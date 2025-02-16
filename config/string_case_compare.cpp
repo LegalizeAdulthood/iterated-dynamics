@@ -17,7 +17,7 @@ static std::string to_lower(std::string_view src)
 }
 
 // case independent version of std::strncmp
-int string_case_compare(char const *s, char const *t, std::size_t ct)
+int string_case_compare(const char *s, const char *t, std::size_t ct)
 {
     std::string lhs{to_lower(std::string_view{s, ct})};
     std::string rhs{to_lower(std::string_view{t, ct})};

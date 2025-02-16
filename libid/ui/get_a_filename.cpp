@@ -51,12 +51,12 @@ struct Choice
 } // namespace
 
 static int check_f6_key(int key, int choice);
-static int filename_speed_str(int row, int col, int vid, char const *speed_string, int speed_match);
+static int filename_speed_str(int row, int col, int vid, const char *speed_string, int speed_match);
 
 static int s_speed_state{};
-static char const *s_masks[]{"*.pot", "*.gif"};
+static const char *s_masks[]{"*.pot", "*.gif"};
 
-bool get_a_file_name(char const *hdg, char const *file_template, std::string &result_filename)
+bool get_a_file_name(const char *hdg, const char *file_template, std::string &result_filename)
 {
     char user_file_template[ID_FILE_MAX_PATH]{};
     // if getting an RDS image map
@@ -218,7 +218,7 @@ retry_dir:
         std::strcat(tmp_mask, s_masks[0]);
     }
 
-    std::string const heading{std::string{hdg} + "\n"
+    const std::string heading{std::string{hdg} + "\n"
         + "Template: " + trim_file_name(tmp_mask, 66)};
     std::strcpy(speed_str, filename);
     int i = 0;
@@ -238,7 +238,7 @@ retry_dir:
     }
 
     i = full_screen_choice(ChoiceFlags::INSTRUCTIONS | (do_sort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED),
-        heading.c_str(), nullptr, instr, file_count, (char const **) choices, attributes, 0, 99, 0, i, nullptr,
+        heading.c_str(), nullptr, instr, file_count, (const char **) choices, attributes, 0, 99, 0, i, nullptr,
         speed_str, filename_speed_str, check_f6_key);
     if (i == -ID_KEY_F4)
     {
@@ -377,9 +377,9 @@ static int check_f6_key(int key, int /*choice*/)
     return 0;
 }
 
-static int filename_speed_str(int row, int col, int vid, char const *speed_string, int speed_match)
+static int filename_speed_str(int row, int col, int vid, const char *speed_string, int speed_match)
 {
-    char const *prompt;
+    const char *prompt;
     if (std::strchr(speed_string, ':')
         || std::strchr(speed_string, '*') || std::strchr(speed_string, '*')
         || std::strchr(speed_string, '?'))

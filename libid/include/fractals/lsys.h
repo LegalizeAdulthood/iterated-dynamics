@@ -34,6 +34,6 @@ extern char g_max_angle;
 struct LSysCmd;
 LSysCmd *draw_lsysf(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth);
 bool lsysf_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth);
-LSysCmd *lsysf_size_transform(char const *s, LSysTurtleState *ts);
-LSysCmd *lsysf_draw_transform(char const *s, LSysTurtleState *ts);
+LSysCmd *lsysf_size_transform(const char *s, LSysTurtleState *ts);
+LSysCmd *lsysf_draw_transform(const char *s, LSysTurtleState *ts);
 void lsysf_do_sin_cos();

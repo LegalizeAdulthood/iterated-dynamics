@@ -464,7 +464,7 @@ LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
         general routine to send a string to the screen
 */
 
-void WinText::put_string(int x_pos, int y_pos, int attrib, char const *string, int *end_row, int *end_col)
+void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, int *end_row, int *end_col)
 {
     ODS("WinText::put_string");
 

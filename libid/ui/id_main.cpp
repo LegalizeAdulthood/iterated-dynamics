@@ -143,7 +143,7 @@ static void bad_id_cfg_msg()
     g_bad_config = ConfigStatus::BAD_WITH_MESSAGE;
 }
 
-static void main_restart(int const argc, char const *const argv[], MainContext &context)
+static void main_restart(const int argc, const char *const argv[], MainContext &context)
 {
     driver_check_memory();
     g_auto_browse = false;
@@ -226,7 +226,7 @@ static bool main_restore_start(MainContext &context)
         g_tab_mode = false;
         if (!g_browsing) /*RB*/
         {
-            char const *hdg;
+            const char *hdg;
             if (g_overlay_3d)
             {
                 hdg = "Select File for 3D Overlay";

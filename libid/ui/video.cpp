@@ -25,7 +25,7 @@
 
 static void (*s_write_pixel)(int x, int y, int color){};
 static int (*s_read_pixel)(int x, int y){};
-static void (*s_write_span)(int y, int x, int last_x, Byte const *pixels){};
+static void (*s_write_span)(int y, int x, int last_x, const Byte *pixels){};
 static void (*s_read_span)(int y, int x, int last_x, Byte *pixels){};
 
 // Global variables (yuck!)
@@ -57,7 +57,7 @@ void read_span(int row, int start_col, int stop_col, Byte *pixels)
 // span of pixels to the screen from pixels[] at one byte per pixel
 // Called by the GIF decoder
 //
-void write_span(int row, int start_col, int stop_col, Byte const *pixels)
+void write_span(int row, int start_col, int stop_col, const Byte *pixels)
 {
     if (start_col + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
     {
@@ -67,7 +67,7 @@ void write_span(int row, int start_col, int stop_col, Byte const *pixels)
     (*s_write_span)(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
 }
 
-static void normal_write_span(int y, int x, int last_x, Byte const *pixels)
+static void normal_write_span(int y, int x, int last_x, const Byte *pixels)
 {
     int width = last_x - x + 1;
     assert(s_write_pixel);

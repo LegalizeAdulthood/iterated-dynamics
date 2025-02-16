@@ -93,7 +93,7 @@ static int z_line_fp(double x, double y);
 
 bool julibrot_setup()
 {
-    char const *map_name;
+    const char *map_name;
 
     if (g_colors < 255)
     {

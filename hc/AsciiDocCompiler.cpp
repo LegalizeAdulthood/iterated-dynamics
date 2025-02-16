@@ -17,7 +17,7 @@
 
 namespace hc
 {
-std::string const DEFAULT_ADOC_FNAME = "id.adoc";
+const std::string DEFAULT_ADOC_FNAME = "id.adoc";
 
 int AsciiDocCompiler::process()
 {
@@ -91,8 +91,8 @@ void AsciiDocCompiler::paginate_ascii_doc()
             case TokenType::TOK_PARA:
             {
                 ++curr;
-                int const indent = *curr++;
-                int const margin = *curr++;
+                const int indent = *curr++;
+                const int margin = *curr++;
                 len -= 3;
                 col = indent;
                 while (true)
@@ -212,7 +212,7 @@ private:
     void emit_key_name();
     void print_inside_key(char c);
     void print_char(char c, int n);
-    void print_string(char const *s, int n);
+    void print_string(const char *s, int n);
     void print_string(const std::string &text)
     {
         print_string(text.c_str(), static_cast<int>(text.size()));
@@ -611,7 +611,7 @@ void AsciiDocProcessor::print_char(char c, int n)
     }
 }
 
-void AsciiDocProcessor::print_string(char const *s, int n)
+void AsciiDocProcessor::print_string(const char *s, int n)
 {
     if (n > 0)
     {

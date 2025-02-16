@@ -81,7 +81,7 @@ public:
     virtual void set_line_mode(int mode) = 0;                                     // set copy/xor line
     virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;        // draw line
     virtual void display_string(
-        int x, int y, int fg, int bg, char const *text) = 0;                  // draw string in graphics mode
+        int x, int y, int fg, int bg, const char *text) = 0;                  // draw string in graphics mode
     virtual void save_graphics() = 0;                                         // save graphics
     virtual void restore_graphics() = 0;                                      // restore graphics
     virtual int get_key() = 0;                                                // poll or block for a key
@@ -91,7 +91,7 @@ public:
     virtual void unget_key(int key) = 0;                                      //
     virtual void shell() = 0;                                                 // invoke a command shell
     virtual void set_video_mode(VideoInfo *mode) = 0;                         //
-    virtual void put_string(int row, int col, int attr, char const *msg) = 0; //
+    virtual void put_string(int row, int col, int attr, const char *msg) = 0; //
     virtual bool is_text() = 0;                                               //
     virtual void set_for_text() = 0;                                          // set for text mode & save gfx
     virtual void set_for_graphics() = 0;                                      // restores graphics and data
@@ -123,7 +123,7 @@ void load_driver(Driver *drv, int *argc, char **argv);
 int init_drivers(int *argc, char **argv);
 void add_video_mode(Driver *drv, VideoInfo *mode);
 void close_drivers();
-Driver *driver_find_by_name(char const *name);
+Driver *driver_find_by_name(const char *name);
 
 extern Driver *g_driver;            // current driver in use
 
@@ -203,7 +203,7 @@ inline int driver_get_key()
 {
     return g_driver->get_key();
 }
-inline void driver_display_string(int x, int y, int fg, int bg, char const *text)
+inline void driver_display_string(int x, int y, int fg, int bg, const char *text)
 {
     g_driver->display_string(x, y, fg, bg, text);
 }
@@ -235,7 +235,7 @@ inline void driver_shell()
 {
     g_driver->shell();
 }
-inline void driver_put_string(int row, int col, int attr, char const *msg)
+inline void driver_put_string(int row, int col, int attr, const char *msg)
 {
     g_driver->put_string(row, col, attr, msg);
 }

@@ -51,7 +51,7 @@ public:
     void create_window() override;
     void set_video_mode(VideoInfo *mode) override;
     void set_clear() override;
-    void display_string(int x, int y, int fg, int bg, char const *text) override;
+    void display_string(int x, int y, int fg, int bg, const char *text) override;
     bool is_text() override;
     void set_for_text() override;
     void set_for_graphics() override;
@@ -402,7 +402,7 @@ void DiskDriver::set_clear()
     m_win_text.clear();
 }
 
-void DiskDriver::display_string(int x, int y, int fg, int bg, char const *text)
+void DiskDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
 }
 

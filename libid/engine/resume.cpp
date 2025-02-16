@@ -25,7 +25,7 @@ int put_resume_len(int len, ...)
     va_start(arg_marker, len);
     while (len)
     {
-        Byte const *source_ptr = va_arg(arg_marker, Byte *);
+        const Byte *source_ptr = va_arg(arg_marker, Byte *);
         std::copy(&source_ptr[0], &source_ptr[len], &g_resume_data[g_resume_len]);
         g_resume_len += len;
         len = va_arg(arg_marker, int);

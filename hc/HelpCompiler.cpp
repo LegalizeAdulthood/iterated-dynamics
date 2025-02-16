@@ -45,12 +45,12 @@ namespace fs = std::filesystem;
 namespace hc
 {
 
-char const *const DEFAULT_SRC_FNAME{"help.src"};
-char const *const DEFAULT_HLP_FNAME{"id.hlp"};
-char const *const DEFAULT_EXE_FNAME{"id.exe"};
-char const *const DEFAULT_DOC_FNAME{"id.txt"};
-char const *const TEMP_FNAME{"hc.tmp"};
-char const *const SWAP_FNAME{"hcswap.tmp"};
+const char *const DEFAULT_SRC_FNAME{"help.src"};
+const char *const DEFAULT_HLP_FNAME{"id.hlp"};
+const char *const DEFAULT_EXE_FNAME{"id.exe"};
+const char *const DEFAULT_DOC_FNAME{"id.txt"};
+const char *const TEMP_FNAME{"hc.tmp"};
+const char *const SWAP_FNAME{"hcswap.tmp"};
 
 // paginate document stuff
 struct DocInfo
@@ -62,7 +62,7 @@ struct DocInfo
 
 struct PaginateDocIno : DocInfo
 {
-    char const *start;
+    const char *start;
     Content  *c;
     Label    *lbl;
 };
@@ -119,8 +119,8 @@ std::ostream &operator<<(std::ostream &str, const Topic &topic)
         << "Offset: " << topic.offset << '\n'
         << "Tokens:\n";
 
-    char const *text = topic.get_topic_text();
-    char const *curr = text;
+    const char *text = topic.get_topic_text();
+    const char *curr = text;
     unsigned int len = topic.text_len;
 
     while (len > 0)
@@ -255,8 +255,8 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
             case TokenType::TOK_PARA:
             {
                 ++curr;
-                int const indent = *curr++;
-                int const margin = *curr++;
+                const int indent = *curr++;
+                const int margin = *curr++;
                 len -= 3;
                 col = indent;
                 while (true)
@@ -628,7 +628,7 @@ static bool compare_files(std::FILE *f1, std::FILE *f2)
     return !(std::feof(f1) && std::feof(f2));
 }
 
-static void write_header_file(char const *fname, std::FILE *file)
+static void write_header_file(const char *fname, std::FILE *file)
 {
     std::fprintf(file, //
         "// SPDX-License-Identifier: GPL-3.0-only\n"
@@ -1021,7 +1021,7 @@ static void printer_ch(PrintDocInfo *info, int c, int n)
     }
 }
 
-static void printer_str(PrintDocInfo *info, char const *s, int n)
+static void printer_str(PrintDocInfo *info, const char *s, int n)
 {
     if (n > 0)
     {
@@ -1105,7 +1105,7 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
 
 void HelpCompiler::print_document()
 {
-    char const *fname{m_options.fname2.empty() ? DEFAULT_DOC_FNAME : m_options.fname2.c_str()};
+    const char *fname{m_options.fname2.empty() ? DEFAULT_DOC_FNAME : m_options.fname2.c_str()};
 
     if (g_src.contents.empty())
     {
@@ -1151,7 +1151,7 @@ void HelpCompiler::report_memory()
         text   += t.text_len;
         data   += t.num_page * sizeof(Page);
 
-        std::vector<Page> const &pages = t.page;
+        const std::vector<Page> &pages = t.page;
         dead += static_cast<long>((pages.capacity() - pages.size()) * sizeof(Page));
     }
 
@@ -1230,8 +1230,8 @@ void HelpCompiler::report_stats()
 // add/delete help from .EXE functions.
 void HelpCompiler::add_hlp_to_exe()
 {
-    char const *hlp_fname{m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str()};
-    char const *exe_fname{m_options.fname2.empty() ? DEFAULT_EXE_FNAME : m_options.fname2.c_str()};
+    const char *hlp_fname{m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str()};
+    const char *exe_fname{m_options.fname2.empty() ? DEFAULT_EXE_FNAME : m_options.fname2.c_str()};
 
     HelpSignature hs{};
 

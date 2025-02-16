@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int ends_with_slash(char const *fl);
+int ends_with_slash(const char *fl);

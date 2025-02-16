@@ -420,7 +420,7 @@ static void rotate_pal(PalEntry *pal, int dir, int lo, int hi)
     }
 }
 
-static void clip_put_line(int row, int start, int stop, Byte const *pixels)
+static void clip_put_line(int row, int start, int stop, const Byte *pixels)
 {
     if (row < 0 || row >= g_screen_y_dots || start > g_screen_x_dots || stop < 0)
     {
@@ -511,7 +511,7 @@ void get_row(int x, int y, int width, char *buff)
     clip_get_line(y, x, x+width-1, (Byte *)buff);
 }
 
-void put_row(int x, int y, int width, char const *buff)
+void put_row(int x, int y, int width, const char *buff)
 {
     clip_put_line(y, x, x+width-1, (Byte *)buff);
 }
@@ -524,7 +524,7 @@ static void ver_get_row(int x, int y, int depth, char *buff)
     }
 }
 
-static void ver_put_row(int x, int y, int depth, char const *buff)
+static void ver_put_row(int x, int y, int depth, const char *buff)
 {
     while (depth-- > 0)
     {
@@ -549,7 +549,7 @@ static void rect(int x, int y, int width, int depth, int color)
     ver_line(x+width-1, y, depth, color);
 }
 
-static void display_fmt(int x, int y, int fg, int bg, char const *format, ...)
+static void display_fmt(int x, int y, int fg, int bg, const char *format, ...)
 {
     char buff[81];
 
@@ -607,7 +607,7 @@ static void rot_col_g_b(PalEntry pal[], int num)
 {
     for (int curr = 0; curr <= num; curr++)
     {
-        int const dummy = pal[curr].green;
+        const int dummy = pal[curr].green;
         pal[curr].green = pal[curr].blue;
         pal[curr].blue = (Byte)dummy;
     }
@@ -617,7 +617,7 @@ static void rot_col_b_r(PalEntry pal[], int num)
 {
     for (int curr = 0; curr <= num; curr++)
     {
-        int const dummy = pal[curr].red;
+        const int dummy = pal[curr].red;
         pal[curr].red = pal[curr].blue;
         pal[curr].blue = (Byte)dummy;
     }
@@ -1700,8 +1700,8 @@ void PalTable::set_curr(int which, int curr)
 
 void PalTable::save_rect()
 {
-    int const width = PAL_TABLE_PAL_X + m_csize * 16 + 1 + 1;
-    int const depth = PAL_TABLE_PAL_Y + m_csize * 16 + 1 + 1;
+    const int width = PAL_TABLE_PAL_X + m_csize * 16 + 1 + 1;
+    const int depth = PAL_TABLE_PAL_Y + m_csize * 16 + 1 + 1;
 
     m_saved_pixel.resize(width * depth);
     s_cursor.hide();

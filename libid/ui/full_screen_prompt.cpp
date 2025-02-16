@@ -28,9 +28,9 @@
 
 static int prompt_check_key(int key);
 static int prompt_check_key_scroll(int key);
-static  int input_field_list(int attr, char *field, int field_len, char const **list, int list_len,
+static  int input_field_list(int attr, char *field, int field_len, const char **list, int list_len,
                              int row, int col, int (*check_key)(int key));
-static int prompt_value_string(char *buf, FullScreenValues const *val);
+static int prompt_value_string(char *buf, const FullScreenValues *val);
 
 static int s_fn_key_mask{};
 
@@ -49,9 +49,9 @@ namespace
 
 struct Prompt
 {
-    Prompt(char const *hdg,       // heading, lines separated by \n
+    Prompt(const char *hdg,       // heading, lines separated by \n
         int num_prompts,          // there are this many prompts (max)
-        char const **prompts,     // array of prompting pointers
+        const char **prompts,     // array of prompting pointers
         FullScreenValues *values, // array of values
         int fn_key_mask,          // bit n on if Fn to cause return
         char *extra_info);        // extra info box to display, \n separated
@@ -77,9 +77,9 @@ private:
     void display_title();
     int full_screen_exit();
 
-    char const *hdg;             // heading, lines separated by \n
+    const char *hdg;             // heading, lines separated by \n
     int num_prompts;             // there are this many prompts (max)
-    char const **prompts;        // array of prompting pointers
+    const char **prompts;        // array of prompting pointers
     FullScreenValues *values;    // array of values
     char *extra_info;            // extra info box to display, \n separated
     std::FILE *scroll_file{};    // file with extra_info entry to scroll
@@ -110,7 +110,7 @@ private:
     int done{};                  //
 };
 
-Prompt::Prompt(char const *hdg, int num_prompts, char const **prompts, FullScreenValues *values,
+Prompt::Prompt(const char *hdg, int num_prompts, const char **prompts, FullScreenValues *values,
     int fn_key_mask, char *extra_info) :
     hdg(hdg),
     num_prompts(num_prompts),
@@ -338,7 +338,7 @@ void Prompt::set_horizontal_positions()
     {
         if (values[i].type == 'y')
         {
-            static char const *noyes[2] = {"no", "yes"};
+            static const char *noyes[2] = {"no", "yes"};
             values[i].type = 'l';
             values[i].uval.ch.vlen = 3;
             values[i].uval.ch.list = noyes;
@@ -877,9 +877,9 @@ int Prompt::full_screen_exit()
 } // namespace
 
 int full_screen_prompt(       // full-screen prompting routine
-    char const *hdg,          // heading, lines separated by \n
+    const char *hdg,          // heading, lines separated by \n
     int num_prompts,          // there are this many prompts (max)
-    char const **prompts,     // array of prompting pointers
+    const char **prompts,     // array of prompting pointers
     FullScreenValues *values, // array of values
     int fn_key_mask,          // bit n on if Fn to cause return
     char *extra_info          // extra info box to display, \n separated
@@ -890,7 +890,7 @@ int full_screen_prompt(       // full-screen prompting routine
 }
 
 // format value into buf, return field width
-static int prompt_value_string(char *buf, FullScreenValues const *val)
+static int prompt_value_string(char *buf, const FullScreenValues *val)
 {
     int ret;
     switch (val->type)
@@ -1013,7 +1013,7 @@ static int prompt_check_key_scroll(int key)
 static int input_field_list(int attr, // display attribute
     char *field,                      // display form field value
     int field_len,                    // field length
-    char const **list,                // list of values
+    const char **list,                // list of values
     int list_len,                     // number of entries in list
     int row,                          // display row
     int col,                          // display column

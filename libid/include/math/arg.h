@@ -41,7 +41,7 @@ struct Arg
 
 struct ConstArg
 {
-    char const *s;
+    const char *s;
     int len;
     Arg a;
 };

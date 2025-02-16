@@ -114,7 +114,7 @@ static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, 
     return done;
 }
 
-static void show_str_var(char const *name, char const *var, int *row, char *msg)
+static void show_str_var(const char *name, const char *var, int *row, char *msg)
 {
     if (var == nullptr)
     {
@@ -127,7 +127,7 @@ static void show_str_var(char const *name, char const *var, int *row, char *msg)
     }
 }
 
-static void write_row(int row, char const *format, ...)
+static void write_row(int row, const char *format, ...)
 {
     char text[78]{};
     std::va_list args;
@@ -225,7 +225,7 @@ int tab_display()       // display the status of the current image
     BigFloat bf_x_ctr = nullptr;
     BigFloat bf_y_ctr = nullptr;
     char msg[350];
-    char const *msg_ptr;
+    const char *msg_ptr;
     int saved = 0;
     int has_form_param = 0;
 
@@ -670,7 +670,7 @@ top:
 
 static void area()
 {
-    char const *msg;
+    const char *msg;
     char buf[160];
     long cnt = 0;
     if (g_inside_color < COLOR_BLACK)

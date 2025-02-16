@@ -7,7 +7,7 @@
 #include <cstdio>
 #include <cstring>
 
-static void dir_name(char *target, char const *dir, char const *name)
+static void dir_name(char *target, const char *dir, const char *name)
 {
     *target = 0;
     if (*dir != 0)
@@ -18,7 +18,7 @@ static void dir_name(char *target, char const *dir, char const *name)
 }
 
 // removes file in dir directory
-int dir_remove(char const *dir, char const *filename)
+int dir_remove(const char *dir, const char *filename)
 {
     char tmp[ID_FILE_MAX_PATH];
     dir_name(tmp, dir, filename);
@@ -26,7 +26,7 @@ int dir_remove(char const *dir, char const *filename)
 }
 
 // fopens file in dir directory
-std::FILE *dir_fopen(char const *dir, char const *filename, char const *mode)
+std::FILE *dir_fopen(const char *dir, const char *filename, const char *mode)
 {
     char tmp[ID_FILE_MAX_PATH];
     dir_name(tmp, dir, filename);

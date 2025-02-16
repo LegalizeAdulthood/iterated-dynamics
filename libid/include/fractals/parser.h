@@ -56,7 +56,7 @@ void d_stk_round();
 int formula();
 int bad_formula();
 int form_per_pixel();
-int frm_get_param_stuff(char const *name);
+int frm_get_param_stuff(const char *name);
 bool run_formula(const std::string &name, bool report_bad_sym);
 bool formula_setup_fp();
 void init_misc();

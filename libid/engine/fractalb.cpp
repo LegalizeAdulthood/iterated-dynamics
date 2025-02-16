@@ -30,7 +30,7 @@ BFMathType g_bf_math{};
 
 #ifndef NDEBUG
 //********************************************************************
-void show_var_bn(char const *s, BigNum n)
+void show_var_bn(const char *s, BigNum n)
 {
     char msg[200];
     std::strcpy(msg, s);
@@ -40,7 +40,7 @@ void show_var_bn(char const *s, BigNum n)
     stop_msg(msg);
 }
 
-void show_corners_dbl(char const *s)
+void show_corners_dbl(const char *s)
 {
     char msg[400];
     std::snprintf(msg, std::size(msg),
@@ -63,7 +63,7 @@ void show_corners_dbl(char const *s)
 }
 
 // show floating point and bignumber corners
-void show_corners_bn(char const *s)
+void show_corners_bn(const char *s)
 {
     int dec = 20;
     char msg[100];
@@ -96,7 +96,7 @@ void show_corners_bn(char const *s)
 }
 
 // show globals
-void show_globals_bf(char const *s)
+void show_globals_bf(const char *s)
 {
     char msg[300];
     std::snprintf(msg, std::size(msg),
@@ -114,7 +114,7 @@ void show_globals_bf(char const *s)
     }
 }
 
-void show_corners_bf(char const *s)
+void show_corners_bf(const char *s)
 {
     int dec = g_decimals;
     char msg[100];
@@ -151,7 +151,7 @@ void show_corners_bf(char const *s)
     }
 }
 
-void show_corners_bf_save(char const *s)
+void show_corners_bf_save(const char *s)
 {
     int dec = 20;
     char msg[100];
@@ -183,7 +183,7 @@ void show_corners_bf_save(char const *s)
     }
 }
 
-void show_two_bf(char const *s1, BigFloat t1, char const *s2, BigFloat t2, int digits)
+void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, int digits)
 {
     char msg1[200];
     char msg2[200];
@@ -197,7 +197,8 @@ void show_two_bf(char const *s1, BigFloat t1, char const *s2, BigFloat t2, int d
     }
 }
 
-void show_three_bf(char const *s1, BigFloat t1, char const *s2, BigFloat t2, char const *s3, BigFloat t3, int digits)
+void show_three_bf(
+    const char *s1, BigFloat t1, const char *s2, BigFloat t2, const char *s3, BigFloat t3, int digits)
 {
     char msg1[200];
     char msg2[200];
@@ -214,7 +215,7 @@ void show_three_bf(char const *s1, BigFloat t1, char const *s2, BigFloat t2, cha
 }
 
 // for aspect ratio debugging
-void show_aspect(char const *s)
+void show_aspect(const char *s)
 {
     char msg[300];
     char str[100];
@@ -238,7 +239,7 @@ void show_aspect(char const *s)
 }
 
 // compare a double and bignumber
-void compare_values(char const *s, LDouble x, BigNum bnx)
+void compare_values(const char *s, LDouble x, BigNum bnx)
 {
     int dec = 40;
     char msg[100];
@@ -251,7 +252,7 @@ void compare_values(char const *s, LDouble x, BigNum bnx)
     }
 }
 // compare a double and bignumber
-void compare_values_bf(char const *s, LDouble x, BigFloat bfx)
+void compare_values_bf(const char *s, LDouble x, BigFloat bfx)
 {
     int dec = 40;
     char msg[300];
@@ -265,7 +266,7 @@ void compare_values_bf(char const *s, LDouble x, BigFloat bfx)
 }
 
 //********************************************************************
-void show_var_bf(char const *s, BigFloat n)
+void show_var_bf(const char *s, BigFloat n)
 {
     char msg[200];
     std::strcpy(msg, s);

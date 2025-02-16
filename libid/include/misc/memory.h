@@ -22,7 +22,7 @@ struct MemoryHandle
         return index != 0;
     }
 
-    bool from_memory(Byte const *buffer, U16 size, long count, long offset);
+    bool from_memory(const Byte *buffer, U16 size, long count, long offset);
     bool to_memory(Byte *buffer, U16 size, long count, long offset);
     bool set(int value, U16 size, long count, long offset);
 };

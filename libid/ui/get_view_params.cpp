@@ -35,7 +35,7 @@
 
 int get_view_params()
 {
-    char const *choices[16];
+    const char *choices[16];
     FullScreenValues values[25];
     int i;
     int x_max;
@@ -45,7 +45,7 @@ int get_view_params()
 
     driver_get_max_screen(&x_max, &y_max);
 
-    bool const old_view_window    = g_view_window;
+    const bool old_view_window    = g_view_window;
     float old_view_reduction = g_view_reduction;
     float old_aspect_ratio = g_final_aspect_ratio;
     int old_view_x_dots = g_view_x_dots;
@@ -102,7 +102,7 @@ get_view_restart:
     values[k].uval.ch.val = g_keep_aspect_ratio ? 1 : 0;
 
     {
-        char const *scroll_types[] = {"fixed", "relaxed"};
+        const char *scroll_types[] = {"fixed", "relaxed"};
         choices[++k] = "Zoombox scrolling (f[ixed], r[elaxed])";
         values[k].type = 'l';
         values[k].uval.ch.vlen = 7;

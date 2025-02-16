@@ -5,7 +5,7 @@
 #include "win_defines.h"
 #include <Windows.h>
 
-void init_failure(char const *message)
+void init_failure(const char *message)
 {
     MessageBoxA(nullptr, message, "Id: Fatal Error", MB_OK);
 }

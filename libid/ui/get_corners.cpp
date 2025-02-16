@@ -52,7 +52,7 @@ int get_corners()
     double rotation;
     double skew;
 
-    bool const old_use_center_mag = g_use_center_mag;
+    const bool old_use_center_mag = g_use_center_mag;
     double old_x_min = g_x_min;
     double old_x_max = g_x_max;
     double old_y_min = g_y_min;
@@ -259,7 +259,7 @@ int get_screen_corners()
     double rotation;
     double skew;
 
-    bool const old_use_center_mag = g_use_center_mag;
+    const bool old_use_center_mag = g_use_center_mag;
 
     double save_x_min = g_x_min;  // save these for later since cvtcorners modifies them
     double save_x_max = g_x_max;  // and we need to set them for cvtcentermag to work

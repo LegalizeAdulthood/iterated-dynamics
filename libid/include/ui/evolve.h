@@ -127,7 +127,7 @@ extern double                g_evolve_y_parameter_range;
 extern EvolutionModeFlags  g_evolving;
 extern GeneBase              g_gene_bank[NUM_GENES];
 
-void copy_genes_to_bank(GeneBase const gene[NUM_GENES]);
+void copy_genes_to_bank(const GeneBase gene[NUM_GENES]);
 void copy_genes_from_bank(GeneBase gene[NUM_GENES]);
 void init_gene();
 void save_param_history();

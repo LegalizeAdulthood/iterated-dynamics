@@ -579,7 +579,7 @@ void Plot::redraw()
     InvalidateRect(m_window, nullptr, FALSE);
 }
 
-void Plot::display_string(int x, int y, int fg, int bg, char const *text)
+void Plot::display_string(int x, int y, int fg, int bg, const char *text)
 {
     while (*text)
     {

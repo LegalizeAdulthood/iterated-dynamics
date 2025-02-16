@@ -527,7 +527,7 @@ static void find_load_cache(long offset) // used by read/write
         case 1:
             for (int i = 0; i < BLOCK_LEN/2; ++i)
             {
-                Byte const tmp_char = mem_getc();
+                const Byte tmp_char = mem_getc();
                 *(pixel_ptr++) = (Byte)(tmp_char >> 4);
                 *(pixel_ptr++) = (Byte)(tmp_char & 15);
             }
@@ -535,7 +535,7 @@ static void find_load_cache(long offset) // used by read/write
         case 2:
             for (int i = 0; i < BLOCK_LEN/4; ++i)
             {
-                Byte const tmp_char = mem_getc();
+                const Byte tmp_char = mem_getc();
                 for (int j = 6; j >= 0; j -= 2)
                 {
                     *(pixel_ptr++) = (Byte)((tmp_char >> j) & 3);
@@ -545,7 +545,7 @@ static void find_load_cache(long offset) // used by read/write
         case 3:
             for (int i = 0; i < BLOCK_LEN/8; ++i)
             {
-                Byte const tmp_char = mem_getc();
+                const Byte tmp_char = mem_getc();
                 for (int j = 7; j >= 0; --j)
                 {
                     *(pixel_ptr++) = (Byte)((tmp_char >> j) & 1);
@@ -715,7 +715,7 @@ static void mem_putc(Byte c)     // memory get_char
     *(s_mem_buf_ptr++) = c;
 }
 
-void dvid_status(int line, char const *msg)
+void dvid_status(int line, const char *msg)
 {
     using namespace std::literals::chrono_literals;
     static std::chrono::time_point<std::chrono::high_resolution_clock> last{};

@@ -20,7 +20,7 @@ static std::vector<Byte> s_text_save;
 static int s_text_x_dots{};
 static int s_text_y_dots{};
 
-int text_temp_msg(char const *msg)
+int text_temp_msg(const char *msg)
 {
     if (show_temp_msg(msg))
     {
@@ -37,7 +37,7 @@ void free_temp_msg()
     s_text_save.clear();
 }
 
-bool show_temp_msg(char const *msg)
+bool show_temp_msg(const char *msg)
 {
     static size_t size = 0;
     char buffer[41];

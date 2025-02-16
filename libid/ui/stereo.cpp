@@ -144,7 +144,7 @@ static bool get_min_max()
     return false;
 }
 
-static void toggle_bars(bool *bars, int bar_width, int const *colour)
+static void toggle_bars(bool *bars, int bar_width, const int *colour)
 {
     find_special_colors();
     int ct = 0;

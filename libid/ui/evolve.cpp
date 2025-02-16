@@ -162,7 +162,7 @@ bool operator==(const EvolutionInfo &lhs, const EvolutionInfo &rhs)
         && lhs.count == rhs.count;                                            //
 }
 
-void copy_genes_to_bank(GeneBase const gene[NUM_GENES])
+void copy_genes_to_bank(const GeneBase gene[NUM_GENES])
 {
     // cppcheck-suppress arrayIndexOutOfBounds
     std::copy(&gene[0], &gene[NUM_GENES], &g_gene_bank[0]);
@@ -409,7 +409,7 @@ void vary_inv(GeneBase gene[], int rand_val, int i)
 static int get_the_rest()
 {
     ChoiceBuilder<20> choices;
-    char const *evolve_modes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+    const char *evolve_modes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     GeneBase gene[NUM_GENES];
 
     copy_genes_from_bank(gene);
@@ -492,7 +492,7 @@ choose_vars_restart:
 
 int get_variations()
 {
-    char const *evolve_modes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
+    const char *evolve_modes[] = {"no", "x", "y", "x+y", "x-y", "random", "spread"};
     ChoiceBuilder<20> choices;
     GeneBase gene[NUM_GENES];
     int first_param = 0;
@@ -841,8 +841,8 @@ void setup_param_box()
     g_evolve_param_box_count = 0;
     g_evolve_param_zoom = ((double) g_evolve_image_grid_size -1.0)/2.0;
     // need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values
-    int const num_box_values = (g_logical_screen_x_dots + g_logical_screen_y_dots)*2;
-    int const num_values = g_logical_screen_x_dots + g_logical_screen_y_dots + 2;
+    const int num_box_values = (g_logical_screen_x_dots + g_logical_screen_y_dots) * 2;
+    const int num_values = g_logical_screen_x_dots + g_logical_screen_y_dots + 2;
 
     s_param_box_x.resize(num_box_values);
     s_param_box_y.resize(num_box_values);

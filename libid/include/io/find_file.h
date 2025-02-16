@@ -20,5 +20,5 @@ struct DirSearch
 
 extern DirSearch g_dta;
 
-int fr_find_first(char const *path);
+int fr_find_first(const char *path);
 int fr_find_next();

@@ -6,7 +6,7 @@
 
 #include <cstring>
 
-int ends_with_slash(char const *fl)
+int ends_with_slash(const char *fl)
 {
     if (int len = (int) std::strlen(fl); len)
     {

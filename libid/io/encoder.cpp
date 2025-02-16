@@ -50,10 +50,10 @@
 #include <string>
 
 static bool compress(int row_limit);
-static int shift_write(Byte const *color, int num_colors);
+static int shift_write(const Byte *color, int num_colors);
 static int extend_blk_len(int data_len);
-static int put_extend_blk(int block_id, int block_len, char const *block_data);
-static int store_item_name(char const *name);
+static int put_extend_blk(int block_id, int block_len, const char *block_data);
+static int store_item_name(const char *name);
 static void setup_save_info(FractalInfo *save_info);
 
 //                        Save-To-Disk Routines (GIF)
@@ -506,7 +506,7 @@ bool encoder()
     if (g_display_3d <= Display3DMode::NONE && g_iteration_ranges_len)
     {
         // ranges block, 004
-        int const num_bytes = g_iteration_ranges_len*2;
+        const int num_bytes = g_iteration_ranges_len*2;
         save_info.tot_extend_len += extend_blk_len(num_bytes);
         std::vector<char> buffer;
         for (int range : g_iteration_ranges)
@@ -647,7 +647,7 @@ oops:
 
 // TODO: should we be doing this?  We need to store full colors, not the VGA truncated business.
 // shift IBM colors to GIF
-static int shift_write(Byte const *color, int num_colors)
+static int shift_write(const Byte *color, int num_colors)
 {
     for (int i = 0; i < num_colors; i++)
     {
@@ -671,7 +671,7 @@ static int extend_blk_len(int data_len)
     // data   +     1.per.block   + 14 for id + 1 for null at end
 }
 
-static int put_extend_blk(int block_id, int block_len, char const *block_data)
+static int put_extend_blk(int block_id, int block_len, const char *block_data)
 {
     int j;
     char header[15];
@@ -701,7 +701,7 @@ static int put_extend_blk(int block_id, int block_len, char const *block_data)
     return 1;
 }
 
-static int store_item_name(char const *name)
+static int store_item_name(const char *name)
 {
     FormulaInfo formula_info{};
     std::strncpy(formula_info.form_name, name, std::size(formula_info.form_name));

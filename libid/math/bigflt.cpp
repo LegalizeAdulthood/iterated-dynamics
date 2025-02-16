@@ -35,11 +35,11 @@ void bf_hex_dump(BigFloat r)
 //         It may use scientific notation.
 // USES: g_bf_tmp1
 
-BigFloat str_to_bf(BigFloat r, char const *s)
+BigFloat str_to_bf(BigFloat r, const char *s)
 {
     Byte ones_byte;
     bool sign_flag = false;
-    char const *l;
+    const char *l;
     int power_ten = 0;
 
     clear_bf(r);
@@ -54,8 +54,8 @@ BigFloat str_to_bf(BigFloat r, char const *s)
         s++;
     }
 
-    char const *d = std::strchr(s, '.');
-    char const *e = std::strchr(s, 'e');
+    const char *d = std::strchr(s, '.');
+    const char *e = std::strchr(s, 'e');
     if (e == nullptr)
     {
         e = std::strchr(s, 'E');

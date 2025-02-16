@@ -89,7 +89,7 @@ static void set_froth_palette()
     }
     if (g_colors >= 16)
     {
-        char const *map_name;
+        const char *map_name;
         if (g_colors >= 256)
         {
             if (s_fsp.attractors == 6)

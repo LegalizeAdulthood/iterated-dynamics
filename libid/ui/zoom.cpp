@@ -299,7 +299,7 @@ void draw_lines(Coord fr, Coord to, int dx, int dy)
         if (fr.y > to.y)
         {
             // swap so from.y is < to.y
-            Coord const tmp_p = fr;
+            const Coord tmp_p = fr;
             fr = to;
             to = tmp_p;
         }

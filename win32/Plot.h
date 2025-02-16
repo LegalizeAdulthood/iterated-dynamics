@@ -28,7 +28,7 @@ struct Plot
     void schedule_alarm(int secs);
     void clear();
     void redraw();
-    void display_string(int x, int y, int fg, int bg, char const *text);
+    void display_string(int x, int y, int fg, int bg, const char *text);
     void save_graphics();
     void restore_graphics();
     HWND get_window() const

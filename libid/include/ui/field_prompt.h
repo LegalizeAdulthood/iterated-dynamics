@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int field_prompt(char const *hdg, char const *instr, char *fld, int len, int (*check_key)(int key));
+int field_prompt(const char *hdg, const char *instr, char *fld, int len, int (*check_key)(int key));

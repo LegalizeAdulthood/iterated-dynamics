@@ -83,7 +83,7 @@
 
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
-static int get_max_cur_arg_len(char const *const float_val_str[], int num_args);
+static int get_max_cur_arg_len(const char *const float_val_str[], int num_args);
 static CmdArgFlags command_file(std::FILE *handle, CmdFile mode);
 static int  next_command(
     char *cmd_buf,
@@ -93,14 +93,14 @@ static int  next_command(
     int *line_offset,
     CmdFile mode);
 static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode);
-static void arg_error(char const *bad_arg);
+static void arg_error(const char *bad_arg);
 static void init_vars_run();
 static void init_vars_restart();
 static void init_vars_fractal();
 static void init_vars3d();
 static void reset_ifs_definition();
-static int  get_bf(BigFloat bf, char const *cur_arg);
-static bool is_a_big_float(char const *str);
+static int  get_bf(BigFloat bf, const char *cur_arg);
+static bool is_a_big_float(const char *str);
 
 // variables defined by the command line/files processor
 int g_stop_pass{};                                        // stop at this guessing pass early
@@ -329,7 +329,7 @@ static void process_file(char *cur_arg)
     command_file(init_file, CmdFile::AT_CMD_LINE);
 }
 
-int cmd_files(int argc, char const *const *argv)
+int cmd_files(int argc, const char *const *argv)
 {
     if (g_first_init)
     {
@@ -413,7 +413,7 @@ static void init_vars_run()              // once per run init
 {
     s_init_random_seed = (int)std::time(nullptr);
     init_comments();
-    char const *p = getenv("TMP");
+    const char *p = getenv("TMP");
     if (p == nullptr)
     {
         p = getenv("TEMP");
@@ -821,7 +821,7 @@ struct Command
     int num_float_params{};           // # of / delimited floats
     int int_vals[64]{};               // pre-parsed integer parms
     double float_vals[16]{};          // pre-parsed floating parms
-    char const *float_val_strs[16]{}; // pointers to float vals
+    const char *float_val_strs[16]{}; // pointers to float vals
     CmdArgFlags status{CmdArgFlags::NONE};
 };
 
@@ -1556,7 +1556,7 @@ static CmdArgFlags cmd_coarse(const Command &cmd)
     return CmdArgFlags::PARAM_3D;
 }
 
-static CmdArgFlags parse_colors(char const *value)
+static CmdArgFlags parse_colors(const char *value)
 {
     if (*value == '@')
     {
@@ -2994,7 +2994,7 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
     {
         g_iteration_ranges.resize(entries);
     }
-    catch (std::bad_alloc const &)
+    catch (const std::bad_alloc &)
     {
         stop_msg(StopMsgFlags::NO_STACK, "Insufficient memory for ranges=");
         return CmdArgFlags::BAD_ARG;
@@ -3441,7 +3441,7 @@ static CmdArgFlags cmd_temp_dir(const Command &cmd)
 
 static CmdArgFlags cmd_text_colors(const Command &cmd)
 {
-    char const *value = cmd.value;
+    const char *value = cmd.value;
     if (std::string_view(value) == "mono")
     {
         for (Byte &elem : g_text_color)
@@ -3963,7 +3963,7 @@ CmdArgFlags cmd_arg(char *cur_arg, CmdFile mode) // process a single argument
     return cmd.bad_arg();
 }
 
-static void arg_error(char const *bad_arg)      // oops. couldn't decode this
+static void arg_error(const char *bad_arg)      // oops. couldn't decode this
 {
     std::string spillover{bad_arg};
     if (spillover.length() > 70)
@@ -4031,9 +4031,9 @@ void set_3d_defaults()
 }
 
 // copy a big number from a string, up to slash
-static int get_bf(BigFloat bf, char const *cur_arg)
+static int get_bf(BigFloat bf, const char *cur_arg)
 {
-    if (char const *s = std::strchr(cur_arg, '/'); s)
+    if (const char *s = std::strchr(cur_arg, '/'); s)
     {
         std::string buff(cur_arg, s);
         str_to_bf(bf, buff.c_str());
@@ -4046,9 +4046,9 @@ static int get_bf(BigFloat bf, char const *cur_arg)
 }
 
 // Get length of current args
-static int get_cur_arg_len(char const *cur_arg)
+static int get_cur_arg_len(const char *cur_arg)
 {
-    if (char const *s = std::strchr(cur_arg, '/'); s)
+    if (const char *s = std::strchr(cur_arg, '/'); s)
     {
         return static_cast<int>(s - cur_arg);
     }
@@ -4070,7 +4070,7 @@ static int get_max_cur_arg_len(const char *const float_val_str[], int num_args)
 
 static std::string to_string(CmdFile value)
 {
-    static char const *const mode_str[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
+    static const char *const mode_str[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
     return mode_str[static_cast<int>(value)];
 }
 
@@ -4080,7 +4080,7 @@ static std::string to_string(CmdFile value)
 //        3 command line @filename/setname
 // this is like stopmsg() but can be used in cmdfiles()
 // call with NULL for badfilename to get pause for driver_get_key()
-int init_msg(char const *cmd_str, char const *bad_filename, CmdFile mode)
+int init_msg(const char *cmd_str, const char *bad_filename, CmdFile mode)
 {
     static int row = 1;
 
@@ -4133,11 +4133,11 @@ int init_msg(char const *cmd_str, char const *bad_filename, CmdFile mode)
 
 // Crude function to detect a floating point number. Intended for
 // use with arbitrary precision.
-static bool is_a_big_float(char const *str)
+static bool is_a_big_float(const char *str)
 {
     // [+|-]numbers][.]numbers[+|-][e|g]numbers
     bool result = true;
-    char const *s = str;
+    const char *s = str;
     int num_dot{};
     int num_e{};
     int num_sign{};

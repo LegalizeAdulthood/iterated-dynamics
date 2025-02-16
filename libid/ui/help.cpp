@@ -136,7 +136,7 @@ static void display_cc(int row, int col, int color, int ch)
     driver_put_string(row, col, color, s);
 }
 
-static void display_text(int row, int col, int color, char const *text, unsigned len)
+static void display_text(int row, int col, int color, const char *text, unsigned len)
 {
     while (len-- != 0)
     {
@@ -149,7 +149,7 @@ static void display_text(int row, int col, int color, char const *text, unsigned
     }
 }
 
-static void display_parse_text(char const *text, unsigned len, int start_margin, int *num_link, Link *link)
+static void display_parse_text(const char *text, unsigned len, int start_margin, int *num_link, Link *link)
 {
     TokenType tok;
     int size;
@@ -158,7 +158,7 @@ static void display_parse_text(char const *text, unsigned len, int start_margin,
     g_text_col_base = SCREEN_INDENT;
     g_text_row_base = TEXT_START_ROW;
 
-    char const *curr = text;
+    const char *curr = text;
     int row = 0;
     int col = 0;
 
@@ -328,7 +328,7 @@ static void color_link(Link *link, int color)
     g_text_row_base = 0;
 }
 
-static void put_key(char const *name, char const *description)
+static void put_key(const char *name, const char *description)
 {
     driver_put_string(-1, -1, C_HELP_INSTR, name);
     driver_put_string(-1, -1, C_HELP_INSTR, ":");
@@ -362,7 +362,7 @@ static void print_instr()
     put_key("Escape", "Abort");
 }
 
-static void display_page(char const *title, char const *text, unsigned text_len,
+static void display_page(const char *title, const char *text, unsigned text_len,
                          int page, int num_pages, int start_margin,
                          int *num_link, Link *link)
 {
@@ -951,7 +951,7 @@ static bool can_read_file(const std::string &path)
     return false;
 }
 
-static std::string find_file(char const *filename)
+static std::string find_file(const char *filename)
 {
     std::string path{(fs::path(SRCDIR) / filename).string()};
     if (can_read_file(path))
@@ -1054,7 +1054,7 @@ static void printer_ch(PrintDocInfo *info, int c, int n)
     }
 }
 
-static void printer_str(PrintDocInfo *info, char const *s, int n)
+static void printer_str(PrintDocInfo *info, const char *s, int n)
 {
     if (n > 0)
     {
@@ -1295,11 +1295,11 @@ bool make_doc_msg_func(int page_num, int num_pages)
     return false;
 }
 
-void print_document(char const *filename, bool (*msg_func)(int, int))
+void print_document(const char *filename, bool (*msg_func)(int, int))
 {
     PrintDocInfo info;
     bool success = false;
-    char const *msg = nullptr;
+    const char *msg = nullptr;
 
     help_seek(16L);
     freader(&info.num_contents, sizeof(int), 1, s_help_file);

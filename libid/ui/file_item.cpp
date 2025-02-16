@@ -47,9 +47,9 @@ struct FileEntry
 
 static std::FILE *s_gfe_file{};
 static FileEntry **s_gfe_choices{}; // for format_parmfile_line
-static char const *s_gfe_title{};
+static const char *s_gfe_title{};
 
-bool find_file_item(std::string &filename, char const *item_name, std::FILE **file_ptr, ItemType item_type)
+bool find_file_item(std::string &filename, const char *item_name, std::FILE **file_ptr, ItemType item_type)
 {
     std::FILE *infile = nullptr;
     bool found = false;
@@ -290,7 +290,7 @@ static int skip_comment(std::FILE *infile, long *file_offset)
     return c;
 }
 
-static int scan_entries(std::FILE *infile, FileEntry *choices, char const *item_name)
+static int scan_entries(std::FILE *infile, FileEntry *choices, const char *item_name)
 {
     // returns the number of entries found; if a
     // specific entry is being looked for, returns -1 if
@@ -431,7 +431,7 @@ top:
     return num_entries;
 }
 
-bool search_for_entry(std::FILE *infile, char const *item_name)
+bool search_for_entry(std::FILE *infile, const char *item_name)
 {
     return scan_entries(infile, nullptr, item_name) == -1;
 }
@@ -656,9 +656,9 @@ static int check_gfe_key(int key, int choice)
     return 0;
 }
 
-static long gfe_choose_entry(ItemType type, char const *title, const std::string &filename, std::string &entry_name)
+static long gfe_choose_entry(ItemType type, const char *title, const std::string &filename, std::string &entry_name)
 {
-    char const *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
+    const char *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     char buf[101];
     FileEntry storage[MAX_ENTRIES + 1]{};
     FileEntry *choices[MAX_ENTRIES + 1] = { nullptr };
@@ -698,7 +698,7 @@ retry:
     }
 
     std::strcpy(buf, entry_name.c_str()); // preset to last choice made
-    std::string const heading{std::string{title} + " Selection\n"
+    const std::string heading{std::string{title} + " Selection\n"
         + "File: " + trim_file_name(filename, 68)};
     void (*format_item)(int, char *) = nullptr;
     int box_depth = 0;
@@ -714,7 +714,7 @@ retry:
 
     const int i =
         full_screen_choice(ChoiceFlags::INSTRUCTIONS | (do_sort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED),
-            heading.c_str(), nullptr, instr, num_entries, (char const **) choices, attributes, box_width,
+            heading.c_str(), nullptr, instr, num_entries, (const char **) choices, attributes, box_width,
             box_depth, col_width, 0, format_item, buf, nullptr, check_gfe_key);
     if (i == -ID_KEY_F4)
     {
@@ -733,7 +733,7 @@ retry:
 }
 
 long get_file_entry(
-    ItemType type, char const *title, char const *fn_key_mask, std::string &filename, std::string &entry_name)
+    ItemType type, const char *title, const char *fn_key_mask, std::string &filename, std::string &entry_name)
 {
     // Formula, LSystem, etc. type structure, select from file
     // containing definitions in the form    name { ... }

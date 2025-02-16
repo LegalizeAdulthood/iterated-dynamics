@@ -12,7 +12,7 @@ namespace hc
 
 constexpr int MAX_CONTENT_TOPIC{10};
 constexpr const char *DOC_CONTENTS_TITLE{"DocContent"};
-constexpr char const *INDEX_LABEL{"HELP_INDEX"};
+constexpr const char *INDEX_LABEL{"HELP_INDEX"};
 constexpr int BUFFER_SIZE{1024 * 1024}; // 1 MB
 
 // values for Content.flags
@@ -131,11 +131,11 @@ struct Topic
 {
     void alloc_topic_text(unsigned size);
     int add_page(const Page &p);
-    void add_page_break(int margin, char const *str, char const *start, char const *curr, int num_links);
+    void add_page_break(int margin, const char *str, const char *start, const char *curr, int num_links);
     char *get_topic_text();
     const char *get_topic_text() const;
     void release_topic_text(bool save) const;
-    void start(char const *str, int len);
+    void start(const char *str, int len);
 
     TopicFlags flags;        // see #defines for TF_???
     int       doc_page;       // page number in document where topic starts
@@ -157,7 +157,7 @@ struct HelpSource
     int add_link(Link &l);
     int add_topic(const Topic &t);
     int add_label(const Label &l);
-    Label *find_label(char const *name);
+    Label *find_label(const char *name);
     void sort_labels();
 
     std::vector<Content> contents;
@@ -178,7 +178,7 @@ struct HelpSource
 
 extern HelpSource g_src;
 
-int find_topic_title(char const *title);
-void read_src(std::string const &fname, Mode mode);
+int find_topic_title(const char *title);
+void read_src(const std::string &fname, Mode mode);
 
 } // namespace hc

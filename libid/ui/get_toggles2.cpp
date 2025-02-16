@@ -21,7 +21,7 @@
 
 int get_toggles2()
 {
-    char const *choices[18];
+    const char *choices[18];
     FullScreenValues values[23];
     double old_potential_param[3];
     double old_inversion[3];
@@ -95,7 +95,7 @@ int get_toggles2()
     int old_rotate_hi = g_color_cycle_range_hi;
     values[k].uval.ival = old_rotate_hi;
 
-    HelpLabels const old_help_mode = g_help_mode;
+    const HelpLabels old_help_mode = g_help_mode;
     g_help_mode = HelpLabels::HELP_Y_OPTIONS;
     {
         int i = full_screen_prompt("Extended Options\n"

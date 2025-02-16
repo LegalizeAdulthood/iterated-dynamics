@@ -46,14 +46,14 @@ enum
 struct KeyMnemonic
 {
     int code;
-    char const *mnemonic;
+    const char *mnemonic;
 };
 
 static void sleep_secs(int secs);
 static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *txt);
-static void message(int secs, char const *buf);
-static void slide_show_err(char const *msg);
-static int  get_scancode(char const *mn);
+static void message(int secs, const char *buf);
+static void slide_show_err(const char *msg);
+static int  get_scancode(const char *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
 SlidesMode g_slides{SlidesMode::OFF}; // PLAY autokey=play, RECORD autokey=record
@@ -92,9 +92,9 @@ static bool s_calc_wait{};
 static int s_repeats{};
 static int s_last1{};
 
-static int get_scancode(char const *mn)
+static int get_scancode(const char *mn)
 {
-    for (KeyMnemonic const &it : s_key_mnemonics)
+    for (const KeyMnemonic &it : s_key_mnemonics)
     {
         if (std::strcmp(mn, it.mnemonic) == 0)
         {
@@ -108,7 +108,7 @@ static int get_scancode(char const *mn)
 static void get_mnemonic(int code, char *mnemonic)
 {
     *mnemonic = 0;
-    for (KeyMnemonic const &it : s_key_mnemonics)
+    for (const KeyMnemonic &it : s_key_mnemonics)
     {
         if (code == it.code)
         {
@@ -139,7 +139,7 @@ static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *t
     return 0;
 }
 
-static void message(int secs, char const *buf)
+static void message(int secs, const char *buf)
 {
     if (driver_is_text())
     {
@@ -459,7 +459,7 @@ static void sleep_secs(int secs)
     g_slides = SlidesMode::PLAY;
 }
 
-static void slide_show_err(char const *msg)
+static void slide_show_err(const char *msg)
 {
     char msg_buff[300] = { "Slideshow error:\n" };
     stop_slide_show();

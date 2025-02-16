@@ -30,7 +30,7 @@ int check_vid_mode_key(int key)
     return -1;
 }
 
-int check_vid_mode_key_name(char const *key_name)
+int check_vid_mode_key_name(const char *key_name)
 {
     int key_set = ID_KEY_F1 - 1;
     if (*key_name == 'S' || *key_name == 's')

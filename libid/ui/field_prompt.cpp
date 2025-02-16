@@ -11,8 +11,8 @@
 
 #include <algorithm>
 
-int field_prompt(char const *hdg, // heading, \n delimited lines
-    char const *instr,            // additional instructions or nullptr
+int field_prompt(const char *hdg, // heading, \n delimited lines
+    const char *instr,            // additional instructions or nullptr
     char *fld,                    // the field itself
     int len,                      // field length (declare as 1 larger for \0)
     int (*check_key)(int key)     // routine to check non data keys, or nullptr
@@ -21,7 +21,7 @@ int field_prompt(char const *hdg, // heading, \n delimited lines
     char buf[81]{};
     help_title();                                   // clear screen, display title
     driver_set_attr(1, 0, C_PROMPT_BKGRD, 24 * 80); // init rest to background
-    char const *char_ptr = hdg;                                  // count title lines, find widest
+    const char *char_ptr = hdg;                                  // count title lines, find widest
     int box_width = 0;
     int i = box_width;
     int title_lines = 1;

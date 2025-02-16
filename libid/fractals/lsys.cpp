@@ -23,12 +23,12 @@
 #include <string>
 #include <vector>
 
-static bool read_lsystem_file(char const *str);
+static bool read_lsystem_file(const char *str);
 static void free_rules_mem();
 static int rule_present(char symbol);
-static bool save_axiom(char const *text);
-static bool save_rule(char const *rule, int index);
-static bool append_rule(char const *rule, int index);
+static bool save_axiom(const char *text);
+static bool save_rule(const char *rule, int index);
+static bool append_rule(const char *rule, int index);
 static void free_l_cmds();
 
 static std::string s_axiom;
@@ -38,7 +38,7 @@ static bool s_loaded{};
 
 char g_max_angle{};
 
-LDouble get_number(char const **str)
+LDouble get_number(const char **str)
 {
     bool root = false;
     bool inverse = false;
@@ -92,7 +92,7 @@ LDouble get_number(char const **str)
     return ret;
 }
 
-static bool read_lsystem_file(char const *str)
+static bool read_lsystem_file(const char *str)
 {
     int err = 0;
     char inline1[MAX_LSYS_LINE_LEN+1];
@@ -158,12 +158,12 @@ static bool read_lsystem_file(char const *str)
                 if (std::strchr("+-/\\@|!c<>][", *word))
                 {
                     std::sprintf(&msg_buff[std::strlen(msg_buff)],
-                            "Syntax error line %d: Redefined reserved symbol %s\n", line_num, word);
+                        "Syntax error line %d: Redefined reserved symbol %s\n", line_num, word);
                     ++err;
                     break;
                 }
-                char const *temp = std::strtok(nullptr, " =\t\n");
-                int const index = rule_present(*word);
+                const char *temp = std::strtok(nullptr, " =\t\n");
+                const int index = rule_present(*word);
                 if (!index)
                 {
                     char fixed[MAX_LSYS_LINE_LEN + 1];
@@ -244,7 +244,7 @@ int lsystem()
     ts.d_max_angle = (char) (g_max_angle - 1);
 
     s_rule_f_cmds.push_back(lsysf_size_transform(s_axiom.c_str(), &ts));
-    for (auto const &rule : s_rules)
+    for (const auto &rule : s_rules)
     {
         s_rule_f_cmds.push_back(lsysf_size_transform(rule.c_str(), &ts));
     }
@@ -259,7 +259,7 @@ int lsystem()
 
         free_l_cmds();
         s_rule_f_cmds.push_back(lsysf_draw_transform(s_axiom.c_str(), &ts));
-        for (auto const &rule : s_rules)
+        for (const auto &rule : s_rules)
         {
             s_rule_f_cmds.push_back(lsysf_draw_transform(rule.c_str(), &ts));
         }
@@ -316,7 +316,7 @@ static int rule_present(char symbol)
     return 0;
 }
 
-static bool save_axiom(char const *text)
+static bool save_axiom(const char *text)
 {
     try
     {
@@ -329,7 +329,7 @@ static bool save_axiom(char const *text)
     }
 }
 
-static bool save_rule(char const *rule, int index)
+static bool save_rule(const char *rule, int index)
 {
     try
     {
@@ -344,7 +344,7 @@ static bool save_rule(char const *rule, int index)
     }
 }
 
-static bool append_rule(char const *rule, int index)
+static bool append_rule(const char *rule, int index)
 {
     try
     {

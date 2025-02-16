@@ -85,7 +85,7 @@ static void which_disk_error(int status)
     // Set status == 1 after a file create, status == 2 after a file set value
     // Set status == 3 after a file write, status == 4 after a file read
     char buf[MSG_LEN];
-    char const *pats[4] = {"Create file error %d:  %s", "Set file error %d:  %s", "Write file error %d:  %s",
+    const char *pats[4] = {"Create file error %d:  %s", "Set file error %d:  %s", "Write file error %d:  %s",
         "Read file error %d:  %s"};
     std::snprintf(buf, std::size(buf), pats[(1 <= status && status <= 4) ? (status - 1) : 0], errno, std::strerror(errno));
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
@@ -103,7 +103,7 @@ static void which_disk_error(int status)
 // to start moving the contents of buffer to
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool MemoryHandle::from_memory(Byte const *buffer, U16 size, long count, long offset)
+bool MemoryHandle::from_memory(const Byte *buffer, U16 size, long count, long offset)
 {
     Byte disk_buff[DISK_WRITE_LEN];
     U16 num_written;

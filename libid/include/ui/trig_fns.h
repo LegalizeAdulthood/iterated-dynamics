@@ -47,7 +47,7 @@ inline int operator+(TrigFn value)
 
 struct NamedTrigFunction
 {
-    char const *name;
+    const char *name;
     void (*d_fn)();
 };
 
@@ -61,7 +61,7 @@ extern void                (*g_d_trig3)();
 
 std::string show_trig();
 void trig_details(char *buf);
-int set_trig_array(int k, char const *name);
+int set_trig_array(int k, const char *name);
 void set_trig_pointers(int which);
 void save_trig_functions();
 void restore_trig_functions();

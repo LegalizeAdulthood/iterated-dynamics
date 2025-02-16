@@ -26,7 +26,7 @@ void report_errors()
     std::printf("%8d Warning%c\n",     g_warnings, (g_warnings == 1) ? ' ' : 's');
 }
 
-static void print_msg(char const *type, int line_num, char const *format, std::va_list arg)
+static void print_msg(const char *type, int line_num, const char *format, std::va_list arg)
 {
     if (type != nullptr)
     {
@@ -42,7 +42,7 @@ static void print_msg(char const *type, int line_num, char const *format, std::v
     std::fflush(stdout);
 }
 
-static void fatal_msg(int line_offset, char const *format, ...)
+static void fatal_msg(int line_offset, const char *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -58,7 +58,7 @@ static void fatal_msg(int line_offset, char const *format, ...)
     std::exit(g_errors + 1);
 }
 
-void error_msg(int line_offset, char const *format, ...)
+void error_msg(int line_offset, const char *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -72,7 +72,7 @@ void error_msg(int line_offset, char const *format, ...)
     }
 }
 
-void warn_msg(int line_offset, char const *format, ...)
+void warn_msg(int line_offset, const char *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -86,7 +86,7 @@ void warn_msg(int line_offset, char const *format, ...)
     }
 }
 
-void notice_msg(char const *format, ...)
+void notice_msg(const char *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -94,7 +94,7 @@ void notice_msg(char const *format, ...)
     va_end(arg);
 }
 
-void msg_msg(char const *format, ...)
+void msg_msg(const char *format, ...)
 {
     std::va_list arg;
 

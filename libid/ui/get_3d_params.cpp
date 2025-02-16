@@ -31,13 +31,13 @@ static  bool get_funny_glasses_params();
 
 static std::string s_funny_glasses_map_name;
 
-std::string const g_glasses1_map{"glasses1.map"};
+const std::string g_glasses1_map{"glasses1.map"};
 
 int get_3d_params()     // prompt for 3D parameters
 {
     int sphere;
-    char const *s;
-    char const *prompts3d[21];
+    const char *s;
+    const char *prompts3d[21];
     FullScreenValues values[21];
     int k;
 
@@ -159,7 +159,7 @@ restart_1:
 
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
-        char const *choices[11];
+        const char *choices[11];
         int attributes[21];
         k = 0;
         choices[k++] = "make a surface grid";

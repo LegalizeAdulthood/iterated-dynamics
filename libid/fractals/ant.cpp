@@ -88,7 +88,7 @@ static void set_wait(long *wait)
 // turkmite from Scientific American July 1994 page 91
 // Tweaked by Luciano Genero & Fulvio Cappelli
 //
-static void turk_mite1(int max_ants, int rule_len, char const *rule, long max_pts, long wait)
+static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pts, long wait)
 {
     int ant_x[MAX_ANTS + 1];
     int ant_y[MAX_ANTS + 1];
@@ -264,13 +264,13 @@ static void turk_mite1(int max_ants, int rule_len, char const *rule, long max_pt
 
 static unsigned rotate_left_one(unsigned value)
 {
-    unsigned const high_bit{~(~0U >> 1)};
-    unsigned const result{value << 1};
+    const unsigned high_bit{~(~0U >> 1)};
+    const unsigned result{value << 1};
     return (value & high_bit) ? (result | 1U) : result;
 }
 
 // this one ignore the color of the current cell is more like a white ant
-static void turk_mite2(int max_ants, int rule_len, char const *rule, long max_pts, long wait)
+static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pts, long wait)
 {
     int ant_dir[MAX_ANTS + 1];
     int ant_x[MAX_ANTS + 1];
@@ -481,8 +481,8 @@ int ant()
     }
     s_inc_y[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
     ValueSaver saved_help_mode(g_help_mode, HelpLabels::HELP_ANT_COMMANDS);
-    long const max_pts = std::abs(static_cast<long>(g_params[1]));
-    long const wait = std::abs(g_orbit_delay);
+    const long max_pts = std::abs(static_cast<long>(g_params[1]));
+    const long wait = std::abs(g_orbit_delay);
     std::string rule{get_rule()};
     int rule_len = (int) rule.length();
     if (rule_len > 1)

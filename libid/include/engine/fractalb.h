@@ -44,16 +44,17 @@ BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy);
 
 // Helper routines for debugging
 #ifndef NDEBUG
-void show_var_bn(char const *s, BigNum n);
-void show_corners_dbl(char const *s);
-void show_corners_bn(char const *s);
-void show_globals_bf(char const *s);
-void show_corners_bf(char const *s);
-void show_corners_bf_save(char const *s);
-void show_two_bf(char const *s1, BigFloat t1, char const *s2, BigFloat t2, int digits);
-void show_three_bf(char const *s1, BigFloat t1, char const *s2, BigFloat t2, char const *s3, BigFloat t3, int digits);
-void show_aspect(char const *s);
-void compare_values(char const *s, LDouble x, BigNum bnx);
-void compare_values_bf(char const *s, LDouble x, BigFloat bfx);
-void show_var_bf(char const *s, BigFloat n);
+void show_var_bn(const char *s, BigNum n);
+void show_corners_dbl(const char *s);
+void show_corners_bn(const char *s);
+void show_globals_bf(const char *s);
+void show_corners_bf(const char *s);
+void show_corners_bf_save(const char *s);
+void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, int digits);
+void show_three_bf(
+    const char *s1, BigFloat t1, const char *s2, BigFloat t2, const char *s3, BigFloat t3, int digits);
+void show_aspect(const char *s);
+void compare_values(const char *s, LDouble x, BigNum bnx);
+void compare_values_bf(const char *s, LDouble x, BigFloat bfx);
+void show_var_bf(const char *s, BigFloat n);
 #endif

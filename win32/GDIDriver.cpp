@@ -60,7 +60,7 @@ public:
     bool validate_mode(VideoInfo *mode) override;
     void pause() override;
     void resume() override;
-    void display_string(int x, int y, int fg, int bg, char const *text) override;
+    void display_string(int x, int y, int fg, int bg, const char *text) override;
     void save_graphics() override;
     void restore_graphics() override;
     void flush() override;
@@ -393,7 +393,7 @@ void GDIDriver::resume()
     m_win_text.resume();
 }
 
-void GDIDriver::display_string(int x, int y, int fg, int bg, char const *text)
+void GDIDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
     m_plot.display_string(x, y, fg, bg, text);
 }

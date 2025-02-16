@@ -22,16 +22,14 @@ struct FullScreenValues
         {
             int val;           // selected choice
             int vlen;          // char len per choice
-            char const **list; // list of values
+            const char **list; // list of values
             int list_len;      // number of values
         } ch;
     } uval;
 };
 
-int full_screen_prompt(
-    char const *hdg,
-    int num_prompts,
-    char const **prompts,
+int full_screen_prompt(const char *hdg,
+    int num_prompts, const char **prompts,
     FullScreenValues *values,
     int fn_key_mask,
     char *extra_info);

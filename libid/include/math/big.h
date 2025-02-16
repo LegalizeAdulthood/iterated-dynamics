@@ -162,7 +162,7 @@ bool is_bn_zero(BigNum n);
 BigNum float_to_bn(BigNum r, LDouble f);
 
 void bf_hex_dump(BigFloat r);
-BigFloat str_to_bf(BigFloat r, char const *s);
+BigFloat str_to_bf(BigFloat r, const char *s);
 int strlen_needed_bf();
 char *unsafe_bf_to_str(char *s, int dec, BigFloat r);
 char *unsafe_bf_to_str_e(char *s, int dec, BigFloat r);

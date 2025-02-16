@@ -2,4 +2,4 @@
 //
 #pragma once
 
-void init_failure(char const *message);
+void init_failure(const char *message);

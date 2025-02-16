@@ -69,7 +69,7 @@ static std::vector<VideoModeChoice> s_video_choices;
 
 static void format_item(int choice, char *buf);
 static int    check_mode_key(int key, int /*choice*/);
-static void   format_video_choice(int i, char const *err, char *buf);
+static void   format_video_choice(int i, const char *err, char *buf);
 static double video_aspect(int try_x_dots, int try_y_dots);
 
 static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice &rhs)
@@ -97,7 +97,7 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
     return false;
 }
 
-static void format_video_choice(int i, char const *err, char *buf)
+static void format_video_choice(int i, const char *err, char *buf)
 {
     char key_name[5];
     std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
@@ -118,7 +118,7 @@ static double video_aspect(int try_x_dots, int try_y_dots)
            * g_screen_aspect;
 }
 
-static std::string heading_detail(FractalInfo const *info, ExtBlock3 const *blk_3_info)
+static std::string heading_detail(const FractalInfo *info, const ExtBlock3 *blk_3_info)
 {
     std::ostringstream result;
     if (info->info_id[0] == 'G')
@@ -402,7 +402,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
                 {
                     break; // already reduced x, don't reduce y
                 }
-                double const f_temp2 = video_aspect(tmp_x_dots, (g_file_y_dots+g_skip_y_dots)/(g_skip_y_dots+1));
+                const double f_temp2 = video_aspect(tmp_x_dots, (g_file_y_dots+g_skip_y_dots)/(g_skip_y_dots+1));
                 if (f_temp2 < g_file_aspect_ratio
                     && f_temp/g_file_aspect_ratio *0.9 <= g_file_aspect_ratio/f_temp2)
                 {
@@ -417,7 +417,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
                 {
                     break; // already reduced y, don't reduce x
                 }
-                double const f_temp2 = video_aspect((g_file_x_dots+g_skip_x_dots)/(g_skip_x_dots+1), tmp_y_dots);
+                const double f_temp2 = video_aspect((g_file_x_dots+g_skip_x_dots)/(g_skip_x_dots+1), tmp_y_dots);
                 if (f_temp2 > g_file_aspect_ratio
                     && g_file_aspect_ratio/f_temp *0.9 <= f_temp2/g_file_aspect_ratio)
                 {

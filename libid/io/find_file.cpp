@@ -71,7 +71,7 @@ static bool next_match()
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
-int fr_find_first(char const *path)       // Find 1st file (or subdir) meeting path/filespec
+int fr_find_first(const char *path)       // Find 1st file (or subdir) meeting path/filespec
 {
     const fs::path search{path};
     const fs::path search_dir{is_directory(search) ? search : (search.has_parent_path() ? search.parent_path() : ".")};

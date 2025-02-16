@@ -6,9 +6,9 @@
 #include <cstring>
 #include <string>
 
-std::string make_path(char const *drive, char const *dir, char const *fname, char const *ext);
+std::string make_path(const char *drive, const char *dir, const char *fname, const char *ext);
 
-inline void make_path(char *template_str, char const *drive, char const *dir, char const *fname, char const *ext)
+inline void make_path(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)
 {
     if (template_str == nullptr)
     {
@@ -20,12 +20,12 @@ inline void make_path(char *template_str, char const *drive, char const *dir, ch
     std::strcpy(template_str, result.c_str());
 }
 
-inline std::string make_fname_ext(char const *fname, char const *ext)
+inline std::string make_fname_ext(const char *fname, const char *ext)
 {
     return make_path(nullptr, nullptr, fname, ext);
 }
 
-inline void make_fname_ext(char *template_str, char const *fname, char const *ext)
+inline void make_fname_ext(char *template_str, const char *fname, const char *ext)
 {
     make_path(template_str, nullptr, nullptr, fname, ext);
 }

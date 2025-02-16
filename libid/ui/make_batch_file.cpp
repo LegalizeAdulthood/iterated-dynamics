@@ -78,13 +78,13 @@ int g_max_line_length{72};
 
 static std::FILE *s_param_file{};
 
-static void put_param(char const *param, ...);
+static void put_param(const char *param, ...);
 static void put_param_line();
 static void put_float(int slash, double value, int prec);
 static void put_bf(int slash, BigFloat r, int prec);
-static void put_file_name(char const *keyword, char const *fname);
+static void put_file_name(const char *keyword, const char *fname);
 static void strip_zeros(char *buf);
-static void write_batch_params(char const *color_inf, bool colors_only, int max_color, int ii, int jj);
+static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj);
 
 static char par_key(int x)
 {
@@ -146,7 +146,7 @@ MakeParParams::MakeParParams()
             max_color = 256;
         }
 
-        char const *str_ptr{};
+        const char *str_ptr{};
         if (g_color_state == ColorState::DEFAULT)
         {
             // default colors
@@ -169,7 +169,7 @@ MakeParParams::MakeParParams()
 
         if (str_ptr && color_spec[0] == '@')
         {
-            char const *str_ptr2 = std::strrchr(str_ptr, SLASH_CH);
+            const char *str_ptr2 = std::strrchr(str_ptr, SLASH_CH);
             if (str_ptr2 != nullptr)
             {
                 str_ptr = str_ptr2 + 1;
@@ -597,7 +597,7 @@ static int get_prec(double a, double b, double c)
     return digits;
 }
 
-static void write_batch_params(char const *color_inf, bool colors_only, int max_color, int ii, int jj)
+static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj)
 {
     char buf[81];
     BigFloat bf_x_ctr = nullptr;
@@ -1567,11 +1567,11 @@ docolors:
     restore_stack(saved);
 }
 
-static void put_file_name(char const *keyword, char const *fname)
+static void put_file_name(const char *keyword, const char *fname)
 {
     if (*fname && !ends_with_slash(fname))
     {
-        char const *p = std::strrchr(fname, SLASH_CH);
+        const char *p = std::strrchr(fname, SLASH_CH);
         if (p != nullptr)
         {
             fname = p+1;
@@ -1584,7 +1584,7 @@ static void put_file_name(char const *keyword, char const *fname)
     }
 }
 
-static void put_param(char const *param, ...)
+static void put_param(const char *param, ...)
 {
     std::va_list args;
 

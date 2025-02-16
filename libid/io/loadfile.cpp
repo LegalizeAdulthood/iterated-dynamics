@@ -214,13 +214,13 @@ static void skip_ext_blk(int *block_len, int *data_len);
 static void backwards_compat(FractalInfo *info);
 static bool fix_bof();
 static bool fix_period_bof();
-static void draw_window(int colour, Window const *info);
-static bool is_visible_window(Window *list, FractalInfo const *info, ExtBlock5 const *blk_5_info);
+static void draw_window(int colour, const Window *info);
+static bool is_visible_window(Window *list, const FractalInfo *info, const ExtBlock5 *blk_5_info);
 static void transform(DblCoords *point);
-static bool params_ok(FractalInfo const *info);
-static bool type_ok(FractalInfo const *info, ExtBlock3 const *blk_3_info);
-static bool function_ok(FractalInfo const *info, int num_fn);
-static void check_history(char const *old_name, char const *new_name);
+static bool params_ok(const FractalInfo *info);
+static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info);
+static bool function_ok(const FractalInfo *info, int num_fn);
+static void check_history(const char *old_name, const char *new_name);
 static void bf_setup_convert_to_screen();
 static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point);
 
@@ -1087,7 +1087,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     }
     else
     {
-        Display3DMode const old_display_ed = g_display_3d;
+        const Display3DMode old_display_ed = g_display_3d;
         g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE;   // for <tab> display during next
         int i = get_video_mode(&read_info, &blk_3_info);
         driver_check_memory();
@@ -1940,9 +1940,9 @@ int file_get_window()
     s_bt_c = alloc_stack(g_r_bf_length+2);
     s_bt_d = alloc_stack(g_r_bf_length+2);
     s_bt_e = alloc_stack(g_r_bf_length+2);
-    s_bt_f = alloc_stack(g_r_bf_length+2);
+    s_bt_f = alloc_stack(g_r_bf_length + 2);
 
-    int const num_dots = g_screen_x_dots + g_screen_y_dots;
+    const int num_dots = g_screen_x_dots + g_screen_y_dots;
     s_browse_windows.resize(MAX_WINDOWS_OPEN);
     s_browse_box_x.resize(num_dots*MAX_WINDOWS_OPEN);
     s_browse_box_y.resize(num_dots*MAX_WINDOWS_OPEN);
@@ -2264,7 +2264,7 @@ rescan:  // entry for changed browse parms
     return c;
 }
 
-static void draw_window(int colour, Window const *info)
+static void draw_window(int colour, const Window *info)
 {
     g_box_color = colour;
     g_box_count = 0;
@@ -2306,9 +2306,7 @@ static void transform(DblCoords *point)
 }
 
 static bool is_visible_window(
-    Window *list,
-    FractalInfo const *info,
-    ExtBlock5 const *blk_5_info)
+    Window *list, const FractalInfo *info, const ExtBlock5 *blk_5_info)
 {
     DblCoords tl;
     DblCoords tr;
@@ -2524,7 +2522,7 @@ static bool is_visible_window(
     return corner_count >= 1;
 }
 
-static bool params_ok(FractalInfo const *info)
+static bool params_ok(const FractalInfo *info)
 {
     double tmp_param3;
     double tmp_param4;
@@ -2579,7 +2577,7 @@ static bool params_ok(FractalInfo const *info)
         && info->invert[0] - g_inversion[0] < MIN_DIF;
 }
 
-static bool function_ok(FractalInfo const *info, int num_fn)
+static bool function_ok(const FractalInfo *info, int num_fn)
 {
     for (int i = 0; i < num_fn; i++)
     {
@@ -2619,7 +2617,7 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
     return false; // no match
 }
 
-static void check_history(char const *old_name, char const *new_name)
+static void check_history(const char *old_name, const char *new_name)
 {
     // file_name_stack[] is maintained in framain2.c.  It is the history
     //  file for the browser and holds a maximum of 16 images.  The history

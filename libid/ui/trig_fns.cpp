@@ -122,7 +122,7 @@ void trig_details(char *buf)
 }
 
 // set array of trig function indices according to "function=" command
-int set_trig_array(int k, char const *name)
+int set_trig_array(int k, const char *name)
 {
     char trig_name[10];
     std::strncpy(trig_name, name, 6);

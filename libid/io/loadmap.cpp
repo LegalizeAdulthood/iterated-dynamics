@@ -32,7 +32,7 @@ struct PaletteType
 
 #define DAC ((PaletteType *)g_dac_box)
 
-bool validate_luts(char const *map_name)
+bool validate_luts(const char *map_name)
 {
     unsigned r;
     unsigned g;
@@ -84,7 +84,7 @@ bool validate_luts(char const *map_name)
 
 //*************************************************************************
 
-void set_color_palette_name(char const *fn)
+void set_color_palette_name(const char *fn)
 {
     if (validate_luts(fn))
     {

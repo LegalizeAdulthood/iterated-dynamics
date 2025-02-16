@@ -7,7 +7,7 @@
 #include <cfloat>
 #include <cmath>
 
-void fpu_cmplx_mul(DComplex const *x, DComplex const *y, DComplex *z)
+void fpu_cmplx_mul(const DComplex *x, const DComplex *y, DComplex *z)
 {
     double tx;
     double ty;
@@ -30,7 +30,7 @@ void fpu_cmplx_mul(DComplex const *x, DComplex const *y, DComplex *z)
     z->y = std::isnan(ty) || std::isinf(ty) ? ID_INFINITY : ty;
 }
 
-void fpu_cmplx_div(DComplex const *x, DComplex const *y, DComplex *z)
+void fpu_cmplx_div(const DComplex *x, const DComplex *y, DComplex *z)
 {
     const double mod = y->x * y->x + y->y * y->y;
     if (mod == 0.0 || std::abs(mod) <= DBL_MIN)

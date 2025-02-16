@@ -77,7 +77,7 @@ static void put_min_max(int x, int y, int color);
 static void triangle_bounds(float pt_t[3][3]);
 static void transparent_clip_color(int x, int y, int color);
 static void vec_draw_line(double *v1, double *v2, int color);
-static void file_error(char const *filename, int error);
+static void file_error(const char *filename, int error);
 
 // static variables
 static void (*s_fill_plot)(int x, int y, int color){};   //
@@ -127,7 +127,7 @@ static int s_real_v{};                           // Actual value of V for fillyt
 static int s_error{};                            //
 static std::string s_targa_temp("fractemp.tga"); //
 static int s_p = 250;                            // Perspective dist used when viewing light vector
-static int const s_bad_check = -3000;            // check values against this to determine if good
+static const int s_bad_check = -3000;            // check values against this to determine if good
 static std::vector<PointColor> s_last_row;       // this array remembers the previous line
 static std::vector<MinMax> s_min_max_x;          // array of min and max x values used in triangle fill
 static Vector s_cross{};                         //
@@ -1424,7 +1424,7 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 
 **************************************************************************/
 
-static void file_error(char const *filename, int error)
+static void file_error(const char *filename, int error)
 {
     char msg_buf[200];
 
@@ -1566,7 +1566,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     return false;
 }
 
-bool targa_validate(char const *filename)
+bool targa_validate(const char *filename)
 {
     // Attempt to open source file for reading
     std::FILE *fp = dir_fopen(g_working_dir.c_str(), filename, "rb");

@@ -268,13 +268,13 @@ struct Token
 
 struct FunctList
 {
-    char const *s;
+    const char *s;
     FunctionPtr *ptr;
 };
 
 struct SymmetryName
 {
-    char const *s;
+    const char *s;
     SymmetryType n;
 };
 
@@ -361,7 +361,7 @@ static unsigned long s_rand_num{};
 static long s_rand_x{};
 static long s_rand_y{};
 static unsigned int s_chars_in_formula{};
-static constexpr std::array<char const *, 4> JUMP_LIST
+static constexpr std::array<const char *, 4> JUMP_LIST
 {
     "if",
     "elseif",
@@ -461,7 +461,7 @@ static constexpr std::array<FunctList, 34> FUNC_LIST
     FunctList{"trunc", &s_trunc},
     FunctList{"round", &s_round},
 };
-static std::array<char const *, 17> s_op_list
+static std::array<const char *, 17> s_op_list
 {
     ",",    //  0
     "!=",   //  1
@@ -481,7 +481,7 @@ static std::array<char const *, 17> s_op_list
     "/",    // 15
     "^"     // 16
 };
-static constexpr std::array<char const *, 19> VARIABLES
+static constexpr std::array<const char *, 19> VARIABLES
 {
     "pixel",        // v[0]
     "p1",           // v[1]
@@ -600,7 +600,7 @@ static bool check_denom(double denom)
     return false;
 }
 
-static char const *parse_error_text(ParseError which)
+static const char *parse_error_text(ParseError which)
 {
     // the entries in this array need to correspond to the ParseError enum values
     static constexpr const char *const MESSAGES[]{
@@ -1225,7 +1225,7 @@ static void stk_jump_label()
     s_jump_index++;
 }
 
-static unsigned int skip_white_space(char const *str)
+static unsigned int skip_white_space(const char *str)
 {
     unsigned n;
     bool done = false;
@@ -1246,7 +1246,7 @@ static unsigned int skip_white_space(char const *str)
 }
 
 // detect if constant is part of a (a,b) construct
-static bool is_const_pair(char const *str)
+static bool is_const_pair(const char *str)
 {
     int n;
     bool answer = false;
@@ -1267,7 +1267,7 @@ static bool is_const_pair(char const *str)
     return answer;
 }
 
-static ConstArg *is_const(char const *str, int len)
+static ConstArg *is_const(const char *str, int len)
 {
     // next line enforces variable vs constant naming convention
     for (unsigned n = 0U; n < g_variable_index; n++)
@@ -1371,7 +1371,7 @@ static ConstArg *is_const(char const *str, int len)
     3 - else
     4 - endif
 */
-static JumpControlType is_jump(char const *str, int len)
+static JumpControlType is_jump(const char *str, int len)
 {
     for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++)
     {
@@ -1392,7 +1392,7 @@ static void funct_not_found()
 }
 
 // determine if s names a function and if so which one
-static int which_fn(char const *s, int len)
+static int which_fn(const char *s, int len)
 {
     int out;
     if (len != 3)
@@ -1414,7 +1414,7 @@ static int which_fn(char const *s, int len)
     return out;
 }
 
-static FunctionPtr is_func(char const *str, int len)
+static FunctionPtr is_func(const char *str, int len)
 {
     unsigned n = skip_white_space(&str[len]);
     if (str[len+n] == '(')
@@ -1463,7 +1463,7 @@ static void push_pending_op(FunctionPtr f, int p)
     assert(g_operation_index == s_op.size());
 }
 
-static bool parse_formula_text(char const *text)
+static bool parse_formula_text(const char *text)
 {
     int mod_flag = 999;
     int len;
@@ -2592,7 +2592,7 @@ CASE_TERMINATOR:
     }
 }
 
-int frm_get_param_stuff(char const *name)
+int frm_get_param_stuff(const char *name)
 {
     std::FILE *debug_token = nullptr;
     int c;
@@ -3081,7 +3081,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
 
     for (int j = 0; j < 3 && s_errors[j].start_pos; j++)
     {
-        bool const initialization_error = s_errors[j].error_number == ParseError::SECOND_COLON;
+        const bool initialization_error = s_errors[j].error_number == ParseError::SECOND_COLON;
         std::fseek(open_file, begin_frm, SEEK_SET);
         int line_number = 1;
         while (std::ftell(open_file) != s_errors[j].error_pos)

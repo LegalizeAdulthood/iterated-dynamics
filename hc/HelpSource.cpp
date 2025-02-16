@@ -92,7 +92,7 @@ void Content::label_topic(int ctr)
 
 void Content::content_topic(int ctr)
 {
-    int const t = find_topic_title(topic_name[ctr].c_str());
+    const int t = find_topic_title(topic_name[ctr].c_str());
     if (t == -1)
     {
         g_current_src_filename = src_file;
@@ -117,7 +117,7 @@ void Content::content_topic(int ctr)
 
 void Link::link_topic()
 {
-    int const t = find_topic_title(name.c_str());
+    const int t = find_topic_title(name.c_str());
     if (t == -1)
     {
         g_current_src_filename = src_file;
@@ -175,7 +175,7 @@ int Topic::add_page(const Page &p)
     return num_page++;
 }
 
-void Topic::add_page_break(int margin, char const *str, char const *start, char const *curr, int num_links)
+void Topic::add_page_break(int margin, const char *str, const char *start, const char *curr, int num_links)
 {
     Page p;
     p.offset = (unsigned)(start - str);
@@ -207,7 +207,7 @@ void Topic::release_topic_text(bool save) const
     }
 }
 
-void Topic::start(char const *str, int len)
+void Topic::start(const char *str, int len)
 {
     flags = TopicFlags::NONE;
     title_len = len;
@@ -230,7 +230,7 @@ void Topic::read_topic_text() const
 #pragma warning(push)
 #pragma warning(disable : 4311)
 #endif
-static void check_buffer(char const *curr, unsigned int off, char const *buffer)
+static void check_buffer(const char *curr, unsigned int off, const char *buffer)
 {
     if ((unsigned)(curr + off - buffer) >= (BUFFER_SIZE-1024))
     {
@@ -246,7 +246,7 @@ static void check_buffer(unsigned int off)
     check_buffer(g_src.curr, off, g_src.buffer.data());
 }
 
-Label *HelpSource::find_label(char const *name)
+Label *HelpSource::find_label(const char *name)
 {
     auto finder = [=](std::vector<Label> &collection) -> Label *
     {
@@ -269,7 +269,7 @@ void HelpSource::sort_labels()
     std::sort(private_labels.begin(), private_labels.end());
 }
 
-int find_topic_title(char const *title)
+int find_topic_title(const char *title)
 {
     while (*title == ' ')
     {
@@ -479,7 +479,7 @@ static int read_char()
 /*
  * .SRC file parser stuff
  */
-static bool validate_label_name(char const *name)
+static bool validate_label_name(const char *name)
 {
     if (!std::isalpha(*name) && *name != '@' && *name != '_')
     {
@@ -497,7 +497,7 @@ static bool validate_label_name(char const *name)
     return true;  // valid
 }
 
-static char *read_until(char *buff, int len, char const *stop_chars)
+static char *read_until(char *buff, int len, const char *stop_chars)
 {
     while (--len > 0)
     {
@@ -529,7 +529,7 @@ static char *read_until(char *buff, int len, char const *stop_chars)
     return buff-1;
 }
 
-static void skip_over(char const *skip)
+static void skip_over(const char *skip)
 {
     while (true)
     {
@@ -627,7 +627,7 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 
     while (true)
     {
-        int const ch = read_char();
+        const int ch = read_char();
         if (ch == '{')   // process a Content entry
         {
             c.flags = 0;
@@ -870,8 +870,8 @@ static int parse_link()   // returns length of link or 0 on error
 
     if (!bad)
     {
-        check_buffer(1+3*sizeof(int)+len+1);
-        int const link_num = g_src.add_link(l);
+        check_buffer(1 + 3 * sizeof(int) + len + 1);
+        const int link_num = g_src.add_link(l);
         *g_src.curr++ = CMD_LINK;
         set_int(g_src.curr, link_num);
         g_src.curr += 3*sizeof(int);
@@ -1132,7 +1132,7 @@ static void end_topic(Topic &t)
     g_src.add_topic(t);
 }
 
-static bool end_of_sentence(char const *ptr)  // true if ptr is at the end of a sentence
+static bool end_of_sentence(const char *ptr)  // true if ptr is at the end of a sentence
 {
     if (*ptr == ')')
     {
@@ -1198,14 +1198,14 @@ static void check_command_length(int err_offset, int len)
     }
 }
 
-static std::FILE *open_include(std::string const &file_name)
+static std::FILE *open_include(const std::string &file_name)
 {
     std::FILE *result = std::fopen(file_name.c_str(), "rt");
     if (result == nullptr)
     {
-        for (std::string const &dir : g_src.include_paths)
+        for (const std::string &dir : g_src.include_paths)
         {
-            std::string const path{dir + '/' + file_name};
+            const std::string path{dir + '/' + file_name};
             result = std::fopen(path.c_str(), "rt");
             if (result != nullptr)
             {
@@ -1256,7 +1256,7 @@ static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int err_of
     }
 }
 
-void read_src(std::string const &fname, Mode mode)
+void read_src(const std::string &fname, Mode mode)
 {
     int    ch;
     char  *ptr;
@@ -1384,8 +1384,8 @@ void read_src(std::string const &fname, Mode mode)
                         in_topic = true;
                     }
 
-                    char const *topic_title = &s_cmd[6];
-                    size_t const title_len = std::strlen(topic_title);
+                    const char *topic_title = &s_cmd[6];
+                    const size_t title_len = std::strlen(topic_title);
                     if (title_len == 0)
                     {
                         MSG_WARN(err_offset, "Topic has no title.");
@@ -1427,7 +1427,7 @@ void read_src(std::string const &fname, Mode mode)
                         in_topic = true;
                     }
 
-                    char const *data = &s_cmd[5];
+                    const char *data = &s_cmd[5];
                     if (data[0] == '\0')
                     {
                         MSG_WARN(err_offset, "Data topic has no label.");
@@ -1713,7 +1713,7 @@ void read_src(std::string const &fname, Mode mode)
                 }
                 else if (string_case_equal(s_cmd, "Label=", 6))
                 {
-                    char const *label_name = &s_cmd[6];
+                    const char *label_name = &s_cmd[6];
                     if ((int)std::strlen(label_name) <= 0)
                     {
                         MSG_ERROR(err_offset, "Label has no name.");

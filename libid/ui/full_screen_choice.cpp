@@ -19,16 +19,16 @@
 #include <cctype>
 #include <cstring>
 
-std::string const g_speed_prompt{"Speed key string"};
+const std::string g_speed_prompt{"Speed key string"};
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
-static int is_a_dir_name(char const *name)
+static int is_a_dir_name(const char *name)
 {
     return *name == '.' || ends_with_slash(name) ? 1 : 0;
 }
 
-static void footer_msg(int *i, ChoiceFlags flags, char const *speed_string)
+static void footer_msg(int *i, ChoiceFlags flags, const char *speed_string)
 {
     put_string_center((*i)++, 0, 80, C_PROMPT_BKGRD,
         speed_string ? "Use the cursor keys or type a value to make a selection"
@@ -42,9 +42,8 @@ static void footer_msg(int *i, ChoiceFlags flags, char const *speed_string)
 }
 
 static void show_speed_string(
-    int speed_row,
-    char const *speed_string,
-    int (*speed_prompt)(int row, int col, int vid, char const *speed_string, int speed_match))
+    int speed_row, const char *speed_string,
+    int (*speed_prompt)(int row, int col, int vid, const char *speed_string, int speed_match))
 {
     char buf[81];
     std::memset(buf, ' ', 80);
@@ -83,7 +82,7 @@ static void show_speed_string(
 }
 
 static void process_speed_string(char *speed_string, //
-    char const **choices,                            // array of choice strings
+    const char **choices,                            // array of choice strings
     int key,                                         //
     int *current,                                    //
     int num_choices,                                 //
@@ -163,17 +162,17 @@ static void process_speed_string(char *speed_string, //
               k for check_key routine return value k (if not 0 nor -1)
               speed_string[0] != 0 on return if string is present
 */
-int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, char const *instr,
-    int num_choices, char const **choices, int *attributes, int box_width, int box_depth, int col_width,
+int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, const char *instr,
+    int num_choices, const char **choices, int *attributes, int box_width, int box_depth, int col_width,
     int current, void (*format_item)(int choice, char *buf), char *speed_string,
-    int (*speed_prompt)(int row, int col, int vid, char const *speed_string, int speed_match),
+    int (*speed_prompt)(int row, int col, int vid, const char *speed_string, int speed_match),
     int (*check_key)(int key, int choice))
 {
     const int scrunch = bit_set(flags, ChoiceFlags::CRUNCH) ? 1 : 0; // scrunch up a line
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
     // preset current to passed string
-    int const speed_len = (speed_string == nullptr) ? 0 : (int) std::strlen(speed_string);
+    const int speed_len = (speed_string == nullptr) ? 0 : (int) std::strlen(speed_string);
     if (speed_len > 0)
     {
         current = 0;
@@ -280,7 +279,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
         ++reqd_rows;   // a row for speedkey prompt
     }
     {
-        int const max_depth = 25 - reqd_rows;
+        const int max_depth = 25 - reqd_rows;
         box_depth = std::min(box_depth, max_depth); // limit the depth to max
         if (box_width == 0)           // pick box width and depth
         {
@@ -456,7 +455,7 @@ int full_screen_choice(ChoiceFlags flags, char const *hdg, char const *hdg2, cha
             redisplay = false;
         }
 
-        char const *item_ptr;
+        const char *item_ptr;
         // ReSharper disable once CppTooWideScope
         char cur_item[81];
         {

@@ -216,7 +216,7 @@ void Win32BaseDriver::set_video_mode(VideoInfo *mode)
     set_clear();
 }
 
-void Win32BaseDriver::put_string(int row, int col, int attr, char const *msg)
+void Win32BaseDriver::put_string(int row, int col, int attr, const char *msg)
 {
     if (-1 != row)
     {

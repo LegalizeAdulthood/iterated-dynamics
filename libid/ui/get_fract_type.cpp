@@ -62,7 +62,7 @@ static const char *s_jiim_method[]{
     to_string(Major::RANDOM_WALK)    //
 };
 #endif
-static char const *s_jiim_left_right_names[]{
+static const char *s_jiim_left_right_names[]{
     to_string(Minor::LEFT_FIRST), //
     to_string(Minor::RIGHT_FIRST) //
 };
@@ -154,7 +154,7 @@ static FractalType select_fract_type(FractalType t)
     type_name[0] = 0;
     const int done = full_screen_choice(ChoiceFlags::HELP | ChoiceFlags::INSTRUCTIONS,
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
-        "Press F2 for a description of the highlighted type", num_types, (char const **) choices, attributes,
+        "Press F2 for a description of the highlighted type", num_types, (const char **) choices, attributes,
         0, 0, 0, j, nullptr, type_name, nullptr, sel_fract_type_help);
     if (done < 0)
     {
@@ -356,25 +356,25 @@ sel_type_restart:
 
 int get_fract_params(bool prompt_for_type_params)        // prompt for type-specific params
 {
-    char const *julia_orbit_name = nullptr;
+    const char *julia_orbit_name = nullptr;
     int num_params;
     int num_trig;
     FullScreenValues param_values[30];
-    char const *choices[30];
+    const char *choices[30];
     // ReSharper disable once CppTooWideScope
     char bailout_msg[50];
     long old_bailout = 0L;
     int prompt_num;
     char msg[120];
-    char const *type_name;
+    const char *type_name;
     int ret = 0;
-    static char const *trg[] =
+    static const char *trg[] =
     {
         "First Function", "Second Function", "Third Function", "Fourth Function"
     };
     std::FILE *entry_file;
-    std::vector<char const *> trig_name_ptr;
-    char const *bail_name_ptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
+    std::vector<const char *> trig_name_ptr;
+    const char *bail_name_ptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
     FractalSpecific *jb_orbit = nullptr;
     int first_param = 0;
     int last_param  = MAX_PARAMS;
@@ -389,7 +389,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     HelpLabels help_formula = g_cur_fractal_specific->help_formula;
     if (help_formula < HelpLabels::NONE)
     {
-        char const *entry_name;
+        const char *entry_name;
         if (help_formula == HelpLabels::SPECIAL_FORMULA)
         {
             // special for formula
@@ -674,7 +674,7 @@ gfp_top:
         }
         else
         {
-            char const *tmp_ptr;
+            const char *tmp_ptr;
             choices[prompt_num] = "Bailout value (0 means use default)";
             param_values[prompt_num].type = 'L';
             old_bailout = g_bailout;
@@ -692,10 +692,10 @@ gfp_top:
     }
     if (g_julibrot)
     {
-        char const *v0 = "From cx (real part)";
-        char const *v1 = "From cy (imaginary part)";
-        char const *v2 = "To   cx (real part)";
-        char const *v3 = "To   cy (imaginary part)";
+        const char *v0 = "From cx (real part)";
+        const char *v1 = "From cy (imaginary part)";
+        const char *v2 = "To   cx (real part)";
+        const char *v3 = "To   cy (imaginary part)";
         switch (g_new_orbit_type)
         {
         case FractalType::QUAT:

@@ -311,12 +311,12 @@ find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth)
             }
             else if (command->ch == '[')
             {
-                char const save_angle = ts->angle;
-                char const save_reverse = ts->reverse;
-                LDouble const save_size = ts->size;
-                LDouble const save_real_angle = ts->real_angle;
-                LDouble const save_x = ts->x_pos;
-                LDouble const save_y = ts->y_pos;
+                const char save_angle = ts->angle;
+                const char save_reverse = ts->reverse;
+                const LDouble save_size = ts->size;
+                const LDouble save_real_angle = ts->real_angle;
+                const LDouble save_x = ts->x_pos;
+                const LDouble save_y = ts->y_pos;
                 command = find_size(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
@@ -378,7 +378,7 @@ lsysf_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int dep
     {
         vert = (float)((g_logical_screen_y_dots-6) /(y_max-y_min));
     }
-    LDouble const local_size = (vert < horiz) ? vert : horiz;
+    const LDouble local_size = (vert < horiz) ? vert : horiz;
 
     if (horiz == 1E37)
     {
@@ -460,13 +460,13 @@ draw_lsysf(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth)
             }
             else if (command->ch == '[')
             {
-                char const save_angle = ts->angle;
-                char const save_reverse = ts->reverse;
-                LDouble const save_size = ts->size;
-                LDouble const save_real_angle = ts->real_angle;
-                LDouble const save_x = ts->x_pos;
-                LDouble const save_y = ts->y_pos;
-                char const save_color = ts->curr_color;
+                const char save_angle = ts->angle;
+                const char save_reverse = ts->reverse;
+                const LDouble save_size = ts->size;
+                const LDouble save_real_angle = ts->real_angle;
+                const LDouble save_x = ts->x_pos;
+                const LDouble save_y = ts->y_pos;
+                const char save_color = ts->curr_color;
                 command = draw_lsysf(command+1, ts, rules, depth);
                 if (command == nullptr)
                 {
@@ -486,14 +486,14 @@ draw_lsysf(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth)
     return command;
 }
 
-LSysCmd *lsysf_size_transform(char const *s, LSysTurtleState *ts)
+LSysCmd *lsysf_size_transform(const char *s, LSysTurtleState *ts)
 {
     int max = 10;
     int n = 0;
 
-    auto const plus = is_pow2(ts->max_angle) ? lsysf_do_plus_pow2 : lsysf_do_plus;
-    auto const minus = is_pow2(ts->max_angle) ? lsysf_do_minus_pow2 : lsysf_do_minus;
-    auto const pipe = is_pow2(ts->max_angle) ? lsysf_do_pipe_pow2 : lsysf_do_pipe;
+    const auto plus = is_pow2(ts->max_angle) ? lsysf_do_plus_pow2 : lsysf_do_plus;
+    const auto minus = is_pow2(ts->max_angle) ? lsysf_do_minus_pow2 : lsysf_do_minus;
+    const auto pipe = is_pow2(ts->max_angle) ? lsysf_do_pipe_pow2 : lsysf_do_pipe;
 
     LSysCmd *ret = (LSysCmd *) malloc((long) max * sizeof(LSysCmd));
     if (ret == nullptr)
@@ -593,14 +593,14 @@ LSysCmd *lsysf_size_transform(char const *s, LSysTurtleState *ts)
     return doubled;
 }
 
-LSysCmd *lsysf_draw_transform(char const *s, LSysTurtleState *ts)
+LSysCmd *lsysf_draw_transform(const char *s, LSysTurtleState *ts)
 {
     int max = 10;
     int n = 0;
 
-    auto const plus = is_pow2(ts->max_angle) ? lsysf_do_plus_pow2 : lsysf_do_plus;
-    auto const minus = is_pow2(ts->max_angle) ? lsysf_do_minus_pow2 : lsysf_do_minus;
-    auto const pipe = is_pow2(ts->max_angle) ? lsysf_do_pipe_pow2 : lsysf_do_pipe;
+    const auto plus = is_pow2(ts->max_angle) ? lsysf_do_plus_pow2 : lsysf_do_plus;
+    const auto minus = is_pow2(ts->max_angle) ? lsysf_do_minus_pow2 : lsysf_do_minus;
+    const auto pipe = is_pow2(ts->max_angle) ? lsysf_do_pipe_pow2 : lsysf_do_pipe;
 
     LSysCmd *ret = (LSysCmd *) malloc((long) max * sizeof(LSysCmd));
     if (ret == nullptr)

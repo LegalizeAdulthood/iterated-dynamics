@@ -13,13 +13,13 @@
 #include <cstring>
 #include <string>
 
-static char const *s_masks[] = {"*.pot", "*.gif"};
+static const char *s_masks[] = {"*.pot", "*.gif"};
 
 int get_rds_params()
 {
     char rds6[60];
-    char const *stereo_bars[] = {"none", "middle", "top"};
-    char const *rds_prompts[7] =
+    const char *stereo_bars[] = {"none", "middle", "top"};
+    const char *rds_prompts[7] =
     {
         "Depth Effect (negative reverses front and back)",
         "Image width in inches",

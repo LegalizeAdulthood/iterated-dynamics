@@ -1904,7 +1904,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
         // find minz and maxz
         for (int i = 0; i < 3; i++)
         {
-            double const tmp = inf->view_vect[i];
+            const double tmp = inf->view_vect[i];
             if (tmp < inf->min_vals[i])
             {
                 inf->min_vals[i] = tmp;

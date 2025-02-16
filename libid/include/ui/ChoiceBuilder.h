@@ -11,7 +11,7 @@
 
 struct FullScreenPrompt
 {
-    int operator()(char const *hdg, int num_prompts, char const **prompts, FullScreenValues *values,
+    int operator()(const char *hdg, int num_prompts, const char **prompts, FullScreenValues *values,
         int fn_key_mask, char *extra_info) const
     {
         return full_screen_prompt(hdg, num_prompts, prompts, values, fn_key_mask, extra_info);
@@ -122,18 +122,18 @@ public:
         return m_current_build;
     }
 
-    int prompt(char const *hdg, int fn_key_mask, char *extra_info)
+    int prompt(const char *hdg, int fn_key_mask, char *extra_info)
     {
         m_prompted = true;
         m_result = m_prompter(hdg, count(), m_choices.data(), m_values.data(), fn_key_mask, extra_info);
         m_current_read = 0;
         return m_result;
     }
-    int prompt(char const *hdg, int fn_key_mask)
+    int prompt(const char *hdg, int fn_key_mask)
     {
         return prompt(hdg, fn_key_mask, nullptr);
     }
-    int prompt(char const *hdg)
+    int prompt(const char *hdg)
     {
         return prompt(hdg, 0, nullptr);
     }

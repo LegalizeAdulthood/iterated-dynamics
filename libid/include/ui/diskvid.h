@@ -20,7 +20,7 @@ int disk_read_pixel(int col, int row);
 void disk_write_pixel(int col, int row, int color);
 void targa_read_disk(unsigned int col, unsigned int row, Byte *red, Byte *green, Byte *blue);
 void targa_write_disk(unsigned int col, unsigned int row, Byte red, Byte green, Byte blue);
-void dvid_status(int line, char const *msg);
+void dvid_status(int line, const char *msg);
 inline void dvid_status(int line, const std::string &msg)
 {
     dvid_status(line, msg.c_str());

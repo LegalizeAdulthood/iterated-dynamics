@@ -50,7 +50,7 @@
 
 static bool look(MainContext &context)
 {
-    HelpLabels const old_help_mode = g_help_mode;
+    const HelpLabels old_help_mode = g_help_mode;
     g_help_mode = HelpLabels::HELP_BROWSE;
     switch (file_get_window())
     {

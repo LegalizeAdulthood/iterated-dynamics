@@ -21,7 +21,7 @@ using GoodbyeFn = std::function<Goodbye>;
 GoodbyeFn get_goodbye();
 void set_goodbye(const GoodbyeFn &fn);
 
-using PrintDoc = void(char const *out_filename, bool (*msg_func)(int, int));
+using PrintDoc = void(const char *out_filename, bool (*msg_func)(int, int));
 using PrintDocFn = std::function<PrintDoc>;
 PrintDocFn get_print_document();
 void set_print_document(const PrintDocFn &fn);

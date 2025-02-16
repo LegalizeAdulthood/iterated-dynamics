@@ -88,7 +88,7 @@ void close_drivers()
     s_num_drivers = 0;
 }
 
-Driver *driver_find_by_name(char const *name)
+Driver *driver_find_by_name(const char *name)
 {
     for (int i = 0; i < s_num_drivers; i++)
     {

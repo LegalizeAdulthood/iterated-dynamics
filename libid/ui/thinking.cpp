@@ -17,11 +17,11 @@
       call this when thinking phase is done
    */
 static int s_think_state{-1};
-static char const *const s_wheel[]{"-", "\\", "|", "/"};
+static const char *const s_wheel[]{"-", "\\", "|", "/"};
 static int s_think_col{};
 static int s_think_count{};
 
-bool thinking(int options, char const *msg)
+bool thinking(int options, const char *msg)
 {
     if (options == 0)
     {

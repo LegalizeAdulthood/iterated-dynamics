@@ -30,7 +30,7 @@ MockPrompter *g_prompter{};
 
 struct Shim
 {
-    int operator()(char const *hdg, int num_prompts, char const **prompts, FullScreenValues *values, int fn_key_mask,
+    int operator()(const char *hdg, int num_prompts, const char **prompts, FullScreenValues *values, int fn_key_mask,
         char *extra_info) const
     {
         return g_prompter->prompt(hdg, num_prompts, prompts, values, fn_key_mask, extra_info);

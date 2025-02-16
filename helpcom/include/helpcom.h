@@ -104,14 +104,14 @@ struct ProcessDocumentInfo
     int page_num;
     int line_num;
     // PD_GET_TOPIC is allowed to change these
-    char const *curr;
+    const char *curr;
     unsigned  len;
     // PD_GET_CONTENT is allowed to change these
-    char const *id;
-    char const *title;
+    const char *id;
+    const char *title;
     bool new_page;
     // general parameters
-    char const *s;
+    const char *s;
     int i;
     // PD_GET_LINK_PAGE
     std::string link_page;
@@ -142,22 +142,22 @@ enum class PrintDocCommand
 
 using PrintDocFn = bool(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info);
 TokenType find_token_length(
-    TokenMode mode, char const *curr, unsigned len, int *ret_size, int *ret_width);
-int find_line_width(TokenMode mode, char const *curr, unsigned len);
+    TokenMode mode, const char *curr, unsigned len, int *ret_size, int *ret_width);
+int find_line_width(TokenMode mode, const char *curr, unsigned len);
 bool process_document(TokenMode mode, PrintDocFn *get_info, PrintDocFn *output, void *info);
 int help();
 int read_help_topic(HelpLabels label, int , int , void *);
 bool make_doc_msg_func(int page_num, int num_pages);
-void print_document(char const *filename, bool (*msg_func)(int, int));
+void print_document(const char *filename, bool (*msg_func)(int, int));
 int init_help();
 void end_help();
-bool is_hyphen(char const *ptr);
+bool is_hyphen(const char *ptr);
 
 /* Get an int from an unaligned pointer
  * This routine is needed because this program uses unaligned 2 byte
  * pointers all over the place.
  */
-inline int get_int(char const *ptr)
+inline int get_int(const char *ptr)
 {
     int s;
     std::memcpy(&s, ptr, sizeof(int));

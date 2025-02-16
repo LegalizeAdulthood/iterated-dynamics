@@ -2,4 +2,4 @@
 //
 #pragma once
 
-const char *has_ext(char const *source);
+const char *has_ext(const char *source);

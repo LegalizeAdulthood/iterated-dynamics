@@ -12,7 +12,7 @@ enum
     MAX_FRACTALS = 25
 };
 
-static int build_fractal_list(FractalType fractals[], int *last_val, char const *name_ptr[])
+static int build_fractal_list(FractalType fractals[], int *last_val, const char *name_ptr[])
 {
     int num_fractals = 0;
     for (int i = 0; i < g_num_fractal_types; i++)
@@ -36,9 +36,9 @@ static int build_fractal_list(FractalType fractals[], int *last_val, char const 
     return num_fractals;
 }
 
-bool check_orbit_name(char const *orbit_name)
+bool check_orbit_name(const char *orbit_name)
 {
-    char const *names[MAX_FRACTALS];
+    const char *names[MAX_FRACTALS];
     FractalType types[MAX_FRACTALS];
     int last_val;
 

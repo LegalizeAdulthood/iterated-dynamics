@@ -9,7 +9,7 @@
 #include <cassert>
 #include <string>
 
-bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
+bool is_hyphen(const char *ptr)   /* true if ptr points to a real hyphen */
 {
     /* checks for "--" and " -" */
     if (*ptr != '-')
@@ -22,7 +22,7 @@ bool is_hyphen(char const *ptr)   /* true if ptr points to a real hyphen */
     return *ptr != ' ' && *ptr != '-';
 }
 
-static TokenType find_token_length(char const *curr, unsigned len, int *ret_size, int *ret_width)
+static TokenType find_token_length(const char *curr, unsigned len, int *ret_size, int *ret_width)
 {
     int size{};
     int width{};
@@ -166,7 +166,7 @@ static TokenType find_token_length(char const *curr, unsigned len, int *ret_size
 }
 
 TokenType find_token_length(
-    TokenMode mode, char const *curr, unsigned int len, int *ret_size, int *ret_width)
+    TokenMode mode, const char *curr, unsigned int len, int *ret_size, int *ret_width)
 {
     int t;
     TokenType tok = find_token_length(curr, len, &t, ret_width);
@@ -210,7 +210,7 @@ TokenType find_token_length(
     return tok;
 }
 
-int find_line_width(TokenMode mode, char const *curr, unsigned len)
+int find_line_width(TokenMode mode, const char *curr, unsigned len)
 {
     int size   = 0;
     int width  = 0;
@@ -322,7 +322,7 @@ private:
     {
         return m_get_info(PrintDocCommand::PD_RELEASE_TOPIC, &m_pd, m_info);
     }
-    bool print(char const *str, int n)
+    bool print(const char *str, int n)
     {
         m_pd.s = str;
         m_pd.i = n;
@@ -516,13 +516,13 @@ bool DocumentProcessor::topic()
 bool DocumentProcessor::topic_paragraph()
 {
     unsigned int hold_len = 0;
-    char const *hold_curr = nullptr;
+    const char *hold_curr = nullptr;
     int in_link = 0;
 
     ++m_pd.curr;
 
-    int const indent = *m_pd.curr++;
-    int const margin = *m_pd.curr++;
+    const int indent = *m_pd.curr++;
+    const int margin = *m_pd.curr++;
 
     m_pd.len -= 3;
 

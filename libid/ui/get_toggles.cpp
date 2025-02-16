@@ -35,16 +35,16 @@
 */
 int get_toggles()
 {
-    char const *choices[20];
+    const char *choices[20];
     char prev_save_name[ID_FILE_MAX_DIR + 1];
     FullScreenValues values[25];
     int old_sound_flag;
-    char const *calc_modes[] = {
+    const char *calc_modes[] = {
         "1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
-    char const *sound_modes[5] = {"off", "beep", "x", "y", "z"};
-    char const *inside_modes[] = {
+    const char *sound_modes[5] = {"off", "beep", "x", "y", "z"};
+    const char *inside_modes[] = {
         "numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross", "startrail", "period", "atan", "fmod"};
-    char const *outside_modes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan", "fmod", "tdis"};
+    const char *outside_modes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan", "fmod", "tdis"};
 
     int k = -1;
 
@@ -164,7 +164,7 @@ int get_toggles()
     choices[++k] = "Savename (.GIF implied)";
     values[k].type = 's';
     std::strcpy(prev_save_name, g_save_filename.c_str());
-    char const *save_name_ptr = std::strrchr(g_save_filename.c_str(), SLASH_CH);
+    const char *save_name_ptr = std::strrchr(g_save_filename.c_str(), SLASH_CH);
     if (save_name_ptr == nullptr)
     {
         save_name_ptr = g_save_filename.c_str();
@@ -226,7 +226,7 @@ int get_toggles()
     double old_close_proximity = g_close_proximity;
     values[k].uval.dval = old_close_proximity;
 
-    HelpLabels const old_help_mode = g_help_mode;
+    const HelpLabels old_help_mode = g_help_mode;
     g_help_mode = HelpLabels::HELP_X_OPTIONS;
     int i = full_screen_prompt(
         "Basic Options\n(not all combinations make sense)", k + 1, choices, values, 0, nullptr);

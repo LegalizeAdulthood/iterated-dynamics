@@ -22,7 +22,7 @@ struct AlternateMath
 struct MoreParams
 {
     FractalType type;                        // index in fractalname of the fractal
-    char const *param_names[MAX_PARAMS - 4]; // name of the parameters
+    const char *param_names[MAX_PARAMS - 4]; // name of the parameters
     double params[MAX_PARAMS - 4];           // default parameter values
 };
 

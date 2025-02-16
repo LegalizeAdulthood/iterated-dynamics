@@ -235,7 +235,7 @@ int cellular()
         s_cell_array[0].resize(g_i_x_stop+1);
         s_cell_array[1].resize(g_i_x_stop+1);
     }
-    catch (std::bad_alloc const&)
+    catch (const std::bad_alloc &)
     {
         abort_cellular(BAD_MEM, 0);
         return -1;
@@ -443,11 +443,11 @@ bool cellular_setup()
 
 static void set_cellular_palette()
 {
-    static Byte const RED[3]    = { 42, 0, 0 };
-    static Byte const GREEN[3]  = { 10, 35, 10 };
-    static Byte const BLUE[3]   = { 13, 12, 29 };
-    static Byte const YELLOW[3] = { 60, 58, 18 };
-    static Byte const BROWN[3]  = { 42, 21, 0 };
+    static const Byte RED[3]    = { 42, 0, 0 };
+    static const Byte GREEN[3]  = { 10, 35, 10 };
+    static const Byte BLUE[3]   = { 13, 12, 29 };
+    static const Byte YELLOW[3] = { 60, 58, 18 };
+    static const Byte BROWN[3]  = { 42, 21, 0 };
 
     if (g_map_specified && g_color_state != ColorState::DEFAULT)
     {

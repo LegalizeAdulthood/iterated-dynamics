@@ -4,4 +4,4 @@
 
 #include <string>
 
-bool get_a_file_name(char const *hdg, char const *file_template, std::string &result_filename);
+bool get_a_file_name(const char *hdg, const char *file_template, std::string &result_filename);

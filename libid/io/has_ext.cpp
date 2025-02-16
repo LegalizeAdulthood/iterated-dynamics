@@ -10,12 +10,12 @@
 
 // tells if filename has extension
 // returns pointer to period or nullptr
-char const *has_ext(char const *source)
+const char *has_ext(const char *source)
 {
     char fname[ID_FILE_MAX_FNAME];
     char ext[ID_FILE_MAX_EXT]{};
     split_fname_ext(source, fname, ext);
-    char const *ret = nullptr;
+    const char *ret = nullptr;
     if (ext[0] != 0)
     {
         ret = std::strrchr(source, '.');

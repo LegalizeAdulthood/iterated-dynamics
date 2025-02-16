@@ -21,13 +21,13 @@
 
 int passes_options()
 {
-    char const *choices[20];
-    char const *pass_calc_modes[] = {"rect", "line"};
+    const char *choices[20];
+    const char *pass_calc_modes[] = {"rect", "line"};
 
     FullScreenValues values[25];
     int i;
 
-    bool const old_keep_screen_coords = g_keep_screen_coords;
+    const bool old_keep_screen_coords = g_keep_screen_coords;
 
     int ret = 0;
 

@@ -105,7 +105,7 @@ struct MainMenu
     int prompt();
 
 private:
-    char const *m_choices[44]; // 2 columns * 22 rows
+    const char *m_choices[44]; // 2 columns * 22 rows
     int m_attributes[44];
     int m_choice_key[44];
     int m_next_left{};

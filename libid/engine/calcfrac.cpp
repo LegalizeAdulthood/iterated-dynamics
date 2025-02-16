@@ -178,8 +178,8 @@ int g_and_color{};                               // "and" value used for color s
 
 static double fmod_test_bailout_or()
 {
-    double const tmp_x = sqr(g_new_z.x);
-    double const tmp_y = sqr(g_new_z.y);
+    const double tmp_x = sqr(g_new_z.x);
+    const double tmp_y = sqr(g_new_z.y);
     if (tmp_x > tmp_y)
     {
         return tmp_x;

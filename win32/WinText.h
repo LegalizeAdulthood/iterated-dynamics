@@ -38,7 +38,7 @@ public:
     void destroy();
     int text_on();
     int text_off();
-    void put_string(int x_pos, int y_pos, int attrib, char const *string, int *end_row, int *end_col);
+    void put_string(int x_pos, int y_pos, int attrib, const char *string, int *end_row, int *end_col);
     void scroll_up(int top, int bot);
     void paint_screen(int x_min, int x_max, int y_min, int y_max);
     void cursor(int x_pos, int y_pos, int cursor_type);

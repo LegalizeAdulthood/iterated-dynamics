@@ -494,9 +494,9 @@ done:
 
 static void set_plasma_palette()
 {
-    static Byte const Red[3]   = { 63, 0, 0 };
-    static Byte const Green[3] = { 0, 63, 0 };
-    static Byte const Blue[3]  = { 0,  0, 63 };
+    static const Byte Red[3]   = { 63, 0, 0 };
+    static const Byte Green[3] = { 0, 63, 0 };
+    static const Byte Blue[3]  = { 0,  0, 63 };
 
     if (g_map_specified || g_colors_preloaded)
     {

@@ -12,7 +12,7 @@
  *
  * varargs version of OutputDebugString with file and line markers.
  */
-void ods(char const *file, unsigned int line, char const *format, ...)
+void ods(const char *file, unsigned int line, const char *format, ...)
 {
     char full_msg[MAX_PATH+1];
     char app_msg[MAX_PATH+1];
