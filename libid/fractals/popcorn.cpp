@@ -87,19 +87,18 @@ int popcorn_fractal_fn()
     DComplex tmp_y;
 
     // tmpx contains the generalized value of the old real "x" equation
-    g_tmp_z = g_param_z2*g_old_z.y;  // tmp = (C * old.y)
-    cmplx_trig1(g_tmp_z, tmp_x);             // tmpx = trig1(tmp)
-    tmp_x.x += g_old_z.y;                  // tmpx = old.y + trig1(tmp)
-    cmplx_trig0(tmp_x, g_tmp_z);             // tmp = trig0(tmpx)
-    cmplx_mult(g_tmp_z, g_param_z1, tmp_x);         // tmpx = tmp * h
+    g_tmp_z = g_param_z2 * g_old_z.y;       // tmp = (C * old.y)
+    cmplx_trig1(g_tmp_z, tmp_x);            // tmpx = trig1(tmp)
+    tmp_x.x += g_old_z.y;                   // tmpx = old.y + trig1(tmp)
+    cmplx_trig0(tmp_x, g_tmp_z);            // tmp = trig0(tmpx)
+    cmplx_mult(g_tmp_z, g_param_z1, tmp_x); // tmpx = tmp * h
 
     // tmpy contains the generalized value of the old real "y" equation
-    g_tmp_z = g_param_z2*g_old_z.x;  // tmp = (C * old.x)
-    cmplx_trig3(g_tmp_z, tmp_y);             // tmpy = trig3(tmp)
-    tmp_y.x += g_old_z.x;                  // tmpy = old.x + trig1(tmp)
-    cmplx_trig2(tmp_y, g_tmp_z);             // tmp = trig2(tmpy)
-
-    cmplx_mult(g_tmp_z, g_param_z1, tmp_y);         // tmpy = tmp * h
+    g_tmp_z = g_param_z2 * g_old_z.x;       // tmp = (C * old.x)
+    cmplx_trig3(g_tmp_z, tmp_y);            // tmpy = trig3(tmp)
+    tmp_y.x += g_old_z.x;                   // tmpy = old.x + trig1(tmp)
+    cmplx_trig2(tmp_y, g_tmp_z);            // tmp = trig2(tmpy)
+    cmplx_mult(g_tmp_z, g_param_z1, tmp_y); // tmpy = tmp * h
 
     g_new_z.x = g_old_z.x - tmp_x.x - tmp_y.y;
     g_new_z.y = g_old_z.y - tmp_y.x - tmp_x.y;
