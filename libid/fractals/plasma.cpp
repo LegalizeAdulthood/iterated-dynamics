@@ -99,7 +99,7 @@ static U16 get_pot(int x, int y)
 
 static U16 adjust(int xa, int ya, int x, int y, int xb, int yb)
 {
-    S32 pseudorandom = ((S32) s_i_param_x) * ((RAND15() - 16383));
+    S32 pseudorandom = s_i_param_x * ((RAND15() - 16383));
     pseudorandom = pseudorandom * s_recur1;
     pseudorandom = pseudorandom >> s_shift_value;
     pseudorandom = (((S32)s_get_pix(xa, ya)+(S32)s_get_pix(xb, yb)+1) >> 1)+pseudorandom;

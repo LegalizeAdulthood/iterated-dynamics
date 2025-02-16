@@ -491,11 +491,11 @@ int line3d(Byte * pixels, unsigned line_len)
                     rnd = -rnd;   // Make +/- n-bit number
                 }
 
-                if ((int)(cur.color) + rnd >= g_colors)
+                if (cur.color + rnd >= g_colors)
                 {
                     cur.color = g_colors - 2;
                 }
-                else if ((int)(cur.color) + rnd <= g_water_line)
+                else if (cur.color + rnd <= g_water_line)
                 {
                     cur.color = g_water_line + 1;
                 }
@@ -733,7 +733,7 @@ int line3d(Byte * pixels, unsigned line_len)
                         stop_msg("debug, cur.color=bad");
                     }
                     f_cur.color = (float) s_bad.color;
-                    cur.color = (int) f_cur.color;
+                    cur.color = f_cur.color;
                 }
                 else
                 {
@@ -765,7 +765,7 @@ int line3d(Byte * pixels, unsigned line_len)
                                 stop_msg("debug, normal vector err2");
                             }
                             f_cur.color = (float) g_colors;
-                            cur.color = (int) f_cur.color;
+                            cur.color = f_cur.color;
                         }
                     }
                     cross_avg[0] = s_tmp_cross[0];
@@ -881,10 +881,10 @@ static void corners(Matrix m, bool show, double *x_min, double *y_min, double *z
      * "bottom" - these points are the corners of the screen in the x-y plane.
      * The "t"'s stand for Top - they are the top of the cube where 255 color
      * points hit. */
-    *z_min = (int) INT_MAX;
+    *z_min = INT_MAX;
     *y_min = *z_min;
     *x_min = *y_min;
-    *z_max = (int) INT_MIN;
+    *z_max = INT_MIN;
     *y_max = *z_max;
     *x_max = *y_max;
 
@@ -1164,8 +1164,8 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
 
     for (int y = miny; y <= maxy; y++)
     {
-        s_min_max_x[y].min_x = (int) INT_MAX;
-        s_min_max_x[y].max_x = (int) INT_MIN;
+        s_min_max_x[y].min_x = INT_MAX;
+        s_min_max_x[y].max_x = INT_MIN;
     }
 
     // set plot to "fake" plot function
@@ -1362,23 +1362,23 @@ int targa_color(int x, int y, int color)
     if (g_fill_type > FillType::SOLID_FILL && !glasses_alternating_or_superimpose())
     {
         // Adjust for Ambient
-        val = (val * (65535L - (unsigned)(color * s_i_ambient))) / 65535L;
+        val = (val * (65535L - color * s_i_ambient)) / 65535L;
     }
 
     if (g_haze)
     {
         // Haze lowers sat of colors
-        sat = (unsigned long)(sat * s_haze_mult) / 100;
+        sat = sat * s_haze_mult / 100;
         if (val >= 32640)           // Haze reduces contrast
         {
             val = val - 32640;
-            val = (unsigned long)((val * s_haze_mult) / 100);
+            val = val * s_haze_mult / 100;
             val = val + 32640;
         }
         else
         {
             val = 32640 - val;
-            val = (unsigned long)((val * s_haze_mult) / 100);
+            val = val * s_haze_mult / 100;
             val = 32640 - val;
         }
     }
@@ -2489,7 +2489,7 @@ static int first_time(int line_len, Vector v)
         trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
               ((double) g_logical_screen_y_dots - y_max - y_min) / 2, -z_max, light_mat);
 
-        trans((double)(g_x_shift), (double)(-g_y_shift), 0.0, g_m);
+        trans(g_x_shift, -g_y_shift, 0.0, g_m);
 
         /* matrix m now contains ALL those transforms composed together !!
          * convert m to long integers shifted 16 bits */
@@ -2535,7 +2535,7 @@ static int first_time(int line_len, Vector v)
         // Similarly for cosine. Neat!
         //*******************************************************************
 
-        float delta_theta = (float) (theta2 - theta1) / (float) line_len;
+        float delta_theta = (theta2 - theta1) / (float) line_len;
 
         // initial sin,cos theta
         s_sin_theta_array[0] = (float) std::sin((double) theta);
@@ -2547,7 +2547,7 @@ static int first_time(int line_len, Vector v)
         float two_cos_delta_theta = (float) (2.0 * std::cos((double) delta_theta));
 
         // build table of other sin,cos with trig identity
-        for (int i = 2; i < (int) line_len; i++)
+        for (int i = 2; i < line_len; i++)
         {
             s_sin_theta_array[i] = s_sin_theta_array[i - 1] * two_cos_delta_theta -
                                s_sin_theta_array[i - 2];
@@ -2556,7 +2556,7 @@ static int first_time(int line_len, Vector v)
         }
 
         // now phi - these calculated as we go - get started here
-        s_delta_phi = (float)(phi2 - phi1) / (float) g_height;
+        s_delta_phi = (phi2 - phi1) / (float) g_height;
 
         // initial sin,cos phi
 
@@ -2717,7 +2717,7 @@ static int first_time(int line_len, Vector v)
     s_f_bad.y = (float) s_bad.y;
     s_bad.color = BAD_VALUE;
     s_f_bad.color = (float) s_bad.color;
-    for (int i = 0; i < (int) line_len; i++)
+    for (int i = 0; i < line_len; i++)
     {
         s_last_row[i] = s_bad;
         s_f_last_row[i] = s_f_bad;

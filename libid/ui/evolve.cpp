@@ -253,7 +253,7 @@ void restore_param_history()
     g_trig_index[1] = static_cast<TrigFn>(s_old_history.trig_index1);
     g_trig_index[2] = static_cast<TrigFn>(s_old_history.trig_index2);
     g_trig_index[3] = static_cast<TrigFn>(s_old_history.trig_index3);
-    g_bailout_test = static_cast<Bailout>(s_old_history.bailout_test);
+    g_bailout_test = s_old_history.bailout_test;
 }
 
 // routine to vary doubles

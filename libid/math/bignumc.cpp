@@ -305,7 +305,7 @@ BigNum half_bn(BigNum r, BigNum n)
     for (int i = g_bn_length - 4; i >= 0; i -= 2)
     {
         // looks wierd, but properly sign extends argument
-        quot += (U32) (((U32) BIG_ACCESS16(n + i) << 16) >> 1); // shift to upper 2 bytes and half it
+        quot += (U32) BIG_ACCESS16(n + i) << 16 >> 1; // shift to upper 2 bytes and half it
         BIG_SET16(r + i, (U16) (quot >> 16));                   // store the upper 2 bytes
         quot <<= 16;                                            // shift the underflow for next time
     }
@@ -332,7 +332,7 @@ BigNum half_a_bn(BigNum r)
     for (int i = g_bn_length - 4; i >= 0; i -= 2)
     {
         // looks wierd, but properly sign extends argument
-        quot += (U32) (((U32) (U16) BIG_ACCESS16(r + i) << 16) >> 1); // shift to upper 2 bytes and half it
+        quot += (U32) BIG_ACCESS16(r + i) << 16 >> 1; // shift to upper 2 bytes and half it
         BIG_SET16(r + i, (U16) (quot >> 16));                         // store the upper 2 bytes
         quot <<= 16;                                                  // shift the underflow for next time
     }

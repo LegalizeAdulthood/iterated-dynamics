@@ -1701,7 +1701,7 @@ static void put_float(int slash, double value, int prec)
     }
     else
     {
-        std::sprintf(buff_ptr, "%1.*g", prec, (double)value);
+        std::sprintf(buff_ptr, "%1.*g", prec, value);
     }
     strip_zeros(buff_ptr);
     put_param(buf);

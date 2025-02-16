@@ -80,7 +80,7 @@ void sound_time_write()
     // cppcheck-suppress leakNoVarFunctionCall
     if (sound_open())
     {
-        std::fprintf(s_snd_fp, "time=%-ld\n", (long)std::clock()*1000/CLOCKS_PER_SEC);
+        std::fprintf(s_snd_fp, "time=%-ld\n", std::clock() *1000/CLOCKS_PER_SEC);
     }
 }
 

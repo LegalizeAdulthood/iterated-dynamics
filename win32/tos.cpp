@@ -14,5 +14,5 @@ enum
 long stack_avail()
 {
     char junk{};
-    return WIN32_STACK_SIZE - (long)(((char *) g_top_of_stack) - &junk);
+    return WIN32_STACK_SIZE - (long)(g_top_of_stack - &junk);
 }

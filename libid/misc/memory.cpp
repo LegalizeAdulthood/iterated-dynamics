@@ -135,8 +135,8 @@ bool MemoryHandle::from_memory(const Byte *buffer, U16 size, long count, long of
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
-            std::memcpy(disk_buff, buffer, (U16) DISK_WRITE_LEN);
-            num_written = (U16) std::fwrite(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            std::memcpy(disk_buff, buffer, DISK_WRITE_LEN);
+            num_written = (U16) std::fwrite(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file);
             if (num_written != 1)
             {
                 which_disk_error(3);
@@ -201,13 +201,13 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
-            num_read = (U16) fread(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            num_read = (U16) fread(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file);
             if (num_read != 1 && !feof(s_handles[index].disk.file))
             {
                 which_disk_error(4);
                 goto diskerror;
             }
-            std::memcpy(buffer, disk_buff, (U16) DISK_WRITE_LEN);
+            std::memcpy(buffer, disk_buff, DISK_WRITE_LEN);
             to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
         }
@@ -264,11 +264,11 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
         break;
 
     case MemoryLocation::DISK: // SetMemory
-        std::memset(disk_buff, value, (U16) DISK_WRITE_LEN);
+        std::memset(disk_buff, value, DISK_WRITE_LEN);
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
-            num_written = (U16) std::fwrite(disk_buff, (U16) DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            num_written = (U16) std::fwrite(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file);
             if (num_written != 1)
             {
                 which_disk_error(2);

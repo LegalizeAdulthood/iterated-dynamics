@@ -177,7 +177,7 @@ get_view_restart:
 
     if ((x_max != -1) && (g_screen_x_dots > x_max))
     {
-        g_screen_x_dots = (int) x_max;
+        g_screen_x_dots = x_max;
     }
     g_screen_x_dots = std::max(g_screen_x_dots, 2);
     if (g_screen_y_dots == 0) // auto by aspect ratio request

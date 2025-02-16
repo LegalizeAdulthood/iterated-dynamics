@@ -132,7 +132,7 @@ static void count_to_int(unsigned long c, int &x, int &y, int dif_offset)
 
 static int diffusion_engine()
 {
-    double log2 = (double) std::log(2.0);
+    double log2 = std::log(2.0);
     int i;
     int j;
     int orig_col;

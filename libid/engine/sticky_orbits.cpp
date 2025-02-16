@@ -56,7 +56,7 @@ int sticky_orbits()
         int inc2;  // G increment when row or column changes
         int dx = g_i_x_stop - g_i_x_start;                   // find vector components
         int dy = g_i_y_stop - g_i_y_start;
-        char pos_slope = (char) (dx > 0);                   // is slope positive?
+        char pos_slope = dx > 0;                   // is slope positive?
         if (dy < 0)
         {
             pos_slope = (char)!pos_slope;

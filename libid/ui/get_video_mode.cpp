@@ -100,7 +100,7 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
 static void format_video_choice(int i, const char *err, char *buf)
 {
     char key_name[5];
-    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[i],
+    std::memcpy(&g_video_entry, &g_video_table[i],
            sizeof(g_video_entry));
     vid_mode_key_name(g_video_entry.key, key_name);
     std::sprintf(buf, "%-5s %-16s %-4s %5d %5d %3d %-25s",  // 67 chars
@@ -337,13 +337,14 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         if (j == 0) // mode has no key, add to reserved slot at end
         {
-            std::memcpy((char *)&g_video_table[g_init_mode = MAX_VIDEO_MODES-1],
-                   (char *)&g_video_table[i], sizeof(*g_video_table));
+            std::memcpy(
+                &g_video_table[g_init_mode = MAX_VIDEO_MODES - 1],
+                   &g_video_table[i], sizeof(*g_video_table));
         }
     }
 
     // ok, we're going to return with a video mode
-    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_init_mode],
+    std::memcpy(&g_video_entry, &g_video_table[g_init_mode],
            sizeof(g_video_entry));
 
     if (g_view_window

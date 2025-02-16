@@ -629,7 +629,7 @@ static void pal_range_to_grey(PalEntry pal[], int first, int how_many)
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
         Byte val = (Byte)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
-        curr->blue = (Byte)val;
+        curr->blue = val;
         curr->green = curr->blue;
         curr->red = curr->green;
     }
@@ -652,7 +652,7 @@ static void hor_dot_line(int x, int y, int width)
     Byte *ptr = g_line_buff.data();
     for (int ctr = 0; ctr < width; ctr++, ptr++)
     {
-        *ptr = (Byte)((ctr&2) ? s_bg_color : s_fg_color);
+        *ptr = ctr & 2 ? s_bg_color : s_fg_color;
     }
 
     put_row(x, y, width, (char *) g_line_buff.data());

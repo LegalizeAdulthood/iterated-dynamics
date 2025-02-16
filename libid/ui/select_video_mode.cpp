@@ -39,7 +39,7 @@ static void format_vid_table(int choice, char *buf)
     char key_name[5];
     const int idx = s_entry_nums[choice];
     assert(idx < g_video_table_len);
-    std::memcpy((char *)&g_video_entry, (char *)&g_video_table[idx],
+    std::memcpy(&g_video_entry, &g_video_table[idx],
            sizeof(g_video_entry));
     vid_mode_key_name(g_video_entry.key, key_name);
     std::sprintf(buf, "%-5s %-12s %5d %5d %3d  %.12s %.26s", // 34 chars
@@ -65,14 +65,14 @@ int select_video_mode(int current_mode)
     }
     else
     {
-        std::memcpy((char *) &g_video_entry, (char *) &g_video_table[current_mode], sizeof(g_video_entry));
+        std::memcpy(&g_video_entry, &g_video_table[current_mode], sizeof(g_video_entry));
     }
     int i;
     for (i = 0; i < g_video_table_len; ++i)  // find default mode
     {
         if (g_video_entry.colors == g_video_table[s_entry_nums[i]].colors
             && (current_mode < 0
-                || std::memcmp((char *) &g_video_entry, (char *) &g_video_table[s_entry_nums[i]], sizeof(g_video_entry)) == 0))
+                || std::memcmp(&g_video_entry, &g_video_table[s_entry_nums[i]], sizeof(g_video_entry)) == 0))
         {
             break;
         }
@@ -105,7 +105,7 @@ int select_video_mode(int current_mode)
     // picked by function key or ENTER key
     i = (i < 0) ? (-1 - i) : s_entry_nums[i];
     // the selected entry now in g_video_entry
-    std::memcpy((char *) &g_video_entry, (char *) &g_video_table[i], sizeof(g_video_entry));
+    std::memcpy(&g_video_entry, &g_video_table[i], sizeof(g_video_entry));
 
     // copy id.cfg table to resident table, note selected entry
     int k = 0;
@@ -113,7 +113,7 @@ int select_video_mode(int current_mode)
     {
         if (g_video_table[i].key > 0)
         {
-            if (std::memcmp((char *)&g_video_entry, (char *)&g_video_table[i], sizeof(g_video_entry)) == 0)
+            if (std::memcmp(&g_video_entry, &g_video_table[i], sizeof(g_video_entry)) == 0)
             {
                 k = g_video_table[i].key;
             }
@@ -122,8 +122,8 @@ int select_video_mode(int current_mode)
     int ret = k;
     if (k == 0)  // selected entry not a copied (assigned to key) one
     {
-        std::memcpy((char *)&g_video_table[MAX_VIDEO_MODES-1],
-               (char *)&g_video_entry, sizeof(*g_video_table));
+        std::memcpy(&g_video_table[MAX_VIDEO_MODES - 1],
+               &g_video_entry, sizeof(*g_video_table));
         ret = 1400; // special value for check_vidmode_key
     }
 

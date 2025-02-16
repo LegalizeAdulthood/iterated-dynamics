@@ -83,11 +83,11 @@ static void plot_d_orbit(double dx, double dy, int color)
     {
         if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)   // sound = x
         {
-            write_sound((int)(i*1000/g_logical_screen_x_dots+g_base_hertz));
+            write_sound(i * 1000 / g_logical_screen_x_dots + g_base_hertz);
         }
         else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X)     // sound = y or z
         {
-            write_sound((int)(j*1000/g_logical_screen_y_dots+g_base_hertz));
+            write_sound(j * 1000 / g_logical_screen_y_dots + g_base_hertz);
         }
         else if (g_orbit_delay > 0)
         {
@@ -98,15 +98,15 @@ static void plot_d_orbit(double dx, double dy, int color)
     {
         if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)   // sound = x
         {
-            write_sound((int)(i+g_base_hertz));
+            write_sound(i + g_base_hertz);
         }
         else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)     // sound = y
         {
-            write_sound((int)(j+g_base_hertz));
+            write_sound(j + g_base_hertz);
         }
         else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)     // sound = z
         {
-            write_sound((int)(i+j+g_base_hertz));
+            write_sound(i + j + g_base_hertz);
         }
         else if (g_orbit_delay > 0)
         {

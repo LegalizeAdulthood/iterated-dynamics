@@ -583,7 +583,7 @@ void InverseJulia::start()
     }
 
     m_x_factor = (int) (s_win_width / 5.33);
-    m_y_factor = (int) (-s_win_height / 4);
+    m_y_factor = -s_win_height / 4;
 
     if (s_window_style == JuliaWindowStyle::LARGE)
     {

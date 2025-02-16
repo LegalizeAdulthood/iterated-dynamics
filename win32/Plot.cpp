@@ -390,7 +390,7 @@ int Plot::init(HINSTANCE instance, LPCSTR title)
 void Plot::terminate()
 {
     {
-        HBITMAP rendering = (HBITMAP) SelectObject(m_memory_dc, (HGDIOBJ) m_backup);
+        HBITMAP rendering = (HBITMAP) SelectObject(m_memory_dc, m_backup);
         _ASSERTE(rendering == m_rendering);
     }
     DeleteObject(m_rendering);
@@ -409,13 +409,13 @@ void Plot::create_backing_store()
 
     m_rendering = CreateCompatibleBitmap(m_memory_dc, m_width, m_height);
     _ASSERTE(m_rendering);
-    m_backup = (HBITMAP) SelectObject(m_memory_dc, (HGDIOBJ) m_rendering);
+    m_backup = (HBITMAP) SelectObject(m_memory_dc, m_rendering);
 
     m_font = CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
                           DEFAULT_PITCH | FF_MODERN, "Courier");
     _ASSERTE(m_font);
-    SelectObject(m_memory_dc, (HGDIOBJ) m_font);
+    SelectObject(m_memory_dc, m_font);
     SetBkMode(m_memory_dc, OPAQUE);
 }
 
@@ -459,7 +459,7 @@ int Plot::read_pixel(int x, int y)
     {
         return 0;
     }
-    return (int) m_pixels[(m_height - 1 - y)*m_row_len + x];
+    return m_pixels[(m_height - 1 - y) * m_row_len + x];
 }
 
 void Plot::write_span(int y, int x, int last_x, const Byte *pixels)

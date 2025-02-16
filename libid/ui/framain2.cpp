@@ -292,7 +292,7 @@ MainState big_while_loop(MainContext &context)
         driver_check_memory();
         if (g_calc_status != CalcStatus::RESUMABLE || g_show_file == 0)
         {
-            std::memcpy((char *)&g_video_entry, (char *)&g_video_table[g_adapter],
+            std::memcpy(&g_video_entry, &g_video_table[g_adapter],
                    sizeof(g_video_entry));
             g_logical_screen_x_dots   = g_video_entry.x_dots;       // # dots across the screen
             g_logical_screen_y_dots   = g_video_entry.y_dots;       // # dots down the screen

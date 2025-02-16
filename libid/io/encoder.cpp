@@ -383,7 +383,7 @@ bool encoder()
             // uh oh - better fake it
             for (int j = 0; j < 256; j += 16)
             {
-                if (!shift_write((Byte *)s_palette_ega, 16))
+                if (!shift_write(s_palette_ega, 16))
                 {
                     goto oops;
                 }
@@ -393,7 +393,7 @@ bool encoder()
     if (g_colors == 2)
     {
         // write out the B&W palette
-        if (!shift_write((Byte *)s_palette_bw, g_colors))
+        if (!shift_write(s_palette_bw, g_colors))
         {
             goto oops;
         }
@@ -401,7 +401,7 @@ bool encoder()
     if (g_colors == 4)
     {
         // write out the CGA palette
-        if (!shift_write((Byte *)s_palette_cga, g_colors))
+        if (!shift_write(s_palette_cga, g_colors))
         {
             goto oops;
         }
@@ -419,7 +419,7 @@ bool encoder()
         else
         {
             // no DAC - must be an EGA
-            if (!shift_write((Byte *)s_palette_ega, g_colors))
+            if (!shift_write(s_palette_ega, g_colors))
             {
                 goto oops;
             }
@@ -932,7 +932,7 @@ static void cl_block();
 static int s_n_bits{};                     // number of bits/code
 static int s_max_bits{BITS_F};               // user settable max # bits/code
 static int s_max_code{};                    // maximum code, given n_bits
-static int s_max_max_cde{(int) 1 << BITS_F}; // should NEVER generate this code
+static int s_max_max_cde{1 << BITS_F}; // should NEVER generate this code
 
 constexpr static int max_code(int n_bits)
 {
@@ -1015,7 +1015,7 @@ static bool compress(int row_limit)
 
     s_a_count = 0;
     int h_shift = 0;
-    for (long f_code = (long) H_SIZE;  f_code < 65536L; f_code *= 2L)
+    for (long f_code = H_SIZE;  f_code < 65536L; f_code *= 2L)
     {
         h_shift++;
     }
@@ -1024,7 +1024,7 @@ static bool compress(int row_limit)
     std::memset(s_h_tab, 0xff, (unsigned)H_SIZE*sizeof(long));
     int h_size_reg = H_SIZE;
 
-    output((int)s_clear_code);
+    output(s_clear_code);
 
     for (int row_num = 0; row_num < g_logical_screen_y_dots; row_num++)
     {
@@ -1047,8 +1047,8 @@ static bool compress(int row_limit)
                     ent = color;
                     continue;
                 }
-                long f_code = (long)(((long) color << s_max_bits) + ent);
-                int i = (((int)color << h_shift) ^ ent);    // xor hashing
+                long f_code = ((long) color << s_max_bits) + ent;
+                int i = ((color << h_shift) ^ ent);    // xor hashing
                 int disp{};
 
                 if (s_h_tab[i] == f_code)
@@ -1056,7 +1056,7 @@ static bool compress(int row_limit)
                     ent = s_code_tab[i];
                     continue;
                 }
-                if ((long) s_h_tab[i] < 0) // empty slot
+                if (s_h_tab[i] < 0) // empty slot
                 {
                     goto nomatch;
                 }
@@ -1076,12 +1076,12 @@ probe:
                     ent = s_code_tab[i];
                     continue;
                 }
-                if ((long)s_h_tab[i] > 0)
+                if (s_h_tab[i] > 0)
                 {
                     goto probe;
                 }
 nomatch:
-                output((int) ent);
+                output(ent);
                 ent = color;
                 if (s_free_ent < s_max_max_cde)
                 {
@@ -1133,8 +1133,8 @@ nomatch:
     } // end for rownum
 
     // Put out the final code.
-    output((int)ent);
-    output((int) s_eof_code);
+    output(ent);
+    output(s_eof_code);
     return interrupted;
 }
 
@@ -1233,7 +1233,7 @@ static void cl_block()             // table clear for block compress
     std::memset(s_h_tab, 0xff, (unsigned)H_SIZE*sizeof(long));
     s_free_ent = s_clear_code + 2;
     s_clear_flag = true;
-    output((int)s_clear_code);
+    output(s_clear_code);
 }
 
 //

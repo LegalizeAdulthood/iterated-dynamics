@@ -113,7 +113,7 @@ long log_table_calc(long color_iter)
         {
             ret = 1;
         }
-        else if ((unsigned long)(color_iter - s_lf) <= (unsigned long)(s_mlf * s_mlf))
+        else if (color_iter - s_lf <= (unsigned long)(s_mlf * s_mlf))
         {
             ret = (long)(color_iter - s_lf + 1);
         }

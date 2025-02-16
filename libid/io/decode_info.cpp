@@ -315,7 +315,7 @@ static void get_double(double *dst, unsigned char **src, int dir)
     {
         if (*dst == 0)
         {
-            std::memset((char *)(*src), 0, 8);
+            std::memset(*src, 0, 8);
         }
         else
         {
@@ -397,7 +397,7 @@ static void get_float(float *dst, unsigned char **src, int dir)
     {
         if (*dst == 0)
         {
-            std::memset((char *)(*src), 0, 4);
+            std::memset(*src, 0, 4);
         }
         else
         {
@@ -441,9 +441,9 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     evolution_info_buff.resize(sizeof(EvolutionInfo));
     unsigned char *buf = evolution_info_buff.data();
     buf_ptr = buf;
-    std::memcpy((char *)buf, (char *)info, sizeof(EvolutionInfo));
+    std::memcpy(buf, info, sizeof(EvolutionInfo));
 
-    get_int16((short *) &info->evolving, &buf_ptr, dir);
+    get_int16(&info->evolving, &buf_ptr, dir);
     get_int16(&info->image_grid_size, &buf_ptr, dir);
     get_int16((short *) &info->this_generation_random_seed, &buf_ptr, dir);
     get_double(&info->max_random_mutation, &buf_ptr, dir);
@@ -477,7 +477,7 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     }
     if (dir == 0)
     {
-        std::memcpy((char *)info, (char *)buf, sizeof(EvolutionInfo));
+        std::memcpy(info, buf, sizeof(EvolutionInfo));
     }
 }
 
@@ -489,7 +489,7 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
     orbits_info_buff.resize(sizeof(OrbitsInfo));
     unsigned char *buf = orbits_info_buff.data();
     buf_ptr = buf;
-    std::memcpy((char *)buf, (char *)info, sizeof(OrbitsInfo));
+    std::memcpy(buf, info, sizeof(OrbitsInfo));
 
     get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
     get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
@@ -513,6 +513,6 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
     }
     if (dir == 0)
     {
-        std::memcpy((char *)info, (char *)buf, sizeof(OrbitsInfo));
+        std::memcpy(info, buf, sizeof(OrbitsInfo));
     }
 }

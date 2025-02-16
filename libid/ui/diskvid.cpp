@@ -217,7 +217,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
         *fwd_link = (int)((char *)ptr1 - (char *)s_cache_start);
     }
 
-    long memory_size = (long) (new_col_size) *new_row_size + s_header_length;
+    long memory_size = new_col_size *new_row_size + s_header_length;
     {
         const int i = (short) memory_size & (BLOCK_LEN - 1);
         if (i != 0)
@@ -240,11 +240,11 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
             s_mem_buf[i] = (Byte)fgetc(s_fp);
         }
         std::fclose(s_fp);
-        s_dv_handle = memory_alloc((U16) BLOCK_LEN, memory_size, MemoryLocation::DISK);
+        s_dv_handle = memory_alloc(BLOCK_LEN, memory_size, MemoryLocation::DISK);
     }
     else
     {
-        s_dv_handle = memory_alloc((U16) BLOCK_LEN, memory_size, MemoryLocation::MEMORY);
+        s_dv_handle = memory_alloc(BLOCK_LEN, memory_size, MemoryLocation::MEMORY);
     }
     if (!s_dv_handle)
     {
@@ -271,7 +271,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
     {
         for (long offset = 0; offset < memory_size; offset++)
         {
-            s_dv_handle.set(0, (U16)BLOCK_LEN, 1L, offset);
+            s_dv_handle.set(0, BLOCK_LEN, 1L, offset);
             if (driver_key_pressed())           // user interrupt
             {
                 // esc to cancel, else continue
@@ -317,7 +317,7 @@ void end_disk()
     }
     if (s_cache_start != nullptr)
     {
-        free((void *)s_cache_start);
+        free(s_cache_start);
         s_cache_start = nullptr;
     }
     s_mem_buf.clear();
@@ -379,7 +379,7 @@ bool from_mem_disk(long offset, int size, void *dest)
     {
         find_load_cache(offset & (0L-BLOCK_LEN));
     }
-    std::memcpy(dest, (void *) &s_cur_cache->pixel[col_index], size);
+    std::memcpy(dest, &s_cur_cache->pixel[col_index], size);
     s_cur_cache->dirty = false;
     return true;
 }
@@ -445,7 +445,7 @@ bool to_mem_disk(long offset, int size, void *src)
         find_load_cache(offset & (0L-BLOCK_LEN));
     }
 
-    std::memcpy((void *) &s_cur_cache->pixel[col_index], src, size);
+    std::memcpy(&s_cur_cache->pixel[col_index], src, size);
     s_cur_cache->dirty = true;
     return true;
 }
@@ -682,8 +682,8 @@ static void mem_seek(long offset)        // mem seek
     s_mem_offset = offset >> BLOCK_SHIFT;
     if (s_mem_offset != s_old_mem_offset)
     {
-        s_dv_handle.from_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_old_mem_offset);
-        s_dv_handle.to_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_old_mem_offset);
+        s_dv_handle.to_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
     }
     s_old_mem_offset = s_mem_offset;
     s_mem_buf_ptr = s_mem_buf.data() + (offset & (BLOCK_LEN - 1));
@@ -693,9 +693,9 @@ static Byte  mem_getc()                     // memory get_char
 {
     if (s_mem_buf_ptr - s_mem_buf.data() >= BLOCK_LEN)
     {
-        s_dv_handle.from_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
         s_mem_offset++;
-        s_dv_handle.to_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_dv_handle.to_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
         s_mem_buf_ptr = s_mem_buf.data();
         s_old_mem_offset = s_mem_offset;
     }
@@ -706,9 +706,9 @@ static void mem_putc(Byte c)     // memory get_char
 {
     if (s_mem_buf_ptr - s_mem_buf.data() >= BLOCK_LEN)
     {
-        s_dv_handle.from_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_dv_handle.from_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
         s_mem_offset++;
-        s_dv_handle.to_memory(s_mem_buf.data(), (U16)BLOCK_LEN, 1L, s_mem_offset);
+        s_dv_handle.to_memory(s_mem_buf.data(), BLOCK_LEN, 1L, s_mem_offset);
         s_mem_buf_ptr = s_mem_buf.data();
         s_old_mem_offset = s_mem_offset;
     }

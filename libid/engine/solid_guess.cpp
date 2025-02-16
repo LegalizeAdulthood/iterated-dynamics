@@ -175,8 +175,8 @@ int solid_guess()
         // set each bit in tprefix[0] to OR of it & surrounding 8 in tprefix[1]
         for (int y = 0; ++y < y_lim;)
         {
-            unsigned int *pfx_p0 = (unsigned int *) &s_t_prefix[0][y][0];
-            unsigned int *pfx_p1 = (unsigned int *) &s_t_prefix[1][y][0];
+            unsigned int *pfx_p0 = &s_t_prefix[0][y][0];
+            unsigned int *pfx_p1 = &s_t_prefix[1][y][0];
             for (int x = 0; ++x < x_lim;)
             {
                 ++pfx_p1;
@@ -283,7 +283,7 @@ static bool guess_row(bool first_pass, int y, int block_size)
     s_half_block = block_size >> 1;
     {
         const int i = y / s_max_block;
-        pfx_ptr = (unsigned int *) &s_t_prefix[first_pass ? 1 : 0][(i >> 4) + 1][g_i_x_start / s_max_block];
+        pfx_ptr = &s_t_prefix[first_pass ? 1 : 0][(i >> 4) + 1][g_i_x_start / s_max_block];
         pfx_mask = 1 << (i & 15);
     }
     y_less_half = y - s_half_block;

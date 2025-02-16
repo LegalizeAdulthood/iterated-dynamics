@@ -179,7 +179,7 @@ void cvt_center_mag_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble &mag, double &x_m
         {
             tmp_y = tmp_y1/tmp_x1 * sign_x;    // tmpy = tmpy / |tmpx|
         }
-        rot = (double)(-rad_to_deg(std::atan2((double)tmp_y, sign_x)));   // negative for image rotation
+        rot = -rad_to_deg(std::atan2((double) tmp_y, sign_x));   // negative for image rotation
 
         // tmpx = g_x_min - g_x_3rd;
         sub_bf(tmp_x_bf, g_bf_x_min, g_bf_x_3rd);

@@ -276,13 +276,13 @@ expand_retry:
            the limit of resolution */
         for (int i = 1; i < g_logical_screen_x_dots; i++)
         {
-            dx0 = (double) (dx0 + (double) g_delta_x);
-            dy1 = (double) (dy1 - (double) g_delta_y2);
+            dx0 = dx0 + (double) g_delta_x;
+            dy1 = dy1 - (double) g_delta_y2;
         }
         for (int i = 1; i < g_logical_screen_y_dots; i++)
         {
-            dy0 = (double) (dy0 - (double) g_delta_y);
-            dx1 = (double) (dx1 + (double) g_delta_x2);
+            dy0 = dy0 - (double) g_delta_y;
+            dx1 = dx1 + (double) g_delta_x2;
         }
         if (g_bf_math == BFMathType::NONE) // redundant test, leave for now
         {

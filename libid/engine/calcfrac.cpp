@@ -2169,7 +2169,7 @@ int potential(double mag, long iterations)
         }
         else   // pot = log(mag) / pow(2.0, (double)pot);
         {
-            double d_tmp = std::log(mag) / (double) std::pow(2.0, (double) pot);
+            double d_tmp = std::log(mag) / std::pow(2.0, (double) pot);
             if (d_tmp > FLT_MIN) // prevent float type underflow
             {
                 pot = (float) d_tmp;

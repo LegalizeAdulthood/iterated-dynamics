@@ -84,7 +84,7 @@ int get_byte()
 
 int get_bytes(Byte *where, int how_many)
 {
-    return (int) std::fread((char *)where, 1, how_many, s_fp_in); // EOF is -1, as desired
+    return (int) std::fread(where, 1, how_many, s_fp_in); // EOF is -1, as desired
 }
 
 // Main entry decoder
@@ -459,7 +459,7 @@ static bool put_sound_line(int row, int col_start, int col_stop, Byte *pixels)
         {
             sleep_ms(g_orbit_delay);
         }
-        write_sound((int)((int)(*pixels++)*3000/g_colors+g_base_hertz));
+        write_sound((int) *pixels++ * 3000 / g_colors + g_base_hertz);
         if (driver_key_pressed())
         {
             driver_mute();

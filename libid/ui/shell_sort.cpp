@@ -21,7 +21,7 @@ void shell_sort(void *v1, int n, unsigned sz)
         {
             for (int j = i-gap; j >= 0; j -= gap)
             {
-                if (lc_compare((char **)(v+j*sz), (char **)(v+(j+gap)*sz)) <= 0)
+                if (lc_compare(v + j * sz, v + (j + gap) * sz) <= 0)
                 {
                     break;
                 }

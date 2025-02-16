@@ -3203,7 +3203,7 @@ static CmdArgFlags cmd_show_dot(const Command &cmd)
         g_auto_show_dot = (char) 0;
         if (std::isalpha(cmd.char_val[0]))
         {
-            if (std::strchr("abdm", (int) cmd.char_val[0]) != nullptr)
+            if (std::strchr("abdm", cmd.char_val[0]) != nullptr)
             {
                 g_auto_show_dot = cmd.char_val[0];
             }

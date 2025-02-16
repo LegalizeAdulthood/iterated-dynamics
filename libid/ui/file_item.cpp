@@ -690,7 +690,7 @@ retry:
     if (do_sort)
     {
         std::strcat(instr, "off");
-        shell_sort((char *) &choices, num_entries, sizeof(FileEntry *));
+        shell_sort(&choices, num_entries, sizeof(FileEntry *));
     }
     else
     {
