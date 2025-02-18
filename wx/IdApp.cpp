@@ -23,10 +23,12 @@ bool IdApp::OnInit()
 
     g_instance = wxGetInstance();
 
-    // start a thread to call id_main here?
-    id_main(argc, argv);
-
     return true;
+}
+
+int IdApp::OnRun()
+{
+    return id_main(argc, argv);
 }
 
 void IdApp::create_window()

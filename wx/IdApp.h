@@ -10,6 +10,8 @@ public:
     ~IdApp() override = default;
 
     bool OnInit() override;
+    int OnRun() override;
+
     void create_window();
     void pump_messages(bool wait_flag);
 };
