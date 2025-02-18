@@ -21,11 +21,14 @@ int burning_ship_fp_fractal()
     q.y = g_init.y;
     if (degree == 2)
     {
-        g_temp_sqr_x = sqr(g_old_z.x);
-        g_temp_sqr_y = sqr(g_old_z.y);
-        const double real_imag = std::abs(g_old_z.x * g_old_z.y);
-        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + q.x;
-        g_new_z.y = real_imag + real_imag - q.y;
+        // (|x| + i|y|)^2 = (|x| + i|y|)*(|x| + i|y|)
+        //                = (|x|*|x| - |y|*|y|) + i(|x|*|y| + |x|*|y|)
+        //                = (|x|^2 - |y|^2) + i(2*|x|*|y|)
+        g_temp_sqr_x = sqr(g_old_z.x);                            // real(z)^2 = |real(z)|^2
+        g_temp_sqr_y = sqr(g_old_z.y);                            // imag(z)^2 = |imag(z)|^2
+        const double real_imag = std::abs(g_old_z.x * g_old_z.y); // |real(z)*imag(z)| = |real(z)|*|imag(z)|
+        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + q.x;            // real(z)^2 - imag(z)^2 + real(c)
+        g_new_z.y = real_imag + real_imag - q.y;                  // |real(z)*imag(z)|*2 - imag(c)
     }
     else if (degree > 2)
     {
