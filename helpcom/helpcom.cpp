@@ -375,7 +375,7 @@ bool DocumentProcessor::content()
         return false;
     }
 
-    if (m_pd.new_page && m_pd.line_num != 0)
+    if (m_pd.new_page && m_pd.line_num != 0 || m_pd.line_num + 2 > PAGE_HEIGHT - CONTENT_BREAK)
     {
         if (!footing())
         {
@@ -388,29 +388,13 @@ bool DocumentProcessor::content()
             return false;
         }
     }
-    else
+    else if (m_pd.line_num > 0)
     {
-        if (m_pd.line_num + 2 > PAGE_HEIGHT - CONTENT_BREAK)
+        if (!print_n('\n', 2))
         {
-            if (!footing())
-            {
-                return false;
-            }
-            ++m_pd.page_num;
-            m_pd.line_num = 0;
-            if (!heading())
-            {
-                return false;
-            }
+            return false;
         }
-        else if (m_pd.line_num > 0)
-        {
-            if (!print_n('\n', 2))
-            {
-                return false;
-            }
-            m_pd.line_num += 2;
-        }
+        m_pd.line_num += 2;
     }
 
     if (!set_section_page())
