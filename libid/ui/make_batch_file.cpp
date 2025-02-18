@@ -13,6 +13,7 @@
 #include "engine/log_map.h"
 #include "engine/sticky_orbits.h"
 #include "engine/type_has_param.h"
+#include "engine/perturbation.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
@@ -692,6 +693,16 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         if (g_stop_pass != 0)
         {
             put_param(" %s=%c%c", "passes", g_user_std_calc_mode, (char)g_stop_pass + '0');
+        }
+
+        if (g_perturbation != PerturbationMode::AUTO)
+        {
+            put_param(" %s=%s", "perturbation", (g_perturbation == PerturbationMode::YES) ? "yes" : "no");
+        }
+
+        if (g_perturbation_tolerance != 1e-6)
+        {
+            put_param(" %s=%lg", "tolerance", g_perturbation_tolerance);
         }
 
         if (g_use_center_mag)

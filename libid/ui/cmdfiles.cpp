@@ -18,6 +18,7 @@
 #include "engine/log_map.h"
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
+#include "engine/perturbation.h"
 #include "fractals/check_orbit_name.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -3757,8 +3758,34 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
+// tolerance=?
+static CmdArgFlags cmd_tolerance(const Command &cmd)
+{
+    g_perturbation_tolerance = cmd.float_vals[0];
+    return CmdArgFlags::NONE;
+}
+
+// perturbation=?
+static CmdArgFlags cmd_perturbation(const Command &cmd)
+{
+    std::string p = cmd.value;
+    if (p == "auto")
+    {
+        g_perturbation = PerturbationMode::AUTO;
+    }
+    else if (p == "yes")
+    {
+        g_perturbation = PerturbationMode::YES;
+    }
+    else
+    {
+        g_perturbation = PerturbationMode::NO;
+    }
+    return CmdArgFlags::NONE;
+}
+
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 157> s_commands{
+static std::array<CommandHandler, 159> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3857,6 +3884,7 @@ static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"passes", cmd_passes},                   //
     CommandHandler{"periodicity", cmd_periodicity},         //
     CommandHandler{"perspective", cmd_perspective},         //
+    CommandHandler{"perturbation", cmd_perturbation},       //
     CommandHandler{"pixelzoom", cmd_pixel_zoom},            //
     CommandHandler{"plotstyle", cmd_deprecated},            // deprecated print parameters
     CommandHandler{"polyphony", cmd_polyphony},             //
@@ -3898,6 +3926,7 @@ static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"tempdir", cmd_temp_dir},                //
     CommandHandler{"textcolors", cmd_text_colors},          //
     CommandHandler{"title", cmd_deprecated},                // deprecated print parameters
+    CommandHandler{"tolerance", cmd_tolerance},             // perturbation glitch tolerance
     CommandHandler{"tplus", cmd_tplus},                     //
     CommandHandler{"translate", cmd_deprecated},            // deprecated print parameters
     CommandHandler{"transparent", cmd_transparent},         //
