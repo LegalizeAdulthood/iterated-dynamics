@@ -9,9 +9,7 @@ target_link_libraries(os-hc INTERFACE helpcom config)
 set_target_properties(os-hc PROPERTIES FOLDER Libraries)
 
 add_library(os STATIC
-    #d_disk.cpp
-    d_wx.cpp
-    d_wx.h
+    WxDriver.h WxDriver.cpp
     read_ticker.cpp
     stack_avail.cpp
 )
@@ -29,15 +27,12 @@ add_executable(id WIN32
     id.rc.in
     "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
     resource.h
-    app.h
-    app.cpp
-    frame.h
-    frame.cpp
-    text_screen.h
-    text_screen.cpp
+    CGATextWindow.h
+    IdApp.h IdApp.cpp
+    IdFrame.h IdFrame.cpp
     init_failure.cpp
-    wx_special_dirs.h
-    wx_special_dirs.cpp
+    #TextScreen.h TextScreen.cpp
+    WxSpecialDirectories.h WxSpecialDirectories.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)

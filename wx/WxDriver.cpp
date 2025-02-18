@@ -4,10 +4,10 @@
  *
  * Routines for a Win32 GDI driver for id.
  */
-#include "d_wx.h"
+#include "WxDriver.h"
 
-#include "app.h"
-#include "frame.h"
+#include "IdApp.h"
+#include "IdFrame.h"
 #include "io/special_dirs.h"
 #include "misc/stack_avail.h"
 #include "ui/read_ticker.h"
@@ -88,7 +88,7 @@ static void flush_output()
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ***********************************************************************/
 
-void WXDriver::terminate()
+void WxDriver::terminate()
 {
     //m_win_text.destroy();
     m_saved_screens.clear();
@@ -96,7 +96,7 @@ void WXDriver::terminate()
     //g_frame.terminate();
 }
 
-bool WXDriver::init(int *argc, char **argv)
+bool WxDriver::init(int *argc, char **argv)
 {
     //LPCSTR title = ID_PROGRAM_NAME;
 
@@ -115,7 +115,7 @@ bool WXDriver::init(int *argc, char **argv)
  * message pump, stash it in the one key buffer for later use by
  * get_key.
  */
-int WXDriver::key_pressed()
+int WxDriver::key_pressed()
 {
     throw std::runtime_error("not implemented");
 
@@ -139,7 +139,7 @@ int WXDriver::key_pressed()
  * Unread a key!  The key buffer is only one character deep, so we
  * assert if its already full.  This should never happen in real life :-).
  */
-void WXDriver::unget_key(int key)
+void WxDriver::unget_key(int key)
 {
     _ASSERTE(0 == m_key_buffer);
     m_key_buffer = key;
@@ -152,7 +152,7 @@ void WXDriver::unget_key(int key)
  * If we get it, pass it off to handle tab and help displays.  If those
  * displays ate the key, then get another one.
  */
-int WXDriver::get_key()
+int WxDriver::get_key()
 {
     throw std::runtime_error("not implemented");
     //int ch;
@@ -175,7 +175,7 @@ int WXDriver::get_key()
 }
 
 // Spawn a command prompt.
-void  WXDriver::shell()
+void  WxDriver::shell()
 {
     throw std::runtime_error("not implemented");
     //STARTUPINFO si =
@@ -206,7 +206,7 @@ void  WXDriver::shell()
     //}
 }
 
-void WXDriver::hide_text_cursor()
+void WxDriver::hide_text_cursor()
 {
     throw std::runtime_error("not implemented");
     //if (m_cursor_shown)
@@ -216,7 +216,7 @@ void WXDriver::hide_text_cursor()
     //}
 }
 
-void WXDriver::set_video_mode(VideoInfo *mode)
+void WxDriver::set_video_mode(VideoInfo *mode)
 {
     throw std::runtime_error("not implemented");
     // initially, set the virtual line to be the scan line length
@@ -245,7 +245,7 @@ void WXDriver::set_video_mode(VideoInfo *mode)
     //set_clear();
 }
 
-void WXDriver::put_string(int row, int col, int attr, char const *msg)
+void WxDriver::put_string(int row, int col, int attr, char const *msg)
 {
     throw std::runtime_error("not implemented");
     //if (-1 != row)
@@ -269,13 +269,13 @@ void WXDriver::put_string(int row, int col, int attr, char const *msg)
 *
 *       Scroll the screen up (from toprow to botrow)
 */
-void WXDriver::scroll_up(int top, int bot)
+void WxDriver::scroll_up(int top, int bot)
 {
     throw std::runtime_error("not implemented");
     //m_win_text.scroll_up(top, bot);
 }
 
-void WXDriver::move_cursor(int row, int col)
+void WxDriver::move_cursor(int row, int col)
 {
     throw std::runtime_error("not implemented");
     //if (row != -1)
@@ -292,7 +292,7 @@ void WXDriver::move_cursor(int row, int col)
     //m_cursor_shown = true;
 }
 
-void WXDriver::set_attr(int row, int col, int attr, int count)
+void WxDriver::set_attr(int row, int col, int attr, int count)
 {
     throw std::runtime_error("not implemented");
     //if (-1 != row)
@@ -310,7 +310,7 @@ void WXDriver::set_attr(int row, int col, int attr, int count)
 * Implement stack and unstack window functions by using multiple curses
 * windows.
 */
-void WXDriver::stack_screen()
+void WxDriver::stack_screen()
 {
     throw std::runtime_error("not implemented");
     // set for text mode if this is the first screen stacked
@@ -323,7 +323,7 @@ void WXDriver::stack_screen()
     //driver_set_clear();
 }
 
-void WXDriver::unstack_screen()
+void WxDriver::unstack_screen()
 {
     throw std::runtime_error("not implemented");
     //_ASSERTE(!m_saved_cursor.empty());
@@ -345,7 +345,7 @@ void WXDriver::unstack_screen()
     //}
 }
 
-void WXDriver::discard_screen()
+void WxDriver::discard_screen()
 {
     if (!m_saved_screens.empty())
     {
@@ -360,12 +360,12 @@ void WXDriver::discard_screen()
     }
 }
 
-int WXDriver::init_fm()
+int WxDriver::init_fm()
 {
     return 0;
 }
 
-void WXDriver::buzzer(Buzzer kind)
+void WxDriver::buzzer(Buzzer kind)
 {
     throw std::runtime_error("not implemented");
     //UINT beep{MB_OK};
@@ -384,25 +384,25 @@ void WXDriver::buzzer(Buzzer kind)
     //MessageBeep(beep);
 }
 
-bool WXDriver::sound_on(int freq)
+bool WxDriver::sound_on(int freq)
 {
     return false;
 }
 
-void WXDriver::sound_off()
+void WxDriver::sound_off()
 {
 }
 
-void WXDriver::mute()
+void WxDriver::mute()
 {
 }
 
-bool WXDriver::is_disk() const
+bool WxDriver::is_disk() const
 {
     return false;
 }
 
-int WXDriver::key_cursor(int row, int col)
+int WxDriver::key_cursor(int row, int col)
 {
     throw std::runtime_error("not implemented");
     //if (-1 != row)
@@ -433,7 +433,7 @@ int WXDriver::key_cursor(int row, int col)
     //return result;
 }
 
-int WXDriver::wait_key_pressed(bool timeout)
+int WxDriver::wait_key_pressed(bool timeout)
 {
     int count = 10;
     while (!key_pressed())
@@ -453,19 +453,19 @@ int WXDriver::wait_key_pressed(bool timeout)
     return key_pressed();
 }
 
-int WXDriver::get_char_attr()
+int WxDriver::get_char_attr()
 {
     throw std::runtime_error("not implemented");
     //return m_win_text.get_char_attr(g_text_row, g_text_col);
 }
 
-void WXDriver::put_char_attr(int char_attr)
+void WxDriver::put_char_attr(int char_attr)
 {
     throw std::runtime_error("not implemented");
     //m_win_text.put_char_attr(g_text_row, g_text_col, char_attr);
 }
 
-void WXDriver::delay(int ms)
+void WxDriver::delay(int ms)
 {
     throw std::runtime_error("not implemented");
     //g_frame.pump_messages(false);
@@ -475,145 +475,145 @@ void WXDriver::delay(int ms)
     //}
 }
 
-void WXDriver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
+void WxDriver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
 {
     throw std::runtime_error("not implemented");
 }
 
-void WXDriver::put_true_color(int x, int y, int r, int g, int b, int a)
+void WxDriver::put_true_color(int x, int y, int r, int g, int b, int a)
 {
     throw std::runtime_error("not implemented");
 }
 
-void WXDriver::set_keyboard_timeout(int ms)
+void WxDriver::set_keyboard_timeout(int ms)
 {
     throw std::runtime_error("not implemented");
     //g_frame.set_keyboard_timeout(ms);
 }
 
-void WXDriver::debug_text(const char *text)
+void WxDriver::debug_text(const char *text)
 {
     throw std::runtime_error("not implemented");
 }
 
-void WXDriver::get_cursor_pos(int &x, int &y) const
+void WxDriver::get_cursor_pos(int &x, int &y) const
 {
     throw std::runtime_error("not implemented");
     // g_frame.get_cursor_pos(x, y);
 }
 
-bool WXDriver::validate_mode(VideoInfo *mode)
+bool WxDriver::validate_mode(VideoInfo *mode)
 {
     return false;
 }
 
-void WXDriver::get_max_screen(int &xmax, int &ymax)
+void WxDriver::get_max_screen(int &xmax, int &ymax)
 {
 }
 
-void WXDriver::pause()
+void WxDriver::pause()
 {
 }
 
-void WXDriver::resume()
+void WxDriver::resume()
 {
 }
 
-void WXDriver::schedule_alarm(int secs)
+void WxDriver::schedule_alarm(int secs)
 {
 }
 
-void WXDriver::create_window()
+void WxDriver::create_window()
 {
 }
 
-bool WXDriver::resize()
+bool WxDriver::resize()
 {
     return false;
 }
 
-void WXDriver::redraw()
+void WxDriver::redraw()
 {
 }
 
-int WXDriver::read_palette()
-{
-    return 0;
-}
-
-int WXDriver::write_palette()
+int WxDriver::read_palette()
 {
     return 0;
 }
 
-int WXDriver::read_pixel(int x, int y)
+int WxDriver::write_palette()
 {
     return 0;
 }
 
-void WXDriver::write_pixel(int x, int y, int color)
+int WxDriver::read_pixel(int x, int y)
+{
+    return 0;
+}
+
+void WxDriver::write_pixel(int x, int y, int color)
 {
 }
 
-void WXDriver::read_span(int y, int x, int lastx, BYTE *pixels)
+void WxDriver::read_span(int y, int x, int lastx, BYTE *pixels)
 {
 }
 
-void WXDriver::write_span(int y, int x, int lastx, BYTE *pixels)
+void WxDriver::write_span(int y, int x, int lastx, BYTE *pixels)
 {
 }
 
-void WXDriver::set_line_mode(int mode)
+void WxDriver::set_line_mode(int mode)
 {
 }
 
-void WXDriver::draw_line(int x1, int y1, int x2, int y2, int color)
+void WxDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
 }
 
-void WXDriver::display_string(int x, int y, int fg, int bg, const char *text)
+void WxDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
 }
 
-void WXDriver::save_graphics()
+void WxDriver::save_graphics()
 {
 }
 
-void WXDriver::restore_graphics()
+void WxDriver::restore_graphics()
 {
 }
 
-bool WXDriver::is_text()
+bool WxDriver::is_text()
 {
     return true;
 }
 
-void WXDriver::set_for_text()
+void WxDriver::set_for_text()
 {
 }
 
-void WXDriver::set_for_graphics()
+void WxDriver::set_for_graphics()
 {
 }
 
-void WXDriver::set_clear()
+void WxDriver::set_clear()
 {
 }
 
-void WXDriver::flush()
+void WxDriver::flush()
 {
 }
 
-void WXDriver::check_memory()
+void WxDriver::check_memory()
 {
 }
 
-bool WXDriver::get_filename(
+bool WxDriver::get_filename(
     const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
 {
     return false;
 }
 
-static WXDriver s_wx_driver{};
+static WxDriver s_wx_driver{};
 
 Driver *g_wx_driver = &s_wx_driver;

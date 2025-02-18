@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "wx_special_dirs.h"
+#include "WxSpecialDirectories.h"
 
 #include <wx/filename.h>
 #include <wx/stdpaths.h>

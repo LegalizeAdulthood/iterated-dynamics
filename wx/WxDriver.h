@@ -4,20 +4,20 @@
 
 #include "misc/Driver.h"
 
-#include "cga_text_window.h"
+#include "CGATextWindow.h"
 
 #include <string>
 #include <vector>
 
-class WXDriver : public Driver
+class WxDriver : public Driver
 {
 public:
-    WXDriver() :
+    WxDriver() :
         m_name("wx"),
         m_description("wxWidgets")
     {
     }
-    ~WXDriver() override = default;
+    ~WxDriver() override = default;
 
     const std::string &get_name() const override
     {

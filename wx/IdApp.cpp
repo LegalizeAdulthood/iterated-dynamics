@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "app.h"
+#include "IdApp.h"
 
 #include "ui/id_main.h"
 
-#include "frame.h"
-#include "wx_special_dirs.h"
+#include "IdFrame.h"
+#include "WxSpecialDirectories.h"
 #include "../win32/instance.h"
 
 #include <wx/wx.h>
