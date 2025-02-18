@@ -253,11 +253,12 @@ namespace
 class DocumentProcessor
 {
 public:
-    DocumentProcessor(TokenMode mode, PrintDocFn *get_info, PrintDocFn *output, void *info) :
+    DocumentProcessor(TokenMode mode, bool paginate, PrintDocFn *get_info, PrintDocFn *output, void *info) :
         m_token_mode(mode),
         m_get_info(get_info),
         m_output(output),
-        m_info(info)
+        m_info(info),
+        m_paginate(paginate)
     {
     }
 
@@ -339,6 +340,7 @@ private:
     PrintDocFn *m_get_info;
     PrintDocFn *m_output;
     void *m_info;
+    bool m_paginate;
     ProcessDocumentInfo m_pd{};
     std::string m_page_text;
     bool m_first_section{};
@@ -701,7 +703,14 @@ bool DocumentProcessor::topic_newline()
         }
         ++m_pd.page_num;
         m_pd.line_num = 0;
-        m_skip_blanks = true;
+        m_skip_blanks = m_paginate;
+        if (!m_paginate)
+        {
+            if (!print_n('\n', 1))
+            {
+                return false;
+            }
+        }
         if (!heading())
         {
             return false;
@@ -857,7 +866,7 @@ bool DocumentProcessor::topic_token()
 
 } // namespace
 
-bool process_document(TokenMode mode, PrintDocFn *get_info, PrintDocFn *output, void *info)
+bool process_document(TokenMode mode, bool paginate, PrintDocFn *get_info, PrintDocFn *output, void *info)
 {
-    return DocumentProcessor(mode, get_info, output, info).process();
+    return DocumentProcessor(mode, paginate, get_info, output, info).process();
 }

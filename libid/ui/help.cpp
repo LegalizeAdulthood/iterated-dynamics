@@ -1326,7 +1326,7 @@ void print_document(const char *filename, bool (*msg_func)(int, int))
     info.start_of_line = true;
     info.spaces = 0;
 
-    success = process_document(TokenMode::DOC, print_doc_get_info, print_doc_output, &info);
+    success = process_document(TokenMode::DOC, true, print_doc_get_info, print_doc_output, &info);
     std::fclose(info.file);
 
 ErrorAbort:

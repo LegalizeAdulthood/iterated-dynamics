@@ -144,7 +144,7 @@ using PrintDocFn = bool(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info
 TokenType find_token_length(
     TokenMode mode, const char *curr, unsigned len, int *ret_size, int *ret_width);
 int find_line_width(TokenMode mode, const char *curr, unsigned len);
-bool process_document(TokenMode mode, PrintDocFn *get_info, PrintDocFn *output, void *info);
+bool process_document(TokenMode mode, bool paginate, PrintDocFn *get_info, PrintDocFn *output, void *info);
 int help();
 int read_help_topic(HelpLabels label, int , int , void *);
 bool make_doc_msg_func(int page_num, int num_pages);

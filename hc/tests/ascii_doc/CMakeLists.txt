@@ -16,7 +16,7 @@ function(add_asciidoc_test name)
             -P "${CMAKE_CURRENT_SOURCE_DIR}/help_compare_test.cmake"
         WORKING_DIRECTORY "${HC_TEST_DIR}"
     )
-    set_tests_properties(TestHelpCompiler.${name} PROPERTIES LABELS "hc;run-hc")
+    set_tests_properties(TestHelpCompiler.${name} PROPERTIES LABELS "hc;run-hc;adoc")
 endfunction()
 
 add_asciidoc_test(toc)
@@ -24,3 +24,4 @@ add_asciidoc_test(sections)
 add_asciidoc_test(keys)
 add_asciidoc_test(bullets)
 add_asciidoc_test(links)
+add_asciidoc_test(table)
