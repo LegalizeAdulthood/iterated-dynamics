@@ -9,41 +9,9 @@
 #include "math/fpu087.h"
 #include "ui/trig_fns.h"
 
-#include <config/port.h>
-
-#include <cstdint>
-
-long exp_float14(long xx);
-
-inline void f_shift(float x, int shift, float &z)
-{
-    *(long*)&z = reg_sft_float(*(long*)&x, shift);
-}
-inline void f_log14(float x, float &z)
-{
-    *reinterpret_cast<long*>(&z) = reg_fg_to_float(log_float14(*reinterpret_cast<long*>(&x)), 16);
-}
-inline void f_exp14(float x, float &z)
-{
-    *(long*)&z = exp_float14(*(long*)&x);
-}
-inline void f_sqrt14(float x, float &z)
-{
-    f_log14(x, z);
-    f_shift(z, -1, z);
-    f_exp14(z, z);
-}
-
 struct Arg
 {
     DComplex d;
-};
-
-struct ConstArg
-{
-    const char *s;
-    int len;
-    Arg a;
 };
 
 extern Arg *g_arg1;

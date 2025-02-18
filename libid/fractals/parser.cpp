@@ -287,6 +287,13 @@ struct ErrorData
 
 constexpr int BIT_SHIFT{16};
 
+struct ConstArg
+{
+    const char *s;
+    int len;
+    Arg a;
+};
+
 } // namespace
 
 // forward declarations
@@ -314,8 +321,6 @@ static void d_stk_jump_on_true();
 
 unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
-Arg *g_arg1{};
-Arg *g_arg2{};
 int g_store_index{};
 int g_load_index{};
 bool g_is_mandelbrot{true};
