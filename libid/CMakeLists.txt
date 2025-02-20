@@ -89,6 +89,7 @@ add_library(libid
     include/fractals/volterra_lotka.h fractals/volterra_lotka.cpp
 
     include/io/check_write_file.h io/check_write_file.cpp
+    include/io/CurrentPathSaver.h
     include/io/decoder.h io/decoder.cpp
     include/io/decode_info.h io/decode_info.cpp
     include/io/dir_file.h io/dir_file.cpp
@@ -110,6 +111,7 @@ add_library(libid
     include/io/loadmap.h io/loadmap.cpp
     include/io/load_config.h io/load_config.cpp
     include/io/load_entry_text.h io/load_entry_text.cpp
+    include/io/locate_input_file.h io/locate_input_file.cpp
     include/io/make_path.h io/make_path.cpp
     include/io/merge_path_names.h io/merge_path_names.cpp
     include/io/path_match.h io/path_match.cpp
@@ -164,7 +166,6 @@ add_library(libid
     include/ui/full_screen_choice.h ui/full_screen_choice.cpp
     include/ui/full_screen_prompt.h ui/full_screen_prompt.cpp
     include/ui/get_3d_params.h ui/get_3d_params.cpp
-    include/ui/get_a_filename.h ui/get_a_filename.cpp
     include/ui/get_a_number.h ui/get_a_number.cpp
     include/ui/get_browse_params.h ui/get_browse_params.cpp
     include/ui/get_calculation_time.h ui/get_calculation_time.cpp

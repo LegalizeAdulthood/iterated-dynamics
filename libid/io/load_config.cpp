@@ -4,8 +4,7 @@
 
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
-#include "io/find_path.h"
-#include "io/special_dirs.h"
+#include "io/locate_input_file.h"
 #include "misc/Driver.h"
 #include "ui/video_mode.h"
 
@@ -21,23 +20,6 @@
 
 int g_cfg_line_nums[MAX_VIDEO_MODES]{};
 
-std::string locate_config_file(const std::string &name)
-{
-    const std::string current_dir{std::filesystem::current_path().string()};
-    std::initializer_list<std::string_view> dirs{g_save_dir, g_fractal_search_dir1, g_fractal_search_dir2, current_dir};
-    for (std::string_view search_dir : dirs)
-    {
-        std::filesystem::path file_path{search_dir};
-        file_path /= name;
-        if (exists(file_path))
-        {
-            return file_path.string();
-        }
-    }
-
-    return {};
-}
-
 /* load_config
  *
  * Reads id.cfg, loading VideoInfo entries into g_video_table.
@@ -49,7 +31,7 @@ std::string locate_config_file(const std::string &name)
  */
 void load_config()
 {
-    load_config(locate_config_file("id.cfg"));
+    load_config(locate_input_file("id.cfg"));
 }
 
 void load_config(const std::string &cfg_path)

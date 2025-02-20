@@ -12,10 +12,21 @@ public:
     {
         current_path(new_path);
     }
+
+    explicit CurrentPathSaver() :
+        m_old_path(std::filesystem::current_path())
+    {
+    }
+
     ~CurrentPathSaver()
     {
         current_path(m_old_path);
     }
+
+    CurrentPathSaver(const CurrentPathSaver &rhs) = delete;
+    CurrentPathSaver(CurrentPathSaver &&rhs) = delete;
+    CurrentPathSaver &operator=(const CurrentPathSaver &rhs) = delete;
+    CurrentPathSaver &operator=(CurrentPathSaver &&rhs) = delete;
 
 private:
     std::filesystem::path m_old_path;

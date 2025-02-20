@@ -15,7 +15,6 @@
 #include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_choice.h"
-#include "ui/get_a_filename.h"
 #include "ui/get_key_no_help.h"
 #include "ui/help_title.h"
 #include "ui/id_keys.h"
@@ -733,17 +732,47 @@ retry:
     return choices[i]->point;
 }
 
+// Formula, LSystem, etc. type structure, select from file
+// containing definitions in the form    name { ... }
 static long get_file_entry(
-    ItemType type, const char *title, const char *fn_key_mask, std::string &filename, std::string &entry_name)
+    ItemType type, const char *type_desc, const char *type_wildcard, std::string &filename, std::string &entry_name)
 {
-    // Formula, LSystem, etc. type structure, select from file
-    // containing definitions in the form    name { ... }
+    char hdg[80];
+    std::sprintf(hdg, "Select %s File", type_desc);
+    while (true)
+    {
+        // binary mode used here - it is more work, but much faster,
+        //     especially when ftell or fgetpos is used
+        s_gfe_file = std::fopen(filename.c_str(), "rb");
+        while (s_gfe_file == nullptr)
+        {
+            stop_msg("Couldn't open " + filename);
+            std::sprintf(hdg, "Select %s File", type_desc);
+            if (driver_get_filename(hdg, type_desc, type_wildcard, filename))
+            {
+                return -1;
+            }
+            s_gfe_file = std::fopen(filename.c_str(), "rb");
+        }
+        long entry_pointer = gfe_choose_entry(type, type_desc, filename, entry_name);
+        if (entry_pointer == -2)
+        {
+            std::fclose(s_gfe_file);
+            s_gfe_file = nullptr;
+            // either they cancel browsing for a new file, in which case
+            // filename is unchanged, or they browsed for a new file that's
+            // been stored in filename.  Either way, we need to open the
+            // file and show the entries again.
+            driver_get_filename(hdg, type_desc, type_wildcard, filename);
+            continue;
+        }
+        return entry_pointer;
+    }
+
     bool new_file = false;
     while (true)
     {
         bool first_try = false;
-        // binary mode used here - it is more work, but much faster,
-        //     especially when ftell or fgetpos is used
         while (new_file || (s_gfe_file = std::fopen(filename.c_str(), "rb")) == nullptr)
         {
             char buf[60];
@@ -752,15 +781,15 @@ static long get_file_entry(
             {
                 stop_msg("Can't find " + filename);
             }
-            std::sprintf(buf, "Select %s File", title);
-            if (get_a_file_name(buf, fn_key_mask, filename))
+            std::sprintf(buf, "Select %s File", type_desc);
+            if (driver_get_filename(buf, type_desc, type_wildcard, filename))
             {
                 return -1;
             }
 
             first_try = true; // if around open loop again it is an error
         }
-        long entry_pointer = gfe_choose_entry(type, title, filename, entry_name);
+        long entry_pointer = gfe_choose_entry(type, type_desc, filename, entry_name);
         if (entry_pointer == -2)
         {
             new_file = true; // go to file list,
@@ -780,19 +809,19 @@ long get_file_entry(ItemType type, std::string &filename, std::string &entry_nam
     case ItemType::FORMULA:
     {
         const long entry_pointer{get_file_entry(type, "Formula", "*.frm", filename, entry_name)};
-        return run_formula(entry_name, true) ? entry_pointer : 0;
+        return entry_pointer >= 0 ? (run_formula(entry_name, true) ? entry_pointer : 0) : entry_pointer;
     }
 
     case ItemType::L_SYSTEM:
     {
         const long entry_pointer{get_file_entry(type, "L-System", "*.l", filename, entry_name)};
-        return lsystem_load() == 0 ? 0 : entry_pointer;
+        return entry_pointer >= 0 ? (lsystem_load() == 0 ? 0 : entry_pointer) : entry_pointer;
     }
 
     case ItemType::IFS:
     {
         const long entry_pointer{get_file_entry(type, "IFS", "*.ifs", filename, entry_name)};
-        if (ifs_load() == 0)
+        if (entry_pointer >= 0 && ifs_load() == 0)
         {
             set_fractal_type(!g_ifs_type ? FractalType::IFS : FractalType::IFS_3D);
             set_default_params(); // to correct them if 3d

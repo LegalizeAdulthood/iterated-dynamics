@@ -45,7 +45,6 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_config_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
-    include/CurrentPathSaver.h
     include/MockDriver.h
     include/ValueUnchanged.h
     include/test_config_data.h.in

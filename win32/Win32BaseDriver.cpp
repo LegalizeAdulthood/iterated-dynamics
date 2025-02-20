@@ -6,12 +6,14 @@
  */
 #include "Win32BaseDriver.h"
 
+#include "config/path_limits.h"
 #include "Frame.h"
 #include "instance.h"
 #include "ods.h"
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "io/CurrentPathSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/read_ticker.h"
@@ -24,9 +26,11 @@
 #include "ui/zoom.h"
 
 #include <crtdbg.h>
+#include <commdlg.h>
 
 #include <cassert>
 #include <ctime>
+#include <filesystem>
 
 static void flush_output()
 {
@@ -468,4 +472,59 @@ void Win32BaseDriver::get_cursor_pos(int &x, int &y) const
 void Win32BaseDriver::check_memory()
 {
     _ASSERTE(_CrtCheckMemory());
+}
+
+bool Win32BaseDriver::get_filename(
+    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
+{
+    CurrentPathSaver saved_current;
+    const std::filesystem::path current{std::filesystem::current_path()};
+    std::filesystem::path path{result_filename};
+    if (path.has_filename())
+    {
+        if (path.is_relative())
+        {
+            path = std::filesystem::current_path() / path;
+        }
+    }
+    else
+    {
+        path.clear();
+    }
+    OPENFILENAMEA info{};
+    info.lStructSize = sizeof(OPENFILENAMEA);
+    info.hwndOwner = g_frame.get_window();
+    std::string filter{type_desc};
+    filter.append(" Files (");
+    filter.append(type_wildcard);
+    filter.append(")");
+    filter.append(1, 0);
+    filter.append(type_wildcard);
+    filter.append(1, 0);
+    filter.append("All files (*.*)");
+    filter.append(1, 0);
+    filter.append("*.*");
+    filter.append(2, 0);
+    info.lpstrFilter = filter.data();
+    info.nFilterIndex = 1;
+    char filename[ID_FILE_MAX_PATH]{};
+    std::strcpy(filename, path.string().c_str());
+    info.lpstrFile = filename;
+    info.nMaxFile = ID_FILE_MAX_PATH;
+    info.lpstrFileTitle = nullptr;
+    info.nMaxFileTitle = 0;
+    info.lpstrInitialDir = nullptr;
+    info.lpstrTitle = hdg;
+    info.Flags =
+        OFN_DONTADDTORECENT | OFN_LONGNAMES | OFN_NONETWORKBUTTON | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+    if (GetOpenFileNameA(&info))
+    {
+        result_filename = info.lpstrFile;
+        return false;
+    }
+    if (DWORD last_error{GetLastError()}; last_error != ERROR_SUCCESS)
+    {
+        debug_text(("GetOpenFileNameA failed: " + std::to_string(last_error)).c_str());
+    }
+    return true;
 }

@@ -7,7 +7,6 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/full_screen_prompt.h"
-#include "ui/get_a_filename.h"
 #include "ui/stereo.h"
 
 #include <cstring>
@@ -112,7 +111,7 @@ int get_rds_params()
         }
         if (g_image_map && !reuse)
         {
-            if (get_a_file_name("Select an Imagemap File", s_masks[1], g_stereo_map_filename))
+            if (driver_get_filename("Select an Imagemap File", "Imagemap", s_masks[1], g_stereo_map_filename))
             {
                 continue;
             }

@@ -78,9 +78,10 @@ int get_fract_type()
 {
     bool accepted{};
     FractalType old_fract_type = g_fractal_type;
+    FractalType t{g_fractal_type};
     while (true)
     {
-        FractalType t = select_fract_type(g_fractal_type);
+        t = select_fract_type(t);
         if (t == FractalType::NO_FRACTAL)
         {
             break;

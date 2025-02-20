@@ -117,6 +117,8 @@ public:
     virtual void debug_text(const char *text) = 0;         // Emit debug text (no EOL assumed)
     virtual void get_cursor_pos(int &x, int &y) const = 0; // get cursor position within frame
     virtual void check_memory() = 0;                       // check memory for corrupted heap
+    virtual bool get_filename(
+        const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename) = 0;
 };
 
 void load_driver(Driver *drv, int *argc, char **argv);
@@ -360,4 +362,10 @@ inline void driver_get_cursor_pos(int &x, int &y)
 inline void driver_check_memory()
 {
     g_driver->check_memory();
+}
+
+inline bool driver_get_filename(
+    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
+{
+    return g_driver->get_filename(hdg, type_desc, type_wildcard, result_filename);
 }

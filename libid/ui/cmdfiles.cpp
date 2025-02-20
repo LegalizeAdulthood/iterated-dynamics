@@ -31,9 +31,9 @@
 #include "io/fix_dirname.h"
 #include "io/has_ext.h"
 #include "io/is_directory.h"
-#include "io/load_config.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
+#include "io/locate_input_file.h"
 #include "io/merge_path_names.h"
 #include "io/special_dirs.h"
 #include "math/biginit.h"
@@ -116,7 +116,7 @@ std::string g_read_filename;                              // name of fractal inp
 std::string g_temp_dir;                                   // name of temporary directory
 std::string g_working_dir;                                // name of directory for misc files
 std::string g_organize_formulas_dir;                      // name of directory for orgfrm files
-std::string g_gif_filename_mask;                          //
+std::string g_gif_filename_mask{"*.gif"};                 //
 std::string g_save_filename{"fract001"};                  // save files using this name
 bool g_potential_flag{};                                  // continuous potential enabled?
 bool g_potential_16bit{};                                 // store 16 bit continuous potential values
@@ -250,7 +250,7 @@ int get_power10(LDouble x)
 
 static void process_sstools_ini()
 {
-    const std::string sstools_ini{locate_config_file("sstools.ini")}; // look for SSTOOLS.INI
+    const std::string sstools_ini{locate_input_file("sstools.ini")}; // look for SSTOOLS.INI
     if (sstools_ini.empty())
     {
         return;
@@ -272,6 +272,12 @@ static void process_simple_command(char *cur_arg)
         if (has_ext(cur_arg) == nullptr)
         {
             filename += ".gif";
+        }
+        filename = locate_input_file(filename);
+        if (filename.empty())
+        {
+            stop_msg("Couldn't locate " + filename);
+            return;
         }
         if (std::FILE *init_file = std::fopen(filename.c_str(), "rb"))
         {

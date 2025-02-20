@@ -184,6 +184,9 @@ public:
     }
     void check_memory() override;
 
+    bool get_filename(const char *hdg, const char *type_desc, const char *type_wildcard,
+        std::string &result_filename) override;
+
     void setredrawscreen()
     {
         m_need_redraw = true;
@@ -2601,6 +2604,12 @@ void X11Driver::set_keyboard_timeout(int ms)
 void X11Driver::check_memory()
 {
     // is there a way to check heap for corruption in libc++ or stdlibc++?
+}
+
+bool X11Driver::get_filename(
+    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename) override
+{
+    return true;
 }
 
 static X11Driver s_x11_driver;

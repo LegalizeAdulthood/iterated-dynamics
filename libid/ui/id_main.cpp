@@ -19,7 +19,6 @@
 #include "ui/evolve.h"
 #include "ui/framain2.h"
 #include "ui/get_3d_params.h"
-#include "ui/get_a_filename.h"
 #include "ui/get_browse_params.h"
 #include "ui/get_cmd_string.h"
 #include "ui/get_commands.h"
@@ -242,7 +241,7 @@ static bool main_restore_start(MainContext &context)
                 hdg = "Select File to Restore";
                 g_help_mode = HelpLabels::HELP_SAVE_RESTORE;
             }
-            if (g_show_file < 0 && get_a_file_name(hdg, g_gif_filename_mask.c_str(), g_read_filename))
+            if (g_show_file < 0 && driver_get_filename(hdg, "GIF", g_gif_filename_mask.c_str(), g_read_filename))
             {
                 g_show_file = 1; // cancelled
                 g_init_mode = -1;

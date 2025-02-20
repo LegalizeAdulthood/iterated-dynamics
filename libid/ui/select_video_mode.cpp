@@ -7,6 +7,7 @@
 #include "io/find_path.h"
 #include "io/is_writeable.h"
 #include "io/load_config.h"
+#include "io/locate_input_file.h"
 #include "io/save_file.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -213,7 +214,7 @@ static void update_id_cfg()
         return;
     }
 
-    const std::filesystem::path cfg_path{locate_config_file("id.cfg")};
+    const std::filesystem::path cfg_path{locate_input_file("id.cfg")};
     if (!exists(cfg_path))
     {
         stop_msg("Couldn't locate id.cfg, expected " + cfg_path.string() + " to exist");

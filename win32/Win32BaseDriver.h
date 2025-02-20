@@ -58,6 +58,8 @@ public:
     void debug_text(const char *text) override;
     void get_cursor_pos(int &x, int &y) const override;
     void check_memory() override;
+    bool get_filename(const char *hdg, const char *type_desc, const char *type_wildcard,
+        std::string &result_filename) override;
 
 protected:
     std::string m_name;

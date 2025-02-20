@@ -16,7 +16,6 @@
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/field_prompt.h"
-#include "ui/get_a_filename.h"
 #include "ui/id_keys.h"
 #include "ui/spindac.h"
 
@@ -619,7 +618,7 @@ bool load_palette()
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
     std::string filename{g_map_name};
     driver_stack_screen();
-    const bool i = get_a_file_name("Select a MAP File", "*.map", filename);
+    const bool i = driver_get_filename("Select a Map File", "Colormap", "*.map", filename);
     driver_unstack_screen();
     if (!i)
     {

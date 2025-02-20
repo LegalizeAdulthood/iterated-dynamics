@@ -2,9 +2,6 @@
 //
 #include <ui/cmdfiles_test.h>
 
-#include "CurrentPathSaver.h"
-#include "engine/log_map.h"
-#include "misc/version.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "ValueUnchanged.h"
@@ -16,6 +13,7 @@
 #include <engine/bailout_formula.h>
 #include <engine/engine_timer.h>
 #include <engine/id_data.h>
+#include <engine/log_map.h>
 #include <engine/soi.h>
 #include <engine/sticky_orbits.h>
 #include <fractals/fractalp.h>
@@ -23,11 +21,13 @@
 #include <fractals/jb.h>
 #include <fractals/lorenz.h>
 #include <fractals/parser.h>
+#include <io/CurrentPathSaver.h>
 #include <io/loadfile.h>
 #include <io/special_dirs.h>
 #include <misc/debug_flags.h>
 #include <misc/id.h>
 #include <misc/ValueSaver.h>
+#include <misc/version.h>
 #include <ui/framain2.h>
 #include <ui/history.h>
 #include <ui/id_keys.h>
@@ -46,6 +46,7 @@
 #include <algorithm>
 #include <cctype>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <sstream>
 #include <string_view>
