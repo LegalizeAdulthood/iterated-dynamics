@@ -15,7 +15,6 @@ enum class ItemType
 
 bool find_file_item(std::string &filename, const char *item_name, std::FILE **file_ptr, ItemType item_type);
 
-long get_file_entry(ItemType type, const char *title, const char *fn_key_mask, std::string &filename,
-    std::string &entry_name);
+long get_file_entry(ItemType type, std::string &filename, std::string &entry_name);
 
 bool search_for_entry(std::FILE *infile, const char *item_name);

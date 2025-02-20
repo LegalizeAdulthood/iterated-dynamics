@@ -32,6 +32,7 @@
 #include <cctype>
 #include <cstdio>
 #include <cstring>
+#include <stdexcept>
 #include <string>
 
 enum : int
@@ -732,7 +733,7 @@ retry:
     return choices[i]->point;
 }
 
-long get_file_entry(
+static long get_file_entry(
     ItemType type, const char *title, const char *fn_key_mask, std::string &filename, std::string &entry_name)
 {
     // Formula, LSystem, etc. type structure, select from file
@@ -759,41 +760,46 @@ long get_file_entry(
 
             first_try = true; // if around open loop again it is an error
         }
-        new_file = false;
         long entry_pointer = gfe_choose_entry(type, title, filename, entry_name);
         if (entry_pointer == -2)
         {
             new_file = true; // go to file list,
-            continue;       // back to getafilename
+            continue;        // back to getafilename
         }
-        if (entry_pointer == -1)
-        {
-            return -1;
-        }
-        switch (type)
-        {
-        case ItemType::FORMULA:
-            if (!run_formula(entry_name, true))
-            {
-                return 0;
-            }
-            break;
-        case ItemType::L_SYSTEM:
-            if (lsystem_load() == 0)
-            {
-                return 0;
-            }
-            break;
-        case ItemType::IFS:
-            if (ifs_load() == 0)
-            {
-                set_fractal_type(!g_ifs_type ? FractalType::IFS : FractalType::IFS_3D);
-                set_default_params(); // to correct them if 3d
-                return 0;
-            }
-            break;
-        case ItemType::PAR_SET:
-            return entry_pointer;
-        }
+        return entry_pointer;
     }
+}
+
+long get_file_entry(ItemType type, std::string &filename, std::string &entry_name)
+{
+    switch (type)
+    {
+    case ItemType::PAR_SET:
+        return get_file_entry(type, "Parameter Set", "*.par", filename, entry_name);
+
+    case ItemType::FORMULA:
+    {
+        const long entry_pointer{get_file_entry(type, "Formula", "*.frm", filename, entry_name)};
+        return run_formula(entry_name, true) ? entry_pointer : 0;
+    }
+
+    case ItemType::L_SYSTEM:
+    {
+        const long entry_pointer{get_file_entry(type, "L-System", "*.l", filename, entry_name)};
+        return lsystem_load() == 0 ? 0 : entry_pointer;
+    }
+
+    case ItemType::IFS:
+    {
+        const long entry_pointer{get_file_entry(type, "IFS", "*.ifs", filename, entry_name)};
+        if (ifs_load() == 0)
+        {
+            set_fractal_type(!g_ifs_type ? FractalType::IFS : FractalType::IFS_3D);
+            set_default_params(); // to correct them if 3d
+            return 0;
+        }
+        return entry_pointer;
+    }
+    }
+    throw std::runtime_error("Unknown item type " + std::to_string(static_cast<int>(type)));
 }
