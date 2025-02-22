@@ -136,6 +136,7 @@ restart:
 
     open_file.replace_extension(open_file_ext);
 
+    open_file = get_save_name(open_file.string());
     tmp_file = open_file;
     if (!exists(open_file))  // file doesn't exist
     {
