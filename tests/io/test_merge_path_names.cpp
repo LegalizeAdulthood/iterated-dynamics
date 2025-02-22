@@ -2,9 +2,9 @@
 //
 #include <io/merge_path_names.h>
 
-#include "CurrentPathSaver.h"
 #include "test_data.h"
 
+#include <io/CurrentPathSaver.h>
 #include <ui/cmdfiles.h>
 
 #include <gtest/gtest.h>

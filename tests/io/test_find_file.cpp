@@ -2,8 +2,9 @@
 //
 #include <io/find_file.h>
 
-#include "CurrentPathSaver.h"
 #include "test_data.h"
+
+#include <io/CurrentPathSaver.h>
 
 #include <gmock/gmock.h>
 
