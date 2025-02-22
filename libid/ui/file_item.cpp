@@ -768,35 +768,6 @@ static long get_file_entry(
         }
         return entry_pointer;
     }
-
-    bool new_file = false;
-    while (true)
-    {
-        bool first_try = false;
-        while (new_file || (s_gfe_file = std::fopen(filename.c_str(), "rb")) == nullptr)
-        {
-            char buf[60];
-            new_file = false;
-            if (first_try)
-            {
-                stop_msg("Can't find " + filename);
-            }
-            std::sprintf(buf, "Select %s File", type_desc);
-            if (driver_get_filename(buf, type_desc, type_wildcard, filename))
-            {
-                return -1;
-            }
-
-            first_try = true; // if around open loop again it is an error
-        }
-        long entry_pointer = gfe_choose_entry(type, type_desc, filename, entry_name);
-        if (entry_pointer == -2)
-        {
-            new_file = true; // go to file list,
-            continue;        // back to getafilename
-        }
-        return entry_pointer;
-    }
 }
 
 long get_file_entry(ItemType type, std::string &filename, std::string &entry_name)
