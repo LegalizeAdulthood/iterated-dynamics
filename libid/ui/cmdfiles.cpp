@@ -1965,7 +1965,7 @@ static CmdArgFlags cmd_fast_restore(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
-static CmdArgFlags cmd_file_name(const Command &cmd)
+static CmdArgFlags cmd_filename(const Command &cmd)
 {
     if (cmd.char_val[0] == '.' && cmd.value[1] != SLASH_CH)
     {
@@ -3798,7 +3798,7 @@ static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"epsf", cmd_deprecated},                 // deprecated print parameters
     CommandHandler{"exitmode", cmd_deprecated},             //
     CommandHandler{"fastrestore", cmd_fast_restore},        //
-    CommandHandler{"filename", cmd_file_name},               //
+    CommandHandler{"filename", cmd_filename},               //
     CommandHandler{"fillcolor", cmd_fill_color},            //
     CommandHandler{"filltype", cmd_fill_type},              //
     CommandHandler{"finattract", cmd_fin_attract},          //
