@@ -274,30 +274,26 @@ static void process_simple_command(char *cur_arg)
             filename += ".gif";
         }
         filename = locate_input_file(filename);
-        if (filename.empty())
+        if (!filename.empty())
         {
-            stop_msg("Couldn't locate " + filename);
-            return;
-        }
-        if (std::FILE *init_file = std::fopen(filename.c_str(), "rb"))
-        {
-            char signature[6];
-            if (std::fread(signature, 1, 6, init_file) != 6)
+            if (std::FILE *init_file = std::fopen(filename.c_str(), "rb"))
             {
-                throw std::system_error(errno, std::system_category(), "process_simple_command failed fread");
+                char signature[6];
+                if (std::fread(signature, 1, 6, init_file) != 6)
+                {
+                    throw std::system_error(
+                        errno, std::system_category(), "process_simple_command failed fread");
+                }
+                if (signature[0] == 'G' && signature[1] == 'I' && signature[2] == 'F' &&
+                    signature[3] >= '8' && signature[3] <= '9' && signature[4] >= '0' && signature[4] <= '9')
+                {
+                    g_read_filename = cur_arg;
+                    g_browse_name = extract_file_name(g_read_filename.c_str());
+                    g_show_file = 0;
+                    processed = true;
+                }
+                std::fclose(init_file);
             }
-            if (signature[0] == 'G'
-                && signature[1] == 'I'
-                && signature[2] == 'F'
-                && signature[3] >= '8' && signature[3] <= '9'
-                && signature[4] >= '0' && signature[4] <= '9')
-            {
-                g_read_filename = cur_arg;
-                g_browse_name = extract_file_name(g_read_filename.c_str());
-                g_show_file = 0;
-                processed = true;
-            }
-            std::fclose(init_file);
         }
     }
     if (!processed)
