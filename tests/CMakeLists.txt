@@ -66,6 +66,7 @@ add_executable(test-id
     io/test_loadfile.cpp
     io/test_load_config.cpp
     io/test_load_entry_text.cpp
+    io/test_locate_input_file.cpp
     io/test_make_path.cpp
     io/test_merge_path_names.cpp
     io/test_open_save_file.cpp

@@ -13,7 +13,7 @@
 std::string locate_input_file(const std::string &name)
 {
     const std::string current_dir{std::filesystem::current_path().string()};
-    std::initializer_list<std::string_view> dirs{g_save_dir, g_fractal_search_dir1, g_fractal_search_dir2, current_dir};
+    std::initializer_list<std::string_view> dirs{current_dir, g_save_dir, g_fractal_search_dir1, g_fractal_search_dir2};
     for (std::string_view search_dir : dirs)
     {
         std::filesystem::path file_path{search_dir};
