@@ -3049,37 +3049,37 @@ TEST_F(TestParameterCommand, logMapValue)
 
 TEST_F(TestParameterCommand, logModeFly)
 {
-    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, -999};
+    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, static_cast<LogMapCalculate>(-999)};
     ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, true};
 
     exec_cmd_arg("logmode=f");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1, g_log_map_fly_calculate);
+    EXPECT_EQ(LogMapCalculate::ON_THE_FLY, g_log_map_fly_calculate);
     EXPECT_FALSE(g_log_map_auto_calculate);
 }
 
 TEST_F(TestParameterCommand, logModeTable)
 {
-    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, -999};
+    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, static_cast<LogMapCalculate>(-999)};
     ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, true};
 
     exec_cmd_arg("logmode=t");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2, g_log_map_fly_calculate);
+    EXPECT_EQ(LogMapCalculate::USE_LOG_TABLE, g_log_map_fly_calculate);
     EXPECT_FALSE(g_log_map_auto_calculate);
 }
 
 TEST_F(TestParameterCommand, logModeAuto)
 {
-    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, -999};
+    ValueSaver saved_log_map_fly_calculate{g_log_map_fly_calculate, static_cast<LogMapCalculate>(-999)};
     ValueSaver saved_log_map_auto_calculate{g_log_map_auto_calculate, false};
 
     exec_cmd_arg("logmode=a");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(0, g_log_map_fly_calculate);
+    EXPECT_EQ(LogMapCalculate::NONE, g_log_map_fly_calculate);
     EXPECT_TRUE(g_log_map_auto_calculate);
 }
 

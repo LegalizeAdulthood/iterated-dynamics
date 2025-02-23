@@ -6,9 +6,16 @@
 
 #include <vector>
 
+enum class LogMapCalculate
+{
+    NONE = 0,
+    ON_THE_FLY = 1,
+    USE_LOG_TABLE = 2,
+};
+
 extern bool                  g_log_map_auto_calculate;
 extern long                  g_log_map_flag;
-extern int                   g_log_map_fly_calculate;
+extern LogMapCalculate       g_log_map_fly_calculate;
 extern bool                  g_log_map_calculate;
 extern std::vector<Byte>     g_log_map_table;
 extern long                  g_log_map_table_max_size;

@@ -8,9 +8,9 @@
 
 #include <cmath>
 
-long g_log_map_flag{};                       // Logarithmic palette flag: 0 = no
-int g_log_map_fly_calculate{};               // calculate logmap on-the-fly
-bool g_log_map_auto_calculate{};             // auto calculate logmap
+long g_log_map_flag{};                     // Logarithmic palette flag: 0 = no
+LogMapCalculate g_log_map_fly_calculate{}; // calculate logmap on-the-fly
+bool g_log_map_auto_calculate{};           // auto calculate logmap
 std::vector<Byte> g_log_map_table;
 long g_log_map_table_max_size{};
 bool g_log_map_calculate{};

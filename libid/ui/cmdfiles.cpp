@@ -2409,15 +2409,15 @@ static CmdArgFlags cmd_log_map(const Command &cmd)
 // logmode=?
 static CmdArgFlags cmd_log_mode(const Command &cmd)
 {
-    g_log_map_fly_calculate = 0; // turn off if error
+    g_log_map_fly_calculate = LogMapCalculate::NONE; // turn off if error
     g_log_map_auto_calculate = false;
     if (cmd.char_val[0] == 'f')
     {
-        g_log_map_fly_calculate = 1; // calculate on the fly
+        g_log_map_fly_calculate = LogMapCalculate::ON_THE_FLY; // calculate on the fly
     }
     else if (cmd.char_val[0] == 't')
     {
-        g_log_map_fly_calculate = 2; // force use of LogTable
+        g_log_map_fly_calculate = LogMapCalculate::USE_LOG_TABLE; // force use of LogTable
     }
     else if (cmd.char_val[0] == 'a')
     {

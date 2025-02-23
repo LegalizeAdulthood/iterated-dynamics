@@ -560,12 +560,12 @@ int calc_fract()
     g_log_map_calculate = false;
     // below, 32767 is used as the allowed value for maximum iteration count for
     // historical reasons.  TODO: increase this limit
-    if (g_log_map_flag && (g_max_iterations > 32767 || g_log_map_fly_calculate == 1))
+    if (g_log_map_flag && (g_max_iterations > 32767 || g_log_map_fly_calculate == LogMapCalculate::ON_THE_FLY))
     {
         g_log_map_calculate = true; // calculate on the fly
         setup_log_table();
     }
-    else if (g_log_map_flag && g_log_map_fly_calculate == 2)
+    else if (g_log_map_flag && g_log_map_fly_calculate == LogMapCalculate::USE_LOG_TABLE)
     {
         g_log_map_table_max_size = 32767;
         g_log_map_calculate = false; // use logtable
@@ -589,14 +589,14 @@ int calc_fract()
 
         if (!resized)
         {
-            if (g_iteration_ranges_len || g_log_map_fly_calculate == 2)
+            if (g_iteration_ranges_len || g_log_map_fly_calculate == LogMapCalculate::USE_LOG_TABLE)
             {
                 stop_msg("Insufficient memory for logmap/ranges with this maxiter");
             }
             else
             {
                 stop_msg("Insufficient memory for logTable, using on-the-fly routine");
-                g_log_map_fly_calculate = 1;
+                g_log_map_fly_calculate = LogMapCalculate::ON_THE_FLY;
                 g_log_map_calculate = true; // calculate on the fly
                 setup_log_table();
             }

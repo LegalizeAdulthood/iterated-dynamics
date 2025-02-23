@@ -991,14 +991,14 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             }
         }
 
-        if (g_log_map_fly_calculate && g_log_map_flag && !g_iteration_ranges_len)
+        if (g_log_map_fly_calculate != LogMapCalculate::NONE && g_log_map_flag && !g_iteration_ranges_len)
         {
             put_param(" %s=", "logmode");
-            if (g_log_map_fly_calculate == 1)
+            if (g_log_map_fly_calculate == LogMapCalculate::ON_THE_FLY)
             {
                 put_param("fly");
             }
-            else if (g_log_map_fly_calculate == 2)
+            else if (g_log_map_fly_calculate == LogMapCalculate::USE_LOG_TABLE)
             {
                 put_param("table");
             }

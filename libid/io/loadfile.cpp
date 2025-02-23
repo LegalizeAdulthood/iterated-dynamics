@@ -755,7 +755,7 @@ static void backwards_info12(FractalInfo read_info)
         g_inversion[0] = read_info.d_invert[0];
         g_inversion[1] = read_info.d_invert[1];
         g_inversion[2] = read_info.d_invert[2];
-        g_log_map_fly_calculate = read_info.log_calc;
+        g_log_map_fly_calculate = static_cast<LogMapCalculate>(read_info.log_calc);
         g_stop_pass = read_info.stop_pass;
     }
 }

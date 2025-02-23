@@ -622,7 +622,7 @@ void save_history_info()
     current.bailout_test = g_bailout_test;
     current.iterations = g_max_iterations;
     current.old_demm_colors = g_old_demm_colors;
-    current.log_map_fly_calculate = g_log_map_fly_calculate;
+    current.log_map_fly_calculate = static_cast<int>(g_log_map_fly_calculate);
     current.is_mandelbrot = g_is_mandelbrot;
     current.close_proximity = g_close_proximity;
     current.bof_match_book_images = g_bof_match_book_images;
@@ -820,7 +820,7 @@ void restore_history_info(int i)
     {
         g_invert = 3;
     }
-    g_log_map_fly_calculate = last.log_map_fly_calculate;
+    g_log_map_fly_calculate = static_cast<LogMapCalculate>(last.log_map_fly_calculate);
     g_is_mandelbrot = last.is_mandelbrot;
     g_close_proximity = last.close_proximity;
     g_bof_match_book_images = last.bof_match_book_images;
