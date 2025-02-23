@@ -220,7 +220,7 @@ static bool main_restore_start(MainContext &context)
         std::memcpy(g_dac_box, g_old_dac_box, 256 * 3); // restore in case colors= present
     }
     g_look_at_mouse = MouseLook::IGNORE_MOUSE;
-    while (g_show_file == ShowFile::REQUEST_IMAGE) // image is to be loaded
+    while (g_show_file <= ShowFile::LOAD_IMAGE) // image is to be loaded
     {
         g_tab_mode = false;
         if (!g_browsing) /*RB*/
