@@ -355,7 +355,7 @@ MainState big_while_loop(MainContext &context)
                 g_video_entry.y_dots = g_logical_screen_y_dots;
             }
 
-            if (g_save_dac || g_colors_preloaded)
+            if (g_save_dac != SaveDAC::NO || g_colors_preloaded)
             {
                 std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
                 spin_dac(0, 1);
@@ -455,13 +455,13 @@ MainState big_while_loop(MainContext &context)
             g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
         }
         // assume we save next time (except jb)
-        g_save_dac = (g_save_dac == 0) ? 2 : 1;
+        g_save_dac = g_save_dac == SaveDAC::NO ? SaveDAC::NEXT_TIME : SaveDAC::YES;
 
         if (g_show_file == ShowFile::LOAD_IMAGE)
         {
             // loading an image
-            g_out_line_cleanup = nullptr;          // outln routine can set this
-            if (g_display_3d != Display3DMode::NONE)                 // set up 3D decoding
+            g_out_line_cleanup = nullptr;            // outln routine can set this
+            if (g_display_3d != Display3DMode::NONE) // set up 3D decoding
             {
                 g_out_line = call_line3d;
             }

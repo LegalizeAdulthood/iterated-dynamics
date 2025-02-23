@@ -38,6 +38,13 @@ enum class Resaves
     FINAL = 2,
 };
 
+enum class SaveDAC
+{
+    NO = 0,
+    YES = 1,
+    NEXT_TIME = 2,
+};
+
 enum class HelpLabels;
 
 extern int                   g_adapter;             // index into g_video_table[]
@@ -80,7 +87,7 @@ extern double                g_plot_my2;
 extern double                g_params[];
 extern double                g_potential_params[];
 extern Resaves               g_resave_flag;
-extern int                   g_save_dac;
+extern SaveDAC               g_save_dac;
 extern int                   g_save_system;
 extern double                g_save_x_3rd;
 extern double                g_save_x_max;

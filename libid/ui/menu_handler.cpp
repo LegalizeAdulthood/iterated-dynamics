@@ -33,7 +33,7 @@ MainState request_fractal_type(MainContext &context)
     if (const int type = get_fract_type(); type >= 0)
     {
         driver_discard_screen();
-        g_save_dac = 0;
+        g_save_dac = SaveDAC::NO;
         g_magnitude_calc = true;
         g_use_old_periodicity = false;
         g_bad_outside = false;
@@ -187,7 +187,7 @@ MainState requested_video_fn(MainContext &context)
     g_adapter = k;
     if (g_video_table[g_adapter].colors != g_colors)
     {
-        g_save_dac = 0;
+        g_save_dac = SaveDAC::NO;
     }
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     context.more_keys = false;

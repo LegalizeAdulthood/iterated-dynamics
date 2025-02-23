@@ -850,14 +850,7 @@ void restore_history_info(int i)
         }
     }
     spin_dac(0, 1);
-    if (g_fractal_type == FractalType::JULIBROT)
-    {
-        g_save_dac = 0;
-    }
-    else
-    {
-        g_save_dac = 1;
-    }
+    g_save_dac = g_fractal_type == FractalType::JULIBROT ? SaveDAC::NO : SaveDAC::YES;
     switch (g_fractal_type)
     {
     case FractalType::FORMULA:

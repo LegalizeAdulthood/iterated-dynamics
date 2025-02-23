@@ -562,7 +562,7 @@ static MainState execute_commands(MainContext &context)
         g_adapter = g_init_mode;
         g_init_mode = -1;
         i |= +CmdArgFlags::FRACTAL_PARAM;
-        g_save_dac = 0;
+        g_save_dac = SaveDAC::NO;
     }
     else if (g_colors_preloaded)
     {
@@ -572,7 +572,7 @@ static MainState execute_commands(MainContext &context)
     }
     else if (i & +CmdArgFlags::RESET) // reset was specified
     {
-        g_save_dac = 0;
+        g_save_dac = SaveDAC::NO;
     }
     if (i & +CmdArgFlags::YES_3D)
     {

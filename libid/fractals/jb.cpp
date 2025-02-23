@@ -130,23 +130,23 @@ bool julibrot_setup()
 
     if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
     {
-        g_save_dac = 0;
+        g_save_dac = SaveDAC::NO;
         map_name = g_glasses1_map.c_str();
     }
     else
     {
         map_name = g_altern_map_file.c_str();
     }
-    if (g_save_dac != 1)
+    if (g_save_dac != SaveDAC::YES)
     {
         if (validate_luts(map_name))
         {
             return false;
         }
         spin_dac(0, 1);               // load it, but don't spin
-        if (g_save_dac == 2)
+        if (g_save_dac == SaveDAC::NEXT_TIME)
         {
-            g_save_dac = 1;
+            g_save_dac = SaveDAC::YES;
         }
     }
     return true;

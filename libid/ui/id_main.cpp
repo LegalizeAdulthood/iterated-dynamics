@@ -100,9 +100,9 @@ double g_save_y_min{}, g_save_y_max{};  //
 double g_save_x_3rd{}, g_save_y_3rd{};  // displayed screen corners
 double g_plot_mx1{}, g_plot_mx2{};      //
 double g_plot_my1{}, g_plot_my2{};      // real->screen multipliers
-CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //
+CalcStatus g_calc_status{CalcStatus::NO_FRACTAL};               //
 long g_calc_time{};                                             //
-int g_save_dac{};                                               // save-the-Video DAC flag
+SaveDAC g_save_dac{};                                           // save-the-Video DAC flag
 bool g_browsing{};                                              // browse mode flag
 std::string g_file_name_stack[16]{};                            // array of file names used while browsing
 int g_filename_stack_index{};                                   //
@@ -178,7 +178,7 @@ static void main_restart(const int argc, const char *const argv[], MainContext &
     driver_create_window();
     std::memcpy(g_old_dac_box, g_dac_box, 256 * 3); // save in case colors= present
     driver_set_for_text();                          // switch to text mode
-    g_save_dac = 0;                                 // don't save the VGA DAC
+    g_save_dac = SaveDAC::NO;                     // don't save the VGA DAC
 
     cmd_files(argc, argv);         // process the command-line
     do_pause(0);                  // pause for error msg if not batch
@@ -294,7 +294,7 @@ static bool main_restore_start(MainContext &context)
         context.resume = true;
         return true;
     }
-    g_save_dac = 0; // don't save the VGA DAC
+    g_save_dac = SaveDAC::NO; // don't save the VGA DAC
     return false;
 }
 
