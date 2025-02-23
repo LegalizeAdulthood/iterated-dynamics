@@ -2607,7 +2607,7 @@ void X11Driver::check_memory()
 }
 
 bool X11Driver::get_filename(
-    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename) override
+    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
 {
     return true;
 }
