@@ -22,6 +22,7 @@
 #include "io/has_ext.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
+#include "io/locate_input_file.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
@@ -94,7 +95,7 @@ int gif_view()
     Byte buffer[16];
     unsigned top;
     unsigned left;
-    char temp1[ID_FILE_MAX_DIR];
+    std::filesystem::path input_file;
     Byte byte_buf[257]; // for decoder
 
     // using stack for decoder byte buf rather than static mem
@@ -109,34 +110,26 @@ int gif_view()
     // Open the file
     if (g_out_line == out_line_stereo)
     {
-        std::strcpy(temp1, g_stereo_map_filename.c_str());
+        input_file = g_stereo_map_filename;
     }
     else
     {
-        std::strcpy(temp1, g_read_filename.c_str());
+        input_file = g_read_filename;
     }
-    if (has_ext(temp1) == nullptr)
+    if (!input_file.has_extension())
     {
-        std::strcat(temp1, DEFAULT_FRACTAL_TYPE);
-        s_fp_in = std::fopen(temp1, "rb");
-        if (s_fp_in != nullptr)
-        {
-            std::fclose(s_fp_in);
-        }
-        else
-        {
-            if (g_out_line == out_line_stereo)
-            {
-                std::strcpy(temp1, g_stereo_map_filename.c_str());
-            }
-            else
-            {
-                std::strcpy(temp1, g_read_filename.c_str());
-            }
-            std::strcat(temp1, ALTERNATE_FRACTAL_TYPE);
-        }
+        input_file.replace_extension(DEFAULT_FRACTAL_TYPE);
     }
-    s_fp_in = std::fopen(temp1, "rb");
+    if (locate_input_file(input_file.string()).empty())
+    {
+        input_file.replace_extension(ALTERNATE_FRACTAL_TYPE);
+    }
+    input_file = locate_input_file(input_file.string());
+    if (input_file.empty())
+    {
+        return -1;
+    }
+    s_fp_in = std::fopen(input_file.string().c_str(), "rb");
     if (s_fp_in == nullptr)
     {
         return -1;
@@ -211,7 +204,7 @@ int gif_view()
     if (driver_is_disk())
     {
         // disk-video
-        dvid_status(1, "restoring " + std::filesystem::path(temp1).filename().string());
+        dvid_status(1, "restoring " + std::filesystem::path(input_file).filename().string());
     }
     g_read_color = true;
 
