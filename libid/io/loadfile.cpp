@@ -1006,8 +1006,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     ExtBlock6 blk_6_info;
     ExtBlock7 blk_7_info;
 
-    g_show_file = 1;                // for any abort exit, pretend done
-    g_init_mode = -1;               // no viewing mode set yet
+    g_show_file = ShowFile::IMAGE_LOADED; // for any abort exit, pretend done
+    g_init_mode = -1;                     // no viewing mode set yet
     g_loaded_3d = false;
     if (g_fast_restore)
     {
@@ -1283,7 +1283,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         }
     }
 
-    g_show_file = 0;                   // trigger the file load
+    g_show_file = ShowFile::LOAD_IMAGE; // trigger the file load
     return 0;
 }
 

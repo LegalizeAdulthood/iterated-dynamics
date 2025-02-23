@@ -186,6 +186,13 @@ enum class ColorState
     MAP_FILE = 2, // g_dac_box matches the color file map
 };
 
+enum class ShowFile
+{
+    LOAD_IMAGE = 0,
+    IMAGE_LOADED = 1,
+    REQUEST_IMAGE = -1,
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern char                  g_auto_show_dot;
@@ -254,7 +261,7 @@ extern std::string           g_save_filename;
 extern float                 g_screen_aspect;
 extern id::SearchPath        g_search_for;
 extern int                   g_show_dot;
-extern int                   g_show_file;
+extern ShowFile              g_show_file;
 extern int                   g_size_dot;
 extern int                   g_sound_flag;
 extern bool                  g_start_show_orbit;

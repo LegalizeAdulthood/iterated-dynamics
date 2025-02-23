@@ -290,7 +290,7 @@ MainState big_while_loop(MainContext &context)
     while (true)                    // eternal loop
     {
         driver_check_memory();
-        if (g_calc_status != CalcStatus::RESUMABLE || g_show_file == 0)
+        if (g_calc_status != CalcStatus::RESUMABLE || g_show_file == ShowFile::LOAD_IMAGE)
         {
             std::memcpy(&g_video_entry, &g_video_table[g_adapter],
                    sizeof(g_video_entry));
@@ -457,7 +457,7 @@ MainState big_while_loop(MainContext &context)
         // assume we save next time (except jb)
         g_save_dac = (g_save_dac == 0) ? 2 : 1;
 
-        if (g_show_file == 0)
+        if (g_show_file == ShowFile::LOAD_IMAGE)
         {
             // loading an image
             g_out_line_cleanup = nullptr;          // outln routine can set this
@@ -475,7 +475,7 @@ MainState big_while_loop(MainContext &context)
                 if (pot_start_disk() < 0)
                 {
                     // pot file failed?
-                    g_show_file = 1;
+                    g_show_file = ShowFile::IMAGE_LOADED;
                     g_potential_flag  = false;
                     g_potential_16bit = false;
                     g_init_mode = -1;
@@ -545,10 +545,10 @@ MainState big_while_loop(MainContext &context)
         }
         save_history_info();
 
-        if (g_show_file == 0)
+        if (g_show_file == ShowFile::LOAD_IMAGE)
         {
             // image has been loaded
-            g_show_file = 1;
+            g_show_file = ShowFile::IMAGE_LOADED;
             if (g_init_batch == BatchMode::NORMAL && g_calc_status == CalcStatus::RESUMABLE)
             {
                 g_init_batch = BatchMode::FINISH_CALC_BEFORE_SAVE;

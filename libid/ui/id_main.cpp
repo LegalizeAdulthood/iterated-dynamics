@@ -193,7 +193,7 @@ static void main_restart(const int argc, const char *const argv[], MainContext &
 
     g_max_keyboard_check_interval = 80;                  // check the keyboard this often
 
-    if (g_show_file && g_init_mode < 0)
+    if (g_show_file != ShowFile::LOAD_IMAGE && g_init_mode < 0)
     {
         intro();                          // display the credits screen
         if (driver_key_pressed() == ID_KEY_ESC)
@@ -220,7 +220,7 @@ static bool main_restore_start(MainContext &context)
         std::memcpy(g_dac_box, g_old_dac_box, 256 * 3); // restore in case colors= present
     }
     g_look_at_mouse = MouseLook::IGNORE_MOUSE;
-    while (g_show_file <= 0) // image is to be loaded
+    while (g_show_file == ShowFile::REQUEST_IMAGE) // image is to be loaded
     {
         g_tab_mode = false;
         if (!g_browsing) /*RB*/
@@ -241,9 +241,10 @@ static bool main_restore_start(MainContext &context)
                 hdg = "Select File to Restore";
                 g_help_mode = HelpLabels::HELP_SAVE_RESTORE;
             }
-            if (g_show_file < 0 && driver_get_filename(hdg, "GIF", g_gif_filename_mask.c_str(), g_read_filename))
+            if (g_show_file == ShowFile::REQUEST_IMAGE &&
+                driver_get_filename(hdg, "GIF", g_gif_filename_mask.c_str(), g_read_filename))
             {
-                g_show_file = 1; // cancelled
+                g_show_file = ShowFile::IMAGE_LOADED; // cancelled
                 g_init_mode = -1;
                 break;
             }
@@ -254,7 +255,7 @@ static bool main_restore_start(MainContext &context)
 
         g_evolving = EvolutionModeFlags::NONE;
         g_view_window = false;
-        g_show_file = 0;
+        g_show_file = ShowFile::LOAD_IMAGE;
         g_help_mode = HelpLabels::NONE;
         g_tab_mode = true;
         if (context.stacked)
@@ -269,11 +270,11 @@ static bool main_restore_start(MainContext &context)
         }
         if (g_browsing) // break out of infinite loop, but lose your mind
         {
-            g_show_file = 1;
+            g_show_file = ShowFile::IMAGE_LOADED;
         }
         else
         {
-            g_show_file = -1; // retry
+            g_show_file = ShowFile::REQUEST_IMAGE; // retry
         }
     }
     g_help_mode = HelpLabels::HELP_MENU; // now use this help mode
@@ -307,7 +308,7 @@ static MainState main_image_start(bool &stacked, bool &resume_flag)
     }
     g_got_status = StatusValues::NONE;                     // for tab_display
 
-    if (g_show_file)
+    if (g_show_file != ShowFile::LOAD_IMAGE)
     {
         // goto image_start implies re-calc
         g_calc_status = std::min(g_calc_status, CalcStatus::PARAMS_CHANGED);
@@ -368,7 +369,7 @@ static MainState main_image_start(bool &stacked, bool &resume_flag)
                 std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save in case colors= present
             }
             driver_set_for_text(); // switch to text mode
-            g_show_file = -1;
+            g_show_file = ShowFile::REQUEST_IMAGE;
             return MainState::RESTORE_START;
         }
         if (key == 't')

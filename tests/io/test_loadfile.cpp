@@ -59,7 +59,7 @@ protected:
     void TearDown() override;
 
     MockDriver m_driver;
-    ValueSaver<int> saved_show_file{g_show_file};
+    ValueSaver<ShowFile> saved_show_file{g_show_file};
     ValueSaver<int> saved_init_mode{g_init_mode};
     ValueSaver<bool> saved_loaded_3d{g_loaded_3d};
     ValueSaver<bool> saved_fast_restore{g_fast_restore};

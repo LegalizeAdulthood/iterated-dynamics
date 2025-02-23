@@ -56,8 +56,8 @@ static bool look(MainContext &context)
     {
     case ID_KEY_ENTER:
     case ID_KEY_ENTER_2:
-        g_show_file = 0;       // trigger load
-        g_browsing = true;    // but don't ask for the file name as it's just been selected
+        g_show_file = ShowFile::LOAD_IMAGE; // trigger load
+        g_browsing = true;            // but don't ask for the file name as it's just been selected
         if (g_filename_stack_index == 15)
         {
             /* about to run off the end of the file
@@ -96,7 +96,7 @@ static bool look(MainContext &context)
             g_browse_name = g_file_name_stack[g_filename_stack_index];
             merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
             g_browsing = true;
-            g_show_file = 0;
+            g_show_file = ShowFile::LOAD_IMAGE;
             if (g_ask_video)
             {
                 driver_stack_screen();// save graphics image
@@ -461,7 +461,7 @@ static MainState unstack_file(bool &stacked)
     merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
     g_browsing = true;
     g_browse_sub_images = true;
-    g_show_file = 0;
+    g_show_file = ShowFile::LOAD_IMAGE;
     if (g_ask_video)
     {
         driver_stack_screen(); // save graphics image

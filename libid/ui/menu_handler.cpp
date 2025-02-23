@@ -153,7 +153,7 @@ MainState restore_from_image(MainContext &context)
             {
                 driver_stack_screen();   // save graphics image
                 g_read_filename = g_save_filename;
-                g_show_file = 0;
+                g_show_file = ShowFile::LOAD_IMAGE;
                 return MainState::RESTORE_START;
             }
         }
@@ -172,7 +172,7 @@ MainState restore_from_image(MainContext &context)
         g_resave_flag = 0;
         g_started_resaves = false;
     }
-    g_show_file = -1;
+    g_show_file = ShowFile::REQUEST_IMAGE;
     return MainState::RESTORE_START;
 }
 

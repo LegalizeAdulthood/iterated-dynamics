@@ -124,7 +124,7 @@ bool g_dither_flag{};                                     // true if we want to 
 bool g_ask_video{};                                       // flag for video prompting
 int g_biomorph{};                                         // flag for biomorph
 int g_user_biomorph_value{};                              //
-int g_show_file{};                                        // zero if file display pending
+ShowFile g_show_file{};                                   // zero if file display pending
 bool g_random_seed_flag{};                                //
 int g_random_seed{};                                      // Random number seeding flag and value
 int g_decomp[2]{};                                        // Decomposition coloring
@@ -289,7 +289,7 @@ static void process_simple_command(char *cur_arg)
                 {
                     g_read_filename = cur_arg;
                     g_browse_name = extract_file_name(g_read_filename.c_str());
-                    g_show_file = 0;
+                    g_show_file = ShowFile::LOAD_IMAGE;
                     processed = true;
                 }
                 std::fclose(init_file);
@@ -369,8 +369,8 @@ int cmd_files(int argc, const char *const *argv)
 
     if (!g_first_init)
     {
-        g_init_mode = -1; // don't set video when <ins> key used
-        g_show_file = 1;  // nor startup image file
+        g_init_mode = -1;                         // don't set video when <ins> key used
+        g_show_file = ShowFile::IMAGE_LOADED;     // nor startup image file
     }
 
     init_msg("", nullptr, CmdFile::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
@@ -381,7 +381,7 @@ int cmd_files(int argc, const char *const *argv)
     }
 
     // PAR reads a file and sets color, don't read colors from GIF
-    g_read_color = !g_colors_preloaded || g_show_file != 0;
+    g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
 
     //set structure of search directories
     g_search_for.par = g_command_file;
@@ -406,7 +406,7 @@ CmdArgFlags load_commands(std::FILE *infile)
     const CmdArgFlags ret = command_file(infile, CmdFile::AT_AFTER_STARTUP);
 
     // PAR reads a file and sets color, don't read colors from GIF
-    g_read_color = !g_colors_preloaded || g_show_file != 0;
+    g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
 
     return ret;
 }
@@ -471,7 +471,7 @@ static void init_vars_restart() // <ins> key init
     g_random_seed_flag = false;                        // not a fixed srand() seed
     g_random_seed = s_init_random_seed;                //
     g_read_filename = DOT_SLASH;                       // initially current directory
-    g_show_file = 1;                                   //
+    g_show_file = ShowFile::IMAGE_LOADED;              //
     // next should perhaps be fractal re-init, not just <ins> ?
     g_init_cycle_limit = 55;                          // spin-DAC default speed limit
     g_map_set = false;                                // no map= name active
@@ -1989,7 +1989,7 @@ static CmdArgFlags cmd_file_name(const Command &cmd)
     const int exist_dir = merge_path_names(g_read_filename, cmd.value, cmd.mode);
     if (exist_dir == 0)
     {
-        g_show_file = 0;
+        g_show_file = ShowFile::LOAD_IMAGE;
     }
     else if (exist_dir < 0)
     {

@@ -735,7 +735,7 @@ TEST_F(TestParameterCommand, filenameMask)
 TEST_F(TestParameterCommandError, filenameTooLong)
 {
     const std::string saved_gif_filename_mask{g_gif_filename_mask};
-    const int saved_show_file{g_show_file};
+    const ShowFile saved_show_file{g_show_file};
     const std::string saved_browse_name{g_browse_name};
     const std::string too_long{"filename=" + std::string(1024, 'f')};
 
