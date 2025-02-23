@@ -318,8 +318,18 @@ compatibility with DOS FRACTINT are made.
 
 Bugs Fixed in Version 1.2
 
-o The orbitname parameter for julibrot types is now documented.\
-o The chip, quadruptwo and threeply types documentation was improved.\
+o Id will search standard locations for images specified on the
+  command-line: current directory, savedir parameter location, and
+  FRACTDIR environment variable location.  (Fixes #267)
+o Id could overwrite image files in separate sessions, even when
+  the overwrite parameter was not set.  Id now properly checks for
+  the existence of a file in the save location.  (Fixes #264)
+o File system errors are now properly reported when writing image
+  parameters.  (Fixes #231)
+o The orbitname parameter for julibrot types is now documented.
+  (Fixes #238)
+o The chip, quadruptwo and threeply types documentation was improved.
+  (Fixes #252)
 o Versions 1.0, 1.1 and 1.1.1 wrote a version number into image files
   that was not compatible with loading into legacy DOS FRACTINT.  That
   has been corrected.
