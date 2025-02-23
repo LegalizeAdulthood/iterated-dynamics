@@ -298,13 +298,13 @@ static bool main_restore_start(MainContext &context)
     return false;
 }
 
-static MainState main_image_start(bool &stacked, bool &resume_flag)
+static MainState main_image_start(MainContext &context)
 {
     driver_check_memory();
-    if (stacked)
+    if (context.stacked)
     {
         driver_discard_screen();
-        stacked = false;
+        context.stacked = false;
     }
     g_got_status = StatusValues::NONE;                     // for tab_display
 
@@ -430,14 +430,9 @@ static MainState main_image_start(bool &stacked, bool &resume_flag)
 
     g_zoom_enabled = true;
     g_help_mode = HelpLabels::HELP_MAIN; // now use this help mode
-    resume_flag = false;                   // allows taking goto inside big_while_loop()
+    context.resume = false;              // allows taking goto inside big_while_loop()
 
     return MainState::CONTINUE;
-}
-
-static MainState main_image_start(MainContext &context)
-{
-    return main_image_start(context.stacked, context.resume);
 }
 
 static void set_search_dirs()
