@@ -553,8 +553,20 @@ skip_ui:
         if (infile != nullptr)
         {
             // replace the original file with the new
-            remove(in_path);           // success assumed on these lines
-            rename(out_path, in_path); // since we checked earlier
+            std::error_code ec{};
+            remove(in_path, ec);           // success assumed on these lines
+            if (ec)
+            {
+                stop_msg("Couldn't remove " + in_path.string() + ":\n" + ec.message());
+                break;
+            }
+            rename(out_path, in_path, ec); // since we checked earlier
+            if (ec)
+            {
+                stop_msg("Couldn't rename " + out_path.string() + "\n to " + in_path.string() + ":\n" +
+                    ec.message());
+                break;
+            }
         }
         break;
     }
