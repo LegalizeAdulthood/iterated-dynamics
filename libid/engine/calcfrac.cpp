@@ -703,10 +703,10 @@ int calc_fract()
     if (!g_resuming) // free resume_info memory if any is hanging around
     {
         end_resume();
-        if (g_resave_flag)
+        if (g_resave_flag != Resaves::NONE)
         {
             update_save_name(g_save_filename); // do the pending increment
-            g_resave_flag = 0;
+            g_resave_flag = Resaves::NONE;
             g_started_resaves = false;
         }
         g_calc_time = 0;

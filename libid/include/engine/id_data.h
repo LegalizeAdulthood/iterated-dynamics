@@ -31,6 +31,13 @@ enum class ConfigStatus
     BAD_NO_MESSAGE = -1
 };
 
+enum class Resaves
+{
+    NONE = 0,
+    STARTED = 1,
+    FINAL = 2,
+};
+
 enum class HelpLabels;
 
 extern int                   g_adapter;             // index into g_video_table[]
@@ -72,7 +79,7 @@ extern double                g_plot_my1;
 extern double                g_plot_my2;
 extern double                g_params[];
 extern double                g_potential_params[];
-extern int                   g_resave_flag;
+extern Resaves               g_resave_flag;
 extern int                   g_save_dac;
 extern int                   g_save_system;
 extern double                g_save_x_3rd;

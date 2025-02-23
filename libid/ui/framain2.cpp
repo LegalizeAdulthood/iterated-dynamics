@@ -725,14 +725,14 @@ resumeloop:                             // return here on failed overlays
                     // woke up for timed save
                     driver_get_key();     // eat the dummy char
                     context.key = 's'; // do the save
-                    g_resave_flag = 1;
+                    g_resave_flag = Resaves::STARTED;
                     g_timed_save = 2;
                 }
                 else
                 {
                     // save done, resume
                     g_timed_save = 0;
-                    g_resave_flag = 2;
+                    g_resave_flag = Resaves::FINAL;
                     context.key = ID_KEY_ENTER;
                 }
             }

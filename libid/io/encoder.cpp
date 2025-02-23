@@ -129,7 +129,7 @@ restart:
         open_file_ext = open_file.extension().string();
         open_file.replace_extension();
     }
-    if (g_resave_flag != 1)
+    if (g_resave_flag != Resaves::STARTED)
     {
         update_save_name(filename); // for next time
     }
@@ -147,7 +147,7 @@ restart:
         // file already exists
         if (!g_overwrite_file)
         {
-            if (g_resave_flag == 0)
+            if (g_resave_flag == Resaves::NONE)
             {
                 goto restart;
             }
@@ -167,10 +167,10 @@ restart:
         tmp_file.replace_filename("id.tmp");
     }
 
-    g_started_resaves = (g_resave_flag == 1);
-    if (g_resave_flag == 2)          // final save of savetime set?
+    g_started_resaves = (g_resave_flag == Resaves::STARTED);
+    if (g_resave_flag == Resaves::FINAL)          // final save of savetime set?
     {
-        g_resave_flag = 0;
+        g_resave_flag = Resaves::NONE;
     }
 
     s_outfile = open_save_file(tmp_file.string(), "wb");
