@@ -203,7 +203,12 @@ Use `UpperCamelCase` for the names of test suites and fixtures and
 ## Files
 
 In general, files are named according to the main item inside the
-file.
+file.  When developing on Windows, take care that you use the proper
+case of filename when modifying a CMake script or source file.  For
+instance, be sure to include `Driver.h` and not `driver.h`, even
+though the latter will compile on Windows where the default file
+system is case insensitive aroun file names.  Mismatched case on
+files will fail the Linux builds.
 
 ### Plain Functions
 
