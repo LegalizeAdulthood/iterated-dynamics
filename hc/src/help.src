@@ -347,6 +347,11 @@ o Versions 1.0, 1.1 and 1.1.1 wrote a version number into image files
 Code Cleanup in Version 1.2
 
 o All integer fractal code paths and associated data have been removed.\
+o A bunch of legacy FRACTINT files were removed from the repository.
+  The remaining files were moved to a directory named 'legacy'.
+o Leftover files from the Sphinx version of HTML help have been removed.\
+o More magic value integers were replaced with symbolic constants
+  as enumerations.
 
 Known limitations:
 
