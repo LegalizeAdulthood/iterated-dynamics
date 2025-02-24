@@ -272,17 +272,27 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-New Features in Version 1.2
-
-o Improved version handling with the reset parameter\
-o Improved version handling when reading GIF files\
-o Improved version handling when writing GIF files\
-o Improved rendering of mathematics in the HTML help\
-
 Version 1.2 is mostly a code cleanup release that removes integer fractal
 types and replaces them exclusively with floating-point types.  This change
 was made to simplify the existing code paths in preparation for migration
 to wxWidgets in version 2.0.
+
+Many thanks to Paul de Leeuw in helping us find a bunch of bugs that
+we fixed for this release!
+
+New Features in Version 1.2
+
+o Native Windows file browse dialog for opening files.\
+o Improved version handling with the reset parameter.\
+o Improved version handling when reading GIF files.\
+o Improved version handling when writing GIF files.\
+o Improved rendering of mathematics in the HTML help.\
+
+When prompting the user to locate a file, Id now uses the native Windows
+Open File dialog.  This replaces a bunch of homebrew code for locating
+a file under DOS using the full screen choice mechanism on the text
+screens.  There are likely more filesystem related issues that
+need to be cleaned up; see issue #268.
 
 Version Handling in Version 1.2 Onward
 
