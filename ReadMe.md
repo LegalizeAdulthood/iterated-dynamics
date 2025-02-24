@@ -168,7 +168,7 @@ Additional files are in the following directories:
 
 - `hc`
     Help source files with a custom build step on help.src to run the help
-    compiler on the source to generate new fractint.hlp and helpdefs.h
+    compiler on the source to generate new id.hlp and helpdefs.h
     files.  Automated tests for `hc` are in the subdirectory `tests`.
     Help compiler input source files are in the subdirectory `src`.
 
@@ -187,8 +187,8 @@ Additional files are in the following directories:
     Data files, such as color maps, parameter files, formula files, and
     so-on that are installed with Id.
 
-- `fractint`
-  Miscellaneous files in the main fractint source folder.  These are not
+- `legacy`
+  Miscellaneous legacy FRACTINT files used for reference.  These are not
   currently used for any of the compilation of the code and are placed
-  here just for reference.
-
+  here just for reference.  Once the corresponding features are implemented
+  in Id, these files will be deleted.
