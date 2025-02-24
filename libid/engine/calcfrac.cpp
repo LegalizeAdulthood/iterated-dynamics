@@ -2228,11 +2228,11 @@ int potential(double mag, long iterations)
 // symmetry plot setup
 static bool x_sym_split(int x_axis_row, bool x_axis_between)
 {
-    if ((g_work_symmetry&0x11) == 0x10)   // already decided not sym
+    if ((g_work_symmetry & 0x11) == 0x10) // already decided not sym
     {
         return true;
     }
-    if ((g_work_symmetry&1) != 0)   // already decided on sym
+    if ((g_work_symmetry & 1) != 0) // already decided on sym
     {
         g_i_y_stop = (g_yy_start+g_yy_stop)/2;
     }
@@ -2281,11 +2281,11 @@ static bool x_sym_split(int x_axis_row, bool x_axis_between)
 
 static bool y_sym_split(int y_axis_col, bool y_axis_between)
 {
-    if ((g_work_symmetry&0x22) == 0x20)   // already decided not sym
+    if ((g_work_symmetry & 0x22) == 0x20) // already decided not sym
     {
         return true;
     }
-    if ((g_work_symmetry&2) != 0)   // already decided on sym
+    if ((g_work_symmetry & 2) != 0) // already decided on sym
     {
         g_i_x_stop = (g_xx_start+g_xx_stop)/2;
     }
