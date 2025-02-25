@@ -1,3 +1,5 @@
+# To Do List
+
 This file contains a list of things that are on the "To Do" list of
 the Id development team, practiced in the true Stone Soup
 tradition.  Any item on this list is up for grabs and you are
@@ -10,31 +12,28 @@ that's been suggested for improving the various sections.
 
 This file last updated May 24th, 2024.
 
-3D Support
-----------
+##  3D Support
 - Provide a way to plug-in a 3D driver by name; platform support
   determines what drivers are available.  Id "native" 3D support
   available on all platforms.
 - Add arcball for iteractive manipulation of 3D viewing parameters
   (interactively manipulate viewed object by its bounding box)
 
-Arbitrary Precision
--------------------
+## Arbitrary Precision
 - Extend arbitrary precision arithmetic to other fractal types, most
   notably formula types
 - Allow arbitrary precision values to be entered into text field boxes
   and PAR files
 
-Deep Color Support
-------------------
+## Deep Color Support
 - 24-bit color modes
 - 32-bit color modes (RGB plus alpha)
 - PNG 24/32-bit output/input
 - Coloring pixels by formulas
 - Texture mapping (probably best integrated into formula coloring)
+- HDR (high dynamic range) color output
 
-Formula Parser
---------------
+## Formula Parser
 - Add type information for expressions and variables
 - Add remainder (modulus) operator/function
 - Make C versions of corresponding assembly functions more efficient
@@ -46,8 +45,7 @@ Formula Parser
   this in the formula parser and related areas.
 - Extend the parser support to deal w/ orbits (orbit-like fractals)
 
-Fractal Types
--------------
+## Fractal Types
 - Add 2D cellular automata
 - Add continuously valued automata, a la CAPOW
 - Various 3D fractal types that could be added
@@ -55,12 +53,10 @@ Fractal Types
 - dL-systems (need more research first)
 - HIFS (Hierachical IFS) seems easy.
 
-Fractal Types: Cellular
--------------
+## Fractal Types: Cellular
 - Extend 1D cellular automata types beyond existing totalistic automata
 
-Help Files
-----------
+## Help Files
 - Add formula tutorial
 - Add formula coloring methods tutorial
 - Add color editor tutorial
@@ -69,23 +65,19 @@ Help Files
 - Add support for inlined images in help browser (initially present
   only in PS/PDF/HTML versions)
 
-Image Computation
------------------
+## Image Computation
 - Provide anti-aliasing support directly (requires deep color)
 - Synchronous Orbits Iteration
 - Gamma correction
 
-Image I/O
----------
+## Image I/O
 - Provide PNG support for both 8-bit and deeper video modes; handle
   gamma correction properly on output
 
-Map Files
----------
+## Map Files
 - Gamma correction
 
-Miscellaneous
--------------
+## Miscellaneous
 - Space mappings (maybe using the parser also) like generalizations to
   inversion but allowing any distortion/mapping to be applied.
 - Support to plot grids, axes, scales, color scales, legends etc. to
@@ -93,9 +85,7 @@ Miscellaneous
 - Support fot HSB/HLS color models.
 - Distributed/collaborative computing of fractals over the network.
 
-
-Platform Support: unix/X
-------------------------
+## Platform Support: unix/X
 - Visual selection assumed root is 8-bit psuedocolor; improve to
   select appropriate visual for requested video mode (could be 24-bit
   with deep color support)
@@ -107,7 +97,6 @@ Platform Support: unix/X
 - Generate /bin/sh scripts instead of MS-DOS bat files for "b" command
 - long filename problems?
 
-Zoom Box
---------
+## Zoom Box
 - Use XaoS like techniques to speedup the zoom box and/or initialize
   the screen from the zoomed section.
