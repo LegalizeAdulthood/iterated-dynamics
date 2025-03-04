@@ -488,8 +488,7 @@ static void fix_inversion(double *x) // make double converted from string look o
     *x = std::atof(buf);
 }
 
-// calcfract - the top level routine for generating an image
-int calc_fract()
+static void init_calc_fract()
 {
     g_attractors = 0;          // default to no known finite attractors
     g_display_3d = Display3DMode::NONE;
@@ -711,81 +710,75 @@ int calc_fract()
         }
         g_calc_time = 0;
     }
+}
 
-    if (g_cur_fractal_specific->calc_type != standard_fractal
-        && g_cur_fractal_specific->calc_type != calc_mand
-        && g_cur_fractal_specific->calc_type != calc_mand_fp
-        && g_cur_fractal_specific->calc_type != lyapunov
-        && g_cur_fractal_specific->calc_type != calc_froth)
+static bool is_standard_fractal()
+{
+    return g_cur_fractal_specific->calc_type == standard_fractal //
+        || g_cur_fractal_specific->calc_type == calc_mand        //
+        || g_cur_fractal_specific->calc_type == calc_mand_fp     //
+        || g_cur_fractal_specific->calc_type == lyapunov         //
+        || g_cur_fractal_specific->calc_type == calc_froth;
+}
+
+static void calc_non_standard_fractal()
+{
+    g_calc_type = g_cur_fractal_specific->calc_type; // per_image can override
+    g_symmetry = g_cur_fractal_specific->symmetry;   //   calctype & symmetry
+    g_plot = g_put_color;                            // defaults when setsymmetry not called or does nothing
+    g_xx_begin = 0;
+    g_yy_begin = 0;
+    g_xx_start = 0;
+    g_yy_start = 0;
+    g_i_x_start = 0;
+    g_i_y_start = 0;
+    g_yy_stop = g_logical_screen_y_dots - 1;
+    g_i_y_stop = g_logical_screen_y_dots - 1;
+    g_xx_stop = g_logical_screen_x_dots - 1;
+    g_i_x_stop = g_logical_screen_x_dots - 1;
+    g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
+    g_distance_estimator = 0;                // only standard escape time engine supports distest
+    // per_image routine is run here
+    if (g_cur_fractal_specific->per_image())
     {
-        g_calc_type = g_cur_fractal_specific->calc_type; // per_image can override
-        g_symmetry = g_cur_fractal_specific->symmetry; //   calctype & symmetry
-        g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
-        g_xx_begin = 0;
-        g_yy_begin = 0;
-        g_xx_start = 0;
-        g_yy_start = 0;
-        g_i_x_start = 0;
-        g_i_y_start = 0;
-        g_yy_stop = g_logical_screen_y_dots-1;
-        g_i_y_stop = g_logical_screen_y_dots-1;
-        g_xx_stop = g_logical_screen_x_dots-1;
-        g_i_x_stop = g_logical_screen_x_dots-1;
-        g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
-        g_distance_estimator = 0; // only standard escape time engine supports distest
-        // per_image routine is run here
-        if (g_cur_fractal_specific->per_image())
+        // not a stand-alone
+        // next two lines in case periodicity changed
+        g_close_enough = g_delta_min * std::pow(2.0, -(double) (std::abs(g_periodicity_check)));
+        set_symmetry(g_symmetry, false);
+        engine_timer(g_calc_type); // non-standard fractal engine
+    }
+    if (check_key())
+    {
+        if (g_calc_status == CalcStatus::IN_PROGRESS)  // calctype didn't set this itself,
         {
-            // not a stand-alone
-            // next two lines in case periodicity changed
-            g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
-            set_symmetry(g_symmetry, false);
-            engine_timer(g_calc_type); // non-standard fractal engine
-        }
-        if (check_key())
-        {
-            if (g_calc_status == CalcStatus::IN_PROGRESS)   // calctype didn't set this itself,
-            {
-                g_calc_status = CalcStatus::NON_RESUMABLE;   // so mark it interrupted, non-resumable
-            }
-        }
-        else
-        {
-            g_calc_status = CalcStatus::COMPLETED; // no key, so assume it completed
+            g_calc_status = CalcStatus::NON_RESUMABLE; // so mark it interrupted, non-resumable
         }
     }
-    else // standard escape-time engine
+    else
     {
-        auto timer_work_list{[]
-            {
-                perform_work_list();
-                return 0;
-            }};
-        if (g_std_calc_mode == '3')  // convoluted 'g' + '2' hybrid
+        g_calc_status = CalcStatus::COMPLETED; // no key, so assume it completed
+    }
+}
+
+// standard escape-time engine
+static void calc_standard_fractal()
+{
+    const auto timer_work_list{[]
         {
-            const int old_calc_mode = g_std_calc_mode;
-            if (!g_resuming || g_three_pass)
+            perform_work_list();
+            return 0;
+        }};
+    if (g_std_calc_mode == '3') // convoluted 'g' + '2' hybrid
+    {
+        const char old_calc_mode = g_std_calc_mode;
+        if (!g_resuming || g_three_pass)
+        {
+            g_std_calc_mode = 'g';
+            g_three_pass = true;
+            engine_timer(timer_work_list);
+            if (g_calc_status == CalcStatus::COMPLETED)
             {
-                g_std_calc_mode = 'g';
-                g_three_pass = true;
-                engine_timer(timer_work_list);
-                if (g_calc_status == CalcStatus::COMPLETED)
-                {
-                    if (g_logical_screen_x_dots >= 640)    // '2' is silly after 'g' for low res
-                    {
-                        g_std_calc_mode = '2';
-                    }
-                    else
-                    {
-                        g_std_calc_mode = '1';
-                    }
-                    engine_timer(timer_work_list);
-                    g_three_pass = false;
-                }
-            }
-            else // resuming '2' pass
-            {
-                if (g_logical_screen_x_dots >= 640)
+                if (g_logical_screen_x_dots >= 640) // '2' is silly after 'g' for low res
                 {
                     g_std_calc_mode = '2';
                 }
@@ -794,15 +787,32 @@ int calc_fract()
                     g_std_calc_mode = '1';
                 }
                 engine_timer(timer_work_list);
+                g_three_pass = false;
             }
-            g_std_calc_mode = (char)old_calc_mode;
         }
-        else // main case, much nicer!
+        else // resuming '2' pass
         {
-            g_three_pass = false;
+            if (g_logical_screen_x_dots >= 640)
+            {
+                g_std_calc_mode = '2';
+            }
+            else
+            {
+                g_std_calc_mode = '1';
+            }
             engine_timer(timer_work_list);
         }
+        g_std_calc_mode = old_calc_mode;
     }
+    else // main case, much nicer!
+    {
+        g_three_pass = false;
+        engine_timer(timer_work_list);
+    }
+}
+
+static void finish_calc_fract()
+{
     g_calc_time += g_timer_interval;
 
     if (!g_log_map_table.empty() && !g_log_map_calculate)
@@ -823,6 +833,22 @@ int calc_fract()
     {
         end_disk();
     }
+}
+
+// calcfract - the top level routine for generating an image
+int calc_fract()
+{
+    init_calc_fract();
+    if (!is_standard_fractal())
+    {
+        calc_non_standard_fractal();
+    }
+    else
+    {
+        calc_standard_fractal();
+    }
+    finish_calc_fract();
+
     return g_calc_status == CalcStatus::COMPLETED ? 0 : -1;
 }
 
