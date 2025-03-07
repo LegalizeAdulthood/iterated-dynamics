@@ -1590,6 +1590,89 @@ Where:\
 ;
 ~Topic=Revision History
 
+Version 1.2
+
+Version 1.2 is mostly a code cleanup release that removes integer fractal
+types and replaces them exclusively with floating-point types.  This change
+was made to simplify the existing code paths in preparation for migration
+to wxWidgets in version 2.0.
+
+Many thanks to Paul de Leeuw in helping us find a bunch of bugs that
+we fixed for this release!
+
+New Features in Version 1.2
+
+o Native Windows file browse dialog for opening files.\
+o Improved version handling with the reset parameter.\
+o Improved version handling when reading GIF files.\
+o Improved version handling when writing GIF files.\
+o Improved rendering of mathematics in the HTML help.\
+
+When prompting the user to locate a file, Id now uses the native Windows
+Open File dialog.  This replaces a bunch of homebrew code for locating
+a file under DOS using the full screen choice mechanism on the text
+screens.  There are likely more filesystem related issues that
+need to be cleaned up; see issue #268.
+
+Version Handling in Version 1.2 Onward
+
+Previous versions of Iterated Dynamics reset the version to 1.0 in a
+breaking change from the legacy DOS FRACTINT version numbering.  While
+this properly served to indicate the reality of Id being a fork from
+DOS FRACTINT, it created some interopability problems with parameter
+sets and image files between the two programs.
+
+When creating a parameter file, the reset parameter is now written
+as reset=major/minor/patch/tweak.  The major and minor version components
+are always written.  The patch and tweak components appear if either
+component is non-zero.  Legacy FRACTINT version numbers, such as reset=2004,
+when read from a parameter set are all treated as version 1.0 of Id for
+the purposes of backward compatibility.
+
+Currently, no backwards compatibility with old FRACTINT behavior is applied
+to parameter sets.  Legacy DOS FRACTINT parameter sets that rely on the
+reset parameter to have behavior adjusted may not render identical images
+in Id.  Such parameter sets can be upgraded by loading the parameter set
+into DOS FRACTINT and either saving an image or creating a new parameter
+set in DOS FRACTINT.
+
+When reading an image file, integer fractal types are converted to their
+corresponding floating-point fractal type.  Legacy FRACTINT version numbers
+in image files are used to migrate legacy FRACTINT behavior to the current
+behavior in Id.
+
+When writing an image file, Id writes the full major/minor/patch/tweak
+version number into the file and writes a legacy FRACTINT version number
+of 20.04.  Such files may load in DOS FRACTINT, but no guarantees of
+compatibility with DOS FRACTINT are made.
+
+Bugs Fixed in Version 1.2
+
+o Id will search standard locations for images specified on the
+  command-line: current directory, savedir parameter location, and
+  FRACTDIR environment variable location.  (Fixes #267)
+o Id could overwrite image files in separate sessions, even when
+  the overwrite parameter was not set.  Id now properly checks for
+  the existence of a file in the save location.  (Fixes #264)
+o File system errors are now properly reported when writing image
+  parameters.  (Fixes #231)
+o The orbitname parameter for julibrot types is now documented.
+  (Fixes #238)
+o The chip, quadruptwo and threeply types documentation was improved.
+  (Fixes #252)
+o Versions 1.0, 1.1 and 1.1.1 wrote a version number into image files
+  that was not compatible with loading into legacy DOS FRACTINT.  That
+  has been corrected.
+
+Code Cleanup in Version 1.2
+
+o All integer fractal code paths and associated data have been removed.\
+o A bunch of legacy FRACTINT files were removed from the repository.
+  The remaining files were moved to a directory named 'legacy'.
+o Leftover files from the Sphinx version of HTML help have been removed.\
+o More magic value integers were replaced with symbolic constants
+  as enumerations.
+
 New Features in Version 1.1:
 
 o Ctrl <+> and <-> can now be used to rotate the zoom box, in addition
