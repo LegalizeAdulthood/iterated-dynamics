@@ -83,7 +83,7 @@ bool g_keep_aspect_ratio{};             // true to keep virtual aspect
 bool g_z_scroll{};                      // screen/zoombox false fixed, true relaxed
                                         // variables defined by the command line/files processor
 bool g_compare_gif{};                   // compare two gif files flag
-int g_timed_save{};                     // when doing a timed save
+Resaves g_timed_save{};                 // when doing a timed save
 Resaves g_resave_flag{};                // tells encoder not to incr filename
 bool g_started_resaves{};               // but incr on first resave
 int g_save_system{};                    // from and for save files

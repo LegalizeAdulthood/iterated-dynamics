@@ -270,7 +270,7 @@ restart:
         }
         return -1;
     }
-    if (g_timed_save == 0)
+    if (g_timed_save == Resaves::NONE)
     {
         driver_buzzer(Buzzer::COMPLETE);
         if (g_init_batch == BatchMode::NONE)
