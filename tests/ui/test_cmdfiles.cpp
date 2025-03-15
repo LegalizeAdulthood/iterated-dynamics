@@ -1088,6 +1088,8 @@ TEST_F(TestParameterCommand, ditherYes)
 
 TEST_F(TestParameterCommand, saveTime)
 {
+    ValueSaver saved_time_interval{g_save_time_interval, -1};
+
     exec_cmd_arg("savetime=20", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
