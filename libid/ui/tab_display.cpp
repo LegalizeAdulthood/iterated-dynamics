@@ -355,7 +355,7 @@ top:
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
         {
             driver_put_string(start_row++, 2, C_GENERAL_HI,
-                              "Note: can't resume this type after interrupts other than <tab> and <F1>");
+                              "Note: can't resume this type after interrupts other than <Tab> and <F1>");
         }
     }
     start_row += add_row;
