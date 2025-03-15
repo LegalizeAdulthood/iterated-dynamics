@@ -140,7 +140,7 @@ Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 
 bool g_overlay_3d{};                                      // 3D overlay flag
 bool g_check_cur_dir{};                                   // flag to check current dir for files
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
-int g_init_save_time{};                                   // autosave minutes
+int g_save_time_interval{};                               // autosave minutes
 DComplex g_init_orbit{};                                  // initial orbit value
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_mode{};                                        // initial video mode
@@ -443,7 +443,7 @@ static void init_vars_restart() // <ins> key init
     g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; // sound is on to PC speaker
     g_init_batch = BatchMode::NONE;                    // not in batch mode
     g_check_cur_dir = false;                           // flag to check current dire for files
-    g_init_save_time = 0;                              // no auto-save
+    g_save_time_interval = 0;                          // no auto-save
     g_init_mode = -1;                                  // no initial video mode
     g_view_window = false;                             // no view window
     g_view_reduction = 4.2F;                           //
@@ -3137,7 +3137,7 @@ static CmdArgFlags cmd_save_name(const Command &cmd)
 
 static CmdArgFlags cmd_save_time(const Command &cmd)
 {
-    g_init_save_time = cmd.num_val;
+    g_save_time_interval = cmd.num_val;
     return CmdArgFlags::NONE;
 }
 

@@ -561,11 +561,11 @@ MainState big_while_loop(MainContext &context)
         else
         {
             // draw an image
-            if (g_init_save_time != 0 // autosave and resumable?
+            if (g_save_time_interval != 0 // autosave and resumable?
                 && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
             {
-                s_save_base = read_ticker();                                     // calc's start time
-                s_save_ticks = std::abs(g_init_save_time) * 60 * CLOCKS_PER_SEC; // ticks/minute
+                s_save_base = read_ticker();                                         // calc's start time
+                s_save_ticks = std::abs(g_save_time_interval) * 60 * CLOCKS_PER_SEC; // ticks/minute
                 if ((s_save_ticks & 65535L) == 0)
                 {
                     ++s_save_ticks; // make low word nonzero

@@ -1091,7 +1091,7 @@ TEST_F(TestParameterCommand, saveTime)
     exec_cmd_arg("savetime=20", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(20, g_init_save_time);
+    EXPECT_EQ(20, g_save_time_interval);
 }
 
 TEST_F(TestParameterCommandError, autoKeyInvalidValue)

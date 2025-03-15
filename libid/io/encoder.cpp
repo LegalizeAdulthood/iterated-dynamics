@@ -278,7 +278,7 @@ restart:
             text_temp_msg((" File saved as " + open_file.filename().string() + ' ').c_str());
         }
     }
-    if (g_init_save_time < 0)
+    if (g_save_time_interval < 0)
     {
         goodbye();
     }
