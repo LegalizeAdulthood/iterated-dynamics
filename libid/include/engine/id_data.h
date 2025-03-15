@@ -31,7 +31,7 @@ enum class ConfigStatus
     BAD_NO_MESSAGE = -1
 };
 
-enum class Resaves
+enum class TimedSave
 {
     NONE = 0,
     STARTED = 1,
@@ -86,7 +86,7 @@ extern double                g_plot_my1;
 extern double                g_plot_my2;
 extern double                g_params[];
 extern double                g_potential_params[];
-extern Resaves               g_resave_flag;
+extern TimedSave             g_resave_flag;
 extern SaveDAC               g_save_dac;
 extern int                   g_save_system;
 extern double                g_save_x_3rd;
@@ -102,7 +102,7 @@ extern int                   g_smallest_box_size_shown;
 extern bool                  g_started_resaves;
 extern char                  g_std_calc_mode;
 extern bool                  g_tab_mode;
-extern Resaves               g_timed_save;
+extern TimedSave             g_timed_save;
 extern double                g_smallest_window_display_size;
 extern long                  g_user_distance_estimator_value;
 extern int                   g_user_periodicity_value;

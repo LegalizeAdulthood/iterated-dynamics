@@ -718,21 +718,21 @@ resumeloop:                             // return here on failed overlays
         while (context.more_keys)
         {
             // loop through command keys
-            if (g_timed_save != Resaves::NONE)
+            if (g_timed_save != TimedSave::NONE)
             {
-                if (g_timed_save == Resaves::STARTED)
+                if (g_timed_save == TimedSave::STARTED)
                 {
                     // woke up for timed save
                     driver_get_key();     // eat the dummy char
                     context.key = 's'; // do the save
-                    g_resave_flag = Resaves::STARTED;
-                    g_timed_save = Resaves::FINAL;
+                    g_resave_flag = TimedSave::STARTED;
+                    g_timed_save = TimedSave::FINAL;
                 }
                 else
                 {
                     // save done, resume
-                    g_timed_save = Resaves::NONE;
-                    g_resave_flag = Resaves::FINAL;
+                    g_timed_save = TimedSave::NONE;
+                    g_resave_flag = TimedSave::FINAL;
                     context.key = ID_KEY_ENTER;
                 }
             }

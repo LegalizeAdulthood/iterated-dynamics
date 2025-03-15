@@ -166,10 +166,10 @@ MainState restore_from_image(MainContext &context)
     }
     driver_stack_screen();            // save graphics image
     context.stacked = !g_overlay_3d;
-    if (g_resave_flag != Resaves::NONE)
+    if (g_resave_flag != TimedSave::NONE)
     {
         update_save_name(g_save_filename);      // do the pending increment
-        g_resave_flag = Resaves::NONE;
+        g_resave_flag = TimedSave::NONE;
         g_started_resaves = false;
     }
     g_show_file = ShowFile::REQUEST_IMAGE;

@@ -351,7 +351,7 @@ int get_toggles()
     g_save_filename = std::string{g_save_filename.c_str(), save_name_ptr} + values[++k].uval.sval;
     if (std::strcmp(g_save_filename.c_str(), prev_save_name) != 0)
     {
-        g_resave_flag = Resaves::NONE;
+        g_resave_flag = TimedSave::NONE;
         g_started_resaves = false; // forget pending increment
     }
     g_overwrite_file = values[++k].uval.ch.val != 0;
