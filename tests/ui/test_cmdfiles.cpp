@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "io/save_timer.h"
+
 #include <ui/cmdfiles_test.h>
 
 #include "MockDriver.h"

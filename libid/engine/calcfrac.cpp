@@ -41,6 +41,7 @@
 #include "fractals/newton.h"
 #include "fractals/parser.h"
 #include "io/check_write_file.h"
+#include "io/save_timer.h"
 #include "io/update_save_name.h"
 #include "math/arg.h"
 #include "math/biginit.h"

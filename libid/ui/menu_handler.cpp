@@ -8,6 +8,7 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "io/loadfile.h"
+#include "io/save_timer.h"
 #include "io/update_save_name.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"

@@ -7,6 +7,7 @@
 #include "engine/log_map.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
+#include "io/save_timer.h"
 #include "ui/cmdfiles.h"
 #include "ui/full_screen_prompt.h"
 

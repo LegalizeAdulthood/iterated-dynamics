@@ -35,6 +35,7 @@
 #include "io/loadmap.h"
 #include "io/locate_input_file.h"
 #include "io/merge_path_names.h"
+#include "io/save_timer.h"
 #include "io/special_dirs.h"
 #include "math/biginit.h"
 #include "misc/debug_flags.h"
@@ -140,7 +141,6 @@ Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 
 bool g_overlay_3d{};                                      // 3D overlay flag
 bool g_check_cur_dir{};                                   // flag to check current dir for files
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
-int g_save_time_interval{};                               // autosave minutes
 DComplex g_init_orbit{};                                  // initial orbit value
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_mode{};                                        // initial video mode

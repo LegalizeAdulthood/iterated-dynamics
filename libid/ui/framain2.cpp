@@ -12,6 +12,7 @@
 #include "io/gifview.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
+#include "io/save_timer.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/cmdfiles.h"
