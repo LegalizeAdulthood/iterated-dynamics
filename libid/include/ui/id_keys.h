@@ -102,6 +102,7 @@ enum
     ID_KEY_CTL_INSERT      = 1146,
     ID_KEY_CTL_DEL         = 1147,
     ID_KEY_CTL_TAB         = 1148,
+    ID_KEY_FAKE_AUTOSAVE   = 9999,
 };
 
 // tests if we have a control character

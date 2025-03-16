@@ -48,8 +48,6 @@ static int call_line3d(Byte *pixels, int line_len);
 static void cmp_line_cleanup();
 static int cmp_line(Byte *pixels, int line_len);
 
-static long s_save_base{}; // base clock ticks
-static long s_save_ticks{};  // save after this many ticks
 static std::FILE *s_cmp_fp{};
 static int s_err_count{};
 
@@ -565,12 +563,7 @@ MainState big_while_loop(MainContext &context)
             if (g_save_time_interval != 0 // autosave and resumable?
                 && bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
             {
-                s_save_base = read_ticker();                                         // calc's start time
-                s_save_ticks = std::abs(g_save_time_interval) * 60 * CLOCKS_PER_SEC; // ticks/minute
-                if ((s_save_ticks & 65535L) == 0)
-                {
-                    ++s_save_ticks; // make low word nonzero
-                }
+                start_save_timer();
                 g_finish_row = -1;
             }
             g_browsing = false;      // regenerate image, turn off browsing
@@ -697,7 +690,7 @@ done:
                 }
             }
 
-            s_save_ticks = 0;                 // turn off autosave timer
+            stop_save_timer();
             if (driver_is_disk() && i == 0) // disk-video
             {
                 dvid_status(0, "Image has been completed");
