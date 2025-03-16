@@ -19,6 +19,11 @@ extern const int             g_patch_level;
 extern int                   g_release;
 extern Version               g_version;
 
+inline Version id_version(int major, int minor)
+{
+    return Version{major, minor, 0, 0, false};
+}
+
 // String representation suitable for writing out as argument to reset parameter.
 std::string to_par_string(const Version &value);
 
