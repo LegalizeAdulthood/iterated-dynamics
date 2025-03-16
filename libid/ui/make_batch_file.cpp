@@ -650,12 +650,12 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
                 || g_julibrot_depth_fp != 8
                 || g_julibrot_z_dots != 128)
             {
-                put_param(" %s=%d/%g/%g/%g/%g/%g", "julibrot3d",
+                put_param(" julibrot3d=%d/%g/%g/%g/%g/%g",
                          g_julibrot_z_dots, g_julibrot_origin_fp, g_julibrot_depth_fp, g_julibrot_height_fp, g_julibrot_width_fp, g_julibrot_dist_fp);
             }
             if (g_eyes_fp != 0)
             {
-                put_param(" %s=%g", "julibroteyes", g_eyes_fp);
+                put_param(" julibroteyes=%g", g_eyes_fp);
             }
             if (g_new_orbit_type != FractalType::JULIA)
             {
@@ -663,31 +663,31 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             }
             if (g_julibrot_3d_mode != Julibrot3DMode::MONOCULAR)
             {
-                put_param(" %s=%s", "3dmode", to_string(g_julibrot_3d_mode));
+                put_param(" 3dmode=%s", to_string(g_julibrot_3d_mode));
             }
         }
         if (g_fractal_type == FractalType::FORMULA)
         {
             put_file_name("formulafile", g_formula_filename.c_str());
-            put_param(" %s=%s", "formulaname", g_formula_name.c_str());
+            put_param(" formulaname=%s", g_formula_name.c_str());
             if (g_frm_uses_ismand)
             {
-                put_param(" %s=%c", "ismand", g_is_mandelbrot ? 'y' : 'n');
+                put_param(" ismand=%c", g_is_mandelbrot ? 'y' : 'n');
             }
         }
         if (g_fractal_type == FractalType::L_SYSTEM)
         {
             put_file_name("lfile", g_l_system_filename.c_str());
-            put_param(" %s=%s", "lname", g_l_system_name.c_str());
+            put_param(" lname=%s", g_l_system_name.c_str());
         }
         if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
         {
             put_file_name("ifsfile", g_ifs_filename.c_str());
-            put_param(" %s=%s", "ifs", g_ifs_name.c_str());
+            put_param(" ifs=%s", g_ifs_name.c_str());
         }
         if (g_fractal_type == FractalType::INVERSE_JULIA)
         {
-            put_param(" %s=%s/%s", "miim", to_string(g_major_method), to_string(g_inverse_julia_minor_method));
+            put_param(" miim=%s/%s", to_string(g_major_method), to_string(g_inverse_julia_minor_method));
         }
 
         strncpy(buf, show_trig().c_str(), std::size(buf));
@@ -698,12 +698,12 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_user_std_calc_mode != 'g')
         {
-            put_param(" %s=%c", "passes", g_user_std_calc_mode);
+            put_param(" passes=%c", g_user_std_calc_mode);
         }
 
         if (g_stop_pass != 0)
         {
-            put_param(" %s=%c%c", "passes", g_user_std_calc_mode, (char)g_stop_pass + '0');
+            put_param(" passes=%c%c", g_user_std_calc_mode, (char)g_stop_pass + '0');
         }
 
         if (g_use_center_mag)
@@ -716,7 +716,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             {
                 cvt_center_mag_bf(bf_x_ctr, bf_y_ctr, magnification, x_mag_factor, rotation, skew);
                 int digits = get_prec_bf(ResolutionFlag::MAX);
-                put_param(" %s=", "center-mag");
+                put_param(" center-mag=");
                 put_bf(0, bf_x_ctr, digits);
                 put_bf(1, bf_y_ctr, digits);
             }
@@ -725,7 +725,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
                 double x_ctr;
                 double y_ctr;
                 cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
-                put_param(" %s=", "center-mag");
+                put_param(" center-mag=");
                 //          convert 1000 fudged long to double, 1000/1<<24 = 6e-5
                 put_param(g_delta_min > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", x_ctr, y_ctr);
             }
@@ -767,7 +767,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         else // not usemag
         {
-            put_param(" %s=", "corners");
+            put_param(" corners=");
             if (g_bf_math != BFMathType::NONE)
             {
                 int digits = get_prec_bf(ResolutionFlag::MAX);
@@ -811,17 +811,17 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         {
             if (g_fractal_type == FractalType::CELLULAR || g_fractal_type == FractalType::ANT)
             {
-                put_param(" %s=%.1f", "params", g_params[0]);
+                put_param(" params=%.1f", g_params[0]);
             }
             else
             {
                 if (g_debug_flag == DebugFlags::FORCE_LONG_DOUBLE_PARAM_OUTPUT)
                 {
-                    put_param(" %s=%.17Lg", "params", (long double)g_params[0]);
+                    put_param(" params=%.17Lg", (long double)g_params[0]);
                 }
                 else
                 {
-                    put_param(" %s=%.17g", "params", g_params[0]);
+                    put_param(" params=%.17g", g_params[0]);
                 }
             }
             for (int j = 1; j <= i; ++j)
@@ -846,26 +846,26 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_use_init_orbit == InitOrbitMode::PIXEL)
         {
-            put_param(" %s=pixel", "initorbit");
+            put_param(" initorbit=pixel");
         }
         else if (g_use_init_orbit == InitOrbitMode::VALUE)
         {
-            put_param(" %s=%.15g/%.15g", "initorbit", g_init_orbit.x, g_init_orbit.y);
+            put_param(" initorbit=%.15g/%.15g", g_init_orbit.x, g_init_orbit.y);
         }
 
         if (g_max_iterations != 150)
         {
-            put_param(" %s=%ld", "maxiter", g_max_iterations);
+            put_param(" maxiter=%ld", g_max_iterations);
         }
 
         if (g_bailout && (!g_potential_flag || g_potential_params[2] == 0.0))
         {
-            put_param(" %s=%ld", "bailout", g_bailout);
+            put_param(" bailout=%ld", g_bailout);
         }
 
         if (g_bailout_test != Bailout::MOD)
         {
-            put_param(" %s=", "bailoutest");
+            put_param(" bailoutest=");
             if (g_bailout_test == Bailout::REAL)
             {
                 put_param("real");
@@ -897,12 +897,12 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (g_fill_color != -1)
         {
-            put_param(" %s=", "fillcolor");
+            put_param(" fillcolor=");
             put_param("%d", g_fill_color);
         }
         if (g_inside_color != 1)
         {
-            put_param(" %s=", "inside");
+            put_param(" inside=");
             if (g_inside_color == ITER)
             {
                 put_param("maxiter");
@@ -947,11 +947,11 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         if (g_close_proximity != 0.01
             && (g_inside_color == EPS_CROSS || g_inside_color == FMODI || g_outside_color == FMOD))
         {
-            put_param(" %s=%.15g", "proximity", g_close_proximity);
+            put_param(" proximity=%.15g", g_close_proximity);
         }
         if (g_outside_color != ITER)
         {
-            put_param(" %s=", "outside");
+            put_param(" outside=");
             if (g_outside_color == REAL)
             {
                 put_param("real");
@@ -988,7 +988,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_log_map_flag && !g_iteration_ranges_len)
         {
-            put_param(" %s=", "logmap");
+            put_param(" logmap=");
             if (g_log_map_flag == -1)
             {
                 put_param("old");
@@ -1005,7 +1005,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_log_map_fly_calculate != LogMapCalculate::NONE && g_log_map_flag && !g_iteration_ranges_len)
         {
-            put_param(" %s=", "logmode");
+            put_param(" logmode=");
             if (g_log_map_fly_calculate == LogMapCalculate::ON_THE_FLY)
             {
                 put_param("fly");
@@ -1018,7 +1018,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_potential_flag)
         {
-            put_param(" %s=%d/%g/%d", "potential",
+            put_param(" potential=%d/%g/%d",
                      (int)g_potential_params[0], g_potential_params[1], (int)g_potential_params[2]);
             if (g_potential_16bit)
             {
@@ -1027,29 +1027,29 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (g_invert != 0)
         {
-            put_param(" %s=%-1.15lg/%-1.15lg/%-1.15lg", "invert",
+            put_param(" invert=%-1.15lg/%-1.15lg/%-1.15lg",
                      g_inversion[0], g_inversion[1], g_inversion[2]);
         }
         if (g_decomp[0])
         {
-            put_param(" %s=%d", "decomp", g_decomp[0]);
+            put_param(" decomp=%d", g_decomp[0]);
         }
         if (g_distance_estimator)
         {
-            put_param(" %s=%ld/%d/%d/%d", "distest", g_distance_estimator, g_distance_estimator_width_factor,
+            put_param(" distest=%ld/%d/%d/%d", g_distance_estimator, g_distance_estimator_width_factor,
                      g_distance_estimator_x_dots?g_distance_estimator_x_dots:g_logical_screen_x_dots, g_distance_estimator_y_dots?g_distance_estimator_y_dots:g_logical_screen_y_dots);
         }
         if (g_old_demm_colors)
         {
-            put_param(" %s=y", "olddemmcolors");
+            put_param(" olddemmcolors=y");
         }
         if (g_user_biomorph_value != -1)
         {
-            put_param(" %s=%d", "biomorph", g_user_biomorph_value);
+            put_param(" biomorph=%d", g_user_biomorph_value);
         }
         if (g_finite_attractor)
         {
-            put_param(" %s=y", "finattract");
+            put_param(" finattract=y");
         }
 
         if (g_force_symmetry != SymmetryType::NOT_FORCED)
@@ -1058,7 +1058,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             {
                 stop_msg("Regenerate before <b> to get correct symmetry");
             }
-            put_param(" %s=", "symmetry");
+            put_param(" symmetry=");
             if (g_force_symmetry == SymmetryType::X_AXIS)
             {
                 put_param("xaxis");
@@ -1087,17 +1087,17 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_periodicity_check != 1)
         {
-            put_param(" %s=%d", "periodicity", g_periodicity_check);
+            put_param(" periodicity=%d", g_periodicity_check);
         }
 
         if (g_random_seed_flag)
         {
-            put_param(" %s=%d", "rseed", g_random_seed);
+            put_param(" rseed=%d", g_random_seed);
         }
 
         if (g_iteration_ranges_len)
         {
-            put_param(" %s=", "ranges");
+            put_param(" ranges=");
             i = 0;
             while (i < g_iteration_ranges_len)
             {
@@ -1120,11 +1120,11 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         //**** 3d transform only parameters in this section ****
         if (g_display_3d == Display3DMode::B_COMMAND)
         {
-            put_param(" %s=%s", "3d", "overlay");
+            put_param(" 3d=overlay");
         }
         else
         {
-            put_param(" %s=%s", "3d", "yes");
+            put_param(" 3d=yes");
         }
         if (!g_loaded_3d)
         {
@@ -1132,70 +1132,70 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (g_sphere)
         {
-            put_param(" %s=y", "sphere");
-            put_param(" %s=%d/%d", "latitude", g_sphere_theta_min, g_sphere_theta_max);
-            put_param(" %s=%d/%d", "longitude", g_sphere_phi_min, g_sphere_phi_max);
-            put_param(" %s=%d", "radius", g_sphere_radius);
+            put_param(" sphere=y");
+            put_param(" latitude=%d/%d", g_sphere_theta_min, g_sphere_theta_max);
+            put_param(" longitude=%d/%d", g_sphere_phi_min, g_sphere_phi_max);
+            put_param(" radius=%d", g_sphere_radius);
         }
-        put_param(" %s=%d/%d", "scalexyz", g_x_scale, g_y_scale);
-        put_param(" %s=%d", "roughness", g_rough);
-        put_param(" %s=%d", "waterline", g_water_line);
+        put_param(" scalexyz=%d/%d", g_x_scale, g_y_scale);
+        put_param(" roughness=%d", g_rough);
+        put_param(" waterline=%d", g_water_line);
         if (g_fill_type != FillType::POINTS)
         {
-            put_param(" %s=%d", "filltype", +g_fill_type);
+            put_param(" filltype=%d", +g_fill_type);
         }
         if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
         {
-            put_param(" %s=%d/%d", "transparent", g_transparent_color_3d[0], g_transparent_color_3d[1]);
+            put_param(" transparent=%d/%d", g_transparent_color_3d[0], g_transparent_color_3d[1]);
         }
         if (g_preview)
         {
-            put_param(" %s=%s", "preview", "yes");
+            put_param(" preview=yes");
             if (g_show_box)
             {
-                put_param(" %s=%s", "showbox", "yes");
+                put_param(" showbox=yes");
             }
-            put_param(" %s=%d", "coarse", g_preview_factor);
+            put_param(" coarse=%d", g_preview_factor);
         }
         if (g_raytrace_format != RayTraceFormat::NONE)
         {
-            put_param(" %s=%d", "ray", static_cast<int>(g_raytrace_format));
+            put_param(" ray=%d", static_cast<int>(g_raytrace_format));
             if (g_brief)
             {
-                put_param(" %s=y", "brief");
+                put_param(" brief=y");
             }
         }
         if (g_fill_type > FillType::SOLID_FILL)
         {
-            put_param(" %s=%d/%d/%d", "lightsource", g_light_x, g_light_y, g_light_z);
+            put_param(" lightsource=%d/%d/%d", g_light_x, g_light_y, g_light_z);
             if (g_light_avg)
             {
-                put_param(" %s=%d", "smoothing", g_light_avg);
+                put_param(" smoothing=%d", g_light_avg);
             }
         }
         if (g_randomize_3d)
         {
-            put_param(" %s=%d", "randomize", g_randomize_3d);
+            put_param(" randomize=%d", g_randomize_3d);
         }
         if (g_targa_out)
         {
-            put_param(" %s=y", "fullcolor");
+            put_param(" fullcolor=y");
         }
         if (g_gray_flag)
         {
-            put_param(" %s=y", "usegrayscale");
+            put_param(" usegrayscale=y");
         }
         if (g_ambient)
         {
-            put_param(" %s=%d", "ambient", g_ambient);
+            put_param(" ambient=%d", g_ambient);
         }
         if (g_haze)
         {
-            put_param(" %s=%d", "haze", g_haze);
+            put_param(" haze=%d", g_haze);
         }
         if (g_background_color[0] != 51 || g_background_color[1] != 153 || g_background_color[2] != 200)
         {
-            put_param(" %s=%d/%d/%d", "background", g_background_color[0], g_background_color[1],
+            put_param(" background=%d/%d/%d", g_background_color[0], g_background_color[1],
                      g_background_color[2]);
         }
     }
@@ -1206,22 +1206,22 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         //**** common (fractal & transform) 3d parameters in this section ****
         if (!g_sphere || g_display_3d < Display3DMode::NONE)
         {
-            put_param(" %s=%d/%d/%d", "rotation", g_x_rot, g_y_rot, g_z_rot);
+            put_param(" rotation=%d/%d/%d", g_x_rot, g_y_rot, g_z_rot);
         }
-        put_param(" %s=%d", "perspective", g_viewer_z);
-        put_param(" %s=%d/%d", "xyshift", g_shift_x, g_shift_y);
+        put_param(" perspective=%d", g_viewer_z);
+        put_param(" xyshift=%d/%d", g_shift_x, g_shift_y);
         if (g_adjust_3d_x || g_adjust_3d_y)
         {
-            put_param(" %s=%d/%d", "xyadjust", g_adjust_3d_x, g_adjust_3d_y);
+            put_param(" xyadjust=%d/%d", g_adjust_3d_x, g_adjust_3d_y);
         }
         if (g_glasses_type != GlassesType::NONE)
         {
-            put_param(" %s=%d", "stereo", static_cast<int>(g_glasses_type));
-            put_param(" %s=%d", "interocular", g_eye_separation);
-            put_param(" %s=%d", "converge", g_converge_x_adjust);
-            put_param(" %s=%d/%d/%d/%d", "crop",
+            put_param(" stereo=%d", static_cast<int>(g_glasses_type));
+            put_param(" interocular=%d", g_eye_separation);
+            put_param(" converge=%d", g_converge_x_adjust);
+            put_param(" crop=%d/%d/%d/%d",
                      g_red_crop_left, g_red_crop_right, g_blue_crop_left, g_blue_crop_right);
-            put_param(" %s=%d/%d", "bright",
+            put_param(" bright=%d/%d",
                      g_red_bright, g_blue_bright);
         }
     }
@@ -1230,7 +1230,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
     if (g_view_window)
     {
-        put_param(" %s=%g/%g", "viewwindows", g_view_reduction, g_final_aspect_ratio);
+        put_param(" viewwindows=%g/%g", g_view_reduction, g_final_aspect_ratio);
         if (g_view_crop)
         {
             put_param("/%s", "yes");
@@ -1246,35 +1246,35 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
     {
         if (g_color_cycle_range_lo != 1 || g_color_cycle_range_hi != 255)
         {
-            put_param(" %s=%d/%d", "cyclerange", g_color_cycle_range_lo, g_color_cycle_range_hi);
+            put_param(" cyclerange=%d/%d", g_color_cycle_range_lo, g_color_cycle_range_hi);
         }
 
         if (g_base_hertz != 440)
         {
-            put_param(" %s=%d", "hertz", g_base_hertz);
+            put_param(" hertz=%d", g_base_hertz);
         }
 
         if (g_sound_flag != (SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER))
         {
             if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_OFF)
             {
-                put_param(" %s=%s", "sound", "off");
+                put_param(" sound=off");
             }
             else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_BEEP)
             {
-                put_param(" %s=%s", "sound", "beep");
+                put_param(" sound=beep");
             }
             else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)
             {
-                put_param(" %s=%s", "sound", "x");
+                put_param(" sound=x");
             }
             else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)
             {
-                put_param(" %s=%s", "sound", "y");
+                put_param(" sound=y");
             }
             else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)
             {
-                put_param(" %s=%s", "sound", "z");
+                put_param(" sound=z");
             }
             if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) <= SOUNDFLAG_Z)
             {
@@ -1299,57 +1299,57 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_fm_volume != 63)
         {
-            put_param(" %s=%d", "volume", g_fm_volume);
+            put_param(" volume=%d", g_fm_volume);
         }
 
         if (g_hi_attenuation != 0)
         {
             if (g_hi_attenuation == 1)
             {
-                put_param(" %s=%s", "attenuate", "low");
+                put_param(" attenuate=low");
             }
             else if (g_hi_attenuation == 2)
             {
-                put_param(" %s=%s", "attenuate", "mid");
+                put_param(" attenuate=mid");
             }
             else if (g_hi_attenuation == 3)
             {
-                put_param(" %s=%s", "attenuate", "high");
+                put_param(" attenuate=high");
             }
             else   // just in case
             {
-                put_param(" %s=%s", "attenuate", "none");
+                put_param(" attenuate=none");
             }
         }
 
         if (g_polyphony != 0)
         {
-            put_param(" %s=%d", "polyphony", g_polyphony+1);
+            put_param(" polyphony=%d", g_polyphony+1);
         }
 
         if (g_fm_wave_type != 0)
         {
-            put_param(" %s=%d", "wavetype", g_fm_wave_type);
+            put_param(" wavetype=%d", g_fm_wave_type);
         }
 
         if (g_fm_attack != 5)
         {
-            put_param(" %s=%d", "attack", g_fm_attack);
+            put_param(" attack=%d", g_fm_attack);
         }
 
         if (g_fm_decay != 10)
         {
-            put_param(" %s=%d", "decay", g_fm_decay);
+            put_param(" decay=%d", g_fm_decay);
         }
 
         if (g_fm_sustain != 13)
         {
-            put_param(" %s=%d", "sustain", g_fm_sustain);
+            put_param(" sustain=%d", g_fm_sustain);
         }
 
         if (g_fm_release != 5)
         {
-            put_param(" %s=%d", "srelease", g_fm_release);
+            put_param(" srelease=%d", g_fm_release);
         }
 
         if (g_sound_flag & SOUNDFLAG_QUANTIZED)
@@ -1365,7 +1365,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             }
             if (i > 12)
             {
-                put_param(" %s=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", "scalemap", g_scale_map[0], g_scale_map[1], g_scale_map[2], g_scale_map[3]
+                put_param(" scalemap=%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d/%d", g_scale_map[0], g_scale_map[1], g_scale_map[2], g_scale_map[3]
                          , g_scale_map[4], g_scale_map[5], g_scale_map[6], g_scale_map[7], g_scale_map[8]
                          , g_scale_map[9], g_scale_map[10], g_scale_map[11]);
             }
@@ -1373,32 +1373,32 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (!g_bof_match_book_images)
         {
-            put_param(" %s=%s", "nobof", "yes");
+            put_param(" nobof=yes");
         }
 
         if (g_orbit_delay > 0)
         {
-            put_param(" %s=%d", "orbitdelay", g_orbit_delay);
+            put_param(" orbitdelay=%d", g_orbit_delay);
         }
 
         if (g_orbit_interval != 1)
         {
-            put_param(" %s=%d", "orbitinterval", g_orbit_interval);
+            put_param(" orbitinterval=%d", g_orbit_interval);
         }
 
         if (g_start_show_orbit)
         {
-            put_param(" %s=%s", "showorbit", "yes");
+            put_param(" showorbit=yes");
         }
 
         if (g_keep_screen_coords)
         {
-            put_param(" %s=%s", "screencoords", "yes");
+            put_param(" screencoords=yes");
         }
 
         if (g_user_std_calc_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
         {
-            put_param(" %s=", "orbitcorners");
+            put_param(" orbitcorners=");
             int x_digits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3rd_x);
             int y_digits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3rd_y);
             put_float(0, g_orbit_corner_min_x, x_digits);
@@ -1414,12 +1414,12 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_draw_mode != 'r')
         {
-            put_param(" %s=%c", "orbitdrawmode", g_draw_mode);
+            put_param(" orbitdrawmode=%c", g_draw_mode);
         }
 
         if (g_math_tol[0] != 0.05 || g_math_tol[1] != 0.05)
         {
-            put_param(" %s=%g/%g", "mathtolerance", g_math_tol[0], g_math_tol[1]);
+            put_param(" mathtolerance=%g/%g", g_math_tol[0], g_math_tol[1]);
         }
     }
 
@@ -1433,7 +1433,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             put_param_line();
         }
 docolors:
-        put_param(" %s=", "colors");
+        put_param(" colors=");
         if (g_record_colors != RecordColorsMode::COMMENT && g_record_colors != RecordColorsMode::YES && *color_inf == '@')
         {
             put_param(color_inf);
