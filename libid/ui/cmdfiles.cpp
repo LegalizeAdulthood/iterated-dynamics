@@ -517,10 +517,10 @@ static void init_vars_fractal()
     g_distance_estimator_width_factor = 71;                         //
     g_force_symmetry = SymmetryType::NOT_FORCED;                    //
     g_x_min = -2.5;                                                 //
-    g_x_3rd = g_x_min;                                              //
+    g_x_3rd = -2.5;                                              //
     g_x_max = 1.5;                                                  // initial corner values
     g_y_min = -1.5;                                                 //
-    g_y_3rd = g_y_min;                                              //
+    g_y_3rd = -1.5;                                              //
     g_y_max = 1.5;                                                  // initial corner values
     g_bf_math = BFMathType::NONE;                                   //
     g_potential_16bit = false;                                      //
