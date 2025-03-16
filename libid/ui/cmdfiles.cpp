@@ -1671,9 +1671,9 @@ static CmdArgFlags parse_colors(const char *value)
         while (i < 256)
         {
             // zap unset entries
-            g_dac_box[i][2] = 40;
-            g_dac_box[i][1] = 40;
             g_dac_box[i][0] = 40;
+            g_dac_box[i][1] = 40;
+            g_dac_box[i][2] = 40;
             ++i;
         }
         g_color_state = ColorState::UNKNOWN;
