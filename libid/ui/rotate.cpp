@@ -496,39 +496,38 @@ void rotate(int direction)      // rotate-the-palette routine
 
 static void pause_rotate()               // pause-the-rotate routine
 {
-    if (s_paused)                            // if already paused , just clear
+    if (s_paused)                        // if already paused, just clear
     {
         s_paused = false;
+        return;
     }
-    else
-    {
-        // else set border, wait for a key
-        int old_dac_count = g_dac_count;  // saved dac-count value goes here
-        Byte old_dac0 = g_dac_box[0][0];
-        Byte old_dac1 = g_dac_box[0][1];
-        Byte old_dac2 = g_dac_box[0][2];
-        g_dac_count = 256;
-        g_dac_box[0][0] = 48;
-        g_dac_box[0][1] = 48;
-        g_dac_box[0][2] = 48;
-        spin_dac(0, 1);                     // show white border
-        if (driver_is_disk())
-        {
-            dvid_status(100, " Paused in \"color cycling\" mode ");
-        }
-        driver_wait_key_pressed(false);                // wait for any key
 
-        if (driver_is_disk())
-        {
-            dvid_status(0, "");
-        }
-        g_dac_box[0][0] = old_dac0;
-        g_dac_box[0][1] = old_dac1;
-        g_dac_box[0][2] = old_dac2;
-        spin_dac(0, 1);                     // show black border
-        g_dac_count = old_dac_count;
-        s_paused = true;
+    // else set border, wait for a key
+    int old_dac_count = g_dac_count; // saved dac-count value goes here
+    Byte old_dac0 = g_dac_box[0][0];
+    Byte old_dac1 = g_dac_box[0][1];
+    Byte old_dac2 = g_dac_box[0][2];
+    g_dac_count = 256;
+    g_dac_box[0][0] = 48;
+    g_dac_box[0][1] = 48;
+    g_dac_box[0][2] = 48;
+    spin_dac(0, 1); // show white border
+    if (driver_is_disk())
+    {
+        dvid_status(100, " Paused in \"color cycling\" mode ");
     }
+    driver_wait_key_pressed(false); // wait for any key
+
+    if (driver_is_disk())
+    {
+        dvid_status(0, "");
+    }
+    g_dac_box[0][0] = old_dac0;
+    g_dac_box[0][1] = old_dac1;
+    g_dac_box[0][2] = old_dac2;
+    spin_dac(0, 1); // show black border
+    g_dac_count = old_dac_count;
+    s_paused = true;
 }
 
 static void set_palette(Byte start[3], Byte finish[3])
