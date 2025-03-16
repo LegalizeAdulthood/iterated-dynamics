@@ -278,6 +278,8 @@ New Features in Version 1.3
 
 Bugs Fixed in Version 1.3
 
+o The automatic image save, activiated by the savetime parameter, has
+  been restored.  (Fixes #43)
 o Issue templates for bug reports and feature requests have been added
   to the github repository.  (Fixes #265)
 o The help compiler documentation has been overhauled and updated for
