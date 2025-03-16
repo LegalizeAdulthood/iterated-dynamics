@@ -86,6 +86,7 @@ add_executable(test-id
     ui/test_comments.cpp
     ui/test_lowerize_parameter.cpp
     ui/test_main_menu_switch.cpp
+    ui/test_make_batch_file.cpp
     ui/test_video_mode.cpp
 )
 source_group("CMake Scripts" REGULAR_EXPRESSION ".*\\.cmake$")

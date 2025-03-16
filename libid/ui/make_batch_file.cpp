@@ -61,23 +61,14 @@
 
 namespace fs = std::filesystem;
 
-namespace
-{
-
-struct WriteBatchData // buffer for parms to break lines nicely
-{
-    int len;
-    char buf[10000];
-};
-
-} // namespace
-
 bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};
 int g_max_line_length{72};
 
 static std::FILE *s_param_file{};
+static WriteBatchData s_wb_data;
 
+static void put_param(WriteBatchData &wb_data, const char *param, ...);
 static void put_param(const char *param, ...);
 static void put_param_line();
 static void put_float(int slash, double value, int prec);
@@ -573,8 +564,6 @@ skip_ui:
     driver_unstack_screen();
 }
 
-static WriteBatchData s_wb_data;
-
 static int get_prec(double a, double b, double c)
 {
     double high_v = 1.0E20;
@@ -609,7 +598,7 @@ static int get_prec(double a, double b, double c)
     return digits;
 }
 
-static void put_encoded_colors(int max_color)
+void put_encoded_colors(WriteBatchData &wb_data, int max_color)
 {
     char buf[81];
     int diff_mag = -1;
@@ -638,7 +627,7 @@ static void put_encoded_colors(int max_color)
             buf[j] = (char) k;
         }
         buf[3] = 0;
-        put_param(buf);
+        put_param(wb_data, buf);
         if (++cur_color >= max_color) // quit if done last color
         {
             break;
@@ -731,7 +720,7 @@ static void put_encoded_colors(int max_color)
             }
             if (--scan_color - cur_color > 1)
             {
-                put_param("<%d>", scan_color - cur_color);
+                put_param(wb_data, "<%d>", scan_color - cur_color);
                 cur_color = scan_color;
             }
             else // changed our mind
@@ -1573,7 +1562,7 @@ docolors:
         }
         else
         {
-            put_encoded_colors(max_color);
+            put_encoded_colors(s_wb_data, max_color);
         }
     }
 
@@ -1602,26 +1591,39 @@ static void put_file_name(const char *keyword, const char *fname)
     }
 }
 
-static void put_param(const char *param, ...)
+static void put_param(WriteBatchData &wb_data, const char *param, std::va_list args)
 {
-    std::va_list args;
-
-    va_start(args, param);
     if (*param == ' '             // starting a new parm
-        && s_wb_data.len == 0)         // skip leading space
+        && wb_data.len == 0)         // skip leading space
     {
         ++param;
     }
-    char *buf_ptr = s_wb_data.buf + s_wb_data.len;
+    char *buf_ptr = wb_data.buf + wb_data.len;
     std::vsprintf(buf_ptr, param, args);
     while (*(buf_ptr++))
     {
-        ++s_wb_data.len;
+        ++wb_data.len;
     }
-    while (s_wb_data.len > 200)
+    while (wb_data.len > 200)
     {
         put_param_line();
     }
+}
+
+static void put_param(WriteBatchData &wb_data, const char *param, ...)
+{
+    std::va_list args;
+    va_start(args, param);
+    put_param(wb_data, param, args);
+    va_end(args);
+}
+
+static void put_param(const char *param, ...)
+{
+    std::va_list args;
+    va_start(args, param);
+    put_param(s_wb_data, param, args);
+    va_end(args);
 }
 
 static int nice_line_length()

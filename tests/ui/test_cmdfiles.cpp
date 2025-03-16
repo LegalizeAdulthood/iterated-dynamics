@@ -2,6 +2,7 @@
 //
 #include <ui/cmdfiles_test.h>
 
+#include "ColorMapSaver.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "ValueUnchanged.h"
@@ -3965,4 +3966,18 @@ TEST_F(TestParameterCommand, orbitNameJulia)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(FractalType::JULIA, g_new_orbit_type);
+}
+
+TEST_F(TestParameterCommand, colorsIncreasingSixBitRamp)
+{
+    ColorMapSaver saved_dac_box;
+
+    exec_cmd_arg("colors=000<56>tttuuuvvv<3>zzz000<57>uuu<4>zzz000<57>uuu<4>zzz000<62>zzz");
+
+    for (int i = 0; i < 256; ++i)
+    {
+        EXPECT_EQ(i % 64, g_dac_box[i][0]);
+        EXPECT_EQ(i % 64, g_dac_box[i][1]);
+        EXPECT_EQ(i % 64, g_dac_box[i][2]);
+    }
 }
