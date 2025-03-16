@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "io/save_timer.h"
-
 #include <ui/cmdfiles_test.h>
 
 #include "MockDriver.h"
@@ -25,6 +23,7 @@
 #include <fractals/parser.h>
 #include <io/CurrentPathSaver.h>
 #include <io/loadfile.h>
+#include <io/save_timer.h>
 #include <io/special_dirs.h>
 #include <misc/debug_flags.h>
 #include <misc/id.h>
