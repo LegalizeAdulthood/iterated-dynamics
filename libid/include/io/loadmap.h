@@ -2,5 +2,6 @@
 //
 #pragma once
 
+// returns true on error
 bool validate_luts(const char *map_name);
 void set_color_palette_name(const char *fn);
