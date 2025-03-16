@@ -286,6 +286,7 @@ void rotate(int direction)      // rotate-the-palette routine
             for (int i = 1; i < 256; i++)
             {
                 g_dac_box[i][change_color] = (Byte)(g_dac_box[i][change_color] + change_direction);
+                // TODO: why is this here?
                 if (g_dac_box[i][change_color] == 64)
                 {
                     g_dac_box[i][change_color] = 63;
