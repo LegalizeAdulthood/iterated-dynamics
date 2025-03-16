@@ -195,6 +195,7 @@ int DiskDriver::read_palette()
     for (int i = 0; i < 256; i++)
     {
         g_dac_box[i][0] = m_clut[i][0];
+        g_dac_box[i][1] = m_clut[i][1];
         g_dac_box[i][2] = m_clut[i][2];
     }
     return 0;
