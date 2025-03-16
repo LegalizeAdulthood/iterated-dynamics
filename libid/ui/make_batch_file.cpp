@@ -609,6 +609,139 @@ static int get_prec(double a, double b, double c)
     return digits;
 }
 
+static void put_encoded_colors(int max_color)
+{
+    char buf[81];
+    int diff_mag = -1;
+    int diff1[4][3];
+    int diff2[4][3];
+    int force = 0;
+    int cur_color = force;
+    while (true)
+    {
+        // emit color in rgb 3 char encoded form
+        for (int j = 0; j < 3; ++j)
+        {
+            int k = g_dac_box[cur_color][j];
+            if (k < 10)
+            {
+                k += '0';
+            }
+            else if (k < 36)
+            {
+                k += ('A' - 10);
+            }
+            else
+            {
+                k += ('_' - 36);
+            }
+            buf[j] = (char) k;
+        }
+        buf[3] = 0;
+        put_param(buf);
+        if (++cur_color >= max_color) // quit if done last color
+        {
+            break;
+        }
+        if (g_debug_flag == DebugFlags::FORCE_LOSSLESS_COLORMAP) // lossless compression
+        {
+            continue;
+        }
+        /* Next a P Branderhorst special, a tricky scan for smooth-shaded
+           ranges which can be written as <nn> to compress .par file entry.
+           Method used is to check net change in each color value over
+           spans of 2 to 5 color numbers.  First time for each span size
+           the value change is noted.  After first time the change is
+           checked against noted change.  First time it differs, a
+           difference of 1 is tolerated and noted as an alternate
+           acceptable change.  When change is not one of the tolerated
+           values, loop exits. */
+        if (force)
+        {
+            --force;
+            continue;
+        }
+        int scan_color = cur_color;
+        int k;
+        while (scan_color < max_color)
+        {
+            // scan while same diff to next
+            int i = scan_color - cur_color;
+            i = std::min(i, 3); // check spans up to 4 steps
+            for (k = 0; k <= i; ++k)
+            {
+                int j;
+                for (j = 0; j < 3; ++j)
+                {
+                    // check pattern of chg per color
+                    if (g_debug_flag != DebugFlags::ALLOW_LARGE_COLORMAP_CHANGES &&
+                        scan_color > (cur_color + 4) && scan_color < max_color - 5)
+                    {
+                        if (std::abs(2 * g_dac_box[scan_color][j] - g_dac_box[scan_color - 5][j] -
+                                g_dac_box[scan_color + 5][j]) >= 2)
+                        {
+                            break;
+                        }
+                    }
+                    int delta = (int) g_dac_box[scan_color][j] - (int) g_dac_box[scan_color - k - 1][j];
+                    if (k == scan_color - cur_color)
+                    {
+                        diff2[k][j] = delta;
+                        diff1[k][j] = diff2[k][j];
+                    }
+                    else if (delta != diff1[k][j] && delta != diff2[k][j])
+                    {
+                        diff_mag = std::abs(delta - diff1[k][j]);
+                        if (diff1[k][j] != diff2[k][j] || diff_mag != 1)
+                        {
+                            break;
+                        }
+                        diff2[k][j] = delta;
+                    }
+                }
+                if (j < 3)
+                {
+                    break; // must've exited from inner loop above
+                }
+            }
+            if (k <= i)
+            {
+                break; // must've exited from inner loop above
+            }
+            ++scan_color;
+        }
+        // now scanc-1 is next color which must be written explicitly
+        if (scan_color - cur_color > 2)
+        {
+            // good, we have a shaded range
+            if (scan_color != max_color)
+            {
+                if (diff_mag < 3)
+                {
+                    // not a sharp slope change?
+                    force = 2;    // force more between ranges, to stop
+                    --scan_color; // "drift" when load/store/load/store/
+                }
+                if (k)
+                {
+                    // more of the same
+                    force += k;
+                    --scan_color;
+                }
+            }
+            if (--scan_color - cur_color > 1)
+            {
+                put_param("<%d>", scan_color - cur_color);
+                cur_color = scan_color;
+            }
+            else // changed our mind
+            {
+                force = 0;
+            }
+        }
+    }
+}
+
 static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj)
 {
     char buf[81];
@@ -1440,134 +1573,7 @@ docolors:
         }
         else
         {
-            int diff_mag = -1;
-            int diff1[4][3];
-            int diff2[4][3];
-            int force = 0;
-            int cur_color = force;
-            while (true)
-            {
-                // emit color in rgb 3 char encoded form
-                for (int j = 0; j < 3; ++j)
-                {
-                    int k = g_dac_box[cur_color][j];
-                    if (k < 10)
-                    {
-                        k += '0';
-                    }
-                    else if (k < 36)
-                    {
-                        k += ('A' - 10);
-                    }
-                    else
-                    {
-                        k += ('_' - 36);
-                    }
-                    buf[j] = (char)k;
-                }
-                buf[3] = 0;
-                put_param(buf);
-                if (++cur_color >= max_color)        // quit if done last color
-                {
-                    break;
-                }
-                if (g_debug_flag == DebugFlags::FORCE_LOSSLESS_COLORMAP)    // lossless compression
-                {
-                    continue;
-                }
-                /* Next a P Branderhorst special, a tricky scan for smooth-shaded
-                   ranges which can be written as <nn> to compress .par file entry.
-                   Method used is to check net change in each color value over
-                   spans of 2 to 5 color numbers.  First time for each span size
-                   the value change is noted.  After first time the change is
-                   checked against noted change.  First time it differs, a
-                   difference of 1 is tolerated and noted as an alternate
-                   acceptable change.  When change is not one of the tolerated
-                   values, loop exits. */
-                if (force)
-                {
-                    --force;
-                    continue;
-                }
-                int scan_color = cur_color;
-                int k;
-                while (scan_color < max_color)
-                {
-                    // scan while same diff to next
-                    int i = scan_color - cur_color;
-                    i = std::min(i, 3); // check spans up to 4 steps
-                    for (k = 0; k <= i; ++k)
-                    {
-                        int j;
-                        for (j = 0; j < 3; ++j)
-                        {
-                            // check pattern of chg per color
-                            if (g_debug_flag != DebugFlags::ALLOW_LARGE_COLORMAP_CHANGES
-                                && scan_color > (cur_color+4) && scan_color < max_color-5)
-                            {
-                                if (std::abs(2*g_dac_box[scan_color][j] - g_dac_box[scan_color-5][j]
-                                        - g_dac_box[scan_color+5][j]) >= 2)
-                                {
-                                    break;
-                                }
-                            }
-                            int delta = (int) g_dac_box[scan_color][j] - (int) g_dac_box[scan_color - k - 1][j];
-                            if (k == scan_color - cur_color)
-                            {
-                                diff2[k][j] = delta;
-                                diff1[k][j] = diff2[k][j];
-                            }
-                            else if (delta != diff1[k][j] && delta != diff2[k][j])
-                            {
-                                diff_mag = std::abs(delta - diff1[k][j]);
-                                if (diff1[k][j] != diff2[k][j] || diff_mag != 1)
-                                {
-                                    break;
-                                }
-                                diff2[k][j] = delta;
-                            }
-                        }
-                        if (j < 3)
-                        {
-                            break; // must've exited from inner loop above
-                        }
-                    }
-                    if (k <= i)
-                    {
-                        break;   // must've exited from inner loop above
-                    }
-                    ++scan_color;
-                }
-                // now scanc-1 is next color which must be written explicitly
-                if (scan_color - cur_color > 2)
-                {
-                    // good, we have a shaded range
-                    if (scan_color != max_color)
-                    {
-                        if (diff_mag < 3)
-                        {
-                            // not a sharp slope change?
-                            force = 2;       // force more between ranges, to stop
-                            --scan_color;         // "drift" when load/store/load/store/
-                        }
-                        if (k)
-                        {
-                            // more of the same
-                            force += k;
-                            --scan_color;
-                        }
-                    }
-                    if (--scan_color - cur_color > 1)
-                    {
-                        put_param("<%d>", scan_color-cur_color);
-                        cur_color = scan_color;
-                    }
-                    else                  // changed our mind
-                    {
-                        force = 0;
-                    }
-                }
-            }
+            put_encoded_colors(max_color);
         }
     }
 
