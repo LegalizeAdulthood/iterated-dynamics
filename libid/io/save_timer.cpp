@@ -1,10 +1,11 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "io/save_timer.h"
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "misc/Driver.h"
 #include "ui/framain2.h"
-#include "ui/id_keys.h"
 #include "ui/read_ticker.h"
 
 #include <cmath>
@@ -29,6 +30,12 @@ void stop_save_timer()
     s_save_ticks = 0;
 }
 
+static bool save_timer_expired()
+{
+    const long elapsed = read_ticker() - s_save_start;
+    return elapsed >= s_save_ticks;
+}
+
 bool auto_save_needed()
 {
     if (s_save_ticks == 0)
@@ -36,9 +43,7 @@ bool auto_save_needed()
         return false;
     }
 
-    /* get current timer value */
-    long elapsed = read_ticker() - s_save_start;
-    if (elapsed >= s_save_ticks) /* time to check */
+    if (save_timer_expired()) /* time to check */
     {
         /* time to save, check for end of row */
         if (g_finish_row == -1)                           /* end of row */
@@ -56,18 +61,14 @@ bool auto_save_needed()
                 g_timed_save = TimedSave::STARTED; /* do the save */
             }
         }
-        else                                       /* not end of row */
+        else if (g_finish_row != g_row)            /* start of next row */
         {
-            if (g_finish_row != g_row)             /* start of next row */
-            {
-                g_timed_save = TimedSave::STARTED; /* do the save */
-            }
+            g_timed_save = TimedSave::STARTED;     /* do the save */
         }
     }
 
     if (g_timed_save == TimedSave::STARTED)
     {
-        driver_unget_key(ID_KEY_FAKE_AUTOSAVE);
         return true;
     }
     return false;

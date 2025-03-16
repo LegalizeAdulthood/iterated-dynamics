@@ -14,8 +14,10 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "io/CurrentPathSaver.h"
+#include "io/save_timer.h"
 #include "ui/cmdfiles.h"
 #include "ui/diskvid.h"
+#include "ui/id_keys.h"
 #include "ui/read_ticker.h"
 #include "ui/rotate.h"
 #include "ui/slideshw.h"
@@ -107,6 +109,12 @@ int Win32BaseDriver::key_pressed()
     {
         return m_key_buffer;
     }
+    if (auto_save_needed())
+    {
+        unget_key(ID_KEY_FAKE_AUTOSAVE);
+        assert(m_key_buffer == ID_KEY_FAKE_AUTOSAVE);
+        return m_key_buffer;
+    }
     flush_output();
     const int ch = handle_special_keys(g_frame.get_key_press(false));
     if (m_key_buffer)
@@ -142,6 +150,10 @@ int Win32BaseDriver::get_key()
 
     do
     {
+        if (auto_save_needed())
+        {
+            return ID_KEY_FAKE_AUTOSAVE;
+        }
         if (m_key_buffer)
         {
             ch = m_key_buffer;
