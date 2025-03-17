@@ -1954,7 +1954,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
     pt_t[2][1] = 2 * pt3.y / g_logical_screen_y_dots - 1;
     pt_t[2][2] = -2.0f * pt3.color / g_num_colors - 1;
 
-    // Color of triangle is average of colors of its verticies
+    // Color of triangle is average of colors of its vertices
     if (!g_brief)
     {
         for (int i = 0; i <= 2; i++)
