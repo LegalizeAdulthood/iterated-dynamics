@@ -534,6 +534,16 @@ TEST_F(TestParameterCommand, resetVersionAllFields)
     EXPECT_FALSE(g_version.legacy);
 }
 
+TEST_F(TestParameterCommand, resetInsideZero)
+{
+    ValueSaver saved_inside_color{g_inside_color, -9999};
+
+    exec_cmd_arg("reset");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(0, g_inside_color);
+}
+
 TEST_F(TestParameterCommandError, filenameExtensionTooLong)
 {
     ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};

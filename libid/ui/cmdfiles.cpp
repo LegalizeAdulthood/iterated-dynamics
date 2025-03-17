@@ -487,7 +487,7 @@ static void init_vars_fractal()
 {
     g_escape_exit = false;                               // don't disable the "are you sure?" screen
     g_user_periodicity_value = 1;                        // turn on periodicity
-    g_inside_color = 1;                                  // inside color = blue
+    g_inside_color = 0;                                  // inside color = black (in default colormap)
     g_fill_color = -1;                                   // no special fill color
     g_user_biomorph_value = -1;                          // turn off biomorph flag
     g_outside_color = ITER;                              // outside color = -1 (not used)
