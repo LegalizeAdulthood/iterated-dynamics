@@ -6,6 +6,7 @@
 
 #include "3d/plot3d.h"
 #include "engine/id_data.h"
+#include "misc/version.h"
 #include "ui/rotate.h"
 
 #include <windowsx.h>
@@ -541,9 +542,19 @@ int Plot::write_palette()
         m_clut[i][1] = g_dac_box[i][1];
         m_clut[i][2] = g_dac_box[i][2];
 
-        m_bmi.bmiColors[i].rgbRed = g_dac_box[i][0]*4;
-        m_bmi.bmiColors[i].rgbGreen = g_dac_box[i][1]*4;
-        m_bmi.bmiColors[i].rgbBlue = g_dac_box[i][2]*4;
+        if (g_version < id_version(1, 3))
+        {
+            // prior to v1.3: 6-bit color
+            m_bmi.bmiColors[i].rgbRed = g_dac_box[i][0] * 4;
+            m_bmi.bmiColors[i].rgbGreen = g_dac_box[i][1] * 4;
+            m_bmi.bmiColors[i].rgbBlue = g_dac_box[i][2] * 4;
+        }
+        else
+        {
+            m_bmi.bmiColors[i].rgbRed = g_dac_box[i][0];
+            m_bmi.bmiColors[i].rgbGreen = g_dac_box[i][1];
+            m_bmi.bmiColors[i].rgbBlue = g_dac_box[i][2];
+        }
     }
     redraw();
 

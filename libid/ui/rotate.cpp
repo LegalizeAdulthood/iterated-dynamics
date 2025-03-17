@@ -286,6 +286,7 @@ void rotate(int direction)      // rotate-the-palette routine
             for (int i = 1; i < 256; i++)
             {
                 g_dac_box[i][change_color] = (Byte)(g_dac_box[i][change_color] + change_direction);
+                // TODO: 6-bit color
                 // TODO: why is this here?
                 if (g_dac_box[i][change_color] == 64)
                 {
@@ -559,6 +560,7 @@ static void set_palette2(Byte start[3], Byte finish[3])
     }
 }
 
+// TODO: 6-bit color?
 static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 {
     g_dac_box[0][0] = 0;
@@ -600,6 +602,7 @@ void save_palette()
         {
             for (i = 0; i < g_colors; i++)
             {
+                // TODO: 6-bit color
                 std::fprintf(dac_file, "%3d %3d %3d\n",
                         g_dac_box[i][0] << 2,
                         g_dac_box[i][1] << 2,

@@ -5,6 +5,7 @@
 #include "io/find_path.h"
 #include "io/has_ext.h"
 #include "io/merge_path_names.h"
+#include "misc/version.h"
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/stop_msg.h"
@@ -64,9 +65,19 @@ bool validate_luts(const char *map_name)
         }
         std::sscanf(line, "%u %u %u", &r, &g, &b);
         //* load global dac values *
-        DAC[index].red   = (Byte)((r%256) >> 2);// maps default to 8 bits
-        DAC[index].green = (Byte)((g%256) >> 2);// DAC wants 6 bits
-        DAC[index].blue  = (Byte)((b%256) >> 2);
+        if (g_version < id_version(1, 3))
+        {
+            // prior to v1.3: 6-bit color
+            DAC[index].red = static_cast<Byte>(r % 256 >> 2);
+            DAC[index].green = static_cast<Byte>(g % 256 >> 2);
+            DAC[index].blue = static_cast<Byte>(b % 256 >> 2);
+        }
+        else
+        {
+            DAC[index].red = static_cast<Byte>(r % 256);
+            DAC[index].green = static_cast<Byte>(g % 256);
+            DAC[index].blue = static_cast<Byte>(b % 256);
+        }
     }
     std::fclose(f);
     while (index < 256)

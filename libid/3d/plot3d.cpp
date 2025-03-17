@@ -529,6 +529,7 @@ void plot_setup()
         {
             if (g_glasses_type == GlassesType::SUPERIMPOSE && g_colors < 256)
             {
+                // TODO: 6-bit color
                 g_dac_box[PAL_RED  ][0] = 63;
                 g_dac_box[PAL_RED  ][1] =  0;
                 g_dac_box[PAL_RED  ][2] =  0;

@@ -503,6 +503,7 @@ static void set_plasma_palette()
         return;    // map= specified
     }
 
+    // TODO: 6-bit color
     g_dac_box[0][0] = 0;
     g_dac_box[0][1] = 0;
     g_dac_box[0][2] = 0;

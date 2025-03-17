@@ -443,6 +443,7 @@ bool cellular_setup()
 
 static void set_cellular_palette()
 {
+    // TODO: 6-bit color
     static const Byte RED[3]    = { 42, 0, 0 };
     static const Byte GREEN[3]  = { 10, 35, 10 };
     static const Byte BLUE[3]   = { 13, 12, 29 };

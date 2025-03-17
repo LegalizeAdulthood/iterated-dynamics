@@ -1365,6 +1365,7 @@ static int find_fractal_info(const std::string &gif_file, //
                 {
                     break;
                 }
+                // TODO: 6-bit color
                 g_dac_box[i][j] = (Byte)(k >> 2);
             }
             if (k < 0)

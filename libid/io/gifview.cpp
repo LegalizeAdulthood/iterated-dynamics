@@ -185,6 +185,7 @@ int gif_view()
             }
             if ((g_display_3d == Display3DMode::NONE || !glasses_alternating_or_superimpose()) && g_read_color)
             {
+                // TODO: 6-bit color
                 g_dac_box[i][j] = (Byte)(k >> 2); // TODO: don't right shift color table by 2
             }
         }
@@ -393,6 +394,7 @@ static int out_line_dither(Byte *pixels, int line_len)
     int next_err = (std::rand() & 0x1f) - 16;
     for (int i = 0; i < line_len; i++)
     {
+        // TODO: 6-bit color
         int brt = (g_dac_box[pixels[i]][0] * 5 + g_dac_box[pixels[i]][1] * 9 + g_dac_box[pixels[i]][2] * 2) >>
             4; // brightness from 0 to 63
         brt += next_err;

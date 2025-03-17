@@ -36,20 +36,30 @@ include(ConfigureData)
 #
 add_executable(test-id
     ConfigureData.cmake
-    home/test.cfg.in
-    home/test.ifs.in
-    "${ID_TEST_CONFIG_FILE}"
+    "home/save.cfg.in"
+    "home/test.cfg.in"
+    "home/test.frm.in"
+    "home/test.ifs.in"
+    "home/test.ini.in"
+    "home/test.map.in" 
+    "${ID_TEST_HOME_CONFIG_FILE}"
+    "${ID_TEST_SAVE_CONFIG_FILE}"
+    "${ID_TEST_FRM_DIR}/${ID_TEST_FRM_FILE}"
     "${ID_TEST_DATA_DIR}/${ID_TEST_IFS_FILE}"
     "${ID_TEST_DATA_SUBDIR}/${ID_TEST_IFS_FILE2}"
+    "${ID_TEST_HOME_TOOLS_INI}"
+    "${ID_TEST_MAP_DIR}/${ID_TEST_MAP_FILE}"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_check_write_file_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_config_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
+    include/expected_map.h
     include/MockDriver.h
     include/ValueUnchanged.h
     include/test_config_data.h.in
     include/test_data.h.in
     include/test_migrate_gif.h.in
+    expected_map.cpp
     engine/test_log_map.cpp
     engine/test_resume.cpp
     fractals/test_check_orbit_name.cpp
@@ -64,6 +74,7 @@ add_executable(test-id
     io/test_gif_file.cpp
     io/test_is_directory.cpp
     io/test_loadfile.cpp
+    io/test_loadmap.cpp
     io/test_load_config.cpp
     io/test_load_entry_text.cpp
     io/test_locate_input_file.cpp
@@ -91,8 +102,12 @@ add_executable(test-id
 )
 source_group("CMake Scripts" REGULAR_EXPRESSION ".*\\.cmake$")
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")
+source_group("Test Data/Color Maps" REGULAR_EXPRESSION ".*\\.map$")
+source_group("Test Data/Config/Home" REGULAR_EXPRESSION ".*/home/.*\\.cfg$")
+source_group("Test Data/Config/Save" REGULAR_EXPRESSION ".*/save/.*\\.cfg$")
+source_group("Test Data/Formulas" REGULAR_EXPRESSION ".*\\.frm$")
 source_group("Test Data/IFS" REGULAR_EXPRESSION ".*\\.ifs$")
-source_group("Test Data/Config" REGULAR_EXPRESSION ".*\\.cfg$")
+source_group("Test Data/INI" REGULAR_EXPRESSION ".*\\.ini$")
 source_group_subdir("Engine" "engine")
 source_group_subdir("Fractal Specific" "fractals")
 source_group_subdir("IO" "io")

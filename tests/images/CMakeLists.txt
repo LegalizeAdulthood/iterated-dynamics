@@ -7,6 +7,9 @@ endif()
 
 function(add_image_test name)
     cmake_parse_arguments(IMAGE_TEST "" "" "PARAMETERS" ${ARGN})
+    if(IMAGE_TEST_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "Unknown arguments: ${IMAGE_TEST_UNPARSED_ARGUMENTS}")
+    endif()
     list(APPEND IMAGE_TEST_PARAMETERS "batch=yes" "video=F6")
     add_test(NAME ImageTest.${name}
         COMMAND ${CMAKE_COMMAND}

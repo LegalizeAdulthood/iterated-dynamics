@@ -655,6 +655,7 @@ static int shift_write(const Byte *color, int num_colors)
     {
         for (int j = 0; j < 3; j++)
         {
+            // TODO: 6-bit color
             Byte this_color = color[3 * i + j];
             this_color = (Byte)(this_color << 2);
             this_color = (Byte)(this_color + (Byte)(this_color >> 6));
