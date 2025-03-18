@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 class GIFInputFile
 {
@@ -100,7 +101,9 @@ inline bool operator!=(const ColorMapObject &lhs, const ColorMapObject &rhs)
 
 inline std::ostream &operator<<(std::ostream &str, const GifColorType &value)
 {
-    return str << "[ " << value.Red << ", " << value.Green << ", " << value.Red << " ]";
+    return str << "[ " << static_cast<int>(value.Red)   //
+               << ", " << static_cast<int>(value.Green) //
+               << ", " << static_cast<int>(value.Red) << " ]";
 }
 
 inline std::ostream &operator<<(std::ostream &str, const ColorMapObject &value)
@@ -152,15 +155,34 @@ std::ostream &operator<<(std::ostream &str, const GifImageDesc &value)
                << R"(, "ColorMap": [ )" << *value.ColorMap << "    ]\n}";
 }
 
-int main(int argc, char *argv[])
+static int usage(std::string_view program)
 {
-    if (argc < 3)
+    std::cout << "Usage: [--ignore-colormap] " << program << ": file1 file2\n";
+    return 1;
+}
+
+    int main(int argc, char *argv[])
+{
+    if (argc < 3 || argc > 4)
     {
-        std::cout << "Usage: " << argv[0] << ": file1 file2\n";
-        return 1;
+        return usage(argv[0]);
     }
-    const std::string file1{argv[1]};
-    const std::string file2{argv[2]};
+    bool compare_colormap{true};
+    int start_arg{1};
+    if (argc == 4)
+    {
+        if (std::string{argv[1]} == "--ignore-colormap")
+        {
+            compare_colormap = false;
+            ++start_arg;
+        }
+        else
+        {
+            return usage(argv[0]);
+        }
+    }
+    const std::string file1{argv[start_arg]};
+    const std::string file2{argv[start_arg + 1]};
     try
     {
         if (!std::filesystem::exists(file1))
@@ -189,7 +211,7 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        if (gif1.color_map() != gif2.color_map())
+        if (compare_colormap && gif1.color_map() != gif2.color_map())
         {
             std::cout << "Color table doesn't match\n"
                       << file1 << ":\n"

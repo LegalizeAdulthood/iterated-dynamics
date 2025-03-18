@@ -20,6 +20,7 @@ if(DEBUG)
     dump_var(PARAMETERS)
     dump_var(TEST_SAVE_IMAGE)
     dump_var(TEST_KEEP_IMAGE)
+    dump_var(IMAGE_TEST_IGNORE_COLORMAP)
     message(STATUS "Parameters:")
     foreach(par ${PARAMETERS})
         message(STATUS "    ${par}")
@@ -32,6 +33,11 @@ execute_process(COMMAND "${ID}" ${PARAMETERS}
     COMMAND_ECHO ${COMMAND_ECHO})
 file(RENAME "${TEST_SAVE_IMAGE}" "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}")
 
-execute_process(COMMAND "${IMAGE_COMPARE}" "${GOLD_IMAGE}" "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}"
+set(IMAGE_COMPARE_ARGS "")
+if(IMAGE_TEST_IGNORE_COLORMAP)
+    list(APPEND IMAGE_COMPARE_ARGS "--ignore-colormap")
+endif()
+list(APPEND IMAGE_COMPARE_ARGS "${GOLD_IMAGE}" "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}")
+execute_process(COMMAND "${IMAGE_COMPARE}" ${IMAGE_COMPARE_ARGS}
     COMMAND_ERROR_IS_FATAL ANY
     COMMAND_ECHO ${COMMAND_ECHO})
