@@ -16,6 +16,10 @@
 
 static PertEngine s_pert_engine;
 
+PerturbationMode g_perturbation{PerturbationMode::AUTO};
+double g_perturbation_tolerance{1e-6};
+bool g_use_perturbation{}; // select perturbation code
+
 bool perturbation()
 {
     BigStackSaver saved;
@@ -58,4 +62,16 @@ bool perturbation()
     }
     g_calc_status = CalcStatus::COMPLETED;
     return false;
+}
+
+int perturbation_per_pixel()
+{
+    int result = s_pert_engine.perturbation_per_pixel(g_col, g_row, g_magnitude_limit);
+    return result;
+}
+
+int perturbation_per_orbit()
+{
+    int status = s_pert_engine.calculate_orbit(g_col, g_row, g_color_iter);
+    return status;
 }

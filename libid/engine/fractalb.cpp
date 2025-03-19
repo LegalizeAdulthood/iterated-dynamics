@@ -9,6 +9,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/perturbation.h"
 #include "engine/type_has_param.h"
 #include "fractals/divide_brot.h"
 #include "fractals/fractalp.h"
@@ -356,12 +357,12 @@ bool mandel_bn_setup()
         }
     }
 
-    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         mandel_perturbation_setup();
         // TODO: figure out crash if we don't do this
-        g_std_calc_mode ='g';
-        g_calc_status = CalcStatus::COMPLETED;
+//        g_std_calc_mode ='g';
+//        g_calc_status = CalcStatus::COMPLETED;
         return true;
     }
 
@@ -475,7 +476,7 @@ bool mandel_bf_setup()
     {
     case FractalType::MANDEL:
     case FractalType::BURNING_SHIP:
-        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+        if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             return mandel_perturbation_setup();
         }
@@ -487,7 +488,7 @@ bool mandel_bf_setup()
         break;
 
     case FractalType::MANDEL_Z_POWER:
-        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+        if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             // only allow integer values of real part
             if (const int degree = (int) g_params[2]; degree > 2)
@@ -536,7 +537,7 @@ bool mandel_bf_setup()
 
 int mandel_bn_per_pixel()
 {
-    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         return true;
     }

@@ -35,6 +35,7 @@
 #include "engine/tesseral.h"
 #include "engine/wait_until.h"
 #include "engine/work_list.h"
+#include "engine/perturbation.h"
 #include "fractals/fractalp.h"
 #include "fractals/frothy_basin.h"
 #include "fractals/lyapunov.h"
@@ -1431,6 +1432,24 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
     }
     g_overflow = false;           // reset integer math overflow flag
 
+    if (g_use_perturbation)
+    {
+//        int temp_color = get_color(g_col, g_row);
+        perturbation_per_pixel(); // initialize the pert calculations
+//        if (perturbation_per_pixel() == -2) // initialize the calculations -2 means not glitched
+//        {
+//            g_color_iter = temp_color; // we have done this pixel in an earlier pass and it's not glitched//
+//            g_color = std::abs((int) g_color_iter);
+//            g_pixel_is_complete = true;
+//            return g_color;
+//        }
+    }
+    else
+    {
+        g_cur_fractal_specific->per_pixel(); // initialize the calculations
+    }
+
+
     g_cur_fractal_specific->per_pixel(); // initialize the calculations
 
     attracted = false;
@@ -1531,9 +1550,22 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         }
 
         // the usual case
-        else if ((g_cur_fractal_specific->orbit_calc() && g_inside_color != STAR_TRAIL) || g_overflow)
+        else
         {
-            break;
+            if (g_use_perturbation)
+            {
+                if ((perturbation_per_orbit() && g_inside_color != STAR_TRAIL) || g_overflow)
+                {
+                    break;
+                }
+            }
+            else
+            {
+                if ((g_cur_fractal_specific->orbit_calc() && g_inside_color != STAR_TRAIL) || g_overflow)
+                {
+                    break;
+                }
+            }
         }
         if (g_show_orbit)
         {

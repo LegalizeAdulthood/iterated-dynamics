@@ -12,6 +12,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "engine/bailout_formula.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
@@ -230,8 +231,8 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
         ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius) - m_delta_real;
     const double delta_imaginary =
         ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius) - m_delta_imag;
-    std::complex<double> delta_sub_0{delta_real, delta_imaginary};
-    std::complex<double> delta_sub_n{delta_real, delta_imaginary};
+    /*std::complex<double> */m_delta_sub_0 = {delta_real, delta_imaginary};
+    /*std::complex<double> */m_delta_sub_n = {delta_real, delta_imaginary};
     int iteration{};
     bool glitched{};
 
@@ -245,9 +246,9 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
             throw std::runtime_error("No perturbation point function defined for fractal type (" +
                 std::string{g_cur_fractal_specific->name} + ")");
         }
-        g_cur_fractal_specific->pert_pt(m_xn[iteration], delta_sub_n, delta_sub_0);
+        g_cur_fractal_specific->pert_pt(m_xn[iteration], m_delta_sub_n, m_delta_sub_0);
         iteration++;
-        magnitude = mag_squared(m_xn[iteration] + delta_sub_n);
+        magnitude = mag_squared(m_xn[iteration] + m_delta_sub_n);
 
         if (g_inside_color == BOF60 || g_inside_color == BOF61)
         {
@@ -277,7 +278,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     {
         int index;
         const double rq_lim2{std::sqrt(g_magnitude_limit)};
-        const std::complex<double> w{m_xn[iteration] + delta_sub_n};
+        const std::complex<double> w{m_xn[iteration] + m_delta_sub_n};
 
         if (g_biomorph >= 0)
         {
@@ -528,4 +529,73 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         }
         g_cur_fractal_specific->pert_ref(center, z);
     }
+}
+
+int PertEngine::perturbation_per_pixel(int x, int y, double bailout)
+{
+    double magnified_radius = m_zoom_radius;
+    int window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
+
+//    if (m_glitches[x + y * g_screen_x_dots] == 0) // processed and not glitched
+//        return -2;
+
+    const double delta_real = ((magnified_radius * (2 * x - g_screen_x_dots)) / window_radius) - m_delta_real;
+    const double delta_imaginary = ((-magnified_radius * (2 * y - g_screen_y_dots)) / window_radius) - m_delta_imag;
+    m_delta_sub_0 = {delta_real, -delta_imaginary};
+    m_delta_sub_n = m_delta_sub_0;
+//    m_points_count++;
+//    m_glitched = false;
+    return 0;
+}
+
+int PertEngine::calculate_orbit(int x, int y, long iteration)
+{
+    // Get the complex number at this pixel.
+    // This calculates the number relative to the reference point, so we need to translate that to the center
+    // when the reference point isn't in the center. That's why for the first reference, calculatedRealDelta
+    // and calculatedImaginaryDelta are 0: it's calculating relative to the center.
+
+    std::complex<double> temp, temp1;
+    double magnitude;
+
+    temp1 = m_xn[iteration - 1] + m_delta_sub_n;
+    g_cur_fractal_specific->pert_pt(m_xn[iteration - 1], m_delta_sub_n, m_delta_sub_0);
+
+    if (g_cur_fractal_specific->pert_pt == nullptr)
+    {
+        throw std::runtime_error("No perturbation point function defined for fractal type (" +
+            std::string{g_cur_fractal_specific->name} + ")");
+    }
+    temp = m_xn[iteration] + m_delta_sub_n;
+//    m_glitches[x + y * g_screen_x_dots] = 0; // assume not glitched
+    magnitude = mag_squared(temp);
+
+    // This is Pauldelbrot's glitch detection method. You can see it here:
+    // http://www.fractalforums.com/announcements-and-news/pertubation-theory-glitches-improvement/. As for
+    // why it looks so weird, it's because I've squared both sides of his equation and moved the |ZsubN| to
+    // the other side to be precalculated. For more information, look at where the reference point is
+    // calculated. I also only want to store this point once.
+    if (m_calculate_glitches /*&& !m_glitched */&& magnitude < m_perturbation_tolerance_check[iteration])
+    {
+//        m_glitches[x + y * g_screen_x_dots] = 1; // yep, she's glitched
+        Point pt(x, y, iteration);
+        m_glitch_points[m_glitch_point_count] = pt;
+        m_glitch_point_count++;
+//        m_glitched = true;
+        return true;
+    }
+    g_new_z.x = temp.real();
+    g_new_z.y = temp.imag();
+    // the following are needed because although perturbation operates in doubles, the math type may not be
+    if (g_bf_math == BFMathType::BIG_NUM)
+    {
+        float_to_bn(g_new_z_bn.x, temp.real());
+        float_to_bn(g_new_z_bn.y, temp.imag());
+    }
+    else if (g_bf_math == BFMathType::BIG_FLT)
+    {
+        float_to_bf(g_new_z_bf.x, temp.real());
+        float_to_bf(g_new_z_bf.y, temp.imag());
+    }
+    return g_bailout_float();
 }

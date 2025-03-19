@@ -14,6 +14,8 @@ class PertEngine
 public:
     void initialize_frame(const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
     int calculate_one_frame();
+    int perturbation_per_pixel(int x, int y, double bailout);
+    int calculate_orbit(int x, int y, long iteration);
 
 private:
     int calculate_point(const Point &pt, double magnified_radius, int window_radius);
@@ -37,4 +39,7 @@ private:
     double m_percent_glitch_tolerance{0.1}; // What percentage of the image is okay to be glitched.
     int m_reference_points{};
     int m_saved_stack{};
+
+    std::complex<double> m_delta_sub_0{};
+    std::complex<double> m_delta_sub_n{};
 };
