@@ -19,6 +19,7 @@ static PertEngine s_pert_engine;
 PerturbationMode g_perturbation{PerturbationMode::AUTO};
 double g_perturbation_tolerance{1e-6};
 bool g_use_perturbation{}; // select perturbation code
+int g_number_referrences{}; // number of references used
 
 bool perturbation()
 {
@@ -75,3 +76,9 @@ int perturbation_per_orbit()
     int status = s_pert_engine.calculate_orbit(g_col, g_row, g_color_iter);
     return status;
 }
+
+int get_number_references()
+{
+    return s_pert_engine.get_number_references();
+}
+

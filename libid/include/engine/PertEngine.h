@@ -16,6 +16,7 @@ public:
     int calculate_one_frame();
     int perturbation_per_pixel(int x, int y, double bailout);
     int calculate_orbit(int x, int y, long iteration);
+    int get_number_references();
 
 private:
     int calculate_reference(int x, int y);

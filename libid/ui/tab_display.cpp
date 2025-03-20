@@ -9,6 +9,7 @@
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
 #include "engine/param_not_used.h"
+#include "engine/perturbation.h"
 #include "engine/pixel_grid.h"
 #include "engine/soi.h"
 #include "engine/type_has_param.h"
@@ -347,6 +348,15 @@ top:
         std::sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(Resolution::CURRENT)*/);
         driver_put_string(start_row, 45, C_GENERAL_HI, "Arbitrary precision ");
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
+    }
+    start_row += 1;
+
+   if (g_use_perturbation)
+    {
+       int ref = get_number_references();
+       std::sprintf(msg, (ref == 1) ? " (%d reference)" : " (%d references)", ref);
+       driver_put_string(start_row, 45, C_GENERAL_HI, "Perturbation in use");
+       driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
     start_row += 1;
 

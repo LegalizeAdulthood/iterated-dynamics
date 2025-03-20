@@ -258,9 +258,21 @@ int PertEngine::calculate_orbit(int x, int y, long iteration)
     if (magnitude < m_perturbation_tolerance_check[iteration])
     {
     // here is where the magic happens... eventually
-    //    calculate_reference(x, y);
-    //    calculate_orbit(x, y, iteration);
-    //    return g_bailout_float();
+/*
+        calculate_reference(x, y);
+        perturbation_per_pixel(x, y, g_magnitude_limit);
+        for (long i = 0; i < g_max_iterations; i++)
+        {
+            int status = calculate_orbit(x, y, i);
+            if (status == 0)
+            {
+                g_color_iter = i;
+                break;
+            }
+        }
+//        return g_bailout_float();
+*/
+        m_reference_points++;
         return true;
     }
     g_new_z.x = temp.real();
@@ -288,7 +300,9 @@ int PertEngine::calculate_reference(int x, int y)
     std::complex<double> reference_coordinate;
     int saved = save_stack();
 
-//    if (m_calculate_glitches == false)
+    m_reference_points++;
+
+    //    if (m_calculate_glitches == false)
 //        return 0;
 
     if (g_bf_math != BFMathType::NONE)
@@ -304,7 +318,6 @@ int PertEngine::calculate_reference(int x, int y)
         ++g_random_seed;
     }
 
-    m_reference_points++;
 
     const int index{(int) ((double) std::rand() / RAND_MAX * m_remaining_point_count)};
     Point pt{m_points_remaining[index]};
@@ -350,4 +363,9 @@ int PertEngine::calculate_reference(int x, int y)
     }
 
     return 0;
+}
+
+int PertEngine::get_number_references()
+{
+    return m_reference_points;
 }
