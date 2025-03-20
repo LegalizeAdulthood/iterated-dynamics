@@ -882,6 +882,10 @@ static void perform_work_list()
     bool (*sv_per_image)() = nullptr;  // once-per-image setup
     int alt = find_alternate_math(g_fractal_type, g_bf_math);
 
+    if (g_use_perturbation)             // setup  per-image perturbation
+    {
+        mandel_perturbation_setup();
+    }
     if (alt > -1)
     {
         sv_orbit_calc = g_cur_fractal_specific->orbit_calc;
@@ -1150,10 +1154,10 @@ static void perform_work_list()
         case 'g':
             // TODO: fix this
             // horrible cludge preventing crash when coming back from perturbation and math = bignum/bigflt
-            if (g_calc_status != CalcStatus::COMPLETED)
-            {
+//            if (g_calc_status != CalcStatus::COMPLETED)
+//            {
                 solid_guess();
-            }
+//            }
             break;
 
         case 'd':

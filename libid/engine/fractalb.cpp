@@ -356,7 +356,7 @@ bool mandel_bn_setup()
             half_a_bn(g_close_enough_bn);
         }
     }
-
+/*
     if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         mandel_perturbation_setup();
@@ -365,7 +365,7 @@ bool mandel_bn_setup()
 //        g_calc_status = CalcStatus::COMPLETED;
         return true;
     }
-
+*/
     g_c_exponent = (int) g_params[2];
     switch (g_fractal_type)
     {
@@ -476,10 +476,12 @@ bool mandel_bf_setup()
     {
     case FractalType::MANDEL:
     case FractalType::BURNING_SHIP:
+/*
         if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             return mandel_perturbation_setup();
         }
+*/
         break;
 
     case FractalType::JULIA:
@@ -488,6 +490,7 @@ bool mandel_bf_setup()
         break;
 
     case FractalType::MANDEL_Z_POWER:
+/*
         if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             // only allow integer values of real part
@@ -500,7 +503,7 @@ bool mandel_bf_setup()
                 return mandel_perturbation_setup();
             }
         }
-
+*/
         init_big_pi();
         if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
         {

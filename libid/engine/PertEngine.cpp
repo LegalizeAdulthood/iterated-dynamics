@@ -9,6 +9,7 @@
 // <https://github.com/ShiromMakkad/MandelbrotPerturbation>
 
 #include "engine/PertEngine.h"
+#include "engine/perturbation.h"
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
@@ -29,7 +30,7 @@
 
 // Raising this number makes more calculations, but less variation between each calculation (less chance
 // of mis-identifying a glitched point).
-constexpr double GLITCH_TOLERANCE{1e-6};
+double GLITCH_TOLERANCE = g_perturbation_tolerance;
 
 void PertEngine::initialize_frame(
     const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius)
@@ -79,7 +80,7 @@ int PertEngine::calculate_one_frame()
             m_remaining_point_count++;
         }
     }
-
+    
     double magnified_radius = m_zoom_radius;
     int window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
     BigStackSaver saved;
@@ -94,7 +95,7 @@ int PertEngine::calculate_one_frame()
         tmp_bf = alloc_stack(g_r_bf_length + 2);
     }
 
-    while (m_remaining_point_count > (g_screen_x_dots * g_screen_y_dots) * (m_percent_glitch_tolerance / 100))
+    if (m_remaining_point_count > (g_screen_x_dots * g_screen_y_dots) * (m_percent_glitch_tolerance / 100))
     {
         m_reference_points++;
 
@@ -128,6 +129,12 @@ int PertEngine::calculate_one_frame()
             }
         }
         else
+        {
+            restore_stack(m_saved_stack);
+            return 0;
+        }
+    }
+        /*
         {
             if (!m_calculate_glitches)
             {
@@ -205,6 +212,7 @@ int PertEngine::calculate_one_frame()
     }
 
     cleanup();
+*/
     return 0;
 }
 
@@ -214,11 +222,13 @@ void PertEngine::cleanup()
     {
         restore_stack(m_saved_stack);
     }
-    m_points_remaining.clear();
-    m_glitch_points.clear();
+//    m_points_remaining.clear();
+//    m_glitch_points.clear();
     m_perturbation_tolerance_check.clear();
     m_xn.clear();
 }
+
+#ifdef OLDPOINT
 
 int PertEngine::calculate_point(const Point &pt, double magnified_radius, int window_radius)
 {
@@ -442,6 +452,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     }
     return 0;
 }
+#endif  // OLDPOINT
 
 void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration)
 {
@@ -575,13 +586,16 @@ int PertEngine::calculate_orbit(int x, int y, long iteration)
     // why it looks so weird, it's because I've squared both sides of his equation and moved the |ZsubN| to
     // the other side to be precalculated. For more information, look at where the reference point is
     // calculated. I also only want to store this point once.
-    if (m_calculate_glitches /*&& !m_glitched */&& magnitude < m_perturbation_tolerance_check[iteration])
+    if (/*m_calculate_glitches && !m_glitched && */magnitude < m_perturbation_tolerance_check[iteration])
     {
+    // here is where the magic happens... eventually
+    /*
 //        m_glitches[x + y * g_screen_x_dots] = 1; // yep, she's glitched
         Point pt(x, y, iteration);
         m_glitch_points[m_glitch_point_count] = pt;
         m_glitch_point_count++;
 //        m_glitched = true;
+    */
         return true;
     }
     g_new_z.x = temp.real();
