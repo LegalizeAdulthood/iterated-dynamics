@@ -529,3 +529,8 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         g_cur_fractal_specific->pert_ref(center, z);
     }
 }
+
+int PertEngine::get_number_references()
+{
+    return m_reference_points;
+}
