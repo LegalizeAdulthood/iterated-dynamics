@@ -68,7 +68,132 @@ static void change_palette_channel(int channel, int increment)
     }
 }
 
-void rotate(int direction)      // rotate-the-palette routine
+static void set_palette_range(int key)
+{
+    if (key == ID_KEY_SHF_F1)
+    {
+        set_palette(s_black, s_white);
+    }
+    if (key == ID_KEY_SHF_F2)
+    {
+        set_palette(s_red, s_yellow);
+    }
+    if (key == ID_KEY_SHF_F3)
+    {
+        set_palette(s_blue, s_green);
+    }
+    if (key == ID_KEY_SHF_F4)
+    {
+        set_palette(s_black, s_yellow);
+    }
+    if (key == ID_KEY_SHF_F5)
+    {
+        set_palette(s_black, s_red);
+    }
+    if (key == ID_KEY_SHF_F6)
+    {
+        set_palette(s_black, s_blue);
+    }
+    if (key == ID_KEY_SHF_F7)
+    {
+        set_palette(s_black, s_green);
+    }
+    if (key == ID_KEY_SHF_F8)
+    {
+        set_palette(s_blue, s_yellow);
+    }
+    if (key == ID_KEY_SHF_F9)
+    {
+        set_palette(s_red, s_green);
+    }
+    if (key == ID_KEY_SHF_F10)
+    {
+        set_palette(s_green, s_white);
+    }
+    if (key == ID_KEY_CTL_F1)
+    {
+        set_palette2(s_black, s_white);
+    }
+    if (key == ID_KEY_CTL_F2)
+    {
+        set_palette2(s_red, s_yellow);
+    }
+    if (key == ID_KEY_CTL_F3)
+    {
+        set_palette2(s_blue, s_green);
+    }
+    if (key == ID_KEY_CTL_F4)
+    {
+        set_palette2(s_black, s_yellow);
+    }
+    if (key == ID_KEY_CTL_F5)
+    {
+        set_palette2(s_black, s_red);
+    }
+    if (key == ID_KEY_CTL_F6)
+    {
+        set_palette2(s_black, s_blue);
+    }
+    if (key == ID_KEY_CTL_F7)
+    {
+        set_palette2(s_black, s_green);
+    }
+    if (key == ID_KEY_CTL_F8)
+    {
+        set_palette2(s_blue, s_yellow);
+    }
+    if (key == ID_KEY_CTL_F9)
+    {
+        set_palette2(s_red, s_green);
+    }
+    if (key == ID_KEY_CTL_F10)
+    {
+        set_palette2(s_green, s_white);
+    }
+    if (key == ID_KEY_ALT_F1)
+    {
+        set_palette3(s_blue, s_green, s_red);
+    }
+    if (key == ID_KEY_ALT_F2)
+    {
+        set_palette3(s_blue, s_yellow, s_red);
+    }
+    if (key == ID_KEY_ALT_F3)
+    {
+        set_palette3(s_red, s_white, s_blue);
+    }
+    if (key == ID_KEY_ALT_F4)
+    {
+        set_palette3(s_red, s_yellow, s_white);
+    }
+    if (key == ID_KEY_ALT_F5)
+    {
+        set_palette3(s_black, s_brown, s_yellow);
+    }
+    if (key == ID_KEY_ALT_F6)
+    {
+        set_palette3(s_blue, s_brown, s_green);
+    }
+    if (key == ID_KEY_ALT_F7)
+    {
+        set_palette3(s_blue, s_green, s_green);
+    }
+    if (key == ID_KEY_ALT_F8)
+    {
+        set_palette3(s_blue, s_green, s_white);
+    }
+    if (key == ID_KEY_ALT_F9)
+    {
+        set_palette3(s_green, s_green, s_white);
+    }
+    if (key == ID_KEY_ALT_F10)
+    {
+        set_palette3(s_red, s_blue, s_white);
+    }
+}
+
+// rotate-the-palette routine
+void rotate(int direction)
 {
     int key;
     int last;
@@ -111,14 +236,14 @@ void rotate(int direction)      // rotate-the-palette routine
     if (direction == 0)
     {
         // firing up in paused mode?
-        pause_rotate();                    // then force a pause
-        direction = 1;                    // and set a rotate direction
+        pause_rotate();                 // then force a pause
+        direction = 1;                  // and set a rotate direction
     }
 
     rotate_max = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors-1;
     rotate_size = rotate_max - g_color_cycle_range_lo + 1;
-    last = rotate_max;                   // last box that was filled
-    next = g_color_cycle_range_lo;                    // next box to be filled
+    last = rotate_max;                  // last box that was filled
+    next = g_color_cycle_range_lo;      // next box to be filled
     if (direction < 0)
     {
         last = g_color_cycle_range_lo;
@@ -350,127 +475,8 @@ void rotate(int direction)      // rotate-the-palette routine
             break;
         default:                        // maybe a new palette
             f_key = 0;                  // disable random generation
-            if (key == ID_KEY_SHF_F1)
-            {
-                set_palette(s_black, s_white);
-            }
-            if (key == ID_KEY_SHF_F2)
-            {
-                set_palette(s_red, s_yellow);
-            }
-            if (key == ID_KEY_SHF_F3)
-            {
-                set_palette(s_blue, s_green);
-            }
-            if (key == ID_KEY_SHF_F4)
-            {
-                set_palette(s_black, s_yellow);
-            }
-            if (key == ID_KEY_SHF_F5)
-            {
-                set_palette(s_black, s_red);
-            }
-            if (key == ID_KEY_SHF_F6)
-            {
-                set_palette(s_black, s_blue);
-            }
-            if (key == ID_KEY_SHF_F7)
-            {
-                set_palette(s_black, s_green);
-            }
-            if (key == ID_KEY_SHF_F8)
-            {
-                set_palette(s_blue, s_yellow);
-            }
-            if (key == ID_KEY_SHF_F9)
-            {
-                set_palette(s_red, s_green);
-            }
-            if (key == ID_KEY_SHF_F10)
-            {
-                set_palette(s_green, s_white);
-            }
-            if (key == ID_KEY_CTL_F1)
-            {
-                set_palette2(s_black, s_white);
-            }
-            if (key == ID_KEY_CTL_F2)
-            {
-                set_palette2(s_red, s_yellow);
-            }
-            if (key == ID_KEY_CTL_F3)
-            {
-                set_palette2(s_blue, s_green);
-            }
-            if (key == ID_KEY_CTL_F4)
-            {
-                set_palette2(s_black, s_yellow);
-            }
-            if (key == ID_KEY_CTL_F5)
-            {
-                set_palette2(s_black, s_red);
-            }
-            if (key == ID_KEY_CTL_F6)
-            {
-                set_palette2(s_black, s_blue);
-            }
-            if (key == ID_KEY_CTL_F7)
-            {
-                set_palette2(s_black, s_green);
-            }
-            if (key == ID_KEY_CTL_F8)
-            {
-                set_palette2(s_blue, s_yellow);
-            }
-            if (key == ID_KEY_CTL_F9)
-            {
-                set_palette2(s_red, s_green);
-            }
-            if (key == ID_KEY_CTL_F10)
-            {
-                set_palette2(s_green, s_white);
-            }
-            if (key == ID_KEY_ALT_F1)
-            {
-                set_palette3(s_blue, s_green, s_red);
-            }
-            if (key == ID_KEY_ALT_F2)
-            {
-                set_palette3(s_blue, s_yellow, s_red);
-            }
-            if (key == ID_KEY_ALT_F3)
-            {
-                set_palette3(s_red, s_white, s_blue);
-            }
-            if (key == ID_KEY_ALT_F4)
-            {
-                set_palette3(s_red, s_yellow, s_white);
-            }
-            if (key == ID_KEY_ALT_F5)
-            {
-                set_palette3(s_black, s_brown, s_yellow);
-            }
-            if (key == ID_KEY_ALT_F6)
-            {
-                set_palette3(s_blue, s_brown, s_green);
-            }
-            if (key == ID_KEY_ALT_F7)
-            {
-                set_palette3(s_blue, s_green, s_green);
-            }
-            if (key == ID_KEY_ALT_F8)
-            {
-                set_palette3(s_blue, s_green, s_white);
-            }
-            if (key == ID_KEY_ALT_F9)
-            {
-                set_palette3(s_green, s_green, s_white);
-            }
-            if (key == ID_KEY_ALT_F10)
-            {
-                set_palette3(s_red, s_blue, s_white);
-            }
-            pause_rotate();  // update palette and pause
+            set_palette_range(key);
+            pause_rotate();
             break;
         }
     }
@@ -521,7 +527,7 @@ static void set_palette(Byte start[3], Byte finish[3])
     {
         for (int j = 0; j < 3; j++)
         {
-            g_dac_box[i][j] = (Byte)((i*start[j] + (256-i)*finish[j])/255);
+            g_dac_box[i][j] = static_cast<Byte>((i * start[j] + (256 - i) * finish[j]) / 255);
         }
     }
 }
@@ -541,7 +547,6 @@ static void set_palette2(Byte start[3], Byte finish[3])
     }
 }
 
-// TODO: 6-bit color?
 static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 {
     g_dac_box[0][0] = 0;
