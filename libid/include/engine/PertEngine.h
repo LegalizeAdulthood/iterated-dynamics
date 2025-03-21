@@ -14,9 +14,12 @@ class PertEngine
 public:
     void initialize_frame(const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
     int calculate_one_frame();
+    int perturbation_per_pixel(int x, int y, double bailout);
+    int calculate_orbit(int x, int y, long iteration);
+    int get_number_references();
 
 private:
-    int calculate_point(const Point &pt, double magnified_radius, int window_radius);
+    int calculate_reference(int x, int y);
     void reference_zoom_point(const BFComplex &center, int max_iteration);
     void reference_zoom_point(const std::complex<double> &center, int max_iteration);
     void cleanup();
@@ -26,15 +29,15 @@ private:
     std::vector<double> m_perturbation_tolerance_check;
     double m_delta_real{};
     double m_delta_imag{};
-    std::vector<Point> m_points_remaining;
-    std::vector<Point> m_glitch_points;
-    long m_glitch_point_count{};
-    long m_remaining_point_count{};
     BFComplex m_center_bf{};
     std::complex<double> m_center{};
     double m_zoom_radius{};
-    bool m_calculate_glitches{true};
     double m_percent_glitch_tolerance{0.1}; // What percentage of the image is okay to be glitched.
     int m_reference_points{};
     int m_saved_stack{};
+    std::complex<double> m_c{};
+    BFComplex m_c_bf{};
+
+    std::complex<double> m_delta_sub_0{};
+    std::complex<double> m_delta_sub_n{};
 };

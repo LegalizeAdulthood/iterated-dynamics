@@ -7,6 +7,7 @@
 #include "engine/PertEngine.h"
 #include "engine/convert_center_mag.h"
 #include "engine/id_data.h"
+#include "fractals/fractalp.h"
 #include "math/biginit.h"
 
 #include <config/port.h>
@@ -15,6 +16,11 @@
 #include <string>
 
 static PertEngine s_pert_engine;
+
+PerturbationMode g_perturbation{PerturbationMode::AUTO};
+double g_perturbation_tolerance{1e-6};
+bool g_use_perturbation{}; // select perturbation code
+int g_number_referrences{}; // number of references used
 
 bool perturbation()
 {
@@ -58,4 +64,45 @@ bool perturbation()
     }
     g_calc_status = CalcStatus::COMPLETED;
     return false;
+}
+
+int perturbation_per_pixel()
+{
+    int result = s_pert_engine.perturbation_per_pixel(g_col, g_row, g_magnitude_limit);
+    return result;
+}
+
+int perturbation_per_orbit()
+{
+    int status = s_pert_engine.calculate_orbit(g_col, g_row, g_color_iter);
+    return status;
+}
+
+int get_number_references()
+{
+    return s_pert_engine.get_number_references();
+}
+
+bool is_perturbation()
+{
+    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    {
+        if (g_perturbation == PerturbationMode::AUTO && g_bf_math != BFMathType::NONE)
+        {
+            g_use_perturbation = true;
+        }
+        else if (g_perturbation == PerturbationMode::YES)
+        {
+            g_use_perturbation = true;
+        }
+        else
+        {
+            g_use_perturbation = false;
+        }
+    }
+    else
+    {
+        g_use_perturbation = false;
+    }
+    return g_use_perturbation;
 }
