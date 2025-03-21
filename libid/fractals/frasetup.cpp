@@ -44,6 +44,7 @@ standalone_setup()
 
 bool mandel_perturbation_setup()
 {
+    g_calc_type = standard_fractal;
     return perturbation();
 }
 
@@ -90,6 +91,7 @@ mandel_fp_setup()
             && g_use_init_orbit != InitOrbitMode::VALUE
             && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X
             && !g_using_jiim
+            && !g_use_perturbation
             && g_bailout_test == Bailout::MOD
             && (g_orbit_save_flags & OSF_MIDI) == 0)
         {

@@ -255,25 +255,35 @@ int PertEngine::calculate_orbit(int x, int y, long iteration)
     // why it looks so weird, it's because I've squared both sides of his equation and moved the |ZsubN| to
     // the other side to be precalculated. For more information, look at where the reference point is
     // calculated. I also only want to store this point once.
-    if (magnitude < m_perturbation_tolerance_check[iteration])
+ //   if (magnitude < m_perturbation_tolerance_check[iteration])
     {
     // here is where the magic happens... eventually
+
+//        calculate_reference(x, y);
 /*
-        calculate_reference(x, y);
         perturbation_per_pixel(x, y, g_magnitude_limit);
         for (long i = 0; i < g_max_iterations; i++)
         {
-            int status = calculate_orbit(x, y, i);
-            if (status == 0)
+            temp1 = m_xn[i] + m_delta_sub_n;
+            g_cur_fractal_specific->pert_pt(m_xn[i], m_delta_sub_n, m_delta_sub_0);
+
+            if (g_cur_fractal_specific->pert_pt == nullptr)
             {
-                g_color_iter = i;
+                throw std::runtime_error("No perturbation point function defined for fractal type (" +
+                    std::string{g_cur_fractal_specific->name} + ")");
+            }
+            temp = m_xn[iteration] + m_delta_sub_n;
+            int status = g_bailout_float();
+            if (status == 1)
+            {
+                g_color_iter = 24;
                 break;
             }
         }
-//        return g_bailout_float();
 */
-        m_reference_points++;
-        return true;
+//        return g_bailout_float();
+//        m_reference_points++;
+ //       return true;
     }
     g_new_z.x = temp.real();
     g_new_z.y = temp.imag();

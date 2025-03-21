@@ -3783,6 +3783,7 @@ static CmdArgFlags cmd_perturbation(const Command &cmd)
     {
         g_perturbation = PerturbationMode::NO;
     }
+    g_use_perturbation = is_perturbation();
     return CmdArgFlags::NONE;
 }
 

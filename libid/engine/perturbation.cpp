@@ -7,6 +7,7 @@
 #include "engine/PertEngine.h"
 #include "engine/convert_center_mag.h"
 #include "engine/id_data.h"
+#include "fractals/fractalp.h"
 #include "math/biginit.h"
 
 #include <config/port.h>
@@ -82,3 +83,26 @@ int get_number_references()
     return s_pert_engine.get_number_references();
 }
 
+bool is_perturbation()
+{
+    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    {
+        if (g_perturbation == PerturbationMode::AUTO && g_bf_math != BFMathType::NONE)
+        {
+            g_use_perturbation = true;
+        }
+        else if (g_perturbation == PerturbationMode::YES)
+        {
+            g_use_perturbation = true;
+        }
+        else
+        {
+            g_use_perturbation = false;
+        }
+    }
+    else
+    {
+        g_use_perturbation = false;
+    }
+    return g_use_perturbation;
+}

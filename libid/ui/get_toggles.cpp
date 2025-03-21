@@ -456,25 +456,7 @@ int get_toggles()
         }
     }
 
-    if (bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
-    {
-        if (g_perturbation == PerturbationMode::AUTO && g_bf_math != BFMathType::NONE)
-        {
-            g_use_perturbation = true;
-        }
-        else if (g_perturbation == PerturbationMode::YES)
-        {
-            g_use_perturbation = true;
-        }
-        else
-        {
-            g_use_perturbation = false;
-        }
-    }
-    else
-    {
-        g_use_perturbation = false;
-    }
+    g_use_perturbation = is_perturbation();
 
     if (old_perturbation != g_perturbation)
     {

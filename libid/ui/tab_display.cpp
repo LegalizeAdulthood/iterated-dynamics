@@ -355,7 +355,7 @@ top:
     {
        int ref = get_number_references();
        std::sprintf(msg, (ref == 1) ? " (%d reference)" : " (%d references)", ref);
-       driver_put_string(start_row, 45, C_GENERAL_HI, "Perturbation in use");
+       driver_put_string(start_row, 45, C_GENERAL_HI, "Perturbation");
        driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
     start_row += 1;
