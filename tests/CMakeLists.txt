@@ -116,7 +116,7 @@ source_group_subdir("Miscellaneous" "misc")
 source_group_subdir("UI" "ui")
 target_include_directories(test-id PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/include")
 target_link_libraries(test-id PRIVATE GTest::gmock_main Boost::boost libid)
-set_target_properties(test-id PROPERTIES FOLDER Tests)
+target_folder(test-id "Tests")
 gtest_discover_tests(test-id PROPERTIES LABELS id)
 
 add_subdirectory(images)

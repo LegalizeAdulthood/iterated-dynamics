@@ -46,7 +46,7 @@ add_library(config
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/string_lower.h"
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
-set_target_properties(config PROPERTIES FOLDER Libraries)
+target_folder(config "Libraries")
 target_include_directories(config PUBLIC
     include
     "${CMAKE_CURRENT_BINARY_DIR}/include")

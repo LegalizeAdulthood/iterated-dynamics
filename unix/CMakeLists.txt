@@ -11,7 +11,7 @@ find_package(X11)
 add_library(os-hc INTERFACE)
 target_compile_options(os-hc INTERFACE ${ID_TARGET_OPTIONS})
 target_link_libraries(os-hc INTERFACE helpcom config)
-set_target_properties(os-hc PROPERTIES FOLDER Libraries)
+target_folder(os-hc "Libraries")
 
 add_library(os STATIC
     d_x11.cpp
@@ -29,7 +29,7 @@ target_link_libraries(os PUBLIC help-defs os-hc X11::X11 m)
 target_compile_definitions(os PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_include_directories(os PRIVATE ../libid/include)
-set_target_properties(os PROPERTIES FOLDER Libraries)
+target_folder(os "Libraries")
 
 set_src_dir(unix.cpp)
 add_dependencies(os native-help)

@@ -29,7 +29,7 @@ add_custom_command(
         help3.src
         help4.src
         help5.src)
-set_target_properties(native-help PROPERTIES FOLDER Docs)
+target_folder(native-help "Docs")
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.hlp DESTINATION .)
 
 add_library(help-links 
@@ -38,7 +38,7 @@ add_library(help-links
 )
 target_include_directories(help-links PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(help-links PUBLIC help-defs)
-set_target_properties(help-links PROPERTIES FOLDER Libraries)
+target_folder(help-links "Libraries")
 
 add_custom_target(ascii-doc
     DEPENDS hc
@@ -52,7 +52,7 @@ add_custom_command(
         help3.src
         help4.src
         help5.src)
-set_target_properties(ascii-doc PROPERTIES FOLDER Docs)
+target_folder(ascii-doc "Docs")
 
 if(ASCII_DOCTOR)
     add_custom_target(html-doc
@@ -62,7 +62,7 @@ if(ASCII_DOCTOR)
         OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/id.html
         COMMAND asciidoctor ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
-    set_target_properties(html-doc PROPERTIES FOLDER Docs)
+    target_folder(html-doc "Docs")
     install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.html DESTINATION .)
     set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
 elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.html)

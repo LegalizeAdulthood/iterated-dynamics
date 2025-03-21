@@ -4,7 +4,8 @@
 #
 cmake_minimum_required(VERSION 3.23)
 
-set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(target_folder)
 
 # <filesystem> is C++17 or later
 set(CMAKE_CXX_STANDARD 17)
