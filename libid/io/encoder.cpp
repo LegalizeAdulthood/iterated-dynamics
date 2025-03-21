@@ -1073,7 +1073,7 @@ static bool compress(int row_limit)
                 }
                 if (s_h_tab[i] < 0) // empty slot
                 {
-                    goto nomatch;
+                    goto no_match;
                 }
                 disp = h_size_reg - i;           // secondary hash (after G. Knott)
                 if (i == 0)
@@ -1095,7 +1095,7 @@ probe:
                 {
                     goto probe;
                 }
-nomatch:
+no_match:
                 output(ent);
                 ent = color;
                 if (s_free_ent < s_max_max_cde)

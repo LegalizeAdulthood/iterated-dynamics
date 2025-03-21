@@ -1319,7 +1319,7 @@ void print_document(const char *filename, bool (*msg_func)(int, int))
     if (info.file == nullptr)
     {
         msg = "Unable to create output file.\n";
-        goto ErrorAbort;
+        goto error_abort;
     }
 
     info.margin = PAGE_INDENT;
@@ -1329,7 +1329,7 @@ void print_document(const char *filename, bool (*msg_func)(int, int))
     success = process_document(TokenMode::DOC, true, print_doc_get_info, print_doc_output, &info);
     std::fclose(info.file);
 
-ErrorAbort:
+error_abort:
     if (msg != nullptr)
     {
         help_title();

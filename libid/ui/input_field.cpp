@@ -56,9 +56,9 @@ int input_field(InputFieldFlags options, //
         case ID_KEY_ENTER:
         case ID_KEY_ENTER_2:
             ret = 0;
-            goto inpfld_end;
+            goto end;
         case ID_KEY_ESC:
-            goto inpfld_end;
+            goto end;
         case ID_KEY_RIGHT_ARROW:
             if (offset < len-1)
             {
@@ -120,7 +120,7 @@ int input_field(InputFieldFlags options, //
             {
                 if (check_key && (ret = (*check_key)(key)) != 0)
                 {
-                    goto inpfld_end;
+                    goto end;
                 }
                 break;                                // non alphanum char
             }
@@ -199,6 +199,6 @@ int input_field(InputFieldFlags options, //
             display = true;
         }
     }
-inpfld_end:
+end:
     return ret;
 }

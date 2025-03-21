@@ -107,7 +107,7 @@ int solid_guess()
                 if ((*g_calc_type)() == -1)
                 {
                     add_work_list(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, g_work_symmetry);
-                    goto exit_solidguess;
+                    goto exit_solid_guess;
                 }
                 g_reset_periodicity = false;
             }
@@ -140,14 +140,14 @@ int solid_guess()
             {
                 y = std::max(y, g_yy_start);
                 add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, g_work_symmetry);
-                goto exit_solidguess;
+                goto exit_solid_guess;
             }
         }
 
         if (g_num_work_list) // work list not empty, just do 1st pass
         {
             add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_symmetry);
-            goto exit_solidguess;
+            goto exit_solid_guess;
         }
         ++g_work_pass;
         g_i_y_start = g_yy_start & (-1 - (s_max_block-1));
@@ -193,7 +193,7 @@ int solid_guess()
     }
     if (g_three_pass)
     {
-        goto exit_solidguess;
+        goto exit_solid_guess;
     }
 
     // remaining pass(es), halve blocksize & quarter each blocksize**2
@@ -209,7 +209,7 @@ int solid_guess()
         {
             if (g_work_pass >= g_stop_pass)
             {
-                goto exit_solidguess;
+                goto exit_solid_guess;
             }
         }
         g_current_pass = g_work_pass + 1;
@@ -220,7 +220,7 @@ int solid_guess()
             {
                 y = std::max(y, g_yy_start);
                 add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, g_work_pass, g_work_symmetry);
-                goto exit_solidguess;
+                goto exit_solid_guess;
             }
         }
         ++g_work_pass;
@@ -228,12 +228,12 @@ int solid_guess()
             && block_size > 2) // if 2, we just did last pass
         {
             add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, g_work_symmetry);
-            goto exit_solidguess;
+            goto exit_solid_guess;
         }
         g_i_y_start = g_yy_start & (-1 - (s_max_block-1));
     }
 
-exit_solidguess:
+exit_solid_guess:
     return 0;
 }
 

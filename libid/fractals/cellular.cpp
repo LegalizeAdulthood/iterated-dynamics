@@ -360,7 +360,7 @@ int cellular()
     }
 
     // This section does all the work
-contloop:
+cont_loop:
     for (g_row = start_row; g_row <= g_i_y_stop; g_row++)
     {
         if (g_random_seed_flag || rand_param == 0 || rand_param == -1)
@@ -425,7 +425,7 @@ contloop:
     {
         g_params[3] += g_i_y_stop + 1;
         start_row = 0;
-        goto contloop;
+        goto cont_loop;
     }
     abort_cellular(CELLULAR_DONE, 0);
     return 1;

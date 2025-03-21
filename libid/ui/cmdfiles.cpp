@@ -1568,7 +1568,7 @@ static CmdArgFlags parse_colors(const char *value)
         }
         if ((int)std::strlen(value) > ID_FILE_MAX_PATH || validate_luts(g_map_name.c_str()))
         {
-            goto badcolor;
+            goto bad_color;
         }
         if (g_display_3d != Display3DMode::NONE)
         {
@@ -1591,7 +1591,7 @@ static CmdArgFlags parse_colors(const char *value)
         {
             if (i >= 256)
             {
-                goto badcolor;
+                goto bad_color;
             }
             if (*value == '<')
             {
@@ -1600,7 +1600,7 @@ static CmdArgFlags parse_colors(const char *value)
                     || (smooth = std::atoi(value+1)) < 2
                     || (value = std::strchr(value, '>')) == nullptr)
                 {
-                    goto badcolor;
+                    goto bad_color;
                 }
                 i += smooth;
                 ++value;
@@ -1612,7 +1612,7 @@ static CmdArgFlags parse_colors(const char *value)
                     int k = *(value++);
                     if (k < '0')
                     {
-                        goto badcolor;
+                        goto bad_color;
                     }
                     if (k <= '9')
                     {
@@ -1620,7 +1620,7 @@ static CmdArgFlags parse_colors(const char *value)
                     }
                     else if (k < 'A')
                     {
-                        goto badcolor;
+                        goto bad_color;
                     }
                     else if (k <= 'Z')
                     {
@@ -1628,7 +1628,7 @@ static CmdArgFlags parse_colors(const char *value)
                     }
                     else if (k < '_' || k > 'z')
                     {
-                        goto badcolor;
+                        goto bad_color;
                     }
                     else
                     {
@@ -1666,7 +1666,7 @@ static CmdArgFlags parse_colors(const char *value)
         }
         if (smooth)
         {
-            goto badcolor;
+            goto bad_color;
         }
         while (i < 256)
         {
@@ -1681,7 +1681,7 @@ static CmdArgFlags parse_colors(const char *value)
     g_colors_preloaded = true;
     std::memcpy(g_old_dac_box, g_dac_box, 256*3);
     return CmdArgFlags::NONE;
-badcolor:
+bad_color:
     return CmdArgFlags::BAD_ARG;
 }
 

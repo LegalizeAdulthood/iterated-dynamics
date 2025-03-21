@@ -159,7 +159,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
             if (g_cur_fractal_specific->orbit_calc())
             {
                 g_overflow = true;
-                goto jumpout;
+                goto jump_out;
             }
         }
     }
@@ -171,14 +171,14 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
             if (g_cur_fractal_specific->orbit_calc())
             {
                 g_overflow = true;
-                goto jumpout;
+                goto jump_out;
             }
             temp = std::abs(g_rate-2.0*g_rate*g_population);
             total *= temp;
             if (total == 0)
             {
                 g_overflow = true;
-                goto jumpout;
+                goto jump_out;
             }
         }
         while (total > 22026.4657948)
@@ -193,7 +193,7 @@ static int lyapunov_cycles(long filter_cycles, double a, double b)
         }
     }
 
-jumpout:
+jump_out:
     if (g_overflow || total <= 0 || (temp = std::log(total) + ln_adjust) > 0)
     {
         color = 0;

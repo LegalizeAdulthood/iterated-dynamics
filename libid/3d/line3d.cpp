@@ -292,14 +292,14 @@ int line3d(Byte * pixels, unsigned line_len)
     // Insure last line is drawn in preview and filltypes <0
     // Draw mod preview lines
     if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || g_fill_type < FillType::POINTS) //
-        && g_current_row != g_logical_screen_y_dots - 1                                               //
-        && g_current_row % s_local_preview_factor                                                         //
-        && !(g_raytrace_format == RayTraceFormat::NONE                                              //
-               && g_fill_type > FillType::SOLID_FILL                                                 //
+        && g_current_row != g_logical_screen_y_dots - 1                                            //
+        && g_current_row % s_local_preview_factor                                                  //
+        && !(g_raytrace_format == RayTraceFormat::NONE                                             //
+               && g_fill_type > FillType::SOLID_FILL                                               //
                && g_current_row == 1))
     {
         // Get init geometry in lightsource modes
-        goto reallythebottom;     // skip over most of the line3d calcs
+        goto really_the_bottom; // skip over most of the line3d calcs
     }
     if (driver_is_disk())
     {
@@ -321,7 +321,7 @@ int line3d(Byte * pixels, unsigned line_len)
             && (col % (int)(s_aspect * s_local_preview_factor))
             && !(g_raytrace_format == RayTraceFormat::NONE && g_fill_type > FillType::SOLID_FILL && col == 1))
         {
-            goto loopbottom;
+            goto loop_bottom;
         }
 
         s_real_color = pixels[col];
@@ -362,7 +362,7 @@ int line3d(Byte * pixels, unsigned line_len)
             {
                 cur = s_bad;
                 f_cur = s_f_bad;
-                goto loopbottom; // another goto !
+                goto loop_bottom; // another goto !
             }
             //**********************************************************
             // KEEP THIS FOR DOCS - original formula --
@@ -399,7 +399,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
-                    goto loopbottom;      // another goto !
+                    goto loop_bottom;      // another goto !
                 }
                 lv[0] = (long)(s_x_center + sin_theta * s_scale_x * r);   // x
                 lv[1] = (long)(s_y_center + cos_theta * s_cos_phi * s_scale_y * r);  // y
@@ -523,7 +523,7 @@ int line3d(Byte * pixels, unsigned line_len)
                     && s_f_last_row[col].color == f_water
                     && s_f_last_row[next].color == f_water)
                 {
-                    goto loopbottom;
+                    goto loop_bottom;
                 }
 
                 if (g_raytrace_format != RayTraceFormat::ACROSPIN)      // Output the vertex info
@@ -558,7 +558,7 @@ int line3d(Byte * pixels, unsigned line_len)
                     && s_f_last_row[col].color == f_water
                     && s_f_last_row[next].color == f_water)
                 {
-                    goto loopbottom;
+                    goto loop_bottom;
                 }
 
                 if (g_raytrace_format != RayTraceFormat::ACROSPIN)      // Output the vertex info
@@ -585,7 +585,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 s_co_max = std::max(s_co, s_co_max);
                 s_co++;
             }
-            goto loopbottom;
+            goto loop_bottom;
         }
 
         switch (g_fill_type)
@@ -684,7 +684,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
-                    goto loopbottom;
+                    goto loop_bottom;
                 }
 
                 // Round and fudge back to original
@@ -811,7 +811,7 @@ int line3d(Byte * pixels, unsigned line_len)
             }
             break;
         }                      // End of CASE statement for fill type
-loopbottom:
+loop_bottom:
         if (g_raytrace_format != RayTraceFormat::NONE || (g_fill_type != FillType::POINTS && g_fill_type != FillType::SOLID_FILL))
         {
             // for triangle and grid fill purposes
@@ -839,7 +839,7 @@ loopbottom:
         col++;
     }                         // End of while statement for plotting line
     s_ro++;
-reallythebottom:
+really_the_bottom:
 
     // stuff that HAS to be done, even in preview mode, goes here
     if (g_sphere)

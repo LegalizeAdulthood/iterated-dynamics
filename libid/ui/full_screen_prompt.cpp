@@ -1053,9 +1053,9 @@ static int input_field_list(int attr, // display attribute
         case ID_KEY_ENTER:
         case ID_KEY_ENTER_2:
             ret = 0;
-            goto inpfldl_end;
+            goto end;
         case ID_KEY_ESC:
-            goto inpfldl_end;
+            goto end;
         case ID_KEY_RIGHT_ARROW:
             if (++cur_val >= list_len)
             {
@@ -1076,7 +1076,7 @@ static int input_field_list(int attr, // display attribute
             {
                 if (check_key && (ret = (*check_key)(key)) != 0)
                 {
-                    goto inpfldl_end;
+                    goto end;
                 }
                 break;                                // non alphanum char
             }
@@ -1095,7 +1095,7 @@ static int input_field_list(int attr, // display attribute
             }
         }
     }
-inpfldl_end:
+end:
     std::strcpy(field, list[cur_val]);
     return ret;
 }

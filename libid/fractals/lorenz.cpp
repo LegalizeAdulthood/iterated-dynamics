@@ -410,7 +410,7 @@ bool orbit3d_float_setup()
             {
                 // can't get queue memory: fall back to random walk
                 fallback_to_random_walk();
-                goto rwalk;
+                goto random_walk;
             }
             enqueue_float((float)((1 + sqrt.x) / 2), (float)(sqrt.y / 2));
             enqueue_float((float)((1 - sqrt.x) / 2), (float)(-sqrt.y / 2));
@@ -420,7 +420,7 @@ bool orbit3d_float_setup()
             {
                 // can't get queue memory: fall back to random walk
                 fallback_to_random_walk();
-                goto rwalk;
+                goto random_walk;
             }
             switch (g_inverse_julia_minor_method)
             {
@@ -435,7 +435,7 @@ bool orbit3d_float_setup()
             }
             break;
         case Major::RANDOM_WALK:
-rwalk:
+random_walk:
             s_init_orbit_fp[0] = 1 + sqrt.x / 2;
             g_new_z.x = s_init_orbit_fp[0];
             s_init_orbit_fp[1] = sqrt.y / 2;

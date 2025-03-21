@@ -140,7 +140,7 @@ bool MemoryHandle::from_memory(const Byte *buffer, U16 size, long count, long of
             if (num_written != 1)
             {
                 which_disk_error(3);
-                goto diskerror;
+                goto disk_error;
             }
             to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
@@ -153,7 +153,7 @@ bool MemoryHandle::from_memory(const Byte *buffer, U16 size, long count, long of
             break;
         }
         success = true;
-diskerror:
+disk_error:
         break;
     } // end of switch
     if (!success && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
@@ -205,7 +205,7 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
             if (num_read != 1 && !feof(s_handles[index].disk.file))
             {
                 which_disk_error(4);
-                goto diskerror;
+                goto disk_error;
             }
             std::memcpy(buffer, disk_buff, DISK_WRITE_LEN);
             to_move -= DISK_WRITE_LEN;
@@ -219,7 +219,7 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
         }
         std::memcpy(buffer, disk_buff, (U16) to_move);
         success = true;
-diskerror:
+disk_error:
         break;
     } // end of switch
     if (!success && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
@@ -272,7 +272,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
             if (num_written != 1)
             {
                 which_disk_error(2);
-                goto diskerror;
+                goto disk_error;
             }
             to_move -= DISK_WRITE_LEN;
         }
@@ -283,7 +283,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
             break;
         }
         success = true;
-diskerror:
+disk_error:
         break;
     } // end of switch
     if (!success && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
