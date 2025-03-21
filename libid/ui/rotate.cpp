@@ -27,6 +27,18 @@
 #include <cstring>
 #include <ctime>
 
+namespace
+{
+
+enum
+{
+    CH_RED = 0,
+    CH_GREEN = 1,
+    CH_BLUE = 2,
+};
+
+}
+
 static void pause_rotate();
 static void set_palette(Byte start[3], Byte finish[3]);
 static void set_palette2(Byte start[3], Byte finish[3]);
@@ -48,6 +60,14 @@ Byte g_old_dac_box[256][3]{};
 bool g_dac_learn{};
 bool g_got_real_dac{}; // true if load_dac has a dacbox
 
+static void change_palette_channel(int channel, int increment)
+{
+    for (int i = 1; i < 256; i++)
+    {
+        g_dac_box[i][channel] = static_cast<Byte>((g_dac_box[i][channel] + increment) % 256);
+    }
+}
+
 void rotate(int direction)      // rotate-the-palette routine
 {
     int key;
@@ -65,8 +85,6 @@ void rotate(int direction)      // rotate-the-palette routine
     int to_red = 0;
     int to_blue = 0;
     int to_green = 0;
-    int change_color;
-    int change_direction;
     int rotate_max;
     int rotate_size;
 
@@ -82,14 +100,12 @@ void rotate(int direction)      // rotate-the-palette routine
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_CYCLING};
 
-    s_paused = false;                          // not paused
-    f_key = 0;                                 // no random coloring
+    s_paused = false;                   // not paused
+    f_key = 0;                          // no random coloring
     step = 1;
-    old_step = 1;                              // single-step
+    old_step = 1;                       // single-step
     f_step = 1;
-    change_color = -1;                         // no color (rgb) to change
-    change_direction = 0;                      // no color direction to change
-    incr = 999;                                // ready to randomize
+    incr = 999;                         // ready to randomize
     std::srand((unsigned) std::time(nullptr)); // randomize things
 
     if (direction == 0)
@@ -173,34 +189,34 @@ void rotate(int direction)      // rotate-the-palette routine
                 && key != ID_KEY_HOME
                 && key != 'C'))
         {
-            s_paused = false;                 // clear paused condition
+            s_paused = false;           // clear paused condition
         }
         switch (key)
         {
-        case '+':                      // '+' means rotate forward
-        case ID_KEY_RIGHT_ARROW:              // RightArrow = rotate fwd
+        case '+':                       // '+' means rotate forward
+        case ID_KEY_RIGHT_ARROW:        // RightArrow = rotate fwd
             f_key = 0;
             direction = 1;
             last = rotate_max;
             next = g_color_cycle_range_lo;
             incr = 999;
             break;
-        case '-':                      // '-' means rotate backward
-        case ID_KEY_LEFT_ARROW:               // LeftArrow = rotate bkwd
+        case '-':                       // '-' means rotate backward
+        case ID_KEY_LEFT_ARROW:         // LeftArrow = rotate bkwd
             f_key = 0;
             direction = -1;
             last = g_color_cycle_range_lo;
             next = rotate_max;
             incr = 999;
             break;
-        case ID_KEY_UP_ARROW:                 // UpArrow means speed up
+        case ID_KEY_UP_ARROW:           // UpArrow means speed up
             g_dac_learn = true;
             if (++g_dac_count >= g_colors)
             {
                 --g_dac_count;
             }
             break;
-        case ID_KEY_DOWN_ARROW:               // DownArrow means slow down
+        case ID_KEY_DOWN_ARROW:         // DownArrow means slow down
             g_dac_learn = true;
             if (g_dac_count > 1)
             {
@@ -216,11 +232,11 @@ void rotate(int direction)      // rotate-the-palette routine
         case '7':
         case '8':
         case '9':
-            step = key - '0';   // change step-size
+            step = key - '0';           // change step-size
             step = std::min(step, rotate_size);
             break;
-        case ID_KEY_F1:                       // ID_KEY_F1 - ID_KEY_F10:
-        case ID_KEY_F2:                       // select a shading factor
+        case ID_KEY_F1:                 // ID_KEY_F1 - ID_KEY_F10:
+        case ID_KEY_F2:                 // select a shading factor
         case ID_KEY_F3:
         case ID_KEY_F4:
         case ID_KEY_F5:
@@ -233,79 +249,44 @@ void rotate(int direction)      // rotate-the-palette routine
             f_step = 1;
             incr = 999;
             break;
-        case ID_KEY_ENTER:                    // enter key: randomize all colors
-        case ID_KEY_ENTER_2:                  // also the Numeric-Keypad Enter
+        case ID_KEY_ENTER:              // enter key: randomize all colors
+        case ID_KEY_ENTER_2:            // also the Numeric-Keypad Enter
             f_key = RAND15()/3277 + 1;
             f_step = 1;
             incr = 999;
             old_step = step;
             step = rotate_size;
             break;
-        case 'r':                      // color changes
-            if (change_color    == -1)
-            {
-                change_color = 0;
-            }
-        case 'g':                      // color changes
-            if (change_color    == -1)
-            {
-                change_color = 1;
-            }
-        case 'b':                      // color changes
-            if (change_color    == -1)
-            {
-                change_color = 2;
-            }
-            if (change_direction == 0)
-            {
-                change_direction = -1;
-            }
-        case 'R':                      // color changes
-            if (change_color    == -1)
-            {
-                change_color = 0;
-            }
-        case 'G':                      // color changes
-            if (change_color    == -1)
-            {
-                change_color = 1;
-            }
-        case 'B':                      // color changes
-            if (driver_is_disk())
-            {
-                break;
-            }
-            if (change_color    == -1)
-            {
-                change_color = 2;
-            }
-            if (change_direction == 0)
-            {
-                change_direction = 1;
-            }
-            for (int i = 1; i < 256; i++)
-            {
-                g_dac_box[i][change_color] = (Byte)(g_dac_box[i][change_color] + change_direction);
-                // TODO: 6-bit color
-                // TODO: why is this here?
-                if (g_dac_box[i][change_color] == 64)
-                {
-                    g_dac_box[i][change_color] = 63;
-                }
-                if (g_dac_box[i][change_color] == 255)
-                {
-                    g_dac_box[i][change_color] = 0;
-                }
-            }
-            change_color    = -1;        // clear flags for next time
-            change_direction = 0;
-            s_paused          = false;    // clear any pause
-        case ' ':                      // use the spacebar as a "pause" toggle
-        case 'c':                      // for completeness' sake, the 'c' too
-        case 'C':
-            pause_rotate();              // pause
+        case 'r':
+            change_palette_channel(CH_RED, -1);
+            s_paused = false;
             break;
-        case '>':                      // single-step
+        case 'g':
+            change_palette_channel(CH_GREEN, -1);
+            s_paused = false;
+            break;
+        case 'b':
+            change_palette_channel(CH_BLUE, -1);
+            s_paused = false;
+            break;
+        case 'R':
+            change_palette_channel(CH_RED, 1);
+            s_paused = false;
+            break;
+        case 'G':
+            change_palette_channel(CH_GREEN, 1);
+            s_paused = false;
+            break;
+        case 'B':
+            change_palette_channel(CH_BLUE, 1);
+            s_paused = false;
+            break;
+        case ' ':                       // use the spacebar as a "pause" toggle
+        case 'c':                       // for completeness' sake, the 'c' too
+        case 'C':
+            pause_rotate();
+            break;
+        case '>':                       // single-step
         case '.':
         case '<':
         case ',':
@@ -327,48 +308,48 @@ void rotate(int direction)      // rotate-the-palette routine
             spin_dac(direction, 1);
             if (! s_paused)
             {
-                pause_rotate();           // pause
+                pause_rotate();
             }
             break;
-        case 'd':                      // load colors from "default.map"
+        case 'd':                       // load colors from "default.map"
         case 'D':
             if (validate_luts("default"))
             {
                 break;
             }
-            f_key = 0;                   // disable random generation
-            pause_rotate();              // update palette and pause
+            f_key = 0;                  // disable random generation
+            pause_rotate();             // update palette and pause
             break;
-        case 'a':                      // load colors from "altern.map"
+        case 'a':                       // load colors from "altern.map"
         case 'A':
             if (validate_luts("altern"))
             {
                 break;
             }
-            f_key = 0;                   // disable random generation
-            pause_rotate();              // update palette and pause
+            f_key = 0;                  // disable random generation
+            pause_rotate();             // update palette and pause
             break;
-        case 'l':                      // load colors from a specified map
+        case 'l':                       // load colors from a specified map
         case 'L':
             load_palette();
-            f_key = 0;                   // disable random generation
-            pause_rotate();              // update palette and pause
+            f_key = 0;                  // disable random generation
+            pause_rotate();             // update palette and pause
             break;
-        case 's':                      // save the palette
+        case 's':                       // save the palette
         case 'S':
             save_palette();
-            f_key = 0;                   // disable random generation
-            pause_rotate();              // update palette and pause
+            f_key = 0;                  // disable random generation
+            pause_rotate();             // update palette and pause
             break;
-        case ID_KEY_ESC:                      // escape
-            more = false;                   // time to bail out
+        case ID_KEY_ESC:                // escape
+            more = false;               // time to bail out
             break;
-        case ID_KEY_HOME:                     // restore palette
-            std::memcpy(g_dac_box, g_old_dac_box, 256*3);
-            pause_rotate();              // pause
+        case ID_KEY_HOME:               // restore palette
+            std::memcpy(g_dac_box, g_old_dac_box, 256 * 3);
+            pause_rotate();             // pause
             break;
-        default:                       // maybe a new palette
-            f_key = 0;                   // disable random generation
+        default:                        // maybe a new palette
+            f_key = 0;                  // disable random generation
             if (key == ID_KEY_SHF_F1)
             {
                 set_palette(s_black, s_white);
