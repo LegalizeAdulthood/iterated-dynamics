@@ -356,7 +356,7 @@ bool encoder()
     {
         goto oops;
     }
-    constexpr int COLOR_RESOLUTION{8};
+    static constexpr int COLOR_RESOLUTION{8};
     x = (Byte)(128 + ((COLOR_RESOLUTION - 1) << 4) + (bits_per_pixel - 1));
     if (std::fwrite(&x, 1, 1, s_outfile) != 1)
 
