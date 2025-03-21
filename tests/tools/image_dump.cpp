@@ -29,18 +29,18 @@ int main(int argc, char *argv[])
         gif.slurp();
 
         std::cout << file << ":\n";
-        std::cout << "    Screen width: " << gif.screen_width() << '\n';
-        std::cout << "    Screen height: " << gif.screen_height() << '\n';
-        std::cout << "    Color resolution: " << gif.color_resolution() << '\n';
-        std::cout << "    Color map: " << gif.color_map() << '\n';
-        std::cout << "    Number of images: " << gif.num_images() << '\n';
+        std::cout << "  Screen width: " << gif.screen_width() << '\n';
+        std::cout << "  Screen height: " << gif.screen_height() << '\n';
+        std::cout << "  Color resolution: " << gif.color_resolution() << '\n';
+        std::cout << "  Color map: " << gif.color_map() << '\n';
+        std::cout << "  Number of images: " << gif.num_images() << '\n';
         for (int i = 0; i < gif.num_images(); ++i)
         {
             const SavedImage &image{gif.get_image(i)};
-            std::cout << "    Image " << i << ": " << image.ImageDesc << '\n';
+            std::cout << "  Image " << i << ": " << image.ImageDesc << '\n';
             for (int y = 0; y < image.ImageDesc.Height; ++y)
             {
-                std::cout << fmt::format("        {:4}: ", y);
+                std::cout << fmt::format("  {:4}: ", y);
                 for (int x = 0; x < image.ImageDesc.Width; ++x)
                 {
                     const GifByteType pixel{image.RasterBits[y * image.ImageDesc.Width + x]};
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
                     {
                         if (x % 16 == 0)
                         {
-                            std::cout << "\n              ";
+                            std::cout << "\n        ";
                         }
                         else
                         {
