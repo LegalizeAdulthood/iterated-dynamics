@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <GIFInputFile.h>
-#include <gif_compare.h>
-#include <gif_json.h>
+#include <image-tool/GIFInputFile.h>
+#include <image-tool/gif_compare.h>
+#include <image-tool/gif_json.h>
 
 #include <filesystem>
 #include <iostream>
