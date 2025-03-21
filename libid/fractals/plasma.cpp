@@ -494,16 +494,15 @@ done:
 
 static void set_plasma_palette()
 {
-    static const Byte Red[3]   = { 63, 0, 0 };
-    static const Byte Green[3] = { 0, 63, 0 };
-    static const Byte Blue[3]  = { 0,  0, 63 };
+    static const Byte Red[3]   = { 255, 0, 0 };
+    static const Byte Green[3] = { 0, 255, 0 };
+    static const Byte Blue[3]  = { 0,  0, 255 };
 
     if (g_map_specified || g_colors_preloaded)
     {
         return;    // map= specified
     }
 
-    // TODO: 6-bit color
     g_dac_box[0][0] = 0;
     g_dac_box[0][1] = 0;
     g_dac_box[0][2] = 0;

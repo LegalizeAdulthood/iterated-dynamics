@@ -1343,10 +1343,9 @@ int targa_color(int x, int y, int color)
     {
     case TrueColorMode::DEFAULT_COLOR:
     default:
-        // TODO: 6-bit color
-        rgb[0] = (Byte)(g_dac_box[s_real_color][0] << 2); // Move color space to
-        rgb[1] = (Byte)(g_dac_box[s_real_color][1] << 2); // 256 color primaries
-        rgb[2] = (Byte)(g_dac_box[s_real_color][2] << 2); // from 64 colors
+        rgb[0] = g_dac_box[s_real_color][0]; // Move color space to
+        rgb[1] = g_dac_box[s_real_color][1]; // 256 color primaries
+        rgb[2] = g_dac_box[s_real_color][2]; // from 64 colors
         break;
 
     case TrueColorMode::ITERATE:
@@ -1960,8 +1959,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
     {
         for (int i = 0; i <= 2; i++)
         {
-            c[i] = (float)(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i])
-                   / (3 * 63); // TODO: 6-bit color
+            c[i] = (float) (g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i]) / (3.0f * 255.0f);
         }
     }
 

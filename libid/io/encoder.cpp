@@ -87,28 +87,42 @@ static int s_out_color_1s{};
 static int s_out_color_2s{};
 static int s_start_bits{};
 
-static Byte s_palette_bw[] =
-{
-    // B&W palette
-    0, 0, 0, 63, 63, 63,
+// B&W palette
+static const Byte s_palette_bw[]{
+    0, 0, 0,    //
+    63, 63, 63, //
 };
 
-static Byte s_palette_cga[] =
-{
-    // 4-color (CGA) palette
-    0, 0, 0, 21, 63, 63, 63, 21, 63, 63, 63, 63,
+// 4-color (CGA) palette
+static const Byte s_palette_cga[]{
+    0, 0, 0,    //
+    21, 63, 63, //
+    63, 21, 63, //
+    63, 63, 63, //
 };
 
-static Byte s_palette_ega[] =
-{
-    // 16-color (EGA/CGA) pal
-    0, 0, 0, 0, 0, 42, 0, 42, 0, 0, 42, 42,
-    42, 0, 0, 42, 0, 42, 42, 21, 0, 42, 42, 42,
-    21, 21, 21, 21, 21, 63, 21, 63, 21, 21, 63, 63,
-    63, 21, 21, 63, 21, 63, 63, 63, 21, 63, 63, 63,
+// 16-color (EGA/CGA) pal
+static const Byte s_palette_ega[]{
+    0, 0, 0,    //
+    0, 0, 42,   //
+    0, 42, 0,   //
+    0, 42, 42,  //
+    42, 0, 0,   //
+    42, 0, 42,  //
+    42, 21, 0,  //
+    42, 42, 42, //
+    21, 21, 21, //
+    21, 21, 63, //
+    21, 63, 21, //
+    21, 63, 63, //
+    63, 21, 21, //
+    63, 21, 63, //
+    63, 63, 21, //
+    63, 63, 63, //
 };
 
-int save_image(std::string &filename)      // save-to-disk routine
+// save-to-disk routine
+int save_image(std::string &filename)
 {
     std::filesystem::path open_file;
     std::string open_file_ext;
@@ -342,8 +356,10 @@ bool encoder()
     {
         goto oops;
     }
-    x = (Byte)(128 + ((6 - 1) << 4) + (bits_per_pixel - 1));      // color resolution == 6 bits worth
+    constexpr int COLOR_RESOLUTION{8};
+    x = (Byte)(128 + ((COLOR_RESOLUTION - 1) << 4) + (bits_per_pixel - 1));
     if (std::fwrite(&x, 1, 1, s_outfile) != 1)
+
     {
         goto oops;
     }
@@ -647,7 +663,6 @@ oops:
     }
 }
 
-// TODO: should we be doing this?  We need to store full colors, not the VGA truncated business.
 // shift IBM colors to GIF
 static int shift_write(const Byte *color, int num_colors)
 {
@@ -655,10 +670,7 @@ static int shift_write(const Byte *color, int num_colors)
     {
         for (int j = 0; j < 3; j++)
         {
-            // TODO: 6-bit color
             Byte this_color = color[3 * i + j];
-            this_color = (Byte)(this_color << 2);
-            this_color = (Byte)(this_color + (Byte)(this_color >> 6));
             if (std::fputc(this_color, s_outfile) != (int) this_color)
             {
                 return 0;

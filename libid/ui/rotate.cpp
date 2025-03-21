@@ -588,11 +588,7 @@ void save_palette()
         {
             for (i = 0; i < g_colors; i++)
             {
-                // TODO: 6-bit color
-                std::fprintf(dac_file, "%3d %3d %3d\n",
-                        g_dac_box[i][0] << 2,
-                        g_dac_box[i][1] << 2,
-                        g_dac_box[i][2] << 2);
+                std::fprintf(dac_file, "%3d %3d %3d\n", g_dac_box[i][0], g_dac_box[i][1], g_dac_box[i][2]);
             }
             std::memcpy(g_old_dac_box, g_dac_box, 256*3);
             g_color_state = ColorState::MAP_FILE;

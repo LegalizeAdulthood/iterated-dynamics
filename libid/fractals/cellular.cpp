@@ -443,12 +443,11 @@ bool cellular_setup()
 
 static void set_cellular_palette()
 {
-    // TODO: 6-bit color
-    static const Byte RED[3]    = { 42, 0, 0 };
-    static const Byte GREEN[3]  = { 10, 35, 10 };
-    static const Byte BLUE[3]   = { 13, 12, 29 };
-    static const Byte YELLOW[3] = { 60, 58, 18 };
-    static const Byte BROWN[3]  = { 42, 21, 0 };
+    static const Byte RED[3]    = { 170, 0, 0 };
+    static const Byte GREEN[3]  = { 40, 141, 40 };
+    static const Byte BLUE[3]   = { 52, 48, 117 };
+    static const Byte YELLOW[3] = { 242, 234, 73 };
+    static const Byte BROWN[3]  = { 170, 85, 0 };
 
     if (g_map_specified && g_color_state != ColorState::DEFAULT)
     {

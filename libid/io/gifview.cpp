@@ -185,8 +185,7 @@ int gif_view()
             }
             if ((g_display_3d == Display3DMode::NONE || !glasses_alternating_or_superimpose()) && g_read_color)
             {
-                // TODO: 6-bit color
-                g_dac_box[i][j] = (Byte)(k >> 2); // TODO: don't right shift color table by 2
+                g_dac_box[i][j] = static_cast<Byte>(k);
             }
         }
     }
