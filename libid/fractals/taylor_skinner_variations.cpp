@@ -10,6 +10,7 @@
 #include "fractals/frasetup.h"
 #include "math/arg.h"
 #include "misc/debug_flags.h"
+#include "ui/trig_fns.h"
 
 static bool fn_plus_fn_sym();
 

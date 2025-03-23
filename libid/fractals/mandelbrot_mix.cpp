@@ -3,6 +3,7 @@
 #include "fractals/mandelbrot_mix.h"
 
 #include "engine/bailout_formula.h"
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"

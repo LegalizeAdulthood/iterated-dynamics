@@ -9,6 +9,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "math/arg.h"
+#include "ui/trig_fns.h"
 
 #include <cmath>
 

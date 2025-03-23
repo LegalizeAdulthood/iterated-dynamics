@@ -12,6 +12,7 @@
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
+#include "ui/trig_fns.h"
 
 #include <cmath>
 

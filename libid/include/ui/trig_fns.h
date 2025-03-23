@@ -54,10 +54,6 @@ struct NamedTrigFunction
 extern NamedTrigFunction     g_trig_fn[];
 extern TrigFn                g_trig_index[];
 extern const int             g_num_trig_functions;
-extern void                (*g_d_trig0)();
-extern void                (*g_d_trig1)();
-extern void                (*g_d_trig2)();
-extern void                (*g_d_trig3)();
 
 std::string show_trig();
 void trig_details(char *buf);

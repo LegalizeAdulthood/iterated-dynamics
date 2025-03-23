@@ -6,6 +6,7 @@
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "fractals/parser.h"
+#include "math/arg.h"
 #include "ui/cmdfiles.h"
 
 #include <config/string_lower.h>
@@ -75,10 +76,6 @@ TrigFn g_trig_index[4] =
 {
     TrigFn::SIN, TrigFn::SQR, TrigFn::SINH, TrigFn::COSH
 };
-void (*g_d_trig0)(){d_stk_sin};
-void (*g_d_trig1)(){d_stk_sqr};
-void (*g_d_trig2)(){d_stk_sinh};
-void (*g_d_trig3)(){d_stk_cosh};
 
 // return display form of active trig functions
 std::string show_trig()

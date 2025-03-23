@@ -2,20 +2,21 @@
 //
 #pragma once
 
-#include "engine/calcfrac.h"
-#include "engine/fractals.h"
 #include "fractals/parser.h"
 #include "math/cmplx.h"
 #include "math/fpu087.h"
-#include "ui/trig_fns.h"
 
 struct Arg
 {
     DComplex d;
 };
 
-extern Arg *g_arg1;
-extern Arg *g_arg2;
+extern Arg                  *g_arg1;
+extern Arg                  *g_arg2;
+extern void                (*g_d_trig0)();
+extern void                (*g_d_trig1)();
+extern void                (*g_d_trig2)();
+extern void                (*g_d_trig3)();
 
 // --------------------------------------------------------------------
 // The following functions allow the complex transcendental functions
