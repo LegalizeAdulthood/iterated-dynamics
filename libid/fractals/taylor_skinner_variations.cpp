@@ -13,6 +13,12 @@
 
 static bool fn_plus_fn_sym();
 
+inline void cmplx_sqr_old(DComplex &out)
+{
+    out.y = (g_old_z.x + g_old_z.x) * g_old_z.y;
+    out.x = g_temp_sqr_x - g_temp_sqr_y;
+}
+
 // generalization of Scott and Skinner types
 static int trig_plus_sqr_fp_fractal()
 {
@@ -20,9 +26,9 @@ static int trig_plus_sqr_fp_fractal()
     cmplx_trig0(g_old_z, g_tmp_z);            // tmp = trig(old)
     cmplx_mult(g_param_z1, g_tmp_z, g_new_z); // new = parm*trig(old)
     cmplx_sqr_old(g_tmp_z);                   // tmp = sqr(old)
-    DComplex tmp2;                           //
+    DComplex tmp2;                            //
     cmplx_mult(g_param_z2, g_tmp_z, tmp2);    // tmp = parm2*sqr(old)
-    g_new_z += tmp2;                         // new = parm*trig(old)+parm2*sqr(old)
+    g_new_z += tmp2;                          // new = parm*trig(old)+parm2*sqr(old)
     return g_bailout_float();
 }
 
@@ -31,16 +37,16 @@ static int scott_trig_plus_sqr_fp_fractal() // float version
     // { z=pixel: z=sin(z)+sqr(z), |z|<BAILOUT }
     cmplx_trig0(g_old_z, g_new_z); // new = trig(old)
     cmplx_sqr_old(g_tmp_z);        // tmp = sqr(old)
-    g_new_z += g_tmp_z;           // new = trig(old)+sqr(old)
+    g_new_z += g_tmp_z;            // new = trig(old)+sqr(old)
     return g_bailout_float();
 }
 
 static int skinner_trig_sub_sqr_fp_fractal()
 {
     // { z=pixel: z=sin(z)-sqr(z), |z|<BAILOUT }
-    cmplx_trig0(g_old_z, g_new_z);   // new = trig(old)
-    cmplx_sqr_old(g_tmp_z);          // old = sqr(old)
-    g_new_z -= g_tmp_z;             // new = trig(old)-sqr(old)
+    cmplx_trig0(g_old_z, g_new_z); // new = trig(old)
+    cmplx_sqr_old(g_tmp_z);        // old = sqr(old)
+    g_new_z -= g_tmp_z;            // new = trig(old)-sqr(old)
     return g_bailout_float();
 }
 

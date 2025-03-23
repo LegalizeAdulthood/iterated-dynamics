@@ -89,11 +89,6 @@ inline void cmplx_sqr(const DComplex &arg, DComplex &out)
     out.x = sqr(arg.x) - sqr(arg.y);
     out.y = (arg.x + arg.x) * arg.y;
 }
-inline void cmplx_sqr_old(DComplex &out)
-{
-    out.y = (g_old_z.x+g_old_z.x) * g_old_z.y;
-    out.x = g_temp_sqr_x - g_temp_sqr_y;
-}
 inline void cmplx_pwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     out = complex_power(arg1, arg2);
