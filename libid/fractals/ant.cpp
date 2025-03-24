@@ -96,14 +96,14 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
     int ant_rule[MAX_ANTS + 1];
     int ant_dir[MAX_ANTS + 1];
     bool ant_wrap = g_params[4] != 0;
-    int step = (int) wait;
-    if (step == 1)
+    bool step = wait > 0;
+    if (step)
     {
         wait = 0;
     }
     else
     {
-        step = 0;
+        step = false;
     }
     if (rule_len == 0)
     {
@@ -171,7 +171,7 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
             switch (key)
             {
             case ID_KEY_SPACE:
-                step = 1 - step;
+                step = !step;
                 break;
             case ID_KEY_ESC:
                 done = true;
@@ -201,7 +201,7 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
         }
         for (int i = INNER_LOOP; i; i--)
         {
-            if (wait > 0 && step == 0)
+            if (wait > 0 && !step)
             {
                 for (int color = max_ants; color; color--)
                 {
@@ -278,14 +278,14 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
     int ant_rule[MAX_ANTS + 1];
     bool ant_wrap = g_params[4] != 0;
 
-    int step = (int) wait;
-    if (step == 1)
+    bool step = wait > 0;
+    if (step)
     {
         wait = 0;
     }
     else
     {
-        step = 0;
+        step = false;
     }
     if (rule_len == 0)
     {
@@ -338,7 +338,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
             switch (key)
             {
             case ID_KEY_SPACE:
-                step = 1 - step;
+                step = !step;
                 break;
             case ID_KEY_ESC:
                 done = true;
@@ -377,7 +377,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
                 int pixel = get_color(x, y);
                 g_put_color(x, y, 15);
 
-                if (wait > 0 && step == 0)
+                if (wait > 0 && !step)
                 {
                     sleep_ms(wait);
                 }
