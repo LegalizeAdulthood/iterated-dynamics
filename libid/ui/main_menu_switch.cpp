@@ -346,17 +346,10 @@ static MainState begin_ant(MainContext &/*context*/)
     }
     g_from_text = false;
     int err = get_fract_params(true);
-    if (err >= 0)
+    driver_unstack_screen();
+    if (err >= 0 && ant() >= 0)
     {
-        driver_unstack_screen();
-        if (ant() >= 0)
-        {
-            g_calc_status = CalcStatus::PARAMS_CHANGED;
-        }
-    }
-    else
-    {
-        driver_unstack_screen();
+        g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
     set_fractal_type(old_type);
     for (int j = 0; j < MAX_PARAMS; ++j)
