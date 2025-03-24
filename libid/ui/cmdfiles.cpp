@@ -1605,6 +1605,14 @@ static CmdArgFlags parse_colors(const char *value)
                 i += smooth;
                 ++value;
             }
+            else if (*value == '#')
+            {
+                ++value;
+                for (int j = 0; j < 6; ++j)
+                {
+                    int k = *value++;
+                }
+            }
             else
             {
                 for (int j = 0; j < 3; ++j)

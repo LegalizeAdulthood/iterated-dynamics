@@ -3981,3 +3981,14 @@ TEST_F(TestParameterCommand, colorsIncreasingSixBitRamp)
         EXPECT_EQ(i % 64, g_dac_box[i][2]);
     }
 }
+
+TEST_F(TestParameterCommand, colorsHexValues)
+{
+    ColorMapSaver saved_dac_box;
+
+    exec_cmd_arg("colors=#404040");
+
+    EXPECT_EQ(64U, g_dac_box[0][0]);
+    EXPECT_EQ(64U, g_dac_box[1][0]);
+    EXPECT_EQ(64U, g_dac_box[2][0]);
+}

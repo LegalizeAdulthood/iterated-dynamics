@@ -56,6 +56,7 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -609,24 +610,38 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
     while (true)
     {
         // emit color in rgb 3 char encoded form
-        for (int j = 0; j < 3; ++j)
+        if (g_dac_box[cur_color][0] < 64 && g_dac_box[cur_color][1] < 64 && g_dac_box[cur_color][2] < 64)
         {
-            int k = g_dac_box[cur_color][j];
-            if (k < 10)
+            for (int j = 0; j < 3; ++j)
             {
-                k += '0';
+                int k = g_dac_box[cur_color][j];
+                if (k < 10)
+                {
+                    k += '0';
+                }
+                else if (k < 36)
+                {
+                    k += 'A' - 10;
+                }
+                else if (k < 64)
+                {
+                    k += '_' - 36;
+                }
+                buf[j] = (char) k;
             }
-            else if (k < 36)
-            {
-                k += ('A' - 10);
-            }
-            else
-            {
-                k += ('_' - 36);
-            }
-            buf[j] = (char) k;
+            buf[3] = 0;
         }
-        buf[3] = 0;
+        else
+        {
+            buf[0] = '#';
+            static constexpr const char *hex_digits{"0123456789ABCDEF"};
+            for (int j = 0; j < 3; ++j)
+            {
+                buf[j * 2 + 1] = hex_digits[(g_dac_box[cur_color][j] & 0xF0) >> 4];
+                buf[j * 2 + 2] = hex_digits[g_dac_box[cur_color][j] & 0x0F];
+            }
+            buf[7] = 0;
+        }
         put_param(wb_data, buf);
         if (++cur_color >= max_color) // quit if done last color
         {
