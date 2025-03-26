@@ -52,36 +52,36 @@ static std::vector<int> s_inc_y[DIRS];
 static int s_last_x_dots{};
 static int s_last_y_dots{};
 
-static void set_wait(long *wait)
+static long change_wait(long wait)
 {
     while (true)
     {
         std::ostringstream msg;
-        msg << "Delay " << std::setw(4) << *wait << "     ";
+        msg << "Delay " << std::setw(4) << wait << "     ";
         show_temp_msg(msg.str());
         switch (driver_get_key())
         {
         case ID_KEY_CTL_RIGHT_ARROW:
         case ID_KEY_CTL_UP_ARROW:
-            (*wait) += 100;
+            wait += 100;
             break;
         case ID_KEY_RIGHT_ARROW:
         case ID_KEY_UP_ARROW:
-            (*wait) += 10;
+            wait += 10;
             break;
         case ID_KEY_CTL_DOWN_ARROW:
         case ID_KEY_CTL_LEFT_ARROW:
-            (*wait) -= 100;
+            wait -= 100;
             break;
         case ID_KEY_LEFT_ARROW:
         case ID_KEY_DOWN_ARROW:
-            (*wait) -= 10;
+            wait -= 10;
             break;
         default:
             clear_temp_msg();
-            return;
+            return wait;
         }
-        *wait = std::max(*wait, 0L);
+        wait = std::max(wait, 0L);
     }
 }
 
@@ -184,7 +184,7 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
             case ID_KEY_CTL_UP_ARROW:
             case ID_KEY_CTL_DOWN_ARROW:
             case ID_KEY_CTL_LEFT_ARROW:
-                set_wait(&wait);
+                wait = change_wait(wait);
                 break;
             default:
                 done = true;
@@ -351,7 +351,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
             case ID_KEY_CTL_UP_ARROW:
             case ID_KEY_CTL_DOWN_ARROW:
             case ID_KEY_CTL_LEFT_ARROW:
-                set_wait(&wait);
+                wait = change_wait(wait);
                 break;
             default:
                 done = true;
