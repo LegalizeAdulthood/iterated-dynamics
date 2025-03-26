@@ -79,8 +79,8 @@ bool show_temp_msg(const char *msg)
         }
     }
 
-    find_special_colors(); // get g_color_dark & g_color_medium set
-    driver_display_string(0, 0, g_color_medium, g_color_dark, buffer);
+    find_special_colors(); // get g_color_dark & g_color_bright set
+    driver_display_string(0, 0, g_color_bright, g_color_dark, buffer);
     g_logical_screen_x_offset = save_screen_x_offset;
     g_logical_screen_y_offset = save_screen_y_offset;
 
