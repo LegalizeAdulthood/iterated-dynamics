@@ -511,7 +511,14 @@ there is an alternative approach that yields continuous changes in colors.
 
 Continuous potential is approximated by calculating
 
+~ADoc-
          potential =  log(modulus)/2^iterations
+~Doc-,Online-,ADoc+,Format-
+[stem]
+++++
+"potential" = log("modulus")/2^"iterations"
+++++
+~Doc+,Online+,Format+
 
 where "modulus" is the orbit value (magnitude of the complex number) when
 the modulus bailout was exceeded, at the "iterations" iteration.  Clear as
