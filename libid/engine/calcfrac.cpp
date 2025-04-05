@@ -2515,19 +2515,19 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         {
             break;
         }
-        goto x_symmetry;
+        goto xsym;
     case SymmetryType::X_AXIS_NO_IMAG:    // X-axis Symmetry (no imag param)
         if (!params_no_imag)
         {
             break;
         }
-        goto x_symmetry;
+        goto xsym;
     case SymmetryType::X_AXIS_NO_PARAM:                        // X-axis Symmetry  (no params)
         if (!params_zero)
         {
             break;
         }
-x_symmetry:
+xsym:
     case SymmetryType::X_AXIS:                       // X-axis Symmetry
         if (!x_sym_split(x_axis_row, x_axis_between))
         {
@@ -2600,7 +2600,7 @@ x_symmetry:
             break;
         }
     case SymmetryType::ORIGIN:                      // Origin Symmetry
-origin_symmetry:
+originsym:
         if (!x_sym_split(x_axis_row, x_axis_between)
             && !y_sym_split(y_axis_col, y_axis_between))
         {
@@ -2636,7 +2636,7 @@ origin_symmetry:
         }
         if ((g_invert != 0) && g_force_symmetry == SymmetryType::NOT_FORCED)
         {
-            goto origin_symmetry;
+            goto originsym;
         }
         g_plot = sym_pi_plot ;
         g_symmetry = SymmetryType::NONE;

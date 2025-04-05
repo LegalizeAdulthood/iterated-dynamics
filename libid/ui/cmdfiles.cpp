@@ -16,6 +16,7 @@
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
 #include "engine/log_map.h"
+#include "engine/perturbation.h"
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
 #include "fractals/check_orbit_name.h"
@@ -1568,7 +1569,7 @@ static CmdArgFlags parse_colors(const char *value)
         }
         if ((int)std::strlen(value) > ID_FILE_MAX_PATH || validate_luts(g_map_name.c_str()))
         {
-            goto bad_color;
+            goto badcolor;
         }
         if (g_display_3d != Display3DMode::NONE)
         {
@@ -1591,7 +1592,7 @@ static CmdArgFlags parse_colors(const char *value)
         {
             if (i >= 256)
             {
-                goto bad_color;
+                goto badcolor;
             }
             if (*value == '<')
             {
@@ -1600,7 +1601,7 @@ static CmdArgFlags parse_colors(const char *value)
                     || (smooth = std::atoi(value+1)) < 2
                     || (value = std::strchr(value, '>')) == nullptr)
                 {
-                    goto bad_color;
+                    goto badcolor;
                 }
                 i += smooth;
                 ++value;
@@ -1612,7 +1613,7 @@ static CmdArgFlags parse_colors(const char *value)
                     int k = *(value++);
                     if (k < '0')
                     {
-                        goto bad_color;
+                        goto badcolor;
                     }
                     if (k <= '9')
                     {
@@ -1620,7 +1621,7 @@ static CmdArgFlags parse_colors(const char *value)
                     }
                     else if (k < 'A')
                     {
-                        goto bad_color;
+                        goto badcolor;
                     }
                     else if (k <= 'Z')
                     {
@@ -1628,7 +1629,7 @@ static CmdArgFlags parse_colors(const char *value)
                     }
                     else if (k < '_' || k > 'z')
                     {
-                        goto bad_color;
+                        goto badcolor;
                     }
                     else
                     {
@@ -1666,7 +1667,7 @@ static CmdArgFlags parse_colors(const char *value)
         }
         if (smooth)
         {
-            goto bad_color;
+            goto badcolor;
         }
         while (i < 256)
         {
@@ -1681,7 +1682,7 @@ static CmdArgFlags parse_colors(const char *value)
     g_colors_preloaded = true;
     std::memcpy(g_old_dac_box, g_dac_box, 256*3);
     return CmdArgFlags::NONE;
-bad_color:
+badcolor:
     return CmdArgFlags::BAD_ARG;
 }
 
@@ -3759,8 +3760,35 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
+// tolerance=?
+static CmdArgFlags cmd_tolerance(const Command &cmd)
+{
+    g_perturbation_tolerance = cmd.float_vals[0];
+    return CmdArgFlags::NONE;
+}
+
+// perturbation=?
+static CmdArgFlags cmd_perturbation(const Command &cmd)
+{
+    std::string p = cmd.value;
+    if (p == "auto")
+    {
+        g_perturbation = PerturbationMode::AUTO;
+    }
+    else if (p == "yes")
+    {
+        g_perturbation = PerturbationMode::YES;
+    }
+    else
+    {
+        g_perturbation = PerturbationMode::NO;
+    }
+    g_use_perturbation = is_perturbation();
+    return CmdArgFlags::NONE;
+}
+
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 157> s_commands{
+static std::array<CommandHandler, 159> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3859,6 +3887,7 @@ static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"passes", cmd_passes},                   //
     CommandHandler{"periodicity", cmd_periodicity},         //
     CommandHandler{"perspective", cmd_perspective},         //
+    CommandHandler{"perturbation", cmd_perturbation},       //
     CommandHandler{"pixelzoom", cmd_pixel_zoom},            //
     CommandHandler{"plotstyle", cmd_deprecated},            // deprecated print parameters
     CommandHandler{"polyphony", cmd_polyphony},             //
@@ -3900,6 +3929,7 @@ static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"tempdir", cmd_temp_dir},                //
     CommandHandler{"textcolors", cmd_text_colors},          //
     CommandHandler{"title", cmd_deprecated},                // deprecated print parameters
+    CommandHandler{"tolerance", cmd_tolerance},             // perturbation "glitch" error tolerance
     CommandHandler{"tplus", cmd_tplus},                     //
     CommandHandler{"translate", cmd_deprecated},            // deprecated print parameters
     CommandHandler{"transparent", cmd_transparent},         //
