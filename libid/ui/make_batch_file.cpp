@@ -750,7 +750,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
     if (colors_only)
     {
-        goto docolors;
+        goto do_colors;
     }
     if (g_display_3d <= Display3DMode::NONE)
     {
@@ -1565,7 +1565,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             put_param(color_inf);
             put_param_line();
         }
-docolors:
+do_colors:
         put_param(" colors=");
         if (g_record_colors != RecordColorsMode::COMMENT && g_record_colors != RecordColorsMode::YES && color_inf[0] == '@')
         {

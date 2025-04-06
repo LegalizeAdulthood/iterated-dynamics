@@ -2515,19 +2515,19 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         {
             break;
         }
-        goto xsym;
+        goto x_symmetry;
     case SymmetryType::X_AXIS_NO_IMAG:    // X-axis Symmetry (no imag param)
         if (!params_no_imag)
         {
             break;
         }
-        goto xsym;
+        goto x_symmetry;
     case SymmetryType::X_AXIS_NO_PARAM:                        // X-axis Symmetry  (no params)
         if (!params_zero)
         {
             break;
         }
-xsym:
+x_symmetry:
     case SymmetryType::X_AXIS:                       // X-axis Symmetry
         if (!x_sym_split(x_axis_row, x_axis_between))
         {
