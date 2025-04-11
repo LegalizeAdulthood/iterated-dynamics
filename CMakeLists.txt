@@ -92,3 +92,39 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     add_subdirectory(packaging)
 endif()
 install(FILES LICENSE.txt DESTINATION .)
+
+add_custom_target(Miscelleanous)
+target_sources(Miscelleanous PRIVATE
+    ".clang-format"
+    ".editorconfig"
+    ".gitattributes"
+    ".github/workflows/cmake.yml"
+    ".gitignore"
+    ".gitmodules"
+    ".mailmap"
+    "CMakePresets.json"
+    "LICENSE.txt"
+    "ReadMe.md"
+    "Style.md"
+    "vcpkg.json"
+    "cmake/set_cxx_standard.cmake"
+    "cmake/target_folder.cmake"
+    "cmake/vs_startup_project.cmake"
+)
+source_group("CMake Scripts" FILES
+    "cmake/set_cxx_standard.cmake"
+    "cmake/target_folder.cmake"
+    "cmake/vs_startup_project.cmake")
+source_group("Editing" FILES
+    ".clang-format"
+    ".editorconfig")
+source_group("Git" FILES
+    ".gitattributes"
+    ".gitignore"
+    ".gitmodules"
+    ".mailmap")
+source_group("GitHub" FILES
+    ".github/workflows/cmake.yml"
+    "LICENSE.txt")
+source_group("VcPkg" FILES
+    "vcpkg.json")
