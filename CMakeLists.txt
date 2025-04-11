@@ -5,11 +5,12 @@
 cmake_minimum_required(VERSION 3.23)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(set_cxx_standard)
 include(target_folder)
+include(vs_startup_project)
 
 # <filesystem> is C++17 or later
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set_cxx_standard(17)
 
 # Set install folder
 set(CMAKE_INSTALL_PREFIX install)
@@ -85,7 +86,7 @@ if(BUILD_TESTING)
     add_subdirectory(tests)
 endif()
 
-set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT id)
+vs_startup_project(id)
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
     add_subdirectory(packaging)
