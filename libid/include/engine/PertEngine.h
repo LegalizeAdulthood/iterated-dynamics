@@ -14,6 +14,7 @@ class PertEngine
 public:
     void initialize_frame(const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
     int calculate_one_frame();
+    int get_number_references();
 
 private:
     int calculate_point(const Point &pt, double magnified_radius, int window_radius);
