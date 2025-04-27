@@ -7,4 +7,4 @@
 #pragma once
 
 // POSIX file-descriptor style I/O functions
-#include <corecrt_io.h>
+#include <io.h>

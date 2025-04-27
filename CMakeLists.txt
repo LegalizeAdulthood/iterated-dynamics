@@ -24,7 +24,7 @@ project("${ID_PROJECT_NAME}"
     VERSION 1.3.0.0
     DESCRIPTION "${ID_PROGRAM_NAME} is a fractal generator"
     HOMEPAGE_URL "https://LegalizeAdulthood.github.io/iterated-dynamics"
-    LANGUAGES CXX)
+    LANGUAGES CXX C)
 
 include(CTest)
 
