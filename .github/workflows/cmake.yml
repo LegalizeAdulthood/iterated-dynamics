@@ -48,6 +48,8 @@ jobs:
         cmake-version: '3.31'
 
     - name: Run Workflow
+      env: 
+        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
       run: |
         cmake --version
         cmake --workflow --preset ci-html-docs
@@ -135,6 +137,8 @@ jobs:
         name: html-docs
 
     - name: Run Workflow
+      env: 
+        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
       run: cmake --workflow --preset ci-${{matrix.preset}}
 
     - name: Upload msi package artifacts
@@ -197,6 +201,8 @@ jobs:
           cmake-version: '3.31'
 
       - name: Configure Compilation Database
+        env: 
+          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
         run: |
           cmake --version
           cmake --preset cppcheck
