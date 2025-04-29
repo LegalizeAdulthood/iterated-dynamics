@@ -8,32 +8,48 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
+
 jobs:
   html-docs:
     runs-on: ubuntu-latest
-    env: 
-      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
       with:
         submodules: true
-
-    - name: Set Environment Variables
-      uses: actions/github-script@v7
-      with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
     - name: Install System Dependencies
       run: |
         sudo apt-get update
         sudo apt-get install libx11-dev
+        sudo apt-get install mono-complete
+
+    - name: Add NuGet sources
+      shell: bash
+      run: |
+        ${{matrix.nuget}} \
+          sources add \
+          -Source "${{env.FEED_URL}}" \
+          -StorePasswordInClearText \
+          -Name GitHubPackages \
+          -UserName "${{github.repository_owner}}" \
+          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+        ${{matrix.nuget}} \
+          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+          -Source "${{env.FEED_URL}}"
+
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
+      with:
+        cmake-version: '3.31'
 
     - name: Run Workflow
-      run: cmake --workflow --preset ci-html-docs
+      run: |
+        cmake --version
+        cmake --workflow --preset ci-html-docs
 
     - name: Setup ruby
       uses: ruby/setup-ruby@v1
@@ -45,11 +61,10 @@ jobs:
       with:
         version: 2.0.18
 
-    - name: AsciiDoctor version
-      run: asciidoctor --version
-  
     - name: Run AsciiDoctor
-      run: asciidoctor build-ci-html-docs/hc/src/id.adoc
+      run: |
+        asciidoctor --version
+        asciidoctor build-ci-html-docs/hc/src/id.adoc
 
     - name: Upload HTML artifact
       uses: actions/upload-artifact@v4
@@ -64,33 +79,59 @@ jobs:
         preset: [ debug, release ]
         # macos-latest is disabled for now
         os: [ ubuntu-latest, windows-latest ]
+        include:
+          #- os: macos-latest
+          #  nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
+          - os: ubuntu-latest
+            nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
+          - os: windows-latest
+            nuget: nuget
+
     runs-on: ${{matrix.os}}
-    env: 
-      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4.1.1
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
       with:
         submodules: true
 
-    - name: Set Environment Variables
-      uses: actions/github-script@v7
+    - name: Install Prerequisites Linux
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      shell: bash
+      run: |
+        ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+        sudo apt-get update
+        sudo apt-get install libx11-dev mono-complete
+
+    #- name: Install Prerequisites macOS
+    #  if: ${{matrix.os == 'macos-latest'}}
+    #  shell: bash
+    #  run: |
+    #    ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+
+    - name: Add NuGet sources
+      shell: bash
+      run: |
+        ${{matrix.nuget}} \
+          sources add \
+          -Source "${{env.FEED_URL}}" \
+          -StorePasswordInClearText \
+          -Name GitHubPackages \
+          -UserName "${{github.repository_owner}}" \
+          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+        ${{matrix.nuget}} \
+          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+          -Source "${{env.FEED_URL}}"
+
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
       with:
-        script: |
-          core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-          core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+        cmake-version: '3.31'
 
     - name: Get HTML documentation
       uses: actions/download-artifact@v4
       with:
         name: html-docs
-
-    - name: Install System Dependencies
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      run: |
-        sudo apt-get update
-        sudo apt-get install libx11-dev
 
     - name: Run Workflow
       run: cmake --workflow --preset ci-${{matrix.preset}}
@@ -122,29 +163,42 @@ jobs:
   cppcheck:
     name: cppcheck
     runs-on: ubuntu-latest
-    env: 
-      VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4.1.1
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
         with:
           submodules: true
-         
-      - name: Set Environment Variables
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
       - name: Install System Dependencies
         run: |
+          ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
           sudo apt-get update
           sudo apt-get install libx11-dev
 
+      - name: Add NuGet sources
+        shell: bash
+        run: |
+          ${{matrix.nuget}} \
+            sources add \
+            -Source "${{env.FEED_URL}}" \
+            -StorePasswordInClearText \
+            -Name GitHubPackages \
+            -UserName "${{github.repository_owner}}" \
+            -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+          ${{matrix.nuget}} \
+            setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+            -Source "${{env.FEED_URL}}"
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
+        with:
+          cmake-version: '3.31'
+
       - name: Configure Compilation Database
-        run: cmake --preset cppcheck
+        run: |
+          cmake --version
+          cmake --preset cppcheck
   
       - name: Run CppCheck
         uses: deep5050/cppcheck-action@v3.0
