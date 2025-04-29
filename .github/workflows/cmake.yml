@@ -179,14 +179,14 @@ jobs:
       - name: Add NuGet sources
         shell: bash
         run: |
-          ${{matrix.nuget}} \
+          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
             sources add \
             -Source "${{env.FEED_URL}}" \
             -StorePasswordInClearText \
             -Name GitHubPackages \
             -UserName "${{github.repository_owner}}" \
             -Password "${{secrets.GH_PACKAGES_TOKEN}}"
-          ${{matrix.nuget}} \
+          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
             setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
             -Source "${{env.FEED_URL}}"
 
