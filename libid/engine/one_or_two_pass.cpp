@@ -80,19 +80,22 @@ static int standard_calc(int pass_num)
                 }
                 g_resuming = false;       // reset so quick_calc works
                 g_reset_periodicity = false;
-                if (pass_num == 1)       // first pass, copy pixel and bump col
+                if (pass_num == 1) // first pass, copy pixel and bump col
                 {
-                    if ((g_row&1) == 0 && g_row < g_i_y_stop)
+                    if (!(g_pixel_is_complete && g_use_perturbation))   // Don't plot pixels if we have already done them'
                     {
-                        (*g_plot)(g_col, g_row+1, g_color);
+                        if ((g_row&1) == 0 && g_row < g_i_y_stop)
+                        {
+                            (*g_plot)(g_col, g_row+1, g_color);
+                            if ((g_col&1) == 0 && g_col < g_i_x_stop)
+                            {
+                                (*g_plot)(g_col+1, g_row+1, g_color);
+                            }
+                        }
                         if ((g_col&1) == 0 && g_col < g_i_x_stop)
                         {
-                            (*g_plot)(g_col+1, g_row+1, g_color);
+                            (*g_plot)(++g_col, g_row, g_color);
                         }
-                    }
-                    if ((g_col&1) == 0 && g_col < g_i_x_stop)
-                    {
-                        (*g_plot)(++g_col, g_row, g_color);
                     }
                 }
             }

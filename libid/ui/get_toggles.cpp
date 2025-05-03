@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/log_map.h"
+#include "engine/perturbation.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "io/save_timer.h"
@@ -41,15 +42,16 @@ int get_toggles()
     FullScreenValues values[25];
     int old_sound_flag;
     const char *calc_modes[] = {
-        "1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
+        "1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o"};
     const char *sound_modes[5] = {"off", "beep", "x", "y", "z"};
     const char *inside_modes[] = {
         "numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross", "startrail", "period", "atan", "fmod"};
     const char *outside_modes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan", "fmod", "tdis"};
+    const char *perturbation_modes[] = {"auto", "yes", "no"};
 
     int k = -1;
 
-    choices[++k] = "Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit], p[ert])";
+    choices[++k] = "Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit])";
     values[k].type = 'l';
     values[k].uval.ch.vlen = 3;
     values[k].uval.ch.list_len = std::size(calc_modes);
@@ -69,8 +71,8 @@ int get_toggles()
         : (g_user_std_calc_mode == 's') ? 11
         : (g_user_std_calc_mode == 't') ? 12
         : (g_user_std_calc_mode == 'd') ? 13
-        : (g_user_std_calc_mode == 'o') ? 14
-        :        /* "p"erturbation */     15;
+        : /*(g_user_std_calc_mode == 'o') ?*/ 14;
+//        :         "p"erturbation      15;
     char old_user_std_calc_mode = g_user_std_calc_mode;
     int old_stop_pass = g_stop_pass;
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
@@ -226,6 +228,30 @@ int get_toggles()
     values[k].type = 'f'; // should be 'd', but prompts get messed up
     double old_close_proximity = g_close_proximity;
     values[k].uval.dval = old_close_proximity;
+
+    choices[++k] = "Use Perturbation (yes, no, auto - internal choice)";
+    values[k].type = 'l';
+    values[k].uval.ch.vlen = 4;
+    values[k].uval.ch.list_len = std::size(perturbation_modes);
+    values[k].uval.ch.list = perturbation_modes;
+    PerturbationMode old_perturbation = g_perturbation;
+    if (g_perturbation == PerturbationMode::AUTO)
+    {
+        values[k].uval.ch.val = 0;
+    }
+    else if (g_perturbation == PerturbationMode::YES)
+    {
+        values[k].uval.ch.val = 1;
+    }
+    else
+    {
+        values[k].uval.ch.val = 2;
+    }
+
+    choices[++k] = "Perturbation tolerance";
+    values[k].type = 'd';
+    double old_perturbation_tolerance = g_perturbation_tolerance;
+    values[k].uval.dval = old_perturbation_tolerance;
 
     const HelpLabels old_help_mode = g_help_mode;
     g_help_mode = HelpLabels::HELP_X_OPTIONS;
@@ -410,6 +436,34 @@ int get_toggles()
     ++k;
     g_close_proximity = values[k].uval.dval;
     if (g_close_proximity != old_close_proximity)
+    {
+        j++;
+    }
+
+    int tmp = values[++k].uval.ch.val;
+    if (tmp > 0)
+    {
+        switch (tmp)
+        {
+        case 0:
+            g_perturbation = PerturbationMode::AUTO;
+            break;
+        case 1:
+            g_perturbation = PerturbationMode::YES;
+            break;
+        case 2:
+            g_perturbation = PerturbationMode::NO;
+            break;
+        }
+    }
+
+    if (old_perturbation != g_perturbation)
+    {
+        j++;
+    }
+
+    g_perturbation_tolerance = values[++k].uval.dval;
+    if (old_perturbation_tolerance != g_perturbation_tolerance)
     {
         j++;
     }
