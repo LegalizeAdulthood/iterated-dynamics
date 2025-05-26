@@ -1608,10 +1608,31 @@ static CmdArgFlags parse_colors(const char *value)
             else if (*value == '#')
             {
                 ++value;
-                for (int j = 0; j < 6; ++j)
+                for (int j = 0; j < 3; ++j)
                 {
-                    int k = *value++;
+                    static constexpr const char HEX_DIGITS[]{"0123456789abcdef"};
+                    static const auto decode_hex_digit = [](int ch)
+                    {
+                        const char *pos = std::strchr(HEX_DIGITS, std::tolower(ch));
+                        return pos == nullptr ? -1 : static_cast<int>(pos - HEX_DIGITS);
+                    };
+                    if (!*value)
+                    {
+                        goto bad_color;
+                    }
+                    const int high = decode_hex_digit(*value++);
+                    if (!*value || high == -1)
+                    {
+                        goto bad_color;
+                    }
+                    const int low = decode_hex_digit(*value++);
+                    if (low == -1)
+                    {
+                        goto bad_color;
+                    }
+                    g_dac_box[i][j] = static_cast<Byte>(high * 16 + low);
                 }
+                ++i;
             }
             else
             {

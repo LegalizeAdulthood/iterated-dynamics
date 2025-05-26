@@ -3988,7 +3988,7 @@ TEST_F(TestParameterCommand, colorsHexValues)
 
     exec_cmd_arg("colors=#404040");
 
-    EXPECT_EQ(64U, g_dac_box[0][0]);
-    EXPECT_EQ(64U, g_dac_box[1][0]);
-    EXPECT_EQ(64U, g_dac_box[2][0]);
+    EXPECT_EQ(0x40U, g_dac_box[0][0]);
+    EXPECT_EQ(0x40U, g_dac_box[0][1]);
+    EXPECT_EQ(0x40U, g_dac_box[0][2]);
 }
