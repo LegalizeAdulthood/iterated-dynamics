@@ -1558,6 +1558,62 @@ static CmdArgFlags cmd_coarse(const Command &cmd)
     return CmdArgFlags::PARAM_3D;
 }
 
+static int decode_hex_digit(int ch)
+{
+    static constexpr const char HEX_DIGITS[]{"0123456789abcdef"};
+    const char *pos = std::strchr(HEX_DIGITS, std::tolower(ch));
+    return pos == nullptr ? -1 : static_cast<int>(pos - HEX_DIGITS);
+}
+
+static int parse_hex_color(const char *&value)
+{
+    if (!*value)
+    {
+        return -1;
+    }
+    const int high = decode_hex_digit(*value++);
+    if (!*value || high == -1)
+    {
+        return -1;
+    }
+    const int low = decode_hex_digit(*value++);
+    if (low == -1)
+    {
+        return -1;
+    }
+    return high * 16 + low;
+ }
+
+static int parse_6bit_color(const char *&value)
+{
+    int k = *(value++);
+    if (k < '0')
+    {
+        return -1;
+    }
+    if (k <= '9')
+    {
+        k -= '0';
+    }
+    else if (k < 'A')
+    {
+        return -1;
+    }
+    else if (k <= 'Z')
+    {
+        k -= ('A' - 10);
+    }
+    else if (k < '_' || k > 'z')
+    {
+        return -1;
+    }
+    else
+    {
+        k -= ('_' - 36);
+    }
+    return k;
+}
+
 static CmdArgFlags parse_colors(const char *value)
 {
     if (*value == '@')
@@ -1605,63 +1661,19 @@ static CmdArgFlags parse_colors(const char *value)
                 i += smooth;
                 ++value;
             }
-            else if (*value == '#')
-            {
-                ++value;
-                for (int j = 0; j < 3; ++j)
-                {
-                    static constexpr const char HEX_DIGITS[]{"0123456789abcdef"};
-                    static const auto decode_hex_digit = [](int ch)
-                    {
-                        const char *pos = std::strchr(HEX_DIGITS, std::tolower(ch));
-                        return pos == nullptr ? -1 : static_cast<int>(pos - HEX_DIGITS);
-                    };
-                    if (!*value)
-                    {
-                        goto bad_color;
-                    }
-                    const int high = decode_hex_digit(*value++);
-                    if (!*value || high == -1)
-                    {
-                        goto bad_color;
-                    }
-                    const int low = decode_hex_digit(*value++);
-                    if (low == -1)
-                    {
-                        goto bad_color;
-                    }
-                    g_dac_box[i][j] = static_cast<Byte>(high * 16 + low);
-                }
-                ++i;
-            }
             else
             {
+                bool hex_color{*value == '#'};
+                if (hex_color)
+                {
+                    ++value;
+                }
                 for (int j = 0; j < 3; ++j)
                 {
-                    int k = *(value++);
-                    if (k < '0')
+                    const int k = hex_color ? parse_hex_color(value) : parse_6bit_color(value);
+                    if (k == -1)
                     {
                         goto bad_color;
-                    }
-                    if (k <= '9')
-                    {
-                        k -= '0';
-                    }
-                    else if (k < 'A')
-                    {
-                        goto bad_color;
-                    }
-                    else if (k <= 'Z')
-                    {
-                        k -= ('A'-10);
-                    }
-                    else if (k < '_' || k > 'z')
-                    {
-                        goto bad_color;
-                    }
-                    else
-                    {
-                        k -= ('_'-36);
                     }
                     g_dac_box[i][j] = (Byte)k;
                     if (smooth)
