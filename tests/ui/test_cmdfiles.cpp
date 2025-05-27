@@ -3976,9 +3976,10 @@ TEST_F(TestParameterCommand, colorsIncreasingSixBitRamp)
 
     for (int i = 0; i < 256; ++i)
     {
-        EXPECT_EQ(i % 64, g_dac_box[i][0]);
-        EXPECT_EQ(i % 64, g_dac_box[i][1]);
-        EXPECT_EQ(i % 64, g_dac_box[i][2]);
+        const Byte val = (i % 64U)*4U;
+        EXPECT_EQ(val, g_dac_box[i][0]);
+        EXPECT_EQ(val, g_dac_box[i][1]);
+        EXPECT_EQ(val, g_dac_box[i][2]);
     }
 }
 
@@ -4006,4 +4007,15 @@ TEST_F(TestParameterCommand, colorRangeHexValues)
         EXPECT_EQ(values[i], g_dac_box[i][1]);
         EXPECT_EQ(values[i], g_dac_box[i][2]);
     }
+}
+
+TEST_F(TestParameterCommand, color6BitMappedTo8Bit)
+{
+    ColorMapSaver saved_dac_box;
+
+    exec_cmd_arg("colors=zzz");
+
+    EXPECT_EQ(63U*4U, g_dac_box[0][0]);
+    EXPECT_EQ(63U*4U, g_dac_box[0][1]);
+    EXPECT_EQ(63U*4U, g_dac_box[0][2]);
 }

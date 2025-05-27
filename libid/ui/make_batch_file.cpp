@@ -599,6 +599,14 @@ static int get_prec(double a, double b, double c)
     return digits;
 }
 
+static bool is_6bit_color(int cur_color)
+{
+    // 3 character encoding can be used if all channels have the 2 LSBs zero.
+    return (g_dac_box[cur_color][0] & 3U) == 0 //
+        && (g_dac_box[cur_color][1] & 3U) == 0 //
+        && (g_dac_box[cur_color][2] & 3U) == 0;
+}
+
 void put_encoded_colors(WriteBatchData &wb_data, int max_color)
 {
     char buf[81];
@@ -610,11 +618,12 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
     while (true)
     {
         // emit color in rgb 3 char encoded form
-        if (g_dac_box[cur_color][0] < 64 && g_dac_box[cur_color][1] < 64 && g_dac_box[cur_color][2] < 64)
+        if (is_6bit_color(cur_color))
         {
             for (int j = 0; j < 3; ++j)
             {
-                int k = g_dac_box[cur_color][j];
+                int k = g_dac_box[cur_color][j]/4;
+                assert(k < 64);
                 if (k < 10)
                 {
                     k += '0';
@@ -690,8 +699,8 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
                     int delta = (int) g_dac_box[scan_color][j] - (int) g_dac_box[scan_color - k - 1][j];
                     if (k == scan_color - cur_color)
                     {
+                        diff1[k][j] = delta;
                         diff2[k][j] = delta;
-                        diff1[k][j] = diff2[k][j];
                     }
                     else if (delta != diff1[k][j] && delta != diff2[k][j])
                     {

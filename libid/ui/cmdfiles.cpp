@@ -1611,7 +1611,7 @@ static int parse_6bit_color(const char *&value)
     {
         k -= ('_' - 36);
     }
-    return k;
+    return k * 4; // move value to high 6 bits.
 }
 
 static CmdArgFlags parse_colors(const char *value)

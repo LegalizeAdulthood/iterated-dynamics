@@ -8,6 +8,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <array>
 #include <numeric>
 
@@ -20,6 +21,7 @@ protected:
     void fill_dac_from_values(int count);
     void up_down_values(int count);
     void up_down_values(int count, int up, int down);
+    void iota4(int count);
     ColorMapSaver m_saved_dac_box;
     std::array<Byte, 256> values{};
     WriteBatchData m_data{};
@@ -47,13 +49,25 @@ void TestPutEncodedColors::up_down_values(int count, int up, int down)
     int offset{};
     for (int i = 0; i < count; ++i)
     {
-        values[offset] = static_cast<Byte>(up);
+        values[offset] = static_cast<Byte>(up * 4);
         ++up;
         ++offset;
-        values[offset] = static_cast<Byte>(down);
+        values[offset] = static_cast<Byte>(down * 4);
         --down;
         ++offset;
     }
+}
+
+void TestPutEncodedColors::iota4(int count)
+{
+    std::generate_n(values.begin(), count,
+        []
+        {
+            static int value{};
+            const int result{value};
+            value += 4;
+            return result;
+        });
 }
 
 } // namespace
@@ -62,9 +76,10 @@ TEST_F(TestPutEncodedColors, increasingSixBitRamp)
 {
     for (int i = 0; i < 256; ++i)
     {
-        g_dac_box[i][0] = static_cast<Byte>(i % 64);
-        g_dac_box[i][1] = static_cast<Byte>(i % 64);
-        g_dac_box[i][2] = static_cast<Byte>(i % 64);
+        const Byte val{static_cast<Byte>((i % 64) * 4)};
+        g_dac_box[i][0] = val;
+        g_dac_box[i][1] = val;
+        g_dac_box[i][2] = val;
     }
 
     put_encoded_colors(m_data, 256);
@@ -125,7 +140,7 @@ TEST_F(TestPutEncodedColors, values36Through63EncodedAsLowerCaseLetters)
 TEST_F(TestPutEncodedColors, smoothFourColors)
 {
     static constexpr int NUM_COLORS{4};
-    std::iota(values.begin(), values.begin() + NUM_COLORS, 0U);
+    iota4(NUM_COLORS);
     fill_dac_from_values(NUM_COLORS);
 
     put_encoded_colors(m_data, NUM_COLORS);
@@ -138,7 +153,7 @@ TEST_F(TestPutEncodedColors, smoothFourColors)
 TEST_F(TestPutEncodedColors, smoothFiveColors)
 {
     static constexpr int NUM_COLORS{5};
-    std::iota(values.begin(), values.begin() + NUM_COLORS, 0U);
+    iota4(NUM_COLORS);
     fill_dac_from_values(NUM_COLORS);
 
     put_encoded_colors(m_data, NUM_COLORS);
@@ -148,15 +163,15 @@ TEST_F(TestPutEncodedColors, smoothFiveColors)
     EXPECT_EQ(expected, actual);
 }
 
-TEST_F(TestPutEncodedColors, values64Through255EncodedAsHex)
+TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
 {
     static constexpr int NUM_COLORS{1};
-    std::iota(values.begin(), values.begin() + NUM_COLORS, 64U);
+    std::iota(values.begin(), values.begin() + NUM_COLORS, 64U + 3U);
     fill_dac_from_values(NUM_COLORS);
 
     put_encoded_colors(m_data, NUM_COLORS);
 
-    std::string_view expected{"#404040"};
+    std::string_view expected{"#434343"};
     std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }
