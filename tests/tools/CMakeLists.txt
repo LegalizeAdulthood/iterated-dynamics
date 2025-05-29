@@ -9,3 +9,7 @@ target_folder(image-compare "Tests/Tools")
 add_executable(image-dump image_dump.cpp)
 target_link_libraries(image-dump PUBLIC image-tool)
 target_folder(image-dump "Tests/Tools")
+
+add_executable(colormap-compare colormap_compare.cpp)
+target_link_libraries(colormap-compare PUBLIC image-tool)
+target_folder(colormap-compare "Tests/Tools")

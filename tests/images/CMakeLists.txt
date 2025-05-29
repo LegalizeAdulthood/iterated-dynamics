@@ -47,6 +47,28 @@ function(add_random_fractal_type_image_test)
     endforeach()
 endfunction()
 
+# Render an image with a map file and compare the image colormap to the map file
+function(add_colormap_test name)
+    cmake_parse_arguments(COLORMAP_TEST "" "MAP" "PARAMETERS" ${ARGN})
+    if(COLORMAP_TEST_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "Unknown arguments: ${COLORMAP_TEST_UNPARSED_ARGUMENTS}")
+    endif()
+    list(APPEND COLORMAP_TEST_PARAMETERS "batch=yes" "video=F6" "colors=@${COLORMAP_TEST_MAP}")
+    add_test(NAME ColormapTest.${name}
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DCOLORMAP_COMPARE=$<SHELL_PATH:$<TARGET_FILE:colormap-compare>>"
+            "-DPARAMETERS=${COLORMAP_TEST_PARAMETERS}"
+            "-DTEST_SAVE_IMAGE=test-${name}.gif"
+            "-DTEST_KEEP_IMAGE=${CMAKE_CURRENT_BINARY_DIR}"
+            "-DMAP_FILE=${COLORMAP_TEST_MAP}"
+            "-DMAP_DIR=${CMAKE_SOURCE_DIR}/home/maps"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/colormap_compare_test.cmake"
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
+    )
+    set_tests_properties(ColormapTest.${name} PROPERTIES LABELS "colormap")
+endfunction()
+
 add_fractal_type_image_test(
     barnsleyj1 barnsleyj2 barnsleyj3 barnsleym1 barnsleym2 barnsleym3 burning-ship
     cellular circle cmplxmarksjul cmplxmarksmand complexbasin complexnewton
@@ -99,3 +121,5 @@ foreach(bailout and imag manh manr or real)
     add_legacy_image_test(bailout-${bailout} PARAMETERS "type=mandel" "bailoutest=${bailout}")
 endforeach()
 add_legacy_image_test(ifs-dragon-1 PARAMETERS "type=ifs" "ifs=dragon" "params=1" "maxiter=500")
+
+add_colormap_test(grey MAP grey.map PARAMETERS "type=mandel")
