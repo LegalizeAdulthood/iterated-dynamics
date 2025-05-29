@@ -55,12 +55,12 @@ jobs:
         cmake --workflow --preset ci-html-docs
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@b8d447ba7506ac7e0c8fbc50762276fb3b7df731 # v1.0.0
       with:
         ruby-version: 2.7
 
     - name: Setup AsciiDoctor
-      uses: reitzig/actions-asciidoctor@v2.0.2
+      uses: reitzig/actions-asciidoctor@c642db5eedd1d729bb8c92034770d0b2f769eda6 # v2.0.2
       with:
         version: 2.0.18
 
@@ -70,7 +70,7 @@ jobs:
         asciidoctor build-ci-html-docs/hc/src/id.adoc
 
     - name: Upload HTML artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       with:
         name: html-docs
         path: ${{github.workspace}}/build-ci-html-docs/hc/src/id.html
@@ -132,7 +132,7 @@ jobs:
         cmake-version: '3.31'
 
     - name: Get HTML documentation
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
       with:
         name: html-docs
 
@@ -142,7 +142,7 @@ jobs:
       run: cmake --workflow --preset ci-${{matrix.preset}}
 
     - name: Upload msi package artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'windows-latest'}}
       with:
         name: Msi-${{matrix.preset}}
@@ -150,7 +150,7 @@ jobs:
         compression-level: 0
 
     - name: Upload zip package artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'windows-latest'}}
       with:
         name: Zip-${{matrix.preset}}
@@ -158,7 +158,7 @@ jobs:
         compression-level: 0
 
     - name: Upload tar.gz package artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'ubuntu-latest'}}
       with:
         name: Tar-${{matrix.preset}}
@@ -208,7 +208,7 @@ jobs:
           cmake --preset cppcheck
   
       - name: Run CppCheck
-        uses: deep5050/cppcheck-action@v3.0
+        uses: deep5050/cppcheck-action@b4d7c69b911c24817691b4b210586568a858b4c5 # v3.0
         with:
           github_token: ${{secrets.GITHUB_TOKEN}}
           enable: 'style'
