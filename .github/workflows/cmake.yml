@@ -55,7 +55,7 @@ jobs:
         cmake --workflow --preset ci-html-docs
 
     - name: Setup ruby
-      uses: ruby/setup-ruby@b8d447ba7506ac7e0c8fbc50762276fb3b7df731 # v1.0.0
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: 2.7
 
