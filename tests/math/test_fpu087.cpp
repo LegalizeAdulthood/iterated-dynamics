@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <cmath>
+
 TEST(TestMath, complexDividePointerAliasX)
 {
     DComplex y{2.0, 0.0};
