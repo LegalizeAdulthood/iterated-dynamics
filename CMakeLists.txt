@@ -5,6 +5,7 @@
 cmake_minimum_required(VERSION 3.23)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+include(misc_target)
 include(set_cxx_standard)
 include(target_folder)
 include(vs_startup_project)
@@ -93,38 +94,26 @@ if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 endif()
 install(FILES LICENSE.txt DESTINATION .)
 
-add_custom_target(Miscelleanous)
-target_sources(Miscelleanous PRIVATE
-    ".clang-format"
-    ".editorconfig"
-    ".gitattributes"
-    ".github/workflows/cmake.yml"
-    ".gitignore"
-    ".gitmodules"
-    ".mailmap"
-    "CMakePresets.json"
-    "LICENSE.txt"
+misc_target(FILES
+    "CMakePresets.json")
+misc_group_sources("Documentation" FILES
     "ReadMe.md"
-    "Style.md"
-    "vcpkg.json"
-    "cmake/set_cxx_standard.cmake"
-    "cmake/target_folder.cmake"
-    "cmake/vs_startup_project.cmake"
-)
-source_group("CMake Scripts" FILES
+    "Style.md")
+misc_group_sources("CMake Scripts" FILES
+    "cmake/misc_target.cmake"
     "cmake/set_cxx_standard.cmake"
     "cmake/target_folder.cmake"
     "cmake/vs_startup_project.cmake")
-source_group("Editing" FILES
+misc_group_sources("Editing" FILES
     ".clang-format"
     ".editorconfig")
-source_group("Git" FILES
+misc_group_sources("Git" FILES
     ".gitattributes"
     ".gitignore"
     ".gitmodules"
     ".mailmap")
-source_group("GitHub" FILES
-    ".github/workflows/cmake.yml"
-    "LICENSE.txt")
-source_group("VcPkg" FILES
+misc_group_sources("GitHub" FILES
+    "LICENSE.txt"
+    ".github/workflows/cmake.yml")
+misc_group_sources("VcPkg" FILES
     "vcpkg.json")
