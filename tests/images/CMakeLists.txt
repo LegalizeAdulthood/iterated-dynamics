@@ -127,5 +127,5 @@ add_colormap_test(grey MAP grey.map PARAMETERS "type=mandel")
 
 option(ID_RUN_SLOW_TESTS "Run slow image tests" OFF)
 if(ID_RUN_SLOW_TESTS)
-    add_image_test(mossy-garden2 PARAMETERS "@MossyFractalGarden.par/MossyGarden2" LABELS "slow")
+    add_image_test(mossy-garden PARAMETERS "@MossyFractalGarden.par/MossyFractalGarden" LABELS "slow")
 endif()
