@@ -7,17 +7,22 @@ enum
     MAX_CALC_WORK = 12
 };
 
+template <typename T>
+struct Point2
+{
+    T x;
+    T y;
+};
+using Point2i = Point2<int>;
+
 // work list entry for std escape time engines
 struct WorkList
 {
-    int xx_start; // screen window for this entry
-    int xx_stop;  //
-    int yy_start; //
-    int yy_stop;  //
-    int yy_begin; // start row within window, for 2pass/ssg resume
-    int symmetry; // if symmetry in window, prevents bad combines
-    int pass;     // for 2pass and solid guessing
-    int xx_begin; // start col within window, =0 except on resume
+    Point2i start; // screen window for this entry
+    Point2i stop;  //
+    Point2i begin; // start point within window, x=0 except on resume, y for 2pass/ssg
+    int symmetry;  // if symmetry in window, prevents bad combines
+    int pass;      // for 2pass and solid guessing
 };
 
 extern int                   g_num_work_list;

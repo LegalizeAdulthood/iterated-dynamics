@@ -924,12 +924,12 @@ static void perform_work_list()
 
     // default set up a new worklist
     g_num_work_list = 1;
-    g_work_list[0].xx_begin = 0;
-    g_work_list[0].xx_start = 0;
-    g_work_list[0].yy_begin = 0;
-    g_work_list[0].yy_start = 0;
-    g_work_list[0].xx_stop = g_logical_screen_x_dots - 1;
-    g_work_list[0].yy_stop = g_logical_screen_y_dots - 1;
+    g_work_list[0].begin.x = 0;
+    g_work_list[0].start.x = 0;
+    g_work_list[0].begin.y = 0;
+    g_work_list[0].start.y = 0;
+    g_work_list[0].stop.x = g_logical_screen_x_dots - 1;
+    g_work_list[0].stop.y = g_logical_screen_y_dots - 1;
     g_work_list[0].symmetry = 0;
     g_work_list[0].pass = 0;
     if (g_resuming) // restore worklist, if we can't the above will stay in place
@@ -1015,16 +1015,16 @@ static void perform_work_list()
         g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
 
         // pull top entry off worklist
-        g_xx_start = g_work_list[0].xx_start;
-        g_i_x_start = g_work_list[0].xx_start;
-        g_xx_stop  = g_work_list[0].xx_stop;
-        g_i_x_stop  = g_work_list[0].xx_stop;
-        g_xx_begin  = g_work_list[0].xx_begin;
-        g_yy_start = g_work_list[0].yy_start;
-        g_i_y_start = g_work_list[0].yy_start;
-        g_yy_stop  = g_work_list[0].yy_stop;
-        g_i_y_stop  = g_work_list[0].yy_stop;
-        g_yy_begin  = g_work_list[0].yy_begin;
+        g_xx_start = g_work_list[0].start.x;
+        g_i_x_start = g_work_list[0].start.x;
+        g_xx_stop  = g_work_list[0].stop.x;
+        g_i_x_stop  = g_work_list[0].stop.x;
+        g_xx_begin  = g_work_list[0].begin.x;
+        g_yy_start = g_work_list[0].start.y;
+        g_i_y_start = g_work_list[0].start.y;
+        g_yy_stop  = g_work_list[0].stop.y;
+        g_i_y_stop  = g_work_list[0].stop.y;
+        g_yy_begin  = g_work_list[0].begin.y;
         g_work_pass = g_work_list[0].pass;
         g_work_symmetry  = g_work_list[0].symmetry;
         --g_num_work_list;
