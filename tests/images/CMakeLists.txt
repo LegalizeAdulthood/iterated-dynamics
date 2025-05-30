@@ -6,7 +6,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 function(add_image_test name)
-    cmake_parse_arguments(IMAGE_TEST "IGNORE_COLORMAP" "" "PARAMETERS" ${ARGN})
+    cmake_parse_arguments(IMAGE_TEST "IGNORE_COLORMAP" "" "PARAMETERS;LABELS" ${ARGN})
     if(IMAGE_TEST_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "Unknown arguments: ${IMAGE_TEST_UNPARSED_ARGUMENTS}")
     endif()
@@ -28,7 +28,8 @@ function(add_image_test name)
             -P "${CMAKE_CURRENT_SOURCE_DIR}/image_compare_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )
-    set_tests_properties(ImageTest.${name} PROPERTIES LABELS "image")
+    list(APPEND IMAGE_TEST_LABELS "image")
+    set_tests_properties(ImageTest.${name} PROPERTIES LABELS "${IMAGE_TEST_LABELS}")
 endfunction()
 
 function(add_legacy_image_test name)
@@ -123,3 +124,8 @@ endforeach()
 add_legacy_image_test(ifs-dragon-1 PARAMETERS "type=ifs" "ifs=dragon" "params=1" "maxiter=500")
 
 add_colormap_test(grey MAP grey.map PARAMETERS "type=mandel")
+
+option(ID_RUN_SLOW_TESTS "Run slow image tests" OFF)
+if(ID_RUN_SLOW_TESTS)
+    add_image_test(mossy-garden2 PARAMETERS "@MossyFractalGarden.par/MossyGarden2" LABELS "slow")
+endif()

@@ -68,6 +68,14 @@
       }
     },
     {
+      "name": "run-slow-tests",
+      "hidden": true,
+      "description": "Configure to enable slow tests",
+      "cacheVariables": {
+        "ID_RUN_SLOW_TESTS": true
+      }
+    },
+    {
       "name": "default",
       "displayName": "Configure with default settings",
       "inherits": [ "sibling-build-preset", "project-name-preset", "vcpkg" ]
@@ -85,12 +93,12 @@
     {
       "name": "ci-debug",
       "displayName": "CI Configure with Debug settings",
-      "inherits": [ "ci-build-preset", "default", "debug-config" ]
+      "inherits": [ "ci-build-preset", "default", "debug-config", "run-slow-tests" ]
     },
     {
       "name": "ci-release",
       "displayName": "CI Configure with Release settings",
-      "inherits": [ "ci-build-preset", "default", "release-config" ]
+      "inherits": [ "ci-build-preset", "default", "release-config", "run-slow-tests" ]
     },
     {
       "name": "ci-html-docs",

@@ -1,0 +1,77 @@
+; GitHub Issue #17: renders incorrectly
+MossyFractalGarden { ; time=0:02:43.18-SF5 on P4-2000
+  reset=2004 type=formula
+  formulaname=MandelbrotBC3 function=ident passes=1
+  center-mag=-0.694457057472/+0.729050695061/1536961\
+  /1/-72.5/-1.2758e-005 params=1.618034/0/0/0 float=y
+  maxiter=5000 inside=0 outside=tdis periodicity=10
+  colors=00008Y06_06a04b02d01f00g00i00k00l00n00nzXpz\
+  TnzRntQlpOikNgfJfaI_OGXLETGDRBBO68N26L04I02G01G00G\
+  02G06I09J0DL0GO0JR0LV0OY1Ra4Va6_bDfdTkdiqdzxdzzdzz\
+  dzzdzzdzzbiwaTn_DdYBXX9NV8ET69R42Q20Q06_0Ei0Nq0Vz0\
+  bz0iz0gz0gz0fz0fz0dz0dz0bw0bt0aq0an0_k0_g0_d1Ya1YY\
+  2XX4XT4VQ6VN8TJ8TG9RDBR9BR8DT9EV9EX9GY9GY9I_BJaBJb\
+  BLdBLdBNfDOgDOiDQkDQkDRlETnETpEVqEzqEzpGzpGznGznGz\
+  nGzlGzlGzlIzkIzkIzkIziIziIzgIzgJzgJJfJJfJJfJIdJIdJ\
+  IdJJfIJfGJgGJgEJiDJiDJkBLk9Ll9Ll8Ln6Ln6Lp4Lp2Lp2Tq\
+  RaqpiqznftsXdxNOzD8z20z60z80z91wD4tE8sGBpIEnLIlNLi\
+  OOgRRfTVbVYaXa__dXagVbkTdlnJQz04x40n90dB0_G0VJ0QN4\
+  LQ9ITEDXL8_Q2bV0f_0kd0ia0g_0gY0fX0fV0dT0dR0bO0aN0a\
+  L0_J0_I0YG0YE0VD0RB0Q91N84J68I4BI4EI2IJ1JJ0NJ0OI0Q\
+  E0RB0T90R60R20V10X00R00V10Y60b90gE0lJ0qN1wR2zX4z_8\
+  zd9ziBzlEzqGzwIzzLzzNzzOzzRzzTzzVzzYzzazzbzzfzzgzx\
+  kzsnznpziszftzax0BV0BX09Y }
+
+; GitHub Issue #17: renders incorrectly
+frm:MandelbrotBC3   { ; by several Fractint users
+  e=p1, a=imag(p2)+100
+  p=real(p2)+PI
+  q=2*PI*fn1(p/(2*PI))
+  r=real(p2)+PI-q
+  Z=C=Pixel:
+    Z=log(Z)
+    IF(imag(Z)>r)
+      Z=Z+flip(2*PI)
+    ENDIF
+    Z=exp(e*(Z+flip(q)))+C
+  |Z|<a }
+
+; GitHub Issue #17: renders correctly
+MossyGarden2 { ; time=0:02:43.18-SF5 on P4-2000
+  reset=2004 type=formula
+  formulaname=MandelbrotBC3-2 function=ident passes=1
+  center-mag=-0.694457057472/+0.729050695061/1536961\
+  /1/-72.5/-1.2758e-005 params=1.618034/0/0/0 float=y
+  maxiter=5000 inside=0 outside=tdis periodicity=10
+  colors=00008Y06_06a04b02d01f00g00i00k00l00n00nzXpz\
+  TnzRntQlpOikNgfJfaI_OGXLETGDRBBO68N26L04I02G01G00G\
+  02G06I09J0DL0GO0JR0LV0OY1Ra4Va6_bDfdTkdiqdzxdzzdzz\
+  dzzdzzdzzbiwaTn_DdYBXX9NV8ET69R42Q20Q06_0Ei0Nq0Vz0\
+  bz0iz0gz0gz0fz0fz0dz0dz0bw0bt0aq0an0_k0_g0_d1Ya1YY\
+  2XX4XT4VQ6VN8TJ8TG9RDBR9BR8DT9EV9EX9GY9GY9I_BJaBJb\
+  BLdBLdBNfDOgDOiDQkDQkDRlETnETpEVqEzqEzpGzpGznGznGz\
+  nGzlGzlGzlIzkIzkIzkIziIziIzgIzgJzgJJfJJfJJfJIdJIdJ\
+  IdJJfIJfGJgGJgEJiDJiDJkBLk9Ll9Ll8Ln6Ln6Lp4Lp2Lp2Tq\
+  RaqpiqznftsXdxNOzD8z20z60z80z91wD4tE8sGBpIEnLIlNLi\
+  OOgRRfTVbVYaXa__dXagVbkTdlnJQz04x40n90dB0_G0VJ0QN4\
+  LQ9ITEDXL8_Q2bV0f_0kd0ia0g_0gY0fX0fV0dT0dR0bO0aN0a\
+  L0_J0_I0YG0YE0VD0RB0Q91N84J68I4BI4EI2IJ1JJ0NJ0OI0Q\
+  E0RB0T90R60R20V10X00R00V10Y60b90gE0lJ0qN1wR2zX4z_8\
+  zd9ziBzlEzqGzwIzzLzzNzzOzzRzzTzzVzzYzzazzbzzfzzgzx\
+  kzsnznpziszftzax0BV0BX09Y }
+
+; GitHub Issue #17: renders correctly
+frm:MandelbrotBC3-2   { ; by several Fractint users
+  e=p1, a=imag(p2)+100
+  p=real(p2)+PI
+  q=p
+  r=0
+  c2=flip(2*PI)
+  fq = flip(q)
+  Z=C=Pixel:
+    Z=log(Z)
+    IF(imag(Z)>r)
+      Z=Z+c2
+    ENDIF
+    Z=exp(e*(Z+fq))+C
+  |Z|<a }
