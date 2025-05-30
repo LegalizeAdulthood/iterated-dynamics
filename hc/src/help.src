@@ -305,6 +305,8 @@ o When log(z) stores the output in the same variable as the input,
 
 Code Cleanup in Version 1.3
 
+o More unused integer math routines were rmoved.
+
 Known limitations:
 
 o This initial implementation of perturbation does not support
