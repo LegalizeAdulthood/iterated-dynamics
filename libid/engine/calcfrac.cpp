@@ -1312,29 +1312,25 @@ int calc_mand_fp()
 }
 #define STAR_TRAIL_MAX FLT_MAX   // just a convenient large number
 
-int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
+// per pixel 1/2/b/g, called with g_row & g_col set
+int standard_fractal()
 {
-    long save_max_it = 0;
     double tan_table[16]{};
-    int hooper = 0;
-    double mem_value = 0.0;
-    double min_orbit = 100000.0;        // orbit value closest to origin
-    long   min_index = 0;               // iteration of min_orbit
-    long cycle_len = -1;
-    long saved_color_iter = 0;
-    bool caught_a_cycle = false;
-    long saved_and = 0;
-    int saved_incr = 0;                  // for periodicity checking
-    bool attracted = false;
-    DComplex  at{};
+    int hooper{};
+    double mem_value{};
+    double min_orbit{100000.0}; // orbit value closest to origin
+    long min_index{};           // iteration of min_orbit
+    long cycle_len{-1};
+    long saved_color_iter{};
+    bool caught_a_cycle{};
+    bool attracted{};
     DComplex deriv{};
-    long dem_color = -1;
+    long dem_color{-1};
     DComplex dem_new{};
-    int check_freq = 0;
-    double total_dist = 0.0;
+    double total_dist{};
     DComplex last_z{};
 
-    save_max_it = g_max_iterations;
+    long save_max_it = g_max_iterations;
     if (g_inside_color == STAR_TRAIL)
     {
         std::fill(std::begin(tan_table), std::end(tan_table), 0.0);
@@ -1410,6 +1406,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         g_color_iter = -1;
     }
     caught_a_cycle = false;
+    long saved_and;
     if (g_inside_color == PERIOD)
     {
         saved_and = 16;           // begin checking every 16th cycle
@@ -1422,7 +1419,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         saved_and = g_first_saved_and;                // begin checking every other cycle
 #endif
     }
-    saved_incr = 1;               // start checking the very first time
+    int saved_incr = 1;               // for periodicity checking, start checking the very first time
 
     if (g_inside_color <= BOF60 && g_inside_color >= BOF61)
     {
@@ -1449,6 +1446,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         last_z.y = g_old_z.y;
     }
 
+    int check_freq;
     if (((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
     {
         check_freq = 16;
@@ -1642,6 +1640,7 @@ int standard_fractal()       // per pixel 1/2/b/g, called with row & col set
         {
             for (int i = 0; i < g_attractors; i++)
             {
+                DComplex at;
                 at.x = g_new_z.x - g_attractor[i].x;
                 at.x = sqr(at.x);
                 if (at.x < g_f_at_rad)
