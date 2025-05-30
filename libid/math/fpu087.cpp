@@ -43,8 +43,9 @@ void fpu_cmplx_div(const DComplex *x, const DComplex *y, DComplex *z)
 
     if (y->y == 0.0) // if y is real
     {
-        z->x = x->x / y->x;
-        z->y = x->y / y->x;
+        const double tmp{y->x};
+        z->x = x->x / tmp;
+        z->y = x->y / tmp;
     }
     else
     {
