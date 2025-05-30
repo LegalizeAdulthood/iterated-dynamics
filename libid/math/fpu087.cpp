@@ -109,12 +109,14 @@ void fpu_cmplx_log(const DComplex *x, DComplex *z)
         return;
     }
     const double mod = x->x * x->x + x->y * x->y;
-    z->x = std::isnan(mod) || std::islessequal(mod, 0) || std::isinf(mod) //
+    double real = std::isnan(mod) || std::islessequal(mod, 0) || std::isinf(mod) //
         ? 0.5
         : 0.5 * std::log(mod);
-    z->y = std::isnan(x->x) || std::isnan(x->y) || std::isinf(x->x) || std::isinf(x->y) //
+    double imag = std::isnan(x->x) || std::isnan(x->y) || std::isinf(x->x) || std::isinf(x->y) //
         ? 1.0
         : std::atan2(x->y, x->x);
+    z->x = real;
+    z->y = imag;
 }
 
 void fpu_cmplx_exp(const DComplex *x, DComplex *z)
