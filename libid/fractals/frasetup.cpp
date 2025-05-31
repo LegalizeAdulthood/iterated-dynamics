@@ -39,8 +39,7 @@ bool burning_ship_per_image()
     return true;
 }
 
-bool
-standalone_per_image()
+bool standalone_per_image()
 {
     engine_timer(g_cur_fractal_specific->calc_type);
     return false;               // effectively disable solid-guessing
@@ -212,8 +211,7 @@ bool mandel_per_image()
     return true;
 }
 
-bool
-julia_per_image()
+bool julia_per_image()
 {
     g_c_exponent = (int)g_params[2];
     g_float_param = &g_param_z1;
@@ -367,8 +365,7 @@ julia_per_image()
     return true;
 }
 
-bool
-standard_per_image()
+bool standard_per_image()
 {
     if (g_fractal_type == FractalType::UNITY)
     {
