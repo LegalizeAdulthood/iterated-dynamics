@@ -27,7 +27,7 @@ extern double                g_temp_sqr_y;
 
 // Raise complex number (base) to the (exp) power, storing the result in complex (result).
 void pow(DComplex *base, int exp, DComplex *result);
-int julia_fp_fractal();
+int julia_orbit();
 int burning_ship_orbit();
 int float_cmplx_z_power_fractal();
 int mandel_fp_per_pixel();

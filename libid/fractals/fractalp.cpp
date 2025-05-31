@@ -233,7 +233,7 @@ FractalSpecific g_fractal_specific[] =
         -2.5F, 1.5F, -1.5F, 1.5F,                                                //
         FractalType::JULIA, FractalType::NO_FRACTAL,                             //
         SymmetryType::X_AXIS_NO_PARAM,                                           //
-        julia_fp_fractal, mandel_fp_per_pixel, mandel_per_image,                 //
+        julia_orbit, mandel_fp_per_pixel, mandel_per_image,                      //
         standard_fractal,                                                        //
         STD_BAILOUT,                                                             //
         mandel_ref_pt, mandel_ref_pt_bf, mandel_perturb                          //
@@ -264,7 +264,7 @@ FractalSpecific g_fractal_specific[] =
         -2.0F, 2.0F, -1.5F, 1.5F,                                              //
         FractalType::NO_FRACTAL, FractalType::MANDEL,                          //
         SymmetryType::ORIGIN,                                                  //
-        julia_fp_fractal, julia_fp_per_pixel, julia_fp_setup,                  //
+        julia_orbit, julia_fp_per_pixel, julia_fp_setup,                       //
         standard_fractal,                                                      //
         STD_BAILOUT                                                            //
     },
@@ -1494,19 +1494,19 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::JULIBROT,                             //
-        "julibrot",                                        //
-        {"", "", "", ""},                                  //
-        {0, 0, 0, 0},                                      //
-        HelpLabels::HT_JULIBROT, HelpLabels::NONE,         //
+        FractalType::JULIBROT,                            //
+        "julibrot",                                       //
+        {"", "", "", ""},                                 //
+        {0, 0, 0, 0},                                     //
+        HelpLabels::HT_JULIBROT, HelpLabels::NONE,        //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_ROTATE |
-            FractalFlags::NO_RESUME,                       //
-        -2.0F, 2.0F, -1.5F, 1.5F,                          //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,  //
-        SymmetryType::NONE,                                //
-        julia_fp_fractal, jb_fp_per_pixel, julibrot_setup, //
-        std_4d_fp_fractal,                                 //
-        STD_BAILOUT                                        //
+            FractalFlags::NO_RESUME,                      //
+        -2.0F, 2.0F, -1.5F, 1.5F,                         //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
+        SymmetryType::NONE,                               //
+        julia_orbit, jb_fp_per_pixel, julibrot_setup,     //
+        std_4d_fp_fractal,                                //
+        STD_BAILOUT                                       //
     },
 
 #ifdef RANDOM_RUN

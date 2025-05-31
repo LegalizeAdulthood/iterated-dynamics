@@ -116,7 +116,7 @@ void pow(DComplex *base, int exp, DComplex *result)
     }
 }
 
-int julia_fp_fractal()
+int julia_orbit()
 {
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
