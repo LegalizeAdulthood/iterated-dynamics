@@ -110,8 +110,6 @@ static int s_show_dot_width{};        //
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
-int g_xx_begin{};                               // these are same as work list,
-int g_yy_begin{};                               // declared as separate items
 double g_f_at_rad{};                            // finite attractor radius
 DComplex g_init{};                              //
 DComplex g_tmp_z{};                             //
@@ -145,19 +143,21 @@ int g_pi_in_pixels{};                           // value of pi in pixels
 bool g_show_orbit{};                            // flag to turn on and off
 int g_orbit_save_index{};                       // index into save_orbit array
 int g_orbit_color{15};                          // XOR color
-int g_i_x_start{};                              //
-int g_i_x_stop{};                               //
-int g_i_y_start{};                              //
-int g_i_y_stop{};                               // start, stop here
 SymmetryType g_symmetry{};                     // symmetry flag
 SymmetryType g_force_symmetry{};               // force symmetry
 bool g_reset_periodicity{};                     // true if escape time pixel rtn to reset
 int g_keyboard_check_interval{};                //
 int g_max_keyboard_check_interval{};            // avoids checking keyboard too often
-int g_xx_start{};                               //
-int g_xx_stop{};                                //
+int g_xx_start{};                               // current work list entry being computedd
 int g_yy_start{};                               //
+int g_xx_stop{};                                //
 int g_yy_stop{};                                //
+int g_xx_begin{};                               // these are same as work list,
+int g_yy_begin{};                               // declared as separate items
+int g_i_x_start{};                              //
+int g_i_y_start{};                              //
+int g_i_x_stop{};                               //
+int g_i_y_stop{};                               // start, stop here
 int g_work_pass{};                              //
 int g_work_symmetry{};                          // for the sake of calcmand
 StatusValues g_got_status{StatusValues::NONE}; // variables which must be visible for tab_display
@@ -1009,14 +1009,14 @@ static void perform_work_list()
 
         // pull top entry off worklist
         g_xx_start = g_work_list[0].start.x;
-        g_i_x_start = g_work_list[0].start.x;
-        g_xx_stop  = g_work_list[0].stop.x;
-        g_i_x_stop  = g_work_list[0].stop.x;
-        g_xx_begin  = g_work_list[0].begin.x;
         g_yy_start = g_work_list[0].start.y;
+        g_i_x_start = g_work_list[0].start.x;
         g_i_y_start = g_work_list[0].start.y;
+        g_xx_stop  = g_work_list[0].stop.x;
         g_yy_stop  = g_work_list[0].stop.y;
+        g_i_x_stop  = g_work_list[0].stop.x;
         g_i_y_stop  = g_work_list[0].stop.y;
+        g_xx_begin  = g_work_list[0].begin.x;
         g_yy_begin  = g_work_list[0].begin.y;
         g_work_pass = g_work_list[0].pass;
         g_work_symmetry  = g_work_list[0].symmetry;

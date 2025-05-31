@@ -90,10 +90,6 @@ extern double                g_f_x_center;
 extern double                g_f_y_center;
 extern long                  g_first_saved_and;
 extern StatusValues          g_got_status;
-extern int                   g_i_x_start;
-extern int                   g_i_x_stop;
-extern int                   g_i_y_start;
-extern int                   g_i_y_stop;
 extern DComplex              g_init;
 extern int                   g_invert;
 extern int                   g_keyboard_check_interval;
@@ -125,14 +121,19 @@ extern int                   g_total_passes;
 extern DComplex              g_tmp_z;
 extern bool                  g_use_old_periodicity;
 extern bool                  g_use_old_distance_estimator;
+
+extern int                   g_xx_start; // current work list entry being computed
+extern int                   g_yy_start;
+extern int                   g_i_x_start;
+extern int                   g_i_y_start;
+extern int                   g_xx_stop;
+extern int                   g_yy_stop;
+extern int                   g_i_x_stop;
+extern int                   g_i_y_stop;
+extern int                   g_xx_begin;
+extern int                   g_yy_begin;
 extern int                   g_work_pass;
 extern int                   g_work_symmetry;
-extern int                   g_xx_begin;
-extern int                   g_xx_start;
-extern int                   g_xx_stop;
-extern int                   g_yy_begin;
-extern int                   g_yy_start;
-extern int                   g_yy_stop;
 
 extern int                   g_inside_color;
 extern int                   g_outside_color;
