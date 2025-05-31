@@ -96,8 +96,8 @@ bool trig_plus_trig_fp_setup()
     {
         return trig_plus_sqr_fp_setup();
     }
-    g_cur_fractal_specific->per_pixel =  other_julia_fp_per_pixel;
-    g_cur_fractal_specific->orbit_calc =  trig_plus_trig_fp_fractal;
+    g_cur_fractal_specific->per_pixel = other_julia_per_pixel;
+    g_cur_fractal_specific->orbit_calc = trig_plus_trig_fp_fractal;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_param_z2.x == 1.0)          // Scott variant

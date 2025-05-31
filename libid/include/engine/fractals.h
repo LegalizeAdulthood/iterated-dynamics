@@ -37,4 +37,4 @@ void mandel_perturb(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 int julia_per_pixel();
 int other_mandel_per_pixel();
-int other_julia_fp_per_pixel();
+int other_julia_per_pixel();

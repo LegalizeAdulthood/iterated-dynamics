@@ -293,7 +293,7 @@ int other_mandel_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int other_julia_fp_per_pixel()
+int other_julia_per_pixel()
 {
     if (g_invert != 0)
     {
