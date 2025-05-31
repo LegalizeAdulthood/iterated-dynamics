@@ -1309,8 +1309,8 @@ int standard_fractal()
     }
 
     // Jonathan - how about this idea ? skips first saved value which never works
-#ifdef MINSAVEDAND
-    g_old_color_iter = std::max<long>(g_old_color_iter, MINSAVEDAND);
+#ifdef MIN_SAVED_AND
+    g_old_color_iter = std::max<long>(g_old_color_iter, MIN_SAVED_AND);
 #else
     g_old_color_iter = std::max(g_old_color_iter, g_first_saved_and);
 #endif
@@ -1372,8 +1372,8 @@ int standard_fractal()
     }
     else
     {
-#ifdef MINSAVEDAND
-        savedand = MINSAVEDAND;
+#ifdef MIN_SAVED_AND
+        savedand = MIN_SAVED_AND;
 #else
         saved_and = g_first_saved_and;                // begin checking every other cycle
 #endif
