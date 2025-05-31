@@ -641,7 +641,6 @@ static int check_pan() // return 0 if can't, alignment requirement if can
         return 0; // not resumable, not complete
     }
     if (g_cur_fractal_specific->calc_type != standard_fractal
-        && g_cur_fractal_specific->calc_type != calc_mand
         && g_cur_fractal_specific->calc_type != calc_mand_fp
         && g_cur_fractal_specific->calc_type != lyapunov
         && g_cur_fractal_specific->calc_type != calc_froth)

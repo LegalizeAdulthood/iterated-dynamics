@@ -139,7 +139,6 @@ extern int                   g_inside_color;
 extern int                   g_outside_color;
 
 int calc_fract();
-int calc_mand();
 int calc_mand_fp();
 int standard_fractal();
 int find_alternate_math(FractalType type, BFMathType math);

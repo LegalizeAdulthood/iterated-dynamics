@@ -717,7 +717,6 @@ static void init_calc_fract()
 static bool is_standard_fractal()
 {
     return g_cur_fractal_specific->calc_type == standard_fractal //
-        || g_cur_fractal_specific->calc_type == calc_mand        //
         || g_cur_fractal_specific->calc_type == calc_mand_fp     //
         || g_cur_fractal_specific->calc_type == lyapunov         //
         || g_cur_fractal_specific->calc_type == calc_froth;
@@ -1216,47 +1215,7 @@ static long calc_mand_asm()
     return 0;
 }
 
-int calc_mand()              // fast per pixel 1/2/b/g, called with row & col set
-{
-    // setup values from array to avoid using es reg in calcmand.asm
-    if (calc_mand_asm() >= 0)
-    {
-        if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
-            && (g_real_color_iter < g_max_iterations
-                || (g_inside_color < COLOR_BLACK && g_color_iter == g_max_iterations)))
-        {
-            g_color_iter = log_table_calc(g_color_iter);
-        }
-        g_color = std::abs((int)g_color_iter);
-        if (g_color_iter >= g_colors)
-        {
-            // don't use color 0 unless from inside/outside
-            if (g_colors < 16)
-            {
-                g_color = (int)(g_color_iter & g_and_color);
-            }
-            else
-            {
-                g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
-            }
-        }
-        if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
-        {
-            if (g_color <= 0 && g_std_calc_mode == 'b')
-            {
-                g_color = 1;
-            }
-        }
-        (*g_plot)(g_col, g_row, g_color);
-    }
-    else
-    {
-        g_color = (int)g_color_iter;
-    }
-    return g_color;
-}
-
-// sort of a floating point version of calcmand()
+// fast per pixel 1/2/b/g, called with row & col set
 // can also handle invert, any rqlim, potflag, zmag, epsilon cross,
 // and all the current outside options
 int calc_mand_fp()
