@@ -266,7 +266,7 @@ int julia_per_pixel()
     return 0;
 }
 
-int other_mandel_fp_per_pixel()
+int other_mandel_per_pixel()
 {
     if (g_invert != 0)
     {

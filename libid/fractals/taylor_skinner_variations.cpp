@@ -370,7 +370,7 @@ int richard_8_fp_fractal()
 
 int other_richard_8_fp_per_pixel()
 {
-    other_mandel_fp_per_pixel();
+    other_mandel_per_pixel();
     cmplx_trig1(*g_float_param, g_tmp_z);
     cmplx_mult(g_tmp_z, g_param_z2, g_tmp_z);
     return 1;
