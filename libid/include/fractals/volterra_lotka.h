@@ -2,5 +2,5 @@
 //
 #pragma once
 
-int vl_fp_fractal();
-bool vl_setup();
+int vl_orbit();
+bool vl_per_image();

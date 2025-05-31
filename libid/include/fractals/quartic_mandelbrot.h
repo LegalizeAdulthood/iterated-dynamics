@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int mandel4_fp_fractal();
+int mandel4_orbit();

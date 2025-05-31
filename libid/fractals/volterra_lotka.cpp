@@ -10,7 +10,7 @@
 #include "engine/id_data.h"
 
 // Beauty of Fractals pp. 125 - 127
-int vl_fp_fractal()
+int vl_orbit()
 {
     double half = g_params[0] / 2.0;
     double xy = g_old_z.x * g_old_z.y;
@@ -24,7 +24,7 @@ int vl_fp_fractal()
     return g_bailout_float();
 }
 
-bool vl_setup()
+bool vl_per_image()
 {
     g_params[0] = std::max(g_params[0], 0.0);
     g_params[1] = std::max(g_params[1], 0.0);

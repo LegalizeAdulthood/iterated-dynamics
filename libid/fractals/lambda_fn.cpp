@@ -13,7 +13,7 @@
 
 #include <cmath>
 
-int lambda_fp_fractal()
+int lambda_orbit()
 {
     // variation of classical Mandelbrot/Julia
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
@@ -27,7 +27,7 @@ int lambda_fp_fractal()
     return g_bailout_float();
 }
 
-int lambda_trig_fp_fractal()
+int lambda_trig_orbit()
 {
     if (std::abs(g_old_z.x) >= g_magnitude_limit2 || std::abs(g_old_z.y) >= g_magnitude_limit2)
     {
@@ -97,7 +97,7 @@ static int lambda_exponent_fractal()
 
 bool lambda_trig_setup()
 {
-    g_cur_fractal_specific->orbit_calc = lambda_trig_fp_fractal;
+    g_cur_fractal_specific->orbit_calc = lambda_trig_orbit;
     switch (g_trig_index[0])
     {
     case TrigFn::SIN:
@@ -131,7 +131,7 @@ bool lambda_trig_setup()
 
 bool mandel_trig_setup()
 {
-    g_cur_fractal_specific->orbit_calc = lambda_trig_fp_fractal;
+    g_cur_fractal_specific->orbit_calc = lambda_trig_orbit;
     g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
     switch (g_trig_index[0])
     {

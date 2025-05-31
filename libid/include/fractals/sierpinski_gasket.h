@@ -2,6 +2,6 @@
 //
 #pragma once
 
-bool sierpinski_fp_setup();
+bool sierpinski_per_image();
 
-int sierpinski_fp_fractal();
+int sierpinski_orbit();

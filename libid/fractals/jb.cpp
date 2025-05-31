@@ -152,7 +152,7 @@ bool julibrot_setup()
     return true;
 }
 
-int jb_fp_per_pixel()
+int julibrot_per_pixel()
 {
     s_jb_fp.jx = ((s_jb_fp.per->x - s_jb_fp.x_pixel) * s_jb_fp.init_z / g_julibrot_dist_fp - s_jb_fp.x_pixel) * s_jb_fp.x_per_inch;
     s_jb_fp.jx += s_jb_fp.x_offset;
@@ -191,7 +191,7 @@ int z_line_fp(double x, double y)
         }
         break;
     }
-    jb_fp_per_pixel();
+    julibrot_per_pixel();
     for (s_z_pixel = 0; s_z_pixel < g_julibrot_z_dots; s_z_pixel++)
     {
         // Special initialization for Mandelbrot types
@@ -264,7 +264,7 @@ int z_line_fp(double x, double y)
     return 0;
 }
 
-int std_4d_fp_fractal()
+int calc_standard_4d()
 {
     g_c_exponent = (int)g_params[2];
 

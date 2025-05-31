@@ -20,4 +20,4 @@ int float_z_to_z_plus_z_pwr_fractal();
 bool julia_fn_plus_z_sqrd_setup();
 
 int trig_plus_z_squared_fractal();
-int trig_plus_z_squared_fp_fractal();
+int trig_plus_z_squared_orbit();

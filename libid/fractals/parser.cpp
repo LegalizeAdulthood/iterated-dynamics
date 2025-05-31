@@ -3020,7 +3020,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
     return true; // error in making string
 }
 
-bool formula_setup_fp()
+bool formula_per_image()
 {
     return !run_formula(g_formula_name, false); // run_formula() returns true for failure
 }

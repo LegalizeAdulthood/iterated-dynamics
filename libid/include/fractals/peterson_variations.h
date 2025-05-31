@@ -6,11 +6,11 @@
 
 extern DComplex              g_marks_coefficient;
 
-bool marks_julia_fp_setup();
-int marks_lambda_fp_fractal();
+bool marks_julia_per_image();
+int marks_lambda_orbit();
 int marks_cplx_mand();
-int marks_mandel_pwr_fp_fractal();
-int tims_error_fp_fractal();
-int marks_mandel_fp_per_pixel();
-int marks_mandel_pwr_fp_per_pixel();
+int marks_mandel_pwr_orbit();
+int tims_error_orbit();
+int marks_mandel_per_pixel();
+int marks_mandel_pwr_per_pixel();
 int marks_cplx_mand_per_pixel();

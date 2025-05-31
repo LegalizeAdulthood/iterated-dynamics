@@ -6,7 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
-bool sierpinski_fp_setup()
+bool sierpinski_per_image()
 {
     // sierpinski
     g_periodicity_check = 0;                // disable periodicity checks
@@ -15,7 +15,7 @@ bool sierpinski_fp_setup()
     return true;
 }
 
-int sierpinski_fp_fractal()
+int sierpinski_orbit()
 {
     /* following code translated from basic - see "Fractals
     Everywhere" by Michael Barnsley, p. 251, Program 7.1.1 */

@@ -7,7 +7,7 @@
 #include "math/cmplx.h"
 #include "math/hcmplx.h"
 
-int hyper_complex_fp_fractal()
+int hyper_complex_orbit()
 {
     DHyperComplex h_old;
     DHyperComplex h_new;

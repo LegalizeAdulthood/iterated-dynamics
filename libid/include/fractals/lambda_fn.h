@@ -2,9 +2,9 @@
 //
 #pragma once
 
-int lambda_fp_fractal();
+int lambda_orbit();
 
 bool lambda_trig_setup();
-int lambda_trig_fp_fractal();
+int lambda_trig_orbit();
 
 bool mandel_trig_setup();

@@ -2,27 +2,27 @@
 //
 #pragma once
 
-int sqr_trig_fp_fractal();
+int sqr_trig_orbit();
 
-bool trig_plus_trig_fp_setup();
-int trig_plus_trig_fp_fractal();
+bool trig_plus_trig_per_image();
+int trig_plus_trig_orbit();
 
-bool fn_x_fn_setup();
-int trig_x_trig_fp_fractal();
+bool fn_x_fn_per_image();
+int trig_x_trig_orbit();
 
-int trig_z_sqrd_fp_fractal();
+int trig_z_sqrd_orbit();
 
-bool sqr_trig_setup();
-int sqr_1_over_trig_fp_fractal();
+bool sqr_trig_per_image();
+int sqr_1_over_trig_orbit();
 
-bool z_x_trig_plus_z_setup();
-int z_x_trig_plus_z_fp_fractal();
+bool z_x_trig_plus_z_per_image();
+int z_x_trig_plus_z_orbit();
 
-int man_o_war_fp_fractal();
+int man_o_war_orbit();
 
-int richard_8_fp_fractal();
-int other_richard_8_fp_per_pixel();
+int richard_8_orbit();
+int other_richard_8_per_pixel();
 
-int spider_fp_fractal();
+int spider_orbit();
 
-int tetrate_fp_fractal();
+int tetrate_orbit();

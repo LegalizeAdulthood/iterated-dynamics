@@ -161,12 +161,12 @@ bool mandelbrot_mix4_setup()
     return s_mix.setup();
 }
 
-int mandelbrot_mix4_fp_per_pixel()
+int mandelbrot_mix4_per_pixel()
 {
     return s_mix.per_pixel();
 }
 
-int mandelbrot_mix4_fp_fractal() // from formula by Jim Muth
+int mandelbrot_mix4_orbit() // from formula by Jim Muth
 {
     return s_mix.iterate();
 }

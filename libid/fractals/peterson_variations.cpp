@@ -17,7 +17,7 @@
 
 DComplex g_marks_coefficient{};
 
-bool marks_julia_fp_setup()
+bool marks_julia_per_image()
 {
     g_params[2] = std::max(g_params[2], 1.0);
     g_c_exponent = (int)g_params[2];
@@ -45,7 +45,7 @@ bool marks_julia_fp_setup()
     return true;
 }
 
-int marks_lambda_fp_fractal()
+int marks_lambda_orbit()
 {
     // Mark Peterson's variation of "lambda" function
 
@@ -77,7 +77,7 @@ int marks_cplx_mand()
    }
 */
 
-int marks_mandel_pwr_fp_fractal()
+int marks_mandel_pwr_orbit()
 {
     cmplx_trig0(g_old_z, g_new_z);
     cmplx_mult(g_tmp_z, g_new_z, g_new_z);
@@ -91,7 +91,7 @@ int marks_mandel_pwr_fp_fractal()
    I thought I would immortalize myself with this error!
                 Tim Wegner */
 
-int tims_error_fp_fractal()
+int tims_error_orbit()
 {
     cmplx_trig0(g_old_z, g_new_z);
     g_new_z.x = g_new_z.x * g_tmp_z.x - g_new_z.y * g_tmp_z.y;
@@ -101,7 +101,7 @@ int tims_error_fp_fractal()
     return g_bailout_float();
 }
 
-int marks_mandel_fp_per_pixel()
+int marks_mandel_per_pixel()
 {
     // marksmandel
 
@@ -152,7 +152,7 @@ int marks_mandel_fp_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-int marks_mandel_pwr_fp_per_pixel()
+int marks_mandel_pwr_per_pixel()
 {
     mandel_per_pixel();
     g_tmp_z = g_old_z;

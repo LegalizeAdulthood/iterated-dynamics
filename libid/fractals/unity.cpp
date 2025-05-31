@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-int unity_fp_fractal()
+int unity_orbit()
 {
     const double XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
     if ((XXOne > 2.0) || (std::abs(XXOne - 1.0) < g_delta_min))

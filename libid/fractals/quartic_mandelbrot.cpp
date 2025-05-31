@@ -6,7 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
-int mandel4_fp_fractal()
+int mandel4_orbit()
 {
     // first, compute (x + iy)**2
     g_new_z.x  = g_temp_sqr_x - g_temp_sqr_y;

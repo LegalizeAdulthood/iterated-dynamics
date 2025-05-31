@@ -7,7 +7,7 @@
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 
-int quaternion_jul_fp_per_pixel()
+int quaternion_jul_per_pixel()
 {
     g_old_z.x = g_dx_pixel();
     g_old_z.y = g_dy_pixel();
@@ -20,7 +20,7 @@ int quaternion_jul_fp_per_pixel()
     return 0;
 }
 
-int quaternion_fp_per_pixel()
+int quaternion_per_pixel()
 {
     g_old_z.x = 0;
     g_old_z.y = 0;
@@ -33,7 +33,7 @@ int quaternion_fp_per_pixel()
     return 0;
 }
 
-int quaternion_fp_fractal()
+int quaternion_orbit()
 {
     double a0 = g_old_z.x;
     double a1 = g_old_z.y;

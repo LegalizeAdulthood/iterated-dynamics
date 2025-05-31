@@ -89,7 +89,7 @@ static int skinner_trig_sub_trig_fp_fractal()
     return g_bailout_float();
 }
 
-bool trig_plus_trig_fp_setup()
+bool trig_plus_trig_per_image()
 {
     fn_plus_fn_sym();
     if (g_trig_index[1] == TrigFn::SQR)
@@ -97,7 +97,7 @@ bool trig_plus_trig_fp_setup()
         return trig_plus_sqr_fp_setup();
     }
     g_cur_fractal_specific->per_pixel = other_julia_per_pixel;
-    g_cur_fractal_specific->orbit_calc = trig_plus_trig_fp_fractal;
+    g_cur_fractal_specific->orbit_calc = trig_plus_trig_orbit;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_param_z2.x == 1.0)          // Scott variant
@@ -112,7 +112,7 @@ bool trig_plus_trig_fp_setup()
     return julia_per_image();
 }
 
-int trig_plus_trig_fp_fractal()
+int trig_plus_trig_orbit()
 {
     // z = trig0(z)*p1+trig1(z)*p2
     cmplx_trig0(g_old_z, g_tmp_z);
@@ -155,7 +155,7 @@ static bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
     return false;
 }
 
-bool fn_x_fn_setup()
+bool fn_x_fn_per_image()
 {
     static SymmetryType fn_x_fn[7][7] =
     {
@@ -199,7 +199,7 @@ bool fn_x_fn_setup()
     return julia_per_image();
 }
 
-int trig_x_trig_fp_fractal()
+int trig_x_trig_orbit()
 {
     // z = trig0(z)*trig1(z)
     cmplx_trig0(g_old_z, g_tmp_z);
@@ -208,7 +208,7 @@ int trig_x_trig_fp_fractal()
     return g_bailout_float();
 }
 
-int trig_z_sqrd_fp_fractal()
+int trig_z_sqrd_orbit()
 {
     // { z=pixel: z=trig(z*z), |z|<TEST }
     cmplx_sqr_old(g_tmp_z);
@@ -216,7 +216,7 @@ int trig_z_sqrd_fp_fractal()
     return g_bailout_float();
 }
 
-bool sqr_trig_setup()
+bool sqr_trig_per_image()
 {
     //   static char SqrTrigSym[] =
     // fn1 ->  sin    cos    sinh   cosh   sqr    exp   log
@@ -236,7 +236,7 @@ bool sqr_trig_setup()
     return julia_per_image();
 }
 
-int sqr_trig_fp_fractal()
+int sqr_trig_orbit()
 {
     // SZSB(XYAXIS) { z=pixel, TEST=(p1+3): z=sin(z)*sin(z), |z|<TEST}
     cmplx_trig0(g_old_z, g_tmp_z);
@@ -244,7 +244,7 @@ int sqr_trig_fp_fractal()
     return g_bailout_float();
 }
 
-int sqr_1_over_trig_fp_fractal()
+int sqr_1_over_trig_orbit()
 {
     // z = sqr(1/trig(z))
     cmplx_trig0(g_old_z, g_old_z);
@@ -271,7 +271,7 @@ static int skinner_z_x_trig_sub_z_fp_fractal()
     return g_bailout_float();
 }
 
-bool z_x_trig_plus_z_setup()
+bool z_x_trig_plus_z_per_image()
 {
     //   static char ZXTrigPlusZSym1[] =
     // fn1 ->  sin   cos    sinh  cosh exp   log   sqr
@@ -321,7 +321,7 @@ bool z_x_trig_plus_z_setup()
             break;
         }
     }
-    g_cur_fractal_specific->orbit_calc = z_x_trig_plus_z_fp_fractal;
+    g_cur_fractal_specific->orbit_calc = z_x_trig_plus_z_orbit;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 &&
         g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
@@ -337,7 +337,7 @@ bool z_x_trig_plus_z_setup()
     return julia_per_image();
 }
 
-int z_x_trig_plus_z_fp_fractal()
+int z_x_trig_plus_z_orbit()
 {
     // z = (p1*z*trig(z))+p2*z
     cmplx_trig0(g_old_z, g_tmp_z);            // tmp  = trig(old)
@@ -349,7 +349,7 @@ int z_x_trig_plus_z_fp_fractal()
     return g_bailout_float();
 }
 
-int man_o_war_fp_fractal()
+int man_o_war_orbit()
 {
     // From Art Matrix via Lee Skinner
     // note that fast >= 287 equiv in fracsuba.asm must be kept in step
@@ -359,7 +359,7 @@ int man_o_war_fp_fractal()
     return g_bailout_float();
 }
 
-int richard_8_fp_fractal()
+int richard_8_orbit()
 {
     //  Richard8 {c = z = pixel: z=sin(z)+sin(pixel),|z|<=50}
     cmplx_trig0(g_old_z, g_new_z);
@@ -368,7 +368,7 @@ int richard_8_fp_fractal()
     return g_bailout_float();
 }
 
-int other_richard_8_fp_per_pixel()
+int other_richard_8_per_pixel()
 {
     other_mandel_per_pixel();
     cmplx_trig1(*g_float_param, g_tmp_z);
@@ -376,7 +376,7 @@ int other_richard_8_fp_per_pixel()
     return 1;
 }
 
-int spider_fp_fractal()
+int spider_orbit()
 {
     // Spider(XAXIS) { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 }
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_tmp_z.x;
@@ -386,7 +386,7 @@ int spider_fp_fractal()
     return g_bailout_float();
 }
 
-int tetrate_fp_fractal()
+int tetrate_orbit()
 {
     // Tetrate(XAXIS) { c=z=pixel: z=c^z, |z|<=(P1+3) }
     g_new_z = complex_power(*g_float_param, g_old_z);

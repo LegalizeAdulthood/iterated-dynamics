@@ -195,7 +195,7 @@ bool julia_fn_plus_z_sqrd_setup()
     return julia_per_image();
 }
 
-int trig_plus_z_squared_fp_fractal()
+int trig_plus_z_squared_orbit()
 {
     // From Scientific American, July 1989
     // A Biomorph

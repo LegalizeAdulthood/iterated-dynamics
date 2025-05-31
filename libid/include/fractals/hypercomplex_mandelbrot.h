@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int hyper_complex_fp_fractal();
+int hyper_complex_orbit();
