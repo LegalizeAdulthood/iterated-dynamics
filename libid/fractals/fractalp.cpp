@@ -1870,18 +1870,18 @@ FractalSpecific g_fractal_specific[] =
 
     // Jim Muth formula
     {
-        FractalType::DIVIDE_BROT5,                                              //
-        "dividebrot5",                                                          //
-        {"a", "b", "", ""},                                                     //
-        {2.0, 0.0, 0.0, 0.0},                                                   //
-        HelpLabels::HT_DIVIDE_BROT5, HelpLabels::HF_DIVIDE_BROT5,               //
-        FractalFlags::BAIL_TEST | FractalFlags::BF_MATH,                        //
-        -2.5f, 1.5f, -1.5f, 1.5f,                                               //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                       //
-        SymmetryType::NONE,                                                     //
-        divide_brot5_fp_fractal, divide_brot5_fp_per_pixel, divide_brot5_setup, //
-        standard_fractal,                                                       //
-        16                                                                      //
+        FractalType::DIVIDE_BROT5,                                      //
+        "dividebrot5",                                                  //
+        {"a", "b", "", ""},                                             //
+        {2.0, 0.0, 0.0, 0.0},                                           //
+        HelpLabels::HT_DIVIDE_BROT5, HelpLabels::HF_DIVIDE_BROT5,       //
+        FractalFlags::BAIL_TEST | FractalFlags::BF_MATH,                //
+        -2.5f, 1.5f, -1.5f, 1.5f,                                       //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,               //
+        SymmetryType::NONE,                                             //
+        divide_brot5_orbit, divide_brot5_per_pixel, divide_brot5_setup, //
+        standard_fractal,                                               //
+        16                                                              //
     },
 
     // Jim Muth formula

@@ -161,7 +161,7 @@ bool divide_brot5_setup()
     return true;
 }
 
-int divide_brot5_fp_per_pixel()
+int divide_brot5_per_pixel()
 {
     if (g_invert != 0)
     {
@@ -180,7 +180,7 @@ int divide_brot5_fp_per_pixel()
     return 0; /* 1st iteration has NOT been done */
 }
 
-int divide_brot5_fp_fractal() /* from formula by Jim Muth */
+int divide_brot5_orbit() /* from formula by Jim Muth */
 {
     /* z=sqr(z)/(z^(-a)+b)+c */
     /* we'll set a to -a in setup, so don't need it here */
