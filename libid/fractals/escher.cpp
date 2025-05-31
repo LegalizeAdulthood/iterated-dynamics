@@ -9,7 +9,7 @@
 #include "math/cmplx.h"
 #include "math/sqr.h"
 
-int escher_fp_fractal() // Science of Fractal Images pp. 185, 187
+int escher_orbit() // Science of Fractal Images pp. 185, 187
 {
     DComplex old_test;
     DComplex test_sqr;

@@ -1836,18 +1836,18 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::ESCHER,                                //
-        "escher_julia",                                     //
-        {REAL_PARAM, IMAG_PARAM, "", ""},                   //
-        {0.32, 0.043, 0, 0},                                //
-        HelpLabels::HT_ESCHER, HelpLabels::HF_ESCHER,       //
-        FractalFlags::NONE,                                 //
-        -1.6F, 1.6F, -1.2F, 1.2F,                           //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,   //
-        SymmetryType::ORIGIN,                               //
-        escher_fp_fractal, julia_per_pixel, standard_setup, //
-        standard_fractal,                                   //
-        STD_BAILOUT                                         //
+        FractalType::ESCHER,                              //
+        "escher_julia",                                   //
+        {REAL_PARAM, IMAG_PARAM, "", ""},                 //
+        {0.32, 0.043, 0, 0},                              //
+        HelpLabels::HT_ESCHER, HelpLabels::HF_ESCHER,     //
+        FractalFlags::NONE,                               //
+        -1.6F, 1.6F, -1.2F, 1.2F,                         //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
+        SymmetryType::ORIGIN,                             //
+        escher_orbit, julia_per_pixel, standard_setup,    //
+        standard_fractal,                                 //
+        STD_BAILOUT                                       //
     },
 
     // From Pickovers' "Chaos in Wonderland"

@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int escher_fp_fractal();
+int escher_orbit();
