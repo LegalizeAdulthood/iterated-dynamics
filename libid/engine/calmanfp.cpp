@@ -28,7 +28,7 @@ void calc_mandelbrot_init()
     g_old_color_iter = 0;
 }
 
-long calc_mand_fp_asm()
+long mandelbrot_orbit()
 {
     double x;
     double y;

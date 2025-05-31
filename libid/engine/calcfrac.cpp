@@ -1229,7 +1229,7 @@ int calc_mandelbrot()
         g_init.x = g_dx_pixel();
         g_init.y = g_dy_pixel();
     }
-    if (calc_mand_fp_asm() >= 0)
+    if (mandelbrot_orbit() >= 0)
     {
         if (g_potential_flag)
         {

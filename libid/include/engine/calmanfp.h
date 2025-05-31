@@ -3,4 +3,4 @@
 #pragma once
 
 void calc_mandelbrot_init();
-long calc_mand_fp_asm();
+long mandelbrot_orbit();
