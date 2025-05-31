@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <string>
 
-int burning_ship_fp_fractal()
+int burning_ship_orbit()
 {
     DComplex q;
     const int degree = (int) g_params[2];
