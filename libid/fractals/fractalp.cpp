@@ -233,7 +233,7 @@ FractalSpecific g_fractal_specific[] =
         -2.5F, 1.5F, -1.5F, 1.5F,                                                //
         FractalType::JULIA, FractalType::NO_FRACTAL,                             //
         SymmetryType::X_AXIS_NO_PARAM,                                           //
-        julia_orbit, mandel_fp_per_pixel, mandel_per_image,                      //
+        julia_orbit, mandel_per_pixel, mandel_per_image,                         //
         standard_fractal,                                                        //
         STD_BAILOUT,                                                             //
         mandel_ref_pt, mandel_ref_pt_bf, mandel_perturb                          //
@@ -314,7 +314,7 @@ FractalSpecific g_fractal_specific[] =
         -2.5F, 1.5F, -1.5F, 1.5F,                                           //
         FractalType::MAN_O_WAR_J, FractalType::NO_FRACTAL,                  //
         SymmetryType::X_AXIS_NO_PARAM,                                      //
-        man_o_war_fp_fractal, mandel_fp_per_pixel, mandel_per_image,        //
+        man_o_war_fp_fractal, mandel_per_pixel, mandel_per_image,           //
         standard_fractal,                                                   //
         STD_BAILOUT                                                         //
     },
@@ -516,7 +516,7 @@ FractalSpecific g_fractal_specific[] =
         -2.5F, 1.5F, -1.5F, 1.5F,                                                   //
         FractalType::JULIA_FN_PLUS_Z_SQRD, FractalType::NO_FRACTAL,                 //
         SymmetryType::X_AXIS_NO_PARAM,                                              //
-        trig_plus_z_squared_fp_fractal, mandel_fp_per_pixel, mandel_per_image,      //
+        trig_plus_z_squared_fp_fractal, mandel_per_pixel, mandel_per_image,         //
         standard_fractal,                                                           //
         STD_BAILOUT                                                                 //
     },
@@ -877,7 +877,7 @@ FractalSpecific g_fractal_specific[] =
         -3.0F, 5.0F, -3.0F, 3.0F,                                   //
         FractalType::LAMBDA, FractalType::NO_FRACTAL,               //
         SymmetryType::X_AXIS_NO_PARAM,                              //
-        lambda_fp_fractal, mandel_fp_per_pixel, mandel_per_image,   //
+        lambda_fp_fractal, mandel_per_pixel, mandel_per_image,      //
         standard_fractal,                                           //
         STD_BAILOUT                                                 //
     },
@@ -1005,7 +1005,7 @@ FractalSpecific g_fractal_specific[] =
         -2.5F, 1.5F, -1.5F, 1.5F,                                        //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                //
         SymmetryType::X_AXIS_NO_PARAM,                                   //
-        spider_fp_fractal, mandel_fp_per_pixel, mandel_per_image,        //
+        spider_fp_fractal, mandel_per_pixel, mandel_per_image,           //
         standard_fractal,                                                //
         STD_BAILOUT                                                      //
     },
@@ -1026,18 +1026,18 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::MAGNET_1M,                                 //
-        "magnet1m",                                             //
-        {REAL_Z0, IMAG_Z0, "", ""},                             //
-        {0, 0, 0, 0},                                           //
-        HelpLabels::HT_MAGNET, HelpLabels::HF_MAGNET_M1,        //
-        FractalFlags::NONE,                                     //
-        -4.0F, 4.0F, -3.0F, 3.0F,                               //
-        FractalType::MAGNET_1J, FractalType::NO_FRACTAL,        //
-        SymmetryType::X_AXIS_NO_PARAM,                          //
-        magnet1_fractal, mandel_fp_per_pixel, mandel_per_image, //
-        standard_fractal,                                       //
-        100                                                     //
+        FractalType::MAGNET_1M,                              //
+        "magnet1m",                                          //
+        {REAL_Z0, IMAG_Z0, "", ""},                          //
+        {0, 0, 0, 0},                                        //
+        HelpLabels::HT_MAGNET, HelpLabels::HF_MAGNET_M1,     //
+        FractalFlags::NONE,                                  //
+        -4.0F, 4.0F, -3.0F, 3.0F,                            //
+        FractalType::MAGNET_1J, FractalType::NO_FRACTAL,     //
+        SymmetryType::X_AXIS_NO_PARAM,                       //
+        magnet1_fractal, mandel_per_pixel, mandel_per_image, //
+        standard_fractal,                                    //
+        100                                                  //
     },
 
     {
@@ -1056,18 +1056,18 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::MAGNET_2M,                                 //
-        "magnet2m",                                             //
-        {REAL_Z0, IMAG_Z0, "", ""},                             //
-        {0, 0, 0, 0},                                           //
-        HelpLabels::HT_MAGNET, HelpLabels::HF_MAGNET_M2,        //
-        FractalFlags::NONE,                                     //
-        -1.5F, 3.7F, -1.95F, 1.95F,                             //
-        FractalType::MAGNET_2J, FractalType::NO_FRACTAL,        //
-        SymmetryType::X_AXIS_NO_PARAM,                          //
-        magnet2_fractal, mandel_fp_per_pixel, mandel_per_image, //
-        standard_fractal,                                       //
-        100                                                     //
+        FractalType::MAGNET_2M,                              //
+        "magnet2m",                                          //
+        {REAL_Z0, IMAG_Z0, "", ""},                          //
+        {0, 0, 0, 0},                                        //
+        HelpLabels::HT_MAGNET, HelpLabels::HF_MAGNET_M2,     //
+        FractalFlags::NONE,                                  //
+        -1.5F, 3.7F, -1.95F, 1.95F,                          //
+        FractalType::MAGNET_2J, FractalType::NO_FRACTAL,     //
+        SymmetryType::X_AXIS_NO_PARAM,                       //
+        magnet2_fractal, mandel_per_pixel, mandel_per_image, //
+        standard_fractal,                                    //
+        100                                                  //
     },
 
     {
@@ -1634,18 +1634,18 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::MANDEL4,                                      //
-        "mandel4",                                                 //
-        {REAL_Z0, IMAG_Z0, "", ""},                                //
-        {0, 0, 0, 0},                                              //
-        HelpLabels::HT_MANDEL_JULIA4, HelpLabels::HF_MANDEL4,      //
-        FractalFlags::BAIL_TEST,                                   //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                  //
-        FractalType::JULIA4, FractalType::NO_FRACTAL,              //
-        SymmetryType::X_AXIS_NO_PARAM,                             //
-        mandel4_fp_fractal, mandel_fp_per_pixel, mandel_per_image, //
-        standard_fractal,                                          //
-        STD_BAILOUT                                                //
+        FractalType::MANDEL4,                                   //
+        "mandel4",                                              //
+        {REAL_Z0, IMAG_Z0, "", ""},                             //
+        {0, 0, 0, 0},                                           //
+        HelpLabels::HT_MANDEL_JULIA4, HelpLabels::HF_MANDEL4,   //
+        FractalFlags::BAIL_TEST,                                //
+        -2.0F, 2.0F, -1.5F, 1.5F,                               //
+        FractalType::JULIA4, FractalType::NO_FRACTAL,           //
+        SymmetryType::X_AXIS_NO_PARAM,                          //
+        mandel4_fp_fractal, mandel_per_pixel, mandel_per_image, //
+        standard_fractal,                                       //
+        STD_BAILOUT                                             //
     },
 
     {

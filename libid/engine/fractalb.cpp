@@ -591,7 +591,7 @@ int mandel_bf_per_pixel()
     // the pointer to set up isn't.
     if (g_bf_math == BFMathType::NONE) // kludge to prevent crash when math type = NONE and still call bigflt setup routine
     {
-        return mandel_fp_per_pixel();
+        return mandel_per_pixel();
     }
     // parm.x = g_x_min + col*delx + row*delx2
     mult_bf_int(g_param_z_bf.x, g_delta_x_bf, (U16)g_col);

@@ -154,7 +154,7 @@ int marks_mandel_fp_per_pixel()
 
 int marks_mandel_pwr_fp_per_pixel()
 {
-    mandel_fp_per_pixel();
+    mandel_per_pixel();
     g_tmp_z = g_old_z;
     g_tmp_z.x -= 1;
     cmplx_pwr(g_old_z, g_tmp_z, g_tmp_z);

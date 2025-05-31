@@ -30,7 +30,7 @@ void pow(DComplex *base, int exp, DComplex *result);
 int julia_orbit();
 int burning_ship_orbit();
 int float_cmplx_z_power_fractal();
-int mandel_fp_per_pixel();
+int mandel_per_pixel();
 void mandel_ref_pt(const std::complex<double> &center, std::complex<double> &z);
 void mandel_ref_pt_bf(const BFComplex &center, BFComplex &z);
 void mandel_perturb(

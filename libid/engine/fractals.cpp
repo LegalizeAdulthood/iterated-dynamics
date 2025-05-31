@@ -135,7 +135,7 @@ int float_cmplx_z_power_fractal()
 //              Initialization (once per pixel) routines
 // --------------------------------------------------------------------
 
-int mandel_fp_per_pixel()
+int mandel_per_pixel()
 {
     // floating point mandelbrot
     // mandelfp
