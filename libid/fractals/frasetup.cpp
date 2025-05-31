@@ -32,7 +32,7 @@ bool burning_ship_per_image()
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
-        return mandel_perturbation_setup();
+        return mandel_perturbation_per_image();
     }
     // use the main processing loop
     g_calc_type = standard_fractal;
@@ -45,12 +45,12 @@ bool standalone_per_image()
     return false;               // effectively disable solid-guessing
 }
 
-bool mandel_perturbation_setup()
+bool mandel_perturbation_per_image()
 {
     return perturbation();
 }
 
-bool mandel_z_power_perturbation_setup()
+bool mandel_z_power_perturbation_per_image()
 {
     constexpr int MAX_POWER{28};
     g_c_exponent = std::min(std::max(g_c_exponent, 2), MAX_POWER);
@@ -91,7 +91,7 @@ bool mandel_per_image()
         */
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
-            return mandel_perturbation_setup();
+            return mandel_perturbation_per_image();
         }
         if (g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL
             && !g_distance_estimator
@@ -120,11 +120,11 @@ bool mandel_per_image()
         {
             if (g_c_exponent == 2)
             {
-                return mandel_perturbation_setup();
+                return mandel_perturbation_per_image();
             }
             if (g_c_exponent > 2)
             {
-                return mandel_z_power_perturbation_setup();
+                return mandel_z_power_perturbation_per_image();
             }
         }
         if ((double)g_c_exponent == g_params[2] && (g_c_exponent & 1))   // odd exponents

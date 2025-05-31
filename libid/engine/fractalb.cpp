@@ -358,7 +358,7 @@ bool mandel_per_image_bn()
 
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
-        mandel_perturbation_setup();
+        mandel_perturbation_per_image();
         // TODO: figure out crash if we don't do this
         g_std_calc_mode ='g';
         g_calc_status = CalcStatus::COMPLETED;
@@ -477,7 +477,7 @@ bool mandel_per_image_bf()
     case FractalType::BURNING_SHIP:
         if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
-            return mandel_perturbation_setup();
+            return mandel_perturbation_per_image();
         }
         break;
 
@@ -492,11 +492,11 @@ bool mandel_per_image_bf()
             // only allow integer values of real part
             if (const int degree = (int) g_params[2]; degree > 2)
             {
-                return mandel_z_power_perturbation_setup();
+                return mandel_z_power_perturbation_per_image();
             }
             else if (degree == 2)  // NOLINT(readability-else-after-return)
             {
-                return mandel_perturbation_setup();
+                return mandel_perturbation_per_image();
             }
         }
 
