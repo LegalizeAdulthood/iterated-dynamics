@@ -494,7 +494,7 @@ bool mandel_per_image_bf()
             {
                 return mandel_z_power_perturbation_setup();
             }
-            else if (degree == 2)
+            else if (degree == 2)  // NOLINT(readability-else-after-return)
             {
                 return mandel_perturbation_setup();
             }
