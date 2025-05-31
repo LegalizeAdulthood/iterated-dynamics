@@ -2,5 +2,5 @@
 //
 #pragma once
 
-void calc_mand_fp_asm_start();
+void calc_mandelbrot_init();
 long calc_mand_fp_asm();

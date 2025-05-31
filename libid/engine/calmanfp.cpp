@@ -21,7 +21,7 @@
 static int s_inside_color{};
 static int s_periodicity_color{};
 
-void calc_mand_fp_asm_start()
+void calc_mandelbrot_init()
 {
     s_inside_color = (g_inside_color < COLOR_BLACK) ? g_max_iterations : g_inside_color;
     s_periodicity_color = (g_periodicity_check < 0) ? 7 : s_inside_color;

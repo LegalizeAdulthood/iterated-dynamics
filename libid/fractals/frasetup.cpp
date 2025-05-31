@@ -107,7 +107,7 @@ bool mandel_per_image()
             && (g_orbit_save_flags & OSF_MIDI) == 0)
         {
             g_calc_type = calc_mandelbrot; // the normal case
-            calc_mand_fp_asm_start();
+            calc_mandelbrot_init();
         }
         else
         {
@@ -246,7 +246,7 @@ julia_fp_setup()
             && (g_orbit_save_flags & OSF_MIDI) == 0)
         {
             g_calc_type = calc_mandelbrot; // the normal case
-            calc_mand_fp_asm_start();
+            calc_mandelbrot_init();
         }
         else
         {
