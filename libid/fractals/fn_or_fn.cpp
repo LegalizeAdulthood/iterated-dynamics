@@ -56,7 +56,7 @@ bool lambda_trig_or_trig_setup()
    or alternate calculations.  The shift is made when the mod
    reaches a given value.  */
 
-int lambda_trig_or_trig_fp_fractal()
+int lambda_trig_or_trig_orbit()
 {
     /* z = trig0(z)*p1 if mod(old) < p2.x and
            trig1(z)*p1 if mod(old) >= p2.x */

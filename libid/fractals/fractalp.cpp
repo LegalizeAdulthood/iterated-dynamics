@@ -1344,18 +1344,18 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::LAMBDA_FN_FN,                                                        //
-        "lambda(fn||fn)",                                                                 //
-        {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},                             //
-        {1, 0.1, 1, 0},                                                                   //
-        HelpLabels::HT_FN_OR_FN, HelpLabels::HF_LAMBDA_FN_FN,                             //
-        FractalFlags::TRIG2 | FractalFlags::BAIL_TEST,                                    //
-        -4.0F, 4.0F, -3.0F, 3.0F,                                                         //
-        FractalType::NO_FRACTAL, FractalType::MAN_LAM_FN_FN,                              //
-        SymmetryType::ORIGIN,                                                             //
-        lambda_trig_or_trig_fp_fractal, other_julia_per_pixel, lambda_trig_or_trig_setup, //
-        standard_fractal,                                                                 //
-        TRIG_BAILOUT_L                                                                    //
+        FractalType::LAMBDA_FN_FN,                                                   //
+        "lambda(fn||fn)",                                                            //
+        {REAL_PARAM, IMAG_PARAM, "Function Shift Value", ""},                        //
+        {1, 0.1, 1, 0},                                                              //
+        HelpLabels::HT_FN_OR_FN, HelpLabels::HF_LAMBDA_FN_FN,                        //
+        FractalFlags::TRIG2 | FractalFlags::BAIL_TEST,                               //
+        -4.0F, 4.0F, -3.0F, 3.0F,                                                    //
+        FractalType::NO_FRACTAL, FractalType::MAN_LAM_FN_FN,                         //
+        SymmetryType::ORIGIN,                                                        //
+        lambda_trig_or_trig_orbit, other_julia_per_pixel, lambda_trig_or_trig_setup, //
+        standard_fractal,                                                            //
+        TRIG_BAILOUT_L                                                               //
     },
 
     {
@@ -1374,18 +1374,18 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::MAN_LAM_FN_FN,                                                         //
-        "manlam(fn||fn)",                                                                   //
-        {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},                                     //
-        {0, 0, 10, 0},                                                                      //
-        HelpLabels::HT_FN_OR_FN, HelpLabels::HF_MANDEL_LAMBDA_FN_FN,                        //
-        FractalFlags::TRIG2 | FractalFlags::BAIL_TEST,                                      //
-        -4.0F, 4.0F, -3.0F, 3.0F,                                                           //
-        FractalType::LAMBDA_FN_FN, FractalType::NO_FRACTAL,                                 //
-        SymmetryType::X_AXIS_NO_PARAM,                                                      //
-        lambda_trig_or_trig_fp_fractal, other_mandel_per_pixel, man_lam_trig_or_trig_setup, //
-        standard_fractal,                                                                   //
-        TRIG_BAILOUT_L                                                                      //
+        FractalType::MAN_LAM_FN_FN,                                                    //
+        "manlam(fn||fn)",                                                              //
+        {REAL_Z0, IMAG_Z0, "Function Shift Value", ""},                                //
+        {0, 0, 10, 0},                                                                 //
+        HelpLabels::HT_FN_OR_FN, HelpLabels::HF_MANDEL_LAMBDA_FN_FN,                   //
+        FractalFlags::TRIG2 | FractalFlags::BAIL_TEST,                                 //
+        -4.0F, 4.0F, -3.0F, 3.0F,                                                      //
+        FractalType::LAMBDA_FN_FN, FractalType::NO_FRACTAL,                            //
+        SymmetryType::X_AXIS_NO_PARAM,                                                 //
+        lambda_trig_or_trig_orbit, other_mandel_per_pixel, man_lam_trig_or_trig_setup, //
+        standard_fractal,                                                              //
+        TRIG_BAILOUT_L                                                                 //
     },
 
     {
