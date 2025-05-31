@@ -58,6 +58,7 @@
 #include "ui/video.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cfloat>
 #include <climits>
 #include <cmath>
@@ -873,6 +874,16 @@ int find_alternate_math(FractalType type, BFMathType math)
     return ret;
 }
 
+static void work_list_pop_front()
+{
+    assert(g_num_work_list > 0);
+    --g_num_work_list;
+    for (int i = 0; i < g_num_work_list; ++i)
+    {
+        g_work_list[i] = g_work_list[i + 1];
+    }
+}
+
 // general escape-time engine routines
 static void perform_work_list()
 {
@@ -1004,27 +1015,23 @@ static void perform_work_list()
     {
         // per_image can override
         g_calc_type = g_cur_fractal_specific->calc_type;
-        g_symmetry = g_cur_fractal_specific->symmetry; //   calctype & symmetry
-        g_plot = g_put_color; // defaults when setsymmetry not called or does nothing
+        g_symmetry = g_cur_fractal_specific->symmetry; //   calc type & symmetry
+        g_plot = g_put_color; // defaults when set symmetry not called or does nothing
 
-        // pull top entry off worklist
+        // pull top entry off work list
         g_xx_start = g_work_list[0].start.x;
         g_yy_start = g_work_list[0].start.y;
         g_i_x_start = g_work_list[0].start.x;
         g_i_y_start = g_work_list[0].start.y;
-        g_xx_stop  = g_work_list[0].stop.x;
-        g_yy_stop  = g_work_list[0].stop.y;
-        g_i_x_stop  = g_work_list[0].stop.x;
-        g_i_y_stop  = g_work_list[0].stop.y;
-        g_xx_begin  = g_work_list[0].begin.x;
-        g_yy_begin  = g_work_list[0].begin.y;
+        g_xx_stop = g_work_list[0].stop.x;
+        g_yy_stop = g_work_list[0].stop.y;
+        g_i_x_stop = g_work_list[0].stop.x;
+        g_i_y_stop = g_work_list[0].stop.y;
+        g_xx_begin = g_work_list[0].begin.x;
+        g_yy_begin = g_work_list[0].begin.y;
         g_work_pass = g_work_list[0].pass;
-        g_work_symmetry  = g_work_list[0].symmetry;
-        --g_num_work_list;
-        for (int i = 0; i < g_num_work_list; ++i)
-        {
-            g_work_list[i] = g_work_list[i+1];
-        }
+        g_work_symmetry = g_work_list[0].symmetry;
+        work_list_pop_front();
 
         g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
 
