@@ -89,7 +89,7 @@ static int s_z_pixel;
 static int s_plotted;
 static long s_n;
 
-static int z_line_fp(double x, double y);
+static int z_line(double x, double y);
 
 bool julibrot_setup()
 {
@@ -165,7 +165,7 @@ int julibrot_per_pixel()
     return 1;
 }
 
-int z_line_fp(double x, double y)
+int z_line(double x, double y)
 {
     s_jb_fp.x_pixel = x;
     s_jb_fp.y_pixel = y;
@@ -290,13 +290,13 @@ int calc_standard_4d()
         {
             g_col = x_dot;
             g_row = y_dot;
-            if (z_line_fp(x, y) < 0)
+            if (z_line(x, y) < 0)
             {
                 return -1;
             }
             g_col = g_logical_screen_x_dots - g_col - 1;
             g_row = g_logical_screen_y_dots - g_row - 1;
-            if (z_line_fp(-x, -y) < 0)
+            if (z_line(-x, -y) < 0)
             {
                 return -1;
             }
