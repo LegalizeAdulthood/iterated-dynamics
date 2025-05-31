@@ -654,7 +654,7 @@ gfp_top:
     type_name = g_cur_fractal_specific->name;
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
-    if (orbit_bailout != 0                                      //
+    if (orbit_bailout != 0                                       //
         && g_cur_fractal_specific->calc_type == standard_fractal //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
@@ -874,7 +874,7 @@ gfp_top:
     }
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
-    if (orbit_bailout != 0                                      //
+    if (orbit_bailout != 0                                       //
         && g_cur_fractal_specific->calc_type == standard_fractal //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
