@@ -58,8 +58,7 @@ bool mandel_z_power_perturbation_setup()
     return perturbation();
 }
 
-bool
-mandel_fp_setup()
+bool mandel_per_image()
 {
     g_bf_math = BFMathType::NONE;
     g_c_exponent = (int)g_params[2];

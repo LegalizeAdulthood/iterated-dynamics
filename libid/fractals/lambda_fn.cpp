@@ -154,5 +154,5 @@ bool mandel_trig_setup()
         g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         break;
     }
-    return mandel_fp_setup();
+    return mandel_per_image();
 }
