@@ -106,7 +106,8 @@ int solid_guess()
                 // calc top row
                 if ((*g_calc_type)() == -1)
                 {
-                    add_work_list(g_xx_start, g_xx_stop, g_xx_begin, g_yy_start, g_yy_stop, g_yy_begin, 0, g_work_symmetry);
+                    add_work_list(g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_begin, g_yy_begin, 0,
+                        g_work_symmetry);
                     goto exit_solid_guess;
                 }
                 g_reset_periodicity = false;
@@ -139,14 +140,16 @@ int solid_guess()
             if (i == -1 || guess_row(true, y, block_size)) // interrupted?
             {
                 y = std::max(y, g_yy_start);
-                add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, 0, g_work_symmetry);
+                add_work_list(
+                    g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, y, 0, g_work_symmetry);
                 goto exit_solid_guess;
             }
         }
 
         if (g_num_work_list) // work list not empty, just do 1st pass
         {
-            add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 1, g_work_symmetry);
+            add_work_list(
+                g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, g_yy_start, 1, g_work_symmetry);
             goto exit_solid_guess;
         }
         ++g_work_pass;
@@ -219,7 +222,8 @@ int solid_guess()
             if (guess_row(false, y, block_size))
             {
                 y = std::max(y, g_yy_start);
-                add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, y, g_work_pass, g_work_symmetry);
+                add_work_list(g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, y, g_work_pass,
+                    g_work_symmetry);
                 goto exit_solid_guess;
             }
         }
@@ -227,7 +231,8 @@ int solid_guess()
         if (g_num_work_list // work list not empty, do one pass at a time
             && block_size > 2) // if 2, we just did last pass
         {
-            add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, g_work_symmetry);
+            add_work_list(g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, g_yy_start, g_work_pass,
+                g_work_symmetry);
             goto exit_solid_guess;
         }
         g_i_y_start = g_yy_start & (-1 - (s_max_block-1));

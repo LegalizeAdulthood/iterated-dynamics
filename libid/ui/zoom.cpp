@@ -787,28 +787,30 @@ void init_pan_or_recalc(bool do_zoom_out)
         g_work_list[i].begin.x -= col;
     }
     // add worklist entries for the new edges
-    int listfull = 0;
+    bool list_full{};
     int i = 0;
     int j = g_logical_screen_y_dots-1;
     if (row < 0)
     {
-        listfull |= add_work_list(0, g_logical_screen_x_dots-1, 0, 0, 0-row-1, 0, 0, 0);
+        list_full = add_work_list(0, 0, g_logical_screen_x_dots - 1, 0 - row - 1, 0, 0, 0, 0) || list_full;
         i = -row;
     }
     if (row > 0)
     {
-        listfull |= add_work_list(0, g_logical_screen_x_dots-1, 0, g_logical_screen_y_dots-row, g_logical_screen_y_dots-1, g_logical_screen_y_dots-row, 0, 0);
+        list_full = add_work_list(0, g_logical_screen_y_dots - row, g_logical_screen_x_dots - 1,
+                        g_logical_screen_y_dots - 1, 0, g_logical_screen_y_dots - row, 0, 0) || list_full;
         j = g_logical_screen_y_dots - row - 1;
     }
     if (col < 0)
     {
-        listfull |= add_work_list(0, 0-col-1, 0, i, j, i, 0, 0);
+        list_full = add_work_list(0, i, 0 - col - 1, j, 0, i, 0, 0) || list_full;
     }
     if (col > 0)
     {
-        listfull |= add_work_list(g_logical_screen_x_dots-col, g_logical_screen_x_dots-1, g_logical_screen_x_dots-col, i, j, i, 0, 0);
+        list_full = add_work_list(g_logical_screen_x_dots - col, i, g_logical_screen_x_dots - 1, j,
+                        g_logical_screen_x_dots - col, i, 0, 0) || list_full;
     }
-    if (listfull != 0)
+    if (list_full)
     {
         if (stop_msg(StopMsgFlags::CANCEL,
             "Tables full, can't pan current image.\n"

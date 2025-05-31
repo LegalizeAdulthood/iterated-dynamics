@@ -46,7 +46,8 @@ int tesseral()
         if (check_key())
         {
             // interrupt before we got properly rolling
-            add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop, g_yy_start, 0, g_work_symmetry);
+            add_work_list(
+                g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, g_yy_start, 0, g_work_symmetry);
             return -1;
         }
     }
@@ -338,8 +339,8 @@ tess_end:
             i <<= 1;
             ++y_size;
         }
-        add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_yy_start, g_yy_stop,
-                     (y_size << 12)+tp->y1, (x_size << 12)+tp->x1, g_work_symmetry);
+        add_work_list(g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, (y_size << 12) + tp->y1,
+            (x_size << 12) + tp->x1, g_work_symmetry);
         return -1;
     }
     return 0;

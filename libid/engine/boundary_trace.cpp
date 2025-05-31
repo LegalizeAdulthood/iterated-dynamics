@@ -100,7 +100,8 @@ int boundary_trace()
                 {
                     g_i_y_stop = g_yy_stop - (cur_row - g_yy_start); // allow for sym
                 }
-                add_work_list(g_xx_start, g_xx_stop, cur_col, cur_row, g_i_y_stop, cur_row, 0, g_work_symmetry);
+                add_work_list(
+                    g_xx_start, cur_row, g_xx_stop, g_i_y_stop, cur_col, cur_row, 0, g_work_symmetry);
                 return -1;
             }
             g_reset_periodicity = false; // normal periodicity checking
@@ -141,7 +142,8 @@ int boundary_trace()
                         {
                             g_i_y_stop = g_yy_stop - (cur_row - g_yy_start); // allow for sym
                         }
-                        add_work_list(g_xx_start, g_xx_stop, cur_col, cur_row, g_i_y_stop, cur_row, 0, g_work_symmetry);
+                        add_work_list(
+                            g_xx_start, cur_row, g_xx_stop, g_i_y_stop, cur_col, cur_row, 0, g_work_symmetry);
                         return -1;
                     }
                     if (g_color == trail_color)

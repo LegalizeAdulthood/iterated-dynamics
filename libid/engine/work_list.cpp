@@ -5,15 +5,35 @@
 int g_num_work_list{}; // resume work list for standard engine
 WorkList g_work_list[MAX_CALC_WORK]{};
 
-static int    combine_work_list();
+static int combine_work_list();
 
-int add_work_list(int x_from, int x_to, int x_begin, //
-    int y_from, int y_to, int y_begin,               //
+bool add_work_list(Point2i start, Point2i stop, Point2i begin, int pass, int symmetry)
+{
+    if (g_num_work_list >= MAX_CALC_WORK)
+    {
+        return true;
+    }
+    g_work_list[g_num_work_list].start = start;
+    g_work_list[g_num_work_list].stop = stop;
+    g_work_list[g_num_work_list].begin = begin;
+    g_work_list[g_num_work_list].pass = pass;
+    g_work_list[g_num_work_list].symmetry = symmetry;
+    ++g_num_work_list;
+    if (g_num_work_list > 1)
+    {
+        tidy_work_list();
+    }
+    return false;
+}
+
+bool add_work_list(int x_from, int y_from, //
+    int x_to, int y_to,                    //
+    int x_begin, int y_begin,              //
     int pass, int symmetry)
 {
     if (g_num_work_list >= MAX_CALC_WORK)
     {
-        return -1;
+        return true;
     }
     g_work_list[g_num_work_list].start.x = x_from;
     g_work_list[g_num_work_list].stop.x  = x_to;
@@ -25,7 +45,7 @@ int add_work_list(int x_from, int x_to, int x_begin, //
     g_work_list[g_num_work_list].symmetry     = symmetry;
     ++g_num_work_list;
     tidy_work_list();
-    return 0;
+    return false;
 }
 
 static int combine_work_list() // look for 2 entries which can freely merge

@@ -2285,7 +2285,8 @@ static bool x_sym_split(int x_axis_row, bool x_axis_between)
             {
                 --g_i_y_stop;
             }
-            add_work_list(g_xx_start, g_xx_stop, g_xx_start, g_i_y_stop+1, g_yy_stop, g_i_y_stop+1, g_work_pass, 0);
+            add_work_list(
+                g_xx_start, g_i_y_stop + 1, g_xx_stop, g_yy_stop, g_xx_start, g_i_y_stop + 1, g_work_pass, 0);
             g_yy_stop = g_i_y_stop;
             return true; // tell set_symmetry no sym for current window
         }
@@ -2295,7 +2296,7 @@ static bool x_sym_split(int x_axis_row, bool x_axis_between)
             {
                 return true;
             }
-            add_work_list(g_xx_start, g_xx_stop, g_xx_start, i+1, g_yy_stop, i+1, g_work_pass, 0);
+            add_work_list(g_xx_start, i + 1, g_xx_stop, g_yy_stop, g_xx_start, i + 1, g_work_pass, 0);
             g_yy_stop = i;
         }
         g_i_y_stop = x_axis_row;
@@ -2338,7 +2339,8 @@ static bool y_sym_split(int y_axis_col, bool y_axis_between)
             {
                 --g_i_x_stop;
             }
-            add_work_list(g_i_x_stop+1, g_xx_stop, g_i_x_stop+1, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, 0);
+            add_work_list(
+                g_i_x_stop + 1, g_yy_start, g_xx_stop, g_yy_stop, g_i_x_stop + 1, g_yy_start, g_work_pass, 0);
             g_xx_stop = g_i_x_stop;
             return true; // tell set_symmetry no sym for current window
         }
@@ -2348,7 +2350,7 @@ static bool y_sym_split(int y_axis_col, bool y_axis_between)
             {
                 return true;
             }
-            add_work_list(i+1, g_xx_stop, i+1, g_yy_start, g_yy_stop, g_yy_start, g_work_pass, 0);
+            add_work_list(i + 1, g_yy_start, g_xx_stop, g_yy_stop, i + 1, g_yy_start, g_work_pass, 0);
             g_xx_stop = i;
         }
         g_i_x_stop = y_axis_col;

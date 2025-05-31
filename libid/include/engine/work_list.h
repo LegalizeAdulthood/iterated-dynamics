@@ -26,9 +26,11 @@ struct WorkList
 };
 
 extern int                   g_num_work_list;
-extern WorkList              g_work_list[MAX_CALC_WORK];
+extern WorkList g_work_list[MAX_CALC_WORK];
 
-int add_work_list(int x_from, int x_to, int x_begin, //
-    int y_from, int y_to, int y_begin,               //
+bool add_work_list(Point2i start, Point2i stop, Point2i begin, int pass, int symmetry);
+bool add_work_list(int x_from, int y_from, //
+    int x_to, int y_to,                    //
+    int x_begin, int y_begin,              //
     int pass, int symmetry);
 void tidy_work_list();
