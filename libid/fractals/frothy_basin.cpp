@@ -24,8 +24,12 @@ constexpr double SQRT3{1.732050807568877193};           //
 constexpr double FROTH_SLOPE{SQRT3};                    //
 constexpr double FROTH_CRITICAL_A{1.028713768218725};   // 1.0287137682187249127
 
-struct FrothDouble
+struct Froth
 {
+    int repeat_mapping;
+    int alt_color;
+    int attractors;
+    int shades;
     double a;
     double half_a;
     double top_x1;
@@ -42,42 +46,11 @@ struct FrothDouble
     double right_x4;
 };
 
-struct FrothLong
-{
-    long a;
-    long half_a;
-    long top_x1;
-    long top_x2;
-    long top_x3;
-    long top_x4;
-    long left_x1;
-    long left_x2;
-    long left_x3;
-    long left_x4;
-    long right_x1;
-    long right_x2;
-    long right_x3;
-    long right_x4;
-};
-
-struct Froth
-{
-    int repeat_mapping;
-    int alt_color;
-    int attractors;
-    int shades;
-    union
-    {
-        FrothDouble f;
-        FrothLong l;
-    } fl;
-};
-
 static Froth s_fsp{};
 
 static double froth_top_x_mapping(double x)
 {
-    return x * x - x -3 * s_fsp.fl.f.a * s_fsp.fl.f.a / 4;
+    return x * x - x -3 * s_fsp.a * s_fsp.a / 4;
 }
 
 // color maps which attempt to replicate the images of James Alexander.
@@ -137,8 +110,8 @@ bool froth_setup()
     }
     s_fsp.repeat_mapping = (int)g_params[0] == 2;
     s_fsp.alt_color = (int)g_params[1];
-    s_fsp.fl.f.a = g_params[2];
-    if (std::abs(s_fsp.fl.f.a) <= FROTH_CRITICAL_A)
+    s_fsp.a = g_params[2];
+    if (std::abs(s_fsp.a) <= FROTH_CRITICAL_A)
     {
         s_fsp.attractors = !s_fsp.repeat_mapping ? 3 : 6;
     }
@@ -151,24 +124,24 @@ bool froth_setup()
     // 0.5 is the value that causes the mapping to reach a minimum
     constexpr double x0 = 0.5;
     // a/2 is the value that causes the y value to be invariant over the mappings
-    s_fsp.fl.f.half_a = s_fsp.fl.f.a/2;
-    const double y0 = s_fsp.fl.f.half_a;
-    s_fsp.fl.f.top_x1 = froth_top_x_mapping(x0);
-    s_fsp.fl.f.top_x2 = froth_top_x_mapping(s_fsp.fl.f.top_x1);
-    s_fsp.fl.f.top_x3 = froth_top_x_mapping(s_fsp.fl.f.top_x2);
-    s_fsp.fl.f.top_x4 = froth_top_x_mapping(s_fsp.fl.f.top_x3);
+    s_fsp.half_a = s_fsp.a/2;
+    const double y0 = s_fsp.half_a;
+    s_fsp.top_x1 = froth_top_x_mapping(x0);
+    s_fsp.top_x2 = froth_top_x_mapping(s_fsp.top_x1);
+    s_fsp.top_x3 = froth_top_x_mapping(s_fsp.top_x2);
+    s_fsp.top_x4 = froth_top_x_mapping(s_fsp.top_x3);
 
     // rotate 120 degrees counter-clock-wise
-    s_fsp.fl.f.left_x1 = s_fsp.fl.f.top_x1 * cos_theta - y0 * sin_theta;
-    s_fsp.fl.f.left_x2 = s_fsp.fl.f.top_x2 * cos_theta - y0 * sin_theta;
-    s_fsp.fl.f.left_x3 = s_fsp.fl.f.top_x3 * cos_theta - y0 * sin_theta;
-    s_fsp.fl.f.left_x4 = s_fsp.fl.f.top_x4 * cos_theta - y0 * sin_theta;
+    s_fsp.left_x1 = s_fsp.top_x1 * cos_theta - y0 * sin_theta;
+    s_fsp.left_x2 = s_fsp.top_x2 * cos_theta - y0 * sin_theta;
+    s_fsp.left_x3 = s_fsp.top_x3 * cos_theta - y0 * sin_theta;
+    s_fsp.left_x4 = s_fsp.top_x4 * cos_theta - y0 * sin_theta;
 
     // rotate 120 degrees clock-wise
-    s_fsp.fl.f.right_x1 = s_fsp.fl.f.top_x1 * cos_theta + y0 * sin_theta;
-    s_fsp.fl.f.right_x2 = s_fsp.fl.f.top_x2 * cos_theta + y0 * sin_theta;
-    s_fsp.fl.f.right_x3 = s_fsp.fl.f.top_x3 * cos_theta + y0 * sin_theta;
-    s_fsp.fl.f.right_x4 = s_fsp.fl.f.top_x4 * cos_theta + y0 * sin_theta;
+    s_fsp.right_x1 = s_fsp.top_x1 * cos_theta + y0 * sin_theta;
+    s_fsp.right_x2 = s_fsp.top_x2 * cos_theta + y0 * sin_theta;
+    s_fsp.right_x3 = s_fsp.top_x3 * cos_theta + y0 * sin_theta;
+    s_fsp.right_x4 = s_fsp.top_x4 * cos_theta + y0 * sin_theta;
 
     // if 2 attractors, use same shades as 3 attractors
     s_fsp.shades = (g_colors-1) / std::max(3, s_fsp.attractors);
@@ -228,13 +201,13 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
     {
         // simple formula: z = z^2 + conj(z*(-1+ai))
         // but it's the attractor that makes this so interesting
-        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.fl.f.a * g_old_z.y;
-        g_old_z.y += (g_old_z.x + g_old_z.x) * g_old_z.y - s_fsp.fl.f.a * g_old_z.x;
+        g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.a * g_old_z.y;
+        g_old_z.y += (g_old_z.x + g_old_z.x) * g_old_z.y - s_fsp.a * g_old_z.x;
         g_old_z.x = g_new_z.x;
         if (s_fsp.repeat_mapping)
         {
-            g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_fsp.fl.f.a * g_old_z.y;
-            g_old_z.y += (g_old_z.x + g_old_z.x) * g_old_z.y - s_fsp.fl.f.a * g_old_z.x;
+            g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_fsp.a * g_old_z.y;
+            g_old_z.y += (g_old_z.x + g_old_z.x) * g_old_z.y - s_fsp.a * g_old_z.x;
             g_old_z.x = g_new_z.x;
         }
 
@@ -249,19 +222,19 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
             plot_orbit(g_old_z.x, g_old_z.y, -1);
         }
 
-        if (std::abs(s_fsp.fl.f.half_a - g_old_z.y) < FROTH_CLOSE && g_old_z.x >= s_fsp.fl.f.top_x1 &&
-            g_old_z.x <= s_fsp.fl.f.top_x2)
+        if (std::abs(s_fsp.half_a - g_old_z.y) < FROTH_CLOSE && g_old_z.x >= s_fsp.top_x1 &&
+            g_old_z.x <= s_fsp.top_x2)
         {
             if ((!s_fsp.repeat_mapping && s_fsp.attractors == 2) ||
                 (s_fsp.repeat_mapping && s_fsp.attractors == 3))
             {
                 found_attractor = 1;
             }
-            else if (g_old_z.x <= s_fsp.fl.f.top_x3)
+            else if (g_old_z.x <= s_fsp.top_x3)
             {
                 found_attractor = 1;
             }
-            else if (g_old_z.x >= s_fsp.fl.f.top_x4)
+            else if (g_old_z.x >= s_fsp.top_x4)
             {
                 if (!s_fsp.repeat_mapping)
                 {
@@ -273,8 +246,8 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                 }
             }
         }
-        else if (std::abs(FROTH_SLOPE * g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE &&
-            g_old_z.x <= s_fsp.fl.f.right_x1 && g_old_z.x >= s_fsp.fl.f.right_x2)
+        else if (std::abs(FROTH_SLOPE * g_old_z.x - s_fsp.a - g_old_z.y) < FROTH_CLOSE &&
+            g_old_z.x <= s_fsp.right_x1 && g_old_z.x >= s_fsp.right_x2)
         {
             if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
             {
@@ -284,7 +257,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
             {
                 found_attractor = 3;
             }
-            else if (g_old_z.x >= s_fsp.fl.f.right_x3)
+            else if (g_old_z.x >= s_fsp.right_x3)
             {
                 if (!s_fsp.repeat_mapping)
                 {
@@ -295,7 +268,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                     found_attractor = 4;
                 }
             }
-            else if (g_old_z.x <= s_fsp.fl.f.right_x4)
+            else if (g_old_z.x <= s_fsp.right_x4)
             {
                 if (!s_fsp.repeat_mapping)
                 {
@@ -307,8 +280,8 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                 }
             }
         }
-        else if (std::abs(-FROTH_SLOPE * g_old_z.x - s_fsp.fl.f.a - g_old_z.y) < FROTH_CLOSE &&
-            g_old_z.x <= s_fsp.fl.f.left_x1 && g_old_z.x >= s_fsp.fl.f.left_x2)
+        else if (std::abs(-FROTH_SLOPE * g_old_z.x - s_fsp.a - g_old_z.y) < FROTH_CLOSE &&
+            g_old_z.x <= s_fsp.left_x1 && g_old_z.x >= s_fsp.left_x2)
         {
             if (!s_fsp.repeat_mapping && s_fsp.attractors == 2)
             {
@@ -318,7 +291,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
             {
                 found_attractor = 2;
             }
-            else if (g_old_z.x >= s_fsp.fl.f.left_x3)
+            else if (g_old_z.x >= s_fsp.left_x3)
             {
                 if (!s_fsp.repeat_mapping)
                 {
@@ -329,7 +302,7 @@ int calc_froth()   // per pixel 1/2/g, called with row & col set
                     found_attractor = 5;
                 }
             }
-            else if (g_old_z.x <= s_fsp.fl.f.left_x4)
+            else if (g_old_z.x <= s_fsp.left_x4)
             {
                 if (!s_fsp.repeat_mapping)
                 {
@@ -461,13 +434,13 @@ int froth_per_pixel()
 
 int froth_per_orbit()
 {
-    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.fl.f.a * g_old_z.y;
-    g_new_z.y = 2.0 * g_old_z.x * g_old_z.y - s_fsp.fl.f.a * g_old_z.x + g_old_z.y;
+    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.a * g_old_z.y;
+    g_new_z.y = 2.0 * g_old_z.x * g_old_z.y - s_fsp.a * g_old_z.x + g_old_z.y;
     if (s_fsp.repeat_mapping)
     {
         g_old_z = g_new_z;
-        g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_fsp.fl.f.a * g_old_z.y;
-        g_new_z.y = 2.0 * g_old_z.x * g_old_z.y - s_fsp.fl.f.a * g_old_z.x + g_old_z.y;
+        g_new_z.x = sqr(g_old_z.x) - sqr(g_old_z.y) - g_old_z.x - s_fsp.a * g_old_z.y;
+        g_new_z.y = 2.0 * g_old_z.x * g_old_z.y - s_fsp.a * g_old_z.x + g_old_z.y;
     }
 
     g_temp_sqr_x = sqr(g_new_z.x);
