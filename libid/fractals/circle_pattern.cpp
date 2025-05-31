@@ -6,7 +6,7 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 
-int circle_fp_fractal()
+int circle_orbit()
 {
     long i = (long) (g_params[0] * (g_temp_sqr_x + g_temp_sqr_y));
     g_color_iter = i%g_colors;

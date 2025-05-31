@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int circle_fp_fractal();
+int circle_orbit();

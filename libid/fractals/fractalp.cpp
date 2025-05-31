@@ -1251,18 +1251,18 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::CIRCLE,                                //
-        "circle",                                           //
-        {"magnification", "", "", ""},                      //
-        {200000L, 0, 0, 0},                                 //
-        HelpLabels::HT_CIRCLE, HelpLabels::HF_CIRCLE,       //
-        FractalFlags::NONE,                                 //
-        -2.0F, 2.0F, -1.5F, 1.5F,                           //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,   //
-        SymmetryType::XY_AXIS,                              //
-        circle_fp_fractal, julia_per_pixel, julia_fp_setup, //
-        standard_fractal,                                   //
-        NO_BAILOUT                                          //
+        FractalType::CIRCLE,                              //
+        "circle",                                         //
+        {"magnification", "", "", ""},                    //
+        {200000L, 0, 0, 0},                               //
+        HelpLabels::HT_CIRCLE, HelpLabels::HF_CIRCLE,     //
+        FractalFlags::NONE,                               //
+        -2.0F, 2.0F, -1.5F, 1.5F,                         //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
+        SymmetryType::XY_AXIS,                            //
+        circle_orbit, julia_per_pixel, julia_fp_setup,    //
+        standard_fractal,                                 //
+        NO_BAILOUT                                        //
     },
 
     {
