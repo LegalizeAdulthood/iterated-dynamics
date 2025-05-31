@@ -19,10 +19,7 @@ bool add_work_list(Point2i start, Point2i stop, Point2i begin, int pass, int sym
     g_work_list[g_num_work_list].pass = pass;
     g_work_list[g_num_work_list].symmetry = symmetry;
     ++g_num_work_list;
-    if (g_num_work_list > 1)
-    {
-        tidy_work_list();
-    }
+    tidy_work_list();
     return false;
 }
 
@@ -36,13 +33,13 @@ bool add_work_list(int x_from, int y_from, //
         return true;
     }
     g_work_list[g_num_work_list].start.x = x_from;
-    g_work_list[g_num_work_list].stop.x  = x_to;
-    g_work_list[g_num_work_list].begin.x = x_begin;
     g_work_list[g_num_work_list].start.y = y_from;
+    g_work_list[g_num_work_list].stop.x  = x_to;
     g_work_list[g_num_work_list].stop.y  = y_to;
+    g_work_list[g_num_work_list].begin.x = x_begin;
     g_work_list[g_num_work_list].begin.y = y_begin;
     g_work_list[g_num_work_list].pass    = pass;
-    g_work_list[g_num_work_list].symmetry     = symmetry;
+    g_work_list[g_num_work_list].symmetry = symmetry;
     ++g_num_work_list;
     tidy_work_list();
     return false;
@@ -103,6 +100,11 @@ static int combine_work_list() // look for 2 entries which can freely merge
 // combine mergeable entries, resort
 void tidy_work_list()
 {
+    if (g_num_work_list < 2)
+    {
+        return; // nothing to do
+    }
+
     {
         int i;
         while ((i = combine_work_list()) != 0)

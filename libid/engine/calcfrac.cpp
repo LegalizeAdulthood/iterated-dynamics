@@ -923,15 +923,8 @@ static void perform_work_list()
     }
 
     // default set up a new worklist
-    g_num_work_list = 1;
-    g_work_list[0].begin.x = 0;
-    g_work_list[0].start.x = 0;
-    g_work_list[0].begin.y = 0;
-    g_work_list[0].start.y = 0;
-    g_work_list[0].stop.x = g_logical_screen_x_dots - 1;
-    g_work_list[0].stop.y = g_logical_screen_y_dots - 1;
-    g_work_list[0].symmetry = 0;
-    g_work_list[0].pass = 0;
+    g_num_work_list = 0;
+    add_work_list({0, 0}, {g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1}, {0, 0}, 0, 0);
     if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
         int version = start_resume();
