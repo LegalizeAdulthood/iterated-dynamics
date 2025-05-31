@@ -53,8 +53,8 @@ static int skinner_trig_sub_sqr_fp_fractal()
 
 static bool trig_plus_sqr_fp_setup()
 {
-    g_cur_fractal_specific->per_pixel =  julia_fp_per_pixel;
-    g_cur_fractal_specific->orbit_calc =  trig_plus_sqr_fp_fractal;
+    g_cur_fractal_specific->per_pixel = julia_per_pixel;
+    g_cur_fractal_specific->orbit_calc = trig_plus_sqr_fp_fractal;
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_param_z2.x == 1.0)          // Scott variant

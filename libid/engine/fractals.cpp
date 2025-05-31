@@ -247,7 +247,7 @@ void mandel_perturb(
     delta_n.real(dnr);
 }
 
-int julia_fp_per_pixel()
+int julia_per_pixel()
 {
     // floating point julia
     // juliafp
