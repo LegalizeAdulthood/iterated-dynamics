@@ -6,7 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
-int barnsley1_fp_fractal()
+int barnsley1_orbit()
 {
     // Barnsley's Mandelbrot type M1 from "Fractals Everywhere" by Michael Barnsley, p. 322
 
@@ -29,7 +29,7 @@ int barnsley1_fp_fractal()
     return g_bailout_float();
 }
 
-int barnsley2_fp_fractal()
+int barnsley2_orbit()
 {
     // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 331,
     // example 4.2
@@ -54,7 +54,7 @@ int barnsley2_fp_fractal()
     return g_bailout_float();
 }
 
-int barnsley3_fp_fractal()
+int barnsley3_orbit()
 {
     // An unnamed Mandelbrot/Julia function from "Fractals Everywhere" by Michael Barnsley, p. 292,
     // example 4.1

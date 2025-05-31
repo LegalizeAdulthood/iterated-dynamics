@@ -778,93 +778,93 @@ FractalSpecific g_fractal_specific[] =
     },
 
     {
-        FractalType::BARNSLEY_M1,                                       //
-        "barnsleym1",                                                   //
-        {REAL_Z0, IMAG_Z0, "", ""},                                     //
-        {0, 0, 0, 0},                                                   //
-        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M1,            //
-        FractalFlags::BAIL_TEST,                                        //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                       //
-        FractalType::BARNSLEY_J1, FractalType::NO_FRACTAL,              //
-        SymmetryType::XY_AXIS_NO_PARAM,                                 //
-        barnsley1_fp_fractal, other_mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                               //
-        STD_BAILOUT                                                     //
+        FractalType::BARNSLEY_M1,                                  //
+        "barnsleym1",                                              //
+        {REAL_Z0, IMAG_Z0, "", ""},                                //
+        {0, 0, 0, 0},                                              //
+        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M1,       //
+        FractalFlags::BAIL_TEST,                                   //
+        -2.0F, 2.0F, -1.5F, 1.5F,                                  //
+        FractalType::BARNSLEY_J1, FractalType::NO_FRACTAL,         //
+        SymmetryType::XY_AXIS_NO_PARAM,                            //
+        barnsley1_orbit, other_mandel_per_pixel, mandel_per_image, //
+        standard_fractal,                                          //
+        STD_BAILOUT                                                //
     },
 
     {
-        FractalType::BARNSLEY_J1,                                    //
-        "barnsleyj1",                                                //
-        {REAL_PARAM, IMAG_PARAM, "", ""},                            //
-        {0.6, 1.1, 0, 0},                                            //
-        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J1,         //
-        FractalFlags::OK_JB | FractalFlags::BAIL_TEST,               //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                    //
-        FractalType::NO_FRACTAL, FractalType::BARNSLEY_M1,           //
-        SymmetryType::ORIGIN,                                        //
-        barnsley1_fp_fractal, other_julia_per_pixel, julia_fp_setup, //
-        standard_fractal,                                            //
-        STD_BAILOUT                                                  //
+        FractalType::BARNSLEY_J1,                               //
+        "barnsleyj1",                                           //
+        {REAL_PARAM, IMAG_PARAM, "", ""},                       //
+        {0.6, 1.1, 0, 0},                                       //
+        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J1,    //
+        FractalFlags::OK_JB | FractalFlags::BAIL_TEST,          //
+        -2.0F, 2.0F, -1.5F, 1.5F,                               //
+        FractalType::NO_FRACTAL, FractalType::BARNSLEY_M1,      //
+        SymmetryType::ORIGIN,                                   //
+        barnsley1_orbit, other_julia_per_pixel, julia_fp_setup, //
+        standard_fractal,                                       //
+        STD_BAILOUT                                             //
     },
 
     {
-        FractalType::BARNSLEY_M2,                                       //
-        "barnsleym2",                                                   //
-        {REAL_Z0, IMAG_Z0, "", ""},                                     //
-        {0, 0, 0, 0},                                                   //
-        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M2,            //
-        FractalFlags::BAIL_TEST,                                        //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                       //
-        FractalType::BARNSLEY_J2, FractalType::NO_FRACTAL,              //
-        SymmetryType::Y_AXIS_NO_PARAM,                                  //
-        barnsley2_fp_fractal, other_mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                               //
-        STD_BAILOUT                                                     //
+        FractalType::BARNSLEY_M2,                                  //
+        "barnsleym2",                                              //
+        {REAL_Z0, IMAG_Z0, "", ""},                                //
+        {0, 0, 0, 0},                                              //
+        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M2,       //
+        FractalFlags::BAIL_TEST,                                   //
+        -2.0F, 2.0F, -1.5F, 1.5F,                                  //
+        FractalType::BARNSLEY_J2, FractalType::NO_FRACTAL,         //
+        SymmetryType::Y_AXIS_NO_PARAM,                             //
+        barnsley2_orbit, other_mandel_per_pixel, mandel_per_image, //
+        standard_fractal,                                          //
+        STD_BAILOUT                                                //
     },
 
     {
-        FractalType::BARNSLEY_J2,                                    //
-        "barnsleyj2",                                                //
-        {REAL_PARAM, IMAG_PARAM, "", ""},                            //
-        {0.6, 1.1, 0, 0},                                            //
-        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J2,         //
-        FractalFlags::OK_JB | FractalFlags::BAIL_TEST,               //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                    //
-        FractalType::NO_FRACTAL, FractalType::BARNSLEY_M2,           //
-        SymmetryType::ORIGIN,                                        //
-        barnsley2_fp_fractal, other_julia_per_pixel, julia_fp_setup, //
-        standard_fractal,                                            //
-        STD_BAILOUT                                                  //
+        FractalType::BARNSLEY_J2,                               //
+        "barnsleyj2",                                           //
+        {REAL_PARAM, IMAG_PARAM, "", ""},                       //
+        {0.6, 1.1, 0, 0},                                       //
+        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J2,    //
+        FractalFlags::OK_JB | FractalFlags::BAIL_TEST,          //
+        -2.0F, 2.0F, -1.5F, 1.5F,                               //
+        FractalType::NO_FRACTAL, FractalType::BARNSLEY_M2,      //
+        SymmetryType::ORIGIN,                                   //
+        barnsley2_orbit, other_julia_per_pixel, julia_fp_setup, //
+        standard_fractal,                                       //
+        STD_BAILOUT                                             //
     },
 
     {
-        FractalType::BARNSLEY_M3,                                       //
-        "barnsleym3",                                                   //
-        {REAL_Z0, IMAG_Z0, "", ""},                                     //
-        {0, 0, 0, 0},                                                   //
-        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M3,            //
-        FractalFlags::BAIL_TEST,                                        //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                       //
-        FractalType::BARNSLEY_J3, FractalType::NO_FRACTAL,              //
-        SymmetryType::X_AXIS_NO_PARAM,                                  //
-        barnsley3_fp_fractal, other_mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                               //
-        STD_BAILOUT                                                     //
+        FractalType::BARNSLEY_M3,                                  //
+        "barnsleym3",                                              //
+        {REAL_Z0, IMAG_Z0, "", ""},                                //
+        {0, 0, 0, 0},                                              //
+        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_M3,       //
+        FractalFlags::BAIL_TEST,                                   //
+        -2.0F, 2.0F, -1.5F, 1.5F,                                  //
+        FractalType::BARNSLEY_J3, FractalType::NO_FRACTAL,         //
+        SymmetryType::X_AXIS_NO_PARAM,                             //
+        barnsley3_orbit, other_mandel_per_pixel, mandel_per_image, //
+        standard_fractal,                                          //
+        STD_BAILOUT                                                //
     },
 
     {
-        FractalType::BARNSLEY_J3,                                    //
-        "barnsleyj3",                                                //
-        {REAL_PARAM, IMAG_PARAM, "", ""},                            //
-        {0.1, 0.36, 0, 0},                                           //
-        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J3,         //
-        FractalFlags::OK_JB | FractalFlags::BAIL_TEST,               //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                    //
-        FractalType::NO_FRACTAL, FractalType::BARNSLEY_M3,           //
-        SymmetryType::NONE,                                          //
-        barnsley3_fp_fractal, other_julia_per_pixel, julia_fp_setup, //
-        standard_fractal,                                            //
-        STD_BAILOUT                                                  //
+        FractalType::BARNSLEY_J3,                               //
+        "barnsleyj3",                                           //
+        {REAL_PARAM, IMAG_PARAM, "", ""},                       //
+        {0.1, 0.36, 0, 0},                                      //
+        HelpLabels::HT_BARNSLEY, HelpLabels::HF_BARNSLEY_J3,    //
+        FractalFlags::OK_JB | FractalFlags::BAIL_TEST,          //
+        -2.0F, 2.0F, -1.5F, 1.5F,                               //
+        FractalType::NO_FRACTAL, FractalType::BARNSLEY_M3,      //
+        SymmetryType::NONE,                                     //
+        barnsley3_orbit, other_julia_per_pixel, julia_fp_setup, //
+        standard_fractal,                                       //
+        STD_BAILOUT                                             //
     },
 
     {

@@ -2,6 +2,6 @@
 //
 #pragma once
 
-int barnsley1_fp_fractal();
-int barnsley2_fp_fractal();
-int barnsley3_fp_fractal();
+int barnsley1_orbit();
+int barnsley2_orbit();
+int barnsley3_orbit();
