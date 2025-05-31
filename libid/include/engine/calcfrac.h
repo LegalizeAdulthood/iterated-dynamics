@@ -139,7 +139,7 @@ extern int                   g_inside_color;
 extern int                   g_outside_color;
 
 int calc_fract();
-int calc_mand_fp();
+int calc_mandelbrot();
 int standard_fractal();
 int find_alternate_math(FractalType type, BFMathType math);
 int potential(double mag, long iterations);

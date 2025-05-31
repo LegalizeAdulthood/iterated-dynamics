@@ -106,7 +106,7 @@ bool mandel_per_image()
             && g_bailout_test == Bailout::MOD
             && (g_orbit_save_flags & OSF_MIDI) == 0)
         {
-            g_calc_type = calc_mand_fp; // the normal case - use calcmandfp
+            g_calc_type = calc_mandelbrot; // the normal case
             calc_mand_fp_asm_start();
         }
         else
@@ -245,7 +245,7 @@ julia_fp_setup()
             && g_bailout_test == Bailout::MOD
             && (g_orbit_save_flags & OSF_MIDI) == 0)
         {
-            g_calc_type = calc_mand_fp; // the normal case - use calcmandfp
+            g_calc_type = calc_mandelbrot; // the normal case
             calc_mand_fp_asm_start();
         }
         else

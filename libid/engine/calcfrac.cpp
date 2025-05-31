@@ -717,7 +717,7 @@ static void init_calc_fract()
 static bool is_standard_fractal()
 {
     return g_cur_fractal_specific->calc_type == standard_fractal //
-        || g_cur_fractal_specific->calc_type == calc_mand_fp     //
+        || g_cur_fractal_specific->calc_type == calc_mandelbrot  //
         || g_cur_fractal_specific->calc_type == lyapunov         //
         || g_cur_fractal_specific->calc_type == calc_froth;
 }
@@ -1218,7 +1218,7 @@ static long calc_mand_asm()
 // fast per pixel 1/2/b/g, called with row & col set
 // can also handle invert, any rqlim, potflag, zmag, epsilon cross,
 // and all the current outside options
-int calc_mand_fp()
+int calc_mandelbrot()
 {
     if (g_invert != 0)
     {

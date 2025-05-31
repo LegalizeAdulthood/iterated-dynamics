@@ -191,10 +191,10 @@ init_restart:
     g_biomorph         = g_user_biomorph_value;
 
     g_potential_flag = false;
-    if (g_potential_params[0] != 0.0
-        && g_colors >= 64
-        && (g_cur_fractal_specific->calc_type == standard_fractal
-            || g_cur_fractal_specific->calc_type == calc_mand_fp))
+    if (g_potential_params[0] != 0.0                              //
+        && g_colors >= 64                                         //
+        && (g_cur_fractal_specific->calc_type == standard_fractal //
+               || g_cur_fractal_specific->calc_type == calc_mandelbrot))
     {
         g_potential_flag = true;
         g_user_distance_estimator_value = 0;
