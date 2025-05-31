@@ -68,7 +68,7 @@ static int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz)
     return 0;
 }
 
-int newton_fractal2()
+int newton_orbit()
 {
     static char start = 1;
     if (start)
@@ -129,7 +129,7 @@ int newton_fractal2()
     return 0;
 }
 
-bool complex_newton_setup()
+bool complex_newton_per_image()
 {
     s_threshold = .001;
     g_periodicity_check = 0;
@@ -148,7 +148,7 @@ bool complex_newton_setup()
     return true;
 }
 
-int complex_newton()
+int complex_newton_orbit()
 {
     DComplex cd1;
 
@@ -183,7 +183,7 @@ int complex_newton()
     return 0;
 }
 
-int complex_basin()
+int complex_basin_orbit()
 {
     DComplex cd1;
 
@@ -243,7 +243,7 @@ int complex_basin()
 }
 
 // Newton/NewtBasin Routines
-bool newton_setup()
+bool newton_per_image()
 {
     // TODO: is it necessary to update g_cur_fractal_specific?
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));

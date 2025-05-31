@@ -156,7 +156,7 @@ int MandelbrotMix::iterate()
 
 static MandelbrotMix s_mix{};
 
-bool mandelbrot_mix4_setup()
+bool mandelbrot_mix4_per_image()
 {
     return s_mix.setup();
 }

@@ -81,7 +81,7 @@ int popcorn_fractal()
 
 // Popcorn generalization
 
-int popcorn_fractal_fn()
+int popcorn_orbit()
 {
     DComplex tmp_x;
     DComplex tmp_y;

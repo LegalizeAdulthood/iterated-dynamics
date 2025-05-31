@@ -95,7 +95,7 @@ static int lambda_exponent_fractal()
     return 0;
 }
 
-bool lambda_trig_setup()
+bool lambda_trig_per_image()
 {
     g_cur_fractal_specific->orbit_calc = lambda_trig_orbit;
     switch (g_trig_index[0])
@@ -129,7 +129,7 @@ bool lambda_trig_setup()
     return julia_per_image();
 }
 
-bool mandel_trig_setup()
+bool mandel_trig_per_image()
 {
     g_cur_fractal_specific->orbit_calc = lambda_trig_orbit;
     g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;

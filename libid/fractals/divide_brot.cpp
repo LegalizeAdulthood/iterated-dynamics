@@ -113,7 +113,7 @@ int divide_brot5_bn_fractal()
     return g_bailout_bignum();
 }
 
-int divide_brot5_bf_fractal()
+int divide_brot5_orbit_bf()
 {
     BFComplex bf_tmp_new;
     BFComplex bf_numer;
@@ -154,7 +154,7 @@ int divide_brot5_bf_fractal()
     return g_bailout_bigfloat();
 }
 
-bool divide_brot5_setup()
+bool divide_brot5_per_imge()
 {
     g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
     g_b_const = g_params[1] + 1.0e-20;

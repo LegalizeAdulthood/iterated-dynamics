@@ -4,8 +4,8 @@
 
 bool mandel_perturbation_setup();
 bool mandel_z_power_perturbation_setup();
-bool mandel_setup();
+bool burning_ship_per_image();
 bool mandel_per_image();
-bool standalone_setup();
+bool standalone_per_image();
 bool julia_per_image();
-bool standard_setup();
+bool standard_per_image();

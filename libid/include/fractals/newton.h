@@ -6,10 +6,10 @@
 
 void invertz2(DComplex *z);
 
-int newton_fractal2();
+int newton_orbit();
 
-bool complex_newton_setup();
-int complex_newton();
-int complex_basin();
+bool complex_newton_per_image();
+int complex_newton_orbit();
+int complex_basin_orbit();
 
-bool newton_setup();
+bool newton_per_image();

@@ -1804,7 +1804,7 @@ static bool parse_formula_text(const char *text)
     return false;
 }
 
-int formula()
+int formula_orbit()
 {
     if (g_formula_name.empty() || g_overflow)
     {
@@ -1835,7 +1835,7 @@ int formula()
     return g_arg1->d.x == 0.0;
 }
 
-int form_per_pixel()
+int formula_per_pixel()
 {
     if (g_formula_name.empty())
     {
@@ -3013,8 +3013,8 @@ bool run_formula(const std::string &name, bool report_bad_sym)
         }
 
         // all parses succeeded so set the pointers back to good functions
-        g_cur_fractal_specific->per_pixel = form_per_pixel;
-        g_cur_fractal_specific->orbit_calc = formula;
+        g_cur_fractal_specific->per_pixel = formula_per_pixel;
+        g_cur_fractal_specific->orbit_calc = formula_orbit;
         return false;
     }
     return true; // error in making string

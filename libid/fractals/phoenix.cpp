@@ -15,7 +15,7 @@
 
 static DComplex s_tmp2{};
 
-int phoenix_fractal()
+int phoenix_orbit()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
@@ -25,7 +25,7 @@ int phoenix_fractal()
     return g_bailout_float();
 }
 
-int phoenix_fractal_cplx()
+int phoenix_fractal_cplx_orbit()
 {
     // z(n+1) = z(n)^2 + p1 + p2*y(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
@@ -166,7 +166,7 @@ int mand_phoenix_per_pixel()
     return 1; // 1st iteration has been done
 }
 
-bool phoenix_setup()
+bool phoenix_per_image()
 {
     g_float_param = &g_param_z1;
     g_degree = (int)g_param_z2.x;
@@ -177,7 +177,7 @@ bool phoenix_setup()
     g_params[2] = (double)g_degree;
     if (g_degree == 0)
     {
-        g_cur_fractal_specific->orbit_calc = phoenix_fractal;
+        g_cur_fractal_specific->orbit_calc = phoenix_orbit;
     }
     if (g_degree >= 2)
     {
@@ -193,7 +193,7 @@ bool phoenix_setup()
     return true;
 }
 
-bool phoenix_cplx_setup()
+bool phoenix_cplx_per_image()
 {
     g_float_param = &g_param_z1;
     g_degree = (int)g_params[4];
@@ -216,7 +216,7 @@ bool phoenix_cplx_setup()
         {
             g_symmetry = SymmetryType::X_AXIS;
         }
-        g_cur_fractal_specific->orbit_calc = phoenix_fractal_cplx;
+        g_cur_fractal_specific->orbit_calc = phoenix_fractal_cplx_orbit;
     }
     if (g_degree >= 2)
     {
@@ -248,7 +248,7 @@ bool phoenix_cplx_setup()
     return true;
 }
 
-bool mand_phoenix_setup()
+bool mand_phoenix_per_image()
 {
     g_float_param = &g_init;
     g_degree = (int)g_param_z2.x;
@@ -259,7 +259,7 @@ bool mand_phoenix_setup()
     g_params[2] = (double)g_degree;
     if (g_degree == 0)
     {
-        g_cur_fractal_specific->orbit_calc = phoenix_fractal;
+        g_cur_fractal_specific->orbit_calc = phoenix_orbit;
     }
     if (g_degree >= 2)
     {
@@ -275,7 +275,7 @@ bool mand_phoenix_setup()
     return true;
 }
 
-bool mand_phoenix_cplx_setup()
+bool mand_phoenix_cplx_per_image()
 {
     g_float_param = &g_init;
     g_degree = (int)g_params[4];
@@ -290,7 +290,7 @@ bool mand_phoenix_cplx_setup()
     }
     if (g_degree == 0)
     {
-        g_cur_fractal_specific->orbit_calc = phoenix_fractal_cplx;
+        g_cur_fractal_specific->orbit_calc = phoenix_fractal_cplx_orbit;
     }
     if (g_degree >= 2)
     {

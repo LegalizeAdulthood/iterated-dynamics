@@ -94,7 +94,7 @@ static void set_froth_palette()
     }
 }
 
-bool froth_setup()
+bool froth_per_image()
 {
     constexpr double sin_theta = SQRT3 / 2; // sin(2*PI/3)
     constexpr double cos_theta = -0.5;      // cos(2*PI/3)
@@ -432,7 +432,7 @@ int froth_per_pixel()
     return 0;
 }
 
-int froth_per_orbit()
+int froth_orbit()
 {
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - s_fsp.a * g_old_z.y;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y - s_fsp.a * g_old_z.x + g_old_z.y;

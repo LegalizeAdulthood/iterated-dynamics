@@ -91,7 +91,7 @@ static long s_n;
 
 static int z_line(double x, double y);
 
-bool julibrot_setup()
+bool julibrot_per_image()
 {
     const char *map_name;
 
@@ -272,7 +272,7 @@ int calc_standard_4d()
     {
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            get_fractal_specific(g_new_orbit_type)->orbit_calc = float_z_power_fractal;
+            get_fractal_specific(g_new_orbit_type)->orbit_calc = mandel_z_power_orbit;
         }
         else
         {

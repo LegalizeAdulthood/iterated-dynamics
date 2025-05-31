@@ -2,6 +2,6 @@
 //
 #pragma once
 
-bool lya_setup();
+bool lyapunov_per_image();
 int lyapunov();
 int lyapunov_orbit();

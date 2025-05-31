@@ -300,7 +300,7 @@ void bf_corners_to_float()
     }
 }
 
-bool mandel_bn_setup()
+bool mandel_per_image_bn()
 {
     BigStackSaver saved;
     // this should be set up dynamically based on corners
@@ -408,7 +408,7 @@ bool mandel_bn_setup()
     return true;
 }
 
-bool mandel_bf_setup()
+bool mandel_per_image_bf()
 {
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
@@ -534,7 +534,7 @@ bool mandel_bf_setup()
     return true;
 }
 
-int mandel_bn_per_pixel()
+int mandel_per_pixel_bn()
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
@@ -584,7 +584,7 @@ int mandel_bn_per_pixel()
     return 1;                  // 1st iteration has been done
 }
 
-int mandel_bf_per_pixel()
+int mandel_per_pixel_bf()
 {
     // I suspect the following code should be somewhere in perform_worklist() to reset the setup routine to
     // floating point when zooming out. Somehow the math type is restored and the bigflt memory restored, but
@@ -637,8 +637,7 @@ int mandel_bf_per_pixel()
     return 1;                  // 1st iteration has been done
 }
 
-int
-julia_bn_per_pixel()
+int julia_per_pixel_bn()
 {
     // old.x = g_x_min + col*delx + row*delx2
     mult_bn_int(g_old_z_bn.x, g_delta_x_bn, (U16)g_col);
@@ -665,8 +664,7 @@ julia_bn_per_pixel()
     return 1;                  // 1st iteration has been done
 }
 
-int
-julia_bf_per_pixel()
+int julia_per_pixel_bf()
 {
     // old.x = g_x_min + col*delx + row*delx2
     mult_bf_int(g_old_z_bf.x, g_delta_x_bf, (U16)g_col);
@@ -693,8 +691,7 @@ julia_bf_per_pixel()
     return 1;                  // 1st iteration has been done
 }
 
-int
-julia_bn_fractal()
+int julia_orbit_bn()
 {
     // Don't forget, with BigNum numbers, after multiplying or squaring
     // you must shift over by g_shift_factor to get the bn number.
@@ -714,8 +711,7 @@ julia_bn_fractal()
     return g_bailout_bignum();
 }
 
-int
-julia_bf_fractal()
+int julia_orbit_bf()
 {
     // new.x = tmpsqrx - tmpsqry + parm.x;
     sub_a_bf(g_tmp_sqr_x_bf, g_tmp_sqr_y_bf);
@@ -728,8 +724,7 @@ julia_bf_fractal()
     return g_bailout_bigfloat();
 }
 
-int
-julia_z_power_bn_fractal()
+int julia_z_power_bn_fractal()
 {
     BNComplex param2;
     int saved = save_stack();
@@ -746,8 +741,7 @@ julia_z_power_bn_fractal()
     return g_bailout_bignum();
 }
 
-int
-julia_z_power_bf_fractal()
+int julia_z_power_orbit_bf()
 {
     BFComplex param2;
     int saved = save_stack();

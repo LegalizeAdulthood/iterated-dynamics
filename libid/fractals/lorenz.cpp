@@ -270,7 +270,7 @@ static double s_orbit{};
 static double &s_cos_b{s_dx};
 static double &s_sin_sum_a_b_c{s_dy};
 
-bool orbit3d_float_setup()
+bool orbit3d_per_image()
 {
     g_max_count = 0L;
     s_connect = true;
@@ -470,7 +470,7 @@ random_walk:
 //   orbit functions - put in fractalspecific[fractype].orbitcalc
 //****************************************************************
 
-int m_inverse_julia_orbit()
+int inverse_julia_orbit()
 {
     static int random_dir = 0;
     static int random_len = 0;
@@ -615,7 +615,7 @@ int m_inverse_julia_orbit()
     return 1;
 }
 
-int lorenz3d1_float_orbit(double *x, double *y, double *z)
+int lorenz3d1_orbit(double *x, double *y, double *z)
 {
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
@@ -634,7 +634,7 @@ int lorenz3d1_float_orbit(double *x, double *y, double *z)
     return 0;
 }
 
-int lorenz3d_float_orbit(double *x, double *y, double *z)
+int lorenz3d_orbit(double *x, double *y, double *z)
 {
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
@@ -651,7 +651,7 @@ int lorenz3d_float_orbit(double *x, double *y, double *z)
     return 0;
 }
 
-int lorenz3d3_float_orbit(double *x, double *y, double *z)
+int lorenz3d3_orbit(double *x, double *y, double *z)
 {
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
@@ -673,7 +673,7 @@ int lorenz3d3_float_orbit(double *x, double *y, double *z)
     return 0;
 }
 
-int lorenz3d4_float_orbit(double *x, double *y, double *z)
+int lorenz3d4_orbit(double *x, double *y, double *z)
 {
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
@@ -694,7 +694,7 @@ int lorenz3d4_float_orbit(double *x, double *y, double *z)
     return 0;
 }
 
-int henon_float_orbit(double *x, double *y, double * /*z*/)
+int henon_orbit(double *x, double *y, double * /*z*/)
 {
     double new_x = 1 + *y - s_a * (*x) * (*x);
     double new_y = s_b * (*x);
@@ -703,7 +703,7 @@ int henon_float_orbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int rossler_float_orbit(double *x, double *y, double *z)
+int rossler_orbit(double *x, double *y, double *z)
 {
     s_xdt = (*x)*s_dt;
     s_ydt = (*y)*s_dt;
@@ -718,7 +718,7 @@ int rossler_float_orbit(double *x, double *y, double *z)
     return 0;
 }
 
-int pickover_float_orbit(double *x, double *y, double *z)
+int pickover_orbit(double *x, double *y, double *z)
 {
     double new_x = std::sin(s_a * (*y)) - (*z) * std::cos(s_b * (*x));
     double new_y = (*z) * std::sin(s_c * (*x)) - std::cos(s_d * (*y));
@@ -730,7 +730,7 @@ int pickover_float_orbit(double *x, double *y, double *z)
 }
 
 // page 149 "Science of Fractal Images"
-int ginger_bread_float_orbit(double *x, double *y, double * /*z*/)
+int ginger_bread_orbit(double *x, double *y, double * /*z*/)
 {
     double new_x = 1 - (*y) + std::abs(*x);
     *y = *x;
@@ -742,7 +742,7 @@ int ginger_bread_float_orbit(double *x, double *y, double * /*z*/)
 // NTURNS = Outside Orbit
 // TURN2  = Points per orbit
 // a      = Angle
-int kam_torus_float_orbit(double *r, double *s, double *z)
+int kam_torus_orbit(double *r, double *s, double *z)
 {
     if (s_t++ >= s_l_d)
     {
@@ -762,7 +762,7 @@ int kam_torus_float_orbit(double *r, double *s, double *z)
     return 0;
 }
 
-int hopalong2d_float_orbit(double *x, double *y, double * /*z*/)
+int hopalong2d_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y - sign(*x) * std::sqrt(std::abs(s_b * (*x) - s_c));
     *y = s_a - *x;
@@ -770,7 +770,7 @@ int hopalong2d_float_orbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int chip2d_float_orbit(double *x, double *y, double * /*z*/)
+int chip2d_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y -
         sign(*x) * std::cos(sqr(std::log(std::abs(s_b * (*x) - s_c)))) *
@@ -780,7 +780,7 @@ int chip2d_float_orbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int quadrup_two2d_float_orbit(double *x, double *y, double * /*z*/)
+int quadrup_two2d_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y -
         sign(*x) * std::sin(std::log(std::abs(s_b * (*x) - s_c))) *
@@ -790,7 +790,7 @@ int quadrup_two2d_float_orbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int three_ply2d_float_orbit(double *x, double *y, double * /*z*/)
+int three_ply2d_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y - sign(*x) * (std::abs(std::sin(*x) * s_cos_b + s_c - (*x) * s_sin_sum_a_b_c));
     *y = s_a - *x;
@@ -798,7 +798,7 @@ int three_ply2d_float_orbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int martin2d_float_orbit(double *x, double *y, double * /*z*/)
+int martin2d_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y - std::sin(*x);
     *y = s_a - *x;
@@ -806,7 +806,7 @@ int martin2d_float_orbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int mandel_cloud_float(double *x, double *y, double * /*z*/)
+int mandel_cloud_orbit(double *x, double *y, double * /*z*/)
 {
     double x2 = (*x) * (*x);
     double y2 = (*y) * (*y);
@@ -821,7 +821,7 @@ int mandel_cloud_float(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-int dynam_float(double *x, double *y, double * /*z*/)
+int dynamic_orbit(double *x, double *y, double * /*z*/)
 {
     DComplex cp;
     DComplex tmp;
@@ -850,7 +850,7 @@ static const double &GAMMA{g_params[3]};
 static const double &OMEGA{g_params[4]};
 static const double &DEGREE{g_params[5]};
 
-int icon_float_orbit(double *x, double *y, double *z)
+int icon_orbit(double *x, double *y, double *z)
 {
     double old_x = *x;
     double old_y = *y;
@@ -880,7 +880,7 @@ static const double &PAR_B{g_params[1]};
 static const double &PAR_C{g_params[2]};
 static const double &PAR_D{g_params[3]};
 
-int latoo_float_orbit(double *x, double *y, double * /*z*/)
+int latoo_orbit(double *x, double *y, double * /*z*/)
 {
     double x_old = *x;
     double y_old = *y;
@@ -912,7 +912,7 @@ int latoo_float_orbit(double *x, double *y, double * /*z*/)
 //   Main fractal engines - put in fractalspecific[fractype].calctype
 //********************************************************************
 
-int inverse_julia_per_image()
+int inverse_julia_fractal()
 {
     int color = 0;
 
@@ -935,7 +935,7 @@ int inverse_julia_per_image()
     return 0;
 }
 
-int orbit2d_float()
+int orbit2d()
 {
     std::FILE *fp = open_orbit_save();
     Affine cvt;
@@ -1211,7 +1211,7 @@ static int orbit3d_float_calc()
     return ret;
 }
 
-bool dynam2d_float_setup()
+bool dynamic2d_per_image()
 {
     s_connect = false;
     s_euler = false;
@@ -1254,7 +1254,7 @@ bool dynam2d_float_setup()
  * of parameter1 pixels.  maxit differential equation steps are taken, with
  * a step size of parameter2.
  */
-int dynam2d_float()
+int dynamic2d()
 {
     std::FILE *fp = open_orbit_save();
 
@@ -1861,7 +1861,7 @@ static void setup_matrix(Matrix double_mat)
     //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
 }
 
-int orbit3d_float()
+int orbit3d()
 {
     g_display_3d = Display3DMode::MINUS_ONE ;
     s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;

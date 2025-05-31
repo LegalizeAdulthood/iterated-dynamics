@@ -23,20 +23,20 @@ inline DComplex cmplx_bf_to_float(const BFComplex &s)
 }
 
 void bf_corners_to_float();
-bool mandel_bn_setup();
-int mandel_bn_per_pixel();
-int julia_bn_per_pixel();
-int julia_bn_fractal();
+bool mandel_per_image_bn();
+int mandel_per_pixel_bn();
+int julia_per_pixel_bn();
+int julia_orbit_bn();
 int julia_z_power_bn_fractal();
 BNComplex *cmplx_log_bn(BNComplex *t, BNComplex *s);
 BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y);
 BNComplex *cmplx_div_bn(BNComplex *t, BNComplex *x, BNComplex *y);
 BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy);
-bool mandel_bf_setup();
-int mandel_bf_per_pixel();
-int julia_bf_per_pixel();
-int julia_bf_fractal();
-int julia_z_power_bf_fractal();
+bool mandel_per_image_bf();
+int mandel_per_pixel_bf();
+int julia_per_pixel_bf();
+int julia_orbit_bf();
+int julia_z_power_orbit_bf();
 BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s);
 BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y);
 BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y);

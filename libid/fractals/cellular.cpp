@@ -431,7 +431,7 @@ cont_loop:
     return 1;
 }
 
-bool cellular_setup()
+bool cellular_per_image()
 {
     if (!g_resuming)
     {

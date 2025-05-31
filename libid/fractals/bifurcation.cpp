@@ -276,7 +276,7 @@ static bool bif_periodic(long time)
 // The following are Bifurcation "orbitcalc" routines...
 /*                                                                                                    */
 //********************************************************************
-int bifurc_verhulst_trig()
+int bifurc_verhulst_trig_orbit()
 {
     //  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop))
     g_tmp_z.x = g_population;
@@ -286,7 +286,7 @@ int bifurc_verhulst_trig()
     return population_orbit();
 }
 
-int bifurc_stewart_trig()
+int bifurc_stewart_trig_orbit()
 {
     //  Population = (Rate * fn(Population) * fn(Population)) - 1.0
     g_tmp_z.x = g_population;
@@ -296,7 +296,7 @@ int bifurc_stewart_trig()
     return population_orbit();
 }
 
-int bifurc_set_trig_pi()
+int bifurc_set_trig_pi_orbit()
 {
     g_tmp_z.x = g_population * PI;
     g_tmp_z.y = 0;
@@ -305,7 +305,7 @@ int bifurc_set_trig_pi()
     return population_orbit();
 }
 
-int bifurc_add_trig_pi()
+int bifurc_add_trig_pi_orbit()
 {
     g_tmp_z.x = g_population * PI;
     g_tmp_z.y = 0;
@@ -314,7 +314,7 @@ int bifurc_add_trig_pi()
     return population_orbit();
 }
 
-int bifurc_lambda_trig()
+int bifurc_lambda_trig_orbit()
 {
     //  Population = Rate * fn(Population) * (1 - fn(Population))
     g_tmp_z.x = g_population;
@@ -324,7 +324,7 @@ int bifurc_lambda_trig()
     return population_orbit();
 }
 
-int bifurc_may()
+int bifurc_may_orbit()
 {
     /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
             Computers, Pattern, Chaos, and Beauty, page 153 */
@@ -334,7 +334,7 @@ int bifurc_may()
     return population_orbit();
 }
 
-bool bifurc_may_setup()
+bool bifurc_may_per_image()
 {
     g_params[2] = std::max(g_params[2], 2.0);
     s_beta = static_cast<long>(g_params[2]);

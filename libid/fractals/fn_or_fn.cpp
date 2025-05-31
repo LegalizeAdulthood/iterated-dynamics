@@ -9,7 +9,7 @@
 #include "math/arg.h"
 #include "ui/trig_fns.h"
 
-bool mandel_trig_or_trig_setup()
+bool mandel_trig_or_trig_per_image()
 {
     // default symmetry is X_AXIS_NO_PARAM
     g_float_param = &g_init;
@@ -20,7 +20,7 @@ bool mandel_trig_or_trig_setup()
     return true;
 }
 
-bool man_lam_trig_or_trig_setup()
+bool man_lam_trig_or_trig_per_image()
 {
     // pseudo
     // default symmetry is X_AXIS
@@ -36,7 +36,7 @@ bool man_lam_trig_or_trig_setup()
     return true;
 }
 
-bool lambda_trig_or_trig_setup()
+bool lambda_trig_or_trig_per_image()
 {
     // default symmetry is ORIGIN
     g_float_param = &g_param_z1;
@@ -73,7 +73,7 @@ int lambda_trig_or_trig_orbit()
     return g_bailout_float();
 }
 
-bool julia_trig_or_trig_setup()
+bool julia_trig_or_trig_per_image()
 {
     // default symmetry is X_AXIS
     g_float_param = &g_param_z1;
@@ -89,7 +89,7 @@ bool julia_trig_or_trig_setup()
     return true;
 }
 
-int julia_trig_or_trig_obit()
+int julia_trig_or_trig_orbit()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */

@@ -28,7 +28,7 @@
 // --------------------------------------------------------------------
 
 // Mandelbrot Routine
-bool mandel_setup()
+bool burning_ship_per_image()
 {
     if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
@@ -40,7 +40,7 @@ bool mandel_setup()
 }
 
 bool
-standalone_setup()
+standalone_per_image()
 {
     engine_timer(g_cur_fractal_specific->calc_type);
     return false;               // effectively disable solid-guessing
@@ -138,7 +138,7 @@ bool mandel_per_image()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            get_fractal_specific(g_fractal_type)->orbit_calc = float_z_power_fractal;
+            get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_orbit;
         }
         else
         {
@@ -262,7 +262,7 @@ julia_per_image()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
         {
-            get_fractal_specific(g_fractal_type)->orbit_calc = float_z_power_fractal;
+            get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_orbit;
         }
         else
         {
@@ -347,7 +347,7 @@ julia_per_image()
         }
         else
         {
-            g_cur_fractal_specific->orbit_calc = popcorn_fractal_fn;
+            g_cur_fractal_specific->orbit_calc = popcorn_orbit;
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
@@ -368,7 +368,7 @@ julia_per_image()
 }
 
 bool
-standard_setup()
+standard_per_image()
 {
     if (g_fractal_type == FractalType::UNITY)
     {

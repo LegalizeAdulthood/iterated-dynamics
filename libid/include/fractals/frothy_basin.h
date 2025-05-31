@@ -4,6 +4,6 @@
 
 int calc_froth();
 void froth_cleanup();
-int froth_per_orbit();
+int froth_orbit();
 int froth_per_pixel();
-bool froth_setup();
+bool froth_per_image();

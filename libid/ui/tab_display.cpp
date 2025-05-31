@@ -198,7 +198,7 @@ static bool tab_display2(char *msg)
               g_driver->get_name().c_str(), g_driver->get_description().c_str());
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
               g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
-              g_cur_fractal_specific->orbit_calc ==  formula ? "slow parser" :
+              g_cur_fractal_specific->orbit_calc ==  formula_orbit ? "slow parser" :
               g_cur_fractal_specific->orbit_calc ==  bad_formula ? "bad formula" :
               "", g_frm_uses_ismand ? 1 : 0);
     /*

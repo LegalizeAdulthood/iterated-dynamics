@@ -103,7 +103,7 @@ int lyapunov()
 //         7       aaaab
 //         8       aabbbb  etc.
 //
-bool lya_setup()
+bool lyapunov_per_image()
 {
     s_filter_cycles = (long)g_params[2];
     if (s_filter_cycles == 0)

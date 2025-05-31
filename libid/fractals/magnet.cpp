@@ -36,7 +36,7 @@ void float_pre_calc_magnet2() // precalculation for Magnet2 (M & J) for speed
 }
 
 //    Z = ((Z**2 + C - 1)/(2Z + C - 2))**2
-int magnet1_fractal()
+int magnet1_orbit()
 {
     //  In "Beauty of Fractals", code by Kev Allen.
     DComplex top;
@@ -67,7 +67,7 @@ int magnet1_fractal()
 
 // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
 //       (3Z**2 + 3(C-2)Z + (C-1)(C-2)+1) )**2
-int magnet2_fractal()
+int magnet2_orbit()
 {
     //   In "Beauty of Fractals", code by Kev Allen.
     DComplex top;

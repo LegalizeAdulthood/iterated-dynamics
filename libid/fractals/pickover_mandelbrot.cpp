@@ -23,7 +23,7 @@ enum
 
 static long s_pascal_triangle[MAX_POWER]{};
 
-int float_trig_plus_exponent_fractal()
+int mandel_trig_plus_exponent_orbit()
 {
     // another Scientific American biomorph type
     // z(n+1) = e**z(n) + trig(z(n)) + C
@@ -44,7 +44,7 @@ int float_trig_plus_exponent_fractal()
     return g_bailout_float();
 }
 
-int float_z_power_fractal()
+int mandel_z_power_orbit()
 {
     pow(&g_old_z, g_c_exponent, &g_new_z);
     g_new_z.x += g_float_param->x;
@@ -162,7 +162,7 @@ void mandel_z_power_perturb(
     }
 }
 
-int float_z_to_z_plus_z_pwr_fractal()
+int mandel_z_to_z_plus_z_pwr_orbit()
 {
     pow(&g_old_z, (int)g_params[2], &g_new_z);
     g_old_z = complex_power(g_old_z, g_old_z);
@@ -171,7 +171,7 @@ int float_z_to_z_plus_z_pwr_fractal()
     return g_bailout_float();
 }
 
-bool julia_fn_plus_z_sqrd_setup()
+bool julia_fn_plus_z_sqrd_per_image()
 {
     //   static char fnpluszsqrd[] =
     // fn1 ->  sin   cos    sinh  cosh   sqr    exp   log

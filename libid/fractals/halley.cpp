@@ -17,7 +17,7 @@
 static int s_halley_a_plus_one{};
 static int s_halley_a_plus_one_times_degree{};
 
-bool halley_setup()
+bool halley_per_image()
 {
     // Halley
     g_periodicity_check = 0;
@@ -53,7 +53,7 @@ static int halley_bailout()
     return 0;
 }
 
-int halley_fractal()
+int halley_orbit()
 {
     //  X(X^a - 1) = 0, Halley Map
     //  a = parm.x = degree, relaxation coeff. = parm.y, epsilon = parm2.x

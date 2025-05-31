@@ -4,7 +4,7 @@
 
 int lambda_orbit();
 
-bool lambda_trig_setup();
+bool lambda_trig_per_image();
 int lambda_trig_orbit();
 
-bool mandel_trig_setup();
+bool mandel_trig_per_image();

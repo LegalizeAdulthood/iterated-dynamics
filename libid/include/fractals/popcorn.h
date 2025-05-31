@@ -4,4 +4,4 @@
 
 int popcorn();
 int popcorn_fractal();
-int popcorn_fractal_fn();
+int popcorn_orbit();
