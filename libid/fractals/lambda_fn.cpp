@@ -126,7 +126,7 @@ bool lambda_trig_setup()
         break;
     }
     get_julia_attractor(0.0, 0.0);       // an attractor?
-    return julia_fp_setup();
+    return julia_per_image();
 }
 
 bool mandel_trig_setup()

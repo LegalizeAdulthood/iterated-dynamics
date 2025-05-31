@@ -66,7 +66,7 @@ static bool trig_plus_sqr_fp_setup()
             g_cur_fractal_specific->orbit_calc =  skinner_trig_sub_sqr_fp_fractal;
         }
     }
-    return julia_fp_setup();
+    return julia_per_image();
 }
 
 static int scott_trig_plus_trig_fp_fractal()
@@ -109,7 +109,7 @@ bool trig_plus_trig_fp_setup()
             g_cur_fractal_specific->orbit_calc =  skinner_trig_sub_trig_fp_fractal;
         }
     }
-    return julia_fp_setup();
+    return julia_per_image();
 }
 
 int trig_plus_trig_fp_fractal()
@@ -196,7 +196,7 @@ bool fn_x_fn_setup()
             g_symmetry = SymmetryType::PI_SYM;
         }
     }
-    return julia_fp_setup();
+    return julia_per_image();
 }
 
 int trig_x_trig_fp_fractal()
@@ -233,7 +233,7 @@ bool sqr_trig_setup()
     default:
         break;
     }
-    return julia_fp_setup();
+    return julia_per_image();
 }
 
 int sqr_trig_fp_fractal()
@@ -334,7 +334,7 @@ bool z_x_trig_plus_z_setup()
             g_cur_fractal_specific->orbit_calc = skinner_z_x_trig_sub_z_fp_fractal;
         }
     }
-    return julia_fp_setup();
+    return julia_per_image();
 }
 
 int z_x_trig_plus_z_fp_fractal()

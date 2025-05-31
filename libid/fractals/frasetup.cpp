@@ -213,7 +213,7 @@ bool mandel_per_image()
 }
 
 bool
-julia_fp_setup()
+julia_per_image()
 {
     g_c_exponent = (int)g_params[2];
     g_float_param = &g_param_z1;

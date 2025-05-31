@@ -192,7 +192,7 @@ bool julia_fn_plus_z_sqrd_setup()
     default:
         break;
     }
-    return julia_fp_setup();
+    return julia_per_image();
 }
 
 int trig_plus_z_squared_fp_fractal()
