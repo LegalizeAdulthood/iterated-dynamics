@@ -2,5 +2,4 @@
 //
 #pragma once
 
-bool unity_setup();
 int unity_fp_fractal();

@@ -9,12 +9,6 @@
 
 #include <cmath>
 
-bool unity_setup()
-{
-    g_periodicity_check = 0;
-    return true;
-}
-
 int unity_fp_fractal()
 {
     const double XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);
