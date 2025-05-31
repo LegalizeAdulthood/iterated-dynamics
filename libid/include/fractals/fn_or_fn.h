@@ -9,4 +9,4 @@ bool lambda_trig_or_trig_setup();
 int lambda_trig_or_trig_orbit();
 
 bool julia_trig_or_trig_setup();
-int julia_trig_or_trig_fp_fractal();
+int julia_trig_or_trig_obit();

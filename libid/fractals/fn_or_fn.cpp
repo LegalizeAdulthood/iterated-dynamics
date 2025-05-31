@@ -89,7 +89,7 @@ bool julia_trig_or_trig_setup()
     return true;
 }
 
-int julia_trig_or_trig_fp_fractal()
+int julia_trig_or_trig_obit()
 {
     /* z = trig0(z)+p1 if mod(old) < p2.x and
            trig1(z)+p1 if mod(old) >= p2.x */
