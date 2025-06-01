@@ -76,11 +76,11 @@ int boundary_trace()
     int last_fill_color_used = -1;
     g_got_status = StatusValues::BOUNDARY_TRACE;
     int max_put_line_length = 0; // reset max_putline_length
-    for (int cur_row = g_i_y_start; cur_row <= g_i_y_stop; cur_row++)
+    for (int cur_row = g_i_start_pt.y; cur_row <= g_i_stop_pt.y; cur_row++)
     {
         g_reset_periodicity = true; // reset for a new row
         g_color = BK_COLOR;
-        for (int cur_col = g_i_x_start; cur_col <= g_i_x_stop; cur_col++)
+        for (int cur_col = g_i_start_pt.x; cur_col <= g_i_stop_pt.x; cur_col++)
         {
             if (get_color(cur_col, cur_row) != BK_COLOR)
             {
@@ -96,12 +96,12 @@ int boundary_trace()
                 {
                     (*g_plot)(g_col, g_row, BK_COLOR);
                 }
-                if (g_i_y_stop != g_yy_stop)
+                if (g_i_stop_pt.y != g_stop_pt.y)
                 {
-                    g_i_y_stop = g_yy_stop - (cur_row - g_yy_start); // allow for sym
+                    g_i_stop_pt.y = g_stop_pt.y - (cur_row - g_start_pt.y); // allow for sym
                 }
                 add_work_list(
-                    g_xx_start, cur_row, g_xx_stop, g_i_y_stop, cur_col, cur_row, 0, g_work_symmetry);
+                    g_start_pt.x, cur_row, g_stop_pt.x, g_i_stop_pt.y, cur_col, cur_row, 0, g_work_symmetry);
                 return -1;
             }
             g_reset_periodicity = false; // normal periodicity checking
@@ -126,9 +126,9 @@ int boundary_trace()
             {
                 step_col_row();
                 if (g_row >= cur_row        //
-                    && g_col >= g_i_x_start //
-                    && g_col <= g_i_x_stop  //
-                    && g_row <= g_i_y_stop)
+                    && g_col >= g_i_start_pt.x //
+                    && g_col <= g_i_stop_pt.x  //
+                    && g_row <= g_i_stop_pt.y)
                 {
                     g_color = get_color(g_col, g_row);
                     // g_color, g_row, g_col are global for (*g_calc_type)()
@@ -138,12 +138,12 @@ int boundary_trace()
                         {
                             (*g_plot)(g_col, g_row, BK_COLOR);
                         }
-                        if (g_i_y_stop != g_yy_stop)
+                        if (g_i_stop_pt.y != g_stop_pt.y)
                         {
-                            g_i_y_stop = g_yy_stop - (cur_row - g_yy_start); // allow for sym
+                            g_i_stop_pt.y = g_stop_pt.y - (cur_row - g_start_pt.y); // allow for sym
                         }
                         add_work_list(
-                            g_xx_start, cur_row, g_xx_stop, g_i_y_stop, cur_col, cur_row, 0, g_work_symmetry);
+                            g_start_pt.x, cur_row, g_stop_pt.x, g_i_stop_pt.y, cur_col, cur_row, 0, g_work_symmetry);
                         return -1;
                     }
                     if (g_color == trail_color)
@@ -191,9 +191,9 @@ int boundary_trace()
                 {
                     step_col_row();
                     if (g_row >= cur_row                          //
-                        && g_col >= g_i_x_start                   //
-                        && g_col <= g_i_x_stop                    //
-                        && g_row <= g_i_y_stop                    //
+                        && g_col >= g_i_start_pt.x                   //
+                        && g_col <= g_i_stop_pt.x                    //
+                        && g_row <= g_i_stop_pt.y                    //
                         && get_color(g_col, g_row) == trail_color) // getcolor() must be last
                     {
                         if (s_going_to == Direction::SOUTH ||
@@ -201,7 +201,7 @@ int boundary_trace()
                         {
                             // fill a row, but only once
                             int right = g_col;
-                            while (--right >= g_i_x_start && (g_color = get_color(right,g_row)) == trail_color)
+                            while (--right >= g_i_start_pt.x && (g_color = get_color(right,g_row)) == trail_color)
                             {
                                 // do nothing
                             }
@@ -210,7 +210,7 @@ int boundary_trace()
                                 int left = right;
                                 while (get_color(--left,g_row) == BK_COLOR)
                                 {
-                                    // Should NOT be possible for left < g_i_x_start
+                                    // Should NOT be possible for left < g_i_start_pt.x
                                     // do nothing
                                 }
                                 left++; // one pixel too far

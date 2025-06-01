@@ -111,57 +111,52 @@ static int s_show_dot_width{};        //
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
-double g_f_at_rad{};                            // finite attractor radius
-DComplex g_init{};                              //
-DComplex g_tmp_z{};                             //
-DComplex g_old_z{};                             //
-DComplex g_new_z{};                             //
-int g_color{};                                  //
-long g_color_iter{};                            //
-long g_old_color_iter{};                        //
-long g_real_color_iter{};                       //
-int g_row{};                                    //
-int g_col{};                                    //
-int g_invert{};                                 //
-double g_f_radius{};                            //
-double g_f_x_center{};                          //
-double g_f_y_center{};                          // for inversion
+double g_f_at_rad{};                             // finite attractor radius
+DComplex g_init{};                               //
+DComplex g_tmp_z{};                              //
+DComplex g_old_z{};                              //
+DComplex g_new_z{};                              //
+int g_color{};                                   //
+long g_color_iter{};                             //
+long g_old_color_iter{};                         //
+long g_real_color_iter{};                        //
+int g_row{};                                     //
+int g_col{};                                     //
+int g_invert{};                                  //
+double g_f_radius{};                             //
+double g_f_x_center{};                           //
+double g_f_y_center{};                           // for inversion
 void (*g_put_color)(int, int, int){put_color_a}; //
 void (*g_plot)(int, int, int){put_color_a};      //
-double g_magnitude{};                           //
-double g_magnitude_limit{};                     //
-double g_magnitude_limit2{};                    //
-bool g_magnitude_calc{true};                    //
-bool g_use_old_periodicity{};                   //
-bool g_use_old_distance_estimator{};            //
-bool g_old_demm_colors{};                       //
-int (*g_calc_type)(){};                         //
-bool g_quick_calc{};                            //
-double g_close_proximity{0.01};                 //
-double g_close_enough{};                        //
-int g_pi_in_pixels{};                           // value of pi in pixels
-                                                // ORBIT variables
-bool g_show_orbit{};                            // flag to turn on and off
-int g_orbit_save_index{};                       // index into save_orbit array
-int g_orbit_color{15};                          // XOR color
-SymmetryType g_symmetry{};                     // symmetry flag
-SymmetryType g_force_symmetry{};               // force symmetry
-bool g_reset_periodicity{};                     // true if escape time pixel rtn to reset
-int g_keyboard_check_interval{};                //
-int g_max_keyboard_check_interval{};            // avoids checking keyboard too often
-int g_xx_start{};                               // current work list entry being computedd
-int g_yy_start{};                               //
-int g_xx_stop{};                                //
-int g_yy_stop{};                                //
-int g_xx_begin{};                               // these are same as work list,
-int g_yy_begin{};                               // declared as separate items
-int g_i_x_start{};                              //
-int g_i_y_start{};                              //
-int g_i_x_stop{};                               //
-int g_i_y_stop{};                               // start, stop here
-int g_work_pass{};                              //
-int g_work_symmetry{};                          // for the sake of calcmand
-StatusValues g_got_status{StatusValues::NONE}; // variables which must be visible for tab_display
+double g_magnitude{};                            //
+double g_magnitude_limit{};                      //
+double g_magnitude_limit2{};                     //
+bool g_magnitude_calc{true};                     //
+bool g_use_old_periodicity{};                    //
+bool g_use_old_distance_estimator{};             //
+bool g_old_demm_colors{};                        //
+int (*g_calc_type)(){};                          //
+bool g_quick_calc{};                             //
+double g_close_proximity{0.01};                  //
+double g_close_enough{};                         //
+int g_pi_in_pixels{};                            // value of pi in pixels
+                                                 // ORBIT variables
+bool g_show_orbit{};                             // flag to turn on and off
+int g_orbit_save_index{};                        // index into save_orbit array
+int g_orbit_color{15};                           // XOR color
+SymmetryType g_symmetry{};                       // symmetry flag
+SymmetryType g_force_symmetry{};                 // force symmetry
+bool g_reset_periodicity{};                      // true if escape time pixel rtn to reset
+int g_keyboard_check_interval{};                 //
+int g_max_keyboard_check_interval{};             // avoids checking keyboard too often
+Point2i g_start_pt{};                            // current work list entry being computedd
+Point2i g_stop_pt{};                             // these are same as work list,
+Point2i g_begin_pt{};                            // declared as separate items
+Point2i g_i_start_pt{};                          // start point for work list
+Point2i g_i_stop_pt{};                           // start, stop here
+int g_work_pass{};                               //
+int g_work_symmetry{};                           // for the sake of calcmand
+StatusValues g_got_status{StatusValues::NONE};   // variables which must be visible for tab_display
 int g_current_pass{};                            //
 int g_total_passes{};                            //
 int g_current_row{};                             //
@@ -258,8 +253,8 @@ void sym_fill_line(int row, int left, int right, Byte *str)
     }
     else if (g_plot == sym_plot2)   // X-axis symmetry
     {
-        int i = g_yy_stop-(row-g_yy_start);
-        if (i > g_i_y_stop && i < g_logical_screen_y_dots)
+        int i = g_stop_pt.y-(row-g_start_pt.y);
+        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
         {
             write_span(i, left, right, str);
             g_keyboard_check_interval -= length >> 3;
@@ -267,15 +262,15 @@ void sym_fill_line(int row, int left, int right, Byte *str)
     }
     else if (g_plot == sym_plot2y) // Y-axis symmetry
     {
-        write_span(row, g_xx_stop-(right-g_xx_start), g_xx_stop-(left-g_xx_start), str);
+        write_span(row, g_stop_pt.x-(right-g_start_pt.x), g_stop_pt.x-(left-g_start_pt.x), str);
         g_keyboard_check_interval -= length >> 3;
     }
     else if (g_plot == sym_plot2j)  // Origin symmetry
     {
-        int i = g_yy_stop-(row-g_yy_start);
-        int j = std::min(g_xx_stop-(right-g_xx_start), g_logical_screen_x_dots-1);
-        int k = std::min(g_xx_stop-(left -g_xx_start), g_logical_screen_x_dots-1);
-        if (i > g_i_y_stop && i < g_logical_screen_y_dots && j <= k)
+        int i = g_stop_pt.y-(row-g_start_pt.y);
+        int j = std::min(g_stop_pt.x-(right-g_start_pt.x), g_logical_screen_x_dots-1);
+        int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen_x_dots-1);
+        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots && j <= k)
         {
             write_span(i, j, k, str);
         }
@@ -283,10 +278,10 @@ void sym_fill_line(int row, int left, int right, Byte *str)
     }
     else if (g_plot == sym_plot4) // X-axis and Y-axis symmetry
     {
-        int i = g_yy_stop-(row-g_yy_start);
-        int j = std::min(g_xx_stop-(right-g_xx_start), g_logical_screen_x_dots-1);
-        int k = std::min(g_xx_stop-(left -g_xx_start), g_logical_screen_x_dots-1);
-        if (i > g_i_y_stop && i < g_logical_screen_y_dots)
+        int i = g_stop_pt.y-(row-g_start_pt.y);
+        int j = std::min(g_stop_pt.x-(right-g_start_pt.x), g_logical_screen_x_dots-1);
+        int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen_x_dots-1);
+        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
         {
             write_span(i, left, right, str);
             if (j <= k)
@@ -323,8 +318,8 @@ static void sym_put_line(int row, int left, int right, Byte *str)
     }
     else if (g_plot == sym_plot2)   // X-axis symmetry
     {
-        int i = g_yy_stop-(row-g_yy_start);
-        if (i > g_i_y_stop && i < g_logical_screen_y_dots)
+        int i = g_stop_pt.y-(row-g_start_pt.y);
+        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
         {
             write_span(i, left, right, str);
         }
@@ -438,7 +433,7 @@ static int calc_type_show_dot()
     int width = s_show_dot_width + 1;
     if (width > 0)
     {
-        if (g_col+width <= g_i_x_stop && g_row+width <= g_i_y_stop)
+        if (g_col+width <= g_i_stop_pt.x && g_row+width <= g_i_stop_pt.y)
         {
             // preferred show dot shape
             direction = ShowDotDirection::UPPER_LEFT;
@@ -447,7 +442,7 @@ static int calc_type_show_dot()
             start_y = g_row+width;
             stop_y  = g_row+1;
         }
-        else if (g_col-width >= g_i_x_start && g_row+width <= g_i_y_stop)
+        else if (g_col-width >= g_i_start_pt.x && g_row+width <= g_i_stop_pt.y)
         {
             // second choice
             direction = ShowDotDirection::UPPER_RIGHT;
@@ -456,7 +451,7 @@ static int calc_type_show_dot()
             start_y = g_row+width;
             stop_y  = g_row+1;
         }
-        else if (g_col-width >= g_i_x_start && g_row-width >= g_i_y_start)
+        else if (g_col-width >= g_i_start_pt.x && g_row-width >= g_i_start_pt.y)
         {
             direction = ShowDotDirection::LOWER_RIGHT;
             start_x = g_col-width;
@@ -464,7 +459,7 @@ static int calc_type_show_dot()
             start_y = g_row-width;
             stop_y  = g_row-1;
         }
-        else if (g_col+width <= g_i_x_stop && g_row-width >= g_i_y_start)
+        else if (g_col+width <= g_i_stop_pt.x && g_row-width >= g_i_start_pt.y)
         {
             direction = ShowDotDirection::LOWER_LEFT;
             start_x = g_col;
@@ -727,16 +722,16 @@ static void calc_non_standard_fractal()
     g_calc_type = g_cur_fractal_specific->calc_type; // per_image can override
     g_symmetry = g_cur_fractal_specific->symmetry;   //   calctype & symmetry
     g_plot = g_put_color;                            // defaults when setsymmetry not called or does nothing
-    g_xx_begin = 0;
-    g_yy_begin = 0;
-    g_xx_start = 0;
-    g_yy_start = 0;
-    g_i_x_start = 0;
-    g_i_y_start = 0;
-    g_yy_stop = g_logical_screen_y_dots - 1;
-    g_i_y_stop = g_logical_screen_y_dots - 1;
-    g_xx_stop = g_logical_screen_x_dots - 1;
-    g_i_x_stop = g_logical_screen_x_dots - 1;
+    g_begin_pt.x = 0;
+    g_begin_pt.y = 0;
+    g_start_pt.x = 0;
+    g_start_pt.y = 0;
+    g_i_start_pt.x = 0;
+    g_i_start_pt.y = 0;
+    g_stop_pt.y = g_logical_screen_y_dots - 1;
+    g_i_stop_pt.y = g_logical_screen_y_dots - 1;
+    g_stop_pt.x = g_logical_screen_x_dots - 1;
+    g_i_stop_pt.x = g_logical_screen_x_dots - 1;
     g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
     g_distance_estimator = 0;                // only standard escape time engine supports distest
     // per_image routine is run here
@@ -942,7 +937,7 @@ static void perform_work_list()
         end_resume();
         if (version < 2)
         {
-            g_xx_begin = 0;
+            g_begin_pt.x = 0;
         }
     }
 
@@ -1018,16 +1013,16 @@ static void perform_work_list()
         g_plot = g_put_color; // defaults when set symmetry not called or does nothing
 
         // pull top entry off work list
-        g_xx_start = g_work_list[0].start.x;
-        g_yy_start = g_work_list[0].start.y;
-        g_i_x_start = g_work_list[0].start.x;
-        g_i_y_start = g_work_list[0].start.y;
-        g_xx_stop = g_work_list[0].stop.x;
-        g_yy_stop = g_work_list[0].stop.y;
-        g_i_x_stop = g_work_list[0].stop.x;
-        g_i_y_stop = g_work_list[0].stop.y;
-        g_xx_begin = g_work_list[0].begin.x;
-        g_yy_begin = g_work_list[0].begin.y;
+        g_start_pt.x = g_work_list[0].start.x;
+        g_start_pt.y = g_work_list[0].start.y;
+        g_i_start_pt.x = g_work_list[0].start.x;
+        g_i_start_pt.y = g_work_list[0].start.y;
+        g_stop_pt.x = g_work_list[0].stop.x;
+        g_stop_pt.y = g_work_list[0].stop.y;
+        g_i_stop_pt.x = g_work_list[0].stop.x;
+        g_i_stop_pt.y = g_work_list[0].stop.y;
+        g_begin_pt.x = g_work_list[0].begin.x;
+        g_begin_pt.y = g_work_list[0].begin.y;
         g_work_pass = g_work_list[0].pass;
         g_work_symmetry = g_work_list[0].symmetry;
         work_list_pop_front();
@@ -2219,46 +2214,46 @@ static bool x_sym_split(int x_axis_row, bool x_axis_between)
     }
     if ((g_work_symmetry & 1) != 0) // already decided on sym
     {
-        g_i_y_stop = (g_yy_start+g_yy_stop)/2;
+        g_i_stop_pt.y = (g_start_pt.y+g_stop_pt.y)/2;
     }
     else   // new window, decide
     {
         g_work_symmetry |= 0x10;
-        if (x_axis_row <= g_yy_start || x_axis_row >= g_yy_stop)
+        if (x_axis_row <= g_start_pt.y || x_axis_row >= g_stop_pt.y)
         {
             return true; // axis not in window
         }
-        int i = x_axis_row + (x_axis_row - g_yy_start);
+        int i = x_axis_row + (x_axis_row - g_start_pt.y);
         if (x_axis_between)
         {
             ++i;
         }
-        if (i > g_yy_stop) // split into 2 pieces, bottom has the symmetry
+        if (i > g_stop_pt.y) // split into 2 pieces, bottom has the symmetry
         {
             if (g_num_work_list >= MAX_CALC_WORK-1)   // no room to split
             {
                 return true;
             }
-            g_i_y_stop = x_axis_row - (g_yy_stop - x_axis_row);
+            g_i_stop_pt.y = x_axis_row - (g_stop_pt.y - x_axis_row);
             if (!x_axis_between)
             {
-                --g_i_y_stop;
+                --g_i_stop_pt.y;
             }
             add_work_list(
-                g_xx_start, g_i_y_stop + 1, g_xx_stop, g_yy_stop, g_xx_start, g_i_y_stop + 1, g_work_pass, 0);
-            g_yy_stop = g_i_y_stop;
+                g_start_pt.x, g_i_stop_pt.y + 1, g_stop_pt.x, g_stop_pt.y, g_start_pt.x, g_i_stop_pt.y + 1, g_work_pass, 0);
+            g_stop_pt.y = g_i_stop_pt.y;
             return true; // tell set_symmetry no sym for current window
         }
-        if (i < g_yy_stop) // split into 2 pieces, top has the symmetry
+        if (i < g_stop_pt.y) // split into 2 pieces, top has the symmetry
         {
             if (g_num_work_list >= MAX_CALC_WORK-1)   // no room to split
             {
                 return true;
             }
-            add_work_list(g_xx_start, i + 1, g_xx_stop, g_yy_stop, g_xx_start, i + 1, g_work_pass, 0);
-            g_yy_stop = i;
+            add_work_list(g_start_pt.x, i + 1, g_stop_pt.x, g_stop_pt.y, g_start_pt.x, i + 1, g_work_pass, 0);
+            g_stop_pt.y = i;
         }
-        g_i_y_stop = x_axis_row;
+        g_i_stop_pt.y = x_axis_row;
         g_work_symmetry |= 1;
     }
     g_symmetry = SymmetryType::NONE;
@@ -2273,46 +2268,46 @@ static bool y_sym_split(int y_axis_col, bool y_axis_between)
     }
     if ((g_work_symmetry & 2) != 0) // already decided on sym
     {
-        g_i_x_stop = (g_xx_start+g_xx_stop)/2;
+        g_i_stop_pt.x = (g_start_pt.x+g_stop_pt.x)/2;
     }
     else   // new window, decide
     {
         g_work_symmetry |= 0x20;
-        if (y_axis_col <= g_xx_start || y_axis_col >= g_xx_stop)
+        if (y_axis_col <= g_start_pt.x || y_axis_col >= g_stop_pt.x)
         {
             return true; // axis not in window
         }
-        int i = y_axis_col + (y_axis_col - g_xx_start);
+        int i = y_axis_col + (y_axis_col - g_start_pt.x);
         if (y_axis_between)
         {
             ++i;
         }
-        if (i > g_xx_stop) // split into 2 pieces, right has the symmetry
+        if (i > g_stop_pt.x) // split into 2 pieces, right has the symmetry
         {
             if (g_num_work_list >= MAX_CALC_WORK-1)   // no room to split
             {
                 return true;
             }
-            g_i_x_stop = y_axis_col - (g_xx_stop - y_axis_col);
+            g_i_stop_pt.x = y_axis_col - (g_stop_pt.x - y_axis_col);
             if (!y_axis_between)
             {
-                --g_i_x_stop;
+                --g_i_stop_pt.x;
             }
             add_work_list(
-                g_i_x_stop + 1, g_yy_start, g_xx_stop, g_yy_stop, g_i_x_stop + 1, g_yy_start, g_work_pass, 0);
-            g_xx_stop = g_i_x_stop;
+                g_i_stop_pt.x + 1, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_i_stop_pt.x + 1, g_start_pt.y, g_work_pass, 0);
+            g_stop_pt.x = g_i_stop_pt.x;
             return true; // tell set_symmetry no sym for current window
         }
-        if (i < g_xx_stop) // split into 2 pieces, left has the symmetry
+        if (i < g_stop_pt.x) // split into 2 pieces, left has the symmetry
         {
             if (g_num_work_list >= MAX_CALC_WORK-1)   // no room to split
             {
                 return true;
             }
-            add_work_list(i + 1, g_yy_start, g_xx_stop, g_yy_stop, i + 1, g_yy_start, g_work_pass, 0);
-            g_xx_stop = i;
+            add_work_list(i + 1, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, i + 1, g_start_pt.y, g_work_pass, 0);
+            g_stop_pt.x = i;
         }
-        g_i_x_stop = y_axis_col;
+        g_i_stop_pt.x = y_axis_col;
         g_work_symmetry |= 2;
     }
     g_symmetry = SymmetryType::NONE;
@@ -2535,7 +2530,7 @@ x_symmetry:
         case 2: // just yaxis symmetry
             if (g_basin) // got no routine for this case
             {
-                g_i_x_stop = g_xx_stop; // fix what split should not have done
+                g_i_stop_pt.x = g_stop_pt.x; // fix what split should not have done
                 g_symmetry = SymmetryType::X_AXIS;
             }
             else
@@ -2565,11 +2560,11 @@ origin_symmetry:
             && !y_sym_split(y_axis_col, y_axis_between))
         {
             g_plot = sym_plot2j;
-            g_i_x_stop = g_xx_stop; // didn't want this changed
+            g_i_stop_pt.x = g_stop_pt.x; // didn't want this changed
         }
         else
         {
-            g_i_y_stop = g_yy_stop; // in case first split worked
+            g_i_stop_pt.y = g_stop_pt.y; // in case first split worked
             g_symmetry = SymmetryType::X_AXIS;
             g_work_symmetry = 0x30; // let it recombine with others like it
         }
@@ -2614,7 +2609,7 @@ origin_symmetry:
         }
         else
         {
-            g_i_y_stop = g_yy_stop; // in case first split worked
+            g_i_stop_pt.y = g_stop_pt.y; // in case first split worked
             g_work_symmetry = 0x30;  // don't mark pisym as ysym, just do it unmarked
         }
         if (g_bf_math != BFMathType::NONE)
@@ -2628,12 +2623,12 @@ origin_symmetry:
             g_pi_in_pixels = (int)((PI/std::abs(g_x_max-g_x_min))*g_logical_screen_x_dots); // PI in pixels
         }
 
-        g_i_x_stop = g_xx_start + g_pi_in_pixels - 1;
-        g_i_x_stop = std::min(g_i_x_stop, g_xx_stop);
-        i = (g_xx_start+g_xx_stop)/2;
-        if (g_plot == sym_pi_plot4j && g_i_x_stop > i)
+        g_i_stop_pt.x = g_start_pt.x + g_pi_in_pixels - 1;
+        g_i_stop_pt.x = std::min(g_i_stop_pt.x, g_stop_pt.x);
+        i = (g_start_pt.x+g_stop_pt.x)/2;
+        if (g_plot == sym_pi_plot4j && g_i_stop_pt.x > i)
         {
-            g_i_x_stop = i;
+            g_i_stop_pt.x = i;
         }
         break;
     default:                  // no symmetry
@@ -2761,7 +2756,7 @@ ack: // bailout here if key is pressed
 // Symmetry plot for period PI
 void sym_pi_plot(int x, int y, int color)
 {
-    while (x <= g_xx_stop)
+    while (x <= g_stop_pt.x)
     {
         g_put_color(x, y, color) ;
         x += g_pi_in_pixels;
@@ -2772,12 +2767,12 @@ void sym_pi_plot(int x, int y, int color)
 void sym_pi_plot2j(int x, int y, int color)
 {
     int j;
-    while (x <= g_xx_stop)
+    while (x <= g_stop_pt.x)
     {
         g_put_color(x, y, color) ;
-        int i = g_yy_stop - (y - g_yy_start);
-        if (i > g_i_y_stop && i < g_logical_screen_y_dots
-            && (j = g_xx_stop-(x-g_xx_start)) < g_logical_screen_x_dots)
+        int i = g_stop_pt.y - (y - g_start_pt.y);
+        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots
+            && (j = g_stop_pt.x-(x-g_start_pt.x)) < g_logical_screen_x_dots)
         {
             g_put_color(j, i, color) ;
         }
@@ -2788,16 +2783,16 @@ void sym_pi_plot2j(int x, int y, int color)
 // Symmetry plot for period PI plus Both Axis Symmetry
 void sym_pi_plot4j(int x, int y, int color)
 {
-    while (x <= (g_xx_start+g_xx_stop)/2)
+    while (x <= (g_start_pt.x+g_stop_pt.x)/2)
     {
-        int j = g_xx_stop - (x - g_xx_start);
+        int j = g_stop_pt.x - (x - g_start_pt.x);
         g_put_color(x , y , color) ;
         if (j < g_logical_screen_x_dots)
         {
             g_put_color(j , y , color) ;
         }
-        int i = g_yy_stop - (y - g_yy_start);
-        if (i > g_i_y_stop && i < g_logical_screen_y_dots)
+        int i = g_stop_pt.y - (y - g_start_pt.y);
+        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
         {
             g_put_color(x , i , color) ;
             if (j < g_logical_screen_x_dots)
@@ -2813,8 +2808,8 @@ void sym_pi_plot4j(int x, int y, int color)
 void sym_plot2(int x, int y, int color)
 {
     g_put_color(x, y, color) ;
-    int i = g_yy_stop - (y - g_yy_start);
-    if (i > g_i_y_stop && i < g_logical_screen_y_dots)
+    int i = g_stop_pt.y - (y - g_start_pt.y);
+    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
     {
         g_put_color(x, i, color) ;
     }
@@ -2824,7 +2819,7 @@ void sym_plot2(int x, int y, int color)
 void sym_plot2y(int x, int y, int color)
 {
     g_put_color(x, y, color) ;
-    int i = g_xx_stop - (x - g_xx_start);
+    int i = g_stop_pt.x - (x - g_start_pt.x);
     if (i < g_logical_screen_x_dots)
     {
         g_put_color(i, y, color) ;
@@ -2836,9 +2831,9 @@ void sym_plot2j(int x, int y, int color)
 {
     int j;
     g_put_color(x, y, color) ;
-    int i = g_yy_stop - (y - g_yy_start);
-    if (i > g_i_y_stop && i < g_logical_screen_y_dots
-        && (j = g_xx_stop-(x-g_xx_start)) < g_logical_screen_x_dots)
+    int i = g_stop_pt.y - (y - g_start_pt.y);
+    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots
+        && (j = g_stop_pt.x-(x-g_start_pt.x)) < g_logical_screen_x_dots)
     {
         g_put_color(j, i, color) ;
     }
@@ -2847,14 +2842,14 @@ void sym_plot2j(int x, int y, int color)
 // Symmetry plot for Both Axis Symmetry
 void sym_plot4(int x, int y, int color)
 {
-    int j = g_xx_stop - (x - g_xx_start);
+    int j = g_stop_pt.x - (x - g_start_pt.x);
     g_put_color(x , y, color) ;
     if (j < g_logical_screen_x_dots)
     {
         g_put_color(j , y, color) ;
     }
-    int i = g_yy_stop - (y - g_yy_start);
-    if (i > g_i_y_stop && i < g_logical_screen_y_dots)
+    int i = g_stop_pt.y - (y - g_start_pt.y);
+    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
     {
         g_put_color(x , i, color) ;
         if (j < g_logical_screen_x_dots)
@@ -2877,8 +2872,8 @@ void sym_plot2_basin(int x, int y, int color)
     {
         stripe = 0;
     }
-    int i = g_yy_stop - (y - g_yy_start);
-    if (i > g_i_y_stop && i < g_logical_screen_y_dots)
+    int i = g_stop_pt.y - (y - g_start_pt.y);
+    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
     {
         color -= stripe;                    // reconstruct unstriped color
         color = (g_degree+1-color)%g_degree+1;  // symmetrical color
@@ -2914,14 +2909,14 @@ void sym_plot4_basin(int x, int y, int color)
     {
         color1 = g_degree/2+g_degree+2 - color;
     }
-    int j = g_xx_stop - (x - g_xx_start);
+    int j = g_stop_pt.x - (x - g_start_pt.x);
     g_put_color(x, y, color+stripe) ;
     if (j < g_logical_screen_x_dots)
     {
         g_put_color(j, y, color1+stripe) ;
     }
-    int i = g_yy_stop - (y - g_yy_start);
-    if (i > g_i_y_stop && i < g_logical_screen_y_dots)
+    int i = g_stop_pt.y - (y - g_start_pt.y);
+    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
     {
         g_put_color(x, i, stripe + (g_degree+1 - color)%g_degree+1) ;
         if (j < g_logical_screen_x_dots)

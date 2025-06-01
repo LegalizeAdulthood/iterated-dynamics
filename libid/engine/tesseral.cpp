@@ -32,22 +32,22 @@ int tesseral()
 {
     s_guess_plot = (g_plot != g_put_color && g_plot != sym_plot2);
     Tess *tp = (Tess *) &s_stack[0];
-    tp->x1 = g_i_x_start;                              // set up initial box
-    tp->x2 = g_i_x_stop;
-    tp->y1 = g_i_y_start;
-    tp->y2 = g_i_y_stop;
+    tp->x1 = g_i_start_pt.x;                              // set up initial box
+    tp->x2 = g_i_stop_pt.x;
+    tp->y1 = g_i_start_pt.y;
+    tp->y2 = g_i_stop_pt.y;
 
     if (g_work_pass == 0) // not resuming
     {
-        tp->top = tess_row(g_i_x_start, g_i_x_stop, g_i_y_start);     // Do top row
-        tp->bot = tess_row(g_i_x_start, g_i_x_stop, g_i_y_stop);      // Do bottom row
-        tp->lft = tess_col(g_i_x_start, g_i_y_start+1, g_i_y_stop-1); // Do left column
-        tp->rgt = tess_col(g_i_x_stop, g_i_y_start+1, g_i_y_stop-1);  // Do right column
+        tp->top = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_start_pt.y);     // Do top row
+        tp->bot = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_stop_pt.y);      // Do bottom row
+        tp->lft = tess_col(g_i_start_pt.x, g_i_start_pt.y+1, g_i_stop_pt.y-1); // Do left column
+        tp->rgt = tess_col(g_i_stop_pt.x, g_i_start_pt.y+1, g_i_stop_pt.y-1);  // Do right column
         if (check_key())
         {
             // interrupt before we got properly rolling
             add_work_list(
-                g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, g_yy_start, 0, g_work_symmetry);
+                g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_start_pt.x, g_start_pt.y, 0, g_work_symmetry);
             return -1;
         }
     }
@@ -58,9 +58,9 @@ int tesseral()
         tp->lft = -2;
         tp->bot = -2;
         tp->top = -2;
-        int cur_y = g_yy_begin & 0xfff;
+        int cur_y = g_begin_pt.y & 0xfff;
         int y_size = 1;
-        int i = (unsigned) g_yy_begin >> 12;
+        int i = (unsigned) g_begin_pt.y >> 12;
         while (--i >= 0)
         {
             y_size <<= 1;
@@ -219,8 +219,8 @@ int tesseral()
                         write_span(g_row, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
                         if (g_plot != g_put_color) // symmetry
                         {
-                            j = g_yy_stop-(g_row-g_yy_start);
-                            if (j > g_i_y_stop && j < g_logical_screen_y_dots)
+                            j = g_stop_pt.y-(g_row-g_start_pt.y);
+                            if (j > g_i_stop_pt.y && j < g_logical_screen_y_dots)
                             {
                                 write_span(j, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
                             }
@@ -339,7 +339,7 @@ tess_end:
             i <<= 1;
             ++y_size;
         }
-        add_work_list(g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, (y_size << 12) + tp->y1,
+        add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_start_pt.x, (y_size << 12) + tp->y1,
             (x_size << 12) + tp->x1, g_work_symmetry);
         return -1;
     }

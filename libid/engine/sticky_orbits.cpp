@@ -29,23 +29,23 @@ int sticky_orbits()
     case 'r':
     default:
         // draw a rectangle
-        g_row = g_yy_begin;
-        g_col = g_xx_begin;
+        g_row = g_begin_pt.y;
+        g_col = g_begin_pt.x;
 
-        while (g_row <= g_i_y_stop)
+        while (g_row <= g_i_stop_pt.y)
         {
             g_current_row = g_row;
-            while (g_col <= g_i_x_stop)
+            while (g_col <= g_i_stop_pt.x)
             {
                 if (plot_orbits2d_float() == -1)
                 {
                     add_work_list(
-                        g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_col, g_row, 0, g_work_symmetry);
+                        g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0, g_work_symmetry);
                     return -1; // interrupted
                 }
                 ++g_col;
             }
-            g_col = g_i_x_start;
+            g_col = g_i_start_pt.x;
             ++g_row;
         }
         break;
@@ -55,8 +55,8 @@ int sticky_orbits()
         int g;     // used to test for new row or column
         int inc1;  // G increment when row or column doesn't change
         int inc2;  // G increment when row or column changes
-        int dx = g_i_x_stop - g_i_x_start;                   // find vector components
-        int dy = g_i_y_stop - g_i_y_start;
+        int dx = g_i_stop_pt.x - g_i_start_pt.x;                   // find vector components
+        int dy = g_i_stop_pt.y - g_i_start_pt.y;
         bool pos_slope = dx > 0;                   // is slope positive?
         if (dy < 0)
         {
@@ -66,15 +66,15 @@ int sticky_orbits()
         {
             if (dx > 0)         // determine start point and last column
             {
-                g_col = g_xx_begin;
-                g_row = g_yy_begin;
-                final = g_i_x_stop;
+                g_col = g_begin_pt.x;
+                g_row = g_begin_pt.y;
+                final = g_i_stop_pt.x;
             }
             else
             {
-                g_col = g_i_x_stop;
-                g_row = g_i_y_stop;
-                final = g_xx_begin;
+                g_col = g_i_stop_pt.x;
+                g_row = g_i_stop_pt.y;
+                final = g_begin_pt.x;
             }
             inc1 = 2 * std::abs(dy);             // determine increments and initial G
             g = inc1 - std::abs(dx);
@@ -86,7 +86,7 @@ int sticky_orbits()
                     if (plot_orbits2d_float() == -1)
                     {
                         add_work_list(
-                            g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_col, g_row, 0, g_work_symmetry);
+                            g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     g_col++;
@@ -108,7 +108,7 @@ int sticky_orbits()
                     if (plot_orbits2d_float() == -1)
                     {
                         add_work_list(
-                            g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_col, g_row, 0, g_work_symmetry);
+                            g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     g_col++;
@@ -128,15 +128,15 @@ int sticky_orbits()
         {
             if (dy > 0)             // determine start point and last row
             {
-                g_col = g_xx_begin;
-                g_row = g_yy_begin;
-                final = g_i_y_stop;
+                g_col = g_begin_pt.x;
+                g_row = g_begin_pt.y;
+                final = g_i_stop_pt.y;
             }
             else
             {
-                g_col = g_i_x_stop;
-                g_row = g_i_y_stop;
-                final = g_yy_begin;
+                g_col = g_i_stop_pt.x;
+                g_row = g_i_stop_pt.y;
+                final = g_begin_pt.y;
             }
             inc1 = 2 * std::abs(dx);             // determine increments and initial G
             g = inc1 - std::abs(dy);
@@ -148,7 +148,7 @@ int sticky_orbits()
                     if (plot_orbits2d_float() == -1)
                     {
                         add_work_list(
-                            g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_col, g_row, 0, g_work_symmetry);
+                            g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     g_row++;
@@ -170,7 +170,7 @@ int sticky_orbits()
                     if (plot_orbits2d_float() == -1)
                     {
                         add_work_list(
-                            g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_col, g_row, 0, g_work_symmetry);
+                            g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0, g_work_symmetry);
                         return -1; // interrupted
                     }
                     g_row++;
@@ -201,7 +201,7 @@ int sticky_orbits()
         double x_factor = g_logical_screen_x_dots / 2.0;
         double y_factor = g_logical_screen_y_dots / 2.0;
 
-        int angle = g_xx_begin;  // save angle in x parameter
+        int angle = g_begin_pt.x;  // save angle in x parameter
 
         cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
         if (rotation <= 0)

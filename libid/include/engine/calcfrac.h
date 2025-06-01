@@ -4,6 +4,7 @@
 
 #include "math/cmplx.h"
 #include "math/big.h"
+#include "math/Point.h"
 
 #include <config/port.h>
 
@@ -122,16 +123,11 @@ extern DComplex              g_tmp_z;
 extern bool                  g_use_old_periodicity;
 extern bool                  g_use_old_distance_estimator;
 
-extern int                   g_xx_start; // current work list entry being computed
-extern int                   g_yy_start;
-extern int                   g_i_x_start;
-extern int                   g_i_y_start;
-extern int                   g_xx_stop;
-extern int                   g_yy_stop;
-extern int                   g_i_x_stop;
-extern int                   g_i_y_stop;
-extern int                   g_xx_begin;
-extern int                   g_yy_begin;
+extern Point2i               g_start_pt; // current work list entry being computed
+extern Point2i               g_i_start_pt;
+extern Point2i               g_stop_pt;
+extern Point2i               g_i_stop_pt;
+extern Point2i               g_begin_pt;
 extern int                   g_work_pass;
 extern int                   g_work_symmetry;
 

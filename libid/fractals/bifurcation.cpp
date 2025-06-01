@@ -90,7 +90,7 @@ int bifurcation()
     }
     try
     {
-        s_verhulst_array.resize(g_i_y_stop + 1);
+        s_verhulst_array.resize(g_i_stop_pt.y + 1);
     }
     catch (const std::bad_alloc &)
     {
@@ -98,7 +98,7 @@ int bifurcation()
         return -1;
     }
 
-    for (int y = 0; y <= g_i_y_stop; y++)   // should be iystop
+    for (int y = 0; y <= g_i_stop_pt.y; y++)   // should be iystop
     {
         s_verhulst_array[y] = 0;
     }
@@ -129,9 +129,9 @@ int bifurcation()
         s_half_time_check = true;
     }
 
-    g_init.y = (double) (g_y_max - g_i_y_stop * g_delta_y); // bottom pixels
+    g_init.y = (double) (g_y_max - g_i_stop_pt.y * g_delta_y); // bottom pixels
 
-    while (x <= g_i_x_stop)
+    while (x <= g_i_stop_pt.x)
     {
         if (driver_key_pressed())
         {
@@ -144,7 +144,7 @@ int bifurcation()
         g_rate = (double) (g_x_min + x * g_delta_x);
         verhulst();        // calculate array once per column
 
-        for (int y = g_i_y_stop; y >= 0; y--) // should be iystop & >=0
+        for (int y = g_i_stop_pt.y; y >= 0; y--) // should be iystop & >=0
         {
             int color = s_verhulst_array[y];
             if (color && s_mono)
@@ -222,16 +222,16 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
 
         // assign population value to Y coordinate in pixels
-        pixel_row = g_i_y_stop - (int) ((g_population - g_init.y) / g_delta_y);
+        pixel_row = g_i_stop_pt.y - (int) ((g_population - g_init.y) / g_delta_y);
 
         // if it's visible on the screen, save it in the column array
-        if (pixel_row <= (unsigned int)g_i_y_stop)
+        if (pixel_row <= (unsigned int)g_i_stop_pt.y)
         {
             s_verhulst_array[ pixel_row ] ++;
         }
         if (g_periodicity_check && bif_periodic(counter))
         {
-            if (pixel_row <= (unsigned int)g_i_y_stop)
+            if (pixel_row <= (unsigned int)g_i_stop_pt.y)
             {
                 s_verhulst_array[ pixel_row ] --;
             }

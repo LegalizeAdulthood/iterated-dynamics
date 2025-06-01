@@ -28,10 +28,10 @@ int popcorn()
     g_keyboard_check_interval = g_max_keyboard_check_interval;
     g_plot = no_plot;
     g_temp_sqr_x = 0;
-    for (g_row = start_row; g_row <= g_i_y_stop; g_row++)
+    for (g_row = start_row; g_row <= g_i_stop_pt.y; g_row++)
     {
         g_reset_periodicity = true;
-        for (g_col = 0; g_col <= g_i_x_stop; g_col++)
+        for (g_col = 0; g_col <= g_i_stop_pt.x; g_col++)
         {
             if (standard_fractal() == -1) // interrupted
             {

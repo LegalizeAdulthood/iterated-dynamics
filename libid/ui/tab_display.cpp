@@ -197,7 +197,7 @@ static bool tab_display2(char *msg)
     write_row(row++, "%dx%d %s (%s)", g_logical_screen_x_dots, g_logical_screen_y_dots,
               g_driver->get_name().c_str(), g_driver->get_description().c_str());
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
-              g_xx_start, g_xx_stop, g_yy_start, g_yy_stop,
+              g_start_pt.x, g_stop_pt.x, g_start_pt.y, g_stop_pt.y,
               g_cur_fractal_specific->orbit_calc ==  formula_orbit ? "slow parser" :
               g_cur_fractal_specific->orbit_calc ==  bad_formula ? "bad formula" :
               "", g_frm_uses_ismand ? 1 : 0);
@@ -415,7 +415,7 @@ top:
         else if (g_got_status != StatusValues::THREE_D)
         {
             std::sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
-                    g_yy_start, g_xx_start, g_yy_stop, g_xx_stop);
+                    g_start_pt.y, g_start_pt.x, g_stop_pt.y, g_stop_pt.x);
             driver_put_string(start_row, 2, C_GENERAL_MED, msg);
             if (g_got_status == StatusValues::BOUNDARY_TRACE || g_got_status == StatusValues::TESSERAL)
             {

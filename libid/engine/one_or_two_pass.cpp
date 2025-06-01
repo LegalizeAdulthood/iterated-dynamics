@@ -22,28 +22,28 @@ int one_or_two_pass()
     {
         if (standard_calc(1) == -1)
         {
-            add_work_list(g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_col, g_row, 0, g_work_symmetry);
+            add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0, g_work_symmetry);
             return -1;
         }
         if (g_num_work_list > 0) // worklist not empty, defer 2nd pass
         {
             add_work_list(
-                g_xx_start, g_yy_start, g_xx_stop, g_yy_stop, g_xx_start, g_yy_start, 1, g_work_symmetry);
+                g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_start_pt.x, g_start_pt.y, 1, g_work_symmetry);
             return 0;
         }
         g_work_pass = 1;
-        g_xx_begin = g_xx_start;
-        g_yy_begin = g_yy_start;
+        g_begin_pt.x = g_start_pt.x;
+        g_begin_pt.y = g_start_pt.y;
     }
     // second or only pass
     if (standard_calc(2) == -1)
     {
-        int i = g_yy_stop;
-        if (g_i_y_stop != g_yy_stop)   // must be due to symmetry
+        int i = g_stop_pt.y;
+        if (g_i_stop_pt.y != g_stop_pt.y)   // must be due to symmetry
         {
-            i -= g_row - g_i_y_start;
+            i -= g_row - g_i_start_pt.y;
         }
-        add_work_list(g_xx_start, g_row, g_xx_stop, i, g_col, g_row, g_work_pass, g_work_symmetry);
+        add_work_list(g_start_pt.x, g_row, g_stop_pt.x, i, g_col, g_row, g_work_pass, g_work_symmetry);
         return -1;
     }
 
@@ -54,14 +54,14 @@ static int standard_calc(int pass_num)
 {
     g_got_status = StatusValues::ONE_OR_TWO_PASS;
     g_current_pass = pass_num;
-    g_row = g_yy_begin;
-    g_col = g_xx_begin;
+    g_row = g_begin_pt.y;
+    g_col = g_begin_pt.x;
 
-    while (g_row <= g_i_y_stop)
+    while (g_row <= g_i_stop_pt.y)
     {
         g_current_row = g_row;
         g_reset_periodicity = true;
-        while (g_col <= g_i_x_stop)
+        while (g_col <= g_i_stop_pt.x)
         {
             // on 2nd pass of two, skip even pts
             if (g_quick_calc && !g_resuming)
@@ -83,15 +83,15 @@ static int standard_calc(int pass_num)
                 g_reset_periodicity = false;
                 if (pass_num == 1)       // first pass, copy pixel and bump col
                 {
-                    if ((g_row&1) == 0 && g_row < g_i_y_stop)
+                    if ((g_row&1) == 0 && g_row < g_i_stop_pt.y)
                     {
                         (*g_plot)(g_col, g_row+1, g_color);
-                        if ((g_col&1) == 0 && g_col < g_i_x_stop)
+                        if ((g_col&1) == 0 && g_col < g_i_stop_pt.x)
                         {
                             (*g_plot)(g_col+1, g_row+1, g_color);
                         }
                     }
-                    if ((g_col&1) == 0 && g_col < g_i_x_stop)
+                    if ((g_col&1) == 0 && g_col < g_i_stop_pt.x)
                     {
                         (*g_plot)(++g_col, g_row, g_color);
                     }
@@ -99,7 +99,7 @@ static int standard_calc(int pass_num)
             }
             ++g_col;
         }
-        g_col = g_i_x_start;
+        g_col = g_i_start_pt.x;
         if (pass_num == 1 && (g_row&1) == 0)
         {
             ++g_row;

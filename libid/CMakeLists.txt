@@ -134,6 +134,7 @@ add_library(libid
     include/math/fixed_pt.h math/fixed_pt.cpp
     include/math/fpu087.h math/fpu087.cpp
     include/math/hcmplx.h math/hcmplx.cpp
+    include/math/Point.h
     include/math/rand15.h
     include/math/round_float_double.h math/round_float_double.cpp
     include/math/sign.h

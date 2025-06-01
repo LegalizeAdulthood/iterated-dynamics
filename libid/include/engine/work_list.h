@@ -2,18 +2,12 @@
 //
 #pragma once
 
+#include "math/Point.h"
+
 enum
 {
     MAX_CALC_WORK = 12
 };
-
-template <typename T>
-struct Point2
-{
-    T x;
-    T y;
-};
-using Point2i = Point2<int>;
 
 // work list entry for std escape time engines
 struct WorkList
