@@ -101,10 +101,6 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
     {
         wait = 0;
     }
-    else
-    {
-        step = false;
-    }
     if (rule_len == 0)
     {
         // random rule
@@ -282,10 +278,6 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
     if (step)
     {
         wait = 0;
-    }
-    else
-    {
-        step = false;
     }
     if (rule_len == 0)
     {
