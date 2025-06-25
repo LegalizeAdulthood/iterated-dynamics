@@ -157,7 +157,7 @@ bool g_map_specified{};                                   // map= specified
 ColorState g_color_state{ColorState::DEFAULT};            // g_dac_box matches default (bios or map=)
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
-double g_math_tol[2]{.05, .05};                           // For math transition
+double g_math_tol[2]{.05, .05};                           // For math transition from double to bignum
 bool g_targa_out{};                                       // 3D full color flag
 bool g_true_color{};                                      // escape time true color flag
 TrueColorMode g_true_mode{TrueColorMode::DEFAULT_COLOR};  // true color coloring scheme
@@ -548,8 +548,8 @@ static void init_vars_fractal()
     g_orbit_corner_min_y = g_cur_fractal_specific->y_min;           //
     g_orbit_corner_max_y = g_cur_fractal_specific->y_max;           //
     g_orbit_corner_3rd_y = g_cur_fractal_specific->y_min;           //
-    g_math_tol[0] = 0.05;                                           //
-    g_math_tol[1] = 0.05;                                           //
+    g_math_tol[0] = 0.05;                                           // integer -> float transition is ignored
+    g_math_tol[1] = 0.05;                                           // float -> bignum transition
     g_display_3d = Display3DMode::NONE;                             // 3D display is off
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
@@ -2526,9 +2526,8 @@ static CmdArgFlags cmd_math_tolerance(const Command &cmd)
     }
     else if (cmd.total_params >= 1)
     {
-        g_math_tol[0] = cmd.float_vals[0];
+        // integer -> float transition value is ignored
     }
-
     if (cmd.total_params >= 2)
     {
         g_math_tol[1] = cmd.float_vals[1];

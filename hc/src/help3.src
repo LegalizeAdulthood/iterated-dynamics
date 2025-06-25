@@ -529,19 +529,6 @@ are a few points to understand.  First, Id's criterion for halting a
 fractal calculation, the "modulus bailout value", is generally set to 4.
 Continuous potential is inaccurate at such a low value.
 
-The bad news is that the integer math which makes the "mandel" and "julia"
-types so fast imposes a hard-wired maximum value of 127.  You can still
-make interesting images from those types, though, so don't avoid them.  You
-will see "ridges" in the "hillsides."  Some folks like the effect.
-
-The good news is that the other fractal types, particularly the
-floating point algorithms, have no such limitation.  The even
-better news is that there is a floating-point algorithm for the "mandel"
-and "julia" types.  To force the use of a floating-point algorithm, use
-Id with the "float=yes" command-line parameter or the <X> options screen.
-Only a few fractal types like plasma clouds, the Barnsley IFS type, and
-"test" are unaffected by this option.
-
 The parameters for continuous potential are:\
     potential=maxcolor[/slope[/modulus[/16bit]]]\
 These parameters are present on the <Y> options screen.
@@ -560,9 +547,7 @@ There is no easy way to predict in advance what this value should be.
 
 "Modulus" is the bailout value used to determine when an orbit has
 "escaped".  Larger values give more accurate and smoother potential.  A
-value of 500 gives excellent results.  As noted, this value must be < 128
-for the integer fractal types (if you select a higher number, they will
-use 127).
+value of 500 gives excellent results.
 
 "16bit":  If you transform a continuous potential image to 3D, the
 illumination modes 5 and 6 will work fine, but the colors will look a bit
@@ -821,9 +806,7 @@ The following bailout tests have been implemented on the <Z> screen:
    manr:    (x + y)^2 >= bailout
 
 The bailout test feature has not been implemented for all applicable fractal
-types.  This is due to the speedups used for these types.  Some of these
-bailout tests show the limitations of the integer math routines by clipping
-the spiked ends off of the protrusions.
+types.  This is due to the speedups used for these types.
 ;
 ;
 ;

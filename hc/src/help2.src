@@ -1587,11 +1587,7 @@ an imaginary part of 0.479.
 
 Each LambdaSine/Cosine iteration calculates a hyperbolic sine, hyperbolic
 cosine, a sine, and a cosine (the LambdaExponent iteration "only" requires
-an exponent, sine, and cosine operation)!  However, Id can compute these
-transcendental functions with fast integer math.  In a few cases the fast
-math is less accurate, so floating point code is used.  To use the
-floating-point code exclusively, use the float=yes parameter or the
-<X> options screen.
+an exponent, sine, and cosine operation)!
 ;
 ;
 ~Topic=Halley, Label=HT_HALLEY
@@ -1970,8 +1966,7 @@ There's a three-dimensional equivalent using nested tetrahedrons instead
 of triangles, but it generates too much pyramid power to be safely
 unleashed yet.
 
-There are no parameters for this type.  We were able to implement it with
-integer math routines, so it runs fairly quickly.
+There are no parameters for this type.
 ;
 ;
 ~Topic=Quartic Mandelbrot/Julia, Label=HT_MANDEL_JULIA4
@@ -3610,9 +3605,6 @@ acting like a "z" term in a formula.
 ~Doc+,Online+
 ~Format+
 
-The formulas are performed using either integer or floating point
-mathematics depending on the <F> floating point toggle.
-
 The 'rand' predefined variable is changed with each iteration to a new
 random number with the real and imaginary components containing a value
 between zero and 1.  Use the srand() function to initialize the random
@@ -3631,12 +3623,6 @@ in floating point mode, trunc(6/3) returns 1 while trunc(6/real(3)) returns
 2.
 
 Note that if x is an integer, floor(x) = ceil(x) = trunc(x) = round(x) = x.
-
-Remember that when using integer math there is a limited dynamic range, so
-what you think may be a fractal could really be just a limitation of the
-integer math range.  God may work with integers, but God's dynamic range is
-many orders of magnitude greater than our puny 32 bit mathematics!  Always
-verify with the floating point <F> toggle.
 ~OnlineFF
 The possible values for symmetry are:\
 XAXIS,  XAXIS_NOPARM\
@@ -4291,11 +4277,3 @@ for drawing purposes, but can be used to achieve complex translations.
 The characters '+', '-', '<', '>', '[', ']', '|', '!', '@', '/', '\\',
 and 'c' are reserved symbols and cannot be redefined.  For example, c=f+f
 and <=, are syntax errors.
-
-The integer code produces incorrect results in five known instances, Peano2
-with order >= 7, SnowFlake1 with order >=6, and SnowFlake2, SnowFlake3, and
-SnowflakeColor with order >= 5.  If you see strange results, switch to the
-floating point code.
-;
-;
-;

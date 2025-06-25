@@ -56,7 +56,6 @@
                            perturbation drawing algorithms.
   fillcolor=normal|<nnn>   Sets a block fill color for use with Boundary
                            Tracing and Tesseral options
-  float=yes                For most functions changes from integer math to fp
   symmetry=xxxx            Force symmetry to None, X axis, Y axis, XY axis,
                            origin, or pi symmetry.  Useful as a speedup.  Only
                            use this feature if the fractal has the stated
@@ -64,11 +63,11 @@
   bfdigits=<nnn>           Force nnn digits if arbitrary precision used (not
                            recommended - this is a developer feature.)
   mathtolerance=<nnn>/<nnn> Controls the logic that automatically selects one
-                           of integer/float/arbitrary precision based on
-                           precision requirements of the current zoom depth.
-                           The first number controls the integer/float
-                           transition, and the second number controls the
-                           float/arbitrary precision transition.
+                           of float/arbitrary precision based on precision
+                           requirements of the current zoom depth.  The first
+                           number was used to control the integer/float
+                           transition and is now ignored.  The second number
+                           controls the float/arbitrary precision transition.
   minstack=<nnn>           For SOI (passes=s).  Controls the minimum amount
                            of stack memory reserved during synchronous orbits.
 ~FF
@@ -537,9 +536,8 @@ Id maintains a list of parameters of the past 10 images that you
 generated in the current Id session.  You can revisit these images
 using the <H> and <Ctrl+H> commands.  The maxhistory parameter allows you
 to set the number of image parameter sets stored in memory.  Keep
-in mind that every time you color cycle or change from integer to float or
-back, another image parameter set is saved, so the default ten images are
-used up quickly.
+in mind that every time you color cycle, another image parameter set
+is saved, so the default ten images are used up quickly.
 ;
 ;
 ~Topic=Calculation Mode Parameters
@@ -552,15 +550,6 @@ See {Drawing Method} and {Passes Parameters}.
 FILLCOLOR=normal|<nnn>\
 Sets a color to be used for block fill by boundary tracing and tesseral
 algorithms.  See {Drawing Method}.
-
-FLOAT=yes\
-Most fractal types have both a fast integer math and a floating point
-version.  The faster, but possibly less accurate, integer version is the
-default.  The default is to use integer math, but in this age of
-powerful CPUS we now recommend your making float=yes the default by
-adding this line to your sstools.ini file.  This sstools.ini file
-distributed with Iterated Dynamics has this setting.
-Also see {"Limitations of Integer Math (and How We Cope)"}.
 
 SYMMETRY=xxx\
 Forces symmetry to none, X axis, Y axis, XY axis, origin, or pi symmetry.
@@ -576,15 +565,15 @@ precision is used with poor results.
 
 MATHTOLERANCE=<nnn>/<nnn>\
 This commands controls the logic that automatically selects one of
-integer/float/arbitrary precision based on precision requirements of the
-current zoom depth.  The first number controls the integer/float transition,
-and the second number controls the float/arbitrary precision transition.  The
-default value of .05 for both means that the ratio between the exact and
-calculated width and height is between .95 and 1.05.  A larger value than .05
-(say .10) makes the test looser so that the lower precision math is used
-longer.  A value <= 0 means the test is always failed and the higher precision
-math type is used.  A value >= 1 means that the test is always passed and the
-lower precision math type is used.
+float/arbitrary precision based on precision requirements of the
+current zoom depth.  The first number was used to control the integer/float
+transition and is now ignored.  The second number controls the float/arbitrary
+precision transition.  The default value of .05 means that the ratio between
+the exact and calculated width and height is between .95 and 1.05.  A larger
+value than .05 (say .10) makes the test looser so that the lower precision math
+is used longer.  A value <= 0 means the test is always failed and the higher
+precision math type is used.  A value >= 1 means that the test is always passed
+and the lower precision math type is used.
 
 MINSTACK=<nnn>\
 This sets the minimum number of stack bytes required for passes=s in order to

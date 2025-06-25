@@ -184,10 +184,9 @@
 {8.1.2, 2, "Who Is This Guy\, Anyway?"}
 {8.2  , 1, A Little Code}
 {8.2.1, 2, "Periodicity Logic"}
-{8.2.2, 2, "Limitations of Integer Math (and How We Cope)"}
-{8.2.3, 2, "Arbitrary Precision and Deep Zooming"}
-{8.2.4, 2, "Perturbation Algorithm"}
-{8.2.5, 2, "The Id \"Fractal Engine\" Architecture"}
+{8.2.2, 2, "Arbitrary Precision and Deep Zooming"}
+{8.2.3, 2, "Perturbation Algorithm"}
+{8.2.4, 2, "The Id \"Fractal Engine\" Architecture"}
 
 {Appendix A, 0, Mathematics of the Fractal Types,
                    "Summary of Fractal Types",
@@ -302,6 +301,11 @@ o Code configuration was generalized to test for features and not
   (Fixes #292)
 o When log(z) stores the output in the same variable as the input,
   it no longer corrupts the output variable.  (Fixes #295)
+o The float parameter has been deprecated and is ignored.  Discussion
+  of integer math removed from the documentation.  (Fixes #303)
+o The first value to the mathtolerance parameter is ignored; it previously
+  was used to control the transition from integer to floating-point
+  math.  When writing parameter sets, the first value is now omitted.
 
 Code Cleanup in Version 1.3
 
@@ -630,13 +634,6 @@ Select a fractal type.  Move the cursor to your choice (or type the first
 few letters of its name) and hit <Enter>.  Next you will be prompted for
 any parameters used by the selected type - hit <Enter> for the defaults.
 See {Fractal Types} for a list of supported types.
-
-<F>\
-Toggles the use of floating-point algorithms
-(see {"Limitations of Integer Math (and How We Cope)"}).
-Whether floating point is in use is shown on the <Tab> status screen.
-The floating point option can also be turned on and off using the "X"
-options screen.
 ~FF
 <X>\
 Select a number of eXtended options.  Brings up a full-screen menu of
@@ -1015,7 +1012,6 @@ The <G> command lets you give a startup parameter interactively.
 
    Passes - see {Drawing Method}\
    Fillcolor - see {Drawing Method}\
-   Floating Point Algorithm - see notes below\
    Maximum Iterations - see {Image Calculation Parameters}\
    Inside and Outside colors - see {Color Parameters}\
    Savename and File Overwrite - see {File Parameters}\
@@ -1023,10 +1019,6 @@ The <G> command lets you give a startup parameter interactively.
    Log Palette - see {Logarithmic Palettes and Color Ranges}\
    Biomorph Color - see {Biomorphs}\
    Decomp Option - see {Decomposition}\
-
-You can toggle the use of floating-point algorithms on this screen (see
-{"Limitations of Integer Math (and How We Cope)"}).  Whether floating
-point is in use is shown on the <Tab> status screen.
 ;
 ;
 ~Topic=<Y> Options Screen, Label=HELP_Y_OPTIONS

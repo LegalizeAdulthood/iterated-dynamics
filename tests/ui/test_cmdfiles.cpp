@@ -1728,8 +1728,7 @@ TEST_F(TestParameterCommand, mathToleranceOneValue)
     exec_cmd_arg("mathtolerance=20");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(20.0, g_math_tol[0]);
-    EXPECT_EQ(8888.0, g_math_tol[1]);
+    EXPECT_EQ(9999.0, g_math_tol[0]); // integer -> float value unchanged
 }
 
 TEST_F(TestParameterCommand, mathToleranceTwoValues)
@@ -1740,7 +1739,7 @@ TEST_F(TestParameterCommand, mathToleranceTwoValues)
     exec_cmd_arg("mathtolerance=20/30");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(20.0, g_math_tol[0]);
+    EXPECT_EQ(9999.0, g_math_tol[0]); // integer -> float value unchanged
     EXPECT_EQ(30, g_math_tol[1]);
 }
 
