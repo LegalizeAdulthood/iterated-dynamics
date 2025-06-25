@@ -146,7 +146,6 @@ add_library(libid
     include/misc/memory.h misc/memory.cpp
     include/misc/sized_types.h
     include/misc/stack_avail.h
-    include/misc/usec_clock.h
     include/misc/ValueSaver.h
     include/misc/version.h misc/version.cpp
 

@@ -522,7 +522,6 @@ static void init_calc_fract()
     }
 
     init_misc();  // set up some variables in parser.c
-    reset_clock();
 
     // following delta values useful only for types with rotation disabled
     // currently used only by bifurcation

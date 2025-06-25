@@ -178,7 +178,7 @@
                            See {Sound Controls}.  The note frequency can be
                            quantized, or rounded to the next proper note.
   hertz=nnn                Base frequency for sound effects
-  orbitdelay=nn            Slows up the display of orbits (by nn/10000 sec)
+  orbitdelay=nn            Slows up the display of orbits (by nn usec)
   showorbit=yes|no         Causes orbits to be toggled on at start of image
                            generation.
   orbitsave=sound          Causes sound values of orbits of escape-time

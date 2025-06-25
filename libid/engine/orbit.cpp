@@ -91,7 +91,7 @@ static void plot_d_orbit(double dx, double dy, int color)
         }
         else if (g_orbit_delay > 0)
         {
-            wait_until(0, g_orbit_delay);
+            wait_until(g_orbit_delay);
         }
     }
     else
@@ -110,7 +110,7 @@ static void plot_d_orbit(double dx, double dy, int color)
         }
         else if (g_orbit_delay > 0)
         {
-            wait_until(0, g_orbit_delay);
+            wait_until(g_orbit_delay);
         }
     }
 

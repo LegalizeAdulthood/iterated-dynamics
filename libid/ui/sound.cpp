@@ -66,7 +66,7 @@ void write_sound(int tone)
         //   if (10 < tone && tone < 5000)  better limits?
         if (driver_sound_on(tone))
         {
-            wait_until(0, g_orbit_delay);
+            wait_until(g_orbit_delay);
             if (!g_tab_or_help)   // kludge because wait_until() calls driver_key_pressed
             {
                 driver_sound_off();

@@ -24,7 +24,6 @@ add_library(os STATIC
     instance.h
     tos.h tos.cpp
     special_dirs.cpp
-    usec_clock.cpp
     win_defines.h
 )
 
