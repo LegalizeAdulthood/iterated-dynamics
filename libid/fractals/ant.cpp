@@ -85,17 +85,22 @@ static long change_wait(long wait)
     }
 }
 
+struct TurkMite1
+{
+    int x[MAX_ANTS + 1]{};
+    int y[MAX_ANTS + 1]{};
+    int next_col[MAX_ANTS + 1]{};
+    int rule[MAX_ANTS + 1]{};
+    int dir[MAX_ANTS + 1]{};
+    bool wrap{g_params[4] != 0};
+};
+
 // turkmite from Scientific American July 1994 page 91
 // Tweaked by Luciano Genero & Fulvio Cappelli
 //
 static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pts, long wait)
 {
-    int ant_x[MAX_ANTS + 1];
-    int ant_y[MAX_ANTS + 1];
-    int ant_next_col[MAX_ANTS + 1];
-    int ant_rule[MAX_ANTS + 1];
-    int ant_dir[MAX_ANTS + 1];
-    bool ant_wrap = g_params[4] != 0;
+    TurkMite1 ant;
     bool step = wait == 1;
     if (step)
     {
@@ -108,11 +113,11 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
         {
             // init the rules and colors for the
             // turkmites: 1 turn left, -1 turn right
-            ant_rule[g_color] = 1 - (random(2) * 2);
-            ant_next_col[g_color] = g_color + 1;
+            ant.rule[g_color] = 1 - (random(2) * 2);
+            ant.next_col[g_color] = g_color + 1;
         }
         // close the cycle
-        ant_next_col[g_color] = 0;
+        ant.next_col[g_color] = 0;
     }
     else
     {
@@ -121,19 +126,19 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
         {
             // init the rules and colors for the
             // turkmites: 1 turn left, -1 turn right
-            ant_rule[g_color] = (rule[g_color] * 2) - 1;
-            ant_next_col[g_color] = g_color + 1;
+            ant.rule[g_color] = (rule[g_color] * 2) - 1;
+            ant.next_col[g_color] = g_color + 1;
         }
         // repeats to last color
         for (g_color = rule_len; g_color < MAX_ANTS; g_color++)
         {
             // init the rules and colors for the
             // turkmites: 1 turn left, -1 turn right
-            ant_rule[g_color] = ant_rule[g_color % rule_len];
-            ant_next_col[g_color] = g_color + 1;
+            ant.rule[g_color] = ant.rule[g_color % rule_len];
+            ant.next_col[g_color] = g_color + 1;
         }
         // close the cycle
-        ant_next_col[g_color] = 0;
+        ant.next_col[g_color] = 0;
     }
     for (g_color = max_ants; g_color; g_color--)
     {
@@ -141,15 +146,15 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
         // x[0], y[0], dir[0]
         if (rule_len)
         {
-            ant_dir[g_color] = 1;
-            ant_x[g_color] = XO;
-            ant_y[g_color] = YO;
+            ant.dir[g_color] = 1;
+            ant.x[g_color] = XO;
+            ant.y[g_color] = YO;
         }
         else
         {
-            ant_dir[g_color] = random(DIRS);
-            ant_x[g_color] = random(g_logical_screen_x_dots);
-            ant_y[g_color] = random(g_logical_screen_y_dots);
+            ant.dir[g_color] = random(DIRS);
+            ant.x[g_color] = random(g_logical_screen_x_dots);
+            ant.y[g_color] = random(g_logical_screen_y_dots);
         }
     }
     max_pts = max_pts / (long) INNER_LOOP;
@@ -204,16 +209,16 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
                 for (int color = max_ants; color; color--)
                 {
                     // move the various turmites
-                    int x = ant_x[color];   // temp vars
-                    int y = ant_y[color];
-                    int dir = ant_dir[color];
+                    int x = ant.x[color];   // temp vars
+                    int y = ant.y[color];
+                    int dir = ant.dir[color];
                     int pixel = get_color(x, y);
                     g_put_color(x, y, 15);
                     sleep_ms(wait);
-                    g_put_color(x, y, ant_next_col[pixel]);
-                    dir += ant_rule[pixel];
+                    g_put_color(x, y, ant.next_col[pixel]);
+                    dir += ant.rule[pixel];
                     dir &= 3;
-                    if (!ant_wrap)
+                    if (!ant.wrap)
                     {
                         if ((dir == 0 && y == g_logical_screen_y_dots - 1)
                             || (dir == 1 && x == g_logical_screen_x_dots - 1)
@@ -223,9 +228,9 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
                             return;
                         }
                     }
-                    ant_x[color] = s_inc_x[dir][x];
-                    ant_y[color] = s_inc_y[dir][y];
-                    ant_dir[color] = dir;
+                    ant.x[color] = s_inc_x[dir][x];
+                    ant.y[color] = s_inc_y[dir][y];
+                    ant.dir[color] = dir;
                 }
             }
             else
@@ -233,14 +238,14 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
                 for (int color = max_ants; color; color--)
                 {
                     // move the various turmites without delay
-                    int x = ant_x[color];   // temp vars
-                    int y = ant_y[color];
-                    int dir = ant_dir[color];
+                    int x = ant.x[color];   // temp vars
+                    int y = ant.y[color];
+                    int dir = ant.dir[color];
                     int pixel = get_color(x, y);
-                    g_put_color(x, y, ant_next_col[pixel]);
-                    dir += ant_rule[pixel];
+                    g_put_color(x, y, ant.next_col[pixel]);
+                    dir += ant.rule[pixel];
                     dir &= 3;
-                    if (!ant_wrap)
+                    if (!ant.wrap)
                     {
                         if ((dir == 0 && y == g_logical_screen_y_dots - 1)
                             || (dir == 1 && x == g_logical_screen_x_dots - 1)
@@ -250,9 +255,9 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
                             return;
                         }
                     }
-                    ant_x[color] = s_inc_x[dir][x];
-                    ant_y[color] = s_inc_y[dir][y];
-                    ant_dir[color] = dir;
+                    ant.x[color] = s_inc_x[dir][x];
+                    ant.y[color] = s_inc_y[dir][y];
+                    ant.dir[color] = dir;
                 }
             }
         }
