@@ -96,7 +96,7 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
     int ant_rule[MAX_ANTS + 1];
     int ant_dir[MAX_ANTS + 1];
     bool ant_wrap = g_params[4] != 0;
-    bool step = wait > 0;
+    bool step = wait == 1;
     if (step)
     {
         wait = 0;
@@ -182,6 +182,8 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
             case ID_KEY_CTL_LEFT_ARROW:
                 wait = change_wait(wait);
                 break;
+            case ID_KEY_ENTER:
+                break;
             default:
                 done = true;
                 break;
@@ -205,7 +207,6 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
                     int x = ant_x[color];   // temp vars
                     int y = ant_y[color];
                     int dir = ant_dir[color];
-
                     int pixel = get_color(x, y);
                     g_put_color(x, y, 15);
                     sleep_ms(wait);
@@ -274,7 +275,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
     int ant_rule[MAX_ANTS + 1];
     bool ant_wrap = g_params[4] != 0;
 
-    bool step = wait > 0;
+    bool step = wait == 1;
     if (step)
     {
         wait = 0;
@@ -344,6 +345,8 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
             case ID_KEY_CTL_DOWN_ARROW:
             case ID_KEY_CTL_LEFT_ARROW:
                 wait = change_wait(wait);
+                break;
+            case ID_KEY_ENTER:
                 break;
             default:
                 done = true;
