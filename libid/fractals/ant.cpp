@@ -271,15 +271,19 @@ static unsigned rotate_left_one(unsigned value)
     return (value & high_bit) ? (result | 1U) : result;
 }
 
+struct TurkMite2
+{
+    int dir[MAX_ANTS + 1]{};
+    int x[MAX_ANTS + 1]{};
+    int y[MAX_ANTS + 1]{};
+    int rule[MAX_ANTS + 1]{};
+    bool wrap{g_params[4] != 0};
+};
+
 // this one ignore the color of the current cell is more like a white ant
 static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pts, long wait)
 {
-    int ant_dir[MAX_ANTS + 1];
-    int ant_x[MAX_ANTS + 1];
-    int ant_y[MAX_ANTS + 1];
-    int ant_rule[MAX_ANTS + 1];
-    bool ant_wrap = g_params[4] != 0;
-
+    TurkMite2 ant;
     bool step = wait == 1;
     if (step)
     {
@@ -292,10 +296,10 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
         {
             // init the various turmites N.B. don't use
             // x[0], y[0], dir[0]
-            ant_dir[color] = random(DIRS);
-            ant_rule[color] = (std::rand() << random(2)) | random(2);
-            ant_x[color] = random(g_logical_screen_x_dots);
-            ant_y[color] = random(g_logical_screen_y_dots);
+            ant.dir[color] = random(DIRS);
+            ant.rule[color] = (std::rand() << random(2)) | random(2);
+            ant.x[color] = random(g_logical_screen_x_dots);
+            ant.y[color] = random(g_logical_screen_y_dots);
         }
     }
     else
@@ -303,23 +307,23 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
         // the same rule the user wants for every
         // turkmite (max rule_len = 16 bit)
         rule_len = static_cast<int>(std::min(static_cast<size_t>(rule_len), 8*sizeof(int)));
-        ant_rule[0] = 0;
+        ant.rule[0] = 0;
         for (int i = 0; i < rule_len; i++)
         {
-            ant_rule[0] = (ant_rule[0] << 1) | rule[i];
+            ant.rule[0] = (ant.rule[0] << 1) | rule[i];
         }
         for (int color = MAX_ANTS-1; color; color--)
         {
             // init the various turmites N.B. non usa
             // x[0], y[0], dir[0]
-            ant_dir[color] = 0;
-            ant_rule[color] = ant_rule[0];
-            ant_x[color] = XO;
-            ant_y[color] = YO;
+            ant.dir[color] = 0;
+            ant.rule[color] = ant.rule[0];
+            ant.x[color] = XO;
+            ant.y[color] = YO;
         }
     }
     // use this rule when a black pixel is found
-    ant_rule[0] = 0;
+    ant.rule[0] = 0;
     unsigned rule_mask = 1U;
     max_pts = max_pts / (long) INNER_LOOP;
     for (long count = 0; count < max_pts; count++)
@@ -371,9 +375,9 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
             for (int color = max_ants; color; color--)
             {
                 // move the various turmites
-                int x = ant_x[color];      // temp vars
-                int y = ant_y[color];
-                int dir = ant_dir[color];
+                int x = ant.x[color];      // temp vars
+                int y = ant.y[color];
+                int dir = ant.dir[color];
                 int pixel = get_color(x, y);
                 g_put_color(x, y, 15);
 
@@ -382,7 +386,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
                     sleep_ms(wait);
                 }
 
-                if (ant_rule[pixel] & rule_mask)
+                if (ant.rule[pixel] & rule_mask)
                 {
                     // turn right
                     dir--;
@@ -395,7 +399,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
                     g_put_color(x, y, color);
                 }
                 dir &= 3;
-                if (!ant_wrap)
+                if (!ant.wrap)
                 {
                     if ((dir == 0 && y == g_logical_screen_y_dots - 1)
                         || (dir == 1 && x == g_logical_screen_x_dots - 1)
@@ -405,9 +409,9 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
                         return;
                     }
                 }
-                ant_x[color] = s_inc_x[dir][x];
-                ant_y[color] = s_inc_y[dir][y];
-                ant_dir[color] = dir;
+                ant.x[color] = s_inc_x[dir][x];
+                ant.y[color] = s_inc_y[dir][y];
+                ant.dir[color] = dir;
             }
             rule_mask = rotate_left_one(rule_mask);
         }
