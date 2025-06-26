@@ -85,6 +85,49 @@ static long change_wait(long wait)
     }
 }
 
+static bool ant_key(bool &step, long &wait)
+{
+    // check for a key only every inner_loop times
+    int key = driver_key_pressed();
+    if (key || step)
+    {
+        if (key == 0)
+        {
+            key = driver_get_key();
+        }
+        switch (key)
+        {
+        case ID_KEY_SPACE:
+            step = !step;
+            break;
+        case ID_KEY_ESC:
+            return true;
+
+        case ID_KEY_RIGHT_ARROW:
+        case ID_KEY_UP_ARROW:
+        case ID_KEY_DOWN_ARROW:
+        case ID_KEY_LEFT_ARROW:
+        case ID_KEY_CTL_RIGHT_ARROW:
+        case ID_KEY_CTL_UP_ARROW:
+        case ID_KEY_CTL_DOWN_ARROW:
+        case ID_KEY_CTL_LEFT_ARROW:
+            wait = change_wait(wait);
+            break;
+
+        case ID_KEY_ENTER:
+            break;
+
+        default:
+            return true;
+        }
+        if (driver_key_pressed())
+        {
+            driver_get_key();
+        }
+    }
+    return false;
+}
+
 struct TurkMite1
 {
     int x[MAX_ANTS + 1]{};
@@ -160,47 +203,9 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
     max_pts = max_pts / (long) INNER_LOOP;
     for (long count = 0; count < max_pts; count++)
     {
-        // check for a key only every inner_loop times
-        int key = driver_key_pressed();
-        if (key || step)
+        if (ant_key(step, wait))
         {
-            bool done = false;
-            if (key == 0)
-            {
-                key = driver_get_key();
-            }
-            switch (key)
-            {
-            case ID_KEY_SPACE:
-                step = !step;
-                break;
-            case ID_KEY_ESC:
-                done = true;
-                break;
-            case ID_KEY_RIGHT_ARROW:
-            case ID_KEY_UP_ARROW:
-            case ID_KEY_DOWN_ARROW:
-            case ID_KEY_LEFT_ARROW:
-            case ID_KEY_CTL_RIGHT_ARROW:
-            case ID_KEY_CTL_UP_ARROW:
-            case ID_KEY_CTL_DOWN_ARROW:
-            case ID_KEY_CTL_LEFT_ARROW:
-                wait = change_wait(wait);
-                break;
-            case ID_KEY_ENTER:
-                break;
-            default:
-                done = true;
-                break;
-            }
-            if (done)
-            {
-                return;
-            }
-            if (driver_key_pressed())
-            {
-                driver_get_key();
-            }
+            return;
         }
         for (int i = INNER_LOOP; i; i--)
         {
@@ -328,47 +333,9 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
     max_pts = max_pts / (long) INNER_LOOP;
     for (long count = 0; count < max_pts; count++)
     {
-        // check for a key only every inner_loop times
-        int key = driver_key_pressed();
-        if (key || step)
+        if (ant_key(step, wait))
         {
-            bool done = false;
-            if (key == 0)
-            {
-                key = driver_get_key();
-            }
-            switch (key)
-            {
-            case ID_KEY_SPACE:
-                step = !step;
-                break;
-            case ID_KEY_ESC:
-                done = true;
-                break;
-            case ID_KEY_RIGHT_ARROW:
-            case ID_KEY_UP_ARROW:
-            case ID_KEY_DOWN_ARROW:
-            case ID_KEY_LEFT_ARROW:
-            case ID_KEY_CTL_RIGHT_ARROW:
-            case ID_KEY_CTL_UP_ARROW:
-            case ID_KEY_CTL_DOWN_ARROW:
-            case ID_KEY_CTL_LEFT_ARROW:
-                wait = change_wait(wait);
-                break;
-            case ID_KEY_ENTER:
-                break;
-            default:
-                done = true;
-                break;
-            }
-            if (done)
-            {
-                return;
-            }
-            if (driver_key_pressed())
-            {
-                driver_get_key();
-            }
+            return;
         }
         for (int i = INNER_LOOP; i; i--)
         {
