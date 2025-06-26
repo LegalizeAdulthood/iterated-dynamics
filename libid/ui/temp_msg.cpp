@@ -109,5 +109,6 @@ void clear_temp_msg()
         }
         g_logical_screen_x_offset = save_screen_x_offset;
         g_logical_screen_y_offset = save_screen_y_offset;
+        driver_flush();
     }
 }

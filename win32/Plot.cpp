@@ -478,10 +478,9 @@ void Plot::flush()
 {
     if (m_dirty)
     {
-        RECT r = { -1, -1, -1, -1 };
-        InvalidateRect(m_window, nullptr, FALSE);
+        InvalidateRect(m_window, &m_dirty_region, FALSE);
         m_dirty = false;
-        m_dirty_region = r;
+        m_dirty_region = {-1, -1, -1, -1};
     }
 }
 
@@ -598,6 +597,7 @@ void Plot::display_string(int x, int y, int fg, int bg, const char *text)
         x += 8;
         text++;
     }
+    flush();
 }
 
 void Plot::save_graphics()
