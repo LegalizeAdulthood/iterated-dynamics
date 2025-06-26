@@ -306,6 +306,8 @@ o The float parameter has been deprecated and is ignored.  Discussion
 o The first value to the mathtolerance parameter is ignored; it previously
   was used to control the transition from integer to floating-point
   math.  When writing parameter sets, the first value is now omitted.
+o The delay value is now properly displayed for type=ant.
+  (Fixes #387)
 
 Code Cleanup in Version 1.3
 
