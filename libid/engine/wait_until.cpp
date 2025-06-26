@@ -13,8 +13,7 @@ fractals, i.e. which are non-fractal-specific fractal engine subroutines.
 
 void sleep_ms(long ms)
 {
-    driver_set_keyboard_timeout(ms);
-    driver_wait_key_pressed(true);
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 /*
