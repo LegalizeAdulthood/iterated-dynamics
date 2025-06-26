@@ -2,14 +2,16 @@
 SPDX-License-Identifier: GPL-3.0-only
 -->
 [![GitHub Release](https://img.shields.io/github/v/release/LegalizeAdulthood/iterated-dynamics?label=Latest+Release)](https://github.com/LegalizeAdulthood/iterated-dynamics/releases)
+[![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/LegalizeAdulthood/iterated-dynamics/latest/total?label=Downloads&color=blue)](https://github.com/LegalizeAdulthood/iterated-dynamics/releases)
 [![CMake workflow](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/cmake.yml/badge.svg)](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/cmake.yml)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 [![License](https://img.shields.io/github/license/LegalizeAdulthood/iterated-dynamics?label=License)](https://github.com/LegalizeAdulthood/iterated-dynamics/blob/master/LICENSE.txt)
 
 <!-- begin FOTD -->
-[![FOTD 2009.03.15](https://user.xmission.com/~legalize/fractals/fotd/2009/03/2009.03.15-Waiting_for_Autumn.thumb.jpg)](https://user.xmission.com/~legalize/fractals/fotd/2009/03/2009.03.15-Waiting_for_Autumn.jpg)<br/>
-[Fractal of the Day](https://user.xmission.com/~legalize/fractals/fotd/index.html), 2009.03.15<br/>
-Waiting for Autumn (<a href="https://user.xmission.com/~legalize/fractals/fotd/2009/03/2009.03.15-Waiting_for_Autumn.par">parameter file</a>)
+<!-- https://user.xmission.com/~legalize/fractals/fotd/random.php?id=2133 -->
+[![FOTD 2005.01.20](https://user.xmission.com/~legalize/fractals/fotd/2005/01/2005.01.20-Dont_Square_This.thumb.jpg)](https://user.xmission.com/~legalize/fractals/fotd/2005/01/2005.01.20-Dont_Square_This.jpg)<br/>
+[Fractal of the Day](https://user.xmission.com/~legalize/fractals/fotd/index.html), 2005.01.20<br/>
+Dont Square This ([parameter file](https://user.xmission.com/~legalize/fractals/fotd/2005/01/2005.01.20-Dont_Square_This.par))<br/>
 <!-- end FOTD -->
 
 # Iterated Dynamics
