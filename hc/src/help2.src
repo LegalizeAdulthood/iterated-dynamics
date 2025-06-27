@@ -3395,6 +3395,10 @@ where the expressions are evaluated and the statements executed are those
 immediately following the first "true" expression (the real part of the
 complex variable being nonzero).  Nesting of if..endif blocks is permitted.
 
+A single logical statement can be continued across multiple physical lines
+with the backslash (\\) character.  The backslash must be the last character
+on the physical line.
+
 ~OnlineFF
 ~Format-
 ~ADoc-
@@ -3532,6 +3536,13 @@ formulas with both "Mandelbrot" and "Julia" behavior.
           7          && (logical AND), || (logical OR)
 ~ADoc+
 ~Format+
+
+Unlike the C or similar languages, the assignment operator '=' can only be
+used as an isolated statement.  It cannot be used in an expression.  So the
+exression q=3+(w=6) is a syntax error.  Multiple variables can be assigned
+the same value in an assignment statement, e.g. z=q=6.  Also unlike C-like
+languages the logical operators && and || do not have any "short cut" behavior;
+both operands to the operators are evaluated.
 
 Precedence may be overridden by use of parenthesis.  Note the modulus squared
 operator |z| is also parenthetic and always sets the imaginary component to

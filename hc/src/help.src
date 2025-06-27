@@ -303,6 +303,8 @@ o When log(z) stores the output in the same variable as the input,
   it no longer corrupts the output variable.  (Fixes #295)
 o The float parameter has been deprecated and is ignored.  Discussion
   of integer math removed from the documentation.  (Fixes #303)
+o Clarify operator precedence and line continuation in the documentation
+  for type=formula.  (Fixes #304)
 o Descriptions of the fractal types are now arranged alphabetically in
   the plain text and HTML documentation files, making it easier to find
   information on a specific fractal type.  (Fixes #305)
