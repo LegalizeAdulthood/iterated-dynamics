@@ -271,13 +271,88 @@ The perturbation algorithm was originally implemented in a program called
 "SuperFractalThing" by K. I. Martin.  The core observation is that orbits
 for nearby points in the complex plane can be related to each other through
 a difference equation.  Therefore, if a single orbit is computed at high
-precision as a reference point, the values in the orbits of nearby points
+precision from a reference point, the values in the orbits of nearby points
 can be computed from the reference orbit using lower precision math.
 
 This is the essence of how perturbation methods speed up deep zooms of
 the Mandelbrot set.  Only a few reference points need to be calculated
 at full precision using slower operations and nearby points can be calculated
 using faster lesser precision operations.
+
+For the Mandelbrot set, the formula for computing the orbit in the complex
+plane is:
+
+~Format-,ADoc-
+    z(n+1) = z(n)^2 + z(0)
+      z(0) = c
+~ADoc+,Online-
+[stem]
+++++
+\{:
+(z_(n+1),=,z_(n)^2 + z_0),
+(z_0,=,c)
+:\}
+++++
+~Format+,Online+
+
+~ADoc-
+~OnlineFF
+If we consider the orbit of some other point y near c, say c2,
+~ADoc+,Doc-,Online-,Format-
+If we consider the orbit of some other point stem:[y] near stem:[c],
+say stem:[c_2],
+~Doc+,Online+,Format+
+we can write the orbit of this point as:
+
+~Format-,ADoc-
+    y(n+1) = y(n)^2 + y(0)
+      y(0) = c
+~Online-,Doc-,ADoc+,Format-
+
+[stem]
+++++
+\{:
+(y_(n+1),=,y_(n)^2 + y_0),
+(y_0,=,c_2)
+:\}
+++++
+
+~Online+,Doc+,Format+
+
+The difference between these two orbits at each iteration is:
+
+~ADoc-
+      d(n) = y(n) - z(n)
+    d(n+1) = y(n+1) - z(n+1)
+           = (y(n)^2 + y(0)) - (z(n)^2 + z(0))
+           = ((z(n) + d(n))^2 + z(0) + d(0)) - (z(n)^2 + z(0))
+           = (z(n)^2 + 2 z(n) d(n) + d(n)^2 + z(0) + d(0)) - (z(n)^2 + z(0))
+           = 2 z(n) d(n) + d(n)^2 + d(0)
+~Online-,Doc-,ADoc+,Format-
+
+[stem]
+++++
+\{:
+(d_(n),=,y_(n) - z_(n)),
+(d_(n+1),=,y_(n+1) - z_(n+1)),
+(       ,=,(y_n^2 + y_0) - (z_(n)^2 + z_0)),
+(       ,=,((z_n + d_n)^2 + z_0 + d_0) - (z_n^2 + z_0)),
+(       ,=,(z_n^2 + 2 z_n d_n + d_n^2 + z_0 + d_0) - (z_n^2 + z_0)),
+(       ,=,2 z_n d_n + d_n^2 + d_0)
+:\}
+++++
+
+~Online+,Doc+,Format+
+
+~ADoc-
+As long as the terms in d(n) are "small", we can use hardware floating-point
+math to compute the values of the orbit for y(n), having computed the reference
+orbit for z(n) using multiple-precision math.
+
+~Online-,Doc-,ADoc+,Format-
+As long as the terms in stem:[d_n] are "small", we can use hardware floating-point
+math to compute the values of the orbit for stem:[y_n], having computed the reference
+orbit for stem:[z_n] using multiple-precision math.
 ;
 ;
 ~Topic=The Id "Fractal Engine" Architecture
