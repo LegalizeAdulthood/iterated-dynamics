@@ -307,7 +307,7 @@ we can write the orbit of this point as:
 ~Format-,ADoc-
     y(n+1) = y(n)^2 + y(0)
       y(0) = c
-~Online-,Doc-,ADoc+,Format-
+~Online-,Doc-,ADoc+
 
 [stem]
 ++++
