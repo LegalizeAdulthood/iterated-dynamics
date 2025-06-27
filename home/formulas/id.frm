@@ -1664,12 +1664,12 @@ ULI_6 {
 }
 
 comment {
-  This formula uses Newton's formula applied to the real equation :
-     F(x,y) = 0 where F(x,y) = (x^3 + y^2 - 1 , y^3 - x^2 + 1)
-     starting with (x_0,y_0) = z0 = pixel
-  It calculates:
-     (x_(n+1),y_(n+1)) = (x_n,y_n) - (F'(x_n,y_n))^-1 * F(x_n,y_n)
-     where (F'(x_n,y_n))^-1 is the inverse of the Jacobian matrix of F.
+;  This formula uses Newton's formula applied to the real equation :
+;     F(x,y) = 0 where F(x,y) = (x^3 + y^2 - 1 , y^3 - x^2 + 1)
+;     starting with (x_0,y_0) = z0 = pixel
+;  It calculates:
+;     (x_(n+1),y_(n+1)) = (x_n,y_n) - (F'(x_n,y_n))^-1 * F(x_n,y_n)
+;     where (F'(x_n,y_n))^-1 is the inverse of the Jacobian matrix of F.
 }
 
 Newton_real   { ; Sylvie Gallet, 1996
