@@ -1,14 +1,18 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright 2014-2024 Richard Thomson
+# Copyright 2014-2025 Richard Thomson
 #
 cmake_minimum_required(VERSION 3.23)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(misc_target)
+include(policy_new)
 include(set_cxx_standard)
 include(target_folder)
 include(vs_startup_project)
+
+# v3.31: install() DESTINATION paths are normalized.
+policy_new(CMP0177)
 
 # <filesystem> is C++17 or later
 set_cxx_standard(17)
@@ -101,6 +105,7 @@ misc_group_sources("Documentation" FILES
     "Style.md")
 misc_group_sources("CMake Scripts" FILES
     "cmake/misc_target.cmake"
+    "cmake/policy_new.cmake"
     "cmake/set_cxx_standard.cmake"
     "cmake/target_folder.cmake"
     "cmake/vs_startup_project.cmake")
