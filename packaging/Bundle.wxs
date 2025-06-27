@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <!-- Define a unique ID for this bundle -->
+  <Bundle Name="$(var.ID_PROGRAM_NAME)"
+          Version="$(var.VERSION)"
+          Manufacturer="$(var.ID_VENDOR_NAME)"
+          UpgradeCode="A55E5D6B-18DF-4726-AB08-D51E7CECC22C"
+          IconSourceFile="$(var.ProjectDir)..\win32\Id.ico">
+
+    <!-- BootstrapperApplicationRef specifies the type of bootstrapper UI to use -->
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLargeLicense">
+      <bal:WixStandardBootstrapperApplication
+        LicenseFile="license.rtf"
+        LogoFile="$(var.ProjectDir)..\win32\Id.ico"
+        ShowVersion="yes"/>
+    </BootstrapperApplicationRef>
+
+    <!-- Registry search to detect if VC++ Runtime is already installed -->
+    <util:RegistrySearch
+        Id="VCRedistInstalled"
+        Root="HKLM"
+        Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\x64"
+        Value="Installed"
+        Variable="VCRedistInstalled"
+        Result="exists" />
+
+    <!-- Use WiX built-in chainable installer for VC Runtime -->
+    <Chain>
+      <!-- Download and install VC++ Redistributable -->
+      <ExePackage
+          Id="VCRedist"
+          Name="VC++ 2022 Runtime"
+          Cache="yes"
+          Compressed="no"
+          PerMachine="yes"
+          Permanent="yes"
+          Vital="yes"
+          SourceFile="!(bindpath.downloads)\vc_redist.x64.exe"
+          DownloadUrl="https://aka.ms/vs/17/release/vc_redist.x64.exe"
+          InstallCommand="/install /quiet /norestart"
+          DetectCondition="VCRedistInstalled" />
+
+      <!-- Your main MSI package comes after the prerequisites -->
+      <MsiPackage
+          Id="MainApplication"
+          SourceFile="$(var.ID_PACKAGE_FILE)"
+          Vital="yes">
+        <!-- Add msi properties as needed -->
+      </MsiPackage>
+    </Chain>
+  </Bundle>
+</Wix>

@@ -15,6 +15,7 @@ set(CPACK_RESOURCE_FILE_README          "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt"
 set(CPACK_PACKAGE_EXECUTABLES           "id" "${ID_PROGRAM_NAME}")
 
 if(WIN32)
+    include(find_wix)
     set(CPACK_GENERATOR ZIP WIX)
 
     install(FILES "github.ico" DESTINATION .)
@@ -31,6 +32,48 @@ if(WIN32)
     set(CPACK_WIX_EXTENSIONS            "WiXUtilExtension")
     set(CPACK_WIX_EXTRA_SOURCES         "${CMAKE_CURRENT_SOURCE_DIR}/shortcuts.xml")
     set(CPACK_WIX_PATCH_FILE            "${CMAKE_CURRENT_SOURCE_DIR}/patch.xml")
+    set(CPACK_WIX_INSTALL_SCOPE         "perMachine")
+    
+    # Define the version for WiX variables in the Bundle.wxs
+    set(VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+    
+    # Add a custom target to build the Burn bootstrapper after the MSI is built
+    add_custom_target(setup
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads
+        COMMAND ${CMAKE_COMMAND} -E copy 
+            ${CMAKE_CURRENT_SOURCE_DIR}/license.rtf 
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/
+        COMMAND ${CPACK_WIX_CANDLE_EXECUTABLE}
+            "-dProjectDir=$<SHELL_PATH:${CMAKE_CURRENT_SOURCE_DIR}/>"
+            "-dID_PROGRAM_NAME=${ID_PROGRAM_NAME}"
+            "-dID_PACKAGE_FILE=$<SHELL_PATH:${CMAKE_BINARY_DIR}/${ID_PROGRAM_NAME}-${VERSION}-win64.msi>"
+            "-dID_VENDOR_NAME=${ID_VENDOR_NAME}"
+            "-dVERSION=${VERSION}"
+            -ext WixBalExtension
+            -ext WixUtilExtension
+            -out ${CMAKE_CURRENT_BINARY_DIR}/bundle/Bundle.wixobj
+            ${CMAKE_CURRENT_SOURCE_DIR}/Bundle.wxs
+        COMMAND ${CPACK_WIX_LIGHT_EXECUTABLE}
+            -ext WixBalExtension 
+            -ext WixUtilExtension
+            -out ${CMAKE_BINARY_DIR}/${ID_PROGRAM_NAME}-${VERSION}-Setup.exe
+            -b downloads=${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/Bundle.wixobj
+        DEPENDS package
+        COMMENT "Building Burn bootstrapper with VC++ runtime installer"
+        VERBATIM
+        SOURCES Bundle.wxs
+    )
+
+    # Download the VC runtime for inclusion in the bundle
+    add_custom_command(
+        TARGET setup PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads
+        COMMAND curl -L
+            -o "${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads/vc_redist.x64.exe"
+            "https://aka.ms/vs/17/release/vc_redist.x64.exe"
+        COMMENT "Checking for VC++ Runtime redistributable"
+    )
 else()
     set(CPACK_GENERATOR TGZ)
 endif()
