@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+# Copyright 2025 Richard Thomson
+#
 # Create a Miscellaneous target to organize files in the IDE
 function(misc_target)
     cmake_parse_arguments(ARG "" "" "FILES" ${ARGN})
