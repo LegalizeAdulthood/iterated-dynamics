@@ -1093,7 +1093,7 @@ we list them here to further elaborate on their contributions.
 ~Doc-,ADoc-
      { Main Author of Iterated Dynamics }\
 
-     { Main Authors of Fractint, Id's Ancestor }
+     { Main Authors of Fractint }
 ~Doc+,ADoc+
 ;
 ;
@@ -1186,7 +1186,9 @@ University of Delaware and a Master of Philosophy degree in Computer Science
 from the University of Utah.  From 2000 to 2010, he was a Microsoft MVP for
 Direct3D and wrote a book on the Direct3D APIs.  The book, "The Direct3D
 Graphics Pipeline", is available free download at
+~Format-
 <https://legalizeadulthood.wordpress.com/the-direct3d-graphics-pipeline/>
+~Format+
 
 He has worked as a software engineer for his entire career on embedded
 systems, 3D graphics workstations, 3D paint software, digital video editing
@@ -1196,9 +1198,9 @@ works on hardware accelerated ray tracing.
 ;
 ;
 ;
-~Topic=Main Authors of Fractint\, Id's Ancestor
+~Topic=Main Authors of Fractint
 ~Format-,Online-,ADoc-
-MAIN AUTHORS OF FRACTINT, ID'S ANCESTOR
+MAIN AUTHORS OF FRACTINT
 
 ~Format+,Online+,ADoc+
 Bert Tyler is the original author of Fractint.  He wrote the "blindingly
