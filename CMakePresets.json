@@ -139,7 +139,8 @@
       "name": "ci-release",
       "displayName": "CI Build with Release settings",
       "configurePreset": "ci-release",
-      "configuration": "RelWithDebInfo"
+      "configuration": "RelWithDebInfo",
+      "targets": [ "package", "setup" ]
     },
     {
       "name": "ci-html-docs",

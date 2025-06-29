@@ -141,6 +141,14 @@ jobs:
         VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
       run: cmake --workflow --preset ci-${{matrix.preset}}
 
+    - name: Upload setup package artifacts
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      if: ${{matrix.os == 'windows-latest'}}
+      with:
+        name: Setup-${{matrix.preset}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*-Setup.exe
+        compression-level: 0
+
     - name: Upload msi package artifacts
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'windows-latest'}}
