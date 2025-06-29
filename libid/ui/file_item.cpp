@@ -168,8 +168,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
     {
         // search for file
         make_path(full_path, drive, dir, "*", default_extension);
-        int out = fr_find_first(full_path);
-        while (out == 0)
+        for (bool more = fr_find_first(full_path); more; more = fr_find_next())
         {
             char msg[200];
             std::sprintf(msg, "Searching %13s for %s      ", g_dta.filename.c_str(), item_name);
@@ -193,7 +192,6 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
                     infile = nullptr;
                 }
             }
-            out = fr_find_next();
         }
         clear_temp_msg();
     }

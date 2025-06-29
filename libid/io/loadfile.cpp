@@ -1975,7 +1975,7 @@ rescan:  // entry for changed browse parms
     split_drive_dir(g_read_filename, drive, dir);
     split_fname_ext(g_browse_mask, fname, ext);
     make_path(tmp_mask, drive, dir, fname, ext);
-    done = (vid_too_big == 2) || fr_find_first(tmp_mask);
+    done = (vid_too_big == 2) || !fr_find_first(tmp_mask);
     // draw all visible windows
     while (!done)
     {
@@ -2008,7 +2008,7 @@ rescan:  // entry for changed browse parms
             save_box(num_dots, win_count);
             win_count++;
         }
-        done = (fr_find_next() || win_count >= MAX_WINDOWS_OPEN);
+        done = (!fr_find_next() || win_count >= MAX_WINDOWS_OPEN);
     }
 
     if (win_count >= MAX_WINDOWS_OPEN)

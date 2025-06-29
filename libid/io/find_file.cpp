@@ -4,6 +4,8 @@
 
 #include "io/path_match.h"
 
+#include <filesystem>
+
 enum class DirPos
 {
     NONE = 0,
@@ -71,7 +73,7 @@ static bool next_match()
  * matching the wildcard specification in path.  Return zero if a file
  * is found, or non-zero if a file was not found or an error occurred.
  */
-int fr_find_first(const char *path)       // Find 1st file (or subdir) meeting path/filespec
+bool fr_find_first(const char *path)       // Find 1st file (or subdir) meeting path/filespec
 {
     const fs::path search{path};
     const fs::path search_dir{is_directory(search) ? search : (search.has_parent_path() ? search.parent_path() : ".")};
@@ -79,7 +81,7 @@ int fr_find_first(const char *path)       // Find 1st file (or subdir) meeting p
     s_dir_it = fs::directory_iterator(search_dir, err);
     if (err)
     {
-        return 1;
+        return false;
     }
 
     s_path_matcher = match_fn(path);
@@ -91,7 +93,7 @@ int fr_find_first(const char *path)       // Find 1st file (or subdir) meeting p
     {
         s_dir_pos = DirPos::FILES;
     }
-    return next_match() ? 0 : 1;
+    return next_match();
 }
 
 /* fr_findnext
@@ -99,12 +101,12 @@ int fr_find_first(const char *path)       // Find 1st file (or subdir) meeting p
  * Find the next file matching the wildcard search begun by fr_findfirst.
  * Fill in DTA.filename, DTA.path, and DTA.attribute
  */
-int fr_find_next()
+bool fr_find_next()
 {
     if (s_dir_pos == DirPos::FILES)
     {
         ++s_dir_it;
     }
-    return next_match() ? 0 : -1;
+    return next_match();
 }
 

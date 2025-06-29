@@ -72,7 +72,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
     // check existence
     if (!is_a_dir || is_a_file)
     {
-        if (fr_find_first(buff) == 0)
+        if (fr_find_first(buff))
         {
             if (g_dta.attribute & SUB_DIR) // exists and is dir
             {

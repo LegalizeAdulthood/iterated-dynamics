@@ -2,8 +2,6 @@
 //
 #pragma once
 
-#include <filesystem>
-#include <functional>
 #include <string>
 
 enum
@@ -20,5 +18,5 @@ struct DirSearch
 
 extern DirSearch g_dta;
 
-int fr_find_first(const char *path);
-int fr_find_next();
+bool fr_find_first(const char *path);
+bool fr_find_next();
