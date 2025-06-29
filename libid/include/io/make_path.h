@@ -20,11 +20,6 @@ inline void make_path(char *template_str, const char *drive, const char *dir, co
     std::strcpy(template_str, result.c_str());
 }
 
-inline std::string make_fname_ext(const char *fname, const char *ext)
-{
-    return make_path(nullptr, nullptr, fname, ext);
-}
-
 inline void make_fname_ext(char *template_str, const char *fname, const char *ext)
 {
     make_path(template_str, nullptr, nullptr, fname, ext);
