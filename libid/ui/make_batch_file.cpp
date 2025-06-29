@@ -220,7 +220,7 @@ bool MakeParParams::prompt()
         }
 
         g_command_file = builder.read_string_buff(MAX_COMMENT_LEN - 1);
-        if (has_ext(g_command_file.c_str()) == nullptr)
+        if (!has_ext(g_command_file))
         {
             g_command_file += ".par";   // default extension .par
         }

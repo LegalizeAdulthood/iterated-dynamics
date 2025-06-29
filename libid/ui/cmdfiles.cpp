@@ -269,7 +269,7 @@ static void process_simple_command(char *cur_arg)
     {
         // not xxx=yyy, so check for gif
         std::string filename = cur_arg;
-        if (has_ext(cur_arg) == nullptr)
+        if (!has_ext(filename))
         {
             filename += ".gif";
         }

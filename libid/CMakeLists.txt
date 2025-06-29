@@ -104,7 +104,7 @@ add_library(libid
     include/io/fix_dirname.h io/fix_dirname.cpp
     include/io/gifview.h io/gifview.cpp
     include/io/gif_file.h io/gif_file.cpp
-    include/io/has_ext.h io/has_ext.cpp
+    include/io/has_ext.h
     include/io/is_directory.h
     include/io/is_writeable.h
     include/io/loadfile.h io/loadfile.cpp

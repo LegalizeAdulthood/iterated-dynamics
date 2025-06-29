@@ -1013,7 +1013,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     {
         g_view_window = false;
     }
-    if (has_ext(g_read_filename.c_str()) == nullptr)
+    if (!has_ext(g_read_filename))
     {
         g_read_filename += ".gif";
     }

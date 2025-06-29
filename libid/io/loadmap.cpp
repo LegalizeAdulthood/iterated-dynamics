@@ -43,7 +43,7 @@ bool validate_luts(const char *map_name)
     std::strcpy(temp, g_map_name.c_str());
     std::strcpy(temp_fn, map_name);
     merge_path_names(temp, temp_fn, CmdFile::AT_CMD_LINE);
-    if (has_ext(temp) == nullptr)   // Did name have an extension?
+    if (!has_ext(temp))   // Did name have an extension?
     {
         std::strcat(temp, ".map");  // No? Then add .map
     }

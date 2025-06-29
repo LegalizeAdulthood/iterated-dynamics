@@ -2,4 +2,9 @@
 //
 #pragma once
 
-const char *has_ext(const char *source);
+#include <filesystem>
+
+inline bool has_ext(const std::filesystem::path &source)
+{
+    return source.has_extension();
+}
