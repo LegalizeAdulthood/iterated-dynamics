@@ -1915,7 +1915,7 @@ int file_get_window()
     int c;
     int done;
     int win_count;
-    int toggle;
+    bool toggle{};
     int color_of_box;
     Window win_list;
     char drive[ID_FILE_MAX_DRIVE];
@@ -1969,7 +1969,7 @@ int file_get_window()
     color_of_box = g_color_medium;
 rescan:  // entry for changed browse parms
     std::time(&last_time);
-    toggle = 0;
+    toggle = false;
     win_count = 0;
     g_browse_sub_images = true;
     split_drive_dir(g_read_filename, drive, dir);
@@ -2043,7 +2043,7 @@ rescan:  // entry for changed browse parms
                 if (static_cast<double>(this_time - last_time) > 0.2)
                 {
                     last_time = this_time;
-                    toggle = 1- toggle;
+                    toggle = !toggle;
                 }
                 if (toggle)
                 {
