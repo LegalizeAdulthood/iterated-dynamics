@@ -11,6 +11,8 @@ include(set_cxx_standard)
 include(target_folder)
 include(vs_startup_project)
 
+# v3.30: The FindBoost module is removed.
+policy_new(CMP0167)
 # v3.31: install() DESTINATION paths are normalized.
 policy_new(CMP0177)
 
