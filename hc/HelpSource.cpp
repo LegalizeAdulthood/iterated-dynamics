@@ -381,7 +381,7 @@ static int read_char_aux()
 
     while (true)
     {
-        switch (const int ch = getc(s_src_file); ch)
+        switch (const int ch = std::getc(s_src_file); ch)
         {
         case '\t':    // expand a tab
         {
@@ -414,7 +414,7 @@ static int read_char_aux()
         default:
             if (s_read_char_sp > 0)
             {
-                ungetc(ch, s_src_file);
+                std::ungetc(ch, s_src_file);
                 --s_read_char_sp;
                 return ' ';
             }
@@ -1603,7 +1603,7 @@ void read_src(const std::string &fname, Mode mode)
                 if (string_case_equal(s_cmd, "Include ", 8))
                 {
                     const std::string file_name = &s_cmd[8];
-                    if (FILE *new_file = open_include(file_name))
+                    if (std::FILE *new_file = open_include(file_name))
                     {
                         Include top{};
                         top.fname = g_current_src_filename;

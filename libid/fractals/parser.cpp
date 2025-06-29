@@ -2020,7 +2020,7 @@ static int frm_get_char(std::FILE *open_file)
     bool line_wrap = false;
     while (!done)
     {
-        c = getc(open_file);
+        c = std::getc(open_file);
         switch (c)
         {
         case '\r':
@@ -2031,7 +2031,7 @@ static int frm_get_char(std::FILE *open_file)
             line_wrap = true;
             break;
         case ';' :
-            while ((c = getc(open_file)) != '\n' && c != EOF)
+            while ((c = std::getc(open_file)) != '\n' && c != EOF)
             {
             }
             if (c == EOF)
@@ -2725,7 +2725,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     bool done = false;
     while (!done)
     {
-        c = getc(open_file);
+        c = std::getc(open_file);
         switch (c)
         {
         case EOF:
@@ -2762,7 +2762,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         std::fseek(open_file, file_pos, SEEK_SET);
         for (j = 0; j < i && j < 25; j++)
         {
-            msg_buff[j+k+2] = (char) getc(open_file);
+            msg_buff[j+k+2] = (char) std::getc(open_file);
         }
         msg_buff[j+k+2] = (char) 0;
         stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
@@ -2777,7 +2777,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         i = 0;
         while (!done)
         {
-            c = getc(open_file);
+            c = std::getc(open_file);
             switch (c)
             {
             case EOF:
@@ -2827,7 +2827,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         done = false;
         while (!done)
         {
-            c = getc(open_file);
+            c = std::getc(open_file);
             switch (c)
             {
             case EOF:
@@ -3091,7 +3091,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         int line_number = 1;
         while (std::ftell(open_file) != s_errors[j].error_pos)
         {
-            int i = fgetc(open_file);
+            int i = std::fgetc(open_file);
             if (i == '\n')
             {
                 line_number++;

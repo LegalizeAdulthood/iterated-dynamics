@@ -201,8 +201,8 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
-            num_read = (U16) fread(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file);
-            if (num_read != 1 && !feof(s_handles[index].disk.file))
+            num_read = (U16) std::fread(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            if (num_read != 1 && !std::feof(s_handles[index].disk.file))
             {
                 which_disk_error(4);
                 goto disk_error;
@@ -211,8 +211,8 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
             to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
         }
-        num_read = (U16) fread(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
-        if (num_read != 1 && !feof(s_handles[index].disk.file))
+        num_read = (U16) std::fread(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
+        if (num_read != 1 && !std::feof(s_handles[index].disk.file))
         {
             which_disk_error(4);
             break;

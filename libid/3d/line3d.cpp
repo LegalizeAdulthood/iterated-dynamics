@@ -827,7 +827,7 @@ loop_bottom:
             {
                 end_object(tout);
                 tout = false;
-                if (ferror(s_file_ptr1))
+                if (std::ferror(s_file_ptr1))
                 {
                     std::fclose(s_file_ptr1);
                     std::remove(g_light_name.c_str());
@@ -1480,7 +1480,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     {
         for (int i = 0; i < s_targa_header_24; i++)   // Copy the header from the Source
         {
-            std::fputc(fgetc(source), fps);
+            std::fputc(std::fgetc(source), fps);
         }
     }
     else
@@ -1529,7 +1529,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
         {
             if (overlay)
             {
-                std::fputc(fgetc(source), fps);
+                std::fputc(std::fgetc(source), fps);
             }
             else
             {
@@ -1539,7 +1539,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
                 }
             }
         }
-        if (ferror(fps))
+        if (std::ferror(fps))
         {
             // Almost certainly not enough disk space
             std::fclose(fps);
@@ -1576,15 +1576,15 @@ bool targa_validate(const char *filename)
         return true;              // Oops, file does not exist
     }
 
-    s_targa_header_24 += fgetc(fp);    // Check ID field and adjust header size
+    s_targa_header_24 += std::fgetc(fp);    // Check ID field and adjust header size
 
-    if (fgetc(fp))               // Make sure this is an unmapped file
+    if (std::fgetc(fp))               // Make sure this is an unmapped file
     {
         file_error(filename, 4);
         return true;
     }
 
-    if (fgetc(fp) != 2)          // Make sure it is a type 2 file
+    if (std::fgetc(fp) != 2)          // Make sure it is a type 2 file
     {
         file_error(filename, 4);
         return true;
@@ -1593,29 +1593,29 @@ bool targa_validate(const char *filename)
     // Skip color map specification
     for (int i = 0; i < 5; i++)
     {
-        fgetc(fp);
+        std::fgetc(fp);
     }
 
     for (int i = 0; i < 4; i++)
     {
         // Check image origin
-        fgetc(fp);
+        std::fgetc(fp);
     }
     // Check Image specs
     for (auto &elem : s_upr_lwr)
     {
-        if (fgetc(fp) != (int) elem)
+        if (std::fgetc(fp) != (int) elem)
         {
             file_error(filename, 3);
             return true;
         }
     }
 
-    if (fgetc(fp) != (int) s_t24)
+    if (std::fgetc(fp) != (int) s_t24)
     {
         s_error = 4;                // Is it a targa 24 file?
     }
-    if (fgetc(fp) != (int) s_t32)
+    if (std::fgetc(fp) != (int) s_t32)
     {
         s_error = 4;                // Is the origin at the upper left?
     }

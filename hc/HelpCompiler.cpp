@@ -619,7 +619,7 @@ static bool compare_files(std::FILE *f1, std::FILE *f2)
 
     while (!std::feof(f1) && !std::feof(f2))
     {
-        if (getc(f1) != getc(f2))
+        if (std::getc(f1) != std::getc(f2))
         {
             return true;
         }

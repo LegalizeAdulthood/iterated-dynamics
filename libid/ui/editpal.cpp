@@ -1973,7 +1973,7 @@ void PalTable::undo_process(int delta)
 {
     // delta = -1 for undo, +1 for redo
 
-    switch (int cmd = getc(m_undo_file); cmd)
+    switch (int cmd = std::getc(m_undo_file); cmd)
     {
     case UNDO_DATA:
     case UNDO_DATA_SINGLE:
@@ -1984,12 +1984,12 @@ void PalTable::undo_process(int delta)
 
         if (cmd == UNDO_DATA)
         {
-            first = (unsigned char) getc(m_undo_file);
-            last = (unsigned char) getc(m_undo_file);
+            first = (unsigned char) std::getc(m_undo_file);
+            last = (unsigned char) std::getc(m_undo_file);
         }
         else // UNDO_DATA_SINGLE
         {
-            last = (unsigned char) getc(m_undo_file);
+            last = (unsigned char) std::getc(m_undo_file);
             first = last;
         }
 
@@ -2015,8 +2015,8 @@ void PalTable::undo_process(int delta)
 
     case UNDO_ROTATE:
     {
-        int first = (unsigned char) getc(m_undo_file);
-        int last = (unsigned char) getc(m_undo_file);
+        int first = (unsigned char) std::getc(m_undo_file);
+        int last = (unsigned char) std::getc(m_undo_file);
         int dir = getw(m_undo_file);
         rotate(delta * dir, first, last);
         break;

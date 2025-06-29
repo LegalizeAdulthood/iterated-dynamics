@@ -104,7 +104,7 @@ static bool read_lsystem_file(const char *str)
     }
     {
         int c;
-        while ((c = fgetc(infile)) != '{')
+        while ((c = std::fgetc(infile)) != '{')
         {
             if (c == EOF)
             {

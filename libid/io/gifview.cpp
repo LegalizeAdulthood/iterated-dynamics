@@ -80,7 +80,7 @@ unsigned int g_num_colors{};
 
 int get_byte()
 {
-    return getc(s_fp_in); // EOF is -1, as desired
+    return std::getc(s_fp_in); // EOF is -1, as desired
 }
 
 int get_bytes(Byte *where, int how_many)

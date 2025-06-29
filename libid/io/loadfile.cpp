@@ -1360,7 +1360,7 @@ static int find_fractal_info(const std::string &gif_file, //
             int k = 0;
             for (int j = 0; j < 3; j++)
             {
-                k = getc(s_fp);
+                k = std::getc(s_fp);
                 if (k < 0)
                 {
                     break;
@@ -1456,7 +1456,7 @@ static int find_fractal_info(const std::string &gif_file, //
             int scan_extend = 1;
             while (scan_extend)
             {
-                if (fgetc(s_fp) != '!' // if not what we expect just give up
+                if (std::fgetc(s_fp) != '!' // if not what we expect just give up
                     || std::fread(temp1, 1, 13, s_fp) != 13
                     || std::strncmp(&temp1[2], "fractint", 8) != 0)
                 {
@@ -1476,7 +1476,7 @@ static int find_fractal_info(const std::string &gif_file, //
                     decode_fractal_info(info, 1);
                     scan_extend = 2;
                     // now we know total extension len, back up to first block
-                    fseek(s_fp, 0L-info->tot_extend_len, SEEK_CUR);
+                    std::fseek(s_fp, 0L-info->tot_extend_len, SEEK_CUR);
                     break;
                 case GifExtensionId::RESUME_INFO: // "fractint002", resume info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
@@ -1631,17 +1631,17 @@ static int find_fractal_info(const std::string &gif_file, //
 static void load_ext_blk(char *load_ptr, int load_len)
 {
     int len;
-    while ((len = fgetc(s_fp)) > 0)
+    while ((len = std::fgetc(s_fp)) > 0)
     {
         while (--len >= 0)
         {
             if (--load_len >= 0)
             {
-                *(load_ptr++) = (char)fgetc(s_fp);
+                *(load_ptr++) = (char)std::fgetc(s_fp);
             }
             else
             {
-                fgetc(s_fp); // discard excess characters
+                std::fgetc(s_fp); // discard excess characters
             }
         }
     }
@@ -1652,7 +1652,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
     int len;
     *data_len = 0;
     *block_len = 1;
-    while ((len = fgetc(s_fp)) > 0)
+    while ((len = std::fgetc(s_fp)) > 0)
     {
         std::fseek(s_fp, len, SEEK_CUR);
         *data_len += len;

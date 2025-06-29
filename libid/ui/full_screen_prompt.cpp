@@ -162,7 +162,7 @@ void Prompt::count_lines_in_entry()
         bool comment = false;
         int c = 0;
         int line_width = -1;
-        while ((c = fgetc(scroll_file)) != EOF)
+        while ((c = std::fgetc(scroll_file)) != EOF)
         {
             if (c == ';')
             {

@@ -270,7 +270,7 @@ static int skip_white_space(std::FILE *infile, long *file_offset)
     int c;
     do
     {
-        c = getc(infile);
+        c = std::getc(infile);
         (*file_offset)++;
     }
     while (c == ' ' || c == '\t' || c == '\n' || c == '\r');
@@ -283,7 +283,7 @@ static int skip_comment(std::FILE *infile, long *file_offset)
     int c;
     do
     {
-        c = getc(infile);
+        c = std::getc(infile);
         (*file_offset)++;
     }
     while (c != '\n' && c != '\r' && c != EOF);
@@ -326,7 +326,7 @@ top:
             {
                 buf[len++] = (char) c;
             }
-            c = getc(infile);
+            c = std::getc(infile);
             ++file_offset;
             if (c == '\n' || c == '\r')
             {
@@ -342,7 +342,7 @@ top:
             }
             else
             {
-                c = getc(infile);
+                c = std::getc(infile);
                 ++file_offset;
                 if (c == '\n' || c == '\r')
                 {
@@ -364,7 +364,7 @@ top:
                     {
                         temp_offset = file_offset;  // beginning of new line
                     }
-                    c = getc(infile);
+                    c = std::getc(infile);
                     ++file_offset;
                 }
                 if (c == '{') //second '{' found
@@ -441,19 +441,19 @@ static void format_param_file_line(int choice, char *buf)
     int c;
     char line[80];
     std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-    while (getc(s_gfe_file) != '{')
+    while (std::getc(s_gfe_file) != '{')
     {
     }
     do
     {
-        c = getc(s_gfe_file);
+        c = std::getc(s_gfe_file);
     }
     while (c == ' ' || c == '\t' || c == ';');
     int i = 0;
     while (i < 56 && c != '\n' && c != '\r' && c != EOF)
     {
         line[i++] = (char)((c == '\t') ? ' ' : c);
-        c = getc(s_gfe_file);
+        c = std::getc(s_gfe_file);
     }
     line[i] = 0;
     std::sprintf(buf, "%-20s%-56s", s_gfe_choices[choice]->name, line);
@@ -483,7 +483,7 @@ static int check_gfe_key(int key, int choice)
         int c = 0;
         int width_ct = 0;
         std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-        while ((c = fgetc(s_gfe_file)) != EOF)
+        while ((c = std::fgetc(s_gfe_file)) != EOF)
         {
             if (c == ';')
             {

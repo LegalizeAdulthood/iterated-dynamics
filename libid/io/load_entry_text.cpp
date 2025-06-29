@@ -8,7 +8,7 @@ static bool skip_starting_rows(std::FILE *entry_file, int start_row)
     int c;
     for (int i = 0; i < start_row; i++)
     {
-        while ((c = fgetc(entry_file)) != '\n' && c != EOF)
+        while ((c = std::fgetc(entry_file)) != '\n' && c != EOF)
         {
             if (c == ';')
             {
@@ -68,7 +68,7 @@ void load_entry_text(
             int i = 0;
             while (i < start_col)
             {
-               c = fgetc(entry_file);
+               c = std::fgetc(entry_file);
                 if (c == EOF)
                 {
                     break;
@@ -123,7 +123,7 @@ void load_entry_text(
         }
 
         // process rest of line into buf
-        while ((c = fgetc(entry_file)) != EOF)
+        while ((c = std::fgetc(entry_file)) != EOF)
         {
             if (c == ';')
             {

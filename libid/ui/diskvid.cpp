@@ -237,7 +237,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
         std::fseek(s_fp, 0L, SEEK_SET);
         for (int i = 0; i < s_header_length; i++)
         {
-            s_mem_buf[i] = (Byte)fgetc(s_fp);
+            s_mem_buf[i] = (Byte)std::fgetc(s_fp);
         }
         std::fclose(s_fp);
         s_dv_handle = memory_alloc(BLOCK_LEN, memory_size, MemoryLocation::DISK);

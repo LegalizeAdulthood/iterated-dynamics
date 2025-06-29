@@ -203,7 +203,7 @@ int slide_show()
 start:
     if (s_quotes) // reading a quoted string
     {
-        out = fgetc(s_slide_show_file);
+        out = std::fgetc(s_slide_show_file);
         if (out != '\"' && out != EOF)
         {
             s_last1 = out;
@@ -212,7 +212,7 @@ start:
         s_quotes = false;
     }
     // skip white space:
-    while ((out = fgetc(s_slide_show_file)) == ' ' || out == '\t' || out == '\n')
+    while ((out = std::fgetc(s_slide_show_file)) == ' ' || out == '\t' || out == '\n')
     {
     }
     switch (out)
@@ -226,7 +226,7 @@ start:
     case ';':         // comment from here to end of line, skip it
         while (out != '\n' && out != EOF)
         {
-            out = fgetc(s_slide_show_file);
+            out = std::fgetc(s_slide_show_file);
         }
         goto start;
     case '*':
@@ -251,7 +251,7 @@ start:
         {
             buffer[i++] = (char)out;
         }
-        out = fgetc(s_slide_show_file);
+        out = std::fgetc(s_slide_show_file);
         if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
         {
             break;

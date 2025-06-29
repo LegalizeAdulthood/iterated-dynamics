@@ -621,7 +621,7 @@ static CmdArgFlags command_file(std::FILE *handle, CmdFile mode)
     if (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
     {
         int i;
-        while ((i = getc(handle)) != '{' && i != EOF)
+        while ((i = std::getc(handle)) != '{' && i != EOF)
         {
         }
         clear_command_comments();

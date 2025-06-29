@@ -52,7 +52,7 @@ static int timer(TimerType type, int (*fn)(), ...)
     }
     if (do_bench)
     {
-        fp = fopen(get_save_name("id-bench.txt").string().c_str(), "a");
+        fp = std::fopen(get_save_name("id-bench.txt").string().c_str(), "a");
     }
     g_timer_start = std::clock();
     switch (type)

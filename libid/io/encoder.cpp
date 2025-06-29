@@ -479,7 +479,7 @@ bool encoder()
 
     interrupted = compress(row_limit);
 
-    if (ferror(s_outfile))
+    if (std::ferror(s_outfile))
     {
         goto oops;
     }
