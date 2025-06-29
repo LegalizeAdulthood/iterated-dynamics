@@ -25,11 +25,6 @@ inline void make_fname_ext(char *template_str, const char *fname, const char *ex
     make_path(template_str, nullptr, nullptr, fname, ext);
 }
 
-inline std::string make_drive_dir(const char *drive, const char *dir)
-{
-    return make_path(drive, dir, nullptr, nullptr);
-}
-
 inline void make_drive_dir(char *template_str, const char *drive, const char *dir)
 {
     make_path(template_str, drive, dir, nullptr, nullptr);
