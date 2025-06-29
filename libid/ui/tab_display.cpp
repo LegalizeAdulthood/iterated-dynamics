@@ -160,8 +160,8 @@ static bool tab_display2(char *msg)
         write_row(++row, "g_int_length %-d g_bf_length %-d ", g_int_length, g_bf_length);
     }
     row++;
-    show_str_var("tempdir",     g_temp_dir.c_str(),      &row, msg);
-    show_str_var("workdir",     g_working_dir.c_str(),      &row, msg);
+    show_str_var("tempdir",     g_temp_dir.string().c_str(),      &row, msg);
+    show_str_var("workdir",     g_working_dir.string().c_str(),      &row, msg);
     show_str_var("filename",    g_read_filename.c_str(),     &row, msg);
     show_str_var("formulafile", g_formula_filename.c_str(), &row, msg);
     show_str_var("savename",    g_save_filename.c_str(),     &row, msg);

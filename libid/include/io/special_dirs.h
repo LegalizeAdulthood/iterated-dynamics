@@ -2,9 +2,9 @@
 //
 #pragma once
 
-#include <string>
+#include <filesystem>
 
-extern std::string g_save_dir;
+extern std::filesystem::path g_save_dir;
 
-std::string get_executable_dir();
-std::string get_documents_dir();
+std::filesystem::path get_executable_dir();
+std::filesystem::path get_documents_dir();

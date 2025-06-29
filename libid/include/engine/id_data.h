@@ -4,6 +4,7 @@
 
 #include <config/port.h>
 
+#include <filesystem>
 #include <string>
 
 struct VideoInfo;
@@ -61,8 +62,8 @@ extern LDouble               g_delta_y;
 extern std::string           g_file_name_stack[16];
 extern int                   g_filename_stack_index;
 extern float                 g_final_aspect_ratio;
-extern std::string           g_fractal_search_dir1;
-extern std::string           g_fractal_search_dir2;
+extern std::filesystem::path g_fractal_search_dir1;
+extern std::filesystem::path g_fractal_search_dir2;
 extern bool                  g_has_inverse;
 extern HelpLabels            g_help_mode;
 extern bool                  g_keep_aspect_ratio;

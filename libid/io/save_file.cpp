@@ -13,7 +13,7 @@ std::filesystem::path get_save_name(const std::string &name)
     fs::path path{name};
     if (path.is_relative())
     {
-        path = fs::path{g_save_dir} / path;
+        path = g_save_dir / path;
     }
     return path;
 }

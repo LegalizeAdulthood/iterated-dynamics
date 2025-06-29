@@ -7,6 +7,7 @@
 #include <config/port.h>
 
 #include <cstdio>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -245,7 +246,7 @@ extern bool                  g_new_bifurcation_functions_loaded;
 extern int                   g_orbit_delay;
 extern int                   g_orbit_save_flags;
 extern std::string           g_orbit_save_name;
-extern std::string           g_organize_formulas_dir;
+extern std::filesystem::path g_organize_formulas_dir;
 extern bool                  g_organize_formulas_search;
 extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;
@@ -266,7 +267,7 @@ extern int                   g_sound_flag;
 extern bool                  g_start_show_orbit;
 extern int                   g_stop_pass;
 extern bool                  g_targa_out;
-extern std::string           g_temp_dir;
+extern std::filesystem::path g_temp_dir;
 extern Byte                  g_text_color[];
 extern int                   g_transparent_color_3d[];
 extern TrueColorMode         g_true_mode;
@@ -274,7 +275,7 @@ extern bool                  g_true_color;
 extern bool                  g_use_center_mag;
 extern InitOrbitMode         g_use_init_orbit;
 extern int                   g_user_biomorph_value;
-extern std::string           g_working_dir;
+extern std::filesystem::path g_working_dir;
 
 int cmd_files(int argc, const char *const *argv);
 CmdArgFlags load_commands(std::FILE *infile);

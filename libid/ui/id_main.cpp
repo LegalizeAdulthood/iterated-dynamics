@@ -54,8 +54,8 @@
 VideoInfo g_video_entry{};                                    //
 HelpLabels g_help_mode{};                                     //
 int g_adapter{};                                              // Video Adapter chosen from list in ...h
-std::string g_fractal_search_dir1;                            //
-std::string g_fractal_search_dir2;                            //
+std::filesystem::path g_fractal_search_dir1;                  //
+std::filesystem::path g_fractal_search_dir2;                  //
 int g_screen_x_dots{}, g_screen_y_dots{};                     // # of dots on the physical screen
 int g_logical_screen_x_offset{}, g_logical_screen_y_offset{}; // physical top left of logical screen
 int g_logical_screen_x_dots{}, g_logical_screen_y_dots{};     // # of dots on the logical screen

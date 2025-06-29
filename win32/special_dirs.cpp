@@ -7,15 +7,16 @@
 #include <Windows.h>
 
 #include <stdexcept>
+#include <string>
 
-std::string get_executable_dir()
+std::filesystem::path get_executable_dir()
 {
     char buffer[MAX_PATH]{};
     GetModuleFileNameA(nullptr, buffer, MAX_PATH);
     return buffer;
 }
 
-std::string get_documents_dir()
+std::filesystem::path get_documents_dir()
 {
     char buffer[MAX_PATH]{};
     const HRESULT status = SHGetFolderPathA(nullptr, CSIDL_MYDOCUMENTS, nullptr, SHGFP_TYPE_CURRENT, buffer);

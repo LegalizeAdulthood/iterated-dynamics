@@ -352,7 +352,7 @@ protected:
 
     ValueSaver<Version> m_saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver<int> m_saved_release{g_release};
-    ValueSaver<std::string> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
+    ValueSaver<std::filesystem::path> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
     ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<int> m_saved_x_dots{g_file_x_dots, 800};
@@ -1776,12 +1776,12 @@ TEST_F(TestParameterCommand, tempDirExisting)
     start_dir.make_preferred();
     std::filesystem::path new_dir{ID_TEST_DATA_SUBDIR};
     new_dir.make_preferred();
-    ValueSaver saved_temp_dir{g_temp_dir, start_dir.make_preferred().string()};
+    ValueSaver saved_temp_dir{g_temp_dir, start_dir.make_preferred()};
 
     exec_cmd_arg("tempdir=" + new_dir.string());
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(new_dir.string(), adjust_dir(g_temp_dir));
+    EXPECT_EQ(new_dir.string(), adjust_dir(g_temp_dir.string()));
 }
 
 TEST_F(TestParameterCommand, workDirExisting)
@@ -1790,12 +1790,12 @@ TEST_F(TestParameterCommand, workDirExisting)
     start_dir.make_preferred();
     std::filesystem::path new_dir{ID_TEST_DATA_SUBDIR};
     new_dir.make_preferred();
-    ValueSaver saved_working_dir{g_working_dir, start_dir.make_preferred().string()};
+    ValueSaver saved_working_dir{g_working_dir, start_dir.make_preferred()};
 
     exec_cmd_arg("workdir=" + new_dir.string());
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(new_dir.string(), adjust_dir(g_working_dir));
+    EXPECT_EQ(new_dir.string(), adjust_dir(g_working_dir.string()));
 }
 
 TEST_F(TestParameterCommand, exitModeDeprecated)
@@ -2622,7 +2622,7 @@ TEST_F(TestParameterCommand, orgFrmDir)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_organize_formulas_search);
-    EXPECT_EQ(ID_TEST_DATA_DIR, adjust_dir(g_organize_formulas_dir));
+    EXPECT_EQ(ID_TEST_DATA_DIR, adjust_dir(g_organize_formulas_dir.string()));
 }
 
 TEST_F(TestParameterCommand, biomorph)

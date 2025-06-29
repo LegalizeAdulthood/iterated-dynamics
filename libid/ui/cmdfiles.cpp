@@ -114,9 +114,9 @@ RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-w
 char g_auto_show_dot{};                                   // dark, medium, bright
 bool g_start_show_orbit{};                                // show orbits on at start of fractal
 std::string g_read_filename;                              // name of fractal input file
-std::string g_temp_dir;                                   // name of temporary directory
-std::string g_working_dir;                                // name of directory for misc files
-std::string g_organize_formulas_dir;                      // name of directory for orgfrm files
+std::filesystem::path g_temp_dir;                         // name of temporary directory
+std::filesystem::path g_working_dir;                      // name of directory for misc files
+std::filesystem::path g_organize_formulas_dir;            // name of directory for orgfrm files
 std::string g_gif_filename_mask{"*.gif"};                 //
 std::string g_save_filename{"fract001"};                  // save files using this name
 bool g_potential_flag{};                                  // continuous potential enabled?
@@ -425,7 +425,6 @@ static void init_vars_run()              // once per run init
         if (is_a_directory(p))
         {
             g_temp_dir = p;
-            fix_dir_name(g_temp_dir);
         }
     }
     else
@@ -2758,7 +2757,6 @@ static CmdArgFlags cmd_org_frm_dir(const Command &cmd)
     }
     g_organize_formulas_search = true;
     g_organize_formulas_dir = cmd.value;
-    fix_dir_name(g_organize_formulas_dir);
     return CmdArgFlags::NONE;
 }
 
@@ -3477,7 +3475,6 @@ static CmdArgFlags cmd_temp_dir(const Command &cmd)
         return cmd.bad_arg();
     }
     g_temp_dir = cmd.value;
-    fix_dir_name(g_temp_dir);
     return CmdArgFlags::NONE;
 }
 
@@ -3771,7 +3768,6 @@ static CmdArgFlags cmd_work_dir(const Command &cmd)
         return cmd.bad_arg();
     }
     g_working_dir = cmd.value;
-    fix_dir_name(g_working_dir);
     return CmdArgFlags::NONE;
 }
 

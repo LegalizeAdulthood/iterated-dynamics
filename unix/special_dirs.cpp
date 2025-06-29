@@ -13,7 +13,7 @@ enum
     BUFFER_SIZE = 1024
 };
 
-std::string get_executable_dir()
+std::filesystem::path get_executable_dir()
 {
     char buffer[BUFFER_SIZE]{};
     int bytes_read = readlink("/proc/self/exe", buffer, std::size(buffer));
@@ -24,7 +24,7 @@ std::string get_executable_dir()
     return buffer;
 }
 
-std::string get_documents_dir()
+std::filesystem::path get_documents_dir()
 {
     char buffer[BUFFER_SIZE]{};
     const char *home = std::getenv("HOME");

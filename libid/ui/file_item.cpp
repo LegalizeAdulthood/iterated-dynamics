@@ -200,7 +200,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
 
     if (!found && g_organize_formulas_search && item_type == ItemType::L_SYSTEM)
     {
-        split_drive_dir(g_organize_formulas_dir, drive, dir);
+        split_drive_dir(g_organize_formulas_dir.string(), drive, dir);
         fname[0] = '_';
         fname[1] = (char) 0;
         if (std::isalpha(item_name[0]))
