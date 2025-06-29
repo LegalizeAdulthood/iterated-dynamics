@@ -141,6 +141,10 @@ jobs:
         VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
       run: cmake --workflow --preset ci-${{matrix.preset}}
 
+    - name: Build Setup package
+      if: ${{matrix.os == 'windows-latest'}}
+      run: cmake --build --preset ci-${{matrix.preset}} --target setup
+
     - name: Upload setup package artifacts
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'windows-latest'}}
