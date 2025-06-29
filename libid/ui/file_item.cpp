@@ -49,7 +49,8 @@ static std::FILE *s_gfe_file{};
 static FileEntry **s_gfe_choices{}; // for format_parmfile_line
 static const char *s_gfe_title{};
 
-bool find_file_item(std::string &filename, const char *item_name, std::FILE **file_ptr, ItemType item_type)
+bool find_file_item(
+    std::string &filename, const std::string &item_name, std::FILE **file_ptr, ItemType item_type)
 {
     std::FILE *infile = nullptr;
     bool found = false;
@@ -67,7 +68,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
         infile = std::fopen(filename.c_str(), "rb");
         if (infile != nullptr)
         {
-            if (search_for_entry(infile, item_name))
+            if (search_for_entry(infile, item_name.c_str()))
             {
                 found = true;
             }
@@ -84,7 +85,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
             infile = std::fopen(full_path, "rb");
             if (infile != nullptr)
             {
-                if (search_for_entry(infile, item_name))
+                if (search_for_entry(infile, item_name.c_str()))
                 {
                     filename = full_path;
                     found = true;
@@ -151,7 +152,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
         infile = std::fopen(full_path, "rb");
         if (infile != nullptr)
         {
-            if (search_for_entry(infile, item_name))
+            if (search_for_entry(infile, item_name.c_str()))
             {
                 filename = full_path;
                 found = true;
@@ -171,7 +172,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
         for (bool more = fr_find_first(full_path); more; more = fr_find_next())
         {
             char msg[200];
-            std::sprintf(msg, "Searching %13s for %s      ", g_dta.filename.c_str(), item_name);
+            std::sprintf(msg, "Searching %13s for %s      ", g_dta.filename.c_str(), item_name.c_str());
             show_temp_msg(msg);
             if (!(g_dta.attribute & SUB_DIR)
                 && g_dta.filename != "."
@@ -182,7 +183,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
                 infile = std::fopen(full_path, "rb");
                 if (infile != nullptr)
                 {
-                    if (search_for_entry(infile, item_name))
+                    if (search_for_entry(infile, item_name.c_str()))
                     {
                         filename = full_path;
                         found = true;
@@ -203,7 +204,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
         fname[1] = (char) 0;
         if (std::isalpha(item_name[0]))
         {
-            if (!string_case_equal(item_name, "carr", 4))
+            if (!string_case_equal(item_name.c_str(), "carr", 4))
             {
                 fname[1] = item_name[0];
                 fname[2] = (char) 0;
@@ -231,7 +232,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
         infile = std::fopen(full_path, "rb");
         if (infile != nullptr)
         {
-            if (search_for_entry(infile, item_name))
+            if (search_for_entry(infile, item_name.c_str()))
             {
                 filename = full_path;
                 found = true;
@@ -246,7 +247,7 @@ bool find_file_item(std::string &filename, const char *item_name, std::FILE **fi
 
     if (!found)
     {
-        std::sprintf(full_path, "'%s' file entry item not found", item_name);
+        std::sprintf(full_path, "'%s' file entry item not found", item_name.c_str());
         stop_msg(full_path);
         return true;
     }

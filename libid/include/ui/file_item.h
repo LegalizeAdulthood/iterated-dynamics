@@ -13,7 +13,8 @@ enum class ItemType
     IFS = 3,
 };
 
-bool find_file_item(std::string &filename, const char *item_name, std::FILE **file_ptr, ItemType item_type);
+bool find_file_item(
+    std::string &filename, const std::string &item_name, std::FILE **file_ptr, ItemType item_type);
 
 long get_file_entry(ItemType type, std::string &filename, std::string &entry_name);
 

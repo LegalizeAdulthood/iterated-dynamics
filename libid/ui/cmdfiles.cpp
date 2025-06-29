@@ -311,7 +311,7 @@ static void process_file_set_name(const char *cur_arg, char *slash)
     }
     g_command_name = &slash[1];
     std::FILE *init_file = nullptr;
-    if (find_file_item(g_command_file, g_command_name.c_str(), &init_file, ItemType::PAR_SET) || init_file == nullptr)
+    if (find_file_item(g_command_file, g_command_name, &init_file, ItemType::PAR_SET) || init_file == nullptr)
     {
         arg_error(cur_arg);
     }

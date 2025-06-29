@@ -2990,7 +2990,7 @@ bool run_formula(const std::string &name, bool report_bad_sym)
     }
 
     std::FILE *entry_file{};
-    if (find_file_item(g_formula_filename, name.c_str(), &entry_file, ItemType::FORMULA))
+    if (find_file_item(g_formula_filename, name, &entry_file, ItemType::FORMULA))
     {
         stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
