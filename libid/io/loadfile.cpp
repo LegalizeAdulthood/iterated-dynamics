@@ -1906,7 +1906,7 @@ static void restore_box(int num_dots, int which)
     std::copy(&s_browse_box_values[num_dots*which], &s_browse_box_values[num_dots*(which + 1)], &g_box_values[0]);
 }
 
-// fgetwindow reads all .GIF files and draws window outlines on the screen
+// file_get_window reads all .GIF files and draws window outlines on the screen
 int file_get_window()
 {
     Affine stack_cvt;
