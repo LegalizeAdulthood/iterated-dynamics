@@ -49,7 +49,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
     static bool batch_mode = false;
     if (g_debug_flag != DebugFlags::NONE || g_init_batch >= BatchMode::NORMAL)
     {
-        if (std::FILE *fp = dir_fopen(g_working_dir.c_str(), "stopmsg.txt", g_init_batch == BatchMode::NONE ? "w" : "a"))
+        if (std::FILE *fp = dir_fopen(g_working_dir, "stopmsg.txt", g_init_batch == BatchMode::NONE ? "w" : "a"))
         {
             std::fprintf(fp, "%s\n", msg.c_str());
             std::fclose(fp);

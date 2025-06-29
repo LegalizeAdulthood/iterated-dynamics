@@ -92,7 +92,7 @@ add_library(libid
     include/io/CurrentPathSaver.h
     include/io/decoder.h io/decoder.cpp
     include/io/decode_info.h io/decode_info.cpp
-    include/io/dir_file.h io/dir_file.cpp
+    include/io/dir_file.h
     include/io/encoder.h io/encoder.cpp
     include/io/ends_with_slash.h io/ends_with_slash.cpp
     include/io/expand_dirname.h io/expand_dirname.cpp

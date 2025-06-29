@@ -3,11 +3,14 @@
 #pragma once
 
 #include <cstdio>
-#include <string>
+#include <filesystem>
 
-int dir_remove(const char *dir, const char *filename);
-inline int dir_remove(const std::string &dir, const std::string &filename)
+inline void dir_remove(const std::filesystem::path &dir, const std::filesystem::path &filename)
 {
-    return dir_remove(dir.c_str(), filename.c_str());
+    std::filesystem::remove(dir / filename);
 }
-std::FILE *dir_fopen(const char *dir, const char *filename, const char *mode);
+
+inline std::FILE *dir_fopen(const std::filesystem::path &dir, const std::filesystem::path &filename, const char *mode)
+{
+    return std::fopen((dir / filename).string().c_str(), mode);
+}

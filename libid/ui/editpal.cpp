@@ -2812,7 +2812,7 @@ PalTable::PalTable() :
     m_curr({1, 1}),
     m_rgb({RGBEditor(0, 0, this), RGBEditor(0, 0, this)}),
     m_move_box(0, 0, 0, PAL_TABLE_PAL_X + 1, PAL_TABLE_PAL_Y + 1),
-    m_undo_file(dir_fopen(g_temp_dir.c_str(), s_undo_file, "w+b")),
+    m_undo_file(dir_fopen(g_temp_dir, s_undo_file, "w+b")),
     m_top(255),
     m_band_width(15)
 {
@@ -2836,7 +2836,7 @@ PalTable::~PalTable()
     if (m_undo_file != nullptr)
     {
         std::fclose(m_undo_file);
-        dir_remove(g_temp_dir.c_str(), s_undo_file);
+        dir_remove(g_temp_dir, s_undo_file);
     }
 }
 

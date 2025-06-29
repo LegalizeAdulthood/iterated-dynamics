@@ -1466,7 +1466,7 @@ static void file_error(const char *filename, int error)
 bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
 {
     // Open File for both reading and writing
-    std::FILE *fps = dir_fopen(g_working_dir.c_str(), filename.c_str(), "w+b");
+    std::FILE *fps = dir_fopen(g_working_dir, filename, "w+b");
     if (fps == nullptr)
     {
         file_error(filename.c_str(), 1);
@@ -1569,7 +1569,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
 bool targa_validate(const char *filename)
 {
     // Attempt to open source file for reading
-    std::FILE *fp = dir_fopen(g_working_dir.c_str(), filename, "rb");
+    std::FILE *fp = dir_fopen(g_working_dir, filename, "rb");
     if (fp == nullptr)
     {
         file_error(filename, 1);

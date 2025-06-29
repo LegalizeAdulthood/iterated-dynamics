@@ -883,7 +883,7 @@ static int cmp_line(Byte *pixels, int line_len)
     if (row == 0)
     {
         s_err_count = 0;
-        s_cmp_fp = dir_fopen(g_working_dir.c_str(), "cmperr", (g_init_batch != BatchMode::NONE) ? "a" : "w");
+        s_cmp_fp = dir_fopen(g_working_dir, "cmperr", (g_init_batch != BatchMode::NONE) ? "a" : "w");
         g_out_line_cleanup = cmp_line_cleanup;
     }
     if (g_potential_16bit)
