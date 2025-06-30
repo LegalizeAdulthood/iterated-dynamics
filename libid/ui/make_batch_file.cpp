@@ -490,20 +490,21 @@ skip_ui:
                 }
                 std::fputc('\n', s_param_file);
                 {
-                    char tmp_buff[25];
-                    std::memset(tmp_buff, ' ', 23);
-                    tmp_buff[23] = 0;
-                    tmp_buff[21] = ';';
+                    char comment[25];
+                    std::memset(comment, ' ', 23);
+                    comment[23] = 0;
+                    comment[21] = ';';
                     for (int k = 1; k < 4; k++)
                     {
                         if (!g_command_comment[k].empty())
                         {
-                            std::fprintf(s_param_file, "%s%s\n", tmp_buff, g_command_comment[k].c_str());
+                            std::fprintf(s_param_file, "%s%s\n", comment, g_command_comment[k].c_str());
                         }
                     }
-                    if (g_patch_level != 0 && !params.colors_only)
+                    if (g_version.patch != 0 && !params.colors_only)
                     {
-                        std::fprintf(s_param_file, "%s id Version %d Patchlevel %d\n", tmp_buff, g_release, g_patch_level);
+                        std::fprintf(s_param_file, "%sId Version %d.%d.%d\n", comment, //
+                            g_version.major, g_version.minor, g_version.patch);
                     }
                 }
                 write_batch_params(params.color_spec, params.colors_only, params.max_color, col, row);

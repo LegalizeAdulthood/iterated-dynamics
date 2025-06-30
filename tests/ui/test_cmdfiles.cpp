@@ -379,6 +379,7 @@ TEST_F(TestCommandMakePar, makeParNewFile)
 
     EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
     EXPECT_EQ(R"par(bar                {
+                     ; Id Version 1.2.3
   reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
   maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
@@ -419,6 +420,7 @@ TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 }
 
 foo                {
+                     ; Id Version 1.2.3
   reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
   maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
   periodicity=0 cyclerange=0/0 hertz=0 sound=off volume=0 attack=0
