@@ -18,7 +18,7 @@
    { Introduction }                         { Distribution of Iterated Dynamics }
    { Conditions on Use }                    { Contacting the Author }
    { Getting Started }                      { The Stone Soup Story }
-   { New Features in 1.3.1 }                { A Word About the Authors }
+   { New Features in 1.3.2 }                { A Word About the Authors }
 
    { Display Mode Commands }
    { Color Cycling Commands }               { Id on Unix }
@@ -39,7 +39,7 @@
 ;
 ;
 ~DocContents
-{     , 0, "New Features in 1.3.1", FF}
+{     , 0, "New Features in 1.3.2", FF}
 {     , 0, "Introduction", "Conditions on Use", FF}
 
 {1.   , 0, Iterated Dynamics Commands, FF}
@@ -259,7 +259,7 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ;
-~Topic=New Features in 1.3.1
+~Topic=New Features in 1.3.2
 Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has
 its own history spanning many years.  Please consult the Fractint help
 for its history.  To avoid being confused with a new release of Fractint,
@@ -271,9 +271,9 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-Version 1.3.1 is an interim bug fix release on the way to version 2.0.
+Version 1.3.2 is an interim bug fix release on the way to version 2.0.
 
-New Features in Version 1.3.1
+New Features in Version 1.3.2
 
 o Colormap channels are no longer restricted to 6 bits.  Encoded colors
   when generating parameter sets are now extended to encode 8-bit color
@@ -284,8 +284,9 @@ o Colormap channels are no longer restricted to 6 bits.  Encoded colors
 o The palette editor was updated to work with 8-bit colors.
   (Fixes #306)
 
-Bugs Fixed in Version 1.3.1
+Bugs Fixed in Version 1.3.2
 
+o Displaying the view window parameter screen could crash.  (Fixes #308)\
 o Periodic automatic image save, activated by the savetime parameter,
   has been restored.  (Fixes #43)
 o Some Fractal of the Day image regressions have been fixed.
@@ -316,7 +317,7 @@ o The first value to the mathtolerance parameter is ignored; it previously
 o The delay value is now properly displayed for type=ant.
   (Fixes #387)
 
-Code Cleanup in Version 1.3.1
+Code Cleanup in Version 1.3.2
 
 o More unused integer math routines were removed.\
 o Functions used to initialize the FractalSpecific array were renamed
