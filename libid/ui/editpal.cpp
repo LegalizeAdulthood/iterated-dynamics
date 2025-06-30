@@ -45,7 +45,7 @@ enum
     CURSOR_BLINK_RATE = 300, // timer ticks between cursor blinks
     FAR_RESERVE = 8192L,     // amount of mem we will leave avail.
     TITLE_LEN = 17,
-    EDITOR_WIDTH = 8 * 3 + 4,
+    EDITOR_WIDTH = 8 * 4 + 4,
     EDITOR_HEIGHT = 8 + 4,
     STATUS_LEN = 4,
     CURS_INC = 1,
@@ -630,8 +630,8 @@ static void pal_range_to_grey(PalEntry pal[], int first, int how_many)
     {
         Byte val = (Byte)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
         curr->blue = val;
-        curr->green = curr->blue;
-        curr->red = curr->green;
+        curr->green = val;
+        curr->red = val;
     }
 }
 
@@ -640,9 +640,9 @@ static void pal_range_to_negative(PalEntry pal[], int first, int how_many)
 {
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
-        curr->red   = (Byte)(63 - curr->red);
-        curr->green = (Byte)(63 - curr->green);
-        curr->blue  = (Byte)(63 - curr->blue);
+        curr->red   = (Byte)(255 - curr->red);
+        curr->green = (Byte)(255 - curr->green);
+        curr->blue  = (Byte)(255 - curr->blue);
     }
 }
 
@@ -767,7 +767,7 @@ void ColorEditor::draw()
     }
 
     s_cursor.hide();
-    display_fmt(m_x + 2, m_y + 2, s_fg_color, s_bg_color, "%c%02d", m_letter, m_val);
+    display_fmt(m_x + 2, m_y + 2, s_fg_color, s_bg_color, "%c%03d", m_letter, m_val);
     s_cursor.show();
 }
 
@@ -820,10 +820,10 @@ int ColorEditor::edit()
         switch (key)
         {
         case ID_KEY_PAGE_UP:
-            if (m_val < 63)
+            if (m_val < 255)
             {
                 m_val += 5;
-                m_val = std::min(m_val, 63);
+                m_val = std::min(m_val, 255);
                 draw();
                 m_observer->change(this);
             }
@@ -837,10 +837,10 @@ int ColorEditor::edit()
                 driver_get_key();
                 ++diff;
             }
-            if (m_val < 63)
+            if (m_val < 255)
             {
                 m_val += diff;
-                m_val = std::min(m_val, 63);
+                m_val = std::min(m_val, 255);
                 draw();
                 m_observer->change(this);
             }
@@ -884,7 +884,7 @@ int ColorEditor::edit()
         case '8':
         case '9':
             m_val = (key - '0') * 10;
-            m_val = std::min(m_val, 63);
+            m_val = std::min(m_val, 255);
             draw();
             m_observer->change(this);
             break;
@@ -1442,13 +1442,6 @@ void PalTable::process()
 {
     get_pal_range(0, g_colors, m_pal);
 
-    // Make sure all palette entries are 0-63
-
-    for (int ctr = 0; ctr < 768; ctr++)
-    {
-        ((char *)m_pal)[ctr] &= 63;
-    }
-
     update_dac();
 
     m_rgb[0].set_rgb(m_curr[0], &m_pal[m_curr[0]]);
@@ -1912,12 +1905,12 @@ void PalTable::update_dac()
         if (s_inverse)
         {
             std::memset(g_dac_box[s_fg_color], 0, 3);  // g_dac_box[fg] = (0,0,0)
-            std::memset(g_dac_box[s_bg_color], 48, 3); // g_dac_box[bg] = (48,48,48)
+            std::memset(g_dac_box[s_bg_color], 192, 3); // g_dac_box[bg] = (192,192,192)
         }
         else
         {
             std::memset(g_dac_box[s_bg_color], 0, 3);  // g_dac_box[bg] = (0,0,0)
-            std::memset(g_dac_box[s_fg_color], 48, 3); // g_dac_box[fg] = (48,48,48)
+            std::memset(g_dac_box[s_fg_color], 192, 3); // g_dac_box[fg] = (192,192,192)
         }
     }
 
@@ -2856,8 +2849,8 @@ void edit_palette()
 
     s_reserve_colors = true;
     s_inverse = false;
-    s_fg_color = (Byte)(255%g_colors);
-    s_bg_color = (Byte)(s_fg_color-1);
+    s_fg_color = static_cast<Byte>(255 % g_colors);
+    s_bg_color = static_cast<Byte>(s_fg_color - 1);
 
     s_cursor = CrossHairCursor();
     PalTable pt;
