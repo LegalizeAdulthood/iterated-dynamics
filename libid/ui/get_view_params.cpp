@@ -102,7 +102,7 @@ get_view_restart:
     values[k].uval.ch.val = g_keep_aspect_ratio ? 1 : 0;
 
     {
-        const char *scroll_types[] = {"fixed", "relaxed"};
+        static const char *scroll_types[] = {"fixed", "relaxed"};
         choices[++k] = "Zoombox scrolling (f[ixed], r[elaxed])";
         values[k].type = 'l';
         values[k].uval.ch.vlen = 7;
