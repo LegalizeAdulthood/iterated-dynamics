@@ -235,14 +235,14 @@ static inline double interpolate(
     s_zi[6].re = (ZRE7);s_zi[6].im = (ZIM7);\
     s_zi[7].re = (ZRE8);s_zi[7].im = (ZIM8);\
     s_zi[8].re = (ZRE9);s_zi[8].im = (ZIM9);\
-    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)) != 0; \
+    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)); \
     assert(status)
 
-static int rhombus(
+static bool rhombus(
     double c_re1, double c_re2, double c_im1, double c_im2,
     int x1, int x2, int y1, int y2, long iter);
 
-static int rhombus_aux(
+static bool rhombus_aux(
     double c_re1, double c_re2, double c_im1, double c_im2,
     int x1, int x2, int y1, int y2, long iter)
 {
@@ -267,7 +267,7 @@ static int rhombus_aux(
 
     DoubleComplex s[9];
 
-    bool status = false;
+    bool status{};
     avail = stack_avail();
     g_soi_min_stack_available = std::min(avail, g_soi_min_stack_available);
     g_max_rhombus_depth = std::max(g_rhombus_depth, g_max_rhombus_depth);
@@ -275,12 +275,12 @@ static int rhombus_aux(
 
     if (driver_key_pressed())
     {
-        return 1;
+        return true;
     }
     if (iter > g_max_iterations)
     {
         put_box(x1, y1, x2, y2, 0);
-        return 0;
+        return false;
     }
 
     if ((y2 - y1 <= SCAN) || (avail < g_soi_min_stack))
@@ -303,14 +303,14 @@ scan:
         {
             if (driver_key_pressed())
             {
-                return 1;
+                return true;
             }
             s_state.scan_z.re = GET_SCAN_REAL(c_re1, s_state.z.im);
             s_state.scan_z.im = GET_SCAN_IMAG(c_re1, s_state.z.im);
             save_color = iteration(c_re1, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
             if (save_color < 0)
             {
-                return 1;
+                return true;
             }
             save_x = x1;
             for (x = x1 + INTERLEAVE, s_state.z.re = c_re1 + s_state.interleave_step; x < x2;
@@ -322,7 +322,7 @@ scan:
                 color = iteration(s_state.z.re, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
                 if (color < 0)
                 {
-                    return 1;
+                    return true;
                 }
                 if (color == save_color)
                 {
@@ -336,7 +336,7 @@ scan:
                     help_color = iteration(s_state.help_real, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
                     if (help_color < 0)
                     {
-                        return 1;
+                        return true;
                     }
                     if (help_color == save_color)
                     {
@@ -365,7 +365,7 @@ scan:
                 help_color = iteration(s_state.help_real, s_state.z.im, s_state.scan_z.re, s_state.scan_z.im, iter);
                 if (help_color < 0)
                 {
-                    return 1;
+                    return true;
                 }
                 if (help_color == save_color)
                 {
@@ -385,7 +385,7 @@ scan:
             }
         }
 
-        return 0;
+        return false;
     }
 
     std::transform(std::begin(s_zi), std::end(s_zi), std::begin(s_state.rq), z_sqr);
@@ -531,7 +531,7 @@ scan:
         if (iter > g_max_iterations)
         {
             put_box(x1, y1, x2, y2, 0);
-            return 0;
+            return false;
         }
 
         /* now for all test points, check whether they exceed the
@@ -710,15 +710,15 @@ scan:
             re94, im94,
             iter);
 
-    return status ? 1 : 0;
+    return status;
 }
 
-static int rhombus(
+static bool rhombus(
     double c_re1, double c_re2, double c_im1, double c_im2,
     int x1, int x2, int y1, int y2, long iter)
 {
     ++g_rhombus_depth;
-    const int result = rhombus_aux(c_re1, c_re2, c_im1, c_im2, x1, x2, y1, y2, iter);
+    const bool result = rhombus_aux(c_re1, c_re2, c_im1, c_im2, x1, x2, y1, y2, iter);
     --g_rhombus_depth;
     return result;
 }
