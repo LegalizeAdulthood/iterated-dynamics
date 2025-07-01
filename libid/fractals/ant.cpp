@@ -401,7 +401,7 @@ static std::string get_rule()
     return buff.str();
 }
 
-int ant()
+int ant_type()
 {
     if (g_logical_screen_x_dots != s_last_x_dots || g_logical_screen_y_dots != s_last_y_dots)
     {

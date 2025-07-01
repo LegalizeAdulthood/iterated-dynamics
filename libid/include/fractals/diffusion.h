@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int diffusion();
+int diffusion_type();

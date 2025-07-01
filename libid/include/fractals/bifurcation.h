@@ -2,7 +2,7 @@
 //
 #pragma once
 
-int bifurcation();
+int bifurcation_type();
 int bifurc_add_trig_pi_orbit();
 int bifurc_lambda_trig_orbit();
 int bifurc_may_orbit();

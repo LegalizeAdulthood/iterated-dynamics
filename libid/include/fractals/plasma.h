@@ -2,4 +2,4 @@
 //
 #pragma once
 
-int plasma();
+int plasma_type();

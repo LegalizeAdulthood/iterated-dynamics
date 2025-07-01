@@ -298,15 +298,15 @@ static MainState prompt_options(MainContext &context)
     {
         g_true_color = false;          // truecolor doesn't play well with the evolver
     }
-    if (g_max_iterations > old_max_iterations
-        && g_inside_color >= COLOR_BLACK
-        && g_calc_status == CalcStatus::COMPLETED
-        && g_cur_fractal_specific->calc_type == standard_fractal
-        && !g_log_map_flag
-        && !g_true_color     // recalc not yet implemented with truecolor
+    if (g_max_iterations > old_max_iterations                         //
+        && g_inside_color >= COLOR_BLACK                              //
+        && g_calc_status == CalcStatus::COMPLETED                     //
+        && g_cur_fractal_specific->calc_type == standard_fractal_type //
+        && !g_log_map_flag                                            //
+        && !g_true_color                                       // recalc not yet implemented with truecolor
         && (g_user_std_calc_mode != 't' || g_fill_color <= -1) // tesseral with fill doesn't work
-        && g_user_std_calc_mode != 'o'
-        && i == 1 // nothing else changed
+        && g_user_std_calc_mode != 'o'                         //
+        && i == 1                                              // nothing else changed//
         && g_outside_color != ATAN)
     {
         g_quick_calc = true;
@@ -347,7 +347,7 @@ static MainState begin_ant(MainContext &/*context*/)
     g_from_text = false;
     int err = get_fract_params(true);
     driver_unstack_screen();
-    if (err >= 0 && ant() >= 0)
+    if (err >= 0 && ant_type() >= 0)
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
@@ -372,8 +372,8 @@ static MainState request_3d_fractal_params(MainContext &context)
 static MainState show_orbit_window(MainContext &/*context*/)
 {
     // must use standard fractal and have a float variant
-    if ((get_fractal_specific(g_fractal_type)->calc_type == standard_fractal ||
-            get_fractal_specific(g_fractal_type)->calc_type == calc_froth) //
+    if ((get_fractal_specific(g_fractal_type)->calc_type == standard_fractal_type ||
+            get_fractal_specific(g_fractal_type)->calc_type == froth_type) //
         && g_bf_math == BFMathType::NONE // for now no arbitrary precision support
         && (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR))
     {

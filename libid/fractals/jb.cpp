@@ -264,7 +264,7 @@ int z_line(double x, double y)
     return 0;
 }
 
-int calc_standard_4d()
+int calc_standard_4d_type()
 {
     g_c_exponent = (int)g_params[2];
 

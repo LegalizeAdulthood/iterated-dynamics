@@ -26,7 +26,7 @@ static int s_lya_rxy[34]{};
 static int lyapunov_cycles(long filter_cycles, double a, double b);
 
 // standalone engine for "lyapunov"
-int lyapunov()
+int lyapunov_type()
 {
     double a;
     double b;

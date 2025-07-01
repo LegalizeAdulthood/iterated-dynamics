@@ -2,6 +2,6 @@
 //
 #pragma once
 
-int popcorn();
+int popcorn_type();
 int popcorn_fractal();
 int popcorn_orbit();

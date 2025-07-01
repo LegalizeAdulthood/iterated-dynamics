@@ -912,7 +912,7 @@ int latoo_orbit(double *x, double *y, double * /*z*/)
 //   Main fractal engines - put in fractalspecific[fractype].calctype
 //********************************************************************
 
-int inverse_julia_fractal()
+int inverse_julia_fractal_type()
 {
     int color = 0;
 
@@ -935,7 +935,7 @@ int inverse_julia_fractal()
     return 0;
 }
 
-int orbit2d()
+int orbit2d_type()
 {
     std::FILE *fp = open_orbit_save();
     Affine cvt;
@@ -1254,7 +1254,7 @@ bool dynamic2d_per_image()
  * of parameter1 pixels.  maxit differential equation steps are taken, with
  * a step size of parameter2.
  */
-int dynamic2d()
+int dynamic2d_type()
 {
     std::FILE *fp = open_orbit_save();
 
@@ -1763,7 +1763,7 @@ static int ifs3d_float()
     return ret;
 }
 
-int ifs()                       // front-end for ifs2d and ifs3d
+int ifs_type()                       // front-end for ifs2d and ifs3d
 {
     if (g_ifs_definition.empty() && ifs_load() < 0)
     {
@@ -1861,7 +1861,7 @@ static void setup_matrix(Matrix double_mat)
     //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
 }
 
-int orbit3d()
+int orbit3d_type()
 {
     g_display_3d = Display3DMode::MINUS_ONE ;
     s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;

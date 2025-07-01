@@ -185,11 +185,10 @@ AlternateMath g_alternate_math[] =
 // clang-format on
 
 // use next to cast orbitcalcs() that have arguments
-using VF = int(*)();
+using VF = int (*)();
 
 // This array is indexed by the enum fractal_type.
-FractalSpecific g_fractal_specific[] =
-{
+FractalSpecific g_fractal_specific[] = {
     /*
     {
         fractal name,
@@ -219,7 +218,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,          //
         SymmetryType::NONE,                                        //
         newton_orbit, other_julia_per_pixel, newton_per_image,     //
-        standard_fractal,                                          //
+        standard_fractal_type,                                     //
         NO_BAILOUT                                                 //
     },
 
@@ -234,7 +233,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::JULIA, FractalType::NO_FRACTAL,                             //
         SymmetryType::X_AXIS_NO_PARAM,                                           //
         julia_orbit, mandel_per_pixel, mandel_per_image,                         //
-        standard_fractal,                                                        //
+        standard_fractal_type,                                                   //
         STD_BAILOUT,                                                             //
         mandel_ref_pt, mandel_ref_pt_bf, mandel_perturb                          //
     },
@@ -250,7 +249,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,      //
         SymmetryType::X_AXIS,                                  //
         newton_orbit, other_julia_per_pixel, newton_per_image, //
-        standard_fractal,                                      //
+        standard_fractal_type,                                 //
         NO_BAILOUT                                             //
     },
 
@@ -265,7 +264,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL,                          //
         SymmetryType::ORIGIN,                                                  //
         julia_orbit, julia_per_pixel, julia_per_image,                         //
-        standard_fractal,                                                      //
+        standard_fractal_type,                                                 //
         STD_BAILOUT                                                            //
     },
 
@@ -285,7 +284,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                  //
         SymmetryType::NONE,                                                                                //
         nullptr, nullptr, standalone_per_image,                                                            //
-        plasma,                                                                                            //
+        plasma_type,                                                                                       //
         NO_BAILOUT                                                                                         //
     },
 
@@ -300,7 +299,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::LAMBDA_FN, FractalType::NO_FRACTAL,                  //
         SymmetryType::XY_AXIS_NO_PARAM,                                   //
         lambda_trig_orbit, other_mandel_per_pixel, mandel_trig_per_image, //
-        standard_fractal,                                                 //
+        standard_fractal_type,                                            //
         TRIG_BAILOUT_L                                                    //
     },
 
@@ -315,7 +314,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::MAN_O_WAR_J, FractalType::NO_FRACTAL,                  //
         SymmetryType::X_AXIS_NO_PARAM,                                      //
         man_o_war_orbit, mandel_per_pixel, mandel_per_image,                //
-        standard_fractal,                                                   //
+        standard_fractal_type,                                              //
         STD_BAILOUT                                                         //
     },
 
@@ -335,7 +334,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         nullptr, nullptr, standalone_per_image,           //
-        test,                                             //
+        test_type,                                        //
         STD_BAILOUT                                       //
     },
 
@@ -350,7 +349,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                //
         SymmetryType::X_AXIS,                                            //
         sqr_trig_orbit, other_julia_per_pixel, sqr_trig_per_image,       //
-        standard_fractal,                                                //
+        standard_fractal_type,                                           //
         TRIG_BAILOUT_L                                                   //
     },
 
@@ -365,7 +364,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                   //
         SymmetryType::NONE,                                                                                 //
         nullptr, nullptr, standalone_per_image,                                                             //
-        ifs,                                                                                                //
+        ifs_type,                                                                                           //
         NO_BAILOUT                                                                                          //
     },
 
@@ -381,7 +380,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         nullptr, nullptr, standalone_per_image,           //
-        ifs,                                              //
+        ifs_type,                                         //
         NO_BAILOUT                                        //
     },
 
@@ -396,7 +395,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                  //
         SymmetryType::XY_AXIS,                                             //
         trig_z_sqrd_orbit, julia_per_pixel, julia_per_image,               //
-        standard_fractal,                                                  //
+        standard_fractal_type,                                             //
         STD_BAILOUT                                                        //
     },
 
@@ -411,7 +410,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
         bifurc_verhulst_trig_orbit, nullptr, standalone_per_image,                                       //
-        bifurcation,                                                                                     //
+        bifurcation_type,                                                                                //
         NO_BAILOUT                                                                                       //
     },
 
@@ -426,7 +425,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                      //
         SymmetryType::X_AXIS,                                                  //
         trig_plus_trig_orbit, other_julia_per_pixel, trig_plus_trig_per_image, //
-        standard_fractal,                                                      //
+        standard_fractal_type,                                                 //
         TRIG_BAILOUT_L                                                         //
     },
 
@@ -441,7 +440,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                     //
         SymmetryType::X_AXIS,                                                 //
         trig_x_trig_orbit, other_julia_per_pixel, fn_x_fn_per_image,          //
-        standard_fractal,                                                     //
+        standard_fractal_type,                                                //
         TRIG_BAILOUT_L                                                        //
     },
 
@@ -456,7 +455,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                       //
         SymmetryType::NONE,                                                     //
         sqr_1_over_trig_orbit, other_julia_per_pixel, sqr_trig_per_image,       //
-        standard_fractal,                                                       //
+        standard_fractal_type,                                                  //
         TRIG_BAILOUT_L                                                          //
     },
 
@@ -471,7 +470,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                               //
         SymmetryType::X_AXIS,                                                                           //
         z_x_trig_plus_z_orbit, julia_per_pixel, z_x_trig_plus_z_per_image,                              //
-        standard_fractal,                                                                               //
+        standard_fractal_type,                                                                          //
         TRIG_BAILOUT_L                                                                                  //
     },
 
@@ -486,7 +485,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,  //
         SymmetryType::NONE,                                //
         (VF) kam_torus_orbit, nullptr, orbit3d_per_image,  //
-        orbit2d,                                           //
+        orbit2d_type,                                      //
         NO_BAILOUT                                         //
     },
 
@@ -502,7 +501,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,  //
         SymmetryType::NONE,                                //
         (VF) kam_torus_orbit, nullptr, orbit3d_per_image,  //
-        orbit3d,                                           //
+        orbit3d_type,                                      //
         NO_BAILOUT                                         //
     },
 
@@ -517,7 +516,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::JULIA_FN_PLUS_Z_SQRD, FractalType::NO_FRACTAL,                 //
         SymmetryType::X_AXIS_NO_PARAM,                                              //
         trig_plus_z_squared_orbit, mandel_per_pixel, mandel_per_image,              //
-        standard_fractal,                                                           //
+        standard_fractal_type,                                                      //
         STD_BAILOUT                                                                 //
     },
 
@@ -532,7 +531,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL_FN_PLUS_Z_SQRD,                //
         SymmetryType::NONE,                                                         //
         trig_plus_z_squared_orbit, julia_per_pixel, julia_fn_plus_z_sqrd_per_image, //
-        standard_fractal,                                                           //
+        standard_fractal_type,                                                      //
         STD_BAILOUT                                                                 //
     },
 
@@ -547,7 +546,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL_FN,                 //
         SymmetryType::PI_SYM,                                            //
         lambda_trig_orbit, other_julia_per_pixel, lambda_trig_per_image, //
-        standard_fractal,                                                //
+        standard_fractal_type,                                           //
         TRIG_BAILOUT_L                                                   //
     },
 
@@ -562,7 +561,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::JULIA_Z_POWER, FractalType::NO_FRACTAL,                     //
         SymmetryType::X_AXIS_NO_IMAG,                                            //
         mandel_z_power_orbit, other_mandel_per_pixel, mandel_per_image,          //
-        standard_fractal,                                                        //
+        standard_fractal_type,                                                   //
         STD_BAILOUT,                                                             //
         mandel_z_power_ref_pt, mandel_z_power_ref_pt_bf, mandel_z_power_perturb  //
     },
@@ -578,7 +577,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL_Z_POWER,                  //
         SymmetryType::ORIGIN,                                                  //
         mandel_z_power_orbit, other_julia_per_pixel, julia_per_image,          //
-        standard_fractal,                                                      //
+        standard_fractal_type,                                                 //
         STD_BAILOUT                                                            //
     },
 
@@ -593,7 +592,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::JUL_Z_TO_Z_PLUS_Z_PWR, FractalType::NO_FRACTAL,              //
         SymmetryType::X_AXIS_NO_PARAM,                                            //
         mandel_z_to_z_plus_z_pwr_orbit, other_mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                                         //
+        standard_fractal_type,                                                    //
         STD_BAILOUT                                                               //
     },
 
@@ -608,7 +607,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MAN_Z_TO_Z_PLUS_Z_PWR,            //
         SymmetryType::NONE,                                                     //
         mandel_z_to_z_plus_z_pwr_orbit, other_julia_per_pixel, julia_per_image, //
-        standard_fractal,                                                       //
+        standard_fractal_type,                                                  //
         STD_BAILOUT                                                             //
     },
 
@@ -623,7 +622,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::JULIA_FN_PLUS_EXP, FractalType::NO_FRACTAL,                   //
         SymmetryType::X_AXIS_NO_PARAM,                                             //
         mandel_trig_plus_exponent_orbit, other_mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                                          //
+        standard_fractal_type,                                                     //
         STD_BAILOUT                                                                //
     },
 
@@ -638,7 +637,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL_FN_PLUS_EXP,                //
         SymmetryType::NONE,                                                      //
         mandel_trig_plus_exponent_orbit, other_julia_per_pixel, julia_per_image, //
-        standard_fractal,                                                        //
+        standard_fractal_type,                                                   //
         STD_BAILOUT                                                              //
     },
 
@@ -653,7 +652,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                      //
         SymmetryType::NO_PLOT,                                                 //
         popcorn_orbit, other_julia_per_pixel, julia_per_image,                 //
-        popcorn,                                                               //
+        popcorn_type,                                                          //
         STD_BAILOUT                                                            //
     },
 
@@ -668,7 +667,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
         (VF) lorenz3d_orbit, nullptr, orbit3d_per_image,                          //
-        orbit2d,                                                                  //
+        orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
@@ -683,7 +682,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                         //
         SymmetryType::NONE,                                                                       //
         complex_newton_orbit, other_julia_per_pixel, complex_newton_per_image,                    //
-        standard_fractal,                                                                         //
+        standard_fractal_type,                                                                    //
         NO_BAILOUT                                                                                //
     },
 
@@ -698,7 +697,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                         //
         SymmetryType::NONE,                                                                       //
         complex_basin_orbit, other_julia_per_pixel, complex_newton_per_image,                     //
-        standard_fractal,                                                                         //
+        standard_fractal_type,                                                                    //
         NO_BAILOUT                                                                                //
     },
 
@@ -713,7 +712,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::COMPLEX_MARKS_JUL, FractalType::NO_FRACTAL,               //
         SymmetryType::NONE,                                                    //
         marks_cplx_mand_orbit, marks_cplx_mand_per_pixel, mandel_per_image,    //
-        standard_fractal,                                                      //
+        standard_fractal_type,                                                 //
         STD_BAILOUT                                                            //
     },
 
@@ -728,7 +727,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::COMPLEX_MARKS_MAND,             //
         SymmetryType::NONE,                                                   //
         marks_cplx_mand_orbit, julia_per_pixel, julia_per_image,              //
-        standard_fractal,                                                     //
+        standard_fractal_type,                                                //
         STD_BAILOUT                                                           //
     },
 
@@ -743,7 +742,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,    //
         SymmetryType::SETUP,                                 //
         formula_orbit, formula_per_pixel, formula_per_image, //
-        standard_fractal,                                    //
+        standard_fractal_type,                               //
         0                                                    //
     },
 
@@ -758,7 +757,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,              //
         SymmetryType::NONE,                                            //
         sierpinski_orbit, other_julia_per_pixel, sierpinski_per_image, //
-        standard_fractal,                                              //
+        standard_fractal_type,                                         //
         127                                                            //
     },
 
@@ -773,7 +772,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL_LAMBDA, //
         SymmetryType::NONE,                                  //
         lambda_orbit, julia_per_pixel, julia_per_image,      //
-        standard_fractal,                                    //
+        standard_fractal_type,                               //
         STD_BAILOUT                                          //
     },
 
@@ -788,7 +787,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::BARNSLEY_J1, FractalType::NO_FRACTAL,         //
         SymmetryType::XY_AXIS_NO_PARAM,                            //
         barnsley1_orbit, other_mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                          //
+        standard_fractal_type,                                     //
         STD_BAILOUT                                                //
     },
 
@@ -803,7 +802,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::BARNSLEY_M1,       //
         SymmetryType::ORIGIN,                                    //
         barnsley1_orbit, other_julia_per_pixel, julia_per_image, //
-        standard_fractal,                                        //
+        standard_fractal_type,                                   //
         STD_BAILOUT                                              //
     },
 
@@ -818,7 +817,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::BARNSLEY_J2, FractalType::NO_FRACTAL,         //
         SymmetryType::Y_AXIS_NO_PARAM,                             //
         barnsley2_orbit, other_mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                          //
+        standard_fractal_type,                                     //
         STD_BAILOUT                                                //
     },
 
@@ -833,7 +832,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::BARNSLEY_M2,       //
         SymmetryType::ORIGIN,                                    //
         barnsley2_orbit, other_julia_per_pixel, julia_per_image, //
-        standard_fractal,                                        //
+        standard_fractal_type,                                   //
         STD_BAILOUT                                              //
     },
 
@@ -848,7 +847,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::BARNSLEY_J3, FractalType::NO_FRACTAL,         //
         SymmetryType::X_AXIS_NO_PARAM,                             //
         barnsley3_orbit, other_mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                          //
+        standard_fractal_type,                                     //
         STD_BAILOUT                                                //
     },
 
@@ -863,7 +862,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::BARNSLEY_M3,       //
         SymmetryType::NONE,                                      //
         barnsley3_orbit, other_julia_per_pixel, julia_per_image, //
-        standard_fractal,                                        //
+        standard_fractal_type,                                   //
         STD_BAILOUT                                              //
     },
 
@@ -878,7 +877,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::LAMBDA, FractalType::NO_FRACTAL,               //
         SymmetryType::X_AXIS_NO_PARAM,                              //
         lambda_orbit, mandel_per_pixel, mandel_per_image,           //
-        standard_fractal,                                           //
+        standard_fractal_type,                                      //
         STD_BAILOUT                                                 //
     },
 
@@ -894,7 +893,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         (VF) lorenz3d_orbit, nullptr, orbit3d_per_image,  //
-        orbit3d,                                          //
+        orbit3d_type,                                     //
         NO_BAILOUT                                        //
     },
 
@@ -910,7 +909,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         (VF) rossler_orbit, nullptr, orbit3d_per_image,   //
-        orbit3d,                                          //
+        orbit3d_type,                                     //
         NO_BAILOUT                                        //
     },
 
@@ -925,7 +924,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
         (VF) henon_orbit, nullptr, orbit3d_per_image,                             //
-        orbit2d,                                                                  //
+        orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
@@ -941,7 +940,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         (VF) pickover_orbit, nullptr, orbit3d_per_image,  //
-        orbit3d,                                          //
+        orbit3d_type,                                     //
         NO_BAILOUT                                        //
     },
 
@@ -956,7 +955,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
         (VF) ginger_bread_orbit, nullptr, orbit3d_per_image,                      //
-        orbit2d,                                                                  //
+        orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
@@ -976,7 +975,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                        //
         SymmetryType::NONE,                                                      //
         nullptr, nullptr, standalone_per_image,                                  //
-        diffusion,                                                               //
+        diffusion_type,                                                          //
         NO_BAILOUT                                                               //
     },
 
@@ -991,7 +990,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,       //
         SymmetryType::XY_AXIS,                                  //
         unity_orbit, other_julia_per_pixel, standard_per_image, //
-        standard_fractal,                                       //
+        standard_fractal_type,                                  //
         NO_BAILOUT                                              //
     },
 
@@ -1006,7 +1005,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                //
         SymmetryType::X_AXIS_NO_PARAM,                                   //
         spider_orbit, mandel_per_pixel, mandel_per_image,                //
-        standard_fractal,                                                //
+        standard_fractal_type,                                           //
         STD_BAILOUT                                                      //
     },
 
@@ -1021,7 +1020,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                 //
         SymmetryType::X_AXIS_NO_IMAG,                                     //
         tetrate_orbit, other_mandel_per_pixel, mandel_per_image,          //
-        standard_fractal,                                                 //
+        standard_fractal_type,                                            //
         STD_BAILOUT                                                       //
     },
 
@@ -1036,7 +1035,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::MAGNET_1J, FractalType::NO_FRACTAL,   //
         SymmetryType::X_AXIS_NO_PARAM,                     //
         magnet1_orbit, mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                  //
+        standard_fractal_type,                             //
         100                                                //
     },
 
@@ -1051,7 +1050,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MAGNET_1M, //
         SymmetryType::X_AXIS_NO_IMAG,                    //
         magnet1_orbit, julia_per_pixel, julia_per_image, //
-        standard_fractal,                                //
+        standard_fractal_type,                           //
         100                                              //
     },
 
@@ -1066,7 +1065,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::MAGNET_2J, FractalType::NO_FRACTAL,   //
         SymmetryType::X_AXIS_NO_PARAM,                     //
         magnet2_orbit, mandel_per_pixel, mandel_per_image, //
-        standard_fractal,                                  //
+        standard_fractal_type,                             //
         100                                                //
     },
 
@@ -1081,7 +1080,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MAGNET_2M, //
         SymmetryType::X_AXIS_NO_IMAG,                    //
         magnet2_orbit, julia_per_pixel, julia_per_image, //
-        standard_fractal,                                //
+        standard_fractal_type,                           //
         100                                              //
     },
 
@@ -1096,7 +1095,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
         bifurc_lambda_trig_orbit, nullptr, standalone_per_image,                                         //
-        bifurcation,                                                                                     //
+        bifurcation_type,                                                                                //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1111,7 +1110,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
         bifurc_add_trig_pi_orbit, nullptr, standalone_per_image,                                         //
-        bifurcation,                                                                                     //
+        bifurcation_type,                                                                                //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1126,7 +1125,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
         bifurc_set_trig_pi_orbit, nullptr, standalone_per_image,                                         //
-        bifurcation,                                                                                     //
+        bifurcation_type,                                                                                //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1141,7 +1140,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,      //
         SymmetryType::NONE,                                    //
         popcorn_orbit, other_julia_per_pixel, julia_per_image, //
-        standard_fractal,                                      //
+        standard_fractal_type,                                 //
         STD_BAILOUT                                            //
     },
 
@@ -1156,7 +1155,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                  //
         SymmetryType::NONE,                                                                                //
         nullptr, nullptr, standalone_per_image,                                                            //
-        lsystem,                                                                                           //
+        lsystem_type,                                                                                      //
         NO_BAILOUT                                                                                         //
     },
 
@@ -1171,7 +1170,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MAN_O_WAR,                          //
         SymmetryType::NONE,                                                       //
         man_o_war_orbit, julia_per_pixel, julia_per_image,                        //
-        standard_fractal,                                                         //
+        standard_fractal_type,                                                    //
         STD_BAILOUT                                                               //
     },
 
@@ -1186,7 +1185,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                        //
         SymmetryType::NONE,                                                      //
         richard_8_orbit, other_richard_8_per_pixel, mandel_per_image,            //
-        standard_fractal,                                                        //
+        standard_fractal_type,                                                   //
         TRIG_BAILOUT_L                                                           //
     },
 
@@ -1201,7 +1200,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                      //
         SymmetryType::X_AXIS_NO_PARAM,                                         //
         marks_mandel_pwr_orbit, marks_mandel_pwr_per_pixel, mandel_per_image,  //
-        standard_fractal,                                                      //
+        standard_fractal_type,                                                 //
         STD_BAILOUT                                                            //
     },
 
@@ -1216,7 +1215,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,               //
         SymmetryType::X_AXIS_NO_PARAM,                                  //
         tims_error_orbit, marks_mandel_pwr_per_pixel, mandel_per_image, //
-        standard_fractal,                                               //
+        standard_fractal_type,                                          //
         STD_BAILOUT                                                     //
     },
 
@@ -1231,7 +1230,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                                //
         SymmetryType::NONE,                                                                              //
         bifurc_stewart_trig_orbit, nullptr, standalone_per_image,                                        //
-        bifurcation,                                                                                     //
+        bifurcation_type,                                                                                //
         NO_BAILOUT                                                                                       //
     },
 
@@ -1246,7 +1245,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
         (VF) hopalong2d_orbit, nullptr, orbit3d_per_image,                        //
-        orbit2d,                                                                  //
+        orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
@@ -1261,7 +1260,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::XY_AXIS,                            //
         circle_orbit, julia_per_pixel, julia_per_image,   //
-        standard_fractal,                                 //
+        standard_fractal_type,                            //
         NO_BAILOUT                                        //
     },
 
@@ -1276,7 +1275,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
         (VF) martin2d_orbit, nullptr, orbit3d_per_image,                          //
-        orbit2d,                                                                  //
+        orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
@@ -1291,7 +1290,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,              //
         SymmetryType::NONE,                                            //
         lyapunov_orbit, nullptr, lyapunov_per_image,                   //
-        lyapunov,                                                      //
+        lyapunov_type,                                                 //
         NO_BAILOUT                                                     //
     },
 
@@ -1307,7 +1306,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         (VF) lorenz3d1_orbit, nullptr, orbit3d_per_image, //
-        orbit3d,                                          //
+        orbit3d_type,                                     //
         NO_BAILOUT                                        //
     },
 
@@ -1323,7 +1322,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         (VF) lorenz3d3_orbit, nullptr, orbit3d_per_image, //
-        orbit3d,                                          //
+        orbit3d_type,                                     //
         NO_BAILOUT                                        //
     },
 
@@ -1339,7 +1338,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         (VF) lorenz3d4_orbit, nullptr, orbit3d_per_image, //
-        orbit3d,                                          //
+        orbit3d_type,                                     //
         NO_BAILOUT                                        //
     },
 
@@ -1354,7 +1353,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MAN_LAM_FN_FN,                             //
         SymmetryType::ORIGIN,                                                            //
         lambda_trig_or_trig_orbit, other_julia_per_pixel, lambda_trig_or_trig_per_image, //
-        standard_fractal,                                                                //
+        standard_fractal_type,                                                           //
         TRIG_BAILOUT_L                                                                   //
     },
 
@@ -1369,7 +1368,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MAN_FN_FN,                               //
         SymmetryType::X_AXIS,                                                          //
         julia_trig_or_trig_orbit, other_julia_per_pixel, julia_trig_or_trig_per_image, //
-        standard_fractal,                                                              //
+        standard_fractal_type,                                                         //
         TRIG_BAILOUT_L                                                                 //
     },
 
@@ -1384,7 +1383,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::LAMBDA_FN_FN, FractalType::NO_FRACTAL,                                //
         SymmetryType::X_AXIS_NO_PARAM,                                                     //
         lambda_trig_or_trig_orbit, other_mandel_per_pixel, man_lam_trig_or_trig_per_image, //
-        standard_fractal,                                                                  //
+        standard_fractal_type,                                                             //
         TRIG_BAILOUT_L                                                                     //
     },
 
@@ -1399,7 +1398,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::JUL_FN_FN, FractalType::NO_FRACTAL,                                 //
         SymmetryType::X_AXIS_NO_PARAM,                                                   //
         julia_trig_or_trig_orbit, other_mandel_per_pixel, mandel_trig_or_trig_per_image, //
-        standard_fractal,                                                                //
+        standard_fractal_type,                                                           //
         TRIG_BAILOUT_L                                                                   //
     },
 
@@ -1414,7 +1413,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                          //
         SymmetryType::NONE,                                                        //
         bifurc_may_orbit, nullptr, bifurc_may_per_image,                           //
-        bifurcation,                                                               //
+        bifurcation_type,                                                          //
         NO_BAILOUT                                                                 //
     },
 
@@ -1429,7 +1428,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::XY_AXIS,                            //
         halley_orbit, halley_per_pixel, halley_per_image, //
-        standard_fractal,                                 //
+        standard_fractal_type,                            //
         NO_BAILOUT                                        //
     },
 
@@ -1444,7 +1443,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                       //
         SymmetryType::NONE,                                                     //
         (VF) dynamic_orbit, nullptr, dynamic2d_per_image,                       //
-        dynamic2d,                                                              //
+        dynamic2d_type,                                                         //
         NO_BAILOUT                                                              //
     },
 
@@ -1459,7 +1458,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::QUAT_JUL, FractalType::NO_FRACTAL,           //
         SymmetryType::X_AXIS,                                     //
         quaternion_orbit, quaternion_per_pixel, mandel_per_image, //
-        standard_fractal,                                         //
+        standard_fractal_type,                                    //
         TRIG_BAILOUT_L                                            //
     },
 
@@ -1474,7 +1473,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::QUAT,                  //
         SymmetryType::ORIGIN,                                        //
         quaternion_orbit, quaternion_jul_per_pixel, julia_per_image, //
-        standard_fractal,                                            //
+        standard_fractal_type,                                       //
         TRIG_BAILOUT_L                                               //
     },
 
@@ -1489,7 +1488,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                        //
         SymmetryType::NONE,                                                      //
         nullptr, nullptr, cellular_per_image,                                    //
-        cellular,                                                                //
+        cellular_type,                                                           //
         NO_BAILOUT                                                               //
     },
 
@@ -1505,7 +1504,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,    //
         SymmetryType::NONE,                                  //
         julia_orbit, julibrot_per_pixel, julibrot_per_image, //
-        calc_standard_4d,                                    //
+        calc_standard_4d_type,                               //
         STD_BAILOUT                                          //
     },
 
@@ -1521,7 +1520,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL,                                                       //
         SymmetryType::NONE,                                                                                 //
         inverse_julia_orbit, nullptr, orbit3d_per_image,                                                    //
-        inverse_julia_per_image,                                                                            //
+        inverse_julia_fractal_type,                                                                         //
         NO_BAILOUT                                                                                          //
     },
 
@@ -1537,7 +1536,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL,                                                       //
         SymmetryType::NONE,                                                                                 //
         inverse_julia_orbit, nullptr, orbit3d_per_image,                                                    //
-        inverse_julia_fractal,                                                                              //
+        inverse_julia_fractal_type,                                                                         //
         NO_BAILOUT                                                                                          //
     },
 
@@ -1554,7 +1553,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,         //
         SymmetryType::NONE,                                       //
         (VF) mandel_cloud_orbit, nullptr, dynamic2d_per_image,    //
-        dynamic2d,                                                //
+        dynamic2d_type,                                                //
         NO_BAILOUT                                                //
     },
 
@@ -1569,7 +1568,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX,  //
         SymmetryType::X_AXIS,                                //
         phoenix_orbit, phoenix_per_pixel, phoenix_per_image, //
-        standard_fractal,                                    //
+        standard_fractal_type,                               //
         STD_BAILOUT                                          //
     },
 
@@ -1584,7 +1583,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::PHOENIX, FractalType::NO_FRACTAL,                 //
         SymmetryType::NONE,                                            //
         phoenix_orbit, mand_phoenix_per_pixel, mand_phoenix_per_image, //
-        standard_fractal,                                              //
+        standard_fractal_type,                                         //
         STD_BAILOUT                                                    //
     },
 
@@ -1599,7 +1598,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::HYPER_CMPLX_J, FractalType::NO_FRACTAL,         //
         SymmetryType::X_AXIS,                                        //
         hyper_complex_orbit, quaternion_per_pixel, mandel_per_image, //
-        standard_fractal,                                            //
+        standard_fractal_type,                                       //
         TRIG_BAILOUT_L                                               //
     },
 
@@ -1614,7 +1613,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::HYPER_CMPLX,                //
         SymmetryType::ORIGIN,                                             //
         hyper_complex_orbit, quaternion_jul_per_pixel, julia_per_image,   //
-        standard_fractal,                                                 //
+        standard_fractal_type,                                            //
         TRIG_BAILOUT_L                                                    //
     },
 
@@ -1629,7 +1628,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         froth_orbit, froth_per_pixel, froth_per_image,    //
-        calc_froth,                                       //
+        froth_type,                                       //
         FROTH_BAILOUT                                     //
     },
 
@@ -1644,7 +1643,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::JULIA4, FractalType::NO_FRACTAL,         //
         SymmetryType::X_AXIS_NO_PARAM,                        //
         mandel4_orbit, mandel_per_pixel, mandel_per_image,    //
-        standard_fractal,                                     //
+        standard_fractal_type,                                //
         STD_BAILOUT                                           //
     },
 
@@ -1659,7 +1658,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MANDEL4,       //
         SymmetryType::ORIGIN,                                //
         mandel4_orbit, julia_per_pixel, julia_per_image,     //
-        standard_fractal,                                    //
+        standard_fractal_type,                               //
         STD_BAILOUT                                          //
     },
 
@@ -1674,7 +1673,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::MARKS_JULIA, FractalType::NO_FRACTAL,               //
         SymmetryType::NONE,                                              //
         marks_lambda_orbit, marks_mandel_per_pixel, mandel_per_image,    //
-        standard_fractal,                                                //
+        standard_fractal_type,                                           //
         STD_BAILOUT                                                      //
     },
 
@@ -1689,7 +1688,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MARKS_MANDEL,             //
         SymmetryType::ORIGIN,                                           //
         marks_lambda_orbit, julia_per_pixel, marks_julia_per_image,     //
-        standard_fractal,                                               //
+        standard_fractal_type,                                          //
         STD_BAILOUT                                                     //
     },
 
@@ -1704,7 +1703,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                              //
         SymmetryType::NONE,                                                                            //
         (VF) icon_orbit, nullptr, orbit3d_per_image,                                                   //
-        orbit2d,                                                                                       //
+        orbit2d_type,                                                                                  //
         NO_BAILOUT                                                                                     //
     },
 
@@ -1720,7 +1719,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         (VF) icon_orbit, nullptr, orbit3d_per_image,      //
-        orbit3d,                                          //
+        orbit3d_type,                                     //
         NO_BAILOUT                                        //
     },
 
@@ -1735,7 +1734,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::MAND_PHOENIX_CPLX,               //
         SymmetryType::ORIGIN,                                                  //
         phoenix_fractal_cplx_orbit, phoenix_per_pixel, phoenix_cplx_per_image, //
-        standard_fractal,                                                      //
+        standard_fractal_type,                                                 //
         STD_BAILOUT                                                            //
     },
 
@@ -1750,7 +1749,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::PHOENIX_CPLX, FractalType::NO_FRACTAL,                              //
         SymmetryType::X_AXIS,                                                            //
         phoenix_fractal_cplx_orbit, mand_phoenix_per_pixel, mand_phoenix_cplx_per_image, //
-        standard_fractal,                                                                //
+        standard_fractal_type,                                                           //
         STD_BAILOUT                                                                      //
     },
 
@@ -1771,7 +1770,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
         nullptr, nullptr, standalone_per_image,           //
-        ant,                                              //
+        ant_type,                                         //
         NO_BAILOUT                                        //
     },
 
@@ -1786,7 +1785,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
         (VF) chip2d_orbit, nullptr, orbit3d_per_image,                            //
-        orbit2d,                                                                  //
+        orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
@@ -1801,7 +1800,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
         (VF) quadrup_two2d_orbit, nullptr, orbit3d_per_image,                     //
-        orbit2d,                                                                  //
+        orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
@@ -1816,7 +1815,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
         (VF) three_ply2d_orbit, nullptr, orbit3d_per_image,                       //
-        orbit2d,                                                                  //
+        orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
@@ -1831,7 +1830,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,             //
         SymmetryType::NONE,                                           //
         vl_orbit, other_julia_per_pixel, vl_per_image,                //
-        standard_fractal,                                             //
+        standard_fractal_type,                                        //
         256                                                           //
     },
 
@@ -1846,7 +1845,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,  //
         SymmetryType::ORIGIN,                              //
         escher_orbit, julia_per_pixel, standard_per_image, //
-        standard_fractal,                                  //
+        standard_fractal_type,                             //
         STD_BAILOUT                                        //
     },
 
@@ -1864,7 +1863,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                               //
         SymmetryType::NONE,                                                                             //
         (VF) latoo_orbit, nullptr, orbit3d_per_image,                                                   //
-        orbit2d,                                                                                        //
+        orbit2d_type,                                                                                   //
         NO_BAILOUT                                                                                      //
     },
 
@@ -1880,7 +1879,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                  //
         SymmetryType::NONE,                                                //
         divide_brot5_orbit, divide_brot5_per_pixel, divide_brot5_per_imge, //
-        standard_fractal,                                                  //
+        standard_fractal_type,                                             //
         16                                                                 //
     },
 
@@ -1896,7 +1895,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                            //
         SymmetryType::NONE,                                                          //
         mandelbrot_mix4_orbit, mandelbrot_mix4_per_pixel, mandelbrot_mix4_per_image, //
-        standard_fractal,                                                            //
+        standard_fractal_type,                                                       //
         STD_BAILOUT                                                                  //
     },
 
@@ -1911,7 +1910,7 @@ FractalSpecific g_fractal_specific[] =
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                        //
         SymmetryType::NONE,                                                      //
         burning_ship_orbit, other_mandel_per_pixel, burning_ship_per_image,      //
-        standard_fractal,                                                        //
+        standard_fractal_type,                                                   //
         STD_BAILOUT,                                                             //
         burning_ship_ref_pt, burning_ship_ref_pt_bf, burning_ship_perturb        //
     },

@@ -29,7 +29,7 @@ static bool keyboard_check_needed()
     return (++s_kbd_check & 0x7f) == 1;
 }
 
-int diffusion()
+int diffusion_type()
 {
     int x_max;
     int y_max;

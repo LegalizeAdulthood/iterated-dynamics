@@ -1328,7 +1328,7 @@ void InverseJulia::finish()
     s_show_numbers = false;
     driver_unget_key(m_key);
 
-    if (g_cur_fractal_specific->calc_type == calc_froth)
+    if (g_cur_fractal_specific->calc_type == froth_type)
     {
         froth_cleanup();
     }
@@ -1354,8 +1354,8 @@ void InverseJulia::process()
 void jiim(JIIMType which)
 {
     // must use standard fractal or be calcfroth
-    if (get_fractal_specific(g_fractal_type)->calc_type != standard_fractal &&
-        get_fractal_specific(g_fractal_type)->calc_type != calc_froth)
+    if (get_fractal_specific(g_fractal_type)->calc_type != standard_fractal_type &&
+        get_fractal_specific(g_fractal_type)->calc_type != froth_type)
     {
         return;
     }

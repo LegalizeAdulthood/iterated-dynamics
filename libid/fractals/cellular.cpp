@@ -115,7 +115,7 @@ static void abort_cellular(int err, int t)
     }
 }
 
-int cellular()
+int cellular_type()
 {
     U16 cell_table[32];
     U16 init_string[16];

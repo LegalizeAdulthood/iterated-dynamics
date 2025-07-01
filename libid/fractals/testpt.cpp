@@ -31,7 +31,7 @@ The sample code below is a straightforward Mandelbrot routine.
 #include "misc/Driver.h"
 
 // standalone engine for "test"
-int test()
+int test_type()
 {
     int start_pass = 0;
     int start_row = start_pass;

@@ -16,7 +16,7 @@
 
 // standalone engine for "popcorn"
 // subset of std engine
-int popcorn()
+int popcorn_type()
 {
     int start_row = 0;
     if (g_resuming)
@@ -33,7 +33,7 @@ int popcorn()
         g_reset_periodicity = true;
         for (g_col = 0; g_col <= g_i_stop_pt.x; g_col++)
         {
-            if (standard_fractal() == -1) // interrupted
+            if (standard_fractal_type() == -1) // interrupted
             {
                 alloc_resume(10, 1);
                 put_resume(g_row);

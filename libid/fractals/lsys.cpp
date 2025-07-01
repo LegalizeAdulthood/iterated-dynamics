@@ -227,7 +227,7 @@ static bool read_lsystem_file(const char *str)
     return false;
 }
 
-int lsystem()
+int lsystem_type()
 {
     if (!s_loaded && lsystem_load())
     {

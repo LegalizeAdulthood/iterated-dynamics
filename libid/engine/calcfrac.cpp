@@ -710,10 +710,10 @@ static void init_calc_fract()
 
 static bool is_standard_fractal()
 {
-    return g_cur_fractal_specific->calc_type == standard_fractal //
-        || g_cur_fractal_specific->calc_type == calc_mandelbrot  //
-        || g_cur_fractal_specific->calc_type == lyapunov         //
-        || g_cur_fractal_specific->calc_type == calc_froth;
+    return g_cur_fractal_specific->calc_type == standard_fractal_type //
+        || g_cur_fractal_specific->calc_type == calc_mandelbrot_type  //
+        || g_cur_fractal_specific->calc_type == lyapunov_type         //
+        || g_cur_fractal_specific->calc_type == froth_type;
 }
 
 static void calc_non_standard_fractal()
@@ -816,7 +816,7 @@ static void finish_calc_fract()
     }
     free_work_area();
 
-    if (g_cur_fractal_specific->calc_type == calc_froth)
+    if (g_cur_fractal_specific->calc_type == froth_type)
     {
         froth_cleanup();
     }
@@ -921,7 +921,7 @@ static void perform_work_list()
     {
         g_std_calc_mode = '1';
     }
-    if (g_std_calc_mode == 'o' && (g_cur_fractal_specific->calc_type != standard_fractal))
+    if (g_std_calc_mode == 'o' && (g_cur_fractal_specific->calc_type != standard_fractal_type))
     {
         g_std_calc_mode = '1';
     }
@@ -1212,7 +1212,7 @@ static long calc_mand_asm()
 // fast per pixel 1/2/b/g, called with row & col set
 // can also handle invert, any rqlim, potflag, zmag, epsilon cross,
 // and all the current outside options
-int calc_mandelbrot()
+int calc_mandelbrot_type()
 {
     if (g_invert != 0)
     {
@@ -1266,7 +1266,7 @@ int calc_mandelbrot()
 #define STAR_TRAIL_MAX FLT_MAX   // just a convenient large number
 
 // per pixel 1/2/b/g, called with g_row & g_col set
-int standard_fractal()
+int standard_fractal_type()
 {
     double tan_table[16]{};
     int hooper{};

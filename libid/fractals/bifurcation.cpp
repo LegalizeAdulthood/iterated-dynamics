@@ -79,7 +79,7 @@ static long s_beta{};
 // to infinity).                Have fun !
 //*************************************************************
 
-int bifurcation()
+int bifurcation_type()
 {
     int x = 0;
     if (g_resuming)

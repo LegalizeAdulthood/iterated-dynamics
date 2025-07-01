@@ -2,7 +2,7 @@
 //
 #pragma once
 
-int calc_froth();
+int froth_type();
 void froth_cleanup();
 int froth_orbit();
 int froth_per_pixel();

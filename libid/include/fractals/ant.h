@@ -2,5 +2,5 @@
 //
 #pragma once
 
-int ant();
+int ant_type();
 void free_ant_storage();

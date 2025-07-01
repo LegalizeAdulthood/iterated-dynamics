@@ -10,5 +10,5 @@ inline bool is_pow2(int n)
 }
 
 LDouble  get_number(const char **str);
-int lsystem();
+int lsystem_type();
 bool lsystem_load();

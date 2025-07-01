@@ -135,8 +135,8 @@ extern int                   g_inside_color;
 extern int                   g_outside_color;
 
 int calc_fract();
-int calc_mandelbrot();
-int standard_fractal();
+int calc_mandelbrot_type();
+int standard_fractal_type();
 int find_alternate_math(FractalType type, BFMathType math);
 int potential(double mag, long iterations);
 void sym_pi_plot(int x, int y, int color);

@@ -3,5 +3,5 @@
 #pragma once
 
 bool lyapunov_per_image();
-int lyapunov();
+int lyapunov_type();
 int lyapunov_orbit();

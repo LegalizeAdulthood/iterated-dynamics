@@ -654,8 +654,8 @@ gfp_top:
     type_name = g_cur_fractal_specific->name;
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
-    if (orbit_bailout != 0                                       //
-        && g_cur_fractal_specific->calc_type == standard_fractal //
+    if (orbit_bailout != 0                                            //
+        && g_cur_fractal_specific->calc_type == standard_fractal_type //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         param_values[prompt_num].type = 'l';
@@ -874,8 +874,8 @@ gfp_top:
     }
 
     orbit_bailout = g_cur_fractal_specific->orbit_bailout;
-    if (orbit_bailout != 0                                       //
-        && g_cur_fractal_specific->calc_type == standard_fractal //
+    if (orbit_bailout != 0                                            //
+        && g_cur_fractal_specific->calc_type == standard_fractal_type //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         if (param_values[prompt_num].uval.ch.val != static_cast<int>(g_bailout_test))

@@ -297,7 +297,7 @@ static void sub_divide(int x1, int y1, int x2, int y2)
     s_recur_level--;
 }
 
-int plasma()
+int plasma_type()
 {
     U16 rnd[4];
     bool old_pot_flag = false;
