@@ -856,49 +856,49 @@ scan:
     LDouble re94 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[1].im);
     LDouble im94 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[1].im);
 
-    RHOMBUS(c_re1, mid_r, c_im1, mid_i, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1), //
-        s[0].re, s[0].im,                                                           //
-        s[4].re, s[4].im,                                                           //
-        s[5].re, s[5].im,                                                           //
-        s[8].re, s[8].im,                                                           //
-        re10, im10,                                                                 //
-        re12, im12,                                                                 //
-        re13, im13,                                                                 //
-        re15, im15,                                                                 //
-        re91, im91,                                                                 //
+    RHOMBUS(c_re1, mid_r, c_im1, mid_i, x1, ((x1 + x2) / 2), y1, ((y1 + y2) / 2), //
+        s[0].re, s[0].im,                                                         //
+        s[4].re, s[4].im,                                                         //
+        s[5].re, s[5].im,                                                         //
+        s[8].re, s[8].im,                                                         //
+        re10, im10,                                                               //
+        re12, im12,                                                               //
+        re13, im13,                                                               //
+        re15, im15,                                                               //
+        re91, im91,                                                               //
         iter);
-    RHOMBUS(mid_r, c_re2, c_im1, mid_i, (x1 + x2) >> 1, x2, y1, (y1 + y2) >> 1,     //
-        s[4].re, s[4].im,                                                           //
-        s[1].re, s[1].im,                                                           //
-        s[8].re, s[8].im,                                                           //
-        s[6].re, s[6].im,                                                           //
-        re11, im11,                                                                 //
-        re13, im13,                                                                 //
-        re14, im14,                                                                 //
-        re16, im16,                                                                 //
-        re92, im92,                                                                 //
+    RHOMBUS(mid_r, c_re2, c_im1, mid_i, (x1 + x2) / 2, x2, y1, (y1 + y2) / 2,     //
+        s[4].re, s[4].im,                                                         //
+        s[1].re, s[1].im,                                                         //
+        s[8].re, s[8].im,                                                         //
+        s[6].re, s[6].im,                                                         //
+        re11, im11,                                                               //
+        re13, im13,                                                               //
+        re14, im14,                                                               //
+        re16, im16,                                                               //
+        re92, im92,                                                               //
         iter);
-    RHOMBUS(c_re1, mid_r, mid_i, c_im2, x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2,     //
-        s[5].re, s[5].im,                                                           //
-        s[8].re, s[8].im,                                                           //
-        s[2].re, s[2].im,                                                           //
-        s[7].re, s[7].im,                                                           //
-        re15, im15,                                                                 //
-        re17, im17,                                                                 //
-        re18, im18,                                                                 //
-        re20, im20,                                                                 //
-        re93, im93,                                                                 //
+    RHOMBUS(c_re1, mid_r, mid_i, c_im2, x1, (x1 + x2) / 2, (y1 + y2) / 2, y2,     //
+        s[5].re, s[5].im,                                                         //
+        s[8].re, s[8].im,                                                         //
+        s[2].re, s[2].im,                                                         //
+        s[7].re, s[7].im,                                                         //
+        re15, im15,                                                               //
+        re17, im17,                                                               //
+        re18, im18,                                                               //
+        re20, im20,                                                               //
+        re93, im93,                                                               //
         iter);
-    RHOMBUS(mid_r, c_re2, mid_i, c_im2, (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2,     //
-        s[8].re, s[8].im,                                                           //
-        s[6].re, s[6].im,                                                           //
-        s[7].re, s[7].im,                                                           //
-        s[3].re, s[3].im,                                                           //
-        re16, im16,                                                                 //
-        re18, im18,                                                                 //
-        re19, im19,                                                                 //
-        re21, im21,                                                                 //
-        re94, im94,                                                                 //
+    RHOMBUS(mid_r, c_re2, mid_i, c_im2, (x1 + x2) / 2, x2, (y1 + y2) / 2, y2,     //
+        s[8].re, s[8].im,                                                         //
+        s[6].re, s[6].im,                                                         //
+        s[7].re, s[7].im,                                                         //
+        s[3].re, s[3].im,                                                         //
+        re16, im16,                                                               //
+        re18, im18,                                                               //
+        re19, im19,                                                               //
+        re21, im21,                                                               //
+        re94, im94,                                                               //
         iter);
 
     return status ? 1 : 0;
