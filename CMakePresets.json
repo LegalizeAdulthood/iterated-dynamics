@@ -162,7 +162,7 @@
       },
       "filter": {
         "exclude": {
-          "label": "image"
+          "label": "image|colormap"
         }
       }
     },
