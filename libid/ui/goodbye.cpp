@@ -30,7 +30,6 @@
         g_ifs_definition.clear();
     }
     free_grid_pointers();
-    free_ant_storage();
     end_disk();
     exit_check();
     if (!g_make_parameter_file)

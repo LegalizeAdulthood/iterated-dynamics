@@ -43,14 +43,87 @@ enum
     INNER_LOOP = 100
 };
 
-// possible value of idir e relative movement in the 4 directions
-// for x 0, 1, 0, -1
-// for y 1, 0, -1, 0
-//
-static std::vector<int> s_inc_x[DIRS];   // table for 4 directions
-static std::vector<int> s_inc_y[DIRS];
-static int s_last_x_dots{};
-static int s_last_y_dots{};
+struct TurkMite
+{
+    TurkMite();
+
+    // possible value of idir e relative movement in the 4 directions
+    // for x 0, 1, 0, -1
+    // for y 1, 0, -1, 0
+    //
+    std::vector<int> inc_x[DIRS]; // table for 4 directions
+    std::vector<int> inc_y[DIRS];
+    long max_pts{std::abs(static_cast<long>(g_params[1]))};
+    int max_ants{static_cast<int>(g_params[2])};
+    int type{static_cast<int>(g_params[3])};
+    bool wrap{g_params[4] != 0};
+
+    int dir[MAX_ANTS + 1]{};
+    int x[MAX_ANTS + 1]{};
+    int y[MAX_ANTS + 1]{};
+    int rule[MAX_ANTS + 1]{};
+    int next_col[MAX_ANTS + 1]{};
+};
+
+TurkMite::TurkMite()
+{
+    for (int i = 0; i < DIRS; i++)
+    {
+        inc_x[i].resize(g_logical_screen_x_dots + 2);
+        inc_y[i].resize(g_logical_screen_y_dots + 2);
+    }
+
+    // In this vectors put all the possible point that the ants can visit.
+    // Wrap them from a side to the other instead of simply end calculation
+    for (int i = 0; i < g_logical_screen_x_dots; i++)
+    {
+        inc_x[0][i] = i;
+        inc_x[2][i] = i;
+    }
+
+    for (int i = 0; i < g_logical_screen_x_dots; i++)
+    {
+        inc_x[3][i] = i + 1;
+    }
+    inc_x[3][g_logical_screen_x_dots-1] = 0; // wrap from right of the screen to left
+
+    for (int i = 1; i < g_logical_screen_x_dots; i++)
+    {
+        inc_x[1][i] = i - 1;
+    }
+    inc_x[1][0] = g_logical_screen_x_dots-1; // wrap from left of the screen to right
+
+    for (int i = 0; i < g_logical_screen_y_dots; i++)
+    {
+        inc_y[1][i] = i;
+        inc_y[3][i] = i;
+    }
+    for (int i = 0; i < g_logical_screen_y_dots; i++)
+    {
+        inc_y[0][i] = i + 1;
+    }
+    inc_y[0][g_logical_screen_y_dots - 1] = 0; // wrap from the top of the screen to the bottom
+    for (int i = 1; i < g_logical_screen_y_dots; i++)
+    {
+        inc_y[2][i] = i - 1;
+    }
+    inc_y[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
+
+    if (max_ants < 1)               // if maxants == 0 maxants random
+    {
+        max_ants = 2 + random(256 - 2);
+    }
+    else if (max_ants > MAX_ANTS)
+    {
+        max_ants = MAX_ANTS;
+        g_params[2] = MAX_ANTS;
+    }
+
+    if (type < 1 || type > 2)
+    {
+        type = random(2);         // if type == 0 choose a random type
+    }
+}
 
 static long change_wait(long wait)
 {
@@ -128,22 +201,11 @@ static bool ant_key(bool &step, long &wait)
     return false;
 }
 
-struct TurkMite1
-{
-    int x[MAX_ANTS + 1]{};
-    int y[MAX_ANTS + 1]{};
-    int next_col[MAX_ANTS + 1]{};
-    int rule[MAX_ANTS + 1]{};
-    int dir[MAX_ANTS + 1]{};
-    bool wrap{g_params[4] != 0};
-};
-
 // turkmite from Scientific American July 1994 page 91
 // Tweaked by Luciano Genero & Fulvio Cappelli
 //
-static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pts, long wait)
+static void turk_mite1(TurkMite &ant, int rule_len, const std::string &rule, long wait)
 {
-    TurkMite1 ant;
     bool step = wait == 1;
     if (step)
     {
@@ -183,7 +245,7 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
         // close the cycle
         ant.next_col[g_color] = 0;
     }
-    for (g_color = max_ants; g_color; g_color--)
+    for (g_color = ant.max_ants; g_color; g_color--)
     {
         // init the various turmites N.B. non usa
         // x[0], y[0], dir[0]
@@ -200,8 +262,7 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
             ant.y[g_color] = random(g_logical_screen_y_dots);
         }
     }
-    max_pts = max_pts / (long) INNER_LOOP;
-    for (long count = 0; count < max_pts; count++)
+    for (long count = 0; count < ant.max_pts / (long) INNER_LOOP; count++)
     {
         if (ant_key(step, wait))
         {
@@ -211,7 +272,7 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
         {
             if (wait > 0 && !step)
             {
-                for (int color = max_ants; color; color--)
+                for (int color = ant.max_ants; color; color--)
                 {
                     // move the various turmites
                     int x = ant.x[color];   // temp vars
@@ -233,14 +294,14 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
                             return;
                         }
                     }
-                    ant.x[color] = s_inc_x[dir][x];
-                    ant.y[color] = s_inc_y[dir][y];
+                    ant.x[color] = ant.inc_x[dir][x];
+                    ant.y[color] = ant.inc_y[dir][y];
                     ant.dir[color] = dir;
                 }
             }
             else
             {
-                for (int color = max_ants; color; color--)
+                for (int color = ant.max_ants; color; color--)
                 {
                     // move the various turmites without delay
                     int x = ant.x[color];   // temp vars
@@ -260,8 +321,8 @@ static void turk_mite1(int max_ants, int rule_len, const char *rule, long max_pt
                             return;
                         }
                     }
-                    ant.x[color] = s_inc_x[dir][x];
-                    ant.y[color] = s_inc_y[dir][y];
+                    ant.x[color] = ant.inc_x[dir][x];
+                    ant.y[color] = ant.inc_y[dir][y];
                     ant.dir[color] = dir;
                 }
             }
@@ -276,19 +337,9 @@ static unsigned rotate_left_one(unsigned value)
     return (value & high_bit) ? (result | 1U) : result;
 }
 
-struct TurkMite2
-{
-    int dir[MAX_ANTS + 1]{};
-    int x[MAX_ANTS + 1]{};
-    int y[MAX_ANTS + 1]{};
-    int rule[MAX_ANTS + 1]{};
-    bool wrap{g_params[4] != 0};
-};
-
 // this one ignore the color of the current cell is more like a white ant
-static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pts, long wait)
+static void turk_mite2(TurkMite &ant, int rule_len, const std::string &rule, long wait)
 {
-    TurkMite2 ant;
     bool step = wait == 1;
     if (step)
     {
@@ -311,7 +362,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
     {
         // the same rule the user wants for every
         // turkmite (max rule_len = 16 bit)
-        rule_len = static_cast<int>(std::min(static_cast<size_t>(rule_len), 8*sizeof(int)));
+        rule_len = static_cast<int>(std::min(static_cast<size_t>(rule_len), 8*sizeof(int)-1));
         ant.rule[0] = 0;
         for (int i = 0; i < rule_len; i++)
         {
@@ -330,8 +381,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
     // use this rule when a black pixel is found
     ant.rule[0] = 0;
     unsigned rule_mask = 1U;
-    max_pts = max_pts / (long) INNER_LOOP;
-    for (long count = 0; count < max_pts; count++)
+    for (long count = 0; count < ant.max_pts / (long) INNER_LOOP; count++)
     {
         if (ant_key(step, wait))
         {
@@ -339,7 +389,7 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
         }
         for (int i = INNER_LOOP; i; i--)
         {
-            for (int color = max_ants; color; color--)
+            for (int color = ant.max_ants; color; color--)
             {
                 // move the various turmites
                 int x = ant.x[color];      // temp vars
@@ -376,8 +426,8 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
                         return;
                     }
                 }
-                ant.x[color] = s_inc_x[dir][x];
-                ant.y[color] = s_inc_y[dir][y];
+                ant.x[color] = ant.inc_x[dir][x];
+                ant.y[color] = ant.inc_y[dir][y];
                 ant.dir[color] = dir;
             }
             rule_mask = rotate_left_one(rule_mask);
@@ -385,76 +435,19 @@ static void turk_mite2(int max_ants, int rule_len, const char *rule, long max_pt
     }
 }
 
-void free_ant_storage()
-{
-    for (int i = 0; i < DIRS; ++i)
-    {
-        s_inc_x[i].clear();
-        s_inc_y[i].clear();
-    }
-}
-
-static std::string get_rule()
+static std::string get_rule(double param)
 {
     std::ostringstream buff;
-    buff << std::setprecision(17) << std::fixed << g_params[0];
+    buff << std::setprecision(17) << std::fixed << param;
     return buff.str();
 }
 
 int ant_type()
 {
-    if (g_logical_screen_x_dots != s_last_x_dots || g_logical_screen_y_dots != s_last_y_dots)
-    {
-        s_last_x_dots = g_logical_screen_x_dots;
-        s_last_y_dots = g_logical_screen_y_dots;
-
-        free_ant_storage();
-        for (int i = 0; i < DIRS; i++)
-        {
-            s_inc_x[i].resize(g_logical_screen_x_dots + 2);
-            s_inc_y[i].resize(g_logical_screen_y_dots + 2);
-        }
-    }
-
-    // In this vectors put all the possible point that the ants can visit.
-    // Wrap them from a side to the other instead of simply end calculation
-    for (int i = 0; i < g_logical_screen_x_dots; i++)
-    {
-        s_inc_x[0][i] = i;
-        s_inc_x[2][i] = i;
-    }
-
-    for (int i = 0; i < g_logical_screen_x_dots; i++)
-    {
-        s_inc_x[3][i] = i + 1;
-    }
-    s_inc_x[3][g_logical_screen_x_dots-1] = 0; // wrap from right of the screen to left
-
-    for (int i = 1; i < g_logical_screen_x_dots; i++)
-    {
-        s_inc_x[1][i] = i - 1;
-    }
-    s_inc_x[1][0] = g_logical_screen_x_dots-1; // wrap from left of the screen to right
-
-    for (int i = 0; i < g_logical_screen_y_dots; i++)
-    {
-        s_inc_y[1][i] = i;
-        s_inc_y[3][i] = i;
-    }
-    for (int i = 0; i < g_logical_screen_y_dots; i++)
-    {
-        s_inc_y[0][i] = i + 1;
-    }
-    s_inc_y[0][g_logical_screen_y_dots - 1] = 0; // wrap from the top of the screen to the bottom
-    for (int i = 1; i < g_logical_screen_y_dots; i++)
-    {
-        s_inc_y[2][i] = i - 1;
-    }
-    s_inc_y[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
     ValueSaver saved_help_mode(g_help_mode, HelpLabels::HELP_ANT_COMMANDS);
-    const long max_pts = std::abs(static_cast<long>(g_params[1]));
+    TurkMite ant;
     const long wait = std::abs(g_orbit_delay);
-    std::string rule{get_rule()};
+    std::string rule{get_rule(g_params[0])};
     int rule_len = (int) rule.length();
     if (rule_len > 1)
     {
@@ -492,28 +485,13 @@ int ant_type()
         ++g_random_seed;
     }
 
-    int max_ants = static_cast<int>(g_params[2]);
-    if (max_ants < 1)               // if maxants == 0 maxants random
-    {
-        max_ants = 2 + random(256 - 2);
-    }
-    else if (max_ants > MAX_ANTS)
-    {
-        max_ants = MAX_ANTS;
-        g_params[2] = MAX_ANTS;
-    }
-    int type = static_cast<int>(g_params[3]);
-    if (type < 1 || type > 2)
-    {
-        type = random(2);         // if type == 0 choose a random type
-    }
-    switch (type)
+    switch (ant.type)
     {
     case 1:
-        turk_mite1(max_ants, rule_len, rule.c_str(), max_pts, wait);
+        turk_mite1(ant, rule_len, rule, wait);
         break;
     case 2:
-        turk_mite2(max_ants, rule_len, rule.c_str(), max_pts, wait);
+        turk_mite2(ant, rule_len, rule, wait);
         break;
     default:
         break;

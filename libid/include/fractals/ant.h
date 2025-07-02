@@ -3,4 +3,3 @@
 #pragma once
 
 int ant_type();
-void free_ant_storage();
