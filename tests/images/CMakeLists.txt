@@ -122,6 +122,10 @@ foreach(bailout and imag manh manr or real)
     add_legacy_image_test(bailout-${bailout} PARAMETERS "type=mandel" "bailoutest=${bailout}")
 endforeach()
 add_legacy_image_test(ifs-dragon-1 PARAMETERS "type=ifs" "ifs=dragon" "params=1" "maxiter=500")
+add_legacy_image_test(ant1 PARAMETERS "type=ant"
+    "passes=1" "center-mag=0/0/1/1.3333" "params=10100.0/999999.0/25.0/1.0/1.0/-400.0" "inside=0" LABELS "ant")
+add_legacy_image_test(ant2 PARAMETERS "type=ant"
+    "passes=1" "center-mag=0/0/1/1.3333" "params=11111.0/999999.0/25.0/2.0/1.0/-400.0" "inside=0" LABELS "ant")
 
 add_colormap_test(grey MAP grey.map PARAMETERS "type=mandel")
 
