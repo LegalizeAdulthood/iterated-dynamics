@@ -18,6 +18,7 @@
 #include "ui/video.h"
 
 #include <array>
+#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -49,6 +50,20 @@ static bool s_last_screen_flag{};
 
 bool g_cellular_next_screen{};             // for cellular next screen generation
 
+inline char to_digit(int value)
+{
+    assert(value >= 0);
+    assert(value <= 9);
+    return static_cast<char>(value) + '0';
+}
+
+inline U16 from_digit(char value)
+{
+    assert(value >= '0');
+    assert(value <= '9');
+    return static_cast<U16>(value - '0');
+}
+
 static void abort_cellular(int err, int t)
 {
     switch (err)
@@ -73,14 +88,14 @@ static void abort_cellular(int err, int t)
     case STRING2:
     {
         static char msg[] = {"Make string of 0's through  's" };
-        msg[27] = (char)(s_k_1 + 48); // turn into a character value
+        msg[27] = to_digit(s_k_1);
         stop_msg(msg);
     }
     break;
     case TABLE_K:
     {
         static char msg[] = {"Make Rule with 0's through  's" };
-        msg[27] = (char)(s_k_1 + 48); // turn into a character value
+        msg[27] = to_digit(s_k_1);
         stop_msg(msg);
     }
     break;
@@ -95,12 +110,12 @@ static void abort_cellular(int err, int t)
         int i = s_rule_digits / 10;
         if (i == 0)
         {
-            msg[14] = (char)(s_rule_digits + 48);
+            msg[14] = to_digit(s_rule_digits);
         }
         else
         {
-            msg[13] = (char)(i+48);
-            msg[14] = (char)((s_rule_digits % 10) + 48);
+            msg[13] = to_digit(i);
+            msg[14] = to_digit(s_rule_digits % 10);
         }
         stop_msg(msg);
     }
@@ -178,7 +193,7 @@ int cellular_type()
         for (int i = 0; i < t; i++)
         {
             // center initial string in array
-            init_string[i+t2] = (U16)(buf[i] - 48); // change character to number
+            init_string[i+t2] = from_digit(buf[i]);
             if (init_string[i+t2]>(U16)s_k_1)
             {
                 abort_cellular(STRING2, 0);
@@ -221,7 +236,7 @@ int cellular_type()
     for (int i = 0; i < t; i++)
     {
         // reverse order
-        cell_table[i] = (U16)(buf[t-i-1] - 48); // change character to number
+        cell_table[i] = from_digit(buf[t - i - 1]);
         if (cell_table[i]>(U16)s_k_1)
         {
             abort_cellular(TABLE_K, 0);
