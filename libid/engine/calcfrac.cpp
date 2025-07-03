@@ -2554,7 +2554,7 @@ x_symmetry:
             break;
         }
     case SymmetryType::ORIGIN:                      // Origin Symmetry
-origin_symmetry:
+originsym:
         if (!x_sym_split(x_axis_row, x_axis_between)
             && !y_sym_split(y_axis_col, y_axis_between))
         {
@@ -2590,7 +2590,7 @@ origin_symmetry:
         }
         if ((g_invert != 0) && g_force_symmetry == SymmetryType::NOT_FORCED)
         {
-            goto origin_symmetry;
+            goto originsym;
         }
         g_plot = sym_pi_plot ;
         g_symmetry = SymmetryType::NONE;

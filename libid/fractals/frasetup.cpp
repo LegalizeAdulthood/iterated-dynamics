@@ -30,7 +30,7 @@
 // Mandelbrot Routine
 bool burning_ship_per_image()
 {
-    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         return mandel_perturbation_per_image();
     }
@@ -89,7 +89,7 @@ bool mandel_per_image()
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
-        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+        if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             return mandel_perturbation_per_image();
         }
@@ -116,7 +116,7 @@ bool mandel_per_image()
         break;
 
     case FractalType::MANDEL_Z_POWER:
-        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+        if (g_use_perturbation && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             if (g_c_exponent == 2)
             {
