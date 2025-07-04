@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/check_key.h"
 #include "engine/id_data.h"
+#include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "math/fpu087.h"
 #include "misc/Driver.h"
@@ -69,11 +70,7 @@ int diffusion_type()
         border = 10;
     }
 
-    std::srand(g_random_seed);
-    if (!g_random_seed_flag)
-    {
-        ++g_random_seed;
-    }
+    set_random_seed();
 
     if (mode == 0)
     {

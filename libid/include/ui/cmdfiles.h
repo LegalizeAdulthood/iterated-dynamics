@@ -252,8 +252,6 @@ extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;
 extern bool                  g_potential_16bit;
 extern bool                  g_potential_flag;
-extern int                   g_random_seed;
-extern bool                  g_random_seed_flag;
 extern bool                  g_read_color;
 extern std::string           g_read_filename;
 extern RecordColorsMode      g_record_colors;

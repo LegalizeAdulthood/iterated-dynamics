@@ -3,6 +3,7 @@
 #include <ui/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
+#include "engine/random_seed.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "ValueUnchanged.h"

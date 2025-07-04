@@ -10,8 +10,8 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "engine/random_seed.h"
 #include "engine/wait_until.h"
-#include "ui/cmdfiles.h"
 #include "ui/video.h"
 
 #include <algorithm>
@@ -142,11 +142,7 @@ Ant::Ant()
         g_random_seed = (int) g_params[5];
     }
 
-    std::srand(g_random_seed);
-    if (!g_random_seed_flag)
-    {
-        ++g_random_seed;
-    }
+    set_random_seed();
 
     switch (type)
     {

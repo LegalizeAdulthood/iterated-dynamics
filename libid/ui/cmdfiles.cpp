@@ -16,6 +16,7 @@
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
 #include "engine/log_map.h"
+#include "engine/random_seed.h"
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
 #include "fractals/check_orbit_name.h"
@@ -126,8 +127,6 @@ bool g_ask_video{};                                       // flag for video prom
 int g_biomorph{};                                         // flag for biomorph
 int g_user_biomorph_value{};                              //
 ShowFile g_show_file{};                                   // zero if file display pending
-bool g_random_seed_flag{};                                //
-int g_random_seed{};                                      // Random number seeding flag and value
 int g_decomp[2]{};                                        // Decomposition coloring
 long g_distance_estimator{};                              //
 int g_distance_estimator_width_factor{};                  //

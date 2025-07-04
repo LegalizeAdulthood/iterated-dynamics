@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/random_seed.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -381,11 +382,7 @@ int plasma_type()
         }
             s_get_pix = GET_COLOR;
     }
-    std::srand(g_random_seed);
-    if (!g_random_seed_flag)
-    {
-        ++g_random_seed;
-    }
+    set_random_seed();
 
     if (g_colors == 256)                     // set the (256-color) palette
     {

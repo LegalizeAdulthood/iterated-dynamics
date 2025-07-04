@@ -7,6 +7,7 @@
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
+#include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "misc/Driver.h"
@@ -202,11 +203,7 @@ int cellular_type()
         }
     }
 
-    std::srand(g_random_seed);
-    if (!g_random_seed_flag)
-    {
-        ++g_random_seed;
-    }
+    set_random_seed();
 
     // generate rule table from parameter 1
     n = g_params[1];

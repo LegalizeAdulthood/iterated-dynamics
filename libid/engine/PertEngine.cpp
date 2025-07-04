@@ -12,6 +12,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "engine/random_seed.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
@@ -133,11 +134,8 @@ int PertEngine::calculate_one_frame()
                 break;
             }
 
-            std::srand(g_random_seed);
-            if (!g_random_seed_flag)
-            {
-                ++g_random_seed;
-            }
+            set_random_seed();
+
             const int index{(int) ((double) std::rand() / RAND_MAX * m_remaining_point_count)};
             Point pt{m_points_remaining[index]};
             // Get the complex point at the chosen reference point

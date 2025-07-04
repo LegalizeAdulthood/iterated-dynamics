@@ -9,6 +9,7 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/log_map.h"
+#include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
 #include "fractals/fractalp.h"

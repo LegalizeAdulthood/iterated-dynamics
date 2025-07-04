@@ -11,6 +11,7 @@
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
 #include "engine/log_map.h"
+#include "engine/random_seed.h"
 #include "engine/sticky_orbits.h"
 #include "engine/type_has_param.h"
 #include "fractals/fractalp.h"
