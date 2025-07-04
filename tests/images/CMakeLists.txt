@@ -32,19 +32,21 @@ function(add_image_test name)
     set_tests_properties(ImageTest.${name} PROPERTIES LABELS "${IMAGE_TEST_LABELS}")
 endfunction()
 
-function(add_legacy_image_test name)
-    add_image_test(${name} IGNORE_COLORMAP ${ARGN})
-endfunction()
-
 function(add_fractal_type_image_test)
     foreach(type ${ARGN})
-        add_legacy_image_test(${type} PARAMETERS type=${type})
+        add_image_test(${type} PARAMETERS "type=${type}")
     endforeach()
 endfunction()
 
-function(add_random_fractal_type_image_test)
+function(add_fractal_type_legacy_image_test)
     foreach(type ${ARGN})
-        add_legacy_image_test(${type} PARAMETERS rseed=4567 type=${type})
+        add_image_test(${type} IGNORE_COLORMAP PARAMETERS "type=${type}")
+    endforeach()
+endfunction()
+
+function(add_random_fractal_type_legacy_image_test)
+    foreach(type ${ARGN})
+        add_image_test(${type} IGNORE_COLORMAP PARAMETERS "rseed=4567" "type=${type}")
     endforeach()
 endfunction()
 
@@ -71,63 +73,68 @@ function(add_colormap_test name)
 endfunction()
 
 add_fractal_type_image_test(
-    barnsleyj1 barnsleyj2 barnsleyj3 barnsleym1 barnsleym2 barnsleym3 burning-ship
-    cellular circle cmplxmarksjul cmplxmarksmand complexbasin complexnewton
-    dividebrot5
-    escher_julia
-    frothybasin
-    gingerbreadman
-    halley hypercomplex hypercomplexj
-    julia julia4 julia_inverse julzpower julzzpwr
-    lambda lambdafn lyapunov
-    magnet1j magnet1m magnet2j magnet2m
-    mandel mandel4 mandelbrotmix4 mandelcloud mandelfn mandellambda mandphoenix mandphoenixclx
-    manowar manowarj manzpower manzzpwr marksjulia marksmandel marksmandelpwr
-    newtbasin newton
-    phoenix phoenixcplx
-    quat quatjul
-    sierpinski spider
-    tetrate tim's_error
-    unity
-    volterra-lotka
+    "bifurcation" "bifmay" "bifstewart"
 )
-add_random_fractal_type_image_test(
-    biflambda
-    diffusion dynamic
-    henon
-    kamtorus kamtorus3d
-    plasma
+add_fractal_type_legacy_image_test(
+    "barnsleyj1" "barnsleyj2" "barnsleyj3" "barnsleym1" "barnsleym2" "barnsleym3" "burning-ship"
+    "cellular" "circle" "cmplxmarksjul" "cmplxmarksmand" "complexbasin" "complexnewton"
+    "dividebrot5"
+    "escher_julia"
+    "frothybasin"
+    "gingerbreadman"
+    "halley" "hypercomplex" "hypercomplexj"
+    "julia" "julia4" "julia_inverse" "julzpower" "julzzpwr"
+    "lambda" "lambdafn" "lyapunov"
+    "magnet1j" "magnet1m" "magnet2j" "magnet2m"
+    "mandel" "mandel4" "mandelbrotmix4" "mandelcloud" "mandelfn" "mandellambda" "mandphoenix" "mandphoenixclx"
+    "manowar" "manowarj" "manzpower" "manzzpwr" "marksjulia" "marksmandel" "marksmandelpwr"
+    "newtbasin" "newton"
+    "phoenix" "phoenixcplx"
+    "quat" "quatjul"
+    "sierpinski" "spider"
+    "tetrate" "tim's_error"
+    "unity"
+    "volterra-lotka"
 )
-add_legacy_image_test(fnz-plus-fnpixel PARAMETERS "type=fn(z)+fn(pix)")
-add_legacy_image_test(fn-zsqr PARAMETERS "type=fn(z*z)")
-add_legacy_image_test(fn-mul-fn PARAMETERS "type=fn*fn")
-add_legacy_image_test(fn-mul-z-plus-z PARAMETERS "type=fn*z+z")
-add_legacy_image_test(fn-plus-fn PARAMETERS "type=fn+fn")
-add_legacy_image_test(julfn-plus-exp PARAMETERS "type=julfn+exp")
-add_legacy_image_test(julfn-plus-zsqrd PARAMETERS "type=julfn+zsqrd")
-add_legacy_image_test(julia-fn-or-fn PARAMETERS "type=julia(fn||fn)")
-add_legacy_image_test(lambda-fn-or-fn PARAMETERS "type=lambda(fn||fn)")
-add_legacy_image_test(mandel-fn-or-fn PARAMETERS "type=mandel(fn||fn)")
-add_legacy_image_test(manfn-plus-exp PARAMETERS "type=manfn+exp")
-add_legacy_image_test(manfn-plus-zsqrd PARAMETERS "type=manfn+zsqrd")
-add_legacy_image_test(manlam-fn-or-fn PARAMETERS "type=manlam(fn||fn)")
-add_legacy_image_test(sqr-1-over-fn PARAMETERS "type=sqr(1/fn)")
-add_legacy_image_test(sqr-fn PARAMETERS "type=sqr(fn)")
-add_legacy_image_test(btrace PARAMETERS "type=mandel" "inside=zmag" "passes=b")
-add_legacy_image_test(mandel-perturb PARAMETERS "type=mandel" "passes=p")
-add_legacy_image_test(manzpower-3-perturb PARAMETERS "type=manzpower" "params=0/0/3" "passes=p")
-add_legacy_image_test(manzpower-4-perturb PARAMETERS "type=manzpower" "params=0/0/4" "passes=p")
-add_legacy_image_test(fractint-formula PARAMETERS "type=formula" "formulafile=example2.frm" "formulaname=fractint")
-foreach(bailout and imag manh manr or real)
-    add_legacy_image_test(bailout-${bailout} PARAMETERS "type=mandel" "bailoutest=${bailout}")
+add_random_fractal_type_legacy_image_test(
+    "biflambda"
+    "diffusion" "dynamic"
+    "henon"
+    "kamtorus" "kamtorus3d"
+    "plasma"
+)
+add_image_test("bif-plus-sinpi" PARAMETERS "type=bif+sinpi")
+add_image_test("bif-equal-sinpi" PARAMETERS "type=bif=sinpi")
+add_image_test("fnz-plus-fnpixel" IGNORE_COLORMAP PARAMETERS "type=fn(z)+fn(pix)")
+add_image_test("fn-zsqr" IGNORE_COLORMAP PARAMETERS "type=fn(z*z)")
+add_image_test("fn-mul-fn" IGNORE_COLORMAP PARAMETERS "type=fn*fn")
+add_image_test("fn-mul-z-plus-z" IGNORE_COLORMAP PARAMETERS "type=fn*z+z")
+add_image_test("fn-plus-fn" IGNORE_COLORMAP PARAMETERS "type=fn+fn")
+add_image_test("julfn-plus-exp" IGNORE_COLORMAP PARAMETERS "type=julfn+exp")
+add_image_test("julfn-plus-zsqrd" IGNORE_COLORMAP PARAMETERS "type=julfn+zsqrd")
+add_image_test("julia-fn-or-fn" IGNORE_COLORMAP PARAMETERS "type=julia(fn||fn)")
+add_image_test("lambda-fn-or-fn" IGNORE_COLORMAP PARAMETERS "type=lambda(fn||fn)")
+add_image_test("mandel-fn-or-fn" IGNORE_COLORMAP PARAMETERS "type=mandel(fn||fn)")
+add_image_test("manfn-plus-exp" IGNORE_COLORMAP PARAMETERS "type=manfn+exp")
+add_image_test("manfn-plus-zsqrd" IGNORE_COLORMAP PARAMETERS "type=manfn+zsqrd")
+add_image_test("manlam-fn-or-fn" IGNORE_COLORMAP PARAMETERS "type=manlam(fn||fn)")
+add_image_test("sqr-1-over-fn" IGNORE_COLORMAP PARAMETERS "type=sqr(1/fn)")
+add_image_test("sqr-fn" IGNORE_COLORMAP PARAMETERS "type=sqr(fn)")
+add_image_test("btrace" IGNORE_COLORMAP PARAMETERS "type=mandel" "inside=zmag" "passes=b")
+add_image_test("mandel-perturb" IGNORE_COLORMAP PARAMETERS "type=mandel" "passes=p")
+add_image_test("manzpower-3-perturb" IGNORE_COLORMAP PARAMETERS "type=manzpower" "params=0/0/3" "passes=p")
+add_image_test("manzpower-4-perturb" IGNORE_COLORMAP PARAMETERS "type=manzpower" "params=0/0/4" "passes=p")
+add_image_test("fractint-formula" IGNORE_COLORMAP PARAMETERS "type=formula" "formulafile=example2.frm" "formulaname=fractint")
+foreach(bailout "and" "imag" "manh" "manr" "or" "real")
+    add_image_test(bailout-${bailout} IGNORE_COLORMAP PARAMETERS "type=mandel" "bailoutest=${bailout}")
 endforeach()
-add_legacy_image_test(ifs-dragon-1 PARAMETERS "type=ifs" "ifs=dragon" "params=1" "maxiter=500")
-add_legacy_image_test(ant1 PARAMETERS "type=ant"
+add_image_test("ifs-dragon-1" IGNORE_COLORMAP PARAMETERS "type=ifs" "ifs=dragon" "params=1" "maxiter=500")
+add_image_test("ant1" IGNORE_COLORMAP PARAMETERS "type=ant"
     "passes=1" "center-mag=0/0/1/1.3333" "params=10100.0/999999.0/25.0/1.0/1.0/-400.0" "inside=0" LABELS "ant")
-add_legacy_image_test(ant2 PARAMETERS "type=ant"
+add_image_test("ant2" IGNORE_COLORMAP PARAMETERS "type=ant"
     "passes=1" "center-mag=0/0/1/1.3333" "params=11111.0/999999.0/25.0/2.0/1.0/-400.0" "inside=0" LABELS "ant")
 
-add_colormap_test(grey MAP grey.map PARAMETERS "type=mandel")
+add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
 option(ID_RUN_SLOW_TESTS "Run slow image tests" OFF)
 if(ID_RUN_SLOW_TESTS)

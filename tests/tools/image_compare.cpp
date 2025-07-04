@@ -67,11 +67,29 @@ int main(int argc, char *argv[])
 
         if (compare_colormap && gif1.color_map() != gif2.color_map())
         {
-            std::cout << "Color table doesn't match\n"
-                      << file1 << ":\n"
-                      << gif1.color_map() << '\n'
-                      << file2 << ";\n"
-                      << gif2.color_map() << '\n';
+            const ColorMapObject &colormap1{gif1.color_map()};
+            const ColorMapObject &colormap2{gif2.color_map()};
+            if (colormap1.ColorCount != colormap2.ColorCount        //
+                || colormap1.BitsPerPixel != colormap2.BitsPerPixel //
+                || colormap1.SortFlag != colormap2.SortFlag)
+            {
+                std::cout << "Color table metadata doesn't match\n"
+                          << file1 << ": count=" << colormap1.ColorCount
+                          << ", bits=" << colormap1.BitsPerPixel
+                          << ", sort=" << (colormap1.SortFlag ? "yes" : "no") << '\n'
+                          << file2 << ": count=" << colormap2.ColorCount
+                          << ", bits=" << colormap2.BitsPerPixel
+                          << ", sort=" << (colormap2.SortFlag ? "yes" : "no") << '\n';
+                return 1;
+            }
+            std::cout << file1 << " != " << file2 << '\n';
+            for (int i = 0; i < colormap1.ColorCount; ++i)
+            {
+                if (colormap1.Colors[i] != colormap2.Colors[i])
+                {
+                    std::cout << "[" << i << "] " << colormap1.Colors[i] << " != " << colormap2.Colors[i] << '\n';
+                }
+            }
             return 1;
         }
 
