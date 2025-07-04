@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-/*
-
-Miscellaneous fractal-specific code
-
-*/
-#include "fractals/bifurcation.h"
+#include "fractals/Bifurcation.h"
 
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
@@ -18,11 +13,8 @@ Miscellaneous fractal-specific code
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/stop_msg.h"
 
-#include <algorithm>
 #include <cmath>
-#include <new>
 #include <vector>
 
 enum
@@ -34,34 +26,8 @@ enum
 
 constexpr double SEED{0.66}; // starting value for population
 
-struct Bifurcation
+namespace id::fractals
 {
-    int iterate();
-
-private:
-    void verhulst();
-
-    std::vector<int> m_verhulst;
-    unsigned long m_filter_cycles{};
-    bool m_half_time_check{};
-    bool m_mono{};
-    int m_outside_x{};
-};
-
-// used for periodicity checking
-struct BifurcationPeriod
-{
-    void init();
-    bool periodic(long time);
-
-    double close_enough{};
-    double saved_pop{};
-    int saved_inc{};
-    long saved_and{};
-};
-
-static Bifurcation s_bif;
-static BifurcationPeriod s_period;
 
 //*********** standalone engine for "bifurcation" types **************
 
@@ -93,31 +59,18 @@ static BifurcationPeriod s_period;
 // is desirable (e.g. in case of errors, or the series tending
 // to infinity).                Have fun !
 //*************************************************************
-int bifurcation_type()
+void Bifurcation::resume()
 {
-    return s_bif.iterate();
+    start_resume();
+    get_resume(m_x);
+    end_resume();
 }
 
-int Bifurcation::iterate()
+Bifurcation::Bifurcation()
 {
-    int x = 0;
-    if (g_resuming)
-    {
-        start_resume();
-        get_resume(x);
-        end_resume();
-    }
-    try
-    {
-        m_verhulst.resize(g_i_stop_pt.y + 1);
-    }
-    catch (const std::bad_alloc &)
-    {
-        stop_msg("Insufficient free memory for calculation.");
-        return -1;
-    }
+    m_verhulst.resize(g_i_stop_pt.y + 1);
 
-    for (int y = 0; y <= g_i_stop_pt.y; y++)   // should be iystop
+    for (int y = 0; y <= g_i_stop_pt.y; y++) // should be iystop
     {
         m_verhulst[y] = 0;
     }
@@ -140,7 +93,7 @@ int Bifurcation::iterate()
         }
     }
 
-    m_filter_cycles = (g_param_z1.x <= 0) ? DEFAULT_FILTER : (long)g_param_z1.x;
+    m_filter_cycles = (g_param_z1.x <= 0) ? DEFAULT_FILTER : (long) g_param_z1.x;
     m_half_time_check = false;
     if (g_periodicity_check && (unsigned long) g_max_iterations < m_filter_cycles)
     {
@@ -149,18 +102,20 @@ int Bifurcation::iterate()
     }
 
     g_init.y = (double) (g_y_max - g_i_stop_pt.y * g_delta_y); // bottom pixels
+}
 
-    while (x <= g_i_stop_pt.x)
+void Bifurcation::suspend()
+{
+    m_verhulst.clear();
+    alloc_resume(10, 1);
+    put_resume(m_x);
+}
+
+bool Bifurcation::iterate()
+{
+    if (m_x <= g_i_stop_pt.x)
     {
-        if (driver_key_pressed())
-        {
-            m_verhulst.clear();
-            alloc_resume(10, 1);
-            put_resume(x);
-            return -1;
-        }
-
-        g_rate = (double) (g_x_min + x * g_delta_x);
+        g_rate = (double) (g_x_min + m_x * g_delta_x);
         verhulst();        // calculate array once per column
 
         for (int y = g_i_stop_pt.y; y >= 0; y--) // should be iystop & >=0
@@ -179,12 +134,12 @@ int Bifurcation::iterate()
                 color = g_colors-1;
             }
             m_verhulst[y] = 0;
-            (*g_plot)(x, y, color); // was row-1, but that's not right?
+            (*g_plot)(m_x, y, color); // was row-1, but that's not right?
         }
-        x++;
+        ++m_x;
+        return true;
     }
-    m_verhulst.clear();
-    return 0;
+    return false;
 }
 
 void Bifurcation::verhulst()          // P. F. Verhulst (1845)
@@ -289,6 +244,8 @@ bool BifurcationPeriod::periodic(long time)
     }
     return false;
 }
+
+} // namespace id::fractals
 
 int bifurc_verhulst_trig_orbit()
 {
