@@ -25,8 +25,6 @@ Miscellaneous fractal-specific code
 #include <new>
 #include <vector>
 
-static void verhulst();
-
 enum
 {
     DEFAULT_FILTER = 1000     /* "Beauty of Fractals" recommends using 5000
@@ -38,6 +36,11 @@ constexpr double SEED{0.66}; // starting value for population
 
 struct Bifurcation
 {
+    int iterate();
+
+private:
+    void verhulst();
+
     std::vector<int> m_verhulst;
     unsigned long m_filter_cycles{};
     bool m_half_time_check{};
@@ -90,8 +93,12 @@ static BifurcationPeriod s_period;
 // is desirable (e.g. in case of errors, or the series tending
 // to infinity).                Have fun !
 //*************************************************************
-
 int bifurcation_type()
+{
+    return s_bif.iterate();
+}
+
+int Bifurcation::iterate()
 {
     int x = 0;
     if (g_resuming)
@@ -102,7 +109,7 @@ int bifurcation_type()
     }
     try
     {
-        s_bif.m_verhulst.resize(g_i_stop_pt.y + 1);
+        m_verhulst.resize(g_i_stop_pt.y + 1);
     }
     catch (const std::bad_alloc &)
     {
@@ -112,33 +119,33 @@ int bifurcation_type()
 
     for (int y = 0; y <= g_i_stop_pt.y; y++)   // should be iystop
     {
-        s_bif.m_verhulst[y] = 0;
+        m_verhulst[y] = 0;
     }
 
-    s_bif.m_mono = false;
+    m_mono = false;
     if (g_colors == 2)
     {
-        s_bif.m_mono = true;
+        m_mono = true;
     }
-    if (s_bif.m_mono)
+    if (m_mono)
     {
         if (g_inside_color != COLOR_BLACK)
         {
-            s_bif.m_outside_x = 0;
+            m_outside_x = 0;
             g_inside_color = 1;
         }
         else
         {
-            s_bif.m_outside_x = 1;
+            m_outside_x = 1;
         }
     }
 
-    s_bif.m_filter_cycles = (g_param_z1.x <= 0) ? DEFAULT_FILTER : (long)g_param_z1.x;
-    s_bif.m_half_time_check = false;
-    if (g_periodicity_check && (unsigned long) g_max_iterations < s_bif.m_filter_cycles)
+    m_filter_cycles = (g_param_z1.x <= 0) ? DEFAULT_FILTER : (long)g_param_z1.x;
+    m_half_time_check = false;
+    if (g_periodicity_check && (unsigned long) g_max_iterations < m_filter_cycles)
     {
-        s_bif.m_filter_cycles = (s_bif.m_filter_cycles - g_max_iterations + 1) / 2;
-        s_bif.m_half_time_check = true;
+        m_filter_cycles = (m_filter_cycles - g_max_iterations + 1) / 2;
+        m_half_time_check = true;
     }
 
     g_init.y = (double) (g_y_max - g_i_stop_pt.y * g_delta_y); // bottom pixels
@@ -147,7 +154,7 @@ int bifurcation_type()
     {
         if (driver_key_pressed())
         {
-            s_bif.m_verhulst.clear();
+            m_verhulst.clear();
             alloc_resume(10, 1);
             put_resume(x);
             return -1;
@@ -158,29 +165,29 @@ int bifurcation_type()
 
         for (int y = g_i_stop_pt.y; y >= 0; y--) // should be iystop & >=0
         {
-            int color = s_bif.m_verhulst[y];
-            if (color && s_bif.m_mono)
+            int color = m_verhulst[y];
+            if (color && m_mono)
             {
                 color = g_inside_color;
             }
-            else if ((!color) && s_bif.m_mono)
+            else if ((!color) && m_mono)
             {
-                color = s_bif.m_outside_x;
+                color = m_outside_x;
             }
             else if (color>=g_colors)
             {
                 color = g_colors-1;
             }
-            s_bif.m_verhulst[y] = 0;
+            m_verhulst[y] = 0;
             (*g_plot)(x, y, color); // was row-1, but that's not right?
         }
         x++;
     }
-    s_bif.m_verhulst.clear();
+    m_verhulst.clear();
     return 0;
 }
 
-static void verhulst()          // P. F. Verhulst (1845)
+void Bifurcation::verhulst()          // P. F. Verhulst (1845)
 {
     unsigned int pixel_row;
 
@@ -188,14 +195,14 @@ static void verhulst()          // P. F. Verhulst (1845)
 
     g_overflow = false;
 
-    for (unsigned long counter = 0UL; counter < s_bif.m_filter_cycles; counter++)
+    for (unsigned long counter = 0UL; counter < m_filter_cycles; counter++)
     {
         if (g_cur_fractal_specific->orbit_calc())
         {
             return;
         }
     }
-    if (s_bif.m_half_time_check) // check for periodicity at half-time
+    if (m_half_time_check) // check for periodicity at half-time
     {
         s_period.init();
         unsigned long counter;
@@ -212,7 +219,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         }
         if (counter >= (unsigned long)g_max_iterations)   // if not periodic, go the distance
         {
-            for (counter = 0; counter < s_bif.m_filter_cycles ; counter++)
+            for (counter = 0; counter < m_filter_cycles ; counter++)
             {
                 if (g_cur_fractal_specific->orbit_calc())
                 {
@@ -239,13 +246,13 @@ static void verhulst()          // P. F. Verhulst (1845)
         // if it's visible on the screen, save it in the column array
         if (pixel_row <= (unsigned int)g_i_stop_pt.y)
         {
-            s_bif.m_verhulst[ pixel_row ] ++;
+            m_verhulst[ pixel_row ] ++;
         }
         if (g_periodicity_check && s_period.periodic(counter))
         {
             if (pixel_row <= (unsigned int)g_i_stop_pt.y)
             {
-                s_bif.m_verhulst[ pixel_row ] --;
+                m_verhulst[ pixel_row ] --;
             }
             break;
         }
