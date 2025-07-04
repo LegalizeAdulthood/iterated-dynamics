@@ -26,8 +26,6 @@ Miscellaneous fractal-specific code
 #include <vector>
 
 static void verhulst();
-static void bif_period_init();
-static bool bif_periodic(long time);
 
 enum
 {
@@ -38,14 +36,24 @@ enum
 
 constexpr double SEED{0.66}; // starting value for population
 
+// used for periodicity checking
+struct BifurcationPeriod
+{
+    void init();
+    bool periodic(long time);
+
+    double close_enough{};
+    double saved_pop{};
+    int saved_inc{};
+    long saved_and{};
+};
+
 static std::vector<int> s_verhulst_array;
 static unsigned long s_filter_cycles{};
 static bool s_half_time_check{};
 static bool s_mono{};
 static int s_outside_x{};
-static double s_bif_close_enough{}, s_bif_saved_pop{};
-static int s_bif_saved_inc{};
-static long s_bif_saved_and{};
+static BifurcationPeriod s_period;
 
 //*********** standalone engine for "bifurcation" types **************
 
@@ -184,7 +192,7 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
     if (s_half_time_check) // check for periodicity at half-time
     {
-        bif_period_init();
+        s_period.init();
         unsigned long counter;
         for (counter = 0; counter < (unsigned long)g_max_iterations ; counter++)
         {
@@ -192,7 +200,7 @@ static void verhulst()          // P. F. Verhulst (1845)
             {
                 return;
             }
-            if (g_periodicity_check && bif_periodic(counter))
+            if (g_periodicity_check && s_period.periodic(counter))
             {
                 break;
             }
@@ -211,7 +219,7 @@ static void verhulst()          // P. F. Verhulst (1845)
 
     if (g_periodicity_check)
     {
-        bif_period_init();
+        s_period.init();
     }
     for (unsigned long counter = 0UL; counter < (unsigned long)g_max_iterations ; counter++)
     {
@@ -228,7 +236,7 @@ static void verhulst()          // P. F. Verhulst (1845)
         {
             s_verhulst_array[ pixel_row ] ++;
         }
-        if (g_periodicity_check && bif_periodic(counter))
+        if (g_periodicity_check && s_period.periodic(counter))
         {
             if (pixel_row <= (unsigned int)g_i_stop_pt.y)
             {
@@ -239,30 +247,30 @@ static void verhulst()          // P. F. Verhulst (1845)
     }
 }
 
-static void bif_period_init()
+void BifurcationPeriod::init()
 {
-    s_bif_saved_inc = 1;
-    s_bif_saved_and = 1;
-    s_bif_saved_pop = -1.0;
-    s_bif_close_enough = (double) g_delta_y / 8.0;
+    saved_inc = 1;
+    saved_and = 1;
+    saved_pop = -1.0;
+    close_enough = (double) g_delta_y / 8.0;
 }
 
 // Bifurcation Population Periodicity Check
 // Returns : true if periodicity found, else false
-static bool bif_periodic(long time)
+bool BifurcationPeriod::periodic(long time)
 {
-    if ((time & s_bif_saved_and) == 0)      // time to save a new value
+    if ((time & saved_and) == 0)      // time to save a new value
     {
-        s_bif_saved_pop = g_population;
-        if (--s_bif_saved_inc == 0)
+        saved_pop = g_population;
+        if (--saved_inc == 0)
         {
-            s_bif_saved_and = (s_bif_saved_and << 1) + 1;
-            s_bif_saved_inc = 4;
+            saved_and = (saved_and << 1) + 1;
+            saved_inc = 4;
         }
     }
     else                         // check against an old save
     {
-        if (std::abs(s_bif_saved_pop - g_population) <= s_bif_close_enough)
+        if (std::abs(saved_pop - g_population) <= close_enough)
         {
             return true;
         }
@@ -270,11 +278,6 @@ static bool bif_periodic(long time)
     return false;
 }
 
-//********************************************************************
-/*                                                                                                    */
-// The following are Bifurcation "orbitcalc" routines...
-/*                                                                                                    */
-//********************************************************************
 int bifurc_verhulst_trig_orbit()
 {
     //  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop))
