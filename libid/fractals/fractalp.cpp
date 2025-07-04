@@ -6,7 +6,6 @@
 
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
-#include "fractals/ant.h"
 #include "fractals/barnsley.h"
 #include "fractals/bifurcation.h"
 #include "fractals/burning_ship.h"
@@ -41,6 +40,7 @@
 #include "fractals/testpt.h"
 #include "fractals/unity.h"
 #include "fractals/volterra_lotka.h"
+#include "ui/ant.h"
 
 #include <algorithm>
 #include <array>

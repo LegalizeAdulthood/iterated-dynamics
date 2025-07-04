@@ -45,7 +45,7 @@ add_library(libid
     include/engine/wait_until.h engine/wait_until.cpp
     include/engine/work_list.h engine/work_list.cpp
 
-    include/fractals/ant.h fractals/ant.cpp
+    include/fractals/Ant.h fractals/Ant.cpp
     include/fractals/barnsley.h fractals/barnsley.cpp
     include/fractals/bifurcation.h fractals/bifurcation.cpp
     include/fractals/burning_ship.h fractals/burning_ship.cpp
@@ -149,6 +149,7 @@ add_library(libid
     include/misc/ValueSaver.h
     include/misc/version.h misc/version.cpp
 
+    include/ui/ant.h ui/ant.cpp
     include/ui/ChoiceBuilder.h
     include/ui/cmdfiles.h ui/cmdfiles.cpp
     include/ui/cmdfiles_test.h
