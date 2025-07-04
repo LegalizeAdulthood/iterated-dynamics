@@ -4,7 +4,6 @@
 
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
-#include "fractals/ant.h"
 #include "helpcom.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
