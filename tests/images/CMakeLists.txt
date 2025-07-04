@@ -72,9 +72,13 @@ function(add_colormap_test name)
     set_tests_properties(ColormapTest.${name} PROPERTIES LABELS "colormap")
 endfunction()
 
-add_fractal_type_image_test(
-    "bifurcation" "bifmay" "bifstewart"
-)
+foreach(type "bifurcation" "biflambda")
+    add_image_test(${type} IGNORE_COLORMAP PARAMETERS "type=${type}" LABELS "bifurcation")
+endforeach()
+foreach(type "bifmay" "bifstewart")
+    add_image_test(${type} PARAMETERS "type=${type}" LABELS "bifurcation")
+endforeach()
+
 add_fractal_type_legacy_image_test(
     "barnsleyj1" "barnsleyj2" "barnsleyj3" "barnsleym1" "barnsleym2" "barnsleym3" "burning-ship"
     "cellular" "circle" "cmplxmarksjul" "cmplxmarksmand" "complexbasin" "complexnewton"
@@ -97,7 +101,6 @@ add_fractal_type_legacy_image_test(
     "volterra-lotka"
 )
 add_random_fractal_type_legacy_image_test(
-    "biflambda"
     "diffusion" "dynamic"
     "henon"
     "kamtorus" "kamtorus3d"
