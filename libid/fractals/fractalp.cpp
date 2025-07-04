@@ -8,6 +8,7 @@
 #include "engine/fractals.h"
 #include "fractals/barnsley.h"
 #include "fractals/bifurcation.h"
+#include "fractals/bif_may.h"
 #include "fractals/burning_ship.h"
 #include "fractals/cellular.h"
 #include "fractals/circle_pattern.h"

@@ -48,6 +48,7 @@ add_library(libid
 
     include/fractals/Ant.h fractals/Ant.cpp
     include/fractals/barnsley.h fractals/barnsley.cpp
+    include/fractals/bif_may.h fractals/bif_may.cpp
     include/fractals/bifurcation.h fractals/bifurcation.cpp
     include/fractals/burning_ship.h fractals/burning_ship.cpp
     include/fractals/cellular.h fractals/cellular.cpp

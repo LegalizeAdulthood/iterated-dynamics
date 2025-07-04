@@ -46,7 +46,6 @@ static int s_outside_x{};
 static double s_bif_close_enough{}, s_bif_saved_pop{};
 static int s_bif_saved_inc{};
 static long s_bif_saved_and{};
-static long s_beta{};
 
 //*********** standalone engine for "bifurcation" types **************
 
@@ -322,22 +321,4 @@ int bifurc_lambda_trig_orbit()
     cmplx_trig0(g_tmp_z, g_tmp_z);
     g_population = g_rate * g_tmp_z.x * (1 - g_tmp_z.x);
     return population_orbit();
-}
-
-int bifurc_may_orbit()
-{
-    /* X = (lambda * X) / (1 + X)^beta, from R.May as described in Pickover,
-            Computers, Pattern, Chaos, and Beauty, page 153 */
-    g_tmp_z.x = 1.0 + g_population;
-    g_tmp_z.x = std::pow(g_tmp_z.x, -s_beta); // pow in math.h included with math/mpmath.h
-    g_population = (g_rate * g_population) * g_tmp_z.x;
-    return population_orbit();
-}
-
-bool bifurc_may_per_image()
-{
-    g_params[2] = std::max(g_params[2], 2.0);
-    s_beta = static_cast<long>(g_params[2]);
-    engine_timer(g_cur_fractal_specific->calc_type);
-    return false;
 }
