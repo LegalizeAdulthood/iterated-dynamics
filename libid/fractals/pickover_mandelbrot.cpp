@@ -35,7 +35,7 @@ int mandel_trig_plus_exponent_orbit()
     const double tmp_exp = std::exp(g_old_z.x);
     double sin_y;
     double cos_y;
-    sin_cos(&g_old_z.y, &sin_y, &cos_y);
+    sin_cos(g_old_z.y, &sin_y, &cos_y);
     cmplx_trig0(g_old_z, g_new_z);
 
     //new =   trig(old) + e**old + C

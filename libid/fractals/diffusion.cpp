@@ -153,10 +153,10 @@ int diffusion_type()
         {
         case 0: // Release new point on a circle inside the box
         {
-            double angle = 2*(double)std::rand()/(RAND_MAX/PI);
+            const double angle = 2*(double)std::rand()/(RAND_MAX/PI);
             double cosine;
             double sine;
-            sin_cos(&angle, &sine, &cosine);
+            sin_cos(angle, &sine, &cosine);
             x = (int)(cosine*(s_diffusion.x_max-s_diffusion.x_min) + g_logical_screen_x_dots);
             y = (int)(sine  *(s_diffusion.y_max-s_diffusion.y_min) + g_logical_screen_y_dots);
             x /= 2;
@@ -171,10 +171,10 @@ int diffusion_type()
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
         {
-            double angle = 2*(double)std::rand()/(RAND_MAX/PI);
+            const double angle = 2*(double)std::rand()/(RAND_MAX/PI);
             double cosine;
             double sine;
-            sin_cos(&angle, &sine, &cosine);
+            sin_cos(angle, &sine, &cosine);
             x = (int)(cosine*radius + g_logical_screen_x_dots);
             y = (int)(sine  *radius + g_logical_screen_y_dots);
             x /= 2;

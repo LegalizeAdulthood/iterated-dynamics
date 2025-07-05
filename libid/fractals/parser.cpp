@@ -910,8 +910,8 @@ void d_stk_sin()
     double sinh_y;
     double cosh_y;
 
-    sin_cos(&g_arg1->d.x, &sin_x, &cos_x);
-    sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
+    sin_cos(g_arg1->d.x, &sin_x, &cos_x);
+    sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
     g_arg1->d.x = sin_x*cosh_y;
     g_arg1->d.y = cos_x*sinh_y;
 }
@@ -927,8 +927,8 @@ void d_stk_tan()
     double cosh_y;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(&g_arg1->d.x, &sin_x, &cos_x);
-    sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
+    sin_cos(g_arg1->d.x, &sin_x, &cos_x);
+    sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
     double denom = cos_x + cosh_y;
     if (check_denom(denom))
     {
@@ -946,8 +946,8 @@ void d_stk_tanh()
     double cosh_x;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(&g_arg1->d.y, &sin_y, &cos_y);
-    sinh_cosh(&g_arg1->d.x, &sinh_x, &cosh_x);
+    sin_cos(g_arg1->d.y, &sin_y, &cos_y);
+    sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
     double denom = cosh_x + cos_y;
     if (check_denom(denom))
     {
@@ -965,8 +965,8 @@ void d_stk_cotan()
     double cosh_y;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(&g_arg1->d.x, &sin_x, &cos_x);
-    sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
+    sin_cos(g_arg1->d.x, &sin_x, &cos_x);
+    sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
     double denom = cosh_y - cos_x;
     if (check_denom(denom))
     {
@@ -984,8 +984,8 @@ void d_stk_cotanh()
     double cosh_x;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(&g_arg1->d.y, &sin_y, &cos_y);
-    sinh_cosh(&g_arg1->d.x, &sinh_x, &cosh_x);
+    sin_cos(g_arg1->d.y, &sin_y, &cos_y);
+    sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
     double denom = cosh_x - cos_y;
     if (check_denom(denom))
     {
@@ -1025,8 +1025,8 @@ void d_stk_sinh()
     double sinh_x;
     double cosh_x;
 
-    sin_cos(&g_arg1->d.y, &sin_y, &cos_y);
-    sinh_cosh(&g_arg1->d.x, &sinh_x, &cosh_x);
+    sin_cos(g_arg1->d.y, &sin_y, &cos_y);
+    sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
     g_arg1->d.x = sinh_x*cos_y;
     g_arg1->d.y = cosh_x*sin_y;
 }
@@ -1038,8 +1038,8 @@ void d_stk_cos()
     double sinh_y;
     double cosh_y;
 
-    sin_cos(&g_arg1->d.x, &sin_x, &cos_x);
-    sinh_cosh(&g_arg1->d.y, &sinh_y, &cosh_y);
+    sin_cos(g_arg1->d.x, &sin_x, &cos_x);
+    sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
     g_arg1->d.x = cos_x*cosh_y;
     g_arg1->d.y = -sin_x*sinh_y;
 }
@@ -1059,8 +1059,8 @@ void d_stk_cosh()
     double sinh_x;
     double cosh_x;
 
-    sin_cos(&g_arg1->d.y, &sin_y, &cos_y);
-    sinh_cosh(&g_arg1->d.x, &sinh_x, &cosh_x);
+    sin_cos(g_arg1->d.y, &sin_y, &cos_y);
+    sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
     g_arg1->d.x = cosh_x*cos_y;
     g_arg1->d.y = sinh_x*sin_y;
 }

@@ -10,5 +10,5 @@ void fpu_cmplx_mul(const DComplex *x, const DComplex *y, DComplex *z); // z = x 
 void fpu_cmplx_div(const DComplex *x, const DComplex *y, DComplex *z); // z = x / y
 void fpu_cmplx_log(const DComplex *x, DComplex *z);                    // z = log(x)
 void fpu_cmplx_exp(const DComplex *x, DComplex *z);                    // z = e^x
-void sin_cos(const double *angle, double *sine, double *cosine);
-void sinh_cosh(const double *angle, double *sine, double *cosine);
+void sin_cos(double angle, double *sine, double *cosine);
+void sinh_cosh(double angle, double *sine, double *cosine);

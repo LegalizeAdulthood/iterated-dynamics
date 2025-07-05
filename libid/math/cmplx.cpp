@@ -17,9 +17,9 @@ DComplex complex_sqrt_float(double x, double y)
     }
     else
     {
-        double mag = std::sqrt(std::sqrt(x*x + y*y));
-        double theta = std::atan2(y, x) / 2;
-        sin_cos(&theta, &result.y, &result.x);
+        const double mag = std::sqrt(std::sqrt(x*x + y*y));
+        const double theta = std::atan2(y, x) / 2;
+        sin_cos(theta, &result.y, &result.x);
         result.x *= mag;
         result.y *= mag;
     }
