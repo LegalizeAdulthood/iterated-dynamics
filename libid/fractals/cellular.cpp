@@ -260,7 +260,7 @@ bool Cellular::iterate()
     {
         if (g_row < static_cast<int>(line_num))
         {
-            thinking(1, "Cellular thinking (higher start row takes longer)");
+            thinking("Cellular thinking (higher start row takes longer)");
             if (g_random_seed_flag || rand_param == 0 || rand_param == -1)
             {
                 // Use a random border
@@ -288,7 +288,7 @@ bool Cellular::iterate()
             }
             if (t > m_rule_digits || t < 0)
             {
-                thinking(0, nullptr);
+                thinking_end();
                 throw CellularError(*this, BAD_T, t);
             }
             m_cell_array[not_filled][m_s_r] = (Byte)cell_table[t];
@@ -300,7 +300,7 @@ bool Cellular::iterate()
                 t = (S16)(t + m_cell_array[filled][g_col+m_s_r] - m_cell_array[filled][g_col-m_s_r-1]);
                 if (t > m_rule_digits || t < 0)
                 {
-                    thinking(0, nullptr);
+                    thinking_end();
                     throw CellularError(*this, BAD_T, t);
                 }
                 m_cell_array[not_filled][g_col] = (Byte)cell_table[t];
@@ -312,7 +312,7 @@ bool Cellular::iterate()
             return true;
         }
         start_row = 0;
-        thinking(0, nullptr);
+        thinking_end();
         m_last_screen_flag = false;
     }
 
@@ -345,7 +345,7 @@ bool Cellular::iterate()
         }
         if (t > m_rule_digits || t < 0)
         {
-            thinking(0, nullptr);
+            thinking_end();
             throw CellularError(*this, BAD_T, t);
         }
         m_cell_array[not_filled][m_s_r] = (Byte)cell_table[t];
@@ -357,7 +357,7 @@ bool Cellular::iterate()
             t = (S16)(t + m_cell_array[filled][g_col+m_s_r] - m_cell_array[filled][g_col-m_s_r-1]);
             if (t > m_rule_digits || t < 0)
             {
-                thinking(0, nullptr);
+                thinking_end();
                 throw CellularError(*this, BAD_T, t);
             }
             m_cell_array[not_filled][g_col] = (Byte)cell_table[t];
@@ -384,7 +384,7 @@ void Cellular::suspend()
 {
     if (m_last_screen_flag)
     {
-        thinking(0, nullptr);
+        thinking_end();
         throw CellularError(*this, INTERRUPT);
     }
     alloc_resume(10, 1);

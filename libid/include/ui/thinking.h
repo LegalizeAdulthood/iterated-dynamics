@@ -4,28 +4,12 @@
 
 bool thinking(int options, const char *msg);
 
-class Thinking
+inline bool thinking(const char *msg)
 {
-public:
-    Thinking(int options, const char *msg) :
-        m_thinking(true)
-    {
-        thinking(options, msg);
-    }
+    return thinking(1, msg);
+}
 
-    ~Thinking()
-    {
-        if (m_thinking)
-        {
-            thinking(0, nullptr);
-        }
-    }
-
-    void cancel()
-    {
-        m_thinking = false;
-    }
-
-private:
-    bool m_thinking{};
-};
+inline void thinking_end()
+{
+    thinking(0, nullptr);
+}

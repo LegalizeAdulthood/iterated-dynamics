@@ -271,7 +271,7 @@ find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth)
         if (!(ts->counter++))
         {
             // let user know we're not dead
-            if (thinking(1, "L-System thinking (higher orders take longer)"))
+            if (thinking("L-System thinking (higher orders take longer)"))
             {
                 ts->counter--;
                 return nullptr;
@@ -351,7 +351,7 @@ lsysf_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int dep
     ts->real_angle = 0;
     ts->size = 1;
     LSysCmd *f_s_ret = find_size(command, ts, rules, depth);
-    thinking(0, nullptr); // erase thinking message if any
+    thinking_end(); // erase thinking message if any
     LDouble x_min = ts->x_min;
     LDouble x_max = ts->x_max;
     LDouble y_min = ts->y_min;
