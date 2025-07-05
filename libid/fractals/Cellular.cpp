@@ -14,7 +14,6 @@
 #include "ui/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
-#include "ui/stop_msg.h"
 #include "ui/thinking.h"
 #include "ui/video.h"
 
@@ -23,7 +22,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <stdexcept>
 #include <vector>
 
 //****************** standalone engine for "cellular" *******************
