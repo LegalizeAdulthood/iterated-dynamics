@@ -138,13 +138,6 @@ static void abort_cellular(int err, int t)
 
 int cellular_type()
 {
-    U16 cell_table[32];
-    U16 init_string[16];
-    U16 two_r;
-    S16 t;
-    double n;
-    char buf[512];
-
     set_cellular_palette();
 
     S32 rand_param = (S32) g_params[0];
@@ -181,11 +174,13 @@ int cellular_type()
     {
         --g_random_seed;
     }
+    U16 init_string[16];
     if (rand_param != 0 && rand_param != -1)
     {
-        n = g_params[0];
+        double n = g_params[0];
+        char buf[512];
         std::snprintf(buf, std::size(buf), "%.16g", n); // # of digits in initial string
-        t = (S16)std::strlen(buf);
+        S16 t = (S16)std::strlen(buf);
         if (t>16 || t <= 0)
         {
             abort_cellular(STRING1, 0);
@@ -211,7 +206,7 @@ int cellular_type()
     set_random_seed();
 
     // generate rule table from parameter 1
-    n = g_params[1];
+    double n = g_params[1];
     if (n == 0)
     {
         // calculate a random rule
@@ -223,14 +218,16 @@ int cellular_type()
         }
         g_params[1] = n;
     }
+    char buf[512];
     std::snprintf(buf, std::size(buf), "%.*g", s_cellular.m_rule_digits, n);
-    t = (S16)std::strlen(buf);
+    S16 t = (S16)std::strlen(buf);
     if (s_cellular.m_rule_digits < t || t < 0)
     {
         // leading 0s could make t smaller
         abort_cellular(RULE_LENGTH, 0);
         return -1;
     }
+    U16 cell_table[32];
     for (int i = 0; i < s_cellular.m_rule_digits; i++)   // zero the table
     {
         cell_table[i] = 0;
@@ -247,16 +244,8 @@ int cellular_type()
     }
 
     S16 start_row = 0;
-    try
-    {
-        s_cellular.m_cell_array[0].resize(g_i_stop_pt.x+1);
-        s_cellular.m_cell_array[1].resize(g_i_stop_pt.x+1);
-    }
-    catch (const std::bad_alloc &)
-    {
-        abort_cellular(BAD_MEM, 0);
-        return -1;
-    }
+    s_cellular.m_cell_array[0].resize(g_i_stop_pt.x+1);
+    s_cellular.m_cell_array[1].resize(g_i_stop_pt.x+1);
 
     // nxtscreenflag toggled by space bar, true for continuous
     // false to stop on next screen
@@ -335,7 +324,7 @@ int cellular_type()
             }
 
             t = 0; // do first cell
-            two_r = (U16)(s_cellular.m_s_r+s_cellular.m_s_r);
+            U16 two_r = (U16)(s_cellular.m_s_r+s_cellular.m_s_r);
             for (int i = 0; i <= two_r; i++)
             {
                 t = (S16)(t + (S16)s_cellular.m_cell_array[filled][i]);
@@ -400,7 +389,7 @@ cont_loop:
         }
 
         t = 0; // do first cell
-        two_r = (U16)(s_cellular.m_s_r+s_cellular.m_s_r);
+        U16 two_r = (U16)(s_cellular.m_s_r+s_cellular.m_s_r);
         for (int i = 0; i <= two_r; i++)
         {
             t = (S16)(t + (S16)s_cellular.m_cell_array[filled][i]);
