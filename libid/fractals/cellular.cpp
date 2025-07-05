@@ -247,12 +247,18 @@ Cellular::Cellular()
     }
     start_row++;
 
+    g_row = start_row;
+}
+
+// This section does all the work
+bool Cellular::iterate()
+{
     // This section calculates the starting line when it is not zero
     // This section can't be resumed since no screen output is generated
-    // calculates the (lnnmbr - 1) generation
+    // calculates the (line_num - 1) generation
     if (m_last_screen_flag)   // line number != 0 & not resuming & not continuing
     {
-        for (U32 big_row = (U32)start_row; big_row < line_num; big_row++)
+        if (g_row < static_cast<int>(line_num))
         {
             thinking(1, "Cellular thinking (higher start row takes longer)");
             if (g_random_seed_flag || rand_param == 0 || rand_param == -1)
@@ -302,23 +308,14 @@ Cellular::Cellular()
 
             filled = not_filled;
             not_filled = (S16)(1-filled);
-            if (driver_key_pressed())
-            {
-                thinking(0, nullptr);
-                throw CellularError(*this, INTERRUPT);
-            }
+            ++g_row;
+            return true;
         }
         start_row = 0;
         thinking(0, nullptr);
         m_last_screen_flag = false;
     }
 
-    g_row = start_row;
-}
-
-// This section does all the work
-bool Cellular::iterate()
-{
     if (g_row <= g_i_stop_pt.y)
     {
         if (g_random_seed_flag || rand_param == 0 || rand_param == -1)
@@ -385,6 +382,11 @@ bool Cellular::iterate()
 
 void Cellular::suspend()
 {
+    if (m_last_screen_flag)
+    {
+        thinking(0, nullptr);
+        throw CellularError(*this, INTERRUPT);
+    }
     alloc_resume(10, 1);
     put_resume(g_row);
 }
