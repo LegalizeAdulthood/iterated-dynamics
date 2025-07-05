@@ -44,12 +44,6 @@ bool Diffusion::keyboard_check_needed()
 
 int diffusion_type()
 {
-    double cosine;
-    double sine;
-    double angle;
-    float r;
-    float radius;
-
     if (driver_is_disk())
     {
         not_disk_msg();
@@ -80,6 +74,7 @@ int diffusion_type()
 
     set_random_seed();
 
+    float radius{};
     switch (mode)
     {
     case 0:
@@ -157,13 +152,17 @@ int diffusion_type()
         switch (mode)
         {
         case 0: // Release new point on a circle inside the box
-            angle = 2*(double)std::rand()/(RAND_MAX/PI);
+        {
+            double angle = 2*(double)std::rand()/(RAND_MAX/PI);
+            double cosine;
+            double sine;
             sin_cos(&angle, &sine, &cosine);
             x = (int)(cosine*(s_diffusion.x_max-s_diffusion.x_min) + g_logical_screen_x_dots);
             y = (int)(sine  *(s_diffusion.y_max-s_diffusion.y_min) + g_logical_screen_y_dots);
             x = x >> 1; // divide by 2
             y = y >> 1;
             break;
+        }
         case 1: /* Release new point on the line ymin somewhere between xmin
                  and xmax */
             y = s_diffusion.y_min;
@@ -171,13 +170,17 @@ int diffusion_type()
             break;
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
-            angle = 2*(double)std::rand()/(RAND_MAX/PI);
+        {
+            double angle = 2*(double)std::rand()/(RAND_MAX/PI);
+            double cosine;
+            double sine;
             sin_cos(&angle, &sine, &cosine);
             x = (int)(cosine*radius + g_logical_screen_x_dots);
             y = (int)(sine  *radius + g_logical_screen_y_dots);
             x = x >> 1;
             y = y >> 1;
             break;
+        }
         }
 
         // Loop as long as the point (x,y) is surrounded by color 0
@@ -313,7 +316,8 @@ int diffusion_type()
             break;
         case 2: /* Decrease the radius where points are released to stay away
                  from the fractal.  It might be decreased by 1 or 2 */
-            r = sqr((float)x-g_logical_screen_x_dots/2) + sqr((float)y-g_logical_screen_y_dots/2);
+        {
+            const double r = sqr((float)x-g_logical_screen_x_dots/2) + sqr((float)y-g_logical_screen_y_dots/2);
             if (r <= border*border)
             {
                 return 0;
@@ -323,6 +327,7 @@ int diffusion_type()
                 radius--;
             }
             break;
+        }
         }
     }
 }
