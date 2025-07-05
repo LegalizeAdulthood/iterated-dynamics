@@ -72,21 +72,20 @@ int diffusion_type()
 
     set_random_seed();
 
-    if (mode == 0)
+    switch (mode)
     {
+    case 0:
         x_max = g_logical_screen_x_dots / 2 + border;  // Initial box
         x_min = g_logical_screen_x_dots / 2 - border;
         y_max = g_logical_screen_y_dots / 2 + border;
         y_min = g_logical_screen_y_dots / 2 - border;
-    }
-    if (mode == 1)
-    {
+        break;
+    case 1:
         x_max = g_logical_screen_x_dots / 2 + border;  // Initial box
         x_min = g_logical_screen_x_dots / 2 - border;
         y_min = g_logical_screen_y_dots - border;
-    }
-    if (mode == 2)
-    {
+        break;
+    case 2:
         if (g_logical_screen_x_dots > g_logical_screen_y_dots)
         {
             radius = (float)(g_logical_screen_y_dots - border);
