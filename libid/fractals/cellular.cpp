@@ -44,7 +44,9 @@ static void set_cellular_palette();
 
 struct Cellular
 {
-    bool init();
+    void init();
+    bool iterate();
+    void suspend();
 
     std::vector<Byte> m_cell_array[2];
     S16 m_s_r{};
@@ -149,7 +151,7 @@ static std::string cellular_error(const Cellular &cellular, int err, int t)
     return "Unknown error";
 }
 
-bool Cellular::init()
+void Cellular::init()
 {
     set_cellular_palette();
 
@@ -175,7 +177,7 @@ bool Cellular::init()
     case 61:
         break;
     default:
-        throw CellularError(s_cellular, TYPE_KR);
+        throw CellularError(*this, TYPE_KR);
     }
 
     m_s_r = (S16)(kr % 10); // Number of nearest neighbors to sum
@@ -183,12 +185,12 @@ bool Cellular::init()
     m_k_1 = (S16)(k - 1); // Highest state value, k=3 has highest state value of 2
     m_rule_digits = (S16)((m_s_r * 2 + 1) * m_k_1 + 1); // Number of digits in the rule
 
-    if (!g_random_seed_flag && s_cellular.rand_param == -1)
+    if (!g_random_seed_flag && rand_param == -1)
     {
         --g_random_seed;
     }
 
-    if (s_cellular.rand_param != 0 && s_cellular.rand_param != -1)
+    if (rand_param != 0 && rand_param != -1)
     {
         double n = g_params[0];
         char buf[512];
@@ -196,9 +198,9 @@ bool Cellular::init()
         S16 t = (S16)std::strlen(buf);
         if (t>16 || t <= 0)
         {
-            throw CellularError(s_cellular, STRING1);
+            throw CellularError(*this, STRING1);
         }
-        for (U16 &elem : s_cellular.init_string)
+        for (U16 &elem : init_string)
         {
             elem = 0; // zero the array
         }
@@ -206,10 +208,10 @@ bool Cellular::init()
         for (int i = 0; i < t; i++)
         {
             // center initial string in array
-            s_cellular.init_string[i+t2] = from_digit(buf[i]);
-            if (s_cellular.init_string[i+t2]>(U16)s_cellular.m_k_1)
+            init_string[i+t2] = from_digit(buf[i]);
+            if (init_string[i+t2]>(U16)m_k_1)
             {
-                throw CellularError(s_cellular, STRING2);
+                throw CellularError(*this, STRING2);
             }
         }
     }
@@ -221,23 +223,23 @@ bool Cellular::init()
     if (n == 0.0)
     {
         // calculate a random rule
-        n = std::rand()%(int) s_cellular.k;
-        for (int i = 1; i < s_cellular.m_rule_digits; i++)
+        n = std::rand()%(int) k;
+        for (int i = 1; i < m_rule_digits; i++)
         {
             n *= 10;
-            n += std::rand()%(int) s_cellular.k;
+            n += std::rand()%(int) k;
         }
         g_params[1] = n;
     }
     char buf[512];
-    std::snprintf(buf, std::size(buf), "%.*g", s_cellular.m_rule_digits, n);
+    std::snprintf(buf, std::size(buf), "%.*g", m_rule_digits, n);
     S16 t = (S16)std::strlen(buf);
-    if (s_cellular.m_rule_digits < t || t < 0)
+    if (m_rule_digits < t || t < 0)
     {
         // leading 0s could make t smaller
-        throw CellularError(s_cellular, RULE_LENGTH);
+        throw CellularError(*this, RULE_LENGTH);
     }
-    for (int i = 0; i < s_cellular.m_rule_digits; i++)   // zero the table
+    for (int i = 0; i < m_rule_digits; i++)   // zero the table
     {
         cell_table[i] = 0;
     }
@@ -245,40 +247,40 @@ bool Cellular::init()
     {
         // reverse order
         cell_table[i] = from_digit(buf[t - i - 1]);
-        if (cell_table[i]>(U16)s_cellular.m_k_1)
+        if (cell_table[i]>(U16)m_k_1)
         {
-            throw CellularError(s_cellular, TABLE_K);
+            throw CellularError(*this, TABLE_K);
         }
     }
 
-    s_cellular.m_cell_array[0].resize(g_i_stop_pt.x+1);
-    s_cellular.m_cell_array[1].resize(g_i_stop_pt.x+1);
+    m_cell_array[0].resize(g_i_stop_pt.x+1);
+    m_cell_array[1].resize(g_i_stop_pt.x+1);
 
     // g_cellular_next_screen toggled by space bar, true for continuous
     // false to stop on next screen
 
-    if (g_resuming && !g_cellular_next_screen && !s_cellular.m_last_screen_flag)
+    if (g_resuming && !g_cellular_next_screen && !m_last_screen_flag)
     {
         start_resume();
-        get_resume(s_cellular.start_row);
+        get_resume(start_row);
         end_resume();
-        read_span(s_cellular.start_row, 0, g_i_stop_pt.x, s_cellular.m_cell_array[s_cellular.filled].data());
+        read_span(start_row, 0, g_i_stop_pt.x, m_cell_array[filled].data());
     }
-    else if (g_cellular_next_screen && !s_cellular.m_last_screen_flag)
+    else if (g_cellular_next_screen && !m_last_screen_flag)
     {
         start_resume();
         end_resume();
-        read_span(g_i_stop_pt.y, 0, g_i_stop_pt.x, s_cellular.m_cell_array[s_cellular.filled].data());
+        read_span(g_i_stop_pt.y, 0, g_i_stop_pt.x, m_cell_array[filled].data());
         g_params[3] += g_i_stop_pt.y + 1;
-        s_cellular.start_row = -1; // after 1st iteration its = 0
+        start_row = -1; // after 1st iteration its = 0
     }
     else
     {
-        if (g_random_seed_flag || s_cellular.rand_param == 0 || s_cellular.rand_param == -1)
+        if (g_random_seed_flag || rand_param == 0 || rand_param == -1)
         {
             for (g_col = 0; g_col <= g_i_stop_pt.x; g_col++)
             {
-                s_cellular.m_cell_array[s_cellular.filled][g_col] = (Byte)(std::rand()%(int) s_cellular.k);
+                m_cell_array[filled][g_col] = (Byte)(std::rand()%(int) k);
             }
         } // end of if random
         else
@@ -286,71 +288,71 @@ bool Cellular::init()
             for (g_col = 0; g_col <= g_i_stop_pt.x; g_col++)
             {
                 // Clear from end to end
-                s_cellular.m_cell_array[s_cellular.filled][g_col] = 0;
+                m_cell_array[filled][g_col] = 0;
             }
             int i = 0;
             for (g_col = (g_i_stop_pt.x-16)/2; g_col < (g_i_stop_pt.x+16)/2; g_col++)
             {
                 // insert initial
-                s_cellular.m_cell_array[s_cellular.filled][g_col] = (Byte)s_cellular.init_string[i++];    // string
+                m_cell_array[filled][g_col] = (Byte)init_string[i++];    // string
             }
         } // end of if not random
-        s_cellular.m_last_screen_flag = s_cellular.line_num != 0;
-        write_span(s_cellular.start_row, 0, g_i_stop_pt.x, s_cellular.m_cell_array[s_cellular.filled].data());
+        m_last_screen_flag = line_num != 0;
+        write_span(start_row, 0, g_i_stop_pt.x, m_cell_array[filled].data());
     }
-    s_cellular.start_row++;
+    start_row++;
 
     // This section calculates the starting line when it is not zero
     // This section can't be resumed since no screen output is generated
     // calculates the (lnnmbr - 1) generation
-    if (s_cellular.m_last_screen_flag)   // line number != 0 & not resuming & not continuing
+    if (m_last_screen_flag)   // line number != 0 & not resuming & not continuing
     {
-        for (U32 big_row = (U32)s_cellular.start_row; big_row < s_cellular.line_num; big_row++)
+        for (U32 big_row = (U32)start_row; big_row < line_num; big_row++)
         {
             thinking(1, "Cellular thinking (higher start row takes longer)");
-            if (g_random_seed_flag || s_cellular.rand_param == 0 || s_cellular.rand_param == -1)
+            if (g_random_seed_flag || rand_param == 0 || rand_param == -1)
             {
                 // Use a random border
-                for (int i = 0; i <= s_cellular.m_s_r; i++)
+                for (int i = 0; i <= m_s_r; i++)
                 {
-                    s_cellular.m_cell_array[not_filled][i] = (Byte)(std::rand()%(int) s_cellular.k);
-                    s_cellular.m_cell_array[not_filled][g_i_stop_pt.x-i] = (Byte)(std::rand()%(int) s_cellular.k);
+                    m_cell_array[not_filled][i] = (Byte)(std::rand()%(int) k);
+                    m_cell_array[not_filled][g_i_stop_pt.x-i] = (Byte)(std::rand()%(int) k);
                 }
             }
             else
             {
                 // Use a zero border
-                for (int i = 0; i <= s_cellular.m_s_r; i++)
+                for (int i = 0; i <= m_s_r; i++)
                 {
-                    s_cellular.m_cell_array[not_filled][i] = 0;
-                    s_cellular.m_cell_array[not_filled][g_i_stop_pt.x-i] = 0;
+                    m_cell_array[not_filled][i] = 0;
+                    m_cell_array[not_filled][g_i_stop_pt.x-i] = 0;
                 }
             }
 
             S16 t = 0; // do first cell
-            U16 two_r = (U16)(s_cellular.m_s_r+s_cellular.m_s_r);
+            U16 two_r = (U16)(m_s_r+m_s_r);
             for (int i = 0; i <= two_r; i++)
             {
-                t = (S16)(t + (S16)s_cellular.m_cell_array[filled][i]);
+                t = (S16)(t + (S16)m_cell_array[filled][i]);
             }
-            if (t > s_cellular.m_rule_digits || t < 0)
+            if (t > m_rule_digits || t < 0)
             {
                 thinking(0, nullptr);
-                throw CellularError(s_cellular, BAD_T, t);
+                throw CellularError(*this, BAD_T, t);
             }
-            s_cellular.m_cell_array[not_filled][s_cellular.m_s_r] = (Byte)s_cellular.cell_table[t];
+            m_cell_array[not_filled][m_s_r] = (Byte)cell_table[t];
 
             // use a rolling sum in t
-            for (g_col = s_cellular.m_s_r+1; g_col < g_i_stop_pt.x-s_cellular.m_s_r; g_col++)
+            for (g_col = m_s_r+1; g_col < g_i_stop_pt.x-m_s_r; g_col++)
             {
                 // now do the rest
-                t = (S16)(t + s_cellular.m_cell_array[filled][g_col+s_cellular.m_s_r] - s_cellular.m_cell_array[filled][g_col-s_cellular.m_s_r-1]);
-                if (t > s_cellular.m_rule_digits || t < 0)
+                t = (S16)(t + m_cell_array[filled][g_col+m_s_r] - m_cell_array[filled][g_col-m_s_r-1]);
+                if (t > m_rule_digits || t < 0)
                 {
                     thinking(0, nullptr);
-                    throw CellularError(s_cellular, BAD_T, t);
+                    throw CellularError(*this, BAD_T, t);
                 }
-                s_cellular.m_cell_array[not_filled][g_col] = (Byte)s_cellular.cell_table[t];
+                m_cell_array[not_filled][g_col] = (Byte)cell_table[t];
             }
 
             filled = not_filled;
@@ -358,93 +360,102 @@ bool Cellular::init()
             if (driver_key_pressed())
             {
                 thinking(0, nullptr);
-                throw CellularError(s_cellular, INTERRUPT);
+                throw CellularError(*this, INTERRUPT);
             }
         }
-        s_cellular.start_row = 0;
+        start_row = 0;
         thinking(0, nullptr);
-        s_cellular.m_last_screen_flag = false;
+        m_last_screen_flag = false;
     }
 
-    return true;
+    g_row = start_row;
+}
+
+// This section does all the work
+bool Cellular::iterate()
+{
+    if (g_row <= g_i_stop_pt.y)
+    {
+        if (g_random_seed_flag || rand_param == 0 || rand_param == -1)
+        {
+            // Use a random border
+            for (int i = 0; i <= m_s_r; i++)
+            {
+                m_cell_array[not_filled][i] = (Byte)(std::rand()%(int) k);
+                m_cell_array[not_filled][g_i_stop_pt.x-i] = (Byte)(std::rand()%(int) k);
+            }
+        }
+        else
+        {
+            // Use a zero border
+            for (int i = 0; i <= m_s_r; i++)
+            {
+                m_cell_array[not_filled][i] = 0;
+                m_cell_array[not_filled][g_i_stop_pt.x-i] = 0;
+            }
+        }
+
+        S16 t = 0; // do first cell
+        U16 two_r = (U16)(m_s_r+m_s_r);
+        for (int i = 0; i <= two_r; i++)
+        {
+            t = (S16)(t + (S16)m_cell_array[filled][i]);
+        }
+        if (t > m_rule_digits || t < 0)
+        {
+            thinking(0, nullptr);
+            throw CellularError(*this, BAD_T, t);
+        }
+        m_cell_array[not_filled][m_s_r] = (Byte)cell_table[t];
+
+        // use a rolling sum in t
+        for (g_col = m_s_r+1; g_col < g_i_stop_pt.x-m_s_r; g_col++)
+        {
+            // now do the rest
+            t = (S16)(t + m_cell_array[filled][g_col+m_s_r] - m_cell_array[filled][g_col-m_s_r-1]);
+            if (t > m_rule_digits || t < 0)
+            {
+                thinking(0, nullptr);
+                throw CellularError(*this, BAD_T, t);
+            }
+            m_cell_array[not_filled][g_col] = (Byte)cell_table[t];
+        }
+
+        filled = not_filled;
+        not_filled = (S16)(1-filled);
+        write_span(g_row, 0, g_i_stop_pt.x, m_cell_array[filled].data());
+        ++g_row;
+        return true;
+    }
+
+    if (g_cellular_next_screen)
+    {
+        g_params[3] += g_i_stop_pt.y + 1;
+        start_row = 0;
+        return true;
+    }
+
+    return false;
+}
+
+void Cellular::suspend()
+{
+    alloc_resume(10, 1);
+    put_resume(g_row);
 }
 
 int cellular_type()
 {
     try
     {
-        if (!s_cellular.init())
+        s_cellular.init();
+        while (s_cellular.iterate())
         {
-            return -1;
-        }
-
-        // This section does all the work
-        while (true)
-        {
-            for (g_row = s_cellular.start_row; g_row <= g_i_stop_pt.y; g_row++)
+            if (driver_key_pressed())
             {
-                if (g_random_seed_flag || s_cellular.rand_param == 0 || s_cellular.rand_param == -1)
-                {
-                    // Use a random border
-                    for (int i = 0; i <= s_cellular.m_s_r; i++)
-                    {
-                        s_cellular.m_cell_array[s_cellular.not_filled][i] = (Byte)(std::rand()%(int) s_cellular.k);
-                        s_cellular.m_cell_array[s_cellular.not_filled][g_i_stop_pt.x-i] = (Byte)(std::rand()%(int) s_cellular.k);
-                    }
-                }
-                else
-                {
-                    // Use a zero border
-                    for (int i = 0; i <= s_cellular.m_s_r; i++)
-                    {
-                        s_cellular.m_cell_array[s_cellular.not_filled][i] = 0;
-                        s_cellular.m_cell_array[s_cellular.not_filled][g_i_stop_pt.x-i] = 0;
-                    }
-                }
-
-                S16 t = 0; // do first cell
-                U16 two_r = (U16)(s_cellular.m_s_r+s_cellular.m_s_r);
-                for (int i = 0; i <= two_r; i++)
-                {
-                    t = (S16)(t + (S16)s_cellular.m_cell_array[s_cellular.filled][i]);
-                }
-                if (t > s_cellular.m_rule_digits || t < 0)
-                {
-                    thinking(0, nullptr);
-                    throw CellularError(s_cellular, BAD_T, t);
-                }
-                s_cellular.m_cell_array[s_cellular.not_filled][s_cellular.m_s_r] = (Byte)s_cellular.cell_table[t];
-
-                // use a rolling sum in t
-                for (g_col = s_cellular.m_s_r+1; g_col < g_i_stop_pt.x-s_cellular.m_s_r; g_col++)
-                {
-                    // now do the rest
-                    t = (S16)(t + s_cellular.m_cell_array[s_cellular.filled][g_col+s_cellular.m_s_r] - s_cellular.m_cell_array[s_cellular.filled][g_col-s_cellular.m_s_r-1]);
-                    if (t > s_cellular.m_rule_digits || t < 0)
-                    {
-                        thinking(0, nullptr);
-                        throw CellularError(s_cellular, BAD_T, t);
-                    }
-                    s_cellular.m_cell_array[s_cellular.not_filled][g_col] = (Byte)s_cellular.cell_table[t];
-                }
-
-                s_cellular.filled = s_cellular.not_filled;
-                s_cellular.not_filled = (S16)(1-s_cellular.filled);
-                write_span(g_row, 0, g_i_stop_pt.x, s_cellular.m_cell_array[s_cellular.filled].data());
-                if (driver_key_pressed())
-                {
-                    alloc_resume(10, 1);
-                    put_resume(g_row);
-                    return -1;
-                }
+                s_cellular.suspend();
+                return -1;
             }
-            if (g_cellular_next_screen)
-            {
-                g_params[3] += g_i_stop_pt.y + 1;
-                s_cellular.start_row = 0;
-                continue;
-            }
-            break;
         }
         return 1;
     }
