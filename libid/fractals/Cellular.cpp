@@ -2,7 +2,7 @@
 //
 //****************** standalone engine for "cellular" *******************
 
-#include "fractals/cellular.h"
+#include "fractals/Cellular.h"
 
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
