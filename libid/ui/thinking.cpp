@@ -21,18 +21,17 @@ static const char *const s_wheel[]{"-", "\\", "|", "/"};
 static int s_think_col{};
 static int s_think_count{};
 
-bool thinking(int options, const char *msg)
+void thinking_end()
 {
-    if (options == 0)
+    if (s_think_state >= 0)
     {
-        if (s_think_state >= 0)
-        {
-            s_think_state = -1;
-            driver_unstack_screen();
-        }
-        return false;
+        s_think_state = -1;
+        driver_unstack_screen();
     }
+}
 
+bool thinking(const char *msg)
+{
     if (s_think_state < 0)
     {
         driver_stack_screen();
