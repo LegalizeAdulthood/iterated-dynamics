@@ -19,7 +19,11 @@ class Ant
 {
 public:
     Ant();
+    Ant(const Ant &) = delete;
+    Ant(Ant &&) = delete;
     ~Ant() = default;
+    Ant &operator=(const Ant &) = delete;
+    Ant &operator=(Ant &&) = delete;
 
     bool iterate(bool step, long wait);
 

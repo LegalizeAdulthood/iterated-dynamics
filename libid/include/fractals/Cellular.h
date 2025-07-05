@@ -18,7 +18,11 @@ class Cellular
 {
 public:
     Cellular();
+    Cellular(const Cellular &) = delete;
+    Cellular(Cellular &&) = delete;
     ~Cellular() = default;
+    Cellular &operator=(const Cellular &) = delete;
+    Cellular &operator=(Cellular &&) = delete;
 
     bool iterate();
     void suspend();

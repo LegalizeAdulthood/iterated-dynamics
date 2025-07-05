@@ -27,7 +27,11 @@ class Diffusion
 {
 public:
     Diffusion();
+    Diffusion(const Diffusion &) = delete;
+    Diffusion(Diffusion &&) = delete;
     ~Diffusion() = default;
+    Diffusion &operator=(const Diffusion &) = delete;
+    Diffusion &operator=(Diffusion &&) = delete;
 
     void release_new_particle();
     bool move_particle();
