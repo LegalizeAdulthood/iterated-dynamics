@@ -50,7 +50,7 @@ int diffusion_type()
     }
 
     int y = -1;
-    int x = y;
+    int x = -1;
 
     int border = (int) g_params[0]; // Distance between release point and fractal
     int mode = (int) g_params[1];   // Determines diffusion type:  0 = central (classic)
