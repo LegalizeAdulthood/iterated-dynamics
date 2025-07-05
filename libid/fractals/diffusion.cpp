@@ -28,6 +28,9 @@ class Diffusion
 public:
     void init();
     void release_new_particle();
+    bool move_particle();
+    void color_particle();
+    bool adjust_limits();
     bool keyboard_check_needed();
 
     int m_kbd_check{};    // to limit kbd checking
@@ -44,8 +47,6 @@ public:
     int current_color{1}; // Start at color 1 (color 0 is probably invisible)
     float radius{};       //
 };
-
-static Diffusion s_diffusion;
 
 //**************** standalone engine for "diffusion" *******************
 
@@ -185,8 +186,7 @@ void Diffusion::release_new_particle()
     case DiffusionMode::FALLING_PARTICLES:
         // Release new point on the line ymin somewhere between xmin and xmax
         y = y_min;
-        x = random(x_max - x_min) +
-            (g_logical_screen_x_dots - x_max + x_min) / 2;
+        x = random(x_max - x_min) + (g_logical_screen_x_dots - x_max + x_min) / 2;
         break;
 
     case DiffusionMode::SQUARE_CAVITY:
@@ -205,164 +205,191 @@ void Diffusion::release_new_particle()
     }
 }
 
+bool Diffusion::move_particle()
+{
+    // Loop as long as the point (x,y) is surrounded by color 0 on all eight sides
+    while (get_color(x + 1, y + 1) == 0 && get_color(x + 1, y) == 0 && get_color(x + 1, y - 1) == 0 //
+        && get_color(x, y + 1) == 0 && get_color(x, y - 1) == 0 && get_color(x - 1, y + 1) == 0     //
+        && get_color(x - 1, y) == 0 && get_color(x - 1, y - 1) == 0)
+    {
+        // Erase moving point
+        if (g_show_orbit)
+        {
+            g_put_color(x, y, 0);
+        }
+
+        if (mode == DiffusionMode::CENTRAL)
+        {
+            // Make sure point is inside the box
+            if (x == x_max)
+            {
+                x--;
+            }
+            else if (x == x_min)
+            {
+                x++;
+            }
+            if (y == y_max)
+            {
+                y--;
+            }
+            else if (y == y_min)
+            {
+                y++;
+            }
+        }
+
+        // Make sure point is on the screen below ymin, but
+        // we need a 1 pixel margin because of the next random step.
+        if (mode == DiffusionMode::FALLING_PARTICLES)
+        {
+            if (x >= g_logical_screen_x_dots - 1)
+            {
+                x--;
+            }
+            else if (x <= 1)
+            {
+                x++;
+            }
+            if (y < y_min)
+            {
+                y++;
+            }
+        }
+
+        // Take one random step
+        x += random(3) - 1;
+        y += random(3) - 1;
+
+        // Check keyboard
+        if (keyboard_check_needed() && check_key())
+        {
+            alloc_resume(20, 1);
+            if (mode != DiffusionMode::SQUARE_CAVITY)
+            {
+                put_resume(x_max, x_min, y_max, y_min);
+            }
+            else
+            {
+                put_resume(x_max, x_min, y_max, radius);
+            }
+
+            m_kbd_check--;
+            return true;
+        }
+
+        // Show the moving point
+        if (g_show_orbit)
+        {
+            g_put_color(x, y, random(g_colors - 1) + 1);
+        }
+    }
+    return false;
+}
+
+void Diffusion::color_particle()
+{
+    // If we're doing color shifting then check to see if we need to shift
+    if (color_shift)
+    {
+        // If we're doing color shifting then use current color
+        g_put_color(x, y, current_color);
+        if (!--color_count)
+        {
+            // If the counter reaches zero then shift
+            current_color++;           // Increase the current color and wrap
+            current_color %= g_colors; // around skipping zero
+            if (!current_color)
+            {
+                current_color++;
+            }
+            color_count = color_shift; // and reset the counter
+        }
+    }
+    else
+    {
+        // pick a color at random
+        g_put_color(x, y, random(g_colors - 1) + 1);
+    }
+}
+
+bool Diffusion::adjust_limits()
+{
+    /* If the new point is close to an edge, we may need to increase
+               some limits so that the limits expand to match the growing
+               fractal. */
+
+    switch (mode)
+    {
+    case DiffusionMode::CENTRAL:
+        if (((x + border) > x_max) ||
+            ((x - border) < x_min) ||
+            ((y - border) < y_min) ||
+            ((y + border) > y_max))
+        {
+            // Increase box size, but not past the edge of the screen
+            y_min--;
+            y_max++;
+            x_min--;
+            x_max++;
+            if ((y_min == 0) || (x_min == 0))
+            {
+                return true;
+            }
+        }
+        break;
+
+    case DiffusionMode::FALLING_PARTICLES:
+        // Decrease ymin, but not past top of screen
+        if (y - border < y_min)
+        {
+            y_min--;
+        }
+        if (y_min == 0)
+        {
+            return true;
+        }
+        break;
+
+    case DiffusionMode::SQUARE_CAVITY:
+    {
+        // Decrease the radius where points are released to stay away
+        // from the fractal.  It might be decreased by 1 or 2
+        const double r = sqr((float) x - g_logical_screen_x_dots / 2) +
+            sqr((float) y - g_logical_screen_y_dots / 2);
+        if (r <= border * border)
+        {
+            return true;
+        }
+        while ((radius - border) * (radius - border) > r)
+        {
+            radius--;
+        }
+        break;
+    }
+    }
+    return false;
+}
+
 int diffusion_type()
 {
-    s_diffusion.init();
+    Diffusion d;
+    d.init();
 
     while (true)
     {
-        s_diffusion.release_new_particle();
+        d.release_new_particle();
 
-        // Loop as long as the point (x,y) is surrounded by color 0
-        // on all eight sides
-
-        while ((get_color(s_diffusion.x+1, s_diffusion.y+1) == 0) && (get_color(s_diffusion.x+1, s_diffusion.y) == 0)
-            && (get_color(s_diffusion.x+1, s_diffusion.y-1) == 0) && (get_color(s_diffusion.x  , s_diffusion.y+1) == 0)
-            && (get_color(s_diffusion.x  , s_diffusion.y-1) == 0) && (get_color(s_diffusion.x-1, s_diffusion.y+1) == 0)
-            && (get_color(s_diffusion.x-1, s_diffusion.y) == 0) && (get_color(s_diffusion.x-1, s_diffusion.y-1) == 0))
+        if (d.move_particle())
         {
-            // Erase moving point
-            if (g_show_orbit)
-            {
-                g_put_color(s_diffusion.x, s_diffusion.y, 0);
-            }
-
-            if (s_diffusion.mode == DiffusionMode::CENTRAL)
-            {
-                // Make sure point is inside the box
-                if (s_diffusion.x == s_diffusion.x_max)
-                {
-                    s_diffusion.x--;
-                }
-                else if (s_diffusion.x == s_diffusion.x_min)
-                {
-                    s_diffusion.x++;
-                }
-                if (s_diffusion.y == s_diffusion.y_max)
-                {
-                    s_diffusion.y--;
-                }
-                else if (s_diffusion.y == s_diffusion.y_min)
-                {
-                    s_diffusion.y++;
-                }
-            }
-
-            // Make sure point is on the screen below ymin, but
-            // we need a 1 pixel margin because of the next random step.
-            if (s_diffusion.mode == DiffusionMode::FALLING_PARTICLES)
-            {
-                if (s_diffusion.x >= g_logical_screen_x_dots-1)
-                {
-                    s_diffusion.x--;
-                }
-                else if (s_diffusion.x <= 1)
-                {
-                    s_diffusion.x++;
-                }
-                if (s_diffusion.y < s_diffusion.y_min)
-                {
-                    s_diffusion.y++;
-                }
-            }
-
-            // Take one random step
-            s_diffusion.x += random(3) - 1;
-            s_diffusion.y += random(3) - 1;
-
-            // Check keyboard
-            if (s_diffusion.keyboard_check_needed() && check_key())
-            {
-                alloc_resume(20, 1);
-                if (s_diffusion.mode != DiffusionMode::SQUARE_CAVITY)
-                {
-                    put_resume(s_diffusion.x_max, s_diffusion.x_min, s_diffusion.y_max, s_diffusion.y_min);
-                }
-                else
-                {
-                    put_resume(s_diffusion.x_max, s_diffusion.x_min, s_diffusion.y_max, s_diffusion.radius);
-                }
-
-                s_diffusion.m_kbd_check--;
-                return 1;
-            }
-
-            // Show the moving point
-            if (g_show_orbit)
-            {
-                g_put_color(s_diffusion.x, s_diffusion.y, random(g_colors-1)+1);
-            }
-        } // End of loop, now fix the point
-
-        /* If we're doing colorshifting then use currentcolor, otherwise
-           pick one at random */
-        g_put_color(s_diffusion.x, s_diffusion.y, s_diffusion.color_shift?s_diffusion.current_color:random(g_colors-1)+1);
-
-        // If we're doing colors hifting then check to see if we need to shift
-        if (s_diffusion.color_shift)
-        {
-            if (!--s_diffusion.color_count)
-            {
-                // If the counter reaches zero then shift
-                s_diffusion.current_color++;      // Increase the current color and wrap
-                s_diffusion.current_color %= g_colors;  // around skipping zero
-                if (!s_diffusion.current_color)
-                {
-                    s_diffusion.current_color++;
-                }
-                s_diffusion.color_count = s_diffusion.color_shift;  // and reset the counter
-            }
+            return 1;
         }
 
-        /* If the new point is close to an edge, we may need to increase
-           some limits so that the limits expand to match the growing
-           fractal. */
+        d.color_particle();
 
-        switch (s_diffusion.mode)
+        if (d.adjust_limits())
         {
-        case DiffusionMode::CENTRAL:
-            if (((s_diffusion.x+s_diffusion.border) > s_diffusion.x_max) || ((s_diffusion.x-s_diffusion.border) < s_diffusion.x_min)
-                || ((s_diffusion.y-s_diffusion.border) < s_diffusion.y_min) || ((s_diffusion.y+s_diffusion.border) > s_diffusion.y_max))
-            {
-                // Increase box size, but not past the edge of the screen
-                s_diffusion.y_min--;
-                s_diffusion.y_max++;
-                s_diffusion.x_min--;
-                s_diffusion.x_max++;
-                if ((s_diffusion.y_min == 0) || (s_diffusion.x_min == 0))
-                {
-                    return 0;
-                }
-            }
-            break;
-
-        case DiffusionMode::FALLING_PARTICLES:
-            // Decrease ymin, but not past top of screen
-            if (s_diffusion.y-s_diffusion.border < s_diffusion.y_min)
-            {
-                s_diffusion.y_min--;
-            }
-            if (s_diffusion.y_min == 0)
-            {
-                return 0;
-            }
-            break;
-
-        case DiffusionMode::SQUARE_CAVITY:
-        {
-            // Decrease the radius where points are released to stay away
-            // from the fractal.  It might be decreased by 1 or 2
-            const double r = sqr((float)s_diffusion.x-g_logical_screen_x_dots/2) + sqr((float)s_diffusion.y-g_logical_screen_y_dots/2);
-            if (r <= s_diffusion.border*s_diffusion.border)
-            {
-                return 0;
-            }
-            while ((s_diffusion.radius-s_diffusion.border)*(s_diffusion.radius-s_diffusion.border) > r)
-            {
-                s_diffusion.radius--;
-            }
-            break;
-        }
+            return 0;
         }
     }
 }
