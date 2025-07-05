@@ -45,7 +45,7 @@ static int timer(TimerType type, int (*fn)(), ...)
 
     va_start(arg_marker, fn);
 
-    bool do_bench = g_timer_flag;        // record time?
+    bool do_bench = g_timer_flag;   // record time?
     if (type == TimerType::ENCODER) // encoder, record time only if debug flag set
     {
         do_bench = (g_debug_flag == DebugFlags::BENCHMARK_ENCODER);
@@ -65,7 +65,7 @@ static int timer(TimerType type, int (*fn)(), ...)
         out = (int) decoder((short) i); // not indirect, safer with overlays
         break;
     case TimerType::ENCODER:
-        out = encoder(); // not indirect, safer with overlays
+        out = encoder();                // not indirect, safer with overlays
         break;
     }
     // next assumes CLOCKS_PER_SEC is 10^n, n>=2
@@ -88,17 +88,20 @@ static int timer(TimerType type, int (*fn)(), ...)
         default:
             break;
         }
-        std::fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld", text,
-            g_cur_fractal_specific->name, g_logical_screen_x_dots, g_logical_screen_y_dots, g_max_iterations);
+        std::fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld", //
+            text,                                                     //
+            g_cur_fractal_specific->name,                             //
+            g_logical_screen_x_dots, g_logical_screen_y_dots,         //
+            g_max_iterations);
         std::fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval / 100, g_timer_interval % 100);
         std::fclose(fp);
     }
     return out;
 }
 
-int engine_timer(int (*fn)())
+void engine_timer(int (*fn)())
 {
-    return timer(TimerType::ENGINE, fn);
+    (void) timer(TimerType::ENGINE, fn);
 }
 
 int encoder_timer()
