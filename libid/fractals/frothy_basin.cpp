@@ -163,10 +163,6 @@ bool froth_per_image()
     return true;
 }
 
-void froth_cleanup()
-{
-}
-
 // Froth Fractal type
 int froth_type()   // per pixel 1/2/g, called with row & col set
 {

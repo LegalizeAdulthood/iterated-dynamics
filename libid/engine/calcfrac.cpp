@@ -816,10 +816,6 @@ static void finish_calc_fract()
     }
     free_work_area();
 
-    if (g_cur_fractal_specific->calc_type == froth_type)
-    {
-        froth_cleanup();
-    }
     if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)   // close sound write file
     {
         close_sound();

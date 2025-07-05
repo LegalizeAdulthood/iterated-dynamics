@@ -1327,11 +1327,6 @@ void InverseJulia::finish()
     }
     s_show_numbers = false;
     driver_unget_key(m_key);
-
-    if (g_cur_fractal_specific->calc_type == froth_type)
-    {
-        froth_cleanup();
-    }
 }
 
 void InverseJulia::process()
