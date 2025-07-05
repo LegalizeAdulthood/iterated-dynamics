@@ -6,7 +6,7 @@
 #include "engine/id_data.h"
 #include "engine/jiim.h"
 #include "engine/log_map.h"
-#include "fractals/cellular.h"
+#include "fractals/Cellular.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/frothy_basin.h"
