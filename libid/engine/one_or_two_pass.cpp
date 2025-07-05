@@ -75,7 +75,7 @@ static int standard_calc(int pass_num)
             }
             if (pass_num == 1 || g_std_calc_mode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
             {
-                if ((*g_calc_type)() == -1)   // standard_fractal(), calcmand() or calcmandfp()
+                if (g_calc_type() == -1)   // standard_fractal(), calcmand() or calcmandfp()
                 {
                     return -1;          // interrupted
                 }
@@ -85,15 +85,15 @@ static int standard_calc(int pass_num)
                 {
                     if ((g_row&1) == 0 && g_row < g_i_stop_pt.y)
                     {
-                        (*g_plot)(g_col, g_row+1, g_color);
+                        g_plot(g_col, g_row+1, g_color);
                         if ((g_col&1) == 0 && g_col < g_i_stop_pt.x)
                         {
-                            (*g_plot)(g_col+1, g_row+1, g_color);
+                            g_plot(g_col+1, g_row+1, g_color);
                         }
                     }
                     if ((g_col&1) == 0 && g_col < g_i_stop_pt.x)
                     {
-                        (*g_plot)(++g_col, g_row, g_color);
+                        g_plot(++g_col, g_row, g_color);
                     }
                 }
             }

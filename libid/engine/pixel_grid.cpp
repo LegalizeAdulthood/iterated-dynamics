@@ -59,8 +59,8 @@ static double dy_pixel_calc()
     return (double)(g_y_max - g_row*g_delta_y - g_col*g_delta_y2);
 }
 
-double (*g_dx_pixel)() = dx_pixel_calc;
-double (*g_dy_pixel)() = dy_pixel_calc;
+double (*g_dx_pixel)(){dx_pixel_calc};
+double (*g_dy_pixel)(){dy_pixel_calc};
 
 void set_pixel_calc_functions()
 {

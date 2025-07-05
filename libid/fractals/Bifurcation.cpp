@@ -134,7 +134,7 @@ bool Bifurcation::iterate()
                 color = g_colors-1;
             }
             m_verhulst[y] = 0;
-            (*g_plot)(m_x, y, color); // was row-1, but that's not right?
+            g_plot(m_x, y, color); // was row-1, but that's not right?
         }
         ++m_x;
         return true;

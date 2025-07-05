@@ -104,7 +104,7 @@ int solid_guess()
             for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += s_max_block)
             {
                 // calc top row
-                if ((*g_calc_type)() == -1)
+                if (g_calc_type() == -1)
                 {
                     add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_begin_pt.x, g_begin_pt.y, 0,
                         g_work_symmetry);
@@ -128,7 +128,7 @@ int solid_guess()
                 g_reset_periodicity = true;
                 for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += s_max_block)
                 {
-                    i = (*g_calc_type)();
+                    i = g_calc_type();
                     if (i == -1)
                     {
                         break;
@@ -246,7 +246,7 @@ static int calc_a_dot(int x, int y)
 {
     g_col = x;
     g_row = y;
-    return (*g_calc_type)();
+    return g_calc_type();
 }
 
 static bool guess_row(bool first_pass, int y, int block_size)
@@ -453,15 +453,15 @@ static bool guess_row(bool first_pass, int y, int block_size)
                 {
                     if (guessed23 > 0)
                     {
-                        (*g_plot)(x, y_plus_half, c23);
+                        g_plot(x, y_plus_half, c23);
                     }
                     if (guessed32 > 0)
                     {
-                        (*g_plot)(x_plus_half, y, c32);
+                        g_plot(x_plus_half, y, c32);
                     }
                     if (guessed33 > 0)
                     {
-                        (*g_plot)(x_plus_half, y_plus_half, c33);
+                        g_plot(x_plus_half, y_plus_half, c33);
                     }
                 }
                 plot_block(1, x, y_plus_half, c23);
@@ -663,13 +663,13 @@ static void plot_block(int build_row, int x, int y, int color)
     }
     for (int i = x; ++i < x_lim;)
     {
-        (*g_plot)(i, y, color); // skip 1st dot on 1st row
+        g_plot(i, y, color); // skip 1st dot on 1st row
     }
     while (++y < y_lim)
     {
         for (int i = x; i < x_lim; ++i)
         {
-            (*g_plot)(i, y, color);
+            g_plot(i, y, color);
         }
     }
 }

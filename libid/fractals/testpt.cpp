@@ -75,10 +75,10 @@ int test_type()
                         color = ((color-1) % g_and_color) + 1; // skip color zero
                     }
                 }
-                (*g_plot)(g_col, g_row, color);
+                g_plot(g_col, g_row, color);
                 if (num_passes && (passes == 0))
                 {
-                    (*g_plot)(g_col, g_row+1, color);
+                    g_plot(g_col, g_row+1, color);
                 }
             }
         }

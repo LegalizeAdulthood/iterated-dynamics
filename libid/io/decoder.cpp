@@ -270,7 +270,7 @@ short decoder(short line_width)
                     {
                         if (--y_skip < 0)
                         {
-                            ret = (short)((*g_out_line)(s_decoder_line, (int)(buf_ptr - s_decoder_line)));
+                            ret = (short) g_out_line(s_decoder_line, (int) (buf_ptr - s_decoder_line));
                             if (ret < 0)
                             {
                                 return ret;
@@ -333,7 +333,7 @@ short decoder(short line_width)
             {
                 if (--y_skip < 0)
                 {
-                    ret = (short)((*g_out_line)(s_decoder_line, (int)(buf_ptr - s_decoder_line)));
+                    ret = (short) g_out_line(s_decoder_line, (int) (buf_ptr - s_decoder_line));
                     if (ret < 0)
                     {
                         return ret;

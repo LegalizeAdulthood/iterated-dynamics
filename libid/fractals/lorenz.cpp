@@ -1047,7 +1047,7 @@ int orbit2d_type()
                 }
                 else
                 {
-                    (*g_plot)(col, row, color % g_colors);
+                    g_plot(col, row, color % g_colors);
                 }
             }
             else
@@ -1056,7 +1056,7 @@ int orbit2d_type()
                 color = get_color(col, row)+1;
                 if (color < g_colors) // color sticks on last value
                 {
-                    (*g_plot)(col, row, color);
+                    g_plot(col, row, color);
                 }
             }
 
@@ -1169,7 +1169,7 @@ static int orbit3d_float_calc()
                 }
                 else
                 {
-                    (*g_plot)(inf.col, inf.row, color%g_colors);
+                    g_plot(inf.col, inf.row, color%g_colors);
                 }
             }
             else if (inf.col == -2)
@@ -1190,7 +1190,7 @@ static int orbit3d_float_calc()
                     }
                     else
                     {
-                        (*g_plot)(inf.col1, inf.row1, color%g_colors);
+                        g_plot(inf.col1, inf.row1, color%g_colors);
                     }
                 }
                 else if (inf.col1 == -2)
@@ -1372,7 +1372,7 @@ int dynamic2d_type()
                     }
                     else if (count > 0 || g_fractal_type != FractalType::MANDEL_CLOUD)
                     {
-                        (*g_plot)(col, row, color%g_colors);
+                        g_plot(col, row, color%g_colors);
                     }
                 }
                 old_col = col;
@@ -1559,7 +1559,7 @@ int plot_orbits2d_float()
                 write_sound((int)(*sound_var*100+g_base_hertz));
             }
 
-            (*g_plot)(col, row, s_o_color%g_colors);
+            g_plot(col, row, s_o_color%g_colors);
         }
         else
         {
@@ -1723,7 +1723,7 @@ static int ifs3d_float()
                 }
                 if (color < g_colors)     // color sticks on last value
                 {
-                    (*g_plot)(inf.col, inf.row, color);
+                    g_plot(inf.col, inf.row, color);
                 }
             }
             else if (inf.col == -2)
@@ -1746,7 +1746,7 @@ static int ifs3d_float()
                     }
                     if (color < g_colors)     // color sticks on last value
                     {
-                        (*g_plot)(inf.col1, inf.row1, color);
+                        g_plot(inf.col1, inf.row1, color);
                     }
                 }
                 else if (inf.col1 == -2)
@@ -1832,7 +1832,7 @@ static int ifs2d()
             }
             if (color < g_colors)     // color sticks on last value
             {
-                (*g_plot)(col, row, color);
+                g_plot(col, row, color);
             }
         }
         else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL)   // sanity check

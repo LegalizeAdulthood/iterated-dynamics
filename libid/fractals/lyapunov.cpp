@@ -51,7 +51,7 @@ int lyapunov_type()
     {
         g_population = g_params[1];
     }
-    (*g_plot)(g_col, g_row, 1);
+    g_plot(g_col, g_row, 1);
     if (g_invert != 0)
     {
         invertz2(&g_init);
@@ -72,7 +72,7 @@ int lyapunov_type()
     {
         g_color = g_colors-1;
     }
-    (*g_plot)(g_col, g_row, g_color);
+    g_plot(g_col, g_row, g_color);
     return g_color;
 }
 

@@ -238,20 +238,20 @@ int z_line(double x, double y)
                 g_color = (int)(128L * s_z_pixel / g_julibrot_z_dots);
                 if ((g_row + g_col) & 1)
                 {
-                    (*g_plot)(g_col, g_row, 127 - g_color);
+                    g_plot(g_col, g_row, 127 - g_color);
                 }
                 else
                 {
                     g_color = (int)(g_color * s_br_ratio_fp);
                     g_color = std::max(g_color, 1);
                     g_color = std::min(g_color, 127);
-                    (*g_plot)(g_col, g_row, 127 + s_b_base - g_color);
+                    g_plot(g_col, g_row, 127 + s_b_base - g_color);
                 }
             }
             else
             {
                 g_color = (int)(254L * s_z_pixel / g_julibrot_z_dots);
-                (*g_plot)(g_col, g_row, g_color + 1);
+                g_plot(g_col, g_row, g_color + 1);
             }
             s_plotted = 1;
             break;

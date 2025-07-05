@@ -497,7 +497,7 @@ MainState big_while_loop(MainContext &context)
             i = funny_glasses_call(gif_view);
             if (g_out_line_cleanup)              // cleanup routine defined?
             {
-                (*g_out_line_cleanup)();
+                g_out_line_cleanup();
             }
             if (i == 0)
             {

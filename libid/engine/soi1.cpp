@@ -121,7 +121,7 @@ static void put_hor_line(int x1, int y1, int x2, int color)
 {
     for (int x = x1; x <= x2; x++)
     {
-        (*g_plot)(x, y1, color);
+        g_plot(x, y1, color);
     }
 }
 
@@ -342,7 +342,7 @@ scan:
                     {
                         break;
                     }
-                    (*g_plot)(z, y, (int)(help_color&255));
+                    g_plot(z, y, (int)(help_color&255));
                 }
 
                 if (save_x < z)
@@ -351,7 +351,7 @@ scan:
                 }
                 else
                 {
-                    (*g_plot)(save_x, y, (int)(save_color&255));
+                    g_plot(save_x, y, (int)(save_color&255));
                 }
 
                 save_x = x;
@@ -372,7 +372,7 @@ scan:
                     break;
                 }
 
-                (*g_plot)(z, y, (int)(help_color&255));
+                g_plot(z, y, (int)(help_color&255));
             }
 
             if (save_x < z)
@@ -381,7 +381,7 @@ scan:
             }
             else
             {
-                (*g_plot)(save_x, y, (int)(save_color&255));
+                g_plot(save_x, y, (int)(save_color&255));
             }
         }
 

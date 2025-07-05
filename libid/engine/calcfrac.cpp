@@ -299,7 +299,7 @@ void sym_fill_line(int row, int left, int right, Byte *str)
     {
         for (int i = left; i <= right; i++)
         {
-            (*g_plot)(i, row, str[i-left]);
+            g_plot(i, row, str[i-left]);
         }
         g_keyboard_check_interval -= length >> 1;
     }
@@ -329,7 +329,7 @@ static void sym_put_line(int row, int left, int right, Byte *str)
     {
         for (int i = left; i <= right; i++)
         {
-            (*g_plot)(i, row, str[i-left]);
+            g_plot(i, row, str[i-left]);
         }
         g_keyboard_check_interval -= length >> 1;
     }
@@ -419,7 +419,7 @@ static void show_dot_save_restore(
     }
     if (action == ShowDotAction::SAVE)
     {
-        (*g_plot)(g_col, g_row, s_show_dot_color);
+        g_plot(g_col, g_row, s_show_dot_color);
     }
 }
 
@@ -1251,7 +1251,7 @@ int calc_mandelbrot_type()
                 g_color = 1;
             }
         }
-        (*g_plot)(g_col, g_row, g_color);
+        g_plot(g_col, g_row, g_color);
     }
     else
     {
@@ -1960,7 +1960,7 @@ plot_pixel:
             g_color = 1;
         }
     }
-    (*g_plot)(g_col, g_row, g_color);
+    g_plot(g_col, g_row, g_color);
 
     g_max_iterations = save_max_it;
     if ((g_keyboard_check_interval -= std::abs((int)g_real_color_iter)) <= 0)
@@ -2649,7 +2649,7 @@ static long auto_log_map()
     long old_max_it = g_max_iterations;
     for (g_col = 0; g_col < x_stop; g_col++) // top row
     {
-        g_color = (*g_calc_type)();
+        g_color = g_calc_type();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2661,18 +2661,18 @@ static long auto_log_map()
         }
         if (g_col >=32)
         {
-            (*g_plot)(g_col-32, g_row, 0);
+            g_plot(g_col-32, g_row, 0);
         }
     }                                    // these lines tidy up for BTM etc
     for (int lag = 32; lag > 0; lag--)
     {
-        (*g_plot)(g_col-lag, g_row, 0);
+        g_plot(g_col-lag, g_row, 0);
     }
 
     g_col = x_stop;
     for (g_row = 0; g_row < y_stop; g_row++) // right  side
     {
-        g_color = (*g_calc_type)();
+        g_color = g_calc_type();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2684,18 +2684,18 @@ static long auto_log_map()
         }
         if (g_row >=32)
         {
-            (*g_plot)(g_col, g_row-32, 0);
+            g_plot(g_col, g_row-32, 0);
         }
     }
     for (int lag = 32; lag > 0; lag--)
     {
-        (*g_plot)(g_col, g_row-lag, 0);
+        g_plot(g_col, g_row-lag, 0);
     }
 
     g_col = 0;
     for (g_row = 0; g_row < y_stop; g_row++) // left  side
     {
-        g_color = (*g_calc_type)();
+        g_color = g_calc_type();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2707,18 +2707,18 @@ static long auto_log_map()
         }
         if (g_row >=32)
         {
-            (*g_plot)(g_col, g_row-32, 0);
+            g_plot(g_col, g_row-32, 0);
         }
     }
     for (int lag = 32; lag > 0; lag--)
     {
-        (*g_plot)(g_col, g_row-lag, 0);
+        g_plot(g_col, g_row-lag, 0);
     }
 
     g_row = y_stop ;
     for (g_col = 0; g_col < x_stop; g_col++) // bottom row
     {
-        g_color = (*g_calc_type)();
+        g_color = g_calc_type();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2730,12 +2730,12 @@ static long auto_log_map()
         }
         if (g_col >=32)
         {
-            (*g_plot)(g_col-32, g_row, 0);
+            g_plot(g_col-32, g_row, 0);
         }
     }
     for (int lag = 32; lag > 0; lag--)
     {
-        (*g_plot)(g_col-lag, g_row, 0);
+        g_plot(g_col-lag, g_row, 0);
     }
 
 ack: // bailout here if key is pressed

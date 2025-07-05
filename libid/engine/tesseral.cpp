@@ -198,7 +198,7 @@ int tesseral()
                     {
                         for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
                         {
-                            (*g_plot)(g_col, g_row, tp->top);
+                            g_plot(g_col, g_row, tp->top);
                             if (++i > 500)
                             {
                                 if (check_key())
@@ -378,13 +378,13 @@ static int tess_col(int x, int y1, int y2)
     g_col = x;
     g_row = y1;
     g_reset_periodicity = true;
-    int col_color = (*g_calc_type)();
+    int col_color = g_calc_type();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_row <= y2)
     {
         // generate the column
-        int i = (*g_calc_type)();
+        int i = g_calc_type();
         if (i < 0)
         {
             return -3;
@@ -402,13 +402,13 @@ static int tess_row(int x1, int x2, int y)
     g_row = y;
     g_col = x1;
     g_reset_periodicity = true;
-    int row_color = (*g_calc_type)();
+    int row_color = g_calc_type();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_col <= x2)
     {
         // generate the row
-        int i = (*g_calc_type)();
+        int i = g_calc_type();
         if (i < 0)
         {
             return -3;

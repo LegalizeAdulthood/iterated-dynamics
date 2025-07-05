@@ -609,7 +609,7 @@ int line3d(Byte * pixels, unsigned line_len)
             break;
 
         case FillType::POINTS:
-            (*g_plot)(cur.x, cur.y, cur.color);
+            g_plot(cur.x, cur.y, cur.color);
             break;
 
         case FillType::WIRE_FRAME:                // connect-a-dot
@@ -1118,7 +1118,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
         g_plot = s_fill_plot;
         if (s_p1.y == s_p3.y && s_p1.x == s_p3.x)
         {
-            (*g_plot)(s_p1.x, s_p1.y, color);
+            g_plot(s_p1.x, s_p1.y, color);
         }
         else
         {

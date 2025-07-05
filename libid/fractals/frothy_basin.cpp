@@ -177,7 +177,7 @@ int froth_type()   // per pixel 1/2/g, called with row & col set
     g_color_iter = 0;
     if (g_show_dot > 0)
     {
-        (*g_plot)(g_col, g_row, g_show_dot % g_colors);
+        g_plot(g_col, g_row, g_show_dot % g_colors);
     }
     if (g_invert != 0)
     {
@@ -407,7 +407,7 @@ int froth_type()   // per pixel 1/2/g, called with row & col set
 
     g_color = std::abs((int)(g_color_iter));
 
-    (*g_plot)(g_col, g_row, g_color);
+    g_plot(g_col, g_row, g_color);
 
     return g_color;
 }

@@ -125,8 +125,8 @@ static void count_to_int(unsigned long c, int &x, int &y, int dif_offset)
 
 // Calculate the point
 #define CALCULATE               \
-    g_reset_periodicity = true;   \
-    if ((*g_calc_type)() == -1)    \
+    g_reset_periodicity = true; \
+    if (g_calc_type() == -1)    \
         return -1;              \
     g_reset_periodicity = false
 
@@ -177,7 +177,7 @@ static int diffusion_engine()
                 do
                 {
                     CALCULATE;
-                    (*g_plot)(g_col, g_row, g_color);
+                    g_plot(g_col, g_row, g_color);
                     j++;
                     g_row += s;                  // next tile
                 } while (j < ny);
@@ -185,7 +185,7 @@ static int diffusion_engine()
                 if (orig_row < rem_y)
                 {
                     CALCULATE;
-                    (*g_plot)(g_col, g_row, g_color);
+                    g_plot(g_col, g_row, g_color);
                 }
                 i++;
                 g_col += s;
@@ -198,14 +198,14 @@ static int diffusion_engine()
                 do
                 {
                     CALCULATE;
-                    (*g_plot)(g_col, g_row, g_color);
+                    g_plot(g_col, g_row, g_color);
                     j++;
                     g_row += s; // next tile
                 } while (j < ny);
                 if (orig_row < rem_y)
                 {
                     CALCULATE;
-                    (*g_plot)(g_col, g_row, g_color);
+                    g_plot(g_col, g_row, g_color);
                 }
             }
             g_diffusion_counter++;
@@ -285,7 +285,7 @@ static int diffusion_engine()
                 g_row = g_i_start_pt.y + orig_row + j * s;
 
                 CALCULATE;
-                (*g_plot)(g_col, g_row, g_color);
+                g_plot(g_col, g_row, g_color);
                 j++;
             } while (j < ny);
             // in the last tile we may not need to plot the point
@@ -294,7 +294,7 @@ static int diffusion_engine()
                 g_row = g_i_start_pt.y + orig_row + ny * s;
 
                 CALCULATE;
-                (*g_plot)(g_col, g_row, g_color);
+                g_plot(g_col, g_row, g_color);
             }
             i++;
         } while (i < nx);
@@ -308,7 +308,7 @@ static int diffusion_engine()
                 g_row = g_i_start_pt.y + orig_row + j * s; // get the right tiles
 
                 CALCULATE;
-                (*g_plot)(g_col, g_row, g_color);
+                g_plot(g_col, g_row, g_color);
                 j++;
             } while (j < ny);
             if (orig_row < rem_y)
@@ -316,7 +316,7 @@ static int diffusion_engine()
                 g_row = g_i_start_pt.y + orig_row + ny * s;
 
                 CALCULATE;
-                (*g_plot)(g_col, g_row, g_color);
+                g_plot(g_col, g_row, g_color);
             }
         }
         g_diffusion_counter++;
