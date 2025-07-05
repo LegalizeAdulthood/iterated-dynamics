@@ -59,11 +59,6 @@ bool Diffusion::keyboard_check_needed()
 
 int diffusion_type()
 {
-    if (driver_is_disk())
-    {
-        not_disk_msg();
-    }
-
     s_diffusion.y = -1;
     s_diffusion.x = -1;
 
