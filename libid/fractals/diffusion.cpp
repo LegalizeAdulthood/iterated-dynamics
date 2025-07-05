@@ -26,6 +26,7 @@ enum class DiffusionMode
 class Diffusion
 {
 public:
+    void init();
     bool keyboard_check_needed();
 
     int m_kbd_check{};    // to limit kbd checking
@@ -57,81 +58,81 @@ bool Diffusion::keyboard_check_needed()
     return (++m_kbd_check & 0x7f) == 1;
 }
 
-int diffusion_type()
+void Diffusion::init()
 {
-    s_diffusion.y = -1;
-    s_diffusion.x = -1;
+    y = -1;
+    x = -1;
 
-    s_diffusion.border = (int) g_params[0];
-    if (s_diffusion.border <= 0)
+    border = (int) g_params[0];
+    if (border <= 0)
     {
-        s_diffusion.border = 10;
+        border = 10;
     }
 
-    s_diffusion.mode = static_cast<DiffusionMode>(g_params[1]);
-    if (s_diffusion.mode < DiffusionMode::CENTRAL || s_diffusion.mode > DiffusionMode::SQUARE_CAVITY)
+    mode = static_cast<DiffusionMode>(g_params[1]);
+    if (mode < DiffusionMode::CENTRAL || mode > DiffusionMode::SQUARE_CAVITY)
     {
-        s_diffusion.mode = DiffusionMode::CENTRAL;
+        mode = DiffusionMode::CENTRAL;
     }
 
-    s_diffusion.color_shift = (int) g_params[2];
-    s_diffusion.color_count = s_diffusion.color_shift; // Counts down from colorshift
-    s_diffusion.current_color = 1;  // Start at color 1 (color 0 is probably invisible)
+    color_shift = (int) g_params[2];
+    color_count = color_shift; // Counts down from colorshift
+    current_color = 1;         // Start at color 1 (color 0 is probably invisible)
 
     set_random_seed();
 
-    s_diffusion.radius = 0.0F;
-    switch (s_diffusion.mode)
+    radius = 0.0F;
+    switch (mode)
     {
     case DiffusionMode::CENTRAL:
-        s_diffusion.x_max = g_logical_screen_x_dots / 2 + s_diffusion.border;  // Initial box
-        s_diffusion.x_min = g_logical_screen_x_dots / 2 - s_diffusion.border;
-        s_diffusion.y_max = g_logical_screen_y_dots / 2 + s_diffusion.border;
-        s_diffusion.y_min = g_logical_screen_y_dots / 2 - s_diffusion.border;
+        x_max = g_logical_screen_x_dots / 2 + border; // Initial box
+        x_min = g_logical_screen_x_dots / 2 - border;
+        y_max = g_logical_screen_y_dots / 2 + border;
+        y_min = g_logical_screen_y_dots / 2 - border;
         break;
 
     case DiffusionMode::FALLING_PARTICLES:
-        s_diffusion.x_max = g_logical_screen_x_dots / 2 + s_diffusion.border;  // Initial box
-        s_diffusion.x_min = g_logical_screen_x_dots / 2 - s_diffusion.border;
-        s_diffusion.y_min = g_logical_screen_y_dots - s_diffusion.border;
+        x_max = g_logical_screen_x_dots / 2 + border; // Initial box
+        x_min = g_logical_screen_x_dots / 2 - border;
+        y_min = g_logical_screen_y_dots - border;
         break;
 
     case DiffusionMode::SQUARE_CAVITY:
         if (g_logical_screen_x_dots > g_logical_screen_y_dots)
         {
-            s_diffusion.radius = (float)(g_logical_screen_y_dots - s_diffusion.border);
+            radius = (float) (g_logical_screen_y_dots - border);
         }
         else
         {
-            s_diffusion.radius = (float)(g_logical_screen_x_dots - s_diffusion.border);
+            radius = (float) (g_logical_screen_x_dots - border);
         }
         break;
     }
 
-    if (g_resuming) // restore worklist, if we can't the above will stay in place
+    if (g_resuming) // restore work list, if we can't the above will stay in place
     {
         start_resume();
-        if (s_diffusion.mode != DiffusionMode::SQUARE_CAVITY)
+        if (mode != DiffusionMode::SQUARE_CAVITY)
         {
-            get_resume(s_diffusion.x_max, s_diffusion.x_min, s_diffusion.y_max, s_diffusion.y_min);
+            get_resume(x_max, x_min, y_max, y_min);
         }
         else
         {
-            get_resume(s_diffusion.x_max, s_diffusion.x_min, s_diffusion.y_max, s_diffusion.radius);
+            get_resume(x_max, x_min, y_max, radius);
         }
         end_resume();
     }
 
-    switch (s_diffusion.mode)
+    switch (mode)
     {
     case DiffusionMode::CENTRAL:
-        g_put_color(g_logical_screen_x_dots / 2, g_logical_screen_y_dots / 2, s_diffusion.current_color);
+        g_put_color(g_logical_screen_x_dots / 2, g_logical_screen_y_dots / 2, current_color);
         break;
 
     case DiffusionMode::FALLING_PARTICLES:
         for (int i = 0; i <= g_logical_screen_x_dots; i++)
         {
-            g_put_color(i, g_logical_screen_y_dots-1, s_diffusion.current_color);
+            g_put_color(i, g_logical_screen_y_dots - 1, current_color);
         }
         break;
 
@@ -140,24 +141,31 @@ int diffusion_type()
         {
             for (int i = 0; i < g_logical_screen_y_dots; i++)
             {
-                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2 , i , s_diffusion.current_color);
-                g_put_color(g_logical_screen_x_dots/2+g_logical_screen_y_dots/2 , i , s_diffusion.current_color);
-                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2+i , 0 , s_diffusion.current_color);
-                g_put_color(g_logical_screen_x_dots/2-g_logical_screen_y_dots/2+i , g_logical_screen_y_dots-1 , s_diffusion.current_color);
+                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2, i, current_color);
+                g_put_color(g_logical_screen_x_dots / 2 + g_logical_screen_y_dots / 2, i, current_color);
+                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2 + i, 0, current_color);
+                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2 + i,
+                    g_logical_screen_y_dots - 1, current_color);
             }
         }
         else
         {
             for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
-                g_put_color(0 , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2+i , s_diffusion.current_color);
-                g_put_color(g_logical_screen_x_dots-1 , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2+i , s_diffusion.current_color);
-                g_put_color(i , g_logical_screen_y_dots/2-g_logical_screen_x_dots/2 , s_diffusion.current_color);
-                g_put_color(i , g_logical_screen_y_dots/2+g_logical_screen_x_dots/2 , s_diffusion.current_color);
+                g_put_color(0, g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2 + i, current_color);
+                g_put_color(g_logical_screen_x_dots - 1,
+                    g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2 + i, current_color);
+                g_put_color(i, g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2, current_color);
+                g_put_color(i, g_logical_screen_y_dots / 2 + g_logical_screen_x_dots / 2, current_color);
             }
         }
         break;
     }
+}
+
+int diffusion_type()
+{
+    s_diffusion.init();
 
     while (true)
     {
