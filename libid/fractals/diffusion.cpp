@@ -159,8 +159,8 @@ int diffusion_type()
             sin_cos(&angle, &sine, &cosine);
             x = (int)(cosine*(s_diffusion.x_max-s_diffusion.x_min) + g_logical_screen_x_dots);
             y = (int)(sine  *(s_diffusion.y_max-s_diffusion.y_min) + g_logical_screen_y_dots);
-            x = x >> 1; // divide by 2
-            y = y >> 1;
+            x /= 2;
+            y /= 2;
             break;
         }
         case 1: /* Release new point on the line ymin somewhere between xmin
@@ -177,8 +177,8 @@ int diffusion_type()
             sin_cos(&angle, &sine, &cosine);
             x = (int)(cosine*radius + g_logical_screen_x_dots);
             y = (int)(sine  *radius + g_logical_screen_y_dots);
-            x = x >> 1;
-            y = y >> 1;
+            x /= 2;
+            y /= 2;
             break;
         }
         }
