@@ -40,19 +40,19 @@ public:
     bool keyboard_check_needed();
 
 private:
-    int m_kbd_check{};    // to limit kbd checking
-    int x_max{};          //
-    int y_max{};          //
-    int x_min{};          //
-    int y_min{};          // Current maximum coordinates
-    int y{-1};            //
-    int x{-1};            //
-    int border{};         // Distance between release point and fractal
-    DiffusionMode mode{}; // Determines diffusion type
-    int color_shift{};    // 0: select colors at random, otherwise shift the color every color_shift points
-    int color_count{};    // Counts down from color_shift
-    int current_color{1}; // Start at color 1 (color 0 is probably invisible)
-    float radius{};       //
+    int m_kbd_check{};      // to limit kbd checking
+    int m_x_max{};          //
+    int m_y_max{};          //
+    int m_x_min{};          //
+    int m_y_min{};          // Current maximum coordinates
+    int m_y{-1};            //
+    int m_x{-1};            //
+    int m_border{};         // Distance between release point and fractal
+    DiffusionMode m_mode{}; // Determines diffusion type
+    int m_color_shift{};    // 0: select colors at random, otherwise shift the color every color_shift points
+    int m_color_count{};    // Counts down from color_shift
+    int m_current_color{1}; // Start at color 1 (color 0 is probably invisible)
+    float m_radius{};       //
 };
 
 //**************** standalone engine for "diffusion" *******************
@@ -68,36 +68,36 @@ bool Diffusion::keyboard_check_needed()
 }
 
 Diffusion::Diffusion() :
-    border(std::max(static_cast<int>(g_params[0]), 10)),
-    mode(std::clamp(static_cast<DiffusionMode>(g_params[1]), DiffusionMode::CENTRAL, DiffusionMode::SQUARE_CAVITY)),
-    color_shift(static_cast<int>(g_params[2])),
-    color_count(static_cast<int>(g_params[2]))
+    m_border(std::max(static_cast<int>(g_params[0]), 10)),
+    m_mode(std::clamp(static_cast<DiffusionMode>(g_params[1]), DiffusionMode::CENTRAL, DiffusionMode::SQUARE_CAVITY)),
+    m_color_shift(static_cast<int>(g_params[2])),
+    m_color_count(static_cast<int>(g_params[2]))
 {
     set_random_seed();
 
-    switch (mode)
+    switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
-        x_max = g_logical_screen_x_dots / 2 + border; // Initial box
-        x_min = g_logical_screen_x_dots / 2 - border;
-        y_max = g_logical_screen_y_dots / 2 + border;
-        y_min = g_logical_screen_y_dots / 2 - border;
+        m_x_max = g_logical_screen_x_dots / 2 + m_border; // Initial box
+        m_x_min = g_logical_screen_x_dots / 2 - m_border;
+        m_y_max = g_logical_screen_y_dots / 2 + m_border;
+        m_y_min = g_logical_screen_y_dots / 2 - m_border;
         break;
 
     case DiffusionMode::FALLING_PARTICLES:
-        x_max = g_logical_screen_x_dots / 2 + border; // Initial box
-        x_min = g_logical_screen_x_dots / 2 - border;
-        y_min = g_logical_screen_y_dots - border;
+        m_x_max = g_logical_screen_x_dots / 2 + m_border; // Initial box
+        m_x_min = g_logical_screen_x_dots / 2 - m_border;
+        m_y_min = g_logical_screen_y_dots - m_border;
         break;
 
     case DiffusionMode::SQUARE_CAVITY:
         if (g_logical_screen_x_dots > g_logical_screen_y_dots)
         {
-            radius = (float) (g_logical_screen_y_dots - border);
+            m_radius = (float) (g_logical_screen_y_dots - m_border);
         }
         else
         {
-            radius = (float) (g_logical_screen_x_dots - border);
+            m_radius = (float) (g_logical_screen_x_dots - m_border);
         }
         break;
     }
@@ -105,27 +105,27 @@ Diffusion::Diffusion() :
     if (g_resuming) // restore work list, if we can't the above will stay in place
     {
         start_resume();
-        if (mode != DiffusionMode::SQUARE_CAVITY)
+        if (m_mode != DiffusionMode::SQUARE_CAVITY)
         {
-            get_resume(x_max, x_min, y_max, y_min);
+            get_resume(m_x_max, m_x_min, m_y_max, m_y_min);
         }
         else
         {
-            get_resume(x_max, x_min, y_max, radius);
+            get_resume(m_x_max, m_x_min, m_y_max, m_radius);
         }
         end_resume();
     }
 
-    switch (mode)
+    switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
-        g_put_color(g_logical_screen_x_dots / 2, g_logical_screen_y_dots / 2, current_color);
+        g_put_color(g_logical_screen_x_dots / 2, g_logical_screen_y_dots / 2, m_current_color);
         break;
 
     case DiffusionMode::FALLING_PARTICLES:
         for (int i = 0; i <= g_logical_screen_x_dots; i++)
         {
-            g_put_color(i, g_logical_screen_y_dots - 1, current_color);
+            g_put_color(i, g_logical_screen_y_dots - 1, m_current_color);
         }
         break;
 
@@ -134,22 +134,22 @@ Diffusion::Diffusion() :
         {
             for (int i = 0; i < g_logical_screen_y_dots; i++)
             {
-                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2, i, current_color);
-                g_put_color(g_logical_screen_x_dots / 2 + g_logical_screen_y_dots / 2, i, current_color);
-                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2 + i, 0, current_color);
+                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2, i, m_current_color);
+                g_put_color(g_logical_screen_x_dots / 2 + g_logical_screen_y_dots / 2, i, m_current_color);
+                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2 + i, 0, m_current_color);
                 g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2 + i,
-                    g_logical_screen_y_dots - 1, current_color);
+                    g_logical_screen_y_dots - 1, m_current_color);
             }
         }
         else
         {
             for (int i = 0; i < g_logical_screen_x_dots; i++)
             {
-                g_put_color(0, g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2 + i, current_color);
+                g_put_color(0, g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2 + i, m_current_color);
                 g_put_color(g_logical_screen_x_dots - 1,
-                    g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2 + i, current_color);
-                g_put_color(i, g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2, current_color);
-                g_put_color(i, g_logical_screen_y_dots / 2 + g_logical_screen_x_dots / 2, current_color);
+                    g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2 + i, m_current_color);
+                g_put_color(i, g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2, m_current_color);
+                g_put_color(i, g_logical_screen_y_dots / 2 + g_logical_screen_x_dots / 2, m_current_color);
             }
         }
         break;
@@ -158,7 +158,7 @@ Diffusion::Diffusion() :
 
 void Diffusion::release_new_particle()
 {
-    switch (mode)
+    switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
     {
@@ -167,17 +167,17 @@ void Diffusion::release_new_particle()
         double cosine;
         double sine;
         sin_cos(angle, &sine, &cosine);
-        x = (int) (cosine * (x_max - x_min) + g_logical_screen_x_dots);
-        y = (int) (sine * (y_max - y_min) + g_logical_screen_y_dots);
-        x /= 2;
-        y /= 2;
+        m_x = (int) (cosine * (m_x_max - m_x_min) + g_logical_screen_x_dots);
+        m_y = (int) (sine * (m_y_max - m_y_min) + g_logical_screen_y_dots);
+        m_x /= 2;
+        m_y /= 2;
         break;
     }
 
     case DiffusionMode::FALLING_PARTICLES:
         // Release new point on the line ymin somewhere between xmin and xmax
-        y = y_min;
-        x = random(x_max - x_min) + (g_logical_screen_x_dots - x_max + x_min) / 2;
+        m_y = m_y_min;
+        m_x = random(m_x_max - m_x_min) + (g_logical_screen_x_dots - m_x_max + m_x_min) / 2;
         break;
 
     case DiffusionMode::SQUARE_CAVITY:
@@ -187,10 +187,10 @@ void Diffusion::release_new_particle()
         double cosine;
         double sine;
         sin_cos(angle, &sine, &cosine);
-        x = (int) (cosine * radius + g_logical_screen_x_dots);
-        y = (int) (sine * radius + g_logical_screen_y_dots);
-        x /= 2;
-        y /= 2;
+        m_x = (int) (cosine * m_radius + g_logical_screen_x_dots);
+        m_y = (int) (sine * m_radius + g_logical_screen_y_dots);
+        m_x /= 2;
+        m_y /= 2;
         break;
     }
     }
@@ -199,70 +199,70 @@ void Diffusion::release_new_particle()
 bool Diffusion::move_particle()
 {
     // Loop as long as the point (x,y) is surrounded by color 0 on all eight sides
-    while (get_color(x + 1, y + 1) == 0 && get_color(x + 1, y) == 0 && get_color(x + 1, y - 1) == 0 //
-        && get_color(x, y + 1) == 0 && get_color(x, y - 1) == 0 && get_color(x - 1, y + 1) == 0     //
-        && get_color(x - 1, y) == 0 && get_color(x - 1, y - 1) == 0)
+    while (get_color(m_x + 1, m_y + 1) == 0 && get_color(m_x + 1, m_y) == 0 && get_color(m_x + 1, m_y - 1) == 0 //
+        && get_color(m_x, m_y + 1) == 0 && get_color(m_x, m_y - 1) == 0 && get_color(m_x - 1, m_y + 1) == 0     //
+        && get_color(m_x - 1, m_y) == 0 && get_color(m_x - 1, m_y - 1) == 0)
     {
         // Erase moving point
         if (g_show_orbit)
         {
-            g_put_color(x, y, 0);
+            g_put_color(m_x, m_y, 0);
         }
 
-        if (mode == DiffusionMode::CENTRAL)
+        if (m_mode == DiffusionMode::CENTRAL)
         {
             // Make sure point is inside the box
-            if (x == x_max)
+            if (m_x == m_x_max)
             {
-                x--;
+                m_x--;
             }
-            else if (x == x_min)
+            else if (m_x == m_x_min)
             {
-                x++;
+                m_x++;
             }
-            if (y == y_max)
+            if (m_y == m_y_max)
             {
-                y--;
+                m_y--;
             }
-            else if (y == y_min)
+            else if (m_y == m_y_min)
             {
-                y++;
+                m_y++;
             }
         }
 
         // Make sure point is on the screen below ymin, but
         // we need a 1 pixel margin because of the next random step.
-        if (mode == DiffusionMode::FALLING_PARTICLES)
+        if (m_mode == DiffusionMode::FALLING_PARTICLES)
         {
-            if (x >= g_logical_screen_x_dots - 1)
+            if (m_x >= g_logical_screen_x_dots - 1)
             {
-                x--;
+                m_x--;
             }
-            else if (x <= 1)
+            else if (m_x <= 1)
             {
-                x++;
+                m_x++;
             }
-            if (y < y_min)
+            if (m_y < m_y_min)
             {
-                y++;
+                m_y++;
             }
         }
 
         // Take one random step
-        x += random(3) - 1;
-        y += random(3) - 1;
+        m_x += random(3) - 1;
+        m_y += random(3) - 1;
 
         // Check keyboard
         if (keyboard_check_needed() && check_key())
         {
             alloc_resume(20, 1);
-            if (mode != DiffusionMode::SQUARE_CAVITY)
+            if (m_mode != DiffusionMode::SQUARE_CAVITY)
             {
-                put_resume(x_max, x_min, y_max, y_min);
+                put_resume(m_x_max, m_x_min, m_y_max, m_y_min);
             }
             else
             {
-                put_resume(x_max, x_min, y_max, radius);
+                put_resume(m_x_max, m_x_min, m_y_max, m_radius);
             }
 
             m_kbd_check--;
@@ -272,7 +272,7 @@ bool Diffusion::move_particle()
         // Show the moving point
         if (g_show_orbit)
         {
-            g_put_color(x, y, random(g_colors - 1) + 1);
+            g_put_color(m_x, m_y, random(g_colors - 1) + 1);
         }
     }
     return false;
@@ -281,26 +281,26 @@ bool Diffusion::move_particle()
 void Diffusion::color_particle()
 {
     // If we're doing color shifting then check to see if we need to shift
-    if (color_shift)
+    if (m_color_shift)
     {
         // If we're doing color shifting then use current color
-        g_put_color(x, y, current_color);
-        if (!--color_count)
+        g_put_color(m_x, m_y, m_current_color);
+        if (!--m_color_count)
         {
             // If the counter reaches zero then shift
-            current_color++;           // Increase the current color and wrap
-            current_color %= g_colors; // around skipping zero
-            if (!current_color)
+            m_current_color++;           // Increase the current color and wrap
+            m_current_color %= g_colors; // around skipping zero
+            if (!m_current_color)
             {
-                current_color++;
+                m_current_color++;
             }
-            color_count = color_shift; // and reset the counter
+            m_color_count = m_color_shift; // and reset the counter
         }
     }
     else
     {
         // pick a color at random
-        g_put_color(x, y, random(g_colors - 1) + 1);
+        g_put_color(m_x, m_y, random(g_colors - 1) + 1);
     }
 }
 
@@ -309,20 +309,20 @@ void Diffusion::color_particle()
 // fractal.
 bool Diffusion::adjust_limits()
 {
-    switch (mode)
+    switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
-        if (((x + border) > x_max) ||
-            ((x - border) < x_min) ||
-            ((y - border) < y_min) ||
-            ((y + border) > y_max))
+        if (((m_x + m_border) > m_x_max) ||
+            ((m_x - m_border) < m_x_min) ||
+            ((m_y - m_border) < m_y_min) ||
+            ((m_y + m_border) > m_y_max))
         {
             // Increase box size, but not past the edge of the screen
-            y_min--;
-            y_max++;
-            x_min--;
-            x_max++;
-            if ((y_min == 0) || (x_min == 0))
+            m_y_min--;
+            m_y_max++;
+            m_x_min--;
+            m_x_max++;
+            if ((m_y_min == 0) || (m_x_min == 0))
             {
                 return true;
             }
@@ -331,11 +331,11 @@ bool Diffusion::adjust_limits()
 
     case DiffusionMode::FALLING_PARTICLES:
         // Decrease ymin, but not past top of screen
-        if (y - border < y_min)
+        if (m_y - m_border < m_y_min)
         {
-            y_min--;
+            m_y_min--;
         }
-        if (y_min == 0)
+        if (m_y_min == 0)
         {
             return true;
         }
@@ -345,15 +345,15 @@ bool Diffusion::adjust_limits()
     {
         // Decrease the radius where points are released to stay away
         // from the fractal.  It might be decreased by 1 or 2
-        const double r = sqr((float) x - g_logical_screen_x_dots / 2) +
-            sqr((float) y - g_logical_screen_y_dots / 2);
-        if (r <= border * border)
+        const double r = sqr((float) m_x - g_logical_screen_x_dots / 2) +
+            sqr((float) m_y - g_logical_screen_y_dots / 2);
+        if (r <= m_border * m_border)
         {
             return true;
         }
-        while ((radius - border) * (radius - border) > r)
+        while ((m_radius - m_border) * (m_radius - m_border) > r)
         {
-            radius--;
+            m_radius--;
         }
         break;
     }
