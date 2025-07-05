@@ -7,6 +7,7 @@
 #include "engine/wait_until.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/ValueSaver.h"
 #include "ui/cmdfiles.h"
 #include "ui/sound.h"
 #include "ui/video.h"
@@ -125,10 +126,8 @@ void plot_orbit(double real, double imag, int color)
 void scrub_orbit()
 {
     driver_mute();
-    int save_screen_x_offset = g_logical_screen_x_offset;
-    int save_screen_y_offset = g_logical_screen_y_offset;
-    g_logical_screen_y_offset = 0;
-    g_logical_screen_x_offset = 0;
+    ValueSaver save_screen_x_offset{g_logical_screen_x_offset, 0};
+    ValueSaver save_screen_y_offset{g_logical_screen_y_offset, 0};
     while (g_orbit_save_index >= 3)
     {
         int c = s_save_orbit[--g_orbit_save_index];
@@ -136,6 +135,4 @@ void scrub_orbit()
         int i = s_save_orbit[--g_orbit_save_index];
         g_put_color(i, j, c);
     }
-    g_logical_screen_x_offset = save_screen_x_offset;
-    g_logical_screen_y_offset = save_screen_y_offset;
 }
