@@ -27,6 +27,7 @@ class Diffusion
 {
 public:
     void init();
+    void release_new_particle();
     bool keyboard_check_needed();
 
     int m_kbd_check{};    // to limit kbd checking
@@ -163,48 +164,54 @@ void Diffusion::init()
     }
 }
 
+void Diffusion::release_new_particle()
+{
+    switch (mode)
+    {
+    case DiffusionMode::CENTRAL:
+    {
+        // Release new point on a circle inside the box
+        const double angle = 2 * (double) std::rand() / (RAND_MAX / PI);
+        double cosine;
+        double sine;
+        sin_cos(angle, &sine, &cosine);
+        x = (int) (cosine * (x_max - x_min) + g_logical_screen_x_dots);
+        y = (int) (sine * (y_max - y_min) + g_logical_screen_y_dots);
+        x /= 2;
+        y /= 2;
+        break;
+    }
+
+    case DiffusionMode::FALLING_PARTICLES:
+        // Release new point on the line ymin somewhere between xmin and xmax
+        y = y_min;
+        x = random(x_max - x_min) +
+            (g_logical_screen_x_dots - x_max + x_min) / 2;
+        break;
+
+    case DiffusionMode::SQUARE_CAVITY:
+    {
+        // Release new point on a circle inside the box with radius given by the radius variable
+        const double angle = 2 * (double) std::rand() / (RAND_MAX / PI);
+        double cosine;
+        double sine;
+        sin_cos(angle, &sine, &cosine);
+        x = (int) (cosine * radius + g_logical_screen_x_dots);
+        y = (int) (sine * radius + g_logical_screen_y_dots);
+        x /= 2;
+        y /= 2;
+        break;
+    }
+    }
+}
+
 int diffusion_type()
 {
     s_diffusion.init();
 
     while (true)
     {
-        switch (s_diffusion.mode)
-        {
-        case DiffusionMode::CENTRAL:
-        {
-            // Release new point on a circle inside the box
-            const double angle = 2*(double)std::rand()/(RAND_MAX/PI);
-            double cosine;
-            double sine;
-            sin_cos(angle, &sine, &cosine);
-            s_diffusion.x = (int)(cosine*(s_diffusion.x_max-s_diffusion.x_min) + g_logical_screen_x_dots);
-            s_diffusion.y = (int)(sine  *(s_diffusion.y_max-s_diffusion.y_min) + g_logical_screen_y_dots);
-            s_diffusion.x /= 2;
-            s_diffusion.y /= 2;
-            break;
-        }
-
-        case DiffusionMode::FALLING_PARTICLES:
-            // Release new point on the line ymin somewhere between xmin and xmax
-            s_diffusion.y = s_diffusion.y_min;
-            s_diffusion.x = random(s_diffusion.x_max-s_diffusion.x_min) + (g_logical_screen_x_dots-s_diffusion.x_max+s_diffusion.x_min)/2;
-            break;
-
-        case DiffusionMode::SQUARE_CAVITY:
-        {
-            // Release new point on a circle inside the box with radius given by the radius variable
-            const double angle = 2*(double)std::rand()/(RAND_MAX/PI);
-            double cosine;
-            double sine;
-            sin_cos(angle, &sine, &cosine);
-            s_diffusion.x = (int)(cosine*s_diffusion.radius + g_logical_screen_x_dots);
-            s_diffusion.y = (int)(sine  *s_diffusion.radius + g_logical_screen_y_dots);
-            s_diffusion.x /= 2;
-            s_diffusion.y /= 2;
-            break;
-        }
-        }
+        s_diffusion.release_new_particle();
 
         // Loop as long as the point (x,y) is surrounded by color 0
         // on all eight sides
