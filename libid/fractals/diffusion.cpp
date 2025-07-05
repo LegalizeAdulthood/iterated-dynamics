@@ -14,6 +14,7 @@
 #include "ui/not_disk_msg.h"
 #include "ui/video.h"
 
+#include <algorithm>
 #include <cstdlib>
 
 enum class DiffusionMode
@@ -26,13 +27,16 @@ enum class DiffusionMode
 class Diffusion
 {
 public:
-    void init();
+    Diffusion();
+    ~Diffusion() = default;
+
     void release_new_particle();
     bool move_particle();
     void color_particle();
     bool adjust_limits();
     bool keyboard_check_needed();
 
+private:
     int m_kbd_check{};    // to limit kbd checking
     int x_max{};          //
     int y_max{};          //
@@ -60,30 +64,14 @@ bool Diffusion::keyboard_check_needed()
     return (++m_kbd_check & 0x7f) == 1;
 }
 
-void Diffusion::init()
+Diffusion::Diffusion() :
+    border(std::max(static_cast<int>(g_params[0]), 10)),
+    mode(std::clamp(static_cast<DiffusionMode>(g_params[1]), DiffusionMode::CENTRAL, DiffusionMode::SQUARE_CAVITY)),
+    color_shift(static_cast<int>(g_params[2])),
+    color_count(static_cast<int>(g_params[2]))
 {
-    y = -1;
-    x = -1;
-
-    border = (int) g_params[0];
-    if (border <= 0)
-    {
-        border = 10;
-    }
-
-    mode = static_cast<DiffusionMode>(g_params[1]);
-    if (mode < DiffusionMode::CENTRAL || mode > DiffusionMode::SQUARE_CAVITY)
-    {
-        mode = DiffusionMode::CENTRAL;
-    }
-
-    color_shift = (int) g_params[2];
-    color_count = color_shift; // Counts down from colorshift
-    current_color = 1;         // Start at color 1 (color 0 is probably invisible)
-
     set_random_seed();
 
-    radius = 0.0F;
     switch (mode)
     {
     case DiffusionMode::CENTRAL:
@@ -374,7 +362,6 @@ bool Diffusion::adjust_limits()
 int diffusion_type()
 {
     Diffusion d;
-    d.init();
 
     while (true)
     {
