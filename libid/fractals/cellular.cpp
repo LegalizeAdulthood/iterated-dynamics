@@ -38,7 +38,6 @@ enum
     TYPE_KR = 6,
     RULE_LENGTH = 7,
     INTERRUPT = 8,
-    CELLULAR_DONE = 10
 };
 
 static void set_cellular_palette();
@@ -64,6 +63,17 @@ struct Cellular
     S16 not_filled{1};
 };
 
+std::string cellular_error(const Cellular &cellular, int err, int t = 0);
+
+class CellularError : public std::runtime_error
+{
+public:
+    CellularError(const Cellular &cellular, int err, int t = 0) :
+        std::runtime_error(cellular_error(cellular, err, t))
+    {
+    }
+};
+
 static Cellular s_cellular;
 
 bool g_cellular_next_screen{};             // for cellular next screen generation
@@ -82,7 +92,7 @@ inline U16 from_digit(char value)
     return static_cast<U16>(value - '0');
 }
 
-static void abort_cellular(int err, int t)
+static std::string cellular_error(const Cellular &cellular, int err, int t)
 {
     switch (err)
     {
@@ -90,62 +100,53 @@ static void abort_cellular(int err, int t)
     {
         char msg[30];
         std::snprintf(msg, std::size(msg), "Bad t=%d, aborting\n", t);
-        stop_msg(msg);
+        return msg;
     }
-    break;
+
     case BAD_MEM:
-    {
-        stop_msg("Insufficient free memory for calculation");
-    }
-    break;
+        return "Insufficient free memory for calculation";
+
     case STRING1:
-    {
-        stop_msg("String can be a maximum of 16 digits");
-    }
-    break;
+        return "String can be a maximum of 16 digits";
+
     case STRING2:
     {
         static char msg[] = {"Make string of 0's through  's"};
-        msg[27] = to_digit(s_cellular.m_k_1);
-        stop_msg(msg);
+        msg[27] = to_digit(cellular.m_k_1);
+        return msg;
     }
-    break;
+
     case TABLE_K:
     {
         static char msg[] = {"Make Rule with 0's through  's"};
-        msg[27] = to_digit(s_cellular.m_k_1);
-        stop_msg(msg);
+        msg[27] = to_digit(cellular.m_k_1);
+        return msg;
     }
-    break;
+
     case TYPE_KR:
-    {
-        stop_msg("Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27");
-    }
-    break;
+        return "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27";
+
     case RULE_LENGTH:
     {
         static char msg[] = {"Rule must be    digits long"};
-        int i = s_cellular.m_rule_digits / 10;
+        int i = cellular.m_rule_digits / 10;
         if (i == 0)
         {
-            msg[14] = to_digit(s_cellular.m_rule_digits);
+            msg[14] = to_digit(cellular.m_rule_digits);
         }
         else
         {
             msg[13] = to_digit(i);
-            msg[14] = to_digit(s_cellular.m_rule_digits % 10);
+            msg[14] = to_digit(cellular.m_rule_digits % 10);
         }
-        stop_msg(msg);
+        return msg;
     }
-    break;
+
     case INTERRUPT:
-    {
-        stop_msg("Interrupted, can't resume");
+        return "Interrupted, can't resume";
     }
-    break;
-    case CELLULAR_DONE:
-        break;
-    }
+
+    return "Unknown error";
 }
 
 bool Cellular::init()
@@ -174,8 +175,7 @@ bool Cellular::init()
     case 61:
         break;
     default:
-        abort_cellular(TYPE_KR, 0);
-        return false;
+        throw CellularError(s_cellular, TYPE_KR);
     }
 
     m_s_r = (S16)(kr % 10); // Number of nearest neighbors to sum
@@ -196,8 +196,7 @@ bool Cellular::init()
         S16 t = (S16)std::strlen(buf);
         if (t>16 || t <= 0)
         {
-            abort_cellular(STRING1, 0);
-            return false;
+            throw CellularError(s_cellular, STRING1);
         }
         for (U16 &elem : s_cellular.init_string)
         {
@@ -210,8 +209,7 @@ bool Cellular::init()
             s_cellular.init_string[i+t2] = from_digit(buf[i]);
             if (s_cellular.init_string[i+t2]>(U16)s_cellular.m_k_1)
             {
-                abort_cellular(STRING2, 0);
-                return false;
+                throw CellularError(s_cellular, STRING2);
             }
         }
     }
@@ -237,8 +235,7 @@ bool Cellular::init()
     if (s_cellular.m_rule_digits < t || t < 0)
     {
         // leading 0s could make t smaller
-        abort_cellular(RULE_LENGTH, 0);
-        return false;
+        throw CellularError(s_cellular, RULE_LENGTH);
     }
     for (int i = 0; i < s_cellular.m_rule_digits; i++)   // zero the table
     {
@@ -250,8 +247,7 @@ bool Cellular::init()
         cell_table[i] = from_digit(buf[t - i - 1]);
         if (cell_table[i]>(U16)s_cellular.m_k_1)
         {
-            abort_cellular(TABLE_K, 0);
-            return false;
+            throw CellularError(s_cellular, TABLE_K);
         }
     }
 
@@ -340,8 +336,7 @@ bool Cellular::init()
             if (t > s_cellular.m_rule_digits || t < 0)
             {
                 thinking(0, nullptr);
-                abort_cellular(BAD_T, t);
-                return false;
+                throw CellularError(s_cellular, BAD_T, t);
             }
             s_cellular.m_cell_array[not_filled][s_cellular.m_s_r] = (Byte)s_cellular.cell_table[t];
 
@@ -353,8 +348,7 @@ bool Cellular::init()
                 if (t > s_cellular.m_rule_digits || t < 0)
                 {
                     thinking(0, nullptr);
-                    abort_cellular(BAD_T, t);
-                    return false;
+                    throw CellularError(s_cellular, BAD_T, t);
                 }
                 s_cellular.m_cell_array[not_filled][g_col] = (Byte)s_cellular.cell_table[t];
             }
@@ -364,8 +358,7 @@ bool Cellular::init()
             if (driver_key_pressed())
             {
                 thinking(0, nullptr);
-                abort_cellular(INTERRUPT, 0);
-                return false;
+                throw CellularError(s_cellular, INTERRUPT);
             }
         }
         s_cellular.start_row = 0;
@@ -378,84 +371,103 @@ bool Cellular::init()
 
 int cellular_type()
 {
-    if (!s_cellular.init())
+    try
     {
-        return -1;
-    }
-
-    // This section does all the work
-    while (true)
-    {
-        for (g_row = s_cellular.start_row; g_row <= g_i_stop_pt.y; g_row++)
+        if (!s_cellular.init())
         {
-            if (g_random_seed_flag || s_cellular.rand_param == 0 || s_cellular.rand_param == -1)
-            {
-                // Use a random border
-                for (int i = 0; i <= s_cellular.m_s_r; i++)
-                {
-                    s_cellular.m_cell_array[s_cellular.not_filled][i] = (Byte)(std::rand()%(int) s_cellular.k);
-                    s_cellular.m_cell_array[s_cellular.not_filled][g_i_stop_pt.x-i] = (Byte)(std::rand()%(int) s_cellular.k);
-                }
-            }
-            else
-            {
-                // Use a zero border
-                for (int i = 0; i <= s_cellular.m_s_r; i++)
-                {
-                    s_cellular.m_cell_array[s_cellular.not_filled][i] = 0;
-                    s_cellular.m_cell_array[s_cellular.not_filled][g_i_stop_pt.x-i] = 0;
-                }
-            }
+            return -1;
+        }
 
-            S16 t = 0; // do first cell
-            U16 two_r = (U16)(s_cellular.m_s_r+s_cellular.m_s_r);
-            for (int i = 0; i <= two_r; i++)
+        // This section does all the work
+        while (true)
+        {
+            for (g_row = s_cellular.start_row; g_row <= g_i_stop_pt.y; g_row++)
             {
-                t = (S16)(t + (S16)s_cellular.m_cell_array[s_cellular.filled][i]);
-            }
-            if (t > s_cellular.m_rule_digits || t < 0)
-            {
-                thinking(0, nullptr);
-                abort_cellular(BAD_T, t);
-                return -1;
-            }
-            s_cellular.m_cell_array[s_cellular.not_filled][s_cellular.m_s_r] = (Byte)s_cellular.cell_table[t];
+                if (g_random_seed_flag || s_cellular.rand_param == 0 || s_cellular.rand_param == -1)
+                {
+                    // Use a random border
+                    for (int i = 0; i <= s_cellular.m_s_r; i++)
+                    {
+                        s_cellular.m_cell_array[s_cellular.not_filled][i] = (Byte)(std::rand()%(int) s_cellular.k);
+                        s_cellular.m_cell_array[s_cellular.not_filled][g_i_stop_pt.x-i] = (Byte)(std::rand()%(int) s_cellular.k);
+                    }
+                }
+                else
+                {
+                    // Use a zero border
+                    for (int i = 0; i <= s_cellular.m_s_r; i++)
+                    {
+                        s_cellular.m_cell_array[s_cellular.not_filled][i] = 0;
+                        s_cellular.m_cell_array[s_cellular.not_filled][g_i_stop_pt.x-i] = 0;
+                    }
+                }
 
-            // use a rolling sum in t
-            for (g_col = s_cellular.m_s_r+1; g_col < g_i_stop_pt.x-s_cellular.m_s_r; g_col++)
-            {
-                // now do the rest
-                t = (S16)(t + s_cellular.m_cell_array[s_cellular.filled][g_col+s_cellular.m_s_r] - s_cellular.m_cell_array[s_cellular.filled][g_col-s_cellular.m_s_r-1]);
+                S16 t = 0; // do first cell
+                U16 two_r = (U16)(s_cellular.m_s_r+s_cellular.m_s_r);
+                for (int i = 0; i <= two_r; i++)
+                {
+                    t = (S16)(t + (S16)s_cellular.m_cell_array[s_cellular.filled][i]);
+                }
                 if (t > s_cellular.m_rule_digits || t < 0)
                 {
                     thinking(0, nullptr);
-                    abort_cellular(BAD_T, t);
+                    throw CellularError(s_cellular, BAD_T, t);
+                }
+                s_cellular.m_cell_array[s_cellular.not_filled][s_cellular.m_s_r] = (Byte)s_cellular.cell_table[t];
+
+                // use a rolling sum in t
+                for (g_col = s_cellular.m_s_r+1; g_col < g_i_stop_pt.x-s_cellular.m_s_r; g_col++)
+                {
+                    // now do the rest
+                    t = (S16)(t + s_cellular.m_cell_array[s_cellular.filled][g_col+s_cellular.m_s_r] - s_cellular.m_cell_array[s_cellular.filled][g_col-s_cellular.m_s_r-1]);
+                    if (t > s_cellular.m_rule_digits || t < 0)
+                    {
+                        thinking(0, nullptr);
+                        throw CellularError(s_cellular, BAD_T, t);
+                    }
+                    s_cellular.m_cell_array[s_cellular.not_filled][g_col] = (Byte)s_cellular.cell_table[t];
+                }
+
+                s_cellular.filled = s_cellular.not_filled;
+                s_cellular.not_filled = (S16)(1-s_cellular.filled);
+                write_span(g_row, 0, g_i_stop_pt.x, s_cellular.m_cell_array[s_cellular.filled].data());
+                if (driver_key_pressed())
+                {
+                    alloc_resume(10, 1);
+                    put_resume(g_row);
                     return -1;
                 }
-                s_cellular.m_cell_array[s_cellular.not_filled][g_col] = (Byte)s_cellular.cell_table[t];
             }
-
-            s_cellular.filled = s_cellular.not_filled;
-            s_cellular.not_filled = (S16)(1-s_cellular.filled);
-            write_span(g_row, 0, g_i_stop_pt.x, s_cellular.m_cell_array[s_cellular.filled].data());
-            if (driver_key_pressed())
+            if (g_cellular_next_screen)
             {
-                abort_cellular(CELLULAR_DONE, 0);
-                alloc_resume(10, 1);
-                put_resume(g_row);
-                return -1;
+                g_params[3] += g_i_stop_pt.y + 1;
+                s_cellular.start_row = 0;
+                continue;
             }
+            break;
         }
-        if (g_cellular_next_screen)
-        {
-            g_params[3] += g_i_stop_pt.y + 1;
-            s_cellular.start_row = 0;
-            continue;
-        }
-        break;
+        return 1;
     }
-    abort_cellular(CELLULAR_DONE, 0);
-    return 1;
+    catch (const CellularError &e)
+    {
+        stop_msg(e.what());
+        return -1;
+    }
+    catch (const std::bad_alloc &)
+    {
+        stop_msg("Insufficient free memory for calculation");
+        return -1;
+    }
+    catch (const std::exception &e)
+    {
+        stop_msg(e.what());
+        return -1;
+    }
+    catch (...)
+    {
+        stop_msg("Unknown error in cellular calculation");
+        return -1;
+    }
 }
 
 bool cellular_per_image()
