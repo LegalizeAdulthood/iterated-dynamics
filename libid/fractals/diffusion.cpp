@@ -11,7 +11,6 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/cmdfiles.h"
-#include "ui/not_disk_msg.h"
 #include "ui/video.h"
 
 #include <algorithm>
