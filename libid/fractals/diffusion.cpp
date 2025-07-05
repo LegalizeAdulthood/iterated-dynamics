@@ -301,12 +301,11 @@ void Diffusion::color_particle()
     }
 }
 
+// If the new point is close to an edge, we may need to increase
+// some limits so that the limits expand to match the growing
+// fractal.
 bool Diffusion::adjust_limits()
 {
-    /* If the new point is close to an edge, we may need to increase
-               some limits so that the limits expand to match the growing
-               fractal. */
-
     switch (mode)
     {
     case DiffusionMode::CENTRAL:
