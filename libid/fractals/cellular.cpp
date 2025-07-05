@@ -48,6 +48,8 @@ struct Cellular
     bool iterate();
     void suspend();
 
+    std::string error(int err, int t = 0) const;
+
     std::vector<Byte> m_cell_array[2];
     S16 m_s_r{};
     S16 m_k_1{};
@@ -65,13 +67,11 @@ struct Cellular
     S16 not_filled{1};
 };
 
-std::string cellular_error(const Cellular &cellular, int err, int t = 0);
-
 class CellularError : public std::runtime_error
 {
 public:
     CellularError(const Cellular &cellular, int err, int t = 0) :
-        std::runtime_error(cellular_error(cellular, err, t))
+        std::runtime_error(cellular.error(err, t))
     {
     }
 };
@@ -92,63 +92,6 @@ inline U16 from_digit(char value)
     assert(value >= '0');
     assert(value <= '9');
     return static_cast<U16>(value - '0');
-}
-
-static std::string cellular_error(const Cellular &cellular, int err, int t)
-{
-    switch (err)
-    {
-    case BAD_T:
-    {
-        char msg[30];
-        std::snprintf(msg, std::size(msg), "Bad t=%d, aborting\n", t);
-        return msg;
-    }
-
-    case BAD_MEM:
-        return "Insufficient free memory for calculation";
-
-    case STRING1:
-        return "String can be a maximum of 16 digits";
-
-    case STRING2:
-    {
-        static char msg[] = {"Make string of 0's through  's"};
-        msg[27] = to_digit(cellular.m_k_1);
-        return msg;
-    }
-
-    case TABLE_K:
-    {
-        static char msg[] = {"Make Rule with 0's through  's"};
-        msg[27] = to_digit(cellular.m_k_1);
-        return msg;
-    }
-
-    case TYPE_KR:
-        return "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27";
-
-    case RULE_LENGTH:
-    {
-        static char msg[] = {"Rule must be    digits long"};
-        int i = cellular.m_rule_digits / 10;
-        if (i == 0)
-        {
-            msg[14] = to_digit(cellular.m_rule_digits);
-        }
-        else
-        {
-            msg[13] = to_digit(i);
-            msg[14] = to_digit(cellular.m_rule_digits % 10);
-        }
-        return msg;
-    }
-
-    case INTERRUPT:
-        return "Interrupted, can't resume";
-    }
-
-    return "Unknown error";
 }
 
 void Cellular::init()
@@ -442,6 +385,63 @@ void Cellular::suspend()
 {
     alloc_resume(10, 1);
     put_resume(g_row);
+}
+
+std::string Cellular::error(int err, int t) const
+{
+    switch (err)
+    {
+    case BAD_T:
+    {
+        char msg[30];
+        std::snprintf(msg, std::size(msg), "Bad t=%d, aborting\n", t);
+        return msg;
+    }
+
+    case BAD_MEM:
+        return "Insufficient free memory for calculation";
+
+    case STRING1:
+        return "String can be a maximum of 16 digits";
+
+    case STRING2:
+    {
+        static char msg[] = {"Make string of 0's through  's"};
+        msg[27] = to_digit(m_k_1);
+        return msg;
+    }
+
+    case TABLE_K:
+    {
+        static char msg[] = {"Make Rule with 0's through  's"};
+        msg[27] = to_digit(m_k_1);
+        return msg;
+    }
+
+    case TYPE_KR:
+        return "Type must be 21, 31, 41, 51, 61, 22, 32, 42, 23, 33, 24, 25, 26, 27";
+
+    case RULE_LENGTH:
+    {
+        static char msg[] = {"Rule must be    digits long"};
+        int i = m_rule_digits / 10;
+        if (i == 0)
+        {
+            msg[14] = to_digit(m_rule_digits);
+        }
+        else
+        {
+            msg[13] = to_digit(i);
+            msg[14] = to_digit(m_rule_digits % 10);
+        }
+        return msg;
+    }
+
+    case INTERRUPT:
+        return "Interrupted, can't resume";
+    }
+
+    return "Unknown error";
 }
 
 int cellular_type()
