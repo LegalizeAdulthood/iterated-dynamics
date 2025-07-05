@@ -51,7 +51,7 @@ add_library(libid
     include/fractals/bif_may.h fractals/bif_may.cpp
     include/fractals/Bifurcation.h fractals/Bifurcation.cpp
     include/fractals/burning_ship.h fractals/burning_ship.cpp
-    include/fractals/cellular.h fractals/cellular.cpp
+    include/fractals/Cellular.h fractals/Cellular.cpp
     include/fractals/check_orbit_name.h fractals/check_orbit_name.cpp
     include/fractals/circle_pattern.h fractals/circle_pattern.cpp
     include/fractals/diffusion.h fractals/diffusion.cpp
@@ -153,6 +153,7 @@ add_library(libid
 
     include/ui/ant.h ui/ant.cpp
     include/ui/bifurcation.h ui/bifurcation.cpp
+    include/ui/cellular.h ui/cellular.cpp
     include/ui/ChoiceBuilder.h
     include/ui/cmdfiles.h ui/cmdfiles.cpp
     include/ui/cmdfiles_test.h

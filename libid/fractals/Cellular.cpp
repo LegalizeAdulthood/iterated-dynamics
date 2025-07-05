@@ -28,6 +28,11 @@
 
 //****************** standalone engine for "cellular" *******************
 
+bool g_cellular_next_screen{};             // for cellular next screen generation
+
+namespace id::fractals
+{
+
 enum
 {
     BAD_T = 1,
@@ -41,46 +46,6 @@ enum
 };
 
 static void set_cellular_palette();
-
-class Cellular
-{
-public:
-    Cellular();
-    ~Cellular() = default;
-
-    bool iterate();
-    void suspend();
-
-    std::string error(int err, int t = 0) const;
-
-private:
-    std::vector<Byte> m_cell_array[2];
-    S16 m_s_r{};
-    S16 m_k_1{};
-    S16 m_rule_digits{};
-    bool m_last_screen_flag{};
-
-    S32 rand_param{};
-    U16 kr{};
-    U32 line_num{};
-    U16 k{};
-    U16 init_string[16]{};
-    U16 cell_table[32]{};
-    S16 start_row{};
-    S16 filled{};
-    S16 not_filled{1};
-};
-
-class CellularError : public std::runtime_error
-{
-public:
-    CellularError(const Cellular &cellular, int err, int t = 0) :
-        std::runtime_error(cellular.error(err, t))
-    {
-    }
-};
-
-bool g_cellular_next_screen{};             // for cellular next screen generation
 
 inline char to_digit(int value)
 {
@@ -448,54 +413,6 @@ std::string Cellular::error(int err, int t) const
     return "Unknown error";
 }
 
-int cellular_type()
-{
-    try
-    {
-        Cellular cellular;
-
-        while (cellular.iterate())
-        {
-            if (driver_key_pressed())
-            {
-                cellular.suspend();
-                return -1;
-            }
-        }
-        return 1;
-    }
-    catch (const CellularError &e)
-    {
-        stop_msg(e.what());
-        return -1;
-    }
-    catch (const std::bad_alloc &)
-    {
-        stop_msg("Insufficient free memory for calculation");
-        return -1;
-    }
-    catch (const std::exception &e)
-    {
-        stop_msg(e.what());
-        return -1;
-    }
-    catch (...)
-    {
-        stop_msg("Unknown error in cellular calculation");
-        return -1;
-    }
-}
-
-bool cellular_per_image()
-{
-    if (!g_resuming)
-    {
-        g_cellular_next_screen = false; // initialize flag
-    }
-    engine_timer(g_cur_fractal_specific->calc_type);
-    return false;
-}
-
 static void set_cellular_palette()
 {
     static const Byte RED[3]    = { 170, 0, 0 };
@@ -530,4 +447,16 @@ static void set_cellular_palette()
     g_dac_box[5][2] = BROWN[2];
 
     spin_dac(0, 1);
+}
+
+} // namespace id::fractals
+
+bool cellular_per_image()
+{
+    if (!g_resuming)
+    {
+        g_cellular_next_screen = false; // initialize flag
+    }
+    engine_timer(g_cur_fractal_specific->calc_type);
+    return false;
 }

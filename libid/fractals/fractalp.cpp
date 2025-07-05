@@ -43,6 +43,7 @@
 #include "fractals/volterra_lotka.h"
 #include "ui/ant.h"
 #include "ui/bifurcation.h"
+#include "ui/cellular.h"
 
 #include <algorithm>
 #include <array>
