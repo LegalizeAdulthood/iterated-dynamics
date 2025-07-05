@@ -42,14 +42,18 @@ enum
 
 static void set_cellular_palette();
 
-struct Cellular
+class Cellular
 {
-    void init();
+public:
+    Cellular();
+    ~Cellular() = default;
+
     bool iterate();
     void suspend();
 
     std::string error(int err, int t = 0) const;
 
+private:
     std::vector<Byte> m_cell_array[2];
     S16 m_s_r{};
     S16 m_k_1{};
@@ -76,8 +80,6 @@ public:
     }
 };
 
-static Cellular s_cellular;
-
 bool g_cellular_next_screen{};             // for cellular next screen generation
 
 inline char to_digit(int value)
@@ -94,7 +96,7 @@ inline U16 from_digit(char value)
     return static_cast<U16>(value - '0');
 }
 
-void Cellular::init()
+Cellular::Cellular()
 {
     set_cellular_palette();
 
@@ -448,12 +450,13 @@ int cellular_type()
 {
     try
     {
-        s_cellular.init();
-        while (s_cellular.iterate())
+        Cellular cellular;
+
+        while (cellular.iterate())
         {
             if (driver_key_pressed())
             {
-                s_cellular.suspend();
+                cellular.suspend();
                 return -1;
             }
         }
