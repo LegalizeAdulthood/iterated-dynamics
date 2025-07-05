@@ -16,7 +16,19 @@
 
 #include <cstdlib>
 
-static int s_kbd_check{}; // to limit kbd checking
+class Diffusion
+{
+public:
+    bool keyboard_check_needed();
+
+    int m_kbd_check{}; // to limit kbd checking
+    int x_max;
+    int y_max;
+    int x_min;
+    int y_min;   // Current maximum coordinates
+};
+
+static Diffusion s_diffusion;
 
 //**************** standalone engine for "diffusion" *******************
 
@@ -25,17 +37,13 @@ static int random(int x)
     return std::rand() % x;
 }
 
-static bool keyboard_check_needed()
+bool Diffusion::keyboard_check_needed()
 {
-    return (++s_kbd_check & 0x7f) == 1;
+    return (++m_kbd_check & 0x7f) == 1;
 }
 
 int diffusion_type()
 {
-    int x_max;
-    int y_max;
-    int x_min;
-    int y_min;   // Current maximum coordinates
     double cosine;
     double sine;
     double angle;
@@ -75,15 +83,15 @@ int diffusion_type()
     switch (mode)
     {
     case 0:
-        x_max = g_logical_screen_x_dots / 2 + border;  // Initial box
-        x_min = g_logical_screen_x_dots / 2 - border;
-        y_max = g_logical_screen_y_dots / 2 + border;
-        y_min = g_logical_screen_y_dots / 2 - border;
+        s_diffusion.x_max = g_logical_screen_x_dots / 2 + border;  // Initial box
+        s_diffusion.x_min = g_logical_screen_x_dots / 2 - border;
+        s_diffusion.y_max = g_logical_screen_y_dots / 2 + border;
+        s_diffusion.y_min = g_logical_screen_y_dots / 2 - border;
         break;
     case 1:
-        x_max = g_logical_screen_x_dots / 2 + border;  // Initial box
-        x_min = g_logical_screen_x_dots / 2 - border;
-        y_min = g_logical_screen_y_dots - border;
+        s_diffusion.x_max = g_logical_screen_x_dots / 2 + border;  // Initial box
+        s_diffusion.x_min = g_logical_screen_x_dots / 2 - border;
+        s_diffusion.y_min = g_logical_screen_y_dots - border;
         break;
     case 2:
         if (g_logical_screen_x_dots > g_logical_screen_y_dots)
@@ -100,11 +108,11 @@ int diffusion_type()
         start_resume();
         if (mode != 2)
         {
-            get_resume(x_max, x_min, y_max, y_min);
+            get_resume(s_diffusion.x_max, s_diffusion.x_min, s_diffusion.y_max, s_diffusion.y_min);
         }
         else
         {
-            get_resume(x_max, x_min, y_max, radius);
+            get_resume(s_diffusion.x_max, s_diffusion.x_min, s_diffusion.y_max, radius);
         }
         end_resume();
     }
@@ -151,15 +159,15 @@ int diffusion_type()
         case 0: // Release new point on a circle inside the box
             angle = 2*(double)std::rand()/(RAND_MAX/PI);
             sin_cos(&angle, &sine, &cosine);
-            x = (int)(cosine*(x_max-x_min) + g_logical_screen_x_dots);
-            y = (int)(sine  *(y_max-y_min) + g_logical_screen_y_dots);
+            x = (int)(cosine*(s_diffusion.x_max-s_diffusion.x_min) + g_logical_screen_x_dots);
+            y = (int)(sine  *(s_diffusion.y_max-s_diffusion.y_min) + g_logical_screen_y_dots);
             x = x >> 1; // divide by 2
             y = y >> 1;
             break;
         case 1: /* Release new point on the line ymin somewhere between xmin
                  and xmax */
-            y = y_min;
-            x = random(x_max-x_min) + (g_logical_screen_x_dots-x_max+x_min)/2;
+            y = s_diffusion.y_min;
+            x = random(s_diffusion.x_max-s_diffusion.x_min) + (g_logical_screen_x_dots-s_diffusion.x_max+s_diffusion.x_min)/2;
             break;
         case 2: /* Release new point on a circle inside the box with radius
                  given by the radius variable */
@@ -189,19 +197,19 @@ int diffusion_type()
             if (mode == 0)
             {
                 // Make sure point is inside the box
-                if (x == x_max)
+                if (x == s_diffusion.x_max)
                 {
                     x--;
                 }
-                else if (x == x_min)
+                else if (x == s_diffusion.x_min)
                 {
                     x++;
                 }
-                if (y == y_max)
+                if (y == s_diffusion.y_max)
                 {
                     y--;
                 }
-                else if (y == y_min)
+                else if (y == s_diffusion.y_min)
                 {
                     y++;
                 }
@@ -218,7 +226,7 @@ int diffusion_type()
                 {
                     x++;
                 }
-                if (y < y_min)
+                if (y < s_diffusion.y_min)
                 {
                     y++;
                 }
@@ -229,19 +237,19 @@ int diffusion_type()
             y += random(3) - 1;
 
             // Check keyboard
-            if (keyboard_check_needed() && check_key())
+            if (s_diffusion.keyboard_check_needed() && check_key())
             {
                 alloc_resume(20, 1);
                 if (mode != 2)
                 {
-                    put_resume(x_max, x_min, y_max, y_min);
+                    put_resume(s_diffusion.x_max, s_diffusion.x_min, s_diffusion.y_max, s_diffusion.y_min);
                 }
                 else
                 {
-                    put_resume(x_max, x_min, y_max, radius);
+                    put_resume(s_diffusion.x_max, s_diffusion.x_min, s_diffusion.y_max, radius);
                 }
 
-                s_kbd_check--;
+                s_diffusion.m_kbd_check--;
                 return 1;
             }
 
@@ -279,26 +287,26 @@ int diffusion_type()
         switch (mode)
         {
         case 0:
-            if (((x+border) > x_max) || ((x-border) < x_min)
-                || ((y-border) < y_min) || ((y+border) > y_max))
+            if (((x+border) > s_diffusion.x_max) || ((x-border) < s_diffusion.x_min)
+                || ((y-border) < s_diffusion.y_min) || ((y+border) > s_diffusion.y_max))
             {
                 // Increase box size, but not past the edge of the screen
-                y_min--;
-                y_max++;
-                x_min--;
-                x_max++;
-                if ((y_min == 0) || (x_min == 0))
+                s_diffusion.y_min--;
+                s_diffusion.y_max++;
+                s_diffusion.x_min--;
+                s_diffusion.x_max++;
+                if ((s_diffusion.y_min == 0) || (s_diffusion.x_min == 0))
                 {
                     return 0;
                 }
             }
             break;
         case 1: // Decrease ymin, but not past top of screen
-            if (y-border < y_min)
+            if (y-border < s_diffusion.y_min)
             {
-                y_min--;
+                s_diffusion.y_min--;
             }
-            if (y_min == 0)
+            if (s_diffusion.y_min == 0)
             {
                 return 0;
             }
