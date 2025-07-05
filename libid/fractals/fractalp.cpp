@@ -10,7 +10,7 @@
 #include "fractals/bif_may.h"
 #include "fractals/Bifurcation.h"
 #include "fractals/burning_ship.h"
-#include "fractals/cellular.h"
+#include "fractals/Cellular.h"
 #include "fractals/circle_pattern.h"
 #include "fractals/diffusion.h"
 #include "fractals/divide_brot.h"
