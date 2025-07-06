@@ -117,7 +117,7 @@ static double s_cdt{};
 static double s_xdt{};
 static double s_ydt{};
 static double s_zdt{};
-static double s_init_orbit_fp[3]{};
+static double s_init_orbit[3]{};
 
 // The following declarations used for Inverse Julia.
 static int      s_max_hits{};
@@ -301,19 +301,19 @@ bool orbit3d_per_image()
         s_projection = 1; // plot x and z
     }
 
-    s_init_orbit_fp[0] = 1;  // initial conditions
-    s_init_orbit_fp[1] = 1;
-    s_init_orbit_fp[2] = 1;
+    s_init_orbit[0] = 1;  // initial conditions
+    s_init_orbit[1] = 1;
+    s_init_orbit[2] = 1;
     if (g_fractal_type == FractalType::GINGERBREAD)
     {
-        s_init_orbit_fp[0] = g_params[0];        // initial conditions
-        s_init_orbit_fp[1] = g_params[1];
+        s_init_orbit[0] = g_params[0];        // initial conditions
+        s_init_orbit[1] = g_params[1];
     }
 
     if (g_fractal_type == FractalType::ICON || g_fractal_type == FractalType::ICON_3D)
     {
-        s_init_orbit_fp[0] = 0.01;  // initial conditions
-        s_init_orbit_fp[1] = 0.003;
+        s_init_orbit[0] = 0.01;  // initial conditions
+        s_init_orbit[1] = 0.003;
         s_connect = false;
         s_waste = 2000;
     }
@@ -332,8 +332,8 @@ bool orbit3d_per_image()
     }
     else if (g_fractal_type == FractalType::ICON || g_fractal_type == FractalType::ICON_3D)
     {
-        s_init_orbit_fp[0] = 0.01;  // initial conditions
-        s_init_orbit_fp[1] = 0.003;
+        s_init_orbit[0] = 0.01;  // initial conditions
+        s_init_orbit[1] = 0.003;
         s_connect = false;
         s_waste = 2000;
         // Initialize parameters
@@ -357,9 +357,9 @@ bool orbit3d_per_image()
         g_sin_x = std::sin(s_a);
         g_cos_x = std::cos(s_a);
         s_orbit = 0;
-        s_init_orbit_fp[0] = 0;
-        s_init_orbit_fp[1] = 0;
-        s_init_orbit_fp[2] = 0;
+        s_init_orbit[0] = 0;
+        s_init_orbit[1] = 0;
+        s_init_orbit[2] = 0;
     }
     else if (g_fractal_type == FractalType::HOPALONG  //
         || g_fractal_type == FractalType::MARTIN      //
@@ -367,9 +367,9 @@ bool orbit3d_per_image()
         || g_fractal_type == FractalType::QUADRUP_TWO //
         || g_fractal_type == FractalType::THREEPLY)
     {
-        s_init_orbit_fp[0] = 0;  // initial conditions
-        s_init_orbit_fp[1] = 0;
-        s_init_orbit_fp[2] = 0;
+        s_init_orbit[0] = 0;  // initial conditions
+        s_init_orbit[1] = 0;
+        s_init_orbit[2] = 0;
         s_connect = false;
         s_a =  g_params[0];
         s_b =  g_params[1];
@@ -435,17 +435,17 @@ bool orbit3d_per_image()
             break;
         case Major::RANDOM_WALK:
 random_walk:
-            s_init_orbit_fp[0] = 1 + sqrt.x / 2;
-            g_new_z.x = s_init_orbit_fp[0];
-            s_init_orbit_fp[1] = sqrt.y / 2;
-            g_new_z.y = s_init_orbit_fp[1];
+            s_init_orbit[0] = 1 + sqrt.x / 2;
+            g_new_z.x = s_init_orbit[0];
+            s_init_orbit[1] = sqrt.y / 2;
+            g_new_z.y = s_init_orbit[1];
             break;
         case Major::RANDOM_RUN:       // random run, choose intervals
             g_major_method = Major::RANDOM_RUN;
-            s_init_orbit_fp[0] = 1 + sqrt.x / 2;
-            g_new_z.x = s_init_orbit_fp[0];
-            s_init_orbit_fp[1] = sqrt.y / 2;
-            g_new_z.y = s_init_orbit_fp[1];
+            s_init_orbit[0] = 1 + sqrt.x / 2;
+            g_new_z.x = s_init_orbit[0];
+            s_init_orbit[1] = sqrt.y / 2;
+            g_new_z.y = s_init_orbit[1];
             break;
         }
     }
@@ -918,9 +918,9 @@ int orbit2d_type()
     setup_convert_to_screen(&cvt); // setup affine screen coord conversion
 
     // set up projection scheme
-    double x = s_init_orbit_fp[0];
-    double y = s_init_orbit_fp[1];
-    double z = s_init_orbit_fp[2];
+    double x = s_init_orbit[0];
+    double y = s_init_orbit[1];
+    double z = s_init_orbit[2];
     double *p0 = nullptr;
     double *p1 = nullptr;
     double *p2 = nullptr;
@@ -1075,9 +1075,9 @@ static int orbit3d_float_calc()
 
     ViewTransform3D inf;
     setup_convert_to_screen(&inf.cvt); // setup affine screen coord conversion
-    inf.orbit[0] = s_init_orbit_fp[0];
-    inf.orbit[1] = s_init_orbit_fp[1];
-    inf.orbit[2] = s_init_orbit_fp[2];
+    inf.orbit[0] = s_init_orbit[0];
+    inf.orbit[1] = s_init_orbit[1];
+    inf.orbit[2] = s_init_orbit[2];
 
     if (driver_is_disk())                  // this would KILL a disk drive!
     {

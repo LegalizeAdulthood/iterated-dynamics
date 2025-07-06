@@ -29,13 +29,13 @@ constexpr const char *to_string(Julibrot3DMode value)
 }
 
 extern bool                  g_julibrot;
-extern float                 g_eyes_fp;
+extern float                 g_eyes;
 extern Julibrot3DMode        g_julibrot_3d_mode;
-extern float                 g_julibrot_depth_fp;
-extern float                 g_julibrot_dist_fp;
-extern float                 g_julibrot_height_fp;
-extern float                 g_julibrot_origin_fp;
-extern float                 g_julibrot_width_fp;
+extern float                 g_julibrot_depth;
+extern float                 g_julibrot_dist;
+extern float                 g_julibrot_height;
+extern float                 g_julibrot_origin;
+extern float                 g_julibrot_width;
 extern double                g_julibrot_x_max;
 extern double                g_julibrot_x_min;
 extern double                g_julibrot_y_max;

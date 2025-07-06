@@ -2055,111 +2055,111 @@ TEST_F(TestParameterCommand, threeDModeMonocular)
 TEST_F(TestParameterCommand, julibrot3DZDots)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin_fp{g_julibrot_origin_fp, 111.0f};
+    ValueSaver saved_julibrot_origin_fp{g_julibrot_origin, 111.0f};
 
     exec_cmd_arg("julibrot3d=100");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(111.0f, g_julibrot_origin_fp);
+    EXPECT_EQ(111.0f, g_julibrot_origin);
 }
 
 TEST_F(TestParameterCommand, julibrot3DOrigin)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin_fp, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth_fp, 222.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
 
     exec_cmd_arg("julibrot3d=100/10");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin_fp);
-    EXPECT_EQ(222.0f, g_julibrot_depth_fp);
+    EXPECT_EQ(10.0f, g_julibrot_origin);
+    EXPECT_EQ(222.0f, g_julibrot_depth);
 }
 
 TEST_F(TestParameterCommand, julibrot3DDepth)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin_fp, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth_fp, 222.0f};
-    ValueSaver saved_julibrot_height{g_julibrot_height_fp, 333.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
+    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0f};
 
     exec_cmd_arg("julibrot3d=100/10/12");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin_fp);
-    EXPECT_EQ(12.0f, g_julibrot_depth_fp);
-    EXPECT_EQ(333.0f, g_julibrot_height_fp);
+    EXPECT_EQ(10.0f, g_julibrot_origin);
+    EXPECT_EQ(12.0f, g_julibrot_depth);
+    EXPECT_EQ(333.0f, g_julibrot_height);
 }
 
 TEST_F(TestParameterCommand, julibrot3DHeight)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin_fp, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth_fp, 222.0f};
-    ValueSaver saved_julibrot_height{g_julibrot_height_fp, 333.0f};
-    ValueSaver saved_julibrot_width{g_julibrot_width_fp, 444.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
+    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0f};
+    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0f};
 
     exec_cmd_arg("julibrot3d=100/10/12/14");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin_fp);
-    EXPECT_EQ(12.0f, g_julibrot_depth_fp);
-    EXPECT_EQ(14.0f, g_julibrot_height_fp);
-    EXPECT_EQ(444.0f, g_julibrot_width_fp);
+    EXPECT_EQ(10.0f, g_julibrot_origin);
+    EXPECT_EQ(12.0f, g_julibrot_depth);
+    EXPECT_EQ(14.0f, g_julibrot_height);
+    EXPECT_EQ(444.0f, g_julibrot_width);
 }
 
 TEST_F(TestParameterCommand, julibrot3DWidth)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin_fp, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth_fp, 222.0f};
-    ValueSaver saved_julibrot_height{g_julibrot_height_fp, 333.0f};
-    ValueSaver saved_julibrot_width{g_julibrot_width_fp, 444.0f};
-    ValueSaver saved_julibrot_dist{g_julibrot_dist_fp, 555.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
+    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0f};
+    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0f};
+    ValueSaver saved_julibrot_dist{g_julibrot_dist, 555.0f};
 
     exec_cmd_arg("julibrot3d=100/10/12/14/16");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin_fp);
-    EXPECT_EQ(12.0f, g_julibrot_depth_fp);
-    EXPECT_EQ(14.0f, g_julibrot_height_fp);
-    EXPECT_EQ(16.0f, g_julibrot_width_fp);
-    EXPECT_EQ(555.0f, g_julibrot_dist_fp);
+    EXPECT_EQ(10.0f, g_julibrot_origin);
+    EXPECT_EQ(12.0f, g_julibrot_depth);
+    EXPECT_EQ(14.0f, g_julibrot_height);
+    EXPECT_EQ(16.0f, g_julibrot_width);
+    EXPECT_EQ(555.0f, g_julibrot_dist);
 }
 
 TEST_F(TestParameterCommand, julibrot3DDistance)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin_fp, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth_fp, 222.0f};
-    ValueSaver saved_julibrot_height{g_julibrot_height_fp, 333.0f};
-    ValueSaver saved_julibrot_width{g_julibrot_width_fp, 444.0f};
-    ValueSaver saved_julibrot_dist{g_julibrot_dist_fp, 555.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
+    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0f};
+    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0f};
+    ValueSaver saved_julibrot_dist{g_julibrot_dist, 555.0f};
 
     exec_cmd_arg("julibrot3d=100/10/12/14/16/18");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin_fp);
-    EXPECT_EQ(12.0f, g_julibrot_depth_fp);
-    EXPECT_EQ(14.0f, g_julibrot_height_fp);
-    EXPECT_EQ(16.0f, g_julibrot_width_fp);
-    EXPECT_EQ(18.0f, g_julibrot_dist_fp);
+    EXPECT_EQ(10.0f, g_julibrot_origin);
+    EXPECT_EQ(12.0f, g_julibrot_depth);
+    EXPECT_EQ(14.0f, g_julibrot_height);
+    EXPECT_EQ(16.0f, g_julibrot_width);
+    EXPECT_EQ(18.0f, g_julibrot_dist);
 }
 
 TEST_F(TestParameterCommand, julibrotEyes)
 {
-    ValueSaver saved_eyes{g_eyes_fp, 111.0f};
+    ValueSaver saved_eyes{g_eyes, 111.0f};
 
     exec_cmd_arg("julibroteyes=10");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(10.0f, g_eyes_fp);
+    EXPECT_EQ(10.0f, g_eyes);
 }
 
 TEST_F(TestParameterCommand, julibrotFromToBadNumberOfValues)

@@ -745,22 +745,22 @@ gfp_top:
         param_values[prompt_num].uval.ch.list = g_julibrot_3d_options;
         choices[prompt_num++] = "3D Mode";
 
-        param_values[prompt_num].uval.dval = g_eyes_fp;
+        param_values[prompt_num].uval.dval = g_eyes;
         param_values[prompt_num].type = 'f';
         choices[prompt_num++] = "Distance between eyes";
-        param_values[prompt_num].uval.dval = g_julibrot_origin_fp;
+        param_values[prompt_num].uval.dval = g_julibrot_origin;
         param_values[prompt_num].type = 'f';
         choices[prompt_num++] = "Location of z origin";
-        param_values[prompt_num].uval.dval = g_julibrot_depth_fp;
+        param_values[prompt_num].uval.dval = g_julibrot_depth;
         param_values[prompt_num].type = 'f';
         choices[prompt_num++] = "Depth of z";
-        param_values[prompt_num].uval.dval = g_julibrot_height_fp;
+        param_values[prompt_num].uval.dval = g_julibrot_height;
         param_values[prompt_num].type = 'f';
         choices[prompt_num++] = "Screen height";
-        param_values[prompt_num].uval.dval = g_julibrot_width_fp;
+        param_values[prompt_num].uval.dval = g_julibrot_width;
         param_values[prompt_num].type = 'f';
         choices[prompt_num++] = "Screen width";
-        param_values[prompt_num].uval.dval = g_julibrot_dist_fp;
+        param_values[prompt_num].uval.dval = g_julibrot_dist;
         param_values[prompt_num].type = 'f';
         choices[prompt_num++] = "Distance to Screen";
     }
@@ -920,12 +920,12 @@ gfp_top:
         g_julibrot_y_min    = param_values[prompt_num++].uval.dval;
         g_julibrot_z_dots      = param_values[prompt_num++].uval.ival;
         g_julibrot_3d_mode = static_cast<Julibrot3DMode>(param_values[prompt_num++].uval.ch.val);
-        g_eyes_fp     = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_origin_fp   = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_depth_fp    = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_height_fp   = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_width_fp    = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_dist_fp     = (float)param_values[prompt_num++].uval.dval;
+        g_eyes     = (float)param_values[prompt_num++].uval.dval;
+        g_julibrot_origin   = (float)param_values[prompt_num++].uval.dval;
+        g_julibrot_depth    = (float)param_values[prompt_num++].uval.dval;
+        g_julibrot_height   = (float)param_values[prompt_num++].uval.dval;
+        g_julibrot_width    = (float)param_values[prompt_num++].uval.dval;
+        g_julibrot_dist     = (float)param_values[prompt_num++].uval.dval;
         ret = 1;  // force new calc since not resumable anyway
     }
     if (current_type == FractalType::INVERSE_JULIA)

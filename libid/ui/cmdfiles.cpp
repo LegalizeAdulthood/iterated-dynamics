@@ -177,17 +177,17 @@ int g_transparent_color_3d[2]{};             // transparency min/max values
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?
-std::string g_formula_filename;      // file to find (type=)formulas in
-std::string g_formula_name;          // Name of the Formula (if not null)
-std::string g_l_system_filename;     // file to find (type=)L-System's in
-std::string g_l_system_name;         // Name of L-System
-std::string g_command_file;          // file to find command sets in
-std::string g_command_name;          // Name of Command set
-std::string g_ifs_filename;          // file to find (type=)IFS in
-std::string g_ifs_name;              // Name of the IFS def'n (if not null)
-id::SearchPath g_search_for;         //
-std::vector<float> g_ifs_definition; // ifs parameters
-bool g_ifs_type{};                   // false=2d, true=3d
+std::string g_formula_filename;              // file to find (type=)formulas in
+std::string g_formula_name;                  // Name of the Formula (if not null)
+std::string g_l_system_filename;             // file to find (type=)L-System's in
+std::string g_l_system_name;                 // Name of L-System
+std::string g_command_file;                  // file to find command sets in
+std::string g_command_name;                  // Name of Command set
+std::string g_ifs_filename;                  // file to find (type=)IFS in
+std::string g_ifs_name;                      // Name of the IFS def'n (if not null)
+id::SearchPath g_search_for;                 //
+std::vector<float> g_ifs_definition;         // ifs parameters
+bool g_ifs_type{};                           // false=2d, true=3d
 Byte g_text_color[31] = {
     BLUE * 16 + LT_WHITE,    // C_TITLE           title background
     BLUE * 16 + LT_GREEN,    // C_TITLE_DEV       development vsn foreground
@@ -513,10 +513,10 @@ static void init_vars_fractal()
     g_distance_estimator_width_factor = 71;                         //
     g_force_symmetry = SymmetryType::NOT_FORCED;                    //
     g_x_min = -2.5;                                                 //
-    g_x_3rd = -2.5;                                              //
+    g_x_3rd = -2.5;                                                 //
     g_x_max = 1.5;                                                  // initial corner values
     g_y_min = -1.5;                                                 //
-    g_y_3rd = -1.5;                                              //
+    g_y_3rd = -1.5;                                                 //
     g_y_max = 1.5;                                                  // initial corner values
     g_bf_math = BFMathType::NONE;                                   //
     g_potential_16bit = false;                                      //
@@ -529,7 +529,7 @@ static void init_vars_fractal()
     g_iteration_ranges.clear();                                     //
     g_iteration_ranges_len = 0;                                     //
     g_use_center_mag = true;                                        // use center-mag, not corners
-    g_color_state = ColorState::DEFAULT_MAP;                            //
+    g_color_state = ColorState::DEFAULT_MAP;                        //
     g_colors_preloaded = false;                                     //
     g_color_cycle_range_lo = 1;                                     //
     g_color_cycle_range_hi = 255;                                   // color cycling default range
@@ -556,12 +556,12 @@ static void init_vars_fractal()
     g_julibrot_y_min = -.25;                                        //
     g_julibrot_x_max = -.83;                                        //
     g_julibrot_y_max = .25;                                         //
-    g_julibrot_origin_fp = 8;                                       //
-    g_julibrot_height_fp = 7;                                       //
-    g_julibrot_width_fp = 10;                                       //
-    g_julibrot_dist_fp = 24;                                        //
-    g_eyes_fp = 2.5F;                                               //
-    g_julibrot_depth_fp = 8;                                        //
+    g_julibrot_origin = 8;                                          //
+    g_julibrot_height = 7;                                          //
+    g_julibrot_width = 10;                                          //
+    g_julibrot_dist = 24;                                           //
+    g_eyes = 2.5F;                                                  //
+    g_julibrot_depth = 8;                                           //
     g_new_orbit_type = FractalType::JULIA;                          //
     g_julibrot_z_dots = 128;                                        //
     init_vars3d();                                                  //
@@ -2310,23 +2310,23 @@ static CmdArgFlags cmd_julibrot3d(const Command &cmd)
     }
     if (cmd.total_params > 1)
     {
-        g_julibrot_origin_fp = (float) cmd.float_vals[1];
+        g_julibrot_origin = (float) cmd.float_vals[1];
     }
     if (cmd.total_params > 2)
     {
-        g_julibrot_depth_fp = (float) cmd.float_vals[2];
+        g_julibrot_depth = (float) cmd.float_vals[2];
     }
     if (cmd.total_params > 3)
     {
-        g_julibrot_height_fp = (float) cmd.float_vals[3];
+        g_julibrot_height = (float) cmd.float_vals[3];
     }
     if (cmd.total_params > 4)
     {
-        g_julibrot_width_fp = (float) cmd.float_vals[4];
+        g_julibrot_width = (float) cmd.float_vals[4];
     }
     if (cmd.total_params > 5)
     {
-        g_julibrot_dist_fp = (float) cmd.float_vals[5];
+        g_julibrot_dist = (float) cmd.float_vals[5];
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -2338,7 +2338,7 @@ static CmdArgFlags cmd_julibrot_eyes(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_eyes_fp = (float) cmd.float_vals[0];
+    g_eyes = (float) cmd.float_vals[0];
     return CmdArgFlags::FRACTAL_PARAM;
 }
 

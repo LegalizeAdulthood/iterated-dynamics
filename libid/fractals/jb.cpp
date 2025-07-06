@@ -57,9 +57,9 @@ struct JuliBrot
 
 } // namespace
 
-static JuliBrot s_jb_fp{};
+static JuliBrot s_jb{};
 static int s_b_base{};
-static float s_br_ratio_fp{1.0f};
+static float s_br_ratio{1.0F};
 
 bool g_julibrot{}; // flag for julibrot
 
@@ -70,12 +70,12 @@ double g_julibrot_x_max{-.83};
 double g_julibrot_y_max{.25};
 //
 int g_julibrot_z_dots{128};
-float g_julibrot_origin_fp{8.0f};
-float g_julibrot_height_fp{7.0f};
-float g_julibrot_width_fp{10.0f};
-float g_julibrot_dist_fp{24.0f};
-float g_eyes_fp{2.5f};
-float g_julibrot_depth_fp{8.0f};
+float g_julibrot_origin{8.0F};
+float g_julibrot_height{7.0F};
+float g_julibrot_width{10.0F};
+float g_julibrot_dist{24.0F};
+float g_eyes{2.5F};
+float g_julibrot_depth{8.0F};
 Julibrot3DMode g_julibrot_3d_mode{};
 FractalType g_new_orbit_type{FractalType::JULIA};
 const char *g_julibrot_3d_options[]{
@@ -101,31 +101,31 @@ bool julibrot_per_image()
         return false;
     }
 
-    s_jb_fp.x_offset = (g_x_max + g_x_min) / 2;     // Calculate average
-    s_jb_fp.y_offset = (g_y_max + g_y_min) / 2;     // Calculate average
-    s_jb_fp.delta_mx = (g_julibrot_x_max - g_julibrot_x_min) / g_julibrot_z_dots;
-    s_jb_fp.delta_my = (g_julibrot_y_max - g_julibrot_y_min) / g_julibrot_z_dots;
-    g_float_param = &s_jb_fp.jb_c;
-    s_jb_fp.x_per_inch = (g_x_min - g_x_max) / g_julibrot_width_fp;
-    s_jb_fp.y_per_inch = (g_y_max - g_y_min) / g_julibrot_height_fp;
-    s_jb_fp.inch_per_x_dot = g_julibrot_width_fp / g_logical_screen_x_dots;
-    s_jb_fp.inch_per_y_dot = g_julibrot_height_fp / g_logical_screen_y_dots;
-    s_jb_fp.init_z = g_julibrot_origin_fp - (g_julibrot_depth_fp / 2);
+    s_jb.x_offset = (g_x_max + g_x_min) / 2;     // Calculate average
+    s_jb.y_offset = (g_y_max + g_y_min) / 2;     // Calculate average
+    s_jb.delta_mx = (g_julibrot_x_max - g_julibrot_x_min) / g_julibrot_z_dots;
+    s_jb.delta_my = (g_julibrot_y_max - g_julibrot_y_min) / g_julibrot_z_dots;
+    g_float_param = &s_jb.jb_c;
+    s_jb.x_per_inch = (g_x_min - g_x_max) / g_julibrot_width;
+    s_jb.y_per_inch = (g_y_max - g_y_min) / g_julibrot_height;
+    s_jb.inch_per_x_dot = g_julibrot_width / g_logical_screen_x_dots;
+    s_jb.inch_per_y_dot = g_julibrot_height / g_logical_screen_y_dots;
+    s_jb.init_z = g_julibrot_origin - (g_julibrot_depth / 2);
     if (g_julibrot_3d_mode == Julibrot3DMode::MONOCULAR)
     {
-        s_jb_fp.right_eye.x = 0.0;
+        s_jb.right_eye.x = 0.0;
     }
     else
     {
-        s_jb_fp.right_eye.x = g_eyes_fp / 2;
+        s_jb.right_eye.x = g_eyes / 2;
     }
-    s_jb_fp.left_eye.x = -s_jb_fp.right_eye.x;
-    s_jb_fp.right_eye.y = 0;
-    s_jb_fp.left_eye.y = 0;
-    s_jb_fp.right_eye.zx = g_julibrot_dist_fp;
-    s_jb_fp.left_eye.zx = s_jb_fp.right_eye.zx;
-    s_jb_fp.right_eye.zy = g_julibrot_dist_fp;
-    s_jb_fp.left_eye.zy = s_jb_fp.right_eye.zy;
+    s_jb.left_eye.x = -s_jb.right_eye.x;
+    s_jb.right_eye.y = 0;
+    s_jb.left_eye.y = 0;
+    s_jb.right_eye.zx = g_julibrot_dist;
+    s_jb.left_eye.zx = s_jb.right_eye.zx;
+    s_jb.right_eye.zy = g_julibrot_dist;
+    s_jb.left_eye.zy = s_jb.right_eye.zy;
     s_b_base = 128;
 
     if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
@@ -154,40 +154,40 @@ bool julibrot_per_image()
 
 int julibrot_per_pixel()
 {
-    s_jb_fp.jx = ((s_jb_fp.per->x - s_jb_fp.x_pixel) * s_jb_fp.init_z / g_julibrot_dist_fp - s_jb_fp.x_pixel) * s_jb_fp.x_per_inch;
-    s_jb_fp.jx += s_jb_fp.x_offset;
-    s_jb_fp.delta_jx = (g_julibrot_depth_fp / g_julibrot_dist_fp) * (s_jb_fp.per->x - s_jb_fp.x_pixel) * s_jb_fp.x_per_inch / g_julibrot_z_dots;
+    s_jb.jx = ((s_jb.per->x - s_jb.x_pixel) * s_jb.init_z / g_julibrot_dist - s_jb.x_pixel) * s_jb.x_per_inch;
+    s_jb.jx += s_jb.x_offset;
+    s_jb.delta_jx = (g_julibrot_depth / g_julibrot_dist) * (s_jb.per->x - s_jb.x_pixel) * s_jb.x_per_inch / g_julibrot_z_dots;
 
-    s_jb_fp.jy = ((s_jb_fp.per->y - s_jb_fp.y_pixel) * s_jb_fp.init_z / g_julibrot_dist_fp - s_jb_fp.y_pixel) * s_jb_fp.y_per_inch;
-    s_jb_fp.jy += s_jb_fp.y_offset;
-    s_jb_fp.delta_jy = g_julibrot_depth_fp / g_julibrot_dist_fp * (s_jb_fp.per->y - s_jb_fp.y_pixel) * s_jb_fp.y_per_inch / g_julibrot_z_dots;
+    s_jb.jy = ((s_jb.per->y - s_jb.y_pixel) * s_jb.init_z / g_julibrot_dist - s_jb.y_pixel) * s_jb.y_per_inch;
+    s_jb.jy += s_jb.y_offset;
+    s_jb.delta_jy = g_julibrot_depth / g_julibrot_dist * (s_jb.per->y - s_jb.y_pixel) * s_jb.y_per_inch / g_julibrot_z_dots;
 
     return 1;
 }
 
 int z_line(double x, double y)
 {
-    s_jb_fp.x_pixel = x;
-    s_jb_fp.y_pixel = y;
-    s_jb_fp.mx = g_julibrot_x_min;
-    s_jb_fp.my = g_julibrot_y_min;
+    s_jb.x_pixel = x;
+    s_jb.y_pixel = y;
+    s_jb.mx = g_julibrot_x_min;
+    s_jb.my = g_julibrot_y_min;
     switch (g_julibrot_3d_mode)
     {
     case Julibrot3DMode::MONOCULAR:
     case Julibrot3DMode::LEFT_EYE:
-        s_jb_fp.per = &s_jb_fp.left_eye;
+        s_jb.per = &s_jb.left_eye;
         break;
     case Julibrot3DMode::RIGHT_EYE:
-        s_jb_fp.per = &s_jb_fp.right_eye;
+        s_jb.per = &s_jb.right_eye;
         break;
     case Julibrot3DMode::RED_BLUE:
         if ((g_row + g_col) & 1)
         {
-            s_jb_fp.per = &s_jb_fp.left_eye;
+            s_jb.per = &s_jb.left_eye;
         }
         else
         {
-            s_jb_fp.per = &s_jb_fp.right_eye;
+            s_jb.per = &s_jb.right_eye;
         }
         break;
     }
@@ -199,19 +199,19 @@ int z_line(double x, double y)
         {
             g_old_z.x = 0.0;
             g_old_z.y = 0.0;
-            s_jb_fp.jb_c.x = 0.0;
-            s_jb_fp.jb_c.y = 0.0;
-            g_quaternion_c = s_jb_fp.jx;
-            g_quaternion_ci = s_jb_fp.jy;
-            g_quaternion_cj = s_jb_fp.mx;
-            g_quaternion_ck = s_jb_fp.my;
+            s_jb.jb_c.x = 0.0;
+            s_jb.jb_c.y = 0.0;
+            g_quaternion_c = s_jb.jx;
+            g_quaternion_ci = s_jb.jy;
+            g_quaternion_cj = s_jb.mx;
+            g_quaternion_ck = s_jb.my;
         }
         else
         {
-            g_old_z.x = s_jb_fp.jx;
-            g_old_z.y = s_jb_fp.jy;
-            s_jb_fp.jb_c.x = s_jb_fp.mx;
-            s_jb_fp.jb_c.y = s_jb_fp.my;
+            g_old_z.x = s_jb.jx;
+            g_old_z.y = s_jb.jy;
+            s_jb.jb_c.x = s_jb.mx;
+            s_jb.jb_c.y = s_jb.my;
             g_quaternion_c = g_params[0];
             g_quaternion_ci = g_params[1];
             g_quaternion_cj = g_params[2];
@@ -242,7 +242,7 @@ int z_line(double x, double y)
                 }
                 else
                 {
-                    g_color = (int)(g_color * s_br_ratio_fp);
+                    g_color = (int)(g_color * s_br_ratio);
                     g_color = std::max(g_color, 1);
                     g_color = std::min(g_color, 127);
                     g_plot(g_col, g_row, 127 + s_b_base - g_color);
@@ -256,10 +256,10 @@ int z_line(double x, double y)
             s_plotted = 1;
             break;
         }
-        s_jb_fp.mx += s_jb_fp.delta_mx;
-        s_jb_fp.my += s_jb_fp.delta_my;
-        s_jb_fp.jx += s_jb_fp.delta_jx;
-        s_jb_fp.jy += s_jb_fp.delta_jy;
+        s_jb.mx += s_jb.delta_mx;
+        s_jb.my += s_jb.delta_my;
+        s_jb.jx += s_jb.delta_jx;
+        s_jb.jy += s_jb.delta_jy;
     }
     return 0;
 }
@@ -282,11 +282,11 @@ int calc_standard_4d_type()
     }
 
     double y = 0.0;
-    for (int y_dot = (g_logical_screen_y_dots >> 1) - 1; y_dot >= 0; y_dot--, y -= s_jb_fp.inch_per_y_dot)
+    for (int y_dot = (g_logical_screen_y_dots >> 1) - 1; y_dot >= 0; y_dot--, y -= s_jb.inch_per_y_dot)
     {
         s_plotted = 0;
-        double x = -g_julibrot_width_fp / 2;
-        for (int x_dot = 0; x_dot < g_logical_screen_x_dots; x_dot++, x += s_jb_fp.inch_per_x_dot)
+        double x = -g_julibrot_width / 2;
+        for (int x_dot = 0; x_dot < g_logical_screen_x_dots; x_dot++, x += s_jb.inch_per_x_dot)
         {
             g_col = x_dot;
             g_row = y_dot;

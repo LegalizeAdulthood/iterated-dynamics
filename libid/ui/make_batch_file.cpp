@@ -792,19 +792,19 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             put_param(" %s=%.15g/%.15g/%.15g/%.15g",
                      "julibrotfromto", g_julibrot_x_max, g_julibrot_x_min, g_julibrot_y_max, g_julibrot_y_min);
             // these rarely change
-            if (g_julibrot_origin_fp != 8
-                || g_julibrot_height_fp != 7
-                || g_julibrot_width_fp != 10
-                || g_julibrot_dist_fp != 24
-                || g_julibrot_depth_fp != 8
+            if (g_julibrot_origin != 8
+                || g_julibrot_height != 7
+                || g_julibrot_width != 10
+                || g_julibrot_dist != 24
+                || g_julibrot_depth != 8
                 || g_julibrot_z_dots != 128)
             {
                 put_param(" julibrot3d=%d/%g/%g/%g/%g/%g",
-                         g_julibrot_z_dots, g_julibrot_origin_fp, g_julibrot_depth_fp, g_julibrot_height_fp, g_julibrot_width_fp, g_julibrot_dist_fp);
+                         g_julibrot_z_dots, g_julibrot_origin, g_julibrot_depth, g_julibrot_height, g_julibrot_width, g_julibrot_dist);
             }
-            if (g_eyes_fp != 0)
+            if (g_eyes != 0)
             {
-                put_param(" julibroteyes=%g", g_eyes_fp);
+                put_param(" julibroteyes=%g", g_eyes);
             }
             if (g_new_orbit_type != FractalType::JULIA)
             {
