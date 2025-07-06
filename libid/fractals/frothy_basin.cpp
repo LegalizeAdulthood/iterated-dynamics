@@ -110,7 +110,6 @@ bool Froth::per_image()
     constexpr double sin_theta = SQRT3 / 2; // sin(2*PI/3)
     constexpr double cos_theta = -0.5;      // cos(2*PI/3)
 
-    // for the all important backwards compatibility
     if (g_params[0] != 2.0)
     {
         g_params[0] = 1;
