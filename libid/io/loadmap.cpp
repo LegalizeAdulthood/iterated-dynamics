@@ -23,12 +23,21 @@
 namespace
 {
 
+#ifdef _WIN32
+#pragma pack(push, 1)
+#define ID_PACKED
+#else
+#define ID_PACKED __attribute__((packed))
+#endif
 struct PaletteType
 {
     Byte red;
     Byte green;
     Byte blue;
-};
+} ID_PACKED;
+#ifdef _WIN32
+#pragma pack(pop)
+#endif
 
 } // namespace
 
