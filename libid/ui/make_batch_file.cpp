@@ -7,6 +7,7 @@
 #include "3d/plot3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
+#include "engine/color_state.h"
 #include "engine/convert_center_mag.h"
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
@@ -140,7 +141,7 @@ MakeParParams::MakeParParams()
         }
 
         const char *str_ptr{};
-        if (g_color_state == ColorState::DEFAULT)
+        if (g_color_state == ColorState::DEFAULT_MAP)
         {
             // default colors
             if (g_map_specified)

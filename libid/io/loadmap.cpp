@@ -2,6 +2,7 @@
 //
 #include "io/loadmap.h"
 
+#include "engine/color_state.h"
 #include "io/find_path.h"
 #include "io/has_ext.h"
 #include "io/merge_path_names.h"

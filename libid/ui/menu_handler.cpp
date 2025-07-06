@@ -3,6 +3,7 @@
 #include "ui/menu_handler.h"
 
 #include "engine/calcfrac.h"
+#include "engine/color_state.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
@@ -103,7 +104,7 @@ MainState color_cycle(MainContext &context)
     }
     if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3) != 0)
     {
-        g_color_state = ColorState::UNKNOWN;
+        g_color_state = ColorState::UNKNOWN_MAP;
         save_history_info();
     }
     return MainState::CONTINUE;
@@ -132,7 +133,7 @@ MainState color_editing(MainContext &context)
         edit_palette();
         if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3) != 0)
         {
-            g_color_state = ColorState::UNKNOWN;
+            g_color_state = ColorState::UNKNOWN_MAP;
             save_history_info();
         }
     }

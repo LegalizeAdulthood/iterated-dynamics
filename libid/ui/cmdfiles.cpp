@@ -9,6 +9,7 @@
 #include "engine/bailout_formula.h"
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
+#include "engine/color_state.h"
 #include "engine/convert_corners.h"
 #include "engine/engine_timer.h"
 #include "engine/fractalb.h"
@@ -153,7 +154,6 @@ std::vector<int> g_iteration_ranges;                      // iter->color ranges 
 int g_iteration_ranges_len{};                             // size of ranges array
 Byte g_map_clut[256][3];                                  // map= (default colors)
 bool g_map_specified{};                                   // map= specified
-ColorState g_color_state{ColorState::DEFAULT};            // g_dac_box matches default (bios or map=)
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
 double g_math_tol[2]{.05, .05};                           // For math transition from double to bignum
@@ -531,7 +531,7 @@ static void init_vars_fractal()
     g_iteration_ranges.clear();                                     //
     g_iteration_ranges_len = 0;                                     //
     g_use_center_mag = true;                                        // use center-mag, not corners
-    g_color_state = ColorState::DEFAULT;                            //
+    g_color_state = ColorState::DEFAULT_MAP;                            //
     g_colors_preloaded = false;                                     //
     g_color_cycle_range_lo = 1;                                     //
     g_color_cycle_range_hi = 255;                                   // color cycling default range
@@ -1715,7 +1715,7 @@ static CmdArgFlags parse_colors(const char *value)
             g_dac_box[i][2] = 40;
             ++i;
         }
-        g_color_state = ColorState::UNKNOWN;
+        g_color_state = ColorState::UNKNOWN_MAP;
     }
     g_colors_preloaded = true;
     std::memcpy(g_old_dac_box, g_dac_box, 256*3);

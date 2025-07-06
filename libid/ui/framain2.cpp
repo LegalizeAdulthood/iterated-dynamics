@@ -4,6 +4,7 @@
 
 #include "3d/line3d.h"
 #include "engine/calc_frac_init.h"
+#include "engine/color_state.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
@@ -379,7 +380,7 @@ MainState big_while_loop(MainContext &context)
                     // disk video, setvideomode via bios didn't get it right, so:
                     validate_luts("default"); // read the default palette file
                 }
-                g_color_state = ColorState::DEFAULT;
+                g_color_state = ColorState::DEFAULT_MAP;
             }
             if (g_view_window)
             {

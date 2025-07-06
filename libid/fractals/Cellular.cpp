@@ -5,6 +5,7 @@
 #include "fractals/Cellular.h"
 
 #include "engine/calcfrac.h"
+#include "engine/color_state.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
 #include "engine/random_seed.h"
@@ -419,7 +420,7 @@ static void set_cellular_palette()
     static const Byte YELLOW[3] = { 242, 234, 73 };
     static const Byte BROWN[3]  = { 170, 85, 0 };
 
-    if (g_map_specified && g_color_state != ColorState::DEFAULT)
+    if (g_map_specified && g_color_state != ColorState::DEFAULT_MAP)
     {
         return;       // map= specified
     }

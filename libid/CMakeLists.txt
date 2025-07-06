@@ -15,6 +15,7 @@ add_library(libid
     include/engine/calcfrac.h engine/calcfrac.cpp
     include/engine/calmanfp.h engine/calmanfp.cpp
     include/engine/check_key.h engine/check_key.cpp
+    include/engine/color_state.h engine/color_state.cpp
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
     include/engine/convert_corners.h engine/convert_corners.cpp
     include/engine/diffusion_scan.h engine/diffusion_scan.cpp

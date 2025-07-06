@@ -1,10 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-/*
-
-Miscellaneous fractal-specific code
-
-*/
 #include "ui/bifurcation.h"
 
 #include "engine/resume.h"

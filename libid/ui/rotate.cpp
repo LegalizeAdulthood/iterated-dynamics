@@ -5,6 +5,7 @@
 */
 #include "ui/rotate.h"
 
+#include "engine/color_state.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "io/loadmap.h"

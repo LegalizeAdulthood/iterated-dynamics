@@ -5,14 +5,13 @@
 #include "fractals/FrothyBasin.h"
 
 #include "engine/calcfrac.h"
-#include "engine/check_key.h"
+#include "engine/color_state.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"
 #include "io/loadmap.h"
-#include "misc/Driver.h"
 #include "ui/cmdfiles.h"
 #include "ui/spindac.h"
 
@@ -37,7 +36,7 @@ double FrothyBasin::top_x_mapping(double x)
 // color maps which attempt to replicate the images of James Alexander.
 void FrothyBasin::set_froth_palette()
 {
-    if (g_color_state != ColorState::DEFAULT)   // 0 means g_dac_box matches default
+    if (g_color_state != ColorState::DEFAULT_MAP)   // 0 means g_dac_box matches default
     {
         return;
     }
@@ -70,7 +69,7 @@ void FrothyBasin::set_froth_palette()
         {
             return;
         }
-        g_color_state = ColorState::DEFAULT; // treat map as default
+        g_color_state = ColorState::DEFAULT_MAP; // treat map as default
         spin_dac(0, 1);
     }
 }

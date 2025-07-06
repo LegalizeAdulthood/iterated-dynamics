@@ -14,6 +14,7 @@
 
 #include "3d/plot3d.h"
 #include "engine/calcfrac.h"
+#include "engine/color_state.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
@@ -189,7 +190,7 @@ int gif_view()
             }
         }
     }
-    g_color_state = ColorState::UNKNOWN; // colors aren't default and not a known .map file
+    g_color_state = ColorState::UNKNOWN_MAP; // colors aren't default and not a known .map file
 
     // don't read if glasses
     if (g_display_3d != Display3DMode::NONE && g_map_set && !glasses_alternating_or_superimpose())
