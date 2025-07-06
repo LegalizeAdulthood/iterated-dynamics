@@ -24,8 +24,14 @@ static Byte s_stack[4096]{}; // common temp, two put_line calls
 
 struct Tess             // one of these per box to be done gets stacked
 {
-    int x1, x2, y1, y2;      // left/right top/bottom x/y coords
-    int top, bot, lft, rgt;  // edge colors, -1 mixed, -2 unknown
+    int x1{};
+    int x2{};
+    int y1{};
+    int y2{};                  // left/right top/bottom x/y coords
+    int top{};
+    int bot{};
+    int lft{};
+    int rgt{}; // edge colors, -1 mixed, -2 unknown
 };
 
 int tesseral()
