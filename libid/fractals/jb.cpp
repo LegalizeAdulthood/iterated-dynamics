@@ -89,7 +89,7 @@ static int s_z_pixel;
 static int s_plotted;
 static long s_n;
 
-static int z_line(double x, double y);
+static void z_line(double x, double y);
 
 bool julibrot_per_image()
 {
@@ -165,7 +165,7 @@ int julibrot_per_pixel()
     return 1;
 }
 
-int z_line(double x, double y)
+void z_line(double x, double y)
 {
     s_jb.x_pixel = x;
     s_jb.y_pixel = y;
@@ -213,13 +213,10 @@ int z_line(double x, double y)
             s_jb.jb_c.x = s_jb.mx;
             s_jb.jb_c.y = s_jb.my;
             g_quaternion_c = g_params[0];
+
             g_quaternion_ci = g_params[1];
             g_quaternion_cj = g_params[2];
             g_quaternion_ck = g_params[3];
-        }
-        if (driver_key_pressed())
-        {
-            return -1;
         }
         g_temp_sqr_x = sqr(g_old_z.x);
         g_temp_sqr_y = sqr(g_old_z.y);
@@ -261,7 +258,6 @@ int z_line(double x, double y)
         s_jb.jx += s_jb.delta_jx;
         s_jb.jy += s_jb.delta_jy;
     }
-    return 0;
 }
 
 int calc_standard_4d_type()
@@ -288,18 +284,16 @@ int calc_standard_4d_type()
         double x = -g_julibrot_width / 2;
         for (int x_dot = 0; x_dot < g_logical_screen_x_dots; x_dot++, x += s_jb.inch_per_x_dot)
         {
+            if (driver_key_pressed())
+            {
+                return -1;
+            }
             g_col = x_dot;
             g_row = y_dot;
-            if (z_line(x, y) < 0)
-            {
-                return -1;
-            }
+            z_line(x, y);
             g_col = g_logical_screen_x_dots - g_col - 1;
             g_row = g_logical_screen_y_dots - g_row - 1;
-            if (z_line(-x, -y) < 0)
-            {
-                return -1;
-            }
+            z_line(-x, -y);
         }
         if (s_plotted == 0)
         {
