@@ -12,7 +12,6 @@
 #include "fractals/burning_ship.h"
 #include "fractals/Cellular.h"
 #include "fractals/circle_pattern.h"
-#include "fractals/diffusion.h"
 #include "fractals/divide_brot.h"
 #include "fractals/escher.h"
 #include "fractals/fn_or_fn.h"
@@ -44,6 +43,7 @@
 #include "ui/ant.h"
 #include "ui/bifurcation.h"
 #include "ui/cellular.h"
+#include "ui/diffusion.h"
 
 #include <algorithm>
 #include <array>

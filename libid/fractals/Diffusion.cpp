@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/diffusion.h"
+#include "fractals/Diffusion.h"
 
 #include "engine/calcfrac.h"
-#include "engine/check_key.h"
 #include "engine/id_data.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "math/fpu087.h"
-#include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/cmdfiles.h"
 #include "ui/video.h"
 
 #include <algorithm>
@@ -348,19 +345,3 @@ bool Diffusion::adjust_limits()
 }
 
 } // namespace id::fractals
-
-int diffusion_type()
-{
-    id::fractals::Diffusion d;
-
-    while (d.iterate())
-    {
-        if (check_key())
-        {
-            d.suspend();
-            return 1;
-        }
-    }
-
-    return 0;
-}

@@ -54,7 +54,7 @@ add_library(libid
     include/fractals/Cellular.h fractals/Cellular.cpp
     include/fractals/check_orbit_name.h fractals/check_orbit_name.cpp
     include/fractals/circle_pattern.h fractals/circle_pattern.cpp
-    include/fractals/diffusion.h fractals/diffusion.cpp
+    include/fractals/Diffusion.h fractals/Diffusion.cpp
     include/fractals/divide_brot.h fractals/divide_brot.cpp
     include/fractals/escher.h fractals/escher.cpp
     include/fractals/fn_or_fn.h fractals/fn_or_fn.cpp
@@ -158,6 +158,7 @@ add_library(libid
     include/ui/cmdfiles.h ui/cmdfiles.cpp
     include/ui/cmdfiles_test.h
     include/ui/comments.h ui/comments.cpp
+    include/ui/diffusion.h ui/diffusion.cpp
     include/ui/diskvid.h ui/diskvid.cpp
     include/ui/double_to_string.h ui/double_to_string.cpp
     include/ui/do_pause.h ui/do_pause.cpp

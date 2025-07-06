@@ -50,5 +50,3 @@ private:
 };
 
 } // namespace id::fractals
-
-int diffusion_type();
