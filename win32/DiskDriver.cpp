@@ -388,7 +388,6 @@ void DiskDriver::set_video_mode(VideoInfo *mode)
     g_good_mode = true;
     g_and_color = g_colors - 1;
     g_box_count = 0;
-    g_dac_learn = true;
     g_dac_count = g_cycle_limit;
     g_got_real_dac = true;
     read_palette();
