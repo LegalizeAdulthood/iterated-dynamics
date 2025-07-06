@@ -1231,7 +1231,7 @@ int calc_mandelbrot_type()
         {
             g_color_iter = log_table_calc(g_color_iter);
         }
-        g_color = std::abs((int)g_color_iter);
+        g_color = std::abs(g_color_iter);
         if (g_color_iter >= g_colors)
         {
             // don't use color 0 unless from inside/outside
@@ -1940,7 +1940,7 @@ plot_inside: // we're "inside"
 
 plot_pixel:
 
-    g_color = std::abs((int)g_color_iter);
+    g_color = std::abs(g_color_iter);
     if (g_color_iter >= g_colors)
     {
         // don't use color 0 unless from inside/outside
@@ -1963,7 +1963,7 @@ plot_pixel:
     g_plot(g_col, g_row, g_color);
 
     g_max_iterations = save_max_it;
-    if ((g_keyboard_check_interval -= std::abs((int)g_real_color_iter)) <= 0)
+    if ((g_keyboard_check_interval -= std::abs(g_real_color_iter)) <= 0)
     {
         if (check_key())
         {

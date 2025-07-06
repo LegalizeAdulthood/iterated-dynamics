@@ -119,7 +119,7 @@ bool Froth::per_image()
         g_params[1] = 1.0;
     }
     m_repeat_mapping = g_params[0] == 2.0;
-    m_alt_color = (int)g_params[1];
+    m_alt_color = static_cast<int>(g_params[1]);
     m_a = g_params[2];
     if (std::abs(m_a) <= FROTH_CRITICAL_A)
     {
@@ -349,7 +349,7 @@ int Froth::calc()
     }
 
     g_real_color_iter = g_color_iter;
-    if ((g_keyboard_check_interval -= std::abs((int)g_real_color_iter)) <= 0)
+    if ((g_keyboard_check_interval -= std::abs(g_real_color_iter)) <= 0)
     {
         if (check_key())
         {
@@ -435,7 +435,7 @@ int Froth::calc()
         g_color_iter = 0;
     }
 
-    g_color = std::abs((int)(g_color_iter));
+    g_color = std::abs(g_color_iter);
 
     g_plot(g_col, g_row, g_color);
 

@@ -355,15 +355,15 @@ expand_retry:
 
     // for periodicity close-enough, and for unity:
     //     min(max(delx,delx2),max(dely,dely2))
-    g_delta_min = std::abs((double)g_delta_x);
-    g_delta_min = std::max(std::abs((double) g_delta_x2), g_delta_min);
-    if (std::abs((double)g_delta_y) > std::abs((double)g_delta_y2))
+    g_delta_min = std::abs(g_delta_x);
+    g_delta_min = std::max(std::abs(static_cast<double>(g_delta_x2)), g_delta_min);
+    if (std::abs(g_delta_y) > std::abs(g_delta_y2))
     {
-        g_delta_min = std::min(std::abs((double) g_delta_y), g_delta_min);
+        g_delta_min = std::min(std::abs(static_cast<double>(g_delta_y)), g_delta_min);
     }
-    else if (std::abs((double)g_delta_y2) < g_delta_min)
+    else if (std::abs(g_delta_y2) < g_delta_min)
     {
-        g_delta_min = std::abs((double)g_delta_y2);
+        g_delta_min = std::abs(g_delta_y2);
     }
 
     // calculate factors which plot real values to screen co-ords
