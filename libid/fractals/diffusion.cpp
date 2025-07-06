@@ -122,6 +122,11 @@ Diffusion::Diffusion() :
 
 void Diffusion::release_new_particle()
 {
+    if (!m_particle_needed)
+    {
+        return;
+    }
+
     switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
@@ -158,6 +163,8 @@ void Diffusion::release_new_particle()
         break;
     }
     }
+
+    m_particle_needed = false;
 }
 
 void Diffusion::suspend()
@@ -173,14 +180,19 @@ void Diffusion::suspend()
     }
 }
 
+bool Diffusion::iterate()
+{
+    release_new_particle();
+    if (move_particle())
+    {
+        return true;
+    }
+    color_particle();
+    return !adjust_limits();
+}
+
 bool Diffusion::move_particle()
 {
-    if (m_particle_needed)
-    {
-        release_new_particle();
-        m_particle_needed = false;
-    }
-
     // Loop as long as the point (x,y) is surrounded by color 0 on all eight sides
     while (get_color(m_x + 1, m_y + 1) == 0 && get_color(m_x + 1, m_y) == 0 && get_color(m_x + 1, m_y - 1) == 0 //
         && get_color(m_x, m_y + 1) == 0 && get_color(m_x, m_y - 1) == 0 && get_color(m_x - 1, m_y + 1) == 0     //
@@ -235,19 +247,15 @@ bool Diffusion::move_particle()
         m_x += random(3) - 1;
         m_y += random(3) - 1;
 
-        // Check keyboard
-        if (keyboard_check_needed() && check_key())
-        {
-            suspend();
-
-            m_kbd_check--;
-            return true;
-        }
-
         // Show the moving point
         if (g_show_orbit)
         {
             g_put_color(m_x, m_y, random(g_colors - 1) + 1);
+        }
+
+        if (keyboard_check_needed())
+        {
+            return true;
         }
     }
 
@@ -345,18 +353,14 @@ int diffusion_type()
 {
     id::fractals::Diffusion d;
 
-    while (true)
+    while (d.iterate())
     {
-        if (d.move_particle())
+        if (check_key())
         {
+            d.suspend();
             return 1;
         }
-
-        d.color_particle();
-
-        if (d.adjust_limits())
-        {
-            return 0;
-        }
     }
+
+    return 0;
 }

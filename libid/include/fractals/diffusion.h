@@ -22,15 +22,16 @@ public:
     Diffusion &operator=(const Diffusion &) = delete;
     Diffusion &operator=(Diffusion &&) = delete;
 
+    bool iterate();
     void suspend();
 
+private:
+    void release_new_particle();
     bool move_particle();
     void color_particle();
     bool adjust_limits();
     bool keyboard_check_needed();
 
-private:
-    void release_new_particle();
 
     int m_kbd_check{};      // to limit kbd checking
     int m_x_max{};          //
