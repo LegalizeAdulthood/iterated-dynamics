@@ -198,11 +198,6 @@ int Froth::calc()
 {
     int found_attractor = 0;
 
-    if (check_key())
-    {
-        return -1;
-    }
-
     g_orbit_save_index = 0;
     g_color_iter = 0;
     if (g_show_dot > 0)
@@ -445,6 +440,11 @@ int Froth::calc()
 // Froth Fractal type
 int froth_type()   // per pixel 1/2/g, called with row & col set
 {
+    if (check_key())
+    {
+        return -1;
+    }
+
     return s_fsp.calc();
 }
 
