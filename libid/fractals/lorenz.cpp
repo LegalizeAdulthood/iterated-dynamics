@@ -351,10 +351,10 @@ bool orbit3d_per_image()
         {
             g_params[1] = .01;
         }
-        s_b =  g_params[1];    // stepsize
-        s_c =  g_params[2];    // stop
-        s_l_d = (long) g_params[3];
-        s_t = (int) s_l_d;      // points per orbit
+        s_b = g_params[1];          // stepsize
+        s_c = g_params[2];          // stop
+        s_l_d = (long) g_params[3]; //
+        s_t = (int) g_params[3];    // points per orbit
         g_sin_x = std::sin(s_a);
         g_cos_x = std::cos(s_a);
         s_orbit = 0;
