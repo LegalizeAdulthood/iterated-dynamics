@@ -45,6 +45,7 @@
 #include "ui/cellular.h"
 #include "ui/diffusion.h"
 #include "ui/frothy_basin.h"
+#include "ui/inverse_julia.h"
 
 #include <algorithm>
 #include <array>

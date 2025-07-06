@@ -76,7 +76,6 @@ int lorenz3d3_orbit(double *x, double *y, double *z);
 int lorenz3d4_orbit(double *x, double *y, double *z);
 int henon_orbit(double *x, double *y, double *z);
 int inverse_julia_orbit();
-int inverse_julia_fractal_type();
 int rossler_orbit(double *x, double *y, double *z);
 int pickover_orbit(double *x, double *y, double *z);
 int ginger_bread_orbit(double *x, double *y, double *z);

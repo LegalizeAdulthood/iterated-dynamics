@@ -199,6 +199,7 @@ add_library(libid
     include/ui/init_failure.h
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp
+    include/ui/inverse_julia.h ui/inverse_julia.cpp
     include/ui/load_params.h ui/load_params.cpp
     include/ui/lowerize_parameter.h ui/lowerize_parameter.cpp
     include/ui/make_batch_file.h ui/make_batch_file.cpp
