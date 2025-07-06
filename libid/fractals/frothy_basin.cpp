@@ -32,6 +32,8 @@ public:
     bool per_image();
     int orbit();
     int calc();
+    bool keyboard_check();
+    void keyboard_reset();
 
 private:
     double top_x_mapping(double x);
@@ -194,6 +196,17 @@ int Froth::orbit()
     return 0;
 }
 
+bool Froth::keyboard_check()
+{
+    g_keyboard_check_interval -= std::abs(g_real_color_iter);
+    return g_keyboard_check_interval <= 0;
+}
+
+void Froth::keyboard_reset()
+{
+    g_keyboard_check_interval = g_max_keyboard_check_interval;
+}
+
 int Froth::calc()
 {
     int found_attractor = 0;
@@ -236,10 +249,6 @@ int Froth::calc()
 
         if (g_show_orbit)
         {
-            if (driver_key_pressed())
-            {
-                break;
-            }
             plot_orbit(g_old_z.x, g_old_z.y, -1);
         }
 
@@ -344,14 +353,6 @@ int Froth::calc()
     }
 
     g_real_color_iter = g_color_iter;
-    if ((g_keyboard_check_interval -= std::abs(g_real_color_iter)) <= 0)
-    {
-        if (check_key())
-        {
-            return -1;
-        }
-        g_keyboard_check_interval = g_max_keyboard_check_interval;
-    }
 
     // inside - Here's where non-palette based images would be nice.  Instead,
     // we'll use blocks of (colors-1)/3 or (colors-1)/6 and use special froth
@@ -445,7 +446,17 @@ int froth_type()   // per pixel 1/2/g, called with row & col set
         return -1;
     }
 
-    return s_fsp.calc();
+    const int calc = s_fsp.calc();
+    if (s_fsp.keyboard_check())
+    {
+        if (check_key())
+        {
+            return -1;
+        }
+        s_fsp.keyboard_reset();
+    }
+
+    return calc;
 }
 
 bool froth_per_image()
