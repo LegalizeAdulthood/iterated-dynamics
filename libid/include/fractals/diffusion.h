@@ -24,13 +24,14 @@ public:
 
     void suspend();
 
-    void release_new_particle();
     bool move_particle();
     void color_particle();
     bool adjust_limits();
     bool keyboard_check_needed();
 
 private:
+    void release_new_particle();
+
     int m_kbd_check{};      // to limit kbd checking
     int m_x_max{};          //
     int m_y_max{};          //
@@ -44,6 +45,7 @@ private:
     int m_color_count{};    // Counts down from color_shift
     int m_current_color{1}; // Start at color 1 (color 0 is probably invisible)
     float m_radius{};       //
+    bool m_particle_needed{true};
 };
 
 } // namespace id::fractals

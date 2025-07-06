@@ -175,6 +175,12 @@ void Diffusion::suspend()
 
 bool Diffusion::move_particle()
 {
+    if (m_particle_needed)
+    {
+        release_new_particle();
+        m_particle_needed = false;
+    }
+
     // Loop as long as the point (x,y) is surrounded by color 0 on all eight sides
     while (get_color(m_x + 1, m_y + 1) == 0 && get_color(m_x + 1, m_y) == 0 && get_color(m_x + 1, m_y - 1) == 0 //
         && get_color(m_x, m_y + 1) == 0 && get_color(m_x, m_y - 1) == 0 && get_color(m_x - 1, m_y + 1) == 0     //
@@ -244,6 +250,9 @@ bool Diffusion::move_particle()
             g_put_color(m_x, m_y, random(g_colors - 1) + 1);
         }
     }
+
+    m_particle_needed = true;
+
     return false;
 }
 
@@ -338,8 +347,6 @@ int diffusion_type()
 
     while (true)
     {
-        d.release_new_particle();
-
         if (d.move_particle())
         {
             return 1;
