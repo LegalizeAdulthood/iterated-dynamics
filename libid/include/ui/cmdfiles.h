@@ -189,7 +189,6 @@ enum class ShowFile
 
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
-extern char                  g_auto_show_dot;
 extern long                  g_bailout;
 extern int                   g_base_hertz;
 extern int                   g_biomorph;
@@ -250,9 +249,7 @@ extern RecordColorsMode      g_record_colors;
 extern std::string           g_save_filename;
 extern float                 g_screen_aspect;
 extern id::SearchPath        g_search_for;
-extern int                   g_show_dot;
 extern ShowFile              g_show_file;
-extern int                   g_size_dot;
 extern int                   g_sound_flag;
 extern bool                  g_start_show_orbit;
 extern int                   g_stop_pass;

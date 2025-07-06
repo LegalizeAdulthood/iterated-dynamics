@@ -4,6 +4,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "engine/show_dot.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "helpcom.h"

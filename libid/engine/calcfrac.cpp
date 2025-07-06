@@ -29,6 +29,7 @@
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
+#include "engine/show_dot.h"
 #include "engine/soi.h"
 #include "engine/solid_guess.h"
 #include "engine/sticky_orbits.h"
@@ -1031,17 +1032,17 @@ static void perform_work_list()
             find_special_colors();
             switch (g_auto_show_dot)
             {
-            case 'd':
+            case AutoShowDot::DARK:
                 s_show_dot_color = g_color_dark % g_colors;
                 break;
-            case 'm':
+            case AutoShowDot::MEDIUM:
                 s_show_dot_color = g_color_medium % g_colors;
                 break;
-            case 'b':
-            case 'a':
+            case AutoShowDot::BRIGHT:
+            case AutoShowDot::AUTOMATIC:
                 s_show_dot_color = g_color_bright % g_colors;
                 break;
-            default:
+            case AutoShowDot::NONE:
                 s_show_dot_color = g_show_dot % g_colors;
                 break;
             }

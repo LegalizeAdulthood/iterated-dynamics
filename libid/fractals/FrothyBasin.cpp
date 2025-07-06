@@ -10,9 +10,9 @@
 #include "engine/id_data.h"
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
+#include "engine/show_dot.h"
 #include "fractals/newton.h"
 #include "io/loadmap.h"
-#include "ui/cmdfiles.h"
 #include "ui/spindac.h"
 
 #include <algorithm>

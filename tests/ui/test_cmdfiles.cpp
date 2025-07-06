@@ -3,7 +3,6 @@
 #include <ui/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
-#include "engine/random_seed.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "ValueUnchanged.h"
@@ -16,6 +15,8 @@
 #include <engine/engine_timer.h>
 #include <engine/id_data.h>
 #include <engine/log_map.h>
+#include <engine/random_seed.h>
+#include <engine/show_dot.h>
 #include <engine/soi.h>
 #include <engine/sticky_orbits.h>
 #include <fractals/fractalp.h>
@@ -3190,7 +3191,7 @@ TEST_F(TestParameterCommand, orbitIntervalValueTooBig)
 TEST_F(TestParameterCommand, showDotDefault)
 {
     ValueSaver save_show_dot{g_show_dot, -999L};
-    VALUE_UNCHANGED(g_auto_show_dot, '!');
+    VALUE_UNCHANGED(g_auto_show_dot, static_cast<AutoShowDot>('!'));
     VALUE_UNCHANGED(g_size_dot, 10);
 
     exec_cmd_arg("showdot");
@@ -3202,28 +3203,28 @@ TEST_F(TestParameterCommand, showDotDefault)
 TEST_F(TestParameterCommand, showDotAuto)
 {
     ValueSaver save_show_dot{g_show_dot, -999L};
-    ValueSaver save_auto_show_dot{g_auto_show_dot, '!'};
+    ValueSaver save_auto_show_dot{g_auto_show_dot, static_cast<AutoShowDot>('!')};
     ValueSaver save_size_dot{g_size_dot, -99};
 
     exec_cmd_arg("showdot=a");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(15, g_show_dot);
-    EXPECT_EQ('a', g_auto_show_dot);
+    EXPECT_EQ(AutoShowDot::AUTOMATIC, g_auto_show_dot);
     EXPECT_EQ(0, g_size_dot);
 }
 
 TEST_F(TestParameterCommand, showDotAutoSize)
 {
     ValueSaver save_show_dot{g_show_dot, -999L};
-    ValueSaver save_auto_show_dot{g_auto_show_dot, '!'};
+    ValueSaver save_auto_show_dot{g_auto_show_dot, static_cast<AutoShowDot>('!')};
     ValueSaver save_size_dot{g_size_dot, -1};
 
     exec_cmd_arg("showdot=a/20");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(15, g_show_dot);
-    EXPECT_EQ('a', g_auto_show_dot);
+    EXPECT_EQ(AutoShowDot::AUTOMATIC, g_auto_show_dot);
     EXPECT_EQ(20, g_size_dot);
 }
 

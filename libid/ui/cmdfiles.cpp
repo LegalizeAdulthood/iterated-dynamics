@@ -18,6 +18,7 @@
 #include "engine/id_data.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
+#include "engine/show_dot.h"
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
 #include "fractals/check_orbit_name.h"
@@ -110,10 +111,7 @@ int g_stop_pass{};                                        // stop at this guessi
 int g_distance_estimator_x_dots{};                        // x dots to use for video independence
 int g_distance_estimator_y_dots{};                        // y dots to use for video independence
 int g_bf_digits{};                                        // digits to use (force) for g_bf_math
-int g_show_dot{-1};                                       // color to show crawling graphics cursor
-int g_size_dot{};                                         // size of dot crawling cursor
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
-char g_auto_show_dot{};                                   // dark, medium, bright
 bool g_start_show_orbit{};                                // show orbits on at start of fractal
 std::string g_read_filename;                              // name of fractal input file
 std::filesystem::path g_temp_dir;                         // name of temporary directory
@@ -3239,12 +3237,12 @@ static CmdArgFlags cmd_show_dot(const Command &cmd)
     g_show_dot = 15;
     if (cmd.total_params > 0)
     {
-        g_auto_show_dot = (char) 0;
+        g_auto_show_dot = AutoShowDot::NONE;
         if (std::isalpha(cmd.char_val[0]))
         {
             if (std::strchr("abdm", cmd.char_val[0]) != nullptr)
             {
-                g_auto_show_dot = cmd.char_val[0];
+                g_auto_show_dot = static_cast<AutoShowDot>(cmd.char_val[0]);
             }
             else
             {

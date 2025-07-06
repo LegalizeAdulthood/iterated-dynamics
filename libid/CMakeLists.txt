@@ -38,6 +38,7 @@ add_library(libid
     include/engine/Point.h
     include/engine/random_seed.h engine/random_seed.cpp
     include/engine/resume.h engine/resume.cpp
+    include/engine/show_dot.h engine/show_dot.cpp
     include/engine/soi.h engine/soi.cpp
     engine/soi1.cpp
     include/engine/solid_guess.h engine/solid_guess.cpp
