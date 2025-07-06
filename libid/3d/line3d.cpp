@@ -2537,13 +2537,13 @@ static int first_time(int line_len, Vector v)
         float delta_theta = (theta2 - theta1) / (float) line_len;
 
         // initial sin,cos theta
-        s_sin_theta_array[0] = (float) std::sin((double) theta);
-        s_cos_theta_array[0] = (float) std::cos((double) theta);
-        s_sin_theta_array[1] = (float) std::sin((double)(theta + delta_theta));
-        s_cos_theta_array[1] = (float) std::cos((double)(theta + delta_theta));
+        s_sin_theta_array[0] = std::sin(theta);
+        s_cos_theta_array[0] = std::cos(theta);
+        s_sin_theta_array[1] = std::sin(theta + delta_theta);
+        s_cos_theta_array[1] = std::cos(theta + delta_theta);
 
         // sin,cos delta theta
-        float two_cos_delta_theta = (float) (2.0 * std::cos((double) delta_theta));
+        float two_cos_delta_theta = 2.0F * std::cos(delta_theta);
 
         // build table of other sin,cos with trig identity
         for (int i = 2; i < line_len; i++)
@@ -2559,15 +2559,15 @@ static int first_time(int line_len, Vector v)
 
         // initial sin,cos phi
 
-        s_old_sin_phi1 = (float) std::sin((double) phi1);
+        s_old_sin_phi1 = std::sin(phi1);
         s_sin_phi = s_old_sin_phi1;
-        s_old_cos_phi1 = (float) std::cos((double) phi1);
+        s_old_cos_phi1 = std::cos(phi1);
         s_cos_phi = s_old_cos_phi1;
-        s_old_sin_phi2 = (float) std::sin((double)(phi1 + s_delta_phi));
-        s_old_cos_phi2 = (float) std::cos((double)(phi1 + s_delta_phi));
+        s_old_sin_phi2 = std::sin(phi1 + s_delta_phi);
+        s_old_cos_phi2 = std::cos(phi1 + s_delta_phi);
 
         // sin,cos delta phi
-        s_two_cos_delta_phi = (float)(2.0 * std::cos((double) s_delta_phi));
+        s_two_cos_delta_phi = 2.0F * std::cos(s_delta_phi);
 
         // affects how rough planet terrain is
         if (g_rough)

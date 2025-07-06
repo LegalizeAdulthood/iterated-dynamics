@@ -2162,7 +2162,7 @@ int potential(double mag, long iterations)
         //    potparam[2] -- rqlim value if changeable (bailout for modulus)
         if (pot > 0.0)
         {
-            pot = (float) std::sqrt((double) pot);
+            pot = std::sqrt(pot);
             pot = (float)(g_potential_params[0] - pot*g_potential_params[1] - 1.0);
         }
         else
