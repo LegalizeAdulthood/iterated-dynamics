@@ -22,6 +22,8 @@ public:
     Diffusion &operator=(const Diffusion &) = delete;
     Diffusion &operator=(Diffusion &&) = delete;
 
+    void suspend();
+
     void release_new_particle();
     bool move_particle();
     void color_particle();

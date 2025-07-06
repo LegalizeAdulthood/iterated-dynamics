@@ -160,6 +160,19 @@ void Diffusion::release_new_particle()
     }
 }
 
+void Diffusion::suspend()
+{
+    alloc_resume(20, 1);
+    if (m_mode != DiffusionMode::SQUARE_CAVITY)
+    {
+        put_resume(m_x_max, m_x_min, m_y_max, m_y_min);
+    }
+    else
+    {
+        put_resume(m_x_max, m_x_min, m_y_max, m_radius);
+    }
+}
+
 bool Diffusion::move_particle()
 {
     // Loop as long as the point (x,y) is surrounded by color 0 on all eight sides
@@ -219,15 +232,7 @@ bool Diffusion::move_particle()
         // Check keyboard
         if (keyboard_check_needed() && check_key())
         {
-            alloc_resume(20, 1);
-            if (m_mode != DiffusionMode::SQUARE_CAVITY)
-            {
-                put_resume(m_x_max, m_x_min, m_y_max, m_y_min);
-            }
-            else
-            {
-                put_resume(m_x_max, m_x_min, m_y_max, m_radius);
-            }
+            suspend();
 
             m_kbd_check--;
             return true;
