@@ -37,7 +37,7 @@
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
 #include "ui/ChoiceBuilder.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/comments.h"
 #include "ui/rotate.h"
 #include "ui/sound.h"

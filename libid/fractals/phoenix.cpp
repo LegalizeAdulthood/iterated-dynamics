@@ -11,7 +11,7 @@
 #include "fractals/newton.h"
 #include "math/cmplx.h"
 #include "math/fpu087.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 
 static DComplex s_tmp2{};
 

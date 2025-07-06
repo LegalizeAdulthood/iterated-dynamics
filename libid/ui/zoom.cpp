@@ -18,7 +18,7 @@
 #include "math/biginit.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/find_special_colors.h"
 #include "ui/framain2.h"

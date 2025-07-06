@@ -6,7 +6,7 @@
 #include "engine/id_data.h"
 #include "engine/show_dot.h"
 #include "engine/work_list.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 

@@ -8,7 +8,7 @@
 #include "fractals/fractalp.h"
 #include "math/cmplx.h"
 #include "math/fixed_pt.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 
 #include <algorithm>
 #include <cmath>

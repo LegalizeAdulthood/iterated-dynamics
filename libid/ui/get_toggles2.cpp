@@ -6,7 +6,7 @@
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/full_screen_prompt.h"
 

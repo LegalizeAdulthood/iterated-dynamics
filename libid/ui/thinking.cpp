@@ -3,7 +3,7 @@
 #include "ui/thinking.h"
 
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/help_title.h"
 #include "ui/text_screen.h"
 

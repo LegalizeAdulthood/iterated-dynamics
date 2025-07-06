@@ -12,7 +12,7 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/stack_avail.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/id_main.h"
 #include "ui/init_failure.h"

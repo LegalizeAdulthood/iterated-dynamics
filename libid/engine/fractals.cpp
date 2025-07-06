@@ -50,7 +50,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "fractals/newton.h"
 #include "math/arg.h"
 #include "math/biginit.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 
 #include <cfloat>
 #include <cmath>

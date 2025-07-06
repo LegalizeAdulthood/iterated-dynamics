@@ -8,7 +8,7 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/stack_avail.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/thinking.h"
 
 #include <algorithm>

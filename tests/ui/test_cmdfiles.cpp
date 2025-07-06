@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <ui/cmdfiles_test.h>
+#include <engine/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
 #include "MockDriver.h"

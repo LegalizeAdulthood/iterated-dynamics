@@ -16,7 +16,7 @@
 #include "math/biginit.h"
 #include "math/fixed_pt.h"
 #include "misc/id.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/goodbye.h"
 #include "ui/stop_msg.h"
 

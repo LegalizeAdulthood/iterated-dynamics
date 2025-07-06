@@ -8,7 +8,7 @@
 #include "engine/work_list.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/video.h"
 
 #include <algorithm>

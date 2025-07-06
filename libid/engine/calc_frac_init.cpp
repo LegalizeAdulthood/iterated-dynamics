@@ -18,7 +18,7 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/stop_msg.h"
 #include "ui/zoom.h"
 

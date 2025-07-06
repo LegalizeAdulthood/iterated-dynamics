@@ -13,7 +13,7 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/field_prompt.h"
 #include "ui/full_screen_choice.h"
 #include "ui/full_screen_prompt.h"

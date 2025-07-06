@@ -14,7 +14,7 @@
 #include "math/rand15.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/field_prompt.h"
 #include "ui/id_keys.h"

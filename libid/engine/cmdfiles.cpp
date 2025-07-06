@@ -2,7 +2,7 @@
 //
 // Command-line / Command-File Parser Routines
 //
-#include "ui/cmdfiles_test.h"
+#include "engine/cmdfiles_test.h"
 
 #include "3d/line3d.h"
 #include "3d/plot3d.h"

@@ -16,7 +16,7 @@
 #include "math/sqr.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/id_keys.h"
 #include "ui/trig_fns.h"
 #include "ui/zoom.h"

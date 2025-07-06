@@ -17,7 +17,7 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"

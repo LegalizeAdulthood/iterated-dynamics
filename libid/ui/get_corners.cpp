@@ -12,7 +12,7 @@
 #include "helpdefs.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/double_to_string.h"
 #include "ui/id_keys.h"
 #include "ui/zoom.h"

@@ -10,7 +10,7 @@
 #include "math/arg.h"
 #include "math/cmplx.h"
 #include "misc/debug_flags.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 
 /* re-use static roots variable
    memory for mandelmix4 */

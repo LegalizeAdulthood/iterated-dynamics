@@ -9,7 +9,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
 #include <misc/ValueSaver.h>
-#include <ui/cmdfiles.h>
+#include <engine/cmdfiles.h>
 #include <ui/history.h>
 #include <ui/make_batch_file.h>
 #include <ui/video_mode.h>

@@ -13,7 +13,7 @@
 #include "math/big.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/help_title.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"

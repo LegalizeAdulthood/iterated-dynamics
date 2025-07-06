@@ -16,7 +16,7 @@
 #include "io/save_timer.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/evolver_menu_switch.h"

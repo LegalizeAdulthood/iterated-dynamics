@@ -24,7 +24,7 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/make_batch_file.h"
 #include "ui/stop_msg.h"

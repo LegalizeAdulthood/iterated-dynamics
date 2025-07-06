@@ -12,7 +12,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"

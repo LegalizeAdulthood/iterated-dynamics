@@ -19,7 +19,7 @@
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
 #include "ui/id_keys.h"

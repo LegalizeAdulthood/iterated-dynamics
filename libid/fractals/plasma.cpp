@@ -10,7 +10,7 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/sized_types.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"

@@ -26,7 +26,7 @@
 #include "io/locate_input_file.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/slideshw.h"

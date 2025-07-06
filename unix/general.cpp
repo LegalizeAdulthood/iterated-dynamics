@@ -12,7 +12,7 @@
 #include "helpdefs.h"
 #include "io/loadfile.h"
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/read_ticker.h"
 #include "ui/slideshw.h"
 #include "ui/tab_display.h"

@@ -50,7 +50,7 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/check_key.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
 #include "ui/frothy_basin.h"

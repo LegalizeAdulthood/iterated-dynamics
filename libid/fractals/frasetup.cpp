@@ -17,7 +17,7 @@
 #include "fractals/pickover_mandelbrot.h"
 #include "fractals/popcorn.h"
 #include "misc/debug_flags.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/trig_fns.h"
 

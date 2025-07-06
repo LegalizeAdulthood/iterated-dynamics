@@ -14,6 +14,8 @@ add_library(libid
     include/engine/calc_frac_init.h engine/calc_frac_init.cpp
     include/engine/calcfrac.h engine/calcfrac.cpp
     include/engine/calmanfp.h engine/calmanfp.cpp
+    include/engine/cmdfiles.h engine/cmdfiles.cpp
+    include/engine/cmdfiles_test.h
     include/engine/color_state.h engine/color_state.cpp
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
     include/engine/convert_corners.h engine/convert_corners.cpp
@@ -157,8 +159,6 @@ add_library(libid
     include/ui/cellular.h ui/cellular.cpp
     include/ui/check_key.h ui/check_key.cpp
     include/ui/ChoiceBuilder.h
-    include/ui/cmdfiles.h ui/cmdfiles.cpp
-    include/ui/cmdfiles_test.h
     include/ui/comments.h ui/comments.cpp
     include/ui/diffusion.h ui/diffusion.cpp
     include/ui/diskvid.h ui/diskvid.cpp

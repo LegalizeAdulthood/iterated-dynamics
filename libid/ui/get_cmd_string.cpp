@@ -7,7 +7,7 @@
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"
 #include "misc/ValueSaver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/field_prompt.h"
 
 /*

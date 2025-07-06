@@ -8,7 +8,7 @@
 #include "io/is_directory.h"
 #include "io/make_path.h"
 #include "io/split_path.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 
 #include <config/path_limits.h>
 #include <config/port.h>

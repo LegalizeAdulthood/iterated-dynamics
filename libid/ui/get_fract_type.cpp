@@ -14,7 +14,7 @@
 #include "io/load_entry_text.h"
 #include "io/loadfile.h"
 #include "misc/ValueSaver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/full_screen_choice.h"
 #include "ui/full_screen_prompt.h"

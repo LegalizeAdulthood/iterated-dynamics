@@ -9,7 +9,7 @@
 #include "fractals/fractype.h"
 #include "fractals/newton.h"
 #include "math/fpu087.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 
 #include <algorithm>
 #include <cmath>

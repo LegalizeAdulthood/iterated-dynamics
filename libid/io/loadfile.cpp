@@ -31,7 +31,7 @@
 #include "math/round_float_double.h"
 #include "misc/Driver.h"
 #include "misc/version.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/field_prompt.h"
 #include "ui/find_special_colors.h"

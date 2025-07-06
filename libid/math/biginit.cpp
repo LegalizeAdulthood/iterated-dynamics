@@ -13,7 +13,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include "engine/calcfrac.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/goodbye.h"
 #include "ui/stop_msg.h"
 

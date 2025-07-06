@@ -9,7 +9,7 @@
 #include "fractals/fractype.h"
 #include "math/round_float_double.h"
 #include "misc/debug_flags.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/zoom.h"
 
 namespace

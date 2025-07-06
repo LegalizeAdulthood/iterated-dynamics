@@ -26,7 +26,7 @@
 #include "math/rand15.h"
 #include "math/sign.h"
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/not_disk_msg.h"
 #include "ui/sound.h"
 #include "ui/stop_msg.h"

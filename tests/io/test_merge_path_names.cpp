@@ -5,7 +5,7 @@
 #include "test_data.h"
 
 #include <io/CurrentPathSaver.h>
-#include <ui/cmdfiles.h>
+#include <engine/cmdfiles.h>
 
 #include <gtest/gtest.h>
 

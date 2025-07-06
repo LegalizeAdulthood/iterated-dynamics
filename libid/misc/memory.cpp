@@ -9,7 +9,7 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/stack_avail.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/goodbye.h"
 #include "ui/stop_msg.h"

@@ -14,7 +14,7 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/evolve.h"
 #include "ui/get_fract_type.h"

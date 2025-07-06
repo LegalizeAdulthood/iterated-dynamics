@@ -3,7 +3,7 @@
 #include "ui/do_pause.h"
 
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/get_key_no_help.h"
 #include "ui/goodbye.h"
 #include "ui/id_keys.h"

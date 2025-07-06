@@ -8,7 +8,7 @@
 #include "helpcom.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/goodbye.h"
 #include "ui/help_title.h"

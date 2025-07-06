@@ -9,7 +9,7 @@
 #include "io/encoder.h"
 #include "io/save_file.h"
 #include "misc/debug_flags.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 
 #include <cstdarg>
 #include <cstdio>

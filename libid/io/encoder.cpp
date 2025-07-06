@@ -30,7 +30,7 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/version.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/framain2.h"

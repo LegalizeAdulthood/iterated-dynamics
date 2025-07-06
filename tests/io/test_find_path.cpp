@@ -7,7 +7,7 @@
 #include <engine/id_data.h>
 #include <io/CurrentPathSaver.h>
 #include <io/search_path.h>
-#include <ui/cmdfiles.h>
+#include <engine/cmdfiles.h>
 
 #include <gtest/gtest.h>
 

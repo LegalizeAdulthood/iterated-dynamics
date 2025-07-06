@@ -7,7 +7,7 @@
 #include "helpcom.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/make_batch_file.h"

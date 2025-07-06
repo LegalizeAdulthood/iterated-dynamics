@@ -15,7 +15,7 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/memory.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/do_pause.h"
 #include "ui/evolve.h"
 #include "ui/framain2.h"

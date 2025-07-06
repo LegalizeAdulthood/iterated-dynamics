@@ -4,7 +4,7 @@
 
 #include "engine/id_data.h"
 #include "misc/Driver.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"

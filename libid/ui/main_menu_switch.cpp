@@ -18,7 +18,7 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/ant.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/flip_image.h"

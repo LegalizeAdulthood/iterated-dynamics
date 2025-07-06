@@ -7,7 +7,7 @@
 #include "fractals/jb.h"
 #include "fractals/parser.h"
 #include "math/arg.h"
-#include "ui/cmdfiles.h"
+#include "engine/cmdfiles.h"
 
 #include <config/string_lower.h>
 
