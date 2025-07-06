@@ -1181,7 +1181,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
         int x_lim = s_min_max_x[y].max_x;
         for (int x = s_min_max_x[y].min_x; x <= x_lim; x++)
         {
-            (*s_fill_plot)(x, y, color);
+            s_fill_plot(x, y, color);
         }
     }
     g_plot = s_normal_plot;

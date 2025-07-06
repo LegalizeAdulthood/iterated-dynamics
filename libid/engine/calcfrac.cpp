@@ -473,7 +473,7 @@ static int calc_type_show_dot()
     {
         sleep_ms(g_orbit_delay);
     }
-    int out = (*s_calc_type_tmp)();
+    int out = s_calc_type_tmp();
     show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::RESTORE);
     return out;
 }

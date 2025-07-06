@@ -48,7 +48,7 @@ void read_span(int row, int start_col, int stop_col, Byte *pixels)
         return;
     }
     assert(s_read_span);
-    (*s_read_span)(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
+    s_read_span(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
 }
 
 // write_span(int row, int startcol, int stopcol, Byte *pixels)
@@ -64,7 +64,7 @@ void write_span(int row, int start_col, int stop_col, const Byte *pixels)
         return;
     }
     assert(s_write_span);
-    (*s_write_span)(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
+    s_write_span(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
 }
 
 static void normal_write_span(int y, int x, int last_x, const Byte *pixels)
@@ -73,7 +73,7 @@ static void normal_write_span(int y, int x, int last_x, const Byte *pixels)
     assert(s_write_pixel);
     for (int i = 0; i < width; i++)
     {
-        (*s_write_pixel)(x + i, y, pixels[i]);
+        s_write_pixel(x + i, y, pixels[i]);
     }
 }
 
@@ -83,7 +83,7 @@ static void normal_read_span(int y, int x, int last_x, Byte *pixels)
     assert(s_read_pixel);
     for (int i = 0; i < width; i++)
     {
-        pixels[i] = (*s_read_pixel)(x + i, y);
+        pixels[i] = static_cast<Byte>(s_read_pixel(x + i, y));
     }
 }
 
@@ -134,7 +134,7 @@ int get_color(int x, int y)
         return 0;
     }
     assert(s_read_pixel);
-    return (*s_read_pixel)(x1, y1);
+    return s_read_pixel(x1, y1);
 }
 
 // write the color on the screen at the (xdot, ydot) point
@@ -146,7 +146,7 @@ void put_color_a(int x, int y, int color)
     assert(x1 >= 0 && x1 <= g_screen_x_dots);
     assert(y1 >= 0 && y1 <= g_screen_y_dots);
     assert(s_write_pixel);
-    (*s_write_pixel)(x1, y1, color & g_and_color);
+    s_write_pixel(x1, y1, color & g_and_color);
 }
 
 // This routine is a 'line' analog of 'putcolor()', and sends an
@@ -161,7 +161,7 @@ int out_line(Byte *pixels, int line_len)
         return 0;
     }
     assert(s_write_span);
-    (*s_write_span)(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, line_len + g_logical_screen_x_offset - 1, pixels);
+    s_write_span(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, line_len + g_logical_screen_x_offset - 1, pixels);
     g_row_count++;
     return 0;
 }
