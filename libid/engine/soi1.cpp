@@ -235,8 +235,7 @@ static inline double interpolate(
     s_zi[6].re = (ZRE7);s_zi[6].im = (ZIM7);\
     s_zi[7].re = (ZRE8);s_zi[7].im = (ZIM8);\
     s_zi[8].re = (ZRE9);s_zi[8].im = (ZIM9);\
-    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER)); \
-    assert(status)
+    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER));
 
 static bool rhombus(
     double c_re1, double c_re2, double c_im1, double c_im2,
