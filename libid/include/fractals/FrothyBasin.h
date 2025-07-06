@@ -46,6 +46,8 @@ private:
     double m_right_x4{};
 };
 
+extern FrothyBasin g_frothy_basin;
+
 } // namespace id::fractals
 
 int froth_orbit();

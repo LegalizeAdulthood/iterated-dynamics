@@ -61,7 +61,7 @@ add_library(libid
     include/fractals/fractalp.h fractals/fractalp.cpp
     include/fractals/fractype.h fractals/fractype.cpp
     include/fractals/frasetup.h fractals/frasetup.cpp
-    include/fractals/frothy_basin.h fractals/frothy_basin.cpp
+    include/fractals/FrothyBasin.h fractals/FrothyBasin.cpp
     include/fractals/halley.h fractals/halley.cpp
     include/fractals/hypercomplex_mandelbrot.h fractals/hypercomplex_mandelbrot.cpp
     include/fractals/ifs.h fractals/ifs.cpp
@@ -170,6 +170,7 @@ add_library(libid
     include/ui/find_special_colors.h ui/find_special_colors.cpp
     include/ui/flip_image.h ui/flip_image.cpp
     include/ui/framain2.h ui/framain2.cpp
+    include/ui/frothy_basin.h ui/frothy_basin.cpp
     include/ui/full_screen_choice.h ui/full_screen_choice.cpp
     include/ui/full_screen_prompt.h ui/full_screen_prompt.cpp
     include/ui/get_3d_params.h ui/get_3d_params.cpp

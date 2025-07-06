@@ -2,7 +2,7 @@
 //
 // frothy basin routines
 
-#include "fractals/frothy_basin.h"
+#include "fractals/FrothyBasin.h"
 
 #include "engine/calcfrac.h"
 #include "engine/check_key.h"
@@ -19,55 +19,23 @@
 #include <algorithm>
 #include <cmath>
 
+namespace id::fractals
+{
+
 constexpr double FROTH_CLOSE{1e-6};                     // seems like a good value
 constexpr double SQRT3{1.732050807568877193};           //
 constexpr double FROTH_SLOPE{SQRT3};                    //
 constexpr double FROTH_CRITICAL_A{1.028713768218725};   // 1.0287137682187249127
 
-class Froth
-{
-public:
-    Froth() = default;
-    ~Froth() = default;
-    bool per_image();
-    int orbit();
-    int calc();
-    bool keyboard_check();
-    void keyboard_reset();
+FrothyBasin g_frothy_basin{};
 
-private:
-    double top_x_mapping(double x);
-    void set_froth_palette();
-
-    bool m_repeat_mapping{};
-    int m_alt_color{};
-    int m_attractors{};
-    int m_shades{};
-    double m_a{};
-    double m_half_a{};
-    double m_top_x1{};
-    double m_top_x2{};
-    double m_top_x3{};
-    double m_top_x4{};
-    double m_left_x1{};
-    double m_left_x2{};
-    double m_left_x3{};
-    double m_left_x4{};
-    double m_right_x1{};
-    double m_right_x2{};
-    double m_right_x3{};
-    double m_right_x4{};
-};
-
-static Froth s_fsp{};
-
-double Froth::top_x_mapping(double x)
+double FrothyBasin::top_x_mapping(double x)
 {
     return x * x - x -3 * m_a * m_a / 4;
 }
 
 // color maps which attempt to replicate the images of James Alexander.
-void Froth::set_froth_palette()
+void FrothyBasin::set_froth_palette()
 {
     if (g_color_state != ColorState::DEFAULT)   // 0 means g_dac_box matches default
     {
@@ -107,7 +75,7 @@ void Froth::set_froth_palette()
     }
 }
 
-bool Froth::per_image()
+bool FrothyBasin::per_image()
 {
     constexpr double sin_theta = SQRT3 / 2; // sin(2*PI/3)
     constexpr double cos_theta = -0.5;      // cos(2*PI/3)
@@ -175,7 +143,7 @@ bool Froth::per_image()
     return true;
 }
 
-int Froth::orbit()
+int FrothyBasin::orbit()
 {
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y - g_old_z.x - m_a * g_old_z.y;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y - m_a * g_old_z.x + g_old_z.y;
@@ -196,18 +164,18 @@ int Froth::orbit()
     return 0;
 }
 
-bool Froth::keyboard_check()
+bool FrothyBasin::keyboard_check()
 {
     g_keyboard_check_interval -= std::abs(g_real_color_iter);
     return g_keyboard_check_interval <= 0;
 }
 
-void Froth::keyboard_reset()
+void FrothyBasin::keyboard_reset()
 {
     g_keyboard_check_interval = g_max_keyboard_check_interval;
 }
 
-int Froth::calc()
+int FrothyBasin::calc()
 {
     int found_attractor = 0;
 
@@ -438,30 +406,11 @@ int Froth::calc()
     return g_color;
 }
 
-// Froth Fractal type
-int froth_type()   // per pixel 1/2/g, called with row & col set
-{
-    if (check_key())
-    {
-        return -1;
-    }
-
-    const int calc = s_fsp.calc();
-    if (s_fsp.keyboard_check())
-    {
-        if (check_key())
-        {
-            return -1;
-        }
-        s_fsp.keyboard_reset();
-    }
-
-    return calc;
-}
+} // namespace id::fractals
 
 bool froth_per_image()
 {
-    return s_fsp.per_image();
+    return id::fractals::g_frothy_basin.per_image();
 }
 
 // These last two froth functions are for the orbit-in-window feature.
@@ -480,5 +429,5 @@ int froth_per_pixel()
 
 int froth_orbit()
 {
-    return s_fsp.orbit();
+    return id::fractals::g_frothy_basin.orbit();
 }

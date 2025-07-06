@@ -16,7 +16,7 @@
 #include "fractals/escher.h"
 #include "fractals/fn_or_fn.h"
 #include "fractals/frasetup.h"
-#include "fractals/frothy_basin.h"
+#include "fractals/FrothyBasin.h"
 #include "fractals/halley.h"
 #include "fractals/hypercomplex_mandelbrot.h"
 #include "fractals/jb.h"
@@ -44,6 +44,7 @@
 #include "ui/bifurcation.h"
 #include "ui/cellular.h"
 #include "ui/diffusion.h"
+#include "ui/frothy_basin.h"
 
 #include <algorithm>
 #include <array>
