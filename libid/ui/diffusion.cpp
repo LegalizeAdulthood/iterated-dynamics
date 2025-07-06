@@ -2,8 +2,8 @@
 //
 #include "ui/diffusion.h"
 
-#include "engine/check_key.h"
 #include "fractals/Diffusion.h"
+#include "ui/check_key.h"
 
 int diffusion_type()
 {

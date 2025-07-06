@@ -1,9 +1,9 @@
 #include "ui/inverse_julia.h"
 
-#include "engine/check_key.h"
 #include "engine/jiim.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
+#include "ui/check_key.h"
 
 int inverse_julia_fractal_type()
 {

@@ -2,8 +2,8 @@
 //
 #include "ui/frothy_basin.h"
 
-#include "engine/check_key.h"
 #include "fractals/FrothyBasin.h"
+#include "ui/check_key.h"
 
 // Froth Fractal type
 int froth_type()   // per pixel 1/2/g, called with row & col set

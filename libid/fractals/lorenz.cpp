@@ -11,7 +11,6 @@
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
 #include "engine/calcfrac.h"
-#include "engine/check_key.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/jiim.h"

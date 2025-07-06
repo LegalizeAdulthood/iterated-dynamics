@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/check_key.h"
+#include "ui/check_key.h"
 
 #include "engine/calcfrac.h"
 #include "engine/orbit.h"
