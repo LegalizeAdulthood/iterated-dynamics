@@ -112,11 +112,11 @@ bool Froth::per_image()
 
     if (g_params[0] != 2.0)
     {
-        g_params[0] = 1;
+        g_params[0] = 1.0;
     }
     if (g_params[1] != 0.0)
     {
-        g_params[1] = 1;
+        g_params[1] = 1.0;
     }
     m_repeat_mapping = g_params[0] == 2.0;
     m_alt_color = (int)g_params[1];
