@@ -1261,7 +1261,19 @@ int calc_mandelbrot_type()
     }
     return g_color;
 }
-#define STAR_TRAIL_MAX FLT_MAX   // just a convenient large number
+#define STAR_TRAIL_MAX FLT_MAX // just a convenient large number
+
+static void set_new_z_from_bignum()
+{
+    if (g_bf_math == BFMathType::BIG_NUM)
+    {
+        g_new_z = cmplx_bn_to_float(g_new_z_bn);
+    }
+    else if (g_bf_math == BFMathType::BIG_FLT)
+    {
+        g_new_z = cmplx_bf_to_float(g_new_z_bf);
+    }
+}
 
 // per pixel 1/2/b/g, called with g_row & g_col set
 int standard_fractal_type()
@@ -1478,34 +1490,21 @@ int standard_fractal_type()
             }
             g_old_z = g_new_z;
         }
-
         // the usual case
         else if ((g_cur_fractal_specific->orbit_calc() && g_inside_color != STAR_TRAIL) || g_overflow)
         {
             break;
         }
+
         if (g_show_orbit)
         {
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_new_z = cmplx_bn_to_float(g_new_z_bn);
-            }
-            else if (g_bf_math == BFMathType::BIG_FLT)
-            {
-                g_new_z = cmplx_bf_to_float(g_new_z_bf);
-            }
+            set_new_z_from_bignum();
             plot_orbit(g_new_z.x, g_new_z.y, -1);
         }
+
         if (g_inside_color < ITER)
         {
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_new_z = cmplx_bn_to_float(g_new_z_bn);
-            }
-            else if (g_bf_math == BFMathType::BIG_FLT)
-            {
-                g_new_z = cmplx_bf_to_float(g_new_z_bf);
-            }
+            set_new_z_from_bignum();
             if (g_inside_color == STAR_TRAIL)
             {
                 if (0 < g_color_iter && g_color_iter < 16)
@@ -1563,14 +1562,7 @@ int standard_fractal_type()
 
         if (g_outside_color == TDIS || g_outside_color == FMOD)
         {
-            if (g_bf_math == BFMathType::BIG_NUM)
-            {
-                g_new_z = cmplx_bn_to_float(g_new_z_bn);
-            }
-            else if (g_bf_math == BFMathType::BIG_FLT)
-            {
-                g_new_z = cmplx_bf_to_float(g_new_z_bf);
-            }
+            set_new_z_from_bignum();
             if (g_outside_color == TDIS)
             {
                 total_dist += std::sqrt(sqr(last_z.x-g_new_z.x)+sqr(last_z.y-g_new_z.y));
@@ -1736,11 +1728,7 @@ int standard_fractal_type()
 
     if (g_outside_color < ITER)
     {
-        if (g_bf_math == BFMathType::BIG_NUM)
-        {
-            g_new_z.x = (double) bn_to_float(g_new_z_bn.x);
-            g_new_z.y = (double) bn_to_float(g_new_z_bn.y);
-        }
+        set_new_z_from_bignum();
         // Add 7 to overcome negative values on the MANDEL
         if (g_outside_color == REAL)                 // "real"
         {
