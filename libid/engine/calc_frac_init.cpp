@@ -894,7 +894,7 @@ static bool ratio_bad(double actual, double desired)
     {
         return false;
     }
-    if (desired != 0 && g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
+    if (desired != 0.0 && g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
         double f_temp = actual / desired;
         if (f_temp < (1.0-tol) || f_temp > (1.0+tol))
