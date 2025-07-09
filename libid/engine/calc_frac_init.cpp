@@ -111,12 +111,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
         g_rhombus_stack[i] = 0;
     }
 
-    // set up grid array compactly leaving space at end
-    // space req for grid is 2(xdots+ydots)*sizeof(long or double)
-    // space available in extraseg is 65536 Bytes
-    long xy_temp = g_logical_screen_x_dots + g_logical_screen_y_dots;
-    g_use_grid = xy_temp * sizeof(double) <= 32768 && g_debug_flag != DebugFlags::PREVENT_COORDINATE_GRID;
-
+    g_use_grid = g_debug_flag != DebugFlags::PREVENT_COORDINATE_GRID;
     set_grid_pointers();
 
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
