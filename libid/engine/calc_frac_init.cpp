@@ -106,10 +106,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
 {
     g_old_color_iter = 0L;
     g_color_iter = 0L;
-    for (int i = 0; i < 10; i++)
-    {
-        g_rhombus_stack[i] = 0;
-    }
+    std::fill(g_rhombus_stack, g_rhombus_stack + 10, 0);
 
     g_use_grid = g_debug_flag != DebugFlags::PREVENT_COORDINATE_GRID;
     set_grid_pointers();
