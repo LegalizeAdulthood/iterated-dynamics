@@ -364,29 +364,25 @@ int tesseral()
 
         if (s_tess.split_needed())
         {
-            goto tess_split;
+            if (s_tess.split_box())
+            {
+                break;
+            }
         }
-        if (s_tess.fill_box())
+        else if (s_tess.fill_box())
         {
-            goto tess_end;
-        }
-        continue;
-
-tess_split:
-        if (s_tess.split_box())
-        {
-            goto tess_end;
+            break;
         }
     }
 
-tess_end:
     if (s_tess.tp >= &s_tess.stack[0])
     {
         s_tess.suspend();
         return -1;
     }
+
     return 0;
-} // tesseral
+}
 
 static int tess_check_col(int x, int y1, int y2)
 {
