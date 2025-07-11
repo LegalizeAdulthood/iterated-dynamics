@@ -18,6 +18,7 @@
 #include "engine/bailout_formula.h"
 #include "engine/boundary_trace.h"
 #include "engine/calmanfp.h"
+#include "engine/cmdfiles.h"
 #include "engine/diffusion_scan.h"
 #include "engine/engine_timer.h"
 #include "engine/fractalb.h"
@@ -49,8 +50,8 @@
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/ValueSaver.h"
 #include "ui/check_key.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
 #include "ui/frothy_basin.h"
@@ -767,7 +768,7 @@ static void calc_standard_fractal()
         }};
     if (g_std_calc_mode == '3') // convoluted 'g' + '2' hybrid
     {
-        const char old_calc_mode = g_std_calc_mode;
+        ValueSaver saved_calc_mode{g_std_calc_mode};
         if (!g_resuming || g_three_pass)
         {
             g_std_calc_mode = 'g';
@@ -799,7 +800,6 @@ static void calc_standard_fractal()
             }
             engine_timer(timer_work_list);
         }
-        g_std_calc_mode = old_calc_mode;
     }
     else // main case, much nicer!
     {
