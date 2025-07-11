@@ -23,19 +23,24 @@ struct Tess             // one of these per box to be done gets stacked
     int rgt{}; // edge colors, -1 mixed, -2 unknown
 };
 
+struct Tesseral
+{
+    bool guess_plot{};  // paint 1st pass row at a time?
+    Tess stack[4096/sizeof(Tess)]{};
+};
+
 static int tess_check_col(int x, int y1, int y2);
 static int tess_check_row(int x1, int x2, int y);
 static int tess_col(int x, int y1, int y2);
 static int tess_row(int x1, int x2, int y);
 
-static bool s_guess_plot{};  // paint 1st pass row at a time?
-static Tess s_stack[4096/sizeof(Tess)]{};
+static Tesseral s_tess;
 
 // tesseral method by CJLT begins here
 int tesseral()
 {
-    s_guess_plot = (g_plot != g_put_color && g_plot != sym_plot2);
-    Tess *tp = &s_stack[0];
+    s_tess.guess_plot = (g_plot != g_put_color && g_plot != sym_plot2);
+    Tess *tp = &s_tess.stack[0];
     tp->x1 = g_i_start_pt.x;                              // set up initial box
     tp->x2 = g_i_stop_pt.x;
     tp->y1 = g_i_start_pt.y;
@@ -116,7 +121,7 @@ int tesseral()
 
     g_got_status = StatusValues::TESSERAL; // for tab_display
 
-    while (tp >= &s_stack[0])
+    while (tp >= &s_tess.stack[0])
     {
         // do next box
         g_current_column = tp->x1; // for tab_display
@@ -194,7 +199,7 @@ int tesseral()
                 {
                     tp->top = g_fill_color %g_colors;
                 }
-                if (const int j = tp->x2 - tp->x1 - 1; s_guess_plot || j < 2)
+                if (const int j = tp->x2 - tp->x1 - 1; s_tess.guess_plot || j < 2)
                 {
                     // paint dots
                     for (g_col = tp->x1 + 1; g_col < tp->x2; g_col++)
@@ -325,7 +330,7 @@ tess_split:
     }
 
 tess_end:
-    if (tp >= &s_stack[0])
+    if (tp >= &s_tess.stack[0])
     {
         // didn't complete
         int y_size = 1;
