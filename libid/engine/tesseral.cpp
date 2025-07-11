@@ -189,7 +189,6 @@ int tesseral()
 
         {
             // all 4 edges are the same color, fill in
-            int j;
             if (g_fill_color != 0)
             {
                 int i = 0;
@@ -197,7 +196,7 @@ int tesseral()
                 {
                     tp->top = g_fill_color %g_colors;
                 }
-                if (s_guess_plot || (j = tp->x2 - tp->x1 - 1) < 2)
+                if (const int j = tp->x2 - tp->x1 - 1; s_guess_plot || j < 2)
                 {
                     // paint dots
                     for (g_col = tp->x1 + 1; g_col < tp->x2; g_col++)
@@ -225,10 +224,10 @@ int tesseral()
                         write_span(g_row, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
                         if (g_plot != g_put_color) // symmetry
                         {
-                            j = g_stop_pt.y-(g_row-g_start_pt.y);
-                            if (j > g_i_stop_pt.y && j < g_logical_screen_y_dots)
+                            if (const int k = g_stop_pt.y - (g_row - g_start_pt.y);
+                                k > g_i_stop_pt.y && k < g_logical_screen_y_dots)
                             {
-                                write_span(j, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
+                                write_span(k, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
                             }
                         }
                         if (++i > 25)
