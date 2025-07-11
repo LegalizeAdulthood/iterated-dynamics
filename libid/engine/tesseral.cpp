@@ -4,13 +4,13 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
-#include "engine/pixel_limits.h"
 #include "engine/work_list.h"
 #include "ui/check_key.h"
 #include "engine/cmdfiles.h"
 #include "ui/video.h"
 
 #include <cstring>
+#include <vector>
 
 static int tess_check_col(int x, int y1, int y2);
 static int tess_check_row(int x1, int x2, int y);
@@ -218,16 +218,16 @@ int tesseral()
                 else
                 {
                     // use put_line for speed
-                    std::memset(&s_stack[OLD_MAX_PIXELS], tp->top, j);
+                    std::vector pixels(j, static_cast<Byte>(tp->top));
                     for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
                     {
-                        write_span(g_row, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
+                        write_span(g_row, tp->x1+1, tp->x2-1, pixels.data());
                         if (g_plot != g_put_color) // symmetry
                         {
                             if (const int k = g_stop_pt.y - (g_row - g_start_pt.y);
                                 k > g_i_stop_pt.y && k < g_logical_screen_y_dots)
                             {
-                                write_span(k, tp->x1+1, tp->x2-1, &s_stack[OLD_MAX_PIXELS]);
+                                write_span(k, tp->x1+1, tp->x2-1, pixels.data());
                             }
                         }
                         if (++i > 25)
