@@ -58,7 +58,6 @@ void Tesseral::init()
     }
     else // resuming, rebuild work stack
     {
-        int mid;
         tp->rgt = -2;
         tp->lft = -2;
         tp->bot = -2;
@@ -87,7 +86,7 @@ void Tesseral::init()
                 {
                     break;
                 }
-                mid = (tp->x1 + tp->x2) >> 1;                // Find mid-point
+                const int mid = (tp->x1 + tp->x2) >> 1;                // Find mid-point
                 if (mid > cur_x)
                 {
                     // stack right part
@@ -103,7 +102,7 @@ void Tesseral::init()
                 {
                     break;
                 }
-                mid = (tp->y1 + tp->y2) >> 1;                // Find mid-point
+                const int mid = (tp->y1 + tp->y2) >> 1;                // Find mid-point
                 if (mid > cur_y)
                 {
                     // stack bottom part
