@@ -1969,19 +1969,19 @@ plot_pixel:
 // standardfractal doodad subroutines
 static void decomposition()
 {
-    // static double cos45     = 0.70710678118654750; // cos 45  degrees
-    static double sin45     = 0.70710678118654750; // sin 45     degrees
-    static double cos22_5   = 0.92387953251128670; // cos 22.5   degrees
-    static double sin22_5   = 0.38268343236508980; // sin 22.5   degrees
-    static double cos11_25  = 0.98078528040323040; // cos 11.25  degrees
-    static double sin11_25  = 0.19509032201612820; // sin 11.25  degrees
-    static double cos5_625  = 0.99518472667219690; // cos 5.625  degrees
-    static double sin5_625  = 0.09801714032956060; // sin 5.625  degrees
-    static double tan22_5   = 0.41421356237309500; // tan 22.5   degrees
-    static double tan11_25  = 0.19891236737965800; // tan 11.25  degrees
-    static double tan5_625  = 0.09849140335716425; // tan 5.625  degrees
-    static double tan2_8125 = 0.04912684976946725; // tan 2.8125 degrees
-    static double tan1_4063 = 0.02454862210892544; // tan 1.4063 degrees
+    // constexpr double cos45  = 0.70710678118654750; // cos 45     degrees
+    constexpr double sin45     = 0.70710678118654750; // sin 45     degrees
+    constexpr double cos22_5   = 0.92387953251128670; // cos 22.5   degrees
+    constexpr double sin22_5   = 0.38268343236508980; // sin 22.5   degrees
+    constexpr double cos11_25  = 0.98078528040323040; // cos 11.25  degrees
+    constexpr double sin11_25  = 0.19509032201612820; // sin 11.25  degrees
+    constexpr double cos5_625  = 0.99518472667219690; // cos 5.625  degrees
+    constexpr double sin5_625  = 0.09801714032956060; // sin 5.625  degrees
+    constexpr double tan22_5   = 0.41421356237309500; // tan 22.5   degrees
+    constexpr double tan11_25  = 0.19891236737965800; // tan 11.25  degrees
+    constexpr double tan5_625  = 0.09849140335716425; // tan 5.625  degrees
+    constexpr double tan2_8125 = 0.04912684976946725; // tan 2.8125 degrees
+    constexpr double tan1_4063 = 0.02454862210892544; // tan 1.4063 degrees
     int temp = 0;
     int save_temp = 0;
     g_color_iter = 0;
