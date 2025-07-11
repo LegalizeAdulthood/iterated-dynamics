@@ -27,6 +27,8 @@ struct Tesseral
 {
     void init();
     bool more() const;
+    bool split_needed();
+    bool fill_box();
 
     bool guess_plot{};  // paint 1st pass row at a time?
     Tess stack[4096 / sizeof(Tess)]{};
@@ -122,6 +124,129 @@ bool Tesseral::more() const
     return tp >= &s_tess.stack[0];
 }
 
+bool Tesseral::split_needed()
+{
+    if (tp->top == -1 || tp->bot == -1 || tp->lft == -1 || tp->rgt == -1)
+    {
+        return true;
+    }
+    // for any edge whose color is unknown, set it
+    if (tp->top == -2)
+    {
+        tp->top = tess_check_row(tp->x1, tp->x2, tp->y1);
+    }
+    if (tp->top == -1)
+    {
+        return true;
+    }
+    if (tp->bot == -2)
+    {
+        tp->bot = tess_check_row(tp->x1, tp->x2, tp->y2);
+    }
+    if (tp->bot != tp->top)
+    {
+        return true;
+    }
+    if (tp->lft == -2)
+    {
+        tp->lft = tess_check_col(tp->x1, tp->y1, tp->y2);
+    }
+    if (tp->lft != tp->top)
+    {
+        return true;
+    }
+    if (tp->rgt == -2)
+    {
+        tp->rgt = tess_check_col(tp->x2, tp->y1, tp->y2);
+    }
+    if (tp->rgt != tp->top)
+    {
+        return true;
+    }
+
+    if (tp->x2 - tp->x1 > tp->y2 - tp->y1)
+    {
+        // divide down the middle
+        const int mid = (tp->x1 + tp->x2) >> 1;                      // Find mid-point
+        const int mid_color = tess_col(mid, tp->y1 + 1, tp->y2 - 1); // Do mid column
+        if (mid_color != tp->top)
+        {
+            return true;
+        }
+    }
+    else
+    {
+        // divide across the middle
+        const int mid = (tp->y1 + tp->y2) >> 1;                      // Find mid-point
+        const int mid_color = tess_row(tp->x1 + 1, tp->x2 - 1, mid); // Do mid row
+        if (mid_color != tp->top)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool Tesseral::fill_box()
+{
+    // all 4 edges are the same color, fill in
+    if (g_fill_color != 0)
+    {
+        if (g_fill_color > 0)
+        {
+            tp->top = g_fill_color % g_colors;
+        }
+        if (const int j = tp->x2 - tp->x1 - 1; guess_plot || j < 2)
+        {
+            int i = 0;
+            for (g_col = tp->x1 + 1; g_col < tp->x2; g_col++)
+            {
+                for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
+                {
+                    g_plot(g_col, g_row, tp->top);
+                    if (++i > 500)
+                    {
+                        if (check_key())
+                        {
+                            return true;
+                        }
+                        i = 0;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // use write_span for speed
+            std::vector pixels(j, static_cast<Byte>(tp->top));
+            int i = 0;
+            for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
+            {
+                write_span(g_row, tp->x1 + 1, tp->x2 - 1, pixels.data());
+                if (g_plot != g_put_color) // symmetry
+                {
+                    if (const int k = g_stop_pt.y - (g_row - g_start_pt.y);
+                        k > g_i_stop_pt.y && k < g_logical_screen_y_dots)
+                    {
+                        write_span(k, tp->x1 + 1, tp->x2 - 1, pixels.data());
+                    }
+                }
+                if (++i > 25)
+                {
+                    if (check_key())
+                    {
+                        return true;
+                    }
+                    i = 0;
+                }
+            }
+        }
+    }
+    --tp;
+    return false;
+}
+
 // tesseral method by CJLT begins here
 int tesseral()
 {
@@ -133,124 +258,14 @@ int tesseral()
         g_current_column = s_tess.tp->x1; // for tab_display
         g_current_row = s_tess.tp->y1;
 
-        if (s_tess.tp->top == -1 || s_tess.tp->bot == -1 || s_tess.tp->lft == -1 || s_tess.tp->rgt == -1)
-        {
-            goto tess_split;
-        }
-        // for any edge whose color is unknown, set it
-        if (s_tess.tp->top == -2)
-        {
-            s_tess.tp->top = tess_check_row(s_tess.tp->x1, s_tess.tp->x2, s_tess.tp->y1);
-        }
-        if (s_tess.tp->top == -1)
-        {
-            goto tess_split;
-        }
-        if (s_tess.tp->bot == -2)
-        {
-            s_tess.tp->bot = tess_check_row(s_tess.tp->x1, s_tess.tp->x2, s_tess.tp->y2);
-        }
-        if (s_tess.tp->bot != s_tess.tp->top)
-        {
-            goto tess_split;
-        }
-        if (s_tess.tp->lft == -2)
-        {
-            s_tess.tp->lft = tess_check_col(s_tess.tp->x1, s_tess.tp->y1, s_tess.tp->y2);
-        }
-        if (s_tess.tp->lft != s_tess.tp->top)
-        {
-            goto tess_split;
-        }
-        if (s_tess.tp->rgt == -2)
-        {
-            s_tess.tp->rgt = tess_check_col(s_tess.tp->x2, s_tess.tp->y1, s_tess.tp->y2);
-        }
-        if (s_tess.tp->rgt != s_tess.tp->top)
+        if (s_tess.split_needed())
         {
             goto tess_split;
         }
 
+        if (s_tess.fill_box())
         {
-            int mid;
-            int mid_color;
-            if (s_tess.tp->x2 - s_tess.tp->x1 > s_tess.tp->y2 - s_tess.tp->y1)
-            {
-                // divide down the middle
-                mid = (s_tess.tp->x1 + s_tess.tp->x2) >> 1;           // Find mid-point
-                mid_color = tess_col(mid, s_tess.tp->y1+1, s_tess.tp->y2-1); // Do mid column
-                if (mid_color != s_tess.tp->top)
-                {
-                    goto tess_split;
-                }
-            }
-            else
-            {
-                // divide across the middle
-                mid = (s_tess.tp->y1 + s_tess.tp->y2) >> 1;           // Find mid-point
-                mid_color = tess_row(s_tess.tp->x1+1, s_tess.tp->x2-1, mid); // Do mid row
-                if (mid_color != s_tess.tp->top)
-                {
-                    goto tess_split;
-                }
-            }
-        }
-
-        {
-            // all 4 edges are the same color, fill in
-            if (g_fill_color != 0)
-            {
-                int i = 0;
-                if (g_fill_color > 0)
-                {
-                    s_tess.tp->top = g_fill_color %g_colors;
-                }
-                if (const int j = s_tess.tp->x2 - s_tess.tp->x1 - 1; s_tess.guess_plot || j < 2)
-                {
-                    // paint dots
-                    for (g_col = s_tess.tp->x1 + 1; g_col < s_tess.tp->x2; g_col++)
-                    {
-                        for (g_row = s_tess.tp->y1 + 1; g_row < s_tess.tp->y2; g_row++)
-                        {
-                            g_plot(g_col, g_row, s_tess.tp->top);
-                            if (++i > 500)
-                            {
-                                if (check_key())
-                                {
-                                    goto tess_end;
-                                }
-                                i = 0;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    // use put_line for speed
-                    std::vector pixels(j, static_cast<Byte>(s_tess.tp->top));
-                    for (g_row = s_tess.tp->y1 + 1; g_row < s_tess.tp->y2; g_row++)
-                    {
-                        write_span(g_row, s_tess.tp->x1+1, s_tess.tp->x2-1, pixels.data());
-                        if (g_plot != g_put_color) // symmetry
-                        {
-                            if (const int k = g_stop_pt.y - (g_row - g_start_pt.y);
-                                k > g_i_stop_pt.y && k < g_logical_screen_y_dots)
-                            {
-                                write_span(k, s_tess.tp->x1+1, s_tess.tp->x2-1, pixels.data());
-                            }
-                        }
-                        if (++i > 25)
-                        {
-                            if (check_key())
-                            {
-                                goto tess_end;
-                            }
-                            i = 0;
-                        }
-                    }
-                }
-            }
-            --s_tess.tp;
+            goto tess_end;
         }
         continue;
 
