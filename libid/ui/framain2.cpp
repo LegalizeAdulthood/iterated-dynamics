@@ -4,6 +4,7 @@
 
 #include "3d/line3d.h"
 #include "engine/calc_frac_init.h"
+#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
@@ -16,7 +17,6 @@
 #include "io/save_timer.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/evolver_menu_switch.h"

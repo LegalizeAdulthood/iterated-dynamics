@@ -3,6 +3,7 @@
 #include "ui/menu_handler.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
@@ -14,7 +15,6 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/evolve.h"
 #include "ui/get_fract_type.h"

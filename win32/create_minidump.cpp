@@ -2,8 +2,8 @@
 //
 #include "create_minidump.h"
 
-#include "io/special_dirs.h"
 #include "engine/cmdfiles.h"
+#include "io/special_dirs.h"
 #include "ui/init_failure.h"
 
 #include <config/port.h>

@@ -3,10 +3,10 @@
 #include "engine/tesseral.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/work_list.h"
 #include "ui/check_key.h"
-#include "engine/cmdfiles.h"
 #include "ui/video.h"
 
 #include <vector>

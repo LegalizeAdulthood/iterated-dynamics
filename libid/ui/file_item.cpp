@@ -2,6 +2,7 @@
 //
 #include "ui/file_item.h"
 
+#include "engine/cmdfiles.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
@@ -13,7 +14,6 @@
 #include "io/split_path.h"
 #include "io/trim_filename.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/get_key_no_help.h"
 #include "ui/help_title.h"

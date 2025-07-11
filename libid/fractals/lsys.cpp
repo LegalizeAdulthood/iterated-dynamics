@@ -2,12 +2,12 @@
 //
 #include "fractals/lsys.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "fractals/lsys_fns.h"
 #include "io/file_gets.h"
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"
 

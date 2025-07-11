@@ -4,6 +4,7 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/param_not_used.h"
 #include "engine/pixel_limits.h"
@@ -16,7 +17,6 @@
 #include "math/sqr.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
-#include "engine/cmdfiles.h"
 #include "ui/id_keys.h"
 #include "ui/trig_fns.h"
 #include "ui/zoom.h"

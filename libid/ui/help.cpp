@@ -2,6 +2,7 @@
 //
 #include "helpcom.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
@@ -9,7 +10,6 @@
 #include "io/save_file.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/help_title.h"
 #include "ui/id_keys.h"
 #include "ui/mouse.h"

@@ -12,10 +12,10 @@
 #include "ods.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "io/CurrentPathSaver.h"
 #include "io/save_timer.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/id_keys.h"
 #include "ui/read_ticker.h"

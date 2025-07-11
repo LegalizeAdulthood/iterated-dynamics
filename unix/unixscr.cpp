@@ -16,10 +16,10 @@
  */
 #include "unixscr.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
 #include "ui/id_keys.h"

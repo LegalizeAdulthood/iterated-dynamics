@@ -2,10 +2,9 @@
 //
 #include "fractals/peterson_variations.h"
 
-#include <algorithm>
-
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
 #include "engine/id_data.h"
@@ -13,7 +12,8 @@
 #include "fractals/newton.h"
 #include "math/arg.h"
 #include "math/fpu087.h"
-#include "engine/cmdfiles.h"
+
+#include <algorithm>
 
 DComplex g_marks_coefficient{};
 

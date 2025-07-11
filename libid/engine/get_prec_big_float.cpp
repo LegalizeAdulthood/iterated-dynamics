@@ -2,12 +2,12 @@
 //
 #include "engine/get_prec_big_float.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
 #include "math/big.h"
 #include "math/biginit.h"
-#include "engine/cmdfiles.h"
 
 #include <config/port.h>
 

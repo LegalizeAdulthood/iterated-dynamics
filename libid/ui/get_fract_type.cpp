@@ -3,6 +3,7 @@
 #include "ui/get_fract_type.h"
 
 #include "engine/bailout_formula.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/param_not_used.h"
 #include "engine/type_has_param.h"
@@ -14,7 +15,6 @@
 #include "io/load_entry_text.h"
 #include "io/loadfile.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/full_screen_choice.h"
 #include "ui/full_screen_prompt.h"

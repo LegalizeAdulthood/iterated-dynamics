@@ -2,6 +2,7 @@
 //
 #include "ui/full_screen_prompt.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
@@ -9,7 +10,6 @@
 #include "math/round_float_double.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/double_to_string.h"
 #include "ui/file_item.h"
 #include "ui/help_title.h"

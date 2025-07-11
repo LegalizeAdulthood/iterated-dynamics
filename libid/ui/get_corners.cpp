@@ -3,6 +3,7 @@
 #include "ui/get_corners.h"
 
 #include "engine/calc_frac_init.h"
+#include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
 #include "engine/id_data.h"
@@ -12,7 +13,6 @@
 #include "helpdefs.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
-#include "engine/cmdfiles.h"
 #include "ui/double_to_string.h"
 #include "ui/id_keys.h"
 #include "ui/zoom.h"

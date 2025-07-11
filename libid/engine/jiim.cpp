@@ -8,6 +8,7 @@
 #include "engine/jiim.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
@@ -17,7 +18,6 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"

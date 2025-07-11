@@ -5,6 +5,7 @@
 */
 #include "ui/rotate.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
@@ -14,7 +15,6 @@
 #include "math/rand15.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/field_prompt.h"
 #include "ui/id_keys.h"

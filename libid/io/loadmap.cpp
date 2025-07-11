@@ -2,12 +2,12 @@
 //
 #include "io/loadmap.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "io/find_path.h"
 #include "io/has_ext.h"
 #include "io/merge_path_names.h"
 #include "misc/version.h"
-#include "engine/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/stop_msg.h"
 

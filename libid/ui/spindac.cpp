@@ -2,9 +2,9 @@
 //
 #include "ui/spindac.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/rotate.h"
 
 #include <cstring>

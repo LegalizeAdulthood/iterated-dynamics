@@ -6,12 +6,12 @@
 #include "ui/editpal.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "io/dir_file.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/field_prompt.h"
 #include "ui/find_special_colors.h"
 #include "ui/get_key_no_help.h"

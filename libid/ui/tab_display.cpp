@@ -4,6 +4,7 @@
 
 #include "3d/line3d.h"
 #include "engine/calc_frac_init.h"
+#include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/diffusion_scan.h"
 #include "engine/engine_timer.h"
@@ -21,7 +22,6 @@
 #include "math/biginit.h"
 #include "misc/Driver.h"
 #include "misc/version.h"
-#include "engine/cmdfiles.h"
 #include "ui/get_calculation_time.h"
 #include "ui/get_key_no_help.h"
 #include "ui/help_title.h"

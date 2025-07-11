@@ -3,8 +3,8 @@
 #include "engine/diffusion_scan.h"
 
 #include "engine/calcfrac.h"
-#include "engine/work_list.h"
 #include "engine/cmdfiles.h"
+#include "engine/work_list.h"
 
 #include <algorithm>
 #include <cmath>

@@ -2,12 +2,12 @@
 //
 #include "ui/evolver_menu_switch.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
 #include "io/encoder.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
 #include "ui/find_special_colors.h"

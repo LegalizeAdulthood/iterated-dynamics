@@ -18,6 +18,7 @@
 #include "fractals/parser.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
@@ -35,7 +36,6 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "engine/cmdfiles.h"
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"
 

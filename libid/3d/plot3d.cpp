@@ -8,10 +8,10 @@
 
 #include "3d/line3d.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
 #include "io/loadmap.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"

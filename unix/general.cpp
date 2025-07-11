@@ -7,12 +7,12 @@
  * fractint license conditions, blah blah blah.
  */
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "io/loadfile.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/read_ticker.h"
 #include "ui/slideshw.h"
 #include "ui/tab_display.h"

@@ -11,9 +11,9 @@ The biggest difference is in the allocations of memory for the big numbers.
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
-#include "engine/cmdfiles.h"
 #include "ui/goodbye.h"
 #include "ui/stop_msg.h"
 

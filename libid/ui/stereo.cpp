@@ -8,6 +8,7 @@
 #include "ui/stereo.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
 #include "helpdefs.h"
@@ -16,7 +17,6 @@
 #include "io/gifview.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/find_special_colors.h"
 #include "ui/id_keys.h"
 #include "ui/rotate.h"

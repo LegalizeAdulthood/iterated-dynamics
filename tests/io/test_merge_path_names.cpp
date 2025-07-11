@@ -4,8 +4,8 @@
 
 #include "test_data.h"
 
-#include <io/CurrentPathSaver.h>
 #include <engine/cmdfiles.h>
+#include <io/CurrentPathSaver.h>
 
 #include <gtest/gtest.h>
 

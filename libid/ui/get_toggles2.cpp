@@ -3,10 +3,10 @@
 #include "ui/get_toggles2.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/full_screen_prompt.h"
 

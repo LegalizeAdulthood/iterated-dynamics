@@ -2,12 +2,12 @@
 //
 #include "ui/get_cmd_string.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "io/loadfile.h"
 #include "misc/debug_flags.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/field_prompt.h"
 
 /*

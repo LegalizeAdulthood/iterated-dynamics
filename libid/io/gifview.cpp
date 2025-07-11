@@ -14,6 +14,7 @@
 
 #include "3d/plot3d.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
@@ -26,7 +27,6 @@
 #include "io/locate_input_file.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/slideshw.h"

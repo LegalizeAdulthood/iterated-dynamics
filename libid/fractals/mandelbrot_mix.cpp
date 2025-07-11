@@ -4,13 +4,13 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"
 #include "math/arg.h"
 #include "math/cmplx.h"
 #include "misc/debug_flags.h"
-#include "engine/cmdfiles.h"
 
 /* re-use static roots variable
    memory for mandelmix4 */

@@ -4,6 +4,7 @@
 
 #include "3d/line3d.h"
 #include "3d/plot3d.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
@@ -13,7 +14,6 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
-#include "engine/cmdfiles.h"
 #include "ui/field_prompt.h"
 #include "ui/full_screen_choice.h"
 #include "ui/full_screen_prompt.h"

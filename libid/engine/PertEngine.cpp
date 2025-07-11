@@ -11,6 +11,7 @@
 #include "engine/PertEngine.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/random_seed.h"
 #include "fractals/fractalp.h"
@@ -19,7 +20,6 @@
 #include "math/complex_fn.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "engine/cmdfiles.h"
 
 #include <algorithm>
 #include <cmath>

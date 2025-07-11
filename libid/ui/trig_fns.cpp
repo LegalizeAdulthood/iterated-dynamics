@@ -2,12 +2,12 @@
 //
 #include "ui/trig_fns.h"
 
+#include "engine/cmdfiles.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "fractals/parser.h"
 #include "math/arg.h"
-#include "engine/cmdfiles.h"
 
 #include <config/string_lower.h>
 

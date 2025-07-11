@@ -3,12 +3,12 @@
 #include "engine/solid_guess.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
 #include "engine/work_list.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/video.h"
 
 #include <algorithm>

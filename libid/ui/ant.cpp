@@ -8,12 +8,12 @@
 //
 #include "ui/ant.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "fractals/Ant.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "engine/cmdfiles.h"
 #include "ui/id_keys.h"
 #include "ui/temp_msg.h"
 

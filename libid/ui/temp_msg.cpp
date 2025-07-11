@@ -2,9 +2,9 @@
 //
 #include "ui/temp_msg.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"

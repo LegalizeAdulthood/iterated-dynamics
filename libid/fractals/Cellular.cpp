@@ -5,6 +5,7 @@
 #include "fractals/Cellular.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
@@ -12,7 +13,6 @@
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "misc/Driver.h"
-#include "engine/cmdfiles.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
 #include "ui/thinking.h"

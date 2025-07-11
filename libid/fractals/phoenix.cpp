@@ -4,6 +4,7 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
@@ -11,7 +12,6 @@
 #include "fractals/newton.h"
 #include "math/cmplx.h"
 #include "math/fpu087.h"
-#include "engine/cmdfiles.h"
 
 static DComplex s_tmp2{};
 

@@ -3,6 +3,7 @@
 #include "engine/calc_frac_init.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
 #include "engine/fractalb.h"
@@ -18,7 +19,6 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "engine/cmdfiles.h"
 #include "ui/stop_msg.h"
 #include "ui/zoom.h"
 

@@ -2,13 +2,13 @@
 //
 #include "fractals/lsys.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "fractals/lsys_fns.h"
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/stack_avail.h"
-#include "engine/cmdfiles.h"
 #include "ui/thinking.h"
 
 #include <algorithm>

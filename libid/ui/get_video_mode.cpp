@@ -17,6 +17,7 @@
 */
 #include "ui/get_video_mode.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "io/loadfile.h"
@@ -24,7 +25,6 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "misc/version.h"
-#include "engine/cmdfiles.h"
 #include "ui/full_screen_choice.h"
 #include "ui/make_batch_file.h"
 #include "ui/stop_msg.h"

@@ -5,6 +5,7 @@
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/calmanfp.h"
+#include "engine/cmdfiles.h"
 #include "engine/engine_timer.h"
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
@@ -17,7 +18,6 @@
 #include "fractals/pickover_mandelbrot.h"
 #include "fractals/popcorn.h"
 #include "misc/debug_flags.h"
-#include "engine/cmdfiles.h"
 #include "ui/editpal.h"
 #include "ui/trig_fns.h"
 

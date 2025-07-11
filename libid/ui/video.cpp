@@ -3,6 +3,7 @@
 #include "ui/video.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "io/find_file.h"
@@ -12,7 +13,6 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/stack_avail.h"
-#include "engine/cmdfiles.h"
 #include "ui/diskvid.h"
 #include "ui/id_main.h"
 #include "ui/init_failure.h"

@@ -3,10 +3,10 @@
 #include "engine/boundary_trace.h"
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/show_dot.h"
 #include "engine/work_list.h"
-#include "engine/cmdfiles.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 

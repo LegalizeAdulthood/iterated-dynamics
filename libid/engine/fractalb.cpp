@@ -7,6 +7,7 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/type_has_param.h"
@@ -16,7 +17,6 @@
 #include "math/biginit.h"
 #include "math/fixed_pt.h"
 #include "misc/id.h"
-#include "engine/cmdfiles.h"
 #include "ui/goodbye.h"
 #include "ui/stop_msg.h"
 

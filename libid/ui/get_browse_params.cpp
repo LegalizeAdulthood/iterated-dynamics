@@ -2,11 +2,11 @@
 //
 #include "ui/get_browse_params.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
-#include "engine/cmdfiles.h"
 #include "ui/evolve.h"
 #include "ui/id_keys.h"
 
