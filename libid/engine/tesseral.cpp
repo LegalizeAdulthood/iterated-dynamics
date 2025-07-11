@@ -9,18 +9,7 @@
 #include "engine/cmdfiles.h"
 #include "ui/video.h"
 
-#include <cstring>
 #include <vector>
-
-static int tess_check_col(int x, int y1, int y2);
-static int tess_check_row(int x1, int x2, int y);
-static int tess_col(int x, int y1, int y2);
-static int tess_row(int x1, int x2, int y);
-
-static bool s_guess_plot{};  // paint 1st pass row at a time?
-static Byte s_stack[4096]{}; // common temp, two put_line calls
-
-// tesseral method by CJLT begins here
 
 struct Tess             // one of these per box to be done gets stacked
 {
@@ -34,10 +23,19 @@ struct Tess             // one of these per box to be done gets stacked
     int rgt{}; // edge colors, -1 mixed, -2 unknown
 };
 
+static int tess_check_col(int x, int y1, int y2);
+static int tess_check_row(int x1, int x2, int y);
+static int tess_col(int x, int y1, int y2);
+static int tess_row(int x1, int x2, int y);
+
+static bool s_guess_plot{};  // paint 1st pass row at a time?
+static Tess s_stack[4096/sizeof(Tess)]{};
+
+// tesseral method by CJLT begins here
 int tesseral()
 {
     s_guess_plot = (g_plot != g_put_color && g_plot != sym_plot2);
-    Tess *tp = (Tess *) &s_stack[0];
+    Tess *tp = &s_stack[0];
     tp->x1 = g_i_start_pt.x;                              // set up initial box
     tp->x2 = g_i_stop_pt.x;
     tp->y1 = g_i_start_pt.y;
@@ -92,7 +90,7 @@ int tesseral()
                 if (mid > cur_x)
                 {
                     // stack right part
-                    std::memcpy(++tp, tp2, sizeof(*tp));
+                    *(++tp) = *tp2; // copy current box
                     tp->x2 = mid;
                 }
                 tp2->x1 = mid;
@@ -108,7 +106,7 @@ int tesseral()
                 if (mid > cur_y)
                 {
                     // stack bottom part
-                    std::memcpy(++tp, tp2, sizeof(*tp));
+                    *(++tp) = *tp2; // copy current box
                     tp->y2 = mid;
                 }
                 tp2->y1 = mid;
@@ -118,7 +116,7 @@ int tesseral()
 
     g_got_status = StatusValues::TESSERAL; // for tab_display
 
-    while (tp >= (Tess *)&s_stack[0])
+    while (tp >= &s_stack[0])
     {
         // do next box
         g_current_column = tp->x1; // for tab_display
@@ -275,7 +273,7 @@ tess_split:
                     if (mid - tp->x1 > 1)
                     {
                         // left part >= 1 col, stack right
-                        std::memcpy(++tp, tp2, sizeof(*tp));
+                        *(++tp) = *tp2; // copy current box
                         tp->x2 = mid;
                         tp->rgt = mid_color;
                     }
@@ -311,7 +309,7 @@ tess_split:
                     if (mid - tp->y1 > 1)
                     {
                         // top also >= 1 col, stack bottom
-                        std::memcpy(++tp, tp2, sizeof(*tp));
+                        *(++tp) = *tp2; // copy current box
                         tp->y2 = mid;
                         tp->bot = mid_color;
                     }
@@ -327,7 +325,7 @@ tess_split:
     }
 
 tess_end:
-    if (tp >= (Tess *)&s_stack[0])
+    if (tp >= &s_stack[0])
     {
         // didn't complete
         int y_size = 1;
