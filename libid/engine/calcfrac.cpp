@@ -2625,9 +2625,6 @@ origin_symmetry:
     }
 }
 
-// added for testing autologmap()
-// insert at end of CALCFRAC.C
-
 static long auto_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
