@@ -1051,17 +1051,17 @@ static void perform_work_list()
             }
             else
             {
-                double d_show_dot_width = (double) g_size_dot * g_logical_screen_x_dots / 1024.0;
+                const double width = (double) g_size_dot * g_logical_screen_x_dots / 1024.0;
 
-                // Arbitrary sanity limit, however showdot_width will
-                // overflow if dshowdot width gets near 256.
-                if (d_show_dot_width > 150.0)
+                // Arbitrary sanity limit, however s_show_dot_width will
+                // overflow if width gets near 256.
+                if (width > 150.0)
                 {
                     s_show_dot_width = 150;
                 }
-                else if (d_show_dot_width > 0.0)
+                else if (width > 0.0)
                 {
-                    s_show_dot_width = (int)d_show_dot_width;
+                    s_show_dot_width = (int)width;
                 }
                 else
                 {
