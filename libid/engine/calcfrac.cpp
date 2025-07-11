@@ -878,12 +878,11 @@ static void work_list_pop_front()
 // general escape-time engine routines
 static void perform_work_list()
 {
-    int (*sv_orbit_calc)() = nullptr;  // function that calculates one orbit
-    int (*sv_per_pixel)() = nullptr;  // once-per-pixel init
-    bool (*sv_per_image)() = nullptr;  // once-per-image setup
-    int alt = find_alternate_math(g_fractal_type, g_bf_math);
+    int (*sv_orbit_calc)(){}; // function that calculates one orbit iteration
+    int (*sv_per_pixel)(){};  // once-per-pixel init
+    bool (*sv_per_image)(){}; // once-per-image setup
 
-    if (alt > -1)
+    if (const int alt = find_alternate_math(g_fractal_type, g_bf_math); alt > -1)
     {
         sv_orbit_calc = g_cur_fractal_specific->orbit_calc;
         sv_per_pixel = g_cur_fractal_specific->per_pixel;
