@@ -1195,18 +1195,6 @@ static void perform_work_list()
     }
 }
 
-static long calc_mand_asm()
-{
-    static bool been_here = false;
-    if (!been_here)
-    {
-        stop_msg("This integer fractal type is unimplemented;\n"
-                "Use float=yes to get a real image.");
-        been_here = true;
-    }
-    return 0;
-}
-
 // fast per pixel 1/2/b/g, called with row & col set
 // can also handle invert, any rqlim, potflag, zmag, epsilon cross,
 // and all the current outside options
