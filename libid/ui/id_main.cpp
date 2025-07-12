@@ -304,7 +304,7 @@ static MainState main_image_start(MainContext &context)
         driver_discard_screen();
         context.stacked = false;
     }
-    g_got_status = StatusValues::NONE;                     // for tab_display
+    g_passes = Passes::NONE;                     // for tab_display
 
     if (g_show_file != ShowFile::LOAD_IMAGE)
     {

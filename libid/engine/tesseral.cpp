@@ -118,7 +118,7 @@ void Tesseral::init()
         }
     }
 
-    g_got_status = StatusValues::TESSERAL; // for tab_display
+    g_passes = Passes::TESSERAL; // for tab_display
 }
 
 bool Tesseral::more() const

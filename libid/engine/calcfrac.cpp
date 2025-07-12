@@ -159,7 +159,7 @@ Point2i g_i_start_pt{};                          // start point for work list
 Point2i g_i_stop_pt{};                           // start, stop here
 int g_work_pass{};                               //
 int g_work_symmetry{};                           // for the sake of calcmand
-StatusValues g_got_status{StatusValues::NONE};   // variables which must be visible for tab_display
+Passes g_passes{Passes::NONE};                   // variables which must be visible for tab_display
 int g_current_pass{};                            //
 int g_total_passes{};                            //
 int g_current_row{};                             //

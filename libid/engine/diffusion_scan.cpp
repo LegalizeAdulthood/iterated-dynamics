@@ -60,7 +60,7 @@ int diffusion_scan()
 {
     double log2 = std::log(2.0);
 
-    g_got_status = StatusValues::DIFFUSION;
+    g_passes = Passes::DIFFUSION;
 
     // note: the max size of 2048x2048 gives us a 22 bit counter that will
     // fit any 32 bit architecture, the maximum limit for this case would

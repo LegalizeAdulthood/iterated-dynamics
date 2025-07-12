@@ -59,16 +59,16 @@ enum
     ATANI = -104
 };
 
-enum class StatusValues
+enum class Passes
 {
     NONE = -1,
-    ONE_OR_TWO_PASS = 0,
+    SEQUENTIAL_SCAN = 0,
     SOLID_GUESS = 1,
     BOUNDARY_TRACE = 2,
     THREE_D = 3,
     TESSERAL = 4,
     DIFFUSION = 5,
-    ORBITS =6,
+    ORBITS = 6,
 };
 
 extern int                   g_and_color;           // AND mask for iteration to get color index
@@ -90,7 +90,7 @@ extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;
 extern long                  g_first_saved_and;
-extern StatusValues          g_got_status;
+extern Passes                g_passes;
 extern DComplex              g_init;
 extern int                   g_invert;
 extern int                   g_keyboard_check_interval;

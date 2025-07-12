@@ -89,7 +89,7 @@ int solid_guess()
     g_i_start_pt.y = g_begin_pt.y;
     g_i_start_pt.y &= -1 - (s_max_block-1);
 
-    g_got_status = StatusValues::SOLID_GUESS;
+    g_passes = Passes::SOLID_GUESS;
 
     if (g_work_pass == 0) // otherwise first pass already done
     {

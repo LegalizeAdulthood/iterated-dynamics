@@ -50,8 +50,7 @@ bool auto_save_needed()
         {
             if (g_calc_status == CalcStatus::IN_PROGRESS) /* still calculating, check row */
             {
-                if (g_got_status == StatusValues::ONE_OR_TWO_PASS ||
-                    g_got_status == StatusValues::SOLID_GUESS)
+                if (g_passes == Passes::SEQUENTIAL_SCAN || g_passes == Passes::SOLID_GUESS)
                 {
                     g_finish_row = g_row;
                 }
