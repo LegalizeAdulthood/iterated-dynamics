@@ -53,6 +53,15 @@ struct MinMax
     int max_x;
 };
 
+enum class FileError
+{
+    NONE = 0,
+    OPEN_FAILED = 1,
+    DISK_FULL = 2,
+    BAD_IMAGE_SIZE = 3,
+    BAD_FILE_TYPE = 4,
+};
+
 // routines in this module
 static int first_time(int line_len, Vector v);
 static void hsv_to_rgb(
@@ -77,7 +86,7 @@ static void put_min_max(int x, int y, int color);
 static void triangle_bounds(float pt_t[3][3]);
 static void transparent_clip_color(int x, int y, int color);
 static void vec_draw_line(double *v1, double *v2, int color);
-static void file_error(const char *filename, int error);
+static void file_error(const char *filename, FileError error);
 
 // static variables
 static void (*s_fill_plot)(int x, int y, int color){};   //
@@ -124,7 +133,7 @@ static PointColor s_bad{};                       // out of range value
 static long s_num_tris{};                        // number of triangles output to ray trace file
 static std::vector<FPointColor> s_f_last_row;    //
 static int s_real_v{};                           // Actual value of V for fillytpe>4 monochrome images
-static int s_error{};                            //
+static FileError s_error{};                      //
 static std::string s_targa_temp("fractemp.tga"); //
 static int s_p = 250;                            // Perspective dist used when viewing light vector
 static const int s_bad_check = -3000;            // check values against this to determine if good
@@ -831,7 +840,7 @@ loop_bottom:
                 {
                     std::fclose(s_file_ptr1);
                     std::remove(g_light_name.c_str());
-                    file_error(g_raytrace_filename.c_str(), 2);
+                    file_error(g_raytrace_filename.c_str(), FileError::DISK_FULL);
                     return -1;
                 }
             }
@@ -1424,23 +1433,23 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 
 **************************************************************************/
 
-static void file_error(const char *filename, int error)
+static void file_error(const char *filename, FileError error)
 {
     char msg_buf[200];
 
     s_error = error;
     switch (error)
     {
-    case 1:                      // Can't Open
+    case FileError::OPEN_FAILED:        // Can't Open
         std::snprintf(msg_buf, std::size(msg_buf), "OOPS, couldn't open  < %s >", filename);
         break;
-    case 2:                      // Not enough room
+    case FileError::DISK_FULL:          // Not enough room
         std::snprintf(msg_buf, std::size(msg_buf), "OOPS, ran out of disk space. < %s >", filename);
         break;
-    case 3:                      // Image wrong size
+    case FileError::BAD_IMAGE_SIZE:     // Image wrong size
         std::snprintf(msg_buf, std::size(msg_buf), "OOPS, image wrong size\n");
         break;
-    case 4:                      // Wrong file type
+    case FileError::BAD_FILE_TYPE:      // Wrong file type
         std::snprintf(msg_buf, std::size(msg_buf), "OOPS, can't handle this type of file.\n");
         break;
     }
@@ -1469,7 +1478,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     std::FILE *fps = dir_fopen(g_working_dir, filename, "w+b");
     if (fps == nullptr)
     {
-        file_error(filename.c_str(), 1);
+        file_error(filename.c_str(), FileError::OPEN_FAILED);
         return true;            // Oops, something's wrong!
     }
 
@@ -1548,7 +1557,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
                 std::fclose(source);
             }
             dir_remove(g_working_dir, filename);
-            file_error(filename.c_str(), 2);
+            file_error(filename.c_str(), FileError::DISK_FULL);
             return true;
         }
         if (driver_key_pressed())
@@ -1572,7 +1581,7 @@ bool targa_validate(const char *filename)
     std::FILE *fp = dir_fopen(g_working_dir, filename, "rb");
     if (fp == nullptr)
     {
-        file_error(filename, 1);
+        file_error(filename, FileError::OPEN_FAILED);
         return true;              // Oops, file does not exist
     }
 
@@ -1580,13 +1589,13 @@ bool targa_validate(const char *filename)
 
     if (std::fgetc(fp))               // Make sure this is an unmapped file
     {
-        file_error(filename, 4);
+        file_error(filename, FileError::BAD_FILE_TYPE);
         return true;
     }
 
     if (std::fgetc(fp) != 2)          // Make sure it is a type 2 file
     {
-        file_error(filename, 4);
+        file_error(filename, FileError::BAD_IMAGE_SIZE);
         return true;
     }
 
@@ -1606,22 +1615,22 @@ bool targa_validate(const char *filename)
     {
         if (std::fgetc(fp) != (int) elem)
         {
-            file_error(filename, 3);
+            file_error(filename, FileError::BAD_IMAGE_SIZE);
             return true;
         }
     }
 
     if (std::fgetc(fp) != (int) s_t24)
     {
-        s_error = 4;                // Is it a targa 24 file?
+        s_error = FileError::BAD_FILE_TYPE; // Is it a targa 24 file?
     }
     if (std::fgetc(fp) != (int) s_t32)
     {
-        s_error = 4;                // Is the origin at the upper left?
+        s_error = FileError::BAD_FILE_TYPE;                // Is the origin at the upper left?
     }
-    if (s_error == 4)
+    if (s_error == FileError::BAD_FILE_TYPE)
     {
-        file_error(filename, 4);
+        file_error(filename, FileError::BAD_FILE_TYPE);
         return true;
     }
     std::fseek(fp, 0, SEEK_SET);
@@ -2275,7 +2284,7 @@ static void line3d_cleanup()
         // Finish up targa files
         s_targa_header_24 = 18;         // Reset Targa header size
         end_disk();
-        if (g_debug_flag == DebugFlags::NONE && (!s_t_safe || s_error) && g_targa_overlay)
+        if (g_debug_flag == DebugFlags::NONE && (!s_t_safe || s_error != FileError::NONE) && g_targa_overlay)
         {
             dir_remove(g_working_dir, g_light_name);
             std::rename(s_targa_temp.c_str(), g_light_name.c_str());
@@ -2285,7 +2294,7 @@ static void line3d_cleanup()
             dir_remove(g_working_dir, s_targa_temp);
         }
     }
-    s_error = 0;
+    s_error = FileError::NONE;
     s_t_safe = false;
 }
 
@@ -2340,7 +2349,7 @@ static int first_time(int line_len, Vector v)
     s_co_max = 0;
 
     set_upr_lwr();
-    s_error = 0;
+    s_error = FileError::NONE;
 
     if (g_which_image < StereoImage::BLUE)
     {
