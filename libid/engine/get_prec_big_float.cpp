@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <cfloat>
+#include <cstdio>
 
 int get_prec_bf_mag()
 {
@@ -35,8 +36,7 @@ int get_prec_bf_mag()
         return -1;
     }
 
-    int dec = get_power10(magnification) + 4; // 4 digits of padding sounds good
-    return dec;
+    return get_magnification_precision(magnification);
 }
 
 /* This function calculates the precision needed to distinguish adjacent
@@ -105,4 +105,19 @@ int get_prec_bf(ResolutionFlag flag)
     restore_stack(saved);
     int dec = get_prec_bf_mag();
     return std::max(digits, dec);
+}
+
+// get_power10(x) returns the magnitude of x.  This rounds
+// a little so 9.95 rounds to 10, but we're using a binary base anyway,
+// so there's nothing magic about changing to the next power of 10.
+static int get_power10(LDouble x)
+{
+    char string[11]; // space for "+x.xe-xxxx"
+    std::snprintf(string, std::size(string), "%+.1Le", x);
+    return std::atoi(string + 5);
+}
+
+int get_magnification_precision(LDouble magnification)
+{
+    return get_power10(magnification) + 4; // 4 digits of padding sounds good
 }

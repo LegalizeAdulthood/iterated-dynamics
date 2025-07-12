@@ -232,19 +232,6 @@ static bool s_init_functions{};  // trig functions set via function=?
 // it also processes the 'sstools.ini' file and any
 // indirect files ('id @myfile')
 
-// This probably ought to go somewhere else, but it's used here.
-// getpower10(x) returns the magnitude of x.  This rounds
-// a little so 9.95 rounds to 10, but we're using a binary base anyway,
-// so there's nothing magic about changing to the next power of 10.
-int get_power10(LDouble x)
-{
-    char string[11]; // space for "+x.xe-xxxx"
-
-    std::snprintf(string, std::size(string), "%+.1Le", x);
-    int p = std::atoi(string + 5);
-    return p;
-}
-
 static void process_sstools_ini()
 {
     const std::string sstools_ini{locate_input_file("sstools.ini")}; // look for SSTOOLS.INI
@@ -1465,7 +1452,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
         return cmd.bad_arg(); // ie: magnification is +-1.#INF
     }
 
-    const int dec = get_power10(magnification) + 4; // 4 digits of padding sounds good
+    const int dec = get_magnification_precision(magnification);
 
     if ((dec <= DBL_DIG + 1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) ||
         g_debug_flag == DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)

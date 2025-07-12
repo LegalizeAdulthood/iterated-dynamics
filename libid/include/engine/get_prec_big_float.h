@@ -6,3 +6,4 @@
 
 int get_prec_bf(ResolutionFlag flag);
 int get_prec_bf_mag();
+int get_magnification_precision(LDouble magnification);
