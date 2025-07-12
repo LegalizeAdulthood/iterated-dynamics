@@ -34,6 +34,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <string>
 #include <vector>
 
 template <typename T>
@@ -312,9 +313,7 @@ int line3d(Byte * pixels, unsigned line_len)
     }
     if (driver_is_disk())
     {
-        char s[40];
-        std::snprintf(s, std::size(s), "mapping to 3d, reading line %d", g_current_row);
-        dvid_status(1, s);
+        dvid_status(1, "mapping to 3d, reading line " + std::to_string(g_current_row));
     }
 
     if (!col && g_raytrace_format != RayTraceFormat::NONE && g_current_row != 0)
@@ -1435,25 +1434,30 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 
 static void file_error(const char *filename, FileError error)
 {
-    char msg_buf[200];
-
+    std::string msg;
     s_error = error;
     switch (error)
     {
+    case FileError::NONE:
+        return;
+
     case FileError::OPEN_FAILED:        // Can't Open
-        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, couldn't open  < %s >", filename);
+        msg = "OOPS, couldn't open  < " + std::string(filename) + " >";
         break;
+
     case FileError::DISK_FULL:          // Not enough room
-        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, ran out of disk space. < %s >", filename);
+        msg = "OOPS, ran out of disk space. < " + std::string(filename) + " >";
         break;
+
     case FileError::BAD_IMAGE_SIZE:     // Image wrong size
-        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, image wrong size\n");
+        msg = "OOPS, image wrong size";
         break;
+
     case FileError::BAD_FILE_TYPE:      // Wrong file type
-        std::snprintf(msg_buf, std::size(msg_buf), "OOPS, can't handle this type of file.\n");
+        msg = "OOPS, can't handle this type of file.";
         break;
     }
-    stop_msg(msg_buf);
+    stop_msg(msg);
 }
 
 //**********************************************************************
