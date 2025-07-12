@@ -28,7 +28,7 @@ struct Tesseral
     void init();
     bool more() const;
     bool split_needed();
-    bool fill_box();
+    void fill_box();
     bool split_box();
     void suspend();
 
@@ -190,7 +190,7 @@ bool Tesseral::split_needed()
     return false;
 }
 
-bool Tesseral::fill_box()
+void Tesseral::fill_box()
 {
     // all 4 edges are the same color, fill in
     if (g_fill_color != 0)
@@ -201,20 +201,11 @@ bool Tesseral::fill_box()
         }
         if (const int j = tp->x2 - tp->x1 - 1; guess_plot || j < 2)
         {
-            int i = 0;
             for (g_col = tp->x1 + 1; g_col < tp->x2; g_col++)
             {
                 for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
                 {
                     g_plot(g_col, g_row, tp->top);
-                    if (++i > 500)
-                    {
-                        if (check_key())
-                        {
-                            return true;
-                        }
-                        i = 0;
-                    }
                 }
             }
         }
@@ -222,7 +213,6 @@ bool Tesseral::fill_box()
         {
             // use write_span for speed
             std::vector pixels(j, static_cast<Byte>(tp->top));
-            int i = 0;
             for (g_row = tp->y1 + 1; g_row < tp->y2; g_row++)
             {
                 write_span(g_row, tp->x1 + 1, tp->x2 - 1, pixels.data());
@@ -234,19 +224,10 @@ bool Tesseral::fill_box()
                         write_span(k, tp->x1 + 1, tp->x2 - 1, pixels.data());
                     }
                 }
-                if (++i > 25)
-                {
-                    if (check_key())
-                    {
-                        return true;
-                    }
-                    i = 0;
-                }
             }
         }
     }
     --tp;
-    return false;
 }
 
 bool Tesseral::split_box()
@@ -369,9 +350,13 @@ int tesseral()
                 break;
             }
         }
-        else if (s_tess.fill_box())
+        else
         {
-            break;
+            s_tess.fill_box();
+            if (check_key())
+            {
+                break;
+            }
         }
     }
 
