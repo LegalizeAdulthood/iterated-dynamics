@@ -1371,7 +1371,7 @@ BigNum div_bn_int(BigNum r, BigNum n, U16 u)
 }
 
 /**********************************************************************/
-char *bn_to_str(char *s, int dec, BigNum r)
+char *bn_to_str(char *s, BigNum r, int dec)
 {
     return unsafe_bn_to_str(s, dec, copy_bn(g_bn_tmp_copy2, r));
 }

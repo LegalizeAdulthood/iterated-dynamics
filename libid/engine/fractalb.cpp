@@ -36,7 +36,7 @@ BFMathType g_bf_math{};
 std::string bn_to_string(BigNum n, int dec)
 {
     char msg[200];
-    bn_to_str(msg, dec, n);
+    bn_to_str(msg, n, dec);
     return msg;
 }
 
@@ -74,7 +74,7 @@ void show_corners_bn(const char *s)
     char msg[100];
     char msg1[200];
     char msg3[400];
-    bn_to_str(msg, dec, g_x_min_bn);
+    bn_to_str(msg, g_x_min_bn, dec);
     std::snprintf(msg1, std::size(msg1),
         "g_x_min_bn=%s\n"
         "x_min= %.20f\n"
@@ -83,35 +83,35 @@ void show_corners_bn(const char *s)
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bn_to_str(msg, dec, g_x_max_bn);
+    bn_to_str(msg, g_x_max_bn, dec);
     std::snprintf(msg1, std::size(msg1),
         "g_x_max_bn=%s\n"
         "x_max= %.20f\n"
         "\n",
         msg, g_x_max);
     std::strcat(msg3, msg1);
-    bn_to_str(msg, dec, g_y_min_bn);
+    bn_to_str(msg, g_y_min_bn, dec);
     std::snprintf(msg1, std::size(msg1),
         "g_y_min_bn=%s\n"
         "y_min= %.20f\n"
         "\n",
         msg, g_y_min);
     std::strcat(msg3, msg1);
-    bn_to_str(msg, dec, g_y_max_bn);
+    bn_to_str(msg, g_y_max_bn, dec);
     std::snprintf(msg1, std::size(msg1),
         "g_y_max_bn=%s\n"
         "y_max= %.20f\n"
         "\n",
         msg, g_y_max);
     std::strcat(msg3, msg1);
-    bn_to_str(msg, dec, g_x_3rd_bn);
+    bn_to_str(msg, g_x_3rd_bn, dec);
     std::snprintf(msg1, std::size(msg1),
         "g_x_3rd_bn=%s\n"
         "x_3rd= %.20f\n"
         "\n",
         msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bn_to_str(msg, dec, g_y_3rd_bn);
+    bn_to_str(msg, g_y_3rd_bn, dec);
     std::snprintf(msg1, std::size(msg1),
         "g_y_3rd_bn=%s\n"
         "y_3rd= %.20f\n"
@@ -331,7 +331,7 @@ void compare_values(const char *s, LDouble x, BigNum bnx)
     int dec = 40;
     char msg[100];
     char msg1[300];
-    bn_to_str(msg, dec, bnx);
+    bn_to_str(msg, bnx, dec);
     std::snprintf(msg1, std::size(msg1),
         "%s\n"
         "bignum=%s\n"

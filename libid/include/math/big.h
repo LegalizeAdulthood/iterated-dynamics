@@ -150,7 +150,7 @@ BigNum mult_bn(BigNum r, BigNum n1, BigNum n2);
 BigNum full_square_bn(BigNum r, BigNum n);
 BigNum square_bn(BigNum r, BigNum n);
 BigNum div_bn_int(BigNum r, BigNum n, U16 u);
-char *bn_to_str(char *s, int dec, BigNum r);
+char *bn_to_str(char *s, BigNum r, int dec);
 BigNum inv_bn(BigNum r, BigNum n);
 BigNum div_bn(BigNum r, BigNum n1, BigNum n2);
 BigNum ln_bn(BigNum r, BigNum n);
