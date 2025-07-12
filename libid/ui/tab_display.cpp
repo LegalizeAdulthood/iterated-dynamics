@@ -345,7 +345,7 @@ top:
     }
     else
     {
-        std::sprintf(msg, "(%-d decimals)", g_decimals /*getprecbf(Resolution::CURRENT)*/);
+        std::sprintf(msg, "(%-d decimals)", g_decimals);
         driver_put_string(start_row, 45, C_GENERAL_HI, "Arbitrary precision ");
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
