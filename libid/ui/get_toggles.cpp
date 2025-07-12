@@ -55,23 +55,23 @@ int get_toggles()
     values[k].uval.ch.list_len = std::size(calc_modes);
     values[k].uval.ch.list = calc_modes;
     values[k].uval.ch.val =
-        (g_user_std_calc_mode == '1') ? 0
-        : (g_user_std_calc_mode == '2') ? 1
-        : (g_user_std_calc_mode == '3') ? 2
-        : (g_user_std_calc_mode == 'g' && g_stop_pass == 0) ? 3
-        : (g_user_std_calc_mode == 'g' && g_stop_pass == 1) ? 4
-        : (g_user_std_calc_mode == 'g' && g_stop_pass == 2) ? 5
-        : (g_user_std_calc_mode == 'g' && g_stop_pass == 3) ? 6
-        : (g_user_std_calc_mode == 'g' && g_stop_pass == 4) ? 7
-        : (g_user_std_calc_mode == 'g' && g_stop_pass == 5) ? 8
-        : (g_user_std_calc_mode == 'g' && g_stop_pass == 6) ? 9
-        : (g_user_std_calc_mode == 'b') ? 10
-        : (g_user_std_calc_mode == 's') ? 11
-        : (g_user_std_calc_mode == 't') ? 12
-        : (g_user_std_calc_mode == 'd') ? 13
-        : (g_user_std_calc_mode == 'o') ? 14
+        (g_user_std_calc_mode == CalcMode::ONE_PASS) ? 0
+        : (g_user_std_calc_mode == CalcMode::TWO_PASS) ? 1
+        : (g_user_std_calc_mode == CalcMode::THREE_PASS) ? 2
+        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 0) ? 3
+        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 1) ? 4
+        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 2) ? 5
+        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 3) ? 6
+        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 4) ? 7
+        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 5) ? 8
+        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 6) ? 9
+        : (g_user_std_calc_mode == CalcMode::BOUNDARY_TRACE) ? 10
+        : (g_user_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT) ? 11
+        : (g_user_std_calc_mode == CalcMode::TESSERAL) ? 12
+        : (g_user_std_calc_mode == CalcMode::DIFFUSION) ? 13
+        : (g_user_std_calc_mode == CalcMode::ORBIT) ? 14
         :        /* "p"erturbation */     15;
-    char old_user_std_calc_mode = g_user_std_calc_mode;
+    CalcMode old_user_std_calc_mode = g_user_std_calc_mode;
     int old_stop_pass = g_stop_pass;
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
     values[k].type = 'L';
@@ -241,15 +241,16 @@ int get_toggles()
     k = -1;
     int j = 0;   // return code
 
-    g_user_std_calc_mode = calc_modes[values[++k].uval.ch.val][0];
+    g_user_std_calc_mode = static_cast<CalcMode>(calc_modes[values[++k].uval.ch.val][0]);
     g_stop_pass = (int)calc_modes[values[k].uval.ch.val][1] - (int)'0';
 
-    if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_std_calc_mode != 'g')
+    if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_std_calc_mode != CalcMode::SOLID_GUESS)
     {
         g_stop_pass = 0;
     }
 
-    if (g_user_std_calc_mode == 'o' && g_fractal_type == FractalType::LYAPUNOV)   // Oops,lyapunov type
+    if (g_user_std_calc_mode == CalcMode::ORBIT &&
+        g_fractal_type == FractalType::LYAPUNOV) // Oops,lyapunov type
     {
         // doesn't use 'new' & breaks orbits
         g_user_std_calc_mode = old_user_std_calc_mode;

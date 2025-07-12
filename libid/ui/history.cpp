@@ -578,7 +578,7 @@ void save_history_info()
     current.outside_color = g_outside_color;
     current.x_3rd = g_x_3rd;
     current.y_3rd = g_y_3rd;
-    current.user_std_calc_mode = g_user_std_calc_mode;
+    current.user_std_calc_mode = static_cast<char>(g_user_std_calc_mode);
     current.three_pass = g_three_pass;
     current.stop_pass = g_stop_pass;
     current.dist_est = g_distance_estimator;
@@ -769,8 +769,8 @@ void restore_history_info(int i)
     g_outside_color = last.outside_color;
     g_x_3rd = last.x_3rd;
     g_y_3rd = last.y_3rd;
-    g_user_std_calc_mode = last.user_std_calc_mode;
-    g_std_calc_mode = last.user_std_calc_mode;
+    g_user_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
+    g_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
     g_three_pass = last.three_pass != 0;
     g_stop_pass = last.stop_pass;
     g_distance_estimator = last.dist_est;

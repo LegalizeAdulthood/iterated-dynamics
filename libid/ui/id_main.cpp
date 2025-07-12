@@ -63,7 +63,6 @@ int g_logical_screen_x_dots{}, g_logical_screen_y_dots{};     // # of dots on th
 double g_logical_screen_x_size_dots{}, g_logical_screen_y_size_dots{}; // xdots-1, ydots-1
 int g_colors{256};                                                     // maximum colors available
 long g_max_iterations{};                                               // try this many iterations
-char g_std_calc_mode{};                                                // '1', '2', 'g', 'b'
 LDouble g_delta_x{}, g_delta_y{};                                      // screen pixel increments
 LDouble g_delta_x2{}, g_delta_y2{};                                    // screen pixel increments
 double g_delta_min{};                                                  // same as a double
@@ -72,7 +71,6 @@ double g_potential_params[3]{};                                        // three 
 ConfigStatus g_bad_config{};                                           // 'id.cfg' ok?
 bool g_has_inverse{};                                                  //
                       // user_xxx is what the user wants, vs what we may be forced to do
-char g_user_std_calc_mode{};            //
 int g_user_periodicity_value{};         //
 long g_user_distance_estimator_value{}; //
 bool g_view_window{};                   // false for full screen, true for window

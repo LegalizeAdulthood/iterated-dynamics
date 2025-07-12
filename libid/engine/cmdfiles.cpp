@@ -488,7 +488,7 @@ static void init_vars_fractal()
     g_user_biomorph_value = -1;                          // turn off biomorph flag
     g_outside_color = ITER;                              // outside color = -1 (not used)
     g_max_iterations = 150;                              // initial max iter
-    g_user_std_calc_mode = 'g';                          // initial solid-guessing
+    g_user_std_calc_mode = CalcMode::SOLID_GUESS;        // initial solid-guessing
     g_stop_pass = 0;                                     // initial guessing stop pass
     g_quick_calc = false;                                //
     g_close_proximity = 0.01;                            //
@@ -2841,7 +2841,7 @@ static CmdArgFlags cmd_passes(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_user_std_calc_mode = cmd.char_val[0];
+    g_user_std_calc_mode = static_cast<CalcMode>(cmd.char_val[0]);
     if (cmd.char_val[0] == 'g')
     {
         g_stop_pass = ((int) cmd.value[1] - (int) '0');

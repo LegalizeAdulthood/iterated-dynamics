@@ -619,7 +619,7 @@ bool encoder()
     }
 
     // Extended parameters block 007
-    if (g_std_calc_mode == 'o')
+    if (g_std_calc_mode == CalcMode::ORBIT)
     {
         OrbitsInfo orbits_info{};
         orbits_info.orbit_corner_min_x     = g_orbit_corner_min_x;
@@ -837,7 +837,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->y3rd = g_y_3rd;
     save_info->calc_status = static_cast<std::int16_t>(g_calc_status);
     save_info->std_calc_mode =
-        static_cast<char>(g_three_pass && g_std_calc_mode == '3' ? 127 : g_std_calc_mode);
+        g_three_pass && g_std_calc_mode == CalcMode::THREE_PASS ? 127 : static_cast<char>(g_std_calc_mode);
     save_info->dist_est_old =
         static_cast<std::int16_t>(g_distance_estimator <= 32000 ? g_distance_estimator : 32000);
     save_info->float_flag = static_cast<std::int16_t>(1);

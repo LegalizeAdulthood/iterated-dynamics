@@ -356,11 +356,11 @@ bool mandel_per_image_bn()
         }
     }
 
-    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    if (g_std_calc_mode == CalcMode::PERTURBATION && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         mandel_perturbation_per_image();
         // TODO: figure out crash if we don't do this
-        g_std_calc_mode ='g';
+        g_std_calc_mode = CalcMode::SOLID_GUESS;
         g_calc_status = CalcStatus::COMPLETED;
         return true;
     }
@@ -475,7 +475,8 @@ bool mandel_per_image_bf()
     {
     case FractalType::MANDEL:
     case FractalType::BURNING_SHIP:
-        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+        if (g_std_calc_mode == CalcMode::PERTURBATION &&
+            bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             return mandel_perturbation_per_image();
         }
@@ -487,7 +488,8 @@ bool mandel_per_image_bf()
         break;
 
     case FractalType::MANDEL_Z_POWER:
-        if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+        if (g_std_calc_mode == CalcMode::PERTURBATION &&
+            bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             // only allow integer values of real part
             if (const int degree = (int) g_params[2]; degree > 2)
@@ -536,7 +538,8 @@ bool mandel_per_image_bf()
 
 int mandel_per_pixel_bn()
 {
-    if (g_std_calc_mode == 'p' && bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
+    if (g_std_calc_mode == CalcMode::PERTURBATION &&
+        bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
     {
         return true;
     }

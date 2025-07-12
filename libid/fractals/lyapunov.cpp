@@ -133,11 +133,11 @@ bool lyapunov_per_image()
         stop_msg("Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         g_inside_color = 1;
     }
-    if (g_user_std_calc_mode == 'o')
+    if (g_user_std_calc_mode == CalcMode::ORBIT)
     {
         // Oops,lyapunov type
-        g_user_std_calc_mode = '1';  // doesn't use new & breaks orbits
-        g_std_calc_mode = '1';
+        g_user_std_calc_mode = CalcMode::ONE_PASS;  // doesn't use new & breaks orbits
+        g_std_calc_mode = CalcMode::ONE_PASS;
     }
     return true;
 }

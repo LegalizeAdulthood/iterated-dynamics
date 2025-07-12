@@ -651,17 +651,17 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     if (g_zoom_box_width != 1.0 || g_zoom_box_height != 1.0
         || g_zoom_box_skew != 0.0 || g_zoom_box_rotation != 0.0)
     {
-        return 0; // not a full size unrotated unskewed zoombox
+        return 0; // not a full size unrotated unskewed zoom box
     }
-    if (g_std_calc_mode == 't')
+    if (g_std_calc_mode == CalcMode::TESSERAL)
     {
-        return 0; // tesselate, can't do it
+        return 0; // tesseral, can't do it
     }
-    if (g_std_calc_mode == 'd')
+    if (g_std_calc_mode == CalcMode::DIFFUSION)
     {
         return 0; // diffusion scan: can't do it either
     }
-    if (g_std_calc_mode == 'o')
+    if (g_std_calc_mode == CalcMode::ORBIT)
     {
         return 0; // orbits, can't do it
     }
@@ -676,13 +676,15 @@ static int check_pan() // return 0 if can't, alignment requirement if can
     {
         return 1; // 1 pass forced so align on any pixel
     }
-    if (g_std_calc_mode == 'b')
+    if (g_std_calc_mode == CalcMode::BOUNDARY_TRACE)
     {
-        return 1; // btm, align on any pixel
+        return 1; // boundary trace method, align on any pixel
     }
-    if (g_std_calc_mode != 'g' || bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_GUESS))
+    if (g_std_calc_mode != CalcMode::SOLID_GUESS ||
+        bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_GUESS))
     {
-        if (g_std_calc_mode == '2' || g_std_calc_mode == '3')   // align on even pixel for 2pass
+        // align on even pixel for 2pass
+        if (g_std_calc_mode == CalcMode::TWO_PASS || g_std_calc_mode == CalcMode::THREE_PASS)
         {
             return 2;
         }

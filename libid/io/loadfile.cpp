@@ -534,12 +534,12 @@ static void backwards_info4(const FractalInfo &read_info)
         g_x_3rd = read_info.x3rd;
         g_y_3rd = read_info.y3rd;
         g_calc_status = static_cast<CalcStatus>(read_info.calc_status);
-        g_user_std_calc_mode = read_info.std_calc_mode;
+        g_user_std_calc_mode = static_cast<CalcMode>(read_info.std_calc_mode);
         g_three_pass = false;
-        if (g_user_std_calc_mode == 127)
+        if (g_user_std_calc_mode == static_cast<CalcMode>(127))
         {
             g_three_pass = true;
-            g_user_std_calc_mode = '3';
+            g_user_std_calc_mode = CalcMode::THREE_PASS;
         }
         g_user_distance_estimator_value = read_info.dist_est_old;
         g_bailout = read_info.bailout_old;

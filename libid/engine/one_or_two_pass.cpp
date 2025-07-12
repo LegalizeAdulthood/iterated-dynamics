@@ -14,11 +14,11 @@ static int  standard_calc(int pass_num);
 int one_or_two_pass()
 {
     g_total_passes = 1;
-    if (g_std_calc_mode == '2')
+    if (g_std_calc_mode == CalcMode::TWO_PASS)
     {
         g_total_passes = 2;
     }
-    if (g_std_calc_mode == '2' && g_work_pass == 0) // do 1st pass of two
+    if (g_std_calc_mode == CalcMode::TWO_PASS && g_work_pass == 0) // do 1st pass of two
     {
         if (standard_calc(1) == -1)
         {
@@ -73,7 +73,7 @@ static int standard_calc(int pass_num)
                     continue;
                 }
             }
-            if (pass_num == 1 || g_std_calc_mode == '1' || (g_row&1) != 0 || (g_col&1) != 0)
+            if (pass_num == 1 || g_std_calc_mode == CalcMode::ONE_PASS || (g_row&1) != 0 || (g_col&1) != 0)
             {
                 if (g_calc_type() == -1)   // standard_fractal(), calcmand() or calcmandfp()
                 {

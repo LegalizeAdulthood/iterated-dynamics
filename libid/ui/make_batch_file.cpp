@@ -845,7 +845,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             put_param(buf);
         }
 
-        if (g_user_std_calc_mode != 'g')
+        if (g_user_std_calc_mode != CalcMode::SOLID_GUESS)
         {
             put_param(" passes=%c", g_user_std_calc_mode);
         }
@@ -1545,7 +1545,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             put_param(" screencoords=yes");
         }
 
-        if (g_user_std_calc_mode == 'o' && g_set_orbit_corners && g_keep_screen_coords)
+        if (g_user_std_calc_mode == CalcMode::ORBIT && g_set_orbit_corners && g_keep_screen_coords)
         {
             put_param(" orbitcorners=");
             int x_digits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3rd_x);

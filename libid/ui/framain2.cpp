@@ -56,7 +56,6 @@ bool g_from_text{}; // = true if we're in graphics mode
 int g_finish_row{}; // save when this row is finished
 EvolutionInfo g_evolve_info{};
 bool g_have_evolve_info{};
-char g_old_std_calc_mode{};
 void (*g_out_line_cleanup)(){};
 bool g_virtual_screens{};
 
@@ -847,7 +846,7 @@ resumeloop:                             // return here on failed overlays
             }
             if (g_quick_calc && g_calc_status != CalcStatus::COMPLETED)
             {
-                g_user_std_calc_mode = '1';
+                g_user_std_calc_mode = CalcMode::ONE_PASS;
             }
             if (mms_value == MainState::IMAGE_START || mms_value == MainState::RESTORE_START ||
                 mms_value == MainState::RESTART)

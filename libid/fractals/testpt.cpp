@@ -45,7 +45,7 @@ int test_type()
     {
         return 0;
     }
-    int num_passes = (g_std_calc_mode == '1') ? 0 : 1;
+    int num_passes = (g_std_calc_mode == CalcMode::ONE_PASS) ? 0 : 1;
     for (int passes = start_pass; passes <= num_passes ; passes++)
     {
         for (g_row = start_row; g_row <= g_i_stop_pt.y; g_row = g_row+1+num_passes)

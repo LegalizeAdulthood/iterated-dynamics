@@ -373,14 +373,14 @@ top:
         case Passes::SEQUENTIAL_SCAN:
             std::sprintf(msg, "%d Pass Mode", g_total_passes);
             driver_put_string(start_row, 2, C_GENERAL_HI, msg);
-            if (g_user_std_calc_mode == '3')
+            if (g_user_std_calc_mode == CalcMode::THREE_PASS)
             {
                 driver_put_string(start_row, -1, C_GENERAL_HI, " (threepass)");
             }
             break;
         case Passes::SOLID_GUESS:
             driver_put_string(start_row, 2, C_GENERAL_HI, "Solid Guessing");
-            if (g_user_std_calc_mode == '3')
+            if (g_user_std_calc_mode == CalcMode::THREE_PASS)
             {
                 driver_put_string(start_row, -1, C_GENERAL_HI, " (threepass)");
             }

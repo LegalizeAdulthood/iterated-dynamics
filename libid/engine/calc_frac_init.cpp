@@ -164,9 +164,9 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     {
         free_bf_vars();
     }
-    if (g_user_std_calc_mode == 's' && g_fractal_type != FractalType::MANDEL)
+    if (g_user_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT && g_fractal_type != FractalType::MANDEL)
     {
-        g_user_std_calc_mode = '1';
+        g_user_std_calc_mode = CalcMode::ONE_PASS;
     }
 
     // cppcheck-suppress variableScope

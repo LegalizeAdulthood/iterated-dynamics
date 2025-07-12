@@ -20,7 +20,7 @@ int sticky_orbits()
 
     if (plot_orbits2d_setup() == -1)
     {
-        g_std_calc_mode = 'g';
+        g_std_calc_mode = CalcMode::SOLID_GUESS;
         return -1;
     }
 

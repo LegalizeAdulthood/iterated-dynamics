@@ -71,6 +71,21 @@ enum class Passes
     ORBITS = 6,
 };
 
+enum class CalcMode
+{
+    NONE = 0,
+    ONE_PASS = '1',
+    TWO_PASS = '2',
+    THREE_PASS = '3',
+    SOLID_GUESS = 'g',
+    BOUNDARY_TRACE = 'b',
+    TESSERAL = 't',
+    SYNCHRONOUS_ORBIT = 's',
+    DIFFUSION = 'd',
+    ORBIT = 'o',
+    PERTURBATION = 'p',
+};
+
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern  double               g_f_at_rad;            // finite attractor radius
 extern int                   g_atan_colors;
@@ -90,7 +105,6 @@ extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;
 extern long                  g_first_saved_and;
-extern Passes                g_passes;
 extern DComplex              g_init;
 extern int                   g_invert;
 extern int                   g_keyboard_check_interval;
@@ -105,6 +119,7 @@ extern bool                  g_old_demm_colors;
 extern DComplex              g_old_z;
 extern int                   g_orbit_color;
 extern int                   g_orbit_save_index;
+extern Passes                g_passes;
 extern int                   g_periodicity_check;
 extern int                   g_periodicity_next_saved_incr;
 extern int                   g_pi_in_pixels;
@@ -115,8 +130,11 @@ extern long                  g_real_color_iter;
 extern bool                  g_reset_periodicity;
 extern int                   g_row;
 extern bool                  g_show_orbit;
-extern SymmetryType         g_force_symmetry;
-extern SymmetryType         g_symmetry;
+extern CalcMode              g_old_std_calc_mode;
+extern CalcMode              g_std_calc_mode;
+extern CalcMode              g_user_std_calc_mode;
+extern SymmetryType          g_force_symmetry;
+extern SymmetryType          g_symmetry;
 extern bool                  g_three_pass;
 extern int                   g_total_passes;
 extern DComplex              g_tmp_z;

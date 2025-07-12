@@ -33,7 +33,7 @@ protected:
 TEST_F(TestMainMenuSwitch, nothingChangedOnLowerCaseM)
 {
     VALUE_UNCHANGED(g_quick_calc, false);
-    VALUE_UNCHANGED(g_user_std_calc_mode, 'g');
+    VALUE_UNCHANGED(g_user_std_calc_mode, CalcMode::SOLID_GUESS);
 
     const MainState result{execute('m')};
 
@@ -48,8 +48,8 @@ TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
 {
     ValueSaver saved_quick_calc{g_quick_calc, true};
     ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'g'};
-    ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, '1'};
+    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, CalcMode::SOLID_GUESS};
+    ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, CalcMode::ONE_PASS};
 
     const MainState result{execute('m')};
 
@@ -59,15 +59,15 @@ TEST_F(TestMainMenuSwitch, quickCalcResetOnImageCompleted)
     EXPECT_FALSE(m_context.more_keys);
     EXPECT_FALSE(m_context.stacked);
     EXPECT_FALSE(g_quick_calc);
-    EXPECT_EQ('1', g_user_std_calc_mode);
+    EXPECT_EQ(CalcMode::ONE_PASS, g_user_std_calc_mode);
 }
 
 TEST_F(TestMainMenuSwitch, userCalcModeResetOnQuickCalcImageNotComplete)
 {
     ValueSaver saved_quick_calc{g_quick_calc, true};
     ValueSaver saved_calc_status{g_calc_status, CalcStatus::IN_PROGRESS};
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, 'g'};
-    ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, '1'};
+    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, CalcMode::SOLID_GUESS};
+    ValueSaver saved_old_std_calc_mode{g_old_std_calc_mode, CalcMode::ONE_PASS};
 
     const MainState result{execute('m')};
 
@@ -77,5 +77,5 @@ TEST_F(TestMainMenuSwitch, userCalcModeResetOnQuickCalcImageNotComplete)
     EXPECT_FALSE(m_context.more_keys);
     EXPECT_FALSE(m_context.stacked);
     EXPECT_TRUE(g_quick_calc);
-    EXPECT_EQ('1', g_user_std_calc_mode);
+    EXPECT_EQ(CalcMode::ONE_PASS, g_user_std_calc_mode);
 }

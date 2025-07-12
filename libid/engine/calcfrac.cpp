@@ -160,6 +160,9 @@ Point2i g_i_stop_pt{};                           // start, stop here
 int g_work_pass{};                               //
 int g_work_symmetry{};                           // for the sake of calcmand
 Passes g_passes{Passes::NONE};                   // variables which must be visible for tab_display
+CalcMode g_old_std_calc_mode{};                  //
+CalcMode g_std_calc_mode{};                      // '1', '2', 'g', 'b'
+CalcMode g_user_std_calc_mode{};                 //
 int g_current_pass{};                            //
 int g_total_passes{};                            //
 int g_current_row{};                             //
@@ -497,7 +500,7 @@ static void init_calc_fract()
     if (g_is_true_color && g_true_mode != TrueColorMode::DEFAULT_COLOR)
     {
         // Have to force passes = 1
-        g_std_calc_mode = '1';
+        g_std_calc_mode = CalcMode::ONE_PASS;
         g_user_std_calc_mode = g_std_calc_mode;
     }
     if (g_true_color)
@@ -506,7 +509,7 @@ static void init_calc_fract()
         if (!start_disk1(g_light_name, nullptr, false))
         {
             // Have to force passes = 1
-            g_std_calc_mode = '1';
+            g_std_calc_mode = CalcMode::ONE_PASS;
             g_user_std_calc_mode = g_std_calc_mode;
             g_put_color = put_true_color_disk;
         }
@@ -517,10 +520,10 @@ static void init_calc_fract()
     }
     if (!g_use_grid)
     {
-        if (g_user_std_calc_mode != 'o')
+        if (g_user_std_calc_mode != CalcMode::ORBIT)
         {
-            g_std_calc_mode = '1';
-            g_user_std_calc_mode = '1';
+            g_std_calc_mode = CalcMode::ONE_PASS;
+            g_user_std_calc_mode = CalcMode::ONE_PASS;
         }
     }
 
@@ -766,23 +769,23 @@ static void calc_standard_fractal()
             perform_work_list();
             return 0;
         }};
-    if (g_std_calc_mode == '3') // convoluted 'g' + '2' hybrid
+    if (g_std_calc_mode == CalcMode::THREE_PASS) // convoluted 'g' + '2' hybrid
     {
         ValueSaver saved_calc_mode{g_std_calc_mode};
         if (!g_resuming || g_three_pass)
         {
-            g_std_calc_mode = 'g';
+            g_std_calc_mode = CalcMode::SOLID_GUESS;
             g_three_pass = true;
             engine_timer(timer_work_list);
             if (g_calc_status == CalcStatus::COMPLETED)
             {
                 if (g_logical_screen_x_dots >= 640) // '2' is silly after 'g' for low res
                 {
-                    g_std_calc_mode = '2';
+                    g_std_calc_mode = CalcMode::TWO_PASS;
                 }
                 else
                 {
-                    g_std_calc_mode = '1';
+                    g_std_calc_mode = CalcMode::ONE_PASS;
                 }
                 engine_timer(timer_work_list);
                 g_three_pass = false;
@@ -792,11 +795,11 @@ static void calc_standard_fractal()
         {
             if (g_logical_screen_x_dots >= 640)
             {
-                g_std_calc_mode = '2';
+                g_std_calc_mode = CalcMode::TWO_PASS;
             }
             else
             {
-                g_std_calc_mode = '1';
+                g_std_calc_mode = CalcMode::ONE_PASS;
             }
             engine_timer(timer_work_list);
         }
@@ -898,29 +901,29 @@ static void perform_work_list()
 
     if (g_potential_flag && g_potential_16bit)
     {
-        int tmp_calc_mode = g_std_calc_mode;
+        CalcMode tmp_calc_mode = g_std_calc_mode;
 
-        g_std_calc_mode = '1'; // force 1 pass
+        g_std_calc_mode = CalcMode::ONE_PASS; // force 1 pass
         if (!g_resuming)
         {
             if (pot_start_disk() < 0)
             {
                 g_potential_16bit = false;       // startdisk failed or cancelled
-                g_std_calc_mode = (char)tmp_calc_mode;    // maybe we can carry on???
+                g_std_calc_mode = tmp_calc_mode; // maybe we can carry on???
             }
         }
     }
-    if (g_std_calc_mode == 'b' && bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_TRACE))
+    if (g_std_calc_mode == CalcMode::BOUNDARY_TRACE && bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_TRACE))
     {
-        g_std_calc_mode = '1';
+        g_std_calc_mode = CalcMode::ONE_PASS;
     }
-    if (g_std_calc_mode == 'g' && bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_GUESS))
+    if (g_std_calc_mode == CalcMode::SOLID_GUESS && bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_GUESS))
     {
-        g_std_calc_mode = '1';
+        g_std_calc_mode = CalcMode::ONE_PASS;
     }
-    if (g_std_calc_mode == 'o' && (g_cur_fractal_specific->calc_type != standard_fractal_type))
+    if (g_std_calc_mode == CalcMode::ORBIT && (g_cur_fractal_specific->calc_type != standard_fractal_type))
     {
-        g_std_calc_mode = '1';
+        g_std_calc_mode = CalcMode::ONE_PASS;
     }
 
     // default set up a new worklist
@@ -1124,19 +1127,19 @@ static void perform_work_list()
         // call the appropriate escape-time engine
         switch (g_std_calc_mode)
         {
-        case 's':
+        case CalcMode::SYNCHRONOUS_ORBIT:
             soi();
             break;
 
-        case 't':
+        case CalcMode::TESSERAL:
             tesseral();
             break;
 
-        case 'b':
+        case CalcMode::BOUNDARY_TRACE:
             boundary_trace();
             break;
 
-        case 'g':
+        case CalcMode::SOLID_GUESS:
             // TODO: fix this
             // horrible cludge preventing crash when coming back from perturbation and math = bignum/bigflt
             if (g_calc_status != CalcStatus::COMPLETED)
@@ -1145,15 +1148,15 @@ static void perform_work_list()
             }
             break;
 
-        case 'd':
+        case CalcMode::DIFFUSION:
             diffusion_scan();
             break;
 
-        case 'o':
+        case CalcMode::ORBIT:
             sticky_orbits();
             break;
 
-        case 'p':
+        case CalcMode::PERTURBATION:
             // we already finished perturbation
             if (bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
             {
@@ -1235,7 +1238,7 @@ int calc_mandelbrot_type()
         }
         if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
         {
-            if (g_color == 0 && g_std_calc_mode == 'b')
+            if (g_color == 0 && g_std_calc_mode == CalcMode::BOUNDARY_TRACE)
             {
                 g_color = 1;
             }
@@ -1932,7 +1935,7 @@ plot_pixel:
     }
     if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
     {
-        if (g_color <= 0 && g_std_calc_mode == 'b')
+        if (g_color <= 0 && g_std_calc_mode == CalcMode::BOUNDARY_TRACE)
         {
             g_color = 1;
         }
@@ -2298,7 +2301,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
     BigFloat bft1;
     int saved = 0;
     g_symmetry = SymmetryType::X_AXIS;
-    if (g_std_calc_mode == 's' || g_std_calc_mode == 'o')
+    if (g_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT || g_std_calc_mode == CalcMode::ORBIT)
     {
         return;
     }

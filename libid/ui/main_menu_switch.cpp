@@ -304,15 +304,15 @@ static MainState prompt_options(MainContext &context)
         && g_calc_status == CalcStatus::COMPLETED                     //
         && g_cur_fractal_specific->calc_type == standard_fractal_type //
         && !g_log_map_flag                                            //
-        && !g_true_color                                       // recalc not yet implemented with truecolor
-        && (g_user_std_calc_mode != 't' || g_fill_color <= -1) // tesseral with fill doesn't work
-        && g_user_std_calc_mode != 'o'                         //
-        && i == 1                                              // nothing else changed//
+        && !g_true_color // recalc not yet implemented with truecolor
+        && (g_user_std_calc_mode != CalcMode::TESSERAL || g_fill_color <= -1) // tesseral with fill doesn't work
+        && g_user_std_calc_mode != CalcMode::ORBIT                         //
+        && i == 1                                                          // nothing else changed
         && g_outside_color != ATAN)
     {
         g_quick_calc = true;
         g_old_std_calc_mode = g_user_std_calc_mode;
-        g_user_std_calc_mode = '1';
+        g_user_std_calc_mode = CalcMode::ONE_PASS;
         context.more_keys = false;
         g_calc_status = CalcStatus::RESUMABLE;
     }
