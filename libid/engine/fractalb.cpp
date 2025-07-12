@@ -20,43 +20,48 @@
 #include "ui/goodbye.h"
 #include "ui/stop_msg.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <array> // std::size
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 BFMathType g_bf_math{};
 
 #ifndef NDEBUG
 //********************************************************************
-void show_var_bn(const char *s, BigNum n)
+std::string bn_to_string(BigNum n, int dec)
 {
     char msg[200];
-    std::strcpy(msg, s);
-    std::strcat(msg, " ");
-    bn_to_str(msg + std::strlen(s), 40, n);
-    msg[79] = 0;
+    bn_to_str(msg, dec, n);
+    return msg;
+}
+
+void show_var_bn(const char *s, BigNum n)
+{
+    std::string msg{s};
+    msg += ' ' + bn_to_string(n, 40);
+    msg.erase(79); // limit to 79 characters
     stop_msg(msg);
 }
 
 void show_corners_dbl(const char *s)
 {
-    char msg[400];
-    std::snprintf(msg, std::size(msg),
-        "%s\n"                               //
-        "   x_min= %.20f    x_max= %.20f\n"  //
-        "   y_min= %.20f    y_max= %.20f\n"  //
-        "   x_3rd= %.20f    y_3rd= %.20f\n"  //
-        " delta_x= %.20Lf delta_y= %.20Lf\n" //
-        "delta_x2= %.20Lf delta_y2= %.20Lf", //
-        s,                                   //
-        g_x_min, g_x_max,                    //
-        g_y_min, g_y_max,                    //
-        g_x_3rd, g_y_3rd,                    //
-        g_delta_x, g_delta_y,                //
-        g_delta_x2, g_delta_y2);
-    if (stop_msg(msg))
+    if (stop_msg(fmt::format("{}\n"                                   //
+                             "   x_min= {:.20f}    x_max= {:.20f}\n"  //
+                             "   y_min= {:.20f}    y_max= {:.20f}\n"  //
+                             "   x_3rd= {:.20f}    y_3rd= {:.20f}\n"  //
+                             " delta_x= {:.20Lf} delta_y= {:.20Lf}\n" //
+                             "delta_x2= {:.20Lf} delta_y2= {:.20Lf}", //
+            s,                                                        //
+            g_x_min, g_x_max,                                         //
+            g_y_min, g_y_max,                                         //
+            g_x_3rd, g_y_3rd,                                         //
+            g_delta_x, g_delta_y,                                     //
+            g_delta_x2, g_delta_y2)))
     {
         goodbye();
     }
