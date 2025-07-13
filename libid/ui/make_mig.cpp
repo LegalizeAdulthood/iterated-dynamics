@@ -5,9 +5,14 @@
 #include "io/save_file.h"
 #include "ui/rotate.h"
 
+#include <fmt/format.h>
+
 #include <array> // std::size
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <filesystem>
+#include <string>
 
 static char par_key(unsigned int x)
 {
@@ -31,8 +36,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
     unsigned int x_loc;
     unsigned int y_loc;
     unsigned int i;
-    char gif_in[15];
-    char gif_out[15];
+    std::string gif_in;
     unsigned char *temp;
 
     int error_flag = 0;                          // no errors so
@@ -43,7 +47,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
     std::FILE *in = nullptr;
     std::FILE *out = in;
 
-    std::strcpy(gif_out, "fractmig.gif");
+    std::string gif_out{"fractmig.gif"};
 
     temp = &g_old_dac_box[0][0];                 // a safe place for our temp data
 
@@ -54,24 +58,24 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
         {
             if (x_step == 0 && y_step == 0)          // first time through?
             {
-                std::printf(" \n Generating multi-image GIF file %s using", gif_out);
+                std::printf(" \n Generating multi-image GIF file %s using", gif_out.c_str());
                 std::printf(" %u X and %u Y components\n\n", x_mult, y_mult);
                 // attempt to create the output file
                 out = open_save_file(gif_out, "wb");
                 if (out == nullptr)
                 {
-                    std::printf("Cannot create output file %s!\n", gif_out);
-                    exit(1);
+                    std::printf("Cannot create output file %s!\n", gif_out.c_str());
+                    std::exit(1);
                 }
             }
 
-            std::snprintf(gif_in, std::size(gif_in), "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
+            gif_in = fmt::format("frmig_{:c}{:c}.gif", par_key(x_step), par_key(y_step));
 
-            in = std::fopen(gif_in, "rb");
+            in = std::fopen(gif_in.c_str(), "rb");
             if (in == nullptr)
             {
-                std::printf("Can't open file %s!\n", gif_in);
-                exit(1);
+                std::printf("Can't open file %s!\n", gif_in.c_str());
+                std::exit(1);
             }
 
             // (read, but only copy this if it's the first time through)
@@ -123,8 +127,8 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
             if (x_res != all_x_res || y_res != all_y_res || i_tbl != all_i_tbl)
             {
                 // Oops - our pieces don't match
-                std::printf("File %s doesn't have the same resolution as its predecessors!\n", gif_in);
-                exit(1);
+                std::printf("File %s doesn't have the same resolution as its predecessors!\n", gif_in.c_str());
+                std::exit(1);
             }
 
             while (true)                       // process each information block
@@ -286,18 +290,12 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
 
     if (input_error_flag != 0)       // uh-oh - something failed
     {
-        std::printf("\007 Process failed = early EOF on input file %s\n", gif_in);
-        /* following line was for debugging
-            std::printf("inputerrorflag = %d\n", inputerrorflag);
-        */
+        std::printf("\007 Process failed = early EOF on input file %s\n", gif_in.c_str());
     }
 
     if (error_flag != 0)            // uh-oh - something failed
     {
         std::printf("\007 Process failed = out of disk space?\n");
-        /* following line was for debugging
-            std::printf("errorflag = %d\n", errorflag);
-        */
     }
 
     // now delete each input image, one at a time
@@ -307,8 +305,8 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
         {
             for (unsigned x_step = 0U; x_step < x_mult; x_step++)
             {
-                std::snprintf(gif_in, std::size(gif_in), "frmig_%c%c.gif", par_key(x_step), par_key(y_step));
-                std::remove(gif_in);
+                gif_in = fmt::format("frmig_{:c}{:c}.gif", par_key(x_step), par_key(y_step));
+                std::filesystem::remove(gif_in);
             }
         }
     }
@@ -316,6 +314,6 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
     // tell the world we're done
     if (error_flag == 0 && input_error_flag == 0)
     {
-        std::printf("File %s has been created (and its component files deleted)\n", gif_out);
+        std::printf("File %s has been created (and its component files deleted)\n", gif_out.c_str());
     }
 }
