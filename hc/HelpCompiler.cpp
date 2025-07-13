@@ -1394,7 +1394,8 @@ HelpCompiler::~HelpCompiler()
 
 int HelpCompiler::process()
 {
-    std::printf("HC - " ID_PROGRAM_NAME " Help Compiler.\n\n");
+    fmt::print("HC - " ID_PROGRAM_NAME " Help Compiler.\n"
+               "\n");
 
     g_src.buffer.resize(BUFFER_SIZE);
 
