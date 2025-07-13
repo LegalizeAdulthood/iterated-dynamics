@@ -18,11 +18,12 @@
 #include "ui/thinking.h"
 #include "ui/video.h"
 
+#include <fmt/format.h>
+
 #include <array>
 #include <cassert>
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <string>
 #include <vector>
 
 //****************** standalone engine for "cellular" *******************
@@ -102,9 +103,8 @@ Cellular::Cellular()
     if (rand_param != 0 && rand_param != -1)
     {
         double n = g_params[0];
-        char buf[512];
-        std::snprintf(buf, std::size(buf), "%.16g", n); // # of digits in initial string
-        S16 t = (S16)std::strlen(buf);
+        std::string buf{fmt::format("{:.16g}", n)};// # of digits in initial string
+        S16 t = (S16)buf.length();
         if (t>16 || t <= 0)
         {
             throw CellularError(*this, STRING1);
@@ -140,9 +140,8 @@ Cellular::Cellular()
         }
         g_params[1] = n;
     }
-    char buf[512];
-    std::snprintf(buf, std::size(buf), "%.*g", m_rule_digits, n);
-    S16 t = (S16)std::strlen(buf);
+    std::string buf{fmt::format("{:.{}g}", n, m_rule_digits)};
+    S16 t = (S16)buf.length();
     if (m_rule_digits < t || t < 0)
     {
         // leading 0s could make t smaller
@@ -360,11 +359,7 @@ std::string Cellular::error(int err, int t) const
     switch (err)
     {
     case BAD_T:
-    {
-        char msg[30];
-        std::snprintf(msg, std::size(msg), "Bad t=%d, aborting\n", t);
-        return msg;
-    }
+        return fmt::format("Bad t={:d}, aborting\n", t);
 
     case BAD_MEM:
         return "Insufficient free memory for calculation";
