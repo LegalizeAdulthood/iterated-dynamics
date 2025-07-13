@@ -27,6 +27,9 @@
 #include <config/path_limits.h>
 #include <config/string_case_compare.h>
 
+#include <fmt/format.h>
+#include <fmt/std.h>
+
 #include <algorithm>
 #include <cctype>
 #include <cstdio>
@@ -34,10 +37,7 @@
 #include <stdexcept>
 #include <string>
 
-enum : int
-{
-    MAX_ENTRIES = 2000
-};
+constexpr int MAX_ENTRIES = 2000;
 
 struct FileEntry
 {
@@ -171,9 +171,7 @@ bool find_file_item(
         make_path(full_path, drive, dir, "*", default_extension);
         for (bool more = fr_find_first(full_path); more; more = fr_find_next())
         {
-            char msg[200];
-            std::sprintf(msg, "Searching %13s for %s      ", g_dta.filename.c_str(), item_name.c_str());
-            show_temp_msg(msg);
+            show_temp_msg(fmt::format("Searching {:13s} for {:s}      ", g_dta.filename, item_name));
             if (!(g_dta.attribute & SUB_DIR)
                 && g_dta.filename != "."
                 && g_dta.filename != "..")
@@ -247,8 +245,7 @@ bool find_file_item(
 
     if (!found)
     {
-        std::sprintf(full_path, "'%s' file entry item not found", item_name.c_str());
-        stop_msg(full_path);
+        stop_msg(fmt::format("'{:s}' file entry item not found", item_name));
         return true;
     }
     // found file
@@ -415,8 +412,7 @@ top:
                     choices[num_entries].point = name_offset;
                     if (++num_entries >= MAX_ENTRIES)
                     {
-                        std::sprintf(buf, "Too many entries in file, first %d used", MAX_ENTRIES);
-                        stop_msg(buf);
+                        stop_msg(fmt::format("Too many entries in file, first {:d} used", MAX_ENTRIES));
                         break;
                     }
                 }
@@ -455,7 +451,7 @@ static void format_param_file_line(int choice, char *buf)
         c = std::getc(s_gfe_file);
     }
     line[i] = 0;
-    std::sprintf(buf, "%-20s%-56s", s_gfe_choices[choice]->name, line);
+    fmt::format_to(buf, "{20s}{56s}", s_gfe_choices[choice]->name, line);
 }
 
 static int check_gfe_key(int key, int choice)
@@ -736,8 +732,7 @@ retry:
 static long get_file_entry(
     ItemType type, const char *type_desc, const char *type_wildcard, std::string &filename, std::string &entry_name)
 {
-    char hdg[80];
-    std::sprintf(hdg, "Select %s File", type_desc);
+    std::string hdg{fmt::format("Select {:s} File", type_desc)};
     while (true)
     {
         // binary mode used here - it is more work, but much faster,
@@ -746,8 +741,7 @@ static long get_file_entry(
         while (s_gfe_file == nullptr)
         {
             stop_msg("Couldn't open " + filename);
-            std::sprintf(hdg, "Select %s File", type_desc);
-            if (driver_get_filename(hdg, type_desc, type_wildcard, filename))
+            if (driver_get_filename(hdg.c_str(), type_desc, type_wildcard, filename))
             {
                 return -1;
             }
@@ -762,7 +756,7 @@ static long get_file_entry(
             // filename is unchanged, or they browsed for a new file that's
             // been stored in filename.  Either way, we need to open the
             // file and show the entries again.
-            driver_get_filename(hdg, type_desc, type_wildcard, filename);
+            driver_get_filename(hdg.c_str(), type_desc, type_wildcard, filename);
             continue;
         }
         return entry_pointer;
