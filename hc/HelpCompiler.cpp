@@ -1219,21 +1219,21 @@ void HelpCompiler::report_stats()
         pages += t.num_page;
     }
 
-    std::printf("\n"
-                "Statistics:\n"
-                "%8d Topics\n"
-                "%8d Links\n"
-                "%8d Labels\n"
-                "%8d Private labels\n"
-                "%8d Table of contents (DocContent) entries\n"
-                "%8d Online help pages\n"
-                "%8d Document pages\n",
-        static_cast<int>(g_src.topics.size()),         //
-        static_cast<int>(g_src.all_links.size()),      //
-        static_cast<int>(g_src.labels.size()),         //
-        static_cast<int>(g_src.private_labels.size()), //
-        static_cast<int>(g_src.contents.size()),       //
-        pages,                                         //
+    fmt::print("\n"
+               "Statistics:\n"
+               "{:8d} Topics\n"
+               "{:8d} Links\n"
+               "{:8d} Labels\n"
+               "{:8d} Private labels\n"
+               "{:8d} Table of contents (DocContent) entries\n"
+               "{:8d} Online help pages\n"
+               "{:8d} Document pages\n",
+        g_src.topics.size(),         //
+        g_src.all_links.size(),      //
+        g_src.labels.size(),         //
+        g_src.private_labels.size(), //
+        g_src.contents.size(),       //
+        pages,                       //
         s_num_doc_pages);
 }
 
