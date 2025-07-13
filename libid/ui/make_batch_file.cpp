@@ -446,7 +446,7 @@ skip_ui:
                     piece_command_name[w] = 0;
                     std::strcat(
                         piece_command_name, fmt::format("_{:c}{:c}", par_key(col), par_key(row)).c_str());
-                    std::fprintf(s_param_file, "%-19s{", piece_command_name);
+                    fmt::print(s_param_file, "{:19s}{{", piece_command_name);
                     g_x_min = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*(row*params.piece_y_dots);
                     g_x_max = piece_x_min + piece_delta_x*((col+1)*params.piece_x_dots - 1) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
                     g_y_min = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*((col+1)*params.piece_x_dots - 1);
@@ -461,12 +461,18 @@ skip_ui:
                         g_x_3rd = g_x_min;
                         g_y_3rd = g_y_min;
                     }
-                    std::fprintf(bat_file, "start/wait id batch=yes overwrite=yes @%s/%s\n", g_command_file.c_str(), piece_command_name);
-                    std::fprintf(bat_file, "if errorlevel 2 goto oops\n");
+                    fmt::print(bat_file,
+                        "start/wait"
+                        " id"
+                        " batch=yes"
+                        " overwrite=yes"
+                        " @{:s}/{:s}\n"
+                        "if errorlevel 2 goto oops\n",
+                        g_command_file, piece_command_name);
                 }
                 else
                 {
-                    std::fprintf(s_param_file, "%-19s{", g_command_name.c_str());
+                    fmt::print(s_param_file, "{:19s}{{", g_command_name.c_str());
                 }
                 {
                     /* guarantee that there are no blank comments above the last
@@ -489,7 +495,7 @@ skip_ui:
                 }
                 if (!g_command_comment[0].empty())
                 {
-                    std::fprintf(s_param_file, " ; %s", g_command_comment[0].c_str());
+                    fmt::print(s_param_file, " ; {:s}", g_command_comment[0]);
                 }
                 std::fputc('\n', s_param_file);
                 {
@@ -501,33 +507,35 @@ skip_ui:
                     {
                         if (!g_command_comment[k].empty())
                         {
-                            std::fprintf(s_param_file, "%s%s\n", comment, g_command_comment[k].c_str());
+                            fmt::print(s_param_file, "{:s}{:s}\n", comment, g_command_comment[k]);
                         }
                     }
                     if (g_version.patch != 0 && !params.colors_only)
                     {
-                        std::fprintf(s_param_file, "%sId Version %s\n", comment, //
-                            to_string(g_version).c_str());
+                        fmt::print(s_param_file, "{:s}Id Version {:s}\n", //
+                            comment, to_string(g_version));
                     }
                 }
                 write_batch_params(params.color_spec, params.colors_only, params.max_color, col, row);
                 if (params.x_multiple > 1 || params.y_multiple > 1)
                 {
-                    std::fprintf(s_param_file,
-                        " video=%s"
-                        " savename=frmig_%c%c\n",
+                    fmt::print(s_param_file,
+                        " video={:s}"
+                        " savename=frmig_{:c}{:c}\n",
                         params.video_mode_key_name, //
                         par_key(col), par_key(row));
                 }
-                std::fprintf(s_param_file,
-                    "}\n"
+                fmt::print(s_param_file,
+                    "}}\n"
                     "\n");
             }
         }
         if (params.x_multiple > 1 || params.y_multiple > 1)
         {
-            std::fprintf(bat_file,
-                "start/wait id makemig=%d/%d\n"
+            fmt::print(bat_file,
+                "start/wait"
+                " id"
+                " makemig={:d}/{:d}\n"
                 ":oops\n",
                 params.x_multiple, params.y_multiple);
             std::fclose(bat_file);
