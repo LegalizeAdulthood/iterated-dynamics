@@ -111,9 +111,8 @@ void trig_details(char *buf)
         int i = 0;
         while (++i < num_fn)
         {
-            char tmp_buff[20];
-            std::snprintf(tmp_buff, std::size(tmp_buff), "/%s", g_trig_fn[+g_trig_index[i]].name);
-            std::strcat(buf, tmp_buff);
+            std::strcat(buf, "/");
+            std::strcat(buf, g_trig_fn[+g_trig_index[i]].name);
         }
     }
 }
