@@ -50,7 +50,7 @@ void show_var_bn(const char *s, BigNum n)
 
 void show_corners_dbl(const char *s)
 {
-    if (stop_msg(fmt::format("{}\n"                                   //
+    if (stop_msg(fmt::format("{:s}\n"                                 //
                              "   x_min= {:.20f}    x_max= {:.20f}\n"  //
                              "   y_min= {:.20f}    y_max= {:.20f}\n"  //
                              "   x_3rd= {:.20f}    y_3rd= {:.20f}\n"  //
@@ -70,55 +70,33 @@ void show_corners_dbl(const char *s)
 // show floating point and bignumber corners
 void show_corners_bn(const char *s)
 {
-    int dec = 20;
-    char msg[100];
-    char msg1[200];
-    char msg3[400];
-    bn_to_str(msg, g_x_min_bn, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "g_x_min_bn=%s\n"
-        "x_min= %.20f\n"
-        "\n",
-        msg, g_x_min);
-    std::strcpy(msg3, s);
-    std::strcat(msg3, "\n");
-    std::strcat(msg3, msg1);
-    bn_to_str(msg, g_x_max_bn, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "g_x_max_bn=%s\n"
-        "x_max= %.20f\n"
-        "\n",
-        msg, g_x_max);
-    std::strcat(msg3, msg1);
-    bn_to_str(msg, g_y_min_bn, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "g_y_min_bn=%s\n"
-        "y_min= %.20f\n"
-        "\n",
-        msg, g_y_min);
-    std::strcat(msg3, msg1);
-    bn_to_str(msg, g_y_max_bn, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "g_y_max_bn=%s\n"
-        "y_max= %.20f\n"
-        "\n",
-        msg, g_y_max);
-    std::strcat(msg3, msg1);
-    bn_to_str(msg, g_x_3rd_bn, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "g_x_3rd_bn=%s\n"
-        "x_3rd= %.20f\n"
-        "\n",
-        msg, g_x_3rd);
-    std::strcat(msg3, msg1);
-    bn_to_str(msg, g_y_3rd_bn, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "g_y_3rd_bn=%s\n"
-        "y_3rd= %.20f\n"
-        "\n",
-        msg, g_y_3rd);
-    std::strcat(msg3, msg1);
-    if (stop_msg(msg3))
+    constexpr int dec = 20;
+    if (stop_msg(fmt::format("{:s}\n"
+                             "g_x_min_bn={:s}\n"
+                             "g_x_min   ={:.20f}\n"
+                             "\n"
+                             "g_x_max_bn={:s}\n"
+                             "g_x_max   ={:.20f}\n"
+                             "\n"
+                             "g_y_min_bn={:s}\n"
+                             "g_y_min   ={:.20f}\n"
+                             "\n"
+                             "g_y_max_bn={:s}\n"
+                             "g_y_max   ={:.20f}\n"
+                             "\n"
+                             "g_x_3rd_bn={:s}\n"
+                             "g_x_3rd   ={:.20f}\n"
+                             "\n"
+                             "g_y_3rd_bn={:s}\n"
+                             "g_y_3rd   ={:.20f}\n"
+                             "\n",
+            s,                                      //
+            bn_to_string(g_x_min_bn, dec), g_x_min, //
+            bn_to_string(g_x_max_bn, dec), g_x_max, //
+            bn_to_string(g_y_min_bn, dec), g_y_min, //
+            bn_to_string(g_y_max_bn, dec), g_y_max, //
+            bn_to_string(g_x_3rd_bn, dec), g_x_3rd, //
+            bn_to_string(g_y_3rd_bn, dec), g_y_3rd)))
     {
         goodbye();
     }
@@ -127,75 +105,57 @@ void show_corners_bn(const char *s)
 // show globals
 void show_globals_bf(const char *s)
 {
-    char msg[300];
-    std::snprintf(msg, std::size(msg),
-        "%s\n"                                                                     //
-        "g_bn_step=%d g_bn_length=%d g_int_length=%d g_r_length=%d g_padding=%d\n" //
-        "g_shift_factor=%d decimals=%d g_bf_length=%d g_r_bf_length=%d \n"         //
-        "g_bf_decimals=%d ",                                                       //
-        s,                                                                         //
-        g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,               //
-        g_shift_factor, g_decimals, g_bf_length, g_r_bf_length,                    //
-        g_bf_decimals);
-    if (stop_msg(msg))
+    if (stop_msg(fmt::format(
+            "{:s}\n"                                                                             //
+            "g_bn_step={:d} g_bn_length={:d} g_int_length={:d} g_r_length={:d} g_padding={:d}\n" //
+            "g_shift_factor={:d} decimals={:d} g_bf_length={:d} g_r_bf_length={:d} \n"           //
+            "g_bf_decimals={:d} ",                                                               //
+            s,                                                                                   //
+            g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,                         //
+            g_shift_factor, g_decimals, g_bf_length, g_r_bf_length,                              //
+            g_bf_decimals)))
     {
         goodbye();
     }
 }
 
+static std::string bf_to_string(BigFloat g_bf_x_min, int dec)
+{
+    char msg[100];
+    bf_to_str(msg, g_bf_x_min, dec);
+    return msg;
+}
+
 void show_corners_bf(const char *s)
 {
-    int dec = g_decimals;
-    char msg[100];
-    char msg1[200];
-    char msg3[600];
-    dec = std::min(dec, 20);
-    bf_to_str(msg, g_bf_x_min, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_x_min=%s\n"                             //
-        "x_min= %.20f decimals %d g_bf_length %d\n" //
-        "\n",                                       //
-        msg,                                        //
-        g_x_min, g_decimals, g_bf_length);
-    std::strcpy(msg3, s);
-    std::strcat(msg3, "\n");
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_x_max, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_x_max=%s\n"
-        "x_max= %.20f\n"
-        "\n",
-        msg, g_x_max);
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_y_min, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_y_min=%s\n"
-        "y_min= %.20f\n"
-        "\n",
-        msg, g_y_min);
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_y_max, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_y_max=%s\n"
-        "y_max= %.20f\n"
-        "\n",
-        msg, g_y_max);
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_x_3rd, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_x_3rd=%s\n"
-        "xx_3rd= %.20f\n"
-        "\n",
-        msg, g_x_3rd);
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_y_3rd, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_y_3rd=%s\n"
-        "y_3rd= %.20f\n"
-        "\n",
-        msg, g_y_3rd);
-    std::strcat(msg3, msg1);
-    if (stop_msg(msg3))
+    const int dec = std::min(g_decimals, 20);
+    if (stop_msg(fmt::format("{:s}\n"
+                             "bf_x_min={:s}\n"
+                             "x_min= {:.20f} decimals {:d} g_bf_length {:d}\n"
+                             "\n"
+                             "bf_x_max={:s}\n"
+                             "x_max= {:.20f}\n"
+                             "\n"
+                             "bf_y_min={:s}\n"
+                             "y_min= {:.20f}\n"
+                             "\n"
+                             "bf_y_max={:s}\n"
+                             "y_max= {:.20f}\n"
+                             "\n"
+                             "bf_x_3rd={:s}\n"
+                             "xx_3rd= {:.20f}\n"
+                             "\n"
+                             "bf_y_3rd={:s}\n"
+                             "y_3rd= {:.20f}\n"
+                             "\n",
+            s,                                              //
+            bf_to_string(g_bf_x_min, dec).c_str(),          //
+            g_x_min, g_decimals, g_bf_length,               //
+            bf_to_string(g_bf_x_max, dec).c_str(), g_x_max, //
+            bf_to_string(g_bf_y_min, dec).c_str(), g_y_min, //
+            bf_to_string(g_bf_y_max, dec).c_str(), g_y_max, //
+            bf_to_string(g_bf_x_3rd, dec).c_str(), g_x_3rd, //
+            bf_to_string(g_bf_y_3rd, dec).c_str(), g_y_3rd)))
     {
         goodbye();
     }
@@ -203,73 +163,53 @@ void show_corners_bf(const char *s)
 
 void show_corners_bf_save(const char *s)
 {
-    int dec = 20;
-    char msg[100];
-    char msg1[200];
-    char msg3[500];
-    bf_to_str(msg, g_bf_save_x_min, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_save_x_min=%s\n"
-        "x_min= %.20f\n"
+    constexpr int dec = 20;
+    if (stop_msg(fmt::format(
+        "{:s}\n"
+        "bf_save_x_min={:s}\n"
+        "x_min= {:.20f}\n"
+        "\n"
+        "bf_save_x_max={:s}\n"
+        "x_max= {:.20f}\n"
+        "\n"
+        "bf_save_y_min={:s}\n"
+        "y_min= {:.20f}\n"
+        "\n"
+        "bf_save_y_max={:s}\n"
+        "y_max= {:.20f}\n"
+        "\n"
+        "bf_save_x_3rd={:s}\n"
+        "x_3rd= {:.20f}\n"
+        "\n"
+        "bf_save_y_3rd={:s}\n"
+        "y_3rd= {:.20f}\n"
         "\n",
-        msg, g_x_min);
-    std::strcpy(msg3, s);
-    std::strcat(msg3, "\n");
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_save_x_max, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_save_x_max=%s\n"
-        "x_max= %.20f\n"
-        "\n",
-        msg, g_x_max);
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_save_y_min, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_save_y_min=%s\n"
-        "y_min= %.20f\n"
-        "\n",
-        msg, g_y_min);
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_save_y_max, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_save_y_max=%s\n"
-        "y_max= %.20f\n"
-        "\n",
-        msg, g_y_max);
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_save_x_3rd, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_save_x_3rd=%s\n"
-        "x_3rd= %.20f\n"
-        "\n",
-        msg, g_x_3rd);
-    std::strcat(msg3, msg1);
-    bf_to_str(msg, g_bf_save_y_3rd, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "bf_save_y_3rd=%s\n"
-        "y_3rd= %.20f\n"
-        "\n",
-        msg, g_y_3rd);
-    std::strcat(msg3, msg1);
-    if (stop_msg(msg3))
+        s,                                                   //
+        bf_to_string(g_bf_save_x_min, dec).c_str(), g_x_min, //
+        bf_to_string(g_bf_save_x_max, dec).c_str(), g_x_max, //
+        bf_to_string(g_bf_save_y_min, dec).c_str(), g_y_min, //
+        bf_to_string(g_bf_save_y_max, dec).c_str(), g_y_max, //
+        bf_to_string(g_bf_save_x_3rd, dec).c_str(), g_x_3rd, //
+        bf_to_string(g_bf_save_y_3rd, dec).c_str(), g_y_3rd)))
     {
         goodbye();
     }
 }
 
+static std::string bf_to_string_e(BigFloat value, int dec)
+{
+    char msg[100];
+    bf_to_str_e(msg, value, dec);
+    return msg;
+}
+
 void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, int digits)
 {
-    char msg1[200];
-    char msg2[200];
-    char msg3[500];
-    bf_to_str_e(msg1, t1, digits);
-    bf_to_str_e(msg2, t2, digits);
-    std::snprintf(msg3, std::size(msg3),
-        "\n"
-        "%s->%s\n"
-        "%s->%s",
-        s1, msg1, s2, msg2);
-    if (stop_msg(msg3))
+    if (stop_msg(fmt::format("\n"
+                             "{:s}->{:s}\n"
+                             "{:s}->{:s}",
+            s1, bf_to_string_e(t1, digits), //
+            s2, bf_to_string_e(t2, digits))))
     {
         goodbye();
     }
@@ -278,20 +218,13 @@ void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, int d
 void show_three_bf(
     const char *s1, BigFloat t1, const char *s2, BigFloat t2, const char *s3, BigFloat t3, int digits)
 {
-    char msg1[200];
-    char msg2[200];
-    char msg3[200];
-    char msg4[700];
-    bf_to_str_e(msg1, t1, digits);
-    bf_to_str_e(msg2, t2, digits);
-    bf_to_str_e(msg3, t3, digits);
-    std::snprintf(msg4, std::size(msg4),
-        "\n"
-        "%s->%s\n"
-        "%s->%s\n"
-        "%s->%s",
-        s1, msg1, s2, msg2, s3, msg3);
-    if (stop_msg(msg4))
+    if (stop_msg(fmt::format("\n"
+                             "{:s}->{:s}\n"
+                             "{:s}->{:s}\n"
+                             "{:s}->{:s}",
+            s1, bf_to_string_e(t1, digits), //
+            s2, bf_to_string_e(t2, digits), //
+            s3, bf_to_string_e(t3, digits))))
     {
         goodbye();
     }
@@ -300,63 +233,52 @@ void show_three_bf(
 // for aspect ratio debugging
 void show_aspect(const char *s)
 {
-    char msg[300];
-    char str[100];
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat bt1 = alloc_stack(g_r_bf_length + 2);
     BigFloat bt2 = alloc_stack(g_r_bf_length + 2);
     BigFloat aspect = alloc_stack(g_r_bf_length + 2);
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
-    bf_to_str(str, aspect, 10);
-    std::snprintf(msg, std::size(msg),
-        "aspect %s\n"
-        "float %13.10f\n"
-        "bf    %s\n"
-        "\n",
-            s,
-            (g_y_max-g_y_min)/(g_x_max-g_x_min),
-            str);
-    if (stop_msg(msg))
+    if (stop_msg(fmt::format("aspect {:s}\n"
+                             "float  {:13.10f}\n"
+                             "bf     {:s}\n"
+                             "\n",
+            s,                                         //
+            (g_y_max - g_y_min) / (g_x_max - g_x_min), //
+            bf_to_string(aspect, 10))))
     {
         goodbye();
     }
-    restore_stack(saved);
 }
 
 // compare a double and bignumber
 void compare_values(const char *s, LDouble x, BigNum bnx)
 {
-    int dec = 40;
-    char msg[100];
-    char msg1[300];
-    bn_to_str(msg, bnx, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "%s\n"
-        "bignum=%s\n"
-        "double=%.20Lf\n"
-        "\n",
-        s, msg, x);
-    if (stop_msg(msg1))
+    constexpr int dec = 40;
+    if (stop_msg(fmt::format("{:s}\n"
+                             "bignum={:s}\n"
+                             "double={:.20Lf}\n"
+                             "\n",
+            s,                      //
+            bn_to_string(bnx, dec), //
+            x)))
     {
         goodbye();
     }
 }
+
 // compare a double and bignumber
 void compare_values_bf(const char *s, LDouble x, BigFloat bfx)
 {
-    int dec = 40;
-    char msg[300];
-    char msg1[700];
-    bf_to_str_e(msg, bfx, dec);
-    std::snprintf(msg1, std::size(msg1),
-        "%s\n"
-        "bignum=%s\n"
-        "double=%.20Lf\n"
-        "\n",
-        s, msg, x);
-    if (stop_msg(msg1))
+    constexpr int dec = 40;
+    if (stop_msg(fmt::format("{:s}\n"
+                             "bignum={:s}\n"
+                             "double={:.20Lf}\n"
+                             "\n",
+            s,                        //
+            bf_to_string_e(bfx, dec), //
+            x)))
     {
         goodbye();
     }
@@ -365,11 +287,8 @@ void compare_values_bf(const char *s, LDouble x, BigFloat bfx)
 //********************************************************************
 void show_var_bf(const char *s, BigFloat n)
 {
-    char msg[200];
-    std::strcpy(msg, s);
-    std::strcat(msg, " ");
-    bf_to_str_e(msg + std::strlen(s), n, 40);
-    msg[79] = 0;
+    std::string msg{bf_to_string_e(n, 40)};
+    msg.erase(79);
     if (stop_msg(msg))
     {
         goodbye();
