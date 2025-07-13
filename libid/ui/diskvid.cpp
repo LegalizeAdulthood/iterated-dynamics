@@ -19,9 +19,12 @@
 #include "ui/temp_msg.h"
 #include "ui/video.h"
 
+#include <fmt/format.h>
+
 #include <array>
 #include <cassert>
 #include <chrono>
+#include <cstdio>
 #include <cstring>
 #include <string>
 #include <vector>
@@ -150,7 +153,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
         }
         driver_put_string(BOX_ROW+2, BOX_COL+4, C_DVID_HI, "'Disk-Video' mode");
         driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO,
-            "Screen resolution: " + std::to_string(g_screen_x_dots) + " x " + std::to_string(g_screen_y_dots));
+            fmt::format("Screen resolution: {:d} x {:d}", g_screen_x_dots, g_screen_y_dots));
         if (g_disk_targa)
         {
             driver_put_string(-1, -1, C_DVID_LO, "  24 bit Targa");
@@ -197,7 +200,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
     }
     if (driver_is_disk())
     {
-        driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Cache size: " + std::to_string(CACHE_SIZE) + "K");
+        driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, fmt::format("Cache size: {:d}K", CACHE_SIZE));
     }
 
     // preset cache to all invalid entries so we don't need free list logic
@@ -332,10 +335,9 @@ int disk_read_pixel(int col, int row)
     {
         if (driver_is_disk())
         {
-            char buf[41];
-            std::snprintf(buf, std::size(buf), " reading line %4d",
-                    (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
-            dvid_status(0, buf);
+            dvid_status(0,
+                fmt::format(" reading line {:4d}",
+                    row >= g_screen_y_dots ? row - g_screen_y_dots : row)); // adjust when potfile
         }
         if (g_bf_math != BFMathType::NONE)
         {
@@ -398,10 +400,9 @@ void disk_write_pixel(int col, int row, int color)
     {
         if (driver_is_disk())
         {
-            char buf[41];
-            std::snprintf(buf, std::size(buf), " writing line %4d",
-                    (row >= g_screen_y_dots) ? row-g_screen_y_dots : row); // adjust when potfile
-            dvid_status(0, buf);
+            dvid_status(0,
+                fmt::format(" writing line {:4d}",
+                    row >= g_screen_y_dots ? row - g_screen_y_dots : row)); // adjust when potfile
         }
         s_time_to_display = 1000;
     }
