@@ -1155,7 +1155,6 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
     case PrintDocCommand::PD_HEADING:
     {
         char line[81];
-        char buff[40];
         int  width = PAGE_WIDTH + PAGE_INDENT;
         bool keep_going;
 
@@ -1171,12 +1170,12 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
         info->margin = 0;
 
         std::memset(line, ' ', 81);
-        std::snprintf(buff, std::size(buff), ID_PROGRAM_NAME " Version %d.%d.%d", ID_VERSION_MAJOR,
-            ID_VERSION_MINOR, ID_VERSION_PATCH);
-        std::memmove(line + ((width-(int)(std::strlen(buff))) / 2)-4, buff, std::strlen(buff));
+        std::string buff = fmt::format(ID_PROGRAM_NAME " Version {:d}.{:d}.{:d}", //
+            ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH);
+        std::memmove(line + ((width - (int) (buff.length())) / 2) - 4, buff.c_str(), buff.length());
 
-        std::snprintf(buff, std::size(buff), "Page %d", pd->page_num);
-        std::memmove(line + (width - (int)std::strlen(buff)), buff, std::strlen(buff));
+        buff = fmt::format("Page {:d}", pd->page_num);
+        std::memmove(line + (width - (int)buff.length()), buff.c_str(), buff.length());
 
         printer_ch(info, '\n', 1);
         printer_str(info, line, width);
@@ -1227,8 +1226,6 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
 
 static bool print_doc_msg_func(int page_num, int num_pages)
 {
-    char temp[10];
-
     if (page_num == -1)      // successful completion
     {
         driver_buzzer(Buzzer::COMPLETE);
@@ -1257,8 +1254,7 @@ static bool print_doc_msg_func(int page_num, int num_pages)
         driver_hide_text_cursor();
     }
 
-    std::snprintf(temp, std::size(temp), "%d%%", (int)((100.0 / num_pages) * page_num));
-    driver_put_string(7, 41, C_HELP_LINK, temp);
+    driver_put_string(7, 41, C_HELP_LINK, fmt::format("{:d}%", (int) (100.0 / num_pages * page_num)));
 
     while (driver_key_pressed())
     {
