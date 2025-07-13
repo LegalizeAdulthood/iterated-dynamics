@@ -60,6 +60,8 @@
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cfloat>
@@ -487,9 +489,7 @@ static int calc_type_show_dot()
 
 static void fix_inversion(double *x) // make double converted from string look ok
 {
-    char buf[30];
-    std::sprintf(buf, "%-1.15lg", *x);
-    *x = std::atof(buf);
+    *x = std::atof(fmt::format("{:-1.15Lg}", *x).c_str());
 }
 
 static void init_calc_fract()
