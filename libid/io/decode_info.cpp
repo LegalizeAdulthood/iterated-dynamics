@@ -188,6 +188,10 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     get_int16(&info->orbit_delay, &buf_ptr, dir);
     get_double(&info->math_tol[0], &buf_ptr, dir);
     get_double(&info->math_tol[1], &buf_ptr, dir);
+    get_uint8(&info->version_major, &buf_ptr, dir);
+    get_uint8(&info->version_minor, &buf_ptr, dir);
+    get_uint8(&info->version_patch, &buf_ptr, dir);
+    get_uint8(&info->version_tweak, &buf_ptr, dir);
 
     for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)  // NOLINT(modernize-loop-convert)
     {
