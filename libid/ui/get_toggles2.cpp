@@ -10,6 +10,8 @@
 #include "ui/diskvid.h"
 #include "ui/full_screen_prompt.h"
 
+#include <fmt/format.h>
+
 #include <array> // std::size
 #include <cstdio>
 #include <cstdlib>
@@ -72,12 +74,12 @@ int get_toggles2()
         old_inversion[i] = g_inversion[i];
         if (g_inversion[i] == AUTO_INVERT)
         {
-            std::sprintf(values[k].uval.sval, "auto");
+            fmt::format_to(values[k].uval.sval, "auto");
         }
         else
         {
             char buff[80]{};
-            std::sprintf(buff, "%-1.15lg", g_inversion[i]);
+            fmt::format_to(buff, "{:-1.15Lg}", g_inversion[i]);
             buff[std::size(values[k].uval.sval)-1] = 0;
             std::strcpy(values[k].uval.sval, buff);
         }
