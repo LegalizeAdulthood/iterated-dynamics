@@ -12,6 +12,8 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -114,11 +116,11 @@ get_view_restart:
     choices[++k] = "";
     values[k].type = '*';
 
-    std::sprintf(dim1, "Video memory limits: (for y = %4d) x <= %d", y_max,  x_max);
+    fmt::format_to(dim1, "Video memory limits: (for y = {:4d}) x <= {:d}", y_max, x_max);
     choices[++k] = dim1;
     values[k].type = '*';
 
-    std::sprintf(dim2, "                     (for x = %4d) y <= %d", x_max, y_max);
+    fmt::format_to(dim2, "                     (for x = {:4d}) y <= {:d}", x_max, y_max);
     choices[++k] = dim2;
     values[k].type = '*';
 
