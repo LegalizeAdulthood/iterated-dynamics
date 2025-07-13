@@ -4,6 +4,8 @@
 
 #include <config/port_config.h>
 
+#include <fmt/format.h>
+
 // g_release is pushed/popped on the history stack to provide backward compatibility with previous
 // behavior, so it can't be const.
 int g_release{ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR};
@@ -12,6 +14,25 @@ int g_release{ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR};
 const int g_patch_level{ID_VERSION_PATCH};
 
 Version g_version{ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH, ID_VERSION_TWEAK, false};
+
+std::string to_string(const Version &value)
+{
+    if (value.legacy)
+    {
+        return fmt::format("{:d}.{:02d}", value.major, value.minor);
+    }
+
+    std::string text = fmt::format("{:d}.{:d}", value.major, value.minor);
+    if (value.patch || value.tweak)
+    {
+        text += fmt::format(".{:d}", value.patch);
+    }
+    if (value.tweak)
+    {
+        text += fmt::format(".{:d}", value.tweak);
+    }
+    return text;
+}
 
 std::string to_par_string(const Version &value)
 {
@@ -33,26 +54,7 @@ std::string to_par_string(const Version &value)
 
 std::string to_display_string(const Version &value)
 {
-    if (value.legacy)
-    {
-        return std::string{"FRACTINT v"} + std::to_string(value.major) + '.' +
-            std::to_string(value.minor + 100).substr(1);
-    }
-    std::string result{"Id v"};
-    result.append(std::to_string(value.major) + '.' + std::to_string(value.minor));
-    if (value.patch)
-    {
-        result.append('.' + std::to_string(value.patch));
-        if (value.tweak)
-        {
-            result.append('.' + std::to_string(value.tweak));
-        }
-    }
-    else if (value.tweak)
-    {
-        result.append(".0." + std::to_string(value.tweak));
-    }
-    return result;
+    return (value.legacy ? "FRACTINT v" : "Id v") + to_string(value);
 }
 
 Version parse_legacy_version(int version)

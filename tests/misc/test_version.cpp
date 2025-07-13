@@ -28,6 +28,55 @@ TEST(TestVersion, versionComponentsFitInUInt8)
     EXPECT_GT(256, ID_VERSION_TWEAK);
 }
 
+TEST(TestVersion, legacyVersionToString)
+{
+    Version v{20, 4, 0, 0, true};
+
+    EXPECT_EQ("20.04", to_string(v));
+}
+
+TEST(TestVersion, toStringMajor)
+{
+    Version v{5, 0, 0, 0, false};
+
+    EXPECT_EQ("5.0", to_string(v));
+}
+
+TEST(TestVersion, toStringMajorMinor)
+{
+    Version v{5, 6, 0, 0, false};
+
+    EXPECT_EQ("5.6", to_string(v));
+}
+
+TEST(TestVersion, toStringMajorMinorPatch)
+{
+    Version v{5, 6, 7, 0, false};
+
+    EXPECT_EQ("5.6.7", to_string(v));
+}
+
+TEST(TestVersion, toStringMajorPatch)
+{
+    Version v{5, 0, 7, 0, false};
+
+    EXPECT_EQ("5.0.7", to_string(v));
+}
+
+TEST(TestVersion, toStringMajorTweak)
+{
+    const Version v{5, 0, 0, 8, false};
+
+    EXPECT_EQ("5.0.0.8", to_string(v));
+}
+
+TEST(TestVersion, toStringMajorMinorTweak)
+{
+    Version v{5, 6, 0, 8, false};
+
+    EXPECT_EQ("5.6.0.8", to_string(v));
+}
+
 TEST(TestVersion, parStringMajor)
 {
     ValueSaver saved_version{g_version, Version{5, 0, 0, 0, false}};
@@ -87,12 +136,7 @@ TEST(TestVersion, parseLegacyVersionMajorMinor)
 
 inline std::ostream &operator<<(std::ostream &str, const Version &value)
 {
-    if (value.legacy)
-    {
-        return str << "legacy{" << value.major << '.' << value.minor << '}';
-    }
-    return str << "id{" << value.major << '.' << value.minor //
-               << '.' << value.patch << '.' << value.tweak << '}';
+    return str << (value.legacy ? "legacy{" : "id{") << to_string(value) << '}';
 }
 
 TEST(TestVersion, legacyVersionLessThanIdVersion)

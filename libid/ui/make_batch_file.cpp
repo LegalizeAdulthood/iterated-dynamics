@@ -506,8 +506,8 @@ skip_ui:
                     }
                     if (g_version.patch != 0 && !params.colors_only)
                     {
-                        std::fprintf(s_param_file, "%sId Version %d.%d.%d\n", comment, //
-                            g_version.major, g_version.minor, g_version.patch);
+                        std::fprintf(s_param_file, "%sId Version %s\n", comment, //
+                            to_string(g_version).c_str());
                     }
                 }
                 write_batch_params(params.color_spec, params.colors_only, params.max_color, col, row);
