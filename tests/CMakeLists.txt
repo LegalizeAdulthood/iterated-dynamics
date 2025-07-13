@@ -60,6 +60,7 @@ add_executable(test-id
     include/test_data.h.in
     include/test_migrate_gif.h.in
     expected_map.cpp
+    engine/test_get_prec_big_float.cpp
     engine/test_log_map.cpp
     engine/test_resume.cpp
     fractals/test_check_orbit_name.cpp
