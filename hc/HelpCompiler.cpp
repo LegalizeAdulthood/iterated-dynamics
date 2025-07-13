@@ -1136,13 +1136,10 @@ void HelpCompiler::print_document()
 // compiler status and memory usage report stuff.
 void HelpCompiler::report_memory()
 {
-    long bytes_in_strings = 0;
-    long // bytes in strings
-        text = 0;
-    long // bytes in topic text (stored on disk)
-        data = 0;
-    long          // bytes in active data structure
-        dead = 0; // bytes in unused data structure
+    std::size_t bytes_in_strings{}; // bytes in strings
+    std::size_t text{};             // bytes in topic text (stored on disk)
+    std::size_t data{};             // bytes in active data structure
+    std::size_t dead{};             // bytes in unused data structure
 
     for (const Topic &t : g_src.topics)
     {
@@ -1152,13 +1149,13 @@ void HelpCompiler::report_memory()
         data   += t.num_page * sizeof(Page);
 
         const std::vector<Page> &pages = t.page;
-        dead += static_cast<long>((pages.capacity() - pages.size()) * sizeof(Page));
+        dead += (pages.capacity() - pages.size()) * sizeof(Page);
     }
 
     for (const Link &l : g_src.all_links)
     {
         data += sizeof(Link);
-        bytes_in_strings += (long) l.name.length();
+        bytes_in_strings += l.name.length();
     }
 
     dead += static_cast<long>((g_src.all_links.capacity() - g_src.all_links.size()) * sizeof(Link));
@@ -1166,18 +1163,18 @@ void HelpCompiler::report_memory()
     for (const Label &l : g_src.labels)
     {
         data   += sizeof(Label);
-        bytes_in_strings += (long) l.name.length() + 1;
+        bytes_in_strings += l.name.length() + 1;
     }
 
-    dead += static_cast<long>((g_src.labels.capacity() - g_src.labels.size()) * sizeof(Label));
+    dead += (g_src.labels.capacity() - g_src.labels.size()) * sizeof(Label);
 
     for (const Label &l : g_src.private_labels)
     {
         data   += sizeof(Label);
-        bytes_in_strings += (long) l.name.length() + 1;
+        bytes_in_strings += l.name.length() + 1;
     }
 
-    dead += static_cast<long>((g_src.private_labels.capacity() - g_src.private_labels.size()) * sizeof(Label));
+    dead += (g_src.private_labels.capacity() - g_src.private_labels.size()) * sizeof(Label);
 
     for (const Content &c : g_src.contents)
     {
@@ -1185,15 +1182,15 @@ void HelpCompiler::report_memory()
             (sizeof(g_src.contents[0].is_label[0]) + g_src.contents[0].topic_name[0].size() + sizeof(g_src.contents[0].topic_num[0]));
         data += sizeof(Content) - t;
         dead += t;
-        bytes_in_strings += (long) c.id.length() + 1;
-        bytes_in_strings += (long) c.name.length() + 1;
+        bytes_in_strings += c.id.length() + 1;
+        bytes_in_strings += c.name.length() + 1;
         for (int ctr2 = 0; ctr2 < c.num_topic; ctr2++)
         {
-            bytes_in_strings += (long) c.topic_name[ctr2].length() + 1;
+            bytes_in_strings += c.topic_name[ctr2].length() + 1;
         }
     }
 
-    dead += static_cast<long>((g_src.contents.capacity() - g_src.contents.size()) * sizeof(Content));
+    dead += (g_src.contents.capacity() - g_src.contents.size()) * sizeof(Content);
 
     std::printf("\n"
                 "Memory Usage:\n"
