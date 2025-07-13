@@ -11,6 +11,8 @@
 #include "io/save_file.h"
 #include "misc/debug_flags.h"
 
+#include <fmt/format.h>
+
 #include <cstdarg>
 #include <cstdio>
 #include <ctime>
@@ -80,20 +82,20 @@ static int timer(TimerType type, int (*fn)(), ...)
         switch (type)
         {
         case TimerType::DECODER:
-            std::fprintf(fp, "decode ");
+            fmt::print(fp, "decode ");
             break;
         case TimerType::ENCODER:
-            std::fprintf(fp, "encode ");
+            fmt::print(fp, "encode ");
             break;
         default:
             break;
         }
-        std::fprintf(fp, "%s type=%s resolution = %dx%d maxiter=%ld", //
+        fmt::print(fp, "{:s} type={:s} resolution = {:d}x{:d} maxiter={:d}", //
             text,                                                     //
             g_cur_fractal_specific->name,                             //
             g_logical_screen_x_dots, g_logical_screen_y_dots,         //
             g_max_iterations);
-        std::fprintf(fp, " time= %ld.%02ld secs\n", g_timer_interval / 100, g_timer_interval % 100);
+        fmt::print(fp, " time= {:d}.{:02d} secs\n", g_timer_interval / 100, g_timer_interval % 100);
         std::fclose(fp);
     }
     return out;
