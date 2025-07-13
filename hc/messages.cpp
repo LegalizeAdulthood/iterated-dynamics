@@ -2,6 +2,8 @@
 //
 #include "messages.h"
 
+#include <fmt/format.h>
+
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
@@ -20,10 +22,10 @@ std::string g_current_src_filename;  // current .SRC filename
  */
 void report_errors()
 {
-    std::printf("\n"
-                "Compiler Status:\n"
-                "%8d Error%c\n"
-                "%8d Warning%c\n",
+    fmt::print("\n"
+               "Compiler Status:\n"
+               "{:8d} Error{:c}\n"
+               "{:8d} Warning{:c}\n",
         g_errors, (g_errors == 1) ? ' ' : 's', //
         g_warnings, (g_warnings == 1) ? ' ' : 's');
 }
