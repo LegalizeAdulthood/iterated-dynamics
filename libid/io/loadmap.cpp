@@ -14,6 +14,8 @@
 #include <config/path_limits.h>
 #include <config/port.h>
 
+#include <fmt/format.h>
+
 #include <array> // std::size
 #include <cstdio>
 #include <cstring>
@@ -60,9 +62,7 @@ bool validate_luts(const char *map_name)
     std::FILE *f = std::fopen(find_path(temp).c_str(), "r"); // search the dos path
     if (f == nullptr)
     {
-        char line[160];
-        std::snprintf(line, std::size(line), "Could not load color map %s", map_name);
-        stop_msg(line);
+        stop_msg(fmt::format("Could not load color map {:s}", map_name));
         return true;
     }
     unsigned index;
