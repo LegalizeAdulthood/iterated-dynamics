@@ -29,11 +29,12 @@
 #include "ui/temp_msg.h"
 #include "ui/video.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cmath>
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <string>
 #include <vector>
 
 enum
@@ -1143,25 +1144,21 @@ bool InverseJulia::iterate()
         m_actively_computing = true;
         if (s_show_numbers) // write coordinates on screen
         {
-            char str[41];
-            std::snprintf(
-                str, std::size(str), "%16.14f %16.14f %3d", m_c_real, m_c_imag, get_color(g_col, g_row));
+            std::string msg{
+                fmt::format("{:16.14f} {:16.14f} {:3d}", m_c_real, m_c_imag, get_color(g_col, g_row))};
             if (s_window_style == JuliaWindowStyle::LARGE)
             {
                 // show temp msg will clear self if new msg is a different length - pad to length 40
-                while ((int) std::strlen(str) < 40)
-                {
-                    std::strcat(str, " ");
-                }
-                str[40] = 0;
+                msg += std::string(40 - msg.length(), ' ');
                 s_cursor.hide();
                 m_actively_computing = true;
-                show_temp_msg(str);
+                show_temp_msg(msg);
                 s_cursor.show();
             }
             else
             {
-                driver_display_string(5, g_vesa_y_res - NUMBER_FONT_HEIGHT, g_color_bright, g_color_dark, str);
+                driver_display_string(
+                    5, g_vesa_y_res - NUMBER_FONT_HEIGHT, g_color_bright, g_color_dark, msg.c_str());
             }
         }
         m_iter = 1;
