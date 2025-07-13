@@ -2203,18 +2203,27 @@ static int end_object(bool tri_out)
             }
 
             // Add the bounding box info
-            std::fprintf(s_file_ptr1, " BOUNDED_BY\n  INTERSECTION\n");
-            std::fprintf(s_file_ptr1, "   PLANE <-1.0  0.0  0.0 > %4.3f END_PLANE\n", -s_min_xyz[0]);
-            std::fprintf(s_file_ptr1, "   PLANE < 1.0  0.0  0.0 > %4.3f END_PLANE\n",  s_max_xyz[0]);
-            std::fprintf(s_file_ptr1, "   PLANE < 0.0 -1.0  0.0 > %4.3f END_PLANE\n", -s_min_xyz[1]);
-            std::fprintf(s_file_ptr1, "   PLANE < 0.0  1.0  0.0 > %4.3f END_PLANE\n",  s_max_xyz[1]);
-            std::fprintf(s_file_ptr1, "   PLANE < 0.0  0.0 -1.0 > %4.3f END_PLANE\n", -s_min_xyz[2]);
-            std::fprintf(s_file_ptr1, "   PLANE < 0.0  0.0  1.0 > %4.3f END_PLANE\n",  s_max_xyz[2]);
-            std::fprintf(s_file_ptr1, "  END_INTERSECTION\n END_BOUND\n");
+            std::fprintf(s_file_ptr1,
+                " BOUNDED_BY\n"
+                "  INTERSECTION\n"
+                "   PLANE <-1.0  0.0  0.0 > %4.3f END_PLANE\n"
+                "   PLANE < 1.0  0.0  0.0 > %4.3f END_PLANE\n"
+                "   PLANE < 0.0 -1.0  0.0 > %4.3f END_PLANE\n"
+                "   PLANE < 0.0  1.0  0.0 > %4.3f END_PLANE\n"
+                "   PLANE < 0.0  0.0 -1.0 > %4.3f END_PLANE\n"
+                "   PLANE < 0.0  0.0  1.0 > %4.3f END_PLANE\n"
+                "  END_INTERSECTION\n"
+                " END_BOUND\n",
+                -s_min_xyz[0], //
+                s_max_xyz[0],  //
+                -s_min_xyz[1], //
+                s_max_xyz[1],  //
+                -s_min_xyz[2], //
+                s_max_xyz[2]);
         }
 
         // Complete the composite object statement
-        std::fprintf(s_file_ptr1, "END_%s\n", "COMPOSITE");
+        std::fprintf(s_file_ptr1, "END_COMPOSITE\n");
     }
 
     if (g_raytrace_format != RayTraceFormat::ACROSPIN && g_raytrace_format != RayTraceFormat::RAYSHADE)
@@ -2236,18 +2245,32 @@ static void line3d_cleanup()
         }
         if (g_raytrace_format == RayTraceFormat::VIVID)
         {
-            std::fprintf(s_file_ptr1, "\n\n//");
+            std::fprintf(s_file_ptr1,
+                "\n"
+                "\n//");
         }
         if (g_raytrace_format == RayTraceFormat::MTV)
         {
-            std::fprintf(s_file_ptr1, "\n\n#");
+            std::fprintf(s_file_ptr1,
+                "\n"
+                "\n#");
         }
 
         if (g_raytrace_format == RayTraceFormat::RAYSHADE)
         {
             // end grid aggregate
-            std::fprintf(s_file_ptr1, "end\n\n/*good landscape:*/\n%s%s\n/*",
-                    "screen 640 480\neyep 0 2.1 0.8\nlookp 0 0 -0.95\nlight 1 point -2 1 1.5\n", "background .3 0 0\nreport verbose\n");
+            std::fprintf(s_file_ptr1,
+                "end\n"
+                "\n"
+                "/*good landscape:*/\n"
+                "background .3 0 0\n"
+                "report verbose\n"
+                "\n"
+                "/*"
+                "screen 640 480\n"
+                "eyep 0 2.1 0.8\n"
+                "lookp 0 0 -0.95\n"
+                "light 1 point -2 1 1.5\n");
         }
         if (g_raytrace_format == RayTraceFormat::ACROSPIN)
         {
@@ -2270,15 +2293,24 @@ static void line3d_cleanup()
                     }
                 }
             }
-            std::fprintf(s_file_ptr1, "\n\n--");
+            std::fprintf(s_file_ptr1,
+                "\n"
+                "\n--");
         }
         if (g_raytrace_format != RayTraceFormat::DXF)
         {
-            std::fprintf(s_file_ptr1, "{ No. Of Triangles = %ld }*/\n\n", s_num_tris);
+            std::fprintf(s_file_ptr1,
+                "{ No. Of Triangles = %ld }*/\n"
+                "\n",
+                s_num_tris);
         }
         if (g_raytrace_format == RayTraceFormat::DXF)
         {
-            std::fprintf(s_file_ptr1, "  0\nENDSEC\n  0\nEOF\n");
+            std::fprintf(s_file_ptr1,
+                "  0\n"
+                "ENDSEC\n"
+                "  0\n"
+                "EOF\n");
         }
         std::fclose(s_file_ptr1);
         s_file_ptr1 = nullptr;

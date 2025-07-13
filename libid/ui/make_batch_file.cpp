@@ -513,16 +513,23 @@ skip_ui:
                 write_batch_params(params.color_spec, params.colors_only, params.max_color, col, row);
                 if (params.x_multiple > 1 || params.y_multiple > 1)
                 {
-                    std::fprintf(s_param_file, "  video=%s", params.video_mode_key_name);
-                    std::fprintf(s_param_file, " savename=frmig_%c%c\n", par_key(col), par_key(row));
+                    std::fprintf(s_param_file,
+                        " video=%s"
+                        " savename=frmig_%c%c\n",
+                        params.video_mode_key_name, //
+                        par_key(col), par_key(row));
                 }
-                std::fprintf(s_param_file, "}\n\n");
+                std::fprintf(s_param_file,
+                    "}\n"
+                    "\n");
             }
         }
         if (params.x_multiple > 1 || params.y_multiple > 1)
         {
-            std::fprintf(bat_file, "start/wait id makemig=%d/%d\n", params.x_multiple, params.y_multiple);
-            std::fprintf(bat_file, ":oops\n");
+            std::fprintf(bat_file,
+                "start/wait id makemig=%d/%d\n"
+                ":oops\n",
+                params.x_multiple, params.y_multiple);
             std::fclose(bat_file);
         }
         //******end here
