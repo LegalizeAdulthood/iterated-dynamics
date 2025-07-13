@@ -13,7 +13,7 @@
 
 #include <algorithm>
 #include <cfloat>
-#include <cstdio>
+#include <cmath>
 
 int get_prec_bf_mag()
 {
@@ -107,14 +107,15 @@ int get_prec_bf(ResolutionFlag flag)
     return std::max(digits, dec);
 }
 
-// get_power10(x) returns the magnitude of x.  This rounds
-// a little so 9.95 rounds to 10, but we're using a binary base anyway,
-// so there's nothing magic about changing to the next power of 10.
+// get_power10(x) returns the magnitude of x.
 static int get_power10(LDouble x)
 {
-    char string[11]; // space for "+x.xe-xxxx"
-    std::snprintf(string, std::size(string), "%+.1Le", x);
-    return std::atoi(string + 5);
+    // Special case for zero
+    if (x == 0.0)
+    {
+        return 0;
+    }
+    return static_cast<int>(std::floor(std::log10(std::abs(x))));
 }
 
 int get_magnification_precision(LDouble magnification)
