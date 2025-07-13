@@ -3,7 +3,6 @@
 # Copyright 2018-2024 Richard Thomson
 #
 find_package(Boost REQUIRED)
-find_package(fmt CONFIG REQUIRED)
 
 add_library(libhc
     AsciiDocCompiler.h
@@ -22,7 +21,7 @@ add_library(libhc
 )
 target_compile_definitions(libhc PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_include_directories(libhc PUBLIC .)
-target_link_libraries(libhc PUBLIC helpcom os-hc fmt::fmt-header-only Boost::boost)
+target_link_libraries(libhc PUBLIC helpcom os-hc Boost::boost)
 target_folder(libhc "Libraries")
 
 add_executable(hc hc.cpp)
