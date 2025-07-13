@@ -16,6 +16,8 @@
 
 #include <config/getpid.h>
 
+#include <fmt/format.h>
+
 #include <cinttypes>
 #include <climits>
 #include <cstdint>
@@ -84,13 +86,12 @@ static void which_disk_error(int status)
 {
     // Set status == 1 after a file create, status == 2 after a file set value
     // Set status == 3 after a file write, status == 4 after a file read
-    char buf[MSG_LEN];
-    const char *pats[4] = {"Create file error %d:  %s", "Set file error %d:  %s", "Write file error %d:  %s",
-        "Read file error %d:  %s"};
-    std::snprintf(buf, std::size(buf), pats[(1 <= status && status <= 4) ? (status - 1) : 0], errno, std::strerror(errno));
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
-        if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER, buf))
+        const char *names[4]{"Create", "Set", "Write", "Read"};
+        if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER,
+                fmt::format("{:s} file error {:d}:  {:s}",
+                    names[(status >= 1 && status <= 4) ? status - 1 : 0], errno, std::strerror(errno))))
         {
             goodbye(); // bailout if ESC
         }
@@ -303,13 +304,9 @@ static void display_error(MemoryLocation stored_at, long how_much)
     // This routine is used to display an error message when the requested
     // memory type cannot be allocated due to insufficient memory, AND there
     // is also insufficient disk space to use as memory.
-
-    char buf[MSG_LEN*2];
-    std::snprintf(buf, std::size(buf),
-        "Allocating %ld Bytes of %s memory failed.\n"
-        "Alternate disk space is also insufficient. Goodbye",
-        how_much, memory_type(stored_at));
-    stop_msg(buf);
+    stop_msg(fmt::format("Allocating {:d} Bytes of {:s} memory failed.\n"
+                         "Alternate disk space is also insufficient. Goodbye",
+        how_much, memory_type(stored_at)));
 }
 
 // This function returns an adjusted stored_at value.
@@ -401,17 +398,14 @@ static int check_bounds(long start, long length, U16 handle)
 
 static void display_memory()
 {
-    char buf[MSG_LEN];
-    std::snprintf(buf, std::size(buf), "disk=%lu", get_disk_space());
-    stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, buf);
+    stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, fmt::format("disk={:d}", get_disk_space()));
 }
 
 static void display_handle(U16 handle)
 {
-    char buf[MSG_LEN];
-    std::snprintf(buf, std::size(buf), "Handle %u, type %s, size %" PRIu64, handle,
-        memory_type(s_handles[handle].stored_at), s_handles[handle].size);
-    if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER, buf))
+    if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER,
+            fmt::format("Handle {:d}, type {:s}, size {:d}", //
+                handle, memory_type(s_handles[handle].stored_at), s_handles[handle].size)))
     {
         goodbye(); // bailout if ESC, it's messy, but should work
     }
@@ -442,17 +436,15 @@ void exit_check()
             continue;
         }
 
-        char buf[MSG_LEN];
-        std::snprintf(buf, std::size(buf), "Memory type %s still allocated.  Handle = %u.",
-            memory_type(s_handles[i].stored_at), i);
-        stop_msg(buf);
+        stop_msg(fmt::format(
+            "Memory type {:s} still allocated.  Handle = {:d}.", memory_type(s_handles[i].stored_at), i));
         memory_release(MemoryHandle{i});
     }
 }
 
 static std::string mem_file_name(U16 handle)
 {
-    return "id." + std::to_string(::getpid()) + '.' + std::to_string(handle) + ".tmp";
+    return fmt::format("id.{:d}.{:d}.tmp", getpid(), handle);
 }
 
 // * * * *
@@ -541,10 +533,9 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
 
     if (stored_at != use_this_type && g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {
-        char buf[MSG_LEN * 2];
-        std::snprintf(buf, std::size(buf), "Asked for %s, allocated %" PRIu64 " bytes of %s, handle = %u.",
-            memory_type(stored_at), to_allocate, memory_type(use_this_type), handle);
-        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, buf);
+        stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER,
+            fmt::format("Asked for {:s}, allocated {:d} bytes of {:s}, handle = {:d}.", //
+                memory_type(stored_at), to_allocate, memory_type(use_this_type), handle));
         display_memory();
     }
 
