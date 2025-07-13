@@ -2824,19 +2824,30 @@ static CmdArgFlags cmd_parm_file(const Command &cmd)
 
 static CmdArgFlags cmd_passes(const Command &cmd)
 {
-    if (std::strchr("123gbtsdop", cmd.char_val[0]) == nullptr)
+    if (std::strchr("123bdgopst", cmd.char_val[0]) == nullptr)
     {
         return cmd.bad_arg();
     }
-    g_user_std_calc_mode = static_cast<CalcMode>(cmd.char_val[0]);
     if (cmd.char_val[0] == 'g')
     {
-        g_stop_pass = ((int) cmd.value[1] - (int) '0');
-        if (g_stop_pass < 0 || g_stop_pass > 6)
+        if (cmd.value_len > 1)
+        {
+            if (!std::isdigit(cmd.value[1]))
+            {
+                return cmd.bad_arg();
+            }
+            g_stop_pass = ((int) cmd.value[1] - (int) '0');
+            if (g_stop_pass < 0 || g_stop_pass > 6)
+            {
+                g_stop_pass = 0;
+            }
+        }
+        else
         {
             g_stop_pass = 0;
         }
     }
+    g_user_std_calc_mode = static_cast<CalcMode>(cmd.char_val[0]);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 

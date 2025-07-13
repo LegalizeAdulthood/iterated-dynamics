@@ -1501,6 +1501,18 @@ TEST_F(TestParameterCommand, passesBoundaryTrace)
     EXPECT_EQ(CalcMode::BOUNDARY_TRACE, g_user_std_calc_mode);
 }
 
+TEST_F(TestParameterCommand, passesSolidGuess)
+{
+    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_stop_pass{g_stop_pass, -1};
+
+    exec_cmd_arg("passes=g", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(CalcMode::SOLID_GUESS, g_user_std_calc_mode);
+    EXPECT_EQ(0, g_stop_pass);
+}
+
 TEST_F(TestParameterCommand, passesSolidGuess3)
 {
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
@@ -1521,6 +1533,16 @@ TEST_F(TestParameterCommand, passesPerturbation)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(CalcMode::PERTURBATION, g_user_std_calc_mode);
+}
+
+TEST_F(TestParameterCommandError, passesSolidGuessNonNumeric)
+{
+    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+
+    exec_cmd_arg("passes=gg", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user_std_calc_mode);
 }
 
 TEST_F(TestParameterCommand, isMandYes)
