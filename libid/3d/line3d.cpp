@@ -29,6 +29,8 @@
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <climits>
 #include <cmath>
@@ -588,8 +590,8 @@ int line3d(Byte * pixels, unsigned line_len)
 
             if (g_raytrace_format == RayTraceFormat::ACROSPIN)       // Output vertex info for Acrospin
             {
-                std::fprintf(s_file_ptr1, "%4.4f %4.4f %4.4f R%dC%d\n",
-                        f_cur.x, f_cur.y, static_cast<double>(f_cur.color), s_ro, s_co);
+                fmt::print(s_file_ptr1, "{:4.4f} {:4.4f} {:4.4f} R{:d}C{:d}\n", //
+                    f_cur.x, f_cur.y, static_cast<double>(f_cur.color), s_ro, s_co);
                 s_co_max = std::max(s_co, s_co_max);
                 s_co++;
             }
@@ -1866,64 +1868,64 @@ static int ray_header()
 
     if (g_raytrace_format == RayTraceFormat::VIVID)
     {
-        std::fprintf(s_file_ptr1, "//");
+        fmt::print(s_file_ptr1, "//");
     }
     if (g_raytrace_format == RayTraceFormat::MTV)
     {
-        std::fprintf(s_file_ptr1, "#");
+        fmt::print(s_file_ptr1, "#");
     }
     if (g_raytrace_format == RayTraceFormat::RAYSHADE)
     {
-        std::fprintf(s_file_ptr1, "/*\n");
+        fmt::print(s_file_ptr1, "/*\n");
     }
     if (g_raytrace_format == RayTraceFormat::ACROSPIN)
     {
-        std::fprintf(s_file_ptr1, "--");
+        fmt::print(s_file_ptr1, "--");
     }
     if (g_raytrace_format == RayTraceFormat::DXF)
     {
-        std::fprintf(s_file_ptr1, DXF_HEADER);
+        fmt::print(s_file_ptr1, DXF_HEADER);
     }
 
     if (g_raytrace_format != RayTraceFormat::DXF)
     {
-        std::fprintf(s_file_ptr1, "{ Created by " ID_PROGRAM_NAME " Ver. %#4.2f }\n\n", g_release / 100.);
+        fmt::print(s_file_ptr1, "{{ Created by " ID_PROGRAM_NAME " Ver. {:s} }}\n\n", to_string(g_version));
     }
 
     if (g_raytrace_format == RayTraceFormat::RAYSHADE)
     {
-        std::fprintf(s_file_ptr1, "*/\n");
+        fmt::print(s_file_ptr1, "*/\n");
     }
 
     // Set the default color
     if (g_raytrace_format == RayTraceFormat::POVRAY)
     {
-        std::fprintf(s_file_ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
+        fmt::print(s_file_ptr1, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
     }
     if (g_brief)
     {
         if (g_raytrace_format == RayTraceFormat::VIVID)
         {
-            std::fprintf(s_file_ptr1, "surf={diff=0.8 0.4 0.1;}\n");
+            fmt::print(s_file_ptr1, "surf={{diff=0.8 0.4 0.1;}}\n");
         }
         if (g_raytrace_format == RayTraceFormat::MTV)
         {
-            std::fprintf(s_file_ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
+            fmt::print(s_file_ptr1, "f 0.8 0.4 0.1 0.95 0.05 5 0 0\n");
         }
         if (g_raytrace_format == RayTraceFormat::RAYSHADE)
         {
-            std::fprintf(s_file_ptr1, "applysurf diffuse 0.8 0.4 0.1");
+            fmt::print(s_file_ptr1, "applysurf diffuse 0.8 0.4 0.1");
         }
     }
     if (g_raytrace_format != RayTraceFormat::DXF)
     {
-        std::fprintf(s_file_ptr1, "\n");
+        fmt::print(s_file_ptr1, "\n");
     }
 
     // open "grid" opject, a speedy way to do aggregates in rayshade
     if (g_raytrace_format == RayTraceFormat::RAYSHADE)
     {
-        std::fprintf(s_file_ptr1,
+        fmt::print(s_file_ptr1,
                 "/* make a gridded aggregate. this size grid is fast for landscapes. */\n"
                 "/* make z grid = 1 always for landscapes. */\n\n"
                 "grid 33 25 1\n");
@@ -1931,7 +1933,10 @@ static int ray_header()
 
     if (g_raytrace_format == RayTraceFormat::ACROSPIN)
     {
-        std::fprintf(s_file_ptr1, "Set Layer 1\nSet Color 2\nEndpointList X Y Z Name\n");
+        fmt::print(s_file_ptr1,
+            "Set Layer 1\n"
+            "Set Color 2\n"
+            "EndpointList X Y Z Name\n");
     }
 
     return 0;
@@ -1987,26 +1992,28 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
     // Describe the triangle
     if (g_raytrace_format == RayTraceFormat::POVRAY)
     {
-        std::fprintf(s_file_ptr1, " OBJECT\n  TRIANGLE ");
+        fmt::print(s_file_ptr1,
+            " OBJECT\n"
+            "  TRIANGLE ");
     }
     if (g_raytrace_format == RayTraceFormat::VIVID && !g_brief)
     {
-        std::fprintf(s_file_ptr1, "surf={diff=");
+        fmt::print(s_file_ptr1, "surf={{diff=");
     }
     if (g_raytrace_format == RayTraceFormat::MTV && !g_brief)
     {
-        std::fprintf(s_file_ptr1, "f");
+        fmt::print(s_file_ptr1, "f");
     }
     if (g_raytrace_format == RayTraceFormat::RAYSHADE && !g_brief)
     {
-        std::fprintf(s_file_ptr1, "applysurf diffuse ");
+        fmt::print(s_file_ptr1, "applysurf diffuse ");
     }
 
     if (!g_brief && g_raytrace_format != RayTraceFormat::POVRAY && g_raytrace_format != RayTraceFormat::DXF)
     {
         for (int i = 0; i <= 2; i++)
         {
-            std::fprintf(s_file_ptr1, "%4.4f ", c[i]);
+            fmt::print(s_file_ptr1, "{:4.4f} ", c[i]);
         }
     }
 
@@ -2014,50 +2021,57 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
     {
         if (!g_brief)
         {
-            std::fprintf(s_file_ptr1, ";}\n");
+            fmt::print(s_file_ptr1, ";}}\n");
         }
-        std::fprintf(s_file_ptr1, "polygon={points=3;");
+        fmt::print(s_file_ptr1, "polygon={{points=3;");
     }
     if (g_raytrace_format == RayTraceFormat::MTV)
     {
         if (!g_brief)
         {
-            std::fprintf(s_file_ptr1, "0.95 0.05 5 0 0\n");
+            fmt::print(s_file_ptr1, "0.95 0.05 5 0 0\n");
         }
-        std::fprintf(s_file_ptr1, "p 3");
+        fmt::print(s_file_ptr1, "p 3");
     }
     if (g_raytrace_format == RayTraceFormat::RAYSHADE)
     {
         if (!g_brief)
         {
-            std::fprintf(s_file_ptr1, "\n");
+            fmt::print(s_file_ptr1, "\n");
         }
-        std::fprintf(s_file_ptr1, "triangle");
+        fmt::print(s_file_ptr1, "triangle");
     }
 
     if (g_raytrace_format == RayTraceFormat::DXF)
     {
-        std::fprintf(s_file_ptr1, "  0\n3DFACE\n  8\nFRACTAL\n 62\n%3d\n", std::min(255, std::max(1, c1)));
+        fmt::print(s_file_ptr1,
+            "  0\n"
+            "3DFACE\n"
+            "  8\n"
+            "FRACTAL\n"
+            " 62\n"
+            "{:3d}\n",
+            std::min(255, std::max(1, c1)));
     }
 
     for (int i = 0; i <= 2; i++)     // Describe each  Vertex
     {
         if (g_raytrace_format != RayTraceFormat::DXF)
         {
-            std::fprintf(s_file_ptr1, "\n");
+            fmt::print(s_file_ptr1, "\n");
         }
 
         if (g_raytrace_format == RayTraceFormat::POVRAY)
         {
-            std::fprintf(s_file_ptr1, "      <");
+            fmt::print(s_file_ptr1, "      <");
         }
         if (g_raytrace_format == RayTraceFormat::VIVID)
         {
-            std::fprintf(s_file_ptr1, " vertex =  ");
+            fmt::print(s_file_ptr1, " vertex =  ");
         }
         if (g_raytrace_format > RayTraceFormat::RAW && g_raytrace_format != RayTraceFormat::DXF)
         {
-            std::fprintf(s_file_ptr1, " ");
+            fmt::print(s_file_ptr1, " ");
         }
 
         for (int j = 0; j <= 2; j++)
@@ -2065,59 +2079,66 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
             if (g_raytrace_format == RayTraceFormat::DXF)
             {
                 // write 3dface entity to dxf file
-                std::fprintf(s_file_ptr1, "%3d\n%g\n", 10 * (j + 1) + i, pt_t[i][j]);
+                fmt::print(s_file_ptr1,
+                    "{:3d}\n"
+                    "{:g}\n",
+                    10 * (j + 1) + i, //
+                    pt_t[i][j]);
                 if (i == 2)           // 3dface needs 4 vertecies
                 {
-                    std::fprintf(s_file_ptr1, "%3d\n%g\n", 10 * (j + 1) + i + 1,
-                            pt_t[i][j]);
+                    fmt::print(s_file_ptr1,
+                        "{:3d}\n"
+                        "{:g}\n",
+                        10 * (j + 1) + i + 1, //
+                        pt_t[i][j]);
                 }
             }
             else if (!(g_raytrace_format == RayTraceFormat::MTV || g_raytrace_format == RayTraceFormat::RAYSHADE))
             {
-                std::fprintf(s_file_ptr1, "%4.4f ", pt_t[i][j]); // Right-handed
+                fmt::print(s_file_ptr1, "{:4.4f} ", pt_t[i][j]); // Right-handed
             }
             else
             {
-                std::fprintf(s_file_ptr1, "%4.4f ", pt_t[2 - i][j]);     // Left-handed
+                fmt::print(s_file_ptr1, "{:4.4f} ", pt_t[2 - i][j]);     // Left-handed
             }
         }
 
         if (g_raytrace_format == RayTraceFormat::POVRAY)
         {
-            std::fprintf(s_file_ptr1, ">");
+            fmt::print(s_file_ptr1, ">");
         }
         if (g_raytrace_format == RayTraceFormat::VIVID)
         {
-            std::fprintf(s_file_ptr1, ";");
+            fmt::print(s_file_ptr1, ";");
         }
     }
 
     if (g_raytrace_format == RayTraceFormat::POVRAY)
     {
-        std::fprintf(s_file_ptr1, " END_TRIANGLE \n");
+        fmt::print(s_file_ptr1, " END_TRIANGLE \n");
         if (!g_brief)
         {
-            std::fprintf(s_file_ptr1,
+            fmt::print(s_file_ptr1,
                     "  TEXTURE\n"
-                    "   COLOR  RED%4.4f GREEN%4.4f BLUE%4.4f\n"
+                    "   COLOR  RED{:4.4f} GREEN{:4.4f} BLUE{:4.4f}\n"
                     "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
                     c[0], c[1], c[2]);
         }
-        std::fprintf(s_file_ptr1, "  COLOR  F_Dflt  END_OBJECT");
+        fmt::print(s_file_ptr1, "  COLOR  F_Dflt  END_OBJECT");
         triangle_bounds(pt_t);    // update bounding info
     }
     if (g_raytrace_format == RayTraceFormat::VIVID)
     {
-        std::fprintf(s_file_ptr1, "}");
+        fmt::print(s_file_ptr1, "}}");
     }
     if (g_raytrace_format == RayTraceFormat::RAW && !g_brief)
     {
-        std::fprintf(s_file_ptr1, "\n");
+        fmt::print(s_file_ptr1, "\n");
     }
 
     if (g_raytrace_format != RayTraceFormat::DXF)
     {
-        std::fprintf(s_file_ptr1, "\n");
+        fmt::print(s_file_ptr1, "\n");
     }
 
     return 0;
@@ -2164,7 +2185,7 @@ static int start_object()
     s_max_xyz[1] = s_max_xyz[2];
     s_max_xyz[0] = s_max_xyz[1];
 
-    std::fprintf(s_file_ptr1, "COMPOSITE\n");
+    fmt::print(s_file_ptr1, "COMPOSITE\n");
     return 0;
 }
 
@@ -2203,15 +2224,15 @@ static int end_object(bool tri_out)
             }
 
             // Add the bounding box info
-            std::fprintf(s_file_ptr1,
+            fmt::print(s_file_ptr1,
                 " BOUNDED_BY\n"
                 "  INTERSECTION\n"
-                "   PLANE <-1.0  0.0  0.0 > %4.3f END_PLANE\n"
-                "   PLANE < 1.0  0.0  0.0 > %4.3f END_PLANE\n"
-                "   PLANE < 0.0 -1.0  0.0 > %4.3f END_PLANE\n"
-                "   PLANE < 0.0  1.0  0.0 > %4.3f END_PLANE\n"
-                "   PLANE < 0.0  0.0 -1.0 > %4.3f END_PLANE\n"
-                "   PLANE < 0.0  0.0  1.0 > %4.3f END_PLANE\n"
+                "   PLANE <-1.0  0.0  0.0 > {:4.3f} END_PLANE\n"
+                "   PLANE < 1.0  0.0  0.0 > {:4.3f} END_PLANE\n"
+                "   PLANE < 0.0 -1.0  0.0 > {:4.3f} END_PLANE\n"
+                "   PLANE < 0.0  1.0  0.0 > {:4.3f} END_PLANE\n"
+                "   PLANE < 0.0  0.0 -1.0 > {:4.3f} END_PLANE\n"
+                "   PLANE < 0.0  0.0  1.0 > {:4.3f} END_PLANE\n"
                 "  END_INTERSECTION\n"
                 " END_BOUND\n",
                 -s_min_xyz[0], //
@@ -2223,12 +2244,12 @@ static int end_object(bool tri_out)
         }
 
         // Complete the composite object statement
-        std::fprintf(s_file_ptr1, "END_COMPOSITE\n");
+        fmt::print(s_file_ptr1, "END_COMPOSITE\n");
     }
 
     if (g_raytrace_format != RayTraceFormat::ACROSPIN && g_raytrace_format != RayTraceFormat::RAYSHADE)
     {
-        std::fprintf(s_file_ptr1, "\n");
+        fmt::print(s_file_ptr1, "\n");
     }
 
     return 0;
@@ -2241,25 +2262,27 @@ static void line3d_cleanup()
         // Finish up the ray tracing files
         if (g_raytrace_format != RayTraceFormat::RAYSHADE && g_raytrace_format != RayTraceFormat::DXF)
         {
-            std::fprintf(s_file_ptr1, "\n");
+            fmt::print(s_file_ptr1, "\n");
         }
         if (g_raytrace_format == RayTraceFormat::VIVID)
         {
-            std::fprintf(s_file_ptr1,
+            fmt::print(s_file_ptr1,
                 "\n"
-                "\n//");
+                "\n"
+                "//");
         }
         if (g_raytrace_format == RayTraceFormat::MTV)
         {
-            std::fprintf(s_file_ptr1,
+            fmt::print(s_file_ptr1,
                 "\n"
-                "\n#");
+                "\n"
+                "#");
         }
 
         if (g_raytrace_format == RayTraceFormat::RAYSHADE)
         {
             // end grid aggregate
-            std::fprintf(s_file_ptr1,
+            fmt::print(s_file_ptr1,
                 "end\n"
                 "\n"
                 "/*good landscape:*/\n"
@@ -2274,39 +2297,40 @@ static void line3d_cleanup()
         }
         if (g_raytrace_format == RayTraceFormat::ACROSPIN)
         {
-            std::fprintf(s_file_ptr1, "LineList From To\n");
+            fmt::print(s_file_ptr1, "LineList From To\n");
             for (int i = 0; i < s_ro; i++)
             {
                 for (int j = 0; j <= s_co_max; j++)
                 {
                     if (j < s_co_max)
                     {
-                        std::fprintf(s_file_ptr1, "R%dC%d R%dC%d\n", i, j, i, j + 1);
+                        fmt::print(s_file_ptr1, "R{:d}C{:d} R{:d}C{:d}\n", i, j, i, j + 1);
                     }
                     if (i < s_ro - 1)
                     {
-                        std::fprintf(s_file_ptr1, "R%dC%d R%dC%d\n", i, j, i + 1, j);
+                        fmt::print(s_file_ptr1, "R{:d}C{:d} R{:d}C{:d}\n", i, j, i + 1, j);
                     }
                     if (i && i < s_ro && j < s_co_max)
                     {
-                        std::fprintf(s_file_ptr1, "R%dC%d R%dC%d\n", i, j, i - 1, j + 1);
+                        fmt::print(s_file_ptr1, "R{:d}C{:d} R{:d}C{:d}\n", i, j, i - 1, j + 1);
                     }
                 }
             }
-            std::fprintf(s_file_ptr1,
+            fmt::print(s_file_ptr1,
                 "\n"
-                "\n--");
+                "\n"
+                "--");
         }
         if (g_raytrace_format != RayTraceFormat::DXF)
         {
-            std::fprintf(s_file_ptr1,
-                "{ No. Of Triangles = %ld }*/\n"
+            fmt::print(s_file_ptr1,
+                "{{ No. Of Triangles = {:d} }}*/\n"
                 "\n",
                 s_num_tris);
         }
         if (g_raytrace_format == RayTraceFormat::DXF)
         {
-            std::fprintf(s_file_ptr1,
+            fmt::print(s_file_ptr1,
                 "  0\n"
                 "ENDSEC\n"
                 "  0\n"
