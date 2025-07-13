@@ -195,9 +195,9 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     }
     if (buf_ptr-buf != sizeof(FractalInfo))
     {
-        std::printf("Warning: loadfile miscount on fractal_info structure.\n");
-        std::printf("Components add up to %d bytes, but sizeof(FractalInfo) = %d\n",
-               (int)(buf_ptr-buf), (int) sizeof(FractalInfo));
+        std::printf("Warning: loadfile miscount on fractal_info structure.\n"
+                    "Components add up to %d bytes, but sizeof(FractalInfo) = %d\n",
+            (int) (buf_ptr - buf), (int) sizeof(FractalInfo));
     }
     if (dir == 0)
     {
@@ -471,9 +471,9 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     }
     if (buf_ptr-buf != sizeof(EvolutionInfo))
     {
-        std::printf("Warning: loadfile miscount on evolution_info structure.\n");
-        std::printf("Components add up to %d bytes, but sizeof(EVOLUTION_INFO) = %d\n",
-               (int)(buf_ptr-buf), (int) sizeof(EvolutionInfo));
+        std::printf("Warning: loadfile miscount on evolution_info structure.\n"
+                    "Components add up to %d bytes, but sizeof(EVOLUTION_INFO) = %d\n",
+            (int) (buf_ptr - buf), (int) sizeof(EvolutionInfo));
     }
     if (dir == 0)
     {
@@ -507,9 +507,9 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
     }
     if (buf_ptr-buf != sizeof(OrbitsInfo))
     {
-        std::printf("Warning: loadfile miscount on orbits_info structure.\n");
-        std::printf("Components add up to %d bytes, but sizeof(OrbitsInfo) = %d\n",
-               (int)(buf_ptr-buf), (int) sizeof(OrbitsInfo));
+        std::printf("Warning: loadfile miscount on orbits_info structure.\n"
+                    "Components add up to %d bytes, but sizeof(OrbitsInfo) = %d\n",
+            (int) (buf_ptr - buf), (int) sizeof(OrbitsInfo));
     }
     if (dir == 0)
     {
