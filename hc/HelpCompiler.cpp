@@ -1192,22 +1192,22 @@ void HelpCompiler::report_memory()
 
     dead += (g_src.contents.capacity() - g_src.contents.size()) * sizeof(Content);
 
-    std::printf("\n"
-                "Memory Usage:\n"
-                "%8ld Bytes in buffers.\n"
-                "%8ld Bytes in strings.\n"
-                "%8ld Bytes in data.\n"
-                "%8ld Bytes in dead space.\n"
-                "--------\n"
-                "%8ld Bytes total.\n"
-                "\n"
-                "Disk Usage:\n"
-                "%8ld Bytes in topic text.\n",
-        (long) BUFFER_SIZE,                                  //
-        bytes_in_strings,                                    //
-        data,                                                //
-        dead,                                                //
-        (long) BUFFER_SIZE + bytes_in_strings + data + dead, //
+    fmt::print("\n"
+               "Memory Usage:\n"
+               "{:8d} Bytes in buffers.\n"
+               "{:8d} Bytes in strings.\n"
+               "{:8d} Bytes in data.\n"
+               "{:8d} Bytes in dead space.\n"
+               "--------\n"
+               "{:8d} Bytes total.\n"
+               "\n"
+               "Disk Usage:\n"
+               "{:8d} Bytes in topic text.\n",
+        BUFFER_SIZE,                                  //
+        bytes_in_strings,                             //
+        data,                                         //
+        dead,                                         //
+        BUFFER_SIZE + bytes_in_strings + data + dead, //
         text);
 }
 
