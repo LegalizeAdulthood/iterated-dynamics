@@ -51,6 +51,8 @@
 #include <config/port.h>
 #include <config/string_case_compare.h>
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -1023,8 +1025,7 @@ int read_overlay()      // read overlay/3D files, if reqr'd
             &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a usable file
-        std::snprintf(msg, std::size(msg), "Sorry, %s isn't a file I can decode.", g_read_filename.c_str());
-        stop_msg(msg);
+        stop_msg(fmt::format("Sorry, {:s} isn't a file I can decode.", g_read_filename));
         return -1;
     }
 
@@ -1032,10 +1033,9 @@ int read_overlay()      // read overlay/3D files, if reqr'd
     const int read_fractal_type = read_info.fractal_type;
     if (read_fractal_type < 0 || read_fractal_type >= +FractalType::MAX)
     {
-        std::snprintf(msg, std::size(msg), "Warning: %s has a bad fractal type %d; using mandel",
-            g_read_filename.c_str(), read_fractal_type);
         set_fractal_type(FractalType::MANDEL);
-        stop_msg(msg);
+        stop_msg(fmt::format(
+            "Warning: {:s} has a bad fractal type {:d}; using mandel", g_read_filename, read_fractal_type));
         return -1;
     }
     set_fractal_type((migrate_integer_types(read_fractal_type)));
@@ -2119,8 +2119,7 @@ rescan:  // entry for changed browse parms
 
             case 'D': // delete file
                 clear_temp_msg();
-                std::snprintf(msg, std::size(msg), "Delete %s? (Y/N)", win_list.name.c_str());
-                show_temp_msg(msg);
+                show_temp_msg(fmt::format("Delete {:s}? (Y/N)", win_list.name));
                 driver_wait_key_pressed(false);
                 clear_temp_msg();
                 c = driver_get_key();
