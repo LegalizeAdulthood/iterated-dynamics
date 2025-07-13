@@ -20,10 +20,12 @@ std::string g_current_src_filename;  // current .SRC filename
  */
 void report_errors()
 {
-    std::printf("\n");
-    std::printf("Compiler Status:\n");
-    std::printf("%8d Error%c\n",       g_errors, (g_errors == 1)   ? ' ' : 's');
-    std::printf("%8d Warning%c\n",     g_warnings, (g_warnings == 1) ? ' ' : 's');
+    std::printf("\n"
+                "Compiler Status:\n"
+                "%8d Error%c\n"
+                "%8d Warning%c\n",
+        g_errors, (g_errors == 1) ? ' ' : 's', //
+        g_warnings, (g_warnings == 1) ? ' ' : 's');
 }
 
 static void print_msg(const char *type, int line_num, const char *format, std::va_list arg)
