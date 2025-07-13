@@ -19,6 +19,8 @@
 #include "ui/put_string_center.h"
 #include "ui/text_screen.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -900,19 +902,19 @@ static int prompt_value_string(char *buf, const FullScreenValues *val)
         double_to_string(buf, val->uval.dval);
         break;
     case 'D':
-        std::sprintf(buf, "%ld", std::lround(val->uval.dval));
+        fmt::format_to(buf, "{:d}", std::lround(val->uval.dval));
         ret = 20;
         break;
     case 'f':
-        std::sprintf(buf, "%.7g", val->uval.dval);
+        fmt::format_to(buf, "{:.7g}", val->uval.dval);
         ret = 14;
         break;
     case 'i':
-        std::sprintf(buf, "%d", val->uval.ival);
+        fmt::format_to(buf, "{:d}", val->uval.ival);
         ret = 6;
         break;
     case 'L':
-        std::sprintf(buf, "%ld", val->uval.Lval);
+        fmt::format_to(buf, "{:d}", val->uval.Lval);
         ret = 10;
         break;
     case '*':
