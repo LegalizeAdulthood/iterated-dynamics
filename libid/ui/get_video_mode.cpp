@@ -101,12 +101,11 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
 
 static void format_video_choice(int i, const char *err, char *buf)
 {
-    char key_name[5];
     std::memcpy(&g_video_entry, &g_video_table[i],
            sizeof(g_video_entry));
-    vid_mode_key_name(g_video_entry.key, key_name);
+    std::string key_name = vid_mode_key_name(g_video_entry.key);
     std::sprintf(buf, "%-5s %-16s %-4s %5d %5d %3d %-25s",  // 67 chars
-            key_name, g_video_entry.driver->get_description().c_str(), err,
+            key_name.c_str(), g_video_entry.driver->get_description().c_str(), err,
             g_video_entry.x_dots, g_video_entry.y_dots,
             g_video_entry.colors, g_video_entry.comment);
     g_video_entry.x_dots = 0; // so tab_display knows to display nothing

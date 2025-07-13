@@ -429,9 +429,7 @@ void record_show(int key)
         }
         else if (check_vid_mode_key(key) >= 0)
         {
-            char buf[10];
-            vid_mode_key_name(key, buf);
-            std::fputs(buf, s_slide_show_file);
+            std::fputs(vid_mode_key_name(key).c_str(), s_slide_show_file);
         }
         else   // not ASCII and not FN key
         {

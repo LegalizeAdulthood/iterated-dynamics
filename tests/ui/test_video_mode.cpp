@@ -122,21 +122,15 @@ TEST(TestVideoMode, keyName)
         ID_KEY_SHF_F1, ID_KEY_SHF_F10, //
         ID_KEY_CTL_F1, ID_KEY_CTL_F10, //
         ID_KEY_ALT_F1, ID_KEY_ALT_F10});
-    char buffer[10];
-    const auto key_name{[&](int key)
-        {
-            vid_mode_key_name(key, buffer);
-            return buffer;
-        }};
 
-    EXPECT_STREQ("F1", key_name(ID_KEY_F1));
-    EXPECT_STREQ("F10", key_name(ID_KEY_F10));
-    EXPECT_STREQ("SF1", key_name(ID_KEY_SHF_F1));
-    EXPECT_STREQ("SF10", key_name(ID_KEY_SHF_F10));
-    EXPECT_STREQ("CF1", key_name(ID_KEY_CTL_F1));
-    EXPECT_STREQ("CF10", key_name(ID_KEY_CTL_F10));
-    EXPECT_STREQ("AF1", key_name(ID_KEY_ALT_F1));
-    EXPECT_STREQ("AF10", key_name(ID_KEY_ALT_F10));
-    EXPECT_STREQ("", key_name(-1));
-    EXPECT_STREQ("", key_name(ID_KEY_CTL_A));
+    EXPECT_EQ("F1", vid_mode_key_name(ID_KEY_F1));
+    EXPECT_EQ("F10", vid_mode_key_name(ID_KEY_F10));
+    EXPECT_EQ("SF1", vid_mode_key_name(ID_KEY_SHF_F1));
+    EXPECT_EQ("SF10", vid_mode_key_name(ID_KEY_SHF_F10));
+    EXPECT_EQ("CF1", vid_mode_key_name(ID_KEY_CTL_F1));
+    EXPECT_EQ("CF10", vid_mode_key_name(ID_KEY_CTL_F10));
+    EXPECT_EQ("AF1", vid_mode_key_name(ID_KEY_ALT_F1));
+    EXPECT_EQ("AF10", vid_mode_key_name(ID_KEY_ALT_F10));
+    EXPECT_EQ("", vid_mode_key_name(-1));
+    EXPECT_EQ("", vid_mode_key_name(ID_KEY_CTL_A));
 }

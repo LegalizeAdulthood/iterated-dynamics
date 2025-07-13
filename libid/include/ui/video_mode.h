@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <string>
+
 enum
 {
     MAX_VIDEO_MODES = 300       // maximum entries in id.cfg
@@ -31,3 +33,10 @@ int check_vid_mode_key_name(const char *key_name);
 
 // set buffer to name of passed key number
 void vid_mode_key_name(int key, char *buffer);
+
+inline std::string vid_mode_key_name(int key)
+{
+    char buffer[16];
+    vid_mode_key_name(key, buffer);
+    return buffer;
+}

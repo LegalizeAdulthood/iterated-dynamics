@@ -37,14 +37,13 @@ static void update_id_cfg();
 
 static void format_vid_table(int choice, char *buf)
 {
-    char key_name[5];
     const int idx = s_entry_nums[choice];
     assert(idx < g_video_table_len);
     std::memcpy(&g_video_entry, &g_video_table[idx],
            sizeof(g_video_entry));
-    vid_mode_key_name(g_video_entry.key, key_name);
+    std::string key_name = vid_mode_key_name(g_video_entry.key);
     std::sprintf(buf, "%-5s %-12s %5d %5d %3d  %.12s %.26s", // 34 chars
-        key_name, g_video_entry.driver->get_description().c_str(), g_video_entry.x_dots, g_video_entry.y_dots,
+        key_name.c_str(), g_video_entry.driver->get_description().c_str(), g_video_entry.x_dots, g_video_entry.y_dots,
         g_video_entry.colors, g_video_entry.driver->get_name().c_str(), g_video_entry.comment);
 }
 
@@ -251,16 +250,15 @@ static void update_id_cfg()
         // replace this line?
         if (line_num == next_line_num)
         {
-            char key_name[5];
             char colors_buff[10];
             VideoInfo video_entry = g_video_table[next_mode];
-            vid_mode_key_name(video_entry.key, key_name);
+            std::string key_name = vid_mode_key_name(video_entry.key);
             std::snprintf(colors_buff, std::size(colors_buff), "%3d", video_entry.colors);
             std::fprintf(out_file, "%-4s,%4d,%5d,%s,%s,%s\n", //
-                key_name,                                    //
-                video_entry.x_dots, video_entry.y_dots,      //
-                colors_buff,                                 //
-                video_entry.driver->get_name().c_str(),      //
+                key_name.c_str(),                             //
+                video_entry.x_dots, video_entry.y_dots,       //
+                colors_buff,                                  //
+                video_entry.driver->get_name().c_str(),       //
                 video_entry.comment);
             if (++next_mode >= g_video_table_len)
             {
