@@ -1427,24 +1427,24 @@ int HelpCompiler::process()
 
 void HelpCompiler::usage()
 {
-    std::printf("To compile a .SRC file:\n"
+    fmt::print("To compile a .SRC file:\n"
                 "      HC /c [/s] [/m] [/r[path]] [src_file]\n"
                 "         /s       = report statistics.\n"
                 "         /m       = report memory usage.\n"
                 "         /r[path] = set swap file path.\n"
-                "         src_file = .SRC file.  Default is \"%s\"\n"
+                "         src_file = .SRC file.  Default is \"{:s}\"\n"
                 "To print a .SRC file:\n"
                 "      HC /p [/r[path]] [src_file] [out_file]\n"
                 "         /r[path] = set swap file path.\n"
-                "         src_file = .SRC file.  Default is \"%s\"\n"
-                "         out_file = Filename to print to. Default is \"%s\"\n"
+                "         src_file = .SRC file.  Default is \"{:s}\"\n"
+                "         out_file = Filename to print to. Default is \"{:s}\"\n"
                 "To append a .HLP file to an .EXE file:\n"
                 "      HC /a [hlp_file] [exe_file]\n"
-                "         hlp_file = .HLP file.  Default is \"%s\"\n"
-                "         exe_file = .EXE file.  Default is \"%s\"\n"
+                "         hlp_file = .HLP file.  Default is \"{:s}\"\n"
+                "         exe_file = .EXE file.  Default is \"{:s}\"\n"
                 "To delete help info from an .EXE file:\n"
                 "      HC /d [exe_file]\n"
-                "         exe_file = .EXE file.  Default is \"%s\"\n"
+                "         exe_file = .EXE file.  Default is \"{:s}\"\n"
                 "\n"
                 "Use \"/q\" for quiet mode. (No status messages.)\n",
         DEFAULT_SRC_FNAME, //
