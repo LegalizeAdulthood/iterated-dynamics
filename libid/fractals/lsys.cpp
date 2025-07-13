@@ -13,6 +13,8 @@
 
 #include <config/string_lower.h>
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -115,7 +117,12 @@ static bool read_lsystem_file(const char *str)
 
     g_max_angle = 0;
     int rul_ind = 0;
-    char msg_buff[481]{}; // enough for 6 full lines
+    char msg_buff[6 * 80 + 1]{};                                // enough for 6 full lines
+    auto append_error = [&](const std::string &s)
+    {
+        std::strcat(msg_buff, s.c_str());
+        ++err;
+    };
 
     int line_num = 0;
     while (file_gets(inline1, MAX_LSYS_LINE_LEN, infile) > -1)  // Max line length chars
@@ -136,8 +143,7 @@ static bool read_lsystem_file(const char *str)
             {
                 if (save_axiom(std::strtok(nullptr, " \t\n")))
                 {
-                    std::strcat(msg_buff, "Error:  out of memory\n");
-                    ++err;
+                    append_error("Error:  out of memory\n");
                     break;
                 }
                 check = true;
@@ -157,9 +163,8 @@ static bool read_lsystem_file(const char *str)
 
                 if (std::strchr("+-/\\@|!c<>][", *word))
                 {
-                    std::sprintf(&msg_buff[std::strlen(msg_buff)],
-                        "Syntax error line %d: Redefined reserved symbol %s\n", line_num, word);
-                    ++err;
+                    append_error(fmt::format(
+                        "Syntax error line {:d}: Redefined reserved symbol {:s}\n", line_num, word));
                     break;
                 }
                 const char *temp = std::strtok(nullptr, " =\t\n");
@@ -180,17 +185,14 @@ static bool read_lsystem_file(const char *str)
                 }
                 if (mem_err)
                 {
-                    std::strcat(msg_buff, "Error:  out of memory\n");
-                    ++err;
+                    append_error("Error:  out of memory\n");
                     break;
                 }
                 check = true;
             }
             else if (err < 6)
             {
-                std::sprintf(&msg_buff[std::strlen(msg_buff)],
-                        "Syntax error line %d: %s\n", line_num, word);
-                ++err;
+                append_error(fmt::format("Syntax error line {:d}: {:s}\n", line_num, word));
             }
             if (check)
             {
@@ -199,9 +201,8 @@ static bool read_lsystem_file(const char *str)
                 {
                     if (err < 6)
                     {
-                        std::sprintf(&msg_buff[std::strlen(msg_buff)],
-                                "Extra text after command line %d: %s\n", line_num, word);
-                        ++err;
+                        append_error(
+                            fmt::format("Extra text after command line {:d}: {:s}\n", line_num, word));
                     }
                 }
             }
@@ -210,13 +211,11 @@ static bool read_lsystem_file(const char *str)
     std::fclose(infile);
     if (s_axiom.empty() && err < 6)
     {
-        std::strcat(msg_buff, "Error:  no axiom\n");
-        ++err;
+        append_error("Error:  no axiom\n");
     }
     if ((g_max_angle < 3||g_max_angle > 50) && err < 6)
     {
-        std::strcat(msg_buff, "Error:  illegal or missing angle\n");
-        ++err;
+        append_error("Error:  illegal or missing angle\n");
     }
     if (err)
     {
