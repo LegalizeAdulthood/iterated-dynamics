@@ -14,6 +14,8 @@
 #include <config/path_limits.h>
 #include <config/string_lower.h>
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cstdlib>
 #include <cstring>
@@ -218,7 +220,7 @@ int get_toggles()
     }
     else
     {
-        std::sprintf(values[k].uval.sval, "%d", g_fill_color);
+        fmt::format_to(values[k].uval.sval, "{:d}", g_fill_color);
     }
     int old_fill_color = g_fill_color;
 
