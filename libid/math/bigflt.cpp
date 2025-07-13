@@ -23,8 +23,7 @@ void bf_hex_dump(BigFloat r)
     {
         std::printf("%02X ", *(r+i));
     }
-    std::printf(" e %04hX ", (S16)BIG_ACCESS16(r+g_bf_length));
-    std::printf("\n");
+    std::printf(" e %04hX\n", (S16)BIG_ACCESS16(r+g_bf_length));
 }
 
 /**********************************************************************/

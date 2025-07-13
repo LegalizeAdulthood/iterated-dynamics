@@ -58,8 +58,10 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
         {
             if (x_step == 0 && y_step == 0)          // first time through?
             {
-                std::printf(" \n Generating multi-image GIF file %s using", gif_out.c_str());
-                std::printf(" %u X and %u Y components\n\n", x_mult, y_mult);
+                std::printf(" \n"
+                            " Generating multi-image GIF file %s using %u X and %u Y components\n"
+                            "\n",
+                    gif_out.c_str(), x_mult, y_mult);
                 // attempt to create the output file
                 out = open_save_file(gif_out, "wb");
                 if (out == nullptr)
