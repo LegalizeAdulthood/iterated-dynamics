@@ -1432,25 +1432,27 @@ void HelpCompiler::usage()
                 "         /s       = report statistics.\n"
                 "         /m       = report memory usage.\n"
                 "         /r[path] = set swap file path.\n"
-                "         src_file = .SRC file.  Default is \"%s\"\n",
-        DEFAULT_SRC_FNAME);
-    std::printf("To print a .SRC file:\n"
+                "         src_file = .SRC file.  Default is \"%s\"\n"
+                "To print a .SRC file:\n"
                 "      HC /p [/r[path]] [src_file] [out_file]\n"
                 "         /r[path] = set swap file path.\n"
-                "         src_file = .SRC file.  Default is \"%s\"\n",
-        DEFAULT_SRC_FNAME);
-    std::printf("         out_file = Filename to print to. Default is \"%s\"\n", DEFAULT_DOC_FNAME);
-    std::printf("To append a .HLP file to an .EXE file:\n"
+                "         src_file = .SRC file.  Default is \"%s\"\n"
+                "         out_file = Filename to print to. Default is \"%s\"\n"
+                "To append a .HLP file to an .EXE file:\n"
                 "      HC /a [hlp_file] [exe_file]\n"
-                "         hlp_file = .HLP file.  Default is \"%s\"\n",
-        DEFAULT_HLP_FNAME);
-    std::printf("         exe_file = .EXE file.  Default is \"%s\"\n", DEFAULT_EXE_FNAME);
-    std::printf("To delete help info from an .EXE file:\n"
+                "         hlp_file = .HLP file.  Default is \"%s\"\n"
+                "         exe_file = .EXE file.  Default is \"%s\"\n"
+                "To delete help info from an .EXE file:\n"
                 "      HC /d [exe_file]\n"
-                "         exe_file = .EXE file.  Default is \"%s\"\n",
+                "         exe_file = .EXE file.  Default is \"%s\"\n"
+                "\n"
+                "Use \"/q\" for quiet mode. (No status messages.)\n",
+        DEFAULT_SRC_FNAME, //
+        DEFAULT_SRC_FNAME, //
+        DEFAULT_DOC_FNAME, //
+        DEFAULT_HLP_FNAME, //
+        DEFAULT_EXE_FNAME, //
         DEFAULT_EXE_FNAME);
-    std::printf("\n"
-                "Use \"/q\" for quiet mode. (No status messages.)\n");
 }
 
 static std::filesystem::path get_unique_swap_name()
