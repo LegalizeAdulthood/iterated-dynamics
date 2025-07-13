@@ -5,6 +5,8 @@
 #include "io/loadfile.h"
 #include "ui/evolve.h"
 
+#include <fmt/format.h>
+
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -199,9 +201,9 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     }
     if (buf_ptr-buf != sizeof(FractalInfo))
     {
-        std::printf("Warning: loadfile miscount on fractal_info structure.\n"
-                    "Components add up to %d bytes, but sizeof(FractalInfo) = %d\n",
-            (int) (buf_ptr - buf), (int) sizeof(FractalInfo));
+        fmt::print("Warning: loadfile miscount on fractal_info structure.\n"
+                   "Components add up to {:d} bytes, but sizeof(FractalInfo) = {:d}\n",
+            static_cast<int>(buf_ptr - buf), sizeof(FractalInfo));
     }
     if (dir == 0)
     {
@@ -475,9 +477,9 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     }
     if (buf_ptr-buf != sizeof(EvolutionInfo))
     {
-        std::printf("Warning: loadfile miscount on evolution_info structure.\n"
-                    "Components add up to %d bytes, but sizeof(EVOLUTION_INFO) = %d\n",
-            (int) (buf_ptr - buf), (int) sizeof(EvolutionInfo));
+        fmt::print("Warning: loadfile miscount on evolution_info structure.\n"
+                   "Components add up to {:d} bytes, but sizeof(EVOLUTION_INFO) = {:d}\n",
+            static_cast<int>(buf_ptr - buf), sizeof(EvolutionInfo));
     }
     if (dir == 0)
     {
@@ -511,9 +513,9 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
     }
     if (buf_ptr-buf != sizeof(OrbitsInfo))
     {
-        std::printf("Warning: loadfile miscount on orbits_info structure.\n"
-                    "Components add up to %d bytes, but sizeof(OrbitsInfo) = %d\n",
-            (int) (buf_ptr - buf), (int) sizeof(OrbitsInfo));
+        fmt::print("Warning: loadfile miscount on orbits_info structure.\n"
+                   "Components add up to {:d} bytes, but sizeof(OrbitsInfo) = {:d}\n",
+            static_cast<int>(buf_ptr - buf), sizeof(OrbitsInfo));
     }
     if (dir == 0)
     {
