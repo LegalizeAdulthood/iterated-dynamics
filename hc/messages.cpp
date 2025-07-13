@@ -34,15 +34,15 @@ static void print_msg(const char *type, int line_num, const char *format, std::v
 {
     if (type != nullptr)
     {
-        std::printf("   %s", type);
+        fmt::print("   {:s}", type);
         if (line_num > 0)
         {
-            std::printf(" %s %d", g_current_src_filename.c_str(), line_num);
+            fmt::print(" {:s} {:d}", g_current_src_filename.c_str(), line_num);
         }
-        std::printf(": ");
+        fmt::print(": ");
     }
     std::vprintf(format, arg);
-    std::printf("\n");
+    fmt::print("\n");
     std::fflush(stdout);
 }
 
@@ -113,7 +113,7 @@ void msg_msg(const char *format, ...)
 
 void show_line(unsigned int line)
 {
-    std::printf("[%04u] ", line);
+    fmt::print("[{:04d}] ", line);
 }
 
 } // namespace hc
