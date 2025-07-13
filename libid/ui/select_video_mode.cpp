@@ -250,15 +250,12 @@ static void update_id_cfg()
         // replace this line?
         if (line_num == next_line_num)
         {
-            char colors_buff[10];
             VideoInfo video_entry = g_video_table[next_mode];
-            std::string key_name = vid_mode_key_name(video_entry.key);
-            std::snprintf(colors_buff, std::size(colors_buff), "%3d", video_entry.colors);
-            std::fprintf(out_file, "%-4s,%4d,%5d,%s,%s,%s\n", //
-                key_name.c_str(),                             //
-                video_entry.x_dots, video_entry.y_dots,       //
-                colors_buff,                                  //
-                video_entry.driver->get_name().c_str(),       //
+            std::fprintf(out_file, "%-4s,%4d,%5d,%3d,%s,%s\n", //
+                vid_mode_key_name(video_entry.key).c_str(),    //
+                video_entry.x_dots, video_entry.y_dots,        //
+                video_entry.colors,                            //
+                video_entry.driver->get_name().c_str(),        //
                 video_entry.comment);
             if (++next_mode >= g_video_table_len)
             {
