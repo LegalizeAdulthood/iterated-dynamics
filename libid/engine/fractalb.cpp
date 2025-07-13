@@ -262,8 +262,8 @@ void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, int d
     char msg1[200];
     char msg2[200];
     char msg3[500];
-    bf_to_str_e(msg1, digits, t1);
-    bf_to_str_e(msg2, digits, t2);
+    bf_to_str_e(msg1, t1, digits);
+    bf_to_str_e(msg2, t2, digits);
     std::snprintf(msg3, std::size(msg3),
         "\n"
         "%s->%s\n"
@@ -282,9 +282,9 @@ void show_three_bf(
     char msg2[200];
     char msg3[200];
     char msg4[700];
-    bf_to_str_e(msg1, digits, t1);
-    bf_to_str_e(msg2, digits, t2);
-    bf_to_str_e(msg3, digits, t3);
+    bf_to_str_e(msg1, t1, digits);
+    bf_to_str_e(msg2, t2, digits);
+    bf_to_str_e(msg3, t3, digits);
     std::snprintf(msg4, std::size(msg4),
         "\n"
         "%s->%s\n"
@@ -349,7 +349,7 @@ void compare_values_bf(const char *s, LDouble x, BigFloat bfx)
     int dec = 40;
     char msg[300];
     char msg1[700];
-    bf_to_str_e(msg, dec, bfx);
+    bf_to_str_e(msg, bfx, dec);
     std::snprintf(msg1, std::size(msg1),
         "%s\n"
         "bignum=%s\n"
@@ -368,7 +368,7 @@ void show_var_bf(const char *s, BigFloat n)
     char msg[200];
     std::strcpy(msg, s);
     std::strcat(msg, " ");
-    bf_to_str_e(msg+std::strlen(s), 40, n);
+    bf_to_str_e(msg + std::strlen(s), n, 40);
     msg[79] = 0;
     if (stop_msg(msg))
     {

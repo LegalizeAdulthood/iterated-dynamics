@@ -345,7 +345,7 @@ int strlen_needed_bn()
 //   SIDE-EFFECT: the bignumber, r, is destroyed.
 //                Copy it first if necessary.
 
-char *unsafe_bn_to_str(char *s, int dec, BigNum r)
+char *unsafe_bn_to_str(char *s, BigNum r, int dec)
 {
     int l = 0;
     long value = 0;
@@ -1373,7 +1373,7 @@ BigNum div_bn_int(BigNum r, BigNum n, U16 u)
 /**********************************************************************/
 char *bn_to_str(char *s, BigNum r, int dec)
 {
-    return unsafe_bn_to_str(s, dec, copy_bn(g_bn_tmp_copy2, r));
+    return unsafe_bn_to_str(s, copy_bn(g_bn_tmp_copy2, r), dec);
 }
 
 /**********************************************************************/

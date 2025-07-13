@@ -162,7 +162,7 @@ int strlen_needed_bf()
 // USES: g_bf_tmp1 - g_bf_tmp2
 /********************************************************************/
 
-char *unsafe_bf_to_str(char *s, int dec, BigFloat r)
+char *unsafe_bf_to_str(char *s, BigFloat r, int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
@@ -176,18 +176,18 @@ char *unsafe_bf_to_str(char *s, int dec, BigFloat r)
     int power = (S16) BIG_ACCESS16(g_bf10_tmp + dec + 2); // where the exponent is stored
     if (power > -4 && power < 6)   // tinker with this
     {
-        bf10_to_str_f(s, dec, g_bf10_tmp);
+        bf10_to_str_f(s, g_bf10_tmp, dec);
     }
     else
     {
-        bf10_to_str_e(s, dec, g_bf10_tmp);
+        bf10_to_str_e(s, g_bf10_tmp, dec);
     }
     return s;
 }
 
 /********************************************************************/
 // the e version puts it in scientific notation, (like printf's %e)
-char *unsafe_bf_to_str_e(char *s, int dec, BigFloat r)
+char *unsafe_bf_to_str_e(char *s, BigFloat r, int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
@@ -198,13 +198,13 @@ char *unsafe_bf_to_str_e(char *s, int dec, BigFloat r)
 
     copy_bf(g_bf_tmp1, r);
     unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
-    bf10_to_str_e(s, dec, g_bf10_tmp);
+    bf10_to_str_e(s, g_bf10_tmp, dec);
     return s;
 }
 
 /********************************************************************/
 // the f version puts it in decimal notation, (like printf's %f)
-char *unsafe_bf_to_str_f(char *s, int dec, BigFloat r)
+char *unsafe_bf_to_str_f(char *s, BigFloat r, int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
@@ -215,7 +215,7 @@ char *unsafe_bf_to_str_f(char *s, int dec, BigFloat r)
 
     copy_bf(g_bf_tmp1, r);
     unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
-    bf10_to_str_f(s, dec, g_bf10_tmp);
+    bf10_to_str_f(s, g_bf10_tmp, dec);
     return s;
 }
 
@@ -1155,23 +1155,23 @@ BigFloat div_bf_int(BigFloat r, BigFloat n,  U16 u)
 char *bf_to_str(char *s, BigFloat r, int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bf_to_str(s, dec, g_bf_tmp_copy1);
+    unsafe_bf_to_str(s, g_bf_tmp_copy1, dec);
     return s;
 }
 
 /**********************************************************************/
-char *bf_to_str_e(char *s, int dec, BigFloat r)
+char *bf_to_str_e(char *s, BigFloat r, int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bf_to_str_e(s, dec, g_bf_tmp_copy1);
+    unsafe_bf_to_str_e(s, g_bf_tmp_copy1, dec);
     return s;
 }
 
 /**********************************************************************/
-char *bf_to_str_f(char *s, int dec, BigFloat r)
+char *bf_to_str_f(char *s, BigFloat r, int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bf_to_str_f(s, dec, g_bf_tmp_copy1);
+    unsafe_bf_to_str_f(s, g_bf_tmp_copy1, dec);
     return s;
 }
 
@@ -2242,7 +2242,7 @@ BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, U16 n)
 // Takes a bf10 number and converts it to an ascii string, sci. notation
 // dec - number of decimals, not including the one extra for rounding
 
-char *bf10_to_str_e(char *s, int dec, BigFloat10 n)
+char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
 {
     if (n[1] == 0)
     {
@@ -2292,7 +2292,7 @@ char *bf10_to_str_e(char *s, int dec, BigFloat10 n)
 // bf10tostr_f()
 // Takes a bf10 number and converts it to an ascii string, decimal notation
 
-char *bf10_to_str_f(char *s, int dec, BigFloat10 n)
+char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
 {
     if (n[1] == 0)
     {
