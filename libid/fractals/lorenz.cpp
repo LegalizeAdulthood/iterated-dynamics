@@ -32,6 +32,8 @@
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
+#include <fmt/format.h>
+
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -1055,7 +1057,7 @@ int orbit2d_type()
         }
         if (fp)
         {
-            std::fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
+            fmt::print(fp, "{:g} {:g} {:g} 15\n", *p0, *p1, 0.0);
         }
     }
     if (fp)
@@ -1124,7 +1126,7 @@ static int orbit3d_float_calc()
         orbit(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
         if (fp)
         {
-            std::fprintf(fp, "%g %g %g 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
+            fmt::print(fp, "{:g} {:g} {:g} 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
         }
         if (float_view_transf3d(&inf))
         {
@@ -1370,7 +1372,7 @@ int dynamic2d_type()
             }
             if (fp)
             {
-                std::fprintf(fp, "%g %g %g 15\n", *p0, *p1, 0.0);
+                fmt::print(fp, "{:g} {:g} {:g} 15\n", *p0, *p1, 0.0);
             }
         }
     }
@@ -1678,7 +1680,7 @@ static int ifs3d_float()
         inf.orbit[2] = new_z;
         if (fp)
         {
-            std::fprintf(fp, "%g %g %g 15\n", new_x, new_y, new_z);
+            fmt::print(fp, "{:g} {:g} {:g} 15\n", new_x, new_y, new_z);
         }
         if (float_view_transf3d(&inf))
         {
@@ -1789,7 +1791,7 @@ static int ifs2d()
         y = new_y;
         if (fp)
         {
-            std::fprintf(fp, "%g %g %g 15\n", new_x, new_y, 0.0);
+            fmt::print(fp, "{:g} {:g} {:g} 15\n", new_x, new_y, 0.0);
         }
 
         // plot if inside window
@@ -1978,7 +1980,7 @@ static std::FILE *open_orbit_save()
     std::FILE *fp;
     if ((g_orbit_save_flags & OSF_RAW) && (fp = open_save_file(g_orbit_save_name, "w")) != nullptr)
     {
-        std::fprintf(fp, "pointlist x y z color\n");
+        fmt::print(fp, "pointlist x y z color\n");
         return fp;
     }
     return nullptr;
