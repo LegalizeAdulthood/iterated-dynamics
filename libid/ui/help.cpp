@@ -1277,9 +1277,8 @@ bool make_doc_msg_func(int page_num, int num_pages)
     };
     if (page_num >= 0)
     {
-        char buffer[80] = "";
-        std::snprintf(buffer, std::size(buffer), "completed %d%%", (int)((100.0 / num_pages) * page_num));
-        driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, buffer);
+        driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO,
+            fmt::format("completed {:d}%", (int) ((100.0 / num_pages) * page_num)));
         driver_key_pressed(); // pumps messages to force screen update
         return true;
     }
