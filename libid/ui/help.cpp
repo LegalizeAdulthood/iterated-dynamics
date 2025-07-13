@@ -21,6 +21,8 @@
 #include <config/filelength.h>
 #include <config/port.h>
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -366,14 +368,12 @@ static void display_page(const char *title, const char *text, unsigned text_len,
                          int page, int num_pages, int start_margin,
                          int *num_link, Link *link)
 {
-    char temp[20];
-
     help_title();
     help_instr();
     driver_set_attr(2, 0, C_HELP_BODY, 80*22);
     put_string_center(1, 0, 80, C_HELP_HDG, title);
-    std::snprintf(temp, std::size(temp), "%2d of %d", page+1, num_pages);
-    driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
+    driver_put_string(1, 79 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR,
+        fmt::format("{:2d} of {:d}", page + 1, num_pages));
 
     if (text != nullptr)
     {
