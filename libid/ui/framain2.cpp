@@ -38,6 +38,8 @@
 
 #include <config/port.h>
 
+#include <fmt/format.h>
+
 #include <array> // std::size
 #include <cctype>
 #include <cmath>
@@ -910,8 +912,8 @@ static int cmp_line(Byte *pixels, int line_len)
             ++s_err_count;
             if (g_init_batch == BatchMode::NONE)
             {
-                std::fprintf(s_cmp_fp, "#%5d col %3d row %3d old %3d new %3d\n",
-                        s_err_count, col, row, old_color, pixels[col]);
+                fmt::print(s_cmp_fp, "#{:5d} col {:3d} row {:3d} old {:3d} new {:3d}\n", //
+                    s_err_count, col, row, old_color, pixels[col]);
             }
         }
     }
@@ -926,8 +928,8 @@ static void cmp_line_cleanup()
         std::time(&now);
         char *times_text = std::ctime(&now);
         times_text[24] = 0; //clobber newline in time string
-        std::fprintf(s_cmp_fp, "%s compare to %s has %5d errs\n",
-                times_text, g_read_filename.c_str(), s_err_count);
+        fmt::print(s_cmp_fp, "{:s} compare to {:s} has {:5d} errs\n", //
+            times_text, g_read_filename.c_str(), s_err_count);
     }
     std::fclose(s_cmp_fp);
 }
