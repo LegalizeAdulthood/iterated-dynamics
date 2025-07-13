@@ -1219,15 +1219,22 @@ void HelpCompiler::report_stats()
         pages += t.num_page;
     }
 
-    std::printf("\n");
-    std::printf("Statistics:\n");
-    std::printf("%8d Topics\n", static_cast<int>(g_src.topics.size()));
-    std::printf("%8d Links\n", static_cast<int>(g_src.all_links.size()));
-    std::printf("%8d Labels\n", static_cast<int>(g_src.labels.size()));
-    std::printf("%8d Private labels\n", static_cast<int>(g_src.private_labels.size()));
-    std::printf("%8d Table of contents (DocContent) entries\n", static_cast<int>(g_src.contents.size()));
-    std::printf("%8d Online help pages\n", pages);
-    std::printf("%8d Document pages\n", s_num_doc_pages);
+    std::printf("\n"
+                "Statistics:\n"
+                "%8d Topics\n"
+                "%8d Links\n"
+                "%8d Labels\n"
+                "%8d Private labels\n"
+                "%8d Table of contents (DocContent) entries\n"
+                "%8d Online help pages\n"
+                "%8d Document pages\n",
+        static_cast<int>(g_src.topics.size()),         //
+        static_cast<int>(g_src.all_links.size()),      //
+        static_cast<int>(g_src.labels.size()),         //
+        static_cast<int>(g_src.private_labels.size()), //
+        static_cast<int>(g_src.contents.size()),       //
+        pages,                                         //
+        s_num_doc_pages);
 }
 
 // add/delete help from .EXE functions.
