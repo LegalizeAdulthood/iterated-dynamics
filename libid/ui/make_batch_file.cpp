@@ -50,6 +50,8 @@
 #include <config/string_case_compare.h>
 #include <config/string_lower.h>
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cctype>
 #include <cfloat>
@@ -379,10 +381,12 @@ skip_ui:
                     && string_case_equal(buf2, g_command_name.c_str()))
                 {
                     // entry with same name
-                    std::snprintf(buf2, std::size(buf2), "File already has an entry named %s\n%s",
-                    g_command_name.c_str(), g_make_parameter_file ?
-                    "... Replacing ..." : "Continue to replace it, Cancel to back out");
-                    if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::INFO_ONLY, buf2))
+                    if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::INFO_ONLY,
+                            fmt::format("File already has an entry named {:s}\n"
+                                        "{:s}",
+                                g_command_name,
+                                g_make_parameter_file ? "... Replacing ..."
+                                                      : "Continue to replace it, Cancel to back out")))
                     {
                         // cancel
                         std::fclose(infile);
@@ -440,11 +444,8 @@ skip_ui:
                         w++;
                     }
                     piece_command_name[w] = 0;
-                    {
-                        char tmp_buff[20];
-                        std::snprintf(tmp_buff, std::size(tmp_buff), "_%c%c", par_key(col), par_key(row));
-                        std::strcat(piece_command_name, tmp_buff);
-                    }
+                    std::strcat(
+                        piece_command_name, fmt::format("_{:c}{:c}", par_key(col), par_key(row)).c_str());
                     std::fprintf(s_param_file, "%-19s{", piece_command_name);
                     g_x_min = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*(row*params.piece_y_dots);
                     g_x_max = piece_x_min + piece_delta_x*((col+1)*params.piece_x_dots - 1) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
