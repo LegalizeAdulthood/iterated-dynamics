@@ -1152,7 +1152,7 @@ BigFloat div_bf_int(BigFloat r, BigFloat n,  U16 u)
 }
 
 /**********************************************************************/
-char *bf_to_str(char *s, int dec, BigFloat r)
+char *bf_to_str(char *s, BigFloat r, int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
     unsafe_bf_to_str(s, dec, g_bf_tmp_copy1);

@@ -150,7 +150,7 @@ void show_corners_bf(const char *s)
     char msg1[200];
     char msg3[600];
     dec = std::min(dec, 20);
-    bf_to_str(msg, dec, g_bf_x_min);
+    bf_to_str(msg, g_bf_x_min, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_x_min=%s\n"                             //
         "x_min= %.20f decimals %d g_bf_length %d\n" //
@@ -160,35 +160,35 @@ void show_corners_bf(const char *s)
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_x_max);
+    bf_to_str(msg, g_bf_x_max, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_x_max=%s\n"
         "x_max= %.20f\n"
         "\n",
         msg, g_x_max);
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_y_min);
+    bf_to_str(msg, g_bf_y_min, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_y_min=%s\n"
         "y_min= %.20f\n"
         "\n",
         msg, g_y_min);
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_y_max);
+    bf_to_str(msg, g_bf_y_max, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_y_max=%s\n"
         "y_max= %.20f\n"
         "\n",
         msg, g_y_max);
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_x_3rd);
+    bf_to_str(msg, g_bf_x_3rd, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_x_3rd=%s\n"
         "xx_3rd= %.20f\n"
         "\n",
         msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_y_3rd);
+    bf_to_str(msg, g_bf_y_3rd, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_y_3rd=%s\n"
         "y_3rd= %.20f\n"
@@ -207,7 +207,7 @@ void show_corners_bf_save(const char *s)
     char msg[100];
     char msg1[200];
     char msg3[500];
-    bf_to_str(msg, dec, g_bf_save_x_min);
+    bf_to_str(msg, g_bf_save_x_min, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_save_x_min=%s\n"
         "x_min= %.20f\n"
@@ -216,35 +216,35 @@ void show_corners_bf_save(const char *s)
     std::strcpy(msg3, s);
     std::strcat(msg3, "\n");
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_save_x_max);
+    bf_to_str(msg, g_bf_save_x_max, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_save_x_max=%s\n"
         "x_max= %.20f\n"
         "\n",
         msg, g_x_max);
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_save_y_min);
+    bf_to_str(msg, g_bf_save_y_min, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_save_y_min=%s\n"
         "y_min= %.20f\n"
         "\n",
         msg, g_y_min);
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_save_y_max);
+    bf_to_str(msg, g_bf_save_y_max, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_save_y_max=%s\n"
         "y_max= %.20f\n"
         "\n",
         msg, g_y_max);
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_save_x_3rd);
+    bf_to_str(msg, g_bf_save_x_3rd, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_save_x_3rd=%s\n"
         "x_3rd= %.20f\n"
         "\n",
         msg, g_x_3rd);
     std::strcat(msg3, msg1);
-    bf_to_str(msg, dec, g_bf_save_y_3rd);
+    bf_to_str(msg, g_bf_save_y_3rd, dec);
     std::snprintf(msg1, std::size(msg1),
         "bf_save_y_3rd=%s\n"
         "y_3rd= %.20f\n"
@@ -309,7 +309,7 @@ void show_aspect(const char *s)
     sub_bf(bt1, g_bf_x_max, g_bf_x_min);
     sub_bf(bt2, g_bf_y_max, g_bf_y_min);
     div_bf(aspect, bt2, bt1);
-    bf_to_str(str, 10, aspect);
+    bf_to_str(str, aspect, 10);
     std::snprintf(msg, std::size(msg),
         "aspect %s\n"
         "float %13.10f\n"

@@ -192,7 +192,7 @@ BigFloat full_square_bf(BigFloat r, BigFloat n);
 BigFloat square_bf(BigFloat r, BigFloat n);
 BigFloat mult_bf_int(BigFloat r, BigFloat n, U16 u);
 BigFloat div_bf_int(BigFloat r, BigFloat n,  U16 u);
-char *bf_to_str(char *s, int dec, BigFloat r);
+char *bf_to_str(char *s, BigFloat r, int dec);
 char *bf_to_str_e(char *s, int dec, BigFloat r);
 char *bf_to_str_f(char *s, int dec, BigFloat r);
 BigFloat inv_bf(BigFloat r, BigFloat n);

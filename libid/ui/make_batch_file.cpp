@@ -1763,7 +1763,7 @@ static void put_bf(int slash, BigFloat r, int prec)
     {
         *(buff_ptr++) = '/';
     }
-    bf_to_str(buff_ptr, prec, r);
+    bf_to_str(buff_ptr, r, prec);
     strip_zeros(buff_ptr);
     put_param(buf.data());
 }
