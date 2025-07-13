@@ -30,6 +30,8 @@
 #include "ui/stop_msg.h"
 #include "ui/video_mode.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -252,38 +254,39 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         std::vector attributes(g_video_table_len, 1);
 
         // format heading
-        char heading[256];  // big enough for more than a few lines
-        std::snprintf(heading, std::size(heading), "File: %-44s  %d x %d x %d\n%-52s",
-                trim_file_name(g_read_filename, 44).c_str(), g_file_x_dots, g_file_y_dots, g_file_colors,
-                heading_detail(info, blk_3_info).c_str());
+        std::string heading{fmt::format("File: {:-44s}  {:d} x {:d} x {:d}\n"
+                                        "{:-52s}",
+            trim_file_name(g_read_filename, 44),         //
+            g_file_x_dots, g_file_y_dots, g_file_colors, //
+            heading_detail(info, blk_3_info))};
         if (info->info_id[0] != 'G')
         {
             if (g_save_system)
             {
-                std::strcat(heading, "Id       ");
+                heading += "Id       ";
             }
-            std::strcat(heading, to_display_string(g_file_version).c_str());
+            heading += to_display_string(g_file_version);
         }
-        std::strcat(heading, "\n");
+        heading += '\n';
         if (info->info_id[0] != 'G' && g_save_system == 0)
         {
             if (g_init_mode < 0)
             {
-                std::strcat(heading, "Saved in unknown video mode.");
+                heading += "Saved in unknown video mode.";
             }
             else
             {
                 char buff[80];
                 format_video_choice(g_init_mode, "", buff);
-                std::strcat(heading, buff);
+                heading += buff;
             }
         }
         if (g_file_aspect_ratio != 0 && g_file_aspect_ratio != g_screen_aspect)
         {
-            std::strcat(heading,
-                   "\nWARNING: non-standard aspect ratio; loading will change your <v>iew settings");
+            heading += "\n"
+                       "WARNING: non-standard aspect ratio; loading will change your <v>iew settings";
         }
-        std::strcat(heading, "\n");
+        heading += '\n';
         // set up instructions
         std::string instructions{"Select a video mode.  Use the cursor keypad to move the pointer.\n"
                "Press ENTER for selected mode, or use a video mode function key.\n"
@@ -297,7 +300,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         int i;
         {
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_LOAD_FILE};
-            i = full_screen_choice(ChoiceFlags::NONE, heading,
+            i = full_screen_choice(ChoiceFlags::NONE, heading.c_str(),
                 "key...name......................err...xdot..ydot.clr.comment..................",
                 instructions.c_str(), g_video_table_len, nullptr, attributes.data(), 1, 13, 78, 0, format_item,
                 nullptr, nullptr, check_mode_key);
