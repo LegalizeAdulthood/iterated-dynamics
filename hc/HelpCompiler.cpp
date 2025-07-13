@@ -1195,17 +1195,23 @@ void HelpCompiler::report_memory()
 
     dead += static_cast<long>((g_src.contents.capacity() - g_src.contents.size()) * sizeof(Content));
 
-    std::printf("\n");
-    std::printf("Memory Usage:\n");
-    std::printf("%8ld Bytes in buffers.\n", (long)BUFFER_SIZE);
-    std::printf("%8ld Bytes in strings.\n", bytes_in_strings);
-    std::printf("%8ld Bytes in data.\n", data);
-    std::printf("%8ld Bytes in dead space.\n", dead);
-    std::printf("--------\n");
-    std::printf("%8ld Bytes total.\n", (long)BUFFER_SIZE+bytes_in_strings+data+dead);
-    std::printf("\n");
-    std::printf("Disk Usage:\n");
-    std::printf("%8ld Bytes in topic text.\n", text);
+    std::printf("\n"
+                "Memory Usage:\n"
+                "%8ld Bytes in buffers.\n"
+                "%8ld Bytes in strings.\n"
+                "%8ld Bytes in data.\n"
+                "%8ld Bytes in dead space.\n"
+                "--------\n"
+                "%8ld Bytes total.\n"
+                "\n"
+                "Disk Usage:\n"
+                "%8ld Bytes in topic text.\n",
+        (long) BUFFER_SIZE,                                  //
+        bytes_in_strings,                                    //
+        data,                                                //
+        dead,                                                //
+        (long) BUFFER_SIZE + bytes_in_strings + data + dead, //
+        text);
 }
 
 void HelpCompiler::report_stats()
