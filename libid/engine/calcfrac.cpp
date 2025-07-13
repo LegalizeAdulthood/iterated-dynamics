@@ -66,6 +66,7 @@
 #include <climits>
 #include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <new>
 #include <vector>
@@ -350,12 +351,12 @@ static void show_dot_save_restore(
         if (s_save_dots.empty())
         {
             stop_msg("savedots empty");
-            exit(0);
+            std::exit(0);
         }
         if (s_fill_buff == nullptr)
         {
             stop_msg("fillbuff NULL");
-            exit(0);
+            std::exit(0);
         }
     }
     switch (direction)

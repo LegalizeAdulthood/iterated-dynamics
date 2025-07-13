@@ -358,7 +358,7 @@ init_unix_window()
         {
             std::fprintf(stderr, "Could not allocate memory for X size hints \n");
             std::fprintf(stderr, "Note: id can run without X in -disk mode\n");
-            exit(-1);
+            std::exit(-1);
         }
 
         if (Xgeometry)
@@ -379,7 +379,7 @@ init_unix_window()
         {
             std::fprintf(stderr, "Could not open display %s\n", Xdisplay);
             std::fprintf(stderr, "Note: id can run without X in -disk mode\n");
-            exit(-1);
+            std::exit(-1);
         }
         Xdscreen = XDefaultScreen(Xdp);
         if (Xgeometry && !onroot)
@@ -726,14 +726,14 @@ resize_window()
         if (Ximage == nullptr)
         {
             std::fprintf(stderr, "XCreateImage failed\n");
-            exit(-1);
+            std::exit(-1);
         }
         Ximage->data = static_cast<char *>(malloc(Ximage->bytes_per_line * Ximage->height));
         if (Ximage->data == nullptr)
         {
             std::fprintf(stderr, "Malloc failed: %d\n", Ximage->bytes_per_line *
                     Ximage->height);
-            exit(-1);
+            std::exit(-1);
         }
         clearXwindow();
         return 1;

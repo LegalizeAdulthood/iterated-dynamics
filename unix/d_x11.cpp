@@ -1488,12 +1488,12 @@ bool X11Driver::init(int *argc, char **argv)
     if (sizeof(short) != 2)
     {
         std::fprintf(stderr, "Error: need short to be 2 bytes\n");
-        exit(-1);
+        std::exit(-1);
     }
     if (sizeof(long) < sizeof(FLOAT4))
     {
         std::fprintf(stderr, "Error: need sizeof(long) >= sizeof(FLOAT4)\n");
-        exit(-1);
+        std::exit(-1);
     }
 
     initdacbox();
@@ -1818,14 +1818,14 @@ bool X11Driver::resize()
         {
             std::printf("XCreateImage failed\n");
             terminate();
-            exit(-1);
+            std::exit(-1);
         }
         m_image->data = (char *) malloc(m_image->bytes_per_line * m_image->height);
         if (m_image->data == nullptr)
         {
             std::fprintf(stderr, "Malloc failed: %d\n", m_image->bytes_per_line *
                     m_image->height);
-            exit(-1);
+            std::exit(-1);
         }
         clearXwindow();
         return true;
@@ -2390,7 +2390,7 @@ void X11Driver::shell()
     {
         execvp(shell.c_str(), argv);
         perror("fork to shell");
-        exit(1);
+        std::exit(1);
     }
     free(argv0);
 

@@ -460,7 +460,7 @@ int id_main(int argc, char *argv[])
     if (! init_drivers(&argc, argv))
     {
         init_failure("Sorry, I couldn't find any working video drivers for your system\n");
-        exit(-1);
+        std::exit(-1);
     }
     // load id.cfg, match against driver supplied modes
     load_config();
