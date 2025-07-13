@@ -41,6 +41,8 @@
 
 #include <config/string_case_compare.h>
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -2240,14 +2242,14 @@ CASE_NUM :
         case '.':
             if (debug_token != nullptr)
             {
-                std::fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
+                fmt::print(debug_token, "Set temp_tok.token_str[0] to {:c}\n", c);
             }
             temp_tok.str[0] = (char) c;
             break;
         case '-' :
             if (debug_token != nullptr)
             {
-                std::fprintf(debug_token,  "First char is a minus\n");
+                fmt::print(debug_token,  "First char is a minus\n");
             }
             sign_value = -1;
             c = frm_get_char(open_file);
@@ -2255,7 +2257,7 @@ CASE_NUM :
             {
                 if (debug_token != nullptr)
                 {
-                    std::fprintf(debug_token,  "Set temp_tok.token_str[0] to %c\n", c);
+                    fmt::print(debug_token, "Set temp_tok.token_str[0] to {:c}\n", c);
                 }
                 temp_tok.str[0] = (char) c;
             }
@@ -2263,7 +2265,7 @@ CASE_NUM :
             {
                 if (debug_token != nullptr)
                 {
-                    std::fprintf(debug_token,  "First char not a . or NUM\n");
+                    fmt::print(debug_token,  "First char not a . or NUM\n");
                 }
                 done = true;
             }
@@ -2271,21 +2273,22 @@ CASE_NUM :
         default:
             if (debug_token != nullptr)
             {
-                std::fprintf(debug_token,  "First char not a . or NUM\n");
+                fmt::print(debug_token,  "First char not a . or NUM\n");
             }
             done = true;
             break;
         }
         if (debug_token != nullptr)
         {
-            std::fprintf(debug_token,  "Calling frmgetconstant unless done is true; done is %s\n", done ? "true" : "false");
+            fmt::print(debug_token, "Calling frmgetconstant unless done is true; done is {:s}\n",
+                done ? "true" : "false");
         }
         if (!done && frm_get_constant(open_file, &temp_tok))
         {
             c = frm_get_char(open_file);
             if (debug_token != nullptr)
             {
-                std::fprintf(debug_token, "frmgetconstant returned 1; next token is %c\n", c);
+                fmt::print(debug_token, "frmgetconstant returned 1; next token is {:c}\n", c);
             }
             if (getting_real && c == ',')   // we have the real part now
             {
@@ -2312,7 +2315,7 @@ CASE_NUM :
                 tok->id   = TokenId::NONE;
                 if (debug_token != nullptr)
                 {
-                    std::fprintf(debug_token, "Exiting with type set to %d\n",
+                    fmt::print(debug_token, "Exiting with type set to {:d}\n",
                         +(tok->constant.y ? FormulaTokenType::COMPLEX_CONSTANT : FormulaTokenType::REAL_CONSTANT));
                     std::fclose(debug_token);
                 }
@@ -2336,7 +2339,7 @@ CASE_NUM :
     tok->id = TokenId::OPEN_PARENS;
     if (debug_token != nullptr)
     {
-        std::fprintf(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
+        fmt::print(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
         std::fclose(debug_token);
     }
 }
@@ -2635,22 +2638,29 @@ int frm_get_param_stuff(const char *name)
         debug_token = open_save_file("frmtokens.txt", "at");
         if (debug_token != nullptr)
         {
-            std::fprintf(debug_token, "%s\n", name);
+            fmt::print(debug_token, "{:s}\n", name);
         }
     }
     while (frm_get_token(entry_file, &current_token))
     {
         if (debug_token != nullptr)
         {
-            std::fprintf(debug_token, "%s\n", current_token.str);
-            std::fprintf(debug_token, "token_type is %d\n", +current_token.type);
-            std::fprintf(debug_token, "token_id is %d\n", +current_token.id);
+            fmt::print(debug_token,
+                "{:s}\n"
+                "token_type is {:d}\n"
+                "token_id is {:d}\n",
+                current_token.str,   //
+                +current_token.type, //
+                +current_token.id);
             if (current_token.type == FormulaTokenType::REAL_CONSTANT || current_token.type == FormulaTokenType::COMPLEX_CONSTANT)
             {
-                std::fprintf(debug_token, "Real value is %f\n", current_token.constant.x);
-                std::fprintf(debug_token, "Imag value is %f\n", current_token.constant.y);
+                fmt::print(debug_token,
+                    "Real value is {:f}\n"
+                    "Imag value is {:f}\n",
+                    current_token.constant.x,
+                    current_token.constant.y);
             }
-            std::fprintf(debug_token, "\n");
+            fmt::print(debug_token, "\n");
         }
         switch (current_token.type)
         {
@@ -2884,14 +2894,14 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
         debug_fp = open_save_file("debugfrm.txt", "at");
         if (debug_fp != nullptr)
         {
-            std::fprintf(debug_fp, "%s\n", g_formula_name.c_str());
+            fmt::print(debug_fp, "{:s}\n", g_formula_name);
             if (g_symmetry != SymmetryType::NONE)
             {
                 auto it = std::find_if(std::begin(SYMMETRY_NAMES), std::end(SYMMETRY_NAMES),
                     [](const SymmetryName &item) { return item.n == g_symmetry; });
                 if (it != std::end(SYMMETRY_NAMES))
                 {
-                    std::fprintf(debug_fp, "%s\n", it->s);
+                    fmt::print(debug_fp, "{:s}\n", it->s);
                 }
             }
         }
@@ -2961,7 +2971,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
     {
         if (!formula_text.empty())
         {
-            std::fprintf(debug_fp, "   %s\n", formula_text.c_str());
+            fmt::print(debug_fp, "   {:s}\n", formula_text);
         }
         std::fclose(debug_fp);
     }
