@@ -1491,6 +1491,16 @@ TEST_F(TestParameterCommandError, passesInvalidValue)
     EXPECT_EQ(static_cast<CalcMode>('Z'), g_user_std_calc_mode);
 }
 
+TEST_F(TestParameterCommandError, passesMissingValue)
+{
+    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+
+    exec_cmd_arg("passes=", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user_std_calc_mode);
+}
+
 TEST_F(TestParameterCommand, passesBoundaryTrace)
 {
     ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};

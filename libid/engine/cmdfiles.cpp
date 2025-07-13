@@ -2824,7 +2824,7 @@ static CmdArgFlags cmd_parm_file(const Command &cmd)
 
 static CmdArgFlags cmd_passes(const Command &cmd)
 {
-    if (std::strchr("123bdgopst", cmd.char_val[0]) == nullptr)
+    if (cmd.value_len == 0 || std::strchr("123bdgopst", cmd.char_val[0]) == nullptr)
     {
         return cmd.bad_arg();
     }
