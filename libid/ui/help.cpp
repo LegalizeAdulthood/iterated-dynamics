@@ -21,6 +21,8 @@
 #include <config/filelength.h>
 #include <config/port.h>
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -366,14 +368,12 @@ static void display_page(const char *title, const char *text, unsigned text_len,
                          int page, int num_pages, int start_margin,
                          int *num_link, Link *link)
 {
-    char temp[20];
-
     help_title();
     help_instr();
     driver_set_attr(2, 0, C_HELP_BODY, 80*22);
     put_string_center(1, 0, 80, C_HELP_HDG, title);
-    std::snprintf(temp, std::size(temp), "%2d of %d", page+1, num_pages);
-    driver_put_string(1, 79-(6 + ((num_pages >= 10)?2:1)), C_HELP_INSTR, temp);
+    driver_put_string(1, 79 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR,
+        fmt::format("{:2d} of {:d}", page + 1, num_pages));
 
     if (text != nullptr)
     {
@@ -1171,11 +1171,11 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
         info->margin = 0;
 
         std::memset(line, ' ', 81);
-        std::snprintf(buff, std::size(buff), ID_PROGRAM_NAME " Version %d.%d.%d", ID_VERSION_MAJOR,
-            ID_VERSION_MINOR, ID_VERSION_PATCH);
+        fmt::format_to(buff, ID_PROGRAM_NAME " Version {:d}.{:d}.{:d}", //
+            ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH);
         std::memmove(line + ((width-(int)(std::strlen(buff))) / 2)-4, buff, std::strlen(buff));
 
-        std::snprintf(buff, std::size(buff), "Page %d", pd->page_num);
+        fmt::format_to(buff, "Page {:d}", pd->page_num);
         std::memmove(line + (width - (int)std::strlen(buff)), buff, std::strlen(buff));
 
         printer_ch(info, '\n', 1);
@@ -1257,8 +1257,7 @@ static bool print_doc_msg_func(int page_num, int num_pages)
         driver_hide_text_cursor();
     }
 
-    std::snprintf(temp, std::size(temp), "%d%%", (int)((100.0 / num_pages) * page_num));
-    driver_put_string(7, 41, C_HELP_LINK, temp);
+    driver_put_string(7, 41, C_HELP_LINK, fmt::format("{:d}%", (int) ((100.0 / num_pages) * page_num)));
 
     while (driver_key_pressed())
     {
@@ -1281,9 +1280,8 @@ bool make_doc_msg_func(int page_num, int num_pages)
     };
     if (page_num >= 0)
     {
-        char buffer[80] = "";
-        std::snprintf(buffer, std::size(buffer), "completed %d%%", (int)((100.0 / num_pages) * page_num));
-        driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO, buffer);
+        driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO,
+            fmt::format("completed {:d}%", (int) ((100.0 / num_pages) * page_num)));
         driver_key_pressed(); // pumps messages to force screen update
         return true;
     }
