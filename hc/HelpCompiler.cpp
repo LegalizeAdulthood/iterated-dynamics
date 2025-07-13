@@ -22,6 +22,7 @@
 #include <cstring>
 #include <fcntl.h>
 #include <filesystem>
+#include <fmt/format.h>
 #include <fstream>
 #include <ios>
 #include <numeric>
@@ -526,9 +527,7 @@ static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *cont
             return false;
         }
         pd->i = link.doc_page;
-        char buff[32];
-        snprintf(buff, sizeof(buff), "(p. %d)", pd->i);
-        pd->link_page = buff;
+        pd->link_page = fmt::format("(p. {:d})", pd->i);
         return true;
     }
 
