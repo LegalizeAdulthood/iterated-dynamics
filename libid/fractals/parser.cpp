@@ -3114,7 +3114,10 @@ static void frm_error(std::FILE * open_file, long begin_frm)
                 return;
             }
         }
-        std::sprintf(&msg_buff[(int) std::strlen(msg_buff)], "Error(%d) at line %d:  %s\n  ", +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number));
+        std::strcat(msg_buff,
+            fmt::format("Error({:d}) at line {:d}:  {:s}\n  ", //
+                +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number))
+                .c_str());
         int i = (int) std::strlen(msg_buff);
         std::fseek(open_file, s_errors[j].start_pos, SEEK_SET);
         int token_count = 0;
