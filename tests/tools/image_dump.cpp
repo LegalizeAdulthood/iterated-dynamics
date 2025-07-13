@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
             std::cout << "  Image " << i << ": " << image.ImageDesc << '\n';
             for (int y = 0; y < image.ImageDesc.Height; ++y)
             {
-                std::cout << fmt::format("  {:4}: ", y);
+                std::cout << fmt::format("  {:4d}: ", y);
                 for (int x = 0; x < image.ImageDesc.Width; ++x)
                 {
                     const GifByteType pixel{image.RasterBits[y * image.ImageDesc.Width + x]};
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
                             std::cout << ' ';
                         }
                     }
-                    std::cout << fmt::format("{:3}", pixel);
+                    std::cout << fmt::format("{:3d}", pixel);
                 }
                 std::cout << '\n';
             }

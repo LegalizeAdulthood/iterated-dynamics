@@ -9,8 +9,8 @@
 
 inline std::ostream &operator<<(std::ostream &str, const GifColorType &value)
 {
-    return str << fmt::format("#{0:02x}{1:02x}{2:02x} {0:3} {1:3} {2:3}", static_cast<int>(value.Red), static_cast<int>(value.Green),
-               static_cast<int>(value.Blue));
+    return str << fmt::format("#{0:02xd}{1:02xd}{2:02xd} {0:3d} {1:3d} {2:3d}", //
+               static_cast<int>(value.Red), static_cast<int>(value.Green), static_cast<int>(value.Blue));
 }
 
 inline std::ostream &operator<<(std::ostream &str, const ColorMapObject &value)
@@ -32,7 +32,7 @@ inline std::ostream &operator<<(std::ostream &str, const ColorMapObject &value)
 
 std::ostream &operator<<(std::ostream &str, const GifImageDesc &value)
 {
-    str << fmt::format("Left: {}, Top: {}, Width: {}, Height: {}, Interlace: {}, ColorMap:", //
+    str << fmt::format("Left: {:d}, Top: {:d}, Width: {:d}, Height: {:d}, Interlace: {}, ColorMap:", //
         value.Left, value.Top, value.Width, value.Height, value.Interlace);
     if (value.ColorMap != nullptr)
     {
