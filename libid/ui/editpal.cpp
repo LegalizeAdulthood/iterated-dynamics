@@ -23,6 +23,8 @@
 #include "ui/video.h"
 #include "ui/zoom.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -1506,19 +1508,17 @@ void PalTable::draw_status(bool stripe_mode)
         }
         s_cursor.hide();
 
-        {
-            char buff[80];
-            std::snprintf(buff, std::size(buff), "%c%c%c%c", m_auto_select ? 'A' : ' ',
-                (m_exclude == 1)       ? 'X'
-                    : (m_exclude == 2) ? 'Y'
-                                     : ' ',
-                m_free_style ? 'F' : ' ', stripe_mode ? 'T' : ' ');
-            driver_display_string(x, y, s_fg_color, s_bg_color, buff);
+        driver_display_string(x, y, s_fg_color, s_bg_color,
+            fmt::format("{:c}{:c}{:c}{:c}",   //
+                m_auto_select ? 'A' : ' ',    //
+                (m_exclude == 1)       ? 'X'  //
+                    : (m_exclude == 2) ? 'Y'  //
+                                       : ' ', //
+                m_free_style ? 'F' : ' ', stripe_mode ? 'T' : ' ')
+                .c_str());
 
-            y = y - 10;
-            std::snprintf(buff, std::size(buff), "%-3d", color); // assumes 8-bit color, 0-255 values
-            driver_display_string(x, y, s_fg_color, s_bg_color, buff);
-        }
+        // assumes 8-bit color, 0-255 values
+        driver_display_string(x, y, s_fg_color, s_bg_color, fmt::format("{:-3d}", color).c_str());
         s_cursor.show();
     }
 }
@@ -2383,7 +2383,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case 'm':
     {
         char buf[20];
-        std::snprintf(buf, std::size(buf), "%.3f", 1. / s_gamma_val);
+        fmt::format_to(buf, "{:.3f}", 1. / s_gamma_val);
         driver_stack_screen();
         int i = field_prompt("Enter gamma value", nullptr, buf, 20, nullptr);
         driver_unstack_screen();
