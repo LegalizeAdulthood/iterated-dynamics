@@ -17,3 +17,4 @@ target_folder(test-hc "Tests")
 gtest_discover_tests(test-hc PROPERTIES LABELS hc)
 
 add_subdirectory(ascii_doc)
+add_subdirectory(text)

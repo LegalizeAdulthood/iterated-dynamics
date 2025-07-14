@@ -1,0 +1,40 @@
+
+                Iterated Dynamics Version 1.3.2                 Page 1
+
+  3.1   Bullet Demonstration...................................2
+  3.1     Bullets..............................................2
+  3.2     Referencing..........................................3
+
+                Iterated Dynamics Version 1.3.2                 Page 2
+
+ 3. Bullet Demonstration
+
+
+ 3.1 Bullets
+
+  This is a paragraph before.
+
+  o This is a single line bullet.
+  o This is another bullet, across multiple source lines.  It goes on for
+    long enough that it will consume multiple output lines when formatted
+    as a printed document.
+  o This is another single line bullet.
+
+  This is a paragraph after.
+
+  Now we have some indented bullets.
+
+    o This is the first indented bullet.
+    o This is the second indented bullet.  It goes on for long enough that
+      it will consume multiple output lines when formatted as a printed
+      document.
+    o This is another single line bullet.
+
+  This is another paragraph after.
+
+                Iterated Dynamics Version 1.3.2                 Page 3
+
+ 3.2 Referencing
+
+  Take a look at Bullets (p. 2).
+
