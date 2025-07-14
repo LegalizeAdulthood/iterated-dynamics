@@ -60,6 +60,7 @@ add_executable(test-id
     include/test_data.h.in
     include/test_migrate_gif.h.in
     expected_map.cpp
+    engine/test_cmdfiles.cpp
     engine/test_get_prec_big_float.cpp
     engine/test_log_map.cpp
     engine/test_resume.cpp
@@ -95,7 +96,6 @@ add_executable(test-id
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
     ui/test_ChoiceBuilder.cpp
-    ui/test_cmdfiles.cpp
     ui/test_comments.cpp
     ui/test_lowerize_parameter.cpp
     ui/test_main_menu_switch.cpp
