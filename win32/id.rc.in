@@ -85,7 +85,7 @@ BEGIN
             VALUE "FileDescription", "@ID_PROGRAM_NAME@ fractal generator"
             VALUE "FileVersion", "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@.@PROJECT_VERSION_TWEAK@"
             VALUE "InternalName", "id"
-            VALUE "LegalCopyright", "Copyright (C) 2024"
+            VALUE "LegalCopyright", "Copyright (C) 2024-@CURRENT_YEAR@"
             VALUE "OriginalFilename", "id.rc"
             VALUE "ProductName", "@ID_PROGRAM_NAME@"
             VALUE "ProductVersion", "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@.@PROJECT_VERSION_TWEAK@ (@ID_GIT_HASH@)"

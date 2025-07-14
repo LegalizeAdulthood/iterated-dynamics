@@ -34,6 +34,7 @@ target_include_directories(os PRIVATE ../libid/include PUBLIC .)
 target_folder(os "Libraries")
 add_dependencies(os native-help)
 
+string(TIMESTAMP CURRENT_YEAR "%Y")
 configure_file(id.rc.in id.rc @ONLY)
 add_executable(id WIN32
     Id.ico
