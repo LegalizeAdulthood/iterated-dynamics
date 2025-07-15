@@ -9,6 +9,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace id::test::data;
+
 TEST(TestSaveFile, getSaveName)
 {
     ValueSaver saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};

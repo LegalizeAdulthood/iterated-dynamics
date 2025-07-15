@@ -6,13 +6,15 @@
 
 #include <gtest/gtest.h>
 
+using namespace id::test::check_write_file;
+
 TEST(TestCheckWriteFile, newFile)
 {
     std::string name{ID_TEST_CHECK_WRITE_FILE_NEW};
 
     check_write_file(name, ID_TEST_CHECK_WRITE_FILE_EXT);
 
-    EXPECT_EQ(ID_TEST_CHECK_WRITE_FILE_NEW, name);
+    EXPECT_EQ(id::test::check_write_file::ID_TEST_CHECK_WRITE_FILE_NEW, name);
 }
 
 TEST(TestCheckWriteFile, existingFile2)
@@ -21,7 +23,7 @@ TEST(TestCheckWriteFile, existingFile2)
 
     check_write_file(name, ID_TEST_CHECK_WRITE_FILE_EXT);
 
-    EXPECT_EQ(ID_TEST_CHECK_WRITE_FILE3, name);
+    EXPECT_EQ(id::test::check_write_file::ID_TEST_CHECK_WRITE_FILE3, name);
 }
 
 TEST(TestCheckWriteFile, existingFile1)
@@ -30,7 +32,7 @@ TEST(TestCheckWriteFile, existingFile1)
 
     check_write_file(name, ID_TEST_CHECK_WRITE_FILE_EXT);
 
-    EXPECT_EQ(ID_TEST_CHECK_WRITE_FILE3, name);
+    EXPECT_EQ(id::test::check_write_file::ID_TEST_CHECK_WRITE_FILE3, name);
 }
 
 TEST(TestCheckWriteFile, existingFile1NoExtension)

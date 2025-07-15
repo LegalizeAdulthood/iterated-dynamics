@@ -20,6 +20,7 @@
 #include <iostream>
 
 using namespace testing;
+using namespace id::test::migrate_gif;
 
 inline std::ostream &operator<<(std::ostream &str, FractalType value)
 {

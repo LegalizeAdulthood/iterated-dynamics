@@ -1,41 +1,48 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+// Generated from @CMAKE_CURRENT_LIST_FILE@
+//
 #pragma once
 
 #include <ui/id_keys.h>
 
-// Generated from @CMAKE_CURRENT_LIST_FILE@
+namespace id::test::config
+{
 
 // config test data
-#define ID_TEST_GDI_FN              "@ID_TEST_GDI_FN@"
-#define ID_TEST_GDI_FN_KEY          @ID_TEST_GDI_FN_KEY@
-#define ID_TEST_GDI_WIDTH           @ID_TEST_GDI_WIDTH@
-#define ID_TEST_GDI_HEIGHT          @ID_TEST_GDI_HEIGHT@
-#define ID_TEST_GDI_COLORS          @ID_TEST_GDI_COLORS@
-#define ID_TEST_GDI_COMMENT         "@ID_TEST_GDI_COMMENT@"
-#define ID_TEST_GDI_DRIVER          "@ID_TEST_GDI_DRIVER@"
+// clang-format off
+constexpr const char *ID_TEST_GDI_FN        {"@ID_TEST_GDI_FN@"};
+constexpr int ID_TEST_GDI_FN_KEY            {@ID_TEST_GDI_FN_KEY@};
+constexpr int ID_TEST_GDI_WIDTH             {@ID_TEST_GDI_WIDTH@};
+constexpr int ID_TEST_GDI_HEIGHT            {@ID_TEST_GDI_HEIGHT@};
+constexpr int ID_TEST_GDI_COLORS            {@ID_TEST_GDI_COLORS@};
+constexpr const char *ID_TEST_GDI_COMMENT   {"@ID_TEST_GDI_COMMENT@"};
+constexpr const char *ID_TEST_GDI_DRIVER    {"@ID_TEST_GDI_DRIVER@"};
 
-#define ID_TEST_DISK_FN             "@ID_TEST_DISK_FN@"
-#define ID_TEST_DISK_FN_KEY         @ID_TEST_DISK_FN_KEY@
-#define ID_TEST_DISK_WIDTH          @ID_TEST_DISK_WIDTH@
-#define ID_TEST_DISK_HEIGHT         @ID_TEST_DISK_HEIGHT@
-#define ID_TEST_DISK_COLORS         @ID_TEST_DISK_COLORS@
-#define ID_TEST_DISK_COMMENT        "@ID_TEST_DISK_COMMENT@"
-#define ID_TEST_DISK_DRIVER         "@ID_TEST_DISK_DRIVER@"
+constexpr const char *ID_TEST_DISK_FN       {"@ID_TEST_DISK_FN@"};
+constexpr int ID_TEST_DISK_FN_KEY           {@ID_TEST_DISK_FN_KEY@};
+constexpr int ID_TEST_DISK_WIDTH            {@ID_TEST_DISK_WIDTH@};
+constexpr int ID_TEST_DISK_HEIGHT           {@ID_TEST_DISK_HEIGHT@};
+constexpr int ID_TEST_DISK_COLORS           {@ID_TEST_DISK_COLORS@};
+constexpr const char *ID_TEST_DISK_COMMENT  {"@ID_TEST_DISK_COMMENT@"};
+constexpr const char *ID_TEST_DISK_DRIVER   {"@ID_TEST_DISK_DRIVER@"};
 
-#define ID_TEST_SAVE_GDI_FN         "@ID_TEST_SAVE_GDI_FN@"
-#define ID_TEST_SAVE_GDI_FN_KEY     @ID_TEST_SAVE_GDI_FN_KEY@
-#define ID_TEST_SAVE_GDI_WIDTH      @ID_TEST_SAVE_GDI_WIDTH@
-#define ID_TEST_SAVE_GDI_HEIGHT     @ID_TEST_SAVE_GDI_HEIGHT@
-#define ID_TEST_SAVE_GDI_COLORS     @ID_TEST_SAVE_GDI_COLORS@
-#define ID_TEST_SAVE_GDI_COMMENT    "@ID_TEST_SAVE_GDI_COMMENT@"
-#define ID_TEST_SAVE_GDI_DRIVER     "@ID_TEST_SAVE_GDI_DRIVER@"
+constexpr const char *ID_TEST_SAVE_GDI_FN       {"@ID_TEST_SAVE_GDI_FN@"};
+constexpr int ID_TEST_SAVE_GDI_FN_KEY           {@ID_TEST_SAVE_GDI_FN_KEY@};
+constexpr int ID_TEST_SAVE_GDI_WIDTH            {@ID_TEST_SAVE_GDI_WIDTH@};
+constexpr int ID_TEST_SAVE_GDI_HEIGHT           {@ID_TEST_SAVE_GDI_HEIGHT@};
+constexpr int ID_TEST_SAVE_GDI_COLORS           {@ID_TEST_SAVE_GDI_COLORS@};
+constexpr const char *ID_TEST_SAVE_GDI_COMMENT  {"@ID_TEST_SAVE_GDI_COMMENT@"};
+constexpr const char *ID_TEST_SAVE_GDI_DRIVER   {"@ID_TEST_SAVE_GDI_DRIVER@"};
 
-constexpr const char *ID_TEST_CFG{"@ID_TEST_CFG@"};
-constexpr const char *ID_TEST_HOME_DIR{"@ID_TEST_HOME_DIR@"};
-constexpr const char *ID_TEST_SAVE_DIR{"@ID_TEST_SAVE_DIR@"};
-constexpr const char *ID_TEST_HOME_CONFIG_FILE{"@ID_TEST_HOME_CONFIG_FILE@"};
-constexpr const char *ID_TEST_SAVE_CONFIG_FILE{"@ID_TEST_SAVE_CONFIG_FILE@"};
+constexpr const char *ID_TEST_CFG               {"@ID_TEST_CFG@"};
+constexpr const char *ID_TEST_HOME_DIR          {"@ID_TEST_HOME_DIR@"};
+constexpr const char *ID_TEST_SAVE_DIR          {"@ID_TEST_SAVE_DIR@"};
+constexpr const char *ID_TEST_HOME_CONFIG_FILE  {"@ID_TEST_HOME_CONFIG_FILE@"};
+constexpr const char *ID_TEST_SAVE_CONFIG_FILE  {"@ID_TEST_SAVE_CONFIG_FILE@"};
 
-constexpr const char *ID_TEST_INI{"@ID_TEST_INI@"};
-constexpr const char *ID_TEST_HOME_TOOLS_INI{"@ID_TEST_HOME_TOOLS_INI@"};
+constexpr const char *ID_TEST_INI               {"@ID_TEST_INI@"};
+constexpr const char *ID_TEST_HOME_TOOLS_INI    {"@ID_TEST_HOME_TOOLS_INI@"};
+// clang-format on
+
+} // namespace id::test::config

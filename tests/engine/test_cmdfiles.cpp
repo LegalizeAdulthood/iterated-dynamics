@@ -57,6 +57,7 @@
 #include <vector>
 
 using namespace testing;
+using namespace id::test::data;
 
 static std::ostream &operator<<(std::ostream &str, CmdArgFlags value)
 {
@@ -595,10 +596,10 @@ TEST_F(TestParameterCommand, mapSpecifiesSubdir)
     ValueSaver saved_map_name{g_map_name, "foo.map"};
     CurrentPathSaver cur_dir(ID_TEST_HOME_DIR);
 
-    exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR, CmdFile::SSTOOLS_INI);
+    exec_cmd_arg(std::string{"map="} + ID_TEST_MAP_SUBDIR, CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(ID_TEST_MAP_SUBDIR SLASH "foo.map", g_map_name);
+    EXPECT_EQ(std::string{ID_TEST_MAP_SUBDIR} + SLASH "foo.map", g_map_name);
 }
 
 TEST_F(TestParameterCommand, mapSpecifiesExistingFile)
@@ -606,10 +607,10 @@ TEST_F(TestParameterCommand, mapSpecifiesExistingFile)
     ValueSaver saved_map_name{g_map_name, "foo.map"};
     CurrentPathSaver cur_dir(ID_TEST_HOME_DIR);
 
-    exec_cmd_arg("map=" ID_TEST_MAP_SUBDIR SLASH ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
+    exec_cmd_arg(std::string{"map="} + ID_TEST_MAP_SUBDIR + SLASH + ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(ID_TEST_MAP_SUBDIR SLASH ID_TEST_MAP_FILE, g_map_name);
+    EXPECT_EQ(std::string{ID_TEST_MAP_SUBDIR} + SLASH + ID_TEST_MAP_FILE, g_map_name);
 }
 
 TEST_F(TestParameterCommand, adapterDeprecatedValues)
@@ -2087,119 +2088,119 @@ TEST_F(TestParameterCommand, threeDModeMonocular)
 TEST_F(TestParameterCommand, julibrot3DZDots)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin_fp{g_julibrot_origin, 111.0f};
+    ValueSaver saved_julibrot_origin_fp{g_julibrot_origin, 111.0F};
 
     exec_cmd_arg("julibrot3d=100");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(111.0f, g_julibrot_origin);
+    EXPECT_EQ(111.0F, g_julibrot_origin);
 }
 
 TEST_F(TestParameterCommand, julibrot3DOrigin)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
 
     exec_cmd_arg("julibrot3d=100/10");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin);
-    EXPECT_EQ(222.0f, g_julibrot_depth);
+    EXPECT_EQ(10.0F, g_julibrot_origin);
+    EXPECT_EQ(222.0F, g_julibrot_depth);
 }
 
 TEST_F(TestParameterCommand, julibrot3DDepth)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
-    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
+    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0F};
 
     exec_cmd_arg("julibrot3d=100/10/12");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin);
-    EXPECT_EQ(12.0f, g_julibrot_depth);
-    EXPECT_EQ(333.0f, g_julibrot_height);
+    EXPECT_EQ(10.0F, g_julibrot_origin);
+    EXPECT_EQ(12.0F, g_julibrot_depth);
+    EXPECT_EQ(333.0F, g_julibrot_height);
 }
 
 TEST_F(TestParameterCommand, julibrot3DHeight)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
-    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0f};
-    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
+    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0F};
+    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0F};
 
     exec_cmd_arg("julibrot3d=100/10/12/14");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin);
-    EXPECT_EQ(12.0f, g_julibrot_depth);
-    EXPECT_EQ(14.0f, g_julibrot_height);
-    EXPECT_EQ(444.0f, g_julibrot_width);
+    EXPECT_EQ(10.0F, g_julibrot_origin);
+    EXPECT_EQ(12.0F, g_julibrot_depth);
+    EXPECT_EQ(14.0F, g_julibrot_height);
+    EXPECT_EQ(444.0F, g_julibrot_width);
 }
 
 TEST_F(TestParameterCommand, julibrot3DWidth)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
-    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0f};
-    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0f};
-    ValueSaver saved_julibrot_dist{g_julibrot_dist, 555.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
+    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0F};
+    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0F};
+    ValueSaver saved_julibrot_dist{g_julibrot_dist, 555.0F};
 
     exec_cmd_arg("julibrot3d=100/10/12/14/16");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin);
-    EXPECT_EQ(12.0f, g_julibrot_depth);
-    EXPECT_EQ(14.0f, g_julibrot_height);
-    EXPECT_EQ(16.0f, g_julibrot_width);
-    EXPECT_EQ(555.0f, g_julibrot_dist);
+    EXPECT_EQ(10.0F, g_julibrot_origin);
+    EXPECT_EQ(12.0F, g_julibrot_depth);
+    EXPECT_EQ(14.0F, g_julibrot_height);
+    EXPECT_EQ(16.0F, g_julibrot_width);
+    EXPECT_EQ(555.0F, g_julibrot_dist);
 }
 
 TEST_F(TestParameterCommand, julibrot3DDistance)
 {
     ValueSaver saved_julibrot_z_dots{g_julibrot_z_dots, 9999};
-    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0f};
-    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0f};
-    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0f};
-    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0f};
-    ValueSaver saved_julibrot_dist{g_julibrot_dist, 555.0f};
+    ValueSaver saved_julibrot_origin{g_julibrot_origin, 111.0F};
+    ValueSaver saved_julibrot_depth{g_julibrot_depth, 222.0F};
+    ValueSaver saved_julibrot_height{g_julibrot_height, 333.0F};
+    ValueSaver saved_julibrot_width{g_julibrot_width, 444.0F};
+    ValueSaver saved_julibrot_dist{g_julibrot_dist, 555.0F};
 
     exec_cmd_arg("julibrot3d=100/10/12/14/16/18");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(100, g_julibrot_z_dots);
-    EXPECT_EQ(10.0f, g_julibrot_origin);
-    EXPECT_EQ(12.0f, g_julibrot_depth);
-    EXPECT_EQ(14.0f, g_julibrot_height);
-    EXPECT_EQ(16.0f, g_julibrot_width);
-    EXPECT_EQ(18.0f, g_julibrot_dist);
+    EXPECT_EQ(10.0F, g_julibrot_origin);
+    EXPECT_EQ(12.0F, g_julibrot_depth);
+    EXPECT_EQ(14.0F, g_julibrot_height);
+    EXPECT_EQ(16.0F, g_julibrot_width);
+    EXPECT_EQ(18.0F, g_julibrot_dist);
 }
 
 TEST_F(TestParameterCommand, julibrotEyes)
 {
-    ValueSaver saved_eyes{g_eyes, 111.0f};
+    ValueSaver saved_eyes{g_eyes, 111.0F};
 
     exec_cmd_arg("julibroteyes=10");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(10.0f, g_eyes);
+    EXPECT_EQ(10.0F, g_eyes);
 }
 
 TEST_F(TestParameterCommand, julibrotFromToBadNumberOfValues)
 {
-    ValueSaver saved_julibrot_x_max{g_julibrot_x_max, 222.0f};
-    ValueSaver saved_julibrot_x_min{g_julibrot_x_min, 111.0f};
-    ValueSaver saved_julibrot_y_max{g_julibrot_y_max, 444.0f};
-    ValueSaver saved_julibrot_y_min{g_julibrot_y_min, 333.0f};
+    ValueSaver saved_julibrot_x_max{g_julibrot_x_max, 222.0F};
+    ValueSaver saved_julibrot_x_min{g_julibrot_x_min, 111.0F};
+    ValueSaver saved_julibrot_y_max{g_julibrot_y_max, 444.0F};
+    ValueSaver saved_julibrot_y_min{g_julibrot_y_min, 333.0F};
 
     exec_cmd_arg("julibrotfromto=40/30/20/10");
 
@@ -2353,9 +2354,9 @@ TEST_F(TestParameterCommand, orbitDrawModeFunction)
 TEST_F(TestParameterCommand, viewWindowsdDefaults)
 {
     ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0f};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0f};
+    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
+    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
     ValueSaver saved_view_crop{g_view_crop, false};
     ValueSaver saved_view_x_dots{g_view_x_dots, 999};
     ValueSaver saved_view_y_dots{g_view_y_dots, 999};
@@ -2364,9 +2365,9 @@ TEST_F(TestParameterCommand, viewWindowsdDefaults)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_view_window);
-    EXPECT_EQ(4.2f, g_view_reduction);
-    EXPECT_EQ(0.75f, g_screen_aspect);
-    EXPECT_EQ(0.75f, g_final_aspect_ratio);
+    EXPECT_EQ(4.2F, g_view_reduction);
+    EXPECT_EQ(0.75F, g_screen_aspect);
+    EXPECT_EQ(0.75F, g_final_aspect_ratio);
     EXPECT_TRUE(g_view_crop);
     EXPECT_EQ(0, g_view_x_dots);
     EXPECT_EQ(0, g_view_y_dots);
@@ -2375,9 +2376,9 @@ TEST_F(TestParameterCommand, viewWindowsdDefaults)
 TEST_F(TestParameterCommand, viewWindowsOneValue)
 {
     ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0f};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0f};
+    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
+    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
     ValueSaver saved_view_crop{g_view_crop, false};
     ValueSaver saved_view_x_dots{g_view_x_dots, 999};
     ValueSaver saved_view_y_dots{g_view_y_dots, 999};
@@ -2385,15 +2386,15 @@ TEST_F(TestParameterCommand, viewWindowsOneValue)
     exec_cmd_arg("viewwindows=2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0f, g_view_reduction);
+    EXPECT_EQ(2.0F, g_view_reduction);
 }
 
 TEST_F(TestParameterCommand, viewWindowsTwoValues)
 {
     ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0f};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0f};
+    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
+    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
     ValueSaver saved_view_crop{g_view_crop, false};
     ValueSaver saved_view_x_dots{g_view_x_dots, 999};
     ValueSaver saved_view_y_dots{g_view_y_dots, 999};
@@ -2401,16 +2402,16 @@ TEST_F(TestParameterCommand, viewWindowsTwoValues)
     exec_cmd_arg("viewwindows=2/3");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0f, g_view_reduction);
-    EXPECT_EQ(3.0f, g_final_aspect_ratio);
+    EXPECT_EQ(2.0F, g_view_reduction);
+    EXPECT_EQ(3.0F, g_final_aspect_ratio);
 }
 
 TEST_F(TestParameterCommand, viewWindowsThreeValues)
 {
     ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0f};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0f};
+    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
+    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
     ValueSaver saved_view_crop{g_view_crop, true};
     ValueSaver saved_view_x_dots{g_view_x_dots, 999};
     ValueSaver saved_view_y_dots{g_view_y_dots, 999};
@@ -2418,17 +2419,17 @@ TEST_F(TestParameterCommand, viewWindowsThreeValues)
     exec_cmd_arg("viewwindows=2/3/n");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0f, g_view_reduction);
-    EXPECT_EQ(3.0f, g_final_aspect_ratio);
+    EXPECT_EQ(2.0F, g_view_reduction);
+    EXPECT_EQ(3.0F, g_final_aspect_ratio);
     EXPECT_FALSE(g_view_crop);
 }
 
 TEST_F(TestParameterCommand, viewWindowsFourValues)
 {
     ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0f};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0f};
+    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
+    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
     ValueSaver saved_view_crop{g_view_crop, true};
     ValueSaver saved_view_x_dots{g_view_x_dots, 999};
     ValueSaver saved_view_y_dots{g_view_y_dots, 999};
@@ -2436,8 +2437,8 @@ TEST_F(TestParameterCommand, viewWindowsFourValues)
     exec_cmd_arg("viewwindows=2/3/n/800");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0f, g_view_reduction);
-    EXPECT_EQ(3.0f, g_final_aspect_ratio);
+    EXPECT_EQ(2.0F, g_view_reduction);
+    EXPECT_EQ(3.0F, g_final_aspect_ratio);
     EXPECT_FALSE(g_view_crop);
     EXPECT_EQ(800, g_view_x_dots);
 }
@@ -2445,9 +2446,9 @@ TEST_F(TestParameterCommand, viewWindowsFourValues)
 TEST_F(TestParameterCommand, viewWindowsFiveValues)
 {
     ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0f};
-    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0f};
+    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
+    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
     ValueSaver saved_view_crop{g_view_crop, true};
     ValueSaver saved_view_x_dots{g_view_x_dots, 999};
     ValueSaver saved_view_y_dots{g_view_y_dots, 999};
@@ -2455,8 +2456,8 @@ TEST_F(TestParameterCommand, viewWindowsFiveValues)
     exec_cmd_arg("viewwindows=2/3/n/800/600");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0f, g_view_reduction);
-    EXPECT_EQ(3.0f, g_final_aspect_ratio);
+    EXPECT_EQ(2.0F, g_view_reduction);
+    EXPECT_EQ(3.0F, g_final_aspect_ratio);
     EXPECT_FALSE(g_view_crop);
     EXPECT_EQ(800, g_view_x_dots);
     EXPECT_EQ(600, g_view_y_dots);
@@ -2551,7 +2552,7 @@ TEST_F(TestParameterCommand, aspectDrift)
     exec_cmd_arg("aspectdrift=12");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(12.0f, g_aspect_drift);
+    EXPECT_EQ(12.0F, g_aspect_drift);
 }
 
 TEST_F(TestParameterCommand, invertComputedRadius)
@@ -2654,7 +2655,7 @@ TEST_F(TestParameterCommand, orgFrmDir)
     ValueSaver saved_organize_formulas_search{g_organize_formulas_search, false};
     ValueSaver saved_organize_formulas_dir{g_organize_formulas_dir, "fmeh"};
 
-    exec_cmd_arg("orgfrmdir=" ID_TEST_DATA_DIR);
+    exec_cmd_arg(std::string{"orgfrmdir="} + ID_TEST_DATA_DIR);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_TRUE(g_organize_formulas_search);
@@ -3987,7 +3988,7 @@ TEST_F(TestParameterCommand, saveDir)
 {
     ValueSaver saved_save_dir{g_save_dir, "foo"};
 
-    exec_cmd_arg("savedir=" ID_TEST_DATA_DIR);
+    exec_cmd_arg(std::string{"savedir="} + ID_TEST_DATA_DIR);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(ID_TEST_DATA_DIR, g_save_dir);

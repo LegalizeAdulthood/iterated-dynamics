@@ -1,16 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+// Generated from @CMAKE_CURRENT_LIST_FILE@
+//
 #pragma once
 
-// Generated from @CMAKE_CURRENT_LIST_FILE@
+namespace id::test::check_write_file
+{
 
-#define ID_TEST_CHECK_WRITE_FILE_DATA_DIR   "@ID_TEST_CHECK_WRITE_FILE_DATA_DIR@"
+// clang-format off
+constexpr const char *ID_TEST_CHECK_WRITE_FILE_DATA_DIR     {"@ID_TEST_CHECK_WRITE_FILE_DATA_DIR@"};
 
 // check_writefile test data
-#define ID_TEST_CHECK_WRITE_FILE_NEW        "@ID_TEST_CHECK_WRITE_FILE_NEW@"
-#define ID_TEST_CHECK_WRITE_FILE_EXISTS1    "@ID_TEST_CHECK_WRITE_FILE_EXISTS1@"
-#define ID_TEST_CHECK_WRITE_FILE_EXISTS2    "@ID_TEST_CHECK_WRITE_FILE_EXISTS2@"
-#define ID_TEST_CHECK_WRITE_FILE3           "@ID_TEST_CHECK_WRITE_FILE3@"
-#define ID_TEST_CHECK_WRITE_FILE_BASE1      "@ID_TEST_CHECK_WRITE_FILE_BASE1@"
-#define ID_TEST_CHECK_WRITE_FILE_EXT        "@ID_TEST_CHECK_WRITE_FILE_EXT@"
-#define ID_TEST_CHECK_WRITE_FILE_OTHER_EXT  "@ID_TEST_CHECK_WRITE_FILE_OTHER_EXT@"
+constexpr const char *ID_TEST_CHECK_WRITE_FILE_NEW          {"@ID_TEST_CHECK_WRITE_FILE_NEW@"};
+constexpr const char *ID_TEST_CHECK_WRITE_FILE_EXISTS1      {"@ID_TEST_CHECK_WRITE_FILE_EXISTS1@"};
+constexpr const char *ID_TEST_CHECK_WRITE_FILE_EXISTS2      {"@ID_TEST_CHECK_WRITE_FILE_EXISTS2@"};
+constexpr const char *ID_TEST_CHECK_WRITE_FILE3             {"@ID_TEST_CHECK_WRITE_FILE3@"};
+constexpr const char *ID_TEST_CHECK_WRITE_FILE_BASE1        {"@ID_TEST_CHECK_WRITE_FILE_BASE1@"};
+constexpr const char *ID_TEST_CHECK_WRITE_FILE_EXT          {"@ID_TEST_CHECK_WRITE_FILE_EXT@"};
+constexpr const char *ID_TEST_CHECK_WRITE_FILE_OTHER_EXT    {"@ID_TEST_CHECK_WRITE_FILE_OTHER_EXT@"};
+// clang-format on
+
+} // namespace id::test::check_write_file

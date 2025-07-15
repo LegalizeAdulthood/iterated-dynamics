@@ -10,11 +10,11 @@
 
 #include <gtest/gtest.h>
 
+using namespace id::test::data;
 
 TEST(TestValidateLuts, loadMap)
 {
-    ValueSaver saved_map_name{g_map_name};
-    g_map_name = ID_TEST_MAP_DIR "/foo.map";
+    ValueSaver saved_map_name{g_map_name, std::string{ID_TEST_MAP_DIR} + "/foo.map"};
 
     const bool result{validate_luts(ID_TEST_MAP_FILE)};
 

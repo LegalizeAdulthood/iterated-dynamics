@@ -14,6 +14,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::test::data;
+
 namespace
 {
 
@@ -101,7 +103,8 @@ TEST_F(TestMergePathNames, expandsDotSlashGetPath)
 TEST_F(TestMergePathNames, expandsDotSlashSubDirGetPath)
 {
     CurrentPathSaver saver{ID_TEST_DATA_DIR};
-    const std::string new_filename{fs::path{"./" ID_TEST_DATA_SUBDIR_NAME}.make_preferred().string()};
+    const std::string new_filename{
+        fs::path{"./" + std::string{ID_TEST_DATA_SUBDIR_NAME}}.make_preferred().string()};
 
     const int result = merge_path_names(m_path, new_filename.c_str(), m_mode);
 

@@ -10,6 +10,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::test::data;
+
 TEST(TestIsDirectory, affirmative)
 {
     EXPECT_TRUE(is_a_directory(ID_TEST_DATA_DIR));

@@ -15,6 +15,7 @@
 #include <filesystem>
 
 using namespace testing;
+using namespace id::test::config;
 
 TEST(TestLoadConfig, gdiDisk)
 {

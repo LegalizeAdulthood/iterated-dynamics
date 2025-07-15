@@ -10,6 +10,8 @@
 #include <filesystem>
 #include <string_view>
 
+using namespace id::test::data;
+
 static void position_to_line_starting_with(std::FILE*entry_file, const std::string_view text)
 {
     long pos;

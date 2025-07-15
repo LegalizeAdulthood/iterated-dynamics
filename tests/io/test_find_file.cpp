@@ -19,6 +19,7 @@ namespace fs = std::filesystem;
 namespace algo = boost::algorithm;
 
 using namespace testing;
+using namespace id::test::data;
 
 TEST(TestFindFile, firstTextFile)
 {

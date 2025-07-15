@@ -10,6 +10,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::test::data;
+
 TEST(TestSearchPath, pathVarNotDefined)
 {
     const std::string result = search_path(ID_TEST_IFS_FILE, "PATH", [](const char *) { return nullptr; });

@@ -15,6 +15,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::test::data;
+
 namespace {
 
 class TestSplitPath : public ::testing::Test

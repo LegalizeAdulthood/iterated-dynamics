@@ -9,6 +9,8 @@
 
 using Path = std::filesystem::path;
 
+using namespace id::test::library;
+
 namespace
 {
 

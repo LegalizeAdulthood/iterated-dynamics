@@ -15,6 +15,8 @@
 using namespace testing;
 namespace fs = std::filesystem;
 
+using namespace id::test::data;
+
 TEST(TestSaveDir, initialValue)
 {
     EXPECT_EQ(get_documents_dir(), g_save_dir);
