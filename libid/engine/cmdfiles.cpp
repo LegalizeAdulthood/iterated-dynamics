@@ -1604,7 +1604,7 @@ static CmdArgFlags parse_colors(const char *value)
         {
             init_msg("", &value[1], CmdFile::AT_CMD_LINE_SET_NAME);
         }
-        if ((int)std::strlen(value) > ID_FILE_MAX_PATH || validate_luts(g_map_name.c_str()))
+        if ((int)std::strlen(value) > ID_FILE_MAX_PATH || validate_luts(g_map_name))
         {
             goto bad_color;
         }

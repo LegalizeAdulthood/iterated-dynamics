@@ -606,7 +606,7 @@ bool load_palette()
     driver_unstack_screen();
     if (!i)
     {
-        if (!validate_luts(filename.c_str()))
+        if (!validate_luts(filename))
         {
             std::memcpy(g_old_dac_box, g_dac_box, 256*3);
         }

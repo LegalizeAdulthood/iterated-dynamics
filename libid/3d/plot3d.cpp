@@ -524,7 +524,7 @@ void plot_setup()
 
     if (g_map_set)
     {
-        validate_luts(g_map_name.c_str()); // read the palette file
+        validate_luts(g_map_name); // read the palette file
         if (glasses_alternating_or_superimpose())
         {
             if (g_glasses_type == GlassesType::SUPERIMPOSE && g_colors < 256)

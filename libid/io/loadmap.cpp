@@ -45,7 +45,7 @@ struct PaletteType
 
 #define DAC ((PaletteType *)g_dac_box)
 
-bool validate_luts(const char *map_name)
+bool validate_luts(const std::string &map_name)
 {
     unsigned r;
     unsigned g;
@@ -53,7 +53,7 @@ bool validate_luts(const char *map_name)
     char    temp[ID_FILE_MAX_PATH+1];
     char    temp_fn[ID_FILE_MAX_PATH];
     std::strcpy(temp, g_map_name.c_str());
-    std::strcpy(temp_fn, map_name);
+    std::strcpy(temp_fn, map_name.c_str());
     merge_path_names(temp, temp_fn, CmdFile::AT_CMD_LINE);
     if (!has_ext(temp))   // Did name have an extension?
     {
@@ -95,9 +95,9 @@ bool validate_luts(const char *map_name)
 
 //*************************************************************************
 
-void set_color_palette_name(const char *fn)
+void set_color_palette_name(const std::string &filename)
 {
-    if (validate_luts(fn))
+    if (validate_luts(filename))
     {
         return;
     }
