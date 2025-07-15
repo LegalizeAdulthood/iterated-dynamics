@@ -15,12 +15,17 @@ enum class FileType
     KEY,
     LSYSTEM,
     MAP,
-    PARAMETER
+    PARAMETER,
+    ROOT,
 };
 
-void clear_search_path();
-void add_library(std::filesystem::path path);
+void clear_read_library_path();
+void add_read_library(std::filesystem::path path);
 
 std::filesystem::path find_file(FileType kind, const std::filesystem::path &filename);
+
+void clear_save_library();
+void set_save_library(std::filesystem::path path);
+std::filesystem::path get_save_path(FileType file, const std::string &filename);
 
 } // namespace id::io
