@@ -2,8 +2,10 @@
 //
 #include "io/library.h"
 
+#include "engine/id_data.h"
 #include "io/special_dirs.h"
 
+#include <cassert>
 #include <string>
 #include <utility>
 #include <vector>
@@ -63,6 +65,7 @@ std::filesystem::path find_file(FileType kind, const std::filesystem::path &file
             return path;
         }
     }
+
     for (const std::filesystem::path &dir : s_search_path)
     {
         if (const std::filesystem::path path = dir / filename; exists(path))
@@ -70,6 +73,32 @@ std::filesystem::path find_file(FileType kind, const std::filesystem::path &file
             return path;
         }
     }
+
+    auto check_dir = [&](const std::filesystem::path &dir) -> std::filesystem::path
+    {
+        if (const std::filesystem::path path = dir / subdir(kind) / filename; exists(path))
+        {
+            return path;
+        }
+
+        if (const std::filesystem::path path = dir / filename; exists(path))
+        {
+            return path;
+        }
+
+        return {};
+    };
+
+    if (const std::filesystem::path path = check_dir(g_fractal_search_dir1); !path.empty())
+    {
+        return path;
+    }
+
+    if (const std::filesystem::path path = check_dir(g_fractal_search_dir2); !path.empty())
+    {
+        return path;
+    }
+
     return {};
 }
 

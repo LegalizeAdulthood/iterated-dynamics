@@ -9,6 +9,8 @@ namespace id::test::library
 constexpr const char *ID_TEST_LIBRARY_DIR1  {"@ID_TEST_LIBRARY_DIR1@"};
 constexpr const char *ID_TEST_LIBRARY_DIR2  {"@ID_TEST_LIBRARY_DIR2@"};
 constexpr const char *ID_TEST_LIBRARY_DIR3  {"@ID_TEST_LIBRARY_DIR3@"};
+constexpr const char *ID_TEST_SEARCH_DIR1   {"@ID_TEST_SEARCH_DIR1@"};
+constexpr const char *ID_TEST_SEARCH_DIR2   {"@ID_TEST_SEARCH_DIR2@"};
 
 constexpr const char *ID_TEST_FRM_FILE      {"@ID_TEST_FRM_FILE@"};
 constexpr const char *ID_TEST_IFS_FILE      {"@ID_TEST_IFS_FILE@"};
@@ -17,6 +19,14 @@ constexpr const char *ID_TEST_KEY_FILE      {"@ID_TEST_KEY_FILE@"};
 constexpr const char *ID_TEST_LSYSTEM_FILE  {"@ID_TEST_LSYSTEM_FILE@"};
 constexpr const char *ID_TEST_MAP_FILE      {"@ID_TEST_MAP_FILE@"};
 constexpr const char *ID_TEST_PAR_FILE      {"@ID_TEST_PAR_FILE@"};
+
+constexpr const char *ID_TEST_FORMULA_FILE2 {"test2.frm"};
+constexpr const char *ID_TEST_IFS_FILE2     {"test2.ifs"};
+constexpr const char *ID_TEST_IMAGE_FILE2   {"test2.gif"};
+constexpr const char *ID_TEST_KEY_FILE2     {"test2.key"};
+constexpr const char *ID_TEST_LSYSTEM_FILE2 {"test2.l"};
+constexpr const char *ID_TEST_MAP_FILE2     {"test2.map"};
+constexpr const char *ID_TEST_PAR_FILE2     {"test2.par"};
 // clang-format on
 
 } // namespace id::test::library
