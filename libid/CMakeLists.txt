@@ -113,6 +113,7 @@ add_library(libid
     include/io/has_ext.h
     include/io/is_directory.h
     include/io/is_writeable.h
+    include/io/library.h io/library.cpp
     include/io/loadfile.h io/loadfile.cpp
     include/io/loadmap.h io/loadmap.cpp
     include/io/load_config.h io/load_config.cpp

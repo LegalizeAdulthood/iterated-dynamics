@@ -41,7 +41,10 @@ add_executable(test-id
     "home/test.frm.in"
     "home/test.ifs.in"
     "home/test.ini.in"
-    "home/test.map.in" 
+    "home/test.key.in"
+    "home/test.l.in"
+    "home/test.map.in"
+    "home/test.par.in"
     "${ID_TEST_HOME_CONFIG_FILE}"
     "${ID_TEST_SAVE_CONFIG_FILE}"
     "${ID_TEST_FRM_DIR}/${ID_TEST_FRM_FILE}"
@@ -52,13 +55,15 @@ add_executable(test-id
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_check_write_file_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_config_data.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_data.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/test_library.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/test_migrate_gif.h"
-    include/expected_map.h
-    include/MockDriver.h
-    include/ValueUnchanged.h
-    include/test_config_data.h.in
-    include/test_data.h.in
-    include/test_migrate_gif.h.in
+    "include/expected_map.h"
+    "include/MockDriver.h"
+    "include/ValueUnchanged.h"
+    "include/test_config_data.h.in"
+    "include/test_data.h.in"
+    "include/test_library.h.in"
+    "include/test_migrate_gif.h.in"
     expected_map.cpp
     engine/test_cmdfiles.cpp
     engine/test_get_prec_big_float.cpp
@@ -75,6 +80,7 @@ add_executable(test-id
     io/test_find_path.cpp
     io/test_gif_file.cpp
     io/test_is_directory.cpp
+    io/test_library.cpp
     io/test_loadfile.cpp
     io/test_loadmap.cpp
     io/test_load_config.cpp
@@ -110,6 +116,7 @@ source_group("Test Data/Config/Save" REGULAR_EXPRESSION ".*/save/.*\\.cfg$")
 source_group("Test Data/Formulas" REGULAR_EXPRESSION ".*\\.frm$")
 source_group("Test Data/IFS" REGULAR_EXPRESSION ".*\\.ifs$")
 source_group("Test Data/INI" REGULAR_EXPRESSION ".*\\.ini$")
+source_group("Test Data/Library" REGULAR_EXPRESSION ".*/library/.*")
 source_group_subdir("Engine" "engine")
 source_group_subdir("Fractal Specific" "fractals")
 source_group_subdir("IO" "io")
