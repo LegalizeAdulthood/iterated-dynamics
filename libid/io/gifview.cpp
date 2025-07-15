@@ -22,6 +22,7 @@
 #include "engine/wait_until.h"
 #include "io/decoder.h"
 #include "io/has_ext.h"
+#include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "io/locate_input_file.h"
@@ -121,11 +122,12 @@ int gif_view()
     {
         input_file.replace_extension(DEFAULT_FRACTAL_TYPE);
     }
-    if (locate_input_file(input_file.string()).empty())
+    input_file = id::io::find_file(id::io::FileType::IMAGE, input_file.string());
+    if (input_file.empty())
     {
         input_file.replace_extension(ALTERNATE_FRACTAL_TYPE);
+        input_file = id::io::find_file(id::io::FileType::IMAGE, input_file.string());
     }
-    input_file = locate_input_file(input_file.string());
     if (input_file.empty())
     {
         return -1;

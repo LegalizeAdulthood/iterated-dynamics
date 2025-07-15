@@ -24,7 +24,7 @@
 #include "io/encoder.h"
 #include "io/find_file.h"
 #include "io/has_ext.h"
-#include "io/locate_input_file.h"
+#include "io/library.h"
 #include "io/make_path.h"
 #include "io/split_path.h"
 #include "math/big.h"
@@ -1021,8 +1021,8 @@ int read_overlay()      // read overlay/3D files, if reqr'd
         g_read_filename += ".gif";
     }
 
-    if (find_fractal_info(locate_input_file(g_read_filename), &read_info, &blk_2_info, &blk_3_info,
-            &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
+    if (find_fractal_info(id::io::find_file(id::io::FileType::IMAGE, g_read_filename).string(), //
+            &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a usable file
         stop_msg(fmt::format("Sorry, {:s} isn't a file I can decode.", g_read_filename));

@@ -30,10 +30,9 @@
 #include "helpcom.h"
 #include "io/extract_filename.h"
 #include "io/file_gets.h"
-#include "io/find_path.h"
-#include "io/fix_dirname.h"
 #include "io/has_ext.h"
 #include "io/is_directory.h"
+#include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "io/locate_input_file.h"
@@ -257,7 +256,7 @@ static void process_simple_command(char *cur_arg)
         {
             filename += ".gif";
         }
-        filename = locate_input_file(filename);
+        filename = id::io::find_file(id::io::FileType::IMAGE, filename).string();
         if (!filename.empty())
         {
             if (std::FILE *init_file = std::fopen(filename.c_str(), "rb"))
