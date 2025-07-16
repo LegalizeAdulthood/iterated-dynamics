@@ -21,7 +21,6 @@
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
 #include "io/decode_info.h"
-#include "io/extract_filename.h"
 #include "io/is_writeable.h"
 #include "io/loadfile.h"
 #include "io/save_file.h"

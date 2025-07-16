@@ -103,7 +103,6 @@ add_library(libid
     include/io/ends_with_slash.h io/ends_with_slash.cpp
     include/io/expand_dirname.h io/expand_dirname.cpp
     include/io/get_disk_space.h io/get_disk_space.cpp
-    include/io/extract_filename.h
     include/io/file_gets.h io/file_gets.cpp
     include/io/find_file.h io/find_file.cpp
     include/io/find_path.h io/find_path.cpp

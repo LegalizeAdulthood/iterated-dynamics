@@ -28,7 +28,6 @@
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
 #include "helpcom.h"
-#include "io/extract_filename.h"
 #include "io/file_gets.h"
 #include "io/has_ext.h"
 #include "io/is_directory.h"
@@ -76,6 +75,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <filesystem>
 #include <functional>
 #include <numeric>
 #include <optional>
@@ -227,6 +227,11 @@ static bool s_init_corners{};    // corners set via corners= or center-mag=?
 static bool s_init_params{};     // params set via params=?
 static bool s_init_functions{};  // trig functions set via function=?
 
+static std::string extract_file_name(const std::string &source)
+{
+    return std::filesystem::path(source).filename().string();
+}
+
 // cmdfiles(argc,argv) process the command-line arguments
 // it also processes the 'sstools.ini' file and any
 // indirect files ('id @myfile')
@@ -271,7 +276,7 @@ static void process_simple_command(char *cur_arg)
                     signature[3] >= '8' && signature[3] <= '9' && signature[4] >= '0' && signature[4] <= '9')
                 {
                     g_read_filename = cur_arg;
-                    g_browse_name = extract_file_name(g_read_filename.c_str());
+                    g_browse_name = extract_file_name(g_read_filename);
                     g_show_file = ShowFile::LOAD_IMAGE;
                     processed = true;
                 }
@@ -1079,11 +1084,11 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     {
         if (!g_read_filename.empty())
         {
-            g_command_name = extract_file_name(g_read_filename.c_str());
+            g_command_name = extract_file_name(g_read_filename);
         }
         else if (!g_map_name.empty())
         {
-            g_command_name = extract_file_name(g_map_name.c_str());
+            g_command_name = extract_file_name(g_map_name);
         }
         else
         {
@@ -2020,7 +2025,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
     }
     else
     {
-        g_browse_name = extract_file_name(g_read_filename.c_str());
+        g_browse_name = extract_file_name(g_read_filename);
     }
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
