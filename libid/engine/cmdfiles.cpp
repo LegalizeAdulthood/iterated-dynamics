@@ -2501,7 +2501,7 @@ static CmdArgFlags cmd_map(const Command &cmd)
         init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
         return CmdArgFlags::NONE;
     }
-    set_color_palette_name(g_map_name.c_str());
+    set_color_palette_name(g_map_name);
     return CmdArgFlags::NONE;
 }
 
