@@ -65,7 +65,7 @@ function(add_colormap_test name)
             "-DTEST_SAVE_IMAGE=test-${name}.gif"
             "-DTEST_KEEP_IMAGE=${CMAKE_CURRENT_BINARY_DIR}"
             "-DMAP_FILE=${COLORMAP_TEST_MAP}"
-            "-DMAP_DIR=${CMAKE_SOURCE_DIR}/home/maps"
+            "-DMAP_DIR=${CMAKE_SOURCE_DIR}/home/map"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/colormap_compare_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )
