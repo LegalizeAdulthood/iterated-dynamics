@@ -62,7 +62,7 @@ bool validate_luts(const std::string &map_name)
         stop_msg(fmt::format("Could not load color map {:s}", map_name));
         return true;
     }
-    unsigned index;
+    int index;
     for (index = 0; index < 256; index++)
     {
         char line[160];
@@ -70,10 +70,16 @@ bool validate_luts(const std::string &map_name)
         {
             break;
         }
-        unsigned int r;
-        unsigned int g;
-        unsigned int b;
-        std::sscanf(line, "%u %u %u", &r, &g, &b);
+        unsigned int r{};
+        unsigned int g{};
+        unsigned int b{};
+        if (int count = std::sscanf(line, "%u %u %u", &r, &g, &b); count != 3)
+        {
+            stop_msg(fmt::format("Malformed map entry on line {:d}, only {:d} channels but expected 3.\n"
+                                 "Skipping remaining lines.",
+                index, count));
+            break;
+        }
         //* load global dac values *
         DAC[index].red = static_cast<Byte>(r % 256);
         DAC[index].green = static_cast<Byte>(g % 256);
