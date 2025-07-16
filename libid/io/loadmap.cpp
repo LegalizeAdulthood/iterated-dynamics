@@ -47,9 +47,6 @@ struct PaletteType
 
 bool validate_luts(const std::string &map_name)
 {
-    unsigned r;
-    unsigned g;
-    unsigned b;
     char    temp[ID_FILE_MAX_PATH+1];
     char    temp_fn[ID_FILE_MAX_PATH];
     std::strcpy(temp, g_map_name.c_str());
@@ -73,6 +70,9 @@ bool validate_luts(const std::string &map_name)
         {
             break;
         }
+        unsigned int r;
+        unsigned int g;
+        unsigned int b;
         std::sscanf(line, "%u %u %u", &r, &g, &b);
         //* load global dac values *
         DAC[index].red = static_cast<Byte>(r % 256);
