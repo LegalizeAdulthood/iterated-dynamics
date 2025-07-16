@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 #pragma once
-#include <xstring>
+
+#include <string>
 
 // returns true on error
 bool validate_luts(const std::string &map_name);
