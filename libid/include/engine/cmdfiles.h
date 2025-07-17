@@ -182,9 +182,9 @@ enum class Display3DMode
 
 enum class ShowFile
 {
+    REQUEST_IMAGE = -1,
     LOAD_IMAGE = 0,
     IMAGE_LOADED = 1,
-    REQUEST_IMAGE = -1,
 };
 
 extern bool                  g_ask_video;
