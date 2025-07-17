@@ -643,7 +643,7 @@ static void write_header_file(const char *fname, std::FILE *file)
         "//\n"
         "\n"
         "// current help file version\n"
-        "#define {:32s} {:3d}  // NOLINT(modernize-macro-to-enum)\n"
+        "#define {:<32s} {:3d}  // NOLINT(modernize-macro-to-enum)\n"
         "\n"
         "// labels\n"
         "enum class HelpLabels\n"
@@ -660,7 +660,7 @@ static void write_header_file(const char *fname, std::FILE *file)
     {
         if (g_src.labels[ctr].name[0] != '@')  // if it's not a local label...
         {
-            fmt::print(file, "    {:32s} = {:3d}{:s}", //
+            fmt::print(file, "    {:<32s} = {:3d}{:s}", //
                 g_src.labels[ctr].name, ctr, ctr != static_cast<int>(g_src.labels.size())-1 ? "," : "");
             if (g_src.labels[ctr].name == INDEX_LABEL)
             {

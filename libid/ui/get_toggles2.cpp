@@ -79,7 +79,7 @@ int get_toggles2()
         else
         {
             char buff[80]{};
-            *fmt::format_to(buff, "{:-1.15Lg}", g_inversion[i]).out = '\0';
+            *fmt::format_to(buff, "{:<1.15Lg}", g_inversion[i]).out = '\0';
             buff[std::size(values[k].uval.sval)-1] = 0;
             std::strcpy(values[k].uval.sval, buff);
         }

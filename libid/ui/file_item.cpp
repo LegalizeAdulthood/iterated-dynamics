@@ -451,7 +451,7 @@ static void format_param_file_line(int choice, char *buf)
         c = std::getc(s_gfe_file);
     }
     line[i] = 0;
-    *fmt::format_to(buf, "{:20s}{:56s}", s_gfe_choices[choice]->name, line) = '\0';
+    *fmt::format_to(buf, "{:<20s}{:<56s}", s_gfe_choices[choice]->name, line) = '\0';
 }
 
 static int check_gfe_key(int key, int choice)

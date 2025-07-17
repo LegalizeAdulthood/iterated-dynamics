@@ -104,7 +104,7 @@ static void format_video_choice(int i, const char *err, char *buf)
     std::memcpy(&g_video_entry, &g_video_table[i],
            sizeof(g_video_entry));
     std::string key_name = vid_mode_key_name(g_video_entry.key);
-    *fmt::format_to(buf, "{:5s} {:16s} {:4s} {:5d} {:5d} {:3d} {:25s}", // 67 chars
+    *fmt::format_to(buf, "{:<5s} {:<16s} {:<4s} {:5d} {:5d} {:3d} {:<25s}", // 67 chars
         key_name, g_video_entry.driver->get_description(), err,         //
         g_video_entry.x_dots, g_video_entry.y_dots,                     //
         g_video_entry.colors, g_video_entry.comment) = '\0';
@@ -253,8 +253,8 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         std::vector attributes(g_video_table_len, 1);
 
         // format heading
-        std::string heading{fmt::format("File: {:-44s}  {:d} x {:d} x {:d}\n"
-                                        "{:-52s}",
+        std::string heading{fmt::format("File: {:<44s}  {:d} x {:d} x {:d}\n"
+                                        "{:<52s}",
             trim_file_name(g_read_filename, 44),         //
             g_file_x_dots, g_file_y_dots, g_file_colors, //
             heading_detail(info, blk_3_info))};

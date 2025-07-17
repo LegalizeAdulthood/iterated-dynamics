@@ -489,7 +489,7 @@ static int calc_type_show_dot()
 
 static void fix_inversion(double *x) // make double converted from string look ok
 {
-    *x = std::atof(fmt::format("{:-1.15Lg}", *x).c_str());
+    *x = std::atof(fmt::format("{:<1.15Lg}", *x).c_str());
 }
 
 static void init_calc_fract()

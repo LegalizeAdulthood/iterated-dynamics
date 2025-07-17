@@ -446,7 +446,7 @@ skip_ui:
                     piece_command_name[w] = 0;
                     std::strcat(
                         piece_command_name, fmt::format("_{:c}{:c}", par_key(col), par_key(row)).c_str());
-                    fmt::print(s_param_file, "{:19s}{{", piece_command_name);
+                    fmt::print(s_param_file, "{:<19s}{{", piece_command_name);
                     g_x_min = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*(row*params.piece_y_dots);
                     g_x_max = piece_x_min + piece_delta_x*((col+1)*params.piece_x_dots - 1) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
                     g_y_min = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*((col+1)*params.piece_x_dots - 1);
@@ -472,7 +472,7 @@ skip_ui:
                 }
                 else
                 {
-                    fmt::print(s_param_file, "{:19s}{{", g_command_name.c_str());
+                    fmt::print(s_param_file, "{:<19s}{{", g_command_name.c_str());
                 }
                 {
                     /* guarantee that there are no blank comments above the last

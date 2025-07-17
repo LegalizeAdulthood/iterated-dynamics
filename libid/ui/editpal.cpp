@@ -1518,7 +1518,7 @@ void PalTable::draw_status(bool stripe_mode)
                 .c_str());
 
         // assumes 8-bit color, 0-255 values
-        driver_display_string(x, y, s_fg_color, s_bg_color, fmt::format("{:-3d}", color).c_str());
+        driver_display_string(x, y, s_fg_color, s_bg_color, fmt::format("{:<3d}", color).c_str());
         s_cursor.show();
     }
 }
