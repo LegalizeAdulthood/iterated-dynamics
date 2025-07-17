@@ -998,7 +998,7 @@ static FractalType migrate_integer_types(int read_type)
     return static_cast<FractalType>(read_type);
 }
 
-int read_overlay()      // read overlay/3D files, if reqr'd
+int read_overlay()      // read overlay/3D files, if required
 {
     FractalInfo read_info;
     char msg[110];
