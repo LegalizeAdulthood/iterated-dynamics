@@ -902,19 +902,19 @@ static int prompt_value_string(char *buf, const FullScreenValues *val)
         double_to_string(buf, val->uval.dval);
         break;
     case 'D':
-        fmt::format_to(buf, "{:d}", std::lround(val->uval.dval));
+        std::strcpy(buf, fmt::format("{:d}", std::lround(val->uval.dval)).c_str());
         ret = 20;
         break;
     case 'f':
-        fmt::format_to(buf, "{:.7g}", val->uval.dval);
+        std::strcpy(buf, fmt::format("{:.7g}", val->uval.dval).c_str());
         ret = 14;
         break;
     case 'i':
-        fmt::format_to(buf, "{:d}", val->uval.ival);
+        std::strcpy(buf, fmt::format("{:d}", val->uval.ival).c_str());
         ret = 6;
         break;
     case 'L':
-        fmt::format_to(buf, "{:d}", val->uval.Lval);
+        std::strcpy(buf, fmt::format("{:d}", val->uval.Lval).c_str());
         ret = 10;
         break;
     case '*':

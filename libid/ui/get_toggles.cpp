@@ -220,7 +220,7 @@ int get_toggles()
     }
     else
     {
-        fmt::format_to(values[k].uval.sval, "{:d}", g_fill_color);
+        *fmt::format_to(values[k].uval.sval, "{:d}", g_fill_color).out = '\0';
     }
     int old_fill_color = g_fill_color;
 

@@ -2383,7 +2383,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
     case 'm':
     {
         char buf[20];
-        fmt::format_to(buf, "{:.3f}", 1. / s_gamma_val);
+        *fmt::format_to(buf, "{:.3f}", 1. / s_gamma_val).out = '\0';
         driver_stack_screen();
         int i = field_prompt("Enter gamma value", nullptr, buf, 20, nullptr);
         driver_unstack_screen();

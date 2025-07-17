@@ -191,7 +191,7 @@ int input_field(InputFieldFlags options, //
                     {
                         round_float_double(&tmp_d);
                     }
-                    fmt::format_to(tmp_fld, "{:.15g}", tmp_d);
+                    *fmt::format_to(tmp_fld, "{:.15g}", tmp_d).out = '\0';
                     tmp_fld[len-1] = 0; // safety, field should be long enough
                     std::strcpy(fld, tmp_fld);
                     offset = 0;

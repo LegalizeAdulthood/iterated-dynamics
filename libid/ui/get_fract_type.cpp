@@ -619,7 +619,7 @@ gfp_top:
             {
                 choices[prompt_num]++;
             }
-            fmt::format_to(tmp_buf, "{:.17g}", g_params[i]);
+            *fmt::format_to(tmp_buf, "{:.17g}", g_params[i]).out = '\0';
             param_values[prompt_num].uval.dval = std::atof(tmp_buf);
             old_param[i] = param_values[prompt_num++].uval.dval;
         }
@@ -689,7 +689,7 @@ gfp_top:
                 orbit_bailout = 100;
                 tmp_ptr = "biomorph";
             }
-            fmt::format_to(bailout_msg, "    ({:s} default is {:d})", tmp_ptr, orbit_bailout);
+            *fmt::format_to(bailout_msg, "    ({:s} default is {:d})", tmp_ptr, orbit_bailout).out = '\0';
             choices[prompt_num++] = bailout_msg;
         }
     }
@@ -802,11 +802,11 @@ gfp_top:
     }
     if (g_julibrot)
     {
-        fmt::format_to(msg, "Julibrot Parameters (orbit={:s})", julia_orbit_name);
+        *fmt::format_to(msg, "Julibrot Parameters (orbit={:s})", julia_orbit_name).out = '\0';
     }
     else
     {
-        fmt::format_to(msg, "Parameters for fractal type {:s}", type_name);
+        *fmt::format_to(msg, "Parameters for fractal type {:s}", type_name).out = '\0';
     }
     if (g_bf_math == BFMathType::NONE)
     {

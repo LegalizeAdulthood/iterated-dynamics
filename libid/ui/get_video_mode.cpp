@@ -104,10 +104,10 @@ static void format_video_choice(int i, const char *err, char *buf)
     std::memcpy(&g_video_entry, &g_video_table[i],
            sizeof(g_video_entry));
     std::string key_name = vid_mode_key_name(g_video_entry.key);
-    fmt::format_to(buf, "{:5s} {:16s} {:4s} {:5d} {:5d} {:3d} {:25s}", // 67 chars
-        key_name, g_video_entry.driver->get_description(), err,        //
-        g_video_entry.x_dots, g_video_entry.y_dots,                    //
-        g_video_entry.colors, g_video_entry.comment);
+    *fmt::format_to(buf, "{:5s} {:16s} {:4s} {:5d} {:5d} {:3d} {:25s}", // 67 chars
+        key_name, g_video_entry.driver->get_description(), err,         //
+        g_video_entry.x_dots, g_video_entry.y_dots,                     //
+        g_video_entry.colors, g_video_entry.comment) = '\0';
     g_video_entry.x_dots = 0; // so tab_display knows to display nothing
 }
 

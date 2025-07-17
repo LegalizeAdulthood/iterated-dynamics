@@ -116,11 +116,11 @@ get_view_restart:
     choices[++k] = "";
     values[k].type = '*';
 
-    fmt::format_to(dim1, "Video memory limits: (for y = {:4d}) x <= {:d}", y_max, x_max);
+    *fmt::format_to(dim1, "Video memory limits: (for y = {:4d}) x <= {:d}", y_max, x_max).out = '\0';
     choices[++k] = dim1;
     values[k].type = '*';
 
-    fmt::format_to(dim2, "                     (for x = {:4d}) y <= {:d}", x_max, y_max);
+    *fmt::format_to(dim2, "                     (for x = {:4d}) y <= {:d}", x_max, y_max).out = '\0';
     choices[++k] = dim2;
     values[k].type = '*';
 
