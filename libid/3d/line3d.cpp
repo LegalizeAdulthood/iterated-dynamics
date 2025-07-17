@@ -1859,8 +1859,9 @@ ENTITIES
 static int ray_header()
 {
     // Open the ray tracing output file
-    check_write_file(g_raytrace_filename, ".ray");
-    s_file_ptr1 = open_save_file(g_raytrace_filename, "w");
+    std::string filename{get_save_name(g_raytrace_filename).string()};
+    check_write_file(filename, ".ray");
+    s_file_ptr1 = std::fopen(filename.c_str(), "w");
     if (s_file_ptr1 == nullptr)
     {
         return -1;              // Oops, something's wrong!
