@@ -1001,7 +1001,6 @@ static FractalType migrate_integer_types(int read_type)
 int read_overlay()      // read overlay/3D files, if required
 {
     FractalInfo read_info;
-    char msg[110];
     ExtBlock2 blk_2_info;
     ExtBlock3 blk_3_info;
     ExtBlock4 blk_4_info;
