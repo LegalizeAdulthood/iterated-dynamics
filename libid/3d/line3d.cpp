@@ -89,7 +89,8 @@ static void put_min_max(int x, int y, int color);
 static void triangle_bounds(float pt_t[3][3]);
 static void transparent_clip_color(int x, int y, int color);
 static void vec_draw_line(double *v1, double *v2, int color);
-static void file_error(const char *filename, FileError error);
+static void file_error(const std::string &filename, FileError error);
+static bool targa_validate(const std::string &filename);
 
 // static variables
 static void (*s_fill_plot)(int x, int y, int color){};   //
@@ -111,7 +112,7 @@ static std::vector<Byte> s_fraction;                     // float version of pix
 static float s_min_xyz[3]{}, s_max_xyz[3]{};             // For Raytrace output
 static int s_line_length1{};                             //
 static int s_targa_header_24 = 18;                       // Size of current Targa-24 header
-static std::FILE *s_raytrace_file{};                         //
+static std::FILE *s_raytrace_file{};                     //
 static unsigned int s_i_ambient{};                       //
 static int s_rand_factor{};                              //
 static int s_haze_mult{};                                //
@@ -841,7 +842,7 @@ loop_bottom:
                 {
                     std::fclose(s_raytrace_file);
                     std::remove(g_light_name.c_str());
-                    file_error(g_raytrace_filename.c_str(), FileError::DISK_FULL);
+                    file_error(g_raytrace_filename, FileError::DISK_FULL);
                     return -1;
                 }
             }
@@ -1434,7 +1435,7 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 
 **************************************************************************/
 
-static void file_error(const char *filename, FileError error)
+static void file_error(const std::string &filename, FileError error)
 {
     std::string msg;
     s_error = error;
@@ -1444,11 +1445,11 @@ static void file_error(const char *filename, FileError error)
         return;
 
     case FileError::OPEN_FAILED:        // Can't Open
-        msg = "OOPS, couldn't open  < " + std::string(filename) + " >";
+        msg = "OOPS, couldn't open  < " + filename + " >";
         break;
 
     case FileError::DISK_FULL:          // Not enough room
-        msg = "OOPS, ran out of disk space. < " + std::string(filename) + " >";
+        msg = "OOPS, ran out of disk space. < " + filename + " >";
         break;
 
     case FileError::BAD_IMAGE_SIZE:     // Image wrong size
@@ -1484,7 +1485,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     std::FILE *fps = dir_fopen(g_working_dir, filename, "w+b");
     if (fps == nullptr)
     {
-        file_error(filename.c_str(), FileError::OPEN_FAILED);
+        file_error(filename, FileError::OPEN_FAILED);
         return true;            // Oops, something's wrong!
     }
 
@@ -1563,7 +1564,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
                 std::fclose(source);
             }
             dir_remove(g_working_dir, filename);
-            file_error(filename.c_str(), FileError::DISK_FULL);
+            file_error(filename, FileError::DISK_FULL);
             return true;
         }
         if (driver_key_pressed())
@@ -1581,7 +1582,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     return false;
 }
 
-bool targa_validate(const char *filename)
+bool targa_validate(const std::string &filename)
 {
     // Attempt to open source file for reading
     std::FILE *fp = dir_fopen(g_working_dir, filename, "rb");
@@ -2422,7 +2423,7 @@ static int first_time(int line_len, Vector v)
         if (g_targa_overlay)
         {
             // Make sure target file is a supportable Targa File
-            if (targa_validate(g_light_name.c_str()))
+            if (targa_validate(g_light_name))
             {
                 return -1;
             }
