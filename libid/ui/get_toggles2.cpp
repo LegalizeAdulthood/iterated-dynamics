@@ -74,7 +74,7 @@ int get_toggles2()
         old_inversion[i] = g_inversion[i];
         if (g_inversion[i] == AUTO_INVERT)
         {
-            *fmt::format_to(values[k].uval.sval, "auto").out = '\0';
+            std::strcpy(values[k].uval.sval, "auto");
         }
         else
         {
