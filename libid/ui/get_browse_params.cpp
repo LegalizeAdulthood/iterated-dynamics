@@ -27,7 +27,7 @@ int get_browse_params()
     bool old_double_caution  = g_confirm_file_deletes;
     int old_smallest_box_size_shown = g_smallest_box_size_shown;
     double old_smallest_window_display_size = g_smallest_window_display_size;
-    std::string old_browse_mask = g_browse_mask;
+    std::filesystem::path old_browse_mask = g_browse_mask;
 
 get_brws_restart:
     choices.reset()
@@ -38,7 +38,7 @@ get_brws_restart:
         .yes_no("Confirm file deletes (y/n)", g_confirm_file_deletes)
         .float_number("Smallest window to display (size in pixels)", g_smallest_window_display_size)
         .int_number("Smallest box size shown before crosshairs used (pix)", g_smallest_box_size_shown)
-        .string("Browse search filename mask ", g_browse_mask.c_str())
+        .string("Browse search filename mask ", g_browse_mask.string().c_str())
         .comment("")
         .comment("Press F4 to reset browse parameters to defaults.");
 

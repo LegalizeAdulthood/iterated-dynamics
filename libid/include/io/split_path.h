@@ -12,6 +12,11 @@ inline void split_fname_ext(const std::string &file_template, char *fname, char 
     split_path(file_template, nullptr, nullptr, fname, ext);
 }
 
+inline void split_fname_ext(const std::filesystem::path &file_template, char *fname, char *ext)
+{
+    split_path(file_template.string(), nullptr, nullptr, fname, ext);
+}
+
 inline void split_drive_dir(const std::string &file_template, char *drive, char *dir)
 {
     split_path(file_template, drive, dir, nullptr, nullptr);

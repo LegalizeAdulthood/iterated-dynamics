@@ -44,7 +44,7 @@ enum class HelpLabels;
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
 extern ConfigStatus          g_bad_config;
-extern std::string           g_browse_mask;
+extern std::filesystem::path g_browse_mask;
 extern bool                  g_browsing;
 extern bool                  g_browse_check_fractal_params;
 extern bool                  g_browse_check_fractal_type;

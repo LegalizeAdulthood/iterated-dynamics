@@ -109,7 +109,7 @@ bool g_auto_browse{};                                           //
 bool g_confirm_file_deletes{};                                  //
 bool g_browse_check_fractal_params{};                           //
 bool g_browse_check_fractal_type{};                             //
-std::string g_browse_mask;                                      //
+std::filesystem::path g_browse_mask;                            //
 int g_scale_map[12]{
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
 
