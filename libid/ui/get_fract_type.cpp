@@ -593,9 +593,9 @@ gfp_top:
         int j = 0;
         for (int i = first_param; i < last_param; i++)
         {
-            char param_prompt[MAX_PARAMS][55];
+            const char *param_prompt[MAX_PARAMS];
             char tmp_buf[30];
-            if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, param_prompt[j]))
+            if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, &param_prompt[j]))
             {
                 if (current_type == FractalType::FORMULA)
                 {

@@ -309,7 +309,7 @@ void bf_corners_to_float()
     }
     for (int i = 0; i < MAX_PARAMS; i++)
     {
-        if (type_has_param(g_fractal_type, i, nullptr))
+        if (type_has_param(g_fractal_type, i))
         {
             g_params[i] = (double)bf_to_float(g_bf_params[i]);
         }

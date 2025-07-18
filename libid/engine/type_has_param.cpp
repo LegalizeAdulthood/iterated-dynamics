@@ -14,7 +14,7 @@
  *  Pass in nullptr for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
-bool type_has_param(FractalType type, int param, char *buf)
+bool type_has_param(FractalType type, int param, const char **prompt)
 {
     const char *ret = nullptr;
     if (0 <= param && param < 4)
@@ -45,9 +45,9 @@ bool type_has_param(FractalType type, int param, char *buf)
         }
     }
 
-    if (ret && buf != nullptr)
+    if (ret && prompt != nullptr)
     {
-        std::strcpy(buf, ret);
+        *prompt = ret;
     }
     return ret != nullptr;
 }

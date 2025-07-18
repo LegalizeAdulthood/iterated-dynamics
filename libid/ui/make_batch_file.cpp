@@ -965,8 +965,8 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         int i;
         for (i = (MAX_PARAMS-1); i >= 0; --i)
         {
-            if (type_has_param(g_fractal_type == FractalType::JULIBROT ? g_new_orbit_type : g_fractal_type,
-                    i, nullptr))
+            if (type_has_param(
+                    g_fractal_type == FractalType::JULIBROT ? g_new_orbit_type : g_fractal_type, i))
             {
                 break;
             }

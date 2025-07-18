@@ -94,7 +94,7 @@ void fractal_float_to_bf()
 
     for (int i = 0; i < MAX_PARAMS; i++)
     {
-        if (type_has_param(g_fractal_type, i, nullptr))
+        if (type_has_param(g_fractal_type, i))
         {
             float_to_bf(g_bf_params[i], g_params[i]);
         }

@@ -4,4 +4,8 @@
 
 #include "fractals/fractype.h"
 
-bool type_has_param(FractalType type, int param, char *buf);
+bool type_has_param(FractalType type, int param, const char **prompt);
+inline bool type_has_param(FractalType type, int param)
+{
+    return type_has_param(type, param, nullptr);
+}

@@ -564,12 +564,12 @@ top:
         }
     }
 
-    if (type_has_param(g_fractal_type, 0, msg) || has_form_param)
+    if (type_has_param(g_fractal_type, 0) || has_form_param)
     {
         for (int i = 0; i < MAX_PARAMS; i++)
         {
-            char p[50];
-            if (type_has_param(g_fractal_type, i, p))
+            const char *p{};
+            if (type_has_param(g_fractal_type, i, &p))
             {
                 int col;
                 if (k%4 == 0)
@@ -587,11 +587,11 @@ top:
                 }
                 std::sprintf(msg, "%3d: ", i+1);
                 driver_put_string(start_row, col, C_GENERAL_MED, msg);
-                if (*p == '+')
+                if (p[0] == '+')
                 {
                     std::sprintf(msg, "%-12d", (int)g_params[i]);
                 }
-                else if (*p == '#')
+                else if (p[0] == '#')
                 {
                     std::sprintf(msg, "%-12u", (U32)g_params[i]);
                 }
