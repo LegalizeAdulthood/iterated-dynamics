@@ -1296,7 +1296,7 @@ static void file_read(void *ptr, size_t size, size_t num, std::FILE *stream)
 }
 
 static int find_fractal_info(const std::string &gif_file, //
-    FractalInfo *info,                                   //
+    FractalInfo *info,                                    //
     ExtBlock2 *blk_2_info,                                //
     ExtBlock3 *blk_3_info,                                //
     ExtBlock4 *blk_4_info,                                //
