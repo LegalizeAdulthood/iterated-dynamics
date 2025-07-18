@@ -3947,6 +3947,20 @@ TEST_F(TestParameterCommand, ray)
     EXPECT_EQ(RayTraceFormat::RAW, g_raytrace_format);
 }
 
+TEST_F(TestParameterCommandError, rayNegative)
+{
+    exec_cmd_arg("ray=-1");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+}
+
+TEST_F(TestParameterCommandError, rayTooLarge)
+{
+    exec_cmd_arg("ray=8");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+}
+
 TEST_F(TestParameterCommand, briefNo)
 {
     ValueSaver saved_brief{g_brief, true};

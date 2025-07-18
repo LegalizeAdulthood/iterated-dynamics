@@ -3049,7 +3049,7 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
 // ray=?
 static CmdArgFlags cmd_ray(const Command &cmd)
 {
-    if (cmd.num_val < 0 || cmd.num_val > 6)
+    if (cmd.num_val < 0 || cmd.num_val > 7)
     {
         return cmd.bad_arg();
     }
