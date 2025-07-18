@@ -14,7 +14,7 @@ set(RAYTRACE_TYPE_rayshade "5")
 set(RAYTRACE_TYPE_vivid "2")
 
 function(add_raytrace_test name)
-    cmake_parse_arguments(RAYTRACE_TEST "" "" "PARAMETERS;LABELS" ${ARGN})
+    cmake_parse_arguments(RAYTRACE_TEST "DISABLED" "" "PARAMETERS;LABELS" ${ARGN})
     if(RAYTRACE_TEST_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "Unknown arguments: ${RAYTRACE_TEST_UNPARSED_ARGUMENTS}")
     endif()
@@ -36,12 +36,17 @@ function(add_raytrace_test name)
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )
     list(APPEND RAYTRACE_TEST_LABELS "raytrace")
+    if(RAYTRACE_TEST_DISABLED)
+        set(DISABLED "TRUE")
+    else()
+        set(DISABELD "FALSE")
+    endif()
     set_tests_properties(RayTraceTest.${name} PROPERTIES
         PROCESSORS "10000"
-        DISABLED TRUE
+        DISABLED "${DISABLED}"
         LABELS "${RAYTRACE_TEST_LABELS}")
 endfunction()
 
 foreach(raytrace acrospin dxf mtv povray raw rayshade vivid)
-    add_raytrace_test("${raytrace}")
+    add_raytrace_test("${raytrace}" DISABLED)
 endforeach()
