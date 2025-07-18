@@ -5,7 +5,6 @@
 #include "engine/id_data.h"
 #include "io/special_dirs.h"
 
-#include <cassert>
 #include <string>
 #include <utility>
 #include <vector>
@@ -16,28 +15,50 @@ namespace id::io
 static std::vector<std::filesystem::path> s_search_path;
 static std::filesystem::path s_save_path;
 
-static std::string_view subdir(FileType kind)
+static std::string_view subdir(ReadFile kind)
 {
     switch (kind)
     {
-    case FileType::FORMULA:
+    case ReadFile::FORMULA:
         return "formula";
-    case FileType::IFS:
+    case ReadFile::IFS:
         return "ifs";
-    case FileType::IMAGE:
+    case ReadFile::IMAGE:
         return "image";
-    case FileType::KEY:
+    case ReadFile::KEY:
         return "key";
-    case FileType::LSYSTEM:
+    case ReadFile::LSYSTEM:
         return "lsystem";
-    case FileType::MAP:
+    case ReadFile::MAP:
         return "map";
-    case FileType::PARAMETER:
+    case ReadFile::PARAMETER:
         return "par";
-    case FileType::ROOT:
-        return ".";
     }
-    throw std::runtime_error("Unknown FileType " + std::to_string(static_cast<int>(kind)));
+    throw std::runtime_error("Unknown ReadFile type " + std::to_string(static_cast<int>(kind)));
+}
+
+static std::string_view subdir(WriteFile kind)
+{
+    switch (kind)
+    {
+    case WriteFile::FORMULA:
+        return "formula";
+    case WriteFile::IFS:
+        return "ifs";
+    case WriteFile::IMAGE:
+        return "image";
+    case WriteFile::KEY:
+        return "key";
+    case WriteFile::LSYSTEM:
+        return "lsystem";
+    case WriteFile::MAP:
+        return "map";
+    case WriteFile::PARAMETER:
+        return "par";
+    case WriteFile::ROOT:
+        return {};
+    }
+    throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));
 }
 
 void clear_read_library_path()
@@ -50,14 +71,8 @@ void add_read_library(std::filesystem::path path)
     s_search_path.emplace_back(std::move(path));
 }
 
-std::filesystem::path find_file(FileType kind, const std::filesystem::path &filename)
+std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &filename)
 {
-    // ROOT is for special case output only, e.g. makedoc or makepar batch files.
-    if (kind == FileType::ROOT)
-    {
-        return {};
-    }
-
     for (const std::filesystem::path &dir : s_search_path)
     {
         if (const std::filesystem::path path = dir / subdir(kind) / filename; exists(path))
@@ -112,7 +127,7 @@ void set_save_library(std::filesystem::path path)
     s_save_path = std::move(path);
 }
 
-std::filesystem::path get_save_path(FileType file, const std::string &filename)
+std::filesystem::path get_save_path(WriteFile file, const std::string &filename)
 {
     return (s_save_path.empty() ? g_save_dir : s_save_path) / subdir(file) / filename;
 }

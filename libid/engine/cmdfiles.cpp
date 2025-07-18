@@ -261,7 +261,7 @@ static void process_simple_command(char *cur_arg)
         {
             filename += ".gif";
         }
-        filename = id::io::find_file(id::io::FileType::IMAGE, filename).string();
+        filename = id::io::find_file(id::io::ReadFile::IMAGE, filename).string();
         if (!filename.empty())
         {
             if (std::FILE *init_file = std::fopen(filename.c_str(), "rb"))

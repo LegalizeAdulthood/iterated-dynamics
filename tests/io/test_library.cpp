@@ -45,7 +45,7 @@ TEST_F(TestLibrary, findFormulaInLibraryDirectory)
 {
     id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
 
-    const Path path{id::io::find_file(id::io::FileType::FORMULA, "root.frm")};
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, "root.frm")};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
@@ -56,7 +56,7 @@ TEST_F(TestLibrary, findFormulaInLibrarySubDirectory)
 {
     id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
 
-    const Path path{id::io::find_file(id::io::FileType::FORMULA, "root.frm")};
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, "root.frm")};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
@@ -69,7 +69,7 @@ TEST_F(TestLibrary, preferFormulaSubDirectory)
     id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
     id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
 
-    const Path path{id::io::find_file(id::io::FileType::FORMULA, "root.frm")};
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, "root.frm")};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
@@ -81,7 +81,7 @@ TEST_F(TestLibrary, findFormulaSearchMultiplePaths)
     id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
     id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
 
-    const Path path{id::io::find_file(id::io::FileType::FORMULA, ID_TEST_FRM_FILE)};
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, ID_TEST_FRM_FILE)};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_FRM_FILE}, path.filename()) << path;
@@ -93,7 +93,7 @@ TEST_F(TestLibrary, findImageInLibraryDirectory)
 {
     id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
 
-    const Path path{id::io::find_file(id::io::FileType::IMAGE, ID_TEST_IMAGE_FILE)};
+    const Path path{id::io::find_file(id::io::ReadFile::IMAGE, ID_TEST_IMAGE_FILE)};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_IMAGE_FILE}, path.filename()) << path;
@@ -105,7 +105,7 @@ TEST_F(TestLibrary, setSaveLibrary)
 {
     id::io::set_save_library(ID_TEST_LIBRARY_DIR3);
 
-    const Path path{id::io::get_save_path(id::io::FileType::IMAGE, ID_TEST_IMAGE_FILE)};
+    const Path path{id::io::get_save_path(id::io::WriteFile::IMAGE, ID_TEST_IMAGE_FILE)};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_IMAGE_FILE}, path.filename()) << path;
@@ -117,7 +117,7 @@ TEST_F(TestLibrary, saveLibraryDefaultsToSaveDir)
 {
     ValueSaver saved_save_dir{g_save_dir, ID_TEST_LIBRARY_DIR3};
 
-    const Path path{id::io::get_save_path(id::io::FileType::IMAGE, ID_TEST_IMAGE_FILE)};
+    const Path path{id::io::get_save_path(id::io::WriteFile::IMAGE, ID_TEST_IMAGE_FILE)};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_IMAGE_FILE}, path.filename()) << path;
@@ -125,20 +125,11 @@ TEST_F(TestLibrary, saveLibraryDefaultsToSaveDir)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
 
-TEST_F(TestLibrary, findFileWithRootNotAllowed)
-{
-    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
-
-    const Path path{id::io::find_file(id::io::FileType::ROOT, "root.gif")};
-
-    ASSERT_TRUE(path.empty()) << path;
-}
-
 TEST_F(TestLibrary, findFileCheckSearchDir1Root)
 {
     ValueSaver saved_search_dir{g_fractal_search_dir1, ID_TEST_SEARCH_DIR1};
 
-    const Path path{id::io::find_file(id::io::FileType::FORMULA, "root.frm")};
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, "root.frm")};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
@@ -149,7 +140,7 @@ TEST_F(TestLibrary, findFilePreferSearchDir1SubDir)
 {
     ValueSaver saved_search_dir{g_fractal_search_dir1, ID_TEST_SEARCH_DIR1};
 
-    const Path path{id::io::find_file(id::io::FileType::IFS, ID_TEST_IFS_FILE)};
+    const Path path{id::io::find_file(id::io::ReadFile::IFS, ID_TEST_IFS_FILE)};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_IFS_FILE}, path.filename()) << path;
@@ -161,7 +152,7 @@ TEST_F(TestLibrary, findFileCheckSearchDir2Root)
 {
     ValueSaver saved_search_dir{g_fractal_search_dir2, ID_TEST_SEARCH_DIR1};
 
-    const Path path{id::io::find_file(id::io::FileType::FORMULA, "root.frm")};
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, "root.frm")};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
@@ -172,7 +163,7 @@ TEST_F(TestLibrary, findFilePreferSearchDir2SubDir)
 {
     ValueSaver saved_search_dir{g_fractal_search_dir2, ID_TEST_SEARCH_DIR1};
 
-    const Path path{id::io::find_file(id::io::FileType::IFS, ID_TEST_IFS_FILE)};
+    const Path path{id::io::find_file(id::io::ReadFile::IFS, ID_TEST_IFS_FILE)};
 
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_IFS_FILE}, path.filename()) << path;

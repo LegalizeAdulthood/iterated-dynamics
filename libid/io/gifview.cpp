@@ -122,11 +122,11 @@ int gif_view()
     {
         input_file.replace_extension(DEFAULT_FRACTAL_TYPE);
     }
-    input_file = id::io::find_file(id::io::FileType::IMAGE, input_file.string());
+    input_file = id::io::find_file(id::io::ReadFile::IMAGE, input_file.string());
     if (input_file.empty())
     {
         input_file.replace_extension(ALTERNATE_FRACTAL_TYPE);
-        input_file = id::io::find_file(id::io::FileType::IMAGE, input_file.string());
+        input_file = id::io::find_file(id::io::ReadFile::IMAGE, input_file.string());
     }
     if (input_file.empty())
     {
