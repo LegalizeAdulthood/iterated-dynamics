@@ -1024,7 +1024,7 @@ int read_overlay()      // read overlay/3D files, if required
             &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a usable file
-        stop_msg(fmt::format("Sorry, {:s} isn't a file I can decode.", g_read_filename));
+        stop_msg(fmt::format("Sorry, {:s} isn't a file I can decode.", g_read_filename.string()));
         return -1;
     }
 
@@ -1033,8 +1033,8 @@ int read_overlay()      // read overlay/3D files, if required
     if (read_fractal_type < 0 || read_fractal_type >= +FractalType::MAX)
     {
         set_fractal_type(FractalType::MANDEL);
-        stop_msg(fmt::format(
-            "Warning: {:s} has a bad fractal type {:d}; using mandel", g_read_filename, read_fractal_type));
+        stop_msg(fmt::format("Warning: {:s} has a bad fractal type {:d}; using mandel",
+            g_read_filename.string(), read_fractal_type));
         return -1;
     }
     set_fractal_type((migrate_integer_types(read_fractal_type)));

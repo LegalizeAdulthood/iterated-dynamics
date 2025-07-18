@@ -929,7 +929,7 @@ static void cmp_line_cleanup()
         char *times_text = std::ctime(&now);
         times_text[24] = 0; //clobber newline in time string
         fmt::print(s_cmp_fp, "{:s} compare to {:s} has {:5d} errs\n", //
-            times_text, g_read_filename.c_str(), s_err_count);
+            times_text, g_read_filename.string(), s_err_count);
     }
     std::fclose(s_cmp_fp);
 }

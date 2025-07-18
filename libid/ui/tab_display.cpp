@@ -163,16 +163,16 @@ static bool tab_display2(char *msg)
         write_row(++row, "g_int_length %-d g_bf_length %-d ", g_int_length, g_bf_length);
     }
     row++;
-    show_str_var("tempdir",     g_temp_dir.string().c_str(),      &row, msg);
-    show_str_var("workdir",     g_working_dir.string().c_str(),      &row, msg);
-    show_str_var("filename",    g_read_filename.c_str(),     &row, msg);
-    show_str_var("formulafile", g_formula_filename.c_str(), &row, msg);
-    show_str_var("savename",    g_save_filename.c_str(),     &row, msg);
-    show_str_var("parmfile",    g_command_file.c_str(),  &row, msg);
-    show_str_var("ifsfile",     g_ifs_filename.c_str(),  &row, msg);
-    show_str_var("autokeyname", g_auto_name.c_str(), &row, msg);
-    show_str_var("lightname",   g_light_name.c_str(),   &row, msg);
-    show_str_var("map",         g_map_name.c_str(),     &row, msg);
+    show_str_var("tempdir",     g_temp_dir.string().c_str(),        &row, msg);
+    show_str_var("workdir",     g_working_dir.string().c_str(),     &row, msg);
+    show_str_var("filename",    g_read_filename.string().c_str(),   &row, msg);
+    show_str_var("formulafile", g_formula_filename.c_str(),         &row, msg);
+    show_str_var("savename",    g_save_filename.c_str(),            &row, msg);
+    show_str_var("parmfile",    g_command_file.c_str(),             &row, msg);
+    show_str_var("ifsfile",     g_ifs_filename.c_str(),             &row, msg);
+    show_str_var("autokeyname", g_auto_name.c_str(),                &row, msg);
+    show_str_var("lightname",   g_light_name.c_str(),               &row, msg);
+    show_str_var("map",         g_map_name.c_str(),                 &row, msg);
     write_row(row++, "Sizeof fractalspecific array %d",
               g_num_fractal_types*(int)sizeof(FractalSpecific));
     write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, g_col, row);

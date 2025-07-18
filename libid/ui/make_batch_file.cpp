@@ -1293,7 +1293,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (!g_loaded_3d)
         {
-            put_file_name("filename", g_read_filename.c_str());
+            put_file_name("filename", g_read_filename.string().c_str());
         }
         if (g_sphere)
         {

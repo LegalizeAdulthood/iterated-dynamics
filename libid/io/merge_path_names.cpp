@@ -151,3 +151,11 @@ int merge_path_names(std::string &old_full_path, const char *new_filename, CmdFi
     old_full_path = buff;
     return result;
 }
+
+int merge_path_names(std::filesystem::path &old_full_path, const char *new_filename, CmdFile mode)
+{
+    std::string buff = old_full_path.string();
+    const int result = merge_path_names(buff, new_filename, mode);
+    old_full_path = buff;
+    return result;
+}

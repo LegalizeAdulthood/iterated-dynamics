@@ -112,7 +112,7 @@ int g_distance_estimator_y_dots{};                        // y dots to use for v
 int g_bf_digits{};                                        // digits to use (force) for g_bf_math
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 bool g_start_show_orbit{};                                // show orbits on at start of fractal
-std::string g_read_filename;                              // name of fractal input file
+std::filesystem::path g_read_filename;                    // name of fractal input file
 std::filesystem::path g_temp_dir;                         // name of temporary directory
 std::filesystem::path g_working_dir;                      // name of directory for misc files
 std::filesystem::path g_organize_formulas_dir;            // name of directory for orgfrm files
@@ -227,9 +227,9 @@ static bool s_init_corners{};    // corners set via corners= or center-mag=?
 static bool s_init_params{};     // params set via params=?
 static bool s_init_functions{};  // trig functions set via function=?
 
-static std::string extract_file_name(const std::string &source)
+static std::string extract_file_name(const std::filesystem::path &source)
 {
-    return std::filesystem::path(source).filename().string();
+    return source.filename().string();
 }
 
 // cmdfiles(argc,argv) process the command-line arguments

@@ -244,7 +244,7 @@ extern bool                  g_overwrite_file;
 extern bool                  g_potential_16bit;
 extern bool                  g_potential_flag;
 extern bool                  g_read_color;
-extern std::string           g_read_filename;
+extern std::filesystem::path g_read_filename;
 extern RecordColorsMode      g_record_colors;
 extern std::string           g_save_filename;
 extern float                 g_screen_aspect;

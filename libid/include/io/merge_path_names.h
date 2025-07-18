@@ -2,6 +2,7 @@
 //
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 enum class CmdFile;
@@ -13,3 +14,4 @@ enum class CmdFile;
 // (modes AT_CMD_LINE and SSTOOLS_INI)
 int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode);
 int merge_path_names(std::string &old_full_path, const char *new_filename, CmdFile mode);
+int merge_path_names(std::filesystem::path &old_full_path, const char *new_filename, CmdFile mode);

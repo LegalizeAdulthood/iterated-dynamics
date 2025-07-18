@@ -5,6 +5,7 @@
 #include <config/port.h>
 
 #include <cassert>
+#include <filesystem>
 #include <string>
 
 struct VideoInfo;
@@ -368,4 +369,13 @@ inline bool driver_get_filename(
     const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
 {
     return g_driver->get_filename(hdg, type_desc, type_wildcard, result_filename);
+}
+
+inline bool driver_get_filename(
+    const char *hdg, const char *type_desc, const char *type_wildcard, std::filesystem::path &result_path)
+{
+    std::string result_filename = result_path.string();
+    const bool result = g_driver->get_filename(hdg, type_desc, type_wildcard, result_filename);
+    result_path = result_filename;
+    return result;
 }
