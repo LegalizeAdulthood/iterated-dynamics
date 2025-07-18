@@ -356,7 +356,7 @@ init_unix_window()
         size_hints = XAllocSizeHints();
         if (size_hints == nullptr)
         {
-            std::fprintf(stderr, "Could not allocate memory for X size hints \n");
+            std::fprintf(stderr, "Could not allocate memory for X size hints\n");
             std::fprintf(stderr, "Note: id can run without X in -disk mode\n");
             std::exit(-1);
         }

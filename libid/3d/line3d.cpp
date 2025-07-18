@@ -2117,7 +2117,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
 
     if (g_raytrace_format == RayTraceFormat::POVRAY)
     {
-        fmt::print(s_raytrace_file, " END_TRIANGLE \n");
+        fmt::print(s_raytrace_file, " END_TRIANGLE\n");
         if (!g_brief)
         {
             fmt::print(s_raytrace_file,

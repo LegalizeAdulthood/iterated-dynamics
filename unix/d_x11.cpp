@@ -1507,7 +1507,7 @@ bool X11Driver::init(int *argc, char **argv)
       such ieee trapping is supported.
     */
     if (ieee_handler("set", "common", continue_hdl) != 0)
-        std::printf("ieee trapping not supported here \n");
+        std::printf("ieee trapping not supported here\n");
 #endif
 
     // filter out x11 arguments

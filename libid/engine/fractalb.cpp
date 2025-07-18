@@ -108,7 +108,7 @@ void show_globals_bf(const char *s)
     if (stop_msg(fmt::format(
             "{:s}\n"                                                                             //
             "g_bn_step={:d} g_bn_length={:d} g_int_length={:d} g_r_length={:d} g_padding={:d}\n" //
-            "g_shift_factor={:d} decimals={:d} g_bf_length={:d} g_r_bf_length={:d} \n"           //
+            "g_shift_factor={:d} decimals={:d} g_bf_length={:d} g_r_bf_length={:d}\n"            //
             "g_bf_decimals={:d} ",                                                               //
             s,                                                                                   //
             g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,                         //
