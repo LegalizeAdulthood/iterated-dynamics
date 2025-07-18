@@ -66,12 +66,12 @@ static bool look(MainContext &context)
                 * make room, lose the 1st one */
             for (int tmp = 1; tmp < 16; tmp++)
             {
-                g_file_name_stack[tmp - 1] = g_file_name_stack[tmp];
+                g_filename_stack[tmp - 1] = g_filename_stack[tmp];
             }
             g_filename_stack_index = 14;
         }
         g_filename_stack_index++;
-        g_file_name_stack[g_filename_stack_index] = g_browse_name;
+        g_filename_stack[g_filename_stack_index] = g_browse_name;
         merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
         if (g_ask_video)
         {
@@ -85,7 +85,7 @@ static bool look(MainContext &context)
         {
             // go back one file if somewhere to go (i.e. browsing)
             g_filename_stack_index--;
-            while (g_file_name_stack[g_filename_stack_index].empty()
+            while (g_filename_stack[g_filename_stack_index].empty()
                 && g_filename_stack_index >= 0)
             {
                 g_filename_stack_index--;
@@ -94,7 +94,7 @@ static bool look(MainContext &context)
             {
                 break;
             }
-            g_browse_name = g_file_name_stack[g_filename_stack_index];
+            g_browse_name = g_filename_stack[g_filename_stack_index];
             merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
             g_browsing = true;
             g_show_file = ShowFile::LOAD_IMAGE;
@@ -443,7 +443,7 @@ static MainState unstack_file(bool &stacked)
 
     // go back one file if somewhere to go (i.e. browsing)
     g_filename_stack_index--;
-    while (g_file_name_stack[g_filename_stack_index].empty() && g_filename_stack_index >= 0)
+    while (g_filename_stack[g_filename_stack_index].empty() && g_filename_stack_index >= 0)
     {
         g_filename_stack_index--;
     }
@@ -451,7 +451,7 @@ static MainState unstack_file(bool &stacked)
     {
         return MainState::NOTHING;
     }
-    g_browse_name = g_file_name_stack[g_filename_stack_index];
+    g_browse_name = g_filename_stack[g_filename_stack_index];
     merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
     g_browsing = true;
     g_browse_sub_images = true;

@@ -100,7 +100,7 @@ CalcStatus g_calc_status{CalcStatus::NO_FRACTAL};               //
 long g_calc_time{};                                             //
 SaveDAC g_save_dac{};                                           // save-the-Video DAC flag
 bool g_browsing{};                                              // browse mode flag
-std::string g_file_name_stack[16]{};                            // array of file names used while browsing
+std::string g_filename_stack[16]{};                            // array of file names used while browsing
 int g_filename_stack_index{};                                   //
 double g_smallest_window_display_size{};                        //
 int g_smallest_box_size_shown{};                                //
@@ -246,7 +246,7 @@ static bool main_restore_start(MainContext &context)
             }
 
             g_filename_stack_index = 0; // 'r' reads first filename for browsing
-            g_file_name_stack[g_filename_stack_index] = g_browse_name;
+            g_filename_stack[g_filename_stack_index] = g_browse_name;
         }
 
         g_evolving = EvolutionModeFlags::NONE;

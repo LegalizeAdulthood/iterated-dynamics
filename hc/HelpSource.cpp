@@ -1198,14 +1198,14 @@ static void check_command_length(int err_offset, int len)
     }
 }
 
-static std::FILE *open_include(const std::string &file_name)
+static std::FILE *open_include(const std::string &filename)
 {
-    std::FILE *result = std::fopen(file_name.c_str(), "rt");
+    std::FILE *result = std::fopen(filename.c_str(), "rt");
     if (result == nullptr)
     {
         for (const std::string &dir : g_src.include_paths)
         {
-            const std::string path{dir + '/' + file_name};
+            const std::string path{dir + '/' + filename};
             result = std::fopen(path.c_str(), "rt");
             if (result != nullptr)
             {
@@ -1602,8 +1602,8 @@ void read_src(const std::string &fname, Mode mode)
                 }
                 if (string_case_equal(s_cmd, "Include ", 8))
                 {
-                    const std::string file_name = &s_cmd[8];
-                    if (std::FILE *new_file = open_include(file_name))
+                    const std::string filename = &s_cmd[8];
+                    if (std::FILE *new_file = open_include(filename))
                     {
                         Include top{};
                         top.fname = g_current_src_filename;
@@ -1612,13 +1612,13 @@ void read_src(const std::string &fname, Mode mode)
                         top.col  = s_src_col;
                         s_include_stack.push_back(top);
                         s_src_file = new_file;
-                        g_current_src_filename = file_name;
+                        g_current_src_filename = filename;
                         g_src_line = 1;
                         s_src_col = 0;
                     }
                     else
                     {
-                        MSG_ERROR(err_offset, "Unable to open \"%s\"", file_name.c_str());
+                        MSG_ERROR(err_offset, "Unable to open \"%s\"", filename.c_str());
                     }
                     continue;
                 }

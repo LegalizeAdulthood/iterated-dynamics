@@ -78,7 +78,7 @@ static void put_param(const char *param, ...);
 static void put_param_line();
 static void put_float(int slash, double value, int prec);
 static void put_bf(int slash, BigFloat r, int prec);
-static void put_file_name(const char *keyword, const char *fname);
+static void put_filename(const char *keyword, const char *fname);
 static void strip_zeros(char *buf);
 static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj);
 
@@ -833,7 +833,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (g_fractal_type == FractalType::FORMULA)
         {
-            put_file_name("formulafile", g_formula_filename.c_str());
+            put_filename("formulafile", g_formula_filename.c_str());
             put_param(" formulaname=%s", g_formula_name.c_str());
             if (g_frm_uses_ismand)
             {
@@ -842,12 +842,12 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (g_fractal_type == FractalType::L_SYSTEM)
         {
-            put_file_name("lfile", g_l_system_filename.c_str());
+            put_filename("lfile", g_l_system_filename.c_str());
             put_param(" lname=%s", g_l_system_name.c_str());
         }
         if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
         {
-            put_file_name("ifsfile", g_ifs_filename.c_str());
+            put_filename("ifsfile", g_ifs_filename.c_str());
             put_param(" ifs=%s", g_ifs_name.c_str());
         }
         if (g_fractal_type == FractalType::INVERSE_JULIA)
@@ -1293,7 +1293,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (!g_loaded_3d)
         {
-            put_file_name("filename", g_read_filename.string().c_str());
+            put_filename("filename", g_read_filename.string().c_str());
         }
         if (g_sphere)
         {
@@ -1617,7 +1617,7 @@ do_colors:
     restore_stack(saved);
 }
 
-static void put_file_name(const char *keyword, const char *fname)
+static void put_filename(const char *keyword, const char *fname)
 {
     if (*fname && !ends_with_slash(fname))
     {

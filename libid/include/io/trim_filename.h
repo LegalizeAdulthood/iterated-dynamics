@@ -5,8 +5,8 @@
 #include <filesystem>
 #include <string>
 
-std::string trim_file_name(const std::string &file_name, int length);
-inline std::string trim_file_name(const std::filesystem::path &file_name, int length)
+std::string trim_filename(const std::string &filename, int length);
+inline std::string trim_filename(const std::filesystem::path &filename, int length)
 {
-    return trim_file_name(file_name.string(), length);
+    return trim_filename(filename.string(), length);
 }
