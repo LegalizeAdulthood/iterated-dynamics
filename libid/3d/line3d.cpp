@@ -2122,7 +2122,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
         {
             fmt::print(s_raytrace_file,
                     "  TEXTURE\n"
-                    "   COLOR  RED{:4.4f} GREEN{:4.4f} BLUE{:4.4f}\n"
+                    "   COLOR  RED {:4.4f} GREEN {:4.4f} BLUE {:4.4f}\n"
                     "      AMBIENT 0.25 DIFFUSE 0.75 END_TEXTURE\n",
                     c[0], c[1], c[2]);
         }
