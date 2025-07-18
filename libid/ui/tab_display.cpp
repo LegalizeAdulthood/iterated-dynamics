@@ -167,7 +167,7 @@ static bool tab_display2(char *msg)
     show_str_var("workdir",     g_working_dir.string().c_str(),     &row, msg);
     show_str_var("filename",    g_read_filename.string().c_str(),   &row, msg);
     show_str_var("formulafile", g_formula_filename.c_str(),         &row, msg);
-    show_str_var("savename",    g_save_filename.c_str(),            &row, msg);
+    show_str_var("savename",    g_save_filename.string().c_str(),   &row, msg);
     show_str_var("parmfile",    g_command_file.c_str(),             &row, msg);
     show_str_var("ifsfile",     g_ifs_filename.c_str(),             &row, msg);
     show_str_var("autokeyname", g_auto_name.c_str(),                &row, msg);
@@ -363,7 +363,7 @@ top:
     }
     start_row += add_row;
     driver_put_string(start_row, 2, C_GENERAL_MED, "Savename: ");
-    driver_put_string(start_row, -1, C_GENERAL_HI, g_save_filename);
+    driver_put_string(start_row, -1, C_GENERAL_HI, g_save_filename.string());
 
     ++start_row;
 

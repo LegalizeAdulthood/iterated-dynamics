@@ -4,9 +4,9 @@
 
 #include <config/port.h>
 
-#include <string>
+#include <filesystem>
 
 extern Byte                  g_block[];
 
-int save_image(std::string &filename);
+int save_image(std::filesystem::path &filename);
 bool encoder();

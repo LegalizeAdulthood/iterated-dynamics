@@ -246,7 +246,7 @@ extern bool                  g_potential_flag;
 extern bool                  g_read_color;
 extern std::filesystem::path g_read_filename;
 extern RecordColorsMode      g_record_colors;
-extern std::string           g_save_filename;
+extern std::filesystem::path g_save_filename;
 extern float                 g_screen_aspect;
 extern id::SearchPath        g_search_for;
 extern ShowFile              g_show_file;

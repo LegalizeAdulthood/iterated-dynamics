@@ -163,7 +163,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
             driver_put_string(-1, -1, C_DVID_LO, "  Colors: ");
             driver_put_string(-1, -1, C_DVID_LO, std::to_string(colors));
         }
-        driver_put_string(BOX_ROW+8, BOX_COL+4, C_DVID_LO, "Save name: " + g_save_filename);
+        driver_put_string(BOX_ROW+8, BOX_COL+4, C_DVID_LO, "Save name: " + g_save_filename.string());
         driver_put_string(BOX_ROW+10, BOX_COL+4, C_DVID_LO, "Status:");
         dvid_status(0, "clearing the 'screen'");
     }

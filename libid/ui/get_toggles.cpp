@@ -17,6 +17,7 @@
 #include <fmt/format.h>
 
 #include <algorithm>
+#include <cassert>
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -39,7 +40,6 @@
 int get_toggles()
 {
     const char *choices[20];
-    char prev_save_name[ID_FILE_MAX_DIR + 1];
     FullScreenValues values[25];
     int old_sound_flag;
     const char *calc_modes[] = {
@@ -166,17 +166,10 @@ int get_toggles()
 
     choices[++k] = "Savename (.GIF implied)";
     values[k].type = 's';
-    std::strcpy(prev_save_name, g_save_filename.c_str());
-    const char *save_name_ptr = std::strrchr(g_save_filename.c_str(), SLASH_CH);
-    if (save_name_ptr == nullptr)
-    {
-        save_name_ptr = g_save_filename.c_str();
-    }
-    else
-    {
-        save_name_ptr++; // point past slash
-    }
-    std::strcpy(values[k].uval.sval, save_name_ptr);
+    std::filesystem::path prev_save_name = g_save_filename;
+    assert(g_save_filename.filename().string().length() < 16);
+    std::strncpy(values[k].uval.sval, g_save_filename.filename().string().c_str(), 15);
+    values[k].uval.sval[15] = '\0'; // ensure null-termination
 
     choices[++k] = "File Overwrite ('overwrite=')";
     values[k].type = 'y';
@@ -352,8 +345,8 @@ int get_toggles()
         j++;
     }
 
-    g_save_filename = std::string{g_save_filename.c_str(), save_name_ptr} + values[++k].uval.sval;
-    if (std::strcmp(g_save_filename.c_str(), prev_save_name) != 0)
+    g_save_filename = g_save_filename.parent_path() / values[++k].uval.sval;
+    if (g_save_filename != prev_save_name)
     {
         g_resave_flag = TimedSave::NONE;
         g_started_resaves = false; // forget pending increment

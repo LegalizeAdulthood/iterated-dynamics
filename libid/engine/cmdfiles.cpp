@@ -117,7 +117,7 @@ std::filesystem::path g_temp_dir;                         // name of temporary d
 std::filesystem::path g_working_dir;                      // name of directory for misc files
 std::filesystem::path g_organize_formulas_dir;            // name of directory for orgfrm files
 std::string g_gif_filename_mask{"*.gif"};                 //
-std::string g_save_filename{"fract001"};                  // save files using this name
+std::filesystem::path g_save_filename{"fract001"};        // save files using this name
 bool g_potential_flag{};                                  // continuous potential enabled?
 bool g_potential_16bit{};                                 // store 16 bit continuous potential values
 bool g_dither_flag{};                                     // true if we want to dither GIFs

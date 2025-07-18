@@ -122,7 +122,7 @@ static const Byte s_palette_ega[]{
 };
 
 // save-to-disk routine
-int save_image(std::string &filename)
+int save_image(std::filesystem::path &filename)
 {
     std::filesystem::path open_file;
     std::string open_file_ext;
