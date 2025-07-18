@@ -4,46 +4,42 @@
 
 #include <gtest/gtest.h>
 
-#include <cstring>
+#include <string>
 
 TEST(TestUpdateSaveName, basic)
 {
-    char filename[1024];
-    std::strcpy(filename, "fract0001.gif");
+    std::string filename("fract0001.gif");
 
     update_save_name(filename);
 
-    EXPECT_EQ(std::string{"fract0002.gif"}, filename);
+    EXPECT_EQ("fract0002.gif", filename);
 }
 
 TEST(TestUpdateSaveName, noNumbersAtEnd)
 {
-    char filename[1024];
-    std::strcpy(filename, "myfract.gif");
+    std::string filename("myfract.gif");
 
     update_save_name(filename);
 
-    EXPECT_EQ(std::string{"myfract2.gif"}, filename);
+    EXPECT_EQ("myfract2.gif", filename);
 }
 
 TEST(TestUpdateSaveName, singleNumberAtEnd)
 {
-    char filename[1024];
-    std::strcpy(filename, "myfract1.gif");
+    std::string filename("myfract1.gif");
 
     update_save_name(filename);
 
-    EXPECT_EQ(std::string{"myfract2.gif"}, filename);
+    EXPECT_EQ("myfract2.gif", filename);
 }
 
 TEST(TestUpdateSaveName, nineAtEnd)
 {
-    char filename[1024];
-    std::strcpy(filename, "myfract9.gif");
+    std::string filename("myfract9.gif");
 
     update_save_name(filename);
 
-    EXPECT_EQ(std::string{"myfract10.gif"}, filename);
+    EXPECT_EQ("myfract10.gif", filename);
 }
 
 TEST(TestNextSaveName, basic)

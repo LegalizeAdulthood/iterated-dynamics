@@ -28,9 +28,3 @@ std::string next_save_name(const std::string &filename)
     }
     return file_path.string();
 }
-
-void update_save_name(char *filename)
-{
-    const std::string next{next_save_name(filename)};
-    std::strcpy(filename, next.c_str());
-}
