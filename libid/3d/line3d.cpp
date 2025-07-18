@@ -44,7 +44,7 @@ struct PointColorT
 {
     T x;
     T y;
-    int color;
+    T color;
 };
 
 using PointColor = PointColorT<int>;
@@ -591,7 +591,7 @@ int line3d(Byte * pixels, unsigned line_len)
 
             if (g_raytrace_format == RayTraceFormat::ACROSPIN)       // Output vertex info for Acrospin
             {
-                fmt::print(s_raytrace_file, "{:4.4f} {:4.4f} {:4.4f} R{:d}C{:d}\n", //
+                fmt::print(s_raytrace_file, "{: 4.4f} {: 4.4f} {: 4.4f} R{:d}C{:d}\n", //
                     f_cur.x, f_cur.y, static_cast<double>(f_cur.color), s_ro, s_co);
                 s_co_max = std::max(s_co, s_co_max);
                 s_co++;
@@ -1817,7 +1817,7 @@ TABLES
 TABLE
   2
 LAYER
-70
+ 70
      2
   0
 LAYER
@@ -1977,9 +1977,9 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
     // Color of triangle is average of colors of its vertices
     if (!g_brief)
     {
-        for (int i = 0; i <= 2; i++)
+        for (int i = 0; i < 3; i++)
         {
-            c[i] = (float) (g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i]) / (3.0f * 255.0f);
+            c[i] = static_cast<float>(g_dac_box[c1][i] + g_dac_box[c2][i] + g_dac_box[c3][i]) / (3.0F * 255.0F);
         }
     }
 
@@ -2015,7 +2015,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
     {
         for (int i = 0; i <= 2; i++)
         {
-            fmt::print(s_raytrace_file, "{:4.4f} ", c[i]);
+            fmt::print(s_raytrace_file, "{: 4.4f} ", c[i]);
         }
     }
 
@@ -2097,11 +2097,11 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
             }
             else if (!(g_raytrace_format == RayTraceFormat::MTV || g_raytrace_format == RayTraceFormat::RAYSHADE))
             {
-                fmt::print(s_raytrace_file, "{:4.4f} ", pt_t[i][j]); // Right-handed
+                fmt::print(s_raytrace_file, "{: 4.4f} ", pt_t[i][j]); // Right-handed
             }
             else
             {
-                fmt::print(s_raytrace_file, "{:4.4f} ", pt_t[2 - i][j]);     // Left-handed
+                fmt::print(s_raytrace_file, "{: 4.4f} ", pt_t[2 - i][j]);     // Left-handed
             }
         }
 

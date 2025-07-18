@@ -23,7 +23,7 @@ function(add_raytrace_test name)
         "ambient=20" "rotation=60/30/0" "perspective=0" "xyshift=0/0"
         "ray=${RAYTRACE_TYPE_${name}}"
         "savedir=."
-        "raytrace.gif"
+        "${CMAKE_CURRENT_SOURCE_DIR}/raytrace.gif"
     )
     add_test(NAME RayTraceTest.${name}
         COMMAND ${CMAKE_COMMAND}
@@ -48,5 +48,5 @@ function(add_raytrace_test name)
 endfunction()
 
 foreach(raytrace acrospin dxf mtv povray raw rayshade vivid)
-    add_raytrace_test("${raytrace}" DISABLED)
+    add_raytrace_test("${raytrace}")
 endforeach()
