@@ -1072,7 +1072,7 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     }
 
     g_parameter_file = cmd.value;
-    if (std::strchr(g_parameter_file.c_str(), '.') == nullptr)
+    if (!has_ext(g_parameter_file))
     {
         g_parameter_file += ".par";
     }
