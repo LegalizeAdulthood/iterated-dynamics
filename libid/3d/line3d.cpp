@@ -120,7 +120,7 @@ static int s_haze_mult{};                                //
 static Byte s_t24 = 24;                                  //
 static Byte s_t32 = 32;                                  //
 static Byte s_upr_lwr[4]{};                              //
-static bool s_t_safe{};                          // Original Targa Image successfully copied to targa_temp
+static bool s_temp_safe{};                       // Original Targa Image successfully copied to targa_temp
 static Vector s_light_direction{};               //
 static Byte s_real_color{};                      // Actual color of cur pixel
 static int s_ro{}, s_co{}, s_co_max{};           // For use in Acrospin support
@@ -1651,7 +1651,7 @@ static bool targa_validate(const std::string &filename)
 
     std::fclose(fp);                  // Close the source
 
-    s_t_safe = true;              // Original file successfully copied to targa_temp
+    s_temp_safe = true;               // Original file successfully copied to targa_temp
     return false;
 }
 
@@ -2351,7 +2351,7 @@ static void line3d_cleanup()
         // Finish up targa files
         s_targa_header_24 = 18;         // Reset Targa header size
         end_disk();
-        if (g_debug_flag == DebugFlags::NONE && (!s_t_safe || s_error != FileError::NONE) && g_targa_overlay)
+        if (g_debug_flag == DebugFlags::NONE && (!s_temp_safe || s_error != FileError::NONE) && g_targa_overlay)
         {
             dir_remove(g_working_dir, g_light_name);
             std::rename(s_targa_temp.c_str(), g_light_name.c_str());
@@ -2362,7 +2362,7 @@ static void line3d_cleanup()
         }
     }
     s_error = FileError::NONE;
-    s_t_safe = false;
+    s_temp_safe = false;
 }
 
 static void set_upr_lwr()
@@ -2420,7 +2420,7 @@ static int first_time(int line_len, Vector v)
 
     if (g_which_image < StereoImage::BLUE)
     {
-        s_t_safe = false; // Not safe yet to mess with the source image
+        s_temp_safe = false; // Not safe yet to mess with the source image
     }
 
     if (g_targa_out && !(glasses_alternating_or_superimpose() && g_which_image == StereoImage::BLUE))
