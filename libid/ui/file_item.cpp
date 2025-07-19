@@ -283,7 +283,7 @@ top:
             continue;
         }
         buf[len] = 0;
-        while (c != '{' &&  c != EOF)
+        while (c != '{' && !is_newline(c) && c != EOF)
         {
             if (c == ';')
             {
@@ -293,11 +293,11 @@ top:
             {
                 c = std::getc(infile);
                 ++file_offset;
-                if (is_newline(c))
-                {
-                    goto top;
-                }
             }
+        }
+        if (is_newline(c))
+        {
+            continue;
         }
         if (c == '{')
         {
