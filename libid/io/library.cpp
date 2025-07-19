@@ -130,7 +130,16 @@ static std::string_view subdir(WriteFile kind)
 
 std::filesystem::path get_save_path(WriteFile file, const std::string &filename)
 {
-    return (s_save_path.empty() ? g_save_dir : s_save_path) / subdir(file) / filename;
+    std::filesystem::path dir = (s_save_path.empty() ? g_save_dir : s_save_path) / subdir(file);
+    if (!exists(dir))
+    {
+        std::error_code ec;
+        if (create_directories(dir, ec); ec)
+        {
+            return {};
+        }
+    }
+    return dir / filename;
 }
 
 } // namespace id::io
