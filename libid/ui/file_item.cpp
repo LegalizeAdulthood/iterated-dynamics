@@ -209,6 +209,11 @@ bool find_file_item(
     return false;
 }
 
+static bool is_newline(int c)
+{
+    return c == '\n' || c == '\r';
+}
+
 // skip to next non-white space character and return it
 static int skip_white_space(std::FILE *infile, long *file_offset)
 {
@@ -218,7 +223,7 @@ static int skip_white_space(std::FILE *infile, long *file_offset)
         c = std::getc(infile);
         (*file_offset)++;
     }
-    while (c == ' ' || c == '\t' || c == '\n' || c == '\r');
+    while (c == ' ' || c == '\t' || is_newline(c));
     return c;
 }
 
@@ -230,8 +235,7 @@ static int skip_comment(std::FILE *infile, long *file_offset)
     {
         c = std::getc(infile);
         (*file_offset)++;
-    }
-    while (c != '\n' && c != '\r' && c != EOF);
+    } while (!is_newline(c) && c != EOF);
     return c;
 }
 
@@ -265,7 +269,7 @@ top:
         int len = 0;
         // allow spaces in entry names in next
         while (c != ' ' && c != '\t' && c != '(' && c != ';' //
-            && c != '{' && c != '\n' && c != '\r' && c != EOF)
+            && c != '{' && !is_newline(c) && c != EOF)
         {
             if (len < 40)
             {
@@ -273,7 +277,7 @@ top:
             }
             c = std::getc(infile);
             ++file_offset;
-            if (c == '\n' || c == '\r')
+            if (is_newline(c))
             {
                 goto top;
             }
@@ -289,7 +293,7 @@ top:
             {
                 c = std::getc(infile);
                 ++file_offset;
-                if (c == '\n' || c == '\r')
+                if (is_newline(c))
                 {
                     goto top;
                 }
@@ -305,7 +309,7 @@ top:
                 }
                 else
                 {
-                    if (c == '\n' || c == '\r')       // reset temp_offset to
+                    if (is_newline(c))       // reset temp_offset to
                     {
                         temp_offset = file_offset;  // beginning of new line
                     }
@@ -394,7 +398,7 @@ static void format_param_file_line(int choice, char *buf)
     }
     while (c == ' ' || c == '\t' || c == ';');
     int i = 0;
-    while (i < 56 && c != '\n' && c != '\r' && c != EOF)
+    while (i < 56 && !is_newline(c) && c != EOF)
     {
         line[i++] = (char)((c == '\t') ? ' ' : c);
         c = std::getc(s_gfe_file);
