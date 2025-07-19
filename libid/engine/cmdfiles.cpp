@@ -180,8 +180,8 @@ std::filesystem::path g_formula_filename;    // file to find (type=)formulas in
 std::string g_formula_name;                  // Name of the Formula (if not null)
 std::string g_l_system_filename;             // file to find (type=)L-System's in
 std::string g_l_system_name;                 // Name of L-System
-std::string g_command_file;                  // file to find command sets in
-std::string g_command_name;                  // Name of Command set
+std::string g_parameter_file;                // file to find parameter sets in
+std::string g_parameter_set_name;            // Name of parameter set
 std::string g_ifs_filename;                  // file to find (type=)IFS in
 std::string g_ifs_name;                      // Name of the IFS def'n (if not null)
 id::SearchPath g_search_for;                 //
@@ -293,13 +293,13 @@ static void process_simple_command(char *cur_arg)
 static void process_file_set_name(const char *cur_arg, char *slash)
 {
     *slash = 0;
-    if (merge_path_names(g_command_file, &cur_arg[1], CmdFile::AT_CMD_LINE) < 0)
+    if (merge_path_names(g_parameter_file, &cur_arg[1], CmdFile::AT_CMD_LINE) < 0)
     {
-        init_msg("", g_command_file.c_str(), CmdFile::AT_CMD_LINE);
+        init_msg("", g_parameter_file.c_str(), CmdFile::AT_CMD_LINE);
     }
-    g_command_name = &slash[1];
+    g_parameter_set_name = &slash[1];
     std::FILE *init_file = nullptr;
-    if (find_file_item(g_command_file, g_command_name, &init_file, ItemType::PAR_SET) || init_file == nullptr)
+    if (find_file_item(g_parameter_file, g_parameter_set_name, &init_file, ItemType::PAR_SET) || init_file == nullptr)
     {
         arg_error(cur_arg);
     }
@@ -372,7 +372,7 @@ int cmd_files(int argc, const char *const *argv)
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
 
     //set structure of search directories
-    g_search_for.par = g_command_file;
+    g_search_for.par = g_parameter_file;
     g_search_for.frm = g_formula_filename.string();
     g_search_for.lsys = g_l_system_filename;
     g_search_for.ifs = g_ifs_filename;
@@ -449,8 +449,8 @@ static void init_vars_restart() // <ins> key init
     g_formula_name.clear();                            //
     g_l_system_filename = "id.l";                      //
     g_l_system_name.clear();                           //
-    g_command_file = "id.par";                         //
-    g_command_name.clear();                            //
+    g_parameter_file = "id.par";                       //
+    g_parameter_set_name.clear();                      //
     clear_command_comments();                          //
     g_ifs_filename = "id.ifs";                         //
     g_ifs_name.clear();                                //
@@ -1071,10 +1071,10 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
         next = slash + 1;
     }
 
-    g_command_file = cmd.value;
-    if (std::strchr(g_command_file.c_str(), '.') == nullptr)
+    g_parameter_file = cmd.value;
+    if (std::strchr(g_parameter_file.c_str(), '.') == nullptr)
     {
-        g_command_file += ".par";
+        g_parameter_file += ".par";
     }
     if (g_read_filename == DOT_SLASH)
     {
@@ -1084,11 +1084,11 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     {
         if (!g_read_filename.empty())
         {
-            g_command_name = extract_filename(g_read_filename);
+            g_parameter_set_name = extract_filename(g_read_filename);
         }
         else if (!g_map_name.empty())
         {
-            g_command_name = extract_filename(g_map_name);
+            g_parameter_set_name = extract_filename(g_map_name);
         }
         else
         {
@@ -1097,11 +1097,11 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     }
     else
     {
-        g_command_name = next;
-        assert(g_command_name.length() <= ITEM_NAME_LEN);
-        if (g_command_name.length() > ITEM_NAME_LEN)
+        g_parameter_set_name = next;
+        assert(g_parameter_set_name.length() <= ITEM_NAME_LEN);
+        if (g_parameter_set_name.length() > ITEM_NAME_LEN)
         {
-            g_command_name.resize(ITEM_NAME_LEN);
+            g_parameter_set_name.resize(ITEM_NAME_LEN);
         }
     }
     g_make_parameter_file = true;
@@ -2808,7 +2808,7 @@ static CmdArgFlags cmd_parm_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (merge_path_names(g_command_file, cmd.value, cmd.mode) < 0)
+    if (merge_path_names(g_parameter_file, cmd.value, cmd.mode) < 0)
     {
         init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
     }

@@ -3407,12 +3407,12 @@ TEST_F(TestParameterCommand, ifs3DName)
 
 TEST_F(TestParameterCommand, parmFile)
 {
-    ValueSaver saved_command_file{g_command_file, ""};
+    ValueSaver saved_command_file{g_parameter_file, ""};
 
     exec_cmd_arg("parmfile=foo.par");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("foo.par", g_command_file);
+    EXPECT_EQ("foo.par", g_parameter_file);
 }
 
 TEST_F(TestParameterCommand, stereoValue)

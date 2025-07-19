@@ -179,14 +179,14 @@ MakeParParams::MakeParParams()
             color_spec[13] = 0;
         }
     }
-    std::strcpy(input_command_file, g_command_file.c_str());
-    std::strcpy(input_command_name, g_command_name.c_str());
+    std::strcpy(input_command_file, g_parameter_file.c_str());
+    std::strcpy(input_command_name, g_parameter_set_name.c_str());
     for (int i = 0; i < 4; i++)
     {
         std::strcpy(input_comment[i], expand_command_comment(i).c_str());
     }
 
-    if (g_command_name.empty())
+    if (g_parameter_set_name.empty())
     {
         std::strcpy(input_command_name, "test");
     }
@@ -223,12 +223,12 @@ bool MakeParParams::prompt()
             return true;
         }
 
-        g_command_file = builder.read_string_buff(MAX_COMMENT_LEN - 1);
-        if (!has_ext(g_command_file))
+        g_parameter_file = builder.read_string_buff(MAX_COMMENT_LEN - 1);
+        if (!has_ext(g_parameter_file))
         {
-            g_command_file += ".par";   // default extension .par
+            g_parameter_file += ".par";   // default extension .par
         }
-        g_command_name = builder.read_string_buff(ITEM_NAME_LEN);
+        g_parameter_set_name = builder.read_string_buff(ITEM_NAME_LEN);
         for (std::string &comment : g_command_comment)
         {
             comment = builder.read_string_buff(MAX_COMMENT_LEN - 1);
@@ -347,7 +347,7 @@ skip_ui:
                 params.max_color = g_file_colors;
             }
         }
-        fs::path out_path = get_save_name(g_command_file);
+        fs::path out_path = get_save_name(g_parameter_file);
         if (fs::exists(out_path))
         {
             // file exists
@@ -378,13 +378,13 @@ skip_ui:
             {
                 if (std::strchr(line, '{')                     // entry heading?
                     && std::sscanf(line, " %40[^ \t({]", buf2) //
-                    && string_case_equal(buf2, g_command_name.c_str()))
+                    && string_case_equal(buf2, g_parameter_set_name.c_str()))
                 {
                     // entry with same name
                     if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::INFO_ONLY,
                             fmt::format("File already has an entry named {:s}\n"
                                         "{:s}",
-                                g_command_name,
+                                g_parameter_set_name,
                                 g_make_parameter_file ? "... Replacing ..."
                                                       : "Continue to replace it, Cancel to back out")))
                     {
@@ -433,9 +433,9 @@ skip_ui:
                 {
                     char piece_command_name[80];
                     int w{};
-                    while (w < (int)g_command_name.length())
+                    while (w < (int)g_parameter_set_name.length())
                     {
-                        const char c = g_command_name[w];
+                        const char c = g_parameter_set_name[w];
                         if (std::isspace(c) || c == 0)
                         {
                             break;
@@ -468,11 +468,11 @@ skip_ui:
                         " overwrite=yes"
                         " @{:s}/{:s}\n"
                         "if errorlevel 2 goto oops\n",
-                        g_command_file, piece_command_name);
+                        g_parameter_file, piece_command_name);
                 }
                 else
                 {
-                    fmt::print(s_param_file, "{:<19s}{{", g_command_name.c_str());
+                    fmt::print(s_param_file, "{:<19s}{{", g_parameter_set_name.c_str());
                 }
                 {
                     /* guarantee that there are no blank comments above the last
