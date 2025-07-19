@@ -195,54 +195,6 @@ bool find_file_item(
         clear_temp_msg();
     }
 
-    if (!found && g_organize_formulas_search && item_type == ItemType::L_SYSTEM)
-    {
-        split_drive_dir(g_organize_formulas_dir.string(), drive, dir);
-        fname[0] = '_';
-        fname[1] = (char) 0;
-        if (std::isalpha(item_name[0]))
-        {
-            if (!string_case_equal(item_name.c_str(), "carr", 4))
-            {
-                fname[1] = item_name[0];
-                fname[2] = (char) 0;
-            }
-            else if (std::isdigit(item_name[4]))
-            {
-                std::strcat(fname, "rc");
-                fname[3] = item_name[4];
-                fname[4] = (char) 0;
-            }
-            else
-            {
-                std::strcat(fname, "rc");
-            }
-        }
-        else if (std::isdigit(item_name[0]))
-        {
-            std::strcat(fname, "num");
-        }
-        else
-        {
-            std::strcat(fname, "chr");
-        }
-        make_path(full_path, drive, dir, fname, default_extension.c_str());
-        infile = std::fopen(full_path, "rb");
-        if (infile != nullptr)
-        {
-            if (search_for_entry(infile, item_name.c_str()))
-            {
-                filename = full_path;
-                found = true;
-            }
-            else
-            {
-                std::fclose(infile);
-                infile = nullptr;
-            }
-        }
-    }
-
     if (!found)
     {
         stop_msg(fmt::format("'{:s}' file entry item not found", item_name));

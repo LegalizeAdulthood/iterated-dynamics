@@ -2723,7 +2723,7 @@ static CmdArgFlags cmd_orbit_save_name(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
-// orgfrmdir=?
+// orgfrmdir=? [deprecated]
 static CmdArgFlags cmd_org_frm_dir(const Command &cmd)
 {
     if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
@@ -2734,8 +2734,6 @@ static CmdArgFlags cmd_org_frm_dir(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_organize_formulas_search = true;
-    g_organize_formulas_dir = cmd.value;
     return CmdArgFlags::NONE;
 }
 

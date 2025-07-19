@@ -2651,18 +2651,6 @@ TEST_F(TestParameterCommand, fastRestoreYes)
     EXPECT_TRUE(g_fast_restore);
 }
 
-TEST_F(TestParameterCommand, orgFrmDir)
-{
-    ValueSaver saved_organize_formulas_search{g_organize_formulas_search, false};
-    ValueSaver saved_organize_formulas_dir{g_organize_formulas_dir, "fmeh"};
-
-    exec_cmd_arg(std::string{"orgfrmdir="} + ID_TEST_DATA_DIR);
-
-    EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_TRUE(g_organize_formulas_search);
-    EXPECT_EQ(ID_TEST_DATA_DIR, adjust_dir(g_organize_formulas_dir.string()));
-}
-
 TEST_F(TestParameterCommand, biomorph)
 {
     ValueSaver saved_user_biomorph_value{g_user_biomorph_value, 999};

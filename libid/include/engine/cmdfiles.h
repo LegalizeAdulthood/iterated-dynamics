@@ -237,8 +237,6 @@ extern bool                  g_new_bifurcation_functions_loaded;
 extern int                   g_orbit_delay;
 extern int                   g_orbit_save_flags;
 extern std::string           g_orbit_save_name;
-extern std::filesystem::path g_organize_formulas_dir;
-extern bool                  g_organize_formulas_search;
 extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;
 extern bool                  g_potential_16bit;
