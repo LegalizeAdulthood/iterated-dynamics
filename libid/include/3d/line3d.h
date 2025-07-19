@@ -47,4 +47,5 @@ extern int                   g_yy_adjust;
 
 int line3d(Byte *pixels, unsigned line_len);
 int targa_color(int x, int y, int color);
-bool start_targa(const std::string &filename, std::FILE *source, bool overlay);
+bool start_targa_overlay(const std::string &filename, std::FILE *source);
+bool start_targa(const std::string &filename);
