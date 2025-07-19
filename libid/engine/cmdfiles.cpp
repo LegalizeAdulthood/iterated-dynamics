@@ -176,7 +176,7 @@ int g_transparent_color_3d[2]{};             // transparency min/max values
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?
-std::string g_formula_filename;              // file to find (type=)formulas in
+std::filesystem::path g_formula_filename;    // file to find (type=)formulas in
 std::string g_formula_name;                  // Name of the Formula (if not null)
 std::string g_l_system_filename;             // file to find (type=)L-System's in
 std::string g_l_system_name;                 // Name of L-System
@@ -373,7 +373,7 @@ int cmd_files(int argc, const char *const *argv)
 
     //set structure of search directories
     g_search_for.par = g_command_file;
-    g_search_for.frm = g_formula_filename;
+    g_search_for.frm = g_formula_filename.string();
     g_search_for.lsys = g_l_system_filename;
     g_search_for.ifs = g_ifs_filename;
     return 0;

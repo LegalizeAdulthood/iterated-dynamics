@@ -641,7 +641,7 @@ void save_history_info()
     switch (g_fractal_type)
     {
     case FractalType::FORMULA:
-        current.filename = g_formula_filename;
+        current.filename = g_formula_filename.string();
         current.file_item_name = g_formula_name;
         break;
     case FractalType::IFS:

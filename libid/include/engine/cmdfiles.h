@@ -214,7 +214,7 @@ extern bool                  g_fast_restore;
 extern int                   g_fill_color;
 extern bool                  g_finite_attractor;
 extern bool                  g_first_init;
-extern std::string           g_formula_filename;
+extern std::filesystem::path g_formula_filename;
 extern std::string           g_formula_name;
 extern std::string           g_gif_filename_mask;
 extern std::vector<float>    g_ifs_definition;

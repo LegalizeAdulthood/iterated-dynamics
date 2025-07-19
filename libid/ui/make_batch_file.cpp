@@ -833,7 +833,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (g_fractal_type == FractalType::FORMULA)
         {
-            put_filename("formulafile", g_formula_filename.c_str());
+            put_filename("formulafile", g_formula_filename.string().c_str());
             put_param(" formulaname=%s", g_formula_name.c_str());
             if (g_frm_uses_ismand)
             {

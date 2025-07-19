@@ -166,7 +166,7 @@ static bool tab_display2(char *msg)
     show_str_var("tempdir",     g_temp_dir.string().c_str(),        &row, msg);
     show_str_var("workdir",     g_working_dir.string().c_str(),     &row, msg);
     show_str_var("filename",    g_read_filename.string().c_str(),   &row, msg);
-    show_str_var("formulafile", g_formula_filename.c_str(),         &row, msg);
+    show_str_var("formulafile", g_formula_filename.string().c_str(),&row, msg);
     show_str_var("savename",    g_save_filename.string().c_str(),   &row, msg);
     show_str_var("parmfile",    g_command_file.c_str(),             &row, msg);
     show_str_var("ifsfile",     g_ifs_filename.c_str(),             &row, msg);

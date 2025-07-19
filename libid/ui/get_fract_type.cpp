@@ -305,7 +305,7 @@ sel_type_restart:
     else if (g_fractal_type == FractalType::FORMULA)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_FORMULA);
-        std::string saved_filename{g_formula_filename};
+        std::string saved_filename{g_formula_filename.string()};
         std::string saved_name{g_formula_name};
         if (get_file_entry(ItemType::FORMULA, g_formula_filename, g_formula_name) < 0)
         {
@@ -389,21 +389,21 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     FractalType current_type = g_fractal_type;
     g_cur_fractal_specific = get_fractal_specific(current_type);
     s_tmp_stack[0] = 0;
-    HelpLabels help_formula = g_cur_fractal_specific->help_formula;
-    if (help_formula < HelpLabels::NONE)
+    HelpLabels help = g_cur_fractal_specific->help_formula;
+    if (help < HelpLabels::NONE)
     {
         const char *entry_name;
-        if (help_formula == HelpLabels::SPECIAL_FORMULA)
+        if (help == HelpLabels::SPECIAL_FORMULA)
         {
             // special for formula
             entry_name = g_formula_name.c_str();
         }
-        else if (help_formula == HelpLabels::SPECIAL_L_SYSTEM)
+        else if (help == HelpLabels::SPECIAL_L_SYSTEM)
         {
             // special for lsystem
             entry_name = g_l_system_name.c_str();
         }
-        else if (help_formula == HelpLabels::SPECIAL_IFS)
+        else if (help == HelpLabels::SPECIAL_IFS)
         {
             // special for ifs
             entry_name = g_ifs_name.c_str();
@@ -436,14 +436,14 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
                 return g_ifs_filename;
             case HelpLabels::SPECIAL_L_SYSTEM:
                 return g_l_system_filename;
-            case HelpLabels::SPECIAL_FORMULA:
-                return g_formula_filename;
             default:
                 throw std::runtime_error(
                     "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
             }
         };
-        if (find_file_item(item_file(help_formula), entry_name, &entry_file, item_for_help(help_formula)) == 0)
+        if ((help == HelpLabels::SPECIAL_FORMULA &&
+                find_file_item(g_formula_filename, entry_name, &entry_file, item_for_help(help)) == 0) ||
+            find_file_item(item_file(help), entry_name, &entry_file, item_for_help(help)) == 0)
         {
             load_entry_text(entry_file, s_tmp_stack, 17, 0, 0);
             std::fclose(entry_file);
@@ -453,12 +453,12 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             }
         }
     }
-    else if (help_formula >= HelpLabels::HELP_INDEX)
+    else if (help >= HelpLabels::HELP_INDEX)
     {
         int c;
         int lines;
-        read_help_topic(help_formula, 0, 2000, s_tmp_stack); // need error handling here ??
-        s_tmp_stack[2000-static_cast<int>(help_formula)] = 0;
+        read_help_topic(help, 0, 2000, s_tmp_stack); // need error handling here ??
+        s_tmp_stack[2000-static_cast<int>(help)] = 0;
         int i = 0;
         lines = 0;
         int j = 0;
