@@ -241,9 +241,6 @@ source_group_subdir("Math" "math")
 source_group_subdir("Miscellaneous" "misc")
 source_group_subdir("UI" "ui")
 
-set_src_dir(ui/help.cpp)
-set_src_dir(ui/id_main.cpp)
-
 target_compile_definitions(libid PUBLIC
     ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 # TODO: Figure out a better way to deal with converting packed structs on big-endian machines

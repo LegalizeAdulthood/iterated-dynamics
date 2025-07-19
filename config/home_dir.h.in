@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// DO NOT EDIT!
+//
+// Generated from home_dir.h.in
+//
+#pragma once
+
+#include <string_view>
+
+namespace id::config
+{
+
+constexpr std::string_view HOME_DIR{"@home_dir@"};
+
+} // namespace id::config

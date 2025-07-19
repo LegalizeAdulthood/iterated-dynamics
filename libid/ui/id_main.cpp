@@ -12,6 +12,7 @@
 #include "helpdefs.h"
 #include "io/load_config.h"
 #include "io/loadfile.h"
+#include "io/special_dirs.h"
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
@@ -42,6 +43,7 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
+#include <config/home_dir.h>
 #include <config/port.h>
 
 #include <algorithm>
@@ -439,11 +441,14 @@ static void set_search_dirs()
         fract_dir = ".";
     }
     g_fractal_search_dir1 = fract_dir;
-#ifdef SRCDIR
-    g_fractal_search_dir2 = SRCDIR;
-#else
-    g_fractal_search_dir2 = ".";
-#endif
+    if (std::filesystem::exists(id::config::HOME_DIR))
+    {
+        g_fractal_search_dir2 = id::config::HOME_DIR;
+    }
+    else
+    {
+        g_fractal_search_dir2 = get_executable_dir();
+    }
 }
 
 int id_main(int argc, char *argv[])

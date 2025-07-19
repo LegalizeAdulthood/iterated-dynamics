@@ -112,6 +112,9 @@ if(NOT PATH_LIMITS_FLAVOR)
 endif()
 configure_flavor_header("path_limits" "${PATH_LIMITS_FLAVOR}")
 
+# Configure HOME_DIR
+configure_file("home_dir.h.in" "include/config/home_dir.h" @ONLY)
+
 add_library(config
     driver_types.h.in
     fdio.fcntl.h.in fdio.io.h.in

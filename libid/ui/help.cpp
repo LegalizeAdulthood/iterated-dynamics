@@ -19,6 +19,7 @@
 
 #include <config/fdio.h>
 #include <config/filelength.h>
+#include <config/home_dir.h>
 #include <config/port.h>
 
 #include <fmt/format.h>
@@ -953,7 +954,7 @@ static bool can_read_file(const std::string &path)
 
 static std::string find_file(const char *filename)
 {
-    std::string path{(fs::path(SRCDIR) / filename).string()};
+    std::string path{(fs::path(id::config::HOME_DIR) / filename).string()};
     if (can_read_file(path))
     {
         return path;

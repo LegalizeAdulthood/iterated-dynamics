@@ -42,11 +42,6 @@ execute_process(COMMAND "${GITCOMMAND}" log -1 --format=%h
     OUTPUT_VARIABLE ID_GIT_HASH
     OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-function(set_src_dir src_file)
-    set_source_files_properties(${src_file}
-        PROPERTIES COMPILE_DEFINITIONS SRCDIR="${home_dir}")
-endfunction()
-
 function(source_group_subdir group subdir)
     source_group("Header Files/${group}" REGULAR_EXPRESSION "include/${subdir}/.*")
     source_group("Source Files/${group}" REGULAR_EXPRESSION "${subdir}/.*")
