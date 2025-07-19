@@ -741,8 +741,8 @@ Shell to a command prompt.  Return to Id by exiting your command shell,
 usually by entering the command "exit".
 
 <Insert>\
-Restart at the "credits" screen and reset most variables to their initial
-state.  Variables which are not reset are: savename, lightname, video,
+Restart at the "credits" screen and reset most parameters to their initial
+state.  Parameters which are not reset are: savename, lightname, video,
 startup filename.
 
 <L>\

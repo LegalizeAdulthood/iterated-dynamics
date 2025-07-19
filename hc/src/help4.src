@@ -267,7 +267,7 @@
                            light source fill types
   haze=nnn                 sets haze for distant objects if fullcolor=1
   background=nn/nn/nn      sets the TGA background color as rr/gg/bb
-  lightname=filename       fullcolor output file name, default FRACT001.TGA
+  lightname=filename       fullcolor output file name, default fract001.tga
   stereowidth=nnn          image width in inches (for RDS only so far)
 ;
 ;

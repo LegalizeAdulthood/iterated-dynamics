@@ -1572,7 +1572,7 @@ look like the screen.
 
 However, if you are worried, hit <Esc> several times and when Id gets
 to the end of the current line it will abort.  Your partial image will be
-there as light001.tga or with whatever file name you selected with the
+there as fract001.tga or with whatever file name you selected with the
 lightname option.  Examine it and adjust any parameters
 you are not happy with.  Its a little awkward, but we haven't figured
 out a better way -- yet.
