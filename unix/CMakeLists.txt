@@ -30,7 +30,6 @@ target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_include_directories(os PRIVATE ../libid/include)
 target_folder(os "Libraries")
 
-set_src_dir(unix.cpp)
 add_dependencies(os native-help)
 
 add_executable(id main.cpp)
