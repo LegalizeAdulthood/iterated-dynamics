@@ -6,6 +6,7 @@ namespace id::test::library
 {
 
 // clang-format off
+constexpr const char *ID_TEST_LIBRARY_DIR   {"@ID_TEST_LIBRARY_DIR@"};
 constexpr const char *ID_TEST_LIBRARY_DIR1  {"@ID_TEST_LIBRARY_DIR1@"};
 constexpr const char *ID_TEST_LIBRARY_DIR2  {"@ID_TEST_LIBRARY_DIR2@"};
 constexpr const char *ID_TEST_LIBRARY_DIR3  {"@ID_TEST_LIBRARY_DIR3@"};

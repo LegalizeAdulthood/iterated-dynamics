@@ -34,7 +34,7 @@ enum class WriteFile
 void clear_read_library_path();
 void add_read_library(std::filesystem::path path);
 
-std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &filename);
+std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file_path);
 
 void clear_save_library();
 void set_save_library(std::filesystem::path path);

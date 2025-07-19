@@ -170,3 +170,15 @@ TEST_F(TestLibrary, findFilePreferSearchDir2SubDir)
     EXPECT_EQ(Path{"ifs"}, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{ID_TEST_SEARCH_DIR1}, path.parent_path().parent_path()) << path;
 }
+
+TEST_F(TestLibrary, findFileAbsolutePath)
+{
+    auto file_path{std::filesystem::path{ID_TEST_LIBRARY_DIR} / ID_TEST_FRM_FILE};
+
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, file_path)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(ID_TEST_FRM_FILE, path.filename()) << path;
+    EXPECT_EQ(ID_TEST_LIBRARY_DIR, path.parent_path()) << path;
+    EXPECT_EQ(file_path, path) << path;
+}

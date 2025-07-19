@@ -47,8 +47,14 @@ void add_read_library(std::filesystem::path path)
     s_search_path.emplace_back(std::move(path));
 }
 
-std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &filename)
+std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file_path)
 {
+    if (file_path.is_absolute() && std::filesystem::exists(file_path))
+    {
+        return file_path;
+    }
+
+    const std::filesystem::path filename{file_path.filename()};
     for (const std::filesystem::path &dir : s_search_path)
     {
         if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
