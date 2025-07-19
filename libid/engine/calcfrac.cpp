@@ -42,6 +42,7 @@
 #include "fractals/newton.h"
 #include "fractals/parser.h"
 #include "io/check_write_file.h"
+#include "io/library.h"
 #include "io/save_timer.h"
 #include "io/update_save_name.h"
 #include "math/arg.h"
@@ -506,8 +507,9 @@ static void init_calc_fract()
     }
     if (g_true_color)
     {
-        check_write_file(g_light_name, ".tga");
-        if (!start_targa(g_light_name))
+        std::string light_path{id::io::get_save_path(id::io::WriteFile::IMAGE, g_light_name).string()};
+        check_write_file(light_path, ".tga");
+        if (!start_targa(light_path))
         {
             // Have to force passes = 1
             g_std_calc_mode = CalcMode::ONE_PASS;

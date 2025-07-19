@@ -1480,13 +1480,13 @@ static void file_error(const std::string &filename, FileError error)
 //
 // *********************************************************************
 
-static bool start_targa_overlay(const std::string &filename, std::FILE *source, bool overlay)
+static bool start_targa_overlay(const std::string &path, std::FILE *source, bool overlay)
 {
     // Open File for both reading and writing
-    std::FILE *fps = dir_fopen(g_working_dir, filename, "w+b");
+    std::FILE *fps = std::fopen(path.c_str(), "w+b");
     if (fps == nullptr)
     {
-        file_error(filename, FileError::OPEN_FAILED);
+        file_error(path, FileError::OPEN_FAILED);
         return true;            // Oops, something's wrong!
     }
 
@@ -1564,8 +1564,8 @@ static bool start_targa_overlay(const std::string &filename, std::FILE *source, 
             {
                 std::fclose(source);
             }
-            dir_remove(g_working_dir, filename);
-            file_error(filename, FileError::DISK_FULL);
+            dir_remove(g_working_dir, path);
+            file_error(path, FileError::DISK_FULL);
             return true;
         }
         if (driver_key_pressed())
@@ -1577,26 +1577,32 @@ static bool start_targa_overlay(const std::string &filename, std::FILE *source, 
     if (targa_start_disk(fps, s_targa_header_24) != 0)
     {
         end_disk();
-        dir_remove(g_working_dir, filename);
+        dir_remove(g_working_dir, path);
         return true;
     }
     return false;
 }
 
-bool start_targa_overlay(const std::string &filename, std::FILE *source)
+bool start_targa_overlay(const std::string &path, std::FILE *source)
 {
-    return start_targa_overlay(filename, source, true);
+    return start_targa_overlay(path, source, true);
 }
 
-bool start_targa(const std::string &filename)
+bool start_targa(const std::string &path)
 {
-    return start_targa_overlay(filename, nullptr, false);
+    return start_targa_overlay(path, nullptr, false);
 }
 
 static bool targa_validate(const std::string &filename)
 {
     // Attempt to open source file for reading
-    std::FILE *fp = dir_fopen(g_working_dir, filename, "rb");
+    std::filesystem::path path{id::io::find_file(id::io::ReadFile::IMAGE, filename)};
+    if (path.empty())
+    {
+        file_error(filename, FileError::OPEN_FAILED);
+        return true;              // Oops, file does not exist
+    }
+    std::FILE *fp = std::fopen(path.string().c_str(), "rb");
     if (fp == nullptr)
     {
         file_error(filename, FileError::OPEN_FAILED);
@@ -1654,7 +1660,8 @@ static bool targa_validate(const std::string &filename)
     std::fseek(fp, 0, SEEK_SET);
 
     // Now that we know it's a good file, create a working copy
-    if (start_targa_overlay(s_targa_temp, fp))
+    std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+    if (start_targa_overlay(temp_path.string(), fp))
     {
         return true;
     }
@@ -2363,12 +2370,15 @@ static void line3d_cleanup()
         end_disk();
         if (g_debug_flag == DebugFlags::NONE && (!s_temp_safe || s_error != FileError::NONE) && g_targa_overlay)
         {
-            dir_remove(g_working_dir, g_light_name);
-            std::rename(s_targa_temp.c_str(), g_light_name.c_str());
+            std::filesystem::path light_path{id::io::get_save_path(id::io::WriteFile::IMAGE, g_light_name)};
+            std::filesystem::remove(light_path);
+            std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+            std::filesystem::rename(temp_path, light_path);
         }
         if (g_debug_flag == DebugFlags::NONE && g_targa_overlay)
         {
-            dir_remove(g_working_dir, s_targa_temp);
+            std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+            std::filesystem::remove(temp_path);
         }
     }
     s_error = FileError::NONE;
@@ -2445,8 +2455,9 @@ static int first_time(int line_len, Vector v)
         }
         else
         {
-            check_write_file(g_light_name, ".tga");
-            if (start_targa(g_light_name))     // Open new file
+            std::string path{id::io::get_save_path(id::io::WriteFile::IMAGE, g_light_name).string()};
+            check_write_file(path, ".tga");
+            if (start_targa(path))     // Open new file
             {
                 return -1;
             }
