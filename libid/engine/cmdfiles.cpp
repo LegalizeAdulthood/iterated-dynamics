@@ -3144,6 +3144,7 @@ static CmdArgFlags cmd_r_seed(const Command &cmd)
 static CmdArgFlags cmd_save_dir(const Command &cmd)
 {
     g_save_dir = cmd.value;
+    id::io::set_save_library(cmd.value);
     return CmdArgFlags::NONE;
 }
 
