@@ -13,7 +13,7 @@ std::filesystem::path get_executable_dir()
 {
     char buffer[MAX_PATH]{};
     GetModuleFileNameA(nullptr, buffer, MAX_PATH);
-    return buffer;
+    return std::filesystem::path{buffer}.parent_path();
 }
 
 std::filesystem::path get_documents_dir()
