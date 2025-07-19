@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "engine/id_data.h"
+
 #include <io/loadmap.h>
 
 #include "expected_map.h"
@@ -15,6 +17,7 @@ using namespace id::test::data;
 TEST(TestValidateLuts, loadMap)
 {
     ValueSaver saved_map_name{g_map_name, std::string{ID_TEST_MAP_DIR} + "/foo.map"};
+    ValueSaver saved_search_dir1{g_fractal_search_dir1, ID_TEST_HOME_DIR};
 
     const bool result{validate_luts(ID_TEST_MAP_FILE)};
 
