@@ -2491,16 +2491,7 @@ static CmdArgFlags cmd_map(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    const int exist_dir = merge_path_names(g_map_name, cmd.value, cmd.mode);
-    if (exist_dir > 0)
-    {
-        return CmdArgFlags::NONE; // got a directory
-    }
-    if (exist_dir < 0) // error
-    {
-        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
-        return CmdArgFlags::NONE;
-    }
+    g_map_name = cmd.value;
     set_color_palette_name(g_map_name);
     return CmdArgFlags::NONE;
 }

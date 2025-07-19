@@ -6,4 +6,4 @@
 
 // returns true on error
 bool validate_luts(const std::string &map_name);
-void set_color_palette_name(const std::string &filename);
+void set_color_palette_name(const std::string &map_name);

@@ -4,14 +4,12 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
-#include "io/find_path.h"
 #include "io/has_ext.h"
-#include "io/merge_path_names.h"
+#include "io/library.h"
 #include "misc/version.h"
 #include "ui/rotate.h"
 #include "ui/stop_msg.h"
 
-#include <config/path_limits.h>
 #include <config/port.h>
 
 #include <fmt/format.h>
@@ -47,16 +45,13 @@ struct PaletteType
 
 bool validate_luts(const std::string &map_name)
 {
-    char    temp[ID_FILE_MAX_PATH+1];
-    char    temp_fn[ID_FILE_MAX_PATH];
-    std::strcpy(temp, g_map_name.c_str());
-    std::strcpy(temp_fn, map_name.c_str());
-    merge_path_names(temp, temp_fn, CmdFile::AT_CMD_LINE);
-    if (!has_ext(temp))   // Did name have an extension?
+    std::filesystem::path map_path{map_name};
+    if (!map_path.has_extension())
     {
-        std::strcat(temp, ".map");  // No? Then add .map
+        map_path.replace_extension(".map");
     }
-    std::FILE *f = std::fopen(find_path(temp).c_str(), "r"); // search the dos path
+    map_path = id::io::find_file(id::io::ReadFile::MAP, map_path);
+    std::FILE *f = std::fopen(map_path.string().c_str(), "r"); // search the dos path
     if (f == nullptr)
     {
         stop_msg(fmt::format("Could not load color map {:s}", map_name));
@@ -101,9 +96,9 @@ bool validate_luts(const std::string &map_name)
 
 //*************************************************************************
 
-void set_color_palette_name(const std::string &filename)
+void set_color_palette_name(const std::string &map_name)
 {
-    if (validate_luts(filename))
+    if (validate_luts(map_name))
     {
         return;
     }
