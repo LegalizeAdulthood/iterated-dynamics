@@ -34,7 +34,7 @@ extern Matrix                g_m;
 extern bool                  g_preview;
 extern int                   g_preview_factor;
 extern int                   g_randomize_3d;
-extern std::string           g_raytrace_filename;
+extern std::string           g_raytrace_filename;       // just the filename
 extern RayTraceFormat        g_raytrace_format;
 extern bool                  g_show_box;
 extern void                (*g_standard_plot)(int, int, int);

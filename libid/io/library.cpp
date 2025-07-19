@@ -37,30 +37,6 @@ static std::string_view subdir(ReadFile kind)
     throw std::runtime_error("Unknown ReadFile type " + std::to_string(static_cast<int>(kind)));
 }
 
-static std::string_view subdir(WriteFile kind)
-{
-    switch (kind)
-    {
-    case WriteFile::FORMULA:
-        return "formula";
-    case WriteFile::IFS:
-        return "ifs";
-    case WriteFile::IMAGE:
-        return "image";
-    case WriteFile::KEY:
-        return "key";
-    case WriteFile::LSYSTEM:
-        return "lsystem";
-    case WriteFile::MAP:
-        return "map";
-    case WriteFile::PARAMETER:
-        return "par";
-    case WriteFile::ROOT:
-        return {};
-    }
-    throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));
-}
-
 void clear_read_library_path()
 {
     s_search_path.clear();
@@ -125,6 +101,31 @@ void clear_save_library()
 void set_save_library(std::filesystem::path path)
 {
     s_save_path = std::move(path);
+}
+
+static std::string_view subdir(WriteFile kind)
+{
+    switch (kind)
+    {
+    case WriteFile::FORMULA:
+        return "formula";
+    case WriteFile::IFS:
+        return "ifs";
+    case WriteFile::IMAGE:
+        return "image";
+    case WriteFile::KEY:
+        return "key";
+    case WriteFile::LSYSTEM:
+        return "lsystem";
+    case WriteFile::MAP:
+        return "map";
+    case WriteFile::PARAMETER:
+        return "par";
+    case WriteFile::RAYTRACE: // no special subdir for raytrace output
+    case WriteFile::ROOT:
+        return {};
+    }
+    throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));
 }
 
 std::filesystem::path get_save_path(WriteFile file, const std::string &filename)

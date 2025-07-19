@@ -15,6 +15,7 @@
 #include "io/check_write_file.h"
 #include "io/dir_file.h"
 #include "io/gifview.h"
+#include "io/library.h"
 #include "io/loadfile.h"
 #include "io/save_file.h"
 #include "math/rand15.h"
@@ -1860,9 +1861,13 @@ ENTITIES
 static int ray_header()
 {
     // Open the ray tracing output file
-    std::string filename{get_save_name(g_raytrace_filename).string()};
-    check_write_file(filename, ".ray");
-    s_raytrace_file = std::fopen(filename.c_str(), "w");
+    std::string path{id::io::get_save_path(id::io::WriteFile::RAYTRACE, g_raytrace_filename).string()};
+    if (path.empty())
+    {
+        return -1;              // Oops, something's wrong!
+    }
+    check_write_file(path, ".ray");
+    s_raytrace_file = std::fopen(path.c_str(), "w");
     if (s_raytrace_file == nullptr)
     {
         return -1;              // Oops, something's wrong!

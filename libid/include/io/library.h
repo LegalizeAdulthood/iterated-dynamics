@@ -28,6 +28,7 @@ enum class WriteFile
     MAP,
     PARAMETER,
     ROOT,
+    RAYTRACE,
 };
 
 void clear_read_library_path();

@@ -84,7 +84,6 @@ restart_1:
     values[k].type = 'y';
     values[k].uval.ch.val = g_brief ? 1 : 0;
 
-    check_write_file(g_raytrace_filename, ".ray");
     prompts3d[++k] = "    Output file name";
     values[k].type = 's';
     std::strcpy(values[k].uval.sval, g_raytrace_filename.c_str());
