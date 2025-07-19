@@ -1582,7 +1582,7 @@ bool start_disk1(const std::string &filename, std::FILE *source, bool overlay)
     return false;
 }
 
-bool targa_validate(const std::string &filename)
+static bool targa_validate(const std::string &filename)
 {
     // Attempt to open source file for reading
     std::FILE *fp = dir_fopen(g_working_dir, filename, "rb");
