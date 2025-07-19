@@ -59,7 +59,7 @@ bool find_file_item(
     char fname[ID_FILE_MAX_FNAME];
     char ext[ID_FILE_MAX_EXT];
     char full_path[ID_FILE_MAX_PATH];
-    char default_extension[5];
+    std::string default_extension;
 
     split_path(filename, drive, dir, fname, ext);
     make_fname_ext(full_path, fname, ext);
@@ -105,25 +105,25 @@ bool find_file_item(
     case ItemType::FORMULA:
         par_search_name = "frm:";
         par_search_name += item_name;
-        std::strcpy(default_extension, ".frm");
+        default_extension = ".frm";
         split_drive_dir(g_search_for.frm, drive, dir);
         break;
     case ItemType::L_SYSTEM:
         par_search_name = "lsys:";
         par_search_name += item_name;
-        std::strcpy(default_extension, ".l");
+        default_extension = ".l";
         split_drive_dir(g_search_for.lsys, drive, dir);
         break;
     case ItemType::IFS:
         par_search_name = "ifs:";
         par_search_name += item_name;
-        std::strcpy(default_extension, ".ifs");
+        default_extension = ".ifs";
         split_drive_dir(g_search_for.ifs, drive, dir);
         break;
     case ItemType::PAR_SET:
     default:
         par_search_name = item_name;
-        std::strcpy(default_extension, ".par");
+        default_extension = ".par";
         split_drive_dir(g_search_for.par, drive, dir);
         break;
     }
@@ -168,7 +168,7 @@ bool find_file_item(
     if (!found)
     {
         // search for file
-        make_path(full_path, drive, dir, "*", default_extension);
+        make_path(full_path, drive, dir, "*", default_extension.c_str());
         for (bool more = fr_find_first(full_path); more; more = fr_find_next())
         {
             show_temp_msg(fmt::format("Searching {:13s} for {:s}      ", g_dta.filename, item_name));
@@ -226,7 +226,7 @@ bool find_file_item(
         {
             std::strcat(fname, "chr");
         }
-        make_path(full_path, drive, dir, fname, default_extension);
+        make_path(full_path, drive, dir, fname, default_extension.c_str());
         infile = std::fopen(full_path, "rb");
         if (infile != nullptr)
         {
