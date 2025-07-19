@@ -21,7 +21,7 @@ std::filesystem::path get_executable_dir()
     {
         throw std::runtime_error("Couldn't get exe path: " + std::to_string(errno));
     }
-    return std:filesystem::path{buffer}.parent_path();
+    return std::filesystem::path{buffer}.parent_path();
 }
 
 std::filesystem::path get_documents_dir()
