@@ -50,7 +50,7 @@ void create_minidump(EXCEPTION_POINTERS *ep)
     char minidump[MAX_PATH]{"id-" ID_GIT_HASH ".dmp"};
     int i{1};
     fs::path path{g_save_dir};
-    while (exists(path / minidump))
+    while (fs::exists(path / minidump))
     {
         std::sprintf(minidump, "id-" ID_GIT_HASH "-%d.dmp", i++);
     }

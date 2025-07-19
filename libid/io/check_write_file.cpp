@@ -19,7 +19,7 @@ void check_write_file(std::string &name, const char *ext)
         {
             open_file.replace_extension(ext);
         }
-        if (!exists(open_file))
+        if (!fs::exists(open_file))
         {
             name = open_file.string();
             return;

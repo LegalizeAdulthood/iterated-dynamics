@@ -376,7 +376,7 @@ void TestCommandMakePar::SetUp()
 TEST_F(TestCommandMakePar, makeParNewFile)
 {
     std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "new.par"};
-    remove(path);
+    std::filesystem::remove(path);
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
@@ -395,7 +395,7 @@ TEST_F(TestCommandMakePar, makeParNewFile)
 
 static void set_file_contents(const std::filesystem::path &path, std::string_view contents)
 {
-    remove(path);
+    std::filesystem::remove(path);
     std::ofstream file{path};
     file << contents;
 }

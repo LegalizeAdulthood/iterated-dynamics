@@ -206,15 +206,15 @@ static bool ent_less(const int lhs, const int rhs)
 
 static void update_id_cfg()
 {
-    const std::filesystem::path save_path{get_save_name("id.cfg")};
+    const fs::path save_path{get_save_name("id.cfg")};
     if (!is_writeable(save_path))
     {
         stop_msg("Can't write " + save_path.string());
         return;
     }
 
-    const std::filesystem::path cfg_path{locate_input_file("id.cfg")};
-    if (!exists(cfg_path))
+    const fs::path cfg_path{locate_input_file("id.cfg")};
+    if (!fs::exists(cfg_path))
     {
         stop_msg("Couldn't locate id.cfg, expected " + cfg_path.string() + " to exist");
         return;
@@ -227,7 +227,7 @@ static void update_id_cfg()
         return;
     }
 
-    const std::filesystem::path out_path{save_path.parent_path() / "id.tmp"};
+    const fs::path out_path{save_path.parent_path() / "id.tmp"};
     std::FILE *out_file = open_save_file(out_path.string(), "w");
     if (out_file == nullptr)
     {

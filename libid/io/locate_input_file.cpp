@@ -16,7 +16,7 @@ std::string locate_input_file(const std::string &name)
     for (std::filesystem::path path : dirs)
     {
         path /= name;
-        if (exists(path))
+        if (std::filesystem::exists(path))
         {
             return path.string();
         }

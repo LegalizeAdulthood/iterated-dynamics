@@ -28,7 +28,7 @@ std::string search_path(const char *filename, const char *path_var, std::functio
     for (const fs::path dir : parts)
     {
         fs::path candidate{dir / filename};
-        if (exists(candidate))
+        if (fs::exists(candidate))
         {
             return candidate.make_preferred().string();
         }

@@ -137,7 +137,7 @@ TEST_F(TestFindPath, notFoundInPath)
 TEST_F(TestFindPath, absolutePath)
 {
     const fs::path absoluteLocation{(fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).make_preferred()};
-    ASSERT_TRUE(exists(absoluteLocation));
+    ASSERT_TRUE(fs::exists(absoluteLocation));
 
     const std::string result = find_path(absoluteLocation.string().c_str(), m_empty_env);
 

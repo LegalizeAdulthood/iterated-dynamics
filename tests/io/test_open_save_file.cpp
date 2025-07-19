@@ -30,7 +30,7 @@ TEST(TestOpenSaveFile, filename)
         fs::remove(name);
     }
     const auto path{fs::path{ID_TEST_DATA_DIR} / name};
-    if (exists(path))
+    if (fs::exists(path))
     {
         fs::remove(path);
     }
@@ -54,7 +54,7 @@ TEST(TestOpenSaveFile, relativeDir)
     }
     const auto relative{fs::path{ID_TEST_DATA_SUBDIR_NAME} / name};
     const auto path{fs::path{ID_TEST_DATA_DIR} / relative};
-    if (exists(path))
+    if (fs::exists(path))
     {
         fs::remove(path);
     }

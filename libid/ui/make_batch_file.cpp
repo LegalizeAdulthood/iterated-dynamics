@@ -348,7 +348,7 @@ skip_ui:
             }
         }
         fs::path out_path = get_save_name(g_command_file);
-        if (exists(out_path))
+        if (fs::exists(out_path))
         {
             // file exists
             if (!is_writeable(out_path))
@@ -393,7 +393,7 @@ skip_ui:
                         infile = nullptr;
                         std::fclose(s_param_file);
                         s_param_file = nullptr;
-                        remove(out_path);
+                        fs::remove(out_path);
                         goto prompt_user;
                     }
                     while (std::strchr(line, '}') == nullptr && file_gets(line, 255, infile) > 0)
@@ -565,13 +565,13 @@ skip_ui:
         {
             // replace the original file with the new
             std::error_code ec{};
-            remove(in_path, ec);           // success assumed on these lines
+            fs::remove(in_path, ec);           // success assumed on these lines
             if (ec)
             {
                 stop_msg("Couldn't remove " + in_path.string() + ":\n" + ec.message());
                 break;
             }
-            rename(out_path, in_path, ec); // since we checked earlier
+            fs::rename(out_path, in_path, ec); // since we checked earlier
             if (ec)
             {
                 stop_msg("Couldn't rename " + out_path.string() + "\n to " + in_path.string() + ":\n" +

@@ -20,13 +20,13 @@ std::string find_path(const char *filename,
     const fs::path file_path{fs::path{filename}.make_preferred()};
 
     // check current directory if curdir= parameter set
-    if (g_check_cur_dir && exists(file_path.filename()))   // file exists
+    if (g_check_cur_dir && fs::exists(file_path.filename()))   // file exists
     {
         return (fs::current_path() / file_path.filename()).make_preferred().string();
     }
 
     // check for absolute path
-    if (file_path.is_absolute() && exists(file_path)) // file exists
+    if (file_path.is_absolute() && fs::exists(file_path)) // file exists
     {
         return file_path.string();
     }
@@ -34,7 +34,7 @@ std::string find_path(const char *filename,
     const auto check_dir = [&](const fs::path &dir)
     {
         fs::path check_path{dir / file_path};
-        return exists(check_path) ? check_path.make_preferred().string() : std::string{};
+        return fs::exists(check_path) ? check_path.make_preferred().string() : std::string{};
     };
 
     // check FRACTDIR

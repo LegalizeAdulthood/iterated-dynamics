@@ -51,7 +51,7 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
 {
     for (const std::filesystem::path &dir : s_search_path)
     {
-        if (const std::filesystem::path path = dir / subdir(kind) / filename; exists(path))
+        if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
         {
             return path;
         }
@@ -59,7 +59,7 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
 
     for (const std::filesystem::path &dir : s_search_path)
     {
-        if (const std::filesystem::path path = dir / filename; exists(path))
+        if (const std::filesystem::path path = dir / filename; std::filesystem::exists(path))
         {
             return path;
         }
@@ -67,12 +67,12 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
 
     auto check_dir = [&](const std::filesystem::path &dir) -> std::filesystem::path
     {
-        if (const std::filesystem::path path = dir / subdir(kind) / filename; exists(path))
+        if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
         {
             return path;
         }
 
-        if (const std::filesystem::path path = dir / filename; exists(path))
+        if (const std::filesystem::path path = dir / filename; std::filesystem::exists(path))
         {
             return path;
         }
@@ -131,7 +131,7 @@ static std::string_view subdir(WriteFile kind)
 std::filesystem::path get_save_path(WriteFile file, const std::string &filename)
 {
     std::filesystem::path dir = (s_save_path.empty() ? g_save_dir : s_save_path) / subdir(file);
-    if (!exists(dir))
+    if (!std::filesystem::exists(dir))
     {
         std::error_code ec;
         if (create_directories(dir, ec); ec)

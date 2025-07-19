@@ -153,7 +153,7 @@ restart:
 
     open_file = get_save_name(open_file.string());
     tmp_file = open_file;
-    if (!exists(open_file))  // file doesn't exist
+    if (!std::filesystem::exists(open_file))  // file doesn't exist
     {
         new_file = true;
     }
