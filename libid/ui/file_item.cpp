@@ -103,20 +103,17 @@ bool find_file_item(
     switch (item_type)
     {
     case ItemType::FORMULA:
-        par_search_name = "frm:";
-        par_search_name += item_name;
+        par_search_name = "frm:" + item_name;
         default_extension = ".frm";
         split_drive_dir(g_search_for.frm, drive, dir);
         break;
     case ItemType::L_SYSTEM:
-        par_search_name = "lsys:";
-        par_search_name += item_name;
+        par_search_name = "lsys:" + item_name;
         default_extension = ".l";
         split_drive_dir(g_search_for.lsys, drive, dir);
         break;
     case ItemType::IFS:
-        par_search_name = "ifs:";
-        par_search_name += item_name;
+        par_search_name = "ifs:" + item_name;
         default_extension = ".ifs";
         split_drive_dir(g_search_for.ifs, drive, dir);
         break;
@@ -267,7 +264,7 @@ top:
         // next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf)
         int len = 0;
         // allow spaces in entry names in next
-        while (c != ' ' && c != '\t' && c != '(' && c != ';'
+        while (c != ' ' && c != '\t' && c != '(' && c != ';' //
             && c != '{' && c != '\n' && c != '\r' && c != EOF)
         {
             if (len < 40)
