@@ -73,10 +73,10 @@ TEST_F(TestFindFileItem, lindenmayerSystem)
 namespace
 {
 
-class TestFindParFileItem : public TestFindFileItem
+class TestFindFileItemParFile : public TestFindFileItem
 {
 public:
-    ~TestFindParFileItem() override = default;
+    ~TestFindFileItemParFile() override = default;
 
 protected:
     std::filesystem::path m_par{std::filesystem::path{ID_TEST_PAR_DIR} / ID_TEST_PAR_FILE};
@@ -85,7 +85,7 @@ protected:
 
 } // namespace
 
-TEST_F(TestFindParFileItem, formula)
+TEST_F(TestFindFileItemParFile, formula)
 {
     m_path = "missing.frm";
 
@@ -93,9 +93,10 @@ TEST_F(TestFindParFileItem, formula)
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(g_parameter_file, m_path);
 }
 
-TEST_F(TestFindParFileItem, ifs)
+TEST_F(TestFindFileItemParFile, ifs)
 {
     m_path = "missing.ifs";
 
@@ -103,9 +104,10 @@ TEST_F(TestFindParFileItem, ifs)
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(g_parameter_file, m_path);
 }
 
-TEST_F(TestFindParFileItem, lindenmayerSystem)
+TEST_F(TestFindFileItemParFile, lindenmayerSystem)
 {
     m_path = "missing.l";
 
@@ -113,19 +115,21 @@ TEST_F(TestFindParFileItem, lindenmayerSystem)
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(g_parameter_file, m_path);
 }
 
 namespace
 {
 
-class TestFindCurrentDirFileItem : public TestFindFileItem
+class TestFindFileItemCurrentDir : public TestFindFileItem
 {
 public:
-    ~TestFindCurrentDirFileItem() override = default;
+    ~TestFindFileItemCurrentDir() override = default;
 
 protected:
     void SetUp() override
     {
+        TestFindFileItem::SetUp();
         m_path = "non-existent";
     }
 
@@ -134,7 +138,7 @@ protected:
 
 } // namespace
 
-TEST_F(TestFindCurrentDirFileItem, formula)
+TEST_F(TestFindFileItemCurrentDir, formula)
 {
     CurrentPathSaver cur_dir{ID_TEST_FRM_DIR};
     m_path /= ID_TEST_FRM_FILE;
@@ -143,9 +147,11 @@ TEST_F(TestFindCurrentDirFileItem, formula)
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(ID_TEST_FRM_FILE, m_path.filename());
+    EXPECT_EQ(std::filesystem::current_path() / ID_TEST_FRM_FILE, std::filesystem::absolute(m_path));
 }
 
-TEST_F(TestFindCurrentDirFileItem, ifs)
+TEST_F(TestFindFileItemCurrentDir, ifs)
 {
     CurrentPathSaver cur_dir{ID_TEST_IFS_DIR};
     m_path /= ID_TEST_IFS_FILE;
@@ -154,9 +160,11 @@ TEST_F(TestFindCurrentDirFileItem, ifs)
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(ID_TEST_IFS_FILE, m_path.filename());
+    EXPECT_EQ(std::filesystem::current_path() / ID_TEST_IFS_FILE, std::filesystem::absolute(m_path));
 }
 
-TEST_F(TestFindCurrentDirFileItem, lindenmayerSystem)
+TEST_F(TestFindFileItemCurrentDir, lindenmayerSystem)
 {
     CurrentPathSaver cur_dir{ID_TEST_LSYSTEM_DIR};
     m_path /= ID_TEST_LSYSTEM_FILE;
@@ -165,4 +173,6 @@ TEST_F(TestFindCurrentDirFileItem, lindenmayerSystem)
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(ID_TEST_LSYSTEM_FILE, m_path.filename());
+    EXPECT_EQ(std::filesystem::current_path() / ID_TEST_LSYSTEM_FILE, std::filesystem::absolute(m_path));
 }

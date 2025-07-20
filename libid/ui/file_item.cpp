@@ -66,6 +66,22 @@ static bool check_path(const std::filesystem::path &path, std::FILE **infile, co
     return false;
 }
 
+static const char *item_extension(ItemType item_type)
+{
+    switch (item_type)
+    {
+    case ItemType::PAR_SET:
+        return ".par";
+    case ItemType::FORMULA:
+        return ".frm";
+    case ItemType::L_SYSTEM:
+        return ".l";
+    case ItemType::IFS:
+        return ".ifs";
+    }
+    throw std::runtime_error("Unknown ItemType " + std::to_string(static_cast<int>(item_type)));
+}
+
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type)
 {
@@ -76,7 +92,6 @@ bool find_file_item(
     char fname[ID_FILE_MAX_FNAME];
     char ext[ID_FILE_MAX_EXT];
     char full_path[ID_FILE_MAX_PATH];
-    std::string default_extension;
 
     split_path(path.string(), drive, dir, fname, ext);
     make_fname_ext(full_path, fname, ext);
@@ -88,6 +103,10 @@ bool find_file_item(
         {
             make_path(full_path, "", DOT_SLASH, fname, ext);
             found = check_path(full_path, &infile, item_name);
+            if (found)
+            {
+                path = full_path;
+            }
         }
     }
 
@@ -98,27 +117,27 @@ bool find_file_item(
         {
         case ItemType::FORMULA:
             par_search_name = "frm:" + item_name;
-            default_extension = ".frm";
             split_drive_dir(g_search_for.frm, drive, dir);
             break;
         case ItemType::L_SYSTEM:
             par_search_name = "lsys:" + item_name;
-            default_extension = ".l";
             split_drive_dir(g_search_for.lsys, drive, dir);
             break;
         case ItemType::IFS:
             par_search_name = "ifs:" + item_name;
-            default_extension = ".ifs";
             split_drive_dir(g_search_for.ifs, drive, dir);
             break;
         case ItemType::PAR_SET:
         default:
             par_search_name = item_name;
-            default_extension = ".par";
             split_drive_dir(g_search_for.par, drive, dir);
             break;
         }
         found = check_path(g_parameter_file, &infile, par_search_name);
+        if (found)
+        {
+            path = g_parameter_file;
+        }
     }
 
     if (!found)
@@ -130,7 +149,7 @@ bool find_file_item(
     if (!found)
     {
         // search for file
-        make_path(full_path, drive, dir, "*", default_extension.c_str());
+        make_path(full_path, drive, dir, "*", item_extension(item_type));
         for (bool more = fr_find_first(full_path); more; more = fr_find_next())
         {
             show_temp_msg(fmt::format("Searching {:13s} for {:s}      ", g_dta.filename, item_name));
