@@ -319,7 +319,7 @@ static void process_file(char *cur_arg)
     command_file(init_file, CmdFile::AT_CMD_LINE);
 }
 
-int cmd_files(int argc, const char *const *argv)
+void cmd_files(int argc, const char *const *argv)
 {
     if (g_first_init)
     {
@@ -376,7 +376,6 @@ int cmd_files(int argc, const char *const *argv)
     g_search_for.frm = g_formula_filename.string();
     g_search_for.lsys = g_l_system_filename.string();
     g_search_for.ifs = g_ifs_filename.string();
-    return 0;
 }
 
 static void init_param_flags()

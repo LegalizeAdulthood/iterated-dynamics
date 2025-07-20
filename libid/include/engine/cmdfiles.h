@@ -262,7 +262,7 @@ extern InitOrbitMode         g_use_init_orbit;
 extern int                   g_user_biomorph_value;
 extern std::filesystem::path g_working_dir;
 
-int cmd_files(int argc, const char *const *argv);
+void cmd_files(int argc, const char *const *argv);
 CmdArgFlags load_commands(std::FILE *infile);
 void set_3d_defaults();
 int init_msg(const char *cmd_str, const char *bad_filename, CmdFile mode);
