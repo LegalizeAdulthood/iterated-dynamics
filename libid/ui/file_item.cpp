@@ -50,7 +50,7 @@ static FileEntry **s_gfe_choices{}; // for format_parmfile_line
 static const char *s_gfe_title{};
 
 bool find_file_item(
-    std::string &filename, const std::string &item_name, std::FILE **file_ptr, ItemType item_type)
+    std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type)
 {
     std::FILE *infile = nullptr;
     bool found = false;
@@ -61,11 +61,11 @@ bool find_file_item(
     char full_path[ID_FILE_MAX_PATH];
     std::string default_extension;
 
-    split_path(filename, drive, dir, fname, ext);
+    split_path(path.string(), drive, dir, fname, ext);
     make_fname_ext(full_path, fname, ext);
-    if (!string_case_equal(filename.c_str(), g_parameter_file.string().c_str()))
+    if (!string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
     {
-        infile = std::fopen(filename.c_str(), "rb");
+        infile = std::fopen(path.string().c_str(), "rb");
         if (infile != nullptr)
         {
             if (search_for_entry(infile, item_name.c_str()))
@@ -87,7 +87,7 @@ bool find_file_item(
             {
                 if (search_for_entry(infile, item_name.c_str()))
                 {
-                    filename = full_path;
+                    path = full_path;
                     found = true;
                 }
                 else
@@ -132,7 +132,7 @@ bool find_file_item(
         {
             if (search_for_entry(infile, par_search_name.c_str()))
             {
-                filename = g_parameter_file.string();
+                path = g_parameter_file.string();
                 found = true;
             }
             else
@@ -151,7 +151,7 @@ bool find_file_item(
         {
             if (search_for_entry(infile, item_name.c_str()))
             {
-                filename = full_path;
+                path = full_path;
                 found = true;
             }
             else
@@ -180,7 +180,7 @@ bool find_file_item(
                 {
                     if (search_for_entry(infile, item_name.c_str()))
                     {
-                        filename = full_path;
+                        path = full_path;
                         found = true;
                         break;
                     }
