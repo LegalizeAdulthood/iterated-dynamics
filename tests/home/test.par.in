@@ -1,0 +1,6 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
+test               { ; Hypnoteyes, Pieter Branderhorst
+   reset type=julia corners=-0.162458/0.17487/0.734422/0.984935
+   params=0.258919/1.76951e-007 colors=@chroma.map
+}

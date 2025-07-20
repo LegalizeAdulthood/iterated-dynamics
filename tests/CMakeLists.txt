@@ -103,6 +103,7 @@ add_executable(test-id
     misc/test_version.cpp
     ui/test_ChoiceBuilder.cpp
     ui/test_comments.cpp
+    ui/test_file_item.cpp
     ui/test_lowerize_parameter.cpp
     ui/test_main_menu_switch.cpp
     ui/test_make_batch_file.cpp

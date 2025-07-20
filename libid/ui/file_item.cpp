@@ -197,6 +197,7 @@ bool find_file_item(
         stop_msg(fmt::format("'{:s}' file entry item not found", item_name));
         return true;
     }
+
     // found file
     if (file_ptr != nullptr)
     {

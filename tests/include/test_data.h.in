@@ -48,6 +48,9 @@ constexpr const char *ID_TEST_FIRST_IFS_NAME{"@ID_TEST_FIRST_IFS_NAME@"};
 constexpr const char *ID_TEST_FIRST_IFS_PARAM1{"@ID_TEST_FIRST_IFS_PARAM1@"};
 constexpr const char *ID_TEST_SECOND_IFS_NAME{"@ID_TEST_SECOND_IFS_NAME@"};
 
+// L-system test data
+constexpr const char *ID_TEST_LSYSTEM_FILE{"@ID_TEST_LSYSTEM_FILE@"};
+
 // color map data
 constexpr const char *ID_TEST_MAP_DIR{"@ID_TEST_MAP_DIR@"};
 constexpr const char *ID_TEST_MAP_SUBDIR{"@ID_TEST_MAP_SUBDIR@"};
