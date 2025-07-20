@@ -1,12 +1,16 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-set(ID_TEST_DATA_DIR "${CMAKE_CURRENT_BINARY_DIR}/test_data")
-set(ID_TEST_HOME_DIR "${ID_TEST_DATA_DIR}/home")
-set(ID_TEST_SAVE_DIR "${ID_TEST_DATA_DIR}/save")
-set(ID_TEST_MAP_SUBDIR "map")
-set(ID_TEST_MAP_DIR "${ID_TEST_HOME_DIR}/${ID_TEST_MAP_SUBDIR}")
-set(ID_TEST_FRM_SUBDIR "formula")
-set(ID_TEST_FRM_DIR "${ID_TEST_HOME_DIR}/${ID_TEST_FRM_SUBDIR}")
+set(ID_TEST_DATA_DIR        "${CMAKE_CURRENT_BINARY_DIR}/test_data")
+set(ID_TEST_HOME_DIR        "${ID_TEST_DATA_DIR}/home")
+set(ID_TEST_SAVE_DIR        "${ID_TEST_DATA_DIR}/save")
+set(ID_TEST_FRM_SUBDIR      "formula")
+set(ID_TEST_FRM_DIR         "${ID_TEST_HOME_DIR}/${ID_TEST_FRM_SUBDIR}")
+set(ID_TEST_LSYSTEM_SUBDIR  "lsystem")
+set(ID_TEST_LSYSTEM_DIR     "${ID_TEST_HOME_DIR}/${ID_TEST_LSYSTEM_SUBDIR}")
+set(ID_TEST_MAP_SUBDIR      "map")
+set(ID_TEST_MAP_DIR         "${ID_TEST_HOME_DIR}/${ID_TEST_MAP_SUBDIR}")
+set(ID_TEST_PAR_SUBDIR      "par")
+set(ID_TEST_PAR_DIR         "${ID_TEST_HOME_DIR}/${ID_TEST_PAR_SUBDIR}")
 
 # id.cfg test data
 set(ID_TEST_GDI_FN "F6")

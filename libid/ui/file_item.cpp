@@ -49,6 +49,23 @@ struct GetFileEntry
 
 static GetFileEntry s_gfe{};
 
+static bool check_path(const std::filesystem::path &path, std::FILE **infile, const std::string &item_name)
+{
+    if (std::FILE *f = std::fopen(path.string().c_str(), "rb"); f != nullptr)
+    {
+        if (id::io::search_for_entry(f, item_name))
+        {
+            *infile = f;
+            return true;
+        }
+
+        std::fclose(f);
+        *infile = nullptr;
+    }
+
+    return false;
+}
+
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type)
 {
@@ -65,37 +82,12 @@ bool find_file_item(
     make_fname_ext(full_path, fname, ext);
     if (!string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
     {
-        infile = std::fopen(path.string().c_str(), "rb");
-        if (infile != nullptr)
-        {
-            if (id::io::search_for_entry(infile, item_name))
-            {
-                found = true;
-            }
-            else
-            {
-                std::fclose(infile);
-                infile = nullptr;
-            }
-        }
+        found = check_path(path, &infile, item_name);
 
         if (!found && g_check_cur_dir)
         {
             make_path(full_path, "", DOT_SLASH, fname, ext);
-            infile = std::fopen(full_path, "rb");
-            if (infile != nullptr)
-            {
-                if (id::io::search_for_entry(infile, item_name))
-                {
-                    path = full_path;
-                    found = true;
-                }
-                else
-                {
-                    std::fclose(infile);
-                    infile = nullptr;
-                }
-            }
+            found = check_path(full_path, &infile, item_name);
         }
     }
 
@@ -124,42 +116,15 @@ bool find_file_item(
         split_drive_dir(g_search_for.par, drive, dir);
         break;
     }
-
     if (!found)
     {
-        infile = std::fopen(g_parameter_file.string().c_str(), "rb");
-        if (infile != nullptr)
-        {
-            if (id::io::search_for_entry(infile, par_search_name))
-            {
-                path = g_parameter_file.string();
-                found = true;
-            }
-            else
-            {
-                std::fclose(infile);
-                infile = nullptr;
-            }
-        }
+        found = check_path(g_parameter_file, &infile, par_search_name);
     }
 
     if (!found)
     {
         make_path(full_path, drive, dir, fname, ext);
-        infile = std::fopen(full_path, "rb");
-        if (infile != nullptr)
-        {
-            if (id::io::search_for_entry(infile, item_name))
-            {
-                path = full_path;
-                found = true;
-            }
-            else
-            {
-                std::fclose(infile);
-                infile = nullptr;
-            }
-        }
+        found = check_path(full_path, &infile, item_name);
     }
 
     if (!found)
@@ -175,18 +140,7 @@ bool find_file_item(
             {
                 split_fname_ext(g_dta.filename, fname, ext);
                 make_path(full_path, drive, dir, fname, ext);
-                infile = std::fopen(full_path, "rb");
-                if (infile != nullptr)
-                {
-                    if (id::io::search_for_entry(infile, item_name))
-                    {
-                        path = full_path;
-                        found = true;
-                        break;
-                    }
-                    std::fclose(infile);
-                    infile = nullptr;
-                }
+                found = check_path(full_path, &infile, item_name);
             }
         }
         clear_temp_msg();

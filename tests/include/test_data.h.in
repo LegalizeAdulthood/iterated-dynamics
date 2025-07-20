@@ -41,6 +41,11 @@ constexpr const char *ID_TEST_FIND_FILE_CASE{"@ID_TEST_FIND_FILE_CASE@"};
 // home directory
 constexpr const char *ID_TEST_HOME_DIR{"@ID_TEST_HOME_DIR@"};
 
+// formula file data
+constexpr const char *ID_TEST_FRM_DIR{"@ID_TEST_FRM_DIR@"};
+constexpr const char *ID_TEST_FRM_SUBDIR{"@ID_TEST_FRM_SUBDIR@"};
+constexpr const char *ID_TEST_FRM_FILE{"@ID_TEST_FRM_FILE@"};
+
 // IFS test data
 constexpr const char *ID_TEST_IFS_FILE{"@ID_TEST_IFS_FILE@"};
 constexpr const char *ID_TEST_IFS_FILE2{"@ID_TEST_IFS_FILE2@"};
@@ -56,10 +61,10 @@ constexpr const char *ID_TEST_MAP_DIR{"@ID_TEST_MAP_DIR@"};
 constexpr const char *ID_TEST_MAP_SUBDIR{"@ID_TEST_MAP_SUBDIR@"};
 constexpr const char *ID_TEST_MAP_FILE{"@ID_TEST_MAP_FILE@"};
 
-// formula file data
-constexpr const char *ID_TEST_FRM_DIR{"@ID_TEST_FRM_DIR@"};
-constexpr const char *ID_TEST_FRM_SUBDIR{"@ID_TEST_FRM_SUBDIR@"};
-constexpr const char *ID_TEST_FRM_FILE{"@ID_TEST_FRM_FILE@"};
+// parameter file data
+constexpr const char *ID_TEST_PAR_DIR{"@ID_TEST_PAR_DIR@"};
+constexpr const char *ID_TEST_PAR_SUBDIR{"@ID_TEST_PAR_SUBDIR@"};
+constexpr const char *ID_TEST_PAR_FILE{"@ID_TEST_PAR_FILE@"};
 // clang-format on
 
 } // namespace id::test::data
