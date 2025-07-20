@@ -650,7 +650,7 @@ void save_history_info()
         current.file_item_name = g_ifs_name;
         break;
     case FractalType::L_SYSTEM:
-        current.filename = g_l_system_filename;
+        current.filename = g_l_system_filename.string();
         current.file_item_name = g_l_system_name;
         break;
     default:

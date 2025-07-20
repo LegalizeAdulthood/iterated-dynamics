@@ -293,7 +293,7 @@ sel_type_restart:
     if (g_fractal_type == FractalType::L_SYSTEM)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_L_SYSTEM);
-        std::string saved_filename{g_l_system_filename};
+        std::string saved_filename{g_l_system_filename.string()};
         std::string saved_name{g_l_system_name};
         if (get_file_entry(ItemType::L_SYSTEM, g_l_system_filename, g_l_system_name) < 0)
         {
@@ -436,15 +436,6 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
                 return g_formula_filename;
             case HelpLabels::SPECIAL_IFS:
                 return g_ifs_filename;
-            default:
-                throw std::runtime_error(
-                    "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
-            }
-        };
-        auto item_file = [](HelpLabels label) -> std::string &
-        {
-            switch (label)
-            {
             case HelpLabels::SPECIAL_L_SYSTEM:
                 return g_l_system_filename;
             default:
@@ -452,9 +443,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
                     "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
             }
         };
-        if (((help == HelpLabels::SPECIAL_FORMULA || help == HelpLabels::SPECIAL_IFS) &&
-                find_file_item(item_path(help), entry_name, &entry_file, item_for_help(help)) == 0) ||
-            find_file_item(item_file(help), entry_name, &entry_file, item_for_help(help)) == 0)
+        if (find_file_item(item_path(help), entry_name, &entry_file, item_for_help(help)) == 0)
         {
             load_entry_text(entry_file, s_tmp_stack, 17, 0, 0);
             std::fclose(entry_file);

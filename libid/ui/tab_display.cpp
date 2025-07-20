@@ -279,7 +279,8 @@ top:
             driver_put_string(start_row+1, 16, C_GENERAL_HI, g_formula_name);
             i = static_cast<int>(g_formula_name.length() + 1);
             driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
-            driver_put_string(start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_formula_filename, 29));
+            driver_put_string(
+                start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_formula_filename, 29));
         }
         trig_details(msg);
         driver_put_string(start_row+1, 16+i, C_GENERAL_HI, msg);
@@ -288,11 +289,12 @@ top:
             driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(start_row+1, 16, C_GENERAL_HI, g_l_system_name);
             driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
-            if ((int) g_l_system_filename.length() >= 28)
+            if ((int) g_l_system_filename.string().length() >= 28)
             {
                 add_row = 1;
             }
-            driver_put_string(start_row+2+add_row, 16, C_GENERAL_HI, g_l_system_filename);
+            driver_put_string(
+                start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_l_system_filename, 29));
         }
         if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
         {

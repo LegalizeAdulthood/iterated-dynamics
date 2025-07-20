@@ -842,7 +842,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         if (g_fractal_type == FractalType::L_SYSTEM)
         {
-            put_filename("lfile", g_l_system_filename.c_str());
+            put_filename("lfile", g_l_system_filename.string().c_str());
             put_param(" lname=%s", g_l_system_name.c_str());
         }
         if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
