@@ -428,7 +428,6 @@ static int check_gfe_key(int key, int choice)
     }
     if (key == ID_KEY_F2)
     {
-        char inf_hdg[60];
         char inf_buf[25 * 80];
         int widest_entry_line = 0;
         int lines_in_entry = 0;
@@ -479,15 +478,13 @@ static int check_gfe_key(int key, int choice)
         {
             in_scrolling_mode = true;
         }
-        std::strcpy(inf_hdg, s_gfe.title);
-        std::strcat(inf_hdg, " file entry:\n\n");
         // ... instead, call help with buffer?  heading added
         driver_stack_screen();
         help_title();
         driver_set_attr(1, 0, C_GENERAL_MED, 24*80);
 
         g_text_col_base = 0;
-        driver_put_string(2, 1, C_GENERAL_HI, inf_hdg);
+        driver_put_string(2, 1, C_GENERAL_HI, s_gfe.title + std::string{" file entry:\n\n"});
         g_text_col_base = 2; // left margin is 2
         driver_put_string(4, 0, C_GENERAL_MED, inf_buf);
         driver_put_string(-1, 0, C_GENERAL_LO,
