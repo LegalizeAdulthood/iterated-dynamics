@@ -91,33 +91,33 @@ bool find_file_item(
         }
     }
 
-    std::string par_search_name;
-    switch (item_type)
-    {
-    case ItemType::FORMULA:
-        par_search_name = "frm:" + item_name;
-        default_extension = ".frm";
-        split_drive_dir(g_search_for.frm, drive, dir);
-        break;
-    case ItemType::L_SYSTEM:
-        par_search_name = "lsys:" + item_name;
-        default_extension = ".l";
-        split_drive_dir(g_search_for.lsys, drive, dir);
-        break;
-    case ItemType::IFS:
-        par_search_name = "ifs:" + item_name;
-        default_extension = ".ifs";
-        split_drive_dir(g_search_for.ifs, drive, dir);
-        break;
-    case ItemType::PAR_SET:
-    default:
-        par_search_name = item_name;
-        default_extension = ".par";
-        split_drive_dir(g_search_for.par, drive, dir);
-        break;
-    }
     if (!found)
     {
+        std::string par_search_name;
+        switch (item_type)
+        {
+        case ItemType::FORMULA:
+            par_search_name = "frm:" + item_name;
+            default_extension = ".frm";
+            split_drive_dir(g_search_for.frm, drive, dir);
+            break;
+        case ItemType::L_SYSTEM:
+            par_search_name = "lsys:" + item_name;
+            default_extension = ".l";
+            split_drive_dir(g_search_for.lsys, drive, dir);
+            break;
+        case ItemType::IFS:
+            par_search_name = "ifs:" + item_name;
+            default_extension = ".ifs";
+            split_drive_dir(g_search_for.ifs, drive, dir);
+            break;
+        case ItemType::PAR_SET:
+        default:
+            par_search_name = item_name;
+            default_extension = ".par";
+            split_drive_dir(g_search_for.par, drive, dir);
+            break;
+        }
         found = check_path(g_parameter_file, &infile, par_search_name);
     }
 
