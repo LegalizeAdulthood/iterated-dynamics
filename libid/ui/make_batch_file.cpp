@@ -179,7 +179,7 @@ MakeParParams::MakeParParams()
             color_spec[13] = 0;
         }
     }
-    std::strcpy(input_command_file, g_parameter_file.c_str());
+    std::strcpy(input_command_file, g_parameter_file.string().c_str());
     std::strcpy(input_command_name, g_parameter_set_name.c_str());
     for (int i = 0; i < 4; i++)
     {
@@ -347,7 +347,7 @@ skip_ui:
                 params.max_color = g_file_colors;
             }
         }
-        fs::path out_path = get_save_name(g_parameter_file);
+        fs::path out_path = get_save_name(g_parameter_file.string());
         if (fs::exists(out_path))
         {
             // file exists
@@ -468,7 +468,7 @@ skip_ui:
                         " overwrite=yes"
                         " @{:s}/{:s}\n"
                         "if errorlevel 2 goto oops\n",
-                        g_parameter_file, piece_command_name);
+                        g_parameter_file.string(), piece_command_name);
                 }
                 else
                 {

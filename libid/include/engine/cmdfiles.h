@@ -198,7 +198,7 @@ extern int                   g_color_cycle_range_hi;
 extern int                   g_color_cycle_range_lo;
 extern std::string           g_color_file;
 extern bool                  g_colors_preloaded;
-extern std::string           g_parameter_file;
+extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;
 extern int                   g_cycle_limit;
 extern int                   g_decomp[];

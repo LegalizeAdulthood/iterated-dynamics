@@ -180,7 +180,7 @@ std::filesystem::path g_formula_filename;    // file to find (type=)formulas in
 std::string g_formula_name;                  // Name of the Formula (if not null)
 std::string g_l_system_filename;             // file to find (type=)L-System's in
 std::string g_l_system_name;                 // Name of L-System
-std::string g_parameter_file;                // file to find parameter sets in
+std::filesystem::path g_parameter_file;      // file to find parameter sets in
 std::string g_parameter_set_name;            // Name of parameter set
 std::string g_ifs_filename;                  // file to find (type=)IFS in
 std::string g_ifs_name;                      // Name of the IFS def'n (if not null)
@@ -295,7 +295,7 @@ static void process_file_set_name(const char *cur_arg, char *slash)
     *slash = 0;
     if (merge_path_names(g_parameter_file, &cur_arg[1], CmdFile::AT_CMD_LINE) < 0)
     {
-        init_msg("", g_parameter_file.c_str(), CmdFile::AT_CMD_LINE);
+        init_msg("", g_parameter_file.string().c_str(), CmdFile::AT_CMD_LINE);
     }
     g_parameter_set_name = &slash[1];
     std::FILE *init_file = nullptr;
@@ -372,7 +372,7 @@ int cmd_files(int argc, const char *const *argv)
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
 
     //set structure of search directories
-    g_search_for.par = g_parameter_file;
+    g_search_for.par = g_parameter_file.string();
     g_search_for.frm = g_formula_filename.string();
     g_search_for.lsys = g_l_system_filename;
     g_search_for.ifs = g_ifs_filename;
@@ -1072,9 +1072,9 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     }
 
     g_parameter_file = cmd.value;
-    if (!has_ext(g_parameter_file))
+    if (!g_parameter_file.has_extension())
     {
-        g_parameter_file += ".par";
+        g_parameter_file.replace_extension(".par");
     }
     if (g_read_filename == DOT_SLASH)
     {

@@ -63,7 +63,7 @@ bool find_file_item(
 
     split_path(filename, drive, dir, fname, ext);
     make_fname_ext(full_path, fname, ext);
-    if (!string_case_equal(filename.c_str(), g_parameter_file.c_str()))
+    if (!string_case_equal(filename.c_str(), g_parameter_file.string().c_str()))
     {
         infile = std::fopen(filename.c_str(), "rb");
         if (infile != nullptr)
@@ -127,12 +127,12 @@ bool find_file_item(
 
     if (!found)
     {
-        infile = std::fopen(g_parameter_file.c_str(), "rb");
+        infile = std::fopen(g_parameter_file.string().c_str(), "rb");
         if (infile != nullptr)
         {
             if (search_for_entry(infile, par_search_name.c_str()))
             {
-                filename = g_parameter_file;
+                filename = g_parameter_file.string();
                 found = true;
             }
             else
