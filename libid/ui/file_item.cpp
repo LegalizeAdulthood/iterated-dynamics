@@ -45,9 +45,14 @@ struct FileEntry
     long point; // points to the ( or the { following the name
 };
 
-static std::FILE *s_gfe_file{};
-static FileEntry **s_gfe_choices{}; // for format_parmfile_line
-static const char *s_gfe_title{};
+struct GetFileEntry
+{
+    std::FILE *file{};
+    FileEntry **choices{}; // for format_param_file_line
+    const char *title{};
+};
+
+static GetFileEntry s_gfe{};
 
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type)
@@ -388,23 +393,23 @@ static void format_param_file_line(int choice, char *buf)
 {
     int c;
     char line[80];
-    std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-    while (std::getc(s_gfe_file) != '{')
+    std::fseek(s_gfe.file, s_gfe.choices[choice]->point, SEEK_SET);
+    while (std::getc(s_gfe.file) != '{')
     {
     }
     do
     {
-        c = std::getc(s_gfe_file);
+        c = std::getc(s_gfe.file);
     }
     while (c == ' ' || c == '\t' || c == ';');
     int i = 0;
     while (i < 56 && !is_newline(c) && c != EOF)
     {
         line[i++] = (char)((c == '\t') ? ' ' : c);
-        c = std::getc(s_gfe_file);
+        c = std::getc(s_gfe.file);
     }
     line[i] = 0;
-    *fmt::format_to(buf, "{:<20s}{:<56s}", s_gfe_choices[choice]->name, line) = '\0';
+    *fmt::format_to(buf, "{:<20s}{:<56s}", s_gfe.choices[choice]->name, line) = '\0';
 }
 
 static int check_gfe_key(int key, int choice)
@@ -430,8 +435,8 @@ static int check_gfe_key(int key, int choice)
         bool comment = false;
         int c = 0;
         int width_ct = 0;
-        std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-        while ((c = std::fgetc(s_gfe_file)) != EOF)
+        std::fseek(s_gfe.file, s_gfe.choices[choice]->point, SEEK_SET);
+        while ((c = std::fgetc(s_gfe.file)) != EOF)
         {
             if (c == ';')
             {
@@ -465,16 +470,16 @@ static int check_gfe_key(int key, int choice)
         if (c == EOF)
         {
             // should never happen
-            std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
+            std::fseek(s_gfe.file, s_gfe.choices[choice]->point, SEEK_SET);
             in_scrolling_mode = false;
         }
-        std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-        load_entry_text(s_gfe_file, inf_buf, 17, 0, 0);
+        std::fseek(s_gfe.file, s_gfe.choices[choice]->point, SEEK_SET);
+        load_entry_text(s_gfe.file, inf_buf, 17, 0, 0);
         if (lines_in_entry > 17 || widest_entry_line > 74)
         {
             in_scrolling_mode = true;
         }
-        std::strcpy(inf_hdg, s_gfe_title);
+        std::strcpy(inf_hdg, s_gfe.title);
         std::strcat(inf_hdg, " file entry:\n\n");
         // ... instead, call help with buffer?  heading added
         driver_stack_screen();
@@ -500,8 +505,8 @@ static int check_gfe_key(int key, int choice)
             if (rewrite_inf_buf)
             {
                 rewrite_inf_buf = false;
-                std::fseek(s_gfe_file, s_gfe_choices[choice]->point, SEEK_SET);
-                load_entry_text(s_gfe_file, inf_buf, 17, top_line, left_column);
+                std::fseek(s_gfe.file, s_gfe.choices[choice]->point, SEEK_SET);
+                load_entry_text(s_gfe.file, inf_buf, 17, top_line, left_column);
                 for (int i = 4; i < (lines_in_entry < 17 ? lines_in_entry + 4 : 21); i++)
                 {
                     driver_put_string(i, 0, C_GENERAL_MED, blanks);
@@ -616,8 +621,8 @@ static long gfe_choose_entry(
 
     static bool do_sort = true;
 
-    s_gfe_choices = &choices[0];
-    s_gfe_title = title;
+    s_gfe.choices = &choices[0];
+    s_gfe.title = title;
 
 retry:
     for (int i = 0; i < MAX_ENTRIES+1; i++)
@@ -628,11 +633,11 @@ retry:
 
     help_title(); // to display a clue when file big and next is slow
 
-    int num_entries = scan_entries(s_gfe_file, &storage[0], nullptr);
+    int num_entries = scan_entries(s_gfe.file, &storage[0], nullptr);
     if (num_entries == 0)
     {
         stop_msg("File doesn't contain any valid entries");
-        std::fclose(s_gfe_file);
+        std::fclose(s_gfe.file);
         return -2; // back to file list
     }
     std::strcpy(instr, o_instr);
@@ -667,11 +672,11 @@ retry:
             box_depth, col_width, 0, format_item, buf, nullptr, check_gfe_key);
     if (i == -ID_KEY_F4)
     {
-        std::fseek(s_gfe_file, 0, SEEK_SET);
+        std::fseek(s_gfe.file, 0, SEEK_SET);
         do_sort = !do_sort;
         goto retry;
     }
-    std::fclose(s_gfe_file);
+    std::fclose(s_gfe.file);
     if (i < 0)
     {
         // go back to file list or cancel
@@ -691,21 +696,21 @@ static long get_file_entry(ItemType type, const char *type_desc, const char *typ
     {
         // binary mode used here - it is more work, but much faster,
         //     especially when ftell or fgetpos is used
-        s_gfe_file = std::fopen(path.string().c_str(), "rb");
-        while (s_gfe_file == nullptr)
+        s_gfe.file = std::fopen(path.string().c_str(), "rb");
+        while (s_gfe.file == nullptr)
         {
             stop_msg("Couldn't open " + path.string());
             if (driver_get_filename(hdg.c_str(), type_desc, type_wildcard, path))
             {
                 return -1;
             }
-            s_gfe_file = std::fopen(path.string().c_str(), "rb");
+            s_gfe.file = std::fopen(path.string().c_str(), "rb");
         }
         long entry_pointer = gfe_choose_entry(type, type_desc, path, entry_name);
         if (entry_pointer == -2)
         {
-            std::fclose(s_gfe_file);
-            s_gfe_file = nullptr;
+            std::fclose(s_gfe.file);
+            s_gfe.file = nullptr;
             // either they cancel browsing for a new file, in which case
             // filename is unchanged, or they browsed for a new file that's
             // been stored in filename.  Either way, we need to open the
