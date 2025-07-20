@@ -646,7 +646,7 @@ void save_history_info()
         break;
     case FractalType::IFS:
     case FractalType::IFS_3D:
-        current.filename = g_ifs_filename;
+        current.filename = g_ifs_filename.string();
         current.file_item_name = g_ifs_name;
         break;
     case FractalType::L_SYSTEM:

@@ -218,7 +218,7 @@ extern std::filesystem::path g_formula_filename;
 extern std::string           g_formula_name;
 extern std::string           g_gif_filename_mask;
 extern std::vector<float>    g_ifs_definition;
-extern std::string           g_ifs_filename;
+extern std::filesystem::path g_ifs_filename;
 extern std::string           g_ifs_name;
 extern bool                  g_ifs_type;
 extern BatchMode             g_init_batch;

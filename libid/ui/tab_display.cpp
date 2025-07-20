@@ -169,7 +169,7 @@ static bool tab_display2(char *msg)
     show_str_var("formulafile", g_formula_filename.string().c_str(),&row, msg);
     show_str_var("savename",    g_save_filename.string().c_str(),   &row, msg);
     show_str_var("parmfile",    g_parameter_file.string().c_str(),  &row, msg);
-    show_str_var("ifsfile",     g_ifs_filename.c_str(),             &row, msg);
+    show_str_var("ifsfile",     g_ifs_filename.string().c_str(),    &row, msg);
     show_str_var("autokeyname", g_auto_name.c_str(),                &row, msg);
     show_str_var("lightname",   g_light_name.c_str(),               &row, msg);
     show_str_var("map",         g_map_name.c_str(),                 &row, msg);
@@ -299,11 +299,11 @@ top:
             driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(start_row+1, 16, C_GENERAL_HI, g_ifs_name);
             driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
-            if ((int) g_ifs_filename.length() >= 28)
+            if ((int) g_ifs_filename.string().length() >= 28)
             {
                 add_row = 1;
             }
-            driver_put_string(start_row+2+add_row, 16, C_GENERAL_HI, g_ifs_filename);
+            driver_put_string(start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_ifs_filename, 29));
         }
     }
 

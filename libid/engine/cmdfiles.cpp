@@ -182,7 +182,7 @@ std::string g_l_system_filename;             // file to find (type=)L-System's i
 std::string g_l_system_name;                 // Name of L-System
 std::filesystem::path g_parameter_file;      // file to find parameter sets in
 std::string g_parameter_set_name;            // Name of parameter set
-std::string g_ifs_filename;                  // file to find (type=)IFS in
+std::filesystem::path g_ifs_filename;        // file to find (type=)IFS in
 std::string g_ifs_name;                      // Name of the IFS def'n (if not null)
 id::SearchPath g_search_for;                 //
 std::vector<float> g_ifs_definition;         // ifs parameters
@@ -375,7 +375,7 @@ int cmd_files(int argc, const char *const *argv)
     g_search_for.par = g_parameter_file.string();
     g_search_for.frm = g_formula_filename.string();
     g_search_for.lsys = g_l_system_filename;
-    g_search_for.ifs = g_ifs_filename;
+    g_search_for.ifs = g_ifs_filename.string();
     return 0;
 }
 
