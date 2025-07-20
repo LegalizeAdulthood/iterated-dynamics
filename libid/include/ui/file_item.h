@@ -18,5 +18,3 @@ bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type);
 
 long get_file_entry(ItemType type, std::filesystem::path &path, std::string &entry_name);
-
-bool search_for_entry(std::FILE *infile, const char *item_name);

@@ -104,6 +104,7 @@ add_library(libid
     include/io/expand_dirname.h io/expand_dirname.cpp
     include/io/get_disk_space.h io/get_disk_space.cpp
     include/io/file_gets.h io/file_gets.cpp
+    include/io/file_item.h io/file_item.cpp
     include/io/find_file.h io/find_file.cpp
     include/io/find_path.h io/find_path.cpp
     include/io/fix_dirname.h io/fix_dirname.cpp
