@@ -420,6 +420,15 @@ static void init_vars_run()              // once per run init
     }
 }
 
+static void init_libraries()
+{
+    id::io::clear_read_library_path();
+    id::io::clear_save_library();
+    const std::filesystem::path docs_dir{get_documents_dir() / ID_PROGRAM_NAME};
+    id::io::add_read_library(docs_dir);
+    id::io::set_save_library(docs_dir);
+}
+
 static void init_vars_restart() // <ins> key init
 {
     g_record_colors = RecordColorsMode::AUTOMATIC;     // use mapfiles in PARs
@@ -466,6 +475,8 @@ static void init_vars_restart() // <ins> key init
     g_inverse_julia_minor_method = Minor::LEFT_FIRST; // default inverse julia methods
     g_true_color = false;                             // truecolor output flag
     g_true_mode = TrueColorMode::DEFAULT_COLOR;       //
+
+    init_libraries();
 }
 
 // init vars affecting calculation
