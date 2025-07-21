@@ -6,6 +6,7 @@
 
 #include <filesystem>
 #include <string>
+#include <vector>
 
 struct VideoInfo;
 
@@ -39,6 +40,8 @@ enum class SaveDAC
     NEXT_TIME = 2,
 };
 
+using FilenameStack = std::vector<std::string>;
+
 enum class HelpLabels;
 
 extern int                   g_adapter;             // index into g_video_table[]
@@ -59,8 +62,7 @@ extern LDouble               g_delta_x2;
 extern LDouble               g_delta_x;
 extern LDouble               g_delta_y2;
 extern LDouble               g_delta_y;
-extern std::string           g_filename_stack[16];
-extern int                   g_filename_stack_index;
+extern FilenameStack         g_filename_stack;
 extern float                 g_final_aspect_ratio;
 extern std::filesystem::path g_fractal_search_dir1;
 extern std::filesystem::path g_fractal_search_dir2;

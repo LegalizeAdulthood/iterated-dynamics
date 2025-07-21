@@ -568,8 +568,8 @@ MainState big_while_loop(MainContext &context)
                 start_save_timer();
                 g_finish_row = -1;
             }
-            g_browsing = false;      // regenerate image, turn off browsing
-            g_filename_stack_index = -1;   // reset pointer
+            g_browsing = false;       // regenerate image, turn off browsing
+            g_filename_stack.clear(); // reset filename stack
             g_browse_name.clear();
             if (g_view_window && bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
                 g_calc_status != CalcStatus::COMPLETED)

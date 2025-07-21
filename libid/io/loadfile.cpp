@@ -2616,19 +2616,15 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
     return false; // no match
 }
 
+// The history stack needs to be adjusted if the rename or delete functions of the
+// browser are used.
 static void check_history(const char *old_name, const char *new_name)
 {
-    // filename_stack[] is maintained in framain2.c.  It is the history
-    //  file for the browser and holds a maximum of 16 images.  The history
-    //  file needs to be adjusted if the rename or delete functions of the
-    //  browser are used.
-    // name_stack_ptr is also maintained in framain2.c.  It is the index into
-    //  filename_stack[].
-    for (int i = 0; i < g_filename_stack_index; i++)
+    for (std::string &name : g_filename_stack)
     {
-        if (string_case_equal(g_filename_stack[i].c_str(), old_name))   // we have a match
+        if (name == old_name)
         {
-            g_filename_stack[i] = new_name;    // insert the new name
+            name = new_name;
         }
     }
 }

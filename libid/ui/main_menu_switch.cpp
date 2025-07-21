@@ -59,19 +59,7 @@ static bool look(MainContext &context)
     case ID_KEY_ENTER_2:
         g_show_file = ShowFile::LOAD_IMAGE; // trigger load
         g_browsing = true;            // but don't ask for the file name as it's just been selected
-        if (g_filename_stack_index == 15)
-        {
-            /* about to run off the end of the file
-                * history stack so shift it all back one to
-                * make room, lose the 1st one */
-            for (int tmp = 1; tmp < 16; tmp++)
-            {
-                g_filename_stack[tmp - 1] = g_filename_stack[tmp];
-            }
-            g_filename_stack_index = 14;
-        }
-        g_filename_stack_index++;
-        g_filename_stack[g_filename_stack_index] = g_browse_name;
+        g_filename_stack.push_back(g_browse_name);
         merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
         if (g_ask_video)
         {
@@ -81,20 +69,11 @@ static bool look(MainContext &context)
         return true;       // hop off and do it!!
 
     case '\\':
-        if (g_filename_stack_index >= 1)
+        if (!g_filename_stack.empty())
         {
             // go back one file if somewhere to go (i.e. browsing)
-            g_filename_stack_index--;
-            while (g_filename_stack[g_filename_stack_index].empty()
-                && g_filename_stack_index >= 0)
-            {
-                g_filename_stack_index--;
-            }
-            if (g_filename_stack_index < 0) // oops, must have deleted first one
-            {
-                break;
-            }
-            g_browse_name = g_filename_stack[g_filename_stack_index];
+            g_browse_name = g_filename_stack.back();
+            g_filename_stack.pop_back();
             merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
             g_browsing = true;
             g_show_file = ShowFile::LOAD_IMAGE;
@@ -436,22 +415,14 @@ static MainState inverse_julia_toggle(MainContext &context)
 
 static MainState unstack_file(bool &stacked)
 {
-    if (g_filename_stack_index < 1)
+    if (g_filename_stack.empty())
     {
         return MainState::NOTHING;
     }
 
     // go back one file if somewhere to go (i.e. browsing)
-    g_filename_stack_index--;
-    while (g_filename_stack[g_filename_stack_index].empty() && g_filename_stack_index >= 0)
-    {
-        g_filename_stack_index--;
-    }
-    if (g_filename_stack_index < 0) // oops, must have deleted first one
-    {
-        return MainState::NOTHING;
-    }
-    g_browse_name = g_filename_stack[g_filename_stack_index];
+    g_browse_name = g_filename_stack.back();
+    g_filename_stack.pop_back();
     merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
     g_browsing = true;
     g_browse_sub_images = true;
