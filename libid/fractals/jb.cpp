@@ -131,11 +131,11 @@ bool julibrot_per_image()
     if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
     {
         g_save_dac = SaveDAC::NO;
-        map_name = g_glasses1_map.c_str();
+        map_name = GLASSES1_MAP_NAME.c_str();
     }
     else
     {
-        map_name = g_altern_map_file.c_str();
+        map_name = ALTERN_MAP_NAME.c_str();
     }
     if (g_save_dac != SaveDAC::YES)
     {

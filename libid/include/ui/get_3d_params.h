@@ -4,7 +4,7 @@
 
 #include <string>
 
-extern const std::string g_glasses1_map;
+extern const std::string GLASSES1_MAP_NAME;
 
 int get_3d_params();
 int get_fract3d_params();

@@ -31,7 +31,7 @@ static  bool get_funny_glasses_params();
 
 static std::string s_funny_glasses_map_name;
 
-const std::string g_glasses1_map{"glasses1.map"};
+const std::string GLASSES1_MAP_NAME{"glasses1.map"};
 
 int get_3d_params()     // prompt for 3D parameters
 {
@@ -494,7 +494,7 @@ static bool get_funny_glasses_params()
 
     if (g_glasses_type == GlassesType::ALTERNATING)
     {
-        s_funny_glasses_map_name = g_glasses1_map;
+        s_funny_glasses_map_name = GLASSES1_MAP_NAME;
     }
     else if (g_glasses_type == GlassesType::SUPERIMPOSE)
     {
@@ -504,7 +504,7 @@ static bool get_funny_glasses_params()
         }
         else
         {
-            std::string glasses2_map{g_glasses1_map};
+            std::string glasses2_map{GLASSES1_MAP_NAME};
             glasses2_map.replace(glasses2_map.find('1'), 1, "2");
             s_funny_glasses_map_name = glasses2_map;
         }

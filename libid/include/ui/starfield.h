@@ -4,7 +4,7 @@
 
 #include <string>
 
-extern const std::string g_altern_map_file;
+extern const std::string ALTERN_MAP_NAME;
 
 int get_star_field_params();
 int star_field();

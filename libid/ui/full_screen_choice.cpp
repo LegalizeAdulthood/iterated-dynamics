@@ -19,7 +19,7 @@
 #include <cctype>
 #include <cstring>
 
-const std::string g_speed_prompt{"Speed key string"};
+static const std::string SPEED_PROMPT{"Speed key string"};
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
@@ -61,8 +61,8 @@ static void show_speed_string(
         }
         else
         {
-            driver_put_string(speed_row, 16, C_CHOICE_SP_INSTR, g_speed_prompt);
-            j = static_cast<int>(g_speed_prompt.length());
+            driver_put_string(speed_row, 16, C_CHOICE_SP_INSTR, SPEED_PROMPT);
+            j = static_cast<int>(SPEED_PROMPT.length());
         }
         std::strcpy(buf, speed_string);
         int i = (int) std::strlen(buf);
