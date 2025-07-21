@@ -23,11 +23,12 @@ if(DEBUG)
     endforeach()
 endif()
 
-if(EXISTS "fract001.ray")
-    file(REMOVE "fract001.ray")
+set(RAYTRACE_OUTPUT "raytrace/fract001.ray")
+if(EXISTS "${RAYTRACE_OUTPUT}")
+    file(REMOVE "${RAYTRACE_OUTPUT}")
 endif()
-if(EXISTS "fract001.gif")
-    file(REMOVE "fract001.gif")
+if(EXISTS "image/fract001.gif")
+    file(REMOVE "image/fract001.gif")
 endif()
 
 set(TEST_OUTPUT "${TEST_KEEP_RAYTRACE}/${RAYTRACE_NAME}.txt")
@@ -35,7 +36,10 @@ set(TEST_OUTPUT "${TEST_KEEP_RAYTRACE}/${RAYTRACE_NAME}.txt")
 execute_process(COMMAND "${ID}" ${PARAMETERS}
     COMMAND_ERROR_IS_FATAL ANY
     COMMAND_ECHO ${COMMAND_ECHO})
-file(RENAME "fract001.ray" "${TEST_OUTPUT}")
+file(RENAME "${RAYTRACE_OUTPUT}" "${TEST_OUTPUT}")
+if(EXISTS "image/fract001.gif")
+    file(REMOVE "image/fract001.gif")
+endif()
 
 execute_process(COMMAND ${CMAKE_COMMAND}
     -E compare_files "${GOLD_TRACE}" "${TEST_OUTPUT}"

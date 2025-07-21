@@ -19,6 +19,8 @@ static std::string_view subdir(ReadFile kind)
 {
     switch (kind)
     {
+    case ReadFile::ID_CONFIG:
+        return "config";
     case ReadFile::FORMULA:
         return "formula";
     case ReadFile::IFS:
@@ -33,8 +35,6 @@ static std::string_view subdir(ReadFile kind)
         return "map";
     case ReadFile::PARAMETER:
         return "par";
-    case ReadFile::ID_CONFIG:
-        return "config";
     }
     throw std::runtime_error("Unknown ReadFile type " + std::to_string(static_cast<int>(kind)));
 }
@@ -115,6 +115,8 @@ static std::string_view subdir(WriteFile kind)
 {
     switch (kind)
     {
+    case WriteFile::ID_CONFIG:
+        return "config";
     case WriteFile::FORMULA:
         return "formula";
     case WriteFile::IFS:
@@ -127,15 +129,14 @@ static std::string_view subdir(WriteFile kind)
         return "lsystem";
     case WriteFile::MAP:
         return "map";
-    case WriteFile::PARAMETER:
-        return "par";
-    case WriteFile::ID_CONFIG:
-        return "config";
     case WriteFile::ORBIT:
         return "orbit";
+    case WriteFile::PARAMETER:
+        return "par";
     case WriteFile::SOUND:
         return "sound";
-    case WriteFile::RAYTRACE: // no special subdir for raytrace output
+    case WriteFile::RAYTRACE:
+        return "raytrace";
     case WriteFile::ROOT:
         return {};
     }
