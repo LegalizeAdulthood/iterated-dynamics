@@ -255,7 +255,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         // format heading
         std::string heading{fmt::format("File: {:<44s}  {:d} x {:d} x {:d}\n"
                                         "{:<52s}",
-            trim_filename(g_read_filename, 44),         //
+            trim_filename(g_read_filename, 44),          //
             g_file_x_dots, g_file_y_dots, g_file_colors, //
             heading_detail(info, blk_3_info))};
         if (info->info_id[0] != 'G')

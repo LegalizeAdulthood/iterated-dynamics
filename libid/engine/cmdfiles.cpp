@@ -273,9 +273,12 @@ static void process_simple_command(char *cur_arg)
                 if (signature[0] == 'G' && signature[1] == 'I' && signature[2] == 'F' &&
                     signature[3] >= '8' && signature[3] <= '9' && signature[4] >= '0' && signature[4] <= '9')
                 {
-                    g_read_filename = cur_arg;
-                    g_browse_name = extract_filename(g_read_filename);
-                    g_show_file = ShowFile::LOAD_IMAGE;
+                    g_read_filename = id::io::find_file(id::io::ReadFile::IMAGE, cur_arg);
+                    if (!g_read_filename.empty())
+                    {
+                        g_browse_name = extract_filename(g_read_filename);
+                        g_show_file = ShowFile::LOAD_IMAGE;
+                    }
                     processed = true;
                 }
                 std::fclose(init_file);
@@ -457,7 +460,7 @@ static void init_vars_restart() // <ins> key init
     reset_ifs_definition();                            //
     g_random_seed_flag = false;                        // not a fixed srand() seed
     g_random_seed = s_init_random_seed;                //
-    g_read_filename = DOT_SLASH;                       // initially current directory
+    g_read_filename.clear();                           // initially empty
     g_show_file = ShowFile::IMAGE_LOADED;              //
     // next should perhaps be fractal re-init, not just <ins> ?
     g_init_cycle_limit = 55;                          // spin-DAC default speed limit

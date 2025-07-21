@@ -1015,9 +1015,9 @@ int read_overlay()      // read overlay/3D files, if required
     {
         g_view_window = false;
     }
-    if (!has_ext(g_read_filename))
+    if (!g_read_filename.has_extension())
     {
-        g_read_filename += ".gif";
+        g_read_filename.replace_extension(".gif");
     }
 
     if (find_fractal_info(id::io::find_file(id::io::ReadFile::IMAGE, g_read_filename).string(), //
