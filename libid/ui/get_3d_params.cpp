@@ -424,10 +424,10 @@ static bool check_map_file()
     {
         return false;
     }
-    char buff[256] = "*";
+    std::filesystem::path map_name{"*"};
     if (g_map_set)
     {
-        std::strcpy(buff, g_map_name.c_str());
+        map_name = g_map_name;
     }
     if (!glasses_alternating_or_superimpose())
     {
@@ -435,13 +435,15 @@ static bool check_map_file()
     }
     else
     {
-        merge_path_names(buff, s_funny_glasses_map_name.c_str(), CmdFile::AT_CMD_LINE);
+        map_name = s_funny_glasses_map_name;
     }
 
     while (true)
     {
         if (ask_flag)
         {
+            char buff[80]{};
+            std::strcpy(buff, map_name.string().c_str());
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::NONE};
             int i = field_prompt("Enter name of .map file to use,\n"
                                  "or '*' to use palette from the image to be loaded.",
@@ -450,6 +452,7 @@ static bool check_map_file()
             {
                 return true;
             }
+            map_name = buff;
             if (buff[0] == '*')
             {
                 g_map_set = false;
@@ -457,7 +460,7 @@ static bool check_map_file()
             }
         }
         std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
-        bool valid = validate_luts(buff);
+        bool valid = validate_luts(map_name.string());
         std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
         if (valid) // Oops, something's wrong
         {
@@ -465,7 +468,7 @@ static bool check_map_file()
             continue;
         }
         g_map_set = true;
-        merge_path_names(g_map_name, buff, CmdFile::AT_CMD_LINE);
+        g_map_name = map_name.filename().string();
         break;
     }
     return false;
