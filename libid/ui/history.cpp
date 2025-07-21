@@ -18,7 +18,7 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
-#include "io/save_file.h"
+#include "io/library.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/version.h"
@@ -686,7 +686,7 @@ void save_history_info()
     }
     if (g_debug_flag == DebugFlags::HISTORY_DUMP_JSON)
     {
-        std::ofstream str(get_save_name("history.json"), std::ios_base::app);
+        std::ofstream str(id::io::get_save_path(id::io::WriteFile::ROOT, "history.json"), std::ios_base::app);
         str << current;
     }
 }
