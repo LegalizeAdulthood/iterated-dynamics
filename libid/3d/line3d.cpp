@@ -1564,7 +1564,8 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, bool
             {
                 std::fclose(source);
             }
-            dir_remove(g_working_dir, path);
+            std::error_code ec;
+            std::filesystem::remove(path, ec);
             file_error(path, FileError::DISK_FULL);
             return true;
         }
@@ -1577,7 +1578,8 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, bool
     if (targa_start_disk(fps, s_targa_header_24) != 0)
     {
         end_disk();
-        dir_remove(g_working_dir, path);
+        std::error_code ec;
+        std::filesystem::remove(path, ec);
         return true;
     }
     return false;

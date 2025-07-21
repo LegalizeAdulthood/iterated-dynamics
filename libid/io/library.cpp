@@ -2,6 +2,7 @@
 //
 #include "io/library.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "io/special_dirs.h"
 
@@ -57,22 +58,6 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
     }
 
     const std::filesystem::path filename{file_path.filename()};
-    for (const std::filesystem::path &dir : s_search_path)
-    {
-        if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
-        {
-            return path;
-        }
-    }
-
-    for (const std::filesystem::path &dir : s_search_path)
-    {
-        if (const std::filesystem::path path = dir / filename; std::filesystem::exists(path))
-        {
-            return path;
-        }
-    }
-
     const auto check_dir = [&](const std::filesystem::path &dir) -> std::filesystem::path
     {
         if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
@@ -87,6 +72,30 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
 
         return {};
     };
+
+    if (g_check_cur_dir)
+    {
+        if (const std::filesystem::path path{check_dir("")}; !path.empty())
+        {
+            return path;
+        }
+    }
+
+    for (const std::filesystem::path &dir : s_search_path)
+    {
+        if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
+        {
+            return path;
+        }
+    }
+
+    for (const std::filesystem::path &dir : s_search_path)
+    {
+        if (const std::filesystem::path path = dir / filename; std::filesystem::exists(path))
+        {
+            return path;
+        }
+    }
 
     if (const std::filesystem::path path = check_dir(s_save_path); !path.empty())
     {

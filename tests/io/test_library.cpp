@@ -2,9 +2,12 @@
 
 #include "test_library.h"
 
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "io/CurrentPathSaver.h"
 #include "io/special_dirs.h"
 #include "misc/ValueSaver.h"
+#include "test_data.h"
 
 #include <gtest/gtest.h>
 
@@ -257,7 +260,7 @@ TEST_F(TestLibrary, findFilePreferSearchDir2SubDir)
 
 TEST_F(TestLibrary, findFileAbsolutePath)
 {
-    auto file_path{std::filesystem::path{ID_TEST_LIBRARY_DIR} / ID_TEST_FRM_FILE};
+    auto file_path{Path{ID_TEST_LIBRARY_DIR} / ID_TEST_FRM_FILE};
 
     const Path path{id::io::find_file(id::io::ReadFile::FORMULA, file_path)};
 
@@ -265,4 +268,23 @@ TEST_F(TestLibrary, findFileAbsolutePath)
     EXPECT_EQ(ID_TEST_FRM_FILE, path.filename()) << path;
     EXPECT_EQ(ID_TEST_LIBRARY_DIR, path.parent_path()) << path;
     EXPECT_EQ(file_path, path) << path;
+}
+
+TEST_F(TestLibrary, findFileCurrentDirectory)
+{
+    // this is where we expect to find ig
+    CurrentPathSaver saved_cur_dir{ID_TEST_SEARCH_DIR2};
+    ValueSaver saved_check_cur_dir{g_check_cur_dir, true};
+    // these are all the places it could look
+    ValueSaver saved_search_dir1{g_fractal_search_dir1, id::test::data::ID_TEST_DATA_SUBDIR};
+    ValueSaver saved_search_dir2{g_fractal_search_dir2, id::test::data::ID_TEST_DATA_SUBDIR};
+    ValueSaver saved_save_dir{g_save_dir, id::test::data::ID_TEST_DATA_SUBDIR};
+    id::io::set_save_library(id::test::data::ID_TEST_DATA_SUBDIR);
+
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{ID_TEST_FORMULA_FILE2}, path.filename()) << path;
+    EXPECT_EQ(id::test::data::ID_TEST_FRM_SUBDIR, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{"formula"} / ID_TEST_FORMULA_FILE2, path) << path;
 }
