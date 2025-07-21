@@ -9,6 +9,7 @@
 #include "engine/color_state.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
+#include "io/library.h"
 #include "io/loadmap.h"
 #include "io/merge_path_names.h"
 #include "io/save_file.h"
@@ -564,8 +565,6 @@ static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 
 void save_palette()
 {
-    char pal_name[ID_FILE_MAX_PATH];
-    std::strcpy(pal_name, g_map_name.c_str());
     driver_stack_screen();
     char filename[256]{};
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
@@ -577,9 +576,8 @@ void save_palette()
         {
             std::strcat(filename, ".map");
         }
-        merge_path_names(pal_name, filename, CmdFile::AT_AFTER_STARTUP);
-        std::FILE *dac_file = open_save_file(pal_name, "w");
-        if (dac_file == nullptr)
+        std::filesystem::path pal_name{id::io::get_save_path(id::io::WriteFile::MAP, filename)};
+        if (std::FILE *dac_file = std::fopen(pal_name.string().c_str(), "w"); dac_file == nullptr)
         {
             driver_buzzer(Buzzer::PROBLEM);
         }
@@ -591,9 +589,9 @@ void save_palette()
             }
             std::memcpy(g_old_dac_box, g_dac_box, 256*3);
             g_color_state = ColorState::MAP_FILE;
-            g_last_map_name = filename;
+            g_last_map_name = pal_name.filename().string();
+            std::fclose(dac_file);
         }
-        std::fclose(dac_file);
     }
 }
 
