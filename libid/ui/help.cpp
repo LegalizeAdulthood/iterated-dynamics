@@ -7,6 +7,7 @@
 #include "engine/id_data.h"
 #include "helpdefs.h"
 #include "io/find_path.h"
+#include "io/library.h"
 #include "io/save_file.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -1311,7 +1312,8 @@ void print_document(const char *filename, bool (*msg_func)(int, int))
         msg_func(0, info.num_page);   // initialize
     }
 
-    info.file = open_save_file(filename, "wt");
+    std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, filename)};
+    info.file = std::fopen(path.string().c_str(), "wt");
     if (info.file == nullptr)
     {
         msg = "Unable to create output file.\n";
