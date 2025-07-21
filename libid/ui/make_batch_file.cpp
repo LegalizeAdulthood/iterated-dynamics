@@ -411,7 +411,8 @@ skip_ui:
         if (params.x_multiple > 1 || params.y_multiple > 1)
         {
             have_3rd = g_x_min != g_x_3rd || g_y_min != g_y_3rd;
-            bat_file = open_save_file("makemig.bat", "w");
+            const fs::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "makemig.bat")};
+            bat_file = std::fopen(path.string().c_str(), "w");
             if (bat_file == nullptr)
             {
                 params.x_multiple = 0;
