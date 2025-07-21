@@ -190,16 +190,16 @@ struct DblCoords
     double y;
 };
 
-struct Window
+// for file_get_window on screen browser
+struct FileWindow
 {
-    // for fgetwindow on screen browser
-    Coord      itl;      // screen coordinates
-    Coord      ibl;      //
-    Coord      itr;      //
-    Coord      ibr;      //
-    double      win_size; // box size for drawindow()
-    std::string name;     // for filename
-    int         box_count; // bytes of saved screen info
+    Coord top_left;       // screen coordinates
+    Coord bot_left;       //
+    Coord top_right;      //
+    Coord bot_right;      //
+    double win_size;      // box size for draw_window()
+    std::string filename; // for filename
+    int box_count;        // bytes of saved screen info
 };
 
 } // namespace
@@ -217,8 +217,8 @@ static void skip_ext_blk(int *block_len, int *data_len);
 static void backwards_compat(FractalInfo *info);
 static bool fix_bof();
 static bool fix_period_bof();
-static void draw_window(int colour, const Window *info);
-static bool is_visible_window(Window *list, const FractalInfo *info, const ExtBlock5 *blk_5_info);
+static void draw_window(int colour, const FileWindow *info);
+static bool is_visible_window(FileWindow *list, const FractalInfo *info, const ExtBlock5 *blk_5_info);
 static void transform(DblCoords *point);
 static bool params_ok(const FractalInfo *info);
 static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info);
@@ -228,7 +228,7 @@ static void bf_setup_convert_to_screen();
 static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point);
 
 static std::FILE *s_fp{};
-static std::vector<Window> s_browse_windows;
+static std::vector<FileWindow> s_browse_windows;
 static std::vector<int> s_browse_box_x;
 static std::vector<int> s_browse_box_y;
 static std::vector<int> s_browse_box_values;
@@ -1917,7 +1917,7 @@ int file_get_window()
     int win_count;
     bool toggle{};
     int color_of_box;
-    Window win_list;
+    FileWindow win_list;
     char drive[ID_FILE_MAX_DRIVE];
     char dir[ID_FILE_MAX_DIR];
     char fname[ID_FILE_MAX_FNAME];
@@ -2001,7 +2001,7 @@ rescan:  // entry for changed browse parms
             && !blk_6_info.got_data                                               //
             && is_visible_window(&win_list, &read_info, &blk_5_info))             //
         {
-            win_list.name = g_dta.filename;
+            win_list.filename = g_dta.filename;
             draw_window(color_of_box, &win_list);
             win_list.box_count = g_box_count;
             s_browse_windows[win_count] = win_list;
@@ -2029,7 +2029,7 @@ rescan:  // entry for changed browse parms
         done = 0;
         win_list = s_browse_windows[index];
         restore_box(num_dots, index);
-        show_temp_msg(win_list.name);
+        show_temp_msg(win_list.filename);
         while (!done)  /* on exit done = 1 for quick exit,
                                  done = 2 for erase boxes and  exit
                                  done = 3 for rescan
@@ -2082,7 +2082,7 @@ rescan:  // entry for changed browse parms
                 }
                 win_list = s_browse_windows[index];
                 restore_box(num_dots, index);
-                show_temp_msg(win_list.name);
+                show_temp_msg(win_list.filename);
                 break;
             case ID_KEY_CTL_INSERT:
                 color_of_box += key_count(ID_KEY_CTL_INSERT);
@@ -2105,7 +2105,7 @@ rescan:  // entry for changed browse parms
                 break;
             case ID_KEY_ENTER:
             case ID_KEY_ENTER_2:   // this file please
-                g_browse_name = win_list.name;
+                g_browse_name = win_list.filename;
                 done = 1;
                 break;
 
@@ -2118,7 +2118,7 @@ rescan:  // entry for changed browse parms
 
             case 'D': // delete file
                 clear_temp_msg();
-                show_temp_msg(fmt::format("Delete {:s}? (Y/N)", win_list.name));
+                show_temp_msg(fmt::format("Delete {:s}? (Y/N)", win_list.filename));
                 driver_wait_key_pressed(false);
                 clear_temp_msg();
                 c = driver_get_key();
@@ -2133,7 +2133,7 @@ rescan:  // entry for changed browse parms
                 if (c == 'Y')
                 {
                     split_drive_dir(g_read_filename, drive, dir);
-                    const std::filesystem::path name_path(win_list.name);
+                    const std::filesystem::path name_path(win_list.filename);
                     const std::string fname2 = name_path.stem().string();
                     const std::string ext2 = name_path.extension().string();
                     make_path(tmp_mask, drive, dir, fname2.c_str(), ext2.c_str());
@@ -2141,7 +2141,7 @@ rescan:  // entry for changed browse parms
                     {
                         // do a rescan
                         done = 3;
-                        std::strcpy(old_name, win_list.name.c_str());
+                        std::strcpy(old_name, win_list.filename.c_str());
                         tmp_mask[0] = '\0';
                         check_history(old_name, tmp_mask);
                         break;
@@ -2149,14 +2149,14 @@ rescan:  // entry for changed browse parms
                     if (errno == EACCES)
                     {
                         text_temp_msg("Sorry...it's a read only file, can't del");
-                        show_temp_msg(win_list.name);
+                        show_temp_msg(win_list.filename);
                         break;
                     }
                 }
                 {
                     text_temp_msg("file not deleted (phew!)");
                 }
-                show_temp_msg(win_list.name);
+                show_temp_msg(win_list.filename);
                 break;
 
             case 'R':
@@ -2166,7 +2166,7 @@ rescan:  // entry for changed browse parms
                 std::strcpy(msg, "Enter the new filename for ");
                 split_drive_dir(g_read_filename, drive, dir);
                 {
-                    const std::filesystem::path name_path{win_list.name};
+                    const std::filesystem::path name_path{win_list.filename};
                     const std::string           fname2{name_path.stem().string()};
                     const std::string           ext2{name_path.extension().string()};
                     make_path(tmp_mask, drive, dir, fname2.c_str(), ext2.c_str());
@@ -2188,14 +2188,14 @@ rescan:  // entry for changed browse parms
                             {
                                 split_fname_ext(std::string{new_name}, fname, ext);
                                 make_fname_ext(tmp_mask, fname, ext);
-                                std::strcpy(old_name, win_list.name.c_str());
+                                std::strcpy(old_name, win_list.filename.c_str());
                                 check_history(old_name, tmp_mask);
-                                win_list.name = tmp_mask;
+                                win_list.filename = tmp_mask;
                             }
                         }
                     }
                     s_browse_windows[index] = win_list;
-                    show_temp_msg(win_list.name);
+                    show_temp_msg(win_list.filename);
                 }
                 break;
 
@@ -2204,7 +2204,7 @@ rescan:  // entry for changed browse parms
                 driver_stack_screen();
                 done = std::abs(get_browse_params());
                 driver_unstack_screen();
-                show_temp_msg(win_list.name);
+                show_temp_msg(win_list.filename);
                 break;
 
             case 's': // save image with boxes
@@ -2263,7 +2263,7 @@ rescan:  // entry for changed browse parms
     return c;
 }
 
-static void draw_window(int colour, const Window *info)
+static void draw_window(int colour, const FileWindow *info)
 {
     g_box_color = colour;
     g_box_count = 0;
@@ -2271,12 +2271,12 @@ static void draw_window(int colour, const Window *info)
     {
         // big enough on screen to show up as a box so draw it
         // corner pixels
-        add_box(info->itl);
-        add_box(info->itr);
-        add_box(info->ibl);
-        add_box(info->ibr);
-        draw_lines(info->itl, info->itr, info->ibl.x-info->itl.x, info->ibl.y-info->itl.y); // top & bottom lines
-        draw_lines(info->itl, info->ibl, info->itr.x-info->itl.x, info->itr.y-info->itl.y); // left & right lines
+        add_box(info->top_left);
+        add_box(info->top_right);
+        add_box(info->bot_left);
+        add_box(info->bot_right);
+        draw_lines(info->top_left, info->top_right, info->bot_left.x-info->top_left.x, info->bot_left.y-info->top_left.y); // top & bottom lines
+        draw_lines(info->top_left, info->bot_left, info->top_right.x-info->top_left.x, info->top_right.y-info->top_left.y); // left & right lines
         display_box();
     }
     else
@@ -2286,12 +2286,12 @@ static void draw_window(int colour, const Window *info)
         // draw crosshairs
         int cross_size = g_logical_screen_y_dots / 45;
         cross_size = std::max(cross_size, 2);
-        itr.x = info->itl.x - cross_size;
-        itr.y = info->itl.y;
-        ibl.y = info->itl.y - cross_size;
-        ibl.x = info->itl.x;
-        draw_lines(info->itl, itr, ibl.x-itr.x, 0); // top & bottom lines
-        draw_lines(info->itl, ibl, 0, itr.y-ibl.y); // left & right lines
+        itr.x = info->top_left.x - cross_size;
+        itr.y = info->top_left.y;
+        ibl.y = info->top_left.y - cross_size;
+        ibl.x = info->top_left.x;
+        draw_lines(info->top_left, itr, ibl.x-itr.x, 0); // top & bottom lines
+        draw_lines(info->top_left, ibl, 0, itr.y-ibl.y); // left & right lines
         display_box();
     }
 }
@@ -2305,7 +2305,7 @@ static void transform(DblCoords *point)
 }
 
 static bool is_visible_window(
-    Window *list, const FractalInfo *info, const ExtBlock5 *blk_5_info)
+    FileWindow *list, const FractalInfo *info, const ExtBlock5 *blk_5_info)
 {
     DblCoords tl;
     DblCoords tr;
@@ -2403,8 +2403,8 @@ static bool is_visible_window(
         tl.y = info->y_max;
         transform(&tl);
     }
-    list->itl.x = (int) std::lround(tl.x);
-    list->itl.y = (int) std::lround(tl.y);
+    list->top_left.x = (int) std::lround(tl.x);
+    list->top_left.y = (int) std::lround(tl.y);
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -2427,8 +2427,8 @@ static bool is_visible_window(
         tr.y = (info->y_max)+(info->y_min-info->y3rd);
         transform(&tr);
     }
-    list->itr.x = (int) std::lround(tr.x);
-    list->itr.y = (int) std::lround(tr.y);
+    list->top_right.x = (int) std::lround(tr.x);
+    list->top_right.y = (int) std::lround(tr.y);
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -2449,8 +2449,8 @@ static bool is_visible_window(
         bl.y = info->y3rd;
         transform(&bl);
     }
-    list->ibl.x = (int) std::lround(bl.x);
-    list->ibl.y = (int) std::lround(bl.y);
+    list->bot_left.x = (int) std::lround(bl.x);
+    list->bot_left.y = (int) std::lround(bl.y);
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -2471,8 +2471,8 @@ static bool is_visible_window(
         br.y = info->y_min;
         transform(&br);
     }
-    list->ibr.x = (int) std::lround(br.x);
-    list->ibr.y = (int) std::lround(br.y);
+    list->bot_right.x = (int) std::lround(br.x);
+    list->bot_right.y = (int) std::lround(br.y);
 
     double tmp_sqrt = std::sqrt(sqr(tr.x - bl.x) + sqr(tr.y - bl.y));
     list->win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
