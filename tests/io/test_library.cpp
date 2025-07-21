@@ -160,6 +160,18 @@ TEST_F(TestLibrary, saveFileAddsExtension)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
 
+TEST_F(TestLibrary, saveOrbit)
+{
+    id::io::set_save_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{id::io::get_save_path(id::io::WriteFile::ORBIT, "foo")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"foo.raw"}, path.filename()) << path;
+    EXPECT_EQ(Path{"orbit"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+}
+
 TEST_F(TestLibrary, findFileCheckSearchDir1Root)
 {
     ValueSaver saved_search_dir{g_fractal_search_dir1, ID_TEST_SEARCH_DIR1};

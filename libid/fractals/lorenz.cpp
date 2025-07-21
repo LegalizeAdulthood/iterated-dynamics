@@ -21,6 +21,7 @@
 #include "fractals/ifs.h"
 #include "io/check_write_file.h"
 #include "io/encoder.h"
+#include "io/library.h"
 #include "io/save_file.h"
 #include "math/arg.h"
 #include "math/cmplx.h"
@@ -1976,12 +1977,15 @@ static bool float_view_transf3d(ViewTransform3D *inf)
 
 static std::FILE *open_orbit_save()
 {
-    check_write_file(g_orbit_save_name, ".raw");
-    std::FILE *fp;
-    if ((g_orbit_save_flags & OSF_RAW) && (fp = open_save_file(g_orbit_save_name, "w")) != nullptr)
+    if (g_orbit_save_flags & OSF_RAW)
     {
-        fmt::print(fp, "pointlist x y z color\n");
-        return fp;
+        std::string path{id::io::get_save_path(id::io::WriteFile::ORBIT, g_orbit_save_name).string()};
+        check_write_file(path, ".raw");
+        if (std::FILE *fp = std::fopen(path.c_str(), "w"); fp != nullptr)
+        {
+            fmt::print(fp, "pointlist x y z color\n");
+            return fp;
+        }
     }
     return nullptr;
 }

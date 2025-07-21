@@ -31,6 +31,7 @@ enum class WriteFile
     ROOT,
     RAYTRACE,
     ID_CONFIG,
+    ORBIT,
 };
 
 void clear_read_library_path();

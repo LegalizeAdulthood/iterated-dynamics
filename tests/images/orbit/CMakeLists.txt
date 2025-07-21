@@ -19,7 +19,7 @@ function(add_orbit_test name)
         COMMAND ${CMAKE_COMMAND}
             "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
             "-DORBIT_NAME=${name}"
-            "-DTEST_ORBIT=${TEST_ORBIT}.raw"
+            "-DTEST_ORBIT=orbit/${TEST_ORBIT}.raw"
             "-DGOLD_ORBIT=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}.txt"
             "-DPARAMETERS=${ORBIT_TEST_PARAMETERS}"
             "-DTEST_KEEP_ORBIT=${CMAKE_CURRENT_BINARY_DIR}"
