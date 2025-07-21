@@ -10,6 +10,7 @@
 #include "fractals/parser.h"
 #include "io/file_item.h"
 #include "io/find_file.h"
+#include "io/library.h"
 #include "io/load_entry_text.h"
 #include "io/make_path.h"
 #include "io/split_path.h"
@@ -142,8 +143,30 @@ bool find_file_item(
 
     if (!found)
     {
-        make_path(full_path, drive, dir, fname, ext);
-        found = check_path(full_path, &infile, item_name);
+        const auto read_file = [](ItemType type)
+        {
+            switch (type)
+            {
+            case ItemType::FORMULA:
+                return id::io::ReadFile::FORMULA;
+            case ItemType::L_SYSTEM:
+                return id::io::ReadFile::LSYSTEM;
+            case ItemType::IFS:
+                return id::io::ReadFile::IFS;
+            case ItemType::PAR_SET:
+                return id::io::ReadFile::PARAMETER;
+            }
+            throw std::runtime_error("Unknown ItemType " + std::to_string(static_cast<int>(type)));
+        };
+        const std::filesystem::path lib_path{id::io::find_file(read_file(item_type), path.filename())};
+        if (!lib_path.empty())
+        {
+            found = check_path(lib_path, &infile, item_name);
+        }
+        if (found)
+        {
+            path = lib_path;
+        }
     }
 
     if (!found)
