@@ -549,35 +549,35 @@ TEST_F(TestParameterCommand, resetInsideZero)
     EXPECT_EQ(0, g_inside_color);
 }
 
-TEST_F(TestParameterCommandError, filenameExtensionTooLong)
+TEST_F(TestParameterCommand, longFilenameExtensionOK)
 {
-    ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};
+    ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.pot"};
 
     exec_cmd_arg("filename=.foobar");
 
-    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ("*.pot", g_gif_filename_mask);
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
+    EXPECT_EQ("*.foobar", g_image_filename_mask);
 }
 
 TEST_F(TestParameterCommand, filenameExtension)
 {
-    ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};
+    ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.pot"};
 
     exec_cmd_arg("filename=.gif");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("*.gif", g_gif_filename_mask);
+    EXPECT_EQ("*.gif", g_image_filename_mask);
 }
 
 TEST_F(TestParameterCommandError, filenameValueTooLong)
 {
-    ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.pot"};
+    ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.pot"};
     const std::string too_long{"filename=" + std::string(ID_FILE_MAX_PATH, 'f') + ".gif"};
 
     exec_cmd_arg(too_long);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ("*.pot", g_gif_filename_mask);
+    EXPECT_EQ("*.pot", g_image_filename_mask);
 }
 
 TEST_F(TestParameterCommandError, mapTooLong)
@@ -742,17 +742,17 @@ TEST_F(TestParameterCommandError, exitNoAskInvalidValue)
 
 TEST_F(TestParameterCommand, filenameMask)
 {
-    ValueSaver saved_gif_filename_mask{g_gif_filename_mask, "*.foo"};
+    ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.foo"};
 
     exec_cmd_arg("filename=.pot", CmdFile::AT_CMD_LINE);
 
-    EXPECT_EQ("*.pot", g_gif_filename_mask);
+    EXPECT_EQ("*.pot", g_image_filename_mask);
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
 }
 
 TEST_F(TestParameterCommandError, filenameTooLong)
 {
-    const std::string saved_gif_filename_mask{g_gif_filename_mask};
+    const std::string saved_gif_filename_mask{g_image_filename_mask};
     const ShowFile saved_show_file{g_show_file};
     const std::string saved_browse_name{g_browse_name};
     const std::string too_long{"filename=" + std::string(1024, 'f')};
@@ -760,7 +760,7 @@ TEST_F(TestParameterCommandError, filenameTooLong)
     exec_cmd_arg(too_long, CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(saved_gif_filename_mask, g_gif_filename_mask);
+    EXPECT_EQ(saved_gif_filename_mask, g_image_filename_mask);
     EXPECT_EQ(saved_show_file, g_show_file);
     EXPECT_EQ(saved_browse_name, g_browse_name);
 }

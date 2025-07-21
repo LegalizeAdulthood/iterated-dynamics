@@ -116,7 +116,7 @@ std::filesystem::path g_read_filename;                    // name of fractal inp
 std::filesystem::path g_temp_dir;                         // name of temporary directory
 std::filesystem::path g_working_dir;                      // name of directory for misc files
 std::filesystem::path g_organize_formulas_dir;            // name of directory for orgfrm files
-std::string g_gif_filename_mask{"*.gif"};                 //
+std::string g_image_filename_mask{"*.gif"};               //
 std::filesystem::path g_save_filename{"fract001"};        // save files using this name
 bool g_potential_flag{};                                  // continuous potential enabled?
 bool g_potential_16bit{};                                 // store 16 bit continuous potential values
@@ -2000,11 +2000,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
 {
     if (cmd.char_val[0] == '.' && cmd.value[1] != SLASH_CH)
     {
-        if (cmd.value_len > 4)
-        {
-            return cmd.bad_arg();
-        }
-        g_gif_filename_mask = std::string{"*"} + cmd.value;
+        g_image_filename_mask = std::string{"*"} + cmd.value;
         return CmdArgFlags::NONE;
     }
     if (cmd.value_len > (ID_FILE_MAX_PATH - 1))

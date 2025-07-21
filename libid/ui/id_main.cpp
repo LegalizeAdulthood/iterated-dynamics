@@ -240,7 +240,7 @@ static bool main_restore_start(MainContext &context)
                 g_help_mode = HelpLabels::HELP_SAVE_RESTORE;
             }
             if (g_show_file == ShowFile::REQUEST_IMAGE &&
-                driver_get_filename(hdg, "GIF", g_gif_filename_mask.c_str(), g_read_filename))
+                driver_get_filename(hdg, "Image File", g_image_filename_mask.c_str(), g_read_filename))
             {
                 g_show_file = ShowFile::IMAGE_LOADED; // cancelled
                 g_init_mode = -1;
