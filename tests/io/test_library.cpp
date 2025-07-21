@@ -112,6 +112,19 @@ TEST_F(TestLibrary, findFormulaSearchMultiplePaths)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
 }
 
+TEST_F(TestLibrary, findFileFromSaveLibrary)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
+    id::io::set_save_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, "root.frm")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
+    EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+}
+
 TEST_F(TestLibrary, findImageInLibraryDirectory)
 {
     id::io::add_read_library(ID_TEST_LIBRARY_DIR2);

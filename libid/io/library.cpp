@@ -88,6 +88,11 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
         return {};
     };
 
+    if (const std::filesystem::path path = check_dir(s_save_path); !path.empty())
+    {
+        return path;
+    }
+
     if (const std::filesystem::path path = check_dir(g_fractal_search_dir1); !path.empty())
     {
         return path;
