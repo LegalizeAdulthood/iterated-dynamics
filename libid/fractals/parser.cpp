@@ -26,6 +26,7 @@
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
+#include "io/library.h"
 #include "io/save_file.h"
 #include "math/arg.h"
 #include "math/cmplx.h"
@@ -2230,7 +2231,8 @@ static void is_complex_constant(std::FILE *open_file, Token *tok)
     long file_pos = std::ftell(open_file);
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        debug_token = open_save_file("frmconst.txt", "at");
+        const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "frmconst.txt")};
+        debug_token = std::fopen(path.string().c_str(), "at");
     }
 
     while (!done)
@@ -2635,7 +2637,8 @@ int frm_get_param_stuff(const char *name)
 
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        debug_token = open_save_file("frmtokens.txt", "at");
+        const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "frmtokens.txt")};
+        debug_token = std::fopen(path.string().c_str(), "at");
         if (debug_token != nullptr)
         {
             fmt::print(debug_token, "{:s}\n", name);
@@ -2891,7 +2894,8 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
     std::FILE *debug_fp{};
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        debug_fp = open_save_file("debugfrm.txt", "at");
+        const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "debugfrm.txt")};
+        debug_fp = std::fopen(path.string().c_str(), "at");
         if (debug_fp != nullptr)
         {
             fmt::print(debug_fp, "{:s}\n", g_formula_name);
