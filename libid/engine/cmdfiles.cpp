@@ -346,10 +346,12 @@ void cmd_files(int argc, const char *const *argv)
             process_simple_command(cur_arg);
         }
         // @filename/setname?
-        else if (char *slash = std::strchr(cur_arg, '/');
-            !process_file_set_name(std::string{cur_arg + 1, slash}, slash + 1))
+        else if (char *slash = std::strchr(cur_arg, '/'); slash != nullptr)
         {
-            arg_error(cur_arg);
+            if (!process_file_set_name(std::string{cur_arg + 1, slash}, slash + 1))
+            {
+                arg_error(cur_arg);
+            }
         }
         // @filename
         else
