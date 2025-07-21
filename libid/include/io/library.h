@@ -32,6 +32,7 @@ enum class WriteFile
     RAYTRACE,
     ID_CONFIG,
     ORBIT,
+    SOUND,
 };
 
 void clear_read_library_path();

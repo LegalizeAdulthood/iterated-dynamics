@@ -133,6 +133,8 @@ static std::string_view subdir(WriteFile kind)
         return "config";
     case WriteFile::ORBIT:
         return "orbit";
+    case WriteFile::SOUND:
+        return "sound";
     case WriteFile::RAYTRACE: // no special subdir for raytrace output
     case WriteFile::ROOT:
         return {};
@@ -166,6 +168,8 @@ static const char *file_extension(WriteFile kind)
         return ".cfg";
     case WriteFile::ORBIT:
         return ".raw";
+    case WriteFile::SOUND:
+        return ".txt";
     }
 
     throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));
