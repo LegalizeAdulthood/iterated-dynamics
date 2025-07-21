@@ -22,6 +22,7 @@
 #include "fractals/parser.h"
 #include "io/decode_info.h"
 #include "io/is_writeable.h"
+#include "io/library.h"
 #include "io/loadfile.h"
 #include "io/save_file.h"
 #include "io/save_timer.h"
@@ -151,7 +152,7 @@ restart:
 
     open_file.replace_extension(open_file_ext);
 
-    open_file = get_save_name(open_file.string());
+    open_file = id::io::get_save_path(id::io::WriteFile::IMAGE, open_file.string());
     tmp_file = open_file;
     if (!std::filesystem::exists(open_file))  // file doesn't exist
     {

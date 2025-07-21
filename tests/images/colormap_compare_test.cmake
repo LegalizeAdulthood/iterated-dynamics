@@ -26,11 +26,14 @@ if(DEBUG)
     endforeach()
 endif()
 
-file(REMOVE "${TEST_SAVE_IMAGE}")
+file(REMOVE "image/${TEST_SAVE_IMAGE}")
 execute_process(COMMAND "${ID}" ${PARAMETERS}
     COMMAND_ERROR_IS_FATAL ANY
     COMMAND_ECHO ${COMMAND_ECHO})
-file(RENAME "${TEST_SAVE_IMAGE}" "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}")
+if(NOT EXISTS "image/${TEST_SAVE_IMAGE}")
+    message(FATAL_ERROR "Image file 'image/${TEST_SAVE_IMAGE}' does not exist.")
+endif()
+file(RENAME "image/${TEST_SAVE_IMAGE}" "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}")
 
 execute_process(COMMAND "${COLORMAP_COMPARE}" "${MAP_DIR}/${MAP_FILE}" "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}"
     COMMAND_ERROR_IS_FATAL ANY
