@@ -313,12 +313,26 @@ static bool process_file_set_name(const std::string &filename, const std::string
 
 static void process_file(char *cur_arg)
 {
-    std::FILE *init_file = std::fopen(&cur_arg[1], "r");
+    fs::path path{&cur_arg[1]};
+    if (!path.has_extension())
+    {
+        path.replace_extension(".par");
+    }
+    path = id::io::find_file(id::io::ReadFile::PARAMETER, path.string());
+    if (path.empty())
+    {
+        arg_error(cur_arg);
+        return;
+    }
+
+    std::FILE *init_file = std::fopen(path.string().c_str(), "r");
     if (init_file == nullptr)
     {
         arg_error(cur_arg);
+        return;
     }
-    command_file(init_file, CmdFile::AT_CMD_LINE);
+
+    command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME);
 }
 
 void cmd_files(int argc, const char *const *argv)

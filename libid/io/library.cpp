@@ -71,7 +71,7 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
         }
     }
 
-    auto check_dir = [&](const std::filesystem::path &dir) -> std::filesystem::path
+    const auto check_dir = [&](const std::filesystem::path &dir) -> std::filesystem::path
     {
         if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
         {

@@ -166,6 +166,7 @@ add_image_test("ant1" IGNORE_COLORMAP PARAMETERS "type=ant"
 add_image_test("ant2" IGNORE_COLORMAP PARAMETERS "type=ant"
     "center-mag=0/0/1/1.3333" "params=11111.0/999999.0/25.0/2.0/1.0/-400.0" "inside=0" LABELS "ant")
 add_image_test("mandel-chroma" PARAMETERS "type=mandel" "map=chroma")
+add_image_test("filament" PARAMETERS "@id")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
