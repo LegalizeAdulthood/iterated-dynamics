@@ -4,6 +4,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/wait_until.h"
+#include "io/check_write_file.h"
 #include "io/library.h"
 #include "io/update_save_name.h"
 #include "misc/Driver.h"
@@ -34,13 +35,9 @@ bool sound_open()
     std::string sound_name{"sound001.txt"};
     if ((g_orbit_save_flags & OSF_MIDI) != 0 && s_snd_fp == nullptr)
     {
-        std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::SOUND, sound_name)};
-        while (std::filesystem::exists(path))
-        {
-            update_save_name(sound_name);
-            path = id::io::get_save_path(id::io::WriteFile::SOUND, sound_name);
-        }
-        s_snd_fp = std::fopen(path.string().c_str(), "w");
+        std::string path{id::io::get_save_path(id::io::WriteFile::SOUND, sound_name).string()};
+        check_write_file(path, ".txt");
+        s_snd_fp = std::fopen(path.c_str(), "w");
         if (s_snd_fp == nullptr)
         {
             stop_msg(fmt::format("Can't open {:s} for writing.", sound_name));
