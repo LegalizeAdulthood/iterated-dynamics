@@ -88,9 +88,7 @@ add_executable(test-id
     io/test_locate_input_file.cpp
     io/test_make_path.cpp
     io/test_merge_path_names.cpp
-    io/test_open_save_file.cpp
     io/test_path_match.cpp
-    io/test_save_file.cpp
     io/test_search_path.cpp
     io/test_split_path.cpp
     io/test_trim_filename.cpp

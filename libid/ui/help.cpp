@@ -8,7 +8,6 @@
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/library.h"
-#include "io/save_file.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/help_title.h"

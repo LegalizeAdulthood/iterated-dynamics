@@ -27,7 +27,6 @@
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "io/library.h"
-#include "io/save_file.h"
 #include "math/arg.h"
 #include "math/cmplx.h"
 #include "math/fixed_pt.h"

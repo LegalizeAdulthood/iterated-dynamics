@@ -122,7 +122,6 @@ add_library(libid
     include/io/make_path.h io/make_path.cpp
     include/io/merge_path_names.h io/merge_path_names.cpp
     include/io/path_match.h io/path_match.cpp
-    include/io/save_file.h io/save_file.cpp
     include/io/save_timer.h io/save_timer.cpp
     include/io/search_path.h io/search_path.cpp
     include/io/special_dirs.h io/special_dirs.cpp
