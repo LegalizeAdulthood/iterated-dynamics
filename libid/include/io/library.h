@@ -38,6 +38,6 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
 
 void clear_save_library();
 void set_save_library(std::filesystem::path path);
-std::filesystem::path get_save_path(WriteFile file, const std::string &filename);
+std::filesystem::path get_save_path(WriteFile kind, const std::string &filename);
 
 } // namespace id::io

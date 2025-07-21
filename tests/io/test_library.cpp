@@ -125,6 +125,18 @@ TEST_F(TestLibrary, saveLibraryDefaultsToSaveDir)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
 
+TEST_F(TestLibrary, saveFileAddsExtension)
+{
+    id::io::set_save_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{id::io::get_save_path(id::io::WriteFile::MAP, "foo")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"foo.map"}, path.filename()) << path;
+    EXPECT_EQ(Path{"map"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+}
+
 TEST_F(TestLibrary, findFileCheckSearchDir1Root)
 {
     ValueSaver saved_search_dir{g_fractal_search_dir1, ID_TEST_SEARCH_DIR1};

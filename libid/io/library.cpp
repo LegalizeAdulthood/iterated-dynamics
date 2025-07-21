@@ -134,18 +134,50 @@ static std::string_view subdir(WriteFile kind)
     throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));
 }
 
-std::filesystem::path get_save_path(WriteFile file, const std::string &filename)
+static const char *file_extension(WriteFile kind)
 {
-    std::filesystem::path dir = (s_save_path.empty() ? g_save_dir : s_save_path) / subdir(file);
-    if (!std::filesystem::exists(dir))
+    switch (kind)
+    {
+    case WriteFile::FORMULA:
+        return ".frm";
+    case WriteFile::IFS:
+        return ".ifs";
+    case WriteFile::IMAGE:
+        return ".gif";
+    case WriteFile::KEY:
+        return ".key";
+    case WriteFile::LSYSTEM:
+        return ".l";
+    case WriteFile::MAP:
+        return ".map";
+    case WriteFile::PARAMETER:
+        return ".par";
+    case WriteFile::ROOT:
+        return "";
+    case WriteFile::RAYTRACE:
+        return ".ray";
+    }
+
+    throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));
+}
+
+std::filesystem::path get_save_path(WriteFile kind, const std::string &filename)
+{
+    std::filesystem::path result = (s_save_path.empty() ? g_save_dir : s_save_path) / subdir(kind);
+    if (!std::filesystem::exists(result))
     {
         std::error_code ec;
-        if (create_directories(dir, ec); ec)
+        if (create_directories(result, ec); ec)
         {
             return {};
         }
     }
-    return dir / filename;
+    result /= filename;
+    if (!result.has_extension())
+    {
+        result.replace_extension(file_extension(kind));
+    }
+    return result;
 }
 
 } // namespace id::io
