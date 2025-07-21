@@ -88,21 +88,14 @@ bool find_file_item(
 {
     std::FILE *infile = nullptr;
     bool found = false;
-    char drive[ID_FILE_MAX_DRIVE];
-    char dir[ID_FILE_MAX_DIR];
-    char fname[ID_FILE_MAX_FNAME];
-    char ext[ID_FILE_MAX_EXT];
-    char full_path[ID_FILE_MAX_PATH];
 
-    split_path(path.string(), drive, dir, fname, ext);
-    make_fname_ext(full_path, fname, ext);
     if (!string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
     {
         found = check_path(path, &infile, item_name);
 
         if (!found && g_check_cur_dir)
         {
-            make_path(full_path, "", DOT_SLASH, fname, ext);
+            std::filesystem::path full_path{path.filename()};
             found = check_path(full_path, &infile, item_name);
             if (found)
             {
@@ -118,20 +111,16 @@ bool find_file_item(
         {
         case ItemType::FORMULA:
             par_search_name = "frm:" + item_name;
-            split_drive_dir(g_search_for.frm, drive, dir);
             break;
         case ItemType::L_SYSTEM:
             par_search_name = "lsys:" + item_name;
-            split_drive_dir(g_search_for.lsys, drive, dir);
             break;
         case ItemType::IFS:
             par_search_name = "ifs:" + item_name;
-            split_drive_dir(g_search_for.ifs, drive, dir);
             break;
         case ItemType::PAR_SET:
         default:
             par_search_name = item_name;
-            split_drive_dir(g_search_for.par, drive, dir);
             break;
         }
         found = check_path(g_parameter_file, &infile, par_search_name);
@@ -167,25 +156,6 @@ bool find_file_item(
         {
             path = lib_path;
         }
-    }
-
-    if (!found)
-    {
-        // search for file
-        make_path(full_path, drive, dir, "*", item_extension(item_type));
-        for (bool more = fr_find_first(full_path); more; more = fr_find_next())
-        {
-            show_temp_msg(fmt::format("Searching {:13s} for {:s}      ", g_dta.filename, item_name));
-            if (!(g_dta.attribute & SUB_DIR)
-                && g_dta.filename != "."
-                && g_dta.filename != "..")
-            {
-                split_fname_ext(g_dta.filename, fname, ext);
-                make_path(full_path, drive, dir, fname, ext);
-                found = check_path(full_path, &infile, item_name);
-            }
-        }
-        clear_temp_msg();
     }
 
     if (!found)
