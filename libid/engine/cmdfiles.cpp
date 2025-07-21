@@ -798,6 +798,7 @@ struct Command
 {
     Command(char *cur_arg, CmdFile a_mode);
     CmdArgFlags bad_arg() const;
+    void init_msg() const;
 
     char *arg;
     CmdFile mode{};
@@ -959,6 +960,11 @@ CmdArgFlags Command::bad_arg() const
 {
     arg_error(arg);
     return CmdArgFlags::BAD_ARG;
+}
+
+void Command::init_msg() const
+{
+    ::init_msg(variable.c_str(), value, mode);
 }
 
 struct CommandHandler
@@ -1312,7 +1318,7 @@ static CmdArgFlags cmd_auto_key_name(const Command &cmd)
 {
     if (merge_path_names(g_auto_name, cmd.value, cmd.mode) < 0)
     {
-        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        cmd.init_msg();
     }
     return CmdArgFlags::NONE;
 }
@@ -2020,7 +2026,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
     }
     else
     {
-        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        cmd.init_msg();
     }
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
@@ -2085,7 +2091,7 @@ static CmdArgFlags cmd_formula_file(const Command &cmd)
     }
     if (merge_path_names(g_formula_filename, cmd.value, cmd.mode) < 0)
     {
-        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        cmd.init_msg();
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -2188,7 +2194,7 @@ static CmdArgFlags cmd_ifs_file(const Command &cmd)
     }
     else if (exist_dir < 0)
     {
-        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        cmd.init_msg();
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -2363,7 +2369,7 @@ static CmdArgFlags cmd_l_file(const Command &cmd)
     }
     if (merge_path_names(g_l_system_filename, cmd.value, cmd.mode) < 0)
     {
-        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        cmd.init_msg();
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -2805,7 +2811,7 @@ static CmdArgFlags cmd_parm_file(const Command &cmd)
     }
     if (merge_path_names(g_parameter_file, cmd.value, cmd.mode) < 0)
     {
-        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        cmd.init_msg();
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -3151,7 +3157,7 @@ static CmdArgFlags cmd_save_name(const Command &cmd)
     {
         if (merge_path_names(g_save_filename, cmd.value, cmd.mode) < 0)
         {
-            init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+            cmd.init_msg();
         }
     }
     return CmdArgFlags::NONE;
