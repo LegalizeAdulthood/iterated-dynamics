@@ -229,7 +229,7 @@ static void update_id_cfg()
     }
 
     const fs::path out_path{save_path.parent_path() / "id.tmp"};
-    std::FILE *out_file = open_save_file(out_path.string(), "w");
+    std::FILE *out_file = std::fopen(out_path.string().c_str(), "w");
     if (out_file == nullptr)
     {
         stop_msg("Can't create " + out_path.string() + ", error " + std::to_string(errno));
