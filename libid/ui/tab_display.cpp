@@ -170,7 +170,7 @@ static bool tab_display2(char *msg)
     show_str_var("savename",    g_save_filename.string().c_str(),   &row, msg);
     show_str_var("parmfile",    g_parameter_file.string().c_str(),  &row, msg);
     show_str_var("ifsfile",     g_ifs_filename.string().c_str(),    &row, msg);
-    show_str_var("autokeyname", g_auto_name.c_str(),                &row, msg);
+    show_str_var("autokeyname", g_auto_name.string().c_str(),       &row, msg);
     show_str_var("lightname",   g_light_name.c_str(),               &row, msg);
     show_str_var("map",         g_map_name.c_str(),                 &row, msg);
     write_row(row++, "Sizeof fractalspecific array %d",

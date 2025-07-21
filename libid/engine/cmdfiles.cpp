@@ -1317,9 +1317,13 @@ static CmdArgFlags cmd_auto_key(const Command &cmd)
 
 static CmdArgFlags cmd_auto_key_name(const Command &cmd)
 {
-    if (merge_path_names(g_auto_name, cmd.value, cmd.mode) < 0)
+    if (const fs::path path{id::io::find_file(id::io::ReadFile::KEY, cmd.value)}; !path.empty())
     {
-        cmd.init_msg();
+        g_auto_name = path;
+    }
+    else
+    {
+        g_auto_name = cmd.value;
     }
     return CmdArgFlags::NONE;
 }

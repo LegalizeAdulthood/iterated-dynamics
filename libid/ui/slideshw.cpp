@@ -10,6 +10,7 @@
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "io/check_write_file.h"
+#include "io/library.h"
 #include "io/save_file.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -56,8 +57,8 @@ static void slide_show_err(const char *msg);
 static int  get_scancode(const char *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
-SlidesMode g_slides{SlidesMode::OFF}; // PLAY autokey=play, RECORD autokey=record
-std::string g_auto_name{"auto.key"};    // record auto keystrokes here
+SlidesMode g_slides{SlidesMode::OFF};          // PLAY autokey=play, RECORD autokey=record
+std::filesystem::path g_auto_name{"auto.key"}; // record auto keystrokes here
 bool g_busy{};
 
 static KeyMnemonic s_key_mnemonics[] =
@@ -359,7 +360,7 @@ start:
 
 SlidesMode start_slide_show()
 {
-    s_slide_show_file = std::fopen(g_auto_name.c_str(), "r");
+    s_slide_show_file = std::fopen(g_auto_name.string().c_str(), "r");
     if (s_slide_show_file == nullptr)
     {
         g_slides = SlidesMode::OFF;
@@ -387,8 +388,9 @@ void record_show(int key)
     s_ticks = std::clock();  // current time
     if (s_slide_show_file == nullptr)
     {
-        check_write_file(g_auto_name, ".key");
-        s_slide_show_file = open_save_file(g_auto_name, "w");
+        std::string path{id::io::get_save_path(id::io::WriteFile::KEY, g_auto_name.filename().string()).string()};
+        check_write_file(path, ".key");
+        s_slide_show_file = std::fopen(path.c_str(), "w");
         if (s_slide_show_file == nullptr)
         {
             return;

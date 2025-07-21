@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include <string>
+#include <filesystem>
 
 enum class SlidesMode
 {
@@ -11,7 +11,7 @@ enum class SlidesMode
     RECORD = 2
 };
 
-extern std::string           g_auto_name;
+extern std::filesystem::path g_auto_name;
 extern bool                  g_busy;
 extern SlidesMode            g_slides;
 
