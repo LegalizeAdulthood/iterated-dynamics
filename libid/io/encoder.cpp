@@ -189,10 +189,10 @@ restart:
         g_resave_flag = TimedSave::NONE;
     }
 
-    s_outfile = open_save_file(tmp_file.string(), "wb");
+    s_outfile = std::fopen(tmp_file.string().c_str(), "wb");
     if (s_outfile == nullptr)
     {
-        stop_msg(std::string{"Can't create "} + tmp_file.string());
+        stop_msg("Can't create " + tmp_file.string());
         return -1;
     }
 
