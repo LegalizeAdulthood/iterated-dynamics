@@ -33,7 +33,6 @@ function(add_orbit_test name)
         set(DISABELD "FALSE")
     endif()
     set_tests_properties(OrbitTest.${name} PROPERTIES
-        PROCESSORS "10000"
         DISABLED "${DISABLED}"
         LABELS "${ORBIT_TEST_LABELS}")
 endfunction()
