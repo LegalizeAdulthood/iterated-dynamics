@@ -41,6 +41,29 @@ void TestLibrary::TearDown()
 
 } // namespace
 
+TEST_F(TestLibrary, findConfigInLibraryDirectory)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
+
+    const Path path{id::io::find_file(id::io::ReadFile::ID_CONFIG, "root.cfg")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"root.cfg"}, path.filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR1}, path.parent_path()) << path;
+}
+
+TEST_F(TestLibrary, findConfigInLibrarySubDirectory)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{id::io::find_file(id::io::ReadFile::ID_CONFIG, "id.cfg")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"id.cfg"}, path.filename()) << path;
+    EXPECT_EQ(Path{"config"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+}
+
 TEST_F(TestLibrary, findFormulaInLibraryDirectory)
 {
     id::io::add_read_library(ID_TEST_LIBRARY_DIR1);

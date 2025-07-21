@@ -33,6 +33,8 @@ static std::string_view subdir(ReadFile kind)
         return "map";
     case ReadFile::PARAMETER:
         return "par";
+    case ReadFile::ID_CONFIG:
+        return "config";
     }
     throw std::runtime_error("Unknown ReadFile type " + std::to_string(static_cast<int>(kind)));
 }
@@ -127,6 +129,8 @@ static std::string_view subdir(WriteFile kind)
         return "map";
     case WriteFile::PARAMETER:
         return "par";
+    case WriteFile::ID_CONFIG:
+        return "config";
     case WriteFile::RAYTRACE: // no special subdir for raytrace output
     case WriteFile::ROOT:
         return {};
@@ -156,6 +160,8 @@ static const char *file_extension(WriteFile kind)
         return "";
     case WriteFile::RAYTRACE:
         return ".ray";
+    case WriteFile::ID_CONFIG:
+        return ".cfg";
     }
 
     throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));

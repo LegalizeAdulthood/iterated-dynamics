@@ -16,6 +16,7 @@ enum class ReadFile
     LSYSTEM,
     MAP,
     PARAMETER,
+    ID_CONFIG,
 };
 
 enum class WriteFile
@@ -29,6 +30,7 @@ enum class WriteFile
     PARAMETER,
     ROOT,
     RAYTRACE,
+    ID_CONFIG,
 };
 
 void clear_read_library_path();

@@ -4,7 +4,7 @@
 
 #include "engine/id_data.h"
 #include "engine/pixel_limits.h"
-#include "io/locate_input_file.h"
+#include "io/library.h"
 #include "misc/Driver.h"
 #include "ui/video_mode.h"
 
@@ -31,7 +31,7 @@ int g_cfg_line_nums[MAX_VIDEO_MODES]{};
  */
 void load_config()
 {
-    load_config(locate_input_file("id.cfg"));
+    load_config(id::io::find_file(id::io::ReadFile::ID_CONFIG, "id.cfg").string());
 }
 
 void load_config(const std::string &cfg_path)

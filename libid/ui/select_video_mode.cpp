@@ -6,6 +6,7 @@
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/is_writeable.h"
+#include "io/library.h"
 #include "io/load_config.h"
 #include "io/locate_input_file.h"
 #include "io/save_file.h"
@@ -206,17 +207,17 @@ static bool ent_less(const int lhs, const int rhs)
 
 static void update_id_cfg()
 {
-    const fs::path save_path{get_save_name("id.cfg")};
+    const fs::path save_path{id::io::get_save_path(id::io::WriteFile::ID_CONFIG, "id.cfg")};
     if (!is_writeable(save_path))
     {
         stop_msg("Can't write " + save_path.string());
         return;
     }
 
-    const fs::path cfg_path{locate_input_file("id.cfg")};
-    if (!fs::exists(cfg_path))
+    const fs::path cfg_path{id::io::find_file(id::io::ReadFile::ID_CONFIG, "id.cfg")};
+    if (!cfg_path.empty())
     {
-        stop_msg("Couldn't locate id.cfg, expected " + cfg_path.string() + " to exist");
+        stop_msg("Couldn't locate id.cfg");
         return;
     }
 
