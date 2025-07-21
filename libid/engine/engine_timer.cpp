@@ -6,9 +6,8 @@
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "io/decoder.h"
-#include "io/dir_file.h"
 #include "io/encoder.h"
-#include "io/save_file.h"
+#include "io/library.h"
 #include "misc/debug_flags.h"
 
 #include <fmt/format.h>
@@ -54,7 +53,7 @@ static int timer(TimerType type, int (*fn)(), ...)
     }
     if (do_bench)
     {
-        fp = std::fopen(get_save_name("id-bench.txt").string().c_str(), "a");
+        fp = std::fopen(id::io::get_save_path(id::io::WriteFile::ROOT, "id-bench.txt").string().c_str(), "a");
     }
     g_timer_start = std::clock();
     switch (type)
