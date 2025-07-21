@@ -5,6 +5,7 @@
 #include "ColorMapSaver.h"
 #include "MockDriver.h"
 #include "test_data.h"
+#include "test_library.h"
 #include "ValueUnchanged.h"
 
 #include <3d/3d.h>
@@ -4085,4 +4086,33 @@ TEST_F(TestParameterCommand, color6BitMappedTo8Bit)
     EXPECT_EQ(63U*4U, g_dac_box[0][0]);
     EXPECT_EQ(63U*4U, g_dac_box[0][1]);
     EXPECT_EQ(63U*4U, g_dac_box[0][2]);
+}
+
+TEST_F(TestParameterCommand, singleReadLibraryDir)
+{
+    using Path = std::filesystem::path;
+    id::io::clear_read_library_path();
+
+    exec_cmd_arg(std::string{"librarydirs="} + id::test::library::ID_TEST_LIBRARY_DIR2);
+
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, ID_TEST_FRM_FILE)};
+    ASSERT_FALSE(path.empty());
+    EXPECT_EQ(Path{ID_TEST_FRM_FILE}, path.filename()) << path;
+    EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{id::test::library::ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestParameterCommand, multipleReadLibraryDir)
+{
+    using Path = std::filesystem::path;
+    id::io::clear_read_library_path();
+
+    exec_cmd_arg(std::string{"librarydirs="} + //
+        id::test::library::ID_TEST_LIBRARY_DIR1 + "," + id::test::library::ID_TEST_LIBRARY_DIR3);
+
+    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, "root.frm")};
+    ASSERT_FALSE(path.empty());
+    EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
+    EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{id::test::library::ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }

@@ -2400,6 +2400,23 @@ static CmdArgFlags cmd_l_file(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
+// librarydirs=path,...,path
+static CmdArgFlags cmd_library_dirs(const Command &cmd)
+{
+    if (cmd.value_len == 0)
+    {
+        return cmd.bad_arg();
+    }
+    const char *start = cmd.value;
+    for (const char *comma = std::strchr(start, ','); comma != nullptr; comma = std::strchr(start, ','))
+    {
+        id::io::add_read_library(std::string{start, comma});
+        start = comma + 1;
+    }
+    id::io::add_read_library(start);
+    return CmdArgFlags::NONE;
+}
+
 // lightname=?
 static CmdArgFlags cmd_light_name(const Command &cmd)
 {
@@ -3811,7 +3828,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 157> s_commands{
+static std::array<CommandHandler, 158> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -3876,6 +3893,7 @@ static std::array<CommandHandler, 157> s_commands{
     CommandHandler{"julibrotfromto", cmd_julibrot_from_to}, //
     CommandHandler{"latitude", cmd_latitude},               //
     CommandHandler{"lfile", cmd_l_file},                    //
+    CommandHandler{"librarydirs", cmd_library_dirs},        //
     CommandHandler{"lightname", cmd_light_name},            //
     CommandHandler{"lightsource", cmd_light_source},        //
     CommandHandler{"linefeed", cmd_deprecated},             // deprecated print parameters
