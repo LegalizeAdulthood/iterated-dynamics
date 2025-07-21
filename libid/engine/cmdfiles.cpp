@@ -1618,11 +1618,15 @@ static CmdArgFlags parse_colors(const char *value)
 {
     if (*value == '@')
     {
-        if (merge_path_names(g_map_name, &value[1], CmdFile::AT_CMD_LINE_SET_NAME) < 0)
+        if (const fs::path path{id::io::find_file(id::io::ReadFile::MAP, &value[1])}; !path.empty())
+        {
+            g_map_name = path.filename().string();
+        }
+        else
         {
             init_msg("", &value[1], CmdFile::AT_CMD_LINE_SET_NAME);
         }
-        if ((int)std::strlen(value) > ID_FILE_MAX_PATH || validate_luts(g_map_name))
+        if (validate_luts(g_map_name))
         {
             goto bad_color;
         }
@@ -1632,10 +1636,7 @@ static CmdArgFlags parse_colors(const char *value)
         }
         else
         {
-            if (merge_path_names(g_last_map_name, &value[1], CmdFile::AT_CMD_LINE_SET_NAME) < 0)
-            {
-                init_msg("", &value[1], CmdFile::AT_CMD_LINE_SET_NAME);
-            }
+            g_last_map_name = &value[1];
             g_color_state = ColorState::MAP_FILE;
         }
     }

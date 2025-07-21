@@ -607,8 +607,8 @@ bool load_palette()
         if (!validate_luts(filename))
         {
             std::memcpy(g_old_dac_box, g_dac_box, 256*3);
+            g_map_name = filename;
         }
-        merge_path_names(g_map_name, filename.c_str(), CmdFile::AT_CMD_LINE);
     }
     return i;
 }
