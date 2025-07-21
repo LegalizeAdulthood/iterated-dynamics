@@ -25,6 +25,7 @@
 #include <fractals/lorenz.h>
 #include <fractals/parser.h>
 #include <io/CurrentPathSaver.h>
+#include <io/library.h>
 #include <io/loadfile.h>
 #include <io/save_timer.h>
 #include <io/special_dirs.h>
@@ -55,6 +56,8 @@
 #include <sstream>
 #include <string_view>
 #include <vector>
+
+namespace fs = std::filesystem;
 
 using namespace testing;
 using namespace id::test::data;
@@ -120,17 +123,37 @@ public:
     ~TestParameterCommand() override = default;
 
 protected:
+    void SetUp() override;
+    void TearDown() override;
     void exec_cmd_arg(const std::string &cur_arg, CmdFile mode = CmdFile::AT_AFTER_STARTUP);
 
     std::vector<char> m_buffer;
     CmdArgFlags m_result{};
 };
 
+void TestParameterCommand::SetUp()
+{
+    Test::SetUp();
+    id::io::clear_read_library_path();
+    id::io::add_read_library(ID_TEST_HOME_DIR);
+}
+
+void TestParameterCommand::TearDown()
+{
+    id::io::clear_read_library_path();
+    Test::TearDown();
+}
+
 void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, CmdFile mode)
 {
     m_buffer.resize(cur_arg.size() + 1);
     std::strcpy(m_buffer.data(), cur_arg.c_str());
     m_result = cmd_arg(m_buffer.data(), mode);
+}
+
+static fs::path home_file(const char *subdir, const char *filename)
+{
+    return fs::path{ID_TEST_HOME_DIR} / subdir / filename;
 }
 
 class TestParameterCommandError : public TestParameterCommand
@@ -338,7 +361,7 @@ TEST_F(TestParameterCommandError, makeParTooManyValues)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
-static std::string read_file_contents(const std::filesystem::path &path)
+static std::string read_file_contents(const fs::path &path)
 {
     std::ifstream file{path};
     std::ostringstream str;
@@ -355,7 +378,7 @@ protected:
 
     ValueSaver<Version> m_saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver<int> m_saved_release{g_release};
-    ValueSaver<std::filesystem::path> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
+    ValueSaver<fs::path> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
     ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<int> m_saved_x_dots{g_file_x_dots, 800};
@@ -375,8 +398,8 @@ void TestCommandMakePar::SetUp()
 
 TEST_F(TestCommandMakePar, makeParNewFile)
 {
-    std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "new.par"};
-    std::filesystem::remove(path);
+    fs::path path{fs::path{ID_TEST_DATA_DIR} / "new.par"};
+    fs::remove(path);
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
 
@@ -393,16 +416,16 @@ TEST_F(TestCommandMakePar, makeParNewFile)
         read_file_contents(path)) << path;
 }
 
-static void set_file_contents(const std::filesystem::path &path, std::string_view contents)
+static void set_file_contents(const fs::path &path, std::string_view contents)
 {
-    std::filesystem::remove(path);
+    fs::remove(path);
     std::ofstream file{path};
     file << contents;
 }
 
 TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 {
-    std::filesystem::path path{std::filesystem::path{ID_TEST_DATA_DIR} / "existing.par"};
+    fs::path path{fs::path{ID_TEST_DATA_DIR} / "existing.par"};
     set_file_contents(path, R"par(bar                {
   reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
   maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
@@ -1799,8 +1822,8 @@ static std::string adjust_dir(std::string actual)
     {
         actual[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(actual[0])));
     }
-    std::filesystem::path sep;
-    sep += std::filesystem::path::preferred_separator;
+    fs::path sep;
+    sep += fs::path::preferred_separator;
     if (actual.back() == sep.string().back())
     {
         actual.pop_back();
@@ -1810,9 +1833,9 @@ static std::string adjust_dir(std::string actual)
 
 TEST_F(TestParameterCommand, tempDirExisting)
 {
-    std::filesystem::path start_dir{ID_TEST_DATA_DIR};
+    fs::path start_dir{ID_TEST_DATA_DIR};
     start_dir.make_preferred();
-    std::filesystem::path new_dir{ID_TEST_DATA_SUBDIR};
+    fs::path new_dir{ID_TEST_DATA_SUBDIR};
     new_dir.make_preferred();
     ValueSaver saved_temp_dir{g_temp_dir, start_dir.make_preferred()};
 
@@ -1824,9 +1847,9 @@ TEST_F(TestParameterCommand, tempDirExisting)
 
 TEST_F(TestParameterCommand, workDirExisting)
 {
-    std::filesystem::path start_dir{ID_TEST_DATA_DIR};
+    fs::path start_dir{ID_TEST_DATA_DIR};
     start_dir.make_preferred();
-    std::filesystem::path new_dir{ID_TEST_DATA_SUBDIR};
+    fs::path new_dir{ID_TEST_DATA_SUBDIR};
     new_dir.make_preferred();
     ValueSaver saved_working_dir{g_working_dir, start_dir.make_preferred()};
 
@@ -3339,10 +3362,10 @@ TEST_F(TestParameterCommand, formulaFileFilename)
 {
     ValueSaver saved_formula_filename{g_formula_filename, ""};
 
-    exec_cmd_arg("formulafile=foo.frm");
+    exec_cmd_arg(std::string{"formulafile="} + ID_TEST_FRM_FILE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("foo.frm", g_formula_filename);
+    EXPECT_EQ(home_file(ID_TEST_FRM_SUBDIR, ID_TEST_FRM_FILE), g_formula_filename);
 }
 
 TEST_F(TestParameterCommand, formulaName)
@@ -3359,10 +3382,10 @@ TEST_F(TestParameterCommand, lFileFilename)
 {
     ValueSaver saved_l_system_filename{g_l_system_filename, ""};
 
-    exec_cmd_arg("lfile=foo.l");
+    exec_cmd_arg(std::string{"lfile="} + ID_TEST_LSYSTEM_FILE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("foo.l", g_l_system_filename);
+    EXPECT_EQ(home_file(ID_TEST_LSYSTEM_SUBDIR, ID_TEST_LSYSTEM_FILE), g_l_system_filename);
 }
 
 TEST_F(TestParameterCommand, lName)
@@ -3379,10 +3402,10 @@ TEST_F(TestParameterCommand, ifsFileFilename)
 {
     ValueSaver saved_ifs_filename{g_ifs_filename, ""};
 
-    exec_cmd_arg("ifsfile=foo.ifs");
+    exec_cmd_arg(std::string{"ifsfile="} + ID_TEST_IFS_FILE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("foo.ifs", g_ifs_filename);
+    EXPECT_EQ(home_file(ID_TEST_IFS_SUBDIR, ID_TEST_IFS_FILE), g_ifs_filename);
 }
 
 TEST_F(TestParameterCommand, ifsName)
@@ -3409,10 +3432,10 @@ TEST_F(TestParameterCommand, parmFile)
 {
     ValueSaver saved_command_file{g_parameter_file, ""};
 
-    exec_cmd_arg("parmfile=foo.par");
+    exec_cmd_arg(std::string{"parmfile="} + ID_TEST_PAR_FILE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("foo.par", g_parameter_file);
+    EXPECT_EQ(home_file(ID_TEST_PAR_SUBDIR, ID_TEST_PAR_FILE), g_parameter_file);
 }
 
 TEST_F(TestParameterCommand, stereoValue)

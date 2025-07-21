@@ -84,6 +84,8 @@
 #include <system_error>
 #include <vector>
 
+namespace fs = std::filesystem;
+
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
 static int get_max_cur_arg_len(const char *const float_val_str[], int num_args);
@@ -112,11 +114,11 @@ int g_distance_estimator_y_dots{};                        // y dots to use for v
 int g_bf_digits{};                                        // digits to use (force) for g_bf_math
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 bool g_start_show_orbit{};                                // show orbits on at start of fractal
-std::filesystem::path g_read_filename;                    // name of fractal input file
-std::filesystem::path g_temp_dir;                         // name of temporary directory
-std::filesystem::path g_working_dir;                      // name of directory for misc files
+fs::path g_read_filename;                                 // name of fractal input file
+fs::path g_temp_dir;                                      // name of temporary directory
+fs::path g_working_dir;                                   // name of directory for misc files
 std::string g_image_filename_mask{"*.gif"};               //
-std::filesystem::path g_save_filename{"fract001"};        // save files using this name
+fs::path g_save_filename{"fract001"};                     // save files using this name
 bool g_potential_flag{};                                  // continuous potential enabled?
 bool g_potential_16bit{};                                 // store 16 bit continuous potential values
 bool g_dither_flag{};                                     // true if we want to dither GIFs
@@ -175,13 +177,13 @@ int g_transparent_color_3d[2]{};             // transparency min/max values
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?
-std::filesystem::path g_formula_filename;    // file to find formulas in
+fs::path g_formula_filename;                 // file to find formulas in
 std::string g_formula_name;                  // Name of the Formula (if not empty)
-std::filesystem::path g_l_system_filename;   // file to find L-System's in
+fs::path g_l_system_filename;                // file to find L-System's in
 std::string g_l_system_name;                 // Name of L-System (if not empty)
-std::filesystem::path g_parameter_file;      // file to find parameter sets in
+fs::path g_parameter_file;                   // file to find parameter sets in
 std::string g_parameter_set_name;            // Name of parameter set (if not empty)
-std::filesystem::path g_ifs_filename;        // file to find IFS in
+fs::path g_ifs_filename;                     // file to find IFS in
 std::string g_ifs_name;                      // Name of the IFS definition (if not empty)
 std::vector<float> g_ifs_definition;         // ifs parameters
 bool g_ifs_type{};                           // false=2d, true=3d
@@ -225,7 +227,7 @@ static bool s_init_corners{};    // corners set via corners= or center-mag=?
 static bool s_init_params{};     // params set via params=?
 static bool s_init_functions{};  // trig functions set via function=?
 
-static std::string extract_filename(const std::filesystem::path &source)
+static std::string extract_filename(const fs::path &source)
 {
     return source.filename().string();
 }
@@ -291,23 +293,22 @@ static void process_simple_command(char *cur_arg)
     }
 }
 
-static void process_file_set_name(const char *cur_arg, char *slash)
+static bool process_file_set_name(const std::string &filename, const std::string &param_name)
 {
-    *slash = 0;
-    if (merge_path_names(g_parameter_file, &cur_arg[1], CmdFile::AT_CMD_LINE) < 0)
-    {
-        init_msg("", g_parameter_file.string().c_str(), CmdFile::AT_CMD_LINE);
-    }
-    g_parameter_set_name = &slash[1];
+    const std::filesystem::path saved_path{g_parameter_file};
+    const std::string saved_name{g_parameter_set_name};
+    g_parameter_file = filename;
+    g_parameter_set_name = param_name;
     std::FILE *init_file = nullptr;
-    if (find_file_item(g_parameter_file, g_parameter_set_name, &init_file, ItemType::PAR_SET) || init_file == nullptr)
+    if (find_file_item(g_parameter_file, g_parameter_set_name, &init_file, ItemType::PAR_SET) ||
+        init_file == nullptr)
     {
-        arg_error(cur_arg);
+        g_parameter_file = saved_path;
+        g_parameter_set_name = saved_name;
+        return false;
     }
-    else
-    {
-        command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME);
-    }
+    command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME);
+    return true;
 }
 
 static void process_file(char *cur_arg)
@@ -345,9 +346,10 @@ void cmd_files(int argc, const char *const *argv)
             process_simple_command(cur_arg);
         }
         // @filename/setname?
-        else if (char *slash = std::strchr(cur_arg, '/'))
+        else if (char *slash = std::strchr(cur_arg, '/');
+            !process_file_set_name(std::string{cur_arg + 1, slash}, slash + 1))
         {
-            process_file_set_name(cur_arg, slash);
+            arg_error(cur_arg);
         }
         // @filename
         else
@@ -419,7 +421,7 @@ static void init_libraries()
 {
     id::io::clear_read_library_path();
     id::io::clear_save_library();
-    const std::filesystem::path docs_dir{get_documents_dir() / ID_PROGRAM_NAME};
+    const fs::path docs_dir{get_documents_dir() / ID_PROGRAM_NAME};
     id::io::add_read_library(docs_dir);
     id::io::set_save_library(docs_dir);
 }
@@ -2088,11 +2090,14 @@ static CmdArgFlags cmd_formula_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (merge_path_names(g_formula_filename, cmd.value, cmd.mode) < 0)
+    if (const fs::path path{id::io::find_file(id::io::ReadFile::FORMULA, cmd.value)}; !path.empty())
     {
-        cmd.init_msg();
+        g_formula_filename = path;
+        return CmdArgFlags::FRACTAL_PARAM;
     }
-    return CmdArgFlags::FRACTAL_PARAM;
+
+    cmd.init_msg();
+    return CmdArgFlags::NONE;
 }
 
 // formulaname=?
@@ -2187,15 +2192,14 @@ static CmdArgFlags cmd_ifs_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (const int exist_dir = merge_path_names(g_ifs_filename, cmd.value, cmd.mode); exist_dir == 0)
+    if (const fs::path path{id::io::find_file(id::io::ReadFile::IFS, cmd.value)}; !path.empty())
     {
+        g_ifs_filename = path;
         reset_ifs_definition();
+        return CmdArgFlags::FRACTAL_PARAM;
     }
-    else if (exist_dir < 0)
-    {
-        cmd.init_msg();
-    }
-    return CmdArgFlags::FRACTAL_PARAM;
+    cmd.init_msg();
+    return CmdArgFlags::NONE;
 }
 
 // initorbit=?/?
@@ -2366,11 +2370,13 @@ static CmdArgFlags cmd_l_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (merge_path_names(g_l_system_filename, cmd.value, cmd.mode) < 0)
+    if (const fs::path path{id::io::find_file(id::io::ReadFile::LSYSTEM, cmd.value)}; !path.empty())
     {
-        cmd.init_msg();
+        g_l_system_filename = path;
+        return CmdArgFlags::FRACTAL_PARAM;
     }
-    return CmdArgFlags::FRACTAL_PARAM;
+    cmd.init_msg();
+    return CmdArgFlags::NONE;
 }
 
 // lightname=?
@@ -2808,11 +2814,13 @@ static CmdArgFlags cmd_parm_file(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (merge_path_names(g_parameter_file, cmd.value, cmd.mode) < 0)
+    if (const fs::path path{id::io::find_file(id::io::ReadFile::PARAMETER, cmd.value)}; !path.empty())
     {
-        cmd.init_msg();
+        g_parameter_file = path;
+        return CmdArgFlags::FRACTAL_PARAM;
     }
-    return CmdArgFlags::FRACTAL_PARAM;
+    cmd.init_msg();
+    return CmdArgFlags::NONE;
 }
 
 static CmdArgFlags cmd_passes(const Command &cmd)
@@ -3154,10 +3162,7 @@ static CmdArgFlags cmd_save_name(const Command &cmd)
     }
     if (g_first_init || cmd.mode == CmdFile::AT_AFTER_STARTUP)
     {
-        if (merge_path_names(g_save_filename, cmd.value, cmd.mode) < 0)
-        {
-            cmd.init_msg();
-        }
+        g_save_filename = cmd.value;
     }
     return CmdArgFlags::NONE;
 }
