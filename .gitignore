@@ -7,5 +7,5 @@
 .vs
 CMakeUserPresets.json
 build-ci-*
-home/*.gif
+home/**/*.gif
 **/stopmsg.txt
