@@ -151,7 +151,7 @@ static void main_restart(const int argc, const char *const argv[], MainContext &
     g_smallest_window_display_size = 6;
     g_smallest_box_size_shown = 3;
     g_browse_mask = "*.gif";
-    g_browse_name = "            ";
+    g_browse_name.clear();
     g_filename_stack_index = -1; // init loaded files stack
 
     g_evolving = EvolutionModeFlags::NONE;
