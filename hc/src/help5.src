@@ -1616,6 +1616,64 @@ Where:\
 ;
 ~Topic=Revision History
 
+Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has
+its own history spanning many years.  Please consult the Fractint help
+for its history.  To avoid being confused with a new release of Fractint,
+the code has been rebranded Iterated Dynamics, or Id for short, throughout.
+
+Version 1.3.1 is an interim bug fix release on the way to version 2.0.
+
+New Features in Version 1.3.1
+
+o Colormap channels are no longer restricted to 6 bits.  Encoded colors
+  when generating parameter sets are now extended to encode 8-bit color
+  channels values without loss of precision.  When reading previous
+  parameter sets that encoded 6-bit values the value is loaded into
+  the 6 most significant bits of the 8-bit color channel value.  Colors
+  written to image files use the full 8-bit colors.  (Fixes #47, #61)
+o The palette editor was updated to work with 8-bit colors.
+  (Fixes #306)
+
+Bugs Fixed in Version 1.3.1
+
+o Displaying the view window parameter screen could crash.  (Fixes #308)\
+o Periodic automatic image save, activated by the savetime parameter,
+  has been restored.  (Fixes #43)
+o Some Fractal of the Day image regressions have been fixed.
+  (Fixes #99, #103)
+o Issue templates for bug reports and feature requests have been added
+  to the github repository.  (Fixes #265)
+o The help compiler documentation has been overhauled and updated for
+  the AsciiDoc output features.  (Fixes #276)
+o Reset and <Insert> now reset "inside" color consistently to zero.
+  (Fixes #279)
+o Improvements were made to the continuous integration build and test
+  mechanisms on github.  (Fixes #280, #293)
+o Code configuration was generalized to test for features and not
+  be based on the platform name to enable building on FreeBSD.
+  (Fixes #292)
+o When log(z) stores the output in the same variable as the input,
+  it no longer corrupts the output variable.  (Fixes #295)
+o The float parameter has been deprecated and is ignored.  Discussion
+  of integer math removed from the documentation.  (Fixes #303)
+o Clarify operator precedence and line continuation in the documentation
+  for type=formula.  (Fixes #304)
+o Descriptions of the fractal types are now arranged alphabetically in
+  the plain text and HTML documentation files, making it easier to find
+  information on a specific fractal type.  (Fixes #305)
+o The first value to the mathtolerance parameter is ignored; it previously
+  was used to control the transition from integer to floating-point
+  math.  When writing parameter sets, the first value is now omitted.
+o The delay value is now properly displayed for type=ant.
+  (Fixes #387)
+
+Code Cleanup in Version 1.3.1
+
+o More unused integer math routines were removed.\
+o Functions used to initialize the FractalSpecific array were renamed
+  to remove floating-point annotations and match the FractalSpecific
+  member name (e.g. orbit, per_pixel, per_image, calc_type).
+
 Version 1.2
 
 Version 1.2 is mostly a code cleanup release that removes integer fractal

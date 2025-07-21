@@ -311,7 +311,72 @@ can create the file with a text editor, putting one "keyword=value"
 parameter on each line.
 ;
 ;
+~Topic=Libraries
+
+Id has a variety of associated data files: formula definitions, IFS
+definitions, autokey scripts, L-system definitions, color maps,
+and parameter set definitions.  Additionally, Id can output other
+types of files such as raw orbit dumps, raytrace output and so-on.
+
+Id knows about two kinds of libraries: one or more read libraries
+and a single save library.  A read library is used to locate input
+files.  A save library is used for writing output files.  Read
+library locations are specified with the librarydirs parameter and
+the save library location is specified with the savedir parameter.
+
+To locate an input file, Id looks in the following locations.
+First, if the input file is specified as an absolute path, it is
+loaded directly without consulting the library locations.
+
+Next, each read library is examined followed by the save library.
+Using the save library as a last ditch read library allows Id
+to easily use any created output files as subsequent input files.
+For each library, the appropriate subdirectory for the type of file
+is examined.  For instance, if looking for a formula file the formula
+subdirectory is examined first.
+
+If the file isn't found in the appropriate subdirectory of any
+of the library locations, then each library location is consulted
+again, only this time the library directory itself is examined to
+see if it contains the file.
+
+Finally, the value of the FRACTDIR environment
+variable is treated as a library location if it is defined.
+
+The following subdirectories are preferred to locate input files
+from read libraries:
+
+  config            Configuration files (id.cfg)\
+  formula           Formula definition files (.frm)\
+  ifs               IFS definitions files (.ifs)\
+  image             Image files (.gif)\
+  key               Autokey files (.key)\
+  lsystem           L-system definition files (.l)\
+  map               Colormap definition files (.map)\
+  par               Parameter set definition files (.par)
+~ONLINEFF
+
+The following subdirectories in the save library are created for
+output files:
+
+  config            Configuration files (id.cfg)\
+  formula           Formula definition files (.frm)\
+  ifs               IFS definitions files (.ifs)\
+  image             Image files (.gif)\
+  key               Autokey files (.key)\
+  lsystem           L-system definition files (.l)\
+  map               Colormap definition files (.map)\
+  orbit             Raw orbit files (.raw)\
+  par               Parameter set definition files (.par)\
+  ratyrace          Raytrace output files (.ray)\
+  sound             Raw sound output (.txt)\
+
+Some files, such as MIG batch files, are written directly to the save
+library location and not to a subdirectory.
+;
+;
 ~Topic=Setting Defaults (sstools.ini File)
+
 Every time Id runs, it searches the current directory, and then the
 directories in your PATH, for a file named sstools.ini.  If it finds
 this file, it begins by reading parameters from it.  This file is useful
@@ -422,6 +487,8 @@ Causes Id to read "filename" for parameters.  When it finishes, it
 resumes reading its own command line -- i.e., "id maxiter=250
 @myfile passes=1" is legal.  This option is only valid on the command
 line, as Id is not clever enough to deal with multiple indirection.
+If the file contains multiple parameter sets, the first parameter set
+is used.
 
 @FILENAME/groupname\
 Like @FILENAME, but reads a named group of parameters from a parameter
@@ -433,7 +500,7 @@ files.
 
 WORKDIR=[directory]\
 This command sets the directory where miscellaneous Id files get
-written, including makemig.bat and debugging files.
+written.
 
 ~ONLINEFF
 FILENAME=[name]\
@@ -448,7 +515,7 @@ On the command line you may omit filename= and just give the file name.
 CURDIR=yes\
 Id uses directories set by various commands, possibly in the
 sstools.ini file.  If you want to try out some files in the current directory,
-such as a modified copy of id.frm, you won't Id to read the copy
+such as a modified copy of id.frm, you won't want Id to read the copy
 in your official FRM directory.  Setting curdir=yes at the command line will
 cause Id to look in the current directory for requested files first
 before looking in the default directory set by the other commands.  Warning:
@@ -1065,21 +1132,24 @@ screen.  Added at the request of Ward Christensen.  It's his funeral <grin>.
 ;
 ~Topic=File Parameters
 
-In Id you can use various filename variables to specify files, set
-default directories, or both.  For example, in the savename description below,
-[name] can be a filename, a directory name, or a fully qualified pathname
-plus filename.  You can specify default directories using these variables
-in your sstools.ini file.
+In Id you can use various filename variables to specify files and set
+default directories.
+You can specify default directories for read libraries and the save library
+using these parameters in your sstools.ini file.
+
+LIBRARYDIRS=<path>[,...,<path>]\
+Specifies a list of locations to use as read libraries.  Separate multiple
+locations with a comma.  See {Libraries}.
 
 SAVEDIR=<path>\
-Sets the directory used when writing output files.  The "savename" parameter
-may use a relative path to the value of the "savedir" parameter if savedir
-is specified first.
+Sets the save library location used for writing output files.  All output
+files are created under this location.  See {Libraries}.
 
 SAVENAME=[<path>\\][name]\
 Set the path and/or filename to use when you <S>ave a screen.  The default
 filename is fract001.  The .gif extension is optional (Example:
-"savename=myfile")
+"savename=myfile").  If an absolute path is given, that value is used,
+otherwise the filename is used with the save library.  See {Libraries}.
 
 OVERWRITE=no|yes\
 Sets the savename overwrite flag (default is no).  If yes, saved files
@@ -1087,12 +1157,12 @@ will over-write existing files from previous sessions; otherwise the
 automatic incrementing of fract001.gif will find the first unused
 filename.
 
+~ONLINEFF
 SAVETIME=nnn\
 Tells Id to automatically do a save every nnn minutes while a
 calculation is in progress.  This is mainly useful with long batches - see
 {Batch Mode}.
 
-~ONLINEFF
 DITHER=yes\
 Dither a color file into two colors for monochrome display.  This gives
 a poor-quality display of gray levels.
@@ -1100,19 +1170,31 @@ a poor-quality display of gray levels.
 PARMFILE=[<path>\\][parmfilename]\
 Specifies the default parameter path and/or file to be used by the <@>
 (or <2>) and <B> commands.  If not specified, the default is id.par.
+If an absolute path is given, that file will be used if it exists.
+Otherwise, the read libraries are used to locate the filename.  See
+{Libraries}.
 
 FORMULAFILE=[<path>\\][formulafilename]\
 Specifies the formula path and/or file for type=formula fractals (default is
 id.frm).  Handy if you want to generate one of these fractal types
 in batch mode.
+If an absolute path is given, that file will be used if it exists.
+Otherwise, the read libraries are used to locate the filename.  See
+{Libraries}.
 
 LFILE=[<path>\\][lsystemfile]\
 Specifies the default L-system path and/or file for type=lsystem fractals
 (default is id.l).
+If an absolute path is given, that file will be used if it exists.
+Otherwise, the read libraries are used to locate the filename.  See
+{Libraries}.
 
 IFSFILE=[<path>\\][ifsfilename]\
 Specifies the default path and/or file for type=ifs fractals (default is
 id.ifs).
+If an absolute path is given, that file will be used if it exists.
+Otherwise, the read libraries are used to locate the filename.  See
+{Libraries}.
 
 FILENAME=[.suffix]\
 Sets the default file extension used for the <R> command.
@@ -1131,7 +1213,8 @@ new fractal is generated a new file is written with this option.\
 
 ORBITSAVENAME=[filename]\
 Sets the name of the orbit file to be written when "orbitsave=yes" is used.
-Defaults to orbits.raw.
+Defaults to orbits.raw.  The file is written to the save library location;
+see {Libraries}.
 ;
 ~Topic=Video Parameters
 
