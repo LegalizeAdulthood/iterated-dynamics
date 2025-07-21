@@ -1071,32 +1071,28 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    char *slash = std::strchr(cmd.value, '/');
-    char *next = nullptr;
-    if (slash != nullptr)
+    std::string par_file{cmd.value};
+    std::string entry_name;
+    if (char *slash = std::strchr(cmd.value, '/'); slash != nullptr)
     {
-        *slash = 0;
-        next = slash + 1;
+        par_file.assign(cmd.value, slash);
+        entry_name.assign(slash + 1);
     }
 
-    g_parameter_file = cmd.value;
+    g_parameter_file = par_file;
     if (!g_parameter_file.has_extension())
     {
         g_parameter_file.replace_extension(".par");
     }
-    if (g_read_filename == DOT_SLASH)
-    {
-        g_read_filename.clear();
-    }
-    if (next == nullptr)
+    if (entry_name.empty())
     {
         if (!g_read_filename.empty())
         {
-            g_parameter_set_name = extract_filename(g_read_filename);
+            g_parameter_set_name = g_read_filename.filename().string();
         }
         else if (!g_map_name.empty())
         {
-            g_parameter_set_name = extract_filename(g_map_name);
+            g_parameter_set_name = g_map_name;
         }
         else
         {
@@ -1105,7 +1101,7 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     }
     else
     {
-        g_parameter_set_name = next;
+        g_parameter_set_name = entry_name;
         assert(g_parameter_set_name.length() <= ITEM_NAME_LEN);
         if (g_parameter_set_name.length() > ITEM_NAME_LEN)
         {
