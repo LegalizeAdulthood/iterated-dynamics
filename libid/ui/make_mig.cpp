@@ -2,6 +2,7 @@
 //
 #include "ui/make_mig.h"
 
+#include "io/library.h"
 #include "io/save_file.h"
 #include "ui/rotate.h"
 
@@ -63,7 +64,8 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                             "\n",
                     gif_out.c_str(), x_mult, y_mult);
                 // attempt to create the output file
-                out = open_save_file(gif_out, "wb");
+                const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::IMAGE, gif_out)};
+                out = std::fopen(path.string().c_str(), "wb");
                 if (out == nullptr)
                 {
                     std::printf("Cannot create output file %s!\n", gif_out.c_str());
@@ -72,8 +74,13 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
             }
 
             gif_in = fmt::format("frmig_{:c}{:c}.gif", par_key(x_step), par_key(y_step));
-
-            in = std::fopen(gif_in.c_str(), "rb");
+            const std::filesystem::path path{id::io::find_file(id::io::ReadFile::IMAGE, gif_in)};
+            if (path.empty())
+            {
+                fmt::print("Can't locate file {:s}!\n", gif_in);
+                std::exit(1);
+            }
+            in = std::fopen(path.string().c_str(), "rb");
             if (in == nullptr)
             {
                 std::printf("Can't open file %s!\n", gif_in.c_str());
