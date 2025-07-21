@@ -115,7 +115,6 @@ bool g_start_show_orbit{};                                // show orbits on at s
 std::filesystem::path g_read_filename;                    // name of fractal input file
 std::filesystem::path g_temp_dir;                         // name of temporary directory
 std::filesystem::path g_working_dir;                      // name of directory for misc files
-std::filesystem::path g_organize_formulas_dir;            // name of directory for orgfrm files
 std::string g_image_filename_mask{"*.gif"};               //
 std::filesystem::path g_save_filename{"fract001"};        // save files using this name
 bool g_potential_flag{};                                  // continuous potential enabled?
