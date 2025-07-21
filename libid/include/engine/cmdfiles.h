@@ -13,19 +13,6 @@
 
 struct FractalSpecific;
 
-namespace id
-{
-
-struct SearchPath
-{
-    std::string par;
-    std::string frm;
-    std::string ifs;
-    std::string lsys;
-};
-
-} // namespace id
-
 enum TextColors
 {
     BLACK = 0,
@@ -246,7 +233,6 @@ extern std::filesystem::path g_read_filename;
 extern RecordColorsMode      g_record_colors;
 extern std::filesystem::path g_save_filename;
 extern float                 g_screen_aspect;
-extern id::SearchPath        g_search_for;
 extern ShowFile              g_show_file;
 extern int                   g_sound_flag;
 extern bool                  g_start_show_orbit;

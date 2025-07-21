@@ -184,7 +184,6 @@ std::filesystem::path g_parameter_file;      // file to find parameter sets in
 std::string g_parameter_set_name;            // Name of parameter set (if not empty)
 std::filesystem::path g_ifs_filename;        // file to find IFS in
 std::string g_ifs_name;                      // Name of the IFS definition (if not empty)
-id::SearchPath g_search_for;                 //
 std::vector<float> g_ifs_definition;         // ifs parameters
 bool g_ifs_type{};                           // false=2d, true=3d
 Byte g_text_color[31] = {
@@ -370,12 +369,6 @@ void cmd_files(int argc, const char *const *argv)
 
     // PAR reads a file and sets color, don't read colors from GIF
     g_read_color = !g_colors_preloaded || g_show_file != ShowFile::LOAD_IMAGE;
-
-    //set structure of search directories
-    g_search_for.par = g_parameter_file.string();
-    g_search_for.frm = g_formula_filename.string();
-    g_search_for.lsys = g_l_system_filename.string();
-    g_search_for.ifs = g_ifs_filename.string();
 }
 
 static void init_param_flags()

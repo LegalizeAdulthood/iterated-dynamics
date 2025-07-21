@@ -164,21 +164,7 @@ static FractalType select_fract_type(FractalType t)
         return FractalType::NO_FRACTAL;
     }
 
-    const FractalType result{g_fractal_specific[choices[done]->num].type};
-    if (result == FractalType::FORMULA && g_formula_filename == g_parameter_file)
-    {
-        g_formula_filename = g_search_for.frm;
-    }
-    if (result == FractalType::L_SYSTEM && g_l_system_filename == g_parameter_file)
-    {
-        g_l_system_filename = g_search_for.lsys;
-    }
-    if ((result == FractalType::IFS || result == FractalType::IFS_3D) && g_ifs_filename == g_parameter_file)
-    {
-        g_ifs_filename = g_search_for.ifs;
-    }
-
-    return result;
+    return g_fractal_specific[choices[done]->num].type;
 }
 
 static int sel_fract_type_help(int key, int choice)
