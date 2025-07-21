@@ -2012,18 +2012,15 @@ static CmdArgFlags cmd_filename(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    const int exist_dir = merge_path_names(g_read_filename, cmd.value, cmd.mode);
-    if (exist_dir == 0)
+    g_read_filename = id::io::find_file(id::io::ReadFile::IMAGE, cmd.value);
+    if (!g_read_filename.empty())
     {
         g_show_file = ShowFile::LOAD_IMAGE;
-    }
-    else if (exist_dir < 0)
-    {
-        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
+        g_browse_name = g_read_filename.filename().string();
     }
     else
     {
-        g_browse_name = extract_filename(g_read_filename);
+        init_msg(cmd.variable.c_str(), cmd.value, cmd.mode);
     }
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
