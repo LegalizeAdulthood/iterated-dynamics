@@ -183,7 +183,7 @@ extern bool                  g_bof_match_book_images;
 extern bool                  g_check_cur_dir;
 extern int                   g_color_cycle_range_hi;
 extern int                   g_color_cycle_range_lo;
-extern std::string           g_color_file;
+extern std::string           g_last_map_name;
 extern bool                  g_colors_preloaded;
 extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;

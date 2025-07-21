@@ -156,7 +156,7 @@ MakeParParams::MakeParParams()
         {
             // colors match colorfile
             color_spec[0] = '@';
-            str_ptr = g_color_file.c_str();
+            str_ptr = g_last_map_name.c_str();
         }
         else // colors match no .map that we know of
         {

@@ -157,7 +157,7 @@ double g_math_tol[2]{.05, .05};                           // For math transition
 bool g_targa_out{};                                       // 3D full color flag
 bool g_true_color{};                                      // escape time true color flag
 TrueColorMode g_true_mode{TrueColorMode::DEFAULT_COLOR};  // true color coloring scheme
-std::string g_color_file;                                 // from last <l> <s> or colors=@filename
+std::string g_last_map_name;                              // from last <l> <s> or colors=@filename
 bool g_new_bifurcation_functions_loaded{};                // if function loaded for new bifs
 float g_screen_aspect{DEFAULT_ASPECT};                    // aspect ratio of the screen
 float g_aspect_drift{DEFAULT_ASPECT_DRIFT}; // how much drift is allowed and still forced to g_screen_aspect
@@ -1622,7 +1622,7 @@ static CmdArgFlags parse_colors(const char *value)
         }
         else
         {
-            if (merge_path_names(g_color_file, &value[1], CmdFile::AT_CMD_LINE_SET_NAME) < 0)
+            if (merge_path_names(g_last_map_name, &value[1], CmdFile::AT_CMD_LINE_SET_NAME) < 0)
             {
                 init_msg("", &value[1], CmdFile::AT_CMD_LINE_SET_NAME);
             }

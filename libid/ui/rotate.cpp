@@ -591,7 +591,7 @@ void save_palette()
             }
             std::memcpy(g_old_dac_box, g_dac_box, 256*3);
             g_color_state = ColorState::MAP_FILE;
-            g_color_file = filename;
+            g_last_map_name = filename;
         }
         std::fclose(dac_file);
     }

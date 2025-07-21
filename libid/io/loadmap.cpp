@@ -90,7 +90,7 @@ bool validate_luts(const std::string &map_name)
         ++index;
     }
     g_color_state = ColorState::MAP_FILE;
-    g_color_file = map_name;
+    g_last_map_name = map_name;
     return false;
 }
 
