@@ -207,6 +207,7 @@ static bool ent_less(const int lhs, const int rhs)
 static void update_id_cfg()
 {
     const fs::path save_path{id::io::get_save_path(id::io::WriteFile::ID_CONFIG, "id.cfg")};
+    assert(!save_path.empty());
     if (!is_writeable(save_path))
     {
         stop_msg("Can't write " + save_path.string());

@@ -32,6 +32,7 @@
 #include <fmt/format.h>
 
 #include <algorithm>
+#include <cassert>
 #include <climits>
 #include <cmath>
 #include <cstdio>
@@ -1660,6 +1661,7 @@ static bool targa_validate(const std::string &filename)
 
     // Now that we know it's a good file, create a working copy
     std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+    assert(!temp_path.empty());
     if (start_targa_overlay(temp_path.string(), fp))
     {
         return true;
@@ -2370,13 +2372,16 @@ static void line3d_cleanup()
         if (g_debug_flag == DebugFlags::NONE && (!s_temp_safe || s_error != FileError::NONE) && g_targa_overlay)
         {
             std::filesystem::path light_path{id::io::get_save_path(id::io::WriteFile::IMAGE, g_light_name)};
+            assert(!light_path.empty());
             std::filesystem::remove(light_path);
             std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+            assert(!temp_path.empty());
             std::filesystem::rename(temp_path, light_path);
         }
         if (g_debug_flag == DebugFlags::NONE && g_targa_overlay)
         {
             std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+            assert(!temp_path.empty());
             std::filesystem::remove(temp_path);
         }
     }
@@ -2455,6 +2460,7 @@ static int first_time(int line_len, Vector v)
         else
         {
             std::string path{id::io::get_save_path(id::io::WriteFile::IMAGE, g_light_name).string()};
+            assert(!path.empty());
             check_write_file(path, ".tga");
             if (start_targa(path))     // Open new file
             {

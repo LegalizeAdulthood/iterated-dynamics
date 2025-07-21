@@ -1312,6 +1312,7 @@ void print_document(const char *filename, bool (*msg_func)(int, int))
     }
 
     std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, filename)};
+    assert(!path.empty());
     info.file = std::fopen(path.string().c_str(), "wt");
     if (info.file == nullptr)
     {

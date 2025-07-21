@@ -12,6 +12,7 @@
 
 #include <fmt/format.h>
 
+#include <cassert>
 #include <cstdio>
 #include <ctime>
 #include <string>
@@ -36,6 +37,7 @@ bool sound_open()
     if ((g_orbit_save_flags & OSF_MIDI) != 0 && s_snd_fp == nullptr)
     {
         std::string path{id::io::get_save_path(id::io::WriteFile::SOUND, sound_name).string()};
+        assert(!path.empty());
         check_write_file(path, ".txt");
         s_snd_fp = std::fopen(path.c_str(), "w");
         if (s_snd_fp == nullptr)

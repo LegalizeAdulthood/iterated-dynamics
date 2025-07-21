@@ -8,6 +8,7 @@
 #include <fmt/format.h>
 
 #include <array> // std::size
+#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -64,6 +65,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                     gif_out.c_str(), x_mult, y_mult);
                 // attempt to create the output file
                 const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::IMAGE, gif_out)};
+                assert(!path.empty());
                 out = std::fopen(path.string().c_str(), "wb");
                 if (out == nullptr)
                 {

@@ -20,6 +20,7 @@
 #include "ui/video_mode.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cctype>
 #include <chrono>
 #include <cstdio>
@@ -388,6 +389,7 @@ void record_show(int key)
     if (s_slide_show_file == nullptr)
     {
         std::string path{id::io::get_save_path(id::io::WriteFile::KEY, g_auto_name.filename().string()).string()};
+        assert(!path.empty());
         check_write_file(path, ".key");
         s_slide_show_file = std::fopen(path.c_str(), "w");
         if (s_slide_show_file == nullptr)

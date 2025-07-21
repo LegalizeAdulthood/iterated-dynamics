@@ -34,6 +34,7 @@
 
 #include <fmt/format.h>
 
+#include <cassert>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -1979,6 +1980,7 @@ static std::FILE *open_orbit_save()
     if (g_orbit_save_flags & OSF_RAW)
     {
         std::string path{id::io::get_save_path(id::io::WriteFile::ORBIT, g_orbit_save_name).string()};
+        assert(!path.empty());
         check_write_file(path, ".raw");
         if (std::FILE *fp = std::fopen(path.c_str(), "w"); fp != nullptr)
         {

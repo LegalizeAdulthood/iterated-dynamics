@@ -23,6 +23,7 @@
 #include <config/path_limits.h>
 
 #include <algorithm>
+#include <cassert>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -576,6 +577,7 @@ void save_palette()
             std::strcat(filename, ".map");
         }
         std::filesystem::path pal_name{id::io::get_save_path(id::io::WriteFile::MAP, filename)};
+        assert(!pal_name.empty());
         if (std::FILE *dac_file = std::fopen(pal_name.string().c_str(), "w"); dac_file == nullptr)
         {
             driver_buzzer(Buzzer::PROBLEM);

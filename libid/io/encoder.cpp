@@ -43,6 +43,7 @@
 #include "ui/video_mode.h"
 
 #include <algorithm>
+#include <cassert>
 #include <climits>
 #include <cstdio>
 #include <cstring>
@@ -152,6 +153,7 @@ restart:
     open_file.replace_extension(open_file_ext);
 
     open_file = id::io::get_save_path(id::io::WriteFile::IMAGE, open_file.string());
+    assert(!open_file.empty());
     tmp_file = open_file;
     if (!std::filesystem::exists(open_file))  // file doesn't exist
     {

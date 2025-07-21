@@ -31,6 +31,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cstring>
 #include <fstream>
 #include <string>
@@ -686,7 +687,9 @@ void save_history_info()
     }
     if (g_debug_flag == DebugFlags::HISTORY_DUMP_JSON)
     {
-        std::ofstream str(id::io::get_save_path(id::io::WriteFile::ROOT, "history.json"), std::ios_base::app);
+        std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "history.json")};
+        assert(!path.empty());
+        std::ofstream str(path, std::ios_base::app);
         str << current;
     }
 }

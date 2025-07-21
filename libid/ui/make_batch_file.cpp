@@ -53,6 +53,7 @@
 #include <fmt/format.h>
 
 #include <algorithm>
+#include <cassert>
 #include <cctype>
 #include <cfloat>
 #include <cmath>
@@ -348,6 +349,7 @@ skip_ui:
             }
         }
         fs::path out_path{id::io::get_save_path(id::io::WriteFile::PARAMETER, g_parameter_file.string())};
+        assert(!out_path.empty());
         if (fs::exists(out_path))
         {
             // file exists
@@ -411,6 +413,7 @@ skip_ui:
         {
             have_3rd = g_x_min != g_x_3rd || g_y_min != g_y_3rd;
             const fs::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "makemig.bat")};
+            assert(!path.empty());
             bat_file = std::fopen(path.string().c_str(), "w");
             if (bat_file == nullptr)
             {
