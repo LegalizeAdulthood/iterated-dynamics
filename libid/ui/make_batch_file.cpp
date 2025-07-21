@@ -27,6 +27,7 @@
 #include "io/file_gets.h"
 #include "io/has_ext.h"
 #include "io/is_writeable.h"
+#include "io/library.h"
 #include "io/loadfile.h"
 #include "io/save_file.h"
 #include "math/big.h"
@@ -347,7 +348,7 @@ skip_ui:
                 params.max_color = g_file_colors;
             }
         }
-        fs::path out_path = get_save_name(g_parameter_file.string());
+        fs::path out_path{id::io::get_save_path(id::io::WriteFile::PARAMETER, g_parameter_file.string())};
         if (fs::exists(out_path))
         {
             // file exists

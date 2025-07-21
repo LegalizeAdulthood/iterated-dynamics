@@ -396,9 +396,14 @@ void TestCommandMakePar::SetUp()
     EXPECT_CALL(m_goodbye, Call());
 }
 
+static fs::path par_path(const char *filename)
+{
+    return fs::path{ID_TEST_DATA_DIR} / ID_TEST_PAR_SUBDIR / filename;
+}
+
 TEST_F(TestCommandMakePar, makeParNewFile)
 {
-    fs::path path{fs::path{ID_TEST_DATA_DIR} / "new.par"};
+    fs::path path{par_path("new.par")};
     fs::remove(path);
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
@@ -425,7 +430,7 @@ static void set_file_contents(const fs::path &path, std::string_view contents)
 
 TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 {
-    fs::path path{fs::path{ID_TEST_DATA_DIR} / "existing.par"};
+    fs::path path{par_path("existing.par")};
     set_file_contents(path, R"par(bar                {
   reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
   maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
