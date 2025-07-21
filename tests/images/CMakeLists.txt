@@ -175,4 +175,5 @@ if(ID_RUN_SLOW_TESTS)
     add_image_test(mossy-garden PARAMETERS "@MossyFractalGarden.par/MossyFractalGarden" LABELS "slow")
 endif()
 
+add_subdirectory(orbit)
 add_subdirectory(raytrace)
