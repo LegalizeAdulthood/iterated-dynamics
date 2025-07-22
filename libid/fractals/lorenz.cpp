@@ -1444,7 +1444,7 @@ int plot_orbits2d_setup()
     return 1;
 }
 
-int plot_orbits2d_float()
+int plot_orbits2d()
 {
     if (driver_key_pressed())
     {

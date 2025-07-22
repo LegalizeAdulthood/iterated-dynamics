@@ -220,7 +220,7 @@ int icon_orbit(double *x, double *y, double *z);
 int latoo_orbit(double *x, double *y, double *z);
 bool setup_convert_to_screen(Affine *scrn_cnvt);
 int plot_orbits2d_setup();
-int plot_orbits2d_float();
+int plot_orbits2d();
 int dynamic_orbit(double *x, double *y, double *z);
 int mandel_cloud_orbit(double *x, double *y, double *z);
 bool dynamic2d_per_image();

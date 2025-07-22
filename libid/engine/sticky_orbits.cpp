@@ -24,7 +24,7 @@ static int orbit_draw_rectangle()
         g_current_row = g_row;
         while (g_col <= g_i_stop_pt.x)
         {
-            if (plot_orbits2d_float() == -1)
+            if (plot_orbits2d() == -1)
             {
                 add_work_list(
                     g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0, g_work_symmetry);
@@ -73,7 +73,7 @@ static int orbit_draw_line()
         {
             while (g_col <= final) // step through columns checking for new row
             {
-                if (plot_orbits2d_float() == -1)
+                if (plot_orbits2d() == -1)
                 {
                     add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0,
                         g_work_symmetry);
@@ -95,7 +95,7 @@ static int orbit_draw_line()
         {
             while (g_col <= final) // step through columns checking for new row
             {
-                if (plot_orbits2d_float() == -1)
+                if (plot_orbits2d() == -1)
                 {
                     add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0,
                         g_work_symmetry);
@@ -135,7 +135,7 @@ static int orbit_draw_line()
         {
             while (g_row <= final) // step through rows checking for new column
             {
-                if (plot_orbits2d_float() == -1)
+                if (plot_orbits2d() == -1)
                 {
                     add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0,
                         g_work_symmetry);
@@ -157,7 +157,7 @@ static int orbit_draw_line()
         {
             while (g_row <= final) // step through rows checking for new column
             {
-                if (plot_orbits2d_float() == -1)
+                if (plot_orbits2d() == -1)
                 {
                     add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_col, g_row, 0,
                         g_work_symmetry);
@@ -205,7 +205,7 @@ static int orbit_draw_function()
         double theta = (double) angle * factor;
         g_col = (int) (x_factor + (x_ctr + x_mag_factor * std::cos(theta)));
         g_row = (int) (y_factor + (y_ctr + x_mag_factor * std::sin(theta)));
-        if (plot_orbits2d_float() == -1)
+        if (plot_orbits2d() == -1)
         {
             add_work_list(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);
             return -1; // interrupted
