@@ -221,6 +221,7 @@ add_library(libid
     include/ui/slideshw.h ui/slideshw.cpp
     include/ui/sound.h ui/sound.cpp
     include/ui/spindac.h ui/spindac.cpp
+    include/ui/standard_4d.h ui/standard_4d.cpp
     include/ui/starfield.h ui/starfield.cpp
     include/ui/stereo.h ui/stereo.cpp
     include/ui/stop_msg.h ui/stop_msg.cpp

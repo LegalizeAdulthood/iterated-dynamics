@@ -46,4 +46,21 @@ extern const char *          g_julibrot_3d_options[];
 
 bool julibrot_per_image();
 int julibrot_per_pixel();
-int standard_4d_type();
+
+namespace id::fractals
+{
+
+class Standard4D
+{
+public:
+    Standard4D();
+    bool iterate();
+
+private:
+    double m_y{};
+    double m_x{};
+    int m_y_dot{};
+    int m_x_dot{};
+};
+
+} // namespace id::fractals

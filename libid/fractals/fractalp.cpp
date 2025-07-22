@@ -46,6 +46,7 @@
 #include "ui/diffusion.h"
 #include "ui/frothy_basin.h"
 #include "ui/inverse_julia.h"
+#include "ui/standard_4d.h"
 
 #include <algorithm>
 #include <array>

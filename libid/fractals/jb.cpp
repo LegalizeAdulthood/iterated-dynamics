@@ -260,18 +260,8 @@ static void z_line(double x, double y)
     }
 }
 
-class Standard4D
+namespace id::fractals
 {
-public:
-    Standard4D();
-    bool iterate();
-
-private:
-    double m_y{};
-    double m_x{};
-    int m_y_dot{};
-    int m_x_dot{};
-};
 
 Standard4D::Standard4D()
 {
@@ -328,17 +318,4 @@ bool Standard4D::iterate()
     return true;
 }
 
-int standard_4d_type()
-{
-    Standard4D s4d;
-
-    while (s4d.iterate())
-    {
-        if (driver_key_pressed())
-        {
-            return -1;
-        }
-    }
-
-    return 0;
-}
+} // namespace id::fractals
