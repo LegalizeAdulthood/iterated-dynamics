@@ -1607,10 +1607,6 @@ static int ifs3d_calc()
     setup_convert_to_screen(&inf.cvt);
     std::srand(1);
     int color_method = (int) g_params[0];
-    if (driver_is_disk())                  // this would KILL a disk drive!
-    {
-        not_disk_msg();
-    }
 
     inf.orbit[0] = 0;
     inf.orbit[1] = 0;
