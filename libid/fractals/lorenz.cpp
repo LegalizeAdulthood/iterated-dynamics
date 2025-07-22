@@ -27,7 +27,7 @@
 #include "math/rand15.h"
 #include "math/sign.h"
 #include "misc/Driver.h"
-#include "ui/not_disk_msg.h"
+#include "ui/ifs3d.h"
 #include "ui/orbit3d.h"
 #include "ui/sound.h"
 #include "ui/stop_msg.h"
@@ -58,7 +58,6 @@ enum
 
 static int  ifs2d();
 static int  ifs3d();
-static int  ifs3d_calc();
 static void setup_matrix(Matrix double_mat);
 static bool float_view_transf3d(ViewTransform3D *inf);
 static std::FILE *open_orbit_save();
@@ -1593,33 +1592,6 @@ done:
 namespace id::fractals
 {
 
-enum class IFSColorMethod
-{
-    INCREMENT_PIXEL = 0,
-    TRANSFORM_INDEX = 1
-};
-
-class IFS3D
-{
-public:
-    IFS3D();
-    ~IFS3D();
-
-    bool done() const;
-    void iterate();
-
-private:
-    std::FILE *m_fp{};
-    int m_color{};
-    double m_new_x{};
-    double m_new_y{};
-    double m_new_z{};
-    int m_k{};
-    ViewTransform3D m_inf{};
-    IFSColorMethod m_color_method{};
-    bool m_unbounded{};
-};
-
 IFS3D::IFS3D() :
     m_fp(open_orbit_save()),
     m_color_method(g_params[0] == 0.0 ? IFSColorMethod::INCREMENT_PIXEL : IFSColorMethod::TRANSFORM_INDEX)
@@ -1745,20 +1717,6 @@ void IFS3D::iterate()
 }
 
 } // namespace id::fractals
-
-static int ifs3d_calc()
-{
-    id::fractals::IFS3D ifs;
-    while (!ifs.done())
-    {
-        if (driver_key_pressed())  // keypress bails out
-        {
-            return -1;
-        }
-        ifs.iterate();
-    }
-    return 0;
-}
 
 int ifs_type()                       // front-end for ifs2d and ifs3d
 {

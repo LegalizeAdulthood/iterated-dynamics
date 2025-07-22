@@ -198,6 +198,7 @@ add_library(libid
     include/ui/history.h ui/history.cpp
     include/ui/id_keys.h
     include/ui/id_main.h ui/id_main.cpp
+    include/ui/ifs3d.h ui/ifs3d.cpp
     include/ui/init_failure.h
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp

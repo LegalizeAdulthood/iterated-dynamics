@@ -161,6 +161,37 @@ private:
     bool m_unbounded{};
 };
 
+enum class IFSColorMethod
+{
+    INCREMENT_PIXEL = 0,
+    TRANSFORM_INDEX = 1
+};
+
+class IFS3D
+{
+public:
+    IFS3D();
+    IFS3D(const IFS3D &rhs) = delete;
+    IFS3D(IFS3D &&rhs) = delete;
+    ~IFS3D();
+    IFS3D &operator=(const IFS3D &rhs) = delete;
+    IFS3D &operator=(IFS3D &&rhs) = delete;
+
+    bool done() const;
+    void iterate();
+
+private:
+    std::FILE *m_fp{};
+    int m_color{};
+    double m_new_x{};
+    double m_new_y{};
+    double m_new_z{};
+    int m_k{};
+    ViewTransform3D m_inf{};
+    IFSColorMethod m_color_method{};
+    bool m_unbounded{};
+};
+
 } // namespace id::fractals
 
 extern Minor                 g_inverse_julia_minor_method;
