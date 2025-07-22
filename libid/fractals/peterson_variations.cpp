@@ -22,7 +22,7 @@ bool marks_julia_per_image()
     g_params[2] = std::max(g_params[2], 1.0);
     g_c_exponent = (int)g_params[2];
     g_float_param = &g_param_z1;
-    g_old_z = *g_float_param;
+    g_old_z = g_param_z1;
     if (g_c_exponent > 3)
     {
         pow(&g_old_z, g_c_exponent-1, &g_marks_coefficient);
