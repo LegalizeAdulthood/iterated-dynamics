@@ -75,12 +75,12 @@ public:
     virtual int write_palette() = 0;                                    // write g_dac_box into palette
     virtual int read_pixel(int x, int y) = 0;                           // reads a single pixel
     virtual void write_pixel(int x, int y, int color) = 0;              // writes a single pixel
-    virtual void read_span(int y, int x, int last_x, Byte *pixels) = 0;  // reads a span of pixel
-    virtual void write_span(int y, int x, int last_x, Byte *pixels) = 0; // writes a span of pixels
+    virtual void read_span(int y, int x, int last_x, Byte *pixels) = 0; // reads a span of pixel
+    virtual void write_span(int y, int x, int last_x, Byte *pixels) = 0;           // writes a span of pixels
     virtual void get_true_color(int x, int y, int *r, int *g, int *b, int *a) = 0; //
     virtual void put_true_color(int x, int y, int r, int g, int b, int a) = 0;     //
-    virtual void set_line_mode(int mode) = 0;                                     // set copy/xor line
-    virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;        // draw line
+    virtual void set_line_mode(int mode) = 0;                                      // set copy/xor line
+    virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;         // draw line
     virtual void display_string(
         int x, int y, int fg, int bg, const char *text) = 0;                  // draw string in graphics mode
     virtual void save_graphics() = 0;                                         // save graphics
