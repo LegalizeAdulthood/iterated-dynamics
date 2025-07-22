@@ -58,7 +58,7 @@ enum
 
 static int  ifs2d();
 static int  ifs3d();
-static int  ifs3d_float();
+static int  ifs3d_calc();
 static void setup_matrix(Matrix double_mat);
 static bool float_view_transf3d(ViewTransform3D *inf);
 static std::FILE *open_orbit_save();
@@ -1591,7 +1591,7 @@ done:
 }
 
 // double version - mainly for testing
-static int ifs3d_float()
+static int ifs3d_calc()
 {
     int color;
 
@@ -1831,7 +1831,7 @@ static int ifs3d()
     g_display_3d = Display3DMode::MINUS_ONE;
 
     s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
-    return funny_glasses_call(ifs3d_float); // double version of ifs3d
+    return funny_glasses_call(ifs3d_calc);
 }
 
 static bool float_view_transf3d(ViewTransform3D *inf)
