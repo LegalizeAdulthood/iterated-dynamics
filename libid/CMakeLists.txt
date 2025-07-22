@@ -213,6 +213,7 @@ add_library(libid
     include/ui/mouse.h ui/mouse.cpp
     include/ui/not_disk_msg.h ui/not_disk_msg.cpp
     include/ui/orbit2d.h ui/orbit2d.cpp
+    include/ui/orbit3d.h ui/orbit3d.cpp
     include/ui/passes_options.h ui/passes_options.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
     include/ui/read_ticker.h ui/read_ticker.cpp

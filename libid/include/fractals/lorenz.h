@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include "3d/3d.h"
+
 #include <cstdio>
 
 struct Affine
@@ -37,6 +39,22 @@ inline int operator+(Minor value)
     return static_cast<int>(value);
 }
 
+// data used by 3d view transform subroutine
+struct ViewTransform3D
+{
+    double orbit[3];      // iterated function orbit value
+    double view_vect[3];  // orbit transformed for viewing
+    double view_vect1[3]; // orbit transformed for viewing
+    double max_vals[3];   //
+    double min_vals[3];   //
+    Matrix double_mat;    // transformation matrix
+    Matrix double_mat1;   // transformation matrix
+    int row;              //
+    int col;              // results
+    int row1;             //
+    int col1;             //
+    Affine cvt;           //
+};
 
 namespace id::fractals
 {
@@ -115,6 +133,31 @@ private:
     int m_old_col{-1};
     int m_count{};
     bool m_bailout{};
+    bool m_unbounded{};
+};
+
+class Orbit3D
+{
+public:
+    Orbit3D();
+    Orbit3D(const Orbit3D &rhs) = delete;
+    Orbit3D(Orbit3D &&rhs) = delete;
+    ~Orbit3D();
+    Orbit3D &operator=(const Orbit3D &rhs) = delete;
+    Orbit3D &operator=(Orbit3D &&rhs) = delete;
+
+    bool done() const;
+    void iterate();
+
+private:
+    int m_color{};
+    ViewTransform3D m_inf{};
+    std::FILE *m_fp{};
+    unsigned long m_count{};
+    int m_old_row{-1};
+    int m_old_col{-1};
+    int m_old_row1{-1};
+    int m_old_col1{-1};
     bool m_unbounded{};
 };
 
