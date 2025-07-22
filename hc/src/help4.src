@@ -1143,7 +1143,8 @@ locations with a comma.  See {Libraries}.
 
 SAVEDIR=<path>\
 Sets the save library location used for writing output files.  All output
-files are created under this location.  See {Libraries}.
+files are created under this location.  The default save library is
+"Iterated Dynamics" in the user's Documents folder.  See {Libraries}.
 
 SAVENAME=[<path>\\][name]\
 Set the path and/or filename to use when you <S>ave a screen.  The default
