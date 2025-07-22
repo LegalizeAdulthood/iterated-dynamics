@@ -82,6 +82,40 @@ private:
     double m_x_pixel{};
     double m_y_pixel{};
     bool m_keep_going{};
+    bool m_unbounded{};
+};
+
+class Orbit2D
+{
+public:
+    Orbit2D();
+    Orbit2D(const Orbit2D &) = delete;
+    Orbit2D(Orbit2D &&) = delete;
+    ~Orbit2D();
+    Orbit2D &operator=(const Orbit2D &) = delete;
+    Orbit2D &operator=(Orbit2D &&) = delete;
+
+    void resume();
+    void suspend();
+    bool done() const;
+    void iterate();
+
+private:
+    std::FILE *m_fp;
+    Affine m_cvt;
+    double m_x{};
+    double m_y{};
+    double m_z{};
+    double *m_p0{};
+    double *m_p1{};
+    double *m_p2{};
+    const double *m_sound_var{};
+    int m_color{};
+    int m_old_row{-1};
+    int m_old_col{-1};
+    int m_count{};
+    bool m_bailout{};
+    bool m_unbounded{};
 };
 
 } // namespace id::fractals

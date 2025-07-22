@@ -927,66 +927,60 @@ int latoo_orbit(double *x, double *y, double * /*z*/)
 //   Main fractal engines - put in fractalspecific[fractype].calctype
 //********************************************************************
 
-int orbit2d_type()
+namespace id::fractals
 {
-    std::FILE *fp = open_orbit_save();
-    Affine cvt;
-    setup_convert_to_screen(&cvt); // setup affine screen coord conversion
+
+Orbit2D::Orbit2D() :
+    m_fp(open_orbit_save()),
+    m_x(s_init_orbit[0]),
+    m_y(s_init_orbit[1]),
+    m_z(s_init_orbit[2])
+{
+    setup_convert_to_screen(&m_cvt); // setup affine screen coord conversion
 
     // set up projection scheme
-    double x = s_init_orbit[0];
-    double y = s_init_orbit[1];
-    double z = s_init_orbit[2];
-    double *p0 = nullptr;
-    double *p1 = nullptr;
-    double *p2 = nullptr;
     switch (s_projection)
     {
     case 0:
-        p0 = &z;
-        p1 = &x;
-        p2 = &y;
+        m_p0 = &m_z;
+        m_p1 = &m_x;
+        m_p2 = &m_y;
         break;
     case 1:
-        p0 = &x;
-        p1 = &z;
-        p2 = &y;
+        m_p0 = &m_x;
+        m_p1 = &m_z;
+        m_p2 = &m_y;
         break;
     case 2:
-        p0 = &x;
-        p1 = &y;
-        p2 = &z;
+        m_p0 = &m_x;
+        m_p1 = &m_y;
+        m_p2 = &m_z;
         break;
     }
-    const double *sound_var = nullptr;
+
     switch (g_sound_flag & SOUNDFLAG_ORBIT_MASK)
     {
     case SOUNDFLAG_X:
-        sound_var = &x;
+        m_sound_var = &m_x;
         break;
     case SOUNDFLAG_Y:
-        sound_var = &y;
+        m_sound_var = &m_y;
         break;
     case SOUNDFLAG_Z:
-        sound_var = &z;
+        m_sound_var = &m_z;
         break;
     }
 
-    int color;
     if (g_inside_color > COLOR_BLACK)
     {
-        color = g_inside_color;
+        m_color = g_inside_color;
     }
     else
     {
-        color = 2;
+        m_color = 2;
     }
 
-    int old_row = -1;
-    int old_col = -1;
     g_color_iter = 0L;
-    int ret = 0;
-    int count = 0;
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
         g_max_count = 0x7fffffffL;
@@ -995,90 +989,130 @@ int orbit2d_type()
     {
         g_max_count = g_max_iterations*1024L;
     }
+}
 
-    if (g_resuming)
+Orbit2D::~Orbit2D()
+{
+    if (m_fp != nullptr)
     {
-        start_resume();
-        get_resume(count, color, old_row, old_col, x, y, z, s_t, s_orbit, g_color_iter);
-        end_resume();
+        std::fclose(m_fp);
+        m_fp = nullptr;
+    }
+}
+
+void Orbit2D::resume()
+{
+    start_resume();
+    get_resume(m_count, m_color, m_old_row, m_old_col, m_x, m_y, m_z, s_t, s_orbit, g_color_iter);
+    end_resume();
+}
+
+void Orbit2D::suspend()
+{
+    driver_mute();
+    alloc_resume(100, 1);
+    put_resume(m_count, m_color, m_old_row, m_old_col, m_x, m_y, m_z, s_t, s_orbit, g_color_iter);
+}
+
+bool Orbit2D::done() const
+{
+    // loop until orbit bails out, orbit unbounded or max iteration exceeded
+    if (m_bailout || m_unbounded || g_color_iter++ > g_max_count)
+    {
+        driver_mute();
+        return true;
+    }
+    return false;
+}
+
+void Orbit2D::iterate()
+{
+    if (++m_count > 1000)
+    {
+        // time to switch colors?
+        m_count = 0;
+        if (++m_color >= g_colors)   // another color to switch to?
+        {
+            m_color = 1;  // (don't use the background color)
+        }
     }
 
-    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
+    const int col = (int)(m_cvt.a * m_x + m_cvt.b * m_y + m_cvt.e);
+    const int row = (int)(m_cvt.c * m_x + m_cvt.d * m_y + m_cvt.f);
+    if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
     {
-        if (driver_key_pressed())
+        if (m_sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
         {
-            driver_mute();
-            alloc_resume(100, 1);
-            put_resume(count, color, old_row, old_col, x, y, z, s_t, s_orbit, g_color_iter);
-            ret = -1;
-            break;
+            write_sound((int)(*m_sound_var*100 + g_base_hertz));
         }
-        if (++count > 1000)
+        if ((g_fractal_type != FractalType::ICON) && (g_fractal_type != FractalType::LATOO))
         {
-            // time to switch colors?
-            count = 0;
-            if (++color >= g_colors)   // another color to switch to?
+            if (m_old_col != -1 && s_connect)
             {
-                color = 1;  // (don't use the background color)
-            }
-        }
-
-        const int col = (int)(cvt.a * x + cvt.b * y + cvt.e);
-        const int row = (int)(cvt.c * x + cvt.d * y + cvt.f);
-        if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
-        {
-            if (sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
-            {
-                write_sound((int)(*sound_var*100 + g_base_hertz));
-            }
-            if ((g_fractal_type != FractalType::ICON) && (g_fractal_type != FractalType::LATOO))
-            {
-                if (old_col != -1 && s_connect)
-                {
-                    driver_draw_line(col, row, old_col, old_row, color % g_colors);
-                }
-                else
-                {
-                    g_plot(col, row, color % g_colors);
-                }
+                driver_draw_line(col, row, m_old_col, m_old_row, m_color % g_colors);
             }
             else
             {
-                // should this be using plothist()?
-                color = get_color(col, row)+1;
-                if (color < g_colors) // color sticks on last value
-                {
-                    g_plot(col, row, color);
-                }
+                g_plot(col, row, m_color % g_colors);
             }
-
-            old_col = col;
-            old_row = row;
-        }
-        else if ((long) std::abs(row) + (long) std::abs(col) > BAD_PIXEL) // sanity check
-        {
-            return ret;
         }
         else
         {
-            old_col = -1;
-            old_row = -1;
+            // should this be using plothist()?
+            m_color = get_color(col, row)+1;
+            if (m_color < g_colors) // color sticks on last value
+            {
+                g_plot(col, row, m_color);
+            }
         }
 
-        if (orbit(p0, p1, p2))
-        {
-            break;
-        }
-        if (fp)
-        {
-            fmt::print(fp, "{:g} {:g} {:g} 15\n", *p0, *p1, 0.0);
-        }
+        m_old_col = col;
+        m_old_row = row;
     }
-    if (fp)
+    else if ((long) std::abs(row) + (long) std::abs(col) > BAD_PIXEL) // sanity check
     {
-        std::fclose(fp);
+        m_unbounded = true;
+        return;
     }
-    return ret;
+    else
+    {
+        m_old_col = -1;
+        m_old_row = -1;
+    }
+
+    if (orbit(m_p0, m_p1, m_p2))
+    {
+        m_bailout = true;
+        return;
+    }
+    if (m_fp)
+    {
+        fmt::print(m_fp, "{:g} {:g} {:g} 15\n", *m_p0, *m_p1, 0.0);
+    }
+}
+
+} // namespace id::fractals
+
+int orbit2d_type()
+{
+    id::fractals::Orbit2D o2d;
+
+    if (g_resuming)
+    {
+        o2d.resume();
+    }
+
+    while (!o2d.done())
+    {
+        if (driver_key_pressed())
+        {
+            o2d.suspend();
+            return -1;
+        }
+
+        o2d.iterate();
+    }
+    return 0;
 }
 
 static int orbit3d_float_calc()
@@ -1295,7 +1329,7 @@ void Dynamic2D::suspend()
 
 bool Dynamic2D::done() const
 {
-    if (m_y_step > s_d)
+    if (m_unbounded || m_y_step > s_d)
     {
         driver_mute();
         return true;
@@ -1373,7 +1407,7 @@ void Dynamic2D::iterate()
         }
         else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL)   // sanity check
         {
-            m_count = -1;
+            m_unbounded = true;
             return;
         }
         else
@@ -1992,7 +2026,7 @@ static std::FILE *open_orbit_save()
 // Plot a histogram by incrementing the pixel each time it is touched
 static void plot_hist(int x, int y, int /*color*/)
 {
-    int color = get_color(x, y)+1;
+    int color = get_color(x, y) + 1;
     if (color >= g_colors)
     {
         color = 1;
