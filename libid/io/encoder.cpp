@@ -630,7 +630,7 @@ bool encoder()
         orbits_info.orbit_corner_3rd_x     = g_orbit_corner_3rd_x;
         orbits_info.orbit_corner_3rd_y     = g_orbit_corner_3rd_y;
         orbits_info.keep_screen_coords = static_cast<std::int16_t>(g_keep_screen_coords);
-        orbits_info.draw_mode  = g_draw_mode;
+        orbits_info.draw_mode = static_cast<char>(g_draw_mode);
 
         // some big-endian logic for the doubles needed here
         decode_orbits_info(&orbits_info, 0);

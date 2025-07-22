@@ -1269,14 +1269,14 @@ int read_overlay()      // read overlay/3D files, if required
 
     if (blk_7_info.got_data)
     {
-        g_orbit_corner_min_x       = blk_7_info.ox_min;
-        g_orbit_corner_max_x       = blk_7_info.ox_max;
-        g_orbit_corner_min_y       = blk_7_info.oy_min;
-        g_orbit_corner_max_y       = blk_7_info.oy_max;
-        g_orbit_corner_3rd_x       = blk_7_info.ox_3rd;
-        g_orbit_corner_3rd_y       = blk_7_info.oy_3rd;
+        g_orbit_corner_min_x = blk_7_info.ox_min;
+        g_orbit_corner_max_x = blk_7_info.ox_max;
+        g_orbit_corner_min_y = blk_7_info.oy_min;
+        g_orbit_corner_max_y = blk_7_info.oy_max;
+        g_orbit_corner_3rd_x = blk_7_info.ox_3rd;
+        g_orbit_corner_3rd_y = blk_7_info.oy_3rd;
         g_keep_screen_coords = blk_7_info.keep_screen_coords != 0;
-        g_draw_mode    = blk_7_info.draw_mode;
+        g_draw_mode = static_cast<OrbitDrawMode>(blk_7_info.draw_mode);
         if (g_keep_screen_coords)
         {
             g_set_orbit_corners = true;

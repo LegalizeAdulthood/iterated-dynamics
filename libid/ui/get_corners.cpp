@@ -62,7 +62,7 @@ int get_corners()
 
 gc_loop:
     int use_center_mag = g_use_center_mag ? 1 : 0;
-    if (g_draw_mode == 'l')
+    if (g_draw_mode == OrbitDrawMode::LINE)
     {
         use_center_mag = 0;
     }
@@ -85,7 +85,7 @@ gc_loop:
     else
     {
         // 10 items
-        if (g_draw_mode == 'l')
+        if (g_draw_mode == OrbitDrawMode::LINE)
         {
             // 6 items
             builder.comment("Left End Point")
@@ -187,7 +187,7 @@ gc_loop:
     }
     else
     {
-        if (g_draw_mode == 'l')
+        if (g_draw_mode == OrbitDrawMode::LINE)
         {
             builder.read_comment();
             g_x_min = builder.read_double_number();
@@ -215,7 +215,7 @@ gc_loop:
         }
     }
 
-    if (prompt_ret == ID_KEY_F7 && g_draw_mode != 'l')
+    if (prompt_ret == ID_KEY_F7 && g_draw_mode != OrbitDrawMode::LINE)
     {
         // toggle corners/center-mag mode
         if (!g_use_center_mag)

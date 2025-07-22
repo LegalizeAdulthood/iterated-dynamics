@@ -550,7 +550,7 @@ static void init_vars_fractal()
     g_orbit_delay = 0;                                              // full speed orbits
     g_orbit_interval = 1;                                           // plot all orbits
     g_keep_screen_coords = false;                                   //
-    g_draw_mode = 'r';                                              // passes=orbits draw mode
+    g_draw_mode = OrbitDrawMode::RECTANGLE;                         // passes=orbits draw mode
     g_set_orbit_corners = false;                                    //
     g_orbit_corner_min_x = g_cur_fractal_specific->x_min;           //
     g_orbit_corner_max_x = g_cur_fractal_specific->x_max;           //
@@ -2724,7 +2724,7 @@ static CmdArgFlags cmd_orbit_draw_mode(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_draw_mode = cmd.char_val[0];
+    g_draw_mode = static_cast<OrbitDrawMode>(cmd.char_val[0]);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 

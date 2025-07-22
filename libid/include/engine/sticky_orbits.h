@@ -2,6 +2,14 @@
 //
 #pragma once
 
-extern char                  g_draw_mode;
+enum class OrbitDrawMode
+{
+    NONE = 0,
+    RECTANGLE = 'r',
+    LINE = 'l',
+    FUNCTION = 'f',
+};
+
+extern OrbitDrawMode         g_draw_mode;
 
 int sticky_orbits();

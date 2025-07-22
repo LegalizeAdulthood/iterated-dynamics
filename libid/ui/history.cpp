@@ -140,7 +140,7 @@ struct ImageHistory
     double orbit_corner_3_x;
     double orbit_corner_3_y;
     bool keep_screen_coords;
-    char draw_mode;
+    OrbitDrawMode draw_mode;
 };
 
 bool dac_box_equal(const Byte lhs[256][3], const Byte rhs[256][3])
@@ -484,7 +484,7 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("orbit_corner_3_x":)json" << value.orbit_corner_3_x << ',';
     str << R"json("orbit_corner_3_y":)json" << value.orbit_corner_3_y << ',';
     str << R"json("keep_screen_coords":)json" << value.keep_screen_coords << ',';
-    str << R"json("draw_mode":)json" << '"' << value.draw_mode << '"';
+    str << R"json("draw_mode":)json" << '"' << static_cast<char>(value.draw_mode) << '"';
     str << '}';
     return str;
 }

@@ -2354,32 +2354,32 @@ TEST_F(TestParameterCommand, screenCoordsYes)
 
 TEST_F(TestParameterCommand, orbitDrawModeLine)
 {
-    ValueSaver saved_orbit_draw_mode{g_draw_mode, '!'};
+    ValueSaver saved_orbit_draw_mode{g_draw_mode, static_cast<OrbitDrawMode>('!')};
 
     exec_cmd_arg("orbitdrawmode=l");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ('l', g_draw_mode);
+    EXPECT_EQ(OrbitDrawMode::LINE, g_draw_mode);
 }
 
 TEST_F(TestParameterCommand, orbitDrawModeRectangle)
 {
-    ValueSaver saved_orbit_draw_mode{g_draw_mode, '!'};
+    ValueSaver saved_orbit_draw_mode{g_draw_mode, static_cast<OrbitDrawMode>('!')};
 
     exec_cmd_arg("orbitdrawmode=r");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ('r', g_draw_mode);
+    EXPECT_EQ(OrbitDrawMode::RECTANGLE, g_draw_mode);
 }
 
 TEST_F(TestParameterCommand, orbitDrawModeFunction)
 {
-    ValueSaver saved_orbit_draw_mode{g_draw_mode, '!'};
+    ValueSaver saved_orbit_draw_mode{g_draw_mode, static_cast<OrbitDrawMode>('!')};
 
     exec_cmd_arg("orbitdrawmode=f");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ('f', g_draw_mode);
+    EXPECT_EQ(OrbitDrawMode::FUNCTION, g_draw_mode);
 }
 
 TEST_F(TestParameterCommand, viewWindowsdDefaults)

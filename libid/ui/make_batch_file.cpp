@@ -1581,9 +1581,9 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             }
         }
 
-        if (g_draw_mode != 'r')
+        if (g_draw_mode != OrbitDrawMode::RECTANGLE)
         {
-            put_param(" orbitdrawmode=%c", g_draw_mode);
+            put_param(" orbitdrawmode=%c", static_cast<char>(g_draw_mode));
         }
 
         if (g_math_tol[1] != 0.05)

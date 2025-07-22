@@ -60,10 +60,10 @@ pass_option_restart:
     values[k].uval.ch.vlen = 5;
     values[k].uval.ch.list_len = std::size(pass_calc_modes);
     values[k].uval.ch.list = pass_calc_modes;
-    values[k].uval.ch.val = (g_draw_mode == 'r') ? 0
-                             : (g_draw_mode == 'l') ? 1
-                             :   /* function */    2;
-    char old_draw_mode = g_draw_mode;
+    values[k].uval.ch.val = (g_draw_mode == OrbitDrawMode::RECTANGLE) ? 0
+        : (g_draw_mode == OrbitDrawMode::LINE)                        ? 1
+                                                                      : /* function */ 2;
+    OrbitDrawMode old_draw_mode = g_draw_mode;
 
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PASSES_OPTIONS};
@@ -113,20 +113,18 @@ pass_option_restart:
         g_set_orbit_corners = false;
     }
 
+    switch (values[++k].uval.ch.val)
     {
-        switch (values[++k].uval.ch.val)
-        {
-        default:
-        case 0:
-            g_draw_mode = 'r';
-            break;
-        case 1:
-            g_draw_mode = 'l';
-            break;
-        case 2:
-            g_draw_mode = 'f';
-            break;
-        }
+    default:
+    case 0:
+        g_draw_mode = OrbitDrawMode::RECTANGLE;
+        break;
+    case 1:
+        g_draw_mode = OrbitDrawMode::LINE;
+        break;
+    case 2:
+        g_draw_mode = OrbitDrawMode::FUNCTION;
+        break;
     }
     if (g_draw_mode != old_draw_mode)
     {
