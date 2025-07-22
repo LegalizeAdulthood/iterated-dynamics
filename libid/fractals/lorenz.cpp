@@ -1718,81 +1718,119 @@ void IFS3D::iterate()
     }
 }
 
+class IFS2D
+{
+public:
+    IFS2D();
+    IFS2D(const IFS2D &) = delete;
+    IFS2D(IFS2D &&) = delete;
+    ~IFS2D();
+    IFS2D &operator=(const IFS2D &) = delete;
+    IFS2D &operator=(IFS2D &&) = delete;
+
+    bool done() const;
+    void iterate();
+
+private:
+    Affine m_cvt{};
+    IFSColorMethod m_color_method;
+    std::FILE *m_fp{};
+    double m_x{};
+    double m_y{};
+    bool m_unbounded{};
+};
+
+IFS2D::IFS2D() :
+    m_color_method(g_params[0] == 0.0 ? IFSColorMethod::INCREMENT_PIXEL : IFSColorMethod::TRANSFORM_INDEX),
+    m_fp(open_orbit_save())
+{
+    // setup affine screen coord conversion
+    setup_convert_to_screen(&m_cvt);
+    std::srand(1);
+    g_max_count = g_max_iterations > 0x1fffffL ? 0x7fffffffL : g_max_iterations * 1024L;
+    g_color_iter = 0L;
+}
+
+IFS2D::~IFS2D()
+{
+    if (m_fp != nullptr)
+    {
+        std::fclose(m_fp);
+        m_fp = nullptr;
+    }
+}
+
+bool IFS2D::done() const
+{
+    return m_unbounded || g_color_iter > g_max_count;
+}
+
+void IFS2D::iterate()
+{
+    ++g_color_iter;
+
+    double r = static_cast<double>(RAND15())/32767.0; // generate random number between 0 and 1
+
+    // pick which iterated function to execute, weighted by probability
+    double sum = g_ifs_definition[6];  // [0][6]
+    int k = 0;
+    while (sum < r && k < g_num_affine_transforms-1)    // fixed bug of error if sum < 1
+    {
+        sum += g_ifs_definition[++k * NUM_IFS_2D_PARAMS + 6];
+    }
+    // calculate image of last point under selected iterated function
+    float *f_f_ptr = g_ifs_definition.data() + k * NUM_IFS_2D_PARAMS; // point to first parm in row
+    double new_x = *(f_f_ptr + 0) * m_x + *(f_f_ptr + 1) * m_y + *(f_f_ptr + 4);
+    double new_y = *(f_f_ptr + 2) * m_x + *(f_f_ptr + 3) * m_y + *(f_f_ptr + 5);
+    m_x = new_x;
+    m_y = new_y;
+    if (m_fp)
+    {
+        fmt::print(m_fp, "{:g} {:g} {:g} 15\n", new_x, new_y, 0.0);
+    }
+
+    // plot if inside window
+    const int col = (int) (m_cvt.a * m_x + m_cvt.b * m_y + m_cvt.e);
+    const int row = (int) (m_cvt.c * m_x + m_cvt.d * m_y + m_cvt.f);
+    if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
+    {
+        int color;
+        if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
+        {
+            color = (k % g_colors) + 1;
+        }
+        else
+        {
+            // color is count of hits on this pixel
+            color = get_color(col, row) + 1;
+        }
+        if (color < g_colors)     // color sticks on last value
+        {
+            g_plot(col, row, color);
+        }
+    }
+    else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL)   // sanity check
+    {
+        m_unbounded = true;
+    }
+}
+
 } // namespace id::fractals
 
 static int ifs2d()
 {
-    int color;
-    Affine cvt;
-    // setup affine screen coord conversion
-    setup_convert_to_screen(&cvt);
+    id::fractals::IFS2D ifs;
 
-    std::srand(1);
-    int color_method = (int) g_params[0];
-
-    std::FILE *fp = open_orbit_save();
-
-    double x = 0;
-    double y = 0;
-    int ret = 0;
-    g_max_count = g_max_iterations > 0x1fffffL ? 0x7fffffffL : g_max_iterations * 1024L;
-    g_color_iter = 0L;
-    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
+    while (!ifs.done())
     {
-        if (driver_key_pressed())  // keypress bails out
+        if (driver_key_pressed())
         {
-            ret = -1;
-            break;
-        }
-        double r = static_cast<double>(RAND15())/32767.0; // generate random number between 0 and 1
-
-        // pick which iterated function to execute, weighted by probability
-        double sum = g_ifs_definition[6];  // [0][6]
-        int k = 0;
-        while (sum < r && k < g_num_affine_transforms-1)    // fixed bug of error if sum < 1
-        {
-            sum += g_ifs_definition[++k * NUM_IFS_2D_PARAMS + 6];
-        }
-        // calculate image of last point under selected iterated function
-        float *f_f_ptr = g_ifs_definition.data() + k * NUM_IFS_2D_PARAMS; // point to first parm in row
-        double new_x = *(f_f_ptr + 0) * x + *(f_f_ptr + 1) * y + *(f_f_ptr + 4);
-        double new_y = *(f_f_ptr + 2) * x + *(f_f_ptr + 3) * y + *(f_f_ptr + 5);
-        x = new_x;
-        y = new_y;
-        if (fp)
-        {
-            fmt::print(fp, "{:g} {:g} {:g} 15\n", new_x, new_y, 0.0);
+            return -1;
         }
 
-        // plot if inside window
-        const int col = (int) (cvt.a * x + cvt.b * y + cvt.e);
-        const int row = (int) (cvt.c * x + cvt.d * y + cvt.f);
-        if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
-        {
-            if (color_method)
-            {
-                color = (k % g_colors) + 1;
-            }
-            else
-            {
-                // color is count of hits on this pixel
-                color = get_color(col, row) + 1;
-            }
-            if (color < g_colors)     // color sticks on last value
-            {
-                g_plot(col, row, color);
-            }
-        }
-        else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL)   // sanity check
-        {
-            return ret;
-        }
+        ifs.iterate();
     }
-    if (fp)
-    {
-        std::fclose(fp);
-    }
-    return ret;
+    return 0;
 }
 
 int ifs_type()                       // front-end for ifs2d and ifs3d
