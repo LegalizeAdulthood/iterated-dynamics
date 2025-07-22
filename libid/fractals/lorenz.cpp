@@ -1718,15 +1718,6 @@ void IFS3D::iterate()
 
 } // namespace id::fractals
 
-int ifs_type()                       // front-end for ifs2d and ifs3d
-{
-    if (g_ifs_definition.empty() && ifs_load() < 0)
-    {
-        return -1;
-    }
-    return g_ifs_dim == IFSDimension::TWO ? ifs2d() : ifs3d();
-}
-
 static int ifs2d()
 {
     int color;
@@ -1800,6 +1791,15 @@ static int ifs2d()
         std::fclose(fp);
     }
     return ret;
+}
+
+int ifs_type()                       // front-end for ifs2d and ifs3d
+{
+    if (g_ifs_definition.empty() && ifs_load() < 0)
+    {
+        return -1;
+    }
+    return g_ifs_dim == IFSDimension::TWO ? ifs2d() : ifs3d();
 }
 
 static void setup_matrix(Matrix double_mat)
