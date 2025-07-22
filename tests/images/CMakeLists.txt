@@ -167,6 +167,9 @@ add_image_test("ant2" IGNORE_COLORMAP PARAMETERS "type=ant"
     "center-mag=0/0/1/1.3333" "params=11111.0/999999.0/25.0/2.0/1.0/-400.0" "inside=0" LABELS "ant")
 add_image_test("mandel-chroma" PARAMETERS "type=mandel" "map=chroma")
 add_image_test("filament" PARAMETERS "@id")
+add_image_test("julibrot" PARAMETERS "type=julibrot" "julibrotfromto=-0.83/-0.83/0.25/-0.25"
+  "julibroteyes=2.5" "center-mag=0/0/0.6666667" "params=0/0" "inside=0"
+  "colors=@altern.map")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
