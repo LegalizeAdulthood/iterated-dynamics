@@ -42,22 +42,6 @@
 
 using OrbitCalc = int (*)(double *x, double *y, double *z);
 
-// orbitcalc is declared with no arguments so jump through hoops here
-static int orbit(double *x, double *y, double *z)
-{
-    return (*reinterpret_cast<OrbitCalc>(g_cur_fractal_specific->orbit_calc))(x, y, z);
-}
-
-static int orbit(double *x, double *y)
-{
-    return orbit(x, y, nullptr);
-}
-
-static int random(int x)
-{
-    return std::rand() % x;
-}
-
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
 to test the actual floating point orbit values, but this seems safe for now.
 A higher value cannot be used - to test, turn off math coprocessor and
@@ -140,9 +124,55 @@ static bool s_euler{};       // use implicit euler approximation for dynamic sys
 static int s_waste{100};     // waste this many points before plotting
 static int s_projection{2};  // projection plane - default is to plot x-y
 
+static Affine s_o_cvt{};
+static int s_o_color{};
+
+static double s_orbit{};
+
+static double &s_cos_b{s_dx};
+static double &s_sin_sum_a_b_c{s_dy};
+
+static const double &LAMBDA{g_params[0]};
+static const double &ALPHA{g_params[1]};
+static const double &BETA{g_params[2]};
+static const double &GAMMA{g_params[3]};
+static const double &OMEGA{g_params[4]};
+static const double &DEGREE{g_params[5]};
+
+static const double &PAR_A{g_params[0]};
+static const double &PAR_B{g_params[1]};
+static const double &PAR_C{g_params[2]};
+static const double &PAR_D{g_params[3]};
+
 long g_max_count;
 Major g_major_method;
 Minor g_inverse_julia_minor_method;
+
+bool g_keep_screen_coords{};
+bool g_set_orbit_corners{};
+long g_orbit_interval{};
+double g_orbit_corner_min_x{};
+double g_orbit_corner_min_y{};
+double g_orbit_corner_max_x{};
+double g_orbit_corner_max_y{};
+double g_orbit_corner_3rd_x{};
+double g_orbit_corner_3rd_y{};
+
+// OrbitCalc is declared with no arguments so jump through hoops here
+static int orbit(double *x, double *y, double *z)
+{
+    return (*reinterpret_cast<OrbitCalc>(g_cur_fractal_specific->orbit_calc))(x, y, z);
+}
+
+static int orbit(double *x, double *y)
+{
+    return orbit(x, y, nullptr);
+}
+
+static int random(int x)
+{
+    return std::rand() % x;
+}
 
 static void fallback_to_random_walk()
 {
@@ -266,11 +296,6 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
 //****************************************************************
 //   setup functions - put in fractalspecific[fractype].per_image
 //****************************************************************
-
-static double s_orbit{};
-
-static double &s_cos_b{s_dx};
-static double &s_sin_sum_a_b_c{s_dy};
 
 bool orbit3d_per_image()
 {
@@ -845,13 +870,6 @@ int dynamic_orbit(double *x, double *y, double * /*z*/)
     return 0;
 }
 
-static const double &LAMBDA{g_params[0]};
-static const double &ALPHA{g_params[1]};
-static const double &BETA{g_params[2]};
-static const double &GAMMA{g_params[3]};
-static const double &OMEGA{g_params[4]};
-static const double &DEGREE{g_params[5]};
-
 int icon_orbit(double *x, double *y, double *z)
 {
     double old_x = *x;
@@ -876,11 +894,6 @@ int icon_orbit(double *x, double *y, double *z)
     *z = z_z_bar;
     return 0;
 }
-
-static const double &PAR_A{g_params[0]};
-static const double &PAR_B{g_params[1]};
-static const double &PAR_C{g_params[2]};
-static const double &PAR_D{g_params[3]};
 
 int latoo_orbit(double *x, double *y, double * /*z*/)
 {
@@ -1226,6 +1239,9 @@ bool dynamic2d_per_image()
     return true;
 }
 
+namespace id::fractals
+{
+
 /*
  * This is the routine called to perform a time-discrete dynamical
  * system image.
@@ -1233,170 +1249,214 @@ bool dynamic2d_per_image()
  * of parameter1 pixels.  maxit differential equation steps are taken, with
  * a step size of parameter2.
  */
-int dynamic2d_type()
+class Dynamic2D
 {
-    std::FILE *fp = open_orbit_save();
+public:
+    Dynamic2D();
+    ~Dynamic2D();
 
+    void resume();
+    void suspend();
+    bool done() const;
+    void iterate();
+
+private:
+    std::FILE *m_fp{};
+    Affine m_cvt;
+    double m_x{};
+    double m_y{};
+    double m_z{};
+    double *m_p0{&m_x};
+    double *m_p1{&m_y};
+    const double *m_sound_var{};
+    long m_count{-1};
+    int m_color{};
+    int m_old_row{-1};
+    int m_old_col{-1};
+    int m_x_step{-1};
+    int m_y_step{0}; // The starting position step number
+    // Our pixel position on the screen
+    double m_x_pixel{};
+    double m_y_pixel{};
+    bool m_keep_going{};
+};
+
+Dynamic2D::Dynamic2D() :
+    m_fp(open_orbit_save())
+{
     // setup affine screen coord conversion
-    Affine cvt;
-    setup_convert_to_screen(&cvt);
+    setup_convert_to_screen(&m_cvt);
 
-    double x{};
-    double y{};
-    const double z{};
-    double *p0 = &x;
-    double *p1 = &y;
-
-    const double *sound_var = nullptr;
     if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)
     {
-        sound_var = &x;
+        m_sound_var = &m_x;
     }
     else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Y)
     {
-        sound_var = &y;
+        m_sound_var = &m_y;
     }
     else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_Z)
     {
-        sound_var = &z;
+        m_sound_var = &m_z;
     }
 
-    long count = 0;
-    int color = 0;
     if (g_inside_color > COLOR_BLACK)
     {
-        color = g_inside_color;
+        m_color = g_inside_color;
     }
-    if (color >= g_colors)
+    if (m_color >= g_colors)
     {
-        color = 1;
+        m_color = 1;
     }
-    int old_row = -1;
-    int old_col = -1;
-    int x_step = -1;
-    int y_step = 0; // The starting position step number
-    if (g_resuming)
-    {
-        start_resume();
-        get_resume(count, color, old_row, old_col, x, y, x_step, y_step);
-        end_resume();
-    }
+}
 
-    int ret = 0;
-    while (true)
+Dynamic2D::~Dynamic2D()
+{
+    if (m_fp != nullptr)
     {
-        if (driver_key_pressed())
-        {
-            driver_mute();
-            alloc_resume(100, 1);
-            put_resume(count, color, old_row, old_col, x, y, x_step, y_step);
-            ret = -1;
-            break;
-        }
+        std::fclose(m_fp);
+    }
+}
 
-        x_step ++;
-        if (x_step >= s_d)
+void Dynamic2D::resume()
+{
+    start_resume();
+    get_resume(m_count, m_color, m_old_row, m_old_col, m_x, m_y, m_x_step, m_y_step);
+    end_resume();
+}
+
+void Dynamic2D::suspend()
+{
+    driver_mute();
+    alloc_resume(100, 1);
+    put_resume(m_count, m_color, m_old_row, m_old_col, m_x, m_y, m_x_step, m_y_step);
+}
+
+bool Dynamic2D::done() const
+{
+    if (m_y_step > s_d)
+    {
+        driver_mute();
+        return true;
+    }
+    return false;
+}
+
+void Dynamic2D::iterate()
+{
+    if (m_count == -1)
+    {
+        ++m_x_step;
+        if (m_x_step >= s_d)
         {
-            x_step = 0;
-            y_step ++;
-            if (y_step > s_d)
+            m_x_step = 0;
+            ++m_y_step;
+            if (m_y_step > s_d)
             {
-                driver_mute();
-                ret = -1;
-                break;
+                return;
             }
         }
 
         // Our pixel position on the screen
-        const double x_pixel = g_logical_screen_x_size_dots * (x_step + .5) / s_d;
-        const double y_pixel = g_logical_screen_y_size_dots * (y_step + .5) / s_d;
-        x = (double)((g_x_min+g_delta_x*x_pixel) + (g_delta_x2*y_pixel));
-        y = (double)((g_y_max-g_delta_y*y_pixel) + (-g_delta_y2*x_pixel));
+        m_x_pixel = g_logical_screen_x_size_dots * (m_x_step + .5) / s_d;
+        m_y_pixel = g_logical_screen_y_size_dots * (m_y_step + .5) / s_d;
+        m_x = (double) ((g_x_min + g_delta_x * m_x_pixel) + (g_delta_x2 * m_y_pixel));
+        m_y = (double) ((g_y_max - g_delta_y * m_y_pixel) + (-g_delta_y2 * m_x_pixel));
         if (g_fractal_type == FractalType::MANDEL_CLOUD)
         {
-            s_a = x;
-            s_b = y;
+            s_a = m_x;
+            s_b = m_y;
         }
-        old_col = -1;
+        m_old_col = -1;
 
-        if (++color >= g_colors)     // another color to switch to?
+        if (++m_color >= g_colors) // another color to switch to?
         {
-            color = 1;    // (don't use the background color)
+            m_color = 1;           // (don't use the background color)
         }
 
-        for (count = 0; count < g_max_iterations; count++)
-        {
-            if (count % 2048L == 0)
-            {
-                if (driver_key_pressed())
-                {
-                    break;
-                }
-            }
-
-            const int col = (int)(cvt.a * x + cvt.b * y + cvt.e);
-            const int row = (int)(cvt.c * x + cvt.d * y + cvt.f);
-            if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
-            {
-                if (sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
-                {
-                    write_sound((int)(*sound_var*100+g_base_hertz));
-                }
-
-                if (count >= g_orbit_delay)
-                {
-                    if (old_col != -1 && s_connect)
-                    {
-                        driver_draw_line(col, row, old_col, old_row, color%g_colors);
-                    }
-                    else if (count > 0 || g_fractal_type != FractalType::MANDEL_CLOUD)
-                    {
-                        g_plot(col, row, color%g_colors);
-                    }
-                }
-                old_col = col;
-                old_row = row;
-            }
-            else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL)   // sanity check
-            {
-                return ret;
-            }
-            else
-            {
-                old_col = -1;
-                old_row = -1;
-            }
-
-            if (orbit(p0, p1))
-            {
-                break;
-            }
-            if (fp)
-            {
-                fmt::print(fp, "{:g} {:g} {:g} 15\n", *p0, *p1, 0.0);
-            }
-        }
+        m_count = 0;
+        m_keep_going = false;
     }
 
-    if (fp)
+    for (; m_count < g_max_iterations; m_count++)
     {
-        std::fclose(fp);
-    }
+        if (!m_keep_going && m_count % 2048L == 0)
+        {
+            m_keep_going = true;
+            return;
+        }
+        m_keep_going = false;
 
-    return ret;
+        const int col = (int)(m_cvt.a * m_x + m_cvt.b * m_y + m_cvt.e);
+        const int row = (int)(m_cvt.c * m_x + m_cvt.d * m_y + m_cvt.f);
+        if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
+        {
+            if (m_sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
+            {
+                write_sound((int)(*m_sound_var*100+g_base_hertz));
+            }
+
+            if (m_count >= g_orbit_delay)
+            {
+                if (m_old_col != -1 && s_connect)
+                {
+                    driver_draw_line(col, row, m_old_col, m_old_row, m_color%g_colors);
+                }
+                else if (m_count > 0 || g_fractal_type != FractalType::MANDEL_CLOUD)
+                {
+                    g_plot(col, row, m_color%g_colors);
+                }
+            }
+            m_old_col = col;
+            m_old_row = row;
+        }
+        else if ((long)std::abs(row) + (long)std::abs(col) > BAD_PIXEL)   // sanity check
+        {
+            m_count = -1;
+            return;
+        }
+        else
+        {
+            m_old_col = -1;
+            m_old_row = -1;
+        }
+
+        if (orbit(m_p0, m_p1))
+        {
+            break;
+        }
+        if (m_fp)
+        {
+            fmt::print(m_fp, "{:g} {:g} {:g} 15\n", *m_p0, *m_p1, 0.0);
+        }
+    }
+    m_count = -1;
 }
 
-bool g_keep_screen_coords{};
-bool g_set_orbit_corners{};
-long g_orbit_interval{};
-double g_orbit_corner_min_x{};
-double g_orbit_corner_min_y{};
-double g_orbit_corner_max_x{};
-double g_orbit_corner_max_y{};
-double g_orbit_corner_3rd_x{};
-double g_orbit_corner_3rd_y{};
-static Affine s_o_cvt{};
-static int s_o_color{};
+} // namespace id::fractals
+
+int dynamic2d_type()
+{
+    id::fractals::Dynamic2D d2d;
+
+    if (g_resuming)
+    {
+        d2d.resume();
+    }
+
+    while (!d2d.done())
+    {
+        if (driver_key_pressed())
+        {
+            d2d.suspend();
+            return -1;
+        }
+
+        d2d.iterate();
+    }
+
+    return 0;
+}
 
 static int setup_orbits_to_screen(Affine *scrn_cnvt)
 {
