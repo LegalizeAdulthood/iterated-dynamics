@@ -424,6 +424,7 @@ TEST_F(TestCommandMakePar, makeParNewFile)
 
 static void set_file_contents(const fs::path &path, std::string_view contents)
 {
+    fs::create_directories(path.parent_path());
     fs::remove(path);
     std::ofstream file{path};
     file << contents;
