@@ -1017,7 +1017,7 @@ void Orbit2D::suspend()
 bool Orbit2D::done() const
 {
     // loop until orbit bails out, orbit unbounded or max iteration exceeded
-    if (m_bailout || m_unbounded || g_color_iter++ > g_max_count)
+    if (m_bailout || m_unbounded || g_color_iter > g_max_count)
     {
         driver_mute();
         return true;
@@ -1027,6 +1027,7 @@ bool Orbit2D::done() const
 
 void Orbit2D::iterate()
 {
+    ++g_color_iter;
     if (++m_count > 1000)
     {
         // time to switch colors?
@@ -1091,26 +1092,37 @@ void Orbit2D::iterate()
     }
 }
 
-} // namespace id::fractals
-
-static int orbit3d_float_calc()
+class Orbit3D
 {
-    int color = 2;
-    if (color >= g_colors)
-    {
-        color = 1;
-    }
+public:
+    Orbit3D();
+    Orbit3D(const Orbit3D &rhs) = delete;
+    Orbit3D(Orbit3D &&rhs) = delete;
+    ~Orbit3D();
+    Orbit3D &operator=(const Orbit3D &rhs) = delete;
+    Orbit3D &operator=(Orbit3D &&rhs) = delete;
 
+    bool done() const;
+    void iterate();
+
+    int color{g_colors <= 2 ? 1 : 2};
     ViewTransform3D inf;
+    std::FILE *fp{open_orbit_save()};
+    unsigned long count{};
+    int old_row{-1};
+    int old_col{-1};
+    int old_row1{-1};
+    int old_col1{-1};
+    bool m_unbounded{};
+};
+
+
+Orbit3D::Orbit3D()
+{
     setup_convert_to_screen(&inf.cvt); // setup affine screen coord conversion
     inf.orbit[0] = s_init_orbit[0];
     inf.orbit[1] = s_init_orbit[1];
     inf.orbit[2] = s_init_orbit[2];
-
-    if (driver_is_disk())                  // this would KILL a disk drive!
-    {
-        not_disk_msg();
-    }
 
     if (g_max_iterations > 0x1fffffL || g_max_count)
     {
@@ -1118,101 +1130,118 @@ static int orbit3d_float_calc()
     }
     else
     {
-        g_max_count = g_max_iterations*1024L;
+        g_max_count = g_max_iterations * 1024L;
     }
     g_color_iter = 0L;
+}
 
-    std::FILE *fp = open_orbit_save();
-    int ret = 0;
-    unsigned long count = 0;
-    int old_row = -1;
-    int old_col = -1;
-    int old_row1 = -1;
-    int old_col1 = -1;
-    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
-    {
-        // calc goes here
-        if (++count > 1000)
-        {
-            // time to switch colors?
-            count = 0;
-            if (++color >= g_colors)     // another color to switch to?
-            {
-                color = 1;        // (don't use the background color)
-            }
-        }
-
-        if (driver_key_pressed())
-        {
-            driver_mute();
-            ret = -1;
-            break;
-        }
-
-        orbit(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
-        if (fp)
-        {
-            fmt::print(fp, "{:g} {:g} {:g} 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
-        }
-        if (float_view_transf3d(&inf))
-        {
-            // plot if inside window
-            if (inf.col >= 0)
-            {
-                if (s_real_time)
-                {
-                    g_which_image = StereoImage::RED;
-                }
-                if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
-                {
-                    write_sound((int)(inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)]*100+g_base_hertz));
-                }
-                if (old_col != -1 && s_connect)
-                {
-                    driver_draw_line(inf.col, inf.row, old_col, old_row, color%g_colors);
-                }
-                else
-                {
-                    g_plot(inf.col, inf.row, color%g_colors);
-                }
-            }
-            else if (inf.col == -2)
-            {
-                return ret;
-            }
-            old_col = inf.col;
-            old_row = inf.row;
-            if (s_real_time)
-            {
-                g_which_image = StereoImage::BLUE;
-                // plot if inside window
-                if (inf.col1 >= 0)
-                {
-                    if (old_col1 != -1 && s_connect)
-                    {
-                        driver_draw_line(inf.col1, inf.row1, old_col1, old_row1, color%g_colors);
-                    }
-                    else
-                    {
-                        g_plot(inf.col1, inf.row1, color%g_colors);
-                    }
-                }
-                else if (inf.col1 == -2)
-                {
-                    return ret;
-                }
-                old_col1 = inf.col1;
-                old_row1 = inf.row1;
-            }
-        }
-    }
-
+Orbit3D::~Orbit3D()
+{
     if (fp)
     {
         std::fclose(fp);
     }
+    driver_mute();
+}
 
-    return ret;
+// loop until unbounded or max count
+bool Orbit3D::done() const
+{
+    return m_unbounded || g_color_iter > g_max_count;
+}
+
+void Orbit3D::iterate()
+{
+    ++g_color_iter;
+
+    // calc goes here
+    if (++count > 1000)
+    {
+        // time to switch colors?
+        count = 0;
+        if (++color >= g_colors)     // another color to switch to?
+        {
+            color = 1;        // (don't use the background color)
+        }
+    }
+
+    orbit(&inf.orbit[0], &inf.orbit[1], &inf.orbit[2]);
+    if (fp)
+    {
+        fmt::print(fp, "{:g} {:g} {:g} 15\n", inf.orbit[0], inf.orbit[1], inf.orbit[2]);
+    }
+    if (float_view_transf3d(&inf))
+    {
+        // plot if inside window
+        if (inf.col >= 0)
+        {
+            if (s_real_time)
+            {
+                g_which_image = StereoImage::RED;
+            }
+            if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
+            {
+                write_sound((int)(inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)]*100+g_base_hertz));
+            }
+            if (old_col != -1 && s_connect)
+            {
+                driver_draw_line(inf.col, inf.row, old_col, old_row, color%g_colors);
+            }
+            else
+            {
+                g_plot(inf.col, inf.row, color%g_colors);
+            }
+        }
+        else if (inf.col == -2)
+        {
+            m_unbounded = true;
+            return;
+        }
+        old_col = inf.col;
+        old_row = inf.row;
+        if (s_real_time)
+        {
+            g_which_image = StereoImage::BLUE;
+            // plot if inside window
+            if (inf.col1 >= 0)
+            {
+                if (old_col1 != -1 && s_connect)
+                {
+                    driver_draw_line(inf.col1, inf.row1, old_col1, old_row1, color%g_colors);
+                }
+                else
+                {
+                    g_plot(inf.col1, inf.row1, color%g_colors);
+                }
+            }
+            else if (inf.col1 == -2)
+            {
+                m_unbounded = true;
+                return;
+            }
+            old_col1 = inf.col1;
+            old_row1 = inf.row1;
+        }
+    }
+}
+
+} // namespace id::fractals
+
+static int orbit3d_calc()
+{
+    id::fractals::Orbit3D o3d;
+
+    while (!o3d.done())
+    {
+        if (driver_key_pressed())
+        {
+            return -1;
+        }
+
+        o3d.iterate();
+    }
+
+    return 0;
 }
 
 bool dynamic2d_per_image()
@@ -1854,7 +1883,7 @@ int orbit3d_type()
 {
     g_display_3d = Display3DMode::MINUS_ONE ;
     s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
-    return funny_glasses_call(orbit3d_float_calc);
+    return funny_glasses_call(orbit3d_calc);
 }
 
 static int ifs3d()
