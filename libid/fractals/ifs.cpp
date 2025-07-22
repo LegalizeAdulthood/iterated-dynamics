@@ -57,7 +57,7 @@ int ifs_load()                   // read in IFS parameters
 {
     // release prior params
     g_ifs_definition.clear();
-    g_ifs_type = false;
+    g_ifs_dim = IFSDimension::TWO;
     std::FILE *ifs_file;
     if (find_file_item(g_ifs_filename, g_ifs_name, &ifs_file, ItemType::IFS))
     {
@@ -74,7 +74,7 @@ int ifs_load()                   // read in IFS parameters
 
     string_lower(buf);
     const int row_size = std::strstr(buf, "(3d)") != nullptr ? NUM_IFS_3D_PARAMS : NUM_IFS_2D_PARAMS;
-    g_ifs_type = row_size == NUM_IFS_3D_PARAMS;
+    g_ifs_dim = row_size == NUM_IFS_3D_PARAMS ? IFSDimension::THREE : IFSDimension::TWO;
 
     int ret = 0;
     int i = ret;

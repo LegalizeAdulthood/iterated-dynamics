@@ -1746,7 +1746,7 @@ int ifs_type()                       // front-end for ifs2d and ifs3d
     {
         return -1;
     }
-    return !g_ifs_type ? ifs2d() : ifs3d();
+    return g_ifs_dim == IFSDimension::TWO ? ifs2d() : ifs3d();
 }
 
 static int ifs2d()

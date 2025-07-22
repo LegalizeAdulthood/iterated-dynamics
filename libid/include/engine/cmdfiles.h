@@ -174,6 +174,12 @@ enum class ShowFile
     IMAGE_LOADED = 1,
 };
 
+enum class IFSDimension
+{
+    TWO = 2,
+    THREE = 3,
+};
+
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern long                  g_bailout;
@@ -207,7 +213,7 @@ extern std::string           g_image_filename_mask;
 extern std::vector<float>    g_ifs_definition;
 extern std::filesystem::path g_ifs_filename;
 extern std::string           g_ifs_name;
-extern bool                  g_ifs_type;
+extern IFSDimension          g_ifs_dim;
 extern BatchMode             g_init_batch;
 extern int                   g_init_cycle_limit;
 extern int                   g_init_mode;

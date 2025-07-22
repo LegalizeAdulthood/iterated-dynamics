@@ -186,7 +186,7 @@ std::string g_parameter_set_name;            // Name of parameter set (if not em
 fs::path g_ifs_filename;                     // file to find IFS in
 std::string g_ifs_name;                      // Name of the IFS definition (if not empty)
 std::vector<float> g_ifs_definition;         // ifs parameters
-bool g_ifs_type{};                           // false=2d, true=3d
+IFSDimension g_ifs_dim{IFSDimension::TWO};   // TWO or THREE
 Byte g_text_color[31] = {
     BLUE * 16 + LT_WHITE,    // C_TITLE           title background
     BLUE * 16 + LT_GREEN,    // C_TITLE_DEV       development vsn foreground

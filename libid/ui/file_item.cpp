@@ -535,7 +535,7 @@ long get_file_entry(ItemType type, std::filesystem::path &path, std::string &ent
         const long entry_pointer{get_file_entry(type, "IFS", "*.ifs", path, entry_name)};
         if (entry_pointer >= 0 && ifs_load() == 0)
         {
-            set_fractal_type(!g_ifs_type ? FractalType::IFS : FractalType::IFS_3D);
+            set_fractal_type(g_ifs_dim == IFSDimension::TWO ? FractalType::IFS : FractalType::IFS_3D);
             set_default_params(); // to correct them if 3d
             return 0;
         }
