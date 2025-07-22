@@ -144,7 +144,7 @@ bool mandel_per_image()
         }
         else
         {
-            get_fractal_specific(g_fractal_type)->orbit_calc = float_cmplx_z_power_fractal;
+            get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_cmplx_orbit;
         }
         break;
     case FractalType::MAGNET_1M:
@@ -267,7 +267,7 @@ bool julia_per_image()
         }
         else
         {
-            get_fractal_specific(g_fractal_type)->orbit_calc = float_cmplx_z_power_fractal;
+            get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_cmplx_orbit;
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
         break;

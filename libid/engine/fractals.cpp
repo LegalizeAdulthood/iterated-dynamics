@@ -123,7 +123,7 @@ int julia_orbit()
     return g_bailout_float();
 }
 
-int float_cmplx_z_power_fractal()
+int mandel_z_power_cmplx_orbit()
 {
     g_new_z = complex_power(g_old_z, g_param_z2);
     g_new_z.x += g_float_param->x;

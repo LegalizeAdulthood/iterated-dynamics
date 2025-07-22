@@ -272,7 +272,7 @@ int calc_standard_4d_type()
         }
         else
         {
-            get_fractal_specific(g_new_orbit_type)->orbit_calc = float_cmplx_z_power_fractal;
+            get_fractal_specific(g_new_orbit_type)->orbit_calc = mandel_z_power_cmplx_orbit;
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
     }
