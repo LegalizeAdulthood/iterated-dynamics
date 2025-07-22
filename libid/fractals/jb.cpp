@@ -86,7 +86,7 @@ const char *g_julibrot_3d_options[]{
 };
 
 static int s_z_pixel;
-static int s_plotted;
+static bool s_plotted{};
 static long s_n;
 
 static void z_line(double x, double y);
@@ -165,7 +165,7 @@ int julibrot_per_pixel()
     return 1;
 }
 
-void z_line(double x, double y)
+static void z_line(double x, double y)
 {
     s_jb.x_pixel = x;
     s_jb.y_pixel = y;
@@ -260,13 +260,27 @@ void z_line(double x, double y)
     }
 }
 
-int calc_standard_4d_type()
+class Standard4D
 {
-    g_c_exponent = (int)g_params[2];
+public:
+    Standard4D();
+    bool iterate();
+
+private:
+    double m_y{};
+    double m_x{};
+    int m_y_dot{};
+    int m_x_dot{};
+};
+
+Standard4D::Standard4D()
+{
+    g_c_exponent = (int) g_params[2];
 
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER)
     {
-        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER &&
+            (double) g_c_exponent == g_params[2])
         {
             get_fractal_specific(g_new_orbit_type)->orbit_calc = mandel_z_power_orbit;
         }
@@ -274,38 +288,57 @@ int calc_standard_4d_type()
         {
             get_fractal_specific(g_new_orbit_type)->orbit_calc = mandel_z_power_cmplx_orbit;
         }
-        get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
+        get_julia_attractor(g_params[0], g_params[1]); // another attractor?
+    }
+    m_y_dot = (g_logical_screen_y_dots >> 1) - 1;
+    m_x_dot = 0;
+    s_plotted = false;
+    m_x = -g_julibrot_width / 2.0;
+}
+
+bool Standard4D::iterate()
+{
+    if (m_y_dot < 0)
+    {
+        return false;
     }
 
-    double y = 0.0;
-    for (int y_dot = (g_logical_screen_y_dots >> 1) - 1; y_dot >= 0; y_dot--, y -= s_jb.inch_per_y_dot)
+    g_col = m_x_dot;
+    g_row = m_y_dot;
+    z_line(m_x, m_y);
+    g_col = g_logical_screen_x_dots - g_col - 1;
+    g_row = g_logical_screen_y_dots - g_row - 1;
+    z_line(-m_x, -m_y);
+    ++m_x_dot;
+    m_x += s_jb.inch_per_x_dot;
+    if (m_x_dot == g_logical_screen_x_dots)
     {
-        s_plotted = 0;
-        double x = -g_julibrot_width / 2;
-        for (int x_dot = 0; x_dot < g_logical_screen_x_dots; x_dot++, x += s_jb.inch_per_x_dot)
+        // next scanline
+        if (!s_plotted && m_y != 0.0)
         {
-            if (driver_key_pressed())
-            {
-                return -1;
-            }
-            g_col = x_dot;
-            g_row = y_dot;
-            z_line(x, y);
-            g_col = g_logical_screen_x_dots - g_col - 1;
-            g_row = g_logical_screen_y_dots - g_row - 1;
-            z_line(-x, -y);
+            return false;
         }
-        if (s_plotted == 0)
+        --m_y_dot;
+        m_y -= s_jb.inch_per_y_dot;
+        s_plotted = false;
+        m_x_dot = 0;
+        m_x = -g_julibrot_width / 2.0;
+    }
+
+    return true;
+}
+
+int standard_4d_type()
+{
+    Standard4D s4d;
+
+    while (s4d.iterate())
+    {
+        if (driver_key_pressed())
         {
-            if (y == 0)
-            {
-                s_plotted = -1;  // no points first pass; don't give up
-            }
-            else
-            {
-                break;
-            }
+            return -1;
         }
     }
+
     return 0;
 }

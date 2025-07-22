@@ -46,4 +46,4 @@ extern const char *          g_julibrot_3d_options[];
 
 bool julibrot_per_image();
 int julibrot_per_pixel();
-int calc_standard_4d_type();
+int standard_4d_type();

@@ -1509,7 +1509,7 @@ FractalSpecific g_fractal_specific[] = {
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,    //
         SymmetryType::NONE,                                  //
         julia_orbit, julibrot_per_pixel, julibrot_per_image, //
-        calc_standard_4d_type,                               //
+        standard_4d_type,                                    //
         STD_BAILOUT                                          //
     },
 
