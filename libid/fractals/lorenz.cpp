@@ -1242,45 +1242,6 @@ bool dynamic2d_per_image()
 namespace id::fractals
 {
 
-/*
- * This is the routine called to perform a time-discrete dynamical
- * system image.
- * The starting positions are taken by stepping across the image in steps
- * of parameter1 pixels.  maxit differential equation steps are taken, with
- * a step size of parameter2.
- */
-class Dynamic2D
-{
-public:
-    Dynamic2D();
-    ~Dynamic2D();
-
-    void resume();
-    void suspend();
-    bool done() const;
-    void iterate();
-
-private:
-    std::FILE *m_fp{};
-    Affine m_cvt;
-    double m_x{};
-    double m_y{};
-    double m_z{};
-    double *m_p0{&m_x};
-    double *m_p1{&m_y};
-    const double *m_sound_var{};
-    long m_count{-1};
-    int m_color{};
-    int m_old_row{-1};
-    int m_old_col{-1};
-    int m_x_step{-1};
-    int m_y_step{0}; // The starting position step number
-    // Our pixel position on the screen
-    double m_x_pixel{};
-    double m_y_pixel{};
-    bool m_keep_going{};
-};
-
 Dynamic2D::Dynamic2D() :
     m_fp(open_orbit_save())
 {
@@ -1434,29 +1395,6 @@ void Dynamic2D::iterate()
 }
 
 } // namespace id::fractals
-
-int dynamic2d_type()
-{
-    id::fractals::Dynamic2D d2d;
-
-    if (g_resuming)
-    {
-        d2d.resume();
-    }
-
-    while (!d2d.done())
-    {
-        if (driver_key_pressed())
-        {
-            d2d.suspend();
-            return -1;
-        }
-
-        d2d.iterate();
-    }
-
-    return 0;
-}
 
 static int setup_orbits_to_screen(Affine *scrn_cnvt)
 {

@@ -165,6 +165,7 @@ add_library(libid
     include/ui/diskvid.h ui/diskvid.cpp
     include/ui/double_to_string.h ui/double_to_string.cpp
     include/ui/do_pause.h ui/do_pause.cpp
+    include/ui/dynamic2d.h ui/dynamic2d.cpp
     include/ui/editpal.h ui/editpal.cpp
     include/ui/evolve.h ui/evolve.cpp
     include/ui/evolver_menu_switch.h ui/evolver_menu_switch.cpp

@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <cstdio>
+
 struct Affine
 {
     // weird order so a,b,e and c,d,f are vectors
@@ -34,6 +36,55 @@ inline int operator+(Minor value)
 {
     return static_cast<int>(value);
 }
+
+
+namespace id::fractals
+{
+
+/*
+ * This is the routine called to perform a time-discrete dynamical
+ * system image.
+ * The starting positions are taken by stepping across the image in steps
+ * of parameter1 pixels.  maxit differential equation steps are taken, with
+ * a step size of parameter2.
+ */
+class Dynamic2D
+{
+public:
+    Dynamic2D();
+    Dynamic2D(const Dynamic2D &rhs) = delete;
+    Dynamic2D(Dynamic2D &&rhs) = delete;
+    ~Dynamic2D();
+    Dynamic2D &operator=(const Dynamic2D &rhs) = delete;
+    Dynamic2D &operator=(Dynamic2D &&rhs) = delete;
+
+    void resume();
+    void suspend();
+    bool done() const;
+    void iterate();
+
+private:
+    std::FILE *m_fp{};
+    Affine m_cvt;
+    double m_x{};
+    double m_y{};
+    double m_z{};
+    double *m_p0{&m_x};
+    double *m_p1{&m_y};
+    const double *m_sound_var{};
+    long m_count{-1};
+    int m_color{};
+    int m_old_row{-1};
+    int m_old_col{-1};
+    int m_x_step{-1};
+    int m_y_step{0}; // The starting position step number
+    // Our pixel position on the screen
+    double m_x_pixel{};
+    double m_y_pixel{};
+    bool m_keep_going{};
+};
+
+} // namespace id::fractals
 
 extern Minor                 g_inverse_julia_minor_method;
 extern bool                  g_keep_screen_coords;
@@ -96,5 +147,4 @@ int plot_orbits2d_setup();
 int plot_orbits2d_float();
 int dynamic_orbit(double *x, double *y, double *z);
 int mandel_cloud_orbit(double *x, double *y, double *z);
-int dynamic2d_type();
 bool dynamic2d_per_image();

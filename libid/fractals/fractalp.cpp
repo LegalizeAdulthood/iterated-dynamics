@@ -44,6 +44,7 @@
 #include "ui/bifurcation.h"
 #include "ui/cellular.h"
 #include "ui/diffusion.h"
+#include "ui/dynamic2d.h"
 #include "ui/frothy_basin.h"
 #include "ui/inverse_julia.h"
 #include "ui/standard_4d.h"
