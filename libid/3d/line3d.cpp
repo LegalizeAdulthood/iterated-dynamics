@@ -1569,10 +1569,6 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, bool
             file_error(path, FileError::DISK_FULL);
             return true;
         }
-        if (driver_key_pressed())
-        {
-            return true;
-        }
     }
 
     if (targa_start_disk(fps, s_targa_header_24) != 0)
