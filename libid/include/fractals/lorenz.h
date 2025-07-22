@@ -170,7 +170,6 @@ int chip2d_orbit(double *x, double *y, double *z);
 int quadrup_two2d_orbit(double *x, double *y, double *z);
 int three_ply2d_orbit(double *x, double *y, double *z);
 int martin2d_orbit(double *x, double *y, double *z);
-int orbit2d_type();
 int funny_glasses_call(int (*calc)());
 int ifs_type();
 int orbit3d_type();

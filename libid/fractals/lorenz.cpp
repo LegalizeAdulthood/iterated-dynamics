@@ -1093,28 +1093,6 @@ void Orbit2D::iterate()
 
 } // namespace id::fractals
 
-int orbit2d_type()
-{
-    id::fractals::Orbit2D o2d;
-
-    if (g_resuming)
-    {
-        o2d.resume();
-    }
-
-    while (!o2d.done())
-    {
-        if (driver_key_pressed())
-        {
-            o2d.suspend();
-            return -1;
-        }
-
-        o2d.iterate();
-    }
-    return 0;
-}
-
 static int orbit3d_float_calc()
 {
     int color = 2;
