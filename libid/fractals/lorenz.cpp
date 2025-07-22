@@ -1590,131 +1590,174 @@ done:
     return status;
 }
 
-// double version - mainly for testing
-static int ifs3d_calc()
+namespace id::fractals
 {
-    int color;
 
-    double new_x;
-    double new_y;
-    double new_z;
+enum class IFSColorMethod
+{
+    INCREMENT_PIXEL = 0,
+    TRANSFORM_INDEX = 1
+};
 
-    int k;
+class IFS3D
+{
+public:
+    IFS3D();
+    ~IFS3D();
 
-    ViewTransform3D inf;
+    bool done() const;
+    void iterate();
 
+private:
+    std::FILE *m_fp{};
+    int m_color{};
+    double m_new_x{};
+    double m_new_y{};
+    double m_new_z{};
+    int m_k{};
+    ViewTransform3D m_inf{};
+    IFSColorMethod m_color_method{};
+    bool m_unbounded{};
+};
+
+IFS3D::IFS3D() :
+    m_fp(open_orbit_save()),
+    m_color_method(g_params[0] == 0.0 ? IFSColorMethod::INCREMENT_PIXEL : IFSColorMethod::TRANSFORM_INDEX)
+{
     // setup affine screen coord conversion
-    setup_convert_to_screen(&inf.cvt);
+    setup_convert_to_screen(&m_inf.cvt);
     std::srand(1);
-    int color_method = (int) g_params[0];
 
-    inf.orbit[0] = 0;
-    inf.orbit[1] = 0;
-    inf.orbit[2] = 0;
+    m_inf.orbit[0] = 0;
+    m_inf.orbit[1] = 0;
+    m_inf.orbit[2] = 0;
 
-    std::FILE *fp = open_orbit_save();
-
-    int ret = 0;
     if (g_max_iterations > 0x1fffffL)
     {
         g_max_count = 0x7fffffffL;
     }
     else
     {
-        g_max_count = g_max_iterations*1024;
+        g_max_count = g_max_iterations * 1024;
     }
     g_color_iter = 0L;
-    while (g_color_iter++ <= g_max_count) // loop until keypress or maxit
+}
+
+IFS3D::~IFS3D()
+{
+    if (m_fp != nullptr)
+    {
+        std::fclose(m_fp);
+        m_fp = nullptr;
+    }
+}
+
+bool IFS3D::done() const
+{
+    return m_unbounded || g_color_iter > g_max_count;
+}
+
+void IFS3D::iterate()
+{
+    ++g_color_iter;
+    double r = std::rand();      // generate a random number between 0 and 1
+    r /= RAND_MAX;
+
+    // pick which iterated function to execute, weighted by probability
+    constexpr int prob_index = NUM_IFS_3D_PARAMS - 1; // last parameter is probability
+    double sum = g_ifs_definition[prob_index];
+    for (m_k = 1; sum < r && m_k < g_num_affine_transforms; ++m_k)
+    {
+        sum += g_ifs_definition[m_k * NUM_IFS_3D_PARAMS + prob_index];
+    }
+    --m_k;
+
+    // calculate image of last point under selected iterated function
+    {
+        const auto row = [&](int idx) { return g_ifs_definition[m_k * NUM_IFS_3D_PARAMS + idx]; };
+        m_new_x = row(0) * m_inf.orbit[0] + row(1) * m_inf.orbit[1] + row(2) * m_inf.orbit[2] + row(9);
+        m_new_y = row(3) * m_inf.orbit[0] + row(4) * m_inf.orbit[1] + row(5) * m_inf.orbit[2] + row(10);
+        m_new_z = row(6) * m_inf.orbit[0] + row(7) * m_inf.orbit[1] + row(8) * m_inf.orbit[2] + row(11);
+    }
+
+    m_inf.orbit[0] = m_new_x;
+    m_inf.orbit[1] = m_new_y;
+    m_inf.orbit[2] = m_new_z;
+    if (m_fp)
+    {
+        fmt::print(m_fp, "{:g} {:g} {:g} 15\n", m_new_x, m_new_y, m_new_z);
+    }
+    if (!float_view_transf3d(&m_inf))
+    {
+        return;
+    }
+
+    // plot if inside window
+    if (m_inf.col >= 0)
+    {
+        if (s_real_time)
+        {
+            g_which_image = StereoImage::RED;
+        }
+        if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
+        {
+            m_color = (m_k % g_colors) + 1;
+        }
+        else
+        {
+            m_color = get_color(m_inf.col, m_inf.row) + 1;
+        }
+        if (m_color < g_colors) // color sticks on last value
+        {
+            g_plot(m_inf.col, m_inf.row, m_color);
+        }
+    }
+    else if (m_inf.col == -2)
+    {
+        m_unbounded = true;
+        return;
+    }
+
+    if (s_real_time)
+    {
+        g_which_image = StereoImage::BLUE;
+        // plot if inside window
+        if (m_inf.col1 >= 0)
+        {
+            if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
+            {
+                m_color = (m_k % g_colors) + 1;
+            }
+            else
+            {
+                m_color = get_color(m_inf.col1, m_inf.row1) + 1;
+            }
+            if (m_color < g_colors) // color sticks on last value
+            {
+                g_plot(m_inf.col1, m_inf.row1, m_color);
+            }
+        }
+        else if (m_inf.col1 == -2)
+        {
+            m_unbounded = true;
+        }
+    }
+}
+
+} // namespace id::fractals
+
+static int ifs3d_calc()
+{
+    id::fractals::IFS3D ifs;
+    while (!ifs.done())
     {
         if (driver_key_pressed())  // keypress bails out
         {
-            ret = -1;
-            break;
+            return -1;
         }
-        double r = std::rand();      // generate a random number between 0 and 1
-        r /= RAND_MAX;
-
-        // pick which iterated function to execute, weighted by probability
-        constexpr int prob_index = NUM_IFS_3D_PARAMS - 1; // last parameter is probability
-        double sum = g_ifs_definition[prob_index];
-        for (k = 1; sum < r && k < g_num_affine_transforms; ++k)
-        {
-            sum += g_ifs_definition[k * NUM_IFS_3D_PARAMS + prob_index];
-        }
-        --k;
-
-        // calculate image of last point under selected iterated function
-        {
-            const auto row = [&](int idx) { return g_ifs_definition[k * NUM_IFS_3D_PARAMS + idx]; };
-            new_x = row(0) * inf.orbit[0] + row(1) * inf.orbit[1] + row(2) * inf.orbit[2] + row(9);
-            new_y = row(3) * inf.orbit[0] + row(4) * inf.orbit[1] + row(5) * inf.orbit[2] + row(10);
-            new_z = row(6) * inf.orbit[0] + row(7) * inf.orbit[1] + row(8) * inf.orbit[2] + row(11);
-        }
-
-        inf.orbit[0] = new_x;
-        inf.orbit[1] = new_y;
-        inf.orbit[2] = new_z;
-        if (fp)
-        {
-            fmt::print(fp, "{:g} {:g} {:g} 15\n", new_x, new_y, new_z);
-        }
-        if (float_view_transf3d(&inf))
-        {
-            // plot if inside window
-            if (inf.col >= 0)
-            {
-                if (s_real_time)
-                {
-                    g_which_image = StereoImage::RED;
-                }
-                if (color_method)
-                {
-                    color = (k%g_colors)+1;
-                }
-                else
-                {
-                    color = get_color(inf.col, inf.row)+1;
-                }
-                if (color < g_colors)     // color sticks on last value
-                {
-                    g_plot(inf.col, inf.row, color);
-                }
-            }
-            else if (inf.col == -2)
-            {
-                return ret;
-            }
-            if (s_real_time)
-            {
-                g_which_image = StereoImage::BLUE;
-                // plot if inside window
-                if (inf.col1 >= 0)
-                {
-                    if (color_method)
-                    {
-                        color = (k%g_colors)+1;
-                    }
-                    else
-                    {
-                        color = get_color(inf.col1, inf.row1)+1;
-                    }
-                    if (color < g_colors)     // color sticks on last value
-                    {
-                        g_plot(inf.col1, inf.row1, color);
-                    }
-                }
-                else if (inf.col1 == -2)
-                {
-                    return ret;
-                }
-            }
-        }
-    } // end while
-    if (fp)
-    {
-        std::fclose(fp);
+        ifs.iterate();
     }
-    return ret;
+    return 0;
 }
 
 int ifs_type()                       // front-end for ifs2d and ifs3d
