@@ -182,7 +182,6 @@ public:
 
 private:
     std::FILE *m_fp{};
-    int m_color{};
     double m_new_x{};
     double m_new_y{};
     double m_new_z{};

@@ -1671,17 +1671,18 @@ void IFS3D::iterate()
         {
             g_which_image = StereoImage::RED;
         }
+        int color;
         if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
         {
-            m_color = (m_k % g_colors) + 1;
+            color = (m_k % g_colors) + 1;
         }
         else
         {
-            m_color = get_color(m_inf.col, m_inf.row) + 1;
+            color = get_color(m_inf.col, m_inf.row) + 1;
         }
-        if (m_color < g_colors) // color sticks on last value
+        if (color < g_colors) // color sticks on last value
         {
-            g_plot(m_inf.col, m_inf.row, m_color);
+            g_plot(m_inf.col, m_inf.row, color);
         }
     }
     else if (m_inf.col == -2)
@@ -1696,17 +1697,18 @@ void IFS3D::iterate()
         // plot if inside window
         if (m_inf.col1 >= 0)
         {
+            int color;
             if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
             {
-                m_color = (m_k % g_colors) + 1;
+                color = (m_k % g_colors) + 1;
             }
             else
             {
-                m_color = get_color(m_inf.col1, m_inf.row1) + 1;
+                color = get_color(m_inf.col1, m_inf.row1) + 1;
             }
-            if (m_color < g_colors) // color sticks on last value
+            if (color < g_colors) // color sticks on last value
             {
-                g_plot(m_inf.col1, m_inf.row1, m_color);
+                g_plot(m_inf.col1, m_inf.row1, color);
             }
         }
         else if (m_inf.col1 == -2)
