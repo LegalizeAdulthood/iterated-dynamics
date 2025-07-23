@@ -14,7 +14,6 @@
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
-#include "ui/stop_msg.h"
 #include "ui/video.h"
 
 #include <algorithm>
@@ -300,36 +299,8 @@ static void sub_divide(int x1, int y1, int x2, int y2)
 
 namespace id::fractals {
 
-enum class PlasmaAlgorithm
-{
-    OLD = 0,
-    NEW = 1,
-};
-
-class Plasma
-{
-public:
-    Plasma();
-    Plasma(const Plasma &rhs) = delete;
-    Plasma(Plasma &&rhs) = delete;
-    ~Plasma();
-    Plasma &operator=(const Plasma &rhs) = delete;
-    Plasma &operator=(Plasma &&rhs) = delete;
-
-    bool done() const;
-    void iterate();
-
-    U16 rnd[4]{};
-    bool old_pot_flag{};
-    bool old_pot_16bit{};
-    bool m_done{};
-    PlasmaAlgorithm m_algo{PlasmaAlgorithm::OLD};
-    int i{};
-    int k{};
-};
-
 Plasma::Plasma() :
-    m_algo(g_params[1] == 0.0 ? PlasmaAlgorithm::OLD : PlasmaAlgorithm::NEW)
+    m_algo(g_params[1] == 0.0 ? Algorithm::OLD : Algorithm::NEW)
 {
     s_kbd_check = 0;
 
@@ -372,8 +343,8 @@ Plasma::Plasma() :
                 g_plot    = (PlotFn)put_pot;
             }
             s_get_pix =  get_pot;
-            old_pot_flag = g_potential_flag;
-            old_pot_16bit = g_potential_16bit;
+            m_old_pot_flag = g_potential_flag;
+            m_old_pot_16_bit = g_potential_16bit;
         }
         else
         {
@@ -439,37 +410,37 @@ Plasma::Plasma() :
     if (s_max_plasma == 0)
     {
         s_p_colors = std::min(g_colors, 256);
-        for (U16 &elem : rnd)
+        for (U16 &elem : m_rnd)
         {
             elem = (U16)(1+(((RAND15()/s_p_colors)*(s_p_colors-1)) >> (s_shift_value-11)));
         }
     }
     else
     {
-        for (U16 &elem : rnd)
+        for (U16 &elem : m_rnd)
         {
             elem = rand16();
         }
     }
     if (g_debug_flag == DebugFlags::PREVENT_PLASMA_RANDOM)
     {
-        for (U16 &elem : rnd)
+        for (U16 &elem : m_rnd)
         {
             elem = 1;
         }
     }
 
-    g_plot(0,      0,  rnd[0]);
-    g_plot(g_logical_screen_x_dots-1,      0,  rnd[1]);
-    g_plot(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1,  rnd[2]);
-    g_plot(0, g_logical_screen_y_dots-1,  rnd[3]);
+    g_plot(0,      0,  m_rnd[0]);
+    g_plot(g_logical_screen_x_dots-1,      0,  m_rnd[1]);
+    g_plot(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1,  m_rnd[2]);
+    g_plot(0, g_logical_screen_y_dots-1,  m_rnd[3]);
 
     s_recur_level = 0;
 
-    if (m_algo == PlasmaAlgorithm::NEW)
+    if (m_algo == Algorithm::NEW)
     {
-        i = 1;
-        k = 1;
+        m_i = 1;
+        m_k = 1;
         s_recur1 = 1;
     }
 }
@@ -478,8 +449,8 @@ Plasma::~Plasma()
 {
     if (s_max_plasma != 0)
     {
-        g_potential_flag = old_pot_flag;
-        g_potential_16bit = old_pot_16bit;
+        g_potential_flag = m_old_pot_flag;
+        g_potential_16bit = m_old_pot_16_bit;
     }
     g_plot = g_put_color;
     s_get_pix = GET_COLOR;
@@ -492,49 +463,27 @@ bool Plasma::done() const
 
 void Plasma::iterate()
 {
-    if (m_algo == PlasmaAlgorithm::OLD)
+    if (m_algo == Algorithm::OLD)
     {
         sub_divide(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1);
         m_done = true;
     }
     else
     {
-        m_done = new_sub_d(0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, i);
+        m_done = new_sub_d(0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, m_i);
         if (!m_done)
         {
-            k = k * 2;
-            if (k  >(int)std::max(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1))
+            m_k = m_k * 2;
+            if (m_k  >(int)std::max(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1))
             {
                 m_done = true;
             }
-            i++;
+            m_i++;
         }
     }
 }
 
 } // namespace id::fractals
-
-int plasma_type()
-{
-    if (g_colors < 4)
-    {
-        stop_msg("Plasma Clouds requires 4 or more color video");
-        return -1;
-    }
-
-    id::fractals::Plasma plasma;
-    while (!plasma.done())
-    {
-        if (driver_key_pressed())
-        {
-            return 1;
-        }
-
-        plasma.iterate();
-    }
-
-    return 0;
-}
 
 static void set_plasma_palette()
 {

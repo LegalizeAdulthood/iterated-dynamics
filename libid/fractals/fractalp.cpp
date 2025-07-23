@@ -48,6 +48,7 @@
 #include "ui/frothy_basin.h"
 #include "ui/inverse_julia.h"
 #include "ui/orbit2d.h"
+#include "ui/plasma.h"
 #include "ui/standard_4d.h"
 
 #include <algorithm>

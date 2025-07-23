@@ -83,7 +83,7 @@ add_library(libid
     include/fractals/peterson_variations.h fractals/peterson_variations.cpp
     include/fractals/phoenix.h fractals/phoenix.cpp
     include/fractals/pickover_mandelbrot.h fractals/pickover_mandelbrot.cpp
-    include/fractals/plasma.h fractals/plasma.cpp
+    include/fractals/Plasma.h fractals/Plasma.cpp
     include/fractals/popcorn.h fractals/popcorn.cpp
     include/fractals/population.h fractals/population.cpp
     include/fractals/quartic_mandelbrot.h fractals/quartic_mandelbrot.cpp
@@ -217,6 +217,7 @@ add_library(libid
     include/ui/orbit2d.h ui/orbit2d.cpp
     include/ui/orbit3d.h ui/orbit3d.cpp
     include/ui/passes_options.h ui/passes_options.cpp
+    include/ui/plasma.h ui/plasma.cpp
     include/ui/put_string_center.h ui/put_string_center.cpp
     include/ui/read_ticker.h ui/read_ticker.cpp
     include/ui/rotate.h ui/rotate.cpp
