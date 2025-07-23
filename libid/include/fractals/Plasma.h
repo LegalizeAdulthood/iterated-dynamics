@@ -46,9 +46,9 @@ private:
     Plasma(Plasma &&rhs) = delete;
     Plasma &operator=(const Plasma &rhs) = delete;
     Plasma &operator=(Plasma &&rhs) = delete;
-    U16 adjust(int xa, int ya, int x, int y, int xb, int yb);
-    void sub_divide(int x1, int y1, int x2, int y2);
-    bool new_sub_d(int x1, int y1, int x2, int y2, int recur);
+    U16 adjust(int xa, int ya, int x, int y, int xb, int yb, int scale);
+    void subdivide();
+    bool subdivide_new(int x1, int y1, int x2, int y2, int recur);
 
     U16 m_rnd[4]{};
     bool m_old_pot_flag{};
@@ -65,7 +65,7 @@ private:
     int m_shift_value{}; // shift based on #colors
     int m_p_colors{};
     int m_recur_level{};
-    int m_recur1{};
+    int m_scale{};
     U16 m_max_plasma{};
     std::vector<Subdivision> m_subdivs;
 };

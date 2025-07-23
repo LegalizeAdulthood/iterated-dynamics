@@ -243,8 +243,10 @@ Plasma::Plasma() :
     {
         m_i = 1;
         m_k = 1;
-        m_recur1 = 1;
+        m_scale = 1;
     }
+
+    m_subdivs.push_back(Subdivision{0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, 0});
 }
 
 Plasma::~Plasma()
@@ -263,10 +265,10 @@ bool Plasma::done() const
     return m_done;
 }
 
-U16 Plasma::adjust(int xa, int ya, int x, int y, int xb, int yb)
+U16 Plasma::adjust(int xa, int ya, int x, int y, int xb, int yb, int scale)
 {
     S32 pseudorandom = m_i_param_x * ((RAND15() - 16383));
-    pseudorandom = pseudorandom * m_recur1;
+    pseudorandom = pseudorandom * scale;
     pseudorandom = pseudorandom >> m_shift_value;
     pseudorandom = (((S32)m_get_pix(xa, ya)+(S32)m_get_pix(xb, yb)+1) >> 1)+pseudorandom;
     if (m_max_plasma == 0)
@@ -285,47 +287,41 @@ U16 Plasma::adjust(int xa, int ya, int x, int y, int xb, int yb)
     return (U16)pseudorandom;
 }
 
-void Plasma::sub_divide(int x1, int y1, int x2, int y2)
+void Plasma::subdivide()
 {
-    if ((++m_kbd_check & 0x7f) == 1)
-    {
-        if (driver_key_pressed())
-        {
-            m_kbd_check--;
-            return;
-        }
-    }
-    if (x2-x1 < 2 && y2-y1 < 2)
+    const Subdivision sd{m_subdivs.back()};
+    m_subdivs.pop_back();
+    if (sd.x2-sd.x1 < 2 && sd.y2-sd.y1 < 2)
     {
         return;
     }
-    m_recur_level++;
-    m_recur1 = (int)(320L >> m_recur_level);
+    const int level{sd.level + 1};
+    const int scale = (int)(320L >> level);
 
-    int x = (x1 + x2) >> 1;
-    int y = (y1 + y2) >> 1;
-    S32 v = m_get_pix(x, y1);
+    int x = (sd.x1 + sd.x2) >> 1;
+    int y = (sd.y1 + sd.y2) >> 1;
+    S32 v = m_get_pix(x, sd.y1);
     if (v == 0)
     {
-        v = adjust(x1, y1, x , y1, x2, y1);
+        v = adjust(sd.x1, sd.y1, x, sd.y1, sd.x2, sd.y1, scale);
     }
     S32 i = v;
-    v = m_get_pix(x2, y);
+    v = m_get_pix(sd.x2, y);
     if (v == 0)
     {
-        v = adjust(x2, y1, x2, y , x2, y2);
+        v = adjust(sd.x2, sd.y1, sd.x2, y, sd.x2, sd.y2, scale);
     }
     i += v;
-    v = m_get_pix(x, y2);
+    v = m_get_pix(x, sd.y2);
     if (v == 0)
     {
-        v = adjust(x1, y2, x , y2, x2, y2);
+        v = adjust(sd.x1, sd.y2, x, sd.y2, sd.x2, sd.y2, scale);
     }
     i += v;
-    v = m_get_pix(x1, y);
+    v = m_get_pix(sd.x1, y);
     if (v == 0)
     {
-        v = adjust(x1, y1, x1, y , x1, y2);
+        v = adjust(sd.x1, sd.y1, sd.x1, y, sd.x1, sd.y2, scale);
     }
     i += v;
 
@@ -334,16 +330,15 @@ void Plasma::sub_divide(int x1, int y1, int x2, int y2)
         g_plot(x, y, (U16)((i+2) >> 2));
     }
 
-    sub_divide(x1, y1, x , y);
-    sub_divide(x , y1, x2, y);
-    sub_divide(x , y , x2, y2);
-    sub_divide(x1, y , x , y2);
-    m_recur_level--;
+    m_subdivs.push_back(Subdivision{sd.x1, y, x, sd.y2, level});
+    m_subdivs.push_back(Subdivision{x, y, sd.x2, sd.y2, level});
+    m_subdivs.push_back(Subdivision{x, sd.y1, sd.x2, y, level});
+    m_subdivs.push_back(Subdivision{sd.x1, sd.y1, x, y, level});
 }
 
-bool Plasma::new_sub_d(int x1, int y1, int x2, int y2, int recur)
+bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int recur)
 {
-    m_recur1 = (int)(320L >> recur);
+    m_scale = (int)(320L >> recur);
     m_sub_y.t = 2;
     m_sub_y.v[0] = y2;
     int ny = m_sub_y.v[0];
@@ -412,14 +407,14 @@ bool Plasma::new_sub_d(int x1, int y1, int x2, int y2, int recur)
             S32 i = m_get_pix(nx, y);
             if (i == 0)
             {
-                i = adjust(nx, ny1, nx, y , nx, ny);
+                i = adjust(nx, ny1, nx, y, nx, ny, m_scale);
             }
             // cppcheck-suppress AssignmentIntegerToAddress
             S32 v = i;
             i = m_get_pix(x, ny);
             if (i == 0)
             {
-                i = adjust(nx1, ny, x , ny, nx, ny);
+                i = adjust(nx1, ny, x, ny, nx, ny, m_scale);
             }
             v += i;
             if (m_get_pix(x, y) == 0)
@@ -427,13 +422,13 @@ bool Plasma::new_sub_d(int x1, int y1, int x2, int y2, int recur)
                 i = m_get_pix(x, ny1);
                 if (i == 0)
                 {
-                    i = adjust(nx1, ny1, x , ny1, nx, ny1);
+                    i = adjust(nx1, ny1, x, ny1, nx, ny1, m_scale);
                 }
                 v += i;
                 i = m_get_pix(nx1, y);
                 if (i == 0)
                 {
-                    i = adjust(nx1, ny1, nx1, y , nx1, ny);
+                    i = adjust(nx1, ny1, nx1, y, nx1, ny, m_scale);
                 }
                 v += i;
                 g_plot(x, y, (U16)((v + 2) >> 2));
@@ -457,12 +452,12 @@ void Plasma::iterate()
 {
     if (m_algo == Algorithm::OLD)
     {
-        sub_divide(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1);
-        m_done = true;
+        subdivide();
+        m_done = m_subdivs.empty();
     }
     else
     {
-        m_done = new_sub_d(0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, m_i);
+        m_done = subdivide_new(0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, m_i);
         if (!m_done)
         {
             m_k = m_k * 2;
