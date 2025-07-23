@@ -336,9 +336,9 @@ bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
     m_scale = (int)(320L >> level);
     m_sub_y.top = 2;
     m_sub_y.value[0] = y2;
-    int ny = m_sub_y.value[0];
+    int ny = y2;
     m_sub_y.value[2] = y1;
-    int ny1 = m_sub_y.value[2];
+    int ny1 = y1;
     m_sub_y.level[0] = 0;
     m_sub_y.level[1] = 1;
     m_sub_y.level[2] = 0;
