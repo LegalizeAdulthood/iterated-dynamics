@@ -110,6 +110,8 @@ static U16 get_pot(int x, int y)
 }
 
 Plasma::Plasma() :
+    m_saved_potential_flag(g_potential_flag),
+    m_saved_potential_16_bit(g_potential_16bit),
     m_algo(g_params[1] == 0.0 ? Algorithm::OLD : Algorithm::NEW),
     m_get_pix{GET_COLOR}
 {
@@ -152,8 +154,6 @@ Plasma::Plasma() :
                 g_plot    = (PlotFn)put_pot;
             }
             m_get_pix =  get_pot;
-            m_old_pot_flag = g_potential_flag;
-            m_old_pot_16_bit = g_potential_16bit;
         }
         else
         {
@@ -251,11 +251,6 @@ Plasma::Plasma() :
 
 Plasma::~Plasma()
 {
-    if (m_max_plasma != 0)
-    {
-        g_potential_flag = m_old_pot_flag;
-        g_potential_16bit = m_old_pot_16_bit;
-    }
     g_plot = g_put_color;
     m_get_pix = GET_COLOR;
 }

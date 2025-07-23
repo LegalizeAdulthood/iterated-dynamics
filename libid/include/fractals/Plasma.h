@@ -4,6 +4,7 @@
 
 #include "config/port.h"
 #include "misc/sized_types.h"
+#include "misc/ValueSaver.h"
 
 #include <vector>
 
@@ -51,8 +52,8 @@ private:
     bool subdivide_new(int x1, int y1, int x2, int y2, int recur);
 
     U16 m_rnd[4]{};
-    bool m_old_pot_flag{};
-    bool m_old_pot_16_bit{};
+    ValueSaver<bool> m_saved_potential_flag;
+    ValueSaver<bool> m_saved_potential_16_bit;
     bool m_done{};
     Algorithm m_algo{Algorithm::OLD};
     int m_i{};
