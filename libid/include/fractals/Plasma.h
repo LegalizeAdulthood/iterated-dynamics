@@ -5,6 +5,8 @@
 #include "config/port.h"
 #include "misc/sized_types.h"
 
+#include <vector>
+
 namespace id::fractals
 {
 
@@ -29,6 +31,15 @@ private:
         Byte t; // top of stack
         int v[16]; // subdivided value
         Byte r[16];  // recursion level
+    };
+
+    struct Subdivision
+    {
+        int x1;
+        int y1;
+        int x2;
+        int y2;
+        int level;
     };
 
     Plasma(const Plasma &rhs) = delete;
@@ -56,6 +67,7 @@ private:
     int m_recur_level{};
     int m_recur1{};
     U16 m_max_plasma{};
+    std::vector<Subdivision> m_subdivs;
 };
 
 } // namespace id::fractals
