@@ -241,7 +241,7 @@ Plasma::Plasma() :
 
     if (m_algo == Algorithm::NEW)
     {
-        m_i = 1;
+        m_level = 1;
         m_k = 1;
         m_scale = 1;
     }
@@ -286,12 +286,12 @@ void Plasma::subdivide()
 {
     const Subdivision sd{m_subdivs.back()};
     m_subdivs.pop_back();
-    if (sd.x2-sd.x1 < 2 && sd.y2-sd.y1 < 2)
+    if (sd.x2 - sd.x1 < 2 && sd.y2 - sd.y1 < 2)
     {
         return;
     }
     const int level{sd.level + 1};
-    const int scale = (int)(320L >> level);
+    const int scale = (int) (320L >> level);
 
     int x = (sd.x1 + sd.x2) >> 1;
     int y = (sd.y1 + sd.y2) >> 1;
@@ -322,7 +322,7 @@ void Plasma::subdivide()
 
     if (m_get_pix(x, y) == 0)
     {
-        g_plot(x, y, (U16)((i+2) >> 2));
+        g_plot(x, y, (U16) ((i + 2) >> 2));
     }
 
     m_subdivs.push_back(Subdivision{sd.x1, y, x, sd.y2, level});
@@ -331,7 +331,7 @@ void Plasma::subdivide()
     m_subdivs.push_back(Subdivision{sd.x1, sd.y1, x, y, level});
 }
 
-bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
+void Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
 {
     m_scale = (int)(320L >> level);
     m_sub_y.top = 2;
@@ -347,14 +347,6 @@ bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
 
     while (m_sub_y.top >= 1)
     {
-        if ((++m_kbd_check & 0x0f) == 1)
-        {
-            if (driver_key_pressed())
-            {
-                m_kbd_check--;
-                return true;
-            }
-        }
         while (m_sub_y.level[m_sub_y.top-1] < level)
         {
             //     1.  Create new entry at top of the stack
@@ -439,7 +431,6 @@ bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
             m_sub_y.top = m_sub_y.top - 2;
         }
     }
-    return false;
 }
 
 void Plasma::iterate()
@@ -451,15 +442,15 @@ void Plasma::iterate()
     }
     else
     {
-        m_done = subdivide_new(0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, m_i);
+        subdivide_new(0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, m_level);
         if (!m_done)
         {
-            m_k = m_k * 2;
+            m_k *= 2;
             if (m_k  >(int)std::max(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1))
             {
                 m_done = true;
             }
-            m_i++;
+            m_level++;
         }
     }
 }

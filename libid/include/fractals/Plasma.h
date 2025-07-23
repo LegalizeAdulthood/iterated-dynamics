@@ -49,18 +49,17 @@ private:
     Plasma &operator=(Plasma &&rhs) = delete;
     U16 adjust(int xa, int ya, int x, int y, int xb, int yb, int scale);
     void subdivide();
-    bool subdivide_new(int x1, int y1, int x2, int y2, int level);
+    void subdivide_new(int x1, int y1, int x2, int y2, int level);
 
     U16 m_rnd[4]{};
     ValueSaver<bool> m_saved_potential_flag;
     ValueSaver<bool> m_saved_potential_16_bit;
     bool m_done{};
     Algorithm m_algo{Algorithm::OLD};
-    int m_i{};
+    int m_level{};
     int m_k{};
     SubdivisionStack m_sub_x{};
     SubdivisionStack m_sub_y{};
-    int m_kbd_check{};
     U16 (*m_get_pix)(int x, int y){};
     int m_i_param_x{};   // s_i_param_x = param.x * 8
     int m_shift_value{}; // shift based on #colors
