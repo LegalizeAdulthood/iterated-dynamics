@@ -399,7 +399,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             // this shouldn't happen
             entry_name = nullptr;
         }
-        auto item_for_help = [](HelpLabels label)
+        const auto item_for_help = [](HelpLabels label)
         {
             switch (label)
             {
@@ -414,7 +414,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
                     "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
             }
         };
-        auto item_path = [](HelpLabels label) -> std::filesystem::path &
+        const auto item_path = [](HelpLabels label) -> std::filesystem::path &
         {
             switch (label)
             {

@@ -957,7 +957,7 @@ static void corners(Matrix m, bool show, double *x_min, double *y_min, double *z
         // Keep the box surrounding the fractal
         for (auto &elem : s)
         {
-            for (auto &elem_i : elem)
+            for (Vector &elem_i : elem)
             {
                 elem_i[0] += g_xx_adjust;
                 elem_i[1] += g_yy_adjust;
@@ -1633,7 +1633,7 @@ static bool targa_validate(const std::string &filename)
         std::fgetc(fp);
     }
     // Check Image specs
-    for (auto &elem : s_upr_lwr)
+    for (Byte &elem : s_upr_lwr)
     {
         if (std::fgetc(fp) != (int) elem)
         {

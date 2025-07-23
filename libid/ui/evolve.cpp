@@ -639,7 +639,7 @@ void set_mutation_level(int strength)
 {
     // scan through the gene array turning on random variation for all parms that
     // are suitable for this level of mutation
-    for (auto &elem : g_gene_bank)
+    for (GeneBase &elem : g_gene_bank)
     {
         if (elem.level <= strength)
         {

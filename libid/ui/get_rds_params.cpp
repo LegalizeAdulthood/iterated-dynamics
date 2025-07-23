@@ -61,7 +61,7 @@ int get_rds_params()
             values[k++].type = 'y';
 
             values[k++].type = '*';
-            for (auto & elem : rds6)
+            for (char &elem : rds6)
             {
                 elem = ' ';
             }

@@ -6,7 +6,7 @@
 
 void shell_sort(void *v1, int n, unsigned sz)
 {
-    auto lc_compare = [](void *arg1, void *arg2) // for sort
+    const auto lc_compare = [](void *arg1, void *arg2) // for sort
     {
         char **choice1 = (char **) arg1;
         char **choice2 = (char **) arg2;

@@ -53,7 +53,7 @@ static POINT get_saved_frame_position()
     CRegKey key;
     if (key.Open(HKEY_CURRENT_USER, WINDOW_POS_KEY) == ERROR_SUCCESS)
     {
-        auto get_value = [&](const TCHAR *name)
+        const auto get_value = [&](const TCHAR *name)
         {
             DWORD value;
             if (const LONG status = key.QueryDWORDValue(name, value); status != ERROR_SUCCESS)

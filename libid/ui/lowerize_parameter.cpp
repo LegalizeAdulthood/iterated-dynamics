@@ -23,7 +23,7 @@ void lowerize_parameter(char *cur_arg)
         }
         else if (*arg_ptr == '=')
         {
-            auto it = std::find_if(std::begin(UNCHANGED_PARAMS), std::end(UNCHANGED_PARAMS),
+            const auto it = std::find_if(std::begin(UNCHANGED_PARAMS), std::end(UNCHANGED_PARAMS),
                 [param = std::string(cur_arg, arg_ptr)](const char *str) { return param == str; });
             if (it != std::end(UNCHANGED_PARAMS))
             {

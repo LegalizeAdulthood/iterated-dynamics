@@ -425,12 +425,12 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
 
 static bool is_key_name(const std::string &name)
 {
-    auto is_function_key_name = [](const std::string &name)
+    const auto is_function_key_name = [](const std::string &name)
     {
         return name[0] == 'F' && name.size() < 4 &&
             std::all_of(name.begin() + 1, name.end(), [](char c) { return std::isdigit(c) != 0; });
     };
-    auto is_modified_key_name = [](const std::string &prefix, const std::string &name)
+    const auto is_modified_key_name = [](const std::string &prefix, const std::string &name)
     { return name.substr(0, prefix.size()) == prefix && is_key_name(name.substr(prefix.size())); };
 
     return name.size() == 1                                                          //

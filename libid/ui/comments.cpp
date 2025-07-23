@@ -32,7 +32,7 @@ static std::string get_cpu_id()
         {
             cpu_id = "(Unknown CPU)";
         }
-        auto check = [](int result, const char *label)
+        const auto check = [](int result, const char *label)
         {
             if (result < 0)
             {
@@ -42,7 +42,7 @@ static std::string get_cpu_id()
         cpu_id_t data;
         check(cpu_identify(nullptr, &data), "cpu_identify");
         std::string brand{data.brand_str};
-        auto drop = [&](const std::string_view text)
+        const auto drop = [&](const std::string_view text)
         {
             for (std::string::size_type pos = brand.find(text); pos != std::string::npos;
                  pos = brand.find(text))

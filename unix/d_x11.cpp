@@ -1540,7 +1540,7 @@ bool X11Driver::init(int *argc, char **argv)
         int const width = WidthOfScreen(DefaultScreenOfDisplay(m_dpy));
         int const height = HeightOfScreen(DefaultScreenOfDisplay(m_dpy));
 
-        for (auto m : modes)
+        for (VideoInfo &m : modes)
         {
             if (m.x_dots <= width && m.y_dots <= height)
             {

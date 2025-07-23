@@ -248,7 +248,7 @@ static void check_buffer(unsigned int off)
 
 Label *HelpSource::find_label(const char *name)
 {
-    auto finder = [=](std::vector<Label> &collection) -> Label *
+    const auto finder = [=](std::vector<Label> &collection) -> Label *
     {
         for (Label &label : collection)
         {

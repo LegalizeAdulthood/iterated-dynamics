@@ -118,7 +118,7 @@ static bool read_lsystem_file(const char *str)
     g_max_angle = 0;
     int rul_ind = 0;
     char msg_buff[6 * 80 + 1]{};                                // enough for 6 full lines
-    auto append_error = [&](const std::string &s)
+    const auto append_error = [&](const std::string &s)
     {
         std::strcat(msg_buff, s.c_str());
         ++err;
@@ -243,7 +243,7 @@ int lsystem_type()
     ts.d_max_angle = (char) (g_max_angle - 1);
 
     s_rule_cmds.push_back(lsys_size_transform(s_axiom.c_str(), &ts));
-    for (const auto &rule : s_rules)
+    for (const std::string &rule : s_rules)
     {
         s_rule_cmds.push_back(lsys_size_transform(rule.c_str(), &ts));
     }
@@ -258,7 +258,7 @@ int lsystem_type()
 
         free_l_cmds();
         s_rule_cmds.push_back(lsys_draw_transform(s_axiom.c_str(), &ts));
-        for (const auto &rule : s_rules)
+        for (const std::string &rule : s_rules)
         {
             s_rule_cmds.push_back(lsys_draw_transform(rule.c_str(), &ts));
         }
@@ -294,7 +294,7 @@ bool lsystem_load()
 
 static void free_rules_mem()
 {
-    for (auto &rule : s_rules)
+    for (std::string &rule : s_rules)
     {
         rule.clear();
         rule.shrink_to_fit();

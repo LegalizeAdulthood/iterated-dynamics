@@ -786,7 +786,7 @@ void HelpCompiler::write_link_source()
             "\n"
             "std::array<HelpLink, "
             << topics.size() << "> g_help_links = {\n";
-        auto link_for_title = [](std::string text)
+        const auto link_for_title = [](std::string text)
         {
             for (auto pos = text.find_first_of("/\""); pos != std::string::npos;
                  pos = text.find_first_of("/\""))

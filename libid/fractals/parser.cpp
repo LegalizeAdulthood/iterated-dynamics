@@ -2903,7 +2903,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
             fmt::print(debug_fp, "{:s}\n", g_formula_name);
             if (g_symmetry != SymmetryType::NONE)
             {
-                auto it = std::find_if(std::begin(SYMMETRY_NAMES), std::end(SYMMETRY_NAMES),
+                const auto it = std::find_if(std::begin(SYMMETRY_NAMES), std::end(SYMMETRY_NAMES),
                     [](const SymmetryName &item) { return item.n == g_symmetry; });
                 if (it != std::end(SYMMETRY_NAMES))
                 {

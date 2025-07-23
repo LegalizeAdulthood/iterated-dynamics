@@ -123,12 +123,12 @@ void load_config(const std::string &cfg_path)
             // look for a synonym mode and if found, overwrite its key
             VideoInfo *begin{&g_video_table[0]};
             VideoInfo *end{&g_video_table[g_video_table_len]};
-            auto it = std::find_if(begin, end,
+            const auto it = std::find_if(begin, end,
                 [&](const VideoInfo &mode)
                 {
                     return mode.driver == video_entry.driver //
                         && mode.colors == video_entry.colors //
-                        && mode.x_dots == video_entry.x_dots   //
+                        && mode.x_dots == video_entry.x_dots //
                         && mode.y_dots == video_entry.y_dots;
                 });
             if (it != end && it->key == 0)

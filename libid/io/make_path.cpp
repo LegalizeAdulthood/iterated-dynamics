@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 std::string make_path(const char *drive, const char *dir, const char *fname, const char *ext)
 {
     fs::path result;
-    auto not_empty = [](const char *ptr) { return ptr != nullptr && ptr[0] != 0; };
+    const auto not_empty = [](const char *ptr) { return ptr != nullptr && ptr[0] != 0; };
     if (not_empty(drive))
     {
         result = drive;

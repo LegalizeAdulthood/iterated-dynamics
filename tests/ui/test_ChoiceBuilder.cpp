@@ -365,8 +365,8 @@ protected:
 TEST(TestFullScreenValueMatchers, hasValue)
 {
     FullScreenValues values{};
-    auto always = [](MatchResultListener *, const FullScreenValues &) { return true; };
-    auto never = [](MatchResultListener *, const FullScreenValues &) { return false; };
+    const auto always = [](MatchResultListener *, const FullScreenValues &) { return true; };
+    const auto never = [](MatchResultListener *, const FullScreenValues &) { return false; };
 
     EXPECT_THAT(&values, has_value(0, always));
     EXPECT_THAT(&values, Not(has_value(0, never)));

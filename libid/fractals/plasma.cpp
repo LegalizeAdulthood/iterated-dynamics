@@ -298,6 +298,29 @@ static void sub_divide(int x1, int y1, int x2, int y2)
     s_recur_level--;
 }
 
+namespace id::fractals {
+
+class Plasma
+{
+public:
+    Plasma();
+    Plasma(const Plasma &rhs) = delete;
+    Plasma(Plasma &&rhs) = delete;
+    ~Plasma();
+    Plasma &operator=(const Plasma &rhs) = delete;
+    Plasma &operator=(Plasma &&rhs) = delete;
+};
+
+Plasma::Plasma()
+{
+}
+
+Plasma::~Plasma()
+{
+}
+
+} // namespace id::fractals
+
 int plasma_type()
 {
     U16 rnd[4];
@@ -419,21 +442,21 @@ int plasma_type()
     if (s_max_plasma == 0)
     {
         s_p_colors = std::min(g_colors, 256);
-        for (auto &elem : rnd)
+        for (U16 &elem : rnd)
         {
             elem = (U16)(1+(((RAND15()/s_p_colors)*(s_p_colors-1)) >> (s_shift_value-11)));
         }
     }
     else
     {
-        for (auto &elem : rnd)
+        for (U16 &elem : rnd)
         {
             elem = rand16();
         }
     }
     if (g_debug_flag == DebugFlags::PREVENT_PLASMA_RANDOM)
     {
-        for (auto &elem : rnd)
+        for (U16 &elem : rnd)
         {
             elem = 1;
         }

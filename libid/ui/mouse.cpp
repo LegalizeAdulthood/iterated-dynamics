@@ -48,7 +48,7 @@ void mouse_unsubscribe(int id)
         s_pending_unsubscribe.push_back(id);
         return;
     }
-    auto it = s_subscribers.find(id);
+    const auto it = s_subscribers.find(id);
     assert(it != s_subscribers.end());
     s_subscribers.erase(id);
 }
