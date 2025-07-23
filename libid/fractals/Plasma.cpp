@@ -331,21 +331,21 @@ void Plasma::subdivide()
     m_subdivs.push_back(Subdivision{sd.x1, sd.y1, x, y, level});
 }
 
-bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int recur)
+bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
 {
-    m_scale = (int)(320L >> recur);
-    m_sub_y.t = 2;
-    m_sub_y.v[0] = y2;
-    int ny = m_sub_y.v[0];
-    m_sub_y.v[2] = y1;
-    int ny1 = m_sub_y.v[2];
-    m_sub_y.r[0] = 0;
-    m_sub_y.r[1] = 1;
-    m_sub_y.r[2] = 0;
-    m_sub_y.v[1] = (ny1 + ny) >> 1;
-    int y = m_sub_y.v[1];
+    m_scale = (int)(320L >> level);
+    m_sub_y.top = 2;
+    m_sub_y.value[0] = y2;
+    int ny = m_sub_y.value[0];
+    m_sub_y.value[2] = y1;
+    int ny1 = m_sub_y.value[2];
+    m_sub_y.level[0] = 0;
+    m_sub_y.level[1] = 1;
+    m_sub_y.level[2] = 0;
+    m_sub_y.value[1] = (ny1 + ny) >> 1;
+    int y = m_sub_y.value[1];
 
-    while (m_sub_y.t >= 1)
+    while (m_sub_y.top >= 1)
     {
         if ((++m_kbd_check & 0x0f) == 1)
         {
@@ -355,7 +355,7 @@ bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int recur)
                 return true;
             }
         }
-        while (m_sub_y.r[m_sub_y.t-1] < (Byte)recur)
+        while (m_sub_y.level[m_sub_y.top-1] < level)
         {
             //     1.  Create new entry at top of the stack
             //     2.  Copy old top value to new top value.
@@ -365,38 +365,38 @@ bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int recur)
             //     5.  New mid-point value is average
             //            of largest and smallest
 
-            m_sub_y.t++;
-            m_sub_y.v[m_sub_y.t] = m_sub_y.v[m_sub_y.t-1];
-            ny1  = m_sub_y.v[m_sub_y.t];
-            ny   = m_sub_y.v[m_sub_y.t-2];
-            m_sub_y.r[m_sub_y.t] = m_sub_y.r[m_sub_y.t-1];
-            m_sub_y.v[m_sub_y.t-1]   = (ny1 + ny) >> 1;
-            y    = m_sub_y.v[m_sub_y.t-1];
-            m_sub_y.r[m_sub_y.t-1]   = (Byte)(std::max(m_sub_y.r[m_sub_y.t], m_sub_y.r[m_sub_y.t-2])+1);
+            m_sub_y.top++;
+            m_sub_y.value[m_sub_y.top] = m_sub_y.value[m_sub_y.top-1];
+            ny1  = m_sub_y.value[m_sub_y.top];
+            ny   = m_sub_y.value[m_sub_y.top-2];
+            m_sub_y.level[m_sub_y.top] = m_sub_y.level[m_sub_y.top-1];
+            m_sub_y.value[m_sub_y.top-1]   = (ny1 + ny) >> 1;
+            y    = m_sub_y.value[m_sub_y.top-1];
+            m_sub_y.level[m_sub_y.top-1]   = (std::max(m_sub_y.level[m_sub_y.top], m_sub_y.level[m_sub_y.top-2])+1);
         }
-        m_sub_x.t = 2;
-        m_sub_x.v[0] = x2;
+        m_sub_x.top = 2;
+        m_sub_x.value[0] = x2;
         int nx = x2;
-        m_sub_x.v[2] = x1;
+        m_sub_x.value[2] = x1;
         int nx1 = x1;
-        m_sub_x.r[2] = 0;
-        m_sub_x.r[0] = 0;
-        m_sub_x.r[1] = 1;
-        m_sub_x.v[1] = (nx1 + nx) >> 1;
-        int x = m_sub_x.v[1];
+        m_sub_x.level[2] = 0;
+        m_sub_x.level[0] = 0;
+        m_sub_x.level[1] = 1;
+        m_sub_x.value[1] = (nx1 + nx) >> 1;
+        int x = m_sub_x.value[1];
 
-        while (m_sub_x.t >= 1)
+        while (m_sub_x.top >= 1)
         {
-            while (m_sub_x.r[m_sub_x.t-1] < (Byte)recur)
+            while (m_sub_x.level[m_sub_x.top-1] < level)
             {
-                m_sub_x.t++; // move the top ofthe stack up 1
-                m_sub_x.v[m_sub_x.t] = m_sub_x.v[m_sub_x.t-1];
-                nx1  = m_sub_x.v[m_sub_x.t];
-                nx   = m_sub_x.v[m_sub_x.t-2];
-                m_sub_x.r[m_sub_x.t] = m_sub_x.r[m_sub_x.t-1];
-                m_sub_x.v[m_sub_x.t-1]   = (nx1 + nx) >> 1;
-                x    = m_sub_x.v[m_sub_x.t-1];
-                m_sub_x.r[m_sub_x.t-1]   = (Byte)(std::max(m_sub_x.r[m_sub_x.t], m_sub_x.r[m_sub_x.t-2])+1);
+                m_sub_x.top++; // move the top ofthe stack up 1
+                m_sub_x.value[m_sub_x.top] = m_sub_x.value[m_sub_x.top-1];
+                nx1  = m_sub_x.value[m_sub_x.top];
+                nx   = m_sub_x.value[m_sub_x.top-2];
+                m_sub_x.level[m_sub_x.top] = m_sub_x.level[m_sub_x.top-1];
+                m_sub_x.value[m_sub_x.top-1]   = (nx1 + nx) >> 1;
+                x    = m_sub_x.value[m_sub_x.top-1];
+                m_sub_x.level[m_sub_x.top-1]   = std::max(m_sub_x.level[m_sub_x.top], m_sub_x.level[m_sub_x.top - 2]) + 1;
             }
 
             S32 i = m_get_pix(nx, y);
@@ -429,15 +429,15 @@ bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int recur)
                 g_plot(x, y, (U16)((v + 2) >> 2));
             }
 
-            if (m_sub_x.r[m_sub_x.t-1] == (Byte)recur)
+            if (m_sub_x.level[m_sub_x.top-1] == level)
             {
-                m_sub_x.t = (Byte)(m_sub_x.t - 2);
+                m_sub_x.top = m_sub_x.top - 2;
             }
         }
 
-        if (m_sub_y.r[m_sub_y.t-1] == (Byte)recur)
+        if (m_sub_y.level[m_sub_y.top-1] == level)
         {
-            m_sub_y.t = (Byte)(m_sub_y.t - 2);
+            m_sub_y.top = m_sub_y.top - 2;
         }
     }
     return false;
