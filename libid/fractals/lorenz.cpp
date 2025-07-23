@@ -27,6 +27,7 @@
 #include "math/rand15.h"
 #include "math/sign.h"
 #include "misc/Driver.h"
+#include "ui/ifs2d.h"
 #include "ui/ifs3d.h"
 #include "ui/orbit3d.h"
 #include "ui/sound.h"
@@ -56,7 +57,6 @@ enum
     BAD_PIXEL = 10000L
 };
 
-static int  ifs2d();
 static int  ifs3d();
 static void setup_matrix(Matrix double_mat);
 static bool float_view_transf3d(ViewTransform3D *inf);
@@ -1718,28 +1718,6 @@ void IFS3D::iterate()
     }
 }
 
-class IFS2D
-{
-public:
-    IFS2D();
-    IFS2D(const IFS2D &) = delete;
-    IFS2D(IFS2D &&) = delete;
-    ~IFS2D();
-    IFS2D &operator=(const IFS2D &) = delete;
-    IFS2D &operator=(IFS2D &&) = delete;
-
-    bool done() const;
-    void iterate();
-
-private:
-    Affine m_cvt{};
-    IFSColorMethod m_color_method;
-    std::FILE *m_fp{};
-    double m_x{};
-    double m_y{};
-    bool m_unbounded{};
-};
-
 IFS2D::IFS2D() :
     m_color_method(g_params[0] == 0.0 ? IFSColorMethod::INCREMENT_PIXEL : IFSColorMethod::TRANSFORM_INDEX),
     m_fp(open_orbit_save())
@@ -1816,22 +1794,6 @@ void IFS2D::iterate()
 }
 
 } // namespace id::fractals
-
-static int ifs2d()
-{
-    id::fractals::IFS2D ifs;
-
-    while (!ifs.done())
-    {
-        if (driver_key_pressed())
-        {
-            return -1;
-        }
-
-        ifs.iterate();
-    }
-    return 0;
-}
 
 int ifs_type()                       // front-end for ifs2d and ifs3d
 {

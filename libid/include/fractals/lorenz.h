@@ -167,6 +167,28 @@ enum class IFSColorMethod
     TRANSFORM_INDEX = 1
 };
 
+class IFS2D
+{
+public:
+    IFS2D();
+    IFS2D(const IFS2D &) = delete;
+    IFS2D(IFS2D &&) = delete;
+    ~IFS2D();
+    IFS2D &operator=(const IFS2D &) = delete;
+    IFS2D &operator=(IFS2D &&) = delete;
+
+    bool done() const;
+    void iterate();
+
+private:
+    Affine m_cvt{};
+    IFSColorMethod m_color_method;
+    std::FILE *m_fp{};
+    double m_x{};
+    double m_y{};
+    bool m_unbounded{};
+};
+
 class IFS3D
 {
 public:
