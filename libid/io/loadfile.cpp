@@ -1926,7 +1926,7 @@ int file_get_window()
     std::time_t this_time;
     std::time_t last_time;
     int c;
-    FileWindowStatus done{};
+    FileWindowStatus status{};
     int win_count;
     bool toggle{};
     int color_of_box;
@@ -1989,9 +1989,9 @@ rescan:  // entry for changed browse parms
     split_drive_dir(g_read_filename, drive, dir);
     split_fname_ext(g_browse_mask, fname, ext);
     make_path(tmp_mask, drive, dir, fname, ext);
-    done = (vid_too_big || !fr_find_first(tmp_mask)) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
+    status = (vid_too_big || !fr_find_first(tmp_mask)) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
     // draw all visible windows
-    while (done == FileWindowStatus::CONTINUE)
+    while (status == FileWindowStatus::CONTINUE)
     {
         if (driver_key_pressed())
         {
@@ -2022,7 +2022,7 @@ rescan:  // entry for changed browse parms
             save_box(num_dots, win_count);
             win_count++;
         }
-        done = (!fr_find_next() || win_count >= MAX_WINDOWS_OPEN) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
+        status = (!fr_find_next() || win_count >= MAX_WINDOWS_OPEN) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
     }
 
     if (win_count >= MAX_WINDOWS_OPEN)
@@ -2040,11 +2040,11 @@ rescan:  // entry for changed browse parms
         char new_name[60];
         driver_buzzer(Buzzer::COMPLETE); //let user know we've finished
         int index = 0;
-        done = FileWindowStatus::CONTINUE;
+        status = FileWindowStatus::CONTINUE;
         win_list = s_browse_windows[index];
         restore_box(num_dots, index);
         show_temp_msg(win_list.filename);
-        while (done == FileWindowStatus::CONTINUE)
+        while (status == FileWindowStatus::CONTINUE)
         {
             char msg[40];
             char old_name[60];
@@ -2117,14 +2117,14 @@ rescan:  // entry for changed browse parms
             case ID_KEY_ENTER:
             case ID_KEY_ENTER_2:   // this file please
                 g_browse_name = win_list.filename;
-                done = FileWindowStatus::EXIT;
+                status = FileWindowStatus::EXIT;
                 break;
 
             case ID_KEY_ESC:
             case 'l':
             case 'L':
                 g_auto_browse = false;
-                done = FileWindowStatus::ERASE_BOXES_EXIT;
+                status = FileWindowStatus::ERASE_BOXES_EXIT;
                 break;
 
             case 'D': // delete file
@@ -2151,7 +2151,7 @@ rescan:  // entry for changed browse parms
                     if (!std::remove(tmp_mask))
                     {
                         // do a rescan
-                        done = FileWindowStatus::RESCAN;
+                        status = FileWindowStatus::RESCAN;
                         std::strcpy(old_name, win_list.filename.c_str());
                         tmp_mask[0] = '\0';
                         check_history(old_name, tmp_mask);
@@ -2213,7 +2213,7 @@ rescan:  // entry for changed browse parms
             case ID_KEY_CTL_B:
                 clear_temp_msg();
                 driver_stack_screen();
-                done = static_cast<FileWindowStatus>(std::abs(get_browse_params()));
+                status = static_cast<FileWindowStatus>(std::abs(get_browse_params()));
                 driver_unstack_screen();
                 show_temp_msg(win_list.filename);
                 break;
@@ -2221,11 +2221,11 @@ rescan:  // entry for changed browse parms
             case 's': // save image with boxes
                 g_auto_browse = false;
                 draw_window(color_of_box, &win_list); // current window white
-                done = FileWindowStatus::SAVE_BOXES_EXIT;
+                status = FileWindowStatus::SAVE_BOXES_EXIT;
                 break;
 
             case '\\': //back out to last image
-                done = FileWindowStatus::ERASE_BOXES_EXIT;
+                status = FileWindowStatus::ERASE_BOXES_EXIT;
                 break;
 
             default:
@@ -2235,7 +2235,7 @@ rescan:  // entry for changed browse parms
 
         // now clean up memory (and the screen if necessary)
         clear_temp_msg();
-        if (done >= FileWindowStatus::EXIT && done < FileWindowStatus::SAVE_BOXES_EXIT)
+        if (status >= FileWindowStatus::EXIT && status < FileWindowStatus::SAVE_BOXES_EXIT)
         {
             for (int i = win_count-1; i >= 0; i--)
             {
@@ -2248,7 +2248,7 @@ rescan:  // entry for changed browse parms
                 }
             }
         }
-        if (done == FileWindowStatus::RESCAN)
+        if (status == FileWindowStatus::RESCAN)
         {
             goto rescan; // hey everybody I just used the g word!
         }
