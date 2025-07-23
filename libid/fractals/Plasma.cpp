@@ -404,7 +404,6 @@ bool Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
             {
                 i = adjust(nx, ny1, nx, y, nx, ny, m_scale);
             }
-            // cppcheck-suppress AssignmentIntegerToAddress
             S32 v = i;
             i = m_get_pix(x, ny);
             if (i == 0)
