@@ -2,6 +2,7 @@
 //
 #pragma once
 
+#include "config/port.h"
 #include "misc/sized_types.h"
 
 namespace id::fractals
@@ -23,10 +24,20 @@ private:
         NEW = 1,
     };
 
+    struct Sub
+    {
+        Byte t; // top of stack
+        int v[16]; // subdivided value
+        Byte r[16];  // recursion level
+    };
+
     Plasma(const Plasma &rhs) = delete;
     Plasma(Plasma &&rhs) = delete;
     Plasma &operator=(const Plasma &rhs) = delete;
     Plasma &operator=(Plasma &&rhs) = delete;
+    U16 adjust(int xa, int ya, int x, int y, int xb, int yb);
+    void sub_divide(int x1, int y1, int x2, int y2);
+    bool new_sub_d(int x1, int y1, int x2, int y2, int recur);
 
     U16 m_rnd[4]{};
     bool m_old_pot_flag{};
@@ -35,6 +46,16 @@ private:
     Algorithm m_algo{Algorithm::OLD};
     int m_i{};
     int m_k{};
+    Sub m_sub_x{};
+    Sub m_sub_y{};
+    int m_kbd_check{};
+    U16 (*m_get_pix)(int x, int y){};
+    int m_i_param_x{};   // s_i_param_x = param.x * 8
+    int m_shift_value{}; // shift based on #colors
+    int m_p_colors{};
+    int m_recur_level{};
+    int m_recur1{};
+    U16 m_max_plasma{};
 };
 
 } // namespace id::fractals
