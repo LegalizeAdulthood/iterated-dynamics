@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/plasma.h"
+#include "fractals/Plasma.h"
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"

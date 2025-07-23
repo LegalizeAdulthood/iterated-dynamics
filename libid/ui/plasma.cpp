@@ -2,7 +2,7 @@
 //
 #include "ui/plasma.h"
 
-#include "fractals/plasma.h"
+#include "fractals/Plasma.h"
 
 #include "engine/id_data.h"
 #include "misc/Driver.h"

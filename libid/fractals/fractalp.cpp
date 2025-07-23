@@ -31,7 +31,6 @@
 #include "fractals/peterson_variations.h"
 #include "fractals/phoenix.h"
 #include "fractals/pickover_mandelbrot.h"
-#include "fractals/plasma.h"
 #include "fractals/popcorn.h"
 #include "fractals/quartic_mandelbrot.h"
 #include "fractals/quaternion_mandelbrot.h"
