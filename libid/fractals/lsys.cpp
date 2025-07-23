@@ -35,7 +35,7 @@ static void free_l_cmds();
 
 static std::string s_axiom;
 static std::vector<std::string> s_rules;
-static std::vector<LSysCmd *> s_rule_f_cmds;
+static std::vector<LSysCmd *> s_rule_cmds;
 static bool s_loaded{};
 
 char g_max_angle{};
@@ -242,27 +242,27 @@ int lsystem_type()
     ts.max_angle = g_max_angle;
     ts.d_max_angle = (char) (g_max_angle - 1);
 
-    s_rule_f_cmds.push_back(lsysf_size_transform(s_axiom.c_str(), &ts));
+    s_rule_cmds.push_back(lsys_size_transform(s_axiom.c_str(), &ts));
     for (const auto &rule : s_rules)
     {
-        s_rule_f_cmds.push_back(lsysf_size_transform(rule.c_str(), &ts));
+        s_rule_cmds.push_back(lsys_size_transform(rule.c_str(), &ts));
     }
-    s_rule_f_cmds.push_back(nullptr);
+    s_rule_cmds.push_back(nullptr);
 
-    lsysf_do_sin_cos();
-    if (lsysf_find_scale(s_rule_f_cmds[0], &ts, &s_rule_f_cmds[1], order))
+    lsys_build_trig_table();
+    if (lsys_find_scale(s_rule_cmds[0], &ts, &s_rule_cmds[1], order))
     {
         ts.reverse = 0;
         ts.angle = 0;
         ts.real_angle = 0;
 
         free_l_cmds();
-        s_rule_f_cmds.push_back(lsysf_draw_transform(s_axiom.c_str(), &ts));
+        s_rule_cmds.push_back(lsys_draw_transform(s_axiom.c_str(), &ts));
         for (const auto &rule : s_rules)
         {
-            s_rule_f_cmds.push_back(lsysf_draw_transform(rule.c_str(), &ts));
+            s_rule_cmds.push_back(lsys_draw_transform(rule.c_str(), &ts));
         }
-        s_rule_f_cmds.push_back(nullptr);
+        s_rule_cmds.push_back(nullptr);
 
         // !! HOW ABOUT A BETTER WAY OF PICKING THE DEFAULT DRAWING COLOR
         ts.curr_color = 15;
@@ -270,7 +270,7 @@ int lsystem_type()
         {
             ts.curr_color = (char) (g_colors - 1);
         }
-        draw_lsysf(s_rule_f_cmds[0], &ts, &s_rule_f_cmds[1], order);
+        draw_lsys(s_rule_cmds[0], &ts, &s_rule_cmds[1], order);
     }
     g_overflow = false;
     free_rules_mem();
@@ -359,12 +359,12 @@ static bool append_rule(const char *rule, int index)
 
 static void free_l_cmds()
 {
-    for (auto cmd : s_rule_f_cmds)
+    for (LSysCmd *cmd : s_rule_cmds)
     {
         if (cmd != nullptr)
         {
             free(cmd);
         }
     }
-    s_rule_f_cmds.clear();
+    s_rule_cmds.clear();
 }
