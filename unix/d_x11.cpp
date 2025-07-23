@@ -300,7 +300,7 @@ static const int mousefkey[4][4] /* [button][dir] */ = {
 
 #define DRIVER_MODE(width_, height_) \
     { 0, width_, height_, 256, nullptr, "                         " }
-static const VideoInfo modes[] =
+static VideoInfo modes[] =
 {
     // 4:3 aspect ratio
     DRIVER_MODE(800, 600),
@@ -1540,7 +1540,7 @@ bool X11Driver::init(int *argc, char **argv)
         int const width = WidthOfScreen(DefaultScreenOfDisplay(m_dpy));
         int const height = HeightOfScreen(DefaultScreenOfDisplay(m_dpy));
 
-        for (const VideoInfo &m : modes)
+        for (VideoInfo &m : modes)
         {
             if (m.x_dots <= width && m.y_dots <= height)
             {
