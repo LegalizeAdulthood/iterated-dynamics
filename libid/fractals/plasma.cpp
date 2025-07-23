@@ -300,6 +300,12 @@ static void sub_divide(int x1, int y1, int x2, int y2)
 
 namespace id::fractals {
 
+enum class PlasmaAlgorithm
+{
+    OLD = 0,
+    NEW = 1,
+};
+
 class Plasma
 {
 public:
@@ -309,30 +315,24 @@ public:
     ~Plasma();
     Plasma &operator=(const Plasma &rhs) = delete;
     Plasma &operator=(Plasma &&rhs) = delete;
+
+    bool done() const;
+    void iterate();
+
+    U16 rnd[4]{};
+    bool old_pot_flag{};
+    bool old_pot_16bit{};
+    bool m_done{};
+    PlasmaAlgorithm m_algo{PlasmaAlgorithm::OLD};
+    int i{};
+    int k{};
 };
 
-Plasma::Plasma()
+Plasma::Plasma() :
+    m_algo(g_params[1] == 0.0 ? PlasmaAlgorithm::OLD : PlasmaAlgorithm::NEW)
 {
-}
-
-Plasma::~Plasma()
-{
-}
-
-} // namespace id::fractals
-
-int plasma_type()
-{
-    U16 rnd[4];
-    bool old_pot_flag = false;
-    bool old_pot_16bit = false;
     s_kbd_check = 0;
 
-    if (g_colors < 4)
-    {
-        stop_msg("Plasma Clouds requires 4 or more color video");
-        return -1;
-    }
     s_i_param_x = (int)(g_params[0] * 8);
     if (g_param_z1.x <= 0.0)
     {
@@ -344,12 +344,9 @@ int plasma_type()
     }
     g_params[0] = (double)s_i_param_x / 8.0;  // let user know what was used
     // limit parameter values
-    g_params[1] = std::max(g_params[1], 0.0);
-    g_params[1] = std::min(g_params[1], 1.0);
-    g_params[2] = std::max(g_params[2], 0.0);
-    g_params[2] = std::min(g_params[2], 1.0);
-    g_params[3] = std::max(g_params[3], 0.0);
-    g_params[3] = std::min(g_params[3], 1.0);
+    g_params[1] = std::clamp(g_params[1], 0.0, 1.0);
+    g_params[2] = std::clamp(g_params[2], 0.0, 1.0);
+    g_params[3] = std::clamp(g_params[3], 0.0, 1.0);
 
     if (!g_random_seed_flag && g_params[2] == 1)
     {
@@ -467,49 +464,76 @@ int plasma_type()
     g_plot(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1,  rnd[2]);
     g_plot(0, g_logical_screen_y_dots-1,  rnd[3]);
 
-    int n;
     s_recur_level = 0;
-    if (g_params[1] == 0)
+
+    if (m_algo == PlasmaAlgorithm::NEW)
     {
-        sub_divide(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1);
-    }
-    else
-    {
-        int i = 1;
-        int k = 1;
+        i = 1;
+        k = 1;
         s_recur1 = 1;
-        while (new_sub_d(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1, i) == 0)
-        {
-            k = k * 2;
-            if (k  >(int)std::max(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1))
-            {
-                break;
-            }
-            if (driver_key_pressed())
-            {
-                n = 1;
-                goto done;
-            }
-            i++;
-        }
     }
-    if (!driver_key_pressed())
-    {
-        n = 0;
-    }
-    else
-    {
-        n = 1;
-    }
-done:
+}
+
+Plasma::~Plasma()
+{
     if (s_max_plasma != 0)
     {
         g_potential_flag = old_pot_flag;
         g_potential_16bit = old_pot_16bit;
     }
-    g_plot    = g_put_color;
+    g_plot = g_put_color;
     s_get_pix = GET_COLOR;
-    return n;
+}
+
+bool Plasma::done() const
+{
+    return m_done;
+}
+
+void Plasma::iterate()
+{
+    if (m_algo == PlasmaAlgorithm::OLD)
+    {
+        sub_divide(0, 0, g_logical_screen_x_dots-1, g_logical_screen_y_dots-1);
+        m_done = true;
+    }
+    else
+    {
+        m_done = new_sub_d(0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, i);
+        if (!m_done)
+        {
+            k = k * 2;
+            if (k  >(int)std::max(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1))
+            {
+                m_done = true;
+            }
+            i++;
+        }
+    }
+}
+
+} // namespace id::fractals
+
+int plasma_type()
+{
+    if (g_colors < 4)
+    {
+        stop_msg("Plasma Clouds requires 4 or more color video");
+        return -1;
+    }
+
+    id::fractals::Plasma plasma;
+    while (!plasma.done())
+    {
+        if (driver_key_pressed())
+        {
+            return 1;
+        }
+
+        plasma.iterate();
+    }
+
+    return 0;
 }
 
 static void set_plasma_palette()
