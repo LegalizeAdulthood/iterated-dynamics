@@ -10,9 +10,8 @@
 #include "ui/evolve.h"
 #include "ui/id_keys.h"
 
-#include <config/string_case_compare.h>
-
 #include <algorithm>
+#include <filesystem>
 #include <string>
 
 // get browse parameters, returns 3 if anything changes.
@@ -74,7 +73,7 @@ get_brws_restart:
     g_smallest_box_size_shown = choices.read_int_number();
     g_smallest_box_size_shown = std::max(g_smallest_box_size_shown, 1);
     g_smallest_box_size_shown = std::min(g_smallest_box_size_shown, 10);
-    g_browse_mask = choices.read_string();
+    g_browse_mask = std::filesystem::path{choices.read_string()}.filename().string();
 
     i = 0;
     if (g_auto_browse != old_auto_browse                                      //
