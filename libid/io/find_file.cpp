@@ -6,6 +6,8 @@
 
 #include <filesystem>
 
+namespace fs = std::filesystem;
+
 enum class DirPos
 {
     NONE = 0,
@@ -14,13 +16,16 @@ enum class DirPos
     FILES = 3
 };
 
-DirSearch g_dta;
+struct DirSearch
+{
+    MatchFn path_matcher;
+    DirPos pos{DirPos::NONE};
+    std::filesystem::directory_iterator it;
+};
 
-namespace fs = std::filesystem;
+FindResult g_dta;
 
-static MatchFn s_path_matcher;
-static DirPos s_dir_pos{DirPos::NONE};
-static fs::directory_iterator s_dir_it;
+static DirSearch s_search;
 
 /* fill_dta
  *
@@ -28,38 +33,38 @@ static fs::directory_iterator s_dir_it;
  */
 static void fill_dta()
 {
-    g_dta.path = s_dir_it->path().string();
-    g_dta.filename = s_dir_it->path().filename().string();
-    g_dta.attribute = is_directory(*s_dir_it) ? SUB_DIR : 0;
+    g_dta.path = s_search.it->path().string();
+    g_dta.filename = s_search.it->path().filename().string();
+    g_dta.attribute = is_directory(*s_search.it) ? SUB_DIR : 0;
 }
 
 static bool next_match()
 {
-    if (s_dir_pos == DirPos::NONE)
+    if (s_search.pos == DirPos::NONE)
     {
-        g_dta.path = (s_dir_it->path() / ".").string();
+        g_dta.path = (s_search.it->path() / ".").string();
         g_dta.filename = ".";
         g_dta.attribute = SUB_DIR;
-        s_dir_pos = DirPos::DOT;
+        s_search.pos = DirPos::DOT;
         return true;
     }
-    if (s_dir_pos == DirPos::DOT)
+    if (s_search.pos == DirPos::DOT)
     {
-        g_dta.path = (s_dir_it->path() / "..").string();
+        g_dta.path = (s_search.it->path() / "..").string();
         g_dta.filename = "..";
         g_dta.attribute = SUB_DIR;
-        s_dir_pos = DirPos::DOT_DOT;
+        s_search.pos = DirPos::DOT_DOT;
         return true;
     }
-    s_dir_pos = DirPos::FILES;
+    s_search.pos = DirPos::FILES;
 
-    while (s_dir_it != fs::directory_iterator() && !s_path_matcher(*s_dir_it))
+    while (s_search.it != fs::directory_iterator() && !s_search.path_matcher(*s_search.it))
     {
-        ++s_dir_it;
+        ++s_search.it;
     }
-    if (s_dir_it == fs::directory_iterator())
+    if (s_search.it == fs::directory_iterator())
     {
-        s_dir_pos = DirPos::NONE;
+        s_search.pos = DirPos::NONE;
         return false;
     }
 
@@ -78,20 +83,20 @@ bool fr_find_first(const char *path)       // Find 1st file (or subdir) meeting 
     const fs::path search{path};
     const fs::path search_dir{is_directory(search) ? search : (search.has_parent_path() ? search.parent_path() : ".")};
     std::error_code err;
-    s_dir_it = fs::directory_iterator(search_dir, err);
+    s_search.it = fs::directory_iterator(search_dir, err);
     if (err)
     {
         return false;
     }
 
-    s_path_matcher = match_fn(path);
+    s_search.path_matcher = match_fn(path);
     if (is_directory(search) || search.filename() == "*" || search.filename() == "*.*")
     {
-        s_dir_pos = DirPos::NONE;
+        s_search.pos = DirPos::NONE;
     }
     else
     {
-        s_dir_pos = DirPos::FILES;
+        s_search.pos = DirPos::FILES;
     }
     return next_match();
 }
@@ -103,9 +108,9 @@ bool fr_find_first(const char *path)       // Find 1st file (or subdir) meeting 
  */
 bool fr_find_next()
 {
-    if (s_dir_pos == DirPos::FILES)
+    if (s_search.pos == DirPos::FILES)
     {
-        ++s_dir_it;
+        ++s_search.it;
     }
     return next_match();
 }
