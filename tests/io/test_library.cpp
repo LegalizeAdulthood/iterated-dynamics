@@ -1,13 +1,13 @@
 #include <io/library.h>
 
+#include "test_data.h"
 #include "test_library.h"
 
-#include "engine/cmdfiles.h"
-#include "engine/id_data.h"
-#include "io/CurrentPathSaver.h"
-#include "io/special_dirs.h"
-#include "misc/ValueSaver.h"
-#include "test_data.h"
+#include <engine/cmdfiles.h>
+#include <engine/id_data.h>
+#include <io/CurrentPathSaver.h>
+#include <io/special_dirs.h>
+#include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
 
@@ -287,4 +287,90 @@ TEST_F(TestLibrary, findFileCurrentDirectory)
     EXPECT_EQ(Path{ID_TEST_FORMULA_FILE2}, path.filename()) << path;
     EXPECT_EQ(id::test::data::ID_TEST_FRM_SUBDIR, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{"formula"} / ID_TEST_FORMULA_FILE2, path) << path;
+}
+
+TEST_F(TestLibrary, findWildcardNoMatches)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, ID_TEST_NO_SUCH_IMAGE_FILE)};
+
+    ASSERT_TRUE(path.empty()) << path;
+}
+
+TEST_F(TestLibrary, findWildcardFirstMatchSubDirTestGif)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, "*.gif")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"test.gif"}, path.filename()) << path;
+    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, findWildcardFirstMatchSubDirRootGif)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
+
+    const Path path{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, "*.gif")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"root.gif"}, path.filename()) << path;
+    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, findWildcardSeqence)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
+    std::vector expected{                              //
+        Path{ID_TEST_LIBRARY_DIR2} / "image/test.gif", //
+        Path{ID_TEST_LIBRARY_DIR3} / "image/root.gif"};
+    std::vector<Path> results;
+
+    for (Path next{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, "*.gif")}; !next.empty();
+        next = id::io::find_wildcard_next())
+    {
+        results.emplace_back(next);
+    }
+
+    EXPECT_EQ(expected, results);
+}
+
+TEST_F(TestLibrary, findWildcardRootFilesAfterSubdirFiles)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
+
+    const Path first{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, "*.gif")};
+
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR1}/"root.gif", first);
+}
+
+TEST_F(TestLibrary, findWildcardSequenceRootFilesAfterSubdirFiles)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
+    std::vector expected{                              //
+        Path{ID_TEST_LIBRARY_DIR2} / "image/test.gif", //
+        Path{ID_TEST_LIBRARY_DIR3} / "image/root.gif", //
+        Path{ID_TEST_LIBRARY_DIR1} / "root.gif"};
+    std::vector<Path> results;
+
+    for (Path next{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, "*.gif")}; !next.empty();
+        next = id::io::find_wildcard_next())
+    {
+        results.emplace_back(next);
+    }
+
+    EXPECT_EQ(expected, results);
 }

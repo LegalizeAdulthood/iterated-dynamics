@@ -4,17 +4,31 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "io/find_file.h"
 #include "io/special_dirs.h"
 
 #include <string>
 #include <utility>
 #include <vector>
 
+namespace fs = std::filesystem;
+
 namespace id::io
 {
 
-static std::vector<std::filesystem::path> s_search_path;
-static std::filesystem::path s_save_path;
+using PathList = std::vector<fs::path>;
+
+struct WildcardSearch
+{
+    ReadFile kind;
+    std::string wildcard;
+    PathList::const_iterator read_it;
+    bool subdirs{true};
+};
+
+static PathList s_read_libraries;
+static fs::path s_save_library;
+static WildcardSearch s_wildcard;
 
 static std::string_view subdir(ReadFile kind)
 {
@@ -42,30 +56,30 @@ static std::string_view subdir(ReadFile kind)
 
 void clear_read_library_path()
 {
-    s_search_path.clear();
+    s_read_libraries.clear();
 }
 
-void add_read_library(std::filesystem::path path)
+void add_read_library(fs::path path)
 {
-    s_search_path.emplace_back(std::move(path));
+    s_read_libraries.emplace_back(std::move(path));
 }
 
-std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file_path)
+fs::path find_file(ReadFile kind, const fs::path &file_path)
 {
-    if (file_path.is_absolute() && std::filesystem::exists(file_path))
+    if (file_path.is_absolute() && fs::exists(file_path))
     {
         return file_path;
     }
 
-    const std::filesystem::path filename{file_path.filename()};
-    const auto check_dir = [&](const std::filesystem::path &dir) -> std::filesystem::path
+    const fs::path filename{file_path.filename()};
+    const auto check_dir = [&](const fs::path &dir) -> fs::path
     {
-        if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
+        if (const fs::path path = dir / subdir(kind) / filename; fs::exists(path))
         {
             return path;
         }
 
-        if (const std::filesystem::path path = dir / filename; std::filesystem::exists(path))
+        if (const fs::path path = dir / filename; fs::exists(path))
         {
             return path;
         }
@@ -75,39 +89,39 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
 
     if (g_check_cur_dir)
     {
-        if (const std::filesystem::path path{check_dir("")}; !path.empty())
+        if (const fs::path path{check_dir("")}; !path.empty())
         {
             return path;
         }
     }
 
-    for (const std::filesystem::path &dir : s_search_path)
+    for (const fs::path &dir : s_read_libraries)
     {
-        if (const std::filesystem::path path = dir / subdir(kind) / filename; std::filesystem::exists(path))
+        if (const fs::path path = dir / subdir(kind) / filename; fs::exists(path))
         {
             return path;
         }
     }
 
-    for (const std::filesystem::path &dir : s_search_path)
+    for (const fs::path &dir : s_read_libraries)
     {
-        if (const std::filesystem::path path = dir / filename; std::filesystem::exists(path))
+        if (const fs::path path = dir / filename; fs::exists(path))
         {
             return path;
         }
     }
 
-    if (const std::filesystem::path path = check_dir(s_save_path); !path.empty())
+    if (const fs::path path = check_dir(s_save_library); !path.empty())
     {
         return path;
     }
 
-    if (const std::filesystem::path path = check_dir(g_fractal_search_dir1); !path.empty())
+    if (const fs::path path = check_dir(g_fractal_search_dir1); !path.empty())
     {
         return path;
     }
 
-    if (const std::filesystem::path path = check_dir(g_fractal_search_dir2); !path.empty())
+    if (const fs::path path = check_dir(g_fractal_search_dir2); !path.empty())
     {
         return path;
     }
@@ -117,12 +131,12 @@ std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file
 
 void clear_save_library()
 {
-    s_save_path.clear();
+    s_save_library.clear();
 }
 
-void set_save_library(std::filesystem::path path)
+void set_save_library(fs::path path)
 {
-    s_save_path = std::move(path);
+    s_save_library = std::move(path);
 }
 
 static std::string_view subdir(WriteFile kind)
@@ -190,10 +204,10 @@ static const char *file_extension(WriteFile kind)
     throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));
 }
 
-std::filesystem::path get_save_path(WriteFile kind, const std::string &filename)
+fs::path get_save_path(WriteFile kind, const std::string &filename)
 {
-    std::filesystem::path result = (s_save_path.empty() ? g_save_dir : s_save_path) / subdir(kind);
-    if (!std::filesystem::exists(result))
+    fs::path result = (s_save_library.empty() ? g_save_dir : s_save_library) / subdir(kind);
+    if (!fs::exists(result))
     {
         std::error_code ec;
         if (create_directories(result, ec); ec)
@@ -207,6 +221,135 @@ std::filesystem::path get_save_path(WriteFile kind, const std::string &filename)
         result.replace_extension(file_extension(kind));
     }
     return result;
+}
+
+fs::path find_wildcard_next()
+{
+    while (s_wildcard.read_it != s_read_libraries.end())
+    {
+        if (fr_find_next())
+        {
+            bool dir_exhausted{};
+            while (g_dta.attribute == SUB_DIR)
+            {
+                if (!fr_find_next())
+                {
+                    dir_exhausted = true;
+                    break;
+                }
+            }
+            if (!dir_exhausted)
+            {
+                return g_dta.path;
+            }
+        }
+        ++s_wildcard.read_it;
+        while (s_wildcard.read_it != s_read_libraries.end())
+        {
+            const std::string wildcard{
+                (s_wildcard.subdirs ? *s_wildcard.read_it / subdir(s_wildcard.kind) / s_wildcard.wildcard
+                                    : *s_wildcard.read_it / s_wildcard.wildcard)
+                    .string()};
+            while (fr_find_first(wildcard.c_str()))
+            {
+                bool dir_exhausted{};
+                while (g_dta.attribute == SUB_DIR)
+                {
+                    if (!fr_find_next())
+                    {
+                        dir_exhausted = true;
+                        break;
+                    }
+                }
+                if (!dir_exhausted)
+                {
+                    return g_dta.path;
+                }
+            }
+            ++s_wildcard.read_it;
+        }
+    }
+    if (!s_wildcard.subdirs)
+    {
+        return {};
+    }
+    s_wildcard.subdirs = false;
+    s_wildcard.read_it = s_read_libraries.begin();
+    while (s_wildcard.read_it != s_read_libraries.end())
+    {
+        const std::string wildcard{(*s_wildcard.read_it / s_wildcard.wildcard).string()};
+        while (fr_find_first(wildcard.c_str()))
+        {
+            bool dir_exhausted{};
+            while (g_dta.attribute == SUB_DIR)
+            {
+                if (!fr_find_next())
+                {
+                    dir_exhausted = true;
+                    break;
+                }
+            }
+            if (!dir_exhausted)
+            {
+                return g_dta.path;
+            }
+        }
+        ++s_wildcard.read_it;
+    }
+    return {};
+}
+
+fs::path find_wildcard_first(ReadFile kind, const std::string &wildcard)
+{
+    s_wildcard.subdirs = true;
+    s_wildcard.kind = kind;
+    s_wildcard.wildcard = wildcard;
+    s_wildcard.read_it = s_read_libraries.begin();
+    while (s_wildcard.read_it != s_read_libraries.end())
+    {
+        const std::string wildcard{(*s_wildcard.read_it / subdir(s_wildcard.kind) / s_wildcard.wildcard).string()};
+        if (fr_find_first(wildcard.c_str()))
+        {
+            bool dir_exhausted{};
+            while (g_dta.attribute == SUB_DIR)
+            {
+                if (!fr_find_next())
+                {
+                    dir_exhausted = true;
+                    break;
+                }
+            }
+            if (!dir_exhausted)
+            {
+                return g_dta.path;
+            }
+        }
+        ++s_wildcard.read_it;
+    }
+    s_wildcard.subdirs = false;
+    s_wildcard.read_it = s_read_libraries.begin();
+    while (s_wildcard.read_it != s_read_libraries.end())
+    {
+        const std::string wildcard{(*s_wildcard.read_it / s_wildcard.wildcard).string()};
+        if (fr_find_first(wildcard.c_str()))
+        {
+            bool dir_exhausted{};
+            while (g_dta.attribute == SUB_DIR)
+            {
+                if (!fr_find_next())
+                {
+                    dir_exhausted = true;
+                    break;
+                }
+            }
+            if (!dir_exhausted)
+            {
+                return g_dta.path;
+            }
+        }
+        ++s_wildcard.read_it;
+    }
+    return {};
 }
 
 } // namespace id::io

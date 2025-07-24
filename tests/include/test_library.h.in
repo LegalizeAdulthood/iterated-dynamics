@@ -13,6 +13,7 @@ constexpr const char *ID_TEST_LIBRARY_DIR3  {"@ID_TEST_LIBRARY_DIR3@"};
 constexpr const char *ID_TEST_SEARCH_DIR1   {"@ID_TEST_SEARCH_DIR1@"};
 constexpr const char *ID_TEST_SEARCH_DIR2   {"@ID_TEST_SEARCH_DIR2@"};
 
+constexpr const char *ID_TEST_NO_SUCH_IMAGE_FILE {"@ID_TEST_NO_SUCH_IMAGE_FILE@"};
 constexpr const char *ID_TEST_FRM_FILE      {"@ID_TEST_FRM_FILE@"};
 constexpr const char *ID_TEST_IFS_FILE      {"@ID_TEST_IFS_FILE@"};
 constexpr const char *ID_TEST_IMAGE_FILE    {"@ID_TEST_IMAGE_FILE@"};

@@ -44,4 +44,7 @@ void clear_save_library();
 void set_save_library(std::filesystem::path path);
 std::filesystem::path get_save_path(WriteFile kind, const std::string &filename);
 
+std::filesystem::path find_wildcard_first(ReadFile kind, const std::string &wildcard);
+std::filesystem::path find_wildcard_next();
+
 } // namespace id::io

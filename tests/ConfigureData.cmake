@@ -148,6 +148,8 @@ configure_file("home/test.ifs.in"   "${ID_TEST_HOME_DIR}/ifs/${ID_TEST_IFS_FILE}
 configure_file("home/test.l.in"     "${ID_TEST_HOME_DIR}/lsystem/${ID_TEST_LSYSTEM_FILE}")
 configure_file("home/test.par.in"   "${ID_TEST_HOME_DIR}/par/${ID_TEST_PAR_FILE}")
 
+# library test data
+set(TEST_NO_SUCH_IMAGE_FILE         "no_such_image.gif")
 set(ID_TEST_FORMULA_FILE2           "test2.frm")
 set(ID_TEST_IFS_FILE2               "test2.ifs")
 set(ID_TEST_IMAGE_FILE2             "test2.gif")
