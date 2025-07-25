@@ -838,13 +838,13 @@ static void finish_calc_fract()
 int calc_fract()
 {
     init_calc_fract();
-    if (!is_standard_fractal())
+    if (is_standard_fractal())
     {
-        calc_non_standard_fractal();
+        calc_standard_fractal();
     }
     else
     {
-        calc_standard_fractal();
+        calc_non_standard_fractal();
     }
     finish_calc_fract();
 
