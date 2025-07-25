@@ -23,7 +23,6 @@
 #include "engine/pixel_limits.h"
 #include "io/gifview.h"
 #include "io/loadfile.h"
-#include "misc/Driver.h"
 #include "misc/sized_types.h"
 #include "ui/video.h"
 
@@ -277,10 +276,6 @@ short decoder(short line_width)
                             }
                             y_skip = g_skip_y_dots;
                         }
-                        if (driver_key_pressed())
-                        {
-                            return -1;
-                        }
                         buf_ptr = s_decoder_line;
                         buf_cnt = line_width;
                         x_skip = 0;
@@ -339,10 +334,6 @@ short decoder(short line_width)
                         return ret;
                     }
                     y_skip = g_skip_y_dots;
-                }
-                if (driver_key_pressed())
-                {
-                    return -1;
                 }
                 buf_ptr = s_decoder_line;
                 buf_cnt = line_width;
