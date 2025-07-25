@@ -21,6 +21,7 @@
 #include "ui/ant.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"
+#include "ui/file_get_window.h"
 #include "ui/flip_image.h"
 #include "ui/framain2.h"
 #include "ui/frothy_basin.h"

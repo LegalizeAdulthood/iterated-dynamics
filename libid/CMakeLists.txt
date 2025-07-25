@@ -170,6 +170,7 @@ add_library(libid
     include/ui/evolve.h ui/evolve.cpp
     include/ui/evolver_menu_switch.h ui/evolver_menu_switch.cpp
     include/ui/field_prompt.h ui/field_prompt.cpp
+    include/ui/file_get_window.h ui/file_get_window.cpp
     include/ui/file_item.h ui/file_item.cpp
     include/ui/find_special_colors.h ui/find_special_colors.cpp
     include/ui/flip_image.h ui/flip_image.cpp

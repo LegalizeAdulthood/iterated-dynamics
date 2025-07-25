@@ -3,6 +3,7 @@
 #pragma once
 
 #include "config/port.h"
+#include "fractals/fractype.h"
 #include "misc/version.h"
 #include "ui/evolve.h"
 
@@ -303,8 +304,6 @@ extern Version               g_file_version;
 int read_overlay();
 void set_if_old_bif();
 void set_function_param_defaults();
-// file_get_window reads all .GIF files and draws window outlines on the screen
-int file_get_window();
 void backwards_legacy_v18();
 void backwards_legacy_v19();
 void backwards_legacy_v20();
@@ -312,3 +311,4 @@ void backwards_legacy_v20();
 bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //
     ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info);
+FractalType migrate_integer_types(int read_type);
