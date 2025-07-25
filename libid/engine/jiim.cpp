@@ -220,10 +220,6 @@ static void fill_rect(int x, int y, int width, int depth, int color)
     std::vector row(width, char(color % g_colors));
     while (depth-- > 0)
     {
-        if (driver_key_pressed())   // we could do this less often when in fast modes
-        {
-            return;
-        }
         put_row(x, y++, width, row.data());
     }
 }
