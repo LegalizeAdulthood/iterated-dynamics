@@ -207,13 +207,9 @@ struct FileWindow
 } // namespace
 
 // prototypes
-static int  find_fractal_info(const std::string &gif_file, FractalInfo *info,
-    ExtBlock2 *blk_2_info,
-    ExtBlock3 *blk_3_info,
-    ExtBlock4 *blk_4_info,
-    ExtBlock5 *blk_5_info,
-    ExtBlock6 *blk_6_info,
-    ExtBlock7 *blk_7_info);
+static bool find_fractal_info(const std::string &gif_file, FractalInfo *info, //
+    ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info,      //
+    ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info);
 static void load_ext_blk(char *load_ptr, int load_len);
 static void skip_ext_blk(int *block_len, int *data_len);
 static void backwards_compat(FractalInfo *info);
@@ -1295,14 +1291,10 @@ static void file_read(void *ptr, size_t size, size_t num, std::FILE *stream)
     }
 }
 
-static int find_fractal_info(const std::string &gif_file, //
-    FractalInfo *info,                                    //
-    ExtBlock2 *blk_2_info,                                //
-    ExtBlock3 *blk_3_info,                                //
-    ExtBlock4 *blk_4_info,                                //
-    ExtBlock5 *blk_5_info,                                //
-    ExtBlock6 *blk_6_info,                                //
-    ExtBlock7 *blk_7_info)                                //
+// return true on error, false on success
+static bool find_fractal_info(const std::string &gif_file, FractalInfo *info, //
+    ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info,      //
+    ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info)
 {
     Byte gif_start[18];
     char temp1[81];
@@ -1323,14 +1315,14 @@ static int find_fractal_info(const std::string &gif_file, //
     s_fp = std::fopen(gif_file.c_str(), "rb");
     if (s_fp == nullptr)
     {
-        return -1;
+        return true;
     }
     file_read(gif_start, 13, 1, s_fp);
     if (std::strncmp((char *)gif_start, "GIF", 3) != 0)
     {
         // not GIF, maybe old .tga?
         std::fclose(s_fp);
-        return -1;
+        return true;
     }
 
     GET16(gif_start[6], g_file_x_dots);
@@ -1598,7 +1590,7 @@ static int find_fractal_info(const std::string &gif_file, //
 
         std::fclose(s_fp);
         g_file_aspect_ratio = g_screen_aspect; // if not >= v15, this is correct
-        return 0;
+        return false;
     }
 
     std::strcpy(info->info_id, "GIFFILE");
@@ -1625,7 +1617,7 @@ static int find_fractal_info(const std::string &gif_file, //
 
     // zero means we won
     std::fclose(s_fp);
-    return 0;
+    return false;
 }
 
 static void load_ext_blk(char *load_ptr, int load_len)
