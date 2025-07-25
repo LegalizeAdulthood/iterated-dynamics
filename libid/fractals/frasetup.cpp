@@ -95,16 +95,16 @@ bool mandel_per_image()
         {
             return mandel_perturbation_per_image();
         }
-        if (g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL
-            && !g_distance_estimator
-            && g_decomp[0] == 0
-            && g_biomorph == -1
-            && (g_inside_color >= ITER)
-            && g_outside_color >= ATAN
-            && g_use_init_orbit != InitOrbitMode::VALUE
-            && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X
-            && !g_using_jiim
-            && g_bailout_test == Bailout::MOD
+        if (g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL     //
+            && !g_distance_estimator                               //
+            && g_decomp[0] == 0                                    //
+            && g_biomorph == -1                                    //
+            && g_inside_color >= ITER                              //
+            && g_outside_color >= ATAN                             //
+            && g_use_init_orbit != InitOrbitMode::VALUE            //
+            && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X //
+            && !g_using_jiim                                       //
+            && g_bailout_test == Bailout::MOD                      //
             && (g_orbit_save_flags & OSF_MIDI) == 0)
         {
             g_calc_type = calc_mandelbrot_type; // the normal case
