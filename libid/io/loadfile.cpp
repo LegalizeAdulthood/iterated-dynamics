@@ -22,8 +22,6 @@
 #include "fractals/parser.h"
 #include "io/decode_info.h"
 #include "io/encoder.h"
-#include "io/find_file.h"
-#include "io/has_ext.h"
 #include "io/library.h"
 #include "io/make_path.h"
 #include "io/split_path.h"
@@ -196,13 +194,14 @@ struct FileWindow
     void draw(int color);
     bool is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info);
 
-    Coord top_left;       // screen coordinates
-    Coord bot_left;       //
-    Coord top_right;      //
-    Coord bot_right;      //
-    double win_size;      // box size for draw_window()
-    std::string filename; // for filename
-    int box_count;        // bytes of saved screen info
+    Coord top_left;             // screen coordinates
+    Coord bot_left;             //
+    Coord top_right;            //
+    Coord bot_right;            //
+    double win_size;            // box size for draw_window()
+    std::string filename;       // for filename
+    std::filesystem::path path; // full path to file
+    int box_count;              // bytes of saved screen info
 };
 
 } // namespace
@@ -1989,7 +1988,8 @@ rescan:  // entry for changed browse parms
     split_drive_dir(g_read_filename, drive, dir);
     split_fname_ext(g_browse_mask, fname, ext);
     make_path(tmp_mask, drive, dir, fname, ext);
-    status = (vid_too_big || !fr_find_first(tmp_mask)) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
+    std::filesystem::path path{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, tmp_mask)};
+    status = (vid_too_big || path.empty()) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
     // draw all visible windows
     while (status == FileWindowStatus::CONTINUE)
     {
@@ -1998,8 +1998,6 @@ rescan:  // entry for changed browse parms
             driver_get_key();
             break;
         }
-        split_fname_ext(g_dta.filename, fname, ext);
-        make_path(tmp_mask, drive, dir, fname, ext);
         FractalInfo read_info;
         ExtBlock2 blk_2_info;
         ExtBlock3 blk_3_info;
@@ -2007,15 +2005,16 @@ rescan:  // entry for changed browse parms
         ExtBlock5 blk_5_info;
         ExtBlock6 blk_6_info;
         ExtBlock7 blk_7_info;
-        if (!find_fractal_info(tmp_mask, &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info,
-                &blk_6_info, &blk_7_info)                                         //
-            && (type_ok(&read_info, &blk_3_info) || !g_browse_check_fractal_type) //
-            && (params_ok(&read_info) || !g_browse_check_fractal_params)          //
-            && !string_case_equal(g_browse_name.c_str(), g_dta.filename.c_str())  //
-            && !blk_6_info.got_data                                               //
-            && window.is_visible(&read_info, &blk_5_info))                        //
+        if (!find_fractal_info(path.string(), &read_info,                                     //
+                &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info) //
+            && (type_ok(&read_info, &blk_3_info) || !g_browse_check_fractal_type)             //
+            && (params_ok(&read_info) || !g_browse_check_fractal_params)                      //
+            && g_browse_name != path.string()                                                 //
+            && !blk_6_info.got_data                                                           //
+            && window.is_visible(&read_info, &blk_5_info))                                    //
         {
-            window.filename = g_dta.filename;
+            window.path = path;
+            window.filename = path.filename().string();
             window.draw(color_of_box);
             window.box_count = g_box_count;
             s_browse_windows.push_back(window);
@@ -2023,7 +2022,8 @@ rescan:  // entry for changed browse parms
             win_count++;
             assert(static_cast<size_t>(win_count) == s_browse_windows.size());
         }
-        status = (!fr_find_next() || win_count >= MAX_WINDOWS_OPEN) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
+        path = id::io::find_wildcard_next();
+        status = path.empty() || win_count >= MAX_WINDOWS_OPEN ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
     }
 
     if (win_count >= MAX_WINDOWS_OPEN)
@@ -2038,7 +2038,6 @@ rescan:  // entry for changed browse parms
     c = 0;
     if (win_count)
     {
-        char new_name[60];
         driver_buzzer(Buzzer::COMPLETE); //let user know we've finished
         int index = 0;
         status = FileWindowStatus::CONTINUE;
@@ -2048,7 +2047,6 @@ rescan:  // entry for changed browse parms
         while (status == FileWindowStatus::CONTINUE)
         {
             char msg[40];
-            char old_name[60];
             while (!driver_key_pressed())
             {
                 std::time(&this_time);
@@ -2144,21 +2142,15 @@ rescan:  // entry for changed browse parms
                 }
                 if (c == 'Y')
                 {
-                    split_drive_dir(g_read_filename, drive, dir);
-                    const std::filesystem::path name_path(window.filename);
-                    const std::string fname2 = name_path.stem().string();
-                    const std::string ext2 = name_path.extension().string();
-                    make_path(tmp_mask, drive, dir, fname2.c_str(), ext2.c_str());
-                    if (!std::remove(tmp_mask))
+                    std::error_code ec;
+                    if (std::filesystem::remove(window.path, ec))
                     {
                         // do a rescan
                         status = FileWindowStatus::RESCAN;
-                        std::strcpy(old_name, window.filename.c_str());
-                        tmp_mask[0] = '\0';
-                        check_history(old_name, tmp_mask);
+                        check_history(window.filename.c_str(), "");
                         break;
                     }
-                    if (errno == EACCES)
+                    if (ec.value() == EACCES)
                     {
                         text_temp_msg("Sorry...it's a read only file, can't del");
                         show_temp_msg(window.filename);
@@ -2172,44 +2164,39 @@ rescan:  // entry for changed browse parms
                 break;
 
             case 'R':
+            {
                 clear_temp_msg();
                 driver_stack_screen();
+                char new_name[60];
                 new_name[0] = 0;
                 std::strcpy(msg, "Enter the new filename for ");
-                split_drive_dir(g_read_filename, drive, dir);
+                std::strcpy(new_name, window.filename.c_str());
+                int i = field_prompt(msg, nullptr, new_name, 60, nullptr);
+                driver_unstack_screen();
+                if (i != -1)
                 {
-                    const std::filesystem::path name_path{window.filename};
-                    const std::string           fname2{name_path.stem().string()};
-                    const std::string           ext2{name_path.extension().string()};
-                    make_path(tmp_mask, drive, dir, fname2.c_str(), ext2.c_str());
-                }
-                std::strcpy(new_name, tmp_mask);
-                std::strcat(msg, tmp_mask);
-                {
-                    int i = field_prompt(msg, nullptr, new_name, 60, nullptr);
-                    driver_unstack_screen();
-                    if (i != -1)
+                    std::error_code ec;
+                    std::string new_filename{std::filesystem::path{new_name}.filename().string()};
+                    std::filesystem::path new_path{window.path.parent_path() / new_filename};
+                    std::filesystem::rename(window.path, new_path, ec);
+                    if (ec)
                     {
-                        if (!std::rename(tmp_mask, new_name))
+                        if (ec.value() == EACCES)
                         {
-                            if (errno == EACCES)
-                            {
-                                text_temp_msg("Sorry....can't rename");
-                            }
-                            else
-                            {
-                                split_fname_ext(std::string{new_name}, fname, ext);
-                                make_fname_ext(tmp_mask, fname, ext);
-                                std::strcpy(old_name, window.filename.c_str());
-                                check_history(old_name, tmp_mask);
-                                window.filename = tmp_mask;
-                            }
+                            text_temp_msg("Sorry....can't rename");
                         }
                     }
-                    s_browse_windows[index] = window;
-                    show_temp_msg(window.filename);
+                    else
+                    {
+                        check_history(window.filename.c_str(), new_filename.c_str());
+                        window.path = new_path;
+                        window.filename = new_filename;
+                    }
                 }
+                s_browse_windows[index] = window;
+                show_temp_msg(window.filename);
                 break;
+            }
 
             case ID_KEY_CTL_B:
                 clear_temp_msg();

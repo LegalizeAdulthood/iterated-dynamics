@@ -18,5 +18,17 @@ struct FindResult
 
 extern FindResult g_dta;
 
+/* fr_find_first
+ *
+ * Fill in DTA.filename, DTA.path and DTA.attribute for the first file
+ * matching the wildcard specification in path.  Return false if a file
+ * is found, or true if a file was not found or an error occurred.
+ */
 bool fr_find_first(const char *path);
+
+/* fr_find_next
+ *
+ * Find the next file matching the wildcard search begun by fr_find_first.
+ * Fill in g_dta.filename, g_dta.path, and g_dta.attribute
+ */
 bool fr_find_next();

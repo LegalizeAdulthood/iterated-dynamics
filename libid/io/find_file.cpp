@@ -72,12 +72,6 @@ static bool next_match()
     return true;
 }
 
-/* fr_findfirst
- *
- * Fill in DTA.filename, DTA.path and DTA.attribute for the first file
- * matching the wildcard specification in path.  Return zero if a file
- * is found, or non-zero if a file was not found or an error occurred.
- */
 bool fr_find_first(const char *path)       // Find 1st file (or subdir) meeting path/filespec
 {
     const fs::path search{path};
@@ -101,11 +95,6 @@ bool fr_find_first(const char *path)       // Find 1st file (or subdir) meeting 
     return next_match();
 }
 
-/* fr_findnext
- *
- * Find the next file matching the wildcard search begun by fr_findfirst.
- * Fill in DTA.filename, DTA.path, and DTA.attribute
- */
 bool fr_find_next()
 {
     if (s_search.pos == DirPos::FILES)
