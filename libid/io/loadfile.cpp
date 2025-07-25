@@ -1919,7 +1919,7 @@ enum class FileWindowStatus
     SAVE_BOXES_EXIT = 4,
 };
 
-// file_get_window reads all .GIF files and draws window outlines on the screen
+// TODO: move this to the UI folder
 int file_get_window()
 {
     Affine stack_cvt;

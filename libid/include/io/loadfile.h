@@ -241,6 +241,7 @@ extern Version               g_file_version;
 int read_overlay();
 void set_if_old_bif();
 void set_function_param_defaults();
+// file_get_window reads all .GIF files and draws window outlines on the screen
 int file_get_window();
 void backwards_legacy_v18();
 void backwards_legacy_v19();
