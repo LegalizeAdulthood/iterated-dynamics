@@ -311,14 +311,6 @@ bool encoder()
     Byte x;
     FractalInfo save_info;
 
-    if (g_init_batch != BatchMode::NONE)                 // flush any impending keystrokes
-    {
-        while (driver_key_pressed())
-        {
-            driver_get_key();
-        }
-    }
-
     setup_save_info(&save_info);
 
     bits_per_pixel = 0;            // calculate bits / pixel
@@ -1135,17 +1127,6 @@ no_match:
                 }
                 s_last_color_bar = y_dot;
             } // end if !driver_diskp()
-            int key = driver_key_pressed();
-            if (key && (key != 's'))  // keyboard hit - bail out
-            {
-                interrupted = true;
-                row_num = g_logical_screen_y_dots;
-                break;
-            }
-            if (key == 's')
-            {
-                driver_get_key();   // eat the keystroke
-            }
         } // end for ydot
     } // end for rownum
 
