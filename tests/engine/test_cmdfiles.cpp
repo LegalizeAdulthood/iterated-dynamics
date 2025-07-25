@@ -3980,6 +3980,33 @@ TEST_F(TestParameterCommandError, rayTooLarge)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
+TEST_F(TestParameterCommand, rayByName)
+{
+    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
+
+    exec_cmd_arg("ray=none");
+
+    EXPECT_EQ(RayTraceFormat::NONE, g_raytrace_format);
+}
+
+TEST_F(TestParameterCommand, rayByNameDKB)
+{
+    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
+
+    exec_cmd_arg("ray=dkb");
+
+    EXPECT_EQ(RayTraceFormat::DKB_POVRAY, g_raytrace_format);
+}
+
+TEST_F(TestParameterCommand, rayByNamePOVRay)
+{
+    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
+
+    exec_cmd_arg("ray=pov-ray");
+
+    EXPECT_EQ(RayTraceFormat::DKB_POVRAY, g_raytrace_format);
+}
+
 TEST_F(TestParameterCommand, briefNo)
 {
     ValueSaver saved_brief{g_brief, true};

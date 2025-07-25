@@ -22,6 +22,7 @@
 #include "ui/stop_msg.h"
 
 #include <algorithm>
+#include <array>
 #include <cstring>
 #include <string>
 
@@ -73,11 +74,15 @@ restart_1:
     prompts3d[++k] = "                  3=photo,4=stereo pair)";
     values[k].type = '*';
 
-    prompts3d[++k] = "Ray trace output? (0=No, 1=DKB/POVRay, 2=VIVID, 3=RAW,";
-    values[k].type = 'i';
-    values[k].uval.ival = static_cast<int>(g_raytrace_format);
-
-    prompts3d[++k] = "                4=MTV, 5=RAYSHADE, 6=ACROSPIN, 7=DXF)";
+    prompts3d[++k] = "Ray trace output? (No, DKB/POV-Ray, VIVID, RAW, MTV,";
+    values[k].type = 'l';
+    static const char *raytrace_formats[]{
+        "No", "DKB/POV-Ray", "VIVID", "Raw", "MTV", "Rayshade", "AcroSpin", "DXF"};
+    values[k].uval.ch.list = raytrace_formats;
+    values[k].uval.ch.list_len = static_cast<int>(std::size(raytrace_formats));
+    values[k].uval.ch.vlen = 11;
+    values[k].uval.ch.val = static_cast<int>(g_raytrace_format);
+    prompts3d[++k] = "                Rayshade, AcroSpin, DXF)";
     values[k].type = '*';
 
     prompts3d[++k] = "    Brief output?";
@@ -112,10 +117,10 @@ restart_1:
     sphere = values[k++].uval.ch.val;
     g_glasses_type = static_cast<GlassesType>(values[k++].uval.ival);
     k++;
-    g_raytrace_format = static_cast<RayTraceFormat>(values[k++].uval.ival);
+    g_raytrace_format = static_cast<RayTraceFormat>(values[k++].uval.ch.val);
     k++;
     {
-        if (g_raytrace_format == RayTraceFormat::POVRAY)
+        if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
         {
             stop_msg("DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
                     "the online documentation.");

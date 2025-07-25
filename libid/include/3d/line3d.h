@@ -12,7 +12,7 @@
 enum class RayTraceFormat
 {
     NONE = 0,
-    POVRAY = 1,
+    DKB_POVRAY = 1,
     VIVID = 2,
     RAW = 3,
     MTV = 4,

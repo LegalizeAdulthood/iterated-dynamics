@@ -1921,7 +1921,7 @@ static int ray_header()
     }
 
     // Set the default color
-    if (g_raytrace_format == RayTraceFormat::POVRAY)
+    if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
     {
         fmt::print(s_raytrace_file, "DECLARE       F_Dflt = COLOR  RED 0.8 GREEN 0.4 BLUE 0.1\n");
     }
@@ -2013,7 +2013,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
     }
 
     // Describe the triangle
-    if (g_raytrace_format == RayTraceFormat::POVRAY)
+    if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
     {
         fmt::print(s_raytrace_file,
             " OBJECT\n"
@@ -2032,7 +2032,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
         fmt::print(s_raytrace_file, "applysurf diffuse ");
     }
 
-    if (!g_brief && g_raytrace_format != RayTraceFormat::POVRAY && g_raytrace_format != RayTraceFormat::DXF)
+    if (!g_brief && g_raytrace_format != RayTraceFormat::DKB_POVRAY && g_raytrace_format != RayTraceFormat::DXF)
     {
         for (int i = 0; i <= 2; i++)
         {
@@ -2084,7 +2084,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
             fmt::print(s_raytrace_file, "\n");
         }
 
-        if (g_raytrace_format == RayTraceFormat::POVRAY)
+        if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
         {
             fmt::print(s_raytrace_file, "      <");
         }
@@ -2126,7 +2126,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
             }
         }
 
-        if (g_raytrace_format == RayTraceFormat::POVRAY)
+        if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
         {
             fmt::print(s_raytrace_file, ">");
         }
@@ -2136,7 +2136,7 @@ static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c
         }
     }
 
-    if (g_raytrace_format == RayTraceFormat::POVRAY)
+    if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
     {
         fmt::print(s_raytrace_file, " END_TRIANGLE\n");
         if (!g_brief)
@@ -2195,7 +2195,7 @@ static void triangle_bounds(float pt_t[3][3])
 
 static int start_object()
 {
-    if (g_raytrace_format != RayTraceFormat::POVRAY)
+    if (g_raytrace_format != RayTraceFormat::DKB_POVRAY)
     {
         return 0;
     }
@@ -2227,7 +2227,7 @@ static int end_object(bool tri_out)
     {
         return 0;
     }
-    if (g_raytrace_format == RayTraceFormat::POVRAY)
+    if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
     {
         if (tri_out)
         {

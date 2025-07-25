@@ -3081,14 +3081,51 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
+namespace
+{
+
+struct RayTraceFormatValue
+{
+    std::string_view name;
+    RayTraceFormat value;
+};
+
+constexpr RayTraceFormatValue RAYTRACE_FORMATS[]{
+    {"none", RayTraceFormat::NONE},          //
+    {"dkb", RayTraceFormat::DKB_POVRAY},     //
+    {"pov-ray", RayTraceFormat::DKB_POVRAY}, //
+    {"vivid", RayTraceFormat::VIVID},        //
+    {"raw", RayTraceFormat::RAW},            //
+    {"mtv", RayTraceFormat::MTV},            //
+    {"rayshade", RayTraceFormat::RAYSHADE},  //
+    {"acrospin", RayTraceFormat::ACROSPIN},  //
+    {"dxf", RayTraceFormat::DXF}             //
+};
+
+} // namespace
+
 // ray=?
 static CmdArgFlags cmd_ray(const Command &cmd)
 {
-    if (cmd.num_val < 0 || cmd.num_val > 7)
+    if (cmd.num_val == NON_NUMERIC)
+    {
+        for (const RayTraceFormatValue &name_value : RAYTRACE_FORMATS)
+        {
+            if (name_value.name == cmd.value)
+            {
+                g_raytrace_format = name_value.value;
+                break;
+            }
+        }
+    }
+    else if (cmd.num_val < 0 || cmd.num_val > 7)
     {
         return cmd.bad_arg();
     }
-    g_raytrace_format = static_cast<RayTraceFormat>(cmd.num_val);
+    else
+    {
+        g_raytrace_format = static_cast<RayTraceFormat>(cmd.num_val);
+    }
     return CmdArgFlags::PARAM_3D;
 }
 
