@@ -58,6 +58,22 @@ bool mandel_z_power_perturbation_per_image()
     return perturbation();
 }
 
+static bool use_calc_mandelbrot()
+{
+    return g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL  //
+        && !g_distance_estimator                               //
+        && g_decomp[0] == 0                                    //
+        && g_biomorph == -1                                    //
+        && g_inside_color >= ITER                              //
+        && g_outside_color >= ATAN                             //
+        && g_use_init_orbit != InitOrbitMode::VALUE            //
+        && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X //
+        && !g_finite_attractor                                 //
+        && !g_using_jiim                                       //
+        && g_bailout_test == Bailout::MOD                      //
+        && (g_orbit_save_flags & OSF_MIDI) == 0;
+}
+
 bool mandel_per_image()
 {
     g_bf_math = BFMathType::NONE;
@@ -89,17 +105,7 @@ bool mandel_per_image()
         {
             return mandel_perturbation_per_image();
         }
-        if (g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL     //
-            && !g_distance_estimator                               //
-            && g_decomp[0] == 0                                    //
-            && g_biomorph == -1                                    //
-            && g_inside_color >= ITER                              //
-            && g_outside_color >= ATAN                             //
-            && g_use_init_orbit != InitOrbitMode::VALUE            //
-            && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X //
-            && !g_using_jiim                                       //
-            && g_bailout_test == Bailout::MOD                      //
-            && (g_orbit_save_flags & OSF_MIDI) == 0)
+        if (use_calc_mandelbrot())
         {
             g_calc_type = calc_mandelbrot_type; // the normal case
             calc_mandelbrot_init();
@@ -227,18 +233,7 @@ bool julia_per_image()
            calcmandfp() can currently handle invert, any rqlim, potflag
            zmag, epsilon cross, and all the current outside options
         */
-        if (g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL
-            && !g_distance_estimator
-            && g_decomp[0] == 0
-            && g_biomorph == -1
-            && (g_inside_color >= ITER)
-            && g_outside_color >= ATAN
-            && g_use_init_orbit != InitOrbitMode::VALUE
-            && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X
-            && !g_finite_attractor
-            && !g_using_jiim
-            && g_bailout_test == Bailout::MOD
-            && (g_orbit_save_flags & OSF_MIDI) == 0)
+        if (use_calc_mandelbrot())
         {
             g_calc_type = calc_mandelbrot_type; // the normal case
             calc_mandelbrot_init();
