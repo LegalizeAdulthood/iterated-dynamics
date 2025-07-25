@@ -1233,8 +1233,8 @@ static void file_read(void *ptr, size_t size, size_t num, std::FILE *stream)
 }
 
 // return true on error, false on success
-static bool find_fractal_info(const std::string &gif_file, FractalInfo *info, //
-    ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info,      //
+bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
+    ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //
     ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info)
 {
     Byte gif_start[18];

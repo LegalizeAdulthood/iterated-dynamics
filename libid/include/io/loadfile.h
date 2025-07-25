@@ -308,3 +308,7 @@ int file_get_window();
 void backwards_legacy_v18();
 void backwards_legacy_v19();
 void backwards_legacy_v20();
+// return true on error, false on success
+bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
+    ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //
+    ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info);
