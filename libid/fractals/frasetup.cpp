@@ -73,14 +73,8 @@ bool mandel_per_image()
             g_c_exponent = 1;
             g_params[2] = 1;
         }
-        if (!(g_c_exponent & 1))
-        {
-            g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;    // odd exponents
-        }
-        if (g_c_exponent & 1)
-        {
-            g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
-        }
+        // odd/even exponents
+        g_symmetry = g_c_exponent & 1 ? SymmetryType::X_AXIS_NO_PARAM : SymmetryType::XY_AXIS_NO_PARAM;
         break;
 
     case FractalType::MANDEL:
