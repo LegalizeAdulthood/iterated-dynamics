@@ -374,3 +374,32 @@ TEST_F(TestLibrary, findWildcardSequenceRootFilesAfterSubdirFiles)
 
     EXPECT_EQ(expected, results);
 }
+
+TEST_F(TestLibrary, findWildcardSaveLibrarySubDir)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
+    id::io::set_save_library(ID_TEST_SAVE_DIR);
+
+    const Path path{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, ID_TEST_SAVE_IMAGE_FILE)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{ID_TEST_SAVE_IMAGE_FILE}, path.filename()) << path;
+    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_SAVE_DIR}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, findWildcardSaveLibraryRootDir)
+{
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR1);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR2);
+    id::io::add_read_library(ID_TEST_LIBRARY_DIR3);
+    id::io::set_save_library(ID_TEST_SAVE_DIR);
+
+    const Path path{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, ID_TEST_SAVE_IMAGE_ROOT_FILE)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{ID_TEST_SAVE_IMAGE_ROOT_FILE}, path.filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_SAVE_DIR}, path.parent_path()) << path;
+}
