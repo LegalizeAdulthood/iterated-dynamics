@@ -29,25 +29,28 @@ struct MoreParams
 // bitmask values for FractalSpecific flags
 enum class FractalFlags
 {
-    NONE = 0,         // no flags
-    NO_ZOOM = 1,      // zoom box not allowed at all
-    NO_GUESS = 2,     // solid guessing not allowed
-    NO_TRACE = 4,     // boundary tracing not allowed
-    NO_ROTATE = 8,    // zoom box rotate/stretch not allowed
-    NO_RESUME = 16,   // can't interrupt and resume
-    INF_CALC = 32,    // this type calculates forever
-    TRIG1 = 64,       // number of trig functions in formula
-    TRIG2 = 128,      //
-    TRIG3 = 192,      //
-    TRIG4 = 256,      //
-    PARAMS_3D = 1024, // uses 3d parameters
-    OK_JB = 2048,     // works with Julibrot
-    MORE = 4096,      // more than 4 params
-    BAIL_TEST = 8192, // can use different bailout tests
-    BF_MATH = 16384,  // supports arbitrary precision
-    LD_MATH = 32768,  // supports long double
-    PERTURB = 65536   // supports perturbation
+    // clang-format off
+    NONE        = 0x00'00'00,   // no flags
+    NO_ZOOM     = 0x00'00'01,   // zoom box not allowed at all
+    NO_GUESS    = 0x00'00'02,   // solid guessing not allowed
+    NO_TRACE    = 0x00'00'04,   // boundary tracing not allowed
+    NO_ROTATE   = 0x00'00'08,   // zoom box rotate/stretch not allowed
+    NO_RESUME   = 0x00'00'10,   // can't interrupt and resume
+    INF_CALC    = 0x00'00'20,   // this type calculates forever
+    TRIG1       = 0x00'00'30,   // number of trig functions in formula
+    TRIG2       = 0x00'00'40,   //
+    TRIG3       = 0x00'00'80,   //
+    TRIG4       = 0x00'01'00,   //
+    PARAMS_3D   = 0x00'04'00,   // uses 3d parameters
+    OK_JB       = 0x00'08'00,   // works with Julibrot
+    MORE        = 0x00'10'00,   // more than 4 params
+    BAIL_TEST   = 0x00'20'00,   // can use different bailout tests
+    BF_MATH     = 0x00'40'00,   // supports arbitrary precision
+    LD_MATH     = 0x00'80'00,   // supports long double
+    PERTURB     = 0x01'00'00,   // supports perturbation
+    // clang-format on
 };
+
 inline int operator+(FractalFlags value)
 {
     return static_cast<int>(value);
