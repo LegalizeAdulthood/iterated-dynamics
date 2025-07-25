@@ -272,6 +272,10 @@ Version 1.3.2 is an interim bug fix release on the way to version 2.0.
 
 New Features in Version 1.3.2
 
+o The raytrace output format can now be specified by name instead of
+  just by number.  (Fixes #318)
+o The DXF raytrace output format is documented in the help file.
+  (Fixes #317)
 o Libraries are used to group data files for Id.  See {Libraries}.
   (Fixes #95)
 o The previous browse history limit of 16 files was relaxed; it is
@@ -284,6 +288,9 @@ o @parfile functionality restored.  (It processes the first parameter
 
 Code Cleanup in Version 1.3.2
 
+o File output comparison tests were added for raytrace output and
+  orbit output to detect major regressions in the formatted output.
+o More image comparison tests were added to cover more fractal types.\
 o The code has been restructured to increase the separation of image
   computation from user interface.
 
