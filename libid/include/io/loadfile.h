@@ -2,10 +2,13 @@
 //
 #pragma once
 
+#include "config/port.h"
 #include "misc/version.h"
+#include "ui/evolve.h"
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 #define INFO_ID         "Fractal"
 
@@ -173,6 +176,13 @@ struct FormulaInfo         // for saving formula data in GIF file
     std::int16_t future[6];       // for stuff we haven't thought of, yet
 } ID_PACKED;
 
+struct ExtBlock2
+{
+    bool got_data;
+    int length;
+    std::vector<Byte> resume_data;
+};
+
 struct ExtBlock3
 {
     bool got_data;
@@ -186,6 +196,58 @@ struct ExtBlock3
     std::int16_t uses_p4;
     std::int16_t uses_p5;
 } ID_PACKED;
+
+struct ExtBlock4
+{
+    bool got_data;
+    int length;
+    std::vector<int> range_data;
+};
+
+struct ExtBlock5
+{
+    bool got_data;
+    std::vector<char> apm_data;
+};
+
+// parameter evolution stuff
+struct ExtBlock6
+{
+    bool got_data;
+    int length;
+    short evolving;
+    short image_grid_size;
+    unsigned short this_generation_random_seed;
+    double max_random_mutation;
+    double x_parameter_range;
+    double y_parameter_range;
+    double x_parameter_offset;
+    double y_parameter_offset;
+    short discrete_x_parameter_offset;
+    short discrete_y_parameter_offset;
+    short  px;
+    short  py;
+    short  sx_offs;
+    short  sy_offs;
+    short  x_dots;
+    short  y_dots;
+    short  e_count;
+    short  mutate[NUM_GENES];
+};
+
+struct ExtBlock7
+{
+    bool got_data;
+    int length;
+    double ox_min;
+    double ox_max;
+    double oy_min;
+    double oy_max;
+    double ox_3rd;
+    double oy_3rd;
+    short keep_screen_coords;
+    char draw_mode;
+};
 
 /*
  * Note: because big endian machines store structures differently, we have
