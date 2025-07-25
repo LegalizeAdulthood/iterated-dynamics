@@ -959,13 +959,15 @@ Ray trace output:\
    but the same Id options apply.
 
    Option values:\
-      0  disables the creation of ray tracing output\
-      1  DKB format (obsolete-see below)\
-      2  VIVID format\
-      3  generic format (must be massaged externally)\
-      4  MTV format\
-      5  RAYSHADE format\
-      6  ACROSPIN format\
+      0  none       disables the creation of ray tracing output\
+      1  dkb        DKB format (obsolete-see below)\
+      1  pov-ray    DKB format (obsolete-see below)\
+      2  vivid      VIVID format\
+      3  raw        generic format (must be massaged externally)\
+      4  mtv        MTV format\
+      5  rayshade   RAYSHADE format\
+      6  acrospin   ACROSPIN format\
+      7  dxf        DXF format\
    Users of POV-Ray can use the DKB output and convert to POV-Ray with the
    DKB2POV utility that comes with POV-Ray.  A better (faster) approach is to
    create a raw output file and convert to POV-Ray with RAW2POV.  A still
@@ -1087,7 +1089,7 @@ Also see {Stereo 3D Viewing}.
 Ray trace output::
 Id can create files of its 3D transformations which are compatible with
 many ray tracing programs.  Currently four are supported directly:
-DKB (now obsolete), VIVID, MTV, and RAYSHADE.  In addition a "raw"
+DKB (now obsolete), VIVID, MTV, RAYSHADE and DXF.  In addition a "raw"
 output is supported which can be relatively easily transformed to be
 usable by many other products.
 One other option is supported: ACROSPIN.  This is not a ray tracer,
@@ -1110,6 +1112,8 @@ but the same Id options apply.
 |RAYSHADE format
 ^|6
 |ACROSPIN format
+^|7
+|DXF format
 |===
 +
 Users of POV-Ray can use the DKB output and convert to POV-Ray with the

@@ -1339,9 +1339,9 @@ SHOWBOX=yes                Turns on 3D showbox default mode
 COARSE=nn                  Sets Preview coarseness default value
 SPHERE=yes                 Turns on spherical projection mode
 STEREO=n                   Selects the type of stereo image creation
-RAY=nnn                    selects raytrace output file format
-BRIEF=yes                  selects brief or verbose file for DKB output
-USEGRAYSCALE=yes           use grayscale as depth instead of color number
+RAY=nnn|name               Selects raytrace output file format
+BRIEF=yes                  Selects brief or verbose file for DKB output
+USEGRAYSCALE=yes           Use grayscale as depth instead of color number
 
 INTEROCULAR=nn             Sets the interocular distance for stereo
 CONVERGE=nn                Determines the overall image separation
@@ -1365,6 +1365,9 @@ TRANSPARENT=min/max        Defines a range of colors to be treated as
 XYADJUST=nn/nn             This shifts the image in the x/y dir
                              without perspective
 ~Format+
+
+The ray parameter can either be specified as a numeric value (nnn) or
+as text.  See the table in {3D Mode Selection}.
 
 Below are commands that support Marc Reinig's terrain features.
 
