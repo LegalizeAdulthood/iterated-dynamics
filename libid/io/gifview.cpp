@@ -333,16 +333,8 @@ int gif_view()
             g_busy = false;      // for slideshow CALCWAIT
             if (g_calc_status == CalcStatus::IN_PROGRESS) // e.g., set by line3d
             {
-                g_calc_time = g_timer_interval; // note how long it took
-                if (driver_key_pressed() != 0)
-                {
-                    g_calc_status = CalcStatus::NON_RESUMABLE; // interrupted, not resumable
-                    finished = true;
-                }
-                else
-                {
-                    g_calc_status = CalcStatus::COMPLETED; // complete
-                }
+                g_calc_time = g_timer_interval;           // note how long it took
+                g_calc_status = CalcStatus::COMPLETED;    // complete
             }
             // Hey! the decoder doesn't read the last (0-length) block!!
             if (get_byte() != 0)
@@ -457,11 +449,6 @@ static bool put_sound_line(int row, int col_start, int col_stop, Byte *pixels)
             sleep_ms(g_orbit_delay);
         }
         write_sound((int) *pixels++ * 3000 / g_colors + g_base_hertz);
-        if (driver_key_pressed())
-        {
-            driver_mute();
-            return true;
-        }
     }
     return false;
 }
@@ -469,7 +456,6 @@ static bool put_sound_line(int row, int col_start, int col_stop, Byte *pixels)
 int sound_line(Byte *pixels, int line_len)
 {
     int width = g_logical_screen_x_dots;
-    int ret = 0;
     while (line_len > 0)
     {
         int extra = s_col_count + line_len - width;
@@ -499,11 +485,8 @@ int sound_line(Byte *pixels, int line_len)
         }
     }
     driver_mute();
-    if (driver_key_pressed())
-    {
-        ret = -1;
-    }
-    return ret;
+
+    return 0;
 }
 
 int pot_line(Byte *pixels, int line_len)
