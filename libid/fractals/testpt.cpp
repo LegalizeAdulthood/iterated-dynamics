@@ -30,71 +30,136 @@ The sample code below is a straightforward Mandelbrot routine.
 #include "engine/resume.h"
 #include "misc/Driver.h"
 
+class TestPoint
+{
+public:
+    TestPoint();
+    TestPoint(const TestPoint &) = delete;
+    TestPoint(TestPoint &&) = delete;
+    ~TestPoint() = default;
+    TestPoint &operator=(const TestPoint &) = delete;
+    TestPoint &operator=(TestPoint &&) = delete;
+
+    void resume();
+    bool start();
+    void suspend();
+    bool done();
+    void iterate();
+    void finish();
+
+    int start_pass{};
+    int start_row{};
+    int num_passes{};
+    int passes{};
+};
+
+TestPoint::TestPoint() :
+    num_passes((g_std_calc_mode == CalcMode::ONE_PASS) ? 0 : 1),
+    passes(start_pass)
+{
+    g_col = 0;
+    g_row = start_row;
+}
+
+void TestPoint::resume()
+{
+    start_resume();
+    get_resume(start_row, start_pass);
+    passes = start_pass;
+    g_row = start_row;
+    end_resume();
+}
+
+void TestPoint::suspend()
+{
+    finish();
+    alloc_resume(20, 1);
+    put_resume(g_row, passes);
+}
+
+bool TestPoint::done()
+{
+    return passes > num_passes;
+}
+
+void TestPoint::iterate()
+{
+    if (g_row <= g_i_stop_pt.y)
+    {
+        if (g_col <= g_i_stop_pt.x) // look at each point on screen
+        {
+            g_init.x = g_dx_pixel();
+            g_init.y = g_dy_pixel();
+            int color =
+                test_pt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
+            if (color >= g_colors)
+            {
+                // avoid trouble if color is 0
+                if (g_colors < 16)
+                {
+                    color &= g_and_color;
+                }
+                else
+                {
+                    color = ((color - 1) % g_and_color) + 1; // skip color zero
+                }
+            }
+            g_plot(g_col, g_row, color);
+            if (num_passes && (passes == 0))
+            {
+                g_plot(g_col, g_row + 1, color);
+            }
+            ++g_col;
+        }
+        else
+        {
+            g_col = 0;
+            g_row += 1 + num_passes;
+        }
+    }
+    else
+    {
+        start_row = passes + 1;
+        g_row = start_row;
+        passes++;
+    }
+}
+
+// this routine is called just before the fractal starts
+bool TestPoint::start()
+{
+    return false;
+}
+
+// this routine is called just after the fractal ends
+void TestPoint::finish()
+{
+}
+
 // standalone engine for "test"
 int test_type()
 {
-    int start_pass = 0;
-    int start_row = 0;
+    TestPoint test;
+
     if (g_resuming)
     {
-        start_resume();
-        get_resume(start_row, start_pass);
-        end_resume();
+        test.resume();
     }
-    if (test_start())   // assume it was stand-alone, doesn't want passes logic
+    if (test.start())   // assume it was stand-alone, doesn't want passes logic
     {
         return 0;
     }
-    int num_passes = (g_std_calc_mode == CalcMode::ONE_PASS) ? 0 : 1;
-    for (int passes = start_pass; passes <= num_passes ; passes++)
+    while (!test.done())
     {
-        for (g_row = start_row; g_row <= g_i_stop_pt.y; g_row = g_row+1+num_passes)
+        if (driver_key_pressed())
         {
-            for (g_col = 0; g_col <= g_i_stop_pt.x; g_col++)       // look at each point on screen
-            {
-                g_init.x = g_dx_pixel();
-                g_init.y = g_dy_pixel();
-                if (driver_key_pressed())
-                {
-                    test_end();
-                    alloc_resume(20, 1);
-                    put_resume(g_row, passes);
-                    return -1;
-                }
-                int color =
-                    test_pt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
-                if (color >= g_colors)
-                {
-                    // avoid trouble if color is 0
-                    if (g_colors < 16)
-                    {
-                        color &= g_and_color;
-                    }
-                    else
-                    {
-                        color = ((color-1) % g_and_color) + 1; // skip color zero
-                    }
-                }
-                g_plot(g_col, g_row, color);
-                if (num_passes && (passes == 0))
-                {
-                    g_plot(g_col, g_row+1, color);
-                }
-            }
+            test.suspend();
+            return -1;
         }
-        start_row = passes + 1;
+        test.iterate();
     }
-    test_end();
+    test.finish();
     return 0;
-}
-
-int test_start()     // this routine is called just before the fractal starts
-{
-    return 0;
-}
-
-void test_end()       // this routine is called just after the fractal ends
-{
 }
 
 // this routine is called once for every pixel
