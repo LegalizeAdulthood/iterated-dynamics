@@ -104,19 +104,19 @@ int test_pt(double init_real, double init_imag, double param1, double param2, lo
     double old_real = param1;
     double old_imag = param2;
     double magnitude = 0.0;
-    long color = 0;
-    while ((magnitude < 4.0) && (color < max_iter))
+    long iter = 0;
+    while ((magnitude < 4.0) && (iter < max_iter))
     {
         double new_real = old_real * old_real - old_imag * old_imag + init_real;
         double new_imag = 2 * old_real * old_imag + init_imag;
-        color++;
+        iter++;
         old_real = new_real;
         old_imag = new_imag;
         magnitude = new_real * new_real + new_imag * new_imag;
     }
-    if (color >= max_iter)
+    if (iter >= max_iter)
     {
-        color = inside;
+        iter = inside;
     }
-    return (int)color;
+    return (int)iter;
 }
