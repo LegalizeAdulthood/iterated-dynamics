@@ -36,7 +36,6 @@
 #include "fractals/quaternion_mandelbrot.h"
 #include "fractals/sierpinski_gasket.h"
 #include "fractals/taylor_skinner_variations.h"
-#include "fractals/testpt.h"
 #include "fractals/unity.h"
 #include "fractals/volterra_lotka.h"
 #include "ui/ant.h"
@@ -49,6 +48,7 @@
 #include "ui/orbit2d.h"
 #include "ui/plasma.h"
 #include "ui/standard_4d.h"
+#include "ui/testpt.h"
 
 #include <algorithm>
 #include <array>

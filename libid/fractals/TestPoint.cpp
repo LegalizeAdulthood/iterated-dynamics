@@ -21,37 +21,16 @@ must not be called by any part of Id other than calcfrac.
 The sample code below is a straightforward Mandelbrot routine.
 
 */
-#include "fractals/testpt.h"
+#include "fractals/TestPoint.h"
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
-#include "misc/Driver.h"
 
-class TestPoint
+namespace id::fractals
 {
-public:
-    TestPoint();
-    TestPoint(const TestPoint &) = delete;
-    TestPoint(TestPoint &&) = delete;
-    ~TestPoint() = default;
-    TestPoint &operator=(const TestPoint &) = delete;
-    TestPoint &operator=(TestPoint &&) = delete;
-
-    void resume();
-    bool start();
-    void suspend();
-    bool done();
-    void iterate();
-    void finish();
-
-    int start_pass{};
-    int start_row{};
-    int num_passes{};
-    int passes{};
-};
 
 TestPoint::TestPoint() :
     num_passes((g_std_calc_mode == CalcMode::ONE_PASS) ? 0 : 1),
@@ -91,7 +70,7 @@ void TestPoint::iterate()
             g_init.x = g_dx_pixel();
             g_init.y = g_dy_pixel();
             int color =
-                test_pt(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
+                per_pixel(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
             if (color >= g_colors)
             {
                 // avoid trouble if color is 0
@@ -125,46 +104,10 @@ void TestPoint::iterate()
     }
 }
 
-// this routine is called just before the fractal starts
-bool TestPoint::start()
-{
-    return false;
-}
-
-// this routine is called just after the fractal ends
-void TestPoint::finish()
-{
-}
-
-// standalone engine for "test"
-int test_type()
-{
-    TestPoint test;
-
-    if (g_resuming)
-    {
-        test.resume();
-    }
-    if (test.start())   // assume it was stand-alone, doesn't want passes logic
-    {
-        return 0;
-    }
-    while (!test.done())
-    {
-        if (driver_key_pressed())
-        {
-            test.suspend();
-            return -1;
-        }
-        test.iterate();
-    }
-    test.finish();
-    return 0;
-}
 
 // this routine is called once for every pixel
 // (note: possibly using the dual-pass / solid-guessing options
-int test_pt(double init_real, double init_imag, double param1, double param2, long max_iter, int inside)
+int TestPoint::per_pixel(double init_real, double init_imag, double param1, double param2, long max_iter, int inside)
 {
     double old_real = param1;
     double old_imag = param2;
@@ -185,3 +128,16 @@ int test_pt(double init_real, double init_imag, double param1, double param2, lo
     }
     return (int)iter;
 }
+
+// this routine is called just before the fractal starts
+bool TestPoint::start()
+{
+    return false;
+}
+
+// this routine is called just after the fractal ends
+void TestPoint::finish()
+{
+}
+
+} // namespace id::fractals

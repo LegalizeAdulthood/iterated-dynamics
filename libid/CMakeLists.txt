@@ -90,7 +90,7 @@ add_library(libid
     include/fractals/quaternion_mandelbrot.h fractals/quaternion_mandelbrot.cpp
     include/fractals/sierpinski_gasket.h fractals/sierpinski_gasket.cpp
     include/fractals/taylor_skinner_variations.h fractals/taylor_skinner_variations.cpp
-    include/fractals/testpt.h fractals/testpt.cpp
+    include/fractals/TestPoint.h fractals/TestPoint.cpp
     include/fractals/unity.h fractals/unity.cpp
     include/fractals/volterra_lotka.h fractals/volterra_lotka.cpp
 
@@ -234,6 +234,7 @@ add_library(libid
     include/ui/stop_msg.h ui/stop_msg.cpp
     include/ui/tab_display.h ui/tab_display.cpp
     include/ui/temp_msg.h ui/temp_msg.cpp
+    include/ui/testpt.h ui/testpt.cpp
     include/ui/text_screen.h ui/text_screen.cpp
     include/ui/thinking.h ui/thinking.cpp
     include/ui/trig_fns.h ui/trig_fns.cpp
