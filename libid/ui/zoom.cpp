@@ -642,7 +642,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
         return 0; // not resumable, not complete
     }
     if (g_cur_fractal_specific->calc_type != standard_fractal_type   //
-        && g_calc_type == calc_mandelbrot_type //
+        && g_cur_fractal_specific->calc_type != calc_mandelbrot_type //
         && g_cur_fractal_specific->calc_type != lyapunov_type        //
         && g_cur_fractal_specific->calc_type != froth_type)
     {
