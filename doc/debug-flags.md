@@ -40,7 +40,6 @@ Example:
 | 2224 | old just-the-dots logic, probably a temporary thing |
 | 3200 | disable auto switch back from arbitrary precision |
 | 3400 | disable auto switch from integer to float |
-| 3444 | turns on long double soi algorithm (passes=s) |
 | 3600 | pins the plasma corners to 1 |
 | 3800 | turns off grid pixel lookup |
 | 4010 | use old centermag conversion. |

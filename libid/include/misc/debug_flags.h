@@ -31,7 +31,6 @@ enum class DebugFlags
     SHOW_FLOAT_FLAG                     = 2224,
     FORCE_ARBITRARY_PRECISION_MATH      = 3200,
     PREVENT_ARBITRARY_PRECISION_MATH    = 3400,
-    USE_SOI_LONG_DOUBLE                 = 3444,
     PREVENT_PLASMA_RANDOM               = 3600,
     PREVENT_COORDINATE_GRID             = 3800,
     ALLOW_NEGATIVE_CROSS_PRODUCT        = 4010,

@@ -42,7 +42,6 @@ add_library(libid
     include/engine/resume.h engine/resume.cpp
     include/engine/show_dot.h engine/show_dot.cpp
     include/engine/soi.h engine/soi.cpp
-    engine/soi1.cpp
     include/engine/solid_guess.h engine/solid_guess.cpp
     include/engine/sticky_orbits.h engine/sticky_orbits.cpp
     include/engine/tesseral.h engine/tesseral.cpp

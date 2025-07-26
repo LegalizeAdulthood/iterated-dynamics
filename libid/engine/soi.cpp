@@ -14,16 +14,11 @@
 #include "engine/soi.h"
 
 #include "engine/calcfrac.h"
+#include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "fractals/fractalp.h"
 #include "misc/Driver.h"
 #include "misc/stack_avail.h"
-
-#include <config/port.h>
-
-#include <algorithm>
-#include <cassert>
-#include <cmath>
-#include <iterator>
 
 enum
 {
@@ -31,63 +26,54 @@ enum
     BASIN_COLOR = 0
 };
 
-int g_rhombus_stack[10]{};
-int g_rhombus_depth{};
-int g_max_rhombus_depth{};
-int g_soi_min_stack_available{};
-int g_soi_min_stack{2200}; // and this much stack to not crash when <tab> is pressed
-
 namespace
 {
 
-struct LongDoubleComplex
+struct DoubleComplex
 {
-    LDouble re;
-    LDouble im;
+    double re;
+    double im;
 };
 
-struct SOILongDoubleState
+struct SOIDoubleState
 {
-    LongDoubleComplex z;
-    LongDoubleComplex step;
-    LDouble interleave_step;
-    LDouble help_real;
-    LongDoubleComplex scan_z;
-    LongDoubleComplex b1[3];
-    LongDoubleComplex b2[3];
-    LongDoubleComplex b3[3];
-    LongDoubleComplex limit;
-    LongDoubleComplex rq[9];
-    LongDoubleComplex corner[2];
-    LongDoubleComplex tz[4];
-    LongDoubleComplex tq[4];
+    bool esc[9];
+    bool t_esc[4];
+
+    DoubleComplex z;
+    DoubleComplex step;
+    double interleave_step;
+    double help_real;
+    DoubleComplex scan_z;
+    DoubleComplex b1[3];
+    DoubleComplex b2[3];
+    DoubleComplex b3[3];
+    DoubleComplex limit;
+    DoubleComplex rq[9];
+    DoubleComplex corner[2];
+    DoubleComplex tz[4];
+    DoubleComplex tq[4];
 };
 
 } // namespace
 
-static LongDoubleComplex z_sqr(LongDoubleComplex z)
+int g_rhombus_stack[10]{};
+static int g_rhombus_depth{};
+int g_max_rhombus_depth{};
+int g_soi_min_stack_available{};
+int g_soi_min_stack{2200}; // and this much stack to not crash when <tab> is pressed
+
+static DoubleComplex z_sqr(DoubleComplex z)
 {
     return { z.re*z.re, z.im*z.im };
-}
-
-/* Newton Interpolation.
-   It computes the value of the interpolation polynomial given by
-   (x0,w0)..(x2,w2) at x:=t */
-static LDouble interpolate(
-    LDouble x0, LDouble x1, LDouble x2,
-    LDouble w0, LDouble w1, LDouble w2,
-    LDouble t)
-{
-    const LDouble b = (w1 - w0)/(x1 - x0);
-    return (((w2 - w1)/(x2 - x1) - b)/(x2 - x0)*(t - x1) + b)*(t - x0) + w0;
 }
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
 static void interpolate(
-    LDouble x0, LDouble x1, LDouble x2,
-    LDouble w0, LDouble w1, LDouble w2,
-    LDouble &b0, LDouble &b1, LDouble &b2)
+    double x0, double x1, double x2,
+    double w0, double w1, double w2,
+    double &b0, double &b1, double &b2)
 {
     b0 = w0;
     b1 = (w1 - w0)/(x1 - x0);
@@ -95,252 +81,40 @@ static void interpolate(
 }
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
-static LDouble evaluate(
-    LDouble x0, LDouble x1,
-    LDouble b0, LDouble b1, LDouble b2,
-    LDouble t)
+static double evaluate(
+    double x0, double x1,
+    double b0, double b1, double b2,
+    double t)
 {
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
 
-static LongDoubleComplex s_zi[9]{};
-static SOILongDoubleState s_state{};
-static LDouble s_t_width{};
-static LDouble s_equal{};
-static bool s_ba_x_in_xx{};
+static DoubleComplex s_zi[9]{};
+static SOIDoubleState s_state{};
+static double s_t_width{};
+static double s_equal{};
 
 static long iteration(
-    LDouble cr, LDouble ci,
-    LDouble re, LDouble im,
+    double cr, double ci,
+    double re, double im,
     long start)
 {
-    long iter;
-    long offset = 0;
-    LDouble ren;
-    LDouble imn;
-    LDouble mag;
-    int exponent;
-
-    if (s_ba_x_in_xx)
+    g_old_z.x = re;
+    g_old_z.y = im;
+    g_temp_sqr_x = sqr(g_old_z.x);
+    g_temp_sqr_y = sqr(g_old_z.y);
+    g_float_param = &g_init;
+    g_float_param->x = cr;
+    g_float_param->y = ci;
+    while (orbit_calc() == 0 && start < g_max_iterations)
     {
-        LDouble sre = re;
-        LDouble sim = im;
-        ren = re*re;
-        imn = im*im;
-        if (start != 0)
-        {
-            offset = g_max_iterations - start + 7;
-            iter = offset >> 3;
-            offset &= 7;
-            offset = (8 - offset);
-        }
-        else
-        {
-            iter = g_max_iterations >> 3;
-        }
-
-        int k = 8;
-        int n = 8;
-        do
-        {
-            im = im*re;
-            re = ren - imn;
-            im += im;
-            re += cr;
-            im += ci;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            if (std::abs(sre - re) < s_equal && std::abs(sim - im) < s_equal)
-            {
-                return BASIN_COLOR;
-            }
-
-            k -= 8;
-            if (k <= 0)
-            {
-                n <<= 1;
-                sre = re;
-                sim = im;
-                k = n;
-            }
-
-            imn = im*im;
-            ren = re*re;
-            mag = ren + imn;
-        }
-        while (mag < 16.0 && --iter != 0);
+        start++;
     }
-    else
+    if (start >= g_max_iterations)
     {
-        ren = re*re;
-        imn = im*im;
-        if (start != 0)
-        {
-            offset = g_max_iterations - start + 7;
-            iter = offset >> 3;
-            offset &= 7;
-            offset = (8 - offset);
-        }
-        else
-        {
-            iter = g_max_iterations >> 3;
-        }
-
-        do
-        {
-            im = im*re;
-            re = ren - imn;
-            im += im;
-            re += cr;
-            im += ci;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*re;
-            ren = re + im;
-            re = re - im;
-            imn += imn;
-            re = ren*re;
-            im = imn + ci;
-            re += cr;
-
-            imn = im*im;
-            ren = re*re;
-            mag = ren + imn;
-        }
-        while (mag < 16.0 && --iter != 0);
+        start = BASIN_COLOR;
     }
-
-    if (iter == 0)
-    {
-        s_ba_x_in_xx = true;
-        return BASIN_COLOR;
-    }
-    static char adjust[256] =
-    {
-        0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,
-        5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-        6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-        6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-        8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-        8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-        8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-        8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-        8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-        8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-        8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-        8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8
-    };
-
-    s_ba_x_in_xx = false;
-    LDouble d = mag;
-    frexpl(d, &exponent);
-    return g_max_iterations + offset - (((iter - 1) << 3) + (long)adjust[exponent >> 3]);
+    return start;
 }
 
 static void put_hor_line(int x1, int y1, int x2, int color)
@@ -412,26 +186,37 @@ enum
         evaluate(c_im1, mid_i, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im, y), \
         evaluate(c_im1, mid_i, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im, y), x)
 
-/* SOICompute - Perform simultaneous orbit iteration for a given rectangle
+/* Newton Interpolation.
+   It computes the value of the interpolation polynomial given by
+   (x0,w0)..(x2,w2) at x:=t */
+static inline double interpolate(
+    double x0, double x1, double x2,
+    double w0, double w1, double w2,
+    double t)
+{
+    const double b = (w1 - w0)/(x1 - x0);
+    return (((w2 - w1)/(x2 - x1) - b)/(x2 - x0)*(t - x1) + b)*(t - x0) + w0;
+}
 
-   Input: c_re1..c_im2 : values defining the four corners of the rectangle
-          x1..y2     : corresponding pixel values
-      zre1..zim9 : intermediate iterated values of the key points (key values)
-
-      (c_re1,c_im1)               (c_re2,c_im1)
-      (zre1,zim1)  (zre5,zim5)  (zre2,zim2)
-           +------------+------------+
-           |            |            |
-           |            |            |
-      (zre6,zim6)  (zre9,zim9)  (zre7,zim7)
-           |            |            |
-           |            |            |
-           +------------+------------+
-      (zre3,zim3)  (zre8,zim8)  (zre4,zim4)
-      (c_re1,c_im2)               (c_re2,c_im2)
-
-      iter       : current number of iterations
-*/
+// SOICompute - Perform simultaneous orbit iteration for a given rectangle
+//
+// Input: c_re1..c_im2 : values defining the four corners of the rectangle
+//        x1..y2     : corresponding pixel values
+//    s_zi[0..8].re,im  : intermediate iterated values of the key points (key values)
+//
+// (c_re1,c_im1)                                    (c_re2,c_im1)
+// (s_zi[0].re,s_zi[0].im)   (s_zi[4].re,s_zi[4].im)  (s_zi[1].re,s_zi[1].im)
+//     +--------------------------+--------------------+
+//     |                          |                    |
+//     |                          |                    |
+// (s_zi[5].re,s_zi[5].im)   (s_zi[8].re,s_zi[8].im)  (s_zi[6].re,s_zi[6].im)
+//     |                          |                    |
+//     |                          |                    |
+//     +--------------------------+--------------------+
+// (s_zi[2].re,s_zi[2].im)   (s_zi[7].re,s_zi[7].im)  (s_zi[3].re,s_zi[3].im)
+// (c_re1,c_im2)                                    (c_re2,c_im2)
+//
+// iter       : current number of iterations
 
 /*
    The purpose of this macro is to reduce the number of parameters of the
@@ -439,34 +224,26 @@ enum
    under DOS is extremely limited.
 */
 
-#define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, ZRE4, ZIM4, \
-    ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER)                                   \
-    s_zi[0].re = (ZRE1);                                                                                \
-    s_zi[0].im = (ZIM1);                                                                                \
-    s_zi[1].re = (ZRE2);                                                                                \
-    s_zi[1].im = (ZIM2);                                                                                \
-    s_zi[2].re = (ZRE3);                                                                                \
-    s_zi[2].im = (ZIM3);                                                                                \
-    s_zi[3].re = (ZRE4);                                                                                \
-    s_zi[3].im = (ZIM4);                                                                                \
-    s_zi[4].re = (ZRE5);                                                                                \
-    s_zi[4].im = (ZIM5);                                                                                \
-    s_zi[5].re = (ZRE6);                                                                                \
-    s_zi[5].im = (ZIM6);                                                                                \
-    s_zi[6].re = (ZRE7);                                                                                \
-    s_zi[6].im = (ZIM7);                                                                                \
-    s_zi[7].re = (ZRE8);                                                                                \
-    s_zi[7].im = (ZIM8);                                                                                \
-    s_zi[8].re = (ZRE9);                                                                                \
-    s_zi[8].im = (ZIM9);                                                                                \
-    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER));                   \
-    assert(status)
+#define RHOMBUS(CRE1, CRE2, CIM1, CIM2, X1, X2, Y1, Y2, ZRE1, ZIM1, ZRE2, ZIM2, ZRE3, ZIM3, \
+    ZRE4, ZIM4, ZRE5, ZIM5, ZRE6, ZIM6, ZRE7, ZIM7, ZRE8, ZIM8, ZRE9, ZIM9, ITER) \
+    s_zi[0].re = (ZRE1);s_zi[0].im = (ZIM1);\
+    s_zi[1].re = (ZRE2);s_zi[1].im = (ZIM2);\
+    s_zi[2].re = (ZRE3);s_zi[2].im = (ZIM3);\
+    s_zi[3].re = (ZRE4);s_zi[3].im = (ZIM4);\
+    s_zi[4].re = (ZRE5);s_zi[4].im = (ZIM5);\
+    s_zi[5].re = (ZRE6);s_zi[5].im = (ZIM6);\
+    s_zi[6].re = (ZRE7);s_zi[6].im = (ZIM7);\
+    s_zi[7].re = (ZRE8);s_zi[7].im = (ZIM8);\
+    s_zi[8].re = (ZRE9);s_zi[8].im = (ZIM9);\
+    status = rhombus((CRE1), (CRE2), (CIM1), (CIM2), (X1), (X2), (Y1), (Y2), (ITER));
 
 static bool rhombus(
-    LDouble c_re1, LDouble c_re2, LDouble c_im1, LDouble c_im2, int x1, int x2, int y1, int y2, long iter);
+    double c_re1, double c_re2, double c_im1, double c_im2,
+    int x1, int x2, int y1, int y2, long iter);
 
 static bool rhombus_aux(
-    LDouble c_re1, LDouble c_re2, LDouble c_im1, LDouble c_im2, int x1, int x2, int y1, int y2, long iter)
+    double c_re1, double c_re2, double c_im1, double c_im2,
+    int x1, int x2, int y1, int y2, long iter)
 {
     // The following variables do not need their values saved
     // used in scanning
@@ -484,10 +261,10 @@ static bool rhombus_aux(
 
     // the variables below need to have local copies for recursive calls
     // center of rectangle
-    LDouble mid_r = (c_re1 + c_re2)/2;
-    LDouble mid_i = (c_im1 + c_im2)/2;
+    double mid_r = (c_re1 + c_re2)/2;
+    double mid_i = (c_im1 + c_im2)/2;
 
-    LongDoubleComplex s[9];
+    DoubleComplex s[9];
 
     bool status{};
     avail = stack_avail();
@@ -551,9 +328,7 @@ scan:
                     continue;
                 }
 
-                for (z = x - 1, s_state.help_real = s_state.z.re - s_state.step.re;
-                        z > x - INTERLEAVE;
-                        z--, s_state.help_real -= s_state.step.re)
+                for (z = x - 1, s_state.help_real = s_state.z.re - s_state.step.re; z > x - INTERLEAVE; z--, s_state.help_real -= s_state.step.re)
                 {
                     s_state.scan_z.re = GET_SCAN_REAL(s_state.help_real, s_state.z.im);
                     s_state.scan_z.im = GET_SCAN_IMAG(s_state.help_real, s_state.z.im);
@@ -582,9 +357,7 @@ scan:
                 save_color = color;
             }
 
-            for (z = x2 - 1, s_state.help_real = c_re2 - s_state.step.re;
-                z > save_x;
-                z--, s_state.help_real -= s_state.step.re)
+            for (z = x2 - 1, s_state.help_real = c_re2 - s_state.step.re; z > save_x; z--, s_state.help_real -= s_state.step.re)
             {
                 s_state.scan_z.re = GET_SCAN_REAL(s_state.help_real, s_state.z.im);
                 s_state.scan_z.im = GET_SCAN_IMAG(s_state.help_real, s_state.z.im);
@@ -610,6 +383,7 @@ scan:
                 g_plot(save_x, y, (int)(save_color&255));
             }
         }
+
         return false;
     }
 
@@ -640,85 +414,119 @@ scan:
     {
         std::copy(std::begin(s_zi), std::end(s_zi), std::begin(s));
 
+#define SOI_ORBIT(zr, rq, zi, iq, cr, ci, esc)  \
+    (zi) = ((zi) + (zi))*(zr) + (ci);           \
+    (zr) = (rq) - (iq) + (cr);                  \
+    (rq) = (zr)*(zr);                           \
+    (iq) = (zi)*(zi);                           \
+    (esc) = (((rq) + (iq)) > 16.0)
+
         // iterate key values
-        s_zi[0].im = (s_zi[0].im + s_zi[0].im)*s_zi[0].re + c_im1;
-        s_zi[0].re = s_state.rq[0].re - s_state.rq[0].im + c_re1;
-        s_state.rq[0].re = s_zi[0].re*s_zi[0].re;
-        s_state.rq[0].im = s_zi[0].im*s_zi[0].im;
-
-        s_zi[1].im = (s_zi[1].im + s_zi[1].im)*s_zi[1].re + c_im1;
-        s_zi[1].re = s_state.rq[1].re - s_state.rq[1].im + c_re2;
-        s_state.rq[1].re = s_zi[1].re*s_zi[1].re;
-        s_state.rq[1].im = s_zi[1].im*s_zi[1].im;
-
-        s_zi[2].im = (s_zi[2].im + s_zi[2].im)*s_zi[2].re + c_im2;
-        s_zi[2].re = s_state.rq[2].re - s_state.rq[2].im + c_re1;
-        s_state.rq[2].re = s_zi[2].re*s_zi[2].re;
-        s_state.rq[2].im = s_zi[2].im*s_zi[2].im;
-
-        s_zi[3].im = (s_zi[3].im + s_zi[3].im)*s_zi[3].re + c_im2;
-        s_zi[3].re = s_state.rq[3].re - s_state.rq[3].im + c_re2;
-        s_state.rq[3].re = s_zi[3].re*s_zi[3].re;
-        s_state.rq[3].im = s_zi[3].im*s_zi[3].im;
-
-        s_zi[4].im = (s_zi[4].im + s_zi[4].im)*s_zi[4].re + c_im1;
-        s_zi[4].re = s_state.rq[4].re - s_state.rq[4].im + mid_r;
-        s_state.rq[4].re = s_zi[4].re*s_zi[4].re;
-        s_state.rq[4].im = s_zi[4].im*s_zi[4].im;
-
-        s_zi[5].im = (s_zi[5].im + s_zi[5].im)*s_zi[5].re + mid_i;
-        s_zi[5].re = s_state.rq[5].re - s_state.rq[5].im + c_re1;
-        s_state.rq[5].re = s_zi[5].re*s_zi[5].re;
-        s_state.rq[5].im = s_zi[5].im*s_zi[5].im;
-
-        s_zi[6].im = (s_zi[6].im + s_zi[6].im)*s_zi[6].re + mid_i;
-        s_zi[6].re = s_state.rq[6].re - s_state.rq[6].im + c_re2;
-        s_state.rq[6].re = s_zi[6].re*s_zi[6].re;
-        s_state.rq[6].im = s_zi[6].im*s_zi[6].im;
-
-        s_zi[7].im = (s_zi[7].im + s_zi[7].im)*s_zi[7].re + c_im2;
-        s_zi[7].re = s_state.rq[7].re - s_state.rq[7].im + mid_r;
-        s_state.rq[7].re = s_zi[7].re*s_zi[7].re;
-        s_state.rq[7].im = s_zi[7].im*s_zi[7].im;
-
-        s_zi[8].im = (s_zi[8].im + s_zi[8].im)*s_zi[8].re + mid_i;
-        s_zi[8].re = s_state.rq[8].re - s_state.rq[8].im + mid_r;
-        s_state.rq[8].re = s_zi[8].re*s_zi[8].re;
-        s_state.rq[8].im = s_zi[8].im*s_zi[8].im;
-
+        SOI_ORBIT(s_zi[0].re, s_state.rq[0].re, s_zi[0].im, s_state.rq[0].im, c_re1, c_im1, s_state.esc[0]);
+        /*
+              zim1=(zim1+zim1)*zre1+c_im1;
+              zre1=rq1-iq1+c_re1;
+              rq1=zre1*zre1;
+              iq1=zim1*zim1;
+        */
+        SOI_ORBIT(s_zi[1].re, s_state.rq[1].re, s_zi[1].im, s_state.rq[1].im, c_re2, c_im1, s_state.esc[1]);
+        /*
+              zim2=(zim2+zim2)*zre2+c_im1;
+              zre2=rq2-iq2+c_re2;
+              rq2=zre2*zre2;
+              iq2=zim2*zim2;
+        */
+        SOI_ORBIT(s_zi[2].re, s_state.rq[2].re, s_zi[2].im, s_state.rq[2].im, c_re1, c_im2, s_state.esc[2]);
+        /*
+              zim3=(zim3+zim3)*zre3+c_im2;
+              zre3=rq3-iq3+c_re1;
+              rq3=zre3*zre3;
+              iq3=zim3*zim3;
+        */
+        SOI_ORBIT(s_zi[3].re, s_state.rq[3].re, s_zi[3].im, s_state.rq[3].im, c_re2, c_im2, s_state.esc[3]);
+        /*
+              zim4=(zim4+zim4)*zre4+c_im2;
+              zre4=rq4-iq4+c_re2;
+              rq4=zre4*zre4;
+              iq4=zim4*zim4;
+        */
+        SOI_ORBIT(s_zi[4].re, s_state.rq[4].re, s_zi[4].im, s_state.rq[4].im, mid_r, c_im1, s_state.esc[4]);
+        /*
+              zim5=(zim5+zim5)*zre5+c_im1;
+              zre5=rq5-iq5+mid_r;
+              rq5=zre5*zre5;
+              iq5=zim5*zim5;
+        */
+        SOI_ORBIT(s_zi[5].re, s_state.rq[5].re, s_zi[5].im, s_state.rq[5].im, c_re1, mid_i, s_state.esc[5]);
+        /*
+              zim6=(zim6+zim6)*zre6+mid_i;
+              zre6=rq6-iq6+c_re1;
+              rq6=zre6*zre6;
+              iq6=zim6*zim6;
+        */
+        SOI_ORBIT(s_zi[6].re, s_state.rq[6].re, s_zi[6].im, s_state.rq[6].im, c_re2, mid_i, s_state.esc[6]);
+        /*
+              zim7=(zim7+zim7)*zre7+mid_i;
+              zre7=rq7-iq7+c_re2;
+              rq7=zre7*zre7;
+              iq7=zim7*zim7;
+        */
+        SOI_ORBIT(s_zi[7].re, s_state.rq[7].re, s_zi[7].im, s_state.rq[7].im, mid_r, c_im2, s_state.esc[7]);
+        /*
+              zim8=(zim8+zim8)*zre8+c_im2;
+              zre8=rq8-iq8+mid_r;
+              rq8=zre8*zre8;
+              iq8=zim8*zim8;
+        */
+        SOI_ORBIT(s_zi[8].re, s_state.rq[8].re, s_zi[8].im, s_state.rq[8].im, mid_r, mid_i, s_state.esc[8]);
+        /*
+              zim9=(zim9+zim9)*zre9+mid_i;
+              zre9=rq9-iq9+mid_r;
+              rq9=zre9*zre9;
+              iq9=zim9*zim9;
+        */
         // iterate test point
-        s_state.tz[0].im = (s_state.tz[0].im + s_state.tz[0].im)*s_state.tz[0].re + s_state.corner[0].im;
-        s_state.tz[0].re = s_state.tq[0].re - s_state.tq[0].im + s_state.corner[0].re;
-        s_state.tq[0].re = s_state.tz[0].re*s_state.tz[0].re;
-        s_state.tq[0].im = s_state.tz[0].im*s_state.tz[0].im;
+        SOI_ORBIT(s_state.tz[0].re, s_state.tq[0].re, s_state.tz[0].im, s_state.tq[0].im, s_state.corner[0].re, s_state.corner[0].im, s_state.t_esc[0]);
+        /*
+              tzi1=(tzi1+tzi1)*tzr1+ci1;
+              tzr1=trq1-tiq1+cr1;
+              trq1=tzr1*tzr1;
+              tiq1=tzi1*tzi1;
+        */
 
-        s_state.tz[1].im = (s_state.tz[1].im + s_state.tz[1].im)*s_state.tz[1].re + s_state.corner[0].im;
-        s_state.tz[1].re = s_state.tq[1].re - s_state.tq[1].im + s_state.corner[1].re;
-        s_state.tq[1].re = s_state.tz[1].re*s_state.tz[1].re;
-        s_state.tq[1].im = s_state.tz[1].im*s_state.tz[1].im;
-
-        s_state.tz[2].im = (s_state.tz[2].im + s_state.tz[2].im)*s_state.tz[2].re + s_state.corner[1].im;
-        s_state.tz[2].re = s_state.tq[2].re - s_state.tq[2].im + s_state.corner[0].re;
-        s_state.tq[2].re = s_state.tz[2].re*s_state.tz[2].re;
-        s_state.tq[2].im = s_state.tz[2].im*s_state.tz[2].im;
-
-        s_state.tz[3].im = (s_state.tz[3].im + s_state.tz[3].im)*s_state.tz[3].re + s_state.corner[1].im;
-        s_state.tz[3].re = s_state.tq[3].re - s_state.tq[3].im + s_state.corner[1].re;
-        s_state.tq[3].re = s_state.tz[3].re*s_state.tz[3].re;
-        s_state.tq[3].im = s_state.tz[3].im*s_state.tz[3].im;
-
+        SOI_ORBIT(s_state.tz[1].re, s_state.tq[1].re, s_state.tz[1].im, s_state.tq[1].im, s_state.corner[1].re, s_state.corner[0].im, s_state.t_esc[1]);
+        /*
+              tzi2=(tzi2+tzi2)*tzr2+ci1;
+              tzr2=trq2-tiq2+cr2;
+              trq2=tzr2*tzr2;
+              tiq2=tzi2*tzi2;
+        */
+        SOI_ORBIT(s_state.tz[2].re, s_state.tq[2].re, s_state.tz[2].im, s_state.tq[2].im, s_state.corner[0].re, s_state.corner[1].im, s_state.t_esc[2]);
+        /*
+              tzi3=(tzi3+tzi3)*tzr3+ci2;
+              tzr3=trq3-tiq3+cr1;
+              trq3=tzr3*tzr3;
+              tiq3=tzi3*tzi3;
+        */
+        SOI_ORBIT(s_state.tz[3].re, s_state.tq[3].re, s_state.tz[3].im, s_state.tq[3].im, s_state.corner[1].re, s_state.corner[1].im, s_state.t_esc[3]);
+        /*
+              tzi4=(tzi4+tzi4)*tzr4+ci2;
+              tzr4=trq4-tiq4+cr2;
+              trq4=tzr4*tzr4;
+              tiq4=tzi4*tzi4;
+        */
         iter++;
 
         // if one of the iterated values bails out, subdivide
-        if (std::find_if(std::begin(s_state.rq), std::end(s_state.rq),
-            [](LongDoubleComplex z) { return z.re + z.im > 16.0; }) != std::end(s_state.rq))
+        if (std::find(std::begin(s_state.esc), std::end(s_state.esc), true) != std::end(s_state.esc)
+            || std::find(std::begin(s_state.t_esc), std::end(s_state.t_esc), true) != std::end(s_state.t_esc))
         {
             break;
         }
 
         /* if maximum number of iterations is reached, the whole rectangle
         can be assumed part of M. This is of course best case behavior
-        of SOI, we seldomly get there */
+        of SOI, we seldom get there */
         if (iter > g_max_iterations)
         {
             put_box(x1, y1, x2, y2, 0);
@@ -811,101 +619,102 @@ scan:
 
     // compute key values for subsequent rectangles
 
-    LDouble re10 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
-    LDouble im10 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
+    double re10 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
+    double im10 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
 
-    LDouble re11 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
-    LDouble im11 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
+    double re11 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
+    double im11 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
 
-    LDouble re20 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
-    LDouble im20 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
+    double re20 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
+    double im20 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
 
-    LDouble re21 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
-    LDouble im21 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
+    double re21 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
+    double im21 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
 
-    LDouble re15 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
-    LDouble im15 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
+    double re15 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
+    double im15 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
 
-    LDouble re16 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
-    LDouble im16 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
+    double re16 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
+    double im16 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
 
-    LDouble re12 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
-    LDouble im12 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
+    double re12 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
+    double im12 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
 
-    LDouble re14 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
-    LDouble im14 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
+    double re14 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
+    double im14 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
 
-    LDouble re17 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
-    LDouble im17 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
+    double re17 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
+    double im17 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
 
-    LDouble re19 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
-    LDouble im19 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
+    double re19 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
+    double im19 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
 
-    LDouble re13 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
-    LDouble im13 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
+    double re13 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
+    double im13 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
 
-    LDouble re18 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
-    LDouble im18 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
+    double re18 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
+    double im18 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
 
-    LDouble re91 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[0].im);
-    LDouble im91 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[0].im);
-    LDouble re92 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[0].im);
-    LDouble im92 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[0].im);
-    LDouble re93 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[1].im);
-    LDouble im93 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[1].im);
-    LDouble re94 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[1].im);
-    LDouble im94 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[1].im);
+    double re91 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[0].im);
+    double im91 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[0].im);
+    double re92 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[0].im);
+    double im92 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[0].im);
+    double re93 = GET_SAVED_REAL(s_state.corner[0].re, s_state.corner[1].im);
+    double im93 = GET_SAVED_IMAG(s_state.corner[0].re, s_state.corner[1].im);
+    double re94 = GET_SAVED_REAL(s_state.corner[1].re, s_state.corner[1].im);
+    double im94 = GET_SAVED_IMAG(s_state.corner[1].re, s_state.corner[1].im);
 
-    RHOMBUS(c_re1, mid_r, c_im1, mid_i, x1, ((x1 + x2) / 2), y1, ((y1 + y2) / 2), //
-        s[0].re, s[0].im,                                                         //
-        s[4].re, s[4].im,                                                         //
-        s[5].re, s[5].im,                                                         //
-        s[8].re, s[8].im,                                                         //
-        re10, im10,                                                               //
-        re12, im12,                                                               //
-        re13, im13,                                                               //
-        re15, im15,                                                               //
-        re91, im91,                                                               //
-        iter);
-    RHOMBUS(mid_r, c_re2, c_im1, mid_i, (x1 + x2) / 2, x2, y1, (y1 + y2) / 2,     //
-        s[4].re, s[4].im,                                                         //
-        s[1].re, s[1].im,                                                         //
-        s[8].re, s[8].im,                                                         //
-        s[6].re, s[6].im,                                                         //
-        re11, im11,                                                               //
-        re13, im13,                                                               //
-        re14, im14,                                                               //
-        re16, im16,                                                               //
-        re92, im92,                                                               //
-        iter);
-    RHOMBUS(c_re1, mid_r, mid_i, c_im2, x1, (x1 + x2) / 2, (y1 + y2) / 2, y2,     //
-        s[5].re, s[5].im,                                                         //
-        s[8].re, s[8].im,                                                         //
-        s[2].re, s[2].im,                                                         //
-        s[7].re, s[7].im,                                                         //
-        re15, im15,                                                               //
-        re17, im17,                                                               //
-        re18, im18,                                                               //
-        re20, im20,                                                               //
-        re93, im93,                                                               //
-        iter);
-    RHOMBUS(mid_r, c_re2, mid_i, c_im2, (x1 + x2) / 2, x2, (y1 + y2) / 2, y2,     //
-        s[8].re, s[8].im,                                                         //
-        s[6].re, s[6].im,                                                         //
-        s[7].re, s[7].im,                                                         //
-        s[3].re, s[3].im,                                                         //
-        re16, im16,                                                               //
-        re18, im18,                                                               //
-        re19, im19,                                                               //
-        re21, im21,                                                               //
-        re94, im94,                                                               //
-        iter);
+    RHOMBUS(c_re1, mid_r, c_im1, mid_i, x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1),
+            s[0].re, s[0].im,
+            s[4].re, s[4].im,
+            s[5].re, s[5].im,
+            s[8].re, s[8].im,
+            re10, im10,
+            re12, im12,
+            re13, im13,
+            re15, im15,
+            re91, im91,
+            iter);
+    RHOMBUS(mid_r, c_re2, c_im1, mid_i, (x1 + x2) >> 1, x2, y1, (y1 + y2) >> 1,
+            s[4].re, s[4].im,
+            s[1].re, s[1].im,
+            s[8].re, s[8].im,
+            s[6].re, s[6].im,
+            re11, im11,
+            re13, im13,
+            re14, im14,
+            re16, im16,
+            re92, im92,
+            iter);
+    RHOMBUS(c_re1, mid_r, mid_i, c_im2, x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2,
+            s[5].re, s[5].im,
+            s[8].re, s[8].im,
+            s[2].re, s[2].im,
+            s[7].re, s[7].im,
+            re15, im15,
+            re17, im17,
+            re18, im18,
+            re20, im20,
+            re93, im93,
+            iter);
+    RHOMBUS(mid_r, c_re2, mid_i, c_im2, (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2,
+            s[8].re, s[8].im,
+            s[6].re, s[6].im,
+            s[7].re, s[7].im,
+            s[3].re, s[3].im,
+            re16, im16,
+            re18, im18,
+            re19, im19,
+            re21, im21,
+            re94, im94,
+            iter);
 
     return status;
 }
 
 static bool rhombus(
-    LDouble c_re1, LDouble c_re2, LDouble c_im1, LDouble c_im2, int x1, int x2, int y1, int y2, long iter)
+    double c_re1, double c_re2, double c_im1, double c_im2,
+    int x1, int x2, int y1, int y2, long iter)
 {
     ++g_rhombus_depth;
     const bool result = rhombus_aux(c_re1, c_re2, c_im1, c_im2, x1, x2, y1, y2, iter);
@@ -913,24 +722,24 @@ static bool rhombus(
     return result;
 }
 
-void soi_ldbl()
+void soi()
 {
     // cppcheck-suppress unreadVariable
     bool status;
-    LDouble tolerance = 0.1;
-    LDouble xx_min_l;
-    LDouble xx_max_l;
-    LDouble yy_min_l;
-    LDouble yy_max_l;
+    double tolerance = 0.1;
+    double xx_min_l;
+    double xx_max_l;
+    double yy_min_l;
+    double yy_max_l;
     g_soi_min_stack_available = 30000;
     g_rhombus_depth = -1;
     g_max_rhombus_depth = 0;
     if (g_bf_math != BFMathType::NONE)
     {
-        xx_min_l = bf_to_float(g_bf_x_min);
-        yy_min_l = bf_to_float(g_bf_y_min);
-        xx_max_l = bf_to_float(g_bf_x_max);
-        yy_max_l = bf_to_float(g_bf_y_max);
+        xx_min_l = (double)bf_to_float(g_bf_x_min);
+        yy_min_l = (double)bf_to_float(g_bf_y_min);
+        xx_max_l = (double)bf_to_float(g_bf_x_max);
+        yy_max_l = (double)bf_to_float(g_bf_y_max);
     }
     else
     {
@@ -940,8 +749,8 @@ void soi_ldbl()
         yy_max_l = g_y_max;
     }
     s_t_width = tolerance/(g_logical_screen_x_dots - 1);
-    LDouble step_x = (xx_max_l - xx_min_l) / g_logical_screen_x_dots;
-    LDouble step_y = (yy_min_l - yy_max_l) / g_logical_screen_y_dots;
+    double step_x = (xx_max_l - xx_min_l) / g_logical_screen_x_dots;
+    double step_y = (yy_min_l - yy_max_l) / g_logical_screen_y_dots;
     s_equal = (step_x < step_y ? step_x : step_y);
 
     RHOMBUS(xx_min_l, xx_max_l, yy_max_l, yy_min_l,
