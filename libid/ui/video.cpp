@@ -107,12 +107,10 @@ void set_normal_span()
 
 static void null_write_pixel(int a, int b, int c)
 {
-    assert(FALSE);
 }
 
 static int null_read_pixel(int a, int b)
 {
-    assert(FALSE);
     return 0;
 }
 
