@@ -720,7 +720,7 @@ static void init_calc_fract()
 static bool is_standard_fractal()
 {
     return g_cur_fractal_specific->calc_type == standard_fractal_type //
-        || g_cur_fractal_specific->calc_type == calc_mandelbrot_type  //
+        || g_calc_type == calc_mandelbrot_type                        //
         || g_cur_fractal_specific->calc_type == lyapunov_type         //
         || g_cur_fractal_specific->calc_type == froth_type;
 }
