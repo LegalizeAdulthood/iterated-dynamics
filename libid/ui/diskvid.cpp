@@ -126,7 +126,7 @@ int targa_start_disk(std::FILE *targa_fp, int overhead)
     if (driver_is_disk()) // ditch the original file, make just the targa
     {
         end_disk();      // close the 'screen'
-        set_null_video(); // set readdot and writedot routines to do nothing
+        set_null_video(); // set read_pixel and write_pixel routines to do nothing
     }
     s_header_length = overhead;
     s_fp = targa_fp;
