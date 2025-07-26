@@ -1214,6 +1214,25 @@ int calc_mandelbrot_type()
         g_init.x = g_dx_pixel();
         g_init.y = g_dy_pixel();
     }
+    g_keyboard_check_interval--;                // Only check the keyboard sometimes
+    if (g_keyboard_check_interval < 0)
+    {
+        g_keyboard_check_interval = 1000;
+        if (int key = driver_key_pressed(); key)
+        {
+            if (key == 'o' || key == 'O')
+            {
+                driver_get_key();
+                g_show_orbit = !g_show_orbit;
+            }
+            else
+            {
+                g_color_iter = -1;
+                g_color = -1;
+                return -1;
+            }
+        }
+    }
     if (mandelbrot_orbit() >= 0)
     {
         if (g_potential_flag)

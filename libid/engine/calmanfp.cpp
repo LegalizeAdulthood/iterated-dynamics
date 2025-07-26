@@ -58,24 +58,6 @@ long mandelbrot_orbit()
     g_orbit_save_index = 0;
     long saved_and = g_first_saved_and;
     int saved_incr = 1;             // start checking the very first time
-    g_keyboard_check_interval--;                // Only check the keyboard sometimes
-    if (g_keyboard_check_interval < 0)
-    {
-        g_keyboard_check_interval = 1000;
-        if (int key = driver_key_pressed(); key)
-        {
-            if (key == 'o' || key == 'O')
-            {
-                driver_get_key();
-                g_show_orbit = !g_show_orbit;
-            }
-            else
-            {
-                g_color_iter = -1;
-                return -1;
-            }
-        }
-    }
 
     long cx = g_max_iterations;
     if (g_fractal_type != FractalType::JULIA)

@@ -353,9 +353,9 @@ static MainState request_3d_fractal_params(MainContext &context)
 static MainState show_orbit_window(MainContext &/*context*/)
 {
     // must use standard fractal and have a float variant
-    if ((get_fractal_specific(g_fractal_type)->calc_type == standard_fractal_type //
-            || get_fractal_specific(g_fractal_type)->calc_type == froth_type)     //
-        && g_bf_math == BFMathType::NONE // for now no arbitrary precision support
+    if ((g_cur_fractal_specific->calc_type == standard_fractal_type //
+            || g_cur_fractal_specific->calc_type == froth_type)     //
+        && g_bf_math == BFMathType::NONE                            // for now no arbitrary precision support
         && (!g_is_true_color || g_true_mode == TrueColorMode::DEFAULT_COLOR))
     {
         clear_zoom_box();
