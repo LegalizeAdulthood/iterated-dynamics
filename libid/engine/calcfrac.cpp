@@ -884,15 +884,12 @@ static void work_list_pop_front()
 // general escape-time engine routines
 static void perform_work_list()
 {
-    int (*sv_orbit_calc)(){}; // function that calculates one orbit iteration
-    int (*sv_per_pixel)(){};  // once-per-pixel init
-    bool (*sv_per_image)(){}; // once-per-image setup
+    ValueSaver saved_orbit_calc{g_cur_fractal_specific->orbit_calc}; // one orbit iteration
+    ValueSaver saved_per_pixel{g_cur_fractal_specific->per_pixel};   // once-per-pixel init
+    ValueSaver saved_per_image{g_cur_fractal_specific->per_image};   // once-per-image setup
 
     if (const int alt = find_alternate_math(g_fractal_type, g_bf_math); alt > -1)
     {
-        sv_orbit_calc = g_cur_fractal_specific->orbit_calc;
-        sv_per_pixel = g_cur_fractal_specific->per_pixel;
-        sv_per_image = g_cur_fractal_specific->per_image;
         g_cur_fractal_specific->orbit_calc = g_alternate_math[alt].orbit_calc;
         g_cur_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
         g_cur_fractal_specific->per_image = g_alternate_math[alt].per_image;
@@ -1191,12 +1188,6 @@ static void perform_work_list()
     else
     {
         g_calc_status = CalcStatus::COMPLETED; // completed
-    }
-    if (sv_orbit_calc != nullptr)
-    {
-        g_cur_fractal_specific->orbit_calc = sv_orbit_calc;
-        g_cur_fractal_specific->per_pixel = sv_per_pixel;
-        g_cur_fractal_specific->per_image = sv_per_image;
     }
 }
 

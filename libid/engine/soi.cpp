@@ -20,6 +20,10 @@
 #include "misc/Driver.h"
 #include "misc/stack_avail.h"
 
+#include <algorithm>
+#include <cmath>
+#include <iterator>
+
 enum
 {
     EVERY = 15,
