@@ -54,7 +54,7 @@ int ssg_block_size()
 
 // Timothy Wegner invented this solid guessing idea and implemented it in
 // more or less the overall framework you see here.  Tim added this note
-// now in a possibly vain attempt to secure my place in history, because
+// now in a possibly vain attempt to secure his place in history, because
 // Pieter Branderhorst has totally rewritten this routine, incorporating
 // a *MUCH* more sophisticated algorithm.  His revised code is not only
 // faster, but is also more accurate. Harrumph!
