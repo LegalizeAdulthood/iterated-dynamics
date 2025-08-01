@@ -30,7 +30,7 @@ class Tesseral
 public:
     Tesseral();
 
-    bool more() const;
+    bool done() const;
     void next_box();
     bool split_needed();
     void fill_box();
@@ -125,9 +125,9 @@ Tesseral::Tesseral() :
     g_passes = Passes::TESSERAL; // for tab_display
 }
 
-bool Tesseral::more() const
+bool Tesseral::done() const
 {
-    return m_tp >= &m_stack[0];
+    return m_tp < &m_stack[0];
 }
 
 void Tesseral::next_box()
@@ -347,7 +347,7 @@ int tesseral()
 {
     Tesseral tess;
 
-    while (tess.more())
+    while (!tess.done())
     {
         tess.next_box();
 
@@ -368,7 +368,7 @@ int tesseral()
         }
     }
 
-    if (tess.more())
+    if (!tess.done())
     {
         tess.suspend();
         return -1;
