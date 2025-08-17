@@ -56,6 +56,7 @@ target_folder(ascii-doc "Docs")
 
 if(ASCII_DOCTOR)
     add_custom_target(html-doc
+        ALL
         DEPENDS hc ascii-doc
         SOURCES ${CMAKE_CURRENT_BINARY_DIR}/id.html ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     add_custom_command(
