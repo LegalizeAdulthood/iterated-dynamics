@@ -3,10 +3,12 @@
 #pragma once
 
 #include <filesystem>
+#include <memory>
 
 class SpecialDirectories
 {
 public:
+    SpecialDirectories() = default;
     virtual ~SpecialDirectories() = default;
 
     virtual std::filesystem::path exeuctable_dir() const = 0;
