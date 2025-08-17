@@ -162,7 +162,7 @@
       },
       "filter": {
         "exclude": {
-          "label": "image|colormap"
+          "label": "image|colormap|orbit|raytrace"
         }
       }
     },
