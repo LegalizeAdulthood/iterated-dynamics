@@ -13,6 +13,7 @@
 #include "ui/read_ticker.h"
 #include "ui/zoom.h"
 
+#include <cassert>
 #include <chrono>
 #include <ctime>
 #include <string>
@@ -36,7 +37,7 @@ uclock_t usec_clock()
 {
     uclock_t result{};
     // TODO
-    _ASSERTE(FALSE);
+    assert(FALSE);
 
     return result;
 }
@@ -141,7 +142,7 @@ int WxDriver::key_pressed()
  */
 void WxDriver::unget_key(int key)
 {
-    _ASSERTE(0 == m_key_buffer);
+    assert(0 == m_key_buffer);
     m_key_buffer = key;
 }
 
@@ -259,8 +260,8 @@ void WxDriver::put_string(int row, int col, int attr, char const *msg)
     //{
     //    int abs_row = g_text_rbase + g_text_row;
     //    int abs_col = g_text_cbase + g_text_col;
-    //    _ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
-    //    _ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
+    //    assert(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
+    //    assert(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
     //    m_win_text.put_string(abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
     //}
 }
@@ -326,7 +327,7 @@ void WxDriver::stack_screen()
 void WxDriver::unstack_screen()
 {
     throw std::runtime_error("not implemented");
-    //_ASSERTE(!m_saved_cursor.empty());
+    //assert(!m_saved_cursor.empty());
     //const int packed{m_saved_cursor.back()};
     //m_saved_cursor.pop_back();
     //g_text_row = packed / 80;
