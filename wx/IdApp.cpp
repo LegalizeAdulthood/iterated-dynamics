@@ -18,7 +18,9 @@ wxIMPLEMENT_APP(IdApp);
 
 bool IdApp::OnInit()
 {
+#ifdef WIN32
     g_instance = wxGetInstance();
+#endif
 
     return true;
 }
