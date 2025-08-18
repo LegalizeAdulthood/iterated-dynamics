@@ -9,7 +9,9 @@
 
 #include <wx/wx.h>
 #include <wx/evtloop.h>
+#ifdef WIN32
 #include <wx/msw/private.h>
+#endif
 
 #include <array>
 #include <cassert>
