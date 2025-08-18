@@ -108,7 +108,10 @@ add_executable(test-id
     ui/test_video_mode.cpp
 )
 if(ID_USE_WX)
-    target_sources(test-id PRIVATE ui/stub.cpp)
+    target_sources(test-id PRIVATE
+        include/MockSpecialDirectories.h
+        io/MockSpecialDirectories.cpp
+        ui/stub.cpp)
 endif()
 source_group("CMake Scripts" REGULAR_EXPRESSION ".*\\.cmake$")
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")
