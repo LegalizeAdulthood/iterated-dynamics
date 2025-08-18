@@ -294,13 +294,13 @@
     {
       "name": "ci-wx-debug",
       "displayName": "CI Package wxWidgets debug build",
-      "configurePreset": "ci-debug",
+      "configurePreset": "ci-wx-debug",
       "configurations": [ "Debug" ]
     },
     {
       "name": "ci-wx-release",
       "displayName": "CI Package wxWidgets release build",
-      "configurePreset": "ci-release",
+      "configurePreset": "ci-wx-release",
       "configurations": [ "RelWithDebInfo" ]
     }
   ],
