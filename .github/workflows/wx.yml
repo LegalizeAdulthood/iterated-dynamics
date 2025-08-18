@@ -1,0 +1,115 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+name: wxWidgets
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+env:
+  FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
+
+jobs:
+  wx:
+    needs: html-docs
+    strategy:
+      matrix:
+        preset: [ wx-debug, wx-release ]
+        # macos-latest is disabled for now
+        os: [ ubuntu-latest, windows-latest ]
+        include:
+          #- os: macos-latest
+          #  nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
+          - os: ubuntu-latest
+            nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
+          - os: windows-latest
+            nuget: nuget
+
+    runs-on: ${{matrix.os}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
+      with:
+        submodules: true
+
+    - name: Install Prerequisites Linux
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      shell: bash
+      run: |
+        ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+        sudo apt-get update
+        sudo apt-get install libx11-dev mono-complete
+
+    #- name: Install Prerequisites macOS
+    #  if: ${{matrix.os == 'macos-latest'}}
+    #  shell: bash
+    #  run: |
+    #    ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+
+    - name: Add NuGet sources
+      shell: bash
+      run: |
+        ${{matrix.nuget}} \
+          sources add \
+          -Source "${{env.FEED_URL}}" \
+          -StorePasswordInClearText \
+          -Name GitHubPackages \
+          -UserName "${{github.repository_owner}}" \
+          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+        ${{matrix.nuget}} \
+          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+          -Source "${{env.FEED_URL}}"
+
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
+      with:
+        cmake-version: '3.31'
+
+    - name: Get HTML documentation
+      uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
+      with:
+        name: html-docs
+
+    - name: Run Workflow
+      env: 
+        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+      run: cmake --workflow --preset ci-${{matrix.preset}}
+
+    - name: Build Setup package
+      if: ${{matrix.os == 'windows-latest'}}
+      run: cmake --build --preset ci-${{matrix.preset}} --target setup
+
+    - name: Upload setup package artifacts
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      if: ${{matrix.os == 'windows-latest'}}
+      with:
+        name: Setup-${{matrix.preset}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*-Setup.exe
+        compression-level: 0
+
+    - name: Upload msi package artifacts
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      if: ${{matrix.os == 'windows-latest'}}
+      with:
+        name: Msi-${{matrix.preset}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.msi
+        compression-level: 0
+
+    - name: Upload zip package artifacts
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      if: ${{matrix.os == 'windows-latest'}}
+      with:
+        name: Zip-${{matrix.preset}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
+        compression-level: 0
+
+    - name: Upload tar.gz package artifacts
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      with:
+        name: Tar-${{matrix.preset}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
+        compression-level: 0

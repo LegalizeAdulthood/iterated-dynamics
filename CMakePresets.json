@@ -110,6 +110,16 @@
       "inherits": [ "ci-build-preset", "default", "release-config", "run-slow-tests" ]
     },
     {
+      "name": "ci-wx-debug",
+      "displayName": "CI Configure with wxWidgets Debug settings",
+      "inherits": [ "ci-build-preset", "wx", "debug-config", "run-slow-tests" ]
+    },
+    {
+      "name": "ci-wx-release",
+      "displayName": "CI Configure with wxWidgets Release settings",
+      "inherits": [ "ci-build-preset", "wx", "release-config", "run-slow-tests" ]
+    },
+    {
       "name": "ci-html-docs",
       "displayName": "CI Configure HTML docs with Release settings for HTML",
       "inherits": [ "ci-build-preset", "default", "release-config" ]
@@ -153,6 +163,19 @@
       "name": "ci-release",
       "displayName": "CI Build with Release settings",
       "configurePreset": "ci-release",
+      "configuration": "RelWithDebInfo",
+      "targets": [ "package" ]
+    },
+    {
+      "name": "ci-wx-debug",
+      "displayName": "CI Build with wxWidgets Debug settings",
+      "configurePreset": "ci-wx-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ci-wx-release",
+      "displayName": "CI Build with wxWidgets Release settings",
+      "configurePreset": "ci-wx-release",
       "configuration": "RelWithDebInfo",
       "targets": [ "package" ]
     },
@@ -221,6 +244,20 @@
       "inherits": [ "settings" ],
       "configurePreset": "ci-release",
       "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ci-wx-debug",
+      "displayName": "CI Test with wxWidgets Debug settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "ci-wx-debug",
+      "configuration": "Debug"
+    },
+    {
+      "name": "ci-wx-release",
+      "displayName": "CI Test with wxWidgets Release settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "ci-wx-release",
+      "configuration": "RelWithDebInfo"
     }
   ],
   "packagePresets": [
@@ -251,6 +288,18 @@
     {
       "name": "ci-release",
       "displayName": "CI Package release build",
+      "configurePreset": "ci-release",
+      "configurations": [ "RelWithDebInfo" ]
+    },
+    {
+      "name": "ci-wx-debug",
+      "displayName": "CI Package wxWidgets debug build",
+      "configurePreset": "ci-debug",
+      "configurations": [ "Debug" ]
+    },
+    {
+      "name": "ci-wx-release",
+      "displayName": "CI Package wxWidgets release build",
       "configurePreset": "ci-release",
       "configurations": [ "RelWithDebInfo" ]
     }
@@ -381,6 +430,50 @@
         {
           "type": "package",
           "name": "ci-release"
+        }
+      ]
+    },
+    {
+      "name": "ci-wx-debug",
+      "displayName": "CI Workflow with wxWidgets Debug settings: configure, build, test and package",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-wx-debug"
+        },
+        {
+          "type": "build",
+          "name": "ci-wx-debug"
+        },
+        {
+          "type": "test",
+          "name": "ci-wx-debug"
+        },
+        {
+          "type": "package",
+          "name": "ci-wx-debug"
+        }
+      ]
+    },
+    {
+      "name": "ci-wx-release",
+      "displayName": "CI Workflow with wxWidgets Release settings: configure, build, test and package",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "ci-wx-release"
+        },
+        {
+          "type": "build",
+          "name": "ci-wx-release"
+        },
+        {
+          "type": "test",
+          "name": "ci-wx-release"
+        },
+        {
+          "type": "package",
+          "name": "ci-wx-release"
         }
       ]
     },
