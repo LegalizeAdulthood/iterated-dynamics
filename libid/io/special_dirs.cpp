@@ -2,5 +2,5 @@
 //
 #include "io/special_dirs.h"
 
-std::shared_ptr<SpecialDirectories> g_special_dirs;
+std::shared_ptr<SpecialDirectories> g_special_dirs{create_special_directories()};
 std::filesystem::path g_save_dir;

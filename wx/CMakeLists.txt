@@ -4,10 +4,6 @@
 
 find_package(wxWidgets CONFIG REQUIRED)
 
-add_library(os-hc INTERFACE)
-target_link_libraries(os-hc INTERFACE helpcom config)
-set_target_properties(os-hc PROPERTIES FOLDER Libraries)
-
 add_library(os STATIC
     WxDriver.h WxDriver.cpp
     read_ticker.cpp
@@ -32,7 +28,7 @@ add_executable(id WIN32
     IdFrame.h IdFrame.cpp
     init_failure.cpp
     #TextScreen.h TextScreen.cpp
-    WxSpecialDirectories.h WxSpecialDirectories.cpp
+    WxSpecialDirectories.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)

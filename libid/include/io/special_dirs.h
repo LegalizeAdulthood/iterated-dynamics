@@ -11,9 +11,10 @@ public:
     SpecialDirectories() = default;
     virtual ~SpecialDirectories() = default;
 
-    virtual std::filesystem::path exeuctable_dir() const = 0;
+    virtual std::filesystem::path program_dir() const = 0;
     virtual std::filesystem::path documents_dir() const = 0;
 };
 
+extern std::shared_ptr<SpecialDirectories> create_special_directories();
 extern std::shared_ptr<SpecialDirectories> g_special_dirs;
 extern std::filesystem::path g_save_dir;

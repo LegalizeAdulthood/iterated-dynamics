@@ -13,7 +13,7 @@
       "cacheVariables": {
         "ID_PROJECT_NAME": {
           "type": "STRING",
-          "value": "Iterated Dynamics ${sourceDirName} ${presetName}"
+          "value": "Iterated Dynamics ${presetName}"
         }
       }
     },
@@ -21,7 +21,7 @@
       "name": "sibling-build-preset",
       "hidden": true,
       "description": "Use a sibling directory for the build based on the preset name",
-      "binaryDir": "${sourceDir}/../build-${sourceDirName}-${presetName}"
+      "binaryDir": "${sourceDir}/../build-${presetName}"
     },
     {
       "name": "ci-build-preset",
@@ -81,6 +81,15 @@
       "inherits": [ "sibling-build-preset", "project-name-preset", "vcpkg" ]
     },
     {
+      "name": "wx",
+      "displayName": "Configure with wxWidgets settings",
+      "inherits": [ "sibling-build-preset", "project-name-preset", "vcpkg" ],
+      "cacheVariables": {
+        "ID_USE_WX": true,
+        "VCPKG_MANIFEST_FEATURES": "wx"
+      }
+    },
+    {
       "name": "debug",
       "displayName": "Configure with Debug settings",
       "inherits": [ "default", "debug-config" ]
@@ -116,6 +125,11 @@
       "name": "default",
       "displayName": "Build with default settings",
       "configurePreset": "default"
+    },
+    {
+      "name": "wx",
+      "displayName": "Build with wxWidgets settings",
+      "configurePreset": "wx"
     },
     {
       "name": "debug",
@@ -159,11 +173,6 @@
       },
       "execution": {
         "jobs": 4
-      },
-      "filter": {
-        "exclude": {
-          "label": "image|colormap|orbit|raytrace"
-        }
       }
     },
     {
@@ -172,6 +181,18 @@
       "inherits": [ "settings" ],
       "configurePreset": "default",
       "configuration": "Debug"
+    },
+    {
+      "name": "wx",
+      "displayName": "Test with wxWidgets settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "wx",
+      "configuration": "Debug",
+      "filter": {
+        "exclude": {
+          "label": "image|colormap|orbit|raytrace"
+        }
+      }
     },
     {
       "name": "debug",
@@ -210,6 +231,12 @@
       "configurations": [ "Debug" ]
     },
     {
+      "name": "wx",
+      "displayName": "Package wxWidgets build",
+      "configurePreset": "wx",
+      "configurations": [ "Debug" ]
+    },
+    {
       "name": "release",
       "displayName": "Package release build",
       "configurePreset": "release",
@@ -244,6 +271,28 @@
         {
           "type": "test",
           "name": "default"
+        }
+      ]
+    },
+    {
+      "name": "wx",
+      "displayName": "Workflow with wxWidgets settings: configure, build and test",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "wx"
+        },
+        {
+          "type": "build",
+          "name": "wx"
+        },
+        {
+          "type": "test",
+          "name": "wx"
+        },
+        {
+          "type": "package",
+          "name": "wx"
         }
       ]
     },

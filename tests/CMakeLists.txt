@@ -99,7 +99,6 @@ add_executable(test-id
     misc/test_driver.cpp
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
-    ui/stub.cpp
     ui/test_ChoiceBuilder.cpp
     ui/test_comments.cpp
     ui/test_file_item.cpp
@@ -108,6 +107,9 @@ add_executable(test-id
     ui/test_make_batch_file.cpp
     ui/test_video_mode.cpp
 )
+if(ID_USE_WX)
+    target_sources(test-id PRIVATE ui/stub.cpp)
+endif()
 source_group("CMake Scripts" REGULAR_EXPRESSION ".*\\.cmake$")
 source_group("CMake Templates" REGULAR_EXPRESSION ".*\\.in$")
 source_group("Test Data/Color Maps" REGULAR_EXPRESSION ".*\\.map$")

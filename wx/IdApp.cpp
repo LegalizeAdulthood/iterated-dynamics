@@ -5,7 +5,6 @@
 #include "ui/id_main.h"
 
 #include "IdFrame.h"
-#include "WxSpecialDirectories.h"
 #include "../win32/instance.h"
 
 #include <wx/wx.h>
@@ -19,8 +18,6 @@ wxIMPLEMENT_APP(IdApp);
 
 bool IdApp::OnInit()
 {
-    g_special_dirs = std::make_shared<id::WxSpecialDirectories>();
-
     g_instance = wxGetInstance();
 
     return true;
