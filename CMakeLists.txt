@@ -26,6 +26,7 @@ set(ID_PROGRAM_NAME "Iterated Dynamics")
 set(ID_VENDOR_NAME  "Legalize Adulthood!")
 
 set(ID_PROJECT_NAME "${ID_PROGRAM_NAME}" CACHE STRING "Project name for IDEs")
+option(ID_USE_WX "Enable wxWidgets for the GUI" OFF)
 
 project("${ID_PROJECT_NAME}"
     VERSION 1.3.2.0
