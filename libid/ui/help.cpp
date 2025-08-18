@@ -818,7 +818,7 @@ int help()
     }
 
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
-    g_timer_start -= std::clock();
+    g_engine_timer_start -= std::clock();
     driver_stack_screen();
 
     if (g_help_mode >= HelpLabels::HELP_INDEX)
@@ -936,7 +936,7 @@ int help()
 
     driver_unstack_screen();
     g_help_mode = old_help_mode;
-    g_timer_start += std::clock();
+    g_engine_timer_start += std::clock();
 
     return 0;
 }

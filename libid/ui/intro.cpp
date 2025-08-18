@@ -31,7 +31,7 @@ void intro()
     char credits[32768]{};
     char screen_text[32768];
 
-    g_timer_start -= std::clock();       // "time out" during help
+    g_engine_timer_start -= std::clock();       // "time out" during help
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_MENU};
 

@@ -16,9 +16,9 @@
 #include <cstdio>
 #include <ctime>
 
-bool g_timer_flag{};     // you didn't see this, either
-long g_timer_start{};    // timer(...) start & total
-long g_timer_interval{}; //
+bool g_timer_flag{};         // you didn't see this, either
+long g_engine_timer_start{}; // timer(...) start & total
+long g_timer_interval{};     //
 
 namespace
 {
@@ -55,7 +55,7 @@ static int timer(TimerType type, int (*fn)(), ...)
     {
         fp = std::fopen(id::io::get_save_path(id::io::WriteFile::ROOT, "id-bench.txt").string().c_str(), "a");
     }
-    g_timer_start = std::clock();
+    g_engine_timer_start = std::clock();
     switch (type)
     {
     case TimerType::ENGINE:
@@ -70,7 +70,7 @@ static int timer(TimerType type, int (*fn)(), ...)
         break;
     }
     // next assumes CLOCKS_PER_SEC is 10^n, n>=2
-    g_timer_interval = (std::clock() - g_timer_start) / (CLOCKS_PER_SEC / 100);
+    g_timer_interval = (std::clock() - g_engine_timer_start) / (CLOCKS_PER_SEC / 100);
 
     if (do_bench)
     {

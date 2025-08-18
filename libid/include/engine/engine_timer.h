@@ -4,7 +4,7 @@
 
 extern bool                  g_timer_flag;
 extern long                  g_timer_interval;
-extern long                  g_timer_start;
+extern long                  g_engine_timer_start;
 
 void engine_timer(int (*fn)());
 int encoder_timer();

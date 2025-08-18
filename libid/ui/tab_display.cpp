@@ -238,7 +238,7 @@ int tab_display()       // display the status of the current image
     }
     if (g_calc_status == CalcStatus::IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     {
-        g_calc_time += (std::clock() - g_timer_start) / (CLOCKS_PER_SEC/100);
+        g_calc_time += (std::clock() - g_engine_timer_start) / (CLOCKS_PER_SEC/100);
     }
     driver_stack_screen();
     if (g_bf_math != BFMathType::NONE)
@@ -663,7 +663,7 @@ top:
         }
     }
     driver_unstack_screen();
-    g_timer_start = std::clock(); // tab display was "time out"
+    g_engine_timer_start = std::clock(); // tab display was "time out"
     if (g_bf_math != BFMathType::NONE)
     {
         restore_stack(saved);
