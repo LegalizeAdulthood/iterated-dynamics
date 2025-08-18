@@ -40,7 +40,7 @@ std::filesystem::path Win32SpecialDirectories::documents_dir() const
     return buffer;
 }
 
-}
+} // namespace
 
 std::shared_ptr<SpecialDirectories> create_special_directories()
 {
