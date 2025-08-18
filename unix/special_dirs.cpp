@@ -15,17 +15,17 @@ enum
     BUFFER_SIZE = 1024
 };
 
-class PosixSpecialDirs : public SpecialDirs
+class PosixSpecialDirectories : public SpecialDirectories
 {
 public:
-    PosixSpecialDirs() = default;
-    ~PosixSpecialDirs() override = default;
+    PosixSpecialDirectories() = default;
+    ~PosixSpecialDirectories() override = default;
 
     std::filesystem::path program_dir() const override;
     std::filesystem::path documents_dir() const override;
 };
 
-std::filesystem::path PosixSpeciaDirs::program_dir() const
+std::filesystem::path PosixSpecialDirectories::program_dir() const
 {
     char buffer[BUFFER_SIZE]{};
     int bytes_read = readlink("/proc/self/exe", buffer, std::size(buffer));
@@ -36,7 +36,7 @@ std::filesystem::path PosixSpeciaDirs::program_dir() const
     return std::filesystem::path{buffer}.parent_path();
 }
 
-std::filesystem::path PosixSpecialDirs::documents_dir() const
+std::filesystem::path PosixSpecialDirectories::documents_dir() const
 {
     char buffer[BUFFER_SIZE]{};
     const char *home = std::getenv("HOME");
@@ -45,7 +45,7 @@ std::filesystem::path PosixSpecialDirs::documents_dir() const
 
 } // namespace
 
-std::shared_ptr<SpecialDirs> create_special_dirs()
+std::shared_ptr<SpecialDirectories> create_special_directories()
 {
-    return std::make_shared<PosixSpecialDirs>();
+    return std::make_shared<PosixSpecialDirectories>();
 }
