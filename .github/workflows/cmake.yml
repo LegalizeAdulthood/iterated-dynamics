@@ -279,8 +279,7 @@ jobs:
         # a whole bunch of stuff needed for gtk3
         sudo apt-get install bison build-essential cmake gperf libdbus-1-dev libgl1-mesa-dev
         sudo apt-get install libglu1-mesa-dev libtool libudev-dev libx11-xcb-dev libxcursor-dev
-        sudo apt-get install libxdamage-dev libxinerama-dev libxrandr-dev nasm ninja-build
-        sudo apt-get install pkg-config python3-distutils
+        sudo apt-get install libxdamage-dev libxinerama-dev libxrandr-dev nasm ninja-build pkg-config
 
     #- name: Install Prerequisites macOS
     #  if: ${{matrix.os == 'macos-latest'}}
