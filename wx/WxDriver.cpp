@@ -556,11 +556,11 @@ void WxDriver::write_pixel(int x, int y, int color)
 {
 }
 
-void WxDriver::read_span(int y, int x, int lastx, BYTE *pixels)
+void WxDriver::read_span(int y, int x, int lastx, Byte *pixels)
 {
 }
 
-void WxDriver::write_span(int y, int x, int lastx, BYTE *pixels)
+void WxDriver::write_span(int y, int x, int lastx, Byte *pixels)
 {
 }
 
