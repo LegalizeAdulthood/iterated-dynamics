@@ -1,11 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 
-#include <array>
-#include <cassert>
-#include <cstdlib>
-#include <cstring>
-
 #include "port.h"
 #include "id.h"
 
@@ -14,6 +9,10 @@
 
 #include "drivers.h"
 
+#include <array>
+#include <cassert>
+#include <cstdlib>
+#include <cstring>
 #include <string>
 
 #define TIMER_ID 1
@@ -379,7 +378,7 @@ int TextScreen::text_on()
     //    nullptr,                                              //
     //    m_instance,                                           //
     //    nullptr);
-    //_ASSERTE(m_window);
+    //assert(m_window);
 
     m_text_mode = 2;
     m_alt_f4_hit = false;
@@ -864,7 +863,7 @@ void TextScreen::schedule_alarm(int secs)
     //if (!result)
     {
         //DWORD error = GetLastError();
-        //_ASSERTE(result);
+        //assert(result);
     }
 }
 

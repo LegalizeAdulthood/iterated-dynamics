@@ -42,7 +42,7 @@ int IdFrame::get_key_press(bool wait_for_key)
 
     if (m_key_press_count == 0)
     {
-        _ASSERTE(!wait_for_key);
+        assert(!wait_for_key);
         return 0;
     }
 
