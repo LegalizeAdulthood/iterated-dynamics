@@ -1,0 +1,34 @@
+# wxWidgets
+libegl1-mesa-dev
+libgles2-mesa-dev
+libibus-1.0-dev
+libltdl-dev
+libwayland-dev
+libx11-dev
+libxext-dev
+libxft-dev
+libxi-dev
+libxkbcommon-dev
+libxtst-dev
+# nuget package caching
+mono-complete
+# a whole bunch of stuff needed for gtk3
+bison
+build-essential
+cmake
+gperf
+libdbus-1-dev
+libgl1-mesa-dev
+libglu1-mesa-dev
+libtool
+libudev-dev
+libx11-xcb-dev
+libxcursor-dev
+libxdamage-dev
+libxinerama-dev
+libxrandr-dev
+nasm
+ninja-build
+pkg-config
+# openssh
+linux-libc-dev

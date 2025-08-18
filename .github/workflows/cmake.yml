@@ -273,13 +273,7 @@ jobs:
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
         sudo apt-get update
-        sudo apt-get install libegl1-mesa-dev libgles2-mesa-dev libibus-1.0-dev libltdl-dev libwayland-dev
-        sudo apt-get install libx11-dev libxext-dev libxft-dev libxi-dev libxkbcommon-dev libxtst-dev
-        sudo apt-get install mono-complete
-        # a whole bunch of stuff needed for gtk3
-        sudo apt-get install bison build-essential cmake gperf libdbus-1-dev libgl1-mesa-dev
-        sudo apt-get install libglu1-mesa-dev libtool libudev-dev libx11-xcb-dev libxcursor-dev
-        sudo apt-get install libxdamage-dev libxinerama-dev libxrandr-dev nasm ninja-build pkg-config
+        sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install
 
     #- name: Install Prerequisites macOS
     #  if: ${{matrix.os == 'macos-latest'}}
