@@ -32,7 +32,7 @@ add_executable(id WIN32
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
-target_link_libraries(id PUBLIC libid)
+target_link_libraries(id PUBLIC libid wx::core wx::base)
 install(TARGETS id
     DESTINATION .
     RUNTIME_DEPENDENCIES
