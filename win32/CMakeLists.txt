@@ -14,7 +14,7 @@ string(TIMESTAMP CURRENT_YEAR "%Y")
 configure_file(id.rc.in id.rc @ONLY)
 
 if(ID_USE_WX)
-    add_library(os-win32 STATIC
+    add_library(os-wx STATIC
         create_minidump.h
         DiskDriver.cpp
         GDIDriver.cpp
@@ -24,16 +24,15 @@ if(ID_USE_WX)
         Plot.h Plot.cpp
         WinText.h WinText.cpp
         tos.h tos.cpp
-        special_dirs.cpp
         win_defines.h
     )
 
-    target_compile_definitions(os-win32 PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-    target_compile_options(os-win32 PRIVATE ${ID_TARGET_OPTIONS})
-    target_link_libraries(os-win32 PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
-    target_include_directories(os-win32 PRIVATE ../libid/include PUBLIC .)
-    target_folder(os-win32 "Libraries")
-    add_dependencies(os-win32 native-help)
+    target_compile_definitions(os-wx PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
+    target_compile_options(os-wx PRIVATE ${ID_TARGET_OPTIONS})
+    target_link_libraries(os-wx PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
+    target_include_directories(os-wx PRIVATE ../libid/include PUBLIC .)
+    target_folder(os-wx "Libraries")
+    add_dependencies(os-wx native-help)
 else()
     add_library(os STATIC
         create_minidump.h create_minidump.cpp

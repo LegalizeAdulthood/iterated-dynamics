@@ -258,7 +258,7 @@ set_source_files_properties(io/decode_info.cpp
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
 if(ID_USE_WX)
-    set(ID_OS_LIBS os-win32)
+    set(ID_OS_LIBS os-wx)
 else()
     set(ID_OS_LIBS "")
 endif()
