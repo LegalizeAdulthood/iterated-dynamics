@@ -100,6 +100,13 @@ public:
     void refresh_display();
     bool is_valid_position(int row, int col) const;
 
+protected:
+    // Override size-related methods to enforce fixed size
+    void DoSetSize(int x, int y, int width, int height, int size_flags = wxSIZE_AUTO) override;
+    wxSize DoGetBestSize() const override;
+    wxSize GetMinSize() const override;
+    wxSize GetMaxSize() const override;
+
 private:
     void initialize_styles();
     void update_cell_display(int row, int col);
@@ -107,6 +114,9 @@ private:
     int get_style_number(unsigned char attr) const;
     int position_from_row_col(int row, int col) const;
     void row_col_from_position(int pos, int &row, int &col) const;
+    wxSize calculate_fixed_size() const;
+
+    wxFont m_font;
 
     // Screen buffer - 80x25 character cells
     std::array<std::array<CGACell, SCREEN_WIDTH>, SCREEN_HEIGHT> m_screen_buffer;
@@ -120,6 +130,9 @@ private:
     // Style mappings for different CGA attribute combinations
     static constexpr int MAX_STYLES = 256; // All possible CGA attribute combinations
     bool m_styles_initialized{false};
+
+    // Fixed size for 80x25 display
+    mutable wxSize m_fixed_size{};
 };
 
 } // namespace ui

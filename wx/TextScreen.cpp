@@ -49,8 +49,11 @@ static wxColour cga_color_to_wx_color(CGAColor color, bool intense)
 }
 
 TextScreen::TextScreen(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) :
-    wxStyledTextCtrl(parent, id, pos, size, style)
+    wxStyledTextCtrl(parent, id, pos, wxDefaultSize, style), // Always use calculated size
+    m_font(wxFontInfo(12).Family(wxFONTFAMILY_TELETYPE).FaceName("Consolas"))
 {
+    InvalidateBestSize();
+
     // Initialize the screen buffer
     clear();
 
@@ -76,12 +79,11 @@ TextScreen::TextScreen(wxWindow *parent, wxWindowID id, const wxPoint &pos, cons
     SetSelectionMode(wxSTC_SEL_RECTANGLE);
 
     // Set monospace font similar to CGA
-    wxFont font(wxFontInfo(12).Family(wxFONTFAMILY_TELETYPE).FaceName("Consolas"));
-    if (!font.IsOk())
+    if (!m_font.IsOk())
     {
-        font = wxFont(wxFontInfo(12).Family(wxFONTFAMILY_MODERN));
+        m_font = wxFont(wxFontInfo(12).Family(wxFONTFAMILY_MODERN));
     }
-    StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+    StyleSetFont(wxSTC_STYLE_DEFAULT, m_font);
 
     // Initialize CGA color styles
     initialize_styles();
@@ -106,6 +108,72 @@ TextScreen::TextScreen(wxWindow *parent, wxWindowID id, const wxPoint &pos, cons
 
     // Prevent user from changing the size
     wxStyledTextCtrl::SetMaxLength(TOTAL_CELLS + SCREEN_HEIGHT - 1); // Include newlines
+
+    // Calculate and set the fixed size
+    m_fixed_size = calculate_fixed_size();
+    wxStyledTextCtrl::DoSetSize(pos.x, pos.y, m_fixed_size.x, m_fixed_size.y, wxSIZE_USE_EXISTING);
+}
+
+wxSize TextScreen::calculate_fixed_size() const
+{
+    // Get the character dimensions from the current font
+    wxClientDC dc(const_cast<TextScreen *>(this));
+    dc.SetFont(m_font);
+
+    wxSize char_size = dc.GetTextExtent("M"); // Use 'M' for consistent character width
+
+    // Calculate the exact size needed for 80x25 characters
+    int width = char_size.x * SCREEN_WIDTH;
+    int height = char_size.y * SCREEN_HEIGHT;
+
+    // Add small margins to account for control borders
+    const int margin = 4;
+    width += margin;
+    height += margin;
+
+    return wxSize(width, height);
+}
+
+void TextScreen::DoSetSize(int x, int y, int width, int height, int size_flags)
+{
+    // Ignore any size changes and use our fixed size
+    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
+    {
+        m_fixed_size = calculate_fixed_size();
+    }
+
+    // Only update position, keep our fixed size
+    wxStyledTextCtrl::DoSetSize(x, y, m_fixed_size.x, m_fixed_size.y, size_flags | wxSIZE_FORCE);
+}
+
+wxSize TextScreen::DoGetBestSize() const
+{
+    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
+    {
+        m_fixed_size = calculate_fixed_size();
+    }
+
+    return m_fixed_size;
+}
+
+wxSize TextScreen::GetMinSize() const
+{
+    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
+    {
+        m_fixed_size = calculate_fixed_size();
+    }
+
+    return m_fixed_size;
+}
+
+wxSize TextScreen::GetMaxSize() const
+{
+    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
+    {
+        m_fixed_size = calculate_fixed_size();
+    }
+
+    return m_fixed_size;
 }
 
 void TextScreen::initialize_styles()
