@@ -476,7 +476,7 @@ void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, i
     char xc;
     for (i = 0; (xc = string[i]) != 0; i++)
     {
-        if (xc == 13 || xc == 10)
+        if (xc == '\r' || xc == '\n')
         {
             if (row < WINTEXT_MAX_ROW-1)
             {
