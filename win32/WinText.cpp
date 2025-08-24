@@ -472,9 +472,9 @@ void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, i
 
     char xa = (attrib & 0x0ff);
     int max_row = y_pos;
-    int row = max_row;
+    int row = y_pos;
     int max_col = x_pos - 1;
-    int col = max_col;
+    int col = x_pos - 1;
 
     int i;
     for (i = 0; (xc = string[i]) != 0; i++)
