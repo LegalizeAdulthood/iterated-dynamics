@@ -22,14 +22,14 @@
 class Driver;
 
 #if ID_HAVE_X11_DRIVER
-extern Driver *g_x11_driver;
+extern Driver *get_x11_driver();
 #endif
 #if ID_HAVE_GDI_DRIVER
-extern Driver *g_gdi_driver;
+extern Driver *get_gdi_driver();
 #endif
 #if ID_HAVE_WIN32_DISK_DRIVER
-extern Driver *g_disk_driver;
+extern Driver *get_disk_driver();
 #endif
 #if ID_HAVE_WX_DRIVER
-extern Driver *g_wx_driver;
+extern Driver *get_wx_driver();
 #endif

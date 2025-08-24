@@ -44,19 +44,19 @@ void load_driver(Driver *drv, int *argc, char **argv)
 int init_drivers(int *argc, char **argv)
 {
 #if ID_HAVE_X11_DRIVER
-    load_driver(g_x11_driver, argc, argv);
+    load_driver(get_x11_driver(), argc, argv);
 #endif
 
 #if ID_HAVE_WIN32_DISK_DRIVER
-    load_driver(g_disk_driver, argc, argv);
+    load_driver(get_disk_driver(), argc, argv);
 #endif
 
 #if ID_HAVE_GDI_DRIVER
-    load_driver(g_gdi_driver, argc, argv);
+    load_driver(get_gdi_driver(), argc, argv);
 #endif
 
 #if ID_HAVE_WX_DRIVER
-    load_driver(g_wx_driver, argc, argv);
+    load_driver(get_wx_driver(), argc, argv);
 #endif
 
     return s_num_drivers;     // number of drivers supported at runtime

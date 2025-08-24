@@ -35,9 +35,6 @@ public:
     GDIDriver() :
         Win32BaseDriver("gdi", "Windows GDI")
     {
-#if ID_HAVE_GDI_DRIVER
-        g_gdi_driver = this;
-#endif
     }
     ~GDIDriver() override = default;
 
@@ -417,3 +414,8 @@ void GDIDriver::flush()
 }
 
 static GDIDriver s_gdi_driver{};
+
+Driver *get_gdi_driver()
+{
+    return &s_gdi_driver;
+}

@@ -40,7 +40,6 @@ else()
     set(ID_HAVE_WIN32_DISK_DRIVER   ${HAVE_WINDOWS_H})
 endif()
 configure_file(driver_types.h.in include/config/driver_types.h @ONLY)
-configure_file(driver_types.cpp.in driver_types.cpp @ONLY)
 
 # Determine file descriptor I/O flavor
 if(HAVE_FCNTL_H)
@@ -126,7 +125,7 @@ configure_flavor_header("path_limits" "${PATH_LIMITS_FLAVOR}")
 configure_file("home_dir.h.in" "include/config/home_dir.h" @ONLY)
 
 add_library(config
-    driver_types.h.in driver_types.cpp.in
+    driver_types.h.in
     fdio.fcntl.h.in fdio.io.h.in
     filelength.io.h.in filelength.stat.h.in
     getpid.process.h.in getpid.unistd.h.in
@@ -142,7 +141,6 @@ add_library(config
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/path_limits.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/port_config.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/string_lower.h"
-    "${CMAKE_CURRENT_BINARY_DIR}/driver_types.cpp"
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_folder(config "Libraries")

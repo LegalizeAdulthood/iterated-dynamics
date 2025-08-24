@@ -114,9 +114,6 @@ class X11Driver : public Driver
 public:
     X11Driver()
     {
-#if ID_HAVE_X11_DRIVER
-        g_x11_driver = this;
-#endif
     }
     ~X11Driver() override = default;
 
@@ -2619,3 +2616,8 @@ bool X11Driver::get_filename(
 }
 
 static X11Driver s_x11_driver;
+
+Driver *get_x11_driver()
+{
+    return &s_x11_driver;
+}

@@ -18,7 +18,6 @@ public:
         m_name("wx"),
         m_description("wxWidgets")
     {
-        g_wx_driver = this;
     }
     ~WxDriver() override = default;
 

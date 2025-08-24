@@ -34,9 +34,6 @@ public:
     DiskDriver() :
         Win32BaseDriver("disk", "Windows Disk")
     {
-#if ID_HAVE_WIN32_DISK_DRIVER
-        g_disk_driver = this;
-#endif
     }
 
     bool init(int *argc, char **argv) override;
@@ -475,3 +472,8 @@ void DiskDriver::flush()
 }
 
 static DiskDriver s_disk_driver{};
+
+Driver *get_disk_driver()
+{
+    return &s_disk_driver;
+}
