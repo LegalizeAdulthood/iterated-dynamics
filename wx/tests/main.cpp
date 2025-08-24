@@ -45,6 +45,13 @@ class TextScreenFrame : public wxFrame
 public:
     TextScreenFrame(const wxString &title);
 
+protected:
+    // Override size-related methods to make frame non-resizable
+    void DoSetSize(int x, int y, int width, int height, int size_flags = wxSIZE_AUTO) override;
+    wxSize DoGetBestSize() const override;
+    wxSize GetMinSize() const override;
+    wxSize GetMaxSize() const override;
+
 private:
     void set_style_font_color(formula::Syntax style, const wxFont &font, const char *color_name);
     void init_coloring();
@@ -54,11 +61,13 @@ private:
     void on_action_load(wxCommandEvent &event);
     void on_margin_click(wxStyledTextEvent &event);
     void on_exit(wxCommandEvent &event);
+    wxSize calculate_frame_size() const;
 
     wxMenuItem *m_view_lines{};
     ui::TextScreen *m_text_screen{};
     int m_line_margin_width{};
     bool m_show_lines{true};
+    mutable wxSize m_fixed_size{};
 };
 
 wxIMPLEMENT_APP(TestTextScreenApp);
@@ -71,7 +80,8 @@ bool TestTextScreenApp::OnInit()
 }
 
 TextScreenFrame::TextScreenFrame(const wxString &title) :
-    wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxSize(800, 600)),
+    wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
+        wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)),
     m_text_screen(new ui::TextScreen(this, wxID_ANY))
 {
     wxMenuBar *menu_bar = new wxMenuBar;
@@ -91,6 +101,76 @@ TextScreenFrame::TextScreenFrame(const wxString &title) :
 
     init_coloring();
     init_line_numbers();
+
+    // Calculate and set the fixed frame size based on TextScreen size
+    m_fixed_size = calculate_frame_size();
+    SetSize(m_fixed_size);
+
+    // Center the frame on screen
+    Center();
+}
+
+wxSize TextScreenFrame::calculate_frame_size() const
+{
+    // Get the TextScreen's fixed size
+    wxSize text_screen_size = m_text_screen->GetBestSize();
+
+    // Account for frame decorations (menu bar, borders, etc.)
+    wxSize frame_size = text_screen_size;
+
+    // Add space for menu bar
+    if (GetMenuBar())
+    {
+        frame_size.y += GetMenuBar()->GetSize().GetHeight();
+    }
+
+    // Add frame border space (estimate based on typical frame decorations)
+    frame_size.x += 16; // Left and right borders
+    frame_size.y += 40; // Title bar and bottom border
+
+    return frame_size;
+}
+
+void TextScreenFrame::DoSetSize(int x, int y, int width, int height, int size_flags)
+{
+    // Ignore any size changes and use our fixed size
+    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
+    {
+        m_fixed_size = calculate_frame_size();
+    }
+
+    // Only update position, keep our fixed size
+    wxFrame::DoSetSize(x, y, m_fixed_size.x, m_fixed_size.y, size_flags | wxSIZE_FORCE);
+}
+
+wxSize TextScreenFrame::DoGetBestSize() const
+{
+    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
+    {
+        m_fixed_size = calculate_frame_size();
+    }
+
+    return m_fixed_size;
+}
+
+wxSize TextScreenFrame::GetMinSize() const
+{
+    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
+    {
+        m_fixed_size = calculate_frame_size();
+    }
+
+    return m_fixed_size;
+}
+
+wxSize TextScreenFrame::GetMaxSize() const
+{
+    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
+    {
+        m_fixed_size = calculate_frame_size();
+    }
+
+    return m_fixed_size;
 }
 
 void TextScreenFrame::set_style_font_color(formula::Syntax style, const wxFont &font, const char *color_name)
@@ -128,7 +208,7 @@ void TextScreenFrame::show_hide_line_numbers()
     m_view_lines->Check(m_show_lines);
 }
 
-void TextScreenFrame::on_view_line_numbers(wxCommandEvent &/*event*/)
+void TextScreenFrame::on_view_line_numbers(wxCommandEvent & /*event*/)
 {
     m_show_lines = !m_show_lines;
     show_hide_line_numbers();
