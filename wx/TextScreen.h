@@ -2,107 +2,125 @@
 //
 #pragma once
 
-#include "port.h"
+#include <wx/stc/stc.h>
+#include <wx/wx.h>
 
-#include <vector>
+#include <array>
 
-struct INSTANCE;
-using HINSTANCE = INSTANCE *;
-struct WND;
-using HWND = WND *;
-using LPCSTR = const char *;
-struct MINMAXINFO;
-using LPMINMAXINFO = MINMAXINFO *;
-using UINT = unsigned int;
-struct FONT;
-using HFONT = FONT *;
-struct BITMAP;
-using HBITMAP = BITMAP*;
-
-enum
+namespace ui
 {
-    WINTEXT_MAX_COL = 80,
-    WINTEXT_MAX_ROW = 25
+
+// CGA color constants
+enum class CGAColor : unsigned char
+{
+    BLACK = 0,
+    BLUE = 1,
+    GREEN = 2,
+    CYAN = 3,
+    RED = 4,
+    MAGENTA = 5,
+    BROWN = 6,
+    LIGHT_GRAY = 7,
+    DARK_GRAY = 8,
+    LIGHT_BLUE = 9,
+    LIGHT_GREEN = 10,
+    LIGHT_CYAN = 11,
+    LIGHT_RED = 12,
+    LIGHT_MAGENTA = 13,
+    YELLOW = 14,
+    WHITE = 15
 };
 
-struct Screen
+// CGA character cell structure
+struct CGACell
 {
-    std::vector<BYTE> chars;
-    std::vector<BYTE> attrs;
+    char character = ' ';
+    unsigned char attribute = 0x07; // White on black (standard CGA attribute)
+
+    CGACell() = default;
+
+    CGACell(char ch, unsigned char attr) :
+        character(ch),
+        attribute(attr)
+    {
+    }
+
+    CGAColor GetForegroundColor() const
+    {
+        return static_cast<CGAColor>(attribute & 0x0F);
+    }
+
+    CGAColor GetBackgroundColor() const
+    {
+        return static_cast<CGAColor>((attribute >> 4) & 0x0F);
+    }
+
+    bool IsBlinking() const
+    {
+        return (attribute & 0x80) != 0;
+    }
+
+    bool IsIntense() const
+    {
+        return (attribute & 0x08) != 0;
+    }
 };
 
-class TextScreen
+class TextScreen : public wxStyledTextCtrl
 {
 public:
-    bool initialize(HINSTANCE instance, HWND parent, LPCSTR title);
-    void destroy();
-    int text_on();
-    int text_off();
-    void put_string(int xpos, int ypos, int attrib, char const *string, int *end_row, int *end_col);
-    void scroll_up(int top, int bot);
-    void paint_screen(int xmin, int xmax, int ymin, int ymax);
-    void cursor(int xpos, int ypos, int cursor_type);
-    void set_attr(int row, int col, int attr, int count);
-    void clear();
-    Screen get_screen() const;
-    void set_screen(const Screen &screen);
-    void hide_cursor();
-    void schedule_alarm(int secs);
-    int get_char_attr(int row, int col);
-    void put_char_attr(int row, int col, int char_attr);
-    void resume();
-    void set_parent(HWND parent)
-    {
-        m_parent = parent;
-    }
-    int get_max_width() const
-    {
-        return m_max_width;
-    }
-    int get_max_height() const
-    {
-        return m_max_height;
-    }
-    HWND get_window() const
-    {
-        return m_window;
-    }
+    static constexpr int SCREEN_WIDTH = 80;
+    static constexpr int SCREEN_HEIGHT = 25;
+    static constexpr int TOTAL_CELLS = SCREEN_WIDTH * SCREEN_HEIGHT;
 
-    // message handlers
-    void on_close(HWND window);
-    void on_set_focus(HWND window, HWND old_focus);
-    void on_kill_focus(HWND window, HWND old_focus);
-    void on_paint(HWND window);
-    void on_size(HWND window, UINT state, int cx, int cy);
-    void on_get_min_max_info(HWND hwnd, LPMINMAXINFO lpMinMaxInfo);
+    TextScreen(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition,
+        const wxSize &size = wxDefaultSize, long style = 0);
+
+    ~TextScreen() override = default;
+
+    // CGA screen manipulation methods
+    void put_char(int row, int col, char ch, unsigned char attr = 0x07);
+    void put_string(int row, int col, const char *str, unsigned char attr = 0x07);
+    void set_attribute(int row, int col, unsigned char attr, int count = 1);
+    void clear(unsigned char attr = 0x07);
+    void scroll_up(int top_row, int bottom_row, int lines = 1, unsigned char fill_attr = 0x07);
+    void scroll_down(int top_row, int bottom_row, int lines = 1, unsigned char fill_attr = 0x07);
+
+    // Cursor operations
+    void set_cursor_position(int row, int col);
+    void get_cursor_position(int &row, int &col) const;
+    void show_cursor(bool show = true);
+    void set_cursor_type(int type); // 0 = none, 1 = underline, 2 = block
+
+    // Screen buffer access
+    CGACell get_cell(int row, int col) const;
+    void set_cell(int row, int col, const CGACell &cell);
+
+    // Utility methods
+    void refresh_display();
+    bool is_valid_position(int row, int col) const;
 
 private:
-    int m_text_mode{};
-    bool m_alt_f4_hit{};
-    int m_showing_cursor{};
-    char m_chars[WINTEXT_MAX_ROW][WINTEXT_MAX_COL]{}; // Local copy of the screen characters and attributes
-    unsigned char m_attrs[WINTEXT_MAX_ROW][WINTEXT_MAX_COL]{};
-    bool m_buffer_init{}; // false if 'screen' is uninitialized
-    HFONT m_font{};
-    int m_char_font{};
-    int m_char_width{};
-    int m_char_height{};
-    int m_char_xchars{};
-    int m_char_ychars{};
-    int m_max_width{};
-    int m_max_height{};
-    int m_cursor_x{};
-    int m_cursor_y{};
-    int m_cursor_type{};
-    bool m_cursor_owned{};
-    HBITMAP m_bitmap[3]{};
-    short m_cursor_pattern[3][40]{};
-    char m_title[128]{};
-    HWND m_window{};
+    void initialize_styles();
+    void update_cell_display(int row, int col);
+    void update_region_display(int start_row, int start_col, int end_row, int end_col);
+    wxColour cga_color_to_wx_color(CGAColor color, bool intense = false) const;
+    int get_style_number(unsigned char attr) const;
+    int position_from_row_col(int row, int col) const;
+    void row_col_from_position(int pos, int &row, int &col) const;
 
-private:
-    void invalidate(int left, int bot, int right, int top);
+    // Screen buffer - 80x25 character cells
+    std::array<std::array<CGACell, SCREEN_WIDTH>, SCREEN_HEIGHT> m_screen_buffer;
 
-    HWND m_parent{};
-    HINSTANCE m_instance{};
+    // Cursor state
+    int m_cursor_row{0};
+    int m_cursor_col{0};
+    bool m_cursor_visible{true};
+    int m_cursor_type{1}; // 1 = underline
+
+    // Style mappings for different CGA attribute combinations
+    static constexpr int MAX_STYLES = 256; // All possible CGA attribute combinations
+    bool m_styles_initialized{false};
 };
+
+} // namespace ui

@@ -16,6 +16,13 @@ target_include_directories(os PUBLIC .)
 set_target_properties(os PROPERTIES FOLDER Libraries)
 add_dependencies(os native-help)
 
+add_library(TextScreen STATIC
+    TextScreen.h TextScreen.cpp
+)
+target_include_directories(TextScreen PUBLIC .)
+target_link_libraries(TextScreen PUBLIC wx::wxstc)
+target_folder(TextScreen "Libraries")
+
 configure_file(id.rc.in id.rc @ONLY)
 add_executable(id WIN32
     Id.ico
@@ -26,13 +33,12 @@ add_executable(id WIN32
     IdApp.h IdApp.cpp
     IdFrame.h IdFrame.cpp
     init_failure.cpp
-    #TextScreen.h TextScreen.cpp
     WxDriver.h WxDriver.cpp
     WxSpecialDirectories.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
-target_link_libraries(id PUBLIC libid wx::core wx::base)
+target_link_libraries(id PUBLIC libid TextScreen wx::core wx::base)
 install(TARGETS id
     DESTINATION .
     RUNTIME_DEPENDENCIES
