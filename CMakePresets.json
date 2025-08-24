@@ -81,9 +81,10 @@
       "inherits": [ "sibling-preset-build-dir", "project-name-preset", "vcpkg" ]
     },
     {
-      "name": "wx",
-      "displayName": "Configure with wxWidgets settings",
-      "inherits": [ "sibling-preset-build-dir", "project-name-preset", "vcpkg" ],
+      "name": "use-wx",
+      "hidden": true,
+      "displayName": "Configure for use of wxWidgets",
+      "inherits": [ "project-name-preset", "vcpkg" ],
       "cacheVariables": {
         "ID_USE_WX": true,
         "VCPKG_MANIFEST_FEATURES": "wx"
@@ -100,6 +101,11 @@
       "inherits": [ "default", "release-config" ]
     },
     {
+      "name": "wx",
+      "displayName": "Configure with wxWidgets settings",
+      "inherits": [ "sibling-preset-build-dir", "use-wx" ]
+    },
+    {
       "name": "ci-debug",
       "displayName": "CI Configure with Debug settings",
       "inherits": [ "ci-preset-build-dir", "default", "debug-config", "run-slow-tests" ]
@@ -112,12 +118,12 @@
     {
       "name": "ci-wx-debug",
       "displayName": "CI Configure with wxWidgets Debug settings",
-      "inherits": [ "ci-preset-build-dir", "wx", "debug-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "use-wx", "debug-config", "run-slow-tests" ]
     },
     {
       "name": "ci-wx-release",
       "displayName": "CI Configure with wxWidgets Release settings",
-      "inherits": [ "ci-preset-build-dir", "wx", "release-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "use-wx", "release-config", "run-slow-tests" ]
     },
     {
       "name": "ci-html-docs",
@@ -199,6 +205,15 @@
       }
     },
     {
+      "name": "filter-tests",
+      "hidden": true,
+      "filter": {
+        "exclude": {
+          "label": "image|colormap|orbit|raytrace"
+        }
+      }
+    },
+    {
       "name": "default",
       "displayName": "Test with default settings",
       "inherits": [ "settings" ],
@@ -208,14 +223,9 @@
     {
       "name": "wx",
       "displayName": "Test with wxWidgets settings",
-      "inherits": [ "settings" ],
+      "inherits": [ "settings", "filter-tests" ],
       "configurePreset": "wx",
-      "configuration": "Debug",
-      "filter": {
-        "exclude": {
-          "label": "image|colormap|orbit|raytrace"
-        }
-      }
+      "configuration": "Debug"
     },
     {
       "name": "debug",
@@ -248,14 +258,14 @@
     {
       "name": "ci-wx-debug",
       "displayName": "CI Test with wxWidgets Debug settings",
-      "inherits": [ "settings" ],
+      "inherits": [ "settings", "filter-tests" ],
       "configurePreset": "ci-wx-debug",
       "configuration": "Debug"
     },
     {
       "name": "ci-wx-release",
       "displayName": "CI Test with wxWidgets Release settings",
-      "inherits": [ "settings" ],
+      "inherits": [ "settings", "filter-tests" ],
       "configurePreset": "ci-wx-release",
       "configuration": "RelWithDebInfo"
     }
