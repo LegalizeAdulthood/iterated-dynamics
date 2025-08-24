@@ -104,7 +104,6 @@ private:
     void initialize_styles();
     void update_cell_display(int row, int col);
     void update_region_display(int start_row, int start_col, int end_row, int end_col);
-    wxColour cga_color_to_wx_color(CGAColor color, bool intense = false) const;
     int get_style_number(unsigned char attr) const;
     int position_from_row_col(int row, int col) const;
     void row_col_from_position(int pos, int &row, int &col) const;

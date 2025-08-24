@@ -45,3 +45,5 @@ install(TARGETS id
         PRE_EXCLUDE_REGEXES "api-ms-.*" "ext-ms-.*"
         POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
 )
+
+add_subdirectory(tests)

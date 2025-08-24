@@ -8,6 +8,46 @@
 namespace ui
 {
 
+static wxColour cga_color_to_wx_color(CGAColor color, bool intense)
+{
+    // Standard CGA color palette
+    static const wxColour cga_colors[] = {
+        wxColour(0, 0, 0),       // BLACK
+        wxColour(0, 0, 170),     // BLUE
+        wxColour(0, 170, 0),     // GREEN
+        wxColour(0, 170, 170),   // CYAN
+        wxColour(170, 0, 0),     // RED
+        wxColour(170, 0, 170),   // MAGENTA
+        wxColour(170, 85, 0),    // BROWN
+        wxColour(170, 170, 170), // LIGHT_GRAY
+        wxColour(85, 85, 85),    // DARK_GRAY
+        wxColour(85, 85, 255),   // LIGHT_BLUE
+        wxColour(85, 255, 85),   // LIGHT_GREEN
+        wxColour(85, 255, 255),  // LIGHT_CYAN
+        wxColour(255, 85, 85),   // LIGHT_RED
+        wxColour(255, 85, 255),  // LIGHT_MAGENTA
+        wxColour(255, 255, 85),  // YELLOW
+        wxColour(255, 255, 255)  // WHITE
+    };
+
+    int color_index = static_cast<int>(color);
+    if (color_index < 0 || color_index > 15)
+    {
+        color_index = 7; // Default to light gray
+    }
+
+    wxColour result = cga_colors[color_index];
+
+    // For foreground colors, apply intensity
+    if (intense && color_index < 8)
+    {
+        // Intensify the color
+        result = cga_colors[color_index + 8];
+    }
+
+    return result;
+}
+
 TextScreen::TextScreen(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) :
     wxStyledTextCtrl(parent, id, pos, size, style)
 {
@@ -65,13 +105,15 @@ TextScreen::TextScreen(wxWindow *parent, wxWindowID id, const wxPoint &pos, cons
     set_cursor_position(0, 0);
 
     // Prevent user from changing the size
-    SetMaxLength(TOTAL_CELLS + SCREEN_HEIGHT - 1); // Include newlines
+    wxStyledTextCtrl::SetMaxLength(TOTAL_CELLS + SCREEN_HEIGHT - 1); // Include newlines
 }
 
 void TextScreen::initialize_styles()
 {
     if (m_styles_initialized)
+    {
         return;
+    }
 
     // Initialize all 256 possible CGA attribute combinations
     for (int attr = 0; attr < MAX_STYLES; ++attr)
@@ -97,50 +139,12 @@ void TextScreen::initialize_styles()
     m_styles_initialized = true;
 }
 
-wxColour TextScreen::cga_color_to_wx_color(CGAColor color, bool intense) const
-{
-    // Standard CGA color palette
-    static const wxColour cga_colors[] = {
-        wxColour(0, 0, 0),       // BLACK
-        wxColour(0, 0, 170),     // BLUE
-        wxColour(0, 170, 0),     // GREEN
-        wxColour(0, 170, 170),   // CYAN
-        wxColour(170, 0, 0),     // RED
-        wxColour(170, 0, 170),   // MAGENTA
-        wxColour(170, 85, 0),    // BROWN
-        wxColour(170, 170, 170), // LIGHT_GRAY
-        wxColour(85, 85, 85),    // DARK_GRAY
-        wxColour(85, 85, 255),   // LIGHT_BLUE
-        wxColour(85, 255, 85),   // LIGHT_GREEN
-        wxColour(85, 255, 255),  // LIGHT_CYAN
-        wxColour(255, 85, 85),   // LIGHT_RED
-        wxColour(255, 85, 255),  // LIGHT_MAGENTA
-        wxColour(255, 255, 85),  // YELLOW
-        wxColour(255, 255, 255)  // WHITE
-    };
-
-    int color_index = static_cast<int>(color);
-    if (color_index < 0 || color_index > 15)
-    {
-        color_index = 7; // Default to light gray
-    }
-
-    wxColour result = cga_colors[color_index];
-
-    // For foreground colors, apply intensity
-    if (intense && color_index < 8)
-    {
-        // Intensify the color
-        result = cga_colors[color_index + 8];
-    }
-
-    return result;
-}
-
 void TextScreen::put_char(int row, int col, char ch, unsigned char attr)
 {
     if (!is_valid_position(row, col))
+    {
         return;
+    }
 
     // Update the screen buffer
     m_screen_buffer[row][col] = CGACell(ch, attr);
@@ -152,7 +156,9 @@ void TextScreen::put_char(int row, int col, char ch, unsigned char attr)
 void TextScreen::put_string(int row, int col, const char *str, unsigned char attr)
 {
     if (!str || !is_valid_position(row, col))
+    {
         return;
+    }
 
     int current_col = col;
     while (*str && current_col < SCREEN_WIDTH)
@@ -166,7 +172,9 @@ void TextScreen::put_string(int row, int col, const char *str, unsigned char att
 void TextScreen::set_attribute(int row, int col, unsigned char attr, int count)
 {
     if (!is_valid_position(row, col))
+    {
         return;
+    }
 
     for (int i = 0; i < count && (col + i) < SCREEN_WIDTH; ++i)
     {
@@ -197,7 +205,9 @@ void TextScreen::clear(unsigned char attr)
 void TextScreen::scroll_up(int top_row, int bottom_row, int lines, unsigned char fill_attr)
 {
     if (top_row < 0 || bottom_row >= SCREEN_HEIGHT || top_row > bottom_row || lines <= 0)
+    {
         return;
+    }
 
     // Move lines up
     for (int src_row = top_row + lines; src_row <= bottom_row; ++src_row)
@@ -224,7 +234,9 @@ void TextScreen::scroll_up(int top_row, int bottom_row, int lines, unsigned char
 void TextScreen::scroll_down(int top_row, int bottom_row, int lines, unsigned char fill_attr)
 {
     if (top_row < 0 || bottom_row >= SCREEN_HEIGHT || top_row > bottom_row || lines <= 0)
+    {
         return;
+    }
 
     // Move lines down
     for (int src_row = bottom_row - lines; src_row >= top_row; --src_row)
@@ -251,7 +263,9 @@ void TextScreen::scroll_down(int top_row, int bottom_row, int lines, unsigned ch
 void TextScreen::set_cursor_position(int row, int col)
 {
     if (!is_valid_position(row, col))
+    {
         return;
+    }
 
     m_cursor_row = row;
     m_cursor_col = col;
@@ -285,14 +299,18 @@ void TextScreen::set_cursor_type(int type)
 CGACell TextScreen::get_cell(int row, int col) const
 {
     if (!is_valid_position(row, col))
+    {
         return CGACell();
+    }
     return m_screen_buffer[row][col];
 }
 
 void TextScreen::set_cell(int row, int col, const CGACell &cell)
 {
     if (!is_valid_position(row, col))
+    {
         return;
+    }
 
     m_screen_buffer[row][col] = cell;
     update_cell_display(row, col);
@@ -338,7 +356,9 @@ bool TextScreen::is_valid_position(int row, int col) const
 void TextScreen::update_cell_display(int row, int col)
 {
     if (!is_valid_position(row, col))
+    {
         return;
+    }
 
     int pos = position_from_row_col(row, col);
     char ch = m_screen_buffer[row][col].character;
