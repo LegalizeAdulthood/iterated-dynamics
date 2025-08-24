@@ -18,13 +18,13 @@
       }
     },
     {
-      "name": "sibling-build-preset",
+      "name": "sibling-preset-build-dir",
       "hidden": true,
       "description": "Use a sibling directory for the build based on the preset name",
       "binaryDir": "${sourceDir}/../build-${presetName}"
     },
     {
-      "name": "ci-build-preset",
+      "name": "ci-preset-build-dir",
       "hidden": true,
       "description": "CI uses a child directory for the build based on the preset name",
       "binaryDir": "${sourceDir}/build-${presetName}"
@@ -78,12 +78,12 @@
     {
       "name": "default",
       "displayName": "Configure with default settings",
-      "inherits": [ "sibling-build-preset", "project-name-preset", "vcpkg" ]
+      "inherits": [ "sibling-preset-build-dir", "project-name-preset", "vcpkg" ]
     },
     {
       "name": "wx",
       "displayName": "Configure with wxWidgets settings",
-      "inherits": [ "sibling-build-preset", "project-name-preset", "vcpkg" ],
+      "inherits": [ "sibling-preset-build-dir", "project-name-preset", "vcpkg" ],
       "cacheVariables": {
         "ID_USE_WX": true,
         "VCPKG_MANIFEST_FEATURES": "wx"
@@ -102,32 +102,32 @@
     {
       "name": "ci-debug",
       "displayName": "CI Configure with Debug settings",
-      "inherits": [ "ci-build-preset", "default", "debug-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "default", "debug-config", "run-slow-tests" ]
     },
     {
       "name": "ci-release",
       "displayName": "CI Configure with Release settings",
-      "inherits": [ "ci-build-preset", "default", "release-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "default", "release-config", "run-slow-tests" ]
     },
     {
       "name": "ci-wx-debug",
       "displayName": "CI Configure with wxWidgets Debug settings",
-      "inherits": [ "ci-build-preset", "wx", "debug-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "wx", "debug-config", "run-slow-tests" ]
     },
     {
       "name": "ci-wx-release",
       "displayName": "CI Configure with wxWidgets Release settings",
-      "inherits": [ "ci-build-preset", "wx", "release-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "wx", "release-config", "run-slow-tests" ]
     },
     {
       "name": "ci-html-docs",
       "displayName": "CI Configure HTML docs with Release settings for HTML",
-      "inherits": [ "ci-build-preset", "default", "release-config" ]
+      "inherits": [ "ci-preset-build-dir", "default", "release-config" ]
     },
     {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
-      "inherits": [ "sibling-build-preset", "compile-commands", "no-testing", "vcpkg" ]
+      "inherits": [ "sibling-preset-build-dir", "compile-commands", "no-testing", "vcpkg" ]
     }
   ],
   "buildPresets": [
