@@ -15,6 +15,9 @@
  * David Sanderson straightened out a bunch of include file problems.
  */
 
+#include <config/driver_types.h>
+#include <config/port.h>
+
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
@@ -31,9 +34,6 @@
 #include "ui/text_screen.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
-
-#include <config/driver_types.h>
-#include <config/port.h>
 
 #include <sys/ioctl.h>
 #include <sys/time.h>
@@ -112,6 +112,12 @@ constexpr const char *const DEFXY{"640x480+0+0"};
 class X11Driver : public Driver
 {
 public:
+    X11Driver()
+    {
+#if ID_HAVE_X11_DRIVER
+        g_x11_driver = this;
+#endif
+    }
     ~X11Driver() override = default;
 
     const std::string &get_name() const
@@ -2613,4 +2619,3 @@ bool X11Driver::get_filename(
 }
 
 static X11Driver s_x11_driver;
-Driver *g_x11_driver = &s_x11_driver;

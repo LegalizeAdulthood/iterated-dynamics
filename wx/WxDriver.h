@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <config/driver_types.h>
+
 #include "misc/Driver.h"
 
 #include "CGATextWindow.h"
@@ -16,6 +18,7 @@ public:
         m_name("wx"),
         m_description("wxWidgets")
     {
+        g_wx_driver = this;
     }
     ~WxDriver() override = default;
 

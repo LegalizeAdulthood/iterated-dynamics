@@ -5,7 +5,6 @@
 find_package(wxWidgets CONFIG REQUIRED)
 
 add_library(os STATIC
-    WxDriver.h WxDriver.cpp
     read_ticker.cpp
     stack_avail.cpp
 )
@@ -28,6 +27,7 @@ add_executable(id WIN32
     IdFrame.h IdFrame.cpp
     init_failure.cpp
     #TextScreen.h TextScreen.cpp
+    WxDriver.h WxDriver.cpp
     WxSpecialDirectories.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")

@@ -10,6 +10,8 @@
 #include "Plot.h"
 #include "Win32BaseDriver.h"
 
+#include <config/driver_types.h>
+
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
@@ -19,8 +21,6 @@
 #include "ui/video.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
-
-#include <config/driver_types.h>
 
 #include <array> // for std::size
 
@@ -35,8 +35,12 @@ public:
     GDIDriver() :
         Win32BaseDriver("gdi", "Windows GDI")
     {
+#if ID_HAVE_GDI_DRIVER
+        g_gdi_driver = this;
+#endif
     }
     ~GDIDriver() override = default;
+
     void terminate() override;
     void get_max_screen(int &x_max, int &y_max) override;
     bool init(int *argc, char **argv) override;
@@ -413,4 +417,3 @@ void GDIDriver::flush()
 }
 
 static GDIDriver s_gdi_driver{};
-Driver *g_gdi_driver = &s_gdi_driver;

@@ -9,6 +9,8 @@
 #include "Win32BaseDriver.h"
 #include "WinText.h"
 
+#include <config/driver_types.h>
+
 #include "3d/plot3d.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
@@ -19,8 +21,6 @@
 #include "ui/video.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
-
-#include <config/driver_types.h>
 
 enum
 {
@@ -34,6 +34,9 @@ public:
     DiskDriver() :
         Win32BaseDriver("disk", "Windows Disk")
     {
+#if ID_HAVE_WIN32_DISK_DRIVER
+        g_disk_driver = this;
+#endif
     }
 
     bool init(int *argc, char **argv) override;
@@ -472,5 +475,3 @@ void DiskDriver::flush()
 }
 
 static DiskDriver s_disk_driver{};
-
-Driver *g_disk_driver = &s_disk_driver;

@@ -1,0 +1,22 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// DO NOT EDIT!
+//
+// Generated from driver_types.cpp.in
+//
+#include <config/driver_types.h>
+
+class Driver;
+
+#if ID_HAVE_X11_DRIVER
+Driver *g_x11_driver{};
+#endif
+#if ID_HAVE_GDI_DRIVER
+Driver *g_gdi_driver{};
+#endif
+#if ID_HAVE_WIN32_DISK_DRIVER
+Driver *g_disk_driver{};
+#endif
+#if ID_HAVE_WX_DRIVER
+Driver *g_wx_driver{};
+#endif

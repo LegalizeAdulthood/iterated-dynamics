@@ -616,5 +616,3 @@ bool WxDriver::get_filename(
 }
 
 static WxDriver s_wx_driver{};
-
-Driver *g_wx_driver = &s_wx_driver;
