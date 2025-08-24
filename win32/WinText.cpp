@@ -466,10 +466,6 @@ LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 
 void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, int *end_row, int *end_col)
 {
-    ODS("WinText::put_string");
-
-    char xc;
-
     char xa = (attrib & 0x0ff);
     int max_row = y_pos;
     int row = y_pos;
@@ -477,6 +473,7 @@ void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, i
     int col = x_pos - 1;
 
     int i;
+    char xc;
     for (i = 0; (xc = string[i]) != 0; i++)
     {
         if (xc == 13 || xc == 10)
