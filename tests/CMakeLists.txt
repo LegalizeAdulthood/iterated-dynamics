@@ -96,6 +96,7 @@ add_executable(test-id
     math/test_cmplx.cpp
     math/test_fpu087.cpp
     math/test_math.cpp
+    misc/driver_types.cpp
     misc/test_driver.cpp
     misc/test_ValueSaver.cpp
     misc/test_version.cpp
