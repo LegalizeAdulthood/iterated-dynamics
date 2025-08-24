@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include <io/load_entry_text.h>
 
 #include "test_data.h"

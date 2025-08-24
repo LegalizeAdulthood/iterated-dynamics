@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include <engine/get_prec_big_float.h>
 
 #include <gtest/gtest.h>

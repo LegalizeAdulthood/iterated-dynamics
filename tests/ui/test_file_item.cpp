@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "io/library.h"
 
 #include <ui/file_item.h>
