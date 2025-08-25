@@ -79,6 +79,7 @@ public:
     ~TextScreen() override = default;
 
     // CGA screen manipulation methods
+    void put_string(int x_pos, int y_pos, int attr, const char *text, int *end_row, int *end_col);
     void put_char(int row, int col, char ch, unsigned char attr = 0x07);
     void put_string(int row, int col, const char *str, unsigned char attr = 0x07);
     void set_attribute(int row, int col, unsigned char attr, int count = 1);
@@ -108,18 +109,20 @@ protected:
     wxSize GetMaxSize() const override;
 
 private:
+    void invalidate(int left, int bot, int right, int top);
     void initialize_styles();
     void update_cell_display(int row, int col);
     void update_region_display(int start_row, int start_col, int end_row, int end_col);
     int get_style_number(unsigned char attr) const;
     int position_from_row_col(int row, int col) const;
     void row_col_from_position(int pos, int &row, int &col) const;
-    wxSize calculate_fixed_size() const;
+    wxSize calculate_fixed_size();
 
-    wxFont m_font;
+    wxFont m_font{};
+    wxSize m_char_size{};
 
     // Screen buffer - 80x25 character cells
-    std::array<std::array<CGACell, SCREEN_WIDTH>, SCREEN_HEIGHT> m_screen_buffer;
+    std::array<std::array<CGACell, SCREEN_WIDTH>, SCREEN_HEIGHT> m_screen;
 
     // Cursor state
     int m_cursor_row{0};

@@ -114,17 +114,17 @@ TextScreen::TextScreen(wxWindow *parent, wxWindowID id, const wxPoint &pos, cons
     wxStyledTextCtrl::DoSetSize(pos.x, pos.y, m_fixed_size.x, m_fixed_size.y, wxSIZE_USE_EXISTING);
 }
 
-wxSize TextScreen::calculate_fixed_size() const
+wxSize TextScreen::calculate_fixed_size()
 {
     // Get the character dimensions from the current font
-    wxClientDC dc(const_cast<TextScreen *>(this));
+    wxClientDC dc(this);
     dc.SetFont(m_font);
 
-    wxSize char_size = dc.GetTextExtent("M"); // Use 'M' for consistent character width
+    m_char_size = dc.GetTextExtent("M"); // Use 'M' for consistent character width
 
     // Calculate the exact size needed for 80x25 characters
-    int width = char_size.x * SCREEN_WIDTH;
-    int height = char_size.y * SCREEN_HEIGHT;
+    int width = m_char_size.x * SCREEN_WIDTH;
+    int height = m_char_size.y * (SCREEN_HEIGHT + 1);
 
     // Add small margins to account for control borders
     const int margin = 4;
@@ -136,44 +136,35 @@ wxSize TextScreen::calculate_fixed_size() const
 
 void TextScreen::DoSetSize(int x, int y, int width, int height, int size_flags)
 {
-    // Ignore any size changes and use our fixed size
-    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
-    {
-        m_fixed_size = calculate_fixed_size();
-    }
-
+    assert(!(m_fixed_size.x == 0 || m_fixed_size.y == 0));
     // Only update position, keep our fixed size
     wxStyledTextCtrl::DoSetSize(x, y, m_fixed_size.x, m_fixed_size.y, size_flags | wxSIZE_FORCE);
 }
 
 wxSize TextScreen::DoGetBestSize() const
 {
-    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
-    {
-        m_fixed_size = calculate_fixed_size();
-    }
-
+    assert(!(m_fixed_size.x == 0 || m_fixed_size.y == 0));
     return m_fixed_size;
 }
 
 wxSize TextScreen::GetMinSize() const
 {
-    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
-    {
-        m_fixed_size = calculate_fixed_size();
-    }
-
+    assert(!(m_fixed_size.x == 0 || m_fixed_size.y == 0));
     return m_fixed_size;
 }
 
 wxSize TextScreen::GetMaxSize() const
 {
-    if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
-    {
-        m_fixed_size = calculate_fixed_size();
-    }
-
+    assert(!(m_fixed_size.x == 0 || m_fixed_size.y == 0));
     return m_fixed_size;
+}
+
+void TextScreen::invalidate(int left, int bot, int right, int top)
+{
+    const wxRect exposed{                                             //
+        left * m_char_size.GetWidth(), top * m_char_size.GetHeight(), //
+        (right + 1) * m_char_size.GetWidth(), (bot + 1) * m_char_size.GetHeight()};
+    RefreshRect(exposed, false);
 }
 
 void TextScreen::initialize_styles()
@@ -207,6 +198,49 @@ void TextScreen::initialize_styles()
     m_styles_initialized = true;
 }
 
+void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, int *end_row, int *end_col)
+{
+    char xa = (attr & 0x0ff);
+    int max_row = y_pos;
+    int row = y_pos;
+    int max_col = x_pos - 1;
+    int col = x_pos - 1;
+
+    int i;
+    char xc;
+    for (i = 0; (xc = text[i]) != 0; i++)
+    {
+        if (xc == '\r' || xc == '\n')
+        {
+            if (row < SCREEN_HEIGHT-1)
+            {
+                row++;
+            }
+            col = x_pos-1;
+        }
+        else
+        {
+            if (++col >= SCREEN_WIDTH)
+            {
+                if (row < SCREEN_HEIGHT-1)
+                {
+                    row++;
+                }
+                col = x_pos;
+            }
+            max_row = std::max(max_row, row);
+            max_col = std::max(max_col, col);
+            m_screen[row][col] = CGACell(xc, xa);
+        }
+    }
+    if (i > 0)
+    {
+        invalidate(x_pos, y_pos, max_col, max_row);
+        *end_row = row;
+        *end_col = col+1;
+    }
+}
+
 void TextScreen::put_char(int row, int col, char ch, unsigned char attr)
 {
     if (!is_valid_position(row, col))
@@ -215,7 +249,7 @@ void TextScreen::put_char(int row, int col, char ch, unsigned char attr)
     }
 
     // Update the screen buffer
-    m_screen_buffer[row][col] = CGACell(ch, attr);
+    m_screen[row][col] = CGACell(ch, attr);
 
     // Update the display
     update_cell_display(row, col);
@@ -246,7 +280,7 @@ void TextScreen::set_attribute(int row, int col, unsigned char attr, int count)
 
     for (int i = 0; i < count && (col + i) < SCREEN_WIDTH; ++i)
     {
-        m_screen_buffer[row][col + i].attribute = attr;
+        m_screen[row][col + i].attribute = attr;
     }
 
     update_region_display(row, col, row, std::min(col + count - 1, SCREEN_WIDTH - 1));
@@ -255,7 +289,7 @@ void TextScreen::set_attribute(int row, int col, unsigned char attr, int count)
 void TextScreen::clear(unsigned char attr)
 {
     // Clear the screen buffer
-    for (auto &row : m_screen_buffer)
+    for (auto &row : m_screen)
     {
         for (auto &cell : row)
         {
@@ -283,7 +317,7 @@ void TextScreen::scroll_up(int top_row, int bottom_row, int lines, unsigned char
         int dest_row = src_row - lines;
         if (dest_row >= top_row && dest_row <= bottom_row)
         {
-            m_screen_buffer[dest_row] = m_screen_buffer[src_row];
+            m_screen[dest_row] = m_screen[src_row];
         }
     }
 
@@ -292,7 +326,7 @@ void TextScreen::scroll_up(int top_row, int bottom_row, int lines, unsigned char
     {
         for (int col = 0; col < SCREEN_WIDTH; ++col)
         {
-            m_screen_buffer[row][col] = CGACell(' ', fill_attr);
+            m_screen[row][col] = CGACell(' ', fill_attr);
         }
     }
 
@@ -312,7 +346,7 @@ void TextScreen::scroll_down(int top_row, int bottom_row, int lines, unsigned ch
         int dest_row = src_row + lines;
         if (dest_row >= top_row && dest_row <= bottom_row)
         {
-            m_screen_buffer[dest_row] = m_screen_buffer[src_row];
+            m_screen[dest_row] = m_screen[src_row];
         }
     }
 
@@ -321,7 +355,7 @@ void TextScreen::scroll_down(int top_row, int bottom_row, int lines, unsigned ch
     {
         for (int col = 0; col < SCREEN_WIDTH; ++col)
         {
-            m_screen_buffer[row][col] = CGACell(' ', fill_attr);
+            m_screen[row][col] = CGACell(' ', fill_attr);
         }
     }
 
@@ -370,7 +404,7 @@ CGACell TextScreen::get_cell(int row, int col) const
     {
         return CGACell();
     }
-    return m_screen_buffer[row][col];
+    return m_screen[row][col];
 }
 
 void TextScreen::set_cell(int row, int col, const CGACell &cell)
@@ -380,7 +414,7 @@ void TextScreen::set_cell(int row, int col, const CGACell &cell)
         return;
     }
 
-    m_screen_buffer[row][col] = cell;
+    m_screen[row][col] = cell;
     update_cell_display(row, col);
 }
 
@@ -393,7 +427,7 @@ void TextScreen::refresh_display()
     {
         for (int col = 0; col < SCREEN_WIDTH; ++col)
         {
-            content += m_screen_buffer[row][col].character;
+            content += m_screen[row][col].character;
         }
         if (row < SCREEN_HEIGHT - 1)
         {
@@ -409,7 +443,7 @@ void TextScreen::refresh_display()
         for (int col = 0; col < SCREEN_WIDTH; ++col)
         {
             int pos = position_from_row_col(row, col);
-            int style = get_style_number(m_screen_buffer[row][col].attribute);
+            int style = get_style_number(m_screen[row][col].attribute);
             StartStyling(pos);
             SetStyling(1, style);
         }
@@ -429,7 +463,7 @@ void TextScreen::update_cell_display(int row, int col)
     }
 
     int pos = position_from_row_col(row, col);
-    char ch = m_screen_buffer[row][col].character;
+    char ch = m_screen[row][col].character;
 
     // Replace the character
     SetTargetStart(pos);
@@ -438,7 +472,7 @@ void TextScreen::update_cell_display(int row, int col)
     ReplaceTarget(wxString(text, wxConvUTF8, 1));
 
     // Apply styling
-    int style = get_style_number(m_screen_buffer[row][col].attribute);
+    int style = get_style_number(m_screen[row][col].attribute);
     StartStyling(pos);
     SetStyling(1, style);
 }

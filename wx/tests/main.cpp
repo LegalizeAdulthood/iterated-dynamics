@@ -1,5 +1,7 @@
 #include "TextScreen.h"
 
+#include <fmt/format.h>
+
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
 
@@ -58,7 +60,7 @@ private:
     void init_line_numbers();
     void show_hide_line_numbers();
     void on_view_line_numbers(wxCommandEvent &event);
-    void on_action_load(wxCommandEvent &event);
+    void on_action_put_string(wxCommandEvent &event);
     void on_margin_click(wxStyledTextEvent &event);
     void on_exit(wxCommandEvent &event);
     wxSize calculate_frame_size() const;
@@ -93,8 +95,8 @@ TextScreenFrame::TextScreenFrame(const wxString &title) :
     Bind(wxEVT_MENU, &TextScreenFrame::on_view_line_numbers, this, m_view_lines->GetId());
     menu_bar->Append(view, "&View");
     wxMenu *action = new wxMenu;
-    wxMenuItem *load = action->Append(wxID_ANY, "&Load Screen");
-    Bind(wxEVT_MENU, &TextScreenFrame::on_action_load, this, load->GetId());
+    wxMenuItem *put_string = action->Append(wxID_ANY, "&Put String");
+    Bind(wxEVT_MENU, &TextScreenFrame::on_action_put_string, this, put_string->GetId());
     menu_bar->Append(action, "&Action");
     wxFrameBase::SetMenuBar(menu_bar);
     Bind(wxEVT_MENU, &TextScreenFrame::on_exit, this, wxID_EXIT);
@@ -214,8 +216,12 @@ void TextScreenFrame::on_view_line_numbers(wxCommandEvent & /*event*/)
     show_hide_line_numbers();
 }
 
-void TextScreenFrame::on_action_load(wxCommandEvent &event)
+void TextScreenFrame::on_action_put_string(wxCommandEvent &event)
 {
+    for (int i = 0; i < 25; ++i)
+    {
+        m_text_screen->put_string(i, i, fmt::format("This is line {:d}", i + 1).c_str(), i % 16);
+    }
 }
 
 void TextScreenFrame::on_margin_click(wxStyledTextEvent &event)
