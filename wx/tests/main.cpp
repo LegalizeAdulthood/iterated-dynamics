@@ -61,6 +61,7 @@ private:
     void show_hide_line_numbers();
     void on_view_line_numbers(wxCommandEvent &event);
     void on_action_put_string(wxCommandEvent &event);
+    void on_action_scroll_up(wxCommandEvent &event);
     void on_margin_click(wxStyledTextEvent &event);
     void on_exit(wxCommandEvent &event);
     wxSize calculate_frame_size() const;
@@ -97,6 +98,8 @@ TextScreenFrame::TextScreenFrame(const wxString &title) :
     wxMenu *action = new wxMenu;
     wxMenuItem *put_string = action->Append(wxID_ANY, "&Put String");
     Bind(wxEVT_MENU, &TextScreenFrame::on_action_put_string, this, put_string->GetId());
+    wxMenuItem *scroll_up = action->Append(wxID_ANY, "&Scroll Up");
+    Bind(wxEVT_MENU, &TextScreenFrame::on_action_scroll_up, this, scroll_up->GetId());
     menu_bar->Append(action, "&Action");
     wxFrameBase::SetMenuBar(menu_bar);
     Bind(wxEVT_MENU, &TextScreenFrame::on_exit, this, wxID_EXIT);
@@ -216,12 +219,25 @@ void TextScreenFrame::on_view_line_numbers(wxCommandEvent & /*event*/)
     show_hide_line_numbers();
 }
 
-void TextScreenFrame::on_action_put_string(wxCommandEvent &event)
+void TextScreenFrame::on_action_put_string(wxCommandEvent & /*event*/)
 {
+    int last_row{};
+    int last_col{};
     for (int i = 0; i < 25; ++i)
     {
-        m_text_screen->put_string(i, i, fmt::format("This is line {:d}", i + 1).c_str(), i % 16);
+        m_text_screen->put_string(
+            i, i, i % 16, fmt::format("This is line {:d}", i + 1).c_str(), last_row, last_col);
     }
+}
+
+void TextScreenFrame::on_action_scroll_up(wxCommandEvent & /*event*/)
+{
+    m_text_screen->scroll_up(12, 14);
+    int last_row{};
+    int Last_col{};
+    static int count{};
+    m_text_screen->put_string(
+        0, 14, 1, fmt::format("New line {:d} after scroll up", ++count).c_str(), last_row, Last_col);
 }
 
 void TextScreenFrame::on_margin_click(wxStyledTextEvent &event)

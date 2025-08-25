@@ -161,10 +161,11 @@ wxSize TextScreen::GetMaxSize() const
 
 void TextScreen::invalidate(int left, int bot, int right, int top)
 {
+    refresh_display();
     const wxRect exposed{                                             //
         left * m_char_size.GetWidth(), top * m_char_size.GetHeight(), //
         (right + 1) * m_char_size.GetWidth(), (bot + 1) * m_char_size.GetHeight()};
-    RefreshRect(exposed, false);
+    RefreshRect(exposed);
 }
 
 void TextScreen::initialize_styles()
@@ -192,13 +193,13 @@ void TextScreen::initialize_styles()
         StyleSetBold(style_num, blinking);
 
         // Set font
-        StyleSetFont(style_num, StyleGetFont(wxSTC_STYLE_DEFAULT));
+        StyleSetFont(style_num, m_font);
     }
 
     m_styles_initialized = true;
 }
 
-void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, int *end_row, int *end_col)
+void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, int &end_row, int &end_col)
 {
     char xa = (attr & 0x0ff);
     int max_row = y_pos;
@@ -212,17 +213,17 @@ void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, in
     {
         if (xc == '\r' || xc == '\n')
         {
-            if (row < SCREEN_HEIGHT-1)
+            if (row < SCREEN_HEIGHT - 1)
             {
                 row++;
             }
-            col = x_pos-1;
+            col = x_pos - 1;
         }
         else
         {
             if (++col >= SCREEN_WIDTH)
             {
-                if (row < SCREEN_HEIGHT-1)
+                if (row < SCREEN_HEIGHT - 1)
                 {
                     row++;
                 }
@@ -236,9 +237,20 @@ void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, in
     if (i > 0)
     {
         invalidate(x_pos, y_pos, max_col, max_row);
-        *end_row = row;
-        *end_col = col+1;
+        end_row = row;
+        end_col = col + 1;
     }
+}
+
+void TextScreen::scroll_up(int top, int bot)
+{
+    for (int row = top; row < bot; row++)
+    {
+        m_screen[row] = m_screen[row + 1];
+    }
+    auto &last{m_screen[bot]};
+    std::fill(last.begin(), last.end(), CGACell(' ', 0));
+    invalidate(0, bot, SCREEN_WIDTH, top);
 }
 
 void TextScreen::put_char(int row, int col, char ch, unsigned char attr)

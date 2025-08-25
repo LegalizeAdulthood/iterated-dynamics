@@ -79,13 +79,15 @@ public:
     ~TextScreen() override = default;
 
     // CGA screen manipulation methods
-    void put_string(int x_pos, int y_pos, int attr, const char *text, int *end_row, int *end_col);
-    void put_char(int row, int col, char ch, unsigned char attr = 0x07);
-    void put_string(int row, int col, const char *str, unsigned char attr = 0x07);
-    void set_attribute(int row, int col, unsigned char attr, int count = 1);
+    void put_string(int x_pos, int y_pos, int attr, const char *text, int &end_row, int &end_col);
+    void scroll_up(int top, int bot);
+
+    void put_char(int row, int col, char ch, unsigned char attr);
+    void put_string(int row, int col, const char *str, unsigned char attr);
+    void set_attribute(int row, int col, unsigned char attr, int count);
     void clear(unsigned char attr = 0x07);
-    void scroll_up(int top_row, int bottom_row, int lines = 1, unsigned char fill_attr = 0x07);
-    void scroll_down(int top_row, int bottom_row, int lines = 1, unsigned char fill_attr = 0x07);
+    void scroll_up(int top_row, int bottom_row, int lines , unsigned char fill_attr);
+    void scroll_down(int top_row, int bottom_row, int lines, unsigned char fill_attr);
 
     // Cursor operations
     void set_cursor_position(int row, int col);
