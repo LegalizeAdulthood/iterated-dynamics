@@ -280,12 +280,6 @@ int Plot::write_palette()
     return 0;
 }
 
-static VOID CALLBACK redraw_window(HWND window, UINT msg, UINT_PTR /*id_event*/, DWORD time)
-{
-    InvalidateRect(window, nullptr, FALSE);
-    KillTimer(window, PLOT_TIMER_ID);
-}
-
 void Plot::schedule_alarm(int secs)
 {
 #if 0
