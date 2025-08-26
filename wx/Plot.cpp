@@ -7,8 +7,6 @@
 #include "misc/version.h"
 #include "ui/rotate.h"
 
-#include <windowsx.h>
-
 #include <cassert>
 #include <cstring>
 #include <stdexcept>
