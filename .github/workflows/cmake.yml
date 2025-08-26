@@ -237,7 +237,7 @@ jobs:
             --suppress=variableScope
             --inline-suppr
             -I headers hc common headers unix win32
-            -ifractint
+            -ilegacy
             -ivcpkg
             -i../build-cppcheck/vcpkg_installed
 
