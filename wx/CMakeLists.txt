@@ -23,6 +23,13 @@ target_include_directories(TextScreen PUBLIC .)
 target_link_libraries(TextScreen PUBLIC wx::wxstc)
 target_folder(TextScreen "Libraries")
 
+add_library(Plot STATIC
+    Plot.h Plot.cpp
+)
+target_include_directories(Plot PUBLIC .)
+target_link_libraries(Plot PUBLIC wx::base libid config)
+target_folder(Plot "Libraries")
+
 configure_file(id.rc.in id.rc @ONLY)
 add_executable(id WIN32
     Id.ico
