@@ -244,6 +244,12 @@ jobs:
       - name: Print Report
         run: cmake -E cat cppcheck_report.txt
 
+      - name: Upload Report
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+        with:
+          name: CppCheck
+          path: cppheck-report.txt
+
   wx:
     needs: html-docs
     strategy:
