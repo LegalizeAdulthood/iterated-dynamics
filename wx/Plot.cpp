@@ -331,4 +331,25 @@ void Plot::restore_graphics()
     redraw();
 }
 
+void Plot::DoSetSize(int x, int y, int width, int height, int sizeFlags)
+{
+    // Ignore any size changes and use fixed size based on m_width and m_height
+    wxControl::DoSetSize(x, y, m_width, m_height, sizeFlags | wxSIZE_FORCE);
+}
+
+wxSize Plot::DoGetBestSize() const
+{
+    return {m_width, m_height};
+}
+
+wxSize Plot::GetMinSize() const
+{
+    return {m_width, m_height};
+}
+
+wxSize Plot::GetMaxSize() const
+{
+    return {m_width, m_height};
+}
+
 } // namespace ui

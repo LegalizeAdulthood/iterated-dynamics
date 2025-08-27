@@ -37,6 +37,13 @@ public:
     void save_graphics();
     void restore_graphics();
 
+protected:
+    // Override size-related methods to enforce fixed size
+    void DoSetSize(int x, int y, int width, int height, int sizeFlags) override;
+    wxSize DoGetBestSize() const override;
+    wxSize GetMinSize() const override;
+    wxSize GetMaxSize() const override;
+
 private:
     void set_dirty_region(int x_min, int y_min, int x_max, int y_max);
     void init_pixels();
