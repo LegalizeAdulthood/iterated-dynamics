@@ -88,44 +88,42 @@ static const Byte FONT_8x8[8][1024 / 8] = {
 
 void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
 {
-#if 0
-    RECT *r = &m_dirty_region;
+    wxRect &r{m_dirty_region};
 
     assert(x_min < x_max);
     assert(y_min < y_max);
-    assert((r->left <= r->right) && (r->top <= r->bottom));
-    if (r->left < 0)
+    assert((r.GetLeft() <= r.GetRight()) && (r.GetTop() <= r.GetBottom()));
+    if (r.GetLeft() < 0)
     {
-        r->left = x_min;
-        r->right = x_max;
-        r->top = y_min;
-        r->bottom = y_max;
+        r.SetLeft(x_min);
+        r.SetRight(x_max);
+        r.SetTop(y_min);
+        r.SetBottom(y_max);
         m_dirty = true;
     }
     else
     {
-        if (x_min < r->left)
+        if (x_min < r.GetLeft())
         {
-            r->left = x_min;
+            r.SetLeft(x_min);
             m_dirty = true;
         }
-        if (x_max > r->right)
+        if (x_max > r.GetRight())
         {
-            r->right = x_max;
+            r.SetRight(x_max);
             m_dirty = true;
         }
-        if (y_min < r->top)
+        if (y_min < r.GetTop())
         {
-            r->top = y_min;
+            r.SetTop(y_min);
             m_dirty = true;
         }
-        if (y_max > r->bottom)
+        if (y_max > r.GetBottom())
         {
-            r->bottom = y_max;
+            r.SetBottom(y_max);
             m_dirty = true;
         }
     }
-#endif
 }
 
 /* init_pixels
