@@ -2,11 +2,6 @@
 //
 #include "Plot.h"
 
-#include "3d/plot3d.h"
-#include "engine/id_data.h"
-#include "misc/version.h"
-#include "ui/rotate.h"
-
 #include <cassert>
 #include <cstring>
 #include <stdexcept>
@@ -135,8 +130,6 @@ void Plot::init_pixels()
 {
     m_pixels.clear();
     m_saved_pixels.clear();
-    m_width = g_screen_x_dots;
-    m_height = g_screen_y_dots;
     m_row_len = m_width * sizeof(Byte);
     m_row_len = ((m_row_len + 3) / 4) * 4;
     m_pixels_len = m_row_len * m_height;
@@ -167,6 +160,15 @@ void Plot::create_backing_store()
     SelectObject(m_memory_dc, m_font);
     SetBkMode(m_memory_dc, OPAQUE);
 #endif
+}
+
+Plot::Plot(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) :
+    wxControl(parent, id, pos, size, style),
+    m_width(size.GetWidth()),
+    m_height(size.GetHeight())
+{
+    init_pixels();
+    create_backing_store();
 }
 
 void Plot::write_pixel(int x, int y, int color)
@@ -227,43 +229,27 @@ void Plot::set_line_mode(int mode)
 
 void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    ::draw_line(x1, y1, x2, y2, color);
-}
-
-int Plot::resize()
-{
-    if ((g_screen_x_dots == m_width) && (g_screen_y_dots == m_height))
-    {
-        return 0;
-    }
-
-    init_pixels();
 #if 0
-    BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_width, m_height, SWP_NOZORDER | SWP_NOMOVE);
-    assert(status);
+    ::draw_line(x1, y1, x2, y2, color);
 #endif
-
-    return 1;
 }
 
 int Plot::read_palette()
 {
-    if (!g_got_real_dac)
-    {
-        return -1;
-    }
-
+#if 0
     for (int i = 0; i < 256; i++)
     {
         g_dac_box[i][0] = m_clut[i][0];
         g_dac_box[i][1] = m_clut[i][1];
         g_dac_box[i][2] = m_clut[i][2];
     }
+#endif
     return 0;
 }
 
 int Plot::write_palette()
 {
+#if 0
     for (int i = 0; i < 256; i++)
     {
         m_clut[i][0] = g_dac_box[i][0];
@@ -271,6 +257,7 @@ int Plot::write_palette()
         m_clut[i][2] = g_dac_box[i][2];
     }
     redraw();
+#endif
 
     return 0;
 }
