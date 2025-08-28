@@ -1,5 +1,13 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
+if(WIN32)
+    include(find_wix)
+    if(NOT (CPACK_WIX_CANDLE_EXECUTABLE AND CPACK_WIX_LIGHT_EXECUTABLE))
+        message(WARNING "Could not find the WiX executables needed to build an installer; skipping packaging.")
+        return()
+    endif()
+endif()
+
 set(CPACK_PACKAGE_NAME                  "${ID_PROGRAM_NAME}")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   "${ID_PROGRAM_NAME} fractal renderer")
 set(CPACK_PACKAGE_VENDOR                "${ID_VENDOR_NAME}")
@@ -15,8 +23,7 @@ set(CPACK_RESOURCE_FILE_README          "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt"
 set(CPACK_PACKAGE_EXECUTABLES           "id" "${ID_PROGRAM_NAME}")
 
 if(WIN32)
-    include(find_wix)
-    set(CPACK_GENERATOR ZIP WIX)
+    set(CPACK_GENERATOR "ZIP" "WIX")
 
     install(FILES "github.ico" DESTINATION .)
 
