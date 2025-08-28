@@ -353,7 +353,7 @@
     },
     {
       "name": "debug",
-      "displayName": "Workflow with Debug settings: configure, build and test",
+      "displayName": "Workflow with Debug settings: configure, build, test and package",
       "steps": [
         {
           "type": "configure",
@@ -375,7 +375,7 @@
     },
     {
       "name": "release",
-      "displayName": "Workflow with Release settings: configure, build and test",
+      "displayName": "Workflow with Release settings: configure, build, test and package",
       "steps": [
         {
           "type": "configure",
