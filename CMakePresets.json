@@ -348,10 +348,6 @@
         {
           "type": "test",
           "name": "wx"
-        },
-        {
-          "type": "package",
-          "name": "wx"
         }
       ]
     },
