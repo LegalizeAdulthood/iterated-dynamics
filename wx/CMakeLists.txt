@@ -27,7 +27,7 @@ add_library(Plot STATIC
     Plot.h Plot.cpp
 )
 target_include_directories(Plot PUBLIC .)
-target_link_libraries(Plot PUBLIC wx::base libid config)
+target_link_libraries(Plot PUBLIC wx::core config)
 target_folder(Plot "Libraries/wx")
 
 configure_file(id.rc.in id.rc @ONLY)
