@@ -9,10 +9,10 @@ public:
     bool OnInit() override;
 };
 
-class PlotFrame : public wxFrame
+class TestPlotFrame : public wxFrame
 {
 public:
-    PlotFrame(const wxString &title);
+    TestPlotFrame(const wxString &title);
 
 protected:
     // Override size-related methods to make frame non-resizable
@@ -33,12 +33,12 @@ wxIMPLEMENT_APP(TestPlotApp);
 
 bool TestPlotApp::OnInit()
 {
-    PlotFrame *frame = new PlotFrame("Scintilla Editing Example");
+    TestPlotFrame *frame = new TestPlotFrame("Plot Control Test");
     frame->Show(true);
     return true;
 }
 
-PlotFrame::PlotFrame(const wxString &title) :
+TestPlotFrame::TestPlotFrame(const wxString &title) :
     wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)),
     m_plot(new ui::Plot(this, wxID_ANY, wxDefaultPosition, wxSize{640, 480}))
@@ -50,7 +50,7 @@ PlotFrame::PlotFrame(const wxString &title) :
     wxMenu *action = new wxMenu;
     menu_bar->Append(action, "&Action");
     wxFrameBase::SetMenuBar(menu_bar);
-    Bind(wxEVT_MENU, &PlotFrame::on_exit, this, wxID_EXIT);
+    Bind(wxEVT_MENU, &TestPlotFrame::on_exit, this, wxID_EXIT);
 
     // Calculate and set the fixed frame size based on Plot size
     m_fixed_size = calculate_frame_size();
@@ -60,7 +60,7 @@ PlotFrame::PlotFrame(const wxString &title) :
     Center();
 }
 
-wxSize PlotFrame::calculate_frame_size() const
+wxSize TestPlotFrame::calculate_frame_size() const
 {
     // Get the Plot's fixed size
     wxSize text_screen_size = m_plot->GetBestSize();
@@ -81,7 +81,7 @@ wxSize PlotFrame::calculate_frame_size() const
     return frame_size;
 }
 
-void PlotFrame::DoSetSize(int x, int y, int width, int height, int size_flags)
+void TestPlotFrame::DoSetSize(int x, int y, int width, int height, int size_flags)
 {
     // Ignore any size changes and use our fixed size
     if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
@@ -93,7 +93,7 @@ void PlotFrame::DoSetSize(int x, int y, int width, int height, int size_flags)
     wxFrame::DoSetSize(x, y, m_fixed_size.x, m_fixed_size.y, size_flags | wxSIZE_FORCE);
 }
 
-wxSize PlotFrame::DoGetBestSize() const
+wxSize TestPlotFrame::DoGetBestSize() const
 {
     if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
     {
@@ -103,7 +103,7 @@ wxSize PlotFrame::DoGetBestSize() const
     return m_fixed_size;
 }
 
-wxSize PlotFrame::GetMinSize() const
+wxSize TestPlotFrame::GetMinSize() const
 {
     if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
     {
@@ -113,7 +113,7 @@ wxSize PlotFrame::GetMinSize() const
     return m_fixed_size;
 }
 
-wxSize PlotFrame::GetMaxSize() const
+wxSize TestPlotFrame::GetMaxSize() const
 {
     if (m_fixed_size.x == 0 || m_fixed_size.y == 0)
     {
@@ -123,7 +123,7 @@ wxSize PlotFrame::GetMaxSize() const
     return m_fixed_size;
 }
 
-void PlotFrame::on_exit(wxCommandEvent & /*event*/)
+void TestPlotFrame::on_exit(wxCommandEvent & /*event*/)
 {
     Close(true);
 }

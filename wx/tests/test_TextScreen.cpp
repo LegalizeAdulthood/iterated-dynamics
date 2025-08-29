@@ -5,26 +5,6 @@
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
 
-namespace formula
-{
-
-enum class Syntax
-{
-    NONE,
-    COMMENT,
-    KEYWORD,
-    WHITESPACE,
-    FUNCTION,
-    IDENTIFIER
-};
-
-inline int operator+(Syntax value)
-{
-    return static_cast<int>(value);
-}
-
-} // namespace formula
-
 enum class MarginIndex
 {
     LINE_NUMBER = 0,
@@ -55,8 +35,6 @@ protected:
     wxSize GetMaxSize() const override;
 
 private:
-    void set_style_font_color(formula::Syntax style, const wxFont &font, const char *color_name);
-    void init_coloring();
     void init_line_numbers();
     void show_hide_line_numbers();
     void on_view_line_numbers(wxCommandEvent &event);
@@ -77,7 +55,7 @@ wxIMPLEMENT_APP(TestTextScreenApp);
 
 bool TestTextScreenApp::OnInit()
 {
-    TextScreenFrame *frame = new TextScreenFrame("Scintilla Editing Example");
+    TextScreenFrame *frame = new TextScreenFrame("TextScreen Control Test");
     frame->Show(true);
     return true;
 }
@@ -104,7 +82,6 @@ TextScreenFrame::TextScreenFrame(const wxString &title) :
     wxFrameBase::SetMenuBar(menu_bar);
     Bind(wxEVT_MENU, &TextScreenFrame::on_exit, this, wxID_EXIT);
 
-    init_coloring();
     init_line_numbers();
 
     // Calculate and set the fixed frame size based on TextScreen size
@@ -178,32 +155,10 @@ wxSize TextScreenFrame::GetMaxSize() const
     return m_fixed_size;
 }
 
-void TextScreenFrame::set_style_font_color(formula::Syntax style, const wxFont &font, const char *color_name)
-{
-    m_text_screen->StyleSetFont(+style, font);
-    wxColour color;
-    wxASSERT(wxFromString(color_name, &color));
-    m_text_screen->StyleSetForeground(+style, color);
-}
-
-void TextScreenFrame::init_coloring()
-{
-    wxFont typewriter;
-    typewriter.SetFamily(wxFONTFAMILY_TELETYPE);
-    typewriter.SetPointSize(12);
-    set_style_font_color(formula::Syntax::NONE, typewriter, "black");
-    set_style_font_color(formula::Syntax::COMMENT, typewriter, "forest green");
-    set_style_font_color(formula::Syntax::KEYWORD, typewriter, "blue");
-    set_style_font_color(formula::Syntax::WHITESPACE, typewriter, "black");
-    set_style_font_color(formula::Syntax::FUNCTION, typewriter, "red");
-    set_style_font_color(formula::Syntax::IDENTIFIER, typewriter, "purple");
-    m_text_screen->Colourise(0, -1);
-}
-
 void TextScreenFrame::init_line_numbers()
 {
     m_text_screen->SetMarginType(+MarginIndex::LINE_NUMBER, wxSTC_MARGIN_NUMBER);
-    m_line_margin_width = m_text_screen->TextWidth(wxSTC_STYLE_LINENUMBER, "_99999");
+    m_line_margin_width = m_text_screen->TextWidth(wxSTC_STYLE_LINENUMBER, "_99");
     show_hide_line_numbers();
 }
 
