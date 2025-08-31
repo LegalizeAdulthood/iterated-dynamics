@@ -2,6 +2,9 @@
 //
 #include "Plot.h"
 
+#include <wx/rawbmp.h>
+
+#include <algorithm>
 #include <cassert>
 #include <cstring>
 #include <stdexcept>
@@ -105,36 +108,11 @@ void Plot::init_pixels()
 {
     m_pixels.clear();
     m_saved_pixels.clear();
-    m_row_len = m_width * sizeof(Byte);
-    m_row_len = ((m_row_len + 3) / 4) * 4;
-    m_pixels_len = m_row_len * m_height;
-    assert(m_pixels_len > 0);
-    m_pixels.resize(m_pixels_len);
-    std::memset(m_pixels.data(), 0, m_pixels_len);
+    m_pixels.resize(m_width*m_height);
+    std::memset(m_pixels.data(), 0, m_pixels.size());
     m_dirty = false;
     m_dirty_region = wxRect{};
-}
-
-void Plot::create_backing_store()
-{
-#if 0
-    {
-        HDC dc = GetDC(m_window);
-        m_memory_dc = CreateCompatibleDC(dc);
-        assert(m_memory_dc);
-        ReleaseDC(m_window, dc);
-    }
-
-    m_rendering = CreateCompatibleBitmap(m_memory_dc, m_width, m_height);
-    assert(m_rendering);
-    m_backup = (HBITMAP) SelectObject(m_memory_dc, m_rendering);
-
-    m_font = CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_RASTER_PRECIS,
-        CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY, DEFAULT_PITCH | FF_MODERN, "Courier");
-    assert(m_font);
-    SelectObject(m_memory_dc, m_font);
-    SetBkMode(m_memory_dc, OPAQUE);
-#endif
+    m_font = wxFont(8, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 }
 
 Plot::Plot()
@@ -145,7 +123,8 @@ Plot::Plot()
 Plot::Plot(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) :
     wxControl(parent, id, pos, size, style),
     m_width(size.GetWidth()),
-    m_height(size.GetHeight())
+    m_height(size.GetHeight()),
+    m_rendering(m_width, m_height)
 {
     init();
 }
@@ -153,7 +132,6 @@ Plot::Plot(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &si
 void Plot::init()
 {
     init_pixels();
-    create_backing_store();
     Bind(wxEVT_PAINT, &Plot::on_paint, this, GetId());
     for (int i = 0; i < 256; ++i)
     {
@@ -161,41 +139,73 @@ void Plot::init()
         m_clut[i][1] = static_cast<Byte>(i); // G
         m_clut[i][2] = static_cast<Byte>(i); // B
     }
+    update_palette();
 }
 
 void Plot::on_paint(wxPaintEvent &event)
 {
     wxPaintDC dc(this);
+    dc.DrawBitmap(m_rendering, 0, 0, false);
 }
 
 void Plot::write_pixel(int x, int y, int color)
 {
-    assert(m_pixels.size() == m_width * m_height);
     if (x < 0 || x > m_width || y < 0 || y > m_height)
     {
         return;
     }
-    m_pixels[(m_height - y - 1) * m_row_len + x] = (Byte) (color & 0xFF);
+
+    assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
+    m_pixels[(m_height - y - 1) * m_width + x] = (Byte) (color & 0xFF);
+
+    wxNativePixelData data{m_rendering};
+    assert(data.GetWidth() == m_width);
+    assert(data.GetHeight() == m_height);
+    auto it = data.GetPixels();
+    it.MoveTo(data, x, y);
+    it.Red() = m_clut[color][0];
+    it.Green() = m_clut[color][1];
+    it.Blue() = m_clut[color][2];
     set_dirty_region({x, y, 1, 1});
 }
 
 int Plot::read_pixel(int x, int y)
 {
-    assert(m_pixels.size() == m_width * m_height);
+    assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
     if (x < 0 || x > m_width || y < 0 || y > m_height)
     {
         return 0;
     }
-    return m_pixels[(m_height - 1 - y) * m_row_len + x];
+    return m_pixels[(m_height - 1 - y) * m_width + x];
 }
 
 void Plot::write_span(int y, int x, int last_x, const Byte *pixels)
 {
-    int width = last_x - x + 1;
-
-    for (int i = 0; i < width; i++)
+    if (x < 0 || x >= m_width || y < 0 || y >= m_height || last_x < x || last_x >= m_width)
     {
-        write_pixel(x + i, y, pixels[i]);
+        assert(x >= 0 || x < m_width || y >= 0 || y < m_height || last_x >= x || last_x < m_width);
+        return;
+    }
+
+    const int width = last_x - x + 1;
+    {
+        assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
+        Byte *begin{m_pixels.data() + (m_height - 1 - y) * m_width + x};
+        std::copy_n(pixels, width, begin);
+    }
+    {
+        wxNativePixelData data{m_rendering};
+        assert(data.GetWidth() == m_width);
+        assert(data.GetHeight() == m_height);
+        auto it = data.GetPixels();
+        it.MoveTo(data, x, y);
+        for (int i = 0; i < width; ++i, ++it, ++pixels)
+        {
+            const Byte color = *pixels;
+            it.Red() = m_clut[color][0];
+            it.Green() = m_clut[color][1];
+            it.Blue() = m_clut[color][2];
+        }
     }
     set_dirty_region({x, y, width, 1});
 }
@@ -236,9 +246,24 @@ Colormap Plot::get_colormap() const
     return m_clut;
 }
 
+void Plot::update_palette()
+{
+    std::array<Byte, 256> red;
+    std::array<Byte, 256> green;
+    std::array<Byte, 256> blue;
+    for (int i = 0; i < 256; ++i)
+    {
+        red[i] = m_clut[i][0];
+        green[i] = m_clut[i][1];
+        blue[i] = m_clut[i][2];
+    }
+    SetPalette(wxPalette(256, red.data(), green.data(), blue.data()));
+}
+
 void Plot::set_colormap(const Colormap &value)
 {
     m_clut = value;
+    update_palette();
 }
 
 void Plot::schedule_alarm(int secs)
@@ -257,7 +282,7 @@ void Plot::clear()
 {
     m_dirty_region = wxRect{0, 0, m_width, m_height};
     m_dirty = true;
-    std::memset(m_pixels.data(), 0, m_pixels_len);
+    std::memset(m_pixels.data(), 0, m_pixels.size());
 }
 
 void Plot::redraw()
@@ -273,8 +298,8 @@ void Plot::display_string(int x, int y, int fg, int bg, const char *text)
     dc.SetTextForeground(wxColor(m_clut[fg][0], m_clut[fg][1], m_clut[fg][2]));
     const wxSize sz{dc.GetTextExtent(text)};
     dc.DrawText(text, x, y);
-    set_dirty_region({x, y, sz.GetWidth(), sz.GetHeight()});
-    flush();
+    //set_dirty_region({x, y, sz.GetWidth(), sz.GetHeight()});
+    //flush();
 }
 
 void Plot::save_graphics()

@@ -34,6 +34,7 @@ public:
     void set_line_mode(int mode);
     void draw_line(int x1, int y1, int x2, int y2, int color);
     Colormap get_colormap() const;
+    void update_palette();
     void set_colormap(const Colormap &value);
     void schedule_alarm(int secs);
     void clear();
@@ -53,21 +54,16 @@ private:
     void init();
     void set_dirty_region(const wxRect &rect);
     void init_pixels();
-    void create_backing_store();
 
-    std::string m_title;
-    wxImage m_rendering;
-    wxImage m_backup;
+    int m_width{};
+    int m_height{};
+    Colormap m_clut{};
+    wxBitmap m_rendering;
     wxFont m_font;
     bool m_dirty{};
     wxRect m_dirty_region{};
     std::vector<Byte> m_pixels;
     std::vector<Byte> m_saved_pixels;
-    size_t m_pixels_len{};
-    size_t m_row_len{};
-    int m_width{};
-    int m_height{};
-    Colormap m_clut{};
 
     wxDECLARE_DYNAMIC_CLASS(Plot);
 };
