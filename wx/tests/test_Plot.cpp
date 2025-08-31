@@ -41,7 +41,8 @@ bool TestPlotApp::OnInit()
 TestPlotFrame::TestPlotFrame(const wxString &title) :
     wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)),
-    m_plot(new ui::Plot(this, wxID_ANY, wxDefaultPosition, wxSize{640, 480}))
+    m_plot(new ui::Plot(this, wxID_ANY, wxDefaultPosition, wxSize{640, 480})),
+    m_fixed_size(calculate_frame_size())
 {
     wxMenuBar *menu_bar = new wxMenuBar;
     wxMenu *file = new wxMenu;
@@ -52,11 +53,7 @@ TestPlotFrame::TestPlotFrame(const wxString &title) :
     wxFrameBase::SetMenuBar(menu_bar);
     Bind(wxEVT_MENU, &TestPlotFrame::on_exit, this, wxID_EXIT);
 
-    // Calculate and set the fixed frame size based on Plot size
-    m_fixed_size = calculate_frame_size();
     SetSize(m_fixed_size);
-
-    // Center the frame on screen
     Center();
 }
 

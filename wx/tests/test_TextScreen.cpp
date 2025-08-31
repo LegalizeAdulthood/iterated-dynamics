@@ -63,7 +63,8 @@ bool TestTextScreenApp::OnInit()
 TextScreenFrame::TextScreenFrame(const wxString &title) :
     wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)),
-    m_text_screen(new ui::TextScreen(this, wxID_ANY))
+    m_text_screen(new ui::TextScreen(this, wxID_ANY)),
+    m_fixed_size(calculate_frame_size())
 {
     wxMenuBar *menu_bar = new wxMenuBar;
     wxMenu *file = new wxMenu;
@@ -83,12 +84,7 @@ TextScreenFrame::TextScreenFrame(const wxString &title) :
     Bind(wxEVT_MENU, &TextScreenFrame::on_exit, this, wxID_EXIT);
 
     init_line_numbers();
-
-    // Calculate and set the fixed frame size based on TextScreen size
-    m_fixed_size = calculate_frame_size();
     SetSize(m_fixed_size);
-
-    // Center the frame on screen
     Center();
 }
 
