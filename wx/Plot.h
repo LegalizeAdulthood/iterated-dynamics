@@ -6,19 +6,25 @@
 
 #include <wx/wx.h>
 
+#include <array>
 #include <string>
 #include <vector>
 
 namespace ui
 {
 
+using Colormap = std::array<std::array<Byte, 3>, 256>;
+
 class Plot : public wxControl
 {
 public:
+    Plot();
     Plot(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition,
         const wxSize &size = wxDefaultSize, long style = 0);
 
     ~Plot() override = default;
+
+    void on_paint(wxPaintEvent &event);
 
     void write_pixel(int x, int y, int color);
     int read_pixel(int x, int y);
@@ -27,8 +33,8 @@ public:
     void read_span(int y, int x, int last_x, Byte *pixels);
     void set_line_mode(int mode);
     void draw_line(int x1, int y1, int x2, int y2, int color);
-    int read_palette();
-    int write_palette();
+    Colormap get_colormap() const;
+    void set_colormap(const Colormap &value);
     void schedule_alarm(int secs);
     void clear();
     void redraw();
@@ -44,7 +50,8 @@ protected:
     wxSize GetMaxSize() const override;
 
 private:
-    void set_dirty_region(int x_min, int y_min, int x_max, int y_max);
+    void init();
+    void set_dirty_region(const wxRect &rect);
     void init_pixels();
     void create_backing_store();
 
@@ -60,7 +67,7 @@ private:
     size_t m_row_len{};
     int m_width{};
     int m_height{};
-    unsigned char m_clut[256][3]{};
+    Colormap m_clut{};
 
     wxDECLARE_DYNAMIC_CLASS(Plot);
 };

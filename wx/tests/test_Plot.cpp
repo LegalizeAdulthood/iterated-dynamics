@@ -22,6 +22,7 @@ protected:
     wxSize GetMaxSize() const override;
 
 private:
+    void on_action_display_string(wxCommandEvent &event);
     void on_exit(wxCommandEvent &event);
     wxSize calculate_frame_size() const;
 
@@ -49,6 +50,8 @@ TestPlotFrame::TestPlotFrame(const wxString &title) :
     file->Append(wxID_EXIT, "&Quit\tAlt-F4", "Quit");
     menu_bar->Append(file, "&File");
     wxMenu *action = new wxMenu;
+    wxMenuItem *display_string = action->Append(wxID_ANY, "&Display String");
+    Bind(wxEVT_MENU, &TestPlotFrame::on_action_display_string, this, display_string->GetId());
     menu_bar->Append(action, "&Action");
     wxFrameBase::SetMenuBar(menu_bar);
     Bind(wxEVT_MENU, &TestPlotFrame::on_exit, this, wxID_EXIT);
@@ -118,6 +121,11 @@ wxSize TestPlotFrame::GetMaxSize() const
     }
 
     return m_fixed_size;
+}
+
+void TestPlotFrame::on_action_display_string(wxCommandEvent & /*event*/)
+{
+    m_plot->display_string(10, 10, 255, 0, "Hello, Plot!");
 }
 
 void TestPlotFrame::on_exit(wxCommandEvent & /*event*/)

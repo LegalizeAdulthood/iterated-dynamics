@@ -83,44 +83,17 @@ static const Byte FONT_8x8[8][1024 / 8] = {
         0x00, 0x1C, 0x00, 0x00, 0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x10, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x1C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
 
-void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
+void Plot::set_dirty_region(const wxRect &rect)
 {
-    wxRect &r{m_dirty_region};
-
-    assert(x_min < x_max);
-    assert(y_min < y_max);
-    assert((r.GetLeft() <= r.GetRight()) && (r.GetTop() <= r.GetBottom()));
-    if (r.GetLeft() < 0)
+    if (m_dirty_region.IsEmpty())
     {
-        r.SetLeft(x_min);
-        r.SetRight(x_max);
-        r.SetTop(y_min);
-        r.SetBottom(y_max);
-        m_dirty = true;
+        m_dirty_region = wxRect{rect};
     }
     else
     {
-        if (x_min < r.GetLeft())
-        {
-            r.SetLeft(x_min);
-            m_dirty = true;
-        }
-        if (x_max > r.GetRight())
-        {
-            r.SetRight(x_max);
-            m_dirty = true;
-        }
-        if (y_min < r.GetTop())
-        {
-            r.SetTop(y_min);
-            m_dirty = true;
-        }
-        if (y_max > r.GetBottom())
-        {
-            r.SetBottom(y_max);
-            m_dirty = true;
-        }
+        m_dirty_region.Union(wxRect{rect});
     }
+    m_dirty = true;
 }
 
 /* init_pixels
@@ -139,7 +112,7 @@ void Plot::init_pixels()
     m_pixels.resize(m_pixels_len);
     std::memset(m_pixels.data(), 0, m_pixels_len);
     m_dirty = false;
-    m_dirty_region = wxRect{-1, -1, -1, -1};
+    m_dirty_region = wxRect{};
 }
 
 void Plot::create_backing_store()
@@ -164,13 +137,35 @@ void Plot::create_backing_store()
 #endif
 }
 
+Plot::Plot()
+{
+    init();
+}
+
 Plot::Plot(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) :
     wxControl(parent, id, pos, size, style),
     m_width(size.GetWidth()),
     m_height(size.GetHeight())
 {
+    init();
+}
+
+void Plot::init()
+{
     init_pixels();
     create_backing_store();
+    Bind(wxEVT_PAINT, &Plot::on_paint, this, GetId());
+    for (int i = 0; i < 256; ++i)
+    {
+        m_clut[i][0] = static_cast<Byte>(i); // R
+        m_clut[i][1] = static_cast<Byte>(i); // G
+        m_clut[i][2] = static_cast<Byte>(i); // B
+    }
+}
+
+void Plot::on_paint(wxPaintEvent &event)
+{
+    wxPaintDC dc(this);
 }
 
 void Plot::write_pixel(int x, int y, int color)
@@ -181,7 +176,7 @@ void Plot::write_pixel(int x, int y, int color)
         return;
     }
     m_pixels[(m_height - y - 1) * m_row_len + x] = (Byte) (color & 0xFF);
-    set_dirty_region(x, y, x + 1, y + 1);
+    set_dirty_region({x, y, 1, 1});
 }
 
 int Plot::read_pixel(int x, int y)
@@ -202,7 +197,7 @@ void Plot::write_span(int y, int x, int last_x, const Byte *pixels)
     {
         write_pixel(x + i, y, pixels[i]);
     }
-    set_dirty_region(x, y, last_x + 1, y + 1);
+    set_dirty_region({x, y, width, 1});
 }
 
 void Plot::flush()
@@ -211,7 +206,7 @@ void Plot::flush()
     {
         RefreshRect(m_dirty_region, false);
         m_dirty = false;
-        m_dirty_region = {-1, -1, -1, -1};
+        m_dirty_region = wxRect{};
     }
 }
 
@@ -236,32 +231,14 @@ void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
 #endif
 }
 
-int Plot::read_palette()
+Colormap Plot::get_colormap() const
 {
-#if 0
-    for (int i = 0; i < 256; i++)
-    {
-        g_dac_box[i][0] = m_clut[i][0];
-        g_dac_box[i][1] = m_clut[i][1];
-        g_dac_box[i][2] = m_clut[i][2];
-    }
-#endif
-    return 0;
+    return m_clut;
 }
 
-int Plot::write_palette()
+void Plot::set_colormap(const Colormap &value)
 {
-#if 0
-    for (int i = 0; i < 256; i++)
-    {
-        m_clut[i][0] = g_dac_box[i][0];
-        m_clut[i][1] = g_dac_box[i][1];
-        m_clut[i][2] = g_dac_box[i][2];
-    }
-    redraw();
-#endif
-
-    return 0;
+    m_clut = value;
 }
 
 void Plot::schedule_alarm(int secs)
@@ -290,22 +267,13 @@ void Plot::redraw()
 
 void Plot::display_string(int x, int y, int fg, int bg, const char *text)
 {
-    while (*text)
-    {
-        for (int row = 0; row < 8; row++)
-        {
-            int x1 = x;
-            int col = 8;
-            Byte pixel = FONT_8x8[row][static_cast<unsigned char>(*text)];
-            while (col-- > 0)
-            {
-                int color = (pixel & (1 << col)) ? fg : bg;
-                write_pixel(x1++, y + row, color);
-            }
-        }
-        x += 8;
-        text++;
-    }
+    wxClientDC dc(this);
+    dc.SetFont(m_font);
+    dc.SetTextBackground(wxColor(m_clut[bg][0], m_clut[bg][1], m_clut[bg][2]));
+    dc.SetTextForeground(wxColor(m_clut[fg][0], m_clut[fg][1], m_clut[fg][2]));
+    const wxSize sz{dc.GetTextExtent(text)};
+    dc.DrawText(text, x, y);
+    set_dirty_region({x, y, sz.GetWidth(), sz.GetHeight()});
     flush();
 }
 
