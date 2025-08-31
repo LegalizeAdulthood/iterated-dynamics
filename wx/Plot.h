@@ -61,6 +61,8 @@ private:
     int m_width{};
     int m_height{};
     unsigned char m_clut[256][3]{};
+
+    wxDECLARE_DYNAMIC_CLASS(Plot);
 };
 
 } // namespace ui
