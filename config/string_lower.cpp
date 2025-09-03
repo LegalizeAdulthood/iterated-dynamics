@@ -2,7 +2,10 @@
 //
 #include <cctype>
 
-// strlwr -- Convert string to lower case.
+namespace id::config
+{
+
+// string_lower -- Convert string to lower case.
 char *string_lower(char *s)
 {
     for (char *sptr = s; *sptr; ++sptr)
@@ -11,3 +14,5 @@ char *string_lower(char *s)
     }
     return s;
 }
+
+} // namespace id::config

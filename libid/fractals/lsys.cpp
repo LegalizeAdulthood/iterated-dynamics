@@ -133,7 +133,7 @@ static bool read_lsystem_file(const char *str)
         {
             *word = 0;
         }
-        string_lower(inline1);
+        id::config::string_lower(inline1);
 
         if ((int)std::strspn(inline1, " \t\n") < (int)std::strlen(inline1)) // not a blank line
         {

@@ -1724,7 +1724,7 @@ static void put_param_line()
 
 static void strip_zeros(char *buf)
 {
-    string_lower(buf);
+    id::config::string_lower(buf);
     char *dot_ptr = std::strchr(buf, '.');
     if (dot_ptr != nullptr)
     {
