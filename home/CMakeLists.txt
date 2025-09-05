@@ -23,6 +23,7 @@ endif()
 
 id_install_home(FILES id.cfg sstools.ini)
 
+add_subdirectory(doc)
 id_install_subdirectory(extra)
 id_install_subdirectory(formula)
 id_install_subdirectory(ifs)
