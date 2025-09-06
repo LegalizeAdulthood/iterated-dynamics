@@ -802,7 +802,7 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
     int num_fn;
     if (g_fractal_type == FractalType::FORMULA && migrate_integer_types(info->fractal_type) == FractalType::FORMULA)
     {
-        if (string_case_equal(blk_3_info->form_name, g_formula_name.c_str()))
+        if (id::string_case_equal(blk_3_info->form_name, g_formula_name.c_str()))
         {
             num_fn = g_max_function;
             if (num_fn > 0)

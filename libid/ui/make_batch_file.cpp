@@ -380,7 +380,7 @@ skip_ui:
             {
                 if (std::strchr(line, '{')                     // entry heading?
                     && std::sscanf(line, " %40[^ \t({]", buf2) //
-                    && string_case_equal(buf2, g_parameter_set_name.c_str()))
+                    && id::string_case_equal(buf2, g_parameter_set_name.c_str()))
                 {
                     // entry with same name
                     if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::INFO_ONLY,

@@ -293,7 +293,7 @@ int find_topic_title(const char *title)
     for (int t = 0; t < static_cast<int>(g_src.topics.size()); t++)
     {
         if ((int) g_src.topics[t].title.length() == len
-            && string_case_equal(title, g_src.topics[t].title.c_str(), len))
+            && id::string_case_equal(title, g_src.topics[t].title.c_str(), len))
         {
             return t;
         }
@@ -680,7 +680,7 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
             while (!last)
             {
                 last = get_next_item();
-                if (string_case_equal(s_cmd, "FF"))
+                if (id::string_case_equal(s_cmd, "FF"))
                 {
                     if (c.flags & CF_NEW_PAGE)
                     {
@@ -980,7 +980,7 @@ static int create_table()
             ch = *ptr;
             *ptr = '\0';
 
-            if (string_case_equal(s_cmd, "EndTable"))
+            if (id::string_case_equal(s_cmd, "EndTable"))
             {
                 done = true;
             }
@@ -1070,7 +1070,7 @@ static void process_comment()
             ch = *ptr;
             *ptr = '\0';
 
-            if (string_case_equal(s_cmd, "EndComment"))
+            if (id::string_case_equal(s_cmd, "EndComment"))
             {
                 if (ch == ',')
                 {
@@ -1218,7 +1218,7 @@ static std::FILE *open_include(const std::string &filename)
 
 static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int err_offset)
 {
-    if (!string_case_equal(s_cmd, tag.data(), tag.length()))
+    if (!id::string_case_equal(s_cmd, tag.data(), tag.length()))
     {
         return;
     }
@@ -1373,7 +1373,7 @@ void read_src(const std::string &fname, Mode mode)
                 *ptr = '\0';
 
                 // commands allowed anytime...
-                if (string_case_equal(s_cmd, "Topic=", 6))
+                if (id::string_case_equal(s_cmd, "Topic=", 6))
                 {
                     if (in_topic)  // if we're in a topic, finish it
                     {
@@ -1416,7 +1416,7 @@ void read_src(const std::string &fname, Mode mode)
                     s_compress_spaces = true;
                     continue;
                 }
-                if (string_case_equal(s_cmd, "Data=", 5))
+                if (id::string_case_equal(s_cmd, "Data=", 5))
                 {
                     if (in_topic)  // if we're in a topic, finish it
                     {
@@ -1475,7 +1475,7 @@ void read_src(const std::string &fname, Mode mode)
                     s_compress_spaces = false;
                     continue;
                 }
-                if (string_case_equal(s_cmd, "DocContents", 11))
+                if (id::string_case_equal(s_cmd, "DocContents", 11))
                 {
                     check_command_length(err_offset, 11);
                     if (in_topic)  // if we're in a topic, finish it
@@ -1496,12 +1496,12 @@ void read_src(const std::string &fname, Mode mode)
                     in_topic = false;
                     continue;
                 }
-                if (string_case_equal(s_cmd, "Comment"))
+                if (id::string_case_equal(s_cmd, "Comment"))
                 {
                     process_comment();
                     continue;
                 }
-                if (string_case_equal(s_cmd, "FormatExclude", 13))
+                if (id::string_case_equal(s_cmd, "FormatExclude", 13))
                 {
                     if (s_cmd[13] == '-')
                     {
@@ -1600,7 +1600,7 @@ void read_src(const std::string &fname, Mode mode)
 
                     continue;
                 }
-                if (string_case_equal(s_cmd, "Include ", 8))
+                if (id::string_case_equal(s_cmd, "Include ", 8))
                 {
                     const std::string filename = &s_cmd[8];
                     if (std::FILE *new_file = open_include(filename))
@@ -1627,7 +1627,7 @@ void read_src(const std::string &fname, Mode mode)
 
                 if (!in_topic)
                 {
-                    if (string_case_equal(s_cmd, "HdrFile=", 8))
+                    if (id::string_case_equal(s_cmd, "HdrFile=", 8))
                     {
                         if (!g_src.hdr_filename.empty())
                         {
@@ -1635,7 +1635,7 @@ void read_src(const std::string &fname, Mode mode)
                         }
                         g_src.hdr_filename = &s_cmd[8];
                     }
-                    else if (string_case_equal(s_cmd, "HlpFile=", 8))
+                    else if (id::string_case_equal(s_cmd, "HlpFile=", 8))
                     {
                         if (!g_src.hlp_filename.empty())
                         {
@@ -1643,7 +1643,7 @@ void read_src(const std::string &fname, Mode mode)
                         }
                         g_src.hlp_filename = &s_cmd[8];
                     }
-                    else if (string_case_equal(s_cmd, "Version=", 8))
+                    else if (id::string_case_equal(s_cmd, "Version=", 8))
                     {
                         if (g_src.version != -1)   // an unlikely value
                         {
@@ -1659,7 +1659,7 @@ void read_src(const std::string &fname, Mode mode)
                     continue;
                 }
                 // commands allowed only in a topic...
-                if (string_case_equal(s_cmd, "FF", 2))
+                if (id::string_case_equal(s_cmd, "FF", 2))
                 {
                     check_command_length(err_offset, 2);
                     if (in_para)
@@ -1671,7 +1671,7 @@ void read_src(const std::string &fname, Mode mode)
                     in_para = false;
                     num_spaces = 0;
                 }
-                else if (string_case_equal(s_cmd, "DocFF", 5))
+                else if (id::string_case_equal(s_cmd, "DocFF", 5))
                 {
                     check_command_length(err_offset, 5);
                     if (in_para)
@@ -1691,7 +1691,7 @@ void read_src(const std::string &fname, Mode mode)
                     in_para = false;
                     num_spaces = 0;
                 }
-                else if (string_case_equal(s_cmd, "OnlineFF", 8))
+                else if (id::string_case_equal(s_cmd, "OnlineFF", 8))
                 {
                     check_command_length(err_offset, 8);
                     if (in_para)
@@ -1711,7 +1711,7 @@ void read_src(const std::string &fname, Mode mode)
                     in_para = false;
                     num_spaces = 0;
                 }
-                else if (string_case_equal(s_cmd, "Label=", 6))
+                else if (id::string_case_equal(s_cmd, "Label=", 6))
                 {
                     const char *label_name = &s_cmd[6];
                     if ((int)std::strlen(label_name) <= 0)
@@ -1745,7 +1745,7 @@ void read_src(const std::string &fname, Mode mode)
                         g_src.add_label(lbl);
                     }
                 }
-                else if (string_case_equal(s_cmd, "Table=", 6))
+                else if (id::string_case_equal(s_cmd, "Table=", 6))
                 {
                     if (in_para)
                     {
@@ -1767,7 +1767,7 @@ void read_src(const std::string &fname, Mode mode)
 
                     create_table();
                 }
-                else if (string_case_equal(s_cmd, "FormatExclude", 12))
+                else if (id::string_case_equal(s_cmd, "FormatExclude", 12))
                 {
                     if (s_cmd[13] == '-')
                     {
@@ -1798,7 +1798,7 @@ void read_src(const std::string &fname, Mode mode)
                         MSG_ERROR(err_offset, "Unexpected or invalid argument to FormatExclude.");
                     }
                 }
-                else if (string_case_equal(s_cmd, "Format", 6))
+                else if (id::string_case_equal(s_cmd, "Format", 6))
                 {
                     if (s_cmd[6] == '+')
                     {
@@ -1839,19 +1839,19 @@ void read_src(const std::string &fname, Mode mode)
                         MSG_ERROR(err_offset, "Invalid argument to Format.");
                     }
                 }
-                else if (string_case_equal(s_cmd, "Online", 6))
+                else if (id::string_case_equal(s_cmd, "Online", 6))
                 {
                     toggle_mode("Online", CMD_XONLINE, s_xonline, err_offset);
                 }
-                else if (string_case_equal(s_cmd, "Doc", 3))
+                else if (id::string_case_equal(s_cmd, "Doc", 3))
                 {
                     toggle_mode("Doc", CMD_XDOC, s_xdoc, err_offset);
                 }
-                else if (string_case_equal(s_cmd, "ADoc", 4))
+                else if (id::string_case_equal(s_cmd, "ADoc", 4))
                 {
                     toggle_mode("ADoc", CMD_XADOC, s_xadoc, err_offset);
                 }
-                else if (string_case_equal(s_cmd, "Center", 6))
+                else if (id::string_case_equal(s_cmd, "Center", 6))
                 {
                     if (s_cmd[6] == '+')
                     {
@@ -1889,7 +1889,7 @@ void read_src(const std::string &fname, Mode mode)
                         MSG_ERROR(err_offset, "Invalid argument to Center.");
                     }
                 }
-                else if (string_case_equal(s_cmd, "CompressSpaces", 14))
+                else if (id::string_case_equal(s_cmd, "CompressSpaces", 14))
                 {
                     check_command_length(err_offset, 15);
 
@@ -1920,7 +1920,7 @@ void read_src(const std::string &fname, Mode mode)
                         MSG_ERROR(err_offset, "Invalid argument to CompressSpaces.");
                     }
                 }
-                else if (string_case_equal("BinInc ", s_cmd, 7))
+                else if (id::string_case_equal("BinInc ", s_cmd, 7))
                 {
                     if (!bit_set(t.flags, TopicFlags::DATA))
                     {

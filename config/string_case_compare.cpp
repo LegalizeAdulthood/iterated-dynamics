@@ -7,6 +7,9 @@
 #include <string>
 #include <string_view>
 
+namespace id
+{
+
 static std::string to_lower(std::string_view src)
 {
     std::string result;
@@ -30,3 +33,5 @@ int string_case_compare(const char *s, const char *t)
     std::string rhs{to_lower(t)};
     return lhs.compare(rhs);
 }
+
+} // namespace id

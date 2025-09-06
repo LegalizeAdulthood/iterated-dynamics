@@ -89,7 +89,7 @@ bool find_file_item(
     std::FILE *infile = nullptr;
     bool found = false;
 
-    if (!string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
+    if (!id::string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
     {
         found = check_path(path, &infile, item_name);
 

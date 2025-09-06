@@ -11,7 +11,7 @@ void shell_sort(void *v1, int n, unsigned sz)
         char **choice1 = (char **) arg1;
         char **choice2 = (char **) arg2;
 
-        return string_case_compare(*choice1, *choice2);
+        return id::string_case_compare(*choice1, *choice2);
     };
 
     char *v = (char *) v1;
