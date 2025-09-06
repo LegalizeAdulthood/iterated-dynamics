@@ -86,9 +86,9 @@ void AsciiDocCompiler::paginate_ascii_doc()
 
         while (len > 0)
         {
-            switch (TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width); tok)
+            switch (id::help::TokenType tok = id::help::find_token_length(id::help::TokenMode::ONLINE, curr, len, &size, &width); tok)
             {
-            case TokenType::TOK_PARA:
+            case id::help::TokenType::TOK_PARA:
             {
                 ++curr;
                 const int indent = *curr++;
@@ -97,21 +97,21 @@ void AsciiDocCompiler::paginate_ascii_doc()
                 col = indent;
                 while (true)
                 {
-                    tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
+                    tok = id::help::find_token_length(id::help::TokenMode::ONLINE, curr, len, &size, &width);
 
-                    if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
+                    if (tok == id::help::TokenType::TOK_DONE || tok == id::help::TokenType::TOK_NL || tok == id::help::TokenType::TOK_FF)
                     {
                         break;
                     }
 
-                    if (tok == TokenType::TOK_PARA)
+                    if (tok == id::help::TokenType::TOK_PARA)
                     {
                         col = 0;   // fake a nl
                         ++ line_num;
                         break;
                     }
 
-                    if (tok == TokenType::TOK_XONLINE || tok == TokenType::TOK_XDOC)
+                    if (tok == id::help::TokenType::TOK_XONLINE || tok == id::help::TokenType::TOK_XDOC)
                     {
                         curr += size;
                         len -= size;
@@ -119,10 +119,10 @@ void AsciiDocCompiler::paginate_ascii_doc()
                     }
 
                     // now tok is SPACE or LINK or WORD
-                    if (col+width > SCREEN_WIDTH)
+                    if (col+width > id::help::SCREEN_WIDTH)
                     {
                         // go to next line...
-                        if (tok == TokenType::TOK_SPACE)
+                        if (tok == id::help::TokenType::TOK_SPACE)
                         {
                             width = 0;    // skip spaces at start of a line
                         }
@@ -141,7 +141,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
                 break;
             }
 
-            case TokenType::TOK_NL:
+            case id::help::TokenType::TOK_NL:
                 if (skip_blanks && col == 0)
                 {
                     start += size;
@@ -151,7 +151,7 @@ void AsciiDocCompiler::paginate_ascii_doc()
                 col = 0;
                 break;
 
-            case TokenType::TOK_FF:
+            case id::help::TokenType::TOK_FF:
                 col = 0;
                 if (skip_blanks)
                 {
@@ -162,13 +162,13 @@ void AsciiDocCompiler::paginate_ascii_doc()
                 num_links = 0;
                 break;
 
-            case TokenType::TOK_DONE:
-            case TokenType::TOK_XONLINE:   // skip
-            case TokenType::TOK_XDOC:      // ignore
-            case TokenType::TOK_CENTER:    // ignore
+            case id::help::TokenType::TOK_DONE:
+            case id::help::TokenType::TOK_XONLINE:   // skip
+            case id::help::TokenType::TOK_XDOC:      // ignore
+            case id::help::TokenType::TOK_CENTER:    // ignore
                 break;
 
-            case TokenType::TOK_LINK:
+            case id::help::TokenType::TOK_LINK:
                 ++num_links;
 
                 // fall-through
@@ -205,9 +205,9 @@ public:
     void process();
 
 private:
-    void set_link_text(const Link &link, const ProcessDocumentInfo *pd);
-    bool info(PrintDocCommand cmd, ProcessDocumentInfo *pd);
-    bool output(PrintDocCommand cmd, ProcessDocumentInfo *pd);
+    void set_link_text(const Link &link, const id::help::ProcessDocumentInfo *pd);
+    bool info(id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd);
+    bool output(id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd);
     void emit_char(char c);
     void emit_key_name();
     void print_inside_key(char c);
@@ -236,11 +236,11 @@ private:
     std::string m_link_markup;
 };
 
-bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
+bool AsciiDocProcessor::info(id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd)
 {
     switch (cmd)
     {
-    case PrintDocCommand::PD_GET_CONTENT:
+    case id::help::PrintDocCommand::PD_GET_CONTENT:
     {
         if (++m_content_num >= static_cast<int>(g_src.contents.size()))
         {
@@ -255,7 +255,7 @@ bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
         return true;
     }
 
-    case PrintDocCommand::PD_GET_TOPIC:
+    case id::help::PrintDocCommand::PD_GET_TOPIC:
     {
         const Content &content{g_src.contents[m_content_num]};
         if (++m_topic_num >= content.num_topic)
@@ -276,9 +276,9 @@ bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
         return true;
     }
 
-    case PrintDocCommand::PD_GET_LINK_PAGE:
+    case id::help::PrintDocCommand::PD_GET_LINK_PAGE:
     {
-        const Link &link{g_src.all_links[get_int(pd->s)]};
+        const Link &link{g_src.all_links[id::help::get_int(pd->s)]};
         if (link.doc_page == -1)
         {
             if (m_link_dest_warn)
@@ -297,7 +297,7 @@ bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
         return true;
     }
 
-    case PrintDocCommand::PD_RELEASE_TOPIC:
+    case id::help::PrintDocCommand::PD_RELEASE_TOPIC:
     {
         const Content &content{g_src.contents[m_content_num]};
         const Topic &topic{g_src.topics[content.topic_num[m_topic_num]]};
@@ -310,25 +310,25 @@ bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
     }
 }
 
-bool AsciiDocProcessor::output(PrintDocCommand cmd, ProcessDocumentInfo *pd)
+bool AsciiDocProcessor::output(id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd)
 {
     switch (cmd)
     {
-    case PrintDocCommand::PD_PRINT:
+    case id::help::PrintDocCommand::PD_PRINT:
         print_string(pd->s, pd->i);
         return true;
 
-    case PrintDocCommand::PD_PRINT_N:
+    case id::help::PrintDocCommand::PD_PRINT_N:
         print_char(*pd->s, pd->i);
         return true;
 
-    case PrintDocCommand::PD_START_SECTION:
+    case id::help::PrintDocCommand::PD_START_SECTION:
         print_char('\n', 1);
         print_string(pd->title, std::strlen(pd->title));
         print_char('\n', 2);
         return true;
 
-    case PrintDocCommand::PD_START_TOPIC:
+    case id::help::PrintDocCommand::PD_START_TOPIC:
         if (!m_topic.empty())
         {
             print_char('\n', 1);
@@ -337,12 +337,12 @@ bool AsciiDocProcessor::output(PrintDocCommand cmd, ProcessDocumentInfo *pd)
         }
         return true;
 
-    case PrintDocCommand::PD_HEADING:
-    case PrintDocCommand::PD_FOOTING:
-    case PrintDocCommand::PD_SET_SECTION_PAGE:
-    case PrintDocCommand::PD_SET_TOPIC_PAGE:
-    case PrintDocCommand::PD_PERIODIC:
-    case PrintDocCommand::PD_PRINT_SEC:
+    case id::help::PrintDocCommand::PD_HEADING:
+    case id::help::PrintDocCommand::PD_FOOTING:
+    case id::help::PrintDocCommand::PD_SET_SECTION_PAGE:
+    case id::help::PrintDocCommand::PD_SET_TOPIC_PAGE:
+    case id::help::PrintDocCommand::PD_PERIODIC:
+    case id::help::PrintDocCommand::PD_PRINT_SEC:
         return true;
 
     default:
@@ -352,11 +352,11 @@ bool AsciiDocProcessor::output(PrintDocCommand cmd, ProcessDocumentInfo *pd)
 
 void AsciiDocProcessor::process()
 {
-    const auto info_cb = [](PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info)
+    const auto info_cb = [](id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->info(cmd, pd); };
-    const auto output_cb = [](PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info)
+    const auto output_cb = [](id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
-    process_document(TokenMode::ADOC, false, info_cb, output_cb, this);
+    id::help::process_document(id::help::TokenMode::ADOC, false, info_cb, output_cb, this);
 }
 
 static std::string to_string(LinkTypes type)
@@ -373,7 +373,7 @@ static std::string to_string(LinkTypes type)
     return "? (" + std::to_string(static_cast<int>(type)) + ")";
 }
 
-void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInfo *pd)
+void AsciiDocProcessor::set_link_text(const Link &link, const id::help::ProcessDocumentInfo *pd)
 {
     std::string anchor_name;
     switch (link.type)

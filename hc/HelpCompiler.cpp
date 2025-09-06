@@ -130,45 +130,45 @@ std::ostream &operator<<(std::ostream &str, const Topic &topic)
         int size = 0;
         int width = 0;
 
-        switch (const TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width); tok)
+        switch (const id::help::TokenType tok = id::help::find_token_length(id::help::TokenMode::ONLINE, curr, len, &size, &width); tok)
         {
-        case TokenType::TOK_DONE:
+        case id::help::TokenType::TOK_DONE:
             str << "  done\n";
             break;
 
-        case TokenType::TOK_SPACE:
+        case id::help::TokenType::TOK_SPACE:
             str << std::string(width, ' ');
             break;
 
-        case TokenType::TOK_LINK:
+        case id::help::TokenType::TOK_LINK:
             str << "  link\n";
             break;
 
-        case TokenType::TOK_PARA:
+        case id::help::TokenType::TOK_PARA:
             str << "  para\n";
             break;
 
-        case TokenType::TOK_NL:
+        case id::help::TokenType::TOK_NL:
             str << '\n';
             break;
 
-        case TokenType::TOK_FF:
+        case id::help::TokenType::TOK_FF:
             str << "  ff\n";
             break;
 
-        case TokenType::TOK_WORD:
+        case id::help::TokenType::TOK_WORD:
             str << std::string(curr, width);
             break;
 
-        case TokenType::TOK_XONLINE:
+        case id::help::TokenType::TOK_XONLINE:
             str << "  xonline\n";
             break;
 
-        case TokenType::TOK_XDOC:
+        case id::help::TokenType::TOK_XDOC:
             str << "  xdoc\n";
             break;
 
-        case TokenType::TOK_CENTER:
+        case id::help::TokenType::TOK_CENTER:
             str << "  center\n";
             break;
         }
@@ -252,9 +252,9 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
 
         while (len > 0)
         {
-            switch (TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width); tok)
+            switch (id::help::TokenType tok = id::help::find_token_length(id::help::TokenMode::ONLINE, curr, len, &size, &width); tok)
             {
-            case TokenType::TOK_PARA:
+            case id::help::TokenType::TOK_PARA:
             {
                 ++curr;
                 const int indent = *curr++;
@@ -263,21 +263,21 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                 col = indent;
                 while (true)
                 {
-                    tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
+                    tok = id::help::find_token_length(id::help::TokenMode::ONLINE, curr, len, &size, &width);
 
-                    if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
+                    if (tok == id::help::TokenType::TOK_DONE || tok == id::help::TokenType::TOK_NL || tok == id::help::TokenType::TOK_FF)
                     {
                         break;
                     }
 
-                    if (tok == TokenType::TOK_PARA)
+                    if (tok == id::help::TokenType::TOK_PARA)
                     {
                         col = 0;   // fake a nl
                         ++line_num;
                         break;
                     }
 
-                    if (tok == TokenType::TOK_XONLINE || tok == TokenType::TOK_XDOC)
+                    if (tok == id::help::TokenType::TOK_XONLINE || tok == id::help::TokenType::TOK_XDOC)
                     {
                         curr += size;
                         len -= size;
@@ -285,19 +285,19 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                     }
 
                     // now tok is SPACE or LINK or WORD
-                    if (col+width > SCREEN_WIDTH)
+                    if (col+width > id::help::SCREEN_WIDTH)
                     {
                         // go to next line...
-                        if (++line_num >= SCREEN_DEPTH)
+                        if (++line_num >= id::help::SCREEN_DEPTH)
                         {
                             // go to next page...
                             t.add_page_break(start_margin, text, start, curr, num_links);
-                            start = curr + ((tok == TokenType::TOK_SPACE) ? size : 0);
+                            start = curr + ((tok == id::help::TokenType::TOK_SPACE) ? size : 0);
                             start_margin = margin;
                             line_num = 0;
                             num_links = 0;
                         }
-                        if (tok == TokenType::TOK_SPACE)
+                        if (tok == id::help::TokenType::TOK_SPACE)
                         {
                             width = 0;    // skip spaces at start of a line
                         }
@@ -316,14 +316,14 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                 break;
             }
 
-            case TokenType::TOK_NL:
+            case id::help::TokenType::TOK_NL:
                 if (skip_blanks && col == 0)
                 {
                     start += size;
                     break;
                 }
                 ++line_num;
-                if (line_num >= SCREEN_DEPTH || (col == 0 && line_num == SCREEN_DEPTH-1))
+                if (line_num >= id::help::SCREEN_DEPTH || (col == 0 && line_num == id::help::SCREEN_DEPTH-1))
                 {
                     t.add_page_break(start_margin, text, start, curr, num_links);
                     start = curr + size;
@@ -335,7 +335,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                 col = 0;
                 break;
 
-            case TokenType::TOK_FF:
+            case id::help::TokenType::TOK_FF:
                 col = 0;
                 if (skip_blanks)
                 {
@@ -349,13 +349,13 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                 num_links = 0;
                 break;
 
-            case TokenType::TOK_DONE:
-            case TokenType::TOK_XONLINE:   // skip
-            case TokenType::TOK_XDOC:      // ignore
-            case TokenType::TOK_CENTER:    // ignore
+            case id::help::TokenType::TOK_DONE:
+            case id::help::TokenType::TOK_XONLINE:   // skip
+            case id::help::TokenType::TOK_XDOC:      // ignore
+            case id::help::TokenType::TOK_CENTER:    // ignore
                 break;
 
-            case TokenType::TOK_LINK:
+            case id::help::TokenType::TOK_LINK:
                 ++num_links;
                 // fall-through
 
@@ -484,14 +484,14 @@ void HelpCompiler::set_content_doc_page()
 }
 
 // this function also used by print_document()
-static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool pd_get_info(id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd, void *context)
 {
     DocInfo &info = *static_cast<DocInfo *>(context);
     const Content *c;
 
     switch (cmd)
     {
-    case PrintDocCommand::PD_GET_CONTENT:
+    case id::help::PrintDocCommand::PD_GET_CONTENT:
         if (++info.content_num >= static_cast<int>(g_src.contents.size()))
         {
             return false;
@@ -503,7 +503,7 @@ static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *cont
         pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
         return true;
 
-    case PrintDocCommand::PD_GET_TOPIC:
+    case id::help::PrintDocCommand::PD_GET_TOPIC:
         c = &g_src.contents[info.content_num];
         if (++info.topic_num >= c->num_topic)
         {
@@ -513,9 +513,9 @@ static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *cont
         pd->len = g_src.topics[c->topic_num[info.topic_num]].text_len;
         return true;
 
-    case PrintDocCommand::PD_GET_LINK_PAGE:
+    case id::help::PrintDocCommand::PD_GET_LINK_PAGE:
     {
-        const Link &link = g_src.all_links[get_int(pd->s)];
+        const Link &link = g_src.all_links[id::help::get_int(pd->s)];
         if (link.doc_page == -1)
         {
             if (info.link_dest_warn)
@@ -532,7 +532,7 @@ static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *cont
         return true;
     }
 
-    case PrintDocCommand::PD_RELEASE_TOPIC:
+    case id::help::PrintDocCommand::PD_RELEASE_TOPIC:
         c = &g_src.contents[info.content_num];
         g_src.topics[c->topic_num[info.topic_num]].release_topic_text(false);
         return true;
@@ -542,39 +542,39 @@ static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *cont
     }
 }
 
-static bool paginate_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool paginate_doc_output(id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd, void *context)
 {
     PaginateDocIno *info = static_cast<PaginateDocIno *>(context);
     switch (cmd)
     {
-    case PrintDocCommand::PD_FOOTING:
-    case PrintDocCommand::PD_PRINT:
-    case PrintDocCommand::PD_PRINT_N:
-    case PrintDocCommand::PD_PRINT_SEC:
+    case id::help::PrintDocCommand::PD_FOOTING:
+    case id::help::PrintDocCommand::PD_PRINT:
+    case id::help::PrintDocCommand::PD_PRINT_N:
+    case id::help::PrintDocCommand::PD_PRINT_SEC:
         return true;
 
-    case PrintDocCommand::PD_HEADING:
+    case id::help::PrintDocCommand::PD_HEADING:
         ++s_num_doc_pages;
         return true;
 
-    case PrintDocCommand::PD_START_SECTION:
+    case id::help::PrintDocCommand::PD_START_SECTION:
         info->c = &g_src.contents[info->content_num];
         return true;
 
-    case PrintDocCommand::PD_START_TOPIC:
+    case id::help::PrintDocCommand::PD_START_TOPIC:
         info->start = pd->curr;
         info->lbl = find_next_label_by_topic(info->c->topic_num[info->topic_num]);
         return true;
 
-    case PrintDocCommand::PD_SET_SECTION_PAGE:
+    case id::help::PrintDocCommand::PD_SET_SECTION_PAGE:
         info->c->doc_page = pd->page_num;
         return true;
 
-    case PrintDocCommand::PD_SET_TOPIC_PAGE:
+    case id::help::PrintDocCommand::PD_SET_TOPIC_PAGE:
         g_src.topics[info->c->topic_num[info->topic_num]].doc_page = pd->page_num;
         return true;
 
-    case PrintDocCommand::PD_PERIODIC:
+    case id::help::PrintDocCommand::PD_PERIODIC:
         while (info->lbl != nullptr && (unsigned)(pd->curr - info->start) >= info->lbl->topic_off)
         {
             info->lbl->doc_page = pd->page_num;
@@ -601,7 +601,7 @@ void HelpCompiler::paginate_document()
     info.content_num = info.topic_num;
     info.link_dest_warn = true;
 
-    process_document(TokenMode::DOC, true, pd_get_info, paginate_doc_output, &info);
+    process_document(id::help::TokenMode::DOC, true, pd_get_info, paginate_doc_output, &info);
 
     set_hot_link_doc_page();
     set_content_doc_page();
@@ -862,14 +862,14 @@ static void insert_real_link_info(char *curr, unsigned int len)
     while (len > 0)
     {
         int size = 0;
-        TokenType tok = find_token_length(TokenMode::NONE, curr, len, &size, nullptr);
+        id::help::TokenType tok = id::help::find_token_length(id::help::TokenMode::NONE, curr, len, &size, nullptr);
 
-        if (tok == TokenType::TOK_LINK)
+        if (tok == id::help::TokenType::TOK_LINK)
         {
-            const Link &l = g_src.all_links[ get_int(curr+1) ];
-            set_int(curr+1, l.topic_num);
-            set_int(curr+1+sizeof(int), l.topic_off);
-            set_int(curr+1+2*sizeof(int), l.doc_page);
+            const Link &l = g_src.all_links[ id::help::get_int(curr+1) ];
+            id::help::set_int(curr+1, l.topic_num);
+            id::help::set_int(curr+1+sizeof(int), l.topic_off);
+            id::help::set_int(curr+1+2*sizeof(int), l.doc_page);
         }
 
         len -= size;
@@ -880,11 +880,11 @@ static void insert_real_link_info(char *curr, unsigned int len)
 void HelpCompiler::write_help(std::FILE *file)
 {
     // write the signature and version
-    HelpSignature hs{};
-    hs.sig = HELP_SIG;
+    id::help::HelpSignature hs{};
+    hs.sig = id::help::HELP_SIG;
     hs.version = g_src.version;
 
-    std::fwrite(&hs, sizeof(HelpSignature), 1, file);
+    std::fwrite(&hs, sizeof(id::help::HelpSignature), 1, file);
 
     // write max_pages & max_links
 
@@ -1047,37 +1047,37 @@ static std::string version_header()
     return std::string(indent, ' ') + heading + std::string(field_width - indent - heading.size(), ' ');
 }
 
-static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool print_doc_output(id::help::PrintDocCommand cmd, id::help::ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)
     {
-    case PrintDocCommand::PD_HEADING:
+    case id::help::PrintDocCommand::PD_HEADING:
     {
         std::ostringstream buff;
         info->margin = 0;
         buff << "\n" << version_header() << "Page " << pd->page_num << "\n\n";
         printer_str(info, buff.str().c_str(), 0);
-        info->margin = PAGE_INDENT;
+        info->margin = id::help::PAGE_INDENT;
         return true;
     }
 
-    case PrintDocCommand::PD_FOOTING:
+    case id::help::PrintDocCommand::PD_FOOTING:
         info->margin = 0;
         printer_ch(info, '\f', 1);
-        info->margin = PAGE_INDENT;
+        info->margin = id::help::PAGE_INDENT;
         return true;
 
-    case PrintDocCommand::PD_PRINT:
+    case id::help::PrintDocCommand::PD_PRINT:
         printer_str(info, pd->s, pd->i);
         return true;
 
-    case PrintDocCommand::PD_PRINT_N:
+    case id::help::PrintDocCommand::PD_PRINT_N:
         printer_ch(info, *pd->s, pd->i);
         return true;
 
-    case PrintDocCommand::PD_PRINT_SEC:
-        info->margin = TITLE_INDENT;
+    case id::help::PrintDocCommand::PD_PRINT_SEC:
+        info->margin = id::help::TITLE_INDENT;
         if (pd->id[0] != '\0')
         {
             printer_str(info, pd->id, 0);
@@ -1085,14 +1085,14 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
         }
         printer_str(info, pd->title, 0);
         printer_ch(info, '\n', 1);
-        info->margin = PAGE_INDENT;
+        info->margin = id::help::PAGE_INDENT;
         return true;
 
-    case PrintDocCommand::PD_START_SECTION:
-    case PrintDocCommand::PD_START_TOPIC:
-    case PrintDocCommand::PD_SET_SECTION_PAGE:
-    case PrintDocCommand::PD_SET_TOPIC_PAGE:
-    case PrintDocCommand::PD_PERIODIC:
+    case id::help::PrintDocCommand::PD_START_SECTION:
+    case id::help::PrintDocCommand::PD_START_TOPIC:
+    case id::help::PrintDocCommand::PD_SET_SECTION_PAGE:
+    case id::help::PrintDocCommand::PD_SET_TOPIC_PAGE:
+    case id::help::PrintDocCommand::PD_PERIODIC:
         return true;
 
     default:
@@ -1121,11 +1121,11 @@ void HelpCompiler::print_document()
         throw std::runtime_error(R"msg(Couldn't create ")msg" + std::string{fname} + '"');
     }
 
-    info.margin = PAGE_INDENT;
+    info.margin = id::help::PAGE_INDENT;
     info.start_of_line = true;
     info.spaces = 0;
 
-    process_document(TokenMode::DOC, true, pd_get_info, print_doc_output, &info);
+    process_document(id::help::TokenMode::DOC, true, pd_get_info, print_doc_output, &info);
 
     std::fclose(info.file);
 }
@@ -1240,7 +1240,7 @@ void HelpCompiler::add_hlp_to_exe()
     const char *hlp_fname{m_options.fname1.empty() ? DEFAULT_HLP_FNAME : m_options.fname1.c_str()};
     const char *exe_fname{m_options.fname2.empty() ? DEFAULT_EXE_FNAME : m_options.fname2.c_str()};
 
-    HelpSignature hs{};
+    id::help::HelpSignature hs{};
 
     int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
@@ -1258,16 +1258,16 @@ void HelpCompiler::add_hlp_to_exe()
 
     // first, check and see if any help is currently installed
 
-    lseek(exe, filelength(exe) - sizeof(HelpSignature), SEEK_SET);
+    lseek(exe, filelength(exe) - sizeof(id::help::HelpSignature), SEEK_SET);
 
-    if (read(exe, &hs, sizeof(HelpSignature)) != sizeof(HelpSignature))
+    if (read(exe, &hs, sizeof(id::help::HelpSignature)) != sizeof(id::help::HelpSignature))
     {
         close(hlp);
         close(exe);
         throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read");
     }
 
-    if (hs.sig == HELP_SIG)
+    if (hs.sig == id::help::HELP_SIG)
     {
         MSG_WARN(0, "Overwriting previous help. (Version=%d)", static_cast<int>(hs.version));
     }
@@ -1278,14 +1278,14 @@ void HelpCompiler::add_hlp_to_exe()
 
     // now, let's see if their help file is for real (and get the version)
 
-    if (read(hlp, &hs, sizeof(HelpSignature)) != sizeof(HelpSignature))
+    if (read(hlp, &hs, sizeof(id::help::HelpSignature)) != sizeof(id::help::HelpSignature))
     {
         close(hlp);
         close(exe);
         throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read2");
     }
 
-    if (hs.sig != HELP_SIG)
+    if (hs.sig != id::help::HELP_SIG)
     {
         throw std::runtime_error("Help signature not found in " + std::string{hlp_fname});
     }
@@ -1296,7 +1296,7 @@ void HelpCompiler::add_hlp_to_exe()
 
     lseek(exe, hs.base, SEEK_SET);
 
-    long len = filelength(hlp) - sizeof(HelpSignature); // adjust for the file signature & version
+    long len = filelength(hlp) - sizeof(id::help::HelpSignature); // adjust for the file signature & version
 
     for (int count = 0; count < len;)
     {
@@ -1314,7 +1314,7 @@ void HelpCompiler::add_hlp_to_exe()
 
     // add on the signature, version and offset
 
-    if (write(exe, &hs, sizeof(HelpSignature)) != sizeof(HelpSignature))
+    if (write(exe, &hs, sizeof(id::help::HelpSignature)) != sizeof(id::help::HelpSignature))
     {
         close(hlp);
         close(exe);
@@ -1340,7 +1340,7 @@ void HelpCompiler::delete_hlp_from_exe()
         throw std::runtime_error(R"msg(Unexpected argument ")msg" + m_options.fname2 + '"');
     }
     const char *exe_fname{m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str()};
-    HelpSignature hs{};
+    id::help::HelpSignature hs{};
 
     int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
@@ -1352,13 +1352,13 @@ void HelpCompiler::delete_hlp_from_exe()
 
     // see if any help is currently installed
 
-    lseek(exe, filelength(exe) - sizeof(HelpSignature), SEEK_SET);
-    if (read(exe, &hs, sizeof(HelpSignature)) != sizeof(HelpSignature))
+    lseek(exe, filelength(exe) - sizeof(id::help::HelpSignature), SEEK_SET);
+    if (read(exe, &hs, sizeof(id::help::HelpSignature)) != sizeof(id::help::HelpSignature))
     {
         throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read ");
     }
 
-    if (hs.sig == HELP_SIG)
+    if (hs.sig == id::help::HELP_SIG)
     {
         if (chsize(exe, hs.base) != hs.base) // truncate at the start of the help
         {

@@ -9,6 +9,9 @@
 #include <cassert>
 #include <string>
 
+namespace id::help
+{
+
 bool is_hyphen(const char *ptr)   /* true if ptr points to a real hyphen */
 {
     /* checks for "--" and " -" */
@@ -870,3 +873,5 @@ bool process_document(TokenMode mode, bool paginate, PrintDocFn *get_info, Print
 {
     return DocumentProcessor(mode, paginate, get_info, output, info).process();
 }
+
+} // namespace id::help

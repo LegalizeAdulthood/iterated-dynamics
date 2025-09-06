@@ -172,7 +172,7 @@ static int sel_fract_type_help(int key, int choice)
     if (key == ID_KEY_F2)
     {
         ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[s_ft_choices[choice]->num].help_text};
-        help();
+        id::help::help();
     }
     return 0;
 }
@@ -443,7 +443,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     {
         int c;
         int lines;
-        read_help_topic(help, 0, 2000, s_tmp_stack); // need error handling here ??
+        id::help::read_help_topic(help, 0, 2000, s_tmp_stack); // need error handling here ??
         s_tmp_stack[2000-static_cast<int>(help)] = 0;
         int i = 0;
         lines = 0;

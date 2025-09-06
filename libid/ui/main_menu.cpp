@@ -258,7 +258,7 @@ int MainMenu::prompt()
             if (i == -ID_KEY_CTL_ENTER)
             {
                 g_help_mode = HelpLabels::HELP_ZOOM;
-                help();
+                id::help::help();
                 i = 0;
             }
         }

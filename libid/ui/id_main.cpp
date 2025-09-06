@@ -468,7 +468,7 @@ int id_main(int argc, char *argv[])
     }
     // load id.cfg, match against driver supplied modes
     load_config();
-    init_help();
+    id::help::init_help();
 
     MainState state{MainState::RESTART};
     MainContext context;

@@ -509,9 +509,9 @@ static char *read_until(char *buff, int len, const char *stop_chars)
             break;
         }
 
-        if ((ch&0xFF) <= MAX_CMD)
+        if ((ch&0xFF) <= id::help::MAX_CMD)
         {
-            *buff++ = CMD_LITERAL;
+            *buff++ = id::help::CMD_LITERAL;
         }
 
         // skip '\r' characters
@@ -574,7 +574,7 @@ static void put_spaces(int how_many)
             how_many = 255;
         }
 
-        *g_src.curr++ = CMD_SPACE;
+        *g_src.curr++ = id::help::CMD_SPACE;
         *g_src.curr++ = (Byte)how_many;
     }
     else
@@ -755,7 +755,7 @@ static void process_doc_contents(Mode mode)
             {
                 std::sprintf(buffer, "%-5s %*.0s%s", c.id.c_str(), c.indent * 2, "", c.name.c_str());
                 char *ptr = buffer + (int) std::strlen(buffer);
-                while ((ptr - buffer) < PAGE_WIDTH - 10)
+                while ((ptr - buffer) < id::help::PAGE_WIDTH - 10)
                 {
                     *ptr++ = '.';
                 }
@@ -872,12 +872,12 @@ static int parse_link()   // returns length of link or 0 on error
     {
         check_buffer(1 + 3 * sizeof(int) + len + 1);
         const int link_num = g_src.add_link(l);
-        *g_src.curr++ = CMD_LINK;
-        set_int(g_src.curr, link_num);
+        *g_src.curr++ = id::help::CMD_LINK;
+        id::help::set_int(g_src.curr, link_num);
         g_src.curr += 3*sizeof(int);
         std::memcpy(g_src.curr, ptr, len);
         g_src.curr += len;
-        *g_src.curr++ = CMD_LINK;
+        *g_src.curr++ = id::help::CMD_LINK;
         return len;
     }
 
@@ -1025,12 +1025,12 @@ static int create_table()
             }
 
             len = static_cast<int>(title[link_num].length());
-            *g_src.curr++ = CMD_LINK;
-            set_int(g_src.curr, first_link+link_num);
+            *g_src.curr++ = id::help::CMD_LINK;
+            id::help::set_int(g_src.curr, first_link+link_num);
             g_src.curr += 3*sizeof(int);
             std::memcpy(g_src.curr, title[link_num].c_str(), len);
             g_src.curr += len;
-            *g_src.curr++ = CMD_LINK;
+            *g_src.curr++ = id::help::CMD_LINK;
 
             if (c < cols-1)
             {
@@ -1149,7 +1149,7 @@ static bool end_of_sentence(const char *ptr)  // true if ptr is at the end of a 
 
 static void add_blank_for_split()   // add space at g_src.curr for merging two lines
 {
-    if (!is_hyphen(g_src.curr-1))     // no spaces if it's a hyphen
+    if (!id::help::is_hyphen(g_src.curr-1))     // no spaces if it's a hyphen
     {
         if (end_of_sentence(g_src.curr-1))
         {
@@ -1167,9 +1167,9 @@ static void put_a_char(int ch, const Topic &t)
     }
     else
     {
-        if ((ch&0xFF) <= MAX_CMD)
+        if ((ch&0xFF) <= id::help::MAX_CMD)
         {
-            *g_src.curr++ = CMD_LITERAL;
+            *g_src.curr++ = id::help::CMD_LITERAL;
         }
         *g_src.curr++ = ch;
     }
@@ -1216,7 +1216,7 @@ static std::FILE *open_include(const std::string &filename)
     return result;
 }
 
-static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int err_offset)
+static void toggle_mode(std::string tag, id::help::HelpCommand cmd, bool &flag, int err_offset)
 {
     if (!id::string_case_equal(s_cmd, tag.data(), tag.length()))
     {
@@ -1666,7 +1666,7 @@ void read_src(const std::string &fname, Mode mode)
                     {
                         *g_src.curr++ = '\n';    // finish off current paragraph
                     }
-                    *g_src.curr++ = CMD_FF;
+                    *g_src.curr++ = id::help::CMD_FF;
                     state = ParseStates::START;
                     in_para = false;
                     num_spaces = 0;
@@ -1680,12 +1680,12 @@ void read_src(const std::string &fname, Mode mode)
                     }
                     if (!s_xonline)
                     {
-                        *g_src.curr++ = CMD_XONLINE;
+                        *g_src.curr++ = id::help::CMD_XONLINE;
                     }
-                    *g_src.curr++ = CMD_FF;
+                    *g_src.curr++ = id::help::CMD_FF;
                     if (!s_xonline)
                     {
-                        *g_src.curr++ = CMD_XONLINE;
+                        *g_src.curr++ = id::help::CMD_XONLINE;
                     }
                     state = ParseStates::START;
                     in_para = false;
@@ -1700,12 +1700,12 @@ void read_src(const std::string &fname, Mode mode)
                     }
                     if (!s_xdoc)
                     {
-                        *g_src.curr++ = CMD_XDOC;
+                        *g_src.curr++ = id::help::CMD_XDOC;
                     }
-                    *g_src.curr++ = CMD_FF;
+                    *g_src.curr++ = id::help::CMD_FF;
                     if (!s_xdoc)
                     {
-                        *g_src.curr++ = CMD_XDOC;
+                        *g_src.curr++ = id::help::CMD_XDOC;
                     }
                     state = ParseStates::START;
                     in_para = false;
@@ -1841,15 +1841,15 @@ void read_src(const std::string &fname, Mode mode)
                 }
                 else if (id::string_case_equal(s_cmd, "Online", 6))
                 {
-                    toggle_mode("Online", CMD_XONLINE, s_xonline, err_offset);
+                    toggle_mode("Online", id::help::CMD_XONLINE, s_xonline, err_offset);
                 }
                 else if (id::string_case_equal(s_cmd, "Doc", 3))
                 {
-                    toggle_mode("Doc", CMD_XDOC, s_xdoc, err_offset);
+                    toggle_mode("Doc", id::help::CMD_XDOC, s_xdoc, err_offset);
                 }
                 else if (id::string_case_equal(s_cmd, "ADoc", 4))
                 {
-                    toggle_mode("ADoc", CMD_XADOC, s_xadoc, err_offset);
+                    toggle_mode("ADoc", id::help::CMD_XADOC, s_xadoc, err_offset);
                 }
                 else if (id::string_case_equal(s_cmd, "Center", 6))
                 {
@@ -1973,7 +1973,7 @@ void read_src(const std::string &fname, Mode mode)
                     }
                     else
                     {
-                        *g_src.curr++ = CMD_CENTER;
+                        *g_src.curr++ = id::help::CMD_CENTER;
                         state = ParseStates::LINE;
                         again = true;
                     }
@@ -2028,7 +2028,7 @@ void read_src(const std::string &fname, Mode mode)
                         }
                         else
                         {
-                            *g_src.curr++ = CMD_PARA;
+                            *g_src.curr++ = id::help::CMD_PARA;
                             *g_src.curr++ = (char)num_spaces;
                             *g_src.curr++ = (char)num_spaces;
                             margin_pos = g_src.curr - 1;

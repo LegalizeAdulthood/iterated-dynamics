@@ -10,6 +10,11 @@
 #include <cstring>
 #include <string>
 
+enum class HelpLabels;
+
+namespace id::help
+{
+
  /*
  * help file signature
  */
@@ -24,8 +29,6 @@ struct HelpSignature
     std::int16_t version;
     std::uint32_t base;
 };
-
-enum class HelpLabels;
 
 /*
  * commands embedded in the help text
@@ -169,3 +172,5 @@ inline void set_int(char *ptr, int n)
 {
     std::memcpy(ptr, &n, sizeof(int));
 }
+
+} // namespace id::help
