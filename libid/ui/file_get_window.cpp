@@ -140,11 +140,11 @@ int file_get_window()
     bool toggle{};
     int color_of_box;
     FileWindow window;
-    char drive[ID_FILE_MAX_DRIVE];
-    char dir[ID_FILE_MAX_DIR];
-    char fname[ID_FILE_MAX_FNAME];
-    char ext[ID_FILE_MAX_EXT];
-    char tmp_mask[ID_FILE_MAX_PATH];
+    char drive[id::ID_FILE_MAX_DRIVE];
+    char dir[id::ID_FILE_MAX_DIR];
+    char fname[id::ID_FILE_MAX_FNAME];
+    char ext[id::ID_FILE_MAX_EXT];
+    char tmp_mask[id::ID_FILE_MAX_PATH];
     bool vid_too_big{};
     int saved;
 

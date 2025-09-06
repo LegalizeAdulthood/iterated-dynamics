@@ -29,8 +29,8 @@ protected:
 
     fs::path m_test_data_dir{ID_TEST_DATA_DIR};
     fs::path m_test_data_subdir{ID_TEST_DATA_SUBDIR};
-    char m_dir_name[ID_FILE_MAX_PATH]{};
-    char m_drive[ID_FILE_MAX_PATH]{};
+    char m_dir_name[id::ID_FILE_MAX_PATH]{};
+    char m_drive[id::ID_FILE_MAX_PATH]{};
     char m_sep{fs::path::preferred_separator};
 };
 

@@ -2030,7 +2030,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
         g_image_filename_mask = std::string{"*"} + cmd.value;
         return CmdArgFlags::NONE;
     }
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2107,7 +2107,7 @@ static CmdArgFlags cmd_float(const Command &cmd)
 // formulafile=?
 static CmdArgFlags cmd_formula_file(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2209,7 +2209,7 @@ static CmdArgFlags cmd_ifs(const Command &cmd)
 // ifsfile=??
 static CmdArgFlags cmd_ifs_file(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2387,7 +2387,7 @@ static CmdArgFlags cmd_latitude(const Command &cmd)
 // lfile=?
 static CmdArgFlags cmd_l_file(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2420,7 +2420,7 @@ static CmdArgFlags cmd_library_dirs(const Command &cmd)
 // lightname=?
 static CmdArgFlags cmd_light_name(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2530,7 +2530,7 @@ static CmdArgFlags cmd_make_mig(const Command &cmd)
 // map=, set default colors
 static CmdArgFlags cmd_map(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value_len > id::ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2770,7 +2770,7 @@ static CmdArgFlags cmd_orbit_save_name(const Command &cmd)
 // orgfrmdir=? [deprecated]
 static CmdArgFlags cmd_org_frm_dir(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }
@@ -2848,7 +2848,7 @@ static CmdArgFlags cmd_params(const Command &cmd)
 // parmfile=?
 static CmdArgFlags cmd_parm_file(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -3231,7 +3231,7 @@ static CmdArgFlags cmd_save_dir(const Command &cmd)
 
 static CmdArgFlags cmd_save_name(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value_len > id::ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -3535,7 +3535,7 @@ static CmdArgFlags cmd_targa_overlay(const Command &cmd)
 
 static CmdArgFlags cmd_temp_dir(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }
@@ -3828,7 +3828,7 @@ static CmdArgFlags cmd_wave_type(const Command &cmd)
 
 static CmdArgFlags cmd_work_dir(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > (id::ID_FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }

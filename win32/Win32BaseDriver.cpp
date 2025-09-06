@@ -518,10 +518,10 @@ bool Win32BaseDriver::get_filename(
     filter.append(2, 0);
     info.lpstrFilter = filter.data();
     info.nFilterIndex = 1;
-    char filename[ID_FILE_MAX_PATH]{};
+    char filename[id::ID_FILE_MAX_PATH]{};
     std::strcpy(filename, path.string().c_str());
     info.lpstrFile = filename;
-    info.nMaxFile = ID_FILE_MAX_PATH;
+    info.nMaxFile = id::ID_FILE_MAX_PATH;
     info.lpstrFileTitle = nullptr;
     info.nMaxFileTitle = 0;
     info.lpstrInitialDir = nullptr;

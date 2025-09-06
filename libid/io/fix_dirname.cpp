@@ -25,7 +25,7 @@ void fix_dir_name(char *dirname)
 
 void fix_dir_name(std::string &dirname)
 {
-    char buff[ID_FILE_MAX_PATH];
+    char buff[id::ID_FILE_MAX_PATH];
     std::strcpy(buff, dirname.c_str());
     fix_dir_name(buff);
     dirname = buff;

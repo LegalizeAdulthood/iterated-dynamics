@@ -28,7 +28,7 @@ namespace fs = std::filesystem;
 // (modes AT_CMD_LINE and SSTOOLS_INI)
 int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode)
 {
-    char buff[ID_FILE_MAX_PATH];
+    char buff[id::ID_FILE_MAX_PATH];
     std::strcpy(buff, fs::path(new_filename).make_preferred().string().c_str());
 
     // no dot or slash so assume a file
@@ -43,7 +43,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
     // if dot, slash, NUL, it's the current directory, set up full path
     if (buff[0] == '.' && buff[1] == SLASH_CH && buff[2] == 0)
     {
-        char temp_drive[ID_FILE_MAX_PATH];
+        char temp_drive[id::ID_FILE_MAX_PATH];
         expand_dir_name(buff, temp_drive);
         std::strcat(temp_drive, buff);
         std::strcpy(buff, temp_drive);
@@ -54,7 +54,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
     if (buff[0] == '.' && buff[1] == SLASH_CH)
     {
         bool test_dir = false;
-        char temp_drive[ID_FILE_MAX_PATH];
+        char temp_drive[id::ID_FILE_MAX_PATH];
         if (std::strrchr(buff, '.') == buff)
         {
             test_dir = true;    // only one '.' assume it's a directory
@@ -87,16 +87,16 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
         }
     }
 
-    char drive[ID_FILE_MAX_DRIVE];
-    char dir[ID_FILE_MAX_DIR];
-    char fname[ID_FILE_MAX_FNAME];
-    char ext[ID_FILE_MAX_EXT];
+    char drive[id::ID_FILE_MAX_DRIVE];
+    char dir[id::ID_FILE_MAX_DIR];
+    char fname[id::ID_FILE_MAX_FNAME];
+    char ext[id::ID_FILE_MAX_EXT];
     split_path(buff, drive, dir, fname, ext);
 
-    char drive1[ID_FILE_MAX_DRIVE];
-    char dir1[ID_FILE_MAX_DIR];
-    char fname1[ID_FILE_MAX_FNAME];
-    char ext1[ID_FILE_MAX_EXT];
+    char drive1[id::ID_FILE_MAX_DRIVE];
+    char dir1[id::ID_FILE_MAX_DIR];
+    char fname1[id::ID_FILE_MAX_FNAME];
+    char ext1[id::ID_FILE_MAX_EXT];
     split_path(old_full_path, drive1, dir1, fname1, ext1);
 
     const bool get_path = (mode == CmdFile::AT_CMD_LINE) || (mode == CmdFile::SSTOOLS_INI);
@@ -145,7 +145,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
 
 int merge_path_names(std::string &old_full_path, const char *new_filename, CmdFile mode)
 {
-    char buff[ID_FILE_MAX_PATH];
+    char buff[id::ID_FILE_MAX_PATH];
     std::strcpy(buff, old_full_path.c_str());
     const int result = merge_path_names(buff, new_filename, mode);
     old_full_path = buff;

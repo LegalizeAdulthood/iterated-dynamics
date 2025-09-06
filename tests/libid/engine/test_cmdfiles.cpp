@@ -602,7 +602,7 @@ TEST_F(TestParameterCommand, filenameExtension)
 TEST_F(TestParameterCommandError, filenameValueTooLong)
 {
     ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.pot"};
-    const std::string too_long{"filename=" + std::string(ID_FILE_MAX_PATH, 'f') + ".gif"};
+    const std::string too_long{"filename=" + std::string(id::ID_FILE_MAX_PATH, 'f') + ".gif"};
 
     exec_cmd_arg(too_long);
 
@@ -613,7 +613,7 @@ TEST_F(TestParameterCommandError, filenameValueTooLong)
 TEST_F(TestParameterCommandError, mapTooLong)
 {
     ValueSaver saved_map_name{g_map_name, "foo.map"};
-    const std::string too_long{"map=" + std::string(ID_FILE_MAX_PATH, 'f') + ".map"};
+    const std::string too_long{"map=" + std::string(id::ID_FILE_MAX_PATH, 'f') + ".map"};
 
     exec_cmd_arg(too_long, CmdFile::SSTOOLS_INI);
 
