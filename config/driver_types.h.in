@@ -21,6 +21,9 @@
 
 class Driver;
 
+namespace id
+{
+
 #if ID_HAVE_X11_DRIVER
 extern Driver *get_x11_driver();
 #endif
@@ -33,3 +36,5 @@ extern Driver *get_disk_driver();
 #if ID_HAVE_WX_DRIVER
 extern Driver *get_wx_driver();
 #endif
+
+} // namespace id

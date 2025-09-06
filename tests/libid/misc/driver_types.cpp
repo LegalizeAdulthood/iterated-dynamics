@@ -4,6 +4,9 @@
 
 #include "MockDriver.h"
 
+namespace id
+{
+
 #if ID_HAVE_X11_DRIVER
 static MockDriver s_x11_driver;
 
@@ -39,3 +42,5 @@ Driver *get_wx_driver()
     return &s_wx_driver;
 }
 #endif
+
+} // namespace id

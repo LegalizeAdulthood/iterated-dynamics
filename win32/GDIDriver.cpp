@@ -415,7 +415,12 @@ void GDIDriver::flush()
 
 static GDIDriver s_gdi_driver{};
 
+namespace id
+{
+
 Driver *get_gdi_driver()
 {
     return &s_gdi_driver;
 }
+
+} // namespace id

@@ -617,7 +617,12 @@ bool WxDriver::get_filename(
 
 static WxDriver s_wx_driver{};
 
+namespace id
+{
+
 Driver *get_wx_driver()
 {
     return &s_wx_driver;
 }
+
+} // namespace id

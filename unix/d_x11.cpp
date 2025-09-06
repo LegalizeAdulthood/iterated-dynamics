@@ -2617,7 +2617,12 @@ bool X11Driver::get_filename(
 
 static X11Driver s_x11_driver;
 
+namespace id
+{
+
 Driver *get_x11_driver()
 {
     return &s_x11_driver;
 }
+
+} // namespace id

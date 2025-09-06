@@ -473,7 +473,12 @@ void DiskDriver::flush()
 
 static DiskDriver s_disk_driver{};
 
+namespace id
+{
+
 Driver *get_disk_driver()
 {
     return &s_disk_driver;
 }
+
+} // namespace id
