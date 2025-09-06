@@ -382,7 +382,7 @@ int get_toggles()
         j++;
     }
 
-    if (std::strncmp(id::config::string_lower(values[++k].uval.sval), "normal", 4) == 0)
+    if (std::strncmp(id::string_lower(values[++k].uval.sval), "normal", 4) == 0)
     {
         g_fill_color = -1;
     }

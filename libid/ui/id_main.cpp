@@ -440,9 +440,9 @@ static void set_search_dirs()
         fract_dir = ".";
     }
     g_fractal_search_dir1 = fract_dir;
-    if (std::filesystem::exists(id::config::HOME_DIR))
+    if (std::filesystem::exists(id::HOME_DIR))
     {
-        g_fractal_search_dir2 = id::config::HOME_DIR;
+        g_fractal_search_dir2 = id::HOME_DIR;
     }
     else
     {

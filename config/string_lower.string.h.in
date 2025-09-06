@@ -8,7 +8,7 @@
 
 #include <string.h>
 
-namespace id::config
+namespace id
 {
 
 inline char *string_lower(char *s)
@@ -16,4 +16,4 @@ inline char *string_lower(char *s)
     return strlwr(s);
 }
 
-} // namespace id::config
+} // namespace id

@@ -6,9 +6,9 @@
 //
 #pragma once
 
-namespace id::config
+namespace id
 {
 
 char *string_lower(char *s);
 
-} // namespace id::config
+} // namespace id

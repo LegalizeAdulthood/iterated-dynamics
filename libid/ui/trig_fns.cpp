@@ -130,7 +130,7 @@ int set_trig_array(int k, const char *name)
         *slash = 0;
     }
 
-    id::config::string_lower(trig_name);
+    id::string_lower(trig_name);
 
     for (int i = 0; i < g_num_trig_functions; i++)
     {
