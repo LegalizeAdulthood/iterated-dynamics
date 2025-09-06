@@ -1172,7 +1172,7 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
 
         std::memset(line, ' ', 81);
         std::string buff = fmt::format(ID_PROGRAM_NAME " Version {:d}.{:d}.{:d}", //
-            ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH);
+            id::ID_VERSION_MAJOR, id::ID_VERSION_MINOR, id::ID_VERSION_PATCH);
         std::memmove(line + ((width - (int) (buff.length())) / 2) - 4, buff.c_str(), buff.length());
 
         buff = fmt::format("Page {:d}", pd->page_num);

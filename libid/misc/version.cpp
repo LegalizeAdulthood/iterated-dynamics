@@ -8,12 +8,12 @@
 
 // g_release is pushed/popped on the history stack to provide backward compatibility with previous
 // behavior, so it can't be const.
-int g_release{ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR};
+int g_release{id::ID_VERSION_MAJOR * 100 + id::ID_VERSION_MINOR};
 
 // g_patch_level can't be modified.
-const int g_patch_level{ID_VERSION_PATCH};
+const int g_patch_level{id::ID_VERSION_PATCH};
 
-Version g_version{ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH, ID_VERSION_TWEAK, false};
+Version g_version{id::ID_VERSION_MAJOR, id::ID_VERSION_MINOR, id::ID_VERSION_PATCH, id::ID_VERSION_TWEAK, false};
 
 std::string to_string(const Version &value)
 {
