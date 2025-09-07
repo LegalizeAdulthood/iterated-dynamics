@@ -4,6 +4,9 @@
 
 #include "math/cmplx.h"
 
+namespace id::fractals
+{
+
 extern DComplex              g_marks_coefficient;
 
 bool marks_julia_per_image();
@@ -14,3 +17,5 @@ int tims_error_orbit();
 int marks_mandel_per_pixel();
 int marks_mandel_pwr_per_pixel();
 int marks_cplx_mand_per_pixel();
+
+} // namespace id::fractals

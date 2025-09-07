@@ -15,8 +15,8 @@
 
 #include <algorithm>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 DComplex g_marks_coefficient{};
 
@@ -182,3 +182,5 @@ int marks_cplx_mand_per_pixel()
     g_marks_coefficient = complex_power(g_init, g_power_z);
     return 1;
 }
+
+} // namespace id::fractals
