@@ -10,6 +10,8 @@
 
 #include <complex>
 
+using namespace id::misc;
+
 namespace id::fractals
 {
 

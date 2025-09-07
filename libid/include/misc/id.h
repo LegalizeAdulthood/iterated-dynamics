@@ -2,13 +2,9 @@
 //
 #pragma once
 
-//
-// The filename limits were increased in Xfract 3.02. But alas,
-// in this poor program that was originally developed on the
-// nearly-brain-dead DOS operating system, quite a few things
-// in the UI would break if file names were bigger than DOS 8-3
-// names. So for now humor us and let's keep the names short.
-//
+namespace id::misc
+{
+
 enum
 {
     MSG_LEN = 80,        // handy buffer size for messages
@@ -32,3 +28,5 @@ enum
 #define TRUE 1
 #define FALSE 0
 #endif
+
+} // namespace id::misc

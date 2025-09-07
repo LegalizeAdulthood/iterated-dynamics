@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <string>
 
+using namespace id::misc;
+
 namespace id::io
 {
 
