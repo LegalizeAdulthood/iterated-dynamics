@@ -37,7 +37,8 @@
 #include <string>
 #include <vector>
 
-using namespace id;
+namespace id
+{
 
 enum
 {
@@ -1354,3 +1355,5 @@ void jiim(JIIMType which)
     InverseJulia tool(which);
     tool.process();
 }
+
+} // namespace id

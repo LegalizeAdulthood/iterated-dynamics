@@ -4,6 +4,9 @@
 
 #include "math/cmplx.h"
 
+namespace id
+{
+
 enum class JIIMType
 {
     JIIM = 0,
@@ -26,3 +29,5 @@ int    queue_full();
 int    queue_full_almost();
 int    push_float(float x, float y);
 int    enqueue_float(float x, float y);
+
+} // namespace id
