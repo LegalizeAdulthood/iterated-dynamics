@@ -29,8 +29,10 @@
 #include <string>
 #include <vector>
 
-using namespace id;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 enum
 {
@@ -741,3 +743,5 @@ void dvid_status(int line, const char *msg)
     driver_put_string(BOX_ROW+10+line, BOX_COL+12, attrib, buff);
     driver_hide_text_cursor();
 }
+
+} // namespace id::ui

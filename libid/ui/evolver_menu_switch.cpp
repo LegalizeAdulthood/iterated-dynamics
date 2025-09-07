@@ -29,6 +29,7 @@
 using namespace id;
 using namespace id::io;
 using namespace id::misc;
+using namespace id::ui;
 
 static MainState save_evolver_image(MainContext &/*context*/)
 {

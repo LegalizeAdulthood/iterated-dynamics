@@ -23,6 +23,7 @@
 #include "ui/zoom.h"
 
 using namespace id;
+using namespace id::ui;
 
 namespace id::misc
 {

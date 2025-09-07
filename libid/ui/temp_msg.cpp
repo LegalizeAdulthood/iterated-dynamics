@@ -18,6 +18,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 static std::vector<Byte> s_text_save;
 static int s_text_x_dots{};

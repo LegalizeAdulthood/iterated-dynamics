@@ -20,6 +20,7 @@
 #include <cstdlib>
 
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id::fractals
 {

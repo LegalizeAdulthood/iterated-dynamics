@@ -19,6 +19,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 /*
         get_toggles2() is similar to get_toggles, invoked by 'y' key

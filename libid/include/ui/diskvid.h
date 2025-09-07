@@ -7,6 +7,9 @@
 #include <cstdio>
 #include <string>
 
+namespace id::ui
+{
+
 extern bool                  g_disk_16_bit;
 extern bool                  g_disk_flag;       // disk video active flag
 extern bool                  g_disk_targa;
@@ -28,3 +31,5 @@ inline void dvid_status(int line, const std::string &msg)
 int common_start_disk(long new_row_size, long new_col_size, int colors);
 bool from_mem_disk(long offset, int size, void *dest);
 bool to_mem_disk(long offset, int size, void *src);
+
+} // namespace id::ui

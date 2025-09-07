@@ -21,6 +21,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 // we're done.  Bail out
 [[noreturn]] void goodbye()

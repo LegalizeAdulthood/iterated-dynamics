@@ -36,6 +36,7 @@
 
 using namespace id;
 using namespace id::io;
+using namespace id::ui;
 
 namespace id::misc
 {
