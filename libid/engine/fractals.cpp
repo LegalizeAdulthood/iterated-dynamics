@@ -55,7 +55,8 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cfloat>
 #include <cmath>
 
-using namespace id;
+namespace id
+{
 
 int g_max_color{};
 int g_degree{};
@@ -309,3 +310,4 @@ int other_julia_per_pixel()
     return 0;
 }
 
+} // namespace id
