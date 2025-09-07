@@ -6,6 +6,9 @@
 #include <string>
 #include <ctime>
 
+namespace id::ui
+{
+
 enum
 {
     MAX_COMMENT_LEN = 57 // length of par comments
@@ -27,3 +30,5 @@ const std::string &expand_command_comment(int i, std::time_t local_time);
 const std::string &expand_command_comment(int i);
 void init_comments();
 void parse_comments(char *value);
+
+} // namespace id::ui

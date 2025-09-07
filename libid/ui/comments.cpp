@@ -17,8 +17,10 @@
 #include <string>
 #include <string_view>
 
-using namespace id;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 static std::string get_cpu_id();
 
@@ -238,3 +240,5 @@ void init_comments()
         comment[0] = '\0';
     }
 }
+
+} // namespace id::ui
