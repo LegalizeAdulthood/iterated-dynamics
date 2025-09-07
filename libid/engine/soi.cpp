@@ -24,7 +24,8 @@
 #include <cmath>
 #include <iterator>
 
-using namespace id;
+namespace id
+{
 
 enum
 {
@@ -801,3 +802,5 @@ void soi()
         (xx_min_l + xx_max_l) / 2, (yy_max_l + yy_min_l) / 2,   //
         1);
 }
+
+} // namespace id
