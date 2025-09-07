@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 class Point
 {
 public:
@@ -41,3 +44,5 @@ private:
     int m_y{};
     int m_iteration{-1};
 };
+
+} // namespace id
