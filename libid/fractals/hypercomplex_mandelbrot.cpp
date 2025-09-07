@@ -7,7 +7,8 @@
 #include "math/cmplx.h"
 #include "math/hcmplx.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 int hyper_complex_orbit()
 {
@@ -40,3 +41,5 @@ int hyper_complex_orbit()
     }
     return 0;
 }
+
+} // namespace id::fractals

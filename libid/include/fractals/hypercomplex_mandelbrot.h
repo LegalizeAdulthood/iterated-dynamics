@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 int hyper_complex_orbit();
+
+} // namespace id::fractals
