@@ -2,8 +2,13 @@
 //
 #pragma once
 
+namespace id::math
+{
+
 template <typename T>
 int sign(T x)
 {
     return (T{} < x) - (x < T{});
 }
+
+} // namespace id::math
