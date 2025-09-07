@@ -4,6 +4,9 @@
 
 #include <config/port.h>
 
+namespace id::fractals
+{
+
 extern LDouble g_b_const;
 
 int divide_brot5_bf_per_pixel();
@@ -13,3 +16,5 @@ int divide_brot5_orbit_bf();
 bool divide_brot5_per_imge();
 int divide_brot5_per_pixel();
 int divide_brot5_orbit();
+
+} // namespace id::fractals

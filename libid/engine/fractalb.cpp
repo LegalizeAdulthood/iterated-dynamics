@@ -417,7 +417,7 @@ bool mandel_per_image_bn()
     case FractalType::DIVIDE_BROT5:
         init_big_pi();
         g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
-        g_b_const = g_params[1] + 1.0e-20;
+        fractals::g_b_const = g_params[1] + 1.0e-20;
         break;
 
     default:
@@ -545,7 +545,7 @@ bool mandel_per_image_bf()
     case FractalType::DIVIDE_BROT5:
         init_big_pi();
         g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
-        g_b_const = g_params[1] + 1.0e-20;
+        fractals::g_b_const = g_params[1] + 1.0e-20;
         break;
 
     default:
