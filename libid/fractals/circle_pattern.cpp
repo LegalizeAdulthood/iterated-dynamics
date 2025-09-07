@@ -6,7 +6,8 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 int circle_orbit()
 {
@@ -14,3 +15,5 @@ int circle_orbit()
     g_color_iter = i%g_colors;
     return 1;
 }
+
+} // namespace id::fractals

@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 int circle_orbit();
+
+} // namespace id::fractals
