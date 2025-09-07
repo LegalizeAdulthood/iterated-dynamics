@@ -54,31 +54,31 @@ inline double cmplx_mod(const DComplex &z)
 inline void cmplx_sin(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    d_stk_sin();
+    id::fractals::d_stk_sin();
     out = g_arg1->d;
 }
 inline void cmplx_cos(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    d_stk_cos();
+    id::fractals::d_stk_cos();
     out = g_arg1->d;
 }
 inline void cmplx_sinh(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    d_stk_sinh();
+    id::fractals::d_stk_sinh();
     out = g_arg1->d;
 }
 inline void cmplx_cosh(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    d_stk_cosh();
+    id::fractals::d_stk_cosh();
     out = g_arg1->d;
 }
 inline void cmplx_log(const DComplex &arg, DComplex &out)
 {
     g_arg1->d = arg;
-    d_stk_log();
+    id::fractals::d_stk_log();
     out = g_arg1->d;
 }
 inline void cmplx_exp(const DComplex &arg, DComplex &out)
@@ -98,7 +98,7 @@ inline void cmplx_mult1(const DComplex &arg1, const DComplex &arg2, DComplex &ou
 {
     g_arg2->d = arg1;
     g_arg1->d = arg2;
-    d_stk_mul();
+    id::fractals::d_stk_mul();
     g_arg1++;
     g_arg2++;
     out = g_arg2->d;

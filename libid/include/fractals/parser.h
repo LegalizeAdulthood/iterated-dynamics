@@ -4,6 +4,9 @@
 
 #include <string>
 
+namespace id::fractals
+{
+
 extern bool                  g_frm_uses_ismand;
 extern bool                  g_frm_uses_p1;
 extern bool                  g_frm_uses_p2;
@@ -61,3 +64,5 @@ bool run_formula(const std::string &name, bool report_bad_sym);
 bool formula_per_image();
 void init_misc();
 void free_work_area();
+
+} // namespace id::fractals

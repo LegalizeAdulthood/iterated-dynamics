@@ -2,6 +2,8 @@
 //
 #include "math/arg.h"
 
+using namespace id::fractals;
+
 Arg *g_arg1{};
 Arg *g_arg2{};
 void (*g_d_trig0)(){d_stk_sin};

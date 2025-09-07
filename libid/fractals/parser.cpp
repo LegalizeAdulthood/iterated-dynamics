@@ -56,8 +56,8 @@
 #include <stdexcept>
 #include <vector>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 namespace
 {
@@ -3706,3 +3706,5 @@ static bool frm_prescan(std::FILE * open_file)
 
     return true;
 }
+
+} // namespace id::fractals
