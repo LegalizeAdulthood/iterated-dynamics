@@ -13,6 +13,8 @@
 #include <array>
 #include <numeric>
 
+using namespace id;
+
 namespace
 {
 

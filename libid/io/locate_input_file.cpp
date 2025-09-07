@@ -9,6 +9,8 @@
 #include <initializer_list>
 #include <string>
 
+using namespace id;
+
 std::string locate_input_file(const std::string &name)
 {
     std::initializer_list dirs{

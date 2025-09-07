@@ -5,6 +5,8 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 
+using namespace id;
+
 bool g_use_grid{};
 // note that integer grid is set when integerfractal && !invert;
 // otherwise the floating point grid is set; never both at once

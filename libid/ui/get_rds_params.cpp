@@ -12,6 +12,8 @@
 #include <cstring>
 #include <string>
 
+using namespace id;
+
 static const char *s_masks[] = {"*.pot", "*.gif"};
 
 int get_rds_params()

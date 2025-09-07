@@ -28,6 +28,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id;
+
 static std::vector<int> s_entry_nums;
 static bool s_modes_changed{};
 

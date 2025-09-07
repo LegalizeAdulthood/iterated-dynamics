@@ -18,6 +18,8 @@
 #include <iterator>
 #include <string_view>
 
+using namespace id;
+
 int g_cfg_line_nums[MAX_VIDEO_MODES]{};
 
 /* load_config

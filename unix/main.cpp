@@ -4,5 +4,5 @@
 
 int main(int argc, char *argv[])
 {
-    return id_main(argc, argv);
+    return id::id_main(argc, argv);
 }

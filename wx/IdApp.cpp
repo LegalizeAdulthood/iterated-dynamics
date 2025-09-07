@@ -29,7 +29,7 @@ bool IdApp::OnInit()
 
 int IdApp::OnRun()
 {
-    return id_main(argc, argv);
+    return id::id_main(argc, argv);
 }
 
 void IdApp::create_window()

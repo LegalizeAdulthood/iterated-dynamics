@@ -15,6 +15,8 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id;
+
 enum
 {
     PLOT_TIMER_ID = 1

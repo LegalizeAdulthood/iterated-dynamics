@@ -9,6 +9,13 @@
 #include <vector>
 
 struct VideoInfo;
+namespace id::help
+{
+enum class HelpLabels;
+}
+
+namespace id
+{
 
 // -1 no fractal
 //  0 params changed, recalculation required
@@ -41,11 +48,6 @@ enum class SaveDAC
 };
 
 using FilenameStack = std::vector<std::string>;
-
-namespace id::help
-{
-enum class HelpLabels;
-}
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
@@ -114,3 +116,5 @@ extern double                g_y_3rd;
 extern double                g_y_max;
 extern double                g_y_min;
 extern bool                  g_z_scroll;
+
+} // namespace id

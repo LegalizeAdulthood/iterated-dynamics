@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cstdarg>
 
+using namespace id;
+
 static int s_resume_offset{}; // offset in resume info gets
 
 std::vector<Byte> g_resume_data; // resume info

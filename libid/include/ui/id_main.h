@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 int id_main(int argc, char *argv[]);
+
+} // namespace id

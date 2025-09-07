@@ -54,7 +54,8 @@
 #include <ctime>
 #include <string>
 
-using namespace id;
+namespace id
+{
 
 VideoInfo g_video_entry{};                                    //
 id::help::HelpLabels g_help_mode{};                           //
@@ -513,3 +514,5 @@ int id_main(int argc, char *argv[])
 
     return 0;
 }
+
+} // namespace id

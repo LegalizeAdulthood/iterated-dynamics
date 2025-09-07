@@ -17,6 +17,8 @@
 #include <string>
 #include <string_view>
 
+using namespace id;
+
 static std::string get_cpu_id();
 
 std::string g_command_comment[4];

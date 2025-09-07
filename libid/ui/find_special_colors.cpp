@@ -7,6 +7,8 @@
 
 #include <algorithm>
 
+using namespace id;
+
 int g_color_dark{};   // darkest color in palette
 int g_color_bright{}; // brightest color in palette
 int g_color_medium{}; // nearest to medbright grey in palette

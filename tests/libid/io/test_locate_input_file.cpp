@@ -16,8 +16,9 @@
 
 #include <filesystem>
 
-using namespace testing;
+using namespace id;
 using namespace id::test::config;
+using namespace testing;
 
 TEST(TestLocateConfigFile, preferCurrentDirectory)
 {

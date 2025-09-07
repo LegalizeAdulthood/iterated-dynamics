@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <cstring>
 
+using namespace id;
+
 // MAX_X_BLK defn must match fracsubr.c
 enum
 {

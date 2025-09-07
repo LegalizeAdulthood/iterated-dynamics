@@ -39,6 +39,8 @@
 #undef max
 #endif
 
+using namespace id;
+
 enum
 {
     MAX_MNEMONIC = 20   // max size of any mnemonic string

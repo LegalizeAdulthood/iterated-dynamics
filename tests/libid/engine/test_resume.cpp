@@ -8,6 +8,8 @@
 
 #include <cstdint>
 
+using namespace id;
+
 namespace
 {
 

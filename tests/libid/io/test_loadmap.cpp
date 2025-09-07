@@ -12,6 +12,7 @@
 
 #include <gtest/gtest.h>
 
+using namespace id;
 using namespace id::test::data;
 
 TEST(TestValidateLuts, loadMap)

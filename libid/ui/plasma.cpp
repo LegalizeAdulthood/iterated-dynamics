@@ -8,6 +8,8 @@
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
 
+using namespace id;
+
 int plasma_type()
 {
     if (g_colors < 4)

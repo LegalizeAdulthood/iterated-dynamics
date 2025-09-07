@@ -15,6 +15,7 @@
 #include <iomanip>
 #include <sstream>
 
+using namespace id;
 using namespace testing;
 
 namespace
