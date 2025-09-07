@@ -41,10 +41,10 @@ private:
     BifurcationPeriod s_period;
 };
 
-} // namespace id::fractals
-
 int bifurc_add_trig_pi_orbit();
 int bifurc_lambda_trig_orbit();
 int bifurc_set_trig_pi_orbit();
 int bifurc_stewart_trig_orbit();
 int bifurc_verhulst_trig_orbit();
+
+} // namespace id::fractals

@@ -17,7 +17,8 @@
 #include <cmath>
 #include <vector>
 
-using namespace id;
+namespace id::fractals
+{
 
 enum
 {
@@ -27,9 +28,6 @@ enum
 };
 
 constexpr double SEED{0.66}; // starting value for population
-
-namespace id::fractals
-{
 
 //*********** standalone engine for "bifurcation" types **************
 
@@ -247,8 +245,6 @@ bool BifurcationPeriod::periodic(long time)
     return false;
 }
 
-} // namespace id::fractals
-
 int bifurc_verhulst_trig_orbit()
 {
     //  Population = Pop + Rate * fn(Pop) * (1 - fn(Pop))
@@ -296,3 +292,5 @@ int bifurc_lambda_trig_orbit()
     g_population = g_rate * g_tmp_z.x * (1 - g_tmp_z.x);
     return population_orbit();
 }
+
+} // namespace id::fractals
