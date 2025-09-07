@@ -4,6 +4,9 @@
 
 #include <cmath>
 
+namespace id::fractals
+{
+
 extern double g_population;
 extern double g_rate;
 
@@ -17,3 +20,5 @@ inline int population_orbit()
 {
     return population_exceeded() ? 1 : 0;
 }
+
+} // namespace id::fractals

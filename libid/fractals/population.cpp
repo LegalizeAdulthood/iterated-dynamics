@@ -2,5 +2,10 @@
 //
 #include "fractals/population.h"
 
+namespace id::fractals
+{
+
 double g_population{};
 double g_rate{};
+
+} // namespace id::fractals
