@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 int escher_orbit();
+
+} // namespace id::fractals

@@ -9,7 +9,8 @@
 #include "math/cmplx.h"
 #include "math/sqr.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 int escher_orbit() // Science of Fractal Images pp. 185, 187
 {
@@ -43,3 +44,5 @@ int escher_orbit() // Science of Fractal Images pp. 185, 187
     g_color_iter = ((3L * g_color_iter) % 255L) + 1L;
     return 1;
 }
+
+} // namespace id::fractals
