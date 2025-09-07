@@ -4,4 +4,9 @@
 
 #include "fractals/fractype.h"
 
+namespace id
+{
+
 int find_extra_param(FractalType type);
+
+} // namespace id

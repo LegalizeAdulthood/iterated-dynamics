@@ -8,6 +8,8 @@
 
 #include <cstring>
 
+using namespace id;
+
 /*
  *  Returns 1 if parameter number parm exists for type. If the
  *  parameter exists, the parameter prompt string is copied to buf.

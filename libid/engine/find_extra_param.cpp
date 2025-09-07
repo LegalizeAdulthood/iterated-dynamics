@@ -4,6 +4,9 @@
 
 #include "fractals/fractalp.h"
 
+namespace id
+{
+
 int find_extra_param(FractalType type)
 {
     int ret = -1;
@@ -21,3 +24,5 @@ int find_extra_param(FractalType type)
     }
     return ret;
 }
+
+} // namespace id

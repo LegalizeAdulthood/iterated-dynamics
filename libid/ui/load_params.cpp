@@ -6,6 +6,8 @@
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 
+using namespace id;
+
 void load_params(FractalType type)
 {
     for (int i = 0; i < 4; ++i)
