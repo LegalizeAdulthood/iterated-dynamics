@@ -29,7 +29,9 @@
 using namespace id;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static MainState save_evolver_image(MainContext &/*context*/)
 {
@@ -454,3 +456,5 @@ MainState evolver_menu_switch(MainContext &context)
     // other (maybe a valid Fn key)
     return requested_video_fn(context);
 }
+
+} // namespace id::ui
