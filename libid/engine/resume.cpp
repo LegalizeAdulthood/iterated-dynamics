@@ -7,7 +7,8 @@
 #include <algorithm>
 #include <cstdarg>
 
-using namespace id;
+namespace id
+{
 
 static int s_resume_offset{}; // offset in resume info gets
 
@@ -82,3 +83,5 @@ void end_resume()
 {
     g_resume_data.clear();
 }
+
+} // namespace id

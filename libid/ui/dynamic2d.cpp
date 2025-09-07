@@ -6,6 +6,8 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
+using namespace id;
+
 int dynamic2d_type()
 {
     id::fractals::Dynamic2D d2d;

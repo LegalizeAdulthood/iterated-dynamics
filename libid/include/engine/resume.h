@@ -6,6 +6,9 @@
 
 #include <vector>
 
+namespace id
+{
+
 extern std::vector<Byte>     g_resume_data;
 extern bool                  g_resuming;
 extern int                   g_resume_len;
@@ -101,3 +104,5 @@ void put_resume(const Head &head, const Tail &...tail)
     put_resume(head);
     put_resume(tail...);
 }
+
+} // namespace id

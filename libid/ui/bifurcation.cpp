@@ -6,6 +6,8 @@
 #include "fractals/Bifurcation.h"
 #include "misc/Driver.h"
 
+using namespace id;
+
 int bifurcation_type()
 {
     id::fractals::Bifurcation bif;

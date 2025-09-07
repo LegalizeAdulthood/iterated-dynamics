@@ -6,6 +6,8 @@
 #include "fractals/TestPoint.h"
 #include "misc/Driver.h"
 
+using namespace id;
+
 // standalone engine for "test"
 int test_type()
 {

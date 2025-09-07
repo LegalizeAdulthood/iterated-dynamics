@@ -11,6 +11,8 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
+using namespace id;
+
 int orbit2d_type()
 {
     id::fractals::Orbit2D o2d;
