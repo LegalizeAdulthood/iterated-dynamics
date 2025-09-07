@@ -706,7 +706,7 @@ get_evol_restart:
         .comment("Press F6 to control which parameters are varied");
 
     {
-        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_EVOLVER};
+        ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_EVOLVER};
         i = choices.prompt("Evolution Mode Options", 255);
     }
     if (i < 0)

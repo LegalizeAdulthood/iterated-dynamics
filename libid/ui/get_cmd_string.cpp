@@ -21,7 +21,7 @@ int get_cmd_string()
 {
     static char cmd_buf[61];
 
-    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COMMANDS};
+    ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_COMMANDS};
     int i = field_prompt("Enter command string to use.", nullptr, cmd_buf, 60, nullptr);
     if (i >= 0 && cmd_buf[0] != 0)
     {

@@ -42,7 +42,10 @@ enum class SaveDAC
 
 using FilenameStack = std::vector<std::string>;
 
+namespace id::help
+{
 enum class HelpLabels;
+}
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
@@ -67,7 +70,7 @@ extern float                 g_final_aspect_ratio;
 extern std::filesystem::path g_fractal_search_dir1;
 extern std::filesystem::path g_fractal_search_dir2;
 extern bool                  g_has_inverse;
-extern HelpLabels            g_help_mode;
+extern id::help::HelpLabels  g_help_mode;
 extern bool                  g_keep_aspect_ratio;
 extern int                   g_logical_screen_x_dots;
 extern int                   g_logical_screen_x_offset;

@@ -225,7 +225,7 @@ void rotate(int direction)
         return;
     }
 
-    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_CYCLING};
+    ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_CYCLING};
 
     s_paused = false;                   // not paused
     f_key = 0;                          // no random coloring
@@ -567,7 +567,7 @@ void save_palette()
 {
     driver_stack_screen();
     char filename[256]{};
-    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
+    ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_COLORMAP};
     int i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
     driver_unstack_screen();
     if (i != -1 && filename[0])
@@ -598,7 +598,7 @@ void save_palette()
 
 bool load_palette()
 {
-    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
+    ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_COLORMAP};
     std::string filename{g_map_name};
     driver_stack_screen();
     const bool i = driver_get_filename("Select a Map File", "Colormap", "*.map", filename);

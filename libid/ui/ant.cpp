@@ -97,7 +97,7 @@ static bool ant_key(bool &step, long &wait)
 
 int ant_type()
 {
-    ValueSaver saved_help_mode(g_help_mode, HelpLabels::HELP_ANT_COMMANDS);
+    ValueSaver saved_help_mode(g_help_mode, id::help::HelpLabels::HELP_ANT_COMMANDS);
     id::fractals::Ant ant;
     long wait = std::abs(g_orbit_delay);
 

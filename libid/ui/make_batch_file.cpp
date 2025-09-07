@@ -313,7 +313,7 @@ void make_batch_file()
     std::FILE *bat_file{};
 
     driver_stack_screen();
-    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PARAM_FILE};
+    ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_PARAM_FILE};
     MakeParParams params;
 
     if (g_make_parameter_file)

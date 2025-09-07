@@ -121,7 +121,7 @@ gc_loop:
 
     int prompt_ret;
     {
-        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COORDS};
+        ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_COORDS};
         prompt_ret = builder.prompt("Image Coordinates", 128 | 16);
     }
 
@@ -329,7 +329,7 @@ gsc_loop:
     builder.comment("Press F4 to reset to type default values");
 
     {
-        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_SCREEN_COORDS};
+        ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_SCREEN_COORDS};
         prompt_ret = builder.prompt("Screen Coordinates", 128 | 16);
     }
 

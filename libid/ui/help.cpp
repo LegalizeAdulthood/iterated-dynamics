@@ -794,7 +794,7 @@ int id::help::help()
     History curr{-1, 0, 0};
     History next;
 
-    if (g_help_mode == HelpLabels::NONE)   // is help disabled?
+    if (g_help_mode == id::help::HelpLabels::NONE)   // is help disabled?
     {
         return 0;
     }
@@ -821,7 +821,7 @@ int id::help::help()
     g_engine_timer_start -= std::clock();
     driver_stack_screen();
 
-    if (g_help_mode >= HelpLabels::HELP_INDEX)
+    if (g_help_mode >= id::help::HelpLabels::HELP_INDEX)
     {
         next.topic_num = s_label[static_cast<int>(g_help_mode)].topic_num;
         next.topic_off = s_label[static_cast<int>(g_help_mode)].topic_off;
@@ -1015,7 +1015,7 @@ static int read_help_topic(int topic, int off, int len, void *buf)
  * to end of topic.  On "EOF" returns a negative number representing
  * number of bytes not read.
  */
-int id::help::read_help_topic(HelpLabels label, int off, int len, void *buf)
+int id::help::read_help_topic(id::help::HelpLabels label, int off, int len, void *buf)
 {
     return ::read_help_topic(s_label[static_cast<int>(label)].topic_num,
         s_label[static_cast<int>(label)].topic_off + off, len, buf);
