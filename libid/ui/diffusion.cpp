@@ -5,11 +5,14 @@
 #include "fractals/Diffusion.h"
 #include "ui/check_key.h"
 
-using namespace id::ui;
+using namespace id::fractals;
+
+namespace id::ui
+{
 
 int diffusion_type()
 {
-    id::fractals::Diffusion d;
+    Diffusion d;
 
     while (d.iterate())
     {
@@ -22,3 +25,5 @@ int diffusion_type()
 
     return 0;
 }
+
+} // namespace id::ui

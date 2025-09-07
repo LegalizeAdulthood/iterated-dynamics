@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int diffusion_type();
+
+} // namespace id::ui
