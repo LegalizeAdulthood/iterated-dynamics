@@ -40,7 +40,9 @@ using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 namespace
 {
@@ -953,3 +955,5 @@ static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point)
 
     restore_stack(saved);
 }
+
+} // namespace id::ui
