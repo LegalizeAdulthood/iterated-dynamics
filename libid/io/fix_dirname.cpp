@@ -7,6 +7,9 @@
 
 #include <cstring>
 
+namespace id::io
+{
+
 // fix up directory names
 void fix_dir_name(char *dirname)
 {
@@ -30,3 +33,5 @@ void fix_dir_name(std::string &dirname)
     fix_dir_name(buff);
     dirname = buff;
 }
+
+} // namespace id::io
