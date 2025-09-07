@@ -4,7 +4,8 @@
 
 #include <stdexcept>
 
-namespace hc {
+namespace hc
+{
 
 Options parse_options(int argc, char **argv)
 {
@@ -144,7 +145,8 @@ Options parse_options(int argc, char **argv)
                 }
                 else
                 {
-                    throw std::runtime_error("/r switch allowed when compiling (/c), printing (/p) or creating AsciiDoc (/adoc)");
+                    throw std::runtime_error(
+                        "/r switch allowed when compiling (/c), printing (/p) or creating AsciiDoc (/adoc)");
                 }
             }
             else if (arg == "q")
