@@ -8,7 +8,8 @@
 
 #include <cstring>
 
-using namespace id;
+namespace id
+{
 
 /*
  *  Returns 1 if parameter number parm exists for type. If the
@@ -53,3 +54,5 @@ bool type_has_param(FractalType type, int param, const char **prompt)
     }
     return ret != nullptr;
 }
+
+} // namespace id

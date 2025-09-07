@@ -4,8 +4,13 @@
 
 #include "fractals/fractype.h"
 
+namespace id
+{
+
 bool type_has_param(FractalType type, int param, const char **prompt);
 inline bool type_has_param(FractalType type, int param)
 {
     return type_has_param(type, param, nullptr);
 }
+
+} // namespace id
