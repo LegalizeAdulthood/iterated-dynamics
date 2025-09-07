@@ -9,6 +9,8 @@
 #include "math/cmplx.h"
 #include "math/sqr.h"
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

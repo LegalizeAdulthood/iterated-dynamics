@@ -25,6 +25,7 @@
 #include <iterator>
 
 using namespace id::fractals;
+using namespace id::math;
 
 namespace id
 {
