@@ -5,9 +5,14 @@
 #include <cstdio>
 #include <cstdlib>
 
+namespace id::math
+{
+
 void round_float_double(double *x) // make double converted from float look ok
 {
     char buf[30];
     std::sprintf(buf, "%-10.7g", *x);
     *x = std::atof(buf);
 }
+
+} // namespace id::math

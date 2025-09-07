@@ -14,6 +14,8 @@
 #include <cstdio>
 #include <cstring>
 
+using namespace id::math;
+
 int input_field(InputFieldFlags options, //
     int attr,                            // display attribute
     char *fld,                           // the field itself

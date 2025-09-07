@@ -31,6 +31,7 @@
 using namespace id;
 using namespace id::fractals;
 using namespace id::io;
+using namespace id::math;
 
 static int prompt_check_key(int key);
 static int prompt_check_key_scroll(int key);
