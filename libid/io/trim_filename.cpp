@@ -8,6 +8,9 @@
 
 namespace fs = std::filesystem;
 
+namespace id::io
+{
+
 std::string trim_filename(const std::string &filename, int length)
 {
     if (static_cast<int>(filename.length()) <= length)
@@ -33,3 +36,5 @@ std::string trim_filename(const std::string &filename, int length)
     const auto join_paths = [](const fs::path &result, const fs::path &item) { return result / item; };
     return std::accumulate(parts.rbegin(), parts.rend(), start, join_paths).make_preferred().string();
 }
+
+} // namespace id::io

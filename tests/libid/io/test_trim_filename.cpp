@@ -6,6 +6,8 @@
 
 #include <filesystem>
 
+using namespace id::io;
+
 TEST(TestTrimFilename, fitsInRequestedSize)
 {
     const std::string filename{R"(C:\iterated-dynamics\foo.par)"};
