@@ -4,6 +4,9 @@
 
 #include <filesystem>
 
+namespace id::io
+{
+
 class CurrentPathSaver
 {
 public:
@@ -31,3 +34,5 @@ public:
 private:
     std::filesystem::path m_old_path;
 };
+
+} // namespace id::io

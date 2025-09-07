@@ -35,6 +35,7 @@
 #include <filesystem>
 
 using namespace id;
+using namespace id::io;
 
 static void flush_output()
 {

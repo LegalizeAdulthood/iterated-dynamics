@@ -14,6 +14,7 @@
 #include <gtest/gtest.h>
 
 using namespace id;
+using namespace id::io;
 using namespace id::test;
 namespace fs = std::filesystem;
 
