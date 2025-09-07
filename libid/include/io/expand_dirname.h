@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::io
+{
+
 int expand_dir_name(char *dirname, char *drive);
+
+} // namespace id::io

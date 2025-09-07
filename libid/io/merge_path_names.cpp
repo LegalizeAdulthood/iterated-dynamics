@@ -19,6 +19,7 @@
 namespace fs = std::filesystem;
 
 using namespace id;
+using namespace id::io;
 
 // merge existing full path with new one
 // attempt to detect if file or directory

@@ -9,6 +9,9 @@
 
 namespace fs = std::filesystem;
 
+namespace id::io
+{
+
 // converts relative path to absolute path
 int expand_dir_name(char *dirname, char *drive)
 {
@@ -23,3 +26,5 @@ int expand_dir_name(char *dirname, char *drive)
 
     return 0;
 }
+
+} // namespace id::io
