@@ -6,6 +6,8 @@
 
 #include <limits>
 
+using namespace id;
+
 TEST(TestGetMagnificationPrecision, basicAssertions)
 {
     EXPECT_EQ(get_magnification_precision(1.0), 4);
