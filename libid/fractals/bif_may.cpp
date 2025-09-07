@@ -10,7 +10,8 @@
 
 #include <cmath>
 
-using namespace id;
+namespace id::fractals
+{
 
 static long s_beta{};
 
@@ -31,3 +32,5 @@ bool bifurc_may_per_image()
     engine_timer(g_cur_fractal_specific->calc_type);
     return false;
 }
+
+} // namespace id::fractals
