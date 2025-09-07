@@ -6,9 +6,14 @@
 #include <functional>
 #include <string>
 
+namespace id::io
+{
+
 std::string find_path(const char *filename, const std::function<const char *(const char *)> &get_env);
 
 inline std::string find_path(const char *filename)
 {
     return find_path(filename, [](const char *var) -> const char * { return std::getenv(var); });
 }
+
+} // namespace id::io

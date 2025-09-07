@@ -10,7 +10,8 @@
 
 namespace fs = std::filesystem;
 
-using namespace id;
+namespace id::io
+{
 
 // find_path
 //
@@ -56,3 +57,5 @@ std::string find_path(const char *filename,
     // check PATH
     return search_path(file_path.filename().string().c_str(), "PATH", get_env);
 }
+
+} // namespace id::io
