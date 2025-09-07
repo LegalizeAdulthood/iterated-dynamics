@@ -2,7 +2,10 @@
 //
 #pragma once
 
+namespace id::io
+{
 struct ExtBlock3;
 struct FractalInfo;
+}
 
-int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info);
+int get_video_mode(id::io::FractalInfo *info, id::io::ExtBlock3 *blk_3_info);

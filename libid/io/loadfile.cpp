@@ -55,7 +55,9 @@
 
 using namespace id;
 using namespace id::fractals;
-using namespace id::io;
+
+namespace id::io
+{
 
 namespace
 {
@@ -1751,3 +1753,5 @@ static bool fix_period_bof()
 {
     return false;
 }
+
+} // namespace id::io

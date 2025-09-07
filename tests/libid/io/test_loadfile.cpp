@@ -21,6 +21,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::io;
 
 using namespace testing;
 using namespace id::test::migrate_gif;

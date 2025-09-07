@@ -11,6 +11,9 @@
 #include <string>
 #include <vector>
 
+namespace id::io
+{
+
 #define INFO_ID         "Fractal"
 
 /*
@@ -311,4 +314,6 @@ void backwards_legacy_v20();
 bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //
     ExtBlock5 *blk_5_info, ExtBlock6 *blk_6_info, ExtBlock7 *blk_7_info);
-id::fractals::FractalType migrate_integer_types(int read_type);
+fractals::FractalType migrate_integer_types(int read_type);
+
+} // namespace id::io

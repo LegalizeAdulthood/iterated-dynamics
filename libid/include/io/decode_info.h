@@ -5,11 +5,12 @@
 #include <config/port_config.h>
 
 struct EvolutionInfo;
-struct FractalInfo;
-struct OrbitsInfo;
 
 namespace id::io
 {
+
+struct FractalInfo;
+struct OrbitsInfo;
 
 // This decoding functions handle big endian binary blobs.
 // Iterated Dynamics always stores binary blobs, e.g. FRACTINT
