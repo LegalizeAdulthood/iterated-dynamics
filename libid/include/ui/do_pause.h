@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 void do_pause(int action);
+
+} // namespace id::ui
