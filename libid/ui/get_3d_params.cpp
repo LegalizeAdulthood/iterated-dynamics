@@ -26,11 +26,12 @@
 #include <cstring>
 #include <string>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static  bool get_light_params();
 static  bool check_map_file();
@@ -611,3 +612,5 @@ get_f3d_exit:
     driver_unstack_screen();
     return ret;
 }
+
+} // namespace id::ui
