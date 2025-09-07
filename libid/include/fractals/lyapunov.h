@@ -2,6 +2,11 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 bool lyapunov_per_image();
 int lyapunov_type();
 int lyapunov_orbit();
+
+} // namespace id::fractals

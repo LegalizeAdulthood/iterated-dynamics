@@ -18,8 +18,8 @@
 #include <cmath>
 #include <cstdlib>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 static unsigned long s_filter_cycles{};
 static int s_lya_length{};
@@ -222,3 +222,5 @@ int lyapunov_orbit()
     g_population = g_rate * g_population * (1 - g_population);
     return population_orbit();
 }
+
+} // namespace id::fractals
