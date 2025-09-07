@@ -28,6 +28,7 @@
 #include <cstring>
 
 using namespace id;
+using namespace id::fractals;
 
 MainState request_fractal_type(MainContext &context)
 {

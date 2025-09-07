@@ -19,8 +19,8 @@
 
 #include <algorithm>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 namespace
 {
@@ -262,9 +262,6 @@ static void z_line(double x, double y)
         s_jb.jy += s_jb.delta_jy;
     }
 }
-
-namespace id::fractals
-{
 
 Standard4D::Standard4D()
 {

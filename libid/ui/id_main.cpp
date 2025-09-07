@@ -54,6 +54,8 @@
 #include <ctime>
 #include <string>
 
+using namespace id::fractals;
+
 namespace id
 {
 

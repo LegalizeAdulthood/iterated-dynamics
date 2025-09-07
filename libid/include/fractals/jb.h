@@ -4,8 +4,8 @@
 
 namespace id::fractals
 {
+
 enum class FractalType;
-}
 
 enum class Julibrot3DMode
 {
@@ -44,14 +44,11 @@ extern double                g_julibrot_x_min;
 extern double                g_julibrot_y_max;
 extern double                g_julibrot_y_min;
 extern int                   g_julibrot_z_dots;
-extern id::fractals::FractalType           g_new_orbit_type;
+extern FractalType           g_new_orbit_type;
 extern const char *          g_julibrot_3d_options[];
 
 bool julibrot_per_image();
 int julibrot_per_pixel();
-
-namespace id::fractals
-{
 
 class Standard4D
 {
