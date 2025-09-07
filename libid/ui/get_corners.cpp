@@ -23,10 +23,11 @@
 #include <cmath>
 #include <cstdlib>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 /*
    See if double value was changed by input screen. Problem is that the
@@ -485,3 +486,5 @@ gsc_loop:
     g_y_3rd = save_y_3rd;
     return 1;
 }
+
+} // namespace id::ui
