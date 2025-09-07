@@ -4,6 +4,11 @@
 
 #include "fractals/fractype.h"
 
+namespace id::ui
+{
+
 int get_fract_type();
 int get_fract_params(bool prompt_for_type_params);
 void set_fractal_default_functions(id::fractals::FractalType previous);
+
+} // namespace id::ui

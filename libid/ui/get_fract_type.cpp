@@ -34,11 +34,12 @@
 #include <string>
 #include <vector>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 namespace
 {
@@ -945,3 +946,5 @@ gfp_exit:
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
     return ret;
 }
+
+} // namespace id::ui
