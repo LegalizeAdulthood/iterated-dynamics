@@ -4,7 +4,12 @@
 
 #include <filesystem>
 
+namespace id::io
+{
+
 inline bool is_a_directory(const char *s)
 {
     return std::filesystem::is_directory(s);
 }
+
+} // namespace id::io
