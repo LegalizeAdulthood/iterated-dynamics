@@ -13,7 +13,8 @@
 #include <stdexcept>
 #include <string>
 
-using namespace id;
+namespace id::fractals
+{
 
 int burning_ship_orbit()
 {
@@ -263,3 +264,5 @@ int burning_ship_bf_fractal()
     }
     return id::g_bailout_bigfloat();
 }
+
+} // namespace id::fractals
