@@ -9,7 +9,8 @@
 
 #include <cfloat>
 
-using namespace id;
+namespace id::fractals
+{
 
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
@@ -105,3 +106,5 @@ int magnet2_orbit()
 
     return id::g_bailout_float();
 }
+
+} // namespace id::fractals
