@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 // structure passed to fullscreen_prompts
 struct FullScreenValues
 {
@@ -35,3 +38,5 @@ int full_screen_prompt(const char *hdg,
     char *extra_info);
 
 void full_screen_reset_scrolling();
+
+} // namespace id::ui

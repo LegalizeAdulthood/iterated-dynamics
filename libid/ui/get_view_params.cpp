@@ -22,6 +22,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 // for videomodes added new options "virtual x/y" that change "sx/ydots"
 // for diskmode changed "viewx/ydots" to "virtual x/y" that do as above

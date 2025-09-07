@@ -14,6 +14,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 static const char *s_masks[] = {"*.pot", "*.gif"};
 

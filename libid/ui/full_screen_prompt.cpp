@@ -28,12 +28,13 @@
 #include <cstring>
 #include <string>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static int prompt_check_key(int key);
 static int prompt_check_key_scroll(int key);
@@ -1108,3 +1109,5 @@ end:
     std::strcpy(field, list[cur_val]);
     return ret;
 }
+
+} // namespace id::ui
