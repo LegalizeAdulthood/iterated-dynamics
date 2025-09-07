@@ -2,5 +2,10 @@
 //
 #pragma once
 
+namespace id
+{
+
 void calc_mandelbrot_init();
 long mandelbrot_orbit();
+
+} // namespace id

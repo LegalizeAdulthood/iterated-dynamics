@@ -18,7 +18,8 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace id;
+namespace id
+{
 
 static int s_inside_color{};
 static int s_periodicity_color{};
@@ -211,3 +212,5 @@ over_bailout_87:
 
     goto pop_stack;
 }
+
+} // namespace id
