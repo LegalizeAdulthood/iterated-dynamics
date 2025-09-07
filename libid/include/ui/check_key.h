@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 bool check_key();
+
+} // namespace id::ui

@@ -5,6 +5,8 @@
 #include "fractals/Diffusion.h"
 #include "ui/check_key.h"
 
+using namespace id::ui;
+
 int diffusion_type()
 {
     id::fractals::Diffusion d;

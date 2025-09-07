@@ -6,8 +6,10 @@
 #include "engine/orbit.h"
 #include "misc/Driver.h"
 
-using namespace id;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 bool check_key()
 {
@@ -30,3 +32,5 @@ bool check_key()
     }
     return false;
 }
+
+} // namespace id::ui
