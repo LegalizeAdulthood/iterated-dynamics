@@ -6,7 +6,9 @@
 #include "ui/ChoiceBuilder.h"
 
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 int get_a_number(double *x, double *y)
 {
@@ -31,3 +33,5 @@ int get_a_number(double *x, double *y)
     driver_unstack_screen();
     return i;
 }
+
+} // namespace id::ui
