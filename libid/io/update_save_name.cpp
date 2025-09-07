@@ -5,6 +5,9 @@
 #include <cstring>
 #include <filesystem>
 
+namespace id::io
+{
+
  // go to the next file name
 std::string next_save_name(const std::string &filename)
 {
@@ -28,3 +31,5 @@ std::string next_save_name(const std::string &filename)
     }
     return file_path.string();
 }
+
+} // namespace id::io

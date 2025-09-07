@@ -6,6 +6,8 @@
 
 #include <string>
 
+using namespace id::io;
+
 TEST(TestUpdateSaveName, basic)
 {
     std::string filename("fract0001.gif");
