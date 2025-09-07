@@ -23,8 +23,8 @@
 
 #include <cmath>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 // --------------------------------------------------------------------
 //              Setup (once per fractal image) routines
@@ -368,3 +368,5 @@ bool standard_per_image()
     }
     return true;
 }
+
+} // namespace id::fractals
