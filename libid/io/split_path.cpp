@@ -7,6 +7,9 @@
 
 namespace fs = std::filesystem;
 
+namespace id::io
+{
+
 void split_path(const std::string &file_template, char *drive, char *dir, char *fname, char *ext)
 {
     fs::path path{file_template};
@@ -29,3 +32,5 @@ void split_path(const std::string &file_template, char *drive, char *dir, char *
         std::strcpy(ext, path.extension().string().c_str());
     }
 }
+
+} // namespace id::io
