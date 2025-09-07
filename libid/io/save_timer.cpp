@@ -10,6 +10,8 @@
 #include <cmath>
 #include <ctime>
 
+using namespace id::ui;
+
 namespace id::io
 {
 

@@ -47,11 +47,12 @@
 #include <cstring>
 #include <ctime>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static int call_line3d(Byte *pixels, int line_len);
 static void cmp_line_cleanup();
@@ -952,3 +953,5 @@ int key_count(int key)
     }
     return ctr;
 }
+
+} // namespace id::ui

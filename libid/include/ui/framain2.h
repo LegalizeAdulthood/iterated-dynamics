@@ -6,8 +6,8 @@
 
 namespace id::ui
 {
+
 struct EvolutionInfo;
-}
 
 extern id::ui::EvolutionInfo g_evolve_info;
 extern int                   g_finish_row;
@@ -20,3 +20,5 @@ MainState big_while_loop(bool &kbd_more, bool &stacked, bool resume_flag);
 MainState big_while_loop(MainContext &context);
 
 int key_count(int key);
+
+} // namespace id::ui

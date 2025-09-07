@@ -65,6 +65,7 @@ using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::test::data;
+using namespace id::ui;
 using namespace testing;
 
 static std::ostream &operator<<(std::ostream &str, CmdArgFlags value)
