@@ -11,7 +11,8 @@
 
 #include <cmath>
 
-using namespace id;
+namespace id
+{
 
 OrbitDrawMode g_draw_mode{OrbitDrawMode::RECTANGLE};
 
@@ -241,3 +242,5 @@ int sticky_orbits()
         return orbit_draw_function();
     }
 }
+
+} // namespace id
