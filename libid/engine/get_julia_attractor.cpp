@@ -13,7 +13,8 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace id;
+namespace id
+{
 
 void get_julia_attractor(double real, double imag)
 {
@@ -78,3 +79,5 @@ void get_julia_attractor(double real, double imag)
     }
     g_max_iterations = save_max_iterations;
 }
+
+} // namespace id
