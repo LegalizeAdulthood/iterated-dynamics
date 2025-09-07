@@ -10,7 +10,8 @@
 #include <cmath>
 #include <cstring>
 
-using namespace id;
+namespace id
+{
 
 // routines in this module
 static int diffusion_engine();
@@ -325,3 +326,5 @@ static int diffusion_engine()
     }
     return 0;
 }
+
+} // namespace id
