@@ -2,6 +2,9 @@
 //
 #include "io/load_entry_text.h"
 
+namespace id::io
+{
+
 static bool skip_starting_rows(std::FILE *entry_file, int start_row)
 {
     bool comment = false;
@@ -182,3 +185,5 @@ void load_entry_text(
     }
     *buf = 0;
 }
+
+} // namespace id::io

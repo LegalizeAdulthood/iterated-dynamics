@@ -4,6 +4,9 @@
 
 #include <cstdio>
 
+namespace id::io
+{
+
 constexpr char SCROLL_MARKER = '\021';
 
 void load_entry_text(
@@ -12,3 +15,5 @@ void load_entry_text(
     int max_lines,
     int start_row,
     int start_col);
+
+} // namespace id::io

@@ -36,6 +36,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::io;
 
 namespace
 {
