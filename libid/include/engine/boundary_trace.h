@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 int boundary_trace();
+
+} // namespace id

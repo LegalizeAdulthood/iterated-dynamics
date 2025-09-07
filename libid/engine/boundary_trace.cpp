@@ -12,6 +12,9 @@
 
 #include <cstring>
 
+namespace id
+{
+
 enum class Direction
 {
     NORTH,
@@ -262,3 +265,5 @@ int boundary_trace()
     }
     return 0;
 }
+
+} // namespace id

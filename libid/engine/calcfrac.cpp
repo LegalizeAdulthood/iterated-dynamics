@@ -1136,7 +1136,7 @@ static void perform_work_list()
             break;
 
         case CalcMode::BOUNDARY_TRACE:
-            boundary_trace();
+            id::boundary_trace();
             break;
 
         case CalcMode::SOLID_GUESS:
