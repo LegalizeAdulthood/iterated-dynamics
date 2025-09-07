@@ -10,10 +10,11 @@
 #include "misc/ValueSaver.h"
 #include "ui/field_prompt.h"
 
-using namespace id;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 /*
     get_cmd_string() is called whenever the 'g' key is pressed.  Return codes are:
@@ -41,3 +42,5 @@ int get_cmd_string()
 
     return i;
 }
+
+} // namespace id::ui

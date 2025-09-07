@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int get_cmd_string();
+
+} // namespace id::ui
