@@ -563,8 +563,8 @@ static void init_vars_fractal()
     g_display_3d = Display3DMode::NONE;                             // 3D display is off
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
-    g_bailout_test = Bailout::MOD;                                  //
-    set_bailout_formula(Bailout::MOD);                              //
+    id::g_bailout_test = id::Bailout::MOD;                                  //
+    id::set_bailout_formula(id::Bailout::MOD);                              //
     g_new_bifurcation_functions_loaded = false;                     // for old bifs
     g_julibrot_x_min = -.83;                                        //
     g_julibrot_y_min = -.25;                                        //
@@ -1381,37 +1381,37 @@ static CmdArgFlags cmd_bailout_test(const Command &cmd)
     const std::string_view value{cmd.value};
     if (value == "mod")
     {
-        g_bailout_test = Bailout::MOD;
+        id::g_bailout_test = id::Bailout::MOD;
     }
     else if (value == "real")
     {
-        g_bailout_test = Bailout::REAL;
+        id::g_bailout_test = id::Bailout::REAL;
     }
     else if (value == "imag")
     {
-        g_bailout_test = Bailout::IMAG;
+        id::g_bailout_test = id::Bailout::IMAG;
     }
     else if (value == "or")
     {
-        g_bailout_test = Bailout::OR;
+        id::g_bailout_test = id::Bailout::OR;
     }
     else if (value == "and")
     {
-        g_bailout_test = Bailout::AND;
+        id::g_bailout_test = id::Bailout::AND;
     }
     else if (value == "manh")
     {
-        g_bailout_test = Bailout::MANH;
+        id::g_bailout_test = id::Bailout::MANH;
     }
     else if (value == "manr")
     {
-        g_bailout_test = Bailout::MANR;
+        id::g_bailout_test = id::Bailout::MANR;
     }
     else
     {
         return cmd.bad_arg();
     }
-    set_bailout_formula(g_bailout_test);
+    id::set_bailout_formula(id::g_bailout_test);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 

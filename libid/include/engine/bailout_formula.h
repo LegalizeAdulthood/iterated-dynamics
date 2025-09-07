@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 enum class Bailout
 {
     MOD,
@@ -19,3 +22,5 @@ extern int      (*g_bailout_bignum)();
 extern int      (*g_bailout_bigfloat)();
 
 void set_bailout_formula(Bailout test);
+
+} // namespace id

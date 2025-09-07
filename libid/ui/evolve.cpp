@@ -57,7 +57,7 @@ struct ParamHistory
     Byte trig_index1;
     Byte trig_index2;
     Byte trig_index3;
-    Bailout bailout_test;
+    id::Bailout bailout_test;
 };
 
 GeneBase g_gene_bank[NUM_GENES];
@@ -197,7 +197,7 @@ void init_gene()
         { &g_trig_index[1], vary_trig, Variations::NONE,      "trig fn 2", 5 },
         { &g_trig_index[2], vary_trig, Variations::NONE,      "trig fn 3", 5 },
         { &g_trig_index[3], vary_trig, Variations::NONE,      "trig fn 4", 5 },
-        { &g_bailout_test, vary_bo_test, Variations::NONE,    "bailout test", 6 }
+        { &id::g_bailout_test, vary_bo_test, Variations::NONE,    "bailout test", 6 }
     };
 
     copy_genes_to_bank(gene);
@@ -226,7 +226,7 @@ void save_param_history()
     s_old_history.trig_index1 = static_cast<Byte>(g_trig_index[1]);
     s_old_history.trig_index2 = static_cast<Byte>(g_trig_index[2]);
     s_old_history.trig_index3 = static_cast<Byte>(g_trig_index[3]);
-    s_old_history.bailout_test = g_bailout_test;
+    s_old_history.bailout_test = id::g_bailout_test;
 }
 
 void restore_param_history()
@@ -253,7 +253,7 @@ void restore_param_history()
     g_trig_index[1] = static_cast<TrigFn>(s_old_history.trig_index1);
     g_trig_index[2] = static_cast<TrigFn>(s_old_history.trig_index2);
     g_trig_index[3] = static_cast<TrigFn>(s_old_history.trig_index3);
-    g_bailout_test = s_old_history.bailout_test;
+    id::g_bailout_test = s_old_history.bailout_test;
 }
 
 // routine to vary doubles
@@ -354,19 +354,19 @@ void vary_bo_test(GeneBase gene[], int rand_val, int i)
 {
     int choices[7] =
     {
-        static_cast<int>(Bailout::MOD),
-        static_cast<int>(Bailout::REAL),
-        static_cast<int>(Bailout::IMAG),
-        static_cast<int>(Bailout::OR),
-        static_cast<int>(Bailout::AND),
-        static_cast<int>(Bailout::MANH),
-        static_cast<int>(Bailout::MANR)
+        static_cast<int>(id::Bailout::MOD),
+        static_cast<int>(id::Bailout::REAL),
+        static_cast<int>(id::Bailout::IMAG),
+        static_cast<int>(id::Bailout::OR),
+        static_cast<int>(id::Bailout::AND),
+        static_cast<int>(id::Bailout::MANH),
+        static_cast<int>(id::Bailout::MANR)
     };
     if (gene[i].mutate != Variations::NONE)
     {
         *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 7, gene[i].mutate)];
         // move this next bit to varybot where it belongs
-        set_bailout_formula(g_bailout_test);
+        id::set_bailout_formula(id::g_bailout_test);
     }
 }
 

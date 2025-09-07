@@ -463,10 +463,10 @@ void init_bf_dec(int dec)
         g_int_length = 4; // 2 leaves artifacts in the center of the lakes
     }
     // the bailout tests need greater dynamic range
-    else if (g_bailout_test == Bailout::REAL //
-        || g_bailout_test == Bailout::IMAG   //
-        || g_bailout_test == Bailout::AND    //
-        || g_bailout_test == Bailout::MANR)
+    else if (id::g_bailout_test == id::Bailout::REAL //
+        || id::g_bailout_test == id::Bailout::IMAG   //
+        || id::g_bailout_test == id::Bailout::AND    //
+        || id::g_bailout_test == id::Bailout::MANR)
     {
         g_int_length = 2;
     }
@@ -499,10 +499,10 @@ void init_bf_length(int bnl)
         g_int_length = 4; // 2 leaves artifacts in the center of the lakes
     }
     // the bailout tests need greater dynamic range
-    else if (g_bailout_test == Bailout::REAL //
-        || g_bailout_test == Bailout::IMAG   //
-        || g_bailout_test == Bailout::AND    //
-        || g_bailout_test == Bailout::MANR)
+    else if (id::g_bailout_test == id::Bailout::REAL //
+        || id::g_bailout_test == id::Bailout::IMAG   //
+        || id::g_bailout_test == id::Bailout::AND    //
+        || id::g_bailout_test == id::Bailout::MANR)
     {
         g_int_length = 2;
     }

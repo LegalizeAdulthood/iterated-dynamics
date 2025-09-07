@@ -874,7 +874,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->max_fn = static_cast<std::int16_t>(g_max_function);
     save_info->inverse_julia = static_cast<std::int16_t>((+g_major_method << 8) + +g_inverse_julia_minor_method);
     save_info->bailout = static_cast<std::int32_t>(g_bailout);
-    save_info->bailout_test = static_cast<std::int16_t>(g_bailout_test);
+    save_info->bailout_test = static_cast<std::int16_t>(id::g_bailout_test);
     save_info->iterations = static_cast<std::int32_t>(g_max_iterations);
     save_info->bf_length = static_cast<std::int16_t>(g_bn_length);
     save_info->bf_math = static_cast<std::int16_t>(g_bf_math);

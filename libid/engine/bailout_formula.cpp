@@ -9,6 +9,9 @@
 
 #include <cmath>
 
+namespace id
+{
+
 Bailout g_bailout_test{}; // test used for determining bailout
 int (*g_bailout_float)(){};
 int (*g_bailout_bignum)(){};
@@ -421,3 +424,5 @@ void set_bailout_formula(Bailout test)
         break;
     }
 }
+
+} // namespace id

@@ -647,7 +647,7 @@ gfp_top:
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         param_values[prompt_num].type = 'l';
-        param_values[prompt_num].uval.ch.val  = static_cast<int>(g_bailout_test);
+        param_values[prompt_num].uval.ch.val  = static_cast<int>(id::g_bailout_test);
         param_values[prompt_num].uval.ch.list_len = 7;
         param_values[prompt_num].uval.ch.vlen = 6;
         param_values[prompt_num].uval.ch.list = bail_name_ptr;
@@ -866,18 +866,18 @@ gfp_top:
         && g_cur_fractal_specific->calc_type == standard_fractal_type //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
-        if (param_values[prompt_num].uval.ch.val != static_cast<int>(g_bailout_test))
+        if (param_values[prompt_num].uval.ch.val != static_cast<int>(id::g_bailout_test))
         {
-            g_bailout_test = static_cast<Bailout>(param_values[prompt_num].uval.ch.val);
+            id::g_bailout_test = static_cast<id::Bailout>(param_values[prompt_num].uval.ch.val);
             ret = 1;
         }
         prompt_num++;
     }
     else
     {
-        g_bailout_test = Bailout::MOD;
+        id::g_bailout_test = id::Bailout::MOD;
     }
-    set_bailout_formula(g_bailout_test);
+    id::set_bailout_formula(id::g_bailout_test);
 
     if (orbit_bailout)
     {

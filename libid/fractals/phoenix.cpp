@@ -22,7 +22,7 @@ int phoenix_orbit()
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + (g_float_param->y * s_tmp2.x);
     g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + (g_float_param->y * s_tmp2.y);
     s_tmp2 = g_old_z; // set tmp2 to Y value
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 int phoenix_fractal_cplx_orbit()
@@ -32,7 +32,7 @@ int phoenix_fractal_cplx_orbit()
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + (g_param_z2.x * s_tmp2.x) - (g_param_z2.y * s_tmp2.y);
     g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + g_float_param->y + (g_param_z2.x * s_tmp2.y) + (g_param_z2.y * s_tmp2.x);
     s_tmp2 = g_old_z; // set tmp2 to Y value
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 int phoenix_plus_fractal()
@@ -52,7 +52,7 @@ int phoenix_plus_fractal()
     g_new_z.x = new_minus.x + (g_float_param->y * s_tmp2.x);
     g_new_z.y = new_minus.y + (g_float_param->y * s_tmp2.y);
     s_tmp2 = g_old_z; // set tmp2 to Y value
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 int phoenix_minus_fractal()
@@ -72,7 +72,7 @@ int phoenix_minus_fractal()
     g_new_z.x = new_minus.x + (g_float_param->y * s_tmp2.x);
     g_new_z.y = new_minus.y + (g_float_param->y * s_tmp2.y);
     s_tmp2 = g_old_z; // set tmp2 to Y value
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 int phoenix_cplx_plus_fractal()
@@ -93,7 +93,7 @@ int phoenix_cplx_plus_fractal()
     g_new_z.x = new_minus.x + g_tmp_z.x;
     g_new_z.y = new_minus.y + g_tmp_z.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 int phoenix_cplx_minus_fractal()
@@ -115,7 +115,7 @@ int phoenix_cplx_minus_fractal()
     g_new_z.x = new_minus.x + g_tmp_z.x;
     g_new_z.y = new_minus.y + g_tmp_z.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 int phoenix_per_pixel()

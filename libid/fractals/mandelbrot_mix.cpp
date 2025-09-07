@@ -151,7 +151,7 @@ int MandelbrotMix::iterate()
     cmplx_pwr(g_old_z, f, z_f); // (z^f)
     g_new_z.x = k.x * a.x * z_b.x + k.x * d.x * z_f.x + c.x;
     g_new_z.y = k.x * a.x * z_b.y + k.x * d.x * z_f.y + c.y;
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 static MandelbrotMix s_mix{};

@@ -587,13 +587,13 @@ static void backwards_info10(FractalInfo read_info)
     {
         // post-version 18.22
         g_bailout = read_info.bailout; // use long bailout
-        g_bailout_test = static_cast<Bailout>(read_info.bailout_test);
+        id::g_bailout_test = static_cast<id::Bailout>(read_info.bailout_test);
     }
     else
     {
-        g_bailout_test = Bailout::MOD;
+        id::g_bailout_test = id::Bailout::MOD;
     }
-    set_bailout_formula(g_bailout_test);
+    id::set_bailout_formula(id::g_bailout_test);
 
     if (read_info.info_version > 9)
     {

@@ -204,9 +204,9 @@ static double fmod_test()
 {
     double result;
 
-    switch (g_bailout_test)
+    switch (id::g_bailout_test)
     {
-    case Bailout::MOD:
+    case id::Bailout::MOD:
         if (g_magnitude == 0.0 || g_magnitude_calc)
         {
             result = sqr(g_new_z.x)+sqr(g_new_z.y);
@@ -217,23 +217,23 @@ static double fmod_test()
         }
         break;
 
-    case Bailout::REAL:
+    case id::Bailout::REAL:
         result = sqr(g_new_z.x);
         break;
 
-    case Bailout::IMAG:
+    case id::Bailout::IMAG:
         result = sqr(g_new_z.y);
         break;
 
-    case Bailout::OR:
+    case id::Bailout::OR:
         result = fmod_test_bailout_or();
         break;
 
-    case Bailout::MANH:
+    case id::Bailout::MANH:
         result = sqr(std::abs(g_new_z.x) + std::abs(g_new_z.y));
         break;
 
-    case Bailout::MANR:
+    case id::Bailout::MANR:
         result = sqr(g_new_z.x+g_new_z.y);
         break;
 
@@ -2359,7 +2359,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         || g_outside_color == MULT
         || g_outside_color == SUM
         || g_outside_color == ATAN
-        || g_bailout_test == Bailout::MANR
+        || id::g_bailout_test == id::Bailout::MANR
         || g_outside_color == FMOD)
     {
         return;

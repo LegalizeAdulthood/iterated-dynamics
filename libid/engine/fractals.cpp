@@ -120,7 +120,7 @@ int julia_orbit()
 {
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 int mandel_z_power_cmplx_orbit()
@@ -128,7 +128,7 @@ int mandel_z_power_cmplx_orbit()
     g_new_z = complex_power(g_old_z, g_param_z2);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
 
 // --------------------------------------------------------------------

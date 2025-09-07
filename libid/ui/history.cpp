@@ -115,7 +115,7 @@ struct ImageHistory
     double d_param9;
     double d_param10;
     long bailout;
-    Bailout bailout_test;
+    id::Bailout bailout_test;
     long iterations;
     int converge_y_adjust;
     bool old_demm_colors;
@@ -302,7 +302,7 @@ std::ostream &operator<<(std::ostream &str, Minor value)
     return str;
 }
 
-std::ostream &operator<<(std::ostream &str, Bailout value)
+std::ostream &operator<<(std::ostream &str, id::Bailout value)
 {
     str << static_cast<int>(value);
     return str;
@@ -621,7 +621,7 @@ void save_history_info()
     current.major_method = g_major_method;
     current.inverse_julia_minor_method = g_inverse_julia_minor_method;
     current.bailout = g_bailout;
-    current.bailout_test = g_bailout_test;
+    current.bailout_test = id::g_bailout_test;
     current.iterations = g_max_iterations;
     current.old_demm_colors = g_old_demm_colors;
     current.log_map_fly_calculate = static_cast<int>(g_log_map_fly_calculate);
@@ -816,7 +816,7 @@ void restore_history_info(int i)
     g_major_method = last.major_method;
     g_inverse_julia_minor_method = last.inverse_julia_minor_method;
     g_bailout = last.bailout;
-    g_bailout_test = last.bailout_test;
+    id::g_bailout_test = last.bailout_test;
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;
     g_potential_flag = (g_potential_params[0] != 0.0);

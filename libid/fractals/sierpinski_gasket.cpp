@@ -31,5 +31,5 @@ int sierpinski_orbit()
         g_new_z.x = g_new_z.x - 1;
     }
 
-    return g_bailout_float();
+    return id::g_bailout_float();
 }

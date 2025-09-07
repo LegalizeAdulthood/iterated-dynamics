@@ -110,7 +110,7 @@ int divide_brot5_bn_fractal()
     add_a_bn(g_new_z_bn.y, g_param_z_bn.y);
 
     restore_stack(saved);
-    return g_bailout_bignum();
+    return id::g_bailout_bignum();
 }
 
 int divide_brot5_orbit_bf()
@@ -151,7 +151,7 @@ int divide_brot5_orbit_bf()
     add_a_bf(g_new_z_bf.y, g_param_z_bf.y);
 
     restore_stack(saved);
-    return g_bailout_bigfloat();
+    return id::g_bailout_bigfloat();
 }
 
 bool divide_brot5_per_imge()
@@ -206,5 +206,5 @@ int divide_brot5_orbit() /* from formula by Jim Muth */
     g_new_z.x += g_init.x;
     g_new_z.y += g_init.y;
 
-    return g_bailout_float();
+    return id::g_bailout_float();
 }
