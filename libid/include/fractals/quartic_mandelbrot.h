@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 int mandel4_orbit();
+
+} // namespace id::fractals

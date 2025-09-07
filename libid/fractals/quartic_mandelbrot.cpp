@@ -6,14 +6,15 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 int mandel4_orbit()
 {
     // first, compute (x + iy)**2
     g_new_z.x  = g_temp_sqr_x - g_temp_sqr_y;
     g_new_z.y = g_old_z.x*g_old_z.y*2;
-    if (id::g_bailout_float())
+    if (g_bailout_float())
     {
         return 1;
     }
@@ -21,5 +22,7 @@ int mandel4_orbit()
     // then, compute ((x + iy)**2)**2 + lambda
     g_new_z.x  = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x;
     g_new_z.y =  g_old_z.x*g_old_z.y*2 + g_float_param->y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
+
+} // namespace id::fractals
