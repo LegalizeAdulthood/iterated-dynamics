@@ -4,6 +4,9 @@
 
 #include "math/Point.h"
 
+namespace id
+{
+
 enum
 {
     MAX_CALC_WORK = 12
@@ -28,3 +31,5 @@ bool add_work_list(int x_from, int y_from, //
     int x_begin, int y_begin,              //
     int pass, int symmetry);
 void tidy_work_list();
+
+} // namespace id

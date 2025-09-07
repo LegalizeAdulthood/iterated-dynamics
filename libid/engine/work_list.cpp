@@ -2,6 +2,9 @@
 //
 #include "engine/work_list.h"
 
+namespace id
+{
+
 int g_num_work_list{}; // resume work list for standard engine
 WorkList g_work_list[MAX_CALC_WORK]{};
 
@@ -135,3 +138,5 @@ void tidy_work_list()
         }
     }
 }
+
+} // namespace id
