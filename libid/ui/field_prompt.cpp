@@ -14,6 +14,9 @@
 using namespace id;
 using namespace id::misc;
 
+namespace id::ui
+{
+
 int field_prompt(const char *hdg, // heading, \n delimited lines
     const char *instr,            // additional instructions or nullptr
     char *fld,                    // the field itself
@@ -82,3 +85,5 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
     }
     return input_field(InputFieldFlags::NONE, C_PROMPT_INPUT, fld, len, title_row + title_lines + 1, prompt_col, check_key);
 }
+
+} // namespace id::ui
