@@ -57,6 +57,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::fractals;
 
 // parameter descriptions
 // Note: + prefix denotes integer parameters

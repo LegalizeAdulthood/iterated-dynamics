@@ -6,7 +6,8 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 int barnsley1_orbit()
 {
@@ -84,3 +85,5 @@ int barnsley3_orbit()
     }
     return g_bailout_float();
 }
+
+} // namespace id::fractals
