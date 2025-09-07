@@ -7,7 +7,8 @@
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 int quaternion_jul_per_pixel()
 {
@@ -60,3 +61,5 @@ int quaternion_orbit()
     g_float_param->y = n3;
     return 0;
 }
+
+} // namespace id::fractals
