@@ -32,20 +32,20 @@ public:
 
 private:
     std::vector<Byte> m_cell_array[2];
-    S16 m_s_r{};
-    S16 m_k_1{};
-    S16 m_rule_digits{};
+    misc::S16 m_s_r{};
+    misc::S16 m_k_1{};
+    misc::S16 m_rule_digits{};
     bool m_last_screen_flag{};
 
-    S32 rand_param{};
-    U16 kr{};
-    U32 line_num{};
-    U16 k{};
-    U16 init_string[16]{};
-    U16 cell_table[32]{};
-    S16 start_row{};
-    S16 filled{};
-    S16 not_filled{1};
+    misc::S32 rand_param{};
+    misc::U16 kr{};
+    misc::U32 line_num{};
+    misc::U16 k{};
+    misc::U16 init_string[16]{};
+    misc::U16 cell_table[32]{};
+    misc::S16 start_row{};
+    misc::S16 filled{};
+    misc::S16 not_filled{1};
 };
 
 class CellularError : public std::runtime_error

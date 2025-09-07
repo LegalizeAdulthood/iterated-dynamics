@@ -12,6 +12,8 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <cstdio>
 #include <cstring>
 
+using namespace id::misc;
+
 /********************************************************************
  The following code contains the C versions of the routines from the
  file BIGNUMA.ASM.  It is provided here for portibility and for clarity.

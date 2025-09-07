@@ -14,6 +14,8 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <cstdlib>
 #include <cstring>
 
+using namespace id::misc;
+
 /********************************************************************/
 // bf_hexdump() - for debugging, dumps to stdout
 

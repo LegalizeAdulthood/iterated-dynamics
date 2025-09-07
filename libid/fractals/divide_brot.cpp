@@ -15,6 +15,7 @@
 #include "engine/pixel_grid.h"
 
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::fractals
 {

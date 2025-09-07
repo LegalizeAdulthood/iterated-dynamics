@@ -15,6 +15,8 @@
 #include <cfloat>
 #include <cmath>
 
+using namespace id::misc;
+
 namespace id
 {
 

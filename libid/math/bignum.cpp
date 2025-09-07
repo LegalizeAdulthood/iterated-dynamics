@@ -141,6 +141,8 @@ double wide number can then be ignored.
 #include <cstring>
 #include <string>
 
+using namespace id::misc;
+
 /*************************************************************************
 * The original bignumber code was written specifically for a Little Endian
 * system (80x86).  The following is not particularly efficient, but was
