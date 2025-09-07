@@ -26,14 +26,12 @@
 #include <string>
 #include <vector>
 
-using namespace id;
+namespace id::fractals
+{
 
 //****************** standalone engine for "cellular" *******************
 
 bool g_cellular_next_screen{};             // for cellular next screen generation
-
-namespace id::fractals
-{
 
 enum
 {
@@ -445,8 +443,6 @@ static void set_cellular_palette()
     spin_dac(0, 1);
 }
 
-} // namespace id::fractals
-
 bool cellular_per_image()
 {
     if (!g_resuming)
@@ -456,3 +452,5 @@ bool cellular_per_image()
     engine_timer(g_cur_fractal_specific->calc_type);
     return false;
 }
+
+} // namespace id::fractals

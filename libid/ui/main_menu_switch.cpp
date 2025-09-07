@@ -51,6 +51,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::fractals;
 
 static bool look(MainContext &context)
 {

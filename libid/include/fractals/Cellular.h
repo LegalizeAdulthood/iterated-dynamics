@@ -8,12 +8,13 @@
 #include <stdexcept>
 #include <vector>
 
+namespace id::fractals
+{
+
 extern bool g_cellular_next_screen;
 
 bool cellular_per_image();
 
-namespace id::fractals
-{
 class Cellular
 {
 public:
