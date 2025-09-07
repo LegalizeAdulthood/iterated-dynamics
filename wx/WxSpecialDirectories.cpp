@@ -5,6 +5,9 @@
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 
+namespace id::io
+{
+
 namespace
 {
 
@@ -37,3 +40,5 @@ std::shared_ptr<SpecialDirectories> create_special_directories()
 {
     return std::make_shared<WxSpecialDirectories>();
 }
+
+} // namespace id::io

@@ -7,6 +7,9 @@
 #include <stdexcept>
 #include <unistd.h>
 
+namespace id::io
+{
+
 namespace
 {
 
@@ -49,3 +52,5 @@ std::shared_ptr<SpecialDirectories> create_special_directories()
 {
     return std::make_shared<PosixSpecialDirectories>();
 }
+
+} // namespace id::io

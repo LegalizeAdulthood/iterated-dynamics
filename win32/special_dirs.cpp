@@ -9,6 +9,9 @@
 #include <stdexcept>
 #include <string>
 
+namespace id::io
+{
+
 namespace
 {
 
@@ -46,3 +49,5 @@ std::shared_ptr<SpecialDirectories> create_special_directories()
 {
     return std::make_shared<Win32SpecialDirectories>();
 }
+
+} // namespace id::io

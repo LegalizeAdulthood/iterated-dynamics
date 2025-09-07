@@ -6,7 +6,7 @@
 
 #include <gmock/gmock.h>
 
-class MockSpecialDirectories : public SpecialDirectories
+class MockSpecialDirectories : public id::io::SpecialDirectories
 {
 public:
     MockSpecialDirectories() = default;
