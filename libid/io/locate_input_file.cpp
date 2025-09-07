@@ -9,7 +9,8 @@
 #include <initializer_list>
 #include <string>
 
-using namespace id;
+namespace id::io
+{
 
 std::string locate_input_file(const std::string &name)
 {
@@ -26,3 +27,5 @@ std::string locate_input_file(const std::string &name)
 
     return {};
 }
+
+} // namespace id::io
