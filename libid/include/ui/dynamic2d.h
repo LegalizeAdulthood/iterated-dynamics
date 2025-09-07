@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int dynamic2d_type();
+
+} // namespace id::ui

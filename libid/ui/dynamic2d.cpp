@@ -6,12 +6,15 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
-using namespace id;
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int dynamic2d_type()
 {
-    id::fractals::Dynamic2D d2d;
+    Dynamic2D d2d;
 
     if (g_resuming)
     {
@@ -31,3 +34,5 @@ int dynamic2d_type()
 
     return 0;
 }
+
+} // namespace id::ui
