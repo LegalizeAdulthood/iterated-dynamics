@@ -4,7 +4,12 @@
 
 #include <filesystem>
 
+namespace id::io
+{
+
 inline bool has_ext(const std::filesystem::path &source)
 {
     return source.has_extension();
 }
+
+} // namespace id::io
