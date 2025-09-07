@@ -4,14 +4,17 @@
 
 #include <config/port_config.h>
 
+struct EvolutionInfo;
+struct FractalInfo;
+struct OrbitsInfo;
+
+namespace id::io
+{
+
 // This decoding functions handle big endian binary blobs.
 // Iterated Dynamics always stores binary blobs, e.g. FRACTINT
 // extension blocks in GIF files, etc., in little endian
 // format.
-
-struct EvolutionInfo;
-struct FractalInfo;
-struct OrbitsInfo;
 
 void decode_evolver_info_big_endian(EvolutionInfo *info, int dir);
 void decode_fractal_info_big_endian(FractalInfo *info, int dir);
@@ -41,3 +44,5 @@ inline void decode_orbits_info(OrbitsInfo * /*info*/, int /*dir*/)
 {
 }
 #endif
+
+}

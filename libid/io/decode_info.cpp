@@ -12,6 +12,9 @@
 #include <cstring>
 #include <vector>
 
+namespace id::io
+{
+
 // Assumptions about the floating-point types used in the blob structures.
 static_assert(sizeof(float) == 4, "sizeof(float) != 4");
 static_assert(sizeof(double) == 8, "sizeof(double) != 8");
@@ -522,3 +525,5 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
         std::memcpy(info, buf, sizeof(OrbitsInfo));
     }
 }
+
+} // namespace id::io
