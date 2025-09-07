@@ -16,6 +16,7 @@
 #include <iterator>
 
 using namespace id;
+using namespace id::fractals;
 
 /*
      passes_options invoked by <p> key

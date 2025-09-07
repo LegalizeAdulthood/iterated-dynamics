@@ -6,6 +6,9 @@
 
 #include <cstdio>
 
+namespace id::fractals
+{
+
 struct Affine
 {
     // weird order so a,b,e and c,d,f are vectors
@@ -55,9 +58,6 @@ struct ViewTransform3D
     int col1;               //
     Affine cvt;             //
 };
-
-namespace id::fractals
-{
 
 /*
  * This is the routine called to perform a time-discrete dynamical
@@ -213,8 +213,6 @@ private:
     bool m_unbounded{};
 };
 
-} // namespace id::fractals
-
 extern Minor                 g_inverse_julia_minor_method;
 extern bool                  g_keep_screen_coords;
 extern Major                 g_major_method;
@@ -276,3 +274,5 @@ int plot_orbits2d();
 int dynamic_orbit(double *x, double *y, double *z);
 int mandel_cloud_orbit(double *x, double *y, double *z);
 bool dynamic2d_per_image();
+
+} // namespace id::fractals

@@ -11,6 +11,8 @@
 
 #include <cmath>
 
+using namespace id::fractals;
+
 namespace id
 {
 

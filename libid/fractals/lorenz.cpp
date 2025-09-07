@@ -42,8 +42,8 @@
 #include <cstdlib>
 #include <vector>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 using OrbitCalc = int (*)(double *x, double *y, double *z);
 
@@ -908,9 +908,6 @@ int latoo_orbit(double *x, double *y, double * /*z*/)
 //   Main fractal engines - put in fractalspecific[fractype].calctype
 //********************************************************************
 
-namespace id::fractals
-{
-
 Orbit2D::Orbit2D() :
     m_fp(open_orbit_save()),
     m_x(s_init_orbit[0]),
@@ -1184,8 +1181,6 @@ void Orbit3D::iterate()
     }
 }
 
-} // namespace id::fractals
-
 bool dynamic2d_per_image()
 {
     s_connect = false;
@@ -1221,9 +1216,6 @@ bool dynamic2d_per_image()
     }
     return true;
 }
-
-namespace id::fractals
-{
 
 Dynamic2D::Dynamic2D() :
     m_fp(open_orbit_save())
@@ -1376,8 +1368,6 @@ void Dynamic2D::iterate()
     }
     m_count = -1;
 }
-
-} // namespace id::fractals
 
 static int setup_orbits_to_screen(Affine *scrn_cnvt)
 {
@@ -1592,9 +1582,6 @@ done:
     return status;
 }
 
-namespace id::fractals
-{
-
 IFS3D::IFS3D() :
     m_fp(open_orbit_save()),
     m_color_method(g_params[0] == 0.0 ? IFSColorMethod::INCREMENT_PIXEL : IFSColorMethod::TRANSFORM_INDEX)
@@ -1796,8 +1783,6 @@ void IFS2D::iterate()
     }
 }
 
-} // namespace id::fractals
-
 int ifs_type()                       // front-end for ifs2d and ifs3d
 {
     if (g_ifs_definition.empty() && ifs_load() < 0)
@@ -1982,3 +1967,5 @@ static void plot_hist(int x, int y, int /*color*/)
     }
     g_put_color(x, y, color);
 }
+
+} // namespace id::fractals
