@@ -8,6 +8,9 @@
 
 #include <cmath>
 
+namespace id
+{
+
 // most people "think" in degrees
 static double deg_to_rad(double x)
 {
@@ -153,3 +156,5 @@ void cvt_corners_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble mag, double x_mag_fa
 
     restore_stack(saved);
 }
+
+} // namespace id
