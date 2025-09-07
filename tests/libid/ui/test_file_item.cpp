@@ -13,11 +13,13 @@
 
 #include <gtest/gtest.h>
 
+namespace fs = std::filesystem;
+
 using namespace id;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::test;
-namespace fs = std::filesystem;
+using namespace id::ui;
 
 namespace
 {

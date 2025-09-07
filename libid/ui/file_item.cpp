@@ -44,6 +44,9 @@ using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
 
+namespace id::ui
+{
+
 constexpr int MAX_ENTRIES = 2000;
 
 struct GetFileEntry
@@ -549,3 +552,5 @@ long get_file_entry(ItemType type, std::filesystem::path &path, std::string &ent
     }
     throw std::runtime_error("Unknown item type " + std::to_string(static_cast<int>(type)));
 }
+
+} // namespace id::ui
