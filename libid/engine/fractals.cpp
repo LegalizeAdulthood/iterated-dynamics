@@ -56,6 +56,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cmath>
 
 using namespace id::fractals;
+using namespace id::math;
 
 namespace id
 {

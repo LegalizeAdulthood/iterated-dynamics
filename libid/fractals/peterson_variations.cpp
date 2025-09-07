@@ -15,6 +15,8 @@
 
 #include <algorithm>
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

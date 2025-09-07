@@ -12,6 +12,8 @@
 #include "misc/debug_flags.h"
 #include "ui/trig_fns.h"
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

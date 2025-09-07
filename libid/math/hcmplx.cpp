@@ -7,6 +7,8 @@
 #include "math/cmplx.h"
 #include "math/sqr.h"
 
+using namespace id::math;
+
 void hcmplx_mult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
 {
     out->x = arg1->x * arg2->x - arg1->y * arg2->y

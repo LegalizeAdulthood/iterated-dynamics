@@ -17,6 +17,8 @@
 #include <cmath>
 #include <vector>
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

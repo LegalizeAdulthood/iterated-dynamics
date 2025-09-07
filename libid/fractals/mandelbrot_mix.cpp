@@ -12,6 +12,8 @@
 #include "math/cmplx.h"
 #include "misc/debug_flags.h"
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

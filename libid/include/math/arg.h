@@ -6,6 +6,9 @@
 #include "math/cmplx.h"
 #include "math/fpu087.h"
 
+namespace id::math
+{
+
 struct Arg
 {
     DComplex d;
@@ -123,3 +126,5 @@ inline void cmplx_recip(const DComplex &arg, DComplex &out)
         out.y = -arg.y / denom;
     }
 }
+
+} // namespace id::math
