@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 int sqr_trig_orbit();
 
 bool trig_plus_trig_per_image();
@@ -26,3 +29,5 @@ int other_richard_8_per_pixel();
 int spider_orbit();
 
 int tetrate_orbit();
+
+} // namespace id::fractals

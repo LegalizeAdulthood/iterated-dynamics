@@ -12,8 +12,8 @@
 #include "misc/debug_flags.h"
 #include "ui/trig_fns.h"
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 static bool fn_plus_fn_sym();
 
@@ -395,3 +395,5 @@ int tetrate_orbit()
     g_new_z = complex_power(*g_float_param, g_old_z);
     return id::g_bailout_float();
 }
+
+} // namespace id::fractals
