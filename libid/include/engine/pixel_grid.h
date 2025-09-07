@@ -4,6 +4,9 @@
 
 #include <vector>
 
+namespace id
+{
+
 extern bool                  g_use_grid;
 extern std::vector<double>   g_grid_x0;
 extern std::vector<double>   g_grid_x1;
@@ -18,3 +21,5 @@ void set_grid_pointers();
 void free_grid_pointers();
 
 void fill_dx_array();
+
+} // namespace id

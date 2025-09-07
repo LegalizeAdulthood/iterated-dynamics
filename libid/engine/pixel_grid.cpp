@@ -5,7 +5,8 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 
-using namespace id;
+namespace id
+{
 
 bool g_use_grid{};
 // note that integer grid is set when integerfractal && !invert;
@@ -118,3 +119,5 @@ void fill_dx_array()
         }
     }
 }
+
+} // namespace id
