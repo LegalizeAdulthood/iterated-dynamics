@@ -9,7 +9,8 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 // Beauty of Fractals pp. 125 - 127
 int vl_orbit()
@@ -35,3 +36,5 @@ bool vl_per_image()
     g_float_param = &g_param_z1;
     return true;
 }
+
+} // namespace id::fractals
