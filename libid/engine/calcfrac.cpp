@@ -507,9 +507,9 @@ static void init_calc_fract()
     }
     if (g_true_color)
     {
-        std::string light_path{id::io::get_save_path(id::io::WriteFile::IMAGE, g_light_name).string()};
+        std::string light_path{id::io::get_save_path(id::io::WriteFile::IMAGE, id::g_light_name).string()};
         check_write_file(light_path, ".tga");
-        if (!start_targa(light_path))
+        if (!id::start_targa(light_path))
         {
             // Have to force passes = 1
             g_std_calc_mode = CalcMode::ONE_PASS;
@@ -2914,7 +2914,7 @@ void sym_plot4_basin(int x, int y, int color)
 static void put_true_color_disk(int x, int y, int color)
 {
     put_color_a(x, y, color);
-    targa_color(x, y, color);
+    id::targa_color(x, y, color);
 }
 
 // Do nothing plot!!!

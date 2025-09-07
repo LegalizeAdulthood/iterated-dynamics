@@ -40,6 +40,9 @@
 #include <string>
 #include <vector>
 
+namespace id
+{
+
 template <typename T>
 struct PointColorT
 {
@@ -2852,3 +2855,5 @@ static int line3d_mem()
 
     return 0;
 }
+
+} // namespace id

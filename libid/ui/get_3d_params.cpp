@@ -45,22 +45,22 @@ int get_3d_params()     // prompt for 3D parameters
 restart_1:
     if (g_targa_out && g_overlay_3d)
     {
-        g_targa_overlay = true;
+        id::g_targa_overlay = true;
     }
 
     k = -1;
 
     prompts3d[++k] = "Preview mode?";
     values[k].type = 'y';
-    values[k].uval.ch.val = g_preview ? 1 : 0;
+    values[k].uval.ch.val = id::g_preview ? 1 : 0;
 
     prompts3d[++k] = "    Show box?";
     values[k].type = 'y';
-    values[k].uval.ch.val = g_show_box ? 1 : 0;
+    values[k].uval.ch.val = id::g_show_box ? 1 : 0;
 
     prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
     values[k].type = 'i';
-    values[k].uval.ival = g_preview_factor;
+    values[k].uval.ival = id::g_preview_factor;
 
     prompts3d[++k] = "Spherical projection?";
     values[k].type = 'y';
@@ -81,17 +81,17 @@ restart_1:
     values[k].uval.ch.list = raytrace_formats;
     values[k].uval.ch.list_len = static_cast<int>(std::size(raytrace_formats));
     values[k].uval.ch.vlen = 11;
-    values[k].uval.ch.val = static_cast<int>(g_raytrace_format);
+    values[k].uval.ch.val = static_cast<int>(id::g_raytrace_format);
     prompts3d[++k] = "                Rayshade, AcroSpin, DXF)";
     values[k].type = '*';
 
     prompts3d[++k] = "    Brief output?";
     values[k].type = 'y';
-    values[k].uval.ch.val = g_brief ? 1 : 0;
+    values[k].uval.ch.val = id::g_brief ? 1 : 0;
 
     prompts3d[++k] = "    Output file name";
     values[k].type = 's';
-    std::strcpy(values[k].uval.sval, g_raytrace_filename.c_str());
+    std::strcpy(values[k].uval.sval, id::g_raytrace_filename.c_str());
 
     prompts3d[++k] = "Targa output?";
     values[k].type = 'y';
@@ -111,31 +111,31 @@ restart_1:
     }
 
     k = 0;
-    g_preview = values[k++].uval.ch.val != 0;
-    g_show_box = values[k++].uval.ch.val != 0;
-    g_preview_factor  = values[k++].uval.ival;
+    id::g_preview = values[k++].uval.ch.val != 0;
+    id::g_show_box = values[k++].uval.ch.val != 0;
+    id::g_preview_factor  = values[k++].uval.ival;
     sphere = values[k++].uval.ch.val;
     g_glasses_type = static_cast<GlassesType>(values[k++].uval.ival);
     k++;
-    g_raytrace_format = static_cast<RayTraceFormat>(values[k++].uval.ch.val);
+    id::g_raytrace_format = static_cast<id::RayTraceFormat>(values[k++].uval.ch.val);
     k++;
     {
-        if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
+        if (id::g_raytrace_format == id::RayTraceFormat::DKB_POVRAY)
         {
             stop_msg("DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
                     "the online documentation.");
         }
     }
-    g_brief = values[k++].uval.ch.val != 0;
+    id::g_brief = values[k++].uval.ch.val != 0;
 
-    g_raytrace_filename = values[k++].uval.sval;
+    id::g_raytrace_filename = values[k++].uval.sval;
 
     g_targa_out = values[k++].uval.ch.val != 0;
     g_gray_flag  = values[k++].uval.ch.val != 0;
 
     // check ranges
-    g_preview_factor = std::max(g_preview_factor, 2);
-    g_preview_factor = std::min(g_preview_factor, 2000);
+    id::g_preview_factor = std::max(id::g_preview_factor, 2);
+    id::g_preview_factor = std::min(id::g_preview_factor, 2000);
 
     if (sphere && !id::g_sphere)
     {
@@ -155,13 +155,13 @@ restart_1:
         g_which_image = StereoImage::RED;
     }
 
-    if (static_cast<int>(g_raytrace_format) < 0)
+    if (static_cast<int>(id::g_raytrace_format) < 0)
     {
-        g_raytrace_format = RayTraceFormat::NONE;
+        id::g_raytrace_format = id::RayTraceFormat::NONE;
     }
-    g_raytrace_format = std::min(g_raytrace_format, RayTraceFormat::DXF);
+    id::g_raytrace_format = std::min(id::g_raytrace_format, id::RayTraceFormat::DXF);
 
-    if (g_raytrace_format == RayTraceFormat::NONE)
+    if (id::g_raytrace_format == id::RayTraceFormat::NONE)
     {
         const char *choices[11];
         int attributes[21];
@@ -223,7 +223,7 @@ restart_3:
     else
     {
         k = -1;
-        if (g_raytrace_format == RayTraceFormat::NONE)
+        if (id::g_raytrace_format == id::RayTraceFormat::NONE)
         {
             prompts3d[++k] = "X-axis rotation in degrees";
             prompts3d[++k] = "Y-axis rotation in degrees";
@@ -233,7 +233,7 @@ restart_3:
         prompts3d[++k] = "Y-axis scaling factor in pct";
     }
     k = -1;
-    if (g_raytrace_format == RayTraceFormat::NONE || id::g_sphere)
+    if (id::g_raytrace_format == id::RayTraceFormat::NONE || id::g_sphere)
     {
         values[++k].uval.ival   = id::g_x_rot    ;
         values[k].type = 'i';
@@ -256,7 +256,7 @@ restart_3:
     values[k].type = 'i';
     values[k].uval.ival = id::g_water_line ;
 
-    if (g_raytrace_format == RayTraceFormat::NONE)
+    if (id::g_raytrace_format == id::RayTraceFormat::NONE)
     {
         prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
         values[k].type = 'i';
@@ -289,7 +289,7 @@ restart_3:
 
     prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
     values[k].type = 'i';
-    values[k++].uval.ival = g_randomize_3d;
+    values[k++].uval.ival = id::g_randomize_3d;
 
     if (id::g_sphere)
     {
@@ -313,7 +313,7 @@ restart_3:
     }
 
     k = 0;
-    if (g_raytrace_format == RayTraceFormat::NONE || id::g_sphere)
+    if (id::g_raytrace_format == id::RayTraceFormat::NONE || id::g_sphere)
     {
         id::g_x_rot    = values[k++].uval.ival;
         id::g_y_rot    = values[k++].uval.ival;
@@ -323,7 +323,7 @@ restart_3:
     id::g_y_scale     = values[k++].uval.ival;
     id::g_rough      = values[k++].uval.ival;
     id::g_water_line  = values[k++].uval.ival;
-    if (g_raytrace_format == RayTraceFormat::NONE)
+    if (id::g_raytrace_format == id::RayTraceFormat::NONE)
     {
         id::g_viewer_z = values[k++].uval.ival;
         id::g_shift_x     = values[k++].uval.ival;
@@ -333,11 +333,11 @@ restart_3:
         g_transparent_color_3d[0] = values[k++].uval.ival;
         g_transparent_color_3d[1] = values[k++].uval.ival;
     }
-    g_randomize_3d  = values[k++].uval.ival;
-    g_randomize_3d = std::min(g_randomize_3d, 7);
-    g_randomize_3d = std::max(g_randomize_3d, 0);
+    id::g_randomize_3d  = values[k++].uval.ival;
+    id::g_randomize_3d = std::min(id::g_randomize_3d, 7);
+    id::g_randomize_3d = std::max(id::g_randomize_3d, 0);
 
-    if (g_targa_out || id::illumine() || g_raytrace_format != RayTraceFormat::NONE)
+    if (g_targa_out || id::illumine() || id::g_raytrace_format != id::RayTraceFormat::NONE)
     {
         if (get_light_params())
         {
@@ -353,33 +353,33 @@ static bool get_light_params()
     ChoiceBuilder<13> builder;
 
     // defaults go here
-    if (id::illumine() || g_raytrace_format != RayTraceFormat::NONE)
+    if (id::illumine() || id::g_raytrace_format != id::RayTraceFormat::NONE)
     {
         builder.int_number("X value light vector", id::g_light_x)
             .int_number("Y value light vector", id::g_light_y)
             .int_number("Z value light vector", id::g_light_z);
 
-        if (g_raytrace_format == RayTraceFormat::NONE)
+        if (id::g_raytrace_format == id::RayTraceFormat::NONE)
         {
             builder.int_number("Light Source Smoothing Factor", id::g_light_avg);
-            builder.int_number("Ambient", g_ambient);
+            builder.int_number("Ambient", id::g_ambient);
         }
     }
 
-    if (g_targa_out && g_raytrace_format == RayTraceFormat::NONE)
+    if (g_targa_out && id::g_raytrace_format == id::RayTraceFormat::NONE)
     {
-        builder.int_number("Haze Factor        (0 - 100, '0' disables)", g_haze);
+        builder.int_number("Haze Factor        (0 - 100, '0' disables)", id::g_haze);
 
-        if (!g_targa_overlay)
+        if (!id::g_targa_overlay)
         {
-            check_write_file(g_light_name, ".tga");
+            check_write_file(id::g_light_name, ".tga");
         }
-        builder.string("Targa File Name  (Assume .tga)", g_light_name.c_str())
+        builder.string("Targa File Name  (Assume .tga)", id::g_light_name.c_str())
             .comment("Background Color (0 - 255)")
-            .int_number("   Red", g_background_color[0])
-            .int_number("   Green", g_background_color[1])
-            .int_number("   Blue", g_background_color[2])
-            .yes_no("Overlay Targa File? (Y/N)", g_targa_overlay);
+            .int_number("   Red", id::g_background_color[0])
+            .int_number("   Green", id::g_background_color[1])
+            .int_number("   Blue", id::g_background_color[2])
+            .yes_no("Overlay Targa File? (Y/N)", id::g_targa_overlay);
     }
     builder.comment("");
 
@@ -396,26 +396,26 @@ static bool get_light_params()
         id::g_light_x   = builder.read_int_number();
         id::g_light_y   = builder.read_int_number();
         id::g_light_z   = builder.read_int_number();
-        if (g_raytrace_format == RayTraceFormat::NONE)
+        if (id::g_raytrace_format == id::RayTraceFormat::NONE)
         {
             id::g_light_avg = builder.read_int_number();
-            g_ambient  = builder.read_int_number();
-            g_ambient = std::min(g_ambient, 100);
-            g_ambient = std::max(g_ambient, 0);
+            id::g_ambient  = builder.read_int_number();
+            id::g_ambient = std::min(id::g_ambient, 100);
+            id::g_ambient = std::max(id::g_ambient, 0);
         }
     }
 
-    if (g_targa_out && g_raytrace_format == RayTraceFormat::NONE)
+    if (g_targa_out && id::g_raytrace_format == id::RayTraceFormat::NONE)
     {
-        g_haze = builder.read_int_number();
-        g_haze = std::min(g_haze, 100);
-        g_haze = std::max(g_haze, 0);
-        g_light_name = builder.read_string();
+        id::g_haze = builder.read_int_number();
+        id::g_haze = std::min(id::g_haze, 100);
+        id::g_haze = std::max(id::g_haze, 0);
+        id::g_light_name = builder.read_string();
         /* In case light_name conflicts with an existing name it is checked again in line3d */
-        g_background_color[0] = (char)(builder.read_int_number() % 255);
-        g_background_color[1] = (char)(builder.read_int_number() % 255);
-        g_background_color[2] = (char)(builder.read_int_number() % 255);
-        g_targa_overlay = builder.read_yes_no();
+        id::g_background_color[0] = (char)(builder.read_int_number() % 255);
+        id::g_background_color[1] = (char)(builder.read_int_number() % 255);
+        id::g_background_color[2] = (char)(builder.read_int_number() % 255);
+        id::g_targa_overlay = builder.read_yes_no();
     }
     return false;
 }
@@ -491,12 +491,12 @@ static bool get_funny_glasses_params()
         if (g_fractal_type == FractalType::IFS_3D || g_fractal_type == FractalType::LORENZ_3D)
         {
             g_eye_separation = 2;
-            g_converge_x_adjust = -2;
+            id::g_converge_x_adjust = -2;
         }
         else
         {
             g_eye_separation = 3;
-            g_converge_x_adjust = 0;
+            id::g_converge_x_adjust = 0;
         }
     }
 
@@ -520,7 +520,7 @@ static bool get_funny_glasses_params()
 
     ChoiceBuilder<10> builder;
     builder.int_number("Interocular distance (as % of screen)", g_eye_separation)
-        .int_number("Convergence adjust (positive = spread greater)", g_converge_x_adjust)
+        .int_number("Convergence adjust (positive = spread greater)", id::g_converge_x_adjust)
         .int_number("Left  red image crop (% of screen)", g_red_crop_left)
         .int_number("Right red image crop (% of screen)", g_red_crop_right)
         .int_number("Left  blue image crop (% of screen)", g_blue_crop_left)
@@ -541,7 +541,7 @@ static bool get_funny_glasses_params()
 
     k = 0;
     g_eye_separation   =  builder.read_int_number();
-    g_converge_x_adjust = builder.read_int_number();
+    id::g_converge_x_adjust = builder.read_int_number();
     g_red_crop_left   =  builder.read_int_number();
     g_red_crop_right  =  builder.read_int_number();
     g_blue_crop_left  =  builder.read_int_number();

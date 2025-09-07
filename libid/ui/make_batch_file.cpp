@@ -1317,19 +1317,19 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         {
             put_param(" transparent=%d/%d", g_transparent_color_3d[0], g_transparent_color_3d[1]);
         }
-        if (g_preview)
+        if (id::g_preview)
         {
             put_param(" preview=yes");
-            if (g_show_box)
+            if (id::g_show_box)
             {
                 put_param(" showbox=yes");
             }
-            put_param(" coarse=%d", g_preview_factor);
+            put_param(" coarse=%d", id::g_preview_factor);
         }
-        if (g_raytrace_format != RayTraceFormat::NONE)
+        if (id::g_raytrace_format != id::RayTraceFormat::NONE)
         {
-            put_param(" ray=%d", static_cast<int>(g_raytrace_format));
-            if (g_brief)
+            put_param(" ray=%d", static_cast<int>(id::g_raytrace_format));
+            if (id::g_brief)
             {
                 put_param(" brief=y");
             }
@@ -1342,9 +1342,9 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
                 put_param(" smoothing=%d", id::g_light_avg);
             }
         }
-        if (g_randomize_3d)
+        if (id::g_randomize_3d)
         {
-            put_param(" randomize=%d", g_randomize_3d);
+            put_param(" randomize=%d", id::g_randomize_3d);
         }
         if (g_targa_out)
         {
@@ -1354,18 +1354,18 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         {
             put_param(" usegrayscale=y");
         }
-        if (g_ambient)
+        if (id::g_ambient)
         {
-            put_param(" ambient=%d", g_ambient);
+            put_param(" ambient=%d", id::g_ambient);
         }
-        if (g_haze)
+        if (id::g_haze)
         {
-            put_param(" haze=%d", g_haze);
+            put_param(" haze=%d", id::g_haze);
         }
-        if (g_background_color[0] != 51 || g_background_color[1] != 153 || g_background_color[2] != 200)
+        if (id::g_background_color[0] != 51 || id::g_background_color[1] != 153 || id::g_background_color[2] != 200)
         {
-            put_param(" background=%d/%d/%d", g_background_color[0], g_background_color[1],
-                     g_background_color[2]);
+            put_param(" background=%d/%d/%d", id::g_background_color[0], id::g_background_color[1],
+                     id::g_background_color[2]);
         }
     }
 
@@ -1387,7 +1387,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         {
             put_param(" stereo=%d", static_cast<int>(g_glasses_type));
             put_param(" interocular=%d", g_eye_separation);
-            put_param(" converge=%d", g_converge_x_adjust);
+            put_param(" converge=%d", id::g_converge_x_adjust);
             put_param(" crop=%d/%d/%d/%d",
                      g_red_crop_left, g_red_crop_right, g_blue_crop_left, g_blue_crop_right);
             put_param(" bright=%d/%d",

@@ -812,7 +812,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->init3d[13] = static_cast<std::int16_t>(id::g_light_y);         // y light vector coordinate
     save_info->init3d[14] = static_cast<std::int16_t>(id::g_light_z);         // z light vector coordinate
     save_info->init3d[15] = static_cast<std::int16_t>(id::g_light_avg);       // number of points to average
-    save_info->preview_factor = static_cast<std::int16_t>(g_preview_factor);
+    save_info->preview_factor = static_cast<std::int16_t>(id::g_preview_factor);
     save_info->x_trans = static_cast<std::int16_t>(g_adjust_3d_x);
     save_info->y_trans = static_cast<std::int16_t>(g_adjust_3d_y);
     save_info->red_crop_left = static_cast<std::int16_t>(g_red_crop_left);
@@ -821,8 +821,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->blue_crop_right = static_cast<std::int16_t>(g_blue_crop_right);
     save_info->red_bright = static_cast<std::int16_t>(g_red_bright);
     save_info->blue_bright = static_cast<std::int16_t>(g_blue_bright);
-    save_info->x_adjust = static_cast<std::int16_t>(g_converge_x_adjust);
-    save_info->y_adjust = static_cast<std::int16_t>(g_converge_y_adjust);
+    save_info->x_adjust = static_cast<std::int16_t>(id::g_converge_x_adjust);
+    save_info->y_adjust = static_cast<std::int16_t>(id::g_converge_y_adjust);
     save_info->eye_separation = static_cast<std::int16_t>(g_eye_separation);
     save_info->glasses_type = static_cast<std::int16_t>(g_glasses_type);
     save_info->outside = static_cast<std::int16_t>(g_outside_color);
@@ -850,9 +850,9 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->system = static_cast<std::int16_t>(g_save_system);
     save_info->release = static_cast<std::int16_t>(20 * 100 + 4); // legacy FRACTINT 20.04
     save_info->display_3d = static_cast<std::int16_t>(g_display_3d);
-    save_info->ambient = static_cast<std::int16_t>(g_ambient);
-    save_info->randomize = static_cast<std::int16_t>(g_randomize_3d);
-    save_info->haze = static_cast<std::int16_t>(g_haze);
+    save_info->ambient = static_cast<std::int16_t>(id::g_ambient);
+    save_info->randomize = static_cast<std::int16_t>(id::g_randomize_3d);
+    save_info->haze = static_cast<std::int16_t>(id::g_haze);
     save_info->transparent[0] = static_cast<std::int16_t>(g_transparent_color_3d[0]);
     save_info->transparent[1] = static_cast<std::int16_t>(g_transparent_color_3d[1]);
     save_info->rotate_lo = static_cast<std::int16_t>(g_color_cycle_range_lo);

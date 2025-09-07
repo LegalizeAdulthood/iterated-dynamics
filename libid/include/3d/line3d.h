@@ -9,6 +9,9 @@
 #include <cstdio>
 #include <string>
 
+namespace id
+{
+
 enum class RayTraceFormat
 {
     NONE = 0,
@@ -49,3 +52,5 @@ int line3d(Byte *pixels, unsigned line_len);
 int targa_color(int x, int y, int color);
 bool start_targa_overlay(const std::string &path, std::FILE *source);
 bool start_targa(const std::string &path);
+
+} // namespace id

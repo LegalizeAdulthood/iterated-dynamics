@@ -874,7 +874,7 @@ resumeloop:                             // return here on failed overlays
 static int call_line3d(Byte *pixels, int line_len)
 {
     // this routine exists because line3d might be in an overlay
-    return line3d(pixels, line_len);
+    return id::line3d(pixels, line_len);
 }
 
 // displays differences between current image file and new image

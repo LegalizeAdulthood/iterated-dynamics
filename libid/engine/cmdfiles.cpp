@@ -594,16 +594,16 @@ static void init_vars_fractal()
 // init vars affecting 3d
 static void init_vars3d()
 {
-    g_raytrace_format = RayTraceFormat::NONE;
-    g_brief   = false;
+    id::g_raytrace_format = id::RayTraceFormat::NONE;
+    id::g_brief   = false;
     id::g_sphere = false;
-    g_preview = false;
-    g_show_box = false;
-    g_converge_x_adjust = 0;
-    g_converge_y_adjust = 0;
+    id::g_preview = false;
+    id::g_show_box = false;
+    id::g_converge_x_adjust = 0;
+    id::g_converge_y_adjust = 0;
     g_eye_separation = 0;
     g_glasses_type = GlassesType::NONE;
-    g_preview_factor = 20;
+    id::g_preview_factor = 20;
     g_red_crop_left   = 4;
     g_red_crop_right  = 0;
     g_blue_crop_left  = 0;
@@ -1255,7 +1255,7 @@ static CmdArgFlags cmd_ambient(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_ambient = cmd.num_val;
+    id::g_ambient = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1358,9 +1358,9 @@ static CmdArgFlags cmd_background(const Command &cmd)
             return cmd.bad_arg();
         }
     }
-    g_background_color[0] = (Byte) cmd.int_vals[0];
-    g_background_color[1] = (Byte) cmd.int_vals[1];
-    g_background_color[2] = (Byte) cmd.int_vals[2];
+    id::g_background_color[0] = (Byte) cmd.int_vals[0];
+    id::g_background_color[1] = (Byte) cmd.int_vals[1];
+    id::g_background_color[2] = (Byte) cmd.int_vals[2];
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1439,7 +1439,7 @@ static CmdArgFlags cmd_brief(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_brief = cmd.yes_no_val[0] != 0;
+    id::g_brief = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1570,7 +1570,7 @@ static CmdArgFlags cmd_coarse(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_preview_factor = cmd.num_val;
+    id::g_preview_factor = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1762,7 +1762,7 @@ static CmdArgFlags cmd_comment(const Command &cmd)
 // converge=?
 static CmdArgFlags cmd_converge(const Command &cmd)
 {
-    g_converge_x_adjust = cmd.num_val;
+    id::g_converge_x_adjust = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -2182,7 +2182,7 @@ static CmdArgFlags cmd_haze(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_haze = cmd.num_val;
+    id::g_haze = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2426,7 +2426,7 @@ static CmdArgFlags cmd_light_name(const Command &cmd)
     }
     if (g_first_init || cmd.mode == CmdFile::AT_AFTER_STARTUP)
     {
-        g_light_name = cmd.value;
+        id::g_light_name = cmd.value;
     }
     return CmdArgFlags::NONE;
 }
@@ -2994,7 +2994,7 @@ static CmdArgFlags cmd_preview(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_preview = cmd.yes_no_val[0] != 0;
+    id::g_preview = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3022,7 +3022,7 @@ static CmdArgFlags cmd_randomize(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_randomize_3d = cmd.num_val;
+    id::g_randomize_3d = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3087,19 +3087,19 @@ namespace
 struct RayTraceFormatValue
 {
     std::string_view name;
-    RayTraceFormat value;
+    id::RayTraceFormat value;
 };
 
 constexpr RayTraceFormatValue RAYTRACE_FORMATS[]{
-    {"none", RayTraceFormat::NONE},          //
-    {"dkb", RayTraceFormat::DKB_POVRAY},     //
-    {"pov-ray", RayTraceFormat::DKB_POVRAY}, //
-    {"vivid", RayTraceFormat::VIVID},        //
-    {"raw", RayTraceFormat::RAW},            //
-    {"mtv", RayTraceFormat::MTV},            //
-    {"rayshade", RayTraceFormat::RAYSHADE},  //
-    {"acrospin", RayTraceFormat::ACROSPIN},  //
-    {"dxf", RayTraceFormat::DXF}             //
+    {"none", id::RayTraceFormat::NONE},          //
+    {"dkb", id::RayTraceFormat::DKB_POVRAY},     //
+    {"pov-ray", id::RayTraceFormat::DKB_POVRAY}, //
+    {"vivid", id::RayTraceFormat::VIVID},        //
+    {"raw", id::RayTraceFormat::RAW},            //
+    {"mtv", id::RayTraceFormat::MTV},            //
+    {"rayshade", id::RayTraceFormat::RAYSHADE},  //
+    {"acrospin", id::RayTraceFormat::ACROSPIN},  //
+    {"dxf", id::RayTraceFormat::DXF}             //
 };
 
 } // namespace
@@ -3113,7 +3113,7 @@ static CmdArgFlags cmd_ray(const Command &cmd)
         {
             if (name_value.name == cmd.value)
             {
-                g_raytrace_format = name_value.value;
+                id::g_raytrace_format = name_value.value;
                 break;
             }
         }
@@ -3124,7 +3124,7 @@ static CmdArgFlags cmd_ray(const Command &cmd)
     }
     else
     {
-        g_raytrace_format = static_cast<RayTraceFormat>(cmd.num_val);
+        id::g_raytrace_format = static_cast<id::RayTraceFormat>(cmd.num_val);
     }
     return CmdArgFlags::PARAM_3D;
 }
@@ -3299,7 +3299,7 @@ static CmdArgFlags cmd_show_box(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_show_box = cmd.yes_no_val[0] != 0;
+    id::g_show_box = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3529,7 +3529,7 @@ static CmdArgFlags cmd_targa_overlay(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_targa_overlay = cmd.yes_no_val[0] != 0;
+    id::g_targa_overlay = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -4106,12 +4106,12 @@ void set_3d_defaults()
     g_adjust_3d_x    = 0;
     g_adjust_3d_y    = 0;
     id::g_light_avg  = 0;
-    g_ambient   = 20;
-    g_randomize_3d = 0;
-    g_haze      = 0;
-    g_background_color[0] = 51;
-    g_background_color[1] = 153;
-    g_background_color[2] = 200;
+    id::g_ambient   = 20;
+    id::g_randomize_3d = 0;
+    id::g_haze      = 0;
+    id::g_background_color[0] = 51;
+    id::g_background_color[1] = 153;
+    id::g_background_color[2] = 200;
     if (id::g_sphere)
     {
         id::g_sphere_phi_min      =  180;

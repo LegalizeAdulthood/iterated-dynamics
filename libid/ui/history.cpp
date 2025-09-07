@@ -563,7 +563,7 @@ void save_history_info()
     current.init_3d[13] = id::g_light_y;         // y light vector coordinate
     current.init_3d[14] = id::g_light_z;         // z light vector coordinate
     current.init_3d[15] = id::g_light_avg;       // number of points to average
-    current.preview_factor = g_preview_factor;
+    current.preview_factor = id::g_preview_factor;
     current.adjust_3d_x = g_adjust_3d_x;
     current.adjust_3d_y = g_adjust_3d_y;
     current.red_crop_left = g_red_crop_left;
@@ -572,8 +572,8 @@ void save_history_info()
     current.blue_crop_right = g_blue_crop_right;
     current.red_bright = g_red_bright;
     current.blue_bright = g_blue_bright;
-    current.converge_x_adjust = g_converge_x_adjust;
-    current.converge_y_adjust = g_converge_y_adjust;
+    current.converge_x_adjust = id::g_converge_x_adjust;
+    current.converge_y_adjust = id::g_converge_y_adjust;
     current.eye_separation = g_eye_separation;
     current.glasses_type = g_glasses_type;
     current.outside_color = g_outside_color;
@@ -596,9 +596,9 @@ void save_history_info()
     current.release = g_release;
     current.save_release = g_release;
     current.display_3d = g_display_3d;
-    current.ambient = g_ambient;
-    current.randomize_3d = g_randomize_3d;
-    current.haze = g_haze;
+    current.ambient = id::g_ambient;
+    current.randomize_3d = id::g_randomize_3d;
+    current.haze = id::g_haze;
     current.transparent_color_3d[0] = g_transparent_color_3d[0];
     current.transparent_color_3d[1] = g_transparent_color_3d[1];
     current.color_cycle_range_lo = g_color_cycle_range_lo;
@@ -756,7 +756,7 @@ void restore_history_info(int i)
     id::g_light_y = last.init_3d[13];                          // y light vector coordinate
     id::g_light_z = last.init_3d[14];                          // z light vector coordinate
     id::g_light_avg = last.init_3d[15];                        // number of points to average
-    g_preview_factor = last.preview_factor;
+    id::g_preview_factor = last.preview_factor;
     g_adjust_3d_x = last.adjust_3d_x;
     g_adjust_3d_y = last.adjust_3d_y;
     g_red_crop_left = last.red_crop_left;
@@ -765,8 +765,8 @@ void restore_history_info(int i)
     g_blue_crop_right = last.blue_crop_right;
     g_red_bright = last.red_bright;
     g_blue_bright = last.blue_bright;
-    g_converge_x_adjust = last.converge_x_adjust;
-    g_converge_y_adjust = last.converge_y_adjust;
+    id::g_converge_x_adjust = last.converge_x_adjust;
+    id::g_converge_y_adjust = last.converge_y_adjust;
     g_eye_separation = last.eye_separation;
     g_glasses_type = last.glasses_type;
     g_outside_color = last.outside_color;
@@ -791,9 +791,9 @@ void restore_history_info(int i)
     g_disk_16_bit = last.disk_16_bit;
     g_release = last.release;
     g_display_3d = last.display_3d;
-    g_ambient = last.ambient;
-    g_randomize_3d = last.randomize_3d;
-    g_haze = last.haze;
+    id::g_ambient = last.ambient;
+    id::g_randomize_3d = last.randomize_3d;
+    id::g_haze = last.haze;
     g_transparent_color_3d[0] = last.transparent_color_3d[0];
     g_transparent_color_3d[1] = last.transparent_color_3d[1];
     g_color_cycle_range_lo = last.color_cycle_range_lo;

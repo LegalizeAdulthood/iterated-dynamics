@@ -3504,12 +3504,12 @@ TEST_F(TestParameterCommand, interocular)
 
 TEST_F(TestParameterCommand, converge)
 {
-    ValueSaver saved_converge_x_adjust{g_converge_x_adjust, -99};
+    ValueSaver saved_converge_x_adjust{id::g_converge_x_adjust, -99};
 
     exec_cmd_arg("converge=90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(90, g_converge_x_adjust);
+    EXPECT_EQ(90, id::g_converge_x_adjust);
 }
 
 TEST_F(TestParameterCommand, crop)
@@ -3763,62 +3763,62 @@ TEST_F(TestParameterCommand, transparentTwoValues)
 
 TEST_F(TestParameterCommand, previewNo)
 {
-    ValueSaver saved_preview{g_preview, true};
+    ValueSaver saved_preview{id::g_preview, true};
 
     exec_cmd_arg("preview=no");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(g_preview);
+    EXPECT_FALSE(id::g_preview);
 }
 
 TEST_F(TestParameterCommand, showBoxNo)
 {
-    ValueSaver saved_show_box{g_show_box, true};
+    ValueSaver saved_show_box{id::g_show_box, true};
 
     exec_cmd_arg("showbox=no");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(g_show_box);
+    EXPECT_FALSE(id::g_show_box);
 }
 
 TEST_F(TestParameterCommand, coarse)
 {
-    ValueSaver saved_preview_factor{g_preview_factor, -99};
+    ValueSaver saved_preview_factor{id::g_preview_factor, -99};
 
     exec_cmd_arg("coarse=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, g_preview_factor);
+    EXPECT_EQ(3, id::g_preview_factor);
 }
 
 TEST_F(TestParameterCommand, randomize)
 {
-    ValueSaver saved_randomize_3d{g_randomize_3d, -99};
+    ValueSaver saved_randomize_3d{id::g_randomize_3d, -99};
 
     exec_cmd_arg("randomize=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, g_randomize_3d);
+    EXPECT_EQ(3, id::g_randomize_3d);
 }
 
 TEST_F(TestParameterCommand, ambient)
 {
-    ValueSaver saved_ambient{g_ambient, -99};
+    ValueSaver saved_ambient{id::g_ambient, -99};
 
     exec_cmd_arg("ambient=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, g_ambient);
+    EXPECT_EQ(3, id::g_ambient);
 }
 
 TEST_F(TestParameterCommand, haze)
 {
-    ValueSaver saved_haze{g_haze, -99};
+    ValueSaver saved_haze{id::g_haze, -99};
 
     exec_cmd_arg("haze=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, g_haze);
+    EXPECT_EQ(3, id::g_haze);
 }
 
 TEST_F(TestParameterCommand, fullColorNo)
@@ -3903,52 +3903,53 @@ TEST_F(TestParameterCommand, monitorWidthAliasForStereoWidth)
 
 TEST_F(TestParameterCommand, targaOverlayNo)
 {
-    ValueSaver saved_targa_overlay{g_targa_overlay, true};
+    ValueSaver saved_targa_overlay{id::g_targa_overlay, true};
 
     exec_cmd_arg("targa_overlay=n");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(g_targa_overlay);
+    EXPECT_FALSE(id::g_targa_overlay);
 }
 
 TEST_F(TestParameterCommand, background)
 {
-    ValueSaver saved_background_color0{g_background_color[0], 255};
-    ValueSaver saved_background_color1{g_background_color[1], 255};
-    ValueSaver saved_background_color2{g_background_color[2], 255};
+    ValueSaver saved_background_color0{id::g_background_color[0], 255};
+    ValueSaver saved_background_color1{id::g_background_color[1], 255};
+    ValueSaver saved_background_color2{id::g_background_color[2], 255};
 
     exec_cmd_arg("background=1/2/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_background_color[0]);
-    EXPECT_EQ(2, g_background_color[1]);
-    EXPECT_EQ(3, g_background_color[2]);
+    EXPECT_EQ(1, id::g_background_color[0]);
+    EXPECT_EQ(2, id::g_background_color[1]);
+    EXPECT_EQ(3, id::g_background_color[2]);
 }
 
 TEST_F(TestParameterCommand, lightNameFirstInit)
 {
     ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_light_name{g_light_name, "fmeh"};
+    ValueSaver saved_light_name{id::g_light_name, "fmeh"};
 
     exec_cmd_arg("lightname=foo", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("foo", g_light_name);
+    EXPECT_EQ("foo", id::g_light_name);
 }
 
 TEST_F(TestParameterCommand, lightNameAfterStartup)
 {
     ValueSaver saved_first_init{g_first_init, false};
-    ValueSaver saved_light_name{g_light_name, "fmeh"};
+    ValueSaver saved_light_name{id::g_light_name, "fmeh"};
 
     exec_cmd_arg("lightname=foo");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("foo", g_light_name);
+    EXPECT_EQ("foo", id::g_light_name);
 }
 
 TEST_F(TestParameterCommand, lightNameNotSet)
 {
+    using namespace id;
     ValueSaver saved_first_init{g_first_init, false};
     VALUE_UNCHANGED(g_light_name, std::string{"fmeh"});
 
@@ -3959,12 +3960,12 @@ TEST_F(TestParameterCommand, lightNameNotSet)
 
 TEST_F(TestParameterCommand, ray)
 {
-    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::NONE};
+    ValueSaver saved_raytrace_format{id::g_raytrace_format, id::RayTraceFormat::NONE};
 
     exec_cmd_arg("ray=3", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(RayTraceFormat::RAW, g_raytrace_format);
+    EXPECT_EQ(id::RayTraceFormat::RAW, id::g_raytrace_format);
 }
 
 TEST_F(TestParameterCommandError, rayNegative)
@@ -3983,39 +3984,39 @@ TEST_F(TestParameterCommandError, rayTooLarge)
 
 TEST_F(TestParameterCommand, rayByName)
 {
-    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
+    ValueSaver saved_raytrace_format{id::g_raytrace_format, id::RayTraceFormat::RAYSHADE};
 
     exec_cmd_arg("ray=none");
 
-    EXPECT_EQ(RayTraceFormat::NONE, g_raytrace_format);
+    EXPECT_EQ(id::RayTraceFormat::NONE, id::g_raytrace_format);
 }
 
 TEST_F(TestParameterCommand, rayByNameDKB)
 {
-    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
+    ValueSaver saved_raytrace_format{id::g_raytrace_format, id::RayTraceFormat::RAYSHADE};
 
     exec_cmd_arg("ray=dkb");
 
-    EXPECT_EQ(RayTraceFormat::DKB_POVRAY, g_raytrace_format);
+    EXPECT_EQ(id::RayTraceFormat::DKB_POVRAY, id::g_raytrace_format);
 }
 
 TEST_F(TestParameterCommand, rayByNamePOVRay)
 {
-    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
+    ValueSaver saved_raytrace_format{id::g_raytrace_format, id::RayTraceFormat::RAYSHADE};
 
     exec_cmd_arg("ray=pov-ray");
 
-    EXPECT_EQ(RayTraceFormat::DKB_POVRAY, g_raytrace_format);
+    EXPECT_EQ(id::RayTraceFormat::DKB_POVRAY, id::g_raytrace_format);
 }
 
 TEST_F(TestParameterCommand, briefNo)
 {
-    ValueSaver saved_brief{g_brief, true};
+    ValueSaver saved_brief{id::g_brief, true};
 
     exec_cmd_arg("brief=n");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(g_brief);
+    EXPECT_FALSE(id::g_brief);
 }
 
 TEST_F(TestParameterCommandError, releaseNotAllowed)

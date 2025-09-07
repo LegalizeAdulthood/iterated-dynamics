@@ -1536,7 +1536,7 @@ int funny_glasses_call(int (*calc)())
 {
     g_which_image = g_glasses_type != GlassesType::NONE ? StereoImage::RED : StereoImage::NONE;
     plot_setup();
-    g_plot = g_standard_plot;
+    g_plot = id::g_standard_plot;
     int status = calc();
     if (s_real_time && g_glasses_type < GlassesType::PHOTO)
     {
@@ -1564,7 +1564,7 @@ int funny_glasses_call(int (*calc)())
             g_cur_fractal_specific->per_image(); // reset for 2nd image
         }
         plot_setup();
-        g_plot = g_standard_plot;
+        g_plot = id::g_standard_plot;
         // is there a better way to clear the graphics screen ?
         status = calc();
         if (status != 0)
@@ -1873,19 +1873,19 @@ static bool float_view_transf3d(ViewTransform3D *inf)
         }
         if (g_color_iter == s_waste) // time to work it out
         {
-            g_view[0] = 0; // center on origin
-            g_view[1] = 0;
+            id::g_view[0] = 0; // center on origin
+            id::g_view[1] = 0;
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
-            g_view[2] = (inf->min_vals[2]-inf->max_vals[2])*(double)id::g_viewer_z/100.0;
+            id::g_view[2] = (inf->min_vals[2]-inf->max_vals[2])*(double)id::g_viewer_z/100.0;
 
             // center image on origin
             double tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
             double tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/(2.0); // center y
 
             // apply perspective shift
-            tmp_x += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-            tmp_y += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
+            tmp_x += ((double)id::g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
+            tmp_y += ((double)id::g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
             double tmp_z = -(inf->max_vals[2]);
             id::trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
 
@@ -1914,9 +1914,9 @@ static bool float_view_transf3d(ViewTransform3D *inf)
         }
     }
     inf->row = (int)(inf->cvt.c*inf->view_vect[0] + inf->cvt.d*inf->view_vect[1]
-                     + inf->cvt.f + g_yy_adjust);
+                     + inf->cvt.f + id::g_yy_adjust);
     inf->col = (int)(inf->cvt.a*inf->view_vect[0] + inf->cvt.b*inf->view_vect[1]
-                     + inf->cvt.e + g_xx_adjust);
+                     + inf->cvt.e + id::g_xx_adjust);
     if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= g_logical_screen_y_dots)
     {
         if ((long)std::abs(inf->col)+(long)std::abs(inf->row) > BAD_PIXEL)

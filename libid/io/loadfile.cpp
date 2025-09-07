@@ -359,7 +359,7 @@ static void backwards_info2(const FractalInfo &read_info)
             id::g_light_y = read_info.init3d[13];                         // y light vector coordinate
             id::g_light_z = read_info.init3d[14];                         // z light vector coordinate
             id::g_light_avg = read_info.init3d[15];                       // number of points to average
-            g_preview_factor = read_info.preview_factor;
+            id::g_preview_factor = read_info.preview_factor;
             g_adjust_3d_x = read_info.x_trans;
             g_adjust_3d_y = read_info.y_trans;
             g_red_crop_left = read_info.red_crop_left;
@@ -368,7 +368,7 @@ static void backwards_info2(const FractalInfo &read_info)
             g_blue_crop_right = read_info.blue_crop_right;
             g_red_bright = read_info.red_bright;
             g_blue_bright = read_info.blue_bright;
-            g_converge_x_adjust = read_info.x_adjust;
+            id::g_converge_x_adjust = read_info.x_adjust;
             g_eye_separation = read_info.eye_separation;
             g_glasses_type = static_cast<GlassesType>(read_info.glasses_type);
         }
@@ -446,9 +446,9 @@ static void backwards_info5(const FractalInfo &read_info)
         if (g_display_3d == Display3DMode::NONE && read_info.display_3d > 0)
         {
             g_loaded_3d = true;
-            g_ambient = read_info.ambient;
-            g_randomize_3d = read_info.randomize;
-            g_haze = read_info.haze;
+            id::g_ambient = read_info.ambient;
+            id::g_randomize_3d = read_info.randomize;
+            id::g_haze = read_info.haze;
             g_transparent_color_3d[0] = read_info.transparent[0];
             g_transparent_color_3d[1] = read_info.transparent[1];
         }

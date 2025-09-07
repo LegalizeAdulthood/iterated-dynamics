@@ -497,7 +497,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
     case MemoryLocation::DISK: // MemoryAlloc
         if (g_disk_targa)
         {
-            s_handles[handle].disk.file = dir_fopen(g_working_dir, g_light_name, "a+b");
+            s_handles[handle].disk.file = dir_fopen(g_working_dir, id::g_light_name, "a+b");
         }
         else
         {
@@ -521,7 +521,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
         success = true;
         std::fclose(s_handles[handle].disk.file); // so clusters aren't lost if we crash while running
         s_handles[handle].disk.file = g_disk_targa ?
-            dir_fopen(g_working_dir, g_light_name, "r+b") :
+            dir_fopen(g_working_dir, id::g_light_name, "r+b") :
             dir_fopen(g_temp_dir, mem_filename(handle), "r+b");
         // cppcheck-suppress useClosedFile
         std::fseek(s_handles[handle].disk.file, 0, SEEK_SET);
