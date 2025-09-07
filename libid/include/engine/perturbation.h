@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 bool perturbation();
+
+} // namespace id

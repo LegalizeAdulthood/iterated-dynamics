@@ -14,7 +14,8 @@
 #include <stdexcept>
 #include <string>
 
-using namespace id;
+namespace id
+{
 
 static PertEngine s_pert_engine;
 
@@ -61,3 +62,5 @@ bool perturbation()
     g_calc_status = CalcStatus::COMPLETED;
     return false;
 }
+
+} // namespace id
