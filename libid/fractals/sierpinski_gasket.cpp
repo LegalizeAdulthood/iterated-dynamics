@@ -6,7 +6,8 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 bool sierpinski_per_image()
 {
@@ -35,3 +36,5 @@ int sierpinski_orbit()
 
     return id::g_bailout_float();
 }
+
+} // namespace id::fractals
