@@ -20,6 +20,7 @@
 #include <cstring>
 
 using namespace id;
+using namespace id::io;
 
 static const std::string SPEED_PROMPT{"Speed key string"};
 

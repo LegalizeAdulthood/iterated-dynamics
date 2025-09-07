@@ -6,6 +6,9 @@
 
 #include <cstring>
 
+namespace id::io
+{
+
 int ends_with_slash(const char *fl)
 {
     if (int len = (int) std::strlen(fl); len)
@@ -17,3 +20,5 @@ int ends_with_slash(const char *fl)
     }
     return 0;
 }
+
+} // namespace id::io

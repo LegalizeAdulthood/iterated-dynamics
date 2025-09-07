@@ -69,6 +69,7 @@ namespace fs = std::filesystem;
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::io;
 
 bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};
