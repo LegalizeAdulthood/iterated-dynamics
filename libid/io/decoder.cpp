@@ -28,6 +28,8 @@
 
 #include <config/port.h>
 
+using namespace id;
+
 static short get_next_code();
 
 // extern short out_line(pixels, linelen)
