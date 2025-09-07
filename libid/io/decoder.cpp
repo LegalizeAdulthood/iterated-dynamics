@@ -30,6 +30,9 @@
 
 using namespace id;
 
+namespace id::io
+{
+
 static short get_next_code();
 
 // extern short out_line(pixels, linelen)
@@ -409,3 +412,5 @@ void set_byte_buff(Byte * ptr)
 {
     s_byte_buff = ptr;
 }
+
+} // namespace id::io

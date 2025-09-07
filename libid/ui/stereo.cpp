@@ -33,6 +33,7 @@
 #include <vector>
 
 using namespace id;
+using namespace id::io;
 
 std::string g_stereo_map_filename;
 int g_auto_stereo_depth{100};

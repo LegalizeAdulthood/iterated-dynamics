@@ -49,6 +49,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::io;
 
 static int call_line3d(Byte *pixels, int line_len);
 static void cmp_line_cleanup();
