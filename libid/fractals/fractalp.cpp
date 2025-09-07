@@ -56,6 +56,8 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id::ui;
+
 namespace id::fractals
 {
 

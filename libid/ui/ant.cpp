@@ -19,8 +19,10 @@
 
 #include <sstream>
 
-using namespace id;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 static long change_wait(long wait)
 {
@@ -118,3 +120,5 @@ int ant_type()
     }
     return 0;
 }
+
+} // namespace id::ui

@@ -54,6 +54,7 @@ using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
+using namespace id::ui;
 
 static bool look(MainContext &context)
 {
