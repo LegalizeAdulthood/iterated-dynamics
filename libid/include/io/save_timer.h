@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::io
+{
+
 enum class TimedSave
 {
     NONE = 0,
@@ -17,3 +20,5 @@ extern TimedSave             g_timed_save;
 void start_save_timer();
 void stop_save_timer();
 bool auto_save_needed();
+
+} // namespace id::io

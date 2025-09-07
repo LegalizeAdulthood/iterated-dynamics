@@ -24,6 +24,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::io;
 
 /*
         get_toggles() is called whenever the 'x' key is pressed.
