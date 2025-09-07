@@ -6,7 +6,12 @@
 
 #include <string>
 
+namespace id::io
+{
+
 extern int                   g_cfg_line_nums[MAX_VIDEO_MODES];
 
 void load_config();
 void load_config(const std::string &cfg_path);
+
+} // namespace id::io
