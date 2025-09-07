@@ -6,6 +6,9 @@
 
 #include <string>
 
+namespace id::ui
+{
+
 std::string get_calculation_time(long calc_time)
 {
     if (calc_time < 0)
@@ -19,3 +22,5 @@ std::string get_calculation_time(long calc_time)
         (calc_time % 6000) / 100,                    //
         calc_time % 100);
 }
+
+} // namespace id::ui
