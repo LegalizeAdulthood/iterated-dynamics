@@ -7,6 +7,9 @@
 
 using namespace id::misc;
 
+namespace id::ui
+{
+
 /*
  * This routine returns a key, ignoring F1
  */
@@ -20,3 +23,5 @@ int get_a_key_no_help()
     while (ID_KEY_F1 == ch);
     return ch;
 }
+
+} // namespace id::ui
