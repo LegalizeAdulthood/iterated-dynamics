@@ -2,6 +2,9 @@
 //
 #include "tos.h"
 
+namespace id::misc
+{
+
 // Global variables (yuck!)
 char *g_top_of_stack{};
 
@@ -16,3 +19,5 @@ long stack_avail()
     char junk{};
     return WIN32_STACK_SIZE - (long)(g_top_of_stack - &junk);
 }
+
+} // namespace id::misc

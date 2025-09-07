@@ -1,5 +1,8 @@
 #include "misc/stack_avail.h"
 
+namespace id::misc
+{
+
 enum
 {
     WIN32_STACK_SIZE = 1024 * 1024
@@ -13,3 +16,5 @@ long stack_avail()
     char junk{};
     return WIN32_STACK_SIZE - (long)(((char *) g_top_of_stack) - &junk);
 }
+
+} // namespace id::misc

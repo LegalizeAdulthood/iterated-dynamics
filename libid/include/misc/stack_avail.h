@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::misc
+{
+
 long stack_avail();
+
+} // namespace id::misc
