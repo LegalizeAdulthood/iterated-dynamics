@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <complex>
 
+namespace id::math
+{
+
 // |z|^2
 inline double mag_squared(const std::complex<double> &z)
 {
@@ -132,3 +135,5 @@ inline void power(BFComplex &result, const BFComplex &z, int degree)
         degree >>= 1;
     }
 }
+
+} // namespace id::math
