@@ -24,9 +24,5 @@ enum
 #undef PI
 #endif
 #define PI 3.14159265358979323846
-#ifndef TRUE
-#define TRUE 1
-#define FALSE 0
-#endif
 
 } // namespace id::misc
