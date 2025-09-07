@@ -14,9 +14,10 @@
 #include <filesystem>
 #include <string>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 // get browse parameters, returns 3 if anything changes.
 int get_browse_params()
@@ -100,3 +101,5 @@ get_brws_restart:
 
     return i;
 }
+
+} // namespace id::ui

@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int get_browse_params();
+
+} // namespace id::ui
