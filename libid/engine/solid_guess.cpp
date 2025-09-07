@@ -14,7 +14,8 @@
 #include <algorithm>
 #include <cstring>
 
-using namespace id;
+namespace id
+{
 
 // MAX_X_BLK defn must match fracsubr.c
 enum
@@ -710,3 +711,5 @@ int solid_guess()
 
     return sg.scan();
 }
+
+} // namespace id
