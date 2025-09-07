@@ -6,6 +6,9 @@
 
 #include <complex>
 
+namespace id::fractals
+{
+
 int mandel_trig_plus_exponent_orbit();
 
 int mandel_z_power_orbit();
@@ -21,3 +24,5 @@ bool julia_fn_plus_z_sqrd_per_image();
 
 int trig_plus_z_squared_fractal();
 int trig_plus_z_squared_orbit();
+
+} // namespace id::fractals

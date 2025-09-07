@@ -16,8 +16,8 @@
 
 #include <cmath>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 enum
 {
@@ -209,3 +209,5 @@ int trig_plus_z_squared_orbit()
     g_new_z.y += 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
     return id::g_bailout_float();
 }
+
+} // namespace id::fractals
