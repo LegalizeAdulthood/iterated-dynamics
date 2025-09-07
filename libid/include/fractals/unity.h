@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 int unity_orbit();
+
+} // namespace id::fractals

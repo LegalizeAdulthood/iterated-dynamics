@@ -9,7 +9,8 @@
 
 #include <cmath>
 
-using namespace id;
+namespace id::fractals
+{
 
 int unity_orbit()
 {
@@ -23,3 +24,5 @@ int unity_orbit()
     g_new_z = g_old_z;
     return 0;
 }
+
+} // namespace id::fractals
