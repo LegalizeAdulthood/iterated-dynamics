@@ -14,6 +14,8 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id;
+
 static PertEngine s_pert_engine;
 
 bool perturbation()

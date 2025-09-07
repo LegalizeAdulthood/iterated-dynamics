@@ -15,6 +15,8 @@
 #include <cfloat>
 #include <cmath>
 
+using namespace id;
+
 int get_prec_bf_mag()
 {
     double x_mag_factor;

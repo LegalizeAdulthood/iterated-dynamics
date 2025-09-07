@@ -13,6 +13,9 @@
 
 #include <cmath>
 
+namespace id
+{
+
 // most people "think" in degrees
 static double rad_to_deg(double x)
 {
@@ -221,3 +224,5 @@ void cvt_center_mag_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble &mag, double &x_m
         rot += 180;
     }
 }
+
+} // namespace id
