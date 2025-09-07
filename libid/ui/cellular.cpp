@@ -8,13 +8,17 @@
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
 
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int cellular_type()
 {
     try
     {
-        id::fractals::Cellular cellular;
+        Cellular cellular;
 
         while (cellular.iterate())
         {
@@ -26,7 +30,7 @@ int cellular_type()
         }
         return 1;
     }
-    catch (const id::fractals::CellularError &e)
+    catch (const CellularError &e)
     {
         stop_msg(e.what());
         return -1;
@@ -47,3 +51,5 @@ int cellular_type()
         return -1;
     }
 }
+
+} // namespace id::ui
