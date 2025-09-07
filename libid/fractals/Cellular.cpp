@@ -26,6 +26,8 @@
 #include <string>
 #include <vector>
 
+using namespace id;
+
 //****************** standalone engine for "cellular" *******************
 
 bool g_cellular_next_screen{};             // for cellular next screen generation

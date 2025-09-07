@@ -16,6 +16,9 @@
 #include <cstdio>
 #include <ctime>
 
+namespace id
+{
+
 bool g_timer_flag{};         // you didn't see this, either
 long g_engine_timer_start{}; // timer(...) start & total
 long g_timer_interval{};     //
@@ -114,3 +117,5 @@ int decoder_timer(int width)
 {
     return timer(TimerType::DECODER, nullptr, width);
 }
+
+} // namespace id
