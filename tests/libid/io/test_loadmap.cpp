@@ -14,6 +14,7 @@
 
 using namespace id;
 using namespace id::io;
+using namespace id::misc;
 using namespace id::test::data;
 
 TEST(TestValidateLuts, loadMap)

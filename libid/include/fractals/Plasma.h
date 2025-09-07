@@ -8,6 +8,8 @@
 
 #include <vector>
 
+using namespace id::misc;
+
 namespace id::fractals
 {
 

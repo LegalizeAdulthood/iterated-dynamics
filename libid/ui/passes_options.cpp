@@ -17,6 +17,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::misc;
 
 /*
      passes_options invoked by <p> key

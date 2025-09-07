@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::misc
+{
+
 /// Saves the current value in the c'tor before assigning a new value.
 /// The d'tor restores the original value.
 template <typename T>
@@ -38,3 +41,5 @@ private:
     T m_saved;
     T &m_data;
 };
+
+} // namespace id::misc

@@ -12,6 +12,7 @@
 #include <gtest/gtest.h>
 
 using namespace id;
+using namespace id::misc;
 using namespace testing;
 
 namespace

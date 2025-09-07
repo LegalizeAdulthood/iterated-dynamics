@@ -15,6 +15,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::misc;
 
 // get browse parameters, returns 3 if anything changes.
 int get_browse_params()

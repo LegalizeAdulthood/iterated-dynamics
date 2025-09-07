@@ -25,6 +25,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::misc;
 
 /*
    See if double value was changed by input screen. Problem is that the

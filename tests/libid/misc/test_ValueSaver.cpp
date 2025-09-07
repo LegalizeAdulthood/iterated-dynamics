@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace id::misc;
+
 TEST(TestValueSaver, setsNewValue)
 {
     bool data{true};

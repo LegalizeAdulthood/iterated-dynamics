@@ -7,6 +7,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace id::misc;
+
 TEST(TestVideoMode, checkKeyNameFnKey)
 {
     EXPECT_EQ(ID_KEY_F1, check_vid_mode_key_name("F1"));

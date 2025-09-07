@@ -10,6 +10,8 @@
 #include <utility>
 #include <vector>
 
+using namespace id::misc;
+
 // g_look_at_mouse:
 //  IGNORE_MOUSE
 //      ignore the mouse entirely

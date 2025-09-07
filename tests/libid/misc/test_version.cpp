@@ -9,6 +9,8 @@
 
 #include <iostream>
 
+using namespace id::misc;
+
 TEST(TestVersion, release)
 {
     EXPECT_EQ(id::ID_VERSION_MAJOR * 100 + id::ID_VERSION_MINOR, g_release);

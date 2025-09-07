@@ -10,6 +10,7 @@
 #include <cstdio>
 
 using namespace id;
+using namespace id::misc;
 
 // execute commands from file
 CmdArgFlags get_commands()
