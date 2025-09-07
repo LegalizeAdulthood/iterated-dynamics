@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 enum class ColorState
 {
     DEFAULT_MAP = 0, // g_dac_box matches default map
@@ -10,3 +13,5 @@ enum class ColorState
 };
 
 extern ColorState g_color_state;
+
+} // namespace id
