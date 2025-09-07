@@ -9,7 +9,8 @@
 #include "math/arg.h"
 #include "ui/trig_fns.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 bool mandel_trig_or_trig_per_image()
 {
@@ -107,3 +108,5 @@ int julia_trig_or_trig_orbit()
     }
     return id::g_bailout_float();
 }
+
+} // namespace id::fractals
