@@ -241,7 +241,7 @@ static void plot3d_superimpose256(int x, int y, int color)
             g_put_color(x, y, color|(tmp&240));
             if (g_targa_out)
             {
-                if (!illumine())
+                if (!id::illumine())
                 {
                     targa_color(x, y, color|(tmp&240));
                 }
@@ -261,7 +261,7 @@ static void plot3d_superimpose256(int x, int y, int color)
             g_put_color(x, y, color|(tmp&15));
             if (g_targa_out)
             {
-                if (!illumine())
+                if (!id::illumine())
                 {
                     targa_color(x, y, color|(tmp&15));
                 }
@@ -297,7 +297,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
             g_put_color(x, y, color|tmp);
             if (g_targa_out)
             {
-                if (!illumine())
+                if (!id::illumine())
                 {
                     targa_color(x, y, color|tmp);
                 }
@@ -316,7 +316,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
             g_put_color(x, y, color|tmp);
             if (g_targa_out)
             {
-                if (!illumine())
+                if (!id::illumine())
                 {
                     targa_color(x, y, color|tmp);
                 }
@@ -345,7 +345,7 @@ static void plot3d_alternate(int x, int y, int color)
             g_put_color(x, y, color >> 1);
             if (g_targa_out)
             {
-                if (!illumine())
+                if (!id::illumine())
                 {
                     targa_color(x, y, color >> 1);
                 }
@@ -363,7 +363,7 @@ static void plot3d_alternate(int x, int y, int color)
             g_put_color(x, y, (color >> 1)+(g_colors >> 1));
             if (g_targa_out)
             {
-                if (!illumine())
+                if (!id::illumine())
                 {
                     targa_color(x, y, (color >> 1)+(g_colors >> 1));
                 }
@@ -452,7 +452,7 @@ void plot_setup()
     case GlassesType::STEREO_PAIR: // crosseyed mode
         if (g_screen_x_dots < 2*g_logical_screen_x_dots)
         {
-            if (g_x_rot == 0 && g_y_rot == 0)
+            if (id::g_x_rot == 0 && id::g_y_rot == 0)
             {
                 g_standard_plot = plot3d_cross_eyed_a; // use hidden surface kludge
             }
@@ -461,7 +461,7 @@ void plot_setup()
                 g_standard_plot = plot3d_cross_eyed_b;
             }
         }
-        else if (g_x_rot == 0 && g_y_rot == 0)
+        else if (id::g_x_rot == 0 && id::g_y_rot == 0)
         {
             g_standard_plot = plot3d_cross_eyed_c; // use hidden surface kludge
         }
@@ -476,9 +476,9 @@ void plot_setup()
         break;
     }
 
-    g_x_shift = (int)((g_shift_x * (double)g_logical_screen_x_dots)/100);
+    g_x_shift = (int)((id::g_shift_x * (double)g_logical_screen_x_dots)/100);
     g_x_shift1 = g_x_shift;
-    g_y_shift = (int)((g_shift_y * (double)g_logical_screen_y_dots)/100);
+    g_y_shift = (int)((id::g_shift_y * (double)g_logical_screen_y_dots)/100);
     g_y_shift1 = g_y_shift;
 
     if (g_glasses_type != GlassesType::NONE)

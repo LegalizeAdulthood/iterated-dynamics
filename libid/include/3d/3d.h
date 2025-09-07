@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 enum
 {
     COL_MAX = 4, // maximum column (4 x 4 matrix)
@@ -82,3 +85,5 @@ int vec_mat_mul(Vector s, Matrix m, Vector t);
 void vec_g_mat_mul(Vector s);
 int perspective(Vector v);
 int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL view, int bit_shift);
+
+} // namespace id

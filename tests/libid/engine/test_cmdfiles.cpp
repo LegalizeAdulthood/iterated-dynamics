@@ -3458,38 +3458,38 @@ TEST_F(TestParameterCommand, stereoValue)
 
 TEST_F(TestParameterCommand, rotation)
 {
-    ValueSaver saved_x_rot{g_x_rot, -99};
-    ValueSaver saved_y_rot{g_y_rot, -99};
-    ValueSaver saved_z_rot{g_z_rot, -99};
+    ValueSaver saved_x_rot{id::g_x_rot, -99};
+    ValueSaver saved_y_rot{id::g_y_rot, -99};
+    ValueSaver saved_z_rot{id::g_z_rot, -99};
 
     exec_cmd_arg("rotation=30/60/90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(30, g_x_rot);
-    EXPECT_EQ(60, g_y_rot);
-    EXPECT_EQ(90, g_z_rot);
+    EXPECT_EQ(30, id::g_x_rot);
+    EXPECT_EQ(60, id::g_y_rot);
+    EXPECT_EQ(90, id::g_z_rot);
 }
 
 TEST_F(TestParameterCommand, perspective)
 {
-    ValueSaver saved_z_viewer{g_viewer_z, -99};
+    ValueSaver saved_z_viewer{id::g_viewer_z, -99};
 
     exec_cmd_arg("perspective=90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(90, g_viewer_z);
+    EXPECT_EQ(90, id::g_viewer_z);
 }
 
 TEST_F(TestParameterCommand, xyShift)
 {
-    ValueSaver saved_x_shift{g_shift_x, -99};
-    ValueSaver saved_y_shift{g_shift_y, -99};
+    ValueSaver saved_x_shift{id::g_shift_x, -99};
+    ValueSaver saved_y_shift{id::g_shift_y, -99};
 
     exec_cmd_arg("xyshift=30/90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(30, g_shift_x);
-    EXPECT_EQ(90, g_shift_y);
+    EXPECT_EQ(30, id::g_shift_x);
+    EXPECT_EQ(90, id::g_shift_y);
 }
 
 TEST_F(TestParameterCommand, interocular)
@@ -3603,26 +3603,27 @@ TEST_F(TestParameterCommand, threeDOverlayNoFractal)
 
 TEST_F(TestParameterCommand, sphereNo)
 {
-    ValueSaver saved_sphere{g_sphere, true};
+    ValueSaver saved_sphere{id::g_sphere, true};
 
     exec_cmd_arg("sphere=no");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(g_sphere);
+    EXPECT_FALSE(id::g_sphere);
 }
 
 TEST_F(TestParameterCommand, sphereYes)
 {
-    ValueSaver saved_sphere{g_sphere, false};
+    ValueSaver saved_sphere{id::g_sphere, false};
 
     exec_cmd_arg("sphere=yes");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_TRUE(g_sphere);
+    EXPECT_TRUE(id::g_sphere);
 }
 
 TEST_F(TestParameterCommand, scaleXYZTwoValues)
 {
+    using namespace id;
     ValueSaver saved_x_scale{g_x_scale, -99};
     ValueSaver saved_y_scale{g_y_scale, -99};
     VALUE_UNCHANGED(g_rough, -99);
@@ -3636,104 +3637,104 @@ TEST_F(TestParameterCommand, scaleXYZTwoValues)
 
 TEST_F(TestParameterCommand, scaleXYZThreeValues)
 {
-    ValueSaver saved_x_scale{g_x_scale, -99};
-    ValueSaver saved_y_scale{g_y_scale, -99};
-    ValueSaver saved_rough{g_rough, -99};
+    ValueSaver saved_x_scale{id::g_x_scale, -99};
+    ValueSaver saved_y_scale{id::g_y_scale, -99};
+    ValueSaver saved_rough{id::g_rough, -99};
 
     exec_cmd_arg("scalexyz=1/2/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_x_scale);
-    EXPECT_EQ(2, g_y_scale);
-    EXPECT_EQ(3, g_rough);
+    EXPECT_EQ(1, id::g_x_scale);
+    EXPECT_EQ(2, id::g_y_scale);
+    EXPECT_EQ(3, id::g_rough);
 }
 
 TEST_F(TestParameterCommand, roughness)
 {
-    ValueSaver saved_rough{g_rough, -99};
+    ValueSaver saved_rough{id::g_rough, -99};
 
     exec_cmd_arg("roughness=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, g_rough);
+    EXPECT_EQ(3, id::g_rough);
 }
 
 TEST_F(TestParameterCommand, waterline)
 {
-    ValueSaver saved_water_line{g_water_line, -99};
+    ValueSaver saved_water_line{id::g_water_line, -99};
 
     exec_cmd_arg("waterline=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, g_water_line);
+    EXPECT_EQ(3, id::g_water_line);
 }
 
 TEST_F(TestParameterCommand, fillType)
 {
-    ValueSaver saved_fill_type{g_fill_type, static_cast<FillType>(-99)};
+    ValueSaver saved_fill_type{id::g_fill_type, static_cast<id::FillType>(-99)};
 
     exec_cmd_arg("filltype=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(FillType::SURFACE_CONSTANT, g_fill_type);
+    EXPECT_EQ(id::FillType::SURFACE_CONSTANT, id::g_fill_type);
 }
 
 TEST_F(TestParameterCommand, lightSource)
 {
-    ValueSaver saved_light_x{g_light_x, -99};
-    ValueSaver saved_light_y{g_light_y, -99};
-    ValueSaver saved_light_z{g_light_z, -99};
+    ValueSaver saved_light_x{id::g_light_x, -99};
+    ValueSaver saved_light_y{id::g_light_y, -99};
+    ValueSaver saved_light_z{id::g_light_z, -99};
 
     exec_cmd_arg("lightsource=1/2/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_light_x);
-    EXPECT_EQ(2, g_light_y);
-    EXPECT_EQ(3, g_light_z);
+    EXPECT_EQ(1, id::g_light_x);
+    EXPECT_EQ(2, id::g_light_y);
+    EXPECT_EQ(3, id::g_light_z);
 }
 
 TEST_F(TestParameterCommand, smoothing)
 {
-    ValueSaver saved_light_avg{g_light_avg, -99};
+    ValueSaver saved_light_avg{id::g_light_avg, -99};
 
     exec_cmd_arg("smoothing=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, g_light_avg);
+    EXPECT_EQ(3, id::g_light_avg);
 }
 
 TEST_F(TestParameterCommand, latitude)
 {
-    ValueSaver saved_sphere_theta_min{g_sphere_theta_min, -99};
-    ValueSaver saved_sphere_theta_max{g_sphere_theta_max, -99};
+    ValueSaver saved_sphere_theta_min{id::g_sphere_theta_min, -99};
+    ValueSaver saved_sphere_theta_max{id::g_sphere_theta_max, -99};
 
     exec_cmd_arg("latitude=1/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_sphere_theta_min);
-    EXPECT_EQ(3, g_sphere_theta_max);
+    EXPECT_EQ(1, id::g_sphere_theta_min);
+    EXPECT_EQ(3, id::g_sphere_theta_max);
 }
 
 TEST_F(TestParameterCommand, longitude)
 {
-    ValueSaver saved_sphere_phi_min{g_sphere_phi_min, -99};
-    ValueSaver saved_sphere_phi_max{g_sphere_phi_max, -99};
+    ValueSaver saved_sphere_phi_min{id::g_sphere_phi_min, -99};
+    ValueSaver saved_sphere_phi_max{id::g_sphere_phi_max, -99};
 
     exec_cmd_arg("longitude=1/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_sphere_phi_min);
-    EXPECT_EQ(3, g_sphere_phi_max);
+    EXPECT_EQ(1, id::g_sphere_phi_min);
+    EXPECT_EQ(3, id::g_sphere_phi_max);
 }
 
 TEST_F(TestParameterCommand, radius)
 {
-    ValueSaver saved_sphere_radius{g_sphere_radius, -99};
+    ValueSaver saved_sphere_radius{id::g_sphere_radius, -99};
 
     exec_cmd_arg("radius=1");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_sphere_radius);
+    EXPECT_EQ(1, id::g_sphere_radius);
 }
 
 TEST_F(TestParameterCommand, transparentOneValue)

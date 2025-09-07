@@ -64,7 +64,7 @@ restart_1:
 
     prompts3d[++k] = "Spherical projection?";
     values[k].type = 'y';
-    sphere = g_sphere ? 1 : 0;
+    sphere = id::g_sphere ? 1 : 0;
     values[k].uval.ch.val = sphere;
 
     prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
@@ -137,14 +137,14 @@ restart_1:
     g_preview_factor = std::max(g_preview_factor, 2);
     g_preview_factor = std::min(g_preview_factor, 2000);
 
-    if (sphere && !g_sphere)
+    if (sphere && !id::g_sphere)
     {
-        g_sphere = true;
+        id::g_sphere = true;
         set_3d_defaults();
     }
-    else if (!sphere && g_sphere)
+    else if (!sphere && id::g_sphere)
     {
-        g_sphere = false;
+        id::g_sphere = false;
         set_3d_defaults();
     }
 
@@ -172,7 +172,7 @@ restart_1:
         choices[k++] = "surface fill (colors interpolated)";
         choices[k++] = "surface fill (colors not interpolated)";
         choices[k++] = "solid fill (bars up from \"ground\")";
-        if (g_sphere)
+        if (id::g_sphere)
         {
             choices[k++] = "light source";
         }
@@ -189,13 +189,13 @@ restart_1:
         {
             ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_3D_FILL};
             i = full_screen_choice(ChoiceFlags::HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
-                attributes, 0, 0, 0, +g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
+                attributes, 0, 0, 0, +id::g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
         }
         if (i < 0)
         {
             goto restart_1;
         }
-        g_fill_type = static_cast<FillType>(i - 1);
+        id::g_fill_type = static_cast<id::FillType>(i - 1);
 
         if (g_glasses_type != GlassesType::NONE)
         {
@@ -211,7 +211,7 @@ restart_1:
     }
 restart_3:
 
-    if (g_sphere)
+    if (id::g_sphere)
     {
         k = -1;
         prompts3d[++k] = "Longitude start (degrees)";
@@ -233,42 +233,42 @@ restart_3:
         prompts3d[++k] = "Y-axis scaling factor in pct";
     }
     k = -1;
-    if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
+    if (g_raytrace_format == RayTraceFormat::NONE || id::g_sphere)
     {
-        values[++k].uval.ival   = g_x_rot    ;
+        values[++k].uval.ival   = id::g_x_rot    ;
         values[k].type = 'i';
-        values[++k].uval.ival   = g_y_rot    ;
+        values[++k].uval.ival   = id::g_y_rot    ;
         values[k].type = 'i';
-        values[++k].uval.ival   = g_z_rot    ;
+        values[++k].uval.ival   = id::g_z_rot    ;
         values[k].type = 'i';
     }
-    values[++k].uval.ival   = g_x_scale    ;
+    values[++k].uval.ival   = id::g_x_scale    ;
     values[k].type = 'i';
 
-    values[++k].uval.ival   = g_y_scale    ;
+    values[++k].uval.ival   = id::g_y_scale    ;
     values[k].type = 'i';
 
     prompts3d[++k] = "Surface Roughness scaling factor in pct";
     values[k].type = 'i';
-    values[k].uval.ival = g_rough     ;
+    values[k].uval.ival = id::g_rough     ;
 
     prompts3d[++k] = "'Water Level' (minimum color value)";
     values[k].type = 'i';
-    values[k].uval.ival = g_water_line ;
+    values[k].uval.ival = id::g_water_line ;
 
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
         prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
         values[k].type = 'i';
-        values[k].uval.ival = g_viewer_z     ;
+        values[k].uval.ival = id::g_viewer_z     ;
 
         prompts3d[++k] = "X shift with perspective (positive = right)";
         values[k].type = 'i';
-        values[k].uval.ival = g_shift_x    ;
+        values[k].uval.ival = id::g_shift_x    ;
 
         prompts3d[++k] = "Y shift with perspective (positive = up   )";
         values[k].type = 'i';
-        values[k].uval.ival = g_shift_y    ;
+        values[k].uval.ival = id::g_shift_y    ;
 
         prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
         values[k].type = 'i';
@@ -291,7 +291,7 @@ restart_3:
     values[k].type = 'i';
     values[k++].uval.ival = g_randomize_3d;
 
-    if (g_sphere)
+    if (id::g_sphere)
     {
         s = "Sphere 3D Parameters\n"
             "Sphere is on its side; North pole to right\n"
@@ -313,21 +313,21 @@ restart_3:
     }
 
     k = 0;
-    if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
+    if (g_raytrace_format == RayTraceFormat::NONE || id::g_sphere)
     {
-        g_x_rot    = values[k++].uval.ival;
-        g_y_rot    = values[k++].uval.ival;
-        g_z_rot    = values[k++].uval.ival;
+        id::g_x_rot    = values[k++].uval.ival;
+        id::g_y_rot    = values[k++].uval.ival;
+        id::g_z_rot    = values[k++].uval.ival;
     }
-    g_x_scale     = values[k++].uval.ival;
-    g_y_scale     = values[k++].uval.ival;
-    g_rough      = values[k++].uval.ival;
-    g_water_line  = values[k++].uval.ival;
+    id::g_x_scale     = values[k++].uval.ival;
+    id::g_y_scale     = values[k++].uval.ival;
+    id::g_rough      = values[k++].uval.ival;
+    id::g_water_line  = values[k++].uval.ival;
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
-        g_viewer_z = values[k++].uval.ival;
-        g_shift_x     = values[k++].uval.ival;
-        g_shift_y     = values[k++].uval.ival;
+        id::g_viewer_z = values[k++].uval.ival;
+        id::g_shift_x     = values[k++].uval.ival;
+        id::g_shift_y     = values[k++].uval.ival;
         g_adjust_3d_x     = values[k++].uval.ival;
         g_adjust_3d_y     = values[k++].uval.ival;
         g_transparent_color_3d[0] = values[k++].uval.ival;
@@ -337,7 +337,7 @@ restart_3:
     g_randomize_3d = std::min(g_randomize_3d, 7);
     g_randomize_3d = std::max(g_randomize_3d, 0);
 
-    if (g_targa_out || illumine() || g_raytrace_format != RayTraceFormat::NONE)
+    if (g_targa_out || id::illumine() || g_raytrace_format != RayTraceFormat::NONE)
     {
         if (get_light_params())
         {
@@ -353,15 +353,15 @@ static bool get_light_params()
     ChoiceBuilder<13> builder;
 
     // defaults go here
-    if (illumine() || g_raytrace_format != RayTraceFormat::NONE)
+    if (id::illumine() || g_raytrace_format != RayTraceFormat::NONE)
     {
-        builder.int_number("X value light vector", g_light_x)
-            .int_number("Y value light vector", g_light_y)
-            .int_number("Z value light vector", g_light_z);
+        builder.int_number("X value light vector", id::g_light_x)
+            .int_number("Y value light vector", id::g_light_y)
+            .int_number("Z value light vector", id::g_light_z);
 
         if (g_raytrace_format == RayTraceFormat::NONE)
         {
-            builder.int_number("Light Source Smoothing Factor", g_light_avg);
+            builder.int_number("Light Source Smoothing Factor", id::g_light_avg);
             builder.int_number("Ambient", g_ambient);
         }
     }
@@ -391,14 +391,14 @@ static bool get_light_params()
         }
     }
 
-    if (illumine())
+    if (id::illumine())
     {
-        g_light_x   = builder.read_int_number();
-        g_light_y   = builder.read_int_number();
-        g_light_z   = builder.read_int_number();
+        id::g_light_x   = builder.read_int_number();
+        id::g_light_y   = builder.read_int_number();
+        id::g_light_z   = builder.read_int_number();
         if (g_raytrace_format == RayTraceFormat::NONE)
         {
-            g_light_avg = builder.read_int_number();
+            id::g_light_avg = builder.read_int_number();
             g_ambient  = builder.read_int_number();
             g_ambient = std::min(g_ambient, 100);
             g_ambient = std::max(g_ambient, 0);
@@ -482,9 +482,9 @@ static bool check_map_file()
 static bool get_funny_glasses_params()
 {
     // defaults
-    if (g_viewer_z == 0)
+    if (id::g_viewer_z == 0)
     {
-        g_viewer_z = 150;
+        id::g_viewer_z = 150;
     }
     if (g_eye_separation == 0)
     {
@@ -506,7 +506,7 @@ static bool get_funny_glasses_params()
     }
     else if (g_glasses_type == GlassesType::SUPERIMPOSE)
     {
-        if (g_fill_type == FillType::SURFACE_GRID)
+        if (id::g_fill_type == id::FillType::SURFACE_GRID)
         {
             s_funny_glasses_map_name = "grid.map";
         }
@@ -560,12 +560,12 @@ int get_fract3d_params() // prompt for 3D fractal parameters
 {
     driver_stack_screen();
     ChoiceBuilder<7> builder;
-    builder.int_number("X-axis rotation in degrees", g_x_rot)
-        .int_number("Y-axis rotation in degrees", g_y_rot)
-        .int_number("Z-axis rotation in degrees", g_z_rot)
-        .int_number("Perspective distance [1 - 999, 0 for no persp]", g_viewer_z)
-        .int_number("X shift with perspective (positive = right)", g_shift_x)
-        .int_number("Y shift with perspective (positive = up   )", g_shift_y)
+    builder.int_number("X-axis rotation in degrees", id::g_x_rot)
+        .int_number("Y-axis rotation in degrees", id::g_y_rot)
+        .int_number("Z-axis rotation in degrees", id::g_z_rot)
+        .int_number("Perspective distance [1 - 999, 0 for no persp]", id::g_viewer_z)
+        .int_number("X shift with perspective (positive = right)", id::g_shift_x)
+        .int_number("Y shift with perspective (positive = up   )", id::g_shift_y)
         .int_number("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)",
             static_cast<int>(g_glasses_type));
 
@@ -582,12 +582,12 @@ int get_fract3d_params() // prompt for 3D fractal parameters
         goto get_f3d_exit;
     }
 
-    g_x_rot    = builder.read_int_number();
-    g_y_rot    = builder.read_int_number();
-    g_z_rot    = builder.read_int_number();
-    g_viewer_z = builder.read_int_number();
-    g_shift_x  = builder.read_int_number();
-    g_shift_y  = builder.read_int_number();
+    id::g_x_rot    = builder.read_int_number();
+    id::g_y_rot    = builder.read_int_number();
+    id::g_z_rot    = builder.read_int_number();
+    id::g_viewer_z = builder.read_int_number();
+    id::g_shift_x  = builder.read_int_number();
+    id::g_shift_y  = builder.read_int_number();
     g_glasses_type = static_cast<GlassesType>(builder.read_int_number());
     if (g_glasses_type < GlassesType::NONE || g_glasses_type > GlassesType::STEREO_PAIR)
     {

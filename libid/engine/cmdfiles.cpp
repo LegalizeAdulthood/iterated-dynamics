@@ -596,7 +596,7 @@ static void init_vars3d()
 {
     g_raytrace_format = RayTraceFormat::NONE;
     g_brief   = false;
-    g_sphere = false;
+    id::g_sphere = false;
     g_preview = false;
     g_show_box = false;
     g_converge_x_adjust = 0;
@@ -2075,11 +2075,11 @@ static CmdArgFlags cmd_fill_color(const Command &cmd)
 // filltype=?
 static CmdArgFlags cmd_fill_type(const Command &cmd)
 {
-    if (cmd.num_val < +FillType::SURFACE_GRID || cmd.num_val > +FillType::LIGHT_SOURCE_AFTER)
+    if (cmd.num_val < +id::FillType::SURFACE_GRID || cmd.num_val > +id::FillType::LIGHT_SOURCE_AFTER)
     {
         return cmd.bad_arg();
     }
-    g_fill_type = static_cast<FillType>(cmd.num_val);
+    id::g_fill_type = static_cast<id::FillType>(cmd.num_val);
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2379,8 +2379,8 @@ static CmdArgFlags cmd_latitude(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_sphere_theta_min = cmd.int_vals[0];
-    g_sphere_theta_max = cmd.int_vals[1];
+    id::g_sphere_theta_min = cmd.int_vals[0];
+    id::g_sphere_theta_max = cmd.int_vals[1];
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2438,9 +2438,9 @@ static CmdArgFlags cmd_light_source(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_light_x = cmd.int_vals[0];
-    g_light_y = cmd.int_vals[1];
-    g_light_z = cmd.int_vals[2];
+    id::g_light_x = cmd.int_vals[0];
+    id::g_light_y = cmd.int_vals[1];
+    id::g_light_z = cmd.int_vals[2];
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2509,8 +2509,8 @@ static CmdArgFlags cmd_longitude(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_sphere_phi_min = cmd.int_vals[0];
-    g_sphere_phi_max = cmd.int_vals[1];
+    id::g_sphere_phi_min = cmd.int_vals[0];
+    id::g_sphere_phi_max = cmd.int_vals[1];
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2926,7 +2926,7 @@ static CmdArgFlags cmd_perspective(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_viewer_z = cmd.num_val;
+    id::g_viewer_z = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3011,7 +3011,7 @@ static CmdArgFlags cmd_radius(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_sphere_radius = cmd.num_val;
+    id::g_sphere_radius = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3200,9 +3200,9 @@ static CmdArgFlags cmd_rotation(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_x_rot = cmd.int_vals[0];
-    g_y_rot = cmd.int_vals[1];
-    g_z_rot = cmd.int_vals[2];
+    id::g_x_rot = cmd.int_vals[0];
+    id::g_y_rot = cmd.int_vals[1];
+    id::g_z_rot = cmd.int_vals[2];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3210,7 +3210,7 @@ static CmdArgFlags cmd_rotation(const Command &cmd)
 static CmdArgFlags cmd_roughness(const Command &cmd)
 {
     // "rough" is really scale z, but we add it here for convenience
-    g_rough = cmd.num_val;
+    id::g_rough = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3272,11 +3272,11 @@ static CmdArgFlags cmd_scale_xyz(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_x_scale = cmd.int_vals[0];
-    g_y_scale = cmd.int_vals[1];
+    id::g_x_scale = cmd.int_vals[0];
+    id::g_y_scale = cmd.int_vals[1];
     if (cmd.total_params > 2)
     {
-        g_rough = cmd.int_vals[2];
+        id::g_rough = cmd.int_vals[2];
     }
     return CmdArgFlags::PARAM_3D;
 }
@@ -3352,7 +3352,7 @@ static CmdArgFlags cmd_smoothing(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_light_avg = cmd.num_val;
+    id::g_light_avg = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3447,7 +3447,7 @@ static CmdArgFlags cmd_sphere(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_sphere = cmd.yes_no_val[0] != 0;
+    id::g_sphere = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3815,7 +3815,7 @@ static CmdArgFlags cmd_water_line(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_water_line = cmd.num_val;
+    id::g_water_line = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3859,8 +3859,8 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_shift_x = cmd.int_vals[0];
-    g_shift_y = cmd.int_vals[1];
+    id::g_shift_x = cmd.int_vals[0];
+    id::g_shift_y = cmd.int_vals[1];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -4098,43 +4098,43 @@ static void arg_error(const char *bad_arg)      // oops. couldn't decode this
 
 void set_3d_defaults()
 {
-    g_rough     = 30;
-    g_water_line = 0;
-    g_viewer_z   = 0;
-    g_shift_x    = 0;
-    g_shift_y    = 0;
+    id::g_rough     = 30;
+    id::g_water_line = 0;
+    id::g_viewer_z   = 0;
+    id::g_shift_x    = 0;
+    id::g_shift_y    = 0;
     g_adjust_3d_x    = 0;
     g_adjust_3d_y    = 0;
-    g_light_avg  = 0;
+    id::g_light_avg  = 0;
     g_ambient   = 20;
     g_randomize_3d = 0;
     g_haze      = 0;
     g_background_color[0] = 51;
     g_background_color[1] = 153;
     g_background_color[2] = 200;
-    if (g_sphere)
+    if (id::g_sphere)
     {
-        g_sphere_phi_min      =  180;
-        g_sphere_phi_max      =  0;
-        g_sphere_theta_min    =  -90;
-        g_sphere_theta_max    =  90;
-        g_sphere_radius    =  100;
-        g_fill_type  = FillType::SURFACE_INTERPOLATED;
-        g_light_x    = 1;
-        g_light_y    = 1;
-        g_light_z    = 1;
+        id::g_sphere_phi_min      =  180;
+        id::g_sphere_phi_max      =  0;
+        id::g_sphere_theta_min    =  -90;
+        id::g_sphere_theta_max    =  90;
+        id::g_sphere_radius    =  100;
+        id::g_fill_type  = id::FillType::SURFACE_INTERPOLATED;
+        id::g_light_x    = 1;
+        id::g_light_y    = 1;
+        id::g_light_z    = 1;
     }
     else
     {
-        g_x_rot      = 60;
-        g_y_rot      = 30;
-        g_z_rot      = 0;
-        g_x_scale    = 90;
-        g_y_scale    = 90;
-        g_fill_type  = FillType::POINTS;
-        g_light_x    = 1;
-        g_light_y    = -1;
-        g_light_z    = 1;
+        id::g_x_rot      = 60;
+        id::g_y_rot      = 30;
+        id::g_z_rot      = 0;
+        id::g_x_scale    = 90;
+        id::g_y_scale    = 90;
+        id::g_fill_type  = id::FillType::POINTS;
+        id::g_light_x    = 1;
+        id::g_light_y    = -1;
+        id::g_light_z    = 1;
     }
 }
 

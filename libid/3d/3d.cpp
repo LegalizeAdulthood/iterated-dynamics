@@ -63,6 +63,9 @@
 #include <cmath>
 #include <cstring>
 
+namespace id
+{
+
 // '3d=nn/nn/nn/...' values
 bool g_sphere{}; // sphere? 1 = yes, 0 = no
 int g_x_rot{};   // rotate x-axis 60 degrees
@@ -353,3 +356,5 @@ int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL 
     t[2] = tmp[2];
     return g_overflow ? 1 : 0;
 }
+
+} // namespace id

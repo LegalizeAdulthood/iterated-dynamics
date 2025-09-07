@@ -58,7 +58,7 @@ enum
 };
 
 static int  ifs3d();
-static void setup_matrix(Matrix double_mat);
+static void setup_matrix(id::Matrix double_mat);
 static bool float_view_transf3d(ViewTransform3D *inf);
 static std::FILE *open_orbit_save();
 static void plot_hist(int x, int y, int color);
@@ -1804,15 +1804,15 @@ int ifs_type()                       // front-end for ifs2d and ifs3d
     return g_ifs_dim == IFSDimension::TWO ? ifs2d() : ifs3d();
 }
 
-static void setup_matrix(Matrix double_mat)
+static void setup_matrix(id::Matrix double_mat)
 {
     // build transformation matrix
-    identity(double_mat);
+    id::identity(double_mat);
 
     // apply rotations - uses the same rotation variables as line3d.c
-    x_rot((double)g_x_rot / 57.29577, double_mat);
-    y_rot((double)g_y_rot / 57.29577, double_mat);
-    z_rot((double)g_z_rot / 57.29577, double_mat);
+    id::x_rot((double)id::g_x_rot / 57.29577, double_mat);
+    id::y_rot((double)id::g_y_rot / 57.29577, double_mat);
+    id::z_rot((double)id::g_z_rot / 57.29577, double_mat);
 
     // apply scale
     //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
@@ -1850,10 +1850,10 @@ static bool float_view_transf3d(ViewTransform3D *inf)
     }
 
     // 3D VIEWING TRANSFORM
-    vec_mat_mul(inf->orbit, inf->double_mat, inf->view_vect);
+    id::vec_mat_mul(inf->orbit, inf->double_mat, inf->view_vect);
     if (s_real_time)
     {
-        vec_mat_mul(inf->orbit, inf->double_mat1, inf->view_vect1);
+        id::vec_mat_mul(inf->orbit, inf->double_mat1, inf->view_vect1);
     }
 
     if (g_color_iter <= s_waste) // waste this many points to find minz and maxz
@@ -1877,7 +1877,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             g_view[1] = 0;
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
-            g_view[2] = (inf->min_vals[2]-inf->max_vals[2])*(double)g_viewer_z/100.0;
+            g_view[2] = (inf->min_vals[2]-inf->max_vals[2])*(double)id::g_viewer_z/100.0;
 
             // center image on origin
             double tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
@@ -1887,7 +1887,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             tmp_x += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
             tmp_y += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
             double tmp_z = -(inf->max_vals[2]);
-            trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
+            id::trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
 
             if (s_real_time)
             {
@@ -1898,19 +1898,19 @@ static bool float_view_transf3d(ViewTransform3D *inf)
                 tmp_x += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
                 tmp_y += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
                 tmp_z = -(inf->max_vals[2]);
-                trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
+                id::trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
             }
         }
         return false;
     }
 
     // apply perspective if requested
-    if (g_viewer_z)
+    if (id::g_viewer_z)
     {
-        perspective(inf->view_vect);
+        id::perspective(inf->view_vect);
         if (s_real_time)
         {
-            perspective(inf->view_vect1);
+            id::perspective(inf->view_vect1);
         }
     }
     inf->row = (int)(inf->cvt.c*inf->view_vect[0] + inf->cvt.d*inf->view_vect[1]

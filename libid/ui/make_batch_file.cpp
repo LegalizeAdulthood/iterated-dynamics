@@ -1299,19 +1299,19 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         {
             put_filename("filename", g_read_filename.string().c_str());
         }
-        if (g_sphere)
+        if (id::g_sphere)
         {
             put_param(" sphere=y");
-            put_param(" latitude=%d/%d", g_sphere_theta_min, g_sphere_theta_max);
-            put_param(" longitude=%d/%d", g_sphere_phi_min, g_sphere_phi_max);
-            put_param(" radius=%d", g_sphere_radius);
+            put_param(" latitude=%d/%d", id::g_sphere_theta_min, id::g_sphere_theta_max);
+            put_param(" longitude=%d/%d", id::g_sphere_phi_min, id::g_sphere_phi_max);
+            put_param(" radius=%d", id::g_sphere_radius);
         }
-        put_param(" scalexyz=%d/%d", g_x_scale, g_y_scale);
-        put_param(" roughness=%d", g_rough);
-        put_param(" waterline=%d", g_water_line);
-        if (g_fill_type != FillType::POINTS)
+        put_param(" scalexyz=%d/%d", id::g_x_scale, id::g_y_scale);
+        put_param(" roughness=%d", id::g_rough);
+        put_param(" waterline=%d", id::g_water_line);
+        if (id::g_fill_type != id::FillType::POINTS)
         {
-            put_param(" filltype=%d", +g_fill_type);
+            put_param(" filltype=%d", +id::g_fill_type);
         }
         if (g_transparent_color_3d[0] || g_transparent_color_3d[1])
         {
@@ -1334,12 +1334,12 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
                 put_param(" brief=y");
             }
         }
-        if (g_fill_type > FillType::SOLID_FILL)
+        if (id::g_fill_type > id::FillType::SOLID_FILL)
         {
-            put_param(" lightsource=%d/%d/%d", g_light_x, g_light_y, g_light_z);
-            if (g_light_avg)
+            put_param(" lightsource=%d/%d/%d", id::g_light_x, id::g_light_y, id::g_light_z);
+            if (id::g_light_avg)
             {
-                put_param(" smoothing=%d", g_light_avg);
+                put_param(" smoothing=%d", id::g_light_avg);
             }
         }
         if (g_randomize_3d)
@@ -1373,12 +1373,12 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
     {
         // universal 3d
         //**** common (fractal & transform) 3d parameters in this section ****
-        if (!g_sphere || g_display_3d < Display3DMode::NONE)
+        if (!id::g_sphere || g_display_3d < Display3DMode::NONE)
         {
-            put_param(" rotation=%d/%d/%d", g_x_rot, g_y_rot, g_z_rot);
+            put_param(" rotation=%d/%d/%d", id::g_x_rot, id::g_y_rot, id::g_z_rot);
         }
-        put_param(" perspective=%d", g_viewer_z);
-        put_param(" xyshift=%d/%d", g_shift_x, g_shift_y);
+        put_param(" perspective=%d", id::g_viewer_z);
+        put_param(" xyshift=%d/%d", id::g_shift_x, id::g_shift_y);
         if (g_adjust_3d_x || g_adjust_3d_y)
         {
             put_param(" xyadjust=%d/%d", g_adjust_3d_x, g_adjust_3d_y);
