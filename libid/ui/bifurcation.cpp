@@ -6,12 +6,15 @@
 #include "fractals/Bifurcation.h"
 #include "misc/Driver.h"
 
-using namespace id;
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int bifurcation_type()
 {
-    id::fractals::Bifurcation bif;
+    Bifurcation bif;
     if (g_resuming)
     {
         bif.resume();
@@ -26,3 +29,5 @@ int bifurcation_type()
     }
     return 0;
 }
+
+} // namespace id::ui
