@@ -18,8 +18,8 @@
 
 namespace fs = std::filesystem;
 
-using namespace id;
-using namespace id::io;
+namespace id::io
+{
 
 // merge existing full path with new one
 // attempt to detect if file or directory
@@ -162,3 +162,5 @@ int merge_path_names(std::filesystem::path &old_full_path, const char *new_filen
     old_full_path = buff;
     return result;
 }
+
+} // namespace id::io
