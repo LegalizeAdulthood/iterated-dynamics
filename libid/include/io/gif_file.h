@@ -11,6 +11,9 @@ struct GifFileType;
 
 #define INFO_ID         "Fractal"
 
+namespace id::io
+{
+
 enum
 {
     GIF_EXTENSION1_FRACTAL_INFO_LENGTH = 504,
@@ -36,3 +39,5 @@ void put_orbits_info(GifFileType *gif, const OrbitsInfo &info);
 
 std::vector<char> get_extended_param_info(GifFileType *gif);
 void put_extended_param_info(GifFileType *gif, const std::vector<char> &params);
+
+} // namespace id::io

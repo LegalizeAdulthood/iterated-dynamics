@@ -15,6 +15,9 @@
 #include <stdexcept>
 #include <string>
 
+namespace id::io
+{
+
 static std::int16_t extract_int16(const unsigned char *src)
 {
     return boost::endian::load_little_s16(src);
@@ -85,7 +88,7 @@ public:
     std::int16_t extract_int16()
     {
         check_overflow(2);
-        const std::int16_t result = ::extract_int16(current());
+        const std::int16_t result = io::extract_int16(current());
         advance(2);
         return result;
     }
@@ -448,7 +451,7 @@ public:
     void insert_int16(std::int16_t value)
     {
         check_overflow(2);
-        ::insert_int16(current(), value);
+        io::insert_int16(current(), value);
         advance(2);
     }
     template <int N>
@@ -860,3 +863,5 @@ void put_orbits_info(GifFileType *gif, const OrbitsInfo &info)
     }
     ser.add_extension(gif, "fractint007");
 }
+
+} // namespace id::io

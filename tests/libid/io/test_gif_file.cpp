@@ -18,14 +18,15 @@
 #include <numeric>
 #include <string>
 
+using namespace id::io;
+using namespace id::test::data;
+
 constexpr double EPS{1.0e-6};
 
 enum
 {
     GIF_EXTENSION2_RESUME_INFO_LENGTH = 196,
 };
-
-using namespace id::test::data;
 
 class TestOpenGIF : public ::testing::Test
 {
