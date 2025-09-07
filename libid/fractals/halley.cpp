@@ -14,8 +14,8 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 static int s_halley_a_plus_one{};
 static int s_halley_a_plus_one_times_degree{};
@@ -118,3 +118,5 @@ int halley_per_pixel()
 
     return 0; // 1st iteration is not done
 }
+
+} // namespace id::fractals
