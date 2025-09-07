@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 int tesseral();
+
+} // namespace id
