@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::math
 {
 
 template <typename T>
@@ -14,10 +14,8 @@ struct HyperComplex
     T t;
 };
 
-}
-
-using DHyperComplex = id::HyperComplex<double>;
-using LHyperComplex = id::HyperComplex<long>;
+using DHyperComplex = HyperComplex<double>;
+using LHyperComplex = HyperComplex<long>;
 
 void hcmplx_mult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out);
 void hcmplx_sqr(DHyperComplex *arg, DHyperComplex *out);
@@ -26,3 +24,5 @@ void hcmplx_add(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out);
 void hcmplx_sub(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out);
 void hcmplx_minus(DHyperComplex *arg1, DHyperComplex *out);
 void hcmplx_trig0(DHyperComplex *h, DHyperComplex *out);
+
+} // namespace id::math
