@@ -35,9 +35,11 @@
 #include <system_error>
 #include <vector>
 
-using namespace id;
 using namespace id::io;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 // misc. #defines
 //
@@ -2862,3 +2864,5 @@ void edit_palette()
 
     g_line_buff.clear();
 }
+
+} // namespace id::ui

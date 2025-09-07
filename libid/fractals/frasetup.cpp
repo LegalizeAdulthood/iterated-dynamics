@@ -24,6 +24,7 @@
 #include <cmath>
 
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id::fractals
 {

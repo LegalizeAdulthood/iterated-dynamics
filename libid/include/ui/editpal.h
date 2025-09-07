@@ -6,6 +6,9 @@
 
 #include <vector>
 
+namespace id::ui
+{
+
 //
 // Class:     CrossHairCursor
 //
@@ -66,3 +69,5 @@ extern bool                  g_using_jiim;
 void edit_palette();
 void put_row(int x, int y, int width, const char *buff);
 void get_row(int x, int y, int width, char *buff);
+
+} // namespace id::ui
