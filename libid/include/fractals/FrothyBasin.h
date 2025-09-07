@@ -48,8 +48,8 @@ private:
 
 extern FrothyBasin g_frothy_basin;
 
-} // namespace id::fractals
-
 int froth_orbit();
 int froth_per_pixel();
 bool froth_per_image();
+
+} // namespace id::fractals

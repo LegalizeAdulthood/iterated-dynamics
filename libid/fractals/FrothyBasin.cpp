@@ -18,8 +18,6 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace id;
-
 namespace id::fractals
 {
 
@@ -407,11 +405,9 @@ int FrothyBasin::calc()
     return g_color;
 }
 
-} // namespace id::fractals
-
 bool froth_per_image()
 {
-    return id::fractals::g_frothy_basin.per_image();
+    return g_frothy_basin.per_image();
 }
 
 // These last two froth functions are for the orbit-in-window feature.
@@ -430,5 +426,7 @@ int froth_per_pixel()
 
 int froth_orbit()
 {
-    return id::fractals::g_frothy_basin.orbit();
+    return g_frothy_basin.orbit();
 }
+
+} // namespace id::fractals
