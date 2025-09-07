@@ -6,6 +6,9 @@
 
 #include <fmt/format.h>
 
+namespace id::misc
+{
+
 // g_release is pushed/popped on the history stack to provide backward compatibility with previous
 // behavior, so it can't be const.
 int g_release{id::ID_VERSION_MAJOR * 100 + id::ID_VERSION_MINOR};
@@ -105,3 +108,5 @@ bool operator<(const Version &lhs, const Version &rhs)
 
     return false;
 }
+
+} // namespace id::misc

@@ -16,6 +16,7 @@
 #include <sstream>
 
 using namespace id;
+using namespace id::misc;
 using namespace testing;
 
 namespace

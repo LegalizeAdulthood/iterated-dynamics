@@ -18,6 +18,7 @@
 #include <string_view>
 
 using namespace id;
+using namespace id::misc;
 
 static std::string get_cpu_id();
 

@@ -4,6 +4,9 @@
 
 #include <string>
 
+namespace id::misc
+{
+
 // major.minor.patch.tweak
 // legacy is true when version read from a file or parameter set as a single integer
 struct Version
@@ -70,3 +73,5 @@ inline bool operator<=(const Version &lhs, int legacy_version)
 {
     return lhs <= parse_legacy_version(legacy_version);
 }
+
+} // namespace id::misc
