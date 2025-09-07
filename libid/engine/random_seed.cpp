@@ -2,6 +2,9 @@
 
 #include <cstdlib>
 
+namespace id
+{
+
 bool g_random_seed_flag{};                                //
 int g_random_seed{};                                      // Random number seeding flag and value
 
@@ -13,3 +16,5 @@ void set_random_seed()
         ++g_random_seed;
     }
 }
+
+} // namespace id
