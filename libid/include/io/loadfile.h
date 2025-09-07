@@ -236,7 +236,7 @@ struct ExtBlock6
     short  x_dots;
     short  y_dots;
     short  e_count;
-    short  mutate[NUM_GENES];
+    short  mutate[ui::NUM_GENES];
 };
 
 struct ExtBlock7

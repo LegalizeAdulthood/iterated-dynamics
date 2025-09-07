@@ -29,10 +29,11 @@
 #include <iterator>
 #include <vector>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::math;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 enum
 {
@@ -1102,3 +1103,5 @@ int unspiral_map()
     }
     return s_evol_count_box[g_evolve_param_grid_x][g_evolve_param_grid_y];
 }
+
+} // namespace id::ui

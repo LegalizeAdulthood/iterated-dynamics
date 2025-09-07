@@ -4,9 +4,12 @@
 
 #include "ui/main_state.h"
 
+namespace id::ui
+{
 struct EvolutionInfo;
+}
 
-extern EvolutionInfo         g_evolve_info;
+extern id::ui::EvolutionInfo g_evolve_info;
 extern int                   g_finish_row;
 extern bool                  g_from_text;
 extern bool                  g_have_evolve_info;

@@ -12,6 +12,8 @@
 #include <cstring>
 #include <vector>
 
+using namespace id::ui;
+
 namespace id::io
 {
 

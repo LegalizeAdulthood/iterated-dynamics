@@ -20,6 +20,7 @@
 
 using namespace id::io;
 using namespace id::test::data;
+using namespace id::ui;
 
 constexpr double EPS{1.0e-6};
 

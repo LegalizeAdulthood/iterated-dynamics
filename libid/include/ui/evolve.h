@@ -4,6 +4,9 @@
 
 #include <cstdint>
 
+namespace id::ui
+{
+
 enum class Variations
 {
     NONE = 0,       // don't vary
@@ -143,3 +146,5 @@ void spiral_map(int count);
 int unspiral_map();
 void setup_param_box();
 void release_param_box();
+
+} // namespace id::ui
