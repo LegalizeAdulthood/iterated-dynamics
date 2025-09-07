@@ -29,7 +29,9 @@
 
 using namespace id;
 using namespace id::io;
-using namespace id::misc;
+
+namespace id::misc
+{
 
 enum
 {
@@ -576,3 +578,5 @@ void memory_release(MemoryHandle handle)
         break;
     } // end of switch
 }
+
+} // namespace id::misc

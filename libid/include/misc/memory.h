@@ -6,6 +6,9 @@
 
 #include <config/port.h>
 
+namespace id::misc
+{
+
 enum class MemoryLocation
 {
     NOWHERE = 0,
@@ -34,3 +37,5 @@ void init_memory();
 void exit_check();
 MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at);
 void memory_release(MemoryHandle handle);
+
+} // namespace id::misc
