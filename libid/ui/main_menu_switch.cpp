@@ -52,6 +52,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::io;
 
 static bool look(MainContext &context)
 {

@@ -27,6 +27,7 @@
 #include <stdexcept>
 
 using namespace id;
+using namespace id::io;
 
 static MainState save_evolver_image(MainContext &/*context*/)
 {
