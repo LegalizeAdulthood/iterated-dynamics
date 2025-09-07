@@ -4,6 +4,11 @@
 
 #include <string>
 
+namespace id::io
+{
+
 // returns true on error
 bool validate_luts(const std::string &map_name);
 void set_color_palette_name(const std::string &map_name);
+
+} // namespace id::io

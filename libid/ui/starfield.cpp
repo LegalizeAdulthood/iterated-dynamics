@@ -19,6 +19,7 @@
 #include "ui/video.h"
 
 using namespace id;
+using namespace id::io;
 
 const std::string ALTERN_MAP_NAME{"altern.map"};
 

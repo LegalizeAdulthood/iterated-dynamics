@@ -18,6 +18,8 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace id::io;
+
 namespace id::fractals
 {
 

@@ -18,7 +18,8 @@
 #include <cstdio>
 #include <cstring>
 
-using namespace id;
+namespace id::io
+{
 
 //*************************************************************************
 
@@ -112,3 +113,5 @@ void set_color_palette_name(const std::string &map_name)
     }
     g_map_specified = true;
 }
+
+} // namespace id::io
