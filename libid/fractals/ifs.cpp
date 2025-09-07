@@ -12,7 +12,8 @@
 #include <cstdio>
 #include <cstring>
 
-using namespace id;
+namespace id::fractals
+{
 
 int g_num_affine_transforms{};
 
@@ -125,3 +126,5 @@ int ifs_load()                   // read in IFS parameters
     }
     return ret;
 }
+
+} // namespace id::fractals

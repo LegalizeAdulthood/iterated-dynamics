@@ -13,6 +13,7 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::fractals;
 using namespace id::test::data;
 
 namespace

@@ -4,6 +4,9 @@
 
 #include <cstdio>
 
+namespace id::fractals
+{
+
 enum
 {
     NUM_IFS_2D_PARAMS = 7,
@@ -16,3 +19,5 @@ char *get_ifs_token(char *buf, std::FILE *ifs_file);
 char *get_next_ifs_token(char *buf, std::FILE *ifs_file);
 
 int ifs_load();
+
+} // namespace id::fractals
