@@ -7,6 +7,9 @@
 
 namespace fs = std::filesystem;
 
+namespace id::io
+{
+
 unsigned long get_disk_space()
 {
     const fs::space_info info{fs::space(fs::current_path())};
@@ -17,3 +20,5 @@ unsigned long get_disk_space()
     }
     return static_cast<unsigned long>(available);
 }
+
+} // namespace id::io

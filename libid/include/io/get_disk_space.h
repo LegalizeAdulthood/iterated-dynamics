@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::io
+{
+
 unsigned long get_disk_space();
+
+} // namespace id::io
