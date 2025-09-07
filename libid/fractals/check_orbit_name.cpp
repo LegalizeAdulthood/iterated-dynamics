@@ -7,6 +7,9 @@
 
 #include <cstring>
 
+namespace id::fractals
+{
+
 bool check_orbit_name(const char *orbit_name)
 {
     for (int i = 0; i < g_num_fractal_types; i++)
@@ -20,3 +23,5 @@ bool check_orbit_name(const char *orbit_name)
     }
     return true;
 }
+
+} // namespace id

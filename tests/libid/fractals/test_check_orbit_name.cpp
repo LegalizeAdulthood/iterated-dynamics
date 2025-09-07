@@ -9,6 +9,8 @@
 #include <string>
 #include <vector>
 
+using namespace id::fractals;
+
 TEST(TestCheckOrbitName, julibrotNames)
 {
     std::vector<std::string> names;

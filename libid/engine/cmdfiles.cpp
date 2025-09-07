@@ -2741,7 +2741,7 @@ static CmdArgFlags cmd_orbit_interval(const Command &cmd)
 
 static CmdArgFlags cmd_orbit_name(const Command &cmd)
 {
-    if (check_orbit_name(cmd.value))
+    if (fractals::check_orbit_name(cmd.value))
     {
         return cmd.bad_arg();
     }
