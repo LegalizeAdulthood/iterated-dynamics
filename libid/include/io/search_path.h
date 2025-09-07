@@ -6,6 +6,9 @@
 #include <functional>
 #include <string>
 
+namespace id::io
+{
+
 #ifdef WIN32
 constexpr const char *const PATH_SEPARATOR{";"};
 #else
@@ -18,3 +21,5 @@ inline std::string search_path(const char * filename, const char *path_var)
 {
     return search_path(filename, path_var, [](const char *var) -> const char * { return std::getenv(var); });
 }
+
+} // namespace id::io

@@ -10,6 +10,9 @@
 
 namespace fs = std::filesystem;
 
+namespace id::io
+{
+
 std::string search_path(const char *filename, const char *path_var, std::function<const char *(const char *)> get_env)
 {
     if (filename == nullptr || path_var == nullptr)
@@ -36,3 +39,5 @@ std::string search_path(const char *filename, const char *path_var, std::functio
 
     return {};
 }
+
+} // namespace id::io

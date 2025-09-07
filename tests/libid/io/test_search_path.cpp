@@ -10,6 +10,7 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::io;
 using namespace id::test::data;
 
 TEST(TestSearchPath, pathVarNotDefined)
