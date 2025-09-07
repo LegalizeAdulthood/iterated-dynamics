@@ -46,7 +46,9 @@
 #include <vector>
 
 using namespace id;
-using namespace id::io;
+
+namespace id::io
+{
 
 enum
 {
@@ -519,3 +521,5 @@ int pot_line(Byte *pixels, int line_len)
     g_row_count = save_row_count + 1;
     return 0;
 }
+
+} // namespace id::io
