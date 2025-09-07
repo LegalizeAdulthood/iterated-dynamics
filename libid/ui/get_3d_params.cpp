@@ -28,6 +28,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::io;
 
 static  bool get_light_params();
 static  bool check_map_file();

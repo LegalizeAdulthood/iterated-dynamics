@@ -18,6 +18,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::io;
 
 int g_fm_attack{};
 int g_fm_decay{};

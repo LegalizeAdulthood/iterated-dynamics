@@ -40,6 +40,8 @@
 #include <string>
 #include <vector>
 
+using namespace id::io;
+
 namespace id
 {
 

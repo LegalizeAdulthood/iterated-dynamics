@@ -10,7 +10,8 @@
 
 namespace fs = std::filesystem;
 
-using namespace id;
+namespace id::io
+{
 
 void check_write_file(std::string &name, const char *ext)
 {
@@ -33,3 +34,5 @@ void check_write_file(std::string &name, const char *ext)
         }
     } while (!g_overwrite_file);
 }
+
+} // namespace id::io

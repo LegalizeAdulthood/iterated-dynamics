@@ -40,6 +40,7 @@
 #endif
 
 using namespace id;
+using namespace id::io;
 
 enum
 {

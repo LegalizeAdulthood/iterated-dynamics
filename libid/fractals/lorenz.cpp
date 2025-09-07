@@ -42,6 +42,8 @@
 #include <cstdlib>
 #include <vector>
 
+using namespace id::io;
+
 namespace id::fractals
 {
 

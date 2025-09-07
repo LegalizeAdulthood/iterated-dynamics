@@ -4,4 +4,9 @@
 
 #include <string>
 
+namespace id::io
+{
+
 void check_write_file(std::string &name, const char *ext);
+
+} // namespace id::io

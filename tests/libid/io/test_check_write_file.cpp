@@ -6,6 +6,7 @@
 
 #include <gtest/gtest.h>
 
+using namespace id::io;
 using namespace id::test::check_write_file;
 
 TEST(TestCheckWriteFile, newFile)
