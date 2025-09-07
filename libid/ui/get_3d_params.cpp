@@ -30,6 +30,7 @@ using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
+using namespace id::ui;
 
 static  bool get_light_params();
 static  bool check_map_file();

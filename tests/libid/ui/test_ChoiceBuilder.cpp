@@ -11,6 +11,7 @@
 #include <functional>
 #include <memory>
 
+using namespace id::ui;
 using namespace testing;
 
 namespace

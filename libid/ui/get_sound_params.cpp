@@ -16,6 +16,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 static int get_music_params();
 static int get_scale_map();

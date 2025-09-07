@@ -16,6 +16,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 // get browse parameters, returns 3 if anything changes.
 int get_browse_params()

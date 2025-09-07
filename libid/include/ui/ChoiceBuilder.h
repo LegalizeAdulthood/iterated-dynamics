@@ -9,6 +9,9 @@
 #include <stdexcept>
 #include <string>
 
+namespace id::ui
+{
+
 struct FullScreenPrompt
 {
     int operator()(const char *hdg, int num_prompts, const char **prompts, FullScreenValues *values,
@@ -230,3 +233,5 @@ private:
     bool m_prompted{};
     Prompter m_prompter;
 };
+
+} // namespace id::ui
