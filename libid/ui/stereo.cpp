@@ -35,6 +35,7 @@
 using namespace id;
 using namespace id::io;
 using namespace id::misc;
+using namespace id::ui;
 
 std::string g_stereo_map_filename;
 int g_auto_stereo_depth{100};

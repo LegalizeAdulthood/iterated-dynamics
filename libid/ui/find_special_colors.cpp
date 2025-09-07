@@ -7,7 +7,8 @@
 
 #include <algorithm>
 
-using namespace id;
+namespace id::ui
+{
 
 int g_color_dark{};   // darkest color in palette
 int g_color_bright{}; // brightest color in palette
@@ -75,3 +76,5 @@ void find_special_colors()
         }
     }
 }
+
+} // namespace id::ui
