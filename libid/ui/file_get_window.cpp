@@ -153,7 +153,7 @@ int file_get_window()
     if (s_old_bf_math == BFMathType::NONE)
     {
         CalcStatus old_calc_status = g_calc_status; // kludge because next sets it = 0
-        fractal_float_to_bf();
+        id::fractal_float_to_bf();
         g_calc_status = old_calc_status;
     }
     saved = save_stack();

@@ -69,7 +69,7 @@ void set_default_params()
     }
     else if (g_bf_math != BFMathType::NONE)
     {
-        fractal_float_to_bf();
+        id::fractal_float_to_bf();
     }
 }
 

@@ -30,6 +30,9 @@
 #include <cfloat>
 #include <cmath>
 
+namespace id
+{
+
 static void adjust_to_limits(double expand);
 static void smallest_add(double *num);
 static bool ratio_bad(double actual, double desired);
@@ -904,3 +907,5 @@ static bool ratio_bad(double actual, double desired)
     }
     return false;
 }
+
+} // namespace id

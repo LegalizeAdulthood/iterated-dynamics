@@ -489,11 +489,11 @@ top:
         double x_mag_factor;
         double rotation;
         double skew;
-        adjust_corner(); // make bottom left exact if very near exact
+        id::adjust_corner(); // make bottom left exact if very near exact
         if (g_bf_math != BFMathType::NONE)
         {
             int dec = std::min(320, g_decimals);
-            adjust_corner_bf(); // make bottom left exact if very near exact
+            id::adjust_corner_bf(); // make bottom left exact if very near exact
             cvt_center_mag_bf(bf_x_ctr, bf_y_ctr, magnification, x_mag_factor, rotation, skew);
             // find alignment information
             msg[0] = 0;
