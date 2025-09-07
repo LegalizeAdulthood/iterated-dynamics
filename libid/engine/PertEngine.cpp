@@ -27,7 +27,8 @@
 #include <cstring>
 #include <stdexcept>
 
-using namespace id;
+namespace id
+{
 
 // Raising this number makes more calculations, but less variation between each calculation (less chance
 // of mis-identifying a glitched point).
@@ -529,3 +530,5 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         g_cur_fractal_specific->pert_ref(center, z);
     }
 }
+
+} // namespace id

@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+namespace id
+{
+
 class PertEngine
 {
 public:
@@ -38,3 +41,5 @@ private:
     int m_reference_points{};
     int m_saved_stack{};
 };
+
+} // namespace id
