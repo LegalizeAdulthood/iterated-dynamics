@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 bool param_not_used(int param);
+
+} // namespace id

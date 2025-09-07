@@ -5,6 +5,9 @@
 #include "fractals/fractype.h"
 #include "fractals/parser.h"
 
+namespace id
+{
+
 /*
  *  Returns 1 if the formula parameter is not used in the current
  *  formula.  If the parameter is used, or not a formula fractal,
@@ -58,3 +61,5 @@ bool param_not_used(int param)
     }
     return ret;
 }
+
+} // namespace id
