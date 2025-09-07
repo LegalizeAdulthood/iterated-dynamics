@@ -17,6 +17,8 @@
 #include <cstdlib>
 #include <cstring>
 
+using namespace id;
+
 static void blank_rows(int row, int count, int attr)
 {
     char buf[81];

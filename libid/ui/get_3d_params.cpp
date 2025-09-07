@@ -26,6 +26,8 @@
 #include <cstring>
 #include <string>
 
+using namespace id;
+
 static  bool get_light_params();
 static  bool check_map_file();
 static  bool get_funny_glasses_params();

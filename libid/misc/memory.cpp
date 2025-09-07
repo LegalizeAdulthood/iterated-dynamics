@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+// Memory allocation routines.
+//
 #include "misc/memory.h"
 
 #include "3d/line3d.h"
@@ -25,7 +27,7 @@
 #include <cstring>
 #include <filesystem>
 
-// Memory allocation routines.
+using namespace id;
 
 enum
 {

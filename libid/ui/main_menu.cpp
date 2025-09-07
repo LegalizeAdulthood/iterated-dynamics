@@ -20,6 +20,8 @@
 
 #include <cstring>
 
+using namespace id;
+
 enum
 {
     MENU_HDG = 3,

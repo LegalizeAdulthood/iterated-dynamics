@@ -86,7 +86,8 @@
 
 namespace fs = std::filesystem;
 
-using namespace id;
+namespace id
+{
 
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
@@ -987,7 +988,7 @@ CmdArgFlags Command::bad_arg() const
 
 void Command::init_msg() const
 {
-    ::init_msg(variable.c_str(), value, mode);
+    ::id::init_msg(variable.c_str(), value, mode);
 }
 
 struct CommandHandler
@@ -4278,3 +4279,5 @@ static bool is_a_big_float(const char *str)
     }
     return result;
 }
+
+} // namespace id

@@ -12,6 +12,8 @@
 #include "ui/sound.h"
 #include "ui/video.h"
 
+using namespace id;
+
 static void plot_d_orbit(double dx, double dy, int color);
 
 enum

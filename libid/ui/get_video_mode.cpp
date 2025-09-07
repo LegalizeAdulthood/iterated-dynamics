@@ -40,6 +40,8 @@
 #include <string>
 #include <vector>
 
+using namespace id;
+
 /* defines for flags; done this way instead of bit union to ensure ordering;
    these bits represent the sort sequence for video mode list */
 enum

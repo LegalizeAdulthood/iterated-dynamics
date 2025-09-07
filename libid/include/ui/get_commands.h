@@ -4,4 +4,4 @@
 
 #include "engine/cmdfiles.h"
 
-CmdArgFlags get_commands();
+id::CmdArgFlags get_commands();

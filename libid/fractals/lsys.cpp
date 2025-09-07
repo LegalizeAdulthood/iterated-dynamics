@@ -25,6 +25,8 @@
 #include <string>
 #include <vector>
 
+using namespace id;
+
 static bool read_lsystem_file(const char *str);
 static void free_rules_mem();
 static int rule_present(char symbol);

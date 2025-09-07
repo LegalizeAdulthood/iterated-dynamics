@@ -39,6 +39,8 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id;
+
 constexpr int MAX_ENTRIES = 2000;
 
 struct GetFileEntry

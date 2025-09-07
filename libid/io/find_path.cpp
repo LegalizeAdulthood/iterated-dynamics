@@ -10,6 +10,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id;
+
 // find_path
 //
 //      Find where a file is.

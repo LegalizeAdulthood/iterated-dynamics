@@ -8,6 +8,8 @@
 
 #include <cmath>
 
+using namespace id;
+
 long g_log_map_flag{};                     // Logarithmic palette flag: 0 = no
 LogMapCalculate g_log_map_fly_calculate{}; // calculate logmap on-the-fly
 bool g_log_map_auto_calculate{};           // auto calculate logmap

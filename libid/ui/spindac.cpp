@@ -9,6 +9,8 @@
 
 #include <cstring>
 
+using namespace id;
+
 int g_dac_count{};
 bool g_is_true_color{};
 

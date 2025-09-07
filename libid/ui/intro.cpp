@@ -21,6 +21,8 @@
 #include <ctime>
 #include <vector>
 
+using namespace id;
+
 bool g_slow_display{};
 
 void intro()

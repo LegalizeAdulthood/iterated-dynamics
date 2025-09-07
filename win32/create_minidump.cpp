@@ -15,6 +15,8 @@
 #include <cstdio>
 #include <filesystem>
 
+using namespace id;
+
 /* Global functions
  *
  * These were either copied from a .c file under unix, or

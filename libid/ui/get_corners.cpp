@@ -23,6 +23,8 @@
 #include <cmath>
 #include <cstdlib>
 
+using namespace id;
+
 /*
    See if double value was changed by input screen. Problem is that the
    conversion from double to string and back can make small changes

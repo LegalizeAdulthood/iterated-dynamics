@@ -20,6 +20,8 @@
 #include <cstring>
 #include <iterator>
 
+using namespace id;
+
 // for videomodes added new options "virtual x/y" that change "sx/ydots"
 // for diskmode changed "viewx/ydots" to "virtual x/y" that do as above
 // (since for diskmode they were updated by x/ydots that should be the

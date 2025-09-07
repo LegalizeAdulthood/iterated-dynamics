@@ -12,6 +12,8 @@
 #include <cstdio>
 #include <cstring>
 
+using namespace id;
+
 int g_num_affine_transforms{};
 
 enum

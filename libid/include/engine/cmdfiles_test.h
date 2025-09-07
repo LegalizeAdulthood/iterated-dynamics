@@ -7,7 +7,7 @@
 
 #include <functional>
 
-namespace cmd_files_test
+namespace id::cmd_files_test
 {
 
 // To facilitate testing

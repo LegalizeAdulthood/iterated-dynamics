@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace id;
+
 static int get_music_params();
 static int get_scale_map();
 

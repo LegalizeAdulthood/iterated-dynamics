@@ -20,6 +20,8 @@
 #undef max
 #endif
 
+using namespace id;
+
 struct LSysCmd
 {
     void (*f)(LSysTurtleState *);

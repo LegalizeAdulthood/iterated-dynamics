@@ -19,6 +19,8 @@
 #include <cctype>
 #include <cstring>
 
+using namespace id;
+
 static const std::string SPEED_PROMPT{"Speed key string"};
 
 /* For file list purposes only, it's a directory name if first

@@ -19,6 +19,8 @@
 #include <crtdbg.h>
 #endif
 
+using namespace id;
+
 // we're done.  Bail out
 [[noreturn]] void goodbye()
 {

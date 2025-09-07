@@ -35,6 +35,8 @@
 
 #include <filesystem>
 
+using namespace id;
+
 namespace
 {
 

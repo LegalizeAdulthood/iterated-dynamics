@@ -14,6 +14,8 @@
 #include <filesystem>
 #include <string>
 
+using namespace id;
+
 // get browse parameters, returns 3 if anything changes.
 int get_browse_params()
 {

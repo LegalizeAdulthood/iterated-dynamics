@@ -19,6 +19,8 @@
 
 #include <sstream>
 
+using namespace id;
+
 static long change_wait(long wait)
 {
     while (true)

@@ -13,6 +13,9 @@
 
 struct FractalSpecific;
 
+namespace id
+{
+
 enum TextColors
 {
     BLACK = 0,
@@ -259,3 +262,5 @@ CmdArgFlags load_commands(std::FILE *infile);
 void set_3d_defaults();
 int init_msg(const char *cmd_str, const char *bad_filename, CmdFile mode);
 CmdArgFlags cmd_arg(char *cur_arg, CmdFile mode);
+
+} // namespace id

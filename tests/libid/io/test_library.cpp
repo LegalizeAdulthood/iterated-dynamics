@@ -15,6 +15,7 @@
 
 using Path = std::filesystem::path;
 
+using namespace id;
 using namespace id::test::library;
 
 namespace

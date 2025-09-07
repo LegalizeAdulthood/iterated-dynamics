@@ -29,6 +29,8 @@
 #include <string>
 #include <vector>
 
+using namespace id;
+
 enum
 {
     BOX_ROW = 6,

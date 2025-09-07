@@ -10,6 +10,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id;
+
 void check_write_file(std::string &name, const char *ext)
 {
     do

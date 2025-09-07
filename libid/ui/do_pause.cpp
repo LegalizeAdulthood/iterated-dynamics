@@ -8,6 +8,8 @@
 #include "ui/goodbye.h"
 #include "ui/id_keys.h"
 
+using namespace id;
+
 // defer pause until after parsing so we know if in batch mode
 void do_pause(int action)
 {

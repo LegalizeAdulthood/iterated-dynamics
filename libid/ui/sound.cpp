@@ -17,6 +17,8 @@
 #include <ctime>
 #include <string>
 
+using namespace id;
+
 int g_fm_attack{};
 int g_fm_decay{};
 int g_fm_release{};

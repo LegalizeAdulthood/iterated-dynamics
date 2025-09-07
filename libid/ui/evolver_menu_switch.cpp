@@ -26,6 +26,8 @@
 #include <cassert>
 #include <stdexcept>
 
+using namespace id;
+
 static MainState save_evolver_image(MainContext &/*context*/)
 {
     if (driver_is_disk() && g_disk_targa)

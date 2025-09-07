@@ -10,6 +10,8 @@
 #include "misc/ValueSaver.h"
 #include "ui/field_prompt.h"
 
+using namespace id;
+
 /*
     get_cmd_string() is called whenever the 'g' key is pressed.  Return codes are:
         -1  routine was ESCAPEd - no need to re-generate the image.

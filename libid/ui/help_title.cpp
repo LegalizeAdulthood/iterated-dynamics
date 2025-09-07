@@ -13,6 +13,8 @@
 
 #include <string>
 
+using namespace id;
+
 void help_title()
 {
     driver_set_clear();

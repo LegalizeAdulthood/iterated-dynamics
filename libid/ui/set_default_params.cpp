@@ -12,6 +12,8 @@
 #include "misc/debug_flags.h"
 #include "ui/zoom.h"
 
+using namespace id;
+
 namespace
 {
 

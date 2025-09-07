@@ -15,6 +15,7 @@
 
 namespace fs = std::filesystem;
 
+using namespace id;
 using namespace id::test::data;
 
 namespace

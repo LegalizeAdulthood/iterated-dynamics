@@ -38,6 +38,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id;
+
 enum
 {
     MAX_HIST = 16,             // number of pages we'll remember

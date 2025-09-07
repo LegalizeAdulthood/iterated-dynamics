@@ -28,6 +28,8 @@
 #include <cstring>
 #include <string>
 
+using namespace id;
+
 static int prompt_check_key(int key);
 static int prompt_check_key_scroll(int key);
 static  int input_field_list(int attr, char *field, int field_len, const char **list, int list_len,

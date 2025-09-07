@@ -18,6 +18,8 @@
 #include <cstdio>
 #include <cstring>
 
+using namespace id;
+
 //*************************************************************************
 
 namespace

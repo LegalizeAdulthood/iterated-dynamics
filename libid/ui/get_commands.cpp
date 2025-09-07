@@ -9,6 +9,8 @@
 
 #include <cstdio>
 
+using namespace id;
+
 // execute commands from file
 CmdArgFlags get_commands()
 {

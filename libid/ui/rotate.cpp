@@ -29,6 +29,8 @@
 #include <cstring>
 #include <ctime>
 
+using namespace id;
+
 namespace
 {
 

@@ -15,6 +15,8 @@
 #include <algorithm>
 #include <iterator>
 
+using namespace id;
+
 /*
      passes_options invoked by <p> key
 */
