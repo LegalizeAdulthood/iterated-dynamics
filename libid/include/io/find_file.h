@@ -4,6 +4,9 @@
 
 #include <string>
 
+namespace id::io
+{
+
 enum
 {
     SUB_DIR = 1
@@ -32,3 +35,5 @@ bool fr_find_first(const char *path);
  * Fill in g_dta.filename, g_dta.path, and g_dta.attribute
  */
 bool fr_find_next();
+
+} // namespace id::io

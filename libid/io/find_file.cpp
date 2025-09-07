@@ -8,6 +8,9 @@
 
 namespace fs = std::filesystem;
 
+namespace id::io
+{
+
 enum class DirPos
 {
     NONE = 0,
@@ -104,3 +107,4 @@ bool fr_find_next()
     return next_match();
 }
 
+} // namespace id::io
