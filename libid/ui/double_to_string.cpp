@@ -5,6 +5,9 @@
 #include <cstdio>
 #include <cstring>
 
+namespace id::ui
+{
+
 void double_to_string(char *buf, double val)
 {
     constexpr std::size_t length = 20;
@@ -18,3 +21,5 @@ void double_to_string(char *buf, double val)
         }
     }
 }
+
+} // namespace id::ui
