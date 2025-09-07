@@ -6,6 +6,9 @@
 
 #include <config/port.h>
 
+namespace id
+{
+
 inline DComplex cmplx_bn_to_float(const BNComplex &s)
 {
     DComplex t;
@@ -58,3 +61,5 @@ void compare_values(const char *s, LDouble x, BigNum bnx);
 void compare_values_bf(const char *s, LDouble x, BigFloat bfx);
 void show_var_bf(const char *s, BigFloat n);
 #endif
+
+} // namespace id

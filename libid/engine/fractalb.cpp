@@ -29,9 +29,10 @@
 #include <cstring>
 #include <string>
 
-using namespace id;
-
 BFMathType g_bf_math{};
+
+namespace id
+{
 
 #ifndef NDEBUG
 //********************************************************************
@@ -970,3 +971,5 @@ BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     restore_stack(saved);
     return t;
 }
+
+} // namespace id
