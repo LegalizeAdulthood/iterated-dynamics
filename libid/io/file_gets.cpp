@@ -4,6 +4,9 @@
 
 #include <cstdio>
 
+namespace id::io
+{
+
 int file_gets(char *buf, int max_len, std::FILE *infile)
 {
     // similar to 'fgets', but file may be in either text or binary mode
@@ -36,3 +39,5 @@ int file_gets(char *buf, int max_len, std::FILE *infile)
     buf[len] = 0;
     return len;
 }
+
+} // namespace id::io

@@ -12,6 +12,8 @@
 #include <cstdio>
 #include <cstring>
 
+using namespace id::io;
+
 namespace id::fractals
 {
 
