@@ -24,6 +24,7 @@
 #include <cmath>
 
 using namespace id;
+using namespace id::fractals;
 
 // --------------------------------------------------------------------
 //              Setup (once per fractal image) routines

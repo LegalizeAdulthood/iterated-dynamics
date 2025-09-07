@@ -31,6 +31,8 @@
 
 BFMathType g_bf_math{};
 
+using namespace id::fractals;
+
 namespace id
 {
 

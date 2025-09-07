@@ -8,6 +8,7 @@
 #include <algorithm>
 
 using namespace testing;
+using namespace id::fractals;
 
 TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
 {

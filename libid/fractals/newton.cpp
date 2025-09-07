@@ -17,6 +17,7 @@
 #include <vector>
 
 using namespace id;
+using namespace id::fractals;
 
 static double                s_degree_minus_1_over_degree{};
 static double                s_newton_r_over_d{};

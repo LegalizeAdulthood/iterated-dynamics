@@ -24,6 +24,7 @@
 #include <cstdlib>
 
 using namespace id;
+using namespace id::fractals;
 
 /*
    See if double value was changed by input screen. Problem is that the

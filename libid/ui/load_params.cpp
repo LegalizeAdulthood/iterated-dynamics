@@ -7,6 +7,7 @@
 #include "fractals/fractalp.h"
 
 using namespace id;
+using namespace id::fractals;
 
 void load_params(FractalType type)
 {

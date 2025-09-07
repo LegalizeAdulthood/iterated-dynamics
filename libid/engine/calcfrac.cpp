@@ -74,6 +74,8 @@
 #include <new>
 #include <vector>
 
+using namespace id::fractals;
+
 namespace id
 {
 

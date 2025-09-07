@@ -19,6 +19,7 @@
 #include <cstdlib>
 
 using namespace id;
+using namespace id::fractals;
 
 static unsigned long s_filter_cycles{};
 static int s_lya_length{};

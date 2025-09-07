@@ -22,6 +22,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <string>
 
 using namespace id;
+using namespace id::fractals;
 
 // globals
 int g_bn_step{};

@@ -15,6 +15,7 @@
 #include <cmath>
 
 using namespace id;
+using namespace id::fractals;
 
 static int s_halley_a_plus_one{};
 static int s_halley_a_plus_one_times_degree{};

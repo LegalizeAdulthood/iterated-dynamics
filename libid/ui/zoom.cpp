@@ -35,6 +35,7 @@
 #include <vector>
 
 using namespace id;
+using namespace id::fractals;
 
 constexpr double PIXEL_ROUND{0.00001};
 

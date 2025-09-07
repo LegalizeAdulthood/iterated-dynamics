@@ -13,6 +13,7 @@
 #include "ui/zoom.h"
 
 using namespace id;
+using namespace id::fractals;
 
 namespace
 {

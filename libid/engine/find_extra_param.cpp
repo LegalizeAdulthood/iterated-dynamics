@@ -4,6 +4,8 @@
 
 #include "fractals/fractalp.h"
 
+using namespace id::fractals;
+
 namespace id
 {
 

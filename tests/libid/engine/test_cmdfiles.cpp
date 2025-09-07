@@ -61,8 +61,9 @@
 namespace fs = std::filesystem;
 
 using namespace id;
-using namespace testing;
+using namespace id::fractals;
 using namespace id::test::data;
+using namespace testing;
 
 static std::ostream &operator<<(std::ostream &str, CmdArgFlags value)
 {

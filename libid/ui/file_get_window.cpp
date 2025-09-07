@@ -36,6 +36,7 @@
 #include <filesystem>
 
 using namespace id;
+using namespace id::fractals;
 
 namespace
 {

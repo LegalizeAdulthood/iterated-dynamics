@@ -41,6 +41,7 @@
 #include <vector>
 
 using namespace id;
+using namespace id::fractals;
 
 /* defines for flags; done this way instead of bit union to ensure ordering;
    these bits represent the sort sequence for video mode list */

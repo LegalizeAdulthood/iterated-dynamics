@@ -11,7 +11,10 @@
 #include <string>
 #include <vector>
 
+namespace id::fractals
+{
 struct FractalSpecific;
+}
 
 namespace id
 {

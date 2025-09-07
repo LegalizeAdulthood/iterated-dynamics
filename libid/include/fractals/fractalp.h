@@ -10,6 +10,9 @@
 
 #include <complex>
 
+namespace id::fractals
+{
+
 struct AlternateMath
 {
     FractalType type;    // index in fractalname of the fractal
@@ -138,3 +141,5 @@ inline void set_fractal_type(FractalType value)
     g_fractal_type = value;
     g_cur_fractal_specific = get_fractal_specific(value);
 }
+
+} // namespace id::fractals

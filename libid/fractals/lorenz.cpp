@@ -43,6 +43,7 @@
 #include <vector>
 
 using namespace id;
+using namespace id::fractals;
 
 using OrbitCalc = int (*)(double *x, double *y, double *z);
 

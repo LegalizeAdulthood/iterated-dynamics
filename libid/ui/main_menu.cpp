@@ -21,6 +21,7 @@
 #include <cstring>
 
 using namespace id;
+using namespace id::fractals;
 
 enum
 {

@@ -44,6 +44,7 @@
 #include <ctime>
 
 using namespace id;
+using namespace id::fractals;
 
 static void area();
 

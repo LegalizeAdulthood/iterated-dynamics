@@ -16,6 +16,8 @@
 #include <cstdio>
 #include <ctime>
 
+using namespace id::fractals;
+
 namespace id
 {
 

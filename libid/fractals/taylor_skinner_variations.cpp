@@ -13,6 +13,7 @@
 #include "ui/trig_fns.h"
 
 using namespace id;
+using namespace id::fractals;
 
 static bool fn_plus_fn_sym();
 

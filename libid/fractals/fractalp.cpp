@@ -56,8 +56,8 @@
 #include <stdexcept>
 #include <string>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 // parameter descriptions
 // Note: + prefix denotes integer parameters
@@ -1958,3 +1958,5 @@ FractalSpecific *get_fractal_specific(FractalType type)
     }
     throw std::runtime_error("Unknown fractal type " + std::to_string(+type));
 }
+
+} // namespace id::fractals

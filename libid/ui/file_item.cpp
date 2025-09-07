@@ -40,6 +40,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::fractals;
 
 constexpr int MAX_ENTRIES = 2000;
 

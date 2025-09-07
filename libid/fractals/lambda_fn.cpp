@@ -14,6 +14,7 @@
 #include <cmath>
 
 using namespace id;
+using namespace id::fractals;
 
 int lambda_orbit()
 {

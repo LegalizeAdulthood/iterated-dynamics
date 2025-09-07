@@ -8,6 +8,8 @@
 
 #include <cstring>
 
+using namespace id::fractals;
+
 namespace id
 {
 

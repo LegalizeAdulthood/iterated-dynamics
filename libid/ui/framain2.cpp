@@ -48,6 +48,7 @@
 #include <ctime>
 
 using namespace id;
+using namespace id::fractals;
 
 static int call_line3d(Byte *pixels, int line_len);
 static void cmp_line_cleanup();

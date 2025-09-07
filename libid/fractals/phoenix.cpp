@@ -14,6 +14,7 @@
 #include "math/fpu087.h"
 
 using namespace id;
+using namespace id::fractals;
 
 static DComplex s_tmp2{};
 

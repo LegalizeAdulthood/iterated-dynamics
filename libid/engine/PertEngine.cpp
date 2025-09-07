@@ -27,6 +27,8 @@
 #include <cstring>
 #include <stdexcept>
 
+using namespace id::fractals;
+
 namespace id
 {
 

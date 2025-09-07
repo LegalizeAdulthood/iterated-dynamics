@@ -6,6 +6,7 @@
 #include "ui/check_key.h"
 
 using namespace id;
+using namespace id::fractals;
 
 int inverse_julia_fractal_type()
 {

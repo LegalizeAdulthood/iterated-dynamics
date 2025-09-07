@@ -20,6 +20,7 @@
 #include <iostream>
 
 using namespace id;
+using namespace id::fractals;
 
 using namespace testing;
 using namespace id::test::migrate_gif;
