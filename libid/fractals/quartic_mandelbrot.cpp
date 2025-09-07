@@ -6,6 +6,8 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
+using namespace id;
+
 int mandel4_orbit()
 {
     // first, compute (x + iy)**2

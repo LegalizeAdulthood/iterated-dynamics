@@ -67,6 +67,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id;
+
 bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};
 int g_max_line_length{72};

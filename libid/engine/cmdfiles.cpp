@@ -86,6 +86,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id;
+
 #define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
 
 static int get_max_cur_arg_len(const char *const float_val_str[], int num_args);

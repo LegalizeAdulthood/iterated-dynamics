@@ -9,6 +9,8 @@
 
 #include <cmath>
 
+using namespace id;
+
 int unity_orbit()
 {
     const double XXOne = sqr(g_old_z.x) + sqr(g_old_z.y);

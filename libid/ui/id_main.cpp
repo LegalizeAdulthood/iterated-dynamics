@@ -54,6 +54,8 @@
 #include <ctime>
 #include <string>
 
+using namespace id;
+
 VideoInfo g_video_entry{};                                    //
 id::help::HelpLabels g_help_mode{};                           //
 int g_adapter{};                                              // Video Adapter chosen from list in ...h

@@ -14,6 +14,8 @@
 
 #include <cmath>
 
+using namespace id;
+
 // standalone engine for "popcorn"
 // subset of std engine
 int popcorn_type()

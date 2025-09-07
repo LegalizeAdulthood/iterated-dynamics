@@ -13,6 +13,8 @@
 
 #include <cmath>
 
+using namespace id;
+
 int lambda_orbit()
 {
     // variation of classical Mandelbrot/Julia

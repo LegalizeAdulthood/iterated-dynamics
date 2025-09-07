@@ -13,6 +13,8 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace id;
+
 void get_julia_attractor(double real, double imag)
 {
     DComplex result{};

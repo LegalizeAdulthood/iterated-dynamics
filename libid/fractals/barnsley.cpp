@@ -6,6 +6,8 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
+using namespace id;
+
 int barnsley1_orbit()
 {
     // Barnsley's Mandelbrot type M1 from "Fractals Everywhere" by Michael Barnsley, p. 322
@@ -26,7 +28,7 @@ int barnsley1_orbit()
         g_new_z.x = (old_x_init_x + g_float_param->x - old_y_init_y);
         g_new_z.y = (old_y_init_x + g_float_param->y + old_x_init_y);
     }
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int barnsley2_orbit()
@@ -51,7 +53,7 @@ int barnsley2_orbit()
         g_new_z.x = old_x_init_x + g_float_param->x - old_y_init_y;
         g_new_z.y = old_y_init_x + g_float_param->y + old_x_init_y;
     }
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int barnsley3_orbit()
@@ -80,5 +82,5 @@ int barnsley3_orbit()
            is uninteresting.) */
         g_new_z.y += g_float_param->y * g_old_z.x;
     }
-    return id::g_bailout_float();
+    return g_bailout_float();
 }

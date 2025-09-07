@@ -21,6 +21,8 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include <cstring>
 #include <string>
 
+using namespace id;
+
 // globals
 int g_bn_step{};
 int g_bn_length{};

@@ -12,6 +12,8 @@
 #include "misc/debug_flags.h"
 #include "ui/trig_fns.h"
 
+using namespace id;
+
 static bool fn_plus_fn_sym();
 
 inline void cmplx_sqr_old(DComplex &out)

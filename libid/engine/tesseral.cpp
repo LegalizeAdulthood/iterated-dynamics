@@ -13,6 +13,8 @@
 
 #include <vector>
 
+using namespace id;
+
 struct Tess             // one of these per box to be done gets stacked
 {
     int x1{};

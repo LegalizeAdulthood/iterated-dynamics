@@ -74,6 +74,9 @@
 #include <new>
 #include <vector>
 
+namespace id
+{
+
 constexpr double DEM_BAILOUT{535.5};
 
 enum class ShowDotAction
@@ -2921,3 +2924,5 @@ static void put_true_color_disk(int x, int y, int color)
 void no_plot(int /*x*/, int /*y*/, int /*color*/)
 {
 }
+
+} // namespace id

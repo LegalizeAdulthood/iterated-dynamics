@@ -18,6 +18,8 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace id;
+
 static int s_inside_color{};
 static int s_periodicity_color{};
 

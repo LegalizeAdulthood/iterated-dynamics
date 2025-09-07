@@ -6,6 +6,8 @@
 #include "engine/orbit.h"
 #include "misc/Driver.h"
 
+using namespace id;
+
 bool check_key()
 {
     int key = driver_key_pressed();

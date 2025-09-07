@@ -22,6 +22,8 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
+using namespace id;
+
 enum
 {
     DRAW_INTERVAL = 6,

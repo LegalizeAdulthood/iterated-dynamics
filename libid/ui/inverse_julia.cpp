@@ -5,6 +5,8 @@
 #include "fractals/fractalp.h"
 #include "ui/check_key.h"
 
+using namespace id;
+
 int inverse_julia_fractal_type()
 {
     int color = 0;

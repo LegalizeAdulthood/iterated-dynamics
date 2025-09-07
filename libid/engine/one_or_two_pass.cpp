@@ -8,6 +8,8 @@
 #include "engine/work_list.h"
 #include "ui/video.h"
 
+using namespace id;
+
 // routines in this module
 static int  standard_calc(int pass_num);
 

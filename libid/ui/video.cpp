@@ -23,6 +23,8 @@
 #include <cassert>
 #include <cstdarg>
 
+using namespace id;
+
 static void (*s_write_pixel)(int x, int y, int color){};
 static int (*s_read_pixel)(int x, int y){};
 static void (*s_write_span)(int y, int x, int last_x, const Byte *pixels){};

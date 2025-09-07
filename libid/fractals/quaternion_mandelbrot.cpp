@@ -7,6 +7,8 @@
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 
+using namespace id;
+
 int quaternion_jul_per_pixel()
 {
     g_old_z.x = g_dx_pixel();

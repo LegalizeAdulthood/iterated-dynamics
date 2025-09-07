@@ -42,6 +42,8 @@
 #include <cstdlib>
 #include <vector>
 
+using namespace id;
+
 using OrbitCalc = int (*)(double *x, double *y, double *z);
 
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better

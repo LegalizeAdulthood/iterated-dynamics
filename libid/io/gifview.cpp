@@ -45,6 +45,8 @@
 #include <filesystem>
 #include <vector>
 
+using namespace id;
+
 enum
 {
     MAX_COLORS = 256

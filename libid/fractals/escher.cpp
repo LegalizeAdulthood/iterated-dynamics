@@ -9,6 +9,8 @@
 #include "math/cmplx.h"
 #include "math/sqr.h"
 
+using namespace id;
+
 int escher_orbit() // Science of Fractal Images pp. 185, 187
 {
     DComplex old_test;

@@ -10,6 +10,8 @@
 
 #include <cmath>
 
+using namespace id;
+
 static long s_beta{};
 
 int bifurc_may_orbit()

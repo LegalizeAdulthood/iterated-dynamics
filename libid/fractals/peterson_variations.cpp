@@ -15,6 +15,8 @@
 
 #include <algorithm>
 
+using namespace id;
+
 DComplex g_marks_coefficient{};
 
 bool marks_julia_per_image()

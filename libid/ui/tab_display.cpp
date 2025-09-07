@@ -43,6 +43,8 @@
 #include <cstring>
 #include <ctime>
 
+using namespace id;
+
 static void area();
 
 // Wrapping version of putstring for long numbers

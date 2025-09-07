@@ -27,6 +27,8 @@
 
 #include <cstring>
 
+using namespace id;
+
 MainState request_fractal_type(MainContext &context)
 {
     g_julibrot = false;

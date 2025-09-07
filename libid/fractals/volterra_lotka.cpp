@@ -9,6 +9,8 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 
+using namespace id;
+
 // Beauty of Fractals pp. 125 - 127
 int vl_orbit()
 {

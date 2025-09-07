@@ -45,7 +45,7 @@ static int s_save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
 
 static void plot_d_orbit(double dx, double dy, int color)
 {
-    if (g_orbit_save_index >= NUM_SAVE_ORBIT-3)
+    if (id::g_orbit_save_index >= NUM_SAVE_ORBIT-3)
     {
         return;
     }
@@ -68,15 +68,15 @@ static void plot_d_orbit(double dx, double dy, int color)
     // save orbit value
     if (color == -1)
     {
-        s_save_orbit[g_orbit_save_index++] = i;
-        s_save_orbit[g_orbit_save_index++] = j;
+        s_save_orbit[id::g_orbit_save_index++] = i;
+        s_save_orbit[id::g_orbit_save_index++] = j;
         const int c = get_color(i, j);
-        s_save_orbit[g_orbit_save_index++] = c;
-        g_put_color(i, j, c^g_orbit_color);
+        s_save_orbit[id::g_orbit_save_index++] = c;
+        id::g_put_color(i, j, c^id::g_orbit_color);
     }
     else
     {
-        g_put_color(i, j, color);
+        id::g_put_color(i, j, color);
     }
     g_logical_screen_x_offset = save_screen_x_offset;
     g_logical_screen_y_offset = save_screen_y_offset;
@@ -128,11 +128,11 @@ void scrub_orbit()
     driver_mute();
     ValueSaver save_screen_x_offset{g_logical_screen_x_offset, 0};
     ValueSaver save_screen_y_offset{g_logical_screen_y_offset, 0};
-    while (g_orbit_save_index >= 3)
+    while (id::g_orbit_save_index >= 3)
     {
-        int c = s_save_orbit[--g_orbit_save_index];
-        int j = s_save_orbit[--g_orbit_save_index];
-        int i = s_save_orbit[--g_orbit_save_index];
-        g_put_color(i, j, c);
+        int c = s_save_orbit[--id::g_orbit_save_index];
+        int j = s_save_orbit[--id::g_orbit_save_index];
+        int i = s_save_orbit[--id::g_orbit_save_index];
+        id::g_put_color(i, j, c);
     }
 }

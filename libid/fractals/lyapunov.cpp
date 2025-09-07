@@ -18,6 +18,8 @@
 #include <cmath>
 #include <cstdlib>
 
+using namespace id;
+
 static unsigned long s_filter_cycles{};
 static int s_lya_length{};
 static int s_lya_seed_ok{};

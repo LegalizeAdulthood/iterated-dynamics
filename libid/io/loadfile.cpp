@@ -53,6 +53,8 @@
                                 ((*((unsigned char*)&(c)+1)) << 8)
 #endif
 
+using namespace id;
+
 namespace
 {
 

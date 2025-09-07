@@ -18,6 +18,8 @@
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
+using namespace id;
+
 const std::string ALTERN_MAP_NAME{"altern.map"};
 
 static int s_distribution{30};

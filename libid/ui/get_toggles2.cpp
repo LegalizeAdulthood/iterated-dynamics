@@ -17,6 +17,8 @@
 #include <cstdlib>
 #include <cstring>
 
+using namespace id;
+
 /*
         get_toggles2() is similar to get_toggles, invoked by 'y' key
 */

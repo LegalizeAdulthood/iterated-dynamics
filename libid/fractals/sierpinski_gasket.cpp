@@ -6,6 +6,8 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
+using namespace id;
+
 bool sierpinski_per_image()
 {
     // sierpinski

@@ -29,6 +29,8 @@
 #include <cstring>
 #include <string>
 
+using namespace id;
+
 BFMathType g_bf_math{};
 
 #ifndef NDEBUG

@@ -51,6 +51,8 @@
 #include <iterator>
 #include <string>
 
+using namespace id;
+
 static bool compress(int row_limit);
 static int shift_write(const Byte *color, int num_colors);
 static int extend_blk_len(int data_len);

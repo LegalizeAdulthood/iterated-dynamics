@@ -37,6 +37,8 @@
 #include <string>
 #include <vector>
 
+using namespace id;
+
 namespace
 {
 

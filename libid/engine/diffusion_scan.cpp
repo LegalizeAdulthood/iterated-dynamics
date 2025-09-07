@@ -10,6 +10,8 @@
 #include <cmath>
 #include <cstring>
 
+using namespace id;
+
 // routines in this module
 static int diffusion_engine();
 

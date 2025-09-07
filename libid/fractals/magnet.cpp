@@ -9,6 +9,8 @@
 
 #include <cfloat>
 
+using namespace id;
+
 /*
 **  pre-calculated values for fractal types Magnet2M & Magnet2J
 */

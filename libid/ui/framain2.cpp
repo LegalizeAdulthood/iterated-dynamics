@@ -47,6 +47,8 @@
 #include <cstring>
 #include <ctime>
 
+using namespace id;
+
 static int call_line3d(Byte *pixels, int line_len);
 static void cmp_line_cleanup();
 static int cmp_line(Byte *pixels, int line_len);

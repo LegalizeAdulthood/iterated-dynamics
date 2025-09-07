@@ -14,6 +14,8 @@
 #include "math/fpu087.h"
 #include "engine/pixel_grid.h"
 
+using namespace id;
+
 LDouble g_b_const{};
 
 int divide_brot5_bn_per_pixel()

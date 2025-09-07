@@ -35,6 +35,8 @@
 #include <system_error>
 #include <vector>
 
+using namespace id;
+
 // misc. #defines
 //
 

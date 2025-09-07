@@ -34,6 +34,8 @@
 #include <cmath>
 #include <vector>
 
+using namespace id;
+
 constexpr double PIXEL_ROUND{0.00001};
 
 enum

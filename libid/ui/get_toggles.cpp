@@ -22,6 +22,8 @@
 #include <cstring>
 #include <string>
 
+using namespace id;
+
 /*
         get_toggles() is called whenever the 'x' key is pressed.
         This routine prompts for several options,

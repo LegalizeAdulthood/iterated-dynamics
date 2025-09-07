@@ -6,6 +6,8 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 
+using namespace id;
+
 int circle_orbit()
 {
     long i = (long) (g_params[0] * (g_temp_sqr_x + g_temp_sqr_y));

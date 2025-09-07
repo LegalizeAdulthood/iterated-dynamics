@@ -7,6 +7,8 @@
 #include "math/cmplx.h"
 #include "math/hcmplx.h"
 
+using namespace id;
+
 int hyper_complex_orbit()
 {
     DHyperComplex h_old;

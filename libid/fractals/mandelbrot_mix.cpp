@@ -12,6 +12,8 @@
 #include "math/cmplx.h"
 #include "misc/debug_flags.h"
 
+using namespace id;
+
 /* re-use static roots variable
    memory for mandelmix4 */
 

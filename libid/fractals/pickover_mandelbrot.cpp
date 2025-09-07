@@ -16,6 +16,8 @@
 
 #include <cmath>
 
+using namespace id;
+
 enum
 {
     MAX_POWER = 28

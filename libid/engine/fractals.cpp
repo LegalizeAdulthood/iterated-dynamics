@@ -55,6 +55,8 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cfloat>
 #include <cmath>
 
+using namespace id;
+
 int g_max_color{};
 int g_degree{};
 int g_basin{};

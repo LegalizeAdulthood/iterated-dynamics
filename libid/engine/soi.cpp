@@ -24,6 +24,8 @@
 #include <cmath>
 #include <iterator>
 
+using namespace id;
+
 enum
 {
     EVERY = 15,

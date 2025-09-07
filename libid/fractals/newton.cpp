@@ -16,6 +16,8 @@
 #include <cmath>
 #include <vector>
 
+using namespace id;
+
 static double                s_degree_minus_1_over_degree{};
 static double                s_newton_r_over_d{};
 static std::vector<DComplex> s_roots;

@@ -101,7 +101,7 @@ struct FractalSpecific
     float y_max;                            // default YMAX corner
     FractalType to_julia;                   // mandel-to-julia switch
     FractalType to_mandel;                  // julia-to-mandel switch
-    SymmetryType symmetry;                  // applicable symmetry logic
+    id::SymmetryType symmetry;                  // applicable symmetry logic
     int (*orbit_calc)();                    // function that calculates one orbit
     int (*per_pixel)();                     // once-per-pixel init
     bool (*per_image)();                    // once-per-image setup

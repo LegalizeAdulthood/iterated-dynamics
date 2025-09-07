@@ -11,6 +11,8 @@
 
 #include <cmath>
 
+using namespace id;
+
 OrbitDrawMode g_draw_mode{OrbitDrawMode::RECTANGLE};
 
 static int orbit_draw_rectangle()

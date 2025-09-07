@@ -9,6 +9,8 @@
 #include "math/arg.h"
 #include "ui/trig_fns.h"
 
+using namespace id;
+
 bool mandel_trig_or_trig_per_image()
 {
     // default symmetry is X_AXIS_NO_PARAM

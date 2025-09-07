@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace id;
+
 static int s_halley_a_plus_one{};
 static int s_halley_a_plus_one_times_degree{};
 

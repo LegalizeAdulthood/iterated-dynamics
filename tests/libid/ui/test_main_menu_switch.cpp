@@ -11,6 +11,7 @@
 
 #include <gtest/gtest.h>
 
+using namespace id;
 using namespace testing;
 
 namespace

@@ -37,6 +37,8 @@
 #include <string>
 #include <vector>
 
+using namespace id;
+
 enum
 {
     MAX_RECT = 1024      // largest width of SaveRect/RestoreRect

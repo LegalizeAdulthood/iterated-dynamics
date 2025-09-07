@@ -17,6 +17,8 @@
 #include <cmath>
 #include <vector>
 
+using namespace id;
+
 enum
 {
     DEFAULT_FILTER = 1000     /* "Beauty of Fractals" recommends using 5000

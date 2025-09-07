@@ -32,6 +32,8 @@
 #include <ctime>
 #include <vector>
 
+using namespace id;
+
 std::string g_stereo_map_filename;
 int g_auto_stereo_depth{100};
 double g_auto_stereo_width{10};

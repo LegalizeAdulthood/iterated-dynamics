@@ -27,6 +27,8 @@
 #include <cstring>
 #include <stdexcept>
 
+using namespace id;
+
 // Raising this number makes more calculations, but less variation between each calculation (less chance
 // of mis-identifying a glitched point).
 constexpr double GLITCH_TOLERANCE{1e-6};

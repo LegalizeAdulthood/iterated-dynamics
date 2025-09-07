@@ -19,6 +19,8 @@
 #include <filesystem>
 #include <iostream>
 
+using namespace id;
+
 using namespace testing;
 using namespace id::test::migrate_gif;
 

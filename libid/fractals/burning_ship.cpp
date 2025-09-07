@@ -13,6 +13,8 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id;
+
 int burning_ship_orbit()
 {
     DComplex q;

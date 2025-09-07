@@ -56,6 +56,8 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id;
+
 // parameter descriptions
 // Note: + prefix denotes integer parameters
 //       # prefix denotes U32 parameters

@@ -34,6 +34,8 @@
 #include <ctime>
 #include <filesystem>
 
+using namespace id;
+
 static void flush_output()
 {
     static time_t start = 0;

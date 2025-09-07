@@ -29,6 +29,8 @@
 #include <iterator>
 #include <vector>
 
+using namespace id;
+
 enum
 {
     EVOLVE_MAX_GRID_SIZE = 51  // This is arbitrary, = 1024/20

@@ -50,6 +50,8 @@
 #include <iterator>
 #include <string>
 
+using namespace id;
+
 static bool look(MainContext &context)
 {
     const id::help::HelpLabels old_help_mode = g_help_mode;

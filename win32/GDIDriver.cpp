@@ -24,6 +24,8 @@
 
 #include <array> // for std::size
 
+using namespace id;
+
 enum
 {
     DRAW_INTERVAL = 6
