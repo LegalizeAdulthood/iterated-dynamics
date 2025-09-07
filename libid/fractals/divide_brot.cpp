@@ -14,6 +14,8 @@
 #include "math/fpu087.h"
 #include "engine/pixel_grid.h"
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

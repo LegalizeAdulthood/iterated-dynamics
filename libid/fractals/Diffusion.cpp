@@ -15,6 +15,8 @@
 
 //**************** standalone engine for "diffusion" *******************
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

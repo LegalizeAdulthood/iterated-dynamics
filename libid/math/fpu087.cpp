@@ -7,7 +7,8 @@
 #include <cfloat>
 #include <cmath>
 
-using namespace id::math;
+namespace id::math
+{
 
 void fpu_cmplx_mul(const DComplex *x, const DComplex *y, DComplex *z)
 {
@@ -141,3 +142,5 @@ void fpu_cmplx_exp(const DComplex *x, DComplex *z)
         z->y = pow * std::sin(y);
     }
 }
+
+} // namespace id::math

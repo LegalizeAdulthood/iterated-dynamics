@@ -6,6 +6,8 @@
 
 #include <cmath>
 
+using namespace id::math;
+
 DComplex complex_sqrt_float(double x, double y)
 {
     DComplex  result;

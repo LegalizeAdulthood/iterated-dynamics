@@ -6,6 +6,8 @@
 
 #include <cmath>
 
+using namespace id::math;
+
 TEST(TestMath, complexDividePointerAliasX)
 {
     DComplex y{2.0, 0.0};
