@@ -2,6 +2,8 @@
 //
 #include "engine/work_list.h"
 
+using namespace id::math;
+
 namespace id
 {
 

@@ -147,11 +147,11 @@ extern DComplex              g_tmp_z;
 extern bool                  g_use_old_periodicity;
 extern bool                  g_use_old_distance_estimator;
 
-extern Point2i               g_start_pt; // current work list entry being computed
-extern Point2i               g_i_start_pt;
-extern Point2i               g_stop_pt;
-extern Point2i               g_i_stop_pt;
-extern Point2i               g_begin_pt;
+extern math::Point2i         g_start_pt; // current work list entry being computed
+extern math::Point2i         g_i_start_pt;
+extern math::Point2i         g_stop_pt;
+extern math::Point2i         g_i_stop_pt;
+extern math::Point2i         g_begin_pt;
 extern int                   g_work_pass;
 extern int                   g_work_symmetry;
 
