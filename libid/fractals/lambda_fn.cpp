@@ -13,8 +13,8 @@
 
 #include <cmath>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 int lambda_orbit()
 {
@@ -159,3 +159,5 @@ bool mandel_trig_per_image()
     }
     return mandel_per_image();
 }
+
+} // namespace id::fractals
