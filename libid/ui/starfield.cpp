@@ -20,6 +20,7 @@
 
 using namespace id;
 using namespace id::io;
+using namespace id::math;
 
 const std::string ALTERN_MAP_NAME{"altern.map"};
 

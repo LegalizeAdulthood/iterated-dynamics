@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+// Fixed-point math, e.g. 'long' arithmetic, related data and functions
+//
 #pragma once
 
-// Fixed-point math, e.g. 'long' arithmetic, related data and functions
+namespace id::math
+{
 
 extern bool                  g_overflow;
 
@@ -32,3 +35,5 @@ inline long multiply(long x, long y, int n)
     }
     return l;
 }
+
+} // namespace id::math

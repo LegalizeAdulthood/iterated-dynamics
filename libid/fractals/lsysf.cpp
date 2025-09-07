@@ -20,6 +20,8 @@
 #undef max
 #endif
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

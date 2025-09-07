@@ -10,6 +10,8 @@
 #include <cmath>
 #include <complex>
 
+using namespace id::math;
+
 namespace id
 {
 

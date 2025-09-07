@@ -76,6 +76,7 @@
 
 using namespace id::fractals;
 using namespace id::io;
+using namespace id::math;
 
 namespace id
 {

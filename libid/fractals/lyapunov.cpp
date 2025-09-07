@@ -18,6 +18,8 @@
 #include <cmath>
 #include <cstdlib>
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

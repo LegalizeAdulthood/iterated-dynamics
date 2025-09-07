@@ -7,6 +7,8 @@
 #include <cfloat>
 #include <cmath>
 
+using namespace id::math;
+
 void fpu_cmplx_mul(const DComplex *x, const DComplex *y, DComplex *z)
 {
     double tx;

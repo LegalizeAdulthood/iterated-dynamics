@@ -63,6 +63,8 @@
 #include <cmath>
 #include <cstring>
 
+using namespace id::math;
+
 namespace id
 {
 

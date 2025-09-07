@@ -2,4 +2,9 @@
 //
 #include "math/fixed_pt.h"
 
+namespace id::math
+{
+
 bool g_overflow{};
+
+} // namespace id::math
