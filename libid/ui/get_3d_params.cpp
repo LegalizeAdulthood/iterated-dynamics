@@ -69,7 +69,7 @@ restart_1:
 
     prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
     values[k].type = 'i';
-    values[k].uval.ival = static_cast<int>(g_glasses_type);
+    values[k].uval.ival = static_cast<int>(id::g_glasses_type);
 
     prompts3d[++k] = "                  3=photo,4=stereo pair)";
     values[k].type = '*';
@@ -115,7 +115,7 @@ restart_1:
     id::g_show_box = values[k++].uval.ch.val != 0;
     id::g_preview_factor  = values[k++].uval.ival;
     sphere = values[k++].uval.ch.val;
-    g_glasses_type = static_cast<GlassesType>(values[k++].uval.ival);
+    id::g_glasses_type = static_cast<id::GlassesType>(values[k++].uval.ival);
     k++;
     id::g_raytrace_format = static_cast<id::RayTraceFormat>(values[k++].uval.ch.val);
     k++;
@@ -148,11 +148,11 @@ restart_1:
         set_3d_defaults();
     }
 
-    g_glasses_type = std::max(g_glasses_type, GlassesType::NONE);
-    g_glasses_type = std::min(g_glasses_type, GlassesType::STEREO_PAIR);
-    if (g_glasses_type != GlassesType::NONE)
+    id::g_glasses_type = std::max(id::g_glasses_type, id::GlassesType::NONE);
+    id::g_glasses_type = std::min(id::g_glasses_type, id::GlassesType::STEREO_PAIR);
+    if (id::g_glasses_type != id::GlassesType::NONE)
     {
-        g_which_image = StereoImage::RED;
+        id::g_which_image = id::StereoImage::RED;
     }
 
     if (static_cast<int>(id::g_raytrace_format) < 0)
@@ -197,7 +197,7 @@ restart_1:
         }
         id::g_fill_type = static_cast<id::FillType>(i - 1);
 
-        if (g_glasses_type != GlassesType::NONE)
+        if (id::g_glasses_type != id::GlassesType::NONE)
         {
             if (get_funny_glasses_params())
             {
@@ -272,11 +272,11 @@ restart_3:
 
         prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
         values[k].type = 'i';
-        values[k].uval.ival = g_adjust_3d_x    ;
+        values[k].uval.ival = id::g_adjust_3d_x    ;
 
         prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
         values[k].type = 'i';
-        values[k].uval.ival = g_adjust_3d_y    ;
+        values[k].uval.ival = id::g_adjust_3d_y    ;
 
         prompts3d[++k] = "First transparent color";
         values[k].type = 'i';
@@ -328,8 +328,8 @@ restart_3:
         id::g_viewer_z = values[k++].uval.ival;
         id::g_shift_x     = values[k++].uval.ival;
         id::g_shift_y     = values[k++].uval.ival;
-        g_adjust_3d_x     = values[k++].uval.ival;
-        g_adjust_3d_y     = values[k++].uval.ival;
+        id::g_adjust_3d_x     = values[k++].uval.ival;
+        id::g_adjust_3d_y     = values[k++].uval.ival;
         g_transparent_color_3d[0] = values[k++].uval.ival;
         g_transparent_color_3d[1] = values[k++].uval.ival;
     }
@@ -434,7 +434,7 @@ static bool check_map_file()
     {
         map_name = g_map_name;
     }
-    if (!glasses_alternating_or_superimpose())
+    if (!id::glasses_alternating_or_superimpose())
     {
         ask_flag = true;
     }
@@ -486,25 +486,25 @@ static bool get_funny_glasses_params()
     {
         id::g_viewer_z = 150;
     }
-    if (g_eye_separation == 0)
+    if (id::g_eye_separation == 0)
     {
         if (g_fractal_type == FractalType::IFS_3D || g_fractal_type == FractalType::LORENZ_3D)
         {
-            g_eye_separation = 2;
+            id::g_eye_separation = 2;
             id::g_converge_x_adjust = -2;
         }
         else
         {
-            g_eye_separation = 3;
+            id::g_eye_separation = 3;
             id::g_converge_x_adjust = 0;
         }
     }
 
-    if (g_glasses_type == GlassesType::ALTERNATING)
+    if (id::g_glasses_type == id::GlassesType::ALTERNATING)
     {
         s_funny_glasses_map_name = GLASSES1_MAP_NAME;
     }
-    else if (g_glasses_type == GlassesType::SUPERIMPOSE)
+    else if (id::g_glasses_type == id::GlassesType::SUPERIMPOSE)
     {
         if (id::g_fill_type == id::FillType::SURFACE_GRID)
         {
@@ -519,15 +519,15 @@ static bool get_funny_glasses_params()
     }
 
     ChoiceBuilder<10> builder;
-    builder.int_number("Interocular distance (as % of screen)", g_eye_separation)
+    builder.int_number("Interocular distance (as % of screen)", id::g_eye_separation)
         .int_number("Convergence adjust (positive = spread greater)", id::g_converge_x_adjust)
-        .int_number("Left  red image crop (% of screen)", g_red_crop_left)
-        .int_number("Right red image crop (% of screen)", g_red_crop_right)
-        .int_number("Left  blue image crop (% of screen)", g_blue_crop_left)
-        .int_number("Right blue image crop (% of screen)", g_blue_crop_right)
-        .int_number("Red brightness factor (%)", g_red_bright)
-        .int_number("Blue brightness factor (%)", g_blue_bright);
-    if (glasses_alternating_or_superimpose())
+        .int_number("Left  red image crop (% of screen)", id::g_red_crop_left)
+        .int_number("Right red image crop (% of screen)", id::g_red_crop_right)
+        .int_number("Left  blue image crop (% of screen)", id::g_blue_crop_left)
+        .int_number("Right blue image crop (% of screen)", id::g_blue_crop_right)
+        .int_number("Red brightness factor (%)", id::g_red_bright)
+        .int_number("Blue brightness factor (%)", id::g_blue_bright);
+    if (id::glasses_alternating_or_superimpose())
     {
         builder.string("Map file name", s_funny_glasses_map_name.c_str());
     }
@@ -540,16 +540,16 @@ static bool get_funny_glasses_params()
     }
 
     k = 0;
-    g_eye_separation   =  builder.read_int_number();
+    id::g_eye_separation   =  builder.read_int_number();
     id::g_converge_x_adjust = builder.read_int_number();
-    g_red_crop_left   =  builder.read_int_number();
-    g_red_crop_right  =  builder.read_int_number();
-    g_blue_crop_left  =  builder.read_int_number();
-    g_blue_crop_right =  builder.read_int_number();
-    g_red_bright      =  builder.read_int_number();
-    g_blue_bright     =  builder.read_int_number();
+    id::g_red_crop_left   =  builder.read_int_number();
+    id::g_red_crop_right  =  builder.read_int_number();
+    id::g_blue_crop_left  =  builder.read_int_number();
+    id::g_blue_crop_right =  builder.read_int_number();
+    id::g_red_bright      =  builder.read_int_number();
+    id::g_blue_bright     =  builder.read_int_number();
 
-    if (glasses_alternating_or_superimpose())
+    if (id::glasses_alternating_or_superimpose())
     {
         s_funny_glasses_map_name = builder.read_string();
     }
@@ -567,7 +567,7 @@ int get_fract3d_params() // prompt for 3D fractal parameters
         .int_number("X shift with perspective (positive = right)", id::g_shift_x)
         .int_number("Y shift with perspective (positive = up   )", id::g_shift_y)
         .int_number("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,3=photo,4=stereo pair)",
-            static_cast<int>(g_glasses_type));
+            static_cast<int>(id::g_glasses_type));
 
     int i;
     {
@@ -588,12 +588,12 @@ int get_fract3d_params() // prompt for 3D fractal parameters
     id::g_viewer_z = builder.read_int_number();
     id::g_shift_x  = builder.read_int_number();
     id::g_shift_y  = builder.read_int_number();
-    g_glasses_type = static_cast<GlassesType>(builder.read_int_number());
-    if (g_glasses_type < GlassesType::NONE || g_glasses_type > GlassesType::STEREO_PAIR)
+    id::g_glasses_type = static_cast<id::GlassesType>(builder.read_int_number());
+    if (id::g_glasses_type < id::GlassesType::NONE || id::g_glasses_type > id::GlassesType::STEREO_PAIR)
     {
-        g_glasses_type = GlassesType::NONE;
+        id::g_glasses_type = id::GlassesType::NONE;
     }
-    if (g_glasses_type != GlassesType::NONE)
+    if (id::g_glasses_type != id::GlassesType::NONE)
     {
         if (get_funny_glasses_params() || check_map_file())
         {

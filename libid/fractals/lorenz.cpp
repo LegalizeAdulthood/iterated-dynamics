@@ -1534,18 +1534,18 @@ int plot_orbits2d()
 // stuff so the code is not duplicated for ifs3d() and lorenz3d()
 int funny_glasses_call(int (*calc)())
 {
-    g_which_image = g_glasses_type != GlassesType::NONE ? StereoImage::RED : StereoImage::NONE;
-    plot_setup();
+    id::g_which_image = id::g_glasses_type != id::GlassesType::NONE ? id::StereoImage::RED : id::StereoImage::NONE;
+    id::plot_setup();
     g_plot = id::g_standard_plot;
     int status = calc();
-    if (s_real_time && g_glasses_type < GlassesType::PHOTO)
+    if (s_real_time && id::g_glasses_type < id::GlassesType::PHOTO)
     {
         s_real_time = false;
         goto done;
     }
-    if (g_glasses_type != GlassesType::NONE && status == 0 && g_display_3d != Display3DMode::NONE)
+    if (id::g_glasses_type != id::GlassesType::NONE && status == 0 && g_display_3d != Display3DMode::NONE)
     {
-        if (g_glasses_type == GlassesType::PHOTO)
+        if (id::g_glasses_type == id::GlassesType::PHOTO)
         {
             // photographer's mode
             stop_msg(StopMsgFlags::INFO_ONLY,
@@ -1558,12 +1558,12 @@ int funny_glasses_call(int (*calc)())
             // is there a better way to clear the screen in graphics mode?
             driver_set_video_mode(&g_video_entry);
         }
-        g_which_image = StereoImage::BLUE;
+        id::g_which_image = id::StereoImage::BLUE;
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))
         {
             g_cur_fractal_specific->per_image(); // reset for 2nd image
         }
-        plot_setup();
+        id::plot_setup();
         g_plot = id::g_standard_plot;
         // is there a better way to clear the graphics screen ?
         status = calc();
@@ -1571,13 +1571,13 @@ int funny_glasses_call(int (*calc)())
         {
             goto done;
         }
-        if (g_glasses_type == GlassesType::PHOTO)   // photographer's mode
+        if (id::g_glasses_type == id::GlassesType::PHOTO)   // photographer's mode
         {
             stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
         }
     }
 done:
-    if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
+    if (id::g_glasses_type == id::GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
     {
         // turn off view windows so will save properly
         g_logical_screen_x_offset = 0;
@@ -1821,7 +1821,7 @@ static void setup_matrix(id::Matrix double_mat)
 int orbit3d_type()
 {
     g_display_3d = Display3DMode::MINUS_ONE ;
-    s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
+    s_real_time = id::g_glasses_type > id::GlassesType::NONE && id::g_glasses_type < id::GlassesType::PHOTO;
     return funny_glasses_call(orbit3d_calc);
 }
 
@@ -1829,7 +1829,7 @@ static int ifs3d()
 {
     g_display_3d = Display3DMode::MINUS_ONE;
 
-    s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
+    s_real_time = id::g_glasses_type > id::GlassesType::NONE && id::g_glasses_type < id::GlassesType::PHOTO;
     return funny_glasses_call(ifs3d_calc);
 }
 
@@ -1895,8 +1895,8 @@ static bool float_view_transf3d(ViewTransform3D *inf)
                 tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
                 tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/(2.0); // center y
 
-                tmp_x += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-                tmp_y += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
+                tmp_x += ((double)id::g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
+                tmp_y += ((double)id::g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
                 tmp_z = -(inf->max_vals[2]);
                 id::trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
             }
@@ -1933,9 +1933,9 @@ static bool float_view_transf3d(ViewTransform3D *inf)
     if (s_real_time)
     {
         inf->row1 = (int)(inf->cvt.c*inf->view_vect1[0] + inf->cvt.d*inf->view_vect1[1]
-                          + inf->cvt.f + g_yy_adjust1);
+                          + inf->cvt.f + id::g_yy_adjust1);
         inf->col1 = (int)(inf->cvt.a*inf->view_vect1[0] + inf->cvt.b*inf->view_vect1[1]
-                          + inf->cvt.e + g_xx_adjust1);
+                          + inf->cvt.e + id::g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
         {
             if ((long)std::abs(inf->col1)+(long)std::abs(inf->row1) > BAD_PIXEL)

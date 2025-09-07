@@ -186,7 +186,7 @@ int gif_view()
                 close_file();
                 return -1;
             }
-            if ((g_display_3d == Display3DMode::NONE || !glasses_alternating_or_superimpose()) && g_read_color)
+            if ((g_display_3d == Display3DMode::NONE || !id::glasses_alternating_or_superimpose()) && g_read_color)
             {
                 g_dac_box[i][j] = static_cast<Byte>(k);
             }
@@ -195,7 +195,7 @@ int gif_view()
     g_color_state = ColorState::UNKNOWN_MAP; // colors aren't default and not a known .map file
 
     // don't read if glasses
-    if (g_display_3d != Display3DMode::NONE && g_map_set && !glasses_alternating_or_superimpose())
+    if (g_display_3d != Display3DMode::NONE && g_map_set && !id::glasses_alternating_or_superimpose())
     {
         validate_luts(g_map_name);  // read the palette file
         spin_dac(0, 1); // load it, but don't spin

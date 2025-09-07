@@ -601,15 +601,15 @@ static void init_vars3d()
     id::g_show_box = false;
     id::g_converge_x_adjust = 0;
     id::g_converge_y_adjust = 0;
-    g_eye_separation = 0;
-    g_glasses_type = GlassesType::NONE;
+    id::g_eye_separation = 0;
+    id::g_glasses_type = id::GlassesType::NONE;
     id::g_preview_factor = 20;
-    g_red_crop_left   = 4;
-    g_red_crop_right  = 0;
-    g_blue_crop_left  = 0;
-    g_blue_crop_right = 4;
-    g_red_bright     = 80;
-    g_blue_bright   = 100;
+    id::g_red_crop_left   = 4;
+    id::g_red_crop_right  = 0;
+    id::g_blue_crop_left  = 0;
+    id::g_blue_crop_right = 4;
+    id::g_red_bright     = 80;
+    id::g_blue_bright   = 100;
     g_transparent_color_3d[0] = 0;
     g_transparent_color_3d[1] = 0; // no min/max transparency
     set_3d_defaults();
@@ -1450,8 +1450,8 @@ static CmdArgFlags cmd_bright(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_red_bright = cmd.int_vals[0];
-    g_blue_bright = cmd.int_vals[1];
+    id::g_red_bright = cmd.int_vals[0];
+    id::g_blue_bright = cmd.int_vals[1];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -1895,10 +1895,10 @@ static CmdArgFlags cmd_crop(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_red_crop_left = cmd.int_vals[0];
-    g_red_crop_right = cmd.int_vals[1];
-    g_blue_crop_left = cmd.int_vals[2];
-    g_blue_crop_right = cmd.int_vals[3];
+    id::g_red_crop_left = cmd.int_vals[0];
+    id::g_red_crop_right = cmd.int_vals[1];
+    id::g_blue_crop_left = cmd.int_vals[2];
+    id::g_blue_crop_right = cmd.int_vals[3];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -2282,7 +2282,7 @@ static CmdArgFlags cmd_inside(const Command &cmd)
 // interocular=?
 static CmdArgFlags cmd_interocular(const Command &cmd)
 {
-    g_eye_separation = cmd.num_val;
+    id::g_eye_separation = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3465,7 +3465,7 @@ static CmdArgFlags cmd_stereo(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_glasses_type = static_cast<GlassesType>(cmd.num_val);
+    id::g_glasses_type = static_cast<id::GlassesType>(cmd.num_val);
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3847,8 +3847,8 @@ static CmdArgFlags cmd_xy_adjust(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_adjust_3d_x = cmd.int_vals[0];
-    g_adjust_3d_y = cmd.int_vals[1];
+    id::g_adjust_3d_x = cmd.int_vals[0];
+    id::g_adjust_3d_y = cmd.int_vals[1];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -4103,8 +4103,8 @@ void set_3d_defaults()
     id::g_viewer_z   = 0;
     id::g_shift_x    = 0;
     id::g_shift_y    = 0;
-    g_adjust_3d_x    = 0;
-    g_adjust_3d_y    = 0;
+    id::g_adjust_3d_x    = 0;
+    id::g_adjust_3d_y    = 0;
     id::g_light_avg  = 0;
     id::g_ambient   = 20;
     id::g_randomize_3d = 0;

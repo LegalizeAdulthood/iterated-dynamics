@@ -70,7 +70,7 @@ struct ImageHistory
     int blue_bright;
     int converge_x_adjust;
     int eye_separation;
-    GlassesType glasses_type;
+    id::GlassesType glasses_type;
     int outside_color;
     double x_3rd;
     double y_3rd;
@@ -314,7 +314,7 @@ std::ostream &operator<<(std::ostream &str, InitOrbitMode value)
     return str;
 }
 
-std::ostream &operator<<(std::ostream &str, GlassesType value)
+std::ostream &operator<<(std::ostream &str, id::GlassesType value)
 {
     str << static_cast<int>(value);
     return str;
@@ -564,18 +564,18 @@ void save_history_info()
     current.init_3d[14] = id::g_light_z;         // z light vector coordinate
     current.init_3d[15] = id::g_light_avg;       // number of points to average
     current.preview_factor = id::g_preview_factor;
-    current.adjust_3d_x = g_adjust_3d_x;
-    current.adjust_3d_y = g_adjust_3d_y;
-    current.red_crop_left = g_red_crop_left;
-    current.red_crop_right = g_red_crop_right;
-    current.blue_crop_left = g_blue_crop_left;
-    current.blue_crop_right = g_blue_crop_right;
-    current.red_bright = g_red_bright;
-    current.blue_bright = g_blue_bright;
+    current.adjust_3d_x = id::g_adjust_3d_x;
+    current.adjust_3d_y = id::g_adjust_3d_y;
+    current.red_crop_left = id::g_red_crop_left;
+    current.red_crop_right = id::g_red_crop_right;
+    current.blue_crop_left = id::g_blue_crop_left;
+    current.blue_crop_right = id::g_blue_crop_right;
+    current.red_bright = id::g_red_bright;
+    current.blue_bright = id::g_blue_bright;
     current.converge_x_adjust = id::g_converge_x_adjust;
     current.converge_y_adjust = id::g_converge_y_adjust;
-    current.eye_separation = g_eye_separation;
-    current.glasses_type = g_glasses_type;
+    current.eye_separation = id::g_eye_separation;
+    current.glasses_type = id::g_glasses_type;
     current.outside_color = g_outside_color;
     current.x_3rd = g_x_3rd;
     current.y_3rd = g_y_3rd;
@@ -757,18 +757,18 @@ void restore_history_info(int i)
     id::g_light_z = last.init_3d[14];                          // z light vector coordinate
     id::g_light_avg = last.init_3d[15];                        // number of points to average
     id::g_preview_factor = last.preview_factor;
-    g_adjust_3d_x = last.adjust_3d_x;
-    g_adjust_3d_y = last.adjust_3d_y;
-    g_red_crop_left = last.red_crop_left;
-    g_red_crop_right = last.red_crop_right;
-    g_blue_crop_left = last.blue_crop_left;
-    g_blue_crop_right = last.blue_crop_right;
-    g_red_bright = last.red_bright;
-    g_blue_bright = last.blue_bright;
+    id::g_adjust_3d_x = last.adjust_3d_x;
+    id::g_adjust_3d_y = last.adjust_3d_y;
+    id::g_red_crop_left = last.red_crop_left;
+    id::g_red_crop_right = last.red_crop_right;
+    id::g_blue_crop_left = last.blue_crop_left;
+    id::g_blue_crop_right = last.blue_crop_right;
+    id::g_red_bright = last.red_bright;
+    id::g_blue_bright = last.blue_bright;
     id::g_converge_x_adjust = last.converge_x_adjust;
     id::g_converge_y_adjust = last.converge_y_adjust;
-    g_eye_separation = last.eye_separation;
-    g_glasses_type = last.glasses_type;
+    id::g_eye_separation = last.eye_separation;
+    id::g_glasses_type = last.glasses_type;
     g_outside_color = last.outside_color;
     g_x_3rd = last.x_3rd;
     g_y_3rd = last.y_3rd;

@@ -237,7 +237,7 @@ void Plot::set_line_mode(int mode)
 void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
 {
 #if 0
-    ::draw_line(x1, y1, x2, y2, color);
+    ::id::draw_line(x1, y1, x2, y2, color);
 #endif
 }
 

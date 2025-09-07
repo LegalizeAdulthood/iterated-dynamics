@@ -21,6 +21,9 @@
 
 #include <cmath>
 
+namespace id
+{
+
 // Use these palette indices for red/blue - same on ega/vga
 enum
 {
@@ -550,3 +553,5 @@ void plot_setup()
         spin_dac(0, 1); // load it, but don't spin
     }
 }
+
+} // namespace id

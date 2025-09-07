@@ -3447,13 +3447,13 @@ TEST_F(TestParameterCommand, parmFile)
 
 TEST_F(TestParameterCommand, stereoValue)
 {
-    ValueSaver saved_glasses_type{g_glasses_type, static_cast<GlassesType>(-1)};
+    ValueSaver saved_glasses_type{id::g_glasses_type, static_cast<id::GlassesType>(-1)};
 
     exec_cmd_arg("stereo=3");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, static_cast<int>(g_glasses_type));
-    EXPECT_EQ(GlassesType::PHOTO, g_glasses_type);
+    EXPECT_EQ(3, static_cast<int>(id::g_glasses_type));
+    EXPECT_EQ(id::GlassesType::PHOTO, id::g_glasses_type);
 }
 
 TEST_F(TestParameterCommand, rotation)
@@ -3494,12 +3494,12 @@ TEST_F(TestParameterCommand, xyShift)
 
 TEST_F(TestParameterCommand, interocular)
 {
-    ValueSaver saved_eye_separation{g_eye_separation, -99};
+    ValueSaver saved_eye_separation{id::g_eye_separation, -99};
 
     exec_cmd_arg("interocular=90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(90, g_eye_separation);
+    EXPECT_EQ(90, id::g_eye_separation);
 }
 
 TEST_F(TestParameterCommand, converge)
@@ -3514,42 +3514,42 @@ TEST_F(TestParameterCommand, converge)
 
 TEST_F(TestParameterCommand, crop)
 {
-    ValueSaver saved_red_crop_left{g_red_crop_left, -99};
-    ValueSaver saved_red_crop_right{g_red_crop_right, -99};
-    ValueSaver saved_blue_crop_left{g_blue_crop_left, -99};
-    ValueSaver saved_blue_crop_right{g_blue_crop_right, -99};
+    ValueSaver saved_red_crop_left{id::g_red_crop_left, -99};
+    ValueSaver saved_red_crop_right{id::g_red_crop_right, -99};
+    ValueSaver saved_blue_crop_left{id::g_blue_crop_left, -99};
+    ValueSaver saved_blue_crop_right{id::g_blue_crop_right, -99};
 
     exec_cmd_arg("crop=1/2/3/4");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_red_crop_left);
-    EXPECT_EQ(2, g_red_crop_right);
-    EXPECT_EQ(3, g_blue_crop_left);
-    EXPECT_EQ(4, g_blue_crop_right);
+    EXPECT_EQ(1, id::g_red_crop_left);
+    EXPECT_EQ(2, id::g_red_crop_right);
+    EXPECT_EQ(3, id::g_blue_crop_left);
+    EXPECT_EQ(4, id::g_blue_crop_right);
 }
 
 TEST_F(TestParameterCommand, bright)
 {
-    ValueSaver saved_red_bright{g_red_bright, -99};
-    ValueSaver saved_blue_bright{g_blue_bright, -99};
+    ValueSaver saved_red_bright{id::g_red_bright, -99};
+    ValueSaver saved_blue_bright{id::g_blue_bright, -99};
 
     exec_cmd_arg("bright=1/2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_red_bright);
-    EXPECT_EQ(2, g_blue_bright);
+    EXPECT_EQ(1, id::g_red_bright);
+    EXPECT_EQ(2, id::g_blue_bright);
 }
 
 TEST_F(TestParameterCommand, xyAdjust)
 {
-    ValueSaver saved_adjust_3d_x{g_adjust_3d_x, -99};
-    ValueSaver saved_adjust_3d_{g_adjust_3d_y, -99};
+    ValueSaver saved_adjust_3d_x{id::g_adjust_3d_x, -99};
+    ValueSaver saved_adjust_3d_{id::g_adjust_3d_y, -99};
 
     exec_cmd_arg("xyadjust=1/2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_adjust_3d_x);
-    EXPECT_EQ(2, g_adjust_3d_y);
+    EXPECT_EQ(1, id::g_adjust_3d_x);
+    EXPECT_EQ(2, id::g_adjust_3d_y);
 }
 
 TEST_F(TestParameterCommand, threeDNo)

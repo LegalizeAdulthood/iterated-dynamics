@@ -1379,19 +1379,19 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
         put_param(" perspective=%d", id::g_viewer_z);
         put_param(" xyshift=%d/%d", id::g_shift_x, id::g_shift_y);
-        if (g_adjust_3d_x || g_adjust_3d_y)
+        if (id::g_adjust_3d_x || id::g_adjust_3d_y)
         {
-            put_param(" xyadjust=%d/%d", g_adjust_3d_x, g_adjust_3d_y);
+            put_param(" xyadjust=%d/%d", id::g_adjust_3d_x, id::g_adjust_3d_y);
         }
-        if (g_glasses_type != GlassesType::NONE)
+        if (id::g_glasses_type != id::GlassesType::NONE)
         {
-            put_param(" stereo=%d", static_cast<int>(g_glasses_type));
-            put_param(" interocular=%d", g_eye_separation);
+            put_param(" stereo=%d", static_cast<int>(id::g_glasses_type));
+            put_param(" interocular=%d", id::g_eye_separation);
             put_param(" converge=%d", id::g_converge_x_adjust);
             put_param(" crop=%d/%d/%d/%d",
-                     g_red_crop_left, g_red_crop_right, g_blue_crop_left, g_blue_crop_right);
+                     id::g_red_crop_left, id::g_red_crop_right, id::g_blue_crop_left, id::g_blue_crop_right);
             put_param(" bright=%d/%d",
-                     g_red_bright, g_blue_bright);
+                     id::g_red_bright, id::g_blue_bright);
         }
     }
 

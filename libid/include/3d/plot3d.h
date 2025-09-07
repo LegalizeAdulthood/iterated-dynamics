@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 enum class StereoImage
 {
     NONE,
@@ -46,3 +49,5 @@ inline bool glasses_alternating_or_superimpose()
 
 void draw_line(int x1, int y1, int x2, int y2, int color);
 void plot_setup();
+
+} // namespace id
