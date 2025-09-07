@@ -2,6 +2,11 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 int mandelbrot_mix4_per_pixel();
 int mandelbrot_mix4_orbit();
 bool mandelbrot_mix4_per_image();
+
+} // namespace id::fractals

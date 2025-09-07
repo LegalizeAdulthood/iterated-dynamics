@@ -12,7 +12,8 @@
 #include "math/cmplx.h"
 #include "misc/debug_flags.h"
 
-using namespace id;
+namespace id::fractals
+{
 
 /* re-use static roots variable
    memory for mandelmix4 */
@@ -172,3 +173,5 @@ int mandelbrot_mix4_orbit() // from formula by Jim Muth
 {
     return s_mix.iterate();
 }
+
+} // namespace id::fractals
