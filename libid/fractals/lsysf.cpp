@@ -20,7 +20,8 @@
 #undef max
 #endif
 
-using namespace id;
+namespace id::fractals
+{
 
 struct LSysCmd
 {
@@ -729,3 +730,5 @@ void lsys_build_trig_table()
         s_cos_table[i] = local_aspect * std::cos(angle);
     }
 }
+
+} // namespace id::fractals

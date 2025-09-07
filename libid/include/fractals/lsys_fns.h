@@ -4,6 +4,9 @@
 
 #include <config/port.h>
 
+namespace id::fractals
+{
+
 inline bool is_pow2(int n)
 {
     return n == (n & -n);
@@ -12,3 +15,5 @@ inline bool is_pow2(int n)
 LDouble  get_number(const char **str);
 int lsystem_type();
 bool lsystem_load();
+
+} // namespace id::Fractals

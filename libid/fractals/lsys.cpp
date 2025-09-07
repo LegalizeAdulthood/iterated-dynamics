@@ -25,7 +25,8 @@
 #include <string>
 #include <vector>
 
-using namespace id;
+namespace id::fractals
+{
 
 static bool read_lsystem_file(const char *str);
 static void free_rules_mem();
@@ -370,3 +371,5 @@ static void free_l_cmds()
     }
     s_rule_cmds.clear();
 }
+
+} // namespace id::fractals

@@ -6,6 +6,9 @@
 
 #include <config/port.h>
 
+namespace id::fractals
+{
+
 enum
 {
     MAX_LSYS_LINE_LEN = 255 // this limits line length to 255
@@ -37,3 +40,5 @@ bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int
 LSysCmd *lsys_size_transform(const char *s, LSysTurtleState *ts);
 LSysCmd *lsys_draw_transform(const char *s, LSysTurtleState *ts);
 void lsys_build_trig_table();
+
+} // namespace id::fractals
