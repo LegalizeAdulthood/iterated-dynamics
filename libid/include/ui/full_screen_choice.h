@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 // fullscreen_choice options
 enum class ChoiceFlags
 {
@@ -46,3 +49,5 @@ int full_screen_choice(ChoiceFlags flags,                   //
     int current, void (*format_item)(int choice, char *buf), char *speed_string,
     int (*speed_prompt)(int row, int col, int vid, const char *speed_string, int speed_match), //
     int (*check_key)(int key, int choice));
+
+} // namespace id::ui

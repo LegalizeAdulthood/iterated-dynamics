@@ -19,9 +19,11 @@
 #include <cctype>
 #include <cstring>
 
-using namespace id;
 using namespace id::io;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 static const std::string SPEED_PROMPT{"Speed key string"};
 
@@ -738,3 +740,5 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
         }
     }
 }
+
+} // namespace id::ui

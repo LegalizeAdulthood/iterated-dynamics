@@ -23,6 +23,7 @@
 using namespace id;
 using namespace id::fractals;
 using namespace id::misc;
+using namespace id::ui;
 
 enum
 {
