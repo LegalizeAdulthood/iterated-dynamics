@@ -18,6 +18,7 @@
 #include <cstring>
 
 using namespace id;
+using namespace id::io;
 
 static void blank_rows(int row, int count, int attr)
 {

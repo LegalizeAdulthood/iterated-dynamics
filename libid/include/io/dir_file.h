@@ -5,6 +5,9 @@
 #include <cstdio>
 #include <filesystem>
 
+namespace id::io
+{
+
 inline void dir_remove(const std::filesystem::path &dir, const std::filesystem::path &filename)
 {
     std::filesystem::remove(dir / filename);
@@ -14,3 +17,5 @@ inline std::FILE *dir_fopen(const std::filesystem::path &dir, const std::filesys
 {
     return std::fopen((dir / filename).string().c_str(), mode);
 }
+
+} // namespace id::io
