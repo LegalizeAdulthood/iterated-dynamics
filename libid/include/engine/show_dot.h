@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id
+{
+
 enum class AutoShowDot
 {
     NONE = 0,        // no auto show dot
@@ -14,3 +17,5 @@ enum class AutoShowDot
 extern AutoShowDot           g_auto_show_dot;
 extern int                   g_show_dot;
 extern int                   g_size_dot;
+
+} // namespace id
