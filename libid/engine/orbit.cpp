@@ -12,7 +12,8 @@
 #include "ui/sound.h"
 #include "ui/video.h"
 
-using namespace id;
+namespace id
+{
 
 static void plot_d_orbit(double dx, double dy, int color);
 
@@ -138,3 +139,5 @@ void scrub_orbit()
         id::g_put_color(i, j, c);
     }
 }
+
+} // namespace id
