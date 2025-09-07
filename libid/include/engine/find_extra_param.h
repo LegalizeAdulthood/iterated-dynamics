@@ -7,6 +7,6 @@
 namespace id
 {
 
-int find_extra_param(FractalType type);
+int find_extra_param(fractals::FractalType type);
 
 } // namespace id

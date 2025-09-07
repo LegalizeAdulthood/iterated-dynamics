@@ -5,6 +5,8 @@
 #include "fractals/fractype.h"
 #include "fractals/parser.h"
 
+using namespace id::fractals;
+
 namespace id
 {
 

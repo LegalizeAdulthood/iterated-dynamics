@@ -6,4 +6,4 @@
 
 int get_fract_type();
 int get_fract_params(bool prompt_for_type_params);
-void set_fractal_default_functions(FractalType previous);
+void set_fractal_default_functions(id::fractals::FractalType previous);

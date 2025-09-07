@@ -7,8 +7,8 @@
 namespace id
 {
 
-bool type_has_param(FractalType type, int param, const char **prompt);
-inline bool type_has_param(FractalType type, int param)
+bool type_has_param(fractals::FractalType type, int param, const char **prompt);
+inline bool type_has_param(fractals::FractalType type, int param)
 {
     return type_has_param(type, param, nullptr);
 }

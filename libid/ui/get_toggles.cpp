@@ -23,6 +23,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::fractals;
 
 /*
         get_toggles() is called whenever the 'x' key is pressed.

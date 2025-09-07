@@ -8,7 +8,10 @@
 
 #include <config/port.h>
 
+namespace id::fractals
+{
 enum class FractalType;
+}
 
 namespace id
 {
@@ -158,7 +161,7 @@ extern int                   g_outside_color;
 int calc_fract();
 int calc_mandelbrot_type();
 int standard_fractal_type();
-int find_alternate_math(FractalType type, BFMathType math);
+int find_alternate_math(fractals::FractalType type, BFMathType math);
 int potential(double mag, long iterations);
 void sym_pi_plot(int x, int y, int color);
 void sym_pi_plot2j(int x, int y, int color);

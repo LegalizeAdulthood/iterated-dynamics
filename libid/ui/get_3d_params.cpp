@@ -27,6 +27,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::fractals;
 
 static  bool get_light_params();
 static  bool check_map_file();

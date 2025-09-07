@@ -52,6 +52,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::fractals;
 
 static bool compress(int row_limit);
 static int shift_write(const Byte *color, int num_colors);

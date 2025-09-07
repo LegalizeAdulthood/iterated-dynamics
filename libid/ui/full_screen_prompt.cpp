@@ -29,6 +29,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::fractals;
 
 static int prompt_check_key(int key);
 static int prompt_check_key_scroll(int key);

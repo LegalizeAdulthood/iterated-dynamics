@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::fractals
+{
+
 // Gaps in the numbering are due to the removal of integer fractal
 // types that are migrated to their floating-point equivalent on
 // image load.
@@ -153,3 +156,5 @@ inline bool operator>=(FractalType lhs, FractalType rhs)
 }
 
 extern FractalType g_fractal_type;
+
+} // namespace id::fractals

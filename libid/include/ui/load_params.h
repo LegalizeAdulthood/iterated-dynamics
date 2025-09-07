@@ -4,4 +4,4 @@
 
 #include "fractals/fractype.h"
 
-void load_params(FractalType type);
+void load_params(id::fractals::FractalType type);
