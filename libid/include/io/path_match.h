@@ -5,6 +5,11 @@
 #include <filesystem>
 #include <functional>
 
+namespace id::io
+{
+
 using MatchFn = std::function<bool(const std::filesystem::path &)>;
 
 MatchFn match_fn(const std::filesystem::path &pattern);
+
+} // namespace id::io

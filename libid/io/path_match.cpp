@@ -9,6 +9,9 @@
 
 namespace fs = std::filesystem;
 
+namespace id::io
+{
+
 static bool match_wild_string(const std::string &pattern, const std::string &text)
 {
     if (text.length() != pattern.length())
@@ -122,3 +125,5 @@ MatchFn match_fn(const fs::path &pattern)
 
     return [=](const fs::path &path) { return match_stem(path) && match_ext(path); };
 }
+
+} // namespace id::io

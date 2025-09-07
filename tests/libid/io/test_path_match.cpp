@@ -8,6 +8,8 @@
 #include <filesystem>
 #include <vector>
 
+using namespace id::io;
+
 TEST(TestPatternMatch, all)
 {
     MatchFn all = match_fn("*.*");
