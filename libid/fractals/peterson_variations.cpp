@@ -16,6 +16,7 @@
 #include <algorithm>
 
 using namespace id;
+using namespace id::fractals;
 
 DComplex g_marks_coefficient{};
 

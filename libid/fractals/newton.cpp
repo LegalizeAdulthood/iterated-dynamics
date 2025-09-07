@@ -16,8 +16,8 @@
 #include <cmath>
 #include <vector>
 
-using namespace id;
-using namespace id::fractals;
+namespace id::fractals
+{
 
 static double                s_degree_minus_1_over_degree{};
 static double                s_newton_r_over_d{};
@@ -299,3 +299,5 @@ bool newton_per_image()
     g_calc_type = standard_fractal_type;
     return true;
 }
+
+} // namespace id::fractals

@@ -4,6 +4,9 @@
 
 #include "math/cmplx.h"
 
+namespace id::fractals
+{
+
 void invertz2(DComplex *z);
 
 int newton_orbit();
@@ -13,3 +16,5 @@ int complex_newton_orbit();
 int complex_basin_orbit();
 
 bool newton_per_image();
+
+} // namespace id::fractals
