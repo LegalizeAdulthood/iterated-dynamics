@@ -4,4 +4,9 @@
 
 #include "engine/cmdfiles.h"
 
-id::CmdArgFlags get_commands();
+namespace id::ui
+{
+
+CmdArgFlags get_commands();
+
+} // namespace id::ui

@@ -9,9 +9,10 @@
 
 #include <cstdio>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 // execute commands from file
 CmdArgFlags get_commands()
@@ -27,3 +28,5 @@ CmdArgFlags get_commands()
     }
     return ret;
 }
+
+} // namespace id::ui
