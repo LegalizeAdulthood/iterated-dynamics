@@ -19,6 +19,7 @@
 
 using namespace id;
 using namespace id::io;
+using namespace id::misc;
 
 static void blank_rows(int row, int count, int attr)
 {

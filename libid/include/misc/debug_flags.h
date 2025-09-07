@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::misc
+{
+
 enum class DebugFlags
 {
     NONE                                = 0,
@@ -62,3 +65,5 @@ inline DebugFlags &operator&=(DebugFlags &lhs, DebugFlags rhs)
 }
 
 extern DebugFlags           g_debug_flag;
+
+} // namespace id::misc

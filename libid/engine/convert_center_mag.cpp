@@ -14,6 +14,7 @@
 #include <cmath>
 
 using namespace id::math;
+using namespace id::misc;
 
 namespace id
 {

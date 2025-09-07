@@ -12,6 +12,7 @@
 
 using namespace id;
 using namespace id::io;
+using namespace id::misc;
 
 /*
     get_cmd_string() is called whenever the 'g' key is pressed.  Return codes are:

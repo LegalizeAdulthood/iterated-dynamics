@@ -30,6 +30,7 @@
 using namespace id;
 using namespace id::fractals;
 using namespace id::io;
+using namespace id::misc;
 
 MainState request_fractal_type(MainContext &context)
 {

@@ -71,6 +71,7 @@ using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
+using namespace id::misc;
 
 bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};

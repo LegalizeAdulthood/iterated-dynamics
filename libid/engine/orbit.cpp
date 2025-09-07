@@ -12,6 +12,8 @@
 #include "ui/sound.h"
 #include "ui/video.h"
 
+using namespace id::misc;
+
 namespace id
 {
 

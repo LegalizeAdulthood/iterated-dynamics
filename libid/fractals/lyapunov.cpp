@@ -19,6 +19,7 @@
 #include <cstdlib>
 
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::fractals
 {

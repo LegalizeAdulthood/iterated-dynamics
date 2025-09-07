@@ -23,6 +23,8 @@
 
 #include <cmath>
 
+using namespace id::misc;
+
 namespace id::fractals
 {
 

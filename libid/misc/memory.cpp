@@ -29,6 +29,7 @@
 
 using namespace id;
 using namespace id::io;
+using namespace id::misc;
 
 enum
 {

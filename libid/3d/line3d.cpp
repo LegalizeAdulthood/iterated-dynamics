@@ -41,6 +41,7 @@
 #include <vector>
 
 using namespace id::io;
+using namespace id::misc;
 
 namespace id
 {
