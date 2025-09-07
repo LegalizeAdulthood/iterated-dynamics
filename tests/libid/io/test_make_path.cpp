@@ -8,6 +8,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::io;
+
 namespace
 {
 

@@ -7,6 +7,9 @@
 
 namespace fs = std::filesystem;
 
+namespace id::io
+{
+
 std::string make_path(const char *drive, const char *dir, const char *fname, const char *ext)
 {
     fs::path result;
@@ -34,3 +37,5 @@ std::string make_path(const char *drive, const char *dir, const char *fname, con
     }
     return result.lexically_normal().make_preferred().string();
 }
+
+} // namespace id::io

@@ -6,6 +6,9 @@
 #include <cstring>
 #include <string>
 
+namespace id::io
+{
+
 std::string make_path(const char *drive, const char *dir, const char *fname, const char *ext);
 
 inline void make_path(char *template_str, const char *drive, const char *dir, const char *fname, const char *ext)
@@ -29,3 +32,5 @@ inline void make_drive_dir(char *template_str, const char *drive, const char *di
 {
     make_path(template_str, drive, dir, nullptr, nullptr);
 }
+
+} // namespace id::io
