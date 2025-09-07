@@ -24,6 +24,7 @@
 #include <cstdarg>
 
 using namespace id;
+using namespace id::misc;
 
 static void (*s_write_pixel)(int x, int y, int color){};
 static int (*s_read_pixel)(int x, int y){};

@@ -43,6 +43,7 @@
 using namespace id;
 using namespace id::fractals;
 using namespace id::io;
+using namespace id::misc;
 
 /* defines for flags; done this way instead of bit union to ensure ordering;
    these bits represent the sort sequence for video mode list */

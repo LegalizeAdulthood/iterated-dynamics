@@ -15,6 +15,7 @@
 #include <filesystem>
 
 using namespace id::io;
+using namespace id::misc;
 using namespace id::test::config;
 using namespace testing;
 

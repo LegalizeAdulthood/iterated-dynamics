@@ -15,6 +15,7 @@
 #include <cmath>
 
 using namespace id;
+using namespace id::misc;
 
 static int get_music_params();
 static int get_scale_map();

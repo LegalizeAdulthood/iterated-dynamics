@@ -15,6 +15,7 @@
 #include <cstring>
 
 using namespace id::math;
+using namespace id::misc;
 
 int input_field(InputFieldFlags options, //
     int attr,                            // display attribute

@@ -37,6 +37,9 @@
 using namespace id;
 using namespace id::io;
 
+namespace id::misc
+{
+
 static void flush_output()
 {
     static time_t start = 0;
@@ -542,3 +545,5 @@ bool Win32BaseDriver::get_filename(
     }
     return true;
 }
+
+} // namespace id::misc

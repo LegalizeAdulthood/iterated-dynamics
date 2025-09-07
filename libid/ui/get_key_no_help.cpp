@@ -5,6 +5,8 @@
 #include "misc/Driver.h"
 #include "ui/id_keys.h"
 
+using namespace id::misc;
+
 /*
  * This routine returns a key, ignoring F1
  */

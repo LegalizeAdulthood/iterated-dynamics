@@ -24,6 +24,9 @@
 
 using namespace id;
 
+namespace id::misc
+{
+
 enum
 {
     DRAW_INTERVAL = 6,
@@ -475,12 +478,9 @@ void DiskDriver::flush()
 
 static DiskDriver s_disk_driver{};
 
-namespace id
-{
-
 Driver *get_disk_driver()
 {
     return &s_disk_driver;
 }
 
-} // namespace id
+} // namespace id::misc

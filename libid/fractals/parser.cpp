@@ -34,7 +34,6 @@
 #include "math/rand15.h"
 #include "math/sign.h"
 #include "misc/debug_flags.h"
-#include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"

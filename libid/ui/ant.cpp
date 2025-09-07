@@ -20,6 +20,7 @@
 #include <sstream>
 
 using namespace id;
+using namespace id::misc;
 
 static long change_wait(long wait)
 {

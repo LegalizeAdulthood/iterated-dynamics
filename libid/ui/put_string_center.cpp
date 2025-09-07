@@ -6,6 +6,8 @@
 
 #include <cstring>
 
+using namespace id::misc;
+
 int put_string_center(int row, int col, int width, int attr, const char *msg)
 {
     char buf[81];

@@ -13,6 +13,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::misc;
 
 static const char *s_masks[] = {"*.pot", "*.gif"};
 

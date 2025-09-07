@@ -29,6 +29,8 @@
 #include <ctime>
 #include <vector>
 
+using namespace id::misc;
+
 // ********************** Mouse Support Variables **************************
 
 bool g_inside_help = false;

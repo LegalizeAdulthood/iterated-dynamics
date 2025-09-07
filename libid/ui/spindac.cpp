@@ -10,6 +10,7 @@
 #include <cstring>
 
 using namespace id;
+using namespace id::misc;
 
 int g_dac_count{};
 bool g_is_true_color{};

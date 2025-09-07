@@ -36,6 +36,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::misc;
 
 constexpr double PIXEL_ROUND{0.00001};
 

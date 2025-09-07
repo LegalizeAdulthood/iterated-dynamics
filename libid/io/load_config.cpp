@@ -18,6 +18,8 @@
 #include <iterator>
 #include <string_view>
 
+using namespace id::misc;
+
 namespace id::io
 {
 

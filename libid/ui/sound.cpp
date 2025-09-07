@@ -19,6 +19,7 @@
 
 using namespace id;
 using namespace id::io;
+using namespace id::misc;
 
 int g_fm_attack{};
 int g_fm_decay{};

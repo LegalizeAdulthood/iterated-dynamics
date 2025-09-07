@@ -19,6 +19,8 @@
 #include <cctype>
 #include <stdexcept>
 
+using namespace id::misc;
+
 Frame g_frame{};
 
 constexpr const TCHAR *const LEFT_POS{_T("Left")};

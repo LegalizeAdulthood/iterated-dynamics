@@ -22,6 +22,7 @@
 #include <vector>
 
 using namespace id;
+using namespace id::misc;
 
 bool g_slow_display{};
 

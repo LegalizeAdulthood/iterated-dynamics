@@ -5,6 +5,8 @@
 #include "fractals/jb.h"
 #include "misc/Driver.h"
 
+using namespace id::misc;
+
 int standard_4d_type()
 {
     id::fractals::Standard4D s4d;

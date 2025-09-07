@@ -10,6 +10,7 @@
 #include <cstring>
 
 using namespace id;
+using namespace id::misc;
 
 /* thinking(1,message):
       if thinking message not yet on display, it is displayed;

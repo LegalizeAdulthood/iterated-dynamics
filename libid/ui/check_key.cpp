@@ -7,6 +7,7 @@
 #include "misc/Driver.h"
 
 using namespace id;
+using namespace id::misc;
 
 bool check_key()
 {

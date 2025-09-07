@@ -8,6 +8,8 @@
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
 
+using namespace id::misc;
+
 int cellular_type()
 {
     try

@@ -5,6 +5,8 @@
 #include "misc/Driver.h"
 #include "ui/ChoiceBuilder.h"
 
+using namespace id::misc;
+
 int get_a_number(double *x, double *y)
 {
     driver_stack_screen();

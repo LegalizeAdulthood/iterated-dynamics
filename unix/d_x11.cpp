@@ -106,6 +106,9 @@ constexpr const int DEFAULT_WIDTH{640};
 constexpr const int DEFAULT_HEIGHT{480};
 constexpr const char *const DEFXY{"640x480+0+0"};
 
+namespace id::misc
+{
+
 // The pixtab stuff is so we can map from pixel values 0-n to
 // the actual color table entries which may be anything.
 //
@@ -2617,12 +2620,9 @@ bool X11Driver::get_filename(
 
 static X11Driver s_x11_driver;
 
-namespace id
-{
-
 Driver *get_x11_driver()
 {
     return &s_x11_driver;
 }
 
-} // namespace id
+} // namespace id::misc

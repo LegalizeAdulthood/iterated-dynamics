@@ -12,7 +12,6 @@
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
-#include "misc/Driver.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
 #include "ui/thinking.h"

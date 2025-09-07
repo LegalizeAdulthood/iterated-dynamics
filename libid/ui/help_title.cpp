@@ -14,6 +14,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::misc;
 
 void help_title()
 {

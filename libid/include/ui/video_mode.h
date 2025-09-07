@@ -9,16 +9,19 @@ enum
     MAX_VIDEO_MODES = 300       // maximum entries in id.cfg
 };
 
+namespace id::misc
+{
 class Driver;
+}
 
 struct VideoInfo
-{                     // All we need to know about a video mode:
-    int key;          // function key used to invoke this mode
-    int x_dots;       // number of dots across the screen
-    int y_dots;       // number of dots down the screen
-    int colors;       // number of colors available
-    Driver *driver;   // associated driver for this mode
-    char comment[26]; // Comments (UNTESTED, etc)
+{                             // All we need to know about a video mode:
+    int key;                  // function key used to invoke this mode
+    int x_dots;               // number of dots across the screen
+    int y_dots;               // number of dots down the screen
+    int colors;               // number of colors available
+    id::misc::Driver *driver; // associated driver for this mode
+    char comment[26];         // Comments (UNTESTED, etc)
 };
 
 extern VideoInfo             g_video_table[];

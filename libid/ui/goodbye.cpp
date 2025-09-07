@@ -20,6 +20,7 @@
 #endif
 
 using namespace id;
+using namespace id::misc;
 
 // we're done.  Bail out
 [[noreturn]] void goodbye()

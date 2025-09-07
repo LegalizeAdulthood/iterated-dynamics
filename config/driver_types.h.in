@@ -19,10 +19,9 @@
 #cmakedefine01 ID_HAVE_GDI_DRIVER
 #cmakedefine01 ID_HAVE_WIN32_DISK_DRIVER
 
-class Driver;
-
-namespace id
+namespace id::misc
 {
+class Driver;
 
 #if ID_HAVE_X11_DRIVER
 extern Driver *get_x11_driver();
@@ -37,4 +36,4 @@ extern Driver *get_disk_driver();
 extern Driver *get_wx_driver();
 #endif
 
-} // namespace id
+} // namespace id::misc

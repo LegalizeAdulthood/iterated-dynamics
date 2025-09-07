@@ -8,6 +8,9 @@
 
 #include <cstring>
 
+namespace id::misc
+{
+
 // list of drivers that are supported by source code in Id.
 // default driver is first one in the list that initializes.
 enum
@@ -44,19 +47,19 @@ void load_driver(Driver *drv, int *argc, char **argv)
 int init_drivers(int *argc, char **argv)
 {
 #if ID_HAVE_X11_DRIVER
-    load_driver(id::get_x11_driver(), argc, argv);
+    load_driver(get_x11_driver(), argc, argv);
 #endif
 
 #if ID_HAVE_WIN32_DISK_DRIVER
-    load_driver(id::get_disk_driver(), argc, argv);
+    load_driver(get_disk_driver(), argc, argv);
 #endif
 
 #if ID_HAVE_GDI_DRIVER
-    load_driver(id::get_gdi_driver(), argc, argv);
+    load_driver(get_gdi_driver(), argc, argv);
 #endif
 
 #if ID_HAVE_WX_DRIVER
-    load_driver(id::get_wx_driver(), argc, argv);
+    load_driver(get_wx_driver(), argc, argv);
 #endif
 
     return s_num_drivers;     // number of drivers supported at runtime
@@ -114,3 +117,5 @@ void driver_set_video_mode(VideoInfo *mode)
     }
     g_driver->set_video_mode(mode);
 }
+
+} // namespace id::misc

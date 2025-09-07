@@ -11,7 +11,6 @@
 #include "fractals/population.h"
 #include "math/arg.h"
 #include "math/fixed_pt.h"
-#include "misc/Driver.h"
 #include "misc/id.h"
 
 #include <cmath>

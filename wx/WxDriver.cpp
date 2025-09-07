@@ -19,6 +19,9 @@
 #include <string>
 #include <thread>
 
+namespace id::misc
+{
+
 #if 0
 long readticker()
 {
@@ -617,12 +620,9 @@ bool WxDriver::get_filename(
 
 static WxDriver s_wx_driver{};
 
-namespace id
-{
-
 Driver *get_wx_driver()
 {
     return &s_wx_driver;
 }
 
-} // namespace id
+} // namespace id::misc

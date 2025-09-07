@@ -42,6 +42,7 @@
 using namespace id;
 using namespace id::fractals;
 using namespace id::io;
+using namespace id::misc;
 
 constexpr int MAX_ENTRIES = 2000;
 

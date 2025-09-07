@@ -12,6 +12,7 @@
 #include "misc/Driver.h"
 
 using namespace id;
+using namespace id::misc;
 
 int orbit2d_type()
 {

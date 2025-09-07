@@ -5,6 +5,8 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
+using namespace id::misc;
+
 int orbit3d_calc()
 {
     id::fractals::Orbit3D o3d;

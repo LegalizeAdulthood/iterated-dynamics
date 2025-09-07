@@ -58,6 +58,8 @@
 #endif
 #endif
 
+using namespace id::misc;
+
 constexpr int ctl(int code)
 {
     return code & 0x1f;

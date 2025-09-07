@@ -9,6 +9,7 @@
 #include "ui/stop_msg.h"
 
 using namespace id;
+using namespace id::misc;
 
 int plasma_type()
 {

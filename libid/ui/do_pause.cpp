@@ -9,6 +9,7 @@
 #include "ui/id_keys.h"
 
 using namespace id;
+using namespace id::misc;
 
 // defer pause until after parsing so we know if in batch mode
 void do_pause(int action)

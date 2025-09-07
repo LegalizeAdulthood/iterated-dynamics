@@ -3,6 +3,8 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
+using namespace id::misc;
+
 int ifs2d()
 {
     id::fractals::IFS2D ifs;

@@ -10,6 +10,9 @@
 
 struct VideoInfo;
 
+namespace id::misc
+{
+
 enum class Buzzer
 {
     COMPLETE = 0,
@@ -379,3 +382,5 @@ inline bool driver_get_filename(
     result_path = result_filename;
     return result;
 }
+
+} // namespace id::misc

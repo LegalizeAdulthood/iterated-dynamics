@@ -12,6 +12,7 @@
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::misc;
 
 /* This routine copies the current screen to by flipping the x-axis, y-axis,
    or both. Refuses to work if calculation in progress or if fractal

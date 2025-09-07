@@ -12,6 +12,7 @@
 #include <algorithm>
 
 using namespace id;
+using namespace id::misc;
 
 int field_prompt(const char *hdg, // heading, \n delimited lines
     const char *instr,            // additional instructions or nullptr

@@ -17,6 +17,7 @@
 #include <vector>
 
 using namespace id;
+using namespace id::misc;
 
 static std::vector<Byte> s_text_save;
 static int s_text_x_dots{};

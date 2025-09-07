@@ -5,6 +5,8 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
+using namespace id::misc;
+
 int ifs3d_calc()
 {
     id::fractals::IFS3D ifs;

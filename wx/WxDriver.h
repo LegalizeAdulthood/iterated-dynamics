@@ -11,6 +11,9 @@
 #include <string>
 #include <vector>
 
+namespace id::misc
+{
+
 class WxDriver : public Driver
 {
 public:
@@ -107,3 +110,5 @@ protected:
     int m_cursor_row{};
     int m_cursor_col{};
 };
+
+} // namespace id::misc

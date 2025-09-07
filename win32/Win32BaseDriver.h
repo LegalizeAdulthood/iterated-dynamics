@@ -8,6 +8,9 @@
 
 #include <vector>
 
+namespace id::misc
+{
+
 class Win32BaseDriver : public Driver
 {
 public:
@@ -80,3 +83,5 @@ protected:
     int m_cursor_row{};
     int m_cursor_col{};
 };
+
+} // namespace id::misc

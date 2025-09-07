@@ -7,6 +7,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+using namespace id::misc;
 using namespace testing;
 
 TEST(TestDriver, loadClose)
