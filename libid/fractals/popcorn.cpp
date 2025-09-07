@@ -14,7 +14,8 @@
 
 #include <cmath>
 
-using namespace id;
+namespace id::fractals
+{
 
 // standalone engine for "popcorn"
 // subset of std engine
@@ -123,3 +124,5 @@ int popcorn_orbit()
     g_old_z = g_new_z;
     return 0;
 }
+
+} // namespace id::fractals
