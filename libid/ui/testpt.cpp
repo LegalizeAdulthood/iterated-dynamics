@@ -6,13 +6,16 @@
 #include "fractals/TestPoint.h"
 #include "misc/Driver.h"
 
-using namespace id;
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 // standalone engine for "test"
 int test_type()
 {
-    id::fractals::TestPoint test;
+    TestPoint test;
 
     if (g_resuming)
     {
@@ -34,3 +37,5 @@ int test_type()
     test.finish();
     return 0;
 }
+
+} // namespace id::ui
