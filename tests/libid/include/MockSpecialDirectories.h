@@ -6,7 +6,10 @@
 
 #include <gmock/gmock.h>
 
-class MockSpecialDirectories : public id::io::SpecialDirectories
+namespace id::io::test
+{
+
+class MockSpecialDirectories : public SpecialDirectories
 {
 public:
     MockSpecialDirectories() = default;
@@ -17,3 +20,5 @@ public:
 };
 
 extern std::shared_ptr<MockSpecialDirectories> g_mock_special_dirs;
+
+}

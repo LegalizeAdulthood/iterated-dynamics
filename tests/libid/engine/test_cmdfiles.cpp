@@ -68,9 +68,13 @@ using namespace id::geometry;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
+using namespace id::misc::test;
 using namespace id::test::data;
 using namespace id::ui;
 using namespace testing;
+
+namespace id::engine
+{
 
 static std::ostream &operator<<(std::ostream &str, CmdArgFlags value)
 {
@@ -126,6 +130,11 @@ static std::ostream &operator<<(std::ostream &str, CmdArgFlags value)
     }
     return str;
 }
+
+} // namespace id::engine
+
+namespace id::test
+{
 
 class TestParameterCommand : public Test
 {
@@ -4153,3 +4162,5 @@ TEST_F(TestParameterCommand, multipleReadLibraryDir)
     EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{test::library::ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
+
+} // namespace id::test

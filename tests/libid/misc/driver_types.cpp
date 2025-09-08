@@ -4,6 +4,8 @@
 
 #include "MockDriver.h"
 
+using namespace id::misc::test;
+
 namespace id::misc
 {
 

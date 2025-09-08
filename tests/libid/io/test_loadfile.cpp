@@ -23,6 +23,7 @@ using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
+using namespace id::misc::test;
 using namespace id::test::migrate_gif;
 using namespace id::ui;
 using namespace testing;

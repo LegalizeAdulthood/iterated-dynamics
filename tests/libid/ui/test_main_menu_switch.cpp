@@ -16,7 +16,7 @@ using namespace id::misc;
 using namespace id::ui;
 using namespace testing;
 
-namespace
+namespace id::test
 {
 
 class TestMainMenuSwitch : public Test
@@ -30,8 +30,6 @@ protected:
 
     MainContext m_context{};
 };
-
-} // namespace
 
 TEST_F(TestMainMenuSwitch, nothingChangedOnLowerCaseM)
 {
@@ -82,3 +80,5 @@ TEST_F(TestMainMenuSwitch, userCalcModeResetOnQuickCalcImageNotComplete)
     EXPECT_TRUE(g_quick_calc);
     EXPECT_EQ(CalcMode::ONE_PASS, g_user_std_calc_mode);
 }
+
+} // namespace id::test

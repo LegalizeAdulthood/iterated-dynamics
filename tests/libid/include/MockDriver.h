@@ -6,7 +6,7 @@
 
 #include <gmock/gmock.h>
 
-namespace id::misc
+namespace id::misc::test
 {
 
 class MockDriver : public testing::StrictMock<Driver>
@@ -73,4 +73,4 @@ public:
     MOCK_METHOD(bool, get_filename, (const char *, const char *, const char *, std::string &), (override));
 };
 
-} // namespace id::misc
+} // namespace id::misc::test

@@ -16,9 +16,13 @@
 
 using namespace id::io;
 using namespace id::misc;
+using namespace id::misc::test;
 using namespace id::test::config;
 using namespace id::ui;
 using namespace testing;
+
+namespace id::test
+{
 
 TEST(TestLoadConfig, gdiDisk)
 {
@@ -57,3 +61,5 @@ TEST(TestLoadConfig, gdiDisk)
 
     close_drivers();
 }
+
+} // namespace id::test

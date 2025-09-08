@@ -4,6 +4,9 @@
 
 #include <gtest/gtest.h>
 
+namespace id::test
+{
+
 template <typename T>
 class ValueUnchanged
 {
@@ -36,3 +39,5 @@ private:
 };
 
 #define VALUE_UNCHANGED(var_, value_) ValueUnchanged saved_##var_(#var_, var_, value_)
+
+} // namespace id::test

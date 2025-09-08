@@ -8,7 +8,11 @@
 #include <gtest/gtest.h>
 
 using namespace id::misc;
+using namespace id::misc::test;
 using namespace testing;
+
+namespace id::test
+{
 
 TEST(TestDriver, loadClose)
 {
@@ -23,3 +27,5 @@ TEST(TestDriver, loadClose)
     close_drivers();
     EXPECT_EQ(nullptr, g_driver);
 }
+
+} // namespace id::test

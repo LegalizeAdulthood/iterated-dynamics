@@ -2,13 +2,19 @@
 //
 #include "MockSpecialDirectories.h"
 
-std::shared_ptr<MockSpecialDirectories> g_mock_special_dirs;
-
 namespace id::io
 {
 
+namespace test
+{
+
+std::shared_ptr<MockSpecialDirectories> g_mock_special_dirs;
+
+} // namespace test
+
 std::shared_ptr<SpecialDirectories> create_special_directories()
 {
+    using namespace id::io::test;
     g_mock_special_dirs = std::make_shared<MockSpecialDirectories>();
     return g_mock_special_dirs;
 }
