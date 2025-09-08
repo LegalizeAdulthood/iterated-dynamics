@@ -11,12 +11,15 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
-using namespace id;
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int orbit2d_type()
 {
-    id::fractals::Orbit2D o2d;
+    Orbit2D o2d;
 
     if (g_resuming)
     {
@@ -35,3 +38,5 @@ int orbit2d_type()
     }
     return 0;
 }
+
+} // namespace id::ui

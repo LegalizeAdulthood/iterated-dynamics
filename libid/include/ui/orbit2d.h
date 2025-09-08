@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int orbit2d_type();
+
+} // namespace id::ui
