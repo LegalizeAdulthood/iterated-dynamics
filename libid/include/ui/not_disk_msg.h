@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 void not_disk_msg();
+
+} // namespace id::ui
