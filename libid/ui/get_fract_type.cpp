@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/param_not_used.h"
+#include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
@@ -23,7 +24,6 @@
 #include "ui/set_default_params.h"
 #include "ui/shell_sort.h"
 #include "ui/stop_msg.h"
-#include "ui/trig_fns.h"
 
 #include <fmt/format.h>
 

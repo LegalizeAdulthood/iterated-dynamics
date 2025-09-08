@@ -20,6 +20,7 @@
 #include <engine/show_dot.h>
 #include <engine/soi.h>
 #include <engine/sticky_orbits.h>
+#include <engine/trig_fns.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
 #include <fractals/jb.h>
@@ -43,7 +44,6 @@
 #include <ui/sound.h>
 #include <ui/stereo.h>
 #include <ui/stop_msg.h>
-#include <ui/trig_fns.h>
 #include <ui/video_mode.h>
 
 #include <gmock/gmock.h>

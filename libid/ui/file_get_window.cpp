@@ -10,6 +10,7 @@
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/lorenz.h"
@@ -28,7 +29,6 @@
 #include "ui/get_browse_params.h"
 #include "ui/id_keys.h"
 #include "ui/temp_msg.h"
-#include "ui/trig_fns.h"
 #include "ui/zoom.h"
 
 #include <fmt/format.h>

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/trig_fns.h"
+#include "engine/trig_fns.h"
 
 #include "engine/cmdfiles.h"
 #include "fractals/fractalp.h"
@@ -18,7 +18,7 @@ using namespace id::config;
 using namespace id::fractals;
 using namespace id::math;
 
-namespace id::ui
+namespace id::engine
 {
 
 namespace
@@ -200,4 +200,4 @@ void restore_trig_functions()
     g_d_trig3 = s_saved_trig_functions.d_trig3;
 }
 
-} // namespace id::ui
+} // namespace id::engine

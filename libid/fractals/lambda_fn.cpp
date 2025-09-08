@@ -6,16 +6,15 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
+#include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "math/arg.h"
-#include "ui/trig_fns.h"
 
 #include <cmath>
 
 using namespace id::engine;
 using namespace id::math;
-using namespace id::ui;
 
 namespace id::fractals
 {

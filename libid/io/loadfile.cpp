@@ -16,6 +16,7 @@
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
+#include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
@@ -32,7 +33,6 @@
 #include "ui/make_batch_file.h"
 #include "ui/rotate.h"
 #include "ui/stop_msg.h"
-#include "ui/trig_fns.h"
 
 #include <fmt/format.h>
 

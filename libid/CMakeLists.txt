@@ -41,6 +41,7 @@ add_library(libid
     include/engine/solid_guess.h engine/solid_guess.cpp
     include/engine/sticky_orbits.h engine/sticky_orbits.cpp
     include/engine/tesseral.h engine/tesseral.cpp
+    include/engine/trig_fns.h engine/trig_fns.cpp
     include/engine/type_has_param.h engine/type_has_param.cpp
     include/engine/wait_until.h engine/wait_until.cpp
     include/engine/work_list.h engine/work_list.cpp
@@ -236,7 +237,6 @@ add_library(libid
     include/ui/testpt.h ui/testpt.cpp
     include/ui/text_screen.h ui/text_screen.cpp
     include/ui/thinking.h ui/thinking.cpp
-    include/ui/trig_fns.h ui/trig_fns.cpp
     include/ui/video.h ui/video.cpp
     include/ui/video_mode.h ui/video_mode.cpp
     include/ui/zoom.h ui/zoom.cpp

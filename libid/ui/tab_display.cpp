@@ -13,6 +13,7 @@
 #include "engine/pixel_grid.h"
 #include "engine/random_seed.h"
 #include "engine/soi.h"
+#include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
@@ -30,7 +31,6 @@
 #include "ui/rotate.h"
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
-#include "ui/trig_fns.h"
 #include "ui/video.h"
 #include "ui/video_mode.h"
 

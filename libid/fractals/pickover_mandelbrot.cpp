@@ -7,18 +7,17 @@
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/trig_fns.h"
 #include "fractals/frasetup.h"
 #include "math/arg.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "math/fpu087.h"
-#include "ui/trig_fns.h"
 
 #include <cmath>
 
 using namespace id::engine;
 using namespace id::math;
-using namespace id::ui;
 
 namespace id::fractals
 {

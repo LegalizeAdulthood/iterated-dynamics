@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace id::ui
+namespace id::engine
 {
 
 // The values must match the values in the trigfn array in prompts1
@@ -66,4 +66,4 @@ void set_trig_pointers(int which);
 void save_trig_functions();
 void restore_trig_functions();
 
-} // namespace id::ui
+} // namespace id::engine

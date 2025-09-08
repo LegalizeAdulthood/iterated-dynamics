@@ -13,6 +13,7 @@
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
+#include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
@@ -25,7 +26,6 @@
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
-#include "ui/trig_fns.h"
 
 #include <config/port.h>
 

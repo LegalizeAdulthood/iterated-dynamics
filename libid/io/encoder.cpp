@@ -16,6 +16,7 @@
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
+#include "engine/trig_fns.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
@@ -38,7 +39,6 @@
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
-#include "ui/trig_fns.h"
 #include "ui/video.h"
 #include "ui/video_mode.h"
 

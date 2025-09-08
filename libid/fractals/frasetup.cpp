@@ -11,6 +11,7 @@
 #include "engine/get_julia_attractor.h"
 #include "engine/id_data.h"
 #include "engine/perturbation.h"
+#include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/magnet.h"
@@ -19,7 +20,6 @@
 #include "fractals/popcorn.h"
 #include "misc/debug_flags.h"
 #include "ui/editpal.h"
-#include "ui/trig_fns.h"
 
 #include <cmath>
 

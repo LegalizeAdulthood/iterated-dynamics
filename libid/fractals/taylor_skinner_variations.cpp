@@ -6,16 +6,15 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "math/arg.h"
 #include "misc/debug_flags.h"
-#include "ui/trig_fns.h"
 
 using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::fractals
 {
