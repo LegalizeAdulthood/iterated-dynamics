@@ -10,7 +10,7 @@
 
 using namespace id::math;
 
-namespace id
+namespace id::engine
 {
 
 // most people "think" in degrees
@@ -159,4 +159,4 @@ void cvt_corners_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble mag, double x_mag_fa
     restore_stack(saved);
 }
 
-} // namespace id
+} // namespace id::engine
