@@ -17,10 +17,9 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace id::engine;
 using namespace id::fractals;
 
-namespace id
+namespace id::engine
 {
 
 static int s_inside_color{};
@@ -215,4 +214,4 @@ over_bailout_87:
     goto pop_stack;
 }
 
-} // namespace id
+} // namespace id::engine
