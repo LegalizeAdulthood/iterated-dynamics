@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 enum class AutoShowDot
@@ -18,4 +18,4 @@ extern AutoShowDot           g_auto_show_dot;
 extern int                   g_show_dot;
 extern int                   g_size_dot;
 
-} // namespace id
+} // namespace id::engine
