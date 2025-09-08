@@ -5,7 +5,7 @@
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
 
-namespace id::wx
+namespace id::gui
 {
 
 enum class MarginIndex
@@ -204,4 +204,4 @@ void TextScreenFrame::on_exit(wxCommandEvent & /*event*/)
     Close(true);
 }
 
-} // namespace id::wx
+} // namespace id::gui

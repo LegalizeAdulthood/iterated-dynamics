@@ -83,7 +83,7 @@ static void flush_output()
         if ((now - last)*frames_per_second > ticks_per_second)
         {
             driver_flush();
-            wx::wxGetApp().pump_messages(false);
+            gui::wxGetApp().pump_messages(false);
             last = now;
         }
     }

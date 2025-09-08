@@ -4,7 +4,7 @@
 
 #include <array>
 
-namespace id::wx
+namespace id::gui
 {
 
 class IdFrame : public wxFrame
@@ -43,4 +43,4 @@ private:
     std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
 };
 
-} // namespace id::wx
+} // namespace id::gui

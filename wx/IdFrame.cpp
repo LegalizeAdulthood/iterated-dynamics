@@ -10,7 +10,7 @@
 #include <array>
 #include <cassert>
 
-namespace id::wx
+namespace id::gui
 {
 
 IdFrame::IdFrame() :
@@ -37,7 +37,7 @@ IdFrame::IdFrame() :
 
 int IdFrame::get_key_press(bool wait_for_key)
 {
-    id::wx::wxGetApp().pump_messages(wait_for_key);
+    wxGetApp().pump_messages(wait_for_key);
     if (wait_for_key && m_timed_out)
     {
         return 0;
@@ -92,4 +92,4 @@ void IdFrame::add_key_press(unsigned int key)
     m_key_press_count++;
 }
 
-} // namespace id::wx
+} // namespace id::gui

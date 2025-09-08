@@ -3,7 +3,7 @@
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
 
-namespace id::wx
+namespace id::gui
 {
 
 class TestPlotApp : public wxApp
@@ -136,4 +136,4 @@ void TestPlotFrame::on_exit(wxCommandEvent & /*event*/)
     Close(true);
 }
 
-} // namespace id::wx
+} // namespace id::gui

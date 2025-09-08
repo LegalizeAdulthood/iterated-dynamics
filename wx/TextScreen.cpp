@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cassert>
 
-namespace id::wx
+namespace id::gui
 {
 
 static wxColour cga_color_to_wx_color(CGAColor color, bool intense)
@@ -523,4 +523,4 @@ void TextScreen::row_col_from_position(int pos, int &row, int &col) const
     col = std::clamp(col, 0, SCREEN_WIDTH - 1);
 }
 
-} // namespace id::wx
+} // namespace id::gui

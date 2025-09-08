@@ -4,7 +4,7 @@
 
 #include <wx/app.h>
 
-namespace id::wx
+namespace id::gui
 {
 
 class IdApp : public wxApp
@@ -21,4 +21,4 @@ public:
 
 IdApp &wxGetApp();
 
-} // namespace id::wx
+} // namespace id::gui

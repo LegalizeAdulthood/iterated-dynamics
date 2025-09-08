@@ -10,7 +10,7 @@
 #include <string>
 #include <vector>
 
-namespace id::wx
+namespace id::gui
 {
 
 using Colormap = std::array<std::array<Byte, 3>, 256>;
@@ -68,4 +68,4 @@ private:
     wxDECLARE_DYNAMIC_CLASS(Plot);
 };
 
-} // namespace id::wx
+} // namespace id::gui

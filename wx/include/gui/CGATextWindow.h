@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace id::wx
+namespace id::gui
 {
 
 enum
@@ -23,4 +23,4 @@ class CGATextWindow
 {
 };
 
-} // namespace id::wx
+} // namespace id::gui
