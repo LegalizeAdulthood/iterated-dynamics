@@ -95,7 +95,7 @@ protected:
     std::string m_name;
     std::string m_description;
 
-    CGATextWindow m_win_text;
+    wx::CGATextWindow m_win_text;
 
     /* key_buffer
     *
@@ -104,7 +104,7 @@ protected:
     */
     mutable int m_key_buffer{};
 
-    std::vector<Screen> m_saved_screens;
+    std::vector<wx::Screen> m_saved_screens;
     std::vector<int> m_saved_cursor;
     bool m_cursor_shown{};
     int m_cursor_row{};

@@ -4,6 +4,9 @@
 
 #include <array>
 
+namespace id::wx
+{
+
 class IdFrame : public wxFrame
 {
 public:
@@ -39,3 +42,5 @@ private:
     unsigned int m_key_press_tail{};
     std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
 };
+
+} // namespace id::wx

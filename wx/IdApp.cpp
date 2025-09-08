@@ -18,6 +18,9 @@
 
 using namespace id::ui;
 
+namespace id::wx
+{
+
 wxIMPLEMENT_APP(IdApp);
 
 bool IdApp::OnInit()
@@ -51,3 +54,5 @@ void IdApp::pump_messages(bool wait_flag)
         }
     }
 }
+
+} // namespace id::wx

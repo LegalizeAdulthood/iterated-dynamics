@@ -4,6 +4,9 @@
 
 #include <vector>
 
+namespace id::wx
+{
+
 enum
 {
     WINTEXT_MAX_COL = 80,
@@ -19,3 +22,5 @@ struct Screen
 class CGATextWindow
 {
 };
+
+} // namespace id::wx
