@@ -84,10 +84,9 @@ TrigFn g_trig_index[4] =
     TrigFn::SIN, TrigFn::SQR, TrigFn::SINH, TrigFn::COSH
 };
 
-// return display form of active trig functions
-std::string show_trig()
+std::string get_function_param()
 {
-    char tmp_buff[30];
+    char tmp_buff[80];
     trig_details(tmp_buff);
     if (tmp_buff[0])
     {

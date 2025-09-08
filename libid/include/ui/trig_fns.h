@@ -58,7 +58,8 @@ extern NamedTrigFunction     g_trig_fn[];
 extern TrigFn                g_trig_index[];
 extern const int             g_num_trig_functions;
 
-std::string show_trig();
+/// return function= parameter form of active functions
+std::string get_function_param();
 void trig_details(char *buf);
 int set_trig_array(int k, const char *name);
 void set_trig_pointers(int which);

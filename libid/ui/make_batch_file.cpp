@@ -870,10 +870,9 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             put_param(" miim=%s/%s", to_string(g_major_method), to_string(g_inverse_julia_minor_method));
         }
 
-        strncpy(buf, show_trig().c_str(), std::size(buf));
-        if (buf[0])
+        if (const std::string param{get_function_param()}; !param.empty())
         {
-            put_param(buf);
+            put_param(param.c_str());
         }
 
         if (g_user_std_calc_mode != CalcMode::SOLID_GUESS)
