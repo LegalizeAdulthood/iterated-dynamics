@@ -67,12 +67,13 @@
 
 namespace fs = std::filesystem;
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 bool g_make_parameter_file{};
 bool g_make_parameter_file_map{};
@@ -1794,3 +1795,5 @@ static void put_bf(int slash, BigFloat r, int prec)
     strip_zeros(buff_ptr);
     put_param(buf.data());
 }
+
+} // namespace id::ui
