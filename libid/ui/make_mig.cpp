@@ -15,6 +15,9 @@
 #include <filesystem>
 #include <string>
 
+namespace id::ui
+{
+
 static char par_key(unsigned int x)
 {
     return x < 10 ? '0' + x : 'a' - 10 + x;
@@ -327,3 +330,5 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
         std::printf("File %s has been created (and its component files deleted)\n", gif_out.c_str());
     }
 }
+
+} // namespace id::ui
