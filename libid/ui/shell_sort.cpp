@@ -4,6 +4,9 @@
 
 #include <config/string_case_compare.h>
 
+namespace id::ui
+{
+
 void shell_sort(void *v1, int n, unsigned sz)
 {
     const auto lc_compare = [](void *arg1, void *arg2) // for sort
@@ -32,3 +35,5 @@ void shell_sort(void *v1, int n, unsigned sz)
         }
     }
 }
+
+} // namespace id::ui

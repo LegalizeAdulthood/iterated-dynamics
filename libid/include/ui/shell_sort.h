@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 void shell_sort(void *v1, int n, unsigned sz);
+
+} // namespace id::ui
