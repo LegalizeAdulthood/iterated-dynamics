@@ -12,9 +12,10 @@
 #include <cstring>
 #include <string>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static const char *s_masks[] = {"*.pot", "*.gif"};
 
@@ -125,3 +126,5 @@ int get_rds_params()
     driver_unstack_screen();
     return ret;
 }
+
+} // namespace id::ui
