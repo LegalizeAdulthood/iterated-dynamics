@@ -5,11 +5,15 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int ifs3d_calc()
 {
-    id::fractals::IFS3D ifs;
+    IFS3D ifs;
     while (!ifs.done())
     {
         // keypress bails out
@@ -21,3 +25,5 @@ int ifs3d_calc()
     }
     return 0;
 }
+
+} // namespace id::ui
