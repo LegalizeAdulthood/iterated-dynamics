@@ -9,9 +9,10 @@
 
 #include <cstring>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 /* thinking(1,message):
       if thinking message not yet on display, it is displayed;
@@ -59,3 +60,5 @@ bool thinking(const char *msg)
     s_think_state = (s_think_state + 1) & 3;
     return driver_key_pressed() != 0;
 }
+
+} // namespace id::ui
