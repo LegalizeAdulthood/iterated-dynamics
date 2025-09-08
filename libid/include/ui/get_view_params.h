@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int get_view_params();
+
+} // namespace id::ui

@@ -20,9 +20,10 @@
 #include <cstring>
 #include <iterator>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 // for videomodes added new options "virtual x/y" that change "sx/ydots"
 // for diskmode changed "viewx/ydots" to "virtual x/y" that do as above
@@ -234,3 +235,5 @@ get_view_restart:
                     || g_view_x_dots != old_view_x_dots
                     || (g_view_y_dots != old_view_y_dots && g_view_x_dots)))) ? 1 : 0;
 }
+
+} // namespace id::ui
