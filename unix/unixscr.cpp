@@ -29,6 +29,8 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
+#include "video.h"
+
 #include <config/port.h>
 
 #include <fcntl.h>

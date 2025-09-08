@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "video.h"
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
@@ -10,6 +11,8 @@
 #include "ui/video.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
+
+#include "general.h'
 #include "unixscr.h"
 
 #include <config/port.h>
