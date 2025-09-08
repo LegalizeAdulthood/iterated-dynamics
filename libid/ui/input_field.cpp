@@ -16,6 +16,7 @@
 
 using namespace id::math;
 using namespace id::misc;
+using namespace id::ui;
 
 int input_field(InputFieldFlags options, //
     int attr,                            // display attribute

@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 // Values returned by driver_get_key()
 enum
 {
@@ -110,3 +113,5 @@ inline bool non_alpha(int c)
 {
     return c < ID_KEY_SPACE || c > 127;
 }
+
+} // namespace id::ui

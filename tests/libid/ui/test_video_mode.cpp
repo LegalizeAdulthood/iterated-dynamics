@@ -8,6 +8,7 @@
 #include <gtest/gtest.h>
 
 using namespace id::misc;
+using namespace id::ui;
 
 TEST(TestVideoMode, checkKeyNameFnKey)
 {
