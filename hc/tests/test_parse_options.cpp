@@ -42,7 +42,7 @@ void PrintTo(const std::vector<const char *> &options, std::ostream *str)
 namespace hc
 {
 
-std::ostream &operator<<(std::ostream &str, hc::Mode value)
+std::ostream &operator<<(std::ostream &str, Mode value)
 {
     switch (value)
     {
@@ -63,7 +63,10 @@ std::ostream &operator<<(std::ostream &str, hc::Mode value)
     return str << "? (" << static_cast<int>(value) << ")";
 }
 
-}
+} // namespace hc
+
+namespace hc::test
+{
 
 class TestParseCompilerOptions : public Test
 {
@@ -72,7 +75,7 @@ protected:
 
     std::vector<std::string> m_args;
     std::vector<char *> m_argv;
-    hc::Options m_options;
+    Options m_options;
 };
 
 void TestParseCompilerOptions::parse_options(const std::vector<const char *> &args)
@@ -202,3 +205,5 @@ static std::vector<const char *> s_invalid_options[]{
 };
 
 INSTANTIATE_TEST_SUITE_P(TestOptionCombos, withOptions, ValuesIn(s_invalid_options));
+
+} // namespace hc::test

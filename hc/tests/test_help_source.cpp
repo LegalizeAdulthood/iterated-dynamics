@@ -4,7 +4,8 @@
 
 #include <gtest/gtest.h>
 
-using namespace hc;
+namespace hc::test
+{
 
 TEST(TestLabels, indexLabelLeast)
 {
@@ -23,3 +24,5 @@ TEST(TestLabels, labelsSortByName)
     EXPECT_TRUE(smaller < bigger);
     EXPECT_FALSE(bigger < smaller);
 }
+
+} // namespace hc::test
