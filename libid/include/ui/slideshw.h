@@ -4,6 +4,9 @@
 
 #include <filesystem>
 
+namespace id::ui
+{
+
 enum class SlidesMode
 {
     OFF = 0,
@@ -20,3 +23,5 @@ SlidesMode start_slide_show();
 void stop_slide_show();
 void record_show(int key);
 int handle_special_keys(int ch);
+
+} // namespace id::ui

@@ -39,10 +39,11 @@
 #undef max
 #endif
 
-using namespace id;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 enum
 {
@@ -522,3 +523,5 @@ int handle_special_keys(int ch)
 
     return ch;
 }
+
+} // namespace id::ui
