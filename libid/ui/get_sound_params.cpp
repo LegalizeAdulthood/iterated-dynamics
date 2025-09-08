@@ -14,9 +14,10 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static int get_music_params();
 static int get_scale_map();
@@ -244,3 +245,5 @@ get_music_restart:
 
     return 0;
 }
+
+} // namespace id::ui
