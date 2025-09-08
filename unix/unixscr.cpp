@@ -29,6 +29,7 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
+#include "general.h"
 #include "video.h"
 
 #include <config/port.h>
