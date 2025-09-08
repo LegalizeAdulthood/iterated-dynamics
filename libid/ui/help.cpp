@@ -38,12 +38,14 @@
 
 namespace fs = std::filesystem;
 
-using namespace id;
 using namespace id::config;
 using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::ui;
+
+namespace id::help
+{
 
 enum
 {
@@ -150,7 +152,7 @@ static void display_text(int row, int col, int color, const char *text, unsigned
 {
     while (len-- != 0)
     {
-        if (*text == help::CMD_LITERAL)
+        if (*text == CMD_LITERAL)
         {
             ++text;
             --len;
@@ -161,11 +163,11 @@ static void display_text(int row, int col, int color, const char *text, unsigned
 
 static void display_parse_text(const char *text, unsigned len, int start_margin, int *num_link, Link *link)
 {
-    help::TokenType tok;
+    TokenType tok;
     int size;
     int width;
 
-    g_text_col_base = help::SCREEN_INDENT;
+    g_text_col_base = SCREEN_INDENT;
     g_text_row_base = TEXT_START_ROW;
 
     const char *curr = text;
@@ -177,18 +179,18 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
 
     if (start_margin >= 0)
     {
-        tok = help::TokenType::TOK_PARA;
+        tok = TokenType::TOK_PARA;
     }
     else
     {
-        tok = static_cast<help::TokenType>(-1);
+        tok = static_cast<TokenType>(-1);
     }
 
     while (true)
     {
         switch (tok)
         {
-        case help::TokenType::TOK_PARA:
+        case TokenType::TOK_PARA:
         {
             int indent;
             int margin;
@@ -210,21 +212,21 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
 
             while (true)
             {
-                tok = id::help::find_token_length(help::TokenMode::ONLINE, curr, len, &size, &width);
+                tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
 
-                if (tok == help::TokenType::TOK_DONE || tok == help::TokenType::TOK_NL || tok == help::TokenType::TOK_FF)
+                if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
                 {
                     break;
                 }
 
-                if (tok == help::TokenType::TOK_PARA)
+                if (tok == TokenType::TOK_PARA)
                 {
                     col = 0;   // fake a new-line
                     row++;
                     break;
                 }
 
-                if (tok == help::TokenType::TOK_XONLINE || tok == help::TokenType::TOK_XDOC)
+                if (tok == TokenType::TOK_XONLINE || tok == TokenType::TOK_XDOC)
                 {
                     curr += size;
                     len  -= size;
@@ -233,33 +235,33 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
 
                 // now tok is SPACE or LINK or WORD
 
-                if (col+width > help::SCREEN_WIDTH)
+                if (col+width > SCREEN_WIDTH)
                 {
                     // go to next line...
                     col = margin;
                     ++row;
 
-                    if (tok == help::TokenType::TOK_SPACE)
+                    if (tok == TokenType::TOK_SPACE)
                     {
                         width = 0;   // skip spaces at start of a line
                     }
                 }
 
-                if (tok == help::TokenType::TOK_LINK)
+                if (tok == TokenType::TOK_LINK)
                 {
                     display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
                     if (num_link != nullptr)
                     {
                         link[*num_link].r         = (Byte)row;
                         link[*num_link].c         = (Byte)col;
-                        link[*num_link].topic_num = help::get_int(curr+1);
-                        link[*num_link].topic_off = help::get_int(curr+1+sizeof(int));
+                        link[*num_link].topic_num = get_int(curr+1);
+                        link[*num_link].topic_off = get_int(curr+1+sizeof(int));
                         link[*num_link].offset    = (unsigned)((curr+1+3*sizeof(int)) - text);
                         link[*num_link].width     = width;
                         ++(*num_link);
                     }
                 }
-                else if (tok == help::TokenType::TOK_WORD)
+                else if (tok == TokenType::TOK_WORD)
                 {
                     display_text(row, col, C_HELP_BODY, curr, width);
                 }
@@ -274,39 +276,39 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
             break;
         }
 
-        case help::TokenType::TOK_CENTER:
-            col = id::help::find_line_width(help::TokenMode::ONLINE, curr, len);
-            col = (help::SCREEN_WIDTH - col)/2;
+        case TokenType::TOK_CENTER:
+            col = find_line_width(TokenMode::ONLINE, curr, len);
+            col = (SCREEN_WIDTH - col)/2;
             col = std::max(col, 0);
             break;
 
-        case help::TokenType::TOK_NL:
+        case TokenType::TOK_NL:
             col = 0;
             ++row;
             break;
 
-        case help::TokenType::TOK_LINK:
+        case TokenType::TOK_LINK:
             display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
             if (num_link != nullptr)
             {
                 link[*num_link].r         = (Byte)row;
                 link[*num_link].c         = (Byte)col;
-                link[*num_link].topic_num = help::get_int(curr+1);
-                link[*num_link].topic_off = help::get_int(curr+1+sizeof(int));
+                link[*num_link].topic_num = get_int(curr+1);
+                link[*num_link].topic_off = get_int(curr+1+sizeof(int));
                 link[*num_link].offset    = (unsigned)((curr+1+3*sizeof(int)) - text);
                 link[*num_link].width     = width;
                 ++(*num_link);
             }
             break;
 
-        case help::TokenType::TOK_XONLINE:  // skip
-        case help::TokenType::TOK_FF:       // ignore
-        case help::TokenType::TOK_XDOC:     // ignore
-        case help::TokenType::TOK_DONE:
-        case help::TokenType::TOK_SPACE:
+        case TokenType::TOK_XONLINE:  // skip
+        case TokenType::TOK_FF:       // ignore
+        case TokenType::TOK_XDOC:     // ignore
+        case TokenType::TOK_DONE:
+        case TokenType::TOK_SPACE:
             break;
 
-        case help::TokenType::TOK_WORD:
+        case TokenType::TOK_WORD:
             display_text(row, col, C_HELP_BODY, curr, width);
             break;
         } // switch
@@ -320,7 +322,7 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
             break;
         }
 
-        tok = id::help::find_token_length(help::TokenMode::ONLINE, curr, len, &size, &width);
+        tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
     } // while (true)
 
     g_text_col_base = 0;
@@ -329,7 +331,7 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
 
 static void color_link(Link *link, int color)
 {
-    g_text_col_base = help::SCREEN_INDENT;
+    g_text_col_base = SCREEN_INDENT;
     g_text_row_base = TEXT_START_ROW;
 
     driver_set_attr(link->r, link->c, color, link->width);
@@ -795,7 +797,7 @@ static int help_topic(History *curr, History *next, int flags)
     return action;
 }
 
-int help::help()
+int help()
 {
     int action{};
     History curr{-1, 0, 0};
@@ -1022,9 +1024,9 @@ static int read_help_topic(int topic, int off, int len, void *buf)
  * to end of topic.  On "EOF" returns a negative number representing
  * number of bytes not read.
  */
-int help::read_help_topic(HelpLabels label, int off, int len, void *buf)
+int read_help_topic(HelpLabels label, int off, int len, void *buf)
 {
-    return ::read_help_topic(s_label[static_cast<int>(label)].topic_num,
+    return read_help_topic(s_label[static_cast<int>(label)].topic_num,
         s_label[static_cast<int>(label)].topic_off + off, len, buf);
 }
 
@@ -1080,7 +1082,7 @@ static void printer_str(PrintDocInfo *info, const char *s, int n)
     }
 }
 
-static bool print_doc_get_info(help::PrintDocCommand cmd, help::ProcessDocumentInfo *pd, void *context)
+static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     int t;
@@ -1088,7 +1090,7 @@ static bool print_doc_get_info(help::PrintDocCommand cmd, help::ProcessDocumentI
 
     switch (cmd)
     {
-    case help::PrintDocCommand::PD_GET_CONTENT:
+    case PrintDocCommand::PD_GET_CONTENT:
         if (++info->current_content >= info->num_contents)
         {
             return false;
@@ -1128,7 +1130,7 @@ static bool print_doc_get_info(help::PrintDocCommand cmd, help::ProcessDocumentI
         pd->title = info->title;
         return true;
 
-    case help::PrintDocCommand::PD_GET_TOPIC:
+    case PrintDocCommand::PD_GET_TOPIC:
         if (++info->current_topic >= info->num_topic)
         {
             return false;
@@ -1142,12 +1144,12 @@ static bool print_doc_get_info(help::PrintDocCommand cmd, help::ProcessDocumentI
         pd->len  = PRINT_BUFFER_SIZE + t;   // same as ...SIZE - abs(t)
         return true;
 
-    case help::PrintDocCommand::PD_GET_LINK_PAGE:
-        pd->i = help::get_int(pd->s+2*sizeof(int));
+    case PrintDocCommand::PD_GET_LINK_PAGE:
+        pd->i = get_int(pd->s+2*sizeof(int));
         pd->link_page = "(p. " + std::to_string(pd->i) + ")";
         return pd->i != -1;
 
-    case help::PrintDocCommand::PD_RELEASE_TOPIC:
+    case PrintDocCommand::PD_RELEASE_TOPIC:
         return true;
 
     default:
@@ -1155,15 +1157,15 @@ static bool print_doc_get_info(help::PrintDocCommand cmd, help::ProcessDocumentI
     }
 }
 
-static bool print_doc_output(help::PrintDocCommand cmd, help::ProcessDocumentInfo *pd, void *context)
+static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)
     {
-    case help::PrintDocCommand::PD_HEADING:
+    case PrintDocCommand::PD_HEADING:
     {
         char line[81];
-        int  width = help::PAGE_WIDTH + help::PAGE_INDENT;
+        int  width = PAGE_WIDTH + PAGE_INDENT;
         bool keep_going;
 
         if (info->msg_func != nullptr)
@@ -1189,27 +1191,27 @@ static bool print_doc_output(help::PrintDocCommand cmd, help::ProcessDocumentInf
         printer_str(info, line, width);
         printer_ch(info, '\n', 2);
 
-        info->margin = help::PAGE_INDENT;
+        info->margin = PAGE_INDENT;
 
         return keep_going;
     }
 
-    case help::PrintDocCommand::PD_FOOTING:
+    case PrintDocCommand::PD_FOOTING:
         info->margin = 0;
         printer_ch(info, '\f', 1);
-        info->margin = help::PAGE_INDENT;
+        info->margin = PAGE_INDENT;
         return true;
 
-    case help::PrintDocCommand::PD_PRINT:
+    case PrintDocCommand::PD_PRINT:
         printer_str(info, pd->s, pd->i);
         return true;
 
-    case help::PrintDocCommand::PD_PRINT_N:
+    case PrintDocCommand::PD_PRINT_N:
         printer_ch(info, *pd->s, pd->i);
         return true;
 
-    case help::PrintDocCommand::PD_PRINT_SEC:
-        info->margin = help::TITLE_INDENT;
+    case PrintDocCommand::PD_PRINT_SEC:
+        info->margin = TITLE_INDENT;
         if (pd->id[0] != '\0')
         {
             printer_str(info, pd->id, 0);
@@ -1217,14 +1219,14 @@ static bool print_doc_output(help::PrintDocCommand cmd, help::ProcessDocumentInf
         }
         printer_str(info, pd->title, 0);
         printer_ch(info, '\n', 1);
-        info->margin = help::PAGE_INDENT;
+        info->margin = PAGE_INDENT;
         return true;
 
-    case help::PrintDocCommand::PD_START_SECTION:
-    case help::PrintDocCommand::PD_START_TOPIC:
-    case help::PrintDocCommand::PD_SET_SECTION_PAGE:
-    case help::PrintDocCommand::PD_SET_TOPIC_PAGE:
-    case help::PrintDocCommand::PD_PERIODIC:
+    case PrintDocCommand::PD_START_SECTION:
+    case PrintDocCommand::PD_START_TOPIC:
+    case PrintDocCommand::PD_SET_SECTION_PAGE:
+    case PrintDocCommand::PD_SET_TOPIC_PAGE:
+    case PrintDocCommand::PD_PERIODIC:
         return true;
 
     default:
@@ -1276,7 +1278,7 @@ static bool print_doc_msg_func(int page_num, int num_pages)
     return true;   // AOK -- continue
 }
 
-bool help::make_doc_msg_func(int page_num, int num_pages)
+bool make_doc_msg_func(int page_num, int num_pages)
 {
     enum
     {
@@ -1298,7 +1300,7 @@ bool help::make_doc_msg_func(int page_num, int num_pages)
     return false;
 }
 
-void help::print_document(const char *filename, bool (*msg_func)(int, int))
+void print_document(const char *filename, bool (*msg_func)(int, int))
 {
     PrintDocInfo info;
     bool success = false;
@@ -1347,7 +1349,7 @@ error_abort:
     }
 }
 
-int help::init_help()
+int init_help()
 {
     HelpSignature hs{};
 
@@ -1421,7 +1423,7 @@ int help::init_help()
     return 0;  // success
 }
 
-void help::end_help()
+void end_help()
 {
     if (s_help_file != nullptr)
     {
@@ -1429,3 +1431,5 @@ void help::end_help()
         s_help_file = nullptr;
     }
 }
+
+} // namespace id::help
