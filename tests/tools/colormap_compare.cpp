@@ -9,6 +9,9 @@
 #include <string_view>
 #include <vector>
 
+namespace id
+{
+
 static int usage(std::string_view program)
 {
     std::cout << "Usage: " << program << ": map-file image-file\n";
@@ -22,8 +25,11 @@ struct Color
     int blue;
 };
 
+} // namespace id
+
 int main(int argc, char *argv[])
 {
+    using namespace id;
     if (argc != 3)
     {
         return usage(argv[0]);

@@ -9,14 +9,20 @@
 #include <string>
 #include <string_view>
 
+namespace id
+{
+
 static int usage(std::string_view program)
 {
     std::cout << "Usage: [--ignore-colormap] " << program << ": file1 file2\n";
     return 1;
 }
 
+} // namespace id
+
 int main(int argc, char *argv[])
 {
+    using namespace id;
     if (argc < 3 || argc > 4)
     {
         return usage(argv[0]);
