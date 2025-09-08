@@ -16,6 +16,7 @@
 #include <string>
 
 using namespace id::engine;
+using namespace id::geometry;
 using namespace id::ui;
 
 enum
@@ -503,7 +504,7 @@ void Plot::set_line_mode(int mode)
 
 void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    ::id::draw_line(x1, y1, x2, y2, color);
+    ::id::geometry::draw_line(x1, y1, x2, y2, color);
 }
 
 int Plot::resize()

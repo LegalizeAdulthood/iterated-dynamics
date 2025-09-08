@@ -23,11 +23,10 @@
 
 using namespace id::engine;
 using namespace id::fractals;
-using namespace id::geometry;
 using namespace id::io;
 using namespace id::ui;
 
-namespace id
+namespace id::geometry
 {
 
 // Use these palette indices for red/blue - same on ega/vga
@@ -560,4 +559,4 @@ void plot_setup()
     }
 }
 
-} // namespace id
+} // namespace id::geometry

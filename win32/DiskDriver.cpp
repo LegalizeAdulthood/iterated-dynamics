@@ -23,6 +23,7 @@
 #include "ui/zoom.h"
 
 using namespace id::engine;
+using namespace id::geometry;
 using namespace id::ui;
 
 namespace id::misc
@@ -354,7 +355,7 @@ void DiskDriver::set_line_mode(int mode)
 void DiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
     ODS5("DiskDriver::draw_line (%d,%d) (%d,%d) %d", x1, y1, x2, y2, color);
-    ::id::draw_line(x1, y1, x2, y2, color);
+    geometry::draw_line(x1, y1, x2, y2, color);
 }
 
 /*
