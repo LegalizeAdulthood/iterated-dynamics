@@ -11,10 +11,9 @@
 
 #include <cmath>
 
-using namespace id::engine;
 using namespace id::fractals;
 
-namespace id
+namespace id::engine
 {
 
 OrbitDrawMode g_draw_mode{OrbitDrawMode::RECTANGLE};
@@ -246,4 +245,4 @@ int sticky_orbits()
     }
 }
 
-} // namespace id
+} // namespace id::engine

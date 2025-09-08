@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 enum class OrbitDrawMode
@@ -17,4 +17,4 @@ extern OrbitDrawMode         g_draw_mode;
 
 int sticky_orbits();
 
-} // namespace id
+} // namespace id::engine
