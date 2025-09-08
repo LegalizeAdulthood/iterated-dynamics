@@ -7,7 +7,7 @@
 namespace id::fractals
 {
 
-extern DComplex              g_marks_coefficient;
+extern math::DComplex              g_marks_coefficient;
 
 bool marks_julia_per_image();
 int marks_lambda_orbit();

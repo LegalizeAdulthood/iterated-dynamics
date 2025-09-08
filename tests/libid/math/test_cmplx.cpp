@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace id::math;
+
 TEST(TestComplex, zeroConstruct)
 {
     const DComplex zero{};

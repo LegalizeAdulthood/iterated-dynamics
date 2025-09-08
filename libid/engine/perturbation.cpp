@@ -14,6 +14,8 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id::math;
+
 namespace id
 {
 

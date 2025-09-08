@@ -6,7 +6,7 @@
 
 #include "math/sqr.h"
 
-namespace id
+namespace id::math
 {
 
 template <typename T>
@@ -98,9 +98,7 @@ double modulus(const Complex<T> &z)
     return sqr(z.x) + sqr(z.y);
 }
 
-} // namespace id
-
-using DComplex = id::Complex<double>;
+using DComplex = Complex<double>;
 
 DComplex complex_sqrt_float(double x, double y);
 inline DComplex complex_sqrt_float(const DComplex &z)
@@ -115,3 +113,5 @@ void asinh_z(DComplex z, DComplex *rz);
 void acosh_z(DComplex z, DComplex *rz);
 void atanh_z(DComplex z, DComplex *rz);
 void atan_z(DComplex z, DComplex *rz);
+
+} // namespace id::math

@@ -223,7 +223,7 @@ extern IFSDimension          g_ifs_dim;
 extern BatchMode             g_init_batch;
 extern int                   g_init_cycle_limit;
 extern int                   g_init_mode;
-extern DComplex              g_init_orbit;
+extern math::DComplex        g_init_orbit;
 extern double                g_inversion[];
 extern std::vector<int>      g_iteration_ranges;
 extern int                   g_iteration_ranges_len;

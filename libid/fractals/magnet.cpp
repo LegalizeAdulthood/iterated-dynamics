@@ -9,6 +9,8 @@
 
 #include <cfloat>
 
+using namespace id::math;
+
 namespace id::fractals
 {
 

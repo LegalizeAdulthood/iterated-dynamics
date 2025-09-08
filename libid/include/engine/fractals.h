@@ -14,12 +14,12 @@ extern int                   g_basin;
 extern int                   g_c_exponent;
 extern double                g_cos_x;
 extern int                   g_degree;
-extern DComplex *            g_float_param;
+extern math::DComplex *      g_float_param;
 extern long                  g_fudge_half;
 extern int                   g_max_color;
-extern DComplex              g_param_z1;
-extern DComplex              g_param_z2;
-extern DComplex              g_power_z;
+extern math::DComplex        g_param_z1;
+extern math::DComplex        g_param_z2;
+extern math::DComplex        g_power_z;
 extern double                g_quaternion_c;
 extern double                g_quaternion_ci;
 extern double                g_quaternion_cj;
@@ -29,7 +29,7 @@ extern double                g_temp_sqr_x;
 extern double                g_temp_sqr_y;
 
 // Raise complex number (base) to the (exp) power, storing the result in complex (result).
-void pow(DComplex *base, int exp, DComplex *result);
+void pow(math::DComplex *base, int exp, math::DComplex *result);
 int julia_orbit();
 int mandel_z_power_cmplx_orbit();
 int mandel_per_pixel();

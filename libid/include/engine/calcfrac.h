@@ -95,7 +95,7 @@ enum class CalcMode
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern  double               g_f_at_rad;            // finite attractor radius
 extern int                   g_atan_colors;
-extern DComplex              g_attractor[];
+extern math::DComplex        g_attractor[];
 extern int                   g_attractor_period[];
 extern int                   g_attractors;
 extern int                 (*g_calc_type)();
@@ -111,7 +111,7 @@ extern double                g_f_radius;
 extern double                g_f_x_center;
 extern double                g_f_y_center;
 extern long                  g_first_saved_and;
-extern DComplex              g_init;
+extern math::DComplex        g_init;
 extern int                   g_invert;
 extern int                   g_keyboard_check_interval;
 extern double                g_magnitude;
@@ -119,10 +119,10 @@ extern bool                  g_magnitude_calc;
 extern double                g_magnitude_limit;
 extern double                g_magnitude_limit2;
 extern int                   g_max_keyboard_check_interval;
-extern DComplex              g_new_z;
+extern math::DComplex        g_new_z;
 extern long                  g_old_color_iter;
 extern bool                  g_old_demm_colors;
-extern DComplex              g_old_z;
+extern math::DComplex        g_old_z;
 extern int                   g_orbit_color;
 extern int                   g_orbit_save_index;
 extern Passes                g_passes;
@@ -143,7 +143,7 @@ extern SymmetryType          g_force_symmetry;
 extern SymmetryType          g_symmetry;
 extern bool                  g_three_pass;
 extern int                   g_total_passes;
-extern DComplex              g_tmp_z;
+extern math::DComplex        g_tmp_z;
 extern bool                  g_use_old_periodicity;
 extern bool                  g_use_old_distance_estimator;
 

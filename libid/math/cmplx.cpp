@@ -6,7 +6,8 @@
 
 #include <cmath>
 
-using namespace id::math;
+namespace id::math
+{
 
 DComplex complex_sqrt_float(double x, double y)
 {
@@ -191,3 +192,5 @@ void atan_z(DComplex z, DComplex *rz)
         rz->y = .5*temp3.x;           // .5*i*temp0
     }
 }   // end. Arctanz
+
+} // namespace id::math

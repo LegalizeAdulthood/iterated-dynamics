@@ -7,7 +7,7 @@
 namespace id::fractals
 {
 
-void invertz2(DComplex *z);
+void invertz2(math::DComplex *z);
 
 int newton_orbit();
 

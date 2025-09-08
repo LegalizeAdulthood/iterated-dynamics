@@ -37,8 +37,8 @@ using BigNum = Big;  // for clarification purposes
 using BigFloat = Big;
 using BigFloat10 = Big;
 
-using BFComplex = id::Complex<BigFloat>;
-using BNComplex = id::Complex<BigNum>;
+using BFComplex = id::math::Complex<BigFloat>;
+using BNComplex = id::math::Complex<BigNum>;
 
 // globals
 extern BFMathType g_bf_math;

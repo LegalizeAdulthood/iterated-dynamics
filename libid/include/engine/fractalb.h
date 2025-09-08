@@ -9,17 +9,17 @@
 namespace id
 {
 
-inline DComplex cmplx_bn_to_float(const BNComplex &s)
+inline math::DComplex cmplx_bn_to_float(const BNComplex &s)
 {
-    DComplex t;
+    math::DComplex t;
     t.x = (double)bn_to_float(s.x);
     t.y = (double)bn_to_float(s.y);
     return t;
 }
 
-inline DComplex cmplx_bf_to_float(const BFComplex &s)
+inline math::DComplex cmplx_bf_to_float(const BFComplex &s)
 {
-    DComplex t;
+    math::DComplex t;
     t.x = (double)bf_to_float(s.x);
     t.y = (double)bf_to_float(s.y);
     return t;
