@@ -8,6 +8,8 @@
 #include "engine/work_list.h"
 #include "ui/video.h"
 
+using namespace id::ui;
+
 namespace id
 {
 

@@ -23,9 +23,10 @@
 #include <cassert>
 #include <cstdarg>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static void (*s_write_pixel)(int x, int y, int color){};
 static int (*s_read_pixel)(int x, int y){};
@@ -167,3 +168,5 @@ int out_line(Byte *pixels, int line_len)
     g_row_count++;
     return 0;
 }
+
+} // namespace id::ui

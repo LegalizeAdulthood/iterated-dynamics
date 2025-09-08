@@ -4,6 +4,9 @@
 
 #include <config/port.h>
 
+namespace id::ui
+{
+
 extern int                   g_row_count;       // row-counter for decoder and out_line
 extern int                   g_vesa_x_res;
 extern int                   g_vesa_y_res;
@@ -19,3 +22,5 @@ void set_disk_dot();
 void set_normal_dot();
 void set_normal_span();
 void set_null_video();
+
+} // namespace id::ui
