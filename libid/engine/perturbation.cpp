@@ -14,6 +14,7 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id::engine;
 using namespace id::math;
 
 namespace id

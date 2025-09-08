@@ -15,6 +15,7 @@
 #include <cfloat>
 #include <cmath>
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
 

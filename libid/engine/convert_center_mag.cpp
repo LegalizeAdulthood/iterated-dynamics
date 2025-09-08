@@ -16,7 +16,7 @@
 using namespace id::math;
 using namespace id::misc;
 
-namespace id
+namespace id::engine
 {
 
 // most people "think" in degrees
@@ -228,4 +228,4 @@ void cvt_center_mag_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble &mag, double &x_m
     }
 }
 
-} // namespace id
+} // namespace id::engine

@@ -6,7 +6,7 @@
 
 #include <config/port.h>
 
-namespace id
+namespace id::engine
 {
 
 void cvt_center_mag(
@@ -14,4 +14,4 @@ void cvt_center_mag(
 void cvt_center_mag_bf(
     math::BigFloat ctr_x, math::BigFloat ctr_y, LDouble &mag, double &x_mag_factor, double &rot, double &skew);
 
-} // namespace id
+} // namespace id::engine
