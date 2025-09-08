@@ -20,10 +20,11 @@
 
 #include <cstring>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 enum
 {
@@ -330,3 +331,5 @@ int main_menu(bool full_menu)
     }
     return key;
 }
+
+} // namespace id::ui
