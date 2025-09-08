@@ -73,6 +73,7 @@
 #endif
 
 using namespace id::engine;
+using namespace id::help;
 using namespace id::math;
 using namespace id::ui;
 
