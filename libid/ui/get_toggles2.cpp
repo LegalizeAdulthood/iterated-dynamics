@@ -17,9 +17,10 @@
 #include <cstdlib>
 #include <cstring>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 /*
         get_toggles2() is similar to get_toggles, invoked by 'y' key
@@ -207,3 +208,5 @@ int get_toggles2()
 
     return changed ? 1 : 0;
 }
+
+} // namespace id::ui
