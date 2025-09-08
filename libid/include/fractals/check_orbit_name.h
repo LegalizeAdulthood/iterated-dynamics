@@ -7,4 +7,4 @@ namespace id::fractals
 
 bool check_orbit_name(const char *orbit_name);
 
-} // namespace id
+} // namespace id::fractals
