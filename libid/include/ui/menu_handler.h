@@ -6,10 +6,13 @@
 
 #include <functional>
 
+namespace id::ui
+{
+
 struct MenuHandler
 {
     int key;
-    std::function<id::ui::MainState(id::ui::MainContext &context)> handler;
+    std::function<MainState(MainContext &context)> handler;
 };
 
 inline bool operator<(const MenuHandler &lhs, const MenuHandler &rhs)
@@ -31,11 +34,13 @@ inline bool operator!=(const MenuHandler &lhs, const MenuHandler &rhs)
     return !(lhs == rhs);
 }
 
-id::ui::MainState request_fractal_type(id::ui::MainContext &context);
-id::ui::MainState toggle_float(id::ui::MainContext &context);
-id::ui::MainState get_history(int kbd_char);
-id::ui::MainState color_cycle(id::ui::MainContext &context);
-id::ui::MainState color_editing(id::ui::MainContext &context);
-id::ui::MainState restore_from_image(id::ui::MainContext &context);
-id::ui::MainState requested_video_fn(id::ui::MainContext &context);
-id::ui::MainState request_restart(id::ui::MainContext &context);
+MainState request_fractal_type(MainContext &context);
+MainState toggle_float(MainContext &context);
+MainState get_history(int kbd_char);
+MainState color_cycle(MainContext &context);
+MainState color_editing(MainContext &context);
+MainState restore_from_image(MainContext &context);
+MainState requested_video_fn(MainContext &context);
+MainState request_restart(MainContext &context);
+
+} // namespace id::ui

@@ -27,11 +27,12 @@
 
 #include <cstring>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 MainState request_fractal_type(MainContext &context)
 {
@@ -207,3 +208,5 @@ MainState request_restart(MainContext &/*context*/)
     driver_set_for_text(); // force text mode
     return MainState::RESTART;
 }
+
+} // namespace id::ui
