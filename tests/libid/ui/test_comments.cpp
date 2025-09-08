@@ -15,7 +15,6 @@
 #include <iomanip>
 #include <sstream>
 
-using namespace id;
 using namespace id::config;
 using namespace id::engine;
 using namespace id::misc;

@@ -3631,7 +3631,6 @@ TEST_F(TestParameterCommand, sphereYes)
 
 TEST_F(TestParameterCommand, scaleXYZTwoValues)
 {
-    using namespace id;
     ValueSaver saved_x_scale{g_x_scale, -99};
     ValueSaver saved_y_scale{g_y_scale, -99};
     VALUE_UNCHANGED(g_rough, -99);
@@ -3957,7 +3956,6 @@ TEST_F(TestParameterCommand, lightNameAfterStartup)
 
 TEST_F(TestParameterCommand, lightNameNotSet)
 {
-    using namespace id;
     ValueSaver saved_first_init{g_first_init, false};
     VALUE_UNCHANGED(g_light_name, std::string{"fmeh"});
 
