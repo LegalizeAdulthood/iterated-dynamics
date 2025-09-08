@@ -25,6 +25,8 @@
 #include <string>
 #include <vector>
 
+using namespace id::ui;
+
 namespace id::fractals
 {
 

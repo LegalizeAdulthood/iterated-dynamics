@@ -11,6 +11,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 int g_dac_count{};
 bool g_is_true_color{};

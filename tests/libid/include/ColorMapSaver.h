@@ -12,9 +12,9 @@ public:
     {
         for (int i = 0; i < 256; ++i)
         {
-            m_map[i][0] = g_dac_box[i][0];
-            m_map[i][1] = g_dac_box[i][1];
-            m_map[i][2] = g_dac_box[i][2];
+            m_map[i][0] = id::ui::g_dac_box[i][0];
+            m_map[i][1] = id::ui::g_dac_box[i][1];
+            m_map[i][2] = id::ui::g_dac_box[i][2];
         }
     }
 
@@ -22,9 +22,9 @@ public:
     {
         for (int i = 0; i < 256; ++i)
         {
-            g_dac_box[i][0] = m_map[i][0];
-            g_dac_box[i][1] = m_map[i][1];
-            g_dac_box[i][2] = m_map[i][2];
+            id::ui::g_dac_box[i][0] = m_map[i][0];
+            id::ui::g_dac_box[i][1] = m_map[i][1];
+            id::ui::g_dac_box[i][2] = m_map[i][2];
         }
     }
 

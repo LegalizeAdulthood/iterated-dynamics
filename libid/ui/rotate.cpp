@@ -29,10 +29,11 @@
 #include <cstring>
 #include <ctime>
 
-using namespace id;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 namespace
 {
@@ -618,3 +619,5 @@ bool load_palette()
     }
     return i;
 }
+
+} // namespace id::ui
