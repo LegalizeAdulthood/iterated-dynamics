@@ -2,10 +2,10 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 void wait_until(unsigned long wait_time_us);
 void sleep_ms(long ms);
 
-} // namespace id
+} // namespace id::engine
