@@ -8,7 +8,10 @@
 #include <string>
 #include <vector>
 
+namespace id::ui
+{
 struct VideoInfo;
+}
 namespace id::help
 {
 enum class HelpLabels;
@@ -103,7 +106,7 @@ extern bool                  g_tab_mode;
 extern double                g_smallest_window_display_size;
 extern long                  g_user_distance_estimator_value;
 extern int                   g_user_periodicity_value;
-extern VideoInfo             g_video_entry;
+extern ui::VideoInfo         g_video_entry;
 extern bool                  g_view_crop;
 extern float                 g_view_reduction;
 extern bool                  g_view_window;

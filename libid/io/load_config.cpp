@@ -19,6 +19,7 @@
 #include <string_view>
 
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id::io
 {
@@ -36,7 +37,7 @@ int g_cfg_line_nums[MAX_VIDEO_MODES]{};
  */
 void load_config()
 {
-    load_config(id::io::find_file(id::io::ReadFile::ID_CONFIG, "id.cfg").string());
+    load_config(find_file(ReadFile::ID_CONFIG, "id.cfg").string());
 }
 
 void load_config(const std::string &cfg_path)

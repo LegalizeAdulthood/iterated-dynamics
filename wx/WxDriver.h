@@ -39,7 +39,7 @@ public:
     void unget_key(int key) override;
     int get_key() override;
     void hide_text_cursor() override;
-    void set_video_mode(VideoInfo *mode) override;
+    void set_video_mode(ui::VideoInfo *mode) override;
     void put_string(int row, int col, int attr, const char *msg) override;
     void scroll_up(int top, int bot) override;
     void move_cursor(int row, int col) override;
@@ -63,7 +63,7 @@ public:
     void set_keyboard_timeout(int ms) override;
     void debug_text(const char *text) override;
     void get_cursor_pos(int &x, int &y) const override;
-    bool validate_mode(VideoInfo *mode) override;
+    bool validate_mode(ui::VideoInfo *mode) override;
     void get_max_screen(int &xmax, int &ymax) override;
     void pause() override;
     void resume() override;

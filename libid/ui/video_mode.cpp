@@ -6,7 +6,8 @@
 
 #include <cstdio>
 
-using namespace id::ui;
+namespace id::ui
+{
 
 VideoInfo g_video_table[MAX_VIDEO_MODES]{};
 
@@ -113,3 +114,5 @@ void vid_mode_key_name(int key, char *buffer)
         std::sprintf(buffer, "F%d", key);
     }
 }
+
+} // namespace id::ui
