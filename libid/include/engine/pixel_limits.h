@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 enum
@@ -12,4 +12,4 @@ enum
     MIN_PIXELS = 10        // Minimum pixel count across/down the screen
 };
 
-} // namespace id
+} // namespace id::engine
