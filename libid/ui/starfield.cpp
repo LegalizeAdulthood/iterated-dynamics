@@ -18,11 +18,12 @@
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
-using namespace id;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 const std::string ALTERN_MAP_NAME{"altern.map"};
 
@@ -138,3 +139,5 @@ int get_star_field_params()
 
     return 0;
 }
+
+} // namespace id::ui
