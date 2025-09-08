@@ -24,6 +24,7 @@ using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::test::migrate_gif;
+using namespace id::ui;
 using namespace testing;
 
 inline std::ostream &operator<<(std::ostream &str, FractalType value)

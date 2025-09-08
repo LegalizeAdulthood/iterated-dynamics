@@ -37,10 +37,11 @@
 #include <string>
 #include <vector>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 namespace
 {
@@ -891,3 +892,5 @@ void restore_history_info(int i)
         break;
     }
 }
+
+} // namespace id::ui
