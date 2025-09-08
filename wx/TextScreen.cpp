@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "TextScreen.h"
+#include <gui/TextScreen.h>
 
 #include <algorithm>
 #include <cassert>

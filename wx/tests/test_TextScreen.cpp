@@ -1,4 +1,4 @@
-#include "TextScreen.h"
+#include <gui/TextScreen.h>
 
 #include <fmt/format.h>
 

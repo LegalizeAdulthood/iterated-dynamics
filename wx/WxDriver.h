@@ -6,7 +6,7 @@
 
 #include "misc/Driver.h"
 
-#include "CGATextWindow.h"
+#include "gui/CGATextWindow.h"
 
 #include <string>
 #include <vector>

@@ -1,4 +1,4 @@
-#include "Plot.h"
+#include <gui/Plot.h>
 
 #include <wx/stc/stc.h>
 #include <wx/wx.h>

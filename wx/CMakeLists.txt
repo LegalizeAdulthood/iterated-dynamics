@@ -17,18 +17,26 @@ set_target_properties(os PROPERTIES FOLDER Libraries)
 add_dependencies(os native-help)
 
 add_library(TextScreen STATIC
-    TextScreen.h TextScreen.cpp
+    include/gui/TextScreen.h TextScreen.cpp
 )
-target_include_directories(TextScreen PUBLIC .)
+target_include_directories(TextScreen PUBLIC include)
 target_link_libraries(TextScreen PUBLIC wx::wxstc)
 target_folder(TextScreen "Libraries/wx")
 
 add_library(Plot STATIC
-    Plot.h Plot.cpp
+    include/gui/Plot.h Plot.cpp
 )
-target_include_directories(Plot PUBLIC .)
+target_include_directories(Plot PUBLIC include)
 target_link_libraries(Plot PUBLIC wx::core config)
 target_folder(Plot "Libraries/wx")
+
+add_library(gui STATIC
+    include/gui/CGATextWindow.h
+    include/gui/IdApp.h IdApp.cpp
+    include/gui/IdFrame.h IdFrame.cpp
+)
+target_include_directories(gui PUBLIC incldue)
+target_link_libraries(gui PUBLIC libid TextScreen wx::core wx::base)
 
 configure_file(id.rc.in id.rc @ONLY)
 add_executable(id WIN32
@@ -36,16 +44,13 @@ add_executable(id WIN32
     id.rc.in
     "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
     resource.h
-    CGATextWindow.h
-    IdApp.h IdApp.cpp
-    IdFrame.h IdFrame.cpp
     init_failure.cpp
     WxDriver.h WxDriver.cpp
     WxSpecialDirectories.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
-target_link_libraries(id PUBLIC libid TextScreen wx::core wx::base)
+target_link_libraries(id PUBLIC gui)
 install(TARGETS id
     DESTINATION .
     RUNTIME_DEPENDENCIES

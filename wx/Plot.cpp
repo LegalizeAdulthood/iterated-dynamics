@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "Plot.h"
+#include <gui/Plot.h>
 
 #include <wx/rawbmp.h>
 

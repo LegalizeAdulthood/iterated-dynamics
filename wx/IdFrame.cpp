@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "IdFrame.h"
+#include <gui/IdFrame.h>
 
-#include "IdApp.h"
+#include <gui/IdApp.h>
 
 #include <wx/app.h>
 #include <wx/wx.h>

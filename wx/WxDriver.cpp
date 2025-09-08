@@ -6,8 +6,8 @@
  */
 #include "WxDriver.h"
 
-#include "IdApp.h"
-#include "IdFrame.h"
+#include "gui/IdApp.h"
+#include "gui/IdFrame.h"
 #include "io/special_dirs.h"
 #include "misc/stack_avail.h"
 #include "ui/read_ticker.h"
