@@ -7,7 +7,7 @@
 
 #include <complex>
 
-namespace id
+namespace id::engine
 {
 
 extern int                   g_basin;
@@ -41,4 +41,4 @@ int julia_per_pixel();
 int other_mandel_per_pixel();
 int other_julia_per_pixel();
 
-} // namespace id
+} // namespace id::engine

@@ -55,11 +55,10 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include <cfloat>
 #include <cmath>
 
-using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 
-namespace id
+namespace id::engine
 {
 
 int g_max_color{};
@@ -314,4 +313,4 @@ int other_julia_per_pixel()
     return 0;
 }
 
-} // namespace id
+} // namespace id::engine
