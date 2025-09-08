@@ -34,6 +34,7 @@ BFMathType g_bf_math{};
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id
 {

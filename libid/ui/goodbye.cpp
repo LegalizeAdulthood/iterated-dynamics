@@ -19,9 +19,10 @@
 #include <crtdbg.h>
 #endif
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 // we're done.  Bail out
 [[noreturn]] void goodbye()
@@ -57,3 +58,5 @@ using namespace id::ui;
 #endif
     std::exit(ret);
 }
+
+} // namespace id::ui

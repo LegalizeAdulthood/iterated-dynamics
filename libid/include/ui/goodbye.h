@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 [[noreturn]] void goodbye();
+
+} // namespace id::ui

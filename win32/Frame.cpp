@@ -20,6 +20,7 @@
 #include <stdexcept>
 
 using namespace id::misc;
+using namespace id::ui;
 
 Frame g_frame{};
 

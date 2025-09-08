@@ -23,6 +23,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 
 using namespace id;
 using namespace id::fractals;
+using namespace id::ui;
 
 // globals
 int g_bn_step{};
