@@ -2,6 +2,9 @@
 //
 #include "expected_map.h"
 
+namespace id::test
+{
+
 const Byte g_expected_map[256][3]{
     { 0, 128, 255 },
     { 1, 129, 254 },
@@ -260,3 +263,5 @@ const Byte g_expected_map[256][3]{
     { 254, 126, 1 },
     { 255, 127, 0 }
 };
+
+} // namespace id::test

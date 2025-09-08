@@ -4,4 +4,9 @@
 
 #include <config/port.h>
 
+namespace id::test
+{
+
 extern const Byte g_expected_map[256][3];
+
+} // namespace id::test

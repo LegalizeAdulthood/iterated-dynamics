@@ -18,6 +18,9 @@ using namespace id::misc;
 using namespace id::test::data;
 using namespace id::ui;
 
+namespace id::test
+{
+
 TEST(TestValidateLuts, loadMap)
 {
     ValueSaver saved_map_name{g_map_name, std::string{ID_TEST_MAP_DIR} + "/foo.map"};
@@ -33,3 +36,5 @@ TEST(TestValidateLuts, loadMap)
         EXPECT_EQ(g_expected_map[i][2], g_dac_box[i][2]) << "index " << i << " blue";
     }
 }
+
+} // namespace id::test
