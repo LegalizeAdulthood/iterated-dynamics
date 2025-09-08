@@ -19,6 +19,6 @@ public:
     void pump_messages(bool wait_flag);
 };
 
-IdApp &wxGetApp();
-
 } // namespace id::gui
+
+id::gui::IdApp &wxGetApp();

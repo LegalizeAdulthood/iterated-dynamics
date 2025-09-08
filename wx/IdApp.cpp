@@ -19,10 +19,10 @@
 using namespace id::misc;
 using namespace id::ui;
 
+wxIMPLEMENT_APP(id::gui::IdApp);
+
 namespace id::gui
 {
-
-wxIMPLEMENT_APP(IdApp);
 
 bool IdApp::OnInit()
 {
