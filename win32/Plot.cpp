@@ -4,7 +4,7 @@
 
 #include "Frame.h"
 
-#include "3d/plot3d.h"
+#include "geometry/plot3d.h"
 #include "engine/id_data.h"
 #include "misc/version.h"
 #include "ui/rotate.h"

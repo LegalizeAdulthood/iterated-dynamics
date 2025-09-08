@@ -12,7 +12,7 @@
  */
 #include "io/gifview.h"
 
-#include "3d/plot3d.h"
+#include "geometry/plot3d.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"

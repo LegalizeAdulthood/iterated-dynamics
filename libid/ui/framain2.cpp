@@ -2,7 +2,7 @@
 //
 #include "ui/framain2.h"
 
-#include "3d/line3d.h"
+#include "geometry/line3d.h"
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"

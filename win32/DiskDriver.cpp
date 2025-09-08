@@ -11,7 +11,7 @@
 
 #include <config/driver_types.h>
 
-#include "3d/plot3d.h"
+#include "geometry/plot3d.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"

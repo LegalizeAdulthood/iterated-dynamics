@@ -6,10 +6,6 @@ find_package(GIF REQUIRED)
 find_package(cpuid CONFIG REQUIRED)
 
 add_library(libid
-    include/3d/3d.h 3d/3d.cpp
-    include/3d/line3d.h 3d/line3d.cpp
-    include/3d/plot3d.h 3d/plot3d.cpp
-
     include/engine/bailout_formula.h engine/bailout_formula.cpp
     include/engine/boundary_trace.h engine/boundary_trace.cpp
     include/engine/calc_frac_init.h engine/calc_frac_init.cpp
@@ -92,6 +88,10 @@ add_library(libid
     include/fractals/TestPoint.h fractals/TestPoint.cpp
     include/fractals/unity.h fractals/unity.cpp
     include/fractals/volterra_lotka.h fractals/volterra_lotka.cpp
+
+    include/geometry/3d.h geometry/3d.cpp
+    include/geometry/line3d.h geometry/line3d.cpp
+    include/geometry/plot3d.h geometry/plot3d.cpp
 
     include/io/check_write_file.h io/check_write_file.cpp
     include/io/CurrentPathSaver.h
@@ -241,9 +241,9 @@ add_library(libid
     include/ui/video_mode.h ui/video_mode.cpp
     include/ui/zoom.h ui/zoom.cpp
 )
-source_group_subdir("3D" "3d")
 source_group_subdir("Engine" "engine")
 source_group_subdir("Fractal Specific" "fractals")
+source_group_subdir("Geometry" "geometry")
 source_group_subdir("IO" "io")
 source_group_subdir("Math" "math")
 source_group_subdir("Miscellaneous" "misc")

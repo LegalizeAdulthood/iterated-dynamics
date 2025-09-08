@@ -14,7 +14,7 @@
 //
 #include "engine/calcfrac.h"
 
-#include "3d/line3d.h"
+#include "geometry/line3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/boundary_trace.h"
 #include "engine/calmanfp.h"

@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "3d/3d.h"
+#include "geometry/3d.h"
 
 #include <cstdio>
 

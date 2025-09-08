@@ -4,7 +4,7 @@
 //
 #include "misc/memory.h"
 
-#include "3d/line3d.h"
+#include "geometry/line3d.h"
 #include "engine/cmdfiles.h"
 #include "io/dir_file.h"
 #include "io/get_disk_space.h"

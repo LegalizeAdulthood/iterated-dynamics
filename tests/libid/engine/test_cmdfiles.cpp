@@ -8,9 +8,9 @@
 #include "test_library.h"
 #include "ValueUnchanged.h"
 
-#include <3d/3d.h>
-#include <3d/line3d.h>
-#include <3d/plot3d.h>
+#include <geometry/3d.h>
+#include <geometry/line3d.h>
+#include <geometry/plot3d.h>
 #include <config/path_limits.h>
 #include <engine/bailout_formula.h>
 #include <engine/engine_timer.h>

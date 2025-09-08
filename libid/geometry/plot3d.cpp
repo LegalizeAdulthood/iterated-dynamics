@@ -4,9 +4,9 @@
     This file includes miscellaneous plot functions and logic
     for 3D, used by lorenz and line3d
 */
-#include "3d/plot3d.h"
+#include "geometry/plot3d.h"
 
-#include "3d/line3d.h"
+#include "geometry/line3d.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"

@@ -4,8 +4,8 @@
 //
 #include "engine/cmdfiles_test.h"
 
-#include "3d/line3d.h"
-#include "3d/plot3d.h"
+#include "geometry/line3d.h"
+#include "geometry/plot3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
