@@ -5,11 +5,15 @@
 #include "fractals/jb.h"
 #include "misc/Driver.h"
 
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int standard_4d_type()
 {
-    id::fractals::Standard4D s4d;
+    Standard4D s4d;
 
     while (s4d.iterate())
     {
@@ -21,3 +25,5 @@ int standard_4d_type()
 
     return 0;
 }
+
+} // namespace id::ui
