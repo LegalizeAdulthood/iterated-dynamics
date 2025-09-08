@@ -288,6 +288,10 @@ o @parfile functionality restored.  (It processes the first parameter
 
 Code Cleanup in Version 1.3.2
 
+o All identifiers are now inside a namespace to avoid collisions with
+  external libraries.  wxWidgets on linux depends on glib which uses
+  g_ prefix for all identifiers and this conflicted with the same
+  prefix used by Id to identify all global variables.  (Fixes #330)
 o File output comparison tests were added for raytrace output and
   orbit output to detect major regressions in the formatted output.
 o More image comparison tests were added to cover more fractal types.\
