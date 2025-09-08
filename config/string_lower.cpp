@@ -2,7 +2,7 @@
 //
 #include <cctype>
 
-namespace id
+namespace id::config
 {
 
 // string_lower -- Convert string to lower case.
