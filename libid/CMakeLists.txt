@@ -27,7 +27,7 @@ add_library(libid
     include/engine/fractals.h engine/fractals.cpp
     include/engine/get_julia_attractor.h engine/get_julia_attractor.cpp
     include/engine/get_prec_big_float.h engine/get_prec_big_float.cpp
-    include/engine/id_data.h
+    include/engine/id_data.h engine/id_data.cpp
     include/engine/jiim.h engine/jiim.cpp
     include/engine/log_map.h engine/log_map.cpp
     include/engine/one_or_two_pass.h engine/one_or_two_pass.cpp

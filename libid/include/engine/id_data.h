@@ -75,7 +75,7 @@ extern float                 g_final_aspect_ratio;
 extern std::filesystem::path g_fractal_search_dir1;
 extern std::filesystem::path g_fractal_search_dir2;
 extern bool                  g_has_inverse;
-extern id::help::HelpLabels  g_help_mode;
+extern help::HelpLabels      g_help_mode;
 extern bool                  g_keep_aspect_ratio;
 extern int                   g_logical_screen_x_dots;
 extern int                   g_logical_screen_x_offset;
@@ -118,6 +118,6 @@ extern double                g_x_min;
 extern double                g_y_3rd;
 extern double                g_y_max;
 extern double                g_y_min;
-extern bool                  g_z_scroll;
+extern bool g_z_scroll;
 
 } // namespace id
