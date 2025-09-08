@@ -6,6 +6,11 @@ namespace id::io
 {
 struct ExtBlock3;
 struct FractalInfo;
-}
+} // namespace id::io
+
+namespace id::ui
+{
 
 int get_video_mode(id::io::FractalInfo *info, id::io::ExtBlock3 *blk_3_info);
+
+} // namespace id::ui

@@ -40,11 +40,12 @@
 #include <string>
 #include <vector>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 /* defines for flags; done this way instead of bit union to ensure ordering;
    these bits represent the sort sequence for video mode list */
@@ -548,3 +549,5 @@ static int check_mode_key(int key, int /*choice*/)
     int i = check_vid_mode_key(key);
     return i >= 0 ? -100-i : 0;
 }
+
+} // namespace id::ui
