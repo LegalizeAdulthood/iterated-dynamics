@@ -4,7 +4,7 @@
 
 #include "math/cmplx.h"
 
-namespace id
+namespace id::engine
 {
 
 enum class JIIMType
@@ -30,4 +30,4 @@ int    queue_full_almost();
 int    push_float(float x, float y);
 int    enqueue_float(float x, float y);
 
-} // namespace id
+} // namespace id::engine

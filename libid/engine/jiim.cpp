@@ -37,13 +37,12 @@
 #include <string>
 #include <vector>
 
-using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 enum
@@ -1362,4 +1361,4 @@ void jiim(JIIMType which)
     tool.process();
 }
 
-} // namespace id
+} // namespace id::engine
