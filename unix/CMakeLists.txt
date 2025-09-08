@@ -28,11 +28,11 @@ else()
         x11_frame.cpp
         x11_text.cpp
         x11_plot.cpp
-        general.cpp
+        general.h general.cpp
         special_dirs.cpp
         stack_avail.cpp
         unixscr.cpp
-        video.cpp)
+        video.h video.cpp)
     target_link_libraries(os PUBLIC help-defs os-hc X11::X11 m)
     target_compile_definitions(os PUBLIC ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
     target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})

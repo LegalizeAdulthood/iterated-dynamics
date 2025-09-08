@@ -19,6 +19,7 @@
 #include <config/port.h>
 
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "helpdefs.h"
@@ -28,12 +29,20 @@
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
 #include "ui/id_keys.h"
+#include "ui/intro.h"
 #include "ui/mouse.h"
 #include "ui/read_ticker.h"
+#include "ui/rotate.h"
 #include "ui/slideshw.h"
 #include "ui/text_screen.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
+
+#include "general.h"
+#include "video.h"
+#include "x11_frame.h"
+#include "x11_text.h"
+#include "x11_plot.h"
 
 #include <sys/ioctl.h>
 #include <sys/time.h>
@@ -59,33 +68,14 @@
 #include <string>
 #include <vector>
 
-#include "x11_frame.h"
-#include "x11_text.h"
-#include "x11_plot.h"
-#include "ui/intro.h"
-
 #ifdef LINUX
 #define FNDELAY O_NDELAY
 #endif
 
-// external variables (set in the id.cfg file, but findable here
+using namespace id::ui;
 
-extern  int g_screen_x_dots, g_screen_y_dots;     // total # of dots on the screen
-extern  int g_logical_screen_x_offset, g_logical_screen_y_offset;     // offset of drawing area
-extern  int g_colors;         // maximum colors available
-extern  int g_init_mode;
-extern  int g_adapter;
-extern bool g_got_real_dac;
-extern bool g_inside_help;
-extern float g_final_aspect_ratio;
-extern  float   g_screen_aspect;
-extern VideoInfo x11_video_table[];
-
-// the video-palette array (named after the VGA adapter's video-DAC)
-
-extern unsigned char g_dac_box[256][3];
-
-extern int g_color_cycle_range_hi;
+namespace id::misc
+{
 
 typedef unsigned long XPixel;
 
@@ -105,9 +95,6 @@ constexpr const char *const FONT{"-*-*-medium-r-*-*-9-*-*-*-c-*-iso8859-*"};
 constexpr const int DEFAULT_WIDTH{640};
 constexpr const int DEFAULT_HEIGHT{480};
 constexpr const char *const DEFXY{"640x480+0+0"};
-
-namespace id::misc
-{
 
 // The pixtab stuff is so we can map from pixel values 0-n to
 // the actual color table entries which may be anything.
