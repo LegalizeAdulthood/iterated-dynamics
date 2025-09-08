@@ -72,6 +72,8 @@
 #define FNDELAY O_NDELAY
 #endif
 
+using namespace id::engine;
+using namespace id::math;
 using namespace id::ui;
 
 namespace id::misc
@@ -1572,6 +1574,7 @@ static void handle_sig_alarm()
 {
     ((X11Driver *) g_driver)->setredrawscreen();
 }
+
 void X11Driver::schedule_alarm(int secs)
 {
     if (!m_fast_mode)
@@ -1648,97 +1651,6 @@ void X11Driver::create_window()
     m_frame.window(width, height);
     m_text.text_on();
     center_window(center_x, center_y);
-#if 0
-    base.wintext.hWndParent = g_frame.window;
-    wintext_texton(&base.wintext);
-    plot_window(&plot, g_frame.window);
-    center_windows(center_x, center_y);
-
-    XSetWindowAttributes Xwatt;
-    XGCValues Xgcvals;
-    int Xwinx = 0, Xwiny = 0;
-
-    g_adapter = 0;
-
-    /* We have to do some X stuff even for disk video, to parse the geometry
-     * string */
-
-    if (!m_geometry.empty() && !m_on_root)
-        XGeometry(m_dpy, m_dpy_screen, m_geometry.c_str(), DEFXY, 0, 1, 1, 0, 0,
-                  &Xwinx, &Xwiny, &m_min_width, &m_min_height);
-    if (m_sync)
-        XSynchronize(m_dpy, True);
-    XSetErrorHandler(errhand);
-    m_screen = ScreenOfDisplay(m_dpy, m_dpy_screen);
-    select_visual();
-    if (m_fix_colors > 0)
-        g_colors = m_fix_colors;
-
-    if (m_full_screen || m_on_root)
-    {
-        m_min_width = DisplayWidth(m_dpy, m_dpy_screen);
-        m_min_height = DisplayHeight(m_dpy, m_dpy_screen);
-    }
-    g_screen_x_dots = m_min_width;
-    g_screen_y_dots = m_min_height;
-
-    Xwatt.background_pixel = BlackPixelOfScreen(m_screen);
-    Xwatt.bit_gravity = StaticGravity;
-    const int doesBacking = DoesBackingStore(m_screen);
-    if (doesBacking)
-        Xwatt.backing_store = Always;
-    else
-        Xwatt.backing_store = NotUseful;
-    if (m_on_root)
-    {
-        m_root_window = FindRootWindow();
-        RemoveRootPixmap();
-        m_gc = XCreateGC(m_dpy, m_root_window, 0, &Xgcvals);
-        m_pixmap = XCreatePixmap(m_dpy, m_root_window,
-                                    m_min_width, m_min_height, m_depth);
-        m_window = m_root_window;
-        XFillRectangle(m_dpy, m_pixmap, m_gc, 0, 0, m_min_width, m_min_height);
-        XSetWindowBackgroundPixmap(m_dpy, m_root_window, m_pixmap);
-    }
-    else
-    {
-        m_root_window = DefaultRootWindow(m_dpy);
-        m_window = XCreateWindow(m_dpy, m_root_window, Xwinx, Xwiny,
-                               m_min_width, m_min_height, 0, m_depth,
-                               InputOutput, CopyFromParent,
-                               CWBackPixel | CWBitGravity | CWBackingStore,
-                               &Xwatt);
-        XStoreName(m_dpy, m_window, "id");
-        m_gc = XCreateGC(m_dpy, m_window, 0, &Xgcvals);
-    }
-    g_colors = xcmapstuff();
-    if (g_color_cycle_range_hi == 255)
-        g_color_cycle_range_hi = g_colors-1;
-
-    {
-        unsigned long event_mask = KeyPressMask | KeyReleaseMask | ExposureMask;
-        if (! m_on_root)
-            event_mask |= ButtonPressMask | ButtonReleaseMask | PointerMotionMask;
-        XSelectInput(m_dpy, m_window, event_mask);
-    }
-
-    if (!m_on_root)
-    {
-        XSetBackground(m_dpy, m_gc, do_fake_lut(m_pixtab[0]));
-        XSetForeground(m_dpy, m_gc, do_fake_lut(m_pixtab[1]));
-        Xwatt.background_pixel = do_fake_lut(m_pixtab[0]);
-        XChangeWindowAttributes(m_dpy, m_window, CWBackPixel, &Xwatt);
-        XMapWindow(m_dpy, m_window);
-    }
-
-    resize();
-    flush();
-    write_palette();
-
-    x11_video_table[0].x_dots = g_screen_x_dots;
-    x11_video_table[0].y_dots = g_screen_y_dots;
-    x11_video_table[0].colors = g_colors;
-#endif
 }
 
 /*----------------------------------------------------------------------
