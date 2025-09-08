@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 long read_ticker();
+
+} // namespace id::ui

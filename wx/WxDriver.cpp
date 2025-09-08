@@ -19,6 +19,8 @@
 #include <string>
 #include <thread>
 
+using namespace id::ui;
+
 namespace id::misc
 {
 
