@@ -43,11 +43,12 @@
 #include <cstring>
 #include <ctime>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static void area();
 
@@ -710,3 +711,5 @@ static void area()
             cnt/((float)g_logical_screen_x_dots*(float)g_logical_screen_y_dots)*(g_x_max-g_x_min)*(g_y_max-g_y_min));
     stop_msg(StopMsgFlags::NO_BUZZER, buf);
 }
+
+} // namespace id::ui
