@@ -11,6 +11,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 /* thinking(1,message):
       if thinking message not yet on display, it is displayed;

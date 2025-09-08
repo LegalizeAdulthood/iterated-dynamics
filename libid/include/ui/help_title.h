@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 void help_title();
+
+} // namespace id::ui

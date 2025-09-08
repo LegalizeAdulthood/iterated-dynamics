@@ -23,6 +23,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 
 bool g_slow_display{};
 

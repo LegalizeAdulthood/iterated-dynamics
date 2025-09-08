@@ -13,8 +13,10 @@
 
 #include <string>
 
-using namespace id;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 void help_title()
 {
@@ -31,3 +33,5 @@ void help_title()
     msg += " (" ID_GIT_HASH ")";
     put_string_center(0, 0, 80, C_TITLE, msg);
 }
+
+} // namespace id::ui
