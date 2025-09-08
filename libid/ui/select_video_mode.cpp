@@ -28,10 +28,11 @@
 
 namespace fs = std::filesystem;
 
-using namespace id;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static std::vector<int> s_entry_nums;
 static bool s_modes_changed{};
@@ -297,3 +298,5 @@ void request_video_mode(int &kbd_char)
         driver_unstack_screen();
     }
 }
+
+} // namespace id::ui
