@@ -6,6 +6,9 @@
 
 using namespace id::config;
 
+namespace id::test
+{
+
 TEST(TestStringCaseCompareCount, firstStringEmpty)
 {
     char buffer[80]{"foo"};
@@ -221,3 +224,5 @@ TEST(TestStringCaseEqual, prefixIsLess)
 {
     EXPECT_FALSE(string_case_equal("frac", "fractint"));
 }
+
+} // namespace id::test
