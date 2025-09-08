@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace id
+namespace id::engine
 {
 
 extern bool                  g_use_grid;
@@ -22,4 +22,4 @@ void free_grid_pointers();
 
 void fill_dx_array();
 
-} // namespace id
+} // namespace id::engine

@@ -5,9 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 
-using namespace id::engine;
-
-namespace id
+namespace id::engine
 {
 
 bool g_use_grid{};
@@ -122,4 +120,4 @@ void fill_dx_array()
     }
 }
 
-} // namespace id
+} // namespace id::engine
