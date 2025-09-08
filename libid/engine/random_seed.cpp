@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-namespace id
+namespace id::engine
 {
 
 bool g_random_seed_flag{};                                //
@@ -17,4 +17,4 @@ void set_random_seed()
     }
 }
 
-} // namespace id
+} // namespace id::engine
