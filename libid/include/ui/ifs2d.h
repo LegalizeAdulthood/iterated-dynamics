@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int ifs2d();
+
+} // namespace id::ui
