@@ -3,6 +3,9 @@
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
 
+namespace id::wx
+{
+
 class TestPlotApp : public wxApp
 {
 public:
@@ -26,7 +29,7 @@ private:
     void on_exit(wxCommandEvent &event);
     wxSize calculate_frame_size() const;
 
-    ui::Plot *m_plot{};
+    Plot *m_plot{};
     mutable wxSize m_fixed_size{};
 };
 
@@ -42,7 +45,7 @@ bool TestPlotApp::OnInit()
 TestPlotFrame::TestPlotFrame(const wxString &title) :
     wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)),
-    m_plot(new ui::Plot(this, wxID_ANY, wxDefaultPosition, wxSize{640, 480})),
+    m_plot(new Plot(this, wxID_ANY, wxDefaultPosition, wxSize{640, 480})),
     m_fixed_size(calculate_frame_size())
 {
     wxMenuBar *menu_bar = new wxMenuBar;
@@ -132,3 +135,5 @@ void TestPlotFrame::on_exit(wxCommandEvent & /*event*/)
 {
     Close(true);
 }
+
+} // namespace id::wx

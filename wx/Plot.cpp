@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace ui
+namespace id::wx
 {
 
 enum
@@ -334,4 +334,4 @@ wxSize Plot::GetMaxSize() const
     return {m_width, m_height};
 }
 
-} // namespace ui
+} // namespace id::wx
