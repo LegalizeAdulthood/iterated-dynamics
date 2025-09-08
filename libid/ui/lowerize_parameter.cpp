@@ -6,6 +6,9 @@
 #include <cstring>
 #include <string>
 
+namespace id::ui
+{
+
 // don't convert these parameter values
 static constexpr const char *const UNCHANGED_PARAMS[] = {"autokeyname", "colors", "comment", "filename",
     "formulafile", "ifsfile", "lfile", "librarydirs", "lightname", "makedoc", "makepar", "map",
@@ -33,3 +36,5 @@ void lowerize_parameter(char *cur_arg)
         ++arg_ptr;
     }
 }
+
+} // namespace id::ui

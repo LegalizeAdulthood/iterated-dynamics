@@ -8,8 +8,9 @@
 
 #include <cstring>
 
-using namespace testing;
 using namespace boost::algorithm;
+using namespace id::ui;
+using namespace testing;
 
 class TestLowerizeParameter : public Test, public WithParamInterface<const char *>
 {

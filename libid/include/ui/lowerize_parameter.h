@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 void lowerize_parameter(char *cur_arg);
+
+} // namespace id::ui
