@@ -2,9 +2,9 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 bool param_not_used(int param);
 
-} // namespace id
+} // namespace id::engine

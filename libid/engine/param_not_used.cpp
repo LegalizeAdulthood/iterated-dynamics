@@ -7,7 +7,7 @@
 
 using namespace id::fractals;
 
-namespace id
+namespace id::engine
 {
 
 /*
@@ -64,4 +64,4 @@ bool param_not_used(int param)
     return ret;
 }
 
-} // namespace id
+} // namespace id::engine
