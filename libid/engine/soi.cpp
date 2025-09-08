@@ -24,12 +24,11 @@
 #include <cmath>
 #include <iterator>
 
-using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
 
-namespace id
+namespace id::engine
 {
 
 enum
@@ -808,4 +807,4 @@ void soi()
         1);
 }
 
-} // namespace id
+} // namespace id::engine

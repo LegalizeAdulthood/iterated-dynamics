@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 extern int                   g_max_rhombus_depth;
@@ -12,4 +12,4 @@ extern int                   g_soi_min_stack_available;
 
 void soi();
 
-} // namespace id
+} // namespace id::engine
