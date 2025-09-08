@@ -4,7 +4,12 @@
 
 #include <wx/wx.h>
 
+namespace id::ui
+{
+
 void init_failure(const char *message)
 {
     wxMessageBox(message, "Initialization Failure");
 }
+
+} // namespace id::ui

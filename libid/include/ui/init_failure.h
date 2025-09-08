@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 void init_failure(const char *message);
+
+} // namespace id::ui
