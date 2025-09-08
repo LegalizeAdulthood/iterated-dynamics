@@ -29,18 +29,18 @@
 #include <cstring>
 #include <string>
 
-using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;
 
-namespace id
-{
-namespace math
+namespace id::math
 {
 BFMathType g_bf_math{};
 }
+
+namespace id::engine
+{
 
 #ifndef NDEBUG
 //********************************************************************
@@ -980,4 +980,4 @@ BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     return t;
 }
 
-} // namespace id
+} // namespace id::engine

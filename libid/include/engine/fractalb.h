@@ -6,7 +6,7 @@
 
 #include <config/port.h>
 
-namespace id
+namespace id::engine
 {
 
 inline math::DComplex cmplx_bn_to_float(const math::BNComplex &s)
@@ -63,4 +63,4 @@ void compare_values_bf(const char *s, LDouble x, math::BigFloat bfx);
 void show_var_bf(const char *s, math::BigFloat n);
 #endif
 
-} // namespace id
+} // namespace id::engine
