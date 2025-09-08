@@ -29,6 +29,7 @@
 #include <cstring>
 #include <string>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
@@ -737,7 +738,7 @@ int julia_orbit_bn()
     double_a_bn(g_bn_tmp+g_shift_factor);
     add_bn(g_new_z_bn.y, g_bn_tmp+g_shift_factor, g_param_z_bn.y);
 
-    return id::g_bailout_bignum();
+    return g_bailout_bignum();
 }
 
 int julia_orbit_bf()
@@ -750,7 +751,7 @@ int julia_orbit_bf()
     mult_bf(g_bf_tmp, g_old_z_bf.x, g_old_z_bf.y); // ok to use unsafe here
     double_a_bf(g_bf_tmp);
     add_bf(g_new_z_bf.y, g_bf_tmp, g_param_z_bf.y);
-    return id::g_bailout_bigfloat();
+    return g_bailout_bigfloat();
 }
 
 int julia_z_power_bn_fractal()
@@ -767,7 +768,7 @@ int julia_z_power_bn_fractal()
     add_bn(g_new_z_bn.x, g_param_z_bn.x, g_new_z_bn.x+g_shift_factor);
     add_bn(g_new_z_bn.y, g_param_z_bn.y, g_new_z_bn.y+g_shift_factor);
     restore_stack(saved);
-    return id::g_bailout_bignum();
+    return g_bailout_bignum();
 }
 
 int julia_z_power_orbit_bf()
@@ -784,7 +785,7 @@ int julia_z_power_orbit_bf()
     add_bf(g_new_z_bf.x, g_param_z_bf.x, g_new_z_bf.x);
     add_bf(g_new_z_bf.y, g_param_z_bf.y, g_new_z_bf.y);
     restore_stack(saved);
-    return id::g_bailout_bigfloat();
+    return g_bailout_bigfloat();
 }
 
 BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)

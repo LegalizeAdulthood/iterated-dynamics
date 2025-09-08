@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 enum class Bailout
@@ -23,4 +23,4 @@ extern int      (*g_bailout_bigfloat)();
 
 void set_bailout_formula(Bailout test);
 
-} // namespace id
+} // namespace id::engine

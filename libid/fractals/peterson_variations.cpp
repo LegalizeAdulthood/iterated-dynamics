@@ -15,6 +15,7 @@
 
 #include <algorithm>
 
+using namespace id::engine;
 using namespace id::math;
 
 namespace id::fractals
@@ -61,7 +62,7 @@ int marks_lambda_orbit()
     g_new_z.x = g_marks_coefficient.x * g_tmp_z.x - g_marks_coefficient.y * g_tmp_z.y + g_float_param->x;
     g_new_z.y = g_marks_coefficient.x * g_tmp_z.y + g_marks_coefficient.y * g_tmp_z.x + g_float_param->y;
 
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int marks_cplx_mand_orbit()
@@ -71,7 +72,7 @@ int marks_cplx_mand_orbit()
     fpu_cmplx_mul(&g_tmp_z, &g_marks_coefficient, &g_new_z);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 /*
@@ -88,7 +89,7 @@ int marks_mandel_pwr_orbit()
     cmplx_mult(g_tmp_z, g_new_z, g_new_z);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 /* I was coding Marksmandelpower and failed to use some temporary
@@ -103,7 +104,7 @@ int tims_error_orbit()
     g_new_z.y = g_new_z.x * g_tmp_z.y - g_new_z.y * g_tmp_z.x;
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int marks_mandel_per_pixel()

@@ -13,6 +13,7 @@
 #include "math/cmplx.h"
 #include "math/fpu087.h"
 
+using namespace id::engine;
 using namespace id::math;
 
 namespace id::fractals

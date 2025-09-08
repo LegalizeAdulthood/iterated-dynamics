@@ -9,6 +9,7 @@
 #include "math/cmplx.h"
 #include "math/sqr.h"
 
+using namespace id::engine;
 using namespace id::math;
 
 namespace id::fractals
@@ -40,7 +41,7 @@ int escher_orbit() // Science of Fractal Images pp. 185, 187
     }
     if (test_size > g_magnitude_limit)
     {
-        return id::g_bailout_float(); // point not in target set
+        return g_bailout_float(); // point not in target set
     }
     // make distinct level sets if point stayed in target set
     g_color_iter = ((3L * g_color_iter) % 255L) + 1L;

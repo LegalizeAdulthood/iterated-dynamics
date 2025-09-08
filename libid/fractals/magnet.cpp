@@ -9,6 +9,7 @@
 
 #include <cfloat>
 
+using namespace id::engine;
 using namespace id::math;
 
 namespace id::fractals
@@ -67,7 +68,7 @@ int magnet1_orbit()
     g_new_z.y = tmp.x * tmp.y;
     g_new_z.y += g_new_z.y;
 
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 // Z = ((Z**3 + 3(C-1)Z + (C-1)(C-2)  ) /
@@ -106,7 +107,7 @@ int magnet2_orbit()
     g_new_z.y = tmp.x * tmp.y;
     g_new_z.y += g_new_z.y;
 
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 } // namespace id::fractals

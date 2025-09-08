@@ -14,6 +14,7 @@
 #include "math/fpu087.h"
 #include "engine/pixel_grid.h"
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
 

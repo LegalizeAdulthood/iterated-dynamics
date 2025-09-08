@@ -16,6 +16,7 @@
 
 #include <cmath>
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::ui;
 
@@ -47,7 +48,7 @@ int mandel_trig_plus_exponent_orbit()
     //new =   trig(old) + e**old + C
     g_new_z.x += tmp_exp*cos_y + g_float_param->x;
     g_new_z.y += tmp_exp*sin_y + g_float_param->y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int mandel_z_power_orbit()
@@ -55,7 +56,7 @@ int mandel_z_power_orbit()
     pow(&g_old_z, g_c_exponent, &g_new_z);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 // Generate Pascal's Triangle coefficients
@@ -174,7 +175,7 @@ int mandel_z_to_z_plus_z_pwr_orbit()
     g_old_z = complex_power(g_old_z, g_old_z);
     g_new_z.x = g_new_z.x + g_old_z.x +g_float_param->x;
     g_new_z.y = g_new_z.y + g_old_z.y +g_float_param->y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 bool julia_fn_plus_z_sqrd_per_image()
@@ -210,7 +211,7 @@ int trig_plus_z_squared_orbit()
     cmplx_trig0(g_old_z, g_new_z);
     g_new_z.x += g_temp_sqr_x - g_temp_sqr_y + g_float_param->x;
     g_new_z.y += 2.0 * g_old_z.x * g_old_z.y + g_float_param->y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 } // namespace id::fractals

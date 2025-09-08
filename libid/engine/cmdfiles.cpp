@@ -86,6 +86,7 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
@@ -270,7 +271,7 @@ static void process_simple_command(char *cur_arg)
         {
             filename += ".gif";
         }
-        filename = id::io::find_file(id::io::ReadFile::IMAGE, filename).string();
+        filename = find_file(ReadFile::IMAGE, filename).string();
         if (!filename.empty())
         {
             if (std::FILE *init_file = std::fopen(filename.c_str(), "rb"))
@@ -284,7 +285,7 @@ static void process_simple_command(char *cur_arg)
                 if (signature[0] == 'G' && signature[1] == 'I' && signature[2] == 'F' &&
                     signature[3] >= '8' && signature[3] <= '9' && signature[4] >= '0' && signature[4] <= '9')
                 {
-                    g_read_filename = id::io::find_file(id::io::ReadFile::IMAGE, cur_arg);
+                    g_read_filename = find_file(ReadFile::IMAGE, cur_arg);
                     if (!g_read_filename.empty())
                     {
                         g_browse_name = extract_filename(g_read_filename);
@@ -327,7 +328,7 @@ static void process_file(char *cur_arg)
     {
         path.replace_extension(".par");
     }
-    path = id::io::find_file(id::io::ReadFile::PARAMETER, path.string());
+    path = find_file(ReadFile::PARAMETER, path.string());
     if (path.empty())
     {
         arg_error(cur_arg);
@@ -444,11 +445,11 @@ static void init_vars_run()              // once per run init
 
 static void init_libraries()
 {
-    id::io::clear_read_library_path();
-    id::io::clear_save_library();
+    clear_read_library_path();
+    clear_save_library();
     const fs::path docs_dir{g_special_dirs->documents_dir() / ID_PROGRAM_NAME};
-    id::io::add_read_library(docs_dir);
-    id::io::set_save_library(docs_dir);
+    add_read_library(docs_dir);
+    set_save_library(docs_dir);
 }
 
 static void init_vars_restart() // <ins> key init
@@ -572,8 +573,8 @@ static void init_vars_fractal()
     g_display_3d = Display3DMode::NONE;                             // 3D display is off
     g_overlay_3d = false;                                           // 3D overlay is off
     g_old_demm_colors = false;                                      //
-    id::g_bailout_test = id::Bailout::MOD;                                  //
-    id::set_bailout_formula(id::Bailout::MOD);                              //
+    g_bailout_test = Bailout::MOD;                                  //
+    set_bailout_formula(Bailout::MOD);                              //
     g_new_bifurcation_functions_loaded = false;                     // for old bifs
     g_julibrot_x_min = -.83;                                        //
     g_julibrot_y_min = -.25;                                        //
@@ -603,22 +604,22 @@ static void init_vars_fractal()
 // init vars affecting 3d
 static void init_vars3d()
 {
-    id::g_raytrace_format = id::RayTraceFormat::NONE;
-    id::g_brief   = false;
-    id::g_sphere = false;
-    id::g_preview = false;
-    id::g_show_box = false;
-    id::g_converge_x_adjust = 0;
-    id::g_converge_y_adjust = 0;
-    id::g_eye_separation = 0;
-    id::g_glasses_type = id::GlassesType::NONE;
-    id::g_preview_factor = 20;
-    id::g_red_crop_left   = 4;
-    id::g_red_crop_right  = 0;
-    id::g_blue_crop_left  = 0;
-    id::g_blue_crop_right = 4;
-    id::g_red_bright     = 80;
-    id::g_blue_bright   = 100;
+    g_raytrace_format = RayTraceFormat::NONE;
+    g_brief   = false;
+    g_sphere = false;
+    g_preview = false;
+    g_show_box = false;
+    g_converge_x_adjust = 0;
+    g_converge_y_adjust = 0;
+    g_eye_separation = 0;
+    g_glasses_type = GlassesType::NONE;
+    g_preview_factor = 20;
+    g_red_crop_left   = 4;
+    g_red_crop_right  = 0;
+    g_blue_crop_left  = 0;
+    g_blue_crop_right = 4;
+    g_red_bright     = 80;
+    g_blue_bright   = 100;
     g_transparent_color_3d[0] = 0;
     g_transparent_color_3d[1] = 0; // no min/max transparency
     set_3d_defaults();
@@ -768,7 +769,7 @@ static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode)
             char tmp_buf[11];
             std::strncpy(tmp_buf, &line_buf[1], 4);
             tmp_buf[4] = 0;
-            id::string_lower(tmp_buf);
+            string_lower(tmp_buf);
             tools_section = std::strncmp(tmp_buf, "id]", 3) == 0;
             continue;                              // skip tools section heading
         }
@@ -790,7 +791,7 @@ namespace cmd_files_test
 
 static StopMsgFn s_stop_msg{static_cast<StopMsg *>(stop_msg)};
 static GoodbyeFn s_goodbye{goodbye};
-static PrintDocFn s_print_document{id::help::print_document};
+static PrintDocFn s_print_document{help::print_document};
 
 StopMsgFn get_stop_msg()
 {
@@ -994,7 +995,7 @@ CmdArgFlags Command::bad_arg() const
 
 void Command::init_msg() const
 {
-    ::id::init_msg(variable.c_str(), value, mode);
+    id::init_msg(variable.c_str(), value, mode);
 }
 
 struct CommandHandler
@@ -1090,7 +1091,7 @@ static CmdArgFlags cmd_make_doc(const Command &cmd)
     std::string file{*cmd.value ? cmd.value : "id.txt"};
     driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, "Save name: " + file);
     driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Status:");
-    cmd_files_test::s_print_document(file.c_str(), id::help::make_doc_msg_func);
+    cmd_files_test::s_print_document(file.c_str(), help::make_doc_msg_func);
     cmd_files_test::s_goodbye();
     return CmdArgFlags::GOODBYE;
 }
@@ -1155,7 +1156,7 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     g_logical_screen_y_dots = g_file_y_dots;
     g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;
     g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
-    id::calc_frac_init();
+    calc_frac_init();
     make_batch_file();
     cmd_files_test::s_goodbye();
     return CmdArgFlags::GOODBYE;
@@ -1264,7 +1265,7 @@ static CmdArgFlags cmd_ambient(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_ambient = cmd.num_val;
+    g_ambient = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1342,7 +1343,7 @@ static CmdArgFlags cmd_auto_key(const Command &cmd)
 
 static CmdArgFlags cmd_auto_key_name(const Command &cmd)
 {
-    if (const fs::path path{id::io::find_file(id::io::ReadFile::KEY, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::KEY, cmd.value)}; !path.empty())
     {
         g_auto_name = path;
     }
@@ -1367,9 +1368,9 @@ static CmdArgFlags cmd_background(const Command &cmd)
             return cmd.bad_arg();
         }
     }
-    id::g_background_color[0] = (Byte) cmd.int_vals[0];
-    id::g_background_color[1] = (Byte) cmd.int_vals[1];
-    id::g_background_color[2] = (Byte) cmd.int_vals[2];
+    g_background_color[0] = (Byte) cmd.int_vals[0];
+    g_background_color[1] = (Byte) cmd.int_vals[1];
+    g_background_color[2] = (Byte) cmd.int_vals[2];
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1390,37 +1391,37 @@ static CmdArgFlags cmd_bailout_test(const Command &cmd)
     const std::string_view value{cmd.value};
     if (value == "mod")
     {
-        id::g_bailout_test = id::Bailout::MOD;
+        g_bailout_test = Bailout::MOD;
     }
     else if (value == "real")
     {
-        id::g_bailout_test = id::Bailout::REAL;
+        g_bailout_test = Bailout::REAL;
     }
     else if (value == "imag")
     {
-        id::g_bailout_test = id::Bailout::IMAG;
+        g_bailout_test = Bailout::IMAG;
     }
     else if (value == "or")
     {
-        id::g_bailout_test = id::Bailout::OR;
+        g_bailout_test = Bailout::OR;
     }
     else if (value == "and")
     {
-        id::g_bailout_test = id::Bailout::AND;
+        g_bailout_test = Bailout::AND;
     }
     else if (value == "manh")
     {
-        id::g_bailout_test = id::Bailout::MANH;
+        g_bailout_test = Bailout::MANH;
     }
     else if (value == "manr")
     {
-        id::g_bailout_test = id::Bailout::MANR;
+        g_bailout_test = Bailout::MANR;
     }
     else
     {
         return cmd.bad_arg();
     }
-    id::set_bailout_formula(id::g_bailout_test);
+    set_bailout_formula(g_bailout_test);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -1448,7 +1449,7 @@ static CmdArgFlags cmd_brief(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_brief = cmd.yes_no_val[0] != 0;
+    g_brief = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1459,8 +1460,8 @@ static CmdArgFlags cmd_bright(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_red_bright = cmd.int_vals[0];
-    id::g_blue_bright = cmd.int_vals[1];
+    g_red_bright = cmd.int_vals[0];
+    g_blue_bright = cmd.int_vals[1];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -1579,7 +1580,7 @@ static CmdArgFlags cmd_coarse(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_preview_factor = cmd.num_val;
+    g_preview_factor = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -1643,7 +1644,7 @@ static CmdArgFlags parse_colors(const char *value)
 {
     if (*value == '@')
     {
-        if (const fs::path path{id::io::find_file(id::io::ReadFile::MAP, &value[1])}; !path.empty())
+        if (const fs::path path{find_file(ReadFile::MAP, &value[1])}; !path.empty())
         {
             g_map_name = path.filename().string();
         }
@@ -1771,7 +1772,7 @@ static CmdArgFlags cmd_comment(const Command &cmd)
 // converge=?
 static CmdArgFlags cmd_converge(const Command &cmd)
 {
-    id::g_converge_x_adjust = cmd.num_val;
+    g_converge_x_adjust = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -1904,10 +1905,10 @@ static CmdArgFlags cmd_crop(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_red_crop_left = cmd.int_vals[0];
-    id::g_red_crop_right = cmd.int_vals[1];
-    id::g_blue_crop_left = cmd.int_vals[2];
-    id::g_blue_crop_right = cmd.int_vals[3];
+    g_red_crop_left = cmd.int_vals[0];
+    g_red_crop_right = cmd.int_vals[1];
+    g_blue_crop_left = cmd.int_vals[2];
+    g_blue_crop_right = cmd.int_vals[3];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -2039,7 +2040,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
         g_image_filename_mask = std::string{"*"} + cmd.value;
         return CmdArgFlags::NONE;
     }
-    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
@@ -2049,7 +2050,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    g_read_filename = id::io::find_file(id::io::ReadFile::IMAGE, cmd.value);
+    g_read_filename = find_file(ReadFile::IMAGE, cmd.value);
     if (!g_read_filename.empty())
     {
         g_show_file = ShowFile::LOAD_IMAGE;
@@ -2084,11 +2085,11 @@ static CmdArgFlags cmd_fill_color(const Command &cmd)
 // filltype=?
 static CmdArgFlags cmd_fill_type(const Command &cmd)
 {
-    if (cmd.num_val < +id::FillType::SURFACE_GRID || cmd.num_val > +id::FillType::LIGHT_SOURCE_AFTER)
+    if (cmd.num_val < +FillType::SURFACE_GRID || cmd.num_val > +FillType::LIGHT_SOURCE_AFTER)
     {
         return cmd.bad_arg();
     }
-    id::g_fill_type = static_cast<id::FillType>(cmd.num_val);
+    g_fill_type = static_cast<FillType>(cmd.num_val);
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2116,11 +2117,11 @@ static CmdArgFlags cmd_float(const Command &cmd)
 // formulafile=?
 static CmdArgFlags cmd_formula_file(const Command &cmd)
 {
-    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
-    if (const fs::path path{id::io::find_file(id::io::ReadFile::FORMULA, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::FORMULA, cmd.value)}; !path.empty())
     {
         g_formula_filename = path;
         return CmdArgFlags::FRACTAL_PARAM;
@@ -2191,7 +2192,7 @@ static CmdArgFlags cmd_haze(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_haze = cmd.num_val;
+    g_haze = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2218,11 +2219,11 @@ static CmdArgFlags cmd_ifs(const Command &cmd)
 // ifsfile=??
 static CmdArgFlags cmd_ifs_file(const Command &cmd)
 {
-    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
-    if (const fs::path path{id::io::find_file(id::io::ReadFile::IFS, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::IFS, cmd.value)}; !path.empty())
     {
         g_ifs_filename = path;
         reset_ifs_definition();
@@ -2291,7 +2292,7 @@ static CmdArgFlags cmd_inside(const Command &cmd)
 // interocular=?
 static CmdArgFlags cmd_interocular(const Command &cmd)
 {
-    id::g_eye_separation = cmd.num_val;
+    g_eye_separation = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -2388,19 +2389,19 @@ static CmdArgFlags cmd_latitude(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_sphere_theta_min = cmd.int_vals[0];
-    id::g_sphere_theta_max = cmd.int_vals[1];
+    g_sphere_theta_min = cmd.int_vals[0];
+    g_sphere_theta_max = cmd.int_vals[1];
     return CmdArgFlags::PARAM_3D;
 }
 
 // lfile=?
 static CmdArgFlags cmd_l_file(const Command &cmd)
 {
-    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
-    if (const fs::path path{id::io::find_file(id::io::ReadFile::LSYSTEM, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::LSYSTEM, cmd.value)}; !path.empty())
     {
         g_l_system_filename = path;
         return CmdArgFlags::FRACTAL_PARAM;
@@ -2419,23 +2420,23 @@ static CmdArgFlags cmd_library_dirs(const Command &cmd)
     const char *start = cmd.value;
     for (const char *comma = std::strchr(start, ','); comma != nullptr; comma = std::strchr(start, ','))
     {
-        id::io::add_read_library(std::string{start, comma});
+        add_read_library(std::string{start, comma});
         start = comma + 1;
     }
-    id::io::add_read_library(start);
+    add_read_library(start);
     return CmdArgFlags::NONE;
 }
 
 // lightname=?
 static CmdArgFlags cmd_light_name(const Command &cmd)
 {
-    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
     if (g_first_init || cmd.mode == CmdFile::AT_AFTER_STARTUP)
     {
-        id::g_light_name = cmd.value;
+        g_light_name = cmd.value;
     }
     return CmdArgFlags::NONE;
 }
@@ -2447,9 +2448,9 @@ static CmdArgFlags cmd_light_source(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_light_x = cmd.int_vals[0];
-    id::g_light_y = cmd.int_vals[1];
-    id::g_light_z = cmd.int_vals[2];
+    g_light_x = cmd.int_vals[0];
+    g_light_y = cmd.int_vals[1];
+    g_light_z = cmd.int_vals[2];
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2518,8 +2519,8 @@ static CmdArgFlags cmd_longitude(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_sphere_phi_min = cmd.int_vals[0];
-    id::g_sphere_phi_max = cmd.int_vals[1];
+    g_sphere_phi_min = cmd.int_vals[0];
+    g_sphere_phi_max = cmd.int_vals[1];
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -2539,7 +2540,7 @@ static CmdArgFlags cmd_make_mig(const Command &cmd)
 // map=, set default colors
 static CmdArgFlags cmd_map(const Command &cmd)
 {
-    if (cmd.value_len > id::ID_FILE_MAX_PATH - 1)
+    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2747,7 +2748,7 @@ static CmdArgFlags cmd_orbit_interval(const Command &cmd)
 
 static CmdArgFlags cmd_orbit_name(const Command &cmd)
 {
-    if (fractals::check_orbit_name(cmd.value))
+    if (check_orbit_name(cmd.value))
     {
         return cmd.bad_arg();
     }
@@ -2779,7 +2780,7 @@ static CmdArgFlags cmd_orbit_save_name(const Command &cmd)
 // orgfrmdir=? [deprecated]
 static CmdArgFlags cmd_org_frm_dir(const Command &cmd)
 {
-    if (cmd.value_len > (id::ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }
@@ -2857,11 +2858,11 @@ static CmdArgFlags cmd_params(const Command &cmd)
 // parmfile=?
 static CmdArgFlags cmd_parm_file(const Command &cmd)
 {
-    if (cmd.value_len > (id::ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
     {
         return cmd.bad_arg();
     }
-    if (const fs::path path{id::io::find_file(id::io::ReadFile::PARAMETER, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::PARAMETER, cmd.value)}; !path.empty())
     {
         g_parameter_file = path;
         return CmdArgFlags::FRACTAL_PARAM;
@@ -2935,7 +2936,7 @@ static CmdArgFlags cmd_perspective(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_viewer_z = cmd.num_val;
+    g_viewer_z = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3003,7 +3004,7 @@ static CmdArgFlags cmd_preview(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_preview = cmd.yes_no_val[0] != 0;
+    g_preview = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3020,7 +3021,7 @@ static CmdArgFlags cmd_radius(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_sphere_radius = cmd.num_val;
+    g_sphere_radius = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3031,7 +3032,7 @@ static CmdArgFlags cmd_randomize(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_randomize_3d = cmd.num_val;
+    g_randomize_3d = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3096,19 +3097,19 @@ namespace
 struct RayTraceFormatValue
 {
     std::string_view name;
-    id::RayTraceFormat value;
+    RayTraceFormat value;
 };
 
 constexpr RayTraceFormatValue RAYTRACE_FORMATS[]{
-    {"none", id::RayTraceFormat::NONE},          //
-    {"dkb", id::RayTraceFormat::DKB_POVRAY},     //
-    {"pov-ray", id::RayTraceFormat::DKB_POVRAY}, //
-    {"vivid", id::RayTraceFormat::VIVID},        //
-    {"raw", id::RayTraceFormat::RAW},            //
-    {"mtv", id::RayTraceFormat::MTV},            //
-    {"rayshade", id::RayTraceFormat::RAYSHADE},  //
-    {"acrospin", id::RayTraceFormat::ACROSPIN},  //
-    {"dxf", id::RayTraceFormat::DXF}             //
+    {"none", RayTraceFormat::NONE},          //
+    {"dkb", RayTraceFormat::DKB_POVRAY},     //
+    {"pov-ray", RayTraceFormat::DKB_POVRAY}, //
+    {"vivid", RayTraceFormat::VIVID},        //
+    {"raw", RayTraceFormat::RAW},            //
+    {"mtv", RayTraceFormat::MTV},            //
+    {"rayshade", RayTraceFormat::RAYSHADE},  //
+    {"acrospin", RayTraceFormat::ACROSPIN},  //
+    {"dxf", RayTraceFormat::DXF}             //
 };
 
 } // namespace
@@ -3122,7 +3123,7 @@ static CmdArgFlags cmd_ray(const Command &cmd)
         {
             if (name_value.name == cmd.value)
             {
-                id::g_raytrace_format = name_value.value;
+                g_raytrace_format = name_value.value;
                 break;
             }
         }
@@ -3133,7 +3134,7 @@ static CmdArgFlags cmd_ray(const Command &cmd)
     }
     else
     {
-        id::g_raytrace_format = static_cast<id::RayTraceFormat>(cmd.num_val);
+        g_raytrace_format = static_cast<RayTraceFormat>(cmd.num_val);
     }
     return CmdArgFlags::PARAM_3D;
 }
@@ -3209,9 +3210,9 @@ static CmdArgFlags cmd_rotation(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_x_rot = cmd.int_vals[0];
-    id::g_y_rot = cmd.int_vals[1];
-    id::g_z_rot = cmd.int_vals[2];
+    g_x_rot = cmd.int_vals[0];
+    g_y_rot = cmd.int_vals[1];
+    g_z_rot = cmd.int_vals[2];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3219,7 +3220,7 @@ static CmdArgFlags cmd_rotation(const Command &cmd)
 static CmdArgFlags cmd_roughness(const Command &cmd)
 {
     // "rough" is really scale z, but we add it here for convenience
-    id::g_rough = cmd.num_val;
+    g_rough = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3234,13 +3235,13 @@ static CmdArgFlags cmd_r_seed(const Command &cmd)
 static CmdArgFlags cmd_save_dir(const Command &cmd)
 {
     g_save_dir = cmd.value;
-    id::io::set_save_library(cmd.value);
+    set_save_library(cmd.value);
     return CmdArgFlags::NONE;
 }
 
 static CmdArgFlags cmd_save_name(const Command &cmd)
 {
-    if (cmd.value_len > id::ID_FILE_MAX_PATH - 1)
+    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -3281,11 +3282,11 @@ static CmdArgFlags cmd_scale_xyz(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_x_scale = cmd.int_vals[0];
-    id::g_y_scale = cmd.int_vals[1];
+    g_x_scale = cmd.int_vals[0];
+    g_y_scale = cmd.int_vals[1];
     if (cmd.total_params > 2)
     {
-        id::g_rough = cmd.int_vals[2];
+        g_rough = cmd.int_vals[2];
     }
     return CmdArgFlags::PARAM_3D;
 }
@@ -3308,7 +3309,7 @@ static CmdArgFlags cmd_show_box(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_show_box = cmd.yes_no_val[0] != 0;
+    g_show_box = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3361,7 +3362,7 @@ static CmdArgFlags cmd_smoothing(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_light_avg = cmd.num_val;
+    g_light_avg = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3456,7 +3457,7 @@ static CmdArgFlags cmd_sphere(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_sphere = cmd.yes_no_val[0] != 0;
+    g_sphere = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3474,7 +3475,7 @@ static CmdArgFlags cmd_stereo(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_glasses_type = static_cast<id::GlassesType>(cmd.num_val);
+    g_glasses_type = static_cast<GlassesType>(cmd.num_val);
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3538,13 +3539,13 @@ static CmdArgFlags cmd_targa_overlay(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_targa_overlay = cmd.yes_no_val[0] != 0;
+    g_targa_overlay = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::PARAM_3D;
 }
 
 static CmdArgFlags cmd_temp_dir(const Command &cmd)
 {
-    if (cmd.value_len > (id::ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }
@@ -3824,7 +3825,7 @@ static CmdArgFlags cmd_water_line(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_water_line = cmd.num_val;
+    g_water_line = cmd.num_val;
     return CmdArgFlags::PARAM_3D;
 }
 
@@ -3837,7 +3838,7 @@ static CmdArgFlags cmd_wave_type(const Command &cmd)
 
 static CmdArgFlags cmd_work_dir(const Command &cmd)
 {
-    if (cmd.value_len > (id::ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
     {
         return cmd.bad_arg();
     }
@@ -3856,8 +3857,8 @@ static CmdArgFlags cmd_xy_adjust(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_adjust_3d_x = cmd.int_vals[0];
-    id::g_adjust_3d_y = cmd.int_vals[1];
+    g_adjust_3d_x = cmd.int_vals[0];
+    g_adjust_3d_y = cmd.int_vals[1];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -3868,8 +3869,8 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    id::g_shift_x = cmd.int_vals[0];
-    id::g_shift_y = cmd.int_vals[1];
+    g_shift_x = cmd.int_vals[0];
+    g_shift_y = cmd.int_vals[1];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -4107,43 +4108,43 @@ static void arg_error(const char *bad_arg)      // oops. couldn't decode this
 
 void set_3d_defaults()
 {
-    id::g_rough     = 30;
-    id::g_water_line = 0;
-    id::g_viewer_z   = 0;
-    id::g_shift_x    = 0;
-    id::g_shift_y    = 0;
-    id::g_adjust_3d_x    = 0;
-    id::g_adjust_3d_y    = 0;
-    id::g_light_avg  = 0;
-    id::g_ambient   = 20;
-    id::g_randomize_3d = 0;
-    id::g_haze      = 0;
-    id::g_background_color[0] = 51;
-    id::g_background_color[1] = 153;
-    id::g_background_color[2] = 200;
-    if (id::g_sphere)
+    g_rough     = 30;
+    g_water_line = 0;
+    g_viewer_z   = 0;
+    g_shift_x    = 0;
+    g_shift_y    = 0;
+    g_adjust_3d_x    = 0;
+    g_adjust_3d_y    = 0;
+    g_light_avg  = 0;
+    g_ambient   = 20;
+    g_randomize_3d = 0;
+    g_haze      = 0;
+    g_background_color[0] = 51;
+    g_background_color[1] = 153;
+    g_background_color[2] = 200;
+    if (g_sphere)
     {
-        id::g_sphere_phi_min      =  180;
-        id::g_sphere_phi_max      =  0;
-        id::g_sphere_theta_min    =  -90;
-        id::g_sphere_theta_max    =  90;
-        id::g_sphere_radius    =  100;
-        id::g_fill_type  = id::FillType::SURFACE_INTERPOLATED;
-        id::g_light_x    = 1;
-        id::g_light_y    = 1;
-        id::g_light_z    = 1;
+        g_sphere_phi_min      =  180;
+        g_sphere_phi_max      =  0;
+        g_sphere_theta_min    =  -90;
+        g_sphere_theta_max    =  90;
+        g_sphere_radius    =  100;
+        g_fill_type  = FillType::SURFACE_INTERPOLATED;
+        g_light_x    = 1;
+        g_light_y    = 1;
+        g_light_z    = 1;
     }
     else
     {
-        id::g_x_rot      = 60;
-        id::g_y_rot      = 30;
-        id::g_z_rot      = 0;
-        id::g_x_scale    = 90;
-        id::g_y_scale    = 90;
-        id::g_fill_type  = id::FillType::POINTS;
-        id::g_light_x    = 1;
-        id::g_light_y    = -1;
-        id::g_light_z    = 1;
+        g_x_rot      = 60;
+        g_y_rot      = 30;
+        g_z_rot      = 0;
+        g_x_scale    = 90;
+        g_y_scale    = 90;
+        g_fill_type  = FillType::POINTS;
+        g_light_x    = 1;
+        g_light_y    = -1;
+        g_light_z    = 1;
     }
 }
 

@@ -9,6 +9,8 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 
+using namespace id::engine;
+
 namespace id::fractals
 {
 
@@ -24,7 +26,7 @@ int vl_orbit()
     double ab = a * b;
     g_new_z.x = g_old_z.x + half * (u + (a - ab));
     g_new_z.y = g_old_z.y + half * (w + (-b + ab));
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 bool vl_per_image()

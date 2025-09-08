@@ -53,7 +53,7 @@
                                 ((*((unsigned char*)&(c)+1)) << 8)
 #endif
 
-using namespace id;
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
@@ -347,39 +347,39 @@ static void backwards_info2(const FractalInfo &read_info)
                    || read_info.display_3d > 0                        //
                    || bit_set(g_cur_fractal_specific->flags, FractalFlags::PARAMS_3D)))
         {
-            id::g_sphere = read_info.init3d[0] != 0;                      // sphere? 1 = yes, 0 = no
-            id::g_x_rot = read_info.init3d[1];                            // rotate x-axis 60 degrees
-            id::g_y_rot = read_info.init3d[2];                            // rotate y-axis 90 degrees
-            id::g_z_rot = read_info.init3d[3];                            // rotate x-axis  0 degrees
-            id::g_x_scale = read_info.init3d[4];                          // scale x-axis, 90 percent
-            id::g_y_scale = read_info.init3d[5];                          // scale y-axis, 90 percent
-            id::g_sphere_phi_min = read_info.init3d[1];                   // longitude start, 180
-            id::g_sphere_phi_max = read_info.init3d[2];                   // longitude end ,   0
-            id::g_sphere_theta_min = read_info.init3d[3];                 // latitude start,-90 degrees
-            id::g_sphere_theta_max = read_info.init3d[4];                 // latitude stop,  90 degrees
-            id::g_sphere_radius = read_info.init3d[5];                    // should be user input
-            id::g_rough = read_info.init3d[6];                            // scale z-axis, 30 percent
-            id::g_water_line = read_info.init3d[7];                       // water level
-            id::g_fill_type = static_cast<id::FillType>(read_info.init3d[8]); // fill type
-            id::g_viewer_z = read_info.init3d[9];                         // perspective view point
-            id::g_shift_x = read_info.init3d[10];                         // x shift
-            id::g_shift_y = read_info.init3d[11];                         // y shift
-            id::g_light_x = read_info.init3d[12];                         // x light vector coordinate
-            id::g_light_y = read_info.init3d[13];                         // y light vector coordinate
-            id::g_light_z = read_info.init3d[14];                         // z light vector coordinate
-            id::g_light_avg = read_info.init3d[15];                       // number of points to average
-            id::g_preview_factor = read_info.preview_factor;
-            id::g_adjust_3d_x = read_info.x_trans;
-            id::g_adjust_3d_y = read_info.y_trans;
-            id::g_red_crop_left = read_info.red_crop_left;
-            id::g_red_crop_right = read_info.red_crop_right;
-            id::g_blue_crop_left = read_info.blue_crop_left;
-            id::g_blue_crop_right = read_info.blue_crop_right;
-            id::g_red_bright = read_info.red_bright;
-            id::g_blue_bright = read_info.blue_bright;
-            id::g_converge_x_adjust = read_info.x_adjust;
-            id::g_eye_separation = read_info.eye_separation;
-            id::g_glasses_type = static_cast<id::GlassesType>(read_info.glasses_type);
+            g_sphere = read_info.init3d[0] != 0;                      // sphere? 1 = yes, 0 = no
+            g_x_rot = read_info.init3d[1];                            // rotate x-axis 60 degrees
+            g_y_rot = read_info.init3d[2];                            // rotate y-axis 90 degrees
+            g_z_rot = read_info.init3d[3];                            // rotate x-axis  0 degrees
+            g_x_scale = read_info.init3d[4];                          // scale x-axis, 90 percent
+            g_y_scale = read_info.init3d[5];                          // scale y-axis, 90 percent
+            g_sphere_phi_min = read_info.init3d[1];                   // longitude start, 180
+            g_sphere_phi_max = read_info.init3d[2];                   // longitude end ,   0
+            g_sphere_theta_min = read_info.init3d[3];                 // latitude start,-90 degrees
+            g_sphere_theta_max = read_info.init3d[4];                 // latitude stop,  90 degrees
+            g_sphere_radius = read_info.init3d[5];                    // should be user input
+            g_rough = read_info.init3d[6];                            // scale z-axis, 30 percent
+            g_water_line = read_info.init3d[7];                       // water level
+            g_fill_type = static_cast<FillType>(read_info.init3d[8]); // fill type
+            g_viewer_z = read_info.init3d[9];                         // perspective view point
+            g_shift_x = read_info.init3d[10];                         // x shift
+            g_shift_y = read_info.init3d[11];                         // y shift
+            g_light_x = read_info.init3d[12];                         // x light vector coordinate
+            g_light_y = read_info.init3d[13];                         // y light vector coordinate
+            g_light_z = read_info.init3d[14];                         // z light vector coordinate
+            g_light_avg = read_info.init3d[15];                       // number of points to average
+            g_preview_factor = read_info.preview_factor;
+            g_adjust_3d_x = read_info.x_trans;
+            g_adjust_3d_y = read_info.y_trans;
+            g_red_crop_left = read_info.red_crop_left;
+            g_red_crop_right = read_info.red_crop_right;
+            g_blue_crop_left = read_info.blue_crop_left;
+            g_blue_crop_right = read_info.blue_crop_right;
+            g_red_bright = read_info.red_bright;
+            g_blue_bright = read_info.blue_bright;
+            g_converge_x_adjust = read_info.x_adjust;
+            g_eye_separation = read_info.eye_separation;
+            g_glasses_type = static_cast<GlassesType>(read_info.glasses_type);
         }
     }
 }
@@ -455,9 +455,9 @@ static void backwards_info5(const FractalInfo &read_info)
         if (g_display_3d == Display3DMode::NONE && read_info.display_3d > 0)
         {
             g_loaded_3d = true;
-            id::g_ambient = read_info.ambient;
-            id::g_randomize_3d = read_info.randomize;
-            id::g_haze = read_info.haze;
+            g_ambient = read_info.ambient;
+            g_randomize_3d = read_info.randomize;
+            g_haze = read_info.haze;
             g_transparent_color_3d[0] = read_info.transparent[0];
             g_transparent_color_3d[1] = read_info.transparent[1];
         }
@@ -596,13 +596,13 @@ static void backwards_info10(FractalInfo read_info)
     {
         // post-version 18.22
         g_bailout = read_info.bailout; // use long bailout
-        id::g_bailout_test = static_cast<id::Bailout>(read_info.bailout_test);
+        g_bailout_test = static_cast<Bailout>(read_info.bailout_test);
     }
     else
     {
-        id::g_bailout_test = id::Bailout::MOD;
+        g_bailout_test = Bailout::MOD;
     }
-    id::set_bailout_formula(id::g_bailout_test);
+    set_bailout_formula(g_bailout_test);
 
     if (read_info.info_version > 9)
     {
@@ -891,7 +891,7 @@ int read_overlay()      // read overlay/3D files, if required
         g_read_filename.replace_extension(".gif");
     }
 
-    if (find_fractal_info(id::io::find_file(id::io::ReadFile::IMAGE, g_read_filename).string(), //
+    if (find_fractal_info(find_file(ReadFile::IMAGE, g_read_filename).string(), //
             &read_info, &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info))
     {
         // didn't find a usable file

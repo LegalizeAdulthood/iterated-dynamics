@@ -52,6 +52,7 @@
 #include <string>
 
 using namespace id;
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
@@ -161,7 +162,7 @@ restart:
 
     open_file.replace_extension(open_file_ext);
 
-    open_file = id::io::get_save_path(id::io::WriteFile::IMAGE, open_file.string());
+    open_file = get_save_path(WriteFile::IMAGE, open_file.string());
     assert(!open_file.empty());
     tmp_file = open_file;
     if (!std::filesystem::exists(open_file))  // file doesn't exist
@@ -800,40 +801,40 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->decomp[0] = static_cast<std::int16_t>(g_decomp[0]);
     save_info->biomorph = static_cast<std::int16_t>(g_user_biomorph_value);
     save_info->symmetry = static_cast<std::int16_t>(g_force_symmetry);
-    save_info->init3d[0] = static_cast<std::int16_t>(id::g_sphere ? 1 : 0);  // sphere? 1 = yes, 0 = no
-    save_info->init3d[1] = static_cast<std::int16_t>(id::g_x_rot);            // rotate x-axis 60 degrees
-    save_info->init3d[2] = static_cast<std::int16_t>(id::g_y_rot);            // rotate y-axis 90 degrees
-    save_info->init3d[3] = static_cast<std::int16_t>(id::g_z_rot);            // rotate x-axis  0 degrees
-    save_info->init3d[4] = static_cast<std::int16_t>(id::g_x_scale);          // scale x-axis, 90 percent
-    save_info->init3d[5] = static_cast<std::int16_t>(id::g_y_scale);          // scale y-axis, 90 percent
-    save_info->init3d[1] = static_cast<std::int16_t>(id::g_sphere_phi_min);   // longitude start, 180
-    save_info->init3d[2] = static_cast<std::int16_t>(id::g_sphere_phi_max);   // longitude end ,   0
-    save_info->init3d[3] = static_cast<std::int16_t>(id::g_sphere_theta_min); // latitude start,-90 degrees
-    save_info->init3d[4] = static_cast<std::int16_t>(id::g_sphere_theta_max); // latitude stop,  90 degrees
-    save_info->init3d[5] = static_cast<std::int16_t>(id::g_sphere_radius);    // should be user input
-    save_info->init3d[6] = static_cast<std::int16_t>(id::g_rough);            // scale z-axis, 30 percent
-    save_info->init3d[7] = static_cast<std::int16_t>(id::g_water_line);       // water level
-    save_info->init3d[8] = static_cast<std::int16_t>(id::g_fill_type);        // fill type
-    save_info->init3d[9] = static_cast<std::int16_t>(id::g_viewer_z);         // perspective view point
-    save_info->init3d[10] = static_cast<std::int16_t>(id::g_shift_x);         // x shift
-    save_info->init3d[11] = static_cast<std::int16_t>(id::g_shift_y);         // y shift
-    save_info->init3d[12] = static_cast<std::int16_t>(id::g_light_x);         // x light vector coordinate
-    save_info->init3d[13] = static_cast<std::int16_t>(id::g_light_y);         // y light vector coordinate
-    save_info->init3d[14] = static_cast<std::int16_t>(id::g_light_z);         // z light vector coordinate
-    save_info->init3d[15] = static_cast<std::int16_t>(id::g_light_avg);       // number of points to average
-    save_info->preview_factor = static_cast<std::int16_t>(id::g_preview_factor);
-    save_info->x_trans = static_cast<std::int16_t>(id::g_adjust_3d_x);
-    save_info->y_trans = static_cast<std::int16_t>(id::g_adjust_3d_y);
-    save_info->red_crop_left = static_cast<std::int16_t>(id::g_red_crop_left);
-    save_info->red_crop_right = static_cast<std::int16_t>(id::g_red_crop_right);
-    save_info->blue_crop_left = static_cast<short>(id::g_blue_crop_left);
-    save_info->blue_crop_right = static_cast<std::int16_t>(id::g_blue_crop_right);
-    save_info->red_bright = static_cast<std::int16_t>(id::g_red_bright);
-    save_info->blue_bright = static_cast<std::int16_t>(id::g_blue_bright);
-    save_info->x_adjust = static_cast<std::int16_t>(id::g_converge_x_adjust);
-    save_info->y_adjust = static_cast<std::int16_t>(id::g_converge_y_adjust);
-    save_info->eye_separation = static_cast<std::int16_t>(id::g_eye_separation);
-    save_info->glasses_type = static_cast<std::int16_t>(id::g_glasses_type);
+    save_info->init3d[0] = static_cast<std::int16_t>(g_sphere ? 1 : 0);  // sphere? 1 = yes, 0 = no
+    save_info->init3d[1] = static_cast<std::int16_t>(g_x_rot);            // rotate x-axis 60 degrees
+    save_info->init3d[2] = static_cast<std::int16_t>(g_y_rot);            // rotate y-axis 90 degrees
+    save_info->init3d[3] = static_cast<std::int16_t>(g_z_rot);            // rotate x-axis  0 degrees
+    save_info->init3d[4] = static_cast<std::int16_t>(g_x_scale);          // scale x-axis, 90 percent
+    save_info->init3d[5] = static_cast<std::int16_t>(g_y_scale);          // scale y-axis, 90 percent
+    save_info->init3d[1] = static_cast<std::int16_t>(g_sphere_phi_min);   // longitude start, 180
+    save_info->init3d[2] = static_cast<std::int16_t>(g_sphere_phi_max);   // longitude end ,   0
+    save_info->init3d[3] = static_cast<std::int16_t>(g_sphere_theta_min); // latitude start,-90 degrees
+    save_info->init3d[4] = static_cast<std::int16_t>(g_sphere_theta_max); // latitude stop,  90 degrees
+    save_info->init3d[5] = static_cast<std::int16_t>(g_sphere_radius);    // should be user input
+    save_info->init3d[6] = static_cast<std::int16_t>(g_rough);            // scale z-axis, 30 percent
+    save_info->init3d[7] = static_cast<std::int16_t>(g_water_line);       // water level
+    save_info->init3d[8] = static_cast<std::int16_t>(g_fill_type);        // fill type
+    save_info->init3d[9] = static_cast<std::int16_t>(g_viewer_z);         // perspective view point
+    save_info->init3d[10] = static_cast<std::int16_t>(g_shift_x);         // x shift
+    save_info->init3d[11] = static_cast<std::int16_t>(g_shift_y);         // y shift
+    save_info->init3d[12] = static_cast<std::int16_t>(g_light_x);         // x light vector coordinate
+    save_info->init3d[13] = static_cast<std::int16_t>(g_light_y);         // y light vector coordinate
+    save_info->init3d[14] = static_cast<std::int16_t>(g_light_z);         // z light vector coordinate
+    save_info->init3d[15] = static_cast<std::int16_t>(g_light_avg);       // number of points to average
+    save_info->preview_factor = static_cast<std::int16_t>(g_preview_factor);
+    save_info->x_trans = static_cast<std::int16_t>(g_adjust_3d_x);
+    save_info->y_trans = static_cast<std::int16_t>(g_adjust_3d_y);
+    save_info->red_crop_left = static_cast<std::int16_t>(g_red_crop_left);
+    save_info->red_crop_right = static_cast<std::int16_t>(g_red_crop_right);
+    save_info->blue_crop_left = static_cast<short>(g_blue_crop_left);
+    save_info->blue_crop_right = static_cast<std::int16_t>(g_blue_crop_right);
+    save_info->red_bright = static_cast<std::int16_t>(g_red_bright);
+    save_info->blue_bright = static_cast<std::int16_t>(g_blue_bright);
+    save_info->x_adjust = static_cast<std::int16_t>(g_converge_x_adjust);
+    save_info->y_adjust = static_cast<std::int16_t>(g_converge_y_adjust);
+    save_info->eye_separation = static_cast<std::int16_t>(g_eye_separation);
+    save_info->glasses_type = static_cast<std::int16_t>(g_glasses_type);
     save_info->outside = static_cast<std::int16_t>(g_outside_color);
     save_info->x3rd = g_x_3rd;
     save_info->y3rd = g_y_3rd;
@@ -859,9 +860,9 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->system = static_cast<std::int16_t>(g_save_system);
     save_info->release = static_cast<std::int16_t>(20 * 100 + 4); // legacy FRACTINT 20.04
     save_info->display_3d = static_cast<std::int16_t>(g_display_3d);
-    save_info->ambient = static_cast<std::int16_t>(id::g_ambient);
-    save_info->randomize = static_cast<std::int16_t>(id::g_randomize_3d);
-    save_info->haze = static_cast<std::int16_t>(id::g_haze);
+    save_info->ambient = static_cast<std::int16_t>(g_ambient);
+    save_info->randomize = static_cast<std::int16_t>(g_randomize_3d);
+    save_info->haze = static_cast<std::int16_t>(g_haze);
     save_info->transparent[0] = static_cast<std::int16_t>(g_transparent_color_3d[0]);
     save_info->transparent[1] = static_cast<std::int16_t>(g_transparent_color_3d[1]);
     save_info->rotate_lo = static_cast<std::int16_t>(g_color_cycle_range_lo);
@@ -883,7 +884,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->max_fn = static_cast<std::int16_t>(g_max_function);
     save_info->inverse_julia = static_cast<std::int16_t>((+g_major_method << 8) + +g_inverse_julia_minor_method);
     save_info->bailout = static_cast<std::int32_t>(g_bailout);
-    save_info->bailout_test = static_cast<std::int16_t>(id::g_bailout_test);
+    save_info->bailout_test = static_cast<std::int16_t>(g_bailout_test);
     save_info->iterations = static_cast<std::int32_t>(g_max_iterations);
     save_info->bf_length = static_cast<std::int16_t>(g_bn_length);
     save_info->bf_math = static_cast<std::int16_t>(g_bf_math);

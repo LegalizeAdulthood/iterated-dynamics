@@ -23,6 +23,7 @@
 
 #include <cmath>
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;
@@ -77,7 +78,7 @@ static bool use_calc_mandelbrot()
         && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X //
         && !g_finite_attractor                                 //
         && !g_using_jiim                                       //
-        && id::g_bailout_test == id::Bailout::MOD                      //
+        && g_bailout_test == Bailout::MOD                      //
         && (g_orbit_save_flags & OSF_MIDI) == 0;
 }
 

@@ -6,6 +6,8 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
+using namespace id::engine;
+
 namespace id::fractals
 {
 
@@ -34,7 +36,7 @@ int sierpinski_orbit()
         g_new_z.x = g_new_z.x - 1;
     }
 
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 } // namespace id::fractals

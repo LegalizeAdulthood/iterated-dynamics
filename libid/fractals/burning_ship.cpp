@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id::engine;
 using namespace id::math;
 
 namespace id::fractals
@@ -44,7 +45,7 @@ int burning_ship_orbit()
         g_new_z.x = z.x + q.x;
         g_new_z.y = z.y + q.y;
     }
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 static double diff_abs(const double c, const double d)
@@ -264,7 +265,7 @@ int burning_ship_bf_fractal()
         add_a_bf(g_new_z_bf.x, g_param_z_bf.x);
         add_a_bf(g_new_z_bf.y, g_param_z_bf.y);
     }
-    return id::g_bailout_bigfloat();
+    return g_bailout_bigfloat();
 }
 
 } // namespace id::fractals

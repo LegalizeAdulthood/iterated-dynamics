@@ -37,6 +37,7 @@
 #include <string>
 #include <vector>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
@@ -77,7 +78,7 @@ struct ImageHistory
     int blue_bright;
     int converge_x_adjust;
     int eye_separation;
-    id::GlassesType glasses_type;
+    GlassesType glasses_type;
     int outside_color;
     double x_3rd;
     double y_3rd;
@@ -122,7 +123,7 @@ struct ImageHistory
     double d_param9;
     double d_param10;
     long bailout;
-    id::Bailout bailout_test;
+    Bailout bailout_test;
     long iterations;
     int converge_y_adjust;
     bool old_demm_colors;
@@ -309,7 +310,7 @@ std::ostream &operator<<(std::ostream &str, Minor value)
     return str;
 }
 
-std::ostream &operator<<(std::ostream &str, id::Bailout value)
+std::ostream &operator<<(std::ostream &str, Bailout value)
 {
     str << static_cast<int>(value);
     return str;
@@ -321,7 +322,7 @@ std::ostream &operator<<(std::ostream &str, InitOrbitMode value)
     return str;
 }
 
-std::ostream &operator<<(std::ostream &str, id::GlassesType value)
+std::ostream &operator<<(std::ostream &str, GlassesType value)
 {
     str << static_cast<int>(value);
     return str;
@@ -549,40 +550,40 @@ void save_history_info()
     current.decomp[1] = g_decomp[1];
     current.biomorph = g_biomorph;
     current.force_symmetry = g_force_symmetry;
-    current.init_3d[0] = id::g_sphere ? 1 : 0;   // sphere? 1 = yes, 0 = no
-    current.init_3d[1] = id::g_x_rot;            // rotate x-axis 60 degrees
-    current.init_3d[2] = id::g_y_rot;            // rotate y-axis 90 degrees
-    current.init_3d[3] = id::g_z_rot;            // rotate x-axis  0 degrees
-    current.init_3d[4] = id::g_x_scale;          // scale x-axis, 90 percent
-    current.init_3d[5] = id::g_y_scale;          // scale y-axis, 90 percent
-    current.init_3d[1] = id::g_sphere_phi_min;   // longitude start, 180
-    current.init_3d[2] = id::g_sphere_phi_max;   // longitude end ,   0
-    current.init_3d[3] = id::g_sphere_theta_min; // latitude start,-90 degrees
-    current.init_3d[4] = id::g_sphere_theta_max; // latitude stop,  90 degrees
-    current.init_3d[5] = id::g_sphere_radius;    // should be user input
-    current.init_3d[6] = id::g_rough;            // scale z-axis, 30 percent
-    current.init_3d[7] = id::g_water_line;       // water level
-    current.init_3d[8] = +id::g_fill_type;       // fill type
-    current.init_3d[9] = id::g_viewer_z;         // perspective view point
-    current.init_3d[10] = id::g_shift_x;         // x shift
-    current.init_3d[11] = id::g_shift_y;         // y shift
-    current.init_3d[12] = id::g_light_x;         // x light vector coordinate
-    current.init_3d[13] = id::g_light_y;         // y light vector coordinate
-    current.init_3d[14] = id::g_light_z;         // z light vector coordinate
-    current.init_3d[15] = id::g_light_avg;       // number of points to average
-    current.preview_factor = id::g_preview_factor;
-    current.adjust_3d_x = id::g_adjust_3d_x;
-    current.adjust_3d_y = id::g_adjust_3d_y;
-    current.red_crop_left = id::g_red_crop_left;
-    current.red_crop_right = id::g_red_crop_right;
-    current.blue_crop_left = id::g_blue_crop_left;
-    current.blue_crop_right = id::g_blue_crop_right;
-    current.red_bright = id::g_red_bright;
-    current.blue_bright = id::g_blue_bright;
-    current.converge_x_adjust = id::g_converge_x_adjust;
-    current.converge_y_adjust = id::g_converge_y_adjust;
-    current.eye_separation = id::g_eye_separation;
-    current.glasses_type = id::g_glasses_type;
+    current.init_3d[0] = g_sphere ? 1 : 0;   // sphere? 1 = yes, 0 = no
+    current.init_3d[1] = g_x_rot;            // rotate x-axis 60 degrees
+    current.init_3d[2] = g_y_rot;            // rotate y-axis 90 degrees
+    current.init_3d[3] = g_z_rot;            // rotate x-axis  0 degrees
+    current.init_3d[4] = g_x_scale;          // scale x-axis, 90 percent
+    current.init_3d[5] = g_y_scale;          // scale y-axis, 90 percent
+    current.init_3d[1] = g_sphere_phi_min;   // longitude start, 180
+    current.init_3d[2] = g_sphere_phi_max;   // longitude end ,   0
+    current.init_3d[3] = g_sphere_theta_min; // latitude start,-90 degrees
+    current.init_3d[4] = g_sphere_theta_max; // latitude stop,  90 degrees
+    current.init_3d[5] = g_sphere_radius;    // should be user input
+    current.init_3d[6] = g_rough;            // scale z-axis, 30 percent
+    current.init_3d[7] = g_water_line;       // water level
+    current.init_3d[8] = +g_fill_type;       // fill type
+    current.init_3d[9] = g_viewer_z;         // perspective view point
+    current.init_3d[10] = g_shift_x;         // x shift
+    current.init_3d[11] = g_shift_y;         // y shift
+    current.init_3d[12] = g_light_x;         // x light vector coordinate
+    current.init_3d[13] = g_light_y;         // y light vector coordinate
+    current.init_3d[14] = g_light_z;         // z light vector coordinate
+    current.init_3d[15] = g_light_avg;       // number of points to average
+    current.preview_factor = g_preview_factor;
+    current.adjust_3d_x = g_adjust_3d_x;
+    current.adjust_3d_y = g_adjust_3d_y;
+    current.red_crop_left = g_red_crop_left;
+    current.red_crop_right = g_red_crop_right;
+    current.blue_crop_left = g_blue_crop_left;
+    current.blue_crop_right = g_blue_crop_right;
+    current.red_bright = g_red_bright;
+    current.blue_bright = g_blue_bright;
+    current.converge_x_adjust = g_converge_x_adjust;
+    current.converge_y_adjust = g_converge_y_adjust;
+    current.eye_separation = g_eye_separation;
+    current.glasses_type = g_glasses_type;
     current.outside_color = g_outside_color;
     current.x_3rd = g_x_3rd;
     current.y_3rd = g_y_3rd;
@@ -603,9 +604,9 @@ void save_history_info()
     current.release = g_release;
     current.save_release = g_release;
     current.display_3d = g_display_3d;
-    current.ambient = id::g_ambient;
-    current.randomize_3d = id::g_randomize_3d;
-    current.haze = id::g_haze;
+    current.ambient = g_ambient;
+    current.randomize_3d = g_randomize_3d;
+    current.haze = g_haze;
     current.transparent_color_3d[0] = g_transparent_color_3d[0];
     current.transparent_color_3d[1] = g_transparent_color_3d[1];
     current.color_cycle_range_lo = g_color_cycle_range_lo;
@@ -628,7 +629,7 @@ void save_history_info()
     current.major_method = g_major_method;
     current.inverse_julia_minor_method = g_inverse_julia_minor_method;
     current.bailout = g_bailout;
-    current.bailout_test = id::g_bailout_test;
+    current.bailout_test = g_bailout_test;
     current.iterations = g_max_iterations;
     current.old_demm_colors = g_old_demm_colors;
     current.log_map_fly_calculate = static_cast<int>(g_log_map_fly_calculate);
@@ -694,7 +695,7 @@ void save_history_info()
     }
     if (g_debug_flag == DebugFlags::HISTORY_DUMP_JSON)
     {
-        std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "history.json")};
+        std::filesystem::path path{id::io::get_save_path(io::WriteFile::ROOT, "history.json")};
         assert(!path.empty());
         std::ofstream str(path, std::ios_base::app);
         str << current;
@@ -742,40 +743,40 @@ void restore_history_info(int i)
     g_user_biomorph_value = last.biomorph;
     g_biomorph = last.biomorph;
     g_force_symmetry = last.force_symmetry;
-    id::g_sphere = last.init_3d[0] != 0;                       // sphere? 1 = yes, 0 = no
-    id::g_x_rot = last.init_3d[1];                             // rotate x-axis 60 degrees
-    id::g_y_rot = last.init_3d[2];                             // rotate y-axis 90 degrees
-    id::g_z_rot = last.init_3d[3];                             // rotate x-axis  0 degrees
-    id::g_x_scale = last.init_3d[4];                           // scale x-axis, 90 percent
-    id::g_y_scale = last.init_3d[5];                           // scale y-axis, 90 percent
-    id::g_sphere_phi_min = last.init_3d[1];                    // longitude start, 180
-    id::g_sphere_phi_max = last.init_3d[2];                    // longitude end ,   0
-    id::g_sphere_theta_min = last.init_3d[3];                  // latitude start,-90 degrees
-    id::g_sphere_theta_max = last.init_3d[4];                  // latitude stop,  90 degrees
-    id::g_sphere_radius = last.init_3d[5];                     // should be user input
-    id::g_rough = last.init_3d[6];                             // scale z-axis, 30 percent
-    id::g_water_line = last.init_3d[7];                        // water level
-    id::g_fill_type = static_cast<id::FillType>(last.init_3d[8]); // fill type
-    id::g_viewer_z = last.init_3d[9];                          // perspective view point
-    id::g_shift_x = last.init_3d[10];                          // x shift
-    id::g_shift_y = last.init_3d[11];                          // y shift
-    id::g_light_x = last.init_3d[12];                          // x light vector coordinate
-    id::g_light_y = last.init_3d[13];                          // y light vector coordinate
-    id::g_light_z = last.init_3d[14];                          // z light vector coordinate
-    id::g_light_avg = last.init_3d[15];                        // number of points to average
-    id::g_preview_factor = last.preview_factor;
-    id::g_adjust_3d_x = last.adjust_3d_x;
-    id::g_adjust_3d_y = last.adjust_3d_y;
-    id::g_red_crop_left = last.red_crop_left;
-    id::g_red_crop_right = last.red_crop_right;
-    id::g_blue_crop_left = last.blue_crop_left;
-    id::g_blue_crop_right = last.blue_crop_right;
-    id::g_red_bright = last.red_bright;
-    id::g_blue_bright = last.blue_bright;
-    id::g_converge_x_adjust = last.converge_x_adjust;
-    id::g_converge_y_adjust = last.converge_y_adjust;
-    id::g_eye_separation = last.eye_separation;
-    id::g_glasses_type = last.glasses_type;
+    g_sphere = last.init_3d[0] != 0;                       // sphere? 1 = yes, 0 = no
+    g_x_rot = last.init_3d[1];                             // rotate x-axis 60 degrees
+    g_y_rot = last.init_3d[2];                             // rotate y-axis 90 degrees
+    g_z_rot = last.init_3d[3];                             // rotate x-axis  0 degrees
+    g_x_scale = last.init_3d[4];                           // scale x-axis, 90 percent
+    g_y_scale = last.init_3d[5];                           // scale y-axis, 90 percent
+    g_sphere_phi_min = last.init_3d[1];                    // longitude start, 180
+    g_sphere_phi_max = last.init_3d[2];                    // longitude end ,   0
+    g_sphere_theta_min = last.init_3d[3];                  // latitude start,-90 degrees
+    g_sphere_theta_max = last.init_3d[4];                  // latitude stop,  90 degrees
+    g_sphere_radius = last.init_3d[5];                     // should be user input
+    g_rough = last.init_3d[6];                             // scale z-axis, 30 percent
+    g_water_line = last.init_3d[7];                        // water level
+    g_fill_type = static_cast<FillType>(last.init_3d[8]); // fill type
+    g_viewer_z = last.init_3d[9];                          // perspective view point
+    g_shift_x = last.init_3d[10];                          // x shift
+    g_shift_y = last.init_3d[11];                          // y shift
+    g_light_x = last.init_3d[12];                          // x light vector coordinate
+    g_light_y = last.init_3d[13];                          // y light vector coordinate
+    g_light_z = last.init_3d[14];                          // z light vector coordinate
+    g_light_avg = last.init_3d[15];                        // number of points to average
+    g_preview_factor = last.preview_factor;
+    g_adjust_3d_x = last.adjust_3d_x;
+    g_adjust_3d_y = last.adjust_3d_y;
+    g_red_crop_left = last.red_crop_left;
+    g_red_crop_right = last.red_crop_right;
+    g_blue_crop_left = last.blue_crop_left;
+    g_blue_crop_right = last.blue_crop_right;
+    g_red_bright = last.red_bright;
+    g_blue_bright = last.blue_bright;
+    g_converge_x_adjust = last.converge_x_adjust;
+    g_converge_y_adjust = last.converge_y_adjust;
+    g_eye_separation = last.eye_separation;
+    g_glasses_type = last.glasses_type;
     g_outside_color = last.outside_color;
     g_x_3rd = last.x_3rd;
     g_y_3rd = last.y_3rd;
@@ -798,9 +799,9 @@ void restore_history_info(int i)
     g_disk_16_bit = last.disk_16_bit;
     g_release = last.release;
     g_display_3d = last.display_3d;
-    id::g_ambient = last.ambient;
-    id::g_randomize_3d = last.randomize_3d;
-    id::g_haze = last.haze;
+    g_ambient = last.ambient;
+    g_randomize_3d = last.randomize_3d;
+    g_haze = last.haze;
     g_transparent_color_3d[0] = last.transparent_color_3d[0];
     g_transparent_color_3d[1] = last.transparent_color_3d[1];
     g_color_cycle_range_lo = last.color_cycle_range_lo;
@@ -823,7 +824,7 @@ void restore_history_info(int i)
     g_major_method = last.major_method;
     g_inverse_julia_minor_method = last.inverse_julia_minor_method;
     g_bailout = last.bailout;
-    id::g_bailout_test = last.bailout_test;
+    g_bailout_test = last.bailout_test;
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;
     g_potential_flag = (g_potential_params[0] != 0.0);

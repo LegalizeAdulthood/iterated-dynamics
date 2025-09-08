@@ -13,6 +13,7 @@
 
 #include <cmath>
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::ui;
 
@@ -30,7 +31,7 @@ int lambda_orbit()
 
     g_new_z.x = g_float_param->x * g_temp_sqr_x - g_float_param->y * g_temp_sqr_y;
     g_new_z.y = g_float_param->x * g_temp_sqr_y + g_float_param->y * g_temp_sqr_x;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int lambda_trig_orbit()

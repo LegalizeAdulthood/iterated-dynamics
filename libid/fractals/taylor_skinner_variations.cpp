@@ -12,6 +12,7 @@
 #include "misc/debug_flags.h"
 #include "ui/trig_fns.h"
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;
@@ -37,7 +38,7 @@ static int trig_plus_sqr_fractal()
     DComplex tmp2;                            //
     cmplx_mult(g_param_z2, g_tmp_z, tmp2);    // tmp = parm2*sqr(old)
     g_new_z += tmp2;                          // new = parm*trig(old)+parm2*sqr(old)
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 static int scott_trig_plus_sqr_fractal() // float version
@@ -46,7 +47,7 @@ static int scott_trig_plus_sqr_fractal() // float version
     cmplx_trig0(g_old_z, g_new_z); // new = trig(old)
     cmplx_sqr_old(g_tmp_z);        // tmp = sqr(old)
     g_new_z += g_tmp_z;            // new = trig(old)+sqr(old)
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 static int skinner_trig_sub_sqr_fractal()
@@ -55,7 +56,7 @@ static int skinner_trig_sub_sqr_fractal()
     cmplx_trig0(g_old_z, g_new_z); // new = trig(old)
     cmplx_sqr_old(g_tmp_z);        // old = sqr(old)
     g_new_z -= g_tmp_z;            // new = trig(old)-sqr(old)
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 static bool trig_plus_sqr_setup()
@@ -83,7 +84,7 @@ static int scott_trig_plus_trig_fractal()
     DComplex tmp2;
     cmplx_trig1(g_old_z, tmp2);
     g_new_z = g_tmp_z + tmp2;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 static int skinner_trig_sub_trig_fractal()
@@ -93,7 +94,7 @@ static int skinner_trig_sub_trig_fractal()
     DComplex tmp2;
     cmplx_trig1(g_old_z, tmp2);
     g_new_z = g_tmp_z - tmp2;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 bool trig_plus_trig_per_image()
@@ -127,7 +128,7 @@ int trig_plus_trig_orbit()
     cmplx_trig1(g_old_z, g_old_z);
     cmplx_mult(g_param_z2, g_old_z, g_old_z);
     g_new_z = g_tmp_z + g_old_z;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 static bool fn_plus_fn_sym() // set symmetry matrix for fn+fn type
@@ -212,7 +213,7 @@ int trig_x_trig_orbit()
     cmplx_trig0(g_old_z, g_tmp_z);
     cmplx_trig1(g_old_z, g_old_z);
     cmplx_mult(g_tmp_z, g_old_z, g_new_z);
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int trig_z_sqrd_orbit()
@@ -220,7 +221,7 @@ int trig_z_sqrd_orbit()
     // { z=pixel: z=trig(z*z), |z|<TEST }
     cmplx_sqr_old(g_tmp_z);
     cmplx_trig0(g_tmp_z, g_new_z);
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 bool sqr_trig_per_image()
@@ -248,7 +249,7 @@ int sqr_trig_orbit()
     // SZSB(XYAXIS) { z=pixel, TEST=(p1+3): z=sin(z)*sin(z), |z|<TEST}
     cmplx_trig0(g_old_z, g_tmp_z);
     cmplx_sqr(g_tmp_z, g_new_z);
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int sqr_1_over_trig_orbit()
@@ -257,7 +258,7 @@ int sqr_1_over_trig_orbit()
     cmplx_trig0(g_old_z, g_old_z);
     cmplx_recip(g_old_z, g_old_z);
     cmplx_sqr(g_old_z, g_new_z);
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 static int scott_z_x_trig_plus_z_fractal()
@@ -266,7 +267,7 @@ static int scott_z_x_trig_plus_z_fractal()
     cmplx_trig0(g_old_z, g_tmp_z);         // tmp  = trig(old)
     cmplx_mult(g_old_z, g_tmp_z, g_new_z); // new  = old*trig(old)
     g_new_z += g_old_z;                   // new  = trig(old) + old
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 static int skinner_z_x_trig_sub_z_fractal()
@@ -275,7 +276,7 @@ static int skinner_z_x_trig_sub_z_fractal()
     cmplx_trig0(g_old_z, g_tmp_z);         // tmp  = trig(old)
     cmplx_mult(g_old_z, g_tmp_z, g_new_z); // new  = old*trig(old)
     g_new_z -= g_old_z;                   // new  = trig(old) - old
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 bool z_x_trig_plus_z_per_image()
@@ -353,7 +354,7 @@ int z_x_trig_plus_z_orbit()
     cmplx_mult(g_old_z, g_tmp_z, tmp2);       // tmp2 = p1*old*trig(old)
     cmplx_mult(g_param_z2, g_old_z, g_tmp_z); // tmp  = p2*old
     g_new_z = tmp2 + g_tmp_z;                // new  = p1*trig(old) + p2*old
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int man_o_war_orbit()
@@ -363,7 +364,7 @@ int man_o_war_orbit()
     g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_tmp_z.x + g_float_param->x;
     g_new_z.y = 2.0 * g_old_z.x * g_old_z.y + g_tmp_z.y + g_float_param->y;
     g_tmp_z = g_old_z;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int richard_8_orbit()
@@ -372,7 +373,7 @@ int richard_8_orbit()
     cmplx_trig0(g_old_z, g_new_z);
     g_new_z.x += g_tmp_z.x;
     g_new_z.y += g_tmp_z.y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int other_richard_8_per_pixel()
@@ -390,14 +391,14 @@ int spider_orbit()
     g_new_z.y = 2 * g_old_z.x * g_old_z.y + g_tmp_z.y;
     g_tmp_z.x = g_tmp_z.x/2 + g_new_z.x;
     g_tmp_z.y = g_tmp_z.y/2 + g_new_z.y;
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 int tetrate_orbit()
 {
     // Tetrate(XAXIS) { c=z=pixel: z=c^z, |z|<=(P1+3) }
     g_new_z = complex_power(*g_float_param, g_old_z);
-    return id::g_bailout_float();
+    return g_bailout_float();
 }
 
 } // namespace id::fractals

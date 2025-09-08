@@ -6,6 +6,8 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 
+using namespace id::engine;
+
 namespace id::fractals
 {
 

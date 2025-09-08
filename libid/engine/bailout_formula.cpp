@@ -11,7 +11,7 @@
 
 using namespace id::math;
 
-namespace id
+namespace id::engine
 {
 
 Bailout g_bailout_test{}; // test used for determining bailout
@@ -427,4 +427,4 @@ void set_bailout_formula(Bailout test)
     }
 }
 
-} // namespace id
+} // namespace id::engine

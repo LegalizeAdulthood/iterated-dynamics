@@ -34,6 +34,7 @@
 #include <string>
 #include <vector>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
@@ -133,7 +134,7 @@ static FractalType select_fract_type(FractalType t)
     s_ft_choices = &choices[0];
 
     // setup context sensitive help
-    ValueSaver save_help_mode(g_help_mode, id::help::HelpLabels::HELP_FRACTALS);
+    ValueSaver save_help_mode(g_help_mode, help::HelpLabels::HELP_FRACTALS);
     if (t == FractalType::IFS_3D)
     {
         t = FractalType::IFS;
@@ -180,7 +181,7 @@ static int sel_fract_type_help(int key, int choice)
     if (key == ID_KEY_F2)
     {
         ValueSaver saved_help_mode{g_help_mode, g_fractal_specific[s_ft_choices[choice]->num].help_text};
-        id::help::help();
+        help::help();
     }
     return 0;
 }
@@ -286,7 +287,7 @@ sel_type_restart:
 
     if (g_fractal_type == FractalType::L_SYSTEM)
     {
-        ValueSaver saved_help_mode(g_help_mode, id::help::HelpLabels::HT_L_SYSTEM);
+        ValueSaver saved_help_mode(g_help_mode, help::HelpLabels::HT_L_SYSTEM);
         std::string saved_filename{g_l_system_filename.string()};
         std::string saved_name{g_l_system_name};
         if (get_file_entry(ItemType::L_SYSTEM, g_l_system_filename, g_l_system_name) < 0)
@@ -298,7 +299,7 @@ sel_type_restart:
     }
     else if (g_fractal_type == FractalType::FORMULA)
     {
-        ValueSaver saved_help_mode(g_help_mode, id::help::HelpLabels::HT_FORMULA);
+        ValueSaver saved_help_mode(g_help_mode, help::HelpLabels::HT_FORMULA);
         std::string saved_filename{g_formula_filename.string()};
         std::string saved_name{g_formula_name};
         if (get_file_entry(ItemType::FORMULA, g_formula_filename, g_formula_name) < 0)
@@ -310,7 +311,7 @@ sel_type_restart:
     }
     else if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
     {
-        ValueSaver saved_help_mode(g_help_mode, id::help::HelpLabels::HT_IFS);
+        ValueSaver saved_help_mode(g_help_mode, help::HelpLabels::HT_IFS);
         std::string saved_filename{g_ifs_filename.string()};
         std::string saved_name{g_ifs_name};
         if (get_file_entry(ItemType::IFS, g_ifs_filename, g_ifs_name) < 0)
@@ -383,21 +384,21 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     FractalType current_type = g_fractal_type;
     g_cur_fractal_specific = get_fractal_specific(current_type);
     s_tmp_stack[0] = 0;
-    id::help::HelpLabels help = g_cur_fractal_specific->help_formula;
-    if (help < id::help::HelpLabels::NONE)
+    help::HelpLabels help = g_cur_fractal_specific->help_formula;
+    if (help < help::HelpLabels::NONE)
     {
         const char *entry_name;
-        if (help == id::help::HelpLabels::SPECIAL_FORMULA)
+        if (help == help::HelpLabels::SPECIAL_FORMULA)
         {
             // special for formula
             entry_name = g_formula_name.c_str();
         }
-        else if (help == id::help::HelpLabels::SPECIAL_L_SYSTEM)
+        else if (help == help::HelpLabels::SPECIAL_L_SYSTEM)
         {
             // special for lsystem
             entry_name = g_l_system_name.c_str();
         }
-        else if (help == id::help::HelpLabels::SPECIAL_IFS)
+        else if (help == help::HelpLabels::SPECIAL_IFS)
         {
             // special for ifs
             entry_name = g_ifs_name.c_str();
@@ -407,30 +408,30 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             // this shouldn't happen
             entry_name = nullptr;
         }
-        const auto item_for_help = [](id::help::HelpLabels label)
+        const auto item_for_help = [](help::HelpLabels label)
         {
             switch (label)
             {
-            case id::help::HelpLabels::SPECIAL_IFS:
+            case help::HelpLabels::SPECIAL_IFS:
                 return ItemType::IFS;
-            case id::help::HelpLabels::SPECIAL_L_SYSTEM:
+            case help::HelpLabels::SPECIAL_L_SYSTEM:
                 return ItemType::L_SYSTEM;
-            case id::help::HelpLabels::SPECIAL_FORMULA:
+            case help::HelpLabels::SPECIAL_FORMULA:
                 return ItemType::FORMULA;
             default:
                 throw std::runtime_error(
                     "Invalid help label " + std::to_string(static_cast<int>(label)) + " for find_file_item");
             }
         };
-        const auto item_path = [](id::help::HelpLabels label) -> std::filesystem::path &
+        const auto item_path = [](help::HelpLabels label) -> std::filesystem::path &
         {
             switch (label)
             {
-            case id::help::HelpLabels::SPECIAL_FORMULA:
+            case help::HelpLabels::SPECIAL_FORMULA:
                 return g_formula_filename;
-            case id::help::HelpLabels::SPECIAL_IFS:
+            case help::HelpLabels::SPECIAL_IFS:
                 return g_ifs_filename;
-            case id::help::HelpLabels::SPECIAL_L_SYSTEM:
+            case help::HelpLabels::SPECIAL_L_SYSTEM:
                 return g_l_system_filename;
             default:
                 throw std::runtime_error(
@@ -447,7 +448,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             }
         }
     }
-    else if (help >= id::help::HelpLabels::HELP_INDEX)
+    else if (help >= help::HelpLabels::HELP_INDEX)
     {
         int c;
         int lines;
@@ -655,7 +656,7 @@ gfp_top:
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
         param_values[prompt_num].type = 'l';
-        param_values[prompt_num].uval.ch.val  = static_cast<int>(id::g_bailout_test);
+        param_values[prompt_num].uval.ch.val  = static_cast<int>(g_bailout_test);
         param_values[prompt_num].uval.ch.list_len = 7;
         param_values[prompt_num].uval.ch.vlen = 6;
         param_values[prompt_num].uval.ch.list = bail_name_ptr;
@@ -874,18 +875,18 @@ gfp_top:
         && g_cur_fractal_specific->calc_type == standard_fractal_type //
         && bit_set(g_cur_fractal_specific->flags, FractalFlags::BAIL_TEST))
     {
-        if (param_values[prompt_num].uval.ch.val != static_cast<int>(id::g_bailout_test))
+        if (param_values[prompt_num].uval.ch.val != static_cast<int>(g_bailout_test))
         {
-            id::g_bailout_test = static_cast<id::Bailout>(param_values[prompt_num].uval.ch.val);
+            g_bailout_test = static_cast<Bailout>(param_values[prompt_num].uval.ch.val);
             ret = 1;
         }
         prompt_num++;
     }
     else
     {
-        id::g_bailout_test = id::Bailout::MOD;
+        g_bailout_test = Bailout::MOD;
     }
-    id::set_bailout_formula(id::g_bailout_test);
+    set_bailout_formula(g_bailout_test);
 
     if (orbit_bailout)
     {

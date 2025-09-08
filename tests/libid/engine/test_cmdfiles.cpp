@@ -61,6 +61,7 @@
 namespace fs = std::filesystem;
 
 using namespace id;
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
@@ -141,13 +142,13 @@ protected:
 void TestParameterCommand::SetUp()
 {
     Test::SetUp();
-    id::io::clear_read_library_path();
-    id::io::add_read_library(ID_TEST_HOME_DIR);
+    clear_read_library_path();
+    add_read_library(ID_TEST_HOME_DIR);
 }
 
 void TestParameterCommand::TearDown()
 {
-    id::io::clear_read_library_path();
+    clear_read_library_path();
     Test::TearDown();
 }
 
@@ -608,7 +609,7 @@ TEST_F(TestParameterCommand, filenameExtension)
 TEST_F(TestParameterCommandError, filenameValueTooLong)
 {
     ValueSaver saved_gif_filename_mask{g_image_filename_mask, "*.pot"};
-    const std::string too_long{"filename=" + std::string(id::ID_FILE_MAX_PATH, 'f') + ".gif"};
+    const std::string too_long{"filename=" + std::string(ID_FILE_MAX_PATH, 'f') + ".gif"};
 
     exec_cmd_arg(too_long);
 
@@ -619,7 +620,7 @@ TEST_F(TestParameterCommandError, filenameValueTooLong)
 TEST_F(TestParameterCommandError, mapTooLong)
 {
     ValueSaver saved_map_name{g_map_name, "foo.map"};
-    const std::string too_long{"map=" + std::string(id::ID_FILE_MAX_PATH, 'f') + ".map"};
+    const std::string too_long{"map=" + std::string(ID_FILE_MAX_PATH, 'f') + ".map"};
 
     exec_cmd_arg(too_long, CmdFile::SSTOOLS_INI);
 
@@ -2739,12 +2740,12 @@ TEST_F(TestParameterCommand, bailOut)
 
 TEST_F(TestParameterCommand, bailOutTestMod)
 {
-    ValueSaver saved_bailout_test{id::g_bailout_test, id::Bailout::REAL};
+    ValueSaver saved_bailout_test{g_bailout_test, Bailout::REAL};
 
     exec_cmd_arg("bailoutest=mod");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(id::Bailout::MOD, id::g_bailout_test);
+    EXPECT_EQ(Bailout::MOD, g_bailout_test);
 }
 
 TEST_F(TestParameterCommandError, floatBadValue)
@@ -2756,12 +2757,12 @@ TEST_F(TestParameterCommandError, floatBadValue)
 
 TEST_F(TestParameterCommandError, bailOutTestBadValue)
 {
-    ValueSaver saved_bailout_test{id::g_bailout_test, id::Bailout::REAL};
+    ValueSaver saved_bailout_test{g_bailout_test, Bailout::REAL};
 
     exec_cmd_arg("bailoutest=foo");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(id::Bailout::REAL, id::g_bailout_test);
+    EXPECT_EQ(Bailout::REAL, g_bailout_test);
 }
 
 TEST_F(TestParameterCommand, symmetryXAxis)
@@ -3453,109 +3454,109 @@ TEST_F(TestParameterCommand, parmFile)
 
 TEST_F(TestParameterCommand, stereoValue)
 {
-    ValueSaver saved_glasses_type{id::g_glasses_type, static_cast<id::GlassesType>(-1)};
+    ValueSaver saved_glasses_type{g_glasses_type, static_cast<GlassesType>(-1)};
 
     exec_cmd_arg("stereo=3");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, static_cast<int>(id::g_glasses_type));
-    EXPECT_EQ(id::GlassesType::PHOTO, id::g_glasses_type);
+    EXPECT_EQ(3, static_cast<int>(g_glasses_type));
+    EXPECT_EQ(GlassesType::PHOTO, g_glasses_type);
 }
 
 TEST_F(TestParameterCommand, rotation)
 {
-    ValueSaver saved_x_rot{id::g_x_rot, -99};
-    ValueSaver saved_y_rot{id::g_y_rot, -99};
-    ValueSaver saved_z_rot{id::g_z_rot, -99};
+    ValueSaver saved_x_rot{g_x_rot, -99};
+    ValueSaver saved_y_rot{g_y_rot, -99};
+    ValueSaver saved_z_rot{g_z_rot, -99};
 
     exec_cmd_arg("rotation=30/60/90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(30, id::g_x_rot);
-    EXPECT_EQ(60, id::g_y_rot);
-    EXPECT_EQ(90, id::g_z_rot);
+    EXPECT_EQ(30, g_x_rot);
+    EXPECT_EQ(60, g_y_rot);
+    EXPECT_EQ(90, g_z_rot);
 }
 
 TEST_F(TestParameterCommand, perspective)
 {
-    ValueSaver saved_z_viewer{id::g_viewer_z, -99};
+    ValueSaver saved_z_viewer{g_viewer_z, -99};
 
     exec_cmd_arg("perspective=90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(90, id::g_viewer_z);
+    EXPECT_EQ(90, g_viewer_z);
 }
 
 TEST_F(TestParameterCommand, xyShift)
 {
-    ValueSaver saved_x_shift{id::g_shift_x, -99};
-    ValueSaver saved_y_shift{id::g_shift_y, -99};
+    ValueSaver saved_x_shift{g_shift_x, -99};
+    ValueSaver saved_y_shift{g_shift_y, -99};
 
     exec_cmd_arg("xyshift=30/90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(30, id::g_shift_x);
-    EXPECT_EQ(90, id::g_shift_y);
+    EXPECT_EQ(30, g_shift_x);
+    EXPECT_EQ(90, g_shift_y);
 }
 
 TEST_F(TestParameterCommand, interocular)
 {
-    ValueSaver saved_eye_separation{id::g_eye_separation, -99};
+    ValueSaver saved_eye_separation{g_eye_separation, -99};
 
     exec_cmd_arg("interocular=90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(90, id::g_eye_separation);
+    EXPECT_EQ(90, g_eye_separation);
 }
 
 TEST_F(TestParameterCommand, converge)
 {
-    ValueSaver saved_converge_x_adjust{id::g_converge_x_adjust, -99};
+    ValueSaver saved_converge_x_adjust{g_converge_x_adjust, -99};
 
     exec_cmd_arg("converge=90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(90, id::g_converge_x_adjust);
+    EXPECT_EQ(90, g_converge_x_adjust);
 }
 
 TEST_F(TestParameterCommand, crop)
 {
-    ValueSaver saved_red_crop_left{id::g_red_crop_left, -99};
-    ValueSaver saved_red_crop_right{id::g_red_crop_right, -99};
-    ValueSaver saved_blue_crop_left{id::g_blue_crop_left, -99};
-    ValueSaver saved_blue_crop_right{id::g_blue_crop_right, -99};
+    ValueSaver saved_red_crop_left{g_red_crop_left, -99};
+    ValueSaver saved_red_crop_right{g_red_crop_right, -99};
+    ValueSaver saved_blue_crop_left{g_blue_crop_left, -99};
+    ValueSaver saved_blue_crop_right{g_blue_crop_right, -99};
 
     exec_cmd_arg("crop=1/2/3/4");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_red_crop_left);
-    EXPECT_EQ(2, id::g_red_crop_right);
-    EXPECT_EQ(3, id::g_blue_crop_left);
-    EXPECT_EQ(4, id::g_blue_crop_right);
+    EXPECT_EQ(1, g_red_crop_left);
+    EXPECT_EQ(2, g_red_crop_right);
+    EXPECT_EQ(3, g_blue_crop_left);
+    EXPECT_EQ(4, g_blue_crop_right);
 }
 
 TEST_F(TestParameterCommand, bright)
 {
-    ValueSaver saved_red_bright{id::g_red_bright, -99};
-    ValueSaver saved_blue_bright{id::g_blue_bright, -99};
+    ValueSaver saved_red_bright{g_red_bright, -99};
+    ValueSaver saved_blue_bright{g_blue_bright, -99};
 
     exec_cmd_arg("bright=1/2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_red_bright);
-    EXPECT_EQ(2, id::g_blue_bright);
+    EXPECT_EQ(1, g_red_bright);
+    EXPECT_EQ(2, g_blue_bright);
 }
 
 TEST_F(TestParameterCommand, xyAdjust)
 {
-    ValueSaver saved_adjust_3d_x{id::g_adjust_3d_x, -99};
-    ValueSaver saved_adjust_3d_{id::g_adjust_3d_y, -99};
+    ValueSaver saved_adjust_3d_x{g_adjust_3d_x, -99};
+    ValueSaver saved_adjust_3d_{g_adjust_3d_y, -99};
 
     exec_cmd_arg("xyadjust=1/2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_adjust_3d_x);
-    EXPECT_EQ(2, id::g_adjust_3d_y);
+    EXPECT_EQ(1, g_adjust_3d_x);
+    EXPECT_EQ(2, g_adjust_3d_y);
 }
 
 TEST_F(TestParameterCommand, threeDNo)
@@ -3609,22 +3610,22 @@ TEST_F(TestParameterCommand, threeDOverlayNoFractal)
 
 TEST_F(TestParameterCommand, sphereNo)
 {
-    ValueSaver saved_sphere{id::g_sphere, true};
+    ValueSaver saved_sphere{g_sphere, true};
 
     exec_cmd_arg("sphere=no");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(id::g_sphere);
+    EXPECT_FALSE(g_sphere);
 }
 
 TEST_F(TestParameterCommand, sphereYes)
 {
-    ValueSaver saved_sphere{id::g_sphere, false};
+    ValueSaver saved_sphere{g_sphere, false};
 
     exec_cmd_arg("sphere=yes");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_TRUE(id::g_sphere);
+    EXPECT_TRUE(g_sphere);
 }
 
 TEST_F(TestParameterCommand, scaleXYZTwoValues)
@@ -3643,104 +3644,104 @@ TEST_F(TestParameterCommand, scaleXYZTwoValues)
 
 TEST_F(TestParameterCommand, scaleXYZThreeValues)
 {
-    ValueSaver saved_x_scale{id::g_x_scale, -99};
-    ValueSaver saved_y_scale{id::g_y_scale, -99};
-    ValueSaver saved_rough{id::g_rough, -99};
+    ValueSaver saved_x_scale{g_x_scale, -99};
+    ValueSaver saved_y_scale{g_y_scale, -99};
+    ValueSaver saved_rough{g_rough, -99};
 
     exec_cmd_arg("scalexyz=1/2/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_x_scale);
-    EXPECT_EQ(2, id::g_y_scale);
-    EXPECT_EQ(3, id::g_rough);
+    EXPECT_EQ(1, g_x_scale);
+    EXPECT_EQ(2, g_y_scale);
+    EXPECT_EQ(3, g_rough);
 }
 
 TEST_F(TestParameterCommand, roughness)
 {
-    ValueSaver saved_rough{id::g_rough, -99};
+    ValueSaver saved_rough{g_rough, -99};
 
     exec_cmd_arg("roughness=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, id::g_rough);
+    EXPECT_EQ(3, g_rough);
 }
 
 TEST_F(TestParameterCommand, waterline)
 {
-    ValueSaver saved_water_line{id::g_water_line, -99};
+    ValueSaver saved_water_line{g_water_line, -99};
 
     exec_cmd_arg("waterline=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, id::g_water_line);
+    EXPECT_EQ(3, g_water_line);
 }
 
 TEST_F(TestParameterCommand, fillType)
 {
-    ValueSaver saved_fill_type{id::g_fill_type, static_cast<id::FillType>(-99)};
+    ValueSaver saved_fill_type{g_fill_type, static_cast<FillType>(-99)};
 
     exec_cmd_arg("filltype=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(id::FillType::SURFACE_CONSTANT, id::g_fill_type);
+    EXPECT_EQ(FillType::SURFACE_CONSTANT, g_fill_type);
 }
 
 TEST_F(TestParameterCommand, lightSource)
 {
-    ValueSaver saved_light_x{id::g_light_x, -99};
-    ValueSaver saved_light_y{id::g_light_y, -99};
-    ValueSaver saved_light_z{id::g_light_z, -99};
+    ValueSaver saved_light_x{g_light_x, -99};
+    ValueSaver saved_light_y{g_light_y, -99};
+    ValueSaver saved_light_z{g_light_z, -99};
 
     exec_cmd_arg("lightsource=1/2/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_light_x);
-    EXPECT_EQ(2, id::g_light_y);
-    EXPECT_EQ(3, id::g_light_z);
+    EXPECT_EQ(1, g_light_x);
+    EXPECT_EQ(2, g_light_y);
+    EXPECT_EQ(3, g_light_z);
 }
 
 TEST_F(TestParameterCommand, smoothing)
 {
-    ValueSaver saved_light_avg{id::g_light_avg, -99};
+    ValueSaver saved_light_avg{g_light_avg, -99};
 
     exec_cmd_arg("smoothing=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, id::g_light_avg);
+    EXPECT_EQ(3, g_light_avg);
 }
 
 TEST_F(TestParameterCommand, latitude)
 {
-    ValueSaver saved_sphere_theta_min{id::g_sphere_theta_min, -99};
-    ValueSaver saved_sphere_theta_max{id::g_sphere_theta_max, -99};
+    ValueSaver saved_sphere_theta_min{g_sphere_theta_min, -99};
+    ValueSaver saved_sphere_theta_max{g_sphere_theta_max, -99};
 
     exec_cmd_arg("latitude=1/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_sphere_theta_min);
-    EXPECT_EQ(3, id::g_sphere_theta_max);
+    EXPECT_EQ(1, g_sphere_theta_min);
+    EXPECT_EQ(3, g_sphere_theta_max);
 }
 
 TEST_F(TestParameterCommand, longitude)
 {
-    ValueSaver saved_sphere_phi_min{id::g_sphere_phi_min, -99};
-    ValueSaver saved_sphere_phi_max{id::g_sphere_phi_max, -99};
+    ValueSaver saved_sphere_phi_min{g_sphere_phi_min, -99};
+    ValueSaver saved_sphere_phi_max{g_sphere_phi_max, -99};
 
     exec_cmd_arg("longitude=1/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_sphere_phi_min);
-    EXPECT_EQ(3, id::g_sphere_phi_max);
+    EXPECT_EQ(1, g_sphere_phi_min);
+    EXPECT_EQ(3, g_sphere_phi_max);
 }
 
 TEST_F(TestParameterCommand, radius)
 {
-    ValueSaver saved_sphere_radius{id::g_sphere_radius, -99};
+    ValueSaver saved_sphere_radius{g_sphere_radius, -99};
 
     exec_cmd_arg("radius=1");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_sphere_radius);
+    EXPECT_EQ(1, g_sphere_radius);
 }
 
 TEST_F(TestParameterCommand, transparentOneValue)
@@ -3769,62 +3770,62 @@ TEST_F(TestParameterCommand, transparentTwoValues)
 
 TEST_F(TestParameterCommand, previewNo)
 {
-    ValueSaver saved_preview{id::g_preview, true};
+    ValueSaver saved_preview{g_preview, true};
 
     exec_cmd_arg("preview=no");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(id::g_preview);
+    EXPECT_FALSE(g_preview);
 }
 
 TEST_F(TestParameterCommand, showBoxNo)
 {
-    ValueSaver saved_show_box{id::g_show_box, true};
+    ValueSaver saved_show_box{g_show_box, true};
 
     exec_cmd_arg("showbox=no");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(id::g_show_box);
+    EXPECT_FALSE(g_show_box);
 }
 
 TEST_F(TestParameterCommand, coarse)
 {
-    ValueSaver saved_preview_factor{id::g_preview_factor, -99};
+    ValueSaver saved_preview_factor{g_preview_factor, -99};
 
     exec_cmd_arg("coarse=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, id::g_preview_factor);
+    EXPECT_EQ(3, g_preview_factor);
 }
 
 TEST_F(TestParameterCommand, randomize)
 {
-    ValueSaver saved_randomize_3d{id::g_randomize_3d, -99};
+    ValueSaver saved_randomize_3d{g_randomize_3d, -99};
 
     exec_cmd_arg("randomize=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, id::g_randomize_3d);
+    EXPECT_EQ(3, g_randomize_3d);
 }
 
 TEST_F(TestParameterCommand, ambient)
 {
-    ValueSaver saved_ambient{id::g_ambient, -99};
+    ValueSaver saved_ambient{g_ambient, -99};
 
     exec_cmd_arg("ambient=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, id::g_ambient);
+    EXPECT_EQ(3, g_ambient);
 }
 
 TEST_F(TestParameterCommand, haze)
 {
-    ValueSaver saved_haze{id::g_haze, -99};
+    ValueSaver saved_haze{g_haze, -99};
 
     exec_cmd_arg("haze=3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(3, id::g_haze);
+    EXPECT_EQ(3, g_haze);
 }
 
 TEST_F(TestParameterCommand, fullColorNo)
@@ -3909,48 +3910,48 @@ TEST_F(TestParameterCommand, monitorWidthAliasForStereoWidth)
 
 TEST_F(TestParameterCommand, targaOverlayNo)
 {
-    ValueSaver saved_targa_overlay{id::g_targa_overlay, true};
+    ValueSaver saved_targa_overlay{g_targa_overlay, true};
 
     exec_cmd_arg("targa_overlay=n");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(id::g_targa_overlay);
+    EXPECT_FALSE(g_targa_overlay);
 }
 
 TEST_F(TestParameterCommand, background)
 {
-    ValueSaver saved_background_color0{id::g_background_color[0], 255};
-    ValueSaver saved_background_color1{id::g_background_color[1], 255};
-    ValueSaver saved_background_color2{id::g_background_color[2], 255};
+    ValueSaver saved_background_color0{g_background_color[0], 255};
+    ValueSaver saved_background_color1{g_background_color[1], 255};
+    ValueSaver saved_background_color2{g_background_color[2], 255};
 
     exec_cmd_arg("background=1/2/3");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, id::g_background_color[0]);
-    EXPECT_EQ(2, id::g_background_color[1]);
-    EXPECT_EQ(3, id::g_background_color[2]);
+    EXPECT_EQ(1, g_background_color[0]);
+    EXPECT_EQ(2, g_background_color[1]);
+    EXPECT_EQ(3, g_background_color[2]);
 }
 
 TEST_F(TestParameterCommand, lightNameFirstInit)
 {
     ValueSaver saved_first_init{g_first_init, true};
-    ValueSaver saved_light_name{id::g_light_name, "fmeh"};
+    ValueSaver saved_light_name{g_light_name, "fmeh"};
 
     exec_cmd_arg("lightname=foo", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("foo", id::g_light_name);
+    EXPECT_EQ("foo", g_light_name);
 }
 
 TEST_F(TestParameterCommand, lightNameAfterStartup)
 {
     ValueSaver saved_first_init{g_first_init, false};
-    ValueSaver saved_light_name{id::g_light_name, "fmeh"};
+    ValueSaver saved_light_name{g_light_name, "fmeh"};
 
     exec_cmd_arg("lightname=foo");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ("foo", id::g_light_name);
+    EXPECT_EQ("foo", g_light_name);
 }
 
 TEST_F(TestParameterCommand, lightNameNotSet)
@@ -3966,12 +3967,12 @@ TEST_F(TestParameterCommand, lightNameNotSet)
 
 TEST_F(TestParameterCommand, ray)
 {
-    ValueSaver saved_raytrace_format{id::g_raytrace_format, id::RayTraceFormat::NONE};
+    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::NONE};
 
     exec_cmd_arg("ray=3", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(id::RayTraceFormat::RAW, id::g_raytrace_format);
+    EXPECT_EQ(RayTraceFormat::RAW, g_raytrace_format);
 }
 
 TEST_F(TestParameterCommandError, rayNegative)
@@ -3990,39 +3991,39 @@ TEST_F(TestParameterCommandError, rayTooLarge)
 
 TEST_F(TestParameterCommand, rayByName)
 {
-    ValueSaver saved_raytrace_format{id::g_raytrace_format, id::RayTraceFormat::RAYSHADE};
+    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
 
     exec_cmd_arg("ray=none");
 
-    EXPECT_EQ(id::RayTraceFormat::NONE, id::g_raytrace_format);
+    EXPECT_EQ(RayTraceFormat::NONE, g_raytrace_format);
 }
 
 TEST_F(TestParameterCommand, rayByNameDKB)
 {
-    ValueSaver saved_raytrace_format{id::g_raytrace_format, id::RayTraceFormat::RAYSHADE};
+    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
 
     exec_cmd_arg("ray=dkb");
 
-    EXPECT_EQ(id::RayTraceFormat::DKB_POVRAY, id::g_raytrace_format);
+    EXPECT_EQ(RayTraceFormat::DKB_POVRAY, g_raytrace_format);
 }
 
 TEST_F(TestParameterCommand, rayByNamePOVRay)
 {
-    ValueSaver saved_raytrace_format{id::g_raytrace_format, id::RayTraceFormat::RAYSHADE};
+    ValueSaver saved_raytrace_format{g_raytrace_format, RayTraceFormat::RAYSHADE};
 
     exec_cmd_arg("ray=pov-ray");
 
-    EXPECT_EQ(id::RayTraceFormat::DKB_POVRAY, id::g_raytrace_format);
+    EXPECT_EQ(RayTraceFormat::DKB_POVRAY, g_raytrace_format);
 }
 
 TEST_F(TestParameterCommand, briefNo)
 {
-    ValueSaver saved_brief{id::g_brief, true};
+    ValueSaver saved_brief{g_brief, true};
 
     exec_cmd_arg("brief=n");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_FALSE(id::g_brief);
+    EXPECT_FALSE(g_brief);
 }
 
 TEST_F(TestParameterCommandError, releaseNotAllowed)
@@ -4127,28 +4128,28 @@ TEST_F(TestParameterCommand, color6BitMappedTo8Bit)
 TEST_F(TestParameterCommand, singleReadLibraryDir)
 {
     using Path = std::filesystem::path;
-    id::io::clear_read_library_path();
+    clear_read_library_path();
 
-    exec_cmd_arg(std::string{"librarydirs="} + id::test::library::ID_TEST_LIBRARY_DIR2);
+    exec_cmd_arg(std::string{"librarydirs="} + test::library::ID_TEST_LIBRARY_DIR2);
 
-    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, ID_TEST_FRM_FILE)};
+    const Path path{find_file(ReadFile::FORMULA, ID_TEST_FRM_FILE)};
     ASSERT_FALSE(path.empty());
     EXPECT_EQ(Path{ID_TEST_FRM_FILE}, path.filename()) << path;
     EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{id::test::library::ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+    EXPECT_EQ(Path{test::library::ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
 }
 
 TEST_F(TestParameterCommand, multipleReadLibraryDir)
 {
     using Path = std::filesystem::path;
-    id::io::clear_read_library_path();
+    clear_read_library_path();
 
     exec_cmd_arg(std::string{"librarydirs="} + //
-        id::test::library::ID_TEST_LIBRARY_DIR1 + "," + id::test::library::ID_TEST_LIBRARY_DIR3);
+        test::library::ID_TEST_LIBRARY_DIR1 + "," + test::library::ID_TEST_LIBRARY_DIR3);
 
-    const Path path{id::io::find_file(id::io::ReadFile::FORMULA, "root.frm")};
+    const Path path{find_file(ReadFile::FORMULA, "root.frm")};
     ASSERT_FALSE(path.empty());
     EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
     EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{id::test::library::ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+    EXPECT_EQ(Path{test::library::ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }

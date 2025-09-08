@@ -74,6 +74,7 @@
 #include <new>
 #include <vector>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
@@ -213,9 +214,9 @@ static double fmod_test()
 {
     double result;
 
-    switch (id::g_bailout_test)
+    switch (g_bailout_test)
     {
-    case id::Bailout::MOD:
+    case Bailout::MOD:
         if (g_magnitude == 0.0 || g_magnitude_calc)
         {
             result = sqr(g_new_z.x)+sqr(g_new_z.y);
@@ -226,23 +227,23 @@ static double fmod_test()
         }
         break;
 
-    case id::Bailout::REAL:
+    case Bailout::REAL:
         result = sqr(g_new_z.x);
         break;
 
-    case id::Bailout::IMAG:
+    case Bailout::IMAG:
         result = sqr(g_new_z.y);
         break;
 
-    case id::Bailout::OR:
+    case Bailout::OR:
         result = fmod_test_bailout_or();
         break;
 
-    case id::Bailout::MANH:
+    case Bailout::MANH:
         result = sqr(std::abs(g_new_z.x) + std::abs(g_new_z.y));
         break;
 
-    case id::Bailout::MANR:
+    case Bailout::MANR:
         result = sqr(g_new_z.x+g_new_z.y);
         break;
 
@@ -516,9 +517,9 @@ static void init_calc_fract()
     }
     if (g_true_color)
     {
-        std::string light_path{id::io::get_save_path(id::io::WriteFile::IMAGE, id::g_light_name).string()};
+        std::string light_path{get_save_path(WriteFile::IMAGE, g_light_name).string()};
         check_write_file(light_path, ".tga");
-        if (!id::start_targa(light_path))
+        if (!start_targa(light_path))
         {
             // Have to force passes = 1
             g_std_calc_mode = CalcMode::ONE_PASS;
@@ -1145,7 +1146,7 @@ static void perform_work_list()
             break;
 
         case CalcMode::BOUNDARY_TRACE:
-            id::boundary_trace();
+            boundary_trace();
             break;
 
         case CalcMode::SOLID_GUESS:
@@ -2368,7 +2369,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         || g_outside_color == MULT
         || g_outside_color == SUM
         || g_outside_color == ATAN
-        || id::g_bailout_test == id::Bailout::MANR
+        || g_bailout_test == Bailout::MANR
         || g_outside_color == FMOD)
     {
         return;
@@ -2923,7 +2924,7 @@ void sym_plot4_basin(int x, int y, int color)
 static void put_true_color_disk(int x, int y, int color)
 {
     put_color_a(x, y, color);
-    id::targa_color(x, y, color);
+    targa_color(x, y, color);
 }
 
 // Do nothing plot!!!
