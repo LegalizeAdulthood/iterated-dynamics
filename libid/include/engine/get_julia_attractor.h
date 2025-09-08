@@ -2,9 +2,9 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 void get_julia_attractor(double real, double imag);
 
-} // namespace id
+} // namespace id::engine

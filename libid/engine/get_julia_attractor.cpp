@@ -13,11 +13,10 @@
 #include <algorithm>
 #include <cmath>
 
-using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 
-namespace id
+namespace id::engine
 {
 
 void get_julia_attractor(double real, double imag)
@@ -84,4 +83,4 @@ void get_julia_attractor(double real, double imag)
     g_max_iterations = save_max_iterations;
 }
 
-} // namespace id
+} // namespace id::engine
