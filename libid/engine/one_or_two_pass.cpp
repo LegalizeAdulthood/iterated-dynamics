@@ -8,10 +8,9 @@
 #include "engine/work_list.h"
 #include "ui/video.h"
 
-using namespace id::engine;
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 // routines in this module
@@ -115,4 +114,4 @@ static int standard_calc(int pass_num)
     return 0;
 }
 
-} // namespace id
+} // namespace id::engine

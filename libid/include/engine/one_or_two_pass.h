@@ -2,9 +2,9 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 int one_or_two_pass();
 
-} // namespace id
+} // namespace id::engine
