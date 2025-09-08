@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 enum class MainState
 {
     NOTHING = 0,
@@ -20,3 +23,5 @@ struct MainContext
     bool stacked{};     // flag to indicate screen stacked
     bool resume{};      //
 };
+
+} // namespace id::ui
