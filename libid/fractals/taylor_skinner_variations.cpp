@@ -14,6 +14,7 @@
 
 using namespace id::math;
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id::fractals
 {

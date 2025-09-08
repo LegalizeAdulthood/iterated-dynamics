@@ -4,6 +4,9 @@
 
 #include <string>
 
+namespace id::ui
+{
+
 // The values must match the values in the trigfn array in prompts1
 enum class TrigFn
 {
@@ -61,3 +64,5 @@ int set_trig_array(int k, const char *name);
 void set_trig_pointers(int which);
 void save_trig_functions();
 void restore_trig_functions();
+
+} // namespace id::ui

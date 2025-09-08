@@ -17,6 +17,9 @@
 using namespace id::fractals;
 using namespace id::math;
 
+namespace id::ui
+{
+
 namespace
 {
 
@@ -196,3 +199,5 @@ void restore_trig_functions()
     g_d_trig2 = s_saved_trig_functions.d_trig2;
     g_d_trig3 = s_saved_trig_functions.d_trig3;
 }
+
+} // namespace id::ui
