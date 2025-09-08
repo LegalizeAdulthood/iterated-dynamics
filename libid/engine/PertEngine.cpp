@@ -27,12 +27,11 @@
 #include <cstring>
 #include <stdexcept>
 
-using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
 
-namespace id
+namespace id::engine
 {
 
 // Raising this number makes more calculations, but less variation between each calculation (less chance
@@ -536,4 +535,4 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
     }
 }
 
-} // namespace id
+} // namespace id::engine

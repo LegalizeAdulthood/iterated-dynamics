@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-namespace id
+namespace id::engine
 {
 
 class PertEngine
@@ -43,4 +43,4 @@ private:
     int m_saved_stack{};
 };
 
-} // namespace id
+} // namespace id::engine
