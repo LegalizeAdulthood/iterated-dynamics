@@ -6,6 +6,7 @@
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 
+using namespace id::engine;
 using namespace id::fractals;
 
 namespace id::ui

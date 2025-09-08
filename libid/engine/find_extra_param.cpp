@@ -6,7 +6,7 @@
 
 using namespace id::fractals;
 
-namespace id
+namespace id::engine
 {
 
 int find_extra_param(FractalType type)
@@ -27,4 +27,4 @@ int find_extra_param(FractalType type)
     return ret;
 }
 
-} // namespace id
+} // namespace id::engine

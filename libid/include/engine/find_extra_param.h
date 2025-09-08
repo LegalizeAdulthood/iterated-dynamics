@@ -4,9 +4,9 @@
 
 #include "fractals/fractype.h"
 
-namespace id
+namespace id::engine
 {
 
 int find_extra_param(fractals::FractalType type);
 
-} // namespace id
+} // namespace id::engine
