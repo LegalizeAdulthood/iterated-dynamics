@@ -36,6 +36,7 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id::config;
 using namespace id::ui;
 
 namespace id::io

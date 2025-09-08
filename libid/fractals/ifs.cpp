@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <cstring>
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::io;
 using namespace id::ui;
@@ -79,7 +80,7 @@ int ifs_load()                   // read in IFS parameters
         *buf_ptr = 0;
     }
 
-    id::string_lower(buf);
+    string_lower(buf);
     const int row_size = std::strstr(buf, "(3d)") != nullptr ? NUM_IFS_3D_PARAMS : NUM_IFS_2D_PARAMS;
     g_ifs_dim = row_size == NUM_IFS_3D_PARAMS ? IFSDimension::THREE : IFSDimension::TWO;
 

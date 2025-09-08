@@ -35,6 +35,7 @@
 
 #include <filesystem>
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
@@ -149,11 +150,11 @@ int file_get_window()
     bool toggle{};
     int color_of_box;
     FileWindow window;
-    char drive[id::ID_FILE_MAX_DRIVE];
-    char dir[id::ID_FILE_MAX_DIR];
-    char fname[id::ID_FILE_MAX_FNAME];
-    char ext[id::ID_FILE_MAX_EXT];
-    char tmp_mask[id::ID_FILE_MAX_PATH];
+    char drive[ID_FILE_MAX_DRIVE];
+    char dir[ID_FILE_MAX_DIR];
+    char fname[ID_FILE_MAX_FNAME];
+    char ext[ID_FILE_MAX_EXT];
+    char tmp_mask[ID_FILE_MAX_PATH];
     bool vid_too_big{};
     int saved;
 
@@ -811,7 +812,7 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
     int num_fn;
     if (g_fractal_type == FractalType::FORMULA && migrate_integer_types(info->fractal_type) == FractalType::FORMULA)
     {
-        if (id::string_case_equal(blk_3_info->form_name, g_formula_name.c_str()))
+        if (string_case_equal(blk_3_info->form_name, g_formula_name.c_str()))
         {
             num_fn = g_max_function;
             if (num_fn > 0)

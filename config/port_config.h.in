@@ -8,7 +8,7 @@
 
 #cmakedefine01 ID_BIG_ENDIAN
 
-namespace id
+namespace id::config
 {
 
 constexpr int ID_VERSION_MAJOR{@PROJECT_VERSION_MAJOR@};
@@ -23,4 +23,4 @@ constexpr int ID_VERSION_TWEAK{@PROJECT_VERSION_TWEAK@};
 #define ID_PROGRAM_NAME "@ID_PROGRAM_NAME@"
 #define ID_VENDOR_NAME  "@ID_VENDOR_NAME@"
 
-} // namespace id
+} // namespace id::config

@@ -61,6 +61,7 @@
 namespace fs = std::filesystem;
 
 using namespace id;
+using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;

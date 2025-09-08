@@ -14,6 +14,7 @@
 #include <cstdio>
 #include <cstring>
 
+using namespace id::config;
 using namespace id::fractals;
 using namespace id::math;
 
@@ -136,7 +137,7 @@ int set_trig_array(int k, const char *name)
         *slash = 0;
     }
 
-    id::string_lower(trig_name);
+    string_lower(trig_name);
 
     for (int i = 0; i < g_num_trig_functions; i++)
     {

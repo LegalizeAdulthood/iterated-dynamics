@@ -39,6 +39,7 @@
 namespace fs = std::filesystem;
 
 using namespace id;
+using namespace id::config;
 using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
@@ -960,7 +961,7 @@ static bool can_read_file(const std::string &path)
 
 static std::string find_file(const char *filename)
 {
-    std::string path{(fs::path(id::HOME_DIR) / filename).string()};
+    std::string path{(fs::path(HOME_DIR) / filename).string()};
     if (can_read_file(path))
     {
         return path;
@@ -1178,7 +1179,7 @@ static bool print_doc_output(id::help::PrintDocCommand cmd, id::help::ProcessDoc
 
         std::memset(line, ' ', 81);
         std::string buff = fmt::format(ID_PROGRAM_NAME " Version {:d}.{:d}.{:d}", //
-            id::ID_VERSION_MAJOR, id::ID_VERSION_MINOR, id::ID_VERSION_PATCH);
+            ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH);
         std::memmove(line + ((width - (int) (buff.length())) / 2) - 4, buff.c_str(), buff.length());
 
         buff = fmt::format("Page {:d}", pd->page_num);

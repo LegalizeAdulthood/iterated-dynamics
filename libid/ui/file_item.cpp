@@ -39,6 +39,7 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
@@ -97,7 +98,7 @@ bool find_file_item(
     std::FILE *infile = nullptr;
     bool found = false;
 
-    if (!id::string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
+    if (!string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
     {
         found = check_path(path, &infile, item_name);
 

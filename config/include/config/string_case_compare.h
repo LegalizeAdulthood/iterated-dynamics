@@ -4,7 +4,7 @@
 
 #include <cstddef>
 
-namespace id
+namespace id::config
 {
 
 int string_case_compare(const char *s, const char *t, std::size_t ct);
@@ -20,4 +20,4 @@ inline bool string_case_equal(const char *s, const char *t)
     return string_case_compare(s, t) == 0;
 }
 
-} // namespace id
+} // namespace id::config

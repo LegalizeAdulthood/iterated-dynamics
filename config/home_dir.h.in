@@ -8,9 +8,9 @@
 
 #include <string_view>
 
-namespace id
+namespace id::config
 {
 
 constexpr std::string_view HOME_DIR{"@home_dir@"};
 
-} // namespace id
+} // namespace id::config

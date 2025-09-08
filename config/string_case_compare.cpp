@@ -7,7 +7,7 @@
 #include <string>
 #include <string_view>
 
-namespace id
+namespace id::config
 {
 
 static std::string to_lower(std::string_view src)
@@ -34,4 +34,4 @@ int string_case_compare(const char *s, const char *t)
     return lhs.compare(rhs);
 }
 
-} // namespace id
+} // namespace id::config

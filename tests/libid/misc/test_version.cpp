@@ -9,25 +9,26 @@
 
 #include <iostream>
 
+using namespace id::config;
 using namespace id::misc;
 
 TEST(TestVersion, release)
 {
-    EXPECT_EQ(id::ID_VERSION_MAJOR * 100 + id::ID_VERSION_MINOR, g_release);
+    EXPECT_EQ(ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR, g_release);
 }
 
 TEST(TestVersion, patchLevel)
 {
-    EXPECT_EQ(id::ID_VERSION_PATCH, g_patch_level);
+    EXPECT_EQ(ID_VERSION_PATCH, g_patch_level);
 }
 
 // In GIF extension blocks, we store the version components as std::uint8_t
 TEST(TestVersion, versionComponentsFitInUInt8)
 {
-    EXPECT_GT(256, id::ID_VERSION_MAJOR);
-    EXPECT_GT(256, id::ID_VERSION_MINOR);
-    EXPECT_GT(256, id::ID_VERSION_PATCH);
-    EXPECT_GT(256, id::ID_VERSION_TWEAK);
+    EXPECT_GT(256, ID_VERSION_MAJOR);
+    EXPECT_GT(256, ID_VERSION_MINOR);
+    EXPECT_GT(256, ID_VERSION_PATCH);
+    EXPECT_GT(256, ID_VERSION_TWEAK);
 }
 
 TEST(TestVersion, legacyVersionToString)

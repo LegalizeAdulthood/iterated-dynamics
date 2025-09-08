@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::io;
 using namespace id::math;
@@ -140,7 +141,7 @@ static bool read_lsystem_file(const char *str)
         {
             *word = 0;
         }
-        id::string_lower(inline1);
+        string_lower(inline1);
 
         if ((int)std::strspn(inline1, " \t\n") < (int)std::strlen(inline1)) // not a blank line
         {

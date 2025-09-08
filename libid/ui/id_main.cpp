@@ -54,6 +54,7 @@
 #include <ctime>
 #include <string>
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
@@ -389,9 +390,9 @@ static void set_search_dirs()
         fract_dir = ".";
     }
     g_fractal_search_dir1 = fract_dir;
-    if (std::filesystem::exists(id::HOME_DIR))
+    if (std::filesystem::exists(HOME_DIR))
     {
-        g_fractal_search_dir2 = id::HOME_DIR;
+        g_fractal_search_dir2 = HOME_DIR;
     }
     else
     {

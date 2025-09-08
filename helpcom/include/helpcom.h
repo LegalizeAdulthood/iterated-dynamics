@@ -12,11 +12,8 @@
 
 namespace id::help
 {
-enum class HelpLabels;
-}
 
-namespace id::help
-{
+enum class HelpLabels;
 
  /*
  * help file signature

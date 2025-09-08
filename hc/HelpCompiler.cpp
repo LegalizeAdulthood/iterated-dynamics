@@ -35,6 +35,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::config;
+
 #if !defined(O_BINARY)
 #define O_BINARY 0
 #endif
@@ -1049,7 +1051,7 @@ static void printer_str(PrintDocInfo *info, const char *s, int n)
 static std::string version_header()
 {
     const std::string heading{fmt::format(ID_PROGRAM_NAME " Version {:d}.{:d}.{:d}", //
-        id::ID_VERSION_MAJOR, id::ID_VERSION_MINOR, id::ID_VERSION_PATCH)};
+        ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH)};
     constexpr std::size_t field_width{64};
     const std::size_t indent{(field_width - heading.size()) / 2};
     return std::string(indent, ' ') + heading + std::string(field_width - indent - heading.size(), ' ');

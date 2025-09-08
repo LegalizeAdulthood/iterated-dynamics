@@ -22,6 +22,7 @@
 #include <cstring>
 #include <string>
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
@@ -389,7 +390,7 @@ int get_toggles()
         j++;
     }
 
-    if (std::strncmp(id::string_lower(values[++k].uval.sval), "normal", 4) == 0)
+    if (std::strncmp(string_lower(values[++k].uval.sval), "normal", 4) == 0)
     {
         g_fill_color = -1;
     }

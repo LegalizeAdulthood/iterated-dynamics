@@ -8,7 +8,7 @@
 
 #include <cstdlib>
 
-namespace id
+namespace id::config
 {
 
 // these are used to declare arrays for file names
@@ -22,4 +22,4 @@ enum
     ID_FILE_MAX_EXT = 64,   // max length of extension
 };
 
-} // namespace id
+} // namespace id::config

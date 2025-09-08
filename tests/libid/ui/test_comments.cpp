@@ -16,6 +16,7 @@
 #include <sstream>
 
 using namespace id;
+using namespace id::config;
 using namespace id::engine;
 using namespace id::misc;
 using namespace id::ui;
@@ -206,7 +207,7 @@ TEST_F(TestComments, expandPatch)
 
     const std::string &result{expand_command_comment(0)};
 
-    EXPECT_EQ(std::to_string(id::ID_VERSION_PATCH), result);
+    EXPECT_EQ(std::to_string(ID_VERSION_PATCH), result);
 }
 
 TEST_F(TestComments, expandXDots)

@@ -55,6 +55,7 @@
 #include <stdexcept>
 #include <vector>
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
@@ -1288,7 +1289,7 @@ static ConstArg *is_const(const char *str, int len)
     {
         if (s_vars[n].len == len)
         {
-            if (id::string_case_equal(s_vars[n].s, str, len))
+            if (string_case_equal(s_vars[n].s, str, len))
             {
                 if (n == 1)          // The formula uses 'p1'.
                 {
@@ -1389,7 +1390,7 @@ static JumpControlType is_jump(const char *str, int len)
 {
     for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++)
     {
-        if ((int) std::strlen(JUMP_LIST[i]) == len && id::string_case_equal(JUMP_LIST[i], str, len))
+        if ((int) std::strlen(JUMP_LIST[i]) == len && string_case_equal(JUMP_LIST[i], str, len))
         {
             return static_cast<JumpControlType>(i + 1);
         }
@@ -1413,7 +1414,7 @@ static int which_fn(const char *s, int len)
     {
         out = 0;
     }
-    else if (!id::string_case_equal(s, "fn", 2))
+    else if (!string_case_equal(s, "fn", 2))
     {
         out = 0;
     }
@@ -1435,7 +1436,7 @@ static FunctionPtr is_func(const char *str, int len)
     {
         for (n = 0; n < static_cast<unsigned>(FUNC_LIST.size()); n++)
         {
-            if (id::string_case_equal(FUNC_LIST[n].s, str, len))
+            if (string_case_equal(FUNC_LIST[n].s, str, len))
             {
                 // count function variables
                 int funct_num = which_fn(str, len);
@@ -2829,7 +2830,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
         constexpr int num_names{SYMMETRY_NAMES.size()};
         for (i = 0; i < num_names; i++)
         {
-            if (id::string_case_equal(SYMMETRY_NAMES[i].s, sym_buf))
+            if (string_case_equal(SYMMETRY_NAMES[i].s, sym_buf))
             {
                 g_symmetry = SYMMETRY_NAMES[i].n;
                 break;

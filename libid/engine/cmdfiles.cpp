@@ -86,6 +86,7 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::config;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;

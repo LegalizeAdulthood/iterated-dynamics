@@ -15,6 +15,7 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::config;
 using namespace id::io;
 using namespace id::test::data;
 
@@ -24,10 +25,10 @@ class TestSplitPath : public ::testing::Test
 {
 protected:
     fs::path m_file_template;
-    char m_drive[id::ID_FILE_MAX_PATH]{};
-    char m_dir[id::ID_FILE_MAX_PATH]{};
-    char m_filename[id::ID_FILE_MAX_PATH]{};
-    char m_ext[id::ID_FILE_MAX_PATH]{};
+    char m_drive[ID_FILE_MAX_PATH]{};
+    char m_dir[ID_FILE_MAX_PATH]{};
+    char m_filename[ID_FILE_MAX_PATH]{};
+    char m_ext[ID_FILE_MAX_PATH]{};
 };
 
 }

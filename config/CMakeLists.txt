@@ -129,6 +129,7 @@ add_library(config
     fdio.fcntl.h.in fdio.io.h.in
     filelength.io.h.in filelength.stat.h.in
     getpid.process.h.in getpid.unistd.h.in
+    home_dir.h.in
     path_limits.manual.h.in path_limits.stdlib.h.in
     include/config/port.h
     port_config.h.in
@@ -138,6 +139,7 @@ add_library(config
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/fdio.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/filelength.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/getpid.h"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/config/home_dir.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/path_limits.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/port_config.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/string_lower.h"
