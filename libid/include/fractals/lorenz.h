@@ -45,18 +45,18 @@ inline int operator+(Minor value)
 // data used by 3d view transform subroutine
 struct ViewTransform3D
 {
-    double orbit[3];        // iterated function orbit value
-    double view_vect[3];    // orbit transformed for viewing
-    double view_vect1[3];   // orbit transformed for viewing
-    double max_vals[3];     //
-    double min_vals[3];     //
-    id::Matrix double_mat;  // transformation matrix
-    id::Matrix double_mat1; // transformation matrix
-    int row;                //
-    int col;                // results
-    int row1;               //
-    int col1;               //
-    Affine cvt;             //
+    double orbit[3];              // iterated function orbit value
+    double view_vect[3];          // orbit transformed for viewing
+    double view_vect1[3];         // orbit transformed for viewing
+    double max_vals[3];           //
+    double min_vals[3];           //
+    geometry::Matrix double_mat;  // transformation matrix
+    geometry::Matrix double_mat1; // transformation matrix
+    int row;                      //
+    int col;                      // results
+    int row1;                     //
+    int col1;                     //
+    Affine cvt;                   //
 };
 
 /*

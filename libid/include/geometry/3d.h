@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::geometry
 {
 
 enum
@@ -86,4 +86,4 @@ void vec_g_mat_mul(Vector s);
 int perspective(Vector v);
 int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL view, int bit_shift);
 
-} // namespace id
+} // namespace id::geometry

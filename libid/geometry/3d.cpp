@@ -65,7 +65,7 @@
 
 using namespace id::math;
 
-namespace id
+namespace id::geometry
 {
 
 // '3d=nn/nn/nn/...' values
@@ -359,4 +359,4 @@ int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL 
     return g_overflow ? 1 : 0;
 }
 
-} // namespace id
+} // namespace id::geometry

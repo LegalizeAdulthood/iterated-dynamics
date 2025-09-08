@@ -41,6 +41,7 @@
 #include <vector>
 
 using namespace id::engine;
+using namespace id::geometry;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::ui;
@@ -75,7 +76,7 @@ enum class FileError
 };
 
 // routines in this module
-static int first_time(int line_len, id::Vector v);
+static int first_time(int line_len, Vector v);
 static void hsv_to_rgb(
     Byte *red, Byte *green, Byte *blue, unsigned long hue, unsigned long sat, unsigned long val);
 static int line3d_mem();
@@ -88,8 +89,8 @@ static int off_screen(PointColor pt);
 static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c1, int c2, int c3);
 static int ray_header();
 static int start_object();
-static void draw_light_box(double *origin, double *direct, id::Matrix light_m);
-static void draw_rect(id::Vector v0, id::Vector v1, id::Vector v2, id::Vector v3, int color, bool rect);
+static void draw_light_box(double *origin, double *direct, Matrix light_m);
+static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, int color, bool rect);
 static void line3d_cleanup();
 static void clip_color(int x, int y, int color);
 static void interp_color(int x, int y, int color);
@@ -110,8 +111,8 @@ static long s_x_center{}, s_y_center{};                  // circle center
 static double s_scale_x{}, s_scale_y{}, s_scale_z{};     // scale factors
 static double s_radius{};                                // radius values
 static double s_radius_factor{};                         // for intermediate calculation
-static id::MatrixL s_llm{};                              // ""
-static id::VectorL s_l_view{};                           // for perspective views
+static MatrixL s_llm{};                              // ""
+static VectorL s_l_view{};                           // for perspective views
 static double s_z_cutoff{};                              // perspective backside cutoff value
 static float s_two_cos_delta_phi{};                      //
 static float s_cos_phi{}, s_sin_phi{};                   // precalculated sin/cos of longitude
@@ -129,7 +130,7 @@ static Byte s_t24 = 24;                                  //
 static Byte s_t32 = 32;                                  //
 static Byte s_upr_lwr[4]{};                              //
 static bool s_temp_safe{};                       // Original Targa Image successfully copied to targa_temp
-static id::Vector s_light_direction{};           //
+static Vector s_light_direction{};           //
 static Byte s_real_color{};                      // Actual color of cur pixel
 static int s_ro{}, s_co{}, s_co_max{};           // For use in Acrospin support
 static int s_local_preview_factor{};             //
@@ -152,13 +153,13 @@ static int s_p = 250;                            // Perspective dist used when v
 static const int s_bad_check = -3000;            // check values against this to determine if good
 static std::vector<PointColor> s_last_row;       // this array remembers the previous line
 static std::vector<MinMax> s_min_max_x;          // array of min and max x values used in triangle fill
-static id::Vector s_cross{};                     //
-static id::Vector s_tmp_cross{};                 //
+static Vector s_cross{};                     //
+static Vector s_tmp_cross{};                 //
 static PointColor s_old_last{};                  // old pixels
 
 // global variables defined here
 void (*g_standard_plot)(int, int, int){};
-id::Matrix g_m{}; // transformation matrix
+Matrix g_m{}; // transformation matrix
 int g_ambient{};
 int g_randomize_3d{};
 int g_haze{};
@@ -177,7 +178,7 @@ int g_x_shift{};
 int g_y_shift{};
 RayTraceFormat g_raytrace_format{}; // Flag to generate Ray trace compatible files in 3d
 bool g_brief{};                     // 1 = short ray trace files
-id::Vector g_view{};                // position of observer for perspective
+Vector g_view{};                // position of observer for perspective
 
 int line3d(Byte * pixels, unsigned line_len)
 {
@@ -195,13 +196,13 @@ int line3d(Byte * pixels, unsigned line_len)
     PointColor old;      // old pixels
     FPointColor f_cur{};
     FPointColor f_old;
-    id::Vector v;                    // double vector
-    id::Vector v1;
-    id::Vector v2;
-    id::Vector cross_avg;
+    Vector v;                    // double vector
+    Vector v1;
+    Vector v2;
+    Vector cross_avg;
     bool cross_not_init;           // flag for crossavg init indication
-    id::VectorL lv;                  // long equivalent of v
-    id::VectorL lv0;                 // long equivalent of v
+    VectorL lv;                  // long equivalent of v
+    VectorL lv0;                 // long equivalent of v
     int last_dot;
     long fudge;
 
@@ -291,7 +292,7 @@ int line3d(Byte * pixels, unsigned line_len)
     // and code.
     //***********************************************************************
     last_dot = std::min(g_logical_screen_x_dots - 1, (int) line_len - 1);
-    if (id::g_fill_type >= id::FillType::LIGHT_SOURCE_BEFORE)
+    if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE)
     {
         if (g_haze && g_targa_out)
         {
@@ -313,11 +314,11 @@ int line3d(Byte * pixels, unsigned line_len)
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0
     // Draw mod preview lines
-    if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || id::g_fill_type < id::FillType::POINTS) //
+    if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || g_fill_type < FillType::POINTS) //
         && g_current_row != g_logical_screen_y_dots - 1                                            //
         && g_current_row % s_local_preview_factor                                                  //
         && !(g_raytrace_format == RayTraceFormat::NONE                                             //
-               && id::g_fill_type > id::FillType::SOLID_FILL                                               //
+               && g_fill_type > FillType::SOLID_FILL                                               //
                && g_current_row == 1))
     {
         // Get init geometry in lightsource modes
@@ -335,11 +336,11 @@ int line3d(Byte * pixels, unsigned line_len)
     // PROCESS ROW LOOP BEGINS HERE
     while (col < (int) line_len)
     {
-        if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || id::g_fill_type < id::FillType::POINTS)
+        if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || g_fill_type < FillType::POINTS)
             && (col != last_dot)             // if this is not the last col
                                             // if not the 1st or mod factor col
             && (col % (int)(s_aspect * s_local_preview_factor))
-            && !(g_raytrace_format == RayTraceFormat::NONE && id::g_fill_type > id::FillType::SOLID_FILL && col == 1))
+            && !(g_raytrace_format == RayTraceFormat::NONE && g_fill_type > FillType::SOLID_FILL && col == 1))
         {
             goto loop_bottom;
         }
@@ -348,7 +349,7 @@ int line3d(Byte * pixels, unsigned line_len)
         cur.color = s_real_color;
         f_cur.color = (float) cur.color;
 
-        if (g_raytrace_format != RayTraceFormat::NONE|| g_preview || id::g_fill_type < id::FillType::POINTS)
+        if (g_raytrace_format != RayTraceFormat::NONE|| g_preview || g_fill_type < FillType::POINTS)
         {
             next = (int)(col + s_aspect * s_local_preview_factor);
             if (next == col)
@@ -362,9 +363,9 @@ int line3d(Byte * pixels, unsigned line_len)
         }
         next = std::min(next, last_dot);
 
-        if (cur.color > 0 && cur.color < id::g_water_line)
+        if (cur.color > 0 && cur.color < g_water_line)
         {
-            s_real_color = (Byte) id::g_water_line;
+            s_real_color = (Byte) g_water_line;
             cur.color = s_real_color;
             f_cur.color = (float) cur.color;  // "lake"
         }
@@ -373,12 +374,12 @@ int line3d(Byte * pixels, unsigned line_len)
             f_cur.color += ((float) s_fraction[col]) / (float)(1 << 8);
         }
 
-        if (id::g_sphere)            // sphere case
+        if (g_sphere)            // sphere case
         {
             sin_theta = s_sin_theta_array[col];
             cos_theta = s_cos_theta_array[col];
 
-            if (s_sin_phi < 0 && g_raytrace_format == RayTraceFormat::NONE && id::g_fill_type >= id::FillType::POINTS)
+            if (s_sin_phi < 0 && g_raytrace_format == RayTraceFormat::NONE && g_fill_type >= FillType::POINTS)
             {
                 cur = s_bad;
                 f_cur = s_f_bad;
@@ -415,7 +416,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 // NOTE: fudge was pre-calculated above in r and R
                 // (almost) guarantee negative
                 lv[2] = (long)(-s_radius - r * cos_theta * s_sin_phi);      // z
-                if (lv[2] > s_z_cutoff && id::g_fill_type >= id::FillType::POINTS)
+                if (lv[2] > s_z_cutoff && g_fill_type >= FillType::POINTS)
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
@@ -424,7 +425,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 lv[0] = (long)(s_x_center + sin_theta * s_scale_x * r);   // x
                 lv[1] = (long)(s_y_center + cos_theta * s_cos_phi * s_scale_y * r);  // y
 
-                if ((id::g_fill_type >= id::FillType::LIGHT_SOURCE_BEFORE) ||
+                if ((g_fill_type >= FillType::LIGHT_SOURCE_BEFORE) ||
                     g_raytrace_format != RayTraceFormat::NONE)
                 {
                     // calculate illumination normal before persp
@@ -440,7 +441,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 v[0] /= fudge;
                 v[1] /= fudge;
                 v[2] /= fudge;
-                id::perspective(v);
+                perspective(v);
                 cur.x = (int) (v[0] + .5 + g_xx_adjust);
                 cur.y = (int) (v[1] + .5 + g_yy_adjust);
             }
@@ -452,7 +453,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 cur.x = (int) f_cur.x;
                 f_cur.y = (float)(s_y_center + cos_theta*s_cos_phi*s_scale_y*r + g_yy_adjust);
                 cur.y = (int) f_cur.y;
-                if (id::g_fill_type >= id::FillType::LIGHT_SOURCE_BEFORE || g_raytrace_format != RayTraceFormat::NONE)          // why do we do this for filltype>5?
+                if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE || g_raytrace_format != RayTraceFormat::NONE)          // why do we do this for filltype>5?
                 {
                     f_cur.color = (float)(-r * cos_theta * s_sin_phi * s_scale_z);
                 }
@@ -469,9 +470,9 @@ int line3d(Byte * pixels, unsigned line_len)
             v[1] = g_current_row;
             v[2] = f_cur.color; // Actually the z value
 
-            id::vec_g_mat_mul(v);   // matrix*vector routine
+            vec_g_mat_mul(v);   // matrix*vector routine
 
-            if (id::g_fill_type > id::FillType::SOLID_FILL || g_raytrace_format != RayTraceFormat::NONE)
+            if (g_fill_type > FillType::SOLID_FILL || g_raytrace_format != RayTraceFormat::NONE)
             {
                 f_cur.x = (float) v[0];
                 f_cur.y = (float) v[1];
@@ -487,21 +488,21 @@ int line3d(Byte * pixels, unsigned line_len)
 
             if (s_persp && g_raytrace_format == RayTraceFormat::NONE)
             {
-                id::perspective(v);
+                perspective(v);
             }
             cur.x = (int) std::lround(v[0] + g_xx_adjust);
             cur.y = (int) std::lround(v[1] + g_yy_adjust);
 
             v[0] = 0;
             v[1] = 0;
-            v[2] = id::g_water_line;
-            id::vec_g_mat_mul(v);
+            v[2] = g_water_line;
+            vec_g_mat_mul(v);
             f_water = (float) v[2];
         }
 
         if (g_randomize_3d != 0)
         {
-            if (cur.color > id::g_water_line)
+            if (cur.color > g_water_line)
             {
                 rnd = RAND15() >> 8;     // 7-bit number
                 rnd = rnd * rnd >> s_rand_factor;  // n-bit number
@@ -515,9 +516,9 @@ int line3d(Byte * pixels, unsigned line_len)
                 {
                     cur.color = g_colors - 2;
                 }
-                else if (cur.color + rnd <= id::g_water_line)
+                else if (cur.color + rnd <= g_water_line)
                 {
-                    cur.color = id::g_water_line + 1;
+                    cur.color = g_water_line + 1;
                 }
                 else
                 {
@@ -608,9 +609,9 @@ int line3d(Byte * pixels, unsigned line_len)
             goto loop_bottom;
         }
 
-        switch (id::g_fill_type)
+        switch (g_fill_type)
         {
-        case id::FillType::SURFACE_GRID:
+        case FillType::SURFACE_GRID:
             if (col
                 && old.x > s_bad_check
                 && old.x < (g_logical_screen_x_dots - s_bad_check))
@@ -628,11 +629,11 @@ int line3d(Byte * pixels, unsigned line_len)
             }
             break;
 
-        case id::FillType::POINTS:
+        case FillType::POINTS:
             g_plot(cur.x, cur.y, cur.color);
             break;
 
-        case id::FillType::WIRE_FRAME:                // connect-a-dot
+        case FillType::WIRE_FRAME:                // connect-a-dot
             if (old.x < g_logical_screen_x_dots && col
                 && old.x > s_bad_check
                 && old.y > s_bad_check)        // Don't draw from old to cur on col 0
@@ -641,8 +642,8 @@ int line3d(Byte * pixels, unsigned line_len)
             }
             break;
 
-        case id::FillType::SURFACE_INTERPOLATED: // with interpolation
-        case id::FillType::SURFACE_CONSTANT:     // no interpolation
+        case FillType::SURFACE_INTERPOLATED: // with interpolation
+        case FillType::SURFACE_CONSTANT:     // no interpolation
             //***********************************************************
             // "triangle fill" - consider four points: current point,
             // previous point same row, point opposite current point in
@@ -675,8 +676,8 @@ int line3d(Byte * pixels, unsigned line_len)
             }
             break;
 
-        case id::FillType::SOLID_FILL:
-            if (id::g_sphere)
+        case FillType::SOLID_FILL:
+            if (g_sphere)
             {
                 if (s_persp)
                 {
@@ -700,7 +701,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 lv[1] = lv[1] << 16;
                 // Since 0, unnecessary lv[2] = lv[2] << 16;
 
-                if (id::long_vec_mat_mul_persp(lv, s_llm, lv0, lv, s_l_view, 16))
+                if (long_vec_mat_mul_persp(lv, s_llm, lv0, lv, s_l_view, 16))
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
@@ -724,8 +725,8 @@ int line3d(Byte * pixels, unsigned line_len)
             driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             break;
 
-        case id::FillType::LIGHT_SOURCE_BEFORE:
-        case id::FillType::LIGHT_SOURCE_AFTER:
+        case FillType::LIGHT_SOURCE_BEFORE:
+        case FillType::LIGHT_SOURCE_AFTER:
             // light-source modulated fill
             if (g_current_row && col)  // skip first row and first column
             {
@@ -743,10 +744,10 @@ int line3d(Byte * pixels, unsigned line_len)
                 v2[1] = s_f_last_row[col].y - f_cur.y;
                 v2[2] = s_f_last_row[col].color - f_cur.color;
 
-                id::cross_product(v1, v2, s_cross);
+                cross_product(v1, v2, s_cross);
 
                 // normalize cross - and check if non-zero
-                if (id::normalize_vector(s_cross))
+                if (normalize_vector(s_cross))
                 {
                     if (g_debug_flag != DebugFlags::NONE)
                     {
@@ -758,7 +759,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 else
                 {
                     // line-wise averaging scheme
-                    if (id::g_light_avg > 0)
+                    if (g_light_avg > 0)
                     {
                         if (cross_not_init)
                         {
@@ -768,16 +769,16 @@ int line3d(Byte * pixels, unsigned line_len)
                             cross_avg[2] = s_cross[2];
                             cross_not_init = false;
                         }
-                        s_tmp_cross[0] = (cross_avg[0] * id::g_light_avg + s_cross[0]) /
-                                      (id::g_light_avg + 1);
-                        s_tmp_cross[1] = (cross_avg[1] * id::g_light_avg + s_cross[1]) /
-                                      (id::g_light_avg + 1);
-                        s_tmp_cross[2] = (cross_avg[2] * id::g_light_avg + s_cross[2]) /
-                                      (id::g_light_avg + 1);
+                        s_tmp_cross[0] = (cross_avg[0] * g_light_avg + s_cross[0]) /
+                                      (g_light_avg + 1);
+                        s_tmp_cross[1] = (cross_avg[1] * g_light_avg + s_cross[1]) /
+                                      (g_light_avg + 1);
+                        s_tmp_cross[2] = (cross_avg[2] * g_light_avg + s_cross[2]) /
+                                      (g_light_avg + 1);
                         s_cross[0] = s_tmp_cross[0];
                         s_cross[1] = s_tmp_cross[1];
                         s_cross[2] = s_tmp_cross[2];
-                        if (id::normalize_vector(s_cross))
+                        if (normalize_vector(s_cross))
                         {
                             // this shouldn't happen
                             if (g_debug_flag != DebugFlags::NONE)
@@ -796,7 +797,7 @@ int line3d(Byte * pixels, unsigned line_len)
                     // we will use this value to shade surface
 
                     cur.color = (int)(1 + (g_colors - 2) *
-                                      (1.0 - id::dot_product(s_cross, s_light_direction)));
+                                      (1.0 - dot_product(s_cross, s_light_direction)));
                 }
                 /* if colors out of range, set them to min or max color index
                  * but avoid background index. This makes colors "opaque" so
@@ -832,7 +833,7 @@ int line3d(Byte * pixels, unsigned line_len)
             break;
         }                      // End of CASE statement for fill type
 loop_bottom:
-        if (g_raytrace_format != RayTraceFormat::NONE || (id::g_fill_type != id::FillType::POINTS && id::g_fill_type != id::FillType::SOLID_FILL))
+        if (g_raytrace_format != RayTraceFormat::NONE || (g_fill_type != FillType::POINTS && g_fill_type != FillType::SOLID_FILL))
         {
             // for triangle and grid fill purposes
             s_old_last = s_last_row[col];
@@ -862,7 +863,7 @@ loop_bottom:
 really_the_bottom:
 
     // stuff that HAS to be done, even in preview mode, goes here
-    if (id::g_sphere)
+    if (g_sphere)
     {
         // incremental sin/cos phi calc
         if (g_current_row == 0)
@@ -893,9 +894,9 @@ static void vec_draw_line(double *v1, double *v2, int color)
     driver_draw_line(x1, y1, x2, y2, color);
 }
 
-static void corners(id::Matrix m, bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
+static void corners(Matrix m, bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
 {
-    id::Vector s[2][4];              // Holds the top and bottom points, S[0][]=bottom
+    Vector s[2][4];              // Holds the top and bottom points, S[0][]=bottom
 
     /* define corners of box fractal is in x,y,z plane "b" stands for
      * "bottom" - these points are the corners of the screen in the x-y plane.
@@ -933,8 +934,8 @@ static void corners(id::Matrix m, bool show, double *x_min, double *y_min, doubl
     for (int i = 0; i < 4; ++i)
     {
         // transform points
-        id::vec_mat_mul(s[0][i], m, s[0][i]);
-        id::vec_mat_mul(s[1][i], m, s[1][i]);
+        vec_mat_mul(s[0][i], m, s[0][i]);
+        vec_mat_mul(s[1][i], m, s[1][i]);
 
         // update minimums and maximums
         *x_min = std::min(s[0][i][0], *x_min);
@@ -957,15 +958,15 @@ static void corners(id::Matrix m, bool show, double *x_min, double *y_min, doubl
         {
             for (int i = 0; i < 4; i++)
             {
-                id::perspective(s[0][i]);
-                id::perspective(s[1][i]);
+                perspective(s[0][i]);
+                perspective(s[1][i]);
             }
         }
 
         // Keep the box surrounding the fractal
         for (auto &elem : s)
         {
-            for (id::Vector &elem_i : elem)
+            for (Vector &elem_i : elem)
             {
                 elem_i[0] += g_xx_adjust;
                 elem_i[1] += g_yy_adjust;
@@ -986,9 +987,9 @@ static void corners(id::Matrix m, bool show, double *x_min, double *y_min, doubl
         FILLTYPE.
 */
 
-static void draw_light_box(double *origin, double *direct, id::Matrix light_m)
+static void draw_light_box(double *origin, double *direct, Matrix light_m)
 {
-    id::Vector s[2][4]{};
+    Vector s[2][4]{};
 
     s[0][0][0] = origin[0];
     s[1][0][0] = s[0][0][0];
@@ -1011,12 +1012,12 @@ static void draw_light_box(double *origin, double *direct, id::Matrix light_m)
     }
 
     // transform the corners if necessary
-    if (id::g_fill_type == id::FillType::LIGHT_SOURCE_AFTER)
+    if (g_fill_type == FillType::LIGHT_SOURCE_AFTER)
     {
         for (int i = 0; i < 4; i++)
         {
-            id::vec_mat_mul(s[0][i], light_m, s[0][i]);
-            id::vec_mat_mul(s[1][i], light_m, s[1][i]);
+            vec_mat_mul(s[0][i], light_m, s[0][i]);
+            vec_mat_mul(s[1][i], light_m, s[1][i]);
         }
     }
 
@@ -1026,8 +1027,8 @@ static void draw_light_box(double *origin, double *direct, id::Matrix light_m)
 
     for (int i = 0; i < 4; i++)
     {
-        id::perspective(s[0][i]);
-        id::perspective(s[1][i]);
+        perspective(s[0][i]);
+        perspective(s[1][i]);
     }
     g_view[2] = temp;              // Restore perspective distance
 
@@ -1062,9 +1063,9 @@ static void draw_light_box(double *origin, double *direct, id::Matrix light_m)
     }
 }
 
-static void draw_rect(id::Vector v0, id::Vector v1, id::Vector v2, id::Vector v3, int color, bool rect)
+static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, int color, bool rect)
 {
-    id::Vector v[4];
+    Vector v[4];
 
     // Since V[2] is not used by vdraw_line don't bother setting it
     for (int i = 0; i < 2; i++)
@@ -1319,7 +1320,7 @@ static void interp_color(int x, int y, int color)
             }
         }
 
-        if (id::g_fill_type >= id::FillType::LIGHT_SOURCE_BEFORE)
+        if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE)
         {
             if (s_real_v && g_targa_out)
             {
@@ -1354,7 +1355,7 @@ int targa_color(int x, int y, int color)
     unsigned long val;
     Byte rgb[3];
 
-    if (id::g_fill_type == id::FillType::SURFACE_INTERPOLATED || glasses_alternating_or_superimpose() || g_true_color)
+    if (g_fill_type == FillType::SURFACE_INTERPOLATED || glasses_alternating_or_superimpose() || g_true_color)
     {
         s_real_color = (Byte)color;       // So Targa gets interpolated color
     }
@@ -1379,7 +1380,7 @@ int targa_color(int x, int y, int color)
     rgb_to_hsv(rgb[0], rgb[1], rgb[2], &hue, &sat, &val);
 
     // Modify original S and V components
-    if (id::g_fill_type > id::FillType::SOLID_FILL && !glasses_alternating_or_superimpose())
+    if (g_fill_type > FillType::SOLID_FILL && !glasses_alternating_or_superimpose())
     {
         // Adjust for Ambient
         val = (val * (65535L - color * s_i_ambient)) / 65535L;
@@ -1602,7 +1603,7 @@ bool start_targa(const std::string &path)
 static bool targa_validate(const std::string &filename)
 {
     // Attempt to open source file for reading
-    std::filesystem::path path{id::io::find_file(id::io::ReadFile::IMAGE, filename)};
+    std::filesystem::path path{find_file(ReadFile::IMAGE, filename)};
     if (path.empty())
     {
         file_error(filename, FileError::OPEN_FAILED);
@@ -1666,7 +1667,7 @@ static bool targa_validate(const std::string &filename)
     std::fseek(fp, 0, SEEK_SET);
 
     // Now that we know it's a good file, create a working copy
-    std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+    std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
     assert(!temp_path.empty());
     if (start_targa_overlay(temp_path.string(), fp))
     {
@@ -1885,7 +1886,7 @@ ENTITIES
 static int ray_header()
 {
     // Open the ray tracing output file
-    std::string path{id::io::get_save_path(id::io::WriteFile::RAYTRACE, g_raytrace_filename).string()};
+    std::string path{get_save_path(WriteFile::RAYTRACE, g_raytrace_filename).string()};
     if (path.empty())
     {
         return -1;              // Oops, something's wrong!
@@ -2377,16 +2378,16 @@ static void line3d_cleanup()
         end_disk();
         if (g_debug_flag == DebugFlags::NONE && (!s_temp_safe || s_error != FileError::NONE) && g_targa_overlay)
         {
-            std::filesystem::path light_path{id::io::get_save_path(id::io::WriteFile::IMAGE, g_light_name)};
+            std::filesystem::path light_path{get_save_path(WriteFile::IMAGE, g_light_name)};
             assert(!light_path.empty());
             std::filesystem::remove(light_path);
-            std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+            std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
             assert(!temp_path.empty());
             std::filesystem::rename(temp_path, light_path);
         }
         if (g_debug_flag == DebugFlags::NONE && g_targa_overlay)
         {
-            std::filesystem::path temp_path{id::io::get_save_path(id::io::WriteFile::IMAGE, s_targa_temp)};
+            std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
             assert(!temp_path.empty());
             std::filesystem::remove(temp_path);
         }
@@ -2404,9 +2405,9 @@ static void set_upr_lwr()
     s_line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
 }
 
-static int first_time(int line_len, id::Vector v)
+static int first_time(int line_len, Vector v)
 {
-    id::Matrix light_mat;               // m w/no trans, keeps obj. on screen
+    Matrix light_mat;               // m w/no trans, keeps obj. on screen
                    // rotation values
     // corners of transformed xdotx by ydots x colors box
     double x_min;
@@ -2415,7 +2416,7 @@ static int first_time(int line_len, id::Vector v)
     double x_max;
     double y_max;
     double z_max;
-    id::Vector direct;
+    Vector direct;
     // current,start,stop latitude
     // current start,stop longitude
     // increment of latitude
@@ -2465,7 +2466,7 @@ static int first_time(int line_len, id::Vector v)
         }
         else
         {
-            std::string path{id::io::get_save_path(id::io::WriteFile::IMAGE, g_light_name).string()};
+            std::string path{get_save_path(WriteFile::IMAGE, g_light_name).string()};
             assert(!path.empty());
             check_write_file(path, ".tga");
             if (start_targa(path))     // Open new file
@@ -2486,11 +2487,11 @@ static int first_time(int line_len, id::Vector v)
     }
 
     // get scale factors
-    s_scale_x = id::g_x_scale / 100.0;
-    s_scale_y = id::g_y_scale / 100.0;
-    if (id::g_rough)
+    s_scale_x = g_x_scale / 100.0;
+    s_scale_y = g_y_scale / 100.0;
+    if (g_rough)
     {
-        s_scale_z = -id::g_rough / 100.0;
+        s_scale_z = -g_rough / 100.0;
     }
     else
     {
@@ -2501,7 +2502,7 @@ static int first_time(int line_len, id::Vector v)
     // aspect ratio calculation - assume screen is 4 x 3
     s_aspect = (double) g_logical_screen_x_dots *.75 / (double) g_logical_screen_y_dots;
 
-    if (!id::g_sphere)         // skip this slow stuff in sphere case
+    if (!g_sphere)         // skip this slow stuff in sphere case
     {
         //*******************************************************************
         // What is done here is to create a single matrix, m, which has
@@ -2515,24 +2516,24 @@ static int first_time(int line_len, id::Vector v)
         //*******************************************************************
 
         // start with identity
-        id::identity(g_m);
-        id::identity(light_mat);
+        identity(g_m);
+        identity(light_mat);
 
         // translate so origin is in center of box, so that when we rotate
         // it, we do so through the center
-        id::trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
+        trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
               (double) s_z_coord / (-2.0), g_m);
-        id::trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
+        trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
               (double) s_z_coord / (-2.0), light_mat);
 
         // apply scale factors
-        id::scale(s_scale_x, s_scale_y, s_scale_z, g_m);
-        id::scale(s_scale_x, s_scale_y, s_scale_z, light_mat);
+        scale(s_scale_x, s_scale_y, s_scale_z, g_m);
+        scale(s_scale_x, s_scale_y, s_scale_z, light_mat);
 
         // rotation values - converting from degrees to radians
-        double x_val = id::g_x_rot / 57.29577;
-        double y_val = id::g_y_rot / 57.29577;
-        double z_val = id::g_z_rot / 57.29577;
+        double x_val = g_x_rot / 57.29577;
+        double y_val = g_y_rot / 57.29577;
+        double z_val = g_z_rot / 57.29577;
 
         if (g_raytrace_format != RayTraceFormat::NONE)
         {
@@ -2541,12 +2542,12 @@ static int first_time(int line_len, id::Vector v)
             z_val = 0;
         }
 
-        id::x_rot(x_val, g_m);
-        id::x_rot(x_val, light_mat);
-        id::y_rot(y_val, g_m);
-        id::y_rot(y_val, light_mat);
-        id::z_rot(z_val, g_m);
-        id::z_rot(z_val, light_mat);
+        x_rot(x_val, g_m);
+        x_rot(x_val, light_mat);
+        y_rot(y_val, g_m);
+        y_rot(y_val, light_mat);
+        z_rot(z_val, g_m);
+        z_rot(z_val, light_mat);
 
         // Find values of translation that make all x,y,z negative
         // m current matrix
@@ -2559,7 +2560,7 @@ static int first_time(int line_len, id::Vector v)
 
     // set perspective flag
     s_persp = false;
-    if (id::g_viewer_z != 0)
+    if (g_viewer_z != 0)
     {
         s_persp = true;
     }
@@ -2569,13 +2570,13 @@ static int first_time(int line_len, id::Vector v)
     s_l_view[1] = g_logical_screen_y_dots >> 1;
 
     // z value of user's eye - should be more negative than extreme negative part of image
-    if (id::g_sphere)                    // sphere case
+    if (g_sphere)                    // sphere case
     {
-        s_l_view[2] = -(long)((double) g_logical_screen_y_dots * (double) id::g_viewer_z / 100.0);
+        s_l_view[2] = -(long)((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
     }
     else                             // non-sphere case
     {
-        s_l_view[2] = (long)((z_min - z_max) * (double) id::g_viewer_z / 100.0);
+        s_l_view[2] = (long)((z_min - z_max) * (double) g_viewer_z / 100.0);
     }
 
     g_view[0] = s_l_view[0];
@@ -2585,18 +2586,18 @@ static int first_time(int line_len, id::Vector v)
     s_l_view[1] = s_l_view[1] << 16;
     s_l_view[2] = s_l_view[2] << 16;
 
-    if (!id::g_sphere)         // sphere skips this
+    if (!g_sphere)         // sphere skips this
     {
         /* translate back exactly amount we translated earlier plus enough to
          * center image so maximum values are non-positive */
-        id::trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
+        trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
               ((double) g_logical_screen_y_dots - y_max - y_min) / 2, -z_max, g_m);
 
         // Keep the box centered and on screen regardless of shifts
-        id::trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
+        trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
               ((double) g_logical_screen_y_dots - y_max - y_min) / 2, -z_max, light_mat);
 
-        id::trans(g_x_shift, -g_y_shift, 0.0, g_m);
+        trans(g_x_shift, -g_y_shift, 0.0, g_m);
 
         /* matrix m now contains ALL those transforms composed together !!
          * convert m to long integers shifted 16 bits */
@@ -2615,12 +2616,12 @@ static int first_time(int line_len, id::Vector v)
          * latitude; bottom 90 degrees */
 
         // Map X to this LATITUDE range
-        float theta1 = (float) (id::g_sphere_theta_min * PI / 180.0);
-        float theta2 = (float) (id::g_sphere_theta_max * PI / 180.0);
+        float theta1 = (float) (g_sphere_theta_min * PI / 180.0);
+        float theta2 = (float) (g_sphere_theta_max * PI / 180.0);
 
         // Map Y to this LONGITUDE range
-        float phi1 = (float) (id::g_sphere_phi_min * PI / 180.0);
-        float phi2 = (float) (id::g_sphere_phi_max * PI / 180.0);
+        float phi1 = (float) (g_sphere_phi_min * PI / 180.0);
+        float phi2 = (float) (g_sphere_phi_max * PI / 180.0);
 
         float theta = theta1;
 
@@ -2678,9 +2679,9 @@ static int first_time(int line_len, id::Vector v)
         s_two_cos_delta_phi = 2.0F * std::cos(s_delta_phi);
 
         // affects how rough planet terrain is
-        if (id::g_rough)
+        if (g_rough)
         {
-            s_r_scale = .3 * id::g_rough / 100.0;
+            s_r_scale = .3 * g_rough / 100.0;
         }
 
         // radius of planet
@@ -2689,7 +2690,7 @@ static int first_time(int line_len, id::Vector v)
         // precalculate factor
         s_r_x_r_scale = s_radius * s_r_scale;
 
-        s_scale_y = id::g_sphere_radius/100.0;
+        s_scale_y = g_sphere_radius/100.0;
         s_scale_x = s_scale_y;
         s_scale_z = s_scale_x;      // Need x,y,z for RAY
 
@@ -2709,7 +2710,7 @@ static int first_time(int line_len, id::Vector v)
 
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
-            double z_view = -(long) ((double) g_logical_screen_y_dots * (double) id::g_viewer_z / 100.0);
+            double z_view = -(long) ((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
             double radius = (double) (g_logical_screen_y_dots) / 2;
             double angle = std::atan(-radius / (z_view + radius));
             s_z_cutoff = -radius - std::sin(angle) * radius;
@@ -2719,7 +2720,7 @@ static int first_time(int line_len, id::Vector v)
     }
 
     // set fill plot function
-    if (id::g_fill_type != id::FillType::SURFACE_CONSTANT)
+    if (g_fill_type != FillType::SURFACE_CONSTANT)
     {
         s_fill_plot = interp_color;
     }
@@ -2735,22 +2736,22 @@ static int first_time(int line_len, id::Vector v)
     }
 
     // Both Sphere and Normal 3D
-    s_light_direction[0] = id::g_light_x;
+    s_light_direction[0] = g_light_x;
     direct[0] = s_light_direction[0];
-    s_light_direction[1] = -id::g_light_y;
+    s_light_direction[1] = -g_light_y;
     direct[1] = s_light_direction[1];
-    s_light_direction[2] = id::g_light_z;
+    s_light_direction[2] = g_light_z;
     direct[2] = s_light_direction[2];
 
     /* Needed because sclz = -ROUGH/100 and light_direction is transformed in
      * FILLTYPE 6 but not in 5. */
-    if (id::g_fill_type == id::FillType::LIGHT_SOURCE_BEFORE)
+    if (g_fill_type == FillType::LIGHT_SOURCE_BEFORE)
     {
-        s_light_direction[2] = -id::g_light_z;
+        s_light_direction[2] = -g_light_z;
         direct[2] = s_light_direction[2];
     }
 
-    if (id::g_fill_type == id::FillType::LIGHT_SOURCE_AFTER)           // transform light direction
+    if (g_fill_type == FillType::LIGHT_SOURCE_AFTER)           // transform light direction
     {
         /* Think of light direction  as a vector with tail at (0,0,0) and head
          * at (light_direction). We apply the transformation to BOTH head and
@@ -2759,26 +2760,26 @@ static int first_time(int line_len, id::Vector v)
         v[0] = 0.0;
         v[1] = 0.0;
         v[2] = 0.0;
-        id::vec_mat_mul(v, g_m, v);
-        id::vec_mat_mul(s_light_direction, g_m, s_light_direction);
+        vec_mat_mul(v, g_m, v);
+        vec_mat_mul(s_light_direction, g_m, s_light_direction);
 
         for (int i = 0; i < 3; i++)
         {
             s_light_direction[i] -= v[i];
         }
     }
-    id::normalize_vector(s_light_direction);
+    normalize_vector(s_light_direction);
 
     if (g_preview && g_show_box)
     {
-        id::Vector origin;
-        id::Vector tmp;
-        id::normalize_vector(direct);
+        Vector origin;
+        Vector tmp;
+        normalize_vector(direct);
 
         // move light vector to be more clear with grey scale maps
         origin[0] = (3 * g_logical_screen_x_dots) / 16;
         origin[1] = (3 * g_logical_screen_y_dots) / 4;
-        if (id::g_fill_type == id::FillType::LIGHT_SOURCE_AFTER)
+        if (g_fill_type == FillType::LIGHT_SOURCE_AFTER)
         {
             origin[1] = (11 * g_logical_screen_y_dots) / 16;
         }
@@ -2786,9 +2787,9 @@ static int first_time(int line_len, id::Vector v)
         origin[2] = 0.0;
 
         double v_length = std::min(g_logical_screen_x_dots, g_logical_screen_y_dots) / 2;
-        if (s_persp && id::g_viewer_z <= s_p)
+        if (s_persp && g_viewer_z <= s_p)
         {
-            v_length *= (long)(s_p + 600) / ((long)(id::g_viewer_z + 600) * 2);
+            v_length *= (long)(s_p + 600) / ((long)(g_viewer_z + 600) * 2);
         }
 
         /* Set direct[] to point from origin[] in direction of untransformed
@@ -2811,7 +2812,7 @@ static int first_time(int line_len, id::Vector v)
         draw_light_box(origin, direct, light_mat);
         /* draw box around original field of view to help visualize effect of
          * rotations 1 means show box - xmin etc. do nothing here */
-        if (!id::g_sphere)
+        if (!g_sphere)
         {
             corners(g_m, true, &x_min, &y_min, &z_min, &x_max, &y_max, &z_max);
         }
@@ -2839,7 +2840,7 @@ static int line3d_mem()
        the purpose of filling in gaps with triangle procedure */
     s_last_row.resize(g_logical_screen_x_dots);
 
-    if (id::g_sphere)
+    if (g_sphere)
     {
         s_sin_theta_array.resize(g_logical_screen_x_dots);
         s_cos_theta_array.resize(g_logical_screen_x_dots);
@@ -2852,8 +2853,8 @@ static int line3d_mem()
     s_min_max_x.clear();
 
     // these fill types call putatriangle which uses minmax_x
-    if (id::g_fill_type == id::FillType::SURFACE_INTERPOLATED || id::g_fill_type == id::FillType::SURFACE_CONSTANT ||
-        id::g_fill_type == id::FillType::LIGHT_SOURCE_BEFORE || id::g_fill_type == id::FillType::LIGHT_SOURCE_AFTER)
+    if (g_fill_type == FillType::SURFACE_INTERPOLATED || g_fill_type == FillType::SURFACE_CONSTANT ||
+        g_fill_type == FillType::LIGHT_SOURCE_BEFORE || g_fill_type == FillType::LIGHT_SOURCE_AFTER)
     {
         s_min_max_x.resize(OLD_MAX_PIXELS);
     }

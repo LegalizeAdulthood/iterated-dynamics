@@ -43,6 +43,7 @@
 #include <vector>
 
 using namespace id::engine;
+using namespace id::geometry;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -67,7 +68,7 @@ enum
 };
 
 static int  ifs3d();
-static void setup_matrix(id::Matrix double_mat);
+static void setup_matrix(Matrix double_mat);
 static bool float_view_transf3d(ViewTransform3D *inf);
 static std::FILE *open_orbit_save();
 static void plot_hist(int x, int y, int color);
@@ -1533,18 +1534,18 @@ int plot_orbits2d()
 // stuff so the code is not duplicated for ifs3d() and lorenz3d()
 int funny_glasses_call(int (*calc)())
 {
-    id::g_which_image = id::g_glasses_type != id::GlassesType::NONE ? id::StereoImage::RED : id::StereoImage::NONE;
-    id::plot_setup();
-    g_plot = id::g_standard_plot;
+    g_which_image = g_glasses_type != GlassesType::NONE ? StereoImage::RED : StereoImage::NONE;
+    plot_setup();
+    g_plot = g_standard_plot;
     int status = calc();
-    if (s_real_time && id::g_glasses_type < id::GlassesType::PHOTO)
+    if (s_real_time && g_glasses_type < GlassesType::PHOTO)
     {
         s_real_time = false;
         goto done;
     }
-    if (id::g_glasses_type != id::GlassesType::NONE && status == 0 && g_display_3d != Display3DMode::NONE)
+    if (g_glasses_type != GlassesType::NONE && status == 0 && g_display_3d != Display3DMode::NONE)
     {
-        if (id::g_glasses_type == id::GlassesType::PHOTO)
+        if (g_glasses_type == GlassesType::PHOTO)
         {
             // photographer's mode
             stop_msg(StopMsgFlags::INFO_ONLY,
@@ -1557,26 +1558,26 @@ int funny_glasses_call(int (*calc)())
             // is there a better way to clear the screen in graphics mode?
             driver_set_video_mode(&g_video_entry);
         }
-        id::g_which_image = id::StereoImage::BLUE;
+        g_which_image = StereoImage::BLUE;
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))
         {
             g_cur_fractal_specific->per_image(); // reset for 2nd image
         }
-        id::plot_setup();
-        g_plot = id::g_standard_plot;
+        plot_setup();
+        g_plot = g_standard_plot;
         // is there a better way to clear the graphics screen ?
         status = calc();
         if (status != 0)
         {
             goto done;
         }
-        if (id::g_glasses_type == id::GlassesType::PHOTO)   // photographer's mode
+        if (g_glasses_type == GlassesType::PHOTO)   // photographer's mode
         {
             stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
         }
     }
 done:
-    if (id::g_glasses_type == id::GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
+    if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
     {
         // turn off view windows so will save properly
         g_logical_screen_x_offset = 0;
@@ -1798,15 +1799,15 @@ int ifs_type()                       // front-end for ifs2d and ifs3d
     return g_ifs_dim == IFSDimension::TWO ? ifs2d() : ifs3d();
 }
 
-static void setup_matrix(id::Matrix double_mat)
+static void setup_matrix(Matrix double_mat)
 {
     // build transformation matrix
-    id::identity(double_mat);
+    identity(double_mat);
 
     // apply rotations - uses the same rotation variables as line3d.c
-    id::x_rot((double)id::g_x_rot / 57.29577, double_mat);
-    id::y_rot((double)id::g_y_rot / 57.29577, double_mat);
-    id::z_rot((double)id::g_z_rot / 57.29577, double_mat);
+    x_rot((double)g_x_rot / 57.29577, double_mat);
+    y_rot((double)g_y_rot / 57.29577, double_mat);
+    z_rot((double)g_z_rot / 57.29577, double_mat);
 
     // apply scale
     //   scale((double)g_x_scale/100.0,(double)g_y_scale/100.0,(double)ROUGH/100.0,doublemat);
@@ -1815,7 +1816,7 @@ static void setup_matrix(id::Matrix double_mat)
 int orbit3d_type()
 {
     g_display_3d = Display3DMode::MINUS_ONE ;
-    s_real_time = id::g_glasses_type > id::GlassesType::NONE && id::g_glasses_type < id::GlassesType::PHOTO;
+    s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
     return funny_glasses_call(orbit3d_calc);
 }
 
@@ -1823,7 +1824,7 @@ static int ifs3d()
 {
     g_display_3d = Display3DMode::MINUS_ONE;
 
-    s_real_time = id::g_glasses_type > id::GlassesType::NONE && id::g_glasses_type < id::GlassesType::PHOTO;
+    s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
     return funny_glasses_call(ifs3d_calc);
 }
 
@@ -1844,10 +1845,10 @@ static bool float_view_transf3d(ViewTransform3D *inf)
     }
 
     // 3D VIEWING TRANSFORM
-    id::vec_mat_mul(inf->orbit, inf->double_mat, inf->view_vect);
+    vec_mat_mul(inf->orbit, inf->double_mat, inf->view_vect);
     if (s_real_time)
     {
-        id::vec_mat_mul(inf->orbit, inf->double_mat1, inf->view_vect1);
+        vec_mat_mul(inf->orbit, inf->double_mat1, inf->view_vect1);
     }
 
     if (g_color_iter <= s_waste) // waste this many points to find minz and maxz
@@ -1867,21 +1868,21 @@ static bool float_view_transf3d(ViewTransform3D *inf)
         }
         if (g_color_iter == s_waste) // time to work it out
         {
-            id::g_view[0] = 0; // center on origin
-            id::g_view[1] = 0;
+            g_view[0] = 0; // center on origin
+            g_view[1] = 0;
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
-            id::g_view[2] = (inf->min_vals[2]-inf->max_vals[2])*(double)id::g_viewer_z/100.0;
+            g_view[2] = (inf->min_vals[2]-inf->max_vals[2])*(double)g_viewer_z/100.0;
 
             // center image on origin
             double tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
             double tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/(2.0); // center y
 
             // apply perspective shift
-            tmp_x += ((double)id::g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-            tmp_y += ((double)id::g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
+            tmp_x += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
+            tmp_y += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
             double tmp_z = -(inf->max_vals[2]);
-            id::trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
+            trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
 
             if (s_real_time)
             {
@@ -1889,28 +1890,28 @@ static bool float_view_transf3d(ViewTransform3D *inf)
                 tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
                 tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/(2.0); // center y
 
-                tmp_x += ((double)id::g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-                tmp_y += ((double)id::g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
+                tmp_x += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
+                tmp_y += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
                 tmp_z = -(inf->max_vals[2]);
-                id::trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
+                trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
             }
         }
         return false;
     }
 
     // apply perspective if requested
-    if (id::g_viewer_z)
+    if (g_viewer_z)
     {
-        id::perspective(inf->view_vect);
+        perspective(inf->view_vect);
         if (s_real_time)
         {
-            id::perspective(inf->view_vect1);
+            perspective(inf->view_vect1);
         }
     }
     inf->row = (int)(inf->cvt.c*inf->view_vect[0] + inf->cvt.d*inf->view_vect[1]
-                     + inf->cvt.f + id::g_yy_adjust);
+                     + inf->cvt.f + g_yy_adjust);
     inf->col = (int)(inf->cvt.a*inf->view_vect[0] + inf->cvt.b*inf->view_vect[1]
-                     + inf->cvt.e + id::g_xx_adjust);
+                     + inf->cvt.e + g_xx_adjust);
     if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= g_logical_screen_y_dots)
     {
         if ((long)std::abs(inf->col)+(long)std::abs(inf->row) > BAD_PIXEL)
@@ -1927,9 +1928,9 @@ static bool float_view_transf3d(ViewTransform3D *inf)
     if (s_real_time)
     {
         inf->row1 = (int)(inf->cvt.c*inf->view_vect1[0] + inf->cvt.d*inf->view_vect1[1]
-                          + inf->cvt.f + id::g_yy_adjust1);
+                          + inf->cvt.f + g_yy_adjust1);
         inf->col1 = (int)(inf->cvt.a*inf->view_vect1[0] + inf->cvt.b*inf->view_vect1[1]
-                          + inf->cvt.e + id::g_xx_adjust1);
+                          + inf->cvt.e + g_xx_adjust1);
         if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
         {
             if ((long)std::abs(inf->col1)+(long)std::abs(inf->row1) > BAD_PIXEL)
@@ -1951,7 +1952,7 @@ static std::FILE *open_orbit_save()
 {
     if (g_orbit_save_flags & OSF_RAW)
     {
-        std::string path{id::io::get_save_path(id::io::WriteFile::ORBIT, g_orbit_save_name).string()};
+        std::string path{get_save_path(WriteFile::ORBIT, g_orbit_save_name).string()};
         assert(!path.empty());
         check_write_file(path, ".raw");
         if (std::FILE *fp = std::fopen(path.c_str(), "w"); fp != nullptr)

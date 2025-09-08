@@ -23,6 +23,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::geometry;
 using namespace id::io;
 using namespace id::ui;
 
@@ -205,7 +206,7 @@ static void plot3d_superimpose16(int x, int y, int /*color*/)
             g_put_color(x, y, color);
             if (g_targa_out)
             {
-                id::targa_color(x, y, color);
+                targa_color(x, y, color);
             }
         }
     }
@@ -221,7 +222,7 @@ static void plot3d_superimpose16(int x, int y, int /*color*/)
             g_put_color(x, y, color);
             if (g_targa_out)
             {
-                id::targa_color(x, y, color);
+                targa_color(x, y, color);
             }
         }
     }
@@ -249,9 +250,9 @@ static void plot3d_superimpose256(int x, int y, int color)
             g_put_color(x, y, color|(tmp&240));
             if (g_targa_out)
             {
-                if (!id::illumine())
+                if (!illumine())
                 {
-                    id::targa_color(x, y, color|(tmp&240));
+                    targa_color(x, y, color|(tmp&240));
                 }
                 else
                 {
@@ -269,9 +270,9 @@ static void plot3d_superimpose256(int x, int y, int color)
             g_put_color(x, y, color|(tmp&15));
             if (g_targa_out)
             {
-                if (!id::illumine())
+                if (!illumine())
                 {
-                    id::targa_color(x, y, color|(tmp&15));
+                    targa_color(x, y, color|(tmp&15));
                 }
                 else
                 {
@@ -305,9 +306,9 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
             g_put_color(x, y, color|tmp);
             if (g_targa_out)
             {
-                if (!id::illumine())
+                if (!illumine())
                 {
-                    id::targa_color(x, y, color|tmp);
+                    targa_color(x, y, color|tmp);
                 }
                 else
                 {
@@ -324,9 +325,9 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
             g_put_color(x, y, color|tmp);
             if (g_targa_out)
             {
-                if (!id::illumine())
+                if (!illumine())
                 {
-                    id::targa_color(x, y, color|tmp);
+                    targa_color(x, y, color|tmp);
                 }
                 else
                 {
@@ -353,9 +354,9 @@ static void plot3d_alternate(int x, int y, int color)
             g_put_color(x, y, color >> 1);
             if (g_targa_out)
             {
-                if (!id::illumine())
+                if (!illumine())
                 {
-                    id::targa_color(x, y, color >> 1);
+                    targa_color(x, y, color >> 1);
                 }
                 else
                 {
@@ -371,9 +372,9 @@ static void plot3d_alternate(int x, int y, int color)
             g_put_color(x, y, (color >> 1)+(g_colors >> 1));
             if (g_targa_out)
             {
-                if (!id::illumine())
+                if (!illumine())
                 {
-                    id::targa_color(x, y, (color >> 1)+(g_colors >> 1));
+                    targa_color(x, y, (color >> 1)+(g_colors >> 1));
                 }
                 else
                 {
@@ -436,7 +437,7 @@ void plot_setup()
     switch (g_glasses_type)
     {
     case GlassesType::ALTERNATING:
-        id::g_standard_plot = plot3d_alternate;
+        g_standard_plot = plot3d_alternate;
         break;
 
     case GlassesType::SUPERIMPOSE:
@@ -444,50 +445,50 @@ void plot_setup()
         {
             if (g_fractal_type != FractalType::IFS_3D)
             {
-                id::g_standard_plot = plot3d_superimpose256;
+                g_standard_plot = plot3d_superimpose256;
             }
             else
             {
-                id::g_standard_plot = plot_ifs3d_superimpose256;
+                g_standard_plot = plot_ifs3d_superimpose256;
             }
         }
         else
         {
-            id::g_standard_plot = plot3d_superimpose16;
+            g_standard_plot = plot3d_superimpose16;
         }
         break;
 
     case GlassesType::STEREO_PAIR: // crosseyed mode
         if (g_screen_x_dots < 2*g_logical_screen_x_dots)
         {
-            if (id::g_x_rot == 0 && id::g_y_rot == 0)
+            if (g_x_rot == 0 && g_y_rot == 0)
             {
-                id::g_standard_plot = plot3d_cross_eyed_a; // use hidden surface kludge
+                g_standard_plot = plot3d_cross_eyed_a; // use hidden surface kludge
             }
             else
             {
-                id::g_standard_plot = plot3d_cross_eyed_b;
+                g_standard_plot = plot3d_cross_eyed_b;
             }
         }
-        else if (id::g_x_rot == 0 && id::g_y_rot == 0)
+        else if (g_x_rot == 0 && g_y_rot == 0)
         {
-            id::g_standard_plot = plot3d_cross_eyed_c; // use hidden surface kludge
+            g_standard_plot = plot3d_cross_eyed_c; // use hidden surface kludge
         }
         else
         {
-            id::g_standard_plot = g_put_color;
+            g_standard_plot = g_put_color;
         }
         break;
 
     default:
-        id::g_standard_plot = g_put_color;
+        g_standard_plot = g_put_color;
         break;
     }
 
-    id::g_x_shift = (int)((id::g_shift_x * (double)g_logical_screen_x_dots)/100);
-    g_x_shift1 = id::g_x_shift;
-    id::g_y_shift = (int)((id::g_shift_y * (double)g_logical_screen_y_dots)/100);
-    g_y_shift1 = id::g_y_shift;
+    g_x_shift = (int)((g_shift_x * (double)g_logical_screen_x_dots)/100);
+    g_x_shift1 = g_x_shift;
+    g_y_shift = (int)((g_shift_y * (double)g_logical_screen_y_dots)/100);
+    g_y_shift1 = g_y_shift;
 
     if (g_glasses_type != GlassesType::NONE)
     {
@@ -501,10 +502,10 @@ void plot_setup()
         switch (g_which_image)
         {
         case StereoImage::RED:
-            id::g_x_shift  += (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
-            id::g_xx_adjust = (int)(((g_adjust_3d_x+id::g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
+            g_x_shift  += (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
+            g_xx_adjust = (int)(((g_adjust_3d_x+g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             g_x_shift1 -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
-            g_xx_adjust1 = (int)(((g_adjust_3d_x-id::g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
+            g_xx_adjust1 = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2 - g_logical_screen_x_dots;
@@ -512,8 +513,8 @@ void plot_setup()
             break;
 
         case StereoImage::BLUE:
-            id::g_x_shift  -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
-            id::g_xx_adjust = (int)(((g_adjust_3d_x-id::g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
+            g_x_shift  -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
+            g_xx_adjust = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
             if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2;
@@ -526,9 +527,9 @@ void plot_setup()
     }
     else
     {
-        id::g_xx_adjust = (int)((g_adjust_3d_x* (double)g_logical_screen_x_dots)/100);
+        g_xx_adjust = (int)((g_adjust_3d_x* (double)g_logical_screen_x_dots)/100);
     }
-    id::g_yy_adjust = (int)(-(g_adjust_3d_y* (double)g_logical_screen_y_dots)/100);
+    g_yy_adjust = (int)(-(g_adjust_3d_y* (double)g_logical_screen_y_dots)/100);
 
     if (g_map_set)
     {

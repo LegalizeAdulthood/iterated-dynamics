@@ -64,6 +64,7 @@ using namespace id;
 using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::geometry;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
