@@ -10,6 +10,8 @@
 #include <cmath>
 #include <cstring>
 
+using namespace id::engine;
+
 namespace id
 {
 

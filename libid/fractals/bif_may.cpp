@@ -10,6 +10,8 @@
 
 #include <cmath>
 
+using namespace id::engine;
+
 namespace id::fractals
 {
 

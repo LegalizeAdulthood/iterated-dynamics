@@ -13,7 +13,7 @@ namespace id::fractals
 enum class FractalType;
 }
 
-namespace id
+namespace id::engine
 {
 
 constexpr double AUTO_INVERT = -123456.789;
@@ -175,4 +175,4 @@ void sym_plot4_basin(int x, int y, int color);
 void no_plot(int x, int y, int color);
 void sym_fill_line(int row, int left, int right, Byte *str);
 
-} // namespace id
+} // namespace id::engine

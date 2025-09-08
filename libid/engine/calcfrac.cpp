@@ -74,14 +74,13 @@
 #include <new>
 #include <vector>
 
-using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 constexpr double DEM_BAILOUT{535.5};
@@ -2932,4 +2931,4 @@ void no_plot(int /*x*/, int /*y*/, int /*color*/)
 {
 }
 
-} // namespace id
+} // namespace id::engine

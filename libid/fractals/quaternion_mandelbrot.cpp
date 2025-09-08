@@ -7,6 +7,8 @@
 #include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 
+using namespace id::engine;
+
 namespace id::fractals
 {
 

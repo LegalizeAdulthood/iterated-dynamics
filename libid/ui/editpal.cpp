@@ -35,6 +35,7 @@
 #include <system_error>
 #include <vector>
 
+using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 

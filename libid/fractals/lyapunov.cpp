@@ -18,6 +18,7 @@
 #include <cmath>
 #include <cstdlib>
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;

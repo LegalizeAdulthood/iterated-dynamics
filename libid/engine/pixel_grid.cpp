@@ -5,6 +5,8 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 
+using namespace id::engine;
+
 namespace id
 {
 
@@ -41,25 +43,25 @@ std::vector<double> g_grid_y1;
 // Real component, grid lookup version - requires dx0/dx1 arrays
 static double dx_pixel_grid()
 {
-    return g_grid_x0[id::g_col]+g_grid_x1[id::g_row];
+    return g_grid_x0[g_col]+g_grid_x1[g_row];
 }
 
 // Real component, calculation version - does not require arrays
 static double dx_pixel_calc()
 {
-    return (double)(g_x_min + id::g_col*g_delta_x + id::g_row*g_delta_x2);
+    return (double)(g_x_min + g_col*g_delta_x + g_row*g_delta_x2);
 }
 
 // Imaginary component, grid lookup version - requires dy0/dy1 arrays
 static double dy_pixel_grid()
 {
-    return g_grid_y0[id::g_row]+g_grid_y1[id::g_col];
+    return g_grid_y0[g_row]+g_grid_y1[g_col];
 }
 
 // Imaginary component, calculation version - does not require arrays
 static double dy_pixel_calc()
 {
-    return (double)(g_y_max - id::g_row*g_delta_y - id::g_col*g_delta_y2);
+    return (double)(g_y_max - g_row*g_delta_y - g_col*g_delta_y2);
 }
 
 double (*g_dx_pixel)(){dx_pixel_calc};

@@ -5,6 +5,7 @@
 #include "fractals/fractalp.h"
 #include "ui/check_key.h"
 
+using namespace id::engine;
 using namespace id::fractals;
 
 namespace id::ui

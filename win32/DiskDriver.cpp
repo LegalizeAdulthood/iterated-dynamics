@@ -22,7 +22,7 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
-using namespace id;
+using namespace id::engine;
 using namespace id::ui;
 
 namespace id::misc

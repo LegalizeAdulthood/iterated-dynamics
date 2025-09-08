@@ -17,6 +17,7 @@
 #include <cstdlib>
 #include <cstring>
 
+using namespace id::engine;
 using namespace id::misc;
 
 namespace id::ui

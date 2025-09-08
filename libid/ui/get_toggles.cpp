@@ -22,6 +22,7 @@
 #include <cstring>
 #include <string>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 

@@ -29,6 +29,8 @@ The sample code below is a straightforward Mandelbrot routine.
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
 
+using namespace id::engine;
+
 namespace id::fractals
 {
 

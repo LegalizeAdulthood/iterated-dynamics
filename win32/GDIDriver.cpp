@@ -24,6 +24,7 @@
 
 #include <array> // for std::size
 
+using namespace id::engine;
 using namespace id::ui;
 
 namespace id::misc

@@ -27,6 +27,7 @@
 
 #include <cstring>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;

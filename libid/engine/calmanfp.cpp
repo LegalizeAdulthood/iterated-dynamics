@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace id::engine;
 using namespace id::fractals;
 
 namespace id

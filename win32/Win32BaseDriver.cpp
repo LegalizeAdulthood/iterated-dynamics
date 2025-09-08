@@ -34,7 +34,7 @@
 #include <ctime>
 #include <filesystem>
 
-using namespace id;
+using namespace id::engine;
 using namespace id::io;
 using namespace id::ui;
 

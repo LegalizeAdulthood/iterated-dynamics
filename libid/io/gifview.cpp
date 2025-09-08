@@ -45,7 +45,7 @@
 #include <filesystem>
 #include <vector>
 
-using namespace id;
+using namespace id::engine;
 using namespace id::misc;
 using namespace id::ui;
 

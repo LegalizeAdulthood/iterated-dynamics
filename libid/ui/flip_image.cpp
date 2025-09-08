@@ -10,7 +10,7 @@
 #include "ui/video.h"
 #include "ui/zoom.h"
 
-using namespace id;
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;

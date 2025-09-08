@@ -56,6 +56,7 @@
 #include <stdexcept>
 #include <string>
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::ui;
 

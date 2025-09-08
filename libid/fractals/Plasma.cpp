@@ -19,6 +19,7 @@
 #include <algorithm>
 #include <cstdlib>
 
+using namespace id::engine;
 using namespace id::misc;
 using namespace id::ui;
 
