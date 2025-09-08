@@ -13,6 +13,7 @@
 
 using namespace id;
 using namespace id::misc;
+using namespace id::ui;
 using namespace testing;
 
 namespace

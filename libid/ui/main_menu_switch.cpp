@@ -50,11 +50,12 @@
 #include <iterator>
 #include <string>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static bool look(MainContext &context)
 {
@@ -696,3 +697,5 @@ MainState main_menu_switch(MainContext &context)
     // other (maybe a valid Fn key)
     return requested_video_fn(context);
 }
+
+} // namespace id::ui

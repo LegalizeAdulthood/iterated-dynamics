@@ -4,4 +4,9 @@
 
 #include "ui/main_state.h"
 
+namespace id::ui
+{
+
 MainState main_menu_switch(MainContext &context);
+
+} // namespace id::ui
