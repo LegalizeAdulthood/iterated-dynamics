@@ -34,10 +34,11 @@
 #include <cmath>
 #include <vector>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 constexpr double PIXEL_ROUND{0.00001};
 
@@ -1227,3 +1228,4 @@ MainState zoom_box_decrease_color(MainContext &/*context*/)
     return MainState::NOTHING;
 }
 
+} // namespace id::ui

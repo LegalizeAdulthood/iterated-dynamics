@@ -4,6 +4,9 @@
 
 #include "ui/main_state.h"
 
+namespace id::ui
+{
+
 struct Coord
 {
     int x;
@@ -35,18 +38,20 @@ void add_box(Coord point);
 void clear_box();
 void display_box();
 void clear_zoom_box();
-id::ui::MainState move_zoom_box(id::ui::MainContext &context);
+MainState move_zoom_box(MainContext &context);
 void reset_zoom_corners();
 
-id::ui::MainState request_zoom_in(id::ui::MainContext &context);
-id::ui::MainState request_zoom_out(id::ui::MainContext &context);
-id::ui::MainState skew_zoom_left(id::ui::MainContext &context);
-id::ui::MainState skew_zoom_right(id::ui::MainContext &context);
-id::ui::MainState decrease_zoom_aspect(id::ui::MainContext &context);
-id::ui::MainState increase_zoom_aspect(id::ui::MainContext &context);
-id::ui::MainState zoom_box_in(id::ui::MainContext &context);
-id::ui::MainState zoom_box_out(id::ui::MainContext &context);
-id::ui::MainState zoom_box_increase_rotation(id::ui::MainContext &context);
-id::ui::MainState zoom_box_decrease_rotation(id::ui::MainContext &context);
-id::ui::MainState zoom_box_increase_color(id::ui::MainContext &context);
-id::ui::MainState zoom_box_decrease_color(id::ui::MainContext &context);
+MainState request_zoom_in(MainContext &context);
+MainState request_zoom_out(MainContext &context);
+MainState skew_zoom_left(MainContext &context);
+MainState skew_zoom_right(MainContext &context);
+MainState decrease_zoom_aspect(MainContext &context);
+MainState increase_zoom_aspect(MainContext &context);
+MainState zoom_box_in(MainContext &context);
+MainState zoom_box_out(MainContext &context);
+MainState zoom_box_increase_rotation(MainContext &context);
+MainState zoom_box_decrease_rotation(MainContext &context);
+MainState zoom_box_increase_color(MainContext &context);
+MainState zoom_box_decrease_color(MainContext &context);
+
+} // namespace id::ui
