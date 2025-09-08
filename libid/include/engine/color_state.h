@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 enum class ColorState
@@ -14,4 +14,4 @@ enum class ColorState
 
 extern ColorState g_color_state;
 
-} // namespace id
+} // namespace id::engine
