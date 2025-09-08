@@ -16,6 +16,8 @@
 #include <array>
 #include <cassert>
 
+using namespace id::ui;
+
 wxIMPLEMENT_APP(IdApp);
 
 bool IdApp::OnInit()
@@ -29,7 +31,7 @@ bool IdApp::OnInit()
 
 int IdApp::OnRun()
 {
-    return id::ui::id_main(argc, argv);
+    return id_main(argc, argv);
 }
 
 void IdApp::create_window()

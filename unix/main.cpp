@@ -2,7 +2,9 @@
 //
 #include <ui/id_main.h>
 
+using namespace id::ui;
+
 int main(int argc, char *argv[])
 {
-    return id::ui::id_main(argc, argv);
+    return id_main(argc, argv);
 }
