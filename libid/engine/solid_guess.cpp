@@ -14,11 +14,10 @@
 #include <algorithm>
 #include <cstring>
 
-using namespace id::engine;
 using namespace id::misc;
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 // MAX_X_BLK defn must match fracsubr.c
@@ -716,4 +715,4 @@ int solid_guess()
     return sg.scan();
 }
 
-} // namespace id
+} // namespace id::engine
