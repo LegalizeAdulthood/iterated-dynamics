@@ -13,6 +13,7 @@
 #include "ui/video.h"
 
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id
 {

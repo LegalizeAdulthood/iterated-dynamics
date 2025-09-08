@@ -17,9 +17,11 @@
 #include <ctime>
 #include <string>
 
-using namespace id;
 using namespace id::io;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int g_fm_attack{};
 int g_fm_decay{};
@@ -99,3 +101,5 @@ void close_sound()
     }
     s_snd_fp = nullptr;
 }
+
+} // namespace id::ui

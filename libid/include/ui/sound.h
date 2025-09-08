@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 extern int                   g_fm_attack;
 extern int                   g_fm_decay;
 extern int                   g_fm_release;
@@ -16,3 +19,5 @@ bool sound_open();
 void write_sound(int tone);
 void sound_time_write();
 void close_sound();
+
+} // namespace id::ui
