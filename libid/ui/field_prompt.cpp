@@ -11,7 +11,7 @@
 
 #include <algorithm>
 
-using namespace id;
+using namespace id::engine;
 using namespace id::misc;
 
 namespace id::ui

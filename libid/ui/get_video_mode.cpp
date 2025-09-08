@@ -40,6 +40,7 @@
 #include <string>
 #include <vector>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;

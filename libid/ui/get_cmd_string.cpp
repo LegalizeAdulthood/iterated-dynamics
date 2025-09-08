@@ -10,6 +10,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/field_prompt.h"
 
+using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 

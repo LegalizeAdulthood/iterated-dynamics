@@ -29,6 +29,7 @@
 #include <cstring>
 #include <ctime>
 
+using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 

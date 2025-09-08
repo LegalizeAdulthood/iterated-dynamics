@@ -13,6 +13,8 @@
 
 namespace fs = std::filesystem;
 
+using namespace id::engine;
+
 namespace id::io
 {
 

@@ -29,6 +29,7 @@
 #include <string>
 #include <vector>
 
+using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
 

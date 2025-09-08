@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 
+using namespace id::engine;
 using namespace id::io;
 using namespace id::math;
 using namespace id::ui;

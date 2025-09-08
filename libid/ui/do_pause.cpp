@@ -8,6 +8,7 @@
 #include "ui/goodbye.h"
 #include "ui/id_keys.h"
 
+using namespace id::engine;
 using namespace id::misc;
 
 namespace id::ui

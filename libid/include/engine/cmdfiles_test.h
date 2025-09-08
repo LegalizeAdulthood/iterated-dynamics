@@ -7,7 +7,7 @@
 
 #include <functional>
 
-namespace id::cmd_files_test
+namespace id::engine::cmd_files_test
 {
 
 // To facilitate testing
@@ -26,4 +26,4 @@ using PrintDocFn = std::function<PrintDoc>;
 PrintDocFn get_print_document();
 void set_print_document(const PrintDocFn &fn);
 
-} // namespace cmd_arg
+} // namespace id::engine::cmd_files_test

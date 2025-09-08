@@ -16,6 +16,7 @@
 namespace fs = std::filesystem;
 
 using namespace id;
+using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::test;

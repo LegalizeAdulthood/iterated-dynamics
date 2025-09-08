@@ -7,6 +7,6 @@
 namespace id::ui
 {
 
-CmdArgFlags get_commands();
+engine::CmdArgFlags get_commands();
 
 } // namespace id::ui

@@ -18,6 +18,7 @@
 #include <cstdio>
 #include <cstring>
 
+using namespace id::engine;
 using namespace id::ui;
 
 namespace id::io

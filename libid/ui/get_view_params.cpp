@@ -20,6 +20,7 @@
 #include <cstring>
 #include <iterator>
 
+using namespace id::engine;
 using namespace id::misc;
 
 namespace id::ui
