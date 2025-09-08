@@ -2,9 +2,9 @@
 //
 #pragma once
 
-namespace id
+namespace id::ui
 {
 
 int id_main(int argc, char *argv[]);
 
-} // namespace id
+} // namespace id::ui

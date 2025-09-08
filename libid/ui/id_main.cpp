@@ -459,6 +459,9 @@ static void set_search_dirs()
     }
 }
 
+namespace ui
+{
+
 int id_main(int argc, char *argv[])
 {
     set_search_dirs();
@@ -521,4 +524,5 @@ int id_main(int argc, char *argv[])
     return 0;
 }
 
+} // namespace ui
 } // namespace id
