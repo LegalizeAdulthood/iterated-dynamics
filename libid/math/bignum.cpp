@@ -143,6 +143,9 @@ double wide number can then be ignored.
 
 using namespace id::misc;
 
+namespace id::math
+{
+
 /*************************************************************************
 * The original bignumber code was written specifically for a Little Endian
 * system (80x86).  The following is not particularly efficient, but was
@@ -1437,3 +1440,5 @@ bool is_bn_zero(BigNum n)
 {
     return !is_bn_not_zero(n);
 }
+
+} // namespace id::math

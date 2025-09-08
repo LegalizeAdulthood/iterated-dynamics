@@ -8,6 +8,9 @@
 
 #include <config/port.h>
 
+namespace id::math
+{
+
 // Number of bytes to use for integer part for fixed decimal math,
 // does not affect floating point math at all.
 enum
@@ -305,3 +308,5 @@ extern BigFloat g_bf_save_y_max;
 extern BigFloat g_bf_save_x_3rd;
 extern BigFloat g_bf_save_y_3rd;
 extern BigFloat g_bf_params[10];                                 // (g_bf_length+2)*10
+
+} // namespace id::math

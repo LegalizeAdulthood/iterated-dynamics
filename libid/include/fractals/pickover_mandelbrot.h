@@ -14,7 +14,7 @@ int mandel_trig_plus_exponent_orbit();
 int mandel_z_power_orbit();
 void pascal_triangle();
 void mandel_z_power_ref_pt(const std::complex<double> &center, std::complex<double> &z);
-void mandel_z_power_ref_pt_bf(const BFComplex &center, BFComplex &z);
+void mandel_z_power_ref_pt_bf(const math::BFComplex &center, math::BFComplex &z);
 void mandel_z_power_perturb(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 

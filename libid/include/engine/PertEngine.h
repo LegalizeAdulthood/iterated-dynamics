@@ -15,12 +15,13 @@ namespace id
 class PertEngine
 {
 public:
-    void initialize_frame(const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
+    void initialize_frame(
+        const math::BFComplex &center_bf, const std::complex<double> &center, double zoom_radius);
     int calculate_one_frame();
 
 private:
     int calculate_point(const Point &pt, double magnified_radius, int window_radius);
-    void reference_zoom_point(const BFComplex &center, int max_iteration);
+    void reference_zoom_point(const math::BFComplex &center, int max_iteration);
     void reference_zoom_point(const std::complex<double> &center, int max_iteration);
     void cleanup();
 
@@ -33,7 +34,7 @@ private:
     std::vector<Point> m_glitch_points;
     long m_glitch_point_count{};
     long m_remaining_point_count{};
-    BFComplex m_center_bf{};
+    math::BFComplex m_center_bf{};
     std::complex<double> m_center{};
     double m_zoom_radius{};
     bool m_calculate_glitches{true};

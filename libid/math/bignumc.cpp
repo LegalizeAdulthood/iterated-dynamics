@@ -14,6 +14,9 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 
 using namespace id::misc;
 
+namespace id::math
+{
+
 /********************************************************************
  The following code contains the C versions of the routines from the
  file BIGNUMA.ASM.  It is provided here for portibility and for clarity.
@@ -989,3 +992,5 @@ LDouble scale256(LDouble f, int n)
 {
     return scale_value(f, 256, n);
 }
+
+} // namespace id::math

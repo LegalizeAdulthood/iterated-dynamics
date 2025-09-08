@@ -23,6 +23,7 @@
 
 #include <cmath>
 
+using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;
 

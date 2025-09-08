@@ -25,6 +25,9 @@ using namespace id;
 using namespace id::fractals;
 using namespace id::ui;
 
+namespace id::math
+{
+
 // globals
 int g_bn_step{};
 int g_bn_length{};
@@ -608,3 +611,5 @@ void init_big_pi()
     g_bf_pi = g_big_pi;
     g_bn_pi = g_big_pi + (g_bf_length-2) - (g_bn_length-g_int_length);
 }
+
+} // namespace id::math

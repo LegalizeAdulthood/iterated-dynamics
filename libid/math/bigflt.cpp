@@ -16,6 +16,9 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 
 using namespace id::misc;
 
+namespace id::math
+{
+
 /********************************************************************/
 // bf_hexdump() - for debugging, dumps to stdout
 
@@ -2359,3 +2362,5 @@ char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
     *s = '\0'; // terminating nul
     return s;
 }
+
+} // namespace id::math

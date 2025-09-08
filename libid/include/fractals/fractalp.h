@@ -17,11 +17,11 @@ namespace id::fractals
 
 struct AlternateMath
 {
-    FractalType type;    // index in fractalname of the fractal
-    BFMathType math;     // kind of math used
-    int (*orbit_calc)(); // function that calculates one orbit
-    int (*per_pixel)();  // once-per-pixel init
-    bool (*per_image)(); // once-per-image setup
+    FractalType type;      // index in fractalname of the fractal
+    math::BFMathType math; // kind of math used
+    int (*orbit_calc)();   // function that calculates one orbit
+    int (*per_pixel)();    // once-per-pixel init
+    bool (*per_image)();   // once-per-image setup
 };
 
 struct MoreParams
@@ -86,7 +86,7 @@ inline bool bit_clear(FractalFlags value, FractalFlags bit)
 }
 
 using PerturbationReference = void(const std::complex<double> &center, std::complex<double> &z);
-using PerturbationReferenceBF = void(const BFComplex &center, BFComplex &z);
+using PerturbationReferenceBF = void(const math::BFComplex &center, math::BFComplex &z);
 using PerturbationPoint = void(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 

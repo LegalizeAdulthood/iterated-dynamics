@@ -6,6 +6,9 @@
 
 #include <stddef.h>
 
+namespace id::math
+{
+
 extern int g_bf_save_len;
 extern long g_bignum_max_stack_addr;
 extern long g_max_stack;
@@ -38,3 +41,5 @@ public:
 private:
     int m_offset;
 };
+
+} // namespace id::math
