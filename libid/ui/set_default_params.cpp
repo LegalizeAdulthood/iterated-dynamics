@@ -12,10 +12,12 @@
 #include "misc/debug_flags.h"
 #include "ui/zoom.h"
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 namespace
 {
@@ -107,3 +109,5 @@ void restore_params()
     }
     g_calc_status = s_saved_params.calc_status;
 }
+
+} // namespace id::ui

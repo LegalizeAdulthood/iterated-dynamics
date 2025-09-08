@@ -2,6 +2,11 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 void set_default_params();
 void save_params();
 void restore_params();
+
+} // namespace id::ui
