@@ -4,4 +4,9 @@
 
 #include "fractals/fractype.h"
 
-void load_params(id::fractals::FractalType type);
+namespace id::ui
+{
+
+void load_params(fractals::FractalType type);
+
+} // namespace id::ui

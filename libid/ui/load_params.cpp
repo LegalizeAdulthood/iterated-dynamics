@@ -6,8 +6,10 @@
 #include "engine/id_data.h"
 #include "fractals/fractalp.h"
 
-using namespace id;
 using namespace id::fractals;
+
+namespace id::ui
+{
 
 void load_params(FractalType type)
 {
@@ -23,3 +25,5 @@ void load_params(FractalType type)
         }
     }
 }
+
+} // namespace id::ui
