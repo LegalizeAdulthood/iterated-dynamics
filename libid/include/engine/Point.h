@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 class Point
@@ -45,4 +45,4 @@ private:
     int m_iteration{-1};
 };
 
-} // namespace id
+} // namespace id::engine
