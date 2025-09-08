@@ -54,8 +54,6 @@ private:
     mutable wxSize m_fixed_size{};
 };
 
-wxIMPLEMENT_APP(TestTextScreenApp);
-
 bool TestTextScreenApp::OnInit()
 {
     TextScreenFrame *frame = new TextScreenFrame("TextScreen Control Test");
@@ -205,3 +203,5 @@ void TextScreenFrame::on_exit(wxCommandEvent & /*event*/)
 }
 
 } // namespace id::gui
+
+wxIMPLEMENT_APP(id::gui::TestTextScreenApp);

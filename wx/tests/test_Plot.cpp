@@ -33,8 +33,6 @@ private:
     mutable wxSize m_fixed_size{};
 };
 
-wxIMPLEMENT_APP(TestPlotApp);
-
 bool TestPlotApp::OnInit()
 {
     TestPlotFrame *frame = new TestPlotFrame("Plot Control Test");
@@ -137,3 +135,5 @@ void TestPlotFrame::on_exit(wxCommandEvent & /*event*/)
 }
 
 } // namespace id::gui
+
+wxIMPLEMENT_APP(id::gui::TestPlotApp);
