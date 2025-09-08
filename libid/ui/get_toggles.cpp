@@ -22,10 +22,11 @@
 #include <cstring>
 #include <string>
 
-using namespace id;
 using namespace id::fractals;
 using namespace id::io;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 /*
         get_toggles() is called whenever the 'x' key is pressed.
@@ -417,3 +418,5 @@ int get_toggles()
 
     return j;
 }
+
+} // namespace id::ui
