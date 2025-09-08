@@ -49,6 +49,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::geometry;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -883,7 +884,7 @@ resumeloop:                             // return here on failed overlays
 static int call_line3d(Byte *pixels, int line_len)
 {
     // this routine exists because line3d might be in an overlay
-    return id::line3d(pixels, line_len);
+    return line3d(pixels, line_len);
 }
 
 // displays differences between current image file and new image

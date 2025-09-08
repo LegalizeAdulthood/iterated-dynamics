@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <string>
 
-namespace id
+namespace id::geometry
 {
 
 enum class RayTraceFormat
@@ -53,4 +53,4 @@ int targa_color(int x, int y, int color);
 bool start_targa_overlay(const std::string &path, std::FILE *source);
 bool start_targa(const std::string &path);
 
-} // namespace id
+} // namespace id::geometry

@@ -41,12 +41,11 @@
 #include <vector>
 
 using namespace id::engine;
-using namespace id::geometry;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::ui;
 
-namespace id
+namespace id::geometry
 {
 
 template <typename T>
@@ -2862,4 +2861,4 @@ static int line3d_mem()
     return 0;
 }
 
-} // namespace id
+} // namespace id::geometry
