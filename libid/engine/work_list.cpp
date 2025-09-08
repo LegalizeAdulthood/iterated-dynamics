@@ -4,7 +4,7 @@
 
 using namespace id::math;
 
-namespace id
+namespace id::engine
 {
 
 int g_num_work_list{}; // resume work list for standard engine
@@ -141,4 +141,4 @@ void tidy_work_list()
     }
 }
 
-} // namespace id
+} // namespace id::engine

@@ -4,7 +4,7 @@
 
 #include "math/Point.h"
 
-namespace id
+namespace id::engine
 {
 
 enum
@@ -32,4 +32,4 @@ bool add_work_list(int x_from, int y_from, //
     int pass, int symmetry);
 void tidy_work_list();
 
-} // namespace id
+} // namespace id::engine
