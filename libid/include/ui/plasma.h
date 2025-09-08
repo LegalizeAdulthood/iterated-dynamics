@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int plasma_type();
+
+} // namespace id::ui

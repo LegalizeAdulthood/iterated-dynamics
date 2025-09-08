@@ -8,8 +8,11 @@
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
 
-using namespace id;
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int plasma_type()
 {
@@ -19,7 +22,7 @@ int plasma_type()
         return -1;
     }
 
-    id::fractals::Plasma plasma;
+    Plasma plasma;
     while (!plasma.done())
     {
         if (driver_key_pressed())
@@ -32,3 +35,5 @@ int plasma_type()
 
     return 0;
 }
+
+} // namespace id::ui
