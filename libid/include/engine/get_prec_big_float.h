@@ -4,11 +4,11 @@
 
 #include "math/big.h"
 
-namespace id
+namespace id::engine
 {
 
 int get_prec_bf(math::ResolutionFlag flag);
 int get_prec_bf_mag();
 int get_magnification_precision(LDouble magnification);
 
-} // namespace id
+} // namespace id::engine

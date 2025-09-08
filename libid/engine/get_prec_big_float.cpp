@@ -15,11 +15,10 @@
 #include <cfloat>
 #include <cmath>
 
-using namespace id::engine;
 using namespace id::math;
 using namespace id::misc;
 
-namespace id
+namespace id::engine
 {
 
 int get_prec_bf_mag()
@@ -130,4 +129,4 @@ int get_magnification_precision(LDouble magnification)
     return get_power10(magnification) + 4; // 4 digits of padding sounds good
 }
 
-} // namespace id
+} // namespace id::engine

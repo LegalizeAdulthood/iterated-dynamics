@@ -6,7 +6,7 @@
 
 #include <limits>
 
-using namespace id;
+using namespace id::engine;
 
 TEST(TestGetMagnificationPrecision, basicAssertions)
 {
