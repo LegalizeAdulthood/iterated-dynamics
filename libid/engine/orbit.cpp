@@ -12,11 +12,10 @@
 #include "ui/sound.h"
 #include "ui/video.h"
 
-using namespace id::engine;
 using namespace id::misc;
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 static void plot_d_orbit(double dx, double dy, int color);
@@ -144,4 +143,4 @@ void scrub_orbit()
     }
 }
 
-} // namespace id
+} // namespace id::engine
