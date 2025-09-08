@@ -20,6 +20,7 @@
 
 using namespace id::io;
 using namespace id::math;
+using namespace id::ui;
 
 namespace id::fractals
 {

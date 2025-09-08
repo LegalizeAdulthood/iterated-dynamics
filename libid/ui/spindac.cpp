@@ -9,9 +9,10 @@
 
 #include <cstring>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 int g_dac_count{};
 bool g_is_true_color{};
@@ -61,3 +62,5 @@ void spin_dac(int dir, int inc)
     driver_write_palette();
     driver_delay(g_colors - g_dac_count - 1);
 }
+
+} // namespace id::ui
