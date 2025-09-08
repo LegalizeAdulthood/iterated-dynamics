@@ -10,6 +10,9 @@
 #include <string>
 #include <vector>
 
+namespace id::misc
+{
+
 struct Plot
 {
     int init(HINSTANCE instance, LPCSTR title);
@@ -72,3 +75,5 @@ private:
     int m_height{};
     unsigned char m_clut[256][3]{};
 };
+
+} // namespace id::misc

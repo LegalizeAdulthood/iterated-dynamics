@@ -13,13 +13,16 @@
 #include <stdexcept>
 #include <string>
 
+namespace id::misc
+{
+
 enum
 {
     TIMER_ID = 1
 };
 
-#if defined(RT_VERBOSE)
-static int carrot_count = 0;
+#if defined(ID_VERBOSE)
+static int caret_count = 0;
 #endif
 
 /*
@@ -324,7 +327,7 @@ void WinText::on_set_focus(HWND window, HWND old_focus)
         CreateCaret(m_window, m_bitmap[m_cursor_type], m_char_width, m_char_height);
         SetCaretPos(m_cursor_x*m_char_width, m_cursor_y*m_char_height);
         //SetCaretBlinkTime(500);
-        ODS3("======================== Show Caret %d #3 (%d,%d)", ++carrot_count, g_me->cursor_x*g_me->char_width, g_me->cursor_y*g_me->char_height);
+        ODS3("======================== Show Caret %d #3 (%d,%d)", ++caret_count, g_me->cursor_x*g_me->char_width, g_me->cursor_y*g_me->char_height);
         ShowCaret(m_window);
     }
 }
@@ -336,7 +339,7 @@ void WinText::on_kill_focus(HWND window, HWND old_focus)
     if (TRUE == m_showing_cursor)
     {
         m_cursor_owned = false;
-        ODS1("======================== Hide Caret %d", --carrot_count);
+        ODS1("======================== Hide Caret %d", --caret_count);
         HideCaret(window);
         DestroyCaret();
     }
@@ -576,7 +579,7 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
 
     if (TRUE == m_showing_cursor)
     {
-        ODS1("======================== Hide Caret %d", --carrot_count);
+        ODS1("======================== Hide Caret %d", --caret_count);
         HideCaret(m_window);
     }
 
@@ -624,7 +627,7 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
 
     if (TRUE == m_showing_cursor)
     {
-        ODS1("======================== Show Caret %d", ++carrot_count);
+        ODS1("======================== Show Caret %d", ++caret_count);
         ShowCaret(m_window);
     }
 
@@ -657,7 +660,7 @@ void WinText::cursor(int x_pos, int y_pos, int cursor_type)
         CreateCaret(m_window, m_bitmap[m_cursor_type],
                     m_char_width, m_char_height);
         SetCaretPos(x, y);
-        ODS3("======================== Show Caret %d #2 (%d,%d)", ++carrot_count, x, y);
+        ODS3("======================== Show Caret %d #2 (%d,%d)", ++caret_count, x, y);
         ShowCaret(m_window);
         m_showing_cursor = TRUE;
     }
@@ -751,3 +754,5 @@ void WinText::resume()
 {
     s_me = this;
 }
+
+} // namespace id::misc

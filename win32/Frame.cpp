@@ -19,8 +19,10 @@
 #include <cctype>
 #include <stdexcept>
 
-using namespace id::misc;
 using namespace id::ui;
+
+namespace id::misc
+{
 
 Frame g_frame{};
 
@@ -813,3 +815,5 @@ void Frame::set_keyboard_timeout(int ms)
         throw std::runtime_error("SetTimer failed: " + std::to_string(error));
     }
 }
+
+} // namespace id::misc

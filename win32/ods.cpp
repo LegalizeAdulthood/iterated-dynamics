@@ -8,6 +8,9 @@
 #include <cstdarg>
 #include <cstdio>
 
+namespace id::misc
+{
+
 /* ods
  *
  * varargs version of OutputDebugString with file and line markers.
@@ -25,3 +28,5 @@ void ods(const char *file, unsigned int line, const char *format, ...)
 
     OutputDebugStringA(full_msg);
 }
+
+} // namespace id::misc

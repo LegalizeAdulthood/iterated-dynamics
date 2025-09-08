@@ -5,4 +5,9 @@
 #include "win_defines.h"
 #include <Windows.h>
 
+namespace id::misc
+{
+
 void create_minidump(EXCEPTION_POINTERS *ep);
+
+} // namespace id::misc

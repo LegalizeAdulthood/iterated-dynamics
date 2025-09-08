@@ -10,6 +10,9 @@
 #include <array>
 #include <string>
 
+namespace id::misc
+{
+
 class Frame
 {
 public:
@@ -92,3 +95,5 @@ private:
 };
 
 extern Frame g_frame;
+
+} // namespace id::misc

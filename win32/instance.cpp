@@ -2,4 +2,9 @@
 //
 #include "instance.h"
 
+namespace id::misc
+{
+
 HINSTANCE g_instance{};
+
+} // namespace id::misc

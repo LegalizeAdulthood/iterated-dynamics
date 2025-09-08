@@ -19,6 +19,9 @@ using namespace id::engine;
 using namespace id::io;
 using namespace id::ui;
 
+namespace id::misc
+{
+
 /* Global functions
  *
  * These were either copied from a .c file under unix, or
@@ -99,3 +102,5 @@ void create_minidump(EXCEPTION_POINTERS *ep)
         MessageBoxA(nullptr, msg, ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
     }
 }
+
+} // namespace id::misc

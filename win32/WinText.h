@@ -9,6 +9,9 @@
 
 #include <array>
 
+namespace id::misc
+{
+
 enum
 {
     WINTEXT_MAX_COL = 80,
@@ -103,3 +106,5 @@ private:
     HWND m_parent{};
     HINSTANCE m_instance{};
 };
+
+} // namespace id::misc

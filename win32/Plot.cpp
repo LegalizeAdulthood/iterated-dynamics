@@ -19,6 +19,9 @@ using namespace id::engine;
 using namespace id::geometry;
 using namespace id::ui;
 
+namespace id::misc
+{
+
 enum
 {
     PLOT_TIMER_ID = 1
@@ -614,3 +617,5 @@ void Plot::restore_graphics()
     m_pixels = m_saved_pixels;
     redraw();
 }
+
+} // namespace id::misc

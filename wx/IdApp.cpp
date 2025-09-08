@@ -16,6 +16,7 @@
 #include <array>
 #include <cassert>
 
+using namespace id::misc;
 using namespace id::ui;
 
 namespace id::gui

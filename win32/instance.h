@@ -9,4 +9,9 @@
 using HINSTANCE = void *; // Dummy definition for non-Windows platforms
 #endif
 
+namespace id::misc
+{
+
 extern HINSTANCE g_instance;
+
+} // namespace id::misc
