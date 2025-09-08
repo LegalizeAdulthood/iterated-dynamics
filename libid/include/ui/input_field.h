@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 enum class InputFieldFlags
 {
     NONE = 0,
@@ -39,3 +42,5 @@ inline bool bit_set(InputFieldFlags value, InputFieldFlags flags)
 int input_field(InputFieldFlags options, int attr, char *fld, int len, //
     int row, int col,                                                  //
     int (*check_key)(int key));
+
+} // namespace id::ui
