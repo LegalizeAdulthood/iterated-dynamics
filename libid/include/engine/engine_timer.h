@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 extern bool                  g_timer_flag;
@@ -13,4 +13,4 @@ void engine_timer(int (*fn)());
 int encoder_timer();
 int decoder_timer(int width);
 
-} // namespace id
+} // namespace id::engine

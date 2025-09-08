@@ -20,7 +20,7 @@ using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
 
-namespace id
+namespace id::engine
 {
 
 bool g_timer_flag{};         // you didn't see this, either
@@ -122,4 +122,4 @@ int decoder_timer(int width)
     return timer(TimerType::DECODER, nullptr, width);
 }
 
-} // namespace id
+} // namespace id::engine
