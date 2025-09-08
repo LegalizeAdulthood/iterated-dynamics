@@ -5,9 +5,10 @@
 #include "fractals/fractalp.h"
 #include "ui/check_key.h"
 
-using namespace id;
 using namespace id::fractals;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 int inverse_julia_fractal_type()
 {
@@ -31,3 +32,5 @@ int inverse_julia_fractal_type()
     free_queue();
     return 0;
 }
+
+} // namespace id::ui

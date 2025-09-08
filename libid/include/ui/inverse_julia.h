@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int inverse_julia_fractal_type();
+
+} // namespace id::ui
