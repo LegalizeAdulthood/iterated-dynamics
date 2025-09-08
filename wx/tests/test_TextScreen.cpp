@@ -5,6 +5,9 @@
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
 
+namespace id::wx
+{
+
 enum class MarginIndex
 {
     LINE_NUMBER = 0,
@@ -45,7 +48,7 @@ private:
     wxSize calculate_frame_size() const;
 
     wxMenuItem *m_view_lines{};
-    ui::TextScreen *m_text_screen{};
+    TextScreen *m_text_screen{};
     int m_line_margin_width{};
     bool m_show_lines{true};
     mutable wxSize m_fixed_size{};
@@ -63,7 +66,7 @@ bool TestTextScreenApp::OnInit()
 TextScreenFrame::TextScreenFrame(const wxString &title) :
     wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
         wxDEFAULT_FRAME_STYLE & ~(wxRESIZE_BORDER | wxMAXIMIZE_BOX)),
-    m_text_screen(new ui::TextScreen(this, wxID_ANY)),
+    m_text_screen(new TextScreen(this, wxID_ANY)),
     m_fixed_size(calculate_frame_size())
 {
     wxMenuBar *menu_bar = new wxMenuBar;
@@ -200,3 +203,5 @@ void TextScreenFrame::on_exit(wxCommandEvent & /*event*/)
 {
     Close(true);
 }
+
+} // namespace id::wx

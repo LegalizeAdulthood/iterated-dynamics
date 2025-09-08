@@ -7,7 +7,7 @@
 
 #include <array>
 
-namespace ui
+namespace id::wx
 {
 
 // CGA color constants
@@ -140,4 +140,4 @@ private:
     mutable wxSize m_fixed_size{};
 };
 
-} // namespace ui
+} // namespace id::wx
