@@ -14,10 +14,9 @@
 #include <stdexcept>
 #include <string>
 
-using namespace id::engine;
 using namespace id::math;
 
-namespace id
+namespace id::engine
 {
 
 static PertEngine s_pert_engine;
@@ -66,4 +65,4 @@ bool perturbation()
     return false;
 }
 
-} // namespace id
+} // namespace id::engine
