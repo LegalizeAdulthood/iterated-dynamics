@@ -2,7 +2,7 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 void calc_frac_init();
@@ -10,4 +10,4 @@ void adjust_corner();
 void adjust_corner_bf();
 void fractal_float_to_bf();
 
-} // namespace id
+} // namespace id::engine

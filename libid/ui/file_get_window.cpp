@@ -35,7 +35,7 @@
 
 #include <filesystem>
 
-using namespace id;
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
@@ -162,7 +162,7 @@ int file_get_window()
     if (s_old_bf_math == BFMathType::NONE)
     {
         CalcStatus old_calc_status = g_calc_status; // kludge because next sets it = 0
-        id::fractal_float_to_bf();
+        fractal_float_to_bf();
         g_calc_status = old_calc_status;
     }
     saved = save_stack();

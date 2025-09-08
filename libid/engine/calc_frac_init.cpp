@@ -35,7 +35,7 @@ using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 static void adjust_to_limits(double expand);
@@ -913,4 +913,4 @@ static bool ratio_bad(double actual, double desired)
     return false;
 }
 
-} // namespace id
+} // namespace id::engine

@@ -23,6 +23,7 @@
 #include <cmath>
 #include <cstdlib>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
@@ -159,7 +160,7 @@ gc_loop:
         }
         if (g_bf_math != BFMathType::NONE)
         {
-            id::fractal_float_to_bf();
+            fractal_float_to_bf();
         }
         goto gc_loop;
     }

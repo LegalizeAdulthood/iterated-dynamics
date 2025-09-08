@@ -12,6 +12,7 @@
 #include "misc/debug_flags.h"
 #include "ui/zoom.h"
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
@@ -76,7 +77,7 @@ void set_default_params()
     }
     else if (g_bf_math != BFMathType::NONE)
     {
-        id::fractal_float_to_bf();
+        fractal_float_to_bf();
     }
 }
 

@@ -47,6 +47,7 @@
 #include <cstring>
 #include <ctime>
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::io;
 using namespace id::math;
@@ -532,7 +533,7 @@ MainState big_while_loop(MainContext &context)
         g_zoom_enabled = !driver_is_disk() && !bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM);
         if (g_evolving == EvolutionModeFlags::NONE)
         {
-            id::calc_frac_init();
+            calc_frac_init();
         }
         driver_schedule_alarm(1);
 
@@ -642,7 +643,7 @@ MainState big_while_loop(MainContext &context)
                     g_logical_screen_y_offset = tmp_y_dots * g_evolve_param_grid_y;
                     restore_param_history();
                     fiddle_params(gene, count);
-                    id::calc_frac_init();
+                    calc_frac_init();
                     if (calc_fract() == -1)
                     {
                         goto done;
