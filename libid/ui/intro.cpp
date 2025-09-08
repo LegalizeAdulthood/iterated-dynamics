@@ -22,6 +22,7 @@
 #include <vector>
 
 using namespace id::engine;
+using namespace id::help;
 using namespace id::misc;
 
 namespace id::ui
@@ -39,11 +40,11 @@ void intro()
 
     g_engine_timer_start -= std::clock();       // "time out" during help
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
-    ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_MENU};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_MENU};
 
-    int i = 32767 + id::help::read_help_topic(id::help::HelpLabels::INTRO_AUTHORS, 0, 32767, screen_text);
+    int i = 32767 + read_help_topic(HelpLabels::INTRO_AUTHORS, 0, 32767, screen_text);
     screen_text[i] = '\0';
-    i = 32767 + id::help::read_help_topic(id::help::HelpLabels::INTRO_CREDITS, 0, 32767, credits);
+    i = 32767 + read_help_topic(HelpLabels::INTRO_CREDITS, 0, 32767, credits);
     credits[i] = '\0';
 
     int j = 0;

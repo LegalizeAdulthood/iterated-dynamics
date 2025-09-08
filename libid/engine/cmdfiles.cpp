@@ -89,6 +89,7 @@ namespace fs = std::filesystem;
 using namespace id::config;
 using namespace id::fractals;
 using namespace id::geometry;
+using namespace id::help;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -792,7 +793,7 @@ namespace cmd_files_test
 
 static StopMsgFn s_stop_msg{static_cast<StopMsg *>(stop_msg)};
 static GoodbyeFn s_goodbye{goodbye};
-static PrintDocFn s_print_document{help::print_document};
+static PrintDocFn s_print_document{print_document};
 
 StopMsgFn get_stop_msg()
 {
@@ -1092,7 +1093,7 @@ static CmdArgFlags cmd_make_doc(const Command &cmd)
     std::string file{*cmd.value ? cmd.value : "id.txt"};
     driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, "Save name: " + file);
     driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Status:");
-    cmd_files_test::s_print_document(file.c_str(), help::make_doc_msg_func);
+    cmd_files_test::s_print_document(file.c_str(), make_doc_msg_func);
     cmd_files_test::s_goodbye();
     return CmdArgFlags::GOODBYE;
 }

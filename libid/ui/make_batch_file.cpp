@@ -71,6 +71,7 @@ using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::geometry;
+using namespace id::help;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -324,7 +325,7 @@ void make_batch_file()
     std::FILE *bat_file{};
 
     driver_stack_screen();
-    ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_PARAM_FILE};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PARAM_FILE};
     MakeParParams params;
 
     if (g_make_parameter_file)

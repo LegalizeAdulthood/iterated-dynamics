@@ -97,8 +97,8 @@ struct FractalSpecific
                                             // (leading "*" suppresses name display)
     const char *param_names[4];             // name of the parameters
     double params[4];                       // default parameter values
-    id::help::HelpLabels help_text;         // helpdefs.h HT_xxxx or NONE
-    id::help::HelpLabels help_formula;      // helpdefs.h HF_xxxx or NONE
+    help::HelpLabels help_text;             // helpdefs.h HT_xxxx or NONE
+    help::HelpLabels help_formula;          // helpdefs.h HF_xxxx or NONE
     FractalFlags flags;                     // constraints, bits defined above
     float x_min;                            // default XMIN corner
     float x_max;                            // default XMAX corner

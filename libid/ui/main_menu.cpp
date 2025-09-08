@@ -22,6 +22,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::help;
 using namespace id::misc;
 
 namespace id::ui
@@ -243,7 +244,7 @@ int MainMenu::prompt()
     int i = driver_key_pressed() ? driver_get_key() : 0;
     if (menu_check_key(i, 0) == 0)
     {
-        g_help_mode = id::help::HelpLabels::HELP_MAIN;         // switch help modes
+        g_help_mode = HelpLabels::HELP_MAIN;         // switch help modes
         m_next_left += 2;
         if (m_next_left < m_next_right)
         {
@@ -264,8 +265,8 @@ int MainMenu::prompt()
             i = m_choice_key[i];
             if (i == -ID_KEY_CTL_ENTER)
             {
-                g_help_mode = id::help::HelpLabels::HELP_ZOOM;
-                id::help::help();
+                g_help_mode = HelpLabels::HELP_ZOOM;
+                help::help();
                 i = 0;
             }
         }

@@ -18,6 +18,7 @@
 #include <cstring>
 
 using namespace id::engine;
+using namespace id::help;
 using namespace id::misc;
 
 namespace id::ui
@@ -103,8 +104,8 @@ int get_toggles2()
     int old_rotate_hi = g_color_cycle_range_hi;
     values[k].uval.ival = old_rotate_hi;
 
-    const id::help::HelpLabels old_help_mode = g_help_mode;
-    g_help_mode = id::help::HelpLabels::HELP_Y_OPTIONS;
+    const HelpLabels old_help_mode = g_help_mode;
+    g_help_mode = HelpLabels::HELP_Y_OPTIONS;
     {
         int i = full_screen_prompt("Extended Options\n"
                               "(not all combinations make sense)",

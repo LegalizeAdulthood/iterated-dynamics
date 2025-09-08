@@ -149,7 +149,7 @@ TokenType find_token_length(
 int find_line_width(TokenMode mode, const char *curr, unsigned len);
 bool process_document(TokenMode mode, bool paginate, PrintDocFn *get_info, PrintDocFn *output, void *info);
 int help();
-int read_help_topic(id::help::HelpLabels label, int , int , void *);
+int read_help_topic(HelpLabels label, int , int , void *);
 bool make_doc_msg_func(int page_num, int num_pages);
 void print_document(const char *filename, bool (*msg_func)(int, int));
 int init_help();

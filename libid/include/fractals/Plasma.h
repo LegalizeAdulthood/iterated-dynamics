@@ -49,11 +49,11 @@ private:
     Plasma(Plasma &&rhs) = delete;
     Plasma &operator=(const Plasma &rhs) = delete;
     Plasma &operator=(Plasma &&rhs) = delete;
-    misc::U16 adjust(int xa, int ya, int x, int y, int xb, int yb, int scale);
+    U16 adjust(int xa, int ya, int x, int y, int xb, int yb, int scale);
     void subdivide();
     void subdivide_new(int x1, int y1, int x2, int y2, int level);
 
-    misc::U16 m_rnd[4]{};
+    U16 m_rnd[4]{};
     ValueSaver<bool> m_saved_potential_flag;
     ValueSaver<bool> m_saved_potential_16_bit;
     bool m_done{};
@@ -62,13 +62,13 @@ private:
     int m_k{};
     SubdivisionStack m_sub_x{};
     SubdivisionStack m_sub_y{};
-    misc::U16 (*m_get_pix)(int x, int y){};
+    U16 (*m_get_pix)(int x, int y){};
     int m_i_param_x{};   // s_i_param_x = param.x * 8
     int m_shift_value{}; // shift based on #colors
     int m_p_colors{};
     int m_recur_level{};
     int m_scale{};
-    misc::U16 m_max_plasma{};
+    U16 m_max_plasma{};
     std::vector<Subdivision> m_subdivs;
 };
 

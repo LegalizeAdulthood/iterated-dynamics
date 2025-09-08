@@ -42,6 +42,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::help;
 using namespace id::io;
 using namespace id::misc;
 
@@ -306,7 +307,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
 
         int i;
         {
-            ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_LOAD_FILE};
+            ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_LOAD_FILE};
             i = full_screen_choice(ChoiceFlags::NONE, heading.c_str(),
                 "key...name......................err...xdot..ydot.clr.comment..................",
                 instructions.c_str(), g_video_table_len, nullptr, attributes.data(), 1, 13, 78, 0, format_item,

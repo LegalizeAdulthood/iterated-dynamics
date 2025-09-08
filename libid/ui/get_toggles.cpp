@@ -25,6 +25,7 @@
 using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::help;
 using namespace id::io;
 
 namespace id::ui
@@ -230,8 +231,8 @@ int get_toggles()
     double old_close_proximity = g_close_proximity;
     values[k].uval.dval = old_close_proximity;
 
-    const id::help::HelpLabels old_help_mode = g_help_mode;
-    g_help_mode = id::help::HelpLabels::HELP_X_OPTIONS;
+    const HelpLabels old_help_mode = g_help_mode;
+    g_help_mode = HelpLabels::HELP_X_OPTIONS;
     int i = full_screen_prompt(
         "Basic Options\n(not all combinations make sense)", k + 1, choices, values, 0, nullptr);
     g_help_mode = old_help_mode;

@@ -57,6 +57,7 @@
 using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::help;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -176,17 +177,17 @@ static bool main_restore_start(MainContext &context)
             if (g_overlay_3d)
             {
                 hdg = "Select File for 3D Overlay";
-                g_help_mode = id::help::HelpLabels::HELP_3D_OVERLAY;
+                g_help_mode = HelpLabels::HELP_3D_OVERLAY;
             }
             else if (g_display_3d != Display3DMode::NONE)
             {
                 hdg = "Select File for 3D Transform";
-                g_help_mode = id::help::HelpLabels::HELP_3D;
+                g_help_mode = HelpLabels::HELP_3D;
             }
             else
             {
                 hdg = "Select File to Restore";
-                g_help_mode = id::help::HelpLabels::HELP_SAVE_RESTORE;
+                g_help_mode = HelpLabels::HELP_SAVE_RESTORE;
             }
             if (g_show_file == ShowFile::REQUEST_IMAGE &&
                 driver_get_filename(hdg, "Image File", g_image_filename_mask.c_str(), g_read_filename))
@@ -203,7 +204,7 @@ static bool main_restore_start(MainContext &context)
         g_evolving = EvolutionModeFlags::NONE;
         g_view_window = false;
         g_show_file = ShowFile::LOAD_IMAGE;
-        g_help_mode = id::help::HelpLabels::NONE;
+        g_help_mode = HelpLabels::NONE;
         g_tab_mode = true;
         if (context.stacked)
         {
@@ -224,7 +225,7 @@ static bool main_restore_start(MainContext &context)
             g_show_file = ShowFile::REQUEST_IMAGE; // retry
         }
     }
-    g_help_mode = id::help::HelpLabels::HELP_MENU; // now use this help mode
+    g_help_mode = HelpLabels::HELP_MENU; // now use this help mode
     g_tab_mode = true;
     g_look_at_mouse = MouseLook::IGNORE_MOUSE;
     if (((g_overlay_3d && (g_init_batch == BatchMode::NONE)) || context.stacked) &&
@@ -376,7 +377,7 @@ static MainState main_image_start(MainContext &context)
     }
 
     g_zoom_enabled = true;
-    g_help_mode = id::help::HelpLabels::HELP_MAIN; // now use this help mode
+    g_help_mode = HelpLabels::HELP_MAIN; // now use this help mode
     context.resume = false;              // allows taking goto inside big_while_loop()
 
     return MainState::CONTINUE;
@@ -418,7 +419,7 @@ int id_main(int argc, char *argv[])
     }
     // load id.cfg, match against driver supplied modes
     load_config();
-    id::help::init_help();
+    init_help();
 
     MainState state{MainState::RESTART};
     MainContext context;

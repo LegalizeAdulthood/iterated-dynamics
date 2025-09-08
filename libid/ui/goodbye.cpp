@@ -20,6 +20,7 @@
 #endif
 
 using namespace id::engine;
+using namespace id::help;
 using namespace id::misc;
 
 namespace id::ui
@@ -43,7 +44,7 @@ namespace id::ui
         driver_move_cursor(6, 0);
     }
     stop_slide_show();
-    id::help::end_help();
+    end_help();
     int ret = 0;
     if (g_init_batch == BatchMode::BAILOUT_ERROR_NO_SAVE) // exit with error code for batch file
     {

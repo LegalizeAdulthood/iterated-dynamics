@@ -21,6 +21,7 @@
 #include <iterator>
 
 using namespace id::engine;
+using namespace id::help;
 using namespace id::misc;
 
 namespace id::ui
@@ -140,7 +141,7 @@ get_view_restart:
     }
 
     {
-        ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_VIEW};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_VIEW};
         i = full_screen_prompt("View Window Options", k+1, choices, values, 16, nullptr);
     }
     if (i < 0)

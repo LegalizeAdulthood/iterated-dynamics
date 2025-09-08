@@ -13,6 +13,7 @@
 #include <string>
 
 using namespace id::engine;
+using namespace id::help;
 using namespace id::misc;
 
 namespace id::ui
@@ -93,7 +94,7 @@ int get_rds_params()
         }
         int choice;
         {
-            ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_RDS};
+            ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS};
             choice = full_screen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, values, 0, nullptr);
         }
         if (choice < 0)

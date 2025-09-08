@@ -33,6 +33,7 @@
 #include <vector>
 
 using namespace id::engine;
+using namespace id::help;
 using namespace id::io;
 using namespace id::misc;
 
@@ -267,7 +268,7 @@ bool auto_stereo_convert()
     std::time(&now);
     std::srand((unsigned int)now);
 
-    ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_RDS_KEYS};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS_KEYS};
     driver_save_graphics();                      // save graphics image
     std::memcpy(save_dac_box, g_dac_box, 256 * 3);  // save colors
 

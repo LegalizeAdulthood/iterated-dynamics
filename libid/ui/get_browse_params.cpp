@@ -15,6 +15,7 @@
 #include <string>
 
 using namespace id::engine;
+using namespace id::help;
 using namespace id::misc;
 
 namespace id::ui
@@ -48,7 +49,7 @@ get_brws_restart:
         .comment("Press F4 to reset browse parameters to defaults.");
 
     {
-        ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_BROWSE_PARAMETERS};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_BROWSE_PARAMETERS};
         i = choices.prompt("Browse ('L'ook) Mode Options", 16);
     }
     if (i < 0)

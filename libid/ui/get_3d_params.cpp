@@ -29,6 +29,7 @@
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::geometry;
+using namespace id::help;
 using namespace id::io;
 using namespace id::misc;
 
@@ -111,7 +112,7 @@ restart_1:
     values[k].uval.ch.val = g_gray_flag ? 1 : 0;
 
     {
-        ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_3D_MODE};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_MODE};
         k = full_screen_prompt("3D Mode Selection", k+1, prompts3d, values, 0, nullptr);
     }
     if (k < 0)
@@ -196,7 +197,7 @@ restart_1:
         }
         int i;
         {
-            ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_3D_FILL};
+            ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_FILL};
             i = full_screen_choice(ChoiceFlags::HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
                 attributes, 0, 0, 0, +g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
         }
@@ -313,7 +314,7 @@ restart_3:
             "Pre-rotation Z axis is coming at you out of the screen!";
     }
     {
-        ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_3D_PARAMETERS};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_PARAMETERS};
         k = full_screen_prompt(s, k, prompts3d, values, 0, nullptr);
     }
     if (k < 0)
@@ -393,7 +394,7 @@ static bool get_light_params()
     builder.comment("");
 
     {
-        ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_3D_LIGHT};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_LIGHT};
         if (builder.prompt("Light Source Parameters") < 0)
         {
             return true;
@@ -458,7 +459,7 @@ static bool check_map_file()
         {
             char buff[80]{};
             std::strcpy(buff, map_name.string().c_str());
-            ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::NONE};
+            ValueSaver saved_help_mode{g_help_mode, HelpLabels::NONE};
             int i = field_prompt("Enter name of .map file to use,\n"
                                  "or '*' to use palette from the image to be loaded.",
                 nullptr, buff, 60, nullptr);
@@ -541,7 +542,7 @@ static bool get_funny_glasses_params()
         builder.string("Map file name", s_funny_glasses_map_name.c_str());
     }
 
-    ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_3D_GLASSES};
+    ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_GLASSES};
     int k = builder.prompt("Funny Glasses Parameters");
     if (k < 0)
     {
@@ -580,7 +581,7 @@ int get_fract3d_params() // prompt for 3D fractal parameters
 
     int i;
     {
-        ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_3D_FRACT};
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_FRACT};
         i = builder.prompt("3D Parameters");
     }
 

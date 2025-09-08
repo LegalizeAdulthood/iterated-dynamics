@@ -697,7 +697,7 @@ void save_history_info()
     }
     if (g_debug_flag == DebugFlags::HISTORY_DUMP_JSON)
     {
-        std::filesystem::path path{get_save_path(io::WriteFile::ROOT, "history.json")};
+        std::filesystem::path path{get_save_path(WriteFile::ROOT, "history.json")};
         assert(!path.empty());
         std::ofstream str(path, std::ios_base::app);
         str << current;

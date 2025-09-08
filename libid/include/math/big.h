@@ -40,8 +40,8 @@ using BigNum = Big;  // for clarification purposes
 using BigFloat = Big;
 using BigFloat10 = Big;
 
-using BFComplex = id::math::Complex<BigFloat>;
-using BNComplex = id::math::Complex<BigNum>;
+using BFComplex = Complex<BigFloat>;
+using BNComplex = Complex<BigNum>;
 
 // globals
 extern BFMathType g_bf_math;
@@ -99,10 +99,10 @@ BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2);
 BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2);
 BigNum unsafe_full_square_bn(BigNum r, BigNum n);
 BigNum unsafe_square_bn(BigNum r, BigNum n);
-BigNum mult_bn_int(BigNum r, BigNum n, id::misc::U16 u);
-BigNum mult_a_bn_int(BigNum r, id::misc::U16 u);
-BigNum unsafe_div_bn_int(BigNum r, BigNum n, id::misc::U16 u);
-BigNum div_a_bn_int(BigNum r, id::misc::U16 u);
+BigNum mult_bn_int(BigNum r, BigNum n, misc::U16 u);
+BigNum mult_a_bn_int(BigNum r, misc::U16 u);
+BigNum unsafe_div_bn_int(BigNum r, BigNum n, misc::U16 u);
+BigNum div_a_bn_int(BigNum r, misc::U16 u);
 BigFloat clear_bf(BigFloat r);
 BigFloat copy_bf(BigFloat r, BigFloat n);
 BigFloat float_to_bf(BigFloat r, LDouble f);
@@ -152,7 +152,7 @@ BigNum full_mult_bn(BigNum r, BigNum n1, BigNum n2);
 BigNum mult_bn(BigNum r, BigNum n1, BigNum n2);
 BigNum full_square_bn(BigNum r, BigNum n);
 BigNum square_bn(BigNum r, BigNum n);
-BigNum div_bn_int(BigNum r, BigNum n, id::misc::U16 u);
+BigNum div_bn_int(BigNum r, BigNum n, misc::U16 u);
 char *bn_to_str(char *s, BigNum r, int dec);
 BigNum inv_bn(BigNum r, BigNum n);
 BigNum div_bn(BigNum r, BigNum n1, BigNum n2);
@@ -193,8 +193,8 @@ BigFloat full_mult_bf(BigFloat r, BigFloat n1, BigFloat n2);
 BigFloat mult_bf(BigFloat r, BigFloat n1, BigFloat n2);
 BigFloat full_square_bf(BigFloat r, BigFloat n);
 BigFloat square_bf(BigFloat r, BigFloat n);
-BigFloat mult_bf_int(BigFloat r, BigFloat n, id::misc::U16 u);
-BigFloat div_bf_int(BigFloat r, BigFloat n, id::misc::U16 u);
+BigFloat mult_bf_int(BigFloat r, BigFloat n, misc::U16 u);
+BigFloat div_bf_int(BigFloat r, BigFloat n, misc::U16 u);
 char *bf_to_str(char *s, BigFloat r, int dec);
 char *bf_to_str_e(char *s, BigFloat r, int dec);
 char *bf_to_str_f(char *s, BigFloat r, int dec);
@@ -212,14 +212,14 @@ LDouble scale_value(LDouble f, LDouble b , int n);
 LDouble extract_10(LDouble f, int *exp_ptr);
 LDouble scale_10(LDouble f, int n);
 BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n);
-BigFloat10 mult_a_bf10_int(BigFloat10 r, int dec, id::misc::U16 n);
-BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, id::misc::U16 n);
+BigFloat10 mult_a_bf10_int(BigFloat10 r, int dec, misc::U16 n);
+BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, misc::U16 n);
 char  *bf10_to_str_e(char *s, BigFloat10 n, int dec);
 char  *bf10_to_str_f(char *s, BigFloat10 n, int dec);
 
 BigFloat norm_bf(BigFloat r);
 void norm_sign_bf(BigFloat r, bool positive);
-id::misc::S16 adjust_bf_add(BigFloat n1, BigFloat n2);
+misc::S16 adjust_bf_add(BigFloat n1, BigFloat n2);
 BigFloat max_bf(BigFloat r);
 int cmp_bf(BigFloat n1, BigFloat n2);
 bool is_bf_neg(BigFloat n);
@@ -238,10 +238,10 @@ BigFloat unsafe_full_mult_bf(BigFloat r, BigFloat n1, BigFloat n2);
 BigFloat unsafe_mult_bf(BigFloat r, BigFloat n1, BigFloat n2);
 BigFloat unsafe_full_square_bf(BigFloat r, BigFloat n);
 BigFloat unsafe_square_bf(BigFloat r, BigFloat n);
-BigFloat unsafe_mult_bf_int(BigFloat r, BigFloat n, id::misc::U16 u);
-BigFloat mult_a_bf_int(BigFloat r, id::misc::U16 u);
-BigFloat unsafe_div_bf_int(BigFloat r, BigFloat n, id::misc::U16 u);
-BigFloat div_a_bf_int(BigFloat r, id::misc::U16 u);
+BigFloat unsafe_mult_bf_int(BigFloat r, BigFloat n, misc::U16 u);
+BigFloat mult_a_bf_int(BigFloat r, misc::U16 u);
+BigFloat unsafe_div_bf_int(BigFloat r, BigFloat n, misc::U16 u);
+BigFloat div_a_bf_int(BigFloat r, misc::U16 u);
 
 enum
 {

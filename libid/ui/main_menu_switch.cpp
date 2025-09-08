@@ -52,6 +52,7 @@
 
 using namespace id::engine;
 using namespace id::fractals;
+using namespace id::help;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -61,8 +62,8 @@ namespace id::ui
 
 static bool look(MainContext &context)
 {
-    const id::help::HelpLabels old_help_mode = g_help_mode;
-    g_help_mode = id::help::HelpLabels::HELP_BROWSE;
+    const HelpLabels old_help_mode = g_help_mode;
+    g_help_mode = HelpLabels::HELP_BROWSE;
     switch (file_get_window())
     {
     case ID_KEY_ENTER:
