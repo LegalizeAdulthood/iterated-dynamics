@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace id
+namespace id::engine
 {
 
 enum class LogMapCalculate
@@ -26,4 +26,4 @@ extern long                  g_log_map_table_max_size;
 void setup_log_table();
 long log_table_calc(long color_iter);
 
-} // namespace id
+} // namespace id::engine

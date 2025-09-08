@@ -8,10 +8,9 @@
 
 #include <cmath>
 
-using namespace id::engine;
 using namespace id::misc;
 
-namespace id
+namespace id::engine
 {
 
 long g_log_map_flag{};                     // Logarithmic palette flag: 0 = no
@@ -131,4 +130,4 @@ long log_table_calc(long color_iter)
     return ret;
 }
 
-} // namespace id
+} // namespace id::engine
