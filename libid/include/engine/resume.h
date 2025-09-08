@@ -6,7 +6,7 @@
 
 #include <vector>
 
-namespace id
+namespace id::engine
 {
 
 extern std::vector<Byte>     g_resume_data;
@@ -105,4 +105,4 @@ void put_resume(const Head &head, const Tail &...tail)
     put_resume(tail...);
 }
 
-} // namespace id
+} // namespace id::engine

@@ -11,6 +11,7 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::misc;
 
