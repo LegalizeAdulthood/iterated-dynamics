@@ -2,9 +2,9 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 int boundary_trace();
 
-} // namespace id
+} // namespace id::engine

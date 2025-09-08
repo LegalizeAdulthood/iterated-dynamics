@@ -14,7 +14,7 @@
 
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 enum class Direction
