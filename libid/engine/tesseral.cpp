@@ -13,10 +13,9 @@
 
 #include <vector>
 
-using namespace id::engine;
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 struct Tess             // one of these per box to be done gets stacked
@@ -458,4 +457,4 @@ static int tess_row(int x1, int x2, int y)
     return row_color;
 }
 
-} // namespace id
+} // namespace id::engine

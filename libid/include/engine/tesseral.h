@@ -2,9 +2,9 @@
 //
 #pragma once
 
-namespace id
+namespace id::engine
 {
 
 int tesseral();
 
-} // namespace id
+} // namespace id::engine
