@@ -15,7 +15,7 @@ using namespace id::help;
 using namespace id::misc;
 using namespace id::ui;
 
-namespace id
+namespace id::engine
 {
 
 VideoInfo g_video_entry{};                                    //
@@ -78,4 +78,4 @@ std::filesystem::path g_browse_mask;                            //
 int g_scale_map[12]{
     1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
 
-} // namespace id
+} // namespace id::engine

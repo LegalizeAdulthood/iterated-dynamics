@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <string>
 
-using namespace id;
+using namespace id::engine;
 using namespace id::ui;
 
 enum

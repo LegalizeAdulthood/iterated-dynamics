@@ -7,6 +7,8 @@
 
 #include <algorithm>
 
+using namespace id::engine;
+
 namespace id::ui
 {
 

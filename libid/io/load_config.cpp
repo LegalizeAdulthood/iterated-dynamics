@@ -18,6 +18,7 @@
 #include <iterator>
 #include <string_view>
 
+using namespace id::engine;
 using namespace id::misc;
 using namespace id::ui;
 

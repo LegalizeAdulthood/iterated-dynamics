@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <cstdarg>
 
+using namespace id::engine;
+
 namespace id
 {
 

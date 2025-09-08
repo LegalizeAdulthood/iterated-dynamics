@@ -8,6 +8,7 @@
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
 
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::misc;
 

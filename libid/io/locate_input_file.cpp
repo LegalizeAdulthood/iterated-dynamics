@@ -9,6 +9,8 @@
 #include <initializer_list>
 #include <string>
 
+using namespace id::engine;
+
 namespace id::io
 {
 

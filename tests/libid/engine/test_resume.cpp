@@ -9,6 +9,7 @@
 #include <cstdint>
 
 using namespace id;
+using namespace id::engine;
 
 namespace
 {

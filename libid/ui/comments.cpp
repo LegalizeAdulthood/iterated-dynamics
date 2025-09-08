@@ -17,6 +17,7 @@
 #include <string>
 #include <string_view>
 
+using namespace id::engine;
 using namespace id::misc;
 
 namespace id::ui

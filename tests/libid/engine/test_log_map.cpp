@@ -14,6 +14,7 @@
 #include <numeric>
 
 using namespace id;
+using namespace id::engine;
 using namespace id::misc;
 
 namespace

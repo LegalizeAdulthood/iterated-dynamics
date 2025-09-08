@@ -17,7 +17,7 @@ namespace id::help
 enum class HelpLabels;
 }
 
-namespace id
+namespace id::engine
 {
 
 // -1 no fractal
@@ -120,4 +120,4 @@ extern double                g_y_max;
 extern double                g_y_min;
 extern bool g_z_scroll;
 
-} // namespace id
+} // namespace id::engine
