@@ -4,7 +4,7 @@
 
 #include "fractals/fractype.h"
 
-namespace id
+namespace id::engine
 {
 
 bool type_has_param(fractals::FractalType type, int param, const char **prompt);
@@ -13,4 +13,4 @@ inline bool type_has_param(fractals::FractalType type, int param)
     return type_has_param(type, param, nullptr);
 }
 
-} // namespace id
+} // namespace id::engine

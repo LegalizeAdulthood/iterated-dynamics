@@ -8,10 +8,9 @@
 
 #include <cstring>
 
-using namespace id::engine;
 using namespace id::fractals;
 
-namespace id
+namespace id::engine
 {
 
 /*
@@ -58,4 +57,4 @@ bool type_has_param(FractalType type, int param, const char **prompt)
     return ret != nullptr;
 }
 
-} // namespace id
+} // namespace id::engine
