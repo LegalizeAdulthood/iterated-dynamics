@@ -16,9 +16,10 @@
 #include <cstring>
 #include <vector>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static std::vector<Byte> s_text_save;
 static int s_text_x_dots{};
@@ -116,3 +117,5 @@ void clear_temp_msg()
         driver_flush();
     }
 }
+
+} // namespace id::ui
