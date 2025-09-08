@@ -17,10 +17,11 @@
 #include <cstdlib>
 #include <cstring>
 
-using namespace id;
 using namespace id::io;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 static void blank_rows(int row, int count, int attr)
 {
@@ -131,3 +132,5 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
     }
     return ret;
 }
+
+} // namespace id::ui

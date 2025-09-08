@@ -11,7 +11,7 @@ namespace id::cmd_files_test
 {
 
 // To facilitate testing
-using StopMsg = bool(StopMsgFlags flags, const std::string &msg);
+using StopMsg = bool(ui::StopMsgFlags flags, const std::string &msg);
 using StopMsgFn = std::function<StopMsg>;
 StopMsgFn get_stop_msg();
 void set_stop_msg(const StopMsgFn &fn);

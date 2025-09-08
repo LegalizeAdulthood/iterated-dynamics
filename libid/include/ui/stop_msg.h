@@ -4,6 +4,9 @@
 
 #include <string>
 
+namespace id::ui
+{
+
 // stop_msg() flags
 enum class StopMsgFlags
 {
@@ -35,3 +38,5 @@ inline bool stop_msg(const std::string &msg)
 {
     return stop_msg(StopMsgFlags::NONE, msg);
 }
+
+} // namespace id::ui

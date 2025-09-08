@@ -12,6 +12,8 @@
 
 #include <cstring>
 
+using namespace id::ui;
+
 namespace id
 {
 
