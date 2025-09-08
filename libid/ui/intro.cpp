@@ -21,9 +21,10 @@
 #include <ctime>
 #include <vector>
 
-using namespace id;
 using namespace id::misc;
-using namespace id::ui;
+
+namespace id::ui
+{
 
 bool g_slow_display{};
 
@@ -114,3 +115,5 @@ void intro()
         driver_hide_text_cursor(); // turn it off
     }
 }
+
+} // namespace id::ui

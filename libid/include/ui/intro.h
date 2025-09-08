@@ -2,6 +2,11 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 extern bool g_slow_display;
 
 void intro();
+
+} // namespace id::ui
