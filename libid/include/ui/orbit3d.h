@@ -2,4 +2,9 @@
 //
 #pragma once
 
+namespace id::ui
+{
+
 int orbit3d_calc();
+
+} // namespace id::ui

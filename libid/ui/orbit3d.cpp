@@ -5,11 +5,15 @@
 #include "fractals/lorenz.h"
 #include "misc/Driver.h"
 
+using namespace id::fractals;
 using namespace id::misc;
+
+namespace id::ui
+{
 
 int orbit3d_calc()
 {
-    id::fractals::Orbit3D o3d;
+    Orbit3D o3d;
 
     while (!o3d.done())
     {
@@ -23,3 +27,5 @@ int orbit3d_calc()
 
     return 0;
 }
+
+} // namespace id::ui
