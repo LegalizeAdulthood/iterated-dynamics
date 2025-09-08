@@ -5,6 +5,9 @@
 #include <memory>
 #include <utility>
 
+namespace id::ui
+{
+
 // g_look_at_mouse is set to one of these positive values for handling mouse events,
 // or it is set to a negative key code for primary button click to generate a key.
 enum class MouseLook
@@ -105,3 +108,5 @@ public:
 private:
     int m_id;
 };
+
+} // namespace id::ui

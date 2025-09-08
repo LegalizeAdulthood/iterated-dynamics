@@ -12,6 +12,9 @@
 
 using namespace id::misc;
 
+namespace id::ui
+{
+
 // g_look_at_mouse:
 //  IGNORE_MOUSE
 //      ignore the mouse entirely
@@ -109,3 +112,5 @@ void mouse_notify_move(int x, int y, int key_flags)
 {
     notify([=](const MouseNotificationPtr &handler) { handler->move(x, y, key_flags); });
 }
+
+} // namespace id::ui

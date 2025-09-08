@@ -81,7 +81,7 @@ private:
     POINT m_last{-1,-1};
     POINT m_delta{};
     POINT m_pos{};
-    int m_look_at_mouse{+MouseLook::IGNORE_MOUSE};
+    int m_look_at_mouse{+id::ui::MouseLook::IGNORE_MOUSE};
     long m_last_tick{-1};
 
     // the keypress buffer
