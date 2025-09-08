@@ -10,6 +10,9 @@
 
 using namespace id::io;
 
+namespace id::test
+{
+
 TEST(TestPatternMatch, all)
 {
     MatchFn all = match_fn("*.*");
@@ -116,3 +119,5 @@ TEST(TestPatternMatch, everything)
     EXPECT_TRUE(everything("goinkf0bgoink.goinkbof"));
     EXPECT_TRUE(everything("goinkf0bgoink.goinkbofgoink"));
 }
+
+} // namespace id::test

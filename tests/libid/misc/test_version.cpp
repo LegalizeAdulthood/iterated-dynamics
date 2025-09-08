@@ -12,6 +12,9 @@
 using namespace id::config;
 using namespace id::misc;
 
+namespace id::test
+{
+
 TEST(TestVersion, release)
 {
     EXPECT_EQ(ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR, g_release);
@@ -295,3 +298,5 @@ TEST(TestVersion, tweakVersionDifferent)
     EXPECT_FALSE(lhs == rhs);
     EXPECT_TRUE(lhs != rhs);
 }
+
+} // namespace id::test

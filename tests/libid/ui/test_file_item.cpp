@@ -21,7 +21,7 @@ using namespace id::misc;
 using namespace id::test;
 using namespace id::ui;
 
-namespace
+namespace id::test
 {
 
 class TestFindFileItem : public testing::Test
@@ -46,8 +46,6 @@ void TestFindFileItem::TearDown()
     }
     Test::TearDown();
 }
-
-} // namespace
 
 TEST_F(TestFindFileItem, formula)
 {
@@ -251,3 +249,5 @@ TEST_F(TestFindFileItemLibrary, lindenmayerSystem)
     EXPECT_NE(nullptr, m_file);
     EXPECT_EQ(file(data::ID_TEST_LSYSTEM_SUBDIR, library::ID_TEST_LSYSTEM_FILE2), m_path);
 }
+
+} // namespace id::test

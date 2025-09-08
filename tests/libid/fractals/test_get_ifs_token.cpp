@@ -16,7 +16,7 @@ namespace fs = std::filesystem;
 using namespace id::fractals;
 using namespace id::test::data;
 
-namespace
+namespace id::test
 {
 
 class TestGetIFSToken : public testing::Test
@@ -62,8 +62,6 @@ void TestGetIFSToken::skip_first_ifs_definition()
         skip_token();
     }
 }
-
-} // namespace
 
 TEST_F(TestGetIFSToken, firstTokenIsName)
 {
@@ -130,3 +128,5 @@ TEST_F(TestGetIFSToken, secondIFSDefinition3DQualifier)
     ASSERT_NE(nullptr, result);
     ASSERT_STREQ("(3D)", result);
 }
+
+} // namespace id::test

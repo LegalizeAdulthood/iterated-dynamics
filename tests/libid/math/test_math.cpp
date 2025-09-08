@@ -22,6 +22,9 @@ inline std::ostream &operator<<(std::ostream &str, const DComplex &value)
 
 } // namespace id
 
+namespace id::test
+{
+
 TEST(TestMath, nanExponent)
 {
     DComplex x{std::nan("1"), 0.0};
@@ -172,3 +175,5 @@ TEST(TestMath, divideAliasing)
     EXPECT_EQ(stdResult.real(), alias_result2.x);
     EXPECT_EQ(stdResult.imag(), alias_result2.y);
 }
+
+} // namespace id::test

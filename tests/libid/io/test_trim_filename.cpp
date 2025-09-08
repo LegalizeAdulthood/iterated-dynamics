@@ -8,6 +8,9 @@
 
 using namespace id::io;
 
+namespace id::test
+{
+
 TEST(TestTrimFilename, fitsInRequestedSize)
 {
     const std::string filename{R"(C:\iterated-dynamics\foo.par)"};
@@ -40,3 +43,5 @@ TEST(TestTrimFilename, dropsIntermediateDirectoriesUnix)
     EXPECT_EQ(R"(/home/.../install/pars/foo.par)", result);
 }
 #endif
+
+} // namespace id::test

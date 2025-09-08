@@ -13,6 +13,9 @@ namespace fs = std::filesystem;
 using namespace id::io;
 using namespace id::test::data;
 
+namespace id::test
+{
+
 TEST(TestSearchPath, pathVarNotDefined)
 {
     const std::string result = search_path(ID_TEST_IFS_FILE, "PATH", [](const char *) { return nullptr; });
@@ -64,3 +67,5 @@ TEST(TestSearchPath, fileNotInMultiplePath)
 
     ASSERT_TRUE(result.empty());
 }
+
+} // namespace id::test

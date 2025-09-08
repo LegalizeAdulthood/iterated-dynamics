@@ -6,6 +6,9 @@
 
 using namespace id::math;
 
+namespace id::test
+{
+
 TEST(TestComplex, zeroConstruct)
 {
     const DComplex zero{};
@@ -115,3 +118,5 @@ TEST(TestComplex, scalarMultiplyLeft)
     EXPECT_EQ(2.0, result.x);
     EXPECT_EQ(4.0, result.y);
 }
+
+} // namespace id::test

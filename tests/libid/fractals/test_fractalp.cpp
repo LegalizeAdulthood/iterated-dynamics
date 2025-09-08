@@ -10,6 +10,9 @@
 using namespace testing;
 using namespace id::fractals;
 
+namespace id::test
+{
+
 TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
 {
     for (int i = 0; i < g_num_fractal_types; ++i)
@@ -96,3 +99,5 @@ TEST(TestGetFractalSpecific, unknownTypeThrowsRuntimeError)
 {
     EXPECT_THROW(get_fractal_specific(static_cast<FractalType>(-100)), std::runtime_error);
 }
+
+} // namespace id::test

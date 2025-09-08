@@ -6,6 +6,9 @@
 
 using namespace id::misc;
 
+namespace id::test
+{
+
 TEST(TestValueSaver, setsNewValue)
 {
     bool data{true};
@@ -24,3 +27,5 @@ TEST(TestValueSaver, restoresOriginalValue)
 
     EXPECT_TRUE(data);
 }
+
+} // namespace id::test

@@ -11,6 +11,9 @@
 
 using namespace id::fractals;
 
+namespace id::test
+{
+
 TEST(TestCheckOrbitName, julibrotNames)
 {
     std::vector<std::string> names;
@@ -44,3 +47,5 @@ TEST(TestCheckOrbitName, notValidNames)
         EXPECT_TRUE(check_orbit_name(name.c_str())) << name;
     }
 }
+
+} // namespace id::test

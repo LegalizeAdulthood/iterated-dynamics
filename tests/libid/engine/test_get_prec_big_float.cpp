@@ -8,6 +8,9 @@
 
 using namespace id::engine;
 
+namespace id::test
+{
+
 TEST(TestGetMagnificationPrecision, basicAssertions)
 {
     EXPECT_EQ(get_magnification_precision(1.0), 4);
@@ -33,3 +36,5 @@ TEST(TestGetMagnificationPrecision, edgeCases)
     EXPECT_EQ(get_magnification_precision(std::numeric_limits<double>::max()), 312);
     EXPECT_EQ(get_magnification_precision(std::numeric_limits<double>::epsilon()), -12);
 }
+
+} // namespace id::test

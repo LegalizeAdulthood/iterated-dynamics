@@ -10,6 +10,9 @@
 using namespace id::misc;
 using namespace id::ui;
 
+namespace id::test
+{
+
 TEST(TestVideoMode, checkKeyNameFnKey)
 {
     EXPECT_EQ(ID_KEY_F1, check_vid_mode_key_name("F1"));
@@ -137,3 +140,5 @@ TEST(TestVideoMode, keyName)
     EXPECT_EQ("", vid_mode_key_name(-1));
     EXPECT_EQ("", vid_mode_key_name(ID_KEY_CTL_A));
 }
+
+} // namespace id::test

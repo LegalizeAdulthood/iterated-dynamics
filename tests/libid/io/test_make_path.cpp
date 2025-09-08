@@ -10,7 +10,7 @@ namespace fs = std::filesystem;
 
 using namespace id::io;
 
-namespace
+namespace id::test
 {
 
 class TestMakePath : public ::testing::Test
@@ -21,8 +21,6 @@ public:
 protected:
     std::string m_result{"foo.txt"};
 };
-
-} // namespace
 
 TEST_F(TestMakePath, empty)
 {
@@ -103,3 +101,5 @@ TEST_F(TestMakePath, filenameWithDot)
 
     ASSERT_EQ("1997.04.30-Ship_of_Indecision.par", m_result);
 }
+
+} // namespace id::test

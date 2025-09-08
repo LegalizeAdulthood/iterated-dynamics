@@ -19,7 +19,7 @@ using namespace id::engine;
 using namespace id::io;
 using namespace id::test::data;
 
-namespace
+namespace id::test
 {
 
 using GetEnv = std::function<const char *(const char *)>;
@@ -45,8 +45,6 @@ void TestFindPath::SetUp()
     g_fractal_search_dir1.clear();
     g_fractal_search_dir2.clear();
 }
-
-} // namespace
 
 TEST_F(TestFindPath, fileFoundInCurrentDirectory)
 {
@@ -145,3 +143,5 @@ TEST_F(TestFindPath, absolutePath)
 
     ASSERT_EQ(absoluteLocation.string(), result);
 }
+
+} // namespace id::test

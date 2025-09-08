@@ -21,7 +21,7 @@ using namespace id::misc;
 using namespace id::ui;
 using namespace testing;
 
-namespace
+namespace id::test
 {
 
 struct TestComments : Test
@@ -72,8 +72,6 @@ private:
     int m_saved_y_dots{};
     int m_saved_video_key{};
 };
-
-} // namespace
 
 TEST_F(TestComments, expandCpu)
 {
@@ -303,3 +301,5 @@ TEST_F(TestComments, expandDate)
 
     EXPECT_EQ("Dec " + std::to_string(TEST_DAY) + ", " + std::to_string(TEST_YEAR), result);
 }
+
+} // namespace id::test

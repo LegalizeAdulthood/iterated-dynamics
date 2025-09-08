@@ -13,6 +13,9 @@ namespace fs = std::filesystem;
 using namespace id::io;
 using namespace id::test::data;
 
+namespace id::test
+{
+
 TEST(TestIsDirectory, affirmative)
 {
     EXPECT_TRUE(is_a_directory(ID_TEST_DATA_DIR));
@@ -24,3 +27,5 @@ TEST(TestIsDirectory, negative)
     EXPECT_FALSE(is_a_directory((fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).string().c_str()));
     EXPECT_FALSE(is_a_directory((fs::path{ID_TEST_DATA_SUBDIR} / ID_TEST_IFS_FILE2).string().c_str()));
 }
+
+} // namespace id::test

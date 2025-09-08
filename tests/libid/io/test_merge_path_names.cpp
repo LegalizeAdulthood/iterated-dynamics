@@ -18,7 +18,7 @@ using namespace id::engine;
 using namespace id::io;
 using namespace id::test::data;
 
-namespace
+namespace id::test
 {
 
 class TestMergePathNames : public ::testing::Test
@@ -40,8 +40,6 @@ void TestMergePathNames::SetUp()
     m_existing_dir.make_preferred();
     m_non_existing_dir.make_preferred();
 }
-
-} // namespace
 
 TEST_F(TestMergePathNames, basicGetPath)
 {
@@ -155,3 +153,5 @@ TEST_F(TestMergePathNames, notFileNotDirectoryReturnParentDirGetPath)
     EXPECT_EQ(0, result);
     EXPECT_EQ((fs::path{ID_TEST_DATA_DIR} / "foo.foo").make_preferred().string(), m_path);
 }
+
+} // namespace id::test

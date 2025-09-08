@@ -10,7 +10,7 @@
 
 using namespace id::engine;
 
-namespace
+namespace id::test
 {
 
 #pragma pack(push, 1)
@@ -56,8 +56,6 @@ void TestResume::TearDown()
     end_resume();
     Test::TearDown();
 }
-
-} // namespace
 
 TEST_F(TestResume, allocate)
 {
@@ -124,3 +122,5 @@ TEST_F(TestResume, templateGetMultiple)
 
     EXPECT_EQ(m_data, actual);
 }
+
+} // namespace id::test

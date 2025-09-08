@@ -12,6 +12,9 @@ using namespace boost::algorithm;
 using namespace id::ui;
 using namespace testing;
 
+namespace id::test
+{
+
 class TestLowerizeParameter : public Test, public WithParamInterface<const char *>
 {
 protected:
@@ -40,3 +43,5 @@ TEST_P(TestLowerizeParameter, valueUnchanged)
 INSTANTIATE_TEST_SUITE_P(TestCaseSensitiveParameters, TestLowerizeParameter,
     Values("autokeyname", "colors", "comment", "filename", "formulafile", "ifsfile", "lfile", "lightname",
         "makedoc", "map", "orbitsavename", "parmfile", "savename"));
+
+} // namespace id::test

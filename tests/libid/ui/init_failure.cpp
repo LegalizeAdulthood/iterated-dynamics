@@ -5,7 +5,7 @@
 namespace id::ui
 {
 
-void init_failure(const char *message)
+void init_failure(const char */*message*/)
 {
 }
 

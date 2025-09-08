@@ -8,6 +8,9 @@
 
 using namespace id::math;
 
+namespace id::test
+{
+
 TEST(TestMath, complexDividePointerAliasX)
 {
     DComplex y{2.0, 0.0};
@@ -61,3 +64,5 @@ TEST(TestMath, complexLogPointerAlias)
     EXPECT_NEAR(std::log(std::sqrt(5)), z.x, 1e-9);
     EXPECT_NEAR(std::atan2(2.0, 1.0), z.y, 1e-9);
 }
+
+} // namespace id::test

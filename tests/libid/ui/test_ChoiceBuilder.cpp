@@ -14,7 +14,7 @@
 using namespace id::ui;
 using namespace testing;
 
-namespace
+namespace id::test
 {
 
 struct Prompter
@@ -360,8 +360,6 @@ protected:
         };
     }
 };
-
-} // namespace
 
 TEST(TestFullScreenValueMatchers, hasValue)
 {
@@ -748,3 +746,5 @@ TEST_F(TestChoiceBuilderPrompting, readStringBuff)
     EXPECT_STREQ("*.pot", value);
     EXPECT_STREQ("*.pot", buff);
 }
+
+} // namespace id::test

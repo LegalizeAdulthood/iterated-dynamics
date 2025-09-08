@@ -22,6 +22,256 @@ using namespace id::io;
 using namespace id::test::data;
 using namespace id::ui;
 
+namespace id::test
+{
+
+template <int N>
+static std::string trim(const char (&field)[N])
+{
+    const std::string text{field, N};
+    const auto pos = text.find_last_not_of('\0');
+    return pos == std::string::npos ? (text[0] == 0 ? std::string{} : text) : text.substr(0, pos + 1);
+}
+
+template <typename T, size_t N>
+class ArrayPrinter
+{
+public:
+    explicit ArrayPrinter(const T (&value)[N]) :
+        m_value(value)
+    {
+    }
+
+    ArrayPrinter(const ArrayPrinter &rhs) = delete;
+    ArrayPrinter(ArrayPrinter &&rhs) = delete;
+    ~ArrayPrinter() = default;
+    ArrayPrinter &operator=(const ArrayPrinter &rhs) = delete;
+    ArrayPrinter &operator=(ArrayPrinter &&rhs) = delete;
+
+    const T (&m_value)[N];
+};
+
+template <size_t N, typename T>
+std::ostream &operator<<(std::ostream &str, const ArrayPrinter<T, N> &value)
+{
+    str << "[ ";
+    bool first{true};
+    for (int i = 0; i < N; ++i)
+    {
+        if (!first)
+        {
+            str << ", ";
+        }
+        str << value.m_value[i];
+        first = false;
+    }
+    return str << " ]";
+}
+
+template <size_t N>
+std::ostream &operator<<(std::ostream &str, const ArrayPrinter<std::uint8_t, N> &value)
+{
+    str << "[ ";
+    bool first{true};
+    for (int i = 0; i < N; ++i)
+    {
+        if (!first)
+        {
+            str << ", ";
+        }
+        str << int(value.m_value[i]);
+        first = false;
+    }
+    return str << " ]";
+}
+
+} // namespace id::test
+
+namespace id::io
+{
+
+std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
+{
+    return str << "{ "                                                            //
+               << R"("info_id": ")" << test::trim(value.info_id) << '"'           //
+               << R"(, "iterationsold": )" << value.iterations_old                //
+               << R"(, "fractal_type": )" << value.fractal_type                   //
+               << R"(, "xmin": )" << value.x_min                                  //
+               << R"(, "xmax": )" << value.x_max                                  //
+               << R"(, "ymin": )" << value.y_min                                  //
+               << R"(, "ymax": )" << value.y_max                                  //
+               << R"(, "creal": )" << value.c_real                                //
+               << R"(, "cimag": )" << value.c_imag                                //
+               << R"(, "ax": )" << value.ax                                       //
+               << R"(, "bx": )" << value.bx                                       //
+               << R"(, "cx": )" << value.cx                                       //
+               << R"(, "dx": )" << value.dx                                       //
+               << R"(, "dotmode": )" << value.dot_mode                            //
+               << R"(, "xdots": )" << value.x_dots                                //
+               << R"(, "ydots": )" << value.y_dots                                //
+               << R"(, "colors": )" << value.colors                               //
+               << R"(, "version": )" << value.info_version                        //
+               << R"(, "param3": )" << value.param3                               //
+               << R"(, "param4": )" << value.param4                               //
+               << R"(, "potential": )" << test::ArrayPrinter(value.potential)     //
+               << R"(, "rseed": )" << value.random_seed                           //
+               << R"(, "rflag": )" << value.random_seed_flag                      //
+               << R"(, "biomorph": )" << value.biomorph                           //
+               << R"(, "inside": )" << value.inside                               //
+               << R"(, "logmapold": )" << value.log_map_old                       //
+               << R"(, "invert": )" << test::ArrayPrinter(value.invert)           //
+               << R"(, "decomp": )" << test::ArrayPrinter(value.decomp)           //
+               << R"(, "symmetry": )" << value.symmetry                           //
+               << R"(, "init3d": )" << test::ArrayPrinter(value.init3d)           //
+               << R"(, "previewfactor": )" << value.preview_factor                //
+               << R"(, "xtrans": )" << value.x_trans                              //
+               << R"(, "ytrans": )" << value.y_trans                              //
+               << R"(, "red_crop_left": )" << value.red_crop_left                 //
+               << R"(, "red_crop_right": )" << value.red_crop_right               //
+               << R"(, "blue_crop_left": )" << value.blue_crop_left               //
+               << R"(, "blue_crop_right": )" << value.blue_crop_right             //
+               << R"(, "red_bright": )" << value.red_bright                       //
+               << R"(, "blue_bright": )" << value.blue_bright                     //
+               << R"(, "xadjust": )" << value.x_adjust                            //
+               << R"(, "eyeseparation": )" << value.eye_separation                //
+               << R"(, "glassestype": )" << value.glasses_type                    //
+               << R"(, "outside": )" << value.outside                             //
+               << R"(, "x3rd": )" << value.x3rd                                   //
+               << R"(, "y3rd": )" << value.y3rd                                   //
+               << R"(, "stdcalcmode": )" << int(value.std_calc_mode)              //
+               << R"(, "useinitorbit": )" << int(value.use_init_orbit)            //
+               << R"(, "calc_status": )" << value.calc_status                     //
+               << R"(, "tot_extend_len": )" << value.tot_extend_len               //
+               << R"(, "distestold": )" << value.dist_est_old                     //
+               << R"(, "floatflag": )" << value.float_flag                        //
+               << R"(, "bailoutold": )" << value.bailout_old                      //
+               << R"(, "calctime": )" << value.calc_time                          //
+               << R"(, "trigndx": )" << test::ArrayPrinter(value.trig_index)      //
+               << R"(, "finattract": )" << value.finite_attractor                 //
+               << R"(, "initorbit": )" << test::ArrayPrinter(value.init_orbit)    //
+               << R"(, "periodicity": )" << value.periodicity                     //
+               << R"(, "pot16bit": )" << value.pot16bit                           //
+               << R"(, "faspectratio": )" << value.final_aspect_ratio             //
+               << R"(, "system": )" << value.system                               //
+               << R"(, "release": )" << value.release                             //
+               << R"(, "display_3d": )" << value.display_3d                       //
+               << R"(, "transparent": )" << test::ArrayPrinter(value.transparent) //
+               << R"(, "ambient": )" << value.ambient                             //
+               << R"(, "haze": )" << value.haze                                   //
+               << R"(, "randomize": )" << value.randomize                         //
+               << R"(, "rotate_lo": )" << value.rotate_lo                         //
+               << R"(, "rotate_hi": )" << value.rotate_hi                         //
+               << R"(, "distestwidth": )" << value.dist_est_width                 //
+               << R"(, "d_param3": )" << value.d_param3                           //
+               << R"(, "d_param4": )" << value.d_param4                           //
+               << R"(, "fillcolor": )" << value.fill_color                        //
+               << R"(, "mxmaxfp": )" << value.julibrot_x_max                      //
+               << R"(, "mxminfp": )" << value.julibrot_x_min                      //
+               << R"(, "mymaxfp": )" << value.julibrot_y_max                      //
+               << R"(, "myminfp": )" << value.julibrot_y_min                      //
+               << R"(, "zdots": )" << value.julibrot_z_dots                       //
+               << R"(, "originfp": )" << value.julibrot_origin_fp                 //
+               << R"(, "depthfp": )" << value.julibrot_depth_fp                   //
+               << R"(, "heightfp": )" << value.julibrot_height_fp                 //
+               << R"(, "widthfp": )" << value.julibrot_width_fp                   //
+               << R"(, "distfp": )" << value.julibrot_dist_fp                     //
+               << R"(, "eyesfp": )" << value.eyes_fp                              //
+               << R"(, "orbittype": )" << value.orbit_type                        //
+               << R"(, "juli3Dmode": )" << value.juli3d_mode                      //
+               << R"(, "maxfn": )" << value.max_fn                                //
+               << R"(, "inversejulia": )" << value.inverse_julia                  //
+               << R"(, "d_param5": )" << value.d_param5                           //
+               << R"(, "d_param6": )" << value.d_param6                           //
+               << R"(, "d_param7": )" << value.d_param7                           //
+               << R"(, "d_param8": )" << value.d_param8                           //
+               << R"(, "d_param9": )" << value.d_param9                           //
+               << R"(, "d_param10": )" << value.d_param10                         //
+               << R"(, "bailout": )" << value.bailout                             //
+               << R"(, "bailoutest": )" << value.bailout_test                     //
+               << R"(, "iterations": )" << value.iterations                       //
+               << R"(, "bf_math": )" << value.bf_math                             //
+               << R"(, "g_bf_length": )" << value.bf_length                       //
+               << R"(, "yadjust": )" << value.y_adjust                            //
+               << R"(, "old_demm_colors": )" << value.old_demm_colors             //
+               << R"(, "logmap": )" << value.log_map                              //
+               << R"(, "distest": )" << value.dist_est                            //
+               << R"(, "dinvert": )" << test::ArrayPrinter(value.d_invert)        //
+               << R"(, "logcalc": )" << value.log_calc                            //
+               << R"(, "stoppass": )" << value.stop_pass                          //
+               << R"(, "quick_calc": )" << value.quick_calc                       //
+               << R"(, "closeprox": )" << value.close_prox                        //
+               << R"(, "nobof": )" << value.no_bof                                //
+               << R"(, "orbit_interval": )" << value.orbit_interval               //
+               << R"(, "orbit_delay": )" << value.orbit_delay                     //
+               << R"(, "math_tol": )" << test::ArrayPrinter(value.math_tol)       //
+               << R"(, "version_major": )" << value.version_major                 //
+               << R"(, "version_minor": )" << value.version_minor                 //
+               << R"(, "version_patch": )" << value.version_patch                 //
+               << R"(, "version_tweak": )" << value.version_tweak                 //
+               << " }";                                                           //
+}
+
+std::ostream &operator<<(std::ostream &str, const FormulaInfo &value)
+{
+    return str << R"({ "form_name": ")" << test::trim(value.form_name) << '"' //
+               << R"(, "uses_p1": )" << value.uses_p1                         //
+               << R"(, "uses_p2": )" << value.uses_p2                         //
+               << R"(, "uses_p3": )" << value.uses_p3                         //
+               << R"(, "uses_ismand": )" << value.uses_ismand                 //
+               << R"(, "ismand": )" << value.ismand                           //
+               << R"(, "uses_p4": )" << value.uses_p4                         //
+               << R"(, "uses_p5": )" << value.uses_p5                         //
+               << " }";
+}
+
+std::ostream &operator<<(std::ostream &str, const OrbitsInfo &value)
+{
+    return str                                                                              //
+        << R"({ "oxmin": )" << value.orbit_corner_min_x                                     //
+        << R"( "oxmax": )" << value.orbit_corner_max_x                                      //
+        << R"( "oymin": )" << value.orbit_corner_min_y                                      //
+        << R"( "oymax": )" << value.orbit_corner_max_y                                      //
+        << R"( "ox3rd": )" << value.orbit_corner_3rd_x                                      //
+        << R"( "oy3rd": )" << value.orbit_corner_3rd_y                                      //
+        << R"( "keep_scrn_coords": )" << (value.keep_screen_coords != 0 ? "true" : "false") //
+        << R"( "drawmode": ")" << value.draw_mode << '"'                                    //
+        << " }";                                                                            //
+}
+
+} // namespace id::io
+
+namespace id::ui
+{
+
+std::ostream &operator<<(std::ostream &str, const EvolutionInfo &value)
+{
+    return str                                                                         //
+        << R"({ "evolving": )" << value.evolving                                       //
+        << R"(, "image_grid_size": )" << value.image_grid_size                         //
+        << R"(, "this_generation_random_seed": )" << value.this_generation_random_seed //
+        << R"(, "max_random_mutation": )" << value.max_random_mutation                 //
+        << R"(, "x_parameter_range": )" << value.x_parameter_range                     //
+        << R"(, "y_parameter_range": )" << value.y_parameter_range                     //
+        << R"(, "x_parameter_offset": )" << value.x_parameter_offset                   //
+        << R"(, "y_parameter_offset": )" << value.y_parameter_offset                   //
+        << R"(, "discrete_x_parameter_offset": )" << value.discrete_x_parameter_offset //
+        << R"(, "discrete_y_paramter_offset": )" << value.discrete_y_parameter_offset  //
+        << R"(, "px": )" << value.px                                                   //
+        << R"(, "py": )" << value.py                                                   //
+        << R"(, "sxoffs": )" << value.screen_x_offset                                  //
+        << R"(, "syoffs": )" << value.screen_y_offset                                  //
+        << R"(, "xdots": )" << value.x_dots                                            //
+        << R"(, "ydots": )" << value.y_dots                                            //
+        << R"(, "mutate": )" << test::ArrayPrinter(value.mutate)                       //
+        << R"(, "ecount": )" << value.count                                            //
+        << " }";                                                                       //
+}
+
+} // namespace id::ui
+
+namespace id::test
+{
+
 constexpr double EPS{1.0e-6};
 
 enum
@@ -170,200 +420,6 @@ public:
     ~TestGIFOrbitInfoExtension() override = default;
 };
 
-template <typename T, size_t N>
-class ArrayPrinter
-{
-public:
-    explicit ArrayPrinter(const T (&value)[N]) :
-        m_value(value)
-    {
-    }
-
-    ArrayPrinter(const ArrayPrinter &rhs) = delete;
-    ArrayPrinter(ArrayPrinter &&rhs) = delete;
-    ~ArrayPrinter() = default;
-    ArrayPrinter &operator=(const ArrayPrinter &rhs) = delete;
-    ArrayPrinter &operator=(ArrayPrinter &&rhs) = delete;
-
-    const T (&m_value)[N];
-};
-
-template <size_t N, typename T>
-std::ostream &operator<<(std::ostream &str, const ArrayPrinter<T, N> &value)
-{
-    str << "[ ";
-    bool first{true};
-    for (int i = 0; i < N; ++i)
-    {
-        if (!first)
-        {
-            str << ", ";
-        }
-        str << value.m_value[i];
-        first = false;
-    }
-    return str << " ]";
-}
-
-template <size_t N>
-std::ostream &operator<<(std::ostream &str, const ArrayPrinter<std::uint8_t, N> &value)
-{
-    str << "[ ";
-    bool first{true};
-    for (int i = 0; i < N; ++i)
-    {
-        if (!first)
-        {
-            str << ", ";
-        }
-        str << int(value.m_value[i]);
-        first = false;
-    }
-    return str << " ]";
-}
-
-template <int N>
-static std::string trim(const char (&field)[N])
-{
-    const std::string text{field, N};
-    const auto pos = text.find_last_not_of('\0');
-    return pos == std::string::npos ? (text[0] == 0 ? std::string{} : text) : text.substr(0, pos + 1);
-}
-
-std::ostream &operator<<(std::ostream &str, const FractalInfo &value)
-{
-    return str << "{ "                                                      //
-               << R"("info_id": ")" << trim(value.info_id) << '"'           //
-               << R"(, "iterationsold": )" << value.iterations_old          //
-               << R"(, "fractal_type": )" << value.fractal_type             //
-               << R"(, "xmin": )" << value.x_min                            //
-               << R"(, "xmax": )" << value.x_max                            //
-               << R"(, "ymin": )" << value.y_min                            //
-               << R"(, "ymax": )" << value.y_max                            //
-               << R"(, "creal": )" << value.c_real                          //
-               << R"(, "cimag": )" << value.c_imag                          //
-               << R"(, "ax": )" << value.ax                                 //
-               << R"(, "bx": )" << value.bx                                 //
-               << R"(, "cx": )" << value.cx                                 //
-               << R"(, "dx": )" << value.dx                                 //
-               << R"(, "dotmode": )" << value.dot_mode                      //
-               << R"(, "xdots": )" << value.x_dots                          //
-               << R"(, "ydots": )" << value.y_dots                          //
-               << R"(, "colors": )" << value.colors                         //
-               << R"(, "version": )" << value.info_version                  //
-               << R"(, "param3": )" << value.param3                         //
-               << R"(, "param4": )" << value.param4                         //
-               << R"(, "potential": )" << ArrayPrinter(value.potential)     //
-               << R"(, "rseed": )" << value.random_seed                     //
-               << R"(, "rflag": )" << value.random_seed_flag                //
-               << R"(, "biomorph": )" << value.biomorph                     //
-               << R"(, "inside": )" << value.inside                         //
-               << R"(, "logmapold": )" << value.log_map_old                 //
-               << R"(, "invert": )" << ArrayPrinter(value.invert)           //
-               << R"(, "decomp": )" << ArrayPrinter(value.decomp)           //
-               << R"(, "symmetry": )" << value.symmetry                     //
-               << R"(, "init3d": )" << ArrayPrinter(value.init3d)           //
-               << R"(, "previewfactor": )" << value.preview_factor          //
-               << R"(, "xtrans": )" << value.x_trans                        //
-               << R"(, "ytrans": )" << value.y_trans                        //
-               << R"(, "red_crop_left": )" << value.red_crop_left           //
-               << R"(, "red_crop_right": )" << value.red_crop_right         //
-               << R"(, "blue_crop_left": )" << value.blue_crop_left         //
-               << R"(, "blue_crop_right": )" << value.blue_crop_right       //
-               << R"(, "red_bright": )" << value.red_bright                 //
-               << R"(, "blue_bright": )" << value.blue_bright               //
-               << R"(, "xadjust": )" << value.x_adjust                      //
-               << R"(, "eyeseparation": )" << value.eye_separation          //
-               << R"(, "glassestype": )" << value.glasses_type              //
-               << R"(, "outside": )" << value.outside                       //
-               << R"(, "x3rd": )" << value.x3rd                             //
-               << R"(, "y3rd": )" << value.y3rd                             //
-               << R"(, "stdcalcmode": )" << int(value.std_calc_mode)        //
-               << R"(, "useinitorbit": )" << int(value.use_init_orbit)      //
-               << R"(, "calc_status": )" << value.calc_status               //
-               << R"(, "tot_extend_len": )" << value.tot_extend_len         //
-               << R"(, "distestold": )" << value.dist_est_old               //
-               << R"(, "floatflag": )" << value.float_flag                  //
-               << R"(, "bailoutold": )" << value.bailout_old                //
-               << R"(, "calctime": )" << value.calc_time                    //
-               << R"(, "trigndx": )" << ArrayPrinter(value.trig_index)      //
-               << R"(, "finattract": )" << value.finite_attractor           //
-               << R"(, "initorbit": )" << ArrayPrinter(value.init_orbit)    //
-               << R"(, "periodicity": )" << value.periodicity               //
-               << R"(, "pot16bit": )" << value.pot16bit                     //
-               << R"(, "faspectratio": )" << value.final_aspect_ratio       //
-               << R"(, "system": )" << value.system                         //
-               << R"(, "release": )" << value.release                       //
-               << R"(, "display_3d": )" << value.display_3d                 //
-               << R"(, "transparent": )" << ArrayPrinter(value.transparent) //
-               << R"(, "ambient": )" << value.ambient                       //
-               << R"(, "haze": )" << value.haze                             //
-               << R"(, "randomize": )" << value.randomize                   //
-               << R"(, "rotate_lo": )" << value.rotate_lo                   //
-               << R"(, "rotate_hi": )" << value.rotate_hi                   //
-               << R"(, "distestwidth": )" << value.dist_est_width           //
-               << R"(, "d_param3": )" << value.d_param3                     //
-               << R"(, "d_param4": )" << value.d_param4                     //
-               << R"(, "fillcolor": )" << value.fill_color                  //
-               << R"(, "mxmaxfp": )" << value.julibrot_x_max                //
-               << R"(, "mxminfp": )" << value.julibrot_x_min                //
-               << R"(, "mymaxfp": )" << value.julibrot_y_max                //
-               << R"(, "myminfp": )" << value.julibrot_y_min                //
-               << R"(, "zdots": )" << value.julibrot_z_dots                 //
-               << R"(, "originfp": )" << value.julibrot_origin_fp           //
-               << R"(, "depthfp": )" << value.julibrot_depth_fp             //
-               << R"(, "heightfp": )" << value.julibrot_height_fp           //
-               << R"(, "widthfp": )" << value.julibrot_width_fp             //
-               << R"(, "distfp": )" << value.julibrot_dist_fp               //
-               << R"(, "eyesfp": )" << value.eyes_fp                        //
-               << R"(, "orbittype": )" << value.orbit_type                  //
-               << R"(, "juli3Dmode": )" << value.juli3d_mode                //
-               << R"(, "maxfn": )" << value.max_fn                          //
-               << R"(, "inversejulia": )" << value.inverse_julia            //
-               << R"(, "d_param5": )" << value.d_param5                     //
-               << R"(, "d_param6": )" << value.d_param6                     //
-               << R"(, "d_param7": )" << value.d_param7                     //
-               << R"(, "d_param8": )" << value.d_param8                     //
-               << R"(, "d_param9": )" << value.d_param9                     //
-               << R"(, "d_param10": )" << value.d_param10                   //
-               << R"(, "bailout": )" << value.bailout                       //
-               << R"(, "bailoutest": )" << value.bailout_test               //
-               << R"(, "iterations": )" << value.iterations                 //
-               << R"(, "bf_math": )" << value.bf_math                       //
-               << R"(, "g_bf_length": )" << value.bf_length                 //
-               << R"(, "yadjust": )" << value.y_adjust                      //
-               << R"(, "old_demm_colors": )" << value.old_demm_colors       //
-               << R"(, "logmap": )" << value.log_map                        //
-               << R"(, "distest": )" << value.dist_est                      //
-               << R"(, "dinvert": )" << ArrayPrinter(value.d_invert)        //
-               << R"(, "logcalc": )" << value.log_calc                      //
-               << R"(, "stoppass": )" << value.stop_pass                    //
-               << R"(, "quick_calc": )" << value.quick_calc                 //
-               << R"(, "closeprox": )" << value.close_prox                  //
-               << R"(, "nobof": )" << value.no_bof                          //
-               << R"(, "orbit_interval": )" << value.orbit_interval         //
-               << R"(, "orbit_delay": )" << value.orbit_delay               //
-               << R"(, "math_tol": )" << ArrayPrinter(value.math_tol)       //
-               << R"(, "version_major": )" << value.version_major           //
-               << R"(, "version_minor": )" << value.version_minor           //
-               << R"(, "version_patch": )" << value.version_patch           //
-               << R"(, "version_tweak": )" << value.version_tweak           //
-               << " }";                                                     //
-}
-
-std::ostream &operator<<(std::ostream &str, const FormulaInfo &value)
-{
-    return str << R"({ "form_name": ")" << trim(value.form_name) << '"' //
-               << R"(, "uses_p1": )" << value.uses_p1                   //
-               << R"(, "uses_p2": )" << value.uses_p2                   //
-               << R"(, "uses_p3": )" << value.uses_p3                   //
-               << R"(, "uses_ismand": )" << value.uses_ismand           //
-               << R"(, "ismand": )" << value.ismand                     //
-               << R"(, "uses_p4": )" << value.uses_p4                   //
-               << R"(, "uses_p5": )" << value.uses_p5                   //
-               << " }";
-}
-
 template <typename T>
 class VecPrinter
 {
@@ -401,44 +457,6 @@ std::ostream &operator<<(std::ostream &str, const VecPrinter<int> &value)
         first = false;
     }
     return str << " ]";
-}
-
-std::ostream &operator<<(std::ostream &str, const EvolutionInfo &value)
-{
-    return str                                                                         //
-        << R"({ "evolving": )" << value.evolving                                       //
-        << R"(, "image_grid_size": )" << value.image_grid_size                         //
-        << R"(, "this_generation_random_seed": )" << value.this_generation_random_seed //
-        << R"(, "max_random_mutation": )" << value.max_random_mutation                 //
-        << R"(, "x_parameter_range": )" << value.x_parameter_range                     //
-        << R"(, "y_parameter_range": )" << value.y_parameter_range                     //
-        << R"(, "x_parameter_offset": )" << value.x_parameter_offset                   //
-        << R"(, "y_parameter_offset": )" << value.y_parameter_offset                   //
-        << R"(, "discrete_x_parameter_offset": )" << value.discrete_x_parameter_offset //
-        << R"(, "discrete_y_paramter_offset": )" << value.discrete_y_parameter_offset  //
-        << R"(, "px": )" << value.px                                                   //
-        << R"(, "py": )" << value.py                                                   //
-        << R"(, "sxoffs": )" << value.screen_x_offset                                  //
-        << R"(, "syoffs": )" << value.screen_y_offset                                  //
-        << R"(, "xdots": )" << value.x_dots                                            //
-        << R"(, "ydots": )" << value.y_dots                                            //
-        << R"(, "mutate": )" << ArrayPrinter(value.mutate)                             //
-        << R"(, "ecount": )" << value.count                                            //
-        << " }";                                                                       //
-}
-
-std::ostream &operator<<(std::ostream &str, const OrbitsInfo &value)
-{
-    return str                                                                              //
-        << R"({ "oxmin": )" << value.orbit_corner_min_x                                     //
-        << R"( "oxmax": )" << value.orbit_corner_max_x                                      //
-        << R"( "oymin": )" << value.orbit_corner_min_y                                      //
-        << R"( "oymax": )" << value.orbit_corner_max_y                                      //
-        << R"( "ox3rd": )" << value.orbit_corner_3rd_x                                      //
-        << R"( "oy3rd": )" << value.orbit_corner_3rd_y                                      //
-        << R"( "keep_scrn_coords": )" << (value.keep_screen_coords != 0 ? "true" : "false") //
-        << R"( "drawmode": ")" << value.draw_mode << '"'                                    //
-        << " }";                                                                            //
 }
 
 class GIFOutputFile
@@ -905,3 +923,5 @@ TEST_F(TestGIFOrbitInfoExtension, encode)
     const OrbitsInfo info2{get_orbits_info(out)};
     EXPECT_EQ(info1, info2) << info1 << " != " << info2;
 }
+
+} // namespace id::test

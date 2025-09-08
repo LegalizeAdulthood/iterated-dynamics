@@ -18,7 +18,7 @@ using namespace id::config;
 using namespace id::io;
 using namespace id::test::data;
 
-namespace
+namespace id::test
 {
 
 class TestExpandDirName : public ::testing::Test
@@ -42,8 +42,6 @@ void TestExpandDirName::SetUp()
     m_test_data_dir.make_preferred();
     m_test_data_subdir.make_preferred();
 }
-
-} // namespace
 
 TEST_F(TestExpandDirName, resolvesRelativeDir)
 {
@@ -75,3 +73,5 @@ TEST_F(TestExpandDirName, absolutePathUnchanged)
     EXPECT_EQ(m_test_data_dir.root_name().string(), m_drive);
     EXPECT_EQ(m_test_data_dir.string().substr(std::strlen(m_drive)) + m_sep, m_dir_name);
 }
+
+} // namespace id::test

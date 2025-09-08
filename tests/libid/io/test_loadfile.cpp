@@ -28,6 +28,9 @@ using namespace id::test::migrate_gif;
 using namespace id::ui;
 using namespace testing;
 
+namespace id::fractals
+{
+
 inline std::ostream &operator<<(std::ostream &str, FractalType value)
 {
     return str << +value;
@@ -38,7 +41,10 @@ void PrintTo(const FractalType value, std::ostream *str)
     *str << value;
 }
 
-namespace {
+} // namespace id::fractals
+
+namespace id::test
+{
 
 struct FileFractalType
 {
@@ -112,8 +118,6 @@ void TestLoadFile::TearDown()
     restore_history_info(g_history_ptr);
     Test::TearDown();
 }
-
-} // namespace
 
 TEST_P(TestLoadFile, integerTypeMigrated)
 {
@@ -193,3 +197,5 @@ static FileFractalType s_int_types[]{
 };
 
 INSTANTIATE_TEST_SUITE_P(MigrateTypes, TestLoadFile, ValuesIn(s_int_types));
+
+} // namespace id::test

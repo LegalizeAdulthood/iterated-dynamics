@@ -8,6 +8,9 @@
 
 using namespace id::io;
 
+namespace id::test
+{
+
 TEST(TestUpdateSaveName, basic)
 {
     std::string filename("fract0001.gif");
@@ -48,3 +51,5 @@ TEST(TestNextSaveName, basic)
 {
     EXPECT_EQ("fract0002.gif", next_save_name("fract0001.gif"));
 }
+
+} // namespace id::test

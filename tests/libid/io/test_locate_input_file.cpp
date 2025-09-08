@@ -22,6 +22,9 @@ using namespace id::misc;
 using namespace id::test::config;
 using namespace testing;
 
+namespace id::test
+{
+
 TEST(TestLocateConfigFile, preferCurrentDirectory)
 {
     ValueSaver saved_save_dir{g_save_dir, ID_TEST_SAVE_DIR};
@@ -75,3 +78,5 @@ TEST(TestLocateConfigFile, loadToolsFileFallbackToCurrentDir)
 
     EXPECT_EQ(std::filesystem::path{ID_TEST_HOME_TOOLS_INI}, result);
 }
+
+} // namespace id::test

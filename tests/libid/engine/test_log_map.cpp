@@ -16,7 +16,7 @@
 using namespace id::engine;
 using namespace id::misc;
 
-namespace
+namespace id::test
 {
 
 struct TestSetupLogTable : testing::Test
@@ -35,8 +35,6 @@ protected:
 void TestSetupLogTable::SetUp()
 {
     g_log_map_table.clear();
-}
-
 }
 
 TEST_F(TestSetupLogTable, zeroLogMapTableMaxSize)
@@ -211,3 +209,5 @@ TEST_F(TestSetupLogTable, sqrtPaletteLogMapFlagMinusTwoHundred)
     }
     EXPECT_THAT(g_log_map_table, testing::ElementsAreArray(expected));
 }
+
+} // namespace id::test

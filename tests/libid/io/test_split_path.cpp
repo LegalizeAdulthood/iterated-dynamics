@@ -19,7 +19,8 @@ using namespace id::config;
 using namespace id::io;
 using namespace id::test::data;
 
-namespace {
+namespace id::test
+{
 
 class TestSplitPath : public ::testing::Test
 {
@@ -30,8 +31,6 @@ protected:
     char m_filename[ID_FILE_MAX_PATH]{};
     char m_ext[ID_FILE_MAX_PATH]{};
 };
-
-}
 
 TEST_F(TestSplitPath, absolutePath)
 {
@@ -143,3 +142,5 @@ TEST_F(TestSplitPath, driveDirectoryOnly)
             static_cast<char>(fs::path::preferred_separator),
         m_dir);
 }
+
+} // namespace id::test

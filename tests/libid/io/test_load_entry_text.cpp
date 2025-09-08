@@ -15,6 +15,9 @@
 using namespace id::io;
 using namespace id::test::data;
 
+namespace id::test
+{
+
 static void position_to_line_starting_with(std::FILE*entry_file, const std::string_view text)
 {
     long pos;
@@ -121,3 +124,5 @@ TEST(TestLoadEntryText, columnTwoOneLine)
     EXPECT_EQ(1U, actual.size());
     EXPECT_EQ(expected[0].substr(start_col), actual[0]);
 }
+
+} // namespace id::test

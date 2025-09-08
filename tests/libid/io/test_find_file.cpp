@@ -22,6 +22,9 @@ using namespace id::io;
 using namespace id::test::data;
 using namespace testing;
 
+namespace id::test
+{
+
 TEST(TestFindFile, firstTextFile)
 {
     const bool result = fr_find_first((fs::path(ID_TEST_DATA_FIND_FILE_DIR) / "*.txt").string().c_str());
@@ -170,3 +173,5 @@ TEST(TestFindFile, caseInsensitiveFilenameWildcardRegex)
     EXPECT_EQ(ID_TEST_FIND_FILE_CASE, g_dta.filename);
     EXPECT_EQ(0, g_dta.attribute);
 }
+
+} // namespace id::test

@@ -14,7 +14,7 @@
 
 using namespace id::ui;
 
-namespace
+namespace id::test
 {
 
 class TestPutEncodedColors : public testing::Test
@@ -71,8 +71,6 @@ void TestPutEncodedColors::iota4(int count)
             return result;
         });
 }
-
-} // namespace
 
 TEST_F(TestPutEncodedColors, increasingSixBitRamp)
 {
@@ -177,3 +175,5 @@ TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
     std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }
+
+} // namespace
