@@ -4,6 +4,9 @@
 
 #include <X11/Xlib.h>
 
+namespace id::misc
+{
+
 enum
 {
     KEYBUFMAX = 80
@@ -47,3 +50,5 @@ private:
     unsigned height_;
     bool mapped_;
 };
+
+} // namespace id::misc

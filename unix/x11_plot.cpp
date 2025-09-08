@@ -6,6 +6,9 @@
 
 #include <X11/Xlib.h>
 
+namespace id::misc
+{
+
 void X11PlotWindow::initialize(Display *dpy, int screen_num, Window parent)
 {
     dpy_ = dpy;
@@ -34,3 +37,5 @@ void X11PlotWindow::clear()
 {
 
 }
+
+} // namespace id::misc

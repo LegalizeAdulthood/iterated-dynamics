@@ -58,7 +58,11 @@
 #endif
 #endif
 
-using namespace id::misc;
+using namespace id::engine;
+using namespace id::ui;
+
+namespace id::misc
+{
 
 constexpr int ctl(int code)
 {
@@ -69,29 +73,6 @@ static int iocount;
 
 // Check if there is a character waiting for us.
 #define input_pending() (ioctl(0, FIONREAD, &iocount), (int)iocount)
-
-// external variables (set in the id.cfg file, but findable here
-
-extern  int g_screen_x_dots, g_screen_y_dots;     // total # of dots on the screen
-extern  int g_logical_screen_x_offset, g_logical_screen_y_offset;     // offset of drawing area
-extern  int g_colors;         // maximum colors available
-extern  int g_adapter;
-extern bool g_got_real_dac;
-extern bool g_inside_help;
-extern float g_final_aspect_ratio;
-extern  float   g_screen_aspect;
-
-extern VideoInfo x11_video_table[];
-
-// the video-palette array (named after the VGA adapter's video-DAC)
-
-extern unsigned char dacbox[256][3];
-
-extern int g_color_cycle_range_hi;
-
-extern void fpe_handler(int signum);
-
-//extern WINDOW *curwin;
 
 static int onroot = 0;
 static int fullscreen = 0;
@@ -121,7 +102,7 @@ static int ipixtab[256];
 static unsigned long pixtab[256];
 typedef unsigned long XPixel;
 
-bool g_fake_lut{};
+static bool g_fake_lut{};
 
 static XPixel cmap_pixtab[256]; // for faking a LUTs on non-LUT visuals
 static bool cmap_pixtab_alloced = false;
@@ -1270,7 +1251,7 @@ handleesc()
     }
 }
 
-bool g_x_zoom_waiting = false;
+static bool g_x_zoom_waiting = false;
 
 #define SENS 1
 #define ABS(x) ((x) > 0?(x):-(x))
@@ -1971,3 +1952,5 @@ redraw_screen()
                      ButtonPressMask|ButtonReleaseMask|
                      PointerMotionMask|StructureNotifyMask);
 }
+
+} // namespace id::misc

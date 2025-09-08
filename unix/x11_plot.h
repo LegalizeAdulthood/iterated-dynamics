@@ -4,6 +4,9 @@
 
 #include <X11/Xlib.h>
 
+namespace id::misc
+{
+
 // cppcheck-suppress noConstructor
 class X11PlotWindow
 {
@@ -43,3 +46,5 @@ private:
     unsigned height_;
     Window window_;
 };
+
+} // namespace id::misc

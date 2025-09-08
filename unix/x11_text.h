@@ -7,6 +7,9 @@
 
 #include <X11/Xlib.h>
 
+namespace id::misc
+{
+
 enum
 {
     X11_TEXT_MAX_COL = 80,
@@ -76,3 +79,5 @@ private:
     Colormap colormap_;
     bool buffer_init_;
 };
+
+} // namespace id::misc

@@ -2,6 +2,9 @@
 //
 #pragma once
 
+namespace id::misc
+{
+
 // reads the current colormap into dacbox.
 int read_video_palette();
 
@@ -24,3 +27,5 @@ int resize_window();
  * where the screen is updated only every few seconds.
  */
 void redraw_screen();
+
+} // namespace id::misc

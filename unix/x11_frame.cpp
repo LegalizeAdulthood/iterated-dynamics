@@ -4,6 +4,9 @@
 
 #include "x11_frame.h"
 
+namespace id::misc
+{
+
 void X11FrameWindow::initialize(Display *dpy,
     int screen_num,
     char const *geometry)
@@ -82,3 +85,5 @@ int X11FrameWindow::pump_messages(bool wait_flag)
 {
     return 0;
 }
+
+} // namespace id::misc

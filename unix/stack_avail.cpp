@@ -2,6 +2,9 @@
 //
 #include "misc/stack_avail.h"
 
+namespace id::misc
+{
+
 /*
  *----------------------------------------------------------------------
  *
@@ -21,3 +24,5 @@ long stack_avail()
 {
     return 8192;
 }
+
+} // namespace id::misc

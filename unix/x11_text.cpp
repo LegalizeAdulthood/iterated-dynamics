@@ -8,6 +8,9 @@
 
 #include "x11_text.h"
 
+namespace id::misc
+{
+
 X11TextWindow::X11TextWindow()
     : dpy_{},
     screen_num_{},
@@ -937,3 +940,5 @@ void X11TextWindow::repaint(int xmin, int xmax, int ymin, int ymax)
 
     XFreeGC(dpy_, gc);
 }
+
+} // namespace id::misc

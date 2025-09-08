@@ -17,6 +17,11 @@
 #include <cstdio>
 #include <cstring>
 
+using namespace id::ui;
+
+namespace id::misc
+{
+
 /*
  * This file contains Unix versions of the routines in video.asm
  * Copyright 1992 Ken Shirriff
@@ -30,3 +35,5 @@ void load_dac()
 {
     read_video_palette();
 }
+
+} // namespace id::misc
