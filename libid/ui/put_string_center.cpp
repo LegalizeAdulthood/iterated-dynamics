@@ -8,6 +8,9 @@
 
 using namespace id::misc;
 
+namespace id::ui
+{
+
 int put_string_center(int row, int col, int width, int attr, const char *msg)
 {
     char buf[81];
@@ -37,3 +40,5 @@ int put_string_center(int row, int col, int width, int attr, const char *msg)
     driver_put_string(row, col, attr, buf);
     return j;
 }
+
+} // namespace id::ui
