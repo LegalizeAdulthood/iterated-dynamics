@@ -56,7 +56,7 @@ bool validate_luts(const std::string &map_name)
     {
         map_path.replace_extension(".map");
     }
-    map_path = id::io::find_file(id::io::ReadFile::MAP, map_path);
+    map_path = find_file(ReadFile::MAP, map_path);
     std::FILE *f = std::fopen(map_path.string().c_str(), "r"); // search the dos path
     if (f == nullptr)
     {

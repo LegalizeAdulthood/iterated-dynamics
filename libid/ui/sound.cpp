@@ -43,7 +43,7 @@ bool sound_open()
     std::string sound_name{"sound001.txt"};
     if ((g_orbit_save_flags & OSF_MIDI) != 0 && s_snd_fp == nullptr)
     {
-        std::string path{id::io::get_save_path(id::io::WriteFile::SOUND, sound_name).string()};
+        std::string path{get_save_path(WriteFile::SOUND, sound_name).string()};
         assert(!path.empty());
         check_write_file(path, ".txt");
         s_snd_fp = std::fopen(path.c_str(), "w");

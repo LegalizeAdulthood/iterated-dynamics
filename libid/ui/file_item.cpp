@@ -53,7 +53,7 @@ constexpr int MAX_ENTRIES = 2000;
 struct GetFileEntry
 {
     std::FILE *file{};
-    id::io::FileEntry **choices{}; // for format_param_file_line
+    FileEntry **choices{}; // for format_param_file_line
     const char *title{};
 };
 
@@ -63,7 +63,7 @@ static bool check_path(const std::filesystem::path &path, std::FILE **infile, co
 {
     if (std::FILE *f = std::fopen(path.string().c_str(), "rb"); f != nullptr)
     {
-        if (id::io::search_for_entry(f, item_name))
+        if (search_for_entry(f, item_name))
         {
             *infile = f;
             return true;
@@ -146,17 +146,17 @@ bool find_file_item(
             switch (type)
             {
             case ItemType::FORMULA:
-                return id::io::ReadFile::FORMULA;
+                return ReadFile::FORMULA;
             case ItemType::L_SYSTEM:
-                return id::io::ReadFile::LSYSTEM;
+                return ReadFile::LSYSTEM;
             case ItemType::IFS:
-                return id::io::ReadFile::IFS;
+                return ReadFile::IFS;
             case ItemType::PAR_SET:
-                return id::io::ReadFile::PARAMETER;
+                return ReadFile::PARAMETER;
             }
             throw std::runtime_error("Unknown ItemType " + std::to_string(static_cast<int>(type)));
         };
-        const std::filesystem::path lib_path{id::io::find_file(read_file(item_type), path.filename())};
+        const std::filesystem::path lib_path{find_file(read_file(item_type), path.filename())};
         if (!lib_path.empty())
         {
             found = check_path(lib_path, &infile, item_name);
@@ -412,8 +412,8 @@ static long gfe_choose_entry(
 {
     const char *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     char buf[101];
-    id::io::FileEntry storage[MAX_ENTRIES + 1]{};
-    id::io::FileEntry *choices[MAX_ENTRIES + 1] = { nullptr };
+    FileEntry storage[MAX_ENTRIES + 1]{};
+    FileEntry *choices[MAX_ENTRIES + 1] = { nullptr };
     int attributes[MAX_ENTRIES + 1]{};
     char instr[80];
 
@@ -431,7 +431,7 @@ retry:
 
     help_title(); // to display a clue when file big and next is slow
 
-    int num_entries = id::io::scan_entries(s_gfe.file, &storage[0]);
+    int num_entries = scan_entries(s_gfe.file, &storage[0]);
     if (num_entries == 0)
     {
         stop_msg("File doesn't contain any valid entries");
@@ -442,7 +442,7 @@ retry:
     if (do_sort)
     {
         std::strcat(instr, "off");
-        shell_sort(&choices, num_entries, sizeof(id::io::FileEntry *));
+        shell_sort(&choices, num_entries, sizeof(FileEntry *));
     }
     else
     {

@@ -395,7 +395,7 @@ void record_show(int key)
     s_ticks = std::clock();  // current time
     if (s_slide_show_file == nullptr)
     {
-        std::string path{id::io::get_save_path(id::io::WriteFile::KEY, g_auto_name.filename().string()).string()};
+        std::string path{get_save_path(WriteFile::KEY, g_auto_name.filename().string()).string()};
         assert(!path.empty());
         check_write_file(path, ".key");
         s_slide_show_file = std::fopen(path.c_str(), "w");
@@ -508,10 +508,10 @@ int handle_special_keys(int ch)
     }
 
     static bool inside_help = false;
-    if (ID_KEY_F1 == ch && g_help_mode != id::help::HelpLabels::HELP_INDEX && !inside_help)
+    if (ID_KEY_F1 == ch && g_help_mode != help::HelpLabels::HELP_INDEX && !inside_help)
     {
         inside_help = true;
-        id::help::help();
+        help::help();
         inside_help = false;
         ch = 0;
     }

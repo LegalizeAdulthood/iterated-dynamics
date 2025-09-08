@@ -91,7 +91,7 @@ int select_video_mode(int current_mode)
 
     {
         ValueSaver saved_tab_mode{g_tab_mode, false};
-        ValueSaver saved_help_mode{g_help_mode, id::help::HelpLabels::HELP_VIDEO_MODE};
+        ValueSaver saved_help_mode{g_help_mode, help::HelpLabels::HELP_VIDEO_MODE};
         s_modes_changed = false;
         i = full_screen_choice(ChoiceFlags::HELP, "Select Video Mode",
             "key...name..........xdot..ydot.colr.driver......comment......", nullptr, g_video_table_len,
@@ -213,7 +213,7 @@ static bool ent_less(const int lhs, const int rhs)
 
 static void update_id_cfg()
 {
-    const fs::path save_path{id::io::get_save_path(id::io::WriteFile::ID_CONFIG, "id.cfg")};
+    const fs::path save_path{get_save_path(WriteFile::ID_CONFIG, "id.cfg")};
     assert(!save_path.empty());
     if (!is_writeable(save_path))
     {
@@ -221,7 +221,7 @@ static void update_id_cfg()
         return;
     }
 
-    const fs::path cfg_path{id::io::find_file(id::io::ReadFile::ID_CONFIG, "id.cfg")};
+    const fs::path cfg_path{find_file(ReadFile::ID_CONFIG, "id.cfg")};
     if (!cfg_path.empty())
     {
         stop_msg("Couldn't locate id.cfg");

@@ -15,6 +15,8 @@
 #include <filesystem>
 #include <string>
 
+using namespace id::io;
+
 namespace id::ui
 {
 
@@ -67,7 +69,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                             "\n",
                     gif_out.c_str(), x_mult, y_mult);
                 // attempt to create the output file
-                const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::IMAGE, gif_out)};
+                const std::filesystem::path path{get_save_path(WriteFile::IMAGE, gif_out)};
                 assert(!path.empty());
                 out = std::fopen(path.string().c_str(), "wb");
                 if (out == nullptr)
@@ -78,7 +80,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
             }
 
             gif_in = fmt::format("frmig_{:c}{:c}.gif", par_key(x_step), par_key(y_step));
-            const std::filesystem::path path{id::io::find_file(id::io::ReadFile::IMAGE, gif_in)};
+            const std::filesystem::path path{find_file(ReadFile::IMAGE, gif_in)};
             if (path.empty())
             {
                 fmt::print("Can't locate file {:s}!\n", gif_in);

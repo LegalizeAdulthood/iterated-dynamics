@@ -207,7 +207,7 @@ rescan:  // entry for changed browse parms
     split_drive_dir(g_read_filename, drive, dir);
     split_fname_ext(g_browse_mask, fname, ext);
     make_path(tmp_mask, drive, dir, fname, ext);
-    std::filesystem::path path{id::io::find_wildcard_first(id::io::ReadFile::IMAGE, tmp_mask)};
+    std::filesystem::path path{find_wildcard_first(ReadFile::IMAGE, tmp_mask)};
     status = (vid_too_big || path.empty()) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
     // draw all visible windows
     while (status == FileWindowStatus::CONTINUE)
@@ -241,7 +241,7 @@ rescan:  // entry for changed browse parms
             win_count++;
             assert(static_cast<size_t>(win_count) == s_browse_windows.size());
         }
-        path = id::io::find_wildcard_next();
+        path = find_wildcard_next();
         status = path.empty() || win_count >= MAX_WINDOWS_OPEN ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
     }
 

@@ -57,6 +57,7 @@
 
 using namespace id::config;
 using namespace id::engine;
+using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 using namespace id::ui;
@@ -2238,7 +2239,7 @@ static void is_complex_constant(std::FILE *open_file, Token *tok)
     long file_pos = std::ftell(open_file);
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "frmconst.txt")};
+        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmconst.txt")};
         assert(!path.empty());
         debug_token = std::fopen(path.string().c_str(), "at");
     }
@@ -2645,7 +2646,7 @@ int frm_get_param_stuff(const char *name)
 
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "frmtokens.txt")};
+        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmtokens.txt")};
         assert(!path.empty());
         debug_token = std::fopen(path.string().c_str(), "at");
         if (debug_token != nullptr)
@@ -2903,7 +2904,7 @@ static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
     std::FILE *debug_fp{};
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        const std::filesystem::path path{id::io::get_save_path(id::io::WriteFile::ROOT, "debugfrm.txt")};
+        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "debugfrm.txt")};
         assert(!path.empty());
         debug_fp = std::fopen(path.string().c_str(), "at");
         if (debug_fp != nullptr)

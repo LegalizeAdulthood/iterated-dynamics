@@ -60,7 +60,7 @@ static int timer(TimerType type, int (*fn)(), ...)
     }
     if (do_bench)
     {
-        fp = std::fopen(id::io::get_save_path(id::io::WriteFile::ROOT, "id-bench.txt").string().c_str(), "a");
+        fp = std::fopen(get_save_path(WriteFile::ROOT, "id-bench.txt").string().c_str(), "a");
     }
     g_engine_timer_start = std::clock();
     switch (type)
