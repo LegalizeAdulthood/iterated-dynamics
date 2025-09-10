@@ -76,22 +76,6 @@ static bool check_path(const std::filesystem::path &path, std::FILE **infile, co
     return false;
 }
 
-static const char *item_extension(ItemType item_type)
-{
-    switch (item_type)
-    {
-    case ItemType::PAR_SET:
-        return ".par";
-    case ItemType::FORMULA:
-        return ".frm";
-    case ItemType::L_SYSTEM:
-        return ".l";
-    case ItemType::IFS:
-        return ".ifs";
-    }
-    throw std::runtime_error("Unknown ItemType " + std::to_string(static_cast<int>(item_type)));
-}
-
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type)
 {
