@@ -522,7 +522,7 @@ void get_row(int x, int y, int width, char *buff)
 
 void put_row(int x, int y, int width, const char *buff)
 {
-    clip_put_line(y, x, x+width-1, (Byte *)buff);
+    clip_put_line(y, x, x+width-1, (const Byte *)buff);
 }
 
 static void ver_get_row(int x, int y, int depth, char *buff)
