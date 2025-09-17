@@ -1588,7 +1588,7 @@ static CmdArgFlags cmd_coarse(const Command &cmd)
 
 static int decode_hex_digit(int ch)
 {
-    static constexpr const char HEX_DIGITS[]{"0123456789abcdef"};
+    static constexpr char HEX_DIGITS[]{"0123456789abcdef"};
     const char *pos = std::strchr(HEX_DIGITS, std::tolower(ch));
     return pos == nullptr ? -1 : static_cast<int>(pos - HEX_DIGITS);
 }
