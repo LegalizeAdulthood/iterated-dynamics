@@ -41,7 +41,7 @@ static TokenType find_token_length(const char *curr, unsigned len, int *ret_size
         {
         case ' ':    /* it's a run of spaces */
             tok = TokenType::TOK_SPACE;
-            while (*curr == ' ' && size < (int)len)
+            while (*curr == ' ' && size < static_cast<int>(len))
             {
                 ++curr;
                 ++size;
@@ -72,7 +72,7 @@ static TokenType find_token_length(const char *curr, unsigned len, int *ret_size
                 ++curr;
                 ++size;
                 ++width;
-                assert((unsigned) size < len);
+                assert(static_cast<unsigned>(size) < len);
             }
 
             ++size;   /* skip ending CMD_LINK */
@@ -117,7 +117,7 @@ static TokenType find_token_length(const char *curr, unsigned len, int *ret_size
             tok = TokenType::TOK_WORD;
             while (true)
             {
-                if (size >= (int)len)
+                if (size >= static_cast<int>(len))
                 {
                     break;
                 }
@@ -131,7 +131,7 @@ static TokenType find_token_length(const char *curr, unsigned len, int *ret_size
                 {
                     assert(0);
                 }
-                else if ((unsigned)*curr <= MAX_CMD || *curr == ' ' || *curr == '\n')
+                else if (static_cast<unsigned>(*curr) <= MAX_CMD || *curr == ' ' || *curr == '\n')
                 {
                     break;
                 }
@@ -561,7 +561,7 @@ bool DocumentProcessor::topic_paragraph()
                 else if (in_link == 2)
                 {
                     tok = TokenType::TOK_WORD;
-                    m_width = (int) m_page_text.length();
+                    m_width = static_cast<int>(m_page_text.length());
                     m_col += 8 - m_width;
                     m_size = 0;
                     m_pd.curr = m_page_text.c_str();
@@ -763,7 +763,7 @@ bool DocumentProcessor::topic_link()
         }
 
         m_width += static_cast<int>(m_pd.link_page.size());
-        if (!print(m_page_text.c_str(), (int) m_page_text.size()))
+        if (!print(m_page_text.c_str(), static_cast<int>(m_page_text.size())))
         {
             return false;
         }

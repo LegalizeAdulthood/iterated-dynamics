@@ -127,7 +127,7 @@ static int bn_mod_bailout()
     add_bn(g_bn_tmp, g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
 
     long long_magnitude = bn_to_int(g_bn_tmp);  // works with any fractal type
-    if (long_magnitude >= (long)g_magnitude_limit)
+    if (long_magnitude >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -141,7 +141,7 @@ static int bn_real_bailout()
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
-    if (long_temp_sqr_x >= (long)g_magnitude_limit)
+    if (long_temp_sqr_x >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -155,7 +155,7 @@ static int bn_imag_bailout()
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (long_temp_sqr_y >= (long)g_magnitude_limit)
+    if (long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -170,7 +170,7 @@ static int bn_or_bailout()
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
     long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (long_temp_sqr_x >= (long)g_magnitude_limit || long_temp_sqr_y >= (long)g_magnitude_limit)
+    if (long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) || long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -185,7 +185,7 @@ static int bn_and_bailout()
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
     long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (long_temp_sqr_x >= (long)g_magnitude_limit && long_temp_sqr_y >= (long)g_magnitude_limit)
+    if (long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) && long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -204,7 +204,7 @@ static int bn_manh_bailout()
     add_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y);
     square_bn(g_old_z_bn.x, g_bn_tmp);
     long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
-    if (long_temp_mag >= (long)g_magnitude_limit)
+    if (long_temp_mag >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -221,7 +221,7 @@ static int bn_manr_bailout()
     // note: in next two lines, g_old_z_bn is just used as a temporary variable
     square_bn(g_old_z_bn.x, g_bn_tmp);
     long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
-    if (long_temp_mag >= (long)g_magnitude_limit)
+    if (long_temp_mag >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }

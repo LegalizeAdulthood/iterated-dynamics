@@ -59,16 +59,16 @@ static int get_prec_dbl(ResolutionFlag flag)
         res = g_logical_screen_x_dots-1;
     }
 
-    LDouble x_delta = ((LDouble) g_x_max - (LDouble) g_x_3rd) / res;
-    LDouble y_delta2 = ((LDouble) g_y_3rd - (LDouble) g_y_min) / res;
+    LDouble x_delta = (static_cast<LDouble>(g_x_max) - static_cast<LDouble>(g_x_3rd)) / res;
+    LDouble y_delta2 = (static_cast<LDouble>(g_y_3rd) - static_cast<LDouble>(g_y_min)) / res;
 
     if (flag == ResolutionFlag::CURRENT)
     {
         res = g_logical_screen_y_dots-1;
     }
 
-    LDouble y_delta = ((LDouble) g_y_max - (LDouble) g_y_3rd) / res;
-    LDouble x_delta2 = ((LDouble) g_x_3rd - (LDouble) g_x_min) / res;
+    LDouble y_delta = (static_cast<LDouble>(g_y_max) - static_cast<LDouble>(g_y_3rd)) / res;
+    LDouble x_delta2 = (static_cast<LDouble>(g_x_3rd) - static_cast<LDouble>(g_x_min)) / res;
 
     LDouble del1 = std::abs(x_delta) + std::abs(x_delta2);
     LDouble del2 = std::abs(y_delta) + std::abs(y_delta2);

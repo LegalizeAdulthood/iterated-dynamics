@@ -478,7 +478,7 @@ void HelpCompiler::set_content_doc_page()
     {
         assert(c.doc_page >= 1);
         std::string doc_page{std::to_string(c.doc_page)};
-        const int len = (int) doc_page.size();
+        const int len = static_cast<int>(doc_page.size());
         assert(len <= 3);
         std::memcpy(base + c.page_num_pos + (3 - len), doc_page.c_str(), len);
     }
@@ -578,7 +578,7 @@ static bool paginate_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, vo
         return true;
 
     case PrintDocCommand::PD_PERIODIC:
-        while (info->lbl != nullptr && (unsigned)(pd->curr - info->start) >= info->lbl->topic_off)
+        while (info->lbl != nullptr && static_cast<unsigned>(pd->curr - info->start) >= info->lbl->topic_off)
         {
             info->lbl->doc_page = pd->page_num;
             info->lbl = find_next_label_by_topic(info->c->topic_num[info->topic_num]);
@@ -834,37 +834,37 @@ void HelpCompiler::write_link_source()
 void HelpCompiler::calc_offsets()    // calc file offset to each topic
 {
     // NOTE: offsets do NOT include 6 bytes for signature & version!
-    long offset = static_cast<long>(sizeof(int) +                       // max_pages
-                                    sizeof(int) +                       // max_links
-                                    sizeof(int) +                       // num_topic
-                                    sizeof(int) +                       // num_label
-                                    sizeof(int) +                       // num_contents
-                                    sizeof(int) +                       // num_doc_pages
-                                    g_src.topics.size() * sizeof(long) +    // offsets to each topic
-                                    g_src.labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
+    long offset = static_cast<long>(sizeof(int) + // max_pages
+        sizeof(int) +                             // max_links
+        sizeof(int) +                             // num_topic
+        sizeof(int) +                             // num_label
+        sizeof(int) +                             // num_contents
+        sizeof(int) +                             // num_doc_pages
+        g_src.topics.size() * sizeof(long) +      // offsets to each topic
+        g_src.labels.size() * 2 * sizeof(int));   // topic_num/topic_off for all public labels
 
     offset = std::accumulate(g_src.contents.begin(), g_src.contents.end(), offset,
         [](long value, const Content &cp)
         {
-            return value += sizeof(int) +   // flags
-                1 +                         // id length
-                (int) cp.id.length() +      // id text
-                1 +                         // name length
-                (int) cp.name.length() +    // name text
-                1 +                         // number of topics
-                cp.num_topic * sizeof(int); // topic numbers
+            return value += sizeof(int) +            // flags
+                1 +                                  // id length
+                static_cast<int>(cp.id.length()) +   // id text
+                1 +                                  // name length
+                static_cast<int>(cp.name.length()) + // name text
+                1 +                                  // number of topics
+                cp.num_topic * sizeof(int);          // topic numbers
         });
 
     for (Topic &tp : g_src.topics)
     {
         tp.offset = offset;
-        offset += (long)sizeof(int) +       // topic flags
-            sizeof(int) +                   // number of pages
-            tp.num_page*3*sizeof(int) +     // page offset, length & starting margin
-            1 +                             // length of title
-            tp.title_len +                  // title
-            sizeof(int) +                   // length of text
-            tp.text_len;                    // text
+        offset += static_cast<long>(sizeof(int) + // topic flags
+            sizeof(int) +                         // number of pages
+            tp.num_page * 3 * sizeof(int) +       // page offset, length & starting margin
+            1 +                                   // length of title
+            tp.title_len +                        // title
+            sizeof(int) +                         // length of text
+            tp.text_len);                         // text
     }
 }
 
@@ -932,15 +932,15 @@ void HelpCompiler::write_help(std::FILE *file)
     {
         putw(cp.flags, file);
 
-        int t = (int) cp.id.length();
-        putc((Byte)t, file);
+        int t = static_cast<int>(cp.id.length());
+        putc(static_cast<Byte>(t), file);
         std::fwrite(cp.id.c_str(), 1, t, file);
 
-        t = (int) cp.name.length();
-        putc((Byte)t, file);
+        t = static_cast<int>(cp.name.length());
+        putc(static_cast<Byte>(t), file);
         std::fwrite(cp.name.c_str(), 1, t, file);
 
-        putc((Byte)cp.num_topic, file);
+        putc(static_cast<Byte>(cp.num_topic), file);
         std::fwrite(cp.topic_num, sizeof(int), cp.num_topic, file);
     }
 
@@ -962,7 +962,7 @@ void HelpCompiler::write_help(std::FILE *file)
 
         // write the help title
 
-        putc((Byte)tp.title_len, file);
+        putc(static_cast<Byte>(tp.title_len), file);
         std::fwrite(tp.title.c_str(), 1, tp.title_len, file);
 
         // insert hot-link info & write the help text
@@ -1313,7 +1313,7 @@ void HelpCompiler::add_hlp_to_exe()
 
     for (int count = 0; count < len;)
     {
-        int size = (int) std::min((long) BUFFER_SIZE, len - count);
+        int size = static_cast<int>(std::min(static_cast<long>(BUFFER_SIZE), len - count));
         if (read(hlp, g_src.buffer.data(), size) != size)
         {
             throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read");

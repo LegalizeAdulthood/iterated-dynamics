@@ -73,7 +73,7 @@ static void flush_output()
             long now_ticks = read_ticker();
             if (now > start)
             {
-                ticks_per_second = (now_ticks - last)/ (long) (now - start);
+                ticks_per_second = (now_ticks - last)/ static_cast<long>(now - start);
             }
         }
     }

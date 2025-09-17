@@ -181,8 +181,8 @@ int Topic::add_page(const Page &p)
 void Topic::add_page_break(int margin, const char *str, const char *start, const char *curr, int num_links)
 {
     Page p;
-    p.offset = (unsigned)(start - str);
-    p.length = (unsigned)(curr - start);
+    p.offset = static_cast<unsigned>(start - str);
+    p.length = static_cast<unsigned>(curr - start);
     p.margin = margin;
     add_page(p);
 
@@ -235,7 +235,7 @@ void Topic::read_topic_text() const
 #endif
 static void check_buffer(const char *curr, unsigned int off, const char *buffer)
 {
-    if ((unsigned)(curr + off - buffer) >= BUFFER_SIZE - 1024)
+    if (static_cast<unsigned>(curr + off - buffer) >= BUFFER_SIZE - 1024)
     {
         throw std::runtime_error("Buffer overflowerd -- Help topic too large.");
     }
@@ -279,7 +279,7 @@ int find_topic_title(const char *title)
         ++title;
     }
 
-    int len = (int) std::strlen(title) - 1;
+    int len = static_cast<int>(std::strlen(title)) - 1;
     while (title[len] == ' ' && len > 0)
     {
         --len;
@@ -295,7 +295,7 @@ int find_topic_title(const char *title)
 
     for (int t = 0; t < static_cast<int>(g_src.topics.size()); t++)
     {
-        if ((int) g_src.topics[t].title.length() == len
+        if (static_cast<int>(g_src.topics[t].title.length()) == len
             && string_case_equal(title, g_src.topics[t].title.c_str(), len))
         {
             return t;
@@ -578,7 +578,7 @@ static void put_spaces(int how_many)
         }
 
         *g_src.curr++ = CMD_SPACE;
-        *g_src.curr++ = (Byte)how_many;
+        *g_src.curr++ = static_cast<Byte>(how_many);
     }
     else
     {
@@ -609,7 +609,7 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 {
     Topic t;
     t.flags     = TopicFlags::NONE;
-    t.title_len = (unsigned) std::strlen(DOC_CONTENTS_TITLE)+1;
+    t.title_len = static_cast<unsigned>(std::strlen(DOC_CONTENTS_TITLE)) +1;
     t.title     = DOC_CONTENTS_TITLE;
     t.doc_page  = -1;
     t.num_page  = 0;
@@ -658,9 +658,9 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
             if (s_cmd[0] == '\"')
             {
                 char *ptr = &s_cmd[1];
-                if (ptr[(int) std::strlen(ptr)-1] == '\"')
+                if (ptr[static_cast<int>(std::strlen(ptr)) -1] == '\"')
                 {
-                    ptr[(int) std::strlen(ptr)-1] = '\0';
+                    ptr[static_cast<int>(std::strlen(ptr)) -1] = '\0';
                 }
                 else
                 {
@@ -696,9 +696,9 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
                 if (s_cmd[0] == '\"')
                 {
                     char *ptr = &s_cmd[1];
-                    if (ptr[(int) std::strlen(ptr)-1] == '\"')
+                    if (ptr[static_cast<int>(std::strlen(ptr)) -1] == '\"')
                     {
-                        ptr[(int) std::strlen(ptr)-1] = '\0';
+                        ptr[static_cast<int>(std::strlen(ptr)) -1] = '\0';
                     }
                     else
                     {
@@ -736,7 +736,7 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
         check_buffer(0);
     }
 
-    t.alloc_topic_text((unsigned)(g_src.curr - g_src.buffer.data()));
+    t.alloc_topic_text(static_cast<unsigned>(g_src.curr - g_src.buffer.data()));
     g_src.add_topic(t);
 }
 
@@ -757,12 +757,12 @@ static void process_doc_contents(Mode mode)
             [](char *buffer, Content &c)
             {
                 std::sprintf(buffer, "%-5s %*.0s%s", c.id.c_str(), c.indent * 2, "", c.name.c_str());
-                char *ptr = buffer + (int) std::strlen(buffer);
+                char *ptr = buffer + static_cast<int>(std::strlen(buffer));
                 while (ptr - buffer < PAGE_WIDTH - 10)
                 {
                     *ptr++ = '.';
                 }
-                c.page_num_pos = (unsigned) (ptr - 3 - g_src.buffer.data());
+                c.page_num_pos = static_cast<unsigned>(ptr - 3 - g_src.buffer.data());
                 return ptr;
             });
     }
@@ -813,7 +813,7 @@ static int parse_link()   // returns length of link or 0 on error
             *ptr++ = '\0';
         }
 
-        len = (int)(end - ptr);
+        len = static_cast<int>(end - ptr);
 
         if (s_cmd[1] == '-')
         {
@@ -825,7 +825,7 @@ static int parse_link()   // returns length of link or 0 on error
         else
         {
             l.type = LinkTypes::LT_LABEL;
-            if ((int)std::strlen(s_cmd) > 32)
+            if (static_cast<int>(std::strlen(s_cmd)) > 32)
             {
                 MSG_WARN(err_offset, "Label is long.");
             }
@@ -848,7 +848,7 @@ static int parse_link()   // returns length of link or 0 on error
     {
         ptr = s_cmd;
         l.type = LinkTypes::LT_TOPIC;
-        len = (int)(end - ptr);
+        len = static_cast<int>(end - ptr);
         if (len == 0)
         {
             MSG_ERROR(err_offset, "Implicit hot-link has no title.");
@@ -1107,7 +1107,7 @@ static void process_bin_inc()
 
     if (len >= BUFFER_SIZE)
     {
-        MSG_ERROR(0, "File \"%s\" is too large to BinInc (%dK).", &s_cmd[7], (int)(len >> 10));
+        MSG_ERROR(0, "File \"%s\" is too large to BinInc (%dK).", &s_cmd[7], static_cast<int>(len >> 10));
         close(handle);
         return ;
     }
@@ -1117,21 +1117,21 @@ static void process_bin_inc()
      * 64K) we can treat it as an unsigned.
      */
 
-    check_buffer((unsigned)len);
+    check_buffer(static_cast<unsigned>(len));
 
-    if (read(handle, g_src.curr, (unsigned)len) != len)
+    if (read(handle, g_src.curr, static_cast<unsigned>(len)) != len)
     {
         throw std::system_error(errno, std::system_category(), "process_bininc failed read");
     }
 
-    g_src.curr += (unsigned)len;
+    g_src.curr += static_cast<unsigned>(len);
 
     close(handle);
 }
 
 static void end_topic(Topic &t)
 {
-    t.alloc_topic_text((unsigned)(g_src.curr - g_src.buffer.data()));
+    t.alloc_topic_text(static_cast<unsigned>(g_src.curr - g_src.buffer.data()));
     g_src.add_topic(t);
 }
 
@@ -1195,7 +1195,7 @@ enum class ParseStates // states for FSM's
 
 static void check_command_length(int err_offset, int len)
 {
-    if ((int) std::strlen(s_cmd) != len)
+    if (static_cast<int>(std::strlen(s_cmd)) != len)
     {
         MSG_ERROR(err_offset, "Invalid text after a command \"%s\"", s_cmd+len);
     }
@@ -1456,7 +1456,7 @@ void read_src(const std::string &fname, Mode mode)
                     t.start("", 0);
                     t.flags |= TopicFlags::DATA;
 
-                    if ((int)std::strlen(data) > 32)
+                    if (static_cast<int>(std::strlen(data)) > 32)
                     {
                         MSG_WARN(err_offset, "Label name is long.");
                     }
@@ -1717,7 +1717,7 @@ void read_src(const std::string &fname, Mode mode)
                 else if (string_case_equal(s_cmd, "Label=", 6))
                 {
                     const char *label_name = &s_cmd[6];
-                    if ((int)std::strlen(label_name) <= 0)
+                    if (static_cast<int>(std::strlen(label_name)) <= 0)
                     {
                         MSG_ERROR(err_offset, "Label has no name.");
                     }
@@ -1731,7 +1731,7 @@ void read_src(const std::string &fname, Mode mode)
                     }
                     else
                     {
-                        if ((int)std::strlen(label_name) > 32)
+                        if (static_cast<int>(std::strlen(label_name)) > 32)
                         {
                             MSG_WARN(err_offset, "Label name is long.");
                         }
@@ -1743,7 +1743,7 @@ void read_src(const std::string &fname, Mode mode)
 
                         lbl.name      = label_name;
                         lbl.topic_num = static_cast<int>(g_src.topics.size());
-                        lbl.topic_off = (unsigned)(g_src.curr - g_src.buffer.data());
+                        lbl.topic_off = static_cast<unsigned>(g_src.curr - g_src.buffer.data());
                         lbl.doc_page  = -1;
                         g_src.add_label(lbl);
                     }
@@ -2032,8 +2032,8 @@ void read_src(const std::string &fname, Mode mode)
                         else
                         {
                             *g_src.curr++ = CMD_PARA;
-                            *g_src.curr++ = (char)num_spaces;
-                            *g_src.curr++ = (char)num_spaces;
+                            *g_src.curr++ = static_cast<char>(num_spaces);
+                            *g_src.curr++ = static_cast<char>(num_spaces);
                             margin_pos = g_src.curr - 1;
                             state = ParseStates::FIRST_LINE;
                             again = true;
@@ -2105,7 +2105,7 @@ void read_src(const std::string &fname, Mode mode)
                         {
                             add_blank_for_split();
                             margin = num_spaces;
-                            *margin_pos = (char)num_spaces;
+                            *margin_pos = static_cast<char>(num_spaces);
                             state = ParseStates::LINE;
                             again = true;
                         }
