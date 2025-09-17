@@ -427,12 +427,12 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
 
 static bool is_key_name(const std::string &name)
 {
-    const auto is_function_key_name = [](const std::string &name)
+    const auto is_function_key_name = [&name]
     {
         return name[0] == 'F' && name.size() < 4 &&
             std::all_of(name.begin() + 1, name.end(), [](char c) { return std::isdigit(c) != 0; });
     };
-    const auto is_modified_key_name = [](const std::string &prefix, const std::string &name)
+    const auto is_modified_key_name = [&name](const std::string &prefix)
     { return name.substr(0, prefix.size()) == prefix && is_key_name(name.substr(prefix.size())); };
 
     return name.size() == 1                                                          //
@@ -443,10 +443,10 @@ static bool is_key_name(const std::string &name)
         || name == "PageDown" || name == "PageUp" || name == "Home" || name == "End" //
         || name == "Left" || name == "Right" || name == "Up" || name == "Down"       //
         || name == "Fn" || name == "Arrow"                                           //
-        || is_function_key_name(name)                                                //
-        || is_modified_key_name("Shift+", name)                                      //
-        || is_modified_key_name("Ctrl+", name)                                       //
-        || is_modified_key_name("Alt+", name);
+        || is_function_key_name()                                                    //
+        || is_modified_key_name("Shift+")                                            //
+        || is_modified_key_name("Ctrl+")                                             //
+        || is_modified_key_name("Alt+");
 }
 
 void AsciiDocProcessor::emit_char(char c)
