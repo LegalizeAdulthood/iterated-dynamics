@@ -461,6 +461,7 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
     copy_bf(z_bf.x, center.x);
     copy_bf(z_bf.y, center.y);
 
+    int last_checked = -1;
     for (int i = 0; i <= max_iteration; i++)
     {
         std::complex<double> c;
@@ -474,7 +475,6 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
         // Everything else in this loop is just for updating the progress counter.
-        int last_checked = -1;
         double progress = (double) i / max_iteration;
         if (int(progress * 100) != last_checked)
         {
@@ -505,6 +505,7 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
 {
     std::complex<double> z = center;
 
+    int last_checked = -1;
     for (int i = 0; i <= max_iteration; i++)
     {
         m_xn[i] = z;
@@ -515,7 +516,6 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
         // Everything else in this loop is just for updating the progress counter.
-        int last_checked = -1;
         double progress = (double) i / max_iteration;
         if (int(progress * 100) != last_checked)
         {
