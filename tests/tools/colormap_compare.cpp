@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
                 std::cout << "Color mismatch at index " << i << '\n'
                           << map_file << ": " << colormap[i].red << ' '
                           << colormap[i].green << ' ' << colormap[i].blue << '\n'
-                          << image_file << ": " 
+                          << image_file << ": "
                           << static_cast<int>(image.color_map().Colors[i].Red) << ' '
                           << static_cast<int>(image.color_map().Colors[i].Green) << ' '
                           << static_cast<int>(image.color_map().Colors[i].Blue) << '\n';
