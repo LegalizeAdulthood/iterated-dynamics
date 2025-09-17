@@ -717,7 +717,7 @@ scan:
 
     status = rhombus2(c_re1, mid_r,                 //
         c_im1, mid_i,                               //
-        x1, (x1 + x2) >> 1, y1, (y1 + y2) >> 1, //
+        x1, (x1 + x2) >> 1, y1, (y1 + y2) >> 1,     //
         s[0], s[4], s[5], s[8],                     //
         re10, im10, re12, im12,                     //
         re13, im13, re15, im15,                     //
@@ -730,7 +730,7 @@ scan:
         re11, im11, re13, im13,                     //
         re14, im14, re16, im16,                     //
         re92, im92,                                 //
-        iter);
+        iter) && status;
     status = rhombus2(c_re1, mid_r,                 //
         mid_i, c_im2,                               //
         x1, (x1 + x2) >> 1, (y1 + y2) >> 1, y2,     //
@@ -738,7 +738,7 @@ scan:
         re15, im15, re17, im17,                     //
         re18, im18, re20, im20,                     //
         re93, im93,                                 //
-        iter);
+        iter) && status;
     status = rhombus2(mid_r, c_re2,                 //
         mid_i, c_im2,                               //
         (x1 + x2) >> 1, x2, (y1 + y2) >> 1, y2,     //
@@ -746,7 +746,7 @@ scan:
         re16, im16, re18, im18,                     //
         re19, im19, re21, im21,                     //
         re94, im94,                                 //
-        iter);
+        iter) && status;
 
     return status;
 }
