@@ -682,13 +682,6 @@ void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)
         return;
     }
 
-    // [button][dir]
-    static constexpr int MOUSE_KEYS[4][4]{
-        {ID_KEY_RIGHT_ARROW, ID_KEY_LEFT_ARROW, ID_KEY_DOWN_ARROW, ID_KEY_UP_ARROW}, // movement
-        {0, 0, ID_KEY_PAGE_DOWN, ID_KEY_PAGE_UP},                                    // left button
-        {ID_KEY_CTL_PLUS, ID_KEY_CTL_MINUS, ID_KEY_CTL_DEL, ID_KEY_CTL_INSERT},      // right button
-        {ID_KEY_CTL_END, ID_KEY_CTL_HOME, ID_KEY_CTL_PAGE_DOWN, ID_KEY_CTL_PAGE_UP}  // middle button
-    };
     int button_num = -1;
     if ((key_flags & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON)) == 0) // movement
     {

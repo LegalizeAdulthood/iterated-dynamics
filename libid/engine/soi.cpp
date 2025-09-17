@@ -764,7 +764,6 @@ static bool rhombus(double c_re1, double c_re2, double c_im1, double c_im2, //
 void soi()
 {
     // cppcheck-suppress unreadVariable
-    bool status;
     double tolerance = 0.1;
     double xx_min_l;
     double xx_max_l;

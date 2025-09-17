@@ -88,7 +88,6 @@ static void check_history(const char *old_name, const char *new_name);
 static void bf_setup_convert_to_screen();
 static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point);
 
-static std::FILE *s_fp{};
 static std::vector<FileWindow> s_browse_windows;
 static std::vector<int> s_browse_box_x;
 static std::vector<int> s_browse_box_y;
