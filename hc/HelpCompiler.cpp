@@ -843,15 +843,17 @@ void HelpCompiler::calc_offsets()    // calc file offset to each topic
                                     g_src.topics.size() * sizeof(long) +    // offsets to each topic
                                     g_src.labels.size() * 2 * sizeof(int)); // topic_num/topic_off for all public labels
 
-    offset = std::accumulate(g_src.contents.begin(), g_src.contents.end(), offset, [](long offset, const Content &cp) {
-        return offset += sizeof(int) +  // flags
-            1 +                         // id length
-            (int) cp.id.length() +      // id text
-            1 +                         // name length
-            (int) cp.name.length() +    // name text
-            1 +                         // number of topics
-            cp.num_topic*sizeof(int);   // topic numbers
-    });
+    offset = std::accumulate(g_src.contents.begin(), g_src.contents.end(), offset,
+        [](long value, const Content &cp)
+        {
+            return value += sizeof(int) +   // flags
+                1 +                         // id length
+                (int) cp.id.length() +      // id text
+                1 +                         // name length
+                (int) cp.name.length() +    // name text
+                1 +                         // number of topics
+                cp.num_topic * sizeof(int); // topic numbers
+        });
 
     for (Topic &tp : g_src.topics)
     {
