@@ -76,7 +76,7 @@ TEST_F(TestPutEncodedColors, increasingSixBitRamp)
 {
     for (int i = 0; i < 256; ++i)
     {
-        const Byte val{static_cast<Byte>((i % 64) * 4)};
+        const Byte val{static_cast<Byte>(i % 64 * 4)};
         g_dac_box[i][0] = val;
         g_dac_box[i][1] = val;
         g_dac_box[i][2] = val;

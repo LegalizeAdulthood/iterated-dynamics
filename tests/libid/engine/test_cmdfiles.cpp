@@ -4090,7 +4090,7 @@ TEST_F(TestParameterCommand, colorsIncreasingSixBitRamp)
 
     for (int i = 0; i < 256; ++i)
     {
-        const Byte val = (i % 64U)*4U;
+        const Byte val = i % 64U *4U;
         EXPECT_EQ(val, g_dac_box[i][0]);
         EXPECT_EQ(val, g_dac_box[i][1]);
         EXPECT_EQ(val, g_dac_box[i][2]);

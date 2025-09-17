@@ -371,9 +371,9 @@ bool GDIDriver::validate_mode(VideoInfo *mode)
     get_max_screen(width, height);
 
     // allow modes <= size of screen with 256 colors
-    return (mode->x_dots <= width)
-        && (mode->y_dots <= height)
-        && (mode->colors == 256);
+    return mode->x_dots <= width
+        && mode->y_dots <= height
+        && mode->colors == 256;
 }
 
 void GDIDriver::pause()

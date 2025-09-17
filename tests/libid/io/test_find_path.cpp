@@ -35,7 +35,7 @@ protected:
     const char *m_non_existent{"goink.goink"};
     GetEnv m_empty_env{[](const char *) -> const char * { return nullptr; }};
     std::string m_path{std::string{ID_TEST_DATA_DIR} + PATH_SEPARATOR + ID_TEST_DATA_SUBDIR};
-    GetEnv m_env_path{[&](const char *var) { return (std::string{var} == "PATH") ? m_path.c_str() : nullptr; }};
+    GetEnv m_env_path{[&](const char *var) { return std::string{var} == "PATH" ? m_path.c_str() : nullptr; }};
 };
 
 void TestFindPath::SetUp()

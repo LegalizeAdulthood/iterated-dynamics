@@ -179,7 +179,7 @@ void TextScreen::initialize_styles()
     for (int attr = 0; attr < MAX_STYLES; ++attr)
     {
         CGAColor fg_color = static_cast<CGAColor>(attr & 0x0F);
-        CGAColor bg_color = static_cast<CGAColor>((attr >> 4) & 0x0F);
+        CGAColor bg_color = static_cast<CGAColor>(attr >> 4 & 0x0F);
         bool intense = (attr & 0x08) != 0;
         bool blinking = (attr & 0x80) != 0;
 
@@ -201,7 +201,7 @@ void TextScreen::initialize_styles()
 
 void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, int &end_row, int &end_col)
 {
-    char xa = (attr & 0x0ff);
+    char xa = attr & 0x0ff;
     int max_row = y_pos;
     int row = y_pos;
     int max_col = x_pos - 1;
@@ -290,7 +290,7 @@ void TextScreen::set_attribute(int row, int col, unsigned char attr, int count)
         return;
     }
 
-    for (int i = 0; i < count && (col + i) < SCREEN_WIDTH; ++i)
+    for (int i = 0; i < count && col + i < SCREEN_WIDTH; ++i)
     {
         m_screen[row][col + i].attribute = attr;
     }
@@ -406,7 +406,7 @@ void TextScreen::set_cursor_type(int type)
     m_cursor_type = type;
     if (m_cursor_visible)
     {
-        SetCaretWidth(type == 2 ? 8 : (type == 1 ? 1 : 0));
+        SetCaretWidth(type == 2 ? 8 : type == 1 ? 1 : 0);
     }
 }
 
@@ -493,8 +493,8 @@ void TextScreen::update_region_display(int start_row, int start_col, int end_row
 {
     for (int row = start_row; row <= end_row; ++row)
     {
-        int col_start = (row == start_row) ? start_col : 0;
-        int col_end = (row == end_row) ? end_col : SCREEN_WIDTH - 1;
+        int col_start = row == start_row ? start_col : 0;
+        int col_end = row == end_row ? end_col : SCREEN_WIDTH - 1;
 
         for (int col = col_start; col <= col_end; ++col)
         {

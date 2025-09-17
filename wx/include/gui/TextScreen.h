@@ -52,7 +52,7 @@ struct CGACell
 
     CGAColor GetBackgroundColor() const
     {
-        return static_cast<CGAColor>((attribute >> 4) & 0x0F);
+        return static_cast<CGAColor>(attribute >> 4 & 0x0F);
     }
 
     bool IsBlinking() const

@@ -469,7 +469,7 @@ LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 
 void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, int *end_row, int *end_col)
 {
-    char xa = (attrib & 0x0ff);
+    char xa = attrib & 0x0ff;
     int max_row = y_pos;
     int row = y_pos;
     int max_col = x_pos - 1;
@@ -489,7 +489,7 @@ void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, i
         }
         else
         {
-            if ((++col) >= WINTEXT_MAX_COL)
+            if (++col >= WINTEXT_MAX_COL)
             {
                 if (row < WINTEXT_MAX_ROW-1)
                 {
@@ -601,8 +601,8 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
             {
                 k = m_screen.attrs(j, i);
             }
-            int foreground = (k & 15);
-            int background = (k >> 4);
+            int foreground = k & 15;
+            int background = k >> 4;
             if (i > x_max || foreground != (int)old_fg || background != (int)old_bk)
             {
                 if (length > 0)
@@ -741,12 +741,12 @@ void WinText::schedule_alarm(int secs)
 
 int WinText::get_char_attr(int row, int col)
 {
-    return (m_screen.chars(row, col) & 0xFF) << 8 | (m_screen.attrs(row, col) & 0xFF);
+    return (m_screen.chars(row, col) & 0xFF) << 8 | m_screen.attrs(row, col) & 0xFF;
 }
 
 void WinText::put_char_attr(int row, int col, int char_attr)
 {
-    m_screen.chars(row, col) = static_cast<char>((char_attr >> 8) & 0xFF);
+    m_screen.chars(row, col) = static_cast<char>(char_attr >> 8 & 0xFF);
     m_screen.attrs(row, col) = static_cast<Byte>(char_attr & 0xFF);
 }
 

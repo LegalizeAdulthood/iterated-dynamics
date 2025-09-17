@@ -117,8 +117,8 @@ static void init_dac_box()
     for (int i = 0; i < 256; i++)
     {
         g_dac_box[i][0] = (i >> 5)*8+7;
-        g_dac_box[i][1] = (((i+16) & 28) >> 2)*8+7;
-        g_dac_box[i][2] = (((i+2) & 3))*16+15;
+        g_dac_box[i][1] = ((i + 16 & 28) >> 2)*8+7;
+        g_dac_box[i][2] = (i + 2 & 3)*16+15;
     }
     g_dac_box[0][0] = 0;
     g_dac_box[0][1] = 0;
@@ -163,8 +163,8 @@ bool DiskDriver::init(int *argc, char **argv)
 bool DiskDriver::resize()
 {
     g_frame.resize(m_win_text.get_max_width(), m_win_text.get_max_height());
-    if ((g_video_table[g_adapter].x_dots == m_width)
-        && (g_video_table[g_adapter].y_dots == m_height))
+    if (g_video_table[g_adapter].x_dots == m_width
+        && g_video_table[g_adapter].y_dots == m_height)
     {
         return false;
     }

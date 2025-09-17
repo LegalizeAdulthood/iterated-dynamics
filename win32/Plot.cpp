@@ -184,7 +184,7 @@ void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
 
     _ASSERTE(x_min < x_max);
     _ASSERTE(y_min < y_max);
-    _ASSERTE((r->left <= r->right) && (r->top <= r->bottom));
+    _ASSERTE(r->left <= r->right && (r->top <= r->bottom));
     if (r->left < 0)
     {
         r->left = x_min;
@@ -230,7 +230,7 @@ void Plot::init_pixels()
     m_width = g_screen_x_dots;
     m_height = g_screen_y_dots;
     m_row_len = m_width * sizeof(Byte);
-    m_row_len = ((m_row_len + 3)/4)*4;
+    m_row_len = (m_row_len + 3) / 4 *4;
     m_pixels_len = m_row_len * m_height;
     _ASSERTE(m_pixels_len > 0);
     m_pixels.resize(m_pixels_len);
@@ -512,7 +512,7 @@ void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
 
 int Plot::resize()
 {
-    if ((g_screen_x_dots == m_width) && (g_screen_y_dots == m_height))
+    if (g_screen_x_dots == m_width && g_screen_y_dots == m_height)
     {
         return 0;
     }
@@ -597,7 +597,7 @@ void Plot::display_string(int x, int y, int fg, int bg, const char *text)
             Byte pixel = FONT_8x8[row][static_cast<unsigned char>(*text)];
             while (col-- > 0)
             {
-                int color = (pixel & (1 << col)) ? fg : bg;
+                int color = pixel & 1 << col ? fg : bg;
                 write_pixel(x1++, y + row, color);
             }
         }
