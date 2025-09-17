@@ -549,7 +549,6 @@ static bool get_funny_glasses_params()
         return true;
     }
 
-    k = 0;
     g_eye_separation   =  builder.read_int_number();
     g_converge_x_adjust = builder.read_int_number();
     g_red_crop_left   =  builder.read_int_number();
