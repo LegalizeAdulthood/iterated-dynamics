@@ -24,7 +24,7 @@ namespace id::test
 
 using GetEnv = std::function<const char *(const char *)>;
 
-class TestFindPath : public ::testing::Test
+class TestFindPath : public testing::Test
 {
 public:
     ~TestFindPath() override = default;

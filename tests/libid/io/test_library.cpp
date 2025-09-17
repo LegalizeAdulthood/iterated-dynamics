@@ -279,10 +279,10 @@ TEST_F(TestLibrary, findFileCurrentDirectory)
     CurrentPathSaver saved_cur_dir{ID_TEST_SEARCH_DIR2};
     ValueSaver saved_check_cur_dir{g_check_cur_dir, true};
     // these are all the places it could look
-    ValueSaver saved_search_dir1{g_fractal_search_dir1, id::test::data::ID_TEST_DATA_SUBDIR};
-    ValueSaver saved_search_dir2{g_fractal_search_dir2, id::test::data::ID_TEST_DATA_SUBDIR};
-    ValueSaver saved_save_dir{g_save_dir, id::test::data::ID_TEST_DATA_SUBDIR};
-    set_save_library(id::test::data::ID_TEST_DATA_SUBDIR);
+    ValueSaver saved_search_dir1{g_fractal_search_dir1, data::ID_TEST_DATA_SUBDIR};
+    ValueSaver saved_search_dir2{g_fractal_search_dir2, data::ID_TEST_DATA_SUBDIR};
+    ValueSaver saved_save_dir{g_save_dir, data::ID_TEST_DATA_SUBDIR};
+    set_save_library(data::ID_TEST_DATA_SUBDIR);
 
     const Path path{find_file(ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
 

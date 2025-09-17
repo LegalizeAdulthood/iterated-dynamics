@@ -21,7 +21,7 @@ using namespace id::test::data;
 namespace id::test
 {
 
-class TestExpandDirName : public ::testing::Test
+class TestExpandDirName : public testing::Test
 {
 public:
     ~TestExpandDirName() override = default;

@@ -202,8 +202,8 @@ protected:
     void SetUp() override
     {
         TestFindFileItem::SetUp();
-        id::io::clear_read_library_path();
-        id::io::add_read_library(library::ID_TEST_SEARCH_DIR2);
+        clear_read_library_path();
+        add_read_library(library::ID_TEST_SEARCH_DIR2);
     }
 
     static fs::path file(const char *subdir, const char *filename)

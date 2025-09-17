@@ -4139,7 +4139,7 @@ TEST_F(TestParameterCommand, singleReadLibraryDir)
     using Path = std::filesystem::path;
     clear_read_library_path();
 
-    exec_cmd_arg(std::string{"librarydirs="} + test::library::ID_TEST_LIBRARY_DIR2);
+    exec_cmd_arg(std::string{"librarydirs="} + library::ID_TEST_LIBRARY_DIR2);
 
     const Path path{find_file(ReadFile::FORMULA, ID_TEST_FRM_FILE)};
     ASSERT_FALSE(path.empty());
@@ -4154,7 +4154,7 @@ TEST_F(TestParameterCommand, multipleReadLibraryDir)
     clear_read_library_path();
 
     exec_cmd_arg(std::string{"librarydirs="} + //
-        test::library::ID_TEST_LIBRARY_DIR1 + "," + test::library::ID_TEST_LIBRARY_DIR3);
+        library::ID_TEST_LIBRARY_DIR1 + "," + library::ID_TEST_LIBRARY_DIR3);
 
     const Path path{find_file(ReadFile::FORMULA, "root.frm")};
     ASSERT_FALSE(path.empty());

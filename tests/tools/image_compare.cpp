@@ -56,9 +56,9 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        id::GIFInputFile gif1{file1};
+        GIFInputFile gif1{file1};
         gif1.slurp();
-        id::GIFInputFile gif2{file2};
+        GIFInputFile gif2{file2};
         gif2.slurp();
 
         if (gif1.screen_width() != gif2.screen_width() || gif1.screen_height() != gif2.screen_height())

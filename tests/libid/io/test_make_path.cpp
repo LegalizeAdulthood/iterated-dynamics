@@ -13,7 +13,7 @@ using namespace id::io;
 namespace id::test
 {
 
-class TestMakePath : public ::testing::Test
+class TestMakePath : public testing::Test
 {
 public:
     ~TestMakePath() override = default;

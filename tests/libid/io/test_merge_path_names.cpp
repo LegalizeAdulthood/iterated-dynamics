@@ -21,7 +21,7 @@ using namespace id::test::data;
 namespace id::test
 {
 
-class TestMergePathNames : public ::testing::Test
+class TestMergePathNames : public testing::Test
 {
 public:
     ~TestMergePathNames() override = default;

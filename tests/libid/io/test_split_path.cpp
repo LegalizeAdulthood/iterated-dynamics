@@ -22,7 +22,7 @@ using namespace id::test::data;
 namespace id::test
 {
 
-class TestSplitPath : public ::testing::Test
+class TestSplitPath : public testing::Test
 {
 protected:
     fs::path m_file_template;

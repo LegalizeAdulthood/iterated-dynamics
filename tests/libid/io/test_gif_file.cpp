@@ -279,7 +279,7 @@ enum
     GIF_EXTENSION2_RESUME_INFO_LENGTH = 196,
 };
 
-class TestOpenGIF : public ::testing::Test
+class TestOpenGIF : public testing::Test
 {
 public:
     TestOpenGIF() :

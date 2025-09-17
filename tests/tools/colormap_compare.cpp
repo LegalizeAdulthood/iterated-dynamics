@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        id::GIFInputFile image{image_file};
+        GIFInputFile image{image_file};
         image.slurp();
 
         std::ifstream map{map_file};
