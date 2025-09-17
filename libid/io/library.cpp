@@ -310,8 +310,8 @@ fs::path find_wildcard_first(ReadFile kind, const std::string &wildcard)
     s_wildcard.read_it = s_read_libraries.begin();
     while (s_wildcard.read_it != s_read_libraries.end())
     {
-        const std::string wildcard{(*s_wildcard.read_it / subdir(s_wildcard.kind) / s_wildcard.wildcard).string()};
-        if (fr_find_first(wildcard.c_str()))
+        const std::string path{(*s_wildcard.read_it / subdir(kind) / wildcard).string()};
+        if (fr_find_first(path.c_str()))
         {
             bool dir_exhausted{};
             while (g_dta.attribute == SUB_DIR)
@@ -333,7 +333,7 @@ fs::path find_wildcard_first(ReadFile kind, const std::string &wildcard)
     s_wildcard.read_it = s_read_libraries.begin();
     while (s_wildcard.read_it != s_read_libraries.end())
     {
-        const std::string path{(*s_wildcard.read_it / s_wildcard.wildcard).string()};
+        const std::string path{(*s_wildcard.read_it / wildcard).string()};
         if (fr_find_first(path.c_str()))
         {
             bool dir_exhausted{};
@@ -353,7 +353,7 @@ fs::path find_wildcard_first(ReadFile kind, const std::string &wildcard)
         ++s_wildcard.read_it;
     }
     s_wildcard.save_library = true;
-    if (const std::string path{(s_save_library / subdir(kind) / s_wildcard.wildcard).string()};
+    if (const std::string path{(s_save_library / subdir(kind) / wildcard).string()};
         fr_find_first(path.c_str()))
     {
         bool dir_exhausted{};
@@ -370,7 +370,7 @@ fs::path find_wildcard_first(ReadFile kind, const std::string &wildcard)
             return g_dta.path;
         }
     }
-    if (const std::string path{(s_save_library / s_wildcard.wildcard).string()}; fr_find_first(path.c_str()))
+    if (const std::string path{(s_save_library / wildcard).string()}; fr_find_first(path.c_str()))
     {
         bool dir_exhausted{};
         while (g_dta.attribute == SUB_DIR)
