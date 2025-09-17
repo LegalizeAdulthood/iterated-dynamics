@@ -311,19 +311,19 @@ scan:
            during scanning. Here, key values do not change, so we can precompute
            coefficients in one direction and simply evaluate the polynomial
            during scanning. */
-        const auto get_scan_real{[=](double x, double y)
+        const auto get_scan_real{[=](double re, double im)
             {
                 return interpolate(c_im1, mid_i, c_im2,
-                    evaluate(c_re1, mid_r, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re, x),
-                    evaluate(c_re1, mid_r, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re, x),
-                    evaluate(c_re1, mid_r, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re, x), y);
+                    evaluate(c_re1, mid_r, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re, re),
+                    evaluate(c_re1, mid_r, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re, re),
+                    evaluate(c_re1, mid_r, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re, re), im);
             }};
-        const auto get_scan_imag{[=](double x, double y)
+        const auto get_scan_imag{[=](double re, double im)
             {
                 return interpolate(c_re1, mid_r, c_re2,
-                    evaluate(c_im1, mid_i, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im, y),
-                    evaluate(c_im1, mid_i, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im, y),
-                    evaluate(c_im1, mid_i, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im, y), x);
+                    evaluate(c_im1, mid_i, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im, im),
+                    evaluate(c_im1, mid_i, s_state.b2[0].im, s_state.b2[1].im, s_state.b2[2].im, im),
+                    evaluate(c_im1, mid_i, s_state.b3[0].im, s_state.b3[1].im, s_state.b3[2].im, im), re);
             }};
         for (y = y1, s_state.z.im = c_im1; y < y2; y++, s_state.z.im += s_state.step.im)
         {
@@ -422,19 +422,19 @@ scan:
     s_state.corner[1].im = 0.25*c_im1 + 0.75*c_im2;
 
     // compute the value of the interpolation polynomial at (x,y)
-    const auto get_real{[=](double x, double y)
+    const auto get_real{[=](double re, double im)
         {
             return interpolate(c_im1, mid_i, c_im2,
-                interpolate(c_re1, mid_r, c_re2, s_zi[0].re, s_zi[4].re, s_zi[1].re, x),
-                interpolate(c_re1, mid_r, c_re2, s_zi[5].re, s_zi[8].re, s_zi[6].re, x),
-                interpolate(c_re1, mid_r, c_re2, s_zi[2].re, s_zi[7].re, s_zi[3].re, x), y);
+                interpolate(c_re1, mid_r, c_re2, s_zi[0].re, s_zi[4].re, s_zi[1].re, re),
+                interpolate(c_re1, mid_r, c_re2, s_zi[5].re, s_zi[8].re, s_zi[6].re, re),
+                interpolate(c_re1, mid_r, c_re2, s_zi[2].re, s_zi[7].re, s_zi[3].re, re), im);
         }};
-    const auto get_imag{[=](double x, double y)
+    const auto get_imag{[=](double re, double im)
         {
             return interpolate(c_re1, mid_r, c_re2,
-                interpolate(c_im1, mid_i, c_im2, s_zi[0].im, s_zi[5].im, s_zi[2].im, y),
-                interpolate(c_im1, mid_i, c_im2, s_zi[4].im, s_zi[8].im, s_zi[7].im, y),
-                interpolate(c_im1, mid_i, c_im2, s_zi[1].im, s_zi[6].im, s_zi[3].im, y), x);
+                interpolate(c_im1, mid_i, c_im2, s_zi[0].im, s_zi[5].im, s_zi[2].im, im),
+                interpolate(c_im1, mid_i, c_im2, s_zi[4].im, s_zi[8].im, s_zi[7].im, im),
+                interpolate(c_im1, mid_i, c_im2, s_zi[1].im, s_zi[6].im, s_zi[3].im, im), re);
         }};
     s_state.tz[0].re = get_real(s_state.corner[0].re, s_state.corner[0].im);
     s_state.tz[0].im = get_imag(s_state.corner[0].re, s_state.corner[0].im);
@@ -692,19 +692,19 @@ scan:
 
     // compute the value of the interpolation polynomial at (x,y)
     // from saved values before interpolation failed to stay within tolerance
-    const auto get_saved_real{[=](double x, double y)
+    const auto get_saved_real{[=](double re, double im)
         {
             return interpolate(c_im1, mid_i, c_im2,
-                interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, x),
-                interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, x),
-                interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, x), y);
+                interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, re),
+                interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, re),
+                interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, re), im);
         }};
-    const auto get_saved_imag{[=](double x, double y)
+    const auto get_saved_imag{[=](double re, double im)
         {
             return interpolate(c_re1, mid_r, c_re2,
-                interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, y),
-                interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, y),
-                interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, y), x);
+                interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, im),
+                interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, im),
+                interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, im), re);
         }};
     double re91 = get_saved_real(s_state.corner[0].re, s_state.corner[0].im);
     double im91 = get_saved_imag(s_state.corner[0].re, s_state.corner[0].im);
