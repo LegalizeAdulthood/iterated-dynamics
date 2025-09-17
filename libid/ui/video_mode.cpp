@@ -71,7 +71,7 @@ int check_vid_mode_key_name(const char *key_name)
     }
     while (*key_name)
     {
-        if (*(key_name++) != ' ')
+        if (*key_name++ != ' ')
         {
             return 0;
         }

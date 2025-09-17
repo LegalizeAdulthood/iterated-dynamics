@@ -95,7 +95,7 @@ Bifurcation::Bifurcation()
         }
     }
 
-    m_filter_cycles = (g_param_z1.x <= 0) ? DEFAULT_FILTER : (long) g_param_z1.x;
+    m_filter_cycles = g_param_z1.x <= 0 ? DEFAULT_FILTER : (long) g_param_z1.x;
     m_half_time_check = false;
     if (g_periodicity_check && (unsigned long) g_max_iterations < m_filter_cycles)
     {
@@ -127,7 +127,7 @@ bool Bifurcation::iterate()
             {
                 color = g_inside_color;
             }
-            else if ((!color) && m_mono)
+            else if (!color && m_mono)
             {
                 color = m_outside_x;
             }
@@ -148,7 +148,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
 {
     unsigned int pixel_row;
 
-    g_population = (g_param_z1.y == 0) ? SEED : g_param_z1.y;
+    g_population = g_param_z1.y == 0 ? SEED : g_param_z1.y;
 
     g_overflow = false;
 
@@ -263,7 +263,7 @@ int bifurc_stewart_trig_orbit()
     g_tmp_z.x = g_population;
     g_tmp_z.y = 0;
     cmplx_trig0(g_tmp_z, g_tmp_z);
-    g_population = (g_rate * g_tmp_z.x * g_tmp_z.x) - 1.0;
+    g_population = g_rate * g_tmp_z.x * g_tmp_z.x - 1.0;
     return population_orbit();
 }
 

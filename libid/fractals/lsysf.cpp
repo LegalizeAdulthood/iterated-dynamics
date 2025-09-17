@@ -235,7 +235,7 @@ static void lsys_draw_f(LSysTurtleState *cmd)
 
 static void lsys_draw_c(LSysTurtleState *cmd)
 {
-    cmd->curr_color = (char)(((int) cmd->param.n) % g_colors);
+    cmd->curr_color = (char)((int) cmd->param.n % g_colors);
 }
 
 static void lsys_draw_gt(LSysTurtleState *cmd)
@@ -274,7 +274,7 @@ static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules
 
     while (command->ch && command->ch != ']')
     {
-        if (!(ts->counter++))
+        if (!ts->counter++)
         {
             // let user know we're not dead
             if (thinking("L-System thinking (higher orders take longer)"))
@@ -291,7 +291,7 @@ static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules
                 if ((*rule_index)->ch == command->ch)
                 {
                     tran = true;
-                    if (find_size((*rule_index)+1, ts, rules, depth-1) == nullptr)
+                    if (find_size(*rule_index +1, ts, rules, depth-1) == nullptr)
                     {
                         return nullptr;
                     }
@@ -383,7 +383,7 @@ bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int
     {
         vert = (float)((g_logical_screen_y_dots-6) /(y_max-y_min));
     }
-    const LDouble local_size = (vert < horiz) ? vert : horiz;
+    const LDouble local_size = vert < horiz ? vert : horiz;
 
     if (horiz == 1E37)
     {
@@ -422,7 +422,7 @@ LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int d
 
     while (command->ch && command->ch != ']')
     {
-        if (!(ts->counter++))
+        if (!ts->counter++)
         {
             if (driver_key_pressed())
             {
@@ -438,7 +438,7 @@ LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int d
                 if ((*rule_index)->ch == command->ch)
                 {
                     tran = true;
-                    if (draw_lsys((*rule_index)+1, ts, rules, depth-1) == nullptr)
+                    if (draw_lsys(*rule_index +1, ts, rules, depth-1) == nullptr)
                     {
                         return nullptr;
                     }

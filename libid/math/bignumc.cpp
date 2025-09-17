@@ -88,7 +88,7 @@ int cmp_bn(BigNum n1, BigNum n2)
         // now determine which of the two bytes was different
         if ((S16) (value1 & 0xFF00) < (S16) (value2 & 0xFF00)) // compare just high bytes
         {
-            return -(g_bn_length); // high byte was different
+            return -g_bn_length; // high byte was different
         }
 
         return -(g_bn_length - 1); // low byte was different
@@ -222,7 +222,7 @@ BigNum neg_bn(BigNum r, BigNum n)
     for (i = 0; neg != 0 && i < g_bn_length; i += 2)
     {
         U16 t_short = ~BIG_ACCESS16(n + i);
-        neg += ((U32)t_short); // two's complement
+        neg += (U32) t_short; // two's complement
         BIG_SET16(r+i, (U16)neg);   // store the lower 2 bytes
         neg >>= 16; // shift the sign bit for next time
     }
@@ -246,7 +246,7 @@ BigNum neg_a_bn(BigNum r)
     for (i = 0; neg != 0 && i < g_bn_length; i += 2)
     {
         U16 t_short = ~BIG_ACCESS16(r + i);
-        neg += ((U32)t_short); // two's complement
+        neg += (U32) t_short; // two's complement
         BIG_SET16(r+i, (U16)neg);   // store the lower 2 bytes
         neg >>= 16; // shift the sign bit for next time
     }
@@ -362,7 +362,7 @@ BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2)
     {
         neg_a_bn(n1);
     }
-    const bool same_var = (n1 == n2);
+    const bool same_var = n1 == n2;
     if (!same_var) // check to see if they're the same pointer
     {
         sign2 = is_bn_neg(n2);
@@ -437,7 +437,7 @@ BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2)
     {
         neg_a_bn(n1);
     }
-    const bool same_var = (n1 == n2);
+    const bool same_var = n1 == n2;
     if (!same_var) // check to see if they're the same pointer
     {
         sign2 = is_bn_neg(n2);
@@ -579,7 +579,7 @@ BigNum unsafe_full_square_bn(BigNum r, BigNum n)
 
     // Now go back and add in the squared terms.
     n1_p = n;
-    steps = (g_bn_length >> 1);
+    steps = g_bn_length >> 1;
     carry_steps = double_steps = (steps << 1) - 2;
     rp1 = r;
     for (int i = 0; i < steps; i++)
@@ -631,7 +631,7 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
     // This whole procedure would be a great deal simpler if we could assume that
     // g_r_length < 2*g_bn_length (that is, not =).  Therefore, we will take the
     // easy way out and call full_square_bn() if it is.
-    if (g_r_length == (g_bn_length << 1))   // g_r_length == 2*g_bn_length
+    if (g_r_length == g_bn_length << 1)   // g_r_length == 2*g_bn_length
     {
         return unsafe_full_square_bn(r, n);    // call full_square_bn() and quit
     }
@@ -881,7 +881,7 @@ LDouble bn_to_float(BigNum n)
 
     // There is no need to use all g_bn_length bytes.  To get the full
     // precision of LDouble, all you need is LDBL_MANT_DIG/8+1.
-    for (int i = 0; i < (LDBL_MANT_DIG/8+1) && get_byte >= n; i++, get_byte--)
+    for (int i = 0; i < LDBL_MANT_DIG / 8 + 1 && get_byte >= n; i++, get_byte--)
     {
         f += scale256(*get_byte, -i);
     }

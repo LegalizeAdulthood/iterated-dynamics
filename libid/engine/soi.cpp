@@ -291,7 +291,7 @@ static bool rhombus_aux(
         return false;
     }
 
-    if ((y2 - y1 <= SCAN) || (avail < g_soi_min_stack))
+    if (y2 - y1 <= SCAN || avail < g_soi_min_stack)
     {
         // finish up the image by scanning the rectangle
 scan:
@@ -571,8 +571,8 @@ scan:
         /* now for all test points, check whether they exceed the
         allowed tolerance. if so, subdivide */
         s_state.limit.re = get_real(s_state.corner[0].re, s_state.corner[0].im);
-        s_state.limit.re = (s_state.tz[0].re == 0.0)?
-           (s_state.limit.re == 0.0)?1.0:1000.0:
+        s_state.limit.re = s_state.tz[0].re == 0.0 ?
+           s_state.limit.re == 0.0 ?1.0:1000.0:
            s_state.limit.re/s_state.tz[0].re;
         if (std::abs(1.0 - s_state.limit.re) > s_t_width)
         {
@@ -580,8 +580,8 @@ scan:
         }
 
         s_state.limit.im = get_imag(s_state.corner[0].re, s_state.corner[0].im);
-        s_state.limit.im = (s_state.tz[0].im == 0.0)?
-           (s_state.limit.im == 0.0)?1.0:1000.0:
+        s_state.limit.im = s_state.tz[0].im == 0.0 ?
+           s_state.limit.im == 0.0 ?1.0:1000.0:
            s_state.limit.im/s_state.tz[0].im;
         if (std::abs(1.0 - s_state.limit.im) > s_t_width)
         {
@@ -589,8 +589,8 @@ scan:
         }
 
         s_state.limit.re = get_real(s_state.corner[1].re, s_state.corner[0].im);
-        s_state.limit.re = (s_state.tz[1].re == 0.0)?
-           (s_state.limit.re == 0.0)?1.0:1000.0:
+        s_state.limit.re = s_state.tz[1].re == 0.0 ?
+           s_state.limit.re == 0.0 ?1.0:1000.0:
            s_state.limit.re/s_state.tz[1].re;
         if (std::abs(1.0 - s_state.limit.re) > s_t_width)
         {
@@ -598,8 +598,8 @@ scan:
         }
 
         s_state.limit.im = get_imag(s_state.corner[1].re, s_state.corner[0].im);
-        s_state.limit.im = (s_state.tz[1].im == 0.0)?
-           (s_state.limit.im == 0.0)?1.0:1000.0:
+        s_state.limit.im = s_state.tz[1].im == 0.0 ?
+           s_state.limit.im == 0.0 ?1.0:1000.0:
            s_state.limit.im/s_state.tz[1].im;
         if (std::abs(1.0 - s_state.limit.im) > s_t_width)
         {
@@ -607,8 +607,8 @@ scan:
         }
 
         s_state.limit.re = get_real(s_state.corner[0].re, s_state.corner[1].im);
-        s_state.limit.re = (s_state.tz[2].re == 0.0)?
-           (s_state.limit.re == 0.0)?1.0:1000.0:
+        s_state.limit.re = s_state.tz[2].re == 0.0 ?
+           s_state.limit.re == 0.0 ?1.0:1000.0:
            s_state.limit.re/s_state.tz[2].re;
         if (std::abs(1.0 - s_state.limit.re) > s_t_width)
         {
@@ -616,8 +616,8 @@ scan:
         }
 
         s_state.limit.im = get_imag(s_state.corner[0].re, s_state.corner[1].im);
-        s_state.limit.im = (s_state.tz[2].im == 0.0)?
-           (s_state.limit.im == 0.0)?1.0:1000.0:
+        s_state.limit.im = s_state.tz[2].im == 0.0 ?
+           s_state.limit.im == 0.0 ?1.0:1000.0:
            s_state.limit.im/s_state.tz[2].im;
         if (std::abs(1.0 - s_state.limit.im) > s_t_width)
         {
@@ -625,8 +625,8 @@ scan:
         }
 
         s_state.limit.re = get_real(s_state.corner[1].re, s_state.corner[1].im);
-        s_state.limit.re = (s_state.tz[3].re == 0.0)?
-           (s_state.limit.re == 0.0)?1.0:1000.0:
+        s_state.limit.re = s_state.tz[3].re == 0.0 ?
+           s_state.limit.re == 0.0 ?1.0:1000.0:
            s_state.limit.re/s_state.tz[3].re;
         if (std::abs(1.0 - s_state.limit.re) > s_t_width)
         {
@@ -634,8 +634,8 @@ scan:
         }
 
         s_state.limit.im = get_imag(s_state.corner[1].re, s_state.corner[1].im);
-        s_state.limit.im = (s_state.tz[3].im == 0.0)?
-           (s_state.limit.im == 0.0)?1.0:1000.0:
+        s_state.limit.im = s_state.tz[3].im == 0.0 ?
+           s_state.limit.im == 0.0 ?1.0:1000.0:
            s_state.limit.im/s_state.tz[3].im;
         if (std::abs(1.0 - s_state.limit.im) > s_t_width)
         {
@@ -717,7 +717,7 @@ scan:
 
     status = rhombus2(c_re1, mid_r,                 //
         c_im1, mid_i,                               //
-        x1, ((x1 + x2) >> 1), y1, ((y1 + y2) >> 1), //
+        x1, (x1 + x2) >> 1, y1, (y1 + y2) >> 1, //
         s[0], s[4], s[5], s[8],                     //
         re10, im10, re12, im12,                     //
         re13, im13, re15, im15,                     //
@@ -790,7 +790,7 @@ void soi()
     s_t_width = tolerance/(g_logical_screen_x_dots - 1);
     double step_x = (xx_max_l - xx_min_l) / g_logical_screen_x_dots;
     double step_y = (yy_min_l - yy_max_l) / g_logical_screen_y_dots;
-    s_equal = (step_x < step_y ? step_x : step_y);
+    s_equal = step_x < step_y ? step_x : step_y;
 
     rhombus2(xx_min_l, xx_max_l,                                //
         yy_max_l, yy_min_l,                                     //

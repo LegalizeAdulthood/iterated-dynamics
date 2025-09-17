@@ -194,7 +194,7 @@ restart:
         tmp_file.replace_filename("id.tmp");
     }
 
-    g_started_resaves = (g_resave_flag == TimedSave::STARTED);
+    g_started_resaves = g_resave_flag == TimedSave::STARTED;
     if (g_resave_flag == TimedSave::FINAL)          // final save of savetime set?
     {
         g_resave_flag = TimedSave::NONE;
@@ -376,11 +376,12 @@ bool encoder()
     if (g_view_window                               // less than full screen?
         && (g_view_x_dots == 0 || g_view_y_dots == 0))     // and we picked the dots?
     {
-        i = (int)(((double) g_screen_y_dots / (double) g_screen_x_dots) * 64.0 / g_screen_aspect - 14.5);
+        i = (int)((double) g_screen_y_dots / (double) g_screen_x_dots * 64.0 / g_screen_aspect - 14.5);
     }
     else       // must risk loss of precision if numbers low
     {
-        i = (int)((((double) g_logical_screen_y_dots / (double) g_logical_screen_x_dots) / g_final_aspect_ratio) * 64 - 14.5);
+        i = (int)((double) g_logical_screen_y_dots / (double) g_logical_screen_x_dots /
+                g_final_aspect_ratio * 64 - 14.5);
     }
     i = std::max(i, 1);
     i = std::min(i, 255);
@@ -703,14 +704,14 @@ static int put_extend_blk(int block_id, int block_len, const char *block_data)
     int i = (block_len + 254) / 255;
     while (--i >= 0)
     {
-        block_len -= (j = std::min(block_len, 255));
+        block_len -= j = std::min(block_len, 255);
         if (std::fputc(j, s_outfile) != j)
         {
             return 0;
         }
         while (--j >= 0)
         {
-            std::fputc(*(block_data++), s_outfile);
+            std::fputc(*block_data++, s_outfile);
         }
     }
     if (std::fputc(0, s_outfile) != 0)
@@ -1010,7 +1011,7 @@ static bool compress(int row_limit)
         out_color1 = 2;
         out_color2 = 3;
     }
-    if (((++s_num_saves) & 1) == 0)
+    if ((++s_num_saves & 1) == 0)
     {
         // reverse the colors on alt saves
         int i = out_color1;
@@ -1028,7 +1029,7 @@ static bool compress(int row_limit)
     s_n_bits = s_start_bits;
     s_max_code = max_code(s_n_bits);
 
-    s_clear_code = (1 << (s_start_bits - 1));
+    s_clear_code = 1 << (s_start_bits - 1);
     s_eof_code = s_clear_code + 1;
     s_free_ent = s_clear_code + 2;
 
@@ -1067,7 +1068,7 @@ static bool compress(int row_limit)
                     continue;
                 }
                 long f_code = ((long) color << s_max_bits) + ent;
-                int i = ((color << h_shift) ^ ent);    // xor hashing
+                int i = color << h_shift ^ ent;    // xor hashing
                 int disp{};
 
                 if (s_h_tab[i] == f_code)
@@ -1177,7 +1178,7 @@ static void output(int code)
 
     if (s_cur_bits > 0)
     {
-        s_cur_accum |= ((long)code << s_cur_bits);
+        s_cur_accum |= (long) code << s_cur_bits;
     }
     else
     {

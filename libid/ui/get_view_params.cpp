@@ -184,7 +184,7 @@ get_view_restart:
     g_keep_aspect_ratio = values[++k].uval.ch.val != 0;
     g_z_scroll = values[++k].uval.ch.val != 0;
 
-    if ((x_max != -1) && (g_screen_x_dots > x_max))
+    if (x_max != -1 && g_screen_x_dots > x_max)
     {
         g_screen_x_dots = x_max;
     }
@@ -193,12 +193,12 @@ get_view_restart:
     {
         if (g_final_aspect_ratio == 0.0)
         {
-            g_final_aspect_ratio = (g_view_window && g_view_x_dots != 0 && g_view_y_dots != 0) ?
-                               ((float) g_view_y_dots)/((float) g_view_x_dots) : old_aspect_ratio;
+            g_final_aspect_ratio = g_view_window && g_view_x_dots != 0 && g_view_y_dots != 0 ?
+                               (float) g_view_y_dots / (float) g_view_x_dots : old_aspect_ratio;
         }
         g_screen_y_dots = (int) std::lround(g_final_aspect_ratio * g_screen_x_dots);
     }
-    if ((y_max != -1) && (g_screen_y_dots > y_max))
+    if (y_max != -1 && g_screen_y_dots > y_max)
     {
         g_screen_y_dots = y_max;
     }
@@ -211,13 +211,13 @@ get_view_restart:
         std::memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
         if (g_final_aspect_ratio == 0.0)
         {
-            g_final_aspect_ratio = ((float) g_screen_y_dots)/((float) g_screen_x_dots);
+            g_final_aspect_ratio = (float) g_screen_y_dots / (float) g_screen_x_dots;
         }
     }
 
     if (g_view_x_dots != 0 && g_view_y_dots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
     {
-        g_final_aspect_ratio = ((float) g_view_y_dots)/((float) g_view_x_dots);
+        g_final_aspect_ratio = (float) g_view_y_dots / (float) g_view_x_dots;
     }
     else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
     {
@@ -229,13 +229,11 @@ get_view_restart:
         aspect_ratio_crop(old_aspect_ratio, g_final_aspect_ratio);
     }
 
-    return (g_view_window != old_view_window
-            || g_screen_x_dots != old_screen_x_dots || g_screen_y_dots != old_screen_y_dots
-            || (g_view_window
-                && (g_view_reduction != old_view_reduction
-                    || g_final_aspect_ratio != old_aspect_ratio
-                    || g_view_x_dots != old_view_x_dots
-                    || (g_view_y_dots != old_view_y_dots && g_view_x_dots)))) ? 1 : 0;
+    return g_view_window != old_view_window || g_screen_x_dots != old_screen_x_dots ||
+            g_screen_y_dots != old_screen_y_dots ||
+            (g_view_window &&
+                (g_view_reduction != old_view_reduction || g_final_aspect_ratio != old_aspect_ratio ||
+                    g_view_x_dots != old_view_x_dots || (g_view_y_dots != old_view_y_dots && g_view_x_dots))) ? 1 : 0;
 }
 
 } // namespace id::ui

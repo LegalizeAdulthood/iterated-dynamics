@@ -269,9 +269,8 @@ int line3d(Byte * pixels, unsigned line_len)
             int color_num;
             color_num = pixels[col];
             // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
-            pal = ((int) g_dac_box[color_num][0] * 77 +
-                   (int) g_dac_box[color_num][1] * 151 +
-                   (int) g_dac_box[color_num][2] * 28);
+            pal = (int) g_dac_box[color_num][0] * 77 + (int) g_dac_box[color_num][1] * 151 +
+                (int) g_dac_box[color_num][2] * 28;
             pal >>= 6;
             pixels[col] = (Byte) pal;
         }
@@ -336,9 +335,9 @@ int line3d(Byte * pixels, unsigned line_len)
     while (col < (int) line_len)
     {
         if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || g_fill_type < FillType::POINTS)
-            && (col != last_dot)             // if this is not the last col
+            && col != last_dot             // if this is not the last col
                                             // if not the 1st or mod factor col
-            && (col % (int)(s_aspect * s_local_preview_factor))
+            && col % (int) (s_aspect * s_local_preview_factor)
             && !(g_raytrace_format == RayTraceFormat::NONE && g_fill_type > FillType::SOLID_FILL && col == 1))
         {
             goto loop_bottom;
@@ -370,7 +369,7 @@ int line3d(Byte * pixels, unsigned line_len)
         }
         else if (g_potential_16bit)
         {
-            f_cur.color += ((float) s_fraction[col]) / (float)(1 << 8);
+            f_cur.color += (float) s_fraction[col] / (float)(1 << 8);
         }
 
         if (g_sphere)            // sphere case
@@ -424,7 +423,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 lv[0] = (long)(s_x_center + sin_theta * s_scale_x * r);   // x
                 lv[1] = (long)(s_y_center + cos_theta * s_cos_phi * s_scale_y * r);  // y
 
-                if ((g_fill_type >= FillType::LIGHT_SOURCE_BEFORE) ||
+                if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE ||
                     g_raytrace_format != RayTraceFormat::NONE)
                 {
                     // calculate illumination normal before persp
@@ -531,11 +530,11 @@ int line3d(Byte * pixels, unsigned line_len)
         {
             if (col && g_current_row
                 && old.x > s_bad_check
-                && old.x < (g_logical_screen_x_dots - s_bad_check)
+                && old.x < g_logical_screen_x_dots - s_bad_check
                 && s_last_row[col].x > s_bad_check
                 && s_last_row[col].y > s_bad_check
-                && s_last_row[col].x < (g_logical_screen_x_dots - s_bad_check)
-                && s_last_row[col].y < (g_logical_screen_y_dots - s_bad_check))
+                && s_last_row[col].x < g_logical_screen_x_dots - s_bad_check
+                && s_last_row[col].y < g_logical_screen_y_dots - s_bad_check)
             {
                 // Get rid of all the triangles in the plane at the base of the object
 
@@ -565,12 +564,12 @@ int line3d(Byte * pixels, unsigned line_len)
             if (col < last_dot && g_current_row
                 && s_last_row[col].x > s_bad_check
                 && s_last_row[col].y > s_bad_check
-                && s_last_row[col].x < (g_logical_screen_x_dots - s_bad_check)
-                && s_last_row[col].y < (g_logical_screen_y_dots - s_bad_check)
+                && s_last_row[col].x < g_logical_screen_x_dots - s_bad_check
+                && s_last_row[col].y < g_logical_screen_y_dots - s_bad_check
                 && s_last_row[next].x > s_bad_check
                 && s_last_row[next].y > s_bad_check
-                && s_last_row[next].x < (g_logical_screen_x_dots - s_bad_check)
-                && s_last_row[next].y < (g_logical_screen_y_dots - s_bad_check))
+                && s_last_row[next].x < g_logical_screen_x_dots - s_bad_check
+                && s_last_row[next].y < g_logical_screen_y_dots - s_bad_check)
             {
                 // Get rid of all the triangles in the plane at the base of the object
 
@@ -613,15 +612,15 @@ int line3d(Byte * pixels, unsigned line_len)
         case FillType::SURFACE_GRID:
             if (col
                 && old.x > s_bad_check
-                && old.x < (g_logical_screen_x_dots - s_bad_check))
+                && old.x < g_logical_screen_x_dots - s_bad_check)
             {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             }
             if (g_current_row
                 && s_last_row[col].x > s_bad_check
                 && s_last_row[col].y > s_bad_check
-                && s_last_row[col].x < (g_logical_screen_x_dots - s_bad_check)
-                && s_last_row[col].y < (g_logical_screen_y_dots - s_bad_check))
+                && s_last_row[col].x < g_logical_screen_x_dots - s_bad_check
+                && s_last_row[col].y < g_logical_screen_y_dots - s_bad_check)
             {
                 driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur.x,
                                  cur.y, cur.color);
@@ -1123,7 +1122,7 @@ enum
 static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int color)
 {
     // Too many points off the screen?
-    if ((off_screen(pt1) + off_screen(pt2) + off_screen(pt3)) > MAXOFFSCREEN)
+    if (off_screen(pt1) + off_screen(pt2) + off_screen(pt3) > MAXOFFSCREEN)
     {
         return;
     }
@@ -1369,9 +1368,9 @@ int targa_color(int x, int y, int color)
         break;
 
     case TrueColorMode::ITERATE:
-        rgb[0] = (Byte)((g_real_color_iter >> 16) & 0xff);  // red
-        rgb[1] = (Byte)((g_real_color_iter >> 8) & 0xff);   // green
-        rgb[2] = (Byte)((g_real_color_iter) & 0xff);        // blue
+        rgb[0] = (Byte)(g_real_color_iter >> 16 & 0xff);  // red
+        rgb[1] = (Byte)(g_real_color_iter >> 8 & 0xff);   // green
+        rgb[2] = (Byte)(g_real_color_iter & 0xff);        // blue
         break;
     }
 
@@ -1382,7 +1381,7 @@ int targa_color(int x, int y, int color)
     if (g_fill_type > FillType::SOLID_FILL && !glasses_alternating_or_superimpose())
     {
         // Adjust for Ambient
-        val = (val * (65535L - color * s_i_ambient)) / 65535L;
+        val = val * (65535L - color * s_i_ambient) / 65535L;
     }
 
     if (g_haze)
@@ -1542,9 +1541,9 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, bool
     if (g_true_color) // write maxit
     {
         std::fputc((Byte)(g_max_iterations       & 0xff), fps);
-        std::fputc((Byte)((g_max_iterations >> 8) & 0xff), fps);
-        std::fputc((Byte)((g_max_iterations >> 16) & 0xff), fps);
-        std::fputc((Byte)((g_max_iterations >> 24) & 0xff), fps);
+        std::fputc((Byte)(g_max_iterations >> 8 & 0xff), fps);
+        std::fputc((Byte)(g_max_iterations >> 16 & 0xff), fps);
+        std::fputc((Byte)(g_max_iterations >> 24 & 0xff), fps);
     }
 
     // Finished with the header, now lets work on the display area
@@ -1711,7 +1710,7 @@ static int rgb_to_hsv(
     unsigned long denom = *val - min;
     if (*val != 0 && denom != 0)
     {
-        *sat = ((denom << 16) / *val) - 1;
+        *sat = (denom << 16) / *val - 1;
     }
     else
     {
@@ -1779,9 +1778,9 @@ static void hsv_to_rgb(
     int i = (int) (hue / 3840);
     int rmd = (int) (hue % 3840);       // RMD = fractional part of H
 
-    unsigned long p1 = ((val * (65535L - sat)) / 65280L) >> 8;
-    unsigned long p2 = (((val * (65535L - (sat * rmd) / 3840)) / 65280L) - 1) >> 8;
-    unsigned long p3 = (((val * (65535L - (sat * (3840 - rmd)) / 3840)) / 65280L)) >> 8;
+    unsigned long p1 = (val * (65535L - sat) / 65280L) >> 8;
+    unsigned long p2 = (val * (65535L - sat * rmd / 3840) / 65280L - 1) >> 8;
+    unsigned long p3 = (val * (65535L - sat * (3840 - rmd) / 3840) / 65280L) >> 8;
     val = val >> 8;
     switch (i)
     {
@@ -2520,10 +2519,10 @@ static int first_time(int line_len, Vector v)
 
         // translate so origin is in center of box, so that when we rotate
         // it, we do so through the center
-        trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
-              (double) s_z_coord / (-2.0), g_m);
-        trans((double) g_logical_screen_x_dots / (-2.0), (double) g_logical_screen_y_dots / (-2.0),
-              (double) s_z_coord / (-2.0), light_mat);
+        trans((double) g_logical_screen_x_dots / -2.0, (double) g_logical_screen_y_dots / -2.0,
+              (double) s_z_coord / -2.0, g_m);
+        trans((double) g_logical_screen_x_dots / -2.0, (double) g_logical_screen_y_dots / -2.0,
+              (double) s_z_coord / -2.0, light_mat);
 
         // apply scale factors
         scale(s_scale_x, s_scale_y, s_scale_z, g_m);
@@ -2684,7 +2683,7 @@ static int first_time(int line_len, Vector v)
         }
 
         // radius of planet
-        s_radius = (double)(g_logical_screen_y_dots) / 2;
+        s_radius = (double)g_logical_screen_y_dots / 2;
 
         // precalculate factor
         s_r_x_r_scale = s_radius * s_r_scale;
@@ -2710,7 +2709,7 @@ static int first_time(int line_len, Vector v)
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
             double z_view = -(long) ((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
-            double radius = (double) (g_logical_screen_y_dots) / 2;
+            double radius = (double) g_logical_screen_y_dots / 2;
             double angle = std::atan(-radius / (z_view + radius));
             s_z_cutoff = -radius - std::sin(angle) * radius;
             s_z_cutoff *= 1.1;        // for safety
@@ -2776,11 +2775,11 @@ static int first_time(int line_len, Vector v)
         normalize_vector(direct);
 
         // move light vector to be more clear with grey scale maps
-        origin[0] = (3 * g_logical_screen_x_dots) / 16;
-        origin[1] = (3 * g_logical_screen_y_dots) / 4;
+        origin[0] = 3 * g_logical_screen_x_dots / 16;
+        origin[1] = 3 * g_logical_screen_y_dots / 4;
         if (g_fill_type == FillType::LIGHT_SOURCE_AFTER)
         {
-            origin[1] = (11 * g_logical_screen_y_dots) / 16;
+            origin[1] = 11 * g_logical_screen_y_dots / 16;
         }
 
         origin[2] = 0.0;

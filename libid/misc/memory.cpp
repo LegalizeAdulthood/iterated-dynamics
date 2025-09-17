@@ -99,7 +99,7 @@ static void which_disk_error(int status)
         const char *names[4]{"Create", "Set", "Write", "Read"};
         if (stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER,
                 fmt::format("{:s} file error {:d}:  {:s}",
-                    names[(status >= 1 && status <= 4) ? status - 1 : 0], errno, std::strerror(errno))))
+                    names[status >= 1 && status <= 4 ? status - 1 : 0], errno, std::strerror(errno))))
         {
             goodbye(); // bailout if ESC
         }
@@ -383,7 +383,7 @@ static int check_bounds(long start, long length, U16 handle)
         display_handle(handle);
         return 1;
     }
-    if (s_handles[handle].stored_at == MemoryLocation::DISK && (stack_avail() <= DISK_WRITE_LEN))
+    if (s_handles[handle].stored_at == MemoryLocation::DISK && stack_avail() <= DISK_WRITE_LEN)
     {
         stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Stack space insufficient for disk memory.");
         display_handle(handle);

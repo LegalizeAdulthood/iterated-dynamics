@@ -244,7 +244,7 @@ int queue_empty()            // True if NO points remain in queue
 
 int queue_full_almost()       // True if room for ONE more point in queue
 {
-    return ((s_list_front + 2) % s_list_size) == s_list_back;
+    return (s_list_front + 2) % s_list_size == s_list_back;
 }
 
 void clear_queue()
@@ -300,7 +300,7 @@ void free_queue()
 
 int push_float(float x, float y)
 {
-    if (((s_list_front + 1) % s_list_size) != s_list_back)
+    if ((s_list_front + 1) % s_list_size != s_list_back)
     {
         if (to_mem_disk(8*s_list_front, sizeof(x), &x)
             && to_mem_disk(8*s_list_front +sizeof(x), sizeof(y), &y))
@@ -519,7 +519,7 @@ void InverseJulia::start()
     s_show_numbers = false;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
-    m_aspect = ((double) g_logical_screen_x_dots * 3) / ((double) g_logical_screen_y_dots * 4); // assumes 4:3
+    m_aspect = (double) g_logical_screen_x_dots * 3 / ((double) g_logical_screen_y_dots * 4); // assumes 4:3
     m_actively_computing = true;
     set_aspect(m_aspect);
 
@@ -926,7 +926,7 @@ bool InverseJulia::iterate_jiim()
             m_r = 0;
         }
         m_iter++;
-        m_color = ((m_count++) >> 5) % g_colors; // chg color every 32 pts
+        m_color = (m_count++ >> 5) % g_colors; // chg color every 32 pts
         if (m_color == 0)
         {
             m_color = 1;

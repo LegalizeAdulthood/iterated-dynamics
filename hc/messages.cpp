@@ -26,8 +26,8 @@ void report_errors()
                "Compiler Status:\n"
                "{:8d} Error{:c}\n"
                "{:8d} Warning{:c}\n",
-        g_errors, (g_errors == 1) ? ' ' : 's', //
-        g_warnings, (g_warnings == 1) ? ' ' : 's');
+        g_errors, g_errors == 1 ? ' ' : 's', //
+        g_warnings, g_warnings == 1 ? ' ' : 's');
 }
 
 static void print_msg(const char *type, int line_num, const char *format, std::va_list arg)

@@ -33,7 +33,7 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
     int title_lines = 1;
     while (*char_ptr)
     {
-        if (*(char_ptr++) == '\n')
+        if (*char_ptr++ == '\n')
         {
             ++title_lines;
             i = -1;
@@ -68,7 +68,7 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
         // display caller's instructions
         char_ptr = instr;
         j = -1;
-        while ((buf[++j] = *(char_ptr++)) != 0)
+        while ((buf[++j] = *char_ptr++) != 0)
         {
             if (buf[j] == '\n')
             {

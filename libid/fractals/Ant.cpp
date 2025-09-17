@@ -167,7 +167,7 @@ void Ant::init_mite1()
         {
             // init the rules and colors for the
             // turkmites: 1 turn left, -1 turn right
-            rule[g_color] = 1 - (random(2) * 2);
+            rule[g_color] = 1 - random(2) * 2;
             next_col[g_color] = g_color + 1;
         }
         // close the cycle
@@ -180,7 +180,7 @@ void Ant::init_mite1()
         {
             // init the rules and colors for the
             // turkmites: 1 turn left, -1 turn right
-            rule[g_color] = (rule_text[g_color] * 2) - 1;
+            rule[g_color] = rule_text[g_color] * 2 - 1;
             next_col[g_color] = g_color + 1;
         }
         // repeats to last color
@@ -255,7 +255,7 @@ static unsigned rotate_left_one(unsigned value)
 {
     const unsigned high_bit{~(~0U >> 1)};
     const unsigned result{value << 1};
-    return (value & high_bit) ? (result | 1U) : result;
+    return value & high_bit ? result | 1U : result;
 }
 
 void Ant::init_mite2()
@@ -268,7 +268,7 @@ void Ant::init_mite2()
             // init the various turmites N.B. don't use
             // x[0], y[0], dir[0]
             dir[color] = random(DIRS);
-            rule[color] = (std::rand() << random(2)) | random(2);
+            rule[color] = std::rand() << random(2) | random(2);
             x[color] = random(g_logical_screen_x_dots);
             y[color] = random(g_logical_screen_y_dots);
         }
@@ -281,7 +281,7 @@ void Ant::init_mite2()
         rule[0] = 0;
         for (size_t i = 0; i < rule_len; i++)
         {
-            rule[0] = (rule[0] << 1) | rule_text[i];
+            rule[0] = rule[0] << 1 | rule_text[i];
         }
         for (int color = MAX_ANTS - 1; color; color--)
         {

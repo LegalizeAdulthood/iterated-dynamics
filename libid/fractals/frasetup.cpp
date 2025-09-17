@@ -138,7 +138,7 @@ bool mandel_per_image()
                 return mandel_z_power_perturbation_per_image();
             }
         }
-        if ((double)g_c_exponent == g_params[2] && (g_c_exponent & 1))   // odd exponents
+        if ((double)g_c_exponent == g_params[2] && g_c_exponent & 1)   // odd exponents
         {
             g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         }
@@ -181,7 +181,7 @@ bool mandel_per_image()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if ((g_trig_index[0] == TrigFn::LOG) || (g_trig_index[0] == TrigFn::FLIP))
+        if (g_trig_index[0] == TrigFn::LOG || g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -254,7 +254,7 @@ bool julia_per_image()
         }
         break;
     case FractalType::JULIA_Z_POWER:
-        if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
+        if (g_c_exponent & 1 || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -298,7 +298,7 @@ bool julia_per_image()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if ((g_trig_index[0] == TrigFn::LOG) || (g_trig_index[0] == TrigFn::FLIP))
+        if (g_trig_index[0] == TrigFn::LOG || g_trig_index[0] == TrigFn::FLIP)
         {
             g_symmetry = SymmetryType::NONE;
         }

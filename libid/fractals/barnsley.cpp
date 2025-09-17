@@ -23,13 +23,13 @@ int barnsley1_orbit()
     // orbit calculation
     if (g_old_z.x >= 0)
     {
-        g_new_z.x = (old_x_init_x - g_float_param->x - old_y_init_y);
-        g_new_z.y = (old_y_init_x - g_float_param->y + old_x_init_y);
+        g_new_z.x = old_x_init_x - g_float_param->x - old_y_init_y;
+        g_new_z.y = old_y_init_x - g_float_param->y + old_x_init_y;
     }
     else
     {
-        g_new_z.x = (old_x_init_x + g_float_param->x - old_y_init_y);
-        g_new_z.y = (old_y_init_x + g_float_param->y + old_x_init_y);
+        g_new_z.x = old_x_init_x + g_float_param->x - old_y_init_y;
+        g_new_z.y = old_y_init_x + g_float_param->y + old_x_init_y;
     }
     return g_bailout_float();
 }

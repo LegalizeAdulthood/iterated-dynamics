@@ -312,11 +312,11 @@ MainState big_while_loop(MainContext &context)
             g_screen_y_dots  = g_logical_screen_y_dots;
             g_logical_screen_y_offset = 0;
             g_logical_screen_x_offset = 0;
-            g_color_cycle_range_hi = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors - 1;
+            g_color_cycle_range_hi = g_color_cycle_range_hi < g_colors ? g_color_cycle_range_hi : g_colors - 1;
 
             std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
 
-            if (g_overlay_3d && (g_init_batch == BatchMode::NONE))
+            if (g_overlay_3d && g_init_batch == BatchMode::NONE)
             {
                 driver_unstack_screen();            // restore old graphics image
                 g_overlay_3d = false;
@@ -397,7 +397,7 @@ MainState big_while_loop(MainContext &context)
             {
                 // bypass for VESA virtual screen
                 const double f_temp{g_final_aspect_ratio *
-                    (((double) g_screen_y_dots) / ((double) g_screen_x_dots) / g_screen_aspect)};
+                    ((double) g_screen_y_dots / (double) g_screen_x_dots / g_screen_aspect)};
                 g_logical_screen_x_dots = g_view_x_dots;
                 if (g_logical_screen_x_dots != 0)
                 {
@@ -450,11 +450,11 @@ MainState big_while_loop(MainContext &context)
                 if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
                 {
                     const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-                    g_logical_screen_x_dots = (g_screen_x_dots / g_evolve_image_grid_size) - grout;
+                    g_logical_screen_x_dots = g_screen_x_dots / g_evolve_image_grid_size - grout;
                     // trim to multiple of 4 for SSG
-                    g_logical_screen_x_dots = g_logical_screen_x_dots - (g_logical_screen_x_dots % 4);
-                    g_logical_screen_y_dots = (g_screen_y_dots / g_evolve_image_grid_size) - grout;
-                    g_logical_screen_y_dots = g_logical_screen_y_dots - (g_logical_screen_y_dots % 4);
+                    g_logical_screen_x_dots = g_logical_screen_x_dots - g_logical_screen_x_dots % 4;
+                    g_logical_screen_y_dots = g_screen_y_dots / g_evolve_image_grid_size - grout;
+                    g_logical_screen_y_dots = g_logical_screen_y_dots - g_logical_screen_y_dots % 4;
                 }
                 else
                 {
@@ -588,7 +588,7 @@ MainState big_while_loop(MainContext &context)
                 int count;
                 GeneBase gene[NUM_GENES];
                 copy_genes_from_bank(gene);
-                if (g_have_evolve_info && (g_calc_status == CalcStatus::RESUMABLE))
+                if (g_have_evolve_info && g_calc_status == CalcStatus::RESUMABLE)
                 {
                     g_evolve_x_parameter_range = g_evolve_info.x_parameter_range;
                     g_evolve_y_parameter_range = g_evolve_info.y_parameter_range;
@@ -618,7 +618,7 @@ MainState big_while_loop(MainContext &context)
                 {
                     // not resuming, start from the beginning
                     int mid = g_evolve_image_grid_size / 2;
-                    if ((g_evolve_param_grid_x != mid) || (g_evolve_param_grid_y != mid))
+                    if (g_evolve_param_grid_x != mid || g_evolve_param_grid_y != mid)
                     {
                         g_evolve_this_generation_random_seed = (unsigned int)std::clock(); // time for new set
                     }
@@ -819,7 +819,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else if (g_init_batch == BatchMode::NORMAL || g_init_batch == BatchMode::BAILOUT_INTERRUPTED_TRY_SAVE)         // save-to-disk
                 {
-                    context.key = (g_debug_flag == DebugFlags::FORCE_DISK_RESTORE_NOT_SAVE) ? 'r' : 's';
+                    context.key = g_debug_flag == DebugFlags::FORCE_DISK_RESTORE_NOT_SAVE ? 'r' : 's';
                     if (g_init_batch == BatchMode::NORMAL)
                     {
                         g_init_batch = BatchMode::SAVE;
@@ -894,7 +894,7 @@ static int cmp_line(Byte *pixels, int line_len)
     if (row == 0)
     {
         s_err_count = 0;
-        s_cmp_fp = dir_fopen(g_working_dir, "cmperr", (g_init_batch != BatchMode::NONE) ? "a" : "w");
+        s_cmp_fp = dir_fopen(g_working_dir, "cmperr", g_init_batch != BatchMode::NONE ? "a" : "w");
         g_out_line_cleanup = cmp_line_cleanup;
     }
     if (g_potential_16bit)

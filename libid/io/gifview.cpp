@@ -167,8 +167,8 @@ int gif_view()
         return -1;
     }
 
-    unsigned width = buffer[6] | (buffer[7] << 8);
-    g_height = buffer[8] | (buffer[9] << 8);
+    unsigned width = buffer[6] | buffer[7] << 8;
+    g_height = buffer[8] | buffer[9] << 8;
     int planes = (buffer[10] & 0x0F) + 1;
     s_gif_view_image_width = width;
 
@@ -265,21 +265,21 @@ int gif_view()
                 break;
             }
 
-            left   = buffer[0] | (buffer[1] << 8);
-            top    = buffer[2] | (buffer[3] << 8);
-            width  = buffer[4] | (buffer[5] << 8);
-            g_height = buffer[6] | (buffer[7] << 8);
+            left   = buffer[0] | buffer[1] << 8;
+            top    = buffer[2] | buffer[3] << 8;
+            width  = buffer[4] | buffer[5] << 8;
+            g_height = buffer[6] | buffer[7] << 8;
 
             // adjustments for handling MIGs
             s_gif_view_image_top  = top;
             if (g_skip_x_dots > 0)
             {
-                s_gif_view_image_top /= (g_skip_y_dots+1);
+                s_gif_view_image_top /= g_skip_y_dots + 1;
             }
             s_gif_view_image_left = left;
             if (g_skip_y_dots > 0)
             {
-                s_gif_view_image_left /= (g_skip_x_dots+1);
+                s_gif_view_image_left /= g_skip_x_dots + 1;
             }
             if (g_out_line == out_line)
             {

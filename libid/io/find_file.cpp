@@ -78,7 +78,8 @@ static bool next_match()
 bool fr_find_first(const char *path)       // Find 1st file (or subdir) meeting path/filespec
 {
     const fs::path search{path};
-    const fs::path search_dir{is_directory(search) ? search : (search.has_parent_path() ? search.parent_path() : ".")};
+    const fs::path search_dir{is_directory(search) ? search : search.has_parent_path()             ? search.parent_path()
+                                                   : "."};
     std::error_code err;
     s_search.it = fs::directory_iterator(search_dir, err);
     if (err)

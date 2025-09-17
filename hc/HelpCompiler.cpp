@@ -295,7 +295,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
                         {
                             // go to next page...
                             t.add_page_break(start_margin, text, start, curr, num_links);
-                            start = curr + ((tok == TokenType::TOK_SPACE) ? size : 0);
+                            start = curr + (tok == TokenType::TOK_SPACE ? size : 0);
                             start_margin = margin;
                             line_num = 0;
                             num_links = 0;
@@ -422,7 +422,7 @@ static Label *find_next_label_by_topic(int t)
     {
         return p;
     }
-    return (g->topic_off < p->topic_off) ? g : p;
+    return g->topic_off < p->topic_off ? g : p;
 }
 
 // Find doc_page for all hot-links.

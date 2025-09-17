@@ -402,7 +402,7 @@ bool mandel_per_image_bn()
 
     case FractalType::MANDEL_Z_POWER:
         init_big_pi();
-        if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
+        if ((double) g_c_exponent == g_params[2] && g_c_exponent & 1) // odd exponents
         {
             g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         }
@@ -416,7 +416,7 @@ bool mandel_per_image_bn()
         init_big_pi();
         bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
         bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
-        if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double) g_c_exponent != g_params[2])
+        if (g_c_exponent & 1 || g_params[3] != 0.0 || (double) g_c_exponent != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -530,7 +530,7 @@ bool mandel_per_image_bf()
         }
 
         init_big_pi();
-        if ((double) g_c_exponent == g_params[2] && (g_c_exponent & 1)) // odd exponents
+        if ((double) g_c_exponent == g_params[2] && g_c_exponent & 1) // odd exponents
         {
             g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         }
@@ -544,7 +544,7 @@ bool mandel_per_image_bf()
         init_big_pi();
         copy_bf(g_param_z_bf.x, g_bf_params[0]);
         copy_bf(g_param_z_bf.y, g_bf_params[1]);
-        if ((g_c_exponent & 1) || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
+        if (g_c_exponent & 1 || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
         }

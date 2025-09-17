@@ -44,7 +44,7 @@ int escher_orbit() // Science of Fractal Images pp. 185, 187
         return g_bailout_float(); // point not in target set
     }
     // make distinct level sets if point stayed in target set
-    g_color_iter = ((3L * g_color_iter) % 255L) + 1L;
+    g_color_iter = 3L * g_color_iter % 255L + 1L;
     return 1;
 }
 

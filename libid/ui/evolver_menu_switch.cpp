@@ -157,7 +157,7 @@ static MainState move_evolver_selection(MainContext &context)
         {
             g_evolve_param_grid_x = g_evolve_image_grid_size - 1;
         }
-        if (g_evolve_param_grid_x > (g_evolve_image_grid_size - 1))
+        if (g_evolve_param_grid_x > g_evolve_image_grid_size - 1)
         {
             g_evolve_param_grid_x = 0;
         }
@@ -165,7 +165,7 @@ static MainState move_evolver_selection(MainContext &context)
         {
             g_evolve_param_grid_y = g_evolve_image_grid_size - 1;
         }
-        if (g_evolve_param_grid_y > (g_evolve_image_grid_size - 1))
+        if (g_evolve_param_grid_y > g_evolve_image_grid_size - 1)
         {
             g_evolve_param_grid_y = 0;
         }
@@ -307,7 +307,7 @@ static MainState decrease_grid_size(MainContext &context)
 
 static MainState increase_grid_size(MainContext &context)
 {
-    if (g_evolve_image_grid_size < (g_screen_x_dots / (MIN_PIXELS << 1)))
+    if (g_evolve_image_grid_size < g_screen_x_dots / (MIN_PIXELS << 1))
     {
         g_evolve_image_grid_size += 2;
         context.more_keys = false;

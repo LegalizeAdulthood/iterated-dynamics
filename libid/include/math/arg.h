@@ -45,9 +45,9 @@ inline void cmplx_trig2(const DComplex &arg, DComplex &out)
 }
 inline void cmplx_trig3(const DComplex &arg, DComplex &out)
 {
-    g_arg1->d = (arg);
+    g_arg1->d = arg;
     g_d_trig3();
-    (out) = g_arg1->d;
+    out = g_arg1->d;
 }
 
 inline double cmplx_mod(const DComplex &z)
@@ -86,7 +86,7 @@ inline void cmplx_log(const DComplex &arg, DComplex &out)
 }
 inline void cmplx_exp(const DComplex &arg, DComplex &out)
 {
-    fpu_cmplx_exp(&(arg), &(out));
+    fpu_cmplx_exp(&arg, &out);
 }
 inline void cmplx_sqr(const DComplex &arg, DComplex &out)
 {

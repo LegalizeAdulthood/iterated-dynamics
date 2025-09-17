@@ -83,7 +83,7 @@ static void calc_corner(BigFloat target, BigFloat p1, double p2, BigFloat p3, do
 
 void display_box()
 {
-    const int box_color = (g_colors - 1) & g_box_color;
+    const int box_color = g_colors - 1 & g_box_color;
     int rgb[3];
     for (int i = 0; i < g_box_count; i++)
     {
@@ -107,7 +107,7 @@ void display_box()
         {
             if (g_colors == 2)
             {
-                g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, (1 - g_box_values[i]));
+                g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, 1 - g_box_values[i]);
             }
             else
             {
@@ -186,7 +186,7 @@ void draw_box(bool draw_it)
     // calc co-ords of topleft & botright corners of box
     double tmp_x = g_zoom_box_width / -2 + f_x_adj; // from zoombox center as origin, on xdots scale
     double tmp_y = g_zoom_box_height * g_final_aspect_ratio / 2;
-    double dx = (rot_cos * tmp_x - rot_sin * tmp_y) - tmp_x; // delta x to rotate topleft
+    double dx = rot_cos * tmp_x - rot_sin * tmp_y - tmp_x; // delta x to rotate topleft
     double dy = tmp_y - (rot_sin * tmp_x + rot_cos * tmp_y); // delta y to rotate topleft
 
     // calc co-ords of topleft
@@ -221,7 +221,7 @@ void draw_box(bool draw_it)
     // do the same for botleft & topright
     tmp_x = g_zoom_box_width/-2 - f_x_adj;
     tmp_y = 0.0-tmp_y;
-    dx = (rot_cos*tmp_x - rot_sin*tmp_y) - tmp_x;
+    dx = rot_cos * tmp_x - rot_sin * tmp_y - tmp_x;
     dy = tmp_y - (rot_sin*tmp_x + rot_cos*tmp_y);
     f_temp1 = g_zoom_box_x + dx - f_x_adj;
     f_temp2 = g_zoom_box_y + dy/g_final_aspect_ratio + g_zoom_box_height;
@@ -280,7 +280,7 @@ void draw_lines(Coord fr, Coord to, int dx, int dy)
         const int alt_dec = std::abs(to.y - fr.y) * x_incr;
         const int alt_inc = to.x-fr.x;
         int alt_ctr = alt_inc / 2;
-        const int y_incr = (to.y > fr.y)?1:-1;
+        const int y_incr = to.y > fr.y ?1:-1;
         Coord line1;
         line1.y = fr.y;
         line1.x = fr.x;
@@ -317,7 +317,7 @@ void draw_lines(Coord fr, Coord to, int dx, int dy)
         const int alt_dec = std::abs(to.x - fr.x) * y_incr;
         const int alt_inc = to.y-fr.y;
         int alt_ctr = alt_inc / 2;
-        const int x_incr = (to.x > fr.x) ? 1 : -1;
+        const int x_incr = to.x > fr.x ? 1 : -1;
         Coord line1;
         line1.x = fr.x;
         line1.y = fr.y;
@@ -371,13 +371,13 @@ void move_box(double dx, double dy)
         if (align != 0)
         {
             if (int col = (int) (g_zoom_box_x * (g_logical_screen_x_size_dots + PIXEL_ROUND));
-                (col & (align - 1)) != 0)
+                (col & align - 1) != 0)
             {
                 if (dx > 0)
                 {
                     col += align;
                 }
-                col -= col & (align - 1); // adjust col to pass alignment
+                col -= col & align - 1; // adjust col to pass alignment
                 g_zoom_box_x = (double) col / g_logical_screen_x_size_dots;
             }
         }
@@ -395,13 +395,13 @@ void move_box(double dx, double dy)
         if (align != 0)
         {
             if (int row = (int) (g_zoom_box_y * (g_logical_screen_y_size_dots + PIXEL_ROUND));
-                (row & (align - 1)) != 0)
+                (row & align - 1) != 0)
             {
                 if (dy > 0)
                 {
                     row += align;
                 }
-                row -= row & (align - 1);
+                row -= row & align - 1;
                 g_zoom_box_y = (double) row / g_logical_screen_y_size_dots;
             }
         }
@@ -590,10 +590,10 @@ static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
        new actual corners
        */
     const double f_temp = (g_y_min - g_y_3rd) * (g_x_3rd - g_x_min) - (g_x_max - g_x_3rd) * (g_y_3rd - g_y_max);
-    g_plot_mx1 = (g_x_3rd-g_x_min); // reuse the plotxxx vars is safe
-    g_plot_mx2 = (g_y_3rd-g_y_max);
-    g_plot_my1 = (g_y_min-g_y_3rd);
-    g_plot_my2 = (g_x_max - g_x_3rd);
+    g_plot_mx1 = g_x_3rd - g_x_min; // reuse the plotxxx vars is safe
+    g_plot_mx2 = g_y_3rd - g_y_max;
+    g_plot_my1 = g_y_min - g_y_3rd;
+    g_plot_my2 = g_x_max - g_x_3rd;
     const double save_x_min = g_x_min;
     const double save_y_max = g_y_max;
     zoom_out_calc(g_save_x_min-save_x_min, g_save_y_max-save_y_max, &g_x_min, &g_y_max, f_temp);

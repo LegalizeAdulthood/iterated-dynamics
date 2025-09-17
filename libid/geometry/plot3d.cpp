@@ -246,12 +246,12 @@ static void plot3d_superimpose256(int x, int y, int color)
         if (s_red_local_left < x && x < s_red_local_right)
         {
             // Overwrite prev Red don't mess w/blue
-            g_put_color(x, y, color|(tmp&240));
+            g_put_color(x, y, color| tmp & 240);
             if (g_targa_out)
             {
                 if (!illumine())
                 {
-                    targa_color(x, y, color|(tmp&240));
+                    targa_color(x, y, color| tmp & 240);
                 }
                 else
                 {
@@ -266,12 +266,12 @@ static void plot3d_superimpose256(int x, int y, int color)
         {
             // Overwrite previous blue, don't mess with existing red
             color = color <<4;
-            g_put_color(x, y, color|(tmp&15));
+            g_put_color(x, y, color| tmp & 15);
             if (g_targa_out)
             {
                 if (!illumine())
                 {
-                    targa_color(x, y, color|(tmp&15));
+                    targa_color(x, y, color| tmp & 15);
                 }
                 else
                 {
@@ -346,7 +346,7 @@ static void plot3d_alternate(int x, int y, int color)
 
     // my mind is STILL fried - lower indices = darker colors is EASIER!
     color = g_colors - color;
-    if ((g_which_image == StereoImage::RED) && !((x+y)&1)) // - lower half palette
+    if (g_which_image == StereoImage::RED && !(x + y &1)) // - lower half palette
     {
         if (s_red_local_left < x && x < s_red_local_right)
         {
@@ -364,7 +364,7 @@ static void plot3d_alternate(int x, int y, int color)
             }
         }
     }
-    else if ((g_which_image == StereoImage::BLUE) && ((x+y)&1))  // - upper half palette
+    else if (g_which_image == StereoImage::BLUE && x + y & 1)  // - upper half palette
     {
         if (s_blue_local_left < x && x < s_blue_local_right)
         {
@@ -484,27 +484,27 @@ void plot_setup()
         break;
     }
 
-    g_x_shift = (int)((g_shift_x * (double)g_logical_screen_x_dots)/100);
+    g_x_shift = (int)(g_shift_x * (double) g_logical_screen_x_dots /100);
     g_x_shift1 = g_x_shift;
-    g_y_shift = (int)((g_shift_y * (double)g_logical_screen_y_dots)/100);
+    g_y_shift = (int)(g_shift_y * (double) g_logical_screen_y_dots /100);
     g_y_shift1 = g_y_shift;
 
     if (g_glasses_type != GlassesType::NONE)
     {
-        s_red_local_left  = (int)((g_red_crop_left      * (double)g_logical_screen_x_dots)/100.0);
-        s_red_local_right = (int)(((100 - g_red_crop_right) * (double)g_logical_screen_x_dots)/100.0);
-        s_blue_local_left = (int)((g_blue_crop_left     * (double)g_logical_screen_x_dots)/100.0);
-        s_blue_local_right = (int)(((100 - g_blue_crop_right) * (double)g_logical_screen_x_dots)/100.0);
+        s_red_local_left  = (int)(g_red_crop_left * (double) g_logical_screen_x_dots /100.0);
+        s_red_local_right = (int)((100 - g_red_crop_right) * (double) g_logical_screen_x_dots /100.0);
+        s_blue_local_left = (int)(g_blue_crop_left * (double) g_logical_screen_x_dots /100.0);
+        s_blue_local_right = (int)((100 - g_blue_crop_right) * (double) g_logical_screen_x_dots /100.0);
         d_red_bright    = (double)g_red_bright/100.0;
         d_blue_bright   = (double)g_blue_bright/100.0;
 
         switch (g_which_image)
         {
         case StereoImage::RED:
-            g_x_shift  += (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
-            g_xx_adjust = (int)(((g_adjust_3d_x+g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
-            g_x_shift1 -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
-            g_xx_adjust1 = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
+            g_x_shift  += (int)(g_eye_separation * (double) g_logical_screen_x_dots /200);
+            g_xx_adjust = (int)((g_adjust_3d_x + g_converge_x_adjust) * (double) g_logical_screen_x_dots /100);
+            g_x_shift1 -= (int)(g_eye_separation * (double) g_logical_screen_x_dots /200);
+            g_xx_adjust1 = (int)((g_adjust_3d_x - g_converge_x_adjust) * (double) g_logical_screen_x_dots /100);
             if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2 - g_logical_screen_x_dots;
@@ -512,8 +512,8 @@ void plot_setup()
             break;
 
         case StereoImage::BLUE:
-            g_x_shift  -= (int)((g_eye_separation* (double)g_logical_screen_x_dots)/200);
-            g_xx_adjust = (int)(((g_adjust_3d_x-g_converge_x_adjust)* (double)g_logical_screen_x_dots)/100);
+            g_x_shift  -= (int)(g_eye_separation * (double) g_logical_screen_x_dots /200);
+            g_xx_adjust = (int)((g_adjust_3d_x - g_converge_x_adjust) * (double) g_logical_screen_x_dots /100);
             if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2;
@@ -526,7 +526,7 @@ void plot_setup()
     }
     else
     {
-        g_xx_adjust = (int)((g_adjust_3d_x* (double)g_logical_screen_x_dots)/100);
+        g_xx_adjust = (int)(g_adjust_3d_x * (double) g_logical_screen_x_dots /100);
     }
     g_yy_adjust = (int)(-(g_adjust_3d_y* (double)g_logical_screen_y_dots)/100);
 

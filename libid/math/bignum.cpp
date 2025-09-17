@@ -364,7 +364,7 @@ char *unsafe_bn_to_str(char *s, BigNum r, int dec)
     if (is_bn_neg(r))
     {
         neg_a_bn(r);
-        *(s++) = '-';
+        *s++ = '-';
     }
     switch (g_int_length)
     {

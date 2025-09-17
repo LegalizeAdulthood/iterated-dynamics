@@ -121,7 +121,7 @@ int get_toggles2()
     k = -1;
     bool changed = false;
 
-    if ((values[++k].uval.ch.val != 0) != g_finite_attractor)
+    if (values[++k].uval.ch.val != 0 != g_finite_attractor)
     {
         g_finite_attractor = values[k].uval.ch.val != 0;
         changed = true;
@@ -145,7 +145,7 @@ int get_toggles2()
         changed = true;
     }
 
-    if ((values[++k].uval.ch.val != 0) != g_potential_16bit)
+    if (values[++k].uval.ch.val != 0 != g_potential_16bit)
     {
         g_potential_16bit = values[k].uval.ch.val != 0;
         if (g_potential_16bit)                   // turned it on
@@ -197,7 +197,7 @@ int get_toggles2()
             changed = true;
         }
     }
-    g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
+    g_invert = g_inversion[0] == 0.0 ? 0 : 3;
     ++k;
 
     g_color_cycle_range_lo = values[++k].uval.ival;

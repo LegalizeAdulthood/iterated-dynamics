@@ -113,7 +113,7 @@ int ifs_load()                   // read in IFS parameters
         }
     }
 
-    if ((i % row_size) != 0 || (buf_ptr && *buf_ptr != '}'))
+    if (i % row_size != 0 || (buf_ptr && *buf_ptr != '}'))
     {
         stop_msg("invalid IFS definition");
         ret = -1;

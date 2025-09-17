@@ -95,7 +95,7 @@ Tesseral::Tesseral() :
             if (m_tp->x2 - m_tp->x1 > m_tp->y2 - m_tp->y1)
             {
                 // next divide down middle
-                if (m_tp->x1 == cur_x && (m_tp->x2 - m_tp->x1 - 2) < x_size)
+                if (m_tp->x1 == cur_x && m_tp->x2 - m_tp->x1 - 2 < x_size)
                 {
                     break;
                 }
@@ -103,7 +103,7 @@ Tesseral::Tesseral() :
                 if (mid > cur_x)
                 {
                     // stack right part
-                    *(++m_tp) = *tp2; // copy current box
+                    *++m_tp = *tp2; // copy current box
                     m_tp->x2 = mid;
                 }
                 tp2->x1 = mid;
@@ -111,7 +111,7 @@ Tesseral::Tesseral() :
             else
             {
                 // next divide across
-                if (m_tp->y1 == cur_y && (m_tp->y2 - m_tp->y1 - 2) < y_size)
+                if (m_tp->y1 == cur_y && m_tp->y2 - m_tp->y1 - 2 < y_size)
                 {
                     break;
                 }
@@ -119,7 +119,7 @@ Tesseral::Tesseral() :
                 if (mid > cur_y)
                 {
                     // stack bottom part
-                    *(++m_tp) = *tp2; // copy current box
+                    *++m_tp = *tp2; // copy current box
                     m_tp->y2 = mid;
                 }
                 tp2->y1 = mid;
@@ -276,7 +276,7 @@ bool Tesseral::split_box()
             if (mid - m_tp->x1 > 1)
             {
                 // left part >= 1 col, stack right
-                *(++m_tp) = *tp2; // copy current box
+                *++m_tp = *tp2; // copy current box
                 m_tp->x2 = mid;
                 m_tp->rgt = mid_color;
             }
@@ -312,7 +312,7 @@ bool Tesseral::split_box()
             if (mid - m_tp->y1 > 1)
             {
                 // top also >= 1 col, stack bottom
-                *(++m_tp) = *tp2; // copy current box
+                *++m_tp = *tp2; // copy current box
                 m_tp->y2 = mid;
                 m_tp->bot = mid_color;
             }

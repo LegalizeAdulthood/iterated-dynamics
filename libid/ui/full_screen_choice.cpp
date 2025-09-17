@@ -41,12 +41,12 @@ static void footer_msg(int *i, ChoiceFlags flags, const char *speed_string)
     put_string_center((*i)++, 0, 80, C_PROMPT_BKGRD,
         speed_string ? "Use the cursor keys or type a value to make a selection"
                     : "Use the cursor keys to highlight your selection");
-    put_string_center(*(i++), 0, 80, C_PROMPT_BKGRD,
+    put_string_center(*i++, 0, 80, C_PROMPT_BKGRD,
         bit_set(flags, ChoiceFlags::MENU)
             ? "Press ENTER for highlighted choice, or F1 for help"
-            : (bit_set(flags, ChoiceFlags::HELP)
-                      ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
-                      : "Press ENTER for highlighted choice, or ESCAPE to back out"));
+            : bit_set(flags, ChoiceFlags::HELP)
+            ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
+            : "Press ENTER for highlighted choice, or ESCAPE to back out");
 }
 
 static void show_speed_string(
@@ -180,7 +180,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
     // preset current to passed string
-    const int speed_len = (speed_string == nullptr) ? 0 : (int) std::strlen(speed_string);
+    const int speed_len = speed_string == nullptr ? 0 : (int) std::strlen(speed_string);
     if (speed_len > 0)
     {
         current = 0;
@@ -236,7 +236,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
         title_lines = 1;
         while (*char_ptr)
         {
-            if (*(char_ptr++) == '\n')
+            if (*char_ptr++ == '\n')
             {
                 ++title_lines;
                 i = -1;
@@ -268,7 +268,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
         ++reqd_rows;
         while (*char_ptr)
         {
-            if (*(char_ptr++) == '\n')
+            if (*char_ptr++ == '\n')
             {
                 ++reqd_rows;
             }
@@ -383,7 +383,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
             const char *char_ptr = instr;
             int j = -1;
             char buf[81];
-            while ((buf[++j] = *(char_ptr++)) != 0)
+            while ((buf[++j] = *char_ptr++) != 0)
             {
                 if (buf[j] == '\n')
                 {
@@ -413,7 +413,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
             char buf[81];
             std::memset(buf, ' ', 80);
             buf[box_width*col_width] = 0;
-            for (int i = (hdg2) ? 0 : -1; i <= box_depth; ++i)  // blank the box
+            for (int i = hdg2 ? 0 : -1; i <= box_depth; ++i)  // blank the box
             {
                 driver_put_string(top_left_row + i, top_left_col, C_PROMPT_LO, buf);
             }
@@ -444,7 +444,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
                 {
                     char_ptr = choices[j];
                 }
-                driver_put_string(top_left_row + i/box_width, top_left_col + (i % box_width)*col_width,
+                driver_put_string(top_left_row + i/box_width, top_left_col + i % box_width *col_width,
                                   k, char_ptr);
             }
             /***
@@ -477,7 +477,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
             {
                 item_ptr = choices[current];
             }
-            driver_put_string(top_left_row + i/box_width, top_left_col + (i % box_width)*col_width,
+            driver_put_string(top_left_row + i/box_width, top_left_col + i % box_width *col_width,
                               C_CHOICE_CURRENT, item_ptr);
         }
 
@@ -507,7 +507,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
             {
                 k = C_PROMPT_MED;
             }
-            driver_put_string(top_left_row + i/box_width, top_left_col + (i % box_width)*col_width,
+            driver_put_string(top_left_row + i/box_width, top_left_col + i % box_width *col_width,
                               k, item_ptr);
         }
 
@@ -535,7 +535,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
                 {
                     if (new_current >= num_choices)
                     {
-                        new_current = (new_current % box_width) - box_width;
+                        new_current = new_current % box_width - box_width;
                     }
                     else if (!is_a_dir_name(choices[new_current]))
                     {
@@ -727,7 +727,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
         }
         if (top_left_choice > num_choices - box_items)
         {
-            top_left_choice = ((num_choices + box_width - 1)/box_width)*box_width - box_items;
+            top_left_choice = (num_choices + box_width - 1) / box_width *box_width - box_items;
         }
         top_left_choice = std::max(top_left_choice, 0);
         while (current < top_left_choice)

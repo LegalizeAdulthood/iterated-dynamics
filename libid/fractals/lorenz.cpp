@@ -526,7 +526,7 @@ int inverse_julia_orbit()
      */
 
     g_new_z       = complex_sqrt_float(g_new_z.x - s_cx, g_new_z.y - s_cy);
-    int left_right = (random(2)) ? 1 : -1;
+    int left_right = random(2) ? 1 : -1;
 
     if (new_col < 1 || new_col >= g_logical_screen_x_dots || new_row < 1 || new_row >= g_logical_screen_y_dots)
     {
@@ -632,16 +632,16 @@ int inverse_julia_orbit()
 
 int lorenz3d1_orbit(double *x, double *y, double *z)
 {
-    s_xdt = (*x)*s_dt;
-    s_ydt = (*y)*s_dt;
-    s_zdt = (*z)*s_dt;
+    s_xdt = *x *s_dt;
+    s_ydt = *y *s_dt;
+    s_zdt = *z *s_dt;
 
     // 1-lobe Lorenz
-    double norm = std::sqrt((*x) * (*x) + (*y) * (*y));
-    s_dx   = (-s_adt-s_dt)*(*x) + (s_adt-s_bdt)*(*y) + (s_dt-s_adt)*norm + s_ydt*(*z);
-    s_dy   = (s_bdt-s_adt)*(*x) - (s_adt+s_dt)*(*y) + (s_bdt+s_adt)*norm - s_xdt*(*z) -
+    double norm = std::sqrt(*x * *x + *y * *y);
+    s_dx   = (-s_adt-s_dt)* *x + (s_adt-s_bdt)* *y + (s_dt-s_adt)*norm + s_ydt* *z;
+    s_dy   = (s_bdt-s_adt)* *x - (s_adt+s_dt)* *y + (s_bdt+s_adt)*norm - s_xdt* *z -
            norm*s_zdt;
-    s_dz   = (s_ydt/2) - s_cdt*(*z);
+    s_dz   = s_ydt / 2 - s_cdt* *z;
 
     *x += s_dx;
     *y += s_dy;
@@ -651,14 +651,14 @@ int lorenz3d1_orbit(double *x, double *y, double *z)
 
 int lorenz3d_orbit(double *x, double *y, double *z)
 {
-    s_xdt = (*x)*s_dt;
-    s_ydt = (*y)*s_dt;
-    s_zdt = (*z)*s_dt;
+    s_xdt = *x *s_dt;
+    s_ydt = *y *s_dt;
+    s_zdt = *z *s_dt;
 
     // 2-lobe Lorenz (the original)
-    s_dx  = -s_adt*(*x) + s_adt*(*y);
-    s_dy  =  s_bdt*(*x) - s_ydt - (*z)*s_xdt;
-    s_dz  = -s_cdt*(*z) + (*x)*s_ydt;
+    s_dx  = -s_adt* *x + s_adt* *y;
+    s_dy  =  s_bdt* *x - s_ydt - *z *s_xdt;
+    s_dz  = -s_cdt* *z + *x *s_ydt;
 
     *x += s_dx;
     *y += s_dy;
@@ -668,19 +668,19 @@ int lorenz3d_orbit(double *x, double *y, double *z)
 
 int lorenz3d3_orbit(double *x, double *y, double *z)
 {
-    s_xdt = (*x)*s_dt;
-    s_ydt = (*y)*s_dt;
-    s_zdt = (*z)*s_dt;
+    s_xdt = *x *s_dt;
+    s_ydt = *y *s_dt;
+    s_zdt = *z *s_dt;
 
     // 3-lobe Lorenz
-    double norm = std::sqrt((*x) * (*x) + (*y) * (*y));
-    s_dx   = (-(s_adt+s_dt)*(*x) + (s_adt-s_bdt+s_zdt)*(*y)) / 3 +
-           ((s_dt-s_adt)*((*x)*(*x)-(*y)*(*y)) +
-            2*(s_bdt+s_adt-s_zdt)*(*x)*(*y))/(3*norm);
-    s_dy   = ((s_bdt-s_adt-s_zdt)*(*x) - (s_adt+s_dt)*(*y)) / 3 +
-           (2*(s_adt-s_dt)*(*x)*(*y) +
-            (s_bdt+s_adt-s_zdt)*((*x)*(*x)-(*y)*(*y)))/(3*norm);
-    s_dz   = (3*s_xdt*(*x)*(*y)-s_ydt*(*y)*(*y))/2 - s_cdt*(*z);
+    double norm = std::sqrt(*x * *x + *y * *y);
+    s_dx   = (-(s_adt+s_dt)* *x + (s_adt-s_bdt+s_zdt)* *y) / 3 +
+           ((s_dt-s_adt)*(*x * *x - *y * *y) +
+            2*(s_bdt+s_adt-s_zdt)* *x * *y)/(3*norm);
+    s_dy   = ((s_bdt-s_adt-s_zdt)* *x - (s_adt+s_dt)* *y) / 3 +
+           (2*(s_adt-s_dt)* *x * *y +
+            (s_bdt+s_adt-s_zdt)*(*x * *x - *y * *y))/(3*norm);
+    s_dz   = (3*s_xdt* *x * *y -s_ydt* *y * *y)/2 - s_cdt* *z;
 
     *x += s_dx;
     *y += s_dy;
@@ -690,18 +690,18 @@ int lorenz3d3_orbit(double *x, double *y, double *z)
 
 int lorenz3d4_orbit(double *x, double *y, double *z)
 {
-    s_xdt = (*x)*s_dt;
-    s_ydt = (*y)*s_dt;
-    s_zdt = (*z)*s_dt;
+    s_xdt = *x *s_dt;
+    s_ydt = *y *s_dt;
+    s_zdt = *z *s_dt;
 
     // 4-lobe Lorenz
-    s_dx   = (-s_adt*(*x)*(*x)*(*x) + (2*s_adt+s_bdt-s_zdt)*(*x)*(*x)*(*y) +
-            (s_adt-2*s_dt)*(*x)*(*y)*(*y) + (s_zdt-s_bdt)*(*y)*(*y)*(*y)) /
-           (2 * ((*x)*(*x)+(*y)*(*y)));
-    s_dy   = ((s_bdt-s_zdt)*(*x)*(*x)*(*x) + (s_adt-2*s_dt)*(*x)*(*x)*(*y) +
-            (-2*s_adt-s_bdt+s_zdt)*(*x)*(*y)*(*y) - s_adt*(*y)*(*y)*(*y)) /
-           (2 * ((*x)*(*x)+(*y)*(*y)));
-    s_dz   = (2*s_xdt*(*x)*(*x)*(*y) - 2*s_xdt*(*y)*(*y)*(*y) - s_cdt*(*z));
+    s_dx   = (-s_adt* *x * *x * *x + (2*s_adt+s_bdt-s_zdt)* *x * *x * *y +
+            (s_adt-2*s_dt)* *x * *y * *y + (s_zdt-s_bdt)* *y * *y * *y) /
+           (2 * (*x * *x + *y * *y));
+    s_dy   = ((s_bdt-s_zdt)* *x * *x * *x + (s_adt-2*s_dt)* *x * *x * *y +
+            (-2*s_adt-s_bdt+s_zdt)* *x * *y * *y - s_adt* *y * *y * *y) /
+           (2 * (*x * *x + *y * *y));
+    s_dz   = 2 * s_xdt * *x * *x * *y - 2 * s_xdt * *y * *y * *y - s_cdt * *z;
 
     *x += s_dx;
     *y += s_dy;
@@ -711,8 +711,8 @@ int lorenz3d4_orbit(double *x, double *y, double *z)
 
 int henon_orbit(double *x, double *y, double * /*z*/)
 {
-    double new_x = 1 + *y - s_a * (*x) * (*x);
-    double new_y = s_b * (*x);
+    double new_x = 1 + *y - s_a * *x * *x;
+    double new_y = s_b * *x;
     *x = new_x;
     *y = new_y;
     return 0;
@@ -720,12 +720,12 @@ int henon_orbit(double *x, double *y, double * /*z*/)
 
 int rossler_orbit(double *x, double *y, double *z)
 {
-    s_xdt = (*x)*s_dt;
-    s_ydt = (*y)*s_dt;
+    s_xdt = *x *s_dt;
+    s_ydt = *y *s_dt;
 
-    s_dx = -s_ydt - (*z)*s_dt;
-    s_dy = s_xdt + (*y)*s_adt;
-    s_dz = s_bdt + (*z)*s_xdt - (*z)*s_cdt;
+    s_dx = -s_ydt - *z *s_dt;
+    s_dy = s_xdt + *y *s_adt;
+    s_dz = s_bdt + *z *s_xdt - *z *s_cdt;
 
     *x += s_dx;
     *y += s_dy;
@@ -735,8 +735,8 @@ int rossler_orbit(double *x, double *y, double *z)
 
 int pickover_orbit(double *x, double *y, double *z)
 {
-    double new_x = std::sin(s_a * (*y)) - (*z) * std::cos(s_b * (*x));
-    double new_y = (*z) * std::sin(s_c * (*x)) - std::cos(s_d * (*y));
+    double new_x = std::sin(s_a * *y) - *z * std::cos(s_b * *x);
+    double new_y = *z * std::sin(s_c * *x) - std::cos(s_d * *y);
     double new_z = std::sin(*x);
     *x = new_x;
     *y = new_y;
@@ -747,7 +747,7 @@ int pickover_orbit(double *x, double *y, double *z)
 // page 149 "Science of Fractal Images"
 int ginger_bread_orbit(double *x, double *y, double * /*z*/)
 {
-    double new_x = 1 - (*y) + std::abs(*x);
+    double new_x = 1 - *y + std::abs(*x);
     *y = *x;
     *x = new_x;
     return 0;
@@ -762,8 +762,8 @@ int kam_torus_orbit(double *r, double *s, double *z)
     if (s_t++ >= s_l_d)
     {
         s_orbit += s_b;
-        (*s) = s_orbit/3;
-        (*r) = (*s);
+        *s = s_orbit/3;
+        *r = *s;
         s_t = 0;
         *z = s_orbit;
         if (s_orbit > s_c)
@@ -771,15 +771,15 @@ int kam_torus_orbit(double *r, double *s, double *z)
             return 1;
         }
     }
-    double srr = (*s) - (*r) * (*r);
-    (*s) = (*r)*g_sin_x+srr*g_cos_x;
-    (*r) = (*r)*g_cos_x-srr*g_sin_x;
+    double srr = *s - *r * *r;
+    *s = *r *g_sin_x+srr*g_cos_x;
+    *r = *r *g_cos_x-srr*g_sin_x;
     return 0;
 }
 
 int hopalong2d_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y - sign(*x) * std::sqrt(std::abs(s_b * (*x) - s_c));
+    double tmp = *y - sign(*x) * std::sqrt(std::abs(s_b * *x - s_c));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -788,8 +788,8 @@ int hopalong2d_orbit(double *x, double *y, double * /*z*/)
 int chip2d_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y -
-        sign(*x) * std::cos(sqr(std::log(std::abs(s_b * (*x) - s_c)))) *
-            std::atan(sqr(std::log(std::abs(s_c * (*x) - s_b))));
+        sign(*x) * std::cos(sqr(std::log(std::abs(s_b * *x - s_c)))) *
+            std::atan(sqr(std::log(std::abs(s_c * *x - s_b))));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -798,8 +798,8 @@ int chip2d_orbit(double *x, double *y, double * /*z*/)
 int quadrup_two2d_orbit(double *x, double *y, double * /*z*/)
 {
     double tmp = *y -
-        sign(*x) * std::sin(std::log(std::abs(s_b * (*x) - s_c))) *
-            std::atan(sqr(std::log(std::abs(s_c * (*x) - s_b))));
+        sign(*x) * std::sin(std::log(std::abs(s_b * *x - s_c))) *
+            std::atan(sqr(std::log(std::abs(s_c * *x - s_b))));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -807,7 +807,7 @@ int quadrup_two2d_orbit(double *x, double *y, double * /*z*/)
 
 int three_ply2d_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y - sign(*x) * (std::abs(std::sin(*x) * s_cos_b + s_c - (*x) * s_sin_sum_a_b_c));
+    double tmp = *y - sign(*x) * std::abs(std::sin(*x) * s_cos_b + s_c - *x * s_sin_sum_a_b_c);
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -823,14 +823,14 @@ int martin2d_orbit(double *x, double *y, double * /*z*/)
 
 int mandel_cloud_orbit(double *x, double *y, double * /*z*/)
 {
-    double x2 = (*x) * (*x);
-    double y2 = (*y) * (*y);
+    double x2 = *x * *x;
+    double y2 = *y * *y;
     if (x2+y2 > 2)
     {
         return 1;
     }
     double new_x = x2 - y2 + s_a;
-    double new_y = 2 * (*x) * (*y) + s_b;
+    double new_y = 2 * *x * *y + s_b;
     *x = new_x;
     *y = new_y;
     return 0;
@@ -1031,7 +1031,7 @@ void Orbit2D::iterate()
         {
             write_sound((int)(*m_sound_var*100 + g_base_hertz));
         }
-        if ((g_fractal_type != FractalType::ICON) && (g_fractal_type != FractalType::LATOO))
+        if (g_fractal_type != FractalType::ICON && g_fractal_type != FractalType::LATOO)
         {
             if (m_old_col != -1 && s_connect)
             {
@@ -1303,8 +1303,8 @@ void Dynamic2D::iterate()
         // Our pixel position on the screen
         m_x_pixel = g_logical_screen_x_size_dots * (m_x_step + .5) / s_d;
         m_y_pixel = g_logical_screen_y_size_dots * (m_y_step + .5) / s_d;
-        m_x = (double) ((g_x_min + g_delta_x * m_x_pixel) + (g_delta_x2 * m_y_pixel));
-        m_y = (double) ((g_y_max - g_delta_y * m_y_pixel) + (-g_delta_y2 * m_x_pixel));
+        m_x = (double) (g_x_min + g_delta_x * m_x_pixel + g_delta_x2 * m_y_pixel);
+        m_y = (double) (g_y_max - g_delta_y * m_y_pixel + -g_delta_y2 * m_x_pixel);
         if (g_fractal_type == FractalType::MANDEL_CLOUD)
         {
             s_a = m_x;
@@ -1671,7 +1671,7 @@ void IFS3D::iterate()
         int color;
         if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
         {
-            color = (m_k % g_colors) + 1;
+            color = m_k % g_colors + 1;
         }
         else
         {
@@ -1697,7 +1697,7 @@ void IFS3D::iterate()
             int color;
             if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
             {
-                color = (m_k % g_colors) + 1;
+                color = m_k % g_colors + 1;
             }
             else
             {
@@ -1772,7 +1772,7 @@ void IFS2D::iterate()
         int color;
         if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
         {
-            color = (k % g_colors) + 1;
+            color = k % g_colors + 1;
         }
         else
         {
@@ -1875,24 +1875,24 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             g_view[2] = (inf->min_vals[2]-inf->max_vals[2])*(double)g_viewer_z/100.0;
 
             // center image on origin
-            double tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
-            double tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/(2.0); // center y
+            double tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/2.0; // center x
+            double tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
 
             // apply perspective shift
-            tmp_x += ((double)g_x_shift*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-            tmp_y += ((double)g_y_shift*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
-            double tmp_z = -(inf->max_vals[2]);
+            tmp_x += (double) g_x_shift * (g_x_max - g_x_min) /g_logical_screen_x_dots;
+            tmp_y += (double) g_y_shift * (g_y_max - g_y_min) /g_logical_screen_y_dots;
+            double tmp_z = -inf->max_vals[2];
             trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
 
             if (s_real_time)
             {
                 // center image on origin
-                tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/(2.0); // center x
-                tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/(2.0); // center y
+                tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/2.0; // center x
+                tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
 
-                tmp_x += ((double)g_x_shift1*(g_x_max-g_x_min))/(g_logical_screen_x_dots);
-                tmp_y += ((double)g_y_shift1*(g_y_max-g_y_min))/(g_logical_screen_y_dots);
-                tmp_z = -(inf->max_vals[2]);
+                tmp_x += (double) g_x_shift1 * (g_x_max - g_x_min) /g_logical_screen_x_dots;
+                tmp_y += (double) g_y_shift1 * (g_y_max - g_y_min) /g_logical_screen_y_dots;
+                tmp_z = -inf->max_vals[2];
                 trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
             }
         }

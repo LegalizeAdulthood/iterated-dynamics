@@ -111,7 +111,7 @@ int select_video_mode(int current_mode)
         return -1;
     }
     // picked by function key or ENTER key
-    i = (i < 0) ? (-1 - i) : s_entry_nums[i];
+    i = i < 0 ? -1 - i : s_entry_nums[i];
     // the selected entry now in g_video_entry
     std::memcpy(&g_video_entry, &g_video_table[i], sizeof(g_video_entry));
 

@@ -208,7 +208,7 @@ rescan:  // entry for changed browse parms
     split_fname_ext(g_browse_mask, fname, ext);
     make_path(tmp_mask, drive, dir, fname, ext);
     std::filesystem::path path{find_wildcard_first(ReadFile::IMAGE, tmp_mask)};
-    status = (vid_too_big || path.empty()) ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
+    status = vid_too_big || path.empty() ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
     // draw all visible windows
     while (status == FileWindowStatus::CONTINUE)
     {
@@ -620,8 +620,8 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     {
         if (!info->bf_math)
         {
-            float_to_bf(bt_x, (info->x_max)-(info->x3rd-info->x_min));
-            float_to_bf(bt_y, (info->y_max)+(info->y_min-info->y3rd));
+            float_to_bf(bt_x, info->x_max -(info->x3rd-info->x_min));
+            float_to_bf(bt_y, info->y_max +(info->y_min-info->y3rd));
         }
         else
         {
@@ -634,8 +634,8 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     }
     else
     {
-        tr.x = (info->x_max)-(info->x3rd-info->x_min);
-        tr.y = (info->y_max)+(info->y_min-info->y3rd);
+        tr.x = info->x_max -(info->x3rd-info->x_min);
+        tr.y = info->y_max +(info->y_min-info->y3rd);
         transform(&tr);
     }
     top_right.x = (int) std::lround(tr.x);
@@ -688,7 +688,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     double tmp_sqrt = std::sqrt(sqr(tr.x - bl.x) + sqr(tr.y - bl.y));
     win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
     // reject anything too small or too big on screen
-    if ((tmp_sqrt < g_smallest_window_display_size) || (tmp_sqrt > too_big))
+    if (tmp_sqrt < g_smallest_window_display_size || tmp_sqrt > too_big)
     {
         cant_see = true;
     }
@@ -708,23 +708,23 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     }
 
     // now see how many corners are on the screen, accept if one or more
-    if (tl.x >= (0-g_logical_screen_x_offset) && tl.x <= (g_screen_x_dots-g_logical_screen_x_offset)
-        && tl.y >= (0-g_logical_screen_y_offset) && tl.y <= (g_screen_y_dots-g_logical_screen_y_offset))
+    if (tl.x >= 0 - g_logical_screen_x_offset && tl.x <= g_screen_x_dots - g_logical_screen_x_offset
+        && tl.y >= 0 - g_logical_screen_y_offset && tl.y <= g_screen_y_dots - g_logical_screen_y_offset)
     {
         corner_count++;
     }
-    if (bl.x >= (0-g_logical_screen_x_offset) && bl.x <= (g_screen_x_dots-g_logical_screen_x_offset)
-        && bl.y >= (0-g_logical_screen_y_offset) && bl.y <= (g_screen_y_dots-g_logical_screen_y_offset))
+    if (bl.x >= 0 - g_logical_screen_x_offset && bl.x <= g_screen_x_dots - g_logical_screen_x_offset
+        && bl.y >= 0 - g_logical_screen_y_offset && bl.y <= g_screen_y_dots - g_logical_screen_y_offset)
     {
         corner_count++;
     }
-    if (tr.x >= (0-g_logical_screen_x_offset) && tr.x <= (g_screen_x_dots-g_logical_screen_x_offset)
-        && tr.y >= (0-g_logical_screen_y_offset) && tr.y <= (g_screen_y_dots-g_logical_screen_y_offset))
+    if (tr.x >= 0 - g_logical_screen_x_offset && tr.x <= g_screen_x_dots - g_logical_screen_x_offset
+        && tr.y >= 0 - g_logical_screen_y_offset && tr.y <= g_screen_y_dots - g_logical_screen_y_offset)
     {
         corner_count++;
     }
-    if (br.x >= (0-g_logical_screen_x_offset) && br.x <= (g_screen_x_dots-g_logical_screen_x_offset)
-        && br.y >= (0-g_logical_screen_y_offset) && br.y <= (g_screen_y_dots-g_logical_screen_y_offset))
+    if (br.x >= 0 - g_logical_screen_x_offset && br.x <= g_screen_x_dots - g_logical_screen_x_offset
+        && br.y >= 0 - g_logical_screen_y_offset && br.y <= g_screen_y_dots - g_logical_screen_y_offset)
     {
         corner_count++;
     }
@@ -825,7 +825,7 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
     }
     if (info->fractal_type == +g_fractal_type || g_fractal_type == migrate_integer_types(info->fractal_type))
     {
-        num_fn = (+g_cur_fractal_specific->flags >> 6) & 7;
+        num_fn = +g_cur_fractal_specific->flags >> 6 & 7;
         if (num_fn > 0)
         {
             return function_ok(info, num_fn);

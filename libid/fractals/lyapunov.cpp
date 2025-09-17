@@ -126,14 +126,14 @@ bool lyapunov_per_image()
     int t;
     for (t = 31; t >= 0; t--)
     {
-        if (i & (1 << t))
+        if (i & 1 << t)
         {
             break;
         }
     }
     for (; t >= 0; t--)
     {
-        s_lya_rxy[s_lya_length++] = (i & (1<<t)) != 0;
+        s_lya_rxy[s_lya_length++] = (i & 1 << t) != 0;
     }
     s_lya_rxy[s_lya_length++] = 0;
     if (g_inside_color < COLOR_BLACK)

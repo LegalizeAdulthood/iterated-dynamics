@@ -23,7 +23,7 @@ int bifurc_may_orbit()
             Computers, Pattern, Chaos, and Beauty, page 153 */
     g_tmp_z.x = 1.0 + g_population;
     g_tmp_z.x = std::pow(g_tmp_z.x, -s_beta); // pow in math.h included with math/mpmath.h
-    g_population = (g_rate * g_population) * g_tmp_z.x;
+    g_population = g_rate * g_population * g_tmp_z.x;
     return population_orbit();
 }
 

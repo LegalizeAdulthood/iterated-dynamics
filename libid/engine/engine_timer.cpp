@@ -56,7 +56,7 @@ static int timer(TimerType type, int (*fn)(), ...)
     bool do_bench = g_timer_flag;   // record time?
     if (type == TimerType::ENCODER) // encoder, record time only if debug flag set
     {
-        do_bench = (g_debug_flag == DebugFlags::BENCHMARK_ENCODER);
+        do_bench = g_debug_flag == DebugFlags::BENCHMARK_ENCODER;
     }
     if (do_bench)
     {

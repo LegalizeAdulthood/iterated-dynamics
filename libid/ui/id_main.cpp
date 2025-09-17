@@ -228,7 +228,7 @@ static bool main_restore_start(MainContext &context)
     g_help_mode = HelpLabels::HELP_MENU; // now use this help mode
     g_tab_mode = true;
     g_look_at_mouse = MouseLook::IGNORE_MOUSE;
-    if (((g_overlay_3d && (g_init_batch == BatchMode::NONE)) || context.stacked) &&
+    if (((g_overlay_3d && g_init_batch == BatchMode::NONE) || context.stacked) &&
         g_init_mode < 0) // overlay command failed
     {
         driver_unstack_screen(); // restore the graphics screen

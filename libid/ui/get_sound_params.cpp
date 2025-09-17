@@ -84,7 +84,7 @@ get_sound_restart:
     g_start_show_orbit = builder.read_yes_no();
 
     /* now do any initialization needed and check for soundcard */
-    if ((g_sound_flag & SOUNDFLAG_OPL3_FM) && !(old_sound_flag & SOUNDFLAG_OPL3_FM))
+    if (g_sound_flag & SOUNDFLAG_OPL3_FM && !(old_sound_flag & SOUNDFLAG_OPL3_FM))
     {
         driver_init_fm();
     }
@@ -206,12 +206,12 @@ get_music_restart:
     }
 
     g_polyphony = std::min(8, std::abs(builder.read_int_number() - 1));
-    g_fm_wave_type = (builder.read_int_number()) & 0x07;
-    g_fm_attack = (builder.read_int_number()) & 0x0F;
-    g_fm_decay = (builder.read_int_number()) & 0x0F;
-    g_fm_sustain = (builder.read_int_number()) & 0x0F;
-    g_fm_release = (builder.read_int_number()) & 0x0F;
-    g_fm_volume = (builder.read_int_number()) & 0x3F;
+    g_fm_wave_type = builder.read_int_number() & 0x07;
+    g_fm_attack = builder.read_int_number() & 0x0F;
+    g_fm_decay = builder.read_int_number() & 0x0F;
+    g_fm_sustain = builder.read_int_number() & 0x0F;
+    g_fm_release = builder.read_int_number() & 0x0F;
+    g_fm_volume = builder.read_int_number() & 0x3F;
     g_hi_attenuation = builder.read_list();
     if (g_sound_flag & SOUNDFLAG_OPL3_FM)
     {

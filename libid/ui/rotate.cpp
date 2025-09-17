@@ -250,7 +250,7 @@ void rotate(int direction)
         direction = 1;                  // and set a rotate direction
     }
 
-    rotate_max = (g_color_cycle_range_hi < g_colors) ? g_color_cycle_range_hi : g_colors-1;
+    rotate_max = g_color_cycle_range_hi < g_colors ? g_color_cycle_range_hi : g_colors-1;
     rotate_size = rotate_max - g_color_cycle_range_lo + 1;
     last = rotate_max;                  // last box that was filled
     next = g_color_cycle_range_lo;      // next box to be filled
@@ -280,7 +280,7 @@ void rotate(int direction)
                     // randomizing is on
                     for (int i_step = 0; i_step < step; i_step++)
                     {
-                        j_step = next + (i_step * direction);
+                        j_step = next + i_step * direction;
                         while (j_step < g_color_cycle_range_lo)
                         {
                             j_step += rotate_size;
@@ -301,9 +301,9 @@ void rotate(int direction)
                             to_green   = RAND15() >> 9;
                             to_blue    = RAND15() >> 9;
                         }
-                        g_dac_box[j_step][0] = (Byte)(from_red   + (((to_red    - from_red)*incr)/f_step));
-                        g_dac_box[j_step][1] = (Byte)(from_green + (((to_green - from_green)*incr)/f_step));
-                        g_dac_box[j_step][2] = (Byte)(from_blue  + (((to_blue  - from_blue)*incr)/f_step));
+                        g_dac_box[j_step][0] = (Byte)(from_red   + (to_red - from_red) * incr / f_step);
+                        g_dac_box[j_step][1] = (Byte)(from_green + (to_green - from_green) * incr / f_step);
+                        g_dac_box[j_step][2] = (Byte)(from_blue  + (to_blue - from_blue) * incr / f_step);
                     }
                 }
                 if (step >= rotate_size)
@@ -319,10 +319,7 @@ void rotate(int direction)
         }
         key = driver_get_key();
         if (s_paused
-            && (key != ' '
-                && key != 'c'
-                && key != ID_KEY_HOME
-                && key != 'C'))
+            && key != ' ' && key != 'c' && key != ID_KEY_HOME && key != 'C')
         {
             s_paused = false;           // clear paused condition
         }

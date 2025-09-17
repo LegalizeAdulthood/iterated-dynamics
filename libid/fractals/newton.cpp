@@ -170,7 +170,7 @@ int complex_newton_orbit()
 
     g_tmp_z.x = g_new_z.x - s_c_root.x;
     g_tmp_z.y = g_new_z.y - s_c_root.y;
-    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < s_threshold)
+    if (sqr(g_tmp_z.x) + sqr(g_tmp_z.y) < s_threshold)
     {
         return 1;
     }
@@ -205,7 +205,7 @@ int complex_basin_orbit()
 
     g_tmp_z.x = g_new_z.x - s_c_root.x;
     g_tmp_z.y = g_new_z.y - s_c_root.y;
-    if ((sqr(g_tmp_z.x) + sqr(g_tmp_z.y)) < s_threshold)
+    if (sqr(g_tmp_z.x) + sqr(g_tmp_z.y) < s_threshold)
     {
         if (std::abs(g_old_z.y) < .01)
         {

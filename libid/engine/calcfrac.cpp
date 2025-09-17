@@ -710,10 +710,10 @@ static void init_calc_fract()
         g_invert = 3; // so values will not be changed if we come back
     }
 
-    g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
+    g_close_enough = g_delta_min*std::pow(2.0, -(double) std::abs(g_periodicity_check));
     s_rq_lim_save = g_magnitude_limit;
     g_magnitude_limit2 = std::sqrt(g_magnitude_limit);
-    g_resuming = (g_calc_status == CalcStatus::RESUMABLE);
+    g_resuming = g_calc_status == CalcStatus::RESUMABLE;
     if (!g_resuming) // free resume_info memory if any is hanging around
     {
         end_resume();
@@ -757,7 +757,7 @@ static void calc_non_standard_fractal()
     {
         // not a stand-alone
         // next two lines in case periodicity changed
-        g_close_enough = g_delta_min * std::pow(2.0, -(double) (std::abs(g_periodicity_check)));
+        g_close_enough = g_delta_min * std::pow(2.0, -(double) std::abs(g_periodicity_check));
         set_symmetry(g_symmetry, false);
         engine_timer(g_calc_type); // non-standard fractal engine
     }
@@ -931,7 +931,7 @@ static void perform_work_list()
     {
         g_std_calc_mode = CalcMode::ONE_PASS;
     }
-    if (g_std_calc_mode == CalcMode::ORBIT && (g_cur_fractal_specific->calc_type != standard_fractal_type))
+    if (g_std_calc_mode == CalcMode::ORBIT && g_cur_fractal_specific->calc_type != standard_fractal_type)
     {
         g_std_calc_mode = CalcMode::ONE_PASS;
     }
@@ -1001,7 +1001,7 @@ static void perform_work_list()
         }
         s_dem_width = (std::sqrt(sqr(g_x_max-g_x_min) + sqr(g_x_3rd-g_x_min)) * aspect
                      + std::sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
-        f_temp = (g_magnitude_limit < DEM_BAILOUT) ? DEM_BAILOUT : g_magnitude_limit;
+        f_temp = g_magnitude_limit < DEM_BAILOUT ? DEM_BAILOUT : g_magnitude_limit;
         f_temp += 3; // bailout plus just a bit
         double f_temp2 = std::log(f_temp);
         if (g_use_old_distance_estimator)
@@ -1122,7 +1122,7 @@ static void perform_work_list()
         }
 
         // some common initialization for escape-time pixel level routines
-        g_close_enough = g_delta_min*std::pow(2.0, -(double)(std::abs(g_periodicity_check)));
+        g_close_enough = g_delta_min*std::pow(2.0, -(double) std::abs(g_periodicity_check));
         g_keyboard_check_interval = g_max_keyboard_check_interval;
 
         set_symmetry(g_symmetry, true);
@@ -1130,7 +1130,7 @@ static void perform_work_list()
         if (!g_resuming && (std::abs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
         {
             // calculate round screen edges to work out best start for logmap
-            g_log_map_flag = (auto_log_map() * (g_log_map_flag / std::abs(g_log_map_flag)));
+            g_log_map_flag = auto_log_map() * (g_log_map_flag / std::abs(g_log_map_flag));
             setup_log_table();
         }
 
@@ -1256,7 +1256,7 @@ int calc_mandelbrot_type()
             }
             else
             {
-                g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
+                g_color = (int)((g_color_iter - 1) % g_and_color + 1);
             }
         }
         if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
@@ -1318,7 +1318,7 @@ int standard_fractal_type()
     }
     else if (g_inside_color == PERIOD)       // for display-periodicity
     {
-        g_old_color_iter = (g_max_iterations/5)*4;       // don't check until nearly done
+        g_old_color_iter = g_max_iterations / 5 * 4; // don't check until nearly done
     }
     else if (g_reset_periodicity)
     {
@@ -1532,7 +1532,7 @@ int standard_fractal_type()
                     g_old_z = g_new_z;
                     {
                         int tmp_color;
-                        tmp_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
+                        tmp_color = (int)((g_color_iter - 1) % g_and_color + 1);
                         tan_table[tmp_color-1] = g_new_z.y/(g_new_z.x+.000001);
                     }
                 }
@@ -1542,12 +1542,12 @@ int standard_fractal_type()
                 hooper = 0;
                 if (std::abs(g_new_z.x) < std::abs(g_close_proximity))
                 {
-                    hooper = (g_close_proximity > 0 ? 1 : -1); // close to y axis
+                    hooper = g_close_proximity > 0 ? 1 : -1; // close to y axis
                     goto plot_inside;
                 }
                 if (std::abs(g_new_z.y) < std::abs(g_close_proximity))
                 {
-                    hooper = (g_close_proximity > 0 ? 2 : -2); // close to x axis
+                    hooper = g_close_proximity > 0 ? 2 : -2; // close to x axis
                     goto plot_inside;
                 }
             }
@@ -1605,12 +1605,12 @@ int standard_fractal_type()
                     at.y = sqr(at.y);
                     if (at.y < g_f_at_rad)
                     {
-                        if ((at.x + at.y) < g_f_at_rad)
+                        if (at.x + at.y < g_f_at_rad)
                         {
                             attracted = true;
                             if (g_finite_attractor)
                             {
-                                g_color_iter = (g_color_iter % g_attractor_period[i]) + 1;
+                                g_color_iter = g_color_iter % g_attractor_period[i] + 1;
                             }
                             break;
                         }
@@ -1769,7 +1769,7 @@ int standard_fractal_type()
         }
         else if (g_outside_color == TDIS)
         {
-            g_color_iter = (long)(total_dist);
+            g_color_iter = (long) total_dist;
         }
 
         // eliminate negative colors & wrap arounds
@@ -1953,7 +1953,7 @@ plot_pixel:
         }
         else
         {
-            g_color = (int)(((g_color_iter - 1) % g_and_color) + 1);
+            g_color = (int)((g_color_iter - 1) % g_and_color + 1);
         }
     }
     if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
@@ -2078,7 +2078,7 @@ static void decomposition()
                         if (g_decomp[0] == 256)
                         {
                             temp <<= 1;
-                            if ((g_new_z.x * tan1_4063 < g_new_z.y))
+                            if (g_new_z.x * tan1_4063 < g_new_z.y)
                             {
                                 ++temp;
                             }
@@ -2343,7 +2343,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
             return;
         }
     }
-    if ((g_potential_flag && g_potential_16bit) || ((g_invert != 0) && g_inversion[2] != 0.0)
+    if ((g_potential_flag && g_potential_16bit) || (g_invert != 0 && g_inversion[2] != 0.0)
         || g_decomp[0] != 0
         || g_x_min != g_x_3rd || g_y_min != g_y_3rd)
     {
@@ -2378,9 +2378,9 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
     {
         return;
     }
-    bool params_zero = (g_param_z1.x == 0.0 && g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
-    bool params_no_real = (g_param_z1.x == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
-    bool params_no_imag = (g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE);
+    bool params_zero = g_param_z1.x == 0.0 && g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE;
+    bool params_no_real = g_param_z1.x == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE;
+    bool params_no_imag = g_param_z1.y == 0.0 && g_use_init_orbit != InitOrbitMode::VALUE;
     switch (g_fractal_type)
     {
     case FractalType::MAN_LAM_FN_FN:  // These need only P1 checked.  P2 is used for a switch value
@@ -2391,17 +2391,16 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
     case FractalType::MARKS_JULIA:
         break;
     case FractalType::FORMULA: // Check P2, P3, P4 and P5
-        params_zero = (params_zero && g_params[2] == 0.0 && g_params[3] == 0.0
-            && g_params[4] == 0.0 && g_params[5] == 0.0
-            && g_params[6] == 0.0 && g_params[7] == 0.0
-            && g_params[8] == 0.0 && g_params[9] == 0.0);
-        params_no_real = (params_no_real && g_params[2] == 0.0 && g_params[4] == 0.0
-            && g_params[6] == 0.0 && g_params[8] == 0.0);
-        params_no_imag = (params_no_imag && g_params[3] == 0.0 && g_params[5] == 0.0
-            && g_params[7] == 0.0 && g_params[9] == 0.0);
+        params_zero = params_zero && g_params[2] == 0.0 && g_params[3] == 0.0 && g_params[4] == 0.0 //
+            && g_params[5] == 0.0 && g_params[6] == 0.0 && g_params[7] == 0.0                       //
+            && g_params[8] == 0.0 && g_params[9] == 0.0;
+        params_no_real = params_no_real && g_params[2] == 0.0 && g_params[4] == 0.0                 //
+            && g_params[6] == 0.0 && g_params[8] == 0.0;
+        params_no_imag = params_no_imag && g_params[3] == 0.0 && g_params[5] == 0.0                 //
+            && g_params[7] == 0.0 && g_params[9] == 0.0;
         break;
     default:   // Check P2 for the rest
-        params_zero = (params_zero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0);
+        params_zero = params_zero && g_param_z2.x == 0.0 && g_param_z2.y == 0.0;
     }
     int y_axis_col = -1;
     int x_axis_row = -1;
@@ -2409,13 +2408,13 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
     {
         saved = save_stack();
         bft1    = alloc_stack(g_r_bf_length+2);
-        x_axis_on_screen = (sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max));
-        y_axis_on_screen = (sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max));
+        x_axis_on_screen = sign_bf(g_bf_y_min) != sign_bf(g_bf_y_max);
+        y_axis_on_screen = sign_bf(g_bf_x_min) != sign_bf(g_bf_x_max);
     }
     else
     {
-        x_axis_on_screen = (sign(g_y_min) != sign(g_y_max));
-        y_axis_on_screen = (sign(g_x_min) != sign(g_x_max));
+        x_axis_on_screen = sign(g_y_min) != sign(g_y_max);
+        y_axis_on_screen = sign(g_x_min) != sign(g_x_max);
     }
     if (x_axis_on_screen) // axis is on screen
     {
@@ -2430,10 +2429,10 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         {
             f_temp = (0.0-g_y_max) / (g_y_min-g_y_max);
         }
-        f_temp *= (g_logical_screen_y_dots-1);
+        f_temp *= g_logical_screen_y_dots - 1;
         f_temp += 0.25;
         x_axis_row = (int)f_temp;
-        x_axis_between = (f_temp - x_axis_row >= 0.5);
+        x_axis_between = f_temp - x_axis_row >= 0.5;
         if (!use_list && (!x_axis_between || (x_axis_row+1)*2 != g_logical_screen_y_dots))
         {
             x_axis_row = -1; // can't split screen, so dead center or not at all
@@ -2452,10 +2451,10 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         {
             f_temp = (0.0-g_x_min) / (g_x_max-g_x_min);
         }
-        f_temp *= (g_logical_screen_x_dots-1);
+        f_temp *= g_logical_screen_x_dots - 1;
         f_temp += 0.25;
         y_axis_col = (int)f_temp;
-        y_axis_between = (f_temp - y_axis_col >= 0.5);
+        y_axis_between = f_temp - y_axis_col >= 0.5;
         if (!use_list && (!y_axis_between || (y_axis_col+1)*2 != g_logical_screen_x_dots))
         {
             y_axis_col = -1; // can't split screen, so dead center or not at all
@@ -2587,7 +2586,7 @@ origin_symmetry:
                 break; // no point in pi symmetry if values too close
             }
         }
-        if ((g_invert != 0) && g_force_symmetry == SymmetryType::NOT_FORCED)
+        if (g_invert != 0 && g_force_symmetry == SymmetryType::NOT_FORCED)
         {
             goto origin_symmetry;
         }
@@ -2614,11 +2613,11 @@ origin_symmetry:
         {
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             abs_a_bf(bft1);
-            g_pi_in_pixels = (int)((PI/(double)bf_to_float(bft1)*g_logical_screen_x_dots)); // PI in pixels
+            g_pi_in_pixels = (int) (PI / (double) bf_to_float(bft1) * g_logical_screen_x_dots); // PI in pixels
         }
         else
         {
-            g_pi_in_pixels = (int)((PI/std::abs(g_x_max-g_x_min))*g_logical_screen_x_dots); // PI in pixels
+            g_pi_in_pixels = (int) (PI / std::abs(g_x_max - g_x_min) *g_logical_screen_x_dots); // PI in pixels
         }
 
         g_i_stop_pt.x = g_start_pt.x + g_pi_in_pixels - 1;

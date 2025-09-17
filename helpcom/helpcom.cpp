@@ -668,7 +668,7 @@ bool DocumentProcessor::topic_paragraph()
             }
             else
             {
-                if (!print(m_pd.curr, (m_size == 0) ? m_width : m_size))
+                if (!print(m_pd.curr, m_size == 0 ? m_width : m_size))
                 {
                     return false;
                 }

@@ -752,7 +752,7 @@ static int next_command(
             }
             continue;                      // loop to check end of line again
         }
-        cmd_buf[cmd_len] = *(line_ptr++);    // copy character to command buffer
+        cmd_buf[cmd_len] = *line_ptr++;    // copy character to command buffer
         if (++cmd_len >= max_len)         // command too long?
         {
             arg_error(cmd_buf);
@@ -970,7 +970,7 @@ Command::Command(char *cur_arg, CmdFile a_mode) :
             }
         }
         // using arbitrary precision and above failed
-        else if (((int) std::strlen(arg_ptr) > 513) // very long command
+        else if ((int) std::strlen(arg_ptr) > 513 // very long command
             || (total_params > 0 && float_vals[total_params - 1] == FLT_MAX && total_params < 6) || is_a_big_float(arg_ptr))
         {
             ++num_float_params;
@@ -1429,7 +1429,7 @@ static CmdArgFlags cmd_bailout_test(const Command &cmd)
 
 static CmdArgFlags cmd_bf_digits(const Command &cmd)
 {
-    if (cmd.num_val == NON_NUMERIC || (cmd.num_val < 0 || cmd.num_val > 2000))
+    if (cmd.num_val == NON_NUMERIC || cmd.num_val < 0 || cmd.num_val > 2000)
     {
         return cmd.bad_arg();
     }
@@ -1470,7 +1470,7 @@ static CmdArgFlags cmd_bright(const Command &cmd)
 // center-mag=?/?/?[/?/?/?]
 static CmdArgFlags cmd_center_mag(const Command &cmd)
 {
-    if ((cmd.total_params != cmd.num_float_params) || (cmd.total_params != 0 && cmd.total_params < 3) ||
+    if (cmd.total_params != cmd.num_float_params || (cmd.total_params != 0 && cmd.total_params < 3) ||
         (cmd.total_params >= 3 && cmd.float_vals[2] == 0.0))
     {
         return cmd.bad_arg();
@@ -1614,7 +1614,7 @@ static int parse_hex_color(const char *&value)
 
 static int parse_6bit_color(const char *&value)
 {
-    int k = *(value++);
+    int k = *value++;
     if (k < '0')
     {
         return -1;
@@ -1629,7 +1629,7 @@ static int parse_6bit_color(const char *&value)
     }
     else if (k <= 'Z')
     {
-        k -= ('A' - 10);
+        k -= 'A' - 10;
     }
     else if (k < '_' || k > 'z')
     {
@@ -1637,7 +1637,7 @@ static int parse_6bit_color(const char *&value)
     }
     else
     {
-        k -= ('_' - 36);
+        k -= '_' - 36;
     }
     return k * 4; // move value to high 6 bits.
 }
@@ -1710,7 +1710,7 @@ static CmdArgFlags parse_colors(const char *value)
                         int spread = smooth + 1;
                         int start = i - spread;
                         int c_num{};
-                        if ((k - (int)g_dac_box[start][j]) == 0)
+                        if (k - (int) g_dac_box[start][j] == 0)
                         {
                             while (++c_num < spread)
                             {
@@ -2042,7 +2042,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
         g_image_filename_mask = std::string{"*"} + cmd.value;
         return CmdArgFlags::NONE;
     }
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2119,7 +2119,7 @@ static CmdArgFlags cmd_float(const Command &cmd)
 // formulafile=?
 static CmdArgFlags cmd_formula_file(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2221,7 +2221,7 @@ static CmdArgFlags cmd_ifs(const Command &cmd)
 // ifsfile=??
 static CmdArgFlags cmd_ifs_file(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2306,7 +2306,7 @@ static CmdArgFlags cmd_invert(const Command &cmd)
         return cmd.bad_arg();
     }
     g_inversion[0] = cmd.float_vals[0];
-    g_invert = (g_inversion[0] != 0.0) ? cmd.total_params : 0;
+    g_invert = g_inversion[0] != 0.0 ? cmd.total_params : 0;
     if (cmd.total_params == 3)
     {
         g_inversion[1] = cmd.float_vals[1];
@@ -2399,7 +2399,7 @@ static CmdArgFlags cmd_latitude(const Command &cmd)
 // lfile=?
 static CmdArgFlags cmd_l_file(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2432,7 +2432,7 @@ static CmdArgFlags cmd_library_dirs(const Command &cmd)
 // lightname=?
 static CmdArgFlags cmd_light_name(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2649,7 +2649,7 @@ static CmdArgFlags cmd_miim(const Command &cmd)
     {
         for (int k = 2; k < 6; ++k)
         {
-            g_params[k - 2] = (k < cmd.total_params) ? cmd.float_vals[k] : 0.0;
+            g_params[k - 2] = k < cmd.total_params ? cmd.float_vals[k] : 0.0;
         }
     }
 
@@ -2768,7 +2768,7 @@ static CmdArgFlags cmd_orbit_save(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_orbit_save_flags |= (cmd.yes_no_val[0] ? OSF_RAW : 0);
+    g_orbit_save_flags |= cmd.yes_no_val[0] ? OSF_RAW : 0;
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -2782,7 +2782,7 @@ static CmdArgFlags cmd_orbit_save_name(const Command &cmd)
 // orgfrmdir=? [deprecated]
 static CmdArgFlags cmd_org_frm_dir(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > ID_FILE_MAX_DIR - 1)
     {
         return cmd.bad_arg();
     }
@@ -2818,7 +2818,7 @@ static CmdArgFlags cmd_outside(const Command &cmd)
             return CmdArgFlags::FRACTAL_PARAM;
         }
     }
-    if (cmd.num_val == NON_NUMERIC || (cmd.num_val < TDIS || cmd.num_val > 255))
+    if (cmd.num_val == NON_NUMERIC || cmd.num_val < TDIS || cmd.num_val > 255)
     {
         return cmd.bad_arg();
     }
@@ -2845,7 +2845,7 @@ static CmdArgFlags cmd_params(const Command &cmd)
     s_init_params = true;
     for (int k = 0; k < MAX_PARAMS; ++k)
     {
-        g_params[k] = (k < cmd.total_params) ? cmd.float_vals[k] : 0.0;
+        g_params[k] = k < cmd.total_params ? cmd.float_vals[k] : 0.0;
     }
     if (g_bf_math != BFMathType::NONE)
     {
@@ -2860,7 +2860,7 @@ static CmdArgFlags cmd_params(const Command &cmd)
 // parmfile=?
 static CmdArgFlags cmd_parm_file(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_PATH - 1))
+    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2887,7 +2887,7 @@ static CmdArgFlags cmd_passes(const Command &cmd)
             {
                 return cmd.bad_arg();
             }
-            g_stop_pass = ((int) cmd.value[1] - (int) '0');
+            g_stop_pass = (int) cmd.value[1] - (int) '0';
             if (g_stop_pass < 0 || g_stop_pass > 6)
             {
                 g_stop_pass = 0;
@@ -3269,7 +3269,7 @@ static CmdArgFlags cmd_scale_map(const Command &cmd)
     }
     for (int counter = 0; counter <= 11; counter++)
     {
-        if ((cmd.total_params > counter) && (cmd.int_vals[counter] > 0) && (cmd.int_vals[counter] < 13))
+        if (cmd.total_params > counter && cmd.int_vals[counter] > 0 && cmd.int_vals[counter] < 13)
         {
             g_scale_map[counter] = cmd.int_vals[counter];
         }
@@ -3393,7 +3393,7 @@ static CmdArgFlags cmd_sound(const Command &cmd)
     {
         g_sound_flag &= ~SOUNDFLAG_ORBIT_MASK;
     }
-    else if ((std::strncmp(cmd.value, "ye", 2) == 0) || (cmd.char_val[0] == 'b'))
+    else if (std::strncmp(cmd.value, "ye", 2) == 0 || cmd.char_val[0] == 'b')
     {
         g_sound_flag |= SOUNDFLAG_BEEP;
     }
@@ -3473,7 +3473,7 @@ static CmdArgFlags cmd_s_release(const Command &cmd)
 // stereo=?
 static CmdArgFlags cmd_stereo(const Command &cmd)
 {
-    if ((cmd.num_val < 0) || (cmd.num_val > 4))
+    if (cmd.num_val < 0 || cmd.num_val > 4)
     {
         return cmd.bad_arg();
     }
@@ -3547,7 +3547,7 @@ static CmdArgFlags cmd_targa_overlay(const Command &cmd)
 
 static CmdArgFlags cmd_temp_dir(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > ID_FILE_MAX_DIR - 1)
     {
         return cmd.bad_arg();
     }
@@ -3598,7 +3598,7 @@ static CmdArgFlags cmd_text_colors(const Command &cmd)
             {
                 unsigned int hex_val;
                 std::sscanf(value, "%x", &hex_val);
-                unsigned int i = (hex_val / 16) & 7;
+                unsigned int i = hex_val / 16 & 7;
                 unsigned int j = hex_val & 15;
                 if (i == j || (i == 0 && j == 8)) // force contrast
                 {
@@ -3840,7 +3840,7 @@ static CmdArgFlags cmd_wave_type(const Command &cmd)
 
 static CmdArgFlags cmd_work_dir(const Command &cmd)
 {
-    if (cmd.value_len > (ID_FILE_MAX_DIR - 1))
+    if (cmd.value_len > ID_FILE_MAX_DIR - 1)
     {
         return cmd.bad_arg();
     }

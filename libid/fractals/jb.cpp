@@ -119,7 +119,7 @@ bool julibrot_per_image()
     s_jb.y_per_inch = (g_y_max - g_y_min) / g_julibrot_height;
     s_jb.inch_per_x_dot = g_julibrot_width / g_logical_screen_x_dots;
     s_jb.inch_per_y_dot = g_julibrot_height / g_logical_screen_y_dots;
-    s_jb.init_z = g_julibrot_origin - (g_julibrot_depth / 2);
+    s_jb.init_z = g_julibrot_origin - g_julibrot_depth / 2;
     if (g_julibrot_3d_mode == Julibrot3DMode::MONOCULAR)
     {
         s_jb.right_eye.x = 0.0;
@@ -165,7 +165,7 @@ int julibrot_per_pixel()
 {
     s_jb.jx = ((s_jb.per->x - s_jb.x_pixel) * s_jb.init_z / g_julibrot_dist - s_jb.x_pixel) * s_jb.x_per_inch;
     s_jb.jx += s_jb.x_offset;
-    s_jb.delta_jx = (g_julibrot_depth / g_julibrot_dist) * (s_jb.per->x - s_jb.x_pixel) * s_jb.x_per_inch / g_julibrot_z_dots;
+    s_jb.delta_jx = g_julibrot_depth / g_julibrot_dist * (s_jb.per->x - s_jb.x_pixel) * s_jb.x_per_inch / g_julibrot_z_dots;
 
     s_jb.jy = ((s_jb.per->y - s_jb.y_pixel) * s_jb.init_z / g_julibrot_dist - s_jb.y_pixel) * s_jb.y_per_inch;
     s_jb.jy += s_jb.y_offset;
@@ -190,7 +190,7 @@ static void z_line(double x, double y)
         s_jb.per = &s_jb.right_eye;
         break;
     case Julibrot3DMode::RED_BLUE:
-        if ((g_row + g_col) & 1)
+        if (g_row + g_col & 1)
         {
             s_jb.per = &s_jb.left_eye;
         }
@@ -242,7 +242,7 @@ static void z_line(double x, double y)
             if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
             {
                 g_color = (int)(128L * s_z_pixel / g_julibrot_z_dots);
-                if ((g_row + g_col) & 1)
+                if (g_row + g_col & 1)
                 {
                     g_plot(g_col, g_row, 127 - g_color);
                 }

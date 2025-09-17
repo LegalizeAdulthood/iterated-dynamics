@@ -68,8 +68,8 @@ pass_option_restart:
     values[k].uval.ch.vlen = 5;
     values[k].uval.ch.list_len = std::size(pass_calc_modes);
     values[k].uval.ch.list = pass_calc_modes;
-    values[k].uval.ch.val = (g_draw_mode == OrbitDrawMode::RECTANGLE) ? 0
-        : (g_draw_mode == OrbitDrawMode::LINE)                        ? 1
+    values[k].uval.ch.val = g_draw_mode == OrbitDrawMode::RECTANGLE ? 0
+        : g_draw_mode == OrbitDrawMode::LINE                        ? 1
                                                                       : /* function */ 2;
     OrbitDrawMode old_draw_mode = g_draw_mode;
 

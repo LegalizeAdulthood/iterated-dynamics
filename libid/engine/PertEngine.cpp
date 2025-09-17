@@ -101,7 +101,7 @@ int PertEngine::calculate_one_frame()
         tmp_bf = alloc_stack(g_r_bf_length + 2);
     }
 
-    while (m_remaining_point_count > (g_screen_x_dots * g_screen_y_dots) * (m_percent_glitch_tolerance / 100))
+    while (m_remaining_point_count > g_screen_x_dots * g_screen_y_dots * (m_percent_glitch_tolerance / 100))
     {
         m_reference_points++;
 
@@ -232,9 +232,9 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     // m_calculated_real_delta and m_calculated_imaginary_delta are 0: it's calculating relative to the
     // center.
     const double delta_real =
-        ((magnified_radius * (2 * pt.get_x() - g_screen_x_dots)) / window_radius) - m_delta_real;
+        magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius - m_delta_real;
     const double delta_imaginary =
-        ((-magnified_radius * (2 * pt.get_y() - g_screen_y_dots)) / window_radius) - m_delta_imag;
+        -magnified_radius * (2 * pt.get_y() - g_screen_y_dots) / window_radius - m_delta_imag;
     std::complex<double> delta_sub_0{delta_real, delta_imaginary};
     std::complex<double> delta_sub_n{delta_real, delta_imaginary};
     int iteration{};

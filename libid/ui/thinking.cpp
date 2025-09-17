@@ -51,14 +51,14 @@ bool thinking(const char *msg)
         s_think_col = g_text_col - 3;
         s_think_count = 0;
     }
-    if ((s_think_count++) < 100)
+    if (s_think_count++ < 100)
     {
         return false;
     }
     s_think_count = 0;
     driver_put_string(4, s_think_col, C_GENERAL_HI, s_wheel[s_think_state]);
     driver_hide_text_cursor(); // turn off cursor
-    s_think_state = (s_think_state + 1) & 3;
+    s_think_state = s_think_state + 1 & 3;
     return driver_key_pressed() != 0;
 }
 

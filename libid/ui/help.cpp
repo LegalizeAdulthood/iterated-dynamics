@@ -256,9 +256,9 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
                         link[*num_link].c         = (Byte)col;
                         link[*num_link].topic_num = get_int(curr+1);
                         link[*num_link].topic_off = get_int(curr+1+sizeof(int));
-                        link[*num_link].offset    = (unsigned)((curr+1+3*sizeof(int)) - text);
+                        link[*num_link].offset    = (unsigned)(curr + 1 + 3 * sizeof(int) - text);
                         link[*num_link].width     = width;
-                        ++(*num_link);
+                        ++*num_link;
                     }
                 }
                 else if (tok == TokenType::TOK_WORD)
@@ -295,9 +295,9 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
                 link[*num_link].c         = (Byte)col;
                 link[*num_link].topic_num = get_int(curr+1);
                 link[*num_link].topic_off = get_int(curr+1+sizeof(int));
-                link[*num_link].offset    = (unsigned)((curr+1+3*sizeof(int)) - text);
+                link[*num_link].offset    = (unsigned)(curr + 1 + 3 * sizeof(int) - text);
                 link[*num_link].width     = width;
-                ++(*num_link);
+                ++*num_link;
             }
             break;
 
@@ -382,7 +382,7 @@ static void display_page(const char *title, const char *text, unsigned text_len,
     help_instr();
     driver_set_attr(2, 0, C_HELP_BODY, 80*22);
     put_string_center(1, 0, 80, C_HELP_HDG, title);
-    driver_put_string(1, 79 - (6 + ((num_pages >= 10) ? 2 : 1)), C_HELP_INSTR,
+    driver_put_string(1, 79 - (6 + (num_pages >= 10 ? 2 : 1)), C_HELP_INSTR,
         fmt::format("{:2d} of {:d}", page + 1, num_pages));
 
     if (text != nullptr)
@@ -496,7 +496,7 @@ static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
         }
     }
 
-    return (best == nullptr) ? -1 : (int)(best-link);
+    return best == nullptr ? -1 : (int)(best-link);
 }
 
 static int find_link_left_right(Link *link, int num_link, int curr_link, int left)
@@ -542,7 +542,7 @@ static int find_link_left_right(Link *link, int num_link, int curr_link, int lef
         }
     } // for
 
-    return (best == nullptr) ? -1 : (int)(best-link);
+    return best == nullptr ? -1 : (int)(best-link);
 }
 
 static int find_link_key(Link * /*link*/, int num_link, int curr_link, int key)
@@ -550,9 +550,9 @@ static int find_link_key(Link * /*link*/, int num_link, int curr_link, int key)
     switch (key)
     {
     case ID_KEY_TAB:
-        return (curr_link >= num_link-1) ? -1 : curr_link+1;
+        return curr_link >= num_link - 1 ? -1 : curr_link+1;
     case ID_KEY_SHF_TAB:
-        return (curr_link <= 0)          ? -1 : curr_link-1;
+        return curr_link <= 0          ? -1 : curr_link-1;
     default:
         assert(0);
         return -1;
@@ -1008,7 +1008,7 @@ static int read_help_topic(int topic, int off, int len, void *buf)
         curr_base += sizeof(int);
     }
 
-    int read_len = (off + len > curr_len) ? curr_len - off : len;
+    int read_len = off + len > curr_len ? curr_len - off : len;
 
     if (read_len > 0)
     {
@@ -1182,7 +1182,7 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
         std::memset(line, ' ', 81);
         std::string buff = fmt::format(ID_PROGRAM_NAME " Version {:d}.{:d}.{:d}", //
             ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH);
-        std::memmove(line + ((width - (int) (buff.length())) / 2) - 4, buff.c_str(), buff.length());
+        std::memmove(line + (width - (int) buff.length()) / 2 - 4, buff.c_str(), buff.length());
 
         buff = fmt::format("Page {:d}", pd->page_num);
         std::memmove(line + (width - (int)buff.length()), buff.c_str(), buff.length());
@@ -1288,7 +1288,7 @@ bool make_doc_msg_func(int page_num, int num_pages)
     if (page_num >= 0)
     {
         driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO,
-            fmt::format("completed {:d}%", (int) ((100.0 / num_pages) * page_num)));
+            fmt::format("completed {:d}%", (int) (100.0 / num_pages * page_num)));
         driver_key_pressed(); // pumps messages to force screen update
         return true;
     }

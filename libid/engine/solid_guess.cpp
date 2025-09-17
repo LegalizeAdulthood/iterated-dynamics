@@ -185,7 +185,7 @@ int SolidGuess::scan()
             return 0;
         }
         ++g_work_pass;
-        g_i_start_pt.y = g_start_pt.y & (-1 - (m_max_block-1));
+        g_i_start_pt.y = g_start_pt.y & -1 - (m_max_block - 1);
 
         // calculate skip flags for skippable blocks
         int x_lim = (g_i_stop_pt.x + m_max_block) / m_max_block + 1;
@@ -216,9 +216,12 @@ int SolidGuess::scan()
             {
                 ++pfx_p1;
                 unsigned int u = *(pfx_p1 - 1) | *pfx_p1 | *(pfx_p1 + 1);
-                *(++pfx_p0) = u|(u >> 1)|(u << 1)
-                             |((*(pfx_p1-(MAX_X_BLK+1))|*(pfx_p1-MAX_X_BLK)|*(pfx_p1-(MAX_X_BLK-1))) >> 15)
-                             |((*(pfx_p1+(MAX_X_BLK-1))|*(pfx_p1+MAX_X_BLK)|*(pfx_p1+(MAX_X_BLK+1))) << 15);
+                *++pfx_p0 = u| u >> 1 | u << 1
+                             |
+                    (*(pfx_p1 - (MAX_X_BLK + 1)) | *(pfx_p1 - MAX_X_BLK) | *(pfx_p1 - (MAX_X_BLK - 1))) >>
+                        15
+                             |
+                    (*(pfx_p1 + (MAX_X_BLK - 1)) | *(pfx_p1 + MAX_X_BLK) | *(pfx_p1 + (MAX_X_BLK + 1))) << 15;
             }
         }
     }
@@ -268,7 +271,7 @@ int SolidGuess::scan()
                 g_work_pass, g_work_symmetry);
             return 0;
         }
-        g_i_start_pt.y = g_start_pt.y & (-1 - (m_max_block-1));
+        g_i_start_pt.y = g_start_pt.y & -1 - (m_max_block - 1);
     }
 
     return 0;
@@ -332,7 +335,7 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
     c13 = c22;
     c12 = c22;
     c24 = c22;
-    c21 = get_color(g_i_start_pt.x, (y > 0)?y_less_half:0);
+    c21 = get_color(g_i_start_pt.x, y > 0 ?y_less_half:0);
     c31 = c21;
     if (y_plus_block <= g_i_stop_pt.y)
     {
@@ -347,7 +350,7 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
 
     for (int x = g_i_start_pt.x; x <= g_i_stop_pt.x;)   // increment at end, or when doing continue
     {
-        if ((x&(m_max_block-1)) == 0)  // time for skip flag stuff
+        if ((x& m_max_block - 1) == 0)  // time for skip flag stuff
         {
             ++pfx_ptr;
             if (!first_pass && (*pfx_ptr&pfx_mask) == 0)  // check for fast skip
@@ -389,7 +392,7 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
             {
                 c44 = get_color(x_plus_block, y_plus_block);
             }
-            c41 = get_color(x_plus_block, (y > 0)?y_less_half:0);
+            c41 = get_color(x_plus_block, y > 0 ?y_less_half:0);
             c42 = get_color(x_plus_block, y);
         }
         else if (!m_right_guess)
@@ -518,18 +521,14 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
         }
 
         // check if some calcs in this block mean earlier guesses need fixing
-        fix21 = ((c22 != c12 || c22 != c32)
-            && c21 == c22 && c21 == c31 && c21 == prev11
-            && y > 0
-            && (x == g_i_start_pt.x || c21 == get_color(x-m_half_block, y_less_block))
-            && (x_plus_half > g_i_stop_pt.x || c21 == get_color(x_plus_half, y_less_block))
-            && c21 == get_color(x, y_less_block));
-        fix31 = (c22 != c32
-            && c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41
-            && y > 0 && x_plus_half <= g_i_stop_pt.x
-            && c31 == get_color(x_plus_half, y_less_block)
-            && (x_plus_block > g_i_stop_pt.x || c31 == get_color(x_plus_block, y_less_block))
-            && c31 == get_color(x, y_less_block));
+        fix21 = (c22 != c12 || c22 != c32) && c21 == c22 && c21 == c31 && c21 == prev11 && y > 0 &&
+            (x == g_i_start_pt.x || c21 == get_color(x - m_half_block, y_less_block)) &&
+            (x_plus_half > g_i_stop_pt.x || c21 == get_color(x_plus_half, y_less_block)) &&
+            c21 == get_color(x, y_less_block);
+        fix31 = c22 != c32 && c31 == c22 && c31 == c42 && c31 == c21 && c31 == c41 && y > 0 &&
+            x_plus_half <= g_i_stop_pt.x && c31 == get_color(x_plus_half, y_less_block) &&
+            (x_plus_block > g_i_stop_pt.x || c31 == get_color(x_plus_block, y_less_block)) &&
+            c31 == get_color(x, y_less_block);
         prev11 = c31; // for next time around
         if (fix21)
         {

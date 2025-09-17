@@ -39,7 +39,7 @@ constexpr int BK_COLOR{};
 
 static Direction advance(Direction dir, int increment)
 {
-    return static_cast<Direction>((+dir + increment) & 0x03);
+    return static_cast<Direction>(+dir + increment & 0x03);
 }
 
 // take one step in the direction of going_to

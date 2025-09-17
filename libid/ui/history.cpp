@@ -829,7 +829,7 @@ void restore_history_info(int i)
     g_bailout_test = last.bailout_test;
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;
-    g_potential_flag = (g_potential_params[0] != 0.0);
+    g_potential_flag = g_potential_params[0] != 0.0;
     if (g_inversion[0] != 0.0)
     {
         g_invert = 3;

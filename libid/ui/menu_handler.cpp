@@ -122,7 +122,7 @@ MainState color_cycle(MainContext &context)
 
 MainState color_editing(MainContext &context)
 {
-    if (g_is_true_color && (g_init_batch == BatchMode::NONE))
+    if (g_is_true_color && g_init_batch == BatchMode::NONE)
     {
         // don't enter palette editor
         if (!load_palette())

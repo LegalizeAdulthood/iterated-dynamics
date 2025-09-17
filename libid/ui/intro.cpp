@@ -88,7 +88,7 @@ void intro()
         {
             delay_max *= 15;
         }
-        for (j = 0; j < delay_max && !(driver_key_pressed()); j++)
+        for (j = 0; j < delay_max && !driver_key_pressed(); j++)
         {
             driver_delay(100);
         }

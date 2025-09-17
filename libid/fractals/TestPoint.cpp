@@ -35,7 +35,7 @@ namespace id::fractals
 {
 
 TestPoint::TestPoint() :
-    num_passes((g_std_calc_mode == CalcMode::ONE_PASS) ? 0 : 1),
+    num_passes(g_std_calc_mode == CalcMode::ONE_PASS ? 0 : 1),
     passes(start_pass)
 {
     g_col = 0;
@@ -82,11 +82,11 @@ void TestPoint::iterate()
                 }
                 else
                 {
-                    color = ((color - 1) % g_and_color) + 1; // skip color zero
+                    color = (color - 1) % g_and_color + 1; // skip color zero
                 }
             }
             g_plot(g_col, g_row, color);
-            if (num_passes && (passes == 0))
+            if (num_passes && passes == 0)
             {
                 g_plot(g_col, g_row + 1, color);
             }
@@ -115,7 +115,7 @@ int TestPoint::per_pixel(double init_real, double init_imag, double param1, doub
     double old_imag = param2;
     double magnitude = 0.0;
     long iter = 0;
-    while ((magnitude < 4.0) && (iter < max_iter))
+    while (magnitude < 4.0 && iter < max_iter)
     {
         double new_real = old_real * old_real - old_imag * old_imag + init_real;
         double new_imag = 2 * old_real * old_imag + init_imag;

@@ -209,8 +209,8 @@ static void init_bf2()
     g_bf_tmp_copy1 = alloc_size((g_r_bf_length+2)*2);
     g_bf_tmp_copy2 = alloc_size((g_r_bf_length+2)*2);
 
-    g_bn_tmp_copy1 = alloc_size((g_r_length*2));
-    g_bn_tmp_copy2 = alloc_size((g_r_length*2));
+    g_bn_tmp_copy1 = alloc_size(g_r_length * 2);
+    g_bn_tmp_copy2 = alloc_size(g_r_length * 2);
 
     if (g_bf_math == BFMathType::BIG_NUM)
     {
@@ -260,7 +260,7 @@ static void init_bf2()
     g_bf10_tmp = alloc_size(g_bf_decimals+4);
 
     // ptr needs to be 16-bit aligned on some systems
-    ptr = (ptr+1)&~1;
+    ptr = ptr + 1 &~1;
 
     s_stack_ptr  = s_bn_root + ptr;
     g_start_stack = ptr;
@@ -411,7 +411,7 @@ BigNum alloc_stack(size_t size)
         stop_msg("alloc_stack called with g_bf_math==0");
         return nullptr;
     }
-    const long stack_addr = (long)((s_stack_ptr-s_bn_root)+size); // part of s_bn_root
+    const long stack_addr = (long)(s_stack_ptr - s_bn_root +size); // part of s_bn_root
 
     if (stack_addr > g_max_stack)
     {

@@ -117,7 +117,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
             }                           // end of first-time-through
 
             unsigned char i_char = (char) (temp[10] & 0x07);        // find the color table size
-            unsigned int i_tbl = 1 << (++i_char);
+            unsigned int i_tbl = 1 << ++i_char;
             i_char = (char)(temp[10] & 0x80);        // is there a global color table?
             if (x_step == 0 && y_step == 0)   // first time through?
             {
@@ -162,8 +162,8 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                     }
                     std::memcpy(&x_loc, &temp[1], 2); // X-location
                     std::memcpy(&y_loc, &temp[3], 2); // Y-location
-                    x_loc += (x_step * x_res);     // adjust the locations
-                    y_loc += (y_step * y_res);
+                    x_loc += x_step * x_res;     // adjust the locations
+                    y_loc += y_step * y_res;
                     std::memcpy(&temp[1], &x_loc, 2);
                     std::memcpy(&temp[3], &y_loc, 2);
                     if (std::fwrite(temp, 10, 1, out) != 1)     // write out the Image Descriptor

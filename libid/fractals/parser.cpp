@@ -670,7 +670,7 @@ static const char *parse_error_text(ParseError which)
 
 static unsigned long new_random_num()
 {
-    s_rand_num = ((s_rand_num << 15) + RAND15()) ^ s_rand_num;
+    s_rand_num = (s_rand_num << 15) + RAND15() ^ s_rand_num;
     return s_rand_num;
 }
 
@@ -680,8 +680,8 @@ static void d_random()
            the same fractals when the srand() function is used. */
     long x = new_random_num() >> (32 - BIT_SHIFT);
     long y = new_random_num() >> (32 - BIT_SHIFT);
-    s_vars[7].a.d.x = ((double)x / (1L << BIT_SHIFT));
-    s_vars[7].a.d.y = ((double)y / (1L << BIT_SHIFT));
+    s_vars[7].a.d.x = (double) x / (1L << BIT_SHIFT);
+    s_vars[7].a.d.y = (double) y / (1L << BIT_SHIFT);
 }
 
 static void set_random()
@@ -738,7 +738,7 @@ static void d_stk_lod_sqr()
     g_arg1++;
     g_arg2++;
     g_arg1->d.y = s_load[g_load_index]->d.x * s_load[g_load_index]->d.y * 2.0;
-    g_arg1->d.x = (s_load[g_load_index]->d.x * s_load[g_load_index]->d.x) - (s_load[g_load_index]->d.y * s_load[g_load_index]->d.y);
+    g_arg1->d.x = s_load[g_load_index]->d.x * s_load[g_load_index]->d.x - s_load[g_load_index]->d.y * s_load[g_load_index]->d.y;
     g_load_index++;
 }
 
@@ -827,8 +827,8 @@ void d_stk_ceil()
 
 void d_stk_trunc()
 {
-    g_arg1->d.x = (int)(g_arg1->d.x);
-    g_arg1->d.y = (int)(g_arg1->d.y);
+    g_arg1->d.x = (int) g_arg1->d.x;
+    g_arg1->d.y = (int) g_arg1->d.y;
 }
 
 void d_stk_round()
@@ -882,7 +882,7 @@ static void d_stk_div()
 
 static void d_stk_mod()
 {
-    g_arg1->d.x = (g_arg1->d.x * g_arg1->d.x) + (g_arg1->d.y * g_arg1->d.y);
+    g_arg1->d.x = g_arg1->d.x * g_arg1->d.x + g_arg1->d.y * g_arg1->d.y;
     g_arg1->d.y = 0.0;
 }
 
@@ -1078,32 +1078,32 @@ void d_stk_cosh()
 
 void d_stk_asin()
 {
-    asin_z(g_arg1->d, &(g_arg1->d));
+    asin_z(g_arg1->d, &g_arg1->d);
 }
 
 void d_stk_asinh()
 {
-    asinh_z(g_arg1->d, &(g_arg1->d));
+    asinh_z(g_arg1->d, &g_arg1->d);
 }
 
 void d_stk_acos()
 {
-    acos_z(g_arg1->d, &(g_arg1->d));
+    acos_z(g_arg1->d, &g_arg1->d);
 }
 
 void d_stk_acosh()
 {
-    acosh_z(g_arg1->d, &(g_arg1->d));
+    acosh_z(g_arg1->d, &g_arg1->d);
 }
 
 void d_stk_atan()
 {
-    atan_z(g_arg1->d, &(g_arg1->d));
+    atan_z(g_arg1->d, &g_arg1->d);
 }
 
 void d_stk_atanh()
 {
-    atanh_z(g_arg1->d, &(g_arg1->d));
+    atanh_z(g_arg1->d, &g_arg1->d);
 }
 
 void d_stk_sqrt()
@@ -1746,7 +1746,7 @@ static bool parse_formula_text(const std::string &text)
             {
                 s_n++;
             }
-            len = (s_n+1)-s_init_n;
+            len = s_n + 1 -s_init_n;
             s_expecting_arg = false;
             if (const JumpControlType type = is_jump(&text[s_init_n], len); type != JumpControlType::NONE)
             {
@@ -1789,7 +1789,7 @@ static bool parse_formula_text(const std::string &text)
                 else
                 {
                     ConstArg *c = is_const(&text[s_init_n], len);
-                    s_load[g_load_index++] = &(c->a);
+                    s_load[g_load_index++] = &c->a;
                     push_pending_op(stk_lod, 1 - (s_paren + equals)*15);
                     s_n = s_init_n + c->len - 1;
                 }
@@ -1864,7 +1864,7 @@ int formula_per_pixel()
     s_vars[10].a.d.x = (double)g_col;
     s_vars[10].a.d.y = (double) g_row;
 
-    if ((g_row + g_col) & 1)
+    if (g_row + g_col & 1)
     {
         s_vars[9].a.d.x = 1.0;
     }
@@ -1988,15 +1988,15 @@ static bool fill_jump_struct()
             }
             find_new_func = false;
         }
-        if (*(s_fns[s_op_ptr]) == stk_lod)
+        if (*s_fns[s_op_ptr] == stk_lod)
         {
             load_count++;
         }
-        else if (*(s_fns[s_op_ptr]) == stk_sto)
+        else if (*s_fns[s_op_ptr] == stk_sto)
         {
             store_count++;
         }
-        else if (*(s_fns[s_op_ptr]) == jump_func)
+        else if (*s_fns[s_op_ptr] == jump_func)
         {
             JumpPtrs value{};
             value.jump_op_ptr = s_op_ptr;
@@ -2458,7 +2458,7 @@ static void frm_get_eos(std::FILE *open_file, Token *this_token)
     long last_file_pos = std::ftell(open_file);
     int c;
 
-    for (c = frm_get_char(open_file); (c == '\n' || c == ',' || c == ':'); c = frm_get_char(open_file))
+    for (c = frm_get_char(open_file); c == '\n' || c == ',' || c == ':'; c = frm_get_char(open_file))
     {
         if (c == ':')
         {
@@ -2704,7 +2704,7 @@ int frm_get_param_stuff(const char *name)
             }
             break;
         case FormulaTokenType::PARAM_FUNCTION:
-            if ((+current_token.id - 10) > g_max_function)
+            if (+current_token.id - 10 > g_max_function)
             {
                 g_max_function = (char)(+current_token.id - 10);
             }
@@ -3593,7 +3593,7 @@ static bool frm_prescan(std::FILE * open_file)
                 {
                     record_error(ParseError::SHOULD_BE_OPERATOR);
                 }
-                else if ((waiting_for_mod & 1L) && expecting_arg)
+                else if (waiting_for_mod & 1L && expecting_arg)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }

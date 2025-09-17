@@ -143,9 +143,9 @@ static std::string heading_detail(const FractalInfo *info, const ExtBlock3 *blk_
             name_ptr = "3D Transform";
         }
         result << "Type: " << name_ptr;
-        if ((!std::strcmp(name_ptr, "formula"))
-            || (!std::strcmp(name_ptr, "lsystem"))
-            || (!std::strncmp(name_ptr, "ifs", 3))) // for ifs and ifs3d
+        if (!std::strcmp(name_ptr, "formula")
+            || !std::strcmp(name_ptr, "lsystem")
+            || !std::strncmp(name_ptr, "ifs", 3)) // for ifs and ifs3d
         {
             result << " -> " << blk_3_info->form_name;
         }
@@ -254,7 +254,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     }
 
     bool got_real_mode = false;
-    if ((g_init_mode < 0 || (g_ask_video && (g_init_batch == BatchMode::NONE))) && !g_make_parameter_file)
+    if ((g_init_mode < 0 || (g_ask_video && g_init_batch == BatchMode::NONE)) && !g_make_parameter_file)
     {
         // no exact match or (askvideo=yes and batch=no), and not in makepar mode, talk to user
         std::sort(s_video_choices.begin(), s_video_choices.end(), video_choice_less);
@@ -500,7 +500,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     }
     if (!g_make_parameter_file
         && !g_fast_restore
-        && (g_init_batch == BatchMode::NONE)
+        && g_init_batch == BatchMode::NONE
         && (std::abs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
     {
         stop_msg(StopMsgFlags::NO_BUZZER,
@@ -515,7 +515,7 @@ static void format_item(int choice, char *buf)
     char err_buf[10];
     err_buf[0] = 0;
     unsigned tmp_flags = s_video_choices[choice].flags;
-    if (tmp_flags & (VI_VIEW_SMALLER+VI_COLORS_SMALLER+VI_BAD_ASPECT))
+    if (tmp_flags & VI_VIEW_SMALLER + VI_COLORS_SMALLER + VI_BAD_ASPECT)
     {
         std::strcat(err_buf, "*");
     }

@@ -202,8 +202,8 @@ int FrothyBasin::calc()
 
     g_temp_sqr_x = sqr(g_old_z.x);
     g_temp_sqr_y = sqr(g_old_z.y);
-    while (!found_attractor && (g_temp_sqr_x + g_temp_sqr_y < g_magnitude_limit) &&
-        (g_color_iter < g_max_iterations))
+    while (!found_attractor && g_temp_sqr_x + g_temp_sqr_y < g_magnitude_limit &&
+        g_color_iter < g_max_iterations)
     {
         // simple formula: z = z^2 + conj(z*(-1+ai))
         // but it's the attractor that makes this so interesting

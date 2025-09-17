@@ -33,8 +33,8 @@ void float_pre_calc_magnet2() // precalculation for Magnet2 (M & J) for speed
     s_t_cm1.y = g_float_param->y;
     s_t_cm2.x = g_float_param->x - 2.0;
     s_t_cm2.y = g_float_param->y;
-    s_t_cm1_cm2.x = (s_t_cm1.x * s_t_cm2.x) - (s_t_cm1.y * s_t_cm2.y);
-    s_t_cm1_cm2.y = (s_t_cm1.x * s_t_cm2.y) + (s_t_cm1.y * s_t_cm2.x);
+    s_t_cm1_cm2.x = s_t_cm1.x * s_t_cm2.x - s_t_cm1.y * s_t_cm2.y;
+    s_t_cm1_cm2.y = s_t_cm1.x * s_t_cm2.y + s_t_cm1.y * s_t_cm2.x;
     s_t_cm1.x += s_t_cm1.x + s_t_cm1.x;
     s_t_cm1.y += s_t_cm1.y + s_t_cm1.y;
     s_t_cm2.x += s_t_cm2.x + s_t_cm2.x;

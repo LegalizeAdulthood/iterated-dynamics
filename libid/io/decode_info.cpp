@@ -200,7 +200,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
     get_uint8(&info->version_patch, &buf_ptr, dir);
     get_uint8(&info->version_tweak, &buf_ptr, dir);
 
-    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)  // NOLINT(modernize-loop-convert)
+    for (int i = 0; i < sizeof(info->future) / sizeof(short); i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->future[i], &buf_ptr, dir);
     }
@@ -259,19 +259,19 @@ static void get_int32(std::int32_t *dst, unsigned char **src, int dir)
 {
     if (dir == 1)
     {
-        *dst = ((unsigned long)((*src)[0])) +
-               (((unsigned long)((*src)[1])) << 8) +
-               (((unsigned long)((*src)[2])) << 16) +
-               (((long)(((char *)(*src))[3])) << 24);
+        *dst = (unsigned long) (*src)[0] +
+               ((unsigned long) (*src)[1] << 8) +
+               ((unsigned long) (*src)[2] << 16) +
+               ((long) ((char *) *src)[3] << 24);
     }
     else
     {
-        (*src)[0] = (*dst)&0xff;
-        (*src)[1] = ((*dst)&0xff00) >> 8;
-        (*src)[2] = ((*dst)&0xff0000) >> 16;
-        (*src)[3] = ((*dst)&0xff000000) >> 24;
+        (*src)[0] = *dst &0xff;
+        (*src)[1] = (*dst &0xff00) >> 8;
+        (*src)[2] = (*dst &0xff0000) >> 16;
+        (*src)[3] = (*dst &0xff000000) >> 24;
     }
-    (*src) += 4; // sizeof(long) in MS_DOS
+    *src += 4; // sizeof(long) in MS_DOS
 }
 
 #define P4 16.
@@ -350,21 +350,21 @@ static void get_double(double *dst, unsigned char **src, int dir)
                 f = (f+1)/2-1;
             }
             e += 1023;
-            (*src)[7] = s | ((e&0x7f0) >> 4);
+            (*src)[7] = s | (e & 0x7f0) >> 4;
             f *= P4;
-            (*src)[6] = ((e&0x0f) << 4) | (((int)f)&0x0f);
+            (*src)[6] = (e & 0x0f) << 4 | (int) f & 0x0f;
             f = (f-(int)f)*P8;
-            (*src)[5] = (((int)f)&0xff);
+            (*src)[5] = (int) f & 0xff;
             f = (f-(int)f)*P8;
-            (*src)[4] = (((int)f)&0xff);
+            (*src)[4] = (int) f & 0xff;
             f = (f-(int)f)*P8;
-            (*src)[3] = (((int)f)&0xff);
+            (*src)[3] = (int) f & 0xff;
             f = (f-(int)f)*P8;
-            (*src)[2] = (((int)f)&0xff);
+            (*src)[2] = (int) f & 0xff;
             f = (f-(int)f)*P8;
-            (*src)[1] = (((int)f)&0xff);
+            (*src)[1] = (int) f & 0xff;
             f = (f-(int)f)*P8;
-            (*src)[0] = (((int)f)&0xff);
+            (*src)[0] = (int) f & 0xff;
         }
     }
     *src += 8; // sizeof(double) in MSDOS
@@ -394,7 +394,7 @@ static void get_float(float *dst, unsigned char **src, int dir)
         }
         else
         {
-            e = ((((*src)[3]&0x7f) << 1) | (((*src)[2]&0x80) >> 7)) - 127;
+            e = (((*src)[3] & 0x7f) << 1 | ((*src)[2] & 0x80) >> 7) - 127;
             f = 1 + ((*src)[2]&0x7f)/P7 + (*src)[1]/P15 + (*src)[0]/P23;
             f *= std::pow(2., (double)e);
             if ((*src)[3]&0x80)
@@ -432,13 +432,13 @@ static void get_float(float *dst, unsigned char **src, int dir)
                 f = (f+1)/2-1;
             }
             e += 127;
-            (*src)[3] = s | ((e&0xf7) >> 1);
+            (*src)[3] = s | (e & 0xf7) >> 1;
             f *= P7;
-            (*src)[2] = ((e&0x01) << 7) | (((int)f)&0x7f);
+            (*src)[2] = (e & 0x01) << 7 | (int) f & 0x7f;
             f = (f-(int)f)*P8;
-            (*src)[1] = (((int)f)&0xff);
+            (*src)[1] = (int) f & 0xff;
             f = (f-(int)f)*P8;
-            (*src)[0] = (((int)f)&0xff);
+            (*src)[0] = (int) f & 0xff;
         }
     }
     *src += 4; // sizeof(float) in MSDOS
@@ -476,7 +476,7 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     }
     get_int16(&info->count, &buf_ptr, dir);
 
-    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)  // NOLINT(modernize-loop-convert)
+    for (int i = 0; i < sizeof(info->future) / sizeof(short); i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->future[i], &buf_ptr, dir);
     }
@@ -512,7 +512,7 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
     get_uint8((unsigned char *) &info->draw_mode, &buf_ptr, dir);
     get_uint8((unsigned char *) &info->dummy, &buf_ptr, dir);
 
-    for (int i = 0; i < (sizeof(info->future)/sizeof(short)); i++)  // NOLINT(modernize-loop-convert)
+    for (int i = 0; i < sizeof(info->future) / sizeof(short); i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->future[i], &buf_ptr, dir);
     }

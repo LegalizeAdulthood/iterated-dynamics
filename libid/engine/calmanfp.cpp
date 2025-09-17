@@ -27,8 +27,8 @@ static int s_periodicity_color{};
 
 void calc_mandelbrot_init()
 {
-    s_inside_color = (g_inside_color < COLOR_BLACK) ? g_max_iterations : g_inside_color;
-    s_periodicity_color = (g_periodicity_check < 0) ? 7 : s_inside_color;
+    s_inside_color = g_inside_color < COLOR_BLACK ? g_max_iterations : g_inside_color;
+    s_periodicity_color = g_periodicity_check < 0 ? 7 : s_inside_color;
     g_old_color_iter = 0;
 }
 
@@ -107,7 +107,7 @@ long mandelbrot_orbit()
         // no_save_new_xy_87
         if (cx < g_old_color_iter)  // check periodicity
         {
-            if (((g_max_iterations - cx) & saved_and) == 0)
+            if ((g_max_iterations - cx & saved_and) == 0)
             {
                 saved_x = x;
                 saved_y = y;

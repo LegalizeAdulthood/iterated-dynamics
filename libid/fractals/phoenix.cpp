@@ -25,8 +25,8 @@ int phoenix_orbit()
 {
     // z(n+1) = z(n)^2 + p + qy(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
-    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + (g_float_param->y * s_tmp2.x);
-    g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + (g_float_param->y * s_tmp2.y);
+    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + g_float_param->y * s_tmp2.x;
+    g_new_z.y = g_tmp_z.x + g_tmp_z.x + g_float_param->y * s_tmp2.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
@@ -35,8 +35,8 @@ int phoenix_fractal_cplx_orbit()
 {
     // z(n+1) = z(n)^2 + p1 + p2*y(n),  y(n+1) = z(n)
     g_tmp_z.x = g_old_z.x * g_old_z.y;
-    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + (g_param_z2.x * s_tmp2.x) - (g_param_z2.y * s_tmp2.y);
-    g_new_z.y = (g_tmp_z.x + g_tmp_z.x) + g_float_param->y + (g_param_z2.x * s_tmp2.y) + (g_param_z2.y * s_tmp2.x);
+    g_new_z.x = g_temp_sqr_x - g_temp_sqr_y + g_float_param->x + g_param_z2.x * s_tmp2.x - g_param_z2.y * s_tmp2.y;
+    g_new_z.y = g_tmp_z.x + g_tmp_z.x + g_float_param->y + g_param_z2.x * s_tmp2.y + g_param_z2.y * s_tmp2.x;
     s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
@@ -55,8 +55,8 @@ int phoenix_plus_fractal()
     }
     old_plus.x += g_float_param->x;
     fpu_cmplx_mul(&g_tmp_z, &old_plus, &new_minus);
-    g_new_z.x = new_minus.x + (g_float_param->y * s_tmp2.x);
-    g_new_z.y = new_minus.y + (g_float_param->y * s_tmp2.y);
+    g_new_z.x = new_minus.x + g_float_param->y * s_tmp2.x;
+    g_new_z.y = new_minus.y + g_float_param->y * s_tmp2.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }
@@ -75,8 +75,8 @@ int phoenix_minus_fractal()
     }
     old_sqr.x += g_float_param->x;
     fpu_cmplx_mul(&g_tmp_z, &old_sqr, &new_minus);
-    g_new_z.x = new_minus.x + (g_float_param->y * s_tmp2.x);
-    g_new_z.y = new_minus.y + (g_float_param->y * s_tmp2.y);
+    g_new_z.x = new_minus.x + g_float_param->y * s_tmp2.x;
+    g_new_z.y = new_minus.y + g_float_param->y * s_tmp2.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
     return g_bailout_float();
 }

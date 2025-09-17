@@ -629,7 +629,7 @@ gfp_top:
         num_params = last_param - first_param;
     }
 
-    num_trig = (+g_cur_fractal_specific->flags >> 6) & 7;
+    num_trig = +g_cur_fractal_specific->flags >> 6 & 7;
     if (current_type == FractalType::FORMULA)
     {
         num_trig = g_max_function;
@@ -791,7 +791,7 @@ gfp_top:
         param_values[prompt_num++].uval.ch.val = g_is_mandelbrot ? 1 : 0;
     }
 
-    if (prompt_for_type_params && (g_display_3d > Display3DMode::NONE))
+    if (prompt_for_type_params && g_display_3d > Display3DMode::NONE)
     {
         stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Current type has no type-specific parameters");
         goto gfp_exit;
@@ -940,7 +940,7 @@ gfp_top:
     {
         if (g_is_mandelbrot != (param_values[prompt_num].uval.ch.val != 0))
         {
-            g_is_mandelbrot = (param_values[prompt_num].uval.ch.val != 0);
+            g_is_mandelbrot = param_values[prompt_num].uval.ch.val != 0;
             ret = 1;
         }
         ++prompt_num;

@@ -18,8 +18,8 @@ std::string get_calculation_time(long calc_time)
 
     return fmt::format("{:3d}:{:02d}:{:02d}.{:02d}", //
         calc_time / 360000L,                         //
-        (calc_time % 360000L) / 6000,                //
-        (calc_time % 6000) / 100,                    //
+        calc_time % 360000L / 6000,                //
+        calc_time % 6000 / 100,                    //
         calc_time % 100);
 }
 

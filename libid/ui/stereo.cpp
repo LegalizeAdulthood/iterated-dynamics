@@ -115,9 +115,7 @@ static int get_depth(int xd, int yd)
     if (g_gray_flag)
     {
         // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
-        pal = ((int) DAC[pal][0] * 77 +
-               (int) DAC[pal][1] * 151 +
-               (int) DAC[pal][2] * 28);
+        pal = (int) DAC[pal][0] * 77 + (int) DAC[pal][1] * 151 + (int) DAC[pal][2] * 28;
         pal >>= 6;
     }
     return pal;
@@ -156,19 +154,19 @@ static void toggle_bars(bool *bars, int bar_width, const int *colour)
 {
     find_special_colors();
     int ct = 0;
-    for (int i = X_CENTER; i < (X_CENTER) + bar_width; i++)
+    for (int i = X_CENTER; i < X_CENTER + bar_width; i++)
     {
-        for (int j = Y_CENTER; j < (Y_CENTER) + BAR_HEIGHT; j++)
+        for (int j = Y_CENTER; j < Y_CENTER + BAR_HEIGHT; j++)
         {
             if (*bars)
             {
-                g_put_color(i + (int)(AVG), j , g_color_bright);
-                g_put_color(i - (int)(AVG), j , g_color_bright);
+                g_put_color(i + (int) AVG, j , g_color_bright);
+                g_put_color(i - (int) AVG, j , g_color_bright);
             }
             else
             {
-                g_put_color(i + (int)(AVG), j, colour[ct++]);
-                g_put_color(i - (int)(AVG), j, colour[ct++]);
+                g_put_color(i + (int) AVG, j, colour[ct++]);
+                g_put_color(i - (int) AVG, j, colour[ct++]);
             }
         }
     }
@@ -177,7 +175,7 @@ static void toggle_bars(bool *bars, int bar_width, const int *colour)
 
 int out_line_stereo(Byte *pixels, int line_len)
 {
-    if ((Y) >= g_logical_screen_y_dots)
+    if (Y >= g_logical_screen_y_dots)
     {
         return 1;
     }
@@ -200,13 +198,13 @@ int out_line_stereo(Byte *pixels, int line_len)
         {
             SEP = GROUND - (int)(DEPTH * (MAX_CC - (get_depth(x, Y) - MIN_C)) / MAX_CC);
         }
-        SEP = (int)((SEP * 10.0) / WIDTH);         // adjust for media WIDTH
+        SEP = (int) (SEP * 10.0 / WIDTH);         // adjust for media WIDTH
 
         // get average value under calibration bars
         if (X1 <= x && x <= X2 && Y1 <= Y && Y <= Y2)
         {
             AVG += SEP;
-            (AVG_CT)++;
+            AVG_CT++;
         }
         int i = x - (SEP + (SEP & Y & 1)) / 2;
         int j = i + SEP;
@@ -234,7 +232,7 @@ int out_line_stereo(Byte *pixels, int line_len)
     {
         if (same[x] == x)
         {
-            colour[x] = (int)pixels[x%line_len];
+            colour[x] = (int) pixels[x % line_len];
         }
         else
         {
@@ -242,7 +240,7 @@ int out_line_stereo(Byte *pixels, int line_len)
         }
         g_put_color(x, Y, colour[x]);
     }
-    (Y)++;
+    Y++;
     return 0;
 }
 
@@ -292,7 +290,7 @@ bool auto_stereo_convert()
     {
         REVERSE = 0;
     }
-    DEPTH = ((long) g_logical_screen_x_dots * (long) g_auto_stereo_depth) / 4000L;
+    DEPTH = (long) g_logical_screen_x_dots * (long) g_auto_stereo_depth / 4000L;
     DEPTH = std::abs(DEPTH) + 1;
     if (get_min_max())
     {
@@ -324,7 +322,7 @@ bool auto_stereo_convert()
     if (g_image_map)
     {
         g_out_line = out_line_stereo;
-        while ((Y) < g_logical_screen_y_dots)
+        while (Y < g_logical_screen_y_dots)
         {
             if (gif_view())
             {
@@ -363,8 +361,8 @@ bool auto_stereo_convert()
         {
             for (int j = Y_CENTER; j < Y_CENTER + BAR_HEIGHT; j++)
             {
-                colour[ct++] = get_color(i + (int)(AVG), j);
-                colour[ct++] = get_color(i - (int)(AVG), j);
+                colour[ct++] = get_color(i + (int) AVG, j);
+                colour[ct++] = get_color(i - (int) AVG, j);
             }
         }
         bars = g_calibrate != 0;
@@ -381,7 +379,7 @@ bool auto_stereo_convert()
             case 'c':
             case '+':
             case '-':
-                rotate((key == 'c') ? 0 : ((key == '+') ? 1 : -1));
+                rotate(key == 'c' ? 0 : key == '+' ? 1 : -1);
                 break;
             case 's':
             case 'S':

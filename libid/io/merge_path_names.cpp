@@ -105,7 +105,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
     char ext1[ID_FILE_MAX_EXT];
     split_path(old_full_path, drive1, dir1, fname1, ext1);
 
-    const bool get_path = (mode == CmdFile::AT_CMD_LINE) || (mode == CmdFile::SSTOOLS_INI);
+    const bool get_path = mode == CmdFile::AT_CMD_LINE || mode == CmdFile::SSTOOLS_INI;
     if (get_path)
     {
         if ((int) std::strlen(drive) != 0)
@@ -146,7 +146,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
         }
     }
     make_path(old_full_path, drive1, dir1, fname1, ext1);
-    return is_a_dir_error ? -1 : (is_a_dir ? 1 : 0);
+    return is_a_dir_error ? -1 : is_a_dir ? 1 : 0;
 }
 
 int merge_path_names(std::string &old_full_path, const char *new_filename, CmdFile mode)

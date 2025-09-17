@@ -723,7 +723,7 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
                 {
                     // check pattern of chg per color
                     if (g_debug_flag != DebugFlags::ALLOW_LARGE_COLORMAP_CHANGES &&
-                        scan_color > (cur_color + 4) && scan_color < max_color - 5)
+                        scan_color > cur_color + 4 && scan_color < max_color - 5)
                     {
                         if (std::abs(2 * g_dac_box[scan_color][j] - g_dac_box[scan_color - 5][j] -
                                 g_dac_box[scan_color + 5][j]) >= 2)
@@ -978,7 +978,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         }
 
         int i;
-        for (i = (MAX_PARAMS-1); i >= 0; --i)
+        for (i = MAX_PARAMS - 1; i >= 0; --i)
         {
             if (type_has_param(
                     g_fractal_type == FractalType::JULIBROT ? g_new_orbit_type : g_fractal_type, i))
@@ -1456,7 +1456,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             {
                 put_param(" sound=z");
             }
-            if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) <= SOUNDFLAG_Z)
+            if (g_sound_flag & SOUNDFLAG_ORBIT_MASK && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) <= SOUNDFLAG_Z)
             {
                 if (g_sound_flag & SOUNDFLAG_SPEAKER)
                 {
@@ -1658,7 +1658,7 @@ static void put_param(WriteBatchData &wb_data, const char *param, std::va_list a
     }
     char *buf_ptr = wb_data.buf + wb_data.len;
     std::vsprintf(buf_ptr, param, args);
-    while (*(buf_ptr++))
+    while (*buf_ptr++)
     {
         ++wb_data.len;
     }
@@ -1767,7 +1767,7 @@ static void put_float(int slash, double value, int prec)
     char *buff_ptr = buf;
     if (slash)
     {
-        *(buff_ptr++) = '/';
+        *buff_ptr++ = '/';
     }
     /* Idea of long double cast is to squeeze out another digit or two
        which might be needed (we have found cases where this digit makes
@@ -1792,7 +1792,7 @@ static void put_bf(int slash, BigFloat r, int prec)
     char *buff_ptr = buf.data();
     if (slash)
     {
-        *(buff_ptr++) = '/';
+        *buff_ptr++ = '/';
     }
     bf_to_str(buff_ptr, r, prec);
     strip_zeros(buff_ptr);

@@ -319,7 +319,7 @@ static void backwards_info1(const FractalInfo &read_info)
         {
             g_colors = read_info.colors;
         }
-        g_potential_flag = (g_potential_params[0] != 0.0);
+        g_potential_flag = g_potential_params[0] != 0.0;
         g_random_seed_flag = read_info.random_seed_flag != 0;
         g_random_seed = read_info.random_seed;
         g_inside_color = read_info.inside;
@@ -909,7 +909,7 @@ int read_overlay()      // read overlay/3D files, if required
             g_read_filename.string(), read_fractal_type));
         return -1;
     }
-    set_fractal_type((migrate_integer_types(read_fractal_type)));
+    set_fractal_type(migrate_integer_types(read_fractal_type));
     g_x_min = read_info.x_min;
     g_x_max = read_info.x_max;
     g_y_min = read_info.y_min;
@@ -1208,7 +1208,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     if (gif_start[12])
     {
         // calc reasonably close value from gif header
-        g_file_aspect_ratio = (float)((64.0 / ((double)(gif_start[12]) + 15.0))
+        g_file_aspect_ratio = (float)(64.0 / ((double) gif_start[12] + 15.0)
                                   * (double)g_file_y_dots / (double)g_file_x_dots);
         if (g_file_aspect_ratio > g_screen_aspect-0.03
             && g_file_aspect_ratio < g_screen_aspect+0.03)
@@ -1399,7 +1399,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                         for (int i = 0; i < blk_4_info->length; ++i)
                         {
                             // int16 stored in little-endian byte order
-                            blk_4_info->range_data[i] = buffer[i*2 + 0] | (buffer[i*2 + 1] << 8);
+                            blk_4_info->range_data[i] = buffer[i*2 + 0] | buffer[i * 2 + 1] << 8;
                         }
                     }
                     blk_4_info->got_data = true;
@@ -1505,7 +1505,7 @@ static void load_ext_blk(char *load_ptr, int load_len)
         {
             if (--load_len >= 0)
             {
-                *(load_ptr++) = (char)std::fgetc(s_fp);
+                *load_ptr++ = (char)std::fgetc(s_fp);
             }
             else
             {

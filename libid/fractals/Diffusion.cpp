@@ -299,17 +299,17 @@ bool Diffusion::adjust_limits()
     switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
-        if (((m_x + m_border) > m_x_max) ||
-            ((m_x - m_border) < m_x_min) ||
-            ((m_y - m_border) < m_y_min) ||
-            ((m_y + m_border) > m_y_max))
+        if (m_x + m_border > m_x_max ||
+            m_x - m_border < m_x_min ||
+            m_y - m_border < m_y_min ||
+            m_y + m_border > m_y_max)
         {
             // Increase box size, but not past the edge of the screen
             m_y_min--;
             m_y_max++;
             m_x_min--;
             m_x_max++;
-            if ((m_y_min == 0) || (m_x_min == 0))
+            if (m_y_min == 0 || m_x_min == 0)
             {
                 return true;
             }

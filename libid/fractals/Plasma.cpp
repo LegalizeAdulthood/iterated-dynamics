@@ -75,7 +75,7 @@ static U16 rand16()
 static void put_pot(int x, int y, U16 color)
 {
     color = std::max<U16>(color, 1U);
-    g_put_color(x, y, (color >> 8) ? (color >> 8) : 1);  // don't write 0
+    g_put_color(x, y, color >> 8 ? color >> 8 : 1);  // don't write 0
     /* we don't write this if driver_diskp() because the above putcolor
           was already a "writedisk" in that case */
     if (!driver_is_disk())
@@ -88,7 +88,7 @@ static void put_pot(int x, int y, U16 color)
 // fixes border
 static void put_pot_border(int x, int y, U16 color)
 {
-    if ((x == 0) || (y == 0) || (x == g_logical_screen_x_dots-1) || (y == g_logical_screen_y_dots-1))
+    if (x == 0 || y == 0 || x == g_logical_screen_x_dots - 1 || y == g_logical_screen_y_dots - 1)
     {
         color = (U16)g_outside_color;
     }
@@ -98,7 +98,7 @@ static void put_pot_border(int x, int y, U16 color)
 // fixes border
 static void put_color_border(int x, int y, int color)
 {
-    if ((x == 0) || (y == 0) || (x == g_logical_screen_x_dots-1) || (y == g_logical_screen_y_dots-1))
+    if (x == 0 || y == 0 || x == g_logical_screen_x_dots - 1 || y == g_logical_screen_y_dots - 1)
     {
         color = g_outside_color;
     }
@@ -218,7 +218,7 @@ Plasma::Plasma() :
         m_p_colors = std::min(g_colors, 256);
         for (U16 &elem : m_rnd)
         {
-            elem = (U16)(1+(((RAND15()/m_p_colors)*(m_p_colors-1)) >> (m_shift_value-11)));
+            elem = (U16)(1+((RAND15() / m_p_colors *(m_p_colors-1)) >> (m_shift_value-11)));
         }
     }
     else
@@ -266,7 +266,7 @@ bool Plasma::done() const
 
 U16 Plasma::adjust(int xa, int ya, int x, int y, int xb, int yb, int scale)
 {
-    S32 pseudorandom = m_i_param_x * ((RAND15() - 16383));
+    S32 pseudorandom = m_i_param_x * (RAND15() - 16383);
     pseudorandom = pseudorandom * scale;
     pseudorandom = pseudorandom >> m_shift_value;
     pseudorandom = (((S32)m_get_pix(xa, ya)+(S32)m_get_pix(xb, yb)+1) >> 1)+pseudorandom;
@@ -368,7 +368,7 @@ void Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
             m_sub_y.level[m_sub_y.top] = m_sub_y.level[m_sub_y.top-1];
             m_sub_y.value[m_sub_y.top-1]   = (ny1 + ny) >> 1;
             y    = m_sub_y.value[m_sub_y.top-1];
-            m_sub_y.level[m_sub_y.top-1]   = (std::max(m_sub_y.level[m_sub_y.top], m_sub_y.level[m_sub_y.top-2])+1);
+            m_sub_y.level[m_sub_y.top-1]   = std::max(m_sub_y.level[m_sub_y.top], m_sub_y.level[m_sub_y.top - 2]) + 1;
         }
         m_sub_x.top = 2;
         m_sub_x.value[0] = x2;

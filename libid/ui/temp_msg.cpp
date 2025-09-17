@@ -62,8 +62,8 @@ bool show_temp_msg(const char *msg)
         return false;
     }
 
-    const int x_repeat = (g_screen_x_dots >= 640) ? 2 : 1;
-    const int y_repeat = (g_screen_y_dots >= 300) ? 2 : 1;
+    const int x_repeat = g_screen_x_dots >= 640 ? 2 : 1;
+    const int y_repeat = g_screen_y_dots >= 300 ? 2 : 1;
     s_text_x_dots = (int) std::strlen(buffer) * x_repeat * 8;
     s_text_y_dots = y_repeat * 8;
 

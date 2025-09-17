@@ -78,18 +78,18 @@ BigFloat str_to_bf(BigFloat r, const char *s)
     {
         while (*l >= '0' && *l <= '9') // while a digit
         {
-            ones_byte = (Byte)(*(l--) - '0');
+            ones_byte = (Byte)(*l-- - '0');
             int_to_bf(g_bf_tmp1, ones_byte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             div_a_bf_int(r, 10);
         }
 
-        if (*(l--) == '.') // the digit was found
+        if (*l-- == '.') // the digit was found
         {
             bool keep_looping = *l >= '0' && *l <= '9' && l >= s;
             while (keep_looping) // while a digit
             {
-                ones_byte = (Byte)(*(l--) - '0');
+                ones_byte = (Byte)(*l-- - '0');
                 int_to_bf(g_bf_tmp1, ones_byte);
                 unsafe_add_a_bf(r, g_bf_tmp1);
                 keep_looping = *l >= '0' && *l <= '9' && l >= s;
@@ -106,7 +106,7 @@ BigFloat str_to_bf(BigFloat r, const char *s)
         bool keep_looping = *l >= '0' && *l <= '9' && l >= s;
         while (keep_looping) // while a digit
         {
-            ones_byte = (Byte)(*(l--) - '0');
+            ones_byte = (Byte)(*l-- - '0');
             int_to_bf(g_bf_tmp1, ones_byte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             keep_looping = *l >= '0' && *l <= '9' && l >= s;
@@ -800,7 +800,8 @@ BigFloat unsafe_sin_cos_bf(BigFloat s, BigFloat c, BigFloat n)
         div_a_bf_int(g_bf_tmp1, fact++);
         if (!cos_done)
         {
-            cos_done = (BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(c_exp)-(g_bf_length-2)); // too small to register
+            cos_done =
+                BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(c_exp) - (g_bf_length - 2); // too small to register
             if (!cos_done)
             {
                 if (k)   // alternate between adding and subtracting
@@ -820,7 +821,8 @@ BigFloat unsafe_sin_cos_bf(BigFloat s, BigFloat c, BigFloat n)
         div_a_bf_int(g_bf_tmp1, fact++);
         if (!sin_done)
         {
-            sin_done = (BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(s_exp)-(g_bf_length-2)); // too small to register
+            sin_done =
+                BIG_ACCESS_S16(test_exp) < BIG_ACCESS_S16(s_exp) - (g_bf_length - 2); // too small to register
             if (!sin_done)
             {
                 if (k)   // alternate between adding and subtracting
@@ -1406,11 +1408,11 @@ int cmp_bf(BigFloat n1, BigFloat n2)
     S16 *n2_exp = (S16 *) (n2 + g_bf_length);
     if (BIG_ACCESS_S16(n1_exp) > BIG_ACCESS_S16(n2_exp))
     {
-        return sign1*(g_bf_length);
+        return sign1*g_bf_length;
     }
     if (BIG_ACCESS_S16(n1_exp) < BIG_ACCESS_S16(n2_exp))
     {
-        return -sign1*(g_bf_length);
+        return -sign1*g_bf_length;
     }
 
     // To get to this point, the signs must match
@@ -1713,7 +1715,7 @@ BigFloat unsafe_mult_bf(BigFloat r, BigFloat n1, BigFloat n2)
     // add exp's
     int r_exp = BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp);
 
-    const bool positive = (is_bf_neg(n1) == is_bf_neg(n2)); // are they the same sign?
+    const bool positive = is_bf_neg(n1) == is_bf_neg(n2); // are they the same sign?
 
     int bnl = g_bn_length;
     g_bn_length = g_bf_length;
@@ -2271,13 +2273,13 @@ char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
 
     if (n[0] == 1)   // sign flag
     {
-        *(s++) = '-';
+        *s++ = '-';
     }
-    *(s++) = (char)(n[1] + '0');
-    *(s++) = '.';
+    *s++ = (char)(n[1] + '0');
+    *s++ = '.';
     for (int d = 2; d <= dec; d++)
     {
-        *(s++) = (char)(n[d] + '0');
+        *s++ = (char)(n[d] + '0');
     }
     // clean up trailing 0's
     while (*(s-1) == '0')
@@ -2286,7 +2288,7 @@ char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
     }
     if (*(s-1) == '.')   // put at least one 0 after the decimal
     {
-        *(s++) = '0';
+        *s++ = '0';
     }
     std::sprintf(s, "e%d", p);
     return s;
@@ -2321,32 +2323,32 @@ char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
 
     if (n[0] == 1)   // sign flag
     {
-        *(s++) = '-';
+        *s++ = '-';
     }
     if (p >= 0)
     {
         int d;
         for (d = 1; d <= p+1; d++)
         {
-            *(s++) = (char)(n[d] + '0');
+            *s++ = (char)(n[d] + '0');
         }
-        *(s++) = '.';
+        *s++ = '.';
         for (; d <= dec; d++)
         {
-            *(s++) = (char)(n[d] + '0');
+            *s++ = (char)(n[d] + '0');
         }
     }
     else
     {
-        *(s++) = '0';
-        *(s++) = '.';
+        *s++ = '0';
+        *s++ = '.';
         for (int d = 0; d > p+1; d--)
         {
-            *(s++) = '0';
+            *s++ = '0';
         }
         for (int d = 1; d <= dec; d++)
         {
-            *(s++) = (char)(n[d] + '0');
+            *s++ = (char)(n[d] + '0');
         }
     }
 
@@ -2357,7 +2359,7 @@ char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
     }
     if (*(s-1) == '.')   // put at least one 0 after the decimal
     {
-        *(s++) = '0';
+        *s++ = '0';
     }
     *s = '\0'; // terminating nul
     return s;

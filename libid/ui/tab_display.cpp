@@ -96,7 +96,7 @@ static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, 
     {
         if (col2-col1 < length)
         {
-            done = (*row - start_row + 1) >= max_row;
+            done = *row - start_row + 1 >= max_row;
             char save1 = str[col2 - col1 + 1];
             char save2 = str[col2 - col1 + 2];
             if (done)
@@ -224,7 +224,7 @@ static bool tab_display2(char *msg)
     *msg = 0;
 
     // display keycodes while waiting for ESC, BACKSPACE or TAB
-    while ((key != ID_KEY_ESC) && (key != ID_KEY_BACKSPACE) && (key != ID_KEY_TAB))
+    while (key != ID_KEY_ESC && key != ID_KEY_BACKSPACE && key != ID_KEY_TAB)
     {
         driver_put_string(row, 2, C_GENERAL_HI, msg);
         key = get_a_key_no_help();
@@ -423,7 +423,7 @@ top:
         if (g_passes == Passes::DIFFUSION)
         {
             std::sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
-                    (100.0 * g_diffusion_counter)/g_diffusion_limit,
+                    100.0 * g_diffusion_counter /g_diffusion_limit,
                     g_diffusion_counter, g_diffusion_limit, g_diffusion_bits);
             driver_put_string(start_row, 2, C_GENERAL_MED, msg);
             ++start_row;

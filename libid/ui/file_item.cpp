@@ -190,7 +190,7 @@ static void format_param_file_line(int choice, char *buf)
     int i = 0;
     while (i < 56 && !is_newline(c) && c != EOF)
     {
-        line[i++] = (char)((c == '\t') ? ' ' : c);
+        line[i++] = (char)(c == '\t' ? ' ' : c);
         c = std::getc(s_gfe.file);
     }
     line[i] = 0;
@@ -462,7 +462,7 @@ retry:
     if (i < 0)
     {
         // go back to file list or cancel
-        return (i == -ID_KEY_F6) ? -2 : -1;
+        return i == -ID_KEY_F6 ? -2 : -1;
     }
     entry_name = choices[i]->name;
     return choices[i]->point;

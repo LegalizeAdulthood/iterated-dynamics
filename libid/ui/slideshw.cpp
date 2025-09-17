@@ -202,7 +202,7 @@ int slide_show()
         {
             s_ticks = std::max(CLOCKS_PER_SEC/150, s_ticks/2);
         }
-        driver_set_keyboard_timeout((1000*s_ticks)/CLOCKS_PER_SEC);
+        driver_set_keyboard_timeout(1000 * s_ticks /CLOCKS_PER_SEC);
     }
     if (s_repeats > 0)
     {
@@ -503,7 +503,7 @@ int handle_special_keys(int ch)
             ch = slide_show();
         }
     }
-    else if ((g_slides == SlidesMode::RECORD) && ch)
+    else if (g_slides == SlidesMode::RECORD && ch)
     {
         record_show(ch);
     }

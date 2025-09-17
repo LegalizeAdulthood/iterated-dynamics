@@ -66,21 +66,21 @@ int get_toggles()
     values[k].uval.ch.list_len = std::size(calc_modes);
     values[k].uval.ch.list = calc_modes;
     values[k].uval.ch.val =
-        (g_user_std_calc_mode == CalcMode::ONE_PASS) ? 0
-        : (g_user_std_calc_mode == CalcMode::TWO_PASS) ? 1
-        : (g_user_std_calc_mode == CalcMode::THREE_PASS) ? 2
-        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 0) ? 3
-        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 1) ? 4
-        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 2) ? 5
-        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 3) ? 6
-        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 4) ? 7
-        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 5) ? 8
-        : (g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 6) ? 9
-        : (g_user_std_calc_mode == CalcMode::BOUNDARY_TRACE) ? 10
-        : (g_user_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT) ? 11
-        : (g_user_std_calc_mode == CalcMode::TESSERAL) ? 12
-        : (g_user_std_calc_mode == CalcMode::DIFFUSION) ? 13
-        : (g_user_std_calc_mode == CalcMode::ORBIT) ? 14
+        g_user_std_calc_mode == CalcMode::ONE_PASS ? 0
+        : g_user_std_calc_mode == CalcMode::TWO_PASS ? 1
+        : g_user_std_calc_mode == CalcMode::THREE_PASS ? 2
+        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 0 ? 3
+        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 1 ? 4
+        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 2 ? 5
+        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 3 ? 6
+        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 4 ? 7
+        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 5 ? 8
+        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 6 ? 9
+        : g_user_std_calc_mode == CalcMode::BOUNDARY_TRACE ? 10
+        : g_user_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT ? 11
+        : g_user_std_calc_mode == CalcMode::TESSERAL ? 12
+        : g_user_std_calc_mode == CalcMode::DIFFUSION ? 13
+        : g_user_std_calc_mode == CalcMode::ORBIT ? 14
         :        /* "p"erturbation */     15;
     CalcMode old_user_std_calc_mode = g_user_std_calc_mode;
     int old_stop_pass = g_stop_pass;
@@ -288,7 +288,7 @@ int get_toggles()
     }
     if (g_inside_color >= g_colors)
     {
-        g_inside_color = (g_inside_color % g_colors) + (g_inside_color / g_colors);
+        g_inside_color = g_inside_color % g_colors + g_inside_color / g_colors;
     }
 
     {
@@ -339,7 +339,7 @@ int get_toggles()
     }
     if (g_outside_color >= g_colors)
     {
-        g_outside_color = (g_outside_color % g_colors) + (g_outside_color / g_colors);
+        g_outside_color = g_outside_color % g_colors + g_outside_color / g_colors;
     }
 
     {
@@ -362,7 +362,7 @@ int get_toggles()
     }
     g_overwrite_file = values[++k].uval.ch.val != 0;
 
-    g_sound_flag = ((g_sound_flag >> 3) << 3) | (values[++k].uval.ch.val);
+    g_sound_flag = (g_sound_flag >> 3) << 3 | values[++k].uval.ch.val;
     if (g_sound_flag != old_sound_flag && ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP || (old_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP))
     {
         j++;
@@ -378,7 +378,7 @@ int get_toggles()
     g_user_biomorph_value = values[++k].uval.ival;
     if (g_user_biomorph_value >= g_colors)
     {
-        g_user_biomorph_value = (g_user_biomorph_value % g_colors) + (g_user_biomorph_value / g_colors);
+        g_user_biomorph_value = g_user_biomorph_value % g_colors + g_user_biomorph_value / g_colors;
     }
     if (g_user_biomorph_value != old_biomorph)
     {
@@ -405,7 +405,7 @@ int get_toggles()
     }
     if (g_fill_color >= g_colors)
     {
-        g_fill_color = (g_fill_color % g_colors) + (g_fill_color / g_colors);
+        g_fill_color = g_fill_color % g_colors + g_fill_color / g_colors;
     }
     if (g_fill_color != old_fill_color)
     {

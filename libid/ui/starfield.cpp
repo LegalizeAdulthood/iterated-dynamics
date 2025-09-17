@@ -80,9 +80,9 @@ int star_field()
     s_star_field_values[2] = std::max(s_star_field_values[2], 1.0);
     s_star_field_values[2] = std::min(s_star_field_values[2], 100.0);
 
-    s_distribution = (int)(s_star_field_values[0]);
-    s_concentration  = (long)(((s_star_field_values[1]) / 100.0) * (1L << 16));
-    s_slope = (int)(s_star_field_values[2]);
+    s_distribution = (int) s_star_field_values[0];
+    s_concentration  = (long)(s_star_field_values[1] / 100.0 * (1L << 16));
+    s_slope = (int) s_star_field_values[2];
 
     if (validate_luts(ALTERN_MAP_NAME))
     {

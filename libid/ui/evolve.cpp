@@ -256,7 +256,7 @@ void restore_param_history()
     g_inversion[0] = s_old_history.invert0;
     g_inversion[1] = s_old_history.invert1;
     g_inversion[2] = s_old_history.invert2;
-    g_invert = (g_inversion[0] == 0.0) ? 0 : 3;
+    g_invert = g_inversion[0] == 0.0 ? 0 : 3;
     g_trig_index[0] = static_cast<TrigFn>(s_old_history.trig_index0);
     g_trig_index[1] = static_cast<TrigFn>(s_old_history.trig_index1);
     g_trig_index[2] = static_cast<TrigFn>(s_old_history.trig_index2);
@@ -280,19 +280,20 @@ void vary_dbl(GeneBase gene[], int rand_val, int i)
         *(double *)gene[i].addr = delta_y * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //same for y
         break;
     case Variations::X_PLUS_Y:
-        *(double *)gene[i].addr = g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +(delta_y*g_evolve_dist_per_y)+ g_evolve_y_parameter_offset; //and x+y
+        *(double *)gene[i].addr = g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +
+            delta_y * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //and x+y
         break;
     case Variations::X_MINUS_Y:
-        *(double *)gene[i].addr = (g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset)-(delta_y*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
+        *(double *)gene[i].addr = g_evolve_param_grid_x * g_evolve_dist_per_x + g_evolve_x_parameter_offset -(delta_y*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
         break;
     case Variations::RANDOM:
-        *(double *)gene[i].addr += (((double)rand_val / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation;
+        *(double *)gene[i].addr += (double) rand_val / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation;
         break;
     case Variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
         double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
-        *(double *)gene[i].addr += ((((double)rand_val / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius;
+        *(double *)gene[i].addr += ((double) rand_val / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation) * radius;
     }
     break;
     }
@@ -317,7 +318,7 @@ static int vary_int(int rand_value, int limit, Variations mode)
         ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x+ g_evolve_discrete_y_parameter_offset +delta_y)%limit;
         break;
     case Variations::X_MINUS_Y:
-        ret = (g_evolve_discrete_x_parameter_offset +g_evolve_param_grid_x)-(g_evolve_discrete_y_parameter_offset +delta_y)%limit;
+        ret = g_evolve_discrete_x_parameter_offset + g_evolve_param_grid_x -(g_evolve_discrete_y_parameter_offset +delta_y)%limit;
         break;
     case Variations::RANDOM:
         ret = rand_value % limit;
@@ -326,7 +327,7 @@ static int vary_int(int rand_value, int limit, Variations mode)
     {
         int mid = g_evolve_image_grid_size /2;
         double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
-        ret = (int)((((rand_value / RAND_MAX) * 2 * g_evolve_max_random_mutation) - g_evolve_max_random_mutation) * radius);
+        ret = (int)((rand_value / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation) * radius);
         ret %= limit;
         break;
     }
@@ -403,7 +404,7 @@ void vary_inv(GeneBase gene[], int rand_val, int i)
     {
         vary_dbl(gene, rand_val, i);
     }
-    g_invert = (g_inversion[0] == 0.0) ? 0 : 3 ;
+    g_invert = g_inversion[0] == 0.0 ? 0 : 3 ;
 }
 
 // ---------------------------------------------------------------------
@@ -422,7 +423,7 @@ static int get_the_rest()
 
     copy_genes_from_bank(gene);
 
-    int num_trig = (+g_cur_fractal_specific->flags >> 6) & 7;
+    int num_trig = +g_cur_fractal_specific->flags >> 6 & 7;
     if (g_fractal_type == FractalType::FORMULA)
     {
         num_trig = g_max_function;
@@ -430,12 +431,12 @@ static int get_the_rest()
 
 choose_vars_restart:
     choices.reset();
-    for (int num = MAX_PARAMS; num < (NUM_GENES - 5); num++)
+    for (int num = MAX_PARAMS; num < NUM_GENES - 5; num++)
     {
         choices.list(gene[num].name, 7, 7, evolve_modes, static_cast<int>(gene[num].mutate));
     }
 
-    for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + num_trig); num++)
+    for (int num = NUM_GENES - 5; num < NUM_GENES - 5 + num_trig; num++)
     {
         choices.list(gene[num].name, 7, 7, evolve_modes, static_cast<int>(gene[num].mutate));
     }
@@ -462,7 +463,7 @@ choose_vars_restart:
     case ID_KEY_F3: // set all on...alternate x and y for field map
         for (int num = MAX_PARAMS; num < NUM_GENES; num ++)
         {
-            gene[num].mutate = static_cast<Variations>((num % 2) + 1);
+            gene[num].mutate = static_cast<Variations>(num % 2 + 1);
         }
         goto choose_vars_restart;
     case ID_KEY_F4: // Randomize all
@@ -478,12 +479,12 @@ choose_vars_restart:
     }
 
     // read out values
-    for (int num = MAX_PARAMS; num < (NUM_GENES - 5); num++)
+    for (int num = MAX_PARAMS; num < NUM_GENES - 5; num++)
     {
         gene[num].mutate = static_cast<Variations>(choices.read_list());
     }
 
-    for (int num = (NUM_GENES - 5); num < (NUM_GENES - 5 + num_trig); num++)
+    for (int num = NUM_GENES - 5; num < NUM_GENES - 5 + num_trig; num++)
     {
         gene[num].mutate = static_cast<Variations>(choices.read_list());
     }
@@ -606,7 +607,7 @@ choose_vars_restart:
     case ID_KEY_F3: // set all on...alternate x and y for field map
         for (int num = 0; num < MAX_PARAMS; num ++)
         {
-            gene[num].mutate = static_cast<Variations>((num % 2) + 1);
+            gene[num].mutate = static_cast<Variations>(num % 2 + 1);
         }
         goto choose_vars_restart;
     case ID_KEY_F4: // Randomize all
@@ -796,8 +797,8 @@ get_evol_restart:
     g_evolve_max_random_mutation = choices.read_float_number();
     g_evolve_mutation_reduction_factor = choices.read_float_number();
     g_evolving |= choices.read_yes_no() ? EvolutionModeFlags::NONE : EvolutionModeFlags::NO_GROUT;
-    g_view_x_dots = (g_screen_x_dots / g_evolve_image_grid_size)-2;
-    g_view_y_dots = (g_screen_y_dots / g_evolve_image_grid_size)-2;
+    g_view_x_dots = g_screen_x_dots / g_evolve_image_grid_size -2;
+    g_view_y_dots = g_screen_y_dots / g_evolve_image_grid_size -2;
     if (!g_view_window)
     {
         g_view_y_dots = 0;
@@ -807,13 +808,13 @@ get_evol_restart:
     i = 0;
 
     if (g_evolving != old_evolving
-        || (g_evolve_image_grid_size != old_image_grid_size)
-        || (g_evolve_x_parameter_range != old_x_parameter_range)
-        || (g_evolve_x_parameter_offset != old_x_parameter_offset)
-        || (g_evolve_y_parameter_range != old_y_parameter_range)
-        || (g_evolve_y_parameter_offset != old_y_parameter_offset)
-        || (g_evolve_max_random_mutation != old_max_random_mutation)
-        || (old_variations > 0))
+        || g_evolve_image_grid_size != old_image_grid_size
+        || g_evolve_x_parameter_range != old_x_parameter_range
+        || g_evolve_x_parameter_offset != old_x_parameter_offset
+        || g_evolve_y_parameter_range != old_y_parameter_range
+        || g_evolve_y_parameter_offset != old_y_parameter_offset
+        || g_evolve_max_random_mutation != old_max_random_mutation
+        || old_variations > 0)
     {
         i = 1;
     }
@@ -897,8 +898,8 @@ void fiddle_params(GeneBase gene[], int count)
     // to vary them, aren't pointers marvellous!
 
     // return if middle image
-    if ((g_evolve_param_grid_x == g_evolve_image_grid_size / 2)
-        && (g_evolve_param_grid_y == g_evolve_image_grid_size / 2))
+    if (g_evolve_param_grid_x == g_evolve_image_grid_size / 2
+        && g_evolve_param_grid_y == g_evolve_image_grid_size / 2)
     {
         return;
     }
@@ -907,7 +908,7 @@ void fiddle_params(GeneBase gene[], int count)
 
     for (int i = 0; i < NUM_GENES; i++)
     {
-        (*(gene[i].vary_fn))(gene, std::rand(), i);
+        (*gene[i].vary_fn)(gene, std::rand(), i);
     }
 }
 
@@ -933,7 +934,7 @@ static bool explore_check()
     // one of the non-random variation modes. Used to see if parmzoom box is
     // needed
     return std::any_of(std::begin(g_gene_bank), std::end(g_gene_bank), [](const GeneBase &gene)
-        { return (gene.mutate != Variations::NONE) && (gene.mutate < Variations::RANDOM); });
+        { return gene.mutate != Variations::NONE && gene.mutate < Variations::RANDOM; });
 }
 
 void draw_param_box(int mode)
@@ -976,13 +977,17 @@ void draw_param_box(int mode)
     }
 
     //draw larger box to show parm zooming range
-    bl.x = ((g_evolve_param_grid_x -(int)g_evolve_param_zoom) * (int)(g_logical_screen_x_size_dots+1+grout))-g_logical_screen_x_offset-1;
+    bl.x = (g_evolve_param_grid_x - (int) g_evolve_param_zoom) *
+            (int) (g_logical_screen_x_size_dots + 1 + grout) -g_logical_screen_x_offset-1;
     tl.x = bl.x;
-    tr.y = ((g_evolve_param_grid_y -(int)g_evolve_param_zoom) * (int)(g_logical_screen_y_size_dots+1+grout))-g_logical_screen_y_offset-1;
+    tr.y = (g_evolve_param_grid_y - (int) g_evolve_param_zoom) *
+            (int) (g_logical_screen_y_size_dots + 1 + grout) -g_logical_screen_y_offset-1;
     tl.y = tr.y;
-    tr.x = ((g_evolve_param_grid_x +1+(int)g_evolve_param_zoom) * (int)(g_logical_screen_x_size_dots+1+grout))-g_logical_screen_x_offset;
+    tr.x = (g_evolve_param_grid_x + 1 + (int) g_evolve_param_zoom) *
+            (int) (g_logical_screen_x_size_dots + 1 + grout) -g_logical_screen_x_offset;
     br.x = tr.x;
-    bl.y = ((g_evolve_param_grid_y +1+(int)g_evolve_param_zoom) * (int)(g_logical_screen_y_size_dots+1+grout))-g_logical_screen_y_offset;
+    bl.y = (g_evolve_param_grid_y + 1 + (int) g_evolve_param_zoom) *
+            (int) (g_logical_screen_y_size_dots + 1 + grout) -g_logical_screen_y_offset;
     br.y = bl.y;
     g_box_count = 0;
     add_box(br);
@@ -1017,8 +1022,9 @@ void set_evolve_ranges()
     // set up ranges and offsets for parameter explorer/evolver
     g_evolve_x_parameter_range = g_evolve_dist_per_x*(g_evolve_param_zoom*2.0);
     g_evolve_y_parameter_range = g_evolve_dist_per_y*(g_evolve_param_zoom*2.0);
-    g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +(((double)g_evolve_param_grid_x-g_evolve_param_zoom)*g_evolve_dist_per_x);
-    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset +(((double)delta_y-g_evolve_param_zoom)*g_evolve_dist_per_y);
+    g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +
+        ((double) g_evolve_param_grid_x - g_evolve_param_zoom) * g_evolve_dist_per_x;
+    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + ((double) delta_y - g_evolve_param_zoom) * g_evolve_dist_per_y;
 
     g_evolve_new_discrete_x_parameter_offset = (char)(g_evolve_discrete_x_parameter_offset +(g_evolve_param_grid_x- g_evolve_image_grid_size /2));
     g_evolve_new_discrete_y_parameter_offset = (char)(g_evolve_discrete_y_parameter_offset +(delta_y- g_evolve_image_grid_size /2));
@@ -1041,8 +1047,8 @@ void spiral_map(int count)
     for (int offset = 1; offset <= mid; offset ++)
     {
         // first do the top row
-        g_evolve_param_grid_y = (mid - offset);
-        for (g_evolve_param_grid_x = (mid - offset)+1; g_evolve_param_grid_x < mid+offset; g_evolve_param_grid_x++)
+        g_evolve_param_grid_y = mid - offset;
+        for (g_evolve_param_grid_x = mid - offset +1; g_evolve_param_grid_x < mid+offset; g_evolve_param_grid_x++)
         {
             i++;
             if (i == count)
@@ -1088,7 +1094,7 @@ int unspiral_map()
     static int old_image_grid_size = 0;
 
     int mid = g_evolve_image_grid_size / 2;
-    if ((g_evolve_param_grid_x == mid && g_evolve_param_grid_y == mid) || (old_image_grid_size != g_evolve_image_grid_size))
+    if ((g_evolve_param_grid_x == mid && g_evolve_param_grid_y == mid) || old_image_grid_size != g_evolve_image_grid_size)
     {
         // set up array and return
         int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;

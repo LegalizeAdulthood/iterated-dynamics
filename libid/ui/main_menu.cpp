@@ -51,7 +51,7 @@ static bool is_julia()
 
 static int menu_check_key(int key, int /*choice*/)
 {
-    int test_key = (key >= 'A' && key <= 'Z') ? key+('a'-'A') : key;
+    int test_key = key >= 'A' && key <= 'Z' ? key+('a'-'A') : key;
     if (test_key == '2')
     {
         test_key = '@';
@@ -85,7 +85,7 @@ static int menu_check_key(int key, int /*choice*/)
             {
                 return -test_key;
             }
-            if (g_colors > 16 && (test_key == 'a' || (test_key == 'e')))
+            if (g_colors > 16 && (test_key == 'a' || test_key == 'e'))
             {
                 return -test_key;
             }
@@ -162,7 +162,7 @@ MainMenu::MainMenu(bool full_menu)
     if (full_menu)
     {
         add_left_heading("      CURRENT IMAGE         ");
-        add_left_item((g_calc_status == CalcStatus::RESUMABLE) ? "Continue calculation        "
+        add_left_item(g_calc_status == CalcStatus::RESUMABLE ? "Continue calculation        "
                                                                       : "Return to image             ",
             ID_KEY_ENTER);
         add_left_item("Info about image      <Tab> ", ID_KEY_TAB);

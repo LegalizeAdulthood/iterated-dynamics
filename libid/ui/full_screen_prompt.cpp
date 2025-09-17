@@ -225,7 +225,7 @@ void Prompt::count_title_lines()
     const char *scan = hdg;
     while (*scan)
     {
-        if (*(scan++) == '\n')
+        if (*scan++ == '\n')
         {
             ++title_lines;
             i = -1;
@@ -253,7 +253,7 @@ void Prompt::count_extra_lines()
             int i = 0;
             while (*scan)
             {
-                if (*(scan++) == '\n')
+                if (*scan++ == '\n')
                 {
                     if (extra_lines + num_prompts + title_lines >= 20)
                     {
@@ -516,7 +516,7 @@ int Prompt::prompt_no_params()
 {
     put_string_center(instr_row++, 0, 80, C_PROMPT_BKGRD, "No changeable parameters;");
     put_string_center(instr_row, 0, 80, C_PROMPT_BKGRD,
-        (g_help_mode > HelpLabels::HELP_INDEX) ? "Press ENTER to exit, ESC to back out, F1 for help"
+        g_help_mode > HelpLabels::HELP_INDEX ? "Press ENTER to exit, ESC to back out, F1 for help"
                                                : "Press ENTER to exit");
     driver_hide_text_cursor();
     while (true)
@@ -613,7 +613,7 @@ int Prompt::prompt_no_params()
         case ID_KEY_F8:
         case ID_KEY_F9:
         case ID_KEY_F10:
-            if (s_fn_key_mask & (1 << (done + 1 - ID_KEY_F1)))
+            if (s_fn_key_mask & 1 << (done + 1 - ID_KEY_F1))
             {
                 return full_screen_exit();
             }
@@ -629,7 +629,7 @@ void Prompt::display_footing()
             instr_row++, 0, 80, C_PROMPT_BKGRD, "Use <Up> and <Down> to select values to change");
     }
     put_string_center(instr_row + 1, 0, 80, C_PROMPT_BKGRD,
-        (g_help_mode > HelpLabels::HELP_INDEX)
+        g_help_mode > HelpLabels::HELP_INDEX
             ? "Press ENTER when finished, ESCAPE to back out, or F1 for help"
             : "Press ENTER when finished (or ESCAPE to back out)");
 }
@@ -663,7 +663,7 @@ int Prompt::prompt_params()
         if (!rewrite_extra_info)
         {
             put_string_center(instr_row, 0, 80, C_PROMPT_BKGRD,
-                (cur_type == 'l') ? "Use <Left> or <Right> to change value of selected field"
+                cur_type == 'l' ? "Use <Left> or <Right> to change value of selected field"
                                   : "Type in replacement value for selected field");
         }
         else
@@ -949,7 +949,7 @@ static int prompt_value_string(char *buf, const FullScreenValues *val)
 
 static int fn_key_mask_selected(int key)
 {
-    return s_fn_key_mask & (1 << (key - ID_KEY_F1 + 1));
+    return s_fn_key_mask & 1 << (key - ID_KEY_F1 + 1);
 }
 
 static int prompt_check_key(int key)

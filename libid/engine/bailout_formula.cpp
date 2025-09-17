@@ -90,7 +90,7 @@ static int fp_manh_bailout()
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     double manh_mag = std::abs(g_new_z.x) + std::abs(g_new_z.y);
-    if ((manh_mag * manh_mag) >= g_magnitude_limit)
+    if (manh_mag * manh_mag >= g_magnitude_limit)
     {
         return 1;
     }
@@ -104,7 +104,7 @@ static int fp_manr_bailout()
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
     double manr_mag = g_new_z.x + g_new_z.y; // don't need abs() since we square it next
-    if ((manr_mag * manr_mag) >= g_magnitude_limit)
+    if (manr_mag * manr_mag >= g_magnitude_limit)
     {
         return 1;
     }

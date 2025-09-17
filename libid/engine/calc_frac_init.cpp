@@ -401,7 +401,7 @@ void adjust_corner_bf()
     // use bf_temp, bftemp2 as bfXctr, bfYctr
     cvt_center_mag_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
     double f_temp = std::abs(x_mag_factor);
-    if (f_temp != 1 && f_temp >= (1-g_aspect_drift) && f_temp <= (1+g_aspect_drift))
+    if (f_temp != 1 && f_temp >= 1 - g_aspect_drift && f_temp <= 1 + g_aspect_drift)
     {
         x_mag_factor = sign(x_mag_factor);
         cvt_corners_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
@@ -475,7 +475,7 @@ void adjust_corner()
     // While we're at it, let's adjust the x_mag_factor as well
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     double f_temp = std::abs(x_mag_factor);
-    if (f_temp != 1 && f_temp >= (1 - g_aspect_drift) && f_temp <= (1 + g_aspect_drift))
+    if (f_temp != 1 && f_temp >= 1 - g_aspect_drift && f_temp <= 1 + g_aspect_drift)
     {
         x_mag_factor = sign(x_mag_factor);
         cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
@@ -738,7 +738,7 @@ static void adjust_to_limits_bf(double expand)
        g_calc_status = calc_status_value::PARAMS_CHANGED; */
     if (g_calc_status == CalcStatus::RESUMABLE
         && (is_bf_not_zero(b_adj_x)|| is_bf_not_zero(b_adj_y))
-        && (g_zoom_box_width == 1.0))
+        && g_zoom_box_width == 1.0)
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
@@ -863,7 +863,7 @@ static void adjust_to_limits(double expand)
             adj_y = f_temp;
         }
     }
-    if (g_calc_status == CalcStatus::RESUMABLE && (adj_x != 0 || adj_y != 0) && (g_zoom_box_width == 1.0))
+    if (g_calc_status == CalcStatus::RESUMABLE && (adj_x != 0 || adj_y != 0) && g_zoom_box_width == 1.0)
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
@@ -905,7 +905,7 @@ static bool ratio_bad(double actual, double desired)
     if (desired != 0.0 && g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
         double f_temp = actual / desired;
-        if (f_temp < (1.0-tol) || f_temp > (1.0+tol))
+        if (f_temp < 1.0 - tol || f_temp > 1.0 + tol)
         {
             return true;
         }

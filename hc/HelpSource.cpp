@@ -235,7 +235,7 @@ void Topic::read_topic_text() const
 #endif
 static void check_buffer(const char *curr, unsigned int off, const char *buffer)
 {
-    if ((unsigned)(curr + off - buffer) >= (BUFFER_SIZE-1024))
+    if ((unsigned)(curr + off - buffer) >= BUFFER_SIZE - 1024)
     {
         throw std::runtime_error("Buffer overflowerd -- Help topic too large.");
     }
@@ -388,7 +388,7 @@ static int read_char_aux()
         {
         case '\t':    // expand a tab
         {
-            int diff = (((s_src_col/8) + 1) * 8) - s_src_col;
+            int diff = (s_src_col / 8 + 1) * 8 - s_src_col;
 
             s_src_col += diff;
             s_read_char_sp += diff;
@@ -489,7 +489,7 @@ static bool validate_label_name(const char *name)
         return false;    // invalid
     }
 
-    while (*(++name) != '\0')
+    while (*++name != '\0')
     {
         if (!std::isalpha(*name) && !std::isdigit(*name) && *name != '_')
         {
@@ -594,13 +594,13 @@ static bool get_next_item()
 {
     skip_over(" \t\r\n");
     char *ptr = read_until(s_cmd, 128, ",}");
-    bool last = (*ptr == '}');
+    bool last = *ptr == '}';
     --ptr;
     while (ptr >= s_cmd && std::strchr(" \t\r\n", *ptr))     // strip trailing spaces
     {
         --ptr;
     }
-    *(++ptr) = '\0';
+    *++ptr = '\0';
 
     return last;
 }
@@ -758,11 +758,11 @@ static void process_doc_contents(Mode mode)
             {
                 std::sprintf(buffer, "%-5s %*.0s%s", c.id.c_str(), c.indent * 2, "", c.name.c_str());
                 char *ptr = buffer + (int) std::strlen(buffer);
-                while ((ptr - buffer) < PAGE_WIDTH - 10)
+                while (ptr - buffer < PAGE_WIDTH - 10)
                 {
                     *ptr++ = '.';
                 }
-                c.page_num_pos = (unsigned) ((ptr - 3) - g_src.buffer.data());
+                c.page_num_pos = (unsigned) (ptr - 3 - g_src.buffer.data());
                 return ptr;
             });
     }
@@ -1013,7 +1013,7 @@ static int create_table()
 
     // now, put all the links into the buffer...
 
-    int rows = 1 + (count / cols);
+    int rows = 1 + count / cols;
 
     for (int r = 0; r < rows; r++)
     {
@@ -1365,7 +1365,7 @@ void read_src(const std::string &fname, Mode mode)
                     MSG_ERROR(err_offset, "Embedded command has no closing paren (\')\')");
                 }
 
-                done = (*ptr != ',');   // we're done if it's not a comma
+                done = *ptr != ',';   // we're done if it's not a comma
 
                 if (*ptr != '\n' && *ptr != ')' && *ptr != ',')
                 {
@@ -1578,7 +1578,7 @@ void read_src(const std::string &fname, Mode mode)
                         }
                         else
                         {
-                            int n = ((in_topic ? format_exclude : s_format_exclude) < 0) ? -1 : 1;
+                            int n = (in_topic ? format_exclude : s_format_exclude) < 0 ? -1 : 1;
 
                             format_exclude = std::atoi(&s_cmd[14]);
 
