@@ -26,16 +26,16 @@ LDouble g_b_const{};
 int divide_brot5_bn_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
-    mult_bn_int(g_param_z_bn.x, g_delta_x_bn, (U16) g_col);
-    mult_bn_int(g_bn_tmp, g_delta2_x_bn, (U16) g_row);
+    mult_bn_int(g_param_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
+    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
     add_a_bn(g_param_z_bn.x, g_bn_tmp);
     add_a_bn(g_param_z_bn.x, g_x_min_bn);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
     /* note: in next four lines, g_old_z_bn is just used as a temporary variable */
-    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, (U16) g_row);
-    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, (U16) g_col);
+    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
+    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
     add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
     sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
 
@@ -50,16 +50,16 @@ int divide_brot5_bn_per_pixel()
 int divide_brot5_bf_per_pixel()
 {
     /* parm.x = xxmin + g_col*delx + g_row*delx2 */
-    mult_bf_int(g_param_z_bf.x, g_delta_x_bf, (U16) g_col);
-    mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16) g_row);
+    mult_bf_int(g_param_z_bf.x, g_delta_x_bf, static_cast<U16>(g_col));
+    mult_bf_int(g_bf_tmp, g_delta2_x_bf, static_cast<U16>(g_row));
 
     add_a_bf(g_param_z_bf.x, g_bf_tmp);
     add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
     /* parm.y = yymax - g_row*dely - g_col*dely2; */
     /* note: in next four lines, g_old_z_bf is just used as a temporary variable */
-    mult_bf_int(g_old_z_bf.x, g_delta_y_bf, (U16) g_row);
-    mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, (U16) g_col);
+    mult_bf_int(g_old_z_bf.x, g_delta_y_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, static_cast<U16>(g_col));
     add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
     sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
 
@@ -163,7 +163,7 @@ int divide_brot5_orbit_bf()
 
 bool divide_brot5_per_imge()
 {
-    g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
+    g_c_exponent = -(static_cast<int>(g_params[0]) - 2); /* use negative here so only need it once */
     g_b_const = g_params[1] + 1.0e-20;
     return true;
 }

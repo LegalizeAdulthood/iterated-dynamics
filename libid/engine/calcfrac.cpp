@@ -563,10 +563,10 @@ static void init_calc_fract()
     else
     {
         // works better than log()
-        g_periodicity_next_saved_incr = (int) std::log10(static_cast<double>(g_max_iterations));
+        g_periodicity_next_saved_incr = static_cast<int>(std::log10(static_cast<double>(g_max_iterations)));
         // maintains image with low iterations
         g_periodicity_next_saved_incr = std::max(g_periodicity_next_saved_incr, 4);
-        g_first_saved_and = (long) (g_periodicity_next_saved_incr * 2 + 1);
+        g_first_saved_and = static_cast<long>(g_periodicity_next_saved_incr * 2 + 1);
     }
 
     g_log_map_table.clear();
@@ -633,13 +633,13 @@ static void init_calc_fract()
                     altern = g_iteration_ranges[i++];    // sub-range iterations
                     num_val = g_iteration_ranges[i++];
                 }
-                if (num_val > (int)g_log_map_table_max_size || i >= g_iteration_ranges_len)
+                if (num_val > static_cast<int>(g_log_map_table_max_size) || i >= g_iteration_ranges_len)
                 {
-                    num_val = (int)g_log_map_table_max_size;
+                    num_val = static_cast<int>(g_log_map_table_max_size);
                 }
                 while (l <= num_val)
                 {
-                    g_log_map_table[l++] = (Byte)(k + flip);
+                    g_log_map_table[l++] = static_cast<Byte>(k + flip);
                     if (++m >= altern)
                     {
                         flip ^= 1;            // Alternate colors
@@ -710,7 +710,7 @@ static void init_calc_fract()
         g_invert = 3; // so values will not be changed if we come back
     }
 
-    g_close_enough = g_delta_min*std::pow(2.0, -(double) std::abs(g_periodicity_check));
+    g_close_enough = g_delta_min*std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
     s_rq_lim_save = g_magnitude_limit;
     g_magnitude_limit2 = std::sqrt(g_magnitude_limit);
     g_resuming = g_calc_status == CalcStatus::RESUMABLE;
@@ -757,7 +757,7 @@ static void calc_non_standard_fractal()
     {
         // not a stand-alone
         // next two lines in case periodicity changed
-        g_close_enough = g_delta_min * std::pow(2.0, -(double) std::abs(g_periodicity_check));
+        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
         set_symmetry(g_symmetry, false);
         engine_timer(g_calc_type); // non-standard fractal engine
     }
@@ -957,13 +957,14 @@ static void perform_work_list()
         double aspect;
         if (g_distance_estimator_x_dots && g_distance_estimator_y_dots)
         {
-            aspect = (double)g_distance_estimator_y_dots/(double)g_distance_estimator_x_dots;
+            aspect = static_cast<double>(g_distance_estimator_y_dots) /
+                static_cast<double>(g_distance_estimator_x_dots);
             d_x_size = g_distance_estimator_x_dots-1;
             d_y_size = g_distance_estimator_y_dots-1;
         }
         else
         {
-            aspect = (double)g_logical_screen_y_dots/(double)g_logical_screen_x_dots;
+            aspect = static_cast<double>(g_logical_screen_y_dots) / static_cast<double>(g_logical_screen_x_dots);
             d_x_size = g_logical_screen_x_dots-1;
             d_y_size = g_logical_screen_y_dots-1;
         }
@@ -1064,7 +1065,7 @@ static void perform_work_list()
             }
             else
             {
-                const double width = (double) g_size_dot * g_logical_screen_x_dots / 1024.0;
+                const double width = static_cast<double>(g_size_dot) * g_logical_screen_x_dots / 1024.0;
 
                 // Arbitrary sanity limit, however s_show_dot_width will
                 // overflow if width gets near 256.
@@ -1074,7 +1075,7 @@ static void perform_work_list()
                 }
                 else if (width > 0.0)
                 {
-                    s_show_dot_width = (int)width;
+                    s_show_dot_width = static_cast<int>(width);
                 }
                 else
                 {
@@ -1122,7 +1123,7 @@ static void perform_work_list()
         }
 
         // some common initialization for escape-time pixel level routines
-        g_close_enough = g_delta_min*std::pow(2.0, -(double) std::abs(g_periodicity_check));
+        g_close_enough = g_delta_min*std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
         g_keyboard_check_interval = g_max_keyboard_check_interval;
 
         set_symmetry(g_symmetry, true);
@@ -1252,11 +1253,11 @@ int calc_mandelbrot_type()
             // don't use color 0 unless from inside/outside
             if (g_colors < 16)
             {
-                g_color = (int)(g_color_iter & g_and_color);
+                g_color = static_cast<int>(g_color_iter & g_and_color);
             }
             else
             {
-                g_color = (int)((g_color_iter - 1) % g_and_color + 1);
+                g_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
             }
         }
         if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
@@ -1270,7 +1271,7 @@ int calc_mandelbrot_type()
     }
     else
     {
-        g_color = (int)g_color_iter;
+        g_color = static_cast<int>(g_color_iter);
     }
     return g_color;
 }
@@ -1532,7 +1533,7 @@ int standard_fractal_type()
                     g_old_z = g_new_z;
                     {
                         int tmp_color;
-                        tmp_color = (int)((g_color_iter - 1) % g_and_color + 1);
+                        tmp_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
                         tan_table[tmp_color-1] = g_new_z.y/(g_new_z.x+.000001);
                     }
                 }
@@ -1717,13 +1718,13 @@ int standard_fractal_type()
     {
         if (g_bf_math == BFMathType::BIG_NUM)
         {
-            g_new_z.x = (double) bn_to_float(g_new_z_bn.x);
-            g_new_z.y = (double) bn_to_float(g_new_z_bn.y);
+            g_new_z.x = static_cast<double>(bn_to_float(g_new_z_bn.x));
+            g_new_z.y = static_cast<double>(bn_to_float(g_new_z_bn.y));
         }
         else if (g_bf_math == BFMathType::BIG_FLT)
         {
-            g_new_z.x = (double) bf_to_float(g_new_z_bf.x);
-            g_new_z.y = (double) bf_to_float(g_new_z_bf.y);
+            g_new_z.x = static_cast<double>(bf_to_float(g_new_z_bf.x));
+            g_new_z.y = static_cast<double>(bf_to_float(g_new_z_bf.y));
         }
         g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
         g_color_iter = potential(g_magnitude, g_color_iter);
@@ -1745,31 +1746,31 @@ int standard_fractal_type()
         // Add 7 to overcome negative values on the MANDEL
         if (g_outside_color == REAL)                 // "real"
         {
-            g_color_iter += (long)g_new_z.x + 7;
+            g_color_iter += static_cast<long>(g_new_z.x) + 7;
         }
         else if (g_outside_color == IMAG)              // "imag"
         {
-            g_color_iter += (long)g_new_z.y + 7;
+            g_color_iter += static_cast<long>(g_new_z.y) + 7;
         }
         else if (g_outside_color == MULT  && g_new_z.y)      // "mult"
         {
-            g_color_iter = (long)((double)g_color_iter * (g_new_z.x/g_new_z.y));
+            g_color_iter = static_cast<long>(static_cast<double>(g_color_iter) * (g_new_z.x / g_new_z.y));
         }
         else if (g_outside_color == SUM)               // "sum"
         {
-            g_color_iter += (long)(g_new_z.x + g_new_z.y);
+            g_color_iter += static_cast<long>(g_new_z.x + g_new_z.y);
         }
         else if (g_outside_color == ATAN)              // "atan"
         {
-            g_color_iter = (long)std::abs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+            g_color_iter = static_cast<long>(std::abs(std::atan2(g_new_z.y, g_new_z.x) * g_atan_colors / PI));
         }
         else if (g_outside_color == FMOD)
         {
-            g_color_iter = (long)(mem_value * g_colors / g_close_proximity);
+            g_color_iter = static_cast<long>(mem_value * g_colors / g_close_proximity);
         }
         else if (g_outside_color == TDIS)
         {
-            g_color_iter = (long) total_dist;
+            g_color_iter = static_cast<long>(total_dist);
         }
 
         // eliminate negative colors & wrap arounds
@@ -1811,15 +1812,15 @@ int standard_fractal_type()
         {
             if (g_old_demm_colors)   // this one is needed for old color scheme
             {
-                g_color_iter = (long)std::sqrt(sqrt(dist) / s_dem_width + 1);
+                g_color_iter = static_cast<long>(std::sqrt(sqrt(dist) / s_dem_width + 1));
             }
             else if (g_use_old_distance_estimator)
             {
-                g_color_iter = (long)std::sqrt(dist / s_dem_width + 1);
+                g_color_iter = static_cast<long>(std::sqrt(dist / s_dem_width + 1));
             }
             else
             {
-                g_color_iter = (long)(dist / s_dem_width + 1);
+                g_color_iter = static_cast<long>(dist / s_dem_width + 1);
             }
             g_color_iter &= LONG_MAX;  // oops - color can be negative
             goto plot_pixel;       // no further adjustments apply
@@ -1913,15 +1914,15 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_color == FMODI)
         {
-            g_color_iter = (long)(mem_value * g_colors / g_close_proximity);
+            g_color_iter = static_cast<long>(mem_value * g_colors / g_close_proximity);
         }
         else if (g_inside_color == ATANI)            // "atan"
         {
-            g_color_iter = (long) std::abs(std::atan2(g_new_z.y, g_new_z.x) * g_atan_colors / PI);
+            g_color_iter = static_cast<long>(std::abs(std::atan2(g_new_z.y, g_new_z.x) * g_atan_colors / PI));
         }
         else if (g_inside_color == BOF60)
         {
-            g_color_iter = (long)(std::sqrt(min_orbit) * 75);
+            g_color_iter = static_cast<long>(std::sqrt(min_orbit) * 75);
         }
         else if (g_inside_color == BOF61)
         {
@@ -1929,7 +1930,7 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_color == ZMAG)
         {
-            g_color_iter = (long) ((sqr(g_new_z.x) + sqr(g_new_z.y)) * (g_max_iterations >> 1) + 1);
+            g_color_iter = static_cast<long>((sqr(g_new_z.x) + sqr(g_new_z.y)) * (g_max_iterations >> 1) + 1);
         }
         else   // inside == -1
         {
@@ -1949,11 +1950,11 @@ plot_pixel:
         // don't use color 0 unless from inside/outside
         if (g_colors < 16)
         {
-            g_color = (int)(g_color_iter & g_and_color);
+            g_color = static_cast<int>(g_color_iter & g_and_color);
         }
         else
         {
-            g_color = (int)((g_color_iter - 1) % g_and_color + 1);
+            g_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
         }
     }
     if (g_debug_flag != DebugFlags::FORCE_BOUNDARY_TRACE_ERROR)
@@ -2140,17 +2141,17 @@ int potential(double mag, long iterations)
     if (iterations < g_max_iterations)
     {
         l_pot = iterations+2;
-        pot = (float) l_pot;
+        pot = static_cast<float>(l_pot);
         if (l_pot <= 0 || mag <= 1.0)
         {
             pot = 0.0F;
         }
         else   // pot = log(mag) / pow(2.0, (double)pot);
         {
-            double d_tmp = std::log(mag) / std::pow(2.0, (double) pot);
+            double d_tmp = std::log(mag) / std::pow(2.0, static_cast<double>(pot));
             if (d_tmp > FLT_MIN) // prevent float type underflow
             {
-                pot = (float) d_tmp;
+                pot = static_cast<float>(d_tmp);
             }
             else
             {
@@ -2166,25 +2167,25 @@ int potential(double mag, long iterations)
         if (pot > 0.0)
         {
             pot = std::sqrt(pot);
-            pot = (float)(g_potential_params[0] - pot*g_potential_params[1] - 1.0);
+            pot = static_cast<float>(g_potential_params[0] - pot * g_potential_params[1] - 1.0);
         }
         else
         {
-            pot = (float)(g_potential_params[0] - 1.0);
+            pot = static_cast<float>(g_potential_params[0] - 1.0);
         }
         pot = std::max(pot, 1.0f); // avoid color 0
     }
     else if (g_inside_color >= COLOR_BLACK)
     {
-        pot = (float) g_inside_color;
+        pot = static_cast<float>(g_inside_color);
     }
     else     // inside < 0 implies inside = maxit, so use 1st pot param instead
     {
-        pot = (float)g_potential_params[0];
+        pot = static_cast<float>(g_potential_params[0]);
     }
 
-    l_pot = (long) (pot * 256);
-    int i_pot = (int) (l_pot >> 8);
+    l_pot = static_cast<long>(pot * 256);
+    int i_pot = static_cast<int>(l_pot >> 8);
     if (i_pot >= g_colors)
     {
         i_pot = g_colors - 1;
@@ -2197,7 +2198,7 @@ int potential(double mag, long iterations)
         {
             disk_write_pixel(g_col+g_logical_screen_x_offset, g_row+g_logical_screen_y_offset, i_pot);
         }
-        disk_write_pixel(g_col+g_logical_screen_x_offset, g_row+g_screen_y_dots+g_logical_screen_y_offset, (int)l_pot);
+        disk_write_pixel(g_col+g_logical_screen_x_offset, g_row+g_screen_y_dots+g_logical_screen_y_offset, static_cast<int>(l_pot));
     }
 
     return i_pot;
@@ -2423,7 +2424,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
             sub_bf(bft1, g_bf_y_min, g_bf_y_max);
             div_bf(bft1, g_bf_y_max, bft1);
             neg_a_bf(bft1);
-            f_temp = (double)bf_to_float(bft1);
+            f_temp = static_cast<double>(bf_to_float(bft1));
         }
         else
         {
@@ -2431,7 +2432,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         }
         f_temp *= g_logical_screen_y_dots - 1;
         f_temp += 0.25;
-        x_axis_row = (int)f_temp;
+        x_axis_row = static_cast<int>(f_temp);
         x_axis_between = f_temp - x_axis_row >= 0.5;
         if (!use_list && (!x_axis_between || (x_axis_row+1)*2 != g_logical_screen_y_dots))
         {
@@ -2445,7 +2446,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             div_bf(bft1, g_bf_x_min, bft1);
             neg_a_bf(bft1);
-            f_temp = (double)bf_to_float(bft1);
+            f_temp = static_cast<double>(bf_to_float(bft1));
         }
         else
         {
@@ -2453,7 +2454,7 @@ static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symme
         }
         f_temp *= g_logical_screen_x_dots - 1;
         f_temp += 0.25;
-        y_axis_col = (int)f_temp;
+        y_axis_col = static_cast<int>(f_temp);
         y_axis_between = f_temp - y_axis_col >= 0.5;
         if (!use_list && (!y_axis_between || (y_axis_col+1)*2 != g_logical_screen_x_dots))
         {
@@ -2574,7 +2575,7 @@ origin_symmetry:
     case SymmetryType::PI_SYM:                      // PI symmetry
         if (g_bf_math != BFMathType::NONE)
         {
-            if ((double)bf_to_float(abs_a_bf(sub_bf(bft1, g_bf_x_max, g_bf_x_min))) < PI/4)
+            if (static_cast<double>(bf_to_float(abs_a_bf(sub_bf(bft1, g_bf_x_max, g_bf_x_min)))) < PI/4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -2613,11 +2614,12 @@ origin_symmetry:
         {
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             abs_a_bf(bft1);
-            g_pi_in_pixels = (int) (PI / (double) bf_to_float(bft1) * g_logical_screen_x_dots); // PI in pixels
+            g_pi_in_pixels = static_cast<int>(
+                PI / static_cast<double>(bf_to_float(bft1)) * g_logical_screen_x_dots); // PI in pixels
         }
         else
         {
-            g_pi_in_pixels = (int) (PI / std::abs(g_x_max - g_x_min) *g_logical_screen_x_dots); // PI in pixels
+            g_pi_in_pixels = static_cast<int>(PI / std::abs(g_x_max - g_x_min) * g_logical_screen_x_dots); // PI in pixels
         }
 
         g_i_stop_pt.x = g_start_pt.x + g_pi_in_pixels - 1;

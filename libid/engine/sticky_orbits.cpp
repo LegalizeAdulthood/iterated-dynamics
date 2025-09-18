@@ -207,9 +207,9 @@ static int orbit_draw_function()
 
     while (angle < rotation)
     {
-        double theta = (double) angle * factor;
-        g_col = (int) (x_factor + (x_ctr + x_mag_factor * std::cos(theta)));
-        g_row = (int) (y_factor + (y_ctr + x_mag_factor * std::sin(theta)));
+        double theta = static_cast<double>(angle) * factor;
+        g_col = static_cast<int>(x_factor + (x_ctr + x_mag_factor * std::cos(theta)));
+        g_row = static_cast<int>(y_factor + (y_ctr + x_mag_factor * std::sin(theta)));
         if (plot_orbits2d() == -1)
         {
             add_work_list(angle, 0, 0, 0, 0, 0, 0, g_work_symmetry);

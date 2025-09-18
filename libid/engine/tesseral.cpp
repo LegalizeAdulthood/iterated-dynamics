@@ -77,14 +77,14 @@ Tesseral::Tesseral() :
         m_tp->top = -2;
         int cur_y = g_begin_pt.y & 0xfff;
         int y_size = 1;
-        int i = (unsigned) g_begin_pt.y >> 12;
+        int i = static_cast<unsigned>(g_begin_pt.y) >> 12;
         while (--i >= 0)
         {
             y_size <<= 1;
         }
         int cur_x = g_work_pass & 0xfff;
         int x_size = 1;
-        i = (unsigned)g_work_pass >> 12;
+        i = static_cast<unsigned>(g_work_pass) >> 12;
         while (--i >= 0)
         {
             x_size <<= 1;

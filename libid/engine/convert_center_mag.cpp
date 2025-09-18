@@ -146,7 +146,7 @@ void cvt_center_mag_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble &mag, double &x_m
         add_bf(ctr_y, g_bf_y_min, g_bf_y_max);
         half_a_bf(ctr_y);
         mag  = 2/height;
-        x_mag_factor = (double)(height / (DEFAULT_ASPECT * width));
+        x_mag_factor = static_cast<double>(height / (DEFAULT_ASPECT * width));
         rot = 0.0;
         skew = 0.0;
     }
@@ -185,7 +185,7 @@ void cvt_center_mag_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble &mag, double &x_m
         {
             tmp_y = tmp_y1/tmp_x1 * sign_x;    // tmpy = tmpy / |tmpx|
         }
-        rot = -rad_to_deg(std::atan2((double) tmp_y, sign_x));   // negative for image rotation
+        rot = -rad_to_deg(std::atan2(static_cast<double>(tmp_y), sign_x));   // negative for image rotation
 
         // tmpx = g_x_min - g_x_3rd;
         sub_bf(tmp_x_bf, g_bf_x_min, g_bf_x_3rd);
@@ -196,7 +196,7 @@ void cvt_center_mag_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble &mag, double &x_m
         const LDouble b2 = tmp_x2 * tmp_x2 + tmp_y2 * tmp_y2;
         const LDouble b = std::sqrt(b2);
 
-        const double tmp_a = std::acos((double)((a2+b2-c2)/(2*a*b))); // save tmpa for later use
+        const double tmp_a = std::acos(static_cast<double>((a2 + b2 - c2) / (2 * a * b))); // save tmpa for later use
         skew = 90 - rad_to_deg(tmp_a);
 
         // these are the only two variables that must use big precision
@@ -209,7 +209,7 @@ void cvt_center_mag_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble &mag, double &x_m
 
         const LDouble height = b * std::sin(tmp_a);
         mag  = 2/height; // 1/(h/2)
-        x_mag_factor = (double)(height / (DEFAULT_ASPECT * a));
+        x_mag_factor = static_cast<double>(height / (DEFAULT_ASPECT * a));
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system

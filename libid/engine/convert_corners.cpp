@@ -28,7 +28,7 @@ void cvt_corners(double ctr_x, double ctr_y, LDouble mag, double x_mag_factor, d
     }
 
     // half height, width
-    const double h = (double) (1 / mag);
+    const double h = static_cast<double>(1.0 / mag);
     const double w = h / (DEFAULT_ASPECT * x_mag_factor);
 
     if (rot == 0.0 && skew == 0.0)

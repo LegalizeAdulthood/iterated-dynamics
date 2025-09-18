@@ -110,11 +110,11 @@ static void set_aspect(double aspect)
     {
         if (aspect > 1.0)
         {
-            s_y_aspect = (unsigned int)(65536.0 / aspect);
+            s_y_aspect = static_cast<unsigned int>(65536.0 / aspect);
         }
         else
         {
-            s_x_aspect = (unsigned int)(65536.0 * aspect);
+            s_x_aspect = static_cast<unsigned int>(65536.0 * aspect);
         }
     }
 }
@@ -171,12 +171,17 @@ static void circle_plot(int x, int y, int color)
         }
         else
         {
-            c_put_color(x+s_circle_x, (short)(s_circle_y + (((long) y * (long) s_y_aspect) >> 16)), color);
+            c_put_color(x + s_circle_x,
+                static_cast<short>(
+                    s_circle_y + ((static_cast<long>(y) * static_cast<long>(s_y_aspect)) >> 16)),
+                color);
         }
     }
     else
     {
-        c_put_color((int)(s_circle_x + (((long) x * (long) s_x_aspect) >> 16)), y+s_circle_y, color);
+        c_put_color(
+            static_cast<int>(s_circle_x + ((static_cast<long>(x) * static_cast<long>(s_x_aspect)) >> 16)),
+            y + s_circle_y, color);
     }
 }
 
@@ -519,7 +524,7 @@ void InverseJulia::start()
     s_show_numbers = false;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
-    m_aspect = (double) g_logical_screen_x_dots * 3 / ((double) g_logical_screen_y_dots * 4); // assumes 4:3
+    m_aspect = static_cast<double>(g_logical_screen_x_dots) * 3 / (static_cast<double>(g_logical_screen_y_dots) * 4); // assumes 4:3
     m_actively_computing = true;
     set_aspect(m_aspect);
 
@@ -589,7 +594,7 @@ void InverseJulia::start()
         m_y_off = g_video_start_y + s_win_height / 2;
     }
 
-    m_x_factor = (int) (s_win_width / 5.33);
+    m_x_factor = static_cast<int>(s_win_width / 5.33);
     m_y_factor = -s_win_height / 4;
 
     if (s_window_style == JuliaWindowStyle::LARGE)
@@ -611,8 +616,8 @@ void InverseJulia::start()
     setup_convert_to_screen(&m_cvt);
 
     // reuse last location if inside window
-    g_col = (int) std::lround(m_cvt.a * g_save_c.x + m_cvt.b * g_save_c.y + m_cvt.e);
-    g_row = (int) std::lround(m_cvt.c * g_save_c.x + m_cvt.d * g_save_c.y + m_cvt.f);
+    g_col = static_cast<int>(std::lround(m_cvt.a * g_save_c.x + m_cvt.b * g_save_c.y + m_cvt.e));
+    g_row = static_cast<int>(std::lround(m_cvt.c * g_save_c.x + m_cvt.d * g_save_c.y + m_cvt.f));
     if (g_col < 0 || g_col >= g_logical_screen_x_dots || g_row < 0 || g_row >= g_logical_screen_y_dots)
     {
         m_c_real = (g_x_max + g_x_min) / 2.0;
@@ -627,8 +632,8 @@ void InverseJulia::start()
     m_old_y = -1;
     m_old_x = -1;
 
-    g_col = (int) std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e);
-    g_row = (int) std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f);
+    g_col = static_cast<int>(std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e));
+    g_row = static_cast<int>(std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f));
 
     fill_dx_array();
 
@@ -779,8 +784,8 @@ bool InverseJulia::handle_key_press(bool &still)
     case 'P':
         get_a_number(&m_c_real, &m_c_imag);
         m_exact = true;
-        g_col = (int) std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e);
-        g_row = (int) std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f);
+        g_col = static_cast<int>(std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e));
+        g_row = static_cast<int>(std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f));
         d_row = 0;
         d_col = 0;
         break;
@@ -888,8 +893,8 @@ bool InverseJulia::iterate_jiim()
                 {
                     g_old_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
                     g_new_z = complex_sqrt_float(g_new_z.x - m_c_real, g_new_z.y - m_c_imag);
-                    enqueue_float((float) g_new_z.x, (float) g_new_z.y);
-                    enqueue_float((float) -g_old_z.x, (float) -g_old_z.y);
+                    enqueue_float(static_cast<float>(g_new_z.x), static_cast<float>(g_new_z.y));
+                    enqueue_float(static_cast<float>(-g_old_z.x), static_cast<float>(-g_old_z.y));
                 }
                 s_max_hits++;
             }
@@ -901,15 +906,15 @@ bool InverseJulia::iterate_jiim()
 
         g_old_z = dequeue_float();
 
-        m_x = (int) (g_old_z.x * m_x_factor * m_zoom + m_x_off);
-        m_y = (int) (g_old_z.y * m_y_factor * m_zoom + m_y_off);
+        m_x = static_cast<int>(g_old_z.x * m_x_factor * m_zoom + m_x_off);
+        m_y = static_cast<int>(g_old_z.y * m_y_factor * m_zoom + m_y_off);
         m_color = c_get_color(m_x, m_y);
         if (m_color < s_max_hits)
         {
             c_put_color(m_x, m_y, m_color + 1);
             g_new_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
-            enqueue_float((float) g_new_z.x, (float) g_new_z.y);
-            enqueue_float((float) -g_new_z.x, (float) -g_new_z.y);
+            enqueue_float(static_cast<float>(g_new_z.x), static_cast<float>(g_new_z.y));
+            enqueue_float(static_cast<float>(-g_new_z.x), static_cast<float>(-g_new_z.y));
         }
     }
     else
@@ -951,8 +956,8 @@ bool InverseJulia::iterate_jiim()
                 g_new_z.x = -g_new_z.x;
                 g_new_z.y = -g_new_z.y;
             }
-            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             break;
 
         case SecretMode::ALWAYS_GO_ONE_DIRECTION:
@@ -961,8 +966,8 @@ bool InverseJulia::iterate_jiim()
                 g_new_z.x = -g_new_z.x;
                 g_new_z.y = -g_new_z.y;
             }
-            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             break;
 
         case SecretMode::GO_ONE_DIR_DRAW_OTHER_DIR:
@@ -971,31 +976,31 @@ bool InverseJulia::iterate_jiim()
                 g_new_z.x = -g_new_z.x;
                 g_new_z.y = -g_new_z.y;
             }
-            m_x = (int) (-g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (-g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(-g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(-g_new_z.y * m_y_factor * m_zoom + m_y_off);
             break;
 
         case SecretMode::GO_NEGATIVE_IF_MAX_COLOR:
-            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             if (c_get_color(m_x, m_y) == g_colors - 1)
             {
                 g_new_z.x = -g_new_z.x;
                 g_new_z.y = -g_new_z.y;
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+                m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             }
             break;
 
         case SecretMode::GO_POSITIVE_IF_MAX_COLOR:
             g_new_z.x = -g_new_z.x;
             g_new_z.y = -g_new_z.y;
-            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             if (c_get_color(m_x, m_y) == g_colors - 1)
             {
-                m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-                m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+                m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+                m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             }
             break;
 
@@ -1005,8 +1010,8 @@ bool InverseJulia::iterate_jiim()
                 g_new_z.x = -g_new_z.x;
                 g_new_z.y = -g_new_z.y;
             }
-            m_x = (int) (-g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (-g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(-g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(-g_new_z.y * m_y_factor * m_zoom + m_y_off);
             if (m_iter > 10)
             {
                 if (s_mode == OrbitFlags::POINT)
@@ -1017,7 +1022,7 @@ bool InverseJulia::iterate_jiim()
                 {
                     s_circle_x = m_x;
                     s_circle_y = m_y;
-                    circle((int) (m_zoom * (s_win_width >> 1) / m_iter), m_color);
+                    circle(static_cast<int>(m_zoom * (s_win_width >> 1) / m_iter), m_color);
                 }
                 if (bit_set(s_mode, OrbitFlags::LINE) && m_x > 0 && m_y > 0 && m_old_x > 0 && m_old_y > 0)
                 {
@@ -1026,8 +1031,8 @@ bool InverseJulia::iterate_jiim()
                 m_old_x = m_x;
                 m_old_y = m_y;
             }
-            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             break;
 
         case SecretMode::GO_IN_LONG_ZIG_ZAGS:
@@ -1040,8 +1045,8 @@ bool InverseJulia::iterate_jiim()
                 g_new_z.x = -g_new_z.x;
                 g_new_z.y = -g_new_z.y;
             }
-            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             break;
 
         case SecretMode::RANDOM_RUN:
@@ -1078,8 +1083,8 @@ bool InverseJulia::iterate_jiim()
                 }
                 break;
             }
-            m_x = (int) (g_new_z.x * m_x_factor * m_zoom + m_x_off);
-            m_y = (int) (g_new_z.y * m_y_factor * m_zoom + m_y_off);
+            m_x = static_cast<int>(g_new_z.x * m_x_factor * m_zoom + m_x_off);
+            m_y = static_cast<int>(g_new_z.y * m_y_factor * m_zoom + m_y_off);
             break;
         }
     }
@@ -1091,9 +1096,9 @@ void InverseJulia::iterate_orbit()
 {
     if (m_iter < g_max_iterations)
     {
-        m_color = (int) m_iter % g_colors;
-        m_x = (int) ((g_old_z.x - g_init.x) * m_x_factor * 3 * m_zoom + m_x_off);
-        m_y = (int) ((g_old_z.y - g_init.y) * m_y_factor * 3 * m_zoom + m_y_off);
+        m_color = static_cast<int>(m_iter) % g_colors;
+        m_x = static_cast<int>((g_old_z.x - g_init.x) * m_x_factor * 3 * m_zoom + m_x_off);
+        m_y = static_cast<int>((g_old_z.y - g_init.y) * m_y_factor * 3 * m_zoom + m_y_off);
         if (orbit_calc())
         {
             m_iter = g_max_iterations;
@@ -1190,8 +1195,8 @@ bool InverseJulia::iterate()
 
             clear_queue();
             s_max_hits = 1;
-            enqueue_float((float) f1.x, (float) f1.y);
-            enqueue_float((float) f2.x, (float) f2.y);
+            enqueue_float(static_cast<float>(f1.x), static_cast<float>(f1.y));
+            enqueue_float(static_cast<float>(f2.x), static_cast<float>(f2.y));
         }
         // End MIIM code.
         if (m_which == JIIMType::ORBIT)
@@ -1250,7 +1255,7 @@ bool InverseJulia::iterate()
         {
             s_circle_x = m_x;
             s_circle_y = m_y;
-            circle((int) (m_zoom * (s_win_width >> 1) / m_iter), m_color);
+            circle(static_cast<int>(m_zoom * (s_win_width >> 1) / m_iter), m_color);
         }
         if (bit_set(s_mode, OrbitFlags::LINE) && m_x > 0 && m_y > 0 && m_old_x > 0 && m_old_y > 0)
         {

@@ -58,11 +58,11 @@ Diffusion::Diffusion() :
     case DiffusionMode::SQUARE_CAVITY:
         if (g_logical_screen_x_dots > g_logical_screen_y_dots)
         {
-            m_radius = (float) (g_logical_screen_y_dots - m_border);
+            m_radius = static_cast<float>(g_logical_screen_y_dots - m_border);
         }
         else
         {
-            m_radius = (float) (g_logical_screen_x_dots - m_border);
+            m_radius = static_cast<float>(g_logical_screen_x_dots - m_border);
         }
         break;
     }
@@ -133,12 +133,12 @@ void Diffusion::release_new_particle()
     case DiffusionMode::CENTRAL:
     {
         // Release new point on a circle inside the box
-        const double angle = 2 * (double) std::rand() / (RAND_MAX / PI);
+        const double angle = 2 * static_cast<double>(std::rand()) / (RAND_MAX / PI);
         double cosine;
         double sine;
         sin_cos(angle, &sine, &cosine);
-        m_x = (int) (cosine * (m_x_max - m_x_min) + g_logical_screen_x_dots);
-        m_y = (int) (sine * (m_y_max - m_y_min) + g_logical_screen_y_dots);
+        m_x = static_cast<int>(cosine * (m_x_max - m_x_min) + g_logical_screen_x_dots);
+        m_y = static_cast<int>(sine * (m_y_max - m_y_min) + g_logical_screen_y_dots);
         m_x /= 2;
         m_y /= 2;
         break;
@@ -153,12 +153,12 @@ void Diffusion::release_new_particle()
     case DiffusionMode::SQUARE_CAVITY:
     {
         // Release new point on a circle inside the box with radius given by the radius variable
-        const double angle = 2 * (double) std::rand() / (RAND_MAX / PI);
+        const double angle = 2 * static_cast<double>(std::rand()) / (RAND_MAX / PI);
         double cosine;
         double sine;
         sin_cos(angle, &sine, &cosine);
-        m_x = (int) (cosine * m_radius + g_logical_screen_x_dots);
-        m_y = (int) (sine * m_radius + g_logical_screen_y_dots);
+        m_x = static_cast<int>(cosine * m_radius + g_logical_screen_x_dots);
+        m_y = static_cast<int>(sine * m_radius + g_logical_screen_y_dots);
         m_x /= 2;
         m_y /= 2;
         break;
@@ -332,8 +332,8 @@ bool Diffusion::adjust_limits()
     {
         // Decrease the radius where points are released to stay away
         // from the fractal.  It might be decreased by 1 or 2
-        const double r = sqr((float) m_x - g_logical_screen_x_dots / 2) +
-            sqr((float) m_y - g_logical_screen_y_dots / 2);
+        const double r = sqr(static_cast<float>(m_x) - g_logical_screen_x_dots / 2) +
+            sqr(static_cast<float>(m_y) - g_logical_screen_y_dots / 2);
         if (r <= m_border * m_border)
         {
             return true;

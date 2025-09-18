@@ -70,10 +70,10 @@ static int timer(TimerType type, int (*fn)(), ...)
         break;
     case TimerType::DECODER:
         i = va_arg(arg_marker, int);
-        out = (int) decoder((short) i); // not indirect, safer with overlays
+        out = static_cast<int>(decoder(static_cast<short>(i)));
         break;
     case TimerType::ENCODER:
-        out = encoder();                // not indirect, safer with overlays
+        out = encoder();
         break;
     }
     // next assumes CLOCKS_PER_SEC is 10^n, n>=2

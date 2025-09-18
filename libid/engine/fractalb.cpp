@@ -311,18 +311,18 @@ void bf_corners_to_float()
 {
     if (g_bf_math != BFMathType::NONE)
     {
-        g_x_min = (double)bf_to_float(g_bf_x_min);
-        g_y_min = (double)bf_to_float(g_bf_y_min);
-        g_x_max = (double)bf_to_float(g_bf_x_max);
-        g_y_max = (double)bf_to_float(g_bf_y_max);
-        g_x_3rd = (double)bf_to_float(g_bf_x_3rd);
-        g_y_3rd = (double)bf_to_float(g_bf_y_3rd);
+        g_x_min = static_cast<double>(bf_to_float(g_bf_x_min));
+        g_y_min = static_cast<double>(bf_to_float(g_bf_y_min));
+        g_x_max = static_cast<double>(bf_to_float(g_bf_x_max));
+        g_y_max = static_cast<double>(bf_to_float(g_bf_y_max));
+        g_x_3rd = static_cast<double>(bf_to_float(g_bf_x_3rd));
+        g_y_3rd = static_cast<double>(bf_to_float(g_bf_y_3rd));
     }
     for (int i = 0; i < MAX_PARAMS; i++)
     {
         if (type_has_param(g_fractal_type, i))
         {
-            g_params[i] = (double)bf_to_float(g_bf_params[i]);
+            g_params[i] = static_cast<double>(bf_to_float(g_bf_params[i]));
         }
     }
 }
@@ -345,19 +345,19 @@ bool mandel_per_image_bn()
 
     // g_delta_x_bn = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
     sub_bn(g_delta_x_bn, g_x_max_bn, g_x_3rd_bn);
-    div_a_bn_int(g_delta_x_bn, (U16) (g_logical_screen_x_dots - 1));
+    div_a_bn_int(g_delta_x_bn, static_cast<U16>(g_logical_screen_x_dots - 1));
 
     // g_delta_y_bn = (g_y_max_bn - g_y_3rd_bn)/(ydots-1)
     sub_bn(g_delta_y_bn, g_y_max_bn, g_y_3rd_bn);
-    div_a_bn_int(g_delta_y_bn, (U16) (g_logical_screen_y_dots - 1));
+    div_a_bn_int(g_delta_y_bn, static_cast<U16>(g_logical_screen_y_dots - 1));
 
     // g_delta2_x_bn = (g_x_3rd_bn - g_x_min_bn)/(ydots-1)
     sub_bn(g_delta2_x_bn, g_x_3rd_bn, g_x_min_bn);
-    div_a_bn_int(g_delta2_x_bn, (U16) (g_logical_screen_y_dots - 1));
+    div_a_bn_int(g_delta2_x_bn, static_cast<U16>(g_logical_screen_y_dots - 1));
 
     // g_delta2_y_bn = (g_y_3rd_bn - g_y_min_bn)/(xdots-1)
     sub_bn(g_delta2_y_bn, g_y_3rd_bn, g_y_min_bn);
-    div_a_bn_int(g_delta2_y_bn, (U16) (g_logical_screen_x_dots - 1));
+    div_a_bn_int(g_delta2_y_bn, static_cast<U16>(g_logical_screen_x_dots - 1));
 
     abs_bn(g_close_enough_bn, g_delta_x_bn);
     if (cmp_bn(abs_bn(bn_temp1, g_delta2_x_bn), g_close_enough_bn) > 0)
@@ -392,7 +392,7 @@ bool mandel_per_image_bn()
         return true;
     }
 
-    g_c_exponent = (int) g_params[2];
+    g_c_exponent = static_cast<int>(g_params[2]);
     switch (g_fractal_type)
     {
     case FractalType::JULIA:
@@ -402,7 +402,7 @@ bool mandel_per_image_bn()
 
     case FractalType::MANDEL_Z_POWER:
         init_big_pi();
-        if ((double) g_c_exponent == g_params[2] && g_c_exponent & 1) // odd exponents
+        if (static_cast<double>(g_c_exponent) == g_params[2] && g_c_exponent & 1) // odd exponents
         {
             g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         }
@@ -416,7 +416,7 @@ bool mandel_per_image_bn()
         init_big_pi();
         bf_to_bn(g_param_z_bn.x, g_bf_params[0]);
         bf_to_bn(g_param_z_bn.y, g_bf_params[1]);
-        if (g_c_exponent & 1 || g_params[3] != 0.0 || (double) g_c_exponent != g_params[2])
+        if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -424,7 +424,7 @@ bool mandel_per_image_bn()
 
     case FractalType::DIVIDE_BROT5:
         init_big_pi();
-        g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
+        g_c_exponent = -(static_cast<int>(g_params[0]) - 2); /* use negative here so only need it once */
         g_b_const = g_params[1] + 1.0e-20;
         break;
 
@@ -455,19 +455,19 @@ bool mandel_per_image_bf()
 
     // g_delta_x_bf = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
     sub_bf(g_delta_x_bf, g_bf_x_max, g_bf_x_3rd);
-    div_a_bf_int(g_delta_x_bf, (U16)(g_logical_screen_x_dots - 1));
+    div_a_bf_int(g_delta_x_bf, static_cast<U16>(g_logical_screen_x_dots - 1));
 
     // g_delta_y_bf = (g_bf_y_max - g_bf_y_3rd)/(ydots-1)
     sub_bf(g_delta_y_bf, g_bf_y_max, g_bf_y_3rd);
-    div_a_bf_int(g_delta_y_bf, (U16)(g_logical_screen_y_dots - 1));
+    div_a_bf_int(g_delta_y_bf, static_cast<U16>(g_logical_screen_y_dots - 1));
 
     // g_delta2_x_bf = (g_bf_x_3rd - g_bf_x_min)/(ydots-1)
     sub_bf(g_delta2_x_bf, g_bf_x_3rd, g_bf_x_min);
-    div_a_bf_int(g_delta2_x_bf, (U16)(g_logical_screen_y_dots - 1));
+    div_a_bf_int(g_delta2_x_bf, static_cast<U16>(g_logical_screen_y_dots - 1));
 
     // g_delta2_y_bf = (g_bf_y_3rd - g_bf_y_min)/(xdots-1)
     sub_bf(g_delta2_y_bf, g_bf_y_3rd, g_bf_y_min);
-    div_a_bf_int(g_delta2_y_bf, (U16)(g_logical_screen_x_dots - 1));
+    div_a_bf_int(g_delta2_y_bf, static_cast<U16>(g_logical_screen_x_dots - 1));
 
     abs_bf(g_close_enough_bf, g_delta_x_bf);
     if (cmp_bf(abs_bf(bf_temp1, g_delta2_x_bf), g_close_enough_bf) > 0)
@@ -497,7 +497,7 @@ bool mandel_per_image_bf()
     // the situations that otherwise are using standard_fractal().
     // calcmandfp() can currently handle invert, any rqlim, potflag
     // zmag, epsilon cross, and all the current outside options
-    g_c_exponent = (int)g_params[2];
+    g_c_exponent = static_cast<int>(g_params[2]);
     switch (g_fractal_type)
     {
     case FractalType::MANDEL:
@@ -519,7 +519,7 @@ bool mandel_per_image_bf()
             bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
         {
             // only allow integer values of real part
-            if (const int degree = (int) g_params[2]; degree > 2)
+            if (const int degree = static_cast<int>(g_params[2]); degree > 2)
             {
                 return mandel_z_power_perturbation_per_image();
             }
@@ -530,7 +530,7 @@ bool mandel_per_image_bf()
         }
 
         init_big_pi();
-        if ((double) g_c_exponent == g_params[2] && g_c_exponent & 1) // odd exponents
+        if (static_cast<double>(g_c_exponent) == g_params[2] && g_c_exponent & 1) // odd exponents
         {
             g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         }
@@ -544,7 +544,7 @@ bool mandel_per_image_bf()
         init_big_pi();
         copy_bf(g_param_z_bf.x, g_bf_params[0]);
         copy_bf(g_param_z_bf.y, g_bf_params[1]);
-        if (g_c_exponent & 1 || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
+        if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
         }
@@ -552,7 +552,7 @@ bool mandel_per_image_bf()
 
     case FractalType::DIVIDE_BROT5:
         init_big_pi();
-        g_c_exponent = -((int) g_params[0] - 2); /* use negative here so only need it once */
+        g_c_exponent = -(static_cast<int>(g_params[0]) - 2); /* use negative here so only need it once */
         g_b_const = g_params[1] + 1.0e-20;
         break;
 
@@ -571,16 +571,16 @@ int mandel_per_pixel_bn()
         return true;
     }
     // parm.x = g_x_min + col*delx + row*delx2
-    mult_bn_int(g_param_z_bn.x, g_delta_x_bn, (U16)g_col);
-    mult_bn_int(g_bn_tmp, g_delta2_x_bn, (U16)g_row);
+    mult_bn_int(g_param_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
+    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
     add_a_bn(g_param_z_bn.x, g_bn_tmp);
     add_a_bn(g_param_z_bn.x, g_x_min_bn);
 
     // parm.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bn is just used as a temporary variable
-    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, (U16)g_row);
-    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, (U16)g_col);
+    mult_bn_int(g_old_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
+    mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
     add_a_bn(g_old_z_bn.x, g_old_z_bn.y);
     sub_bn(g_param_z_bn.y, g_y_max_bn, g_old_z_bn.x);
 
@@ -624,16 +624,16 @@ int mandel_per_pixel_bf()
         return mandel_per_pixel();
     }
     // parm.x = g_x_min + col*delx + row*delx2
-    mult_bf_int(g_param_z_bf.x, g_delta_x_bf, (U16)g_col);
-    mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16)g_row);
+    mult_bf_int(g_param_z_bf.x, g_delta_x_bf, static_cast<U16>(g_col));
+    mult_bf_int(g_bf_tmp, g_delta2_x_bf, static_cast<U16>(g_row));
 
     add_a_bf(g_param_z_bf.x, g_bf_tmp);
     add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
     // parm.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bf is just used as a temporary variable
-    mult_bf_int(g_old_z_bf.x, g_delta_y_bf, (U16)g_row);
-    mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, (U16)g_col);
+    mult_bf_int(g_old_z_bf.x, g_delta_y_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, static_cast<U16>(g_col));
     add_a_bf(g_old_z_bf.x, g_old_z_bf.y);
     sub_bf(g_param_z_bf.y, g_bf_y_max, g_old_z_bf.x);
 
@@ -670,16 +670,16 @@ int mandel_per_pixel_bf()
 int julia_per_pixel_bn()
 {
     // old.x = g_x_min + col*delx + row*delx2
-    mult_bn_int(g_old_z_bn.x, g_delta_x_bn, (U16)g_col);
-    mult_bn_int(g_bn_tmp, g_delta2_x_bn, (U16)g_row);
+    mult_bn_int(g_old_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
+    mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
     add_a_bn(g_old_z_bn.x, g_bn_tmp);
     add_a_bn(g_old_z_bn.x, g_x_min_bn);
 
     // old.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bn is just used as a temporary variable
-    mult_bn_int(g_new_z_bn.x, g_delta_y_bn, (U16)g_row);
-    mult_bn_int(g_new_z_bn.y, g_delta2_y_bn, (U16)g_col);
+    mult_bn_int(g_new_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
+    mult_bn_int(g_new_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
     add_a_bn(g_new_z_bn.x, g_new_z_bn.y);
     sub_bn(g_old_z_bn.y, g_y_max_bn, g_new_z_bn.x);
 
@@ -697,16 +697,16 @@ int julia_per_pixel_bn()
 int julia_per_pixel_bf()
 {
     // old.x = g_x_min + col*delx + row*delx2
-    mult_bf_int(g_old_z_bf.x, g_delta_x_bf, (U16)g_col);
-    mult_bf_int(g_bf_tmp, g_delta2_x_bf, (U16)g_row);
+    mult_bf_int(g_old_z_bf.x, g_delta_x_bf, static_cast<U16>(g_col));
+    mult_bf_int(g_bf_tmp, g_delta2_x_bf, static_cast<U16>(g_row));
 
     add_a_bf(g_old_z_bf.x, g_bf_tmp);
     add_a_bf(g_old_z_bf.x, g_bf_x_min);
 
     // old.y = g_y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bf is just used as a temporary variable
-    mult_bf_int(g_new_z_bf.x, g_delta_y_bf, (U16)g_row);
-    mult_bf_int(g_new_z_bf.y, g_delta2_y_bf, (U16)g_col);
+    mult_bf_int(g_new_z_bf.x, g_delta_y_bf, static_cast<U16>(g_row));
+    mult_bf_int(g_new_z_bf.y, g_delta2_y_bf, static_cast<U16>(g_col));
     add_a_bf(g_new_z_bf.x, g_new_z_bf.y);
     sub_bf(g_old_z_bf.y, g_bf_y_max, g_new_z_bf.x);
 

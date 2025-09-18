@@ -625,11 +625,11 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
                 color = m_stack[i];
                 j = g_i_stop_pt.x - (i - g_start_pt.x);
                 m_stack[i] = m_stack[j];
-                m_stack[j] = (Byte)color;
+                m_stack[j] = static_cast<Byte>(color);
                 j += OLD_MAX_PIXELS;
                 color = m_stack[i + OLD_MAX_PIXELS];
                 m_stack[i + OLD_MAX_PIXELS] = m_stack[j];
-                m_stack[j] = (Byte)color;
+                m_stack[j] = static_cast<Byte>(color);
             }
         }
         for (int i = 0; i < m_half_block; ++i)
@@ -671,11 +671,11 @@ void SolidGuess::plot_block(int build_row, int x, int y, int color)
     {
         if (build_row == 0)
         {
-            fill_d_stack(x, x_lim, (Byte) color);
+            fill_d_stack(x, x_lim, static_cast<Byte>(color));
         }
         else
         {
-            fill_d_stack(x + OLD_MAX_PIXELS, x_lim + OLD_MAX_PIXELS, (Byte) color);
+            fill_d_stack(x + OLD_MAX_PIXELS, x_lim + OLD_MAX_PIXELS, static_cast<Byte>(color));
         }
         if (x >= g_start_pt.x)   // when x reduced for alignment, paint those dots too
         {

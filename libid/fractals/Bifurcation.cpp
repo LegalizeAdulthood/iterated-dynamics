@@ -95,15 +95,15 @@ Bifurcation::Bifurcation()
         }
     }
 
-    m_filter_cycles = g_param_z1.x <= 0 ? DEFAULT_FILTER : (long) g_param_z1.x;
+    m_filter_cycles = g_param_z1.x <= 0 ? DEFAULT_FILTER : static_cast<long>(g_param_z1.x);
     m_half_time_check = false;
-    if (g_periodicity_check && (unsigned long) g_max_iterations < m_filter_cycles)
+    if (g_periodicity_check && static_cast<unsigned long>(g_max_iterations) < m_filter_cycles)
     {
         m_filter_cycles = (m_filter_cycles - g_max_iterations + 1) / 2;
         m_half_time_check = true;
     }
 
-    g_init.y = (double) (g_y_max - g_i_stop_pt.y * g_delta_y); // bottom pixels
+    g_init.y = static_cast<double>(g_y_max - g_i_stop_pt.y * g_delta_y); // bottom pixels
 }
 
 void Bifurcation::suspend()
@@ -117,7 +117,7 @@ bool Bifurcation::iterate()
 {
     if (m_x <= g_i_stop_pt.x)
     {
-        g_rate = (double) (g_x_min + m_x * g_delta_x);
+        g_rate = static_cast<double>(g_x_min + m_x * g_delta_x);
         verhulst();        // calculate array once per column
 
         for (int y = g_i_stop_pt.y; y >= 0; y--) // should be iystop & >=0
@@ -163,7 +163,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
     {
         s_period.init();
         unsigned long counter;
-        for (counter = 0; counter < (unsigned long)g_max_iterations ; counter++)
+        for (counter = 0; counter < static_cast<unsigned long>(g_max_iterations) ; counter++)
         {
             if (g_cur_fractal_specific->orbit_calc())
             {
@@ -174,7 +174,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
                 break;
             }
         }
-        if (counter >= (unsigned long)g_max_iterations)   // if not periodic, go the distance
+        if (counter >= static_cast<unsigned long>(g_max_iterations))   // if not periodic, go the distance
         {
             for (counter = 0; counter < m_filter_cycles ; counter++)
             {
@@ -190,7 +190,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
     {
         s_period.init();
     }
-    for (unsigned long counter = 0UL; counter < (unsigned long)g_max_iterations ; counter++)
+    for (unsigned long counter = 0UL; counter < static_cast<unsigned long>(g_max_iterations) ; counter++)
     {
         if (g_cur_fractal_specific->orbit_calc())
         {
@@ -198,16 +198,16 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
         }
 
         // assign population value to Y coordinate in pixels
-        pixel_row = g_i_stop_pt.y - (int) ((g_population - g_init.y) / g_delta_y);
+        pixel_row = g_i_stop_pt.y - static_cast<int>((g_population - g_init.y) / g_delta_y);
 
         // if it's visible on the screen, save it in the column array
-        if (pixel_row <= (unsigned int)g_i_stop_pt.y)
+        if (pixel_row <= static_cast<unsigned int>(g_i_stop_pt.y))
         {
             m_verhulst[ pixel_row ] ++;
         }
         if (g_periodicity_check && s_period.periodic(counter))
         {
-            if (pixel_row <= (unsigned int)g_i_stop_pt.y)
+            if (pixel_row <= static_cast<unsigned int>(g_i_stop_pt.y))
             {
                 m_verhulst[ pixel_row ] --;
             }
@@ -221,7 +221,7 @@ void BifurcationPeriod::init()
     saved_inc = 1;
     saved_and = 1;
     saved_pop = -1.0;
-    close_enough = (double) g_delta_y / 8.0;
+    close_enough = static_cast<double>(g_delta_y) / 8.0;
 }
 
 // Bifurcation Population Periodicity Check

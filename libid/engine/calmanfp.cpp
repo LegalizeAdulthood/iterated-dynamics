@@ -186,23 +186,23 @@ over_bailout_87:
         // special_outside
         if (g_outside_color == REAL)
         {
-            g_color_iter += (long) g_new_z.x + 7;
+            g_color_iter += static_cast<long>(g_new_z.x) + 7;
         }
         else if (g_outside_color == IMAG)
         {
-            g_color_iter += (long) g_new_z.y + 7;
+            g_color_iter += static_cast<long>(g_new_z.y) + 7;
         }
         else if (g_outside_color == MULT && g_new_z.y != 0.0)
         {
-            g_color_iter = (long)((double) g_color_iter * (g_new_z.x/g_new_z.y));
+            g_color_iter = static_cast<long>(static_cast<double>(g_color_iter) * (g_new_z.x / g_new_z.y));
         }
         else if (g_outside_color == SUM)
         {
-            g_color_iter += (long)(g_new_z.x + g_new_z.y);
+            g_color_iter += static_cast<long>(g_new_z.x + g_new_z.y);
         }
         else if (g_outside_color == ATAN)
         {
-            g_color_iter = (long) std::abs(std::atan2(g_new_z.y, g_new_z.x)*g_atan_colors/PI);
+            g_color_iter = static_cast<long>(std::abs(std::atan2(g_new_z.y, g_new_z.x) * g_atan_colors / PI));
         }
         // check_color
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)

@@ -22,7 +22,7 @@ namespace id::fractals
 int burning_ship_orbit()
 {
     DComplex q;
-    const int degree = (int) g_params[2];
+    const int degree = static_cast<int>(g_params[2]);
     q.x = g_init.x;
     q.y = g_init.y;
     if (degree == 2)
@@ -62,7 +62,7 @@ static double diff_abs(const double c, const double d)
 void burning_ship_perturb(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0)
 {
-    const int degree = (int) g_params[2];
+    const int degree = static_cast<int>(g_params[2]);
     const double r{ref.real()};
     const double i{ref.imag()};
     const double r2 = r * r;
@@ -180,7 +180,7 @@ void burning_ship_perturb(
 
 void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 {
-    const int degree = (int) g_params[2];
+    const int degree = static_cast<int>(g_params[2]);
     if (degree == 2)
     {
         const double real_sqr = sqr(z.real());
@@ -206,7 +206,7 @@ void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double
 
 void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
 {
-    const int degree = (int) g_params[2];
+    const int degree = static_cast<int>(g_params[2]);
     BigStackSaver saved;
     BigFloat temp_real = alloc_stack(g_r_bf_length + 2);
     BigFloat real_sqr = alloc_stack(g_r_bf_length + 2);
@@ -239,7 +239,7 @@ void burning_ship_ref_pt_bf(const BFComplex &center, BFComplex &z)
 
 int burning_ship_bf_fractal()
 {
-    const int degree = (int) g_params[2];
+    const int degree = static_cast<int>(g_params[2]);
     BigStackSaver saved;
 
     if (degree == 2) // Burning Ship

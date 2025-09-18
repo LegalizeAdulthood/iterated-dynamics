@@ -59,9 +59,10 @@ unsigned int g_diffusion_bits{};     // number of bits in the counter
 unsigned long g_diffusion_counter{}; // the diffusion counter
 unsigned long g_diffusion_limit{};   // the diffusion counter
 
+static const double LOG2{std::log(2.0)};
+
 int diffusion_scan()
 {
-    double log2 = std::log(2.0);
 
     g_passes = Passes::DIFFUSION;
 
@@ -69,15 +70,19 @@ int diffusion_scan()
     // fit any 32 bit architecture, the maximum limit for this case would
     // be 65536x65536
 
-    g_diffusion_bits = (unsigned)(std::min(std::log(static_cast<double>(g_i_stop_pt.y-g_i_start_pt.y+1)), std::log(static_cast<double>(g_i_stop_pt.x-g_i_start_pt.x+1)))/log2);
+    g_diffusion_bits =
+        static_cast<unsigned>(std::min( //
+                                  std::log(static_cast<double>(g_i_stop_pt.y - g_i_start_pt.y + 1)),
+                                  std::log(static_cast<double>(g_i_stop_pt.x - g_i_start_pt.x + 1))) /
+            LOG2);
     g_diffusion_bits <<= 1; // double for two axes
     g_diffusion_limit = 1UL << g_diffusion_bits;
 
     if (diffusion_engine() == -1)
     {
         add_work_list(g_start_pt.x, g_start_pt.y, g_stop_pt.x, g_stop_pt.y, g_start_pt.x,
-            (int) (g_diffusion_counter >> 16),    // high,
-            (int) (g_diffusion_counter & 0xffff), // low order words
+            static_cast<int>(g_diffusion_counter >> 16),    // high,
+            static_cast<int>(g_diffusion_counter & 0xffff), // low order words
             g_work_symmetry);
         return -1;
     }
@@ -142,8 +147,8 @@ static int diffusion_engine()
     int orig_row;
     int s = 1 << (g_diffusion_bits/2); // size of the square
     // number of tiles to build in x and y dirs
-    int nx = (int) floor(static_cast<double>((g_i_stop_pt.x - g_i_start_pt.x + 1) / s));
-    int ny = (int) floor(static_cast<double>((g_i_stop_pt.y - g_i_start_pt.y + 1) / s));
+    int nx = static_cast<int>(floor(static_cast<double>((g_i_stop_pt.x - g_i_start_pt.x + 1) / s)));
+    int ny = static_cast<int>(floor(static_cast<double>((g_i_stop_pt.y - g_i_start_pt.y + 1) / s)));
     // made this to complete the area that is not
     // a square with sides like 2 ** n
     // what is left on the last tile to draw
@@ -158,7 +163,7 @@ static int diffusion_engine()
     else
     {
         // yybegin and passes contain data for resuming the type:
-        g_diffusion_counter = (long) (unsigned) g_begin_pt.y << 16 | (unsigned) g_work_pass;
+        g_diffusion_counter = static_cast<long>(static_cast<unsigned>(g_begin_pt.y)) << 16 | static_cast<unsigned>(g_work_pass);
     }
 
     int dif_offset = 12 - g_diffusion_bits / 2; // offset to adjust coordinates
@@ -221,7 +226,8 @@ static int diffusion_engine()
         {
             // size of the block being filled
             int sq_size =
-                1 << ((int) (g_diffusion_bits - (int) (std::log(g_diffusion_counter + 0.5) / log2) - 1) / 2);
+                1 << (static_cast<int>(g_diffusion_bits -
+                                    static_cast<int>(std::log(g_diffusion_counter + 0.5) / log2) - 1) / 2);
 
             count_to_int(g_diffusion_counter, orig_col, orig_row, dif_offset);
 

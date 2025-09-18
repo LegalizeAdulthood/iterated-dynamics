@@ -36,7 +36,7 @@ void setup_log_table()
     {
         // new log function
         s_lf = g_log_map_flag > 1 ? g_log_map_flag : 0;
-        if (s_lf >= (unsigned long) g_log_map_table_max_size)
+        if (s_lf >= static_cast<unsigned long>(g_log_map_table_max_size))
         {
             s_lf = g_log_map_table_max_size - 1;
         }
@@ -51,7 +51,7 @@ void setup_log_table()
     {
         // sqrt function
         s_lf = 0 - g_log_map_flag;
-        if (s_lf >= (unsigned long) g_log_map_table_max_size)
+        if (s_lf >= static_cast<unsigned long>(g_log_map_table_max_size))
         {
             s_lf = g_log_map_table_max_size - 1;
         }
@@ -80,23 +80,23 @@ long log_table_calc(long color_iter)
     }
     if (!g_log_map_table.empty() && !g_log_map_calculate)
     {
-        return g_log_map_table[(long)std::min(color_iter, g_log_map_table_max_size)];
+        return g_log_map_table[std::min(color_iter, g_log_map_table_max_size)];
     }
 
     if (g_log_map_flag > 0)
     {
         // new log function
-        if ((unsigned long)color_iter <= s_lf + 1)
+        if (static_cast<unsigned long>(color_iter) <= s_lf + 1)
         {
             ret = 1;
         }
         else if ((color_iter - s_lf)/std::log(static_cast<double>(color_iter - s_lf)) <= s_mlf)
         {
-            ret = (long)(color_iter - s_lf);
+            ret = static_cast<long>(color_iter - s_lf);
         }
         else
         {
-            ret = (long)(s_mlf * std::log(static_cast<double>(color_iter - s_lf))) + 1;
+            ret = static_cast<long>(s_mlf * std::log(static_cast<double>(color_iter - s_lf))) + 1;
         }
     }
     else if (g_log_map_flag == -1)
@@ -108,23 +108,23 @@ long log_table_calc(long color_iter)
         }
         else
         {
-            ret = (long)(s_mlf * std::log(static_cast<double>(color_iter))) + 1;
+            ret = static_cast<long>(s_mlf * std::log(static_cast<double>(color_iter))) + 1;
         }
     }
     else if (g_log_map_flag <= -2)
     {
         // sqrt function
-        if ((unsigned long)color_iter <= s_lf)
+        if (static_cast<unsigned long>(color_iter) <= s_lf)
         {
             ret = 1;
         }
-        else if (color_iter - s_lf <= (unsigned long)(s_mlf * s_mlf))
+        else if (color_iter - s_lf <= static_cast<unsigned long>(s_mlf * s_mlf))
         {
-            ret = (long)(color_iter - s_lf + 1);
+            ret = static_cast<long>(color_iter - s_lf + 1);
         }
         else
         {
-            ret = (long)(s_mlf * std::sqrt(static_cast<double>(color_iter - s_lf))) + 1;
+            ret = static_cast<long>(s_mlf * std::sqrt(static_cast<double>(color_iter - s_lf))) + 1;
         }
     }
     return ret;

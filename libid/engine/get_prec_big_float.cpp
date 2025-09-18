@@ -71,11 +71,11 @@ int get_prec_bf(ResolutionFlag flag)
 
     // bfxxdel = (bfxmax - bfx3rd)/(xdots-1)
     sub_bf(bf_x_delta, g_bf_x_max, g_bf_x_3rd);
-    div_a_bf_int(bf_x_delta, (U16)res);
+    div_a_bf_int(bf_x_delta, static_cast<U16>(res));
 
     // bfyydel2 = (bfy3rd - bfymin)/(xdots-1)
     sub_bf(bf_y_delta2, g_bf_y_3rd, g_bf_y_min);
-    div_a_bf_int(bf_y_delta2, (U16)res);
+    div_a_bf_int(bf_y_delta2, static_cast<U16>(res));
 
     if (flag == ResolutionFlag::CURRENT)
     {
@@ -84,11 +84,11 @@ int get_prec_bf(ResolutionFlag flag)
 
     // bfyydel = (bfymax - bfy3rd)/(ydots-1)
     sub_bf(bf_y_delta, g_bf_y_max, g_bf_y_3rd);
-    div_a_bf_int(bf_y_delta, (U16)res);
+    div_a_bf_int(bf_y_delta, static_cast<U16>(res));
 
     // bfxxdel2 = (bfx3rd - bfxmin)/(ydots-1)
     sub_bf(bf_x_delta2, g_bf_x_3rd, g_bf_x_min);
-    div_a_bf_int(bf_x_delta2, (U16)res);
+    div_a_bf_int(bf_x_delta2, static_cast<U16>(res));
 
     abs_a_bf(add_bf(del1, bf_x_delta, bf_x_delta2));
     abs_a_bf(add_bf(del2, bf_y_delta, bf_y_delta2));

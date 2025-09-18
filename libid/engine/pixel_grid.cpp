@@ -47,7 +47,7 @@ static double dx_pixel_grid()
 // Real component, calculation version - does not require arrays
 static double dx_pixel_calc()
 {
-    return (double)(g_x_min + g_col*g_delta_x + g_row*g_delta_x2);
+    return static_cast<double>(g_x_min + g_col * g_delta_x + g_row * g_delta_x2);
 }
 
 // Imaginary component, grid lookup version - requires dy0/dy1 arrays
@@ -59,7 +59,7 @@ static double dy_pixel_grid()
 // Imaginary component, calculation version - does not require arrays
 static double dy_pixel_calc()
 {
-    return (double)(g_y_max - g_row*g_delta_y - g_col*g_delta_y2);
+    return static_cast<double>(g_y_max - g_row * g_delta_y - g_col * g_delta_y2);
 }
 
 double (*g_dx_pixel)(){dx_pixel_calc};
@@ -109,13 +109,13 @@ void fill_dx_array()
         g_grid_x1[0] = 0;
         for (int i = 1; i < g_logical_screen_x_dots; i++)
         {
-            g_grid_x0[i] = (double)(g_grid_x0[0] + i*g_delta_x);
-            g_grid_y1[i] = (double)(g_grid_y1[0] - i*g_delta_y2);
+            g_grid_x0[i] = static_cast<double>(g_grid_x0[0] + i * g_delta_x);
+            g_grid_y1[i] = static_cast<double>(g_grid_y1[0] - i * g_delta_y2);
         }
         for (int i = 1; i < g_logical_screen_y_dots; i++)
         {
-            g_grid_y0[i] = (double)(g_grid_y0[0] - i*g_delta_y);
-            g_grid_x1[i] = (double)(g_grid_x1[0] + i*g_delta_x2);
+            g_grid_y0[i] = static_cast<double>(g_grid_y0[0] - i * g_delta_y);
+            g_grid_x1[i] = static_cast<double>(g_grid_x1[0] + i * g_delta_x2);
         }
     }
 }

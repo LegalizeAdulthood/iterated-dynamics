@@ -143,7 +143,7 @@ int PertEngine::calculate_one_frame()
 
             set_random_seed();
 
-            const int index{(int) ((double) std::rand() / RAND_MAX * m_remaining_point_count)};
+            const int index{static_cast<int>(static_cast<double>(std::rand()) / RAND_MAX * m_remaining_point_count)};
             Point pt{m_points_remaining[index]};
             // Get the complex point at the chosen reference point
             double delta_real = magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius;
@@ -193,12 +193,12 @@ int PertEngine::calculate_one_frame()
                 return -1;
             }
             // Everything else in this loop is just for updating the progress counter.
-            double progress = (double) i / m_remaining_point_count;
-            if (int(progress * 100) != last_checked)
+            double progress = static_cast<double>(i) / m_remaining_point_count;
+            if (static_cast<int>(progress * 100) != last_checked)
             {
-                last_checked = int(progress * 100);
+                last_checked = static_cast<int>(progress * 100);
                 m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
-                    std::to_string(int(progress * 100)) + "%)";
+                    std::to_string(static_cast<int>(progress * 100)) + "%)";
             }
         }
 
@@ -320,7 +320,8 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
             case ZMAG:
                 if (iteration == g_max_iterations)
                 {
-                    index = (int) ((w.real() * w.real() + w.imag() + w.imag()) * (g_max_iterations >> 1) + 1);
+                    index = static_cast<int>(
+                        (w.real() * w.real() + w.imag() + w.imag()) * (g_max_iterations >> 1) + 1);
                 }
                 else
                 {
@@ -335,7 +336,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                 }
                 else
                 {
-                    index = iteration + (long) w.real() + 7;
+                    index = iteration + static_cast<long>(w.real()) + 7;
                 }
                 break;
 
@@ -346,7 +347,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                 }
                 else
                 {
-                    index = iteration + (long) w.imag() + 7;
+                    index = iteration + static_cast<long>(w.imag()) + 7;
                 }
                 break;
 
@@ -357,7 +358,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                 }
                 else if (w.imag())
                 {
-                    index = (long) ((double) iteration * (w.real() / w.imag()));
+                    index = static_cast<long>(static_cast<double>(iteration) * (w.real() / w.imag()));
                 }
                 else
                 {
@@ -372,7 +373,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                 }
                 else
                 {
-                    index = iteration + (long) (w.real() + w.imag());
+                    index = iteration + static_cast<long>(w.real() + w.imag());
                 }
                 break;
 
@@ -383,7 +384,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                 }
                 else
                 {
-                    index = (long) std::abs(atan2(w.imag(), w.real()) * 180.0 / PI);
+                    index = static_cast<long>(std::abs(atan2(w.imag(), w.real()) * 180.0 / PI));
                 }
                 break;
 
@@ -424,13 +425,13 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
                 case ZMAG:
                     if (iteration == g_max_iterations)
                     {
-                        index = (int) (mag_squared(w) * (g_max_iterations >> 1) + 1);
+                        index = static_cast<int>(mag_squared(w) * (g_max_iterations >> 1) + 1);
                     }
                     break;
                 case BOF60:
                     if (iteration == g_max_iterations)
                     {
-                        index = (int) (std::sqrt(min_orbit) * 75.0);
+                        index = static_cast<int>(std::sqrt(min_orbit) * 75.0);
                     }
                     break;
                 case BOF61:
@@ -475,12 +476,12 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
         // Everything else in this loop is just for updating the progress counter.
-        double progress = (double) i / max_iteration;
-        if (int(progress * 100) != last_checked)
+        double progress = static_cast<double>(i) / max_iteration;
+        if (static_cast<int>(progress * 100) != last_checked)
         {
-            last_checked = int(progress * 100);
+            last_checked = static_cast<int>(progress * 100);
             m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
-                std::to_string(int(progress * 100)) + "%)";
+                std::to_string(static_cast<int>(progress * 100)) + "%)";
         }
 
         float_to_bf(tmp_bf, GLITCH_TOLERANCE);
@@ -516,12 +517,12 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, int ma
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
         // Everything else in this loop is just for updating the progress counter.
-        double progress = (double) i / max_iteration;
-        if (int(progress * 100) != last_checked)
+        double progress = static_cast<double>(i) / max_iteration;
+        if (static_cast<int>(progress * 100) != last_checked)
         {
-            last_checked = int(progress * 100);
+            last_checked = static_cast<int>(progress * 100);
             m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
-                std::to_string(int(progress * 100)) + "%)";
+                std::to_string(static_cast<int>(progress * 100)) + "%)";
         }
 
         m_perturbation_tolerance_check[i] = mag_squared(z * GLITCH_TOLERANCE);

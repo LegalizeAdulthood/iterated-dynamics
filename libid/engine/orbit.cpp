@@ -55,13 +55,13 @@ static void plot_d_orbit(double dx, double dy, int color)
     {
         return;
     }
-    int i = (int) (dy * g_plot_mx1 - dx * g_plot_mx2);
+    int i = static_cast<int>(dy * g_plot_mx1 - dx * g_plot_mx2);
     i += g_logical_screen_x_offset;
     if (i < 0 || i >= g_screen_x_dots)
     {
         return;
     }
-    int j = (int) (dx * g_plot_my1 - dy * g_plot_my2);
+    int j = static_cast<int>(dx * g_plot_my1 - dy * g_plot_my2);
     j += g_logical_screen_y_offset;
     if (j < 0 || j >= g_screen_y_dots)
     {

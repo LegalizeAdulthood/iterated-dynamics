@@ -31,7 +31,7 @@ namespace id::fractals
 // Generate Random Number 0 <= r < n
 static int random(int n)
 {
-    return (int) ((long) std::rand() * (long) n >> 15);
+    return static_cast<int>(static_cast<long>(std::rand()) * static_cast<long>(n) >> 15);
 }
 
 #define XO              (g_logical_screen_x_dots/2)
@@ -97,7 +97,7 @@ Ant::Ant()
         max_ants = MAX_ANTS;
         g_params[2] = MAX_ANTS;
     }
-    count_end = max_pts / (long) INNER_LOOP;
+    count_end = max_pts / static_cast<long>(INNER_LOOP);
 
     type = static_cast<AntType>(g_params[3]);
     if (type < AntType::ONE || type > AntType::TWO)
@@ -114,7 +114,7 @@ Ant::Ant()
         return buff.str();
     };
     rule_text = get_rule(g_params[0]);
-    rule_len = (int) rule_text.length();
+    rule_len = static_cast<int>(rule_text.length());
     if (rule_len > 1)
     {
         // if rule_len == 0 random rule
@@ -142,7 +142,7 @@ Ant::Ant()
     }
     if (g_params[5] != 0.0 && g_params[5] != 1.0)
     {
-        g_random_seed = (int) g_params[5];
+        g_random_seed = static_cast<int>(g_params[5]);
     }
 
     set_random_seed();

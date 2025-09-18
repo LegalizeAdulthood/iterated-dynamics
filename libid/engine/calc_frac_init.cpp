@@ -246,10 +246,10 @@ init_restart:
     else
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
-        g_delta_x  = (LDouble)(g_x_max - g_x_3rd) / (LDouble)g_logical_screen_x_size_dots; // calculate stepsizes
-        g_delta_y  = (LDouble)(g_y_max - g_y_3rd) / (LDouble)g_logical_screen_y_size_dots;
-        g_delta_x2 = (LDouble)(g_x_3rd - g_x_min) / (LDouble)g_logical_screen_y_size_dots;
-        g_delta_y2 = (LDouble)(g_y_3rd - g_y_min) / (LDouble)g_logical_screen_x_size_dots;
+        g_delta_x  = static_cast<LDouble>(g_x_max - g_x_3rd) / static_cast<LDouble>(g_logical_screen_x_size_dots); // calculate stepsizes
+        g_delta_y  = static_cast<LDouble>(g_y_max - g_y_3rd) / static_cast<LDouble>(g_logical_screen_y_size_dots);
+        g_delta_x2 = static_cast<LDouble>(g_x_3rd - g_x_min) / static_cast<LDouble>(g_logical_screen_y_size_dots);
+        g_delta_y2 = static_cast<LDouble>(g_y_3rd - g_y_min) / static_cast<LDouble>(g_logical_screen_x_size_dots);
         fill_dx_array();
     }
 
@@ -275,13 +275,13 @@ expand_retry:
            the limit of resolution */
         for (int i = 1; i < g_logical_screen_x_dots; i++)
         {
-            dx0 = dx0 + (double) g_delta_x;
-            dy1 = dy1 - (double) g_delta_y2;
+            dx0 = dx0 + static_cast<double>(g_delta_x);
+            dy1 = dy1 - static_cast<double>(g_delta_y2);
         }
         for (int i = 1; i < g_logical_screen_y_dots; i++)
         {
-            dy0 = dy0 - (double) g_delta_y;
-            dx1 = dx1 + (double) g_delta_x2;
+            dy0 = dy0 - static_cast<double>(g_delta_y);
+            dx1 = dx1 + static_cast<double>(g_delta_x2);
         }
         if (g_bf_math == BFMathType::NONE) // redundant test, leave for now
         {
@@ -344,12 +344,12 @@ expand_retry:
         fill_dx_array(); // fill up the x, y grids
 
         // re-set corners to match reality
-        g_x_max = (double) (g_x_min + (g_logical_screen_x_dots - 1) * g_delta_x +
-            (g_logical_screen_y_dots - 1) * g_delta_x2);
-        g_y_min = (double) (g_y_max - (g_logical_screen_y_dots - 1) * g_delta_y -
-            (g_logical_screen_x_dots - 1) * g_delta_y2);
-        g_x_3rd = (double) (g_x_min + (g_logical_screen_y_dots - 1) * g_delta_x2);
-        g_y_3rd = (double) (g_y_max - (g_logical_screen_y_dots - 1) * g_delta_y);
+        g_x_max = static_cast<double>(
+            g_x_min + (g_logical_screen_x_dots - 1) * g_delta_x + (g_logical_screen_y_dots - 1) * g_delta_x2);
+        g_y_min = static_cast<double>(
+            g_y_max - (g_logical_screen_y_dots - 1) * g_delta_y - (g_logical_screen_x_dots - 1) * g_delta_y2);
+        g_x_3rd = static_cast<double>(g_x_min + (g_logical_screen_y_dots - 1) * g_delta_x2);
+        g_y_3rd = static_cast<double>(g_y_max - (g_logical_screen_y_dots - 1) * g_delta_y);
         // end else
     } // end if not plasma
 
@@ -368,13 +368,16 @@ expand_retry:
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
-    double tmp = (double)((0.0-g_delta_y2) * g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots
-                     - (g_x_max-g_x_3rd) * (g_y_3rd-g_y_max));
+    double tmp = static_cast<double>(
+        (0.0 - g_delta_y2) * g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots -
+        (g_x_max - g_x_3rd) * (g_y_3rd - g_y_max));
     if (tmp != 0)
     {
-        g_plot_mx1 = (double)(g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / tmp);
+        g_plot_mx1 = static_cast<double>(
+            g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / tmp);
         g_plot_mx2 = (g_y_3rd-g_y_max) * g_logical_screen_x_size_dots / tmp;
-        g_plot_my1 = (double)((0.0-g_delta_y2) * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / tmp);
+        g_plot_my1 = static_cast<double>(
+            (0.0 - g_delta_y2) * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / tmp);
         g_plot_my2 = (g_x_max-g_x_3rd) * g_logical_screen_y_size_dots / tmp;
     }
     if (g_bf_math == BFMathType::NONE)

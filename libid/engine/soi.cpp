@@ -368,16 +368,16 @@ scan:
                     {
                         break;
                     }
-                    g_plot(z, y, (int)(help_color&255));
+                    g_plot(z, y, static_cast<int>(help_color & 255));
                 }
 
                 if (save_x < z)
                 {
-                    put_hor_line(save_x, y, z, (int)(save_color&255));
+                    put_hor_line(save_x, y, z, static_cast<int>(save_color & 255));
                 }
                 else
                 {
-                    g_plot(save_x, y, (int)(save_color&255));
+                    g_plot(save_x, y, static_cast<int>(save_color & 255));
                 }
 
                 save_x = x;
@@ -398,16 +398,16 @@ scan:
                     break;
                 }
 
-                g_plot(z, y, (int)(help_color&255));
+                g_plot(z, y, static_cast<int>(help_color & 255));
             }
 
             if (save_x < z)
             {
-                put_hor_line(save_x, y, z, (int)(save_color&255));
+                put_hor_line(save_x, y, z, static_cast<int>(save_color & 255));
             }
             else
             {
-                g_plot(save_x, y, (int)(save_color&255));
+                g_plot(save_x, y, static_cast<int>(save_color & 255));
             }
         }
 
@@ -774,10 +774,10 @@ void soi()
     g_max_rhombus_depth = 0;
     if (g_bf_math != BFMathType::NONE)
     {
-        xx_min_l = (double)bf_to_float(g_bf_x_min);
-        yy_min_l = (double)bf_to_float(g_bf_y_min);
-        xx_max_l = (double)bf_to_float(g_bf_x_max);
-        yy_max_l = (double)bf_to_float(g_bf_y_max);
+        xx_min_l = static_cast<double>(bf_to_float(g_bf_x_min));
+        yy_min_l = static_cast<double>(bf_to_float(g_bf_y_min));
+        xx_max_l = static_cast<double>(bf_to_float(g_bf_x_max));
+        yy_max_l = static_cast<double>(bf_to_float(g_bf_y_max));
     }
     else
     {
