@@ -73,7 +73,7 @@ static void show_speed_string(
             j = static_cast<int>(SPEED_PROMPT.length());
         }
         std::strcpy(buf, speed_string);
-        int i = (int) std::strlen(buf);
+        int i = static_cast<int>(std::strlen(buf));
         while (i < 30)
         {
             buf[i++] = ' ';
@@ -81,7 +81,7 @@ static void show_speed_string(
         buf[i] = 0;
         driver_put_string(speed_row, 16+j, C_CHOICE_SP_INSTR, " ");
         driver_put_string(speed_row, 17+j, C_CHOICE_SP_KEYIN, buf);
-        driver_move_cursor(speed_row, 17+j+(int) std::strlen(speed_string));
+        driver_move_cursor(speed_row, 17+j+ static_cast<int>(std::strlen(speed_string)));
     }
     else
     {
@@ -96,7 +96,7 @@ static void process_speed_string(char *speed_string, //
     int num_choices,                                 //
     bool is_unsorted)
 {
-    int i = (int) std::strlen(speed_string);
+    int i = static_cast<int>(std::strlen(speed_string));
     if (key == 8 && i > 0)   // backspace
     {
         speed_string[--i] = 0;
@@ -104,7 +104,7 @@ static void process_speed_string(char *speed_string, //
     if (33 <= key && key <= 126 && i < 30)
     {
         key = std::tolower(key);
-        speed_string[i] = (char)key;
+        speed_string[i] = static_cast<char>(key);
         speed_string[++i] = 0;
     }
     if (i > 0)
@@ -180,7 +180,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
     // preset current to passed string
-    const int speed_len = speed_string == nullptr ? 0 : (int) std::strlen(speed_string);
+    const int speed_len = speed_string == nullptr ? 0 : static_cast<int>(std::strlen(speed_string));
     if (speed_len > 0)
     {
         current = 0;
@@ -252,7 +252,7 @@ int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, con
     {
         for (int i = 0; i < num_choices; ++i)
         {
-            const int len = (int) std::strlen(choices[i]);
+            const int len = static_cast<int>(std::strlen(choices[i]));
             col_width = std::max(len, col_width);
         }
     }

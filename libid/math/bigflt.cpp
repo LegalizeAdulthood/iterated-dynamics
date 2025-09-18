@@ -1377,7 +1377,7 @@ S16 adjust_bf_add(BigFloat n1, BigFloat n2)
 BigFloat max_bf(BigFloat r)
 {
     int_to_bf(r, 1);
-    BIG_SET16(r+g_bf_length, (S16)(LDBL_MAX_EXP/8));
+    BIG_SET16(r+g_bf_length, static_cast<S16>(LDBL_MAX_EXP/8));
     return r;
 }
 
@@ -1684,7 +1684,7 @@ BigFloat unsafe_full_mult_bf(BigFloat r, BigFloat n1, BigFloat n2)
     S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
     S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
     // add exp's
-    BIG_SET_S16(r_exp, (S16)(BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp)));
+    BIG_SET_S16(r_exp, static_cast<S16>(BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp)));
 
     int bnl = g_bn_length;
     g_bn_length = g_bf_length;

@@ -422,9 +422,9 @@ static bool get_light_params()
         g_haze = std::max(g_haze, 0);
         g_light_name = builder.read_string();
         /* In case light_name conflicts with an existing name it is checked again in line3d */
-        g_background_color[0] = (char)(builder.read_int_number() % 255);
-        g_background_color[1] = (char)(builder.read_int_number() % 255);
-        g_background_color[2] = (char)(builder.read_int_number() % 255);
+        g_background_color[0] = static_cast<char>(builder.read_int_number() % 255);
+        g_background_color[1] = static_cast<char>(builder.read_int_number() % 255);
+        g_background_color[2] = static_cast<char>(builder.read_int_number() % 255);
         g_targa_overlay = builder.read_yes_no();
     }
     return false;

@@ -265,10 +265,10 @@ BigNum str_to_bn(BigNum r, char *s)
 
     if (std::strchr(s, '.') != nullptr) // is there a decimal point?
     {
-        int l = (int) std::strlen(s) - 1;      // start with the last digit
+        int l = static_cast<int>(std::strlen(s)) - 1;      // start with the last digit
         while (s[l] >= '0' && s[l] <= '9') // while a digit
         {
-            *ones_byte = (Byte)(s[l--] - '0');
+            *ones_byte = static_cast<Byte>(s[l--] - '0');
             div_a_bn_int(r, 10);
         }
 
@@ -279,10 +279,10 @@ BigNum str_to_bn(BigNum r, char *s)
             {
                 // only 1, 2, or 4 are allowed
             case 1:
-                *ones_byte = (Byte)value;
+                *ones_byte = static_cast<Byte>(value);
                 break;
             case 2:
-                BIG_SET16(ones_byte, (U16)value);
+                BIG_SET16(ones_byte, static_cast<U16>(value));
                 break;
             case 4:
                 BIG_SET32(ones_byte, value);
@@ -297,10 +297,10 @@ BigNum str_to_bn(BigNum r, char *s)
         {
             // only 1, 2, or 4 are allowed
         case 1:
-            *ones_byte = (Byte)value;
+            *ones_byte = static_cast<Byte>(value);
             break;
         case 2:
-            BIG_SET16(ones_byte, (U16)value);
+            BIG_SET16(ones_byte, static_cast<U16>(value));
             break;
         case 4:
             BIG_SET32(ones_byte, value);
@@ -380,7 +380,7 @@ char *unsafe_bn_to_str(char *s, BigNum r, int dec)
         break;
     }
     strcpy(s, std::to_string(value).c_str());
-    l = (int) std::strlen(s);
+    l = static_cast<int>(std::strlen(s));
     s[l++] = '.';
     for (int d = 0; d < dec; d++)
     {
@@ -390,7 +390,7 @@ char *unsafe_bn_to_str(char *s, BigNum r, int dec)
         {
             break;
         }
-        s[l++] = (Byte)(*ones_byte + '0');
+        s[l++] = static_cast<char>(*ones_byte + '0');
     }
     s[l] = '\0'; // don't forget nul char
 
@@ -408,10 +408,10 @@ BigNum int_to_bn(BigNum r, long value)
     {
         // only 1, 2, or 4 are allowed
     case 1:
-        *ones_byte = (Byte)value;
+        *ones_byte = static_cast<Byte>(value);
         break;
     case 2:
-        BIG_SET16(ones_byte, (U16)value);
+        BIG_SET16(ones_byte, static_cast<U16>(value));
         break;
     case 4:
         BIG_SET32(ones_byte, value);
@@ -464,22 +464,22 @@ BigNum float_to_bn(BigNum r, LDouble f)
     {
         // only 1, 2, or 4 are allowed
     case 1:
-        *ones_byte = (Byte)f;
+        *ones_byte = static_cast<Byte>(f);
         break;
     case 2:
-        BIG_SET16(ones_byte, (U16)f);
+        BIG_SET16(ones_byte, static_cast<U16>(f));
         break;
     case 4:
-        BIG_SET32(ones_byte, (U32)f);
+        BIG_SET32(ones_byte, static_cast<U32>(f));
         break;
     }
 
-    f -= (long)f; // keep only the decimal part
+    f -= static_cast<long>(f); // keep only the decimal part
     for (int i = g_bn_length-g_int_length-1; i >= 0 && f != 0.0; i--)
     {
         f *= 256;
-        r[i] = (Byte)f;  // keep use the integer part
-        f -= (Byte)f; // now throw away the integer part
+        r[i] = static_cast<Byte>(f);  // keep use the integer part
+        f -= static_cast<Byte>(f); // now throw away the integer part
     }
 
     if (sign_flag)
@@ -570,7 +570,7 @@ BigNum unsafe_inv_bn(BigNum r, BigNum n)
     // orig_bntmp1        = g_bn_tmp1;
 
     // calculate new starting values
-    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -758,7 +758,7 @@ BigNum sqrt_bn(BigNum r, BigNum n)
     BigNum orig_n = n;
 
     // calculate new starting values
-    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -891,7 +891,7 @@ BigNum unsafe_ln_bn(BigNum r, BigNum n)
     int_to_bn(g_bn_tmp4, 1); // set before setting new values
 
     // calculate new starting values
-    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -1157,7 +1157,7 @@ BigNum unsafe_atan_bn(BigNum r, BigNum n)
     BigNum orig_bn_tmp3 = g_bn_tmp3;
 
     // calculate new starting values
-    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 

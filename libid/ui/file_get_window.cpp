@@ -521,7 +521,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     DblCoords tr;
     DblCoords bl;
     DblCoords br;
-    double too_big = std::sqrt(sqr((double) g_screen_x_dots) + sqr((double) g_screen_y_dots)) * 1.5;
+    double too_big = std::sqrt(sqr(static_cast<double>(g_screen_x_dots)) + sqr(static_cast<double>(g_screen_y_dots))) * 1.5;
     // arbitrary value... stops browser zooming out too far
     int corner_count = 0;
     bool cant_see = false;
@@ -613,8 +613,8 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         tl.y = info->y_max;
         transform(&tl);
     }
-    top_left.x = (int) std::lround(tl.x);
-    top_left.y = (int) std::lround(tl.y);
+    top_left.x = static_cast<int>(std::lround(tl.x));
+    top_left.y = static_cast<int>(std::lround(tl.y));
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -637,8 +637,8 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         tr.y = info->y_max +(info->y_min-info->y3rd);
         transform(&tr);
     }
-    top_right.x = (int) std::lround(tr.x);
-    top_right.y = (int) std::lround(tr.y);
+    top_right.x = static_cast<int>(std::lround(tr.x));
+    top_right.y = static_cast<int>(std::lround(tr.y));
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -659,8 +659,8 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         bl.y = info->y3rd;
         transform(&bl);
     }
-    bot_left.x = (int) std::lround(bl.x);
-    bot_left.y = (int) std::lround(bl.y);
+    bot_left.x = static_cast<int>(std::lround(bl.x));
+    bot_left.y = static_cast<int>(std::lround(bl.y));
     if (s_old_bf_math != BFMathType::NONE || info->bf_math)
     {
         if (!info->bf_math)
@@ -681,8 +681,8 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
         br.y = info->y_min;
         transform(&br);
     }
-    bot_right.x = (int) std::lround(br.x);
-    bot_right.y = (int) std::lround(br.y);
+    bot_right.x = static_cast<int>(std::lround(br.x));
+    bot_right.y = static_cast<int>(std::lround(br.y));
 
     double tmp_sqrt = std::sqrt(sqr(tr.x - bl.x) + sqr(tr.y - bl.y));
     win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
@@ -944,14 +944,14 @@ static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point)
     mult_bf(bt_tmp2, s_n_b, bt_y);
     add_a_bf(bt_tmp1, bt_tmp2);
     add_a_bf(bt_tmp1, s_n_e);
-    point->x = (double)bf_to_float(bt_tmp1);
+    point->x = static_cast<double>(bf_to_float(bt_tmp1));
 
     //  point->y = cvt->c * point->x + cvt->d * point->y + cvt->f;
     mult_bf(bt_tmp1, s_n_c, bt_x);
     mult_bf(bt_tmp2, s_n_d, bt_y);
     add_a_bf(bt_tmp1, bt_tmp2);
     add_a_bf(bt_tmp1, s_n_f);
-    point->y = (double)bf_to_float(bt_tmp1);
+    point->y = static_cast<double>(bf_to_float(bt_tmp1));
 
     restore_stack(saved);
 }

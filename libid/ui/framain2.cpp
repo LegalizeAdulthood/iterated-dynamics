@@ -265,8 +265,8 @@ bool ZoomMouseNotification::process_zoom(MainContext &context)
     {
         if (g_box_count)
         {
-            g_zoom_box_x = (double) m_x / g_logical_screen_x_size_dots - g_zoom_box_width / 2.0;
-            g_zoom_box_y = (double) m_y / g_logical_screen_y_size_dots - g_zoom_box_height / 2.0;
+            g_zoom_box_x = static_cast<double>(m_x) / g_logical_screen_x_size_dots - g_zoom_box_width / 2.0;
+            g_zoom_box_y = static_cast<double>(m_y) / g_logical_screen_y_size_dots - g_zoom_box_height / 2.0;
             draw_box(true);
         }
         m_position_updated = false;
@@ -397,7 +397,7 @@ MainState big_while_loop(MainContext &context)
             {
                 // bypass for VESA virtual screen
                 const double f_temp{g_final_aspect_ratio *
-                    ((double) g_screen_y_dots / (double) g_screen_x_dots / g_screen_aspect)};
+                    (static_cast<double>(g_screen_y_dots) / static_cast<double>(g_screen_x_dots) / g_screen_aspect)};
                 g_logical_screen_x_dots = g_view_x_dots;
                 if (g_logical_screen_x_dots != 0)
                 {
@@ -410,12 +410,12 @@ MainState big_while_loop(MainContext &context)
                 }
                 else if (g_final_aspect_ratio <= g_screen_aspect)
                 {
-                    g_logical_screen_x_dots = iround((double) g_screen_x_dots / g_view_reduction);
+                    g_logical_screen_x_dots = iround(static_cast<double>(g_screen_x_dots) / g_view_reduction);
                     g_logical_screen_y_dots = iround(g_logical_screen_x_dots * f_temp);
                 }
                 else
                 {
-                    g_logical_screen_y_dots = iround((double) g_screen_y_dots / g_view_reduction);
+                    g_logical_screen_y_dots = iround(static_cast<double>(g_screen_y_dots) / g_view_reduction);
                     g_logical_screen_x_dots = iround(g_logical_screen_y_dots / f_temp);
                 }
                 if (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots)
@@ -596,9 +596,9 @@ MainState big_while_loop(MainContext &context)
                     g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
                     g_evolve_new_y_parameter_offset = g_evolve_info.y_parameter_offset;
                     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
-                    g_evolve_new_discrete_x_parameter_offset = (char)g_evolve_info.discrete_x_parameter_offset;
+                    g_evolve_new_discrete_x_parameter_offset = static_cast<char>(g_evolve_info.discrete_x_parameter_offset);
                     g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
-                    g_evolve_new_discrete_y_parameter_offset = (char)g_evolve_info.discrete_y_parameter_offset;
+                    g_evolve_new_discrete_y_parameter_offset = static_cast<char>(g_evolve_info.discrete_y_parameter_offset);
                     g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
                     g_evolve_param_grid_x           = g_evolve_info.px;
                     g_evolve_param_grid_y           = g_evolve_info.py;
@@ -620,7 +620,7 @@ MainState big_while_loop(MainContext &context)
                     int mid = g_evolve_image_grid_size / 2;
                     if (g_evolve_param_grid_x != mid || g_evolve_param_grid_y != mid)
                     {
-                        g_evolve_this_generation_random_seed = (unsigned int)std::clock(); // time for new set
+                        g_evolve_this_generation_random_seed = static_cast<unsigned int>(std::clock()); // time for new set
                     }
                     save_param_history();
                     count = 0;
@@ -664,19 +664,19 @@ done:
                     g_evolve_info.y_parameter_range = g_evolve_y_parameter_range;
                     g_evolve_info.x_parameter_offset = g_evolve_x_parameter_offset;
                     g_evolve_info.y_parameter_offset = g_evolve_y_parameter_offset;
-                    g_evolve_info.discrete_x_parameter_offset = (short) g_evolve_discrete_x_parameter_offset;
-                    g_evolve_info.discrete_y_parameter_offset = (short) g_evolve_discrete_y_parameter_offset;
-                    g_evolve_info.px              = (short)g_evolve_param_grid_x;
-                    g_evolve_info.py              = (short)g_evolve_param_grid_y;
-                    g_evolve_info.screen_x_offset          = (short)g_logical_screen_x_offset;
-                    g_evolve_info.screen_y_offset          = (short)g_logical_screen_y_offset;
-                    g_evolve_info.x_dots           = (short)g_logical_screen_x_dots;
-                    g_evolve_info.y_dots           = (short)g_logical_screen_y_dots;
-                    g_evolve_info.image_grid_size = (short) g_evolve_image_grid_size;
-                    g_evolve_info.this_generation_random_seed = (short) g_evolve_this_generation_random_seed;
+                    g_evolve_info.discrete_x_parameter_offset = static_cast<short>(g_evolve_discrete_x_parameter_offset);
+                    g_evolve_info.discrete_y_parameter_offset = static_cast<short>(g_evolve_discrete_y_parameter_offset);
+                    g_evolve_info.px              = static_cast<short>(g_evolve_param_grid_x);
+                    g_evolve_info.py              = static_cast<short>(g_evolve_param_grid_y);
+                    g_evolve_info.screen_x_offset          = static_cast<short>(g_logical_screen_x_offset);
+                    g_evolve_info.screen_y_offset          = static_cast<short>(g_logical_screen_y_offset);
+                    g_evolve_info.x_dots           = static_cast<short>(g_logical_screen_x_dots);
+                    g_evolve_info.y_dots           = static_cast<short>(g_logical_screen_y_dots);
+                    g_evolve_info.image_grid_size = static_cast<short>(g_evolve_image_grid_size);
+                    g_evolve_info.this_generation_random_seed = static_cast<short>(g_evolve_this_generation_random_seed);
                     g_evolve_info.max_random_mutation = g_evolve_max_random_mutation;
-                    g_evolve_info.evolving        = (short) +g_evolving;
-                    g_evolve_info.count          = (short) count;
+                    g_evolve_info.evolving        = static_cast<short>(+g_evolving);
+                    g_evolve_info.count          = static_cast<short>(count);
                     g_have_evolve_info = true;
                 }
                 g_logical_screen_y_offset = 0;
@@ -909,7 +909,7 @@ static int cmp_line(Byte *pixels, int line_len)
     for (int col = 0; col < line_len; col++)
     {
         int old_color = get_color(col, row);
-        if (old_color == (int)pixels[col])
+        if (old_color == static_cast<int>(pixels[col]))
         {
             g_put_color(col, row, 0);
         }

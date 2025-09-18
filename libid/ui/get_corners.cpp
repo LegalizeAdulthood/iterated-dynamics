@@ -84,7 +84,7 @@ gc_loop:
         // 8 items
         builder.double_number("Center X", x_ctr)
             .double_number("Center Y", y_ctr)
-            .double_number("Magnification", (double) magnification)
+            .double_number("Magnification", static_cast<double>(magnification))
             .double_number("X Magnification Factor", x_mag_factor)
             .double_number("Rotation Angle (degrees)", rotation)
             .double_number("Skew Angle (degrees)", skew)
@@ -176,7 +176,7 @@ gc_loop:
         const double new_skew = builder.read_double_number();
         if (cmp_dbl(x_ctr, new_x_center)                          //
             || cmp_dbl(y_ctr, new_y_center)                       //
-            || cmp_dbl((double) magnification, new_magnification) //
+            || cmp_dbl(static_cast<double>(magnification), new_magnification) //
             || cmp_dbl(x_mag_factor, new_x_mag_factor)            //
             || cmp_dbl(rotation, new_rotation)                    //
             || cmp_dbl(skew, new_skew))
@@ -400,7 +400,7 @@ gsc_loop:
         const double new_skew = builder.read_double_number();
         if (cmp_dbl(x_ctr, new_x_center)                          //
             || cmp_dbl(y_ctr, new_y_center)                       //
-            || cmp_dbl((double) magnification, new_magnification) //
+            || cmp_dbl(static_cast<double>(magnification), new_magnification) //
             || cmp_dbl(x_mag_factor, new_x_mag_factor)            //
             || cmp_dbl(rotation, new_rotation)                    //
             || cmp_dbl(skew, new_skew))

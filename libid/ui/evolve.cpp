@@ -274,26 +274,26 @@ void vary_dbl(GeneBase gene[], int rand_val, int i)
     case Variations::NONE:
         break;
     case Variations::X:
-        *(double *)gene[i].addr = g_evolve_param_grid_x * g_evolve_dist_per_x + g_evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
+        *static_cast<double *>(gene[i].addr) = g_evolve_param_grid_x * g_evolve_dist_per_x + g_evolve_x_parameter_offset; //paramspace x coord * per view delta px + offset
         break;
     case Variations::Y:
-        *(double *)gene[i].addr = delta_y * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //same for y
+        *static_cast<double *>(gene[i].addr) = delta_y * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //same for y
         break;
     case Variations::X_PLUS_Y:
-        *(double *)gene[i].addr = g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +
+        *static_cast<double *>(gene[i].addr) = g_evolve_param_grid_x*g_evolve_dist_per_x+ g_evolve_x_parameter_offset +
             delta_y * g_evolve_dist_per_y + g_evolve_y_parameter_offset; //and x+y
         break;
     case Variations::X_MINUS_Y:
-        *(double *)gene[i].addr = g_evolve_param_grid_x * g_evolve_dist_per_x + g_evolve_x_parameter_offset -(delta_y*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
+        *static_cast<double *>(gene[i].addr) = g_evolve_param_grid_x * g_evolve_dist_per_x + g_evolve_x_parameter_offset -(delta_y*g_evolve_dist_per_y+ g_evolve_y_parameter_offset); //and x-y
         break;
     case Variations::RANDOM:
-        *(double *)gene[i].addr += (double) rand_val / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation;
+        *static_cast<double *>(gene[i].addr) += static_cast<double>(rand_val) / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation;
         break;
     case Variations::WEIGHTED_RANDOM:
     {
         int mid = g_evolve_image_grid_size /2;
         double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
-        *(double *)gene[i].addr += ((double) rand_val / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation) * radius;
+        *static_cast<double *>(gene[i].addr) += (static_cast<double>(rand_val) / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation) * radius;
     }
     break;
     }
@@ -327,7 +327,9 @@ static int vary_int(int rand_value, int limit, Variations mode)
     {
         int mid = g_evolve_image_grid_size /2;
         double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
-        ret = (int)((rand_value / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation) * radius);
+        ret = static_cast<int>(
+            (rand_value / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation) *
+            radius);
         ret %= limit;
         break;
     }
@@ -346,7 +348,7 @@ void vary_inside(GeneBase gene[], int rand_val, int i)
     int choices[9] = { ZMAG, BOF60, BOF61, EPS_CROSS, STAR_TRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate != Variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
+        *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
     }
 }
 
@@ -355,7 +357,7 @@ void vary_outside(GeneBase gene[], int rand_val, int i)
     int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate != Variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 8, gene[i].mutate)];
+        *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 8, gene[i].mutate)];
     }
 }
 
@@ -373,7 +375,7 @@ void vary_bo_test(GeneBase gene[], int rand_val, int i)
     };
     if (gene[i].mutate != Variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 7, gene[i].mutate)];
+        *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 7, gene[i].mutate)];
         // move this next bit to varybot where it belongs
         set_bailout_formula(g_bailout_test);
     }
@@ -384,7 +386,7 @@ void vary_pwr2(GeneBase gene[], int rand_val, int i)
     int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
     if (gene[i].mutate != Variations::NONE)
     {
-        *(int*)gene[i].addr = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
+        *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
     }
 }
 
@@ -848,7 +850,7 @@ get_evol_restart:
 void setup_param_box()
 {
     g_evolve_param_box_count = 0;
-    g_evolve_param_zoom = ((double) g_evolve_image_grid_size -1.0)/2.0;
+    g_evolve_param_zoom = (static_cast<double>(g_evolve_image_grid_size) -1.0)/2.0;
     // need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values
     const int num_box_values = (g_logical_screen_x_dots + g_logical_screen_y_dots) * 2;
     const int num_values = g_logical_screen_x_dots + g_logical_screen_y_dots + 2;
@@ -977,17 +979,17 @@ void draw_param_box(int mode)
     }
 
     //draw larger box to show parm zooming range
-    bl.x = (g_evolve_param_grid_x - (int) g_evolve_param_zoom) *
-            (int) (g_logical_screen_x_size_dots + 1 + grout) -g_logical_screen_x_offset-1;
+    bl.x = (g_evolve_param_grid_x - static_cast<int>(g_evolve_param_zoom)) *
+            static_cast<int>(g_logical_screen_x_size_dots + 1 + grout) -g_logical_screen_x_offset-1;
     tl.x = bl.x;
-    tr.y = (g_evolve_param_grid_y - (int) g_evolve_param_zoom) *
-            (int) (g_logical_screen_y_size_dots + 1 + grout) -g_logical_screen_y_offset-1;
+    tr.y = (g_evolve_param_grid_y - static_cast<int>(g_evolve_param_zoom)) *
+            static_cast<int>(g_logical_screen_y_size_dots + 1 + grout) -g_logical_screen_y_offset-1;
     tl.y = tr.y;
-    tr.x = (g_evolve_param_grid_x + 1 + (int) g_evolve_param_zoom) *
-            (int) (g_logical_screen_x_size_dots + 1 + grout) -g_logical_screen_x_offset;
+    tr.x = (g_evolve_param_grid_x + 1 + static_cast<int>(g_evolve_param_zoom)) *
+            static_cast<int>(g_logical_screen_x_size_dots + 1 + grout) -g_logical_screen_x_offset;
     br.x = tr.x;
-    bl.y = (g_evolve_param_grid_y + 1 + (int) g_evolve_param_zoom) *
-            (int) (g_logical_screen_y_size_dots + 1 + grout) -g_logical_screen_y_offset;
+    bl.y = (g_evolve_param_grid_y + 1 + static_cast<int>(g_evolve_param_zoom)) *
+            static_cast<int>(g_logical_screen_y_size_dots + 1 + grout) -g_logical_screen_y_offset;
     br.y = bl.y;
     g_box_count = 0;
     add_box(br);
@@ -1023,11 +1025,12 @@ void set_evolve_ranges()
     g_evolve_x_parameter_range = g_evolve_dist_per_x*(g_evolve_param_zoom*2.0);
     g_evolve_y_parameter_range = g_evolve_dist_per_y*(g_evolve_param_zoom*2.0);
     g_evolve_new_x_parameter_offset = g_evolve_x_parameter_offset +
-        ((double) g_evolve_param_grid_x - g_evolve_param_zoom) * g_evolve_dist_per_x;
-    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + ((double) delta_y - g_evolve_param_zoom) * g_evolve_dist_per_y;
+        (static_cast<double>(g_evolve_param_grid_x) - g_evolve_param_zoom) * g_evolve_dist_per_x;
+    g_evolve_new_y_parameter_offset = g_evolve_y_parameter_offset + (static_cast<double>(delta_y) - g_evolve_param_zoom) * g_evolve_dist_per_y;
 
-    g_evolve_new_discrete_x_parameter_offset = (char)(g_evolve_discrete_x_parameter_offset +(g_evolve_param_grid_x- g_evolve_image_grid_size /2));
-    g_evolve_new_discrete_y_parameter_offset = (char)(g_evolve_discrete_y_parameter_offset +(delta_y- g_evolve_image_grid_size /2));
+    g_evolve_new_discrete_x_parameter_offset = static_cast<char>(
+        g_evolve_discrete_x_parameter_offset + (g_evolve_param_grid_x - g_evolve_image_grid_size / 2));
+    g_evolve_new_discrete_y_parameter_offset = static_cast<char>(g_evolve_discrete_y_parameter_offset + (delta_y - g_evolve_image_grid_size / 2));
 }
 
 void spiral_map(int count)

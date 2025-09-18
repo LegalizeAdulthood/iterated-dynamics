@@ -145,7 +145,7 @@ bool MemoryHandle::from_memory(const Byte *buffer, U16 size, long count, long of
         while (to_move > DISK_WRITE_LEN)
         {
             std::memcpy(disk_buff, buffer, DISK_WRITE_LEN);
-            num_written = (U16) std::fwrite(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            num_written = static_cast<U16>(std::fwrite(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file));
             if (num_written != 1)
             {
                 which_disk_error(3);
@@ -154,8 +154,8 @@ bool MemoryHandle::from_memory(const Byte *buffer, U16 size, long count, long of
             to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
         }
-        std::memcpy(disk_buff, buffer, (U16) to_move);
-        num_written = (U16) std::fwrite(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
+        std::memcpy(disk_buff, buffer, static_cast<U16>(to_move));
+        num_written = static_cast<U16>(std::fwrite(disk_buff, (U16) to_move, 1, s_handles[index].disk.file));
         if (num_written != 1)
         {
             which_disk_error(3);
@@ -199,7 +199,7 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
     case MemoryLocation::MEMORY: // MoveFromMemory
         for (int i = 0; i < size; i++)
         {
-            std::memcpy(buffer, s_handles[index].linear.memory + start, (U16) count);
+            std::memcpy(buffer, s_handles[index].linear.memory + start, static_cast<U16>(count));
             start += count;
             buffer += count;
         }
@@ -210,7 +210,7 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
-            num_read = (U16) std::fread(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            num_read = static_cast<U16>(std::fread(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file));
             if (num_read != 1 && !std::feof(s_handles[index].disk.file))
             {
                 which_disk_error(4);
@@ -220,13 +220,13 @@ bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
             to_move -= DISK_WRITE_LEN;
             buffer += DISK_WRITE_LEN;
         }
-        num_read = (U16) std::fread(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
+        num_read = static_cast<U16>(std::fread(disk_buff, (U16) to_move, 1, s_handles[index].disk.file));
         if (num_read != 1 && !std::feof(s_handles[index].disk.file))
         {
             which_disk_error(4);
             break;
         }
-        std::memcpy(buffer, disk_buff, (U16) to_move);
+        std::memcpy(buffer, disk_buff, static_cast<U16>(to_move));
         success = true;
 disk_error:
         break;
@@ -266,7 +266,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
     case MemoryLocation::MEMORY: // SetMemory
         for (int i = 0; i < size; i++)
         {
-            std::memset(s_handles[index].linear.memory + start, value, (U16) count);
+            std::memset(s_handles[index].linear.memory + start, value, static_cast<U16>(count));
             start += count;
         }
         success = true; // No way to gauge success or failure
@@ -277,7 +277,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
         std::fseek(s_handles[index].disk.file, start, SEEK_SET);
         while (to_move > DISK_WRITE_LEN)
         {
-            num_written = (U16) std::fwrite(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file);
+            num_written = static_cast<U16>(std::fwrite(disk_buff, DISK_WRITE_LEN, 1, s_handles[index].disk.file));
             if (num_written != 1)
             {
                 which_disk_error(2);
@@ -285,7 +285,7 @@ bool MemoryHandle::set(int value, U16 size, long count, long offset)
             }
             to_move -= DISK_WRITE_LEN;
         }
-        num_written = (U16) std::fwrite(disk_buff, (U16) to_move, 1, s_handles[index].disk.file);
+        num_written = static_cast<U16>(std::fwrite(disk_buff, (U16) to_move, 1, s_handles[index].disk.file));
         if (num_written != 1)
         {
             which_disk_error(2);
@@ -377,7 +377,7 @@ static int check_bounds(long start, long length, U16 handle)
         display_handle(handle);
         return 1;
     }
-    if (length > (long)USHRT_MAX)
+    if (length > static_cast<long>(USHRT_MAX))
     {
         stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Tried to move > 65,535 bytes.");
         display_handle(handle);
@@ -495,7 +495,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
 
     case MemoryLocation::MEMORY: // MemoryAlloc
         // Availability of memory checked in check_for_mem()
-        s_handles[handle].linear.memory = (Byte *)malloc(to_allocate);
+        s_handles[handle].linear.memory = static_cast<Byte *>(malloc(to_allocate));
         s_handles[handle].size = to_allocate;
         s_handles[handle].stored_at = MemoryLocation::MEMORY;
         s_num_total_handles++;

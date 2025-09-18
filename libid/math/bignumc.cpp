@@ -76,7 +76,7 @@ int cmp_bn(BigNum n1, BigNum n2)
     if (value1 > value2)
     {
         // now determine which of the two bytes was different
-        if ((S16) (value1 & 0xFF00) > (S16) (value2 & 0xFF00)) // compare just high bytes
+        if (static_cast<S16>(value1 & 0xFF00) > static_cast<S16>(value2 & 0xFF00)) // compare just high bytes
         {
             return g_bn_length; // high byte was different
         }
@@ -86,7 +86,7 @@ int cmp_bn(BigNum n1, BigNum n2)
     if (value1 < value2)
     {
         // now determine which of the two bytes was different
-        if ((S16) (value1 & 0xFF00) < (S16) (value2 & 0xFF00)) // compare just high bytes
+        if (static_cast<S16>(value1 & 0xFF00) < static_cast<S16>(value2 & 0xFF00)) // compare just high bytes
         {
             return -g_bn_length; // high byte was different
         }
@@ -128,7 +128,7 @@ int cmp_bn(BigNum n1, BigNum n2)
 // returns 1 if negative, 0 if positive or zero
 bool is_bn_neg(BigNum n)
 {
-    return (S8)n[g_bn_length-1] < 0;
+    return static_cast<S8>(n[g_bn_length - 1]) < 0;
 }
 
 /********************************************************************/
@@ -156,8 +156,8 @@ BigNum add_bn(BigNum r, BigNum n1, BigNum n2)
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
     {
-        sum += (U32)BIG_ACCESS16(n1+i) + (U32)BIG_ACCESS16(n2+i); // add 'em up
-        BIG_SET16(r+i, (U16)sum);   // store the lower 2 bytes
+        sum += static_cast<U32>(BIG_ACCESS16(n1 + i)) + static_cast<U32>(BIG_ACCESS16(n2 + i)); // add 'em up
+        BIG_SET16(r+i, static_cast<U16>(sum));   // store the lower 2 bytes
         sum >>= 16; // shift the overflow for next time
     }
     return r;
@@ -172,8 +172,8 @@ BigNum add_a_bn(BigNum r, BigNum n)
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
     {
-        sum += (U32)BIG_ACCESS16(r+i) + (U32)BIG_ACCESS16(n+i); // add 'em up
-        BIG_SET16(r+i, (U16)sum);   // store the lower 2 bytes
+        sum += static_cast<U32>(BIG_ACCESS16(r + i)) + static_cast<U32>(BIG_ACCESS16(n + i)); // add 'em up
+        BIG_SET16(r+i, static_cast<U16>(sum));   // store the lower 2 bytes
         sum >>= 16; // shift the overflow for next time
     }
     return r;
@@ -188,8 +188,8 @@ BigNum sub_bn(BigNum r, BigNum n1, BigNum n2)
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
     {
-        diff = (U32)BIG_ACCESS16(n1+i) - ((U32)BIG_ACCESS16(n2+i)-(S32)(S16)diff); // subtract with borrow
-        BIG_SET16(r+i, (U16)diff);   // store the lower 2 bytes
+        diff = static_cast<U32>(BIG_ACCESS16(n1 + i)) - (static_cast<U32>(BIG_ACCESS16(n2 + i)) - static_cast<S32>(static_cast<S16>(diff))); // subtract with borrow
+        BIG_SET16(r+i, static_cast<U16>(diff));   // store the lower 2 bytes
         diff >>= 16; // shift the underflow for next time
     }
     return r;
@@ -204,8 +204,8 @@ BigNum sub_a_bn(BigNum r, BigNum n)
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
     {
-        diff = (U32)BIG_ACCESS16(r+i) - ((U32)BIG_ACCESS16(n+i)-(S32)(S16)diff); // subtract with borrow
-        BIG_SET16(r+i, (U16)diff);   // store the lower 2 bytes
+        diff = static_cast<U32>(BIG_ACCESS16(r + i)) - (static_cast<U32>(BIG_ACCESS16(n + i)) - static_cast<S32>(static_cast<S16>(diff))); // subtract with borrow
+        BIG_SET16(r+i, static_cast<U16>(diff));   // store the lower 2 bytes
         diff >>= 16; // shift the underflow for next time
     }
     return r;
@@ -222,8 +222,8 @@ BigNum neg_bn(BigNum r, BigNum n)
     for (i = 0; neg != 0 && i < g_bn_length; i += 2)
     {
         U16 t_short = ~BIG_ACCESS16(n + i);
-        neg += (U32) t_short; // two's complement
-        BIG_SET16(r+i, (U16)neg);   // store the lower 2 bytes
+        neg += static_cast<U32>(t_short); // two's complement
+        BIG_SET16(r+i, static_cast<U16>(neg));   // store the lower 2 bytes
         neg >>= 16; // shift the sign bit for next time
     }
     // if neg was 0, then just "not" the rest
@@ -246,8 +246,8 @@ BigNum neg_a_bn(BigNum r)
     for (i = 0; neg != 0 && i < g_bn_length; i += 2)
     {
         U16 t_short = ~BIG_ACCESS16(r + i);
-        neg += (U32) t_short; // two's complement
-        BIG_SET16(r+i, (U16)neg);   // store the lower 2 bytes
+        neg += static_cast<U32>(t_short); // two's complement
+        BIG_SET16(r+i, static_cast<U16>(neg));   // store the lower 2 bytes
         neg >>= 16; // shift the sign bit for next time
     }
     // if neg was 0, then just "not" the rest
@@ -268,8 +268,8 @@ BigNum double_bn(BigNum r, BigNum n)
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
     {
-        prod += (U32)BIG_ACCESS16(n+i) << 1; // double it
-        BIG_SET16(r+i, (U16)prod);   // store the lower 2 bytes
+        prod += static_cast<U32>(BIG_ACCESS16(n + i)) << 1; // double it
+        BIG_SET16(r+i, static_cast<U16>(prod));   // store the lower 2 bytes
         prod >>= 16; // shift the overflow for next time
     }
     return r;
@@ -284,8 +284,8 @@ BigNum double_a_bn(BigNum r)
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
     {
-        prod += (U32)BIG_ACCESS16(r+i) << 1; // double it
-        BIG_SET16(r+i, (U16)prod);   // store the lower 2 bytes
+        prod += static_cast<U32>(BIG_ACCESS16(r + i)) << 1; // double it
+        BIG_SET16(r+i, static_cast<U16>(prod));   // store the lower 2 bytes
         prod >>= 16; // shift the overflow for next time
     }
     return r;
@@ -302,16 +302,17 @@ BigNum half_bn(BigNum r, BigNum n)
     // start with an arithmetic shift
     {
         const int i = g_bn_length - 2;
-        quot += (U32) (((S32) (S16) BIG_ACCESS16(n + i) << 16) >> 1); // shift to upper 2 bytes and half it
-        BIG_SET16(r + i, (U16) (quot >> 16));                         // store the upper 2 bytes
+        quot += static_cast<U32>((static_cast<S32>(static_cast<S16>(BIG_ACCESS16(n + i))) << 16) >>
+            1);                                                       // shift to upper 2 bytes and half it
+        BIG_SET16(r + i, static_cast<U16>(quot >> 16));                         // store the upper 2 bytes
         quot <<= 16;                                                  // shift the underflow for next time
     }
 
     for (int i = g_bn_length - 4; i >= 0; i -= 2)
     {
         // looks wierd, but properly sign extends argument
-        quot += (U32) BIG_ACCESS16(n + i) << 16 >> 1; // shift to upper 2 bytes and half it
-        BIG_SET16(r + i, (U16) (quot >> 16));                   // store the upper 2 bytes
+        quot += static_cast<U32>(BIG_ACCESS16(n + i)) << 16 >> 1; // shift to upper 2 bytes and half it
+        BIG_SET16(r + i, static_cast<U16>(quot >> 16));                   // store the upper 2 bytes
         quot <<= 16;                                            // shift the underflow for next time
     }
 
@@ -329,16 +330,17 @@ BigNum half_a_bn(BigNum r)
     // start with an arithmetic shift
     {
         const int i = g_bn_length - 2;
-        quot += (U32) (((S32) (S16) BIG_ACCESS16(r + i) << 16) >> 1); // shift to upper 2 bytes and half it
-        BIG_SET16(r + i, (U16) (quot >> 16));                         // store the upper 2 bytes
+        quot += static_cast<U32>(
+            (static_cast<S32>(static_cast<S16>(BIG_ACCESS16(r + i))) << 16) >> 1); // shift to upper 2 bytes and half it
+        BIG_SET16(r + i, static_cast<U16>(quot >> 16));                         // store the upper 2 bytes
         quot <<= 16;                                                  // shift the underflow for next time
     }
 
     for (int i = g_bn_length - 4; i >= 0; i -= 2)
     {
         // looks wierd, but properly sign extends argument
-        quot += (U32) BIG_ACCESS16(r + i) << 16 >> 1; // shift to upper 2 bytes and half it
-        BIG_SET16(r + i, (U16) (quot >> 16));                         // store the upper 2 bytes
+        quot += static_cast<U32>(BIG_ACCESS16(r + i)) << 16 >> 1; // shift to upper 2 bytes and half it
+        BIG_SET16(r + i, static_cast<U16>(quot >> 16));                         // store the upper 2 bytes
         quot <<= 16;                                                  // shift the underflow for next time
     }
     return r;
@@ -384,19 +386,19 @@ BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2)
         BigNum n2_p = n2;
         for (int j = 0; j < steps; j++)
         {
-            U32 prod = (U32) BIG_ACCESS16(n1_p) * (U32) BIG_ACCESS16(n2_p); // U16*U16=U32
-            U32 sum = (U32) BIG_ACCESS16(rp2) + prod; // add to previous, including overflow
-            BIG_SET16(rp2, (U16)sum); // save the lower 2 bytes
+            U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
+            U32 sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
+            BIG_SET16(rp2, static_cast<U16>(sum)); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
             BigNum rp3 = rp2 + 2;          // move over 2 bytes
             sum += BIG_ACCESS16(rp3);     // add what was the upper two bytes
-            BIG_SET16(rp3 , (U16)sum); // save what was the upper two bytes
+            BIG_SET16(rp3 , static_cast<U16>(sum)); // save what was the upper two bytes
             sum >>= 16;             // keep just the overflow
             for (int k = 0; sum != 0 && k < carry_steps; k++)
             {
                 rp3 += 2;               // move over 2 bytes
                 sum += BIG_ACCESS16(rp3);     // add to what was the overflow
-                BIG_SET16(rp3, (U16)sum); // save what was the overflow
+                BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the overflow
                 sum >>= 16;             // keep just the new overflow
             }
             n2_p += 2;       // to next word
@@ -462,19 +464,19 @@ BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2)
         BigNum n2_p = n2;
         for (int j = 0; j < steps; j++)
         {
-            U32 prod = (U32) BIG_ACCESS16(n1_p) * (U32) BIG_ACCESS16(n2_p); // U16*U16=U32
-            U32 sum = (U32) BIG_ACCESS16(rp2) + prod; // add to previous, including overflow
-            BIG_SET16(rp2, (U16)sum); // save the lower 2 bytes
+            U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
+            U32 sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
+            BIG_SET16(rp2, static_cast<U16>(sum)); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
             BigNum rp3 = rp2 + 2;          // move over 2 bytes
             sum += BIG_ACCESS16(rp3);     // add what was the upper two bytes
-            BIG_SET16(rp3, (U16)sum); // save what was the upper two bytes
+            BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the upper two bytes
             sum >>= 16;             // keep just the overflow
             for (int k = 0; sum != 0 && k < carry_steps; k++)
             {
                 rp3 += 2;               // move over 2 bytes
                 sum += BIG_ACCESS16(rp3);     // add to what was the overflow
-                BIG_SET16(rp3, (U16)sum); // save what was the overflow
+                BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the overflow
                 sum >>= 16;             // keep just the new overflow
             }
             n2_p += 2;                   // increase by two bytes
@@ -546,19 +548,19 @@ BigNum unsafe_full_square_bn(BigNum r, BigNum n)
             BigNum n2_p = n1_p + 2;  // set n2p pointer to 1 step beyond n1p
             for (int j = 0; j < steps; j++)
             {
-                prod = (U32)BIG_ACCESS16(n1_p) * (U32)BIG_ACCESS16(n2_p); // U16*U16=U32
-                sum = (U32)BIG_ACCESS16(rp2) + prod; // add to previous, including overflow
-                BIG_SET16(rp2, (U16)sum); // save the lower 2 bytes
+                prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
+                sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
+                BIG_SET16(rp2, static_cast<U16>(sum)); // save the lower 2 bytes
                 sum >>= 16;             // keep just the upper 2 bytes
                 rp3 = rp2 + 2;          // move over 2 bytes
                 sum += BIG_ACCESS16(rp3);     // add what was the upper two bytes
-                BIG_SET16(rp3, (U16)sum); // save what was the upper two bytes
+                BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the upper two bytes
                 sum >>= 16;             // keep just the overflow
                 for (int k = 0; sum != 0 && k < carry_steps; k++)
                 {
                     rp3 += 2;               // move over 2 bytes
                     sum += BIG_ACCESS16(rp3);     // add to what was the overflow
-                    BIG_SET16(rp3, (U16)sum); // save what was the overflow
+                    BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the overflow
                     sum >>= 16;             // keep just the new overflow
                 }
                 n2_p += 2;       // increase by two bytes
@@ -585,19 +587,19 @@ BigNum unsafe_full_square_bn(BigNum r, BigNum n)
     for (int i = 0; i < steps; i++)
     {
         // square it
-        prod = (U32)BIG_ACCESS16(n1_p) * (U32)BIG_ACCESS16(n1_p); // U16*U16=U32
-        sum = (U32)BIG_ACCESS16(rp1) + prod; // add to previous, including overflow
-        BIG_SET16(rp1, (U16)sum); // save the lower 2 bytes
+        prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n1_p)); // U16*U16=U32
+        sum = static_cast<U32>(BIG_ACCESS16(rp1)) + prod; // add to previous, including overflow
+        BIG_SET16(rp1, static_cast<U16>(sum)); // save the lower 2 bytes
         sum >>= 16;             // keep just the upper 2 bytes
         rp3 = rp1 + 2;          // move over 2 bytes
         sum += BIG_ACCESS16(rp3);     // add what was the upper two bytes
-        BIG_SET16(rp3, (U16)sum); // save what was the upper two bytes
+        BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the upper two bytes
         sum >>= 16;             // keep just the overflow
         for (int k = 0; sum != 0 && k < carry_steps; k++)
         {
             rp3 += 2;               // move over 2 bytes
             sum += BIG_ACCESS16(rp3);     // add to what was the overflow
-            BIG_SET16(rp3, (U16)sum); // save what was the overflow
+            BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the overflow
             sum >>= 16;             // keep just the new overflow
         }
         n1_p += 2;       // increase by 2 bytes
@@ -647,7 +649,7 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
     g_bn_length = bnl;
 
     // determine whether r is on an odd or even two-byte word in the number
-    int rodd = (U16) (((g_bn_length << 1) - g_r_length) >> 1) & 0x0001;
+    int rodd = static_cast<U16>(((g_bn_length << 1) - g_r_length) >> 1) & 0x0001;
     int i = (g_bn_length >> 1)-1;
     int steps = (g_r_length - g_bn_length) >> 1;
     int carry_steps = double_steps = (g_bn_length >> 1) + steps - 2;
@@ -662,19 +664,19 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
         {
             for (int j = 0; j < steps; j++)
             {
-                prod = (U32)BIG_ACCESS16(n1_p) * (U32)BIG_ACCESS16(n2_p); // U16*U16=U32
-                sum = (U32)BIG_ACCESS16(rp2) + prod; // add to previous, including overflow
-                BIG_SET16(rp2, (U16)sum); // save the lower 2 bytes
+                prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
+                sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
+                BIG_SET16(rp2, static_cast<U16>(sum)); // save the lower 2 bytes
                 sum >>= 16;             // keep just the upper 2 bytes
                 rp3 = rp2 + 2;          // move over 2 bytes
                 sum += BIG_ACCESS16(rp3);     // add what was the upper two bytes
-                BIG_SET16(rp3, (U16)sum); // save what was the upper two bytes
+                BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the upper two bytes
                 sum >>= 16;             // keep just the overflow
                 for (int k = 0; sum != 0 && k < carry_steps; k++)
                 {
                     rp3 += 2;               // move over 2 bytes
                     sum += BIG_ACCESS16(rp3);     // add to what was the overflow
-                    BIG_SET16(rp3, (U16)sum); // save what was the overflow
+                    BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the overflow
                     sum >>= 16;             // keep just the new overflow
                 }
                 n2_p += 2;       // increase by 2-byte word size
@@ -717,8 +719,8 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
     // determine whether r is on an odd or even word in the number
     // using i as a temporary variable here
     i = (g_bn_length << 1)-g_r_length;
-    rp1 = r + ((U16)i & (U16)0x0002);
-    i = (U16)((i >> 1)+1) & (U16)0xFFFE;
+    rp1 = r + (static_cast<U16>(i) & static_cast<U16>(0x0002));
+    i = static_cast<U16>((i >> 1) + 1) & static_cast<U16>(0xFFFE);
     n1_p = n + i;
     // i here is no longer a temp var., but will be used as a loop counter
     i = (g_bn_length - i) >> 1;
@@ -727,19 +729,19 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
     for (; i > 0; i--)
     {
         // square it
-        prod = (U32)BIG_ACCESS16(n1_p) * (U32)BIG_ACCESS16(n1_p); // U16*U16=U32
-        sum = (U32)BIG_ACCESS16(rp1) + prod; // add to previous, including overflow
-        BIG_SET16(rp1, (U16)sum); // save the lower 2 bytes
+        prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n1_p)); // U16*U16=U32
+        sum = static_cast<U32>(BIG_ACCESS16(rp1)) + prod; // add to previous, including overflow
+        BIG_SET16(rp1, static_cast<U16>(sum)); // save the lower 2 bytes
         sum >>= 16;             // keep just the upper 2 bytes
         rp3 = rp1 + 2;          // move over 2 bytes
         sum += BIG_ACCESS16(rp3);     // add what was the upper two bytes
-        BIG_SET16(rp3, (U16)sum); // save what was the upper two bytes
+        BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the upper two bytes
         sum >>= 16;             // keep just the overflow
         for (int k = 0; sum != 0 && k < carry_steps; k++)
         {
             rp3 += 2;               // move over 2 bytes
             sum += BIG_ACCESS16(rp3);     // add to what was the overflow
-            BIG_SET16(rp3, (U16)sum); // save what was the overflow
+            BIG_SET16(rp3, static_cast<U16>(sum)); // save what was the overflow
             sum >>= 16;             // keep just the new overflow
         }
         n1_p += 2;
@@ -758,8 +760,8 @@ BigNum mult_bn_int(BigNum r, BigNum n, U16 u)
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
     {
-        prod += (U32)BIG_ACCESS16(n+i) * u; // n*u
-        BIG_SET16(r+i, (U16)prod);   // store the lower 2 bytes
+        prod += static_cast<U32>(BIG_ACCESS16(n + i)) * u; // n*u
+        BIG_SET16(r+i, static_cast<U16>(prod));   // store the lower 2 bytes
         prod >>= 16; // shift the overflow for next time
     }
     return r;
@@ -774,8 +776,8 @@ BigNum mult_a_bn_int(BigNum r, U16 u)
     // two bytes at a time
     for (int i = 0; i < g_bn_length; i += 2)
     {
-        prod += (U32)BIG_ACCESS16(r+i) * u; // r*u
-        BIG_SET16(r+i, (U16)prod);   // store the lower 2 bytes
+        prod += static_cast<U32>(BIG_ACCESS16(r + i)) * u; // r*u
+        BIG_SET16(r+i, static_cast<U16>(prod));   // store the lower 2 bytes
         prod >>= 16; // shift the overflow for next time
     }
     return r;
@@ -806,9 +808,9 @@ BigNum unsafe_div_bn_int(BigNum r, BigNum n,  U16 u)
     // two bytes at a time
     for (int i = g_bn_length-2; i >= 0; i -= 2)
     {
-        U32 full_number = ((U32) rem << 16) + (U32) BIG_ACCESS16(n + i);
-        U16 quot = (U16) (full_number / u);
-        rem  = (U16)(full_number % u);
+        U32 full_number = (static_cast<U32>(rem) << 16) + static_cast<U32>(BIG_ACCESS16(n + i));
+        U16 quot = static_cast<U16>(full_number / u);
+        rem  = static_cast<U16>(full_number % u);
         BIG_SET16(r+i, quot);
     }
 
@@ -844,9 +846,9 @@ BigNum div_a_bn_int(BigNum r, U16 u)
     // two bytes at a time
     for (int i = g_bn_length-2; i >= 0; i -= 2)
     {
-        U32 full_number = ((U32) rem << 16) + (U32) BIG_ACCESS16(r + i);
-        U16 quot = (U16) (full_number / u);
-        rem  = (U16)(full_number % u);
+        U32 full_number = (static_cast<U32>(rem) << 16) + static_cast<U32>(BIG_ACCESS16(r + i));
+        U16 quot = static_cast<U16>(full_number / u);
+        rem  = static_cast<U16>(full_number % u);
         BIG_SET16(r+i, quot);
     }
 
@@ -938,7 +940,7 @@ BigFloat float_to_bf(BigFloat r, LDouble f)
     g_bn_length = bnl;
     g_int_length = il;
 
-    BIG_SET16(r + g_bf_length, (S16)power); // exp
+    BIG_SET16(r + g_bf_length, static_cast<S16>(power)); // exp
 
     return r;
 }
@@ -967,7 +969,7 @@ LDouble bf_to_float(BigFloat n)
     g_bn_length = bnl;
     g_int_length = il;
 
-    int power = (S16) BIG_ACCESS16(n + g_bf_length);
+    int power = static_cast<S16>(BIG_ACCESS16(n + g_bf_length));
     f = scale256(f, power);
 
     return f;

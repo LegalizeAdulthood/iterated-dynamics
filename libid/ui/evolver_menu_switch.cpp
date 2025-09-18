@@ -170,8 +170,8 @@ static MainState move_evolver_selection(MainContext &context)
             g_evolve_param_grid_y = 0;
         }
         const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-        g_logical_screen_x_offset = g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
-        g_logical_screen_y_offset = g_evolve_param_grid_y * (int) (g_logical_screen_y_size_dots + 1 + grout);
+        g_logical_screen_x_offset = g_evolve_param_grid_x * static_cast<int>(g_logical_screen_x_size_dots + 1 + grout);
+        g_logical_screen_y_offset = g_evolve_param_grid_y * static_cast<int>(g_logical_screen_y_size_dots + 1 + grout);
 
         restore_param_history();
         fiddle_params(gene, unspiral_map()); // change all parameters
@@ -229,9 +229,9 @@ static MainState evolver_zoom_in(MainContext &/*context*/)
                 // mode)
                 const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
                 g_logical_screen_x_offset =
-                    g_evolve_param_grid_x * (int) (g_logical_screen_x_size_dots + 1 + grout);
+                    g_evolve_param_grid_x * static_cast<int>(g_logical_screen_x_size_dots + 1 + grout);
                 g_logical_screen_y_offset =
-                    g_evolve_param_grid_y * (int) (g_logical_screen_y_size_dots + 1 + grout);
+                    g_evolve_param_grid_y * static_cast<int>(g_logical_screen_y_size_dots + 1 + grout);
                 setup_param_box();
                 draw_param_box(0);
             }

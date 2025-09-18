@@ -144,7 +144,7 @@ void calc_lengths()
 
     g_bf_length = g_bn_length+g_bn_step; // one extra step for added precision
     g_r_bf_length = g_bf_length + g_padding;
-    g_bf_decimals = (int)((g_bf_length-2)*LOG10_256);
+    g_bf_decimals = static_cast<int>((g_bf_length - 2) * LOG10_256);
 }
 
 /************************************************************************/
@@ -303,14 +303,14 @@ static void init_bf2()
     // good citizens initialize variables
     if (g_bf_save_len > 0)    // leave save area
     {
-        std::memset(s_bn_root+(g_bf_save_len+2)*22, 0, (unsigned)(g_start_stack-(g_bf_save_len+2)*22));
+        std::memset(s_bn_root+(g_bf_save_len+2)*22, 0, static_cast<unsigned>(g_start_stack - (g_bf_save_len + 2) * 22));
     }
     else   // first time through - nothing saved
     {
         // high variables
         std::memset(s_bn_root+g_max_stack, 0, (g_bf_length+2)*22);
         // low variables
-        std::memset(s_bn_root, 0, (unsigned)g_start_stack);
+        std::memset(s_bn_root, 0, static_cast<unsigned>(g_start_stack));
     }
 
     restore_bf_vars();
@@ -411,7 +411,7 @@ BigNum alloc_stack(size_t size)
         stop_msg("alloc_stack called with g_bf_math==0");
         return nullptr;
     }
-    const long stack_addr = (long)(s_stack_ptr - s_bn_root +size); // part of s_bn_root
+    const long stack_addr = static_cast<long>(s_stack_ptr - s_bn_root + size); // part of s_bn_root
 
     if (stack_addr > g_max_stack)
     {
@@ -428,7 +428,7 @@ BigNum alloc_stack(size_t size)
 // Returns stack pointer offset so it can be saved.
 int save_stack()
 {
-    return (int)(s_stack_ptr - s_bn_root);
+    return static_cast<int>(s_stack_ptr - s_bn_root);
 }
 
 /************************************************************************/
@@ -482,7 +482,7 @@ void init_bf_dec(int dec)
         g_int_length = 1;
     }
     // conservative estimate
-    g_bn_length = g_int_length + (int)(g_decimals/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(g_decimals / LOG10_256) + 1; // round up
     init_bf2();
 }
 
@@ -518,7 +518,7 @@ void init_bf_length(int bnl)
         g_int_length = 1;
     }
     // conservative estimate
-    g_decimals = (int)((g_bn_length-g_int_length)*LOG10_256);
+    g_decimals = static_cast<int>((g_bn_length - g_int_length) * LOG10_256);
     init_bf2();
 }
 

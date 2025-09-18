@@ -190,7 +190,7 @@ static void format_param_file_line(int choice, char *buf)
     int i = 0;
     while (i < 56 && !is_newline(c) && c != EOF)
     {
-        line[i++] = (char)(c == '\t' ? ' ' : c);
+        line[i++] = c == '\t' ? ' ' : static_cast<char>(c);
         c = std::getc(s_gfe.file);
     }
     line[i] = 0;
@@ -201,7 +201,7 @@ static int check_gfe_key(int key, int choice)
 {
     char blanks[79];         // used to clear the entry portion of screen
     std::memset(blanks, ' ', 78);
-    blanks[78] = (char) 0;
+    blanks[78] = static_cast<char>(0);
 
     if (key == ID_KEY_F6)
     {

@@ -1209,7 +1209,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     {
         // calc reasonably close value from gif header
         g_file_aspect_ratio = static_cast<float>(
-            64.0 / ((double) gif_start[12] + 15.0) * (double) g_file_y_dots / (double) g_file_x_dots);
+            64.0 / (static_cast<double>(gif_start[12]) + 15.0) * static_cast<double>(g_file_y_dots) / static_cast<double>(g_file_x_dots));
         if (g_file_aspect_ratio > g_screen_aspect-0.03
             && g_file_aspect_ratio < g_screen_aspect+0.03)
         {

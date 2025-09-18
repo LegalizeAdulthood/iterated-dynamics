@@ -356,7 +356,7 @@ void Prompt::set_horizontal_positions()
             values[i].uval.ch.list = noyes;
             values[i].uval.ch.list_len = 2;
         }
-        int j = (int) std::strlen(prompts[i]);
+        int j = static_cast<int>(std::strlen(prompts[i]));
         if (values[i].type == '*')
         {
             max_comment = std::max(j, max_comment);
@@ -429,7 +429,7 @@ void Prompt::display_box_heading()
             break; // shouldn't happen
         }
         *next = '\0';
-        title_width = (int) std::strlen(hdg_line);
+        title_width = static_cast<int>(std::strlen(hdg_line));
         driver_put_string(title_row + i, box_col + (box_width - title_width) / 2, C_PROMPT_HI, hdg_line);
         *next = '\n';
         hdg_line = next + 1;
@@ -437,11 +437,11 @@ void Prompt::display_box_heading()
     // add scrolling key message, if applicable
     if (in_scrolling_mode)
     {
-        *(hdg_line + 31) = (char) 0; // replace the ')'
+        *(hdg_line + 31) = static_cast<char>(0); // replace the ')'
         std::strcat(hdg_line, ". Ctrl+<arrow key> to scroll text.)");
     }
 
-    title_width = (int) std::strlen(hdg_line);
+    title_width = static_cast<int>(std::strlen(hdg_line));
     driver_put_string(title_row + i, box_col + (box_width - title_width) / 2, C_PROMPT_HI, hdg_line);
 }
 
@@ -739,7 +739,7 @@ int Prompt::prompt_params()
 
         driver_put_string(prompt_row + cur_choice, prompt_col, C_PROMPT_LO, prompts[cur_choice]);
         {
-            int j = (int) std::strlen(buf);
+            int j = static_cast<int>(std::strlen(buf));
             std::memset(&buf[j], ' ', 80 - j);
         }
         buf[cur_len] = 0;
@@ -929,7 +929,7 @@ static int prompt_value_string(char *buf, const FullScreenValues *val)
         break;
     case '*':
         ret = 0;
-        *buf = (char) ret;
+        *buf = static_cast<char>(ret);
         break;
     case 's':
         std::strncpy(buf, val->uval.sval, 16);
@@ -1052,7 +1052,7 @@ static int input_field_list(int attr, // display attribute
     {
         std::strcpy(buf, list[cur_val]);
         {
-            int i = (int) std::strlen(buf);
+            int i = static_cast<int>(std::strlen(buf));
             while (i < field_len)
             {
                 buf[i++] = ' ';

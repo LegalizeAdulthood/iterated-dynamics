@@ -45,7 +45,7 @@ void find_special_colors()
 
     for (int i = 0; i < g_colors; i++)
     {
-        const int brt = (int) g_dac_box[i][0] + (int) g_dac_box[i][1] + (int) g_dac_box[i][2];
+        const int brt = static_cast<int>(g_dac_box[i][0]) + static_cast<int>(g_dac_box[i][1]) + static_cast<int>(g_dac_box[i][2]);
         if (brt > max_b)
         {
             max_b = brt;
@@ -60,16 +60,16 @@ void find_special_colors()
         {
             int min_gun = g_dac_box[i][0];
             int max_gun = min_gun;
-            if ((int) g_dac_box[i][1] > (int) g_dac_box[i][0])
+            if (static_cast<int>(g_dac_box[i][1]) > static_cast<int>(g_dac_box[i][0]))
             {
-                max_gun = (int) g_dac_box[i][1];
+                max_gun = static_cast<int>(g_dac_box[i][1]);
             }
             else
             {
-                min_gun = (int) g_dac_box[i][1];
+                min_gun = static_cast<int>(g_dac_box[i][1]);
             }
-            max_gun = std::max((int) g_dac_box[i][2], max_gun);
-            min_gun = std::min((int) g_dac_box[i][2], min_gun);
+            max_gun = std::max(static_cast<int>(g_dac_box[i][2]), max_gun);
+            min_gun = std::min(static_cast<int>(g_dac_box[i][2]), min_gun);
             if (brt - (max_gun - min_gun) / 2 > med)
             {
                 g_color_medium = i;

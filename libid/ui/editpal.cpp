@@ -384,9 +384,9 @@ static int clip_get_color(int x, int y);
 // Interface to graphics stuff
 static void set_pal(int pal, int r, int g, int b)
 {
-    g_dac_box[pal][0] = (Byte)r;
-    g_dac_box[pal][1] = (Byte)g;
-    g_dac_box[pal][2] = (Byte)b;
+    g_dac_box[pal][0] = static_cast<Byte>(r);
+    g_dac_box[pal][1] = static_cast<Byte>(g);
+    g_dac_box[pal][2] = static_cast<Byte>(b);
     spin_dac(0, 1);
 }
 
@@ -529,7 +529,7 @@ static void ver_get_row(int x, int y, int depth, char *buff)
 {
     while (depth-- > 0)
     {
-        *buff++ = (char)clip_get_color(x, y++);
+        *buff++ = static_cast<char>(clip_get_color(x, y++));
     }
 }
 
@@ -537,7 +537,7 @@ static void ver_put_row(int x, int y, int depth, const char *buff)
 {
     while (depth-- > 0)
     {
-        clip_put_color(x, y++, (Byte) *buff++);
+        clip_put_color(x, y++, static_cast<Byte>(*buff++));
     }
 }
 
@@ -574,29 +574,32 @@ static void display_fmt(int x, int y, int fg, int bg, const char *format, ...)
 // create smooth shades between two colors
 static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], int num, int skip)
 {
-    double rm = (double) ((int) p2->red - (int) p1->red) / num;
-    double gm = (double) ((int) p2->green - (int) p1->green) / num;
-    double bm = (double) ((int) p2->blue - (int) p1->blue) / num;
+    double rm = static_cast<double>((int) p2->red - (int) p1->red) / num;
+    double gm = static_cast<double>((int) p2->green - (int) p1->green) / num;
+    double bm = static_cast<double>((int) p2->blue - (int) p1->blue) / num;
 
     for (int curr = 0; curr < num; curr += skip)
     {
         if (s_gamma_val == 1)
         {
-            pal[curr].red   = (Byte)(p1->red == p2->red ? p1->red   :
-                                     (int) p1->red   + (int)(rm * curr));
-            pal[curr].green = (Byte)(p1->green == p2->green ? p1->green :
-                                     (int) p1->green + (int)(gm * curr));
-            pal[curr].blue  = (Byte)(p1->blue == p2->blue ? p1->blue  :
-                                     (int) p1->blue  + (int)(bm * curr));
+            pal[curr].red   = static_cast<Byte>(p1->red == p2->red ? p1->red : (int) p1->red + (int) (rm * curr));
+            pal[curr].green = static_cast<Byte>(p1->green == p2->green ? p1->green : (int) p1->green + (int) (gm * curr));
+            pal[curr].blue  = static_cast<Byte>(p1->blue == p2->blue ? p1->blue : (int) p1->blue + (int) (bm * curr));
         }
         else
         {
-            pal[curr].red   = (Byte)(p1->red == p2->red ? p1->red   :
-                                     (int)(p1->red   + std::pow(curr/(double)(num-1), static_cast<double>(s_gamma_val))*num*rm));
-            pal[curr].green = (Byte)(p1->green == p2->green ? p1->green :
-                                     (int)(p1->green + std::pow(curr/(double)(num-1), static_cast<double>(s_gamma_val))*num*gm));
-            pal[curr].blue  = (Byte)(p1->blue == p2->blue ? p1->blue  :
-                                     (int)(p1->blue  + std::pow(curr/(double)(num-1), static_cast<double>(s_gamma_val))*num*bm));
+            pal[curr].red   = static_cast<Byte>(p1->red == p2->red
+                    ? p1->red
+                    : (int) (p1->red +
+                          std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * rm));
+            pal[curr].green = static_cast<Byte>(p1->green == p2->green
+                    ? p1->green
+                    : (int) (p1->green +
+                          std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * gm));
+            pal[curr].blue  = static_cast<Byte>(p1->blue == p2->blue
+                    ? p1->blue
+                    : (int) (p1->blue +
+                          std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * bm));
         }
     }
 }
@@ -608,7 +611,7 @@ static void rot_col_r_g(PalEntry pal[], int num)
     {
         int dummy = pal[curr].red;
         pal[curr].red = pal[curr].green;
-        pal[curr].green = (Byte)dummy;
+        pal[curr].green = static_cast<Byte>(dummy);
     }
 }
 
@@ -618,7 +621,7 @@ static void rot_col_g_b(PalEntry pal[], int num)
     {
         const int dummy = pal[curr].green;
         pal[curr].green = pal[curr].blue;
-        pal[curr].blue = (Byte)dummy;
+        pal[curr].blue = static_cast<Byte>(dummy);
     }
 }
 
@@ -628,7 +631,7 @@ static void rot_col_b_r(PalEntry pal[], int num)
     {
         const int dummy = pal[curr].red;
         pal[curr].red = pal[curr].blue;
-        pal[curr].blue = (Byte)dummy;
+        pal[curr].blue = static_cast<Byte>(dummy);
     }
 }
 
@@ -637,7 +640,7 @@ static void pal_range_to_grey(PalEntry pal[], int first, int how_many)
 {
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
-        Byte val = (Byte)(((int)curr->red*30 + (int)curr->green*59 + (int)curr->blue*11) / 100);
+        Byte val = static_cast<Byte>(((int) curr->red * 30 + (int) curr->green * 59 + (int) curr->blue * 11) / 100);
         curr->blue = val;
         curr->green = val;
         curr->red = val;
@@ -649,9 +652,9 @@ static void pal_range_to_negative(PalEntry pal[], int first, int how_many)
 {
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
-        curr->red   = (Byte)(255 - curr->red);
-        curr->green = (Byte)(255 - curr->green);
-        curr->blue  = (Byte)(255 - curr->blue);
+        curr->red   = static_cast<Byte>(255 - curr->red);
+        curr->green = static_cast<Byte>(255 - curr->green);
+        curr->blue  = static_cast<Byte>(255 - curr->blue);
     }
 }
 
@@ -1372,9 +1375,9 @@ PalEntry RGBEditor::get_rgb() const
 {
     PalEntry pal;
 
-    pal.red = (Byte) m_color[0].get_val();
-    pal.green = (Byte) m_color[1].get_val();
-    pal.blue = (Byte) m_color[2].get_val();
+    pal.red = static_cast<Byte>(m_color[0].get_val());
+    pal.green = static_cast<Byte>(m_color[1].get_val());
+    pal.blue = static_cast<Byte>(m_color[2].get_val());
 
     return pal;
 }
@@ -1984,12 +1987,12 @@ void PalTable::undo_process(int delta)
 
         if (cmd == UNDO_DATA)
         {
-            first = (unsigned char) std::getc(m_undo_file);
-            last = (unsigned char) std::getc(m_undo_file);
+            first = static_cast<unsigned char>(std::getc(m_undo_file));
+            last = static_cast<unsigned char>(std::getc(m_undo_file));
         }
         else // UNDO_DATA_SINGLE
         {
-            last = (unsigned char) std::getc(m_undo_file);
+            last = static_cast<unsigned char>(std::getc(m_undo_file));
             first = last;
         }
 
@@ -2015,8 +2018,8 @@ void PalTable::undo_process(int delta)
 
     case UNDO_ROTATE:
     {
-        int first = (unsigned char) std::getc(m_undo_file);
-        int last = (unsigned char) std::getc(m_undo_file);
+        int first = static_cast<unsigned char>(std::getc(m_undo_file));
+        int last = static_cast<unsigned char>(std::getc(m_undo_file));
         int dir = getw(m_undo_file);
         rotate(delta * dir, first, last);
         break;
@@ -2038,7 +2041,7 @@ void PalTable::undo()
         return;
     }
 
-    std::fseek(m_undo_file, -(int) sizeof(int), SEEK_CUR); // go back to get size
+    std::fseek(m_undo_file, -static_cast<int>(sizeof(int)), SEEK_CUR); // go back to get size
 
     int size = getw(m_undo_file);
     std::fseek(m_undo_file, -size, SEEK_CUR); // go to start of undo
@@ -2401,7 +2404,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
             {
                 s_gamma_val = 0.0000000001F;
             }
-            s_gamma_val = (float) (1.0 / s_gamma_val);
+            s_gamma_val = static_cast<float>(1.0 / s_gamma_val);
         }
     }
     break;
@@ -2498,8 +2501,8 @@ void PalTable::other_key(int key, RGBEditor *rgb)
             break;
         }
 
-        s_fg_color = (Byte) m_curr[0];
-        s_bg_color = (Byte) m_curr[1];
+        s_fg_color = static_cast<Byte>(m_curr[0]);
+        s_bg_color = static_cast<Byte>(m_curr[1]);
 
         if (!m_hidden)
         {
