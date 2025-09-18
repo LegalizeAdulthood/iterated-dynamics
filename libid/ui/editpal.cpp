@@ -574,31 +574,31 @@ static void display_fmt(int x, int y, int fg, int bg, const char *format, ...)
 // create smooth shades between two colors
 static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], int num, int skip)
 {
-    double rm = static_cast<double>((int) p2->red - (int) p1->red) / num;
-    double gm = static_cast<double>((int) p2->green - (int) p1->green) / num;
-    double bm = static_cast<double>((int) p2->blue - (int) p1->blue) / num;
+    double rm = static_cast<double>(static_cast<int>(p2->red) - static_cast<int>(p1->red)) / num;
+    double gm = static_cast<double>(static_cast<int>(p2->green) - static_cast<int>(p1->green)) / num;
+    double bm = static_cast<double>(static_cast<int>(p2->blue) - static_cast<int>(p1->blue)) / num;
 
     for (int curr = 0; curr < num; curr += skip)
     {
         if (s_gamma_val == 1)
         {
-            pal[curr].red   = static_cast<Byte>(p1->red == p2->red ? p1->red : (int) p1->red + (int) (rm * curr));
-            pal[curr].green = static_cast<Byte>(p1->green == p2->green ? p1->green : (int) p1->green + (int) (gm * curr));
-            pal[curr].blue  = static_cast<Byte>(p1->blue == p2->blue ? p1->blue : (int) p1->blue + (int) (bm * curr));
+            pal[curr].red   = static_cast<Byte>(p1->red == p2->red ? p1->red : static_cast<int>(p1->red) + static_cast<int>(rm * curr));
+            pal[curr].green = static_cast<Byte>(p1->green == p2->green ? p1->green : static_cast<int>(p1->green) + static_cast<int>(gm * curr));
+            pal[curr].blue  = static_cast<Byte>(p1->blue == p2->blue ? p1->blue : static_cast<int>(p1->blue) + static_cast<int>(bm * curr));
         }
         else
         {
             pal[curr].red   = static_cast<Byte>(p1->red == p2->red
                     ? p1->red
-                    : (int) (p1->red +
+                    : static_cast<int>(p1->red +
                           std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * rm));
             pal[curr].green = static_cast<Byte>(p1->green == p2->green
                     ? p1->green
-                    : (int) (p1->green +
+                    : static_cast<int>(p1->green +
                           std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * gm));
             pal[curr].blue  = static_cast<Byte>(p1->blue == p2->blue
                     ? p1->blue
-                    : (int) (p1->blue +
+                    : static_cast<int>(p1->blue +
                           std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * bm));
         }
     }
@@ -640,7 +640,7 @@ static void pal_range_to_grey(PalEntry pal[], int first, int how_many)
 {
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
-        Byte val = static_cast<Byte>(((int) curr->red * 30 + (int) curr->green * 59 + (int) curr->blue * 11) / 100);
+        Byte val = static_cast<Byte>((static_cast<int>(curr->red) * 30 + static_cast<int>(curr->green) * 59 + static_cast<int>(curr->blue) * 11) / 100);
         curr->blue = val;
         curr->green = val;
         curr->red = val;

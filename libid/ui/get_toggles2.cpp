@@ -45,7 +45,7 @@ int get_toggles2()
     choices[++k] = "Potential Max Color (0 means off)";
     values[k].type = 'i';
     old_potential_param[0] = g_potential_params[0];
-    values[k].uval.ival = (int) old_potential_param[0];
+    values[k].uval.ival = static_cast<int>(old_potential_param[0]);
 
     choices[++k] = "          Slope";
     values[k].type = 'd';
@@ -55,7 +55,7 @@ int get_toggles2()
     choices[++k] = "          Bailout";
     values[k].type = 'i';
     old_potential_param[2] = g_potential_params[2];
-    values[k].uval.ival = (int) old_potential_param[2];
+    values[k].uval.ival = static_cast<int>(old_potential_param[2]);
 
     choices[++k] = "          16 bit values";
     values[k].type = 'y';

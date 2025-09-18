@@ -74,7 +74,7 @@ int get_rds_params()
             }
             auto p = g_stereo_map_filename.find(SLASH_CH);
             if (p == std::string::npos ||
-                    (int) g_stereo_map_filename.length() < sizeof(rds6)-2)
+                    static_cast<int>(g_stereo_map_filename.length()) < sizeof(rds6)-2)
             {
                 p = 0;
             }
@@ -83,7 +83,7 @@ int get_rds_params()
                 p++;
             }
             // center file name
-            rds6[(sizeof(rds6)-(int) (g_stereo_map_filename.length() - p)+2)/2] = 0;
+            rds6[(sizeof(rds6)- static_cast<int>(g_stereo_map_filename.length() - p) +2)/2] = 0;
             std::strcat(rds6, "[");
             std::strcat(rds6, &g_stereo_map_filename.c_str()[p]);
             std::strcat(rds6, "]");
@@ -106,11 +106,11 @@ int get_rds_params()
         g_auto_stereo_depth = values[k++].uval.ival;
         g_auto_stereo_width = values[k++].uval.dval;
         g_gray_flag = values[k++].uval.ch.val != 0;
-        g_calibrate = (char) values[k++].uval.ch.val;
+        g_calibrate = static_cast<char>(values[k++].uval.ch.val);
         g_image_map = values[k++].uval.ch.val != 0;
         if (!g_stereo_map_filename.empty() && g_image_map)
         {
-            reuse = (char) values[k++].uval.ch.val;
+            reuse = static_cast<char>(values[k++].uval.ch.val);
         }
         else
         {

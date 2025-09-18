@@ -68,7 +68,7 @@ static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, 
     int dec_pt;
     bool done = false;
     int start_row = *row;
-    int length = (int) std::strlen(str);
+    int length = static_cast<int>(std::strlen(str));
     int padding = 3; // space between col1 and decimal.
     // find decimal point
     for (dec_pt = 0; dec_pt < length; dec_pt++)
@@ -185,7 +185,7 @@ static bool tab_display2(char *msg)
     show_str_var("lightname",   g_light_name.c_str(),               &row, msg);
     show_str_var("map",         g_map_name.c_str(),                 &row, msg);
     write_row(row++, "Sizeof fractalspecific array %d",
-              g_num_fractal_types*(int)sizeof(FractalSpecific));
+              g_num_fractal_types* static_cast<int>(sizeof(FractalSpecific)));
     write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, g_col, row);
     ++row;
     if (g_fractal_type == FractalType::FORMULA)
@@ -300,7 +300,7 @@ top:
             driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(start_row+1, 16, C_GENERAL_HI, g_l_system_name);
             driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
-            if ((int) g_l_system_filename.string().length() >= 28)
+            if (static_cast<int>(g_l_system_filename.string().length()) >= 28)
             {
                 add_row = 1;
             }
@@ -312,7 +312,7 @@ top:
             driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
             driver_put_string(start_row+1, 16, C_GENERAL_HI, g_ifs_name);
             driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
-            if ((int) g_ifs_filename.string().length() >= 28)
+            if (static_cast<int>(g_ifs_filename.string().length()) >= 28)
             {
                 add_row = 1;
             }
@@ -468,7 +468,7 @@ top:
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
         const std::string time{get_calculation_time(
-            (long) (g_calc_time * (static_cast<double>(g_diffusion_limit) / g_diffusion_counter)))};
+            static_cast<long>(g_calc_time * (static_cast<double>(g_diffusion_limit) / g_diffusion_counter)))};
         strncpy(msg, time.c_str(),std::size(msg));
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
@@ -602,11 +602,11 @@ top:
                 driver_put_string(start_row, col, C_GENERAL_MED, msg);
                 if (p[0] == '+')
                 {
-                    std::sprintf(msg, "%-12d", (int)g_params[i]);
+                    std::sprintf(msg, "%-12d", static_cast<int>(g_params[i]));
                 }
                 else if (p[0] == '#')
                 {
-                    std::sprintf(msg, "%-12u", (U32)g_params[i]);
+                    std::sprintf(msg, "%-12u", static_cast<U32>(g_params[i]));
                 }
                 else
                 {
@@ -711,8 +711,8 @@ static void area()
         msg = "";
     }
     std::sprintf(buf, "%s%ld inside pixels of %ld%s%f",
-            msg, cnt, (long)g_logical_screen_x_dots*(long)g_logical_screen_y_dots, ".  Total area ",
-            cnt/((float)g_logical_screen_x_dots*(float)g_logical_screen_y_dots)*(g_x_max-g_x_min)*(g_y_max-g_y_min));
+            msg, cnt, static_cast<long>(g_logical_screen_x_dots) * static_cast<long>(g_logical_screen_y_dots), ".  Total area ",
+            cnt/(static_cast<float>(g_logical_screen_x_dots) * static_cast<float>(g_logical_screen_y_dots))*(g_x_max-g_x_min)*(g_y_max-g_y_min));
     stop_msg(StopMsgFlags::NO_BUZZER, buf);
 }
 

@@ -73,7 +73,7 @@ void intro()
     driver_set_attr(23, 0, C_TITLE_LOW, 160);
 
     driver_set_attr(top_row, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
-    std::srand((unsigned int)std::clock());
+    std::srand(static_cast<unsigned int>(std::clock()));
     j = std::rand()%(j-(bot_row-top_row)); // first to use
     i = j+bot_row-top_row; // last to use
     char old_char = credits[authors.at(i + 1)];

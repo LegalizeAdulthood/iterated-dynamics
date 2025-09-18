@@ -246,7 +246,7 @@ int get_toggles()
     int j = 0;   // return code
 
     g_user_std_calc_mode = static_cast<CalcMode>(calc_modes[values[++k].uval.ch.val][0]);
-    g_stop_pass = (int)calc_modes[values[k].uval.ch.val][1] - (int)'0';
+    g_stop_pass = static_cast<int>(calc_modes[values[k].uval.ch.val][1]) - static_cast<int>('0');
 
     if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_std_calc_mode != CalcMode::SOLID_GUESS)
     {

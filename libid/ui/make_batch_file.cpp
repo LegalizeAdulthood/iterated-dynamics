@@ -140,7 +140,7 @@ MakeParParams::MakeParParams()
         }
         if (g_distance_estimator < COLOR_BLACK && -g_distance_estimator > max_color)
         {
-            max_color = (int) (0 - g_distance_estimator);
+            max_color = static_cast<int>(-g_distance_estimator);
         }
         if (g_decomp[0] > max_color)
         {
@@ -148,7 +148,7 @@ MakeParParams::MakeParParams()
         }
         if (g_potential_flag && g_potential_params[0] >= max_color)
         {
-            max_color = (int) g_potential_params[0];
+            max_color = static_cast<int>(g_potential_params[0]);
         }
         if (++max_color > 256)
         {
@@ -449,7 +449,7 @@ skip_ui:
                 {
                     char piece_command_name[80];
                     int w{};
-                    while (w < (int)g_parameter_set_name.length())
+                    while (w < static_cast<int>(g_parameter_set_name.length()))
                     {
                         const char c = g_parameter_set_name[w];
                         if (std::isspace(c) || c == 0)
@@ -671,7 +671,7 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
                 {
                     k += '_' - 36;
                 }
-                buf[j] = (char) k;
+                buf[j] = static_cast<char>(k);
             }
             buf[3] = 0;
         }
@@ -731,7 +731,7 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
                             break;
                         }
                     }
-                    int delta = (int) g_dac_box[scan_color][j] - (int) g_dac_box[scan_color - k - 1][j];
+                    int delta = static_cast<int>(g_dac_box[scan_color][j]) - static_cast<int>(g_dac_box[scan_color - k - 1][j]);
                     if (k == scan_color - cur_color)
                     {
                         diff1[k][j] = delta;
@@ -882,7 +882,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
 
         if (g_stop_pass != 0)
         {
-            put_param(" passes=%c%c", g_user_std_calc_mode, (char)g_stop_pass + '0');
+            put_param(" passes=%c%c", g_user_std_calc_mode, static_cast<char>(g_stop_pass) + '0');
         }
 
         if (g_use_center_mag)
@@ -1198,7 +1198,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         if (g_potential_flag)
         {
             put_param(" potential=%d/%g/%d",
-                     (int)g_potential_params[0], g_potential_params[1], (int)g_potential_params[2]);
+                     static_cast<int>(g_potential_params[0]), g_potential_params[1], static_cast<int>(g_potential_params[2]));
             if (g_potential_16bit)
             {
                 put_param("/%s", "16bit");
@@ -1717,7 +1717,7 @@ static void put_param_line()
         std::fputc('\\', s_param_file);
     }
     std::fputc('\n', s_param_file);
-    s_wb_data.buf[len] = (char)c;
+    s_wb_data.buf[len] = static_cast<char>(c);
     if (c == ' ')
     {
         ++len;
@@ -1774,7 +1774,7 @@ static void put_float(int slash, double value, int prec)
 
     if (prec > 15)
     {
-        std::sprintf(buff_ptr, "%1.*Lg", prec, (long double)value);
+        std::sprintf(buff_ptr, "%1.*Lg", prec, static_cast<long double>(value));
     }
     else
     {

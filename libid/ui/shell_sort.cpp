@@ -13,13 +13,13 @@ void shell_sort(void *v1, int n, unsigned sz)
 {
     const auto lc_compare = [](void *arg1, void *arg2) // for sort
     {
-        char **choice1 = (char **) arg1;
-        char **choice2 = (char **) arg2;
+        char **choice1 = static_cast<char **>(arg1);
+        char **choice2 = static_cast<char **>(arg2);
 
         return string_case_compare(*choice1, *choice2);
     };
 
-    char *v = (char *) v1;
+    char *v = static_cast<char *>(v1);
     for (int gap = n/2; gap > 0; gap /= 2)
     {
         for (int i = gap; i < n; i++)

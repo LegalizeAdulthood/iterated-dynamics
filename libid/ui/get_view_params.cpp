@@ -170,8 +170,8 @@ get_view_restart:
     if (!driver_is_disk())
     {
         g_view_window = values[++k].uval.ch.val != 0;
-        g_view_reduction = (float) values[++k].uval.dval;
-        g_final_aspect_ratio = (float) values[++k].uval.dval;
+        g_view_reduction = static_cast<float>(values[++k].uval.dval);
+        g_final_aspect_ratio = static_cast<float>(values[++k].uval.dval);
         g_view_crop = values[++k].uval.ch.val != 0;
         g_view_x_dots = values[++k].uval.ival;
         g_view_y_dots = values[++k].uval.ival;
@@ -194,9 +194,9 @@ get_view_restart:
         if (g_final_aspect_ratio == 0.0)
         {
             g_final_aspect_ratio = g_view_window && g_view_x_dots != 0 && g_view_y_dots != 0 ?
-                               (float) g_view_y_dots / (float) g_view_x_dots : old_aspect_ratio;
+                               static_cast<float>(g_view_y_dots) / static_cast<float>(g_view_x_dots) : old_aspect_ratio;
         }
-        g_screen_y_dots = (int) std::lround(g_final_aspect_ratio * g_screen_x_dots);
+        g_screen_y_dots = static_cast<int>(std::lround(g_final_aspect_ratio * g_screen_x_dots));
     }
     if (y_max != -1 && g_screen_y_dots > y_max)
     {
@@ -211,13 +211,13 @@ get_view_restart:
         std::memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
         if (g_final_aspect_ratio == 0.0)
         {
-            g_final_aspect_ratio = (float) g_screen_y_dots / (float) g_screen_x_dots;
+            g_final_aspect_ratio = static_cast<float>(g_screen_y_dots) / static_cast<float>(g_screen_x_dots);
         }
     }
 
     if (g_view_x_dots != 0 && g_view_y_dots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
     {
-        g_final_aspect_ratio = (float) g_view_y_dots / (float) g_view_x_dots;
+        g_final_aspect_ratio = static_cast<float>(g_view_y_dots) / static_cast<float>(g_view_x_dots);
     }
     else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
     {

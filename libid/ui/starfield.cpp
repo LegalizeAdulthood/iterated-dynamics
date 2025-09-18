@@ -48,10 +48,10 @@ static double s_star_field_values[4]{30.0, 100.0, 5.0, 0.0};
 //
 static int gaussian_number(int probability, int range)
 {
-    long p = divide((long) probability << 16, (long) range << 16, 16);
+    long p = divide(static_cast<long>(probability) << 16, static_cast<long>(range) << 16, 16);
     p = multiply(p, s_concentration, 16);
-    p = multiply((long)s_distribution << 16, p, 16);
-    if (!(RAND15() % (s_distribution - (int)(p >> 16) + 1)))
+    p = multiply(static_cast<long>(s_distribution) << 16, p, 16);
+    if (!(RAND15() % (s_distribution - static_cast<int>(p >> 16) + 1)))
     {
         long accum = 0;
         for (int n = 0; n < s_slope; n++)
@@ -59,7 +59,7 @@ static int gaussian_number(int probability, int range)
             accum += RAND15();
         }
         accum /= s_slope;
-        int r = (int)(multiply((long)range << 15, accum, 15) >> 14);
+        int r = static_cast<int>(multiply(static_cast<long>(range) << 15, accum, 15) >> 14);
         r = r - range;
         if (r < 0)
         {
@@ -80,9 +80,9 @@ int star_field()
     s_star_field_values[2] = std::max(s_star_field_values[2], 1.0);
     s_star_field_values[2] = std::min(s_star_field_values[2], 100.0);
 
-    s_distribution = (int) s_star_field_values[0];
-    s_concentration  = (long)(s_star_field_values[1] / 100.0 * (1L << 16));
-    s_slope = (int) s_star_field_values[2];
+    s_distribution = static_cast<int>(s_star_field_values[0]);
+    s_concentration  = static_cast<long>(s_star_field_values[1] / 100.0 * (1L << 16));
+    s_slope = static_cast<int>(s_star_field_values[2]);
 
     if (validate_luts(ALTERN_MAP_NAME))
     {

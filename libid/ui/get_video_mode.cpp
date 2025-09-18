@@ -123,8 +123,8 @@ static void format_video_choice(int i, const char *err, char *buf)
 static double video_aspect(int try_x_dots, int try_y_dots)
 {
     // calc resulting aspect ratio for specified dots in current mode
-    return (double)try_y_dots / (double)try_x_dots
-           * (double)g_video_entry.x_dots / (double)g_video_entry.y_dots
+    return static_cast<double>(try_y_dots) / static_cast<double>(try_x_dots)
+           * static_cast<double>(g_video_entry.x_dots) / static_cast<double>(g_video_entry.y_dots)
            * g_screen_aspect;
 }
 
@@ -369,13 +369,13 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         if (g_view_x_dots)
         {
-            g_view_reduction = (float)(g_video_entry.x_dots / g_view_x_dots);
+            g_view_reduction = static_cast<float>(g_video_entry.x_dots / g_view_x_dots);
             g_view_y_dots = 0;
             g_view_x_dots = 0; // easier to use auto reduction
         }
         g_view_reduction = std::round(g_view_reduction); // need integer value
-        g_skip_y_dots = (short)(g_view_reduction - 1);
-        g_skip_x_dots = (short)(g_view_reduction - 1);
+        g_skip_y_dots = static_cast<short>(g_view_reduction - 1);
+        g_skip_x_dots = static_cast<short>(g_view_reduction - 1);
         return 0;
     }
 
@@ -448,7 +448,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     g_final_aspect_ratio = g_file_aspect_ratio;
     if (g_final_aspect_ratio == 0) // assume display correct
     {
-        g_final_aspect_ratio = (float)video_aspect(g_file_x_dots, g_file_y_dots);
+        g_final_aspect_ratio = static_cast<float>(video_aspect(g_file_x_dots, g_file_y_dots));
     }
     if (g_final_aspect_ratio >= g_screen_aspect-0.02
         && g_final_aspect_ratio <= g_screen_aspect+0.02)
@@ -456,8 +456,8 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         g_final_aspect_ratio = g_screen_aspect;
     }
     {
-        int i = (int)(g_final_aspect_ratio * 1000.0 + 0.5);
-        g_final_aspect_ratio = (float)(i/1000.0); // chop precision to 3 decimals
+        int i = static_cast<int>(g_final_aspect_ratio * 1000.0 + 0.5);
+        g_final_aspect_ratio = static_cast<float>(i / 1000.0); // chop precision to 3 decimals
     }
 
     // setup view window stuff
@@ -469,24 +469,26 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         // image not exactly same size as screen
         g_view_window = true;
         f_temp = g_final_aspect_ratio
-                * (double)g_video_entry.y_dots / (double)g_video_entry.x_dots
+                * static_cast<double>(g_video_entry.y_dots) / static_cast<double>(g_video_entry.x_dots)
                 / g_screen_aspect;
         float tmp_reduce;
         int i;
         int j;
         if (g_final_aspect_ratio <= g_screen_aspect)
         {
-            i = (int) std::lround((double) g_video_entry.x_dots / (double) g_file_x_dots * 20.0);
-            tmp_reduce = (float)(i/20.0); // chop precision to nearest .05
-            i = (int) std::lround((double) g_video_entry.x_dots / tmp_reduce);
-            j = (int) std::lround((double) i * f_temp);
+            i = static_cast<int>(std::lround(
+                static_cast<double>(g_video_entry.x_dots) / static_cast<double>(g_file_x_dots) * 20.0));
+            tmp_reduce = static_cast<float>(i / 20.0); // chop precision to nearest .05
+            i = static_cast<int>(std::lround(static_cast<double>(g_video_entry.x_dots) / tmp_reduce));
+            j = static_cast<int>(std::lround(static_cast<double>(i) * f_temp));
         }
         else
         {
-            i = (int) std::lround((double) g_video_entry.y_dots / (double) g_file_y_dots * 20.0);
-            tmp_reduce = (float)(i/20.0); // chop precision to nearest .05
-            j = (int) std::lround((double) g_video_entry.y_dots / tmp_reduce);
-            i = (int) std::lround((double) j / f_temp);
+            i = static_cast<int>(std::lround(
+                static_cast<double>(g_video_entry.y_dots) / static_cast<double>(g_file_y_dots) * 20.0));
+            tmp_reduce = static_cast<float>(i / 20.0); // chop precision to nearest .05
+            j = static_cast<int>(std::lround(static_cast<double>(g_video_entry.y_dots) / tmp_reduce));
+            i = static_cast<int>(std::lround(static_cast<double>(j) / f_temp));
         }
         if (i != g_file_x_dots || j != g_file_y_dots)  // too bad, must be explicit
         {

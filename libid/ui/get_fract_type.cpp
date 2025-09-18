@@ -491,7 +491,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
                     }
                     k = 0;
                 }
-                s_tmp_stack[j++] = (char)c;
+                s_tmp_stack[j++] = static_cast<char>(c);
             }
         }
         while (--j >= 0 && s_tmp_stack[j] == '\n')
@@ -918,12 +918,12 @@ gfp_top:
         g_julibrot_y_min    = param_values[prompt_num++].uval.dval;
         g_julibrot_z_dots      = param_values[prompt_num++].uval.ival;
         g_julibrot_3d_mode = static_cast<Julibrot3DMode>(param_values[prompt_num++].uval.ch.val);
-        g_eyes     = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_origin   = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_depth    = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_height   = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_width    = (float)param_values[prompt_num++].uval.dval;
-        g_julibrot_dist     = (float)param_values[prompt_num++].uval.dval;
+        g_eyes     = static_cast<float>(param_values[prompt_num++].uval.dval);
+        g_julibrot_origin   = static_cast<float>(param_values[prompt_num++].uval.dval);
+        g_julibrot_depth    = static_cast<float>(param_values[prompt_num++].uval.dval);
+        g_julibrot_height   = static_cast<float>(param_values[prompt_num++].uval.dval);
+        g_julibrot_width    = static_cast<float>(param_values[prompt_num++].uval.dval);
+        g_julibrot_dist     = static_cast<float>(param_values[prompt_num++].uval.dval);
         ret = 1;  // force new calc since not resumable anyway
     }
     if (current_type == FractalType::INVERSE_JULIA)

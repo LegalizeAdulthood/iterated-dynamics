@@ -144,7 +144,7 @@ static void help_seek(long pos)
 
 static void display_cc(int row, int col, int color, int ch)
 {
-    char s[] = { (char) ch, 0 };
+    char s[] = { static_cast<char>(ch), 0 };
     driver_put_string(row, col, color, s);
 }
 
@@ -252,11 +252,11 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
                     display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
                     if (num_link != nullptr)
                     {
-                        link[*num_link].r         = (Byte)row;
-                        link[*num_link].c         = (Byte)col;
+                        link[*num_link].r         = static_cast<Byte>(row);
+                        link[*num_link].c         = static_cast<Byte>(col);
                         link[*num_link].topic_num = get_int(curr+1);
                         link[*num_link].topic_off = get_int(curr+1+sizeof(int));
-                        link[*num_link].offset    = (unsigned)(curr + 1 + 3 * sizeof(int) - text);
+                        link[*num_link].offset    = static_cast<unsigned>(curr + 1 + 3 * sizeof(int) - text);
                         link[*num_link].width     = width;
                         ++*num_link;
                     }
@@ -291,11 +291,11 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
             display_text(row, col, C_HELP_LINK, curr+1+3*sizeof(int), width);
             if (num_link != nullptr)
             {
-                link[*num_link].r         = (Byte)row;
-                link[*num_link].c         = (Byte)col;
+                link[*num_link].r         = static_cast<Byte>(row);
+                link[*num_link].c         = static_cast<Byte>(col);
                 link[*num_link].topic_num = get_int(curr+1);
                 link[*num_link].topic_off = get_int(curr+1+sizeof(int));
-                link[*num_link].offset    = (unsigned)(curr + 1 + 3 * sizeof(int) - text);
+                link[*num_link].offset    = static_cast<unsigned>(curr + 1 + 3 * sizeof(int) - text);
                 link[*num_link].width     = width;
                 ++*num_link;
             }
@@ -496,7 +496,7 @@ static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
         }
     }
 
-    return best == nullptr ? -1 : (int)(best-link);
+    return best == nullptr ? -1 : static_cast<int>(best - link);
 }
 
 static int find_link_left_right(Link *link, int num_link, int curr_link, int left)
@@ -514,7 +514,7 @@ static int find_link_left_right(Link *link, int num_link, int curr_link, int lef
         int temp_c2 = temp->c + temp->width - 1;
 
         if (ctr != curr_link
-            && ((left && temp_c2 < (int) curr->c) || (!left && (int) temp->c > curr_c2)))
+            && ((left && temp_c2 < static_cast<int>(curr->c)) || (!left && static_cast<int>(temp->c) > curr_c2)))
         {
             int temp_dist = dist1(curr->r, temp->r);
 
@@ -542,7 +542,7 @@ static int find_link_left_right(Link *link, int num_link, int curr_link, int lef
         }
     } // for
 
-    return best == nullptr ? -1 : (int)(best-link);
+    return best == nullptr ? -1 : static_cast<int>(best - link);
 }
 
 static int find_link_key(Link * /*link*/, int num_link, int curr_link, int key)
@@ -1182,10 +1182,10 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
         std::memset(line, ' ', 81);
         std::string buff = fmt::format(ID_PROGRAM_NAME " Version {:d}.{:d}.{:d}", //
             ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH);
-        std::memmove(line + (width - (int) buff.length()) / 2 - 4, buff.c_str(), buff.length());
+        std::memmove(line + (width - static_cast<int>(buff.length())) / 2 - 4, buff.c_str(), buff.length());
 
         buff = fmt::format("Page {:d}", pd->page_num);
-        std::memmove(line + (width - (int)buff.length()), buff.c_str(), buff.length());
+        std::memmove(line + (width - static_cast<int>(buff.length())), buff.c_str(), buff.length());
 
         printer_ch(info, '\n', 1);
         printer_str(info, line, width);
@@ -1264,7 +1264,7 @@ static bool print_doc_msg_func(int page_num, int num_pages)
         driver_hide_text_cursor();
     }
 
-    driver_put_string(7, 41, C_HELP_LINK, fmt::format("{:d}%", (int) (100.0 / num_pages * page_num)));
+    driver_put_string(7, 41, C_HELP_LINK, fmt::format("{:d}%", static_cast<int>(100.0 / num_pages * page_num)));
 
     while (driver_key_pressed())
     {
@@ -1288,7 +1288,7 @@ bool make_doc_msg_func(int page_num, int num_pages)
     if (page_num >= 0)
     {
         driver_put_string(BOX_ROW + 8, BOX_COL + 4, C_DVID_LO,
-            fmt::format("completed {:d}%", (int) (100.0 / num_pages * page_num)));
+            fmt::format("completed {:d}%", static_cast<int>(100.0 / num_pages * page_num)));
         driver_key_pressed(); // pumps messages to force screen update
         return true;
     }

@@ -241,7 +241,7 @@ void rotate(int direction)
     old_step = 1;                       // single-step
     f_step = 1;
     incr = 999;                         // ready to randomize
-    std::srand((unsigned) std::time(nullptr)); // randomize things
+    std::srand(static_cast<unsigned>(std::time(nullptr))); // randomize things
 
     if (direction == 0)
     {
@@ -301,9 +301,9 @@ void rotate(int direction)
                             to_green   = RAND15() >> 9;
                             to_blue    = RAND15() >> 9;
                         }
-                        g_dac_box[j_step][0] = (Byte)(from_red   + (to_red - from_red) * incr / f_step);
-                        g_dac_box[j_step][1] = (Byte)(from_green + (to_green - from_green) * incr / f_step);
-                        g_dac_box[j_step][2] = (Byte)(from_blue  + (to_blue - from_blue) * incr / f_step);
+                        g_dac_box[j_step][0] = static_cast<Byte>(from_red + (to_red - from_red) * incr / f_step);
+                        g_dac_box[j_step][1] = static_cast<Byte>(from_green + (to_green - from_green) * incr / f_step);
+                        g_dac_box[j_step][2] = static_cast<Byte>(from_blue + (to_blue - from_blue) * incr / f_step);
                     }
                 }
                 if (step >= rotate_size)
@@ -546,8 +546,8 @@ static void set_palette2(Byte start[3], Byte finish[3])
     {
         for (int j = 0; j < 3; j++)
         {
-            g_dac_box[i][j]     = (Byte)((i*finish[j] + (128-i)*start[j])/128);
-            g_dac_box[i+127][j] = (Byte)((i*start[j]  + (128-i)*finish[j])/128);
+            g_dac_box[i][j]     = static_cast<Byte>((i * finish[j] + (128 - i) * start[j]) / 128);
+            g_dac_box[i+127][j] = static_cast<Byte>((i * start[j] + (128 - i) * finish[j]) / 128);
         }
     }
 }
@@ -561,9 +561,9 @@ static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
     {
         for (int j = 0; j < 3; j++)
         {
-            g_dac_box[i][j]     = (Byte)((i*middle[j] + (86-i)*start[j])/85);
-            g_dac_box[i+85][j]  = (Byte)((i*finish[j] + (86-i)*middle[j])/85);
-            g_dac_box[i+170][j] = (Byte)((i*start[j]  + (86-i)*finish[j])/85);
+            g_dac_box[i][j]     = static_cast<Byte>((i * middle[j] + (86 - i) * start[j]) / 85);
+            g_dac_box[i+85][j]  = static_cast<Byte>((i * finish[j] + (86 - i) * middle[j]) / 85);
+            g_dac_box[i+170][j] = static_cast<Byte>((i * start[j] + (86 - i) * finish[j]) / 85);
         }
     }
 }

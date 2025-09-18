@@ -258,7 +258,7 @@ start:
     {
         if (i < 80)
         {
-            buffer[i++] = (char)out;
+            buffer[i++] = static_cast<char>(out);
         }
         out = std::fgetc(s_slide_show_file);
         if (out == ' ' || out == '\t' || out == '\n' || out == EOF)
@@ -291,7 +291,7 @@ start:
             {
                 throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
             }
-            int len = (int) std::strlen(buf);
+            int len = static_cast<int>(std::strlen(buf));
             buf[len-1] = 0; // zap newline
             message(secs, buf);
         }
@@ -331,11 +331,11 @@ start:
     {
         float f_ticks;
         const int count = std::fscanf(s_slide_show_file, "%f", &f_ticks); // how many seconds to wait
-        driver_set_keyboard_timeout((int)(f_ticks*1000.f)); // timeout in ms
+        driver_set_keyboard_timeout(static_cast<int>(f_ticks * 1000.f)); // timeout in ms
         f_ticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
         if (count == 1)
         {
-            s_ticks = (long)f_ticks;
+            s_ticks = static_cast<long>(f_ticks);
             s_start_tick = now;  // start timing
         }
         else
@@ -392,7 +392,7 @@ void stop_slide_show()
 
 void record_show(int key)
 {
-    float dt = (float) s_ticks;      // save time of last call
+    float dt = static_cast<float>(s_ticks);      // save time of last call
     s_ticks = std::clock();  // current time
     if (s_slide_show_file == nullptr)
     {

@@ -116,9 +116,9 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                 }
             }                           // end of first-time-through
 
-            unsigned char i_char = (char) (temp[10] & 0x07);        // find the color table size
+            unsigned char i_char = static_cast<char>(temp[10] & 0x07);        // find the color table size
             unsigned int i_tbl = 1 << ++i_char;
-            i_char = (char)(temp[10] & 0x80);        // is there a global color table?
+            i_char = static_cast<char>(temp[10] & 0x80);        // is there a global color table?
             if (x_step == 0 && y_step == 0)   // first time through?
             {
                 all_i_tbl = i_tbl;             // save the color table size
@@ -171,7 +171,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                         error_flag = 4;
                     }
 
-                    i_char = (char)(temp[9] & 0x80);     // is there a local color table?
+                    i_char = static_cast<char>(temp[9] & 0x80);     // is there a local color table?
                     if (i_char != 0)            // yup
                     {
                         if (std::fread(temp, 3*i_tbl, 1, in) != 1)       // read the local color table

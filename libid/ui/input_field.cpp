@@ -42,7 +42,7 @@ int input_field(InputFieldFlags options, //
     while (true)
     {
         std::strcpy(buf, fld);
-        int i = (int) std::strlen(buf);
+        int i = static_cast<int>(std::strlen(buf));
         while (i < len)
         {
             buf[i++] = ' ';
@@ -86,14 +86,14 @@ int input_field(InputFieldFlags options, //
             started = true;
             break;
         case ID_KEY_END:
-            offset = (int) std::strlen(fld);
+            offset = static_cast<int>(std::strlen(fld));
             started = true;
             break;
         case ID_KEY_BACKSPACE:
         case 127:                              // backspace
             if (offset > 0)
             {
-                j = (int) std::strlen(fld);
+                j = static_cast<int>(std::strlen(fld));
                 for (int k = offset-1; k < j; ++k)
                 {
                     fld[k] = fld[k+1];
@@ -104,7 +104,7 @@ int input_field(InputFieldFlags options, //
             display = true;
             break;
         case ID_KEY_DELETE:                           // delete
-            j = (int) std::strlen(fld);
+            j = static_cast<int>(std::strlen(fld));
             for (int k = offset; k < j; ++k)
             {
                 fld[k] = fld[k+1];
@@ -136,7 +136,7 @@ int input_field(InputFieldFlags options, //
             {
                 break;                // at end of field
             }
-            if (insert && started && std::strlen(fld) >= (size_t)len)
+            if (insert && started && std::strlen(fld) >= static_cast<size_t>(len))
             {
                 break;                                // insert & full
             }
@@ -162,18 +162,18 @@ int input_field(InputFieldFlags options, //
             }
             if (insert)
             {
-                j = (int) std::strlen(fld);
+                j = static_cast<int>(std::strlen(fld));
                 while (j >= offset)
                 {
                     fld[j+1] = fld[j];
                     --j;
                 }
             }
-            if ((size_t)offset >= std::strlen(fld))
+            if (static_cast<size_t>(offset) >= std::strlen(fld))
             {
                 fld[offset+1] = 0;
             }
-            fld[offset++] = (char)key;
+            fld[offset++] = static_cast<char>(key);
             // if "e" or "p" in first col make number e or pi
             if ((options & (InputFieldFlags::NUMERIC | InputFieldFlags::INTEGER)) == InputFieldFlags::NUMERIC)
             {

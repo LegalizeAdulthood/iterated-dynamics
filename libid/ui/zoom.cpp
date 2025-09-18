@@ -194,8 +194,8 @@ void draw_box(bool draw_it)
     double f_temp2 = g_zoom_box_y + dy / g_final_aspect_ratio;
 
     Coord top_left;
-    top_left.x   = (int)(f_temp1*(g_logical_screen_x_size_dots+PIXEL_ROUND)); // screen co-ords
-    top_left.y   = (int)(f_temp2*(g_logical_screen_y_size_dots+PIXEL_ROUND));
+    top_left.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND)); // screen co-ords
+    top_left.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
     g_x_min  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew; // real co-ords
     g_y_max  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
@@ -208,8 +208,8 @@ void draw_box(bool draw_it)
     f_temp1 = g_zoom_box_x + g_zoom_box_width - dx - f_x_adj;
     f_temp2 = g_zoom_box_y - dy/g_final_aspect_ratio + g_zoom_box_height;
     Coord bot_right;
-    bot_right.x   = (int)(f_temp1*(g_logical_screen_x_size_dots+PIXEL_ROUND));
-    bot_right.y   = (int)(f_temp2*(g_logical_screen_y_size_dots+PIXEL_ROUND));
+    bot_right.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND));
+    bot_right.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
     g_x_max  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew;
     g_y_min  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
@@ -226,8 +226,8 @@ void draw_box(bool draw_it)
     f_temp1 = g_zoom_box_x + dx - f_x_adj;
     f_temp2 = g_zoom_box_y + dy/g_final_aspect_ratio + g_zoom_box_height;
     Coord bot_left;
-    bot_left.x   = (int)(f_temp1*(g_logical_screen_x_size_dots+PIXEL_ROUND));
-    bot_left.y   = (int)(f_temp2*(g_logical_screen_y_size_dots+PIXEL_ROUND));
+    bot_left.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND));
+    bot_left.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
     g_x_3rd  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew;
     g_y_3rd  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
@@ -239,8 +239,8 @@ void draw_box(bool draw_it)
     f_temp1 = g_zoom_box_x + g_zoom_box_width - dx + f_x_adj;
     f_temp2 = g_zoom_box_y - dy/g_final_aspect_ratio;
     Coord top_right;
-    top_right.x   = (int)(f_temp1*(g_logical_screen_x_size_dots+PIXEL_ROUND));
-    top_right.y   = (int)(f_temp2*(g_logical_screen_y_size_dots+PIXEL_ROUND));
+    top_right.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND));
+    top_right.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
 
     if (g_box_count != 0)
     {
@@ -370,7 +370,7 @@ void move_box(double dx, double dy)
         }
         if (align != 0)
         {
-            if (int col = (int) (g_zoom_box_x * (g_logical_screen_x_size_dots + PIXEL_ROUND));
+            if (int col = static_cast<int>(g_zoom_box_x * (g_logical_screen_x_size_dots + PIXEL_ROUND));
                 (col & align - 1) != 0)
             {
                 if (dx > 0)
@@ -378,7 +378,7 @@ void move_box(double dx, double dy)
                     col += align;
                 }
                 col -= col & align - 1; // adjust col to pass alignment
-                g_zoom_box_x = (double) col / g_logical_screen_x_size_dots;
+                g_zoom_box_x = static_cast<double>(col) / g_logical_screen_x_size_dots;
             }
         }
     }
@@ -394,7 +394,7 @@ void move_box(double dx, double dy)
         }
         if (align != 0)
         {
-            if (int row = (int) (g_zoom_box_y * (g_logical_screen_y_size_dots + PIXEL_ROUND));
+            if (int row = static_cast<int>(g_zoom_box_y * (g_logical_screen_y_size_dots + PIXEL_ROUND));
                 (row & align - 1) != 0)
             {
                 if (dy > 0)
@@ -402,7 +402,7 @@ void move_box(double dx, double dy)
                     row += align;
                 }
                 row -= row & align - 1;
-                g_zoom_box_y = (double) row / g_logical_screen_y_size_dots;
+                g_zoom_box_y = static_cast<double>(row) / g_logical_screen_y_size_dots;
             }
         }
     }
@@ -763,9 +763,9 @@ void init_pan_or_recalc(bool do_zoom_out)
         return;
     }
 
-    int col = (int) (g_zoom_box_x *
-        (g_logical_screen_x_size_dots + PIXEL_ROUND)); // calc dest col,row of topleft pixel
-    int row = (int) (g_zoom_box_y * (g_logical_screen_y_size_dots + PIXEL_ROUND));
+    int col = static_cast<int>(
+        g_zoom_box_x * (g_logical_screen_x_size_dots + PIXEL_ROUND)); // calc dest col,row of topleft pixel
+    int row = static_cast<int>(g_zoom_box_y * (g_logical_screen_y_size_dots + PIXEL_ROUND));
     if (do_zoom_out)
     {
         // invert row and col
@@ -1065,7 +1065,7 @@ MainState move_zoom_box(MainContext &context)
     }
     if (g_box_count)
     {
-        move_box((double)horizontal/g_logical_screen_x_size_dots, (double)vertical/g_logical_screen_y_size_dots);
+        move_box(static_cast<double>(horizontal) /g_logical_screen_x_size_dots, static_cast<double>(vertical) /g_logical_screen_y_size_dots);
     }
     return MainState::NOTHING;
 }

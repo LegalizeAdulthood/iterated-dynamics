@@ -55,7 +55,7 @@ pass_option_restart:
 
     choices[++k] = "Orbit interval (1 ... 255)";
     values[k].type = 'i';
-    int old_orbit_interval = (int) g_orbit_interval;
+    int old_orbit_interval = static_cast<int>(g_orbit_interval);
     values[k].uval.ival = old_orbit_interval;
 
     choices[++k] = "Maintain screen coordinates";
