@@ -70,8 +70,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
         std::strcpy(buff, temp_drive);
         if (!test_dir)
         {
-            int len = (int) std::strlen(buff);
-            buff[len-1] = 0; // get rid of slash added by expand_dirname
+            buff[std::strlen(buff) - 1] = 0; // get rid of slash added by expand_dirname
         }
     }
 
@@ -108,20 +107,20 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
     const bool get_path = mode == CmdFile::AT_CMD_LINE || mode == CmdFile::SSTOOLS_INI;
     if (get_path)
     {
-        if ((int) std::strlen(drive) != 0)
+        if (static_cast<int>(std::strlen(drive)) != 0)
         {
             std::strcpy(drive1, drive);
         }
-        if ((int) std::strlen(dir) != 0)
+        if (static_cast<int>(std::strlen(dir)) != 0)
         {
             std::strcpy(dir1, dir);
         }
     }
-    if ((int) std::strlen(fname) != 0)
+    if (static_cast<int>(std::strlen(fname)) != 0)
     {
         std::strcpy(fname1, fname);
     }
-    if ((int) std::strlen(ext) != 0)
+    if (static_cast<int>(std::strlen(ext)) != 0)
     {
         std::strcpy(ext1, ext);
     }
@@ -129,7 +128,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
     if (!is_a_dir && !is_a_file && get_path)
     {
         make_drive_dir(old_full_path, drive1, dir1);
-        int len = (int) std::strlen(old_full_path);
+        int len = static_cast<int>(std::strlen(old_full_path));
         if (len > 0)
         {
             // strip trailing slash

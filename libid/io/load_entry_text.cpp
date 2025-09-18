@@ -99,7 +99,7 @@ void load_entry_text(
                 if (c == '\n')
                 {
                     // need to insert '\n', even for short lines
-                    *buf++ = (char)c;
+                    *buf++ = static_cast<char>(c);
                     break;
                 }
             }
@@ -162,7 +162,7 @@ void load_entry_text(
                 }
                 else
                 {
-                    *buf++ = (char)c;
+                    *buf++ = static_cast<char>(c);
                 }
                 if (c == '}' && !comment)
                 {

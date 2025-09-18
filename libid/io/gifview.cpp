@@ -95,7 +95,7 @@ int get_byte()
 
 int get_bytes(Byte *where, int how_many)
 {
-    return (int) std::fread(where, 1, how_many, s_fp_in); // EOF is -1, as desired
+    return static_cast<int>(std::fread(where, 1, how_many, s_fp_in)); // EOF is -1, as desired
 }
 
 // Main entry decoder
@@ -150,7 +150,7 @@ int gif_view()
     for (int i = 0; i < 13; i++)
     {
         int tmp = get_byte();
-        buffer[i] = (Byte) tmp;
+        buffer[i] = static_cast<Byte>(tmp);
         if (tmp < 0)
         {
             close_file();
@@ -184,7 +184,7 @@ int gif_view()
         g_out_line = out_line_dither;
     }
 
-    for (int i = 0; i < (int)g_num_colors; i++)
+    for (int i = 0; i < static_cast<int>(g_num_colors); i++)
     {
         for (int j = 0; j < 3; j++)
         {
@@ -252,7 +252,7 @@ int gif_view()
             for (int i = 0; i < 9; i++)
             {
                 int tmp = get_byte();
-                buffer[i] = (Byte) tmp;
+                buffer[i] = static_cast<Byte>(tmp);
                 if (tmp < 0)
                 {
                     status = -1;
@@ -411,8 +411,8 @@ static int out_line_dither(Byte *pixels, int line_len)
             err = brt;
         }
         next_err = s_dither_buf[i+1]+err/3;
-        s_dither_buf[i] = (char)(err/3);
-        s_dither_buf[i+1] = (char)(err/3);
+        s_dither_buf[i] = static_cast<char>(err / 3);
+        s_dither_buf[i+1] = static_cast<char>(err / 3);
     }
     return out_line(pixels, line_len);
 }
@@ -456,7 +456,7 @@ static bool put_sound_line(int row, int col_start, int col_stop, Byte *pixels)
         {
             sleep_ms(g_orbit_delay);
         }
-        write_sound((int) *pixels++ * 3000 / g_colors + g_base_hertz);
+        write_sound(static_cast<int>(*pixels++) * 3000 / g_colors + g_base_hertz);
     }
     return false;
 }

@@ -73,7 +73,7 @@ void load_config(const std::string &cfg_path)
             continue;   // comment line
         }
         temp_string[120] = 0;
-        temp_string[(int) std::strlen(temp_string)-1] = 0; // zap trailing \n
+        temp_string[std::strlen(temp_string) -1] = 0; // zap trailing \n
         int j = -1;
         int i = j;
         // key, 0: mode name, 1: x, 2: y, 3: colors, 4: driver, 5: comments
@@ -119,8 +119,8 @@ void load_config(const std::string &cfg_path)
         std::strncpy(&video_entry.comment[0], fields[4], std::size(video_entry.comment));
         video_entry.comment[25] = 0;
         video_entry.key      = key;
-        video_entry.x_dots       = (short)x_dots;
-        video_entry.y_dots       = (short)y_dots;
+        video_entry.x_dots       = static_cast<short>(x_dots);
+        video_entry.y_dots       = static_cast<short>(y_dots);
         video_entry.colors      = colors;
 
         // if valid, add to supported modes

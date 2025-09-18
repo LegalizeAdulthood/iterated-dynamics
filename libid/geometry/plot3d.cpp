@@ -484,29 +484,29 @@ void plot_setup()
         break;
     }
 
-    g_x_shift = static_cast<int>(g_shift_x * (double) g_logical_screen_x_dots / 100);
+    g_x_shift = static_cast<int>(g_shift_x * static_cast<double>(g_logical_screen_x_dots) / 100);
     g_x_shift1 = g_x_shift;
-    g_y_shift = static_cast<int>(g_shift_y * (double) g_logical_screen_y_dots / 100);
+    g_y_shift = static_cast<int>(g_shift_y * static_cast<double>(g_logical_screen_y_dots) / 100);
     g_y_shift1 = g_y_shift;
 
     if (g_glasses_type != GlassesType::NONE)
     {
-        s_red_local_left  = static_cast<int>(g_red_crop_left * (double) g_logical_screen_x_dots / 100.0);
-        s_red_local_right = static_cast<int>((100 - g_red_crop_right) * (double) g_logical_screen_x_dots / 100.0);
-        s_blue_local_left = static_cast<int>(g_blue_crop_left * (double) g_logical_screen_x_dots / 100.0);
-        s_blue_local_right = static_cast<int>((100 - g_blue_crop_right) * (double) g_logical_screen_x_dots / 100.0);
+        s_red_local_left  = static_cast<int>(g_red_crop_left * static_cast<double>(g_logical_screen_x_dots) / 100.0);
+        s_red_local_right = static_cast<int>((100 - g_red_crop_right) * static_cast<double>(g_logical_screen_x_dots) / 100.0);
+        s_blue_local_left = static_cast<int>(g_blue_crop_left * static_cast<double>(g_logical_screen_x_dots) / 100.0);
+        s_blue_local_right = static_cast<int>((100 - g_blue_crop_right) * static_cast<double>(g_logical_screen_x_dots) / 100.0);
         d_red_bright    = static_cast<double>(g_red_bright) /100.0;
         d_blue_bright   = static_cast<double>(g_blue_bright) /100.0;
 
         switch (g_which_image)
         {
         case StereoImage::RED:
-            g_x_shift  += static_cast<int>(g_eye_separation * (double) g_logical_screen_x_dots / 200);
+            g_x_shift  += static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
             g_xx_adjust = static_cast<int>(
-                (g_adjust_3d_x + g_converge_x_adjust) * (double) g_logical_screen_x_dots / 100);
-            g_x_shift1 -= static_cast<int>(g_eye_separation * (double) g_logical_screen_x_dots / 200);
+                (g_adjust_3d_x + g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
+            g_x_shift1 -= static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
             g_xx_adjust1 = static_cast<int>(
-                (g_adjust_3d_x - g_converge_x_adjust) * (double) g_logical_screen_x_dots / 100);
+                (g_adjust_3d_x - g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
             if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2 - g_logical_screen_x_dots;
@@ -514,9 +514,9 @@ void plot_setup()
             break;
 
         case StereoImage::BLUE:
-            g_x_shift  -= static_cast<int>(g_eye_separation * (double) g_logical_screen_x_dots / 200);
+            g_x_shift  -= static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
             g_xx_adjust = static_cast<int>(
-                (g_adjust_3d_x - g_converge_x_adjust) * (double) g_logical_screen_x_dots / 100);
+                (g_adjust_3d_x - g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
             if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2;
@@ -529,9 +529,9 @@ void plot_setup()
     }
     else
     {
-        g_xx_adjust = static_cast<int>(g_adjust_3d_x * (double) g_logical_screen_x_dots / 100);
+        g_xx_adjust = static_cast<int>(g_adjust_3d_x * static_cast<double>(g_logical_screen_x_dots) / 100);
     }
-    g_yy_adjust = static_cast<int>(-(g_adjust_3d_y * (double) g_logical_screen_y_dots) / 100);
+    g_yy_adjust = static_cast<int>(-(g_adjust_3d_y * static_cast<double>(g_logical_screen_y_dots)) / 100);
 
     if (g_map_set)
     {

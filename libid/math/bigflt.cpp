@@ -28,7 +28,7 @@ void bf_hex_dump(BigFloat r)
     {
         std::printf("%02X ", *(r+i));
     }
-    std::printf(" e %04hX\n", (S16)BIG_ACCESS16(r+g_bf_length));
+    std::printf(" e %04hX\n", static_cast<S16>(BIG_ACCESS16(r + g_bf_length)));
 }
 
 /**********************************************************************/
@@ -78,7 +78,7 @@ BigFloat str_to_bf(BigFloat r, const char *s)
     {
         while (*l >= '0' && *l <= '9') // while a digit
         {
-            ones_byte = (Byte)(*l-- - '0');
+            ones_byte = static_cast<Byte>(*l-- - '0');
             int_to_bf(g_bf_tmp1, ones_byte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             div_a_bf_int(r, 10);
@@ -89,7 +89,7 @@ BigFloat str_to_bf(BigFloat r, const char *s)
             bool keep_looping = *l >= '0' && *l <= '9' && l >= s;
             while (keep_looping) // while a digit
             {
-                ones_byte = (Byte)(*l-- - '0');
+                ones_byte = static_cast<Byte>(*l-- - '0');
                 int_to_bf(g_bf_tmp1, ones_byte);
                 unsafe_add_a_bf(r, g_bf_tmp1);
                 keep_looping = *l >= '0' && *l <= '9' && l >= s;
@@ -106,7 +106,7 @@ BigFloat str_to_bf(BigFloat r, const char *s)
         bool keep_looping = *l >= '0' && *l <= '9' && l >= s;
         while (keep_looping) // while a digit
         {
-            ones_byte = (Byte)(*l-- - '0');
+            ones_byte = static_cast<Byte>(*l-- - '0');
             int_to_bf(g_bf_tmp1, ones_byte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             keep_looping = *l >= '0' && *l <= '9' && l >= s;
@@ -177,7 +177,7 @@ char *unsafe_bf_to_str(char *s, BigFloat r, int dec)
 
     copy_bf(g_bf_tmp1, r);
     unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
-    int power = (S16) BIG_ACCESS16(g_bf10_tmp + dec + 2); // where the exponent is stored
+    int power = static_cast<S16>(BIG_ACCESS16(g_bf10_tmp + dec + 2)); // where the exponent is stored
     if (power > -4 && power < 6)   // tinker with this
     {
         bf10_to_str_f(s, g_bf10_tmp, dec);
@@ -229,7 +229,7 @@ char *unsafe_bf_to_str_f(char *s, BigFloat r, int dec)
 //  g_bf_length must be at least g_bn_length+2
 BigNum bf_to_bn(BigNum n, BigFloat f)
 {
-    int f_exp = (S16) BIG_ACCESS16(f + g_bf_length);
+    int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
     if (f_exp >= g_int_length)
     {
         // if it's too big, use max value
@@ -263,8 +263,8 @@ BigFloat bn_to_bf(BigFloat f, BigNum n)
 {
     std::memcpy(f+g_bf_length-g_bn_length-1, n, g_bn_length);
     std::memset(f, 0, g_bf_length - g_bn_length - 1);
-    *(f+g_bf_length-1) = (Byte)(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
-    BIG_SET16(f+g_bf_length, (S16)(g_int_length - 1)); // exp
+    *(f+g_bf_length-1) = static_cast<Byte>(is_bn_neg(n) ? 0xFF : 0x00); // sign extend
+    BIG_SET16(f+g_bf_length, static_cast<S16>(g_int_length - 1)); // exp
     norm_bf(f);
     return f;
 }
@@ -275,8 +275,8 @@ BigFloat bn_to_bf(BigFloat f, BigNum n)
 BigFloat int_to_bf(BigFloat r, long value)
 {
     clear_bf(r);
-    BIG_SET32(r+g_bf_length-4, (S32)value);
-    BIG_SET16(r+g_bf_length, (S16)2);
+    BIG_SET32(r+g_bf_length-4, static_cast<S32>(value));
+    BIG_SET16(r+g_bf_length, static_cast<S16>(2));
     norm_bf(r);
     return r;
 }
@@ -289,7 +289,7 @@ long bf_to_int(BigFloat f)
 {
     long result;
 
-    int f_exp = (S16) BIG_ACCESS16(f + g_bf_length);
+    int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
     if (f_exp > 3)
     {
         result = 0x7FFFFFFFL;
@@ -352,8 +352,8 @@ BigFloat unsafe_inv_bf(BigFloat r, BigFloat n)
         neg_a_bf(n);
     }
 
-    int f_exp = (S16) BIG_ACCESS16(n + g_bf_length);
-    BIG_SET16(n+g_bf_length, (S16)0); // put within LDouble range
+    int f_exp = static_cast<S16>(BIG_ACCESS16(n + g_bf_length));
+    BIG_SET16(n+g_bf_length, static_cast<S16>(0)); // put within LDouble range
 
     LDouble f = bf_to_float(n);
     if (f == 0) // division by zero
@@ -378,7 +378,7 @@ BigFloat unsafe_inv_bf(BigFloat r, BigFloat n)
     // orig_bftmp1        = g_bf_tmp1;
 
     // calculate new starting values
-    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -427,9 +427,9 @@ BigFloat unsafe_inv_bf(BigFloat r, BigFloat n)
     {
         neg_a_bf(r);
     }
-    int r_exp = (S16) BIG_ACCESS16(r + g_bf_length);
+    int r_exp = static_cast<S16>(BIG_ACCESS16(r + g_bf_length));
     r_exp -= f_exp;
-    BIG_SET16(r+g_bf_length, (S16)r_exp); // adjust result exponent
+    BIG_SET16(r+g_bf_length, static_cast<S16>(r_exp)); // adjust result exponent
     return r;
 }
 
@@ -444,8 +444,8 @@ BigFloat unsafe_div_bf(BigFloat r, BigFloat n1, BigFloat n2)
 {
     // first, check for valid data
 
-    int a_exp = (S16) BIG_ACCESS16(n1 + g_bf_length);
-    BIG_SET16(n1+g_bf_length, (S16)0); // put within LDouble range
+    int a_exp = static_cast<S16>(BIG_ACCESS16(n1 + g_bf_length));
+    BIG_SET16(n1+g_bf_length, static_cast<S16>(0)); // put within LDouble range
 
     LDouble a = bf_to_float(n1);
     if (a == 0) // division into zero
@@ -454,8 +454,8 @@ BigFloat unsafe_div_bf(BigFloat r, BigFloat n1, BigFloat n2)
         return r;
     }
 
-    int b_exp = (S16) BIG_ACCESS16(n2 + g_bf_length);
-    BIG_SET16(n2+g_bf_length, (S16)0); // put within LDouble range
+    int b_exp = static_cast<S16>(BIG_ACCESS16(n2 + g_bf_length));
+    BIG_SET16(n2+g_bf_length, static_cast<S16>(0)); // put within LDouble range
 
     LDouble b = bf_to_float(n2);
     if (b == 0) // division by zero
@@ -468,9 +468,9 @@ BigFloat unsafe_div_bf(BigFloat r, BigFloat n1, BigFloat n2)
     unsafe_mult_bf(g_bf_tmp1, n1, r);
     copy_bf(r, g_bf_tmp1); // r = g_bf_tmp1
 
-    int r_exp = (S16) BIG_ACCESS16(r + g_bf_length);
+    int r_exp = static_cast<S16>(BIG_ACCESS16(r + g_bf_length));
     r_exp += a_exp - b_exp;
-    BIG_SET16(r+g_bf_length, (S16)r_exp); // adjust result exponent
+    BIG_SET16(r+g_bf_length, static_cast<S16>(r_exp)); // adjust result exponent
 
     return r;
 }
@@ -515,7 +515,7 @@ BigFloat unsafe_sqrt_bf(BigFloat r, BigFloat n)
     BigFloat orig_n = n;
 
     // calculate new starting values
-    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -636,7 +636,7 @@ BigFloat unsafe_ln_bf(BigFloat r, BigFloat n)
     BigFloat orig_bf_tmp5 = g_bf_tmp5;
 
     // calculate new starting values
-    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -921,7 +921,7 @@ BigFloat unsafe_atan_bf(BigFloat r, BigFloat n)
     BigFloat orig_bf_tmp3 = g_bf_tmp3;
 
     // calculate new starting values
-    g_bn_length = g_int_length + (int)(LDBL_DIG/LOG10_256) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -1277,8 +1277,8 @@ BigFloat norm_bf(BigFloat r)
     if (hi_byte != 0x00 && hi_byte != 0xFF)
     {
         std::memmove(r, r+1, g_bf_length-1);
-        r[g_bf_length-1] = (Byte)(hi_byte & 0x80 ? 0xFF : 0x00);
-        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp)+(S16)1);   // exp
+        r[g_bf_length-1] = static_cast<Byte>(hi_byte & 0x80 ? 0xFF : 0x00);
+        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp) + static_cast<S16>(1));   // exp
     }
 
     // check for underflow
@@ -1300,7 +1300,7 @@ BigFloat norm_bf(BigFloat r)
             {
                 std::memmove(r+scale, r, g_bf_length-scale-1);
                 std::memset(r, 0, scale);
-                BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp)-(S16)scale);    // exp
+                BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp) - static_cast<S16>(scale));    // exp
             }
         }
     }
@@ -1315,7 +1315,7 @@ BigFloat norm_bf(BigFloat r)
 void norm_sign_bf(BigFloat r, bool positive)
 {
     norm_bf(r);
-    r[g_bf_length-1] = (Byte)(positive ? 0x00 : 0xFF);
+    r[g_bf_length-1] = static_cast<Byte>(positive ? 0x00 : 0xFF);
 }
 /******************************************************/
 // adjust n1, n2 for before addition or subtraction
@@ -1451,7 +1451,7 @@ int cmp_bf(BigFloat n1, BigFloat n2)
 // returns 1 if negative, 0 if positive or zero
 bool is_bf_neg(BigFloat n)
 {
-    return (S8)n[g_bf_length-1] < 0;
+    return static_cast<S8>(n[g_bf_length - 1]) < 0;
 }
 
 /********************************************************************/
@@ -1727,7 +1727,7 @@ BigFloat unsafe_mult_bf(BigFloat r, BigFloat n1, BigFloat n2)
 
     int bfl = g_bf_length;
     g_bf_length = g_r_bf_length;
-    BIG_SET16(r+g_bf_length, (S16)(r_exp+2)); // adjust after mult
+    BIG_SET16(r+g_bf_length, static_cast<S16>(r_exp + 2)); // adjust after mult
     norm_sign_bf(r, positive);
     g_bf_length = bfl;
     std::memmove(r, r+g_padding, g_bf_length+2); // shift back
@@ -1790,7 +1790,7 @@ BigFloat unsafe_square_bf(BigFloat r, BigFloat n)
     }
 
     S16 *n_exp = (S16 *) (n + g_bf_length);
-    int r_exp = (S16) (2 * BIG_ACCESS_S16(n_exp));
+    int r_exp = static_cast<S16>(2 * BIG_ACCESS_S16(n_exp));
 
     int bnl = g_bn_length;
     g_bn_length = g_bf_length;
@@ -1802,7 +1802,7 @@ BigFloat unsafe_square_bf(BigFloat r, BigFloat n)
 
     int bfl = g_bf_length;
     g_bf_length = g_r_bf_length;
-    BIG_SET16(r+g_bf_length, (S16)(r_exp+2)); // adjust after mult
+    BIG_SET16(r+g_bf_length, static_cast<S16>(r_exp + 2)); // adjust after mult
 
     norm_sign_bf(r, true);
     g_bf_length = bfl;
@@ -1831,7 +1831,7 @@ BigFloat unsafe_mult_bf_int(BigFloat r, BigFloat n, U16 u)
     {
         // un-normalize n
         std::memmove(n, n+1, g_bf_length-1);  // this sign extends as well
-        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp)+(S16)1);
+        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp) + static_cast<S16>(1));
     }
 
     int bnl = g_bn_length;
@@ -1859,7 +1859,7 @@ BigFloat mult_a_bf_int(BigFloat r, U16 u)
     {
         // un-normalize n
         std::memmove(r, r+1, g_bf_length-1);  // this sign extends as well
-        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp)+(S16)1);
+        BIG_SET_S16(r_exp, BIG_ACCESS_S16(r_exp) + static_cast<S16>(1));
     }
 
     int bnl = g_bn_length;
@@ -2069,12 +2069,12 @@ BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n)
     if (is_bf_zero(n))
     {
         // in scientific notation, the leading digit can't be zero
-        r[1] = (Byte)0; // unless the number is zero
+        r[1] = static_cast<Byte>(0); // unless the number is zero
         return r;
     }
 
     BigFloat ones_byte = n + g_bf_length - 1;           // really it's n+g_bf_length-2
-    int power256 = (S16) BIG_ACCESS16(n + g_bf_length) + 1; // so adjust power256 by 1
+    int power256 = static_cast<S16>(BIG_ACCESS16(n + g_bf_length)) + 1; // so adjust power256 by 1
 
     if (dec == 0)
     {
@@ -2111,7 +2111,7 @@ BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n)
         *ones_byte = 0;
     }
     g_bn_length = bnl;
-    BIG_SET16(power10, (U16)p); // save power of ten
+    BIG_SET16(power10, static_cast<U16>(p)); // save power of ten
 
     // the digits are all read in, now scale it by 256^power256
     if (power256 > 0)
@@ -2151,8 +2151,8 @@ BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n)
             r[1] = 0;
             std::memmove(r+2, r+1, dec-1);
             r[1] = 1;
-            p = (S16)BIG_ACCESS16(power10);
-            BIG_SET16(power10, (U16)(p+1));
+            p = static_cast<S16>(BIG_ACCESS16(power10));
+            BIG_SET16(power10, static_cast<U16>(p + 1));
         }
     }
     r[dec] = 0; // truncate the rounded digit
@@ -2174,25 +2174,25 @@ BigFloat10 mult_a_bf10_int(BigFloat10 r, int dec, U16 n)
     }
 
     BigFloat10 power10 = r + dec + 1;
-    int p = (S16) BIG_ACCESS16(power10);
+    int p = static_cast<S16>(BIG_ACCESS16(power10));
 
     int sign_flag = r[0];  // r[0] to be used as a padding
     unsigned overflow = 0;
     for (int d = dec; d > 0; d--)
     {
         unsigned value = r[d] * n + overflow;
-        r[d] = (Byte)(value % 10);
+        r[d] = static_cast<Byte>(value % 10);
         overflow = value / 10;
     }
     while (overflow)
     {
         p++;
         std::memmove(r+2, r+1, dec-1);
-        r[1] = (Byte)(overflow % 10);
+        r[1] = static_cast<Byte>(overflow % 10);
         overflow = overflow / 10;
     }
-    BIG_SET16(power10, (U16)p); // save power of ten
-    r[0] = (Byte)sign_flag; // restore sign flag
+    BIG_SET16(power10, static_cast<U16>(p)); // save power of ten
+    r[0] = static_cast<Byte>(sign_flag); // restore sign flag
     return r;
 }
 
@@ -2212,14 +2212,14 @@ BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, U16 n)
     }
 
     BigFloat10 power10 = r + dec + 1;
-    int p = (S16) BIG_ACCESS16(power10);
+    int p = static_cast<S16>(BIG_ACCESS16(power10));
 
     unsigned remainder = 0;
     int dest = 1;
     for (int src = 1; src <= dec; dest++, src++)
     {
         value = 10*remainder + r[src];
-        r[dest] = (Byte)(value / n);
+        r[dest] = static_cast<Byte>(value / n);
         remainder = value % n;
         if (dest == 1 && r[dest] == 0)
         {
@@ -2230,7 +2230,7 @@ BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, U16 n)
     for (; dest <= dec; dest++)
     {
         value = 10*remainder;
-        r[dest] = (Byte)(value / n);
+        r[dest] = static_cast<Byte>(value / n);
         remainder = value % n;
         if (dest == 1 && r[dest] == 0)
         {
@@ -2239,7 +2239,7 @@ BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, U16 n)
         }
     }
 
-    BIG_SET16(power10, (U16)p); // save power of ten
+    BIG_SET16(power10, static_cast<U16>(p)); // save power of ten
     return r;
 }
 
@@ -2262,7 +2262,7 @@ char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
     }
     dec++;  // one extra byte for rounding
     BigFloat10 power10 = n + dec + 1;
-    int p = (S16) BIG_ACCESS16(power10);
+    int p = static_cast<S16>(BIG_ACCESS16(power10));
 
     // if p is negative, it is not necessary to show all the decimal places
     if (p < 0 && dec > 8) // 8 sounds like a reasonable value
@@ -2275,11 +2275,11 @@ char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
     {
         *s++ = '-';
     }
-    *s++ = (char)(n[1] + '0');
+    *s++ = static_cast<char>(n[1] + '0');
     *s++ = '.';
     for (int d = 2; d <= dec; d++)
     {
-        *s++ = (char)(n[d] + '0');
+        *s++ = static_cast<char>(n[d] + '0');
     }
     // clean up trailing 0's
     while (*(s-1) == '0')
@@ -2312,7 +2312,7 @@ char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
     }
     dec++;  // one extra byte for rounding
     BigFloat10 power10 = n + dec + 1;
-    int p = (S16) BIG_ACCESS16(power10);
+    int p = static_cast<S16>(BIG_ACCESS16(power10));
 
     // if p is negative, it is not necessary to show all the decimal places
     if (p < 0 && dec > 8) // 8 sounds like a reasonable value
@@ -2330,12 +2330,12 @@ char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
         int d;
         for (d = 1; d <= p+1; d++)
         {
-            *s++ = (char)(n[d] + '0');
+            *s++ = static_cast<char>(n[d] + '0');
         }
         *s++ = '.';
         for (; d <= dec; d++)
         {
-            *s++ = (char)(n[d] + '0');
+            *s++ = static_cast<char>(n[d] + '0');
         }
     }
     else
@@ -2348,7 +2348,7 @@ char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
         }
         for (int d = 1; d <= dec; d++)
         {
-            *s++ = (char)(n[d] + '0');
+            *s++ = static_cast<char>(n[d] + '0');
         }
     }
 

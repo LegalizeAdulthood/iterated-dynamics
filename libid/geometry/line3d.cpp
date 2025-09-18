@@ -295,9 +295,10 @@ int line3d(Byte * pixels, unsigned line_len)
         if (g_haze && g_targa_out)
         {
             s_haze_mult = static_cast<int>(g_haze *
-                ((float) ((long) (g_logical_screen_y_dots - 1 - g_current_row) *
-                     (long) (g_logical_screen_y_dots - 1 - g_current_row)) /
-                    (float) ((long) (g_logical_screen_y_dots - 1) * (long) (g_logical_screen_y_dots - 1))));
+                (static_cast<float>(static_cast<long>(g_logical_screen_y_dots - 1 - g_current_row) *
+                     static_cast<long>(g_logical_screen_y_dots - 1 - g_current_row)) /
+                    static_cast<float>(static_cast<long>(g_logical_screen_y_dots - 1) *
+                        static_cast<long>(g_logical_screen_y_dots - 1))));
             s_haze_mult = 100 - s_haze_mult;
         }
     }
@@ -1297,8 +1298,8 @@ static void interp_color(int x, int y, int color)
     {
         /* calculate a weighted average of colors long casts prevent integer
            overflow. This can evaluate to zero */
-        color = static_cast<int>(((long) (d2 + d3) * (long) s_p1.color + (long) (d1 + d3) * (long) s_p2.color +
-                                 (long) (d1 + d2) * (long) s_p3.color) /
+        color = static_cast<int>((static_cast<long>(d2 + d3) * static_cast<long>(s_p1.color) + static_cast<long>(d1 + d3) * static_cast<long>(s_p2.color) +
+                                 static_cast<long>(d1 + d2) * static_cast<long>(s_p3.color)) /
                 d);
     }
 
@@ -2425,7 +2426,7 @@ static int first_time(int line_len, Vector v)
     // mark as in-progress, and enable <tab> timer display
     g_calc_status = CalcStatus::IN_PROGRESS;
 
-    s_i_ambient = static_cast<unsigned int>(255 * (float) (100 - g_ambient) / 100.0);
+    s_i_ambient = static_cast<unsigned int>(255 * static_cast<float>(100 - g_ambient) / 100.0);
     s_i_ambient = std::max<unsigned int>(s_i_ambient, 1);
 
     s_num_tris = 0;
@@ -2570,11 +2571,12 @@ static int first_time(int line_len, Vector v)
     // z value of user's eye - should be more negative than extreme negative part of image
     if (g_sphere)                    // sphere case
     {
-        s_l_view[2] = -static_cast<long>((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
+        s_l_view[2] = -static_cast<long>(
+            static_cast<double>(g_logical_screen_y_dots) * static_cast<double>(g_viewer_z) / 100.0);
     }
     else                             // non-sphere case
     {
-        s_l_view[2] = static_cast<long>((z_min - z_max) * (double) g_viewer_z / 100.0);
+        s_l_view[2] = static_cast<long>((z_min - z_max) * static_cast<double>(g_viewer_z) / 100.0);
     }
 
     g_view[0] = s_l_view[0];
@@ -2708,7 +2710,8 @@ static int first_time(int line_len, Vector v)
 
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
-            double z_view = -static_cast<long>((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
+            double z_view = -static_cast<long>(
+                static_cast<double>(g_logical_screen_y_dots) * static_cast<double>(g_viewer_z) / 100.0);
             double radius = static_cast<double>(g_logical_screen_y_dots) / 2;
             double angle = std::atan(-radius / (z_view + radius));
             s_z_cutoff = -radius - std::sin(angle) * radius;

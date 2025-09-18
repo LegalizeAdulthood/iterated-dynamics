@@ -513,7 +513,7 @@ static void backwards_info9(const FractalInfo &read_info)
         g_eyes = read_info.eyes_fp;
         g_new_orbit_type = static_cast<FractalType>(read_info.orbit_type);
         g_julibrot_3d_mode = static_cast<Julibrot3DMode>(read_info.juli3d_mode);
-        g_max_function = (char) read_info.max_fn;
+        g_max_function = static_cast<char>(read_info.max_fn);
         g_major_method = static_cast<Major>(read_info.inverse_julia >> 8);
         g_inverse_julia_minor_method = static_cast<Minor>(read_info.inverse_julia & 255);
         g_params[4] = read_info.d_param5;
@@ -1092,9 +1092,9 @@ int read_overlay()      // read overlay/3D files, if required
         g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
         g_evolve_new_y_parameter_offset = blk_6_info.y_parameter_offset;
         g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
-        g_evolve_new_discrete_x_parameter_offset = (char) blk_6_info.discrete_x_parameter_offset;
+        g_evolve_new_discrete_x_parameter_offset = static_cast<char>(blk_6_info.discrete_x_parameter_offset);
         g_evolve_discrete_x_parameter_offset = g_evolve_new_discrete_x_parameter_offset;
-        g_evolve_new_discrete_y_parameter_offset = (char) blk_6_info.discrete_y_parameter_offset;
+        g_evolve_new_discrete_y_parameter_offset = static_cast<char>(blk_6_info.discrete_y_parameter_offset);
         g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
         g_evolve_param_grid_x           = blk_6_info.px;
         g_evolve_param_grid_y           = blk_6_info.py;
@@ -1208,8 +1208,8 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     if (gif_start[12])
     {
         // calc reasonably close value from gif header
-        g_file_aspect_ratio = (float)(64.0 / ((double) gif_start[12] + 15.0)
-                                  * (double)g_file_y_dots / (double)g_file_x_dots);
+        g_file_aspect_ratio = static_cast<float>(
+            64.0 / ((double) gif_start[12] + 15.0) * (double) g_file_y_dots / (double) g_file_x_dots);
         if (g_file_aspect_ratio > g_screen_aspect-0.03
             && g_file_aspect_ratio < g_screen_aspect+0.03)
         {
@@ -1424,8 +1424,8 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     blk_6_info->y_parameter_range = evolution_info.y_parameter_range;
                     blk_6_info->x_parameter_offset = evolution_info.x_parameter_offset;
                     blk_6_info->y_parameter_offset = evolution_info.y_parameter_offset;
-                    blk_6_info->discrete_x_parameter_offset = (char)evolution_info.discrete_x_parameter_offset;
-                    blk_6_info->discrete_y_parameter_offset = (char)evolution_info.discrete_y_parameter_offset;
+                    blk_6_info->discrete_x_parameter_offset = static_cast<char>(evolution_info.discrete_x_parameter_offset);
+                    blk_6_info->discrete_y_parameter_offset = static_cast<char>(evolution_info.discrete_y_parameter_offset);
                     blk_6_info->px              = evolution_info.px;
                     blk_6_info->py              = evolution_info.py;
                     blk_6_info->sx_offs          = evolution_info.screen_x_offset;
@@ -1486,9 +1486,9 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     info->cx = 255;
     info->dx = 255;
     info->dot_mode = 0;
-    info->x_dots = (short)g_file_x_dots;
-    info->y_dots = (short)g_file_y_dots;
-    info->colors = (short)g_file_colors;
+    info->x_dots = static_cast<short>(g_file_x_dots);
+    info->y_dots = static_cast<short>(g_file_y_dots);
+    info->colors = static_cast<short>(g_file_colors);
     info->info_version = 0; // this forces lots more init at calling end too
 
     // zero means we won
@@ -1505,7 +1505,7 @@ static void load_ext_blk(char *load_ptr, int load_len)
         {
             if (--load_len >= 0)
             {
-                *load_ptr++ = (char)std::fgetc(s_fp);
+                *load_ptr++ = static_cast<char>(std::fgetc(s_fp));
             }
             else
             {

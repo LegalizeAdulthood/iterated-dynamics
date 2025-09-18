@@ -376,13 +376,14 @@ bool encoder()
     if (g_view_window                               // less than full screen?
         && (g_view_x_dots == 0 || g_view_y_dots == 0))     // and we picked the dots?
     {
-        i = static_cast<int>(
-            (double) g_screen_y_dots / (double) g_screen_x_dots * 64.0 / g_screen_aspect - 14.5);
+        i = static_cast<int>(static_cast<double>(g_screen_y_dots) / static_cast<double>(g_screen_x_dots) *
+                64.0 / g_screen_aspect -
+            14.5);
     }
     else       // must risk loss of precision if numbers low
     {
-        i = static_cast<int>(
-            (double) g_logical_screen_y_dots / (double) g_logical_screen_x_dots / g_final_aspect_ratio * 64 -
+        i = static_cast<int>(static_cast<double>(g_logical_screen_y_dots) /
+                static_cast<double>(g_logical_screen_x_dots) / g_final_aspect_ratio * 64 -
             14.5);
     }
     i = std::max(i, 1);
