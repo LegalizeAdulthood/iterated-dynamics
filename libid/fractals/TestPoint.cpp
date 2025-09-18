@@ -128,7 +128,7 @@ int TestPoint::per_pixel(double init_real, double init_imag, double param1, doub
     {
         iter = inside;
     }
-    return (int)iter;
+    return static_cast<int>(iter);
 }
 
 // this routine is called just before the fractal starts

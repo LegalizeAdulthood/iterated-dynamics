@@ -143,7 +143,7 @@ static bool read_lsystem_file(const char *str)
         }
         string_lower(inline1);
 
-        if ((int)std::strspn(inline1, " \t\n") < (int)std::strlen(inline1)) // not a blank line
+        if (static_cast<int>(std::strspn(inline1, " \t\n")) < static_cast<int>(std::strlen(inline1))) // not a blank line
         {
             bool check = false;
             word = std::strtok(inline1, " =\t\n");
@@ -158,7 +158,7 @@ static bool read_lsystem_file(const char *str)
             }
             else if (!std::strcmp(word, "angle"))
             {
-                g_max_angle = (char)std::atoi(std::strtok(nullptr, " \t\n"));
+                g_max_angle = static_cast<char>(std::atoi(std::strtok(nullptr, " \t\n")));
                 check = true;
             }
             else if (!std::strcmp(word, "}"))
@@ -241,14 +241,14 @@ int lsystem_type()
         return -1;
     }
 
-    int order = (int) g_params[0];
+    int order = static_cast<int>(g_params[0]);
     order = std::max(order, 0);
 
     LSysTurtleState ts;
 
     ts.stack_overflow = false;
     ts.max_angle = g_max_angle;
-    ts.d_max_angle = (char) (g_max_angle - 1);
+    ts.d_max_angle = static_cast<char>(g_max_angle - 1);
 
     s_rule_cmds.push_back(lsys_size_transform(s_axiom.c_str(), &ts));
     for (const std::string &rule : s_rules)
@@ -276,7 +276,7 @@ int lsystem_type()
         ts.curr_color = 15;
         if (ts.curr_color > g_colors)
         {
-            ts.curr_color = (char) (g_colors - 1);
+            ts.curr_color = static_cast<char>(g_colors - 1);
         }
         draw_lsys(s_rule_cmds[0], &ts, &s_rule_cmds[1], order);
     }
@@ -355,7 +355,7 @@ static bool append_rule(const char *rule, int index)
 {
     try
     {
-        assert(index > 0 && unsigned(index) < s_rules.size());
+        assert(index > 0 && static_cast<unsigned>(index) < s_rules.size());
         s_rules[index] += rule;
         return false;
     }

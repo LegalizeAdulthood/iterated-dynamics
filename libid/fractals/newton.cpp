@@ -214,7 +214,7 @@ int complex_basin_orbit()
         fpu_cmplx_log(&g_old_z, &s_temp);
         fpu_cmplx_mul(&s_temp, &s_c_degree, &g_tmp_z);
         double mod = g_tmp_z.y/s_two_pi;
-        g_color_iter = (long)mod;
+        g_color_iter = static_cast<long>(mod);
         if (std::abs(mod - g_color_iter) > 0.5)
         {
             if (mod < 0.0)
@@ -255,15 +255,15 @@ bool newton_per_image()
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
     // set up table of roots of 1 along unit circle
-    g_degree = (int)g_param_z1.x;
+    g_degree = static_cast<int>(g_param_z1.x);
     if (g_degree < 2)
     {
         g_degree = 3;   // defaults to 3, but 2 is possible
     }
 
     // precalculated values
-    s_newton_r_over_d       = 1.0 / (double)g_degree;
-    s_degree_minus_1_over_degree      = (double)(g_degree - 1) / (double)g_degree;
+    s_newton_r_over_d       = 1.0 / static_cast<double>(g_degree);
+    s_degree_minus_1_over_degree      = static_cast<double>(g_degree - 1) / static_cast<double>(g_degree);
     g_max_color     = 0;
     s_threshold    = .3*PI/g_degree; // less than half distance between roots
 
@@ -284,12 +284,12 @@ bool newton_per_image()
         // list of roots to discover where we converged for newtbasin
         for (int i = 0; i < g_degree; i++)
         {
-            s_roots[i].x = std::cos(i*PI*2.0/(double)g_degree);
-            s_roots[i].y = std::sin(i*PI*2.0/(double)g_degree);
+            s_roots[i].x = std::cos(i*PI*2.0/ static_cast<double>(g_degree));
+            s_roots[i].y = std::sin(i*PI*2.0/ static_cast<double>(g_degree));
         }
     }
 
-    g_params[0] = (double)g_degree;
+    g_params[0] = static_cast<double>(g_degree);
     if (g_degree%4 == 0)
     {
         g_symmetry = SymmetryType::XY_AXIS;

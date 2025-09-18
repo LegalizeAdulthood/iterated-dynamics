@@ -680,8 +680,8 @@ static void d_random()
            the same fractals when the srand() function is used. */
     long x = new_random_num() >> (32 - BIT_SHIFT);
     long y = new_random_num() >> (32 - BIT_SHIFT);
-    s_vars[7].a.d.x = (double) x / (1L << BIT_SHIFT);
-    s_vars[7].a.d.y = (double) y / (1L << BIT_SHIFT);
+    s_vars[7].a.d.x = static_cast<double>(x) / (1L << BIT_SHIFT);
+    s_vars[7].a.d.y = static_cast<double>(y) / (1L << BIT_SHIFT);
 }
 
 static void set_random()
@@ -691,7 +691,7 @@ static void set_random()
         s_rand_num = s_rand_x ^ s_rand_y;
     }
 
-    const unsigned int seed = (unsigned) s_rand_num ^ (unsigned) (s_rand_num >> 16);
+    const unsigned int seed = static_cast<unsigned>(s_rand_num) ^ static_cast<unsigned>(s_rand_num >> 16);
     std::srand(seed);
     s_set_random = true;
 
@@ -707,7 +707,7 @@ static void random_seed()
 
     // Use the current time to randomize the random number sequence.
     std::time(&now);
-    std::srand((unsigned int)now);
+    std::srand(static_cast<unsigned int>(now));
 
     new_random_num();
     new_random_num();
@@ -717,8 +717,8 @@ static void random_seed()
 
 static void d_stk_srand()
 {
-    s_rand_x = (long)(g_arg1->d.x * (1L << BIT_SHIFT));
-    s_rand_y = (long)(g_arg1->d.y * (1L << BIT_SHIFT));
+    s_rand_x = static_cast<long>(g_arg1->d.x * (1L << BIT_SHIFT));
+    s_rand_y = static_cast<long>(g_arg1->d.y * (1L << BIT_SHIFT));
     set_random();
     d_random();
     g_arg1->d = s_vars[7].a.d;
@@ -827,8 +827,8 @@ void d_stk_ceil()
 
 void d_stk_trunc()
 {
-    g_arg1->d.x = (int) g_arg1->d.x;
-    g_arg1->d.y = (int) g_arg1->d.y;
+    g_arg1->d.x = static_cast<int>(g_arg1->d.x);
+    g_arg1->d.y = static_cast<int>(g_arg1->d.y);
 }
 
 void d_stk_round()
@@ -1119,7 +1119,7 @@ void d_stk_cabs()
 
 static void d_stk_lt()
 {
-    g_arg2->d.x = (double)(g_arg2->d.x < g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x < g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1127,7 +1127,7 @@ static void d_stk_lt()
 
 static void d_stk_gt()
 {
-    g_arg2->d.x = (double)(g_arg2->d.x > g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x > g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1135,7 +1135,7 @@ static void d_stk_gt()
 
 static void d_stk_lte()
 {
-    g_arg2->d.x = (double)(g_arg2->d.x <= g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x <= g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1143,7 +1143,7 @@ static void d_stk_lte()
 
 static void d_stk_gte()
 {
-    g_arg2->d.x = (double)(g_arg2->d.x >= g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x >= g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1151,7 +1151,7 @@ static void d_stk_gte()
 
 static void d_stk_eq()
 {
-    g_arg2->d.x = (double)(g_arg2->d.x == g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x == g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1159,7 +1159,7 @@ static void d_stk_eq()
 
 static void d_stk_ne()
 {
-    g_arg2->d.x = (double)(g_arg2->d.x != g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x != g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1167,7 +1167,7 @@ static void d_stk_ne()
 
 static void d_stk_or()
 {
-    g_arg2->d.x = (double)(g_arg2->d.x || g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x || g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1175,7 +1175,7 @@ static void d_stk_or()
 
 static void d_stk_and()
 {
-    g_arg2->d.x = (double)(g_arg2->d.x && g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x && g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1391,7 +1391,7 @@ static JumpControlType is_jump(const char *str, int len)
 {
     for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++)
     {
-        if ((int) std::strlen(JUMP_LIST[i]) == len && string_case_equal(JUMP_LIST[i], str, len))
+        if (static_cast<int>(std::strlen(JUMP_LIST[i])) == len && string_case_equal(JUMP_LIST[i], str, len))
         {
             return static_cast<JumpControlType>(i + 1);
         }
@@ -1445,7 +1445,7 @@ static FunctionPtr is_func(const char *str, int len)
                 {
                     if (funct_num > g_max_function)
                     {
-                        g_max_function = (char)funct_num;
+                        g_max_function = static_cast<char>(funct_num);
                     }
                 }
                 return *FUNC_LIST[n].ptr;
@@ -1555,22 +1555,22 @@ static bool parse_formula_text(const std::string &text)
     for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(VARIABLES.size()); g_variable_index++)
     {
         s_vars[g_variable_index].s = VARIABLES[g_variable_index];
-        s_vars[g_variable_index].len = (int) std::strlen(VARIABLES[g_variable_index]);
+        s_vars[g_variable_index].len = static_cast<int>(std::strlen(VARIABLES[g_variable_index]));
     }
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     double const_pi = std::atan(1.0) * 4;
     double const_e = std::exp(1.0);
     s_vars[7].a.d.y = 0.0;
     s_vars[7].a.d.x = s_vars[7].a.d.y;
-    s_vars[11].a.d.x = (double)g_logical_screen_x_dots;
-    s_vars[11].a.d.y = (double)g_logical_screen_y_dots;
-    s_vars[12].a.d.x = (double)g_max_iterations;
+    s_vars[11].a.d.x = static_cast<double>(g_logical_screen_x_dots);
+    s_vars[11].a.d.y = static_cast<double>(g_logical_screen_y_dots);
+    s_vars[12].a.d.x = static_cast<double>(g_max_iterations);
     s_vars[12].a.d.y = 0;
     s_vars[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
     s_vars[13].a.d.y = 0;
     s_vars[14].a.d.x = x_ctr;
     s_vars[14].a.d.y = y_ctr;
-    s_vars[15].a.d.x = (double)magnification;
+    s_vars[15].a.d.x = static_cast<double>(magnification);
     s_vars[15].a.d.y = x_mag_factor;
     s_vars[16].a.d.x = rotation;
     s_vars[16].a.d.y = skew;
@@ -1835,7 +1835,7 @@ int formula_orbit()
     g_arg1 = s_stack.data();
     g_arg2 = s_stack.data();
     --g_arg2;
-    while (s_op_ptr < (int) s_op_count)
+    while (s_op_ptr < static_cast<int>(s_op_count))
     {
         s_fns[s_op_ptr]();
         s_op_ptr++;
@@ -1861,8 +1861,8 @@ int formula_per_pixel()
     g_arg2 = s_stack.data();
     g_arg2--;
 
-    s_vars[10].a.d.x = (double)g_col;
-    s_vars[10].a.d.y = (double) g_row;
+    s_vars[10].a.d.x = static_cast<double>(g_col);
+    s_vars[10].a.d.y = static_cast<double>(g_row);
 
     if (g_row + g_col & 1)
     {
@@ -1954,7 +1954,7 @@ static bool fill_jump_struct()
 
     std::vector<JumpPtrs> jump_data;
 
-    for (s_op_ptr = 0; s_op_ptr < (int) s_op_count; s_op_ptr++)
+    for (s_op_ptr = 0; s_op_ptr < static_cast<int>(s_op_count); s_op_ptr++)
     {
         if (find_new_func)
         {
@@ -2149,38 +2149,38 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
         switch (int c = frm_get_char(open_file); c)
         {
         case EOF:
-            tok->str[i] = (char) 0;
+            tok->str[i] = static_cast<char>(0);
             tok->type = FormulaTokenType::NOT_A_TOKEN;
             tok->id   = TokenId::END_OF_FILE;
             return false;
         CASE_NUM:
-            tok->str[i++] = (char) c;
+            tok->str[i++] = static_cast<char>(c);
             file_pos = std::ftell(open_file);
             break;
         case '.':
             if (got_decimal_already || !getting_base)
             {
-                tok->str[i++] = (char) c;
-                tok->str[i++] = (char) 0;
+                tok->str[i++] = static_cast<char>(c);
+                tok->str[i++] = static_cast<char>(0);
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
             }
-            tok->str[i++] = (char) c;
+            tok->str[i++] = static_cast<char>(c);
             got_decimal_already = true;
             file_pos = std::ftell(open_file);
             break;
         default :
             if (c == 'e' && getting_base && (std::isdigit(tok->str[i-1]) || (tok->str[i-1] == '.' && i > 1)))
             {
-                tok->str[i++] = (char) c;
+                tok->str[i++] = static_cast<char>(c);
                 getting_base = false;
                 got_decimal_already = false;
                 file_pos = std::ftell(open_file);
                 c = frm_get_char(open_file);
                 if (c == '-' || c == '+')
                 {
-                    tok->str[i++] = (char) c;
+                    tok->str[i++] = static_cast<char>(c);
                     file_pos = std::ftell(open_file);
                 }
                 else
@@ -2190,16 +2190,16 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
             }
             else if (std::isalpha(c) || c == '_')
             {
-                tok->str[i++] = (char) c;
-                tok->str[i++] = (char) 0;
+                tok->str[i++] = static_cast<char>(c);
+                tok->str[i++] = static_cast<char>(0);
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
             }
             else if (tok->str[i-1] == 'e' || (tok->str[i-1] == '.' && i == 1))
             {
-                tok->str[i++] = (char) c;
-                tok->str[i++] = (char) 0;
+                tok->str[i++] = static_cast<char>(c);
+                tok->str[i++] = static_cast<char>(0);
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
@@ -2207,14 +2207,14 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
             else
             {
                 std::fseek(open_file, file_pos, SEEK_SET);
-                tok->str[i++] = (char) 0;
+                tok->str[i++] = static_cast<char>(0);
                 done = true;
             }
             break;
         }
         if (i == 33 && tok->str[32])
         {
-            tok->str[33] = (char) 0;
+            tok->str[33] = static_cast<char>(0);
             tok->type = FormulaTokenType::NOT_A_TOKEN;
             tok->id = TokenId::TOKEN_TOO_LONG;
             return false;
@@ -2234,7 +2234,7 @@ static void is_complex_constant(std::FILE *open_file, Token *tok)
     bool done = false;
     bool getting_real = true;
     std::FILE * debug_token = nullptr;
-    tok->str[1] = (char) 0;  // so we can concatenate later
+    tok->str[1] = static_cast<char>(0);  // so we can concatenate later
 
     long file_pos = std::ftell(open_file);
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
@@ -2255,7 +2255,7 @@ CASE_NUM :
             {
                 fmt::print(debug_token, "Set temp_tok.token_str[0] to {:c}\n", c);
             }
-            temp_tok.str[0] = (char) c;
+            temp_tok.str[0] = static_cast<char>(c);
             break;
         case '-' :
             if (debug_token != nullptr)
@@ -2270,7 +2270,7 @@ CASE_NUM :
                 {
                     fmt::print(debug_token, "Set temp_tok.token_str[0] to {:c}\n", c);
                 }
-                temp_tok.str[0] = (char) c;
+                temp_tok.str[0] = static_cast<char>(c);
             }
             else
             {
@@ -2343,7 +2343,7 @@ CASE_NUM :
         }
     }
     std::fseek(open_file, file_pos, SEEK_SET);
-    tok->str[1] = (char) 0;
+    tok->str[1] = static_cast<char>(0);
     tok->constant.x = 0.0;
     tok->constant.y = tok->constant.x;
     tok->type = FormulaTokenType::PARENS;
@@ -2371,11 +2371,11 @@ CASE_NUM:
         case '_':
             if (i < 79)
             {
-                tok->str[i++] = (char) c;
+                tok->str[i++] = static_cast<char>(c);
             }
             else
             {
-                tok->str[i] = (char) 0;
+                tok->str[i] = static_cast<char>(0);
             }
             if (i == 33)
             {
@@ -2389,18 +2389,18 @@ CASE_NUM:
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = TokenId::ILLEGAL_VARIABLE_NAME;
                 tok->str[i++] = '.';
-                tok->str[i] = (char) 0;
+                tok->str[i] = static_cast<char>(0);
                 return false;
             }
             if (var_name_too_long)
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = TokenId::TOKEN_TOO_LONG;
-                tok->str[i] = (char) 0;
+                tok->str[i] = static_cast<char>(0);
                 std::fseek(open_file, last_file_pos, SEEK_SET);
                 return false;
             }
-            tok->str[i] = (char) 0;
+            tok->str[i] = static_cast<char>(0);
             std::fseek(open_file, last_file_pos, SEEK_SET);
             get_func_info(tok);
             if (c == '(') //getfuncinfo() correctly filled structure
@@ -2447,7 +2447,7 @@ CASE_NUM:
             return true;
         }
     }
-    tok->str[0] = (char) 0;
+    tok->str[0] = static_cast<char>(0);
     tok->type = FormulaTokenType::NOT_A_TOKEN;
     tok->id   = TokenId::END_OF_FILE;
     return false;
@@ -2494,22 +2494,22 @@ static bool frm_get_token(std::FILE *open_file, Token *this_token)
     {
 CASE_NUM:
     case '.':
-        this_token->str[0] = (char) c;
+        this_token->str[0] = static_cast<char>(c);
         return frm_get_constant(open_file, this_token);
 CASE_ALPHA:
     case '_':
-        this_token->str[0] = (char) c;
+        this_token->str[0] = static_cast<char>(c);
         return frm_get_alpha(open_file, this_token);
 CASE_TERMINATOR:
         this_token->type = FormulaTokenType::OPERATOR; // this may be changed below
-        this_token->str[0] = (char) c;
+        this_token->str[0] = static_cast<char>(c);
         file_pos = std::ftell(open_file);
         if (c == '<' || c == '>' || c == '=')
         {
             c = frm_get_char(open_file);
             if (c == '=')
             {
-                this_token->str[i++] = (char) c;
+                this_token->str[i++] = static_cast<char>(c);
             }
             else
             {
@@ -2521,12 +2521,12 @@ CASE_TERMINATOR:
             c = frm_get_char(open_file);
             if (c == '=')
             {
-                this_token->str[i++] = (char) c;
+                this_token->str[i++] = static_cast<char>(c);
             }
             else
             {
                 std::fseek(open_file, file_pos, SEEK_SET);
-                this_token->str[1] = (char) 0;
+                this_token->str[1] = static_cast<char>(0);
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = TokenId::ILLEGAL_OPERATOR;
                 return false;
@@ -2537,7 +2537,7 @@ CASE_TERMINATOR:
             c = frm_get_char(open_file);
             if (c == '|')
             {
-                this_token->str[i++] = (char) c;
+                this_token->str[i++] = static_cast<char>(c);
             }
             else
             {
@@ -2549,12 +2549,12 @@ CASE_TERMINATOR:
             c = frm_get_char(open_file);
             if (c == '&')
             {
-                this_token->str[i++] = (char) c;
+                this_token->str[i++] = static_cast<char>(c);
             }
             else
             {
                 std::fseek(open_file, file_pos, SEEK_SET);
-                this_token->str[1] = (char) 0;
+                this_token->str[1] = static_cast<char>(0);
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = TokenId::ILLEGAL_OPERATOR;
                 return false;
@@ -2584,7 +2584,7 @@ CASE_TERMINATOR:
             is_complex_constant(open_file, this_token);
             return true;
         }
-        this_token->str[i] = (char) 0;
+        this_token->str[i] = static_cast<char>(0);
         if (this_token->type == FormulaTokenType::OPERATOR)
         {
             for (int j = 0; j < static_cast<int>(s_op_list.size()); j++)
@@ -2598,13 +2598,13 @@ CASE_TERMINATOR:
         }
         return this_token->str[0] != '}';
     case EOF:
-        this_token->str[0] = (char) 0;
+        this_token->str[0] = static_cast<char>(0);
         this_token->type = FormulaTokenType::NOT_A_TOKEN;
         this_token->id = TokenId::END_OF_FILE;
         return false;
     default:
-        this_token->str[0] = (char) c;
-        this_token->str[1] = (char) 0;
+        this_token->str[0] = static_cast<char>(c);
+        this_token->str[1] = static_cast<char>(0);
         this_token->type = FormulaTokenType::NOT_A_TOKEN;
         this_token->id = TokenId::ILLEGAL_CHARACTER;
         return false;
@@ -2706,7 +2706,7 @@ int frm_get_param_stuff(const char *name)
         case FormulaTokenType::PARAM_FUNCTION:
             if (+current_token.id - 10 > g_max_function)
             {
-                g_max_function = (char)(+current_token.id - 10);
+                g_max_function = static_cast<char>(+current_token.id - 10);
             }
             break;
         default:
@@ -2778,16 +2778,16 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     if (i > ITEM_NAME_LEN)
     {
         int j;
-        int k = (int) std::strlen(parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
+        int k = static_cast<int>(std::strlen(parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE)));
         char msg_buff[100];
         std::strcpy(msg_buff, parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
         std::strcat(msg_buff, ":\n   ");
         std::fseek(open_file, file_pos, SEEK_SET);
         for (j = 0; j < i && j < 25; j++)
         {
-            msg_buff[j+k+2] = (char) std::getc(open_file);
+            msg_buff[j+k+2] = static_cast<char>(std::getc(open_file));
         }
-        msg_buff[j+k+2] = (char) 0;
+        msg_buff[j+k+2] = static_cast<char>(0);
         stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
         return false;
     }
@@ -2822,12 +2822,12 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
             default :
                 if (i < 19)
                 {
-                    sym_buf[i++] = (char) std::toupper(c);
+                    sym_buf[i++] = static_cast<char>(std::toupper(c));
                 }
                 break;
             }
         }
-        sym_buf[i] = (char) 0;
+        sym_buf[i] = static_cast<char>(0);
         constexpr int num_names{SYMMETRY_NAMES.size()};
         for (i = 0; i < num_names; i++)
         {
@@ -3073,7 +3073,7 @@ static void parser_allocate()
 {
     free_work_area();
     g_max_function_ops = 2300;
-    g_max_function_args = (unsigned)(g_max_function_ops/2.5);
+    g_max_function_args = static_cast<unsigned>(g_max_function_ops / 2.5);
 
     s_fns.reserve(g_max_function_ops);
     s_store.resize(MAX_STORES);
@@ -3133,7 +3133,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
             fmt::format("Error({:d}) at line {:d}:  {:s}\n  ", //
                 +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number))
                 .c_str());
-        int i = (int) std::strlen(msg_buff);
+        int i = static_cast<int>(std::strlen(msg_buff));
         std::fseek(open_file, s_errors[j].start_pos, SEEK_SET);
         int token_count = 0;
         int statement_len = token_count;
@@ -3145,14 +3145,14 @@ static void frm_error(std::FILE * open_file, long begin_frm)
             {
                 chars_to_error = statement_len;
                 frm_get_token(open_file, &tok);
-                chars_in_error = (int) std::strlen(tok.str);
+                chars_in_error = static_cast<int>(std::strlen(tok.str));
                 statement_len += chars_in_error;
                 token_count++;
             }
             else
             {
                 frm_get_token(open_file, &tok);
-                statement_len += (int) std::strlen(tok.str);
+                statement_len += static_cast<int>(std::strlen(tok.str));
                 token_count++;
             }
             if (tok.type == FormulaTokenType::END_OF_FORMULA ||
@@ -3172,7 +3172,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
             while (chars_to_error + chars_in_error > 74)
             {
                 frm_get_token(open_file, &tok);
-                chars_to_error -= (int) std::strlen(tok.str);
+                chars_to_error -= static_cast<int>(std::strlen(tok.str));
                 token_count--;
             }
         }
@@ -3182,19 +3182,19 @@ static void frm_error(std::FILE * open_file, long begin_frm)
             chars_to_error = 0;
             token_count = 1;
         }
-        while ((int) std::strlen(&msg_buff[i]) <=74 && token_count--)
+        while (static_cast<int>(std::strlen(&msg_buff[i])) <=74 && token_count--)
         {
             frm_get_token(open_file, &tok);
             std::strcat(msg_buff, tok.str);
         }
         std::fseek(open_file, s_errors[j].error_pos, SEEK_SET);
         frm_get_token(open_file, &tok);
-        if ((int) std::strlen(&msg_buff[i]) > 74)
+        if (static_cast<int>(std::strlen(&msg_buff[i])) > 74)
         {
-            msg_buff[i + 74] = (char) 0;
+            msg_buff[i + 74] = static_cast<char>(0);
         }
         std::strcat(msg_buff, "\n");
-        i = (int) std::strlen(msg_buff);
+        i = static_cast<int>(std::strlen(msg_buff));
         while (chars_to_error-- > -2)
         {
             std::strcat(msg_buff, " ");
@@ -3203,7 +3203,7 @@ static void frm_error(std::FILE * open_file, long begin_frm)
         {
             chars_in_error = 33;
         }
-        while (chars_in_error-- && (int) std::strlen(&msg_buff[i]) <=74)
+        while (chars_in_error-- && static_cast<int>(std::strlen(&msg_buff[i])) <=74)
         {
             std::strcat(msg_buff, "^");
         }
@@ -3264,7 +3264,7 @@ static bool frm_prescan(std::FILE * open_file)
     {
         file_pos = std::ftell(open_file);
         frm_get_token(open_file, &this_token);
-        s_chars_in_formula += (int) std::strlen(this_token.str);
+        s_chars_in_formula += static_cast<int>(std::strlen(this_token.str));
         switch (this_token.type)
         {
         case FormulaTokenType::NOT_A_TOKEN:

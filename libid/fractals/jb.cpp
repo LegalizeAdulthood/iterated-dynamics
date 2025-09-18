@@ -241,14 +241,14 @@ static void z_line(double x, double y)
         {
             if (g_julibrot_3d_mode == Julibrot3DMode::RED_BLUE)
             {
-                g_color = (int)(128L * s_z_pixel / g_julibrot_z_dots);
+                g_color = static_cast<int>(128L * s_z_pixel / g_julibrot_z_dots);
                 if (g_row + g_col & 1)
                 {
                     g_plot(g_col, g_row, 127 - g_color);
                 }
                 else
                 {
-                    g_color = (int)(g_color * s_br_ratio);
+                    g_color = static_cast<int>(g_color * s_br_ratio);
                     g_color = std::max(g_color, 1);
                     g_color = std::min(g_color, 127);
                     g_plot(g_col, g_row, 127 + s_b_base - g_color);
@@ -256,7 +256,7 @@ static void z_line(double x, double y)
             }
             else
             {
-                g_color = (int)(254L * s_z_pixel / g_julibrot_z_dots);
+                g_color = static_cast<int>(254L * s_z_pixel / g_julibrot_z_dots);
                 g_plot(g_col, g_row, g_color + 1);
             }
             s_plotted = 1;
@@ -271,12 +271,12 @@ static void z_line(double x, double y)
 
 Standard4D::Standard4D()
 {
-    g_c_exponent = (int) g_params[2];
+    g_c_exponent = static_cast<int>(g_params[2]);
 
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER)
     {
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER &&
-            (double) g_c_exponent == g_params[2])
+            static_cast<double>(g_c_exponent) == g_params[2])
         {
             get_fractal_specific(g_new_orbit_type)->orbit_calc = mandel_z_power_orbit;
         }

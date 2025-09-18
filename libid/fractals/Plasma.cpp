@@ -28,7 +28,8 @@ namespace id::fractals
 
 using PlotFn = void(*)(int, int, int);
 
-static constexpr U16 (*GET_COLOR)(int x, int y){[](int x, int y) { return (U16) get_color(x, y); }};
+static constexpr U16 (*GET_COLOR)(int x, int y){
+    [](int x, int y) { return static_cast<U16>(get_color(x, y)); }};
 
 static void set_plasma_palette()
 {
@@ -46,16 +47,16 @@ static void set_plasma_palette()
     g_dac_box[0][2] = 0;
     for (int i = 1; i <= 85; i++)
     {
-        g_dac_box[i][0] = (Byte)((i*Green[0] + (86-i)*Blue[0])/85);
-        g_dac_box[i][1] = (Byte)((i*Green[1] + (86-i)*Blue[1])/85);
-        g_dac_box[i][2] = (Byte)((i*Green[2] + (86-i)*Blue[2])/85);
+        g_dac_box[i][0] = static_cast<Byte>((i * Green[0] + (86 - i) * Blue[0]) / 85);
+        g_dac_box[i][1] = static_cast<Byte>((i * Green[1] + (86 - i) * Blue[1]) / 85);
+        g_dac_box[i][2] = static_cast<Byte>((i * Green[2] + (86 - i) * Blue[2]) / 85);
 
-        g_dac_box[i+85][0] = (Byte)((i*Red[0] + (86-i)*Green[0])/85);
-        g_dac_box[i+85][1] = (Byte)((i*Red[1] + (86-i)*Green[1])/85);
-        g_dac_box[i+85][2] = (Byte)((i*Red[2] + (86-i)*Green[2])/85);
-        g_dac_box[i+170][0] = (Byte)((i*Blue[0] + (86-i)*Red[0])/85);
-        g_dac_box[i+170][1] = (Byte)((i*Blue[1] + (86-i)*Red[1])/85);
-        g_dac_box[i+170][2] = (Byte)((i*Blue[2] + (86-i)*Red[2])/85);
+        g_dac_box[i+85][0] = static_cast<Byte>((i * Red[0] + (86 - i) * Green[0]) / 85);
+        g_dac_box[i+85][1] = static_cast<Byte>((i * Red[1] + (86 - i) * Green[1]) / 85);
+        g_dac_box[i+85][2] = static_cast<Byte>((i * Red[2] + (86 - i) * Green[2]) / 85);
+        g_dac_box[i+170][0] = static_cast<Byte>((i * Blue[0] + (86 - i) * Red[0]) / 85);
+        g_dac_box[i+170][1] = static_cast<Byte>((i * Blue[1] + (86 - i) * Red[1]) / 85);
+        g_dac_box[i+170][2] = static_cast<Byte>((i * Blue[2] + (86 - i) * Red[2]) / 85);
     }
     spin_dac(0, 1);
 }
@@ -65,9 +66,9 @@ static void set_plasma_palette()
 // returns a random 16 bit value that is never 0
 static U16 rand16()
 {
-    U16 value = (U16) RAND15();
+    U16 value = static_cast<U16>(RAND15());
     value <<= 1;
-    value = (U16)(value + (RAND15()&1));
+    value = static_cast<U16>(value + (RAND15() & 1));
     value = std::max<U16>(value, 1U);
     return value;
 }
@@ -90,7 +91,7 @@ static void put_pot_border(int x, int y, U16 color)
 {
     if (x == 0 || y == 0 || x == g_logical_screen_x_dots - 1 || y == g_logical_screen_y_dots - 1)
     {
-        color = (U16)g_outside_color;
+        color = static_cast<U16>(g_outside_color);
     }
     put_pot(x, y, color);
 }
@@ -108,8 +109,10 @@ static void put_color_border(int x, int y, int color)
 
 static U16 get_pot(int x, int y)
 {
-    U16 color = (U16) disk_read_pixel(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset);
-    color = (U16)((color << 8) + (U16) disk_read_pixel(x+g_logical_screen_x_offset, y+g_screen_y_dots+g_logical_screen_y_offset));
+    U16 color = static_cast<U16>(disk_read_pixel(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset));
+    color = static_cast<U16>((color << 8) +
+        static_cast<U16>(
+            disk_read_pixel(x + g_logical_screen_x_offset, y + g_screen_y_dots + g_logical_screen_y_offset)));
     return color;
 }
 
@@ -119,7 +122,7 @@ Plasma::Plasma() :
     m_algo(g_params[1] == 0.0 ? Algorithm::OLD : Algorithm::NEW),
     m_get_pix{GET_COLOR}
 {
-    m_i_param_x = (int)(g_params[0] * 8);
+    m_i_param_x = static_cast<int>(g_params[0] * 8);
     if (g_param_z1.x <= 0.0)
     {
         m_i_param_x = 0;
@@ -128,7 +131,7 @@ Plasma::Plasma() :
     {
         m_i_param_x = 800;
     }
-    g_params[0] = (double)m_i_param_x / 8.0;  // let user know what was used
+    g_params[0] = static_cast<double>(m_i_param_x) / 8.0;  // let user know what was used
     // limit parameter values
     g_params[1] = std::clamp(g_params[1], 0.0, 1.0);
     g_params[2] = std::clamp(g_params[2], 0.0, 1.0);
@@ -140,9 +143,9 @@ Plasma::Plasma() :
     }
     if (g_params[2] != 0 && g_params[2] != 1)
     {
-        g_random_seed = (int)g_params[2];
+        g_random_seed = static_cast<int>(g_params[2]);
     }
-    m_max_plasma = (U16)g_params[3];  // max_plasma is used as a flag for potential
+    m_max_plasma = static_cast<U16>(g_params[3]);  // max_plasma is used as a flag for potential
 
     if (m_max_plasma != 0)
     {
@@ -218,7 +221,7 @@ Plasma::Plasma() :
         m_p_colors = std::min(g_colors, 256);
         for (U16 &elem : m_rnd)
         {
-            elem = (U16)(1+((RAND15() / m_p_colors *(m_p_colors-1)) >> (m_shift_value-11)));
+            elem = static_cast<U16>(1 + ((RAND15() / m_p_colors * (m_p_colors - 1)) >> (m_shift_value - 11)));
         }
     }
     else
@@ -269,7 +272,7 @@ U16 Plasma::adjust(int xa, int ya, int x, int y, int xb, int yb, int scale)
     S32 pseudorandom = m_i_param_x * (RAND15() - 16383);
     pseudorandom = pseudorandom * scale;
     pseudorandom = pseudorandom >> m_shift_value;
-    pseudorandom = (((S32)m_get_pix(xa, ya)+(S32)m_get_pix(xb, yb)+1) >> 1)+pseudorandom;
+    pseudorandom = ((static_cast<S32>(m_get_pix(xa, ya)) + static_cast<S32>(m_get_pix(xb, yb)) +1) >> 1)+pseudorandom;
     if (m_max_plasma == 0)
     {
         if (pseudorandom >= m_p_colors)
@@ -277,13 +280,13 @@ U16 Plasma::adjust(int xa, int ya, int x, int y, int xb, int yb, int scale)
             pseudorandom = m_p_colors-1;
         }
     }
-    else if (pseudorandom >= (S32)m_max_plasma)
+    else if (pseudorandom >= static_cast<S32>(m_max_plasma))
     {
         pseudorandom = m_max_plasma;
     }
     pseudorandom = std::max<S32>(pseudorandom, 1);
-    g_plot(x, y, (U16)pseudorandom);
-    return (U16)pseudorandom;
+    g_plot(x, y, static_cast<U16>(pseudorandom));
+    return static_cast<U16>(pseudorandom);
 }
 
 void Plasma::subdivide()
@@ -295,7 +298,7 @@ void Plasma::subdivide()
         return;
     }
     const int level{sd.level + 1};
-    const int scale = (int) (320L >> level);
+    const int scale = static_cast<int>(320L >> level);
 
     int x = (sd.x1 + sd.x2) >> 1;
     int y = (sd.y1 + sd.y2) >> 1;
@@ -326,7 +329,7 @@ void Plasma::subdivide()
 
     if (m_get_pix(x, y) == 0)
     {
-        g_plot(x, y, (U16) ((i + 2) >> 2));
+        g_plot(x, y, static_cast<U16>((i + 2) >> 2));
     }
 
     m_subdivs.push_back(Subdivision{sd.x1, y, x, sd.y2, level});
@@ -337,7 +340,7 @@ void Plasma::subdivide()
 
 void Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
 {
-    m_scale = (int)(320L >> level);
+    m_scale = static_cast<int>(320L >> level);
     m_sub_y.top = 2;
     m_sub_y.value[0] = y2;
     int ny = y2;
@@ -421,7 +424,7 @@ void Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
                     i = adjust(nx1, ny1, nx1, y, nx1, ny, m_scale);
                 }
                 v += i;
-                g_plot(x, y, (U16)((v + 2) >> 2));
+                g_plot(x, y, static_cast<U16>((v + 2) >> 2));
             }
 
             if (m_sub_x.level[m_sub_x.top-1] == level)
@@ -450,7 +453,7 @@ void Plasma::iterate()
         if (!m_done)
         {
             m_k *= 2;
-            if (m_k  >(int)std::max(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1))
+            if (m_k  > static_cast<int>(std::max(g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1)))
             {
                 m_done = true;
             }

@@ -113,7 +113,7 @@ int lyapunov_type()
 //
 bool lyapunov_per_image()
 {
-    s_filter_cycles = (long)g_params[2];
+    s_filter_cycles = static_cast<long>(g_params[2]);
     if (s_filter_cycles == 0)
     {
         s_filter_cycles = g_max_iterations/2;
@@ -121,7 +121,7 @@ bool lyapunov_per_image()
     s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL;
     s_lya_length = 1;
 
-    long i = (long) g_params[0];
+    long i = static_cast<long>(g_params[0]);
     s_lya_rxy[0] = 1;
     int t;
     for (t = 31; t >= 0; t--)
@@ -211,13 +211,13 @@ jump_out:
         double lyap;
         if (g_log_map_flag)
         {
-            lyap = -temp/((double) s_lya_length*i);
+            lyap = -temp/(static_cast<double>(s_lya_length) *i);
         }
         else
         {
-            lyap = 1 - std::exp(temp/((double) s_lya_length*i));
+            lyap = 1 - std::exp(temp/(static_cast<double>(s_lya_length) *i));
         }
-        color = 1 + (int)(lyap * (g_colors-1));
+        color = 1 + static_cast<int>(lyap * (g_colors - 1));
     }
     return color;
 }

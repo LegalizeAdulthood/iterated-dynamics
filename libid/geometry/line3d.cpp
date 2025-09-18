@@ -245,9 +245,9 @@ int line3d(Byte * pixels, unsigned line_len)
         cross_avg[1] = 0;
         cross_avg[2] = 0;
         s_x_center = g_logical_screen_x_dots / 2 + g_x_shift;
-        x_center0 = (int) s_x_center;
+        x_center0 = static_cast<int>(s_x_center);
         s_y_center = g_logical_screen_y_dots / 2 - g_y_shift;
-        y_center0 = (int) s_y_center;
+        y_center0 = static_cast<int>(s_y_center);
     }
     // make sure these pixel coordinates are out of range
     old = s_bad;
@@ -263,16 +263,16 @@ int line3d(Byte * pixels, unsigned line_len)
     }
     else if (g_gray_flag)             // convert color numbers to grayscale values
     {
-        for (col = 0; col < (int) line_len; col++)
+        for (col = 0; col < static_cast<int>(line_len); col++)
         {
             int pal;
             int color_num;
             color_num = pixels[col];
             // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
-            pal = (int) g_dac_box[color_num][0] * 77 + (int) g_dac_box[color_num][1] * 151 +
-                (int) g_dac_box[color_num][2] * 28;
+            pal = static_cast<int>(g_dac_box[color_num][0]) * 77 + static_cast<int>(g_dac_box[color_num][1]) * 151 +
+                static_cast<int>(g_dac_box[color_num][2]) * 28;
             pal >>= 6;
-            pixels[col] = (Byte) pal;
+            pixels[col] = static_cast<Byte>(pal);
         }
     }
     cross_not_init = true;
@@ -289,15 +289,15 @@ int line3d(Byte * pixels, unsigned line_len)
     // the effects of 3D transformations. Thanks to Marc Reinig for this idea
     // and code.
     //***********************************************************************
-    last_dot = std::min(g_logical_screen_x_dots - 1, (int) line_len - 1);
+    last_dot = std::min(g_logical_screen_x_dots - 1, static_cast<int>(line_len) - 1);
     if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE)
     {
         if (g_haze && g_targa_out)
         {
-            s_haze_mult = (int)(g_haze * (
-                                  (float)((long)(g_logical_screen_y_dots - 1 - g_current_row) *
-                                          (long)(g_logical_screen_y_dots - 1 - g_current_row)) /
-                                  (float)((long)(g_logical_screen_y_dots - 1) * (long)(g_logical_screen_y_dots - 1))));
+            s_haze_mult = static_cast<int>(g_haze *
+                ((float) ((long) (g_logical_screen_y_dots - 1 - g_current_row) *
+                     (long) (g_logical_screen_y_dots - 1 - g_current_row)) /
+                    (float) ((long) (g_logical_screen_y_dots - 1) * (long) (g_logical_screen_y_dots - 1))));
             s_haze_mult = 100 - s_haze_mult;
         }
     }
@@ -332,12 +332,12 @@ int line3d(Byte * pixels, unsigned line_len)
         start_object();
     }
     // PROCESS ROW LOOP BEGINS HERE
-    while (col < (int) line_len)
+    while (col < static_cast<int>(line_len))
     {
         if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || g_fill_type < FillType::POINTS)
             && col != last_dot             // if this is not the last col
                                             // if not the 1st or mod factor col
-            && col % (int) (s_aspect * s_local_preview_factor)
+            && col % static_cast<int>(s_aspect * s_local_preview_factor)
             && !(g_raytrace_format == RayTraceFormat::NONE && g_fill_type > FillType::SOLID_FILL && col == 1))
         {
             goto loop_bottom;
@@ -345,11 +345,11 @@ int line3d(Byte * pixels, unsigned line_len)
 
         s_real_color = pixels[col];
         cur.color = s_real_color;
-        f_cur.color = (float) cur.color;
+        f_cur.color = static_cast<float>(cur.color);
 
         if (g_raytrace_format != RayTraceFormat::NONE|| g_preview || g_fill_type < FillType::POINTS)
         {
-            next = (int)(col + s_aspect * s_local_preview_factor);
+            next = static_cast<int>(col + s_aspect * s_local_preview_factor);
             if (next == col)
             {
                 next = col + 1;
@@ -363,13 +363,13 @@ int line3d(Byte * pixels, unsigned line_len)
 
         if (cur.color > 0 && cur.color < g_water_line)
         {
-            s_real_color = (Byte) g_water_line;
+            s_real_color = static_cast<Byte>(g_water_line);
             cur.color = s_real_color;
-            f_cur.color = (float) cur.color;  // "lake"
+            f_cur.color = static_cast<float>(cur.color);  // "lake"
         }
         else if (g_potential_16bit)
         {
-            f_cur.color += (float) s_fraction[col] / (float)(1 << 8);
+            f_cur.color += static_cast<float>(s_fraction[col]) / static_cast<float>(1 << 8);
         }
 
         if (g_sphere)            // sphere case
@@ -397,11 +397,11 @@ int line3d(Byte * pixels, unsigned line_len)
 
             if (s_r_scale < 0.0)
             {
-                r = s_radius + s_radius_factor * (double) f_cur.color * cos_theta;
+                r = s_radius + s_radius_factor * static_cast<double>(f_cur.color) * cos_theta;
             }
             else if (s_r_scale > 0.0)
             {
-                r = s_radius - s_r_x_r_scale + s_radius_factor * (double) f_cur.color * cos_theta;
+                r = s_radius - s_r_x_r_scale + s_radius_factor * static_cast<double>(f_cur.color) * cos_theta;
             }
             else
             {
@@ -413,15 +413,15 @@ int line3d(Byte * pixels, unsigned line_len)
                 // how do lv[] and cur and f_cur all relate
                 // NOTE: fudge was pre-calculated above in r and R
                 // (almost) guarantee negative
-                lv[2] = (long)(-s_radius - r * cos_theta * s_sin_phi);      // z
+                lv[2] = static_cast<long>(-s_radius - r * cos_theta * s_sin_phi);      // z
                 if (lv[2] > s_z_cutoff && g_fill_type >= FillType::POINTS)
                 {
                     cur = s_bad;
                     f_cur = s_f_bad;
                     goto loop_bottom;      // another goto !
                 }
-                lv[0] = (long)(s_x_center + sin_theta * s_scale_x * r);   // x
-                lv[1] = (long)(s_y_center + cos_theta * s_cos_phi * s_scale_y * r);  // y
+                lv[0] = static_cast<long>(s_x_center + sin_theta * s_scale_x * r);   // x
+                lv[1] = static_cast<long>(s_y_center + cos_theta * s_cos_phi * s_scale_y * r);  // y
 
                 if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE ||
                     g_raytrace_format != RayTraceFormat::NONE)
@@ -429,9 +429,9 @@ int line3d(Byte * pixels, unsigned line_len)
                     // calculate illumination normal before persp
 
                     r0 = r / 65536L;
-                    f_cur.x = (float) (x_center0 + sin_theta * s_scale_x * r0);
-                    f_cur.y = (float) (y_center0 + cos_theta * s_cos_phi * s_scale_y * r0);
-                    f_cur.color = (float) (-r0 * cos_theta * s_sin_phi);
+                    f_cur.x = static_cast<float>(x_center0 + sin_theta * s_scale_x * r0);
+                    f_cur.y = static_cast<float>(y_center0 + cos_theta * s_cos_phi * s_scale_y * r0);
+                    f_cur.color = static_cast<float>(-r0 * cos_theta * s_sin_phi);
                 }
                 v[0] = lv[0];
                 v[1] = lv[1];
@@ -440,20 +440,20 @@ int line3d(Byte * pixels, unsigned line_len)
                 v[1] /= fudge;
                 v[2] /= fudge;
                 perspective(v);
-                cur.x = (int) (v[0] + .5 + g_xx_adjust);
-                cur.y = (int) (v[1] + .5 + g_yy_adjust);
+                cur.x = static_cast<int>(v[0] + .5 + g_xx_adjust);
+                cur.y = static_cast<int>(v[1] + .5 + g_yy_adjust);
             }
             // Not sure how this a 3rd if above relate
             else
             {
                 // Why the xx- and yyadjust here and not above?
-                f_cur.x = (float) (s_x_center + sin_theta*s_scale_x*r + g_xx_adjust);
-                cur.x = (int) f_cur.x;
-                f_cur.y = (float)(s_y_center + cos_theta*s_cos_phi*s_scale_y*r + g_yy_adjust);
-                cur.y = (int) f_cur.y;
+                f_cur.x = static_cast<float>(s_x_center + sin_theta * s_scale_x * r + g_xx_adjust);
+                cur.x = static_cast<int>(f_cur.x);
+                f_cur.y = static_cast<float>(s_y_center + cos_theta * s_cos_phi * s_scale_y * r + g_yy_adjust);
+                cur.y = static_cast<int>(f_cur.y);
                 if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE || g_raytrace_format != RayTraceFormat::NONE)          // why do we do this for filltype>5?
                 {
-                    f_cur.color = (float)(-r * cos_theta * s_sin_phi * s_scale_z);
+                    f_cur.color = static_cast<float>(-r * cos_theta * s_sin_phi * s_scale_z);
                 }
                 v[0] = 0;
                 v[1] = 0;
@@ -472,9 +472,9 @@ int line3d(Byte * pixels, unsigned line_len)
 
             if (g_fill_type > FillType::SOLID_FILL || g_raytrace_format != RayTraceFormat::NONE)
             {
-                f_cur.x = (float) v[0];
-                f_cur.y = (float) v[1];
-                f_cur.color = (float) v[2];
+                f_cur.x = static_cast<float>(v[0]);
+                f_cur.y = static_cast<float>(v[1]);
+                f_cur.color = static_cast<float>(v[2]);
 
                 if (g_raytrace_format == RayTraceFormat::ACROSPIN)
                 {
@@ -488,14 +488,14 @@ int line3d(Byte * pixels, unsigned line_len)
             {
                 perspective(v);
             }
-            cur.x = (int) std::lround(v[0] + g_xx_adjust);
-            cur.y = (int) std::lround(v[1] + g_yy_adjust);
+            cur.x = static_cast<int>(std::lround(v[0] + g_xx_adjust));
+            cur.y = static_cast<int>(std::lround(v[1] + g_yy_adjust));
 
             v[0] = 0;
             v[1] = 0;
             v[2] = g_water_line;
             vec_g_mat_mul(v);
-            f_water = (float) v[2];
+            f_water = static_cast<float>(v[2]);
         }
 
         if (g_randomize_3d != 0)
@@ -522,7 +522,7 @@ int line3d(Byte * pixels, unsigned line_len)
                 {
                     cur.color = cur.color + rnd;
                 }
-                s_real_color = (Byte)cur.color;
+                s_real_color = static_cast<Byte>(cur.color);
             }
         }
 
@@ -679,13 +679,13 @@ int line3d(Byte * pixels, unsigned line_len)
             {
                 if (s_persp)
                 {
-                    old.x = (int)(s_x_center >> 16);
-                    old.y = (int)(s_y_center >> 16);
+                    old.x = static_cast<int>(s_x_center >> 16);
+                    old.y = static_cast<int>(s_y_center >> 16);
                 }
                 else
                 {
-                    old.x = (int) s_x_center;
-                    old.y = (int) s_y_center;
+                    old.x = static_cast<int>(s_x_center);
+                    old.y = static_cast<int>(s_y_center);
                 }
             }
             else
@@ -707,8 +707,8 @@ int line3d(Byte * pixels, unsigned line_len)
                 }
 
                 // Round and fudge back to original
-                old.x = (int)((lv[0] + 32768L) >> 16);
-                old.y = (int)((lv[1] + 32768L) >> 16);
+                old.x = static_cast<int>((lv[0] + 32768L) >> 16);
+                old.y = static_cast<int>((lv[1] + 32768L) >> 16);
             }
             old.x = std::max(old.x, 0);
             if (old.x >= g_logical_screen_x_dots)
@@ -751,7 +751,7 @@ int line3d(Byte * pixels, unsigned line_len)
                     {
                         stop_msg("debug, cur.color=bad");
                     }
-                    f_cur.color = (float) s_bad.color;
+                    f_cur.color = static_cast<float>(s_bad.color);
                     cur.color = f_cur.color;
                 }
                 else
@@ -783,7 +783,7 @@ int line3d(Byte * pixels, unsigned line_len)
                             {
                                 stop_msg("debug, normal vector err2");
                             }
-                            f_cur.color = (float) g_colors;
+                            f_cur.color = static_cast<float>(g_colors);
                             cur.color = f_cur.color;
                         }
                     }
@@ -794,8 +794,8 @@ int line3d(Byte * pixels, unsigned line_len)
                     // dot product of unit vectors is cos of angle between
                     // we will use this value to shade surface
 
-                    cur.color = (int)(1 + (g_colors - 2) *
-                                      (1.0 - dot_product(s_cross, s_light_direction)));
+                    cur.color = static_cast<int>(
+                        1 + (g_colors - 2) * (1.0 - dot_product(s_cross, s_light_direction)));
                 }
                 /* if colors out of range, set them to min or max color index
                  * but avoid background index. This makes colors "opaque" so
@@ -885,10 +885,10 @@ really_the_bottom:
 // vector version of line draw
 static void vec_draw_line(double *v1, double *v2, int color)
 {
-    int x1 = (int) v1[0];
-    int y1 = (int) v1[1];
-    int x2 = (int) v2[0];
-    int y2 = (int) v2[1];
+    int x1 = static_cast<int>(v1[0]);
+    int y1 = static_cast<int>(v1[1]);
+    int x2 = static_cast<int>(v2[0]);
+    int y2 = static_cast<int>(v2[1]);
     driver_draw_line(x1, y1, x2, y2, color);
 }
 
@@ -1055,7 +1055,7 @@ static void draw_light_box(double *origin, double *direct, Matrix light_m)
         {
             if (std::abs(i) + std::abs(j) < 6)
             {
-                g_plot((int)(s[1][2][0] + i), (int)(s[1][2][1] + j), 10);
+                g_plot(static_cast<int>(s[1][2][0] + i), static_cast<int>(s[1][2][1] + j), 10);
             }
         }
     }
@@ -1297,17 +1297,17 @@ static void interp_color(int x, int y, int color)
     {
         /* calculate a weighted average of colors long casts prevent integer
            overflow. This can evaluate to zero */
-        color = (int)(((long)(d2 + d3) * (long) s_p1.color +
-                       (long)(d1 + d3) * (long) s_p2.color +
-                       (long)(d1 + d2) * (long) s_p3.color) / d);
+        color = static_cast<int>(((long) (d2 + d3) * (long) s_p1.color + (long) (d1 + d3) * (long) s_p2.color +
+                                 (long) (d1 + d2) * (long) s_p3.color) /
+                d);
     }
 
     if (0 <= x && x < g_logical_screen_x_dots
         && 0 <= y && y < g_logical_screen_y_dots
         && 0 <= color && color < g_colors
         && (g_transparent_color_3d[1] == 0
-            || (int) s_real_color > g_transparent_color_3d[1]
-            || g_transparent_color_3d[0] > (int) s_real_color))
+            || static_cast<int>(s_real_color) > g_transparent_color_3d[1]
+            || g_transparent_color_3d[0] > static_cast<int>(s_real_color)))
     {
         if (g_targa_out)
         {
@@ -1326,7 +1326,7 @@ static void interp_color(int x, int y, int color)
             }
             else
             {
-                color = (1 + (unsigned) color * s_i_ambient) / 256;
+                color = (1 + static_cast<unsigned>(color) * s_i_ambient) / 256;
                 if (color == 0)
                 {
                     color = 1;
@@ -1355,7 +1355,7 @@ int targa_color(int x, int y, int color)
 
     if (g_fill_type == FillType::SURFACE_INTERPOLATED || glasses_alternating_or_superimpose() || g_true_color)
     {
-        s_real_color = (Byte)color;       // So Targa gets interpolated color
+        s_real_color = static_cast<Byte>(color);       // So Targa gets interpolated color
     }
 
     switch (g_true_mode)
@@ -1368,9 +1368,9 @@ int targa_color(int x, int y, int color)
         break;
 
     case TrueColorMode::ITERATE:
-        rgb[0] = (Byte)(g_real_color_iter >> 16 & 0xff);  // red
-        rgb[1] = (Byte)(g_real_color_iter >> 8 & 0xff);   // green
-        rgb[2] = (Byte)(g_real_color_iter & 0xff);        // blue
+        rgb[0] = static_cast<Byte>(g_real_color_iter >> 16 & 0xff);  // red
+        rgb[1] = static_cast<Byte>(g_real_color_iter >> 8 & 0xff);   // green
+        rgb[2] = static_cast<Byte>(g_real_color_iter & 0xff);        // blue
         break;
     }
 
@@ -1406,28 +1406,28 @@ int targa_color(int x, int y, int color)
 
     if (s_real_v)
     {
-        val = (35 * (int) rgb[0] + 45 * (int) rgb[1] + 20 * (int) rgb[2]) / 100;
+        val = (35 * static_cast<int>(rgb[0]) + 45 * static_cast<int>(rgb[1]) + 20 * static_cast<int>(rgb[2])) / 100;
     }
 
     // Now write the color triple to its transformed location
     // on the disk.
     targa_write_disk(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset, rgb[0], rgb[1], rgb[2]);
 
-    return (int)(255 - val);
+    return static_cast<int>(255 - val);
 }
 
 static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 {
     if ((s_even_odd_row++ & 1) == 0) // even rows are color value
     {
-        for (int i = 0; i < (int) line_len; i++) // add the fractional part in odd row
+        for (int i = 0; i < static_cast<int>(line_len); i++) // add the fractional part in odd row
         {
             fraction[i] = pixels[i];
         }
         return true;
     }
     // swap
-    for (int i = 0; i < (int) line_len; i++) // swap so pixel has color
+    for (int i = 0; i < static_cast<int>(line_len); i++) // swap so pixel has color
     {
         Byte tmp = pixels[i];
         pixels[i] = fraction[i];
@@ -1540,10 +1540,10 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, bool
 
     if (g_true_color) // write maxit
     {
-        std::fputc((Byte)(g_max_iterations       & 0xff), fps);
-        std::fputc((Byte)(g_max_iterations >> 8 & 0xff), fps);
-        std::fputc((Byte)(g_max_iterations >> 16 & 0xff), fps);
-        std::fputc((Byte)(g_max_iterations >> 24 & 0xff), fps);
+        std::fputc(static_cast<Byte>(g_max_iterations & 0xff), fps);
+        std::fputc(static_cast<Byte>(g_max_iterations >> 8 & 0xff), fps);
+        std::fputc(static_cast<Byte>(g_max_iterations >> 16 & 0xff), fps);
+        std::fputc(static_cast<Byte>(g_max_iterations >> 24 & 0xff), fps);
     }
 
     // Finished with the header, now lets work on the display area
@@ -1642,18 +1642,18 @@ static bool targa_validate(const std::string &filename)
     // Check Image specs
     for (Byte &elem : s_upr_lwr)
     {
-        if (std::fgetc(fp) != (int) elem)
+        if (std::fgetc(fp) != static_cast<int>(elem))
         {
             file_error(filename, FileError::BAD_IMAGE_SIZE);
             return true;
         }
     }
 
-    if (std::fgetc(fp) != (int) s_t24)
+    if (std::fgetc(fp) != static_cast<int>(s_t24))
     {
         s_error = FileError::BAD_FILE_TYPE; // Is it a targa 24 file?
     }
-    if (std::fgetc(fp) != (int) s_t32)
+    if (std::fgetc(fp) != static_cast<int>(s_t32))
     {
         s_error = FileError::BAD_FILE_TYPE;                // Is the origin at the upper left?
     }
@@ -1775,8 +1775,8 @@ static void hsv_to_rgb(
     {
         hue = hue % 23040;            // Makes h circular
     }
-    int i = (int) (hue / 3840);
-    int rmd = (int) (hue % 3840);       // RMD = fractional part of H
+    int i = static_cast<int>(hue / 3840);
+    int rmd = static_cast<int>(hue % 3840);       // RMD = fractional part of H
 
     unsigned long p1 = (val * (65535L - sat) / 65280L) >> 8;
     unsigned long p2 = (val * (65535L - sat * rmd / 3840) / 65280L - 1) >> 8;
@@ -1785,34 +1785,34 @@ static void hsv_to_rgb(
     switch (i)
     {
     case 0:
-        *red = (Byte) val;
-        *green = (Byte) p3;
-        *blue = (Byte) p1;
+        *red = static_cast<Byte>(val);
+        *green = static_cast<Byte>(p3);
+        *blue = static_cast<Byte>(p1);
         break;
     case 1:
-        *red = (Byte) p2;
-        *green = (Byte) val;
-        *blue = (Byte) p1;
+        *red = static_cast<Byte>(p2);
+        *green = static_cast<Byte>(val);
+        *blue = static_cast<Byte>(p1);
         break;
     case 2:
-        *red = (Byte) p1;
-        *green = (Byte) val;
-        *blue = (Byte) p3;
+        *red = static_cast<Byte>(p1);
+        *green = static_cast<Byte>(val);
+        *blue = static_cast<Byte>(p3);
         break;
     case 3:
-        *red = (Byte) p1;
-        *green = (Byte) p2;
-        *blue = (Byte) val;
+        *red = static_cast<Byte>(p1);
+        *green = static_cast<Byte>(p2);
+        *blue = static_cast<Byte>(val);
         break;
     case 4:
-        *red = (Byte) p3;
-        *green = (Byte) p1;
-        *blue = (Byte) val;
+        *red = static_cast<Byte>(p3);
+        *green = static_cast<Byte>(p1);
+        *blue = static_cast<Byte>(val);
         break;
     case 5:
-        *red = (Byte) val;
-        *green = (Byte) p1;
-        *blue = (Byte) p2;
+        *red = static_cast<Byte>(val);
+        *green = static_cast<Byte>(p1);
+        *blue = static_cast<Byte>(p2);
         break;
     }
 }
@@ -2396,10 +2396,10 @@ static void line3d_cleanup()
 
 static void set_upr_lwr()
 {
-    s_upr_lwr[0] = (Byte)(g_logical_screen_x_dots & 0xff);
-    s_upr_lwr[1] = (Byte)(g_logical_screen_x_dots >> 8);
-    s_upr_lwr[2] = (Byte)(g_logical_screen_y_dots & 0xff);
-    s_upr_lwr[3] = (Byte)(g_logical_screen_y_dots >> 8);
+    s_upr_lwr[0] = static_cast<Byte>(g_logical_screen_x_dots & 0xff);
+    s_upr_lwr[1] = static_cast<Byte>(g_logical_screen_x_dots >> 8);
+    s_upr_lwr[2] = static_cast<Byte>(g_logical_screen_y_dots & 0xff);
+    s_upr_lwr[3] = static_cast<Byte>(g_logical_screen_y_dots >> 8);
     s_line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
 }
 
@@ -2425,7 +2425,7 @@ static int first_time(int line_len, Vector v)
     // mark as in-progress, and enable <tab> timer display
     g_calc_status = CalcStatus::IN_PROGRESS;
 
-    s_i_ambient = (unsigned int)(255 * (float)(100 - g_ambient) / 100.0);
+    s_i_ambient = static_cast<unsigned int>(255 * (float) (100 - g_ambient) / 100.0);
     s_i_ambient = std::max<unsigned int>(s_i_ambient, 1);
 
     s_num_tris = 0;
@@ -2498,7 +2498,7 @@ static int first_time(int line_len, Vector v)
     }
 
     // aspect ratio calculation - assume screen is 4 x 3
-    s_aspect = (double) g_logical_screen_x_dots *.75 / (double) g_logical_screen_y_dots;
+    s_aspect = static_cast<double>(g_logical_screen_x_dots) *.75 / static_cast<double>(g_logical_screen_y_dots);
 
     if (!g_sphere)         // skip this slow stuff in sphere case
     {
@@ -2519,10 +2519,10 @@ static int first_time(int line_len, Vector v)
 
         // translate so origin is in center of box, so that when we rotate
         // it, we do so through the center
-        trans((double) g_logical_screen_x_dots / -2.0, (double) g_logical_screen_y_dots / -2.0,
-              (double) s_z_coord / -2.0, g_m);
-        trans((double) g_logical_screen_x_dots / -2.0, (double) g_logical_screen_y_dots / -2.0,
-              (double) s_z_coord / -2.0, light_mat);
+        trans(static_cast<double>(g_logical_screen_x_dots) / -2.0, static_cast<double>(g_logical_screen_y_dots) / -2.0,
+              static_cast<double>(s_z_coord) / -2.0, g_m);
+        trans(static_cast<double>(g_logical_screen_x_dots) / -2.0, static_cast<double>(g_logical_screen_y_dots) / -2.0,
+              static_cast<double>(s_z_coord) / -2.0, light_mat);
 
         // apply scale factors
         scale(s_scale_x, s_scale_y, s_scale_z, g_m);
@@ -2570,11 +2570,11 @@ static int first_time(int line_len, Vector v)
     // z value of user's eye - should be more negative than extreme negative part of image
     if (g_sphere)                    // sphere case
     {
-        s_l_view[2] = -(long)((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
+        s_l_view[2] = -static_cast<long>((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
     }
     else                             // non-sphere case
     {
-        s_l_view[2] = (long)((z_min - z_max) * (double) g_viewer_z / 100.0);
+        s_l_view[2] = static_cast<long>((z_min - z_max) * (double) g_viewer_z / 100.0);
     }
 
     g_view[0] = s_l_view[0];
@@ -2588,12 +2588,12 @@ static int first_time(int line_len, Vector v)
     {
         /* translate back exactly amount we translated earlier plus enough to
          * center image so maximum values are non-positive */
-        trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
-              ((double) g_logical_screen_y_dots - y_max - y_min) / 2, -z_max, g_m);
+        trans((static_cast<double>(g_logical_screen_x_dots) - x_max - x_min) / 2,
+              (static_cast<double>(g_logical_screen_y_dots) - y_max - y_min) / 2, -z_max, g_m);
 
         // Keep the box centered and on screen regardless of shifts
-        trans(((double) g_logical_screen_x_dots - x_max - x_min) / 2,
-              ((double) g_logical_screen_y_dots - y_max - y_min) / 2, -z_max, light_mat);
+        trans((static_cast<double>(g_logical_screen_x_dots) - x_max - x_min) / 2,
+              (static_cast<double>(g_logical_screen_y_dots) - y_max - y_min) / 2, -z_max, light_mat);
 
         trans(g_x_shift, -g_y_shift, 0.0, g_m);
 
@@ -2603,7 +2603,7 @@ static int first_time(int line_len, Vector v)
         {
             for (int j = 0; j < 4; j++)
             {
-                s_llm[i][j] = (long)(g_m[i][j] * 65536.0);
+                s_llm[i][j] = static_cast<long>(g_m[i][j] * 65536.0);
             }
         }
     }
@@ -2614,12 +2614,12 @@ static int first_time(int line_len, Vector v)
          * latitude; bottom 90 degrees */
 
         // Map X to this LATITUDE range
-        float theta1 = (float) (g_sphere_theta_min * PI / 180.0);
-        float theta2 = (float) (g_sphere_theta_max * PI / 180.0);
+        float theta1 = static_cast<float>(g_sphere_theta_min * PI / 180.0);
+        float theta2 = static_cast<float>(g_sphere_theta_max * PI / 180.0);
 
         // Map Y to this LONGITUDE range
-        float phi1 = (float) (g_sphere_phi_min * PI / 180.0);
-        float phi2 = (float) (g_sphere_phi_max * PI / 180.0);
+        float phi1 = static_cast<float>(g_sphere_phi_min * PI / 180.0);
+        float phi2 = static_cast<float>(g_sphere_phi_max * PI / 180.0);
 
         float theta = theta1;
 
@@ -2641,7 +2641,7 @@ static int first_time(int line_len, Vector v)
         // Similarly for cosine. Neat!
         //*******************************************************************
 
-        float delta_theta = (theta2 - theta1) / (float) line_len;
+        float delta_theta = (theta2 - theta1) / static_cast<float>(line_len);
 
         // initial sin,cos theta
         s_sin_theta_array[0] = std::sin(theta);
@@ -2662,7 +2662,7 @@ static int first_time(int line_len, Vector v)
         }
 
         // now phi - these calculated as we go - get started here
-        s_delta_phi = (phi2 - phi1) / (float) g_height;
+        s_delta_phi = (phi2 - phi1) / static_cast<float>(g_height);
 
         // initial sin,cos phi
 
@@ -2683,7 +2683,7 @@ static int first_time(int line_len, Vector v)
         }
 
         // radius of planet
-        s_radius = (double)g_logical_screen_y_dots / 2;
+        s_radius = static_cast<double>(g_logical_screen_y_dots) / 2;
 
         // precalculate factor
         s_r_x_r_scale = s_radius * s_r_scale;
@@ -2696,7 +2696,7 @@ static int first_time(int line_len, Vector v)
         s_scale_x *= s_aspect;
 
         // precalculation factor used in sphere calc
-        s_radius_factor = s_r_scale * s_radius / (double) s_z_coord;
+        s_radius_factor = s_r_scale * s_radius / static_cast<double>(s_z_coord);
 
         if (s_persp)                // precalculate fudge factor
         {
@@ -2708,8 +2708,8 @@ static int first_time(int line_len, Vector v)
 
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
-            double z_view = -(long) ((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
-            double radius = (double) g_logical_screen_y_dots / 2;
+            double z_view = -static_cast<long>((double) g_logical_screen_y_dots * (double) g_viewer_z / 100.0);
+            double radius = static_cast<double>(g_logical_screen_y_dots) / 2;
             double angle = std::atan(-radius / (z_view + radius));
             s_z_cutoff = -radius - std::sin(angle) * radius;
             s_z_cutoff *= 1.1;        // for safety
@@ -2787,7 +2787,7 @@ static int first_time(int line_len, Vector v)
         double v_length = std::min(g_logical_screen_x_dots, g_logical_screen_y_dots) / 2;
         if (s_persp && g_viewer_z <= s_p)
         {
-            v_length *= (long)(s_p + 600) / ((long)(g_viewer_z + 600) * 2);
+            v_length *= static_cast<long>(s_p + 600) / (static_cast<long>(g_viewer_z + 600) * 2);
         }
 
         /* Set direct[] to point from origin[] in direction of untransformed
@@ -2818,11 +2818,11 @@ static int first_time(int line_len, Vector v)
 
     // bad has values caught by clipping
     s_bad.x = BAD_VALUE;
-    s_f_bad.x = (float) s_bad.x;
+    s_f_bad.x = static_cast<float>(s_bad.x);
     s_bad.y = BAD_VALUE;
-    s_f_bad.y = (float) s_bad.y;
+    s_f_bad.y = static_cast<float>(s_bad.y);
     s_bad.color = BAD_VALUE;
-    s_f_bad.color = (float) s_bad.color;
+    s_f_bad.color = static_cast<float>(s_bad.color);
     for (int i = 0; i < line_len; i++)
     {
         s_last_row[i] = s_bad;

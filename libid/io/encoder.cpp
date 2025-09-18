@@ -361,7 +361,7 @@ bool encoder()
         goto oops;
     }
     static constexpr int COLOR_RESOLUTION{8};
-    x = (Byte)(128 + ((COLOR_RESOLUTION - 1) << 4) + (bits_per_pixel - 1));
+    x = static_cast<Byte>(128 + ((COLOR_RESOLUTION - 1) << 4) + (bits_per_pixel - 1));
     if (std::fwrite(&x, 1, 1, s_outfile) != 1)
 
     {
@@ -376,12 +376,14 @@ bool encoder()
     if (g_view_window                               // less than full screen?
         && (g_view_x_dots == 0 || g_view_y_dots == 0))     // and we picked the dots?
     {
-        i = (int)((double) g_screen_y_dots / (double) g_screen_x_dots * 64.0 / g_screen_aspect - 14.5);
+        i = static_cast<int>(
+            (double) g_screen_y_dots / (double) g_screen_x_dots * 64.0 / g_screen_aspect - 14.5);
     }
     else       // must risk loss of precision if numbers low
     {
-        i = (int)((double) g_logical_screen_y_dots / (double) g_logical_screen_x_dots /
-                g_final_aspect_ratio * 64 - 14.5);
+        i = static_cast<int>(
+            (double) g_logical_screen_y_dots / (double) g_logical_screen_x_dots / g_final_aspect_ratio * 64 -
+            14.5);
     }
     i = std::max(i, 1);
     i = std::min(i, 255);
@@ -475,7 +477,7 @@ bool encoder()
         goto oops;
     }
 
-    bits_per_pixel = (Byte)(s_start_bits - 1);
+    bits_per_pixel = static_cast<Byte>(s_start_bits - 1);
 
     if (std::fwrite(&bits_per_pixel, 1, 1, s_outfile) != 1)
     {
@@ -676,7 +678,7 @@ static int shift_write(const Byte *color, int num_colors)
         for (int j = 0; j < 3; j++)
         {
             Byte this_color = color[3 * i + j];
-            if (std::fputc(this_color, s_outfile) != (int) this_color)
+            if (std::fputc(this_color, s_outfile) != static_cast<int>(this_color))
             {
                 return 0;
             }
@@ -1041,7 +1043,7 @@ static bool compress(int row_limit)
     }
     h_shift = 8 - h_shift;                // set hash code range bound
 
-    std::memset(s_h_tab, 0xff, (unsigned)H_SIZE*sizeof(long));
+    std::memset(s_h_tab, 0xff, static_cast<unsigned>(H_SIZE) *sizeof(long));
     int h_size_reg = H_SIZE;
 
     output(s_clear_code);
@@ -1067,7 +1069,7 @@ static bool compress(int row_limit)
                     ent = color;
                     continue;
                 }
-                long f_code = ((long) color << s_max_bits) + ent;
+                long f_code = (static_cast<long>(color) << s_max_bits) + ent;
                 int i = color << h_shift ^ ent;    // xor hashing
                 int disp{};
 
@@ -1106,7 +1108,7 @@ no_match:
                 if (s_free_ent < s_max_max_cde)
                 {
                     // code -> hashtable
-                    s_code_tab[i] = (unsigned short)s_free_ent++;
+                    s_code_tab[i] = static_cast<unsigned short>(s_free_ent++);
                     s_h_tab[i] = f_code;
                 }
                 else
@@ -1178,7 +1180,7 @@ static void output(int code)
 
     if (s_cur_bits > 0)
     {
-        s_cur_accum |= (long) code << s_cur_bits;
+        s_cur_accum |= static_cast<long>(code) << s_cur_bits;
     }
     else
     {
@@ -1189,7 +1191,7 @@ static void output(int code)
 
     while (s_cur_bits >= 8)
     {
-        char_out((unsigned int)(s_cur_accum & 0xff));
+        char_out(static_cast<unsigned int>(s_cur_accum & 0xff));
         s_cur_accum >>= 8;
         s_cur_bits -= 8;
     }
@@ -1223,7 +1225,7 @@ static void output(int code)
         // At EOF, write the rest of the buffer.
         while (s_cur_bits > 0)
         {
-            char_out((unsigned int)(s_cur_accum & 0xff));
+            char_out(static_cast<unsigned int>(s_cur_accum & 0xff));
             s_cur_accum >>= 8;
             s_cur_bits -= 8;
         }
@@ -1239,7 +1241,7 @@ static void output(int code)
 //
 static void cl_block()             // table clear for block compress
 {
-    std::memset(s_h_tab, 0xff, (unsigned)H_SIZE*sizeof(long));
+    std::memset(s_h_tab, 0xff, static_cast<unsigned>(H_SIZE) *sizeof(long));
     s_free_ent = s_clear_code + 2;
     s_clear_flag = true;
     output(s_clear_code);
@@ -1251,7 +1253,7 @@ static void cl_block()             // table clear for block compress
 //
 static void char_out(int c)
 {
-    s_accum[ s_a_count++ ] = (char)c;
+    s_accum[ s_a_count++ ] = static_cast<char>(c);
     if (s_a_count >= 254)
     {
         flush_char();

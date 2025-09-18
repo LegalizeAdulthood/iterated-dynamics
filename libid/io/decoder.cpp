@@ -136,7 +136,7 @@ short decoder(short line_width)
 
     // Initialize for decoding a new image...
 
-    short size = (short) get_byte();
+    short size = static_cast<short>(get_byte());
     if (size < 0)
     {
         return size;
@@ -146,11 +146,11 @@ short decoder(short line_width)
         return BAD_CODE_SIZE;
     }
 
-    s_curr_size = (short)(size + 1);
-    short top_slot = (short) (1 << s_curr_size); // Highest code for current size
-    short clear = (short) (1 << size);           // Value for a clear code
-    short ending = (short) (clear + 1);          // Value for an ending code
-    short new_codes = (short) (ending + 1);       // First available code
+    s_curr_size = static_cast<short>(size + 1);
+    short top_slot = static_cast<short>(1 << s_curr_size); // Highest code for current size
+    short clear = static_cast<short>(1 << size);           // Value for a clear code
+    short ending = static_cast<short>(clear + 1);          // Value for an ending code
+    short new_codes = static_cast<short>(ending + 1);       // First available code
     short slot = new_codes;                       // Last read code
     short old_code = 0;
     short y_skip = 0;
@@ -191,10 +191,10 @@ short decoder(short line_width)
         // If the code is a clear code, reinitialize all necessary items.
         if (c == clear)
         {
-            s_curr_size = (short)(size + 1);
+            s_curr_size = static_cast<short>(size + 1);
             slot = new_codes;
             s_sizeof_string[slot] = 0;
-            top_slot = (short)(1 << s_curr_size);
+            top_slot = static_cast<short>(1 << s_curr_size);
 
             // Continue reading codes until we get a non-clear code (Another
             // unlikely, but possible case...)
@@ -221,10 +221,10 @@ short decoder(short line_width)
             }
 
             old_code = c;
-            out_value = (Byte) old_code;
+            out_value = static_cast<Byte>(old_code);
 
             // And let us not forget to put the char into the buffer...
-            *sp++ = (Byte) c;
+            *sp++ = static_cast<Byte>(c);
         }
         else
         {
@@ -269,14 +269,15 @@ short decoder(short line_width)
                         code = prefix[code];
                     }
                     while (--j > 0);
-                    *buf_ptr = (Byte) code;
+                    *buf_ptr = static_cast<Byte>(code);
                     buf_ptr += ++i;
                     buf_cnt -= i;
                     if (buf_cnt == 0) // finished an input row?
                     {
                         if (--y_skip < 0)
                         {
-                            ret = (short) g_out_line(s_decoder_line, (int) (buf_ptr - s_decoder_line));
+                            ret = static_cast<short>(
+                                g_out_line(s_decoder_line, (int) (buf_ptr - s_decoder_line)));
                             if (ret < 0)
                             {
                                 return ret;
@@ -303,13 +304,13 @@ short decoder(short line_width)
             // overwrite the last code...)
             if (fast_loop == NOPE)
             {
-                *sp++ = (Byte) code;
+                *sp++ = static_cast<Byte>(code);
             }
 
             if (slot < top_slot)
             {
-                s_sizeof_string[slot] = (short)(s_sizeof_string[old_code] + 1);
-                out_value = (Byte) code;
+                s_sizeof_string[slot] = static_cast<short>(s_sizeof_string[old_code] + 1);
+                out_value = static_cast<Byte>(code);
                 s_suffix[slot] = out_value;
                 prefix[slot++] = old_code;
                 old_code = c;
@@ -335,7 +336,7 @@ short decoder(short line_width)
             {
                 if (--y_skip < 0)
                 {
-                    ret = (short) g_out_line(s_decoder_line, (int) (buf_ptr - s_decoder_line));
+                    ret = static_cast<short>(g_out_line(s_decoder_line, (int) (buf_ptr - s_decoder_line)));
                     if (ret < 0)
                     {
                         return ret;
@@ -367,7 +368,7 @@ static short get_next_code()
 
             // Out of bytes in current block, so read next block
             s_ptr_bytes = s_byte_buff;
-            s_num_avail_bytes = (short) get_byte();
+            s_num_avail_bytes = static_cast<short>(get_byte());
             if (s_num_avail_bytes < 0)
             {
                 return s_num_avail_bytes;
@@ -382,7 +383,7 @@ static short get_next_code()
         --s_num_avail_bytes;
     }
 
-    ret_code = (short)(b1 >> (8 - s_num_bits_left));
+    ret_code = static_cast<short>(b1 >> (8 - s_num_bits_left));
     while (s_curr_size > s_num_bits_left)
     {
         if (s_num_avail_bytes <= 0)
@@ -390,7 +391,7 @@ static short get_next_code()
 
             // Out of bytes in current block, so read next block
             s_ptr_bytes = s_byte_buff;
-            s_num_avail_bytes = (short) get_byte();
+            s_num_avail_bytes = static_cast<short>(get_byte());
             if (s_num_avail_bytes < 0)
             {
                 return s_num_avail_bytes;
@@ -406,7 +407,7 @@ static short get_next_code()
         --s_num_avail_bytes;
     }
     s_num_bits_left -= s_curr_size;
-    return (short)(ret_code & s_code_mask[s_curr_size]);
+    return static_cast<short>(ret_code & s_code_mask[s_curr_size]);
 }
 
 // called in parent routine to set byte_buff

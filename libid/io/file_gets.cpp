@@ -33,7 +33,7 @@ int file_gets(char *buf, int max_len, std::FILE *infile)
         }
         if (c != '\r')
         {
-            buf[len++] = (char)c;    // ignore c/r
+            buf[len++] = static_cast<char>(c);    // ignore c/r
         }
     }
     buf[len] = 0;

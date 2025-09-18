@@ -85,7 +85,7 @@ static bool use_calc_mandelbrot()
 bool mandel_per_image()
 {
     g_bf_math = BFMathType::NONE;
-    g_c_exponent = (int)g_params[2];
+    g_c_exponent = static_cast<int>(g_params[2]);
     g_power_z.x = g_params[2] - 1.0;
     g_power_z.y = g_params[3];
     g_float_param = &g_init;
@@ -138,7 +138,7 @@ bool mandel_per_image()
                 return mandel_z_power_perturbation_per_image();
             }
         }
-        if ((double)g_c_exponent == g_params[2] && g_c_exponent & 1)   // odd exponents
+        if (static_cast<double>(g_c_exponent) == g_params[2] && g_c_exponent & 1)   // odd exponents
         {
             g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
         }
@@ -146,7 +146,7 @@ bool mandel_per_image()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && static_cast<double>(g_c_exponent) == g_params[2])
         {
             get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_orbit;
         }
@@ -224,7 +224,7 @@ bool mandel_per_image()
 
 bool julia_per_image()
 {
-    g_c_exponent = (int)g_params[2];
+    g_c_exponent = static_cast<int>(g_params[2]);
     g_float_param = &g_param_z1;
     if (g_fractal_type == FractalType::COMPLEX_MARKS_JUL)
     {
@@ -254,11 +254,11 @@ bool julia_per_image()
         }
         break;
     case FractalType::JULIA_Z_POWER:
-        if (g_c_exponent & 1 || g_params[3] != 0.0 || (double)g_c_exponent != g_params[2])
+        if (g_c_exponent & 1 || g_params[3] != 0.0 || static_cast<double>(g_c_exponent) != g_params[2])
         {
             g_symmetry = SymmetryType::NONE;
         }
-        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && (double)g_c_exponent == g_params[2])
+        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && static_cast<double>(g_c_exponent) == g_params[2])
         {
             get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_orbit;
         }

@@ -19,7 +19,7 @@ extern bool                  g_overflow;
 //
 inline long divide(long x, long y, int n)
 {
-    return (long) ((float) x / (float) y *(float)(1 << n));
+    return static_cast<long>(static_cast<float>(x) / static_cast<float>(y) * static_cast<float>(1 << n));
 }
 
 //  32-bit integer multiply with n bit shift.
@@ -28,7 +28,7 @@ inline long divide(long x, long y, int n)
 //  Overflow condition returns 0x7fffffffh with overflow = 1;
 inline long multiply(long x, long y, int n)
 {
-    long l = (long)((float) x * (float) y /(float)(1 << n));
+    long l = static_cast<long>(static_cast<float>(x) * static_cast<float>(y) / static_cast<float>(1 << n));
     if (l == 0x7fffffff)
     {
         g_overflow = true;

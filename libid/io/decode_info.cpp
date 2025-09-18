@@ -259,10 +259,10 @@ static void get_int32(std::int32_t *dst, unsigned char **src, int dir)
 {
     if (dir == 1)
     {
-        *dst = (unsigned long) (*src)[0] +
-               ((unsigned long) (*src)[1] << 8) +
-               ((unsigned long) (*src)[2] << 16) +
-               ((long) ((char *) *src)[3] << 24);
+        *dst = static_cast<unsigned long>((*src)[0]) +
+               (static_cast<unsigned long>((*src)[1]) << 8) +
+               (static_cast<unsigned long>((*src)[2]) << 16) +
+               (static_cast<long>(((char *) *src)[3]) << 24);
     }
     else
     {
@@ -314,7 +314,7 @@ static void get_double(double *dst, unsigned char **src, int dir)
             e = (((*src)[7]&0x7f) << 4) + (((*src)[6]&0xf0) >> 4) - 1023;
             f = 1 + ((*src)[6]&0x0f)/P4 + (*src)[5]/P12 + (*src)[4]/P20 +
                 (*src)[3]/P28 + (*src)[2]/P36 + (*src)[1]/P44 + (*src)[0]/P52;
-            f *= std::pow(2., (double)e);
+            f *= std::pow(2., static_cast<double>(e));
             if ((*src)[7]&0x80)
             {
                 f = -f;
@@ -338,7 +338,7 @@ static void get_double(double *dst, unsigned char **src, int dir)
                 f = -f;
             }
             e = std::log(f)/std::log(2.);
-            f = f/std::pow(2., (double)e) - 1;
+            f = f/std::pow(2., static_cast<double>(e)) - 1;
             if (f < 0)
             {
                 e--;
@@ -352,19 +352,19 @@ static void get_double(double *dst, unsigned char **src, int dir)
             e += 1023;
             (*src)[7] = s | (e & 0x7f0) >> 4;
             f *= P4;
-            (*src)[6] = (e & 0x0f) << 4 | (int) f & 0x0f;
-            f = (f-(int)f)*P8;
-            (*src)[5] = (int) f & 0xff;
-            f = (f-(int)f)*P8;
-            (*src)[4] = (int) f & 0xff;
-            f = (f-(int)f)*P8;
-            (*src)[3] = (int) f & 0xff;
-            f = (f-(int)f)*P8;
-            (*src)[2] = (int) f & 0xff;
-            f = (f-(int)f)*P8;
-            (*src)[1] = (int) f & 0xff;
-            f = (f-(int)f)*P8;
-            (*src)[0] = (int) f & 0xff;
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+            f = (f- static_cast<int>(f))*P8;
+            (*src)[5] = static_cast<int>(f) & 0xff;
+            f = (f- static_cast<int>(f))*P8;
+            (*src)[4] = static_cast<int>(f) & 0xff;
+            f = (f- static_cast<int>(f))*P8;
+            (*src)[3] = static_cast<int>(f) & 0xff;
+            f = (f- static_cast<int>(f))*P8;
+            (*src)[2] = static_cast<int>(f) & 0xff;
+            f = (f- static_cast<int>(f))*P8;
+            (*src)[1] = static_cast<int>(f) & 0xff;
+            f = (f- static_cast<int>(f))*P8;
+            (*src)[0] = static_cast<int>(f) & 0xff;
         }
     }
     *src += 8; // sizeof(double) in MSDOS
@@ -396,7 +396,7 @@ static void get_float(float *dst, unsigned char **src, int dir)
         {
             e = (((*src)[3] & 0x7f) << 1 | ((*src)[2] & 0x80) >> 7) - 127;
             f = 1 + ((*src)[2]&0x7f)/P7 + (*src)[1]/P15 + (*src)[0]/P23;
-            f *= std::pow(2., (double)e);
+            f *= std::pow(2., static_cast<double>(e));
             if ((*src)[3]&0x80)
             {
                 f = -f;
@@ -420,7 +420,7 @@ static void get_float(float *dst, unsigned char **src, int dir)
                 f = -f;
             }
             e = std::log(f)/std::log(2.);
-            f = f/std::pow(2., (double)e) - 1;
+            f = f/std::pow(2., static_cast<double>(e)) - 1;
             if (f < 0)
             {
                 e--;
@@ -434,11 +434,11 @@ static void get_float(float *dst, unsigned char **src, int dir)
             e += 127;
             (*src)[3] = s | (e & 0xf7) >> 1;
             f *= P7;
-            (*src)[2] = (e & 0x01) << 7 | (int) f & 0x7f;
-            f = (f-(int)f)*P8;
-            (*src)[1] = (int) f & 0xff;
-            f = (f-(int)f)*P8;
-            (*src)[0] = (int) f & 0xff;
+            (*src)[2] = (e & 0x01) << 7 | static_cast<int>(f) & 0x7f;
+            f = (f- static_cast<int>(f))*P8;
+            (*src)[1] = static_cast<int>(f) & 0xff;
+            f = (f- static_cast<int>(f))*P8;
+            (*src)[0] = static_cast<int>(f) & 0xff;
         }
     }
     *src += 4; // sizeof(float) in MSDOS

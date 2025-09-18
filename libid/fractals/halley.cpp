@@ -30,9 +30,9 @@ bool halley_per_image()
 
     set_fractal_type(FractalType::HALLEY);
 
-    g_degree = (int)g_param_z1.x;
+    g_degree = static_cast<int>(g_param_z1.x);
     g_degree = std::max(g_degree, 2);
-    g_params[0] = (double)g_degree;
+    g_params[0] = static_cast<double>(g_degree);
 
     //  precalculated values
     s_halley_a_plus_one = g_degree + 1; // a+1

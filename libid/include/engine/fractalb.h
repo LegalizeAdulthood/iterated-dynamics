@@ -12,16 +12,16 @@ namespace id::engine
 inline math::DComplex cmplx_bn_to_float(const math::BNComplex &s)
 {
     math::DComplex t;
-    t.x = (double) math::bn_to_float(s.x);
-    t.y = (double) math::bn_to_float(s.y);
+    t.x = static_cast<double>(math::bn_to_float(s.x));
+    t.y = static_cast<double>(math::bn_to_float(s.y));
     return t;
 }
 
 inline math::DComplex cmplx_bf_to_float(const math::BFComplex &s)
 {
     math::DComplex t;
-    t.x = (double) math::bf_to_float(s.x);
-    t.y = (double) math::bf_to_float(s.y);
+    t.x = static_cast<double>(math::bf_to_float(s.x));
+    t.y = static_cast<double>(math::bf_to_float(s.y));
     return t;
 }
 

@@ -108,7 +108,7 @@ top:
         {
             if (len < 40)
             {
-                buf[len++] = (char) c;
+                buf[len++] = static_cast<char>(c);
             }
             c = std::getc(infile);
             ++file_offset;
@@ -188,7 +188,7 @@ top:
             {
                 if (string_case_equal(buf, item_name))
                 {
-                    std::fseek(infile, name_offset + (long) exclude_entry, SEEK_SET);
+                    std::fseek(infile, name_offset + static_cast<long>(exclude_entry), SEEK_SET);
                     return -1;
                 }
             }

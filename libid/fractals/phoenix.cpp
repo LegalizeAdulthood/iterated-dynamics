@@ -175,12 +175,12 @@ int mand_phoenix_per_pixel()
 bool phoenix_per_image()
 {
     g_float_param = &g_param_z1;
-    g_degree = (int)g_param_z2.x;
+    g_degree = static_cast<int>(g_param_z2.x);
     if (g_degree < 2 && g_degree > -3)
     {
         g_degree = 0;
     }
-    g_params[2] = (double)g_degree;
+    g_params[2] = static_cast<double>(g_degree);
     if (g_degree == 0)
     {
         g_cur_fractal_specific->orbit_calc = phoenix_orbit;
@@ -202,12 +202,12 @@ bool phoenix_per_image()
 bool phoenix_cplx_per_image()
 {
     g_float_param = &g_param_z1;
-    g_degree = (int)g_params[4];
+    g_degree = static_cast<int>(g_params[4]);
     if (g_degree < 2 && g_degree > -3)
     {
         g_degree = 0;
     }
-    g_params[4] = (double)g_degree;
+    g_params[4] = static_cast<double>(g_degree);
     if (g_degree == 0)
     {
         if (g_param_z2.x != 0 || g_param_z2.y != 0)
@@ -257,12 +257,12 @@ bool phoenix_cplx_per_image()
 bool mand_phoenix_per_image()
 {
     g_float_param = &g_init;
-    g_degree = (int)g_param_z2.x;
+    g_degree = static_cast<int>(g_param_z2.x);
     if (g_degree < 2 && g_degree > -3)
     {
         g_degree = 0;
     }
-    g_params[2] = (double)g_degree;
+    g_params[2] = static_cast<double>(g_degree);
     if (g_degree == 0)
     {
         g_cur_fractal_specific->orbit_calc = phoenix_orbit;
@@ -284,12 +284,12 @@ bool mand_phoenix_per_image()
 bool mand_phoenix_cplx_per_image()
 {
     g_float_param = &g_init;
-    g_degree = (int)g_params[4];
+    g_degree = static_cast<int>(g_params[4]);
     if (g_degree < 2 && g_degree > -3)
     {
         g_degree = 0;
     }
-    g_params[4] = (double)g_degree;
+    g_params[4] = static_cast<double>(g_degree);
     if (g_param_z1.y != 0 || g_param_z2.y != 0)
     {
         g_symmetry = SymmetryType::NONE;
