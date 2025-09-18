@@ -154,11 +154,11 @@ Plasma::Plasma() :
             m_max_plasma = 0xFFFF;
             if (g_outside_color >= COLOR_BLACK)
             {
-                g_plot    = (PlotFn)put_pot_border;
+                g_plot    = reinterpret_cast<PlotFn>(put_pot_border);
             }
             else
             {
-                g_plot    = (PlotFn)put_pot;
+                g_plot    = reinterpret_cast<PlotFn>(put_pot);
             }
             m_get_pix =  get_pot;
         }
