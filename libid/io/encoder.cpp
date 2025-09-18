@@ -399,7 +399,7 @@ bool encoder()
         if (g_got_real_dac)
         {
             // got a DAC - must be a VGA
-            if (!shift_write((Byte *) g_dac_box, g_colors))
+            if (!shift_write(reinterpret_cast<Byte *>(g_dac_box), g_colors))
             {
                 goto oops;
             }
@@ -437,7 +437,7 @@ bool encoder()
         // Either EGA or VGA
         if (g_got_real_dac)
         {
-            if (!shift_write((Byte *) g_dac_box, g_colors))
+            if (!shift_write(reinterpret_cast<Byte *>(g_dac_box), g_colors))
             {
                 goto oops;
             }
@@ -509,7 +509,7 @@ bool encoder()
         // resume info block, 002
         save_info.tot_extend_len += extend_blk_len(g_resume_len);
         std::copy(g_resume_data.data(), &g_resume_data[g_resume_len], &g_block[0]);
-        if (!put_extend_blk(2, g_resume_len, (char *)g_block))
+        if (!put_extend_blk(2, g_resume_len, reinterpret_cast<char *>(g_block)))
         {
             goto oops;
         }
@@ -552,7 +552,7 @@ bool encoder()
         save_info.tot_extend_len += extend_blk_len(22 * (g_bf_length + 2));
         // note: this assumes variables allocated in order starting with
         // g_bf_x_min in init_bf_2() in BIGNUM.C
-        if (!put_extend_blk(5, 22 * (g_bf_length + 2), (char *) g_bf_x_min))
+        if (!put_extend_blk(5, 22 * (g_bf_length + 2), reinterpret_cast<char *>(g_bf_x_min)))
         {
             goto oops;
         }
@@ -619,7 +619,7 @@ bool encoder()
         decode_evolver_info(&evolution_info, 0);
         // evolution info block, 006
         save_info.tot_extend_len += extend_blk_len(sizeof(evolution_info));
-        if (!put_extend_blk(6, sizeof(evolution_info), (char *) &evolution_info))
+        if (!put_extend_blk(6, sizeof(evolution_info), reinterpret_cast<char *>(&evolution_info)))
         {
             goto oops;
         }
@@ -642,7 +642,7 @@ bool encoder()
         decode_orbits_info(&orbits_info, 0);
         // orbits info block, 007
         save_info.tot_extend_len += extend_blk_len(sizeof(orbits_info));
-        if (!put_extend_blk(7, sizeof(orbits_info), (char *) &orbits_info))
+        if (!put_extend_blk(7, sizeof(orbits_info), reinterpret_cast<char *>(&orbits_info)))
         {
             goto oops;
         }
@@ -651,7 +651,7 @@ bool encoder()
     // main and last block, 001
     save_info.tot_extend_len += extend_blk_len(sizeof(FractalInfo));
     decode_fractal_info(&save_info, 0);
-    if (!put_extend_blk(1, sizeof(FractalInfo), (char *) &save_info))
+    if (!put_extend_blk(1, sizeof(FractalInfo), reinterpret_cast<char *>(&save_info)))
     {
         goto oops;
     }
@@ -750,7 +750,7 @@ static int store_item_name(const char *name)
     }
 
     // formula/lsys/ifs info block, 003
-    put_extend_blk(3, sizeof(formula_info), (char *) &formula_info);
+    put_extend_blk(3, sizeof(formula_info), reinterpret_cast<char *>(&formula_info));
     return extend_blk_len(sizeof(formula_info));
 }
 

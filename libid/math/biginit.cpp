@@ -163,7 +163,7 @@ static void init_bf2()
 
     calc_lengths();
 
-    s_bn_root = (BigFloat) &s_storage[0];
+    s_bn_root = reinterpret_cast<BigFloat>(&s_storage[0]);
 
     /* at present time one call would suffice, but this logic allows
        multiple kinds of alternate math e.g. long double */

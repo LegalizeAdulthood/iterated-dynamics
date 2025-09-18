@@ -1194,7 +1194,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
         return true;
     }
     file_read(gif_start, 13, 1, s_fp);
-    if (std::strncmp((char *)gif_start, "GIF", 3) != 0)
+    if (std::strncmp(reinterpret_cast<char *>(gif_start), "GIF", 3) != 0)
     {
         // not GIF, maybe old .tga?
         std::fclose(s_fp);
@@ -1340,7 +1340,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                         scan_extend = 0;
                         break;
                     }
-                    load_ext_blk((char *)info, sizeof(FractalInfo));
+                    load_ext_blk(reinterpret_cast<char *>(info), sizeof(FractalInfo));
                     decode_fractal_info(info, 1);
                     scan_extend = 2;
                     // now we know total extension len, back up to first block
@@ -1350,7 +1350,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_2_info->resume_data.resize(data_len);
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk((char *)g_block, data_len);
+                    load_ext_blk(reinterpret_cast<char *>(g_block), data_len);
                     // resume data is assumed to be platform native; no need to decode
                     std::copy(&g_block[0], &g_block[data_len], blk_2_info->resume_data.data());
                     blk_2_info->length = data_len;
@@ -1360,7 +1360,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     // check data_len for backward compatibility
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk((char *)&formula_info, data_len);
+                    load_ext_blk(reinterpret_cast<char *>(&formula_info), data_len);
                     // TODO: decode formula info?
                     std::strcpy(blk_3_info->form_name, formula_info.form_name);
                     blk_3_info->length = data_len;
@@ -1415,7 +1415,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                 case GifExtensionId::EVOLVER_INFO: // "fractint006", evolver params
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk((char *)&evolution_info, data_len);
+                    load_ext_blk(reinterpret_cast<char *>(&evolution_info), data_len);
                     decode_evolver_info(&evolution_info, 1);
                     blk_6_info->length = data_len;
                     blk_6_info->got_data = true;
@@ -1445,7 +1445,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                 case GifExtensionId::ORBITS_INFO: // "fractint007", orbits parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
-                    load_ext_blk((char *)&orbits_info, data_len);
+                    load_ext_blk(reinterpret_cast<char *>(&orbits_info), data_len);
                     decode_orbits_info(&orbits_info, 1);
                     blk_7_info->length = data_len;
                     blk_7_info->got_data = true;

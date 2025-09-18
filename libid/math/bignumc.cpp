@@ -71,8 +71,8 @@ int cmp_bn(BigNum n1, BigNum n2)
 {
     // two bytes at a time
     // signed comparison for msb
-    S16 value1 = BIG_ACCESS_S16((S16 *) (n1 + g_bn_length - 2));
-    S16 value2 = BIG_ACCESS_S16((S16 *) (n2 + g_bn_length - 2));
+    S16 value1 = BIG_ACCESS_S16(reinterpret_cast<S16 *>(n1 + g_bn_length - 2));
+    S16 value2 = BIG_ACCESS_S16(reinterpret_cast<S16 *>(n2 + g_bn_length - 2));
     if (value1 > value2)
     {
         // now determine which of the two bytes was different
@@ -230,7 +230,7 @@ BigNum neg_bn(BigNum r, BigNum n)
     for (; i < g_bn_length; i += 2)
     {
         // notice that BIG_ACCESS16() and BIG_SET16() are not needed here
-        *(U16 *)(r+i) = ~*(U16 *)(n+i); // toggle all the bits
+        *reinterpret_cast<U16 *>(r + i) = ~*reinterpret_cast<U16 *>(n + i); // toggle all the bits
     }
     return r;
 }
@@ -254,7 +254,7 @@ BigNum neg_a_bn(BigNum r)
     for (; i < g_bn_length; i += 2)
     {
         // notice that BIG_ACCESS16() and BIG_SET16() are not needed here
-        *(U16 *)(r+i) = ~*(U16 *)(r+i); // toggle all the bits
+        *reinterpret_cast<U16 *>(r + i) = ~*reinterpret_cast<U16 *>(r + i); // toggle all the bits
     }
     return r;
 }

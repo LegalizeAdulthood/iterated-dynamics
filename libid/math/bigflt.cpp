@@ -570,8 +570,8 @@ BigFloat unsafe_sqrt_bf(BigFloat r, BigFloat n)
 BigFloat exp_bf(BigFloat r, BigFloat n)
 {
     U16 fact = 1;
-    S16 *test_exp = (S16 *) (g_bf_tmp2 + g_bf_length);
-    S16 *r_exp = (S16 *) (r + g_bf_length);
+    S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp2 + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
 
     if (is_bf_zero(n))
     {
@@ -702,9 +702,9 @@ BigFloat unsafe_ln_bf(BigFloat r, BigFloat n)
 BigFloat unsafe_sin_cos_bf(BigFloat s, BigFloat c, BigFloat n)
 {
     U16 fact = 2;
-    S16 *test_exp = (S16 *) (g_bf_tmp1 + g_bf_length);
-    S16 *c_exp = (S16 *) (c + g_bf_length);
-    S16 *s_exp = (S16 *) (s + g_bf_length);
+    S16 *test_exp = reinterpret_cast<S16 *>(g_bf_tmp1 + g_bf_length);
+    S16 *c_exp = reinterpret_cast<S16 *>(c + g_bf_length);
+    S16 *s_exp = reinterpret_cast<S16 *>(s + g_bf_length);
 
 #ifndef CALCULATING_BIG_PI
     // assure range 0 <= x < pi/4
@@ -1270,7 +1270,7 @@ int convert_bf(BigFloat new_num, BigFloat old_num, int new_bf_len, int old_bf_le
 // normalize big float
 BigFloat norm_bf(BigFloat r)
 {
-    S16 *r_exp = (S16 *) (r + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
 
     // check for overflow
     Byte hi_byte = r[g_bf_length - 1];
@@ -1329,8 +1329,8 @@ S16 adjust_bf_add(BigFloat n1, BigFloat n2)
 
     // scale n1 or n2
     // compare exp's
-    S16 *n1_exp = (S16 *) (n1 + g_bf_length);
-    S16 *n2_exp = (S16 *) (n2 + g_bf_length);
+    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
+    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
     if (BIG_ACCESS_S16(n1_exp) > BIG_ACCESS_S16(n2_exp))
     {
         // scale n2
@@ -1404,8 +1404,8 @@ int cmp_bf(BigFloat n1, BigFloat n2)
     // signs are the same
 
     // compare exponents, using signed comparisons
-    S16 *n1_exp = (S16 *) (n1 + g_bf_length);
-    S16 *n2_exp = (S16 *) (n2 + g_bf_length);
+    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
+    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
     if (BIG_ACCESS_S16(n1_exp) > BIG_ACCESS_S16(n2_exp))
     {
         return sign1*g_bf_length;
@@ -1484,7 +1484,7 @@ BigFloat unsafe_add_bf(BigFloat r, BigFloat n1, BigFloat n2)
         return r;
     }
 
-    S16 *r_exp = (S16 *)(r+g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
     BIG_SET_S16(r_exp, adjust_bf_add(n1, n2));
 
     int bnl = g_bn_length;
@@ -1538,7 +1538,7 @@ BigFloat unsafe_sub_bf(BigFloat r, BigFloat n1, BigFloat n2)
         return r;
     }
 
-    S16 *r_exp = (S16 *) (r + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
     BIG_SET_S16(r_exp, adjust_bf_add(n1, n2));
 
     int bnl = g_bn_length;
@@ -1579,8 +1579,8 @@ BigFloat unsafe_sub_a_bf(BigFloat r, BigFloat n)
 // r = -n
 BigFloat neg_bf(BigFloat r, BigFloat n)
 {
-    S16 *r_exp = (S16 *) (r + g_bf_length);
-    S16 *n_exp = (S16 *) (n + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
     BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
 
     int bnl = g_bn_length;
@@ -1609,8 +1609,8 @@ BigFloat neg_a_bf(BigFloat r)
 // r = 2*n
 BigFloat double_bf(BigFloat r, BigFloat n)
 {
-    S16 *r_exp = (S16 *) (r + g_bf_length);
-    S16 *n_exp = (S16 *) (n + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
     BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
 
     int bnl = g_bn_length;
@@ -1639,8 +1639,8 @@ BigFloat double_a_bf(BigFloat r)
 // r = n/2
 BigFloat half_bf(BigFloat r, BigFloat n)
 {
-    S16 *r_exp = (S16 *) (r + g_bf_length);
-    S16 *n_exp = (S16 *) (n + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
     BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
 
     int bnl = g_bn_length;
@@ -1680,9 +1680,9 @@ BigFloat unsafe_full_mult_bf(BigFloat r, BigFloat n1, BigFloat n2)
         return r;
     }
 
-    S16 *r_exp = (S16 *) (r + 2 * g_bf_length);
-    S16 *n1_exp = (S16 *) (n1 + g_bf_length);
-    S16 *n2_exp = (S16 *) (n2 + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + 2 * g_bf_length);
+    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
+    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
     // add exp's
     BIG_SET_S16(r_exp, (S16)(BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp)));
 
@@ -1710,8 +1710,8 @@ BigFloat unsafe_mult_bf(BigFloat r, BigFloat n1, BigFloat n2)
         return r;
     }
 
-    S16 *n1_exp = (S16 *) (n1 + g_bf_length);
-    S16 *n2_exp = (S16 *) (n2 + g_bf_length);
+    S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
+    S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
     // add exp's
     int r_exp = BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp);
 
@@ -1755,8 +1755,8 @@ BigFloat unsafe_full_square_bf(BigFloat r, BigFloat n)
         return r;
     }
 
-    S16 *r_exp = (S16 *) (r + 2 * g_bf_length);
-    S16 *n_exp = (S16 *) (n + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + 2 * g_bf_length);
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
     BIG_SET_S16(r_exp, 2 * BIG_ACCESS_S16(n_exp));
 
     int bnl = g_bn_length;
@@ -1789,7 +1789,7 @@ BigFloat unsafe_square_bf(BigFloat r, BigFloat n)
         return r;
     }
 
-    S16 *n_exp = (S16 *) (n + g_bf_length);
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
     int r_exp = static_cast<S16>(2 * BIG_ACCESS_S16(n_exp));
 
     int bnl = g_bn_length;
@@ -1816,8 +1816,8 @@ BigFloat unsafe_square_bf(BigFloat r, BigFloat n)
 // SIDE-EFFECTS: n can be "de-normalized" and lose precision
 BigFloat unsafe_mult_bf_int(BigFloat r, BigFloat n, U16 u)
 {
-    S16 *r_exp = (S16 *) (r + g_bf_length);
-    S16 *n_exp = (S16 *) (n + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
     BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
 
     const bool positive = !is_bf_neg(n);
@@ -1847,7 +1847,7 @@ BigFloat unsafe_mult_bf_int(BigFloat r, BigFloat n, U16 u)
 // r *= u  where u is an unsigned integer
 BigFloat mult_a_bf_int(BigFloat r, U16 u)
 {
-    S16 *r_exp = (S16 *) (r + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
     const bool positive = !is_bf_neg(r);
 
     /*
@@ -1885,8 +1885,8 @@ BigFloat unsafe_div_bf_int(BigFloat r, BigFloat n,  U16 u)
         return r;
     }
 
-    S16 *r_exp = (S16 *) (r + g_bf_length);
-    S16 *n_exp = (S16 *) (n + g_bf_length);
+    S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
+    S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
     BIG_SET_S16(r_exp, BIG_ACCESS_S16(n_exp)); // *r_exp = *n_exp;
 
     int bnl = g_bn_length;

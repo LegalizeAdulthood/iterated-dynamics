@@ -54,11 +54,11 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
 
     if (dir == 1)
     {
-        std::strncpy(info->info_id, (char *)buf_ptr, 8);
+        std::strncpy(info->info_id, reinterpret_cast<char *>(buf_ptr), 8);
     }
     else
     {
-        std::strncpy((char *)buf_ptr, info->info_id, 8);
+        std::strncpy(reinterpret_cast<char *>(buf_ptr), info->info_id, 8);
     }
     buf_ptr += 8;
     get_int16(&info->iterations_old, &buf_ptr, dir);
@@ -241,7 +241,7 @@ static void get_int16(std::int16_t *dst, unsigned char **src, int dir)
 {
     if (dir == 1)
     {
-        *dst = static_cast<std::int16_t>((*src)[0] + (((char *) *src)[1] << 8));
+        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
     }
     else
     {
@@ -262,7 +262,7 @@ static void get_int32(std::int32_t *dst, unsigned char **src, int dir)
         *dst = static_cast<unsigned long>((*src)[0]) +
                (static_cast<unsigned long>((*src)[1]) << 8) +
                (static_cast<unsigned long>((*src)[2]) << 16) +
-               (static_cast<long>(((char *) *src)[3]) << 24);
+               (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
     }
     else
     {
@@ -456,7 +456,7 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
 
     get_int16(&info->evolving, &buf_ptr, dir);
     get_int16(&info->image_grid_size, &buf_ptr, dir);
-    get_int16((short *) &info->this_generation_random_seed, &buf_ptr, dir);
+    get_int16(reinterpret_cast<short *>(&info->this_generation_random_seed), &buf_ptr, dir);
     get_double(&info->max_random_mutation, &buf_ptr, dir);
     get_double(&info->x_parameter_range, &buf_ptr, dir);
     get_double(&info->y_parameter_range, &buf_ptr, dir);
@@ -509,8 +509,8 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
     get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
     get_double(&info->orbit_corner_3rd_y, &buf_ptr, dir);
     get_int16(&info->keep_screen_coords, &buf_ptr, dir);
-    get_uint8((unsigned char *) &info->draw_mode, &buf_ptr, dir);
-    get_uint8((unsigned char *) &info->dummy, &buf_ptr, dir);
+    get_uint8(reinterpret_cast<unsigned char *>(&info->draw_mode), &buf_ptr, dir);
+    get_uint8(reinterpret_cast<unsigned char *>(&info->dummy), &buf_ptr, dir);
 
     for (int i = 0; i < sizeof(info->future) / sizeof(short); i++)  // NOLINT(modernize-loop-convert)
     {

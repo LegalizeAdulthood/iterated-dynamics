@@ -275,7 +275,7 @@ static void plot3d_superimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, (Byte *)&tmp, (Byte *)&tmp);
+                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
                     targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
                 }
             }
@@ -330,7 +330,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
                 }
                 else
                 {
-                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, (Byte *)&tmp, (Byte *)&tmp);
+                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
                     targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
                 }
             }
