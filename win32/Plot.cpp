@@ -398,7 +398,7 @@ int Plot::init(HINSTANCE instance, LPCSTR title)
 void Plot::terminate()
 {
     {
-        HBITMAP rendering = (HBITMAP) SelectObject(m_memory_dc, m_backup);
+        HBITMAP rendering = static_cast<HBITMAP>(SelectObject(m_memory_dc, m_backup));
         _ASSERTE(rendering == m_rendering);
     }
     DeleteObject(m_rendering);
@@ -417,7 +417,7 @@ void Plot::create_backing_store()
 
     m_rendering = CreateCompatibleBitmap(m_memory_dc, m_width, m_height);
     _ASSERTE(m_rendering);
-    m_backup = (HBITMAP) SelectObject(m_memory_dc, m_rendering);
+    m_backup = static_cast<HBITMAP>(SelectObject(m_memory_dc, m_rendering));
 
     m_font = CreateFont(8, 8, 0, 0, 0, FALSE, FALSE, FALSE, ANSI_CHARSET,
                           OUT_RASTER_PRECIS, CLIP_DEFAULT_PRECIS, ANTIALIASED_QUALITY,
@@ -456,7 +456,7 @@ void Plot::write_pixel(int x, int y, int color)
     {
         return;
     }
-    m_pixels[(m_height - y - 1)*m_row_len + x] = (Byte)(color & 0xFF);
+    m_pixels[(m_height - y - 1)*m_row_len + x] = static_cast<Byte>(color & 0xFF);
     set_dirty_region(x, y, x+1, y+1);
 }
 

@@ -365,8 +365,8 @@ void WinText::on_paint(HWND window)
 void WinText::on_size(HWND window, UINT state, int cx, int cy)
 {
     ODS("wintext_OnSize");
-    if (cx > (WORD)s_me->m_max_width ||
-            cy > (WORD)s_me->m_max_height)
+    if (cx > static_cast<WORD>(s_me->m_max_width) ||
+            cy > static_cast<WORD>(s_me->m_max_height))
     {
         SetWindowPos(window,
                      GetNextWindow(window, GW_HWNDPREV),
@@ -603,7 +603,7 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
             }
             int foreground = k & 15;
             int background = k >> 4;
-            if (i > x_max || foreground != (int)old_fg || background != (int)old_bk)
+            if (i > x_max || foreground != static_cast<int>(old_fg) || background != static_cast<int>(old_bk))
             {
                 if (length > 0)
                 {

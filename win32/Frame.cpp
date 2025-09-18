@@ -313,7 +313,7 @@ void Frame::on_char(HWND window, TCHAR ch, int num_repeat)
 
     // KEYUP, KEYDOWN, and CHAR msgs go to the SG code
     // an ASCII key has been pressed
-    unsigned int i = (unsigned int) ((num_repeat & 0x00ff0000) >> 16);
+    unsigned int i = static_cast<unsigned int>((num_repeat & 0x00ff0000) >> 16);
     unsigned int j = ch;
     unsigned int k = (i << 8) + j;
     if (k == '\t' && has_mod(VK_SHIFT))

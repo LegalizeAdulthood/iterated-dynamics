@@ -156,7 +156,7 @@ void Plot::write_pixel(int x, int y, int color)
     }
 
     assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
-    m_pixels[(m_height - y - 1) * m_width + x] = (Byte) (color & 0xFF);
+    m_pixels[(m_height - y - 1) * m_width + x] = static_cast<Byte>(color & 0xFF);
 
     wxNativePixelData data{m_rendering};
     assert(data.GetWidth() == m_width);

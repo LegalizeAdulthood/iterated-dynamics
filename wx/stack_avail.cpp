@@ -14,7 +14,7 @@ char *g_top_of_stack{};
 long stack_avail()
 {
     char junk{};
-    return WIN32_STACK_SIZE - (long)(g_top_of_stack - &junk);
+    return WIN32_STACK_SIZE - static_cast<long>(g_top_of_stack - &junk);
 }
 
 } // namespace id::misc
