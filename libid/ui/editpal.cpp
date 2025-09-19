@@ -591,15 +591,15 @@ static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], int num, in
             pal[curr].red   = static_cast<Byte>(p1->red == p2->red
                     ? p1->red
                     : static_cast<int>(p1->red +
-                          std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * rm));
+                          std::pow(curr / static_cast<double>(num - 1), static_cast<double>(s_gamma_val)) * num * rm));
             pal[curr].green = static_cast<Byte>(p1->green == p2->green
                     ? p1->green
                     : static_cast<int>(p1->green +
-                          std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * gm));
+                          std::pow(curr / static_cast<double>(num - 1), static_cast<double>(s_gamma_val)) * num * gm));
             pal[curr].blue  = static_cast<Byte>(p1->blue == p2->blue
                     ? p1->blue
                     : static_cast<int>(p1->blue +
-                          std::pow(curr / (double) (num - 1), static_cast<double>(s_gamma_val)) * num * bm));
+                          std::pow(curr / static_cast<double>(num - 1), static_cast<double>(s_gamma_val)) * num * bm));
         }
     }
 }
