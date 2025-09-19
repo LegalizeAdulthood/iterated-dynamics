@@ -517,12 +517,12 @@ static void ver_line(int x, int y, int depth, int color)
 
 void get_row(int x, int y, int width, char *buff)
 {
-    clip_get_line(y, x, x+width-1, (Byte *)buff);
+    clip_get_line(y, x, x+width-1, reinterpret_cast<Byte *>(buff));
 }
 
 void put_row(int x, int y, int width, const char *buff)
 {
-    clip_put_line(y, x, x+width-1, (const Byte *)buff);
+    clip_put_line(y, x, x+width-1, reinterpret_cast<const Byte *>(buff));
 }
 
 static void ver_get_row(int x, int y, int depth, char *buff)
@@ -667,7 +667,7 @@ static void hor_dot_line(int x, int y, int width)
         *ptr = ctr & 2 ? s_bg_color : s_fg_color;
     }
 
-    put_row(x, y, width, (char *) g_line_buff.data());
+    put_row(x, y, width, reinterpret_cast<char *>(g_line_buff.data()));
 }
 
 static void ver_dot_line(int x, int y, int depth)
@@ -1906,7 +1906,7 @@ void PalTable::update_dac()
 
         if (m_free_style)
         {
-            put_band((PalEntry *) g_dac_box); // apply band to g_dac_box
+            put_band(reinterpret_cast<PalEntry *>(g_dac_box)); // apply band to g_dac_box
         }
     }
 

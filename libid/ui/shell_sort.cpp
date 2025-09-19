@@ -30,9 +30,9 @@ void shell_sort(void *v1, int n, unsigned sz)
                 {
                     break;
                 }
-                void *temp = *(char **) (v + j * sz);
-                *(char **)(v+j*sz) = *(char **)(v+(j+gap)*sz);
-                *(char **)(v+(j+gap)*sz) = static_cast<char *>(temp);
+                void *temp = *reinterpret_cast<char **>(v + j * sz);
+                *reinterpret_cast<char **>(v + j * sz) = *reinterpret_cast<char **>(v + (j + gap) * sz);
+                *reinterpret_cast<char **>(v + (j + gap) * sz) = static_cast<char *>(temp);
             }
         }
     }

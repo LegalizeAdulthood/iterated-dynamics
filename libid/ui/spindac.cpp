@@ -37,7 +37,7 @@ void spin_dac(int dir, int inc)
     if (dir != 0 && g_color_cycle_range_lo < g_colors && g_color_cycle_range_lo < g_color_cycle_range_hi)
     {
         int top = g_color_cycle_range_hi > g_colors ? g_colors - 1 : g_color_cycle_range_hi;
-        unsigned char *dac_bot = (unsigned char *) g_dac_box + 3*g_color_cycle_range_lo;
+        unsigned char *dac_bot = reinterpret_cast<unsigned char *>(g_dac_box) + 3*g_color_cycle_range_lo;
         int len = (top - g_color_cycle_range_lo)*3*sizeof(unsigned char);
         if (dir > 0)
         {

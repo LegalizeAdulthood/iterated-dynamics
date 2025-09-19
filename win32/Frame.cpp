@@ -527,7 +527,7 @@ void Frame::init(HINSTANCE instance, LPCSTR title)
         wc.hInstance = m_instance;
         wc.hIcon = LoadIcon(instance, MAKEINTRESOURCE(IDI_ITERATED_DYNAMICS));
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-        wc.hbrBackground = (HBRUSH)(COLOR_BACKGROUND+1);
+        wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_BACKGROUND + 1);
         wc.lpszMenuName = m_title.c_str();
         wc.lpszClassName = window_class;
 

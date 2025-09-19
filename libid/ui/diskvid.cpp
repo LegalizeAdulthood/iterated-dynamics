@@ -224,7 +224,7 @@ int common_start_disk(long new_row_size, long new_col_size, int colors)
         unsigned int *fwd_link = &s_hash_ptr[static_cast<unsigned short>(long_tmp) >> BLOCK_SHIFT & HASH_SIZE - 1];
         ptr1->offset = long_tmp;
         ptr1->hash_link = *fwd_link;
-        *fwd_link = static_cast<int>((char *) ptr1 - (char *) s_cache_start);
+        *fwd_link = static_cast<int>(reinterpret_cast<char *>(ptr1) - reinterpret_cast<char *>(s_cache_start));
     }
 
     long memory_size = new_col_size *new_row_size + s_header_length;
@@ -472,7 +472,7 @@ static void find_load_cache(long offset) // used by read/write
     unsigned int tbl_offset = s_hash_ptr[static_cast<unsigned short>(offset) >> BLOCK_SHIFT & HASH_SIZE - 1];
     while (tbl_offset != 0xffff)  // follow the hash chain
     {
-        s_cur_cache = (Cache *)((char *)s_cache_start + tbl_offset);
+        s_cur_cache = reinterpret_cast<Cache *>(reinterpret_cast<char *>(s_cache_start) + tbl_offset);
         if (s_cur_cache->offset == offset)  // great, it is in the cache
         {
             s_cur_cache->lru = true;
@@ -500,10 +500,10 @@ static void find_load_cache(long offset) // used by read/write
     // remove block at cache_lru from its hash chain
     unsigned int *fwd_link =
         &s_hash_ptr[(static_cast<unsigned short>(s_cache_lru->offset) >> BLOCK_SHIFT & HASH_SIZE - 1)];
-    tbl_offset = static_cast<int>((char *) s_cache_lru - (char *) s_cache_start);
+    tbl_offset = static_cast<int>(reinterpret_cast<char *>(s_cache_lru) - reinterpret_cast<char *>(s_cache_start));
     while (*fwd_link != tbl_offset)
     {
-        fwd_link = &((Cache *)((char *)s_cache_start+*fwd_link))->hash_link;
+        fwd_link = &reinterpret_cast<Cache *>(reinterpret_cast<char *>(s_cache_start) + *fwd_link)->hash_link;
     }
     *fwd_link = s_cache_lru->hash_link;
     // load block
@@ -565,7 +565,7 @@ static void find_load_cache(long offset) // used by read/write
     // add new block to its hash chain
     fwd_link = &s_hash_ptr[(static_cast<unsigned short>(offset) >> BLOCK_SHIFT & HASH_SIZE - 1)];
     s_cache_lru->hash_link = *fwd_link;
-    *fwd_link = static_cast<int>((char *) s_cache_lru - (char *) s_cache_start);
+    *fwd_link = static_cast<int>(reinterpret_cast<char *>(s_cache_lru) - reinterpret_cast<char *>(s_cache_start));
     s_cur_cache = s_cache_lru;
 }
 
@@ -575,7 +575,7 @@ static Cache *find_cache(long offset)
     unsigned int tbl_offset = s_hash_ptr[static_cast<unsigned short>(offset) >> BLOCK_SHIFT & HASH_SIZE - 1];
     while (tbl_offset != 0xffff)
     {
-        Cache *ptr1 = (Cache *) ((char *) s_cache_start + tbl_offset);
+        Cache *ptr1 = reinterpret_cast<Cache *>(reinterpret_cast<char *>(s_cache_start) + tbl_offset);
         if (ptr1->offset == offset)
         {
             return ptr1;
