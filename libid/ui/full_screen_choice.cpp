@@ -172,7 +172,7 @@ static void process_speed_string(char *speed_string, //
 */
 int full_screen_choice(ChoiceFlags flags,                            //
     const char *hdg, const char *hdg2, const char *instr,            //
-    int num_choices, const char **choices, int *attributes,          //
+    int num_choices, const char **choices, const int *attributes,    //
     int box_width, int box_depth, int col_width,                     //
     int current, FormatItem *format_item,                            //
     char *speed_string, SpeedPrompt *speed_prompt,                   //
