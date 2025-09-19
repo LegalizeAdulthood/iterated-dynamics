@@ -436,7 +436,7 @@ retry:
     std::strcpy(buf, entry_name.c_str()); // preset to last choice made
     const std::string heading{std::string{title} + " Selection\n"
         + "File: " + trim_filename(path, 68)};
-    void (*format_item)(int, char *) = nullptr;
+    FormatItem *format_item{};
     int box_depth = 0;
     int col_width = box_depth;
     int box_width = col_width;

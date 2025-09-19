@@ -170,11 +170,13 @@ static void process_speed_string(char *speed_string, //
               k for check_key routine return value k (if not 0 nor -1)
               speed_string[0] != 0 on return if string is present
 */
-int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, const char *instr,
-    int num_choices, const char **choices, int *attributes, int box_width, int box_depth, int col_width,
-    int current, void (*format_item)(int choice, char *buf), char *speed_string,
-    int (*speed_prompt)(int row, int col, int vid, const char *speed_string, int speed_match),
-    int (*check_key)(int key, int choice))
+int full_screen_choice(ChoiceFlags flags,                            //
+    const char *hdg, const char *hdg2, const char *instr,            //
+    int num_choices, const char **choices, int *attributes,          //
+    int box_width, int box_depth, int col_width,                     //
+    int current, FormatItem *format_item,                            //
+    char *speed_string, SpeedPrompt *speed_prompt,                   //
+    CheckKey *check_key)
 {
     const int scrunch = bit_set(flags, ChoiceFlags::CRUNCH) ? 1 : 0; // scrunch up a line
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
