@@ -73,7 +73,7 @@ public:
     static constexpr int SCREEN_HEIGHT = 25;
     static constexpr int TOTAL_CELLS = SCREEN_WIDTH * SCREEN_HEIGHT;
 
-    TextScreen(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition,
+    explicit TextScreen(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition,
         const wxSize &size = wxDefaultSize, long style = 0);
 
     ~TextScreen() override = default;

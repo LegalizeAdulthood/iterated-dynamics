@@ -15,7 +15,7 @@ public:
 class TestPlotFrame : public wxFrame
 {
 public:
-    TestPlotFrame(const wxString &title);
+    explicit TestPlotFrame(const wxString &title);
 
 protected:
     // Override size-related methods to make frame non-resizable

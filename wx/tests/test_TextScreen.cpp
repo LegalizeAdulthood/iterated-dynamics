@@ -28,7 +28,7 @@ public:
 class TextScreenFrame : public wxFrame
 {
 public:
-    TextScreenFrame(const wxString &title);
+    explicit TextScreenFrame(const wxString &title);
 
 protected:
     // Override size-related methods to make frame non-resizable

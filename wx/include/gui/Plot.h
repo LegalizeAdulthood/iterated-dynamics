@@ -19,7 +19,7 @@ class Plot : public wxControl
 {
 public:
     Plot();
-    Plot(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition,
+    explicit Plot(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition,
         const wxSize &size = wxDefaultSize, long style = 0);
 
     ~Plot() override = default;

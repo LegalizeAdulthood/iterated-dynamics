@@ -333,7 +333,7 @@ std::ostream &operator<<(std::ostream &str, GlassesType value)
 template <typename T, size_t N>
 struct JsonArray
 {
-    JsonArray(const T (&value)[N])
+    explicit JsonArray(const T (&value)[N])
     {
         for (size_t i = 0; i < N; ++i)
         {
