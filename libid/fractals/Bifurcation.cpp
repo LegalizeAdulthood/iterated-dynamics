@@ -146,8 +146,6 @@ bool Bifurcation::iterate()
 
 void Bifurcation::verhulst()          // P. F. Verhulst (1845)
 {
-    unsigned int pixel_row;
-
     g_population = g_param_z1.y == 0 ? SEED : g_param_z1.y;
 
     g_overflow = false;
@@ -198,7 +196,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
         }
 
         // assign population value to Y coordinate in pixels
-        pixel_row = g_i_stop_pt.y - static_cast<int>((g_population - g_init.y) / g_delta_y);
+        const unsigned int pixel_row = g_i_stop_pt.y - static_cast<int>((g_population - g_init.y) / g_delta_y);
 
         // if it's visible on the screen, save it in the column array
         if (pixel_row <= static_cast<unsigned int>(g_i_stop_pt.y))

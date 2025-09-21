@@ -1532,8 +1532,7 @@ int standard_fractal_type()
                     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
                     g_old_z = g_new_z;
                     {
-                        int tmp_color;
-                        tmp_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
+                        const int tmp_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
                         tan_table[tmp_color-1] = g_new_z.y/(g_new_z.x+.000001);
                     }
                 }
@@ -1782,16 +1781,14 @@ int standard_fractal_type()
 
     if (g_distance_estimator)
     {
-        double dist;
-        dist = sqr(g_new_z.x) + sqr(g_new_z.y);
+        double dist = sqr(g_new_z.x) + sqr(g_new_z.y);
         if (dist == 0 || g_overflow)
         {
             dist = 0;
         }
         else
         {
-            double temp;
-            temp = std::log(dist);
+            const double temp = std::log(dist);
             dist = dist * sqr(temp) / (sqr(deriv.x) + sqr(deriv.y));
         }
         if (dist < s_dem_delta)     // point is on the edge
@@ -1868,11 +1865,10 @@ plot_inside: // we're "inside"
     {
         if (g_inside_color == STAR_TRAIL)
         {
-            double diff;
             g_color_iter = 0;
             for (int i = 1; i < 16; i++)
             {
-                diff = tan_table[0] - tan_table[i];
+                const double diff = tan_table[0] - tan_table[i];
                 if (std::abs(diff) < .05)
                 {
                     g_color_iter = i;

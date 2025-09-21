@@ -205,23 +205,12 @@ static void set_palette_range(int key)
 // rotate-the-palette routine
 void rotate(int direction)
 {
-    int key;
-    int last;
-    int next;
-    int f_key;
-    int step;
-    int f_step;
-    int j_step;
-    int old_step;
-    int incr;
     int from_red = 0;
     int from_blue = 0;
     int from_green = 0;
     int to_red = 0;
     int to_blue = 0;
     int to_green = 0;
-    int rotate_max;
-    int rotate_size;
 
     static int f_steps[] = {2, 4, 8, 12, 16, 24, 32, 40, 54, 100}; // (for Fkeys)
 
@@ -236,24 +225,24 @@ void rotate(int direction)
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_CYCLING};
 
     s_paused = false;                   // not paused
-    f_key = 0;                          // no random coloring
-    step = 1;
-    old_step = 1;                       // single-step
-    f_step = 1;
-    incr = 999;                         // ready to randomize
+    int f_key = 0;                      // no random coloring
+    int step = 1;
+    int old_step = 1;                       // single-step
+    int f_step = 1;
+    int incr = 999;                         // ready to randomize
     std::srand(static_cast<unsigned>(std::time(nullptr))); // randomize things
 
     if (direction == 0)
     {
         // firing up in paused mode?
-        pause_rotate();                 // then force a pause
-        direction = 1;                  // and set a rotate direction
+        pause_rotate(); // then force a pause
+        direction = 1;  // and set a rotate direction
     }
 
-    rotate_max = g_color_cycle_range_hi < g_colors ? g_color_cycle_range_hi : g_colors-1;
-    rotate_size = rotate_max - g_color_cycle_range_lo + 1;
-    last = rotate_max;                  // last box that was filled
-    next = g_color_cycle_range_lo;      // next box to be filled
+    const int rotate_max = g_color_cycle_range_hi < g_colors ? g_color_cycle_range_hi : g_colors - 1;
+    const int rotate_size = rotate_max - g_color_cycle_range_lo + 1;
+    int last = rotate_max;                  // last box that was filled
+    int next = g_color_cycle_range_lo;      // next box to be filled
     if (direction < 0)
     {
         last = g_color_cycle_range_lo;
@@ -280,7 +269,7 @@ void rotate(int direction)
                     // randomizing is on
                     for (int i_step = 0; i_step < step; i_step++)
                     {
-                        j_step = next + i_step * direction;
+                        int j_step = next + i_step * direction;
                         while (j_step < g_color_cycle_range_lo)
                         {
                             j_step += rotate_size;
@@ -317,7 +306,7 @@ void rotate(int direction)
         {
             step = old_step;
         }
-        key = driver_get_key();
+        const int key = driver_get_key();
         if (s_paused
             && key != ' ' && key != 'c' && key != ID_KEY_HOME && key != 'C')
         {
