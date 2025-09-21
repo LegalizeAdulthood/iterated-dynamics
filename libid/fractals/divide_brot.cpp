@@ -73,10 +73,10 @@ int divide_brot5_bf_per_pixel()
 
 int divide_brot5_bn_fractal()
 {
+    BigStackSaver saved;
     BNComplex bn_tmp_new;
     BNComplex bn_numer;
     BNComplex bn_c_exp;
-    int saved = save_stack();
 
     bn_tmp_new.x = alloc_stack(g_r_length);
     bn_tmp_new.y = alloc_stack(g_r_length);
@@ -116,16 +116,15 @@ int divide_brot5_bn_fractal()
     add_a_bn(g_new_z_bn.x, g_param_z_bn.x);
     add_a_bn(g_new_z_bn.y, g_param_z_bn.y);
 
-    restore_stack(saved);
     return g_bailout_bignum();
 }
 
 int divide_brot5_orbit_bf()
 {
+    BigStackSaver saved;
     BFComplex bf_tmp_new;
     BFComplex bf_numer;
     BFComplex bf_c_exp;
-    int saved = save_stack();
 
     bf_tmp_new.x = alloc_stack(g_r_bf_length + 2);
     bf_tmp_new.y = alloc_stack(g_r_bf_length + 2);
@@ -157,7 +156,6 @@ int divide_brot5_orbit_bf()
     add_a_bf(g_new_z_bf.x, g_param_z_bf.x);
     add_a_bf(g_new_z_bf.y, g_param_z_bf.y);
 
-    restore_stack(saved);
     return g_bailout_bigfloat();
 }
 

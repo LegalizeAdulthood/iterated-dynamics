@@ -792,9 +792,9 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
 
 static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj)
 {
+    BigStackSaver saved;
     BigFloat bf_x_ctr = nullptr;
     BigFloat bf_y_ctr = nullptr;
-    int saved = save_stack();
     if (g_bf_math != BFMathType::NONE)
     {
         bf_x_ctr = alloc_stack(g_bf_length+2);
@@ -1627,8 +1627,6 @@ do_colors:
     {
         put_param_line();
     }
-
-    restore_stack(saved);
 }
 
 static void put_filename(const char *keyword, const char *fname)

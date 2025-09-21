@@ -67,7 +67,7 @@ static void move_row(int from_row, int to_row, int col);
 // big number declarations
 static void calc_corner(BigFloat target, BigFloat p1, double p2, BigFloat p3, double p4, BigFloat p5)
 {
-    const int saved = save_stack();
+    BigStackSaver saved;
     const BigFloat b_tmp1 = alloc_stack(g_r_bf_length + 2);
     const BigFloat b_tmp2 = alloc_stack(g_r_bf_length + 2);
     const BigFloat b_tmp3 = alloc_stack(g_r_bf_length + 2);
@@ -78,7 +78,6 @@ static void calc_corner(BigFloat target, BigFloat p1, double p2, BigFloat p3, do
     mult_bf(b_tmp2, float_to_bf(target, p4), p5);
     add_bf(target, b_tmp1, b_tmp2);
     add_a_bf(target, p1);
-    restore_stack(saved);
 }
 
 void display_box()
@@ -462,7 +461,7 @@ static void zoom_out_calc(BigFloat bf_dx, BigFloat bf_dy, //
     BigFloat bf_plot_my1, BigFloat bf_plot_my2,             //
     BigFloat bf_f_temp)
 {
-    const int saved = save_stack();
+    BigStackSaver saved;
     BigFloat b_tmp1 = alloc_stack(g_r_bf_length + 2);
     BigFloat b_tmp2 = alloc_stack(g_r_bf_length + 2);
     BigFloat b_tmp3 = alloc_stack(g_r_bf_length + 2);
@@ -505,7 +504,6 @@ static void zoom_out_calc(BigFloat bf_dx, BigFloat bf_dy, //
     div_bf(b_tmp4a, b_tmp4, bf_f_temp);
     add_bf(bf_new_y, g_bf_save_y_max, b_tmp2a);
     add_a_bf(bf_new_y, b_tmp4a);
-    restore_stack(saved);
 }
 
 static void zoom_out_calc(double dx, double dy, double *new_x, double *new_y, double f_temp)
@@ -531,7 +529,7 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
        then extend these co-ords from current real screen corners to get
        new actual corners
        */
-    const int saved = save_stack();
+    BigStackSaver saved;
     const BigFloat save_bf_x_min = alloc_stack(g_r_bf_length + 2);
     const BigFloat save_bf_y_max = alloc_stack(g_r_bf_length + 2);
     const BigFloat bf_f_temp = alloc_stack(g_r_bf_length + 2);
@@ -575,7 +573,6 @@ static void zoom_out_bf() // for ctl-enter, calc corners for zooming out
     sub_bf(tmp1, g_bf_save_x_3rd, save_bf_x_min);
     sub_bf(tmp2, g_bf_save_y_3rd, save_bf_y_max);
     zoom_out_calc(tmp1, tmp2, g_bf_x_3rd, g_bf_y_3rd, bf_plot_mx1, bf_plot_mx2, bf_plot_my1, bf_plot_my2, bf_f_temp);
-    restore_stack(saved);
 }
 
 static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out

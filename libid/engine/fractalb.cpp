@@ -756,8 +756,8 @@ int julia_orbit_bf()
 
 int julia_z_power_bn_fractal()
 {
+    BigStackSaver saved;
     BNComplex param2;
-    int saved = save_stack();
 
     param2.x = alloc_stack(g_bn_length);
     param2.y = alloc_stack(g_bn_length);
@@ -767,14 +767,13 @@ int julia_z_power_bn_fractal()
     cmplx_pow_bn(&g_new_z_bn, &g_old_z_bn, &param2);
     add_bn(g_new_z_bn.x, g_param_z_bn.x, g_new_z_bn.x+g_shift_factor);
     add_bn(g_new_z_bn.y, g_param_z_bn.y, g_new_z_bn.y+g_shift_factor);
-    restore_stack(saved);
     return g_bailout_bignum();
 }
 
 int julia_z_power_orbit_bf()
 {
+    BigStackSaver saved;
     BFComplex param2;
-    int saved = save_stack();
 
     param2.x = alloc_stack(g_bf_length+2);
     param2.y = alloc_stack(g_bf_length+2);
@@ -784,7 +783,6 @@ int julia_z_power_orbit_bf()
     cmplx_pow_bf(&g_new_z_bf, &g_old_z_bf, &param2);
     add_bf(g_new_z_bf.x, g_param_z_bf.x, g_new_z_bf.x);
     add_bf(g_new_z_bf.y, g_param_z_bf.y, g_new_z_bf.y);
-    restore_stack(saved);
     return g_bailout_bigfloat();
 }
 
@@ -809,7 +807,7 @@ BFComplex *cmplx_log_bf(BFComplex *t, BFComplex *s)
 
 BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_r_bf_length + 2);
     mult_bf(t->x, x->x, y->x);
     mult_bf(t->y, x->y, y->y);
@@ -818,13 +816,12 @@ BFComplex *cmplx_mul_bf(BFComplex *t, BFComplex *x, BFComplex *y)
     mult_bf(tmp1, x->x, y->y);
     mult_bf(t->y, x->y, y->x);
     add_bf(t->y, tmp1, t->y);
-    restore_stack(saved);
     return t;
 }
 
 BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_r_bf_length + 2);
     BigFloat denom = alloc_stack(g_r_bf_length + 2);
 
@@ -849,14 +846,13 @@ BFComplex *cmplx_div_bf(BFComplex *t, BFComplex *x, BFComplex *y)
         div_bf(t->y, t->y, denom);
     }
 
-    restore_stack(saved);
     return t;
 }
 
 BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
 {
+    BigStackSaver saved;
     BFComplex tmp;
-    int saved = save_stack();
     BigFloat e2x = alloc_stack(g_r_bf_length + 2);
     BigFloat sin_y = alloc_stack(g_r_bf_length + 2);
     BigFloat cos_y = alloc_stack(g_r_bf_length + 2);
@@ -877,7 +873,6 @@ BFComplex *cmplx_pow_bf(BFComplex *t, BFComplex *xx, BFComplex *yy)
     sin_cos_bf(sin_y, cos_y, tmp.y);
     mult_bf(t->x, e2x, cos_y);
     mult_bf(t->y, e2x, sin_y);
-    restore_stack(saved);
     return t;
 }
 
@@ -900,7 +895,7 @@ BNComplex *cmplx_log_bn(BNComplex *t, BNComplex *s)
 
 BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigNum tmp1 = alloc_stack(g_r_length);
     mult_bn(t->x, x->x, y->x);
     mult_bn(t->y, x->y, y->y);
@@ -909,13 +904,12 @@ BNComplex *cmplx_mul_bn(BNComplex *t, BNComplex *x, BNComplex *y)
     mult_bn(tmp1, x->x, y->y);
     mult_bn(t->y, x->y, y->x);
     add_bn(t->y, tmp1 + g_shift_factor, t->y + g_shift_factor);
-    restore_stack(saved);
     return t;
 }
 
 BNComplex *cmplx_div_bn(BNComplex *t, BNComplex *x, BNComplex *y)
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigNum tmp1 = alloc_stack(g_r_length);
     BigNum tmp2 = alloc_stack(g_r_length);
     BigNum denom = alloc_stack(g_r_length);
@@ -946,15 +940,14 @@ BNComplex *cmplx_div_bn(BNComplex *t, BNComplex *x, BNComplex *y)
         div_bn(t->y, tmp2, denom);
     }
 
-    restore_stack(saved);
     return t;
 }
 
 // note: ComplexPower_bn() returns need to be +g_shift_factor'ed
 BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
 {
+    BigStackSaver saved;
     BNComplex tmp;
-    int saved = save_stack();
     BigNum e2x = alloc_stack(g_r_length);
     BigNum sin_y = alloc_stack(g_r_length);
     BigNum cos_y = alloc_stack(g_r_length);
@@ -966,7 +959,6 @@ BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     {
         clear_bn(t->x);
         clear_bn(t->y);
-        restore_stack(saved);
         return t;
     }
 
@@ -976,7 +968,6 @@ BNComplex *cmplx_pow_bn(BNComplex *t, BNComplex *xx, BNComplex *yy)
     sin_cos_bn(sin_y, cos_y, tmp.y);
     mult_bn(t->x, e2x, cos_y);
     mult_bn(t->y, e2x, sin_y);
-    restore_stack(saved);
     return t;
 }
 

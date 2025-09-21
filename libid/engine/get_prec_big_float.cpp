@@ -28,12 +28,11 @@ int get_prec_bf_mag()
     double skew;
     LDouble magnification;
 
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat b_x_ctr = alloc_stack(g_bf_length + 2);
     BigFloat b_y_ctr = alloc_stack(g_bf_length + 2);
     // this is just to find magnification
     cvt_center_mag_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
-    restore_stack(saved);
 
     // I don't know if this is portable, but something needs to
     // be used in case compiler's LDBL_MAX is not big enough
@@ -50,8 +49,8 @@ int get_prec_bf_mag()
    (if res==Resolution::MAX) or at current resolution (if res==Resolution::CURRENT)    */
 int get_prec_bf(ResolutionFlag flag)
 {
+    BigStackSaver saved;
     int res;
-    int saved = save_stack();
     BigFloat del1 = alloc_stack(g_bf_length + 2);
     BigFloat del2 = alloc_stack(g_bf_length + 2);
     BigFloat one = alloc_stack(g_bf_length + 2);
@@ -98,7 +97,6 @@ int get_prec_bf(ResolutionFlag flag)
     }
     if (cmp_bf(del1, clear_bf(del2)) == 0)
     {
-        restore_stack(saved);
         return -1;
     }
     int digits = 1;
@@ -108,7 +106,6 @@ int get_prec_bf(ResolutionFlag flag)
         mult_a_bf_int(del1, 10);
     }
     digits = std::max(digits, 3);
-    restore_stack(saved);
     return std::max(digits, get_prec_bf_mag());
 }
 

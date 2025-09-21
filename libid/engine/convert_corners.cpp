@@ -79,7 +79,7 @@ void cvt_corners(double ctr_x, double ctr_y, LDouble mag, double x_mag_factor, d
 // convert center/mag to corners using bf
 void cvt_corners_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble mag, double x_mag_factor, double rot, double skew)
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat bfh = alloc_stack(g_bf_length + 2);
     BigFloat bfw = alloc_stack(g_bf_length + 2);
 
@@ -107,7 +107,6 @@ void cvt_corners_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble mag, double x_mag_fa
         copy_bf(g_bf_y_3rd, g_bf_y_min);
         // yymax = y_ctr + h;
         add_bf(g_bf_y_max, ctr_y, bfh);
-        restore_stack(saved);
         return;
     }
 
@@ -155,8 +154,6 @@ void cvt_corners_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble mag, double x_mag_fa
     // yy3rd = y + y_ctr;
     float_to_bf(bf_tmp, y);
     add_bf(g_bf_y_3rd, bf_tmp, ctr_y);
-
-    restore_stack(saved);
 }
 
 } // namespace id::engine

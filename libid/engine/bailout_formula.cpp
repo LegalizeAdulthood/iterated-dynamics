@@ -232,7 +232,7 @@ static int bn_manr_bailout()
 
 static int bf_mod_bailout()
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
@@ -241,18 +241,16 @@ static int bf_mod_bailout()
     float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_bf_tmp, tmp1) > 0)
     {
-        restore_stack(saved);
         return 1;
     }
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
-    restore_stack(saved);
     return 0;
 }
 
 static int bf_real_bailout()
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
@@ -260,20 +258,18 @@ static int bf_real_bailout()
     float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0)
     {
-        restore_stack(saved);
         return 1;
     }
 
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
-    restore_stack(saved);
     return 0;
 }
 
 
 static int bf_imag_bailout()
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
@@ -281,19 +277,17 @@ static int bf_imag_bailout()
     float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
-        restore_stack(saved);
         return 1;
     }
 
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
-    restore_stack(saved);
     return 0;
 }
 
 static int bf_or_bailout()
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
@@ -301,19 +295,17 @@ static int bf_or_bailout()
     float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0 || cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
-        restore_stack(saved);
         return 1;
     }
 
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
-    restore_stack(saved);
     return 0;
 }
 
 static int bf_and_bailout()
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
@@ -321,19 +313,17 @@ static int bf_and_bailout()
     float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_tmp_sqr_x_bf, tmp1) > 0 && cmp_bf(g_tmp_sqr_y_bf, tmp1) > 0)
     {
-        restore_stack(saved);
         return 1;
     }
 
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
-    restore_stack(saved);
     return 0;
 }
 
 static int bf_manh_bailout()
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
@@ -346,19 +336,17 @@ static int bf_manh_bailout()
     float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_old_z_bf.x, tmp1) > 0)
     {
-        restore_stack(saved);
         return 1;
     }
 
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
-    restore_stack(saved);
     return 0;
 }
 
 static int bf_manr_bailout()
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat tmp1 = alloc_stack(g_bf_length + 2);
 
     square_bf(g_tmp_sqr_x_bf, g_new_z_bf.x);
@@ -369,13 +357,11 @@ static int bf_manr_bailout()
     float_to_bf(tmp1, g_magnitude_limit);
     if (cmp_bf(g_old_z_bf.x, tmp1) > 0)
     {
-        restore_stack(saved);
         return 1;
     }
 
     copy_bf(g_old_z_bf.x, g_new_z_bf.x);
     copy_bf(g_old_z_bf.y, g_new_z_bf.y);
-    restore_stack(saved);
     return 0;
 }
 

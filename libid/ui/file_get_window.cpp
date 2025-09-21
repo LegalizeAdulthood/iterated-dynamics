@@ -526,7 +526,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     int corner_count = 0;
     bool cant_see = false;
 
-    int saved = save_stack();
+    BigStackSaver saved;
     // Save original values.
     int orig_bf_length = g_bf_length;
     int orig_bn_length = g_bn_length;
@@ -700,7 +700,6 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     g_shift_factor = orig_shift_factor;
     g_r_bf_length = orig_r_bf_length;
 
-    restore_stack(saved);
     if (cant_see)   // do it this way so bignum stack is released
     {
         return false;
@@ -849,10 +848,11 @@ static void check_history(const char *old_name, const char *new_name)
 
 static void bf_setup_convert_to_screen()
 {
+    BigStackSaver saved;
+
     // setup_convert_to_screen() in LORENZ.C, converted to g_bf_math
     // Call only from within fgetwindow()
 
-    int saved = save_stack();
     BigFloat bt_inter1 = alloc_stack(g_r_bf_length + 2);
     BigFloat bt_inter2 = alloc_stack(g_r_bf_length + 2);
     BigFloat bt_det = alloc_stack(g_r_bf_length + 2);
@@ -928,14 +928,12 @@ static void bf_setup_convert_to_screen()
     mult_bf(bt_tmp1, s_bt_c, g_bf_x_min);
     mult_bf(bt_tmp2, s_bt_d, g_bf_y_max);
     neg_a_bf(add_bf(s_bt_f, bt_tmp1, bt_tmp2));
-
-    restore_stack(saved);
 }
 
 // maps points onto view screen
 static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point)
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat bt_tmp1 = alloc_stack(g_r_bf_length + 2);
     BigFloat bt_tmp2 = alloc_stack(g_r_bf_length + 2);
 
@@ -952,8 +950,6 @@ static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point)
     add_a_bf(bt_tmp1, bt_tmp2);
     add_a_bf(bt_tmp1, s_n_f);
     point->y = static_cast<double>(bf_to_float(bt_tmp1));
-
-    restore_stack(saved);
 }
 
 } // namespace id::ui

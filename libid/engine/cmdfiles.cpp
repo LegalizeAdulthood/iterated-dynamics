@@ -1544,7 +1544,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
         }
     }
     g_use_center_mag = true;
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat b_x_ctr = alloc_stack(g_bf_length + 2);
     BigFloat b_y_ctr = alloc_stack(g_bf_length + 2);
     get_bf(b_x_ctr, cmd.float_val_strs[0]);
@@ -1571,7 +1571,6 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     // calculate bounds
     cvt_corners_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
     bf_corners_to_float();
-    restore_stack(saved);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 

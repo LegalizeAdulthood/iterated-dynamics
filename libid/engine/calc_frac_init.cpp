@@ -395,7 +395,7 @@ void adjust_corner_bf()
     double skew;
     LDouble magnification;
 
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat bf_temp = alloc_stack(g_r_bf_length + 2);
     BigFloat bf_temp2 = alloc_stack(g_r_bf_length + 2);
     BigFloat b_tmp1 = alloc_stack(g_r_bf_length + 2);
@@ -461,8 +461,6 @@ void adjust_corner_bf()
         // yy3rd = yymax;
         copy_bf(g_bf_y_3rd, g_bf_y_max);
     }
-
-    restore_stack(saved);
 }
 
 void adjust_corner()
@@ -517,9 +515,9 @@ void adjust_corner()
 
 static void adjust_to_limits_bf(double expand)
 {
+    BigStackSaver saved;
     BigFloat b_corner_x[4];
     BigFloat b_corner_y[4];
-    int saved = save_stack();
     b_corner_x[0] = alloc_stack(g_r_bf_length+2);
     b_corner_x[1] = alloc_stack(g_r_bf_length+2);
     b_corner_x[2] = alloc_stack(g_r_bf_length+2);
@@ -760,7 +758,6 @@ static void adjust_to_limits_bf(double expand)
     sub_bf(g_bf_y_3rd, b_corner_y[2], b_adj_y);
 
     adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
-    restore_stack(saved);
 }
 
 static void adjust_to_limits(double expand)
@@ -887,11 +884,10 @@ static void smallest_add(double *num)
 
 static void smallest_add_bf(BigFloat num)
 {
-    int saved = save_stack();
+    BigStackSaver saved;
     BigFloat b_tmp1 = alloc_stack(g_bf_length + 2);
     mult_bf(b_tmp1, float_to_bf(b_tmp1, 5.0e-16), num);
     add_a_bf(num, b_tmp1);
-    restore_stack(saved);
 }
 
 static bool ratio_bad(double actual, double desired)
