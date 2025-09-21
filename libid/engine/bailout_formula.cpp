@@ -168,7 +168,7 @@ static int bn_or_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
+    const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
     long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
     if (long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) || long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
@@ -183,7 +183,7 @@ static int bn_and_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
+    const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
     long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
     if (long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) && long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {

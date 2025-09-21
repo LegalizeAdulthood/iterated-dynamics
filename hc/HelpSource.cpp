@@ -61,7 +61,7 @@ static int s_read_char_sp{};
 
 void Content::label_topic(int ctr)
 {
-    if (Label *lbl = g_src.find_label(topic_name[ctr].c_str()))
+    if (const Label *const lbl = g_src.find_label(topic_name[ctr].c_str()))
     {
         if (bit_set(g_src.topics[lbl->topic_num].flags, TopicFlags::DATA))
         {
@@ -138,7 +138,7 @@ void Link::link_topic()
 
 void Link::link_label()
 {
-    if (Label *lbl = g_src.find_label(name.c_str()))
+    if (const Label *const lbl = g_src.find_label(name.c_str()))
     {
         if (bit_set(g_src.topics[lbl->topic_num].flags, TopicFlags::DATA))
         {
@@ -388,7 +388,7 @@ static int read_char_aux()
         {
         case '\t':    // expand a tab
         {
-            int diff = (s_src_col / 8 + 1) * 8 - s_src_col;
+            const int diff = (s_src_col / 8 + 1) * 8 - s_src_col;
 
             s_src_col += diff;
             s_read_char_sp += diff;
@@ -504,7 +504,7 @@ static char *read_until(char *buff, int len, const char *stop_chars)
 {
     while (--len > 0)
     {
-        int ch = read_char();
+        const int ch = read_char();
 
         if (ch == -1)
         {
@@ -536,7 +536,7 @@ static void skip_over(const char *skip)
 {
     while (true)
     {
-        int ch = read_char();
+        const int ch = read_char();
 
         if (ch == -1)
         {
@@ -594,7 +594,7 @@ static bool get_next_item()
 {
     skip_over(" \t\r\n");
     char *ptr = read_until(s_cmd, 128, ",}");
-    bool last = *ptr == '}';
+    const bool last = *ptr == '}';
     --ptr;
     while (ptr >= s_cmd && std::strchr(" \t\r\n", *ptr))     // strip trailing spaces
     {
@@ -920,7 +920,7 @@ static int create_table()
 
     bool done = false;
 
-    int first_link = static_cast<int>(g_src.all_links.size());
+    const int first_link = static_cast<int>(g_src.all_links.size());
     char *table_start = g_src.curr;
     int count = 0;
 
@@ -1013,14 +1013,14 @@ static int create_table()
 
     // now, put all the links into the buffer...
 
-    int rows = 1 + count / cols;
+    const int rows = 1 + count / cols;
 
     for (int r = 0; r < rows; r++)
     {
         put_spaces(start_off);
         for (int c = 0; c < cols; c++)
         {
-            int link_num = c * rows + r;
+            const int link_num = c * rows + r;
 
             if (first_link+link_num >= static_cast<int>(g_src.all_links.size()))
             {
@@ -1096,14 +1096,14 @@ static void process_comment()
 
 static void process_bin_inc()
 {
-    int handle = open(&s_cmd[7], O_RDONLY | O_BINARY);
+    const int handle = open(&s_cmd[7], O_RDONLY | O_BINARY);
     if (handle == -1)
     {
         MSG_ERROR(0, "Unable to open \"%s\"", &s_cmd[7]);
-        return ;
+        return;
     }
 
-    long len = filelength(handle);
+    const long len = filelength(handle);
 
     if (len >= BUFFER_SIZE)
     {

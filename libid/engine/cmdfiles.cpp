@@ -1090,7 +1090,7 @@ static CmdArgFlags cmd_make_doc(const Command &cmd)
         driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);
     }
     driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "Creating Help Document");
-    std::string file{*cmd.value ? cmd.value : "id.txt"};
+    const std::string file{*cmd.value ? cmd.value : "id.txt"};
     driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, "Save name: " + file);
     driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Status:");
     cmd_files_test::s_print_document(file.c_str(), make_doc_msg_func);
@@ -1503,8 +1503,8 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
         g_debug_flag == DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
         // rough estimate that double is OK
-        double x_ctr = cmd.float_vals[0];
-        double y_ctr = cmd.float_vals[1];
+        const double x_ctr = cmd.float_vals[0];
+        const double y_ctr = cmd.float_vals[1];
         double x_mag_factor = 1;
         double rotation = 0;
         double skew = 0;
@@ -1531,7 +1531,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
 
     // use arbitrary precision
     s_init_corners = true;
-    BFMathType old_bf_math = g_bf_math;
+    const BFMathType old_bf_math = g_bf_math;
     if (g_bf_math == BFMathType::NONE || dec > g_decimals)
     {
         init_bf_dec(dec);
@@ -1692,7 +1692,7 @@ static CmdArgFlags parse_colors(const char *value)
             }
             else
             {
-                bool hex_color{*value == '#'};
+                const bool hex_color{*value == '#'};
                 if (hex_color)
                 {
                     ++value;
@@ -1707,8 +1707,8 @@ static CmdArgFlags parse_colors(const char *value)
                     g_dac_box[i][j] = static_cast<Byte>(k);
                     if (smooth)
                     {
-                        int spread = smooth + 1;
-                        int start = i - spread;
+                        const int spread = smooth + 1;
+                        const int start = i - spread;
                         int c_num{};
                         if (k - static_cast<int>(g_dac_box[start][j]) == 0)
                         {
@@ -1803,7 +1803,7 @@ static CmdArgFlags cmd_corners(const Command &cmd)
     if ((dec > DBL_DIG + 1 || g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) &&
         g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
-        BFMathType old_bf_math = g_bf_math;
+        const BFMathType old_bf_math = g_bf_math;
         if (g_bf_math == BFMathType::NONE || dec > g_decimals)
         {
             init_bf_dec(dec);
@@ -3598,7 +3598,7 @@ static CmdArgFlags cmd_text_colors(const Command &cmd)
             {
                 unsigned int hex_val;
                 std::sscanf(value, "%x", &hex_val);
-                unsigned int i = hex_val / 16 & 7;
+                const unsigned int i = hex_val / 16 & 7;
                 unsigned int j = hex_val & 15;
                 if (i == j || (i == 0 && j == 8)) // force contrast
                 {
@@ -4155,7 +4155,7 @@ static int get_bf(BigFloat bf, const char *cur_arg)
 {
     if (const char *s = std::strchr(cur_arg, '/'); s)
     {
-        std::string buff(cur_arg, s);
+        const std::string buff(cur_arg, s);
         str_to_bf(bf, buff.c_str());
     }
     else

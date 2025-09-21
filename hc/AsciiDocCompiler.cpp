@@ -469,7 +469,7 @@ void AsciiDocProcessor::emit_char(char c)
 
 void AsciiDocProcessor::emit_key_name()
 {
-    for (char c : m_key_name)
+    for (const char c : m_key_name)
     {
         emit_char(c);
     }

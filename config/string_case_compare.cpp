@@ -22,15 +22,15 @@ static std::string to_lower(std::string_view src)
 // case independent version of std::strncmp
 int string_case_compare(const char *s, const char *t, std::size_t ct)
 {
-    std::string lhs{to_lower(std::string_view{s, ct})};
-    std::string rhs{to_lower(std::string_view{t, ct})};
+    const std::string lhs{to_lower(std::string_view{s, ct})};
+    const std::string rhs{to_lower(std::string_view{t, ct})};
     return lhs.compare(rhs);
 }
 
 int string_case_compare(const char *s, const char *t)
 {
-    std::string lhs{to_lower(s)};
-    std::string rhs{to_lower(t)};
+    const std::string lhs{to_lower(s)};
+    const std::string rhs{to_lower(t)};
     return lhs.compare(rhs);
 }
 

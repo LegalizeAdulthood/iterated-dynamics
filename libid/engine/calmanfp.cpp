@@ -51,7 +51,7 @@ long mandelbrot_orbit()
         g_old_color_iter = g_max_iterations - 255;
     }
 
-    long tmp_fsd = g_max_iterations - g_first_saved_and;
+    const long tmp_fsd = g_max_iterations - g_first_saved_and;
     // this defeats checking periodicity immediately
     // but matches the code in standard_fractal()
     g_old_color_iter = std::min(g_old_color_iter, tmp_fsd);

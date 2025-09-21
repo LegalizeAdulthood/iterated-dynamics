@@ -140,20 +140,20 @@ static void count_to_int(unsigned long c, int &x, int &y, int dif_offset)
 
 static int diffusion_engine()
 {
-    double log2 = std::log(2.0);
+    static const double log2 = std::log(2.0);
     int i;
     int j;
     int orig_col;
     int orig_row;
-    int s = 1 << (g_diffusion_bits/2); // size of the square
+    const int s = 1 << (g_diffusion_bits/2); // size of the square
     // number of tiles to build in x and y dirs
-    int nx = static_cast<int>(floor(static_cast<double>((g_i_stop_pt.x - g_i_start_pt.x + 1) / s)));
-    int ny = static_cast<int>(floor(static_cast<double>((g_i_stop_pt.y - g_i_start_pt.y + 1) / s)));
+    const int nx = static_cast<int>(floor(static_cast<double>((g_i_stop_pt.x - g_i_start_pt.x + 1) / s)));
+    const int ny = static_cast<int>(floor(static_cast<double>((g_i_stop_pt.y - g_i_start_pt.y + 1) / s)));
     // made this to complete the area that is not
     // a square with sides like 2 ** n
     // what is left on the last tile to draw
-    int rem_x = g_i_stop_pt.x - g_i_start_pt.x + 1 - nx * s;
-    int rem_y = g_i_stop_pt.y - g_i_start_pt.y + 1 - ny * s;
+    const int rem_x = g_i_stop_pt.x - g_i_start_pt.x + 1 - nx * s;
+    const int rem_y = g_i_stop_pt.y - g_i_start_pt.y + 1 - ny * s;
 
     if (g_begin_pt.y == g_i_start_pt.y && g_work_pass == 0)
     {
@@ -163,10 +163,11 @@ static int diffusion_engine()
     else
     {
         // yybegin and passes contain data for resuming the type:
-        g_diffusion_counter = static_cast<long>(static_cast<unsigned>(g_begin_pt.y)) << 16 | static_cast<unsigned>(g_work_pass);
+        g_diffusion_counter =
+            static_cast<long>(static_cast<unsigned>(g_begin_pt.y)) << 16 | static_cast<unsigned>(g_work_pass);
     }
 
-    int dif_offset = 12 - g_diffusion_bits / 2; // offset to adjust coordinates
+    const int dif_offset = 12 - g_diffusion_bits / 2; // offset to adjust coordinates
     // (*) for 4 bytes use 16 for 3 use 12 etc.
 
     // only the points (dithering only) :
@@ -225,7 +226,7 @@ static int diffusion_engine()
         while (g_diffusion_counter < g_diffusion_limit >> 1)
         {
             // size of the block being filled
-            int sq_size =
+            const int sq_size =
                 1 << (static_cast<int>(g_diffusion_bits -
                                     static_cast<int>(std::log(g_diffusion_counter + 0.5) / log2) - 1) / 2);
 

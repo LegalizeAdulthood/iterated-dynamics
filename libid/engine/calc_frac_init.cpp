@@ -52,26 +52,26 @@ static int get_prec_dbl(ResolutionFlag flag)
     LDouble res;
     if (flag == ResolutionFlag::MAX)
     {
-        res = OLD_MAX_PIXELS -1;
+        res = OLD_MAX_PIXELS - 1;
     }
     else
     {
-        res = g_logical_screen_x_dots-1;
+        res = g_logical_screen_x_dots - 1;
     }
 
-    LDouble x_delta = (static_cast<LDouble>(g_x_max) - static_cast<LDouble>(g_x_3rd)) / res;
-    LDouble y_delta2 = (static_cast<LDouble>(g_y_3rd) - static_cast<LDouble>(g_y_min)) / res;
+    const LDouble x_delta = (static_cast<LDouble>(g_x_max) - static_cast<LDouble>(g_x_3rd)) / res;
+    const LDouble y_delta2 = (static_cast<LDouble>(g_y_3rd) - static_cast<LDouble>(g_y_min)) / res;
 
     if (flag == ResolutionFlag::CURRENT)
     {
-        res = g_logical_screen_y_dots-1;
+        res = g_logical_screen_y_dots - 1;
     }
 
-    LDouble y_delta = (static_cast<LDouble>(g_y_max) - static_cast<LDouble>(g_y_3rd)) / res;
-    LDouble x_delta2 = (static_cast<LDouble>(g_x_3rd) - static_cast<LDouble>(g_x_min)) / res;
+    const LDouble y_delta = (static_cast<LDouble>(g_y_max) - static_cast<LDouble>(g_y_3rd)) / res;
+    const LDouble x_delta2 = (static_cast<LDouble>(g_x_3rd) - static_cast<LDouble>(g_x_min)) / res;
 
     LDouble del1 = std::abs(x_delta) + std::abs(x_delta2);
-    LDouble del2 = std::abs(y_delta) + std::abs(y_delta2);
+    const LDouble del2 = std::abs(y_delta) + std::abs(y_delta2);
     del1 = std::min(del2, del1);
     if (del1 == 0)
     {
@@ -368,7 +368,7 @@ expand_retry:
 
     // calculate factors which plot real values to screen co-ords
     // calcfrac.c plot_orbit routines have comments about this
-    double tmp = static_cast<double>(
+    const double tmp = static_cast<double>(
         (0.0 - g_delta_y2) * g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots -
         (g_x_max - g_x_3rd) * (g_y_3rd - g_y_max));
     if (tmp != 0)
@@ -542,7 +542,7 @@ static void adjust_to_limits_bf(double expand)
     BigFloat b_tmp2 = alloc_stack(g_r_bf_length + 2);
     BigFloat b_expand = alloc_stack(g_r_bf_length + 2);
 
-    LDouble limit = 32767.99;
+    const LDouble limit = 32767.99;
 
     /*   if (bitshift >= 24) limit = 31.99;
        if (bitshift >= 29) limit = 3.99; */
@@ -767,9 +767,9 @@ static void adjust_to_limits(double expand)
 {
     double corner_x[4];
     double corner_y[4];
-    double limit = 32767.99;
-    double center_x = (g_x_min + g_x_max) / 2;
-    double center_y = (g_y_min + g_y_max) / 2;
+    const double limit = 32767.99;
+    const double center_x = (g_x_min + g_x_max) / 2;
+    const double center_y = (g_y_min + g_y_max) / 2;
 
     if (g_x_min == center_x)
     {

@@ -433,7 +433,7 @@ void HelpCompiler::set_hot_link_doc_page()
         switch (l.type)
         {
         case LinkTypes::LT_TOPIC:
-            if (int t = find_topic_title(l.name.c_str()); t == -1)
+            if (const int t = find_topic_title(l.name.c_str()); t == -1)
             {
                 g_current_src_filename = l.src_file;
                 g_src_line = l.src_line; // pretend we are still in the source...
@@ -447,7 +447,7 @@ void HelpCompiler::set_hot_link_doc_page()
             break;
 
         case LinkTypes::LT_LABEL:
-            if (Label *lbl = g_src.find_label(l.name.c_str()); lbl == nullptr)
+            if (const Label *const lbl = g_src.find_label(l.name.c_str()); lbl == nullptr)
             {
                 g_current_src_filename = l.src_file;
                 g_src_line = l.src_line; // pretend again
@@ -807,14 +807,14 @@ void HelpCompiler::write_link_source()
             std::transform(text.begin(), text.end(), text.begin(),
                 [](char c)
                 {
-                    unsigned char test = static_cast<unsigned char>(c);
+                    const unsigned char test = static_cast<unsigned char>(c);
                     return std::isalnum(test) ? static_cast<char>(std::tolower(test)) : '_';
                 });
             for (auto pos = text.find("__"); pos != std::string::npos; pos = text.find("__"))
             {
                 text.erase(pos, 1);
             }
-            if (auto pos = text.find_last_not_of('_') + 1; pos != text.length())
+            if (const auto pos = text.find_last_not_of('_') + 1; pos != text.length())
             {
                 text.erase(pos);
             }
@@ -1188,7 +1188,7 @@ void HelpCompiler::report_memory()
 
     for (const Content &c : g_src.contents)
     {
-        int t = (MAX_CONTENT_TOPIC - c.num_topic) *
+        const int t = (MAX_CONTENT_TOPIC - c.num_topic) *
             (sizeof(g_src.contents[0].is_label[0]) + g_src.contents[0].topic_name[0].size() + sizeof(g_src.contents[0].topic_num[0]));
         data += sizeof(Content) - t;
         dead += t;
@@ -1255,13 +1255,13 @@ void HelpCompiler::add_hlp_to_exe()
 
     HelpSignature hs{};
 
-    int exe = open(exe_fname, O_RDWR | O_BINARY);
+    const int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
     {
         throw std::runtime_error(R"msg(Unable to open ")msg" + std::string{exe_fname} + '"');
     }
 
-    int hlp = open(hlp_fname, O_RDONLY | O_BINARY);
+    const int hlp = open(hlp_fname, O_RDONLY | O_BINARY);
     if (hlp == -1)
     {
         throw std::runtime_error("Unable to open \"" + std::string{hlp_fname} + '"');
@@ -1309,11 +1309,11 @@ void HelpCompiler::add_hlp_to_exe()
 
     lseek(exe, hs.base, SEEK_SET);
 
-    long len = filelength(hlp) - sizeof(HelpSignature); // adjust for the file signature & version
+    const long len = filelength(hlp) - sizeof(HelpSignature); // adjust for the file signature & version
 
     for (int count = 0; count < len;)
     {
-        int size = static_cast<int>(std::min(static_cast<long>(BUFFER_SIZE), len - count));
+        const int size = static_cast<int>(std::min(static_cast<long>(BUFFER_SIZE), len - count));
         if (read(hlp, g_src.buffer.data(), size) != size)
         {
             throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed read");
@@ -1355,7 +1355,7 @@ void HelpCompiler::delete_hlp_from_exe()
     const char *exe_fname{m_options.fname1.empty() ? DEFAULT_EXE_FNAME : m_options.fname1.c_str()};
     HelpSignature hs{};
 
-    int exe = open(exe_fname, O_RDWR | O_BINARY);
+    const int exe = open(exe_fname, O_RDWR | O_BINARY);
     if (exe == -1)
     {
         throw std::runtime_error(R"msg(Unable to open ")msg" + std::string{exe_fname} + '"');

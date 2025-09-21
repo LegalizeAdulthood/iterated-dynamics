@@ -264,7 +264,7 @@ static double fmod_test()
 // pixels of different colors.
 void sym_fill_line(int row, int left, int right, Byte *str)
 {
-    int length = right - left + 1;
+    const int length = right - left + 1;
     write_span(row, left, right, str);
     // here's where all the symmetry goes
     if (g_plot == g_put_color)
@@ -287,9 +287,9 @@ void sym_fill_line(int row, int left, int right, Byte *str)
     }
     else if (g_plot == sym_plot2j)  // Origin symmetry
     {
-        int i = g_stop_pt.y-(row-g_start_pt.y);
-        int j = std::min(g_stop_pt.x-(right-g_start_pt.x), g_logical_screen_x_dots-1);
-        int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen_x_dots-1);
+        const int i = g_stop_pt.y - (row - g_start_pt.y);
+        const int j = std::min(g_stop_pt.x-(right-g_start_pt.x), g_logical_screen_x_dots-1);
+        const int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen_x_dots-1);
         if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots && j <= k)
         {
             write_span(i, j, k, str);
@@ -298,9 +298,9 @@ void sym_fill_line(int row, int left, int right, Byte *str)
     }
     else if (g_plot == sym_plot4) // X-axis and Y-axis symmetry
     {
-        int i = g_stop_pt.y-(row-g_start_pt.y);
-        int j = std::min(g_stop_pt.x-(right-g_start_pt.x), g_logical_screen_x_dots-1);
-        int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen_x_dots-1);
+        const int i = g_stop_pt.y - (row - g_start_pt.y);
+        const int j = std::min(g_stop_pt.x - (right - g_start_pt.x), g_logical_screen_x_dots - 1);
+        const int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen_x_dots-1);
         if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
         {
             write_span(i, left, right, str);
@@ -330,7 +330,7 @@ void sym_fill_line(int row, int left, int right, Byte *str)
 // otherwise it just writes the pixels one-by-one.
 static void sym_put_line(int row, int left, int right, Byte *str)
 {
-    int length = right-left+1;
+    const int length = right-left+1;
     write_span(row, left, right, str);
     if (g_plot == g_put_color)
     {
@@ -493,7 +493,7 @@ static int calc_type_show_dot()
     {
         sleep_ms(g_orbit_delay);
     }
-    int out = s_calc_type_tmp();
+    const int out = s_calc_type_tmp();
     show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::RESTORE);
     return out;
 }
@@ -941,7 +941,7 @@ static void perform_work_list()
     add_work_list({0, 0}, {g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1}, {0, 0}, 0, 0);
     if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
-        int version = start_resume();
+        const int version = start_resume();
         get_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
         end_resume();
         if (version < 2)
@@ -969,10 +969,10 @@ static void perform_work_list()
             d_y_size = g_logical_screen_y_dots-1;
         }
 
-        double del_xx = (g_x_max - g_x_3rd) / d_x_size; // calculate stepsizes
-        double del_yy = (g_y_max - g_y_3rd) / d_y_size;
-        double del_xx2 = (g_x_3rd - g_x_min) / d_y_size;
-        double del_yy2 = (g_y_3rd - g_y_min) / d_x_size;
+        const double del_xx = (g_x_max - g_x_3rd) / d_x_size; // calculate stepsizes
+        const double del_yy = (g_y_max - g_y_3rd) / d_y_size;
+        const double del_xx2 = (g_x_3rd - g_x_min) / d_y_size;
+        const double del_yy2 = (g_y_3rd - g_y_min) / d_x_size;
 
         g_use_old_distance_estimator = false;
         g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
@@ -1004,7 +1004,7 @@ static void perform_work_list()
                      + std::sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
         f_temp = g_magnitude_limit < DEM_BAILOUT ? DEM_BAILOUT : g_magnitude_limit;
         f_temp += 3; // bailout plus just a bit
-        double f_temp2 = std::log(f_temp);
+        const double f_temp2 = std::log(f_temp);
         if (g_use_old_distance_estimator)
         {
             s_dem_too_big = sqr(f_temp) * sqr(f_temp2) * 4 / s_dem_delta;
@@ -1220,7 +1220,7 @@ int calc_mandelbrot_type()
     if (g_keyboard_check_interval < 0)
     {
         g_keyboard_check_interval = 1000;
-        if (int key = driver_key_pressed(); key)
+        if (const int key = driver_key_pressed(); key)
         {
             if (key == 'o' || key == 'O')
             {
@@ -1307,7 +1307,7 @@ int standard_fractal_type()
     double total_dist{};
     DComplex last_z{};
 
-    long save_max_it = g_max_iterations;
+    const long save_max_it = g_max_iterations;
     if (g_inside_color == STAR_TRAIL)
     {
         std::fill(std::begin(tan_table), std::end(tan_table), 0.0);
@@ -2642,12 +2642,12 @@ origin_symmetry:
 static long auto_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
-    int x_stop = g_logical_screen_x_dots - 1; // don't use symmetry
-    int y_stop = g_logical_screen_y_dots - 1; // don't use symmetry
+    const int x_stop = g_logical_screen_x_dots - 1; // don't use symmetry
+    const int y_stop = g_logical_screen_y_dots - 1; // don't use symmetry
     long min_color = LONG_MAX;
     g_row = 0;
     g_reset_periodicity = false;
-    long old_max_it = g_max_iterations;
+    const long old_max_it = g_max_iterations;
     for (g_col = 0; g_col < x_stop; g_col++) // top row
     {
         g_color = g_calc_type();
@@ -2781,7 +2781,7 @@ void sym_pi_plot4j(int x, int y, int color)
 {
     while (x <= (g_start_pt.x+g_stop_pt.x)/2)
     {
-        int j = g_stop_pt.x - (x - g_start_pt.x);
+        const int j = g_stop_pt.x - (x - g_start_pt.x);
         g_put_color(x , y , color) ;
         if (j < g_logical_screen_x_dots)
         {
@@ -2838,7 +2838,7 @@ void sym_plot2j(int x, int y, int color)
 // Symmetry plot for Both Axis Symmetry
 void sym_plot4(int x, int y, int color)
 {
-    int j = g_stop_pt.x - (x - g_start_pt.x);
+    const int j = g_stop_pt.x - (x - g_start_pt.x);
     g_put_color(x , y, color) ;
     if (j < g_logical_screen_x_dots)
     {
@@ -2905,7 +2905,7 @@ void sym_plot4_basin(int x, int y, int color)
     {
         color1 = g_degree/2+g_degree+2 - color;
     }
-    int j = g_stop_pt.x - (x - g_start_pt.x);
+    const int j = g_stop_pt.x - (x - g_start_pt.x);
     g_put_color(x, y, color+stripe) ;
     if (j < g_logical_screen_x_dots)
     {

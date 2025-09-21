@@ -69,8 +69,8 @@ static void flush_output()
         }
         else
         {
-            std::time_t now = std::time(nullptr);
-            long now_ticks = read_ticker();
+            const std::time_t now = std::time(nullptr);
+            const long now_ticks = read_ticker();
             if (now > start)
             {
                 ticks_per_second = (now_ticks - last)/ static_cast<long>(now - start);
