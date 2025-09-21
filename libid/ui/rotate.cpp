@@ -70,7 +70,7 @@ Byte g_old_dac_box[256][3]{};
 bool g_dac_learn{};
 bool g_got_real_dac{}; // true if load_dac has a dacbox
 
-static void change_palette_channel(int channel, int increment)
+static void change_palette_channel(const int channel, const int increment)
 {
     for (int i = 1; i < 256; i++)
     {
@@ -78,7 +78,7 @@ static void change_palette_channel(int channel, int increment)
     }
 }
 
-static void set_palette_range(int key)
+static void set_palette_range(const int key)
 {
     if (key == ID_KEY_SHF_F1)
     {

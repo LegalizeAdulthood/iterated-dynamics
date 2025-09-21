@@ -14,7 +14,7 @@ fractals, i.e. which are non-fractal-specific fractal engine subroutines.
 namespace id::engine
 {
 
-void sleep_ms(long ms)
+void sleep_ms(const long ms)
 {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
@@ -23,7 +23,7 @@ void sleep_ms(long ms)
  * wait until wait_time microseconds from the
  * last call has elapsed.
  */
-void wait_until(unsigned long wait_time_us)
+void wait_until(const unsigned long wait_time_us)
 {
     std::this_thread::sleep_for(std::chrono::microseconds(wait_time_us));
 }

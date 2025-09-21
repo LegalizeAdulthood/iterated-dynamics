@@ -137,18 +137,18 @@ static std::vector<Page> s_page_table;   // 4*max_pages
 // forward declarations
 static bool print_doc_msg_func(int page_num, int num_pages);
 
-static void help_seek(long pos)
+static void help_seek(const long pos)
 {
     std::fseek(s_help_file, s_base_off + pos, SEEK_SET);
 }
 
-static void display_cc(int row, int col, int color, int ch)
+static void display_cc(const int row, const int col, const int color, const int ch)
 {
     const char s[] = { static_cast<char>(ch), 0 };
     driver_put_string(row, col, color, s);
 }
 
-static void display_text(int row, int col, int color, const char *text, unsigned len)
+static void display_text(const int row, int col, const int color, const char *text, unsigned len)
 {
     while (len-- != 0)
     {
@@ -161,7 +161,7 @@ static void display_text(int row, int col, int color, const char *text, unsigned
     }
 }
 
-static void display_parse_text(const char *text, unsigned len, int start_margin, int *num_link, Link *link)
+static void display_parse_text(const char *text, unsigned len, const int start_margin, int *num_link, Link *link)
 {
     TokenType tok;
     int size;
@@ -329,7 +329,7 @@ static void display_parse_text(const char *text, unsigned len, int start_margin,
     g_text_row_base = 0;
 }
 
-static void color_link(Link *link, int color)
+static void color_link(Link *link, const int color)
 {
     g_text_col_base = SCREEN_INDENT;
     g_text_row_base = TEXT_START_ROW;
@@ -374,8 +374,7 @@ static void print_instr()
     put_key("Escape", "Abort");
 }
 
-static void display_page(const char *title, const char *text, unsigned text_len,
-                         int page, int num_pages, int start_margin,
+static void display_page(const char *title, const char *text, const unsigned text_len, const int page, int num_pages, const int start_margin,
                          int *num_link, Link *link)
 {
     help_title();
@@ -420,7 +419,7 @@ static void display_page(const char *title, const char *text, unsigned text_len,
  *                      |                     |
  *
  */
-static int overlap(int a, int a2, int b, int b2)
+static int overlap(const int a, const int a2, const int b, const int b2)
 {
     if (b < a)
     {
@@ -440,14 +439,14 @@ static int overlap(int a, int a2, int b, int b2)
     return a2 - b;                  // case (2), case (4)
 }
 
-static int dist1(int a, int b)
+static int dist1(const int a, const int b)
 {
     const int t = a - b;
 
     return std::abs(t);
 }
 
-static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
+static int find_link_up_down(Link *link, const int num_link, const int curr_link, const int up)
 {
     int best_overlap = 0;
 
@@ -499,7 +498,7 @@ static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
     return best == nullptr ? -1 : static_cast<int>(best - link);
 }
 
-static int find_link_left_right(Link *link, int num_link, int curr_link, int left)
+static int find_link_left_right(Link *link, const int num_link, const int curr_link, const int left)
 {
     int best_c2 = 0;
     int best_dist = 0;
@@ -545,7 +544,7 @@ static int find_link_left_right(Link *link, int num_link, int curr_link, int lef
     return best == nullptr ? -1 : static_cast<int>(best - link);
 }
 
-static int find_link_key(Link * /*link*/, int num_link, int curr_link, int key)
+static int find_link_key(Link * /*link*/, const int num_link, const int curr_link, const int key)
 {
     switch (key)
     {
@@ -559,7 +558,7 @@ static int find_link_key(Link * /*link*/, int num_link, int curr_link, int key)
     }
 }
 
-static int do_move_link(Link *link, int num_link, int *curr, int (*f)(Link *, int, int, int), int val)
+static int do_move_link(Link *link, const int num_link, int *curr, int (*f)(Link *, int, int, int), const int val)
 {
     if (num_link > 1)
     {
@@ -585,7 +584,7 @@ static int do_move_link(Link *link, int num_link, int *curr, int (*f)(Link *, in
     return 0;
 }
 
-static void freader(void *ptr, size_t size, size_t num, std::FILE *stream)
+static void freader(void *ptr, const size_t size, const size_t num, std::FILE *stream)
 {
     if (std::fread(ptr, size, num, stream) != num)
     {
@@ -593,7 +592,7 @@ static void freader(void *ptr, size_t size, size_t num, std::FILE *stream)
     }
 }
 
-static int help_topic(History *curr, History *next, int flags)
+static int help_topic(History *curr, History *next, const int flags)
 {
     int       key;
     int       num_pages;
@@ -971,7 +970,7 @@ static std::string find_file(const char *filename)
     return find_path(filename);
 }
 
-static int read_help_topic(int topic, int off, int len, void *buf)
+static int read_help_topic(const int topic, const int off, const int len, void *buf)
 {
     static int  curr_topic = -1;
     static long curr_base;
@@ -1024,13 +1023,13 @@ static int read_help_topic(int topic, int off, int len, void *buf)
  * to end of topic.  On "EOF" returns a negative number representing
  * number of bytes not read.
  */
-int read_help_topic(HelpLabels label, int off, int len, void *buf)
+int read_help_topic(HelpLabels label, const int off, const int len, void *buf)
 {
     return read_help_topic(s_label[static_cast<int>(label)].topic_num,
         s_label[static_cast<int>(label)].topic_off + off, len, buf);
 }
 
-static void printer_ch(PrintDocInfo *info, int c, int n)
+static void printer_ch(PrintDocInfo *info, const int c, int n)
 {
     while (n-- > 0)
     {
@@ -1082,7 +1081,7 @@ static void printer_str(PrintDocInfo *info, const char *s, int n)
     }
 }
 
-static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool print_doc_get_info(const PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     int t;
@@ -1157,7 +1156,7 @@ static bool print_doc_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, voi
     }
 }
 
-static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool print_doc_output(const PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)
@@ -1234,7 +1233,7 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
     }
 }
 
-static bool print_doc_msg_func(int page_num, int num_pages)
+static bool print_doc_msg_func(const int page_num, const int num_pages)
 {
     if (page_num == -1)      // successful completion
     {
@@ -1278,7 +1277,7 @@ static bool print_doc_msg_func(int page_num, int num_pages)
     return true;   // AOK -- continue
 }
 
-bool make_doc_msg_func(int page_num, int num_pages)
+bool make_doc_msg_func(const int page_num, const int num_pages)
 {
     enum
     {

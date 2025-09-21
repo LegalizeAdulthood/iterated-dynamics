@@ -109,7 +109,7 @@ static StereoData *s_data{};
 
 #define DAC   (*((DACBox)(s_data->save_dac)))
 
-static int get_depth(int xd, int yd)
+static int get_depth(const int xd, const int yd)
 {
     int pal = get_color(xd, yd);
     if (g_gray_flag)
@@ -150,7 +150,7 @@ static bool get_min_max()
     return false;
 }
 
-static void toggle_bars(bool *bars, int bar_width, const int *colour)
+static void toggle_bars(bool *bars, const int bar_width, const int *colour)
 {
     find_special_colors();
     int ct = 0;
@@ -173,7 +173,7 @@ static void toggle_bars(bool *bars, int bar_width, const int *colour)
     *bars = !*bars;
 }
 
-int out_line_stereo(Byte *pixels, int line_len)
+int out_line_stereo(Byte *pixels, const int line_len)
 {
     if (Y >= g_logical_screen_y_dots)
     {

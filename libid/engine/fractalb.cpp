@@ -44,7 +44,7 @@ namespace id::engine
 
 #ifndef NDEBUG
 //********************************************************************
-std::string bn_to_string(BigNum n, int dec)
+std::string bn_to_string(BigNum n, const int dec)
 {
     char msg[200];
     bn_to_str(msg, n, dec);
@@ -130,7 +130,7 @@ void show_globals_bf(const char *s)
     }
 }
 
-static std::string bf_to_string(BigFloat g_bf_x_min, int dec)
+static std::string bf_to_string(BigFloat g_bf_x_min, const int dec)
 {
     char msg[100];
     bf_to_str(msg, g_bf_x_min, dec);
@@ -207,14 +207,14 @@ void show_corners_bf_save(const char *s)
     }
 }
 
-static std::string bf_to_string_e(BigFloat value, int dec)
+static std::string bf_to_string_e(BigFloat value, const int dec)
 {
     char msg[100];
     bf_to_str_e(msg, value, dec);
     return msg;
 }
 
-void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, int digits)
+void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, const int digits)
 {
     if (stop_msg(fmt::format("\n"
                              "{:s}->{:s}\n"
@@ -227,7 +227,7 @@ void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, int d
 }
 
 void show_three_bf(
-    const char *s1, BigFloat t1, const char *s2, BigFloat t2, const char *s3, BigFloat t3, int digits)
+    const char *s1, BigFloat t1, const char *s2, BigFloat t2, const char *s3, BigFloat t3, const int digits)
 {
     if (stop_msg(fmt::format("\n"
                              "{:s}->{:s}\n"
@@ -264,7 +264,7 @@ void show_aspect(const char *s)
 }
 
 // compare a double and bignumber
-void compare_values(const char *s, LDouble x, BigNum bnx)
+void compare_values(const char *s, const LDouble x, BigNum bnx)
 {
     constexpr int dec = 40;
     if (stop_msg(fmt::format("{:s}\n"
@@ -280,7 +280,7 @@ void compare_values(const char *s, LDouble x, BigNum bnx)
 }
 
 // compare a double and bignumber
-void compare_values_bf(const char *s, LDouble x, BigFloat bfx)
+void compare_values_bf(const char *s, const LDouble x, BigFloat bfx)
 {
     constexpr int dec = 40;
     if (stop_msg(fmt::format("{:s}\n"

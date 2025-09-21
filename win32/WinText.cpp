@@ -137,7 +137,7 @@ static COLORREF s_wintext_color[]
     RGB(255, 255, 255)
 };
 
-void WinText::invalidate(int left, int bot, int right, int top)
+void WinText::invalidate(const int left, const int bot, const int right, const int top)
 {
     const RECT exposed =
     {
@@ -152,7 +152,7 @@ void WinText::invalidate(int left, int bot, int right, int top)
      all the necessary registration and initialization
 */
 
-bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
+bool WinText::initialize(const HINSTANCE instance, const HWND parent, const LPCSTR title)
 {
     ODS("WinText::initialize");
 
@@ -332,7 +332,7 @@ void WinText::on_set_focus(HWND window, HWND old_focus)
     }
 }
 
-void WinText::on_kill_focus(HWND window, HWND old_focus)
+void WinText::on_kill_focus(const HWND window, HWND old_focus)
 {
     // kill focus - hide caret
     ODS("wintext_OnKillFocus");
@@ -345,7 +345,7 @@ void WinText::on_kill_focus(HWND window, HWND old_focus)
     }
 }
 
-void WinText::on_paint(HWND window)
+void WinText::on_paint(const HWND window)
 {
     PAINTSTRUCT ps;
     BeginPaint(window, &ps);
@@ -362,7 +362,7 @@ void WinText::on_paint(HWND window)
     EndPaint(window, &ps);
 }
 
-void WinText::on_size(HWND window, UINT state, int cx, int cy)
+void WinText::on_size(const HWND window, UINT state, const int cx, const int cy)
 {
     ODS("wintext_OnSize");
     if (cx > static_cast<WORD>(s_me->m_max_width) ||
@@ -374,59 +374,59 @@ void WinText::on_size(HWND window, UINT state, int cx, int cy)
     }
 }
 
-void WinText::on_get_min_max_info(HWND hwnd, LPMINMAXINFO min_max_info)
+void WinText::on_get_min_max_info(HWND hwnd, const LPMINMAXINFO min_max_info)
 {
     ODS("wintext_OnGetMinMaxInfo");
     min_max_info->ptMaxSize.x = s_me->m_max_width;
     min_max_info->ptMaxSize.y = s_me->m_max_height;
 }
 
-static void wintext_on_close(HWND window)
+static void wintext_on_close(const HWND window)
 {
     s_me->on_close(window);
 }
 
-static void wintext_on_set_focus(HWND window, HWND old_focus)
+static void wintext_on_set_focus(const HWND window, const HWND old_focus)
 {
     s_me->on_set_focus(window, old_focus);
 }
 
-static void wintext_on_kill_focus(HWND window, HWND old_focus)
+static void wintext_on_kill_focus(const HWND window, const HWND old_focus)
 {
     s_me->on_kill_focus(window, old_focus);
 }
 
-static void wintext_on_paint(HWND window)
+static void wintext_on_paint(const HWND window)
 {
     s_me->on_paint(window);
 }
 
-static void wintext_on_size(HWND window, UINT state, int cx, int cy)
+static void wintext_on_size(const HWND window, const UINT state, const int cx, const int cy)
 {
     s_me->on_size(window, state, cx, cy);
 }
 
-static void wintext_on_get_min_max_info(HWND hwnd, LPMINMAXINFO min_max_info)
+static void wintext_on_get_min_max_info(const HWND hwnd, const LPMINMAXINFO min_max_info)
 {
     s_me->on_get_min_max_info(hwnd, min_max_info);
 }
 
-static void wintext_on_primary_button_up(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_primary_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_primary_button_up(window, x, y, key_flags);
 }
 
-static void wintext_on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_secondary_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_secondary_button_up(window, x, y, key_flags);
 }
 
-static void wintext_on_middle_button_up(HWND window, int x, int y, UINT key_flags)
+static void wintext_on_middle_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
 
-LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
+LRESULT CALLBACK wintext_proc(const HWND window, const UINT message, const WPARAM wp, const LPARAM lp)
 {
     switch (message)
     {
@@ -467,7 +467,8 @@ LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
         general routine to send a string to the screen
 */
 
-void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, int *end_row, int *end_col)
+void WinText::put_string(
+    const int x_pos, const int y_pos, const int attrib, const char *string, int *end_row, int *end_col)
 {
     const char xa = attrib & 0x0ff;
     int max_row = y_pos;
@@ -511,7 +512,7 @@ void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, i
     }
 }
 
-void WinText::scroll_up(int top, int bot)
+void WinText::scroll_up(const int top, const int bot)
 {
     for (int row = top; row < bot; row++)
     {
@@ -634,7 +635,7 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
     ReleaseDC(m_window, dc);
 }
 
-void WinText::cursor(int x_pos, int y_pos, int cursor_type)
+void WinText::cursor(const int x_pos, const int y_pos, const int cursor_type)
 {
     ODS("WinText::cursor");
     int x;
@@ -673,7 +674,7 @@ void WinText::cursor(int x_pos, int y_pos, int cursor_type)
     }
 }
 
-void WinText::set_attr(int row, int col, int attr, int count)
+void WinText::set_attr(const int row, const int col, const int attr, const int count)
 {
     int x_max = col;
     int x_min = x_max;
@@ -723,13 +724,13 @@ void WinText::hide_cursor()
     }
 }
 
-static VOID CALLBACK wintext_timer_redraw(HWND window, UINT msg, UINT_PTR /*idEvent*/, DWORD /*dwTime*/)
+static VOID CALLBACK wintext_timer_redraw(const HWND window, UINT msg, UINT_PTR /*idEvent*/, DWORD /*dwTime*/)
 {
     InvalidateRect(window, nullptr, FALSE);
     KillTimer(window, TIMER_ID);
 }
 
-void WinText::schedule_alarm(int secs)
+void WinText::schedule_alarm(const int secs)
 {
     UINT_PTR result = SetTimer(m_window, TIMER_ID, secs, wintext_timer_redraw);
     if (!result)
@@ -739,12 +740,12 @@ void WinText::schedule_alarm(int secs)
     }
 }
 
-int WinText::get_char_attr(int row, int col)
+int WinText::get_char_attr(const int row, const int col)
 {
     return (m_screen.chars(row, col) & 0xFF) << 8 | m_screen.attrs(row, col) & 0xFF;
 }
 
-void WinText::put_char_attr(int row, int col, int char_attr)
+void WinText::put_char_attr(const int row, const int col, const int char_attr)
 {
     m_screen.chars(row, col) = static_cast<char>(char_attr >> 8 & 0xFF);
     m_screen.attrs(row, col) = static_cast<Byte>(char_attr & 0xFF);

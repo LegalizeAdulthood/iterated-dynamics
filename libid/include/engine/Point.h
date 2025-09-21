@@ -9,12 +9,12 @@ class Point
 {
 public:
     Point() = default;
-    Point(int x, int y) :
+    Point(const int x, const int y) :
         m_x(x),
         m_y(y)
     {
     }
-    Point(int x, int y, int iteration) :
+    Point(const int x, const int y, const int iteration) :
         m_x(x),
         m_y(y),
         m_iteration(iteration)

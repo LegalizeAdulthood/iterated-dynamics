@@ -150,7 +150,7 @@ bool lyapunov_per_image()
     return true;
 }
 
-static int lyapunov_cycles(long filter_cycles, double a, double b)
+static int lyapunov_cycles(const long filter_cycles, const double a, const double b)
 {
     int color;
     double temp;

@@ -15,29 +15,29 @@ enum class ChoiceFlags
     CRUNCH       = 16,
     NOT_SORTED   = 32
 };
-inline int operator+(ChoiceFlags value)
+inline int operator+(const ChoiceFlags value)
 {
     return static_cast<int>(value);
 }
-inline ChoiceFlags operator&(ChoiceFlags lhs, ChoiceFlags rhs)
+inline ChoiceFlags operator&(const ChoiceFlags lhs, const ChoiceFlags rhs)
 {
     return static_cast<ChoiceFlags>(+lhs & +rhs);
 }
-inline ChoiceFlags &operator&=(ChoiceFlags &lhs, ChoiceFlags rhs)
+inline ChoiceFlags &operator&=(ChoiceFlags &lhs, const ChoiceFlags rhs)
 {
     lhs = lhs & rhs;
     return lhs;
 }
-inline ChoiceFlags operator|(ChoiceFlags lhs, ChoiceFlags rhs)
+inline ChoiceFlags operator|(const ChoiceFlags lhs, const ChoiceFlags rhs)
 {
     return static_cast<ChoiceFlags>(+lhs | +rhs);
 }
-inline ChoiceFlags &operator|=(ChoiceFlags &lhs, ChoiceFlags rhs)
+inline ChoiceFlags &operator|=(ChoiceFlags &lhs, const ChoiceFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
-inline bool bit_set(ChoiceFlags lhs, ChoiceFlags rhs)
+inline bool bit_set(const ChoiceFlags lhs, const ChoiceFlags rhs)
 {
     return (lhs & rhs) == rhs;
 }

@@ -46,7 +46,7 @@ static double s_star_field_values[4]{30.0, 100.0, 5.0, 0.0};
 // 1 in distribution*(1-probability/range*concentration)+1 chance of getting a
 // Gaussian; otherwise you just get offset.
 //
-static int gaussian_number(int probability, int range)
+static int gaussian_number(const int probability, const int range)
 {
     long p = divide(static_cast<long>(probability) << 16, static_cast<long>(range) << 16, 16);
     p = multiply(p, s_concentration, 16);

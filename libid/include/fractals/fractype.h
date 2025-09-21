@@ -126,31 +126,31 @@ enum class FractalType
     MAX                         = 175, // maximum FractalType number
 };
 // clang-format on
-constexpr int operator+(FractalType rhs)
+constexpr int operator+(const FractalType rhs)
 {
     return static_cast<int>(rhs);
 }
-inline bool operator==(FractalType lhs, FractalType rhs)
+inline bool operator==(const FractalType lhs, const FractalType rhs)
 {
     return +lhs == +rhs;
 }
-inline bool operator!=(FractalType lhs, FractalType rhs)
+inline bool operator!=(const FractalType lhs, const FractalType rhs)
 {
     return +lhs != +rhs;
 }
-inline bool operator<(FractalType lhs, FractalType rhs)
+inline bool operator<(const FractalType lhs, const FractalType rhs)
 {
     return +lhs < +rhs;
 }
-inline bool operator<=(FractalType lhs, FractalType rhs)
+inline bool operator<=(const FractalType lhs, const FractalType rhs)
 {
     return +lhs <= +rhs;
 }
-inline bool operator>(FractalType lhs, FractalType rhs)
+inline bool operator>(const FractalType lhs, const FractalType rhs)
 {
     return +lhs > +rhs;
 }
-inline bool operator>=(FractalType lhs, FractalType rhs)
+inline bool operator>=(const FractalType lhs, const FractalType rhs)
 {
     return +lhs >= +rhs;
 }

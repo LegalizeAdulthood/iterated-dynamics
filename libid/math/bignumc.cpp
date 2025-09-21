@@ -753,7 +753,7 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
 
 /********************************************************************/
 // r = n * u  where u is an unsigned integer
-BigNum mult_bn_int(BigNum r, BigNum n, U16 u)
+BigNum mult_bn_int(BigNum r, BigNum n, const U16 u)
 {
     U32 prod = 0;
 
@@ -769,7 +769,7 @@ BigNum mult_bn_int(BigNum r, BigNum n, U16 u)
 
 /********************************************************************/
 // r *= u  where u is an unsigned integer
-BigNum mult_a_bn_int(BigNum r, U16 u)
+BigNum mult_a_bn_int(BigNum r, const U16 u)
 {
     U32 prod = 0;
 
@@ -785,7 +785,7 @@ BigNum mult_a_bn_int(BigNum r, U16 u)
 
 /********************************************************************/
 // r = n / u  where u is an unsigned integer
-BigNum unsafe_div_bn_int(BigNum r, BigNum n,  U16 u)
+BigNum unsafe_div_bn_int(BigNum r, BigNum n, const U16 u)
 {
     U16 rem = 0;
 
@@ -823,7 +823,7 @@ BigNum unsafe_div_bn_int(BigNum r, BigNum n,  U16 u)
 
 /********************************************************************/
 // r /= u  where u is an unsigned integer
-BigNum div_a_bn_int(BigNum r, U16 u)
+BigNum div_a_bn_int(BigNum r, const U16 u)
 {
     U16 rem = 0;
 
@@ -948,7 +948,7 @@ BigFloat float_to_bf(BigFloat r, LDouble f)
 /*********************************************************************/
 //  b = f
 //  Converts a long double to a bigfloat
-BigFloat float_to_bf1(BigFloat r, LDouble f)
+BigFloat float_to_bf1(BigFloat r, const LDouble f)
 {
     char msg[80];
     std::snprintf(msg, std::size(msg), "%-.22Le", f);
@@ -979,7 +979,7 @@ LDouble bf_to_float(BigFloat n)
 // extracts the mantissa and exponent of f
 // finds m and n such that 1<=|m|<256 and f = m*256^n
 // n is stored in *exp_ptr and m is returned, sort of like frexp()
-LDouble extract256(LDouble f, int *exp_ptr)
+LDouble extract256(const LDouble f, int *exp_ptr)
 {
     return extract_value(f, 256, exp_ptr);
 }
@@ -990,7 +990,7 @@ LDouble extract256(LDouble f, int *exp_ptr)
 //
 // n must be in the range -2^12 <= n < 2^12 (2^12=4096),
 // which should not be a problem
-LDouble scale256(LDouble f, int n)
+LDouble scale256(const LDouble f, const int n)
 {
     return scale_value(f, 256, n);
 }

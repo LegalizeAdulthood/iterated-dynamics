@@ -22,7 +22,7 @@ namespace id::test
 class TestMainMenuSwitch : public Test
 {
 protected:
-    MainState execute(int key)
+    MainState execute(const int key)
     {
         m_context.key = key;
         return main_menu_switch(m_context);

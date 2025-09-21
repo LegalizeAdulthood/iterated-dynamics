@@ -7,7 +7,7 @@
 namespace id::fractals
 {
 
-inline bool is_pow2(int n)
+inline bool is_pow2(const int n)
 {
     return n == (n & -n);
 }

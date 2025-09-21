@@ -128,7 +128,7 @@ int pot_start_disk()
     return i;
 }
 
-int targa_start_disk(std::FILE *targa_fp, int overhead)
+int targa_start_disk(std::FILE *targa_fp, const int overhead)
 {
     if (driver_is_disk()) // ditch the original file, make just the targa
     {
@@ -144,7 +144,7 @@ int targa_start_disk(std::FILE *targa_fp, int overhead)
     return i;
 }
 
-int common_start_disk(long new_row_size, long new_col_size, int colors)
+int common_start_disk(const long new_row_size, const long new_col_size, const int colors)
 {
     if (g_disk_flag)
     {
@@ -336,7 +336,7 @@ void end_disk()
     g_disk_16_bit = false;
 }
 
-int disk_read_pixel(int col, int row)
+int disk_read_pixel(const int col, int row)
 {
     if (--s_time_to_display < 0)  // time to g_driver status?
     {
@@ -377,7 +377,7 @@ int disk_read_pixel(int col, int row)
     return s_cur_cache->pixel[col_index];
 }
 
-bool from_mem_disk(long offset, int size, void *dest)
+bool from_mem_disk(const long offset, const int size, void *dest)
 {
     const int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
     if (col_index + size > BLOCK_LEN)            // access violates  a
@@ -393,7 +393,7 @@ bool from_mem_disk(long offset, int size, void *dest)
     return true;
 }
 
-void targa_read_disk(unsigned int col, unsigned int row, Byte *red, Byte *green, Byte *blue)
+void targa_read_disk(unsigned int col, const unsigned int row, Byte *red, Byte *green, Byte *blue)
 {
     col *= 3;
     *blue  = static_cast<Byte>(disk_read_pixel(col, row));
@@ -401,7 +401,7 @@ void targa_read_disk(unsigned int col, unsigned int row, Byte *red, Byte *green,
     *red   = static_cast<Byte>(disk_read_pixel(col + 1, row));
 }
 
-void disk_write_pixel(int col, int row, int color)
+void disk_write_pixel(const int col, int row, const int color)
 {
     if (--s_time_to_display < 0)  // time to display status?
     {
@@ -439,7 +439,7 @@ void disk_write_pixel(int col, int row, int color)
     }
 }
 
-bool to_mem_disk(long offset, int size, void *src)
+bool to_mem_disk(const long offset, const int size, void *src)
 {
     const int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
 
@@ -458,14 +458,14 @@ bool to_mem_disk(long offset, int size, void *src)
     return true;
 }
 
-void targa_write_disk(unsigned int col, unsigned int row, Byte red, Byte green, Byte blue)
+void targa_write_disk(unsigned int col, const unsigned int row, const Byte red, const Byte green, const Byte blue)
 {
     disk_write_pixel(col *= 3, row, blue);
     disk_write_pixel(++col, row, green);
     disk_write_pixel(col+1, row, red);
 }
 
-static void find_load_cache(long offset) // used by read/write
+static void find_load_cache(const long offset) // used by read/write
 {
     s_cur_offset = offset; // note this for next reference
     // check if required entry is in cache - lookup by hash
@@ -570,7 +570,7 @@ static void find_load_cache(long offset) // used by read/write
 }
 
 // lookup for write_cache_lru
-static Cache *find_cache(long offset)
+static Cache *find_cache(const long offset)
 {
     unsigned int tbl_offset = s_hash_ptr[static_cast<unsigned short>(offset) >> BLOCK_SHIFT & HASH_SIZE - 1];
     while (tbl_offset != 0xffff)
@@ -709,7 +709,7 @@ static Byte  mem_getc()                     // memory get_char
     return *s_mem_buf_ptr++;
 }
 
-static void mem_putc(Byte c)     // memory get_char
+static void mem_putc(const Byte c)     // memory get_char
 {
     if (s_mem_buf_ptr - s_mem_buf.data() >= BLOCK_LEN)
     {

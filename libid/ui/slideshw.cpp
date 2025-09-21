@@ -114,7 +114,7 @@ static int get_scancode(const char *mn)
     return -1;
 }
 
-static void get_mnemonic(int code, char *mnemonic)
+static void get_mnemonic(const int code, char *mnemonic)
 {
     *mnemonic = 0;
     for (const KeyMnemonic &it : s_key_mnemonics)
@@ -128,7 +128,7 @@ static void get_mnemonic(int code, char *mnemonic)
 }
 
 // places a temporary message on the screen in text mode
-static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *txt)
+static int show_temp_msg_txt(const int row, const int col, const int attr, const int secs, const char *txt)
 {
     int save_screen[80];
 
@@ -148,7 +148,7 @@ static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *t
     return 0;
 }
 
-static void message(int secs, const char *buf)
+static void message(const int secs, const char *buf)
 {
     if (driver_is_text())
     {
@@ -390,7 +390,7 @@ void stop_slide_show()
     g_slides = SlidesMode::OFF;
 }
 
-void record_show(int key)
+void record_show(const int key)
 {
     float dt = static_cast<float>(s_ticks);      // save time of last call
     s_ticks = std::clock();  // current time
@@ -451,7 +451,7 @@ void record_show(int key)
 }
 
 // suspend process # of seconds
-static void sleep_secs(int secs)
+static void sleep_secs(const int secs)
 {
     g_slides = SlidesMode::OFF;
     const int iterations = secs * 100;

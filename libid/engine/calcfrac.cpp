@@ -262,7 +262,7 @@ static double fmod_test()
 // in all cases, however the symmetry logic assumes that the line
 // is one color; it is not general enough to handle a row of
 // pixels of different colors.
-void sym_fill_line(int row, int left, int right, Byte *str)
+void sym_fill_line(const int row, const int left, const int right, Byte *str)
 {
     const int length = right - left + 1;
     write_span(row, left, right, str);
@@ -328,7 +328,7 @@ void sym_fill_line(int row, int left, int right, Byte *str)
 // The sym_put_line() routine is the symmetry-aware version of put_line().
 // It only works efficiently in the no symmetry or X_AXIS symmetry case,
 // otherwise it just writes the pixels one-by-one.
-static void sym_put_line(int row, int left, int right, Byte *str)
+static void sym_put_line(const int row, const int left, const int right, Byte *str)
 {
     const int length = right-left+1;
     write_span(row, left, right, str);
@@ -356,7 +356,8 @@ static void sym_put_line(int row, int left, int right, Byte *str)
 }
 
 static void show_dot_save_restore(
-    int start_x, int stop_x, int start_y, int stop_y, ShowDotDirection direction, ShowDotAction action)
+    int start_x, int stop_x, const int start_y, const int stop_y,
+    const ShowDotDirection direction, const ShowDotAction action)
 {
     int ct = 0;
     if (direction != ShowDotDirection::JUST_A_POINT)
@@ -862,7 +863,7 @@ int calc_fract()
 }
 
 // locate alternate math record
-int find_alternate_math(FractalType type, BFMathType math)
+int find_alternate_math(const FractalType type, const BFMathType math)
 {
     if (math == BFMathType::NONE)
     {
@@ -2129,7 +2130,7 @@ static void decomposition()
 // controlling the level and slope of the continuous potential
 // surface. Returns color.
 //
-int potential(double mag, long iterations)
+int potential(const double mag, const long iterations)
 {
     float pot;
     long l_pot;
@@ -2201,7 +2202,7 @@ int potential(double mag, long iterations)
 }
 
 // symmetry plot setup
-static bool x_sym_split(int x_axis_row, bool x_axis_between)
+static bool x_sym_split(const int x_axis_row, const bool x_axis_between)
 {
     if ((g_work_symmetry & 0x11) == 0x10) // already decided not sym
     {
@@ -2255,7 +2256,7 @@ static bool x_sym_split(int x_axis_row, bool x_axis_between)
     return false; // tell set_symmetry it's a go
 }
 
-static bool y_sym_split(int y_axis_col, bool y_axis_between)
+static bool y_sym_split(const int y_axis_col, const bool y_axis_between)
 {
     if ((g_work_symmetry & 0x22) == 0x20) // already decided not sym
     {
@@ -2309,7 +2310,7 @@ static bool y_sym_split(int y_axis_col, bool y_axis_between)
     return false; // tell set_symmetry it's a go
 }
 
-static void set_symmetry(SymmetryType sym, bool use_list) // set up proper symmetrical plot functions
+static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper symmetrical plot functions
 {
     int i;
     // pixel number for origin
@@ -2746,7 +2747,7 @@ ack: // bailout here if key is pressed
 }
 
 // Symmetry plot for period PI
-void sym_pi_plot(int x, int y, int color)
+void sym_pi_plot(int x, const int y, const int color)
 {
     while (x <= g_stop_pt.x)
     {
@@ -2756,7 +2757,7 @@ void sym_pi_plot(int x, int y, int color)
 }
 
 // Symmetry plot for period PI plus Origin Symmetry
-void sym_pi_plot2j(int x, int y, int color)
+void sym_pi_plot2j(int x, const int y, const int color)
 {
     int j;
     while (x <= g_stop_pt.x)
@@ -2773,7 +2774,7 @@ void sym_pi_plot2j(int x, int y, int color)
 }
 
 // Symmetry plot for period PI plus Both Axis Symmetry
-void sym_pi_plot4j(int x, int y, int color)
+void sym_pi_plot4j(int x, const int y, const int color)
 {
     while (x <= (g_start_pt.x+g_stop_pt.x)/2)
     {
@@ -2797,7 +2798,7 @@ void sym_pi_plot4j(int x, int y, int color)
 }
 
 // Symmetry plot for X Axis Symmetry
-void sym_plot2(int x, int y, int color)
+void sym_plot2(const int x, const int y, const int color)
 {
     g_put_color(x, y, color) ;
     int i = g_stop_pt.y - (y - g_start_pt.y);
@@ -2808,7 +2809,7 @@ void sym_plot2(int x, int y, int color)
 }
 
 // Symmetry plot for Y Axis Symmetry
-void sym_plot2y(int x, int y, int color)
+void sym_plot2y(const int x, const int y, const int color)
 {
     g_put_color(x, y, color) ;
     int i = g_stop_pt.x - (x - g_start_pt.x);
@@ -2819,7 +2820,7 @@ void sym_plot2y(int x, int y, int color)
 }
 
 // Symmetry plot for Origin Symmetry
-void sym_plot2j(int x, int y, int color)
+void sym_plot2j(const int x, const int y, const int color)
 {
     int j;
     g_put_color(x, y, color) ;
@@ -2832,7 +2833,7 @@ void sym_plot2j(int x, int y, int color)
 }
 
 // Symmetry plot for Both Axis Symmetry
-void sym_plot4(int x, int y, int color)
+void sym_plot4(const int x, const int y, const int color)
 {
     const int j = g_stop_pt.x - (x - g_start_pt.x);
     g_put_color(x , y, color) ;
@@ -2852,7 +2853,7 @@ void sym_plot4(int x, int y, int color)
 }
 
 // Symmetry plot for X Axis Symmetry - Striped Newtbasin version
-void sym_plot2_basin(int x, int y, int color)
+void sym_plot2_basin(const int x, const int y, int color)
 {
     int stripe;
     g_put_color(x, y, color) ;
@@ -2875,7 +2876,7 @@ void sym_plot2_basin(int x, int y, int color)
 }
 
 // Symmetry plot for Both Axis Symmetry  - Newtbasin version
-void sym_plot4_basin(int x, int y, int color)
+void sym_plot4_basin(const int x, const int y, int color)
 {
     int color1;
     int stripe;
@@ -2918,7 +2919,7 @@ void sym_plot4_basin(int x, int y, int color)
     }
 }
 
-static void put_true_color_disk(int x, int y, int color)
+static void put_true_color_disk(const int x, const int y, const int color)
 {
     put_color_a(x, y, color);
     targa_color(x, y, color);

@@ -20,13 +20,13 @@ using namespace id::misc;
 namespace id::ui
 {
 
-int input_field(InputFieldFlags options, //
-    int attr,                            // display attribute
-    char *fld,                           // the field itself
-    int len,                             // field length (declare as 1 larger for \0)
-    int row,                             // display row
-    int col,                             // display column
-    int (*check_key)(int key)            // routine to check non data keys, or nullptr
+int input_field(const InputFieldFlags options, //
+    const int attr,                            // display attribute
+    char *fld,                                 // the field itself
+    const int len,                             // field length (declare as 1 larger for \0)
+    const int row,                             // display row
+    const int col,                             // display column
+    int (*check_key)(int key)                  // routine to check non data keys, or nullptr
 )
 {
     char save_fld[81];

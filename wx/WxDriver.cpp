@@ -145,7 +145,7 @@ int WxDriver::key_pressed()
  * Unread a key!  The key buffer is only one character deep, so we
  * assert if its already full.  This should never happen in real life :-).
  */
-void WxDriver::unget_key(int key)
+void WxDriver::unget_key(const int key)
 {
     assert(0 == m_key_buffer);
     m_key_buffer = key;
@@ -439,7 +439,7 @@ int WxDriver::key_cursor(int row, int col)
     //return result;
 }
 
-int WxDriver::wait_key_pressed(bool timeout)
+int WxDriver::wait_key_pressed(const bool timeout)
 {
     int count = 10;
     while (!key_pressed())

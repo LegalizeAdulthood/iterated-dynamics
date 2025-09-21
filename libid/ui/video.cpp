@@ -47,7 +47,7 @@ int g_video_start_y{};
 // span of pixels from the screen and stores it in pixels[] at one byte per
 // pixel
 //
-void read_span(int row, int start_col, int stop_col, Byte *pixels)
+void read_span(const int row, const int start_col, const int stop_col, Byte *pixels)
 {
     if (start_col + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
     {
@@ -63,7 +63,7 @@ void read_span(int row, int start_col, int stop_col, Byte *pixels)
 // span of pixels to the screen from pixels[] at one byte per pixel
 // Called by the GIF decoder
 //
-void write_span(int row, int start_col, int stop_col, const Byte *pixels)
+void write_span(const int row, const int start_col, const int stop_col, const Byte *pixels)
 {
     if (start_col + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
     {
@@ -73,7 +73,7 @@ void write_span(int row, int start_col, int stop_col, const Byte *pixels)
     s_write_span(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
 }
 
-static void normal_write_span(int y, int x, int last_x, const Byte *pixels)
+static void normal_write_span(const int y, const int x, const int last_x, const Byte *pixels)
 {
     const int width = last_x - x + 1;
     assert(s_write_pixel);
@@ -83,7 +83,7 @@ static void normal_write_span(int y, int x, int last_x, const Byte *pixels)
     }
 }
 
-static void normal_read_span(int y, int x, int last_x, Byte *pixels)
+static void normal_read_span(const int y, const int x, const int last_x, Byte *pixels)
 {
     const int width = last_x - x + 1;
     assert(s_read_pixel);
@@ -128,7 +128,7 @@ void set_null_video()
 
 // Return the color on the screen at the (xdot, ydot) point
 //
-int get_color(int x, int y)
+int get_color(const int x, const int y)
 {
     const int x1 = x + g_logical_screen_x_offset;
     const int y1 = y + g_logical_screen_y_offset;
@@ -143,7 +143,7 @@ int get_color(int x, int y)
 
 // write the color on the screen at the (xdot, ydot) point
 //
-void put_color_a(int x, int y, int color)
+void put_color_a(const int x, const int y, const int color)
 {
     const int x1 = x + g_logical_screen_x_offset;
     const int y1 = y + g_logical_screen_y_offset;
@@ -157,7 +157,7 @@ void put_color_a(int x, int y, int color)
 // entire line of pixels to the screen (0 <= xdot < xdots) at a clip
 // Called by the GIF decoder
 //
-int out_line(Byte *pixels, int line_len)
+int out_line(Byte *pixels, const int line_len)
 {
     driver_check_memory();
     if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)

@@ -63,7 +63,7 @@ static void area();
 // color   -- attribute (same as for putstring)
 // maxrow -- max number of rows to write
 // returns false if success, true if hit maxrow before done
-static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, int max_row)
+static bool put_string_wrap(int *row, int col1, const int col2, const int color, char *str, const int max_row)
 {
     int dec_pt;
     bool done = false;
@@ -141,7 +141,7 @@ static void show_str_var(const char *name, const char *var, int *row, char *msg)
     }
 }
 
-static void write_row(int row, const char *format, ...)
+static void write_row(const int row, const char *format, ...)
 {
     char text[78]{};
     std::va_list args;

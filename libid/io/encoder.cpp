@@ -672,7 +672,7 @@ oops:
 }
 
 // shift IBM colors to GIF
-static int shift_write(const Byte *color, int num_colors)
+static int shift_write(const Byte *color, const int num_colors)
 {
     for (int i = 0; i < num_colors; i++)
     {
@@ -688,13 +688,13 @@ static int shift_write(const Byte *color, int num_colors)
     return 1;
 }
 
-static int extend_blk_len(int data_len)
+static int extend_blk_len(const int data_len)
 {
     return data_len + (data_len + 254) / 255 + 15;
     // data   +     1.per.block   + 14 for id + 1 for null at end
 }
 
-static int put_extend_blk(int block_id, int block_len, const char *block_data)
+static int put_extend_blk(const int block_id, int block_len, const char *block_data)
 {
     int j;
     char header[15];
@@ -957,7 +957,7 @@ static int s_max_bits{BITS_F};               // user settable max # bits/code
 static int s_max_code{};                    // maximum code, given n_bits
 static int s_max_max_cde{1 << BITS_F}; // should NEVER generate this code
 
-constexpr static int max_code(int n_bits)
+constexpr static int max_code(const int n_bits)
 {
     return (1 << n_bits) - 1;
 }
@@ -1000,7 +1000,7 @@ static int s_cur_bits{};
 //
 static char s_accum[256]{};
 
-static bool compress(int row_limit)
+static bool compress(const int row_limit)
 {
     int color;
     int in_count = 0;
@@ -1167,7 +1167,7 @@ no_match:
 // code in turn.  When the buffer fills up empty it and start over.
 //
 
-static void output(int code)
+static void output(const int code)
 {
     static unsigned long masks[] =
     {
@@ -1252,7 +1252,7 @@ static void cl_block()             // table clear for block compress
 // Add a character to the end of the current packet, and if it is 254
 // characters, flush the packet to disk.
 //
-static void char_out(int c)
+static void char_out(const int c)
 {
     s_accum[ s_a_count++ ] = static_cast<char>(c);
     if (s_a_count >= 254)

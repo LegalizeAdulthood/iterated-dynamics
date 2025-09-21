@@ -168,7 +168,7 @@ inline int get_int(const char *ptr)
 }
 
 /* Set an int to an unaligned pointer */
-inline void set_int(char *ptr, int n)
+inline void set_int(char *ptr, const int n)
 {
     std::memcpy(ptr, &n, sizeof(int));
 }

@@ -59,7 +59,7 @@ static int s_read_char_buff[READ_CHAR_BUFF_SIZE];
 static int s_read_char_buff_pos{-1};
 static int s_read_char_sp{};
 
-void Content::label_topic(int ctr)
+void Content::label_topic(const int ctr)
 {
     if (const Label *const lbl = g_src.find_label(topic_name[ctr].c_str()))
     {
@@ -93,7 +93,7 @@ void Content::label_topic(int ctr)
     }
 }
 
-void Content::content_topic(int ctr)
+void Content::content_topic(const int ctr)
 {
     const int t = find_topic_title(topic_name[ctr].c_str());
     if (t == -1)
@@ -163,7 +163,7 @@ void Link::link_label()
     }
 }
 
-void Topic::alloc_topic_text(unsigned size)
+void Topic::alloc_topic_text(const unsigned size)
 {
     text_len = size;
     text = g_src.swap_pos;
@@ -178,7 +178,8 @@ int Topic::add_page(const Page &p)
     return num_page++;
 }
 
-void Topic::add_page_break(int margin, const char *str, const char *start, const char *curr, int num_links)
+void Topic::add_page_break(
+    const int margin, const char *str, const char *start, const char *curr, const int num_links)
 {
     Page p;
     p.offset = static_cast<unsigned>(start - str);
@@ -201,7 +202,7 @@ const char *Topic::get_topic_text() const
     return g_src.buffer.data();
 }
 
-void Topic::release_topic_text(bool save) const
+void Topic::release_topic_text(const bool save) const
 {
     if (save)
     {
@@ -210,7 +211,7 @@ void Topic::release_topic_text(bool save) const
     }
 }
 
-void Topic::start(const char *str, int len)
+void Topic::start(const char *str, const int len)
 {
     flags = TopicFlags::NONE;
     title_len = len;
@@ -233,7 +234,7 @@ void Topic::read_topic_text() const
 #pragma warning(push)
 #pragma warning(disable : 4311)
 #endif
-static void check_buffer(const char *curr, unsigned int off, const char *buffer)
+static void check_buffer(const char *curr, const unsigned int off, const char *buffer)
 {
     if (static_cast<unsigned>(curr + off - buffer) >= BUFFER_SIZE - 1024)
     {
@@ -244,7 +245,7 @@ static void check_buffer(const char *curr, unsigned int off, const char *buffer)
 #pragma warning(pop)
 #endif
 
-static void check_buffer(unsigned int off)
+static void check_buffer(const unsigned int off)
 {
     check_buffer(g_src.curr, off, g_src.buffer.data());
 }
@@ -345,7 +346,7 @@ int HelpSource::add_content(const Content &c)
 /*
  * Will not handle new-lines or tabs correctly!
  */
-static void unread_char(int ch)
+static void unread_char(const int ch)
 {
     if (s_read_char_buff_pos+1 >= READ_CHAR_BUFF_SIZE)
     {
@@ -550,7 +551,7 @@ static void skip_over(const char *skip)
     }
 }
 
-static char *char_lit(int ch)
+static char *char_lit(const int ch)
 {
     static char buff[16];
 
@@ -740,7 +741,7 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
     g_src.add_topic(t);
 }
 
-static void process_doc_contents(Mode mode)
+static void process_doc_contents(const Mode mode)
 {
     if (mode == Mode::ASCII_DOC)
     {
@@ -1162,7 +1163,7 @@ static void add_blank_for_split()   // add space at g_src.curr for merging two l
     }
 }
 
-static void put_a_char(int ch, const Topic &t)
+static void put_a_char(const int ch, const Topic &t)
 {
     if (ch == '{' && !bit_set(t.flags, TopicFlags::DATA)) // is it a hot-link?
     {
@@ -1193,7 +1194,7 @@ enum class ParseStates // states for FSM's
     SPACES
 };
 
-static void check_command_length(int err_offset, int len)
+static void check_command_length(const int err_offset, const int len)
 {
     if (static_cast<int>(std::strlen(s_cmd)) != len)
     {
@@ -1219,7 +1220,7 @@ static std::FILE *open_include(const std::string &filename)
     return result;
 }
 
-static void toggle_mode(std::string tag, HelpCommand cmd, bool &flag, int err_offset)
+static void toggle_mode(std::string tag, const HelpCommand cmd, bool &flag, const int err_offset)
 {
     if (!string_case_equal(s_cmd, tag.data(), tag.length()))
     {

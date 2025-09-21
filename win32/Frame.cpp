@@ -36,7 +36,7 @@ static void forget_frame_position(CRegKey &key)
     key.DeleteValue(TOP_POS);
 }
 
-static void save_frame_position(HWND window)
+static void save_frame_position(const HWND window)
 {
     RECT rect{};
     GetWindowRect(window, &rect);
@@ -93,7 +93,7 @@ static POINT get_saved_frame_position()
     return pos;
 }
 
-void Frame::on_close(HWND window)
+void Frame::on_close(const HWND window)
 {
     if (window != m_window)
     {
@@ -104,7 +104,7 @@ void Frame::on_close(HWND window)
     PostQuitMessage(0);
 }
 
-void Frame::on_paint(HWND window)
+void Frame::on_paint(const HWND window)
 {
     if (window != m_window)
     {
@@ -116,7 +116,7 @@ void Frame::on_paint(HWND window)
     EndPaint(window, &ps);
 }
 
-void Frame::add_key_press(unsigned int key)
+void Frame::add_key_press(const unsigned int key)
 {
     if (key_buffer_full())
     {
@@ -133,12 +133,12 @@ void Frame::add_key_press(unsigned int key)
     m_key_press_count++;
 }
 
-static bool has_mod(int modifier)
+static bool has_mod(const int modifier)
 {
     return (GetKeyState(modifier) & 0x8000) != 0;
 }
 
-static unsigned int mod_key(int modifier, int code, int id_key, unsigned int *j = nullptr)
+static unsigned int mod_key(const int modifier, const int code, const int id_key, unsigned int *j = nullptr)
 {
     if (has_mod(modifier))
     {
@@ -163,7 +163,7 @@ static void debug_key_strokes(const std::string &text)
 }
 #endif
 
-void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT flags)
+void Frame::on_key_down(const HWND window, const UINT vk, BOOL down, int repeat_count, UINT flags)
 {
     if (window != m_window)
     {
@@ -304,7 +304,7 @@ void Frame::on_key_down(HWND window, UINT vk, BOOL down, int repeat_count, UINT 
     debug_key_strokes("OnKeyDown exit vk: " + std::to_string(vk) + ", vsc: " + std::to_string(i) + ", char: " + std::to_string(j));
 }
 
-void Frame::on_char(HWND window, TCHAR ch, int num_repeat)
+void Frame::on_char(const HWND window, const TCHAR ch, const int num_repeat)
 {
     if (window != m_window)
     {
@@ -324,7 +324,7 @@ void Frame::on_char(HWND window, TCHAR ch, int num_repeat)
     debug_key_strokes("OnChar " + std::to_string(k));
 }
 
-void Frame::on_get_min_max_info(HWND hwnd, LPMINMAXINFO info)
+void Frame::on_get_min_max_info(const HWND hwnd, const LPMINMAXINFO info)
 {
     if (hwnd != m_window)
     {
@@ -337,7 +337,7 @@ void Frame::on_get_min_max_info(HWND hwnd, LPMINMAXINFO info)
     info->ptMinTrackSize = info->ptMaxSize;
 }
 
-void Frame::on_timer(HWND window, UINT id)
+void Frame::on_timer(const HWND window, const UINT id)
 {
     if (window != m_window)
     {
@@ -348,82 +348,87 @@ void Frame::on_timer(HWND window, UINT id)
     m_timed_out = true;
 }
 
-static void frame_on_close(HWND window)
+static void frame_on_close(const HWND window)
 {
     g_frame.on_close(window);
 }
 
-static void frame_on_set_focus(HWND window, HWND old_focus)
+static void frame_on_set_focus(const HWND window, const HWND old_focus)
 {
     g_frame.on_set_focus(window, old_focus);
 }
 
-static void frame_on_kill_focus(HWND window, HWND old_focus)
+static void frame_on_kill_focus(const HWND window, const HWND old_focus)
 {
     g_frame.on_kill_focus(window, old_focus);
 }
 
-static void frame_on_paint(HWND window)
+static void frame_on_paint(const HWND window)
 {
     g_frame.on_paint(window);
 }
 
-static void frame_on_key_down(HWND hwnd, UINT vk, BOOL down, int repeat, UINT flags)
+static void frame_on_key_down(
+    const HWND hwnd, const UINT vk, const BOOL down, const int repeat, const UINT flags)
 {
     g_frame.on_key_down(hwnd, vk, down, repeat, flags);
 }
 
-static void frame_on_char(HWND hwnd, TCHAR ch, int repeat)
+static void frame_on_char(const HWND hwnd, const TCHAR ch, const int repeat)
 {
     g_frame.on_char(hwnd, ch, repeat);
 }
 
-static void frame_on_get_min_max_info(HWND hwnd, LPMINMAXINFO info)
+static void frame_on_get_min_max_info(const HWND hwnd, const LPMINMAXINFO info)
 {
     g_frame.on_get_min_max_info(hwnd, info);
 }
 
-static void frame_on_timer(HWND window, UINT id)
+static void frame_on_timer(const HWND window, const UINT id)
 {
     g_frame.on_timer(window, id);
 }
 
-static void frame_on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void frame_on_primary_button_down(
+    const HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_primary_button_down(window, double_click, x, y, key_flags);
 }
 
-static void frame_on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void frame_on_secondary_button_down(
+    const HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_secondary_button_down(window, double_click, x, y, key_flags);
 }
 
-static void frame_on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void frame_on_middle_button_down(
+    const HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
 }
 
-static void frame_on_primary_button_up(HWND window, int x, int y, UINT key_flags)
+static void frame_on_primary_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_primary_button_up(window, x, y, key_flags);
 }
 
-static void frame_on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
+static void frame_on_secondary_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_secondary_button_up(window, x, y, key_flags);
 }
 
-static void frame_on_middle_button_up(HWND window, int x, int y, UINT key_flags)
+static void frame_on_middle_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
 
-static void frame_on_mouse_move(HWND window, int x, int y, UINT key_flags)
+static void frame_on_mouse_move(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_mouse_move(window,x, y, key_flags);
 }
 
-static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
+static LRESULT CALLBACK frame_window_proc(
+    const HWND window, const UINT message, const WPARAM wp, const LPARAM lp)
 {
     switch (message)
     {
@@ -509,7 +514,7 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
     return 0;
 }
 
-void Frame::init(HINSTANCE instance, LPCSTR title)
+void Frame::init(const HINSTANCE instance, const LPCSTR title)
 {
     const LPCTSTR window_class = _T("IdFrame");
     WNDCLASS  wc;
@@ -545,7 +550,7 @@ void Frame::terminate()
     save_frame_position(m_window);
 }
 
-void Frame::pump_messages(bool wait_flag)
+void Frame::pump_messages(const bool wait_flag)
 {
     MSG msg;
     bool quitting = false;
@@ -582,7 +587,7 @@ void Frame::pump_messages(bool wait_flag)
     }
 }
 
-int Frame::get_key_press(bool wait_for_key)
+int Frame::get_key_press(const bool wait_for_key)
 {
     pump_messages(wait_for_key);
     if (wait_for_key && m_timed_out)
@@ -607,7 +612,7 @@ int Frame::get_key_press(bool wait_for_key)
     return i;
 }
 
-void Frame::adjust_size(int width, int height)
+void Frame::adjust_size(const int width, const int height)
 {
     m_width = width;
     m_nc_width = width + GetSystemMetrics(SM_CXFRAME) * 2;
@@ -615,7 +620,7 @@ void Frame::adjust_size(int width, int height)
     m_nc_height = height + GetSystemMetrics(SM_CYFRAME) * 4 + GetSystemMetrics(SM_CYCAPTION) - 1;
 }
 
-void Frame::on_set_focus(HWND window, HWND /*old_focus*/)
+void Frame::on_set_focus(const HWND window, HWND /*old_focus*/)
 {
     if (window != m_window)
     {
@@ -624,7 +629,7 @@ void Frame::on_set_focus(HWND window, HWND /*old_focus*/)
     m_has_focus = true;
 }
 
-void Frame::on_kill_focus(HWND window, HWND /*old_focus*/)
+void Frame::on_kill_focus(const HWND window, HWND /*old_focus*/)
 {
     if (window != m_window)
     {
@@ -633,10 +638,10 @@ void Frame::on_kill_focus(HWND window, HWND /*old_focus*/)
     g_frame.m_has_focus = false;
 }
 
-static std::string key_flags_string(UINT value)
+static std::string key_flags_string(const UINT value)
 {
     std::string result;
-    const auto append_flag = [&](UINT flag, const char *label)
+    const auto append_flag = [&](const UINT flag, const char *label)
     {
         if (value & flag)
         {
@@ -666,7 +671,7 @@ static int get_mouse_look_key()
     return -key;
 }
 
-void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)
+void Frame::on_mouse_move(HWND window, const int x, const int y, const UINT key_flags)
 {
     m_pos.x = static_cast<LONG>(x);
     m_pos.y = static_cast<LONG>(y);
@@ -721,7 +726,7 @@ void Frame::on_mouse_move(HWND window, int x, int y, UINT key_flags)
         ", flags: " + key_flags_string(key_flags));
 }
 
-void Frame::on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+void Frame::on_primary_button_down(HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     SetCapture(m_window);
     mouse_notify_primary_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
@@ -729,7 +734,7 @@ void Frame::on_primary_button_down(HWND window, BOOL double_click, int x, int y,
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
 }
 
-void Frame::on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+void Frame::on_secondary_button_down(HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     SetCapture(m_window);
     mouse_notify_secondary_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
@@ -737,7 +742,7 @@ void Frame::on_secondary_button_down(HWND window, BOOL double_click, int x, int 
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
 }
 
-void Frame::on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+void Frame::on_middle_button_down(HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     SetCapture(m_window);
     mouse_notify_middle_down(static_cast<bool>(double_click), x, y, static_cast<int>(key_flags));
@@ -745,7 +750,7 @@ void Frame::on_middle_button_down(HWND window, BOOL double_click, int x, int y, 
         std::to_string(y) + ", flags: " + key_flags_string(key_flags));
 }
 
-void Frame::on_primary_button_up(HWND window, int x, int y, UINT key_flags)
+void Frame::on_primary_button_up(HWND window, const int x, const int y, const UINT key_flags)
 {
     ReleaseCapture();
     mouse_notify_primary_up(x, y, static_cast<int>(key_flags));
@@ -760,7 +765,7 @@ void Frame::on_primary_button_up(HWND window, int x, int y, UINT key_flags)
     }
 }
 
-void Frame::on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
+void Frame::on_secondary_button_up(HWND window, const int x, const int y, const UINT key_flags)
 {
     ReleaseCapture();
     mouse_notify_secondary_up(x, y, key_flags);
@@ -768,7 +773,7 @@ void Frame::on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
         ", flags: " + key_flags_string(key_flags));
 }
 
-void Frame::on_middle_button_up(HWND window, int x, int y, UINT key_flags)
+void Frame::on_middle_button_up(HWND window, const int x, const int y, const UINT key_flags)
 {
     ReleaseCapture();
     mouse_notify_middle_up(x, y, static_cast<int>(key_flags));
@@ -776,7 +781,7 @@ void Frame::on_middle_button_up(HWND window, int x, int y, UINT key_flags)
         ", flags: " + key_flags_string(key_flags));
 }
 
-void Frame::create_window(int width, int height)
+void Frame::create_window(const int width, const int height)
 {
     if (nullptr == m_window)
     {
@@ -792,14 +797,14 @@ void Frame::create_window(int width, int height)
     }
 }
 
-void Frame::resize(int width, int height)
+void Frame::resize(const int width, const int height)
 {
     adjust_size(width, height);
     const BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_nc_width, m_nc_height, SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 }
 
-void Frame::set_keyboard_timeout(int ms)
+void Frame::set_keyboard_timeout(const int ms)
 {
     UINT_PTR result = SetTimer(m_window, FRAME_TIMER_ID, ms, nullptr);
     if (!result)

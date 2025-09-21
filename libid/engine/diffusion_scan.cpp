@@ -92,7 +92,7 @@ int diffusion_scan()
 
 // little function that plots a filled square of color c, size s with
 // top left cornet at (x,y) with optimization from sym_fill_line
-static void plot_block(int x, int y, int s, int c)
+static void plot_block(const int x, const int y, const int s, const int c)
 {
     std::memset(s_stack, c, s);
     for (int ty = y; ty < y + s; ty++)
@@ -102,7 +102,7 @@ static void plot_block(int x, int y, int s, int c)
 }
 
 // function that does the same as above, but checks the limits in x and y
-static void plot_block_lim(int x, int y, int s, int c)
+static void plot_block_lim(const int x, const int y, const int s, const int c)
 {
     std::memset(s_stack, c, s);
     for (int ty = y; ty < std::min(y + s, g_i_stop_pt.y + 1); ty++)
@@ -112,7 +112,7 @@ static void plot_block_lim(int x, int y, int s, int c)
 }
 
 // count_to_int(dif_counter, colo, rowo, dif_offset)
-static void count_to_int(unsigned long c, int &x, int &y, int dif_offset)
+static void count_to_int(const unsigned long c, int &x, int &y, const int dif_offset)
 {
     long unsigned t_c = c;
     x = DIF_LA[t_c & 0xFF];

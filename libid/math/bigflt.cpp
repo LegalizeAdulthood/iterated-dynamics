@@ -166,7 +166,7 @@ int strlen_needed_bf()
 // USES: g_bf_tmp1 - g_bf_tmp2
 /********************************************************************/
 
-char *unsafe_bf_to_str(char *s, BigFloat r, int dec)
+char *unsafe_bf_to_str(char *s, BigFloat r, const int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
@@ -191,7 +191,7 @@ char *unsafe_bf_to_str(char *s, BigFloat r, int dec)
 
 /********************************************************************/
 // the e version puts it in scientific notation, (like printf's %e)
-char *unsafe_bf_to_str_e(char *s, BigFloat r, int dec)
+char *unsafe_bf_to_str_e(char *s, BigFloat r, const int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
@@ -208,7 +208,7 @@ char *unsafe_bf_to_str_e(char *s, BigFloat r, int dec)
 
 /********************************************************************/
 // the f version puts it in decimal notation, (like printf's %f)
-char *unsafe_bf_to_str_f(char *s, BigFloat r, int dec)
+char *unsafe_bf_to_str_f(char *s, BigFloat r, const int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
@@ -272,7 +272,7 @@ BigFloat bn_to_bf(BigFloat f, BigNum n)
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bigfloat
-BigFloat int_to_bf(BigFloat r, long value)
+BigFloat int_to_bf(BigFloat r, const long value)
 {
     clear_bf(r);
     BIG_SET32(r+g_bf_length-4, static_cast<S32>(value));
@@ -1142,7 +1142,7 @@ BigFloat square_bf(BigFloat r, BigFloat n)
 }
 
 /**********************************************************************/
-BigFloat mult_bf_int(BigFloat r, BigFloat n, U16 u)
+BigFloat mult_bf_int(BigFloat r, BigFloat n, const U16 u)
 {
     copy_bf(g_bf_tmp_copy1, n);
     unsafe_mult_bf_int(r, g_bf_tmp_copy1, u);
@@ -1150,7 +1150,7 @@ BigFloat mult_bf_int(BigFloat r, BigFloat n, U16 u)
 }
 
 /**********************************************************************/
-BigFloat div_bf_int(BigFloat r, BigFloat n,  U16 u)
+BigFloat div_bf_int(BigFloat r, BigFloat n, const U16 u)
 {
     copy_bf(g_bf_tmp_copy1, n);
     unsafe_div_bf_int(r, g_bf_tmp_copy1, u);
@@ -1158,7 +1158,7 @@ BigFloat div_bf_int(BigFloat r, BigFloat n,  U16 u)
 }
 
 /**********************************************************************/
-char *bf_to_str(char *s, BigFloat r, int dec)
+char *bf_to_str(char *s, BigFloat r, const int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
     unsafe_bf_to_str(s, g_bf_tmp_copy1, dec);
@@ -1166,7 +1166,7 @@ char *bf_to_str(char *s, BigFloat r, int dec)
 }
 
 /**********************************************************************/
-char *bf_to_str_e(char *s, BigFloat r, int dec)
+char *bf_to_str_e(char *s, BigFloat r, const int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
     unsafe_bf_to_str_e(s, g_bf_tmp_copy1, dec);
@@ -1174,7 +1174,7 @@ char *bf_to_str_e(char *s, BigFloat r, int dec)
 }
 
 /**********************************************************************/
-char *bf_to_str_f(char *s, BigFloat r, int dec)
+char *bf_to_str_f(char *s, BigFloat r, const int dec)
 {
     copy_bf(g_bf_tmp_copy1, r);
     unsafe_bf_to_str_f(s, g_bf_tmp_copy1, dec);
@@ -1246,7 +1246,7 @@ bool is_bf_zero(BigFloat n)
 
 /************************************************************************/
 // convert_bf  -- convert bigfloat numbers from old to new lengths
-int convert_bf(BigFloat new_num, BigFloat old_num, int new_bf_len, int old_bf_len)
+int convert_bf(BigFloat new_num, BigFloat old_num, const int new_bf_len, const int old_bf_len)
 {
     // save lengths so not dependent on external environment
     int save_bf_length = g_bf_length;
@@ -1312,7 +1312,7 @@ BigFloat norm_bf(BigFloat r)
 // normalize big float with forced sign
 // positive = 1, force to be positive
 //          = 0, force to be negative
-void norm_sign_bf(BigFloat r, bool positive)
+void norm_sign_bf(BigFloat r, const bool positive)
 {
     norm_bf(r);
     r[g_bf_length-1] = static_cast<Byte>(positive ? 0x00 : 0xFF);
@@ -1814,7 +1814,7 @@ BigFloat unsafe_square_bf(BigFloat r, BigFloat n)
 /********************************************************************/
 // r = n * u  where u is an unsigned integer
 // SIDE-EFFECTS: n can be "de-normalized" and lose precision
-BigFloat unsafe_mult_bf_int(BigFloat r, BigFloat n, U16 u)
+BigFloat unsafe_mult_bf_int(BigFloat r, BigFloat n, const U16 u)
 {
     S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
     S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
@@ -1845,7 +1845,7 @@ BigFloat unsafe_mult_bf_int(BigFloat r, BigFloat n, U16 u)
 
 /********************************************************************/
 // r *= u  where u is an unsigned integer
-BigFloat mult_a_bf_int(BigFloat r, U16 u)
+BigFloat mult_a_bf_int(BigFloat r, const U16 u)
 {
     S16 *r_exp = reinterpret_cast<S16 *>(r + g_bf_length);
     const bool positive = !is_bf_neg(r);
@@ -1873,7 +1873,7 @@ BigFloat mult_a_bf_int(BigFloat r, U16 u)
 
 /********************************************************************/
 // r = n / u  where u is an unsigned integer
-BigFloat unsafe_div_bf_int(BigFloat r, BigFloat n,  U16 u)
+BigFloat unsafe_div_bf_int(BigFloat r, BigFloat n, const U16 u)
 {
     if (u == 0) // division by zero
     {
@@ -1900,7 +1900,7 @@ BigFloat unsafe_div_bf_int(BigFloat r, BigFloat n,  U16 u)
 
 /********************************************************************/
 // r /= u  where u is an unsigned integer
-BigFloat div_a_bf_int(BigFloat r, U16 u)
+BigFloat div_a_bf_int(BigFloat r, const U16 u)
 {
     if (u == 0) // division by zero
     {
@@ -1978,7 +1978,7 @@ LDouble extract_value(LDouble f, LDouble b, int *exp_ptr)
 /********************************************************************/
 // calculates and returns the value of f*b^n
 // sort of like ldexp()
-LDouble scale_value(LDouble f, LDouble b , int n)
+LDouble scale_value(LDouble f, LDouble b , const int n)
 {
     LDouble total = 1;
 
@@ -2027,7 +2027,7 @@ LDouble extract_10(LDouble f, int *exp_ptr)
 /********************************************************************/
 // calculates and returns the value of f*10^n
 // sort of like ldexp()
-LDouble scale_10(LDouble f, int n)
+LDouble scale_10(LDouble f, const int n)
 {
     return scale_value(f, 10, n);
 }
@@ -2165,7 +2165,7 @@ BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n)
 // r *= n
 // dec - number of decimals, including the one extra for rounding
 
-BigFloat10 mult_a_bf10_int(BigFloat10 r, int dec, U16 n)
+BigFloat10 mult_a_bf10_int(BigFloat10 r, const int dec, const U16 n)
 {
     if (r[1] == 0 || n == 0)
     {
@@ -2201,7 +2201,7 @@ BigFloat10 mult_a_bf10_int(BigFloat10 r, int dec, U16 n)
 // r /= n
 // dec - number of decimals, including the one extra for rounding
 
-BigFloat10 div_a_bf10_int(BigFloat10 r, int dec, U16 n)
+BigFloat10 div_a_bf10_int(BigFloat10 r, const int dec, const U16 n)
 {
     unsigned value;
 

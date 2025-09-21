@@ -29,7 +29,7 @@ namespace id::fractals
 {
 
 // Generate Random Number 0 <= r < n
-static int random(int n)
+static int random(const int n)
 {
     return static_cast<int>(static_cast<long>(std::rand()) * static_cast<long>(n) >> 15);
 }
@@ -107,7 +107,7 @@ Ant::Ant()
 
     wrap = g_params[4] != 0.0;
 
-    const auto get_rule = [](double param)
+    const auto get_rule = [](const double param)
     {
         std::ostringstream buff;
         buff << std::setprecision(17) << std::fixed << param;
@@ -216,7 +216,7 @@ void Ant::init_mite1()
 // turkmite from Scientific American July 1994 page 91
 // Tweaked by Luciano Genero & Fulvio Cappelli
 //
-void Ant::turk_mite1(bool step, long wait)
+void Ant::turk_mite1(const bool step, const long wait)
 {
     for (int i = INNER_LOOP; i; i--)
     {
@@ -251,7 +251,7 @@ void Ant::turk_mite1(bool step, long wait)
     }
 }
 
-static unsigned rotate_left_one(unsigned value)
+static unsigned rotate_left_one(const unsigned value)
 {
     const unsigned high_bit{~(~0U >> 1)};
     const unsigned result{value << 1};
@@ -298,7 +298,7 @@ void Ant::init_mite2()
 }
 
 // this one ignore the color of the current cell is more like a white ant
-void Ant::turk_mite2(bool step, long wait)
+void Ant::turk_mite2(const bool step, const long wait)
 {
     for (int i = INNER_LOOP; i; i--)
     {
@@ -346,7 +346,7 @@ void Ant::turk_mite2(bool step, long wait)
     }
 }
 
-bool Ant::iterate(bool step, long wait)
+bool Ant::iterate(const bool step, const long wait)
 {
     if (count < count_end)
     {

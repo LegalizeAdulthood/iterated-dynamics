@@ -31,7 +31,7 @@ using namespace testing;
 namespace id::fractals
 {
 
-inline std::ostream &operator<<(std::ostream &str, FractalType value)
+inline std::ostream &operator<<(std::ostream &str, const FractalType value)
 {
     return str << +value;
 }

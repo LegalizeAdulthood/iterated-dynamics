@@ -36,7 +36,7 @@ static int is_a_dir_name(const char *name)
     return *name == '.' || ends_with_slash(name) ? 1 : 0;
 }
 
-static void footer_msg(int *i, ChoiceFlags flags, const char *speed_string)
+static void footer_msg(int *i, const ChoiceFlags flags, const char *speed_string)
 {
     put_string_center((*i)++, 0, 80, C_PROMPT_BKGRD,
         speed_string ? "Use the cursor keys or type a value to make a selection"
@@ -49,8 +49,7 @@ static void footer_msg(int *i, ChoiceFlags flags, const char *speed_string)
             : "Press ENTER for highlighted choice, or ESCAPE to back out");
 }
 
-static void show_speed_string(
-    int speed_row, const char *speed_string,
+static void show_speed_string(const int speed_row, const char *speed_string,
     int (*speed_prompt)(int row, int col, int vid, const char *speed_string, int speed_match))
 {
     char buf[81];
@@ -92,8 +91,8 @@ static void process_speed_string(char *speed_string, //
     const char **choices,                            // array of choice strings
     int key,                                         //
     int *current,                                    //
-    int num_choices,                                 //
-    bool is_unsorted)
+    const int num_choices,                           //
+    const bool is_unsorted)
 {
     int i = static_cast<int>(std::strlen(speed_string));
     if (key == 8 && i > 0)   // backspace

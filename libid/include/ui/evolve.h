@@ -80,29 +80,29 @@ enum class EvolutionModeFlags
     NO_GROUT = 8,    // no gaps between images
     PARAM_BOX = 128, //
 };
-inline int operator+(EvolutionModeFlags value)
+inline int operator+(const EvolutionModeFlags value)
 {
     return static_cast<int>(value);
 }
-inline EvolutionModeFlags operator|(EvolutionModeFlags lhs, EvolutionModeFlags rhs)
+inline EvolutionModeFlags operator|(const EvolutionModeFlags lhs, const EvolutionModeFlags rhs)
 {
     return static_cast<EvolutionModeFlags>(+lhs | +rhs);
 }
-inline EvolutionModeFlags &operator|=(EvolutionModeFlags &lhs, EvolutionModeFlags rhs)
+inline EvolutionModeFlags &operator|=(EvolutionModeFlags &lhs, const EvolutionModeFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
-inline EvolutionModeFlags operator^(EvolutionModeFlags lhs, EvolutionModeFlags rhs)
+inline EvolutionModeFlags operator^(const EvolutionModeFlags lhs, const EvolutionModeFlags rhs)
 {
     return static_cast<EvolutionModeFlags>(+lhs ^ +rhs);
 }
-inline EvolutionModeFlags &operator^=(EvolutionModeFlags &lhs, EvolutionModeFlags rhs)
+inline EvolutionModeFlags &operator^=(EvolutionModeFlags &lhs, const EvolutionModeFlags rhs)
 {
     lhs = lhs ^ rhs;
     return lhs;
 }
-inline bool bit_set(EvolutionModeFlags flags, EvolutionModeFlags bit)
+inline bool bit_set(const EvolutionModeFlags flags, const EvolutionModeFlags bit)
 {
     return (+flags & +bit) == +bit;
 }

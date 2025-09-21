@@ -108,7 +108,7 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
     return false;
 }
 
-static void format_video_choice(int i, const char *err, char *buf)
+static void format_video_choice(const int i, const char *err, char *buf)
 {
     std::memcpy(&g_video_entry, &g_video_table[i],
            sizeof(g_video_entry));
@@ -120,7 +120,7 @@ static void format_video_choice(int i, const char *err, char *buf)
     g_video_entry.x_dots = 0; // so tab_display knows to display nothing
 }
 
-static double video_aspect(int try_x_dots, int try_y_dots)
+static double video_aspect(const int try_x_dots, const int try_y_dots)
 {
     // calc resulting aspect ratio for specified dots in current mode
     return static_cast<double>(try_y_dots) / static_cast<double>(try_x_dots)
@@ -512,7 +512,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     return 0;
 }
 
-static void format_item(int choice, char *buf)
+static void format_item(const int choice, char *buf)
 {
     char err_buf[10];
     err_buf[0] = 0;
@@ -548,7 +548,7 @@ static void format_item(int choice, char *buf)
     format_video_choice(s_video_choices[choice].entry_num, err_buf, buf);
 }
 
-static int check_mode_key(int key, int /*choice*/)
+static int check_mode_key(const int key, int /*choice*/)
 {
     const int i = check_vid_mode_key(key);
     return i >= 0 ? -100-i : 0;

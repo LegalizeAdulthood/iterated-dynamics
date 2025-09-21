@@ -157,7 +157,7 @@ static int orbit(double *x, double *y)
     return orbit(x, y, nullptr);
 }
 
-static int random(int x)
+static int random(const int x)
 {
     return std::rand() % x;
 }
@@ -1647,7 +1647,7 @@ void IFS3D::iterate()
 
     // calculate image of last point under selected iterated function
     {
-        const auto row = [&](int idx) { return g_ifs_definition[m_k * NUM_IFS_3D_PARAMS + idx]; };
+        const auto row = [&](const int idx) { return g_ifs_definition[m_k * NUM_IFS_3D_PARAMS + idx]; };
         m_new_x = row(0) * m_inf.orbit[0] + row(1) * m_inf.orbit[1] + row(2) * m_inf.orbit[2] + row(9);
         m_new_y = row(3) * m_inf.orbit[0] + row(4) * m_inf.orbit[1] + row(5) * m_inf.orbit[2] + row(10);
         m_new_z = row(6) * m_inf.orbit[0] + row(7) * m_inf.orbit[1] + row(8) * m_inf.orbit[2] + row(11);
@@ -1969,7 +1969,7 @@ static std::FILE *open_orbit_save()
 }
 
 // Plot a histogram by incrementing the pixel each time it is touched
-static void plot_hist(int x, int y, int /*color*/)
+static void plot_hist(const int x, const int y, const int /*color*/)
 {
     int color = get_color(x, y) + 1;
     if (color >= g_colors)

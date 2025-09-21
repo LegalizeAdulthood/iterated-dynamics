@@ -77,7 +77,7 @@ static bool check_path(const std::filesystem::path &path, std::FILE **infile, co
 }
 
 bool find_file_item(
-    std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, ItemType item_type)
+    std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, const ItemType item_type)
 {
     std::FILE *infile = nullptr;
     bool found = false;
@@ -169,12 +169,12 @@ bool find_file_item(
     return false;
 }
 
-static bool is_newline(int c)
+static bool is_newline(const int c)
 {
     return c == '\n' || c == '\r';
 }
 
-static void format_param_file_line(int choice, char *buf)
+static void format_param_file_line(const int choice, char *buf)
 {
     int c;
     char line[80];
@@ -197,7 +197,7 @@ static void format_param_file_line(int choice, char *buf)
     *fmt::format_to(buf, "{:<20s}{:<56s}", s_gfe.choices[choice]->name, line) = '\0';
 }
 
-static int check_gfe_key(int key, int choice)
+static int check_gfe_key(const int key, const int choice)
 {
     char blanks[79];         // used to clear the entry portion of screen
     std::memset(blanks, ' ', 78);
@@ -392,7 +392,7 @@ static int check_gfe_key(int key, int choice)
 }
 
 static long gfe_choose_entry(
-    ItemType type, const char *title, const std::filesystem::path &path, std::string &entry_name)
+    const ItemType type, const char *title, const std::filesystem::path &path, std::string &entry_name)
 {
     const char *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
     char buf[101];
@@ -470,7 +470,7 @@ retry:
 
 // Formula, LSystem, etc. type structure, select from file
 // containing definitions in the form    name { ... }
-static long get_file_entry(ItemType type, const char *type_desc, const char *type_wildcard,
+static long get_file_entry(const ItemType type, const char *type_desc, const char *type_wildcard,
     std::filesystem::path &path, std::string &entry_name)
 {
     const std::string hdg{fmt::format("Select {:s} File", type_desc)};

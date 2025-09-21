@@ -8,7 +8,7 @@
 namespace id::gui
 {
 
-static wxColour cga_color_to_wx_color(CGAColor color, bool intense)
+static wxColour cga_color_to_wx_color(CGAColor color, const bool intense)
 {
     // Standard CGA color palette
     static const wxColour cga_colors[] = {
@@ -48,7 +48,7 @@ static wxColour cga_color_to_wx_color(CGAColor color, bool intense)
     return result;
 }
 
-TextScreen::TextScreen(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) :
+TextScreen::TextScreen(wxWindow *parent, const wxWindowID id, const wxPoint &pos, const wxSize &size, const long style) :
     wxStyledTextCtrl(parent, id, pos, wxDefaultSize, style), // Always use calculated size
     m_font(wxFontInfo(12).Family(wxFONTFAMILY_TELETYPE).FaceName("Consolas"))
 {
@@ -134,7 +134,7 @@ wxSize TextScreen::calculate_fixed_size()
     return wxSize(width, height);
 }
 
-void TextScreen::DoSetSize(int x, int y, int width, int height, int size_flags)
+void TextScreen::DoSetSize(const int x, const int y, int width, int height, const int size_flags)
 {
     assert(!(m_fixed_size.x == 0 || m_fixed_size.y == 0));
     // Only update position, keep our fixed size
@@ -159,7 +159,7 @@ wxSize TextScreen::GetMaxSize() const
     return m_fixed_size;
 }
 
-void TextScreen::invalidate(int left, int bot, int right, int top)
+void TextScreen::invalidate(const int left, const int bot, const int right, const int top)
 {
     refresh_display();
     const wxRect exposed{                                             //
@@ -199,7 +199,8 @@ void TextScreen::initialize_styles()
     m_styles_initialized = true;
 }
 
-void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, int &end_row, int &end_col)
+void TextScreen::put_string(
+    const int x_pos, const int y_pos, const int attr, const char *text, int &end_row, int &end_col)
 {
     const char xa = attr & 0x0ff;
     int max_row = y_pos;
@@ -242,7 +243,7 @@ void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, in
     }
 }
 
-void TextScreen::scroll_up(int top, int bot)
+void TextScreen::scroll_up(const int top, const int bot)
 {
     for (int row = top; row < bot; row++)
     {
@@ -253,7 +254,7 @@ void TextScreen::scroll_up(int top, int bot)
     invalidate(0, bot, SCREEN_WIDTH, top);
 }
 
-void TextScreen::put_char(int row, int col, char ch, unsigned char attr)
+void TextScreen::put_char(const int row, const int col, const char ch, const unsigned char attr)
 {
     if (!is_valid_position(row, col))
     {
@@ -267,7 +268,7 @@ void TextScreen::put_char(int row, int col, char ch, unsigned char attr)
     update_cell_display(row, col);
 }
 
-void TextScreen::put_string(int row, int col, const char *str, unsigned char attr)
+void TextScreen::put_string(const int row, const int col, const char *str, const unsigned char attr)
 {
     if (!str || !is_valid_position(row, col))
     {
@@ -283,7 +284,7 @@ void TextScreen::put_string(int row, int col, const char *str, unsigned char att
     }
 }
 
-void TextScreen::set_attribute(int row, int col, unsigned char attr, int count)
+void TextScreen::set_attribute(const int row, const int col, const unsigned char attr, const int count)
 {
     if (!is_valid_position(row, col))
     {
@@ -298,7 +299,7 @@ void TextScreen::set_attribute(int row, int col, unsigned char attr, int count)
     update_region_display(row, col, row, std::min(col + count - 1, SCREEN_WIDTH - 1));
 }
 
-void TextScreen::clear(unsigned char attr)
+void TextScreen::clear(const unsigned char attr)
 {
     // Clear the screen buffer
     for (auto &row : m_screen)
@@ -316,7 +317,8 @@ void TextScreen::clear(unsigned char attr)
     set_cursor_position(0, 0);
 }
 
-void TextScreen::scroll_up(int top_row, int bottom_row, int lines, unsigned char fill_attr)
+void TextScreen::scroll_up(
+    const int top_row, const int bottom_row, const int lines, const unsigned char fill_attr)
 {
     if (top_row < 0 || bottom_row >= SCREEN_HEIGHT || top_row > bottom_row || lines <= 0)
     {
@@ -345,7 +347,8 @@ void TextScreen::scroll_up(int top_row, int bottom_row, int lines, unsigned char
     update_region_display(top_row, 0, bottom_row, SCREEN_WIDTH - 1);
 }
 
-void TextScreen::scroll_down(int top_row, int bottom_row, int lines, unsigned char fill_attr)
+void TextScreen::scroll_down(
+    const int top_row, const int bottom_row, const int lines, const unsigned char fill_attr)
 {
     if (top_row < 0 || bottom_row >= SCREEN_HEIGHT || top_row > bottom_row || lines <= 0)
     {
@@ -374,7 +377,7 @@ void TextScreen::scroll_down(int top_row, int bottom_row, int lines, unsigned ch
     update_region_display(top_row, 0, bottom_row, SCREEN_WIDTH - 1);
 }
 
-void TextScreen::set_cursor_position(int row, int col)
+void TextScreen::set_cursor_position(const int row, const int col)
 {
     if (!is_valid_position(row, col))
     {
@@ -395,13 +398,13 @@ void TextScreen::get_cursor_position(int &row, int &col) const
     col = m_cursor_col;
 }
 
-void TextScreen::show_cursor(bool show)
+void TextScreen::show_cursor(const bool show)
 {
     m_cursor_visible = show;
     SetCaretWidth(show ? (m_cursor_type == 2 ? 8 : 1) : 0);
 }
 
-void TextScreen::set_cursor_type(int type)
+void TextScreen::set_cursor_type(const int type)
 {
     m_cursor_type = type;
     if (m_cursor_visible)
@@ -410,7 +413,7 @@ void TextScreen::set_cursor_type(int type)
     }
 }
 
-CGACell TextScreen::get_cell(int row, int col) const
+CGACell TextScreen::get_cell(const int row, const int col) const
 {
     if (!is_valid_position(row, col))
     {
@@ -419,7 +422,7 @@ CGACell TextScreen::get_cell(int row, int col) const
     return m_screen[row][col];
 }
 
-void TextScreen::set_cell(int row, int col, const CGACell &cell)
+void TextScreen::set_cell(const int row, const int col, const CGACell &cell)
 {
     if (!is_valid_position(row, col))
     {
@@ -462,12 +465,12 @@ void TextScreen::refresh_display()
     }
 }
 
-bool TextScreen::is_valid_position(int row, int col) const
+bool TextScreen::is_valid_position(const int row, const int col) const
 {
     return row >= 0 && row < SCREEN_HEIGHT && col >= 0 && col < SCREEN_WIDTH;
 }
 
-void TextScreen::update_cell_display(int row, int col)
+void TextScreen::update_cell_display(const int row, const int col)
 {
     if (!is_valid_position(row, col))
     {
@@ -489,7 +492,8 @@ void TextScreen::update_cell_display(int row, int col)
     SetStyling(1, style);
 }
 
-void TextScreen::update_region_display(int start_row, int start_col, int end_row, int end_col)
+void TextScreen::update_region_display(
+    const int start_row, const int start_col, const int end_row, const int end_col)
 {
     for (int row = start_row; row <= end_row; ++row)
     {
@@ -503,17 +507,17 @@ void TextScreen::update_region_display(int start_row, int start_col, int end_row
     }
 }
 
-int TextScreen::get_style_number(unsigned char attr) const
+int TextScreen::get_style_number(const unsigned char attr) const
 {
     return static_cast<int>(attr);
 }
 
-int TextScreen::position_from_row_col(int row, int col) const
+int TextScreen::position_from_row_col(const int row, const int col) const
 {
     return row * (SCREEN_WIDTH + 1) + col; // +1 for newline characters
 }
 
-void TextScreen::row_col_from_position(int pos, int &row, int &col) const
+void TextScreen::row_col_from_position(const int pos, int &row, int &col) const
 {
     row = pos / (SCREEN_WIDTH + 1);
     col = pos % (SCREEN_WIDTH + 1);

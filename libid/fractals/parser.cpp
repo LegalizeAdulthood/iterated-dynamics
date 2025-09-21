@@ -537,7 +537,7 @@ static constexpr std::array<SymmetryName, 14> SYMMETRY_NAMES
     SymmetryName{ "NOPLOT",        SymmetryType::NO_PLOT },
 };
 
-static void push_jump(JumpControlType type)
+static void push_jump(const JumpControlType type)
 {
     JumpControl value{};
     value.type = type;
@@ -606,7 +606,7 @@ static void push_jump(JumpControlType type)
 #define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
 #define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
 
-static bool check_denom(double denom)
+static bool check_denom(const double denom)
 {
     if (std::abs(denom) <= DBL_MIN)
     {
@@ -1283,7 +1283,7 @@ static bool is_const_pair(const char *str)
     return answer;
 }
 
-static ConstArg *is_const(const char *str, int len)
+static ConstArg *is_const(const char *str, const int len)
 {
     // next line enforces variable vs constant naming convention
     for (unsigned n = 0U; n < g_variable_index; n++)
@@ -1387,7 +1387,7 @@ static ConstArg *is_const(const char *str, int len)
     3 - else
     4 - endif
 */
-static JumpControlType is_jump(const char *str, int len)
+static JumpControlType is_jump(const char *str, const int len)
 {
     for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++)
     {
@@ -1408,7 +1408,7 @@ static void funct_not_found()
 }
 
 // determine if s names a function and if so which one
-static int which_fn(const char *s, int len)
+static int which_fn(const char *s, const int len)
 {
     int out;
     if (len != 3)
@@ -1430,7 +1430,7 @@ static int which_fn(const char *s, int len)
     return out;
 }
 
-static FunctionPtr is_func(const char *str, int len)
+static FunctionPtr is_func(const char *str, const int len)
 {
     unsigned n = skip_white_space(&str[len]);
     if (str[len+n] == '(')
@@ -1472,7 +1472,7 @@ static void sort_precedence()
     ++s_op_ptr;
 }
 
-static void push_pending_op(FunctionPtr f, int p)
+static void push_pending_op(const FunctionPtr f, const int p)
 {
     s_op.push_back(PendingOp{f, p});
     ++g_operation_index;
@@ -1906,7 +1906,7 @@ int formula_per_pixel()
     return g_overflow ? 0 : 1;
 }
 
-static int fill_if_group(int endif_index, JumpPtrs *jump_data)
+static int fill_if_group(const int endif_index, JumpPtrs *jump_data)
 {
     int i   = endif_index;
     int ljp = endif_index; // ljp means "last jump processed"
@@ -2737,7 +2737,7 @@ int frm_get_param_stuff(const char *name)
      on success, and false if errors are found which should cause the
      formula not to be executed
 */
-static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
+static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_sym)
 {
     const long file_pos = std::ftell(open_file);
     int c;
@@ -2879,7 +2879,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     letter of the name of the formula to be prepared. This function
     is called from run_formula() below.
 */
-static std::string prepare_formula(std::FILE *file, bool report_bad_sym)
+static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
 {
     const long file_pos{std::ftell(file)};
 
@@ -3002,7 +3002,7 @@ int bad_formula()
 }
 
 //  returns true if an error occurred
-bool run_formula(const std::string &name, bool report_bad_sym)
+bool run_formula(const std::string &name, const bool report_bad_sym)
 {
     //  first set the pointers so they point to a fn which always returns 1
     assert(g_cur_fractal_specific == get_fractal_specific(FractalType::FORMULA));
@@ -3101,7 +3101,7 @@ void free_work_area()
     s_fns.clear();
 }
 
-static void frm_error(std::FILE * open_file, long begin_frm)
+static void frm_error(std::FILE * open_file, const long begin_frm)
 {
     Token tok;
     int chars_to_error = 0;
@@ -3250,7 +3250,7 @@ static bool frm_prescan(std::FILE * open_file)
         error.error_pos    = 0L;
         error.error_number = ParseError::NONE;
     }
-    const auto record_error = [&](ParseError err)
+    const auto record_error = [&](const ParseError err)
     {
         if (errors_found == 0 || s_errors[errors_found - 1].start_pos != statement_pos)
         {

@@ -22,7 +22,7 @@ using namespace id::ui;
 namespace id::fractals
 {
 
-static int random(int x)
+static int random(const int x)
 {
     return std::rand() % x;
 }

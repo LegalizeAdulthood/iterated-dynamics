@@ -38,7 +38,7 @@ static std::string get_cpu_id()
         {
             cpu_id = "(Unknown CPU)";
         }
-        const auto check = [](int result, const char *label)
+        const auto check = [](const int result, const char *label)
         {
             if (result < 0)
             {
@@ -63,18 +63,18 @@ static std::string get_cpu_id()
     return cpu_id;
 }
 
-static std::string_view expand_time(std::time_t local_time)
+static std::string_view expand_time(const std::time_t local_time)
 {
     return std::ctime(&local_time);
 }
 
-static std::string expand_time(std::time_t local_time, int start, int count)
+static std::string expand_time(const std::time_t local_time, const int start, const int count)
 {
     const std::string_view str{expand_time(local_time)};
     return std::string{str.substr(start, count)};
 }
 
-static std::string expand_var(const std::string &var, std::time_t local_time)
+static std::string expand_var(const std::string &var, const std::time_t local_time)
 {
     // ctime format
     // Sat Aug 17 21:34:14 1996
@@ -178,7 +178,7 @@ void parse_comments(char *value)
 }
 
 // expands comments from the comments= command
-static std::string expand_comments(const std::string_view source, std::time_t local_time)
+static std::string expand_comments(const std::string_view source, const std::time_t local_time)
 {
     constexpr char QUOTE{'\\'};    // used to quote the next character (_, \ or $) from special interpretation
     constexpr char DELIMITER{'$'}; // delimits variable names
@@ -221,13 +221,13 @@ static std::string expand_comments(const std::string_view source, std::time_t lo
     return target;
 }
 
-const std::string &expand_command_comment(int i, std::time_t local_time)
+const std::string &expand_command_comment(const int i, const std::time_t local_time)
 {
     g_command_comment[i] = expand_comments(g_par_comment[i], local_time);
     return g_command_comment[i];
 }
 
-const std::string &expand_command_comment(int i)
+const std::string &expand_command_comment(const int i)
 {
     std::time_t now;
     std::time(&now);

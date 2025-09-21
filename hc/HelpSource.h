@@ -101,28 +101,28 @@ enum class TopicFlags
     DATA = 2    // set if it is a "data" topic
 };
 
-inline int operator+(TopicFlags val)
+inline int operator+(const TopicFlags val)
 {
     return static_cast<int>(val);
 }
 
-inline TopicFlags operator|(TopicFlags lhs, TopicFlags rhs)
+inline TopicFlags operator|(const TopicFlags lhs, const TopicFlags rhs)
 {
     return static_cast<TopicFlags>(+lhs | +rhs);
 }
 
-inline TopicFlags &operator|=(TopicFlags &lhs, TopicFlags rhs)
+inline TopicFlags &operator|=(TopicFlags &lhs, const TopicFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
 
-inline TopicFlags operator&(TopicFlags lhs, TopicFlags rhs)
+inline TopicFlags operator&(const TopicFlags lhs, const TopicFlags rhs)
 {
     return static_cast<TopicFlags>(+lhs & +rhs);
 }
 
-inline bool bit_set(TopicFlags flags, TopicFlags bit)
+inline bool bit_set(const TopicFlags flags, const TopicFlags bit)
 {
     return (flags & bit) == bit;
 }

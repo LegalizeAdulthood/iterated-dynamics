@@ -76,7 +76,7 @@ using namespace testing;
 namespace id::engine
 {
 
-static std::ostream &operator<<(std::ostream &str, CmdArgFlags value)
+static std::ostream &operator<<(std::ostream &str, const CmdArgFlags value)
 {
     if (value == CmdArgFlags::BAD_ARG)
     {
@@ -163,7 +163,7 @@ void TestParameterCommand::TearDown()
     Test::TearDown();
 }
 
-void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, CmdFile mode)
+void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, const CmdFile mode)
 {
     m_buffer.resize(cur_arg.size() + 1);
     std::strcpy(m_buffer.data(), cur_arg.c_str());
@@ -440,7 +440,7 @@ TEST_F(TestCommandMakePar, makeParNewFile)
         read_file_contents(path)) << path;
 }
 
-static void set_file_contents(const fs::path &path, std::string_view contents)
+static void set_file_contents(const fs::path &path, const std::string_view contents)
 {
     fs::create_directories(path.parent_path());
     fs::remove(path);

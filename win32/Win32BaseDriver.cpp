@@ -137,7 +137,7 @@ int Win32BaseDriver::key_pressed()
  * Unread a key!  The key buffer is only one character deep, so we
  * assert if it's already full.  This should never happen in real life :-).
  */
-void Win32BaseDriver::unget_key(int key)
+void Win32BaseDriver::unget_key(const int key)
 {
     assert(0 == m_key_buffer);
     m_key_buffer = key;
@@ -237,7 +237,7 @@ void Win32BaseDriver::set_video_mode(VideoInfo *mode)
     set_clear();
 }
 
-void Win32BaseDriver::put_string(int row, int col, int attr, const char *msg)
+void Win32BaseDriver::put_string(const int row, const int col, const int attr, const char *msg)
 {
     if (-1 != row)
     {
@@ -260,12 +260,12 @@ void Win32BaseDriver::put_string(int row, int col, int attr, const char *msg)
 *
 *       Scroll the screen up (from toprow to botrow)
 */
-void Win32BaseDriver::scroll_up(int top, int bot)
+void Win32BaseDriver::scroll_up(const int top, const int bot)
 {
     m_win_text.scroll_up(top, bot);
 }
 
-void Win32BaseDriver::move_cursor(int row, int col)
+void Win32BaseDriver::move_cursor(const int row, const int col)
 {
     if (row != -1)
     {
@@ -281,7 +281,7 @@ void Win32BaseDriver::move_cursor(int row, int col)
     m_cursor_shown = true;
 }
 
-void Win32BaseDriver::set_attr(int row, int col, int attr, int count)
+void Win32BaseDriver::set_attr(const int row, const int col, const int attr, const int count)
 {
     if (-1 != row)
     {
@@ -352,7 +352,7 @@ int Win32BaseDriver::init_fm()
     return 0;
 }
 
-void Win32BaseDriver::buzzer(Buzzer kind)
+void Win32BaseDriver::buzzer(const Buzzer kind)
 {
     UINT beep{MB_OK};
     switch (kind)
@@ -391,7 +391,7 @@ bool Win32BaseDriver::is_disk() const
     return false;
 }
 
-int Win32BaseDriver::key_cursor(int row, int col)
+int Win32BaseDriver::key_cursor(const int row, const int col)
 {
     ODS2("Win32BaseDriver::key_cursor %d,%d", row, col);
     if (-1 != row)
@@ -422,7 +422,7 @@ int Win32BaseDriver::key_cursor(int row, int col)
     return result;
 }
 
-int Win32BaseDriver::wait_key_pressed(bool timeout)
+int Win32BaseDriver::wait_key_pressed(const bool timeout)
 {
     int count = 10;
     while (!key_pressed())
@@ -447,12 +447,12 @@ int Win32BaseDriver::get_char_attr()
     return m_win_text.get_char_attr(g_text_row, g_text_col);
 }
 
-void Win32BaseDriver::put_char_attr(int char_attr)
+void Win32BaseDriver::put_char_attr(const int char_attr)
 {
     m_win_text.put_char_attr(g_text_row, g_text_col, char_attr);
 }
 
-void Win32BaseDriver::delay(int ms)
+void Win32BaseDriver::delay(const int ms)
 {
     g_frame.pump_messages(false);
     if (ms >= 0)
@@ -471,7 +471,7 @@ void Win32BaseDriver::put_true_color(int x, int y, int r, int g, int b, int a)
     _ASSERTE(0 && "Win32BaseDriver::put_truecolor called.");
 }
 
-void Win32BaseDriver::set_keyboard_timeout(int ms)
+void Win32BaseDriver::set_keyboard_timeout(const int ms)
 {
     g_frame.set_keyboard_timeout(ms);
 }

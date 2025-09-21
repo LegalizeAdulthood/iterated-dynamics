@@ -35,7 +35,7 @@ IdFrame::IdFrame() :
     Bind(wxEVT_CHAR, &IdFrame::on_char, this, wxID_ANY);
 }
 
-int IdFrame::get_key_press(bool wait_for_key)
+int IdFrame::get_key_press(const bool wait_for_key)
 {
     wxGetApp().pump_messages(wait_for_key);
     if (wait_for_key && m_timed_out)
@@ -75,7 +75,7 @@ void IdFrame::on_char(wxKeyEvent &event)
     int key = event.GetKeyCode();
 }
 
-void IdFrame::add_key_press(unsigned int key)
+void IdFrame::add_key_press(const unsigned int key)
 {
     if (key_buffer_full())
     {

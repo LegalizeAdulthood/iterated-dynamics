@@ -277,7 +277,7 @@ int SolidGuess::scan()
     return 0;
 }
 
-static int calc_a_dot(int x, int y)
+static int calc_a_dot(const int x, const int y)
 {
     g_col = x;
     g_row = y;
@@ -653,14 +653,14 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
     return false;
 }
 
-void SolidGuess::fill_d_stack(int x1, int x2, Byte value)
+void SolidGuess::fill_d_stack(const int x1, const int x2, const Byte value)
 {
     const int begin = std::min(x1, x2);
     const int end = std::max(x1, x2);
     std::fill(&m_stack[begin], &m_stack[end], value);
 }
 
-void SolidGuess::plot_block(int build_row, int x, int y, int color)
+void SolidGuess::plot_block(const int build_row, const int x, int y, const int color)
 {
     int x_lim = x + m_half_block;
     if (x_lim > g_i_stop_pt.x)

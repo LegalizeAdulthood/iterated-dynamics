@@ -382,7 +382,7 @@ int tesseral()
     return 0;
 }
 
-static int tess_check_col(int x, int y1, int y2)
+static int tess_check_col(const int x, int y1, int y2)
 {
     const int i = get_color(x, ++y1);
     while (--y2 > y1)
@@ -395,7 +395,7 @@ static int tess_check_col(int x, int y1, int y2)
     return i;
 }
 
-static int tess_check_row(int x1, int x2, int y)
+static int tess_check_row(const int x1, int x2, const int y)
 {
     const int i = get_color(x1, y);
     while (x2 > x1)
@@ -409,7 +409,7 @@ static int tess_check_row(int x1, int x2, int y)
     return i;
 }
 
-static int tess_col(int x, int y1, int y2)
+static int tess_col(const int x, const int y1, const int y2)
 {
     g_col = x;
     g_row = y1;
@@ -433,7 +433,7 @@ static int tess_col(int x, int y1, int y2)
     return col_color;
 }
 
-static int tess_row(int x1, int x2, int y)
+static int tess_row(const int x1, const int x2, const int y)
 {
     g_row = y;
     g_col = x1;

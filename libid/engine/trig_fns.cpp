@@ -124,7 +124,7 @@ void trig_details(char *buf)
 }
 
 // set array of trig function indices according to "function=" command
-int set_trig_array(int k, const char *name)
+int set_trig_array(const int k, const char *name)
 {
     char trig_name[10];
     std::strncpy(trig_name, name, 6);
@@ -150,7 +150,7 @@ int set_trig_array(int k, const char *name)
     return 0;
 }
 
-void set_trig_pointers(int which)
+void set_trig_pointers(const int which)
 {
     // set trig variable functions to avoid array lookup time
     switch (which)

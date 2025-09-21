@@ -224,7 +224,7 @@ void BifurcationPeriod::init()
 
 // Bifurcation Population Periodicity Check
 // Returns : true if periodicity found, else false
-bool BifurcationPeriod::periodic(long time)
+bool BifurcationPeriod::periodic(const long time)
 {
     if ((time & saved_and) == 0)      // time to save a new value
     {

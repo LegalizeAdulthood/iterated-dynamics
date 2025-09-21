@@ -24,7 +24,7 @@ using namespace id::misc;
 namespace id::ui
 {
 
-static void blank_rows(int row, int count, int attr)
+static void blank_rows(int row, int count, const int attr)
 {
     char buf[81];
     std::memset(buf, ' ', 80);
@@ -50,7 +50,7 @@ static void blank_rows(int row, int count, int attr)
        &8 for parser - use a fixed pitch font
       &16 for info only message (green box instead of red in DOS vsn)
    */
-bool stop_msg(StopMsgFlags flags, const std::string &msg)
+bool stop_msg(const StopMsgFlags flags, const std::string &msg)
 {
     int top_row;
     static bool batch_mode = false;

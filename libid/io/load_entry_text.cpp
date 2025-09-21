@@ -5,7 +5,7 @@
 namespace id::io
 {
 
-static bool skip_starting_rows(std::FILE *entry_file, int start_row)
+static bool skip_starting_rows(std::FILE *entry_file, const int start_row)
 {
     bool comment = false;
     int c;
@@ -38,9 +38,7 @@ static bool skip_starting_rows(std::FILE *entry_file, int start_row)
 void load_entry_text(
     std::FILE *entry_file,
     char *buf,
-    int max_lines,
-    int start_row,
-    int start_col)
+    int max_lines, const int start_row, const int start_col)
 {
     if (max_lines <= 0)
     {

@@ -20,11 +20,11 @@ enum
 
 struct Screen
 {
-    char &chars(int row, int col)
+    char &chars(const int row, const int col)
     {
         return m_chars[row * WINTEXT_MAX_COL + col];
     }
-    Byte &attrs(int row, int col)
+    Byte &attrs(const int row, const int col)
     {
         return m_attrs[row * WINTEXT_MAX_COL + col];
     }
@@ -54,7 +54,7 @@ public:
     int get_char_attr(int row, int col);
     void put_char_attr(int row, int col, int char_attr);
     void resume();
-    void set_parent(HWND parent)
+    void set_parent(const HWND parent)
     {
         m_parent = parent;
     }

@@ -143,7 +143,7 @@ static bool equal(const std::int16_t (&lhs)[N], const std::int16_t (&rhs)[N])
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs));
 }
 
-static bool within_eps(double lhs, double rhs)
+static bool within_eps(const double lhs, const double rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
 }
@@ -265,7 +265,7 @@ void restore_param_history()
 }
 
 // routine to vary doubles
-void vary_dbl(GeneBase gene[], int rand_val, int i)
+void vary_dbl(GeneBase gene[], const int rand_val, const int i)
 {
     const int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (gene[i].mutate)
@@ -299,7 +299,7 @@ void vary_dbl(GeneBase gene[], int rand_val, int i)
     }
 }
 
-static int vary_int(int rand_value, int limit, Variations mode)
+static int vary_int(const int rand_value, const int limit, const Variations mode)
 {
     int ret = 0;
     const int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
@@ -337,13 +337,13 @@ static int vary_int(int rand_value, int limit, Variations mode)
     return ret;
 }
 
-int wrapped_positive_vary_int(int rand_value, int limit, Variations mode)
+int wrapped_positive_vary_int(const int rand_value, const int limit, const Variations mode)
 {
     const int i = vary_int(rand_value, limit, mode);
     return i < 0 ? limit + i : i;
 }
 
-void vary_inside(GeneBase gene[], int rand_val, int i)
+void vary_inside(GeneBase gene[], const int rand_val, const int i)
 {
     constexpr int choices[9] = { ZMAG, BOF60, BOF61, EPS_CROSS, STAR_TRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate != Variations::NONE)
@@ -352,7 +352,7 @@ void vary_inside(GeneBase gene[], int rand_val, int i)
     }
 }
 
-void vary_outside(GeneBase gene[], int rand_val, int i)
+void vary_outside(GeneBase gene[], const int rand_val, const int i)
 {
     constexpr int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate != Variations::NONE)
@@ -361,7 +361,7 @@ void vary_outside(GeneBase gene[], int rand_val, int i)
     }
 }
 
-void vary_bo_test(GeneBase gene[], int rand_val, int i)
+void vary_bo_test(GeneBase gene[], const int rand_val, const int i)
 {
     constexpr int choices[7] =
     {
@@ -381,7 +381,7 @@ void vary_bo_test(GeneBase gene[], int rand_val, int i)
     }
 }
 
-void vary_pwr2(GeneBase gene[], int rand_val, int i)
+void vary_pwr2(GeneBase gene[], const int rand_val, const int i)
 {
     int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
     if (gene[i].mutate != Variations::NONE)
@@ -390,7 +390,7 @@ void vary_pwr2(GeneBase gene[], int rand_val, int i)
     }
 }
 
-void vary_trig(GeneBase gene[], int rand_val, int i)
+void vary_trig(GeneBase gene[], const int rand_val, const int i)
 {
     if (gene[i].mutate != Variations::NONE)
     {
@@ -400,7 +400,7 @@ void vary_trig(GeneBase gene[], int rand_val, int i)
     set_trig_pointers(5); //set all trig ptrs up
 }
 
-void vary_inv(GeneBase gene[], int rand_val, int i)
+void vary_inv(GeneBase gene[], const int rand_val, const int i)
 {
     if (gene[i].mutate != Variations::NONE)
     {
@@ -646,7 +646,7 @@ choose_vars_restart:
     return 1; // if you were here, you want to regenerate
 }
 
-void set_mutation_level(int strength)
+void set_mutation_level(const int strength)
 {
     // scan through the gene array turning on random variation for all parms that
     // are suitable for this level of mutation
@@ -884,7 +884,7 @@ void set_current_params()
     g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
 }
 
-void fiddle_params(GeneBase gene[], int count)
+void fiddle_params(GeneBase gene[], const int count)
 {
     // call with px, py ... parameter set co-ords
     // set random seed then call rnd enough times to get to px, py
@@ -914,7 +914,7 @@ void fiddle_params(GeneBase gene[], int count)
     }
 }
 
-static void set_random(int count)
+static void set_random(const int count)
 {
     // This must be called with ecount set correctly for the spiral map.
     // Call this routine to set the random # to the proper value
@@ -939,7 +939,7 @@ static bool explore_check()
         { return gene.mutate != Variations::NONE && gene.mutate < Variations::RANDOM; });
 }
 
-void draw_param_box(int mode)
+void draw_param_box(const int mode)
 {
     // draws parameter zoom box in evolver mode
     // clears boxes off-screen if mode = 1, otherwise, redraws boxes
@@ -1033,7 +1033,7 @@ void set_evolve_ranges()
     g_evolve_new_discrete_y_parameter_offset = static_cast<char>(g_evolve_discrete_y_parameter_offset + (delta_y - g_evolve_image_grid_size / 2));
 }
 
-void spiral_map(int count)
+void spiral_map(const int count)
 {
     // maps out a clockwise spiral for a prettier and possibly
     // more intuitively useful order of drawing the sub images.

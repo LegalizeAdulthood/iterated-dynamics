@@ -9,7 +9,7 @@ namespace id::io
 {
 
 std::string trim_filename(const std::string &filename, int length);
-inline std::string trim_filename(const std::filesystem::path &filename, int length)
+inline std::string trim_filename(const std::filesystem::path &filename, const int length)
 {
     return trim_filename(filename.string(), length);
 }

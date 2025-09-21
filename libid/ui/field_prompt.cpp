@@ -20,7 +20,7 @@ namespace id::ui
 int field_prompt(const char *hdg, // heading, \n delimited lines
     const char *instr,            // additional instructions or nullptr
     char *fld,                    // the field itself
-    int len,                      // field length (declare as 1 larger for \0)
+    const int len,                // field length (declare as 1 larger for \0)
     int (*check_key)(int key)     // routine to check non data keys, or nullptr
 )
 {

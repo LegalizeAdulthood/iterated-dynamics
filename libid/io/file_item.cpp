@@ -44,7 +44,7 @@ namespace id::io
 
 constexpr int MAX_ENTRIES = 2000;
 
-static bool is_newline(int c)
+static bool is_newline(const int c)
 {
     return c == '\n' || c == '\r';
 }

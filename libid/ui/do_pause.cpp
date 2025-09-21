@@ -15,7 +15,7 @@ namespace id::ui
 {
 
 // defer pause until after parsing so we know if in batch mode
-void do_pause(int action)
+void do_pause(const int action)
 {
     static int need_pause{};
     switch (action)

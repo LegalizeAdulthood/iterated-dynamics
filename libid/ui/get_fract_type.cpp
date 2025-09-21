@@ -177,7 +177,7 @@ static FractalType select_fract_type(FractalType t)
     return g_fractal_specific[choices[done]->num].type;
 }
 
-static int sel_fract_type_help(int key, int choice)
+static int sel_fract_type_help(const int key, const int choice)
 {
     if (key == ID_KEY_F2)
     {
@@ -187,7 +187,7 @@ static int sel_fract_type_help(int key, int choice)
     return 0;
 }
 
-void set_fractal_default_functions(FractalType previous)
+void set_fractal_default_functions(const FractalType previous)
 {
     switch (g_fractal_type)
     {
@@ -279,7 +279,7 @@ private:
 } // namespace
 
 // prompt for new fractal type parameters; returns true on params accepted.
-static bool select_type_params(FractalType new_fract_type, FractalType old_fract_type)
+static bool select_type_params(const FractalType new_fract_type, const FractalType old_fract_type)
 {
     SaveFractalType saved_fractal_type;
 

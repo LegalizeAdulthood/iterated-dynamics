@@ -29,7 +29,7 @@ protected:
     WriteBatchData m_data{};
 };
 
-void TestPutEncodedColors::fill_dac_from_values(int count)
+void TestPutEncodedColors::fill_dac_from_values(const int count)
 {
     for (int i =0; i < count; ++i)
     {
@@ -39,14 +39,14 @@ void TestPutEncodedColors::fill_dac_from_values(int count)
     }
 }
 
-void TestPutEncodedColors::up_down_values(int count)
+void TestPutEncodedColors::up_down_values(const int count)
 {
     constexpr int up{0};
     const int down{static_cast<Byte>(count * 2 - 1)};
     up_down_values(count, up, down);
 }
 
-void TestPutEncodedColors::up_down_values(int count, int up, int down)
+void TestPutEncodedColors::up_down_values(const int count, int up, int down)
 {
     int offset{};
     for (int i = 0; i < count; ++i)
@@ -60,7 +60,7 @@ void TestPutEncodedColors::up_down_values(int count, int up, int down)
     }
 }
 
-void TestPutEncodedColors::iota4(int count)
+void TestPutEncodedColors::iota4(const int count)
 {
     std::generate_n(values.begin(), count,
         []

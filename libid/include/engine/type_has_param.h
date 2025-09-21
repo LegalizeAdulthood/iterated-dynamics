@@ -8,7 +8,7 @@ namespace id::engine
 {
 
 bool type_has_param(fractals::FractalType type, int param, const char **prompt);
-inline bool type_has_param(fractals::FractalType type, int param)
+inline bool type_has_param(const fractals::FractalType type, const int param)
 {
     return type_has_param(type, param, nullptr);
 }

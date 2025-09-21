@@ -79,7 +79,7 @@ TEST(TestVideoMode, checkKeyFnKeyNoModes)
     EXPECT_EQ(-1, check_vid_mode_key(ID_KEY_ALT_F10));
 }
 
-static void push_modes(std::initializer_list<int> keys)
+static void push_modes(const std::initializer_list<int> keys)
 {
     for (const int key : keys)
     {

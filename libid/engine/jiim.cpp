@@ -119,7 +119,7 @@ static void set_aspect(double aspect)
     }
 }
 
-static void c_put_color(int x, int y, int color)
+static void c_put_color(const int x, const int y, const int color)
 {
     // avoid writing outside window
     if (x < s_corner_x || y < s_corner_y || x >= s_corner_x + s_win_width || y >= s_corner_y + s_win_height)
@@ -140,7 +140,7 @@ static void c_put_color(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-static int c_get_color(int x, int y)
+static int c_get_color(const int x, const int y)
 {
     // avoid reading outside window
     if (x < s_corner_x || y < s_corner_y || x >= s_corner_x + s_win_width || y >= s_corner_y + s_win_height)
@@ -161,7 +161,7 @@ static int c_get_color(int x, int y)
     return get_color(x, y);
 }
 
-static void circle_plot(int x, int y, int color)
+static void circle_plot(const int x, const int y, const int color)
 {
     if (s_x_aspect == 0)
     {
@@ -185,7 +185,7 @@ static void circle_plot(int x, int y, int color)
     }
 }
 
-static void plot8(int x, int y, int color)
+static void plot8(const int x, const int y, const int color)
 {
     circle_plot(x, y, color);
     circle_plot(-x, y, color);
@@ -197,7 +197,7 @@ static void plot8(int x, int y, int color)
     circle_plot(-y, -x, color);
 }
 
-static void circle(int radius, int color)
+static void circle(const int radius, const int color)
 {
     int x = 0;
     int y = radius << 1;
@@ -224,7 +224,7 @@ static void circle(int radius, int color)
 // Global variables and service functions used for computing
 // MIIM Julias will be grouped here (and shared by code in LORENZ.C)
 //
-static void fill_rect(int x, int y, int width, int depth, int color)
+static void fill_rect(const int x, int y, const int width, int depth, const int color)
 {
     // fast version of fillrect
     if (!g_has_inverse)
@@ -261,7 +261,7 @@ void clear_queue()
 }
 
 // Queue functions for MIIM julia:
-bool init_queue(unsigned long request)
+bool init_queue(const unsigned long request)
 {
     if (driver_is_disk())
     {
@@ -350,7 +350,7 @@ DComplex pop_float()
     return pop;
 }
 
-int enqueue_float(float x, float y)
+int enqueue_float(const float x, const float y)
 {
     return push_float(x, y);
 }
@@ -378,7 +378,7 @@ DComplex dequeue_float()
     return out;
 }
 
-static void save_rect(int x, int y, int width, int depth)
+static void save_rect(const int x, const int y, const int width, const int depth)
 {
     if (!g_has_inverse)
     {
@@ -397,7 +397,7 @@ static void save_rect(int x, int y, int width, int depth)
     s_cursor.show();
 }
 
-static void restore_rect(int x, int y, int width, int depth)
+static void restore_rect(const int x, const int y, const int width, const int depth)
 {
     if (!g_has_inverse)
     {
@@ -422,23 +422,23 @@ enum class OrbitFlags
     LINE = 2
 };
 
-int operator+(OrbitFlags value)
+int operator+(const OrbitFlags value)
 {
     return static_cast<int>(value);
 }
-OrbitFlags operator&(OrbitFlags lhs, OrbitFlags rhs)
+OrbitFlags operator&(const OrbitFlags lhs, const OrbitFlags rhs)
 {
     return static_cast<OrbitFlags>(+lhs & +rhs);
 }
-bool bit_set(OrbitFlags value, OrbitFlags bit)
+bool bit_set(const OrbitFlags value, const OrbitFlags bit)
 {
     return (value & bit) == bit;
 }
-OrbitFlags operator^(OrbitFlags lhs, OrbitFlags rhs)
+OrbitFlags operator^(const OrbitFlags lhs, const OrbitFlags rhs)
 {
     return static_cast<OrbitFlags>(+lhs ^ +rhs);
 }
-OrbitFlags &operator^=(OrbitFlags &lhs, OrbitFlags rhs)
+OrbitFlags &operator^=(OrbitFlags &lhs, const OrbitFlags rhs)
 {
     lhs = lhs ^ rhs;
     return lhs;
@@ -452,7 +452,7 @@ public:
     void move(int x, int y, int key_flags) override;
 };
 
-void InverseJuliaMouseNotification::move(int x, int y, int key_flags)
+void InverseJuliaMouseNotification::move(const int x, const int y, const int key_flags)
 {
     s_cursor.set_pos(x, y);
     NullMouseNotification::move(x, y, key_flags);
@@ -508,7 +508,7 @@ OrbitFlags InverseJulia::s_mode{};
 int InverseJulia::s_ran_dir{};
 int InverseJulia::s_ran_cnt{};
 
-InverseJulia::InverseJulia(JIIMType which) :
+InverseJulia::InverseJulia(const JIIMType which) :
     m_which(which)
 {
     find_special_colors();
@@ -1354,7 +1354,7 @@ void InverseJulia::process()
 
 } // namespace
 
-void jiim(JIIMType which)
+void jiim(const JIIMType which)
 {
     // must use standard fractal or be calcfroth
     if (g_cur_fractal_specific->calc_type != standard_fractal_type &&

@@ -33,7 +33,7 @@ constexpr double FROTH_CRITICAL_A{1.028713768218725};   // 1.0287137682187249127
 
 FrothyBasin g_frothy_basin{};
 
-double FrothyBasin::top_x_mapping(double x)
+double FrothyBasin::top_x_mapping(const double x)
 {
     return x * x - x -3 * m_a * m_a / 4;
 }

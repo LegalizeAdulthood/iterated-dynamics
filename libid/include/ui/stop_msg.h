@@ -18,15 +18,15 @@ enum class StopMsgFlags
     INFO_ONLY   = 16
 };
 
-inline int operator+(StopMsgFlags value)
+inline int operator+(const StopMsgFlags value)
 {
     return static_cast<int>(value);
 }
-inline StopMsgFlags operator|(StopMsgFlags lhs, StopMsgFlags rhs)
+inline StopMsgFlags operator|(const StopMsgFlags lhs, const StopMsgFlags rhs)
 {
     return static_cast<StopMsgFlags>(+lhs | +rhs);
 }
-inline bool bit_set(StopMsgFlags flags, StopMsgFlags bit)
+inline bool bit_set(const StopMsgFlags flags, const StopMsgFlags bit)
 {
     return (+flags & +bit) == +bit;
 }

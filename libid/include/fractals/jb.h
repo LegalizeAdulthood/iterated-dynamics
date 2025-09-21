@@ -15,7 +15,7 @@ enum class Julibrot3DMode
     RED_BLUE = 3
 };
 
-constexpr const char *to_string(Julibrot3DMode value)
+constexpr const char *to_string(const Julibrot3DMode value)
 {
     switch (value)
     {

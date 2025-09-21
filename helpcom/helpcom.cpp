@@ -25,7 +25,7 @@ bool is_hyphen(const char *ptr)   /* true if ptr points to a real hyphen */
     return *ptr != ' ' && *ptr != '-';
 }
 
-static TokenType find_token_length(const char *curr, unsigned len, int *ret_size, int *ret_width)
+static TokenType find_token_length(const char *curr, const unsigned len, int *ret_size, int *ret_width)
 {
     int size{};
     int width{};
@@ -169,7 +169,7 @@ static TokenType find_token_length(const char *curr, unsigned len, int *ret_size
 }
 
 TokenType find_token_length(
-    TokenMode mode, const char *curr, unsigned int len, int *ret_size, int *ret_width)
+    const TokenMode mode, const char *curr, unsigned int len, int *ret_size, int *ret_width)
 {
     int t;
     TokenType tok = find_token_length(curr, len, &t, ret_width);
@@ -213,7 +213,7 @@ TokenType find_token_length(
     return tok;
 }
 
-int find_line_width(TokenMode mode, const char *curr, unsigned len)
+int find_line_width(const TokenMode mode, const char *curr, unsigned len)
 {
     int size   = 0;
     int width  = 0;
@@ -256,7 +256,8 @@ namespace
 class DocumentProcessor
 {
 public:
-    DocumentProcessor(TokenMode mode, bool paginate, PrintDocFn *get_info, PrintDocFn *output, void *info) :
+    DocumentProcessor(
+        const TokenMode mode, const bool paginate, PrintDocFn *get_info, PrintDocFn *output, void *info) :
         m_token_mode(mode),
         m_get_info(get_info),
         m_output(output),
@@ -326,13 +327,13 @@ private:
     {
         return m_get_info(PrintDocCommand::PD_RELEASE_TOPIC, &m_pd, m_info);
     }
-    bool print(const char *str, int n)
+    bool print(const char *str, const int n)
     {
         m_pd.s = str;
         m_pd.i = n;
         return m_output(PrintDocCommand::PD_PRINT, &m_pd, m_info);
     }
-    bool print_n(char ch, int n)
+    bool print_n(const char ch, const int n)
     {
         m_pd.s = &ch;
         m_pd.i = n;
@@ -869,7 +870,8 @@ bool DocumentProcessor::topic_token()
 
 } // namespace
 
-bool process_document(TokenMode mode, bool paginate, PrintDocFn *get_info, PrintDocFn *output, void *info)
+bool process_document(
+    const TokenMode mode, const bool paginate, PrintDocFn *get_info, PrintDocFn *output, void *info)
 {
     return DocumentProcessor(mode, paginate, get_info, output, info).process();
 }

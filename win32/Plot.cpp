@@ -178,7 +178,7 @@ static const Byte FONT_8x8[8][1024/8] =
     }
 };
 
-void Plot::set_dirty_region(int x_min, int y_min, int x_max, int y_max)
+void Plot::set_dirty_region(const int x_min, const int y_min, const int x_max, const int y_max)
 {
     RECT *r = &m_dirty_region;
 
@@ -254,7 +254,7 @@ void Plot::init_pixels()
     }
 }
 
-void Plot::on_paint(HWND window)
+void Plot::on_paint(const HWND window)
 {
     PAINTSTRUCT ps;
     const HDC dc = BeginPaint(window, &ps);
@@ -272,47 +272,50 @@ void Plot::on_paint(HWND window)
     EndPaint(window, &ps);
 }
 
-static void plot_on_paint(HWND window)
+static void plot_on_paint(const HWND window)
 {
     s_plot->on_paint(window);
 }
 
-static void plot_on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void plot_on_primary_button_down(
+    const HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_primary_button_down(window, double_click, x, y, key_flags);
 }
 
-static void plot_on_primary_button_up(HWND window, int x, int y, UINT key_flags)
+static void plot_on_primary_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_primary_button_up(window, x, y, key_flags);
 }
 
-static void plot_on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void plot_on_secondary_button_down(
+    const HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_secondary_button_down(window, double_click, x, y, key_flags);
 }
 
-static void plot_on_secondary_button_up(HWND window, int x, int y, UINT key_flags)
+static void plot_on_secondary_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_secondary_button_up(window, x, y, key_flags);
 }
 
-static void plot_on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)
+static void plot_on_middle_button_down(
+    const HWND window, const BOOL double_click, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_middle_button_down(window, double_click, x, y, key_flags);
 }
 
-static void plot_on_middle_button_up(HWND window, int x, int y, UINT key_flags)
+static void plot_on_middle_button_up(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_middle_button_up(window, x, y, key_flags);
 }
 
-static void plot_on_mouse_move(HWND window, int x, int y, UINT key_flags)
+static void plot_on_mouse_move(const HWND window, const int x, const int y, const UINT key_flags)
 {
     g_frame.on_mouse_move(window, x, y, key_flags);
 }
 
-static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
+static LRESULT CALLBACK plot_proc(const HWND window, const UINT message, const WPARAM wp, const LPARAM lp)
 {
     _ASSERTE(s_plot != nullptr);
     switch (message)
@@ -368,7 +371,7 @@ static LRESULT CALLBACK plot_proc(HWND window, UINT message, WPARAM wp, LPARAM l
     return 0;
 }
 
-int Plot::init(HINSTANCE instance, LPCSTR title)
+int Plot::init(const HINSTANCE instance, const LPCSTR title)
 {
     WNDCLASS  wc;
 
@@ -427,7 +430,7 @@ void Plot::create_backing_store()
     SetBkMode(m_memory_dc, OPAQUE);
 }
 
-void Plot::create_window(HWND parent)
+void Plot::create_window(const HWND parent)
 {
     if (nullptr == m_window)
     {
@@ -449,7 +452,7 @@ void Plot::create_window(HWND parent)
     }
 }
 
-void Plot::write_pixel(int x, int y, int color)
+void Plot::write_pixel(const int x, const int y, const int color)
 {
     _ASSERTE(m_pixels.size() == m_width* m_height);
     if (x < 0 || x > m_width || y < 0 || y > m_height)
@@ -460,7 +463,7 @@ void Plot::write_pixel(int x, int y, int color)
     set_dirty_region(x, y, x+1, y+1);
 }
 
-int Plot::read_pixel(int x, int y)
+int Plot::read_pixel(const int x, const int y)
 {
     _ASSERTE(m_pixels.size() == m_width* m_height);
     if (x < 0 || x > m_width || y < 0 || y > m_height)
@@ -470,7 +473,7 @@ int Plot::read_pixel(int x, int y)
     return m_pixels[(m_height - 1 - y) * m_row_len + x];
 }
 
-void Plot::write_span(int y, int x, int last_x, const Byte *pixels)
+void Plot::write_span(const int y, const int x, const int last_x, const Byte *pixels)
 {
     const int width = last_x-x+1;
 
@@ -491,7 +494,7 @@ void Plot::flush()
     }
 }
 
-void Plot::read_span(int y, int x, int last_x, Byte *pixels)
+void Plot::read_span(const int y, const int x, const int last_x, Byte *pixels)
 {
     flush();
     const int width = last_x - x + 1;
@@ -505,7 +508,7 @@ void Plot::set_line_mode(int mode)
 {
 }
 
-void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
+void Plot::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
     geometry::draw_line(x1, y1, x2, y2, color);
 }
@@ -557,13 +560,13 @@ int Plot::write_palette()
     return 0;
 }
 
-static VOID CALLBACK redraw_window(HWND window, UINT msg, UINT_PTR /*id_event*/, DWORD time)
+static VOID CALLBACK redraw_window(const HWND window, UINT msg, UINT_PTR /*id_event*/, DWORD time)
 {
     InvalidateRect(window, nullptr, FALSE);
     KillTimer(window, PLOT_TIMER_ID);
 }
 
-void Plot::schedule_alarm(int secs)
+void Plot::schedule_alarm(const int secs)
 {
     UINT_PTR result = SetTimer(m_window, PLOT_TIMER_ID, secs, redraw_window);
     if (!result)
@@ -586,7 +589,7 @@ void Plot::redraw()
     InvalidateRect(m_window, nullptr, FALSE);
 }
 
-void Plot::display_string(int x, int y, int fg, int bg, const char *text)
+void Plot::display_string(int x, const int y, const int fg, const int bg, const char *text)
 {
     while (*text)
     {

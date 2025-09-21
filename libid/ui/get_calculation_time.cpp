@@ -9,7 +9,7 @@
 namespace id::ui
 {
 
-std::string get_calculation_time(long calc_time)
+std::string get_calculation_time(const long calc_time)
 {
     if (calc_time < 0)
     {

@@ -65,7 +65,7 @@ static void fix_work_list();
 static void move_row(int from_row, int to_row, int col);
 
 // big number declarations
-static void calc_corner(BigFloat target, BigFloat p1, double p2, BigFloat p3, double p4, BigFloat p5)
+static void calc_corner(BigFloat target, BigFloat p1, const double p2, BigFloat p3, const double p4, BigFloat p5)
 {
     BigStackSaver saved;
     const BigFloat b_tmp1 = alloc_stack(g_r_bf_length + 2);
@@ -131,7 +131,7 @@ void clear_box()
     }
 }
 
-void draw_box(bool draw_it)
+void draw_box(const bool draw_it)
 {
     if (g_zoom_box_width == 0.0)
     {
@@ -262,7 +262,7 @@ void draw_box(bool draw_it)
     }
 }
 
-void draw_lines(Coord fr, Coord to, int dx, int dy)
+void draw_lines(Coord fr, Coord to, const int dx, const int dy)
 {
     if (std::abs(to.x-fr.x) > std::abs(to.y-fr.y))
     {
@@ -354,7 +354,7 @@ void add_box(Coord point)
     }
 }
 
-void move_box(double dx, double dy)
+void move_box(const double dx, const double dy)
 {
     const int align = check_pan();
     if (dx != 0.0)
@@ -430,7 +430,7 @@ static void change_box(double delta_width, double delta_height)
     move_box(delta_width / -2.0, delta_height / -2.0); // keep it centered & check limits
 }
 
-void resize_box(int steps)
+void resize_box(const int steps)
 {
     double delta_x;
     double delta_y;
@@ -450,15 +450,15 @@ void resize_box(int steps)
 }
 
 // change size by pixels
-void change_box(int dw, int dh)
+void change_box(const int dw, const int dh)
 {
     change_box(dw / g_logical_screen_x_size_dots, dh / g_logical_screen_y_size_dots);
 }
 
 static void zoom_out_calc(BigFloat bf_dx, BigFloat bf_dy, //
-    BigFloat bf_new_x, BigFloat bf_new_y,                   //
-    BigFloat bf_plot_mx1, BigFloat bf_plot_mx2,             //
-    BigFloat bf_plot_my1, BigFloat bf_plot_my2,             //
+    BigFloat bf_new_x, BigFloat bf_new_y,                 //
+    BigFloat bf_plot_mx1, BigFloat bf_plot_mx2,           //
+    BigFloat bf_plot_my1, BigFloat bf_plot_my2,           //
     BigFloat bf_f_temp)
 {
     BigStackSaver saved;
@@ -506,7 +506,7 @@ static void zoom_out_calc(BigFloat bf_dx, BigFloat bf_dy, //
     add_a_bf(bf_new_y, b_tmp4a);
 }
 
-static void zoom_out_calc(double dx, double dy, double *new_x, double *new_y, double f_temp)
+static void zoom_out_calc(const double dx, const double dy, double *new_x, double *new_y, const double f_temp)
 {
     /* calc cur screen corner relative to zoombox, when zoombox co-ords
        are taken as (0,0) topleft through (1,1) bottom right */
@@ -610,7 +610,7 @@ void zoom_out() // for ctl-enter, calc corners for zooming out
     }
 }
 
-void aspect_ratio_crop(float old_aspect, float new_aspect)
+void aspect_ratio_crop(const float old_aspect, const float new_aspect)
 {
     double f_temp;
     double x_margin;
@@ -713,7 +713,7 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 }
 
 // move a row on the screen
-static void move_row(int from_row, int to_row, int col)
+static void move_row(const int from_row, const int to_row, const int col)
 {
     std::vector<Byte> temp(g_logical_screen_x_dots, 0);
     if (from_row >= 0 && from_row < g_logical_screen_y_dots)
@@ -736,7 +736,7 @@ static void move_row(int from_row, int to_row, int col)
 }
 
 // decide to recalc, or to chg worklist & pan
-void init_pan_or_recalc(bool do_zoom_out)
+void init_pan_or_recalc(const bool do_zoom_out)
 {
     // no zoombox, leave g_calc_status as is
     if (g_zoom_box_width == 0.0)
@@ -855,7 +855,7 @@ void init_pan_or_recalc(bool do_zoom_out)
 }
 
 // force a worklist entry to restart
-static void restart_window(int index)
+static void restart_window(const int index)
 {
     const int y_start = std::max(0, g_work_list[index].start.y);
     const int x_start = std::max(0, g_work_list[index].start.x);

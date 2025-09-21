@@ -67,7 +67,7 @@ void add_read_library(fs::path path)
     s_read_libraries.emplace_back(std::move(path));
 }
 
-fs::path find_file(ReadFile kind, const fs::path &file_path)
+fs::path find_file(const ReadFile kind, const fs::path &file_path)
 {
     if (file_path.is_absolute() && fs::exists(file_path))
     {
@@ -207,7 +207,7 @@ static const char *file_extension(WriteFile kind)
     throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));
 }
 
-fs::path get_save_path(WriteFile kind, const std::string &filename)
+fs::path get_save_path(const WriteFile kind, const std::string &filename)
 {
     fs::path result = (s_save_library.empty() ? g_save_dir : s_save_library) / subdir(kind);
     if (!fs::exists(result))
@@ -302,7 +302,7 @@ fs::path find_wildcard_next()
     return {};
 }
 
-fs::path find_wildcard_first(ReadFile kind, const std::string &wildcard)
+fs::path find_wildcard_first(const ReadFile kind, const std::string &wildcard)
 {
     s_wildcard.subdirs = true;
     s_wildcard.kind = kind;

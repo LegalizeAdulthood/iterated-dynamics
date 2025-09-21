@@ -174,7 +174,7 @@ int julibrot_per_pixel()
     return 1;
 }
 
-static void z_line(double x, double y)
+static void z_line(const double x, const double y)
 {
     s_jb.x_pixel = x;
     s_jb.y_pixel = y;

@@ -40,7 +40,7 @@ int check_vid_mode_key_name(const char *key_name);
 // set buffer to name of passed key number
 void vid_mode_key_name(int key, char *buffer);
 
-inline std::string vid_mode_key_name(int key)
+inline std::string vid_mode_key_name(const int key)
 {
     char buffer[16];
     vid_mode_key_name(key, buffer);

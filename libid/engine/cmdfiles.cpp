@@ -347,7 +347,7 @@ static void process_file(char *cur_arg)
     command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME);
 }
 
-void cmd_files(int argc, const char *const *argv)
+void cmd_files(const int argc, const char *const *argv)
 {
     if (g_first_init)
     {
@@ -638,7 +638,7 @@ static void reset_ifs_definition()
 //        AT_CMD_LINE_SET_NAME  command line @filename/setname
 // note that cmdfile could be open as text OR as binary.
 // binary is used in @ command processing for reasonable speed note/point
-static CmdArgFlags command_file(std::FILE *handle, CmdFile mode)
+static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
 {
     if (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
     {
@@ -679,12 +679,7 @@ static CmdArgFlags command_file(std::FILE *handle, CmdFile mode)
 }
 
 static int next_command(
-    char *cmd_buf,
-    int max_len,
-    std::FILE *handle,
-    char *line_buf,
-    int *line_offset,
-    CmdFile mode)
+    char *cmd_buf, const int max_len, std::FILE *handle, char *line_buf, int *line_offset, const CmdFile mode)
 {
     int cmd_len{};
     char *line_ptr = line_buf + *line_offset;
@@ -761,7 +756,7 @@ static int next_command(
     }
 }
 
-static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode)
+static bool next_line(std::FILE *handle, char *line_buf, const CmdFile mode)
 {
     bool tools_section = true;
     while (file_gets(line_buf, 512, handle) >= 0)
@@ -850,7 +845,7 @@ struct Command
     CmdArgFlags status{CmdArgFlags::NONE};
 };
 
-Command::Command(char *cur_arg, CmdFile a_mode) :
+Command::Command(char *cur_arg, const CmdFile a_mode) :
     arg(cur_arg),
     mode(a_mode),
     value(std::strchr(&cur_arg[1], '='))
@@ -1585,7 +1580,7 @@ static CmdArgFlags cmd_coarse(const Command &cmd)
     return CmdArgFlags::PARAM_3D;
 }
 
-static int decode_hex_digit(int ch)
+static int decode_hex_digit(const int ch)
 {
     static constexpr char HEX_DIGITS[]{"0123456789abcdef"};
     const char *pos = std::strchr(HEX_DIGITS, std::tolower(ch));
@@ -4058,7 +4053,7 @@ static std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
 //
-CmdArgFlags cmd_arg(char *cur_arg, CmdFile mode) // process a single argument
+CmdArgFlags cmd_arg(char *cur_arg, const CmdFile mode) // process a single argument
 {
     Command cmd{cur_arg, mode};
     if (cmd.status != CmdArgFlags::NONE)
@@ -4176,7 +4171,7 @@ static int get_cur_arg_len(const char *cur_arg)
 }
 
 // Get max length of current args
-static int get_max_cur_arg_len(const char *const float_val_str[], int num_args)
+static int get_max_cur_arg_len(const char *const float_val_str[], const int num_args)
 {
     int max_str = 0;
     for (int i = 0; i < num_args; i++)
@@ -4199,7 +4194,7 @@ static std::string to_string(CmdFile value)
 //        3 command line @filename/setname
 // this is like stopmsg() but can be used in cmdfiles()
 // call with NULL for badfilename to get pause for driver_get_key()
-int init_msg(const char *cmd_str, const char *bad_filename, CmdFile mode)
+int init_msg(const char *cmd_str, const char *bad_filename, const CmdFile mode)
 {
     static int row = 1;
 

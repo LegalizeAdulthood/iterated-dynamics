@@ -226,7 +226,7 @@ extern double                g_orbit_corner_min_y;
 extern long                  g_orbit_interval;
 extern bool                  g_set_orbit_corners;
 
-constexpr const char *to_string(Major value)
+constexpr const char *to_string(const Major value)
 {
     switch(value)
     {
@@ -242,7 +242,7 @@ constexpr const char *to_string(Major value)
     }
 }
 
-constexpr const char *to_string(Minor value)
+constexpr const char *to_string(const Minor value)
 {
     return value == Minor::LEFT_FIRST ? "left" : "right";
 }

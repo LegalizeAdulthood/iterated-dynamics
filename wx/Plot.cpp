@@ -120,7 +120,7 @@ Plot::Plot()
     init();
 }
 
-Plot::Plot(wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style) :
+Plot::Plot(wxWindow *parent, const wxWindowID id, const wxPoint &pos, const wxSize &size, const long style) :
     wxControl(parent, id, pos, size, style),
     m_width(size.GetWidth()),
     m_height(size.GetHeight()),
@@ -148,7 +148,7 @@ void Plot::on_paint(wxPaintEvent &event)
     dc.DrawBitmap(m_rendering, 0, 0, false);
 }
 
-void Plot::write_pixel(int x, int y, int color)
+void Plot::write_pixel(int x, int y, const int color)
 {
     if (x < 0 || x > m_width || y < 0 || y > m_height)
     {
@@ -169,7 +169,7 @@ void Plot::write_pixel(int x, int y, int color)
     set_dirty_region({x, y, 1, 1});
 }
 
-int Plot::read_pixel(int x, int y)
+int Plot::read_pixel(const int x, const int y)
 {
     assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
     if (x < 0 || x > m_width || y < 0 || y > m_height)
@@ -179,7 +179,7 @@ int Plot::read_pixel(int x, int y)
     return m_pixels[(m_height - 1 - y) * m_width + x];
 }
 
-void Plot::write_span(int y, int x, int last_x, const Byte *pixels)
+void Plot::write_span(int y, int x, const int last_x, const Byte *pixels)
 {
     if (x < 0 || x >= m_width || y < 0 || y >= m_height || last_x < x || last_x >= m_width)
     {
@@ -220,7 +220,7 @@ void Plot::flush()
     }
 }
 
-void Plot::read_span(int y, int x, int last_x, Byte *pixels)
+void Plot::read_span(const int y, const int x, const int last_x, Byte *pixels)
 {
     flush();
     const int width = last_x - x + 1;
@@ -290,7 +290,7 @@ void Plot::redraw()
     Refresh(false);
 }
 
-void Plot::display_string(int x, int y, int fg, int bg, const char *text)
+void Plot::display_string(const int x, const int y, const int fg, const int bg, const char *text)
 {
     wxClientDC dc(this);
     dc.SetFont(m_font);
@@ -313,7 +313,7 @@ void Plot::restore_graphics()
     redraw();
 }
 
-void Plot::DoSetSize(int x, int y, int width, int height, int sizeFlags)
+void Plot::DoSetSize(const int x, const int y, int width, int height, const int sizeFlags)
 {
     // Ignore any size changes and use fixed size based on m_width and m_height
     wxControl::DoSetSize(x, y, m_width, m_height, sizeFlags | wxSIZE_FORCE);

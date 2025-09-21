@@ -64,8 +64,7 @@ static void plot3d_superimpose256(int x, int y, int color);
 static void plot_ifs3d_superimpose256(int x, int y, int color);
 
 // Bresenham's algorithm for drawing line
-void draw_line(int x1, int y1, int x2, int y2, int color)
-
+void draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
     // uses Bresenham algorithm to draw a line
     // vector components
@@ -189,7 +188,7 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
     }
 }   // draw_line
 
-static void plot3d_superimpose16(int x, int y, int /*color*/)
+static void plot3d_superimpose16(const int x, const int y, const int /*color*/)
 {
     const int tmp = get_color(x, y);
 
@@ -227,7 +226,7 @@ static void plot3d_superimpose16(int x, int y, int /*color*/)
     }
 }
 
-static void plot3d_superimpose256(int x, int y, int color)
+static void plot3d_superimpose256(const int x, const int y, int color)
 {
     int tmp;
 
@@ -283,7 +282,7 @@ static void plot3d_superimpose256(int x, int y, int color)
     }
 }
 
-static void plot_ifs3d_superimpose256(int x, int y, int color)
+static void plot_ifs3d_superimpose256(const int x, const int y, int color)
 {
     int tmp;
 
@@ -338,7 +337,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
     }
 }
 
-static void plot3d_alternate(int x, int y, int color)
+static void plot3d_alternate(const int x, const int y, int color)
 {
     const Byte t_c = static_cast<Byte>(255 - color);
     // low res high color red/blue 3D plot function
@@ -384,7 +383,7 @@ static void plot3d_alternate(int x, int y, int color)
     }
 }
 
-static void plot3d_cross_eyed_a(int x, int y, int color)
+static void plot3d_cross_eyed_a(int x, int y, const int color)
 {
     x /= 2;
     y /= 2;
@@ -403,7 +402,7 @@ static void plot3d_cross_eyed_a(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-static void plot3d_cross_eyed_b(int x, int y, int color)
+static void plot3d_cross_eyed_b(int x, int y, const int color)
 {
     x /= 2;
     y /= 2;
@@ -414,7 +413,7 @@ static void plot3d_cross_eyed_b(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-static void plot3d_cross_eyed_c(int x, int y, int color)
+static void plot3d_cross_eyed_c(const int x, const int y, const int color)
 {
     if (g_row_count >= g_logical_screen_y_dots/2)
     {

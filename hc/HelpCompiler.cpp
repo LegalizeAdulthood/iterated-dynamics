@@ -383,7 +383,7 @@ void HelpCompiler::paginate_online()    // paginate the text for on-line help
     } // for
 }
 
-static Label *find_next_label_by_topic(int t)
+static Label *find_next_label_by_topic(const int t)
 {
     Label *g = nullptr;
     for (Label &l : g_src.labels)
@@ -487,7 +487,7 @@ void HelpCompiler::set_content_doc_page()
 }
 
 // this function also used by print_document()
-static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool pd_get_info(const PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     DocInfo &info = *static_cast<DocInfo *>(context);
     const Content *c;
@@ -545,7 +545,7 @@ static bool pd_get_info(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *cont
     }
 }
 
-static bool paginate_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool paginate_doc_output(const PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PaginateDocIno *info = static_cast<PaginateDocIno *>(context);
     switch (cmd)
@@ -805,7 +805,7 @@ void HelpCompiler::write_link_source()
                 text.erase(pos, 1);
             }
             std::transform(text.begin(), text.end(), text.begin(),
-                [](char c)
+                [](const char c)
                 {
                     const unsigned char test = static_cast<unsigned char>(c);
                     return std::isalnum(test) ? static_cast<char>(std::tolower(test)) : '_';
@@ -1000,7 +1000,7 @@ void HelpCompiler::write_help()
     std::fclose(hlp);
 }
 
-static void printer_ch(PrintDocInfo *info, int c, int n)
+static void printer_ch(PrintDocInfo *info, const int c, int n)
 {
     while (n-- > 0)
     {
@@ -1060,7 +1060,7 @@ static std::string version_header()
     return std::string(indent, ' ') + heading + std::string(field_width - indent - heading.size(), ' ');
 }
 
-static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
+static bool print_doc_output(const PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
     PrintDocInfo *info = static_cast<PrintDocInfo *>(context);
     switch (cmd)

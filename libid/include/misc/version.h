@@ -22,7 +22,7 @@ extern const int             g_patch_level;
 extern int                   g_release;
 extern Version               g_version;
 
-inline Version id_version(int major, int minor)
+inline Version id_version(const int major, const int minor)
 {
     return Version{major, minor, 0, 0, false};
 }
@@ -60,7 +60,7 @@ inline bool operator>(const Version &lhs, const Version &rhs)
     return rhs < lhs;
 }
 
-inline bool operator<(const Version &lhs, int legacy_version)
+inline bool operator<(const Version &lhs, const int legacy_version)
 {
     return lhs < parse_legacy_version(legacy_version);
 }
@@ -69,7 +69,7 @@ inline bool operator<=(const Version &lhs, const Version &rhs)
 {
     return lhs < rhs || lhs == rhs;
 }
-inline bool operator<=(const Version &lhs, int legacy_version)
+inline bool operator<=(const Version &lhs, const int legacy_version)
 {
     return lhs <= parse_legacy_version(legacy_version);
 }

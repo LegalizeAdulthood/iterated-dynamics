@@ -67,7 +67,7 @@ static double distance1(const DComplex &z)
     return sqr(z.x - 1.0) + sqr(z.y);
 }
 
-static int complex_mult(DComplex arg1, DComplex arg2, DComplex *pz)
+static int complex_mult(const DComplex arg1, const DComplex arg2, DComplex *pz)
 {
     pz->x = arg1.x * arg2.x - arg1.y * arg2.y;
     pz->y = arg1.x * arg2.y + arg1.y * arg2.x;

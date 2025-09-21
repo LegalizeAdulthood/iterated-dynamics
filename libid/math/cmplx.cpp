@@ -9,7 +9,7 @@
 namespace id::math
 {
 
-DComplex complex_sqrt_float(double x, double y)
+DComplex complex_sqrt_float(const double x, const double y)
 {
     DComplex  result;
 
@@ -29,7 +29,7 @@ DComplex complex_sqrt_float(double x, double y)
     return result;
 }
 
-DComplex complex_power(DComplex xx, DComplex yy)
+DComplex complex_power(const DComplex xx, const DComplex yy)
 {
     DComplex z;
     DComplex c_log;
@@ -55,7 +55,7 @@ DComplex complex_power(DComplex xx, DComplex yy)
 */
 
 // rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
-void asin_z(DComplex z, DComplex *rz)
+void asin_z(const DComplex z, DComplex *rz)
 {
     DComplex temp_z1;
     DComplex temp_z2;
@@ -75,7 +75,7 @@ void asin_z(DComplex z, DComplex *rz)
 }   // end. Arcsinz
 
 // rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)}
-void acos_z(DComplex z, DComplex *rz)
+void acos_z(const DComplex z, DComplex *rz)
 {
     DComplex temp;
 
@@ -91,7 +91,7 @@ void acos_z(DComplex z, DComplex *rz)
     rz->y = -temp.x;              // rz = (-i)*tempz1
 }   // end. Arccosz
 
-void asinh_z(DComplex z, DComplex *rz)
+void asinh_z(const DComplex z, DComplex *rz)
 {
     DComplex temp;
 
@@ -104,7 +104,7 @@ void asinh_z(DComplex z, DComplex *rz)
 }  // end. Arcsinhz
 
 // rz=Arccosh(z)=Log(z+sqrt(z*z-1)}
-void acosh_z(DComplex z, DComplex *rz)
+void acosh_z(const DComplex z, DComplex *rz)
 {
     DComplex temp_z;
     fpu_cmplx_mul(&z, &z, &temp_z);
@@ -116,7 +116,7 @@ void acosh_z(DComplex z, DComplex *rz)
 }   // end. Arccoshz
 
 // rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)}
-void atanh_z(DComplex z, DComplex *rz)
+void atanh_z(const DComplex z, DComplex *rz)
 {
     DComplex temp0;
     DComplex temp1;
@@ -152,7 +152,7 @@ void atanh_z(DComplex z, DComplex *rz)
 }   // end. Arctanhz
 
 // rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)}
-void atan_z(DComplex z, DComplex *rz)
+void atan_z(const DComplex z, DComplex *rz)
 {
     DComplex temp0;
     DComplex temp1;

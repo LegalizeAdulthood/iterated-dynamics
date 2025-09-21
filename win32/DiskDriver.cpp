@@ -251,7 +251,7 @@ int DiskDriver::write_palette()
 *
 *----------------------------------------------------------------------
 */
-void DiskDriver::schedule_alarm(int secs)
+void DiskDriver::schedule_alarm(const int secs)
 {
     m_win_text.schedule_alarm((secs ? 1 : DRAW_INTERVAL) * 1000);
 }
@@ -271,7 +271,7 @@ void DiskDriver::schedule_alarm(int secs)
 *
 *----------------------------------------------------------------------
 */
-void DiskDriver::write_pixel(int x, int y, int color)
+void DiskDriver::write_pixel(const int x, const int y, const int color)
 {
     put_color_a(x, y, color);
 }
@@ -291,7 +291,7 @@ void DiskDriver::write_pixel(int x, int y, int color)
 *
 *----------------------------------------------------------------------
 */
-int DiskDriver::read_pixel(int x, int y)
+int DiskDriver::read_pixel(const int x, const int y)
 {
     return get_color(x, y);
 }
@@ -311,7 +311,7 @@ int DiskDriver::read_pixel(int x, int y)
 *
 *----------------------------------------------------------------------
 */
-void DiskDriver::write_span(int y, int x, int last_x, Byte *pixels)
+void DiskDriver::write_span(const int y, const int x, const int last_x, Byte *pixels)
 {
     const int width = last_x-x+1;
     ODS3("DiskDriver::write_span (%d,%d,%d)", y, x, lastx);
@@ -337,7 +337,7 @@ void DiskDriver::write_span(int y, int x, int last_x, Byte *pixels)
 *
 *----------------------------------------------------------------------
 */
-void DiskDriver::read_span(int y, int x, int last_x, Byte *pixels)
+void DiskDriver::read_span(const int y, const int x, const int last_x, Byte *pixels)
 {
     ODS3("DiskDriver::read_span (%d,%d,%d)", y, x, lastx);
     const int width = last_x-x+1;
@@ -352,7 +352,7 @@ void DiskDriver::set_line_mode(int mode)
     ODS1("DiskDriver::set_line_mode %d", mode);
 }
 
-void DiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
+void DiskDriver::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
     ODS5("DiskDriver::draw_line (%d,%d) (%d,%d) %d", x1, y1, x2, y2, color);
     geometry::draw_line(x1, y1, x2, y2, color);

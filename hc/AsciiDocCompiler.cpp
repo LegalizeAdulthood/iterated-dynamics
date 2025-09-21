@@ -238,7 +238,7 @@ private:
     std::string m_link_markup;
 };
 
-bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
+bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
 {
     switch (cmd)
     {
@@ -312,7 +312,7 @@ bool AsciiDocProcessor::info(PrintDocCommand cmd, ProcessDocumentInfo *pd)
     }
 }
 
-bool AsciiDocProcessor::output(PrintDocCommand cmd, ProcessDocumentInfo *pd)
+bool AsciiDocProcessor::output(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
 {
     switch (cmd)
     {
@@ -354,9 +354,9 @@ bool AsciiDocProcessor::output(PrintDocCommand cmd, ProcessDocumentInfo *pd)
 
 void AsciiDocProcessor::process()
 {
-    const auto info_cb = [](PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info)
+    const auto info_cb = [](const PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->info(cmd, pd); };
-    const auto output_cb = [](PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info)
+    const auto output_cb = [](const PrintDocCommand cmd, ProcessDocumentInfo *pd, void *info)
     { return static_cast<AsciiDocProcessor *>(info)->output(cmd, pd); };
     process_document(TokenMode::ADOC, false, info_cb, output_cb, this);
 }
@@ -430,7 +430,7 @@ static bool is_key_name(const std::string &name)
     const auto is_function_key_name = [&name]
     {
         return name[0] == 'F' && name.size() < 4 &&
-            std::all_of(name.begin() + 1, name.end(), [](char c) { return std::isdigit(c) != 0; });
+            std::all_of(name.begin() + 1, name.end(), [](const char c) { return std::isdigit(c) != 0; });
     };
     const auto is_modified_key_name = [&name](const std::string &prefix)
     { return name.substr(0, prefix.size()) == prefix && is_key_name(name.substr(prefix.size())); };
@@ -449,7 +449,7 @@ static bool is_key_name(const std::string &name)
         || is_modified_key_name("Alt+");
 }
 
-void AsciiDocProcessor::emit_char(char c)
+void AsciiDocProcessor::emit_char(const char c)
 {
     if (m_start_of_line)
     {
@@ -475,7 +475,7 @@ void AsciiDocProcessor::emit_key_name()
     }
 }
 
-void AsciiDocProcessor::print_inside_key(char c)
+void AsciiDocProcessor::print_inside_key(const char c)
 {
     if (c == '>')
     {
@@ -526,7 +526,7 @@ void AsciiDocProcessor::print_inside_key(char c)
     }
 }
 
-void AsciiDocProcessor::print_char(char c, int n)
+void AsciiDocProcessor::print_char(const char c, int n)
 {
     while (n-- > 0)
     {

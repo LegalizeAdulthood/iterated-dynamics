@@ -70,7 +70,7 @@ void setup_log_table()
     }
 }
 
-long log_table_calc(long color_iter)
+long log_table_calc(const long color_iter)
 {
     long ret = 0;
 

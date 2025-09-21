@@ -14,8 +14,8 @@ namespace id::ui
 
 struct FullScreenPrompt
 {
-    int operator()(const char *hdg, int num_prompts, const char **prompts, FullScreenValues *values,
-        int fn_key_mask, char *extra_info) const
+    int operator()(const char *hdg, const int num_prompts, const char **prompts, FullScreenValues *values,
+        const int fn_key_mask, char *extra_info) const
     {
         return full_screen_prompt(hdg, num_prompts, prompts, values, fn_key_mask, extra_info);
     }
@@ -25,7 +25,7 @@ template <int N, typename Prompter = FullScreenPrompt>
 class ChoiceBuilder
 {
 public:
-    ChoiceBuilder &yes_no(const char *choice, bool value)
+    ChoiceBuilder &yes_no(const char *choice, const bool value)
     {
         check_build_overflow();
         m_choices[m_current_build] = choice;
@@ -100,7 +100,7 @@ public:
         m_values[m_current_build].uval.sval[15] = 0;
         return advance();
     }
-    ChoiceBuilder &string_buff(const char *choice, char *buffer, int len)
+    ChoiceBuilder &string_buff(const char *choice, char *buffer, const int len)
     {
         check_build_overflow();
         m_choices[m_current_build] = choice;
@@ -132,7 +132,7 @@ public:
         m_current_read = 0;
         return m_result;
     }
-    int prompt(const char *hdg, int fn_key_mask)
+    int prompt(const char *hdg, const int fn_key_mask)
     {
         return prompt(hdg, fn_key_mask, nullptr);
     }
@@ -186,7 +186,7 @@ public:
         check_read_type("string", 's');
         return m_values[m_current_read++].uval.sval;
     }
-    const char *read_string_buff(int len) const
+    const char *read_string_buff(const int len) const
     {
         check_read_type("string buff", 0x100 + len);
         return m_values[m_current_read++].uval.sbuf;
@@ -201,7 +201,7 @@ private:
         ++m_current_build;
         return *this;
     }
-    void check_overflow(int val) const
+    void check_overflow(const int val) const
     {
         if (val == N)
         {

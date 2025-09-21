@@ -122,8 +122,8 @@ private:
     int done{};                  //
 };
 
-Prompt::Prompt(const char *hdg, int num_prompts, const char **prompts, FullScreenValues *values,
-    int fn_key_mask, char *extra_info) :
+Prompt::Prompt(const char *hdg, const int num_prompts, const char **prompts, FullScreenValues *values,
+    const int fn_key_mask, char *extra_info) :
     hdg(hdg),
     num_prompts(num_prompts),
     prompts(prompts),
@@ -890,10 +890,10 @@ int Prompt::full_screen_exit()
 
 int full_screen_prompt(       // full-screen prompting routine
     const char *hdg,          // heading, lines separated by \n
-    int num_prompts,          // there are this many prompts (max)
+    const int num_prompts,          // there are this many prompts (max)
     const char **prompts,     // array of prompting pointers
     FullScreenValues *values, // array of values
-    int fn_key_mask,          // bit n on if Fn to cause return
+    const int fn_key_mask,          // bit n on if Fn to cause return
     char *extra_info          // extra info box to display, \n separated
 )
 {
@@ -947,12 +947,12 @@ static int prompt_value_string(char *buf, const FullScreenValues *val)
     return ret;
 }
 
-static int fn_key_mask_selected(int key)
+static int fn_key_mask_selected(const int key)
 {
     return s_fn_key_mask & 1 << (key - ID_KEY_F1 + 1);
 }
 
-static int prompt_check_key(int key)
+static int prompt_check_key(const int key)
 {
     switch (key)
     {
@@ -983,7 +983,7 @@ static int prompt_check_key(int key)
     return 0;
 }
 
-static int prompt_check_key_scroll(int key)
+static int prompt_check_key_scroll(const int key)
 {
     switch (key)
     {
@@ -1022,14 +1022,14 @@ static int prompt_check_key_scroll(int key)
     return 0;
 }
 
-static int input_field_list(int attr, // display attribute
-    char *field,                      // display form field value
-    int field_len,                    // field length
-    const char **list,                // list of values
-    int list_len,                     // number of entries in list
-    int row,                          // display row
-    int col,                          // display column
-    int (*check_key)(int key)         // routine to check non data keys, or nullptr
+static int input_field_list(const int attr, // display attribute
+    char *field,                            // display form field value
+    const int field_len,                    // field length
+    const char **list,                      // list of values
+    const int list_len,                     // number of entries in list
+    const int row,                          // display row
+    const int col,                          // display column
+    int (*check_key)(int key)               // routine to check non data keys, or nullptr
 )
 {
     int init_val;

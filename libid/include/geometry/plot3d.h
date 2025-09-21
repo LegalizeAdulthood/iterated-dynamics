@@ -21,7 +21,7 @@ enum class GlassesType
     STEREO_PAIR = 4,
 };
 
-inline bool alternating_or_superimpose(GlassesType value)
+inline bool alternating_or_superimpose(const GlassesType value)
 {
     return value == GlassesType::ALTERNATING || value == GlassesType::SUPERIMPOSE;
 }

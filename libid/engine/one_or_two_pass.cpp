@@ -55,7 +55,7 @@ int one_or_two_pass()
     return 0;
 }
 
-static int standard_calc(int pass_num)
+static int standard_calc(const int pass_num)
 {
     g_passes = Passes::SEQUENTIAL_SCAN;
     g_current_pass = pass_num;

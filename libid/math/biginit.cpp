@@ -185,7 +185,7 @@ static void init_bf2()
     }
 
     // Now split up the memory among the pointers
-    const auto alloc_size = [&ptr](int size)
+    const auto alloc_size = [&ptr](const int size)
     {
         BigNum result = s_bn_root + ptr;
         ptr += size;
@@ -404,7 +404,7 @@ void free_bf_vars()
 // Memory allocator routines start here.
 /************************************************************************/
 // Allocates a BigNum variable on stack
-BigNum alloc_stack(size_t size)
+BigNum alloc_stack(const size_t size)
 {
     if (g_bf_math == BFMathType::NONE)
     {
@@ -434,7 +434,7 @@ int save_stack()
 /************************************************************************/
 // Restores stack pointer, effectively freeing local variables
 //    allocated since save_stack()
-void restore_stack(int old_offset)
+void restore_stack(const int old_offset)
 {
     s_stack_ptr  = s_bn_root+old_offset;
 }
@@ -448,7 +448,7 @@ void restore_stack(int old_offset)
 //   dec = decimal places after decimal point
 //   intl = bytes for integer part (1, 2, or 4)
 
-void init_bf_dec(int dec)
+void init_bf_dec(const int dec)
 {
     if (g_bf_digits > 0)
     {
@@ -490,7 +490,7 @@ void init_bf_dec(int dec)
 // initialize bignumber global variables
 //   bnl = bignumber length
 //   intl = bytes for integer part (1, 2, or 4)
-void init_bf_length(int bnl)
+void init_bf_length(const int bnl)
 {
     g_bn_length = bnl;
 

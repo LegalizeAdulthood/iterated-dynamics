@@ -38,7 +38,7 @@ namespace id::ui
    in the value, so will it twill test as "different" even though it
    is not
 */
-static int cmp_dbl(double old, double new_val)
+static int cmp_dbl(double old, const double new_val)
 {
     char buf[81];
 

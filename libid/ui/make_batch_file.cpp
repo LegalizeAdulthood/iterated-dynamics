@@ -95,7 +95,7 @@ static void put_filename(const char *keyword, const char *fname);
 static void strip_zeros(char *buf);
 static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj);
 
-static char par_key(int x)
+static char par_key(const int x)
 {
     return static_cast<char>(x < 10 ? '0' + x : 'a' - 10 + x);
 }
@@ -600,7 +600,7 @@ skip_ui:
     driver_unstack_screen();
 }
 
-static int get_prec(double a, double b, double c)
+static int get_prec(const double a, const double b, const double c)
 {
     constexpr double high_v = 1.0E20;
     double diff = std::abs(a - b);
@@ -634,7 +634,7 @@ static int get_prec(double a, double b, double c)
     return digits;
 }
 
-static bool is_6bit_color(int cur_color)
+static bool is_6bit_color(const int cur_color)
 {
     // 3 character encoding can be used if all channels have the 2 LSBs zero.
     return (g_dac_box[cur_color][0] & 3U) == 0 //
@@ -642,7 +642,7 @@ static bool is_6bit_color(int cur_color)
         && (g_dac_box[cur_color][2] & 3U) == 0;
 }
 
-void put_encoded_colors(WriteBatchData &wb_data, int max_color)
+void put_encoded_colors(WriteBatchData &wb_data, const int max_color)
 {
     char buf[81];
     int diff_mag = -1;
@@ -790,7 +790,8 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
     }
 }
 
-static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj)
+static void write_batch_params(
+    const char *color_inf, const bool colors_only, const int max_color, const int ii, const int jj)
 {
     BigStackSaver saved;
     BigFloat bf_x_ctr = nullptr;
@@ -1646,7 +1647,7 @@ static void put_filename(const char *keyword, const char *fname)
     }
 }
 
-static void put_param(WriteBatchData &wb_data, const char *param, std::va_list args)
+static void put_param(WriteBatchData &wb_data, const char *param, const std::va_list args)
 {
     if (*param == ' '             // starting a new parm
         && wb_data.len == 0)         // skip leading space
@@ -1758,7 +1759,7 @@ static void strip_zeros(char *buf)
     }
 }
 
-static void put_float(int slash, double value, int prec)
+static void put_float(const int slash, const double value, const int prec)
 {
     char buf[40];
     char *buff_ptr = buf;
@@ -1782,7 +1783,7 @@ static void put_float(int slash, double value, int prec)
     put_param(buf);
 }
 
-static void put_bf(int slash, BigFloat r, int prec)
+static void put_bf(const int slash, const BigFloat r, const int prec)
 {
     std::vector<char> buf;              // "/-1.xxxxxxE-1234"
     buf.resize(5000);

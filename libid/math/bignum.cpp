@@ -195,8 +195,8 @@ S16 BIG_SET_S16(S16 *addr, S16 val)
 
 /************************************************************************/
 // convert_bn  -- convert bignum numbers from old to new lengths
-int convert_bn(BigNum new_num, BigNum old_num, int new_bn_len, int new_int_len,
-               int old_bn_len, int old_int_len)
+int convert_bn(BigNum new_num, BigNum old_num, const int new_bn_len, const int new_int_len,
+    const int old_bn_len, const int old_int_len)
 {
     // save lengths so not dependent on external environment
     int save_int_length = g_int_length;
@@ -400,7 +400,7 @@ char *unsafe_bn_to_str(char *s, BigNum r, int dec)
 /*********************************************************************/
 //  b = l
 //  Converts a long to a bignumber
-BigNum int_to_bn(BigNum r, long value)
+BigNum int_to_bn(BigNum r, const long value)
 {
     clear_bn(r);
     BigNum ones_byte = r + g_bn_length - g_int_length;
@@ -1364,7 +1364,7 @@ BigNum square_bn(BigNum r, BigNum n)
 }
 
 /**********************************************************************/
-BigNum div_bn_int(BigNum r, BigNum n, U16 u)
+BigNum div_bn_int(BigNum r, BigNum n, const U16 u)
 {
     const bool sign = is_bn_neg(n);
     unsafe_div_bn_int(r, n, u);
@@ -1376,7 +1376,7 @@ BigNum div_bn_int(BigNum r, BigNum n, U16 u)
 }
 
 /**********************************************************************/
-char *bn_to_str(char *s, BigNum r, int dec)
+char *bn_to_str(char *s, BigNum r, const int dec)
 {
     return unsafe_bn_to_str(s, copy_bn(g_bn_tmp_copy2, r), dec);
 }

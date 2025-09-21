@@ -62,7 +62,7 @@ std::string to_display_string(const Version &value)
     return (value.legacy ? "FRACTINT v" : "Id v") + to_string(value);
 }
 
-Version parse_legacy_version(int version)
+Version parse_legacy_version(const int version)
 {
     Version result{};
     result.major = version / 100;

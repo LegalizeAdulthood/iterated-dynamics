@@ -77,16 +77,15 @@ int g_soi_min_stack{2200}; // and this much stack to not crash when <tab> is pre
 static bool rhombus(double c_re1, double c_re2, double c_im1, double c_im2, //
     int x1, int x2, int y1, int y2, long iter);
 
-static DoubleComplex z_sqr(DoubleComplex z)
+static DoubleComplex z_sqr(const DoubleComplex z)
 {
     return { z.re*z.re, z.im*z.im };
 }
 
 /* compute coefficients of Newton polynomial (b0,..,b2) from
    (x0,w0),..,(x2,w2). */
-static void interpolate(
-    double x0, double x1, double x2,
-    double w0, double w1, double w2,
+static void interpolate(const double x0, const double x1, const double x2, //
+    const double w0, const double w1, const double w2,                     //
     double &b0, double &b1, double &b2)
 {
     b0 = w0;
@@ -95,10 +94,9 @@ static void interpolate(
 }
 
 // evaluate Newton polynomial given by (x0,b0),(x1,b1) at x:=t
-static double evaluate(
-    double x0, double x1,
-    double b0, double b1, double b2,
-    double t)
+static double evaluate(const double x0, const double x1, //
+    const double b0, const double b1, const double b2,   //
+    const double t)
 {
     return (b2*(t - x1) + b1)*(t - x0) + b0;
 }
@@ -108,9 +106,8 @@ static SOIDoubleState s_state{};
 static double s_t_width{};
 static double s_equal{};
 
-static long iteration(
-    double cr, double ci,
-    double re, double im,
+static long iteration(const double cr, const double ci, //
+    const double re, const double im,                   //
     long start)
 {
     g_old_z.x = re;
@@ -131,7 +128,7 @@ static long iteration(
     return start;
 }
 
-static void put_hor_line(int x1, int y1, int x2, int color)
+static void put_hor_line(const int x1, const int y1, const int x2, const int color)
 {
     for (int x = x1; x <= x2; x++)
     {
@@ -139,7 +136,7 @@ static void put_hor_line(int x1, int y1, int x2, int color)
     }
 }
 
-static void put_box(int x1, int y1, int x2, int y2, int color)
+static void put_box(const int x1, int y1, const int x2, const int y2, const int color)
 {
     for (; y1 <= y2; y1++)
     {
@@ -163,10 +160,9 @@ enum
 /* Newton Interpolation.
    It computes the value of the interpolation polynomial given by
    (x0,w0)..(x2,w2) at x:=t */
-static inline double interpolate(
-    double x0, double x1, double x2,
-    double w0, double w1, double w2,
-    double t)
+static inline double interpolate(const double x0, const double x1, const double x2, //
+    const double w0, const double w1, const double w2,                              //
+    const double t)
 {
     const double b = (w1 - w0)/(x1 - x0);
     return (((w2 - w1)/(x2 - x1) - b)/(x2 - x0)*(t - x1) + b)*(t - x0) + w0;
@@ -192,14 +188,14 @@ static inline double interpolate(
 //
 // iter       : current number of iterations
 
-static bool rhombus2(double cre1, double cre2, double cim1, double cim2, //
-    int x1, int x2, int y1, int y2,                                      //
-    double zre1, double zim1, double zre2, double zim2,                  //
-    double zre3, double zim3, double zre4, double zim4,                  //
-    double zre5, double zim5, double zre6, double zim6,                  //
-    double zre7, double zim7, double zre8, double zim8,                  //
-    double zre9, double zim9,                                            //
-    long iter)
+static bool rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
+    const int x1, const int x2, const int y1, const int y2,                                      //
+    const double zre1, const double zim1, const double zre2, const double zim2,                  //
+    const double zre3, const double zim3, const double zre4, const double zim4,                  //
+    const double zre5, const double zim5, const double zre6, const double zim6,                  //
+    const double zre7, const double zim7, const double zre8, const double zim8,                  //
+    const double zre9, const double zim9,                                                        //
+    const long iter)
 {
     s_zi[0].re = zre1;
     s_zi[0].im = zim1;
@@ -222,14 +218,14 @@ static bool rhombus2(double cre1, double cre2, double cim1, double cim2, //
     return rhombus(cre1, cre2, cim1, cim2, x1, x2, y1, y2, iter);
 }
 
-static bool rhombus2(double cre1, double cre2, double cim1, double cim2, //
-    int x1, int x2, int y1, int y2,                                      //
-    DoubleComplex z1, DoubleComplex z2,                                  //
-    DoubleComplex z3, DoubleComplex z4,                                  //
-    double zre5, double zim5, double zre6, double zim6,                  //
-    double zre7, double zim7, double zre8, double zim8,                  //
-    double zre9, double zim9,                                            //
-    long iter)
+static bool rhombus2(const double cre1, const double cre2, const double cim1, const double cim2, //
+    const int x1, const int x2, const int y1, const int y2,                                      //
+    const DoubleComplex z1, const DoubleComplex z2,                                              //
+    const DoubleComplex z3, const DoubleComplex z4,                                              //
+    const double zre5, const double zim5, const double zre6, const double zim6,                  //
+    const double zre7, const double zim7, const double zre8, const double zim8,                  //
+    const double zre9, const double zim9,                                                        //
+    const long iter)
 {
     return rhombus2(cre1, cre2, cim1, cim2,                              //
         x1, x2, y1, y2,                                                  //
@@ -241,7 +237,7 @@ static bool rhombus2(double cre1, double cre2, double cim1, double cim2, //
         iter);
 }
 
-static void soi_orbit(DoubleComplex &z, DoubleComplex &rq, double cr, double ci, bool &esc)
+static void soi_orbit(DoubleComplex &z, DoubleComplex &rq, const double cr, const double ci, bool &esc)
 {
     z.im = (z.im + z.im) * z.re + ci;
     z.re = rq.re - rq.im + cr;
@@ -250,9 +246,8 @@ static void soi_orbit(DoubleComplex &z, DoubleComplex &rq, double cr, double ci,
     esc = rq.re + rq.im > 16.0;
 }
 
-static bool rhombus_aux(
-    double c_re1, double c_re2, double c_im1, double c_im2,
-    int x1, int x2, int y1, int y2, long iter)
+static bool rhombus_aux(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
+    const int x1, const int x2, const int y1, const int y2, long iter)
 {
     // The following variables do not need their values saved
     // used in scanning
@@ -311,14 +306,14 @@ scan:
            during scanning. Here, key values do not change, so we can precompute
            coefficients in one direction and simply evaluate the polynomial
            during scanning. */
-        const auto get_scan_real{[=](double re, double im)
+        const auto get_scan_real{[=](const double re, const double im)
             {
                 return interpolate(c_im1, mid_i, c_im2,
                     evaluate(c_re1, mid_r, s_state.b1[0].re, s_state.b1[1].re, s_state.b1[2].re, re),
                     evaluate(c_re1, mid_r, s_state.b2[0].re, s_state.b2[1].re, s_state.b2[2].re, re),
                     evaluate(c_re1, mid_r, s_state.b3[0].re, s_state.b3[1].re, s_state.b3[2].re, re), im);
             }};
-        const auto get_scan_imag{[=](double re, double im)
+        const auto get_scan_imag{[=](const double re, const double im)
             {
                 return interpolate(c_re1, mid_r, c_re2,
                     evaluate(c_im1, mid_i, s_state.b1[0].im, s_state.b1[1].im, s_state.b1[2].im, im),
@@ -422,14 +417,14 @@ scan:
     s_state.corner[1].im = 0.25*c_im1 + 0.75*c_im2;
 
     // compute the value of the interpolation polynomial at (x,y)
-    const auto get_real{[=](double re, double im)
+    const auto get_real{[=](const double re, const double im)
         {
             return interpolate(c_im1, mid_i, c_im2,
                 interpolate(c_re1, mid_r, c_re2, s_zi[0].re, s_zi[4].re, s_zi[1].re, re),
                 interpolate(c_re1, mid_r, c_re2, s_zi[5].re, s_zi[8].re, s_zi[6].re, re),
                 interpolate(c_re1, mid_r, c_re2, s_zi[2].re, s_zi[7].re, s_zi[3].re, re), im);
         }};
-    const auto get_imag{[=](double re, double im)
+    const auto get_imag{[=](const double re, const double im)
         {
             return interpolate(c_re1, mid_r, c_re2,
                 interpolate(c_im1, mid_i, c_im2, s_zi[0].im, s_zi[5].im, s_zi[2].im, im),
@@ -692,14 +687,14 @@ scan:
 
     // compute the value of the interpolation polynomial at (x,y)
     // from saved values before interpolation failed to stay within tolerance
-    const auto get_saved_real{[=](double re, double im)
+    const auto get_saved_real{[=](const double re, const double im)
         {
             return interpolate(c_im1, mid_i, c_im2,
                 interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, re),
                 interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, re),
                 interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, re), im);
         }};
-    const auto get_saved_imag{[=](double re, double im)
+    const auto get_saved_imag{[=](const double re, const double im)
         {
             return interpolate(c_re1, mid_r, c_re2,
                 interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, im),
@@ -751,9 +746,9 @@ scan:
     return status;
 }
 
-static bool rhombus(double c_re1, double c_re2, double c_im1, double c_im2, //
-    int x1, int x2, int y1, int y2,                                         //
-    long iter)
+static bool rhombus(const double c_re1, const double c_re2, const double c_im1, const double c_im2, //
+    const int x1, const int x2, const int y1, const int y2,                                         //
+    const long iter)
 {
     ++g_rhombus_depth;
     const bool result = rhombus_aux(c_re1, c_re2, c_im1, c_im2, x1, x2, y1, y2, iter);

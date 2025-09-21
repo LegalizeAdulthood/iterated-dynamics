@@ -43,22 +43,22 @@ enum class DebugFlags
     DISPLAY_MEMORY_STATISTICS           = 10000,
 };
 
-inline int operator+(DebugFlags val)
+inline int operator+(const DebugFlags val)
 {
     return static_cast<int>(val);
 }
 
-inline DebugFlags operator~(DebugFlags val)
+inline DebugFlags operator~(const DebugFlags val)
 {
     return static_cast<DebugFlags>(~+val);
 }
 
-inline DebugFlags operator&(DebugFlags lhs, DebugFlags rhs)
+inline DebugFlags operator&(const DebugFlags lhs, const DebugFlags rhs)
 {
     return static_cast<DebugFlags>(+lhs & +rhs);
 }
 
-inline DebugFlags &operator&=(DebugFlags &lhs, DebugFlags rhs)
+inline DebugFlags &operator&=(DebugFlags &lhs, const DebugFlags rhs)
 {
     lhs = lhs & rhs;
     return lhs;

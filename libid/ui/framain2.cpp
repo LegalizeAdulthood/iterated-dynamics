@@ -71,7 +71,7 @@ bool g_have_evolve_info{};
 void (*g_out_line_cleanup)(){};
 bool g_virtual_screens{};
 
-static int iround(double value)
+static int iround(const double value)
 {
     return static_cast<int>(std::lround(value));
 }
@@ -113,7 +113,7 @@ private:
     bool m_position_updated{};
 };
 
-void ZoomMouseNotification::primary_down(bool double_click, int x, int y, int key_flags)
+void ZoomMouseNotification::primary_down(const bool double_click, const int x, const int y, int key_flags)
 {
     if (g_zoom_box_width != 0.0 && double_click)
     {
@@ -122,7 +122,7 @@ void ZoomMouseNotification::primary_down(bool double_click, int x, int y, int ke
     button_down(x, y, m_primary_down);
 }
 
-void ZoomMouseNotification::secondary_down(bool double_click, int x, int y, int key_flags)
+void ZoomMouseNotification::secondary_down(const bool double_click, const int x, const int y, int key_flags)
 {
     if (g_zoom_box_width != 0.0 && double_click)
     {
@@ -131,7 +131,7 @@ void ZoomMouseNotification::secondary_down(bool double_click, int x, int y, int 
     button_down(x, y, m_secondary_down);
 }
 
-void ZoomMouseNotification::middle_down(bool double_click, int x, int y, int key_flags)
+void ZoomMouseNotification::middle_down(bool double_click, const int x, const int y, int key_flags)
 {
     button_down(x, y, m_middle_down);
 }
@@ -151,7 +151,7 @@ void ZoomMouseNotification::middle_up(int x, int y, int key_flags)
     m_middle_down = false;
 }
 
-void ZoomMouseNotification::move(int x, int y, int /*key_flags*/)
+void ZoomMouseNotification::move(const int x, const int y, int /*key_flags*/)
 {
     if (m_x != x || m_y != y)
     {
@@ -275,7 +275,7 @@ bool ZoomMouseNotification::process_zoom(MainContext &context)
     return false;
 }
 
-void ZoomMouseNotification::button_down(int x, int y, bool &flag)
+void ZoomMouseNotification::button_down(const int x, const int y, bool &flag)
 {
     flag = true;
     m_down_x = x;
@@ -881,14 +881,14 @@ resumeloop:                             // return here on failed overlays
     }
 }
 
-static int call_line3d(Byte *pixels, int line_len)
+static int call_line3d(Byte *pixels, const int line_len)
 {
     // this routine exists because line3d might be in an overlay
     return line3d(pixels, line_len);
 }
 
 // displays differences between current image file and new image
-static int cmp_line(Byte *pixels, int line_len)
+static int cmp_line(Byte *pixels, const int line_len)
 {
     int row = g_row_count++;
     if (row == 0)
@@ -946,7 +946,7 @@ static void cmp_line_cleanup()
 
 // read keystrokes while = specified key, return 1+count;
 // used to catch up when moving zoombox is slower than keyboard
-int key_count(int key)
+int key_count(const int key)
 {
     int ctr = 1;
     while (driver_key_pressed() == key)

@@ -296,7 +296,7 @@ protected:
     void TearDown() override;
 
     int extension_total(int begin, int end) const;
-    std::string get_extension_name(int ext) const
+    std::string get_extension_name(const int ext) const
     {
         return std::string{reinterpret_cast<char *>(m_gif->ExtensionBlocks[ext].Bytes), 11};
     }
@@ -317,7 +317,7 @@ void TestOpenGIF::TearDown()
     Test::TearDown();
 }
 
-int TestOpenGIF::extension_total(int begin, int end) const
+int TestOpenGIF::extension_total(const int begin, const int end) const
 {
     int length{};
     for (int i = begin; i < end; ++i)

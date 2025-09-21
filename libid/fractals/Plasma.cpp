@@ -29,7 +29,7 @@ namespace id::fractals
 using PlotFn = void(*)(int, int, int);
 
 static constexpr U16 (*GET_COLOR)(int x, int y){
-    [](int x, int y) { return static_cast<U16>(get_color(x, y)); }};
+    [](const int x, const int y) { return static_cast<U16>(get_color(x, y)); }};
 
 static void set_plasma_palette()
 {
@@ -73,7 +73,7 @@ static U16 rand16()
     return value;
 }
 
-static void put_pot(int x, int y, U16 color)
+static void put_pot(const int x, const int y, U16 color)
 {
     color = std::max<U16>(color, 1U);
     g_put_color(x, y, color >> 8 ? color >> 8 : 1);  // don't write 0
@@ -87,7 +87,7 @@ static void put_pot(int x, int y, U16 color)
 }
 
 // fixes border
-static void put_pot_border(int x, int y, U16 color)
+static void put_pot_border(const int x, const int y, U16 color)
 {
     if (x == 0 || y == 0 || x == g_logical_screen_x_dots - 1 || y == g_logical_screen_y_dots - 1)
     {
@@ -97,7 +97,7 @@ static void put_pot_border(int x, int y, U16 color)
 }
 
 // fixes border
-static void put_color_border(int x, int y, int color)
+static void put_color_border(const int x, const int y, int color)
 {
     if (x == 0 || y == 0 || x == g_logical_screen_x_dots - 1 || y == g_logical_screen_y_dots - 1)
     {
@@ -107,7 +107,7 @@ static void put_color_border(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-static U16 get_pot(int x, int y)
+static U16 get_pot(const int x, const int y)
 {
     U16 color = static_cast<U16>(disk_read_pixel(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset));
     color = static_cast<U16>((color << 8) +
@@ -267,7 +267,7 @@ bool Plasma::done() const
     return m_done;
 }
 
-U16 Plasma::adjust(int xa, int ya, int x, int y, int xb, int yb, int scale)
+U16 Plasma::adjust(const int xa, const int ya, const int x, const int y, const int xb, const int yb, const int scale)
 {
     S32 pseudorandom = m_i_param_x * (RAND15() - 16383);
     pseudorandom = pseudorandom * scale;
@@ -338,7 +338,7 @@ void Plasma::subdivide()
     m_subdivs.push_back(Subdivision{sd.x1, sd.y1, x, y, level});
 }
 
-void Plasma::subdivide_new(int x1, int y1, int x2, int y2, int level)
+void Plasma::subdivide_new(const int x1, const int y1, const int x2, const int y2, const int level)
 {
     m_scale = static_cast<int>(320L >> level);
     m_sub_y.top = 2;

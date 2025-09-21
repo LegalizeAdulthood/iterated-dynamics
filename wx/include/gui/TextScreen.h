@@ -39,7 +39,7 @@ struct CGACell
 
     CGACell() = default;
 
-    CGACell(char ch, unsigned char attr) :
+    CGACell(const char ch, const unsigned char attr) :
         character(ch),
         attribute(attr)
     {

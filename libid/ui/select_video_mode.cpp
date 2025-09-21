@@ -43,7 +43,7 @@ static int check_mode_key(int key, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
 
-static void format_vid_table(int choice, char *buf)
+static void format_vid_table(const int choice, char *buf)
 {
     const int idx = s_entry_nums[choice];
     assert(idx < g_video_table_len);
@@ -54,7 +54,7 @@ static void format_vid_table(int choice, char *buf)
         g_video_entry.colors, g_video_entry.driver->get_name().c_str(), g_video_entry.comment);
 }
 
-int select_video_mode(int current_mode)
+int select_video_mode(const int current_mode)
 {
     std::vector<int> attributes;
 
@@ -143,7 +143,7 @@ int select_video_mode(int current_mode)
     return ret;
 }
 
-static int check_mode_key(int key, int choice)
+static int check_mode_key(const int key, const int choice)
 {
     if (const int i = check_vid_mode_key(key); i >= 0)
     {

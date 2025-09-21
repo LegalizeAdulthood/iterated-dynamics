@@ -8,7 +8,7 @@
 namespace id::ui
 {
 
-void double_to_string(char *buf, double val)
+void double_to_string(char *buf, const double val)
 {
     constexpr std::size_t length = 20;
     // cellular needs 16

@@ -25,7 +25,7 @@ static std::int16_t extract_int16(const unsigned char *src)
     return boost::endian::load_little_s16(src);
 }
 
-static void insert_int16(unsigned char *dest, std::int16_t value)
+static void insert_int16(unsigned char *dest, const std::int16_t value)
 {
     boost::endian::store_little_s16(dest, value);
 }
@@ -37,7 +37,7 @@ static bool is_fractint_extension(const ExtensionBlock &block, const char *name)
         && std::string(reinterpret_cast<const char *>(block.Bytes), 11) == name; //
 }
 
-static void add_gif_extension(GifFileType *gif, const char *name, unsigned char *bytes, int length)
+static void add_gif_extension(GifFileType *gif, const char *name, unsigned char *bytes, const int length)
 {
     GifAddExtensionBlock(&gif->ExtensionBlockCount, &gif->ExtensionBlocks, APPLICATION_EXT_FUNC_CODE, //
         11, reinterpret_cast<unsigned char *>(const_cast<char *>(name)));
@@ -64,7 +64,7 @@ public:
     {
         extract_chars(dest, N);
     }
-    void extract_chars(char *dest, int count)
+    void extract_chars(char *dest, const int count)
     {
         check_overflow(count);
         std::copy_n(current(), count, reinterpret_cast<unsigned char *>(dest));
@@ -166,14 +166,14 @@ private:
     {
         return m_bytes.data() + m_offset;
     }
-    void check_overflow(int count)
+    void check_overflow(const int count)
     {
         if (m_count < count)
         {
             throw std::runtime_error("Buffer overflow");
         }
     }
-    void advance(int size)
+    void advance(const int size)
     {
         m_offset += size;
         m_count -= size;
@@ -428,7 +428,7 @@ public:
     {
         insert_chars(dest, N);
     }
-    void insert_chars(const char *src, int count)
+    void insert_chars(const char *src, const int count)
     {
         check_overflow(count);
         std::copy_n(reinterpret_cast<const unsigned char *>(src), count, current());
@@ -450,7 +450,7 @@ public:
         }
     }
 
-    void insert_int16(std::int16_t value)
+    void insert_int16(const std::int16_t value)
     {
         check_overflow(2);
         io::insert_int16(current(), value);
@@ -465,21 +465,21 @@ public:
         }
     }
 
-    void insert_uint16(std::uint16_t value)
+    void insert_uint16(const std::uint16_t value)
     {
         check_overflow(2);
         boost::endian::store_little_u16(current(), value);
         advance(2);
     }
 
-    void insert_int32(std::int32_t value)
+    void insert_int32(const std::int32_t value)
     {
         check_overflow(4);
         boost::endian::store_little_s32(current(), value);
         advance(4);
     }
 
-    void insert_float(float value)
+    void insert_float(const float value)
     {
         check_overflow(4);
         boost::endian::little_float32_buf_t buffer(value);
@@ -495,7 +495,7 @@ public:
         }
     }
 
-    void insert_double(double value)
+    void insert_double(const double value)
     {
         check_overflow(8);
         boost::endian::little_float64_buf_t buffer(value);
@@ -521,14 +521,14 @@ private:
     {
         return m_bytes.data() + m_offset;
     }
-    void check_overflow(int count)
+    void check_overflow(const int count)
     {
         if (m_count < count)
         {
             throw std::runtime_error("Buffer overflow");
         }
     }
-    void advance(int size)
+    void advance(const int size)
     {
         m_offset += size;
         m_count -= size;
@@ -767,7 +767,7 @@ std::vector<char> get_extended_param_info(GifFileType *gif)
 
     std::vector<char> parameters;
     parameters.resize(bytes.size());
-    std::transform(bytes.begin(), bytes.end(), parameters.begin(), [](Byte byte) { return static_cast<char>(byte); });
+    std::transform(bytes.begin(), bytes.end(), parameters.begin(), [](const Byte byte) { return static_cast<char>(byte); });
     return parameters;
 }
 

@@ -37,7 +37,7 @@ int put_resume_len(int len, ...)
     return 0;
 }
 
-int alloc_resume(int max_size, int version)
+int alloc_resume(const int max_size, const int version)
 {
     g_resume_data.clear();
     g_resume_data.resize(sizeof(int)*max_size);

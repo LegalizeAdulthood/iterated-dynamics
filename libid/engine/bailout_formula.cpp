@@ -365,7 +365,7 @@ static int bf_manr_bailout()
     return 0;
 }
 
-void set_bailout_formula(Bailout test)
+void set_bailout_formula(const Bailout test)
 {
     switch (test)
     {

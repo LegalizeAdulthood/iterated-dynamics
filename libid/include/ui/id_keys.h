@@ -109,7 +109,7 @@ enum
 };
 
 // tests if we have a control character
-inline bool non_alpha(int c)
+inline bool non_alpha(const int c)
 {
     return c < ID_KEY_SPACE || c > 127;
 }

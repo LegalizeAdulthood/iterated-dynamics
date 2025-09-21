@@ -17,12 +17,12 @@ public:
     ~GIFInputFile();
 
     // clang-format off
-    int screen_width() const                    { return m_gif->SWidth; }
-    int screen_height() const                   { return m_gif->SHeight; }
-    int color_resolution() const                { return m_gif->SColorResolution; }
-    const ColorMapObject &color_map() const     { return *m_gif->SColorMap; }
-    int num_images() const                      { return m_gif->ImageCount; }
-    const SavedImage &get_image(int i) const    { return m_gif->SavedImages[i]; }
+    int screen_width() const                        { return m_gif->SWidth; }
+    int screen_height() const                       { return m_gif->SHeight; }
+    int color_resolution() const                    { return m_gif->SColorResolution; }
+    const ColorMapObject &color_map() const         { return *m_gif->SColorMap; }
+    int num_images() const                          { return m_gif->ImageCount; }
+    const SavedImage &get_image(const int i) const  { return m_gif->SavedImages[i]; }
     // clang-format on
 
     void slurp();

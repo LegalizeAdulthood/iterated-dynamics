@@ -57,7 +57,7 @@ bool sound_open()
 
 /* This routine plays a tone in the speaker and optionally writes a file
    if the orbitsave variable is turned on */
-void write_sound(int tone)
+void write_sound(const int tone)
 {
     if ((g_orbit_save_flags & OSF_MIDI) != 0)
     {

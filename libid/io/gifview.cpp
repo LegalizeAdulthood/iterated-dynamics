@@ -93,7 +93,7 @@ int get_byte()
     return std::getc(s_fp_in); // EOF is -1, as desired
 }
 
-int get_bytes(Byte *where, int how_many)
+int get_bytes(Byte *where, const int how_many)
 {
     return static_cast<int>(std::fread(where, 1, how_many, s_fp_in)); // EOF is -1, as desired
 }
@@ -376,7 +376,7 @@ static void close_file()
 
 // routine for MIGS that generates partial output lines
 
-static int out_line_migs(Byte *pixels, int line_len)
+static int out_line_migs(Byte *pixels, const int line_len)
 {
     const int row = s_gif_view_image_top + g_row_count;
     const int start_col = s_gif_view_image_left;
@@ -387,7 +387,7 @@ static int out_line_migs(Byte *pixels, int line_len)
     return 0;
 }
 
-static int out_line_dither(Byte *pixels, int line_len)
+static int out_line_dither(Byte *pixels, const int line_len)
 {
     int err;
     s_dither_buf.resize(line_len + 1);
@@ -447,7 +447,7 @@ static int out_line_too_wide(Byte *pixels, int line_len)
     return 0;
 }
 
-static bool put_sound_line(int row, int col_start, int col_stop, Byte *pixels)
+static bool put_sound_line(const int row, const int col_start, const int col_stop, Byte *pixels)
 {
     for (int col = col_start; col <= col_stop; col++)
     {
@@ -497,7 +497,7 @@ int sound_line(Byte *pixels, int line_len)
     return 0;
 }
 
-int pot_line(Byte *pixels, int line_len)
+int pot_line(Byte *pixels, const int line_len)
 {
     if (g_row_count == 0)
     {

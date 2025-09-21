@@ -79,7 +79,7 @@ static Memory s_handles[MAX_HANDLES];
 
 // Memory handling support routines
 
-static bool check_disk_space(std::uint64_t size)
+static bool check_disk_space(const std::uint64_t size)
 {
     const std::filesystem::space_info space{std::filesystem::space(g_temp_dir)};
     return space.free >= size;
@@ -90,7 +90,7 @@ static const char *memory_type(MemoryLocation where)
     return MEMORY_NAMES[static_cast<int>(where)];
 }
 
-static void which_disk_error(int status)
+static void which_disk_error(const int status)
 {
     // Set status == 1 after a file create, status == 2 after a file set value
     // Set status == 3 after a file write, status == 4 after a file read
@@ -112,7 +112,7 @@ static void which_disk_error(int status)
 // to start moving the contents of buffer to
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool MemoryHandle::from_memory(const Byte *buffer, U16 size, long count, long offset)
+bool MemoryHandle::from_memory(const Byte *buffer, const U16 size, const long count, const long offset)
 {
     Byte disk_buff[DISK_WRITE_LEN];
     U16 num_written;
@@ -176,7 +176,7 @@ disk_error:
 // offset is the number of units from the beginning of buffer to start moving
 // size is the size of the unit, count is the number of units to move
 // Returns true if successful, false if failure
-bool MemoryHandle::to_memory(Byte *buffer, U16 size, long count, long offset)
+bool MemoryHandle::to_memory(Byte *buffer, const U16 size, const long count, const long offset)
 {
     Byte disk_buff[DISK_WRITE_LEN];
     U16 num_read;
@@ -243,7 +243,7 @@ disk_error:
 // offset is the number of units from the start of allocated memory
 // size is the size of the unit, count is the number of units to set
 // Returns true if successful, false if failure
-bool MemoryHandle::set(int value, U16 size, long count, long offset)
+bool MemoryHandle::set(const int value, const U16 size, const long count, const long offset)
 {
     Byte disk_buff[DISK_WRITE_LEN];
     U16 num_written;
@@ -302,12 +302,12 @@ disk_error:
     return success;
 }
 
-MemoryLocation memory_type(MemoryHandle handle)
+MemoryLocation memory_type(const MemoryHandle handle)
 {
     return s_handles[handle.index].stored_at;
 }
 
-static void display_error(MemoryLocation stored_at, long how_much)
+static void display_error(const MemoryLocation stored_at, long how_much)
 {
     // This routine is used to display an error message when the requested
     // memory type cannot be allocated due to insufficient memory, AND there
@@ -319,7 +319,7 @@ static void display_error(MemoryLocation stored_at, long how_much)
 
 // This function returns an adjusted stored_at value.
 // This is where the memory requested can be allocated.
-static MemoryLocation check_for_mem(MemoryLocation where, std::uint64_t size)
+static MemoryLocation check_for_mem(MemoryLocation where, const std::uint64_t size)
 {
     if (g_debug_flag == DebugFlags::FORCE_MEMORY_FROM_DISK)
     {
@@ -369,7 +369,7 @@ static U16 next_handle()
     return counter;
 }
 
-static int check_bounds(long start, long length, U16 handle)
+static int check_bounds(const long start, const long length, const U16 handle)
 {
     if (s_handles[handle].size < static_cast<std::uint64_t>(start - length))
     {
@@ -459,7 +459,7 @@ static std::string mem_filename(U16 handle)
 // Memory handling routines
 
 // Returns handle number if successful, 0 or nullptr if failure
-MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
+MemoryHandle memory_alloc(const U16 size, const long count, const MemoryLocation stored_at)
 {
     std::uint64_t to_allocate = count * size;
 
@@ -554,7 +554,7 @@ MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at)
     return {};
 }
 
-void memory_release(MemoryHandle handle)
+void memory_release(const MemoryHandle handle)
 {
     const U16 index{handle.index};
     switch (s_handles[index].stored_at)

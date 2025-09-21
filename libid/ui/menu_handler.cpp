@@ -72,7 +72,7 @@ MainState request_fractal_type(MainContext &context)
     return MainState::NOTHING;
 }
 
-MainState get_history(int kbd_char)
+MainState get_history(const int kbd_char)
 {
     if (g_max_image_history <= 0 || g_bf_math != BFMathType::NONE)
     {

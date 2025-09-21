@@ -20,7 +20,7 @@ inline bool operator<(const MenuHandler &lhs, const MenuHandler &rhs)
     return lhs.key < rhs.key;
 }
 
-inline bool operator<(const MenuHandler &lhs, int key)
+inline bool operator<(const MenuHandler &lhs, const int key)
 {
     return lhs.key < key;
 }

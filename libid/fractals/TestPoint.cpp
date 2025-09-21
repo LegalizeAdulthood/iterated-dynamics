@@ -109,7 +109,9 @@ void TestPoint::iterate()
 
 // this routine is called once for every pixel
 // (note: possibly using the dual-pass / solid-guessing options
-int TestPoint::per_pixel(double init_real, double init_imag, double param1, double param2, long max_iter, int inside)
+int TestPoint::per_pixel(const double init_real, const double init_imag, //
+    const double param1, const double param2,                            //
+    const long max_iter, const int inside)
 {
     double old_real = param1;
     double old_imag = param2;

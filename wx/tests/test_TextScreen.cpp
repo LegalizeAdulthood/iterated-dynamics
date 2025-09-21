@@ -110,7 +110,7 @@ wxSize TextScreenFrame::calculate_frame_size() const
     return frame_size;
 }
 
-void TextScreenFrame::DoSetSize(int x, int y, int width, int height, int size_flags)
+void TextScreenFrame::DoSetSize(const int x, const int y, int width, int height, const int size_flags)
 {
     // Ignore any size changes and use our fixed size
     if (m_fixed_size.x == 0 || m_fixed_size.y == 0)

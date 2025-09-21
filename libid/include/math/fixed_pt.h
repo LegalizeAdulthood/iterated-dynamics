@@ -17,7 +17,7 @@ extern bool                  g_overflow;
 //
 //       z = divide(x, y, n);       z = x / y;
 //
-inline long divide(long x, long y, int n)
+inline long divide(const long x, const long y, const int n)
 {
     return static_cast<long>(static_cast<float>(x) / static_cast<float>(y) * static_cast<float>(1 << n));
 }
@@ -26,7 +26,7 @@ inline long divide(long x, long y, int n)
 //  Note that we fake integer multiplication with floating point
 //  multiplication.
 //  Overflow condition returns 0x7fffffffh with overflow = 1;
-inline long multiply(long x, long y, int n)
+inline long multiply(const long x, const long y, const int n)
 {
     const long l = static_cast<long>(static_cast<float>(x) * static_cast<float>(y) / static_cast<float>(1 << n));
     if (l == 0x7fffffff)

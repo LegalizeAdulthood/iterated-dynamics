@@ -9,7 +9,7 @@ using namespace id::config;
 namespace id::ui
 {
 
-void shell_sort(void *v1, int n, unsigned sz)
+void shell_sort(void *v1, const int n, const unsigned sz)
 {
     const auto lc_compare = [](void *arg1, void *arg2) // for sort
     {

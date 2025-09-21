@@ -49,14 +49,14 @@ enum
 
 static void set_cellular_palette();
 
-inline char to_digit(int value)
+inline char to_digit(const int value)
 {
     assert(value >= 0);
     assert(value <= 9);
     return static_cast<char>(value) + '0';
 }
 
-inline U16 from_digit(char value)
+inline U16 from_digit(const char value)
 {
     assert(value >= '0');
     assert(value <= '9');
@@ -358,7 +358,7 @@ void Cellular::suspend()
     put_resume(g_row);
 }
 
-std::string Cellular::error(int err, int t) const
+std::string Cellular::error(const int err, int t) const
 {
     switch (err)
     {

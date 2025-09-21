@@ -49,7 +49,7 @@ static int s_save_orbit[NUM_SAVE_ORBIT]{}; // array to save orbit values
                       / ((0-delyy2)*W*delxx2*D-Ys*Xs)
   */
 
-static void plot_d_orbit(double dx, double dy, int color)
+static void plot_d_orbit(const double dx, const double dy, const int color)
 {
     if (g_orbit_save_index >= NUM_SAVE_ORBIT-3)
     {
@@ -124,7 +124,7 @@ static void plot_d_orbit(double dx, double dy, int color)
     // placing sleepms here delays each dot
 }
 
-void plot_orbit(double real, double imag, int color)
+void plot_orbit(const double real, const double imag, const int color)
 {
     plot_d_orbit(real-g_x_min, imag-g_y_max, color);
 }

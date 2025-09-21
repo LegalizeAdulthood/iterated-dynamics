@@ -44,7 +44,7 @@ enum class TimerType
      timer(timer_type::DECODER,nullptr,int width)        decoder
      timer(timer_type::ENCODER)                          encoder
   */
-static int timer(TimerType type, int (*fn)(), ...)
+static int timer(const TimerType type, int (*fn)(), ...)
 {
     std::va_list arg_marker; // variable arg list
     std::FILE *fp = nullptr;
@@ -117,7 +117,7 @@ int encoder_timer()
     return timer(TimerType::ENCODER, nullptr);
 }
 
-int decoder_timer(int width)
+int decoder_timer(const int width)
 {
     return timer(TimerType::DECODER, nullptr, width);
 }

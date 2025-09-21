@@ -62,7 +62,7 @@ void fpu_cmplx_div(const DComplex *x, const DComplex *y, DComplex *z)
     }
 }
 
-void sin_cos(double angle, double *sine, double *cosine)
+void sin_cos(const double angle, double *sine, double *cosine)
 {
     if (std::isnan(angle) || std::isinf(angle))
     {
@@ -76,7 +76,7 @@ void sin_cos(double angle, double *sine, double *cosine)
     }
 }
 
-void sinh_cosh(double angle, double *sine, double *cosine)
+void sinh_cosh(const double angle, double *sine, double *cosine)
 {
     if (std::isnan(angle) || std::isinf(angle))
     {

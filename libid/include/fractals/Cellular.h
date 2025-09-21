@@ -51,7 +51,7 @@ private:
 class CellularError : public std::runtime_error
 {
 public:
-    CellularError(const Cellular &cellular, int err, int t = 0) :
+    CellularError(const Cellular &cellular, const int err, const int t = 0) :
         std::runtime_error(cellular.error(err, t))
     {
     }

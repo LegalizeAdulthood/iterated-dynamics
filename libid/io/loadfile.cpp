@@ -131,12 +131,12 @@ bool g_bad_outside{};
 std::string g_browse_name; // name for browse file
 Version g_file_version{};
 
-static bool within_eps(float lhs, float rhs)
+static bool within_eps(const float lhs, const float rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
 }
 
-static bool within_eps(double lhs, double rhs)
+static bool within_eps(const double lhs, const double rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
 }
@@ -151,14 +151,14 @@ template <size_t N>
 static bool equal(const float (&lhs)[N], const float (&rhs)[N])
 {
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs), //
-        [](float lhs, float rhs) { return within_eps(lhs, rhs); });
+        [](const float lhs, const float rhs) { return within_eps(lhs, rhs); });
 }
 
 template <size_t N>
 static bool equal(const double (&lhs)[N], const double (&rhs)[N])
 {
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs), //
-        [](double lhs, double rhs) { return within_eps(lhs, rhs); });
+        [](const double lhs, const double rhs) { return within_eps(lhs, rhs); });
 }
 
 bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
@@ -862,7 +862,8 @@ static constexpr MigrateReadType MIGRATED_TYPES[]{
 FractalType migrate_integer_types(int read_type)
 {
     if (const auto it = std::lower_bound(std::begin(MIGRATED_TYPES), std::end(MIGRATED_TYPES), read_type,
-            [](const MigrateReadType &migrate, int read_type) { return +migrate.deprecated < read_type; });
+            [](const MigrateReadType &migrate, const int read_type)
+            { return +migrate.deprecated < read_type; });
         it != std::end(MIGRATED_TYPES) && +it->deprecated == read_type)
     {
         return it->migrated;
@@ -1159,7 +1160,7 @@ int read_overlay()      // read overlay/3D files, if required
     return 0;
 }
 
-static void file_read(void *ptr, size_t size, size_t num, std::FILE *stream)
+static void file_read(void *ptr, const size_t size, const size_t num, std::FILE *stream)
 {
     if (std::fread(ptr, size, num, stream) != num)
     {

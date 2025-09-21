@@ -12,29 +12,29 @@ enum class InputFieldFlags
     INTEGER = 2,
     DOUBLE = 4
 };
-inline int operator+(InputFieldFlags value)
+inline int operator+(const InputFieldFlags value)
 {
     return static_cast<int>(value);
 }
-inline InputFieldFlags operator|(InputFieldFlags lhs, InputFieldFlags rhs)
+inline InputFieldFlags operator|(const InputFieldFlags lhs, const InputFieldFlags rhs)
 {
     return static_cast<InputFieldFlags>(+lhs | +rhs);
 }
-inline InputFieldFlags& operator|=(InputFieldFlags &lhs, InputFieldFlags rhs)
+inline InputFieldFlags& operator|=(InputFieldFlags &lhs, const InputFieldFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
-inline InputFieldFlags operator&(InputFieldFlags lhs, InputFieldFlags rhs)
+inline InputFieldFlags operator&(const InputFieldFlags lhs, const InputFieldFlags rhs)
 {
     return static_cast<InputFieldFlags>(+lhs & +rhs);
 }
-inline InputFieldFlags operator&=(InputFieldFlags &lhs, InputFieldFlags rhs)
+inline InputFieldFlags operator&=(InputFieldFlags &lhs, const InputFieldFlags rhs)
 {
     lhs = lhs & rhs;
     return lhs;
 }
-inline bool bit_set(InputFieldFlags value, InputFieldFlags flags)
+inline bool bit_set(const InputFieldFlags value, const InputFieldFlags flags)
 {
     return (value & flags) == flags;
 }

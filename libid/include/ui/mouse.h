@@ -21,7 +21,7 @@ inline int operator+(MouseLook value)
 {
     return static_cast<int>(value);
 }
-inline MouseLook mouse_look_key(int key)
+inline MouseLook mouse_look_key(const int key)
 {
     return static_cast<MouseLook>(-key);
 }

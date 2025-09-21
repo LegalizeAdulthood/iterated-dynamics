@@ -311,7 +311,7 @@ static void free_rules_mem()
     s_rules.shrink_to_fit();
 }
 
-static int rule_present(char symbol)
+static int rule_present(const char symbol)
 {
     for (std::size_t i = 1; i < s_rules.size(); ++i)
     {
@@ -336,7 +336,7 @@ static bool save_axiom(const char *text)
     }
 }
 
-static bool save_rule(const char *rule, int index)
+static bool save_rule(const char *rule, const int index)
 {
     try
     {
@@ -351,7 +351,7 @@ static bool save_rule(const char *rule, int index)
     }
 }
 
-static bool append_rule(const char *rule, int index)
+static bool append_rule(const char *rule, const int index)
 {
     try
     {

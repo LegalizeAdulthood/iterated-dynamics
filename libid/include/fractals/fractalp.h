@@ -56,31 +56,31 @@ enum class FractalFlags
     // clang-format on
 };
 
-inline int operator+(FractalFlags value)
+inline int operator+(const FractalFlags value)
 {
     return static_cast<int>(value);
 }
-inline FractalFlags operator|(FractalFlags lhs, FractalFlags rhs)
+inline FractalFlags operator|(const FractalFlags lhs, const FractalFlags rhs)
 {
     return static_cast<FractalFlags>(+lhs | +rhs);
 }
-inline FractalFlags operator&(FractalFlags lhs, FractalFlags rhs)
+inline FractalFlags operator&(const FractalFlags lhs, const FractalFlags rhs)
 {
     return static_cast<FractalFlags>(+lhs & +rhs);
 }
-inline FractalFlags operator^(FractalFlags lhs, FractalFlags rhs)
+inline FractalFlags operator^(const FractalFlags lhs, const FractalFlags rhs)
 {
     return static_cast<FractalFlags>(+lhs ^ +rhs);
 }
-inline FractalFlags operator~(FractalFlags lhs)
+inline FractalFlags operator~(const FractalFlags lhs)
 {
     return static_cast<FractalFlags>(~+lhs);
 }
-inline bool bit_set(FractalFlags value, FractalFlags bit)
+inline bool bit_set(const FractalFlags value, const FractalFlags bit)
 {
     return (value & bit) == bit;
 }
-inline bool bit_clear(FractalFlags value, FractalFlags bit)
+inline bool bit_clear(const FractalFlags value, const FractalFlags bit)
 {
     return (value & bit) == FractalFlags::NONE;
 }
@@ -138,7 +138,7 @@ inline int orbit_calc()
     return get_fractal_specific(g_fractal_type)->orbit_calc();
 }
 
-inline void set_fractal_type(FractalType value)
+inline void set_fractal_type(const FractalType value)
 {
     g_fractal_type = value;
     g_cur_fractal_specific = get_fractal_specific(value);

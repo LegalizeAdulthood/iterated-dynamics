@@ -1952,11 +1952,12 @@ int g_num_fractal_types = static_cast<int>(std::size(g_fractal_specific)) - 1;
 
 FractalSpecific *g_cur_fractal_specific{};
 
-FractalSpecific *get_fractal_specific(FractalType type)
+FractalSpecific *get_fractal_specific(const FractalType type)
 {
     // g_fractal_specific is sorted by the type member, so we can use binary search.
     if (const auto it = std::lower_bound(&g_fractal_specific[0], &g_fractal_specific[g_num_fractal_types],
-            type, [](const FractalSpecific &specific, FractalType value) { return specific.type < value; });
+            type,
+            [](const FractalSpecific &specific, const FractalType value) { return specific.type < value; });
         it != std::end(g_fractal_specific) && it->type == type)
     {
         return it;

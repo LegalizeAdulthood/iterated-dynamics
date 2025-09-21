@@ -270,7 +270,7 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.draw_mode == rhs.draw_mode;                                                              //
 }
 
-std::ostream &operator<<(std::ostream &str, FractalType value)
+std::ostream &operator<<(std::ostream &str, const FractalType value)
 {
     str << +value;
     return str;
@@ -282,7 +282,7 @@ std::ostream &operator<<(std::ostream &str, SymmetryType value)
     return str;
 }
 
-std::ostream &operator<<(std::ostream &str, TrigFn value)
+std::ostream &operator<<(std::ostream &str, const TrigFn value)
 {
     str << +value;
     return str;
@@ -294,19 +294,19 @@ std::ostream &operator<<(std::ostream &str, Display3DMode value)
     return str;
 }
 
-std::ostream &operator<<(std::ostream &str, Julibrot3DMode value)
+std::ostream &operator<<(std::ostream &str, const Julibrot3DMode value)
 {
     str << '"' << to_string(value) << '"';
     return str;
 }
 
-std::ostream &operator<<(std::ostream &str, Major value)
+std::ostream &operator<<(std::ostream &str, const Major value)
 {
     str << +value;
     return str;
 }
 
-std::ostream &operator<<(std::ostream &str, Minor value)
+std::ostream &operator<<(std::ostream &str, const Minor value)
 {
     str << +value;
     return str;
@@ -704,7 +704,7 @@ void save_history_info()
     }
 }
 
-void restore_history_info(int i)
+void restore_history_info(const int i)
 {
     if (g_max_image_history <= 0 || g_bf_math != BFMathType::NONE)
     {

@@ -112,12 +112,12 @@ public:
     {
         return m_csize;
     }
-    void set_pos(int x_, int y_)
+    void set_pos(const int x_, const int y_)
     {
         m_x = x_;
         m_y = y_;
     }
-    void set_csize(int csize_)
+    void set_csize(const int csize_)
     {
         m_csize = csize_;
     }
@@ -153,13 +153,13 @@ public:
     MoveBoxNotification &operator=(const MoveBoxNotification &rhs) = delete;
     MoveBoxNotification &operator=(MoveBoxNotification &&rhs) = delete;
 
-    void move(int x, int y, int key_flags) override
+    void move(const int x, const int y, int key_flags) override
     {
         m_box.erase();
         m_box.set_pos(x, y);
         m_box.draw();
     }
-    void primary_down(bool double_click, int x, int y, int key_flags) override
+    void primary_down(const bool double_click, int x, int y, int key_flags) override
     {
         if (!double_click)
         {
@@ -304,7 +304,7 @@ private:
         CrossHairCursorNotification &operator=(const CrossHairCursorNotification &rhs) = delete;
         CrossHairCursorNotification &operator=(CrossHairCursorNotification &&rhs) = delete;
 
-        void move(int x, int y, int key_flags) override
+        void move(const int x, const int y, int key_flags) override
         {
             if (!m_cursor.hidden())
             {
@@ -382,7 +382,7 @@ static void clip_put_color(int x, int y, int color);
 static int clip_get_color(int x, int y);
 
 // Interface to graphics stuff
-static void set_pal(int pal, int r, int g, int b)
+static void set_pal(const int pal, const int r, const int g, const int b)
 {
     g_dac_box[pal][0] = static_cast<Byte>(r);
     g_dac_box[pal][1] = static_cast<Byte>(g);
@@ -390,18 +390,18 @@ static void set_pal(int pal, int r, int g, int b)
     spin_dac(0, 1);
 }
 
-static void set_pal_range(int first, int how_many, PalEntry *pal)
+static void set_pal_range(const int first, const int how_many, PalEntry *pal)
 {
     std::memmove(g_dac_box+first, pal, how_many*3);
     spin_dac(0, 1);
 }
 
-static void get_pal_range(int first, int how_many, PalEntry *pal)
+static void get_pal_range(const int first, const int how_many, PalEntry *pal)
 {
     std::memmove(pal, g_dac_box+first, how_many*3);
 }
 
-static void rotate_pal(PalEntry *pal, int dir, int lo, int hi)
+static void rotate_pal(PalEntry *pal, int dir, const int lo, const int hi)
 {
     // rotate in either direction
     PalEntry hold;
@@ -429,7 +429,7 @@ static void rotate_pal(PalEntry *pal, int dir, int lo, int hi)
     }
 }
 
-static void clip_put_line(int row, int start, int stop, const Byte *pixels)
+static void clip_put_line(const int row, int start, int stop, const Byte *pixels)
 {
     if (row < 0 || row >= g_screen_y_dots || start > g_screen_x_dots || stop < 0)
     {
@@ -455,7 +455,7 @@ static void clip_put_line(int row, int start, int stop, const Byte *pixels)
     write_span(row, start, stop, pixels);
 }
 
-static void clip_get_line(int row, int start, int stop, Byte *pixels)
+static void clip_get_line(const int row, int start, int stop, Byte *pixels)
 {
     if (row < 0 || row >= g_screen_y_dots || start > g_screen_x_dots || stop < 0)
     {
@@ -481,7 +481,7 @@ static void clip_get_line(int row, int start, int stop, Byte *pixels)
     read_span(row, start, stop, pixels);
 }
 
-static void clip_put_color(int x, int y, int color)
+static void clip_put_color(const int x, const int y, const int color)
 {
     if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= g_screen_y_dots)
     {
@@ -491,7 +491,7 @@ static void clip_put_color(int x, int y, int color)
     g_put_color(x, y, color);
 }
 
-static int clip_get_color(int x, int y)
+static int clip_get_color(const int x, const int y)
 {
     if (x < 0 || y < 0 || x >= g_screen_x_dots || y >= g_screen_y_dots)
     {
@@ -501,13 +501,13 @@ static int clip_get_color(int x, int y)
     return get_color(x, y);
 }
 
-static void hor_line(int x, int y, int width, int color)
+static void hor_line(const int x, const int y, const int width, const int color)
 {
     std::memset(g_line_buff.data(), color, width);
     clip_put_line(y, x, x+width-1, g_line_buff.data());
 }
 
-static void ver_line(int x, int y, int depth, int color)
+static void ver_line(const int x, int y, int depth, const int color)
 {
     while (depth-- > 0)
     {
@@ -515,17 +515,17 @@ static void ver_line(int x, int y, int depth, int color)
     }
 }
 
-void get_row(int x, int y, int width, char *buff)
+void get_row(const int x, const int y, const int width, char *buff)
 {
     clip_get_line(y, x, x+width-1, reinterpret_cast<Byte *>(buff));
 }
 
-void put_row(int x, int y, int width, const char *buff)
+void put_row(const int x, const int y, const int width, const char *buff)
 {
     clip_put_line(y, x, x+width-1, reinterpret_cast<const Byte *>(buff));
 }
 
-static void ver_get_row(int x, int y, int depth, char *buff)
+static void ver_get_row(const int x, int y, int depth, char *buff)
 {
     while (depth-- > 0)
     {
@@ -533,7 +533,7 @@ static void ver_get_row(int x, int y, int depth, char *buff)
     }
 }
 
-static void ver_put_row(int x, int y, int depth, const char *buff)
+static void ver_put_row(const int x, int y, int depth, const char *buff)
 {
     while (depth-- > 0)
     {
@@ -541,7 +541,7 @@ static void ver_put_row(int x, int y, int depth, const char *buff)
     }
 }
 
-static void fill_rect(int x, int y, int width, int depth, int color)
+static void fill_rect(const int x, int y, const int width, int depth, const int color)
 {
     while (depth-- > 0)
     {
@@ -549,7 +549,7 @@ static void fill_rect(int x, int y, int width, int depth, int color)
     }
 }
 
-static void rect(int x, int y, int width, int depth, int color)
+static void rect(const int x, const int y, const int width, const int depth, const int color)
 {
     hor_line(x, y, width, color);
     hor_line(x, y+depth-1, width, color);
@@ -558,7 +558,7 @@ static void rect(int x, int y, int width, int depth, int color)
     ver_line(x+width-1, y, depth, color);
 }
 
-static void display_fmt(int x, int y, int fg, int bg, const char *format, ...)
+static void display_fmt(const int x, const int y, const int fg, const int bg, const char *format, ...)
 {
     char buff[81];
 
@@ -572,7 +572,7 @@ static void display_fmt(int x, int y, int fg, int bg, const char *format, ...)
 }
 
 // create smooth shades between two colors
-static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], int num, int skip)
+static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], const int num, const int skip)
 {
     const double rm = static_cast<double>(static_cast<int>(p2->red) - static_cast<int>(p1->red)) / num;
     const double gm = static_cast<double>(static_cast<int>(p2->green) - static_cast<int>(p1->green)) / num;
@@ -605,7 +605,7 @@ static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], int num, in
 }
 
 //  Swap RG GB & RB columns
-static void rot_col_r_g(PalEntry pal[], int num)
+static void rot_col_r_g(PalEntry pal[], const int num)
 {
     for (int curr = 0; curr <= num; curr++)
     {
@@ -615,7 +615,7 @@ static void rot_col_r_g(PalEntry pal[], int num)
     }
 }
 
-static void rot_col_g_b(PalEntry pal[], int num)
+static void rot_col_g_b(PalEntry pal[], const int num)
 {
     for (int curr = 0; curr <= num; curr++)
     {
@@ -625,7 +625,7 @@ static void rot_col_g_b(PalEntry pal[], int num)
     }
 }
 
-static void rot_col_b_r(PalEntry pal[], int num)
+static void rot_col_b_r(PalEntry pal[], const int num)
 {
     for (int curr = 0; curr <= num; curr++)
     {
@@ -636,7 +636,7 @@ static void rot_col_b_r(PalEntry pal[], int num)
 }
 
 // convert a range of colors to grey scale
-static void pal_range_to_grey(PalEntry pal[], int first, int how_many)
+static void pal_range_to_grey(PalEntry pal[], const int first, int how_many)
 {
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
@@ -648,7 +648,7 @@ static void pal_range_to_grey(PalEntry pal[], int first, int how_many)
 }
 
 // convert a range of colors to their inverse
-static void pal_range_to_negative(PalEntry pal[], int first, int how_many)
+static void pal_range_to_negative(PalEntry pal[], const int first, int how_many)
 {
     for (PalEntry *curr = &pal[first]; how_many > 0; how_many--, curr++)
     {
@@ -659,7 +659,7 @@ static void pal_range_to_negative(PalEntry pal[], int first, int how_many)
 }
 
 // draw and horizontal/vertical dotted lines
-static void hor_dot_line(int x, int y, int width)
+static void hor_dot_line(const int x, const int y, const int width)
 {
     Byte *ptr = g_line_buff.data();
     for (int ctr = 0; ctr < width; ctr++, ptr++)
@@ -670,7 +670,7 @@ static void hor_dot_line(int x, int y, int width)
     put_row(x, y, width, reinterpret_cast<char *>(g_line_buff.data()));
 }
 
-static void ver_dot_line(int x, int y, int depth)
+static void ver_dot_line(const int x, int y, const int depth)
 {
     for (int ctr = 0; ctr < depth; ctr++, y++)
     {
@@ -678,7 +678,7 @@ static void ver_dot_line(int x, int y, int depth)
     }
 }
 
-static void dot_rect(int x, int y, int width, int depth)
+static void dot_rect(const int x, const int y, const int width, const int depth)
 {
     hor_dot_line(x, y, width);
     hor_dot_line(x, y+depth-1, width);
@@ -688,17 +688,17 @@ static void dot_rect(int x, int y, int width, int depth)
 }
 
 // misc. routines
-static bool is_reserved(int color)
+static bool is_reserved(const int color)
 {
     return s_reserve_colors && (color == s_fg_color || color == s_bg_color);
 }
 
-static bool is_in_box(int x, int y, int bx, int by, int bw, int bd)
+static bool is_in_box(const int x, const int y, const int bx, const int by, const int bw, const int bd)
 {
     return x >= bx && y >= by && x < bx + bw && y < by + bd;
 }
 
-static void draw_diamond(int x, int y, int color)
+static void draw_diamond(const int x, const int y, const int color)
 {
     g_put_color(x+2, y+0,    color);
     hor_line(x+1, y+1, 3, color);
@@ -720,7 +720,7 @@ CrossHairCursor::CrossHairCursor() :
 {
 }
 
-MoveBox::MoveBox(int x, int y, int csize, int base_width, int base_depth) :
+MoveBox::MoveBox(const int x, const int y, const int csize, const int base_width, const int base_depth) :
     m_x(x),
     m_y(y),
     m_base_width(base_width),
@@ -763,7 +763,7 @@ void MoveBox::erase()
     put_row(m_x, m_y + depth - 1, width, m_b.data());
 }
 
-ColorEditor::ColorEditor(int x, int y, char letter, ColorEditorNotification *observer) :
+ColorEditor::ColorEditor(const int x, const int y, const char letter, ColorEditorNotification *observer) :
     m_x(x),
     m_y(y),
     m_letter(letter),
@@ -783,13 +783,13 @@ void ColorEditor::draw()
     s_cursor.show();
 }
 
-void ColorEditor::set_pos(int x, int y)
+void ColorEditor::set_pos(const int x, const int y)
 {
     m_x = x;
     m_y = y;
 }
 
-void ColorEditor::set_val(int val)
+void ColorEditor::set_val(const int val)
 {
     m_val = val;
 }
@@ -799,12 +799,12 @@ int ColorEditor::get_val() const
     return m_val;
 }
 
-void ColorEditor::set_done(bool done)
+void ColorEditor::set_done(const bool done)
 {
     m_done = done;
 }
 
-void ColorEditor::set_hidden(bool hidden)
+void ColorEditor::set_hidden(const bool hidden)
 {
     m_hidden = hidden;
 }
@@ -1116,7 +1116,7 @@ void CrossHairCursor::restore()
     put_row(m_x+2,             m_y,  CURSOR_SIZE, m_right);
 }
 
-void CrossHairCursor::set_pos(int x, int y)
+void CrossHairCursor::set_pos(const int x, const int y)
 {
     if (!m_hidden)
     {
@@ -1134,7 +1134,7 @@ void CrossHairCursor::set_pos(int x, int y)
     }
 }
 
-void CrossHairCursor::move(int x_offset, int y_offset)
+void CrossHairCursor::move(const int x_offset, const int y_offset)
 {
     if (!m_hidden)
     {
@@ -1204,7 +1204,7 @@ int CrossHairCursor::wait_key()
     return driver_key_pressed();
 }
 
-RGBEditor::RGBEditor(int x, int y, RGBEditorNotification *observer) :
+RGBEditor::RGBEditor(const int x, const int y, RGBEditorNotification *observer) :
     m_x(x),
     m_y(y),
     m_pal(1),
@@ -1247,12 +1247,12 @@ RGBEditor &RGBEditor::operator=(RGBEditor &&rhs) noexcept
     return *this;
 }
 
-void RGBEditor::set_done(bool done)
+void RGBEditor::set_done(const bool done)
 {
     m_done = done;
 }
 
-void RGBEditor::set_pos(int x, int y)
+void RGBEditor::set_pos(const int x, const int y)
 {
     m_x = x;
     m_y = y;
@@ -1261,7 +1261,7 @@ void RGBEditor::set_pos(int x, int y)
     m_color[2].set_pos(x + 2, y + 2 + EDITOR_HEIGHT - 1 + EDITOR_HEIGHT - 1);
 }
 
-void RGBEditor::set_hidden(bool hidden)
+void RGBEditor::set_hidden(const bool hidden)
 {
     m_hidden = hidden;
     m_color[0].set_hidden(hidden);
@@ -1363,7 +1363,7 @@ int RGBEditor::edit()
     return key;
 }
 
-void RGBEditor::set_rgb(int pal, PalEntry *rgb)
+void RGBEditor::set_rgb(const int pal, PalEntry *rgb)
 {
     m_pal = pal;
     m_color[0].set_val(rgb->red);
@@ -1392,7 +1392,7 @@ void RGBEditor::change(ColorEditor *editor)
     m_observer->change(this);
 }
 
-void RGBEditor::other_key(int key, ColorEditor *editor)
+void RGBEditor::other_key(const int key, ColorEditor *editor)
 {
     switch (key)
     {
@@ -1503,7 +1503,7 @@ void PalTable::process()
 }
 
 // - everything else -
-void PalTable::draw_status(bool stripe_mode)
+void PalTable::draw_status(const bool stripe_mode)
 {
     int width = 1 + m_csize * 16 + 1 + 1;
 
@@ -1533,7 +1533,7 @@ void PalTable::draw_status(bool stripe_mode)
     }
 }
 
-void PalTable::hl_pal(int pal_index, int color)
+void PalTable::hl_pal(const int pal_index, const int color)
 {
     if (m_hidden)
     {
@@ -1734,7 +1734,7 @@ void PalTable::restore_rect()
     s_cursor.show();
 }
 
-void PalTable::set_pos(int x, int y)
+void PalTable::set_pos(const int x, const int y)
 {
     const int width = PAL_TABLE_PAL_X + m_csize * 16 + 1 + 1;
 
@@ -1745,7 +1745,7 @@ void PalTable::set_pos(int x, int y)
     m_rgb[1].set_pos(x + width - 2 - RGB_EDITOR_WIDTH, y + 2);
 }
 
-void PalTable::set_csize(int csize)
+void PalTable::set_csize(const int csize)
 {
     m_csize = csize;
     set_pos(m_x, m_y);
@@ -1855,7 +1855,7 @@ void PalTable::do_curs(int key)
     set_curr_from_cursor();
 }
 
-void PalTable::rotate(int dir, int lo, int hi)
+void PalTable::rotate(const int dir, const int lo, const int hi)
 {
     rotate_pal(m_pal, dir, lo, hi);
 
@@ -1927,7 +1927,7 @@ void PalTable::update_dac()
     spin_dac(0, 1);
 }
 
-void PalTable::save_undo_data(int first, int last)
+void PalTable::save_undo_data(const int first, const int last)
 {
     if (m_undo_file == nullptr)
     {
@@ -1955,7 +1955,7 @@ void PalTable::save_undo_data(int first, int last)
     m_num_redo = 0;
 }
 
-void PalTable::save_undo_rotate(int dir, int first, int last)
+void PalTable::save_undo_rotate(const int dir, const int first, const int last)
 {
     if (m_undo_file == nullptr)
     {
@@ -1972,7 +1972,7 @@ void PalTable::save_undo_rotate(int dir, int first, int last)
     m_num_redo = 0;
 }
 
-void PalTable::undo_process(int delta)
+void PalTable::undo_process(const int delta)
 {
     // delta = -1 for undo, +1 for redo
 
@@ -2076,7 +2076,7 @@ void PalTable::mk_default_palettes()
     }
 }
 
-void PalTable::hide(RGBEditor *rgb, bool hidden)
+void PalTable::hide(RGBEditor *rgb, const bool hidden)
 {
     if (hidden)
     {
@@ -2769,7 +2769,7 @@ void PalTable::put_band(PalEntry *pal)
     }
 }
 
-void PalTable::set_hidden(bool hidden)
+void PalTable::set_hidden(const bool hidden)
 {
     m_hidden = hidden;
     m_rgb[0].set_hidden(hidden);

@@ -110,14 +110,14 @@ static BFMathType s_old_bf_math{};
 
 // browse code RB
 
-static void save_box(int num_dots, int which)
+static void save_box(const int num_dots, const int which)
 {
     std::copy(&g_box_x[0], &g_box_x[num_dots], &s_browse_box_x[num_dots*which]);
     std::copy(&g_box_y[0], &g_box_y[num_dots], &s_browse_box_y[num_dots*which]);
     std::copy(&g_box_values[0], &g_box_values[num_dots], &s_browse_box_values[num_dots*which]);
 }
 
-static void restore_box(int num_dots, int which)
+static void restore_box(const int num_dots, const int which)
 {
     std::copy(&s_browse_box_x[num_dots*which], &s_browse_box_x[num_dots*(which + 1)], &g_box_x[0]);
     std::copy(&s_browse_box_y[num_dots*which], &s_browse_box_y[num_dots*(which + 1)], &g_box_y[0]);
@@ -480,7 +480,7 @@ rescan:  // entry for changed browse parms
     return c;
 }
 
-void FileWindow::draw(int color)
+void FileWindow::draw(const int color)
 {
     g_box_color = color;
     g_box_count = 0;
@@ -793,7 +793,7 @@ static bool params_ok(const FractalInfo *info)
         && info->invert[0] - g_inversion[0] < MIN_DIF;
 }
 
-static bool function_ok(const FractalInfo *info, int num_fn)
+static bool function_ok(const FractalInfo *info, const int num_fn)
 {
     for (int i = 0; i < num_fn; i++)
     {
@@ -931,7 +931,7 @@ static void bf_setup_convert_to_screen()
 }
 
 // maps points onto view screen
-static void bf_transform(BigFloat bt_x, BigFloat bt_y, DblCoords *point)
+static void bf_transform(const BigFloat bt_x, const BigFloat bt_y, DblCoords *point)
 {
     BigStackSaver saved;
     BigFloat bt_tmp1 = alloc_stack(g_r_bf_length + 2);

@@ -31,8 +31,8 @@ MockPrompter *g_prompter{};
 
 struct Shim
 {
-    int operator()(const char *hdg, int num_prompts, const char **prompts, FullScreenValues *values, int fn_key_mask,
-        char *extra_info) const
+    int operator()(const char *hdg, const int num_prompts, const char **prompts, FullScreenValues *values,
+        const int fn_key_mask, char *extra_info) const
     {
         return g_prompter->prompt(hdg, num_prompts, prompts, values, fn_key_mask, extra_info);
     }
@@ -75,7 +75,7 @@ MatchResultListener &operator<<(MatchResultListener &listener, const FullScreenV
     return listener << "0x100 + " << (value.type & 0xFF);
 }
 
-FullScreenValuePredicate has_type(int type)
+FullScreenValuePredicate has_type(const int type)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -90,7 +90,7 @@ FullScreenValuePredicate has_type(int type)
     };
 }
 
-bool check_type(MatchResultListener *listener, const FullScreenValues &value, int type)
+bool check_type(MatchResultListener *listener, const FullScreenValues &value, const int type)
 {
     if (value.type != type)
     {
@@ -102,7 +102,7 @@ bool check_type(MatchResultListener *listener, const FullScreenValues &value, in
     return true;
 }
 
-FullScreenValuePredicate has_yes_no(bool yes)
+FullScreenValuePredicate has_yes_no(const bool yes)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -120,7 +120,7 @@ FullScreenValuePredicate has_yes_no(bool yes)
     };
 }
 
-FullScreenValuePredicate has_int_number(int number)
+FullScreenValuePredicate has_int_number(const int number)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -139,7 +139,7 @@ FullScreenValuePredicate has_int_number(int number)
     };
 }
 
-FullScreenValuePredicate has_long_number(long number)
+FullScreenValuePredicate has_long_number(const long number)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -158,7 +158,7 @@ FullScreenValuePredicate has_long_number(long number)
     };
 }
 
-FullScreenValuePredicate has_float_number(float number)
+FullScreenValuePredicate has_float_number(const float number)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -177,7 +177,7 @@ FullScreenValuePredicate has_float_number(float number)
     };
 }
 
-FullScreenValuePredicate has_double_number(double number)
+FullScreenValuePredicate has_double_number(const double number)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -196,7 +196,7 @@ FullScreenValuePredicate has_double_number(double number)
     };
 }
 
-FullScreenValuePredicate has_int_double_number(double number)
+FullScreenValuePredicate has_int_double_number(const double number)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -215,7 +215,8 @@ FullScreenValuePredicate has_int_double_number(double number)
     };
 }
 
-FullScreenValuePredicate has_list(int list_len, int list_value_len, const char *list[], int choice)
+FullScreenValuePredicate has_list(
+    const int list_len, const int list_value_len, const char *list[], const int choice)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -292,7 +293,7 @@ FullScreenValuePredicate has_string(const char *text)
     };
 }
 
-FullScreenValuePredicate has_string_buff(char *buff, int len)
+FullScreenValuePredicate has_string_buff(char *buff, const int len)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -347,7 +348,7 @@ protected:
     }
 
     MockPrompter m_prompter;
-    std::function<void(FullScreenValues *)> expect_yes_no(int index, bool expected)
+    std::function<void(FullScreenValues *)> expect_yes_no(const int index, const bool expected)
     {
         return [=](FullScreenValues *values)
         {

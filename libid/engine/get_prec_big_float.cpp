@@ -47,7 +47,7 @@ int get_prec_bf_mag()
 /* This function calculates the precision needed to distinguish adjacent
    pixels at maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if res==Resolution::MAX) or at current resolution (if res==Resolution::CURRENT)    */
-int get_prec_bf(ResolutionFlag flag)
+int get_prec_bf(const ResolutionFlag flag)
 {
     BigStackSaver saved;
     int res;
@@ -110,7 +110,7 @@ int get_prec_bf(ResolutionFlag flag)
 }
 
 // get_power10(x) returns the magnitude of x.
-static int get_power10(LDouble x)
+static int get_power10(const LDouble x)
 {
     // Special case for zero
     if (x == 0.0)
@@ -120,7 +120,7 @@ static int get_power10(LDouble x)
     return static_cast<int>(std::floor(std::log10(std::abs(x))));
 }
 
-int get_magnification_precision(LDouble magnification)
+int get_magnification_precision(const LDouble magnification)
 {
     return get_power10(magnification) + 4; // 4 digits of padding sounds good
 }

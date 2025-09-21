@@ -11,7 +11,7 @@ namespace fs = std::filesystem;
 namespace id::io
 {
 
-std::string trim_filename(const std::string &filename, int length)
+std::string trim_filename(const std::string &filename, const int length)
 {
     if (static_cast<int>(filename.length()) <= length)
     {
@@ -27,7 +27,8 @@ std::string trim_filename(const std::string &filename, int length)
     }
     const fs::path start{path / parts.back() / "..."};
     parts.pop_back();
-    const auto path_length = [](int len, const fs::path &item) { return static_cast<int>(item.filename().string().size()) + len + 1; };
+    const auto path_length = [](const int len, const fs::path &item)
+    { return static_cast<int>(item.filename().string().size()) + len + 1; };
     const int remaining{length - static_cast<int>(start.string().size())};
     while (std::accumulate(parts.begin(), parts.end(), 0, path_length) > remaining)
     {

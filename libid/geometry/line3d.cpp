@@ -884,7 +884,7 @@ really_the_bottom:
 }
 
 // vector version of line draw
-static void vec_draw_line(double *v1, double *v2, int color)
+static void vec_draw_line(double *v1, double *v2, const int color)
 {
     const int x1 = static_cast<int>(v1[0]);
     const int y1 = static_cast<int>(v1[1]);
@@ -893,7 +893,7 @@ static void vec_draw_line(double *v1, double *v2, int color)
     driver_draw_line(x1, y1, x2, y2, color);
 }
 
-static void corners(Matrix m, bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
+static void corners(Matrix m, const bool show, double *x_min, double *y_min, double *z_min, double *x_max, double *y_max, double *z_max)
 {
     Vector s[2][4];              // Holds the top and bottom points, S[0][]=bottom
 
@@ -1062,7 +1062,7 @@ static void draw_light_box(double *origin, double *direct, Matrix light_m)
     }
 }
 
-static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, int color, bool rect)
+static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, const int color, const bool rect)
 {
     Vector v[4];
 
@@ -1101,7 +1101,7 @@ static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, int color, boo
 
 // replacement for plot - builds a table of min and max x's instead of plot
 // called by draw_line as part of triangle fill routine
-static void put_min_max(int x, int y, int /*color*/)
+static void put_min_max(const int x, const int y, const int /*color*/)
 {
     if (y >= 0 && y < g_logical_screen_y_dots)
     {
@@ -1120,7 +1120,7 @@ enum
     MAXOFFSCREEN = 2    // allow two of three points to be off-screen
 };
 
-static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int color)
+static void put_triangle(const PointColor pt1, const PointColor pt2, const PointColor pt3, const int color)
 {
     // Too many points off the screen?
     if (off_screen(pt1) + off_screen(pt2) + off_screen(pt3) > MAXOFFSCREEN)
@@ -1207,7 +1207,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
     g_plot = s_normal_plot;
 }
 
-static int off_screen(PointColor pt)
+static int off_screen(const PointColor pt)
 {
     if (pt.x >= 0)
     {
@@ -1229,7 +1229,7 @@ static int off_screen(PointColor pt)
     return 1;                  // point is off the screen
 }
 
-static void clip_color(int x, int y, int color)
+static void clip_color(const int x, const int y, const int color)
 {
     if (0 <= x && x < g_logical_screen_x_dots
         && 0 <= y && y < g_logical_screen_y_dots
@@ -1254,7 +1254,7 @@ static void clip_color(int x, int y, int color)
 // has been enabled.
 //*******************************************************************
 
-static void transparent_clip_color(int x, int y, int color)
+static void transparent_clip_color(const int x, const int y, const int color)
 {
     if (0 <= x && x < g_logical_screen_x_dots       // is the point on screen?
         && 0 <= y && y < g_logical_screen_y_dots    // Yes?
@@ -1283,7 +1283,7 @@ static void transparent_clip_color(int x, int y, int color)
 //      Real_Color always contains the actual color
 //**********************************************************************
 
-static void interp_color(int x, int y, int color)
+static void interp_color(const int x, const int y, int color)
 {
     /* this distance formula is not the usual one - but it has the virtue that
      * it uses ONLY additions (almost) and it DOES go to zero as the points
@@ -1347,7 +1347,7 @@ static void interp_color(int x, int y, int color)
         and plots it in a Targa file. Used in plot3d.c
 */
 
-int targa_color(int x, int y, int color)
+int targa_color(const int x, const int y, const int color)
 {
     unsigned long hue;
     unsigned long sat;
@@ -1417,7 +1417,7 @@ int targa_color(int x, int y, int color)
     return static_cast<int>(255 - val);
 }
 
-static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
+static bool set_pixel_buff(Byte *pixels, Byte *fraction, const unsigned line_len)
 {
     if ((s_even_odd_row++ & 1) == 0) // even rows are color value
     {
@@ -1444,7 +1444,7 @@ static bool set_pixel_buff(Byte *pixels, Byte *fraction, unsigned line_len)
 
 **************************************************************************/
 
-static void file_error(const std::string &filename, FileError error)
+static void file_error(const std::string &filename, const FileError error)
 {
     std::string msg;
     s_error = error;
@@ -1488,7 +1488,7 @@ static void file_error(const std::string &filename, FileError error)
 //
 // *********************************************************************
 
-static bool start_targa_overlay(const std::string &path, std::FILE *source, bool overlay)
+static bool start_targa_overlay(const std::string &path, std::FILE *source, const bool overlay)
 {
     // Open File for both reading and writing
     std::FILE *fps = std::fopen(path.c_str(), "w+b");
@@ -1679,8 +1679,8 @@ static bool targa_validate(const std::string &filename)
     return false;
 }
 
-static int rgb_to_hsv(
-    Byte red, Byte green, Byte blue, unsigned long *hue, unsigned long *sat, unsigned long *val)
+static int rgb_to_hsv(const Byte red, const Byte green, const Byte blue, //
+    unsigned long *hue, unsigned long *sat, unsigned long *val)
 {
     *val = red;
     Byte min = green;
@@ -1769,8 +1769,8 @@ static int rgb_to_hsv(
     return 0;
 }
 
-static void hsv_to_rgb(
-    Byte *red, Byte *green, Byte *blue, unsigned long hue, unsigned long sat, unsigned long val)
+static void hsv_to_rgb(Byte *red, Byte *green, Byte *blue, //
+    unsigned long hue, const unsigned long sat, unsigned long val)
 {
     if (hue >= 23040)
     {
@@ -1987,7 +1987,8 @@ static int ray_header()
 //
 //******************************************************************
 
-static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c1, int c2, int c3)
+static int out_triangle(const FPointColor pt1, const FPointColor pt2, const FPointColor pt3, //
+    const int c1, const int c2, const int c3)
 {
     float c[3];
     float pt_t[3][3];
@@ -2229,7 +2230,7 @@ static int start_object()
 //
 //******************************************************************
 
-static int end_object(bool tri_out)
+static int end_object(const bool tri_out)
 {
     if (g_raytrace_format == RayTraceFormat::DXF)
     {
@@ -2404,7 +2405,7 @@ static void set_upr_lwr()
     s_line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
 }
 
-static int first_time(int line_len, Vector v)
+static int first_time(const int line_len, Vector v)
 {
     Matrix light_mat;               // m w/no trans, keeps obj. on screen
                    // rotation values

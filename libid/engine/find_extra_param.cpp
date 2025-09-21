@@ -9,7 +9,7 @@ using namespace id::fractals;
 namespace id::engine
 {
 
-int find_extra_param(FractalType type)
+int find_extra_param(const FractalType type)
 {
     int ret = -1;
     if (bit_set(get_fractal_specific(type)->flags, FractalFlags::MORE))

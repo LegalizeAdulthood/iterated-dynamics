@@ -32,7 +32,7 @@ namespace id::io
 // (modes AT_AFTER_STARTUP and AT_CMD_LINE_SET_NAME)
 // attempts to extract directory and test for existence
 // (modes AT_CMD_LINE and SSTOOLS_INI)
-int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode)
+int merge_path_names(char *old_full_path, const char *new_filename, const CmdFile mode)
 {
     char buff[ID_FILE_MAX_PATH];
     std::strcpy(buff, fs::path(new_filename).make_preferred().string().c_str());
@@ -148,7 +148,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
     return is_a_dir_error ? -1 : is_a_dir ? 1 : 0;
 }
 
-int merge_path_names(std::string &old_full_path, const char *new_filename, CmdFile mode)
+int merge_path_names(std::string &old_full_path, const char *new_filename, const CmdFile mode)
 {
     char buff[ID_FILE_MAX_PATH];
     std::strcpy(buff, old_full_path.c_str());
@@ -157,7 +157,7 @@ int merge_path_names(std::string &old_full_path, const char *new_filename, CmdFi
     return result;
 }
 
-int merge_path_names(std::filesystem::path &old_full_path, const char *new_filename, CmdFile mode)
+int merge_path_names(std::filesystem::path &old_full_path, const char *new_filename, const CmdFile mode)
 {
     std::string buff = old_full_path.string();
     const int result = merge_path_names(buff, new_filename, mode);

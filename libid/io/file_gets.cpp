@@ -7,7 +7,7 @@
 namespace id::io
 {
 
-int file_gets(char *buf, int max_len, std::FILE *infile)
+int file_gets(char *buf, const int max_len, std::FILE *infile)
 {
     // similar to 'fgets', but file may be in either text or binary mode
     // returns -1 at eof, length of string otherwise

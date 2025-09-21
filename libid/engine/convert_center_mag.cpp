@@ -20,7 +20,7 @@ namespace id::engine
 {
 
 // most people "think" in degrees
-static double rad_to_deg(double x)
+static double rad_to_deg(const double x)
 {
     return x * (180.0 / PI);
 }

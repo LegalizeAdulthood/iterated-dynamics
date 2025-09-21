@@ -24,7 +24,7 @@ enum class Direction
     SOUTH,
     WEST
 };
-inline int operator+(Direction value)
+inline int operator+(const Direction value)
 {
     return static_cast<int>(value);
 }
@@ -37,7 +37,7 @@ static Byte s_stack[4096]{}; // common temp, two put_line calls
 // boundary trace method
 constexpr int BK_COLOR{};
 
-static Direction advance(Direction dir, int increment)
+static Direction advance(const Direction dir, const int increment)
 {
     return static_cast<Direction>(+dir + increment & 0x03);
 }

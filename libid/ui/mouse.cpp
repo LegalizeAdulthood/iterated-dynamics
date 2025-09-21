@@ -46,7 +46,7 @@ int mouse_subscribe(MouseNotificationPtr subscriber)
     return result;
 }
 
-void mouse_unsubscribe(int id)
+void mouse_unsubscribe(const int id)
 {
     if (s_inside_notification)
     {
@@ -76,39 +76,39 @@ static void notify(std::function<void(const MouseNotificationPtr &)> handler)
     }
 }
 
-void mouse_notify_primary_down(bool double_click, int x, int y, int key_flags)
+void mouse_notify_primary_down(const bool double_click, const int x, const int y, const int key_flags)
 {
     notify(
         [=](const MouseNotificationPtr &handler) { handler->primary_down(double_click, x, y, key_flags); });
 }
 
-void mouse_notify_secondary_down(bool double_click, int x, int y, int key_flags)
+void mouse_notify_secondary_down(const bool double_click, const int x, const int y, const int key_flags)
 {
     notify(
         [=](const MouseNotificationPtr &handler) { handler->secondary_down(double_click, x, y, key_flags); });
 }
 
-void mouse_notify_middle_down(bool double_click, int x, int y, int key_flags)
+void mouse_notify_middle_down(const bool double_click, const int x, const int y, const int key_flags)
 {
     notify([=](const MouseNotificationPtr &handler) { handler->middle_down(double_click, x, y, key_flags); });
 }
 
-void mouse_notify_primary_up(int x, int y, int key_flags)
+void mouse_notify_primary_up(const int x, const int y, const int key_flags)
 {
     notify([=](const MouseNotificationPtr &handler) { handler->primary_up(x, y, key_flags); });
 }
 
-void mouse_notify_secondary_up(int x, int y, int key_flags)
+void mouse_notify_secondary_up(const int x, const int y, const int key_flags)
 {
     notify([=](const MouseNotificationPtr &handler) { handler->secondary_up(x, y, key_flags); });
 }
 
-void mouse_notify_middle_up(int x, int y, int key_flags)
+void mouse_notify_middle_up(const int x, const int y, const int key_flags)
 {
     notify([=](const MouseNotificationPtr &handler) { handler->middle_up(x, y, key_flags); });
 }
 
-void mouse_notify_move(int x, int y, int key_flags)
+void mouse_notify_move(const int x, const int y, const int key_flags)
 {
     notify([=](const MouseNotificationPtr &handler) { handler->move(x, y, key_flags); });
 }

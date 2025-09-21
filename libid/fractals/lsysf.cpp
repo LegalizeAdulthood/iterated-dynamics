@@ -255,7 +255,7 @@ static void lsys_draw_lt(LSysTurtleState *cmd)
     }
 }
 
-static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth)
+static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
 {
     if (g_overflow)       // integer math routines overflowed
     {
@@ -338,7 +338,7 @@ static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules
     return command;
 }
 
-bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth)
+bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
 {
     ts->aspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
     ts->y_min = 0;
@@ -403,7 +403,7 @@ bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int
     return true;
 }
 
-LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth)
+LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
 {
     if (g_overflow)       // integer math routines overflowed
     {

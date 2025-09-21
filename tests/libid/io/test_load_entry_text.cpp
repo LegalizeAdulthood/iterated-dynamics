@@ -81,7 +81,7 @@ R"frm(Fractint { ; Sylvie Gallet, 1996
 static std::vector<std::string> split_lines(std::string_view text)
 {
     std::vector<std::string> result;
-    boost::algorithm::split(result, text, [](char c) { return c == '\n'; });
+    boost::algorithm::split(result, text, [](const char c) { return c == '\n'; });
     return result;
 }
 

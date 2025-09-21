@@ -135,20 +135,20 @@ enum class CmdArgFlags
     RESET            = 8,
     GOODBYE          = 16,
 };
-inline int operator+(CmdArgFlags value)
+inline int operator+(const CmdArgFlags value)
 {
     return static_cast<int>(value);
 }
-inline CmdArgFlags operator|(CmdArgFlags lhs, CmdArgFlags rhs)
+inline CmdArgFlags operator|(const CmdArgFlags lhs, const CmdArgFlags rhs)
 {
     return static_cast<CmdArgFlags>(+lhs | +rhs);
 }
-inline CmdArgFlags &operator|=(CmdArgFlags &lhs, CmdArgFlags rhs)
+inline CmdArgFlags &operator|=(CmdArgFlags &lhs, const CmdArgFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
-inline bool bit_set(CmdArgFlags flags, CmdArgFlags bit)
+inline bool bit_set(const CmdArgFlags flags, const CmdArgFlags bit)
 {
     return (+flags & +bit) == +bit;
 }

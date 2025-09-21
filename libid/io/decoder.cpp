@@ -128,7 +128,7 @@ static Byte s_decoder_line[MAX_PIXELS]{};
 // moved sizeofstring here for possible re-use elsewhere
 static short s_sizeof_string[MAX_CODES + 1]{};  // size of string list
 
-short decoder(short line_width)
+short decoder(const short line_width)
 {
     U16 prefix[MAX_CODES+1]{};     // Prefix linked list
     short ret;

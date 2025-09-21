@@ -47,7 +47,7 @@ static void smallest_add_bf(BigFloat num);
 /* This function calculates the precision needed to distinguish adjacent
    pixels at the maximum resolution of MAX_PIXELS by MAX_PIXELS
    (if res==Resolution::MAX) or at current resolution (if res==Resolution::CURRENT)    */
-static int get_prec_dbl(ResolutionFlag flag)
+static int get_prec_dbl(const ResolutionFlag flag)
 {
     LDouble res;
     if (flag == ResolutionFlag::MAX)
@@ -513,7 +513,7 @@ void adjust_corner()
     }
 }
 
-static void adjust_to_limits_bf(double expand)
+static void adjust_to_limits_bf(const double expand)
 {
     BigStackSaver saved;
     BigFloat b_corner_x[4];
@@ -760,7 +760,7 @@ static void adjust_to_limits_bf(double expand)
     adjust_corner_bf(); // make 3rd corner exact if very near other co-ords
 }
 
-static void adjust_to_limits(double expand)
+static void adjust_to_limits(const double expand)
 {
     double corner_x[4];
     double corner_y[4];
@@ -890,7 +890,7 @@ static void smallest_add_bf(BigFloat num)
     add_a_bf(num, b_tmp1);
 }
 
-static bool ratio_bad(double actual, double desired)
+static bool ratio_bad(const double actual, const double desired)
 {
     const double tol = g_math_tol[1];
     if (tol <= 0.0)

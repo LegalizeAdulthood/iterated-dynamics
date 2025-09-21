@@ -133,7 +133,7 @@ void mat_mul(Matrix lhs, Matrix rhs, Matrix result)
 }
 
 // multiply a matrix by a scalar
-void scale(double sx, double sy, double sz, Matrix m)
+void scale(const double sx, const double sy, const double sz, Matrix m)
 {
     Matrix scale;
     identity(scale);
@@ -144,7 +144,7 @@ void scale(double sx, double sy, double sz, Matrix m)
 }
 
 // rotate about X axis
-void x_rot(double theta, Matrix m)
+void x_rot(const double theta, Matrix m)
 {
     Matrix rot;
     const double sin_theta = std::sin(theta);
@@ -158,7 +158,7 @@ void x_rot(double theta, Matrix m)
 }
 
 // rotate about Y axis
-void y_rot(double theta, Matrix m)
+void y_rot(const double theta, Matrix m)
 {
     Matrix rot;
     const double sin_theta = std::sin(theta);
@@ -172,7 +172,7 @@ void y_rot(double theta, Matrix m)
 }
 
 // rotate about Z axis
-void z_rot(double theta, Matrix m)
+void z_rot(const double theta, Matrix m)
 {
     Matrix rot;
     const double sin_theta = std::sin(theta);
@@ -186,7 +186,7 @@ void z_rot(double theta, Matrix m)
 }
 
 // translate
-void trans(double tx, double ty, double tz, Matrix m)
+void trans(const double tx, const double ty, const double tz, Matrix m)
 {
     Matrix trans;
     identity(trans);
@@ -293,7 +293,7 @@ int perspective(Vector v)
 }
 
 // long version of vmult and perspective combined for speed
-int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL view, int bit_shift)
+int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL view, const int bit_shift)
 {
     // s: source vector
     // m: transformation matrix

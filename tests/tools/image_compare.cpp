@@ -12,7 +12,7 @@
 namespace id
 {
 
-static int usage(std::string_view program)
+static int usage(const std::string_view program)
 {
     std::cout << "Usage: [--ignore-colormap] " << program << ": file1 file2\n";
     return 1;
@@ -20,7 +20,7 @@ static int usage(std::string_view program)
 
 } // namespace id
 
-int main(int argc, char *argv[])
+int main(const int argc, char *argv[])
 {
     using namespace id;
     if (argc < 3 || argc > 4)

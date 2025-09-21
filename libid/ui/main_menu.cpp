@@ -49,7 +49,7 @@ static bool is_julia()
     return g_fractal_type == FractalType::JULIA || g_fractal_type == FractalType::INVERSE_JULIA;
 }
 
-static int menu_check_key(int key, int /*choice*/)
+static int menu_check_key(const int key, int /*choice*/)
 {
     int test_key = key >= 'A' && key <= 'Z' ? key+('a'-'A') : key;
     if (test_key == '2')
@@ -120,7 +120,7 @@ private:
     int m_next_right{};
 };
 
-MainMenu::MainMenu(bool full_menu)
+MainMenu::MainMenu(const bool full_menu)
 {
     const auto add_left_heading{[&](const char *heading)
         {
@@ -128,7 +128,7 @@ MainMenu::MainMenu(bool full_menu)
             m_choices[m_next_left] = heading;
             m_attributes[m_next_left] = 256 + MENU_HDG;
         }};
-    const auto add_left_item{[&](const char *choice, int key)
+    const auto add_left_item{[&](const char *choice, const int key)
         {
             m_next_left += 2;
             m_choice_key[m_next_left] = key;
@@ -141,7 +141,7 @@ MainMenu::MainMenu(bool full_menu)
             m_choices[m_next_right] = heading;
             m_attributes[m_next_right] = 256 + MENU_HDG;
         }};
-    const auto add_right_item{[&](const char *choice, int key)
+    const auto add_right_item{[&](const char *choice, const int key)
         {
             m_next_right += 2;
             m_choice_key[m_next_right] = key;
@@ -297,7 +297,7 @@ static bool exit_prompt()
     return true;
 }
 
-int main_menu(bool full_menu)
+int main_menu(const bool full_menu)
 {
     ValueSaver saved_tab_mode{g_tab_mode};
 

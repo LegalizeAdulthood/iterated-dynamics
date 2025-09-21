@@ -14,13 +14,14 @@ namespace id::engine
 {
 
 // most people "think" in degrees
-static double deg_to_rad(double x)
+static double deg_to_rad(const double x)
 {
     return x * (PI / 180.0);
 }
 
 // convert center/mag to corners
-void cvt_corners(double ctr_x, double ctr_y, LDouble mag, double x_mag_factor, double rot, double skew)
+void cvt_corners(const double ctr_x, const double ctr_y, const LDouble mag, double x_mag_factor, double rot,
+    const double skew)
 {
     if (x_mag_factor == 0.0)
     {
@@ -77,7 +78,8 @@ void cvt_corners(double ctr_x, double ctr_y, LDouble mag, double x_mag_factor, d
 }
 
 // convert center/mag to corners using bf
-void cvt_corners_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble mag, double x_mag_factor, double rot, double skew)
+void cvt_corners_bf(
+    BigFloat ctr_x, BigFloat ctr_y, const LDouble mag, double x_mag_factor, double rot, const double skew)
 {
     BigStackSaver saved;
     BigFloat bfh = alloc_stack(g_bf_length + 2);

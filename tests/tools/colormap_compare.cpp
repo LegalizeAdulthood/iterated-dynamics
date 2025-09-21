@@ -12,7 +12,7 @@
 namespace id
 {
 
-static int usage(std::string_view program)
+static int usage(const std::string_view program)
 {
     std::cout << "Usage: " << program << ": map-file image-file\n";
     return 1;
@@ -27,7 +27,7 @@ struct Color
 
 } // namespace id
 
-int main(int argc, char *argv[])
+int main(const int argc, char *argv[])
 {
     using namespace id;
     if (argc != 3)

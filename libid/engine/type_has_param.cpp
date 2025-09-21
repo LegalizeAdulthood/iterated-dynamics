@@ -19,7 +19,7 @@ namespace id::engine
  *  Pass in nullptr for buf if only the existence of the parameter is
  *  needed, and not the prompt string.
  */
-bool type_has_param(FractalType type, int param, const char **prompt)
+bool type_has_param(const FractalType type, const int param, const char **prompt)
 {
     const char *ret = nullptr;
     if (0 <= param && param < 4)

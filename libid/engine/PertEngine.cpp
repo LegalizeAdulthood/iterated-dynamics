@@ -39,7 +39,7 @@ namespace id::engine
 constexpr double GLITCH_TOLERANCE{1e-6};
 
 void PertEngine::initialize_frame(
-    const BFComplex &center_bf, const std::complex<double> &center, double zoom_radius)
+    const BFComplex &center_bf, const std::complex<double> &center, const double zoom_radius)
 {
     m_zoom_radius = zoom_radius;
 
@@ -224,7 +224,7 @@ void PertEngine::cleanup()
     m_xn.clear();
 }
 
-int PertEngine::calculate_point(const Point &pt, double magnified_radius, int window_radius)
+int PertEngine::calculate_point(const Point &pt, const double magnified_radius, const int window_radius)
 {
     // Get the complex number at this pixel.
     // This calculates the number relative to the reference point, so we need to translate that to the center
@@ -448,7 +448,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
     return 0;
 }
 
-void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration)
+void PertEngine::reference_zoom_point(const BFComplex &center, const int max_iteration)
 {
     BigStackSaver saved;
 
@@ -502,7 +502,7 @@ void PertEngine::reference_zoom_point(const BFComplex &center, int max_iteration
     }
 }
 
-void PertEngine::reference_zoom_point(const std::complex<double> &center, int max_iteration)
+void PertEngine::reference_zoom_point(const std::complex<double> &center, const int max_iteration)
 {
     std::complex<double> z = center;
 

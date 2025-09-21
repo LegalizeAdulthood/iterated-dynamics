@@ -66,7 +66,7 @@ namespace id::ui
 {
 
 // Do nothing if math error
-static void my_floating_point_err(int sig)
+static void my_floating_point_err(const int sig)
 {
     if (sig != 0)
     {

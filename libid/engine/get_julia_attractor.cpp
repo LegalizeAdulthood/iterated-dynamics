@@ -19,7 +19,7 @@ using namespace id::math;
 namespace id::engine
 {
 
-void get_julia_attractor(double real, double imag)
+void get_julia_attractor(const double real, const double imag)
 {
     DComplex result{};
 

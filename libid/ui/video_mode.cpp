@@ -13,7 +13,7 @@ VideoInfo g_video_table[MAX_VIDEO_MODES]{};
 
 int g_video_table_len{};                 // number of entries in above
 
-int check_vid_mode_key(int key)
+int check_vid_mode_key(const int key)
 {
     if (key == 1400)                // special value from select_vid_mode
     {

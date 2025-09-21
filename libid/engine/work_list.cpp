@@ -12,7 +12,7 @@ WorkList g_work_list[MAX_CALC_WORK]{};
 
 static int combine_work_list();
 
-bool add_work_list(Point2i start, Point2i stop, Point2i begin, int pass, int symmetry)
+bool add_work_list(const Point2i start, const Point2i stop, const Point2i begin, const int pass, const int symmetry)
 {
     if (g_num_work_list >= MAX_CALC_WORK)
     {
@@ -28,10 +28,10 @@ bool add_work_list(Point2i start, Point2i stop, Point2i begin, int pass, int sym
     return false;
 }
 
-bool add_work_list(int x_from, int y_from, //
-    int x_to, int y_to,                    //
-    int x_begin, int y_begin,              //
-    int pass, int symmetry)
+bool add_work_list(const int x_from, const int y_from, //
+    const int x_to, const int y_to,                    //
+    const int x_begin, const int y_begin,              //
+    const int pass, const int symmetry)
 {
     if (g_num_work_list >= MAX_CALC_WORK)
     {

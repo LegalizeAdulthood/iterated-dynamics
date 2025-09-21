@@ -44,7 +44,7 @@ static void get_int32(std::int32_t *dst, unsigned char **src, int dir);
 static void get_float(float *dst, unsigned char **src, int dir);
 static void get_double(double *dst, unsigned char **src, int dir);
 
-void decode_fractal_info_big_endian(FractalInfo *info, int dir)
+void decode_fractal_info_big_endian(FractalInfo *info, const int dir)
 {
     std::vector<unsigned char> info_buff;
     info_buff.resize(sizeof(FractalInfo));
@@ -220,7 +220,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, int dir)
  * This routine gets a char out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_uint8(std::uint8_t *dst, unsigned char **src, int dir)
+static void get_uint8(std::uint8_t *dst, unsigned char **src, const int dir)
 {
     if (dir == 1)
     {
@@ -237,7 +237,7 @@ static void get_uint8(std::uint8_t *dst, unsigned char **src, int dir)
  * This routine gets an int16_t out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_int16(std::int16_t *dst, unsigned char **src, int dir)
+static void get_int16(std::int16_t *dst, unsigned char **src, const int dir)
 {
     if (dir == 1)
     {
@@ -255,7 +255,7 @@ static void get_int16(std::int16_t *dst, unsigned char **src, int dir)
  * This routine gets a long out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_int32(std::int32_t *dst, unsigned char **src, int dir)
+static void get_int32(std::int32_t *dst, unsigned char **src, const int dir)
 {
     if (dir == 1)
     {
@@ -291,7 +291,7 @@ static void get_int32(std::int32_t *dst, unsigned char **src, int dir)
  * buffer;
  * It updates the buffer pointer accordingly.
  */
-static void get_double(double *dst, unsigned char **src, int dir)
+static void get_double(double *dst, unsigned char **src, const int dir)
 {
     int e;
     double f;
@@ -374,7 +374,7 @@ static void get_double(double *dst, unsigned char **src, int dir)
  * This routine gets a float out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_float(float *dst, unsigned char **src, int dir)
+static void get_float(float *dst, unsigned char **src, const int dir)
 {
     int e;
     double f;
@@ -444,7 +444,7 @@ static void get_float(float *dst, unsigned char **src, int dir)
     *src += 4; // sizeof(float) in MSDOS
 }
 
-void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
+void decode_evolver_info_big_endian(EvolutionInfo *info, const int dir)
 {
     std::vector<unsigned char> evolution_info_buff;
     unsigned char *buf_ptr;
@@ -492,7 +492,7 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, int dir)
     }
 }
 
-void decode_orbits_info_big_endian(OrbitsInfo *info, int dir)
+void decode_orbits_info_big_endian(OrbitsInfo *info, const int dir)
 {
     std::vector<unsigned char> orbits_info_buff;
     unsigned char *buf_ptr;

@@ -94,7 +94,7 @@ static VideoInfo s_modes[] =
 };
 #undef DRIVER_MODE
 
-static void show_hide_windows(HWND show, HWND hide)
+static void show_hide_windows(const HWND show, const HWND hide)
 {
     ShowWindow(show, SW_NORMAL);
     ShowWindow(hide, SW_HIDE);
@@ -116,7 +116,7 @@ void GDIDriver::get_max_size(int *width, int *height, bool *center_x, bool *cent
     }
 }
 
-void GDIDriver::center_windows(bool center_x, bool center_y)
+void GDIDriver::center_windows(const bool center_x, const bool center_y)
 {
     POINT text_pos{};
     POINT plot_pos{};
@@ -250,32 +250,32 @@ void GDIDriver::schedule_alarm(int secs)
     }
 }
 
-void GDIDriver::write_pixel(int x, int y, int color)
+void GDIDriver::write_pixel(const int x, const int y, const int color)
 {
     m_plot.write_pixel(x, y, color);
 }
 
-int GDIDriver::read_pixel(int x, int y)
+int GDIDriver::read_pixel(const int x, const int y)
 {
     return m_plot.read_pixel(x,y);
 }
 
-void GDIDriver::write_span(int y, int x, int last_x, Byte *pixels)
+void GDIDriver::write_span(const int y, const int x, const int last_x, Byte *pixels)
 {
     m_plot.write_span(y, x, last_x, pixels);
 }
 
-void GDIDriver::read_span(int y, int x, int last_x, Byte *pixels)
+void GDIDriver::read_span(const int y, const int x, const int last_x, Byte *pixels)
 {
     m_plot.read_span(y, x, last_x, pixels);
 }
 
-void GDIDriver::set_line_mode(int mode)
+void GDIDriver::set_line_mode(const int mode)
 {
     m_plot.set_line_mode(mode);
 }
 
-void GDIDriver::draw_line(int x1, int y1, int x2, int y2, int color)
+void GDIDriver::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
     m_plot.draw_line(x1, y1, x2, y2, color);
 }
@@ -399,7 +399,7 @@ void GDIDriver::resume()
     m_win_text.resume();
 }
 
-void GDIDriver::display_string(int x, int y, int fg, int bg, const char *text)
+void GDIDriver::display_string(const int x, const int y, const int fg, const int bg, const char *text)
 {
     m_plot.display_string(x, y, fg, bg, text);
 }

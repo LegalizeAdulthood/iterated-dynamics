@@ -46,7 +46,7 @@ static void print_msg(const char *type, int line_num, const char *format, std::v
     std::fflush(stdout);
 }
 
-static void fatal_msg(int line_offset, const char *format, ...)
+static void fatal_msg(const int line_offset, const char *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -62,7 +62,7 @@ static void fatal_msg(int line_offset, const char *format, ...)
     std::exit(g_errors + 1);
 }
 
-void error_msg(int line_offset, const char *format, ...)
+void error_msg(const int line_offset, const char *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
@@ -76,7 +76,7 @@ void error_msg(int line_offset, const char *format, ...)
     }
 }
 
-void warn_msg(int line_offset, const char *format, ...)
+void warn_msg(const int line_offset, const char *format, ...)
 {
     std::va_list arg;
     va_start(arg, format);
