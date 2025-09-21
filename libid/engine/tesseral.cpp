@@ -75,14 +75,14 @@ Tesseral::Tesseral() :
         m_tp->lft = -2;
         m_tp->bot = -2;
         m_tp->top = -2;
-        int cur_y = g_begin_pt.y & 0xfff;
+        const int cur_y = g_begin_pt.y & 0xfff;
         int y_size = 1;
         int i = static_cast<unsigned>(g_begin_pt.y) >> 12;
         while (--i >= 0)
         {
             y_size <<= 1;
         }
-        int cur_x = g_work_pass & 0xfff;
+        const int cur_x = g_work_pass & 0xfff;
         int x_size = 1;
         i = static_cast<unsigned>(g_work_pass) >> 12;
         while (--i >= 0)
@@ -228,7 +228,7 @@ void Tesseral::fill_box()
         else
         {
             // use write_span for speed
-            std::vector pixels(j, static_cast<Byte>(m_tp->top));
+            const std::vector pixels(j, static_cast<Byte>(m_tp->top));
             for (g_row = m_tp->y1 + 1; g_row < m_tp->y2; g_row++)
             {
                 write_span(g_row, m_tp->x1 + 1, m_tp->x2 - 1, pixels.data());
@@ -384,7 +384,7 @@ int tesseral()
 
 static int tess_check_col(int x, int y1, int y2)
 {
-    int i = get_color(x, ++y1);
+    const int i = get_color(x, ++y1);
     while (--y2 > y1)
     {
         if (get_color(x, y2) != i)
@@ -397,7 +397,7 @@ static int tess_check_col(int x, int y1, int y2)
 
 static int tess_check_row(int x1, int x2, int y)
 {
-    int i = get_color(x1, y);
+    const int i = get_color(x1, y);
     while (x2 > x1)
     {
         if (get_color(x2, y) != i)
@@ -420,7 +420,7 @@ static int tess_col(int x, int y1, int y2)
     while (++g_row <= y2)
     {
         // generate the column
-        int i = g_calc_type();
+        const int i = g_calc_type();
         if (i < 0)
         {
             return -3;
@@ -444,7 +444,7 @@ static int tess_row(int x1, int x2, int y)
     while (++g_col <= x2)
     {
         // generate the row
-        int i = g_calc_type();
+        const int i = g_calc_type();
         if (i < 0)
         {
             return -3;

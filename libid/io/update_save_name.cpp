@@ -12,8 +12,8 @@ namespace id::io
 std::string next_save_name(const std::string &filename)
 {
     std::filesystem::path file_path{filename};
-    std::string           stem{file_path.stem().string()};
-    const auto            last_non_digit = stem.find_last_not_of("0123456789");
+    const std::string stem{file_path.stem().string()};
+    const auto last_non_digit = stem.find_last_not_of("0123456789");
     if (last_non_digit == stem.length() - 1)
     {
         file_path.replace_filename(stem + "2" + file_path.extension().string());

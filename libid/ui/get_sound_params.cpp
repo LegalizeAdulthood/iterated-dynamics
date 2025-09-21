@@ -198,7 +198,7 @@ get_music_restart:
 
     HelpLabels old_help_mode = g_help_mode; /* this prevents HELP from activating */
     g_help_mode = HelpLabels::HELP_MUSIC;
-    int i = builder.prompt("FM Synth Card Control Screen", 255);
+    const int i = builder.prompt("FM Synth Card Control Screen", 255);
     g_help_mode = old_help_mode; /* re-enable HELP */
     if (i < 0)
     {

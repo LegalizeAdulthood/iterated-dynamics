@@ -178,12 +178,12 @@ void TextScreen::initialize_styles()
     // Initialize all 256 possible CGA attribute combinations
     for (int attr = 0; attr < MAX_STYLES; ++attr)
     {
-        CGAColor fg_color = static_cast<CGAColor>(attr & 0x0F);
-        CGAColor bg_color = static_cast<CGAColor>(attr >> 4 & 0x0F);
-        bool intense = (attr & 0x08) != 0;
-        bool blinking = (attr & 0x80) != 0;
+        const CGAColor fg_color = static_cast<CGAColor>(attr & 0x0F);
+        const CGAColor bg_color = static_cast<CGAColor>(attr >> 4 & 0x0F);
+        const bool intense = (attr & 0x08) != 0;
+        const bool blinking = (attr & 0x80) != 0;
 
-        int style_num = attr;
+        const int style_num = attr;
 
         // Set foreground and background colors
         StyleSetForeground(style_num, cga_color_to_wx_color(fg_color, intense));
@@ -201,7 +201,7 @@ void TextScreen::initialize_styles()
 
 void TextScreen::put_string(int x_pos, int y_pos, int attr, const char *text, int &end_row, int &end_col)
 {
-    char xa = attr & 0x0ff;
+    const char xa = attr & 0x0ff;
     int max_row = y_pos;
     int row = y_pos;
     int max_col = x_pos - 1;
@@ -384,7 +384,7 @@ void TextScreen::set_cursor_position(int row, int col)
     m_cursor_row = row;
     m_cursor_col = col;
 
-    int pos = position_from_row_col(row, col);
+    const int pos = position_from_row_col(row, col);
     SetCurrentPos(pos);
     SetAnchor(pos);
 }
@@ -454,8 +454,8 @@ void TextScreen::refresh_display()
     {
         for (int col = 0; col < SCREEN_WIDTH; ++col)
         {
-            int pos = position_from_row_col(row, col);
-            int style = get_style_number(m_screen[row][col].attribute);
+            const int pos = position_from_row_col(row, col);
+            const int style = get_style_number(m_screen[row][col].attribute);
             StartStyling(pos);
             SetStyling(1, style);
         }
@@ -474,8 +474,8 @@ void TextScreen::update_cell_display(int row, int col)
         return;
     }
 
-    int pos = position_from_row_col(row, col);
-    char ch = m_screen[row][col].character;
+    const int pos = position_from_row_col(row, col);
+    const char ch = m_screen[row][col].character;
 
     // Replace the character
     SetTargetStart(pos);
@@ -484,7 +484,7 @@ void TextScreen::update_cell_display(int row, int col)
     ReplaceTarget(wxString(text, wxConvUTF8, 1));
 
     // Apply styling
-    int style = get_style_number(m_screen[row][col].attribute);
+    const int style = get_style_number(m_screen[row][col].attribute);
     StartStyling(pos);
     SetStyling(1, style);
 }
@@ -493,8 +493,8 @@ void TextScreen::update_region_display(int start_row, int start_col, int end_row
 {
     for (int row = start_row; row <= end_row; ++row)
     {
-        int col_start = row == start_row ? start_col : 0;
-        int col_end = row == end_row ? end_col : SCREEN_WIDTH - 1;
+        const int col_start = row == start_row ? start_col : 0;
+        const int col_end = row == end_row ? end_col : SCREEN_WIDTH - 1;
 
         for (int col = col_start; col <= col_end; ++col)
         {

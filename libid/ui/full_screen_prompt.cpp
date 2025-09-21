@@ -302,7 +302,7 @@ void Prompt::set_scroll_limit()
 void Prompt::set_vertical_positions()
 {
     {
-        int i = num_prompts + title_lines + extra_lines + 3; // total rows required
+        const int i = num_prompts + title_lines + extra_lines + 3; // total rows required
         int j = (25 - i) / 2;                                // top row of it all when centered
         j -= j / 4;                                          // higher is better if lots extra
         box_lines = num_prompts;
@@ -402,7 +402,7 @@ void Prompt::set_horizontal_positions()
         }
     }
     {
-        int i = (90 - box_width) / 20;
+        const int i = (90 - box_width) / 20;
         box_col -= i;
         prompt_col -= i;
         value_col -= i;
@@ -739,7 +739,7 @@ int Prompt::prompt_params()
 
         driver_put_string(prompt_row + cur_choice, prompt_col, C_PROMPT_LO, prompts[cur_choice]);
         {
-            int j = static_cast<int>(std::strlen(buf));
+            const int j = static_cast<int>(std::strlen(buf));
             std::memset(&buf[j], ' ', 80 - j);
         }
         buf[cur_len] = 0;
@@ -1060,7 +1060,7 @@ static int input_field_list(int attr, // display attribute
         }
         buf[field_len] = 0;
         driver_put_string(row, col, attr, buf);
-        switch (int key = driver_key_cursor(row, col); key)
+        switch (const int key = driver_key_cursor(row, col); key)
         {
         case ID_KEY_ENTER:
         case ID_KEY_ENTER_2:

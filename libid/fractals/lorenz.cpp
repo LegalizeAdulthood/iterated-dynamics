@@ -264,7 +264,7 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     {
         return true;
     }
-    double xd = g_logical_screen_x_size_dots / det;
+    const double xd = g_logical_screen_x_size_dots / det;
     scrn_cnvt->a =  xd*(g_y_max-g_y_3rd);
     scrn_cnvt->b =  xd*(g_x_3rd-g_x_min);
     scrn_cnvt->e = -scrn_cnvt->a*g_x_min - scrn_cnvt->b*g_y_max;
@@ -274,7 +274,7 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     {
         return true;
     }
-    double yd = g_logical_screen_y_size_dots / det;
+    const double yd = g_logical_screen_y_size_dots / det;
     scrn_cnvt->c =  yd*(g_y_min-g_y_3rd);
     scrn_cnvt->d =  yd*(g_x_3rd-g_x_max);
     scrn_cnvt->f = -scrn_cnvt->c*g_x_min - scrn_cnvt->d*g_y_max;
@@ -518,15 +518,15 @@ int inverse_julia_orbit()
     /*
      * Next, find its pixel position
      */
-    int new_col = static_cast<int>(s_cvt.a * g_new_z.x + s_cvt.b * g_new_z.y + s_cvt.e);
-    int new_row = static_cast<int>(s_cvt.c * g_new_z.x + s_cvt.d * g_new_z.y + s_cvt.f);
+    const int new_col = static_cast<int>(s_cvt.a * g_new_z.x + s_cvt.b * g_new_z.y + s_cvt.e);
+    const int new_row = static_cast<int>(s_cvt.c * g_new_z.x + s_cvt.d * g_new_z.y + s_cvt.f);
 
     /*
      * Now find the next point(s), and flip a coin to choose one.
      */
 
-    g_new_z       = complex_sqrt_float(g_new_z.x - s_cx, g_new_z.y - s_cy);
-    int left_right = random(2) ? 1 : -1;
+    g_new_z = complex_sqrt_float(g_new_z.x - s_cx, g_new_z.y - s_cy);
+    const int left_right = random(2) ? 1 : -1;
 
     if (new_col < 1 || new_col >= g_logical_screen_x_dots || new_row < 1 || new_row >= g_logical_screen_y_dots)
     {
@@ -555,7 +555,7 @@ int inverse_julia_orbit()
      * For MIIM, if color >= mxhits, discard the point
      *           else put the point's children onto the queue
      */
-    int color = get_color(new_col, new_row);
+    const int color = get_color(new_col, new_row);
     switch (g_major_method)
     {
     case Major::BREADTH_FIRST:
@@ -639,7 +639,7 @@ int lorenz3d1_orbit(double *x, double *y, double *z)
     s_zdt = *z *s_dt;
 
     // 1-lobe Lorenz
-    double norm = std::sqrt(*x * *x + *y * *y);
+    const double norm = std::sqrt(*x * *x + *y * *y);
     s_dx   = (-s_adt-s_dt)* *x + (s_adt-s_bdt)* *y + (s_dt-s_adt)*norm + s_ydt* *z;
     s_dy   = (s_bdt-s_adt)* *x - (s_adt+s_dt)* *y + (s_bdt+s_adt)*norm - s_xdt* *z -
            norm*s_zdt;
@@ -675,7 +675,7 @@ int lorenz3d3_orbit(double *x, double *y, double *z)
     s_zdt = *z *s_dt;
 
     // 3-lobe Lorenz
-    double norm = std::sqrt(*x * *x + *y * *y);
+    const double norm = std::sqrt(*x * *x + *y * *y);
     s_dx   = (-(s_adt+s_dt)* *x + (s_adt-s_bdt+s_zdt)* *y) / 3 +
            ((s_dt-s_adt)*(*x * *x - *y * *y) +
             2*(s_bdt+s_adt-s_zdt)* *x * *y)/(3*norm);
@@ -713,8 +713,8 @@ int lorenz3d4_orbit(double *x, double *y, double *z)
 
 int henon_orbit(double *x, double *y, double * /*z*/)
 {
-    double new_x = 1 + *y - s_a * *x * *x;
-    double new_y = s_b * *x;
+    const double new_x = 1 + *y - s_a * *x * *x;
+    const double new_y = s_b * *x;
     *x = new_x;
     *y = new_y;
     return 0;
@@ -737,9 +737,9 @@ int rossler_orbit(double *x, double *y, double *z)
 
 int pickover_orbit(double *x, double *y, double *z)
 {
-    double new_x = std::sin(s_a * *y) - *z * std::cos(s_b * *x);
-    double new_y = *z * std::sin(s_c * *x) - std::cos(s_d * *y);
-    double new_z = std::sin(*x);
+    const double new_x = std::sin(s_a * *y) - *z * std::cos(s_b * *x);
+    const double new_y = *z * std::sin(s_c * *x) - std::cos(s_d * *y);
+    const double new_z = std::sin(*x);
     *x = new_x;
     *y = new_y;
     *z = new_z;
@@ -749,7 +749,7 @@ int pickover_orbit(double *x, double *y, double *z)
 // page 149 "Science of Fractal Images"
 int ginger_bread_orbit(double *x, double *y, double * /*z*/)
 {
-    double new_x = 1 - *y + std::abs(*x);
+    const double new_x = 1 - *y + std::abs(*x);
     *y = *x;
     *x = new_x;
     return 0;
@@ -764,7 +764,7 @@ int kam_torus_orbit(double *r, double *s, double *z)
     if (s_t++ >= s_l_d)
     {
         s_orbit += s_b;
-        *s = s_orbit/3;
+        *s = s_orbit / 3;
         *r = *s;
         s_t = 0;
         *z = s_orbit;
@@ -773,7 +773,7 @@ int kam_torus_orbit(double *r, double *s, double *z)
             return 1;
         }
     }
-    double srr = *s - *r * *r;
+    const double srr = *s - *r * *r;
     *s = *r *g_sin_x+srr*g_cos_x;
     *r = *r *g_cos_x-srr*g_sin_x;
     return 0;
@@ -781,7 +781,7 @@ int kam_torus_orbit(double *r, double *s, double *z)
 
 int hopalong2d_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y - sign(*x) * std::sqrt(std::abs(s_b * *x - s_c));
+    const double tmp = *y - sign(*x) * std::sqrt(std::abs(s_b * *x - s_c));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -789,7 +789,7 @@ int hopalong2d_orbit(double *x, double *y, double * /*z*/)
 
 int chip2d_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y -
+    const double tmp = *y -
         sign(*x) * std::cos(sqr(std::log(std::abs(s_b * *x - s_c)))) *
             std::atan(sqr(std::log(std::abs(s_c * *x - s_b))));
     *y = s_a - *x;
@@ -799,7 +799,7 @@ int chip2d_orbit(double *x, double *y, double * /*z*/)
 
 int quadrup_two2d_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y -
+    const double tmp = *y -
         sign(*x) * std::sin(std::log(std::abs(s_b * *x - s_c))) *
             std::atan(sqr(std::log(std::abs(s_c * *x - s_b))));
     *y = s_a - *x;
@@ -809,7 +809,7 @@ int quadrup_two2d_orbit(double *x, double *y, double * /*z*/)
 
 int three_ply2d_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y - sign(*x) * std::abs(std::sin(*x) * s_cos_b + s_c - *x * s_sin_sum_a_b_c);
+    const double tmp = *y - sign(*x) * std::abs(std::sin(*x) * s_cos_b + s_c - *x * s_sin_sum_a_b_c);
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -817,7 +817,7 @@ int three_ply2d_orbit(double *x, double *y, double * /*z*/)
 
 int martin2d_orbit(double *x, double *y, double * /*z*/)
 {
-    double tmp = *y - std::sin(*x);
+    const double tmp = *y - std::sin(*x);
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -825,14 +825,14 @@ int martin2d_orbit(double *x, double *y, double * /*z*/)
 
 int mandel_cloud_orbit(double *x, double *y, double * /*z*/)
 {
-    double x2 = *x * *x;
-    double y2 = *y * *y;
-    if (x2+y2 > 2)
+    const double x2 = *x * *x;
+    const double y2 = *y * *y;
+    if (x2 + y2 > 2)
     {
         return 1;
     }
-    double new_x = x2 - y2 + s_a;
-    double new_y = 2 * *x * *y + s_b;
+    const double new_x = x2 - y2 + s_a;
+    const double new_y = 2 * *x * *y + s_b;
     *x = new_x;
     *y = new_y;
     return 0;
@@ -845,7 +845,7 @@ int dynamic_orbit(double *x, double *y, double * /*z*/)
     cp.x = s_b* *x;
     cp.y = 0;
     cmplx_trig0(cp, tmp);
-    double new_y = *y + s_dt * std::sin(*x + s_a * tmp.x);
+    const double new_y = *y + s_dt * std::sin(*x + s_a * tmp.x);
     if (s_euler)
     {
         *y = new_y;
@@ -854,7 +854,7 @@ int dynamic_orbit(double *x, double *y, double * /*z*/)
     cp.x = s_b* *y;
     cp.y = 0;
     cmplx_trig0(cp, tmp);
-    double new_x = *x - s_dt * std::sin(*y + s_a * tmp.x);
+    const double new_x = *x - s_dt * std::sin(*y + s_a * tmp.x);
     *x = new_x;
     *y = new_y;
     return 0;
@@ -862,22 +862,22 @@ int dynamic_orbit(double *x, double *y, double * /*z*/)
 
 int icon_orbit(double *x, double *y, double *z)
 {
-    double old_x = *x;
-    double old_y = *y;
+    const double old_x = *x;
+    const double old_y = *y;
 
-    double z_z_bar = old_x * old_x + old_y * old_y;
+    const double z_z_bar = old_x * old_x + old_y * old_y;
     double z_real = old_x;
     double z_imag = old_y;
 
-    for (int i = 1; i <= DEGREE-2; i++)
+    for (int i = 1; i <= DEGREE - 2; i++)
     {
-        double za = z_real * old_x - z_imag * old_y;
-        double zb = z_imag * old_x + z_real * old_y;
+        const double za = z_real * old_x - z_imag * old_y;
+        const double zb = z_imag * old_x + z_real * old_y;
         z_real = za;
         z_imag = zb;
     }
-    double zn = old_x * z_real - old_y * z_imag;
-    double p = LAMBDA + ALPHA * z_z_bar + BETA * zn;
+    const double zn = old_x * z_real - old_y * z_imag;
+    const double p = LAMBDA + ALPHA * z_z_bar + BETA * zn;
     *x = p * old_x + GAMMA * z_real - OMEGA * old_y;
     *y = p * old_y - GAMMA * z_imag + OMEGA * old_x;
 
@@ -887,8 +887,8 @@ int icon_orbit(double *x, double *y, double *z)
 
 int latoo_orbit(double *x, double *y, double * /*z*/)
 {
-    double x_old = *x;
-    double y_old = *y;
+    const double x_old = *x;
+    const double y_old = *y;
 
     //    *x = sin(yold * PAR_B) + PAR_C * sin(xold * PAR_B);
     g_old_z.x = y_old * PAR_B;
@@ -1457,9 +1457,9 @@ int plot_orbits2d()
         return -1;
     }
 
-    double x = 0.0;
-    double y = 0.0;
-    double z = 0.0;
+    const double x = 0.0;
+    const double y = 0.0;
+    const double z = 0.0;
     const double *sound_var = nullptr;
     if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)
     {
@@ -1748,7 +1748,7 @@ void IFS2D::iterate()
 {
     ++g_color_iter;
 
-    double r = static_cast<double>(RAND15())/32767.0; // generate random number between 0 and 1
+    const double r = static_cast<double>(RAND15())/32767.0; // generate random number between 0 and 1
 
     // pick which iterated function to execute, weighted by probability
     double sum = g_ifs_definition[6];  // [0][6]
@@ -1758,7 +1758,7 @@ void IFS2D::iterate()
         sum += g_ifs_definition[++k * NUM_IFS_2D_PARAMS + 6];
     }
     // calculate image of last point under selected iterated function
-    float *f_f_ptr = g_ifs_definition.data() + k * NUM_IFS_2D_PARAMS; // point to first parm in row
+    const float *f_f_ptr = g_ifs_definition.data() + k * NUM_IFS_2D_PARAMS; // point to first parm in row
     double new_x = *(f_f_ptr + 0) * m_x + *(f_f_ptr + 1) * m_y + *(f_f_ptr + 4);
     double new_y = *(f_f_ptr + 2) * m_x + *(f_f_ptr + 3) * m_y + *(f_f_ptr + 5);
     m_x = new_x;

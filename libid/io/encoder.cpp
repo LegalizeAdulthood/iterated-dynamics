@@ -1004,7 +1004,8 @@ static bool compress(int row_limit)
 {
     int color;
     int in_count = 0;
-    bool interrupted = false;
+    // TODO: why does this remain if it's never changed?
+    const bool interrupted = false;
 
     int out_color1 = 0;               // use these colors to show progress
     int out_color2 = 1;               // (this has nothing to do with GIF)
@@ -1045,7 +1046,6 @@ static bool compress(int row_limit)
     h_shift = 8 - h_shift;                // set hash code range bound
 
     std::memset(s_h_tab, 0xff, static_cast<unsigned>(H_SIZE) *sizeof(long));
-    int h_size_reg = H_SIZE;
 
     output(s_clear_code);
 
@@ -1070,7 +1070,7 @@ static bool compress(int row_limit)
                     ent = color;
                     continue;
                 }
-                long f_code = (static_cast<long>(color) << s_max_bits) + ent;
+                const long f_code = (static_cast<long>(color) << s_max_bits) + ent;
                 int i = color << h_shift ^ ent;    // xor hashing
                 int disp{};
 
@@ -1083,7 +1083,7 @@ static bool compress(int row_limit)
                 {
                     goto no_match;
                 }
-                disp = h_size_reg - i;           // secondary hash (after G. Knott)
+                disp = H_SIZE - i;           // secondary hash (after G. Knott)
                 if (i == 0)
                 {
                     disp = 1;
@@ -1091,7 +1091,7 @@ static bool compress(int row_limit)
 probe:
                 if ((i -= disp) < 0)
                 {
-                    i += h_size_reg;
+                    i += H_SIZE;
                 }
 
                 if (s_h_tab[i] == f_code)

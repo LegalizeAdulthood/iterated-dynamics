@@ -255,13 +255,13 @@ bool MakeParParams::prompt()
                 colors_only = true;
             }
             builder.read_comment();
-            if (int num_colors{builder.read_int_number()}; num_colors > 0 && num_colors <= 256)
+            if (const int num_colors{builder.read_int_number()}; num_colors > 0 && num_colors <= 256)
             {
                 max_color = num_colors;
             }
             builder.read_comment();
         }
-        if (int value = builder.read_int_number();
+        if (const int value = builder.read_int_number();
             g_max_line_length != value && value >= MIN_MAX_LINE_LENGTH && value <= MAX_MAX_LINE_LENGTH)
         {
             g_max_line_length = value;
@@ -275,9 +275,9 @@ bool MakeParParams::prompt()
         // get resolution from the video name (which must be valid)
         piece_y_dots = 0;
         piece_x_dots = 0;
-        if (int key = check_vid_mode_key_name(builder.read_string_buff(4)); key > 0)
+        if (const int key = check_vid_mode_key_name(builder.read_string_buff(4)); key > 0)
         {
-            if (int i = check_vid_mode_key(key); i >= 0)
+            if (const int i = check_vid_mode_key(key); i >= 0)
             {
                 // get the resolution of this video mode
                 piece_x_dots = g_video_table[i].x_dots;
@@ -602,7 +602,7 @@ skip_ui:
 
 static int get_prec(double a, double b, double c)
 {
-    double high_v = 1.0E20;
+    constexpr double high_v = 1.0E20;
     double diff = std::abs(a - b);
     if (diff == 0.0)
     {
@@ -731,7 +731,7 @@ void put_encoded_colors(WriteBatchData &wb_data, int max_color)
                             break;
                         }
                     }
-                    int delta = static_cast<int>(g_dac_box[scan_color][j]) - static_cast<int>(g_dac_box[scan_color - k - 1][j]);
+                    const int delta = static_cast<int>(g_dac_box[scan_color][j]) - static_cast<int>(g_dac_box[scan_color - k - 1][j]);
                     if (k == scan_color - cur_color)
                     {
                         diff1[k][j] = delta;
@@ -894,7 +894,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             if (g_bf_math != BFMathType::NONE)
             {
                 cvt_center_mag_bf(bf_x_ctr, bf_y_ctr, magnification, x_mag_factor, rotation, skew);
-                int digits = get_prec_bf(ResolutionFlag::MAX);
+                const int digits = get_prec_bf(ResolutionFlag::MAX);
                 put_param(" center-mag=");
                 put_bf(0, bf_x_ctr, digits);
                 put_bf(1, bf_y_ctr, digits);
@@ -949,7 +949,7 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             put_param(" corners=");
             if (g_bf_math != BFMathType::NONE)
             {
-                int digits = get_prec_bf(ResolutionFlag::MAX);
+                const int digits = get_prec_bf(ResolutionFlag::MAX);
                 put_bf(0, g_bf_x_min, digits);
                 put_bf(1, g_bf_x_max, digits);
                 put_bf(1, g_bf_y_min, digits);
@@ -962,8 +962,8 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
             }
             else
             {
-                int x_digits = get_prec(g_x_min, g_x_max, g_x_3rd);
-                int y_digits = get_prec(g_y_min, g_y_max, g_y_3rd);
+                const int x_digits = get_prec(g_x_min, g_x_max, g_x_3rd);
+                const int y_digits = get_prec(g_y_min, g_y_max, g_y_3rd);
                 put_float(0, g_x_min, x_digits);
                 put_float(1, g_x_max, x_digits);
                 put_float(1, g_y_min, y_digits);
@@ -1578,8 +1578,8 @@ static void write_batch_params(const char *color_inf, bool colors_only, int max_
         if (g_user_std_calc_mode == CalcMode::ORBIT && g_set_orbit_corners && g_keep_screen_coords)
         {
             put_param(" orbitcorners=");
-            int x_digits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3rd_x);
-            int y_digits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3rd_y);
+            const int x_digits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3rd_x);
+            const int y_digits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3rd_y);
             put_float(0, g_orbit_corner_min_x, x_digits);
             put_float(1, g_orbit_corner_max_x, x_digits);
             put_float(1, g_orbit_corner_min_y, y_digits);
@@ -1700,15 +1700,15 @@ static void put_param_line()
         }
         if (len == 0)
         {
-            len = nice_line_length()-1;
-            while (++len < g_max_line_length
-                && s_wb_data.buf[len]
+            len = nice_line_length() - 1;
+            while (++len < g_max_line_length //
+                && s_wb_data.buf[len]        //
                 && s_wb_data.buf[len] != ' ')
             {
             }
         }
     }
-    int c = s_wb_data.buf[len];
+    const int c = s_wb_data.buf[len];
     s_wb_data.buf[len] = 0;
     std::fputs("  ", s_param_file);
     std::fputs(s_wb_data.buf, s_param_file);

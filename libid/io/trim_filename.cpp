@@ -25,7 +25,7 @@ std::string trim_filename(const std::string &filename, int length)
         parts.push_back(path.filename());
         path = path.parent_path();
     }
-    fs::path start{path / parts.back() / "..."};
+    const fs::path start{path / parts.back() / "..."};
     parts.pop_back();
     const auto path_length = [](int len, const fs::path &item) { return static_cast<int>(item.filename().string().size()) + len + 1; };
     const int remaining{length - static_cast<int>(start.string().size())};

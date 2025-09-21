@@ -58,8 +58,8 @@ static void flush_output()
         }
         else
         {
-            std::time_t now = std::time(nullptr);
-            long now_ticks = read_ticker();
+            const std::time_t now = std::time(nullptr);
+            const long now_ticks = read_ticker();
             if (now > start)
             {
                 ticks_per_second = (now_ticks - last)/ static_cast<long>(now - start);
@@ -94,10 +94,8 @@ void Win32BaseDriver::terminate()
 
 bool Win32BaseDriver::init(int *argc, char **argv)
 {
-    LPCSTR title = ID_PROGRAM_NAME;
-
     ODS("Win32BaseDriver::init");
-    g_frame.init(g_instance, title);
+    g_frame.init(g_instance, ID_PROGRAM_NAME);
     return m_win_text.initialize(g_instance, nullptr, "Text");
 }
 
@@ -250,8 +248,8 @@ void Win32BaseDriver::put_string(int row, int col, int attr, const char *msg)
         g_text_col = col;
     }
     {
-        int abs_row = g_text_row_base + g_text_row;
-        int abs_col = g_text_col_base + g_text_col;
+        const int abs_row = g_text_row_base + g_text_row;
+        const int abs_col = g_text_col_base + g_text_col;
         _ASSERTE(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
         _ASSERTE(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
         m_win_text.put_string(abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
@@ -541,7 +539,7 @@ bool Win32BaseDriver::get_filename(
         result_filename = info.lpstrFile;
         return false;
     }
-    if (DWORD last_error{GetLastError()}; last_error != ERROR_SUCCESS)
+    if (const DWORD last_error{GetLastError()}; last_error != ERROR_SUCCESS)
     {
         debug_text(("GetOpenFileNameA failed: " + std::to_string(last_error)).c_str());
     }

@@ -50,8 +50,8 @@ static int orbit_draw_line()
     int g;                                   // used to test for new row or column
     int inc1;                                // G increment when row or column doesn't change
     int inc2;                                // G increment when row or column changes
-    int dx = g_i_stop_pt.x - g_i_start_pt.x; // find vector components
-    int dy = g_i_stop_pt.y - g_i_start_pt.y;
+    const int dx = g_i_stop_pt.x - g_i_start_pt.x; // find vector components
+    const int dy = g_i_stop_pt.y - g_i_start_pt.y;
     bool pos_slope = dx > 0;                 // is slope positive?
     if (dy < 0)
     {
@@ -193,9 +193,9 @@ static int orbit_draw_function()
     double x_mag_factor;
     double rotation;
     double skew;
-    double factor = PI / 180.0;
-    double x_factor = g_logical_screen_x_dots / 2.0;
-    double y_factor = g_logical_screen_y_dots / 2.0;
+    constexpr double FACTOR = PI / 180.0;
+    const double x_factor = g_logical_screen_x_dots / 2.0;
+    const double y_factor = g_logical_screen_y_dots / 2.0;
 
     int angle = g_begin_pt.x; // save angle in x parameter
 
@@ -207,7 +207,7 @@ static int orbit_draw_function()
 
     while (angle < rotation)
     {
-        double theta = static_cast<double>(angle) * factor;
+        const double theta = static_cast<double>(angle) * FACTOR;
         g_col = static_cast<int>(x_factor + (x_ctr + x_mag_factor * std::cos(theta)));
         g_row = static_cast<int>(y_factor + (y_ctr + x_mag_factor * std::sin(theta)));
         if (plot_orbits2d() == -1)

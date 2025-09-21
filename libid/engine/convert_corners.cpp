@@ -79,7 +79,7 @@ void cvt_corners(double ctr_x, double ctr_y, LDouble mag, double x_mag_factor, d
 // convert center/mag to corners using bf
 void cvt_corners_bf(BigFloat ctr_x, BigFloat ctr_y, LDouble mag, double x_mag_factor, double rot, double skew)
 {
-    const int saved = save_stack();
+    int saved = save_stack();
     BigFloat bfh = alloc_stack(g_bf_length + 2);
     BigFloat bfw = alloc_stack(g_bf_length + 2);
 

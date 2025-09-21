@@ -544,7 +544,7 @@ BigNum unsafe_inv_bn(BigNum r, BigNum n)
         return r;
     }
     f = 1/f; // approximate inverse
-    long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
+    const long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
     if (f > max_val) // check for overflow
     {
         max_bn(r);
@@ -627,20 +627,20 @@ BigNum unsafe_inv_bn(BigNum r, BigNum n)
 BigNum unsafe_div_bn(BigNum r, BigNum n1, BigNum n2)
 {
     // first, check for valid data
-    LDouble a = bn_to_float(n1);
-    if (a == 0) // division into zero
+    const LDouble a = bn_to_float(n1);
+    if (a == 0)      // division into zero
     {
         clear_bn(r); // return 0
         return r;
     }
-    LDouble b = bn_to_float(n2);
+    const LDouble b = bn_to_float(n2);
     if (b == 0) // division by zero
     {
         max_bn(r);
         return r;
     }
-    LDouble f = a / b; // approximate quotient
-    long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
+    const LDouble f = a / b; // approximate quotient
+    const long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
     if (f > max_val) // check for overflow
     {
         max_bn(r);
@@ -699,13 +699,13 @@ BigNum unsafe_div_bn(BigNum r, BigNum n1, BigNum n2)
         // Rescale r back to what it should be.  Overflow has already been checked
         if (scale1 > scale2) // answer is too big, adjust it
         {
-            int scale = scale1-scale2;
+            const int scale = scale1-scale2;
             std::memmove(r, r+scale, g_bn_length-scale); // shift bytes over
             std::memset(r+g_bn_length-scale, 0, scale);  // zero out the rest
         }
         else if (scale1 < scale2) // answer is too small, adjust it
         {
-            int scale = scale2-scale1;
+            const int scale = scale2-scale1;
             std::memmove(r+scale, r, g_bn_length-scale); // shift bytes over
             std::memset(r, 0, scale);                 // zero out the rest
         }
@@ -862,7 +862,7 @@ BigNum unsafe_ln_bn(BigNum r, BigNum n)
 
     LDouble f = bn_to_float(n);
     f = std::log(f); // approximate ln(x)
-    long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
+    const long max_val = (1L << ((g_int_length << 3) - 1)) - 1;
     if (f > max_val) // check for overflow
     {
         max_bn(r);
@@ -1027,8 +1027,8 @@ BigNum unsafe_sin_cos_bn(BigNum s, BigNum c, BigNum n)
     // the range is cut in half, the number of iterations required is reduced
     // by "quite a bit."  It's just a matter of testing to see what gives the
     // optimal results.
-    // halves = g_bn_length / 10; */ /* this is experimental
-    int halves = 1;
+    // halves = g_bn_length / 10; // this is experimental
+    const int halves = 1;
     for (int i = 0; i < halves; i++)
     {
         half_a_bn(n);
@@ -1134,7 +1134,7 @@ BigNum unsafe_atan_bn(BigNum r, BigNum n)
     // say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
 
     LDouble f = bn_to_float(n);
-    bool large_arg = f > 1.0;
+    const bool large_arg = f > 1.0;
     if (large_arg)
     {
         unsafe_inv_bn(g_bn_tmp3, n);
@@ -1253,8 +1253,8 @@ BigNum unsafe_atan_bn(BigNum r, BigNum n)
 // uses g_bn_tmp1 - g_bn_tmp6 - global temp bigfloats
 BigNum unsafe_atan2_bn(BigNum r, BigNum ny, BigNum nx)
 {
-    int sign_x = sign_bn(nx);
-    int sign_y = sign_bn(ny);
+    const int sign_x = sign_bn(nx);
+    const int sign_y = sign_bn(ny);
 
     if (sign_y == 0)
     {
@@ -1308,8 +1308,8 @@ BigNum unsafe_atan2_bn(BigNum r, BigNum ny, BigNum nx)
 /**********************************************************************/
 BigNum full_mult_bn(BigNum r, BigNum n1, BigNum n2)
 {
-    bool sign1 = is_bn_neg(n1);
-    bool sign2 = is_bn_neg(n2);
+    const bool sign1 = is_bn_neg(n1);
+    const bool sign2 = is_bn_neg(n2);
     unsafe_full_mult_bn(r, n1, n2);
     if (sign1)
     {
@@ -1325,8 +1325,8 @@ BigNum full_mult_bn(BigNum r, BigNum n1, BigNum n2)
 /**********************************************************************/
 BigNum mult_bn(BigNum r, BigNum n1, BigNum n2)
 {
-    bool sign1 = is_bn_neg(n1);
-    bool sign2 = is_bn_neg(n2);
+    const bool sign1 = is_bn_neg(n1);
+    const bool sign2 = is_bn_neg(n2);
     unsafe_mult_bn(r, n1, n2);
     if (sign1)
     {
@@ -1342,7 +1342,7 @@ BigNum mult_bn(BigNum r, BigNum n1, BigNum n2)
 /**********************************************************************/
 BigNum full_square_bn(BigNum r, BigNum n)
 {
-    bool sign = is_bn_neg(n);
+    const bool sign = is_bn_neg(n);
     unsafe_full_square_bn(r, n);
     if (sign)
     {
@@ -1354,7 +1354,7 @@ BigNum full_square_bn(BigNum r, BigNum n)
 /**********************************************************************/
 BigNum square_bn(BigNum r, BigNum n)
 {
-    bool sign = is_bn_neg(n);
+    const bool sign = is_bn_neg(n);
     unsafe_square_bn(r, n);
     if (sign)
     {
@@ -1366,7 +1366,7 @@ BigNum square_bn(BigNum r, BigNum n)
 /**********************************************************************/
 BigNum div_bn_int(BigNum r, BigNum n, U16 u)
 {
-    bool sign = is_bn_neg(n);
+    const bool sign = is_bn_neg(n);
     unsafe_div_bn_int(r, n, u);
     if (sign)
     {
@@ -1384,7 +1384,7 @@ char *bn_to_str(char *s, BigNum r, int dec)
 /**********************************************************************/
 BigNum inv_bn(BigNum r, BigNum n)
 {
-    bool sign = is_bn_neg(n);
+    const bool sign = is_bn_neg(n);
     unsafe_inv_bn(r, n);
     if (sign)
     {
@@ -1418,7 +1418,7 @@ BigNum sin_cos_bn(BigNum s, BigNum c, BigNum n)
 /**********************************************************************/
 BigNum atan_bn(BigNum r, BigNum n)
 {
-    bool sign = is_bn_neg(n);
+    const bool sign = is_bn_neg(n);
     unsafe_atan_bn(r, n);
     if (sign)
     {

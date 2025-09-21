@@ -288,7 +288,7 @@ MainState big_while_loop(MainContext &context)
 {
     int     i = 0;                           // temporary loop counters
     MainState mms_value;
-    auto mouse{std::make_shared<ZoomMouseNotification>()};
+    const auto mouse{std::make_shared<ZoomMouseNotification>()};
     MouseSubscription subscription{mouse};
 
     driver_check_memory();
@@ -634,9 +634,9 @@ MainState big_while_loop(MainContext &context)
                 g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size -1);
                 g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size -1);
                 const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-                int tmp_x_dots = g_logical_screen_x_dots + grout;
-                int tmp_y_dots = g_logical_screen_y_dots + grout;
-                int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
+                const int tmp_x_dots = g_logical_screen_x_dots + grout;
+                const int tmp_y_dots = g_logical_screen_y_dots + grout;
+                const int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
                 while (count < grid_sqr)
                 {
                     spiral_map(count); // sets px & py

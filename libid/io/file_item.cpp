@@ -99,7 +99,7 @@ top:
             continue;
         }
         long temp_offset = file_offset;
-        long name_offset = file_offset;
+        const long name_offset = file_offset;
         // next equiv roughly to fscanf(..,"%40[^* \n\r\t({\032]",buf)
         int len = 0;
         // allow spaces in entry names in next

@@ -64,8 +64,7 @@ static void show_speed_string(
         int j;
         if (speed_prompt)
         {
-            int speed_match = 0;
-            j = speed_prompt(speed_row, 16, C_CHOICE_SP_INSTR, speed_string, speed_match);
+            j = speed_prompt(speed_row, 16, C_CHOICE_SP_INSTR, speed_string, 0);
         }
         else
         {

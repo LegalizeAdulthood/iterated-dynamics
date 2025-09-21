@@ -47,9 +47,8 @@ static void format_vid_table(int choice, char *buf)
 {
     const int idx = s_entry_nums[choice];
     assert(idx < g_video_table_len);
-    std::memcpy(&g_video_entry, &g_video_table[idx],
-           sizeof(g_video_entry));
-    std::string key_name = vid_mode_key_name(g_video_entry.key);
+    std::memcpy(&g_video_entry, &g_video_table[idx], sizeof(g_video_entry));
+    const std::string key_name = vid_mode_key_name(g_video_entry.key);
     std::sprintf(buf, "%-5s %-12s %5d %5d %3d  %.12s %.26s", // 34 chars
         key_name.c_str(), g_video_entry.driver->get_description().c_str(), g_video_entry.x_dots, g_video_entry.y_dots,
         g_video_entry.colors, g_video_entry.driver->get_name().c_str(), g_video_entry.comment);
@@ -146,7 +145,7 @@ int select_video_mode(int current_mode)
 
 static int check_mode_key(int key, int choice)
 {
-    if (int i = check_vid_mode_key(key); i >= 0)
+    if (const int i = check_vid_mode_key(key); i >= 0)
     {
         return -1 - i;
     }
@@ -181,7 +180,7 @@ static int check_mode_key(int key, int choice)
 
     // assign key?
     int ret = 0;
-    if (int j = get_a_key_no_help(); j >= ID_KEY_SHF_F1 && j <= ID_KEY_ALT_F10)
+    if (const int j = get_a_key_no_help(); j >= ID_KEY_SHF_F1 && j <= ID_KEY_ALT_F10)
     {
         for (int k = 0; k < g_video_table_len; ++k)
         {

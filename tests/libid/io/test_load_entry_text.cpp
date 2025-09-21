@@ -88,9 +88,9 @@ static std::vector<std::string> split_lines(std::string_view text)
 TEST(TestLoadEntryText, columnZeroOneLine)
 {
     char result[2048]{};
-    int max_lines{1};
-    int start_row{};
-    int start_col{};
+    const int max_lines{1};
+    const int start_row{};
+    const int start_col{};
     std::filesystem::path frm{ID_TEST_FRM_DIR};
     frm /= ID_TEST_FRM_FILE;
     std::FILE *entry_file{std::fopen(frm.string().c_str(), "r")};
@@ -99,8 +99,8 @@ TEST(TestLoadEntryText, columnZeroOneLine)
 
     load_entry_text(entry_file, result, max_lines, start_row, start_col);
 
-    std::vector expected{split_lines(FRACTINT_FORMULA)};
-    std::vector actual{split_lines(result)};
+    const std::vector expected{split_lines(FRACTINT_FORMULA)};
+    const std::vector actual{split_lines(result)};
     EXPECT_EQ(1U, actual.size());
     EXPECT_EQ(expected[0], actual[0]);
 }
@@ -108,9 +108,9 @@ TEST(TestLoadEntryText, columnZeroOneLine)
 TEST(TestLoadEntryText, columnTwoOneLine)
 {
     char result[2048]{};
-    int max_lines{1};
-    int start_row{};
-    int start_col{2};
+    const int max_lines{1};
+    const int start_row{};
+    const int start_col{2};
     std::filesystem::path frm{ID_TEST_FRM_DIR};
     frm /= ID_TEST_FRM_FILE;
     std::FILE *entry_file{std::fopen(frm.string().c_str(), "r")};
@@ -119,8 +119,8 @@ TEST(TestLoadEntryText, columnTwoOneLine)
 
     load_entry_text(entry_file, result, max_lines, start_row, start_col);
 
-    std::vector expected{split_lines(FRACTINT_FORMULA)};
-    std::vector actual{split_lines(result)};
+    const std::vector expected{split_lines(FRACTINT_FORMULA)};
+    const std::vector actual{split_lines(result)};
     EXPECT_EQ(1U, actual.size());
     EXPECT_EQ(expected[0].substr(start_col), actual[0]);
 }

@@ -158,7 +158,7 @@ void Plot::write_pixel(int x, int y, int color)
     assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
     m_pixels[(m_height - y - 1) * m_width + x] = static_cast<Byte>(color & 0xFF);
 
-    wxNativePixelData data{m_rendering};
+    const wxNativePixelData data{m_rendering};
     assert(data.GetWidth() == m_width);
     assert(data.GetHeight() == m_height);
     auto it = data.GetPixels();
@@ -194,7 +194,7 @@ void Plot::write_span(int y, int x, int last_x, const Byte *pixels)
         std::copy_n(pixels, width, begin);
     }
     {
-        wxNativePixelData data{m_rendering};
+        const wxNativePixelData data{m_rendering};
         assert(data.GetWidth() == m_width);
         assert(data.GetHeight() == m_height);
         auto it = data.GetPixels();
@@ -223,7 +223,7 @@ void Plot::flush()
 void Plot::read_span(int y, int x, int last_x, Byte *pixels)
 {
     flush();
-    int width = last_x - x + 1;
+    const int width = last_x - x + 1;
     for (int i = 0; i < width; i++)
     {
         pixels[i] = read_pixel(x + i, y);

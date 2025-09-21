@@ -167,10 +167,9 @@ static void lsys_bang(LSysTurtleState *cmd)
 
 static void lsys_size_dm(LSysTurtleState *cmd)
 {
-    double angle = static_cast<double>(cmd->real_angle);
-
-    double s = std::sin(angle);
-    double c = std::cos(angle);
+    const double angle = static_cast<double>(cmd->real_angle);
+    const double s = std::sin(angle);
+    const double c = std::cos(angle);
 
     cmd->x_pos += cmd->size * cmd->aspect * c;
     cmd->y_pos += cmd->size * s;
@@ -194,12 +193,11 @@ static void lsys_size_gf(LSysTurtleState *cmd)
 
 static void lsys_draw_d(LSysTurtleState *cmd)
 {
-    double angle = static_cast<double>(cmd->real_angle);
-    double s = std::sin(angle);
-    double c = std::cos(angle);
-
-    int last_x = static_cast<int>(cmd->x_pos);
-    int last_y = static_cast<int>(cmd->y_pos);
+    const double angle = static_cast<double>(cmd->real_angle);
+    const double s = std::sin(angle);
+    const double c = std::cos(angle);
+    const int last_x = static_cast<int>(cmd->x_pos);
+    const int last_y = static_cast<int>(cmd->y_pos);
 
     cmd->x_pos += cmd->size * cmd->aspect * c;
     cmd->y_pos += cmd->size * s;
@@ -209,10 +207,9 @@ static void lsys_draw_d(LSysTurtleState *cmd)
 
 static void lsys_draw_m(LSysTurtleState *cmd)
 {
-    double angle = static_cast<double>(cmd->real_angle);
-
-    double s = std::sin(angle);
-    double c = std::cos(angle);
+    const double angle = static_cast<double>(cmd->real_angle);
+    const double s = std::sin(angle);
+    const double c = std::cos(angle);
 
     cmd->x_pos += cmd->size * cmd->aspect * c;
     cmd->y_pos += cmd->size * s;
@@ -226,8 +223,8 @@ static void lsys_draw_g(LSysTurtleState *cmd)
 
 static void lsys_draw_f(LSysTurtleState *cmd)
 {
-    int last_x = static_cast<int>(cmd->x_pos);
-    int last_y = static_cast<int>(cmd->y_pos);
+    const int last_x = static_cast<int>(cmd->x_pos);
+    const int last_y = static_cast<int>(cmd->y_pos);
     cmd->x_pos += cmd->size * s_cos_table[static_cast<int>(cmd->angle)];
     cmd->y_pos += cmd->size * s_sin_table[static_cast<int>(cmd->angle)];
     driver_draw_line(last_x, last_y, static_cast<int>(cmd->x_pos), static_cast<int>(cmd->y_pos), cmd->curr_color);
@@ -355,12 +352,12 @@ bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int
     ts->angle = 0;
     ts->real_angle = 0;
     ts->size = 1;
-    LSysCmd *f_s_ret = find_size(command, ts, rules, depth);
+    const LSysCmd *f_s_ret = find_size(command, ts, rules, depth);
     thinking_end(); // erase thinking message if any
-    LDouble x_min = ts->x_min;
-    LDouble x_max = ts->x_max;
-    LDouble y_min = ts->y_min;
-    LDouble y_max = ts->y_max;
+    const LDouble x_min = ts->x_min;
+    const LDouble x_max = ts->x_max;
+    const LDouble y_min = ts->y_min;
+    const LDouble y_max = ts->y_max;
     if (f_s_ret == nullptr)
     {
         return false;
@@ -724,8 +721,8 @@ void lsys_build_trig_table()
 {
     constexpr LDouble two_pi = 2.0 * PI;
 
-    double local_aspect = g_screen_aspect * g_logical_screen_x_dots / g_logical_screen_y_dots;
-    double increment = two_pi / g_max_angle;
+    const double local_aspect = g_screen_aspect * g_logical_screen_x_dots / g_logical_screen_y_dots;
+    const double increment = two_pi / g_max_angle;
     s_sin_table.resize(g_max_angle);
     s_cos_table.resize(g_max_angle);
     for (int i = 0; i < g_max_angle; i++)

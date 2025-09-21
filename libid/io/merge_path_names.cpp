@@ -132,7 +132,7 @@ int merge_path_names(char *old_full_path, const char *new_filename, CmdFile mode
         if (len > 0)
         {
             // strip trailing slash
-            char save = old_full_path[len - 1];
+            const char save = old_full_path[len - 1];
             if (save == SLASH_CH)
             {
                 old_full_path[len-1] = 0;

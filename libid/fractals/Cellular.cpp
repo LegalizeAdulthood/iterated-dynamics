@@ -105,8 +105,8 @@ Cellular::Cellular()
     if (rand_param != 0 && rand_param != -1)
     {
         double n = g_params[0];
-        std::string buf{fmt::format("{:.16g}", n)};// # of digits in initial string
-        S16 t = static_cast<S16>(buf.length());
+        const std::string buf{fmt::format("{:.16g}", n)}; // # of digits in initial string
+        const S16 t = static_cast<S16>(buf.length());
         if (t>16 || t <= 0)
         {
             throw CellularError(*this, STRING1);
@@ -115,7 +115,7 @@ Cellular::Cellular()
         {
             elem = 0; // zero the array
         }
-        S16 t2 = static_cast<S16>((16 - t) / 2);
+        const S16 t2 = static_cast<S16>((16 - t) / 2);
         for (int i = 0; i < t; i++)
         {
             // center initial string in array
@@ -134,16 +134,16 @@ Cellular::Cellular()
     if (n == 0.0)
     {
         // calculate a random rule
-        n = std::rand()% static_cast<int>(k);
+        n = std::rand() % static_cast<int>(k);
         for (int i = 1; i < m_rule_digits; i++)
         {
             n *= 10;
-            n += std::rand()% static_cast<int>(k);
+            n += std::rand() % static_cast<int>(k);
         }
         g_params[1] = n;
     }
-    std::string buf{fmt::format("{:.{}g}", n, m_rule_digits)};
-    S16 t = static_cast<S16>(buf.length());
+    const std::string buf{fmt::format("{:.{}g}", n, m_rule_digits)};
+    const S16 t = static_cast<S16>(buf.length());
     if (m_rule_digits < t || t < 0)
     {
         // leading 0s could make t smaller
@@ -246,7 +246,7 @@ bool Cellular::iterate()
             }
 
             S16 t = 0; // do first cell
-            U16 two_r = static_cast<U16>(m_s_r + m_s_r);
+            const U16 two_r = static_cast<U16>(m_s_r + m_s_r);
             for (int i = 0; i <= two_r; i++)
             {
                 t = static_cast<S16>(t + static_cast<S16>(m_cell_array[filled][i]));
@@ -304,7 +304,7 @@ bool Cellular::iterate()
         }
 
         S16 t = 0; // do first cell
-        U16 two_r = static_cast<U16>(m_s_r + m_s_r);
+        const U16 two_r = static_cast<U16>(m_s_r + m_s_r);
         for (int i = 0; i <= two_r; i++)
         {
             t = static_cast<S16>(t + static_cast<S16>(m_cell_array[filled][i]));

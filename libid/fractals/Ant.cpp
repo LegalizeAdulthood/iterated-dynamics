@@ -223,10 +223,10 @@ void Ant::turk_mite1(bool step, long wait)
         for (int color = max_ants; color; color--)
         {
             // move the various turmites
-            int x = this->x[color]; // temp vars
-            int y = this->y[color];
+            const int x = this->x[color]; // temp vars
+            const int y = this->y[color];
             int dir = this->dir[color];
-            int pixel = get_color(x, y);
+            const int pixel = get_color(x, y);
             if (wait > 0 && !step)
             {
                 g_put_color(x, y, 15);
@@ -305,10 +305,10 @@ void Ant::turk_mite2(bool step, long wait)
         for (int color = max_ants; color; color--)
         {
             // move the various turmites
-            int x = this->x[color]; // temp vars
-            int y = this->y[color];
+            const int x = this->x[color]; // temp vars
+            const int y = this->y[color];
             int dir = this->dir[color];
-            int pixel = get_color(x, y);
+            const int pixel = get_color(x, y);
             g_put_color(x, y, 15);
 
             if (wait > 0 && !step)

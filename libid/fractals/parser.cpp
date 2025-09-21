@@ -678,8 +678,8 @@ static void d_random()
 {
     /* Use the same algorithm as for fixed math so that they will generate
            the same fractals when the srand() function is used. */
-    long x = new_random_num() >> (32 - BIT_SHIFT);
-    long y = new_random_num() >> (32 - BIT_SHIFT);
+    const long x = new_random_num() >> (32 - BIT_SHIFT);
+    const long y = new_random_num() >> (32 - BIT_SHIFT);
     s_vars[7].a.d.x = static_cast<double>(x) / (1L << BIT_SHIFT);
     s_vars[7].a.d.y = static_cast<double>(y) / (1L << BIT_SHIFT);
 }
@@ -909,7 +909,7 @@ static void stk_clr()
 
 void d_stk_flip()
 {
-    double t = g_arg1->d.x;
+    const double t = g_arg1->d.x;
     g_arg1->d.x = g_arg1->d.y;
     g_arg1->d.y = t;
 }
@@ -940,7 +940,7 @@ void d_stk_tan()
     g_arg1->d.y *= 2;
     sin_cos(g_arg1->d.x, &sin_x, &cos_x);
     sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
-    double denom = cos_x + cosh_y;
+    const double denom = cos_x + cosh_y;
     if (check_denom(denom))
     {
         return;
@@ -959,7 +959,7 @@ void d_stk_tanh()
     g_arg1->d.y *= 2;
     sin_cos(g_arg1->d.y, &sin_y, &cos_y);
     sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
-    double denom = cosh_x + cos_y;
+    const double denom = cosh_x + cos_y;
     if (check_denom(denom))
     {
         return;
@@ -978,7 +978,7 @@ void d_stk_cotan()
     g_arg1->d.y *= 2;
     sin_cos(g_arg1->d.x, &sin_x, &cos_x);
     sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
-    double denom = cosh_y - cos_x;
+    const double denom = cosh_y - cos_x;
     if (check_denom(denom))
     {
         return;
@@ -997,7 +997,7 @@ void d_stk_cotanh()
     g_arg1->d.y *= 2;
     sin_cos(g_arg1->d.y, &sin_y, &cos_y);
     sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
-    double denom = cosh_x - cos_y;
+    const double denom = cosh_x - cos_y;
     if (check_denom(denom))
     {
         return;
@@ -1015,7 +1015,7 @@ void d_stk_cotanh()
 
 void d_stk_recip()
 {
-    double mod = g_arg1->d.x * g_arg1->d.x + g_arg1->d.y * g_arg1->d.y;
+    const double mod = g_arg1->d.x * g_arg1->d.x + g_arg1->d.y * g_arg1->d.y;
     if (check_denom(mod))
     {
         return;
@@ -1458,7 +1458,7 @@ static FunctionPtr is_func(const char *str, int len)
 
 static void sort_precedence()
 {
-    int this_op = s_next_op++;
+    const int this_op = s_next_op++;
     while (s_op[this_op].p > s_op[s_next_op].p && s_next_op < g_operation_index)
     {
         sort_precedence();
@@ -1558,8 +1558,8 @@ static bool parse_formula_text(const std::string &text)
         s_vars[g_variable_index].len = static_cast<int>(std::strlen(VARIABLES[g_variable_index]));
     }
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
-    double const_pi = std::atan(1.0) * 4;
-    double const_e = std::exp(1.0);
+    const double const_pi = std::atan(1.0) * 4;
+    const double const_e = std::exp(1.0);
     s_vars[7].a.d.y = 0.0;
     s_vars[7].a.d.x = s_vars[7].a.d.y;
     s_vars[11].a.d.x = static_cast<double>(g_logical_screen_x_dots);
@@ -2236,7 +2236,7 @@ static void is_complex_constant(std::FILE *open_file, Token *tok)
     std::FILE * debug_token = nullptr;
     tok->str[1] = static_cast<char>(0);  // so we can concatenate later
 
-    long file_pos = std::ftell(open_file);
+    const long file_pos = std::ftell(open_file);
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
         const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmconst.txt")};
@@ -2363,7 +2363,7 @@ static bool frm_get_alpha(std::FILE *open_file, Token *tok)
     long last_file_pos = std::ftell(open_file);
     while ((c = frm_get_char(open_file)) != EOF)
     {
-        long file_pos = std::ftell(open_file);
+        const long file_pos = std::ftell(open_file);
         switch (c)
         {
 CASE_ALPHA:
@@ -2739,7 +2739,7 @@ int frm_get_param_stuff(const char *name)
 */
 static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
 {
-    long file_pos = std::ftell(open_file);
+    const long file_pos = std::ftell(open_file);
     int c;
     bool at_end_of_name = false;
 
@@ -2778,7 +2778,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, bool report_bad_sym)
     if (i > ITEM_NAME_LEN)
     {
         int j;
-        int k = static_cast<int>(std::strlen(parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE)));
+        const int k = static_cast<int>(std::strlen(parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE)));
         char msg_buff[100];
         std::strcpy(msg_buff, parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
         std::strcat(msg_buff, ":\n   ");
@@ -3243,7 +3243,7 @@ static bool frm_prescan(std::FILE * open_file)
     s_paren = 0;
 
     long statement_pos{std::ftell(open_file)};
-    long orig_pos{statement_pos};
+    const long orig_pos{statement_pos};
     for (ErrorData &error : s_errors)
     {
         error.start_pos    = 0L;

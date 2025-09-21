@@ -48,7 +48,7 @@ TEST(TestFractalSpecific, toJuliaExists)
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
         const FractalSpecific &from{g_fractal_specific[i]};
-        if (FractalType julia_type = from.to_julia; julia_type != FractalType::NO_FRACTAL)
+        if (const FractalType julia_type = from.to_julia; julia_type != FractalType::NO_FRACTAL)
         {
             EXPECT_NO_THROW(get_fractal_specific(julia_type)) << "index " << i << " (" << from.name << ")";
             EXPECT_EQ(from.type, get_fractal_specific(julia_type)->to_mandel)
@@ -62,7 +62,7 @@ TEST(TestFractalSpecific, toMandelbrotExists)
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
         const FractalSpecific &from{g_fractal_specific[i]};
-        if (FractalType mandel_type = from.to_mandel; mandel_type != FractalType::NO_FRACTAL)
+        if (const FractalType mandel_type = from.to_mandel; mandel_type != FractalType::NO_FRACTAL)
         {
             EXPECT_NO_THROW(get_fractal_specific(mandel_type)) << "index " << i << " (" << from.name << ")";
             // type=inverse_julia is a special case;

@@ -570,7 +570,7 @@ void save_palette()
         {
             std::strcat(filename, ".map");
         }
-        std::filesystem::path pal_name{get_save_path(WriteFile::MAP, filename)};
+        const std::filesystem::path pal_name{get_save_path(WriteFile::MAP, filename)};
         assert(!pal_name.empty());
         if (std::FILE *dac_file = std::fopen(pal_name.string().c_str(), "w"); dac_file == nullptr)
         {

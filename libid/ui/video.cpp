@@ -75,7 +75,7 @@ void write_span(int row, int start_col, int stop_col, const Byte *pixels)
 
 static void normal_write_span(int y, int x, int last_x, const Byte *pixels)
 {
-    int width = last_x - x + 1;
+    const int width = last_x - x + 1;
     assert(s_write_pixel);
     for (int i = 0; i < width; i++)
     {
@@ -85,7 +85,7 @@ static void normal_write_span(int y, int x, int last_x, const Byte *pixels)
 
 static void normal_read_span(int y, int x, int last_x, Byte *pixels)
 {
-    int width = last_x - x + 1;
+    const int width = last_x - x + 1;
     assert(s_read_pixel);
     for (int i = 0; i < width; i++)
     {
@@ -145,8 +145,8 @@ int get_color(int x, int y)
 //
 void put_color_a(int x, int y, int color)
 {
-    int x1 = x + g_logical_screen_x_offset;
-    int y1 = y + g_logical_screen_y_offset;
+    const int x1 = x + g_logical_screen_x_offset;
+    const int y1 = y + g_logical_screen_y_offset;
     assert(x1 >= 0 && x1 <= g_screen_x_dots);
     assert(y1 >= 0 && y1 <= g_screen_y_dots);
     assert(s_write_pixel);

@@ -69,7 +69,7 @@ static void notify(std::function<void(const MouseNotificationPtr &)> handler)
     }
     if (!s_inside_notification)
     {
-        for (int id : s_pending_unsubscribe)
+        for (const int id : s_pending_unsubscribe)
         {
             mouse_unsubscribe(id);
         }

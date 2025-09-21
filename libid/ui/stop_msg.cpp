@@ -103,7 +103,7 @@ bool stop_msg(StopMsgFlags flags, const std::string &msg)
         driver_put_string(g_text_row+2, 0, 7, "Any key to continue...");
     }
     g_text_col_base = 0; // back to full line
-    int color = bit_set(flags, StopMsgFlags::INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
+    const int color = bit_set(flags, StopMsgFlags::INFO_ONLY) ? C_STOP_INFO : C_STOP_ERR;
     driver_set_attr(top_row, 0, color, (g_text_row+1-top_row)*80);
     driver_hide_text_cursor();   // cursor off
     if (!bit_set(flags, StopMsgFlags::NO_BUZZER))

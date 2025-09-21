@@ -51,7 +51,7 @@ TestPlotFrame::TestPlotFrame(const wxString &title) :
     file->Append(wxID_EXIT, "&Quit\tAlt-F4", "Quit");
     menu_bar->Append(file, "&File");
     wxMenu *action = new wxMenu;
-    wxMenuItem *display_string = action->Append(wxID_ANY, "&Display String");
+    const wxMenuItem *display_string = action->Append(wxID_ANY, "&Display String");
     Bind(wxEVT_MENU, &TestPlotFrame::on_action_display_string, this, display_string->GetId());
     menu_bar->Append(action, "&Action");
     wxFrameBase::SetMenuBar(menu_bar);
@@ -64,7 +64,7 @@ TestPlotFrame::TestPlotFrame(const wxString &title) :
 wxSize TestPlotFrame::calculate_frame_size() const
 {
     // Get the Plot's fixed size
-    wxSize text_screen_size = m_plot->GetBestSize();
+    const wxSize text_screen_size = m_plot->GetBestSize();
 
     // Account for frame decorations (menu bar, borders, etc.)
     wxSize frame_size = text_screen_size;

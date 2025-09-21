@@ -14,7 +14,7 @@ TEST(TestAsciiDoc, createCompiler)
     Options options{};
     options.mode = Mode::ASCII_DOC;
 
-    std::shared_ptr compiler{create_compiler(options)};
+    const std::shared_ptr compiler{create_compiler(options)};
 
     EXPECT_TRUE(compiler);
 }

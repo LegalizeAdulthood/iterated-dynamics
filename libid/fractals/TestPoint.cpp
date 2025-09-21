@@ -117,8 +117,8 @@ int TestPoint::per_pixel(double init_real, double init_imag, double param1, doub
     long iter = 0;
     while (magnitude < 4.0 && iter < max_iter)
     {
-        double new_real = old_real * old_real - old_imag * old_imag + init_real;
-        double new_imag = 2 * old_real * old_imag + init_imag;
+        const double new_real = old_real * old_real - old_imag * old_imag + init_real;
+        const double new_imag = 2 * old_real * old_imag + init_imag;
         iter++;
         old_real = new_real;
         old_imag = new_imag;

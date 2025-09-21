@@ -121,7 +121,7 @@ bool lyapunov_per_image()
     s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL;
     s_lya_length = 1;
 
-    long i = static_cast<long>(g_params[0]);
+    const long i = static_cast<long>(g_params[0]);
     s_lya_rxy[0] = 1;
     int t;
     for (t = 31; t >= 0; t--)

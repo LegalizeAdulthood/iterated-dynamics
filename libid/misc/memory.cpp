@@ -81,7 +81,7 @@ static Memory s_handles[MAX_HANDLES];
 
 static bool check_disk_space(std::uint64_t size)
 {
-    std::filesystem::space_info space{std::filesystem::space(g_temp_dir)};
+    const std::filesystem::space_info space{std::filesystem::space(g_temp_dir)};
     return space.free >= size;
 }
 
@@ -116,7 +116,7 @@ bool MemoryHandle::from_memory(const Byte *buffer, U16 size, long count, long of
 {
     Byte disk_buff[DISK_WRITE_LEN];
     U16 num_written;
-    long start = offset * size; // offset to first location to move to
+    const long start = offset * size; // offset to first location to move to
     long to_move = count * size; // number of bytes to move
     if (g_debug_flag == DebugFlags::DISPLAY_MEMORY_STATISTICS)
     {

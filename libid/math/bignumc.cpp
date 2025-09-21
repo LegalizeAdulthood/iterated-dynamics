@@ -71,8 +71,8 @@ int cmp_bn(BigNum n1, BigNum n2)
 {
     // two bytes at a time
     // signed comparison for msb
-    S16 value1 = BIG_ACCESS_S16(reinterpret_cast<S16 *>(n1 + g_bn_length - 2));
-    S16 value2 = BIG_ACCESS_S16(reinterpret_cast<S16 *>(n2 + g_bn_length - 2));
+    const S16 value1 = BIG_ACCESS_S16(reinterpret_cast<S16 *>(n1 + g_bn_length - 2));
+    const S16 value2 = BIG_ACCESS_S16(reinterpret_cast<S16 *>(n2 + g_bn_length - 2));
     if (value1 > value2)
     {
         // now determine which of the two bytes was different
@@ -97,8 +97,8 @@ int cmp_bn(BigNum n1, BigNum n2)
     // unsigned comparison for the rest
     for (int i = g_bn_length-4; i >= 0; i -= 2)
     {
-        U16 n1_value = BIG_ACCESS16(n1 + i);
-        U16 n2_value = BIG_ACCESS16(n2 + i);
+        const U16 n1_value = BIG_ACCESS16(n1 + i);
+        const U16 n2_value = BIG_ACCESS16(n2 + i);
         if (n1_value > n2_value)
         {
             // now determine which of the two bytes was different
@@ -221,7 +221,7 @@ BigNum neg_bn(BigNum r, BigNum n)
     // two bytes at a time
     for (i = 0; neg != 0 && i < g_bn_length; i += 2)
     {
-        U16 t_short = ~BIG_ACCESS16(n + i);
+        const U16 t_short = ~BIG_ACCESS16(n + i);
         neg += static_cast<U32>(t_short); // two's complement
         BIG_SET16(r+i, static_cast<U16>(neg));   // store the lower 2 bytes
         neg >>= 16; // shift the sign bit for next time
@@ -245,7 +245,7 @@ BigNum neg_a_bn(BigNum r)
     // two bytes at a time
     for (i = 0; neg != 0 && i < g_bn_length; i += 2)
     {
-        U16 t_short = ~BIG_ACCESS16(r + i);
+        const U16 t_short = ~BIG_ACCESS16(r + i);
         neg += static_cast<U32>(t_short); // two's complement
         BIG_SET16(r+i, static_cast<U16>(neg));   // store the lower 2 bytes
         neg >>= 16; // shift the sign bit for next time
@@ -359,7 +359,7 @@ BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2)
     BigNum rp2;
     // pointers for r
 
-    bool sign1 = is_bn_neg(n1);
+    const bool sign1 = is_bn_neg(n1);
     if (sign1) // =, not ==
     {
         neg_a_bn(n1);
@@ -375,7 +375,7 @@ BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2)
     }
 
     BigNum n1_p = n1;
-    int steps = g_bn_length >> 1; // two bytes at a time
+    const int steps = g_bn_length >> 1; // two bytes at a time
     int carry_steps = double_steps = (steps << 1) - 2;
     g_bn_length <<= 1;
     clear_bn(r);        // double width
@@ -386,7 +386,7 @@ BigNum unsafe_full_mult_bn(BigNum r, BigNum n1, BigNum n2)
         BigNum n2_p = n2;
         for (int j = 0; j < steps; j++)
         {
-            U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
+            const U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
             U32 sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
             BIG_SET16(rp2, static_cast<U16>(sum)); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
@@ -434,7 +434,7 @@ BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2)
     BigNum rp1;
 
     int bnl = g_bn_length;
-    bool sign1 = is_bn_neg(n1);
+    const bool sign1 = is_bn_neg(n1);
     if (sign1 != 0)   // =, not ==
     {
         neg_a_bn(n1);
@@ -464,7 +464,7 @@ BigNum unsafe_mult_bn(BigNum r, BigNum n1, BigNum n2)
         BigNum n2_p = n2;
         for (int j = 0; j < steps; j++)
         {
-            U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
+            const U32 prod = static_cast<U32>(BIG_ACCESS16(n1_p)) * static_cast<U32>(BIG_ACCESS16(n2_p)); // U16*U16=U32
             U32 sum = static_cast<U32>(BIG_ACCESS16(rp2)) + prod; // add to previous, including overflow
             BIG_SET16(rp2, static_cast<U16>(sum)); // save the lower 2 bytes
             sum >>= 16;             // keep just the upper 2 bytes
@@ -649,7 +649,7 @@ BigNum unsafe_square_bn(BigNum r, BigNum n)
     g_bn_length = bnl;
 
     // determine whether r is on an odd or even two-byte word in the number
-    int rodd = static_cast<U16>(((g_bn_length << 1) - g_r_length) >> 1) & 0x0001;
+    const int rodd = static_cast<U16>(((g_bn_length << 1) - g_r_length) >> 1) & 0x0001;
     int i = (g_bn_length >> 1)-1;
     int steps = (g_r_length - g_bn_length) >> 1;
     int carry_steps = double_steps = (g_bn_length >> 1) + steps - 2;
@@ -789,7 +789,7 @@ BigNum unsafe_div_bn_int(BigNum r, BigNum n,  U16 u)
 {
     U16 rem = 0;
 
-    bool sign = is_bn_neg(n);
+    const bool sign = is_bn_neg(n);
     if (sign)
     {
         neg_a_bn(n);
@@ -808,8 +808,8 @@ BigNum unsafe_div_bn_int(BigNum r, BigNum n,  U16 u)
     // two bytes at a time
     for (int i = g_bn_length-2; i >= 0; i -= 2)
     {
-        U32 full_number = (static_cast<U32>(rem) << 16) + static_cast<U32>(BIG_ACCESS16(n + i));
-        U16 quot = static_cast<U16>(full_number / u);
+        const U32 full_number = (static_cast<U32>(rem) << 16) + static_cast<U32>(BIG_ACCESS16(n + i));
+        const U16 quot = static_cast<U16>(full_number / u);
         rem  = static_cast<U16>(full_number % u);
         BIG_SET16(r+i, quot);
     }
@@ -827,7 +827,7 @@ BigNum div_a_bn_int(BigNum r, U16 u)
 {
     U16 rem = 0;
 
-    bool sign = is_bn_neg(r);
+    const bool sign = is_bn_neg(r);
     if (sign)
     {
         neg_a_bn(r);
@@ -846,8 +846,8 @@ BigNum div_a_bn_int(BigNum r, U16 u)
     // two bytes at a time
     for (int i = g_bn_length-2; i >= 0; i -= 2)
     {
-        U32 full_number = (static_cast<U32>(rem) << 16) + static_cast<U32>(BIG_ACCESS16(r + i));
-        U16 quot = static_cast<U16>(full_number / u);
+        const U32 full_number = (static_cast<U32>(rem) << 16) + static_cast<U32>(BIG_ACCESS16(r + i));
+        const U16 quot = static_cast<U16>(full_number / u);
         rem  = static_cast<U16>(full_number % u);
         BIG_SET16(r+i, quot);
     }
@@ -969,7 +969,7 @@ LDouble bf_to_float(BigFloat n)
     g_bn_length = bnl;
     g_int_length = il;
 
-    int power = static_cast<S16>(BIG_ACCESS16(n + g_bf_length));
+    const int power = static_cast<S16>(BIG_ACCESS16(n + g_bf_length));
     f = scale256(f, power);
 
     return f;

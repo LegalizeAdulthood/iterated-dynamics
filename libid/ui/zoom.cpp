@@ -864,7 +864,7 @@ static void restart_window(int index)
     const int x_start = std::max(0, g_work_list[index].start.x);
     const int y_stop = std::min(g_logical_screen_y_dots - 1, g_work_list[index].stop.y);
     const int x_stop = std::min(g_logical_screen_x_dots - 1, g_work_list[index].stop.x);
-    std::vector<Byte> temp(g_logical_screen_x_dots, 0);
+    const std::vector<Byte> temp(g_logical_screen_x_dots, 0);
     for (int y = y_start; y <= y_stop; ++y)
     {
         write_span(y, x_start, x_stop, temp.data());

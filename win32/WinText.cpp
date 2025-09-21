@@ -139,7 +139,7 @@ static COLORREF s_wintext_color[]
 
 void WinText::invalidate(int left, int bot, int right, int top)
 {
-    RECT exposed =
+    const RECT exposed =
     {
         left*m_char_width, top*m_char_height,
         (right+1)*m_char_width, (bot+1)*m_char_height
@@ -183,8 +183,8 @@ bool WinText::initialize(HINSTANCE instance, HWND parent, LPCSTR title)
     // set up the font characteristics
     m_char_font = OEM_FIXED_FONT;
     m_font = static_cast<HFONT>(GetStockObject(m_char_font));
-    HDC dc = GetDC(parent);
-    HFONT old_font = static_cast<HFONT>(SelectObject(dc, m_font));
+    const HDC dc = GetDC(parent);
+    const HFONT old_font = static_cast<HFONT>(SelectObject(dc, m_font));
     GetTextMetricsA(dc, &text_metric);
     SelectObject(dc, old_font);
     ReleaseDC(parent, dc);
@@ -238,7 +238,7 @@ void WinText::destroy()
         return;
     }
 
-    for (HBITMAP &bm : m_bitmap)
+    for (const HBITMAP &bm : m_bitmap)
     {
         DeleteObject(bm);
     }
@@ -351,10 +351,10 @@ void WinText::on_paint(HWND window)
     BeginPaint(window, &ps);
 
     // the routine below handles *all* window updates
-    int x_min = ps.rcPaint.left/m_char_width;
-    int x_max = (ps.rcPaint.right + m_char_width - 1)/m_char_width;
-    int y_min = ps.rcPaint.top/m_char_height;
-    int y_max = (ps.rcPaint.bottom + m_char_height - 1)/m_char_height;
+    const int x_min = ps.rcPaint.left / m_char_width;
+    const int x_max = (ps.rcPaint.right + m_char_width - 1) / m_char_width;
+    const int y_min = ps.rcPaint.top / m_char_height;
+    const int y_max = (ps.rcPaint.bottom + m_char_height - 1)/m_char_height;
 
     ODS("wintext_OnPaint");
 
@@ -469,7 +469,7 @@ LRESULT CALLBACK wintext_proc(HWND window, UINT message, WPARAM wp, LPARAM lp)
 
 void WinText::put_string(int x_pos, int y_pos, int attrib, const char *string, int *end_row, int *end_col)
 {
-    char xa = attrib & 0x0ff;
+    const char xa = attrib & 0x0ff;
     int max_row = y_pos;
     int row = y_pos;
     int max_col = x_pos - 1;
@@ -517,8 +517,8 @@ void WinText::scroll_up(int top, int bot)
     {
         char *chars = &m_screen.chars(row, 0);
         Byte *attrs = &m_screen.attrs(row, 0);
-        char *next_chars = &m_screen.chars(row+1, 0);
-        Byte *next_attrs = &m_screen.attrs(row+1, 0);
+        const char *next_chars = &m_screen.chars(row + 1, 0);
+        const Byte *next_attrs = &m_screen.attrs(row+1, 0);
         for (int col = 0; col < WINTEXT_MAX_COL; col++)
         {
             *chars++ = *next_chars++;
@@ -555,7 +555,7 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
         m_buffer_init = true;
         old_bk = 0x00;
         old_fg = 0x0f;
-        int k = (old_bk << 4) + old_fg;
+        const int k = (old_bk << 4) + old_fg;
         m_buffer_init = true;
         for (int col = 0; col < m_char_x_chars; col++)
         {
@@ -572,7 +572,7 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
     y_min = std::max(y_min, 0);
     y_max = std::min(y_max, m_char_y_chars - 1);
 
-    HDC dc = GetDC(m_window);
+    const HDC dc = GetDC(m_window);
     SelectObject(dc, m_font);
     SetBkMode(dc, OPAQUE);
     SetTextAlign(dc, TA_LEFT | TA_TOP);
@@ -601,7 +601,7 @@ void WinText::paint_screen(int x_min, int x_max, // update this rectangular sect
             {
                 k = m_screen.attrs(j, i);
             }
-            int foreground = k & 15;
+            const int foreground = k & 15;
             int background = k >> 4;
             if (i > x_max || foreground != static_cast<int>(old_fg) || background != static_cast<int>(old_bk))
             {
@@ -678,7 +678,7 @@ void WinText::set_attr(int row, int col, int attr, int count)
     int x_max = col;
     int x_min = x_max;
     int y_max = row;
-    int y_min = y_max;
+    const int y_min = y_max;
     for (int i = 0; i < count; i++)
     {
         m_screen.attrs(row, col+i) = static_cast<Byte>(attr & 0xFF);
@@ -734,7 +734,7 @@ void WinText::schedule_alarm(int secs)
     UINT_PTR result = SetTimer(m_window, TIMER_ID, secs, wintext_timer_redraw);
     if (!result)
     {
-        DWORD error = GetLastError();
+        const DWORD error = GetLastError();
         throw std::runtime_error("SetTimer failed: " + std::to_string(error));
     }
 }

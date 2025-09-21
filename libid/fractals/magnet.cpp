@@ -56,7 +56,7 @@ int magnet1_orbit()
     bot.x = g_old_z.x + g_old_z.x + g_float_param->x - 2;       // bot = 2*Z+C-2
     bot.y = g_old_z.y + g_old_z.y + g_float_param->y;
 
-    double div = bot.x * bot.x + bot.y * bot.y;                // tmp = top/bot
+    const double div = bot.x * bot.x + bot.y * bot.y;           // tmp = top/bot
     if (div < FLT_MIN)
     {
         return 1;
@@ -86,16 +86,16 @@ int magnet2_orbit()
             + g_old_z.x * s_t_cm1.y + s_t_cm1_cm2.y;
 
     bot.x = g_temp_sqr_x - g_temp_sqr_y;
-    bot.x = bot.x + bot.x + bot.x
-            + g_old_z.x * s_t_cm2.x - g_old_z.y * s_t_cm2.y
-            + s_t_cm1_cm2.x + 1.0;
+    bot.x = bot.x + bot.x + bot.x                       //
+        + g_old_z.x * s_t_cm2.x - g_old_z.y * s_t_cm2.y //
+        + s_t_cm1_cm2.x + 1.0;
     bot.y = g_old_z.x * g_old_z.y;
     bot.y += bot.y;
-    bot.y = bot.y + bot.y + bot.y
-            + g_old_z.x * s_t_cm2.y + g_old_z.y * s_t_cm2.x
-            + s_t_cm1_cm2.y;
+    bot.y = bot.y + bot.y + bot.y                                    //
+        + g_old_z.x * s_t_cm2.y + g_old_z.y * s_t_cm2.x              //
+        + s_t_cm1_cm2.y;
 
-    double div = bot.x * bot.x + bot.y * bot.y;                // tmp = top/bot
+    const double div = bot.x * bot.x + bot.y * bot.y;                // tmp = top/bot
     if (div < FLT_MIN)
     {
         return 1;

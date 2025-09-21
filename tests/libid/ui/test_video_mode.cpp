@@ -81,7 +81,7 @@ TEST(TestVideoMode, checkKeyFnKeyNoModes)
 
 static void push_modes(std::initializer_list<int> keys)
 {
-    for (int key : keys)
+    for (const int key : keys)
     {
         g_video_table[g_video_table_len].key = key;
         ++g_video_table_len;

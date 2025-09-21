@@ -13,7 +13,7 @@ namespace id::test
 
 TEST(TestMath, complexDividePointerAliasX)
 {
-    DComplex y{2.0, 0.0};
+    const DComplex y{2.0, 0.0};
     DComplex z{1.0, 2.0};
 
     fpu_cmplx_div(&z, &y, &z); // z = z/y
@@ -24,7 +24,7 @@ TEST(TestMath, complexDividePointerAliasX)
 
 TEST(TestMath, complexDividePointerAliasY)
 {
-    DComplex x{1.0, 2.0};
+    const DComplex x{1.0, 2.0};
     DComplex z{2.0, 0.0};
 
     fpu_cmplx_div(&x, &z, &z); // z = x/z
@@ -35,7 +35,7 @@ TEST(TestMath, complexDividePointerAliasY)
 
 TEST(TestMath, complexLogZeroIsZero)
 {
-    DComplex x{0.0, 0.0};
+    const DComplex x{0.0, 0.0};
     DComplex z{1.0, 1.0};
 
     fpu_cmplx_log(&x, &z); // z = log(x)
@@ -46,7 +46,7 @@ TEST(TestMath, complexLogZeroIsZero)
 
 TEST(TestMath, complexLogReal)
 {
-    DComplex x{5.0, 0.0};
+    const DComplex x{5.0, 0.0};
     DComplex z{1.0, 1.0};
 
     fpu_cmplx_log(&x, &z); // z = log(x)

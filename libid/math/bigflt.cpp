@@ -229,7 +229,7 @@ char *unsafe_bf_to_str_f(char *s, BigFloat r, int dec)
 //  g_bf_length must be at least g_bn_length+2
 BigNum bf_to_bn(BigNum n, BigFloat f)
 {
-    int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
+    const int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
     if (f_exp >= g_int_length)
     {
         // if it's too big, use max value
@@ -248,9 +248,9 @@ BigNum bf_to_bn(BigNum n, BigFloat f)
     }
 
     // already checked for over/underflow, this should be ok
-    int move_bytes = g_bn_length - g_int_length + f_exp + 1;
-    std::memcpy(n, f+g_bf_length-move_bytes-1, move_bytes);
-    Byte hi_byte = *(f + g_bf_length - 1);
+    const int move_bytes = g_bn_length - g_int_length + f_exp + 1;
+    std::memcpy(n, f + g_bf_length - move_bytes - 1, move_bytes);
+    const Byte hi_byte = *(f + g_bf_length - 1);
     std::memset(n+move_bytes, hi_byte, g_bn_length-move_bytes); // sign extends
     return n;
 }
@@ -289,7 +289,7 @@ long bf_to_int(BigFloat f)
 {
     long result;
 
-    int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
+    const int f_exp = static_cast<S16>(BIG_ACCESS16(f + g_bf_length));
     if (f_exp > 3)
     {
         result = 0x7FFFFFFFL;
@@ -352,7 +352,7 @@ BigFloat unsafe_inv_bf(BigFloat r, BigFloat n)
         neg_a_bf(n);
     }
 
-    int f_exp = static_cast<S16>(BIG_ACCESS16(n + g_bf_length));
+    const int f_exp = static_cast<S16>(BIG_ACCESS16(n + g_bf_length));
     BIG_SET16(n+g_bf_length, static_cast<S16>(0)); // put within LDouble range
 
     LDouble f = bf_to_float(n);
@@ -444,17 +444,17 @@ BigFloat unsafe_div_bf(BigFloat r, BigFloat n1, BigFloat n2)
 {
     // first, check for valid data
 
-    int a_exp = static_cast<S16>(BIG_ACCESS16(n1 + g_bf_length));
+    const int a_exp = static_cast<S16>(BIG_ACCESS16(n1 + g_bf_length));
     BIG_SET16(n1+g_bf_length, static_cast<S16>(0)); // put within LDouble range
 
     LDouble a = bf_to_float(n1);
-    if (a == 0) // division into zero
+    if (a == 0)                                     // division into zero
     {
-        clear_bf(r); // return 0
+        clear_bf(r);                                // return 0
         return r;
     }
 
-    int b_exp = static_cast<S16>(BIG_ACCESS16(n2 + g_bf_length));
+    const int b_exp = static_cast<S16>(BIG_ACCESS16(n2 + g_bf_length));
     BIG_SET16(n2+g_bf_length, static_cast<S16>(0)); // put within LDouble range
 
     LDouble b = bf_to_float(n2);
@@ -777,8 +777,8 @@ BigFloat unsafe_sin_cos_bf(BigFloat s, BigFloat c, BigFloat n)
     // the range is cut in half, the number of iterations required is reduced
     // by "quite a bit."  It's just a matter of testing to see what gives the
     // optimal results.
-    // halves = g_bf_length / 10; */ /* this is experimental
-    int halves = 1;
+    // halves = g_bf_length / 10;  // this is experimental
+    const int halves = 1;
     for (int i = 0; i < halves; i++)
     {
         half_a_bf(n);
@@ -896,7 +896,7 @@ BigFloat unsafe_atan_bf(BigFloat r, BigFloat n)
     // say, 1, atan(n) = pi/2 - acot(n) = pi/2 - atan(1/n).
 
     LDouble f = bf_to_float(n);
-    bool large_arg = f > 1.0;
+    const bool large_arg = f > 1.0;
     if (large_arg)
     {
         unsafe_inv_bf(g_bf_tmp3, n);
@@ -1019,8 +1019,8 @@ BigFloat unsafe_atan_bf(BigFloat r, BigFloat n)
 // uses g_bf_tmp1 - g_bf_tmp6 - global temp bigfloats
 BigFloat unsafe_atan2_bf(BigFloat r, BigFloat ny, BigFloat nx)
 {
-    int sign_x = sign_bf(nx);
-    int sign_y = sign_bf(ny);
+    const int sign_x = sign_bf(nx);
+    const int sign_y = sign_bf(ny);
 
     if (sign_y == 0)
     {
@@ -1391,8 +1391,8 @@ BigFloat max_bf(BigFloat r)
 int cmp_bf(BigFloat n1, BigFloat n2)
 {
     // compare signs
-    int sign1 = sign_bf(n1);
-    int sign2 = sign_bf(n2);
+    const int sign1 = sign_bf(n1);
+    const int sign2 = sign_bf(n2);
     if (sign1 > sign2)
     {
         return g_bf_length;
@@ -1420,8 +1420,8 @@ int cmp_bf(BigFloat n1, BigFloat n2)
     // two bytes at a time
     for (int i = g_bf_length-2; i >= 0; i -= 2)
     {
-        U16 value1 = BIG_ACCESS16(n1 + i);
-        U16 value2 = BIG_ACCESS16(n2 + i);
+        const U16 value1 = BIG_ACCESS16(n1 + i);
+        const U16 value2 = BIG_ACCESS16(n2 + i);
         if (value1 > value2)
         {
             // now determine which of the two bytes was different
@@ -1462,7 +1462,7 @@ bool is_bf_not_zero(BigFloat n)
 {
     int bnl = g_bn_length;
     g_bn_length = g_bf_length;
-    bool result = is_bn_not_zero(n);
+    const bool result = is_bn_not_zero(n);
     g_bn_length = bnl;
 
     return result;
@@ -1713,7 +1713,7 @@ BigFloat unsafe_mult_bf(BigFloat r, BigFloat n1, BigFloat n2)
     S16 *n1_exp = reinterpret_cast<S16 *>(n1 + g_bf_length);
     S16 *n2_exp = reinterpret_cast<S16 *>(n2 + g_bf_length);
     // add exp's
-    int r_exp = BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp);
+    const int r_exp = BIG_ACCESS_S16(n1_exp) + BIG_ACCESS_S16(n2_exp);
 
     const bool positive = is_bf_neg(n1) == is_bf_neg(n2); // are they the same sign?
 
@@ -1790,7 +1790,7 @@ BigFloat unsafe_square_bf(BigFloat r, BigFloat n)
     }
 
     S16 *n_exp = reinterpret_cast<S16 *>(n + g_bf_length);
-    int r_exp = static_cast<S16>(2 * BIG_ACCESS_S16(n_exp));
+    const int r_exp = static_cast<S16>(2 * BIG_ACCESS_S16(n_exp));
 
     int bnl = g_bn_length;
     g_bn_length = g_bf_length;
@@ -1939,8 +1939,8 @@ LDouble extract_value(LDouble f, LDouble b, int *exp_ptr)
         return 0;
     }
 
-    LDouble orig_b = b;
-    LDouble af = f >= 0 ? f : -f;     // abs value
+    const LDouble orig_b = b;
+    const LDouble af = f >= 0 ? f : -f;     // abs value
     LDouble ff = af > 1 ? af : 1 / af;
     int n = 0;
     unsigned power_two = 1;
@@ -2074,7 +2074,7 @@ BigFloat10 unsafe_bf_to_bf10(BigFloat10 r, int dec, BigFloat n)
     }
 
     BigFloat ones_byte = n + g_bf_length - 1;           // really it's n+g_bf_length-2
-    int power256 = static_cast<S16>(BIG_ACCESS16(n + g_bf_length)) + 1; // so adjust power256 by 1
+    const int power256 = static_cast<S16>(BIG_ACCESS16(n + g_bf_length)) + 1; // so adjust power256 by 1
 
     if (dec == 0)
     {
@@ -2176,11 +2176,11 @@ BigFloat10 mult_a_bf10_int(BigFloat10 r, int dec, U16 n)
     BigFloat10 power10 = r + dec + 1;
     int p = static_cast<S16>(BIG_ACCESS16(power10));
 
-    int sign_flag = r[0];  // r[0] to be used as a padding
+    const int sign_flag = r[0];  // r[0] to be used as a padding
     unsigned overflow = 0;
     for (int d = dec; d > 0; d--)
     {
-        unsigned value = r[d] * n + overflow;
+        const unsigned value = r[d] * n + overflow;
         r[d] = static_cast<Byte>(value % 10);
         overflow = value / 10;
     }
@@ -2262,7 +2262,7 @@ char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
     }
     dec++;  // one extra byte for rounding
     BigFloat10 power10 = n + dec + 1;
-    int p = static_cast<S16>(BIG_ACCESS16(power10));
+    const int p = static_cast<S16>(BIG_ACCESS16(power10));
 
     // if p is negative, it is not necessary to show all the decimal places
     if (p < 0 && dec > 8) // 8 sounds like a reasonable value
@@ -2312,7 +2312,7 @@ char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
     }
     dec++;  // one extra byte for rounding
     BigFloat10 power10 = n + dec + 1;
-    int p = static_cast<S16>(BIG_ACCESS16(power10));
+    const int p = static_cast<S16>(BIG_ACCESS16(power10));
 
     // if p is negative, it is not necessary to show all the decimal places
     if (p < 0 && dec > 8) // 8 sounds like a reasonable value

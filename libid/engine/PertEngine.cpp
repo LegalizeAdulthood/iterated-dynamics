@@ -81,14 +81,14 @@ int PertEngine::calculate_one_frame()
     {
         for (long x = 0; x < g_screen_x_dots; x++)
         {
-            Point pt(x, g_screen_y_dots - 1 - y);
+            const Point pt(x, g_screen_y_dots - 1 - y);
             m_points_remaining[y * g_screen_x_dots + x] = pt;
             m_remaining_point_count++;
         }
     }
 
-    double magnified_radius = m_zoom_radius;
-    int window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
+    const double magnified_radius = m_zoom_radius;
+    const int window_radius = std::min(g_screen_x_dots, g_screen_y_dots);
     BigStackSaver saved;
     BigFloat tmp_bf;
 
@@ -146,8 +146,8 @@ int PertEngine::calculate_one_frame()
             const int index{static_cast<int>(static_cast<double>(std::rand()) / RAND_MAX * m_remaining_point_count)};
             Point pt{m_points_remaining[index]};
             // Get the complex point at the chosen reference point
-            double delta_real = magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius;
-            double delta_imag = -magnified_radius * (2 * pt.get_y() - g_screen_y_dots) / window_radius;
+            const double delta_real = magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius;
+            const double delta_imag = -magnified_radius * (2 * pt.get_y() - g_screen_y_dots) / window_radius;
 
             // We need to store this offset because the formula we use to convert pixels into a complex point
             // does so relative to the center of the image. We need to offset that calculation when our
@@ -235,7 +235,7 @@ int PertEngine::calculate_point(const Point &pt, double magnified_radius, int wi
         magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius - m_delta_real;
     const double delta_imaginary =
         -magnified_radius * (2 * pt.get_y() - g_screen_y_dots) / window_radius - m_delta_imag;
-    std::complex<double> delta_sub_0{delta_real, delta_imaginary};
+    const std::complex<double> delta_sub_0{delta_real, delta_imaginary};
     std::complex<double> delta_sub_n{delta_real, delta_imaginary};
     int iteration{};
     bool glitched{};

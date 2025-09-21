@@ -291,7 +291,7 @@ start:
             {
                 throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
             }
-            int len = static_cast<int>(std::strlen(buf));
+            const int len = static_cast<int>(std::strlen(buf));
             buf[len-1] = 0; // zap newline
             message(secs, buf);
         }

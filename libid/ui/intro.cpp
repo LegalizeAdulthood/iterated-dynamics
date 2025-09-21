@@ -60,7 +60,7 @@ void intro()
 
     help_title();
 #define END_MAIN_AUTHOR 6
-    int top_row = END_MAIN_AUTHOR + 1;
+    constexpr int top_row = END_MAIN_AUTHOR + 1;
     int bot_row = 21;
     put_string_center(1, 0, 80, C_TITLE, PRESS_ENTER);
     driver_put_string(2, 0, C_CONTRIB, screen_text);

@@ -336,7 +336,7 @@ static MainState begin_ant(MainContext &/*context*/)
         driver_stack_screen();
     }
     g_from_text = false;
-    int err = get_fract_params(true);
+    const int err = get_fract_params(true);
     driver_unstack_screen();
     if (err >= 0 && ant_type() >= 0)
     {

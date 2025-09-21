@@ -49,7 +49,7 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
     title_row -= title_row / 4;              // higher is better if lots extra
     int title_col = (80 - box_width) / 2;        // center the box
     title_col -= (90 - box_width) / 20;
-    int prompt_col = title_col - (box_width - len) / 2;
+    const int prompt_col = title_col - (box_width - len) / 2;
     int j = title_col;                          // add margin at each side of box
     i = (82-box_width)/4;
     i = std::min(i, 3);

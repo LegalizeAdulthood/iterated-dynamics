@@ -354,7 +354,7 @@ int FrothyBasin::calc()
             // Trying to make a better 16 color distribution.
             // Since there are only a few possibilities, just handle each case.
             // This is a guess work here.
-            long l_shade = (g_color_iter << 16) / g_max_iterations;
+            const long l_shade = (g_color_iter << 16) / g_max_iterations;
             if (m_attractors != 6) // either 2 or 3 attractors
             {
                 if (l_shade < 2622)         // 0.04

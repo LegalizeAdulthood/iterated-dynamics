@@ -447,7 +447,7 @@ std::ostream &operator<<(std::ostream &str, const VecPrinter<int> &value)
 
     str << "[ ";
     bool first{true};
-    for (int i : value.m_values)
+    for (const int i : value.m_values)
     {
         if (!first)
         {

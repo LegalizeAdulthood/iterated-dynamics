@@ -118,7 +118,7 @@ TEST_F(TestSetupLogTable, oldPaletteLogMapFlag)
     EXPECT_FALSE(g_log_map_calculate);
     EXPECT_EQ(256U + 1U, g_log_map_table.size());
     EXPECT_EQ(256L, g_log_map_table_max_size);
-    std::array<int, 257> expected{
+    const std::array<int, 257> expected{
         1, 1, 32, 51, 64, 75, 83, 90, 96, 102, 106, 111, 115, 118, 122, 125,            // 0
         128, 131, 133, 136, 138, 141, 143, 145, 147, 149, 150, 152, 154, 155, 157, 158, // 16
         160, 161, 163, 164, 165, 167, 168, 169, 170, 171, 172, 173, 175, 176, 177, 178, // 32

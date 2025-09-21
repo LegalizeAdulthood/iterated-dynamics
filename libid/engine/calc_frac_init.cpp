@@ -896,7 +896,7 @@ static void smallest_add_bf(BigFloat num)
 
 static bool ratio_bad(double actual, double desired)
 {
-    double tol = g_math_tol[1];
+    const double tol = g_math_tol[1];
     if (tol <= 0.0)
     {
         return true;

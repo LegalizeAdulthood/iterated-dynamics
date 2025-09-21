@@ -521,7 +521,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     DblCoords tr;
     DblCoords bl;
     DblCoords br;
-    double too_big = std::sqrt(sqr(static_cast<double>(g_screen_x_dots)) + sqr(static_cast<double>(g_screen_y_dots))) * 1.5;
+    const double too_big = std::sqrt(sqr(static_cast<double>(g_screen_x_dots)) + sqr(static_cast<double>(g_screen_y_dots))) * 1.5;
     // arbitrary value... stops browser zooming out too far
     int corner_count = 0;
     bool cant_see = false;
@@ -540,7 +540,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
           calc_lengths();
        }
     */
-    int two_len = g_bf_length + 2;
+    const int two_len = g_bf_length + 2;
     BigFloat bt_x = alloc_stack(two_len);
     BigFloat bt_y = alloc_stack(two_len);
     BigFloat bt_x_min = alloc_stack(two_len);
@@ -684,7 +684,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     bot_right.x = static_cast<int>(std::lround(br.x));
     bot_right.y = static_cast<int>(std::lround(br.y));
 
-    double tmp_sqrt = std::sqrt(sqr(tr.x - bl.x) + sqr(tr.y - bl.y));
+    const double tmp_sqrt = std::sqrt(sqr(tr.x - bl.x) + sqr(tr.y - bl.y));
     win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
     // reject anything too small or too big on screen
     if (tmp_sqrt < g_smallest_window_display_size || tmp_sqrt > too_big)
@@ -734,7 +734,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
 // maps points onto view screen
 static void transform(DblCoords *point)
 {
-    double tmp_pt_x = s_cvt->a * point->x + s_cvt->b * point->y + s_cvt->e;
+    const double tmp_pt_x = s_cvt->a * point->x + s_cvt->b * point->y + s_cvt->e;
     point->y = s_cvt->c * point->x + s_cvt->d * point->y + s_cvt->f;
     point->x = tmp_pt_x;
 }

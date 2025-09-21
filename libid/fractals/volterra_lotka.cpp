@@ -17,13 +17,13 @@ namespace id::fractals
 // Beauty of Fractals pp. 125 - 127
 int vl_orbit()
 {
-    double half = g_params[0] / 2.0;
-    double xy = g_old_z.x * g_old_z.y;
-    double u = g_old_z.x - xy;
-    double w = -g_old_z.y + xy;
-    double a = g_old_z.x + g_params[1] * u;
-    double b = g_old_z.y + g_params[1] * w;
-    double ab = a * b;
+    const double half = g_params[0] / 2.0;
+    const double xy = g_old_z.x * g_old_z.y;
+    const double u = g_old_z.x - xy;
+    const double w = -g_old_z.y + xy;
+    const double a = g_old_z.x + g_params[1] * u;
+    const double b = g_old_z.y + g_params[1] * w;
+    const double ab = a * b;
     g_new_z.x = g_old_z.x + half * (u + (a - ab));
     g_new_z.y = g_old_z.y + half * (w + (-b + ab));
     return g_bailout_float();

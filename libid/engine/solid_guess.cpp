@@ -188,8 +188,8 @@ int SolidGuess::scan()
         g_i_start_pt.y = g_start_pt.y & -1 - (m_max_block - 1);
 
         // calculate skip flags for skippable blocks
-        int x_lim = (g_i_stop_pt.x + m_max_block) / m_max_block + 1;
-        int y_lim = ((g_i_stop_pt.y + m_max_block) / m_max_block + 15) / 16 + 1;
+        const int x_lim = (g_i_stop_pt.x + m_max_block) / m_max_block + 1;
+        const int y_lim = ((g_i_stop_pt.y + m_max_block) / m_max_block + 15) / 16 + 1;
         if (!m_right_guess)         // no right edge guessing, zap border
         {
             for (int y = 0; y <= y_lim; ++y)
@@ -199,8 +199,8 @@ int SolidGuess::scan()
         }
         if (!m_bottom_guess)      // no bottom edge guessing, zap border
         {
-            int i = (g_i_stop_pt.y+m_max_block)/m_max_block+1;
-            int y = i/16+1;
+            int i = (g_i_stop_pt.y + m_max_block) / m_max_block + 1;
+            const int y = i/16+1;
             i = 1 << (i&15);
             for (int x = 0; x <= x_lim; ++x)
             {
@@ -211,11 +211,11 @@ int SolidGuess::scan()
         for (int y = 0; ++y < y_lim;)
         {
             unsigned int *pfx_p0 = &m_prefix[0][y][0];
-            unsigned int *pfx_p1 = &m_prefix[1][y][0];
+            const unsigned int *pfx_p1 = &m_prefix[1][y][0];
             for (int x = 0; ++x < x_lim;)
             {
                 ++pfx_p1;
-                unsigned int u = *(pfx_p1 - 1) | *pfx_p1 | *(pfx_p1 + 1);
+                const unsigned int u = *(pfx_p1 - 1) | *pfx_p1 | *(pfx_p1 + 1);
                 *++pfx_p0 = u| u >> 1 | u << 1
                              |
                     (*(pfx_p1 - (MAX_X_BLK + 1)) | *(pfx_p1 - MAX_X_BLK) | *(pfx_p1 - (MAX_X_BLK - 1))) >>

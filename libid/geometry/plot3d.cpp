@@ -76,8 +76,8 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
     int inc1;  // G increment when row or column doesn't change
     int inc2;  // G increment when row or column changes
 
-    int dx = x2 - x1;                   // find vector components
-    int dy = y2 - y1;
+    const int dx = x2 - x1;                   // find vector components
+    const int dy = y2 - y1;
     bool pos_slope = dx > 0;                   // is slope positive?
     if (dy < 0)
     {
@@ -191,7 +191,7 @@ void draw_line(int x1, int y1, int x2, int y2, int color)
 
 static void plot3d_superimpose16(int x, int y, int /*color*/)
 {
-    int tmp = get_color(x, y);
+    const int tmp = get_color(x, y);
 
     if (g_which_image == StereoImage::RED) // RED
     {
@@ -231,7 +231,7 @@ static void plot3d_superimpose256(int x, int y, int color)
 {
     int tmp;
 
-    Byte t_c = static_cast<Byte>(255 - color);
+    const Byte t_c = static_cast<Byte>(255 - color);
 
     if (color != 0)         // Keeps index 0 still 0
     {
@@ -287,7 +287,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
 {
     int tmp;
 
-    Byte t_c = static_cast<Byte>(255 - color);
+    const Byte t_c = static_cast<Byte>(255 - color);
 
     if (color != 0)         // Keeps index 0 still 0
     {
@@ -340,7 +340,7 @@ static void plot_ifs3d_superimpose256(int x, int y, int color)
 
 static void plot3d_alternate(int x, int y, int color)
 {
-    Byte t_c = static_cast<Byte>(255 - color);
+    const Byte t_c = static_cast<Byte>(255 - color);
     // low res high color red/blue 3D plot function
     // if g_which_image = RED, compresses color to lower 128 colors
 

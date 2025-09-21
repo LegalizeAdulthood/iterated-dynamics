@@ -28,7 +28,7 @@ inline long divide(long x, long y, int n)
 //  Overflow condition returns 0x7fffffffh with overflow = 1;
 inline long multiply(long x, long y, int n)
 {
-    long l = static_cast<long>(static_cast<float>(x) * static_cast<float>(y) / static_cast<float>(1 << n));
+    const long l = static_cast<long>(static_cast<float>(x) * static_cast<float>(y) / static_cast<float>(1 << n));
     if (l == 0x7fffffff)
     {
         g_overflow = true;

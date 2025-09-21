@@ -88,7 +88,7 @@ bool find_file_item(
 
         if (!found && g_check_cur_dir)
         {
-            std::filesystem::path full_path{path.filename()};
+            const std::filesystem::path full_path{path.filename()};
             found = check_path(full_path, &infile, item_name);
             if (found)
             {
@@ -415,7 +415,7 @@ retry:
 
     help_title(); // to display a clue when file big and next is slow
 
-    int num_entries = scan_entries(s_gfe.file, &storage[0]);
+    const int num_entries = scan_entries(s_gfe.file, &storage[0]);
     if (num_entries == 0)
     {
         stop_msg("File doesn't contain any valid entries");
@@ -473,7 +473,7 @@ retry:
 static long get_file_entry(ItemType type, const char *type_desc, const char *type_wildcard,
     std::filesystem::path &path, std::string &entry_name)
 {
-    std::string hdg{fmt::format("Select {:s} File", type_desc)};
+    const std::string hdg{fmt::format("Select {:s} File", type_desc)};
     while (true)
     {
         // binary mode used here - it is more work, but much faster,
@@ -488,7 +488,7 @@ static long get_file_entry(ItemType type, const char *type_desc, const char *typ
             }
             s_gfe.file = std::fopen(path.string().c_str(), "rb");
         }
-        long entry_pointer = gfe_choose_entry(type, type_desc, path, entry_name);
+        const long entry_pointer = gfe_choose_entry(type, type_desc, path, entry_name);
         if (entry_pointer == -2)
         {
             std::fclose(s_gfe.file);

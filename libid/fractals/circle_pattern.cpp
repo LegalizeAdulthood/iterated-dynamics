@@ -13,7 +13,7 @@ namespace id::fractals
 
 int circle_orbit()
 {
-    long i = static_cast<long>(g_params[0] * (g_temp_sqr_x + g_temp_sqr_y));
+    const long i = static_cast<long>(g_params[0] * (g_temp_sqr_x + g_temp_sqr_y));
     g_color_iter = i%g_colors;
     return 1;
 }

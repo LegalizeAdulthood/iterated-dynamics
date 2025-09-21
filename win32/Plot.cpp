@@ -237,7 +237,7 @@ void Plot::init_pixels()
     std::memset(m_pixels.data(), 0, m_pixels_len);
     m_dirty = false;
     {
-        RECT dirty_rect = { -1, -1, -1, -1 };
+        constexpr RECT dirty_rect{-1, -1, -1, -1};
         m_dirty_region = dirty_rect;
     }
     {
@@ -257,15 +257,15 @@ void Plot::init_pixels()
 void Plot::on_paint(HWND window)
 {
     PAINTSTRUCT ps;
-    HDC dc = BeginPaint(window, &ps);
-    RECT *r = &ps.rcPaint;
-    int width = r->right - r->left;
-    int height = r->bottom - r->top;
+    const HDC dc = BeginPaint(window, &ps);
+    const RECT *r = &ps.rcPaint;
+    const int width = r->right - r->left;
+    const int height = r->bottom - r->top;
 
     _ASSERTE(width >= 0 && height >= 0);
     if (width > 0 && height > 0)
     {
-        DWORD status = StretchDIBits(dc, 0, 0, m_width, m_height, 0, 0, m_width, m_height, m_pixels.data(),
+        const DWORD status = StretchDIBits(dc, 0, 0, m_width, m_height, 0, 0, m_width, m_height, m_pixels.data(),
             &m_bmi, DIB_RGB_COLORS, SRCCOPY);
         _ASSERTE(status != GDI_ERROR);
     }
@@ -398,7 +398,7 @@ int Plot::init(HINSTANCE instance, LPCSTR title)
 void Plot::terminate()
 {
     {
-        HBITMAP rendering = static_cast<HBITMAP>(SelectObject(m_memory_dc, m_backup));
+        const HBITMAP rendering = static_cast<HBITMAP>(SelectObject(m_memory_dc, m_backup));
         _ASSERTE(rendering == m_rendering);
     }
     DeleteObject(m_rendering);
@@ -409,7 +409,7 @@ void Plot::terminate()
 void Plot::create_backing_store()
 {
     {
-        HDC dc = GetDC(m_window);
+        const HDC dc = GetDC(m_window);
         m_memory_dc = CreateCompatibleDC(dc);
         _ASSERTE(m_memory_dc);
         ReleaseDC(m_window, dc);
@@ -472,7 +472,7 @@ int Plot::read_pixel(int x, int y)
 
 void Plot::write_span(int y, int x, int last_x, const Byte *pixels)
 {
-    int width = last_x-x+1;
+    const int width = last_x-x+1;
 
     for (int i = 0; i < width; i++)
     {
@@ -494,7 +494,7 @@ void Plot::flush()
 void Plot::read_span(int y, int x, int last_x, Byte *pixels)
 {
     flush();
-    int width = last_x - x + 1;
+    const int width = last_x - x + 1;
     for (int i = 0; i < width; i++)
     {
         pixels[i] = read_pixel(x + i, y);
@@ -518,7 +518,7 @@ int Plot::resize()
     }
 
     init_pixels();
-    BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_width, m_height, SWP_NOZORDER | SWP_NOMOVE);
+    const BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_width, m_height, SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 
     return 1;
@@ -575,7 +575,7 @@ void Plot::schedule_alarm(int secs)
 
 void Plot::clear()
 {
-    RECT r = { 0, 0, m_width, m_height };
+    const RECT r{0, 0, m_width, m_height};
     m_dirty_region = r;
     m_dirty = true;
     std::memset(m_pixels.data(), 0, m_pixels_len);
@@ -594,10 +594,10 @@ void Plot::display_string(int x, int y, int fg, int bg, const char *text)
         {
             int x1 = x;
             int col = 8;
-            Byte pixel = FONT_8x8[row][static_cast<unsigned char>(*text)];
+            const Byte pixel = FONT_8x8[row][static_cast<unsigned char>(*text)];
             while (col-- > 0)
             {
-                int color = pixel & 1 << col ? fg : bg;
+                const int color = pixel & 1 << col ? fg : bg;
                 write_pixel(x1++, y + row, color);
             }
         }

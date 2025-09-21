@@ -37,8 +37,8 @@ MainState flip_image(MainContext &context)
     {
         clear_zoom_box(); // clear, don't copy, the zoombox
     }
-    int x_half = g_logical_screen_x_dots / 2;
-    int y_half = g_logical_screen_y_dots / 2;
+    const int x_half = g_logical_screen_x_dots / 2;
+    const int y_half = g_logical_screen_y_dots / 2;
     switch (context.key)
     {
     case ID_KEY_CTL_X:            // control-X - reverse X-axis

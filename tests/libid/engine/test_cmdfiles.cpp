@@ -382,7 +382,7 @@ TEST_F(TestParameterCommandError, makeParTooManyValues)
 
 static std::string read_file_contents(const fs::path &path)
 {
-    std::ifstream file{path};
+    const std::ifstream file{path};
     std::ostringstream str;
     str << file.rdbuf();
     return str.str();
@@ -422,7 +422,7 @@ static fs::path par_path(const char *filename)
 
 TEST_F(TestCommandMakePar, makeParNewFile)
 {
-    fs::path path{par_path("new.par")};
+    const fs::path path{par_path("new.par")};
     fs::remove(path);
 
     exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
@@ -450,7 +450,7 @@ static void set_file_contents(const fs::path &path, std::string_view contents)
 
 TEST_F(TestCommandMakePar, makeParNewEntryExistingFile)
 {
-    fs::path path{par_path("existing.par")};
+    const fs::path path{par_path("existing.par")};
     set_file_contents(path, R"par(bar                {
   reset=1/2/3/4 type=mandel passes= corners=0/0/0/0 params=0/0
   maxiter=0 fillcolor=0 inside=0 outside=0 biomorph=0 symmetry=none
@@ -691,7 +691,7 @@ TEST_F(TestParameterCommand, textSafeDeprecatedValues)
     ValueSaver saved_first_init{g_first_init, true};
     const std::string arg{"textsafe="};
 
-    for (char val : std::string_view{"nybs"})
+    for (const char val : std::string_view{"nybs"})
     {
         exec_cmd_arg(arg + val, CmdFile::SSTOOLS_INI);
 
@@ -712,7 +712,7 @@ TEST_F(TestParameterCommand, vesaDetectDeprecatedValues)
 {
     const std::string arg{"vesadetect="};
 
-    for (char val : std::string_view{"ny"})
+    for (const char val : std::string_view{"ny"})
     {
         exec_cmd_arg(arg + val, CmdFile::SSTOOLS_INI);
 
@@ -729,7 +729,7 @@ TEST_F(TestParameterCommandError, vesaDetectInvalidValue)
 
 TEST_F(TestParameterCommand, biosPaletteDetectDeprecatedValues)
 {
-    for (char arg : std::string_view{"ny"})
+    for (const char arg : std::string_view{"ny"})
     {
         exec_cmd_arg("biospalette=" + std::string{arg}, CmdFile::SSTOOLS_INI);
 
@@ -1017,7 +1017,7 @@ TEST_F(TestParameterCommandError, maxColorResInvalidValue)
 
 TEST_F(TestParameterCommand, maxColorResValidValue)
 {
-    for (int v : {1, 4, 8, 16})
+    for (const int v : {1, 4, 8, 16})
     {
         const std::string arg{"maxcolorres=" + std::to_string(v)};
 

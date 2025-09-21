@@ -263,7 +263,7 @@ TEST_F(TestLibrary, findFilePreferSearchDir2SubDir)
 
 TEST_F(TestLibrary, findFileAbsolutePath)
 {
-    auto file_path{Path{ID_TEST_LIBRARY_DIR} / ID_TEST_FRM_FILE};
+    const auto file_path{Path{ID_TEST_LIBRARY_DIR} / ID_TEST_FRM_FILE};
 
     const Path path{find_file(ReadFile::FORMULA, file_path)};
 
@@ -335,7 +335,7 @@ TEST_F(TestLibrary, findWildcardSeqence)
 {
     add_read_library(ID_TEST_LIBRARY_DIR2);
     add_read_library(ID_TEST_LIBRARY_DIR3);
-    std::vector expected{                              //
+    const std::vector expected{                        //
         Path{ID_TEST_LIBRARY_DIR2} / "image/test.gif", //
         Path{ID_TEST_LIBRARY_DIR3} / "image/root.gif"};
     std::vector<Path> results;
@@ -363,7 +363,7 @@ TEST_F(TestLibrary, findWildcardSequenceRootFilesAfterSubdirFiles)
     add_read_library(ID_TEST_LIBRARY_DIR1);
     add_read_library(ID_TEST_LIBRARY_DIR2);
     add_read_library(ID_TEST_LIBRARY_DIR3);
-    std::vector expected{                              //
+    const std::vector expected{                        //
         Path{ID_TEST_LIBRARY_DIR2} / "image/test.gif", //
         Path{ID_TEST_LIBRARY_DIR3} / "image/root.gif", //
         Path{ID_TEST_LIBRARY_DIR1} / "root.gif"};

@@ -15,7 +15,7 @@ namespace id::test
 
 TEST(TestPatternMatch, all)
 {
-    MatchFn all = match_fn("*.*");
+    const MatchFn all = match_fn("*.*");
 
     EXPECT_TRUE(all("foo.txt"));
     EXPECT_TRUE(all("foo.foo"));
@@ -24,7 +24,7 @@ TEST(TestPatternMatch, all)
 
 TEST(TestPatternMatch, anyExtension)
 {
-    MatchFn any_ext = match_fn("foo.*");
+    const MatchFn any_ext = match_fn("foo.*");
 
     EXPECT_TRUE(any_ext("foo.txt"));
     EXPECT_TRUE(any_ext("foo.foo"));
@@ -33,7 +33,7 @@ TEST(TestPatternMatch, anyExtension)
 
 TEST(TestPatternMatch, anyStem)
 {
-    MatchFn any_stem = match_fn("*.txt");
+    const MatchFn any_stem = match_fn("*.txt");
 
     EXPECT_TRUE(any_stem("foo.txt"));
     EXPECT_FALSE(any_stem("foo.foo"));
@@ -42,7 +42,7 @@ TEST(TestPatternMatch, anyStem)
 
 TEST(TestPatternMatch, anyStemWildExtension)
 {
-    MatchFn any_stem = match_fn("*.t?t");
+    const MatchFn any_stem = match_fn("*.t?t");
 
     EXPECT_TRUE(any_stem("foo.txt"));
     EXPECT_FALSE(any_stem("foo.foo"));
@@ -51,7 +51,7 @@ TEST(TestPatternMatch, anyStemWildExtension)
 
 TEST(TestPatternMatch, wildExtension)
 {
-    MatchFn wild_ext = match_fn("foo.t?t");
+    const MatchFn wild_ext = match_fn("foo.t?t");
 
     EXPECT_TRUE(wild_ext("foo.txt"));
     EXPECT_FALSE(wild_ext("foo.foo"));
@@ -60,7 +60,7 @@ TEST(TestPatternMatch, wildExtension)
 
 TEST(TestPatternMatch, wildStem)
 {
-    MatchFn wild_stem = match_fn("fo?.txt");
+    const MatchFn wild_stem = match_fn("fo?.txt");
 
     EXPECT_TRUE(wild_stem("foo.txt"));
     EXPECT_TRUE(wild_stem("for.txt"));
@@ -69,7 +69,7 @@ TEST(TestPatternMatch, wildStem)
 
 TEST(TestPatternMatch, wildFilename)
 {
-    MatchFn wild_filename = match_fn("fo?.t?t");
+    const MatchFn wild_filename = match_fn("fo?.t?t");
 
     EXPECT_TRUE(wild_filename("foo.txt"));
     EXPECT_TRUE(wild_filename("for.tst"));
@@ -80,7 +80,7 @@ TEST(TestPatternMatch, wildFilename)
 
 TEST(TestPatternMatch, filenameSubstring)
 {
-    MatchFn arbitrary = match_fn("*frob*.*");
+    const MatchFn arbitrary = match_fn("*frob*.*");
 
     EXPECT_FALSE(arbitrary("fab.bof"));
     EXPECT_TRUE(arbitrary("goinkfrob.bof"));
@@ -90,7 +90,7 @@ TEST(TestPatternMatch, filenameSubstring)
 
 TEST(TestPatternMatch, extensionSubstring)
 {
-    MatchFn arbitrary = match_fn("*.*frob*");
+    const MatchFn arbitrary = match_fn("*.*frob*");
 
     EXPECT_FALSE(arbitrary("fab.bof"));
     EXPECT_TRUE(arbitrary("bof.goinkfrob"));
@@ -100,7 +100,7 @@ TEST(TestPatternMatch, extensionSubstring)
 
 TEST(TestPatternMatch, arbitrary)
 {
-    MatchFn arbitrary = match_fn("*f?b*.*b?f*");
+    const MatchFn arbitrary = match_fn("*f?b*.*b?f*");
 
     EXPECT_TRUE(arbitrary("fab.bof"));
     EXPECT_TRUE(arbitrary("goinkf0b.bof"));
@@ -111,7 +111,7 @@ TEST(TestPatternMatch, arbitrary)
 
 TEST(TestPatternMatch, everything)
 {
-    MatchFn everything = match_fn("*");
+    const MatchFn everything = match_fn("*");
 
     EXPECT_TRUE(everything("fab.bof"));
     EXPECT_TRUE(everything("goinkf0b.bof"));

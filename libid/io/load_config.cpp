@@ -90,17 +90,17 @@ void load_config(const std::string &cfg_path)
             else if (temp_string[i] == ',' && ++j < 6)
             {
                 assert(j >= 0 && j < 11);
-                fields[j] = &temp_string[i+1]; // remember start of next field
-                temp_string[i] = 0;   // make field a separate string
+                fields[j] = &temp_string[i + 1]; // remember start of next field
+                temp_string[i] = 0;              // make field a separate string
             }
         }
-        int key = check_vid_mode_key_name(temp_string);
+        const int key = check_vid_mode_key_name(temp_string);
         assert(fields[0]);
-        long x_dots = std::atol(fields[0]);
+        const long x_dots = std::atol(fields[0]);
         assert(fields[1]);
-        long y_dots = std::atol(fields[1]);
+        const long y_dots = std::atol(fields[1]);
         assert(fields[2]);
-        int colors = std::atoi(fields[2]);
+        const int colors = std::atoi(fields[2]);
 
         if (j < 4 ||
                 key < 0 ||

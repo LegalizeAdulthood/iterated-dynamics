@@ -313,8 +313,8 @@ void Frame::on_char(HWND window, TCHAR ch, int num_repeat)
 
     // KEYUP, KEYDOWN, and CHAR msgs go to the SG code
     // an ASCII key has been pressed
-    unsigned int i = static_cast<unsigned int>((num_repeat & 0x00ff0000) >> 16);
-    unsigned int j = ch;
+    const unsigned int i = static_cast<unsigned int>((num_repeat & 0x00ff0000) >> 16);
+    const unsigned int j = ch;
     unsigned int k = (i << 8) + j;
     if (k == '\t' && has_mod(VK_SHIFT))
     {
@@ -511,7 +511,7 @@ static LRESULT CALLBACK frame_window_proc(HWND window, UINT message, WPARAM wp, 
 
 void Frame::init(HINSTANCE instance, LPCSTR title)
 {
-    LPCTSTR window_class = _T("IdFrame");
+    const LPCTSTR window_class = _T("IdFrame");
     WNDCLASS  wc;
 
     bool status = GetClassInfo(instance, window_class, &wc) != 0;
@@ -564,7 +564,7 @@ void Frame::pump_messages(bool wait_flag)
             }
         }
 
-        if (int result = GetMessageA(&msg, nullptr, 0, 0); result > 0)
+        if (const int result = GetMessageA(&msg, nullptr, 0, 0); result > 0)
         {
             // translate accelerator here?
             TranslateMessage(&msg);
@@ -795,7 +795,7 @@ void Frame::create_window(int width, int height)
 void Frame::resize(int width, int height)
 {
     adjust_size(width, height);
-    BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_nc_width, m_nc_height, SWP_NOZORDER | SWP_NOMOVE);
+    const BOOL status = SetWindowPos(m_window, nullptr, 0, 0, m_nc_width, m_nc_height, SWP_NOZORDER | SWP_NOMOVE);
     _ASSERTE(status);
 }
 
@@ -804,7 +804,7 @@ void Frame::set_keyboard_timeout(int ms)
     UINT_PTR result = SetTimer(m_window, FRAME_TIMER_ID, ms, nullptr);
     if (!result)
     {
-        DWORD error = GetLastError();
+        const DWORD error = GetLastError();
         throw std::runtime_error("SetTimer failed: " + std::to_string(error));
     }
 }

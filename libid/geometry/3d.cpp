@@ -147,8 +147,8 @@ void scale(double sx, double sy, double sz, Matrix m)
 void x_rot(double theta, Matrix m)
 {
     Matrix rot;
-    double sin_theta = std::sin(theta);
-    double cos_theta = std::cos(theta);
+    const double sin_theta = std::sin(theta);
+    const double cos_theta = std::cos(theta);
     identity(rot);
     rot[1][1] = cos_theta;
     rot[1][2] = -sin_theta;
@@ -161,8 +161,8 @@ void x_rot(double theta, Matrix m)
 void y_rot(double theta, Matrix m)
 {
     Matrix rot;
-    double sin_theta = std::sin(theta);
-    double cos_theta = std::cos(theta);
+    const double sin_theta = std::sin(theta);
+    const double cos_theta = std::cos(theta);
     identity(rot);
     rot[0][0] = cos_theta;
     rot[0][2] = sin_theta;
@@ -175,8 +175,8 @@ void y_rot(double theta, Matrix m)
 void z_rot(double theta, Matrix m)
 {
     Matrix rot;
-    double sin_theta = std::sin(theta);
-    double cos_theta = std::cos(theta);
+    const double sin_theta = std::sin(theta);
+    const double cos_theta = std::cos(theta);
     identity(rot);
     rot[0][0] = cos_theta;
     rot[0][1] = -sin_theta;
@@ -275,7 +275,7 @@ void vec_g_mat_mul(Vector s)
 // perspective projection of vector v with respect to viewpoint vector view
 int perspective(Vector v)
 {
-    double denom = g_view[2] - v[2];
+    const double denom = g_view[2] - v[2];
 
     if (denom >= 0.0)
     {
@@ -328,7 +328,7 @@ int long_vec_mat_mul_persp(VectorL s, MatrixL m, VectorL t0, VectorL t, VectorL 
     }
     if (view[2] != 0)           // perspective 3D
     {
-        long denom = view[2] - tmp[2];
+        const long denom = view[2] - tmp[2];
         if (denom >= 0)           // bail out if point is "behind" us
         {
             t[0] = BAD_VALUE;

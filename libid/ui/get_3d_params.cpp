@@ -460,8 +460,8 @@ static bool check_map_file()
             char buff[80]{};
             std::strcpy(buff, map_name.string().c_str());
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::NONE};
-            int i = field_prompt("Enter name of .map file to use,\n"
-                                 "or '*' to use palette from the image to be loaded.",
+            const int i = field_prompt("Enter name of .map file to use,\n"
+                                       "or '*' to use palette from the image to be loaded.",
                 nullptr, buff, 60, nullptr);
             if (i < 0)
             {
@@ -475,7 +475,7 @@ static bool check_map_file()
             }
         }
         std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
-        bool valid = validate_luts(map_name.string());
+        const bool valid = validate_luts(map_name.string());
         std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
         if (valid) // Oops, something's wrong
         {

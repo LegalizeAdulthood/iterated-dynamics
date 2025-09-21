@@ -516,7 +516,7 @@ static void format_item(int choice, char *buf)
 {
     char err_buf[10];
     err_buf[0] = 0;
-    unsigned tmp_flags = s_video_choices[choice].flags;
+    const unsigned tmp_flags = s_video_choices[choice].flags;
     if (tmp_flags & VI_VIEW_SMALLER + VI_COLORS_SMALLER + VI_BAD_ASPECT)
     {
         std::strcat(err_buf, "*");
@@ -550,7 +550,7 @@ static void format_item(int choice, char *buf)
 
 static int check_mode_key(int key, int /*choice*/)
 {
-    int i = check_vid_mode_key(key);
+    const int i = check_vid_mode_key(key);
     return i >= 0 ? -100-i : 0;
 }
 

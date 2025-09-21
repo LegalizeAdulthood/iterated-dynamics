@@ -11,28 +11,28 @@ namespace id::test
 
 TEST(TestStringCaseCompareCount, firstStringEmpty)
 {
-    char buffer[80]{"foo"};
+    constexpr char buffer[80]{"foo"};
 
     EXPECT_GT(0, string_case_compare("", buffer, sizeof(buffer)));
 }
 
 TEST(TestStringCaseCompareCount, secondStringEmpty)
 {
-    char buffer[80]{"foo"};
+    constexpr char buffer[80]{"foo"};
 
     EXPECT_LT(0, string_case_compare(buffer, "", sizeof(buffer)));
 }
 
 TEST(TestStringCaseCompareCount, firstStringExhaustedEqual)
 {
-    char buffer[]{"foo"};
+    constexpr char buffer[]{"foo"};
 
     EXPECT_EQ(0, string_case_compare(buffer, "foobar", sizeof(buffer) - 1));
 }
 
 TEST(TestStringCaseCompareCount, secondStringExhaustedEqual)
 {
-    char buffer[]{"foo"};
+    constexpr char buffer[]{"foo"};
 
     EXPECT_EQ(0, string_case_compare("foobar", buffer, sizeof(buffer) - 1));
 }
@@ -119,28 +119,28 @@ TEST(TestStringCaseCompare, prefixIsLess)
 
 TEST(TestStringCaseEqualCount, firstStringEmpty)
 {
-    char buffer[80]{"foo"};
+    constexpr char buffer[80]{"foo"};
 
     EXPECT_FALSE(string_case_equal("", buffer, sizeof(buffer)));
 }
 
 TEST(TestStringCaseEqualCount, secondStringEmpty)
 {
-    char buffer[80]{"foo"};
+    constexpr char buffer[80]{"foo"};
 
     EXPECT_FALSE(string_case_equal(buffer, "", sizeof(buffer)));
 }
 
 TEST(TestStringCaseEqualCount, firstStringExhaustedEqual)
 {
-    char buffer[]{"foo"};
+    constexpr char buffer[]{"foo"};
 
     EXPECT_TRUE(string_case_equal(buffer, "foobar", sizeof(buffer) - 1));
 }
 
 TEST(TestStringCaseEqualCount, secondStringExhaustedEqual)
 {
-    char buffer[]{"foo"};
+    constexpr char buffer[]{"foo"};
 
     EXPECT_TRUE(string_case_equal("foobar", buffer, sizeof(buffer) - 1));
 }

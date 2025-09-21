@@ -886,10 +886,10 @@ really_the_bottom:
 // vector version of line draw
 static void vec_draw_line(double *v1, double *v2, int color)
 {
-    int x1 = static_cast<int>(v1[0]);
-    int y1 = static_cast<int>(v1[1]);
-    int x2 = static_cast<int>(v2[0]);
-    int y2 = static_cast<int>(v2[1]);
+    const int x1 = static_cast<int>(v1[0]);
+    const int y1 = static_cast<int>(v1[1]);
+    const int x2 = static_cast<int>(v2[0]);
+    const int y2 = static_cast<int>(v2[1]);
     driver_draw_line(x1, y1, x2, y2, color);
 }
 
@@ -1021,7 +1021,7 @@ static void draw_light_box(double *origin, double *direct, Matrix light_m)
     }
 
     // always use perspective to aid viewing
-    double temp = g_view[2];              // save perspective distance for a later restore
+    const double temp = g_view[2];              // save perspective distance for a later restore
     g_view[2] = -s_p * 300.0 / 100.0;
 
     for (int i = 0; i < 4; i++)
@@ -1198,7 +1198,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
 
     for (int y = miny; y <= maxy; y++)
     {
-        int x_lim = s_min_max_x[y].max_x;
+        const int x_lim = s_min_max_x[y].max_x;
         for (int x = s_min_max_x[y].min_x; x <= x_lim; x++)
         {
             s_fill_plot(x, y, color);
@@ -1289,9 +1289,9 @@ static void interp_color(int x, int y, int color)
      * it uses ONLY additions (almost) and it DOES go to zero as the points
      * get close. */
 
-    int d1 = std::abs(s_p1.x - x) + std::abs(s_p1.y - y);
-    int d2 = std::abs(s_p2.x - x) + std::abs(s_p2.y - y);
-    int d3 = std::abs(s_p3.x - x) + std::abs(s_p3.y - y);
+    const int d1 = std::abs(s_p1.x - x) + std::abs(s_p1.y - y);
+    const int d2 = std::abs(s_p2.x - x) + std::abs(s_p2.y - y);
+    const int d3 = std::abs(s_p3.x - x) + std::abs(s_p3.y - y);
 
     int d = (d1 + d2 + d3) << 1;
     if (d)
@@ -1530,7 +1530,7 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, bool
             }
         }
         // Write image size
-        for (Byte &elem : s_upr_lwr)
+        for (const Byte elem : s_upr_lwr)
         {
             std::fputc(elem, fps);
         }
@@ -1602,7 +1602,7 @@ bool start_targa(const std::string &path)
 static bool targa_validate(const std::string &filename)
 {
     // Attempt to open source file for reading
-    std::filesystem::path path{find_file(ReadFile::IMAGE, filename)};
+    const std::filesystem::path path{find_file(ReadFile::IMAGE, filename)};
     if (path.empty())
     {
         file_error(filename, FileError::OPEN_FAILED);
@@ -1641,7 +1641,7 @@ static bool targa_validate(const std::string &filename)
         std::fgetc(fp);
     }
     // Check Image specs
-    for (Byte &elem : s_upr_lwr)
+    for (const Byte elem : s_upr_lwr)
     {
         if (std::fgetc(fp) != static_cast<int>(elem))
         {
@@ -1666,7 +1666,7 @@ static bool targa_validate(const std::string &filename)
     std::fseek(fp, 0, SEEK_SET);
 
     // Now that we know it's a good file, create a working copy
-    std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
+    const std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
     assert(!temp_path.empty());
     if (start_targa_overlay(temp_path.string(), fp))
     {
@@ -1708,7 +1708,7 @@ static int rgb_to_hsv(
             *val = blue;
         }
     }
-    unsigned long denom = *val - min;
+    const unsigned long denom = *val - min;
     if (*val != 0 && denom != 0)
     {
         *sat = (denom << 16) / *val - 1;
@@ -1729,9 +1729,9 @@ static int rgb_to_hsv(
         *val = *val << 8;
         return 0;
     }
-    unsigned long r1 = (((*val - red) * 60) << 6) / denom; // distance of color from red
-    unsigned long g1 = (((*val - green) * 60) << 6) / denom; // distance of color from green
-    unsigned long b1 = (((*val - blue) * 60) << 6) / denom; // distance of color from blue
+    const unsigned long r1 = (((*val - red) * 60) << 6) / denom; // distance of color from red
+    const unsigned long g1 = (((*val - green) * 60) << 6) / denom; // distance of color from green
+    const unsigned long b1 = (((*val - blue) * 60) << 6) / denom; // distance of color from blue
     if (*val == red)
     {
         if (min == green)
@@ -1774,14 +1774,14 @@ static void hsv_to_rgb(
 {
     if (hue >= 23040)
     {
-        hue = hue % 23040;            // Makes h circular
+        hue = hue % 23040;                        // Makes h circular
     }
-    int i = static_cast<int>(hue / 3840);
-    int rmd = static_cast<int>(hue % 3840);       // RMD = fractional part of H
+    const int i = static_cast<int>(hue / 3840);
+    const int rmd = static_cast<int>(hue % 3840);       // RMD = fractional part of H
 
-    unsigned long p1 = (val * (65535L - sat) / 65280L) >> 8;
-    unsigned long p2 = (val * (65535L - sat * rmd / 3840) / 65280L - 1) >> 8;
-    unsigned long p3 = (val * (65535L - sat * (3840 - rmd) / 3840) / 65280L) >> 8;
+    const unsigned long p1 = (val * (65535L - sat) / 65280L) >> 8;
+    const unsigned long p2 = (val * (65535L - sat * rmd / 3840) / 65280L - 1) >> 8;
+    const unsigned long p3 = (val * (65535L - sat * (3840 - rmd) / 3840) / 65280L) >> 8;
     val = val >> 8;
     switch (i)
     {
@@ -2377,16 +2377,16 @@ static void line3d_cleanup()
         end_disk();
         if (g_debug_flag == DebugFlags::NONE && (!s_temp_safe || s_error != FileError::NONE) && g_targa_overlay)
         {
-            std::filesystem::path light_path{get_save_path(WriteFile::IMAGE, g_light_name)};
+            const std::filesystem::path light_path{get_save_path(WriteFile::IMAGE, g_light_name)};
             assert(!light_path.empty());
             std::filesystem::remove(light_path);
-            std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
+            const std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
             assert(!temp_path.empty());
             std::filesystem::rename(temp_path, light_path);
         }
         if (g_debug_flag == DebugFlags::NONE && g_targa_overlay)
         {
-            std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
+            const std::filesystem::path temp_path{get_save_path(WriteFile::IMAGE, s_targa_temp)};
             assert(!temp_path.empty());
             std::filesystem::remove(temp_path);
         }
@@ -2616,14 +2616,14 @@ static int first_time(int line_len, Vector v)
          * latitude; bottom 90 degrees */
 
         // Map X to this LATITUDE range
-        float theta1 = static_cast<float>(g_sphere_theta_min * PI / 180.0);
-        float theta2 = static_cast<float>(g_sphere_theta_max * PI / 180.0);
+        const float theta1 = static_cast<float>(g_sphere_theta_min * PI / 180.0);
+        const float theta2 = static_cast<float>(g_sphere_theta_max * PI / 180.0);
 
         // Map Y to this LONGITUDE range
-        float phi1 = static_cast<float>(g_sphere_phi_min * PI / 180.0);
-        float phi2 = static_cast<float>(g_sphere_phi_max * PI / 180.0);
+        const float phi1 = static_cast<float>(g_sphere_phi_min * PI / 180.0);
+        const float phi2 = static_cast<float>(g_sphere_phi_max * PI / 180.0);
 
-        float theta = theta1;
+        const float theta = theta1;
 
         //*******************************************************************
         // Thanks to Hugh Bray for the following idea: when calculating
@@ -2643,7 +2643,7 @@ static int first_time(int line_len, Vector v)
         // Similarly for cosine. Neat!
         //*******************************************************************
 
-        float delta_theta = (theta2 - theta1) / static_cast<float>(line_len);
+        const float delta_theta = (theta2 - theta1) / static_cast<float>(line_len);
 
         // initial sin,cos theta
         s_sin_theta_array[0] = std::sin(theta);
@@ -2652,7 +2652,7 @@ static int first_time(int line_len, Vector v)
         s_cos_theta_array[1] = std::cos(theta + delta_theta);
 
         // sin,cos delta theta
-        float two_cos_delta_theta = 2.0F * std::cos(delta_theta);
+        const float two_cos_delta_theta = 2.0F * std::cos(delta_theta);
 
         // build table of other sin,cos with trig identity
         for (int i = 2; i < line_len; i++)
@@ -2710,10 +2710,10 @@ static int first_time(int line_len, Vector v)
 
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
-            double z_view = -static_cast<long>(
+            const double z_view = -static_cast<long>(
                 static_cast<double>(g_logical_screen_y_dots) * static_cast<double>(g_viewer_z) / 100.0);
-            double radius = static_cast<double>(g_logical_screen_y_dots) / 2;
-            double angle = std::atan(-radius / (z_view + radius));
+            const double radius = static_cast<double>(g_logical_screen_y_dots) / 2;
+            const double angle = std::atan(-radius / (z_view + radius));
             s_z_cutoff = -radius - std::sin(angle) * radius;
             s_z_cutoff *= 1.1;        // for safety
             s_z_cutoff *= 65536L;

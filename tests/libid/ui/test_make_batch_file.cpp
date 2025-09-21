@@ -41,8 +41,8 @@ void TestPutEncodedColors::fill_dac_from_values(int count)
 
 void TestPutEncodedColors::up_down_values(int count)
 {
-    int up{0};
-    int down{static_cast<Byte>(count * 2 - 1)};
+    constexpr int up{0};
+    const int down{static_cast<Byte>(count * 2 - 1)};
     up_down_values(count, up, down);
 }
 
@@ -95,8 +95,8 @@ TEST_F(TestPutEncodedColors, values0Through9EncodedAsDigits)
 
     put_encoded_colors(m_data, 10);
 
-    std::string_view expected{"000999111888222777333666444555"};
-    std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    constexpr std::string_view expected{"000999111888222777333666444555"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }
 
@@ -107,8 +107,9 @@ TEST_F(TestPutEncodedColors, values10Through35EncodedAsUpperCaseLetters)
 
     put_encoded_colors(m_data, 26);
 
-    std::string_view expected{"AAAZZZBBBYYYCCCXXXDDDWWWEEEVVVFFFUUUGGGTTTHHHSSSIIIRRRJJJQQQKKKPPPLLLOOOMMMNNN"};
-    std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    constexpr std::string_view expected{
+        "AAAZZZBBBYYYCCCXXXDDDWWWEEEVVVFFFUUUGGGTTTHHHSSSIIIRRRJJJQQQKKKPPPLLLOOOMMMNNN"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }
 
@@ -119,21 +120,21 @@ TEST_F(TestPutEncodedColors, values36Through63EncodedAsLowerCaseLetters)
 
     put_encoded_colors(m_data, 28);
 
-    std::string_view expected{"___zzz"
-                              "```yyy"
-                              "aaaxxx"
-                              "bbbwww"
-                              "cccvvv"
-                              "ddduuu"
-                              "eeettt"
-                              "fffsss"
-                              "gggrrr"
-                              "hhhqqq"
-                              "iiippp"
-                              "jjjooo"
-                              "kkknnn"
-                              "lllmmm"};
-    std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    constexpr std::string_view expected{"___zzz"
+                                        "```yyy"
+                                        "aaaxxx"
+                                        "bbbwww"
+                                        "cccvvv"
+                                        "ddduuu"
+                                        "eeettt"
+                                        "fffsss"
+                                        "gggrrr"
+                                        "hhhqqq"
+                                        "iiippp"
+                                        "jjjooo"
+                                        "kkknnn"
+                                        "lllmmm"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }
 
@@ -145,8 +146,8 @@ TEST_F(TestPutEncodedColors, smoothFourColors)
 
     put_encoded_colors(m_data, NUM_COLORS);
 
-    std::string_view expected{"000<2>333"};
-    std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    constexpr std::string_view expected{"000<2>333"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }
 
@@ -158,8 +159,8 @@ TEST_F(TestPutEncodedColors, smoothFiveColors)
 
     put_encoded_colors(m_data, NUM_COLORS);
 
-    std::string_view expected{"000<3>444"};
-    std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    constexpr std::string_view expected{"000<3>444"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }
 
@@ -171,8 +172,8 @@ TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
 
     put_encoded_colors(m_data, NUM_COLORS);
 
-    std::string_view expected{"#434343"};
-    std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    constexpr std::string_view expected{"#434343"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }
 

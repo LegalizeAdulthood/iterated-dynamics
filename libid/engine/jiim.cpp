@@ -231,7 +231,7 @@ static void fill_rect(int x, int y, int width, int depth, int color)
     {
         return;
     }
-    std::vector row(width, char(color % g_colors));
+    const std::vector row(width, char(color % g_colors));
     while (depth-- > 0)
     {
         put_row(x, y++, width, row.data());

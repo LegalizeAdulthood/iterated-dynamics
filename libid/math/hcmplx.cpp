@@ -33,15 +33,15 @@ void hcmplx_sqr(DHyperComplex *arg, DHyperComplex *out)
 
 int hcmplx_inv(DHyperComplex *arg, DHyperComplex *out)
 {
-    double det =
+    const double det =
         (sqr(arg->x - arg->t) + sqr(arg->y + arg->z)) * (sqr(arg->x + arg->t) + sqr(arg->y - arg->z));
 
     if (det == 0.0)
     {
         return -1;
     }
-    double mod = sqr(arg->x) + sqr(arg->y) + sqr(arg->z) + sqr(arg->t);
-    double xt_minus_yz = arg->x * arg->t - arg->y * arg->z;
+    const double mod = sqr(arg->x) + sqr(arg->y) + sqr(arg->z) + sqr(arg->t);
+    const double xt_minus_yz = arg->x * arg->t - arg->y * arg->z;
 
     out->x = (arg->x * mod - 2 * arg->t * xt_minus_yz)/det;
     out->y = (-arg->y * mod - 2 * arg->z * xt_minus_yz)/det;

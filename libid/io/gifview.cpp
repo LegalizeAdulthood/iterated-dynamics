@@ -149,7 +149,7 @@ int gif_view()
     // Get the screen description
     for (int i = 0; i < 13; i++)
     {
-        int tmp = get_byte();
+        const int tmp = get_byte();
         buffer[i] = static_cast<Byte>(tmp);
         if (tmp < 0)
         {
@@ -188,7 +188,7 @@ int gif_view()
     {
         for (int j = 0; j < 3; j++)
         {
-            int k = get_byte();
+            const int k = get_byte();
             if (k < 0)
             {
                 close_file();
@@ -251,7 +251,7 @@ int gif_view()
 
             for (int i = 0; i < 9; i++)
             {
-                int tmp = get_byte();
+                const int tmp = get_byte();
                 buffer[i] = static_cast<Byte>(tmp);
                 if (tmp < 0)
                 {
@@ -306,7 +306,7 @@ int gif_view()
                 // local map?
                 // make this local
                 planes = (buffer[8] & 0x0F) + 1;
-                int num_colors = 1 << planes;
+                const int num_colors = 1 << planes;
                 // skip local map
                 for (int i = 0; i < num_colors; i++)
                 {
@@ -378,9 +378,9 @@ static void close_file()
 
 static int out_line_migs(Byte *pixels, int line_len)
 {
-    int row = s_gif_view_image_top + g_row_count;
-    int start_col = s_gif_view_image_left;
-    int stop_col = start_col + line_len - 1;
+    const int row = s_gif_view_image_top + g_row_count;
+    const int start_col = s_gif_view_image_left;
+    const int stop_col = start_col + line_len - 1;
     write_span(row, start_col, stop_col, pixels);
     g_row_count++;
 
@@ -421,7 +421,7 @@ static int out_line_dither(Byte *pixels, int line_len)
 
 static int out_line_too_wide(Byte *pixels, int line_len)
 {
-    int width = g_logical_screen_x_dots;
+    const int width = g_logical_screen_x_dots;
     while (line_len > 0)
     {
         int extra = s_col_count + line_len - width;
@@ -463,7 +463,7 @@ static bool put_sound_line(int row, int col_start, int col_stop, Byte *pixels)
 
 int sound_line(Byte *pixels, int line_len)
 {
-    int width = g_logical_screen_x_dots;
+    const int width = g_logical_screen_x_dots;
     while (line_len > 0)
     {
         int extra = s_col_count + line_len - width;

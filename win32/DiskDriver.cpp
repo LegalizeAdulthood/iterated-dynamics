@@ -313,7 +313,7 @@ int DiskDriver::read_pixel(int x, int y)
 */
 void DiskDriver::write_span(int y, int x, int last_x, Byte *pixels)
 {
-    int width = last_x-x+1;
+    const int width = last_x-x+1;
     ODS3("DiskDriver::write_span (%d,%d,%d)", y, x, lastx);
 
     for (int i = 0; i < width; i++)
@@ -340,7 +340,7 @@ void DiskDriver::write_span(int y, int x, int last_x, Byte *pixels)
 void DiskDriver::read_span(int y, int x, int last_x, Byte *pixels)
 {
     ODS3("DiskDriver::read_span (%d,%d,%d)", y, x, lastx);
-    int width = last_x-x+1;
+    const int width = last_x-x+1;
     for (int i = 0; i < width; i++)
     {
         pixels[i] = read_pixel(x+i, y);

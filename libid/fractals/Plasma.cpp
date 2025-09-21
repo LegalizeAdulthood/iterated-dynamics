@@ -300,8 +300,8 @@ void Plasma::subdivide()
     const int level{sd.level + 1};
     const int scale = static_cast<int>(320L >> level);
 
-    int x = (sd.x1 + sd.x2) >> 1;
-    int y = (sd.y1 + sd.y2) >> 1;
+    const int x = (sd.x1 + sd.x2) >> 1;
+    const int y = (sd.y1 + sd.y2) >> 1;
     S32 v = m_get_pix(x, sd.y1);
     if (v == 0)
     {

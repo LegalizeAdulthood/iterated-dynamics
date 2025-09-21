@@ -911,7 +911,7 @@ static void perform_work_list()
 
     if (g_potential_flag && g_potential_16bit)
     {
-        CalcMode tmp_calc_mode = g_std_calc_mode;
+        const CalcMode tmp_calc_mode = g_std_calc_mode;
 
         g_std_calc_mode = CalcMode::ONE_PASS; // force 1 pass
         if (!g_resuming)

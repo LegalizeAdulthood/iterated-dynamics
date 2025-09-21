@@ -213,7 +213,7 @@ int complex_basin_orbit()
         }
         fpu_cmplx_log(&g_old_z, &s_temp);
         fpu_cmplx_mul(&s_temp, &s_c_degree, &g_tmp_z);
-        double mod = g_tmp_z.y/s_two_pi;
+        const double mod = g_tmp_z.y/s_two_pi;
         g_color_iter = static_cast<long>(mod);
         if (std::abs(mod - g_color_iter) > 0.5)
         {

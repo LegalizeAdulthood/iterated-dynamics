@@ -136,7 +136,7 @@ short decoder(short line_width)
 
     // Initialize for decoding a new image...
 
-    short size = static_cast<short>(get_byte());
+    const short size = static_cast<short>(get_byte());
     if (size < 0)
     {
         return size;
@@ -148,9 +148,9 @@ short decoder(short line_width)
 
     s_curr_size = static_cast<short>(size + 1);
     short top_slot = static_cast<short>(1 << s_curr_size); // Highest code for current size
-    short clear = static_cast<short>(1 << size);           // Value for a clear code
-    short ending = static_cast<short>(clear + 1);          // Value for an ending code
-    short new_codes = static_cast<short>(ending + 1);       // First available code
+    const short clear = static_cast<short>(1 << size);           // Value for a clear code
+    const short ending = static_cast<short>(clear + 1);          // Value for an ending code
+    const short new_codes = static_cast<short>(ending + 1);       // First available code
     short slot = new_codes;                       // Last read code
     short old_code = 0;
     short y_skip = 0;

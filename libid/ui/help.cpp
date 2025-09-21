@@ -144,7 +144,7 @@ static void help_seek(long pos)
 
 static void display_cc(int row, int col, int color, int ch)
 {
-    char s[] = { static_cast<char>(ch), 0 };
+    const char s[] = { static_cast<char>(ch), 0 };
     driver_put_string(row, col, color, s);
 }
 
@@ -442,7 +442,7 @@ static int overlap(int a, int a2, int b, int b2)
 
 static int dist1(int a, int b)
 {
-    int t = a - b;
+    const int t = a - b;
 
     return std::abs(t);
 }
@@ -451,9 +451,9 @@ static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
 {
     int best_overlap = 0;
 
-    Link *curr = &link[curr_link];
-    Link *best = nullptr;
-    int curr_c2 = curr->c + curr->width - 1;
+    const Link *curr = &link[curr_link];
+    const Link *best = nullptr;
+    const int curr_c2 = curr->c + curr->width - 1;
 
     Link *temp = link;
     for (int ctr = 0; ctr < num_link; ctr++, temp++)
@@ -463,7 +463,7 @@ static int find_link_up_down(Link *link, int num_link, int curr_link, int up)
         {
             int temp_overlap = overlap(curr->c, curr_c2, temp->c, temp->c + temp->width - 1);
             // if >= 3 lines between, prioritize on vertical distance:
-            int temp_dist = dist1(temp->r, curr->r);
+            const int temp_dist = dist1(temp->r, curr->r);
             if (temp_dist >= 4)
             {
                 temp_overlap -= temp_dist*100;
@@ -504,9 +504,9 @@ static int find_link_left_right(Link *link, int num_link, int curr_link, int lef
     int best_c2 = 0;
     int best_dist = 0;
 
-    Link *curr = &link[curr_link];
-    Link *best = nullptr;
-    int curr_c2 = curr->c + curr->width - 1;
+    const Link *curr = &link[curr_link];
+    const Link *best = nullptr;
+    const int curr_c2 = curr->c + curr->width - 1;
 
     Link *temp = link;
     for (int ctr = 0; ctr < num_link; ctr++, temp++)
@@ -516,7 +516,7 @@ static int find_link_left_right(Link *link, int num_link, int curr_link, int lef
         if (ctr != curr_link
             && ((left && temp_c2 < static_cast<int>(curr->c)) || (!left && static_cast<int>(temp->c) > curr_c2)))
         {
-            int temp_dist = dist1(curr->r, temp->r);
+            const int temp_dist = dist1(curr->r, temp->r);
 
             if (best != nullptr)
             {
@@ -613,7 +613,7 @@ static int help_topic(History *curr, History *next, int flags)
     freader(s_page_table.data(), 3*sizeof(int), num_pages, s_help_file);
 
     freader(&ch, sizeof(char), 1, s_help_file);
-    int len = ch;
+    const int len = ch;
     assert(len < 81);
     freader(title, sizeof(char), len, s_help_file);
     title[len] = '\0';
@@ -1165,7 +1165,7 @@ static bool print_doc_output(PrintDocCommand cmd, ProcessDocumentInfo *pd, void 
     case PrintDocCommand::PD_HEADING:
     {
         char line[81];
-        int  width = PAGE_WIDTH + PAGE_INDENT;
+        const int width = PAGE_WIDTH + PAGE_INDENT;
         bool keep_going;
 
         if (info->msg_func != nullptr)
@@ -1317,10 +1317,10 @@ void print_document(const char *filename, bool (*msg_func)(int, int))
 
     if (msg_func != nullptr)
     {
-        msg_func(0, info.num_page);   // initialize
+        msg_func(0, info.num_page); // initialize
     }
 
-    std::filesystem::path path{get_save_path(WriteFile::ROOT, filename)};
+    const std::filesystem::path path{get_save_path(WriteFile::ROOT, filename)};
     assert(!path.empty());
     info.file = std::fopen(path.string().c_str(), "wt");
     if (info.file == nullptr)

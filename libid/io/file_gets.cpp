@@ -18,7 +18,7 @@ int file_gets(char *buf, int max_len, std::FILE *infile)
     int len = 0;
     while (len < max_len)
     {
-        int c = std::getc(infile);
+        const int c = std::getc(infile);
         if (c == EOF)
         {
             if (len)

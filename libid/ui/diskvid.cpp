@@ -118,7 +118,7 @@ int pot_start_disk()
     }
     s_header_length = 0;
     g_disk_targa = false;
-    int i = common_start_disk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
+    const int i = common_start_disk(g_screen_x_dots, g_screen_y_dots << 1, g_colors);
     clear_temp_msg();
     if (i == 0)
     {
@@ -138,7 +138,7 @@ int targa_start_disk(std::FILE *targa_fp, int overhead)
     s_header_length = overhead;
     s_fp = targa_fp;
     g_disk_targa = true;
-    int i = common_start_disk(g_logical_screen_x_dots * 3, g_logical_screen_y_dots, g_colors);
+    const int i = common_start_disk(g_logical_screen_x_dots * 3, g_logical_screen_y_dots, g_colors);
     s_high_offset = 100000000L; // targa not necessarily init'd to zeros
 
     return i;
@@ -368,8 +368,8 @@ int disk_read_pixel(int col, int row)
     {
         return 0;
     }
-    long offset = s_cur_row_base + col;
-    int col_index = static_cast<short>(offset) & BLOCK_LEN - 1; // offset within cache entry
+    const long offset = s_cur_row_base + col;
+    const int col_index = static_cast<short>(offset) & BLOCK_LEN - 1; // offset within cache entry
     if (s_cur_offset != (offset & 0L - BLOCK_LEN)) // same entry as last ref?
     {
         find_load_cache(offset & 0L - BLOCK_LEN);
@@ -379,7 +379,7 @@ int disk_read_pixel(int col, int row)
 
 bool from_mem_disk(long offset, int size, void *dest)
 {
-    int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
+    const int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
     if (col_index + size > BLOCK_LEN)            // access violates  a
     {
         return false;                                 //   cache boundary
@@ -426,8 +426,8 @@ void disk_write_pixel(int col, int row, int color)
     {
         return;
     }
-    long offset = s_cur_row_base + col;
-    int col_index = static_cast<short>(offset) & BLOCK_LEN - 1;
+    const long offset = s_cur_row_base + col;
+    const int col_index = static_cast<short>(offset) & BLOCK_LEN - 1;
     if (s_cur_offset != (offset & 0L - BLOCK_LEN)) // same entry as last ref?
     {
         find_load_cache(offset & 0L - BLOCK_LEN);
@@ -441,7 +441,7 @@ void disk_write_pixel(int col, int row, int color)
 
 bool to_mem_disk(long offset, int size, void *src)
 {
-    int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
+    const int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
 
     if (col_index + size > BLOCK_LEN)           // access violates  a
     {
@@ -614,7 +614,7 @@ write_seek:
     mem_seek(ptr1->offset >> s_pixel_shift);
 
 write_stuff:
-    Byte *pixel_ptr = &ptr1->pixel[0];
+    const Byte *pixel_ptr = &ptr1->pixel[0];
     switch (s_pixel_shift)
     {
     case 0:
@@ -726,7 +726,7 @@ void dvid_status(int line, const char *msg)
 {
     using namespace std::literals::chrono_literals;
     static std::chrono::time_point<std::chrono::high_resolution_clock> last{};
-    std::chrono::time_point now{std::chrono::high_resolution_clock::now()};
+    const std::chrono::time_point now{std::chrono::high_resolution_clock::now()};
     if (now - last < 100ms)
     {
         return;

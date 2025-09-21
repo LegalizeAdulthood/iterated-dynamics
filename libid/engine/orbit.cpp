@@ -136,9 +136,9 @@ void scrub_orbit()
     ValueSaver save_screen_y_offset{g_logical_screen_y_offset, 0};
     while (g_orbit_save_index >= 3)
     {
-        int c = s_save_orbit[--g_orbit_save_index];
-        int j = s_save_orbit[--g_orbit_save_index];
-        int i = s_save_orbit[--g_orbit_save_index];
+        const int c = s_save_orbit[--g_orbit_save_index];
+        const int j = s_save_orbit[--g_orbit_save_index];
+        const int i = s_save_orbit[--g_orbit_save_index];
         g_put_color(i, j, c);
     }
 }

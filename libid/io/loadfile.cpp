@@ -961,7 +961,7 @@ int read_overlay()      // read overlay/3D files, if required
     {
         const Display3DMode old_display_ed = g_display_3d;
         g_display_3d = g_loaded_3d ? Display3DMode::YES : Display3DMode::NONE;   // for <tab> display during next
-        int i = get_video_mode(&read_info, &blk_3_info);
+        const int i = get_video_mode(&read_info, &blk_3_info);
         driver_check_memory();
         g_display_3d = old_display_ed;
         if (i)
@@ -1270,15 +1270,15 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     */
 
     std::memset(info, 0, sizeof(FractalInfo));
-    int fractal_info_len = sizeof(FractalInfo) + (sizeof(FractalInfo) + 254) / 255;
-    std::fseek(s_fp, -1 - fractal_info_len, SEEK_END);
+    constexpr int FRACTAL_INFO_LEN = sizeof(FractalInfo) + (sizeof(FractalInfo) + 254) / 255;
+    std::fseek(s_fp, -1 - FRACTAL_INFO_LEN, SEEK_END);
     /* TODO: revise this to read members one at a time so we get natural alignment
        of fields within the FractalInfo structure for the platform */
     file_read(info, 1, sizeof(FractalInfo), s_fp);
     if (std::strcmp(INFO_ID, info->info_id) == 0)
     {
         decode_fractal_info(info, 1);
-        hdr_offset = -1-fractal_info_len;
+        hdr_offset = -1-FRACTAL_INFO_LEN;
     }
     else
     {
@@ -1286,7 +1286,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
         char tmp_buff[110];
         hdr_offset = 0;
         int offset = 80; // don't even check last 80 bytes of file for id
-        while (offset < fractal_info_len+513)
+        while (offset < FRACTAL_INFO_LEN+513)
         {
             // allow 512 garbage at eof
             offset += 100; // go back 100 bytes at a time

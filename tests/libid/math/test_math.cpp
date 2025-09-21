@@ -27,7 +27,7 @@ namespace id::test
 
 TEST(TestMath, nanExponent)
 {
-    DComplex x{std::nan("1"), 0.0};
+    const DComplex x{std::nan("1"), 0.0};
     DComplex z{};
 
     fpu_cmplx_exp(&x, &z); // z = e^x
@@ -37,8 +37,8 @@ TEST(TestMath, nanExponent)
 
 TEST(TestMath, nanRealMultiply)
 {
-    DComplex lhs{std::nan("1"), 0.0};
-    DComplex rhs{1.0, 0.0};
+    const DComplex lhs{std::nan("1"), 0.0};
+    const DComplex rhs{1.0, 0.0};
 
     DComplex result;
     fpu_cmplx_mul(&lhs, &rhs, &result);
@@ -48,8 +48,8 @@ TEST(TestMath, nanRealMultiply)
 
 TEST(TestMath, infRealMultiply)
 {
-    DComplex lhs{INFINITY, 0.0};
-    DComplex rhs{1.0, 0.0};
+    const DComplex lhs{INFINITY, 0.0};
+    const DComplex rhs{1.0, 0.0};
 
     DComplex result;
     fpu_cmplx_mul(&lhs, &rhs, &result);
@@ -59,8 +59,8 @@ TEST(TestMath, infRealMultiply)
 
 TEST(TestMath, nanImagMultiply)
 {
-    DComplex lhs{0.0, std::nan("1")};
-    DComplex rhs{1.0, 0.0};
+    const DComplex lhs{0.0, std::nan("1")};
+    const DComplex rhs{1.0, 0.0};
 
     DComplex result;
     fpu_cmplx_mul(&lhs, &rhs, &result);
@@ -70,8 +70,8 @@ TEST(TestMath, nanImagMultiply)
 
 TEST(TestMath, infImagMultiply)
 {
-    DComplex lhs{0.0, INFINITY};
-    DComplex rhs{1.0, 0.0};
+    const DComplex lhs{0.0, INFINITY};
+    const DComplex rhs{1.0, 0.0};
 
     DComplex result;
     fpu_cmplx_mul(&lhs, &rhs, &result);
@@ -81,8 +81,8 @@ TEST(TestMath, infImagMultiply)
 
 TEST(TestMath, zeroDivide)
 {
-    DComplex lhs{1.0, 1.0};
-    DComplex rhs{};
+    const DComplex lhs{1.0, 1.0};
+    const DComplex rhs{};
 
     DComplex result;
     fpu_cmplx_div(&lhs, &rhs, &result);

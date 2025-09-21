@@ -183,7 +183,7 @@ void copy_genes_to_bank(const GeneBase gene[NUM_GENES])
 void init_gene()
 {
     //                        Use only 15 letters below: 123456789012345
-    GeneBase gene[NUM_GENES] =
+    const GeneBase gene[NUM_GENES] =
     {
         { &g_params[0], vary_dbl, Variations::RANDOM,       "Param 1 real", 1 },
         { &g_params[1], vary_dbl, Variations::RANDOM,       "Param 1 imag", 1 },
@@ -267,7 +267,7 @@ void restore_param_history()
 // routine to vary doubles
 void vary_dbl(GeneBase gene[], int rand_val, int i)
 {
-    int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
+    const int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (gene[i].mutate)
     {
     default:
@@ -291,8 +291,8 @@ void vary_dbl(GeneBase gene[], int rand_val, int i)
         break;
     case Variations::WEIGHTED_RANDOM:
     {
-        int mid = g_evolve_image_grid_size /2;
-        double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
+        const int mid = g_evolve_image_grid_size / 2;
+        const double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
         *static_cast<double *>(gene[i].addr) += (static_cast<double>(rand_val) / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation) * radius;
     }
     break;
@@ -302,7 +302,7 @@ void vary_dbl(GeneBase gene[], int rand_val, int i)
 static int vary_int(int rand_value, int limit, Variations mode)
 {
     int ret = 0;
-    int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
+    const int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     switch (mode)
     {
     default:
@@ -325,8 +325,8 @@ static int vary_int(int rand_value, int limit, Variations mode)
         break;
     case Variations::WEIGHTED_RANDOM:
     {
-        int mid = g_evolve_image_grid_size /2;
-        double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
+        const int mid = g_evolve_image_grid_size / 2;
+        const double radius =  std::sqrt(static_cast<double>(sqr(g_evolve_param_grid_x - mid) + sqr(delta_y - mid)));
         ret = static_cast<int>(
             (rand_value / RAND_MAX * 2 * g_evolve_max_random_mutation - g_evolve_max_random_mutation) *
             radius);
@@ -339,13 +339,13 @@ static int vary_int(int rand_value, int limit, Variations mode)
 
 int wrapped_positive_vary_int(int rand_value, int limit, Variations mode)
 {
-    int i = vary_int(rand_value, limit, mode);
+    const int i = vary_int(rand_value, limit, mode);
     return i < 0 ? limit + i : i;
 }
 
 void vary_inside(GeneBase gene[], int rand_val, int i)
 {
-    int choices[9] = { ZMAG, BOF60, BOF61, EPS_CROSS, STAR_TRAIL, PERIOD, FMODI, ATANI, ITER };
+    constexpr int choices[9] = { ZMAG, BOF60, BOF61, EPS_CROSS, STAR_TRAIL, PERIOD, FMODI, ATANI, ITER };
     if (gene[i].mutate != Variations::NONE)
     {
         *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
@@ -354,7 +354,7 @@ void vary_inside(GeneBase gene[], int rand_val, int i)
 
 void vary_outside(GeneBase gene[], int rand_val, int i)
 {
-    int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
+    constexpr int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
     if (gene[i].mutate != Variations::NONE)
     {
         *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 8, gene[i].mutate)];
@@ -363,7 +363,7 @@ void vary_outside(GeneBase gene[], int rand_val, int i)
 
 void vary_bo_test(GeneBase gene[], int rand_val, int i)
 {
-    int choices[7] =
+    constexpr int choices[7] =
     {
         static_cast<int>(Bailout::MOD),
         static_cast<int>(Bailout::REAL),
@@ -454,7 +454,7 @@ choose_vars_restart:
     choices.comment("Press F3 to set all on");
     choices.comment("Press F4 to randomize all");
 
-    switch (int i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4); i)
+    switch (const int i = choices.prompt("Variable tweak central 2 of 2", 16 | 8 | 4); i)
     {
     case ID_KEY_F2: // set all off
         for (int num = MAX_PARAMS; num < NUM_GENES; num++)
@@ -598,7 +598,7 @@ choose_vars_restart:
         .comment("Press F4 to randomize all")
         .comment("Press F6 for second page"); // F5 gets eaten
 
-    switch (int i = choices.prompt("Variable tweak central 1 of 2", 64 | 16 | 8 | 4); i)
+    switch (const int i = choices.prompt("Variable tweak central 1 of 2", 64 | 16 | 8 | 4); i)
     {
     case ID_KEY_F2: // set all off
         for (int num = 0; num < MAX_PARAMS; num++)
@@ -754,11 +754,11 @@ get_evol_restart:
     }
     if (i == ID_KEY_F3)
     {
-        double center_x = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
+        const double center_x = g_evolve_x_parameter_offset + g_evolve_x_parameter_range / 2;
         g_evolve_x_parameter_range = g_evolve_x_parameter_range * 2;
         g_evolve_new_x_parameter_offset = center_x - g_evolve_x_parameter_range / 2;
         g_evolve_x_parameter_offset = g_evolve_new_x_parameter_offset;
-        double center_y = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
+        const double center_y = g_evolve_y_parameter_offset + g_evolve_y_parameter_range / 2;
         g_evolve_y_parameter_range = g_evolve_y_parameter_range * 2;
         g_evolve_new_y_parameter_offset = center_y - g_evolve_y_parameter_range / 2;
         g_evolve_y_parameter_offset = g_evolve_new_y_parameter_offset;
@@ -766,7 +766,7 @@ get_evol_restart:
         goto get_evol_restart;
     }
 
-    int j = i;
+    const int j = i;
 
     // now check out the results
     g_evolving = choices.read_yes_no() ? EvolutionModeFlags::FIELD_MAP : EvolutionModeFlags::NONE;
@@ -1020,7 +1020,7 @@ void draw_param_box(int mode)
 
 void set_evolve_ranges()
 {
-    int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
+    const int delta_y = g_evolve_image_grid_size - g_evolve_param_grid_y - 1;
     // set up ranges and offsets for parameter explorer/evolver
     g_evolve_x_parameter_range = g_evolve_dist_per_x*(g_evolve_param_zoom*2.0);
     g_evolve_y_parameter_range = g_evolve_dist_per_y*(g_evolve_param_zoom*2.0);
@@ -1039,7 +1039,7 @@ void spiral_map(int count)
     // more intuitively useful order of drawing the sub images.
     // All the malarky with count is to allow resuming
     int i = 0;
-    int mid = g_evolve_image_grid_size / 2;
+    const int mid = g_evolve_image_grid_size / 2;
     if (count == 0)
     {
         // start in the middle
@@ -1100,7 +1100,7 @@ int unspiral_map()
     if ((g_evolve_param_grid_x == mid && g_evolve_param_grid_y == mid) || old_image_grid_size != g_evolve_image_grid_size)
     {
         // set up array and return
-        int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
+        const int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
         s_evol_count_box[g_evolve_param_grid_x][g_evolve_param_grid_y] = 0;  // we know the first one, do the rest
         for (int i = 1; i < grid_sqr; i++)
         {

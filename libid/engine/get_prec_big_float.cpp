@@ -109,8 +109,7 @@ int get_prec_bf(ResolutionFlag flag)
     }
     digits = std::max(digits, 3);
     restore_stack(saved);
-    int dec = get_prec_bf_mag();
-    return std::max(digits, dec);
+    return std::max(digits, get_prec_bf_mag());
 }
 
 // get_power10(x) returns the magnitude of x.

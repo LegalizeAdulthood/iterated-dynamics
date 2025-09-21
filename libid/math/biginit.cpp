@@ -324,7 +324,7 @@ static int save_bf_vars()
     int ret;
     if (s_bn_root != nullptr)
     {
-        unsigned int mem = (g_bf_length+2)*22;  // 6 corners + 6 save corners + 10 params
+        const unsigned int mem = (g_bf_length+2)*22;  // 6 corners + 6 save corners + 10 params
         g_bf_save_len = g_bf_length;
         std::memcpy(s_bn_root, g_bf_x_min, mem);
         // scrub old high area
@@ -604,7 +604,7 @@ void init_big_pi()
     };
 
     int length = g_bf_length + 2; // 2 byte exp
-    int pi_offset = sizeof pi_table - length;
+    const int pi_offset = sizeof(pi_table) - length;
     std::memcpy(g_big_pi, pi_table + pi_offset, length);
 
     // notice that g_bf_pi and g_bn_pi can share the same memory space

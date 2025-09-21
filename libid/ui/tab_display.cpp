@@ -67,7 +67,7 @@ static bool put_string_wrap(int *row, int col1, int col2, int color, char *str, 
 {
     int dec_pt;
     bool done = false;
-    int start_row = *row;
+    const int start_row = *row;
     int length = static_cast<int>(std::strlen(str));
     int padding = 3; // space between col1 and decimal.
     // find decimal point
@@ -503,7 +503,7 @@ top:
         adjust_corner(); // make bottom left exact if very near exact
         if (g_bf_math != BFMathType::NONE)
         {
-            int dec = std::min(320, g_decimals);
+            const int dec = std::min(320, g_decimals);
             adjust_corner_bf(); // make bottom left exact if very near exact
             cvt_center_mag_bf(bf_x_ctr, bf_y_ctr, magnification, x_mag_factor, rotation, skew);
             // find alignment information
@@ -513,7 +513,7 @@ top:
             {
                 truncate = true;
             }
-            int truncate_row = g_row;
+            const int truncate_row = g_row;
             driver_put_string(++start_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(start_row, 8, C_GENERAL_MED, "x");
             bf_to_str(msg, bf_x_ctr, dec);
@@ -658,7 +658,7 @@ top:
     put_string_center(
         24, 0, 80, C_GENERAL_LO, "Press any key to continue, F6 for area, Ctrl+Tab for next page");
     driver_hide_text_cursor();
-    int key = get_a_key_no_help();
+    const int key = get_a_key_no_help();
     if (key == ID_KEY_F6)
     {
         driver_stack_screen();

@@ -270,8 +270,8 @@ static bool rhombus_aux(
 
     // the variables below need to have local copies for recursive calls
     // center of rectangle
-    double mid_r = (c_re1 + c_re2)/2;
-    double mid_i = (c_im1 + c_im2)/2;
+    const double mid_r = (c_re1 + c_re2) / 2;
+    const double mid_i = (c_im1 + c_im2)/2;
 
     DoubleComplex s[9];
 
@@ -654,41 +654,41 @@ scan:
 
     // compute key values for subsequent rectangles
 
-    double re10 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
-    double im10 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
+    const double re10 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[0].re);
+    const double im10 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[0].re);
 
-    double re11 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
-    double im11 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
+    const double re11 = interpolate(c_re1, mid_r, c_re2, s[0].re, s[4].re, s[1].re, s_state.corner[1].re);
+    const double im11 = interpolate(c_re1, mid_r, c_re2, s[0].im, s[4].im, s[1].im, s_state.corner[1].re);
 
-    double re20 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
-    double im20 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
+    const double re20 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[0].re);
+    const double im20 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[0].re);
 
-    double re21 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
-    double im21 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
+    const double re21 = interpolate(c_re1, mid_r, c_re2, s[2].re, s[7].re, s[3].re, s_state.corner[1].re);
+    const double im21 = interpolate(c_re1, mid_r, c_re2, s[2].im, s[7].im, s[3].im, s_state.corner[1].re);
 
-    double re15 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
-    double im15 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
+    const double re15 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[0].re);
+    const double im15 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[0].re);
 
-    double re16 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
-    double im16 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
+    const double re16 = interpolate(c_re1, mid_r, c_re2, s[5].re, s[8].re, s[6].re, s_state.corner[1].re);
+    const double im16 = interpolate(c_re1, mid_r, c_re2, s[5].im, s[8].im, s[6].im, s_state.corner[1].re);
 
-    double re12 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
-    double im12 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
+    const double re12 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[0].im);
+    const double im12 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[0].im);
 
-    double re14 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
-    double im14 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
+    const double re14 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[0].im);
+    const double im14 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[0].im);
 
-    double re17 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
-    double im17 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
+    const double re17 = interpolate(c_im1, mid_i, c_im2, s[0].re, s[5].re, s[2].re, s_state.corner[1].im);
+    const double im17 = interpolate(c_im1, mid_i, c_im2, s[0].im, s[5].im, s[2].im, s_state.corner[1].im);
 
-    double re19 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
-    double im19 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
+    const double re19 = interpolate(c_im1, mid_i, c_im2, s[1].re, s[6].re, s[3].re, s_state.corner[1].im);
+    const double im19 = interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, s_state.corner[1].im);
 
-    double re13 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
-    double im13 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
+    const double re13 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[0].im);
+    const double im13 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[0].im);
 
-    double re18 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
-    double im18 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
+    const double re18 = interpolate(c_im1, mid_i, c_im2, s[4].re, s[8].re, s[7].re, s_state.corner[1].im);
+    const double im18 = interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, s_state.corner[1].im);
 
     // compute the value of the interpolation polynomial at (x,y)
     // from saved values before interpolation failed to stay within tolerance
@@ -706,14 +706,14 @@ scan:
                 interpolate(c_im1, mid_i, c_im2, s[4].im, s[8].im, s[7].im, im),
                 interpolate(c_im1, mid_i, c_im2, s[1].im, s[6].im, s[3].im, im), re);
         }};
-    double re91 = get_saved_real(s_state.corner[0].re, s_state.corner[0].im);
-    double im91 = get_saved_imag(s_state.corner[0].re, s_state.corner[0].im);
-    double re92 = get_saved_real(s_state.corner[1].re, s_state.corner[0].im);
-    double im92 = get_saved_imag(s_state.corner[1].re, s_state.corner[0].im);
-    double re93 = get_saved_real(s_state.corner[0].re, s_state.corner[1].im);
-    double im93 = get_saved_imag(s_state.corner[0].re, s_state.corner[1].im);
-    double re94 = get_saved_real(s_state.corner[1].re, s_state.corner[1].im);
-    double im94 = get_saved_imag(s_state.corner[1].re, s_state.corner[1].im);
+    const double re91 = get_saved_real(s_state.corner[0].re, s_state.corner[0].im);
+    const double im91 = get_saved_imag(s_state.corner[0].re, s_state.corner[0].im);
+    const double re92 = get_saved_real(s_state.corner[1].re, s_state.corner[0].im);
+    const double im92 = get_saved_imag(s_state.corner[1].re, s_state.corner[0].im);
+    const double re93 = get_saved_real(s_state.corner[0].re, s_state.corner[1].im);
+    const double im93 = get_saved_imag(s_state.corner[0].re, s_state.corner[1].im);
+    const double re94 = get_saved_real(s_state.corner[1].re, s_state.corner[1].im);
+    const double im94 = get_saved_imag(s_state.corner[1].re, s_state.corner[1].im);
 
     status = rhombus2(c_re1, mid_r,                 //
         c_im1, mid_i,                               //
@@ -764,7 +764,7 @@ static bool rhombus(double c_re1, double c_re2, double c_im1, double c_im2, //
 void soi()
 {
     // cppcheck-suppress unreadVariable
-    double tolerance = 0.1;
+    constexpr double TOLERANCE = 0.1;
     double xx_min_l;
     double xx_max_l;
     double yy_min_l;
@@ -786,9 +786,9 @@ void soi()
         xx_max_l = g_x_max;
         yy_max_l = g_y_max;
     }
-    s_t_width = tolerance/(g_logical_screen_x_dots - 1);
-    double step_x = (xx_max_l - xx_min_l) / g_logical_screen_x_dots;
-    double step_y = (yy_min_l - yy_max_l) / g_logical_screen_y_dots;
+    s_t_width = TOLERANCE / (g_logical_screen_x_dots - 1);
+    const double step_x = (xx_max_l - xx_min_l) / g_logical_screen_x_dots;
+    const double step_y = (yy_min_l - yy_max_l) / g_logical_screen_y_dots;
     s_equal = step_x < step_y ? step_x : step_y;
 
     rhombus2(xx_min_l, xx_max_l,                                //

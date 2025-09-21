@@ -52,8 +52,8 @@ static int cmp_dbl(double old, double new_val)
 int get_corners()
 {
     ChoiceBuilder<11> builder;
-    char x_prompt[] = "          X";
-    char y_prompt[] = "          Y";
+    constexpr char x_prompt[] = "          X";
+    constexpr char y_prompt[] = "          Y";
     double x_ctr;
     double y_ctr;
     LDouble magnification; // LDouble not really needed here, but used to match function parameters
@@ -258,8 +258,8 @@ gc_loop:
 int get_screen_corners()
 {
     ChoiceBuilder<15> builder;
-    char x_prompt[] = "          X";
-    char y_prompt[] = "          Y";
+    constexpr char x_prompt[] = "          X";
+    constexpr char y_prompt[] = "          Y";
     int prompt_ret;
     double x_ctr;
     double y_ctr;
@@ -302,7 +302,7 @@ int get_screen_corners()
     g_y_3rd = g_orbit_corner_3rd_y;
 
 gsc_loop:
-    int use_center_mag = g_use_center_mag ? 1 : 0;
+    const bool use_center_mag = g_use_center_mag;
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
 
     builder.reset();

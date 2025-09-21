@@ -16,7 +16,7 @@ namespace id::io
 
 std::string locate_input_file(const std::string &name)
 {
-    std::initializer_list dirs{
+    const std::initializer_list dirs{
         std::filesystem::current_path(), g_save_dir, g_fractal_search_dir1, g_fractal_search_dir2};
     for (std::filesystem::path path : dirs)
     {

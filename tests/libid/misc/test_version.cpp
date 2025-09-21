@@ -36,35 +36,35 @@ TEST(TestVersion, versionComponentsFitInUInt8)
 
 TEST(TestVersion, legacyVersionToString)
 {
-    Version v{20, 4, 0, 0, true};
+    const Version v{20, 4, 0, 0, true};
 
     EXPECT_EQ("20.04", to_string(v));
 }
 
 TEST(TestVersion, toStringMajor)
 {
-    Version v{5, 0, 0, 0, false};
+    const Version v{5, 0, 0, 0, false};
 
     EXPECT_EQ("5.0", to_string(v));
 }
 
 TEST(TestVersion, toStringMajorMinor)
 {
-    Version v{5, 6, 0, 0, false};
+    const Version v{5, 6, 0, 0, false};
 
     EXPECT_EQ("5.6", to_string(v));
 }
 
 TEST(TestVersion, toStringMajorMinorPatch)
 {
-    Version v{5, 6, 7, 0, false};
+    const Version v{5, 6, 7, 0, false};
 
     EXPECT_EQ("5.6.7", to_string(v));
 }
 
 TEST(TestVersion, toStringMajorPatch)
 {
-    Version v{5, 0, 7, 0, false};
+    const Version v{5, 0, 7, 0, false};
 
     EXPECT_EQ("5.0.7", to_string(v));
 }
@@ -78,7 +78,7 @@ TEST(TestVersion, toStringMajorTweak)
 
 TEST(TestVersion, toStringMajorMinorTweak)
 {
-    Version v{5, 6, 0, 8, false};
+    const Version v{5, 6, 0, 8, false};
 
     EXPECT_EQ("5.6.0.8", to_string(v));
 }
@@ -120,7 +120,7 @@ TEST(TestVersion, parStringMajorMinorPatchTweak)
 
 TEST(TestVersion, parseLegacyVersionMajor)
 {
-    Version result{parse_legacy_version(100)};
+    const Version result{parse_legacy_version(100)};
 
     EXPECT_TRUE(result.legacy);
     EXPECT_EQ(1, result.major);
@@ -131,7 +131,7 @@ TEST(TestVersion, parseLegacyVersionMajor)
 
 TEST(TestVersion, parseLegacyVersionMajorMinor)
 {
-    Version result{parse_legacy_version(1401)};
+    const Version result{parse_legacy_version(1401)};
 
     EXPECT_TRUE(result.legacy);
     EXPECT_EQ(14, result.major);
