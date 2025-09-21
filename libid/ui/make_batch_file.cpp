@@ -1647,7 +1647,7 @@ static void put_filename(const char *keyword, const char *fname)
     }
 }
 
-static void put_param(WriteBatchData &wb_data, const char *param, const std::va_list args)
+static void put_param(WriteBatchData &wb_data, const char *param, std::va_list args)
 {
     if (*param == ' '             // starting a new parm
         && wb_data.len == 0)         // skip leading space
