@@ -231,7 +231,7 @@ static void fill_rect(const int x, int y, const int width, int depth, const int 
     {
         return;
     }
-    const std::vector row(width, char(color % g_colors));
+    const std::vector row(width, static_cast<char>(color % g_colors));
     while (depth-- > 0)
     {
         put_row(x, y++, width, row.data());
@@ -386,7 +386,7 @@ static void save_rect(const int x, const int y, const int width, const int depth
     }
 
     s_screen_rect.clear();
-    const std::vector background(width, char(g_color_dark));
+    const std::vector background(width, static_cast<char>(g_color_dark));
     s_screen_rect.resize(width*depth);
     s_cursor.hide();
     for (int y_off = 0; y_off < depth; y_off++)
