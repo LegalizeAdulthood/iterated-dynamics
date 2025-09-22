@@ -15,7 +15,9 @@ constexpr const char *const PATH_SEPARATOR{";"};
 constexpr const char *const PATH_SEPARATOR{":"};
 #endif
 
-std::string search_path(const char *filename, const char *path_var, std::function<const char *(const char *)> get_env);
+using GetEnv = std::function<const char *(const char *)>;
+
+std::string search_path(const char *filename, const char *path_var, const GetEnv &get_env);
 
 inline std::string search_path(const char * filename, const char *path_var)
 {
