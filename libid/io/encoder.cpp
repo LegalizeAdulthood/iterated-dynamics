@@ -99,13 +99,13 @@ static int s_out_color_2s{};
 static int s_start_bits{};
 
 // B&W palette
-static const Byte s_palette_bw[]{
+static constexpr Byte s_palette_bw[]{
     0, 0, 0,    //
     63, 63, 63, //
 };
 
 // 4-color (CGA) palette
-static const Byte s_palette_cga[]{
+static constexpr Byte s_palette_cga[]{
     0, 0, 0,    //
     21, 63, 63, //
     63, 21, 63, //
@@ -113,7 +113,7 @@ static const Byte s_palette_cga[]{
 };
 
 // 16-color (EGA/CGA) pal
-static const Byte s_palette_ega[]{
+static constexpr Byte s_palette_ega[]{
     0, 0, 0,    //
     0, 0, 42,   //
     0, 42, 0,   //

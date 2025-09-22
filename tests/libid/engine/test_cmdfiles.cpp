@@ -971,7 +971,7 @@ TEST_F(TestParameterCommandError, maxLineLengthTooLarge)
 TEST_F(TestParameterCommand, maxLineLength)
 {
     ValueSaver saved_max_line_length{g_max_line_length, 0};
-    const int value{(MIN_MAX_LINE_LENGTH + MAX_MAX_LINE_LENGTH) / 2};
+    constexpr int value{(MIN_MAX_LINE_LENGTH + MAX_MAX_LINE_LENGTH) / 2};
     const std::string arg{"maxlinelength=" + std::to_string(value)};
 
     exec_cmd_arg(arg, CmdFile::AT_CMD_LINE);

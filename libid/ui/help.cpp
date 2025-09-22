@@ -1164,7 +1164,7 @@ static bool print_doc_output(const PrintDocCommand cmd, ProcessDocumentInfo *pd,
     case PrintDocCommand::PD_HEADING:
     {
         char line[81];
-        const int width = PAGE_WIDTH + PAGE_INDENT;
+        constexpr int WIDTH = PAGE_WIDTH + PAGE_INDENT;
         bool keep_going;
 
         if (info->msg_func != nullptr)
@@ -1181,13 +1181,13 @@ static bool print_doc_output(const PrintDocCommand cmd, ProcessDocumentInfo *pd,
         std::memset(line, ' ', 81);
         std::string buff = fmt::format(ID_PROGRAM_NAME " Version {:d}.{:d}.{:d}", //
             ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH);
-        std::memmove(line + (width - static_cast<int>(buff.length())) / 2 - 4, buff.c_str(), buff.length());
+        std::memmove(line + (WIDTH - static_cast<int>(buff.length())) / 2 - 4, buff.c_str(), buff.length());
 
         buff = fmt::format("Page {:d}", pd->page_num);
-        std::memmove(line + (width - static_cast<int>(buff.length())), buff.c_str(), buff.length());
+        std::memmove(line + (WIDTH - static_cast<int>(buff.length())), buff.c_str(), buff.length());
 
         printer_ch(info, '\n', 1);
-        printer_str(info, line, width);
+        printer_str(info, line, WIDTH);
         printer_ch(info, '\n', 2);
 
         info->margin = PAGE_INDENT;

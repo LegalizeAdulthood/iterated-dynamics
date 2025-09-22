@@ -127,7 +127,7 @@ wxSize TextScreen::calculate_fixed_size()
     int height = m_char_size.y * (SCREEN_HEIGHT + 1);
 
     // Add small margins to account for control borders
-    const int margin = 4;
+    constexpr int margin = 4;
     width += margin;
     height += margin;
 

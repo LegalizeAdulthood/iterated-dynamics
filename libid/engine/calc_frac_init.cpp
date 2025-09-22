@@ -540,7 +540,7 @@ static void adjust_to_limits_bf(const double expand)
     BigFloat b_tmp2 = alloc_stack(g_r_bf_length + 2);
     BigFloat b_expand = alloc_stack(g_r_bf_length + 2);
 
-    const LDouble limit = 32767.99;
+    constexpr LDouble limit = 32767.99;
 
     /*   if (bitshift >= 24) limit = 31.99;
        if (bitshift >= 29) limit = 3.99; */
@@ -764,7 +764,7 @@ static void adjust_to_limits(const double expand)
 {
     double corner_x[4];
     double corner_y[4];
-    const double limit = 32767.99;
+    constexpr double limit = 32767.99;
     const double center_x = (g_x_min + g_x_max) / 2;
     const double center_y = (g_y_min + g_y_max) / 2;
 

@@ -38,9 +38,9 @@ static void set_plasma_palette()
         return;    // map= specified
     }
 
-    static const Byte Red[3]   = { 255, 0, 0 };
-    static const Byte Green[3] = { 0, 255, 0 };
-    static const Byte Blue[3]  = { 0,  0, 255 };
+    static constexpr Byte Red[3]   = { 255, 0, 0 };
+    static constexpr Byte Green[3] = { 0, 255, 0 };
+    static constexpr Byte Blue[3]  = { 0,  0, 255 };
 
     g_dac_box[0][0] = 0;
     g_dac_box[0][1] = 0;

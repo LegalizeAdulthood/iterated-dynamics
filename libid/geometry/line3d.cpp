@@ -110,8 +110,8 @@ static long s_x_center{}, s_y_center{};                  // circle center
 static double s_scale_x{}, s_scale_y{}, s_scale_z{};     // scale factors
 static double s_radius{};                                // radius values
 static double s_radius_factor{};                         // for intermediate calculation
-static MatrixL s_llm{};                              // ""
-static VectorL s_l_view{};                           // for perspective views
+static MatrixL s_llm{};                                  // ""
+static VectorL s_l_view{};                               // for perspective views
 static double s_z_cutoff{};                              // perspective backside cutoff value
 static float s_two_cos_delta_phi{};                      //
 static float s_cos_phi{}, s_sin_phi{};                   // precalculated sin/cos of longitude
@@ -129,7 +129,7 @@ static Byte s_t24 = 24;                                  //
 static Byte s_t32 = 32;                                  //
 static Byte s_upr_lwr[4]{};                              //
 static bool s_temp_safe{};                       // Original Targa Image successfully copied to targa_temp
-static Vector s_light_direction{};           //
+static Vector s_light_direction{};               //
 static Byte s_real_color{};                      // Actual color of cur pixel
 static int s_ro{}, s_co{}, s_co_max{};           // For use in Acrospin support
 static int s_local_preview_factor{};             //
@@ -149,11 +149,11 @@ static int s_real_v{};                           // Actual value of V for fillyt
 static FileError s_error{};                      //
 static std::string s_targa_temp("fractemp.tga"); //
 static int s_p = 250;                            // Perspective dist used when viewing light vector
-static const int s_bad_check = -3000;            // check values against this to determine if good
+static constexpr int s_bad_check = -3000;        // check values against this to determine if good
 static std::vector<PointColor> s_last_row;       // this array remembers the previous line
 static std::vector<MinMax> s_min_max_x;          // array of min and max x values used in triangle fill
-static Vector s_cross{};                     //
-static Vector s_tmp_cross{};                 //
+static Vector s_cross{};                         //
+static Vector s_tmp_cross{};                     //
 static PointColor s_old_last{};                  // old pixels
 
 // global variables defined here

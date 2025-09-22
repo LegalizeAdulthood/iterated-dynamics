@@ -253,7 +253,7 @@ void Ant::turk_mite1(const bool step, const long wait)
 
 static unsigned rotate_left_one(const unsigned value)
 {
-    const unsigned high_bit{~(~0U >> 1)};
+    constexpr unsigned high_bit{~(~0U >> 1)};
     const unsigned result{value << 1};
     return value & high_bit ? result | 1U : result;
 }

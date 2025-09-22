@@ -88,9 +88,9 @@ static std::vector<std::string> split_lines(std::string_view text)
 TEST(TestLoadEntryText, columnZeroOneLine)
 {
     char result[2048]{};
-    const int max_lines{1};
-    const int start_row{};
-    const int start_col{};
+    constexpr int max_lines{1};
+    constexpr int start_row{};
+    constexpr int start_col{};
     std::filesystem::path frm{ID_TEST_FRM_DIR};
     frm /= ID_TEST_FRM_FILE;
     std::FILE *entry_file{std::fopen(frm.string().c_str(), "r")};
@@ -108,9 +108,9 @@ TEST(TestLoadEntryText, columnZeroOneLine)
 TEST(TestLoadEntryText, columnTwoOneLine)
 {
     char result[2048]{};
-    const int max_lines{1};
-    const int start_row{};
-    const int start_col{2};
+    constexpr int max_lines{1};
+    constexpr int start_row{};
+    constexpr int start_col{2};
     std::filesystem::path frm{ID_TEST_FRM_DIR};
     frm /= ID_TEST_FRM_FILE;
     std::FILE *entry_file{std::fopen(frm.string().c_str(), "r")};
