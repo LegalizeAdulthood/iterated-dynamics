@@ -173,6 +173,6 @@ void sym_plot4(int x, int y, int color);
 void sym_plot2_basin(int x, int y, int color);
 void sym_plot4_basin(int x, int y, int color);
 void no_plot(int x, int y, int color);
-void sym_fill_line(int row, int left, int right, Byte *str);
+void sym_fill_line(int row, int left, int right, const Byte *str);
 
 } // namespace id::engine

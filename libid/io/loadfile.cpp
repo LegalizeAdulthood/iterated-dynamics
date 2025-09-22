@@ -114,7 +114,7 @@ struct GifExtensionId
 // prototypes
 static void load_ext_blk(char *load_ptr, int load_len);
 static void skip_ext_blk(int *block_len, int *data_len);
-static void backwards_compat(FractalInfo *info);
+static void backwards_compat(const FractalInfo &info);
 static bool fix_bof();
 static bool fix_period_bof();
 
@@ -529,7 +529,7 @@ static void backwards_info_pre4(FractalInfo read_info)
 {
     if (read_info.info_version < 4 && read_info.info_version != 0) // pre-version 14.0?
     {
-        backwards_compat(&read_info);                              // translate obsolete types
+        backwards_compat(read_info);                              // translate obsolete types
         if (g_log_map_flag)
         {
             g_log_map_flag = 2;
@@ -1530,7 +1530,7 @@ static void skip_ext_blk(int *block_len, int *data_len)
 }
 
 // switch obsolete fractal types to new generalizations
-static void backwards_compat(FractalInfo *info)
+static void backwards_compat(const FractalInfo &info)
 {
     switch (+g_fractal_type)
     {
@@ -1616,11 +1616,11 @@ static void backwards_compat(FractalInfo *info)
         break;
     case DeprecatedFractalType::DEM_M:
         set_fractal_type(FractalType::MANDEL);
-        g_user_distance_estimator_value = (info->y_dots - 1) * 2;
+        g_user_distance_estimator_value = (info.y_dots - 1) * 2;
         break;
     case DeprecatedFractalType::DEM_J:
         set_fractal_type(FractalType::JULIA);
-        g_user_distance_estimator_value = (info->y_dots - 1) * 2;
+        g_user_distance_estimator_value = (info.y_dots - 1) * 2;
         break;
     default:
         break;

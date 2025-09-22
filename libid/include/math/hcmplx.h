@@ -17,12 +17,12 @@ struct HyperComplex
 using DHyperComplex = HyperComplex<double>;
 using LHyperComplex = HyperComplex<long>;
 
-void hcmplx_mult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out);
-void hcmplx_sqr(DHyperComplex *arg, DHyperComplex *out);
-int hcmplx_inv(DHyperComplex *arg, DHyperComplex *out);
-void hcmplx_add(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out);
-void hcmplx_sub(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out);
-void hcmplx_minus(DHyperComplex *arg1, DHyperComplex *out);
-void hcmplx_trig0(DHyperComplex *h, DHyperComplex *out);
+void hcmplx_mult(const DHyperComplex *arg1, const DHyperComplex *arg2, DHyperComplex *out);
+void hcmplx_sqr(const DHyperComplex *arg, DHyperComplex *out);
+int hcmplx_inv(const DHyperComplex *arg, DHyperComplex *out);
+void hcmplx_add(const DHyperComplex *arg1, const DHyperComplex *arg2, DHyperComplex *out);
+void hcmplx_sub(const DHyperComplex *arg1, const DHyperComplex *arg2, DHyperComplex *out);
+void hcmplx_minus(const DHyperComplex *arg1, DHyperComplex *out);
+void hcmplx_trig0(const DHyperComplex *h, DHyperComplex *out);
 
 } // namespace id::math

@@ -262,7 +262,7 @@ static double fmod_test()
 // in all cases, however the symmetry logic assumes that the line
 // is one color; it is not general enough to handle a row of
 // pixels of different colors.
-void sym_fill_line(const int row, const int left, const int right, Byte *str)
+void sym_fill_line(const int row, const int left, const int right, const Byte *str)
 {
     const int length = right - left + 1;
     write_span(row, left, right, str);
@@ -328,7 +328,7 @@ void sym_fill_line(const int row, const int left, const int right, Byte *str)
 // The sym_put_line() routine is the symmetry-aware version of put_line().
 // It only works efficiently in the no symmetry or X_AXIS symmetry case,
 // otherwise it just writes the pixels one-by-one.
-static void sym_put_line(const int row, const int left, const int right, Byte *str)
+static void sym_put_line(const int row, const int left, const int right, const Byte *str)
 {
     const int length = right-left+1;
     write_span(row, left, right, str);

@@ -10,7 +10,7 @@
 namespace id::math
 {
 
-void hcmplx_mult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
+void hcmplx_mult(const DHyperComplex *arg1, const DHyperComplex *arg2, DHyperComplex *out)
 {
     out->x = arg1->x * arg2->x - arg1->y * arg2->y
              - arg1->z * arg2->z + arg1->t * arg2->t;
@@ -22,7 +22,7 @@ void hcmplx_mult(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
              + arg1->y * arg2->z + arg1->x * arg2->t;
 }
 
-void hcmplx_sqr(DHyperComplex *arg, DHyperComplex *out)
+void hcmplx_sqr(const DHyperComplex *arg, DHyperComplex *out)
 {
     out->x = arg->x * arg->x - arg->y * arg->y
              - arg->z * arg->z + arg->t * arg->t;
@@ -31,7 +31,7 @@ void hcmplx_sqr(DHyperComplex *arg, DHyperComplex *out)
     out->t = 2 * arg->t * arg->x + 2 * arg->z * arg->y;
 }
 
-int hcmplx_inv(DHyperComplex *arg, DHyperComplex *out)
+int hcmplx_inv(const DHyperComplex *arg, DHyperComplex *out)
 {
     const double det =
         (sqr(arg->x - arg->t) + sqr(arg->y + arg->z)) * (sqr(arg->x + arg->t) + sqr(arg->y - arg->z));
@@ -50,7 +50,7 @@ int hcmplx_inv(DHyperComplex *arg, DHyperComplex *out)
     return 0;
 }
 
-void hcmplx_add(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
+void hcmplx_add(const DHyperComplex *arg1, const DHyperComplex *arg2, DHyperComplex *out)
 {
     out->x = arg1->x + arg2->x;
     out->y = arg1->y + arg2->y;
@@ -58,7 +58,7 @@ void hcmplx_add(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
     out->t = arg1->t + arg2->t;
 }
 
-void hcmplx_sub(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
+void hcmplx_sub(const DHyperComplex *arg1, const DHyperComplex *arg2, DHyperComplex *out)
 {
     out->x = arg1->x - arg2->x;
     out->y = arg1->y - arg2->y;
@@ -66,7 +66,7 @@ void hcmplx_sub(DHyperComplex *arg1, DHyperComplex *arg2, DHyperComplex *out)
     out->t = arg1->t - arg2->t;
 }
 
-void hcmplx_minus(DHyperComplex *arg1, DHyperComplex *out)
+void hcmplx_minus(const DHyperComplex *arg1, DHyperComplex *out)
 {
     out->x = -arg1->x;
     out->y = -arg1->y;
@@ -75,7 +75,7 @@ void hcmplx_minus(DHyperComplex *arg1, DHyperComplex *out)
 }
 
 // extends the unary function f to *h1
-void hcmplx_trig0(DHyperComplex *h, DHyperComplex *out)
+void hcmplx_trig0(const DHyperComplex *h, DHyperComplex *out)
 {
     /* This is the whole beauty of Hypercomplex numbers - *ANY* unary
        complex valued function of a complex variable can easily

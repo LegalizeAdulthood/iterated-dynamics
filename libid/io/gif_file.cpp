@@ -57,7 +57,7 @@ template <int Size>
 class ExtensionDeserializer
 {
 public:
-    ExtensionDeserializer(GifFileType *gif, const char *name);
+    ExtensionDeserializer(const GifFileType *gif, const char *name);
 
     template <int N>
     void extract_chars(char (&dest)[N])
@@ -185,7 +185,7 @@ private:
 };
 
 template <int Size>
-ExtensionDeserializer<Size>::ExtensionDeserializer(GifFileType *gif, const char *name)
+ExtensionDeserializer<Size>::ExtensionDeserializer(const GifFileType *gif, const char *name)
 {
     int count{Size};
     for (int i = 0; i < gif->ExtensionBlockCount; ++i)
@@ -696,7 +696,7 @@ void put_formula_info(GifFileType *gif, const FormulaInfo &info)
     ser.add_extension(gif, "fractint003");
 }
 
-std::vector<int> get_ranges_info(GifFileType *gif)
+std::vector<int> get_ranges_info(const GifFileType *gif)
 {
     std::vector<Byte> bytes;
     for (int i = 0; i < gif->ExtensionBlockCount; ++i)
@@ -745,7 +745,7 @@ void put_ranges_info(GifFileType *gif, const std::vector<int> &info)
     add_gif_extension(gif, "fractint004", bytes.data(), static_cast<int>(bytes.size()));
 }
 
-std::vector<char> get_extended_param_info(GifFileType *gif)
+std::vector<char> get_extended_param_info(const GifFileType *gif)
 {
     std::vector<Byte> bytes;
     for (int i = 0; i < gif->ExtensionBlockCount; ++i)

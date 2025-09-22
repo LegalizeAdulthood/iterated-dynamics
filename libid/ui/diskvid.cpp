@@ -439,7 +439,7 @@ void disk_write_pixel(const int col, int row, const int color)
     }
 }
 
-bool to_mem_disk(const long offset, const int size, void *src)
+bool to_mem_disk(const long offset, const int size, const void *src)
 {
     const int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
 

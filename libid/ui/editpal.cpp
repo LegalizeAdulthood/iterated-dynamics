@@ -246,7 +246,7 @@ public:
     void update();
     void draw();
     int edit();
-    void set_rgb(int pal, PalEntry *rgb);
+    void set_rgb(int pal, const PalEntry *rgb);
     PalEntry get_rgb() const;
 
 private:
@@ -390,7 +390,7 @@ static void set_pal(const int pal, const int r, const int g, const int b)
     spin_dac(0, 1);
 }
 
-static void set_pal_range(const int first, const int how_many, PalEntry *pal)
+static void set_pal_range(const int first, const int how_many, const PalEntry *pal)
 {
     std::memmove(g_dac_box+first, pal, how_many*3);
     spin_dac(0, 1);
@@ -572,7 +572,7 @@ static void display_fmt(const int x, const int y, const int fg, const int bg, co
 }
 
 // create smooth shades between two colors
-static void mk_pal_range(PalEntry *p1, PalEntry *p2, PalEntry pal[], const int num, const int skip)
+static void mk_pal_range(const PalEntry *p1, const PalEntry *p2, PalEntry pal[], const int num, const int skip)
 {
     const double rm = static_cast<double>(static_cast<int>(p2->red) - static_cast<int>(p1->red)) / num;
     const double gm = static_cast<double>(static_cast<int>(p2->green) - static_cast<int>(p1->green)) / num;
@@ -1363,7 +1363,7 @@ int RGBEditor::edit()
     return key;
 }
 
-void RGBEditor::set_rgb(const int pal, PalEntry *rgb)
+void RGBEditor::set_rgb(const int pal, const PalEntry *rgb)
 {
     m_pal = pal;
     m_color[0].set_val(rgb->red);

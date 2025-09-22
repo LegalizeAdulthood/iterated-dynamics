@@ -88,7 +88,7 @@ static int off_screen(PointColor pt);
 static int out_triangle(FPointColor pt1, FPointColor pt2, FPointColor pt3, int c1, int c2, int c3);
 static int ray_header();
 static int start_object();
-static void draw_light_box(double *origin, double *direct, Matrix light_m);
+static void draw_light_box(const double *origin, const double *direct, Matrix light_m);
 static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, int color, bool rect);
 static void line3d_cleanup();
 static void clip_color(int x, int y, int color);
@@ -97,7 +97,7 @@ static void put_triangle(PointColor pt1, PointColor pt2, PointColor pt3, int col
 static void put_min_max(int x, int y, int color);
 static void triangle_bounds(float pt_t[3][3]);
 static void transparent_clip_color(int x, int y, int color);
-static void vec_draw_line(double *v1, double *v2, int color);
+static void vec_draw_line(const double *v1, const double *v2, int color);
 static void file_error(const std::string &filename, FileError error);
 static bool targa_validate(const std::string &filename);
 
@@ -884,7 +884,7 @@ really_the_bottom:
 }
 
 // vector version of line draw
-static void vec_draw_line(double *v1, double *v2, const int color)
+static void vec_draw_line(const double *v1, const double *v2, const int color)
 {
     const int x1 = static_cast<int>(v1[0]);
     const int y1 = static_cast<int>(v1[1]);
@@ -986,7 +986,7 @@ static void corners(Matrix m, const bool show, double *x_min, double *y_min, dou
         FILLTYPE.
 */
 
-static void draw_light_box(double *origin, double *direct, Matrix light_m)
+static void draw_light_box(const double *origin, const double *direct, Matrix light_m)
 {
     Vector s[2][4]{};
 

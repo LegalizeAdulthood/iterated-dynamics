@@ -734,7 +734,7 @@ TEST_F(TestChoiceBuilderPrompting, readStringBuff)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(m_prompter, prompt(_, 1, NotNull(), _, _, _))
-        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { std::strcpy(values[0].uval.sbuf, "*.pot"); }),
+        .WillOnce(DoAll(WithArg<3>([](const FullScreenValues *values) { std::strcpy(values[0].uval.sbuf, "*.pot"); }),
             Return(ID_KEY_ENTER)));
     constexpr int len{80};
     char buff[len]{};

@@ -329,12 +329,12 @@ static void display_parse_text(const char *text, unsigned len, const int start_m
     g_text_row_base = 0;
 }
 
-static void color_link(Link *link, const int color)
+static void color_link(const Link &link, const int color)
 {
     g_text_col_base = SCREEN_INDENT;
     g_text_row_base = TEXT_START_ROW;
 
-    driver_set_attr(link->r, link->c, color, link->width);
+    driver_set_attr(link.r, link.c, color, link.width);
 
     g_text_col_base = 0;
     g_text_row_base = 0;
@@ -574,9 +574,9 @@ static int do_move_link(Link *link, const int num_link, int *curr, int (*f)(Link
 
         if (t >= 0 && t != *curr)
         {
-            color_link(&link[*curr], C_HELP_LINK);
+            color_link(link[*curr], C_HELP_LINK);
             *curr = t;
-            color_link(&link[*curr], C_HELP_CURLINK);
+            color_link(link[*curr], C_HELP_CURLINK);
             return 1;
         }
     }
@@ -661,7 +661,7 @@ static int help_topic(History *curr, History *next, const int flags)
 
             if (num_link > 0)
             {
-                color_link(&s_link_table[curr_link], C_HELP_CURLINK);
+                color_link(s_link_table[curr_link], C_HELP_CURLINK);
             }
 
             draw_page = 0;

@@ -447,7 +447,7 @@ static int out_line_too_wide(Byte *pixels, int line_len)
     return 0;
 }
 
-static bool put_sound_line(const int row, const int col_start, const int col_stop, Byte *pixels)
+static bool put_sound_line(const int row, const int col_start, const int col_stop, const Byte *pixels)
 {
     for (int col = col_start; col <= col_stop; col++)
     {

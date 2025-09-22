@@ -30,6 +30,6 @@ inline void dvid_status(const int line, const std::string &msg)
 }
 int common_start_disk(long new_row_size, long new_col_size, int colors);
 bool from_mem_disk(long offset, int size, void *dest);
-bool to_mem_disk(long offset, int size, void *src);
+bool to_mem_disk(long offset, int size, const void *src);
 
 } // namespace id::ui
