@@ -1220,7 +1220,7 @@ static std::FILE *open_include(const std::string &filename)
     return result;
 }
 
-static void toggle_mode(std::string tag, const HelpCommand cmd, bool &flag, const int err_offset)
+static void toggle_mode(const std::string &tag, const HelpCommand cmd, bool &flag, const int err_offset)
 {
     if (!string_case_equal(s_cmd, tag.data(), tag.length()))
     {

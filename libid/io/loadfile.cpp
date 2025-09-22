@@ -525,7 +525,7 @@ static void backwards_info9(const FractalInfo &read_info)
     }
 }
 
-static void backwards_info_pre4(FractalInfo read_info)
+static void backwards_info_pre4(const FractalInfo &read_info)
 {
     if (read_info.info_version < 4 && read_info.info_version != 0) // pre-version 14.0?
     {
@@ -537,7 +537,7 @@ static void backwards_info_pre4(FractalInfo read_info)
     }
 }
 
-static void backwards_info_pre5(FractalInfo read_info)
+static void backwards_info_pre5(const FractalInfo &read_info)
 {
     if (read_info.info_version < 5 && read_info.info_version != 0) // pre-version 15.0?
     {
@@ -552,7 +552,7 @@ static void backwards_info_pre5(FractalInfo read_info)
     }
 }
 
-static void backwards_info_pre8(FractalInfo read_info)
+static void backwards_info_pre8(const FractalInfo &read_info)
 {
     if (g_potential_flag) // in version 15.x and 16.x logmap didn't work with pot
     {
@@ -564,7 +564,7 @@ static void backwards_info_pre8(FractalInfo read_info)
     set_trig_pointers(-1);
 }
 
-static void backwards_info_pre9(FractalInfo read_info)
+static void backwards_info_pre9(const FractalInfo &read_info)
 {
     if (read_info.info_version < 9 && read_info.info_version != 0) // pre-version 18.0?
     {
@@ -581,7 +581,7 @@ static void backwards_info_pre9(FractalInfo read_info)
     }
 }
 
-static void backwards_legacy_v17_25(FractalInfo read_info)
+static void backwards_legacy_v17_25(const FractalInfo &read_info)
 {
     // pre-version 17.25
     if (g_file_version < 1725 && read_info.info_version != 0)
@@ -614,7 +614,7 @@ static void backwards_info10(FractalInfo read_info)
     }
 }
 
-static void backwards_info11(FractalInfo read_info)
+static void backwards_info11(const FractalInfo &read_info)
 {
     if (read_info.info_version > 10) // post-version 19.20
     {
@@ -635,7 +635,7 @@ static void backwards_info12(FractalInfo read_info)
     }
 }
 
-static void backwards_info13(FractalInfo read_info)
+static void backwards_info13(const FractalInfo &read_info)
 {
     if (read_info.info_version > 12) // post-version 19.60
     {
@@ -650,7 +650,7 @@ static void backwards_info13(FractalInfo read_info)
     }
 }
 
-static void backwards_info14(FractalInfo read_info)
+static void backwards_info14(const FractalInfo &read_info)
 {
     g_bof_match_book_images = true;
     if (read_info.info_version > 13) // post-version 20.1.2
@@ -665,7 +665,7 @@ static void backwards_info15()
     g_log_map_auto_calculate = false; // make sure it's turned off
 }
 
-static void backwards_info16(FractalInfo read_info)
+static void backwards_info16(const FractalInfo &read_info)
 {
     g_orbit_interval = 1;
     if (read_info.info_version > 15) // post-version 20.3.2
@@ -674,7 +674,7 @@ static void backwards_info16(FractalInfo read_info)
     }
 }
 
-static void backwards_info17(FractalInfo read_info)
+static void backwards_info17(const FractalInfo &read_info)
 {
     g_orbit_delay = 0;
     g_math_tol[0] = 0.05;
@@ -687,7 +687,7 @@ static void backwards_info17(FractalInfo read_info)
     }
 }
 
-static void backwards_id1_1(FractalInfo read_info)
+static void backwards_id1_1(const FractalInfo &read_info)
 {
     // Id 1.0 and 1.1 used a legacy info version but wrote new version into release field
     if (read_info.info_version == FRACTAL_INFO_VERSION_LEGACY_20_4)
@@ -699,7 +699,7 @@ static void backwards_id1_1(FractalInfo read_info)
     }
 }
 
-static void backwards_id1_2(FractalInfo read_info)
+static void backwards_id1_2(const FractalInfo &read_info)
 {
     // Id 1.2
     if (read_info.info_version > FRACTAL_INFO_VERSION_LEGACY_20_4)

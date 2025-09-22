@@ -58,7 +58,7 @@ void mouse_unsubscribe(const int id)
     s_subscribers.erase(id);
 }
 
-static void notify(std::function<void(const MouseNotificationPtr &)> handler)
+static void notify(const std::function<void(const MouseNotificationPtr &)> &handler)
 {
     {
         ValueSaver saved_inside_notification(s_inside_notification, true);
