@@ -662,7 +662,7 @@ void put_fractal_info(GifFileType *gif, const FractalInfo &info)
     ser.add_extension(gif, "fractint001");
 }
 
-FormulaInfo get_formula_info(GifFileType *gif)
+FormulaInfo get_formula_info(const GifFileType *gif)
 {
     FormulaInfo result{};
     ExtensionDeserializer<GIF_EXTENSION3_ITEM_NAME_INFO_LENGTH> deser(gif, "fractint003");
@@ -777,7 +777,7 @@ void put_extended_param_info(GifFileType *gif, const std::vector<char> &params)
         reinterpret_cast<unsigned char *>(const_cast<char *>(params.data())), static_cast<int>(params.size()));
 }
 
-EvolutionInfo get_evolution_info(GifFileType *gif)
+EvolutionInfo get_evolution_info(const GifFileType *gif)
 {
     EvolutionInfo result{};
     ExtensionDeserializer<GIF_EXTENSION6_EVOLVER_INFO_LENGTH> deser(gif, "fractint006");
@@ -831,7 +831,7 @@ void put_evolution_info(GifFileType *gif, const EvolutionInfo &info)
     ser.add_extension(gif, "fractint006");
 }
 
-OrbitsInfo get_orbits_info(GifFileType *gif)
+OrbitsInfo get_orbits_info(const GifFileType *gif)
 {
     OrbitsInfo result{};
     ExtensionDeserializer<GIF_EXTENSION7_ORBIT_INFO_LENGTH> deser(gif, "fractint007");
