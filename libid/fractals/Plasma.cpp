@@ -26,7 +26,12 @@ using namespace id::ui;
 namespace id::fractals
 {
 
-using PlotFn = void(*)(int, int, int);
+using PlotFn = void(*)(int x, int y, int color);
+
+PlotFn plot_cast(void (*f)(int x, int y, U16 color))
+{
+    return reinterpret_cast<PlotFn>(f);  // NOLINT(clang-diagnostic-cast-function-type-strict)
+}
 
 static constexpr U16 (*GET_COLOR)(int x, int y){
     [](const int x, const int y) { return static_cast<U16>(get_color(x, y)); }};
@@ -154,13 +159,13 @@ Plasma::Plasma() :
             m_max_plasma = 0xFFFF;
             if (g_outside_color >= COLOR_BLACK)
             {
-                g_plot    = reinterpret_cast<PlotFn>(put_pot_border);
+                g_plot = plot_cast(put_pot_border);
             }
             else
             {
-                g_plot    = reinterpret_cast<PlotFn>(put_pot);
+                g_plot = plot_cast(put_pot);
             }
-            m_get_pix =  get_pot;
+            m_get_pix = get_pot;
         }
         else
         {

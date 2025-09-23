@@ -203,6 +203,11 @@ AlternateMath g_alternate_math[] =
 // use next to cast orbitcalcs() that have arguments
 using VF = int (*)();
 
+VF orbit_cast(int (*f)(double *r, double *s, double *z))
+{
+    return reinterpret_cast<VF>(f); // NOLINT(clang-diagnostic-cast-function-type-strict)
+}
+
 // This array is indexed by the enum fractal_type.
 FractalSpecific g_fractal_specific[] = {
     /*
@@ -491,34 +496,34 @@ FractalSpecific g_fractal_specific[] = {
     },
 
     {
-        FractalType::KAM,                                                  //
-        "kamtorus",                                                        //
-        {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},                 //
-        {1.3, .05, 1.5, 150},                                              //
-        HelpLabels::HT_KAM, HelpLabels::HF_KAM,                            //
-        FractalFlags::NO_GUESS | FractalFlags::NO_TRACE,                   //
-        -1.0F, 1.0F, -.75F, .75F,                                          //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                  //
-        SymmetryType::NONE,                                                //
-        reinterpret_cast<VF>(kam_torus_orbit), nullptr, orbit3d_per_image, //
-        orbit2d_type,                                                      //
-        NO_BAILOUT                                                         //
+        FractalType::KAM,                                        //
+        "kamtorus",                                              //
+        {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},       //
+        {1.3, .05, 1.5, 150},                                    //
+        HelpLabels::HT_KAM, HelpLabels::HF_KAM,                  //
+        FractalFlags::NO_GUESS | FractalFlags::NO_TRACE,         //
+        -1.0F, 1.0F, -.75F, .75F,                                //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,        //
+        SymmetryType::NONE,                                      //
+        orbit_cast(kam_torus_orbit), nullptr, orbit3d_per_image, //
+        orbit2d_type,                                            //
+        NO_BAILOUT                                               //
     },
 
     {
-        FractalType::KAM_3D,                                               //
-        "kamtorus3d",                                                      //
-        {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},                 //
-        {1.3, .05, 1.5, 150},                                              //
-        HelpLabels::HT_KAM, HelpLabels::HF_KAM,                            //
+        FractalType::KAM_3D,                                     //
+        "kamtorus3d",                                            //
+        {KAM_ANGLE, KAM_STEP, KAM_STOP, POINTS_PER_ORBIT},       //
+        {1.3, .05, 1.5, 150},                                    //
+        HelpLabels::HT_KAM, HelpLabels::HF_KAM,                  //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME |
-            FractalFlags::PARAMS_3D,                                       //
-        -3.0F, 3.0F, -1.0F, 3.5F,                                          //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                  //
-        SymmetryType::NONE,                                                //
-        reinterpret_cast<VF>(kam_torus_orbit), nullptr, orbit3d_per_image, //
-        orbit3d_type,                                                      //
-        NO_BAILOUT                                                         //
+            FractalFlags::PARAMS_3D,                             //
+        -3.0F, 3.0F, -1.0F, 3.5F,                                //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,        //
+        SymmetryType::NONE,                                      //
+        orbit_cast(kam_torus_orbit), nullptr, orbit3d_per_image, //
+        orbit3d_type,                                            //
+        NO_BAILOUT                                               //
     },
 
     {
@@ -682,7 +687,7 @@ FractalSpecific g_fractal_specific[] = {
         -15.0F, 15.0F, 0.0F, 30.0F,                                               //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
-        reinterpret_cast<VF>(lorenz3d_orbit), nullptr, orbit3d_per_image,         //
+        orbit_cast(lorenz3d_orbit), nullptr, orbit3d_per_image,                   //
         orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
@@ -898,35 +903,35 @@ FractalSpecific g_fractal_specific[] = {
     },
 
     {
-        FractalType::LORENZ_3D,                                           //
-        "lorenz3d",                                                       //
-        {TIME_STEP, "a", "b", "c"},                                       //
-        {.02, 5, 15, 1},                                                  //
-        HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ,                     //
+        FractalType::LORENZ_3D,                                 //
+        "lorenz3d",                                             //
+        {TIME_STEP, "a", "b", "c"},                             //
+        {.02, 5, 15, 1},                                        //
+        HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ,           //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME | FractalFlags::PARAMS_3D |
-            FractalFlags::INF_CALC,                                       //
-        -30.0F, 30.0F, -30.0F, 30.0F,                                     //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                 //
-        SymmetryType::NONE,                                               //
-        reinterpret_cast<VF>(lorenz3d_orbit), nullptr, orbit3d_per_image, //
-        orbit3d_type,                                                     //
-        NO_BAILOUT                                                        //
+            FractalFlags::INF_CALC,                             //
+        -30.0F, 30.0F, -30.0F, 30.0F,                           //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,       //
+        SymmetryType::NONE,                                     //
+        orbit_cast(lorenz3d_orbit), nullptr, orbit3d_per_image, //
+        orbit3d_type,                                           //
+        NO_BAILOUT                                              //
     },
 
     {
-        FractalType::ROSSLER,                                            //
-        "rossler3d",                                                     //
-        {TIME_STEP, "a", "b", "c"},                                      //
-        {.04, .2, .2, 5.7},                                              //
-        HelpLabels::HT_ROSSLER, HelpLabels::HF_ROSSLER,                  //
+        FractalType::ROSSLER,                                  //
+        "rossler3d",                                           //
+        {TIME_STEP, "a", "b", "c"},                            //
+        {.04, .2, .2, 5.7},                                    //
+        HelpLabels::HT_ROSSLER, HelpLabels::HF_ROSSLER,        //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME | FractalFlags::PARAMS_3D |
-            FractalFlags::INF_CALC,                                      //
-        -30.0F, 30.0F, -20.0F, 40.0F,                                    //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                //
-        SymmetryType::NONE,                                              //
-        reinterpret_cast<VF>(rossler_orbit), nullptr, orbit3d_per_image, //
-        orbit3d_type,                                                    //
-        NO_BAILOUT                                                       //
+            FractalFlags::INF_CALC,                            //
+        -30.0F, 30.0F, -20.0F, 40.0F,                          //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,      //
+        SymmetryType::NONE,                                    //
+        orbit_cast(rossler_orbit), nullptr, orbit3d_per_image, //
+        orbit3d_type,                                          //
+        NO_BAILOUT                                             //
     },
 
     {
@@ -939,25 +944,25 @@ FractalSpecific g_fractal_specific[] = {
         -1.4F, 1.4F, -.5F, .5F,                                                   //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
-        reinterpret_cast<VF>(henon_orbit), nullptr, orbit3d_per_image,            //
+        orbit_cast(henon_orbit), nullptr, orbit3d_per_image,                      //
         orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
 
     {
-        FractalType::PICKOVER,                                            //
-        "pickover",                                                       //
-        {"a", "b", "c", "d"},                                             //
-        {2.24, .43, -.65, -2.43},                                         //
-        HelpLabels::HT_PICKOVER, HelpLabels::HF_PICKOVER,                 //
+        FractalType::PICKOVER,                                  //
+        "pickover",                                             //
+        {"a", "b", "c", "d"},                                   //
+        {2.24, .43, -.65, -2.43},                               //
+        HelpLabels::HT_PICKOVER, HelpLabels::HF_PICKOVER,       //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME |
-            FractalFlags::PARAMS_3D,                                      //
-        -8.0F / 3.0F, 8.0F / 3.0F, -2.0F, 2.0F,                           //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                 //
-        SymmetryType::NONE,                                               //
-        reinterpret_cast<VF>(pickover_orbit), nullptr, orbit3d_per_image, //
-        orbit3d_type,                                                     //
-        NO_BAILOUT                                                        //
+            FractalFlags::PARAMS_3D,                            //
+        -8.0F / 3.0F, 8.0F / 3.0F, -2.0F, 2.0F,                 //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,       //
+        SymmetryType::NONE,                                     //
+        orbit_cast(pickover_orbit), nullptr, orbit3d_per_image, //
+        orbit3d_type,                                           //
+        NO_BAILOUT                                              //
     },
 
     {
@@ -970,7 +975,7 @@ FractalSpecific g_fractal_specific[] = {
         -4.5F, 8.5F, -4.5F, 8.5F,                                                 //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
-        reinterpret_cast<VF>(ginger_bread_orbit), nullptr, orbit3d_per_image,     //
+        orbit_cast(ginger_bread_orbit), nullptr, orbit3d_per_image,               //
         orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
@@ -1260,7 +1265,7 @@ FractalSpecific g_fractal_specific[] = {
         -2.0F, 3.0F, -1.625F, 2.625F,                                             //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
-        reinterpret_cast<VF>(hopalong2d_orbit), nullptr, orbit3d_per_image,       //
+        orbit_cast(hopalong2d_orbit), nullptr, orbit3d_per_image,                 //
         orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
@@ -1290,7 +1295,7 @@ FractalSpecific g_fractal_specific[] = {
         -32.0F, 32.0F, -24.0F, 24.0F,                                             //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
-        reinterpret_cast<VF>(martin2d_orbit), nullptr, orbit3d_per_image,         //
+        orbit_cast(martin2d_orbit), nullptr, orbit3d_per_image,                   //
         orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
@@ -1311,51 +1316,51 @@ FractalSpecific g_fractal_specific[] = {
     },
 
     {
-        FractalType::LORENZ_3D1,                                           //
-        "lorenz3d1",                                                       //
-        {TIME_STEP, "a", "b", "c"},                                        //
-        {.02, 5, 15, 1},                                                   //
-        HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D1,                  //
+        FractalType::LORENZ_3D1,                                 //
+        "lorenz3d1",                                             //
+        {TIME_STEP, "a", "b", "c"},                              //
+        {.02, 5, 15, 1},                                         //
+        HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D1,        //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME | FractalFlags::PARAMS_3D |
-            FractalFlags::INF_CALC,                                        //
-        -30.0F, 30.0F, -30.0F, 30.0F,                                      //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                  //
-        SymmetryType::NONE,                                                //
-        reinterpret_cast<VF>(lorenz3d1_orbit), nullptr, orbit3d_per_image, //
-        orbit3d_type,                                                      //
-        NO_BAILOUT                                                         //
+            FractalFlags::INF_CALC,                              //
+        -30.0F, 30.0F, -30.0F, 30.0F,                            //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,        //
+        SymmetryType::NONE,                                      //
+        orbit_cast(lorenz3d1_orbit), nullptr, orbit3d_per_image, //
+        orbit3d_type,                                            //
+        NO_BAILOUT                                               //
     },
 
     {
-        FractalType::LORENZ_3D3,                                           //
-        "lorenz3d3",                                                       //
-        {TIME_STEP, "a", "b", "c"},                                        //
-        {.02, 10, 28, 2.66},                                               //
-        HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D3,                  //
+        FractalType::LORENZ_3D3,                                 //
+        "lorenz3d3",                                             //
+        {TIME_STEP, "a", "b", "c"},                              //
+        {.02, 10, 28, 2.66},                                     //
+        HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D3,        //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME | FractalFlags::PARAMS_3D |
-            FractalFlags::INF_CALC,                                        //
-        -30.0F, 30.0F, -30.0F, 30.0F,                                      //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                  //
-        SymmetryType::NONE,                                                //
-        reinterpret_cast<VF>(lorenz3d3_orbit), nullptr, orbit3d_per_image, //
-        orbit3d_type,                                                      //
-        NO_BAILOUT                                                         //
+            FractalFlags::INF_CALC,                              //
+        -30.0F, 30.0F, -30.0F, 30.0F,                            //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,        //
+        SymmetryType::NONE,                                      //
+        orbit_cast(lorenz3d3_orbit), nullptr, orbit3d_per_image, //
+        orbit3d_type,                                            //
+        NO_BAILOUT                                               //
     },
 
     {
-        FractalType::LORENZ_3D4,                                           //
-        "lorenz3d4",                                                       //
-        {TIME_STEP, "a", "b", "c"},                                        //
-        {.02, 10, 28, 2.66},                                               //
-        HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D4,                  //
+        FractalType::LORENZ_3D4,                                 //
+        "lorenz3d4",                                             //
+        {TIME_STEP, "a", "b", "c"},                              //
+        {.02, 10, 28, 2.66},                                     //
+        HelpLabels::HT_LORENZ, HelpLabels::HF_LORENZ_3D4,        //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::NO_RESUME | FractalFlags::PARAMS_3D |
-            FractalFlags::INF_CALC,                                        //
-        -30.0F, 30.0F, -30.0F, 30.0F,                                      //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                  //
-        SymmetryType::NONE,                                                //
-        reinterpret_cast<VF>(lorenz3d4_orbit), nullptr, orbit3d_per_image, //
-        orbit3d_type,                                                      //
-        NO_BAILOUT                                                         //
+            FractalFlags::INF_CALC,                              //
+        -30.0F, 30.0F, -30.0F, 30.0F,                            //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,        //
+        SymmetryType::NONE,                                      //
+        orbit_cast(lorenz3d4_orbit), nullptr, orbit3d_per_image, //
+        orbit3d_type,                                            //
+        NO_BAILOUT                                               //
     },
 
     {
@@ -1458,7 +1463,7 @@ FractalSpecific g_fractal_specific[] = {
         -20.0F, 20.0F, -20.0F, 20.0F,                                           //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                       //
         SymmetryType::NONE,                                                     //
-        reinterpret_cast<VF>(dynamic_orbit), nullptr, dynamic2d_per_image,      //
+        orbit_cast(dynamic_orbit), nullptr, dynamic2d_per_image,                //
         dynamic2d_type,                                                         //
         NO_BAILOUT                                                              //
     },
@@ -1559,18 +1564,18 @@ FractalSpecific g_fractal_specific[] = {
 #endif
 
     {
-        FractalType::MANDEL_CLOUD,                                              //
-        "mandelcloud",                                                          //
-        {"+# of intervals (<0 = connect)", "", "", ""},                         //
-        {50, 0, 0, 0},                                                          //
-        HelpLabels::HT_MANDEL_CLOUD, HelpLabels::HF_MANDEL_CLOUD,               //
-        FractalFlags::NO_GUESS | FractalFlags::NO_TRACE,                        //
-        -2.5F, 1.5F, -1.5F, 1.5F,                                               //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                       //
-        SymmetryType::NONE,                                                     //
-        reinterpret_cast<VF>(mandel_cloud_orbit), nullptr, dynamic2d_per_image, //
-        dynamic2d_type,                                                         //
-        NO_BAILOUT                                                              //
+        FractalType::MANDEL_CLOUD,                                    //
+        "mandelcloud",                                                //
+        {"+# of intervals (<0 = connect)", "", "", ""},               //
+        {50, 0, 0, 0},                                                //
+        HelpLabels::HT_MANDEL_CLOUD, HelpLabels::HF_MANDEL_CLOUD,     //
+        FractalFlags::NO_GUESS | FractalFlags::NO_TRACE,              //
+        -2.5F, 1.5F, -1.5F, 1.5F,                                     //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,             //
+        SymmetryType::NONE,                                           //
+        orbit_cast(mandel_cloud_orbit), nullptr, dynamic2d_per_image, //
+        dynamic2d_type,                                               //
+        NO_BAILOUT                                                    //
     },
 
     {
@@ -1718,25 +1723,25 @@ FractalSpecific g_fractal_specific[] = {
         -2.0F, 2.0F, -1.5F, 1.5F,                                                                      //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                              //
         SymmetryType::NONE,                                                                            //
-        reinterpret_cast<VF>(icon_orbit), nullptr, orbit3d_per_image,                                  //
+        orbit_cast(icon_orbit), nullptr, orbit3d_per_image,                                            //
         orbit2d_type,                                                                                  //
         NO_BAILOUT                                                                                     //
     },
 
     {
-        FractalType::ICON_3D,                                         //
-        "icons3d",                                                    //
-        {"Lambda", "Alpha", "Beta", "Gamma"},                         //
-        {-2.34, 2.0, 0.2, 0.1},                                       //
-        HelpLabels::HT_ICON, HelpLabels::HF_ICON,                     //
+        FractalType::ICON_3D,                               //
+        "icons3d",                                          //
+        {"Lambda", "Alpha", "Beta", "Gamma"},               //
+        {-2.34, 2.0, 0.2, 0.1},                             //
+        HelpLabels::HT_ICON, HelpLabels::HF_ICON,           //
         FractalFlags::NO_GUESS | FractalFlags::NO_TRACE | FractalFlags::INF_CALC | FractalFlags::PARAMS_3D |
-            FractalFlags::MORE,                                       //
-        -2.0F, 2.0F, -1.5F, 1.5F,                                     //
-        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,             //
-        SymmetryType::NONE,                                           //
-        reinterpret_cast<VF>(icon_orbit), nullptr, orbit3d_per_image, //
-        orbit3d_type,                                                 //
-        NO_BAILOUT                                                    //
+            FractalFlags::MORE,                             //
+        -2.0F, 2.0F, -1.5F, 1.5F,                           //
+        FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,   //
+        SymmetryType::NONE,                                 //
+        orbit_cast(icon_orbit), nullptr, orbit3d_per_image, //
+        orbit3d_type,                                       //
+        NO_BAILOUT                                          //
     },
 
     {
@@ -1800,7 +1805,7 @@ FractalSpecific g_fractal_specific[] = {
         -760.0F, 760.0F, -570.0F, 570.0F,                                         //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
-        reinterpret_cast<VF>(chip2d_orbit), nullptr, orbit3d_per_image,           //
+        orbit_cast(chip2d_orbit), nullptr, orbit3d_per_image,                     //
         orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
@@ -1815,7 +1820,7 @@ FractalSpecific g_fractal_specific[] = {
         -82.93367F, 112.2749F, -55.76383F, 90.64257F,                             //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
-        reinterpret_cast<VF>(quadrup_two2d_orbit), nullptr, orbit3d_per_image,    //
+        orbit_cast(quadrup_two2d_orbit), nullptr, orbit3d_per_image,              //
         orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
@@ -1830,7 +1835,7 @@ FractalSpecific g_fractal_specific[] = {
         -8000.0F, 8000.0F, -6000.0F, 6000.0F,                                     //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                         //
         SymmetryType::NONE,                                                       //
-        reinterpret_cast<VF>(three_ply2d_orbit), nullptr, orbit3d_per_image,      //
+        orbit_cast(three_ply2d_orbit), nullptr, orbit3d_per_image,                //
         orbit2d_type,                                                             //
         NO_BAILOUT                                                                //
     },
@@ -1878,7 +1883,7 @@ FractalSpecific g_fractal_specific[] = {
         -2.0F, 2.0F, -1.5F, 1.5F,                                                                       //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                                               //
         SymmetryType::NONE,                                                                             //
-        reinterpret_cast<VF>(latoo_orbit), nullptr, orbit3d_per_image,                                  //
+        orbit_cast(latoo_orbit), nullptr, orbit3d_per_image,                                            //
         orbit2d_type,                                                                                   //
         NO_BAILOUT                                                                                      //
     },
