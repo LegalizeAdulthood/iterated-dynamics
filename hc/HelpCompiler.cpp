@@ -489,31 +489,31 @@ void HelpCompiler::set_content_doc_page()
 // this function also used by print_document()
 static bool pd_get_info(const PrintDocCommand cmd, ProcessDocumentInfo *pd, void *context)
 {
-    DocInfo &info = *static_cast<DocInfo *>(context);
+    auto &[content_num, topic_num, link_dest_warn] = *static_cast<DocInfo *>(context);
     const Content *c;
 
     switch (cmd)
     {
     case PrintDocCommand::PD_GET_CONTENT:
-        if (++info.content_num >= static_cast<int>(g_src.contents.size()))
+        if (++content_num >= static_cast<int>(g_src.contents.size()))
         {
             return false;
         }
-        c = &g_src.contents[info.content_num];
-        info.topic_num = -1;
+        c = &g_src.contents[content_num];
+        topic_num = -1;
         pd->id       = c->id.c_str();
         pd->title    = c->name.c_str();
         pd->new_page = (c->flags & CF_NEW_PAGE) != 0;
         return true;
 
     case PrintDocCommand::PD_GET_TOPIC:
-        c = &g_src.contents[info.content_num];
-        if (++info.topic_num >= c->num_topic)
+        c = &g_src.contents[content_num];
+        if (++topic_num >= c->num_topic)
         {
             return false;
         }
-        pd->curr = g_src.topics[c->topic_num[info.topic_num]].get_topic_text();
-        pd->len = g_src.topics[c->topic_num[info.topic_num]].text_len;
+        pd->curr = g_src.topics[c->topic_num[topic_num]].get_topic_text();
+        pd->len = g_src.topics[c->topic_num[topic_num]].text_len;
         return true;
 
     case PrintDocCommand::PD_GET_LINK_PAGE:
@@ -521,7 +521,7 @@ static bool pd_get_info(const PrintDocCommand cmd, ProcessDocumentInfo *pd, void
         const Link &link = g_src.all_links[get_int(pd->s)];
         if (link.doc_page == -1)
         {
-            if (info.link_dest_warn)
+            if (link_dest_warn)
             {
                 g_current_src_filename = link.src_file;
                 g_src_line    = link.src_line;
@@ -536,8 +536,8 @@ static bool pd_get_info(const PrintDocCommand cmd, ProcessDocumentInfo *pd, void
     }
 
     case PrintDocCommand::PD_RELEASE_TOPIC:
-        c = &g_src.contents[info.content_num];
-        g_src.topics[c->topic_num[info.topic_num]].release_topic_text(false);
+        c = &g_src.contents[content_num];
+        g_src.topics[c->topic_num[topic_num]].release_topic_text(false);
         return true;
 
     default:
@@ -820,10 +820,10 @@ void HelpCompiler::write_link_source()
             }
             return "id.html#_" + text;
         };
-        for (std::pair<int, Label> &item : topics)
+        for (const auto &[topic_num, label] : topics)
         {
-            src << "    HelpLink{ id::help::HelpLabels::" << item.second.name << ", \""
-                      << link_for_title(g_src.topics[item.first].title) << "\" },\n";
+            src << "    HelpLink{ id::help::HelpLabels::" << label.name << ", \""
+                      << link_for_title(g_src.topics[topic_num].title) << "\" },\n";
         }
         src << "};\n"
                "\n"
@@ -953,11 +953,11 @@ void HelpCompiler::write_help(std::FILE *file)
         // write offset, length and starting margin for each page
 
         putw(tp.num_page, file);
-        for (const Page &p : tp.page)
+        for (const auto &[offset, length, margin] : tp.page)
         {
-            putw(p.offset, file);
-            putw(p.length, file);
-            putw(p.margin, file);
+            putw(offset, file);
+            putw(length, file);
+            putw(margin, file);
         }
 
         // write the help title

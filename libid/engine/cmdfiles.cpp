@@ -2252,22 +2252,23 @@ static CmdArgFlags cmd_inside(const Command &cmd)
         std::string_view arg;
         int inside;
     };
+
     const Inside inside_names[] = {
-        {"zmag", ZMAG},             //
-        {"bof60", BOF60},           //
-        {"bof61", BOF61},           //
+        {"zmag", ZMAG},              //
+        {"bof60", BOF60},            //
+        {"bof61", BOF61},            //
         {"epsiloncross", EPS_CROSS}, //
         {"startrail", STAR_TRAIL},   //
-        {"period", PERIOD},         //
-        {"fmod", FMODI},            //
-        {"atan", ATANI},            //
-        {"maxiter", -1}             //
+        {"period", PERIOD},          //
+        {"fmod", FMODI},             //
+        {"atan", ATANI},             //
+        {"maxiter", -1}              //
     };
-    for (const Inside &arg : inside_names)
+    for (const auto &[arg, inside] : inside_names)
     {
-        if (arg.arg == cmd.value)
+        if (arg == cmd.value)
         {
-            g_inside_color = arg.inside;
+            g_inside_color = inside;
             return CmdArgFlags::FRACTAL_PARAM;
         }
     }
@@ -2799,11 +2800,11 @@ static CmdArgFlags cmd_outside(const Command &cmd)
         {"fmod", FMOD}, //
         {"tdis", TDIS}  //
     };
-    for (const Outside &arg : OUTSIDES)
+    for (const auto &[arg, outside] : OUTSIDES)
     {
-        if (cmd.value == arg.arg)
+        if (cmd.value == arg)
         {
-            g_outside_color = arg.outside;
+            g_outside_color = outside;
             return CmdArgFlags::FRACTAL_PARAM;
         }
     }
@@ -3087,8 +3088,8 @@ namespace
 
 struct RayTraceFormatValue
 {
-    std::string_view name;
-    RayTraceFormat value;
+    std::string_view arg;
+    RayTraceFormat format;
 };
 
 constexpr RayTraceFormatValue RAYTRACE_FORMATS[]{
@@ -3110,11 +3111,11 @@ static CmdArgFlags cmd_ray(const Command &cmd)
 {
     if (cmd.num_val == NON_NUMERIC)
     {
-        for (const RayTraceFormatValue &name_value : RAYTRACE_FORMATS)
+        for (const auto &[arg, format] : RAYTRACE_FORMATS)
         {
-            if (name_value.name == cmd.value)
+            if (arg == cmd.value)
             {
-                g_raytrace_format = name_value.value;
+                g_raytrace_format = format;
                 break;
             }
         }

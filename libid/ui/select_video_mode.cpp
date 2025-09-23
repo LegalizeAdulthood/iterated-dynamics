@@ -258,13 +258,13 @@ static void update_id_cfg()
         // replace this line?
         if (line_num == next_line_num)
         {
-            VideoInfo video_entry = g_video_table[next_mode];
+            const auto [key, x_dots, y_dots, colors, driver, comment] = g_video_table[next_mode];
             std::fprintf(out_file, "%-4s,%4d,%5d,%3d,%s,%s\n", //
-                vid_mode_key_name(video_entry.key).c_str(),    //
-                video_entry.x_dots, video_entry.y_dots,        //
-                video_entry.colors,                            //
-                video_entry.driver->get_name().c_str(),        //
-                video_entry.comment);
+                vid_mode_key_name(key).c_str(),                //
+                x_dots, y_dots,                                //
+                colors,                                        //
+                driver->get_name().c_str(),                    //
+                comment);
             if (++next_mode >= g_video_table_len)
             {
                 next_line_num = 32767;
