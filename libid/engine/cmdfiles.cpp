@@ -4178,7 +4178,7 @@ static int get_max_cur_arg_len(const char *const float_val_str[], const int num_
 
 static std::string to_string(CmdFile value)
 {
-    static constexpr char *const mode_str[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
+    static constexpr const char *const mode_str[4] = {"command line", "sstools.ini", "PAR file", "PAR file"};
     return mode_str[static_cast<int>(value)];
 }
 
