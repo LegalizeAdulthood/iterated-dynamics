@@ -4114,7 +4114,7 @@ TEST_F(TestParameterCommand, colorRangeHexValues)
 
     exec_cmd_arg("colors=000<4>#ffffff");
 
-    const Byte values[6]{0x00U, 0x33U, 0x66U, 0x99U, 0xCCU, 0xFFU};
+    constexpr Byte values[6]{0x00U, 0x33U, 0x66U, 0x99U, 0xCCU, 0xFFU};
     for (int i = 0; i < 6; ++i)
     {
         EXPECT_EQ(values[i], g_dac_box[i][0]);
