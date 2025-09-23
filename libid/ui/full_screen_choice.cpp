@@ -186,7 +186,7 @@ int full_screen_choice(ChoiceFlags flags,                            //
         current = 0;
         if (bit_set(flags, ChoiceFlags::NOT_SORTED))
         {
-            int k;
+            int k{-1};
             while (current < num_choices && (k = string_case_compare(speed_string, choices[current], speed_len)) != 0)
             {
                 ++current;
@@ -198,7 +198,7 @@ int full_screen_choice(ChoiceFlags flags,                            //
         }
         else
         {
-            int k;
+            int k{1};
             while (current < num_choices && (k = string_case_compare(speed_string, choices[current], speed_len)) > 0)
             {
                 ++current;
