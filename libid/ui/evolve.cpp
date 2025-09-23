@@ -383,9 +383,9 @@ void vary_bo_test(GeneBase gene[], const int rand_val, const int i)
 
 void vary_pwr2(GeneBase gene[], const int rand_val, const int i)
 {
-    int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
     if (gene[i].mutate != Variations::NONE)
     {
+        constexpr int choices[9] = {0, 2, 4, 8, 16, 32, 64, 128, 256};
         *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
     }
 }

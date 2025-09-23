@@ -21,8 +21,6 @@ namespace id::engine
 
 void get_julia_attractor(const double real, const double imag)
 {
-    DComplex result{};
-
     if (g_attractors == 0 && !g_finite_attractor)   // not magnet & not requested
     {
         return;
@@ -54,15 +52,15 @@ void get_julia_attractor(const double real, const double imag)
     }
     if (g_color_iter >= g_max_iterations)      // if orbit stays in the lake
     {
-        result = g_new_z;
+        const DComplex prev_z = g_new_z;
         for (int i = 0; i < 10; i++)
         {
             g_overflow = false;
             if (!g_cur_fractal_specific->orbit_calc() && !g_overflow) // if it stays in the lake
             {
                 // and doesn't move far, probably found a finite attractor
-                if (std::abs(result.x - g_new_z.x) < g_close_enough &&
-                    std::abs(result.y - g_new_z.y) < g_close_enough)
+                if (std::abs(prev_z.x - g_new_z.x) < g_close_enough &&
+                    std::abs(prev_z.y - g_new_z.y) < g_close_enough)
                 {
                     g_attractor[g_attractors] = g_new_z;
                     g_attractor_period[g_attractors] = i + 1;
