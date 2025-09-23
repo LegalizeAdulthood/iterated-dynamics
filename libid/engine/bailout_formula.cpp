@@ -89,8 +89,8 @@ static int fp_manh_bailout()
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    double manh_mag = std::abs(g_new_z.x) + std::abs(g_new_z.y);
-    if (manh_mag * manh_mag >= g_magnitude_limit)
+    if (const double manh_mag = std::abs(g_new_z.x) + std::abs(g_new_z.y);
+        manh_mag * manh_mag >= g_magnitude_limit)
     {
         return 1;
     }
@@ -103,8 +103,7 @@ static int fp_manr_bailout()
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
-    double manr_mag = g_new_z.x + g_new_z.y; // don't need abs() since we square it next
-    if (manr_mag * manr_mag >= g_magnitude_limit)
+    if (const double manr_mag = g_new_z.x + g_new_z.y; manr_mag * manr_mag >= g_magnitude_limit)
     {
         return 1;
     }
@@ -126,8 +125,8 @@ static int bn_mod_bailout()
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_tmp_sqr_x_bn+g_shift_factor, g_tmp_sqr_y_bn+g_shift_factor);
 
-    long long_magnitude = bn_to_int(g_bn_tmp);  // works with any fractal type
-    if (long_magnitude >= static_cast<long>(g_magnitude_limit))
+    if (const long long_magnitude = bn_to_int(g_bn_tmp);
+        long_magnitude >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -140,8 +139,8 @@ static int bn_real_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
-    if (long_temp_sqr_x >= static_cast<long>(g_magnitude_limit))
+    if (const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
+        long_temp_sqr_x >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -154,8 +153,8 @@ static int bn_imag_bailout()
 {
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
-    long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
+    if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
+        long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -169,8 +168,8 @@ static int bn_or_bailout()
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
-    long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) || long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
+    if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
+        long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) || long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -184,8 +183,8 @@ static int bn_and_bailout()
     square_bn(g_tmp_sqr_x_bn, g_new_z_bn.x);
     square_bn(g_tmp_sqr_y_bn, g_new_z_bn.y);
     const long long_temp_sqr_x = bn_to_int(g_tmp_sqr_x_bn + g_shift_factor);
-    long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
-    if (long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) && long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
+    if (const long long_temp_sqr_y = bn_to_int(g_tmp_sqr_y_bn + g_shift_factor);
+        long_temp_sqr_x >= static_cast<long>(g_magnitude_limit) && long_temp_sqr_y >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -203,8 +202,8 @@ static int bn_manh_bailout()
     abs_bn(g_old_z_bn.y, g_new_z_bn.y);
     add_bn(g_bn_tmp, g_old_z_bn.x, g_old_z_bn.y);
     square_bn(g_old_z_bn.x, g_bn_tmp);
-    long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
-    if (long_temp_mag >= static_cast<long>(g_magnitude_limit))
+    if (const long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
+        long_temp_mag >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }
@@ -220,8 +219,8 @@ static int bn_manr_bailout()
     add_bn(g_bn_tmp, g_new_z_bn.x, g_new_z_bn.y); // don't need abs since we square it next
     // note: in next two lines, g_old_z_bn is just used as a temporary variable
     square_bn(g_old_z_bn.x, g_bn_tmp);
-    long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
-    if (long_temp_mag >= static_cast<long>(g_magnitude_limit))
+    if (const long long_temp_mag = bn_to_int(g_old_z_bn.x + g_shift_factor);
+        long_temp_mag >= static_cast<long>(g_magnitude_limit))
     {
         return 1;
     }

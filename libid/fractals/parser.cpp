@@ -657,8 +657,7 @@ static const char *parse_error_text(ParseError which)
         R"msg(Only one ":" permitted in a formula)msg",
         "Invalid ParseErrs code",
     };
-    constexpr int last_err = std::size(MESSAGES) - 1;
-    if (+which > last_err)
+    if (constexpr int last_err = std::size(MESSAGES) - 1; +which > last_err)
     {
         which = static_cast<ParseError>(last_err);
     }

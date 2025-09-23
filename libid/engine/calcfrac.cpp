@@ -273,8 +273,7 @@ void sym_fill_line(const int row, const int left, const int right, const Byte *s
     }
     else if (g_plot == sym_plot2)   // X-axis symmetry
     {
-        int i = g_stop_pt.y-(row-g_start_pt.y);
-        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+        if (int i = g_stop_pt.y - (row - g_start_pt.y); i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
         {
             write_span(i, left, right, str);
             g_keyboard_check_interval -= length >> 3;
@@ -338,8 +337,8 @@ static void sym_put_line(const int row, const int left, const int right, const B
     }
     else if (g_plot == sym_plot2)   // X-axis symmetry
     {
-        int i = g_stop_pt.y-(row-g_start_pt.y);
-        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+        if (const int i = g_stop_pt.y - (row - g_start_pt.y);
+            i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
         {
             write_span(i, left, right, str);
         }
@@ -451,8 +450,7 @@ static int calc_type_show_dot()
     int start_x = g_col;
     int stop_y = g_row;
     int start_y = g_row;
-    int width = s_show_dot_width + 1;
-    if (width > 0)
+    if (const int width = s_show_dot_width + 1; width > 0)
     {
         if (g_col+width <= g_i_stop_pt.x && g_row+width <= g_i_stop_pt.y)
         {
@@ -1066,11 +1064,10 @@ static void perform_work_list()
             }
             else
             {
-                const double width = static_cast<double>(g_size_dot) * g_logical_screen_x_dots / 1024.0;
-
                 // Arbitrary sanity limit, however s_show_dot_width will
                 // overflow if width gets near 256.
-                if (width > 150.0)
+                if (const double width = static_cast<double>(g_size_dot) * g_logical_screen_x_dots / 1024.0;
+                    width > 150.0)
                 {
                     s_show_dot_width = 150;
                 }
@@ -1554,8 +1551,7 @@ int standard_fractal_type()
             }
             else if (g_inside_color == FMODI)
             {
-                double mag = fmod_test();
-                if (mag < g_close_proximity)
+                if (const double mag = fmod_test(); mag < g_close_proximity)
                 {
                     mem_value = mag;
                 }
@@ -1585,8 +1581,7 @@ int standard_fractal_type()
             }
             else if (g_outside_color == FMOD)
             {
-                double mag = fmod_test();
-                if (mag < g_close_proximity)
+                if (const double mag = fmod_test(); mag < g_close_proximity)
                 {
                     mem_value = mag;
                 }
@@ -1869,8 +1864,7 @@ plot_inside: // we're "inside"
             g_color_iter = 0;
             for (int i = 1; i < 16; i++)
             {
-                const double diff = tan_table[0] - tan_table[i];
-                if (std::abs(diff) < .05)
+                if (const double diff = tan_table[0] - tan_table[i]; std::abs(diff) < .05)
                 {
                     g_color_iter = i;
                     break;
@@ -2145,8 +2139,8 @@ int potential(const double mag, const long iterations)
         }
         else   // pot = log(mag) / pow(2.0, (double)pot);
         {
-            double d_tmp = std::log(mag) / std::pow(2.0, static_cast<double>(pot));
-            if (d_tmp > FLT_MIN) // prevent float type underflow
+            if (const double d_tmp = std::log(mag) / std::pow(2.0, static_cast<double>(pot));
+                d_tmp > FLT_MIN) // prevent float type underflow
             {
                 pot = static_cast<float>(d_tmp);
             }
@@ -2763,9 +2757,9 @@ void sym_pi_plot2j(int x, const int y, const int color)
     while (x <= g_stop_pt.x)
     {
         g_put_color(x, y, color) ;
-        int i = g_stop_pt.y - (y - g_start_pt.y);
-        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots
-            && (j = g_stop_pt.x-(x-g_start_pt.x)) < g_logical_screen_x_dots)
+        if (int i = g_stop_pt.y - (y - g_start_pt.y); //
+            i > g_i_stop_pt.y && i < g_logical_screen_y_dots &&
+            (j = g_stop_pt.x - (x - g_start_pt.x)) < g_logical_screen_x_dots)
         {
             g_put_color(j, i, color) ;
         }
@@ -2784,8 +2778,8 @@ void sym_pi_plot4j(int x, const int y, const int color)
         {
             g_put_color(j , y , color) ;
         }
-        int i = g_stop_pt.y - (y - g_start_pt.y);
-        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+        if (int i = g_stop_pt.y - (y - g_start_pt.y); //
+            i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
         {
             g_put_color(x , i , color) ;
             if (j < g_logical_screen_x_dots)
@@ -2801,8 +2795,8 @@ void sym_pi_plot4j(int x, const int y, const int color)
 void sym_plot2(const int x, const int y, const int color)
 {
     g_put_color(x, y, color) ;
-    int i = g_stop_pt.y - (y - g_start_pt.y);
-    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+    if (int i = g_stop_pt.y - (y - g_start_pt.y); //
+        i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
     {
         g_put_color(x, i, color) ;
     }
@@ -2812,8 +2806,8 @@ void sym_plot2(const int x, const int y, const int color)
 void sym_plot2y(const int x, const int y, const int color)
 {
     g_put_color(x, y, color) ;
-    int i = g_stop_pt.x - (x - g_start_pt.x);
-    if (i < g_logical_screen_x_dots)
+    if (int i = g_stop_pt.x - (x - g_start_pt.x); //
+        i < g_logical_screen_x_dots)
     {
         g_put_color(i, y, color) ;
     }
@@ -2822,11 +2816,10 @@ void sym_plot2y(const int x, const int y, const int color)
 // Symmetry plot for Origin Symmetry
 void sym_plot2j(const int x, const int y, const int color)
 {
-    int j;
-    g_put_color(x, y, color) ;
-    int i = g_stop_pt.y - (y - g_start_pt.y);
-    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots
-        && (j = g_stop_pt.x-(x-g_start_pt.x)) < g_logical_screen_x_dots)
+    g_put_color(x, y, color);
+    const int i = g_stop_pt.y - (y - g_start_pt.y);
+    const int j = g_stop_pt.x - (x - g_start_pt.x);
+    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots && j < g_logical_screen_x_dots)
     {
         g_put_color(j, i, color) ;
     }
@@ -2839,9 +2832,9 @@ void sym_plot4(const int x, const int y, const int color)
     g_put_color(x , y, color) ;
     if (j < g_logical_screen_x_dots)
     {
-        g_put_color(j , y, color) ;
+        g_put_color(j, y, color);
     }
-    int i = g_stop_pt.y - (y - g_start_pt.y);
+    const int i = g_stop_pt.y - (y - g_start_pt.y);
     if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
     {
         g_put_color(x , i, color) ;
@@ -2865,7 +2858,7 @@ void sym_plot2_basin(const int x, const int y, int color)
     {
         stripe = 0;
     }
-    int i = g_stop_pt.y - (y - g_start_pt.y);
+    const int i = g_stop_pt.y - (y - g_start_pt.y);
     if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
     {
         color -= stripe;                    // reconstruct unstriped color
@@ -2906,9 +2899,9 @@ void sym_plot4_basin(const int x, const int y, int color)
     g_put_color(x, y, color+stripe) ;
     if (j < g_logical_screen_x_dots)
     {
-        g_put_color(j, y, color1+stripe) ;
+        g_put_color(j, y, color1 + stripe);
     }
-    int i = g_stop_pt.y - (y - g_start_pt.y);
+    const int i = g_stop_pt.y - (y - g_start_pt.y);
     if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
     {
         g_put_color(x, i, stripe + (g_degree+1 - color)%g_degree+1) ;

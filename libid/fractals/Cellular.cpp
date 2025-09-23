@@ -391,8 +391,7 @@ std::string Cellular::error(const int err, int t) const
     case RULE_LENGTH:
     {
         static char msg[] = {"Rule must be    digits long"};
-        int i = m_rule_digits / 10;
-        if (i == 0)
+        if (int i = m_rule_digits / 10; i == 0)
         {
             msg[14] = to_digit(m_rule_digits);
         }

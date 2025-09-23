@@ -1010,9 +1010,9 @@ static CmdArgFlags cmd_deprecated(const Command &/*cmd*/)
 // adapter parameter no longer used; check for bad argument anyway
 static CmdArgFlags cmd_adapter(const Command &cmd)
 {
-    const std::string_view value{cmd.value};
-    if (value != "egamono" && value != "hgc" //
-        && value != "ega" && value != "cga"  //
+    if (const std::string_view value{cmd.value}; //
+        value != "egamono" && value != "hgc"     //
+        && value != "ega" && value != "cga"      //
         && value != "mcga" && value != "vga")
     {
         return cmd.bad_arg();
@@ -1060,8 +1060,7 @@ static CmdArgFlags cmd_exit_no_ask(const Command &cmd)
 // fpu deprecated; validate arg and gobble
 static CmdArgFlags cmd_fpu(const Command &cmd)
 {
-    const std::string_view value{cmd.value};
-    if (value == "387")
+    if (const std::string_view value{cmd.value}; value == "387")
     {
         return CmdArgFlags::NONE;
     }
@@ -1322,8 +1321,7 @@ static CmdArgFlags cmd_attenuate(const Command &cmd)
 
 static CmdArgFlags cmd_auto_key(const Command &cmd)
 {
-    const std::string_view value{cmd.value};
-    if (value == "record")
+    if (const std::string_view value{cmd.value}; value == "record")
     {
         g_slides = SlidesMode::RECORD;
     }
@@ -1385,8 +1383,7 @@ static CmdArgFlags cmd_bailout(const Command &cmd)
 // bailoutest=?
 static CmdArgFlags cmd_bailout_test(const Command &cmd)
 {
-    const std::string_view value{cmd.value};
-    if (value == "mod")
+    if (const std::string_view value{cmd.value}; value == "mod")
     {
         g_bailout_test = Bailout::MOD;
     }
@@ -1793,8 +1790,8 @@ static CmdArgFlags cmd_corners(const Command &cmd)
 
     s_init_corners = true;
     // good first approx, but dec could be too big
-    int dec = get_max_cur_arg_len(cmd.float_val_strs, cmd.total_params) + 1;
-    if ((dec > DBL_DIG + 1 || g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) &&
+    if (int dec = get_max_cur_arg_len(cmd.float_val_strs, cmd.total_params) + 1;
+        (dec > DBL_DIG + 1 || g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) &&
         g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
         const BFMathType old_bf_math = g_bf_math;
@@ -2062,8 +2059,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
 // fillcolor=?
 static CmdArgFlags cmd_fill_color(const Command &cmd)
 {
-    const std::string_view value{cmd.value};
-    if (value == "normal")
+    if (const std::string_view value{cmd.value}; value == "normal")
     {
         g_fill_color = -1;
     }
@@ -2232,8 +2228,7 @@ static CmdArgFlags cmd_ifs_file(const Command &cmd)
 // initorbit=?/?
 static CmdArgFlags cmd_init_orbit(const Command &cmd)
 {
-    const std::string_view value{cmd.value};
-    if (value == "pixel")
+    if (const std::string_view value{cmd.value}; value == "pixel")
     {
         g_use_init_orbit = InitOrbitMode::PIXEL;
     }
@@ -3496,8 +3491,7 @@ static CmdArgFlags cmd_sustain(const Command &cmd)
 // symmetry=?
 static CmdArgFlags cmd_symmetry(const Command &cmd)
 {
-    const std::string_view value{cmd.value};
-    if (value == "xaxis")
+    if (const std::string_view value{cmd.value}; value == "xaxis")
     {
         g_force_symmetry = SymmetryType::X_AXIS;
     }
@@ -3555,8 +3549,7 @@ static CmdArgFlags cmd_temp_dir(const Command &cmd)
 
 static CmdArgFlags cmd_text_colors(const Command &cmd)
 {
-    const char *value = cmd.value;
-    if (std::string_view(value) == "mono")
+    if (const char *value = cmd.value; std::string_view(value) == "mono")
     {
         for (Byte &elem : g_text_color)
         {

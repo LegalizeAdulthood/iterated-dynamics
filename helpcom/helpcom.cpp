@@ -442,9 +442,9 @@ bool DocumentProcessor::topic()
         while (m_pd.len > 0)
         {
             int size = 0;
-            TokenType tok = find_token_length(m_token_mode, m_pd.curr, m_pd.len, &size, nullptr);
-            if (tok != TokenType::TOK_XDOC && tok != TokenType::TOK_XONLINE &&
-                tok != TokenType::TOK_NL && tok != TokenType::TOK_DONE)
+            if (TokenType tok = find_token_length(m_token_mode, m_pd.curr, m_pd.len, &size, nullptr);
+                tok != TokenType::TOK_XDOC && tok != TokenType::TOK_XONLINE //
+                && tok != TokenType::TOK_NL && tok != TokenType::TOK_DONE)
             {
                 break;
             }

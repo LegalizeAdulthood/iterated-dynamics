@@ -79,8 +79,7 @@ static void flush_output()
     }
     else
     {
-        long now = read_ticker();
-        if ((now - last)*frames_per_second > ticks_per_second)
+        if (long now = read_ticker(); (now - last)*frames_per_second > ticks_per_second)
         {
             driver_flush();
             wxGetApp().pump_messages(false);

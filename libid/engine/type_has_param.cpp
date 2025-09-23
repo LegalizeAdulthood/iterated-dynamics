@@ -28,8 +28,7 @@ bool type_has_param(const FractalType type, const int param, const char **prompt
     }
     else if (param >= 4 && param < MAX_PARAMS)
     {
-        const int extra = find_extra_param(type);
-        if (extra > -1)
+        if (const int extra = find_extra_param(type); extra > -1)
         {
             ret = g_more_fractal_params[extra].param_names[param-4];
         }

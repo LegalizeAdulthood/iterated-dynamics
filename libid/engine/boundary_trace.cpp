@@ -227,8 +227,9 @@ int boundary_trace()
                                 else
                                 {
                                     // fill the line to the left
-                                    const int length = right - left + 1;
-                                    if (fill_color_used != last_fill_color_used || length > max_put_line_length)
+                                    if (const int length = right - left + 1;
+                                        fill_color_used != last_fill_color_used ||
+                                        length > max_put_line_length)
                                     {
                                         // only reset dstack if necessary
                                         std::memset(s_stack, fill_color_used, length);

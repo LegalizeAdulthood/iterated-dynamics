@@ -127,8 +127,9 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     // switch back to double when zooming out if using arbitrary precision
     if (g_bf_math != BFMathType::NONE)
     {
-        int got_prec = get_prec_bf(ResolutionFlag::CURRENT);
-        if ((got_prec <= DBL_DIG+1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) || g_math_tol[1] >= 1.0)
+        if (const int got_prec = get_prec_bf(ResolutionFlag::CURRENT);
+            (got_prec <= DBL_DIG + 1 && g_debug_flag != DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) ||
+            g_math_tol[1] >= 1.0)
         {
             bf_corners_to_float();
             g_bf_math = BFMathType::NONE;
@@ -403,8 +404,8 @@ void adjust_corner_bf()
     // While we're at it, let's adjust the x_mag_factor as well
     // use bf_temp, bftemp2 as bfXctr, bfYctr
     cvt_center_mag_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
-    double f_temp = std::abs(x_mag_factor);
-    if (f_temp != 1 && f_temp >= 1 - g_aspect_drift && f_temp <= 1 + g_aspect_drift)
+    if (const double f_temp = std::abs(x_mag_factor);
+        f_temp != 1 && f_temp >= 1 - g_aspect_drift && f_temp <= 1 + g_aspect_drift)
     {
         x_mag_factor = sign(x_mag_factor);
         cvt_corners_bf(bf_temp, bf_temp2, magnification, x_mag_factor, rotation, skew);
@@ -903,8 +904,7 @@ static bool ratio_bad(const double actual, const double desired)
     }
     if (desired != 0.0 && g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
-        double f_temp = actual / desired;
-        if (f_temp < 1.0 - tol || f_temp > 1.0 + tol)
+        if (const double f_temp = actual / desired; f_temp < 1.0 - tol || f_temp > 1.0 + tol)
         {
             return true;
         }

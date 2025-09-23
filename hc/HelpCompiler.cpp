@@ -875,9 +875,9 @@ static void insert_real_link_info(char *curr, unsigned int len)
     while (len > 0)
     {
         int size = 0;
-        TokenType tok = find_token_length(TokenMode::NONE, curr, len, &size, nullptr);
 
-        if (tok == TokenType::TOK_LINK)
+        if (TokenType tok = find_token_length(TokenMode::NONE, curr, len, &size, nullptr);
+            tok == TokenType::TOK_LINK)
         {
             const Link &l = g_src.all_links[ get_int(curr+1) ];
             set_int(curr+1, l.topic_num);
@@ -1334,8 +1334,8 @@ void HelpCompiler::add_hlp_to_exe()
         throw std::system_error(errno, std::system_category(), "add_hlp_to_exe failed std::fwrite");
     }
 
-    off_t offset = lseek(exe, 0L, SEEK_CUR);
-    if (chsize(exe, offset) != offset) // truncate if old help was longer
+    if (const off_t offset = lseek(exe, 0L, SEEK_CUR);
+        chsize(exe, offset) != offset) // truncate if old help was longer
     {
         close(hlp);
         close(exe);

@@ -81,8 +81,8 @@ void show_corners_dbl(const char *s)
 // show floating point and bignumber corners
 void show_corners_bn(const char *s)
 {
-    constexpr int dec = 20;
-    if (stop_msg(fmt::format("{:s}\n"
+    if (constexpr int dec = 20; //
+        stop_msg(fmt::format("{:s}\n"
                              "g_x_min_bn={:s}\n"
                              "g_x_min   ={:.20f}\n"
                              "\n"
@@ -139,8 +139,8 @@ static std::string bf_to_string(BigFloat g_bf_x_min, const int dec)
 
 void show_corners_bf(const char *s)
 {
-    const int dec = std::min(g_decimals, 20);
-    if (stop_msg(fmt::format("{:s}\n"
+    if (const int dec = std::min(g_decimals, 20);
+        stop_msg(fmt::format("{:s}\n"
                              "bf_x_min={:s}\n"
                              "x_min= {:.20f} decimals {:d} g_bf_length {:d}\n"
                              "\n"
@@ -174,8 +174,8 @@ void show_corners_bf(const char *s)
 
 void show_corners_bf_save(const char *s)
 {
-    constexpr int dec = 20;
-    if (stop_msg(fmt::format(
+    if (constexpr int dec = 20; //
+        stop_msg(fmt::format(
         "{:s}\n"
         "bf_save_x_min={:s}\n"
         "x_min= {:.20f}\n"
@@ -266,8 +266,8 @@ void show_aspect(const char *s)
 // compare a double and bignumber
 void compare_values(const char *s, const LDouble x, BigNum bnx)
 {
-    constexpr int dec = 40;
-    if (stop_msg(fmt::format("{:s}\n"
+    if (constexpr int dec = 40; //
+        stop_msg(fmt::format("{:s}\n"
                              "bignum={:s}\n"
                              "double={:.20Lf}\n"
                              "\n",
@@ -282,8 +282,8 @@ void compare_values(const char *s, const LDouble x, BigNum bnx)
 // compare a double and bignumber
 void compare_values_bf(const char *s, const LDouble x, BigFloat bfx)
 {
-    constexpr int dec = 40;
-    if (stop_msg(fmt::format("{:s}\n"
+    if (constexpr int dec = 40; //
+        stop_msg(fmt::format("{:s}\n"
                              "bignum={:s}\n"
                              "double={:.20Lf}\n"
                              "\n",

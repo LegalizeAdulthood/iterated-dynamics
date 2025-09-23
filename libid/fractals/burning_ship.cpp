@@ -180,8 +180,7 @@ void burning_ship_perturb(
 
 void burning_ship_ref_pt(const std::complex<double> &center, std::complex<double> &z)
 {
-    const int degree = static_cast<int>(g_params[2]);
-    if (degree == 2)
+    if (const int degree = static_cast<int>(g_params[2]); degree == 2)
     {
         const double real_sqr = sqr(z.real());
         const double imag_sqr = sqr(z.imag());

@@ -187,14 +187,14 @@ int PertEngine::calculate_one_frame()
             {
                 return -1;
             }
-            Point pt{m_points_remaining[i]};
-            if (calculate_point(pt, magnified_radius, window_radius) < 0)
+            if (Point pt{m_points_remaining[i]}; //
+                calculate_point(pt, magnified_radius, window_radius) < 0)
             {
                 return -1;
             }
             // Everything else in this loop is just for updating the progress counter.
-            double progress = static_cast<double>(i) / m_remaining_point_count;
-            if (static_cast<int>(progress * 100) != last_checked)
+            if (const double progress = static_cast<double>(i) / m_remaining_point_count;
+                static_cast<int>(progress * 100) != last_checked)
             {
                 last_checked = static_cast<int>(progress * 100);
                 m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
@@ -476,8 +476,8 @@ void PertEngine::reference_zoom_point(const BFComplex &center, const int max_ite
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
         // Everything else in this loop is just for updating the progress counter.
-        double progress = static_cast<double>(i) / max_iteration;
-        if (static_cast<int>(progress * 100) != last_checked)
+        if (const double progress = static_cast<double>(i) / max_iteration;
+            static_cast<int>(progress * 100) != last_checked)
         {
             last_checked = static_cast<int>(progress * 100);
             m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +
@@ -517,8 +517,8 @@ void PertEngine::reference_zoom_point(const std::complex<double> &center, const 
         // a square root operation, which is expensive, so we'll just compare this to the squared magnitude.
 
         // Everything else in this loop is just for updating the progress counter.
-        double progress = static_cast<double>(i) / max_iteration;
-        if (static_cast<int>(progress * 100) != last_checked)
+        if (const double progress = static_cast<double>(i) / max_iteration;
+            static_cast<int>(progress * 100) != last_checked)
         {
             last_checked = static_cast<int>(progress * 100);
             m_status = "Pass: " + std::to_string(m_reference_points) + ", Ref (" +

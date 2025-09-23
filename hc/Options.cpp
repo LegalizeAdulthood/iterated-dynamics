@@ -12,8 +12,7 @@ Options parse_options(int argc, char **argv)
     Options result{};
     for (int i = 1; i < argc; ++i)
     {
-        std::string arg{argv[i]};
-        if (arg[0] == '/' || arg[0] == '-')
+        if (std::string arg{argv[i]}; arg[0] == '/' || arg[0] == '-')
         {
             arg.erase(0, 1); // drop '/' or '-'
             if (arg == "a")

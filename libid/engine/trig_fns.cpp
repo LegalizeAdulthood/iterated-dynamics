@@ -130,8 +130,7 @@ int set_trig_array(const int k, const char *name)
     std::strncpy(trig_name, name, 6);
     trig_name[6] = 0; // safety first
 
-    char *slash = std::strchr(trig_name, '/');
-    if (slash != nullptr)
+    if (char *slash = std::strchr(trig_name, '/'); slash != nullptr)
     {
         *slash = 0;
     }

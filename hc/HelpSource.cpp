@@ -95,8 +95,7 @@ void Content::label_topic(const int ctr)
 
 void Content::content_topic(const int ctr)
 {
-    const int t = find_topic_title(topic_name[ctr].c_str());
-    if (t == -1)
+    if (const int t = find_topic_title(topic_name[ctr].c_str()); t == -1)
     {
         g_current_src_filename = src_file;
         g_src_line = src_line;
@@ -120,8 +119,7 @@ void Content::content_topic(const int ctr)
 
 void Link::link_topic()
 {
-    const int t = find_topic_title(name.c_str());
-    if (t == -1)
+    if (const int t = find_topic_title(name.c_str()); t == -1)
     {
         g_current_src_filename = src_file;
         g_src_line = src_line; // pretend we are still in the source...
@@ -631,8 +629,7 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 
     while (true)
     {
-        const int ch = read_char();
-        if (ch == '{')   // process a Content entry
+        if (const int ch = read_char(); ch == '{')   // process a Content entry
         {
             c.flags = 0;
             c.num_topic = 0;
@@ -1051,9 +1048,7 @@ static void process_comment()
 {
     while (true)
     {
-        int ch = read_char();
-
-        if (ch == '~')
+        if (int ch = read_char(); ch == '~')
         {
             bool embedded;
 
@@ -1717,8 +1712,7 @@ void read_src(const std::string &fname, Mode mode)
                 }
                 else if (string_case_equal(s_cmd, "Label=", 6))
                 {
-                    const char *label_name = &s_cmd[6];
-                    if (static_cast<int>(std::strlen(label_name)) <= 0)
+                    if (const char *label_name = &s_cmd[6]; std::strlen(label_name) == 0)
                     {
                         MSG_ERROR(err_offset, "Label has no name.");
                     }
