@@ -37,9 +37,9 @@ jobs:
           -StorePasswordInClearText \
           -Name GitHubPackages \
           -UserName "${{github.repository_owner}}" \
-          -Password "${{secrets.GITHUB_TOKEN}}"
+          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
         mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-          setapikey "${{secrets.GITHUB_TOKEN}}" \
+          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
           -Source "${{env.FEED_URL}}"
 
     - name: Setup CMake
@@ -121,9 +121,9 @@ jobs:
           -StorePasswordInClearText \
           -Name GitHubPackages \
           -UserName "${{github.repository_owner}}" \
-          -Password "${{secrets.GITHUB_TOKEN}}"
+          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
         ${{matrix.nuget}} \
-          setapikey "${{secrets.GITHUB_TOKEN}}" \
+          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
           -Source "${{env.FEED_URL}}"
 
     - name: Setup CMake
@@ -202,9 +202,9 @@ jobs:
             -StorePasswordInClearText \
             -Name GitHubPackages \
             -UserName "${{github.repository_owner}}" \
-            -Password "${{secrets.GITHUB_TOKEN}}"
+            -Password "${{secrets.GH_PACKAGES_TOKEN}}"
           mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-            setapikey "${{secrets.GITHUB_TOKEN}}" \
+            setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
             -Source "${{env.FEED_URL}}"
 
       - name: Setup CMake
@@ -222,7 +222,7 @@ jobs:
       - name: Run CppCheck
         uses: deep5050/cppcheck-action@b4d7c69b911c24817691b4b210586568a858b4c5 # v3.0
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
+          github_token: ${{secrets.GH_PACKAGES_TOKEN}}
           enable: 'style'
           force: 'enable'
           other_options: >-
@@ -296,9 +296,9 @@ jobs:
           -StorePasswordInClearText \
           -Name GitHubPackages \
           -UserName "${{github.repository_owner}}" \
-          -Password "${{secrets.GITHUB_TOKEN}}"
+          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
         ${{matrix.nuget}} \
-          setapikey "${{secrets.GITHUB_TOKEN}}" \
+          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
           -Source "${{env.FEED_URL}}"
 
     - name: Setup CMake
