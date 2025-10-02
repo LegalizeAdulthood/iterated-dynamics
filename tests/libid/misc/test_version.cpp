@@ -203,9 +203,9 @@ TEST(TestVersion, legacyVersionNotEqualIdVersion)
 
 TEST(TestVersion, legacyVersionToDisplayString)
 {
-    const Version versino{parse_legacy_version(2004)};
+    const Version version{parse_legacy_version(2004)};
 
-    const std::string result{to_display_string(versino)};
+    const std::string result{to_display_string(version)};
 
     EXPECT_EQ("FRACTINT v20.04", result);
 }

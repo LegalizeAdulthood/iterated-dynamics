@@ -159,7 +159,7 @@ int divide_brot5_orbit_bf()
     return g_bailout_bigfloat();
 }
 
-bool divide_brot5_per_imge()
+bool divide_brot5_per_image()
 {
     g_c_exponent = -(static_cast<int>(g_params[0]) - 2); /* use negative here so only need it once */
     g_b_const = g_params[1] + 1.0e-20;

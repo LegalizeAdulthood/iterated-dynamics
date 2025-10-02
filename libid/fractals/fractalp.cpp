@@ -1899,7 +1899,7 @@ FractalSpecific g_fractal_specific[] = {
         -2.5f, 1.5f, -1.5f, 1.5f,                                          //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL,                  //
         SymmetryType::NONE,                                                //
-        divide_brot5_orbit, divide_brot5_per_pixel, divide_brot5_per_imge, //
+        divide_brot5_orbit, divide_brot5_per_pixel, divide_brot5_per_image, //
         standard_fractal_type,                                             //
         16                                                                 //
     },
