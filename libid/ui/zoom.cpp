@@ -718,19 +718,19 @@ static void move_row(const int from_row, const int to_row, const int col)
     std::vector<Byte> temp(g_logical_screen_x_dots, 0);
     if (from_row >= 0 && from_row < g_logical_screen_y_dots)
     {
-        int startcol = 0;
-        int tocol = 0;
-        int endcol = g_logical_screen_x_dots-1;
+        int start_col = 0;
+        int to_col = 0;
+        int stop_col = g_logical_screen_x_dots-1;
         if (col < 0)
         {
-            tocol -= col;
-            endcol += col;
+            to_col -= col;
+            stop_col += col;
         }
         if (col > 0)
         {
-            startcol += col;
+            start_col += col;
         }
-        read_span(from_row, startcol, endcol, &temp[tocol]);
+        read_span(from_row, start_col, stop_col, &temp[to_col]);
     }
     write_span(to_row, 0, g_logical_screen_x_dots-1, temp.data());
 }
