@@ -19,55 +19,33 @@ Dont Square This ([parameter file](https://user.xmission.com/~legalize/fractals/
 Iterated Dynamics is an open source fractal renderer that can generate
 the following fractal types:
 
-- [Mandelbrot set](https://legalizeadulthood.github.io/iterated-dynamics/#_the_mandelbrot_set)
-- [Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_julia_sets)
-- [Inverse Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_inverse_julias)
-- [Ant automaton](https://legalizeadulthood.github.io/iterated-dynamics/#_ant_automaton)
-- [Barnsley IFS](https://legalizeadulthood.github.io/iterated-dynamics/#_barnsley_ifs_fractals)
-- [Barnsley Mandelbrot/Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_barnsley_mandelbrotjulia_sets)
-- [Bifurcation](https://legalizeadulthood.github.io/iterated-dynamics/#_bifurcation)
-- [Burning Ship](https://legalizeadulthood.github.io/iterated-dynamics/#_burning_ship)
-- [Cellular automata](https://legalizeadulthood.github.io/iterated-dynamics/#_cellular_automata)
-- [Circle](https://legalizeadulthood.github.io/iterated-dynamics/#_circle)
-- [Diffusion limited aggregation](https://legalizeadulthood.github.io/iterated-dynamics/#_diffusion_limited_aggregation)
-- [Divide Brot5](https://legalizeadulthood.github.io/iterated-dynamics/#_dividebrot5)
-- [Dynamic system](https://legalizeadulthood.github.io/iterated-dynamics/#_dynamic_system)
-- [Escher-like Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_escher_like_julia_sets)
-- [Custom escape-time formula](https://legalizeadulthood.github.io/iterated-dynamics/#_formula)
-- [Frothy basins](https://legalizeadulthood.github.io/iterated-dynamics/#_frothy_basins)
-- [Gingerbread man](https://legalizeadulthood.github.io/iterated-dynamics/#_gingerbreadman)
-- [Halley map](https://legalizeadulthood.github.io/iterated-dynamics/#_halley)
-- [Henon attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_henon_attractors)
-- [Hyper complex](https://legalizeadulthood.github.io/iterated-dynamics/#_hypercomplex)
-- [Icon](https://legalizeadulthood.github.io/iterated-dynamics/#_icon)
-- [Julibrot](https://legalizeadulthood.github.io/iterated-dynamics/#_julibrots)
-- [Kam torus](https://legalizeadulthood.github.io/iterated-dynamics/#_kam_torus)
-- [L-systems](https://legalizeadulthood.github.io/iterated-dynamics/#_l_systems)
-- [Lambda sets](https://legalizeadulthood.github.io/iterated-dynamics/#_lambda_sets)
-- [Generalized lambda sets](https://legalizeadulthood.github.io/iterated-dynamics/#_lambdafn)
-- [Latoocarfian](https://legalizeadulthood.github.io/iterated-dynamics/#_latoocarfian)
-- [Lorenz attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_lorenz_attractors)
-- [Lyapunov](https://legalizeadulthood.github.io/iterated-dynamics/#_lyapunov_fractals)
-- [Magnetic](https://legalizeadulthood.github.io/iterated-dynamics/#_magnetic_fractals)
-- [Mandelbrot Mix4](https://legalizeadulthood.github.io/iterated-dynamics/#_mandelbrot_mix_4)
-- [Mandelcloud](https://legalizeadulthood.github.io/iterated-dynamics/#_mandelcloud)
-- [Mandelbrot version of lambda sets](https://legalizeadulthood.github.io/iterated-dynamics/#_mandellambda_sets)
-- [Martin attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_martin_attractors)
-- [Newton domains of attraction](https://legalizeadulthood.github.io/iterated-dynamics/#_newton_domains_of_attraction)
-- [Complex Newton](https://legalizeadulthood.github.io/iterated-dynamics/#_complex_newton)
-- [Peterson Mandelbrot variations](https://legalizeadulthood.github.io/iterated-dynamics/#_peterson_variations)
-- [Phoenix curve](https://legalizeadulthood.github.io/iterated-dynamics/#_phoenix)
-- [Pickover attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_pickover_attractors)
-- [Pickover Mandelbrot/Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_pickover_mandelbrotjulia_types)
-- [Pickover popcorn](https://legalizeadulthood.github.io/iterated-dynamics/#_pickover_popcorn)
-- [Plasma clouds](https://legalizeadulthood.github.io/iterated-dynamics/#_plasma_clouds)
-- [Quartic Mandelbrot/Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_quartic_mandelbrotjulia)
-- [Quaternion](https://legalizeadulthood.github.io/iterated-dynamics/#_quaternion)
-- [Rossler attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_rossler_attractors)
-- [Scott Taylor / Lee Skinner variations](https://legalizeadulthood.github.io/iterated-dynamics/#_scott_taylor_lee_skinner_variations)
-- [Sierpinski gasket](https://legalizeadulthood.github.io/iterated-dynamics/#_sierpinski_gasket)
-- [Unity](https://legalizeadulthood.github.io/iterated-dynamics/#_unity)
-- [Volterra-Lotka](https://legalizeadulthood.github.io/iterated-dynamics/#_volterra_lotka_fractals)
+| Fractal Type | Fractal Type |
+| ---- | ---- |
+| [Mandelbrot set](https://legalizeadulthood.github.io/iterated-dynamics/#_the_mandelbrot_set) | [Lambda sets](https://legalizeadulthood.github.io/iterated-dynamics/#_lambda_sets) |
+| [Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_julia_sets) | [Generalized lambda sets](https://legalizeadulthood.github.io/iterated-dynamics/#_lambdafn) |
+| [Inverse Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_inverse_julias) | [Latoocarfian](https://legalizeadulthood.github.io/iterated-dynamics/#_latoocarfian) |
+| [Ant automaton](https://legalizeadulthood.github.io/iterated-dynamics/#_ant_automaton) | [Lorenz attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_lorenz_attractors) |
+| [Barnsley IFS](https://legalizeadulthood.github.io/iterated-dynamics/#_barnsley_ifs_fractals) | [Lyapunov](https://legalizeadulthood.github.io/iterated-dynamics/#_lyapunov_fractals) |
+| [Barnsley Mandelbrot/Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_barnsley_mandelbrotjulia_sets) | [Magnetic](https://legalizeadulthood.github.io/iterated-dynamics/#_magnetic_fractals) |
+| [Bifurcation](https://legalizeadulthood.github.io/iterated-dynamics/#_bifurcation) | [Mandelbrot Mix4](https://legalizeadulthood.github.io/iterated-dynamics/#_mandelbrot_mix_4) |
+| [Burning Ship](https://legalizeadulthood.github.io/iterated-dynamics/#_burning_ship) | [Mandelcloud](https://legalizeadulthood.github.io/iterated-dynamics/#_mandelcloud) |
+| [Cellular automata](https://legalizeadulthood.github.io/iterated-dynamics/#_cellular_automata) | [Mandelbrot version of lambda sets](https://legalizeadulthood.github.io/iterated-dynamics/#_mandellambda_sets) |
+| [Circle](https://legalizeadulthood.github.io/iterated-dynamics/#_circle) | [Martin attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_martin_attractors) |
+| [Diffusion limited aggregation](https://legalizeadulthood.github.io/iterated-dynamics/#_diffusion_limited_aggregation) | [Newton domains of attraction](https://legalizeadulthood.github.io/iterated-dynamics/#_newton_domains_of_attraction) |
+| [Divide Brot5](https://legalizeadulthood.github.io/iterated-dynamics/#_dividebrot5) | [Complex Newton](https://legalizeadulthood.github.io/iterated-dynamics/#_complex_newton) |
+| [Dynamic system](https://legalizeadulthood.github.io/iterated-dynamics/#_dynamic_system) | [Peterson Mandelbrot variations](https://legalizeadulthood.github.io/iterated-dynamics/#_peterson_variations) |
+| [Escher-like Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_escher_like_julia_sets) | [Phoenix curve](https://legalizeadulthood.github.io/iterated-dynamics/#_phoenix) |
+| [Custom escape-time formula](https://legalizeadulthood.github.io/iterated-dynamics/#_formula) | [Pickover attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_pickover_attractors) |
+| [Frothy basins](https://legalizeadulthood.github.io/iterated-dynamics/#_frothy_basins) | [Pickover Mandelbrot/Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_pickover_mandelbrotjulia_types) |
+| [Gingerbread man](https://legalizeadulthood.github.io/iterated-dynamics/#_gingerbreadman) | [Pickover popcorn](https://legalizeadulthood.github.io/iterated-dynamics/#_pickover_popcorn) |
+| [Halley map](https://legalizeadulthood.github.io/iterated-dynamics/#_halley) | [Plasma clouds](https://legalizeadulthood.github.io/iterated-dynamics/#_plasma_clouds) |
+| [Henon attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_henon_attractors) | [Quartic Mandelbrot/Julia sets](https://legalizeadulthood.github.io/iterated-dynamics/#_quartic_mandelbrotjulia) |
+| [Hyper complex](https://legalizeadulthood.github.io/iterated-dynamics/#_hypercomplex) | [Quaternion](https://legalizeadulthood.github.io/iterated-dynamics/#_quaternion) |
+| [Icon](https://legalizeadulthood.github.io/iterated-dynamics/#_icon) | [Rossler attractors](https://legalizeadulthood.github.io/iterated-dynamics/#_rossler_attractors) |
+| [Julibrot](https://legalizeadulthood.github.io/iterated-dynamics/#_julibrots) | [Scott Taylor / Lee Skinner variations](https://legalizeadulthood.github.io/iterated-dynamics/#_scott_taylor_lee_skinner_variations) |
+| [Kam torus](https://legalizeadulthood.github.io/iterated-dynamics/#_kam_torus) | [Sierpinski gasket](https://legalizeadulthood.github.io/iterated-dynamics/#_sierpinski_gasket) |
+| [L-systems](https://legalizeadulthood.github.io/iterated-dynamics/#_l_systems) | [Unity](https://legalizeadulthood.github.io/iterated-dynamics/#_unity) |
+| | [Volterra-Lotka](https://legalizeadulthood.github.io/iterated-dynamics/#_volterra_lotka_fractals) |
 
 See the [on-line help](http://legalizeadulthood.github.io/iterated-dynamics/)
 for more of what the software can do.
