@@ -22,6 +22,10 @@ public:
 
     int get_key_press(bool wait_for_key);
 
+protected:
+    // Override DoGetBestSize to return the maximum size needed for either control
+    wxSize DoGetBestSize() const override;
+
 private:
     enum
     {
@@ -36,6 +40,7 @@ private:
     {
         return m_key_press_count >= KEY_BUF_MAX;
     }
+    wxSize get_client_size() const;
 
     bool m_timed_out{};
 

@@ -9,6 +9,7 @@
 #include <wx/app.h>
 #include <wx/wx.h>
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 
@@ -22,21 +23,34 @@ IdFrame::IdFrame() :
 {
     wxMenu *file = new wxMenu;
     file->Append(wxID_EXIT);
-
     wxMenu *help = new wxMenu;
     help->Append(wxID_ABOUT);
-
     wxMenuBar *bar = new wxMenuBar;
     bar->Append(file, "&File");
     bar->Append(help, "&Help");
-
     wxFrameBase::SetMenuBar(bar);
-
     wxFrameBase::CreateStatusBar();
 
     Bind(wxEVT_MENU, &IdFrame::on_about, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &IdFrame::on_exit, this, wxID_EXIT);
     Bind(wxEVT_CHAR, &IdFrame::on_char, this, wxID_ANY);
+
+    SetClientSize(get_client_size());
+    m_plot->Hide();
+    m_text_screen->Hide();
+}
+
+wxSize IdFrame::get_client_size() const
+{
+    const wxSize plot_size = m_plot->GetBestSize();
+    const wxSize text_size = m_text_screen->GetBestSize();
+    return {std::max(plot_size.GetWidth(), text_size.GetWidth()),
+        std::max(plot_size.GetHeight(), text_size.GetHeight())};
+}
+
+wxSize IdFrame::DoGetBestSize() const
+{
+    return get_client_size();
 }
 
 int IdFrame::get_key_press(const bool wait_for_key)

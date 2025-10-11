@@ -538,7 +538,7 @@ void WxDriver::schedule_alarm(int secs)
 
 void WxDriver::create_window()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().create_window();
 }
 
 bool WxDriver::resize()
