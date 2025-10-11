@@ -250,7 +250,7 @@ void WxDriver::set_video_mode(VideoInfo *mode)
     //set_clear();
 }
 
-void WxDriver::put_string(int row, int col, int attr, char const *msg)
+void WxDriver::put_string(int row, int col, int attr, const char *msg)
 {
     throw std::runtime_error("not implemented");
     //if (-1 != row)
