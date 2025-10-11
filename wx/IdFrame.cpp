@@ -3,6 +3,8 @@
 #include <gui/IdFrame.h>
 
 #include <gui/IdApp.h>
+#include <gui/Plot.h>
+#include <gui/TextScreen.h>
 
 #include <wx/app.h>
 #include <wx/wx.h>
@@ -14,7 +16,9 @@ namespace id::gui
 {
 
 IdFrame::IdFrame() :
-    wxFrame(nullptr, wxID_ANY, wxT("Iterated Dynamics"))
+    wxFrame(nullptr, wxID_ANY, wxT("Iterated Dynamics")),
+    m_plot(new Plot(this)),
+    m_text_screen(new TextScreen(this))
 {
     wxMenu *file = new wxMenu;
     file->Append(wxID_EXIT);

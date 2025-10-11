@@ -7,6 +7,9 @@
 namespace id::gui
 {
 
+class Plot;
+class TextScreen;
+
 class IdFrame : public wxFrame
 {
 public:
@@ -41,6 +44,8 @@ private:
     unsigned int m_key_press_head{};
     unsigned int m_key_press_tail{};
     std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
+    Plot *m_plot{};
+    TextScreen *m_text_screen{};
 };
 
 } // namespace id::gui
