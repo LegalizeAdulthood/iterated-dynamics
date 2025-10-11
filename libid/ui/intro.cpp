@@ -30,11 +30,26 @@ namespace id::ui
 
 bool g_slow_display{};
 
+static std::vector<int> get_authors(const char *credits)
+{
+    std::vector<int> authors;
+    authors.push_back(0); // find the start of each credit-line
+    int i;
+    for (i = 0; credits[i] != 0; i++)
+    {
+        if (credits[i] == '\n')
+        {
+            authors.push_back(i + 1);
+        }
+    }
+    authors.push_back(i);
+    return authors;
+}
+
 void intro()
 {
     // following overlayed data safe if "putstrings" are resident
     static char PRESS_ENTER[] = {"Press ENTER for main menu, F1 for help."};
-    std::vector<int> authors;
     char credits[32768]{};
     char screen_text[32768];
 
@@ -51,15 +66,7 @@ void intro()
     read_topic(HelpLabels::INTRO_CREDITS, credits);
 
     int j = 0;
-    authors.push_back(0);               // find the start of each credit-line
-    for (i = 0; credits[i] != 0; i++)
-    {
-        if (credits[i] == '\n')
-        {
-            authors.push_back(i+1);
-        }
-    }
-    authors.push_back(i);
+    const std::vector authors{get_authors(credits)};
 
     help_title();
 #define END_MAIN_AUTHOR 6
@@ -78,7 +85,7 @@ void intro()
     driver_set_attr(top_row, 0, C_CONTRIB, (21-END_MAIN_AUTHOR)*80);
     std::srand(static_cast<unsigned int>(std::clock()));
     j = std::rand()%(j-(bot_row-top_row)); // first to use
-    i = j+bot_row-top_row; // last to use
+    int i = j+bot_row-top_row; // last to use
     char old_char = credits[authors.at(i + 1)];
     credits[authors.at(i+1)] = 0;
     driver_put_string(top_row, 0, C_CONTRIB, credits+authors.at(j));
