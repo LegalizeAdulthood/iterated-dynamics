@@ -30,13 +30,18 @@ target_include_directories(Plot PUBLIC include)
 target_link_libraries(Plot PUBLIC wx::core config)
 target_folder(Plot "Libraries/wx")
 
+add_library(IdFrame STATIC
+    include/gui/IdFrame.h IdFrame.cpp)
+target_include_directories(IdFrame PUBLIC include)
+target_link_libraries(IdFrame PUBLIC TextScreen Plot wx::core)
+target_folder(IdFrame "Libraries/wx")
+
 add_library(gui STATIC
     include/gui/CGATextWindow.h
     include/gui/IdApp.h IdApp.cpp
-    include/gui/IdFrame.h IdFrame.cpp
 )
-target_include_directories(gui PUBLIC incldue)
-target_link_libraries(gui PUBLIC libid TextScreen wx::core wx::base)
+target_include_directories(gui PUBLIC include)
+target_link_libraries(gui PUBLIC libid IdFrame wx::core wx::base)
 
 configure_file(id.rc.in id.rc @ONLY)
 add_executable(id WIN32
