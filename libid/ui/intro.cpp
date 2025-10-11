@@ -42,10 +42,13 @@ void intro()
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_MENU};
 
-    int i = 32767 + read_help_topic(HelpLabels::INTRO_AUTHORS, 0, 32767, screen_text);
-    screen_text[i] = '\0';
-    i = 32767 + read_help_topic(HelpLabels::INTRO_CREDITS, 0, 32767, credits);
-    credits[i] = '\0';
+    const auto read_topic = [](HelpLabels label, char buffer[32768])
+    {
+        const int i = 32767 + read_help_topic(label, 0, 32767, buffer);
+        buffer[i] = '\0';
+    };
+    read_topic(HelpLabels::INTRO_AUTHORS, screen_text);
+    read_topic(HelpLabels::INTRO_CREDITS, credits);
 
     int j = 0;
     authors.push_back(0);               // find the start of each credit-line
