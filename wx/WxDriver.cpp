@@ -19,6 +19,10 @@
 #include <string>
 #include <thread>
 
+#ifdef WIN32
+#include <crtdbg.h>
+#endif
+
 using namespace id::ui;
 
 namespace id::misc
@@ -95,18 +99,13 @@ static void flush_output()
 
 void WxDriver::terminate()
 {
-    //m_win_text.destroy();
     m_saved_screens.clear();
     m_saved_cursor.clear();
-    //g_frame.terminate();
 }
 
 bool WxDriver::init(int *argc, char **argv)
 {
-    //LPCSTR title = ID_PROGRAM_NAME;
-
-    //g_frame.init(g_instance, title);
-    //return m_win_text.initialize(g_instance, nullptr, "Text");
+    // nothing needs to be done in wxWidgets
     return true;
 }
 
@@ -367,6 +366,7 @@ void WxDriver::discard_screen()
 
 int WxDriver::init_fm()
 {
+    throw std::runtime_error("not implemented");
     return 0;
 }
 
@@ -391,15 +391,18 @@ void WxDriver::buzzer(Buzzer kind)
 
 bool WxDriver::sound_on(int freq)
 {
+    throw std::runtime_error("not implemented");
     return false;
 }
 
 void WxDriver::sound_off()
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::mute()
 {
+    throw std::runtime_error("not implemented");
 }
 
 bool WxDriver::is_disk() const
@@ -509,113 +512,142 @@ void WxDriver::get_cursor_pos(int &x, int &y) const
 
 bool WxDriver::validate_mode(VideoInfo *mode)
 {
+    throw std::runtime_error("not implemented");
     return false;
 }
 
 void WxDriver::get_max_screen(int &xmax, int &ymax)
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::pause()
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::resume()
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::schedule_alarm(int secs)
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::create_window()
 {
+    throw std::runtime_error("not implemented");
 }
 
 bool WxDriver::resize()
 {
+    throw std::runtime_error("not implemented");
     return false;
 }
 
 void WxDriver::redraw()
 {
+    throw std::runtime_error("not implemented");
 }
 
 int WxDriver::read_palette()
 {
+    throw std::runtime_error("not implemented");
     return 0;
 }
 
 int WxDriver::write_palette()
 {
+    throw std::runtime_error("not implemented");
     return 0;
 }
 
 int WxDriver::read_pixel(int x, int y)
 {
+    throw std::runtime_error("not implemented");
     return 0;
 }
 
 void WxDriver::write_pixel(int x, int y, int color)
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::read_span(int y, int x, int lastx, Byte *pixels)
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::write_span(int y, int x, int lastx, Byte *pixels)
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::set_line_mode(int mode)
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::save_graphics()
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::restore_graphics()
 {
+    throw std::runtime_error("not implemented");
 }
 
 bool WxDriver::is_text()
 {
+    throw std::runtime_error("not implemented");
     return true;
 }
 
 void WxDriver::set_for_text()
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::set_for_graphics()
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::set_clear()
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::flush()
 {
+    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::check_memory()
 {
+#ifdef WIN32
+    assert(_CrtCheckMemory() == TRUE);
+#endif
+    // TODO: is there something comparable we can do under gcc/clang?
 }
 
 bool WxDriver::get_filename(
     const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
 {
+    throw std::runtime_error("not implemented");
     return false;
 }
 
