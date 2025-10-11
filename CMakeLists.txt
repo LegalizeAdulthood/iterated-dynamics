@@ -8,7 +8,9 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 include(misc_target)
 include(policy_new)
 include(set_cxx_standard)
+include(gui_executable)
 include(target_folder)
+include(vs_debugger_directory)
 include(vs_startup_project)
 
 # v3.30: The FindBoost module is removed.
@@ -50,11 +52,6 @@ endfunction()
 
 set(ID_TARGET_DEFINITIONS "")
 set(ID_TARGET_DEFINITIONS_DEBUG "")
-
-set(ID_EXECUTABLE_TYPE "")
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    set(ID_EXECUTABLE_TYPE "WIN32")
-endif()
 
 set(ID_TARGET_OPTIONS "")
 if(NOT MSVC AND CMAKE_CXX_COMPILER_ID MATCHES "(GNU|Clang)")
@@ -104,10 +101,12 @@ misc_group_sources("Documentation" FILES
     "ReadMe.md"
     "Style.md")
 misc_group_sources("CMake Scripts" FILES
+    "cmake/gui_executable.cmake"
     "cmake/misc_target.cmake"
     "cmake/policy_new.cmake"
     "cmake/set_cxx_standard.cmake"
     "cmake/target_folder.cmake"
+    "cmake/vs_debugger_directory.cmake"
     "cmake/vs_startup_project.cmake")
 misc_group_sources("Editing" FILES
     ".clang-format"

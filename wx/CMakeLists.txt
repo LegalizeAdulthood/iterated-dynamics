@@ -44,7 +44,7 @@ target_include_directories(gui PUBLIC include)
 target_link_libraries(gui PUBLIC libid IdFrame wx::core wx::base)
 
 configure_file(id.rc.in id.rc @ONLY)
-add_executable(id WIN32
+add_executable(id
     Id.ico
     id.rc.in
     "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
@@ -56,6 +56,8 @@ add_executable(id WIN32
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
 target_link_libraries(id PUBLIC gui)
+gui_executable(id)
+vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
 install(TARGETS id
     DESTINATION .
     RUNTIME_DEPENDENCIES

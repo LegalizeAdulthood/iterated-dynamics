@@ -58,7 +58,7 @@ else()
     target_folder(os "Libraries")
     add_dependencies(os native-help)
 
-    add_executable(id WIN32
+    add_executable(id
         Id.ico
         id.rc.in
         "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
@@ -67,7 +67,8 @@ else()
     source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
     target_include_directories(id PUBLIC .)
     target_link_libraries(id PUBLIC libid)
-    set_property(TARGET id PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home")
+    gui_executable(id)
+    vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
     install(TARGETS id
         DESTINATION .
         RUNTIME_DEPENDENCIES

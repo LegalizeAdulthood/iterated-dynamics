@@ -1,9 +1,11 @@
 find_package(fmt CONFIG REQUIRED)
 
-add_executable(TestTextScreen WIN32 test_TextScreen.cpp)
+add_executable(TestTextScreen test_TextScreen.cpp)
 target_link_libraries(TestTextScreen PUBLIC TextScreen fmt::fmt-header-only)
+gui_executable(TestTextScreen)
 target_folder(TestTextScreen "Tests/wx")
 
-add_executable(TestPlot WIN32 test_Plot.cpp)
+add_executable(TestPlot test_Plot.cpp)
 target_link_libraries(TestPlot PUBLIC Plot)
+gui_executable(TestPlot)
 target_folder(TestPlot "Tests/wx")
