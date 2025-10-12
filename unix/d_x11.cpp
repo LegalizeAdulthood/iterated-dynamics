@@ -119,7 +119,7 @@ public:
         return m_description;
     }
     bool init(int *argc, char **argv) override;
-    bool validate_mode(VideoInfo *mode) override;
+    bool validate_mode(const VideoInfo &mode) override;
     void get_max_screen(int &width, int &height) override;
     void terminate() override;
     void pause() override;
@@ -1553,7 +1553,7 @@ bool X11Driver::init(int *argc, char **argv)
     return true;
 }
 
-bool X11Driver::validate_mode(VideoInfo *mode)
+bool X11Driver::validate_mode(const VideoInfo &mode)
 {
     return false;
 }
