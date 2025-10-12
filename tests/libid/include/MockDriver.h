@@ -15,7 +15,7 @@ public:
     MOCK_METHOD(const std::string &, get_name, (), (const, override));
     MOCK_METHOD(const std::string &, get_description, (), (const, override));
     MOCK_METHOD(bool, init, (int *, char **), (override));
-    MOCK_METHOD(bool, validate_mode, (ui::VideoInfo *), (override));
+    MOCK_METHOD(bool, validate_mode, (const ui::VideoInfo &), (override));
     MOCK_METHOD(void, get_max_screen, (int &, int &), (override));
     MOCK_METHOD(void, terminate, (), (override));
     MOCK_METHOD(void, pause, (), (override));

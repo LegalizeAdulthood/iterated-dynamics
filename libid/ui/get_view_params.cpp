@@ -52,7 +52,7 @@ int get_view_params()
     char dim1[50];
     char dim2[50];
 
-    driver_get_max_screen(&x_max, &y_max);
+    driver_get_max_screen(x_max, y_max);
 
     const bool old_view_window    = g_view_window;
     float old_view_reduction = g_view_reduction;

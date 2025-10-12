@@ -45,7 +45,7 @@ public:
     ~GDIDriver() override = default;
 
     void terminate() override;
-    void get_max_screen(int &x_max, int &y_max) override;
+    void get_max_screen(int &width, int &height) override;
     bool init(int *argc, char **argv) override;
     bool resize() override;
     int read_palette() override;
@@ -64,7 +64,7 @@ public:
     void set_for_graphics() override;
     void set_clear() override;
     void set_video_mode(VideoInfo *mode) override;
-    bool validate_mode(VideoInfo *mode) override;
+    bool validate_mode(const VideoInfo &mode) override;
     void pause() override;
     void resume() override;
     void display_string(int x, int y, int fg, int bg, const char *text) override;
@@ -160,15 +160,15 @@ void GDIDriver::terminate()
     Win32BaseDriver::terminate();
 }
 
-void GDIDriver::get_max_screen(int &x_max, int &y_max)
+void GDIDriver::get_max_screen(int &width, int &height)
 {
     RECT desktop;
     GetClientRect(GetDesktopWindow(), &desktop);
     desktop.right -= GetSystemMetrics(SM_CXFRAME) * 2;
     desktop.bottom -= GetSystemMetrics(SM_CYFRAME) * 2 + GetSystemMetrics(SM_CYCAPTION) - 1;
 
-    x_max = desktop.right;
-    y_max = desktop.bottom;
+    width = desktop.right;
+    height = desktop.bottom;
 }
 
 bool GDIDriver::init(int *argc, char **argv)
@@ -364,16 +364,16 @@ void GDIDriver::set_video_mode(VideoInfo *mode)
     set_clear();
 }
 
-bool GDIDriver::validate_mode(VideoInfo *mode)
+bool GDIDriver::validate_mode(const VideoInfo &mode)
 {
     int width;
     int height;
     get_max_screen(width, height);
 
     // allow modes <= size of screen with 256 colors
-    return mode->x_dots <= width
-        && mode->y_dots <= height
-        && mode->colors == 256;
+    return mode.x_dots <= width
+        && mode.y_dots <= height
+        && mode.colors == 256;
 }
 
 void GDIDriver::pause()

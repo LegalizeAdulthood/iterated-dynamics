@@ -68,8 +68,8 @@ public:
     virtual const std::string &get_name() const = 0;                    // name of driver
     virtual const std::string &get_description() const = 0;             // driver description
     virtual bool init(int *argc, char **argv) = 0;                      // init the driver
-    virtual bool validate_mode(ui::VideoInfo *mode) = 0;                // validate a id.cfg mode
-    virtual void get_max_screen(int &x_max, int &y_max) = 0;            // find max screen extents
+    virtual bool validate_mode(const ui::VideoInfo &mode) = 0;          // validate a id.cfg mode
+    virtual void get_max_screen(int &width, int &height) = 0;            // find max screen extents
     virtual void terminate() = 0;                                       // shutdown the driver
     virtual void pause() = 0;                                           // pause this driver
     virtual void resume() = 0;                                          // resume this driver
@@ -138,15 +138,9 @@ extern Driver *g_driver;            // current driver in use
 
 void driver_set_video_mode(ui::VideoInfo *mode);
 
-inline bool driver_validate_mode(ui::VideoInfo *mode)
+inline void driver_get_max_screen(int &width, int &height)
 {
-    return g_driver->validate_mode(mode);
-}
-inline void driver_get_max_screen(int *x_max, int *y_max)
-{
-    assert(x_max != nullptr);
-    assert(y_max != nullptr);
-    g_driver->get_max_screen(*x_max, *y_max);
+    g_driver->get_max_screen(width, height);
 }
 inline void driver_terminate()
 {

@@ -125,7 +125,7 @@ void load_config(const std::string &cfg_path)
 
         // if valid, add to supported modes
         video_entry.driver = driver_find_by_name(fields[3]);
-        if (video_entry.driver != nullptr && video_entry.driver->validate_mode(&video_entry))
+        if (video_entry.driver != nullptr && video_entry.driver->validate_mode(video_entry))
         {
             // look for a synonym mode and if found, overwrite its key
             VideoInfo *begin{&g_video_table[0]};

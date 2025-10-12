@@ -33,9 +33,9 @@ TEST(TestLoadConfig, gdiDisk)
     ExpectationSet init_gdi = EXPECT_CALL(gdi, init(nullptr, nullptr)).WillOnce(Return(true));
     ExpectationSet init_disk = EXPECT_CALL(disk, init(nullptr, nullptr)).WillOnce(Return(true));
     EXPECT_CALL(gdi, get_name()).WillRepeatedly(ReturnRef(gdi_name));
-    EXPECT_CALL(gdi, validate_mode(NotNull())).After(init_gdi).WillRepeatedly(Return(true));
+    EXPECT_CALL(gdi, validate_mode(_)).After(init_gdi).WillRepeatedly(Return(true));
     EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
-    EXPECT_CALL(disk, validate_mode(NotNull())).After(init_disk).WillRepeatedly(Return(true));
+    EXPECT_CALL(disk, validate_mode(_)).After(init_disk).WillRepeatedly(Return(true));
     EXPECT_CALL(gdi, terminate());
     EXPECT_CALL(disk, terminate());
     load_driver(&gdi, nullptr, nullptr);

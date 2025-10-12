@@ -63,12 +63,12 @@ public:
     void set_for_text() override;
     void set_for_graphics() override;
     bool is_disk() const override;
-    bool validate_mode(VideoInfo *mode) override;
+    bool validate_mode(const VideoInfo &mode) override;
     void pause() override;
     void resume() override;
     void save_graphics() override;
     void restore_graphics() override;
-    void get_max_screen(int &x_max, int &y_max) override;
+    void get_max_screen(int &width, int &height) override;
     void flush() override;
 
 private:
@@ -432,10 +432,10 @@ bool DiskDriver::is_disk() const
     return true;
 }
 
-bool DiskDriver::validate_mode(VideoInfo *mode)
+bool DiskDriver::validate_mode(const VideoInfo &mode)
 {
     /* allow modes of any size with 256 colors */
-    return mode->colors == 256;
+    return mode.colors == 256;
 }
 
 void DiskDriver::pause()
@@ -468,10 +468,10 @@ void DiskDriver::restore_graphics()
 {
 }
 
-void DiskDriver::get_max_screen(int &x_max, int &y_max)
+void DiskDriver::get_max_screen(int &width, int &height)
 {
-    x_max = -1;
-    y_max = -1;
+    width = -1;
+    height = -1;
 }
 
 void DiskDriver::flush()

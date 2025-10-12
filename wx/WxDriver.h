@@ -63,8 +63,8 @@ public:
     void set_keyboard_timeout(int ms) override;
     void debug_text(const char *text) override;
     void get_cursor_pos(int &x, int &y) const override;
-    bool validate_mode(ui::VideoInfo *mode) override;
-    void get_max_screen(int &xmax, int &ymax) override;
+    bool validate_mode(const ui::VideoInfo &mode) override;
+    void get_max_screen(int &width, int &height) override;
     void pause() override;
     void resume() override;
     void schedule_alarm(int secs) override;
