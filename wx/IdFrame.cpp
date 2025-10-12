@@ -6,12 +6,15 @@
 #include <gui/Plot.h>
 #include <gui/TextScreen.h>
 
+#include <ui/id_keys.h>
+
 #include <wx/app.h>
 #include <wx/wx.h>
 
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <iterator>
 
 namespace id::gui
 {
@@ -118,14 +121,49 @@ void IdFrame::scroll_up(int top, int bot)
     m_text_screen->scroll_up(top, bot);
 }
 
+void IdFrame::move_cursor(int row, int col, int cursor_type)
+{
+    m_text_screen->set_cursor_position(row, col);
+    m_text_screen->set_cursor_type(cursor_type);
+}
+
 void IdFrame::flush()
 {
     m_plot->flush();
 }
 
+namespace
+{
+
+struct WxKeyToIdKey
+{
+    wxKeyCode wx_key;
+    int id_key;
+};
+
+}
+
+static WxKeyToIdKey s_key_map[]{
+    {WXK_NUMPAD_ENTER, ui::ID_KEY_CTL_ENTER_2} //
+};
+
 void IdFrame::on_char(wxKeyEvent &event)
 {
     int key = event.GetKeyCode();
+    if ((key & 0x7F) == key)
+    {
+        add_key_press(key);
+    }
+    else if (const auto it = std::find_if(std::begin(s_key_map), std::end(s_key_map),
+                 [key](const WxKeyToIdKey &entry) { return entry.wx_key == key; });
+        it != std::end(s_key_map))
+    {
+        add_key_press(it->id_key);
+    }
+    else
+    {
+        assert("Unhandled key press" == nullptr);
+    }
 }
 
 void IdFrame::add_key_press(const unsigned int key)

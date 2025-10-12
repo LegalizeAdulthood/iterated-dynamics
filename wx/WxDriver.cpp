@@ -168,24 +168,22 @@ void WxDriver::unget_key(const int key)
  */
 int WxDriver::get_key()
 {
-    throw std::runtime_error("not implemented");
-    //int ch;
+    int ch;
+    do
+    {
+        if (m_key_buffer)
+        {
+            ch = m_key_buffer;
+            m_key_buffer = 0;
+        }
+        else
+        {
+            ch = handle_special_keys(wxGetApp().get_key_press(true));
+        }
+    }
+    while (ch == 0);
 
-    //do
-    //{
-    //    if (m_key_buffer)
-    //    {
-    //        ch = m_key_buffer;
-    //        m_key_buffer = 0;
-    //    }
-    //    else
-    //    {
-    //        ch = handle_special_keys(g_frame.get_key_press(true));
-    //    }
-    //}
-    //while (ch == 0);
-
-    //return ch;
+    return ch;
 }
 
 // Spawn a command prompt.
@@ -284,19 +282,18 @@ void WxDriver::scroll_up(int top, int bot)
 
 void WxDriver::move_cursor(int row, int col)
 {
-    throw std::runtime_error("not implemented");
-    //if (row != -1)
-    //{
-    //    m_cursor_row = row;
-    //    g_text_row = row;
-    //}
-    //if (col != -1)
-    //{
-    //    m_cursor_col = col;
-    //    g_text_col = col;
-    //}
-    //m_win_text.cursor(g_text_cbase + m_cursor_col, g_text_rbase + m_cursor_row, 1);
-    //m_cursor_shown = true;
+    if (row != -1)
+    {
+        m_cursor_row = row;
+        g_text_row = row;
+    }
+    if (col != -1)
+    {
+        m_cursor_col = col;
+        g_text_col = col;
+    }
+    wxGetApp().move_cursor(g_text_col_base + m_cursor_col, g_text_row_base + m_cursor_row, 1);
+    m_cursor_shown = true;
 }
 
 void WxDriver::set_attr(int row, int col, int attr, int count)

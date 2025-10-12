@@ -33,7 +33,7 @@ target_folder(Plot "Libraries/wx")
 add_library(IdFrame STATIC
     include/gui/IdFrame.h IdFrame.cpp)
 target_include_directories(IdFrame PUBLIC include)
-target_link_libraries(IdFrame PUBLIC TextScreen Plot wx::core)
+target_link_libraries(IdFrame PUBLIC libid TextScreen Plot wx::core)
 target_folder(IdFrame "Libraries/wx")
 
 add_library(gui STATIC

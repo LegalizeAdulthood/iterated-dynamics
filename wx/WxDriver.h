@@ -4,9 +4,8 @@
 
 #include <config/driver_types.h>
 
-#include "misc/Driver.h"
-
 #include "gui/CGATextWindow.h"
+#include "misc/Driver.h"
 
 #include <string>
 #include <vector>
@@ -94,8 +93,6 @@ public:
 protected:
     std::string m_name;
     std::string m_description;
-
-    gui::CGATextWindow m_win_text;
 
     /* key_buffer
     *

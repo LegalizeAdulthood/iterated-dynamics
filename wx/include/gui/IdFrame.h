@@ -29,6 +29,7 @@ public:
     void set_attr(int row, int col, int attr, int count);
     void hide_text_cursor();
     void scroll_up(int top, int bot);
+    void move_cursor(int row, int col, int cursor_type);
     void flush();
 
     bool is_text() const
