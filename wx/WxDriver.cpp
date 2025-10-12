@@ -512,15 +512,21 @@ void WxDriver::get_cursor_pos(int &x, int &y) const
     // g_frame.get_cursor_pos(x, y);
 }
 
-bool WxDriver::validate_mode(VideoInfo *mode)
+bool WxDriver::validate_mode(const VideoInfo &mode)
 {
-    throw std::runtime_error("not implemented");
-    return false;
+    int width;
+    int height;
+    get_max_screen(width, height);
+
+    // allow modes <= size of screen with 256 colors
+    return mode.x_dots <= width
+        && mode.y_dots <= height
+        && mode.colors == 256;
 }
 
-void WxDriver::get_max_screen(int &xmax, int &ymax)
+void WxDriver::get_max_screen(int &width, int &height)
 {
-    throw std::runtime_error("not implemented");
+    wxDisplaySize(&width, &height);
 }
 
 void WxDriver::pause()
