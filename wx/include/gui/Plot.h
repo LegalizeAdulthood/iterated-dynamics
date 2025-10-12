@@ -18,7 +18,7 @@ using Colormap = std::array<std::array<Byte, 3>, 256>;
 class Plot : public wxControl
 {
 public:
-    Plot();
+    Plot() = default;
     explicit Plot(wxWindow *parent, wxWindowID id = wxID_ANY, const wxPoint &pos = wxDefaultPosition,
         const wxSize &size = wxDefaultSize, long style = 0);
 
@@ -45,13 +45,12 @@ public:
 
 protected:
     // Override size-related methods to enforce fixed size
-    void DoSetSize(int x, int y, int width, int height, int sizeFlags) override;
+    void DoSetSize(int x, int y, int width, int height, int flags) override;
     wxSize DoGetBestSize() const override;
     wxSize GetMinSize() const override;
     wxSize GetMaxSize() const override;
 
 private:
-    void init();
     void set_dirty_region(const wxRect &rect);
     void init_pixels();
 

@@ -112,24 +112,14 @@ void Plot::init_pixels()
     std::memset(m_pixels.data(), 0, m_pixels.size());
     m_dirty = false;
     m_dirty_region = wxRect{};
-    m_font = wxFont(8, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
-}
-
-Plot::Plot()
-{
-    init();
 }
 
 Plot::Plot(wxWindow *parent, const wxWindowID id, const wxPoint &pos, const wxSize &size, const long style) :
     wxControl(parent, id, pos, size, style),
     m_width(size.GetWidth()),
     m_height(size.GetHeight()),
-    m_rendering(m_width, m_height)
-{
-    init();
-}
-
-void Plot::init()
+    m_rendering(m_width, m_height),
+    m_font(8, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL)
 {
     init_pixels();
     Bind(wxEVT_PAINT, &Plot::on_paint, this, GetId());
@@ -313,10 +303,13 @@ void Plot::restore_graphics()
     redraw();
 }
 
-void Plot::DoSetSize(const int x, const int y, int width, int height, const int sizeFlags)
+void Plot::DoSetSize(const int x, const int y, int width, int height, const int flags)
 {
-    // Ignore any size changes and use fixed size based on m_width and m_height
-    wxControl::DoSetSize(x, y, m_width, m_height, sizeFlags | wxSIZE_FORCE);
+    m_width = width;
+    m_height = height;
+    wxControl::DoSetSize(x, y, width, height, flags | wxSIZE_FORCE);
+    m_rendering = wxBitmap(m_width, m_height);
+    init_pixels();
 }
 
 wxSize Plot::DoGetBestSize() const
