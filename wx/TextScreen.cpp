@@ -49,6 +49,18 @@ static wxColour cga_color_to_wx_color(CGAColor color, const bool intense)
     return result;
 }
 
+enum class MarginIndex
+{
+    LINE_NUMBER = 0,
+    SYMBOLS = 1,
+    FOLDING = 2,
+};
+
+inline int operator+(MarginIndex value)
+{
+    return static_cast<int>(value);
+}
+
 TextScreen::TextScreen(wxWindow *parent, const wxWindowID id, const wxPoint &pos, const wxSize &size, const long style) :
     wxStyledTextCtrl(parent, id, pos, wxDefaultSize, style), // Always use calculated size
     m_font(wxFontInfo(12).Family(wxFONTFAMILY_TELETYPE).FaceName("Consolas"))
@@ -57,9 +69,9 @@ TextScreen::TextScreen(wxWindow *parent, const wxWindowID id, const wxPoint &pos
     clear();
     SetUseHorizontalScrollBar(false);
     SetUseVerticalScrollBar(false);
-    SetMarginWidth(0, 0); // Hide line number margin
-    SetMarginWidth(1, 0); // Hide symbol margin
-    SetMarginWidth(2, 0); // Hide fold margin
+    SetMarginWidth(+MarginIndex::LINE_NUMBER, 0); // Hide margins
+    SetMarginWidth(+MarginIndex::SYMBOLS, 0);
+    SetMarginWidth(+MarginIndex::FOLDING, 0);
     SetZoom(0);
     SetTabWidth(1);
     SetIndent(0);
