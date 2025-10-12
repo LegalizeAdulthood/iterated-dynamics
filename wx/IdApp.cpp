@@ -38,9 +38,10 @@ int IdApp::OnRun()
     return id_main(argc, argv);
 }
 
-void IdApp::create_window()
+void IdApp::create_window(const int width, const int height)
 {
     IdFrame *frame = new IdFrame();
+    frame->set_plot_size(width, height);
     frame->Show(true);
 }
 

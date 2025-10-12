@@ -21,6 +21,7 @@ public:
     IdFrame &operator=(IdFrame &&rhs) = delete;
 
     int get_key_press(bool wait_for_key);
+    void set_plot_size(int width, int height);
 
 protected:
     // Override DoGetBestSize to return the maximum size needed for either control

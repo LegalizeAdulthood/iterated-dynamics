@@ -16,9 +16,11 @@
 namespace id::gui
 {
 
+const wxSize ARBITRARY_DEFAULT_PLOT_SIZE{640, 480};
+
 IdFrame::IdFrame() :
     wxFrame(nullptr, wxID_ANY, wxT("Iterated Dynamics")),
-    m_plot(new Plot(this)),
+    m_plot(new Plot(this, wxID_ANY, wxDefaultPosition, ARBITRARY_DEFAULT_PLOT_SIZE)),
     m_text_screen(new TextScreen(this))
 {
     wxMenu *file = new wxMenu;
@@ -76,6 +78,12 @@ int IdFrame::get_key_press(const bool wait_for_key)
     m_key_press_count--;
 
     return i;
+}
+
+void IdFrame::set_plot_size(int width, int height)
+{
+    m_plot->SetSize(width, height);
+    SetClientSize(get_client_size());
 }
 
 void IdFrame::on_exit(wxCommandEvent &event)

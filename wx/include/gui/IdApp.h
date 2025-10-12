@@ -15,7 +15,7 @@ public:
     bool OnInit() override;
     int OnRun() override;
 
-    void create_window();
+    void create_window(int width, int height);
     void pump_messages(bool wait_flag);
 };
 

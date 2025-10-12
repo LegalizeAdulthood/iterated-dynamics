@@ -6,11 +6,13 @@
  */
 #include "WxDriver.h"
 
+#include "engine/id_data.h"
 #include "gui/IdApp.h"
 #include "gui/IdFrame.h"
 #include "io/special_dirs.h"
 #include "misc/stack_avail.h"
 #include "ui/read_ticker.h"
+#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <cassert>
@@ -538,7 +540,8 @@ void WxDriver::schedule_alarm(int secs)
 
 void WxDriver::create_window()
 {
-    wxGetApp().create_window();
+    wxGetApp().create_window(
+        g_video_table[engine::g_adapter].x_dots, g_video_table[engine::g_adapter].y_dots);
 }
 
 bool WxDriver::resize()
