@@ -22,6 +22,19 @@ public:
 
     int get_key_press(bool wait_for_key);
     void set_plot_size(int width, int height);
+    void set_for_text();
+    void set_for_graphics();
+    void clear();
+    void put_string(int row, int col, int attr, const char *msg, int &end_row, int &end_col);
+    void set_attr(int row, int col, int attr, int count);
+    void hide_text_cursor();
+    int key_pressed() const;
+    void scroll_up(int top, int bot);
+
+    bool is_text() const
+    {
+        return m_text_not_graphics;
+    }
 
 protected:
     // Override DoGetBestSize to return the maximum size needed for either control
@@ -52,6 +65,7 @@ private:
     std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
     Plot *m_plot{};
     TextScreen *m_text_screen{};
+    bool m_text_not_graphics{true};
 };
 
 } // namespace id::gui

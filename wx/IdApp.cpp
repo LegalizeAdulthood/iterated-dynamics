@@ -40,21 +40,68 @@ int IdApp::OnRun()
 
 void IdApp::create_window(const int width, const int height)
 {
-    IdFrame *frame = new IdFrame();
-    frame->set_plot_size(width, height);
-    frame->Show(true);
+    m_frame = new IdFrame();
+    m_frame->set_plot_size(width, height);
+    m_frame->Show(true);
 }
 
 void IdApp::pump_messages(bool wait_flag)
 {
-    wxEventLoopBase *loop = GetMainLoop();
-    while (loop->Pending())
+    if (wxEventLoopBase *loop = GetMainLoop())
     {
-        if (!loop->Dispatch())
+        while (loop->Pending())
         {
-            return;
+            if (!loop->Dispatch())
+            {
+                return;
+            }
         }
     }
+}
+
+bool IdApp::is_text() const
+{
+    return m_frame->is_text();
+}
+
+void IdApp::set_for_text()
+{
+    m_frame->set_for_text();
+}
+
+void IdApp::set_for_graphics()
+{
+    m_frame->set_for_graphics();
+}
+
+void IdApp::clear()
+{
+    m_frame->clear();
+}
+
+void IdApp::put_string(int col, int row, int attr, const char *msg, int &end_row, int &end_col)
+{
+    m_frame->put_string(row, col, attr, msg, end_row, end_col);
+}
+
+void IdApp::set_attr(int row, int col, int attr, int count)
+{
+    m_frame->set_attr(row, col, attr, count);
+}
+
+void IdApp::hide_text_cursor()
+{
+    m_frame->hide_text_cursor();
+}
+
+int IdApp::key_pressed() const
+{
+    return m_frame->key_pressed();
+}
+
+void IdApp::scroll_up(int top, int bot)
+{
+    m_frame->scroll_up(top, bot);
 }
 
 } // namespace id::gui

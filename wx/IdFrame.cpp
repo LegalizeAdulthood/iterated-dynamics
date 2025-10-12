@@ -86,6 +86,70 @@ void IdFrame::set_plot_size(int width, int height)
     SetClientSize(get_client_size());
 }
 
+void IdFrame::set_for_text()
+{
+    m_plot->Show(false);
+    m_text_screen->Show(true);
+}
+
+void IdFrame::set_for_graphics()
+{
+    m_plot->Show(true);
+    m_text_screen->Show(false);
+}
+
+void IdFrame::clear()
+{
+    if (m_text_not_graphics)
+    {
+        m_text_screen->clear();
+    }
+    else
+    {
+        m_plot->clear();
+    }
+}
+
+void IdFrame::put_string(int row, int col, int attr, const char *msg, int &end_row, int &end_col)
+{
+    m_text_screen->put_string(col, row, attr, msg, end_row, end_col);
+}
+
+void IdFrame::set_attr(int row, int col, int attr, int count)
+{
+    m_text_screen->set_attribute(row, col, attr, count);
+}
+
+void IdFrame::hide_text_cursor()
+{
+    m_text_screen->show_cursor(false);
+}
+
+int IdFrame::key_pressed() const
+{
+    return 0;
+    throw std::runtime_error("not implemented");
+
+    // if (m_key_buffer)
+    //{
+    //     return m_key_buffer;
+    // }
+    // flush_output();
+    // const int ch = handle_special_keys(g_frame.get_key_press(false));
+    // if (m_key_buffer)
+    //{
+    //     return m_key_buffer;
+    // }
+    // m_key_buffer = ch;
+
+    // return ch;
+}
+
+void IdFrame::scroll_up(int top, int bot)
+{
+    m_text_screen->scroll_up(top, bot);
+}
+
 void IdFrame::on_exit(wxCommandEvent &event)
 {
     Close(true);

@@ -12,6 +12,7 @@
 #include "io/special_dirs.h"
 #include "misc/stack_avail.h"
 #include "ui/read_ticker.h"
+#include "ui/text_screen.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
@@ -123,21 +124,7 @@ bool WxDriver::init(int *argc, char **argv)
  */
 int WxDriver::key_pressed()
 {
-    throw std::runtime_error("not implemented");
-
-    //if (m_key_buffer)
-    //{
-    //    return m_key_buffer;
-    //}
-    //flush_output();
-    //const int ch = handle_special_keys(g_frame.get_key_press(false));
-    //if (m_key_buffer)
-    //{
-    //    return m_key_buffer;
-    //}
-    //m_key_buffer = ch;
-
-    //return ch;
+    return wxGetApp().key_pressed();
 }
 
 /* unget_key
@@ -214,12 +201,7 @@ void  WxDriver::shell()
 
 void WxDriver::hide_text_cursor()
 {
-    throw std::runtime_error("not implemented");
-    //if (m_cursor_shown)
-    //{
-    //    m_cursor_shown = false;
-    //    m_win_text.hide_cursor();
-    //}
+    wxGetApp().hide_text_cursor();
 }
 
 void WxDriver::set_video_mode(VideoInfo *mode)
@@ -253,22 +235,21 @@ void WxDriver::set_video_mode(VideoInfo *mode)
 
 void WxDriver::put_string(int row, int col, int attr, const char *msg)
 {
-    throw std::runtime_error("not implemented");
-    //if (-1 != row)
-    //{
-    //    g_text_row = row;
-    //}
-    //if (-1 != col)
-    //{
-    //    g_text_col = col;
-    //}
-    //{
-    //    int abs_row = g_text_rbase + g_text_row;
-    //    int abs_col = g_text_cbase + g_text_col;
-    //    assert(abs_row >= 0 && abs_row < WINTEXT_MAX_ROW);
-    //    assert(abs_col >= 0 && abs_col < WINTEXT_MAX_COL);
-    //    m_win_text.put_string(abs_col, abs_row, attr, msg, &g_text_row, &g_text_col);
-    //}
+    if (-1 != row)
+    {
+        g_text_row = row;
+    }
+    if (-1 != col)
+    {
+        g_text_col = col;
+    }
+    {
+        const int abs_row = g_text_row_base + g_text_row;
+        const int abs_col = g_text_col_base + g_text_col;
+        _ASSERTE(abs_row >= 0 && abs_row < gui::WINTEXT_MAX_ROW);
+        _ASSERTE(abs_col >= 0 && abs_col < gui::WINTEXT_MAX_COL);
+        wxGetApp().put_string(abs_col, abs_row, attr, msg, g_text_row, g_text_col);
+    }
 }
 
 /************** Function scrollup(toprow, botrow) ******************
@@ -277,8 +258,7 @@ void WxDriver::put_string(int row, int col, int attr, const char *msg)
 */
 void WxDriver::scroll_up(int top, int bot)
 {
-    throw std::runtime_error("not implemented");
-    //m_win_text.scroll_up(top, bot);
+    wxGetApp().scroll_up(top, bot);
 }
 
 void WxDriver::move_cursor(int row, int col)
@@ -300,16 +280,15 @@ void WxDriver::move_cursor(int row, int col)
 
 void WxDriver::set_attr(int row, int col, int attr, int count)
 {
-    throw std::runtime_error("not implemented");
-    //if (-1 != row)
-    //{
-    //    g_text_row = row;
-    //}
-    //if (-1 != col)
-    //{
-    //    g_text_col = col;
-    //}
-    //m_win_text.set_attr(g_text_rbase + g_text_row, g_text_cbase + g_text_col, attr, count);
+    if (-1 != row)
+    {
+        g_text_row = row;
+    }
+    if (-1 != col)
+    {
+        g_text_col = col;
+    }
+    wxGetApp().set_attr(g_text_row_base + g_text_row, g_text_col_base + g_text_col, attr, count);
 }
 
 /*
@@ -477,12 +456,8 @@ void WxDriver::put_char_attr(int char_attr)
 
 void WxDriver::delay(int ms)
 {
-    throw std::runtime_error("not implemented");
-    //g_frame.pump_messages(false);
-    //if (ms >= 0)
-    //{
-    //    Sleep(ms);
-    //}
+    wxGetApp().pump_messages(false);
+    std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
 void WxDriver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
@@ -621,23 +596,22 @@ void WxDriver::restore_graphics()
 
 bool WxDriver::is_text()
 {
-    throw std::runtime_error("not implemented");
-    return true;
+    return wxGetApp().is_text();
 }
 
 void WxDriver::set_for_text()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().set_for_text();
 }
 
 void WxDriver::set_for_graphics()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().set_for_graphics();
 }
 
 void WxDriver::set_clear()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().clear();
 }
 
 void WxDriver::flush()
