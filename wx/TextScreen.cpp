@@ -53,18 +53,12 @@ TextScreen::TextScreen(wxWindow *parent, const wxWindowID id, const wxPoint &pos
     m_font(wxFontInfo(12).Family(wxFONTFAMILY_TELETYPE).FaceName("Consolas"))
 {
     InvalidateBestSize();
-
-    // Initialize the screen buffer
     clear();
-
-    // Configure the styled text control for fixed-width display
     SetUseHorizontalScrollBar(false);
     SetUseVerticalScrollBar(false);
     SetMarginWidth(0, 0); // Hide line number margin
     SetMarginWidth(1, 0); // Hide symbol margin
     SetMarginWidth(2, 0); // Hide fold margin
-
-    // Set up for 80x25 display
     SetZoom(0);
     SetTabWidth(1);
     SetIndent(0);
@@ -72,23 +66,16 @@ TextScreen::TextScreen(wxWindow *parent, const wxWindowID id, const wxPoint &pos
     SetViewEOL(false);
     SetViewWhiteSpace(wxSTC_WS_INVISIBLE);
     SetOvertype(true); // Overtype mode for CGA simulation
-
-    // Disable features not needed for CGA simulation
     SetReadOnly(false);
     SetCaretLineVisible(false);
     SetSelectionMode(wxSTC_SEL_RECTANGLE);
-
-    // Set monospace font similar to CGA
+    HideSelection(true);
     if (!m_font.IsOk())
     {
         m_font = wxFont(wxFontInfo(12).Family(wxFONTFAMILY_MODERN));
     }
     StyleSetFont(wxSTC_STYLE_DEFAULT, m_font);
-
-    // Initialize CGA color styles
     initialize_styles();
-
-    // Set initial content to 80x25 spaces
     std::string initial_content;
     for (int row = 0; row < SCREEN_HEIGHT; ++row)
     {
@@ -102,14 +89,8 @@ TextScreen::TextScreen(wxWindow *parent, const wxWindowID id, const wxPoint &pos
         }
     }
     SetText(initial_content);
-
-    // Position cursor at top-left
     set_cursor_position(0, 0);
-
-    // Prevent user from changing the size
     wxStyledTextCtrl::SetMaxLength(TOTAL_CELLS + SCREEN_HEIGHT - 1); // Include newlines
-
-    // Calculate and set the fixed size
     m_fixed_size = calculate_fixed_size();
     wxStyledTextCtrl::DoSetSize(pos.x, pos.y, m_fixed_size.x, m_fixed_size.y, wxSIZE_USE_EXISTING);
 }
