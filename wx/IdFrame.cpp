@@ -15,6 +15,21 @@
 #include <array>
 #include <cassert>
 #include <iterator>
+#include <string>
+
+#undef ID_DEBUG_KEYSTROKES
+#ifdef ID_DEBUG_KEYSTROKES
+#include <misc/Driver.h>
+
+static void debug_key_strokes(const std::string &text)
+{
+    driver_debug_line(text);
+}
+#else
+static void debug_key_strokes(const std::string &text)
+{
+}
+#endif
 
 namespace id::gui
 {
@@ -26,6 +41,7 @@ IdFrame::IdFrame() :
     m_plot(new Plot(this, wxID_ANY, wxDefaultPosition, ARBITRARY_DEFAULT_PLOT_SIZE)),
     m_text_screen(new TextScreen(this))
 {
+    Bind(wxEVT_KEY_DOWN, &IdFrame::on_key_down, this, wxID_ANY);
     Bind(wxEVT_CHAR, &IdFrame::on_char, this, wxID_ANY);
 
     SetClientSize(get_client_size());
@@ -137,33 +153,144 @@ namespace
 
 struct WxKeyToIdKey
 {
-    wxKeyCode wx_key;
+    int wx_key;
     int id_key;
 };
 
+} // namespace
+
+// clang-format off
+static WxKeyToIdKey s_key_map[]{
+    {WXK_NUMPAD_ENTER,  ui::ID_KEY_CTL_ENTER_2},
+    {WXK_HOME,          ui::ID_KEY_HOME},
+    {WXK_UP,            ui::ID_KEY_UP_ARROW},
+    {WXK_PAGEUP,        ui::ID_KEY_PAGE_UP},
+    {WXK_LEFT,          ui::ID_KEY_LEFT_ARROW},
+    {WXK_NUMPAD5,       ui::ID_KEY_KEYPAD_5},
+    {WXK_RIGHT,         ui::ID_KEY_RIGHT_ARROW},
+    {WXK_END,           ui::ID_KEY_END},
+    {WXK_DOWN,          ui::ID_KEY_DOWN_ARROW},
+    {WXK_PAGEDOWN,      ui::ID_KEY_PAGE_DOWN},
+    {WXK_INSERT,        ui::ID_KEY_INSERT},
+    {WXK_DELETE,        ui::ID_KEY_DELETE},
+};
+
+static WxKeyToIdKey s_shift_key_map[]{
+    {'\t',              ui::ID_KEY_SHF_TAB},
+    {'A',               ui::ID_KEY_ALT_A},
+    {'S',               ui::ID_KEY_ALT_S},
+};
+
+static WxKeyToIdKey s_control_key_map[]{
+    {WXK_LEFT,          ui::ID_KEY_CTL_LEFT_ARROW},
+    {WXK_RIGHT,         ui::ID_KEY_CTL_RIGHT_ARROW},
+    {WXK_END,           ui::ID_KEY_CTL_END},
+    {WXK_PAGEDOWN,      ui::ID_KEY_CTL_PAGE_DOWN},
+    {WXK_HOME,          ui::ID_KEY_CTL_HOME},
+    {WXK_PAGEUP,        ui::ID_KEY_CTL_PAGE_UP},
+    {WXK_UP,            ui::ID_KEY_CTL_UP_ARROW},
+    {'-',               ui::ID_KEY_CTL_MINUS},
+    {WXK_NUMPAD5,       ui::ID_KEY_CTL_KEYPAD_5},
+    {'+',               ui::ID_KEY_CTL_PLUS},
+    {WXK_DOWN,          ui::ID_KEY_CTL_DOWN_ARROW},
+    {WXK_INSERT,        ui::ID_KEY_CTL_INSERT},
+    {WXK_DELETE,        ui::ID_KEY_CTL_DEL},
+    {WXK_TAB,           ui::ID_KEY_CTL_TAB},
+};
+
+static WxKeyToIdKey s_alt_key_map[]{
+    {'A',               ui::ID_KEY_ALT_A},
+    {'S',               ui::ID_KEY_ALT_S},
+    {'1',               ui::ID_KEY_ALT_1},
+    {'2',               ui::ID_KEY_ALT_2},
+    {'3',               ui::ID_KEY_ALT_3},
+    {'4',               ui::ID_KEY_ALT_4},
+    {'5',               ui::ID_KEY_ALT_5},
+    {'6',               ui::ID_KEY_ALT_6},
+    {'7',               ui::ID_KEY_ALT_7},
+};
+// clang-format on
+
+static bool has_modifier(const wxKeyEvent &event, const int modifier)
+{
+    return (event.GetModifiers() & modifier) != 0;
 }
 
-static WxKeyToIdKey s_key_map[]{
-    {WXK_NUMPAD_ENTER, ui::ID_KEY_CTL_ENTER_2} //
-};
+void IdFrame::on_key_down(wxKeyEvent &event)
+{
+    const bool shift = has_modifier(event, wxMOD_SHIFT);
+    const bool alt = has_modifier(event, wxMOD_ALT);
+    const bool ctrl = has_modifier(event, wxMOD_CONTROL);
+    const int key = event.GetKeyCode();
+    const auto find_key = [key](const WxKeyToIdKey *begin, const WxKeyToIdKey *end)
+    { return std::find_if(begin, end, [key](const WxKeyToIdKey &entry) { return entry.wx_key == key; }); };
+    if ((key & 0x7F) == key)
+    {
+    }
+    else if (key >= WXK_F1 && key <= WXK_F10)
+    {
+        const int offset = key - WXK_F1;
+        if (shift)
+        {
+            add_key_press(ui::ID_KEY_SHF_F1 + offset);
+        }
+        else if (ctrl)
+        {
+            add_key_press(ui::ID_KEY_CTL_F1 + offset);
+        }
+        else if (alt)
+        {
+            add_key_press(ui::ID_KEY_ALT_F1 + offset);
+        }
+        else
+        {
+            add_key_press(ui::ID_KEY_F1 + offset);
+        }
+    }
+    else if (!(shift || alt || ctrl))
+    {
+        if (const auto it = find_key(std::begin(s_key_map), std::end(s_key_map)); it != std::end(s_key_map))
+        {
+            add_key_press(it->id_key);
+        }
+    }
+    else if (shift)
+    {
+        if (const auto it = find_key(std::begin(s_shift_key_map), std::end(s_shift_key_map));
+            it != std::end(s_shift_key_map))
+        {
+            add_key_press(it->id_key);
+        }
+    }
+    else if (ctrl)
+    {
+        if (const auto it = find_key(std::begin(s_control_key_map), std::end(s_control_key_map));
+            it != std::end(s_control_key_map))
+        {
+            add_key_press(it->id_key);
+        }
+    }
+    else if (alt)
+    {
+        if (const auto it = find_key(std::begin(s_alt_key_map), std::end(s_alt_key_map));
+            it != std::end(s_alt_key_map))
+        {
+            add_key_press(it->id_key);
+        }
+    }
+}
 
 void IdFrame::on_char(wxKeyEvent &event)
 {
     int key = event.GetKeyCode();
-    if ((key & 0x7F) == key)
+    assert((key & 0x7F) == key);
+    // an ASCII key has been pressed
+    if (key == '\t' && has_modifier(event, wxMOD_SHIFT))
     {
-        add_key_press(key);
+        key = ui::ID_KEY_SHF_TAB;
     }
-    else if (const auto it = std::find_if(std::begin(s_key_map), std::end(s_key_map),
-                 [key](const WxKeyToIdKey &entry) { return entry.wx_key == key; });
-        it != std::end(s_key_map))
-    {
-        add_key_press(it->id_key);
-    }
-    else
-    {
-        assert("Unhandled key press" == nullptr);
-    }
+    add_key_press(key);
+    debug_key_strokes("OnChar " + std::to_string(key));
 }
 
 void IdFrame::add_key_press(const unsigned int key)

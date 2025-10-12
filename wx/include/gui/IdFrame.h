@@ -47,6 +47,7 @@ private:
         KEY_BUF_MAX = 80,
     };
 
+    void on_key_down(wxKeyEvent &event);
     void on_char(wxKeyEvent &event);
     void add_key_press(unsigned int key);
     bool key_buffer_full() const
