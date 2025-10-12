@@ -246,8 +246,8 @@ void WxDriver::put_string(int row, int col, int attr, const char *msg)
     {
         const int abs_row = g_text_row_base + g_text_row;
         const int abs_col = g_text_col_base + g_text_col;
-        _ASSERTE(abs_row >= 0 && abs_row < gui::WINTEXT_MAX_ROW);
-        _ASSERTE(abs_col >= 0 && abs_col < gui::WINTEXT_MAX_COL);
+        assert(abs_row >= 0 && abs_row < gui::WINTEXT_MAX_ROW);
+        assert(abs_col >= 0 && abs_col < gui::WINTEXT_MAX_COL);
         wxGetApp().put_string(abs_col, abs_row, attr, msg, g_text_row, g_text_col);
     }
 }
