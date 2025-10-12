@@ -6,21 +6,18 @@
 
 #include <config/driver_types.h>
 
+#include <algorithm>
 #include <cstring>
+#include <vector>
 
 using namespace id::ui;
 
 namespace id::misc
 {
 
-// list of drivers that are supported by source code in Id.
-// default driver is first one in the list that initializes.
-enum
-{
-    MAX_DRIVERS = 10
-};
-static int s_num_drivers{};
-static Driver *s_available[MAX_DRIVERS]{};
+// Array of drivers that are supported by source code in Id.
+// The default driver is first one in the list that initializes.
+static std::vector<Driver *> s_available;
 
 Driver *g_driver{};
 
@@ -35,7 +32,7 @@ void load_driver(Driver *drv, int *argc, char **argv)
             {
                 g_driver = drv;
             }
-            s_available[s_num_drivers++] = drv;
+            s_available.push_back(drv);
         }
     }
 }
@@ -64,7 +61,7 @@ int init_drivers(int *argc, char **argv)
     load_driver(get_wx_driver(), argc, argv);
 #endif
 
-    return s_num_drivers;     // number of drivers supported at runtime
+    return static_cast<int>(s_available.size()); // number of drivers supported at runtime
 }
 
 // add_video_mode
@@ -84,27 +81,22 @@ void add_video_mode(Driver *drv, VideoInfo *mode)
 
 void close_drivers()
 {
-    for (int i = 0; i < s_num_drivers; i++)
+    while (!s_available.empty())
     {
-        if (s_available[i])
-        {
-            s_available[i]->terminate();
-            s_available[i] = nullptr;
-        }
+        Driver *drv = s_available.back();
+        s_available.pop_back();
+        drv->terminate();
     }
-
     g_driver = nullptr;
-    s_num_drivers = 0;
 }
 
 Driver *driver_find_by_name(const char *name)
 {
-    for (int i = 0; i < s_num_drivers; i++)
+    if (const auto it = std::find_if(
+            s_available.begin(), s_available.end(), [name](Driver *drv) { return drv->get_name() == name; });
+        it != s_available.end())
     {
-        if (name == s_available[i]->get_name())
-        {
-            return s_available[i];
-        }
+        return *it;
     }
     return nullptr;
 }
