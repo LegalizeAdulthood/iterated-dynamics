@@ -23,18 +23,6 @@ IdFrame::IdFrame() :
     m_plot(new Plot(this, wxID_ANY, wxDefaultPosition, ARBITRARY_DEFAULT_PLOT_SIZE)),
     m_text_screen(new TextScreen(this))
 {
-    wxMenu *file = new wxMenu;
-    file->Append(wxID_EXIT);
-    wxMenu *help = new wxMenu;
-    help->Append(wxID_ABOUT);
-    wxMenuBar *bar = new wxMenuBar;
-    bar->Append(file, "&File");
-    bar->Append(help, "&Help");
-    wxFrameBase::SetMenuBar(bar);
-    wxFrameBase::CreateStatusBar();
-
-    Bind(wxEVT_MENU, &IdFrame::on_about, this, wxID_ABOUT);
-    Bind(wxEVT_MENU, &IdFrame::on_exit, this, wxID_EXIT);
     Bind(wxEVT_CHAR, &IdFrame::on_char, this, wxID_ANY);
 
     SetClientSize(get_client_size());
@@ -133,16 +121,6 @@ void IdFrame::scroll_up(int top, int bot)
 void IdFrame::flush()
 {
     m_plot->flush();
-}
-
-void IdFrame::on_exit(wxCommandEvent &event)
-{
-    Close(true);
-}
-
-void IdFrame::on_about(wxCommandEvent &event)
-{
-    wxMessageBox("Iterated Dynamics 2.0", "About Iterated Dynamics", wxOK | wxICON_INFORMATION);
 }
 
 void IdFrame::on_char(wxKeyEvent &event)
