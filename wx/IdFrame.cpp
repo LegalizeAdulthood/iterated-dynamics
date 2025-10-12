@@ -125,29 +125,14 @@ void IdFrame::hide_text_cursor()
     m_text_screen->show_cursor(false);
 }
 
-int IdFrame::key_pressed() const
-{
-    return 0;
-    throw std::runtime_error("not implemented");
-
-    // if (m_key_buffer)
-    //{
-    //     return m_key_buffer;
-    // }
-    // flush_output();
-    // const int ch = handle_special_keys(g_frame.get_key_press(false));
-    // if (m_key_buffer)
-    //{
-    //     return m_key_buffer;
-    // }
-    // m_key_buffer = ch;
-
-    // return ch;
-}
-
 void IdFrame::scroll_up(int top, int bot)
 {
     m_text_screen->scroll_up(top, bot);
+}
+
+void IdFrame::flush()
+{
+    m_plot->flush();
 }
 
 void IdFrame::on_exit(wxCommandEvent &event)

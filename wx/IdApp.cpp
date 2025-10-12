@@ -35,6 +35,7 @@ bool IdApp::OnInit()
 
 int IdApp::OnRun()
 {
+    m_mainLoop = CreateMainLoop();
     return id_main(argc, argv);
 }
 
@@ -94,14 +95,19 @@ void IdApp::hide_text_cursor()
     m_frame->hide_text_cursor();
 }
 
-int IdApp::key_pressed() const
-{
-    return m_frame->key_pressed();
-}
-
 void IdApp::scroll_up(int top, int bot)
 {
     m_frame->scroll_up(top, bot);
+}
+
+int IdApp::get_key_press(bool wait_for_key)
+{
+    return m_frame->get_key_press(wait_for_key);
+}
+
+void IdApp::flush()
+{
+    m_frame->flush();
 }
 
 } // namespace id::gui

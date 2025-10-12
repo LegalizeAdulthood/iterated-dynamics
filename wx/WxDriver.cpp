@@ -9,9 +9,12 @@
 #include "engine/id_data.h"
 #include "gui/IdApp.h"
 #include "gui/IdFrame.h"
+#include "io/save_timer.h"
 #include "io/special_dirs.h"
 #include "misc/stack_avail.h"
+#include "ui/id_keys.h"
 #include "ui/read_ticker.h"
+#include "ui/slideshw.h"
 #include "ui/text_screen.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
@@ -124,7 +127,25 @@ bool WxDriver::init(int *argc, char **argv)
  */
 int WxDriver::key_pressed()
 {
-    return wxGetApp().key_pressed();
+    if (m_key_buffer)
+    {
+        return m_key_buffer;
+    }
+    if (io::auto_save_needed())
+    {
+        unget_key(ID_KEY_FAKE_AUTOSAVE);
+        assert(m_key_buffer == ID_KEY_FAKE_AUTOSAVE);
+        return m_key_buffer;
+    }
+    flush_output();
+    const int ch = handle_special_keys(wxGetApp().get_key_press(false));
+    if (m_key_buffer)
+    {
+        return m_key_buffer;
+    }
+    m_key_buffer = ch;
+
+    return ch;
 }
 
 /* unget_key
@@ -616,7 +637,7 @@ void WxDriver::set_clear()
 
 void WxDriver::flush()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().flush();
 }
 
 void WxDriver::check_memory()

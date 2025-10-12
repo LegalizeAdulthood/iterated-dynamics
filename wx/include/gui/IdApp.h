@@ -26,8 +26,9 @@ public:
     void put_string(int col, int row, int attr, const char *msg, int &end_row, int &end_col);
     void set_attr(int row, int col, int attr, int count);
     void hide_text_cursor();
-    int key_pressed() const;
     void scroll_up(int top, int bot);
+    int get_key_press(bool wait_for_key);
+    void flush();
 
 private:
     IdFrame *m_frame{};

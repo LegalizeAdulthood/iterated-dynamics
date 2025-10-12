@@ -28,8 +28,8 @@ public:
     void put_string(int row, int col, int attr, const char *msg, int &end_row, int &end_col);
     void set_attr(int row, int col, int attr, int count);
     void hide_text_cursor();
-    int key_pressed() const;
     void scroll_up(int top, int bot);
+    void flush();
 
     bool is_text() const
     {
@@ -57,6 +57,13 @@ private:
     wxSize get_client_size() const;
 
     bool m_timed_out{};
+
+    /* key_buffer
+    *
+    * When we peeked ahead and saw a keypress, stash it here for later
+    * feeding to our caller.
+    */
+    mutable int m_key_buffer{};
 
     // the keypress buffer
     unsigned int m_key_press_count{};

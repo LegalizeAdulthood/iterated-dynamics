@@ -42,6 +42,7 @@ add_library(gui STATIC
 )
 target_include_directories(gui PUBLIC include)
 target_link_libraries(gui PUBLIC libid IdFrame wx::core wx::base)
+target_folder(gui "Libraries/wx")
 
 configure_file(id.rc.in id.rc @ONLY)
 add_executable(id
