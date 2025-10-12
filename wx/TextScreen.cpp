@@ -12,22 +12,23 @@ static wxColour cga_color_to_wx_color(CGAColor color, const bool intense)
 {
     // Standard CGA color palette
     static const wxColour cga_colors[] = {
-        wxColour(0, 0, 0),       // BLACK
-        wxColour(0, 0, 170),     // BLUE
-        wxColour(0, 170, 0),     // GREEN
-        wxColour(0, 170, 170),   // CYAN
-        wxColour(170, 0, 0),     // RED
-        wxColour(170, 0, 170),   // MAGENTA
-        wxColour(170, 85, 0),    // BROWN
-        wxColour(170, 170, 170), // LIGHT_GRAY
-        wxColour(85, 85, 85),    // DARK_GRAY
-        wxColour(85, 85, 255),   // LIGHT_BLUE
-        wxColour(85, 255, 85),   // LIGHT_GREEN
-        wxColour(85, 255, 255),  // LIGHT_CYAN
-        wxColour(255, 85, 85),   // LIGHT_RED
-        wxColour(255, 85, 255),  // LIGHT_MAGENTA
-        wxColour(255, 255, 85),  // YELLOW
-        wxColour(255, 255, 255)  // WHITE
+        wxColour(0, 0, 0),
+        wxColour(0, 0, 128),
+        wxColour(0, 128, 0),
+        wxColour(0, 128, 128),
+        wxColour(128, 0, 0),
+        wxColour(128, 0, 128),
+        wxColour(128, 128, 0),
+        wxColour(192, 192, 192),
+        //  wxColour(128, 128, 128),  This looks lousy - make it black
+        wxColour(0, 0, 0),
+        wxColour(0, 0, 255),
+        wxColour(0, 255, 0),
+        wxColour(0, 255, 255),
+        wxColour(255, 0, 0),
+        wxColour(255, 0, 255),
+        wxColour(255, 255, 0),
+        wxColour(255, 255, 255)
     };
 
     int color_index = static_cast<int>(color);
