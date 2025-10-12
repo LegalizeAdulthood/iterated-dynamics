@@ -89,23 +89,11 @@ TextScreen::TextScreen(wxWindow *parent, const wxWindowID id, const wxPoint &pos
     }
     StyleSetFont(wxSTC_STYLE_DEFAULT, m_font);
     initialize_styles();
-    std::string initial_content;
-    for (int row = 0; row < SCREEN_HEIGHT; ++row)
-    {
-        for (int col = 0; col < SCREEN_WIDTH; ++col)
-        {
-            initial_content += ' ';
-        }
-        if (row < SCREEN_HEIGHT - 1)
-        {
-            initial_content += '\n';
-        }
-    }
-    SetText(initial_content);
     set_cursor_position(0, 0);
     wxStyledTextCtrl::SetMaxLength(TOTAL_CELLS + SCREEN_HEIGHT - 1); // Include newlines
     m_fixed_size = calculate_fixed_size();
     wxStyledTextCtrl::DoSetSize(pos.x, pos.y, m_fixed_size.x, m_fixed_size.y, wxSIZE_USE_EXISTING);
+    wxWindowBase::Enable(false);
 }
 
 wxSize TextScreen::calculate_fixed_size()
