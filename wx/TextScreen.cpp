@@ -106,7 +106,7 @@ wxSize TextScreen::calculate_fixed_size()
 
     // Calculate the exact size needed for 80x25 characters
     int width = m_char_size.x * SCREEN_WIDTH;
-    int height = m_char_size.y * (SCREEN_HEIGHT + 1);
+    int height = m_char_size.y * (SCREEN_HEIGHT + 1); // TODO: if SCREEN_HEIGHT is 25, why do we need +1?
 
     // Add small margins to account for control borders
     constexpr int margin = 4;
