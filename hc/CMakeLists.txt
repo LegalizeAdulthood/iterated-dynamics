@@ -35,4 +35,6 @@ target_sources(help-defs INTERFACE
 target_include_directories(help-defs INTERFACE ${CMAKE_BINARY_DIR}/include)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

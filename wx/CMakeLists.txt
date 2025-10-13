@@ -49,4 +49,6 @@ install(TARGETS id
         POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
 )
 
-add_subdirectory(tests)
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()

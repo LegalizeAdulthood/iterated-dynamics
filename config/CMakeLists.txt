@@ -150,4 +150,6 @@ target_include_directories(config PUBLIC
     include
     "${CMAKE_CURRENT_BINARY_DIR}/include")
 
-add_subdirectory(tests)
+if(BUILD_TESTING)
+    add_subdirectory(tests)
+endif()
