@@ -115,4 +115,14 @@ void IdApp::flush()
     m_frame->flush();
 }
 
+Screen IdApp::get_screen() const
+{
+    return m_frame->get_screen();
+}
+
+void IdApp::set_screen(const Screen &screen)
+{
+    m_frame->set_screen(screen);
+}
+
 } // namespace id::gui

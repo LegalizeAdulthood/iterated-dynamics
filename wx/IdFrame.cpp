@@ -148,6 +148,16 @@ void IdFrame::flush()
     m_plot->flush();
 }
 
+Screen IdFrame::get_screen() const
+{
+    return m_text_screen->get_screen();
+}
+
+void IdFrame::set_screen(const Screen &screen)
+{
+    m_text_screen->set_screen(screen);
+}
+
 namespace
 {
 

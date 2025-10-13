@@ -20,7 +20,7 @@ add_library(TextScreen STATIC
     include/gui/TextScreen.h TextScreen.cpp
 )
 target_include_directories(TextScreen PUBLIC include)
-target_link_libraries(TextScreen PUBLIC wx::wxstc)
+target_link_libraries(TextScreen PUBLIC wx::wxstc config)
 target_folder(TextScreen "Libraries/wx")
 
 add_library(Plot STATIC
@@ -37,8 +37,8 @@ target_link_libraries(IdFrame PUBLIC libid TextScreen Plot wx::core)
 target_folder(IdFrame "Libraries/wx")
 
 add_library(gui STATIC
-    include/gui/CGATextWindow.h
     include/gui/IdApp.h IdApp.cpp
+    include/gui/Screen.h
 )
 target_include_directories(gui PUBLIC include)
 target_link_libraries(gui PUBLIC libid IdFrame wx::core wx::base)

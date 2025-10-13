@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include "gui/Screen.h"
+
 #include <wx/stc/stc.h>
 #include <wx/wx.h>
 
@@ -109,6 +111,8 @@ public:
     // Screen buffer access
     CGACell get_cell(int row, int col) const;
     void set_cell(int row, int col, const CGACell &cell);
+    Screen get_screen() const;
+    void set_screen(const Screen & screen);
 
     // Utility methods
     void refresh_display();

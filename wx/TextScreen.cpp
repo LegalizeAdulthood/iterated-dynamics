@@ -185,6 +185,8 @@ void TextScreen::initialize_styles()
 void TextScreen::put_string(
     const int x_pos, const int y_pos, const int attr, const char *text, int &end_row, int &end_col)
 {
+    assert(y_pos >= 0 && y_pos < SCREEN_HEIGHT);
+    assert(x_pos >= 0 && x_pos < SCREEN_WIDTH);
     const char xa = attr & 0x0ff;
     int max_row = y_pos;
     int row = y_pos;
@@ -405,6 +407,34 @@ void TextScreen::set_cell(const int row, const int col, const CGACell &cell)
 
     m_screen[row][col] = cell;
     update_cell_display(row, col);
+}
+
+Screen TextScreen::get_screen() const
+{
+    Screen result;
+    for (int row = 0; row < SCREEN_HEIGHT; ++row)
+    {
+        for (int col = 0; col < SCREEN_WIDTH; ++col)
+        {
+            result.chars.push_back(m_screen[row][col].character);
+            result.attrs.push_back(m_screen[row][col].attribute);
+        }
+    }
+    return result;
+}
+
+void TextScreen::set_screen(const Screen &screen)
+{
+    for (int row = 0; row < SCREEN_HEIGHT; ++row)
+    {
+        int index{row * SCREEN_WIDTH};
+        for (int col = 0; col < SCREEN_WIDTH; ++col, ++index)
+        {
+            assert(index < static_cast<int>(screen.chars.size()));
+            assert(index < static_cast<int>(screen.attrs.size()));
+            m_screen[row][col] = CGACell(screen.chars[index], screen.attrs[index]);
+        }
+    }
 }
 
 void TextScreen::refresh_display()

@@ -4,7 +4,7 @@
 
 #include <config/driver_types.h>
 
-#include "gui/CGATextWindow.h"
+#include "gui/Screen.h"
 #include "misc/Driver.h"
 
 #include <string>
@@ -91,6 +91,11 @@ public:
         std::string &result_filename) override;
 
 protected:
+    struct TextLocation
+    {
+        int row{};
+        int col{};
+    };
     std::string m_name;
     std::string m_description;
 
@@ -102,9 +107,8 @@ protected:
     mutable int m_key_buffer{};
 
     std::vector<gui::Screen> m_saved_screens;
-    std::vector<int> m_saved_cursor;
-    int m_cursor_row{};
-    int m_cursor_col{};
+    std::vector<TextLocation> m_saved_cursor;
+    TextLocation m_cursor;
 };
 
 } // namespace id::misc

@@ -265,8 +265,6 @@ void WxDriver::put_string(int row, int col, int attr, const char *msg)
     {
         const int abs_row = g_text_row_base + g_text_row;
         const int abs_col = g_text_col_base + g_text_col;
-        assert(abs_row >= 0 && abs_row < gui::WINTEXT_MAX_ROW);
-        assert(abs_col >= 0 && abs_col < gui::WINTEXT_MAX_COL);
         wxGetApp().put_string(abs_col, abs_row, attr, msg, g_text_row, g_text_col);
     }
 }
@@ -284,15 +282,15 @@ void WxDriver::move_cursor(int row, int col)
 {
     if (row != -1)
     {
-        m_cursor_row = row;
+        m_cursor.row = row;
         g_text_row = row;
     }
     if (col != -1)
     {
-        m_cursor_col = col;
+        m_cursor.col = col;
         g_text_col = col;
     }
-    wxGetApp().move_cursor(g_text_col_base + m_cursor_col, g_text_row_base + m_cursor_row);
+    wxGetApp().move_cursor(g_text_col_base + m_cursor.col, g_text_row_base + m_cursor.row);
 }
 
 void WxDriver::set_attr(int row, int col, int attr, int count)
@@ -314,37 +312,35 @@ void WxDriver::set_attr(int row, int col, int attr, int count)
 */
 void WxDriver::stack_screen()
 {
-    throw std::runtime_error("not implemented");
     // set for text mode if this is the first screen stacked
-    //if (m_saved_screens.empty())
-    //{
-    //    driver_set_for_text();
-    //}
-    //m_saved_cursor.push_back(g_text_row * 80 + g_text_col);
-    //m_saved_screens.push_back(m_win_text.get_screen());
-    //driver_set_clear();
+    if (m_saved_screens.empty())
+    {
+        driver_set_for_text();
+    }
+    m_saved_cursor.push_back(TextLocation{g_text_row, g_text_col});
+    m_saved_screens.push_back(wxGetApp().get_screen());
+    driver_set_clear();
 }
 
 void WxDriver::unstack_screen()
 {
-    throw std::runtime_error("not implemented");
-    //assert(!m_saved_cursor.empty());
-    //const int packed{m_saved_cursor.back()};
-    //m_saved_cursor.pop_back();
-    //g_text_row = packed / 80;
-    //g_text_col = packed % 80;
-    //if (!m_saved_screens.empty())
-    //{
-    //    // unstack
-    //    m_win_text.set_screen(m_saved_screens.back());
-    //    m_saved_screens.pop_back();
-    //    move_cursor(-1, -1);
-    //}
-    //// unstacking the last saved screen reverts to graphics display
-    //if (m_saved_screens.empty())
-    //{
-    //    set_for_graphics();
-    //}
+    assert(!m_saved_cursor.empty());
+    const TextLocation packed{m_saved_cursor.back()};
+    m_saved_cursor.pop_back();
+    g_text_row = packed.row;
+    g_text_col = packed.col;
+    if (!m_saved_screens.empty())
+    {
+        // unstack
+        wxGetApp().set_screen(m_saved_screens.back());
+        m_saved_screens.pop_back();
+        move_cursor(-1, -1);
+    }
+    // unstacking the last saved screen reverts to graphics display
+    if (m_saved_screens.empty())
+    {
+        set_for_graphics();
+    }
 }
 
 void WxDriver::discard_screen()

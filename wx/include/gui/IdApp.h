@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include "gui/Screen.h"
+
 #include <wx/app.h>
 
 namespace id::gui
@@ -30,6 +32,8 @@ public:
     void move_cursor(int row, int col);
     int get_key_press(bool wait_for_key);
     void flush();
+    Screen get_screen() const;
+    void set_screen(const Screen &screen);
 
 private:
     IdFrame *m_frame{};

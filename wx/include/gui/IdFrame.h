@@ -1,5 +1,7 @@
 #pragma once
 
+#include "gui/Screen.h"
+
 #include <wx/frame.h>
 
 #include <array>
@@ -31,6 +33,8 @@ public:
     void scroll_up(int top, int bot);
     void move_cursor(int row, int col);
     void flush();
+    Screen get_screen() const;
+    void set_screen(const Screen & screen);
 
     bool is_text() const
     {
