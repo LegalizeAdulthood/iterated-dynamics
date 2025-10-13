@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-find_package(Boost REQUIRED)
+find_package(boost_algorithm CONFIG REQUIRED)
+find_package(boost_endian CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
 find_package(GIF REQUIRED)
 find_package(cpuid CONFIG REQUIRED)
@@ -263,6 +264,6 @@ else()
     set(ID_OS_LIBS "")
 endif()
 target_link_libraries(libid PRIVATE helpcom os ${ID_OS_LIBS} fmt::fmt-header-only)
-target_link_libraries(libid PUBLIC help-defs config Boost::boost GIF::GIF cpuid::cpuid)
+target_link_libraries(libid PUBLIC help-defs config Boost::algorithm Boost::endian GIF::GIF cpuid::cpuid)
 target_folder(libid "Libraries")
 add_dependencies(libid native-help)
