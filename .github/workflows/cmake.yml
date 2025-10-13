@@ -24,11 +24,10 @@ jobs:
       with:
         submodules: true
 
-    - name: Install System Dependencies
+    - name: Install System Dependencies for building HTML docs
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
         sudo apt-get update
-        sudo apt-get install libx11-dev
         sudo apt-get install mono-complete
 
     - name: Add NuGet sources
