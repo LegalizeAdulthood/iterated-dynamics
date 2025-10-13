@@ -25,9 +25,12 @@
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
+#include <wx/log.h>
+
 #include <cassert>
 #include <chrono>
 #include <ctime>
+#include <stdexcept>
 #include <string>
 #include <thread>
 
@@ -369,43 +372,25 @@ void WxDriver::discard_screen()
 
 int WxDriver::init_fm()
 {
-    throw std::runtime_error("not implemented");
     return 0;
 }
 
 void WxDriver::buzzer(Buzzer kind)
 {
-    throw std::runtime_error("not implemented");
-    //UINT beep{MB_OK};
-    //switch (kind)
-    //{
-    //case buzzer_codes::COMPLETE:
-    //default:
-    //    break;
-    //case buzzer_codes::INTERRUPT:
-    //    beep = MB_ICONWARNING;
-    //    break;
-    //case buzzer_codes::PROBLEM:
-    //    beep = MB_ICONERROR;
-    //    break;
-    //}
-    //MessageBeep(beep);
+    wxBell();
 }
 
 bool WxDriver::sound_on(int freq)
 {
-    throw std::runtime_error("not implemented");
     return false;
 }
 
 void WxDriver::sound_off()
 {
-    throw std::runtime_error("not implemented");
 }
 
 void WxDriver::mute()
 {
-    throw std::runtime_error("not implemented");
 }
 
 bool WxDriver::is_disk() const
@@ -452,14 +437,12 @@ int WxDriver::wait_key_pressed(const bool timeout)
 
 int WxDriver::get_char_attr()
 {
-    throw std::runtime_error("not implemented");
-    //return m_win_text.get_char_attr(g_text_row, g_text_col);
+    return wxGetApp().get_char_attr(g_text_row, g_text_col);
 }
 
 void WxDriver::put_char_attr(int char_attr)
 {
-    throw std::runtime_error("not implemented");
-    //m_win_text.put_char_attr(g_text_row, g_text_col, char_attr);
+    wxGetApp().put_char_attr(g_text_row, g_text_col, char_attr);
 }
 
 void WxDriver::delay(int ms)
@@ -480,19 +463,17 @@ void WxDriver::put_true_color(int x, int y, int r, int g, int b, int a)
 
 void WxDriver::set_keyboard_timeout(int ms)
 {
-    throw std::runtime_error("not implemented");
-    //g_frame.set_keyboard_timeout(ms);
+    wxGetApp().set_keyboard_timeout(ms);
 }
 
 void WxDriver::debug_text(const char *text)
 {
-    throw std::runtime_error("not implemented");
+    wxLogDebug(text);
 }
 
 void WxDriver::get_cursor_pos(int &x, int &y) const
 {
-    throw std::runtime_error("not implemented");
-    // g_frame.get_cursor_pos(x, y);
+    wxGetApp().get_cursor_pos(x, y);
 }
 
 bool WxDriver::validate_mode(const VideoInfo &mode)
@@ -514,12 +495,12 @@ void WxDriver::get_max_screen(int &width, int &height)
 
 void WxDriver::pause()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().pause();
 }
 
 void WxDriver::resume()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().resume();
 }
 
 void WxDriver::schedule_alarm(int secs)

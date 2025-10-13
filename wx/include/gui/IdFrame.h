@@ -5,6 +5,7 @@
 #include <wx/frame.h>
 
 #include <array>
+#include <wx/timer.h>
 
 namespace id::gui
 {
@@ -35,6 +36,10 @@ public:
     void flush();
     Screen get_screen() const;
     void set_screen(const Screen & screen);
+    int get_char_attr(int row, int col);
+    void put_char_attr(int row, int col, int char_attr);
+    void set_keyboard_timeout(int ms);
+    void get_cursor_pos(int &x, int &y) const;
 
     bool is_text() const
     {
@@ -53,6 +58,7 @@ private:
 
     void on_key_down(wxKeyEvent &event);
     void on_char(wxKeyEvent &event);
+    void on_timer(wxTimerEvent &event);
     void add_key_press(unsigned int key);
     bool key_buffer_full() const
     {
@@ -76,6 +82,7 @@ private:
     std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
     Plot *m_plot{};
     TextScreen *m_text_screen{};
+    wxTimer m_keyboard_timer;
     bool m_text_not_graphics{true};
 };
 

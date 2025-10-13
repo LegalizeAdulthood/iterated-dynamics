@@ -125,4 +125,34 @@ void IdApp::set_screen(const Screen &screen)
     m_frame->set_screen(screen);
 }
 
+int IdApp::get_char_attr(int row, int col)
+{
+    return m_frame->get_char_attr(row, col);
+}
+
+void IdApp::put_char_attr(int row, int col, int char_attr)
+{
+    m_frame->put_char_attr(row, col, char_attr);
+}
+
+void IdApp::set_keyboard_timeout(int ms)
+{
+    m_frame->set_keyboard_timeout(ms);
+}
+
+void IdApp::get_cursor_pos(int &x, int &y) const
+{
+    m_frame->get_cursor_pos(x, y);
+}
+
+void IdApp::pause()
+{
+    m_frame->Hide();
+}
+
+void IdApp::resume()
+{
+    m_frame->Show();
+}
+
 } // namespace id::gui

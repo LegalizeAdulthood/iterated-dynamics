@@ -15,6 +15,7 @@
 #include <array>
 #include <cassert>
 #include <iterator>
+#include <stdexcept>
 #include <string>
 
 #undef ID_DEBUG_KEYSTROKES
@@ -39,10 +40,12 @@ const wxSize ARBITRARY_DEFAULT_PLOT_SIZE{640, 480};
 IdFrame::IdFrame() :
     wxFrame(nullptr, wxID_ANY, wxT("Iterated Dynamics")),
     m_plot(new Plot(this, wxID_ANY, wxDefaultPosition, ARBITRARY_DEFAULT_PLOT_SIZE)),
-    m_text_screen(new TextScreen(this))
+    m_text_screen(new TextScreen(this)),
+    m_keyboard_timer(this)
 {
     Bind(wxEVT_KEY_DOWN, &IdFrame::on_key_down, this, wxID_ANY);
     Bind(wxEVT_CHAR, &IdFrame::on_char, this, wxID_ANY);
+    Bind(wxEVT_TIMER, &IdFrame::on_timer, this, wxID_ANY);
 
     SetClientSize(get_client_size());
     m_plot->Hide();
@@ -156,6 +159,30 @@ Screen IdFrame::get_screen() const
 void IdFrame::set_screen(const Screen &screen)
 {
     m_text_screen->set_screen(screen);
+}
+
+int IdFrame::get_char_attr(int row, int col)
+{
+    const CGACell cell = m_text_screen->get_cell(row, col);
+    return static_cast<int>(cell.character) | static_cast<int>(cell.attribute) << 8;
+}
+
+void IdFrame::put_char_attr(int row, int col, int char_attr)
+{
+    const CGACell cell{
+        static_cast<char>(char_attr & 0xFF), static_cast<unsigned char>(char_attr >> 8 & 0xFF)};
+    m_text_screen->set_cell(row, col, cell);
+}
+
+void IdFrame::set_keyboard_timeout(int ms)
+{
+    m_keyboard_timer.Start(ms, wxTIMER_ONE_SHOT);
+    // TODO: move message pump to IdFrame and handle keyboard timeout there
+}
+
+void IdFrame::get_cursor_pos(int &x, int &y) const
+{
+    m_text_screen->get_cursor_position(y, x);
 }
 
 namespace
@@ -301,6 +328,11 @@ void IdFrame::on_char(wxKeyEvent &event)
     }
     add_key_press(key);
     debug_key_strokes("OnChar " + std::to_string(key));
+}
+
+void IdFrame::on_timer(wxTimerEvent &event)
+{
+    m_timed_out = true;
 }
 
 void IdFrame::add_key_press(const unsigned int key)

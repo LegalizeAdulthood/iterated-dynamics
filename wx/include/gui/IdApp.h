@@ -5,6 +5,7 @@
 #include "gui/Screen.h"
 
 #include <wx/app.h>
+#include <wx/timer.h>
 
 namespace id::gui
 {
@@ -34,6 +35,12 @@ public:
     void flush();
     Screen get_screen() const;
     void set_screen(const Screen &screen);
+    int get_char_attr(int row, int col);
+    void put_char_attr(int row, int col, int char_attr);
+    void set_keyboard_timeout(int ms);
+    void get_cursor_pos(int &x, int &y) const;
+    void pause();
+    void resume();
 
 private:
     IdFrame *m_frame{};
