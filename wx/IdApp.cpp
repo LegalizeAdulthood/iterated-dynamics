@@ -100,9 +100,9 @@ void IdApp::scroll_up(int top, int bot)
     m_frame->scroll_up(top, bot);
 }
 
-void IdApp::move_cursor(int row, int col, int cursor_type)
+void IdApp::move_cursor(int row, int col)
 {
-    m_frame->move_cursor(row, col, cursor_type);
+    m_frame->move_cursor(row, col);
 }
 
 int IdApp::get_key_press(bool wait_for_key)

@@ -292,8 +292,7 @@ void WxDriver::move_cursor(int row, int col)
         m_cursor_col = col;
         g_text_col = col;
     }
-    wxGetApp().move_cursor(g_text_col_base + m_cursor_col, g_text_row_base + m_cursor_row, 1);
-    m_cursor_shown = true;
+    wxGetApp().move_cursor(g_text_col_base + m_cursor_col, g_text_row_base + m_cursor_row);
 }
 
 void WxDriver::set_attr(int row, int col, int attr, int count)
@@ -411,33 +410,19 @@ bool WxDriver::is_disk() const
 
 int WxDriver::key_cursor(int row, int col)
 {
-    throw std::runtime_error("not implemented");
-    //if (-1 != row)
-    //{
-    //    m_cursor_row = row;
-    //    g_text_row = row;
-    //}
-    //if (-1 != col)
-    //{
-    //    m_cursor_col = col;
-    //    g_text_col = col;
-    //}
+    int result;
+    if (key_pressed())
+    {
+        result = get_key();
+    }
+    else
+    {
+        move_cursor(row, col);
+        result = get_key();
+        hide_text_cursor();
+    }
 
-    //int result;
-    //if (key_pressed())
-    //{
-    //    result = get_key();
-    //}
-    //else
-    //{
-    //    m_cursor_shown = true;
-    //    m_win_text.cursor(m_cursor_col, m_cursor_row, 1);
-    //    result = get_key();
-    //    hide_text_cursor();
-    //    m_cursor_shown = false;
-    //}
-
-    //return result;
+    return result;
 }
 
 int WxDriver::wait_key_pressed(const bool timeout)

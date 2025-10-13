@@ -137,10 +137,10 @@ void IdFrame::scroll_up(int top, int bot)
     m_text_screen->scroll_up(top, bot);
 }
 
-void IdFrame::move_cursor(int row, int col, int cursor_type)
+void IdFrame::move_cursor(const int row, const int col)
 {
     m_text_screen->set_cursor_position(row, col);
-    m_text_screen->set_cursor_type(cursor_type);
+    m_text_screen->show_cursor(true);
 }
 
 void IdFrame::flush()

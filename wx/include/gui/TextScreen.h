@@ -66,6 +66,18 @@ struct CGACell
     }
 };
 
+enum class CursorType
+{
+    NONE = 0,
+    UNDERLINE = 1,
+    BLOCK = 2
+};
+
+inline int operator+(CursorType value)
+{
+    return static_cast<int>(value);
+}
+
 class TextScreen : public wxStyledTextCtrl
 {
 public:
@@ -93,7 +105,6 @@ public:
     void set_cursor_position(int row, int col);
     void get_cursor_position(int &row, int &col) const;
     void show_cursor(bool show = true);
-    void set_cursor_type(int type); // 0 = none, 1 = underline, 2 = block
 
     // Screen buffer access
     CGACell get_cell(int row, int col) const;
@@ -130,7 +141,7 @@ private:
     int m_cursor_row{0};
     int m_cursor_col{0};
     bool m_cursor_visible{true};
-    int m_cursor_type{1}; // 1 = underline
+    CursorType m_cursor_type{CursorType::UNDERLINE};
 
     // Style mappings for different CGA attribute combinations
     static constexpr int MAX_STYLES = 256; // All possible CGA attribute combinations

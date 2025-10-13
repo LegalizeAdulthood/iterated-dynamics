@@ -90,6 +90,7 @@ TextScreen::TextScreen(wxWindow *parent, const wxWindowID id, const wxPoint &pos
     StyleSetFont(wxSTC_STYLE_DEFAULT, m_font);
     initialize_styles();
     set_cursor_position(0, 0);
+    SetCaretStyle(+CursorType::UNDERLINE);
     wxStyledTextCtrl::SetMaxLength(TOTAL_CELLS + SCREEN_HEIGHT - 1); // Include newlines
     m_fixed_size = calculate_fixed_size();
     wxStyledTextCtrl::DoSetSize(pos.x, pos.y, m_fixed_size.x, m_fixed_size.y, wxSIZE_USE_EXISTING);
@@ -383,16 +384,7 @@ void TextScreen::get_cursor_position(int &row, int &col) const
 void TextScreen::show_cursor(const bool show)
 {
     m_cursor_visible = show;
-    SetCaretWidth(show ? (m_cursor_type == 2 ? 8 : 1) : 0);
-}
-
-void TextScreen::set_cursor_type(const int type)
-{
-    m_cursor_type = type;
-    if (m_cursor_visible)
-    {
-        SetCaretWidth(type == 2 ? 8 : type == 1 ? 1 : 0);
-    }
+    SetCaretStyle(show ? +m_cursor_type : +CursorType::NONE);
 }
 
 CGACell TextScreen::get_cell(const int row, const int col) const
