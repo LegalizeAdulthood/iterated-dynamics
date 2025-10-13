@@ -16,32 +16,15 @@ target_include_directories(os PUBLIC .)
 set_target_properties(os PROPERTIES FOLDER Libraries)
 add_dependencies(os native-help)
 
-add_library(TextScreen STATIC
+add_library(gui STATIC
+    include/gui/App.h App.cpp
+    include/gui/Frame.h Frame.cpp
+    include/gui/Plot.h Plot.cpp
+    include/gui/Screen.h
     include/gui/TextScreen.h TextScreen.cpp
 )
-target_include_directories(TextScreen PUBLIC include)
-target_link_libraries(TextScreen PUBLIC wx::wxstc config)
-target_folder(TextScreen "Libraries/wx")
-
-add_library(Plot STATIC
-    include/gui/Plot.h Plot.cpp
-)
-target_include_directories(Plot PUBLIC include)
-target_link_libraries(Plot PUBLIC wx::core config)
-target_folder(Plot "Libraries/wx")
-
-add_library(IdFrame STATIC
-    include/gui/IdFrame.h IdFrame.cpp)
-target_include_directories(IdFrame PUBLIC include)
-target_link_libraries(IdFrame PUBLIC libid TextScreen Plot wx::core)
-target_folder(IdFrame "Libraries/wx")
-
-add_library(gui STATIC
-    include/gui/IdApp.h IdApp.cpp
-    include/gui/Screen.h
-)
 target_include_directories(gui PUBLIC include)
-target_link_libraries(gui PUBLIC libid IdFrame wx::core wx::base)
+target_link_libraries(gui PUBLIC libid wx::stc wx::core wx::base)
 target_folder(gui "Libraries/wx")
 
 configure_file(id.rc.in id.rc @ONLY)

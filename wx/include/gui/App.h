@@ -10,12 +10,12 @@
 namespace id::gui
 {
 
-class IdFrame;
+class Frame;
 
-class IdApp : public wxApp
+class App : public wxApp
 {
 public:
-    ~IdApp() override = default;
+    ~App() override = default;
 
     bool OnInit() override;
     int OnRun() override;
@@ -43,9 +43,9 @@ public:
     void resume();
 
 private:
-    IdFrame *m_frame{};
+    Frame *m_frame{};
 };
 
 } // namespace id::gui
 
-id::gui::IdApp &wxGetApp();
+id::gui::App &wxGetApp();

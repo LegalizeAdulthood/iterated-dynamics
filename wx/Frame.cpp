@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <gui/IdFrame.h>
+#include <gui/Frame.h>
 
-#include <gui/IdApp.h>
+#include <gui/App.h>
 #include <gui/Plot.h>
 #include <gui/TextScreen.h>
 
@@ -37,22 +37,22 @@ namespace id::gui
 
 const wxSize ARBITRARY_DEFAULT_PLOT_SIZE{640, 480};
 
-IdFrame::IdFrame() :
+Frame::Frame() :
     wxFrame(nullptr, wxID_ANY, wxT("Iterated Dynamics")),
     m_plot(new Plot(this, wxID_ANY, wxDefaultPosition, ARBITRARY_DEFAULT_PLOT_SIZE)),
     m_text_screen(new TextScreen(this)),
     m_keyboard_timer(this)
 {
-    Bind(wxEVT_KEY_DOWN, &IdFrame::on_key_down, this, wxID_ANY);
-    Bind(wxEVT_CHAR, &IdFrame::on_char, this, wxID_ANY);
-    Bind(wxEVT_TIMER, &IdFrame::on_timer, this, wxID_ANY);
+    Bind(wxEVT_KEY_DOWN, &Frame::on_key_down, this, wxID_ANY);
+    Bind(wxEVT_CHAR, &Frame::on_char, this, wxID_ANY);
+    Bind(wxEVT_TIMER, &Frame::on_timer, this, wxID_ANY);
 
     SetClientSize(get_client_size());
     m_plot->Hide();
     m_text_screen->Hide();
 }
 
-wxSize IdFrame::get_client_size() const
+wxSize Frame::get_client_size() const
 {
     const wxSize plot_size = m_plot->GetBestSize();
     const wxSize text_size = m_text_screen->GetBestSize();
@@ -60,12 +60,12 @@ wxSize IdFrame::get_client_size() const
         std::max(plot_size.GetHeight(), text_size.GetHeight())};
 }
 
-wxSize IdFrame::DoGetBestSize() const
+wxSize Frame::DoGetBestSize() const
 {
     return get_client_size();
 }
 
-int IdFrame::get_key_press(const bool wait_for_key)
+int Frame::get_key_press(const bool wait_for_key)
 {
     wxGetApp().pump_messages(wait_for_key);
     if (wait_for_key && m_timed_out)
@@ -90,25 +90,25 @@ int IdFrame::get_key_press(const bool wait_for_key)
     return i;
 }
 
-void IdFrame::set_plot_size(int width, int height)
+void Frame::set_plot_size(int width, int height)
 {
     m_plot->SetSize(width, height);
     SetClientSize(get_client_size());
 }
 
-void IdFrame::set_for_text()
+void Frame::set_for_text()
 {
     m_plot->Show(false);
     m_text_screen->Show(true);
 }
 
-void IdFrame::set_for_graphics()
+void Frame::set_for_graphics()
 {
     m_plot->Show(true);
     m_text_screen->Show(false);
 }
 
-void IdFrame::clear()
+void Frame::clear()
 {
     if (m_text_not_graphics)
     {
@@ -120,67 +120,67 @@ void IdFrame::clear()
     }
 }
 
-void IdFrame::put_string(int row, int col, int attr, const char *msg, int &end_row, int &end_col)
+void Frame::put_string(int row, int col, int attr, const char *msg, int &end_row, int &end_col)
 {
     m_text_screen->put_string(col, row, attr, msg, end_row, end_col);
 }
 
-void IdFrame::set_attr(int row, int col, int attr, int count)
+void Frame::set_attr(int row, int col, int attr, int count)
 {
     m_text_screen->set_attribute(row, col, attr, count);
 }
 
-void IdFrame::hide_text_cursor()
+void Frame::hide_text_cursor()
 {
     m_text_screen->show_cursor(false);
 }
 
-void IdFrame::scroll_up(int top, int bot)
+void Frame::scroll_up(int top, int bot)
 {
     m_text_screen->scroll_up(top, bot);
 }
 
-void IdFrame::move_cursor(const int row, const int col)
+void Frame::move_cursor(const int row, const int col)
 {
     m_text_screen->set_cursor_position(row, col);
     m_text_screen->show_cursor(true);
 }
 
-void IdFrame::flush()
+void Frame::flush()
 {
     m_plot->flush();
 }
 
-Screen IdFrame::get_screen() const
+Screen Frame::get_screen() const
 {
     return m_text_screen->get_screen();
 }
 
-void IdFrame::set_screen(const Screen &screen)
+void Frame::set_screen(const Screen &screen)
 {
     m_text_screen->set_screen(screen);
 }
 
-int IdFrame::get_char_attr(int row, int col)
+int Frame::get_char_attr(int row, int col)
 {
     const CGACell cell = m_text_screen->get_cell(row, col);
     return static_cast<int>(cell.character) | static_cast<int>(cell.attribute) << 8;
 }
 
-void IdFrame::put_char_attr(int row, int col, int char_attr)
+void Frame::put_char_attr(int row, int col, int char_attr)
 {
     const CGACell cell{
         static_cast<char>(char_attr & 0xFF), static_cast<unsigned char>(char_attr >> 8 & 0xFF)};
     m_text_screen->set_cell(row, col, cell);
 }
 
-void IdFrame::set_keyboard_timeout(int ms)
+void Frame::set_keyboard_timeout(int ms)
 {
     m_keyboard_timer.Start(ms, wxTIMER_ONE_SHOT);
     // TODO: move message pump to IdFrame and handle keyboard timeout there
 }
 
-void IdFrame::get_cursor_pos(int &x, int &y) const
+void Frame::get_cursor_pos(int &x, int &y) const
 {
     m_text_screen->get_cursor_position(y, x);
 }
@@ -253,7 +253,7 @@ static bool has_modifier(const wxKeyEvent &event, const int modifier)
     return (event.GetModifiers() & modifier) != 0;
 }
 
-void IdFrame::on_key_down(wxKeyEvent &event)
+void Frame::on_key_down(wxKeyEvent &event)
 {
     const bool shift = has_modifier(event, wxMOD_SHIFT);
     const bool alt = has_modifier(event, wxMOD_ALT);
@@ -317,7 +317,7 @@ void IdFrame::on_key_down(wxKeyEvent &event)
     }
 }
 
-void IdFrame::on_char(wxKeyEvent &event)
+void Frame::on_char(wxKeyEvent &event)
 {
     int key = event.GetKeyCode();
     assert((key & 0x7F) == key);
@@ -330,12 +330,12 @@ void IdFrame::on_char(wxKeyEvent &event)
     debug_key_strokes("OnChar " + std::to_string(key));
 }
 
-void IdFrame::on_timer(wxTimerEvent &event)
+void Frame::on_timer(wxTimerEvent &event)
 {
     m_timed_out = true;
 }
 
-void IdFrame::add_key_press(const unsigned int key)
+void Frame::add_key_press(const unsigned int key)
 {
     if (key_buffer_full())
     {
