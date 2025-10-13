@@ -126,14 +126,28 @@
       "inherits": [ "ci-preset-build-dir", "use-wx", "release-config", "run-slow-tests" ]
     },
     {
+      "name": "feature-hc",
+      "hidden": true,
+      "displayName": "Configure for help compiler feature",
+      "cacheVariables": {
+        "VCPKG_MANIFEST_FEATURES": "hc",
+        "VCPKG_MANIFEST_NO_DEFAULT_FEATURES": true
+      }
+    },
+    {
       "name": "ci-html-docs",
       "displayName": "CI Configure HTML docs with Release settings for HTML",
-      "inherits": [ "ci-preset-build-dir", "default", "release-config" ]
+      "inherits": [ "ci-preset-build-dir", "no-testing", "feature-hc", "release-config", "default" ]
     },
     {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
       "inherits": [ "sibling-preset-build-dir", "compile-commands", "no-testing", "vcpkg" ]
+    },
+    {
+      "name": "hc",
+      "displayName": "Configure help compiler for generating docs",
+      "inherits": [ "sibling-preset-build-dir", "no-testing", "feature-hc", "release-config", "vcpkg" ]
     }
   ],
   "buildPresets": [
@@ -146,6 +160,11 @@
       "name": "wx",
       "displayName": "Build with wxWidgets settings",
       "configurePreset": "wx"
+    },
+    {
+      "name": "hc",
+      "displayName": "Build with help compiler settings",
+      "configurePreset": "hc"
     },
     {
       "name": "debug",
@@ -494,6 +513,20 @@
         {
           "type": "build",
           "name": "ci-html-docs"
+        }
+      ]
+    },
+    {
+      "name": "hc",
+      "displayName": "CI Workflow for HTML docs with Release settings: configure, build",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "hc"
+        },
+        {
+          "type": "build",
+          "name": "hc"
         }
       ]
     }
