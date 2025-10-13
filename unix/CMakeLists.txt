@@ -6,11 +6,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     return()
 endif()
 
-add_library(os-hc INTERFACE)
-target_compile_options(os-hc INTERFACE ${ID_TARGET_OPTIONS})
-target_link_libraries(os-hc INTERFACE helpcom config)
-target_folder(os-hc "Libraries")
-
 if(ID_USE_WX)
     add_library(os-wx STATIC
         init_failure.cpp)

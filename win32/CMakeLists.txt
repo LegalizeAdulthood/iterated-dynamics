@@ -6,10 +6,6 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     return()
 endif()
 
-add_library(os-hc INTERFACE)
-target_link_libraries(os-hc INTERFACE helpcom config)
-target_folder(os-hc "Libraries")
-
 string(TIMESTAMP CURRENT_YEAR "%Y")
 configure_file(id.rc.in id.rc @ONLY)
 

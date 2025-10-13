@@ -34,6 +34,11 @@ target_sources(help-defs INTERFACE
     ${CMAKE_BINARY_DIR}/include/helpdefs.h)
 target_include_directories(help-defs INTERFACE ${CMAKE_BINARY_DIR}/include)
 
+add_library(os-hc INTERFACE)
+target_compile_options(os-hc INTERFACE ${ID_TARGET_OPTIONS})
+target_link_libraries(os-hc INTERFACE helpcom config)
+target_folder(os-hc "Libraries")
+
 add_subdirectory(src)
 if(BUILD_TESTING)
     add_subdirectory(tests)
