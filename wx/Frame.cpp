@@ -44,7 +44,6 @@ Frame::Frame() :
     m_keyboard_timer(this)
 {
     Bind(wxEVT_KEY_DOWN, &Frame::on_key_down, this, wxID_ANY);
-    Bind(wxEVT_CHAR, &Frame::on_char, this, wxID_ANY);
     Bind(wxEVT_TIMER, &Frame::on_timer, this, wxID_ANY);
 
     SetClientSize(get_client_size());
@@ -263,6 +262,7 @@ void Frame::on_key_down(wxKeyEvent &event)
     { return std::find_if(begin, end, [key](const WxKeyToIdKey &entry) { return entry.wx_key == key; }); };
     if ((key & 0x7F) == key)
     {
+        add_key_press(key);
     }
     else if (key >= WXK_F1 && key <= WXK_F10)
     {
@@ -315,19 +315,6 @@ void Frame::on_key_down(wxKeyEvent &event)
             add_key_press(it->id_key);
         }
     }
-}
-
-void Frame::on_char(wxKeyEvent &event)
-{
-    int key = event.GetKeyCode();
-    assert((key & 0x7F) == key);
-    // an ASCII key has been pressed
-    if (key == '\t' && has_modifier(event, wxMOD_SHIFT))
-    {
-        key = ui::ID_KEY_SHF_TAB;
-    }
-    add_key_press(key);
-    debug_key_strokes("OnChar " + std::to_string(key));
 }
 
 void Frame::on_timer(wxTimerEvent &event)

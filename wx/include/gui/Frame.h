@@ -59,7 +59,6 @@ private:
     };
 
     void on_key_down(wxKeyEvent &event);
-    void on_char(wxKeyEvent &event);
     void on_timer(wxTimerEvent &event);
     void add_key_press(unsigned int key);
     bool key_buffer_full() const
