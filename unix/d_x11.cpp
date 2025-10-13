@@ -147,7 +147,7 @@ public:
     int wait_key_pressed(bool timeout) override;
     void unget_key(int key) override;
     void shell() override;
-    void set_video_mode(VideoInfo *mode) override;
+    void set_video_mode(const VideoInfo &mode) override;
     void put_string(int row, int col, int attr, char const *msg) override;
     bool is_text() override;
     void set_for_text() override;
@@ -2312,7 +2312,7 @@ void X11Driver::shell()
     putchar('\n');
 }
 
-void X11Driver::set_video_mode(VideoInfo *mode)
+void X11Driver::set_video_mode(const VideoInfo &mode)
 {
     if (g_disk_flag)
     {

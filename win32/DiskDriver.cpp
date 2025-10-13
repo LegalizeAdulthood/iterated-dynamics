@@ -56,7 +56,7 @@ public:
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
     void create_window() override;
-    void set_video_mode(VideoInfo *mode) override;
+    void set_video_mode(const VideoInfo &mode) override;
     void set_clear() override;
     void display_string(int x, int y, int fg, int bg, const char *text) override;
     bool is_text() override;
@@ -386,7 +386,7 @@ void DiskDriver::create_window()
     m_win_text.text_on();
 }
 
-void DiskDriver::set_video_mode(VideoInfo *mode)
+void DiskDriver::set_video_mode(const VideoInfo &mode)
 {
     // initially, set the virtual line to be the scan line length
     g_is_true_color = false;            // assume not truecolor

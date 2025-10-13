@@ -109,7 +109,7 @@ void driver_set_video_mode(VideoInfo *mode)
         g_driver = mode->driver;
         g_driver->resume();
     }
-    g_driver->set_video_mode(mode);
+    g_driver->set_video_mode(*mode);
 }
 
 } // namespace id::misc

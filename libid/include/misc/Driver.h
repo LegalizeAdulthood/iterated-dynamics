@@ -97,7 +97,7 @@ public:
     virtual int wait_key_pressed(bool timeout) = 0;                           //
     virtual void unget_key(int key) = 0;                                      //
     virtual void shell() = 0;                                                 // invoke a command shell
-    virtual void set_video_mode(ui::VideoInfo *mode) = 0;                     //
+    virtual void set_video_mode(const ui::VideoInfo &mode) = 0;               //
     virtual void put_string(int row, int col, int attr, const char *msg) = 0; //
     virtual bool is_text() = 0;                                               //
     virtual void set_for_text() = 0;                                          // set for text mode & save gfx

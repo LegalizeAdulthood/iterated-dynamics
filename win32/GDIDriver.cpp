@@ -63,7 +63,7 @@ public:
     void set_for_text() override;
     void set_for_graphics() override;
     void set_clear() override;
-    void set_video_mode(VideoInfo *mode) override;
+    void set_video_mode(const VideoInfo &mode) override;
     bool validate_mode(const VideoInfo &mode) override;
     void pause() override;
     void resume() override;
@@ -339,7 +339,7 @@ void GDIDriver::set_clear()
     }
 }
 
-void GDIDriver::set_video_mode(VideoInfo *mode)
+void GDIDriver::set_video_mode(const VideoInfo &mode)
 {
     // initially, set the virtual line to be the scan line length
     g_is_true_color = false;            // assume not truecolor

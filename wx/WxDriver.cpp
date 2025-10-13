@@ -223,7 +223,7 @@ void WxDriver::hide_text_cursor()
     wxGetApp().hide_text_cursor();
 }
 
-void WxDriver::set_video_mode(VideoInfo *mode)
+void WxDriver::set_video_mode(const VideoInfo &mode)
 {
     throw std::runtime_error("not implemented");
     // initially, set the virtual line to be the scan line length

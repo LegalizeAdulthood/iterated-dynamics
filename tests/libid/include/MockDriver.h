@@ -43,7 +43,7 @@ public:
     MOCK_METHOD(int, wait_key_pressed, (bool), (override));
     MOCK_METHOD(void, unget_key, (int), (override));
     MOCK_METHOD(void, shell, (), (override));
-    MOCK_METHOD(void, set_video_mode, (ui::VideoInfo *), (override));
+    MOCK_METHOD(void, set_video_mode, (const ui::VideoInfo &), (override));
     MOCK_METHOD(void, put_string, (int, int, int, char const *), (override));
     MOCK_METHOD(bool, is_text, (), (override));
     MOCK_METHOD(void, set_for_text, (), (override));
