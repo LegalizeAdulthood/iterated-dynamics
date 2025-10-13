@@ -6,16 +6,22 @@
  */
 #include "WxDriver.h"
 
+#include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "gui/IdApp.h"
 #include "gui/IdFrame.h"
 #include "io/save_timer.h"
 #include "io/special_dirs.h"
 #include "misc/stack_avail.h"
+#include "ui/diskvid.h"
 #include "ui/id_keys.h"
 #include "ui/read_ticker.h"
+#include "ui/rotate.h"
 #include "ui/slideshw.h"
+#include "ui/spindac.h"
 #include "ui/text_screen.h"
+#include "ui/video.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
@@ -29,6 +35,7 @@
 #include <crtdbg.h>
 #endif
 
+using namespace id::engine;
 using namespace id::ui;
 
 namespace id::misc
@@ -225,31 +232,33 @@ void WxDriver::hide_text_cursor()
 
 void WxDriver::set_video_mode(const VideoInfo &mode)
 {
-    throw std::runtime_error("not implemented");
-    // initially, set the virtual line to be the scan line length
-    //g_is_true_color = false;            // assume not truecolor
-    //g_vesa_x_res = 0;                   // reset indicators used for
-    //g_vesa_y_res = 0;                   // virtual screen limits estimation
-    //g_good_mode = true;
-    //if (g_dot_mode != 0)
-    //{
-    //    g_and_color = g_colors-1;
-    //    g_box_count = 0;
-    //    g_dac_learn = true;
-    //    g_dac_count = g_cycle_limit;
-    //    g_got_real_dac = true;          // we are "VGA"
-    //    read_palette();
-    //}
+    // This should already be the case, but let's confirm assumptions.
+    assert(g_video_table[g_adapter].x_dots == mode.x_dots);
+    assert(g_video_table[g_adapter].y_dots == mode.y_dots);
+    assert(g_video_table[g_adapter].colors == mode.colors);
+    assert(g_video_table[g_adapter].driver == this);
 
-    //resize();
-    //if (g_disk_flag)
-    //{
-    //    enddisk();
-    //}
-    //set_normal_dot();
-    //set_normal_span();
-    //set_for_graphics();
-    //set_clear();
+    // initially, set the virtual line to be the scan line length
+    g_is_true_color = false;            // assume not truecolor
+    g_vesa_x_res = 0;                   // reset indicators used for
+    g_vesa_y_res = 0;                   // virtual screen limits estimation
+    g_good_mode = true;
+    g_and_color = g_colors - 1;
+    g_box_count = 0;
+    g_dac_count = g_cycle_limit;
+    g_got_real_dac = true; // we are "VGA"
+    read_palette();
+
+    resize();
+    wxGetApp().clear();
+    if (g_disk_flag)
+    {
+        end_disk();
+    }
+    set_normal_dot();
+    set_normal_span();
+    set_for_graphics();
+    set_clear();
 }
 
 void WxDriver::put_string(int row, int col, int attr, const char *msg)
@@ -520,8 +529,7 @@ void WxDriver::schedule_alarm(int secs)
 
 void WxDriver::create_window()
 {
-    wxGetApp().create_window(
-        g_video_table[engine::g_adapter].x_dots, g_video_table[engine::g_adapter].y_dots);
+    wxGetApp().create_window(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
 }
 
 bool WxDriver::resize()
