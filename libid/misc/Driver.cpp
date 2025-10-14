@@ -81,6 +81,7 @@ void add_video_mode(Driver *drv, VideoInfo *mode)
 
 void close_drivers()
 {
+    // terminate drivers in reverse order of initialization
     while (!s_available.empty())
     {
         Driver *drv = s_available.back();
