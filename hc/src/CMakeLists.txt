@@ -79,6 +79,7 @@ add_custom_command(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/id.txt"
     WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
     DEPENDS native-help
 )
+target_folder(doc-file "Docs")
 
 set(image_files
     "type-mandel.png"
