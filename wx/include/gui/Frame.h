@@ -7,6 +7,7 @@
 #include <wx/frame.h>
 
 #include <array>
+#include <wx/evtloop.h>
 #include <wx/timer.h>
 
 namespace id::gui
@@ -42,6 +43,7 @@ public:
     void put_char_attr(int row, int col, int char_attr);
     void set_keyboard_timeout(int ms);
     void get_cursor_pos(int &x, int &y) const;
+    void pump_messages(wxEventLoopBase *loop, bool wait_flag);
 
     bool is_text() const
     {
@@ -58,6 +60,7 @@ private:
         KEY_BUF_MAX = 80,
     };
 
+    void on_close(wxCloseEvent &event);
     void on_key_down(wxKeyEvent &event);
     void on_timer(wxTimerEvent &event);
     void add_key_press(unsigned int key);
@@ -68,6 +71,7 @@ private:
     wxSize get_client_size() const;
 
     bool m_timed_out{};
+    bool m_close_requested{};
 
     /* key_buffer
     *

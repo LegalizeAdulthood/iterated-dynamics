@@ -48,16 +48,7 @@ void App::create_window(const int width, const int height)
 
 void App::pump_messages(bool wait_flag)
 {
-    if (wxEventLoopBase *loop = GetMainLoop())
-    {
-        while (loop->Pending())
-        {
-            if (!loop->Dispatch())
-            {
-                return;
-            }
-        }
-    }
+    m_frame->pump_messages(GetMainLoop(), wait_flag);
 }
 
 bool App::is_text() const

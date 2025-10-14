@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "ui/goodbye.h"
+
 #include <gui/Frame.h>
 
 #include <gui/App.h>
@@ -9,6 +11,7 @@
 #include <ui/id_keys.h>
 
 #include <wx/app.h>
+#include <wx/evtloop.h>
 #include <wx/wx.h>
 
 #include <algorithm>
@@ -45,6 +48,7 @@ Frame::Frame() :
 {
     Bind(wxEVT_KEY_DOWN, &Frame::on_key_down, this, wxID_ANY);
     Bind(wxEVT_TIMER, &Frame::on_timer, this, wxID_ANY);
+    Bind(wxEVT_CLOSE_WINDOW, &Frame::on_close, this, wxID_ANY);
 
     SetClientSize(get_client_size());
     m_plot->Hide();
@@ -62,6 +66,12 @@ wxSize Frame::get_client_size() const
 wxSize Frame::DoGetBestSize() const
 {
     return get_client_size();
+}
+
+void Frame::on_close(wxCloseEvent &event)
+{
+    m_close_requested = true;
+    Destroy();
 }
 
 int Frame::get_key_press(const bool wait_for_key)
@@ -175,13 +185,47 @@ void Frame::put_char_attr(int row, int col, int char_attr)
 
 void Frame::set_keyboard_timeout(int ms)
 {
-    m_keyboard_timer.Start(ms, wxTIMER_ONE_SHOT);
-    // TODO: move message pump to IdFrame and handle keyboard timeout there
+    m_keyboard_timer.Start(ms, wxTIMER_CONTINUOUS);
 }
 
 void Frame::get_cursor_pos(int &x, int &y) const
 {
     m_text_screen->get_cursor_position(y, x);
+}
+
+void Frame::pump_messages(wxEventLoopBase *loop, bool wait_flag)
+{
+    if (!loop)
+    {
+        return;
+    }
+
+    bool quitting = m_close_requested;
+    m_timed_out = false;
+
+    while (!quitting)
+    {
+        if (!loop->Pending())
+        {
+            // no messages waiting
+            if (!wait_flag                     //
+                || m_key_press_count != 0      //
+                || (wait_flag && m_timed_out)) //
+            {
+                return;
+            }
+        }
+
+        if (!loop->Dispatch())
+        {
+            quitting = true;
+        }
+    }
+
+    if (quitting)
+    {
+        ui::goodbye();
+    }
 }
 
 namespace
