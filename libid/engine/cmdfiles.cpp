@@ -227,8 +227,8 @@ Byte g_text_color[31] = {
     RED * 16 + LT_WHITE,     // C_STOP_ERR        stop message, error
     GREEN * 16 + BLACK,      // C_STOP_INFO       stop message, info
     BLUE * 16 + WHITE,       // C_TITLE_LOW       bottom lines of title screen
-    GREEN * 16 + BLACK,      // C_AUTHDIV1        title screen dividers
-    GREEN * 16 + GRAY,       // C_AUTHDIV2        title screen dividers
+    GREEN * 16 + BLACK,      // C_AUTH_DIV1       title screen dividers
+    GREEN * 16 + GRAY,       // C_AUTH_DIV2       title screen dividers
     BLACK * 16 + LT_WHITE,   // C_PRIMARY         primary authors
     BLACK * 16 + WHITE       // C_CONTRIB         contributing authors
 };
