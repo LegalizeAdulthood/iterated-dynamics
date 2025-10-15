@@ -276,12 +276,19 @@ void TextScreen::set_attribute(const int row, const int col, const unsigned char
         return;
     }
 
-    for (int i = 0; i < count && col + i < SCREEN_WIDTH; ++i)
+    int r{row};
+    int c{col};
+    for (int i = 0; i < count; ++i, ++c)
     {
-        m_screen[row][col + i].attribute = attr;
+        if (c == SCREEN_WIDTH)
+        {
+            ++r;
+            c = 0;
+        }
+        m_screen[r][c].attribute = attr;
     }
 
-    update_region_display(row, col, row, std::min(col + count - 1, SCREEN_WIDTH - 1));
+    update_region_display(row, col, r, c);
 }
 
 void TextScreen::clear(const unsigned char attr)
@@ -441,7 +448,6 @@ void TextScreen::refresh_display()
 {
     std::string content;
     content.reserve(TOTAL_CELLS + SCREEN_HEIGHT - 1);
-
     for (int row = 0; row < SCREEN_HEIGHT; ++row)
     {
         for (int col = 0; col < SCREEN_WIDTH; ++col)
@@ -453,18 +459,20 @@ void TextScreen::refresh_display()
             content += '\n';
         }
     }
-
     SetText(content);
 
-    // Apply styling
+    StartStyling(0);
     for (int row = 0; row < SCREEN_HEIGHT; ++row)
     {
         for (int col = 0; col < SCREEN_WIDTH; ++col)
         {
-            const int pos = position_from_row_col(row, col);
             const int style = get_style_number(m_screen[row][col].attribute);
-            StartStyling(pos);
             SetStyling(1, style);
+        }
+        if (row < SCREEN_HEIGHT - 1)
+        {
+            // Newline character
+            SetStyling(1, wxSTC_STYLE_DEFAULT);
         }
     }
 }
