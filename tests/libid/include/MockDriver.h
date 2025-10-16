@@ -24,7 +24,7 @@ public:
     MOCK_METHOD(void, create_window, (), (override));
     MOCK_METHOD(bool, resize, (), (override));
     MOCK_METHOD(void, redraw, (), (override));
-    MOCK_METHOD(int, read_palette, (), (override));
+    MOCK_METHOD(void, read_palette, (), (override));
     MOCK_METHOD(int, write_palette, (), (override));
     MOCK_METHOD(int, read_pixel, (int, int), (override));
     MOCK_METHOD(void, write_pixel, (int, int, int), (override));

@@ -26,7 +26,7 @@ struct Plot
     void set_line_mode(int mode);
     void draw_line(int x1, int y1, int x2, int y2, int color);
     int resize();
-    int read_palette();
+    void read_palette();
     int write_palette();
     void schedule_alarm(int secs);
     void clear();

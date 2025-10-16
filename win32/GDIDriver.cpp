@@ -48,7 +48,7 @@ public:
     void get_max_screen(int &width, int &height) override;
     bool init(int *argc, char **argv) override;
     bool resize() override;
-    int read_palette() override;
+    void read_palette() override;
     int write_palette() override;
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
@@ -226,9 +226,9 @@ bool GDIDriver::resize()
 }
 
 // Reads the current video palette into g_dac_box.
-int GDIDriver::read_palette()
+void GDIDriver::read_palette()
 {
-    return m_plot.read_palette();
+    m_plot.read_palette();
 }
 
 // Writes g_dac_box into the video palette.

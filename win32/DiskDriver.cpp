@@ -45,7 +45,7 @@ public:
 
     bool init(int *argc, char **argv) override;
     bool resize() override;
-    int read_palette() override;
+    void read_palette() override;
     int write_palette() override;
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
@@ -179,25 +179,25 @@ bool DiskDriver::resize()
 }
 
 /*----------------------------------------------------------------------
-* read_palette
-*
-*   Reads the current video palette into g_dac_box.
-*
-*
-* Results:
-*   None.
-*
-* Side effects:
-*   Fills in g_dac_box.
-*
-*----------------------------------------------------------------------
-*/
-int DiskDriver::read_palette()
+ * read_palette
+ *
+ *   Reads the current video palette into g_dac_box.
+ *
+ *
+ * Results:
+ *   None.
+ *
+ * Side effects:
+ *   Fills in g_dac_box.
+ *
+ *----------------------------------------------------------------------
+ */
+void DiskDriver::read_palette()
 {
     ODS("DiskDriver::read_palette");
     if (!g_got_real_dac)
     {
-        return -1;
+        return;
     }
     for (int i = 0; i < 256; i++)
     {
@@ -205,7 +205,6 @@ int DiskDriver::read_palette()
         g_dac_box[i][1] = m_clut[i][1];
         g_dac_box[i][2] = m_clut[i][2];
     }
-    return 0;
 }
 
 /*

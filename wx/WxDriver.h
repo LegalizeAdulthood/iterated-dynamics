@@ -70,7 +70,7 @@ public:
     void create_window() override;
     bool resize() override;
     void redraw() override;
-    int read_palette() override;
+    void read_palette() override;
     int write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;

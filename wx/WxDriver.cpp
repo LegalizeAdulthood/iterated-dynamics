@@ -525,11 +525,11 @@ void WxDriver::redraw()
     throw std::runtime_error("not implemented");
 }
 
-int WxDriver::read_palette()
+void WxDriver::read_palette()
 {
     if (!g_got_real_dac)
     {
-        return -1;
+        return;
     }
 
     gui::Colormap map{wxGetApp().read_palette()};
@@ -539,8 +539,6 @@ int WxDriver::read_palette()
         g_dac_box[i][1] = map[i][1];
         g_dac_box[i][2] = map[i][2];
     }
-
-    return 0;
 }
 
 int WxDriver::write_palette()

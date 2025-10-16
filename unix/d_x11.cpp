@@ -128,7 +128,7 @@ public:
     void create_window() override;
     bool resize() override;
     void redraw() override;
-    int read_palette() override;
+    void read_palette() override;
     int write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
@@ -1786,17 +1786,18 @@ void X11Driver::redraw()
  *
  *----------------------------------------------------------------------
  */
-int X11Driver::read_palette()
+void X11Driver::read_palette()
 {
     if (!g_got_real_dac)
-        return -1;
+    {
+        return;
+    }
     for (int i = 0; i < 256; i++)
     {
         g_dac_box[i][0] = m_colors[i].red/1024;
         g_dac_box[i][1] = m_colors[i].green/1024;
         g_dac_box[i][2] = m_colors[i].blue/1024;
     }
-    return 0;
 }
 
 /*

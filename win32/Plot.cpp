@@ -527,11 +527,11 @@ int Plot::resize()
     return 1;
 }
 
-int Plot::read_palette()
+void Plot::read_palette()
 {
     if (!g_got_real_dac)
     {
-        return -1;
+        return;
     }
 
     for (int i = 0; i < 256; i++)
@@ -540,7 +540,6 @@ int Plot::read_palette()
         g_dac_box[i][1] = m_clut[i][1];
         g_dac_box[i][2] = m_clut[i][2];
     }
-    return 0;
 }
 
 int Plot::write_palette()
