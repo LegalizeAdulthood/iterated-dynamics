@@ -147,10 +147,6 @@ private:
     bool m_cursor_visible{true};
     CursorType m_cursor_type{CursorType::UNDERLINE};
 
-    // Style mappings for different CGA attribute combinations
-    static constexpr int MAX_STYLES = 256; // All possible CGA attribute combinations
-    bool m_styles_initialized{false};
-
     // Fixed size for 80x25 display
     mutable wxSize m_fixed_size{};
 };

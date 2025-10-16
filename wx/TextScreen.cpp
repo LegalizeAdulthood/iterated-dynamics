@@ -8,7 +8,7 @@
 namespace id::gui
 {
 
-static wxColour cga_color_to_wx_color(CGAColor color, const bool intense)
+static wxColour cga_color_to_wx_color(CGAColor color)
 {
     // Standard CGA color palette
     static const wxColour cga_colors[] = {
@@ -37,16 +37,7 @@ static wxColour cga_color_to_wx_color(CGAColor color, const bool intense)
         color_index = 7; // Default to light gray
     }
 
-    wxColour result = cga_colors[color_index];
-
-    // For foreground colors, apply intensity
-    if (intense && color_index < 8)
-    {
-        // Intensify the color
-        result = cga_colors[color_index + 8];
-    }
-
-    return result;
+    return cga_colors[color_index];
 }
 
 enum class MarginIndex
@@ -153,33 +144,17 @@ void TextScreen::invalidate(const int left, const int bot, const int right, cons
 
 void TextScreen::initialize_styles()
 {
-    if (m_styles_initialized)
-    {
-        return;
-    }
-
-    // Initialize all 256 possible CGA attribute combinations
+    // Style mappings for different CGA attribute combinations
+    static constexpr int MAX_STYLES = 256; // All possible CGA attribute combinations
     for (int attr = 0; attr < MAX_STYLES; ++attr)
     {
         const CGAColor fg_color = static_cast<CGAColor>(attr & 0x0F);
         const CGAColor bg_color = static_cast<CGAColor>(attr >> 4 & 0x0F);
-        const bool intense = (attr & 0x08) != 0;
-        const bool blinking = (attr & 0x80) != 0;
-
         const int style_num = attr;
-
-        // Set foreground and background colors
-        StyleSetForeground(style_num, cga_color_to_wx_color(fg_color, intense));
-        StyleSetBackground(style_num, cga_color_to_wx_color(bg_color, false));
-
-        // Handle blinking (simulate with bold for now)
-        StyleSetBold(style_num, blinking);
-
-        // Set font
+        StyleSetForeground(style_num, cga_color_to_wx_color(fg_color));
+        StyleSetBackground(style_num, cga_color_to_wx_color(bg_color));
         StyleSetFont(style_num, m_font);
     }
-
-    m_styles_initialized = true;
 }
 
 void TextScreen::put_string(
