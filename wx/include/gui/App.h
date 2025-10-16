@@ -43,6 +43,7 @@ public:
     void pause();
     void resume();
     Colormap read_palette();
+    void write_palette(const Colormap& map);
     bool resize(int width, int height);
 
 private:

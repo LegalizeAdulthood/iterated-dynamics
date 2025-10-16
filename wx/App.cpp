@@ -151,6 +151,11 @@ Colormap App::read_palette()
     return m_frame->read_palette();
 }
 
+void App::write_palette(const Colormap &map)
+{
+    m_frame->write_palette(map);
+}
+
 bool App::resize(int width, int height)
 {
     return m_frame->resize(width, height);

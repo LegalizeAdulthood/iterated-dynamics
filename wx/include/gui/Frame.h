@@ -46,6 +46,7 @@ public:
     void get_cursor_pos(int &x, int &y) const;
     void pump_messages(wxEventLoopBase *loop, bool wait_flag);
     Colormap read_palette();
+    void write_palette(const Colormap &map);
     bool resize(int width, int height);
 
     bool is_text() const

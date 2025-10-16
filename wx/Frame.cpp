@@ -237,6 +237,11 @@ Colormap Frame::read_palette()
     return m_plot->get_colormap();
 }
 
+void Frame::write_palette(const Colormap &map)
+{
+    m_plot->set_colormap(map);
+}
+
 bool Frame::resize(int width, int height)
 {
     const wxSize text_size{m_text_screen->GetClientSize()};

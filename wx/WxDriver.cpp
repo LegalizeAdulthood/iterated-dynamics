@@ -542,7 +542,14 @@ void WxDriver::read_palette()
 
 void WxDriver::write_palette()
 {
-    throw std::runtime_error("not implemented");
+    gui::Colormap map{};
+    for (size_t i = 0; i < map.size(); ++i)
+    {
+        map[i][0] = g_dac_box[i][0];
+        map[i][1] = g_dac_box[i][1];
+        map[i][2] = g_dac_box[i][2];
+    }
+    wxGetApp().write_palette(map);
 }
 
 int WxDriver::read_pixel(int x, int y)
