@@ -200,8 +200,8 @@ bool GDIDriver::init(int *argc, char **argv)
 
 /* resize
  *
- * Check if we need resizing.  If no, return 0.
- * If yes, resize internal buffers and return 1.
+ * Check if we need resizing.  If no, return false.
+ * If yes, resize internal buffers and return true.
  */
 bool GDIDriver::resize()
 {
@@ -213,7 +213,7 @@ bool GDIDriver::resize()
     get_max_size(&width, &height, &center_graphics_x, &center_graphics_y);
     if (g_video_table[g_adapter].x_dots == m_plot.get_width()     //
         && g_video_table[g_adapter].y_dots == m_plot.get_height() //
-        && width == g_frame.get_width()                        //
+        && width == g_frame.get_width()                           //
         && height == g_frame.get_height())
     {
         return false;

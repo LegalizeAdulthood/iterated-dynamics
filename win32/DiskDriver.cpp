@@ -157,8 +157,8 @@ bool DiskDriver::init(int *argc, char **argv)
 
 /* resize
  *
- * Check if we need resizing.  If no, return 0.
- * If yes, resize internal buffers and return 1.
+ * Check if we need resizing.  If no, return false.
+ * If yes, resize internal buffers and return true.
  */
 bool DiskDriver::resize()
 {

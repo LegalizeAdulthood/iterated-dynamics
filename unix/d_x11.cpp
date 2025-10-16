@@ -1656,19 +1656,10 @@ void X11Driver::create_window()
     center_window(center_x, center_y);
 }
 
-/*----------------------------------------------------------------------
+/* resize
  *
- * resize --
- *
- *  Look after resizing the window if necessary.
- *
- * Results:
- *  Returns 1 for resize, 0 for no resize.
- *
- * Side effects:
- *  May reallocate data structures.
- *
- *----------------------------------------------------------------------
+ * Check if we need resizing.  If no, return false.
+ * If yes, resize internal buffers and return true.
  */
 bool X11Driver::resize()
 {
