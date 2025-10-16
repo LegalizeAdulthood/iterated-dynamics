@@ -461,16 +461,6 @@ void Win32BaseDriver::delay(const int ms)
     }
 }
 
-void Win32BaseDriver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
-{
-    _ASSERTE(0 && "Win32BaseDriver::get_truecolor called.");
-}
-
-void Win32BaseDriver::put_true_color(int x, int y, int r, int g, int b, int a)
-{
-    _ASSERTE(0 && "Win32BaseDriver::put_truecolor called.");
-}
-
 void Win32BaseDriver::set_keyboard_timeout(const int ms)
 {
     g_frame.set_keyboard_timeout(ms);

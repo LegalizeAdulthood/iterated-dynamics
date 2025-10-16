@@ -452,16 +452,6 @@ void WxDriver::delay(int ms)
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-void WxDriver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
-{
-    throw std::runtime_error("not implemented");
-}
-
-void WxDriver::put_true_color(int x, int y, int r, int g, int b, int a)
-{
-    throw std::runtime_error("not implemented");
-}
-
 void WxDriver::set_keyboard_timeout(int ms)
 {
     wxGetApp().set_keyboard_timeout(ms);

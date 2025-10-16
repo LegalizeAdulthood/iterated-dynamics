@@ -134,8 +134,6 @@ public:
     void write_pixel(int x, int y, int color) override;
     void read_span(int y, int x, int last_x, Byte *pixels) override;
     void write_span(int y, int x, int last_x, Byte *pixels) override;
-    void get_true_color(int x, int y, int *r, int *g, int *b, int *a) override;
-    void put_true_color(int x, int y, int r, int g, int b, int a) override;
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void display_string(int x, int y, int fg, int bg, char const *text) override;
@@ -2043,14 +2041,6 @@ void X11Driver::write_span(int y, int x, int last_x, Byte *pixels)
         write_pixel(x+i, y, pixels[i]);
     }
 #endif
-}
-
-void X11Driver::get_true_color(int x, int y, int *r, int *g, int *b, int *a)
-{
-}
-
-void X11Driver::put_true_color(int x, int y, int r, int g, int b, int a)
-{
 }
 
 /*

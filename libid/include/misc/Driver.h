@@ -83,8 +83,6 @@ public:
     virtual void write_pixel(int x, int y, int color) = 0;               // writes a single pixel
     virtual void read_span(int y, int x, int last_x, Byte *pixels) = 0;  // reads a span of pixel
     virtual void write_span(int y, int x, int last_x, Byte *pixels) = 0; // writes a span of pixels
-    virtual void get_true_color(int x, int y, int *r, int *g, int *b, int *a) = 0; //
-    virtual void put_true_color(int x, int y, int r, int g, int b, int a) = 0;     //
     virtual void set_line_mode(int mode) = 0;                                      // set copy/xor line
     virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;         // draw line
     virtual void display_string(
@@ -206,17 +204,6 @@ inline void driver_set_line_mode(const int mode)
 inline void driver_draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
     g_driver->draw_line(x1, y1, x2, y2, color);
-}
-
-inline void driver_get_true_color(const int x, const int y, int *r, int *g, int *b, int *a)
-{
-    g_driver->get_true_color(x, y, r, g, b, a);
-}
-
-inline void driver_put_true_color(
-    const int x, const int y, const int r, const int g, const int b, const int a)
-{
-    g_driver->put_true_color(x, y, r, g, b, a);
 }
 
 inline int driver_get_key()

@@ -57,8 +57,6 @@ public:
     int get_char_attr() override;
     void put_char_attr(int char_attr) override;
     void delay(int ms) override;
-    void get_true_color(int x, int y, int *r, int *g, int *b, int *a) override;
-    void put_true_color(int x, int y, int r, int g, int b, int a) override;
     void set_keyboard_timeout(int ms) override;
     void debug_text(const char *text) override;
     void get_cursor_pos(int &x, int &y) const override;
