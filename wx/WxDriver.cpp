@@ -10,6 +10,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "gui/App.h"
+#include "gui/Colormap.h"
 #include "gui/Frame.h"
 #include "io/save_timer.h"
 #include "io/special_dirs.h"
@@ -526,7 +527,19 @@ void WxDriver::redraw()
 
 int WxDriver::read_palette()
 {
-    throw std::runtime_error("not implemented");
+    if (!g_got_real_dac)
+    {
+        return -1;
+    }
+
+    gui::Colormap map{wxGetApp().read_palette()};
+    for (size_t i = 0; i < map.size(); ++i)
+    {
+        g_dac_box[i][0] = map[i][0];
+        g_dac_box[i][1] = map[i][1];
+        g_dac_box[i][2] = map[i][2];
+    }
+
     return 0;
 }
 

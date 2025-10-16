@@ -3,9 +3,9 @@
 #pragma once
 
 #include "gui/Screen.h"
+#include "gui/Colormap.h"
 
 #include <wx/app.h>
-#include <wx/timer.h>
 
 namespace id::gui
 {
@@ -41,6 +41,7 @@ public:
     void get_cursor_pos(int &x, int &y) const;
     void pause();
     void resume();
+    Colormap read_palette();
 
 private:
     Frame *m_frame{};

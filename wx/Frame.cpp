@@ -228,6 +228,11 @@ void Frame::pump_messages(wxEventLoopBase *loop, bool wait_flag)
     }
 }
 
+Colormap Frame::read_palette()
+{
+    return m_plot->get_colormap();
+}
+
 namespace
 {
 

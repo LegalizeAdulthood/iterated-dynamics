@@ -146,4 +146,9 @@ void App::resume()
     m_frame->Show();
 }
 
+Colormap App::read_palette()
+{
+    return m_frame->read_palette();
+}
+
 } // namespace id::gui

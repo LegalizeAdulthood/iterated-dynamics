@@ -4,6 +4,8 @@
 
 #include <config/port.h>
 
+#include <gui/Colormap.h>
+
 #include <wx/wx.h>
 
 #include <array>
@@ -12,8 +14,6 @@
 
 namespace id::gui
 {
-
-using Colormap = std::array<std::array<Byte, 3>, 256>;
 
 class Plot : public wxControl
 {

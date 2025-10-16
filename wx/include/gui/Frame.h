@@ -2,7 +2,8 @@
 //
 #pragma once
 
-#include "gui/Screen.h"
+#include <gui/Colormap.h>
+#include <gui/Screen.h>
 
 #include <wx/frame.h>
 
@@ -44,6 +45,7 @@ public:
     void set_keyboard_timeout(int ms);
     void get_cursor_pos(int &x, int &y) const;
     void pump_messages(wxEventLoopBase *loop, bool wait_flag);
+    Colormap read_palette();
 
     bool is_text() const
     {
