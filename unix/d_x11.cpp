@@ -129,7 +129,7 @@ public:
     bool resize() override;
     void redraw() override;
     void read_palette() override;
-    int write_palette() override;
+    void write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
     void read_span(int y, int x, int last_x, Byte *pixels) override;
@@ -676,7 +676,9 @@ int X11Driver::xcmapstuff()
     {
         m_colormap = DefaultColormapOfScreen(m_screen);
         if (m_fake_lut)
+        {
             write_palette();
+        }
     }
     else if (m_share_color)
     {
@@ -1815,7 +1817,7 @@ void X11Driver::read_palette()
  *
  *----------------------------------------------------------------------
  */
-int X11Driver::write_palette()
+void X11Driver::write_palette()
 {
     if (!g_got_real_dac)
     {
@@ -1879,8 +1881,6 @@ int X11Driver::write_palette()
         XStoreColors(m_dpy, m_colormap, m_colors, g_colors);
         XFlush(m_dpy);
     }
-
-    return 0;
 }
 
 /*

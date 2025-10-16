@@ -49,7 +49,7 @@ public:
     bool init(int *argc, char **argv) override;
     bool resize() override;
     void read_palette() override;
-    int write_palette() override;
+    void write_palette() override;
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
@@ -232,9 +232,9 @@ void GDIDriver::read_palette()
 }
 
 // Writes g_dac_box into the video palette.
-int GDIDriver::write_palette()
+void GDIDriver::write_palette()
 {
-    return m_plot.write_palette();
+    m_plot.write_palette();
 }
 
 void GDIDriver::schedule_alarm(int secs)

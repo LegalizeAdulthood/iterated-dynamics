@@ -541,10 +541,9 @@ void WxDriver::read_palette()
     }
 }
 
-int WxDriver::write_palette()
+void WxDriver::write_palette()
 {
     throw std::runtime_error("not implemented");
-    return 0;
 }
 
 int WxDriver::read_pixel(int x, int y)
