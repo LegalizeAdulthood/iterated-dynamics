@@ -506,7 +506,7 @@ void WxDriver::resume()
 
 void WxDriver::schedule_alarm(int secs)
 {
-    throw std::runtime_error("not implemented");
+    // do nothing
 }
 
 void WxDriver::create_window()
