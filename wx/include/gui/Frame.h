@@ -54,6 +54,9 @@ public:
         return m_text_not_graphics;
     }
 
+    void write_pixel(int x, int y, int color);
+    int read_pixel(int x, int y);
+
 protected:
     // Override DoGetBestSize to return the maximum size needed for either control
     wxSize DoGetBestSize() const override;

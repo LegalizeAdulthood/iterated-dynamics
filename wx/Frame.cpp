@@ -67,6 +67,16 @@ wxSize Frame::get_client_size() const
     return Max(plot_size, text_size);
 }
 
+void Frame::write_pixel(int x, int y, int color)
+{
+    m_plot->write_pixel(x, y, color);
+}
+
+int Frame::read_pixel(int x, int y)
+{
+    return m_plot->read_pixel(x, y);
+}
+
 wxSize Frame::DoGetBestSize() const
 {
     return get_client_size();

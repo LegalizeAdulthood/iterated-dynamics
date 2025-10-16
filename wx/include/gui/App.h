@@ -45,6 +45,8 @@ public:
     Colormap read_palette();
     void write_palette(const Colormap& map);
     bool resize(int width, int height);
+    void write_pixel(int x, int y, int color);
+    int read_pixel(int x, int y);
 
 private:
     Frame *m_frame{};

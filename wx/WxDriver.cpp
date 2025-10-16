@@ -554,13 +554,12 @@ void WxDriver::write_palette()
 
 int WxDriver::read_pixel(int x, int y)
 {
-    throw std::runtime_error("not implemented");
-    return 0;
+    return wxGetApp().read_pixel(x, y);
 }
 
 void WxDriver::write_pixel(int x, int y, int color)
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().write_pixel(x, y, color);
 }
 
 void WxDriver::read_span(int y, int x, int lastx, Byte *pixels)

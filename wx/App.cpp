@@ -161,4 +161,14 @@ bool App::resize(int width, int height)
     return m_frame->resize(width, height);
 }
 
+void App::write_pixel(int x, int y, int color)
+{
+    m_frame->write_pixel(x, y, color);
+}
+
+int App::read_pixel(int x, int y)
+{
+    return m_frame->read_pixel(x, y);
+}
+
 } // namespace id::gui
