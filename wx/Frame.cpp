@@ -40,6 +40,11 @@ namespace id::gui
 
 const wxSize ARBITRARY_DEFAULT_PLOT_SIZE{640, 480};
 
+static wxSize Max(const wxSize &lhs, const wxSize &rhs)
+{
+    return {std::max(lhs.GetWidth(), rhs.GetWidth()), std::max(lhs.GetHeight(), rhs.GetHeight())};
+}
+
 Frame::Frame() :
     wxFrame(nullptr, wxID_ANY, wxT("Iterated Dynamics")),
     m_plot(new Plot(this, wxID_ANY, wxDefaultPosition, ARBITRARY_DEFAULT_PLOT_SIZE)),
@@ -59,8 +64,7 @@ wxSize Frame::get_client_size() const
 {
     const wxSize plot_size = m_plot->GetBestSize();
     const wxSize text_size = m_text_screen->GetBestSize();
-    return {std::max(plot_size.GetWidth(), text_size.GetWidth()),
-        std::max(plot_size.GetHeight(), text_size.GetHeight())};
+    return Max(plot_size, text_size);
 }
 
 wxSize Frame::DoGetBestSize() const
@@ -231,6 +235,27 @@ void Frame::pump_messages(wxEventLoopBase *loop, bool wait_flag)
 Colormap Frame::read_palette()
 {
     return m_plot->get_colormap();
+}
+
+bool Frame::resize(int width, int height)
+{
+    const wxSize text_size{m_text_screen->GetClientSize()};
+    wxSize new_size{width, height};
+    {
+        const wxSize plot_size{m_plot->GetClientSize()};
+        const wxSize max_size{Max(text_size, plot_size)};
+        if (new_size == plot_size && max_size == GetClientSize())
+        {
+            return false;
+        }
+    }
+
+    new_size = Max(new_size, text_size);
+    SetClientSize(new_size);
+    m_plot->SetClientSize(width, height);
+    m_text_screen->CenterOnParent();
+    m_plot->CenterOnParent();
+    return true;
 }
 
 namespace

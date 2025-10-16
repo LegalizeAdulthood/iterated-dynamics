@@ -151,4 +151,9 @@ Colormap App::read_palette()
     return m_frame->read_palette();
 }
 
+bool App::resize(int width, int height)
+{
+    return m_frame->resize(width, height);
+}
+
 } // namespace id::gui

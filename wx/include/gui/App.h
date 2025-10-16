@@ -2,8 +2,9 @@
 //
 #pragma once
 
-#include "gui/Screen.h"
 #include "gui/Colormap.h"
+#include "gui/Screen.h"
+#include "ui/video_mode.h"
 
 #include <wx/app.h>
 
@@ -42,6 +43,7 @@ public:
     void pause();
     void resume();
     Colormap read_palette();
+    bool resize(int width, int height);
 
 private:
     Frame *m_frame{};

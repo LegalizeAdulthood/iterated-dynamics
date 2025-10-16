@@ -516,8 +516,7 @@ void WxDriver::create_window()
 
 bool WxDriver::resize()
 {
-    throw std::runtime_error("not implemented");
-    return false;
+    return wxGetApp().resize(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
 }
 
 void WxDriver::redraw()
