@@ -51,7 +51,6 @@ public:
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
-    void redraw() override;
     void create_window() override;
     void set_video_mode(const VideoInfo &mode) override;
     void set_clear() override;
@@ -294,27 +293,6 @@ void DiskDriver::draw_line(const int x1, const int y1, const int x2, const int y
 {
     ODS5("DiskDriver::draw_line (%d,%d) (%d,%d) %d", x1, y1, x2, y2, color);
     geometry::draw_line(x1, y1, x2, y2, color);
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* redraw --
-*
-*   Refresh the screen.
-*
-* Results:
-*   None.
-*
-* Side effects:
-*   Redraws the screen.
-*
-*----------------------------------------------------------------------
-*/
-void DiskDriver::redraw()
-{
-    ODS("DiskDriver::redraw");
-    m_win_text.paint_screen(0, 80, 0, 25);
 }
 
 void DiskDriver::create_window()

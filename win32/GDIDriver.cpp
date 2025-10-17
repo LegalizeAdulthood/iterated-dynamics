@@ -54,7 +54,6 @@ public:
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
-    void redraw() override;
     void create_window() override;
     bool is_text() override;
     void set_for_text() override;
@@ -260,20 +259,6 @@ int GDIDriver::read_pixel(const int x, const int y)
 void GDIDriver::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
     m_plot.draw_line(x1, y1, x2, y2, color);
-}
-
-void GDIDriver::redraw()
-{
-    ODS("GDIDriver::redraw");
-    if (m_text_not_graphics)
-    {
-        m_win_text.paint_screen(0, 80, 0, 25);
-    }
-    else
-    {
-        m_plot.redraw();
-    }
-    g_frame.pump_messages(false);
 }
 
 void GDIDriver::create_window()

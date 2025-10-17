@@ -67,7 +67,6 @@ public:
     void schedule_alarm(int secs) override;
     void create_window() override;
     bool resize() override;
-    void redraw() override;
     void read_palette() override;
     void write_palette() override;
     int read_pixel(int x, int y) override;

@@ -27,7 +27,6 @@ struct Plot
     int write_palette();
     void schedule_alarm(int secs);
     void clear();
-    void redraw();
     void display_string(int x, int y, int fg, int bg, const char *text);
     void save_graphics();
     void restore_graphics();
@@ -48,6 +47,7 @@ struct Plot
     void on_paint(HWND window);
 
 private:
+    void redraw();
     void set_dirty_region(int x_min, int y_min, int x_max, int y_max);
     void init_pixels();
     void create_backing_store();

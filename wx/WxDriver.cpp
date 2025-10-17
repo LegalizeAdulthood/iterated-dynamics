@@ -510,11 +510,6 @@ bool WxDriver::resize()
     return wxGetApp().resize(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
 }
 
-void WxDriver::redraw()
-{
-    throw std::runtime_error("not implemented");
-}
-
 void WxDriver::read_palette()
 {
     if (!g_got_real_dac)

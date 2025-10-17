@@ -35,7 +35,6 @@ public:
     void set_colormap(const Colormap &value);
     void schedule_alarm(int secs);
     void clear();
-    void redraw();
     void display_string(int x, int y, int fg, int bg, const char *text);
     void save_graphics();
     void restore_graphics();
@@ -48,6 +47,7 @@ protected:
     wxSize GetMaxSize() const override;
 
 private:
+    void redraw();
     void set_dirty_region(const wxRect &rect);
     void init_pixels();
 
