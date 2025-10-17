@@ -176,4 +176,14 @@ void App::display_string(int x, int y, int fg, int bg, const char *text)
     m_frame->display_string(x, y, fg, bg, text);
 }
 
+void App::save_graphics()
+{
+    m_frame->save_graphics();
+}
+
+void App::restore_graphics()
+{
+    m_frame->restore_graphics();
+}
+
 } // namespace id::gui

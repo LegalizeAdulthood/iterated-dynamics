@@ -82,6 +82,16 @@ void Frame::display_string(int x, int y, int fg, int bg, const char *text)
     m_plot->display_string(x, y, fg, bg, text);
 }
 
+void Frame::save_graphics()
+{
+    m_plot->save_graphics();
+}
+
+void Frame::restore_graphics()
+{
+    m_plot->restore_graphics();
+}
+
 wxSize Frame::DoGetBestSize() const
 {
     return get_client_size();

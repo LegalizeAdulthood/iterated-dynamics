@@ -565,12 +565,12 @@ void WxDriver::display_string(int x, int y, int fg, int bg, const char *text)
 
 void WxDriver::save_graphics()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().save_graphics();
 }
 
 void WxDriver::restore_graphics()
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().restore_graphics();
 }
 
 bool WxDriver::is_text()
