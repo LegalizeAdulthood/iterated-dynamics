@@ -179,10 +179,6 @@ void Plot::flush()
     }
 }
 
-void Plot::set_line_mode(int mode)
-{
-}
-
 void Plot::draw_line(int x1, int y1, int x2, int y2, int color)
 {
 #if 0

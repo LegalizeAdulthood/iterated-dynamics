@@ -21,7 +21,6 @@ struct Plot
     void write_pixel(int x, int y, int color);
     int read_pixel(int x, int y);
     void flush();
-    void set_line_mode(int mode);
     void draw_line(int x1, int y1, int x2, int y2, int color);
     int resize();
     void read_palette();

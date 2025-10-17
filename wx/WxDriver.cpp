@@ -552,11 +552,6 @@ void WxDriver::write_pixel(int x, int y, int color)
     wxGetApp().write_pixel(x, y, color);
 }
 
-void WxDriver::set_line_mode(int mode)
-{
-    throw std::runtime_error("not implemented");
-}
-
 void WxDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
     throw std::runtime_error("not implemented");

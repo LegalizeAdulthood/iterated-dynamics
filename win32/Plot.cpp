@@ -483,10 +483,6 @@ void Plot::flush()
     }
 }
 
-void Plot::set_line_mode(int mode)
-{
-}
-
 void Plot::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
     geometry::draw_line(x1, y1, x2, y2, color);

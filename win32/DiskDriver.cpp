@@ -50,7 +50,6 @@ public:
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
-    void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
     void create_window() override;
@@ -289,11 +288,6 @@ void DiskDriver::write_pixel(const int x, const int y, const int color)
 int DiskDriver::read_pixel(const int x, const int y)
 {
     return get_color(x, y);
-}
-
-void DiskDriver::set_line_mode(int mode)
-{
-    ODS1("DiskDriver::set_line_mode %d", mode);
 }
 
 void DiskDriver::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)

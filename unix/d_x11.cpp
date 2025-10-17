@@ -132,7 +132,6 @@ public:
     void write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
-    void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void display_string(int x, int y, int fg, int bg, char const *text) override;
     void save_graphics() override;
@@ -1946,38 +1945,6 @@ void X11Driver::write_pixel(int x, int y, int color)
         {
             XDrawPoint(m_dpy, m_pixmap, m_gc, x, y);
         }
-    }
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * set_line_mode --
- *
- *  Set line mode to 0=draw or 1=xor.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Sets mode.
- *
- *----------------------------------------------------------------------
- */
-void X11Driver::set_line_mode(int mode)
-{
-    xlastcolor = -1;
-    if (mode == 0)
-    {
-        XSetFunction(m_dpy, m_gc, GXcopy);
-        xlastfcn = GXcopy;
-    }
-    else
-    {
-        XSetForeground(m_dpy, m_gc, do_fake_lut(g_colors-1));
-        xlastcolor = -1;
-        XSetFunction(m_dpy, m_gc, GXxor);
-        xlastfcn = GXxor;
     }
 }
 

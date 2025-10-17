@@ -72,7 +72,6 @@ public:
     void write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
-    void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void display_string(int x, int y, int fg, int bg, const char *text) override;
     void save_graphics() override;

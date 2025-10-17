@@ -41,7 +41,6 @@ enum class Buzzer
  * redraw
  * read_palette, write_palette
  * read_pixel, write_pixel
- * set_line_mode
  * draw_line
  * get_key
  * key_cursor
@@ -80,7 +79,6 @@ public:
     virtual void write_palette() = 0;                                         // write g_dac_box into palette
     virtual int read_pixel(int x, int y) = 0;                                 // reads a single pixel
     virtual void write_pixel(int x, int y, int color) = 0;                    // writes a single pixel
-    virtual void set_line_mode(int mode) = 0;                                 // set copy/xor line
     virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;    // draw line
     virtual void display_string(
         int x, int y, int fg, int bg, const char *text) = 0;                  // draw string in graphics mode
@@ -181,11 +179,6 @@ inline int driver_read_pixel(const int x, const int y)
 inline void driver_write_pixel(const int x, const int y, const int color)
 {
     g_driver->write_pixel(x, y, color);
-}
-
-inline void driver_set_line_mode(const int mode)
-{
-    g_driver->set_line_mode(mode);
 }
 
 inline void driver_draw_line(const int x1, const int y1, const int x2, const int y2, const int color)

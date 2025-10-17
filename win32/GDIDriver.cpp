@@ -53,7 +53,6 @@ public:
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
-    void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
     void create_window() override;
@@ -256,11 +255,6 @@ void GDIDriver::write_pixel(const int x, const int y, const int color)
 int GDIDriver::read_pixel(const int x, const int y)
 {
     return m_plot.read_pixel(x,y);
-}
-
-void GDIDriver::set_line_mode(const int mode)
-{
-    m_plot.set_line_mode(mode);
 }
 
 void GDIDriver::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
