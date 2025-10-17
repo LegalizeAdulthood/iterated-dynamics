@@ -50,6 +50,8 @@ public:
     void display_string(int x, int y, int fg, int bg, const char *text);
     void save_graphics();
     void restore_graphics();
+    bool get_filename(
+        const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename);
 
 private:
     Frame *m_frame{};

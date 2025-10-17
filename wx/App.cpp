@@ -2,10 +2,13 @@
 //
 #include <gui/App.h>
 
+#include "io/CurrentPathSaver.h"
 #include "ui/id_main.h"
 
 #include <gui/Frame.h>
 #include "../win32/instance.h"
+
+#include <fmt/format.h>
 
 #include <wx/wx.h>
 #include <wx/evtloop.h>
@@ -15,6 +18,7 @@
 
 #include <array>
 #include <cassert>
+#include <filesystem>
 
 using namespace id::misc;
 using namespace id::ui;
@@ -184,6 +188,37 @@ void App::save_graphics()
 void App::restore_graphics()
 {
     m_frame->restore_graphics();
+}
+
+bool App::get_filename(
+    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
+{
+    io::CurrentPathSaver saved_current;
+    std::filesystem::path path{result_filename};
+    if (path.has_filename())
+    {
+        if (path.is_relative())
+        {
+            path = std::filesystem::current_path() / path;
+        }
+    }
+    else
+    {
+        path.clear();
+    }
+    wxFileDialog dlg(m_frame,                                            // parent
+        hdg,                                                             // message
+        wxEmptyString,                                                   // defaultDir
+        path.string(),                                                   // defaultFile
+        fmt::format("{0:s} Files ({1:s})|{1:s}|All files ({2:s})|{2:s}", // wildcard
+            type_desc, type_wildcard, wxFileSelectorDefaultWildcardStr),
+        wxFD_DEFAULT_STYLE);                                             // style,
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        result_filename = dlg.GetPath().ToStdString();
+        return false;
+    }
+    return true;
 }
 
 } // namespace id::gui

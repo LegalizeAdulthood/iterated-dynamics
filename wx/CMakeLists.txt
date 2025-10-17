@@ -2,6 +2,7 @@
 #
 # Copyright 2018-2024 Richard Thomson
 
+find_package(fmt CONFIG REQUIRED)
 find_package(wxWidgets CONFIG REQUIRED)
 
 add_library(os STATIC
@@ -24,7 +25,7 @@ add_library(gui STATIC
     include/gui/TextScreen.h TextScreen.cpp
 )
 target_include_directories(gui PUBLIC include)
-target_link_libraries(gui PUBLIC libid wx::stc wx::core wx::base)
+target_link_libraries(gui PUBLIC fmt::fmt-header-only libid wx::stc wx::core wx::base)
 target_folder(gui "Libraries/wx")
 
 configure_file(id.rc.in id.rc @ONLY)
