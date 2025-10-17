@@ -1975,7 +1975,7 @@ static CmdArgFlags cmd_decomp(const Command &cmd)
     if (cmd.total_params > 1) // backward compatibility
     {
         g_decomp[1] = cmd.int_vals[1];
-        g_bailout = g_decomp[1];
+        g_bailout = cmd.int_vals[1];
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
