@@ -41,7 +41,6 @@ enum class Buzzer
  * redraw
  * read_palette, write_palette
  * read_pixel, write_pixel
- * read_span, write_span
  * set_line_mode
  * draw_line
  * get_key
@@ -65,26 +64,24 @@ class Driver
 public:
     virtual ~Driver() = default;
 
-    virtual const std::string &get_name() const = 0;                     // name of driver
-    virtual const std::string &get_description() const = 0;              // driver description
-    virtual bool init(int *argc, char **argv) = 0;                       // init the driver
-    virtual bool validate_mode(const ui::VideoInfo &mode) = 0;           // validate a id.cfg mode
-    virtual void get_max_screen(int &width, int &height) = 0;            // find max screen extents
-    virtual void terminate() = 0;                                        // shutdown the driver
-    virtual void pause() = 0;                                            // pause this driver
-    virtual void resume() = 0;                                           // resume this driver
-    virtual void schedule_alarm(int secs) = 0;                           // refresh alarm
-    virtual void create_window() = 0;                                    // creates a window
-    virtual bool resize() = 0;                                           // handles window resize.
-    virtual void redraw() = 0;                                           // redraws the screen
-    virtual void read_palette() = 0;                                     // read palette into g_dac_box
-    virtual void write_palette() = 0;                                    // write g_dac_box into palette
-    virtual int read_pixel(int x, int y) = 0;                            // reads a single pixel
-    virtual void write_pixel(int x, int y, int color) = 0;               // writes a single pixel
-    virtual void read_span(int y, int x, int last_x, Byte *pixels) = 0;  // reads a span of pixel
-    virtual void write_span(int y, int x, int last_x, Byte *pixels) = 0; // writes a span of pixels
-    virtual void set_line_mode(int mode) = 0;                                      // set copy/xor line
-    virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;         // draw line
+    virtual const std::string &get_name() const = 0;                          // name of driver
+    virtual const std::string &get_description() const = 0;                   // driver description
+    virtual bool init(int *argc, char **argv) = 0;                            // init the driver
+    virtual bool validate_mode(const ui::VideoInfo &mode) = 0;                // validate a id.cfg mode
+    virtual void get_max_screen(int &width, int &height) = 0;                 // find max screen extents
+    virtual void terminate() = 0;                                             // shutdown the driver
+    virtual void pause() = 0;                                                 // pause this driver
+    virtual void resume() = 0;                                                // resume this driver
+    virtual void schedule_alarm(int secs) = 0;                                // refresh alarm
+    virtual void create_window() = 0;                                         // creates a window
+    virtual bool resize() = 0;                                                // handles window resize.
+    virtual void redraw() = 0;                                                // redraws the screen
+    virtual void read_palette() = 0;                                          // read palette into g_dac_box
+    virtual void write_palette() = 0;                                         // write g_dac_box into palette
+    virtual int read_pixel(int x, int y) = 0;                                 // reads a single pixel
+    virtual void write_pixel(int x, int y, int color) = 0;                    // writes a single pixel
+    virtual void set_line_mode(int mode) = 0;                                 // set copy/xor line
+    virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;    // draw line
     virtual void display_string(
         int x, int y, int fg, int bg, const char *text) = 0;                  // draw string in graphics mode
     virtual void save_graphics() = 0;                                         // save graphics
@@ -184,16 +181,6 @@ inline int driver_read_pixel(const int x, const int y)
 inline void driver_write_pixel(const int x, const int y, const int color)
 {
     g_driver->write_pixel(x, y, color);
-}
-
-inline void driver_read_span(const int y, const int x, const int last_x, Byte *pixels)
-{
-    g_driver->read_span(y, x, last_x, pixels);
-}
-
-inline void driver_write_span(const int y, const int x, const int last_x, Byte *pixels)
-{
-    g_driver->write_span(y, x, last_x, pixels);
 }
 
 inline void driver_set_line_mode(const int mode)

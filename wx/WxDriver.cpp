@@ -552,16 +552,6 @@ void WxDriver::write_pixel(int x, int y, int color)
     wxGetApp().write_pixel(x, y, color);
 }
 
-void WxDriver::read_span(int y, int x, int lastx, Byte *pixels)
-{
-    throw std::runtime_error("not implemented");
-}
-
-void WxDriver::write_span(int y, int x, int lastx, Byte *pixels)
-{
-    throw std::runtime_error("not implemented");
-}
-
 void WxDriver::set_line_mode(int mode)
 {
     throw std::runtime_error("not implemented");

@@ -132,8 +132,6 @@ public:
     void write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
-    void read_span(int y, int x, int last_x, Byte *pixels) override;
-    void write_span(int y, int x, int last_x, Byte *pixels) override;
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void display_string(int x, int y, int fg, int bg, char const *text) override;
@@ -1949,98 +1947,6 @@ void X11Driver::write_pixel(int x, int y, int color)
             XDrawPoint(m_dpy, m_pixmap, m_gc, x, y);
         }
     }
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * read_span --
- *
- *  Reads a line of pixels from the screen.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Gets pixels
- *
- *----------------------------------------------------------------------
- */
-void X11Driver::read_span(int y, int x, int last_x, Byte *pixels)
-{
-    int width = last_x-x+1;
-    for (int i = 0; i < width; i++)
-    {
-        pixels[i] = read_pixel(x+i, y);
-    }
-}
-
-/*
- *----------------------------------------------------------------------
- *
- * write_span --
- *
- *  Write a line of pixels to the screen.
- *
- * Results:
- *  None.
- *
- * Side effects:
- *  Draws pixels.
- *
- *----------------------------------------------------------------------
- */
-void X11Driver::write_span(int y, int x, int last_x, Byte *pixels)
-{
-    int width;
-    const Byte *pixline;
-
-#if 1
-    if (x == last_x)
-    {
-        write_pixel(x, y, pixels[0]);
-        return;
-    }
-    width = last_x-x+1;
-    if (m_use_pixtab)
-    {
-        m_pixels.resize(width);
-        for (int i = 0; i < width; i++)
-        {
-            m_pixels[i] = m_pixtab[pixels[i]];
-        }
-        pixline = m_pixels.data();
-    }
-    else
-    {
-        pixline = pixels;
-    }
-    for (int i = 0; i < width; i++)
-    {
-        XPutPixel(m_image, x+i, y, do_fake_lut(pixline[i]));
-    }
-    if (m_fast_mode && g_help_mode != HelpLabels::HELP_PALETTE_EDITOR)
-    {
-        if (!m_alarm_on)
-        {
-            schedule_alarm(0);
-        }
-    }
-    else
-    {
-        XPutImage(m_dpy, m_window, m_gc, m_image, x, y, x, y, width, 1);
-        if (m_on_root)
-        {
-            XPutImage(m_dpy, m_pixmap, m_gc, m_image, x, y, x, y, width, 1);
-        }
-    }
-#else
-    width = last_x-x+1;
-    for (int i = 0; i < width; i++)
-    {
-        write_pixel(x+i, y, pixels[i]);
-    }
-#endif
 }
 
 /*

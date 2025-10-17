@@ -28,9 +28,7 @@ public:
 
     void write_pixel(int x, int y, int color);
     int read_pixel(int x, int y);
-    void write_span(int y, int x, int last_x, const Byte *pixels);
     void flush();
-    void read_span(int y, int x, int last_x, Byte *pixels);
     void set_line_mode(int mode);
     void draw_line(int x1, int y1, int x2, int y2, int color);
     Colormap get_colormap() const;

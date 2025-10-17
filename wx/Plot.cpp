@@ -169,37 +169,6 @@ int Plot::read_pixel(const int x, const int y)
     return m_pixels[(m_height - 1 - y) * m_width + x];
 }
 
-void Plot::write_span(int y, int x, const int last_x, const Byte *pixels)
-{
-    if (x < 0 || x >= m_width || y < 0 || y >= m_height || last_x < x || last_x >= m_width)
-    {
-        assert(x >= 0 || x < m_width || y >= 0 || y < m_height || last_x >= x || last_x < m_width);
-        return;
-    }
-
-    const int width = last_x - x + 1;
-    {
-        assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
-        Byte *begin{m_pixels.data() + (m_height - 1 - y) * m_width + x};
-        std::copy_n(pixels, width, begin);
-    }
-    {
-        const wxNativePixelData data{m_rendering};
-        assert(data.GetWidth() == m_width);
-        assert(data.GetHeight() == m_height);
-        auto it = data.GetPixels();
-        it.MoveTo(data, x, y);
-        for (int i = 0; i < width; ++i, ++it, ++pixels)
-        {
-            const Byte color = *pixels;
-            it.Red() = m_clut[color][0];
-            it.Green() = m_clut[color][1];
-            it.Blue() = m_clut[color][2];
-        }
-    }
-    set_dirty_region({x, y, width, 1});
-}
-
 void Plot::flush()
 {
     if (m_dirty)
@@ -207,16 +176,6 @@ void Plot::flush()
         RefreshRect(m_dirty_region, false);
         m_dirty = false;
         m_dirty_region = wxRect{};
-    }
-}
-
-void Plot::read_span(const int y, const int x, const int last_x, Byte *pixels)
-{
-    flush();
-    const int width = last_x - x + 1;
-    for (int i = 0; i < width; i++)
-    {
-        pixels[i] = read_pixel(x + i, y);
     }
 }
 

@@ -49,8 +49,6 @@ public:
     void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
-    void write_span(int y, int x, int lastx, BYTE *pixels) override;
-    void read_span(int y, int x, int lastx, BYTE *pixels) override;
     void set_line_mode(int mode) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
     void redraw() override;
@@ -292,57 +290,6 @@ void DiskDriver::write_pixel(int x, int y, int color)
 int DiskDriver::read_pixel(int x, int y)
 {
     return getcolor(x, y);
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* write_span --
-*
-*   Write a line of pixels to the screen.
-*
-* Results:
-*   None.
-*
-* Side effects:
-*   Draws pixels.
-*
-*----------------------------------------------------------------------
-*/
-void DiskDriver::write_span(int y, int x, int lastx, BYTE *pixels)
-{
-    int width = lastx-x+1;
-    ODS3("DiskDriver::write_span (%d,%d,%d)", y, x, lastx);
-
-    for (int i = 0; i < width; i++)
-    {
-        write_pixel(x+i, y, pixels[i]);
-    }
-}
-
-/*
-*----------------------------------------------------------------------
-*
-* read_span --
-*
-*   Reads a line of pixels from the screen.
-*
-* Results:
-*   None.
-*
-* Side effects:
-*   Gets pixels
-*
-*----------------------------------------------------------------------
-*/
-void DiskDriver::read_span(int y, int x, int lastx, BYTE *pixels)
-{
-    ODS3("DiskDriver::read_span (%d,%d,%d)", y, x, lastx);
-    int width = lastx-x+1;
-    for (int i = 0; i < width; i++)
-    {
-        pixels[i] = read_pixel(x+i, y);
-    }
 }
 
 void DiskDriver::set_line_mode(int mode)

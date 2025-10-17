@@ -473,17 +473,6 @@ int Plot::read_pixel(const int x, const int y)
     return m_pixels[(m_height - 1 - y) * m_row_len + x];
 }
 
-void Plot::write_span(const int y, const int x, const int last_x, const Byte *pixels)
-{
-    const int width = last_x-x+1;
-
-    for (int i = 0; i < width; i++)
-    {
-        write_pixel(x+i, y, pixels[i]);
-    }
-    set_dirty_region(x, y, last_x+1, y+1);
-}
-
 void Plot::flush()
 {
     if (m_dirty)
@@ -491,16 +480,6 @@ void Plot::flush()
         InvalidateRect(m_window, &m_dirty_region, FALSE);
         m_dirty = false;
         m_dirty_region = {-1, -1, -1, -1};
-    }
-}
-
-void Plot::read_span(const int y, const int x, const int last_x, Byte *pixels)
-{
-    flush();
-    const int width = last_x - x + 1;
-    for (int i = 0; i < width; i++)
-    {
-        pixels[i] = read_pixel(x + i, y);
     }
 }
 
