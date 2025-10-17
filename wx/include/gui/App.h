@@ -47,6 +47,7 @@ public:
     bool resize(int width, int height);
     void write_pixel(int x, int y, int color);
     int read_pixel(int x, int y);
+    void display_string(int x, int y, int fg, int bg, const char *text);
 
 private:
     Frame *m_frame{};

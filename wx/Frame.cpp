@@ -77,6 +77,11 @@ int Frame::read_pixel(int x, int y)
     return m_plot->read_pixel(x, y);
 }
 
+void Frame::display_string(int x, int y, int fg, int bg, const char *text)
+{
+    m_plot->display_string(x, y, fg, bg, text);
+}
+
 wxSize Frame::DoGetBestSize() const
 {
     return get_client_size();

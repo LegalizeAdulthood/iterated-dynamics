@@ -560,7 +560,7 @@ void WxDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 
 void WxDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
-    throw std::runtime_error("not implemented");
+    wxGetApp().display_string(x, y, fg, bg, text);
 }
 
 void WxDriver::save_graphics()

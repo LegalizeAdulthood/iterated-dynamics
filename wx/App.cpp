@@ -171,4 +171,9 @@ int App::read_pixel(int x, int y)
     return m_frame->read_pixel(x, y);
 }
 
+void App::display_string(int x, int y, int fg, int bg, const char *text)
+{
+    m_frame->display_string(x, y, fg, bg, text);
+}
+
 } // namespace id::gui
