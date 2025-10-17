@@ -6,6 +6,8 @@
  */
 #include "WxDriver.h"
 
+#include <config/cmd_shell.h>
+
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
@@ -22,6 +24,7 @@
 #include "ui/rotate.h"
 #include "ui/slideshw.h"
 #include "ui/spindac.h"
+#include "ui/stop_msg.h"
 #include "ui/text_screen.h"
 #include "ui/video.h"
 #include "ui/video_mode.h"
@@ -40,6 +43,7 @@
 #include <crtdbg.h>
 #endif
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::ui;
 
@@ -199,35 +203,15 @@ int WxDriver::get_key()
 }
 
 // Spawn a command prompt.
-void  WxDriver::shell()
+void WxDriver::shell()
 {
-    throw std::runtime_error("not implemented");
-    //STARTUPINFO si =
-    //{
-    //    sizeof(si)
-    //};
-    //PROCESS_INFORMATION pi = { 0 };
-    //const char *comspec = getenv("COMSPEC");
-    //if (comspec == nullptr)
-    //{
-    //    comspec = "cmd.exe";
-    //}
-    //const std::string command_line(comspec);
-    //if (CreateProcessA(
-    //        command_line.c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
-    //{
-    //    DWORD status = WaitForSingleObject(pi.hProcess, 100);
-    //    while (WAIT_TIMEOUT == status)
-    //    {
-    //        g_frame.pump_messages(false);
-    //        status = WaitForSingleObject(pi.hProcess, 100);
-    //    }
-    //    CloseHandle(pi.hProcess);
-    //}
-    //else
-    //{
-    //    stopmsg("Couldn't run shell '" + command_line + "', error " + std::to_string(GetLastError()));
-    //}
+    const auto timeout{[] { wxGetApp().pump_messages(false); }};
+    if (cmd_shell(timeout))
+    {
+        return;
+    }
+    stop_msg(
+        "Couldn't run shell '" + cmd_shell_command() + "', error " + std::to_string(get_cmd_shell_error()));
 }
 
 void WxDriver::hide_text_cursor()
