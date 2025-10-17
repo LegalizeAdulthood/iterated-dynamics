@@ -9,6 +9,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "geometry/plot3d.h"
 #include "gui/App.h"
 #include "gui/Colormap.h"
 #include "gui/Frame.h"
@@ -554,7 +555,7 @@ void WxDriver::write_pixel(int x, int y, int color)
 
 void WxDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 {
-    throw std::runtime_error("not implemented");
+    geometry::draw_line(x1, y1, x2, y2, color);
 }
 
 void WxDriver::display_string(int x, int y, int fg, int bg, const char *text)
