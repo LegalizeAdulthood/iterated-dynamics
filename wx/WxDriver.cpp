@@ -609,8 +609,7 @@ void WxDriver::check_memory()
 bool WxDriver::get_filename(
     const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
 {
-    throw std::runtime_error("not implemented");
-    return false;
+    return wxGetApp().get_filename(hdg, type_desc, type_wildcard, result_filename);
 }
 
 static WxDriver s_wx_driver{};
