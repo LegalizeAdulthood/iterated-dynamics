@@ -41,6 +41,19 @@ else()
 endif()
 configure_file(driver_types.h.in include/config/driver_types.h @ONLY)
 
+# Determine command shell flavor
+if(NOT CMD_SHELL_FLAVOR)
+    if(DEFINED ENV{COMSPEC})
+        set(CMD_SHELL_DEFAULT_FLAVOR "comspec")
+    elseif(DEFINED ENV{SHELL})
+        set(CMD_SHELL_DEFAULT_FLAVOR "shell")
+    else()
+        set(CMD_SHELL_DEFAULT_FLAVOR "null")
+    endif()
+endif()
+set(CMD_SHELL_FLAVOR "${CMD_SHELL_DEFAULT_FLAVOR}" CACHE STRING "The command-shell algorithm to use: null, comspec, shell")
+configure_file("cmd_shell.${CMD_SHELL_FLAVOR}.cpp.in" "cmd_shell.cpp" COPYONLY)
+
 # Determine file descriptor I/O flavor
 if(HAVE_FCNTL_H)
     check_symbol_exists(open "fcntl.h" HAVE_FCNTL_OPEN)
@@ -135,6 +148,8 @@ add_library(config
     port_config.h.in
     include/config/string_case_compare.h string_case_compare.cpp
     string_lower.string.h.in string_lower.manual.h.in ${ID_STRING_LOWER_SOURCES}
+    cmd_shell.comspec.cpp.in cmd_shell.null.cpp.in cmd_shell.shell.cpp.in
+    include/config/cmd_shell.h "${CMAKE_CURRENT_BINARY_DIR}/cmd_shell.cpp"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/driver_types.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/fdio.h"
     "${CMAKE_CURRENT_BINARY_DIR}/include/config/filelength.h"

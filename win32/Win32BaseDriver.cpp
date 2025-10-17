@@ -6,6 +6,7 @@
  */
 #include "Win32BaseDriver.h"
 
+#include "config/cmd_shell.h"
 #include "config/path_limits.h"
 #include "Frame.h"
 #include "instance.h"
@@ -178,30 +179,12 @@ int Win32BaseDriver::get_key()
 // Spawn a command prompt.
 void  Win32BaseDriver::shell()
 {
-    STARTUPINFO si{};
-    si.cb = sizeof(si);
-    PROCESS_INFORMATION pi{};
-    const char *com_spec = getenv("COMSPEC");
-    if (com_spec == nullptr)
+    const auto timeout{[] { g_frame.pump_messages(false); }};
+    if (cmd_shell(timeout))
     {
-        com_spec = "cmd.exe";
+        return;
     }
-    const std::string command_line(com_spec);
-    if (CreateProcessA(
-            command_line.c_str(), nullptr, nullptr, nullptr, FALSE, CREATE_NEW_CONSOLE, nullptr, nullptr, &si, &pi))
-    {
-        DWORD status = WaitForSingleObject(pi.hProcess, 100);
-        while (WAIT_TIMEOUT == status)
-        {
-            g_frame.pump_messages(false);
-            status = WaitForSingleObject(pi.hProcess, 100);
-        }
-        CloseHandle(pi.hProcess);
-    }
-    else
-    {
-        stop_msg("Couldn't run shell '" + command_line + "', error " + std::to_string(GetLastError()));
-    }
+    stop_msg("Couldn't run shell '" + cmd_shell_command() + "', error " + std::to_string(get_cmd_shell_error()));
 }
 
 void Win32BaseDriver::hide_text_cursor()

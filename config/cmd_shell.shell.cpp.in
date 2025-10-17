@@ -1,0 +1,53 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// DO NOT EDIT!
+//
+// Generated from cmd_shell.shell.cpp.in
+//
+// $SHELL implementation for unix
+
+#include <config/cmd_shell.h>
+
+#include <cerrno>
+#include <cstdlib>
+#include <stdlib.h>
+#include <string>
+
+namespace id::config
+{
+
+static int s_cmd_shell_error{};
+
+int get_cmd_shell_error()
+{
+    return s_cmd_shell_error;
+}
+
+std::string cmd_shell_command()
+{
+    const char *shell = std::getenv("SHELL");
+    if (shell == nullptr)
+    {
+        shell = "sh";
+    }
+    return shell;
+}
+
+bool cmd_shell(TimeoutCallback *timeout)
+{
+    s_cmd_shell_error = 0;
+    if (system(nullptr) == 0)
+    {
+        // do nothing, shell is not available
+        return true;
+    }
+
+    if (system(cmd_shell_command().c_str()) == -1)
+    {
+        s_cmd_shell_error = errno;
+        return false;
+    }
+    return false;
+}
+
+} // namespace id::config

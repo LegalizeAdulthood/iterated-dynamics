@@ -1,0 +1,30 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
+// DO NOT EDIT!
+//
+// Generated from cmd_shell.null.cpp.in
+//
+// Null implementation that returns immediately.
+//
+
+#include <config/cmd_shell.h>
+
+namespace id::config
+{
+
+int get_cmd_shell_error()
+{
+    return 0;
+}
+
+std::string cmd_shell_command()
+{
+    return {};
+}
+
+bool cmd_shell(TimeoutCallback *timeout)
+{
+    return true;
+}
+
+} // namespace id::config
