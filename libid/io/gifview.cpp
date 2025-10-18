@@ -421,7 +421,7 @@ static int out_line_dither(Byte *pixels, const int line_len)
 
 static int out_line_too_wide(Byte *pixels, int line_len)
 {
-    const int width = g_logical_screen_x_dots;
+    const int width = g_logical_screen.x_dots;
     while (line_len > 0)
     {
         int extra = s_col_count + line_len - width;
@@ -463,7 +463,7 @@ static bool put_sound_line(const int row, const int col_start, const int col_sto
 
 int sound_line(Byte *pixels, int line_len)
 {
-    const int width = g_logical_screen_x_dots;
+    const int width = g_logical_screen.x_dots;
     while (line_len > 0)
     {
         int extra = s_col_count + line_len - width;
@@ -511,15 +511,15 @@ int pot_line(Byte *pixels, const int line_len)
     int row = g_row_count;
     if ((save_row_count & 1) != 0)   // odd line
     {
-        row += g_logical_screen_y_dots;
+        row += g_logical_screen.y_dots;
     }
     else if (!driver_is_disk())     // even line - display the line too
     {
         out_line(pixels, line_len);
     }
-    for (int col = 0; col < g_logical_screen_x_dots; ++col)
+    for (int col = 0; col < g_logical_screen.x_dots; ++col)
     {
-        disk_write_pixel(col+g_logical_screen_x_offset, row+g_logical_screen_y_offset, *(pixels+col));
+        disk_write_pixel(col+g_logical_screen.x_offset, row+g_logical_screen.y_offset, *(pixels+col));
     }
     g_row_count = save_row_count + 1;
     return 0;

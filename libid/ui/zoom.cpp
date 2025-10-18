@@ -87,7 +87,7 @@ void display_box()
     int rgb[3];
     for (int i = 0; i < g_box_count; i++)
     {
-        g_box_values[i] = get_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset);
+        g_box_values[i] = get_color(g_box_x[i]-g_logical_screen.x_offset, g_box_y[i]-g_logical_screen.y_offset);
     }
 
     // There is an interaction between getcolor and putcolor, so separate them
@@ -98,11 +98,11 @@ void display_box()
         {
             if (g_colors == 2)
             {
-                g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, 1 - g_box_values[i]);
+                g_put_color(g_box_x[i]-g_logical_screen.x_offset, g_box_y[i]-g_logical_screen.y_offset, 1 - g_box_values[i]);
             }
             else
             {
-                g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, box_color);
+                g_put_color(g_box_x[i]-g_logical_screen.x_offset, g_box_y[i]-g_logical_screen.y_offset, box_color);
             }
         }
     }
@@ -118,7 +118,7 @@ void clear_box()
     {
         for (int i = 0; i < g_box_count; i++)
         {
-            g_put_color(g_box_x[i]-g_logical_screen_x_offset, g_box_y[i]-g_logical_screen_y_offset, g_box_values[i]);
+            g_put_color(g_box_x[i]-g_logical_screen.x_offset, g_box_y[i]-g_logical_screen.y_offset, g_box_values[i]);
         }
     }
 }
@@ -185,8 +185,8 @@ void draw_box(const bool draw_it)
     double f_temp2 = g_zoom_box_y + dy / g_final_aspect_ratio;
 
     Coord top_left;
-    top_left.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND)); // screen co-ords
-    top_left.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
+    top_left.x   = static_cast<int>(f_temp1 * (g_logical_screen.x_size_dots + PIXEL_ROUND)); // screen co-ords
+    top_left.y   = static_cast<int>(f_temp2 * (g_logical_screen.y_size_dots + PIXEL_ROUND));
     g_image_region.m_min.x  = g_save_image_region.m_min.x + f_temp1*f_x_width + f_temp2*f_x_skew; // real co-ords
     g_image_region.m_max.y  = g_save_image_region.m_max.y + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
@@ -199,8 +199,8 @@ void draw_box(const bool draw_it)
     f_temp1 = g_zoom_box_x + g_zoom_box_width - dx - f_x_adj;
     f_temp2 = g_zoom_box_y - dy/g_final_aspect_ratio + g_zoom_box_height;
     Coord bot_right;
-    bot_right.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND));
-    bot_right.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
+    bot_right.x   = static_cast<int>(f_temp1 * (g_logical_screen.x_size_dots + PIXEL_ROUND));
+    bot_right.y   = static_cast<int>(f_temp2 * (g_logical_screen.y_size_dots + PIXEL_ROUND));
     g_image_region.m_max.x  = g_save_image_region.m_min.x + f_temp1*f_x_width + f_temp2*f_x_skew;
     g_image_region.m_min.y  = g_save_image_region.m_max.y + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
@@ -217,8 +217,8 @@ void draw_box(const bool draw_it)
     f_temp1 = g_zoom_box_x + dx - f_x_adj;
     f_temp2 = g_zoom_box_y + dy/g_final_aspect_ratio + g_zoom_box_height;
     Coord bot_left;
-    bot_left.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND));
-    bot_left.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
+    bot_left.x   = static_cast<int>(f_temp1 * (g_logical_screen.x_size_dots + PIXEL_ROUND));
+    bot_left.y   = static_cast<int>(f_temp2 * (g_logical_screen.y_size_dots + PIXEL_ROUND));
     g_image_region.m_3rd.x  = g_save_image_region.m_min.x + f_temp1*f_x_width + f_temp2*f_x_skew;
     g_image_region.m_3rd.y  = g_save_image_region.m_max.y + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
@@ -230,8 +230,8 @@ void draw_box(const bool draw_it)
     f_temp1 = g_zoom_box_x + g_zoom_box_width - dx + f_x_adj;
     f_temp2 = g_zoom_box_y - dy/g_final_aspect_ratio;
     Coord top_right;
-    top_right.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND));
-    top_right.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
+    top_right.x   = static_cast<int>(f_temp1 * (g_logical_screen.x_size_dots + PIXEL_ROUND));
+    top_right.y   = static_cast<int>(f_temp2 * (g_logical_screen.y_size_dots + PIXEL_ROUND));
 
     if (g_box_count != 0)
     {
@@ -335,8 +335,8 @@ void draw_lines(Coord fr, Coord to, const int dx, const int dy)
 void add_box(Coord point)
 {
     assert(g_box_count < NUM_BOX_POINTS);
-    point.x += g_logical_screen_x_offset;
-    point.y += g_logical_screen_y_offset;
+    point.x += g_logical_screen.x_offset;
+    point.y += g_logical_screen.y_offset;
     if (point.x >= 0 && point.x < g_screen_x_dots
         && point.y >= 0 && point.y < g_screen_y_dots)
     {
@@ -361,7 +361,7 @@ void move_box(const double dx, const double dy)
         }
         if (align != 0)
         {
-            if (int col = static_cast<int>(g_zoom_box_x * (g_logical_screen_x_size_dots + PIXEL_ROUND));
+            if (int col = static_cast<int>(g_zoom_box_x * (g_logical_screen.x_size_dots + PIXEL_ROUND));
                 (col & align - 1) != 0)
             {
                 if (dx > 0)
@@ -369,7 +369,7 @@ void move_box(const double dx, const double dy)
                     col += align;
                 }
                 col -= col & align - 1; // adjust col to pass alignment
-                g_zoom_box_x = static_cast<double>(col) / g_logical_screen_x_size_dots;
+                g_zoom_box_x = static_cast<double>(col) / g_logical_screen.x_size_dots;
             }
         }
     }
@@ -385,7 +385,7 @@ void move_box(const double dx, const double dy)
         }
         if (align != 0)
         {
-            if (int row = static_cast<int>(g_zoom_box_y * (g_logical_screen_y_size_dots + PIXEL_ROUND));
+            if (int row = static_cast<int>(g_zoom_box_y * (g_logical_screen.y_size_dots + PIXEL_ROUND));
                 (row & align - 1) != 0)
             {
                 if (dy > 0)
@@ -393,7 +393,7 @@ void move_box(const double dx, const double dy)
                     row += align;
                 }
                 row -= row & align - 1;
-                g_zoom_box_y = static_cast<double>(row) / g_logical_screen_y_size_dots;
+                g_zoom_box_y = static_cast<double>(row) / g_logical_screen.y_size_dots;
             }
         }
     }
@@ -444,7 +444,7 @@ void resize_box(const int steps)
 // change size by pixels
 void change_box(const int dw, const int dh)
 {
-    change_box(dw / g_logical_screen_x_size_dots, dh / g_logical_screen_y_size_dots);
+    change_box(dw / g_logical_screen.x_size_dots, dh / g_logical_screen.y_size_dots);
 }
 
 static void zoom_out_calc(BigFloat bf_dx, BigFloat bf_dy, //
@@ -708,12 +708,12 @@ static int check_pan() // return 0 if can't, alignment requirement if can
 // move a row on the screen
 static void move_row(const int from_row, const int to_row, const int col)
 {
-    std::vector<Byte> temp(g_logical_screen_x_dots, 0);
-    if (from_row >= 0 && from_row < g_logical_screen_y_dots)
+    std::vector<Byte> temp(g_logical_screen.x_dots, 0);
+    if (from_row >= 0 && from_row < g_logical_screen.y_dots)
     {
         int start_col = 0;
         int to_col = 0;
-        int stop_col = g_logical_screen_x_dots-1;
+        int stop_col = g_logical_screen.x_dots-1;
         if (col < 0)
         {
             to_col -= col;
@@ -725,7 +725,7 @@ static void move_row(const int from_row, const int to_row, const int col)
         }
         read_span(from_row, start_col, stop_col, &temp[to_col]);
     }
-    write_span(to_row, 0, g_logical_screen_x_dots-1, temp.data());
+    write_span(to_row, 0, g_logical_screen.x_dots-1, temp.data());
 }
 
 // decide to recalc, or to chg worklist & pan
@@ -754,8 +754,8 @@ void init_pan_or_recalc(const bool do_zoom_out)
     }
 
     int col = static_cast<int>(
-        g_zoom_box_x * (g_logical_screen_x_size_dots + PIXEL_ROUND)); // calc dest col,row of topleft pixel
-    int row = static_cast<int>(g_zoom_box_y * (g_logical_screen_y_size_dots + PIXEL_ROUND));
+        g_zoom_box_x * (g_logical_screen.x_size_dots + PIXEL_ROUND)); // calc dest col,row of topleft pixel
+    int row = static_cast<int>(g_zoom_box_y * (g_logical_screen.y_size_dots + PIXEL_ROUND));
     if (do_zoom_out)
     {
         // invert row and col
@@ -789,17 +789,17 @@ void init_pan_or_recalc(const bool do_zoom_out)
     // add worklist entries for the new edges
     bool list_full{};
     int i = 0;
-    int j = g_logical_screen_y_dots-1;
+    int j = g_logical_screen.y_dots-1;
     if (row < 0)
     {
-        list_full = add_work_list(0, 0, g_logical_screen_x_dots - 1, 0 - row - 1, 0, 0, 0, 0) || list_full;
+        list_full = add_work_list(0, 0, g_logical_screen.x_dots - 1, 0 - row - 1, 0, 0, 0, 0) || list_full;
         i = -row;
     }
     if (row > 0)
     {
-        list_full = add_work_list(0, g_logical_screen_y_dots - row, g_logical_screen_x_dots - 1,
-                        g_logical_screen_y_dots - 1, 0, g_logical_screen_y_dots - row, 0, 0) || list_full;
-        j = g_logical_screen_y_dots - row - 1;
+        list_full = add_work_list(0, g_logical_screen.y_dots - row, g_logical_screen.x_dots - 1,
+                        g_logical_screen.y_dots - 1, 0, g_logical_screen.y_dots - row, 0, 0) || list_full;
+        j = g_logical_screen.y_dots - row - 1;
     }
     if (col < 0)
     {
@@ -807,8 +807,8 @@ void init_pan_or_recalc(const bool do_zoom_out)
     }
     if (col > 0)
     {
-        list_full = add_work_list(g_logical_screen_x_dots - col, i, g_logical_screen_x_dots - 1, j,
-                        g_logical_screen_x_dots - col, i, 0, 0) || list_full;
+        list_full = add_work_list(g_logical_screen.x_dots - col, i, g_logical_screen.x_dots - 1, j,
+                        g_logical_screen.x_dots - col, i, 0, 0) || list_full;
     }
     if (list_full)
     {
@@ -830,14 +830,14 @@ void init_pan_or_recalc(const bool do_zoom_out)
     clear_box();
     if (row > 0)   // move image up
     {
-        for (int y = 0; y < g_logical_screen_y_dots; ++y)
+        for (int y = 0; y < g_logical_screen.y_dots; ++y)
         {
             move_row(y+row, y, col);
         }
     }
     else             // move image down
     {
-        for (int y = g_logical_screen_y_dots; --y >=0;)
+        for (int y = g_logical_screen.y_dots; --y >=0;)
         {
             move_row(y+row, y, col);
         }
@@ -852,9 +852,9 @@ static void restart_window(const int index)
 {
     const int y_start = std::max(0, g_work_list[index].start.y);
     const int x_start = std::max(0, g_work_list[index].start.x);
-    const int y_stop = std::min(g_logical_screen_y_dots - 1, g_work_list[index].stop.y);
-    const int x_stop = std::min(g_logical_screen_x_dots - 1, g_work_list[index].stop.x);
-    const std::vector<Byte> temp(g_logical_screen_x_dots, 0);
+    const int y_stop = std::min(g_logical_screen.y_dots - 1, g_work_list[index].stop.y);
+    const int x_stop = std::min(g_logical_screen.x_dots - 1, g_work_list[index].stop.x);
+    const std::vector<Byte> temp(g_logical_screen.x_dots, 0);
     for (int y = y_start; y <= y_stop; ++y)
     {
         write_span(y, x_start, x_stop, temp.data());
@@ -871,8 +871,8 @@ static void fix_work_list()
     for (int i = 0; i < g_num_work_list; ++i)
     {
         WorkList *wk = &g_work_list[i];
-        if (wk->start.y >= g_logical_screen_y_dots || wk->start.y < 0
-            || wk->start.x >= g_logical_screen_x_dots || wk->stop.x < 0)
+        if (wk->start.y >= g_logical_screen.y_dots || wk->start.y < 0
+            || wk->start.x >= g_logical_screen.x_dots || wk->stop.x < 0)
         {
             // offscreen, delete
             for (int j = i+1; j < g_num_work_list; ++j)
@@ -911,10 +911,10 @@ static void fix_work_list()
                 restart_window(i); // restart the no-longer sym part
             }
         }
-        if (wk->start.y >= g_logical_screen_y_dots)
+        if (wk->start.y >= g_logical_screen.y_dots)
         {
             // partly off bottom edge
-            int j = g_logical_screen_y_dots-1;
+            int j = g_logical_screen.y_dots-1;
             if ((wk->symmetry&1) != 0)
             {
                 // uses xaxis symmetry
@@ -964,10 +964,10 @@ static void fix_work_list()
                 restart_window(i); // restart the no-longer sym part
             }
         }
-        if (wk->stop.x >= g_logical_screen_x_dots)
+        if (wk->stop.x >= g_logical_screen.x_dots)
         {
             // partly off right edge
-            int j = g_logical_screen_x_dots-1;
+            int j = g_logical_screen.x_dots-1;
             if ((wk->symmetry&2) != 0)
             {
                 // uses xaxis symmetry
@@ -1055,7 +1055,7 @@ MainState move_zoom_box(MainContext &context)
     }
     if (g_box_count)
     {
-        move_box(static_cast<double>(horizontal) /g_logical_screen_x_size_dots, static_cast<double>(vertical) /g_logical_screen_y_size_dots);
+        move_box(static_cast<double>(horizontal) /g_logical_screen.x_size_dots, static_cast<double>(vertical) /g_logical_screen.y_size_dots);
     }
     return MainState::NOTHING;
 }

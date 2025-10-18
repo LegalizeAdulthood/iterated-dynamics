@@ -340,7 +340,7 @@ static LSysCmd *find_size(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules
 
 bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, const int depth)
 {
-    ts->aspect = g_screen_aspect*g_logical_screen_x_dots/g_logical_screen_y_dots;
+    ts->aspect = g_screen_aspect*g_logical_screen.x_dots/g_logical_screen.y_dots;
     ts->y_min = 0;
     ts->y_max = 0;
     ts->x_max = 0;
@@ -369,7 +369,7 @@ bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, con
     }
     else
     {
-        horiz = static_cast<float>((g_logical_screen_x_dots - 10) / (x_max - x_min));
+        horiz = static_cast<float>((g_logical_screen.x_dots - 10) / (x_max - x_min));
     }
     float vert;
     if (y_max == y_min)
@@ -378,25 +378,25 @@ bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, con
     }
     else
     {
-        vert = static_cast<float>((g_logical_screen_y_dots - 6) / (y_max - y_min));
+        vert = static_cast<float>((g_logical_screen.y_dots - 6) / (y_max - y_min));
     }
     const LDouble local_size = vert < horiz ? vert : horiz;
 
     if (horiz == 1E37)
     {
-        ts->x_pos = g_logical_screen_x_dots/2;
+        ts->x_pos = g_logical_screen.x_dots/2;
     }
     else
     {
-        ts->x_pos = (g_logical_screen_x_dots-local_size*(x_max+x_min))/2;
+        ts->x_pos = (g_logical_screen.x_dots-local_size*(x_max+x_min))/2;
     }
     if (vert == 1E37)
     {
-        ts->y_pos = g_logical_screen_y_dots/2;
+        ts->y_pos = g_logical_screen.y_dots/2;
     }
     else
     {
-        ts->y_pos = (g_logical_screen_y_dots-local_size*(y_max+y_min))/2;
+        ts->y_pos = (g_logical_screen.y_dots-local_size*(y_max+y_min))/2;
     }
     ts->size = local_size;
 
@@ -721,7 +721,7 @@ void lsys_build_trig_table()
 {
     constexpr LDouble two_pi = 2.0 * PI;
 
-    const double local_aspect = g_screen_aspect * g_logical_screen_x_dots / g_logical_screen_y_dots;
+    const double local_aspect = g_screen_aspect * g_logical_screen.x_dots / g_logical_screen.y_dots;
     const double increment = two_pi / g_max_angle;
     s_sin_table.resize(g_max_angle);
     s_cos_table.resize(g_max_angle);

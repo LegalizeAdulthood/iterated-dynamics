@@ -237,16 +237,16 @@ int line3d(Byte * pixels, unsigned line_len)
         {
             return err;
         }
-        if (g_logical_screen_x_dots > OLD_MAX_PIXELS)
+        if (g_logical_screen.x_dots > OLD_MAX_PIXELS)
         {
             return -1;
         }
         cross_avg[0] = 0;
         cross_avg[1] = 0;
         cross_avg[2] = 0;
-        s_x_center = g_logical_screen_x_dots / 2 + g_x_shift;
+        s_x_center = g_logical_screen.x_dots / 2 + g_x_shift;
         x_center0 = static_cast<int>(s_x_center);
-        s_y_center = g_logical_screen_y_dots / 2 - g_y_shift;
+        s_y_center = g_logical_screen.y_dots / 2 - g_y_shift;
         y_center0 = static_cast<int>(s_y_center);
     }
     // make sure these pixel coordinates are out of range
@@ -289,32 +289,32 @@ int line3d(Byte * pixels, unsigned line_len)
     // the effects of 3D transformations. Thanks to Marc Reinig for this idea
     // and code.
     //***********************************************************************
-    last_dot = std::min(g_logical_screen_x_dots - 1, static_cast<int>(line_len) - 1);
+    last_dot = std::min(g_logical_screen.x_dots - 1, static_cast<int>(line_len) - 1);
     if (g_fill_type >= FillType::LIGHT_SOURCE_BEFORE)
     {
         if (g_haze && g_targa_out)
         {
             s_haze_mult = static_cast<int>(g_haze *
-                (static_cast<float>(static_cast<long>(g_logical_screen_y_dots - 1 - g_current_row) *
-                     static_cast<long>(g_logical_screen_y_dots - 1 - g_current_row)) /
-                    static_cast<float>(static_cast<long>(g_logical_screen_y_dots - 1) *
-                        static_cast<long>(g_logical_screen_y_dots - 1))));
+                (static_cast<float>(static_cast<long>(g_logical_screen.y_dots - 1 - g_current_row) *
+                     static_cast<long>(g_logical_screen.y_dots - 1 - g_current_row)) /
+                    static_cast<float>(static_cast<long>(g_logical_screen.y_dots - 1) *
+                        static_cast<long>(g_logical_screen.y_dots - 1))));
             s_haze_mult = 100 - s_haze_mult;
         }
     }
 
-    if (g_preview_factor >= g_logical_screen_y_dots || g_preview_factor > last_dot)
+    if (g_preview_factor >= g_logical_screen.y_dots || g_preview_factor > last_dot)
     {
-        g_preview_factor = std::min(g_logical_screen_y_dots - 1, last_dot);
+        g_preview_factor = std::min(g_logical_screen.y_dots - 1, last_dot);
     }
 
-    s_local_preview_factor = g_logical_screen_y_dots / g_preview_factor;
+    s_local_preview_factor = g_logical_screen.y_dots / g_preview_factor;
 
     bool tout = false;          // triangle has been sent to ray trace file
     // Insure last line is drawn in preview and filltypes <0
     // Draw mod preview lines
     if ((g_raytrace_format != RayTraceFormat::NONE || g_preview || g_fill_type < FillType::POINTS) //
-        && g_current_row != g_logical_screen_y_dots - 1                                            //
+        && g_current_row != g_logical_screen.y_dots - 1                                            //
         && g_current_row % s_local_preview_factor                                                  //
         && !(g_raytrace_format == RayTraceFormat::NONE                                             //
                && g_fill_type > FillType::SOLID_FILL                                               //
@@ -479,8 +479,8 @@ int line3d(Byte * pixels, unsigned line_len)
 
                 if (g_raytrace_format == RayTraceFormat::ACROSPIN)
                 {
-                    f_cur.x = f_cur.x * (2.0F / g_logical_screen_x_dots) - 1.0F;
-                    f_cur.y = f_cur.y * (2.0F / g_logical_screen_y_dots) - 1.0F;
+                    f_cur.x = f_cur.x * (2.0F / g_logical_screen.x_dots) - 1.0F;
+                    f_cur.y = f_cur.y * (2.0F / g_logical_screen.y_dots) - 1.0F;
                     f_cur.color = -f_cur.color * (2.0F / g_num_colors) - 1.0F;
                 }
             }
@@ -531,11 +531,11 @@ int line3d(Byte * pixels, unsigned line_len)
         {
             if (col && g_current_row
                 && old.x > s_bad_check
-                && old.x < g_logical_screen_x_dots - s_bad_check
+                && old.x < g_logical_screen.x_dots - s_bad_check
                 && s_last_row[col].x > s_bad_check
                 && s_last_row[col].y > s_bad_check
-                && s_last_row[col].x < g_logical_screen_x_dots - s_bad_check
-                && s_last_row[col].y < g_logical_screen_y_dots - s_bad_check)
+                && s_last_row[col].x < g_logical_screen.x_dots - s_bad_check
+                && s_last_row[col].y < g_logical_screen.y_dots - s_bad_check)
             {
                 // Get rid of all the triangles in the plane at the base of the object
 
@@ -565,12 +565,12 @@ int line3d(Byte * pixels, unsigned line_len)
             if (col < last_dot && g_current_row
                 && s_last_row[col].x > s_bad_check
                 && s_last_row[col].y > s_bad_check
-                && s_last_row[col].x < g_logical_screen_x_dots - s_bad_check
-                && s_last_row[col].y < g_logical_screen_y_dots - s_bad_check
+                && s_last_row[col].x < g_logical_screen.x_dots - s_bad_check
+                && s_last_row[col].y < g_logical_screen.y_dots - s_bad_check
                 && s_last_row[next].x > s_bad_check
                 && s_last_row[next].y > s_bad_check
-                && s_last_row[next].x < g_logical_screen_x_dots - s_bad_check
-                && s_last_row[next].y < g_logical_screen_y_dots - s_bad_check)
+                && s_last_row[next].x < g_logical_screen.x_dots - s_bad_check
+                && s_last_row[next].y < g_logical_screen.y_dots - s_bad_check)
             {
                 // Get rid of all the triangles in the plane at the base of the object
 
@@ -613,15 +613,15 @@ int line3d(Byte * pixels, unsigned line_len)
         case FillType::SURFACE_GRID:
             if (col
                 && old.x > s_bad_check
-                && old.x < g_logical_screen_x_dots - s_bad_check)
+                && old.x < g_logical_screen.x_dots - s_bad_check)
             {
                 driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             }
             if (g_current_row
                 && s_last_row[col].x > s_bad_check
                 && s_last_row[col].y > s_bad_check
-                && s_last_row[col].x < g_logical_screen_x_dots - s_bad_check
-                && s_last_row[col].y < g_logical_screen_y_dots - s_bad_check)
+                && s_last_row[col].x < g_logical_screen.x_dots - s_bad_check
+                && s_last_row[col].y < g_logical_screen.y_dots - s_bad_check)
             {
                 driver_draw_line(s_last_row[col].x, s_last_row[col].y, cur.x,
                                  cur.y, cur.color);
@@ -633,7 +633,7 @@ int line3d(Byte * pixels, unsigned line_len)
             break;
 
         case FillType::WIRE_FRAME:                // connect-a-dot
-            if (old.x < g_logical_screen_x_dots && col
+            if (old.x < g_logical_screen.x_dots && col
                 && old.x > s_bad_check
                 && old.y > s_bad_check)        // Don't draw from old to cur on col 0
             {
@@ -712,14 +712,14 @@ int line3d(Byte * pixels, unsigned line_len)
                 old.y = static_cast<int>((lv[1] + 32768L) >> 16);
             }
             old.x = std::max(old.x, 0);
-            if (old.x >= g_logical_screen_x_dots)
+            if (old.x >= g_logical_screen.x_dots)
             {
-                old.x = g_logical_screen_x_dots - 1;
+                old.x = g_logical_screen.x_dots - 1;
             }
             old.y = std::max(old.y, 0);
-            if (old.y >= g_logical_screen_y_dots)
+            if (old.y >= g_logical_screen.y_dots)
             {
-                old.y = g_logical_screen_y_dots - 1;
+                old.y = g_logical_screen.y_dots - 1;
             }
             driver_draw_line(old.x, old.y, cur.x, cur.y, cur.color);
             break;
@@ -917,11 +917,11 @@ static void corners(Matrix m, const bool show, double *x_min, double *y_min, dou
         }
     }
 
-    s[1][2][0] = g_logical_screen_x_dots - 1;
+    s[1][2][0] = g_logical_screen.x_dots - 1;
     s[1][1][0] = s[1][2][0];
     s[0][2][0] = s[1][1][0];
     s[0][1][0] = s[0][2][0];
-    s[1][3][1] = g_logical_screen_y_dots - 1;
+    s[1][3][1] = g_logical_screen.y_dots - 1;
     s[1][2][1] = s[1][3][1];
     s[0][3][1] = s[1][2][1];
     s[0][2][1] = s[0][3][1];
@@ -1103,7 +1103,7 @@ static void draw_rect(Vector v0, Vector v1, Vector v2, Vector v3, const int colo
 // called by draw_line as part of triangle fill routine
 static void put_min_max(const int x, const int y, const int /*color*/)
 {
-    if (y >= 0 && y < g_logical_screen_y_dots)
+    if (y >= 0 && y < g_logical_screen.y_dots)
     {
         s_min_max_x[y].min_x = std::min(x, s_min_max_x[y].min_x);
         s_min_max_x[y].max_x = std::max(x, s_min_max_x[y].max_x);
@@ -1177,9 +1177,9 @@ static void put_triangle(const PointColor pt1, const PointColor pt2, const Point
 
     // only worried about values on screen
     miny = std::max(miny, 0);
-    if (maxy >= g_logical_screen_y_dots)
+    if (maxy >= g_logical_screen.y_dots)
     {
-        maxy = g_logical_screen_y_dots - 1;
+        maxy = g_logical_screen.y_dots - 1;
     }
 
     for (int y = miny; y <= maxy; y++)
@@ -1211,11 +1211,11 @@ static int off_screen(const PointColor pt)
 {
     if (pt.x >= 0)
     {
-        if (pt.x < g_logical_screen_x_dots)
+        if (pt.x < g_logical_screen.x_dots)
         {
             if (pt.y >= 0)
             {
-                if (pt.y < g_logical_screen_y_dots)
+                if (pt.y < g_logical_screen.y_dots)
                 {
                     return 0;      // point is ok
                 }
@@ -1231,8 +1231,8 @@ static int off_screen(const PointColor pt)
 
 static void clip_color(const int x, const int y, const int color)
 {
-    if (0 <= x && x < g_logical_screen_x_dots
-        && 0 <= y && y < g_logical_screen_y_dots
+    if (0 <= x && x < g_logical_screen.x_dots
+        && 0 <= y && y < g_logical_screen.y_dots
         && 0 <= color && color < g_file_colors)
     {
         g_standard_plot(x, y, color);
@@ -1256,8 +1256,8 @@ static void clip_color(const int x, const int y, const int color)
 
 static void transparent_clip_color(const int x, const int y, const int color)
 {
-    if (0 <= x && x < g_logical_screen_x_dots       // is the point on screen?
-        && 0 <= y && y < g_logical_screen_y_dots    // Yes?
+    if (0 <= x && x < g_logical_screen.x_dots       // is the point on screen?
+        && 0 <= y && y < g_logical_screen.y_dots    // Yes?
         && 0 <= color && color < g_colors           // Colors in valid range?
         // Let's make sure it's not a transparent color
         && (g_transparent_color_3d[0] > color || color > g_transparent_color_3d[1]))
@@ -1303,8 +1303,8 @@ static void interp_color(const int x, const int y, int color)
                 d);
     }
 
-    if (0 <= x && x < g_logical_screen_x_dots
-        && 0 <= y && y < g_logical_screen_y_dots
+    if (0 <= x && x < g_logical_screen.x_dots
+        && 0 <= y && y < g_logical_screen.y_dots
         && 0 <= color && color < g_colors
         && (g_transparent_color_3d[1] == 0
             || static_cast<int>(s_real_color) > g_transparent_color_3d[1]
@@ -1412,7 +1412,7 @@ int targa_color(const int x, const int y, const int color)
 
     // Now write the color triple to its transformed location
     // on the disk.
-    targa_write_disk(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset, rgb[0], rgb[1], rgb[2]);
+    targa_write_disk(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, rgb[0], rgb[1], rgb[2]);
 
     return static_cast<int>(255 - val);
 }
@@ -1548,7 +1548,7 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, cons
     }
 
     // Finished with the header, now lets work on the display area
-    for (int i = 0; i < g_logical_screen_y_dots; i++)  // "clear the screen" (write to the disk)
+    for (int i = 0; i < g_logical_screen.y_dots; i++)  // "clear the screen" (write to the disk)
     {
         for (int j = 0; j < s_line_length1; j = j + inc)
         {
@@ -1994,14 +1994,14 @@ static int out_triangle(const FPointColor pt1, const FPointColor pt2, const FPoi
     float pt_t[3][3];
 
     // Normalize each vertex to screen size and adjust coordinate system
-    pt_t[0][0] = 2 * pt1.x / g_logical_screen_x_dots - 1;
-    pt_t[0][1] = 2 * pt1.y / g_logical_screen_y_dots - 1;
+    pt_t[0][0] = 2 * pt1.x / g_logical_screen.x_dots - 1;
+    pt_t[0][1] = 2 * pt1.y / g_logical_screen.y_dots - 1;
     pt_t[0][2] = -2.0f * pt1.color / g_num_colors - 1;
-    pt_t[1][0] = 2 * pt2.x / g_logical_screen_x_dots - 1;
-    pt_t[1][1] = 2 * pt2.y / g_logical_screen_y_dots - 1;
+    pt_t[1][0] = 2 * pt2.x / g_logical_screen.x_dots - 1;
+    pt_t[1][1] = 2 * pt2.y / g_logical_screen.y_dots - 1;
     pt_t[1][2] = -2.0f * pt2.color / g_num_colors - 1;
-    pt_t[2][0] = 2 * pt3.x / g_logical_screen_x_dots - 1;
-    pt_t[2][1] = 2 * pt3.y / g_logical_screen_y_dots - 1;
+    pt_t[2][0] = 2 * pt3.x / g_logical_screen.x_dots - 1;
+    pt_t[2][1] = 2 * pt3.y / g_logical_screen.y_dots - 1;
     pt_t[2][2] = -2.0f * pt3.color / g_num_colors - 1;
 
     // Color of triangle is average of colors of its vertices
@@ -2398,11 +2398,11 @@ static void line3d_cleanup()
 
 static void set_upr_lwr()
 {
-    s_upr_lwr[0] = static_cast<Byte>(g_logical_screen_x_dots & 0xff);
-    s_upr_lwr[1] = static_cast<Byte>(g_logical_screen_x_dots >> 8);
-    s_upr_lwr[2] = static_cast<Byte>(g_logical_screen_y_dots & 0xff);
-    s_upr_lwr[3] = static_cast<Byte>(g_logical_screen_y_dots >> 8);
-    s_line_length1 = 3 * g_logical_screen_x_dots;    // line length @ 3 bytes per pixel
+    s_upr_lwr[0] = static_cast<Byte>(g_logical_screen.x_dots & 0xff);
+    s_upr_lwr[1] = static_cast<Byte>(g_logical_screen.x_dots >> 8);
+    s_upr_lwr[2] = static_cast<Byte>(g_logical_screen.y_dots & 0xff);
+    s_upr_lwr[3] = static_cast<Byte>(g_logical_screen.y_dots >> 8);
+    s_line_length1 = 3 * g_logical_screen.x_dots;    // line length @ 3 bytes per pixel
 }
 
 static int first_time(const int line_len, Vector v)
@@ -2500,7 +2500,7 @@ static int first_time(const int line_len, Vector v)
     }
 
     // aspect ratio calculation - assume screen is 4 x 3
-    s_aspect = static_cast<double>(g_logical_screen_x_dots) *.75 / static_cast<double>(g_logical_screen_y_dots);
+    s_aspect = static_cast<double>(g_logical_screen.x_dots) *.75 / static_cast<double>(g_logical_screen.y_dots);
 
     if (!g_sphere)         // skip this slow stuff in sphere case
     {
@@ -2521,9 +2521,9 @@ static int first_time(const int line_len, Vector v)
 
         // translate so origin is in center of box, so that when we rotate
         // it, we do so through the center
-        trans(static_cast<double>(g_logical_screen_x_dots) / -2.0, static_cast<double>(g_logical_screen_y_dots) / -2.0,
+        trans(static_cast<double>(g_logical_screen.x_dots) / -2.0, static_cast<double>(g_logical_screen.y_dots) / -2.0,
               static_cast<double>(s_z_coord) / -2.0, g_m);
-        trans(static_cast<double>(g_logical_screen_x_dots) / -2.0, static_cast<double>(g_logical_screen_y_dots) / -2.0,
+        trans(static_cast<double>(g_logical_screen.x_dots) / -2.0, static_cast<double>(g_logical_screen.y_dots) / -2.0,
               static_cast<double>(s_z_coord) / -2.0, light_mat);
 
         // apply scale factors
@@ -2566,14 +2566,14 @@ static int first_time(const int line_len, Vector v)
     }
 
     // set up view vector, and put viewer in center of screen
-    s_l_view[0] = g_logical_screen_x_dots >> 1;
-    s_l_view[1] = g_logical_screen_y_dots >> 1;
+    s_l_view[0] = g_logical_screen.x_dots >> 1;
+    s_l_view[1] = g_logical_screen.y_dots >> 1;
 
     // z value of user's eye - should be more negative than extreme negative part of image
     if (g_sphere)                    // sphere case
     {
         s_l_view[2] = -static_cast<long>(
-            static_cast<double>(g_logical_screen_y_dots) * static_cast<double>(g_viewer_z) / 100.0);
+            static_cast<double>(g_logical_screen.y_dots) * static_cast<double>(g_viewer_z) / 100.0);
     }
     else                             // non-sphere case
     {
@@ -2591,12 +2591,12 @@ static int first_time(const int line_len, Vector v)
     {
         /* translate back exactly amount we translated earlier plus enough to
          * center image so maximum values are non-positive */
-        trans((static_cast<double>(g_logical_screen_x_dots) - x_max - x_min) / 2,
-              (static_cast<double>(g_logical_screen_y_dots) - y_max - y_min) / 2, -z_max, g_m);
+        trans((static_cast<double>(g_logical_screen.x_dots) - x_max - x_min) / 2,
+              (static_cast<double>(g_logical_screen.y_dots) - y_max - y_min) / 2, -z_max, g_m);
 
         // Keep the box centered and on screen regardless of shifts
-        trans((static_cast<double>(g_logical_screen_x_dots) - x_max - x_min) / 2,
-              (static_cast<double>(g_logical_screen_y_dots) - y_max - y_min) / 2, -z_max, light_mat);
+        trans((static_cast<double>(g_logical_screen.x_dots) - x_max - x_min) / 2,
+              (static_cast<double>(g_logical_screen.y_dots) - y_max - y_min) / 2, -z_max, light_mat);
 
         trans(g_x_shift, -g_y_shift, 0.0, g_m);
 
@@ -2686,7 +2686,7 @@ static int first_time(const int line_len, Vector v)
         }
 
         // radius of planet
-        s_radius = static_cast<double>(g_logical_screen_y_dots) / 2;
+        s_radius = static_cast<double>(g_logical_screen.y_dots) / 2;
 
         // precalculate factor
         s_r_x_r_scale = s_radius * s_r_scale;
@@ -2712,8 +2712,8 @@ static int first_time(const int line_len, Vector v)
             /* calculate z cutoff factor attempt to prevent out-of-view surfaces
              * from being written */
             const double z_view = -static_cast<long>(
-                static_cast<double>(g_logical_screen_y_dots) * static_cast<double>(g_viewer_z) / 100.0);
-            const double radius = static_cast<double>(g_logical_screen_y_dots) / 2;
+                static_cast<double>(g_logical_screen.y_dots) * static_cast<double>(g_viewer_z) / 100.0);
+            const double radius = static_cast<double>(g_logical_screen.y_dots) / 2;
             const double angle = std::atan(-radius / (z_view + radius));
             s_z_cutoff = -radius - std::sin(angle) * radius;
             s_z_cutoff *= 1.1;        // for safety
@@ -2779,16 +2779,16 @@ static int first_time(const int line_len, Vector v)
         normalize_vector(direct);
 
         // move light vector to be more clear with grey scale maps
-        origin[0] = 3 * g_logical_screen_x_dots / 16;
-        origin[1] = 3 * g_logical_screen_y_dots / 4;
+        origin[0] = 3 * g_logical_screen.x_dots / 16;
+        origin[1] = 3 * g_logical_screen.y_dots / 4;
         if (g_fill_type == FillType::LIGHT_SOURCE_AFTER)
         {
-            origin[1] = 11 * g_logical_screen_y_dots / 16;
+            origin[1] = 11 * g_logical_screen.y_dots / 16;
         }
 
         origin[2] = 0.0;
 
-        double v_length = std::min(g_logical_screen_x_dots, g_logical_screen_y_dots) / 2;
+        double v_length = std::min(g_logical_screen.x_dots, g_logical_screen.y_dots) / 2;
         if (s_persp && g_viewer_z <= s_p)
         {
             v_length *= static_cast<long>(s_p + 600) / (static_cast<long>(g_viewer_z + 600) * 2);
@@ -2840,17 +2840,17 @@ static int line3d_mem()
 {
     /* lastrow stores the previous row of the original GIF image for
        the purpose of filling in gaps with triangle procedure */
-    s_last_row.resize(g_logical_screen_x_dots);
+    s_last_row.resize(g_logical_screen.x_dots);
 
     if (g_sphere)
     {
-        s_sin_theta_array.resize(g_logical_screen_x_dots);
-        s_cos_theta_array.resize(g_logical_screen_x_dots);
+        s_sin_theta_array.resize(g_logical_screen.x_dots);
+        s_cos_theta_array.resize(g_logical_screen.x_dots);
     }
-    s_f_last_row.resize(g_logical_screen_x_dots);
+    s_f_last_row.resize(g_logical_screen.x_dots);
     if (g_potential_16bit)
     {
-        s_fraction.resize(g_logical_screen_x_dots);
+        s_fraction.resize(g_logical_screen.x_dots);
     }
     s_min_max_x.clear();
 

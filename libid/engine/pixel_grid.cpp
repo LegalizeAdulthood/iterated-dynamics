@@ -83,11 +83,11 @@ void set_pixel_calc_functions()
 void set_grid_pointers()
 {
     free_grid_pointers();
-    g_grid_x0.resize(g_logical_screen_x_dots);
-    g_grid_y1.resize(g_logical_screen_x_dots);
+    g_grid_x0.resize(g_logical_screen.x_dots);
+    g_grid_y1.resize(g_logical_screen.x_dots);
 
-    g_grid_y0.resize(g_logical_screen_y_dots);
-    g_grid_x1.resize(g_logical_screen_y_dots);
+    g_grid_y0.resize(g_logical_screen.y_dots);
+    g_grid_x1.resize(g_logical_screen.y_dots);
 
     set_pixel_calc_functions();
 }
@@ -108,12 +108,12 @@ void fill_dx_array()
         g_grid_y0[0] = g_image_region.m_max.y;
         g_grid_y1[0] = 0;
         g_grid_x1[0] = 0;
-        for (int i = 1; i < g_logical_screen_x_dots; i++)
+        for (int i = 1; i < g_logical_screen.x_dots; i++)
         {
             g_grid_x0[i] = static_cast<double>(g_grid_x0[0] + i * g_delta_x);
             g_grid_y1[i] = static_cast<double>(g_grid_y1[0] - i * g_delta_y2);
         }
-        for (int i = 1; i < g_logical_screen_y_dots; i++)
+        for (int i = 1; i < g_logical_screen.y_dots; i++)
         {
             g_grid_y0[i] = static_cast<double>(g_grid_y0[0] - i * g_delta_y);
             g_grid_x1[i] = static_cast<double>(g_grid_x1[0] + i * g_delta_x2);

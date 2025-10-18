@@ -44,10 +44,10 @@ static MainState save_evolver_image(MainContext &/*context*/)
     GeneBase gene[NUM_GENES];
     copy_genes_from_bank(gene);
     {
-        ValueSaver saved_logical_screen_x_offset{g_logical_screen_x_offset, 0};
-        ValueSaver saved_logical_screen_y_offset{g_logical_screen_y_offset, 0};
-        ValueSaver saved_logical_screen_x_dots{g_logical_screen_x_dots, g_screen_x_dots};
-        ValueSaver saved_logical_screen_y_dots{g_logical_screen_y_dots, g_screen_y_dots};
+        ValueSaver saved_logical_screen_x_offset{g_logical_screen.x_offset, 0};
+        ValueSaver saved_logical_screen_y_offset{g_logical_screen.y_offset, 0};
+        ValueSaver saved_logical_screen_x_dots{g_logical_screen.x_dots, g_screen_x_dots};
+        ValueSaver saved_logical_screen_y_dots{g_logical_screen.y_dots, g_screen_y_dots};
         {
             ValueSaver saved_evolve_param_grid_x{g_evolve_param_grid_x, g_evolve_image_grid_size / 2};
             ValueSaver saved_evolve_param_grid_y{g_evolve_param_grid_y, g_evolve_image_grid_size / 2};
@@ -170,8 +170,8 @@ static MainState move_evolver_selection(MainContext &context)
             g_evolve_param_grid_y = 0;
         }
         const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-        g_logical_screen_x_offset = g_evolve_param_grid_x * static_cast<int>(g_logical_screen_x_size_dots + 1 + grout);
-        g_logical_screen_y_offset = g_evolve_param_grid_y * static_cast<int>(g_logical_screen_y_size_dots + 1 + grout);
+        g_logical_screen.x_offset = g_evolve_param_grid_x * static_cast<int>(g_logical_screen.x_size_dots + 1 + grout);
+        g_logical_screen.y_offset = g_evolve_param_grid_y * static_cast<int>(g_logical_screen.y_size_dots + 1 + grout);
 
         restore_param_history();
         fiddle_params(gene, unspiral_map()); // change all parameters
@@ -228,10 +228,10 @@ static MainState evolver_zoom_in(MainContext &/*context*/)
                 // set screen view params back (previously changed to allow full screen saves in viewwindow
                 // mode)
                 const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-                g_logical_screen_x_offset =
-                    g_evolve_param_grid_x * static_cast<int>(g_logical_screen_x_size_dots + 1 + grout);
-                g_logical_screen_y_offset =
-                    g_evolve_param_grid_y * static_cast<int>(g_logical_screen_y_size_dots + 1 + grout);
+                g_logical_screen.x_offset =
+                    g_evolve_param_grid_x * static_cast<int>(g_logical_screen.x_size_dots + 1 + grout);
+                g_logical_screen.y_offset =
+                    g_evolve_param_grid_y * static_cast<int>(g_logical_screen.y_size_dots + 1 + grout);
                 setup_param_box();
                 draw_param_box(0);
             }

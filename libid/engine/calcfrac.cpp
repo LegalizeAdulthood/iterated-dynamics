@@ -271,7 +271,7 @@ void sym_fill_line(const int row, const int left, const int right, const Byte *s
     }
     else if (g_plot == sym_plot2)   // X-axis symmetry
     {
-        if (int i = g_stop_pt.y - (row - g_start_pt.y); i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+        if (int i = g_stop_pt.y - (row - g_start_pt.y); i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
         {
             write_span(i, left, right, str);
             g_keyboard_check_interval -= length >> 3;
@@ -285,9 +285,9 @@ void sym_fill_line(const int row, const int left, const int right, const Byte *s
     else if (g_plot == sym_plot2j)  // Origin symmetry
     {
         const int i = g_stop_pt.y - (row - g_start_pt.y);
-        const int j = std::min(g_stop_pt.x-(right-g_start_pt.x), g_logical_screen_x_dots-1);
-        const int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen_x_dots-1);
-        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots && j <= k)
+        const int j = std::min(g_stop_pt.x-(right-g_start_pt.x), g_logical_screen.x_dots-1);
+        const int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen.x_dots-1);
+        if (i > g_i_stop_pt.y && i < g_logical_screen.y_dots && j <= k)
         {
             write_span(i, j, k, str);
         }
@@ -296,9 +296,9 @@ void sym_fill_line(const int row, const int left, const int right, const Byte *s
     else if (g_plot == sym_plot4) // X-axis and Y-axis symmetry
     {
         const int i = g_stop_pt.y - (row - g_start_pt.y);
-        const int j = std::min(g_stop_pt.x - (right - g_start_pt.x), g_logical_screen_x_dots - 1);
-        const int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen_x_dots-1);
-        if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+        const int j = std::min(g_stop_pt.x - (right - g_start_pt.x), g_logical_screen.x_dots - 1);
+        const int k = std::min(g_stop_pt.x-(left -g_start_pt.x), g_logical_screen.x_dots-1);
+        if (i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
         {
             write_span(i, left, right, str);
             if (j <= k)
@@ -336,7 +336,7 @@ static void sym_put_line(const int row, const int left, const int right, const B
     else if (g_plot == sym_plot2)   // X-axis symmetry
     {
         if (const int i = g_stop_pt.y - (row - g_start_pt.y);
-            i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+            i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
         {
             write_span(i, left, right, str);
         }
@@ -744,10 +744,10 @@ static void calc_non_standard_fractal()
     g_start_pt.y = 0;
     g_i_start_pt.x = 0;
     g_i_start_pt.y = 0;
-    g_stop_pt.y = g_logical_screen_y_dots - 1;
-    g_i_stop_pt.y = g_logical_screen_y_dots - 1;
-    g_stop_pt.x = g_logical_screen_x_dots - 1;
-    g_i_stop_pt.x = g_logical_screen_x_dots - 1;
+    g_stop_pt.y = g_logical_screen.y_dots - 1;
+    g_i_stop_pt.y = g_logical_screen.y_dots - 1;
+    g_stop_pt.x = g_logical_screen.x_dots - 1;
+    g_i_stop_pt.x = g_logical_screen.x_dots - 1;
     g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
     g_distance_estimator = 0;                // only standard escape time engine supports distest
     // per_image routine is run here
@@ -790,7 +790,7 @@ static void calc_standard_fractal()
             engine_timer(timer_work_list);
             if (g_calc_status == CalcStatus::COMPLETED)
             {
-                if (g_logical_screen_x_dots >= 640) // '2' is silly after 'g' for low res
+                if (g_logical_screen.x_dots >= 640) // '2' is silly after 'g' for low res
                 {
                     g_std_calc_mode = CalcMode::TWO_PASS;
                 }
@@ -804,7 +804,7 @@ static void calc_standard_fractal()
         }
         else // resuming '2' pass
         {
-            if (g_logical_screen_x_dots >= 640)
+            if (g_logical_screen.x_dots >= 640)
             {
                 g_std_calc_mode = CalcMode::TWO_PASS;
             }
@@ -936,7 +936,7 @@ static void perform_work_list()
 
     // default set up a new worklist
     g_num_work_list = 0;
-    add_work_list({0, 0}, {g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1}, {0, 0}, 0, 0);
+    add_work_list({0, 0}, {g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1}, {0, 0}, 0, 0);
     if (g_resuming) // restore worklist, if we can't the above will stay in place
     {
         const int version = start_resume();
@@ -962,9 +962,9 @@ static void perform_work_list()
         }
         else
         {
-            aspect = static_cast<double>(g_logical_screen_y_dots) / static_cast<double>(g_logical_screen_x_dots);
-            d_x_size = g_logical_screen_x_dots-1;
-            d_y_size = g_logical_screen_y_dots-1;
+            aspect = static_cast<double>(g_logical_screen.y_dots) / static_cast<double>(g_logical_screen.x_dots);
+            d_x_size = g_logical_screen.x_dots-1;
+            d_y_size = g_logical_screen.y_dots-1;
         }
 
         const DComplex del{g_image_region.m_max - g_image_region.m_3rd}; // calculate stepsizes
@@ -1067,7 +1067,7 @@ static void perform_work_list()
             {
                 // Arbitrary sanity limit, however s_show_dot_width will
                 // overflow if width gets near 256.
-                if (const double width = static_cast<double>(g_size_dot) * g_logical_screen_x_dots / 1024.0;
+                if (const double width = static_cast<double>(g_size_dot) * g_logical_screen.x_dots / 1024.0;
                     width > 150.0)
                 {
                     s_show_dot_width = 150;
@@ -2188,9 +2188,9 @@ int potential(const double mag, const long iterations)
     {
         if (!driver_is_disk())   // if putcolor won't be doing it for us
         {
-            disk_write_pixel(g_col+g_logical_screen_x_offset, g_row+g_logical_screen_y_offset, i_pot);
+            disk_write_pixel(g_col+g_logical_screen.x_offset, g_row+g_logical_screen.y_offset, i_pot);
         }
-        disk_write_pixel(g_col+g_logical_screen_x_offset, g_row+g_screen_y_dots+g_logical_screen_y_offset, static_cast<int>(l_pot));
+        disk_write_pixel(g_col+g_logical_screen.x_offset, g_row+g_screen_y_dots+g_logical_screen.y_offset, static_cast<int>(l_pot));
     }
 
     return i_pot;
@@ -2422,11 +2422,11 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
         {
             f_temp = (0.0-g_image_region.m_max.y) / (g_image_region.m_min.y-g_image_region.m_max.y);
         }
-        f_temp *= g_logical_screen_y_dots - 1;
+        f_temp *= g_logical_screen.y_dots - 1;
         f_temp += 0.25;
         x_axis_row = static_cast<int>(f_temp);
         x_axis_between = f_temp - x_axis_row >= 0.5;
-        if (!use_list && (!x_axis_between || (x_axis_row+1)*2 != g_logical_screen_y_dots))
+        if (!use_list && (!x_axis_between || (x_axis_row+1)*2 != g_logical_screen.y_dots))
         {
             x_axis_row = -1; // can't split screen, so dead center or not at all
         }
@@ -2444,11 +2444,11 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
         {
             f_temp = -g_image_region.m_min.x / g_image_region.width();
         }
-        f_temp *= g_logical_screen_x_dots - 1;
+        f_temp *= g_logical_screen.x_dots - 1;
         f_temp += 0.25;
         y_axis_col = static_cast<int>(f_temp);
         y_axis_between = f_temp - y_axis_col >= 0.5;
-        if (!use_list && (!y_axis_between || (y_axis_col+1)*2 != g_logical_screen_x_dots))
+        if (!use_list && (!y_axis_between || (y_axis_col+1)*2 != g_logical_screen.x_dots))
         {
             y_axis_col = -1; // can't split screen, so dead center or not at all
         }
@@ -2607,11 +2607,11 @@ origin_symmetry:
             sub_bf(bft1, g_bf_x_max, g_bf_x_min);
             abs_a_bf(bft1);
             g_pi_in_pixels = static_cast<int>(
-                PI / static_cast<double>(bf_to_float(bft1)) * g_logical_screen_x_dots); // PI in pixels
+                PI / static_cast<double>(bf_to_float(bft1)) * g_logical_screen.x_dots); // PI in pixels
         }
         else
         {
-            g_pi_in_pixels = static_cast<int>(PI / std::abs(g_image_region.width()) * g_logical_screen_x_dots); // PI in pixels
+            g_pi_in_pixels = static_cast<int>(PI / std::abs(g_image_region.width()) * g_logical_screen.x_dots); // PI in pixels
         }
 
         g_i_stop_pt.x = g_start_pt.x + g_pi_in_pixels - 1;
@@ -2634,8 +2634,8 @@ origin_symmetry:
 static long auto_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
-    const int x_stop = g_logical_screen_x_dots - 1; // don't use symmetry
-    const int y_stop = g_logical_screen_y_dots - 1; // don't use symmetry
+    const int x_stop = g_logical_screen.x_dots - 1; // don't use symmetry
+    const int y_stop = g_logical_screen.y_dots - 1; // don't use symmetry
     long min_color = LONG_MAX;
     g_row = 0;
     g_reset_periodicity = false;
@@ -2759,8 +2759,8 @@ void sym_pi_plot2j(int x, const int y, const int color)
     {
         g_put_color(x, y, color) ;
         if (int i = g_stop_pt.y - (y - g_start_pt.y); //
-            i > g_i_stop_pt.y && i < g_logical_screen_y_dots &&
-            (j = g_stop_pt.x - (x - g_start_pt.x)) < g_logical_screen_x_dots)
+            i > g_i_stop_pt.y && i < g_logical_screen.y_dots &&
+            (j = g_stop_pt.x - (x - g_start_pt.x)) < g_logical_screen.x_dots)
         {
             g_put_color(j, i, color) ;
         }
@@ -2775,15 +2775,15 @@ void sym_pi_plot4j(int x, const int y, const int color)
     {
         const int j = g_stop_pt.x - (x - g_start_pt.x);
         g_put_color(x , y , color) ;
-        if (j < g_logical_screen_x_dots)
+        if (j < g_logical_screen.x_dots)
         {
             g_put_color(j , y , color) ;
         }
         if (int i = g_stop_pt.y - (y - g_start_pt.y); //
-            i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+            i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
         {
             g_put_color(x , i , color) ;
-            if (j < g_logical_screen_x_dots)
+            if (j < g_logical_screen.x_dots)
             {
                 g_put_color(j , i , color) ;
             }
@@ -2797,7 +2797,7 @@ void sym_plot2(const int x, const int y, const int color)
 {
     g_put_color(x, y, color) ;
     if (int i = g_stop_pt.y - (y - g_start_pt.y); //
-        i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+        i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
     {
         g_put_color(x, i, color) ;
     }
@@ -2808,7 +2808,7 @@ void sym_plot2y(const int x, const int y, const int color)
 {
     g_put_color(x, y, color) ;
     if (int i = g_stop_pt.x - (x - g_start_pt.x); //
-        i < g_logical_screen_x_dots)
+        i < g_logical_screen.x_dots)
     {
         g_put_color(i, y, color) ;
     }
@@ -2820,7 +2820,7 @@ void sym_plot2j(const int x, const int y, const int color)
     g_put_color(x, y, color);
     const int i = g_stop_pt.y - (y - g_start_pt.y);
     const int j = g_stop_pt.x - (x - g_start_pt.x);
-    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots && j < g_logical_screen_x_dots)
+    if (i > g_i_stop_pt.y && i < g_logical_screen.y_dots && j < g_logical_screen.x_dots)
     {
         g_put_color(j, i, color) ;
     }
@@ -2831,15 +2831,15 @@ void sym_plot4(const int x, const int y, const int color)
 {
     const int j = g_stop_pt.x - (x - g_start_pt.x);
     g_put_color(x , y, color) ;
-    if (j < g_logical_screen_x_dots)
+    if (j < g_logical_screen.x_dots)
     {
         g_put_color(j, y, color);
     }
     const int i = g_stop_pt.y - (y - g_start_pt.y);
-    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+    if (i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
     {
         g_put_color(x , i, color) ;
-        if (j < g_logical_screen_x_dots)
+        if (j < g_logical_screen.x_dots)
         {
             g_put_color(j , i, color) ;
         }
@@ -2860,7 +2860,7 @@ void sym_plot2_basin(const int x, const int y, int color)
         stripe = 0;
     }
     const int i = g_stop_pt.y - (y - g_start_pt.y);
-    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+    if (i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
     {
         color -= stripe;                    // reconstruct unstriped color
         color = (g_degree+1-color)%g_degree+1;  // symmetrical color
@@ -2898,15 +2898,15 @@ void sym_plot4_basin(const int x, const int y, int color)
     }
     const int j = g_stop_pt.x - (x - g_start_pt.x);
     g_put_color(x, y, color+stripe) ;
-    if (j < g_logical_screen_x_dots)
+    if (j < g_logical_screen.x_dots)
     {
         g_put_color(j, y, color1 + stripe);
     }
     const int i = g_stop_pt.y - (y - g_start_pt.y);
-    if (i > g_i_stop_pt.y && i < g_logical_screen_y_dots)
+    if (i > g_i_stop_pt.y && i < g_logical_screen.y_dots)
     {
         g_put_color(x, i, stripe + (g_degree+1 - color)%g_degree+1) ;
-        if (j < g_logical_screen_x_dots)
+        if (j < g_logical_screen.x_dots)
         {
             g_put_color(j, i, stripe + (g_degree+1 - color1)%g_degree+1) ;
         }

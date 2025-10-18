@@ -253,7 +253,7 @@ static void plot3d_superimpose256(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, t_c, 0, 0);
+                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
                 }
             }
         }
@@ -273,8 +273,8 @@ static void plot3d_superimpose256(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
-                    targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
+                    targa_read_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, &s_t_red, reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
+                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, s_t_red, 0, t_c);
                 }
             }
         }
@@ -309,7 +309,7 @@ static void plot_ifs3d_superimpose256(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, t_c, 0, 0);
+                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
                 }
             }
         }
@@ -328,8 +328,8 @@ static void plot_ifs3d_superimpose256(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_read_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, &s_t_red, reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
-                    targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
+                    targa_read_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, &s_t_red, reinterpret_cast<Byte *>(&tmp), reinterpret_cast<Byte *>(&tmp));
+                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, s_t_red, 0, t_c);
                 }
             }
         }
@@ -357,7 +357,7 @@ static void plot3d_alternate(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, t_c, 0, 0);
+                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, t_c, 0, 0);
                 }
             }
         }
@@ -375,7 +375,7 @@ static void plot3d_alternate(const int x, const int y, int color)
                 }
                 else
                 {
-                    targa_write_disk(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, s_t_red, 0, t_c);
+                    targa_write_disk(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, s_t_red, 0, t_c);
                 }
             }
         }
@@ -388,9 +388,9 @@ static void plot3d_cross_eyed_a(int x, int y, const int color)
     y /= 2;
     if (g_which_image == StereoImage::BLUE)
     {
-        x += g_logical_screen_x_dots/2;
+        x += g_logical_screen.x_dots/2;
     }
-    if (g_row_count >= g_logical_screen_y_dots/2)
+    if (g_row_count >= g_logical_screen.y_dots/2)
     {
         // hidden surface kludge
         if (get_color(x, y) != 0)
@@ -407,14 +407,14 @@ static void plot3d_cross_eyed_b(int x, int y, const int color)
     y /= 2;
     if (g_which_image == StereoImage::BLUE)
     {
-        x += g_logical_screen_x_dots/2;
+        x += g_logical_screen.x_dots/2;
     }
     g_put_color(x, y, color);
 }
 
 static void plot3d_cross_eyed_c(const int x, const int y, const int color)
 {
-    if (g_row_count >= g_logical_screen_y_dots/2)
+    if (g_row_count >= g_logical_screen.y_dots/2)
     {
         // hidden surface kludge
         if (get_color(x, y) != 0)
@@ -456,7 +456,7 @@ void plot_setup()
         break;
 
     case GlassesType::STEREO_PAIR: // crosseyed mode
-        if (g_screen_x_dots < 2*g_logical_screen_x_dots)
+        if (g_screen_x_dots < 2*g_logical_screen.x_dots)
         {
             if (g_x_rot == 0 && g_y_rot == 0)
             {
@@ -482,42 +482,42 @@ void plot_setup()
         break;
     }
 
-    g_x_shift = static_cast<int>(g_shift_x * static_cast<double>(g_logical_screen_x_dots) / 100);
+    g_x_shift = static_cast<int>(g_shift_x * static_cast<double>(g_logical_screen.x_dots) / 100);
     g_x_shift1 = g_x_shift;
-    g_y_shift = static_cast<int>(g_shift_y * static_cast<double>(g_logical_screen_y_dots) / 100);
+    g_y_shift = static_cast<int>(g_shift_y * static_cast<double>(g_logical_screen.y_dots) / 100);
     g_y_shift1 = g_y_shift;
 
     if (g_glasses_type != GlassesType::NONE)
     {
-        s_red_local_left  = static_cast<int>(g_red_crop_left * static_cast<double>(g_logical_screen_x_dots) / 100.0);
-        s_red_local_right = static_cast<int>((100 - g_red_crop_right) * static_cast<double>(g_logical_screen_x_dots) / 100.0);
-        s_blue_local_left = static_cast<int>(g_blue_crop_left * static_cast<double>(g_logical_screen_x_dots) / 100.0);
-        s_blue_local_right = static_cast<int>((100 - g_blue_crop_right) * static_cast<double>(g_logical_screen_x_dots) / 100.0);
+        s_red_local_left  = static_cast<int>(g_red_crop_left * static_cast<double>(g_logical_screen.x_dots) / 100.0);
+        s_red_local_right = static_cast<int>((100 - g_red_crop_right) * static_cast<double>(g_logical_screen.x_dots) / 100.0);
+        s_blue_local_left = static_cast<int>(g_blue_crop_left * static_cast<double>(g_logical_screen.x_dots) / 100.0);
+        s_blue_local_right = static_cast<int>((100 - g_blue_crop_right) * static_cast<double>(g_logical_screen.x_dots) / 100.0);
         d_red_bright    = static_cast<double>(g_red_bright) /100.0;
         d_blue_bright   = static_cast<double>(g_blue_bright) /100.0;
 
         switch (g_which_image)
         {
         case StereoImage::RED:
-            g_x_shift  += static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
+            g_x_shift  += static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen.x_dots) / 200);
             g_xx_adjust = static_cast<int>(
-                (g_adjust_3d.x + g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
-            g_x_shift1 -= static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
+                (g_adjust_3d.x + g_converge_x_adjust) * static_cast<double>(g_logical_screen.x_dots) / 100);
+            g_x_shift1 -= static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen.x_dots) / 200);
             g_xx_adjust1 = static_cast<int>(
-                (g_adjust_3d.x - g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
-            if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
+                (g_adjust_3d.x - g_converge_x_adjust) * static_cast<double>(g_logical_screen.x_dots) / 100);
+            if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen.x_dots)
             {
-                g_logical_screen_x_offset = g_screen_x_dots / 2 - g_logical_screen_x_dots;
+                g_logical_screen.x_offset = g_screen_x_dots / 2 - g_logical_screen.x_dots;
             }
             break;
 
         case StereoImage::BLUE:
-            g_x_shift  -= static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
+            g_x_shift  -= static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen.x_dots) / 200);
             g_xx_adjust = static_cast<int>(
-                (g_adjust_3d.x - g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
-            if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
+                (g_adjust_3d.x - g_converge_x_adjust) * static_cast<double>(g_logical_screen.x_dots) / 100);
+            if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen.x_dots)
             {
-                g_logical_screen_x_offset = g_screen_x_dots / 2;
+                g_logical_screen.x_offset = g_screen_x_dots / 2;
             }
             break;
 
@@ -527,9 +527,9 @@ void plot_setup()
     }
     else
     {
-        g_xx_adjust = static_cast<int>(g_adjust_3d.x * static_cast<double>(g_logical_screen_x_dots) / 100);
+        g_xx_adjust = static_cast<int>(g_adjust_3d.x * static_cast<double>(g_logical_screen.x_dots) / 100);
     }
-    g_yy_adjust = static_cast<int>(-(g_adjust_3d.y * static_cast<double>(g_logical_screen_y_dots)) / 100);
+    g_yy_adjust = static_cast<int>(-(g_adjust_3d.y * static_cast<double>(g_logical_screen.y_dots)) / 100);
 
     if (g_map_set)
     {

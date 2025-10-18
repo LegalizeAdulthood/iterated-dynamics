@@ -129,7 +129,7 @@ static bool get_min_max()
 {
     MIN_C = g_colors;
     MAX_C = 0;
-    for (int yd = 0; yd < g_logical_screen_y_dots; yd++)
+    for (int yd = 0; yd < g_logical_screen.y_dots; yd++)
     {
         if (driver_key_pressed())
         {
@@ -139,7 +139,7 @@ static bool get_min_max()
         {
             show_temp_msg("Getting min and max");
         }
-        for (int xd = 0; xd < g_logical_screen_x_dots; xd++)
+        for (int xd = 0; xd < g_logical_screen.x_dots; xd++)
         {
             int depth = get_depth(xd, yd);
             MIN_C = std::min(depth, MIN_C);
@@ -175,20 +175,20 @@ static void toggle_bars(bool *bars, const int bar_width, const int *colour)
 
 int out_line_stereo(Byte *pixels, const int line_len)
 {
-    if (Y >= g_logical_screen_y_dots)
+    if (Y >= g_logical_screen.y_dots)
     {
         return 1;
     }
 
     std::vector<int> same;
-    same.resize(g_logical_screen_x_dots);
-    for (int x = 0; x < g_logical_screen_x_dots; ++x)
+    same.resize(g_logical_screen.x_dots);
+    for (int x = 0; x < g_logical_screen.x_dots; ++x)
     {
         same[x] = x;
     }
     std::vector<int> colour;
-    colour.resize(g_logical_screen_x_dots);
-    for (int x = 0; x < g_logical_screen_x_dots; ++x)
+    colour.resize(g_logical_screen.x_dots);
+    for (int x = 0; x < g_logical_screen.x_dots; ++x)
     {
         if (REVERSE)
         {
@@ -208,11 +208,11 @@ int out_line_stereo(Byte *pixels, const int line_len)
         }
         int i = x - (SEP + (SEP & Y & 1)) / 2;
         int j = i + SEP;
-        if (0 <= i && j < g_logical_screen_x_dots)
+        if (0 <= i && j < g_logical_screen.x_dots)
         {
             // there are cases where next never terminates so we time out
             int ct = 0;
-            for (int s = same[i]; s != i && s != j && ct++ < g_logical_screen_x_dots; s = same[i])
+            for (int s = same[i]; s != i && s != j && ct++ < g_logical_screen.x_dots; s = same[i])
             {
                 if (s > j)
                 {
@@ -228,7 +228,7 @@ int out_line_stereo(Byte *pixels, const int line_len)
             same[i] = j;
         }
     }
-    for (int x = g_logical_screen_x_dots - 1; x >= 0; x--)
+    for (int x = g_logical_screen.x_dots - 1; x >= 0; x--)
     {
         if (same[x] == x)
         {
@@ -257,7 +257,7 @@ bool auto_stereo_convert()
     bool bars;
     std::time_t now;
     std::vector<int> colour;
-    colour.resize(g_logical_screen_x_dots);
+    colour.resize(g_logical_screen.x_dots);
 
     s_data = &v;   // set static vars to stack structure
     s_data->save_dac = save_dac_box;
@@ -270,7 +270,7 @@ bool auto_stereo_convert()
     driver_save_graphics();                      // save graphics image
     std::memcpy(save_dac_box, g_dac_box, 256 * 3);  // save colors
 
-    if (g_logical_screen_x_dots > OLD_MAX_PIXELS)
+    if (g_logical_screen.x_dots > OLD_MAX_PIXELS)
     {
         stop_msg("Stereo not allowed with resolution > 2048 pixels wide");
         driver_buzzer(Buzzer::INTERRUPT);
@@ -281,7 +281,7 @@ bool auto_stereo_convert()
     // empircally determined adjustment to make WIDTH scale correctly
     WIDTH = g_auto_stereo_width*.67;
     WIDTH = std::max(WIDTH, 1.0);
-    GROUND = g_logical_screen_x_dots / 8;
+    GROUND = g_logical_screen.x_dots / 8;
     if (g_auto_stereo_depth < 0)
     {
         REVERSE = 1;
@@ -290,7 +290,7 @@ bool auto_stereo_convert()
     {
         REVERSE = 0;
     }
-    DEPTH = static_cast<long>(g_logical_screen_x_dots) * static_cast<long>(g_auto_stereo_depth) / 4000L;
+    DEPTH = static_cast<long>(g_logical_screen.x_dots) * static_cast<long>(g_auto_stereo_depth) / 4000L;
     DEPTH = std::abs(DEPTH) + 1;
     if (get_min_max())
     {
@@ -301,20 +301,20 @@ bool auto_stereo_convert()
     MAX_CC = MAX_C - MIN_C + 1;
     AVG_CT = 0L;
     AVG = AVG_CT;
-    BAR_HEIGHT = 1 + g_logical_screen_y_dots / 20;
-    X_CENTER = g_logical_screen_x_dots/2;
+    BAR_HEIGHT = 1 + g_logical_screen.y_dots / 20;
+    X_CENTER = g_logical_screen.x_dots/2;
     if (g_calibrate > 1)
     {
         Y_CENTER = BAR_HEIGHT/2;
     }
     else
     {
-        Y_CENTER = g_logical_screen_y_dots/2;
+        Y_CENTER = g_logical_screen.y_dots/2;
     }
 
     // box to average for calibration bars
-    X1 = X_CENTER - g_logical_screen_x_dots/16;
-    X2 = X_CENTER + g_logical_screen_x_dots/16;
+    X1 = X_CENTER - g_logical_screen.x_dots/16;
+    X2 = X_CENTER + g_logical_screen.x_dots/16;
     Y1 = Y_CENTER - BAR_HEIGHT/2;
     Y2 = Y_CENTER + BAR_HEIGHT/2;
 
@@ -322,7 +322,7 @@ bool auto_stereo_convert()
     if (g_image_map)
     {
         g_out_line = out_line_stereo;
-        while (Y < g_logical_screen_y_dots)
+        while (Y < g_logical_screen.y_dots)
         {
             if (gif_view())
             {
@@ -334,19 +334,19 @@ bool auto_stereo_convert()
     else
     {
         std::vector<Byte> buf;
-        buf.resize(g_logical_screen_x_dots);
-        while (Y < g_logical_screen_y_dots)
+        buf.resize(g_logical_screen.x_dots);
+        while (Y < g_logical_screen.y_dots)
         {
             if (driver_key_pressed())
             {
                 ret = true;
                 goto exit_stereo;
             }
-            for (int i = 0; i < g_logical_screen_x_dots; i++)
+            for (int i = 0; i < g_logical_screen.x_dots; i++)
             {
                 buf[i] = static_cast<unsigned char>(std::rand() % g_colors);
             }
-            out_line_stereo(buf.data(), g_logical_screen_x_dots);
+            out_line_stereo(buf.data(), g_logical_screen.x_dots);
         }
     }
 
@@ -356,7 +356,7 @@ bool auto_stereo_convert()
     {
         bool done = false;
         int ct = 0;
-        const int bar_width = 1 + g_logical_screen_x_dots / 200;
+        const int bar_width = 1 + g_logical_screen.x_dots / 200;
         for (int i = X_CENTER; i < X_CENTER + bar_width; i++)
         {
             for (int j = Y_CENTER; j < Y_CENTER + BAR_HEIGHT; j++)

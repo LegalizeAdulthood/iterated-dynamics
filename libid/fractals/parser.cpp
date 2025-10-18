@@ -1562,8 +1562,8 @@ static bool parse_formula_text(const std::string &text)
     const double const_e = std::exp(1.0);
     s_vars[7].a.d.y = 0.0;
     s_vars[7].a.d.x = s_vars[7].a.d.y;
-    s_vars[11].a.d.x = static_cast<double>(g_logical_screen_x_dots);
-    s_vars[11].a.d.y = static_cast<double>(g_logical_screen_y_dots);
+    s_vars[11].a.d.x = static_cast<double>(g_logical_screen.x_dots);
+    s_vars[11].a.d.y = static_cast<double>(g_logical_screen.y_dots);
     s_vars[12].a.d.x = static_cast<double>(g_max_iterations);
     s_vars[12].a.d.y = 0;
     s_vars[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;

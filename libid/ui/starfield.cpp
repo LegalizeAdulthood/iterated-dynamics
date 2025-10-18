@@ -91,9 +91,9 @@ int star_field()
         return -1;
     }
     spin_dac(0, 1);                 // load it, but don't spin
-    for (g_row = 0; g_row < g_logical_screen_y_dots; g_row++)
+    for (g_row = 0; g_row < g_logical_screen.y_dots; g_row++)
     {
-        for (g_col = 0; g_col < g_logical_screen_x_dots; g_col++)
+        for (g_col = 0; g_col < g_logical_screen.x_dots; g_col++)
         {
             if (driver_key_pressed())
             {

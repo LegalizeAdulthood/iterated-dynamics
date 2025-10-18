@@ -504,7 +504,7 @@ void FileWindow::draw(const int color)
         Coord ibl;
         Coord itr;
         // draw crosshairs
-        int cross_size = g_logical_screen_y_dots / 45;
+        int cross_size = g_logical_screen.y_dots / 45;
         cross_size = std::max(cross_size, 2);
         itr.x = top_left.x - cross_size;
         itr.y = top_left.y;
@@ -707,23 +707,23 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     }
 
     // now see how many corners are on the screen, accept if one or more
-    if (tl.x >= 0 - g_logical_screen_x_offset && tl.x <= g_screen_x_dots - g_logical_screen_x_offset
-        && tl.y >= 0 - g_logical_screen_y_offset && tl.y <= g_screen_y_dots - g_logical_screen_y_offset)
+    if (tl.x >= 0 - g_logical_screen.x_offset && tl.x <= g_screen_x_dots - g_logical_screen.x_offset
+        && tl.y >= 0 - g_logical_screen.y_offset && tl.y <= g_screen_y_dots - g_logical_screen.y_offset)
     {
         corner_count++;
     }
-    if (bl.x >= 0 - g_logical_screen_x_offset && bl.x <= g_screen_x_dots - g_logical_screen_x_offset
-        && bl.y >= 0 - g_logical_screen_y_offset && bl.y <= g_screen_y_dots - g_logical_screen_y_offset)
+    if (bl.x >= 0 - g_logical_screen.x_offset && bl.x <= g_screen_x_dots - g_logical_screen.x_offset
+        && bl.y >= 0 - g_logical_screen.y_offset && bl.y <= g_screen_y_dots - g_logical_screen.y_offset)
     {
         corner_count++;
     }
-    if (tr.x >= 0 - g_logical_screen_x_offset && tr.x <= g_screen_x_dots - g_logical_screen_x_offset
-        && tr.y >= 0 - g_logical_screen_y_offset && tr.y <= g_screen_y_dots - g_logical_screen_y_offset)
+    if (tr.x >= 0 - g_logical_screen.x_offset && tr.x <= g_screen_x_dots - g_logical_screen.x_offset
+        && tr.y >= 0 - g_logical_screen.y_offset && tr.y <= g_screen_y_dots - g_logical_screen.y_offset)
     {
         corner_count++;
     }
-    if (br.x >= 0 - g_logical_screen_x_offset && br.x <= g_screen_x_dots - g_logical_screen_x_offset
-        && br.y >= 0 - g_logical_screen_y_offset && br.y <= g_screen_y_dots - g_logical_screen_y_offset)
+    if (br.x >= 0 - g_logical_screen.x_offset && br.x <= g_screen_x_dots - g_logical_screen.x_offset
+        && br.y >= 0 - g_logical_screen.y_offset && br.y <= g_screen_y_dots - g_logical_screen.y_offset)
     {
         corner_count++;
     }
@@ -880,7 +880,7 @@ static void bf_setup_convert_to_screen()
     add_bf(bt_det, bt_tmp1, bt_tmp2);
 
     // xd = x_size_d/det
-    float_to_bf(bt_tmp1, g_logical_screen_x_size_dots);
+    float_to_bf(bt_tmp1, g_logical_screen.x_size_dots);
     div_bf(bt_xd, bt_tmp1, bt_det);
 
     // a =  xd*(yymax-yy3rd)
@@ -914,7 +914,7 @@ static void bf_setup_convert_to_screen()
     add_bf(bt_det, bt_tmp1, bt_tmp2);
 
     // yd = y_size_d/det
-    float_to_bf(bt_tmp2, g_logical_screen_y_size_dots);
+    float_to_bf(bt_tmp2, g_logical_screen.y_size_dots);
     div_bf(bt_yd, bt_tmp2, bt_det);
 
     // c =  yd*(yymin-yy3rd)

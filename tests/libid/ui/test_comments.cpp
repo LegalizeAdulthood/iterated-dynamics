@@ -34,8 +34,8 @@ protected:
         init_comments();
         m_saved_calc_time = g_calc_time;
         m_saved_version = g_release;
-        m_saved_x_dots = g_logical_screen_x_dots;
-        m_saved_y_dots = g_logical_screen_y_dots;
+        m_saved_x_dots = g_logical_screen.x_dots;
+        m_saved_y_dots = g_logical_screen.y_dots;
         m_saved_video_key = g_video_entry.key;
         g_calc_time = 0;
         std::tm tm{};
@@ -51,8 +51,8 @@ protected:
     {
         init_comments();
         g_video_entry.key = m_saved_video_key;
-        g_logical_screen_y_dots = m_saved_y_dots;
-        g_logical_screen_x_dots = m_saved_x_dots;
+        g_logical_screen.y_dots = m_saved_y_dots;
+        g_logical_screen.x_dots = m_saved_x_dots;
         g_release = m_saved_version;
         g_calc_time = m_saved_calc_time;
     }
@@ -209,7 +209,7 @@ TEST_F(TestComments, expandPatch)
 
 TEST_F(TestComments, expandXDots)
 {
-    g_logical_screen_x_dots = 1964;
+    g_logical_screen.x_dots = 1964;
     std::strcpy(g_par_comment[0], "$xdots$");
 
     const std::string &result{expand_command_comment(0)};
@@ -219,7 +219,7 @@ TEST_F(TestComments, expandXDots)
 
 TEST_F(TestComments, expandYDots)
 {
-    g_logical_screen_y_dots = 1964;
+    g_logical_screen.y_dots = 1964;
     std::strcpy(g_par_comment[0], "$ydots$");
 
     const std::string &result{expand_command_comment(0)};

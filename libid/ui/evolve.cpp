@@ -814,8 +814,8 @@ void setup_param_box()
     g_evolve_param_box_count = 0;
     g_evolve_param_zoom = (static_cast<double>(g_evolve_image_grid_size) -1.0)/2.0;
     // need to allocate 2 int arrays for g_box_x and g_box_y plus 1 byte array for values
-    const int num_box_values = (g_logical_screen_x_dots + g_logical_screen_y_dots) * 2;
-    const int num_values = g_logical_screen_x_dots + g_logical_screen_y_dots + 2;
+    const int num_box_values = (g_logical_screen.x_dots + g_logical_screen.y_dots) * 2;
+    const int num_values = g_logical_screen.x_dots + g_logical_screen.y_dots + 2;
 
     s_param_box_x.resize(num_box_values);
     s_param_box_y.resize(num_box_values);
@@ -942,16 +942,16 @@ void draw_param_box(const int mode)
 
     //draw larger box to show parm zooming range
     bl.x = (g_evolve_param_grid_x - static_cast<int>(g_evolve_param_zoom)) *
-            static_cast<int>(g_logical_screen_x_size_dots + 1 + grout) -g_logical_screen_x_offset-1;
+            static_cast<int>(g_logical_screen.x_size_dots + 1 + grout) -g_logical_screen.x_offset-1;
     tl.x = bl.x;
     tr.y = (g_evolve_param_grid_y - static_cast<int>(g_evolve_param_zoom)) *
-            static_cast<int>(g_logical_screen_y_size_dots + 1 + grout) -g_logical_screen_y_offset-1;
+            static_cast<int>(g_logical_screen.y_size_dots + 1 + grout) -g_logical_screen.y_offset-1;
     tl.y = tr.y;
     tr.x = (g_evolve_param_grid_x + 1 + static_cast<int>(g_evolve_param_zoom)) *
-            static_cast<int>(g_logical_screen_x_size_dots + 1 + grout) -g_logical_screen_x_offset;
+            static_cast<int>(g_logical_screen.x_size_dots + 1 + grout) -g_logical_screen.x_offset;
     br.x = tr.x;
     bl.y = (g_evolve_param_grid_y + 1 + static_cast<int>(g_evolve_param_zoom)) *
-            static_cast<int>(g_logical_screen_y_size_dots + 1 + grout) -g_logical_screen_y_offset;
+            static_cast<int>(g_logical_screen.y_size_dots + 1 + grout) -g_logical_screen.y_offset;
     br.y = bl.y;
     g_box_count = 0;
     add_box(br);

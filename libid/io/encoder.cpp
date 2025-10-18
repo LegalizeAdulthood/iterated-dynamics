@@ -276,12 +276,12 @@ restart:
                     out_color2 = 0;
                 }
             }
-            for (int i = 0; 250*i < g_logical_screen_x_dots; i++)
+            for (int i = 0; 250*i < g_logical_screen.x_dots; i++)
             {
                 // clear vert status bars
                 g_put_color(i, j, get_color(i, j) ^ out_color1);
-                g_put_color(g_logical_screen_x_dots - 1 - i, j,
-                         get_color(g_logical_screen_x_dots - 1 - i, j) ^ out_color2);
+                g_put_color(g_logical_screen.x_dots - 1 - i, j,
+                         get_color(g_logical_screen.x_dots - 1 - i, j) ^ out_color2);
             }
         }
     }
@@ -343,8 +343,8 @@ bool encoder()
         goto oops; // new GIF Signature
     }
 
-    width = g_logical_screen_x_dots;
-    row_limit = g_logical_screen_y_dots;
+    width = g_logical_screen.x_dots;
+    row_limit = g_logical_screen.y_dots;
     if (s_save_16bit)
     {
         // pot16bit info is stored as: file:    double width rows, right side
@@ -358,7 +358,7 @@ bool encoder()
     {
         goto oops;                // screen descriptor
     }
-    if (std::fwrite(&g_logical_screen_y_dots, 2, 1, s_outfile) != 1)
+    if (std::fwrite(&g_logical_screen.y_dots, 2, 1, s_outfile) != 1)
     {
         goto oops;
     }
@@ -384,8 +384,8 @@ bool encoder()
     }
     else       // must risk loss of precision if numbers low
     {
-        i = static_cast<int>(static_cast<double>(g_logical_screen_y_dots) /
-                static_cast<double>(g_logical_screen_x_dots) / g_final_aspect_ratio * 64 -
+        i = static_cast<int>(static_cast<double>(g_logical_screen.y_dots) /
+                static_cast<double>(g_logical_screen.x_dots) / g_final_aspect_ratio * 64 -
             14.5);
     }
     i = std::max(i, 1);
@@ -471,7 +471,7 @@ bool encoder()
     {
         goto oops;
     }
-    if (std::fwrite(&g_logical_screen_y_dots, 2, 1, s_outfile) != 1)
+    if (std::fwrite(&g_logical_screen.y_dots, 2, 1, s_outfile) != 1)
     {
         goto oops;
     }
@@ -575,10 +575,10 @@ bool encoder()
             evolution_info.discrete_y_parameter_offset = static_cast<std::int16_t>(g_evolve_discrete_y_parameter_offset);
             evolution_info.px              = static_cast<std::int16_t>(g_evolve_param_grid_x);
             evolution_info.py              = static_cast<std::int16_t>(g_evolve_param_grid_y);
-            evolution_info.screen_x_offset          = static_cast<std::int16_t>(g_logical_screen_x_offset);
-            evolution_info.screen_y_offset          = static_cast<std::int16_t>(g_logical_screen_y_offset);
-            evolution_info.x_dots           = static_cast<std::int16_t>(g_logical_screen_x_dots);
-            evolution_info.y_dots           = static_cast<std::int16_t>(g_logical_screen_y_dots);
+            evolution_info.screen_x_offset          = static_cast<std::int16_t>(g_logical_screen.x_offset);
+            evolution_info.screen_y_offset          = static_cast<std::int16_t>(g_logical_screen.y_offset);
+            evolution_info.x_dots           = static_cast<std::int16_t>(g_logical_screen.x_dots);
+            evolution_info.y_dots           = static_cast<std::int16_t>(g_logical_screen.y_dots);
             evolution_info.image_grid_size = static_cast<std::int16_t>(g_evolve_image_grid_size);
             evolution_info.evolving        = static_cast<std::int16_t>(+g_evolving);
             evolution_info.this_generation_random_seed =
@@ -1051,20 +1051,20 @@ static bool compress(const int row_limit)
 
     output(s_clear_code);
 
-    for (int row_num = 0; row_num < g_logical_screen_y_dots; row_num++)
+    for (int row_num = 0; row_num < g_logical_screen.y_dots; row_num++)
     {
         // scan through the dots
-        for (int y_dot = row_num; y_dot < row_limit; y_dot += g_logical_screen_y_dots)
+        for (int y_dot = row_num; y_dot < row_limit; y_dot += g_logical_screen.y_dots)
         {
-            for (int x_dot = 0; x_dot < g_logical_screen_x_dots; x_dot++)
+            for (int x_dot = 0; x_dot < g_logical_screen.x_dots; x_dot++)
             {
-                if (s_save_16bit == 0 || y_dot < g_logical_screen_y_dots)
+                if (s_save_16bit == 0 || y_dot < g_logical_screen.y_dots)
                 {
                     color = get_color(x_dot, y_dot);
                 }
                 else
                 {
-                    color = disk_read_pixel(x_dot + g_logical_screen_x_offset, y_dot + g_logical_screen_y_offset);
+                    color = disk_read_pixel(x_dot + g_logical_screen.x_offset, y_dot + g_logical_screen.y_offset);
                 }
                 if (in_count == 0)
                 {
@@ -1133,13 +1133,13 @@ no_match:
                         out_color2 = 0;
                     }
                 }
-                for (int i = 0; 250*i < g_logical_screen_x_dots; i++)
+                for (int i = 0; 250*i < g_logical_screen.x_dots; i++)
                 {
                     // display vert status bars
                     // (this is NOT GIF-related)
                     g_put_color(i, y_dot, get_color(i, y_dot) ^ out_color1);
-                    g_put_color(g_logical_screen_x_dots - 1 - i, y_dot,
-                             get_color(g_logical_screen_x_dots - 1 - i, y_dot) ^ out_color2);
+                    g_put_color(g_logical_screen.x_dots - 1 - i, y_dot,
+                             get_color(g_logical_screen.x_dots - 1 - i, y_dot) ^ out_color2);
                 }
                 s_last_color_bar = y_dot;
             } // end if !driver_diskp()

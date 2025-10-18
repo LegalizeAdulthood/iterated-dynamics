@@ -344,19 +344,19 @@ bool mandel_per_image_bn()
 
     // g_delta_x_bn = (g_x_max_bn - g_x_3rd_bn)/(xdots-1)
     sub_bn(g_delta_x_bn, g_x_max_bn, g_x_3rd_bn);
-    div_a_bn_int(g_delta_x_bn, static_cast<U16>(g_logical_screen_x_dots - 1));
+    div_a_bn_int(g_delta_x_bn, static_cast<U16>(g_logical_screen.x_dots - 1));
 
     // g_delta_y_bn = (g_y_max_bn - g_y_3rd_bn)/(ydots-1)
     sub_bn(g_delta_y_bn, g_y_max_bn, g_y_3rd_bn);
-    div_a_bn_int(g_delta_y_bn, static_cast<U16>(g_logical_screen_y_dots - 1));
+    div_a_bn_int(g_delta_y_bn, static_cast<U16>(g_logical_screen.y_dots - 1));
 
     // g_delta2_x_bn = (g_x_3rd_bn - g_x_min_bn)/(ydots-1)
     sub_bn(g_delta2_x_bn, g_x_3rd_bn, g_x_min_bn);
-    div_a_bn_int(g_delta2_x_bn, static_cast<U16>(g_logical_screen_y_dots - 1));
+    div_a_bn_int(g_delta2_x_bn, static_cast<U16>(g_logical_screen.y_dots - 1));
 
     // g_delta2_y_bn = (g_y_3rd_bn - g_y_min_bn)/(xdots-1)
     sub_bn(g_delta2_y_bn, g_y_3rd_bn, g_y_min_bn);
-    div_a_bn_int(g_delta2_y_bn, static_cast<U16>(g_logical_screen_x_dots - 1));
+    div_a_bn_int(g_delta2_y_bn, static_cast<U16>(g_logical_screen.x_dots - 1));
 
     abs_bn(g_close_enough_bn, g_delta_x_bn);
     if (cmp_bn(abs_bn(bn_temp1, g_delta2_x_bn), g_close_enough_bn) > 0)
@@ -454,19 +454,19 @@ bool mandel_per_image_bf()
 
     // g_delta_x_bf = (g_bf_x_max - g_bf_x_3rd)/(xdots-1)
     sub_bf(g_delta_x_bf, g_bf_x_max, g_bf_x_3rd);
-    div_a_bf_int(g_delta_x_bf, static_cast<U16>(g_logical_screen_x_dots - 1));
+    div_a_bf_int(g_delta_x_bf, static_cast<U16>(g_logical_screen.x_dots - 1));
 
     // g_delta_y_bf = (g_bf_y_max - g_bf_y_3rd)/(ydots-1)
     sub_bf(g_delta_y_bf, g_bf_y_max, g_bf_y_3rd);
-    div_a_bf_int(g_delta_y_bf, static_cast<U16>(g_logical_screen_y_dots - 1));
+    div_a_bf_int(g_delta_y_bf, static_cast<U16>(g_logical_screen.y_dots - 1));
 
     // g_delta2_x_bf = (g_bf_x_3rd - g_bf_x_min)/(ydots-1)
     sub_bf(g_delta2_x_bf, g_bf_x_3rd, g_bf_x_min);
-    div_a_bf_int(g_delta2_x_bf, static_cast<U16>(g_logical_screen_y_dots - 1));
+    div_a_bf_int(g_delta2_x_bf, static_cast<U16>(g_logical_screen.y_dots - 1));
 
     // g_delta2_y_bf = (g_bf_y_3rd - g_bf_y_min)/(xdots-1)
     sub_bf(g_delta2_y_bf, g_bf_y_3rd, g_bf_y_min);
-    div_a_bf_int(g_delta2_y_bf, static_cast<U16>(g_logical_screen_x_dots - 1));
+    div_a_bf_int(g_delta2_y_bf, static_cast<U16>(g_logical_screen.x_dots - 1));
 
     abs_bf(g_close_enough_bf, g_delta_x_bf);
     if (cmp_bf(abs_bf(bf_temp1, g_delta2_x_bf), g_close_enough_bf) > 0)

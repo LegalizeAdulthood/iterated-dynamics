@@ -99,7 +99,7 @@ static int timer(const TimerType type, int (*fn)(), ...)
         fmt::print(fp, "{:s} type={:s} resolution = {:d}x{:d} maxiter={:d}", //
             text,                                                     //
             g_cur_fractal_specific->name,                             //
-            g_logical_screen_x_dots, g_logical_screen_y_dots,         //
+            g_logical_screen.x_dots, g_logical_screen.y_dots,         //
             g_max_iterations);
         fmt::print(fp, " time= {:d}.{:02d} secs\n", g_timer_interval / 100, g_timer_interval % 100);
         std::fclose(fp);

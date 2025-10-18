@@ -49,12 +49,12 @@ int g_video_start_y{};
 //
 void read_span(const int row, const int start_col, const int stop_col, Byte *pixels)
 {
-    if (start_col + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset >= g_screen_y_dots)
+    if (start_col + g_logical_screen.x_offset >= g_screen_x_dots || row + g_logical_screen.y_offset >= g_screen_y_dots)
     {
         return;
     }
     assert(s_read_span);
-    s_read_span(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
+    s_read_span(row + g_logical_screen.y_offset, start_col + g_logical_screen.x_offset, stop_col + g_logical_screen.x_offset, pixels);
 }
 
 // write_span(int row, int startcol, int stopcol, Byte *pixels)
@@ -65,12 +65,12 @@ void read_span(const int row, const int start_col, const int stop_col, Byte *pix
 //
 void write_span(const int row, const int start_col, const int stop_col, const Byte *pixels)
 {
-    if (start_col + g_logical_screen_x_offset >= g_screen_x_dots || row + g_logical_screen_y_offset > g_screen_y_dots)
+    if (start_col + g_logical_screen.x_offset >= g_screen_x_dots || row + g_logical_screen.y_offset > g_screen_y_dots)
     {
         return;
     }
     assert(s_write_span);
-    s_write_span(row + g_logical_screen_y_offset, start_col + g_logical_screen_x_offset, stop_col + g_logical_screen_x_offset, pixels);
+    s_write_span(row + g_logical_screen.y_offset, start_col + g_logical_screen.x_offset, stop_col + g_logical_screen.x_offset, pixels);
 }
 
 static void normal_write_span(const int y, const int x, const int last_x, const Byte *pixels)
@@ -130,8 +130,8 @@ void set_null_video()
 //
 int get_color(const int x, const int y)
 {
-    const int x1 = x + g_logical_screen_x_offset;
-    const int y1 = y + g_logical_screen_y_offset;
+    const int x1 = x + g_logical_screen.x_offset;
+    const int y1 = y + g_logical_screen.y_offset;
     if (x1 < 0 || y1 < 0 || x1 >= g_screen_x_dots || y1 >= g_screen_y_dots)
     {
         // this can happen in boundary trace
@@ -145,8 +145,8 @@ int get_color(const int x, const int y)
 //
 void put_color_a(const int x, const int y, const int color)
 {
-    const int x1 = x + g_logical_screen_x_offset;
-    const int y1 = y + g_logical_screen_y_offset;
+    const int x1 = x + g_logical_screen.x_offset;
+    const int y1 = y + g_logical_screen.y_offset;
     assert(x1 >= 0 && x1 <= g_screen_x_dots);
     assert(y1 >= 0 && y1 <= g_screen_y_dots);
     assert(s_write_pixel);
@@ -160,12 +160,12 @@ void put_color_a(const int x, const int y, const int color)
 int out_line(Byte *pixels, const int line_len)
 {
     driver_check_memory();
-    if (g_row_count + g_logical_screen_y_offset >= g_screen_y_dots)
+    if (g_row_count + g_logical_screen.y_offset >= g_screen_y_dots)
     {
         return 0;
     }
     assert(s_write_span);
-    s_write_span(g_row_count + g_logical_screen_y_offset, g_logical_screen_x_offset, line_len + g_logical_screen_x_offset - 1, pixels);
+    s_write_span(g_row_count + g_logical_screen.y_offset, g_logical_screen.x_offset, line_len + g_logical_screen.x_offset - 1, pixels);
     g_row_count++;
     return 0;
 }

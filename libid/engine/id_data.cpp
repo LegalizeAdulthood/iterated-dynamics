@@ -18,15 +18,13 @@ using namespace id::ui;
 namespace id::engine
 {
 
+LogicalScreen g_logical_screen{};                             //
 VideoInfo g_video_entry{};                                    //
 HelpLabels g_help_mode{};                                     //
 int g_adapter{};                                              // Video Adapter chosen from list in ...h
 std::filesystem::path g_fractal_search_dir1;                  //
 std::filesystem::path g_fractal_search_dir2;                  //
 int g_screen_x_dots{}, g_screen_y_dots{};                     // # of dots on the physical screen
-int g_logical_screen_x_offset{}, g_logical_screen_y_offset{}; // physical top left of logical screen
-int g_logical_screen_x_dots{}, g_logical_screen_y_dots{};     // # of dots on the logical screen
-double g_logical_screen_x_size_dots{}, g_logical_screen_y_size_dots{}; // xdots-1, ydots-1
 int g_colors{256};                                                     // maximum colors available
 long g_max_iterations{};                                               // try this many iterations
 LDouble g_delta_x{}, g_delta_y{};                                      // screen pixel increments

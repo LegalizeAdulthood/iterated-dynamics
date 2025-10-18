@@ -118,8 +118,8 @@ bool julibrot_per_image()
     g_float_param = &s_jb.jb_c;
     s_jb.x_per_inch = (g_image_region.m_min.x - g_image_region.m_max.x) / g_julibrot_width;
     s_jb.y_per_inch = g_image_region.height() / g_julibrot_height;
-    s_jb.inch_per_x_dot = g_julibrot_width / g_logical_screen_x_dots;
-    s_jb.inch_per_y_dot = g_julibrot_height / g_logical_screen_y_dots;
+    s_jb.inch_per_x_dot = g_julibrot_width / g_logical_screen.x_dots;
+    s_jb.inch_per_y_dot = g_julibrot_height / g_logical_screen.y_dots;
     s_jb.init_z = g_julibrot_origin - g_julibrot_depth / 2;
     if (g_julibrot_3d_mode == Julibrot3DMode::MONOCULAR)
     {
@@ -287,7 +287,7 @@ Standard4D::Standard4D()
         }
         get_julia_attractor(g_params[0], g_params[1]); // another attractor?
     }
-    m_y_dot = (g_logical_screen_y_dots >> 1) - 1;
+    m_y_dot = (g_logical_screen.y_dots >> 1) - 1;
     m_x_dot = 0;
     s_plotted = false;
     m_x = -g_julibrot_width / 2.0;
@@ -303,12 +303,12 @@ bool Standard4D::iterate()
     g_col = m_x_dot;
     g_row = m_y_dot;
     z_line(m_x, m_y);
-    g_col = g_logical_screen_x_dots - g_col - 1;
-    g_row = g_logical_screen_y_dots - g_row - 1;
+    g_col = g_logical_screen.x_dots - g_col - 1;
+    g_row = g_logical_screen.y_dots - g_row - 1;
     z_line(-m_x, -m_y);
     ++m_x_dot;
     m_x += s_jb.inch_per_x_dot;
-    if (m_x_dot == g_logical_screen_x_dots)
+    if (m_x_dot == g_logical_screen.x_dots)
     {
         // next scanline
         if (!s_plotted && m_y != 0.0)

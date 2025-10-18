@@ -43,26 +43,26 @@ Diffusion::Diffusion() :
     switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
-        m_x_max = g_logical_screen_x_dots / 2 + m_border; // Initial box
-        m_x_min = g_logical_screen_x_dots / 2 - m_border;
-        m_y_max = g_logical_screen_y_dots / 2 + m_border;
-        m_y_min = g_logical_screen_y_dots / 2 - m_border;
+        m_x_max = g_logical_screen.x_dots / 2 + m_border; // Initial box
+        m_x_min = g_logical_screen.x_dots / 2 - m_border;
+        m_y_max = g_logical_screen.y_dots / 2 + m_border;
+        m_y_min = g_logical_screen.y_dots / 2 - m_border;
         break;
 
     case DiffusionMode::FALLING_PARTICLES:
-        m_x_max = g_logical_screen_x_dots / 2 + m_border; // Initial box
-        m_x_min = g_logical_screen_x_dots / 2 - m_border;
-        m_y_min = g_logical_screen_y_dots - m_border;
+        m_x_max = g_logical_screen.x_dots / 2 + m_border; // Initial box
+        m_x_min = g_logical_screen.x_dots / 2 - m_border;
+        m_y_min = g_logical_screen.y_dots - m_border;
         break;
 
     case DiffusionMode::SQUARE_CAVITY:
-        if (g_logical_screen_x_dots > g_logical_screen_y_dots)
+        if (g_logical_screen.x_dots > g_logical_screen.y_dots)
         {
-            m_radius = static_cast<float>(g_logical_screen_y_dots - m_border);
+            m_radius = static_cast<float>(g_logical_screen.y_dots - m_border);
         }
         else
         {
-            m_radius = static_cast<float>(g_logical_screen_x_dots - m_border);
+            m_radius = static_cast<float>(g_logical_screen.x_dots - m_border);
         }
         break;
     }
@@ -84,37 +84,37 @@ Diffusion::Diffusion() :
     switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
-        g_put_color(g_logical_screen_x_dots / 2, g_logical_screen_y_dots / 2, m_current_color);
+        g_put_color(g_logical_screen.x_dots / 2, g_logical_screen.y_dots / 2, m_current_color);
         break;
 
     case DiffusionMode::FALLING_PARTICLES:
-        for (int i = 0; i <= g_logical_screen_x_dots; i++)
+        for (int i = 0; i <= g_logical_screen.x_dots; i++)
         {
-            g_put_color(i, g_logical_screen_y_dots - 1, m_current_color);
+            g_put_color(i, g_logical_screen.y_dots - 1, m_current_color);
         }
         break;
 
     case DiffusionMode::SQUARE_CAVITY:
-        if (g_logical_screen_x_dots > g_logical_screen_y_dots)
+        if (g_logical_screen.x_dots > g_logical_screen.y_dots)
         {
-            for (int i = 0; i < g_logical_screen_y_dots; i++)
+            for (int i = 0; i < g_logical_screen.y_dots; i++)
             {
-                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2, i, m_current_color);
-                g_put_color(g_logical_screen_x_dots / 2 + g_logical_screen_y_dots / 2, i, m_current_color);
-                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2 + i, 0, m_current_color);
-                g_put_color(g_logical_screen_x_dots / 2 - g_logical_screen_y_dots / 2 + i,
-                    g_logical_screen_y_dots - 1, m_current_color);
+                g_put_color(g_logical_screen.x_dots / 2 - g_logical_screen.y_dots / 2, i, m_current_color);
+                g_put_color(g_logical_screen.x_dots / 2 + g_logical_screen.y_dots / 2, i, m_current_color);
+                g_put_color(g_logical_screen.x_dots / 2 - g_logical_screen.y_dots / 2 + i, 0, m_current_color);
+                g_put_color(g_logical_screen.x_dots / 2 - g_logical_screen.y_dots / 2 + i,
+                    g_logical_screen.y_dots - 1, m_current_color);
             }
         }
         else
         {
-            for (int i = 0; i < g_logical_screen_x_dots; i++)
+            for (int i = 0; i < g_logical_screen.x_dots; i++)
             {
-                g_put_color(0, g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2 + i, m_current_color);
-                g_put_color(g_logical_screen_x_dots - 1,
-                    g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2 + i, m_current_color);
-                g_put_color(i, g_logical_screen_y_dots / 2 - g_logical_screen_x_dots / 2, m_current_color);
-                g_put_color(i, g_logical_screen_y_dots / 2 + g_logical_screen_x_dots / 2, m_current_color);
+                g_put_color(0, g_logical_screen.y_dots / 2 - g_logical_screen.x_dots / 2 + i, m_current_color);
+                g_put_color(g_logical_screen.x_dots - 1,
+                    g_logical_screen.y_dots / 2 - g_logical_screen.x_dots / 2 + i, m_current_color);
+                g_put_color(i, g_logical_screen.y_dots / 2 - g_logical_screen.x_dots / 2, m_current_color);
+                g_put_color(i, g_logical_screen.y_dots / 2 + g_logical_screen.x_dots / 2, m_current_color);
             }
         }
         break;
@@ -137,8 +137,8 @@ void Diffusion::release_new_particle()
         double cosine;
         double sine;
         sin_cos(angle, &sine, &cosine);
-        m_x = static_cast<int>(cosine * (m_x_max - m_x_min) + g_logical_screen_x_dots);
-        m_y = static_cast<int>(sine * (m_y_max - m_y_min) + g_logical_screen_y_dots);
+        m_x = static_cast<int>(cosine * (m_x_max - m_x_min) + g_logical_screen.x_dots);
+        m_y = static_cast<int>(sine * (m_y_max - m_y_min) + g_logical_screen.y_dots);
         m_x /= 2;
         m_y /= 2;
         break;
@@ -147,7 +147,7 @@ void Diffusion::release_new_particle()
     case DiffusionMode::FALLING_PARTICLES:
         // Release new point on the line ymin somewhere between xmin and xmax
         m_y = m_y_min;
-        m_x = random(m_x_max - m_x_min) + (g_logical_screen_x_dots - m_x_max + m_x_min) / 2;
+        m_x = random(m_x_max - m_x_min) + (g_logical_screen.x_dots - m_x_max + m_x_min) / 2;
         break;
 
     case DiffusionMode::SQUARE_CAVITY:
@@ -157,8 +157,8 @@ void Diffusion::release_new_particle()
         double cosine;
         double sine;
         sin_cos(angle, &sine, &cosine);
-        m_x = static_cast<int>(cosine * m_radius + g_logical_screen_x_dots);
-        m_y = static_cast<int>(sine * m_radius + g_logical_screen_y_dots);
+        m_x = static_cast<int>(cosine * m_radius + g_logical_screen.x_dots);
+        m_y = static_cast<int>(sine * m_radius + g_logical_screen.y_dots);
         m_x /= 2;
         m_y /= 2;
         break;
@@ -230,7 +230,7 @@ bool Diffusion::move_particle()
         // we need a 1 pixel margin because of the next random step.
         if (m_mode == DiffusionMode::FALLING_PARTICLES)
         {
-            if (m_x >= g_logical_screen_x_dots - 1)
+            if (m_x >= g_logical_screen.x_dots - 1)
             {
                 m_x--;
             }
@@ -332,8 +332,8 @@ bool Diffusion::adjust_limits()
     {
         // Decrease the radius where points are released to stay away
         // from the fractal.  It might be decreased by 1 or 2
-        const double r = sqr(static_cast<float>(m_x) - g_logical_screen_x_dots / 2) +
-            sqr(static_cast<float>(m_y) - g_logical_screen_y_dots / 2);
+        const double r = sqr(static_cast<float>(m_x) - g_logical_screen.x_dots / 2) +
+            sqr(static_cast<float>(m_y) - g_logical_screen.y_dots / 2);
         if (r <= m_border * m_border)
         {
             return true;

@@ -4,6 +4,8 @@
 
 #include <config/port.h>
 
+#include "math/Point.h"
+
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -50,7 +52,19 @@ enum class SaveDAC
     NEXT_TIME = 2,
 };
 
+struct LogicalScreen
+{
+    int x_dots;         // # of dots on the logical screen
+    int y_dots;
+    int x_offset;       // physical top left of logical screen
+    int y_offset;
+    double x_size_dots; // xdots-1, ydots-1
+    double y_size_dots;
+};
+
 using FilenameStack = std::vector<std::string>;
+
+extern LogicalScreen g_logical_screen;
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
@@ -77,12 +91,6 @@ extern std::filesystem::path g_fractal_search_dir2;
 extern bool                  g_has_inverse;
 extern help::HelpLabels      g_help_mode;
 extern bool                  g_keep_aspect_ratio;
-extern int                   g_logical_screen_x_dots;
-extern int                   g_logical_screen_x_offset;
-extern double                g_logical_screen_x_size_dots;
-extern int                   g_logical_screen_y_dots;
-extern int                   g_logical_screen_y_offset;
-extern double                g_logical_screen_y_size_dots;
 extern long                  g_max_iterations;
 extern double                g_plot_mx1;
 extern double                g_plot_mx2;

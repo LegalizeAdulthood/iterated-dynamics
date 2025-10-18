@@ -127,11 +127,11 @@ static std::string expand_var(const std::string &var, const std::time_t local_ti
     }
     if (var == "xdots")   // 2 to 4 chars
     {
-        return std::to_string(g_logical_screen_x_dots);
+        return std::to_string(g_logical_screen.x_dots);
     }
     if (var == "ydots")   // 2 to 4 chars
     {
-        return std::to_string(g_logical_screen_y_dots);
+        return std::to_string(g_logical_screen.y_dots);
     }
     if (var == "vidkey")   // 2 to 3 chars
     {

@@ -175,7 +175,7 @@ bool ZoomMouseNotification::process_zoom_primary(MainContext &context)
     if (m_position_updated)
     {
         const int delta_y = m_y - m_down_y;
-        const int amt{static_cast<int>(g_logical_screen_y_size_dots * 0.02)};
+        const int amt{static_cast<int>(g_logical_screen.y_size_dots * 0.02)};
         const int steps{delta_y / amt};
         if (steps != 0)
         {
@@ -204,7 +204,7 @@ bool ZoomMouseNotification::process_zoom_secondary(MainContext &/*context*/)
     if (m_position_updated)
     {
         const int delta_x = m_x - m_down_x;
-        const int amt{static_cast<int>(g_logical_screen_x_size_dots * 0.02)};
+        const int amt{static_cast<int>(g_logical_screen.x_size_dots * 0.02)};
         const int steps{delta_x / amt};
         if (steps != 0)
         {
@@ -266,8 +266,8 @@ bool ZoomMouseNotification::process_zoom(MainContext &context)
     {
         if (g_box_count)
         {
-            g_zoom_box_x = static_cast<double>(m_x) / g_logical_screen_x_size_dots - g_zoom_box_width / 2.0;
-            g_zoom_box_y = static_cast<double>(m_y) / g_logical_screen_y_size_dots - g_zoom_box_height / 2.0;
+            g_zoom_box_x = static_cast<double>(m_x) / g_logical_screen.x_size_dots - g_zoom_box_width / 2.0;
+            g_zoom_box_y = static_cast<double>(m_y) / g_logical_screen.y_size_dots - g_zoom_box_height / 2.0;
             draw_box(true);
         }
         m_position_updated = false;
@@ -306,13 +306,13 @@ MainState big_while_loop(MainContext &context)
         {
             std::memcpy(&g_video_entry, &g_video_table[g_adapter],
                    sizeof(g_video_entry));
-            g_logical_screen_x_dots   = g_video_entry.x_dots;       // # dots across the screen
-            g_logical_screen_y_dots   = g_video_entry.y_dots;       // # dots down the screen
+            g_logical_screen.x_dots   = g_video_entry.x_dots;       // # dots across the screen
+            g_logical_screen.y_dots   = g_video_entry.y_dots;       // # dots down the screen
             g_colors  = g_video_entry.colors;      // # colors available
-            g_screen_x_dots  = g_logical_screen_x_dots;
-            g_screen_y_dots  = g_logical_screen_y_dots;
-            g_logical_screen_y_offset = 0;
-            g_logical_screen_x_offset = 0;
+            g_screen_x_dots  = g_logical_screen.x_dots;
+            g_screen_y_dots  = g_logical_screen.y_dots;
+            g_logical_screen.y_offset = 0;
+            g_logical_screen.x_offset = 0;
             g_color_cycle_range_hi = g_color_cycle_range_hi < g_colors ? g_color_cycle_range_hi : g_colors - 1;
 
             std::memcpy(g_old_dac_box, g_dac_box, 256*3); // save the DAC
@@ -342,15 +342,15 @@ MainState big_while_loop(MainContext &context)
                     return MainState::RESTORE_START;
                 }
 
-                if (g_virtual_screens && (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots))
+                if (g_virtual_screens && (g_logical_screen.x_dots > g_screen_x_dots || g_logical_screen.y_dots > g_screen_y_dots))
                 {
 #define MSG_XY1 "Can't set virtual line that long, width cut down."
 #define MSG_XY2 "Not enough video memory for that many lines, height cut down."
-                    if (g_logical_screen_x_dots > g_screen_x_dots && g_logical_screen_y_dots > g_screen_y_dots)
+                    if (g_logical_screen.x_dots > g_screen_x_dots && g_logical_screen.y_dots > g_screen_y_dots)
                     {
                         stop_msg(MSG_XY1 "\n" MSG_XY2);
                     }
-                    else if (g_logical_screen_y_dots > g_screen_y_dots)
+                    else if (g_logical_screen.y_dots > g_screen_y_dots)
                     {
                         stop_msg(MSG_XY2);
                     }
@@ -361,10 +361,10 @@ MainState big_while_loop(MainContext &context)
 #undef MSG_XY1
 #undef MSG_XY2
                 }
-                g_logical_screen_x_dots = g_screen_x_dots;
-                g_logical_screen_y_dots = g_screen_y_dots;
-                g_video_entry.x_dots = g_logical_screen_x_dots;
-                g_video_entry.y_dots = g_logical_screen_y_dots;
+                g_logical_screen.x_dots = g_screen_x_dots;
+                g_logical_screen.y_dots = g_screen_y_dots;
+                g_video_entry.x_dots = g_logical_screen.x_dots;
+                g_video_entry.y_dots = g_logical_screen.y_dots;
             }
 
             if (g_save_dac != SaveDAC::NO || g_colors_preloaded)
@@ -399,45 +399,45 @@ MainState big_while_loop(MainContext &context)
                 // bypass for VESA virtual screen
                 const double f_temp{g_final_aspect_ratio *
                     (static_cast<double>(g_screen_y_dots) / static_cast<double>(g_screen_x_dots) / g_screen_aspect)};
-                g_logical_screen_x_dots = g_view_x_dots;
-                if (g_logical_screen_x_dots != 0)
+                g_logical_screen.x_dots = g_view_x_dots;
+                if (g_logical_screen.x_dots != 0)
                 {
                     // xdots specified
-                    g_logical_screen_y_dots = g_view_y_dots;
-                    if (g_logical_screen_y_dots == 0) // calc ydots?
+                    g_logical_screen.y_dots = g_view_y_dots;
+                    if (g_logical_screen.y_dots == 0) // calc ydots?
                     {
-                        g_logical_screen_y_dots = iround(g_logical_screen_x_dots * f_temp);
+                        g_logical_screen.y_dots = iround(g_logical_screen.x_dots * f_temp);
                     }
                 }
                 else if (g_final_aspect_ratio <= g_screen_aspect)
                 {
-                    g_logical_screen_x_dots = iround(static_cast<double>(g_screen_x_dots) / g_view_reduction);
-                    g_logical_screen_y_dots = iround(g_logical_screen_x_dots * f_temp);
+                    g_logical_screen.x_dots = iround(static_cast<double>(g_screen_x_dots) / g_view_reduction);
+                    g_logical_screen.y_dots = iround(g_logical_screen.x_dots * f_temp);
                 }
                 else
                 {
-                    g_logical_screen_y_dots = iround(static_cast<double>(g_screen_y_dots) / g_view_reduction);
-                    g_logical_screen_x_dots = iround(g_logical_screen_y_dots / f_temp);
+                    g_logical_screen.y_dots = iround(static_cast<double>(g_screen_y_dots) / g_view_reduction);
+                    g_logical_screen.x_dots = iround(g_logical_screen.y_dots / f_temp);
                 }
-                if (g_logical_screen_x_dots > g_screen_x_dots || g_logical_screen_y_dots > g_screen_y_dots)
+                if (g_logical_screen.x_dots > g_screen_x_dots || g_logical_screen.y_dots > g_screen_y_dots)
                 {
                     stop_msg("View window too large; using full screen.");
                     g_view_window = false;
                     g_view_x_dots = g_screen_x_dots;
-                    g_logical_screen_x_dots = g_view_x_dots;
+                    g_logical_screen.x_dots = g_view_x_dots;
                     g_view_y_dots = g_screen_y_dots;
-                    g_logical_screen_y_dots = g_view_y_dots;
+                    g_logical_screen.y_dots = g_view_y_dots;
                 }
                 // changed test to 1, so a 2x2 window will work with the sound feature
-                else if ((g_logical_screen_x_dots <= 1 || g_logical_screen_y_dots <= 1) &&
+                else if ((g_logical_screen.x_dots <= 1 || g_logical_screen.y_dots <= 1) &&
                     !bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
                 {
                     // so ssg works
                     // but no check if in evolve mode to allow lots of small views
                     stop_msg("View window too small; using full screen.");
                     g_view_window = false;
-                    g_logical_screen_x_dots = g_screen_x_dots;
-                    g_logical_screen_y_dots = g_screen_y_dots;
+                    g_logical_screen.x_dots = g_screen_x_dots;
+                    g_logical_screen.y_dots = g_screen_y_dots;
                 }
                 if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
                     bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))
@@ -445,26 +445,26 @@ MainState big_while_loop(MainContext &context)
                     stop_msg("Fractal doesn't terminate! switching off evolution.");
                     g_evolving ^= EvolutionModeFlags::FIELD_MAP;
                     g_view_window = false;
-                    g_logical_screen_x_dots = g_screen_x_dots;
-                    g_logical_screen_y_dots = g_screen_y_dots;
+                    g_logical_screen.x_dots = g_screen_x_dots;
+                    g_logical_screen.y_dots = g_screen_y_dots;
                 }
                 if (bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP))
                 {
                     const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-                    g_logical_screen_x_dots = g_screen_x_dots / g_evolve_image_grid_size - grout;
+                    g_logical_screen.x_dots = g_screen_x_dots / g_evolve_image_grid_size - grout;
                     // trim to multiple of 4 for SSG
-                    g_logical_screen_x_dots = g_logical_screen_x_dots - g_logical_screen_x_dots % 4;
-                    g_logical_screen_y_dots = g_screen_y_dots / g_evolve_image_grid_size - grout;
-                    g_logical_screen_y_dots = g_logical_screen_y_dots - g_logical_screen_y_dots % 4;
+                    g_logical_screen.x_dots = g_logical_screen.x_dots - g_logical_screen.x_dots % 4;
+                    g_logical_screen.y_dots = g_screen_y_dots / g_evolve_image_grid_size - grout;
+                    g_logical_screen.y_dots = g_logical_screen.y_dots - g_logical_screen.y_dots % 4;
                 }
                 else
                 {
-                    g_logical_screen_x_offset = (g_screen_x_dots - g_logical_screen_x_dots) / 2;
-                    g_logical_screen_y_offset = (g_screen_y_dots - g_logical_screen_y_dots) / 3;
+                    g_logical_screen.x_offset = (g_screen_x_dots - g_logical_screen.x_dots) / 2;
+                    g_logical_screen.y_offset = (g_screen_y_dots - g_logical_screen.y_dots) / 3;
                 }
             }
-            g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;            // convert just once now
-            g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
+            g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;            // convert just once now
+            g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
         }
         // assume we save next time (except jb)
         g_save_dac = g_save_dac == SaveDAC::NO ? SaveDAC::NEXT_TIME : SaveDAC::YES;
@@ -598,10 +598,10 @@ MainState big_while_loop(MainContext &context)
                     g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
                     g_evolve_param_grid_x           = g_evolve_info.px;
                     g_evolve_param_grid_y           = g_evolve_info.py;
-                    g_logical_screen_x_offset       = g_evolve_info.screen_x_offset;
-                    g_logical_screen_y_offset       = g_evolve_info.screen_y_offset;
-                    g_logical_screen_x_dots        = g_evolve_info.x_dots;
-                    g_logical_screen_y_dots        = g_evolve_info.y_dots;
+                    g_logical_screen.x_offset       = g_evolve_info.screen_x_offset;
+                    g_logical_screen.y_offset       = g_evolve_info.screen_y_offset;
+                    g_logical_screen.x_dots        = g_evolve_info.x_dots;
+                    g_logical_screen.y_dots        = g_evolve_info.y_dots;
                     g_evolve_image_grid_size = g_evolve_info.image_grid_size;
                     g_evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
                     g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
@@ -630,14 +630,14 @@ MainState big_while_loop(MainContext &context)
                 g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size -1);
                 g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size -1);
                 const int grout = bit_set(g_evolving, EvolutionModeFlags::NO_GROUT) ? 0 : 1;
-                const int tmp_x_dots = g_logical_screen_x_dots + grout;
-                const int tmp_y_dots = g_logical_screen_y_dots + grout;
+                const int tmp_x_dots = g_logical_screen.x_dots + grout;
+                const int tmp_y_dots = g_logical_screen.y_dots + grout;
                 const int grid_sqr = g_evolve_image_grid_size * g_evolve_image_grid_size;
                 while (count < grid_sqr)
                 {
                     spiral_map(count); // sets px & py
-                    g_logical_screen_x_offset = tmp_x_dots * g_evolve_param_grid_x;
-                    g_logical_screen_y_offset = tmp_y_dots * g_evolve_param_grid_y;
+                    g_logical_screen.x_offset = tmp_x_dots * g_evolve_param_grid_x;
+                    g_logical_screen.y_offset = tmp_y_dots * g_evolve_param_grid_y;
                     restore_param_history();
                     fiddle_params(gene, count);
                     calc_frac_init();
@@ -664,10 +664,10 @@ done:
                     g_evolve_info.discrete_y_parameter_offset = static_cast<short>(g_evolve_discrete_y_parameter_offset);
                     g_evolve_info.px              = static_cast<short>(g_evolve_param_grid_x);
                     g_evolve_info.py              = static_cast<short>(g_evolve_param_grid_y);
-                    g_evolve_info.screen_x_offset          = static_cast<short>(g_logical_screen_x_offset);
-                    g_evolve_info.screen_y_offset          = static_cast<short>(g_logical_screen_y_offset);
-                    g_evolve_info.x_dots           = static_cast<short>(g_logical_screen_x_dots);
-                    g_evolve_info.y_dots           = static_cast<short>(g_logical_screen_y_dots);
+                    g_evolve_info.screen_x_offset          = static_cast<short>(g_logical_screen.x_offset);
+                    g_evolve_info.screen_y_offset          = static_cast<short>(g_logical_screen.y_offset);
+                    g_evolve_info.x_dots           = static_cast<short>(g_logical_screen.x_dots);
+                    g_evolve_info.y_dots           = static_cast<short>(g_logical_screen.y_dots);
                     g_evolve_info.image_grid_size = static_cast<short>(g_evolve_image_grid_size);
                     g_evolve_info.this_generation_random_seed = static_cast<short>(g_evolve_this_generation_random_seed);
                     g_evolve_info.max_random_mutation = g_evolve_max_random_mutation;
@@ -675,10 +675,10 @@ done:
                     g_evolve_info.count          = static_cast<short>(count);
                     g_have_evolve_info = true;
                 }
-                g_logical_screen_y_offset = 0;
-                g_logical_screen_x_offset = 0;
-                g_logical_screen_x_dots = g_screen_x_dots;
-                g_logical_screen_y_dots = g_screen_y_dots; // otherwise save only saves a sub image and boxes get clipped
+                g_logical_screen.y_offset = 0;
+                g_logical_screen.x_offset = 0;
+                g_logical_screen.x_dots = g_screen_x_dots;
+                g_logical_screen.y_dots = g_screen_y_dots; // otherwise save only saves a sub image and boxes get clipped
 
                 // set up for 1st selected image, this reuses px and py
                 g_evolve_param_grid_y = g_evolve_image_grid_size /2;

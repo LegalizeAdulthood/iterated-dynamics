@@ -32,13 +32,13 @@ int ssg_block_size()
     // blocksize 4 if <300 rows, 8 if 300-599, 16 if 600-1199, 32 if >=1200
     int block_size = 4;
     int i = 300;
-    while (i <= g_logical_screen_y_dots)
+    while (i <= g_logical_screen.y_dots)
     {
         block_size += block_size;
         i += i;
     }
     // increase blocksize if prefix array not big enough
-    while (block_size*(MAX_X_BLK-2) < g_logical_screen_x_dots || block_size*(MAX_Y_BLK-2)*16 < g_logical_screen_y_dots)
+    while (block_size*(MAX_X_BLK-2) < g_logical_screen.x_dots || block_size*(MAX_Y_BLK-2)*16 < g_logical_screen.y_dots)
     {
         block_size += block_size;
     }
@@ -79,9 +79,9 @@ SolidGuess::SolidGuess() :
     m_guess_plot(g_plot != g_put_color && g_plot != sym_plot2 && g_plot != sym_plot2j),
     // check if guessing at bottom & right edges is ok
     m_bottom_guess(
-        g_plot == sym_plot2 || (g_plot == g_put_color && g_i_stop_pt.y + 1 == g_logical_screen_y_dots)),
+        g_plot == sym_plot2 || (g_plot == g_put_color && g_i_stop_pt.y + 1 == g_logical_screen.y_dots)),
     m_right_guess(g_plot == sym_plot2j ||
-        ((g_plot == g_put_color || g_plot == sym_plot2) && g_i_stop_pt.x + 1 == g_logical_screen_x_dots)),
+        ((g_plot == g_put_color || g_plot == sym_plot2) && g_i_stop_pt.x + 1 == g_logical_screen.x_dots)),
     m_max_block(ssg_block_size()),
     m_block_size(m_max_block)
 {
@@ -635,12 +635,12 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
         for (int i = 0; i < m_half_block; ++i)
         {
             j = g_stop_pt.y-(y+i-g_start_pt.y);
-            if (j > g_i_stop_pt.y && j < g_logical_screen_y_dots)
+            if (j > g_i_stop_pt.y && j < g_logical_screen.y_dots)
             {
                 write_span(j, g_start_pt.x, g_i_stop_pt.x, &m_stack[g_start_pt.x]);
             }
             j = g_stop_pt.y-(y+i+m_half_block-g_start_pt.y);
-            if (j > g_i_stop_pt.y && j < g_logical_screen_y_dots)
+            if (j > g_i_stop_pt.y && j < g_logical_screen.y_dots)
             {
                 write_span(j, g_start_pt.x, g_i_stop_pt.x, &m_stack[g_start_pt.x+OLD_MAX_PIXELS]);
             }

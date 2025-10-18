@@ -2845,8 +2845,8 @@ PalTable::~PalTable()
 
 void edit_palette()
 {
-    ValueSaver saved_logical_screen_x_offset(g_logical_screen_x_offset, 0);
-    ValueSaver saved_logical_screen_y_offset(g_logical_screen_y_offset, 0);
+    ValueSaver saved_logical_screen_x_offset(g_logical_screen.x_offset, 0);
+    ValueSaver saved_logical_screen_y_offset(g_logical_screen.y_offset, 0);
 
     if (g_screen_x_dots < 133 || g_screen_y_dots < 174)
     {

@@ -86,15 +86,15 @@ static void put_pot(const int x, const int y, U16 color)
           was already a "writedisk" in that case */
     if (!driver_is_disk())
     {
-        disk_write_pixel(x+g_logical_screen_x_offset, y+g_logical_screen_y_offset, color >> 8);    // upper 8 bits
+        disk_write_pixel(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, color >> 8);    // upper 8 bits
     }
-    disk_write_pixel(x+g_logical_screen_x_offset, y+g_screen_y_dots+g_logical_screen_y_offset, color&255); // lower 8 bits
+    disk_write_pixel(x+g_logical_screen.x_offset, y+g_screen_y_dots+g_logical_screen.y_offset, color&255); // lower 8 bits
 }
 
 // fixes border
 static void put_pot_border(const int x, const int y, U16 color)
 {
-    if (x == 0 || y == 0 || x == g_logical_screen_x_dots - 1 || y == g_logical_screen_y_dots - 1)
+    if (x == 0 || y == 0 || x == g_logical_screen.x_dots - 1 || y == g_logical_screen.y_dots - 1)
     {
         color = static_cast<U16>(g_outside_color);
     }
@@ -104,7 +104,7 @@ static void put_pot_border(const int x, const int y, U16 color)
 // fixes border
 static void put_color_border(const int x, const int y, int color)
 {
-    if (x == 0 || y == 0 || x == g_logical_screen_x_dots - 1 || y == g_logical_screen_y_dots - 1)
+    if (x == 0 || y == 0 || x == g_logical_screen.x_dots - 1 || y == g_logical_screen.y_dots - 1)
     {
         color = g_outside_color;
     }
@@ -114,10 +114,10 @@ static void put_color_border(const int x, const int y, int color)
 
 static U16 get_pot(const int x, const int y)
 {
-    U16 color = static_cast<U16>(disk_read_pixel(x + g_logical_screen_x_offset, y + g_logical_screen_y_offset));
+    U16 color = static_cast<U16>(disk_read_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset));
     color = static_cast<U16>((color << 8) +
         static_cast<U16>(
-            disk_read_pixel(x + g_logical_screen_x_offset, y + g_screen_y_dots + g_logical_screen_y_offset)));
+            disk_read_pixel(x + g_logical_screen.x_offset, y + g_screen_y_dots + g_logical_screen.y_offset)));
     return color;
 }
 
@@ -245,9 +245,9 @@ Plasma::Plasma() :
     }
 
     g_plot(0,      0,  m_rnd[0]);
-    g_plot(g_logical_screen_x_dots-1,      0,  m_rnd[1]);
-    g_plot(g_logical_screen_x_dots-1, g_logical_screen_y_dots-1,  m_rnd[2]);
-    g_plot(0, g_logical_screen_y_dots-1,  m_rnd[3]);
+    g_plot(g_logical_screen.x_dots-1,      0,  m_rnd[1]);
+    g_plot(g_logical_screen.x_dots-1, g_logical_screen.y_dots-1,  m_rnd[2]);
+    g_plot(0, g_logical_screen.y_dots-1,  m_rnd[3]);
 
     m_recur_level = 0;
 
@@ -258,7 +258,7 @@ Plasma::Plasma() :
         m_scale = 1;
     }
 
-    m_subdivs.push_back(Subdivision{0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, 0});
+    m_subdivs.push_back(Subdivision{0, 0, g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1, 0});
 }
 
 Plasma::~Plasma()
@@ -454,11 +454,11 @@ void Plasma::iterate()
     }
     else
     {
-        subdivide_new(0, 0, g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1, m_level);
+        subdivide_new(0, 0, g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1, m_level);
         if (!m_done)
         {
             m_k *= 2;
-            if (m_k  > static_cast<int>(std::max(g_logical_screen_x_dots - 1, g_logical_screen_y_dots - 1)))
+            if (m_k  > static_cast<int>(std::max(g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1)))
             {
                 m_done = true;
             }

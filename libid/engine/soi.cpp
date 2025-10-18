@@ -782,14 +782,14 @@ void soi()
         xx_max_l = g_image_region.m_max.x;
         yy_max_l = g_image_region.m_max.y;
     }
-    s_t_width = TOLERANCE / (g_logical_screen_x_dots - 1);
-    const double step_x = (xx_max_l - xx_min_l) / g_logical_screen_x_dots;
-    const double step_y = (yy_min_l - yy_max_l) / g_logical_screen_y_dots;
+    s_t_width = TOLERANCE / (g_logical_screen.x_dots - 1);
+    const double step_x = (xx_max_l - xx_min_l) / g_logical_screen.x_dots;
+    const double step_y = (yy_min_l - yy_max_l) / g_logical_screen.y_dots;
     s_equal = step_x < step_y ? step_x : step_y;
 
     rhombus2(xx_min_l, xx_max_l,                                //
         yy_max_l, yy_min_l,                                     //
-        0, g_logical_screen_x_dots, 0, g_logical_screen_y_dots, //
+        0, g_logical_screen.x_dots, 0, g_logical_screen.y_dots, //
         xx_min_l, yy_max_l,                                     //
         xx_max_l, yy_max_l,                                     //
         xx_min_l, yy_min_l,                                     //

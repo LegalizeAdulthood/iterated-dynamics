@@ -34,8 +34,8 @@ static int random(const int n)
     return static_cast<int>(static_cast<long>(std::rand()) * static_cast<long>(n) >> 15);
 }
 
-#define XO              (g_logical_screen_x_dots/2)
-#define YO              (g_logical_screen_y_dots/2)
+#define XO              (g_logical_screen.x_dots/2)
+#define YO              (g_logical_screen.y_dots/2)
 
 enum
 {
@@ -46,45 +46,45 @@ Ant::Ant()
 {
     for (int i = 0; i < DIRS; i++)
     {
-        inc_x[i].resize(g_logical_screen_x_dots + 2);
-        inc_y[i].resize(g_logical_screen_y_dots + 2);
+        inc_x[i].resize(g_logical_screen.x_dots + 2);
+        inc_y[i].resize(g_logical_screen.y_dots + 2);
     }
 
     // In this vectors put all the possible point that the ants can visit.
     // Wrap them from a side to the other instead of simply end calculation
-    for (int i = 0; i < g_logical_screen_x_dots; i++)
+    for (int i = 0; i < g_logical_screen.x_dots; i++)
     {
         inc_x[0][i] = i;
         inc_x[2][i] = i;
     }
 
-    for (int i = 0; i < g_logical_screen_x_dots; i++)
+    for (int i = 0; i < g_logical_screen.x_dots; i++)
     {
         inc_x[3][i] = i + 1;
     }
-    inc_x[3][g_logical_screen_x_dots - 1] = 0; // wrap from right of the screen to left
+    inc_x[3][g_logical_screen.x_dots - 1] = 0; // wrap from right of the screen to left
 
-    for (int i = 1; i < g_logical_screen_x_dots; i++)
+    for (int i = 1; i < g_logical_screen.x_dots; i++)
     {
         inc_x[1][i] = i - 1;
     }
-    inc_x[1][0] = g_logical_screen_x_dots - 1; // wrap from left of the screen to right
+    inc_x[1][0] = g_logical_screen.x_dots - 1; // wrap from left of the screen to right
 
-    for (int i = 0; i < g_logical_screen_y_dots; i++)
+    for (int i = 0; i < g_logical_screen.y_dots; i++)
     {
         inc_y[1][i] = i;
         inc_y[3][i] = i;
     }
-    for (int i = 0; i < g_logical_screen_y_dots; i++)
+    for (int i = 0; i < g_logical_screen.y_dots; i++)
     {
         inc_y[0][i] = i + 1;
     }
-    inc_y[0][g_logical_screen_y_dots - 1] = 0; // wrap from the top of the screen to the bottom
-    for (int i = 1; i < g_logical_screen_y_dots; i++)
+    inc_y[0][g_logical_screen.y_dots - 1] = 0; // wrap from the top of the screen to the bottom
+    for (int i = 1; i < g_logical_screen.y_dots; i++)
     {
         inc_y[2][i] = i - 1;
     }
-    inc_y[2][0] = g_logical_screen_y_dots - 1; // wrap from the bottom of the screen to the top
+    inc_y[2][0] = g_logical_screen.y_dots - 1; // wrap from the bottom of the screen to the top
 
     max_pts = std::abs(static_cast<long>(g_params[1]));
     max_ants = static_cast<int>(g_params[2]);
@@ -207,8 +207,8 @@ void Ant::init_mite1()
         else
         {
             dir[g_color] = random(DIRS);
-            x[g_color] = random(g_logical_screen_x_dots);
-            y[g_color] = random(g_logical_screen_y_dots);
+            x[g_color] = random(g_logical_screen.x_dots);
+            y[g_color] = random(g_logical_screen.y_dots);
         }
     }
 }
@@ -237,8 +237,8 @@ void Ant::turk_mite1(const bool step, const long wait)
             dir &= 3;
             if (!wrap)
             {
-                if ((dir == 0 && y == g_logical_screen_y_dots - 1) ||
-                    (dir == 1 && x == g_logical_screen_x_dots - 1) || (dir == 2 && y == 0) ||
+                if ((dir == 0 && y == g_logical_screen.y_dots - 1) ||
+                    (dir == 1 && x == g_logical_screen.x_dots - 1) || (dir == 2 && y == 0) ||
                     (dir == 3 && x == 0))
                 {
                     return;
@@ -269,8 +269,8 @@ void Ant::init_mite2()
             // x[0], y[0], dir[0]
             dir[color] = random(DIRS);
             rule[color] = std::rand() << random(2) | random(2);
-            x[color] = random(g_logical_screen_x_dots);
-            y[color] = random(g_logical_screen_y_dots);
+            x[color] = random(g_logical_screen.x_dots);
+            y[color] = random(g_logical_screen.y_dots);
         }
     }
     else
@@ -331,8 +331,8 @@ void Ant::turk_mite2(const bool step, const long wait)
             dir &= 3;
             if (!wrap)
             {
-                if ((dir == 0 && y == g_logical_screen_y_dots - 1) ||
-                    (dir == 1 && x == g_logical_screen_x_dots - 1) || (dir == 2 && y == 0) ||
+                if ((dir == 0 && y == g_logical_screen.y_dots - 1) ||
+                    (dir == 1 && x == g_logical_screen.x_dots - 1) || (dir == 2 && y == 0) ||
                     (dir == 3 && x == 0))
                 {
                     return;

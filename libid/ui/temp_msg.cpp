@@ -72,10 +72,10 @@ bool show_temp_msg(const char *msg)
     {
         s_text_save.clear();
     }
-    int save_screen_x_offset = g_logical_screen_x_offset;
-    int save_screen_y_offset = g_logical_screen_y_offset;
-    g_logical_screen_y_offset = 0;
-    g_logical_screen_x_offset = 0;
+    int save_screen_x_offset = g_logical_screen.x_offset;
+    int save_screen_y_offset = g_logical_screen.y_offset;
+    g_logical_screen.y_offset = 0;
+    g_logical_screen.x_offset = 0;
     if (s_text_save.empty()) // only save screen first time called
     {
         s_text_save.resize(s_text_x_dots*s_text_y_dots);
@@ -87,8 +87,8 @@ bool show_temp_msg(const char *msg)
 
     find_special_colors(); // get g_color_dark & g_color_bright set
     driver_display_string(0, 0, g_color_bright, g_color_dark, buffer);
-    g_logical_screen_x_offset = save_screen_x_offset;
-    g_logical_screen_y_offset = save_screen_y_offset;
+    g_logical_screen.x_offset = save_screen_x_offset;
+    g_logical_screen.y_offset = save_screen_y_offset;
 
     return false;
 }
@@ -101,10 +101,10 @@ void clear_temp_msg()
     }
     else if (!s_text_save.empty())
     {
-        int save_screen_x_offset = g_logical_screen_x_offset;
-        int save_screen_y_offset = g_logical_screen_y_offset;
-        g_logical_screen_y_offset = 0;
-        g_logical_screen_x_offset = 0;
+        int save_screen_x_offset = g_logical_screen.x_offset;
+        int save_screen_y_offset = g_logical_screen.y_offset;
+        g_logical_screen.y_offset = 0;
+        g_logical_screen.x_offset = 0;
         for (int i = 0; i < s_text_y_dots; ++i)
         {
             write_span(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);
@@ -113,8 +113,8 @@ void clear_temp_msg()
         {
             s_text_save.clear();
         }
-        g_logical_screen_x_offset = save_screen_x_offset;
-        g_logical_screen_y_offset = save_screen_y_offset;
+        g_logical_screen.x_offset = save_screen_x_offset;
+        g_logical_screen.y_offset = save_screen_y_offset;
         driver_flush();
     }
 }

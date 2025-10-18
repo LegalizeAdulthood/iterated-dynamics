@@ -210,7 +210,7 @@ static bool tab_display2(char *msg)
     /*
         write_row(row++, "xdots %d ydots %d sxdots %d sydots %d", xdots, ydots, sxdots, sydots);
     */
-    write_row(row++, "%dx%d %s (%s)", g_logical_screen_x_dots, g_logical_screen_y_dots,
+    write_row(row++, "%dx%d %s (%s)", g_logical_screen.x_dots, g_logical_screen.y_dots,
               g_driver->get_name().c_str(), g_driver->get_description().c_str());
     write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
               g_start_pt.x, g_stop_pt.x, g_start_pt.y, g_stop_pt.y,
@@ -694,9 +694,9 @@ static void area()
         stop_msg("Need solid inside to compute area");
         return;
     }
-    for (int y = 0; y < g_logical_screen_y_dots; y++)
+    for (int y = 0; y < g_logical_screen.y_dots; y++)
     {
-        for (int x = 0; x < g_logical_screen_x_dots; x++)
+        for (int x = 0; x < g_logical_screen.x_dots; x++)
         {
             if (get_color(x, y) == g_inside_color)
             {
@@ -714,9 +714,9 @@ static void area()
     }
     const DComplex size{g_image_region.size()};
     std::sprintf(buf, "%s%ld inside pixels of %ld%s%f", msg, cnt,
-        static_cast<long>(g_logical_screen_x_dots) * static_cast<long>(g_logical_screen_y_dots),
+        static_cast<long>(g_logical_screen.x_dots) * static_cast<long>(g_logical_screen.y_dots),
         ".  Total area ",
-        cnt / (static_cast<float>(g_logical_screen_x_dots) * static_cast<float>(g_logical_screen_y_dots)) *
+        cnt / (static_cast<float>(g_logical_screen.x_dots) * static_cast<float>(g_logical_screen.y_dots)) *
             size.x * size.y);
     stop_msg(StopMsgFlags::NO_BUZZER, buf);
 }

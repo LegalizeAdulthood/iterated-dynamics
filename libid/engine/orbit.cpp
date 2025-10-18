@@ -57,21 +57,21 @@ static void plot_d_orbit(const double dx, const double dy, const int color)
         return;
     }
     int i = static_cast<int>(dy * g_plot_mx1 - dx * g_plot_mx2);
-    i += g_logical_screen_x_offset;
+    i += g_logical_screen.x_offset;
     if (i < 0 || i >= g_screen_x_dots)
     {
         return;
     }
     int j = static_cast<int>(dx * g_plot_my1 - dy * g_plot_my2);
-    j += g_logical_screen_y_offset;
+    j += g_logical_screen.y_offset;
     if (j < 0 || j >= g_screen_y_dots)
     {
         return;
     }
-    int save_screen_x_offset = g_logical_screen_x_offset;
-    int save_screen_y_offset = g_logical_screen_y_offset;
-    g_logical_screen_y_offset = 0;
-    g_logical_screen_x_offset = 0;
+    int save_screen_x_offset = g_logical_screen.x_offset;
+    int save_screen_y_offset = g_logical_screen.y_offset;
+    g_logical_screen.y_offset = 0;
+    g_logical_screen.x_offset = 0;
     // save orbit value
     if (color == -1)
     {
@@ -85,17 +85,17 @@ static void plot_d_orbit(const double dx, const double dy, const int color)
     {
         g_put_color(i, j, color);
     }
-    g_logical_screen_x_offset = save_screen_x_offset;
-    g_logical_screen_y_offset = save_screen_y_offset;
+    g_logical_screen.x_offset = save_screen_x_offset;
+    g_logical_screen.y_offset = save_screen_y_offset;
     if (g_debug_flag == DebugFlags::FORCE_SCALED_SOUND_FORMULA)
     {
         if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_X)   // sound = x
         {
-            write_sound(i * 1000 / g_logical_screen_x_dots + g_base_hertz);
+            write_sound(i * 1000 / g_logical_screen.x_dots + g_base_hertz);
         }
         else if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X)     // sound = y or z
         {
-            write_sound(j * 1000 / g_logical_screen_y_dots + g_base_hertz);
+            write_sound(j * 1000 / g_logical_screen.y_dots + g_base_hertz);
         }
         else if (g_orbit_delay > 0)
         {
@@ -133,8 +133,8 @@ void plot_orbit(const double real, const double imag, const int color)
 void scrub_orbit()
 {
     driver_mute();
-    ValueSaver save_screen_x_offset{g_logical_screen_x_offset, 0};
-    ValueSaver save_screen_y_offset{g_logical_screen_y_offset, 0};
+    ValueSaver save_screen_x_offset{g_logical_screen.x_offset, 0};
+    ValueSaver save_screen_y_offset{g_logical_screen.y_offset, 0};
     while (g_orbit_save_index >= 3)
     {
         const int c = s_save_orbit[--g_orbit_save_index];

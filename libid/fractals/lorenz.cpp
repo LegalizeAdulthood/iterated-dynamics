@@ -262,7 +262,7 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     {
         return true;
     }
-    const double xd = g_logical_screen_x_size_dots / det;
+    const double xd = g_logical_screen.x_size_dots / det;
     scrn_cnvt->a =  xd*(g_image_region.m_max.y-g_image_region.m_3rd.y);
     scrn_cnvt->b =  xd*(g_image_region.width3());
     scrn_cnvt->e = -scrn_cnvt->a*g_image_region.m_min.x - scrn_cnvt->b*g_image_region.m_max.y;
@@ -274,7 +274,7 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     {
         return true;
     }
-    const double yd = g_logical_screen_y_size_dots / det;
+    const double yd = g_logical_screen.y_size_dots / det;
     scrn_cnvt->c =  yd*(g_image_region.m_min.y-g_image_region.m_3rd.y);
     scrn_cnvt->d =  yd*(g_image_region.m_3rd.x-g_image_region.m_max.x);
     scrn_cnvt->f = -scrn_cnvt->c*g_image_region.m_min.x - scrn_cnvt->d*g_image_region.m_max.y;
@@ -528,7 +528,7 @@ int inverse_julia_orbit()
     g_new_z = complex_sqrt_float(g_new_z.x - s_cx, g_new_z.y - s_cy);
     const int left_right = random(2) ? 1 : -1;
 
-    if (new_col < 1 || new_col >= g_logical_screen_x_dots || new_row < 1 || new_row >= g_logical_screen_y_dots)
+    if (new_col < 1 || new_col >= g_logical_screen.x_dots || new_row < 1 || new_row >= g_logical_screen.y_dots)
     {
         /*
          * MIIM must skip points that are off the screen boundary,
@@ -1027,7 +1027,7 @@ void Orbit2D::iterate()
 
     const int col = static_cast<int>(m_cvt.a * m_x + m_cvt.b * m_y + m_cvt.e);
     const int row = static_cast<int>(m_cvt.c * m_x + m_cvt.d * m_y + m_cvt.f);
-    if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
+    if (col >= 0 && col < g_logical_screen.x_dots && row >= 0 && row < g_logical_screen.y_dots)
     {
         if (m_sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
         {
@@ -1305,8 +1305,8 @@ void Dynamic2D::iterate()
         }
 
         // Our pixel position on the screen
-        m_x_pixel = g_logical_screen_x_size_dots * (m_x_step + .5) / s_d;
-        m_y_pixel = g_logical_screen_y_size_dots * (m_y_step + .5) / s_d;
+        m_x_pixel = g_logical_screen.x_size_dots * (m_x_step + .5) / s_d;
+        m_y_pixel = g_logical_screen.y_size_dots * (m_y_step + .5) / s_d;
         m_x = static_cast<double>(g_image_region.m_min.x + g_delta_x * m_x_pixel + g_delta_x2 * m_y_pixel);
         m_y = static_cast<double>(g_image_region.m_max.y - g_delta_y * m_y_pixel + -g_delta_y2 * m_x_pixel);
         if (g_fractal_type == FractalType::MANDEL_CLOUD)
@@ -1336,7 +1336,7 @@ void Dynamic2D::iterate()
 
         const int col = static_cast<int>(m_cvt.a * m_x + m_cvt.b * m_y + m_cvt.e);
         const int row = static_cast<int>(m_cvt.c * m_x + m_cvt.d * m_y + m_cvt.f);
-        if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
+        if (col >= 0 && col < g_logical_screen.x_dots && row >= 0 && row < g_logical_screen.y_dots)
         {
             if (m_sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
             {
@@ -1389,7 +1389,7 @@ static int setup_orbits_to_screen(Affine *scrn_cnvt)
     {
         return -1;
     }
-    const double xd = g_logical_screen_x_size_dots / det;
+    const double xd = g_logical_screen.x_size_dots / det;
     scrn_cnvt->a =  xd*(g_orbit_corner.m_max.y-g_orbit_corner.m_3rd.y);
     scrn_cnvt->b =  xd*g_orbit_corner.width3();
     scrn_cnvt->e = -scrn_cnvt->a*g_orbit_corner.m_min.x - scrn_cnvt->b*g_orbit_corner.m_max.y;
@@ -1401,7 +1401,7 @@ static int setup_orbits_to_screen(Affine *scrn_cnvt)
     {
         return -1;
     }
-    const double yd = g_logical_screen_y_size_dots / det;
+    const double yd = g_logical_screen.y_size_dots / det;
     scrn_cnvt->c =  yd*(g_orbit_corner.m_min.y-g_orbit_corner.m_3rd.y);
     scrn_cnvt->d =  yd*(g_orbit_corner.m_3rd.x-g_orbit_corner.m_max.x);
     scrn_cnvt->f = -scrn_cnvt->c*g_orbit_corner.m_min.x - scrn_cnvt->d*g_orbit_corner.m_max.y;
@@ -1512,7 +1512,7 @@ int plot_orbits2d()
         // else count >= orbit_delay, and we want to plot it
         const int col = static_cast<int>(s_o_cvt.a * g_new_z.x + s_o_cvt.b * g_new_z.y + s_o_cvt.e);
         const int row = static_cast<int>(s_o_cvt.c * g_new_z.x + s_o_cvt.d * g_new_z.y + s_o_cvt.f);
-        if (col > 0 && col < g_logical_screen_x_dots && row > 0 && row < g_logical_screen_y_dots)
+        if (col > 0 && col < g_logical_screen.x_dots && row > 0 && row < g_logical_screen.y_dots)
         {
             // plot if on the screen
             if (sound_var && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
@@ -1581,13 +1581,13 @@ int funny_glasses_call(int (*calc)())
         }
     }
 done:
-    if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
+    if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen.x_dots)
     {
         // turn off view windows so will save properly
-        g_logical_screen_x_offset = 0;
-        g_logical_screen_y_offset = 0;
-        g_logical_screen_x_dots = g_screen_x_dots;
-        g_logical_screen_y_dots = g_screen_y_dots;
+        g_logical_screen.x_offset = 0;
+        g_logical_screen.y_offset = 0;
+        g_logical_screen.x_dots = g_screen_x_dots;
+        g_logical_screen.y_dots = g_screen_y_dots;
         g_view_window = false;
     }
     return status;
@@ -1771,7 +1771,7 @@ void IFS2D::iterate()
     // plot if inside window
     const int col = static_cast<int>(m_cvt.a * m_x + m_cvt.b * m_y + m_cvt.e);
     const int row = static_cast<int>(m_cvt.c * m_x + m_cvt.d * m_y + m_cvt.f);
-    if (col >= 0 && col < g_logical_screen_x_dots && row >= 0 && row < g_logical_screen_y_dots)
+    if (col >= 0 && col < g_logical_screen.x_dots && row >= 0 && row < g_logical_screen.y_dots)
     {
         int color;
         if (m_color_method == IFSColorMethod::TRANSFORM_INDEX)
@@ -1883,8 +1883,8 @@ static bool float_view_transf3d(ViewTransform3D *inf)
 
             // apply perspective shift
             const DComplex size{g_image_region.size()};
-            tmp_x += static_cast<double>(g_x_shift) * size.x / g_logical_screen_x_dots;
-            tmp_y += static_cast<double>(g_y_shift) * size.y / g_logical_screen_y_dots;
+            tmp_x += static_cast<double>(g_x_shift) * size.x / g_logical_screen.x_dots;
+            tmp_y += static_cast<double>(g_y_shift) * size.y / g_logical_screen.y_dots;
             double tmp_z = -inf->max_vals[2];
             trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
 
@@ -1894,8 +1894,8 @@ static bool float_view_transf3d(ViewTransform3D *inf)
                 tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/2.0; // center x
                 tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
 
-                tmp_x += static_cast<double>(g_x_shift1) * size.x / g_logical_screen_x_dots;
-                tmp_y += static_cast<double>(g_y_shift1) * size.y / g_logical_screen_y_dots;
+                tmp_x += static_cast<double>(g_x_shift1) * size.x / g_logical_screen.x_dots;
+                tmp_y += static_cast<double>(g_y_shift1) * size.y / g_logical_screen.y_dots;
                 tmp_z = -inf->max_vals[2];
                 trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
             }
@@ -1916,7 +1916,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
         inf->cvt.c * inf->view_vect[0] + inf->cvt.d * inf->view_vect[1] + inf->cvt.f + g_yy_adjust);
     inf->col = static_cast<int>(
         inf->cvt.a * inf->view_vect[0] + inf->cvt.b * inf->view_vect[1] + inf->cvt.e + g_xx_adjust);
-    if (inf->col < 0 || inf->col >= g_logical_screen_x_dots || inf->row < 0 || inf->row >= g_logical_screen_y_dots)
+    if (inf->col < 0 || inf->col >= g_logical_screen.x_dots || inf->row < 0 || inf->row >= g_logical_screen.y_dots)
     {
         if (static_cast<long>(std::abs(inf->col)) + static_cast<long>(std::abs(inf->row)) > BAD_PIXEL)
         {
@@ -1935,7 +1935,7 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             inf->cvt.c * inf->view_vect1[0] + inf->cvt.d * inf->view_vect1[1] + inf->cvt.f + g_yy_adjust1);
         inf->col1 = static_cast<int>(
             inf->cvt.a * inf->view_vect1[0] + inf->cvt.b * inf->view_vect1[1] + inf->cvt.e + g_xx_adjust1);
-        if (inf->col1 < 0 || inf->col1 >= g_logical_screen_x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen_y_dots)
+        if (inf->col1 < 0 || inf->col1 >= g_logical_screen.x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen.y_dots)
         {
             if (static_cast<long>(std::abs(inf->col1)) + static_cast<long>(std::abs(inf->row1)) > BAD_PIXEL)
             {

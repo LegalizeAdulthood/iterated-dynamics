@@ -952,7 +952,7 @@ int read_overlay()      // read overlay/3D files, if required
     if (g_overlay_3d)
     {
         g_init_mode = g_adapter;          // use previous adapter mode for overlays
-        if (g_file_x_dots > g_logical_screen_x_dots || g_file_y_dots > g_logical_screen_y_dots)
+        if (g_file_x_dots > g_logical_screen.x_dots || g_file_y_dots > g_logical_screen.y_dots)
         {
             stop_msg("Can't overlay with a larger image");
             g_init_mode = -1;
@@ -1100,10 +1100,10 @@ int read_overlay()      // read overlay/3D files, if required
         g_evolve_discrete_y_parameter_offset = g_evolve_new_discrete_y_parameter_offset;
         g_evolve_param_grid_x           = blk_6_info.px;
         g_evolve_param_grid_y           = blk_6_info.py;
-        g_logical_screen_x_offset       = blk_6_info.sx_offs;
-        g_logical_screen_y_offset       = blk_6_info.sy_offs;
-        g_logical_screen_x_dots        = blk_6_info.x_dots;
-        g_logical_screen_y_dots        = blk_6_info.y_dots;
+        g_logical_screen.x_offset       = blk_6_info.sx_offs;
+        g_logical_screen.y_offset       = blk_6_info.sy_offs;
+        g_logical_screen.x_dots        = blk_6_info.x_dots;
+        g_logical_screen.y_dots        = blk_6_info.y_dots;
         g_evolve_image_grid_size = blk_6_info.image_grid_size;
         g_evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
         g_evolve_max_random_mutation = blk_6_info.max_random_mutation;

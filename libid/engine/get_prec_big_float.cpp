@@ -65,7 +65,7 @@ int get_prec_bf(const ResolutionFlag flag)
     }
     else
     {
-        res = g_logical_screen_x_dots-1;
+        res = g_logical_screen.x_dots-1;
     }
 
     // bfxxdel = (bfxmax - bfx3rd)/(xdots-1)
@@ -78,7 +78,7 @@ int get_prec_bf(const ResolutionFlag flag)
 
     if (flag == ResolutionFlag::CURRENT)
     {
-        res = g_logical_screen_y_dots-1;
+        res = g_logical_screen.y_dots-1;
     }
 
     // bfyydel = (bfymax - bfy3rd)/(ydots-1)

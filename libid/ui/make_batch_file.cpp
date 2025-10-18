@@ -118,8 +118,8 @@ struct MakeParParams
     int y_multiple{1};
     char video_mode_key_name[5];
 
-    int piece_x_dots{g_logical_screen_x_dots};
-    int piece_y_dots{g_logical_screen_y_dots};
+    int piece_x_dots{g_logical_screen.x_dots};
+    int piece_y_dots{g_logical_screen.y_dots};
 
 private:
     bool m_prompt_record_colors{
@@ -1220,7 +1220,7 @@ static void write_batch_params(
         if (g_distance_estimator)
         {
             put_param(" distest=%ld/%d/%d/%d", g_distance_estimator, g_distance_estimator_width_factor,
-                     g_distance_estimator_x_dots?g_distance_estimator_x_dots:g_logical_screen_x_dots, g_distance_estimator_y_dots?g_distance_estimator_y_dots:g_logical_screen_y_dots);
+                     g_distance_estimator_x_dots?g_distance_estimator_x_dots:g_logical_screen.x_dots, g_distance_estimator_y_dots?g_distance_estimator_y_dots:g_logical_screen.y_dots);
         }
         if (g_old_demm_colors)
         {

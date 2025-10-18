@@ -38,8 +38,8 @@ MainState flip_image(MainContext &context)
     {
         clear_zoom_box(); // clear, don't copy, the zoombox
     }
-    const int x_half = g_logical_screen_x_dots / 2;
-    const int y_half = g_logical_screen_y_dots / 2;
+    const int x_half = g_logical_screen.x_dots / 2;
+    const int y_half = g_logical_screen.y_dots / 2;
     switch (context.key)
     {
     case ID_KEY_CTL_X:            // control-X - reverse X-axis
@@ -49,11 +49,11 @@ MainState flip_image(MainContext &context)
             {
                 break;
             }
-            for (int j = 0; j < g_logical_screen_y_dots; j++)
+            for (int j = 0; j < g_logical_screen.y_dots; j++)
             {
                 temp_dot = get_color(i, j);
-                g_put_color(i, j, get_color(g_logical_screen_x_dots-1-i, j));
-                g_put_color(g_logical_screen_x_dots-1-i, j, temp_dot);
+                g_put_color(i, j, get_color(g_logical_screen.x_dots-1-i, j));
+                g_put_color(g_logical_screen.x_dots-1-i, j, temp_dot);
             }
         }
         g_save_image_region.m_min.x = g_image_region.m_max.x + g_image_region.m_min.x - g_image_region.m_3rd.x;
@@ -81,11 +81,11 @@ MainState flip_image(MainContext &context)
             {
                 break;
             }
-            for (int i = 0; i < g_logical_screen_x_dots; i++)
+            for (int i = 0; i < g_logical_screen.x_dots; i++)
             {
                 temp_dot = get_color(i, j);
-                g_put_color(i, j, get_color(i, g_logical_screen_y_dots-1-j));
-                g_put_color(i, g_logical_screen_y_dots-1-j, temp_dot);
+                g_put_color(i, j, get_color(i, g_logical_screen.y_dots-1-j));
+                g_put_color(i, g_logical_screen.y_dots-1-j, temp_dot);
             }
         }
         g_save_image_region.m_min.x = g_image_region.m_3rd.x;
@@ -113,11 +113,11 @@ MainState flip_image(MainContext &context)
             {
                 break;
             }
-            for (int j = 0; j < g_logical_screen_y_dots; j++)
+            for (int j = 0; j < g_logical_screen.y_dots; j++)
             {
                 temp_dot = get_color(i, j);
-                g_put_color(i, j, get_color(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j));
-                g_put_color(g_logical_screen_x_dots-1-i, g_logical_screen_y_dots-1-j, temp_dot);
+                g_put_color(i, j, get_color(g_logical_screen.x_dots-1-i, g_logical_screen.y_dots-1-j));
+                g_put_color(g_logical_screen.x_dots-1-i, g_logical_screen.y_dots-1-j, temp_dot);
             }
         }
         g_save_image_region.m_min = g_image_region.m_max;

@@ -1149,10 +1149,10 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     {
         g_make_parameter_file_map = true;
     }
-    g_logical_screen_x_dots = g_file_x_dots;
-    g_logical_screen_y_dots = g_file_y_dots;
-    g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;
-    g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
+    g_logical_screen.x_dots = g_file_x_dots;
+    g_logical_screen.y_dots = g_file_y_dots;
+    g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;
+    g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
     calc_frac_init();
     make_batch_file();
     cmd_files_test::s_goodbye();

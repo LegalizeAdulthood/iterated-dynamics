@@ -235,7 +235,7 @@ void Tesseral::fill_box()
                 if (g_plot != g_put_color) // symmetry
                 {
                     if (const int k = g_stop_pt.y - (g_row - g_start_pt.y);
-                        k > g_i_stop_pt.y && k < g_logical_screen_y_dots)
+                        k > g_i_stop_pt.y && k < g_logical_screen.y_dots)
                     {
                         write_span(k, m_tp->x1 + 1, m_tp->x2 - 1, pixels.data());
                     }

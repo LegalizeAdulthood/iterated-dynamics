@@ -194,8 +194,8 @@ static int orbit_draw_function()
     double rotation;
     double skew;
     constexpr double FACTOR = PI / 180.0;
-    const double x_factor = g_logical_screen_x_dots / 2.0;
-    const double y_factor = g_logical_screen_y_dots / 2.0;
+    const double x_factor = g_logical_screen.x_dots / 2.0;
+    const double y_factor = g_logical_screen.y_dots / 2.0;
 
     int angle = g_begin_pt.x; // save angle in x parameter
 

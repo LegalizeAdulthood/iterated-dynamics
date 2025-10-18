@@ -138,7 +138,7 @@ int targa_start_disk(std::FILE *targa_fp, const int overhead)
     s_header_length = overhead;
     s_fp = targa_fp;
     g_disk_targa = true;
-    const int i = common_start_disk(g_logical_screen_x_dots * 3, g_logical_screen_y_dots, g_colors);
+    const int i = common_start_disk(g_logical_screen.x_dots * 3, g_logical_screen.y_dots, g_colors);
     s_high_offset = 100000000L; // targa not necessarily init'd to zeros
 
     return i;

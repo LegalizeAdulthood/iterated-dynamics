@@ -132,7 +132,7 @@ static void c_put_color(const int x, const int y, const int color)
     }
     if (s_window_style == JuliaWindowStyle::FULL_SCREEN)   // avoid overwriting fractal
     {
-        if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < g_logical_screen_y_dots)
+        if (0 <= x && x < g_logical_screen.x_dots && 0 <= y && y < g_logical_screen.y_dots)
         {
             return;
         }
@@ -153,7 +153,7 @@ static int c_get_color(const int x, const int y)
     }
     if (s_window_style == JuliaWindowStyle::FULL_SCREEN)   // avoid over reading fractal
     {
-        if (0 <= x && x < g_logical_screen_x_dots && 0 <= y && y < g_logical_screen_y_dots)
+        if (0 <= x && x < g_logical_screen.x_dots && 0 <= y && y < g_logical_screen.y_dots)
         {
             return 1000;
         }
@@ -494,8 +494,8 @@ private:
     double m_aspect{};
     bool m_actively_computing{true};
     bool m_first_time{true};
-    int m_old_screen_x_offset{g_logical_screen_x_offset};
-    int m_old_screen_y_offset{g_logical_screen_y_offset};
+    int m_old_screen_x_offset{g_logical_screen.x_offset};
+    int m_old_screen_y_offset{g_logical_screen.y_offset};
     int m_mouse_subscription{-1};
 
     static OrbitFlags s_mode; // point, circle, ...
@@ -523,7 +523,7 @@ void InverseJulia::start()
     s_show_numbers = false;
     g_using_jiim = true;
     g_line_buff.resize(std::max(g_screen_x_dots, g_screen_y_dots));
-    m_aspect = static_cast<double>(g_logical_screen_x_dots) * 3 / (static_cast<double>(g_logical_screen_y_dots) * 4); // assumes 4:3
+    m_aspect = static_cast<double>(g_logical_screen.x_dots) * 3 / (static_cast<double>(g_logical_screen.y_dots) * 4); // assumes 4:3
     m_actively_computing = true;
     set_aspect(m_aspect);
 
@@ -550,18 +550,18 @@ void InverseJulia::start()
     g_vesa_x_res = g_screen_x_dots;
     g_vesa_y_res = g_screen_y_dots;
 
-    if (g_logical_screen_x_offset != 0 || g_logical_screen_y_offset != 0) // we're in view windows
+    if (g_logical_screen.x_offset != 0 || g_logical_screen.y_offset != 0) // we're in view windows
     {
         ValueSaver saved_has_inverse(g_has_inverse, true);
-        save_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
-        g_logical_screen_x_offset = g_video_start_x;
-        g_logical_screen_y_offset = g_video_start_y;
-        restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
+        save_rect(0, 0, g_logical_screen.x_dots, g_logical_screen.y_dots);
+        g_logical_screen.x_offset = g_video_start_x;
+        g_logical_screen.y_offset = g_video_start_y;
+        restore_rect(0, 0, g_logical_screen.x_dots, g_logical_screen.y_dots);
     }
 
-    if (g_logical_screen_x_dots == g_vesa_x_res || g_logical_screen_y_dots == g_vesa_y_res ||
-        g_vesa_x_res - g_logical_screen_x_dots < g_vesa_x_res / 3 ||
-        g_vesa_y_res - g_logical_screen_y_dots < g_vesa_y_res / 3 || g_logical_screen_x_dots >= MAX_RECT)
+    if (g_logical_screen.x_dots == g_vesa_x_res || g_logical_screen.y_dots == g_vesa_y_res ||
+        g_vesa_x_res - g_logical_screen.x_dots < g_vesa_x_res / 3 ||
+        g_vesa_y_res - g_logical_screen.y_dots < g_vesa_y_res / 3 || g_logical_screen.x_dots >= MAX_RECT)
     {
         // this mode puts orbit/julia in an overlapping window 1/3 the size of the physical screen
         s_window_style = JuliaWindowStyle::LARGE;
@@ -572,13 +572,13 @@ void InverseJulia::start()
         m_x_off = g_video_start_x + s_win_width * 5 / 2;
         m_y_off = g_video_start_y + s_win_height * 5 / 2;
     }
-    else if (g_logical_screen_x_dots > g_vesa_x_res / 3 && g_logical_screen_y_dots > g_vesa_y_res / 3)
+    else if (g_logical_screen.x_dots > g_vesa_x_res / 3 && g_logical_screen.y_dots > g_vesa_y_res / 3)
     {
         s_window_style = JuliaWindowStyle::NO_OVERLAP;
-        s_win_width = g_vesa_x_res - g_logical_screen_x_dots;
-        s_win_height = g_vesa_y_res - g_logical_screen_y_dots;
-        s_corner_x = g_video_start_x + g_logical_screen_x_dots;
-        s_corner_y = g_video_start_y + g_logical_screen_y_dots;
+        s_win_width = g_vesa_x_res - g_logical_screen.x_dots;
+        s_win_height = g_vesa_y_res - g_logical_screen.y_dots;
+        s_corner_x = g_video_start_x + g_logical_screen.x_dots;
+        s_corner_y = g_video_start_y + g_logical_screen.y_dots;
         m_x_off = s_corner_x + s_win_width / 2;
         m_y_off = s_corner_y + s_win_height / 2;
     }
@@ -602,10 +602,10 @@ void InverseJulia::start()
     }
     else if (s_window_style == JuliaWindowStyle::FULL_SCREEN) // leave the fractal
     {
-        fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width - g_logical_screen_x_dots, s_win_height,
+        fill_rect(g_logical_screen.x_dots, s_corner_y, s_win_width - g_logical_screen.x_dots, s_win_height,
             g_color_dark);
-        fill_rect(s_corner_x, g_logical_screen_y_dots, g_logical_screen_x_dots,
-            s_win_height - g_logical_screen_y_dots, g_color_dark);
+        fill_rect(s_corner_x, g_logical_screen.y_dots, g_logical_screen.x_dots,
+            s_win_height - g_logical_screen.y_dots, g_color_dark);
     }
     else // blank whole window
     {
@@ -617,7 +617,7 @@ void InverseJulia::start()
     // reuse last location if inside window
     g_col = static_cast<int>(std::lround(m_cvt.a * g_save_c.x + m_cvt.b * g_save_c.y + m_cvt.e));
     g_row = static_cast<int>(std::lround(m_cvt.c * g_save_c.x + m_cvt.d * g_save_c.y + m_cvt.f));
-    if (g_col < 0 || g_col >= g_logical_screen_x_dots || g_row < 0 || g_row >= g_logical_screen_y_dots)
+    if (g_col < 0 || g_col >= g_logical_screen.x_dots || g_row < 0 || g_row >= g_logical_screen.y_dots)
     {
         m_c = g_image_region.center();
     }
@@ -794,7 +794,7 @@ bool InverseJulia::handle_key_press(bool &still)
         }
         else if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res)
         {
-            restore_rect(g_video_start_x, g_video_start_y, g_logical_screen_x_dots, g_logical_screen_y_dots);
+            restore_rect(g_video_start_x, g_video_start_y, g_logical_screen.x_dots, g_logical_screen.y_dots);
             s_window_style = JuliaWindowStyle::FULL_SCREEN;
         }
         break;
@@ -837,14 +837,14 @@ bool InverseJulia::handle_key_press(bool &still)
     g_row += d_row;
 
     // keep cursor in logical screen
-    if (g_col >= g_logical_screen_x_dots)
+    if (g_col >= g_logical_screen.x_dots)
     {
-        g_col = g_logical_screen_x_dots - 1;
+        g_col = g_logical_screen.x_dots - 1;
         m_exact = false;
     }
-    if (g_row >= g_logical_screen_y_dots)
+    if (g_row >= g_logical_screen.y_dots)
     {
-        g_row = g_logical_screen_y_dots - 1;
+        g_row = g_logical_screen.y_dots - 1;
         m_exact = false;
     }
     if (g_col < 0)
@@ -1214,10 +1214,10 @@ bool InverseJulia::iterate()
         }
         if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
         {
-            fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width - g_logical_screen_x_dots,
+            fill_rect(g_logical_screen.x_dots, s_corner_y, s_win_width - g_logical_screen.x_dots,
                 s_win_height - (s_show_numbers ? NUMBER_FONT_HEIGHT : 0), g_color_dark);
-            fill_rect(s_corner_x, g_logical_screen_y_dots, g_logical_screen_x_dots,
-                s_win_height - g_logical_screen_y_dots - (s_show_numbers ? NUMBER_FONT_HEIGHT : 0),
+            fill_rect(s_corner_x, g_logical_screen.y_dots, g_logical_screen.x_dots,
+                s_win_height - g_logical_screen.y_dots - (s_show_numbers ? NUMBER_FONT_HEIGHT : 0),
                 g_color_dark);
         }
         else
@@ -1280,10 +1280,10 @@ void InverseJulia::finish()
         {
             if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
             {
-                fill_rect(g_logical_screen_x_dots, s_corner_y, s_win_width - g_logical_screen_x_dots,
+                fill_rect(g_logical_screen.x_dots, s_corner_y, s_win_width - g_logical_screen.x_dots,
                     s_win_height, g_color_dark);
-                fill_rect(s_corner_x, g_logical_screen_y_dots, g_logical_screen_x_dots,
-                    s_win_height - g_logical_screen_y_dots, g_color_dark);
+                fill_rect(s_corner_x, g_logical_screen.y_dots, g_logical_screen.x_dots,
+                    s_win_height - g_logical_screen.y_dots, g_color_dark);
             }
             else
             {
@@ -1291,15 +1291,15 @@ void InverseJulia::finish()
             }
             if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res) // unhide
             {
-                restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
+                restore_rect(0, 0, g_logical_screen.x_dots, g_logical_screen.y_dots);
                 s_window_style = JuliaWindowStyle::FULL_SCREEN;
             }
             s_cursor.hide();
             ValueSaver saved_has_inverse{g_has_inverse, true};
-            save_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
-            g_logical_screen_x_offset = m_old_screen_x_offset;
-            g_logical_screen_y_offset = m_old_screen_y_offset;
-            restore_rect(0, 0, g_logical_screen_x_dots, g_logical_screen_y_dots);
+            save_rect(0, 0, g_logical_screen.x_dots, g_logical_screen.y_dots);
+            g_logical_screen.x_offset = m_old_screen_x_offset;
+            g_logical_screen.y_offset = m_old_screen_y_offset;
+            restore_rect(0, 0, g_logical_screen.x_dots, g_logical_screen.y_dots);
         }
     }
     g_cursor_mouse_tracking = false;
@@ -1314,12 +1314,12 @@ void InverseJulia::finish()
         g_view_reduction = 4.2F;
         g_view_crop = true;
         g_final_aspect_ratio = g_screen_aspect;
-        g_logical_screen_x_dots = g_screen_x_dots;
-        g_logical_screen_y_dots = g_screen_y_dots;
-        g_logical_screen_x_size_dots = g_logical_screen_x_dots - 1;
-        g_logical_screen_y_size_dots = g_logical_screen_y_dots - 1;
-        g_logical_screen_x_offset = 0;
-        g_logical_screen_y_offset = 0;
+        g_logical_screen.x_dots = g_screen_x_dots;
+        g_logical_screen.y_dots = g_screen_y_dots;
+        g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;
+        g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
+        g_logical_screen.x_offset = 0;
+        g_logical_screen.y_offset = 0;
         free_temp_msg();
     }
     else
