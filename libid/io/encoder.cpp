@@ -631,12 +631,12 @@ bool encoder()
     if (g_std_calc_mode == CalcMode::ORBIT)
     {
         OrbitsInfo orbits_info{};
-        orbits_info.orbit_corner_min_x     = g_orbit_corner_min_x;
-        orbits_info.orbit_corner_max_x     = g_orbit_corner_max_x;
-        orbits_info.orbit_corner_min_y     = g_orbit_corner_min_y;
-        orbits_info.orbit_corner_max_y     = g_orbit_corner_max_y;
-        orbits_info.orbit_corner_3rd_x     = g_orbit_corner_3rd_x;
-        orbits_info.orbit_corner_3rd_y     = g_orbit_corner_3rd_y;
+        orbits_info.orbit_corner_min_x     = g_orbit_corner.m_min.x;
+        orbits_info.orbit_corner_max_x     = g_orbit_corner.m_max.x;
+        orbits_info.orbit_corner_min_y     = g_orbit_corner.m_min.y;
+        orbits_info.orbit_corner_max_y     = g_orbit_corner.m_max.y;
+        orbits_info.orbit_corner_3rd_x     = g_orbit_corner.m_3rd.x;
+        orbits_info.orbit_corner_3rd_y     = g_orbit_corner.m_3rd.y;
         orbits_info.keep_screen_coords = static_cast<std::int16_t>(g_keep_screen_coords);
         orbits_info.draw_mode = static_cast<char>(g_draw_mode);
 

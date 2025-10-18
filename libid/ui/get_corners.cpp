@@ -271,36 +271,17 @@ int get_screen_corners()
 
     const bool old_use_center_mag = g_use_center_mag;
 
-    double save_x_min = g_image_region.m_min.x;  // save these for later since cvtcorners modifies them
-    double save_x_max = g_image_region.m_max.x;  // and we need to set them for cvtcentermag to work
-    double save_x_3rd = g_image_region.m_3rd.x;
-    double save_y_min = g_image_region.m_min.y;
-    double save_y_max = g_image_region.m_max.y;
-    double save_y_3rd = g_image_region.m_3rd.y;
+    const ImageRegion save_region{g_image_region}; // save these for later since cvtcorners modifies them
+                                                   // and we need to set them for cvtcentermag to work
 
     if (!g_set_orbit_corners && !g_keep_screen_coords)
     {
-        g_orbit_corner_min_x = g_image_region.m_min.x;
-        g_orbit_corner_max_x = g_image_region.m_max.x;
-        g_orbit_corner_3rd_x = g_image_region.m_3rd.x;
-        g_orbit_corner_min_y = g_image_region.m_min.y;
-        g_orbit_corner_max_y = g_image_region.m_max.y;
-        g_orbit_corner_3rd_y = g_image_region.m_3rd.y;
+        g_orbit_corner = g_image_region;
     }
 
-    double old_x_min = g_orbit_corner_min_x;
-    double old_x_max = g_orbit_corner_max_x;
-    double old_y_min = g_orbit_corner_min_y;
-    double old_y_max = g_orbit_corner_max_y;
-    double old_x_3rd = g_orbit_corner_3rd_x;
-    double old_y_3rd = g_orbit_corner_3rd_y;
+    const ImageRegion save_corner{g_orbit_corner};
 
-    g_image_region.m_min.x = g_orbit_corner_min_x;
-    g_image_region.m_max.x = g_orbit_corner_max_x;
-    g_image_region.m_min.y = g_orbit_corner_min_y;
-    g_image_region.m_max.y = g_orbit_corner_max_y;
-    g_image_region.m_3rd.x = g_orbit_corner_3rd_x;
-    g_image_region.m_3rd.y = g_orbit_corner_3rd_y;
+    g_image_region = g_orbit_corner;
 
 gsc_loop:
     const bool use_center_mag = g_use_center_mag;
@@ -321,19 +302,19 @@ gsc_loop:
     else
     {
         builder.comment("Top-Left Corner")
-            .double_number(x_prompt, g_orbit_corner_min_x)
-            .double_number(y_prompt, g_orbit_corner_max_y)
+            .double_number(x_prompt, g_orbit_corner.m_min.x)
+            .double_number(y_prompt, g_orbit_corner.m_max.y)
             .comment("Bottom-Right Corner")
-            .double_number(x_prompt, g_orbit_corner_max_x)
-            .double_number(y_prompt, g_orbit_corner_min_y);
-        if (g_orbit_corner_min_x == g_orbit_corner_3rd_x && g_orbit_corner_min_y == g_orbit_corner_3rd_y)
+            .double_number(x_prompt, g_orbit_corner.m_max.x)
+            .double_number(y_prompt, g_orbit_corner.m_min.y);
+        if (g_orbit_corner.m_min.x == g_orbit_corner.m_3rd.x && g_orbit_corner.m_min.y == g_orbit_corner.m_3rd.y)
         {
-            g_orbit_corner_3rd_y = 0;
-            g_orbit_corner_3rd_x = 0;
+            g_orbit_corner.m_3rd.y = 0;
+            g_orbit_corner.m_3rd.x = 0;
         }
         builder.comment("Bottom-left (zeros for top-left X, bottom-right Y)")
-            .double_number(x_prompt, g_orbit_corner_3rd_x)
-            .double_number(y_prompt, g_orbit_corner_3rd_y)
+            .double_number(x_prompt, g_orbit_corner.m_3rd.x)
+            .double_number(y_prompt, g_orbit_corner.m_3rd.y)
             .comment("Press F7 to switch to \"center-mag\" mode");
     }
     builder.comment("Press F4 to reset to type default values");
@@ -345,49 +326,27 @@ gsc_loop:
 
     if (prompt_ret < 0)
     {
-        g_use_center_mag = old_use_center_mag;
-        g_orbit_corner_min_x = old_x_min;
-        g_orbit_corner_max_x = old_x_max;
-        g_orbit_corner_min_y = old_y_min;
-        g_orbit_corner_max_y = old_y_max;
-        g_orbit_corner_3rd_x = old_x_3rd;
-        g_orbit_corner_3rd_y = old_y_3rd;
         // restore corners
-        g_image_region.m_min.x = save_x_min;
-        g_image_region.m_max.x = save_x_max;
-        g_image_region.m_min.y = save_y_min;
-        g_image_region.m_max.y = save_y_max;
-        g_image_region.m_3rd.x = save_x_3rd;
-        g_image_region.m_3rd.y = save_y_3rd;
+        g_use_center_mag = old_use_center_mag;
+        g_orbit_corner = save_corner;
+        g_image_region = g_save_image_region;
         return -1;
     }
 
     if (prompt_ret == ID_KEY_F4)
     {
         // reset to type defaults
-        g_orbit_corner_min_x = g_cur_fractal_specific->x_min;
-        g_orbit_corner_3rd_x = g_orbit_corner_min_x;
-        g_orbit_corner_max_x = g_cur_fractal_specific->x_max;
-        g_orbit_corner_min_y = g_cur_fractal_specific->y_min;
-        g_orbit_corner_3rd_y = g_orbit_corner_min_y;
-        g_orbit_corner_max_y = g_cur_fractal_specific->y_max;
-        g_image_region.m_min.x = g_orbit_corner_min_x;
-        g_image_region.m_max.x = g_orbit_corner_max_x;
-        g_image_region.m_min.y = g_orbit_corner_min_y;
-        g_image_region.m_max.y = g_orbit_corner_max_y;
-        g_image_region.m_3rd.x = g_orbit_corner_3rd_x;
-        g_image_region.m_3rd.y = g_orbit_corner_3rd_y;
+        g_orbit_corner.m_min.x = g_cur_fractal_specific->x_min;
+        g_orbit_corner.m_min.y = g_cur_fractal_specific->y_min;
+        g_orbit_corner.m_max.x = g_cur_fractal_specific->x_max;
+        g_orbit_corner.m_max.y = g_cur_fractal_specific->y_max;
+        g_orbit_corner.m_3rd = g_orbit_corner.m_min;
+        g_image_region = g_orbit_corner;
         if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
         {
             aspect_ratio_crop(g_screen_aspect, g_final_aspect_ratio);
+            g_orbit_corner = g_image_region;
         }
-
-        g_orbit_corner_min_x = g_image_region.m_min.x;
-        g_orbit_corner_max_x = g_image_region.m_max.x;
-        g_orbit_corner_min_y = g_image_region.m_min.y;
-        g_orbit_corner_max_y = g_image_region.m_max.y;
-        g_orbit_corner_3rd_x = g_image_region.m_min.x;
-        g_orbit_corner_3rd_y = g_image_region.m_min.y;
         goto gsc_loop;
     }
 
@@ -418,29 +377,23 @@ gsc_loop:
             }
             cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
             // set screen corners
-            g_orbit_corner_min_x = g_image_region.m_min.x;
-            g_orbit_corner_max_x = g_image_region.m_max.x;
-            g_orbit_corner_min_y = g_image_region.m_min.y;
-            g_orbit_corner_max_y = g_image_region.m_max.y;
-            g_orbit_corner_3rd_x = g_image_region.m_3rd.x;
-            g_orbit_corner_3rd_y = g_image_region.m_3rd.y;
+            g_orbit_corner = g_image_region;
         }
     }
     else
     {
         builder.read_comment();
-        g_orbit_corner_min_x = builder.read_double_number();
-        g_orbit_corner_max_y = builder.read_double_number();
+        g_orbit_corner.m_min.x = builder.read_double_number();
+        g_orbit_corner.m_max.y = builder.read_double_number();
         builder.read_comment();
-        g_orbit_corner_max_x = builder.read_double_number();
-        g_orbit_corner_min_y = builder.read_double_number();
+        g_orbit_corner.m_max.x = builder.read_double_number();
+        g_orbit_corner.m_min.y = builder.read_double_number();
         builder.read_comment();
-        g_orbit_corner_3rd_x = builder.read_double_number();
-        g_orbit_corner_3rd_y = builder.read_double_number();
-        if (g_orbit_corner_3rd_x == 0 && g_orbit_corner_3rd_y == 0)
+        g_orbit_corner.m_3rd.x = builder.read_double_number();
+        g_orbit_corner.m_3rd.y = builder.read_double_number();
+        if (g_orbit_corner.m_3rd.x == 0.0 && g_orbit_corner.m_3rd.y == 0.0)
         {
-            g_orbit_corner_3rd_x = g_orbit_corner_min_x;
-            g_orbit_corner_3rd_y = g_orbit_corner_min_y;
+            g_orbit_corner.m_3rd = g_orbit_corner.m_min;
         }
     }
 
@@ -459,35 +412,22 @@ gsc_loop:
         goto gsc_loop;
     }
 
-    if (!cmp_dbl(old_x_min, g_orbit_corner_min_x) && !cmp_dbl(old_x_max, g_orbit_corner_max_x) &&
-        !cmp_dbl(old_y_min, g_orbit_corner_min_y) && !cmp_dbl(old_y_max, g_orbit_corner_max_y) &&
-        !cmp_dbl(old_x_3rd, g_orbit_corner_3rd_x) && !cmp_dbl(old_y_3rd, g_orbit_corner_3rd_y))
+    const auto cmp_cmplx = [](const DComplex &lhs, const DComplex &rhs)
+    { return !cmp_dbl(lhs.x, rhs.x) && !cmp_dbl(lhs.y, rhs.y); };
+    if (!cmp_cmplx(save_corner.m_min, g_orbit_corner.m_min) && //
+        !cmp_cmplx(save_corner.m_max, g_orbit_corner.m_max) && //
+        !cmp_cmplx(save_corner.m_3rd, g_orbit_corner.m_3rd))
     {
         // no change, restore values to avoid drift
-        g_orbit_corner_min_x = old_x_min;
-        g_orbit_corner_max_x = old_x_max;
-        g_orbit_corner_min_y = old_y_min;
-        g_orbit_corner_max_y = old_y_max;
-        g_orbit_corner_3rd_x = old_x_3rd;
-        g_orbit_corner_3rd_y = old_y_3rd;
         // restore corners
-        g_image_region.m_min.x = save_x_min;
-        g_image_region.m_max.x = save_x_max;
-        g_image_region.m_min.y = save_y_min;
-        g_image_region.m_max.y = save_y_max;
-        g_image_region.m_3rd.x = save_x_3rd;
-        g_image_region.m_3rd.y = save_y_3rd;
+        g_orbit_corner = save_corner;
+        g_image_region = save_region;
         return 0;
     }
+
     g_set_orbit_corners = true;
     g_keep_screen_coords = true;
-    // restore corners
-    g_image_region.m_min.x = save_x_min;
-    g_image_region.m_max.x = save_x_max;
-    g_image_region.m_min.y = save_y_min;
-    g_image_region.m_max.y = save_y_max;
-    g_image_region.m_3rd.x = save_x_3rd;
-    g_image_region.m_3rd.y = save_y_3rd;
+    g_image_region = save_region;
     return 1;
 }
 

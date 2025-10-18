@@ -131,12 +131,7 @@ struct ImageHistory
     bool bof_match_book_images;
     int orbit_delay;
     long orbit_interval;
-    double orbit_corner_min_x;
-    double orbit_corner_max_x;
-    double orbit_corner_min_y;
-    double orbit_corner_max_y;
-    double orbit_corner_3_x;
-    double orbit_corner_3_y;
+    ImageRegion orbit_corner;
     bool keep_screen_coords;
     OrbitDrawMode draw_mode;
 };
@@ -234,12 +229,7 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.bof_match_book_images == rhs.bof_match_book_images                                       //
         && lhs.orbit_delay == rhs.orbit_delay                                                           //
         && lhs.orbit_interval == rhs.orbit_interval                                                     //
-        && lhs.orbit_corner_min_x == rhs.orbit_corner_min_x                                             //
-        && lhs.orbit_corner_max_x == rhs.orbit_corner_max_x                                             //
-        && lhs.orbit_corner_min_y == rhs.orbit_corner_min_y                                             //
-        && lhs.orbit_corner_max_y == rhs.orbit_corner_max_y                                             //
-        && lhs.orbit_corner_3_x == rhs.orbit_corner_3_x                                                 //
-        && lhs.orbit_corner_3_y == rhs.orbit_corner_3_y                                                 //
+        && lhs.orbit_corner == rhs.orbit_corner                                                         //
         && lhs.keep_screen_coords == rhs.keep_screen_coords                                             //
         && lhs.draw_mode == rhs.draw_mode;                                                              //
 }
@@ -474,12 +464,12 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("bof_match_book_images":)json" << value.bof_match_book_images << ',';
     str << R"json("orbit_delay":)json" << value.orbit_delay << ',';
     str << R"json("orbit_interval":)json" << value.orbit_interval << ',';
-    str << R"json("orbit_corner_min_x":)json" << value.orbit_corner_min_x << ',';
-    str << R"json("orbit_corner_max_x":)json" << value.orbit_corner_max_x << ',';
-    str << R"json("orbit_corner_min_y":)json" << value.orbit_corner_min_y << ',';
-    str << R"json("orbit_corner_max_y":)json" << value.orbit_corner_max_y << ',';
-    str << R"json("orbit_corner_3_x":)json" << value.orbit_corner_3_x << ',';
-    str << R"json("orbit_corner_3_y":)json" << value.orbit_corner_3_y << ',';
+    str << R"json("orbit_corner_min_x":)json" << value.orbit_corner.m_min.x << ',';
+    str << R"json("orbit_corner_max_x":)json" << value.orbit_corner.m_max.x << ',';
+    str << R"json("orbit_corner_min_y":)json" << value.orbit_corner.m_min.y << ',';
+    str << R"json("orbit_corner_max_y":)json" << value.orbit_corner.m_max.y << ',';
+    str << R"json("orbit_corner_3rd_x":)json" << value.orbit_corner.m_3rd.x << ',';
+    str << R"json("orbit_corner_3rd_y":)json" << value.orbit_corner.m_3rd.y << ',';
     str << R"json("keep_screen_coords":)json" << value.keep_screen_coords << ',';
     str << R"json("draw_mode":)json" << '"' << static_cast<char>(value.draw_mode) << '"';
     str << '}';
@@ -603,12 +593,7 @@ void save_history_info()
     current.bof_match_book_images = g_bof_match_book_images;
     current.orbit_delay = g_orbit_delay;
     current.orbit_interval = g_orbit_interval;
-    current.orbit_corner_min_x = g_orbit_corner_min_x;
-    current.orbit_corner_max_x = g_orbit_corner_max_x;
-    current.orbit_corner_min_y = g_orbit_corner_min_y;
-    current.orbit_corner_max_y = g_orbit_corner_max_y;
-    current.orbit_corner_3_x = g_orbit_corner_3rd_x;
-    current.orbit_corner_3_y = g_orbit_corner_3rd_y;
+    current.orbit_corner = g_orbit_corner;
     current.keep_screen_coords = g_keep_screen_coords;
     current.draw_mode = g_draw_mode;
     std::memcpy(current.dac_box, g_dac_box, 256*3);
@@ -786,12 +771,7 @@ void restore_history_info(const int i)
     g_bof_match_book_images = last.bof_match_book_images;
     g_orbit_delay = last.orbit_delay;
     g_orbit_interval = last.orbit_interval;
-    g_orbit_corner_min_x = last.orbit_corner_min_x;
-    g_orbit_corner_max_x = last.orbit_corner_max_x;
-    g_orbit_corner_min_y = last.orbit_corner_min_y;
-    g_orbit_corner_max_y = last.orbit_corner_max_y;
-    g_orbit_corner_3rd_x = last.orbit_corner_3_x;
-    g_orbit_corner_3rd_y = last.orbit_corner_3_y;
+    g_orbit_corner = last.orbit_corner;
     g_keep_screen_coords = last.keep_screen_coords;
     if (g_keep_screen_coords)
     {

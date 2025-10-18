@@ -133,19 +133,14 @@ static const double &PAR_B{g_params[1]};
 static const double &PAR_C{g_params[2]};
 static const double &PAR_D{g_params[3]};
 
-long g_max_count;
-Major g_major_method;
-Minor g_inverse_julia_minor_method;
+long g_max_count{};
+Major g_major_method{};
+Minor g_inverse_julia_minor_method{};
 
 bool g_keep_screen_coords{};
 bool g_set_orbit_corners{};
 long g_orbit_interval{};
-double g_orbit_corner_min_x{};
-double g_orbit_corner_min_y{};
-double g_orbit_corner_max_x{};
-double g_orbit_corner_max_y{};
-double g_orbit_corner_3rd_x{};
-double g_orbit_corner_3rd_y{};
+ImageRegion g_orbit_corner;
 
 // OrbitCalc is declared with no arguments so jump through hoops here
 static int orbit(double *x, double *y, double *z)
@@ -260,7 +255,9 @@ The same technique can be applied to the second set of equations:
 
 bool setup_convert_to_screen(Affine *scrn_cnvt)
 {
-    double det = g_image_region.width3() * (g_image_region.m_min.y - g_image_region.m_max.y) + (g_image_region.m_max.y - g_image_region.m_3rd.y) * g_image_region.width();
+    double det = //
+        g_image_region.width3() * (g_image_region.m_min.y - g_image_region.m_max.y) +
+        (g_image_region.m_max.y - g_image_region.m_3rd.y) * g_image_region.width();
     if (det == 0)
     {
         return true;
@@ -270,7 +267,9 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     scrn_cnvt->b =  xd*(g_image_region.width3());
     scrn_cnvt->e = -scrn_cnvt->a*g_image_region.m_min.x - scrn_cnvt->b*g_image_region.m_max.y;
 
-    det = (g_image_region.m_3rd.x-g_image_region.m_max.x)*(g_image_region.m_min.y-g_image_region.m_max.y) + (g_image_region.m_min.y-g_image_region.m_3rd.y) * g_image_region.width();
+    det = //
+        (g_image_region.m_3rd.x - g_image_region.m_max.x) * (g_image_region.m_min.y - g_image_region.m_max.y) +
+        (g_image_region.m_min.y - g_image_region.m_3rd.y) * g_image_region.width();
     if (det == 0)
     {
         return true;
@@ -1384,28 +1383,28 @@ void Dynamic2D::iterate()
 static int setup_orbits_to_screen(Affine *scrn_cnvt)
 {
     double det = //
-        (g_orbit_corner_3rd_x - g_orbit_corner_min_x) * (g_orbit_corner_min_y - g_orbit_corner_max_y) +
-        (g_orbit_corner_max_y - g_orbit_corner_3rd_y) * (g_orbit_corner_max_x - g_orbit_corner_min_x);
+        g_orbit_corner.width3() * (g_orbit_corner.m_min.y - g_orbit_corner.m_max.y) +
+        (g_orbit_corner.m_max.y - g_orbit_corner.m_3rd.y) * g_orbit_corner.width();
     if (det == 0)
     {
         return -1;
     }
     const double xd = g_logical_screen_x_size_dots / det;
-    scrn_cnvt->a =  xd*(g_orbit_corner_max_y-g_orbit_corner_3rd_y);
-    scrn_cnvt->b =  xd*(g_orbit_corner_3rd_x-g_orbit_corner_min_x);
-    scrn_cnvt->e = -scrn_cnvt->a*g_orbit_corner_min_x - scrn_cnvt->b*g_orbit_corner_max_y;
+    scrn_cnvt->a =  xd*(g_orbit_corner.m_max.y-g_orbit_corner.m_3rd.y);
+    scrn_cnvt->b =  xd*g_orbit_corner.width3();
+    scrn_cnvt->e = -scrn_cnvt->a*g_orbit_corner.m_min.x - scrn_cnvt->b*g_orbit_corner.m_max.y;
 
     det = //
-        (g_orbit_corner_3rd_x - g_orbit_corner_max_x) * (g_orbit_corner_min_y - g_orbit_corner_max_y) +
-        (g_orbit_corner_min_y - g_orbit_corner_3rd_y) * (g_orbit_corner_max_x - g_orbit_corner_min_x);
+        (g_orbit_corner.m_3rd.x - g_orbit_corner.m_max.x) * (g_orbit_corner.m_min.y - g_orbit_corner.m_max.y) +
+        (g_orbit_corner.m_min.y - g_orbit_corner.m_3rd.y) * g_orbit_corner.width();
     if (det == 0)
     {
         return -1;
     }
     const double yd = g_logical_screen_y_size_dots / det;
-    scrn_cnvt->c =  yd*(g_orbit_corner_min_y-g_orbit_corner_3rd_y);
-    scrn_cnvt->d =  yd*(g_orbit_corner_3rd_x-g_orbit_corner_max_x);
-    scrn_cnvt->f = -scrn_cnvt->c*g_orbit_corner_min_x - scrn_cnvt->d*g_orbit_corner_max_y;
+    scrn_cnvt->c =  yd*(g_orbit_corner.m_min.y-g_orbit_corner.m_3rd.y);
+    scrn_cnvt->d =  yd*(g_orbit_corner.m_3rd.x-g_orbit_corner.m_max.x);
+    scrn_cnvt->f = -scrn_cnvt->c*g_orbit_corner.m_min.x - scrn_cnvt->d*g_orbit_corner.m_max.y;
 
     return 0;
 }

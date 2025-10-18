@@ -2,6 +2,7 @@
 //
 #pragma once
 
+#include "engine/ImageRegion.h"
 #include "geometry/3d.h"
 
 #include <cstdio>
@@ -217,12 +218,7 @@ extern Minor                 g_inverse_julia_minor_method;
 extern bool                  g_keep_screen_coords;
 extern Major                 g_major_method;
 extern long                  g_max_count;
-extern double                g_orbit_corner_3rd_x;
-extern double                g_orbit_corner_3rd_y;
-extern double                g_orbit_corner_max_x;
-extern double                g_orbit_corner_max_y;
-extern double                g_orbit_corner_min_x;
-extern double                g_orbit_corner_min_y;
+extern engine::ImageRegion   g_orbit_corner;
 extern long                  g_orbit_interval;
 extern bool                  g_set_orbit_corners;
 

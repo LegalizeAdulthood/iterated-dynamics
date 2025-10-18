@@ -12,8 +12,8 @@ namespace id::math
 template <typename T>
 struct Complex
 {
-    T x;
-    T y;
+    T x{};
+    T y{};
 
     Complex &operator+=(const Complex &rhs)
     {

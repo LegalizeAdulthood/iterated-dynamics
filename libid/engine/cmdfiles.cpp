@@ -555,53 +555,53 @@ static void init_vars_fractal()
     set_trig_array(3, "cosh");                                                    //
     g_iteration_ranges.clear();                                                   //
     g_iteration_ranges_len = 0;                                                   //
-    g_use_center_mag = true;                              // use center-mag, not corners
-    g_color_state = ColorState::DEFAULT_MAP;              //
-    g_colors_preloaded = false;                           //
-    g_color_cycle_range_lo = 1;                           //
-    g_color_cycle_range_hi = 255;                         // color cycling default range
-    g_orbit_delay = 0;                                    // full speed orbits
-    g_orbit_interval = 1;                                 // plot all orbits
-    g_keep_screen_coords = false;                         //
-    g_draw_mode = OrbitDrawMode::RECTANGLE;               // passes=orbits draw mode
-    g_set_orbit_corners = false;                          //
-    g_orbit_corner_min_x = g_cur_fractal_specific->x_min; //
-    g_orbit_corner_max_x = g_cur_fractal_specific->x_max; //
-    g_orbit_corner_3rd_x = g_cur_fractal_specific->x_min; //
-    g_orbit_corner_min_y = g_cur_fractal_specific->y_min; //
-    g_orbit_corner_max_y = g_cur_fractal_specific->y_max; //
-    g_orbit_corner_3rd_y = g_cur_fractal_specific->y_min; //
-    g_math_tol[0] = 0.05;                                 // integer -> float transition is ignored
-    g_math_tol[1] = 0.05;                                 // float -> bignum transition
-    g_display_3d = Display3DMode::NONE;                   // 3D display is off
-    g_overlay_3d = false;                                 // 3D overlay is off
-    g_old_demm_colors = false;                            //
-    g_bailout_test = Bailout::MOD;                        //
-    set_bailout_formula(Bailout::MOD);                    //
-    g_new_bifurcation_functions_loaded = false;           // for old bifs
-    g_julibrot_x_min = -.83;                              //
-    g_julibrot_y_min = -.25;                              //
-    g_julibrot_x_max = -.83;                              //
-    g_julibrot_y_max = .25;                               //
-    g_julibrot_origin = 8;                                //
-    g_julibrot_height = 7;                                //
-    g_julibrot_width = 10;                                //
-    g_julibrot_dist = 24;                                 //
-    g_eyes = 2.5F;                                        //
-    g_julibrot_depth = 8;                                 //
-    g_new_orbit_type = FractalType::JULIA;                //
-    g_julibrot_z_dots = 128;                              //
-    init_vars3d();                                        //
-    g_base_hertz = 440;                                   // basic hertz rate
-    g_fm_volume = 63;                                     // full volume on soundcard o/p
-    g_hi_attenuation = 0;                                 // no attenuation of hi notes
-    g_fm_attack = 5;                                      // fast attack
-    g_fm_decay = 10;                                      // long decay
-    g_fm_sustain = 13;                                    // fairly high sustain level
-    g_fm_release = 5;                                     // short release
-    g_fm_wave_type = 0;                                   // sin wave
-    g_polyphony = 0;                                      // no polyphony
-    std::iota(&g_scale_map[0], &g_scale_map[11], 1);      // straight mapping of notes in octave
+    g_use_center_mag = true;                                // use center-mag, not corners
+    g_color_state = ColorState::DEFAULT_MAP;                //
+    g_colors_preloaded = false;                             //
+    g_color_cycle_range_lo = 1;                             //
+    g_color_cycle_range_hi = 255;                           // color cycling default range
+    g_orbit_delay = 0;                                      // full speed orbits
+    g_orbit_interval = 1;                                   // plot all orbits
+    g_keep_screen_coords = false;                           //
+    g_draw_mode = OrbitDrawMode::RECTANGLE;                 // passes=orbits draw mode
+    g_set_orbit_corners = false;                            //
+    g_orbit_corner.m_min.x = g_cur_fractal_specific->x_min; //
+    g_orbit_corner.m_min.y = g_cur_fractal_specific->y_min; //
+    g_orbit_corner.m_max.x = g_cur_fractal_specific->x_max; //
+    g_orbit_corner.m_max.y = g_cur_fractal_specific->y_max; //
+    g_orbit_corner.m_3rd.x = g_cur_fractal_specific->x_min; //
+    g_orbit_corner.m_3rd.y = g_cur_fractal_specific->y_min; //
+    g_math_tol[0] = 0.05;                                   // integer -> float transition is ignored
+    g_math_tol[1] = 0.05;                                   // float -> bignum transition
+    g_display_3d = Display3DMode::NONE;                     // 3D display is off
+    g_overlay_3d = false;                                   // 3D overlay is off
+    g_old_demm_colors = false;                              //
+    g_bailout_test = Bailout::MOD;                          //
+    set_bailout_formula(Bailout::MOD);                      //
+    g_new_bifurcation_functions_loaded = false;             // for old bifs
+    g_julibrot_x_min = -.83;                                //
+    g_julibrot_y_min = -.25;                                //
+    g_julibrot_x_max = -.83;                                //
+    g_julibrot_y_max = .25;                                 //
+    g_julibrot_origin = 8;                                  //
+    g_julibrot_height = 7;                                  //
+    g_julibrot_width = 10;                                  //
+    g_julibrot_dist = 24;                                   //
+    g_eyes = 2.5F;                                          //
+    g_julibrot_depth = 8;                                   //
+    g_new_orbit_type = FractalType::JULIA;                  //
+    g_julibrot_z_dots = 128;                                //
+    init_vars3d();                                          //
+    g_base_hertz = 440;                                     // basic hertz rate
+    g_fm_volume = 63;                                       // full volume on soundcard o/p
+    g_hi_attenuation = 0;                                   // no attenuation of hi notes
+    g_fm_attack = 5;                                        // fast attack
+    g_fm_decay = 10;                                        // long decay
+    g_fm_sustain = 13;                                      // fairly high sustain level
+    g_fm_release = 5;                                       // short release
+    g_fm_wave_type = 0;                                     // sin wave
+    g_polyphony = 0;                                        // no polyphony
+    std::iota(&g_scale_map[0], &g_scale_map[11], 1);        // straight mapping of notes in octave
 }
 
 // init vars affecting 3d
@@ -2702,17 +2702,17 @@ static CmdArgFlags cmd_orbit_corners(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_orbit_corner_min_x = cmd.float_vals[0];
-    g_orbit_corner_3rd_x = cmd.float_vals[0];
-    g_orbit_corner_max_x = cmd.float_vals[1];
-    g_orbit_corner_min_y = cmd.float_vals[2];
-    g_orbit_corner_3rd_y = cmd.float_vals[2];
-    g_orbit_corner_max_y = cmd.float_vals[3];
+    g_orbit_corner.m_min.x = cmd.float_vals[0];
+    g_orbit_corner.m_3rd.x = cmd.float_vals[0];
+    g_orbit_corner.m_max.x = cmd.float_vals[1];
+    g_orbit_corner.m_min.y = cmd.float_vals[2];
+    g_orbit_corner.m_3rd.y = cmd.float_vals[2];
+    g_orbit_corner.m_max.y = cmd.float_vals[3];
 
     if (cmd.total_params == 6)
     {
-        g_orbit_corner_3rd_x = cmd.float_vals[4];
-        g_orbit_corner_3rd_y = cmd.float_vals[5];
+        g_orbit_corner.m_3rd.x = cmd.float_vals[4];
+        g_orbit_corner.m_3rd.y = cmd.float_vals[5];
     }
     g_set_orbit_corners = true;
     g_keep_screen_coords = true;

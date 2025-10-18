@@ -1582,16 +1582,16 @@ static void write_batch_params(
         if (g_user_std_calc_mode == CalcMode::ORBIT && g_set_orbit_corners && g_keep_screen_coords)
         {
             put_param(" orbitcorners=");
-            const int x_digits = get_prec(g_orbit_corner_min_x, g_orbit_corner_max_x, g_orbit_corner_3rd_x);
-            const int y_digits = get_prec(g_orbit_corner_min_y, g_orbit_corner_max_y, g_orbit_corner_3rd_y);
-            put_float(0, g_orbit_corner_min_x, x_digits);
-            put_float(1, g_orbit_corner_max_x, x_digits);
-            put_float(1, g_orbit_corner_min_y, y_digits);
-            put_float(1, g_orbit_corner_max_y, y_digits);
-            if (g_orbit_corner_3rd_x != g_orbit_corner_min_x || g_orbit_corner_3rd_y != g_orbit_corner_min_y)
+            const int x_digits = get_prec(g_orbit_corner.m_min.x, g_orbit_corner.m_max.x, g_orbit_corner.m_3rd.x);
+            const int y_digits = get_prec(g_orbit_corner.m_min.y, g_orbit_corner.m_max.y, g_orbit_corner.m_3rd.y);
+            put_float(0, g_orbit_corner.m_min.x, x_digits);
+            put_float(1, g_orbit_corner.m_max.x, x_digits);
+            put_float(1, g_orbit_corner.m_min.y, y_digits);
+            put_float(1, g_orbit_corner.m_max.y, y_digits);
+            if (g_orbit_corner.m_3rd.x != g_orbit_corner.m_min.x || g_orbit_corner.m_3rd.y != g_orbit_corner.m_min.y)
             {
-                put_float(1, g_orbit_corner_3rd_x, x_digits);
-                put_float(1, g_orbit_corner_3rd_y, y_digits);
+                put_float(1, g_orbit_corner.m_3rd.x, x_digits);
+                put_float(1, g_orbit_corner.m_3rd.y, y_digits);
             }
         }
 
