@@ -13,8 +13,7 @@ enum class JIIMType
     ORBIT
 };
 
-extern double                g_julia_c_x;
-extern double                g_julia_c_y;
+extern math::DComplex        g_julia_c;
 extern math::DComplex        g_save_c;
 constexpr double             JULIA_C_NOT_SET{100000.0};
 

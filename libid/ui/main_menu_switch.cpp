@@ -151,17 +151,17 @@ static void toggle_mandelbrot_julia(MainContext &context)
             return;
         }
         set_fractal_type(g_cur_fractal_specific->to_julia);
-        if (g_julia_c_x == JULIA_C_NOT_SET || g_julia_c_y == JULIA_C_NOT_SET)
+        if (g_julia_c.x == JULIA_C_NOT_SET || g_julia_c.y == JULIA_C_NOT_SET)
         {
             g_params[0] = (g_image_region.m_max.x + g_image_region.m_min.x) / 2;
             g_params[1] = (g_image_region.m_max.y + g_image_region.m_min.y) / 2;
         }
         else
         {
-            g_params[0] = g_julia_c_x;
-            g_params[1] = g_julia_c_y;
-            g_julia_c_y = JULIA_C_NOT_SET;
-            g_julia_c_x = JULIA_C_NOT_SET;
+            g_params[0] = g_julia_c.x;
+            g_params[1] = g_julia_c.y;
+            g_julia_c.y = JULIA_C_NOT_SET;
+            g_julia_c.x = JULIA_C_NOT_SET;
         }
         s_j = g_save_image_region;
         context.from_mandel = true;

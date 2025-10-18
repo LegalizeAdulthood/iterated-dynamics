@@ -98,9 +98,8 @@ static float s_lucky_x{};                 //
 static float s_lucky_y{};                 //
 static CrossHairCursor s_cursor;          //
 
-double g_julia_c_x{JULIA_C_NOT_SET}; //
-double g_julia_c_y{JULIA_C_NOT_SET}; //
-DComplex g_save_c{-3000.0, -3000.0}; //
+DComplex g_julia_c{JULIA_C_NOT_SET, JULIA_C_NOT_SET}; //
+DComplex g_save_c{-3000.0, -3000.0};                  //
 
 static void set_aspect(double aspect)
 {
@@ -478,8 +477,7 @@ private:
     Affine m_cvt{};
     bool m_exact{};
     int m_count{};           // coloring julia
-    double m_c_real{};
-    double m_c_imag{};
+    DComplex m_c{};
     double m_r{};
     int m_x_factor{};
     int m_y_factor{}; // aspect ratio
@@ -621,20 +619,18 @@ void InverseJulia::start()
     g_row = static_cast<int>(std::lround(m_cvt.c * g_save_c.x + m_cvt.d * g_save_c.y + m_cvt.f));
     if (g_col < 0 || g_col >= g_logical_screen_x_dots || g_row < 0 || g_row >= g_logical_screen_y_dots)
     {
-        m_c_real = g_image_region.center_x();
-        m_c_imag = g_image_region.center_y();
+        m_c = g_image_region.center();
     }
     else
     {
-        m_c_real = g_save_c.x;
-        m_c_imag = g_save_c.y;
+        m_c = g_save_c;
     }
 
     m_old_y = -1;
     m_old_x = -1;
 
-    g_col = static_cast<int>(std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e));
-    g_row = static_cast<int>(std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f));
+    g_col = static_cast<int>(std::lround(m_cvt.a * m_c.x + m_cvt.b * m_c.y + m_cvt.e));
+    g_row = static_cast<int>(std::lround(m_cvt.c * m_c.x + m_cvt.d * m_c.y + m_cvt.f));
 
     fill_dx_array();
 
@@ -660,8 +656,8 @@ bool InverseJulia::handle_key_press(bool &still)
     constexpr int BIG_DELTA{4};
     constexpr int SMALL_DELTA{1};
     constexpr float ZOOM_INCREMENT{1.15f};
-    g_julia_c_x = JULIA_C_NOT_SET;
-    g_julia_c_y = JULIA_C_NOT_SET;
+    g_julia_c.x = JULIA_C_NOT_SET;
+    g_julia_c.y = JULIA_C_NOT_SET;
     switch (m_key)
     {
     case ID_KEY_CTL_KEYPAD_5: // ctrl - keypad 5
@@ -756,8 +752,7 @@ bool InverseJulia::handle_key_press(bool &still)
         break;
 
     case ID_KEY_SPACE:
-        g_julia_c_x = m_c_real;
-        g_julia_c_y = m_c_imag;
+        g_julia_c = m_c;
         return true;
 
     case 'c':
@@ -783,10 +778,10 @@ bool InverseJulia::handle_key_press(bool &still)
 
     case 'p':
     case 'P':
-        get_a_number(&m_c_real, &m_c_imag);
+        get_a_number(&m_c.x, &m_c.y);
         m_exact = true;
-        g_col = static_cast<int>(std::lround(m_cvt.a * m_c_real + m_cvt.b * m_c_imag + m_cvt.e));
-        g_row = static_cast<int>(std::lround(m_cvt.c * m_c_real + m_cvt.d * m_c_imag + m_cvt.f));
+        g_col = static_cast<int>(std::lround(m_cvt.a * m_c.x + m_cvt.b * m_c.y + m_cvt.e));
+        g_row = static_cast<int>(std::lround(m_cvt.c * m_c.x + m_cvt.d * m_c.y + m_cvt.f));
         d_row = 0;
         d_col = 0;
         break;
@@ -892,8 +887,8 @@ bool InverseJulia::iterate_jiim()
                 s_lucky_x = 0.0f;
                 for (int i = 0; i < 199; i++)
                 {
-                    g_old_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
-                    g_new_z = complex_sqrt_float(g_new_z.x - m_c_real, g_new_z.y - m_c_imag);
+                    g_old_z = complex_sqrt_float(g_old_z.x - m_c.x, g_old_z.y - m_c.y);
+                    g_new_z = complex_sqrt_float(g_new_z.x - m_c.x, g_new_z.y - m_c.y);
                     enqueue_float(static_cast<float>(g_new_z.x), static_cast<float>(g_new_z.y));
                     enqueue_float(static_cast<float>(-g_old_z.x), static_cast<float>(-g_old_z.y));
                 }
@@ -913,7 +908,7 @@ bool InverseJulia::iterate_jiim()
         if (m_color < s_max_hits)
         {
             c_put_color(m_x, m_y, m_color + 1);
-            g_new_z = complex_sqrt_float(g_old_z.x - m_c_real, g_old_z.y - m_c_imag);
+            g_new_z = complex_sqrt_float(g_old_z.x - m_c.x, g_old_z.y - m_c.y);
             enqueue_float(static_cast<float>(g_new_z.x), static_cast<float>(g_new_z.y));
             enqueue_float(static_cast<float>(-g_new_z.x), static_cast<float>(-g_new_z.y));
         }
@@ -921,8 +916,7 @@ bool InverseJulia::iterate_jiim()
     else
     {
         // not MIIM code.
-        g_old_z.x -= m_c_real;
-        g_old_z.y -= m_c_imag;
+        g_old_z -= m_c;
         m_r = g_old_z.x * g_old_z.x + g_old_z.y * g_old_z.y;
         if (m_r > 10.0)
         {
@@ -1148,15 +1142,15 @@ bool InverseJulia::iterate()
 
         if (!m_exact)
         {
-            m_c_real = g_dx_pixel();
-            m_c_imag = g_dy_pixel();
+            m_c.x = g_dx_pixel();
+            m_c.y = g_dy_pixel();
         }
 
         m_actively_computing = true;
         if (s_show_numbers) // write coordinates on screen
         {
             std::string msg{
-                fmt::format("{:16.14f} {:16.14f} {:3d}", m_c_real, m_c_imag, get_color(g_col, g_row))};
+                fmt::format("{:16.14f} {:16.14f} {:3d}", m_c.x, m_c.y, get_color(g_col, g_row))};
             if (s_window_style == JuliaWindowStyle::LARGE)
             {
                 // show temp msg will clear self if new msg is a different length - pad to length 40
@@ -1175,10 +1169,8 @@ bool InverseJulia::iterate()
         m_iter = 1;
         g_old_z.y = 0;
         g_old_z.x = 0;
-        g_init.x = m_c_real;
-        g_save_c.x = m_c_real;
-        g_init.y = m_c_imag;
-        g_save_c.y = m_c_imag;
+        g_init = m_c;
+        g_save_c = m_c;
 
         m_old_y = -1;
         m_old_x = -1;
@@ -1188,7 +1180,7 @@ bool InverseJulia::iterate()
             DComplex f1;
             DComplex f2;
             // Fixed points of Julia
-            DComplex sqrt = complex_sqrt_float(1 - 4 * m_c_real, -4 * m_c_imag);
+            DComplex sqrt = complex_sqrt_float(1 - 4 * m_c.x, -4 * m_c.y);
             f1.x = (1 + sqrt.x) / 2;
             f2.x = (1 - sqrt.x) / 2;
             f1.y = sqrt.y / 2;
