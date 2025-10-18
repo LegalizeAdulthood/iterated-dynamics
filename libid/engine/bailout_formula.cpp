@@ -19,11 +19,16 @@ int (*g_bailout_float)(){};
 int (*g_bailout_bignum)(){};
 int (*g_bailout_bigfloat)(){};
 
-static int fp_mod_bailout()
+static void get_sqr_mag()
 {
     g_temp_sqr_x = sqr(g_new_z.x);
     g_temp_sqr_y = sqr(g_new_z.y);
     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+}
+
+static int fp_mod_bailout()
+{
+    get_sqr_mag();
     if (g_magnitude >= g_magnitude_limit)
     {
         return 1;
@@ -34,9 +39,7 @@ static int fp_mod_bailout()
 
 static int fp_real_bailout()
 {
-    g_temp_sqr_x = sqr(g_new_z.x);
-    g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+    get_sqr_mag();
     if (g_temp_sqr_x >= g_magnitude_limit)
     {
         return 1;
@@ -47,9 +50,7 @@ static int fp_real_bailout()
 
 static int fp_imag_bailout()
 {
-    g_temp_sqr_x = sqr(g_new_z.x);
-    g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+    get_sqr_mag();
     if (g_temp_sqr_y >= g_magnitude_limit)
     {
         return 1;
@@ -60,9 +61,7 @@ static int fp_imag_bailout()
 
 static int fp_or_bailout()
 {
-    g_temp_sqr_x = sqr(g_new_z.x);
-    g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+    get_sqr_mag();
     if (g_temp_sqr_x >= g_magnitude_limit || g_temp_sqr_y >= g_magnitude_limit)
     {
         return 1;
@@ -73,9 +72,7 @@ static int fp_or_bailout()
 
 static int fp_and_bailout()
 {
-    g_temp_sqr_x = sqr(g_new_z.x);
-    g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+    get_sqr_mag();
     if (g_temp_sqr_x >= g_magnitude_limit && g_temp_sqr_y >= g_magnitude_limit)
     {
         return 1;
@@ -86,9 +83,7 @@ static int fp_and_bailout()
 
 static int fp_manh_bailout()
 {
-    g_temp_sqr_x = sqr(g_new_z.x);
-    g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+    get_sqr_mag();
     if (const double manh_mag = std::abs(g_new_z.x) + std::abs(g_new_z.y);
         manh_mag * manh_mag >= g_magnitude_limit)
     {
@@ -100,9 +95,7 @@ static int fp_manh_bailout()
 
 static int fp_manr_bailout()
 {
-    g_temp_sqr_x = sqr(g_new_z.x);
-    g_temp_sqr_y = sqr(g_new_z.y);
-    g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
+    get_sqr_mag();
     if (const double manr_mag = g_new_z.x + g_new_z.y; manr_mag * manr_mag >= g_magnitude_limit)
     {
         return 1;
