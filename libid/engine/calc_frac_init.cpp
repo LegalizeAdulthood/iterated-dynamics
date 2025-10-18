@@ -61,7 +61,7 @@ static int get_prec_dbl(const ResolutionFlag flag)
     }
 
     const LDouble x_delta = (static_cast<LDouble>(g_image_region.m_max.x) - static_cast<LDouble>(g_image_region.m_3rd.x)) / res;
-    const LDouble y_delta2 = (static_cast<LDouble>(g_image_region.m_3rd.y) - static_cast<LDouble>(g_image_region.m_min.y)) / res;
+    const LDouble y_delta2 = static_cast<LDouble>(g_image_region.height3()) / res;
 
     if (flag == ResolutionFlag::CURRENT)
     {
@@ -69,7 +69,7 @@ static int get_prec_dbl(const ResolutionFlag flag)
     }
 
     const LDouble y_delta = (static_cast<LDouble>(g_image_region.m_max.y) - static_cast<LDouble>(g_image_region.m_3rd.y)) / res;
-    const LDouble x_delta2 = (static_cast<LDouble>(g_image_region.m_3rd.x) - static_cast<LDouble>(g_image_region.m_min.x)) / res;
+    const LDouble x_delta2 = static_cast<LDouble>(g_image_region.width3()) / res;
 
     LDouble del1 = std::abs(x_delta) + std::abs(x_delta2);
     const LDouble del2 = std::abs(y_delta) + std::abs(y_delta2);
@@ -234,8 +234,7 @@ init_restart:
         {
             std::swap(g_image_region.m_min.y, g_image_region.m_max.y);
         }
-        g_image_region.m_3rd.x = g_image_region.m_min.x;
-        g_image_region.m_3rd.y = g_image_region.m_min.y;
+        g_image_region.m_3rd = g_image_region.m_min;
     }
 
     g_f_at_rad = 1.0/32768L;
@@ -250,8 +249,9 @@ init_restart:
         adjust_to_limits(1.0); // make sure all corners in valid range
         g_delta_x  = static_cast<LDouble>(g_image_region.m_max.x - g_image_region.m_3rd.x) / static_cast<LDouble>(g_logical_screen_x_size_dots); // calculate stepsizes
         g_delta_y  = static_cast<LDouble>(g_image_region.m_max.y - g_image_region.m_3rd.y) / static_cast<LDouble>(g_logical_screen_y_size_dots);
-        g_delta_x2 = static_cast<LDouble>(g_image_region.m_3rd.x - g_image_region.m_min.x) / static_cast<LDouble>(g_logical_screen_y_size_dots);
-        g_delta_y2 = static_cast<LDouble>(g_image_region.m_3rd.y - g_image_region.m_min.y) / static_cast<LDouble>(g_logical_screen_x_size_dots);
+        const DComplex size3{g_image_region.size3()};
+        g_delta_x2 = static_cast<LDouble>(size3.x) / static_cast<LDouble>(g_logical_screen_y_size_dots);
+        g_delta_y2 = static_cast<LDouble>(size3.y) / static_cast<LDouble>(g_logical_screen_x_size_dots);
         fill_dx_array();
     }
 
@@ -308,14 +308,14 @@ expand_retry:
                    to arbitrary precision sooner, but always later.*/
                 double test_x_try;
                 double test_x_exact;
-                if (std::abs(g_image_region.m_max.x - g_image_region.m_3rd.x) > std::abs(g_image_region.m_3rd.x - g_image_region.m_min.x))
+                if (std::abs(g_image_region.m_max.x - g_image_region.m_3rd.x) > std::abs(g_image_region.width3()))
                 {
                     test_x_exact = g_image_region.m_max.x - g_image_region.m_3rd.x;
                     test_x_try = dx0 - g_image_region.m_min.x;
                 }
                 else
                 {
-                    test_x_exact = g_image_region.m_3rd.x - g_image_region.m_min.x;
+                    test_x_exact = g_image_region.width3();
                     test_x_try = dx1;
                 }
                 double testy_try;
@@ -484,7 +484,8 @@ void adjust_corner()
         cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     }
 
-    f_temp = std::abs(g_image_region.m_3rd.x-g_image_region.m_min.x);
+    const DComplex size3{g_image_region.size3()};
+    f_temp = std::abs(size3.x);
     double f_temp2 = std::abs(g_image_region.m_max.x - g_image_region.m_3rd.x);
     if (f_temp < f_temp2)
     {
@@ -499,7 +500,7 @@ void adjust_corner()
         g_image_region.m_3rd.x = g_image_region.m_max.x;
     }
 
-    f_temp = std::abs(g_image_region.m_3rd.y-g_image_region.m_min.y);
+    f_temp = std::abs(size3.y);
     f_temp2 = std::abs(g_image_region.m_max.y-g_image_region.m_3rd.y);
     if (f_temp < f_temp2)
     {

@@ -9,6 +9,36 @@ namespace id::engine
 
 struct ImageRegion
 {
+    math::DComplex size() const
+    {
+        return m_max - m_min;
+    }
+
+    math::DComplex size3() const
+    {
+        return m_3rd - m_min;
+    }
+
+    double width() const
+    {
+        return m_max.x - m_min.x;
+    }
+
+    double width3() const
+    {
+        return m_3rd.x - m_min.x;
+    }
+
+    double height() const
+    {
+        return m_max.y - m_min.y;
+    }
+
+    double height3() const
+    {
+        return m_3rd.y - m_min.y;
+    }
+
     // for historical reasons (before rotation):
     //    top    left  corner of screen is (min.x,max.y)
     //    bottom left  corner of screen is (3rd.x,3rd.y)

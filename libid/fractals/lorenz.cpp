@@ -260,17 +260,17 @@ The same technique can be applied to the second set of equations:
 
 bool setup_convert_to_screen(Affine *scrn_cnvt)
 {
-    double det = (g_image_region.m_3rd.x - g_image_region.m_min.x) * (g_image_region.m_min.y - g_image_region.m_max.y) + (g_image_region.m_max.y - g_image_region.m_3rd.y) * (g_image_region.m_max.x - g_image_region.m_min.x);
+    double det = g_image_region.width3() * (g_image_region.m_min.y - g_image_region.m_max.y) + (g_image_region.m_max.y - g_image_region.m_3rd.y) * g_image_region.width();
     if (det == 0)
     {
         return true;
     }
     const double xd = g_logical_screen_x_size_dots / det;
     scrn_cnvt->a =  xd*(g_image_region.m_max.y-g_image_region.m_3rd.y);
-    scrn_cnvt->b =  xd*(g_image_region.m_3rd.x-g_image_region.m_min.x);
+    scrn_cnvt->b =  xd*(g_image_region.width3());
     scrn_cnvt->e = -scrn_cnvt->a*g_image_region.m_min.x - scrn_cnvt->b*g_image_region.m_max.y;
 
-    det = (g_image_region.m_3rd.x-g_image_region.m_max.x)*(g_image_region.m_min.y-g_image_region.m_max.y) + (g_image_region.m_min.y-g_image_region.m_3rd.y)*(g_image_region.m_max.x-g_image_region.m_min.x);
+    det = (g_image_region.m_3rd.x-g_image_region.m_max.x)*(g_image_region.m_min.y-g_image_region.m_max.y) + (g_image_region.m_min.y-g_image_region.m_3rd.y) * g_image_region.width();
     if (det == 0)
     {
         return true;
@@ -1883,8 +1883,9 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             double tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
 
             // apply perspective shift
-            tmp_x += static_cast<double>(g_x_shift) * (g_image_region.m_max.x - g_image_region.m_min.x) /g_logical_screen_x_dots;
-            tmp_y += static_cast<double>(g_y_shift) * (g_image_region.m_max.y - g_image_region.m_min.y) /g_logical_screen_y_dots;
+            const DComplex size{g_image_region.size()};
+            tmp_x += static_cast<double>(g_x_shift) * size.x / g_logical_screen_x_dots;
+            tmp_y += static_cast<double>(g_y_shift) * size.y / g_logical_screen_y_dots;
             double tmp_z = -inf->max_vals[2];
             trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
 
@@ -1894,8 +1895,8 @@ static bool float_view_transf3d(ViewTransform3D *inf)
                 tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/2.0; // center x
                 tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
 
-                tmp_x += static_cast<double>(g_x_shift1) * (g_image_region.m_max.x - g_image_region.m_min.x) /g_logical_screen_x_dots;
-                tmp_y += static_cast<double>(g_y_shift1) * (g_image_region.m_max.y - g_image_region.m_min.y) /g_logical_screen_y_dots;
+                tmp_x += static_cast<double>(g_x_shift1) * size.x / g_logical_screen_x_dots;
+                tmp_y += static_cast<double>(g_y_shift1) * size.y / g_logical_screen_y_dots;
                 tmp_z = -inf->max_vals[2];
                 trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
             }

@@ -676,9 +676,10 @@ static void init_calc_fract()
         g_f_x_center   = g_inversion[1];
         g_f_y_center   = g_inversion[2];
 
+        const DComplex size{g_image_region.size()};
         if (g_inversion[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
         {
-            g_inversion[0] = std::min(std::abs(g_image_region.m_max.x - g_image_region.m_min.x), std::abs(g_image_region.m_max.y - g_image_region.m_min.y)) / 6.0;
+            g_inversion[0] = std::min(std::abs(size.x), std::abs(size.y)) / 6.0;
             fix_inversion(&g_inversion[0]);
             g_f_radius = g_inversion[0];
         }
@@ -688,7 +689,7 @@ static void init_calc_fract()
             g_inversion[1] = (g_image_region.m_min.x + g_image_region.m_max.x) / 2.0;
             fix_inversion(&g_inversion[1]);
             g_f_x_center = g_inversion[1];
-            if (std::abs(g_f_x_center) < std::abs(g_image_region.m_max.x-g_image_region.m_min.x) / 100)
+            if (std::abs(g_f_x_center) < std::abs(size.x) / 100)
             {
                 g_f_x_center = 0.0;
                 g_inversion[1] = 0.0;
@@ -700,7 +701,7 @@ static void init_calc_fract()
             g_inversion[2] = (g_image_region.m_min.y + g_image_region.m_max.y) / 2.0;
             fix_inversion(&g_inversion[2]);
             g_f_y_center = g_inversion[2];
-            if (std::abs(g_f_y_center) < std::abs(g_image_region.m_max.y-g_image_region.m_min.y) / 100)
+            if (std::abs(g_f_y_center) < std::abs(size.y) / 100)
             {
                 g_f_y_center = 0.0;
                 g_inversion[2] = 0.0;
@@ -969,10 +970,10 @@ static void perform_work_list()
             d_y_size = g_logical_screen_y_dots-1;
         }
 
-        const double del_xx = (g_image_region.m_max.x - g_image_region.m_3rd.x) / d_x_size; // calculate stepsizes
-        const double del_yy = (g_image_region.m_max.y - g_image_region.m_3rd.y) / d_y_size;
-        const double del_xx2 = (g_image_region.m_3rd.x - g_image_region.m_min.x) / d_y_size;
-        const double del_yy2 = (g_image_region.m_3rd.y - g_image_region.m_min.y) / d_x_size;
+        const DComplex del{g_image_region.m_max - g_image_region.m_3rd}; // calculate stepsizes
+        const DComplex del2{g_image_region.size3()};
+        const double del_xx2 = del2.x / d_y_size;
+        const double del_yy2 = del2.y / d_x_size;
 
         g_use_old_distance_estimator = false;
         g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
@@ -984,8 +985,8 @@ static void perform_work_list()
         s_dem_mandel = g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL
             || g_use_old_distance_estimator
             || g_fractal_type == FractalType::FORMULA;
-        s_dem_delta = sqr(del_xx) + sqr(del_yy2);
-        double f_temp = sqr(del_yy) + sqr(del_xx2);
+        s_dem_delta = sqr(del.x) + sqr(del_yy2);
+        double f_temp = sqr(del.y) + sqr(del_xx2);
         s_dem_delta = std::max(f_temp, s_dem_delta);
         if (g_distance_estimator_width_factor == 0)
         {
@@ -1000,8 +1001,10 @@ static void perform_work_list()
         {
             s_dem_delta *= 1/(sqr(f_temp)*10000); // multiply by thickness desired
         }
-        s_dem_width = (std::sqrt(sqr(g_image_region.m_max.x-g_image_region.m_min.x) + sqr(g_image_region.m_3rd.x-g_image_region.m_min.x)) * aspect
-                     + std::sqrt(sqr(g_image_region.m_max.y-g_image_region.m_min.y) + sqr(g_image_region.m_3rd.y-g_image_region.m_min.y))) / g_distance_estimator;
+        const DComplex size{g_image_region.size()};
+        const DComplex size3{g_image_region.size3()};
+        s_dem_width = (std::sqrt(sqr(size.x) + sqr(size3.x)) * aspect
+                     + std::sqrt(sqr(size.y) + sqr(size3.y))) / g_distance_estimator;
         f_temp = g_magnitude_limit < DEM_BAILOUT ? DEM_BAILOUT : g_magnitude_limit;
         f_temp += 3; // bailout plus just a bit
         const double f_temp2 = std::log(f_temp);
@@ -2336,9 +2339,9 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
             return;
         }
     }
-    if ((g_potential_flag && g_potential_16bit) || (g_invert != 0 && g_inversion[2] != 0.0)
-        || g_decomp[0] != 0
-        || g_image_region.m_min.x != g_image_region.m_3rd.x || g_image_region.m_min.y != g_image_region.m_3rd.y)
+    if ((g_potential_flag && g_potential_16bit) || (g_invert != 0 && g_inversion[2] != 0.0)//
+        || g_decomp[0] != 0//
+        || g_image_region.m_min != g_image_region.m_3rd)
     {
         return;
     }
@@ -2442,7 +2445,7 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
         }
         else
         {
-            f_temp = (0.0-g_image_region.m_min.x) / (g_image_region.m_max.x-g_image_region.m_min.x);
+            f_temp = -g_image_region.m_min.x / g_image_region.width();
         }
         f_temp *= g_logical_screen_x_dots - 1;
         f_temp += 0.25;
@@ -2574,7 +2577,7 @@ origin_symmetry:
         }
         else
         {
-            if (std::abs(g_image_region.m_max.x - g_image_region.m_min.x) < PI/4)
+            if (std::abs(g_image_region.width()) < PI/4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -2611,7 +2614,7 @@ origin_symmetry:
         }
         else
         {
-            g_pi_in_pixels = static_cast<int>(PI / std::abs(g_image_region.m_max.x - g_image_region.m_min.x) * g_logical_screen_x_dots); // PI in pixels
+            g_pi_in_pixels = static_cast<int>(PI / std::abs(g_image_region.width()) * g_logical_screen_x_dots); // PI in pixels
         }
 
         g_i_stop_pt.x = g_start_pt.x + g_pi_in_pixels - 1;

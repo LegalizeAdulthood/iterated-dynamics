@@ -48,7 +48,7 @@ bool perturbation()
 
     if (g_bf_math == BFMathType::NONE)
     {
-        mandel_width = g_image_region.m_max.y - g_image_region.m_min.y;
+        mandel_width = g_image_region.height();
     }
     else
     {

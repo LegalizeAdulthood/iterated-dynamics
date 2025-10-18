@@ -435,8 +435,9 @@ skip_ui:
             }
             piece_delta_x  = (g_image_region.m_max.x - g_image_region.m_3rd.x) / (params.x_multiple * params.piece_x_dots - 1);   // calculate step sizes
             piece_delta_y  = (g_image_region.m_max.y - g_image_region.m_3rd.y) / (params.y_multiple * params.piece_y_dots - 1);
-            piece_delta_x2 = (g_image_region.m_3rd.x - g_image_region.m_min.x) / (params.y_multiple * params.piece_y_dots - 1);
-            piece_delta_y2 = (g_image_region.m_3rd.y - g_image_region.m_min.y) / (params.x_multiple * params.piece_x_dots - 1);
+            const DComplex size3{g_image_region.size3()};
+            piece_delta_x2 = size3.x / (params.y_multiple * params.piece_y_dots - 1);
+            piece_delta_y2 = size3.y / (params.x_multiple * params.piece_x_dots - 1);
 
             // save corners
             piece_x_min = g_image_region.m_min.x;

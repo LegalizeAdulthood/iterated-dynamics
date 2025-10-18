@@ -255,7 +255,7 @@ void show_aspect(const char *s)
                              "bf     {:s}\n"
                              "\n",
             s,                                         //
-            (g_image_region.m_max.y - g_image_region.m_min.y) / (g_image_region.m_max.x - g_image_region.m_min.x), //
+            (g_image_region.height()) / (g_image_region.width()), //
             bf_to_string(aspect, 10))))
     {
         goodbye();

@@ -711,9 +711,12 @@ static void area()
     {
         msg = "";
     }
-    std::sprintf(buf, "%s%ld inside pixels of %ld%s%f",
-            msg, cnt, static_cast<long>(g_logical_screen_x_dots) * static_cast<long>(g_logical_screen_y_dots), ".  Total area ",
-            cnt/(static_cast<float>(g_logical_screen_x_dots) * static_cast<float>(g_logical_screen_y_dots))*(g_image_region.m_max.x-g_image_region.m_min.x)*(g_image_region.m_max.y-g_image_region.m_min.y));
+    const DComplex size{g_image_region.size()};
+    std::sprintf(buf, "%s%ld inside pixels of %ld%s%f", msg, cnt,
+        static_cast<long>(g_logical_screen_x_dots) * static_cast<long>(g_logical_screen_y_dots),
+        ".  Total area ",
+        cnt / (static_cast<float>(g_logical_screen_x_dots) * static_cast<float>(g_logical_screen_y_dots)) *
+            size.x * size.y);
     stop_msg(StopMsgFlags::NO_BUZZER, buf);
 }
 

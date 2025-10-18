@@ -37,12 +37,11 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
     if (g_image_region.m_3rd.x == g_image_region.m_min.x && g_image_region.m_3rd.y == g_image_region.m_min.y)
     {
         // no rotation or skewing, but stretching is allowed
-        const double width = g_image_region.m_max.x - g_image_region.m_min.x;
-        const double height = g_image_region.m_max.y - g_image_region.m_min.y;
+        const DComplex size{g_image_region.size()};
         ctr_x = (g_image_region.m_min.x + g_image_region.m_max.x)/2.0;
         ctr_y = (g_image_region.m_min.y + g_image_region.m_max.y)/2.0;
-        mag  = 2.0/height;
-        x_mag_factor =  height / (DEFAULT_ASPECT * width);
+        mag  = 2.0/size.y;
+        x_mag_factor =  size.y / (DEFAULT_ASPECT * size.x);
         rot = 0.0;
         skew = 0.0;
     }
@@ -50,15 +49,13 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
     {
         // set up triangle ABC, having sides abc
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)
-        double tmp_x1 = g_image_region.m_max.x - g_image_region.m_min.x;
-        double tmp_y1 = g_image_region.m_max.y - g_image_region.m_min.y;
-        const double c2 = tmp_x1*tmp_x1 + tmp_y1*tmp_y1;
+        const DComplex size{g_image_region.size()};
+        const double c2 = size.x * size.x + size.y * size.y;
 
-        tmp_x1 = g_image_region.m_max.x - g_image_region.m_3rd.x;
-        tmp_y1 = g_image_region.m_min.y - g_image_region.m_3rd.y;
-        const double a2 = tmp_x1 * tmp_x1 + tmp_y1 * tmp_y1;
+        const DComplex size3{g_image_region.m_max-g_image_region.m_3rd};
+        const double a2 = size3.x * size3.x + size3.y * size3.y;
         const double a = std::sqrt(a2);
-        rot = -rad_to_deg(std::atan2(tmp_y1, tmp_x1));   // negative for image rotation
+        rot = -rad_to_deg(std::atan2(size3.y, size3.x));   // negative for image rotation
 
         const double tmp_x2 = g_image_region.m_min.x - g_image_region.m_3rd.x;
         const double tmp_y2 = g_image_region.m_max.y - g_image_region.m_3rd.y;
@@ -78,7 +75,7 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
-        if (tmp_x1*tmp_y2 - tmp_x2*tmp_y1 < 0
+        if (size3.x *tmp_y2 - tmp_x2* size3.y < 0
             && g_debug_flag != DebugFlags::ALLOW_NEGATIVE_CROSS_PRODUCT)
         {
             skew = -skew;

@@ -578,8 +578,8 @@ static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
        then extend these co-ords from current real screen corners to get
        new actual corners
        */
-    const double f_temp = (g_image_region.m_min.y - g_image_region.m_3rd.y) * (g_image_region.m_3rd.x - g_image_region.m_min.x) - (g_image_region.m_max.x - g_image_region.m_3rd.x) * (g_image_region.m_3rd.y - g_image_region.m_max.y);
-    g_plot_mx1 = g_image_region.m_3rd.x - g_image_region.m_min.x; // reuse the plotxxx vars is safe
+    const double f_temp = (g_image_region.m_min.y - g_image_region.m_3rd.y) * (g_image_region.width3()) - (g_image_region.m_max.x - g_image_region.m_3rd.x) * (g_image_region.m_3rd.y - g_image_region.m_max.y);
+    g_plot_mx1 = g_image_region.width3(); // reuse the plotxxx vars is safe
     g_plot_mx2 = g_image_region.m_3rd.y - g_image_region.m_max.y;
     g_plot_my1 = g_image_region.m_min.y - g_image_region.m_3rd.y;
     g_plot_my2 = g_image_region.m_max.x - g_image_region.m_3rd.x;
@@ -620,8 +620,9 @@ void aspect_ratio_crop(const float old_aspect, const float new_aspect)
     {
         // new ratio is wider, crop y
         f_temp = (1.0 - new_aspect / old_aspect) / 2;
-        x_margin = (g_image_region.m_3rd.x - g_image_region.m_min.x) * f_temp;
-        y_margin = (g_image_region.m_3rd.y - g_image_region.m_max.y) * f_temp;
+        const DComplex size3{g_image_region.size3()};
+        x_margin = size3.x * f_temp;
+        y_margin = size3.y * f_temp;
         g_image_region.m_3rd.x -= x_margin;
         g_image_region.m_3rd.y -= y_margin;
     }

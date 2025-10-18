@@ -117,7 +117,7 @@ bool julibrot_per_image()
     s_jb.delta_my = (g_julibrot_y_max - g_julibrot_y_min) / g_julibrot_z_dots;
     g_float_param = &s_jb.jb_c;
     s_jb.x_per_inch = (g_image_region.m_min.x - g_image_region.m_max.x) / g_julibrot_width;
-    s_jb.y_per_inch = (g_image_region.m_max.y - g_image_region.m_min.y) / g_julibrot_height;
+    s_jb.y_per_inch = g_image_region.height() / g_julibrot_height;
     s_jb.inch_per_x_dot = g_julibrot_width / g_logical_screen_x_dots;
     s_jb.inch_per_y_dot = g_julibrot_height / g_logical_screen_y_dots;
     s_jb.init_z = g_julibrot_origin - g_julibrot_depth / 2;
