@@ -8,6 +8,7 @@
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"
 #include "math/arg.h"
@@ -111,7 +112,7 @@ int marks_mandel_per_pixel()
 {
     // marksmandel
 
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
     }
@@ -169,7 +170,7 @@ int marks_mandel_pwr_per_pixel()
 
 int marks_cplx_mand_per_pixel()
 {
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
     }

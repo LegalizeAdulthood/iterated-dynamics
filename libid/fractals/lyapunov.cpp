@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
@@ -60,7 +61,7 @@ int lyapunov_type()
         g_population = g_params[1];
     }
     g_plot(g_col, g_row, 1);
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
         a = g_init.y;

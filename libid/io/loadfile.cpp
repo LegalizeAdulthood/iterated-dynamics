@@ -10,6 +10,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
@@ -325,12 +326,12 @@ static void backwards_info1(const FractalInfo &read_info)
         g_random_seed = read_info.random_seed;
         g_inside_color = read_info.inside;
         g_log_map_flag = read_info.log_map_old;
-        g_inversion[0] = read_info.invert[0];
-        g_inversion[1] = read_info.invert[1];
-        g_inversion[2] = read_info.invert[2];
-        if (g_inversion[0] != 0.0)
+        g_inversion.params[0] = read_info.invert[0];
+        g_inversion.params[1] = read_info.invert[1];
+        g_inversion.params[2] = read_info.invert[2];
+        if (g_inversion.params[0] != 0.0)
         {
-            g_invert = 3;
+            g_inversion.invert = 3;
         }
         g_decomp[0] = read_info.decomp[0];
         g_decomp[1] = read_info.decomp[1];
@@ -627,9 +628,9 @@ static void backwards_info12(FractalInfo read_info)
 {
     if (read_info.info_version > 11) // post-version 19.20, inversion fix
     {
-        g_inversion[0] = read_info.d_invert[0];
-        g_inversion[1] = read_info.d_invert[1];
-        g_inversion[2] = read_info.d_invert[2];
+        g_inversion.params[0] = read_info.d_invert[0];
+        g_inversion.params[1] = read_info.d_invert[1];
+        g_inversion.params[2] = read_info.d_invert[2];
         g_log_map_fly_calculate = static_cast<LogMapCalculate>(read_info.log_calc);
         g_stop_pass = read_info.stop_pass;
     }
@@ -919,7 +920,7 @@ int read_overlay()      // read overlay/3D files, if required
     g_params[1] = read_info.c_imag;
     g_file_version = Version{11, 0, 0, 0, true};
 
-    g_invert = 0;
+    g_inversion.invert = 0;
     backwards_info1(read_info);
     backwards_info2(read_info);
     backwards_info3(read_info);
@@ -1716,10 +1717,10 @@ void backwards_legacy_v19()
     {
         if (g_file_version < 1824)
         {
-            g_inversion[0] = 0;
-            g_inversion[1] = 0;
-            g_inversion[2] = 0;
-            g_invert = 0;
+            g_inversion.params[0] = 0;
+            g_inversion.params[1] = 0;
+            g_inversion.params[2] = 0;
+            g_inversion.invert = 0;
         }
     }
 

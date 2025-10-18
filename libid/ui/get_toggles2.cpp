@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
@@ -78,15 +79,15 @@ int get_toggles2()
     for (int i = 0; i < 3; i++)
     {
         values[++k].type = 's';
-        old_inversion[i] = g_inversion[i];
-        if (g_inversion[i] == AUTO_INVERT)
+        old_inversion[i] = g_inversion.params[i];
+        if (g_inversion.params[i] == AUTO_INVERT)
         {
             std::strcpy(values[k].uval.sval, "auto");
         }
         else
         {
             char buff[80]{};
-            *fmt::format_to(buff, "{:<1.15Lg}", g_inversion[i]).out = '\0';
+            *fmt::format_to(buff, "{:<1.15Lg}", g_inversion.params[i]).out = '\0';
             buff[std::size(values[k].uval.sval)-1] = 0;
             std::strcpy(values[k].uval.sval, buff);
         }
@@ -185,19 +186,19 @@ int get_toggles2()
     {
         if (values[++k].uval.sval[0] == 'a' || values[k].uval.sval[0] == 'A')
         {
-            g_inversion[i] = AUTO_INVERT;
+            g_inversion.params[i] = AUTO_INVERT;
         }
         else
         {
-            g_inversion[i] = std::atof(values[k].uval.sval);
+            g_inversion.params[i] = std::atof(values[k].uval.sval);
         }
-        if (old_inversion[i] != g_inversion[i]
-            && (i == 0 || g_inversion[0] != 0.0))
+        if (old_inversion[i] != g_inversion.params[i]
+            && (i == 0 || g_inversion.params[0] != 0.0))
         {
             changed = true;
         }
     }
-    g_invert = g_inversion[0] == 0.0 ? 0 : 3;
+    g_inversion.invert = g_inversion.params[0] == 0.0 ? 0 : 3;
     ++k;
 
     g_color_cycle_range_lo = values[++k].uval.ival;

@@ -45,6 +45,7 @@ an appropriate setup, per_image, per_pixel, and orbit routines.
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
 #include "fractals/fractype.h"
 #include "fractals/magnet.h"
@@ -147,7 +148,7 @@ int mandel_per_pixel()
     // mandelfp
     // burning ship
 
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
     }
@@ -257,7 +258,7 @@ int julia_per_pixel()
 {
     // floating point julia
     // juliafp
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_old_z);
     }
@@ -274,7 +275,7 @@ int julia_per_pixel()
 
 int other_mandel_per_pixel()
 {
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
     }
@@ -301,7 +302,7 @@ int other_mandel_per_pixel()
 
 int other_julia_per_pixel()
 {
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_old_z);
     }

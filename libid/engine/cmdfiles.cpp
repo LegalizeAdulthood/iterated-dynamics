@@ -15,6 +15,7 @@
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/show_dot.h"
@@ -158,7 +159,6 @@ int g_init_mode{};                                        // initial video mode
 int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
 long g_bailout{};                                         // user input bailout value
-double g_inversion[3]{};                                  // radius, x center, y center
 int g_color_cycle_range_lo{};                             //
 int g_color_cycle_range_hi{};                             // cycling color range
 std::vector<int> g_iteration_ranges;                      // iter->color ranges mapping
@@ -527,81 +527,81 @@ static void init_vars_fractal()
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
     g_use_init_orbit = InitOrbitMode::NORMAL;            //
     std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0); // initial parameter values
-    std::fill(&g_potential_params[0], &g_potential_params[3], 0.0); // initial potential values
-    std::fill(std::begin(g_inversion), std::end(g_inversion), 0.0); // initial invert values
-    g_init_orbit.y = 0.0;                                           //
-    g_init_orbit.x = 0.0;                                           // initial orbit values
-    g_invert = 0;                                                   //
-    g_decomp[0] = 0;                                                //
-    g_decomp[1] = 0;                                                //
-    g_user_distance_estimator_value = 0;                            //
-    g_distance_estimator_x_dots = 0;                                //
-    g_distance_estimator_y_dots = 0;                                //
-    g_distance_estimator_width_factor = 71;                         //
-    g_force_symmetry = SymmetryType::NOT_FORCED;                    //
-    g_image_region.m_min.x = -2.5;                                                 //
-    g_image_region.m_3rd.x = -2.5;                                                 //
-    g_image_region.m_max.x = 1.5;                                                  // initial corner values
-    g_image_region.m_min.y = -1.5;                                                 //
-    g_image_region.m_3rd.y = -1.5;                                                 //
-    g_image_region.m_max.y = 1.5;                                                  // initial corner values
-    g_bf_math = BFMathType::NONE;                                   //
-    g_potential_16bit = false;                                      //
-    g_potential_flag = false;                                       //
-    g_log_map_flag = 0;                                             // no logarithmic palette
-    set_trig_array(0, "sin");                                       // trigfn defaults
-    set_trig_array(1, "sqr");                                       //
-    set_trig_array(2, "sinh");                                      //
-    set_trig_array(3, "cosh");                                      //
-    g_iteration_ranges.clear();                                     //
-    g_iteration_ranges_len = 0;                                     //
-    g_use_center_mag = true;                                        // use center-mag, not corners
-    g_color_state = ColorState::DEFAULT_MAP;                        //
-    g_colors_preloaded = false;                                     //
-    g_color_cycle_range_lo = 1;                                     //
-    g_color_cycle_range_hi = 255;                                   // color cycling default range
-    g_orbit_delay = 0;                                              // full speed orbits
-    g_orbit_interval = 1;                                           // plot all orbits
-    g_keep_screen_coords = false;                                   //
-    g_draw_mode = OrbitDrawMode::RECTANGLE;                         // passes=orbits draw mode
-    g_set_orbit_corners = false;                                    //
-    g_orbit_corner_min_x = g_cur_fractal_specific->x_min;           //
-    g_orbit_corner_max_x = g_cur_fractal_specific->x_max;           //
-    g_orbit_corner_3rd_x = g_cur_fractal_specific->x_min;           //
-    g_orbit_corner_min_y = g_cur_fractal_specific->y_min;           //
-    g_orbit_corner_max_y = g_cur_fractal_specific->y_max;           //
-    g_orbit_corner_3rd_y = g_cur_fractal_specific->y_min;           //
-    g_math_tol[0] = 0.05;                                           // integer -> float transition is ignored
-    g_math_tol[1] = 0.05;                                           // float -> bignum transition
-    g_display_3d = Display3DMode::NONE;                             // 3D display is off
-    g_overlay_3d = false;                                           // 3D overlay is off
-    g_old_demm_colors = false;                                      //
-    g_bailout_test = Bailout::MOD;                                  //
-    set_bailout_formula(Bailout::MOD);                              //
-    g_new_bifurcation_functions_loaded = false;                     // for old bifs
-    g_julibrot_x_min = -.83;                                        //
-    g_julibrot_y_min = -.25;                                        //
-    g_julibrot_x_max = -.83;                                        //
-    g_julibrot_y_max = .25;                                         //
-    g_julibrot_origin = 8;                                          //
-    g_julibrot_height = 7;                                          //
-    g_julibrot_width = 10;                                          //
-    g_julibrot_dist = 24;                                           //
-    g_eyes = 2.5F;                                                  //
-    g_julibrot_depth = 8;                                           //
-    g_new_orbit_type = FractalType::JULIA;                          //
-    g_julibrot_z_dots = 128;                                        //
-    init_vars3d();                                                  //
-    g_base_hertz = 440;                                             // basic hertz rate
-    g_fm_volume = 63;                                               // full volume on soundcard o/p
-    g_hi_attenuation = 0;                                           // no attenuation of hi notes
-    g_fm_attack = 5;                                                // fast attack
-    g_fm_decay = 10;                                                // long decay
-    g_fm_sustain = 13;                                              // fairly high sustain level
-    g_fm_release = 5;                                               // short release
-    g_fm_wave_type = 0;                                             // sin wave
-    g_polyphony = 0;                                                // no polyphony
-    std::iota(&g_scale_map[0], &g_scale_map[11], 1);                // straight mapping of notes in octave
+    std::fill(&g_potential_params[0], &g_potential_params[3], 0.0);               // initial potential values
+    std::fill(std::begin(g_inversion.params), std::end(g_inversion.params), 0.0); // initial invert values
+    g_init_orbit.y = 0.0;                                                         //
+    g_init_orbit.x = 0.0;                                                         // initial orbit values
+    g_inversion.invert = 0;                                                       //
+    g_decomp[0] = 0;                                                              //
+    g_decomp[1] = 0;                                                              //
+    g_user_distance_estimator_value = 0;                                          //
+    g_distance_estimator_x_dots = 0;                                              //
+    g_distance_estimator_y_dots = 0;                                              //
+    g_distance_estimator_width_factor = 71;                                       //
+    g_force_symmetry = SymmetryType::NOT_FORCED;                                  //
+    g_image_region.m_min.x = -2.5;                                                //
+    g_image_region.m_3rd.x = -2.5;                                                //
+    g_image_region.m_max.x = 1.5;                                                 // initial corner values
+    g_image_region.m_min.y = -1.5;                                                //
+    g_image_region.m_3rd.y = -1.5;                                                //
+    g_image_region.m_max.y = 1.5;                                                 // initial corner values
+    g_bf_math = BFMathType::NONE;                                                 //
+    g_potential_16bit = false;                                                    //
+    g_potential_flag = false;                                                     //
+    g_log_map_flag = 0;                                                           // no logarithmic palette
+    set_trig_array(0, "sin");                                                     // trigfn defaults
+    set_trig_array(1, "sqr");                                                     //
+    set_trig_array(2, "sinh");                                                    //
+    set_trig_array(3, "cosh");                                                    //
+    g_iteration_ranges.clear();                                                   //
+    g_iteration_ranges_len = 0;                                                   //
+    g_use_center_mag = true;                              // use center-mag, not corners
+    g_color_state = ColorState::DEFAULT_MAP;              //
+    g_colors_preloaded = false;                           //
+    g_color_cycle_range_lo = 1;                           //
+    g_color_cycle_range_hi = 255;                         // color cycling default range
+    g_orbit_delay = 0;                                    // full speed orbits
+    g_orbit_interval = 1;                                 // plot all orbits
+    g_keep_screen_coords = false;                         //
+    g_draw_mode = OrbitDrawMode::RECTANGLE;               // passes=orbits draw mode
+    g_set_orbit_corners = false;                          //
+    g_orbit_corner_min_x = g_cur_fractal_specific->x_min; //
+    g_orbit_corner_max_x = g_cur_fractal_specific->x_max; //
+    g_orbit_corner_3rd_x = g_cur_fractal_specific->x_min; //
+    g_orbit_corner_min_y = g_cur_fractal_specific->y_min; //
+    g_orbit_corner_max_y = g_cur_fractal_specific->y_max; //
+    g_orbit_corner_3rd_y = g_cur_fractal_specific->y_min; //
+    g_math_tol[0] = 0.05;                                 // integer -> float transition is ignored
+    g_math_tol[1] = 0.05;                                 // float -> bignum transition
+    g_display_3d = Display3DMode::NONE;                   // 3D display is off
+    g_overlay_3d = false;                                 // 3D overlay is off
+    g_old_demm_colors = false;                            //
+    g_bailout_test = Bailout::MOD;                        //
+    set_bailout_formula(Bailout::MOD);                    //
+    g_new_bifurcation_functions_loaded = false;           // for old bifs
+    g_julibrot_x_min = -.83;                              //
+    g_julibrot_y_min = -.25;                              //
+    g_julibrot_x_max = -.83;                              //
+    g_julibrot_y_max = .25;                               //
+    g_julibrot_origin = 8;                                //
+    g_julibrot_height = 7;                                //
+    g_julibrot_width = 10;                                //
+    g_julibrot_dist = 24;                                 //
+    g_eyes = 2.5F;                                        //
+    g_julibrot_depth = 8;                                 //
+    g_new_orbit_type = FractalType::JULIA;                //
+    g_julibrot_z_dots = 128;                              //
+    init_vars3d();                                        //
+    g_base_hertz = 440;                                   // basic hertz rate
+    g_fm_volume = 63;                                     // full volume on soundcard o/p
+    g_hi_attenuation = 0;                                 // no attenuation of hi notes
+    g_fm_attack = 5;                                      // fast attack
+    g_fm_decay = 10;                                      // long decay
+    g_fm_sustain = 13;                                    // fairly high sustain level
+    g_fm_release = 5;                                     // short release
+    g_fm_wave_type = 0;                                   // sin wave
+    g_polyphony = 0;                                      // no polyphony
+    std::iota(&g_scale_map[0], &g_scale_map[11], 1);      // straight mapping of notes in octave
 }
 
 // init vars affecting 3d
@@ -2296,12 +2296,12 @@ static CmdArgFlags cmd_invert(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_inversion[0] = cmd.float_vals[0];
-    g_invert = g_inversion[0] != 0.0 ? cmd.total_params : 0;
+    g_inversion.params[0] = cmd.float_vals[0];
+    g_inversion.invert = g_inversion.params[0] != 0.0 ? cmd.total_params : 0;
     if (cmd.total_params == 3)
     {
-        g_inversion[1] = cmd.float_vals[1];
-        g_inversion[2] = cmd.float_vals[2];
+        g_inversion.params[1] = cmd.float_vals[1];
+        g_inversion.params[2] = cmd.float_vals[2];
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }

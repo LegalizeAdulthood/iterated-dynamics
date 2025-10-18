@@ -24,6 +24,7 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/one_or_two_pass.h"
 #include "engine/orbit.h"
@@ -140,10 +141,6 @@ long g_old_color_iter{};                         //
 long g_real_color_iter{};                        //
 int g_row{};                                     //
 int g_col{};                                     //
-int g_invert{};                                  //
-double g_f_radius{};                             //
-double g_f_x_center{};                           //
-double g_f_y_center{};                           // for inversion
 void (*g_put_color)(int, int, int){put_color_a}; //
 void (*g_plot)(int, int, int){put_color_a};      //
 double g_magnitude{};                            //
@@ -670,45 +667,45 @@ static void init_calc_fract()
         g_orbit_color = 1;
     }
 
-    if (g_inversion[0] != 0.0)
+    if (g_inversion.params[0] != 0.0)
     {
-        g_f_radius    = g_inversion[0];
-        g_f_x_center   = g_inversion[1];
-        g_f_y_center   = g_inversion[2];
+        g_inversion.radius    = g_inversion.params[0];
+        g_inversion.center.x   = g_inversion.params[1];
+        g_inversion.center.y   = g_inversion.params[2];
 
         const DComplex size{g_image_region.size()};
-        if (g_inversion[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
+        if (g_inversion.params[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
         {
-            g_inversion[0] = std::min(std::abs(size.x), std::abs(size.y)) / 6.0;
-            fix_inversion(&g_inversion[0]);
-            g_f_radius = g_inversion[0];
+            g_inversion.params[0] = std::min(std::abs(size.x), std::abs(size.y)) / 6.0;
+            fix_inversion(&g_inversion.params[0]);
+            g_inversion.radius = g_inversion.params[0];
         }
 
-        if (g_invert < 2 || g_inversion[1] == AUTO_INVERT)  // xcenter not already set
+        if (g_inversion.invert < 2 || g_inversion.params[1] == AUTO_INVERT)  // xcenter not already set
         {
-            g_inversion[1] = g_image_region.center_x();
-            fix_inversion(&g_inversion[1]);
-            g_f_x_center = g_inversion[1];
-            if (std::abs(g_f_x_center) < std::abs(size.x) / 100)
+            g_inversion.params[1] = g_image_region.center_x();
+            fix_inversion(&g_inversion.params[1]);
+            g_inversion.center.x = g_inversion.params[1];
+            if (std::abs(g_inversion.center.x) < std::abs(size.x) / 100)
             {
-                g_f_x_center = 0.0;
-                g_inversion[1] = 0.0;
+                g_inversion.center.x = 0.0;
+                g_inversion.params[1] = 0.0;
             }
         }
 
-        if (g_invert < 3 || g_inversion[2] == AUTO_INVERT)  // ycenter not already set
+        if (g_inversion.invert < 3 || g_inversion.params[2] == AUTO_INVERT)  // ycenter not already set
         {
-            g_inversion[2] = g_image_region.center_y();
-            fix_inversion(&g_inversion[2]);
-            g_f_y_center = g_inversion[2];
-            if (std::abs(g_f_y_center) < std::abs(size.y) / 100)
+            g_inversion.params[2] = g_image_region.center_y();
+            fix_inversion(&g_inversion.params[2]);
+            g_inversion.center.y = g_inversion.params[2];
+            if (std::abs(g_inversion.center.y) < std::abs(size.y) / 100)
             {
-                g_f_y_center = 0.0;
-                g_inversion[2] = 0.0;
+                g_inversion.center.y = 0.0;
+                g_inversion.params[2] = 0.0;
             }
         }
 
-        g_invert = 3; // so values will not be changed if we come back
+        g_inversion.invert = 3; // so values will not be changed if we come back
     }
 
     g_close_enough = g_delta_min*std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
@@ -1209,7 +1206,7 @@ static void perform_work_list()
 // and all the current outside options
 int calc_mandelbrot_type()
 {
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
     }
@@ -2339,7 +2336,7 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
             return;
         }
     }
-    if ((g_potential_flag && g_potential_16bit) || (g_invert != 0 && g_inversion[2] != 0.0)//
+    if ((g_potential_flag && g_potential_16bit) || (g_inversion.invert != 0 && g_inversion.params[2] != 0.0)//
         || g_decomp[0] != 0//
         || g_image_region.m_min != g_image_region.m_3rd)
     {
@@ -2347,7 +2344,7 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
     }
     if (sym != SymmetryType::X_AXIS
         && sym != SymmetryType::X_AXIS_NO_PARAM
-        && g_inversion[1] != 0.0
+        && g_inversion.params[1] != 0.0
         && g_force_symmetry == SymmetryType::NOT_FORCED)
     {
         return;
@@ -2582,7 +2579,7 @@ origin_symmetry:
                 break; // no point in pi symmetry if values too close
             }
         }
-        if (g_invert != 0 && g_force_symmetry == SymmetryType::NOT_FORCED)
+        if (g_inversion.invert != 0 && g_force_symmetry == SymmetryType::NOT_FORCED)
         {
             goto origin_symmetry;
         }

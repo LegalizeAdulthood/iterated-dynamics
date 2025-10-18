@@ -10,6 +10,7 @@
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
@@ -800,9 +801,9 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->random_seed = static_cast<std::int16_t>(g_random_seed);
     save_info->inside = static_cast<std::int16_t>(g_inside_color);
     save_info->log_map_old = static_cast<std::int16_t>(g_log_map_flag <= SHRT_MAX ? g_log_map_flag : SHRT_MAX);
-    save_info->invert[0] = static_cast<float>(g_inversion[0]);
-    save_info->invert[1] = static_cast<float>(g_inversion[1]);
-    save_info->invert[2] = static_cast<float>(g_inversion[2]);
+    save_info->invert[0] = static_cast<float>(g_inversion.params[0]);
+    save_info->invert[1] = static_cast<float>(g_inversion.params[1]);
+    save_info->invert[2] = static_cast<float>(g_inversion.params[2]);
     save_info->decomp[0] = static_cast<std::int16_t>(g_decomp[0]);
     save_info->biomorph = static_cast<std::int16_t>(g_user_biomorph_value);
     save_info->symmetry = static_cast<std::int16_t>(g_force_symmetry);
@@ -896,9 +897,9 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->old_demm_colors = static_cast<std::int16_t>(g_old_demm_colors ? 1 : 0);
     save_info->log_map = static_cast<std::int32_t>(g_log_map_flag);
     save_info->dist_est = static_cast<std::int32_t>(g_distance_estimator);
-    save_info->d_invert[0] = g_inversion[0];
-    save_info->d_invert[1] = g_inversion[1];
-    save_info->d_invert[2] = g_inversion[2];
+    save_info->d_invert[0] = g_inversion.params[0];
+    save_info->d_invert[1] = g_inversion.params[1];
+    save_info->d_invert[2] = g_inversion.params[2];
     save_info->log_calc = static_cast<std::int16_t>(g_log_map_fly_calculate);
     save_info->stop_pass = static_cast<std::int16_t>(g_stop_pass);
     save_info->quick_calc = static_cast<std::int16_t>(g_quick_calc ? 1 : 0);

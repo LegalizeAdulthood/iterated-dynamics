@@ -6,13 +6,14 @@
 #include "engine/calcfrac.h"
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
+#include "engine/id_data.h"
+#include "engine/Inversion.h"
+#include "engine/pixel_grid.h"
 #include "fractals/newton.h"
 #include "fractals/parser.h"
-#include "engine/id_data.h"
 #include "math/big.h"
 #include "math/biginit.h"
 #include "math/fpu087.h"
-#include "engine/pixel_grid.h"
 
 using namespace id::engine;
 using namespace id::math;
@@ -168,7 +169,7 @@ bool divide_brot5_per_image()
 
 int divide_brot5_per_pixel()
 {
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
     }

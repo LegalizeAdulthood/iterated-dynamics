@@ -22,6 +22,7 @@
 #include "engine/convert_center_mag.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/jiim.h"
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
@@ -1873,18 +1874,16 @@ int formula_per_pixel()
     }
     s_vars[9].a.d.y = 0.0;
 
+    if (g_inversion.invert != 0)
     {
-        if (g_invert != 0)
-        {
-            invertz2(&g_old_z);
-            s_vars[0].a.d.x = g_old_z.x;
-            s_vars[0].a.d.y = g_old_z.y;
-        }
-        else
-        {
-            s_vars[0].a.d.x = g_dx_pixel();
-            s_vars[0].a.d.y = g_dy_pixel();
-        }
+        invertz2(&g_old_z);
+        s_vars[0].a.d.x = g_old_z.x;
+        s_vars[0].a.d.y = g_old_z.y;
+    }
+    else
+    {
+        s_vars[0].a.d.x = g_dx_pixel();
+        s_vars[0].a.d.y = g_dy_pixel();
     }
 
     if (g_last_init_op)

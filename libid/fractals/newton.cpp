@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -43,22 +44,20 @@ void invertz2(DComplex *z)
 {
     z->x = g_dx_pixel();
     z->y = g_dy_pixel();
-    z->x -= g_f_x_center;
-    z->y -= g_f_y_center;  // Normalize values to center of circle
+    *z -= g_inversion.center;  // Normalize values to center of circle
 
     g_temp_sqr_x = sqr(z->x) + sqr(z->y);  // Get old radius
     if (std::abs(g_temp_sqr_x) > FLT_MIN)
     {
-        g_temp_sqr_x = g_f_radius / g_temp_sqr_x;
+        g_temp_sqr_x = g_inversion.radius / g_temp_sqr_x;
     }
     else
     {
         g_temp_sqr_x = FLT_MAX;   // a big number, but not TOO big
     }
     z->x *= g_temp_sqr_x;
-    z->y *= g_temp_sqr_x;      // Perform inversion
-    z->x += g_f_x_center;
-    z->y += g_f_y_center; // Renormalize
+    z->y *= g_temp_sqr_x;         // Perform inversion
+    *z += g_inversion.center;             // Renormalize
 }
 
 // Distance of complex z from unit circle

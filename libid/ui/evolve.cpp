@@ -6,6 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/param_not_used.h"
 #include "engine/pixel_limits.h"
 #include "engine/trig_fns.h"
@@ -182,31 +183,33 @@ void copy_genes_to_bank(const GeneBase gene[NUM_GENES])
 // as well
 void init_gene()
 {
-    //                        Use only 15 letters below: 123456789012345
+    // clang-format off
     const GeneBase gene[NUM_GENES] =
     {
-        { &g_params[0], vary_dbl, Variations::RANDOM,       "Param 1 real", 1 },
-        { &g_params[1], vary_dbl, Variations::RANDOM,       "Param 1 imag", 1 },
-        { &g_params[2], vary_dbl, Variations::NONE,         "Param 2 real", 1 },
-        { &g_params[3], vary_dbl, Variations::NONE,         "Param 2 imag", 1 },
-        { &g_params[4], vary_dbl, Variations::NONE,         "Param 3 real", 1 },
-        { &g_params[5], vary_dbl, Variations::NONE,         "Param 3 imag", 1 },
-        { &g_params[6], vary_dbl, Variations::NONE,         "Param 4 real", 1 },
-        { &g_params[7], vary_dbl, Variations::NONE,         "Param 4 imag", 1 },
-        { &g_params[8], vary_dbl, Variations::NONE,         "Param 5 real", 1 },
-        { &g_params[9], vary_dbl, Variations::NONE,         "Param 5 imag", 1 },
-        { &g_inside_color, vary_inside, Variations::NONE,        "inside color", 2 },
-        { &g_outside_color, vary_outside, Variations::NONE,      "outside color", 3 },
-        { &g_decomp[0], vary_pwr2, Variations::NONE,       "decomposition", 4 },
-        { &g_inversion[0], vary_inv, Variations::NONE,     "invert radius", 7 },
-        { &g_inversion[1], vary_inv, Variations::NONE,     "invert center x", 7 },
-        { &g_inversion[2], vary_inv, Variations::NONE,     "invert center y", 7 },
+        //                        Use only 15 letters below:   123456789012345
+        { &g_params[0], vary_dbl, Variations::RANDOM,         "Param 1 real"   , 1 },
+        { &g_params[1], vary_dbl, Variations::RANDOM,         "Param 1 imag"   , 1 },
+        { &g_params[2], vary_dbl, Variations::NONE,           "Param 2 real"   , 1 },
+        { &g_params[3], vary_dbl, Variations::NONE,           "Param 2 imag"   , 1 },
+        { &g_params[4], vary_dbl, Variations::NONE,           "Param 3 real"   , 1 },
+        { &g_params[5], vary_dbl, Variations::NONE,           "Param 3 imag"   , 1 },
+        { &g_params[6], vary_dbl, Variations::NONE,           "Param 4 real"   , 1 },
+        { &g_params[7], vary_dbl, Variations::NONE,           "Param 4 imag"   , 1 },
+        { &g_params[8], vary_dbl, Variations::NONE,           "Param 5 real"   , 1 },
+        { &g_params[9], vary_dbl, Variations::NONE,           "Param 5 imag"   , 1 },
+        { &g_inside_color, vary_inside, Variations::NONE,     "inside color"   , 2 },
+        { &g_outside_color, vary_outside, Variations::NONE,   "outside color"  , 3 },
+        { &g_decomp[0], vary_pwr2, Variations::NONE,          "decomposition"  , 4 },
+        { &g_inversion.params[0], vary_inv, Variations::NONE, "invert radius"  , 7 },
+        { &g_inversion.params[1], vary_inv, Variations::NONE, "invert center x", 7 },
+        { &g_inversion.params[2], vary_inv, Variations::NONE, "invert center y", 7 },
         { &g_trig_index[0], vary_trig, Variations::NONE,      "trig function 1", 5 },
-        { &g_trig_index[1], vary_trig, Variations::NONE,      "trig fn 2", 5 },
-        { &g_trig_index[2], vary_trig, Variations::NONE,      "trig fn 3", 5 },
-        { &g_trig_index[3], vary_trig, Variations::NONE,      "trig fn 4", 5 },
-        { &g_bailout_test, vary_bo_test, Variations::NONE,    "bailout test", 6 }
+        { &g_trig_index[1], vary_trig, Variations::NONE,      "trig fn 2"      , 5 },
+        { &g_trig_index[2], vary_trig, Variations::NONE,      "trig fn 3"      , 5 },
+        { &g_trig_index[3], vary_trig, Variations::NONE,      "trig fn 4"      , 5 },
+        { &g_bailout_test, vary_bo_test, Variations::NONE,    "bailout test"   , 6 }
     };
+    // clang-format on
 
     copy_genes_to_bank(gene);
 }
@@ -227,9 +230,9 @@ void save_param_history()
     s_old_history.inside = g_inside_color;
     s_old_history.outside = g_outside_color;
     s_old_history.decomp0 = g_decomp[0];
-    s_old_history.invert0 = g_inversion[0];
-    s_old_history.invert1 = g_inversion[1];
-    s_old_history.invert2 = g_inversion[2];
+    s_old_history.invert0 = g_inversion.params[0];
+    s_old_history.invert1 = g_inversion.params[1];
+    s_old_history.invert2 = g_inversion.params[2];
     s_old_history.trig_index0 = static_cast<Byte>(g_trig_index[0]);
     s_old_history.trig_index1 = static_cast<Byte>(g_trig_index[1]);
     s_old_history.trig_index2 = static_cast<Byte>(g_trig_index[2]);
@@ -253,10 +256,10 @@ void restore_param_history()
     g_inside_color = s_old_history.inside;
     g_outside_color = s_old_history.outside;
     g_decomp[0] = s_old_history.decomp0;
-    g_inversion[0] = s_old_history.invert0;
-    g_inversion[1] = s_old_history.invert1;
-    g_inversion[2] = s_old_history.invert2;
-    g_invert = g_inversion[0] == 0.0 ? 0 : 3;
+    g_inversion.params[0] = s_old_history.invert0;
+    g_inversion.params[1] = s_old_history.invert1;
+    g_inversion.params[2] = s_old_history.invert2;
+    g_inversion.invert = g_inversion.params[0] == 0.0 ? 0 : 3;
     g_trig_index[0] = static_cast<TrigFn>(s_old_history.trig_index0);
     g_trig_index[1] = static_cast<TrigFn>(s_old_history.trig_index1);
     g_trig_index[2] = static_cast<TrigFn>(s_old_history.trig_index2);
@@ -406,7 +409,7 @@ void vary_inv(GeneBase gene[], const int rand_val, const int i)
     {
         vary_dbl(gene, rand_val, i);
     }
-    g_invert = g_inversion[0] == 0.0 ? 0 : 3 ;
+    g_inversion.invert = g_inversion.params[0] == 0.0 ? 0 : 3 ;
 }
 
 // ---------------------------------------------------------------------

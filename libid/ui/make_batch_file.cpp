@@ -10,6 +10,7 @@
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/sticky_orbits.h"
@@ -1207,10 +1208,10 @@ static void write_batch_params(
                 put_param("/%s", "16bit");
             }
         }
-        if (g_invert != 0)
+        if (g_inversion.invert != 0)
         {
             put_param(" invert=%-1.15lg/%-1.15lg/%-1.15lg",
-                     g_inversion[0], g_inversion[1], g_inversion[2]);
+                     g_inversion.params[0], g_inversion.params[1], g_inversion.params[2]);
         }
         if (g_decomp[0])
         {

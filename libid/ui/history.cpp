@@ -7,6 +7,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
@@ -66,7 +67,7 @@ struct ImageHistory
     int biomorph;
     int inside_color;
     long log_map_flag;
-    double inversion[3];
+    InversionParams inversion;
     int decomp[2];
     SymmetryType force_symmetry;
     int init_3d[16];
@@ -342,6 +343,11 @@ struct JsonArray
         }
     }
 
+    explicit JsonArray(const std::array<T, N> &value) :
+        array(value)
+    {
+    }
+
     std::array<T, N> array{};
 };
 
@@ -546,9 +552,7 @@ void save_history_info()
     current.random_seed = g_random_seed;
     current.inside_color = g_inside_color;
     current.log_map_flag = g_log_map_flag;
-    current.inversion[0] = g_inversion[0];
-    current.inversion[1] = g_inversion[1];
-    current.inversion[2] = g_inversion[2];
+    current.inversion = g_inversion.params;
     current.decomp[0] = g_decomp[0];
     current.decomp[1] = g_decomp[1];
     current.biomorph = g_biomorph;
@@ -712,7 +716,7 @@ void restore_history_info(const int i)
         return;
     }
     ImageHistory last = s_history[i];
-    g_invert = 0;
+    g_inversion.invert = 0;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_resuming = false;
     set_fractal_type(last.image_fractal_type);
@@ -738,9 +742,7 @@ void restore_history_info(const int i)
     g_random_seed = last.random_seed;
     g_inside_color = last.inside_color;
     g_log_map_flag = last.log_map_flag;
-    g_inversion[0] = last.inversion[0];
-    g_inversion[1] = last.inversion[1];
-    g_inversion[2] = last.inversion[2];
+    g_inversion.params = last.inversion;
     g_decomp[0] = last.decomp[0];
     g_decomp[1] = last.decomp[1];
     g_user_biomorph_value = last.biomorph;
@@ -831,9 +833,9 @@ void restore_history_info(const int i)
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;
     g_potential_flag = g_potential_params[0] != 0.0;
-    if (g_inversion[0] != 0.0)
+    if (g_inversion.params[0] != 0.0)
     {
-        g_invert = 3;
+        g_inversion.invert = 3;
     }
     g_log_map_fly_calculate = static_cast<LogMapCalculate>(last.log_map_fly_calculate);
     g_is_mandelbrot = last.is_mandelbrot;

@@ -10,6 +10,7 @@
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -790,7 +791,7 @@ static bool params_ok(const FractalInfo *info)
         && std::abs(tmp_param8 - g_params[7]) < MIN_DIF    //
         && std::abs(tmp_param9 - g_params[8]) < MIN_DIF    //
         && std::abs(tmp_param10 - g_params[9]) < MIN_DIF   //
-        && info->invert[0] - g_inversion[0] < MIN_DIF;
+        && info->invert[0] - g_inversion.params[0] < MIN_DIF;
 }
 
 static bool function_ok(const FractalInfo *info, const int num_fn)

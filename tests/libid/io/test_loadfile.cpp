@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "engine/Inversion.h"
+
 #include <io/loadfile.h>
 
 #include "MockDriver.h"
@@ -79,7 +81,7 @@ protected:
     ValueSaver<bool> saved_view_window{g_view_window};
     ValueSaver<FractalType> saved_fractal_type{g_fractal_type, FractalType::JULIA};
     ValueSaver<FractalSpecific *> saved_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::JULIA)};
-    ValueSaver<int> saved_invert{g_invert};
+    ValueSaver<int> saved_invert{g_inversion.invert};
     ValueSaver<bool> saved_make_parameter_file{g_make_parameter_file};
     ValueSaver<int> saved_colors{g_colors};
     ValueSaver<bool> saved_potential_flag{g_potential_flag};

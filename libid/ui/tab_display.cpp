@@ -9,6 +9,7 @@
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/Inversion.h"
 #include "engine/param_not_used.h"
 #include "engine/pixel_grid.h"
 #include "engine/random_seed.h"
@@ -639,16 +640,16 @@ top:
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         driver_put_string(++start_row, 2, C_GENERAL_MED, "Inversion radius: ");
-        std::sprintf(msg, "%12.9f", g_f_radius);
+        std::sprintf(msg, "%12.9f", g_inversion.radius);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
         driver_put_string(-1, -1, C_GENERAL_MED, "  xcenter: ");
-        std::sprintf(msg, "%12.9f", g_f_x_center);
+        std::sprintf(msg, "%12.9f", g_inversion.center.x);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
         driver_put_string(-1, -1, C_GENERAL_MED, "  ycenter: ");
-        std::sprintf(msg, "%12.9f", g_f_y_center);
+        std::sprintf(msg, "%12.9f", g_inversion.center.y);
         driver_put_string(-1, -1, C_GENERAL_HI, msg);
     }
 

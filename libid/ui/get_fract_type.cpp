@@ -5,6 +5,7 @@
 #include "engine/bailout_formula.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/param_not_used.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
@@ -343,10 +344,10 @@ sel_type_restart:
 
     if (new_fract_type != old_fract_type)
     {
-        g_invert = 0;
-        g_inversion[0] = 0.0;
-        g_inversion[1] = 0.0;
-        g_inversion[2] = 0.0;
+        g_inversion.invert = 0;
+        g_inversion.params[0] = 0.0;
+        g_inversion.params[1] = 0.0;
+        g_inversion.params[2] = 0.0;
     }
 
     saved_fractal_type.commit();

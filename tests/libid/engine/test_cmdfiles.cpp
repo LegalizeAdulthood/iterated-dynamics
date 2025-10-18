@@ -3,7 +3,6 @@
 #include <engine/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
-#include "engine/ImageRegion.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "test_library.h"
@@ -17,6 +16,7 @@
 #include <engine/engine_timer.h>
 #include <engine/id_data.h>
 #include <engine/ImageRegion.h>
+#include <engine/Inversion.h>
 #include <engine/log_map.h>
 #include <engine/random_seed.h>
 #include <engine/show_dot.h>
@@ -2603,46 +2603,46 @@ TEST_F(TestParameterCommand, aspectDrift)
 
 TEST_F(TestParameterCommand, invertComputedRadius)
 {
-    ValueSaver saved_inversion0{g_inversion[0], 999.0};
-    ValueSaver saved_inversion1{g_inversion[1], 999.0};
-    ValueSaver saved_inversion2{g_inversion[2], 999.0};
-    ValueSaver saved_invert{g_invert, 999};
+    ValueSaver saved_inversion0{g_inversion.params[0], 999.0};
+    ValueSaver saved_inversion1{g_inversion.params[1], 999.0};
+    ValueSaver saved_inversion2{g_inversion.params[2], 999.0};
+    ValueSaver saved_invert{g_inversion.invert, 999};
 
     exec_cmd_arg("invert=-1");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-1.0, g_inversion[0]);
-    EXPECT_EQ(1, g_invert);
+    EXPECT_EQ(-1.0, g_inversion.params[0]);
+    EXPECT_EQ(1, g_inversion.invert);
 }
 
 TEST_F(TestParameterCommand, invertDefaultCenter)
 {
-    ValueSaver saved_inversion0{g_inversion[0], 999.0};
-    ValueSaver saved_inversion1{g_inversion[1], 999.0};
-    ValueSaver saved_inversion2{g_inversion[2], 999.0};
-    ValueSaver saved_invert{g_invert, 999};
+    ValueSaver saved_inversion0{g_inversion.params[0], 999.0};
+    ValueSaver saved_inversion1{g_inversion.params[1], 999.0};
+    ValueSaver saved_inversion2{g_inversion.params[2], 999.0};
+    ValueSaver saved_invert{g_inversion.invert, 999};
 
     exec_cmd_arg("invert=1");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1.0, g_inversion[0]);
-    EXPECT_EQ(1, g_invert);
+    EXPECT_EQ(1.0, g_inversion.params[0]);
+    EXPECT_EQ(1, g_inversion.invert);
 }
 
 TEST_F(TestParameterCommand, invertRadiusCenter)
 {
-    ValueSaver saved_inversion0{g_inversion[0], 999.0};
-    ValueSaver saved_inversion1{g_inversion[1], 999.0};
-    ValueSaver saved_inversion2{g_inversion[2], 999.0};
-    ValueSaver saved_invert{g_invert, 999};
+    ValueSaver saved_inversion0{g_inversion.params[0], 999.0};
+    ValueSaver saved_inversion1{g_inversion.params[1], 999.0};
+    ValueSaver saved_inversion2{g_inversion.params[2], 999.0};
+    ValueSaver saved_invert{g_inversion.invert, 999};
 
     exec_cmd_arg("invert=1/100/200");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1.0, g_inversion[0]);
-    EXPECT_EQ(100.0, g_inversion[1]);
-    EXPECT_EQ(200.0, g_inversion[2]);
-    EXPECT_EQ(3, g_invert);
+    EXPECT_EQ(1.0, g_inversion.params[0]);
+    EXPECT_EQ(100.0, g_inversion.params[1]);
+    EXPECT_EQ(200.0, g_inversion.params[2]);
+    EXPECT_EQ(3, g_inversion.invert);
 }
 
 TEST_F(TestParameterCommand, oldDemmColorsYes)

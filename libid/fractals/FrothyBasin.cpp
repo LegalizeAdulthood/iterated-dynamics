@@ -8,6 +8,7 @@
 #include "engine/color_state.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
 #include "engine/show_dot.h"
@@ -189,7 +190,7 @@ int FrothyBasin::calc()
     {
         g_plot(g_col, g_row, g_show_dot % g_colors);
     }
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_tmp_z);
         g_old_z = g_tmp_z;

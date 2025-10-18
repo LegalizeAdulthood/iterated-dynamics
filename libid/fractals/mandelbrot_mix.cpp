@@ -6,6 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"
 #include "math/arg.h"
@@ -135,7 +136,7 @@ bool MandelbrotMix::setup()
 
 int MandelbrotMix::per_pixel()
 {
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
     }

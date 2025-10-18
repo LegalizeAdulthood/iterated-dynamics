@@ -7,6 +7,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
@@ -126,7 +127,7 @@ int phoenix_cplx_minus_fractal()
 
 int phoenix_per_pixel()
 {
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_old_z);
     }
@@ -144,7 +145,7 @@ int phoenix_per_pixel()
 
 int mand_phoenix_per_pixel()
 {
-    if (g_invert != 0)
+    if (g_inversion.invert != 0)
     {
         invertz2(&g_init);
     }
