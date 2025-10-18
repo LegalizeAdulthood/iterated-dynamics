@@ -22,6 +22,7 @@
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
 #include "io/library.h"
+#include "math/Point.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/version.h"
@@ -68,8 +69,7 @@ struct ImageHistory
     SymmetryType force_symmetry;
     std::array<int, 16> init_3d;
     int preview_factor;
-    int adjust_3d_x;
-    int adjust_3d_y;
+    Point2i adjust_3d;
     int red_crop_left;
     int red_crop_right;
     int blue_crop_left;
@@ -165,8 +165,7 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.force_symmetry == rhs.force_symmetry                                                     //
         && std::equal(std::begin(lhs.init_3d), std::end(lhs.init_3d), std::begin(rhs.init_3d))          //
         && lhs.preview_factor == rhs.preview_factor                                                     //
-        && lhs.adjust_3d_x == rhs.adjust_3d_x                                                           //
-        && lhs.adjust_3d_y == rhs.adjust_3d_y                                                           //
+        && lhs.adjust_3d == rhs.adjust_3d                                                               //
         && lhs.red_crop_left == rhs.red_crop_left                                                       //
         && lhs.red_crop_right == rhs.red_crop_right                                                     //
         && lhs.blue_crop_left == rhs.blue_crop_left                                                     //
@@ -401,8 +400,8 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("force_symmetry":)json" << value.force_symmetry << ',';
     str << R"json("init_3d":)json" << JsonArray(value.init_3d) << ',';
     str << R"json("preview_factor":)json" << value.preview_factor << ',';
-    str << R"json("adjust_3d_x":)json" << value.adjust_3d_x << ',';
-    str << R"json("adjust_3d_y":)json" << value.adjust_3d_y << ',';
+    str << R"json("adjust_3d_x":)json" << value.adjust_3d.x << ',';
+    str << R"json("adjust_3d_y":)json" << value.adjust_3d.y << ',';
     str << R"json("red_crop_left":)json" << value.red_crop_left << ',';
     str << R"json("red_crop_right":)json" << value.red_crop_right << ',';
     str << R"json("blue_crop_left":)json" << value.blue_crop_left << ',';
@@ -534,8 +533,7 @@ void save_history_info()
     current.init_3d[14] = g_light_z;         // z light vector coordinate
     current.init_3d[15] = g_light_avg;       // number of points to average
     current.preview_factor = g_preview_factor;
-    current.adjust_3d_x = g_adjust_3d_x;
-    current.adjust_3d_y = g_adjust_3d_y;
+    current.adjust_3d = g_adjust_3d;
     current.red_crop_left = g_red_crop_left;
     current.red_crop_right = g_red_crop_right;
     current.blue_crop_left = g_blue_crop_left;
@@ -701,8 +699,7 @@ void restore_history_info(const int i)
     g_light_z = last.init_3d[14];                          // z light vector coordinate
     g_light_avg = last.init_3d[15];                        // number of points to average
     g_preview_factor = last.preview_factor;
-    g_adjust_3d_x = last.adjust_3d_x;
-    g_adjust_3d_y = last.adjust_3d_y;
+    g_adjust_3d = last.adjust_3d;
     g_red_crop_left = last.red_crop_left;
     g_red_crop_right = last.red_crop_right;
     g_blue_crop_left = last.blue_crop_left;

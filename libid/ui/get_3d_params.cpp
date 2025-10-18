@@ -282,11 +282,11 @@ restart_3:
 
         prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
         values[k].type = 'i';
-        values[k].uval.ival = g_adjust_3d_x    ;
+        values[k].uval.ival = g_adjust_3d.x    ;
 
         prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
         values[k].type = 'i';
-        values[k].uval.ival = g_adjust_3d_y    ;
+        values[k].uval.ival = g_adjust_3d.y    ;
 
         prompts3d[++k] = "First transparent color";
         values[k].type = 'i';
@@ -338,8 +338,8 @@ restart_3:
         g_viewer_z = values[k++].uval.ival;
         g_shift_x     = values[k++].uval.ival;
         g_shift_y     = values[k++].uval.ival;
-        g_adjust_3d_x     = values[k++].uval.ival;
-        g_adjust_3d_y     = values[k++].uval.ival;
+        g_adjust_3d.x     = values[k++].uval.ival;
+        g_adjust_3d.y     = values[k++].uval.ival;
         g_transparent_color_3d[0] = values[k++].uval.ival;
         g_transparent_color_3d[1] = values[k++].uval.ival;
     }

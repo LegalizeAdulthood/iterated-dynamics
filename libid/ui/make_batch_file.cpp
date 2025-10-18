@@ -1393,9 +1393,9 @@ static void write_batch_params(
         }
         put_param(" perspective=%d", g_viewer_z);
         put_param(" xyshift=%d/%d", g_shift_x, g_shift_y);
-        if (g_adjust_3d_x || g_adjust_3d_y)
+        if (g_adjust_3d.x || g_adjust_3d.y)
         {
-            put_param(" xyadjust=%d/%d", g_adjust_3d_x, g_adjust_3d_y);
+            put_param(" xyadjust=%d/%d", g_adjust_3d.x, g_adjust_3d.y);
         }
         if (g_glasses_type != GlassesType::NONE)
         {

@@ -829,8 +829,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->init3d[14] = static_cast<std::int16_t>(g_light_z);         // z light vector coordinate
     save_info->init3d[15] = static_cast<std::int16_t>(g_light_avg);       // number of points to average
     save_info->preview_factor = static_cast<std::int16_t>(g_preview_factor);
-    save_info->x_trans = static_cast<std::int16_t>(g_adjust_3d_x);
-    save_info->y_trans = static_cast<std::int16_t>(g_adjust_3d_y);
+    save_info->x_trans = static_cast<std::int16_t>(g_adjust_3d.x);
+    save_info->y_trans = static_cast<std::int16_t>(g_adjust_3d.y);
     save_info->red_crop_left = static_cast<std::int16_t>(g_red_crop_left);
     save_info->red_crop_right = static_cast<std::int16_t>(g_red_crop_right);
     save_info->blue_crop_left = static_cast<short>(g_blue_crop_left);

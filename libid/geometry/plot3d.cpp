@@ -44,8 +44,7 @@ int g_eye_separation{};
 GlassesType g_glasses_type{};
 int g_x_shift1{};
 int g_y_shift1{};
-int g_adjust_3d_x{};
-int g_adjust_3d_y{};
+math::Point2i g_adjust_3d{};
 int g_red_crop_left{4};
 int g_red_crop_right{};
 int g_blue_crop_left{};
@@ -502,10 +501,10 @@ void plot_setup()
         case StereoImage::RED:
             g_x_shift  += static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
             g_xx_adjust = static_cast<int>(
-                (g_adjust_3d_x + g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
+                (g_adjust_3d.x + g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
             g_x_shift1 -= static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
             g_xx_adjust1 = static_cast<int>(
-                (g_adjust_3d_x - g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
+                (g_adjust_3d.x - g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
             if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2 - g_logical_screen_x_dots;
@@ -515,7 +514,7 @@ void plot_setup()
         case StereoImage::BLUE:
             g_x_shift  -= static_cast<int>(g_eye_separation * static_cast<double>(g_logical_screen_x_dots) / 200);
             g_xx_adjust = static_cast<int>(
-                (g_adjust_3d_x - g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
+                (g_adjust_3d.x - g_converge_x_adjust) * static_cast<double>(g_logical_screen_x_dots) / 100);
             if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen_x_dots)
             {
                 g_logical_screen_x_offset = g_screen_x_dots / 2;
@@ -528,9 +527,9 @@ void plot_setup()
     }
     else
     {
-        g_xx_adjust = static_cast<int>(g_adjust_3d_x * static_cast<double>(g_logical_screen_x_dots) / 100);
+        g_xx_adjust = static_cast<int>(g_adjust_3d.x * static_cast<double>(g_logical_screen_x_dots) / 100);
     }
-    g_yy_adjust = static_cast<int>(-(g_adjust_3d_y * static_cast<double>(g_logical_screen_y_dots)) / 100);
+    g_yy_adjust = static_cast<int>(-(g_adjust_3d.y * static_cast<double>(g_logical_screen_y_dots)) / 100);
 
     if (g_map_set)
     {

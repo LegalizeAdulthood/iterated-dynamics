@@ -3848,8 +3848,8 @@ static CmdArgFlags cmd_xy_adjust(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_adjust_3d_x = cmd.int_vals[0];
-    g_adjust_3d_y = cmd.int_vals[1];
+    g_adjust_3d.x = cmd.int_vals[0];
+    g_adjust_3d.y = cmd.int_vals[1];
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
@@ -4104,8 +4104,8 @@ void set_3d_defaults()
     g_viewer_z   = 0;
     g_shift_x    = 0;
     g_shift_y    = 0;
-    g_adjust_3d_x    = 0;
-    g_adjust_3d_y    = 0;
+    g_adjust_3d.x    = 0;
+    g_adjust_3d.y    = 0;
     g_light_avg  = 0;
     g_ambient   = 20;
     g_randomize_3d = 0;

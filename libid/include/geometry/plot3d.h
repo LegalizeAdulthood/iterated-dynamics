@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include "math/Point.h"
+
 namespace id::geometry
 {
 
@@ -26,8 +28,7 @@ inline bool alternating_or_superimpose(const GlassesType value)
     return value == GlassesType::ALTERNATING || value == GlassesType::SUPERIMPOSE;
 }
 
-extern int                   g_adjust_3d_x;
-extern int                   g_adjust_3d_y;
+extern math::Point2i         g_adjust_3d;
 extern int                   g_blue_bright;
 extern int                   g_blue_crop_left;
 extern int                   g_blue_crop_right;

@@ -3557,14 +3557,14 @@ TEST_F(TestParameterCommand, bright)
 
 TEST_F(TestParameterCommand, xyAdjust)
 {
-    ValueSaver saved_adjust_3d_x{g_adjust_3d_x, -99};
-    ValueSaver saved_adjust_3d_{g_adjust_3d_y, -99};
+    ValueSaver saved_adjust_3d_x{g_adjust_3d.x, -99};
+    ValueSaver saved_adjust_3d_{g_adjust_3d.y, -99};
 
     exec_cmd_arg("xyadjust=1/2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ(1, g_adjust_3d_x);
-    EXPECT_EQ(2, g_adjust_3d_y);
+    EXPECT_EQ(1, g_adjust_3d.x);
+    EXPECT_EQ(2, g_adjust_3d.y);
 }
 
 TEST_F(TestParameterCommand, threeDNo)

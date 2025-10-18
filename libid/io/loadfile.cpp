@@ -372,8 +372,8 @@ static void backwards_info2(const FractalInfo &read_info)
             g_light_z = read_info.init3d[14];                         // z light vector coordinate
             g_light_avg = read_info.init3d[15];                       // number of points to average
             g_preview_factor = read_info.preview_factor;
-            g_adjust_3d_x = read_info.x_trans;
-            g_adjust_3d_y = read_info.y_trans;
+            g_adjust_3d.x = read_info.x_trans;
+            g_adjust_3d.y = read_info.y_trans;
             g_red_crop_left = read_info.red_crop_left;
             g_red_crop_right = read_info.red_crop_right;
             g_blue_crop_left = read_info.blue_crop_left;
