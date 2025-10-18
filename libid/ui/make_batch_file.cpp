@@ -2,9 +2,6 @@
 //
 #include "ui/make_batch_file.h"
 
-#include "geometry/3d.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
@@ -12,6 +9,7 @@
 #include "engine/convert_center_mag.h"
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/sticky_orbits.h"
@@ -22,6 +20,9 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
+#include "geometry/3d.h"
+#include "geometry/line3d.h"
+#include "geometry/plot3d.h"
 #include "helpdefs.h"
 #include "io/dir_file.h"
 #include "io/ends_with_slash.h"
@@ -423,7 +424,7 @@ skip_ui:
         //**** start here
         if (params.x_multiple > 1 || params.y_multiple > 1)
         {
-            have_3rd = g_x_min != g_x_3rd || g_y_min != g_y_3rd;
+            have_3rd = g_image_region.m_min.x != g_image_region.m_3rd.x || g_image_region.m_min.y != g_image_region.m_3rd.y;
             const fs::path path{get_save_path(WriteFile::ROOT, "makemig.bat")};
             assert(!path.empty());
             bat_file = std::fopen(path.string().c_str(), "w");
@@ -432,14 +433,14 @@ skip_ui:
                 params.x_multiple = 0;
                 params.y_multiple = 0;
             }
-            piece_delta_x  = (g_x_max - g_x_3rd) / (params.x_multiple * params.piece_x_dots - 1);   // calculate step sizes
-            piece_delta_y  = (g_y_max - g_y_3rd) / (params.y_multiple * params.piece_y_dots - 1);
-            piece_delta_x2 = (g_x_3rd - g_x_min) / (params.y_multiple * params.piece_y_dots - 1);
-            piece_delta_y2 = (g_y_3rd - g_y_min) / (params.x_multiple * params.piece_x_dots - 1);
+            piece_delta_x  = (g_image_region.m_max.x - g_image_region.m_3rd.x) / (params.x_multiple * params.piece_x_dots - 1);   // calculate step sizes
+            piece_delta_y  = (g_image_region.m_max.y - g_image_region.m_3rd.y) / (params.y_multiple * params.piece_y_dots - 1);
+            piece_delta_x2 = (g_image_region.m_3rd.x - g_image_region.m_min.x) / (params.y_multiple * params.piece_y_dots - 1);
+            piece_delta_y2 = (g_image_region.m_3rd.y - g_image_region.m_min.y) / (params.x_multiple * params.piece_x_dots - 1);
 
             // save corners
-            piece_x_min = g_x_min;
-            piece_y_min = g_y_max;
+            piece_x_min = g_image_region.m_min.x;
+            piece_y_min = g_image_region.m_max.y;
         }
         for (int col = 0; col < params.x_multiple; col++)
         {
@@ -463,19 +464,19 @@ skip_ui:
                     std::strcat(
                         piece_command_name, fmt::format("_{:c}{:c}", par_key(col), par_key(row)).c_str());
                     fmt::print(s_param_file, "{:<19s}{{", piece_command_name);
-                    g_x_min = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*(row*params.piece_y_dots);
-                    g_x_max = piece_x_min + piece_delta_x*((col+1)*params.piece_x_dots - 1) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
-                    g_y_min = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*((col+1)*params.piece_x_dots - 1);
-                    g_y_max = piece_y_min - piece_delta_y*(row*params.piece_y_dots) - piece_delta_y2*(col*params.piece_x_dots);
+                    g_image_region.m_min.x = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*(row*params.piece_y_dots);
+                    g_image_region.m_max.x = piece_x_min + piece_delta_x*((col+1)*params.piece_x_dots - 1) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
+                    g_image_region.m_min.y = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*((col+1)*params.piece_x_dots - 1);
+                    g_image_region.m_max.y = piece_y_min - piece_delta_y*(row*params.piece_y_dots) - piece_delta_y2*(col*params.piece_x_dots);
                     if (have_3rd)
                     {
-                        g_x_3rd = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
-                        g_y_3rd = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*(col*params.piece_x_dots);
+                        g_image_region.m_3rd.x = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
+                        g_image_region.m_3rd.y = piece_y_min - piece_delta_y*((row+1)*params.piece_y_dots - 1) - piece_delta_y2*(col*params.piece_x_dots);
                     }
                     else
                     {
-                        g_x_3rd = g_x_min;
-                        g_y_3rd = g_y_min;
+                        g_image_region.m_3rd.x = g_image_region.m_min.x;
+                        g_image_region.m_3rd.y = g_image_region.m_min.y;
                     }
                     fmt::print(bat_file,
                         "start/wait"
@@ -963,16 +964,16 @@ static void write_batch_params(
             }
             else
             {
-                const int x_digits = get_prec(g_x_min, g_x_max, g_x_3rd);
-                const int y_digits = get_prec(g_y_min, g_y_max, g_y_3rd);
-                put_float(0, g_x_min, x_digits);
-                put_float(1, g_x_max, x_digits);
-                put_float(1, g_y_min, y_digits);
-                put_float(1, g_y_max, y_digits);
-                if (g_x_3rd != g_x_min || g_y_3rd != g_y_min)
+                const int x_digits = get_prec(g_image_region.m_min.x, g_image_region.m_max.x, g_image_region.m_3rd.x);
+                const int y_digits = get_prec(g_image_region.m_min.y, g_image_region.m_max.y, g_image_region.m_3rd.y);
+                put_float(0, g_image_region.m_min.x, x_digits);
+                put_float(1, g_image_region.m_max.x, x_digits);
+                put_float(1, g_image_region.m_min.y, y_digits);
+                put_float(1, g_image_region.m_max.y, y_digits);
+                if (g_image_region.m_3rd.x != g_image_region.m_min.x || g_image_region.m_3rd.y != g_image_region.m_min.y)
                 {
-                    put_float(1, g_x_3rd, x_digits);
-                    put_float(1, g_y_3rd, y_digits);
+                    put_float(1, g_image_region.m_3rd.x, x_digits);
+                    put_float(1, g_image_region.m_3rd.y, y_digits);
                 }
             }
         }

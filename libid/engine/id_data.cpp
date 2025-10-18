@@ -50,13 +50,6 @@ bool g_z_scroll{};                      // screen/zoombox false fixed, true rela
 bool g_compare_gif{};                   // compare two gif files flag
 int g_save_system{};                    // from and for save files
 bool g_tab_mode{true};                  // tab display enabled
-                                        // for historical reasons (before rotation):
-                                        //    top    left  corner of screen is (xxmin,yymax)
-                                        //    bottom left  corner of screen is (xx3rd,yy3rd)
-                                        //    bottom right corner of screen is (xxmax,yymin)
-double g_x_min{}, g_x_max{};            //
-double g_y_min{}, g_y_max{};            //
-double g_x_3rd{}, g_y_3rd{};            // selected screen corners
 double g_save_x_min{}, g_save_x_max{};  //
 double g_save_y_min{}, g_save_y_max{};  //
 double g_save_x_3rd{}, g_save_y_3rd{};  // displayed screen corners

@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/jiim.h"
 #include "engine/log_map.h"
 #include "fractals/Cellular.h"
@@ -157,8 +158,8 @@ static void toggle_mandelbrot_julia(MainContext &context)
         set_fractal_type(g_cur_fractal_specific->to_julia);
         if (g_julia_c_x == JULIA_C_NOT_SET || g_julia_c_y == JULIA_C_NOT_SET)
         {
-            g_params[0] = (g_x_max + g_x_min) / 2;
-            g_params[1] = (g_y_max + g_y_min) / 2;
+            g_params[0] = (g_image_region.m_max.x + g_image_region.m_min.x) / 2;
+            g_params[1] = (g_image_region.m_max.y + g_image_region.m_min.y) / 2;
         }
         else
         {
@@ -174,20 +175,20 @@ static void toggle_mandelbrot_julia(MainContext &context)
         s_j_x_3rd = g_save_x_3rd;
         s_j_y_3rd = g_save_y_3rd;
         context.from_mandel = true;
-        g_x_min = g_cur_fractal_specific->x_min;
-        g_x_max = g_cur_fractal_specific->x_max;
-        g_y_min = g_cur_fractal_specific->y_min;
-        g_y_max = g_cur_fractal_specific->y_max;
-        g_x_3rd = g_x_min;
-        g_y_3rd = g_y_min;
+        g_image_region.m_min.x = g_cur_fractal_specific->x_min;
+        g_image_region.m_max.x = g_cur_fractal_specific->x_max;
+        g_image_region.m_min.y = g_cur_fractal_specific->y_min;
+        g_image_region.m_max.y = g_cur_fractal_specific->y_max;
+        g_image_region.m_3rd.x = g_image_region.m_min.x;
+        g_image_region.m_3rd.y = g_image_region.m_min.y;
         if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1)
         {
-            g_x_min *= 3.0;
-            g_x_max *= 3.0;
-            g_y_min *= 3.0;
-            g_y_max *= 3.0;
-            g_x_3rd *= 3.0;
-            g_y_3rd *= 3.0;
+            g_image_region.m_min.x *= 3.0;
+            g_image_region.m_max.x *= 3.0;
+            g_image_region.m_min.y *= 3.0;
+            g_image_region.m_max.y *= 3.0;
+            g_image_region.m_3rd.x *= 3.0;
+            g_image_region.m_3rd.y *= 3.0;
         }
         g_zoom_enabled = true;
         g_calc_status = CalcStatus::PARAMS_CHANGED;
@@ -199,21 +200,21 @@ static void toggle_mandelbrot_julia(MainContext &context)
         set_fractal_type(g_cur_fractal_specific->to_mandel);
         if (context.from_mandel)
         {
-            g_x_min = s_j_x_min;
-            g_x_max = s_j_x_max;
-            g_y_min = s_j_y_min;
-            g_y_max = s_j_y_max;
-            g_x_3rd = s_j_x_3rd;
-            g_y_3rd = s_j_y_3rd;
+            g_image_region.m_min.x = s_j_x_min;
+            g_image_region.m_max.x = s_j_x_max;
+            g_image_region.m_min.y = s_j_y_min;
+            g_image_region.m_max.y = s_j_y_max;
+            g_image_region.m_3rd.x = s_j_x_3rd;
+            g_image_region.m_3rd.y = s_j_y_3rd;
         }
         else
         {
-            g_x_3rd = g_cur_fractal_specific->x_min;
-            g_x_min = g_x_3rd;
-            g_x_max = g_cur_fractal_specific->x_max;
-            g_y_3rd = g_cur_fractal_specific->y_min;
-            g_y_min = g_y_3rd;
-            g_y_max = g_cur_fractal_specific->y_max;
+            g_image_region.m_3rd.x = g_cur_fractal_specific->x_min;
+            g_image_region.m_min.x = g_image_region.m_3rd.x;
+            g_image_region.m_max.x = g_cur_fractal_specific->x_max;
+            g_image_region.m_3rd.y = g_cur_fractal_specific->y_min;
+            g_image_region.m_min.y = g_image_region.m_3rd.y;
+            g_image_region.m_max.y = g_cur_fractal_specific->y_max;
         }
         g_save_c.x = g_params[0];
         g_save_c.y = g_params[1];

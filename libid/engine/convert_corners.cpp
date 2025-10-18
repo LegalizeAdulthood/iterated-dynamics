@@ -3,6 +3,7 @@
 #include "engine/convert_corners.h"
 
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "math/biginit.h"
 #include "misc/id.h"
 
@@ -35,23 +36,23 @@ void cvt_corners(const double ctr_x, const double ctr_y, const LDouble mag, doub
     if (rot == 0.0 && skew == 0.0)
     {
         // simple, faster case
-        g_x_min = ctr_x - w;
-        g_x_3rd = g_x_min;
-        g_x_max = ctr_x + w;
-        g_y_min = ctr_y - h;
-        g_y_3rd = g_y_min;
-        g_y_max = ctr_y + h;
+        g_image_region.m_min.x = ctr_x - w;
+        g_image_region.m_3rd.x = g_image_region.m_min.x;
+        g_image_region.m_max.x = ctr_x + w;
+        g_image_region.m_min.y = ctr_y - h;
+        g_image_region.m_3rd.y = g_image_region.m_min.y;
+        g_image_region.m_max.y = ctr_y + h;
         return;
     }
 
     // in unrotated, untranslated coordinate system
     const double tan_skew = std::tan(deg_to_rad(skew));
-    g_x_min = -w + h*tan_skew;
-    g_x_max =  w - h*tan_skew;
-    g_x_3rd = -w - h*tan_skew;
-    g_y_max = h;
-    g_y_min = -h;
-    g_y_3rd = g_y_min;
+    g_image_region.m_min.x = -w + h*tan_skew;
+    g_image_region.m_max.x =  w - h*tan_skew;
+    g_image_region.m_3rd.x = -w - h*tan_skew;
+    g_image_region.m_max.y = h;
+    g_image_region.m_min.y = -h;
+    g_image_region.m_3rd.y = g_image_region.m_min.y;
 
     // rotate coord system and then translate it
     rot = deg_to_rad(rot);
@@ -59,22 +60,22 @@ void cvt_corners(const double ctr_x, const double ctr_y, const LDouble mag, doub
     const double cos_rot = std::cos(rot);
 
     // top left
-    double x = g_x_min * cos_rot + g_y_max * sin_rot;
-    double y = -g_x_min * sin_rot + g_y_max * cos_rot;
-    g_x_min = x + ctr_x;
-    g_y_max = y + ctr_y;
+    double x = g_image_region.m_min.x * cos_rot + g_image_region.m_max.y * sin_rot;
+    double y = -g_image_region.m_min.x * sin_rot + g_image_region.m_max.y * cos_rot;
+    g_image_region.m_min.x = x + ctr_x;
+    g_image_region.m_max.y = y + ctr_y;
 
     // bottom right
-    x = g_x_max * cos_rot + g_y_min *  sin_rot;
-    y = -g_x_max * sin_rot + g_y_min *  cos_rot;
-    g_x_max = x + ctr_x;
-    g_y_min = y + ctr_y;
+    x = g_image_region.m_max.x * cos_rot + g_image_region.m_min.y *  sin_rot;
+    y = -g_image_region.m_max.x * sin_rot + g_image_region.m_min.y *  cos_rot;
+    g_image_region.m_max.x = x + ctr_x;
+    g_image_region.m_min.y = y + ctr_y;
 
     // bottom left
-    x = g_x_3rd * cos_rot + g_y_3rd *  sin_rot;
-    y = -g_x_3rd * sin_rot + g_y_3rd *  cos_rot;
-    g_x_3rd = x + ctr_x;
-    g_y_3rd = y + ctr_y;
+    x = g_image_region.m_3rd.x * cos_rot + g_image_region.m_3rd.y *  sin_rot;
+    y = -g_image_region.m_3rd.x * sin_rot + g_image_region.m_3rd.y *  cos_rot;
+    g_image_region.m_3rd.x = x + ctr_x;
+    g_image_region.m_3rd.y = y + ctr_y;
 }
 
 // convert center/mag to corners using bf

@@ -16,6 +16,7 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "fractals/fractalp.h"
 #include "misc/Driver.h"
 #include "misc/stack_avail.h"
@@ -776,10 +777,10 @@ void soi()
     }
     else
     {
-        xx_min_l = g_x_min;
-        yy_min_l = g_y_min;
-        xx_max_l = g_x_max;
-        yy_max_l = g_y_max;
+        xx_min_l = g_image_region.m_min.x;
+        yy_min_l = g_image_region.m_min.y;
+        xx_max_l = g_image_region.m_max.x;
+        yy_max_l = g_image_region.m_max.y;
     }
     s_t_width = TOLERANCE / (g_logical_screen_x_dots - 1);
     const double step_x = (xx_max_l - xx_min_l) / g_logical_screen_x_dots;

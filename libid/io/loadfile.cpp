@@ -5,13 +5,11 @@
 */
 #include "io/loadfile.h"
 
-#include "geometry/3d.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
@@ -21,6 +19,9 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
+#include "geometry/3d.h"
+#include "geometry/line3d.h"
+#include "geometry/plot3d.h"
 #include "io/decode_info.h"
 #include "io/encoder.h"
 #include "io/library.h"
@@ -394,8 +395,8 @@ static void backwards_info3(const FractalInfo &read_info)
     }
 
     g_calc_status = CalcStatus::PARAMS_CHANGED; // defaults if version < 4
-    g_x_3rd = g_x_min;
-    g_y_3rd = g_y_min;
+    g_image_region.m_3rd.x = g_image_region.m_min.x;
+    g_image_region.m_3rd.y = g_image_region.m_min.y;
     g_user_distance_estimator_value = 0;
     g_calc_time = 0;
 }
@@ -405,8 +406,8 @@ static void backwards_info4(const FractalInfo &read_info)
     if (read_info.info_version > 3)
     {
         g_file_version = Version{14, 0, 0, 0, true};
-        g_x_3rd = read_info.x3rd;
-        g_y_3rd = read_info.y3rd;
+        g_image_region.m_3rd.x = read_info.x3rd;
+        g_image_region.m_3rd.y = read_info.y3rd;
         g_calc_status = static_cast<CalcStatus>(read_info.calc_status);
         g_user_std_calc_mode = static_cast<CalcMode>(read_info.std_calc_mode);
         g_three_pass = false;
@@ -911,10 +912,10 @@ int read_overlay()      // read overlay/3D files, if required
         return -1;
     }
     set_fractal_type(migrate_integer_types(read_fractal_type));
-    g_x_min = read_info.x_min;
-    g_x_max = read_info.x_max;
-    g_y_min = read_info.y_min;
-    g_y_max = read_info.y_max;
+    g_image_region.m_min.x = read_info.x_min;
+    g_image_region.m_max.x = read_info.x_max;
+    g_image_region.m_min.y = read_info.y_min;
+    g_image_region.m_max.y = read_info.y_max;
     g_params[0] = read_info.c_real;
     g_params[1] = read_info.c_imag;
     g_file_version = Version{11, 0, 0, 0, true};

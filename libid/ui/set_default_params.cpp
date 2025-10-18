@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/find_extra_param.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "math/round_float_double.h"
@@ -42,12 +43,12 @@ static SavedParams s_saved_params{};
 
 void set_default_params()
 {
-    g_x_min = g_cur_fractal_specific->x_min;
-    g_x_max = g_cur_fractal_specific->x_max;
-    g_y_min = g_cur_fractal_specific->y_min;
-    g_y_max = g_cur_fractal_specific->y_max;
-    g_x_3rd = g_x_min;
-    g_y_3rd = g_y_min;
+    g_image_region.m_min.x = g_cur_fractal_specific->x_min;
+    g_image_region.m_max.x = g_cur_fractal_specific->x_max;
+    g_image_region.m_min.y = g_cur_fractal_specific->y_min;
+    g_image_region.m_max.y = g_cur_fractal_specific->y_max;
+    g_image_region.m_3rd.x = g_image_region.m_min.x;
+    g_image_region.m_3rd.y = g_image_region.m_min.y;
 
     if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
     {
@@ -83,12 +84,12 @@ void set_default_params()
 
 void save_params()
 {
-    s_saved_params.x_min = g_x_min;
-    s_saved_params.x_max = g_x_max;
-    s_saved_params.y_min = g_y_min;
-    s_saved_params.y_max = g_y_max;
-    s_saved_params.x_3rd = g_x_3rd;
-    s_saved_params.y_3rd = g_y_3rd; // selected screen corners
+    s_saved_params.x_min = g_image_region.m_min.x;
+    s_saved_params.x_max = g_image_region.m_max.x;
+    s_saved_params.y_min = g_image_region.m_min.y;
+    s_saved_params.y_max = g_image_region.m_max.y;
+    s_saved_params.x_3rd = g_image_region.m_3rd.x;
+    s_saved_params.y_3rd = g_image_region.m_3rd.y; // selected screen corners
     for (int i = 0; i < MAX_PARAMS; ++i)
     {
         s_saved_params.params[i] = g_params[i]; // parameters}
@@ -98,12 +99,12 @@ void save_params()
 
 void restore_params()
 {
-    g_x_min = s_saved_params.x_min;
-    g_x_max = s_saved_params.x_max;
-    g_y_min = s_saved_params.y_min;
-    g_y_max = s_saved_params.y_max;
-    g_x_3rd = s_saved_params.x_3rd;
-    g_y_3rd = s_saved_params.y_3rd; // selected screen corners
+    g_image_region.m_min.x = s_saved_params.x_min;
+    g_image_region.m_max.x = s_saved_params.x_max;
+    g_image_region.m_min.y = s_saved_params.y_min;
+    g_image_region.m_max.y = s_saved_params.y_max;
+    g_image_region.m_3rd.x = s_saved_params.x_3rd;
+    g_image_region.m_3rd.y = s_saved_params.y_3rd; // selected screen corners
     for (int i = 0; i < MAX_PARAMS; ++i)
     {
         g_params[i] = s_saved_params.params[i]; // parameters}

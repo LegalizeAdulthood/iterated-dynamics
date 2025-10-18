@@ -10,6 +10,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/type_has_param.h"
 #include "fractals/divide_brot.h"
 #include "fractals/fractalp.h"
@@ -68,9 +69,9 @@ void show_corners_dbl(const char *s)
                              " delta_x= {:.20Lf} delta_y= {:.20Lf}\n" //
                              "delta_x2= {:.20Lf} delta_y2= {:.20Lf}", //
             s,                                                        //
-            g_x_min, g_x_max,                                         //
-            g_y_min, g_y_max,                                         //
-            g_x_3rd, g_y_3rd,                                         //
+            g_image_region.m_min.x, g_image_region.m_max.x,                                         //
+            g_image_region.m_min.y, g_image_region.m_max.y,                                         //
+            g_image_region.m_3rd.x, g_image_region.m_3rd.y,                                         //
             g_delta_x, g_delta_y,                                     //
             g_delta_x2, g_delta_y2)))
     {
@@ -83,31 +84,31 @@ void show_corners_bn(const char *s)
 {
     if (constexpr int dec = 20; //
         stop_msg(fmt::format("{:s}\n"
-                             "g_x_min_bn={:s}\n"
-                             "g_x_min   ={:.20f}\n"
+                             "x_min_bn={:s}\n"
+                             "x_min   ={:.20f}\n"
                              "\n"
-                             "g_x_max_bn={:s}\n"
-                             "g_x_max   ={:.20f}\n"
+                             "x_max_bn={:s}\n"
+                             "x_max   ={:.20f}\n"
                              "\n"
-                             "g_y_min_bn={:s}\n"
-                             "g_y_min   ={:.20f}\n"
+                             "y_min_bn={:s}\n"
+                             "y_min   ={:.20f}\n"
                              "\n"
-                             "g_y_max_bn={:s}\n"
-                             "g_y_max   ={:.20f}\n"
+                             "y_max_bn={:s}\n"
+                             "y_max   ={:.20f}\n"
                              "\n"
-                             "g_x_3rd_bn={:s}\n"
-                             "g_x_3rd   ={:.20f}\n"
+                             "x_3rd_bn={:s}\n"
+                             "x_3rd   ={:.20f}\n"
                              "\n"
-                             "g_y_3rd_bn={:s}\n"
-                             "g_y_3rd   ={:.20f}\n"
+                             "y_3rd_bn={:s}\n"
+                             "y_3rd   ={:.20f}\n"
                              "\n",
             s,                                      //
-            bn_to_string(g_x_min_bn, dec), g_x_min, //
-            bn_to_string(g_x_max_bn, dec), g_x_max, //
-            bn_to_string(g_y_min_bn, dec), g_y_min, //
-            bn_to_string(g_y_max_bn, dec), g_y_max, //
-            bn_to_string(g_x_3rd_bn, dec), g_x_3rd, //
-            bn_to_string(g_y_3rd_bn, dec), g_y_3rd)))
+            bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
+            bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
+            bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
+            bn_to_string(g_y_max_bn, dec), g_image_region.m_max.y, //
+            bn_to_string(g_x_3rd_bn, dec), g_image_region.m_3rd.x, //
+            bn_to_string(g_y_3rd_bn, dec), g_image_region.m_3rd.y)))
     {
         goodbye();
     }
@@ -116,14 +117,13 @@ void show_corners_bn(const char *s)
 // show globals
 void show_globals_bf(const char *s)
 {
-    if (stop_msg(fmt::format(
-            "{:s}\n"                                                                             //
-            "g_bn_step={:d} g_bn_length={:d} g_int_length={:d} g_r_length={:d} g_padding={:d}\n" //
-            "g_shift_factor={:d} decimals={:d} g_bf_length={:d} g_r_bf_length={:d}\n"            //
-            "g_bf_decimals={:d} ",                                                               //
-            s,                                                                                   //
-            g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,                         //
-            g_shift_factor, g_decimals, g_bf_length, g_r_bf_length,                              //
+    if (stop_msg(fmt::format("{:s}\n"                                                                   //
+                             "bn_step={:d} bn_length={:d} int_length={:d} r_length={:d} padding={:d}\n" //
+                             "shift_factor={:d} decimals={:d} bf_length={:d} r_bf_length={:d}\n"        //
+                             "bf_decimals={:d} ",                                                       //
+            s,                                                                                          //
+            g_bn_step, g_bn_length, g_int_length, g_r_length, g_padding,                                //
+            g_shift_factor, g_decimals, g_bf_length, g_r_bf_length,                                     //
             g_bf_decimals)))
     {
         goodbye();
@@ -161,12 +161,12 @@ void show_corners_bf(const char *s)
                              "\n",
             s,                                              //
             bf_to_string(g_bf_x_min, dec).c_str(),          //
-            g_x_min, g_decimals, g_bf_length,               //
-            bf_to_string(g_bf_x_max, dec).c_str(), g_x_max, //
-            bf_to_string(g_bf_y_min, dec).c_str(), g_y_min, //
-            bf_to_string(g_bf_y_max, dec).c_str(), g_y_max, //
-            bf_to_string(g_bf_x_3rd, dec).c_str(), g_x_3rd, //
-            bf_to_string(g_bf_y_3rd, dec).c_str(), g_y_3rd)))
+            g_image_region.m_min.x, g_decimals, g_bf_length,               //
+            bf_to_string(g_bf_x_max, dec).c_str(), g_image_region.m_max.x, //
+            bf_to_string(g_bf_y_min, dec).c_str(), g_image_region.m_min.y, //
+            bf_to_string(g_bf_y_max, dec).c_str(), g_image_region.m_max.y, //
+            bf_to_string(g_bf_x_3rd, dec).c_str(), g_image_region.m_3rd.x, //
+            bf_to_string(g_bf_y_3rd, dec).c_str(), g_image_region.m_3rd.y)))
     {
         goodbye();
     }
@@ -196,12 +196,12 @@ void show_corners_bf_save(const char *s)
         "y_3rd= {:.20f}\n"
         "\n",
         s,                                                   //
-        bf_to_string(g_bf_save_x_min, dec).c_str(), g_x_min, //
-        bf_to_string(g_bf_save_x_max, dec).c_str(), g_x_max, //
-        bf_to_string(g_bf_save_y_min, dec).c_str(), g_y_min, //
-        bf_to_string(g_bf_save_y_max, dec).c_str(), g_y_max, //
-        bf_to_string(g_bf_save_x_3rd, dec).c_str(), g_x_3rd, //
-        bf_to_string(g_bf_save_y_3rd, dec).c_str(), g_y_3rd)))
+        bf_to_string(g_bf_save_x_min, dec).c_str(), g_image_region.m_min.x, //
+        bf_to_string(g_bf_save_x_max, dec).c_str(), g_image_region.m_max.x, //
+        bf_to_string(g_bf_save_y_min, dec).c_str(), g_image_region.m_min.y, //
+        bf_to_string(g_bf_save_y_max, dec).c_str(), g_image_region.m_max.y, //
+        bf_to_string(g_bf_save_x_3rd, dec).c_str(), g_image_region.m_3rd.x, //
+        bf_to_string(g_bf_save_y_3rd, dec).c_str(), g_image_region.m_3rd.y)))
     {
         goodbye();
     }
@@ -256,7 +256,7 @@ void show_aspect(const char *s)
                              "bf     {:s}\n"
                              "\n",
             s,                                         //
-            (g_y_max - g_y_min) / (g_x_max - g_x_min), //
+            (g_image_region.m_max.y - g_image_region.m_min.y) / (g_image_region.m_max.x - g_image_region.m_min.x), //
             bf_to_string(aspect, 10))))
     {
         goodbye();
@@ -311,12 +311,12 @@ void bf_corners_to_float()
 {
     if (g_bf_math != BFMathType::NONE)
     {
-        g_x_min = static_cast<double>(bf_to_float(g_bf_x_min));
-        g_y_min = static_cast<double>(bf_to_float(g_bf_y_min));
-        g_x_max = static_cast<double>(bf_to_float(g_bf_x_max));
-        g_y_max = static_cast<double>(bf_to_float(g_bf_y_max));
-        g_x_3rd = static_cast<double>(bf_to_float(g_bf_x_3rd));
-        g_y_3rd = static_cast<double>(bf_to_float(g_bf_y_3rd));
+        g_image_region.m_min.x = static_cast<double>(bf_to_float(g_bf_x_min));
+        g_image_region.m_min.y = static_cast<double>(bf_to_float(g_bf_y_min));
+        g_image_region.m_max.x = static_cast<double>(bf_to_float(g_bf_x_max));
+        g_image_region.m_max.y = static_cast<double>(bf_to_float(g_bf_y_max));
+        g_image_region.m_3rd.x = static_cast<double>(bf_to_float(g_bf_x_3rd));
+        g_image_region.m_3rd.y = static_cast<double>(bf_to_float(g_bf_y_3rd));
     }
     for (int i = 0; i < MAX_PARAMS; i++)
     {
@@ -570,14 +570,14 @@ int mandel_per_pixel_bn()
     {
         return true;
     }
-    // parm.x = g_x_min + col*delx + row*delx2
+    // parm.x = x_min + col*delx + row*delx2
     mult_bn_int(g_param_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
     mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
     add_a_bn(g_param_z_bn.x, g_bn_tmp);
     add_a_bn(g_param_z_bn.x, g_x_min_bn);
 
-    // parm.y = g_y_max - row*dely - col*dely2;
+    // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bn is just used as a temporary variable
     mult_bn_int(g_old_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
     mult_bn_int(g_old_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
@@ -623,14 +623,14 @@ int mandel_per_pixel_bf()
     {
         return mandel_per_pixel();
     }
-    // parm.x = g_x_min + col*delx + row*delx2
+    // parm.x = x_min + col*delx + row*delx2
     mult_bf_int(g_param_z_bf.x, g_delta_x_bf, static_cast<U16>(g_col));
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, static_cast<U16>(g_row));
 
     add_a_bf(g_param_z_bf.x, g_bf_tmp);
     add_a_bf(g_param_z_bf.x, g_bf_x_min);
 
-    // parm.y = g_y_max - row*dely - col*dely2;
+    // parm.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_old_z_bf is just used as a temporary variable
     mult_bf_int(g_old_z_bf.x, g_delta_y_bf, static_cast<U16>(g_row));
     mult_bf_int(g_old_z_bf.y, g_delta2_y_bf, static_cast<U16>(g_col));
@@ -669,14 +669,14 @@ int mandel_per_pixel_bf()
 
 int julia_per_pixel_bn()
 {
-    // old.x = g_x_min + col*delx + row*delx2
+    // old.x = x_min + col*delx + row*delx2
     mult_bn_int(g_old_z_bn.x, g_delta_x_bn, static_cast<U16>(g_col));
     mult_bn_int(g_bn_tmp, g_delta2_x_bn, static_cast<U16>(g_row));
 
     add_a_bn(g_old_z_bn.x, g_bn_tmp);
     add_a_bn(g_old_z_bn.x, g_x_min_bn);
 
-    // old.y = g_y_max - row*dely - col*dely2;
+    // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bn is just used as a temporary variable
     mult_bn_int(g_new_z_bn.x, g_delta_y_bn, static_cast<U16>(g_row));
     mult_bn_int(g_new_z_bn.y, g_delta2_y_bn, static_cast<U16>(g_col));
@@ -696,14 +696,14 @@ int julia_per_pixel_bn()
 
 int julia_per_pixel_bf()
 {
-    // old.x = g_x_min + col*delx + row*delx2
+    // old.x = x_min + col*delx + row*delx2
     mult_bf_int(g_old_z_bf.x, g_delta_x_bf, static_cast<U16>(g_col));
     mult_bf_int(g_bf_tmp, g_delta2_x_bf, static_cast<U16>(g_row));
 
     add_a_bf(g_old_z_bf.x, g_bf_tmp);
     add_a_bf(g_old_z_bf.x, g_bf_x_min);
 
-    // old.y = g_y_max - row*dely - col*dely2;
+    // old.y = y_max - row*dely - col*dely2;
     // note: in next four lines, g_new_z_bf is just used as a temporary variable
     mult_bf_int(g_new_z_bf.x, g_delta_y_bf, static_cast<U16>(g_row));
     mult_bf_int(g_new_z_bf.y, g_delta2_y_bf, static_cast<U16>(g_col));

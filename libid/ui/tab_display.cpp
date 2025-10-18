@@ -2,13 +2,13 @@
 //
 #include "ui/tab_display.h"
 
-#include "geometry/line3d.h"
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/diffusion_scan.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/param_not_used.h"
 #include "engine/pixel_grid.h"
 #include "engine/random_seed.h"
@@ -18,6 +18,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
+#include "geometry/line3d.h"
 #include "io/loadfile.h"
 #include "io/trim_filename.h"
 #include "math/biginit.h"
@@ -546,16 +547,16 @@ top:
             double y_ctr;
             driver_put_string(start_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
             driver_put_string(++start_row, 3, C_GENERAL_MED, "Top-l");
-            std::sprintf(msg, "%20.16f  %20.16f", g_x_min, g_y_max);
+            std::sprintf(msg, "%20.16f  %20.16f", g_image_region.m_min.x, g_image_region.m_max.y);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
             driver_put_string(++start_row, 3, C_GENERAL_MED, "Bot-r");
-            std::sprintf(msg, "%20.16f  %20.16f", g_x_max, g_y_min);
+            std::sprintf(msg, "%20.16f  %20.16f", g_image_region.m_max.x, g_image_region.m_min.y);
             driver_put_string(-1, 17, C_GENERAL_HI, msg);
 
-            if (g_x_min != g_x_3rd || g_y_min != g_y_3rd)
+            if (g_image_region.m_min.x != g_image_region.m_3rd.x || g_image_region.m_min.y != g_image_region.m_3rd.y)
             {
                 driver_put_string(++start_row, 3, C_GENERAL_MED, "Bot-l");
-                std::sprintf(msg, "%20.16f  %20.16f", g_x_3rd, g_y_3rd);
+                std::sprintf(msg, "%20.16f  %20.16f", g_image_region.m_3rd.x, g_image_region.m_3rd.y);
                 driver_put_string(-1, 17, C_GENERAL_HI, msg);
             }
             cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
@@ -712,7 +713,7 @@ static void area()
     }
     std::sprintf(buf, "%s%ld inside pixels of %ld%s%f",
             msg, cnt, static_cast<long>(g_logical_screen_x_dots) * static_cast<long>(g_logical_screen_y_dots), ".  Total area ",
-            cnt/(static_cast<float>(g_logical_screen_x_dots) * static_cast<float>(g_logical_screen_y_dots))*(g_x_max-g_x_min)*(g_y_max-g_y_min));
+            cnt/(static_cast<float>(g_logical_screen_x_dots) * static_cast<float>(g_logical_screen_y_dots))*(g_image_region.m_max.x-g_image_region.m_min.x)*(g_image_region.m_max.y-g_image_region.m_min.y));
     stop_msg(StopMsgFlags::NO_BUZZER, buf);
 }
 

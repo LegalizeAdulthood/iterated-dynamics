@@ -11,6 +11,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/FrothyBasin.h"
@@ -620,8 +621,8 @@ void InverseJulia::start()
     g_row = static_cast<int>(std::lround(m_cvt.c * g_save_c.x + m_cvt.d * g_save_c.y + m_cvt.f));
     if (g_col < 0 || g_col >= g_logical_screen_x_dots || g_row < 0 || g_row >= g_logical_screen_y_dots)
     {
-        m_c_real = (g_x_max + g_x_min) / 2.0;
-        m_c_imag = (g_y_max + g_y_min) / 2.0;
+        m_c_real = (g_image_region.m_max.x + g_image_region.m_min.x) / 2.0;
+        m_c_imag = (g_image_region.m_max.y + g_image_region.m_min.y) / 2.0;
     }
     else
     {

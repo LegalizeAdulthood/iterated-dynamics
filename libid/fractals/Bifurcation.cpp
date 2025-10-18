@@ -6,6 +6,7 @@
 #include "engine/engine_timer.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "fractals/population.h"
@@ -103,7 +104,7 @@ Bifurcation::Bifurcation()
         m_half_time_check = true;
     }
 
-    g_init.y = static_cast<double>(g_y_max - g_i_stop_pt.y * g_delta_y); // bottom pixels
+    g_init.y = static_cast<double>(g_image_region.m_max.y - g_i_stop_pt.y * g_delta_y); // bottom pixels
 }
 
 void Bifurcation::suspend()
@@ -117,7 +118,7 @@ bool Bifurcation::iterate()
 {
     if (m_x <= g_i_stop_pt.x)
     {
-        g_rate = static_cast<double>(g_x_min + m_x * g_delta_x);
+        g_rate = static_cast<double>(g_image_region.m_min.x + m_x * g_delta_x);
         verhulst();        // calculate array once per column
 
         for (int y = g_i_stop_pt.y; y >= 0; y--) // should be iystop & >=0

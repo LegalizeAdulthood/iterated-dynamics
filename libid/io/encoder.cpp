@@ -4,14 +4,12 @@
 //
 #include "io/encoder.h"
 
-#include "geometry/3d.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
@@ -21,6 +19,9 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
+#include "geometry/3d.h"
+#include "geometry/line3d.h"
+#include "geometry/plot3d.h"
 #include "io/decode_info.h"
 #include "io/is_writeable.h"
 #include "io/library.h"
@@ -766,10 +767,10 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->iterations_old =
         static_cast<std::int16_t>(g_max_iterations <= SHRT_MAX ? g_max_iterations : SHRT_MAX);
     save_info->fractal_type = static_cast<std::int16_t>(+g_fractal_type);
-    save_info->x_min = g_x_min;
-    save_info->x_max = g_x_max;
-    save_info->y_min = g_y_min;
-    save_info->y_max = g_y_max;
+    save_info->x_min = g_image_region.m_min.x;
+    save_info->x_max = g_image_region.m_max.x;
+    save_info->y_min = g_image_region.m_min.y;
+    save_info->y_max = g_image_region.m_max.y;
     save_info->c_real = g_params[0];
     save_info->c_imag = g_params[1];
     save_info->ax = 0;
@@ -840,8 +841,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->eye_separation = static_cast<std::int16_t>(g_eye_separation);
     save_info->glasses_type = static_cast<std::int16_t>(g_glasses_type);
     save_info->outside = static_cast<std::int16_t>(g_outside_color);
-    save_info->x3rd = g_x_3rd;
-    save_info->y3rd = g_y_3rd;
+    save_info->x3rd = g_image_region.m_3rd.x;
+    save_info->y3rd = g_image_region.m_3rd.y;
     save_info->calc_status = static_cast<std::int16_t>(g_calc_status);
     save_info->std_calc_mode =
         g_three_pass && g_std_calc_mode == CalcMode::THREE_PASS ? 127 : static_cast<char>(g_std_calc_mode);

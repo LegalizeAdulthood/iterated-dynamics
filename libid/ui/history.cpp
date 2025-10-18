@@ -2,13 +2,11 @@
 //
 #include "ui/history.h"
 
-#include "geometry/3d.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
@@ -19,6 +17,9 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
+#include "geometry/3d.h"
+#include "geometry/line3d.h"
+#include "geometry/plot3d.h"
 #include "io/library.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -523,10 +524,10 @@ void save_history_info()
 
     ImageHistory current{};
     current.image_fractal_type = g_fractal_type;
-    current.x_min = g_x_min;
-    current.x_max = g_x_max;
-    current.y_min = g_y_min;
-    current.y_max = g_y_max;
+    current.x_min = g_image_region.m_min.x;
+    current.x_max = g_image_region.m_max.x;
+    current.y_min = g_image_region.m_min.y;
+    current.y_max = g_image_region.m_max.y;
     current.c_real = g_params[0];
     current.c_imag = g_params[1];
     current.d_param3 = g_params[2];
@@ -587,8 +588,8 @@ void save_history_info()
     current.eye_separation = g_eye_separation;
     current.glasses_type = g_glasses_type;
     current.outside_color = g_outside_color;
-    current.x_3rd = g_x_3rd;
-    current.y_3rd = g_y_3rd;
+    current.x_3rd = g_image_region.m_3rd.x;
+    current.y_3rd = g_image_region.m_3rd.y;
     current.user_std_calc_mode = static_cast<char>(g_user_std_calc_mode);
     current.three_pass = g_three_pass;
     current.stop_pass = g_stop_pass;
@@ -715,10 +716,10 @@ void restore_history_info(const int i)
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_resuming = false;
     set_fractal_type(last.image_fractal_type);
-    g_x_min = last.x_min;
-    g_x_max = last.x_max;
-    g_y_min = last.y_min;
-    g_y_max = last.y_max;
+    g_image_region.m_min.x = last.x_min;
+    g_image_region.m_max.x = last.x_max;
+    g_image_region.m_min.y = last.y_min;
+    g_image_region.m_max.y = last.y_max;
     g_params[0] = last.c_real;
     g_params[1] = last.c_imag;
     g_params[2] = last.d_param3;
@@ -780,8 +781,8 @@ void restore_history_info(const int i)
     g_eye_separation = last.eye_separation;
     g_glasses_type = last.glasses_type;
     g_outside_color = last.outside_color;
-    g_x_3rd = last.x_3rd;
-    g_y_3rd = last.y_3rd;
+    g_image_region.m_3rd.x = last.x_3rd;
+    g_image_region.m_3rd.y = last.y_3rd;
     g_user_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
     g_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
     g_three_pass = last.three_pass != 0;

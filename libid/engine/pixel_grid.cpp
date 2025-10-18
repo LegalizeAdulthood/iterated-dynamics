@@ -4,6 +4,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 
 namespace id::engine
 {
@@ -47,7 +48,7 @@ static double dx_pixel_grid()
 // Real component, calculation version - does not require arrays
 static double dx_pixel_calc()
 {
-    return static_cast<double>(g_x_min + g_col * g_delta_x + g_row * g_delta_x2);
+    return static_cast<double>(g_image_region.m_min.x + g_col * g_delta_x + g_row * g_delta_x2);
 }
 
 // Imaginary component, grid lookup version - requires dy0/dy1 arrays
@@ -59,7 +60,7 @@ static double dy_pixel_grid()
 // Imaginary component, calculation version - does not require arrays
 static double dy_pixel_calc()
 {
-    return static_cast<double>(g_y_max - g_row * g_delta_y - g_col * g_delta_y2);
+    return static_cast<double>(g_image_region.m_max.y - g_row * g_delta_y - g_col * g_delta_y2);
 }
 
 double (*g_dx_pixel)(){dx_pixel_calc};
@@ -103,8 +104,8 @@ void fill_dx_array()
 {
     if (g_use_grid)
     {
-        g_grid_x0[0] = g_x_min;              // fill up the x, y grids
-        g_grid_y0[0] = g_y_max;
+        g_grid_x0[0] = g_image_region.m_min.x;              // fill up the x, y grids
+        g_grid_y0[0] = g_image_region.m_max.y;
         g_grid_y1[0] = 0;
         g_grid_x1[0] = 0;
         for (int i = 1; i < g_logical_screen_x_dots; i++)

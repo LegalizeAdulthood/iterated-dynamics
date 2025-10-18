@@ -7,18 +7,19 @@
 */
 #include "fractals/lorenz.h"
 
-#include "geometry/3d.h"
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/jiim.h"
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
+#include "geometry/3d.h"
+#include "geometry/line3d.h"
+#include "geometry/plot3d.h"
 #include "io/check_write_file.h"
 #include "io/encoder.h"
 #include "io/library.h"
@@ -259,25 +260,25 @@ The same technique can be applied to the second set of equations:
 
 bool setup_convert_to_screen(Affine *scrn_cnvt)
 {
-    double det = (g_x_3rd - g_x_min) * (g_y_min - g_y_max) + (g_y_max - g_y_3rd) * (g_x_max - g_x_min);
+    double det = (g_image_region.m_3rd.x - g_image_region.m_min.x) * (g_image_region.m_min.y - g_image_region.m_max.y) + (g_image_region.m_max.y - g_image_region.m_3rd.y) * (g_image_region.m_max.x - g_image_region.m_min.x);
     if (det == 0)
     {
         return true;
     }
     const double xd = g_logical_screen_x_size_dots / det;
-    scrn_cnvt->a =  xd*(g_y_max-g_y_3rd);
-    scrn_cnvt->b =  xd*(g_x_3rd-g_x_min);
-    scrn_cnvt->e = -scrn_cnvt->a*g_x_min - scrn_cnvt->b*g_y_max;
+    scrn_cnvt->a =  xd*(g_image_region.m_max.y-g_image_region.m_3rd.y);
+    scrn_cnvt->b =  xd*(g_image_region.m_3rd.x-g_image_region.m_min.x);
+    scrn_cnvt->e = -scrn_cnvt->a*g_image_region.m_min.x - scrn_cnvt->b*g_image_region.m_max.y;
 
-    det = (g_x_3rd-g_x_max)*(g_y_min-g_y_max) + (g_y_min-g_y_3rd)*(g_x_max-g_x_min);
+    det = (g_image_region.m_3rd.x-g_image_region.m_max.x)*(g_image_region.m_min.y-g_image_region.m_max.y) + (g_image_region.m_min.y-g_image_region.m_3rd.y)*(g_image_region.m_max.x-g_image_region.m_min.x);
     if (det == 0)
     {
         return true;
     }
     const double yd = g_logical_screen_y_size_dots / det;
-    scrn_cnvt->c =  yd*(g_y_min-g_y_3rd);
-    scrn_cnvt->d =  yd*(g_x_3rd-g_x_max);
-    scrn_cnvt->f = -scrn_cnvt->c*g_x_min - scrn_cnvt->d*g_y_max;
+    scrn_cnvt->c =  yd*(g_image_region.m_min.y-g_image_region.m_3rd.y);
+    scrn_cnvt->d =  yd*(g_image_region.m_3rd.x-g_image_region.m_max.x);
+    scrn_cnvt->f = -scrn_cnvt->c*g_image_region.m_min.x - scrn_cnvt->d*g_image_region.m_max.y;
     return false;
 }
 
@@ -1307,8 +1308,8 @@ void Dynamic2D::iterate()
         // Our pixel position on the screen
         m_x_pixel = g_logical_screen_x_size_dots * (m_x_step + .5) / s_d;
         m_y_pixel = g_logical_screen_y_size_dots * (m_y_step + .5) / s_d;
-        m_x = static_cast<double>(g_x_min + g_delta_x * m_x_pixel + g_delta_x2 * m_y_pixel);
-        m_y = static_cast<double>(g_y_max - g_delta_y * m_y_pixel + -g_delta_y2 * m_x_pixel);
+        m_x = static_cast<double>(g_image_region.m_min.x + g_delta_x * m_x_pixel + g_delta_x2 * m_y_pixel);
+        m_y = static_cast<double>(g_image_region.m_max.y - g_delta_y * m_y_pixel + -g_delta_y2 * m_x_pixel);
         if (g_fractal_type == FractalType::MANDEL_CLOUD)
         {
             s_a = m_x;
@@ -1882,8 +1883,8 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             double tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
 
             // apply perspective shift
-            tmp_x += static_cast<double>(g_x_shift) * (g_x_max - g_x_min) /g_logical_screen_x_dots;
-            tmp_y += static_cast<double>(g_y_shift) * (g_y_max - g_y_min) /g_logical_screen_y_dots;
+            tmp_x += static_cast<double>(g_x_shift) * (g_image_region.m_max.x - g_image_region.m_min.x) /g_logical_screen_x_dots;
+            tmp_y += static_cast<double>(g_y_shift) * (g_image_region.m_max.y - g_image_region.m_min.y) /g_logical_screen_y_dots;
             double tmp_z = -inf->max_vals[2];
             trans(tmp_x, tmp_y, tmp_z, inf->double_mat);
 
@@ -1893,8 +1894,8 @@ static bool float_view_transf3d(ViewTransform3D *inf)
                 tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/2.0; // center x
                 tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
 
-                tmp_x += static_cast<double>(g_x_shift1) * (g_x_max - g_x_min) /g_logical_screen_x_dots;
-                tmp_y += static_cast<double>(g_y_shift1) * (g_y_max - g_y_min) /g_logical_screen_y_dots;
+                tmp_x += static_cast<double>(g_x_shift1) * (g_image_region.m_max.x - g_image_region.m_min.x) /g_logical_screen_x_dots;
+                tmp_y += static_cast<double>(g_y_shift1) * (g_image_region.m_max.y - g_image_region.m_min.y) /g_logical_screen_y_dots;
                 tmp_z = -inf->max_vals[2];
                 trans(tmp_x, tmp_y, tmp_z, inf->double_mat1);
             }

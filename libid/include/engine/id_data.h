@@ -112,12 +112,6 @@ extern float                 g_view_reduction;
 extern bool                  g_view_window;
 extern int                   g_view_x_dots;
 extern int                   g_view_y_dots;
-extern double                g_x_3rd;
-extern double                g_x_max;
-extern double                g_x_min;
-extern double                g_y_3rd;
-extern double                g_y_max;
-extern double                g_y_min;
 extern bool g_z_scroll;
 
 } // namespace id::engine

@@ -5,6 +5,7 @@
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/pickover_mandelbrot.h"
@@ -110,13 +111,13 @@ bool julibrot_per_image()
         return false;
     }
 
-    s_jb.x_offset = (g_x_max + g_x_min) / 2;     // Calculate average
-    s_jb.y_offset = (g_y_max + g_y_min) / 2;     // Calculate average
+    s_jb.x_offset = (g_image_region.m_max.x + g_image_region.m_min.x) / 2;     // Calculate average
+    s_jb.y_offset = (g_image_region.m_max.y + g_image_region.m_min.y) / 2;     // Calculate average
     s_jb.delta_mx = (g_julibrot_x_max - g_julibrot_x_min) / g_julibrot_z_dots;
     s_jb.delta_my = (g_julibrot_y_max - g_julibrot_y_min) / g_julibrot_z_dots;
     g_float_param = &s_jb.jb_c;
-    s_jb.x_per_inch = (g_x_min - g_x_max) / g_julibrot_width;
-    s_jb.y_per_inch = (g_y_max - g_y_min) / g_julibrot_height;
+    s_jb.x_per_inch = (g_image_region.m_min.x - g_image_region.m_max.x) / g_julibrot_width;
+    s_jb.y_per_inch = (g_image_region.m_max.y - g_image_region.m_min.y) / g_julibrot_height;
     s_jb.inch_per_x_dot = g_julibrot_width / g_logical_screen_x_dots;
     s_jb.inch_per_y_dot = g_julibrot_height / g_logical_screen_y_dots;
     s_jb.init_z = g_julibrot_origin - g_julibrot_depth / 2;

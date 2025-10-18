@@ -9,6 +9,7 @@
 #include "engine/fractalb.h"
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/pixel_grid.h"
 #include "engine/pixel_limits.h"
 #include "engine/soi.h"
@@ -59,16 +60,16 @@ static int get_prec_dbl(const ResolutionFlag flag)
         res = g_logical_screen_x_dots - 1;
     }
 
-    const LDouble x_delta = (static_cast<LDouble>(g_x_max) - static_cast<LDouble>(g_x_3rd)) / res;
-    const LDouble y_delta2 = (static_cast<LDouble>(g_y_3rd) - static_cast<LDouble>(g_y_min)) / res;
+    const LDouble x_delta = (static_cast<LDouble>(g_image_region.m_max.x) - static_cast<LDouble>(g_image_region.m_3rd.x)) / res;
+    const LDouble y_delta2 = (static_cast<LDouble>(g_image_region.m_3rd.y) - static_cast<LDouble>(g_image_region.m_min.y)) / res;
 
     if (flag == ResolutionFlag::CURRENT)
     {
         res = g_logical_screen_y_dots - 1;
     }
 
-    const LDouble y_delta = (static_cast<LDouble>(g_y_max) - static_cast<LDouble>(g_y_3rd)) / res;
-    const LDouble x_delta2 = (static_cast<LDouble>(g_x_3rd) - static_cast<LDouble>(g_x_min)) / res;
+    const LDouble y_delta = (static_cast<LDouble>(g_image_region.m_max.y) - static_cast<LDouble>(g_image_region.m_3rd.y)) / res;
+    const LDouble x_delta2 = (static_cast<LDouble>(g_image_region.m_3rd.x) - static_cast<LDouble>(g_image_region.m_min.x)) / res;
 
     LDouble del1 = std::abs(x_delta) + std::abs(x_delta2);
     const LDouble del2 = std::abs(y_delta) + std::abs(y_delta2);
@@ -93,12 +94,12 @@ static int get_prec_dbl(const ResolutionFlag flag)
 void fractal_float_to_bf()
 {
     init_bf_dec(get_prec_dbl(ResolutionFlag::CURRENT));
-    float_to_bf(g_bf_x_min, g_x_min);
-    float_to_bf(g_bf_x_max, g_x_max);
-    float_to_bf(g_bf_y_min, g_y_min);
-    float_to_bf(g_bf_y_max, g_y_max);
-    float_to_bf(g_bf_x_3rd, g_x_3rd);
-    float_to_bf(g_bf_y_3rd, g_y_3rd);
+    float_to_bf(g_bf_x_min, g_image_region.m_min.x);
+    float_to_bf(g_bf_x_max, g_image_region.m_max.x);
+    float_to_bf(g_bf_y_min, g_image_region.m_min.y);
+    float_to_bf(g_bf_y_max, g_image_region.m_max.y);
+    float_to_bf(g_bf_x_3rd, g_image_region.m_3rd.x);
+    float_to_bf(g_bf_y_3rd, g_image_region.m_3rd.y);
 
     for (int i = 0; i < MAX_PARAMS; i++)
     {
@@ -225,16 +226,16 @@ init_restart:
     if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_ROTATE))
     {
         // ensure min<max and unrotated rectangle
-        if (g_x_min > g_x_max)
+        if (g_image_region.m_min.x > g_image_region.m_max.x)
         {
-            std::swap(g_x_min, g_x_max);
+            std::swap(g_image_region.m_min.x, g_image_region.m_max.x);
         }
-        if (g_y_min > g_y_max)
+        if (g_image_region.m_min.y > g_image_region.m_max.y)
         {
-            std::swap(g_y_min, g_y_max);
+            std::swap(g_image_region.m_min.y, g_image_region.m_max.y);
         }
-        g_x_3rd = g_x_min;
-        g_y_3rd = g_y_min;
+        g_image_region.m_3rd.x = g_image_region.m_min.x;
+        g_image_region.m_3rd.y = g_image_region.m_min.y;
     }
 
     g_f_at_rad = 1.0/32768L;
@@ -247,10 +248,10 @@ init_restart:
     else
     {
         adjust_to_limits(1.0); // make sure all corners in valid range
-        g_delta_x  = static_cast<LDouble>(g_x_max - g_x_3rd) / static_cast<LDouble>(g_logical_screen_x_size_dots); // calculate stepsizes
-        g_delta_y  = static_cast<LDouble>(g_y_max - g_y_3rd) / static_cast<LDouble>(g_logical_screen_y_size_dots);
-        g_delta_x2 = static_cast<LDouble>(g_x_3rd - g_x_min) / static_cast<LDouble>(g_logical_screen_y_size_dots);
-        g_delta_y2 = static_cast<LDouble>(g_y_3rd - g_y_min) / static_cast<LDouble>(g_logical_screen_x_size_dots);
+        g_delta_x  = static_cast<LDouble>(g_image_region.m_max.x - g_image_region.m_3rd.x) / static_cast<LDouble>(g_logical_screen_x_size_dots); // calculate stepsizes
+        g_delta_y  = static_cast<LDouble>(g_image_region.m_max.y - g_image_region.m_3rd.y) / static_cast<LDouble>(g_logical_screen_y_size_dots);
+        g_delta_x2 = static_cast<LDouble>(g_image_region.m_3rd.x - g_image_region.m_min.x) / static_cast<LDouble>(g_logical_screen_y_size_dots);
+        g_delta_y2 = static_cast<LDouble>(g_image_region.m_3rd.y - g_image_region.m_min.y) / static_cast<LDouble>(g_logical_screen_x_size_dots);
         fill_dx_array();
     }
 
@@ -267,8 +268,8 @@ init_restart:
 expand_retry:
         // set up dx0 and dy0 analogs of lx0 and ly0
         // put fractal parameters in doubles
-        double dx0 = g_x_min; // fill up the x, y grids
-        double dy0 = g_y_max;
+        double dx0 = g_image_region.m_min.x; // fill up the x, y grids
+        double dy0 = g_image_region.m_max.y;
         double dy1 = 0;
         double dx1 = 0;
         /* this way of defining the dx and dy arrays is not the most
@@ -307,26 +308,26 @@ expand_retry:
                    to arbitrary precision sooner, but always later.*/
                 double test_x_try;
                 double test_x_exact;
-                if (std::abs(g_x_max - g_x_3rd) > std::abs(g_x_3rd - g_x_min))
+                if (std::abs(g_image_region.m_max.x - g_image_region.m_3rd.x) > std::abs(g_image_region.m_3rd.x - g_image_region.m_min.x))
                 {
-                    test_x_exact = g_x_max - g_x_3rd;
-                    test_x_try = dx0 - g_x_min;
+                    test_x_exact = g_image_region.m_max.x - g_image_region.m_3rd.x;
+                    test_x_try = dx0 - g_image_region.m_min.x;
                 }
                 else
                 {
-                    test_x_exact = g_x_3rd - g_x_min;
+                    test_x_exact = g_image_region.m_3rd.x - g_image_region.m_min.x;
                     test_x_try = dx1;
                 }
                 double testy_try;
                 double testy_exact;
-                if (std::abs(g_y_3rd - g_y_max) > std::abs(g_y_min - g_y_3rd))
+                if (std::abs(g_image_region.m_3rd.y - g_image_region.m_max.y) > std::abs(g_image_region.m_min.y - g_image_region.m_3rd.y))
                 {
-                    testy_exact = g_y_3rd - g_y_max;
-                    testy_try = dy0 - g_y_max;
+                    testy_exact = g_image_region.m_3rd.y - g_image_region.m_max.y;
+                    testy_try = dy0 - g_image_region.m_max.y;
                 }
                 else
                 {
-                    testy_exact = g_y_min - g_y_3rd;
+                    testy_exact = g_image_region.m_min.y - g_image_region.m_3rd.y;
                     testy_try = dy1;
                 }
                 if (ratio_bad(test_x_try, test_x_exact) || ratio_bad(testy_try, testy_exact))
@@ -345,12 +346,12 @@ expand_retry:
         fill_dx_array(); // fill up the x, y grids
 
         // re-set corners to match reality
-        g_x_max = static_cast<double>(
-            g_x_min + (g_logical_screen_x_dots - 1) * g_delta_x + (g_logical_screen_y_dots - 1) * g_delta_x2);
-        g_y_min = static_cast<double>(
-            g_y_max - (g_logical_screen_y_dots - 1) * g_delta_y - (g_logical_screen_x_dots - 1) * g_delta_y2);
-        g_x_3rd = static_cast<double>(g_x_min + (g_logical_screen_y_dots - 1) * g_delta_x2);
-        g_y_3rd = static_cast<double>(g_y_max - (g_logical_screen_y_dots - 1) * g_delta_y);
+        g_image_region.m_max.x = static_cast<double>(
+            g_image_region.m_min.x + (g_logical_screen_x_dots - 1) * g_delta_x + (g_logical_screen_y_dots - 1) * g_delta_x2);
+        g_image_region.m_min.y = static_cast<double>(
+            g_image_region.m_max.y - (g_logical_screen_y_dots - 1) * g_delta_y - (g_logical_screen_x_dots - 1) * g_delta_y2);
+        g_image_region.m_3rd.x = static_cast<double>(g_image_region.m_min.x + (g_logical_screen_y_dots - 1) * g_delta_x2);
+        g_image_region.m_3rd.y = static_cast<double>(g_image_region.m_max.y - (g_logical_screen_y_dots - 1) * g_delta_y);
         // end else
     } // end if not plasma
 
@@ -371,15 +372,15 @@ expand_retry:
     // calcfrac.c plot_orbit routines have comments about this
     const double tmp = static_cast<double>(
         (0.0 - g_delta_y2) * g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots -
-        (g_x_max - g_x_3rd) * (g_y_3rd - g_y_max));
+        (g_image_region.m_max.x - g_image_region.m_3rd.x) * (g_image_region.m_3rd.y - g_image_region.m_max.y));
     if (tmp != 0)
     {
         g_plot_mx1 = static_cast<double>(
             g_delta_x2 * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / tmp);
-        g_plot_mx2 = (g_y_3rd-g_y_max) * g_logical_screen_x_size_dots / tmp;
+        g_plot_mx2 = (g_image_region.m_3rd.y-g_image_region.m_max.y) * g_logical_screen_x_size_dots / tmp;
         g_plot_my1 = static_cast<double>(
             (0.0 - g_delta_y2) * g_logical_screen_x_size_dots * g_logical_screen_y_size_dots / tmp);
-        g_plot_my2 = (g_x_max-g_x_3rd) * g_logical_screen_y_size_dots / tmp;
+        g_plot_my2 = (g_image_region.m_max.x-g_image_region.m_3rd.x) * g_logical_screen_y_size_dots / tmp;
     }
     if (g_bf_math == BFMathType::NONE)
     {
@@ -483,34 +484,34 @@ void adjust_corner()
         cvt_corners(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     }
 
-    f_temp = std::abs(g_x_3rd-g_x_min);
-    double f_temp2 = std::abs(g_x_max - g_x_3rd);
+    f_temp = std::abs(g_image_region.m_3rd.x-g_image_region.m_min.x);
+    double f_temp2 = std::abs(g_image_region.m_max.x - g_image_region.m_3rd.x);
     if (f_temp < f_temp2)
     {
-        if (f_temp*10000 < f_temp2 && g_y_3rd != g_y_max)
+        if (f_temp*10000 < f_temp2 && g_image_region.m_3rd.y != g_image_region.m_max.y)
         {
-            g_x_3rd = g_x_min;
+            g_image_region.m_3rd.x = g_image_region.m_min.x;
         }
     }
 
-    if (f_temp2*10000 < f_temp && g_y_3rd != g_y_min)
+    if (f_temp2*10000 < f_temp && g_image_region.m_3rd.y != g_image_region.m_min.y)
     {
-        g_x_3rd = g_x_max;
+        g_image_region.m_3rd.x = g_image_region.m_max.x;
     }
 
-    f_temp = std::abs(g_y_3rd-g_y_min);
-    f_temp2 = std::abs(g_y_max-g_y_3rd);
+    f_temp = std::abs(g_image_region.m_3rd.y-g_image_region.m_min.y);
+    f_temp2 = std::abs(g_image_region.m_max.y-g_image_region.m_3rd.y);
     if (f_temp < f_temp2)
     {
-        if (f_temp*10000 < f_temp2 && g_x_3rd != g_x_max)
+        if (f_temp*10000 < f_temp2 && g_image_region.m_3rd.x != g_image_region.m_max.x)
         {
-            g_y_3rd = g_y_min;
+            g_image_region.m_3rd.y = g_image_region.m_min.y;
         }
     }
 
-    if (f_temp2*10000 < f_temp && g_x_3rd != g_x_min)
+    if (f_temp2*10000 < f_temp && g_image_region.m_3rd.x != g_image_region.m_min.x)
     {
-        g_y_3rd = g_y_max;
+        g_image_region.m_3rd.y = g_image_region.m_max.y;
     }
 }
 
@@ -766,42 +767,42 @@ static void adjust_to_limits(const double expand)
     double corner_x[4];
     double corner_y[4];
     constexpr double limit = 32767.99;
-    const double center_x = (g_x_min + g_x_max) / 2;
-    const double center_y = (g_y_min + g_y_max) / 2;
+    const double center_x = (g_image_region.m_min.x + g_image_region.m_max.x) / 2;
+    const double center_y = (g_image_region.m_min.y + g_image_region.m_max.y) / 2;
 
-    if (g_x_min == center_x)
+    if (g_image_region.m_min.x == center_x)
     {
         // ohoh, infinitely thin, fix it
-        smallest_add(&g_x_max);
-        g_x_min -= g_x_max-center_x;
+        smallest_add(&g_image_region.m_max.x);
+        g_image_region.m_min.x -= g_image_region.m_max.x-center_x;
     }
 
-    if (g_y_min == center_y)
+    if (g_image_region.m_min.y == center_y)
     {
-        smallest_add(&g_y_max);
-        g_y_min -= g_y_max-center_y;
+        smallest_add(&g_image_region.m_max.y);
+        g_image_region.m_min.y -= g_image_region.m_max.y-center_y;
     }
 
-    if (g_x_3rd == center_x)
+    if (g_image_region.m_3rd.x == center_x)
     {
-        smallest_add(&g_x_3rd);
+        smallest_add(&g_image_region.m_3rd.x);
     }
 
-    if (g_y_3rd == center_y)
+    if (g_image_region.m_3rd.y == center_y)
     {
-        smallest_add(&g_y_3rd);
+        smallest_add(&g_image_region.m_3rd.y);
     }
 
     // setup array for easier manipulation
-    corner_x[0] = g_x_min;
-    corner_x[1] = g_x_max;
-    corner_x[2] = g_x_3rd;
-    corner_x[3] = g_x_min+(g_x_max-g_x_3rd);
+    corner_x[0] = g_image_region.m_min.x;
+    corner_x[1] = g_image_region.m_max.x;
+    corner_x[2] = g_image_region.m_3rd.x;
+    corner_x[3] = g_image_region.m_min.x+(g_image_region.m_max.x-g_image_region.m_3rd.x);
 
-    corner_y[0] = g_y_max;
-    corner_y[1] = g_y_min;
-    corner_y[2] = g_y_3rd;
-    corner_y[3] = g_y_min+(g_y_max-g_y_3rd);
+    corner_y[0] = g_image_region.m_max.y;
+    corner_y[1] = g_image_region.m_min.y;
+    corner_y[2] = g_image_region.m_3rd.y;
+    corner_y[3] = g_image_region.m_min.y+(g_image_region.m_max.y-g_image_region.m_3rd.y);
 
     // if caller wants image size adjusted, do that first
     if (expand != 1.0)
@@ -868,12 +869,12 @@ static void adjust_to_limits(const double expand)
     {
         g_calc_status = CalcStatus::PARAMS_CHANGED;
     }
-    g_x_min = corner_x[0] - adj_x;
-    g_x_max = corner_x[1] - adj_x;
-    g_x_3rd = corner_x[2] - adj_x;
-    g_y_max = corner_y[0] - adj_y;
-    g_y_min = corner_y[1] - adj_y;
-    g_y_3rd = corner_y[2] - adj_y;
+    g_image_region.m_min.x = corner_x[0] - adj_x;
+    g_image_region.m_max.x = corner_x[1] - adj_x;
+    g_image_region.m_3rd.x = corner_x[2] - adj_x;
+    g_image_region.m_max.y = corner_y[0] - adj_y;
+    g_image_region.m_min.y = corner_y[1] - adj_y;
+    g_image_region.m_3rd.y = corner_y[2] - adj_y;
 
     adjust_corner(); // make 3rd corner exact if very near other co-ords
 }

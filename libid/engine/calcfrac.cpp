@@ -14,7 +14,6 @@
 //
 #include "engine/calcfrac.h"
 
-#include "geometry/line3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/boundary_trace.h"
 #include "engine/calmanfp.h"
@@ -24,6 +23,7 @@
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/log_map.h"
 #include "engine/one_or_two_pass.h"
 #include "engine/orbit.h"
@@ -41,6 +41,7 @@
 #include "fractals/lyapunov.h"
 #include "fractals/newton.h"
 #include "fractals/parser.h"
+#include "geometry/line3d.h"
 #include "io/check_write_file.h"
 #include "io/library.h"
 #include "io/save_timer.h"
@@ -677,17 +678,17 @@ static void init_calc_fract()
 
         if (g_inversion[0] == AUTO_INVERT)  //  auto calc radius 1/6 screen
         {
-            g_inversion[0] = std::min(std::abs(g_x_max - g_x_min), std::abs(g_y_max - g_y_min)) / 6.0;
+            g_inversion[0] = std::min(std::abs(g_image_region.m_max.x - g_image_region.m_min.x), std::abs(g_image_region.m_max.y - g_image_region.m_min.y)) / 6.0;
             fix_inversion(&g_inversion[0]);
             g_f_radius = g_inversion[0];
         }
 
         if (g_invert < 2 || g_inversion[1] == AUTO_INVERT)  // xcenter not already set
         {
-            g_inversion[1] = (g_x_min + g_x_max) / 2.0;
+            g_inversion[1] = (g_image_region.m_min.x + g_image_region.m_max.x) / 2.0;
             fix_inversion(&g_inversion[1]);
             g_f_x_center = g_inversion[1];
-            if (std::abs(g_f_x_center) < std::abs(g_x_max-g_x_min) / 100)
+            if (std::abs(g_f_x_center) < std::abs(g_image_region.m_max.x-g_image_region.m_min.x) / 100)
             {
                 g_f_x_center = 0.0;
                 g_inversion[1] = 0.0;
@@ -696,10 +697,10 @@ static void init_calc_fract()
 
         if (g_invert < 3 || g_inversion[2] == AUTO_INVERT)  // ycenter not already set
         {
-            g_inversion[2] = (g_y_min + g_y_max) / 2.0;
+            g_inversion[2] = (g_image_region.m_min.y + g_image_region.m_max.y) / 2.0;
             fix_inversion(&g_inversion[2]);
             g_f_y_center = g_inversion[2];
-            if (std::abs(g_f_y_center) < std::abs(g_y_max-g_y_min) / 100)
+            if (std::abs(g_f_y_center) < std::abs(g_image_region.m_max.y-g_image_region.m_min.y) / 100)
             {
                 g_f_y_center = 0.0;
                 g_inversion[2] = 0.0;
@@ -968,10 +969,10 @@ static void perform_work_list()
             d_y_size = g_logical_screen_y_dots-1;
         }
 
-        const double del_xx = (g_x_max - g_x_3rd) / d_x_size; // calculate stepsizes
-        const double del_yy = (g_y_max - g_y_3rd) / d_y_size;
-        const double del_xx2 = (g_x_3rd - g_x_min) / d_y_size;
-        const double del_yy2 = (g_y_3rd - g_y_min) / d_x_size;
+        const double del_xx = (g_image_region.m_max.x - g_image_region.m_3rd.x) / d_x_size; // calculate stepsizes
+        const double del_yy = (g_image_region.m_max.y - g_image_region.m_3rd.y) / d_y_size;
+        const double del_xx2 = (g_image_region.m_3rd.x - g_image_region.m_min.x) / d_y_size;
+        const double del_yy2 = (g_image_region.m_3rd.y - g_image_region.m_min.y) / d_x_size;
 
         g_use_old_distance_estimator = false;
         g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
@@ -999,8 +1000,8 @@ static void perform_work_list()
         {
             s_dem_delta *= 1/(sqr(f_temp)*10000); // multiply by thickness desired
         }
-        s_dem_width = (std::sqrt(sqr(g_x_max-g_x_min) + sqr(g_x_3rd-g_x_min)) * aspect
-                     + std::sqrt(sqr(g_y_max-g_y_min) + sqr(g_y_3rd-g_y_min))) / g_distance_estimator;
+        s_dem_width = (std::sqrt(sqr(g_image_region.m_max.x-g_image_region.m_min.x) + sqr(g_image_region.m_3rd.x-g_image_region.m_min.x)) * aspect
+                     + std::sqrt(sqr(g_image_region.m_max.y-g_image_region.m_min.y) + sqr(g_image_region.m_3rd.y-g_image_region.m_min.y))) / g_distance_estimator;
         f_temp = g_magnitude_limit < DEM_BAILOUT ? DEM_BAILOUT : g_magnitude_limit;
         f_temp += 3; // bailout plus just a bit
         const double f_temp2 = std::log(f_temp);
@@ -2337,7 +2338,7 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
     }
     if ((g_potential_flag && g_potential_16bit) || (g_invert != 0 && g_inversion[2] != 0.0)
         || g_decomp[0] != 0
-        || g_x_min != g_x_3rd || g_y_min != g_y_3rd)
+        || g_image_region.m_min.x != g_image_region.m_3rd.x || g_image_region.m_min.y != g_image_region.m_3rd.y)
     {
         return;
     }
@@ -2405,8 +2406,8 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
     }
     else
     {
-        x_axis_on_screen = sign(g_y_min) != sign(g_y_max);
-        y_axis_on_screen = sign(g_x_min) != sign(g_x_max);
+        x_axis_on_screen = sign(g_image_region.m_min.y) != sign(g_image_region.m_max.y);
+        y_axis_on_screen = sign(g_image_region.m_min.x) != sign(g_image_region.m_max.x);
     }
     if (x_axis_on_screen) // axis is on screen
     {
@@ -2419,7 +2420,7 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
         }
         else
         {
-            f_temp = (0.0-g_y_max) / (g_y_min-g_y_max);
+            f_temp = (0.0-g_image_region.m_max.y) / (g_image_region.m_min.y-g_image_region.m_max.y);
         }
         f_temp *= g_logical_screen_y_dots - 1;
         f_temp += 0.25;
@@ -2441,7 +2442,7 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
         }
         else
         {
-            f_temp = (0.0-g_x_min) / (g_x_max-g_x_min);
+            f_temp = (0.0-g_image_region.m_min.x) / (g_image_region.m_max.x-g_image_region.m_min.x);
         }
         f_temp *= g_logical_screen_x_dots - 1;
         f_temp += 0.25;
@@ -2573,7 +2574,7 @@ origin_symmetry:
         }
         else
         {
-            if (std::abs(g_x_max - g_x_min) < PI/4)
+            if (std::abs(g_image_region.m_max.x - g_image_region.m_min.x) < PI/4)
             {
                 break; // no point in pi symmetry if values too close
             }
@@ -2610,7 +2611,7 @@ origin_symmetry:
         }
         else
         {
-            g_pi_in_pixels = static_cast<int>(PI / std::abs(g_x_max - g_x_min) * g_logical_screen_x_dots); // PI in pixels
+            g_pi_in_pixels = static_cast<int>(PI / std::abs(g_image_region.m_max.x - g_image_region.m_min.x) * g_logical_screen_x_dots); // PI in pixels
         }
 
         g_i_stop_pt.x = g_start_pt.x + g_pi_in_pixels - 1;

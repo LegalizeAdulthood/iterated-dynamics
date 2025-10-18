@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/wait_until.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -126,7 +127,7 @@ static void plot_d_orbit(const double dx, const double dy, const int color)
 
 void plot_orbit(const double real, const double imag, const int color)
 {
-    plot_d_orbit(real-g_x_min, imag-g_y_max, color);
+    plot_d_orbit(real-g_image_region.m_min.x, imag-g_image_region.m_max.y, color);
 }
 
 void scrub_orbit()

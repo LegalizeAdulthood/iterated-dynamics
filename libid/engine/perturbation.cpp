@@ -4,9 +4,10 @@
 
 #include "engine/perturbation.h"
 
-#include "engine/PertEngine.h"
 #include "engine/convert_center_mag.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
+#include "engine/PertEngine.h"
 #include "math/biginit.h"
 
 #include <config/port.h>
@@ -47,7 +48,7 @@ bool perturbation()
 
     if (g_bf_math == BFMathType::NONE)
     {
-        mandel_width = g_y_max - g_y_min;
+        mandel_width = g_image_region.m_max.y - g_image_region.m_min.y;
     }
     else
     {

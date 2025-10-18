@@ -3,6 +3,7 @@
 #include <engine/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
+#include "engine/ImageRegion.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "test_library.h"
@@ -15,6 +16,7 @@
 #include <engine/bailout_formula.h>
 #include <engine/engine_timer.h>
 #include <engine/id_data.h>
+#include <engine/ImageRegion.h>
 #include <engine/log_map.h>
 #include <engine/random_seed.h>
 #include <engine/show_dot.h>
@@ -1227,12 +1229,12 @@ TEST_F(TestParameterCommand, typeSierpinski)
 {
     ValueSaver saved_fractal_type{g_fractal_type, FractalType::LYAPUNOV};
     ValueSaver saved_fractal_specific{g_cur_fractal_specific, nullptr};
-    ValueSaver saved_x_min{g_x_min, 111.0};
-    ValueSaver saved_x_max{g_x_max, 222.0};
-    ValueSaver saved_x_3rd{g_x_3rd, 333.0};
-    ValueSaver saved_y_min{g_y_min, 444.0};
-    ValueSaver saved_y_max{g_y_max, 555.0};
-    ValueSaver saved_y_3rd{g_y_3rd, 666.0};
+    ValueSaver saved_x_min{g_image_region.m_min.x, 111.0};
+    ValueSaver saved_x_max{g_image_region.m_max.x, 222.0};
+    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 333.0};
+    ValueSaver saved_y_min{g_image_region.m_min.y, 444.0};
+    ValueSaver saved_y_max{g_image_region.m_max.y, 555.0};
+    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 666.0};
     double params[MAX_PARAMS]{111.0, 222.0, 333.0, 444.0, 555.0, 666.0, 777.0, 888.0, 999.0, 101010.0};
     ParamSaver saved_params(params);
 
@@ -1242,12 +1244,12 @@ TEST_F(TestParameterCommand, typeSierpinski)
     EXPECT_EQ(FractalType::SIERPINSKI, g_fractal_type);
     EXPECT_EQ(g_cur_fractal_specific, get_fractal_specific(FractalType::SIERPINSKI));
     const FractalSpecific &fractal{*g_cur_fractal_specific};
-    EXPECT_EQ(g_x_min, fractal.x_min);
-    EXPECT_EQ(g_x_max, fractal.x_max);
-    EXPECT_EQ(g_x_3rd, fractal.x_min);
-    EXPECT_EQ(g_y_min, fractal.y_min);
-    EXPECT_EQ(g_y_max, fractal.y_max);
-    EXPECT_EQ(g_y_3rd, fractal.y_min);
+    EXPECT_EQ(g_image_region.m_min.x, fractal.x_min);
+    EXPECT_EQ(g_image_region.m_max.x, fractal.x_max);
+    EXPECT_EQ(g_image_region.m_3rd.x, fractal.x_min);
+    EXPECT_EQ(g_image_region.m_min.y, fractal.y_min);
+    EXPECT_EQ(g_image_region.m_max.y, fractal.y_max);
+    EXPECT_EQ(g_image_region.m_3rd.y, fractal.y_min);
     for (int i = 0; i < 4; ++i)
     {
         EXPECT_EQ(fractal.params[i], g_params[i]);
@@ -2273,45 +2275,45 @@ TEST_F(TestParameterCommand, cornersNoValues)
 TEST_F(TestParameterCommand, cornersFourValues)
 {
     ValueSaver saved_use_center_mag{g_use_center_mag, true};
-    ValueSaver saved_x_min{g_x_min, 111.0};
-    ValueSaver saved_x_3rd{g_x_3rd, 222.0};
-    ValueSaver saved_x_max{g_x_max, 333.0};
-    ValueSaver saved_y_min{g_y_min, 444.0};
-    ValueSaver saved_y_3rd{g_y_3rd, 555.0};
-    ValueSaver saved_y_max{g_y_max, 666.0};
+    ValueSaver saved_x_min{g_image_region.m_min.x, 111.0};
+    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 222.0};
+    ValueSaver saved_x_max{g_image_region.m_max.x, 333.0};
+    ValueSaver saved_y_min{g_image_region.m_min.y, 444.0};
+    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 555.0};
+    ValueSaver saved_y_max{g_image_region.m_max.y, 666.0};
 
     exec_cmd_arg("corners=1/2/3/4");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_use_center_mag);
-    EXPECT_EQ(1.0, g_x_min);
-    EXPECT_EQ(1.0, g_x_3rd);
-    EXPECT_EQ(2.0, g_x_max);
-    EXPECT_EQ(3.0, g_y_min);
-    EXPECT_EQ(3.0, g_y_3rd);
-    EXPECT_EQ(4.0, g_y_max);
+    EXPECT_EQ(1.0, g_image_region.m_min.x);
+    EXPECT_EQ(1.0, g_image_region.m_3rd.x);
+    EXPECT_EQ(2.0, g_image_region.m_max.x);
+    EXPECT_EQ(3.0, g_image_region.m_min.y);
+    EXPECT_EQ(3.0, g_image_region.m_3rd.y);
+    EXPECT_EQ(4.0, g_image_region.m_max.y);
 }
 
 TEST_F(TestParameterCommand, cornersSixValues)
 {
     ValueSaver saved_use_center_mag{g_use_center_mag, true};
-    ValueSaver saved_x_min{g_x_min, 111.0};
-    ValueSaver saved_x_3rd{g_x_3rd, 222.0};
-    ValueSaver saved_x_max{g_x_max, 333.0};
-    ValueSaver saved_y_min{g_y_min, 444.0};
-    ValueSaver saved_y_3rd{g_y_3rd, 555.0};
-    ValueSaver saved_y_max{g_y_max, 666.0};
+    ValueSaver saved_x_min{g_image_region.m_min.x, 111.0};
+    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 222.0};
+    ValueSaver saved_x_max{g_image_region.m_max.x, 333.0};
+    ValueSaver saved_y_min{g_image_region.m_min.y, 444.0};
+    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 555.0};
+    ValueSaver saved_y_max{g_image_region.m_max.y, 666.0};
 
     exec_cmd_arg("corners=1/2/3/4/5/6");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_use_center_mag);
-    EXPECT_EQ(1.0, g_x_min);
-    EXPECT_EQ(2.0, g_x_max);
-    EXPECT_EQ(3.0, g_y_min);
-    EXPECT_EQ(4.0, g_y_max);
-    EXPECT_EQ(5.0, g_x_3rd);
-    EXPECT_EQ(6.0, g_y_3rd);
+    EXPECT_EQ(1.0, g_image_region.m_min.x);
+    EXPECT_EQ(2.0, g_image_region.m_max.x);
+    EXPECT_EQ(3.0, g_image_region.m_min.y);
+    EXPECT_EQ(4.0, g_image_region.m_max.y);
+    EXPECT_EQ(5.0, g_image_region.m_3rd.x);
+    EXPECT_EQ(6.0, g_image_region.m_3rd.y);
 }
 
 TEST_F(TestParameterCommand, orbitCornersFourValues)
@@ -2515,12 +2517,7 @@ TEST_F(TestParameterCommand, viewWindowsFiveValues)
 TEST_F(TestParameterCommand, centerMagOn)
 {
     ValueSaver saved_use_center_mag{g_use_center_mag, false};
-    VALUE_UNCHANGED(g_x_min, 999.0);
-    VALUE_UNCHANGED(g_x_max, 999.0);
-    VALUE_UNCHANGED(g_x_3rd, 999.0);
-    VALUE_UNCHANGED(g_y_min, 999.0);
-    VALUE_UNCHANGED(g_y_max, 999.0);
-    VALUE_UNCHANGED(g_y_3rd, 999.0);
+    ValueUnchanged saved_image_region("g_image_region", g_image_region, {});
 
     exec_cmd_arg("center-mag");
 
@@ -2531,67 +2528,67 @@ TEST_F(TestParameterCommand, centerMagOn)
 TEST_F(TestParameterCommand, centerMagThreeValues)
 {
     ValueSaver saved_use_center_mag{g_use_center_mag, false};
-    ValueSaver saved_x_min{g_x_min, 999.0};
-    ValueSaver saved_x_max{g_x_max, 999.0};
-    ValueSaver saved_x_3rd{g_x_3rd, 999.0};
-    ValueSaver saved_y_min{g_y_min, 999.0};
-    ValueSaver saved_y_max{g_y_max, 999.0};
-    ValueSaver saved_y_3rd{g_y_3rd, 999.0};
+    ValueSaver saved_x_min{g_image_region.m_min.x, 999.0};
+    ValueSaver saved_x_max{g_image_region.m_max.x, 999.0};
+    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 999.0};
+    ValueSaver saved_y_min{g_image_region.m_min.y, 999.0};
+    ValueSaver saved_y_max{g_image_region.m_max.y, 999.0};
+    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 999.0};
 
     exec_cmd_arg("center-mag=2/4/3");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_use_center_mag);
-    EXPECT_NEAR(1.555555, g_x_min, 1e-6);
-    EXPECT_NEAR(2.444444, g_x_max, 1e-6);
-    EXPECT_NEAR(1.555555, g_x_3rd, 1e-6);
-    EXPECT_NEAR(3.666666, g_y_min, 1e-6);
-    EXPECT_NEAR(4.333333, g_y_max, 1e-6);
-    EXPECT_NEAR(3.666666, g_y_3rd, 1e-6);
+    EXPECT_NEAR(1.555555, g_image_region.m_min.x, 1e-6);
+    EXPECT_NEAR(2.444444, g_image_region.m_max.x, 1e-6);
+    EXPECT_NEAR(1.555555, g_image_region.m_3rd.x, 1e-6);
+    EXPECT_NEAR(3.666666, g_image_region.m_min.y, 1e-6);
+    EXPECT_NEAR(4.333333, g_image_region.m_max.y, 1e-6);
+    EXPECT_NEAR(3.666666, g_image_region.m_3rd.y, 1e-6);
 }
 
 TEST_F(TestParameterCommand, centerMagFourValues)
 {
     ValueSaver saved_use_center_mag{g_use_center_mag, false};
-    ValueSaver saved_x_min{g_x_min, 999.0};
-    ValueSaver saved_x_max{g_x_max, 999.0};
-    ValueSaver saved_x_3rd{g_x_3rd, 999.0};
-    ValueSaver saved_y_min{g_y_min, 999.0};
-    ValueSaver saved_y_max{g_y_max, 999.0};
-    ValueSaver saved_y_3rd{g_y_3rd, 999.0};
+    ValueSaver saved_x_min{g_image_region.m_min.x, 999.0};
+    ValueSaver saved_x_max{g_image_region.m_max.x, 999.0};
+    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 999.0};
+    ValueSaver saved_y_min{g_image_region.m_min.y, 999.0};
+    ValueSaver saved_y_max{g_image_region.m_max.y, 999.0};
+    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 999.0};
 
     exec_cmd_arg("center-mag=2/4/3/90");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_use_center_mag);
-    EXPECT_NEAR(1.995061, g_x_min, 1e-6);
-    EXPECT_NEAR(2.004938, g_x_max, 1e-6);
-    EXPECT_NEAR(1.995061, g_x_3rd, 1e-6);
-    EXPECT_NEAR(3.666666, g_y_min, 1e-6);
-    EXPECT_NEAR(4.333333, g_y_max, 1e-6);
-    EXPECT_NEAR(3.666666, g_y_3rd, 1e-6);
+    EXPECT_NEAR(1.995061, g_image_region.m_min.x, 1e-6);
+    EXPECT_NEAR(2.004938, g_image_region.m_max.x, 1e-6);
+    EXPECT_NEAR(1.995061, g_image_region.m_3rd.x, 1e-6);
+    EXPECT_NEAR(3.666666, g_image_region.m_min.y, 1e-6);
+    EXPECT_NEAR(4.333333, g_image_region.m_max.y, 1e-6);
+    EXPECT_NEAR(3.666666, g_image_region.m_3rd.y, 1e-6);
 }
 
 TEST_F(TestParameterCommand, centerMagFiveValues)
 {
     ValueSaver saved_use_center_mag{g_use_center_mag, false};
-    ValueSaver saved_x_min{g_x_min, 999.0};
-    ValueSaver saved_x_max{g_x_max, 999.0};
-    ValueSaver saved_x_3rd{g_x_3rd, 999.0};
-    ValueSaver saved_y_min{g_y_min, 999.0};
-    ValueSaver saved_y_max{g_y_max, 999.0};
-    ValueSaver saved_y_3rd{g_y_3rd, 999.0};
+    ValueSaver saved_x_min{g_image_region.m_min.x, 999.0};
+    ValueSaver saved_x_max{g_image_region.m_max.x, 999.0};
+    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 999.0};
+    ValueSaver saved_y_min{g_image_region.m_min.y, 999.0};
+    ValueSaver saved_y_max{g_image_region.m_max.y, 999.0};
+    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 999.0};
 
     exec_cmd_arg("center-mag=2/4/3/90/45");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_TRUE(g_use_center_mag);
-    EXPECT_NEAR(2.232210, g_x_min, 1e-6);
-    EXPECT_NEAR(1.767789, g_x_max, 1e-6);
-    EXPECT_NEAR(1.760805, g_x_3rd, 1e-6);
-    EXPECT_NEAR(3.760805, g_y_min, 1e-6);
-    EXPECT_NEAR(4.239194, g_y_max, 1e-6);
-    EXPECT_NEAR(3.767789, g_y_3rd, 1e-6);
+    EXPECT_NEAR(2.232210, g_image_region.m_min.x, 1e-6);
+    EXPECT_NEAR(1.767789, g_image_region.m_max.x, 1e-6);
+    EXPECT_NEAR(1.760805, g_image_region.m_3rd.x, 1e-6);
+    EXPECT_NEAR(3.760805, g_image_region.m_min.y, 1e-6);
+    EXPECT_NEAR(4.239194, g_image_region.m_max.y, 1e-6);
+    EXPECT_NEAR(3.767789, g_image_region.m_3rd.y, 1e-6);
 }
 
 TEST_F(TestParameterCommand, aspectDrift)

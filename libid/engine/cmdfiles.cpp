@@ -4,8 +4,6 @@
 //
 #include "engine/cmdfiles_test.h"
 
-#include "geometry/line3d.h"
-#include "geometry/plot3d.h"
 #include "engine/bailout_formula.h"
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
@@ -16,6 +14,7 @@
 #include "engine/fractals.h"
 #include "engine/get_prec_big_float.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/log_map.h"
 #include "engine/random_seed.h"
 #include "engine/show_dot.h"
@@ -28,6 +27,8 @@
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
+#include "geometry/line3d.h"
+#include "geometry/plot3d.h"
 #include "helpcom.h"
 #include "io/file_gets.h"
 #include "io/has_ext.h"
@@ -538,12 +539,12 @@ static void init_vars_fractal()
     g_distance_estimator_y_dots = 0;                                //
     g_distance_estimator_width_factor = 71;                         //
     g_force_symmetry = SymmetryType::NOT_FORCED;                    //
-    g_x_min = -2.5;                                                 //
-    g_x_3rd = -2.5;                                                 //
-    g_x_max = 1.5;                                                  // initial corner values
-    g_y_min = -1.5;                                                 //
-    g_y_3rd = -1.5;                                                 //
-    g_y_max = 1.5;                                                  // initial corner values
+    g_image_region.m_min.x = -2.5;                                                 //
+    g_image_region.m_3rd.x = -2.5;                                                 //
+    g_image_region.m_max.x = 1.5;                                                  // initial corner values
+    g_image_region.m_min.y = -1.5;                                                 //
+    g_image_region.m_3rd.y = -1.5;                                                 //
+    g_image_region.m_max.y = 1.5;                                                  // initial corner values
     g_bf_math = BFMathType::NONE;                                   //
     g_potential_16bit = false;                                      //
     g_potential_flag = false;                                       //
@@ -1874,17 +1875,17 @@ static CmdArgFlags cmd_corners(const Command &cmd)
             }
         }
     }
-    g_x_min = cmd.float_vals[0];
-    g_x_3rd = cmd.float_vals[0];
-    g_x_max = cmd.float_vals[1];
-    g_y_min = cmd.float_vals[2];
-    g_y_3rd = cmd.float_vals[2];
-    g_y_max = cmd.float_vals[3];
+    g_image_region.m_min.x = cmd.float_vals[0];
+    g_image_region.m_3rd.x = cmd.float_vals[0];
+    g_image_region.m_max.x = cmd.float_vals[1];
+    g_image_region.m_min.y = cmd.float_vals[2];
+    g_image_region.m_3rd.y = cmd.float_vals[2];
+    g_image_region.m_max.y = cmd.float_vals[3];
 
     if (cmd.total_params == 6)
     {
-        g_x_3rd = cmd.float_vals[4];
-        g_y_3rd = cmd.float_vals[5];
+        g_image_region.m_3rd.x = cmd.float_vals[4];
+        g_image_region.m_3rd.y = cmd.float_vals[5];
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -3689,12 +3690,12 @@ static CmdArgFlags cmd_type(const Command &cmd)
     set_fractal_type(type);
     if (!s_init_corners)
     {
-        g_x_min = g_cur_fractal_specific->x_min;
-        g_x_3rd = g_x_min;
-        g_x_max = g_cur_fractal_specific->x_max;
-        g_y_min = g_cur_fractal_specific->y_min;
-        g_y_3rd = g_y_min;
-        g_y_max = g_cur_fractal_specific->y_max;
+        g_image_region.m_min.x = g_cur_fractal_specific->x_min;
+        g_image_region.m_3rd.x = g_image_region.m_min.x;
+        g_image_region.m_max.x = g_cur_fractal_specific->x_max;
+        g_image_region.m_min.y = g_cur_fractal_specific->y_min;
+        g_image_region.m_3rd.y = g_image_region.m_min.y;
+        g_image_region.m_max.y = g_cur_fractal_specific->y_max;
     }
     if (!s_init_functions)
     {

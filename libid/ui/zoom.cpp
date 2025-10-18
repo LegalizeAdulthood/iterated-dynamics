@@ -9,6 +9,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/ImageRegion.h"
 #include "engine/resume.h"
 #include "engine/solid_guess.h"
 #include "engine/work_list.h"
@@ -186,8 +187,8 @@ void draw_box(const bool draw_it)
     Coord top_left;
     top_left.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND)); // screen co-ords
     top_left.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
-    g_x_min  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew; // real co-ords
-    g_y_max  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
+    g_image_region.m_min.x  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew; // real co-ords
+    g_image_region.m_max.y  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_min, g_bf_save_x_min, f_temp1, bf_f_x_width, f_temp2, bf_f_x_skew);
@@ -200,8 +201,8 @@ void draw_box(const bool draw_it)
     Coord bot_right;
     bot_right.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND));
     bot_right.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
-    g_x_max  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew;
-    g_y_min  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
+    g_image_region.m_max.x  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew;
+    g_image_region.m_min.y  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_max, g_bf_save_x_min, f_temp1, bf_f_x_width, f_temp2, bf_f_x_skew);
@@ -218,8 +219,8 @@ void draw_box(const bool draw_it)
     Coord bot_left;
     bot_left.x   = static_cast<int>(f_temp1 * (g_logical_screen_x_size_dots + PIXEL_ROUND));
     bot_left.y   = static_cast<int>(f_temp2 * (g_logical_screen_y_size_dots + PIXEL_ROUND));
-    g_x_3rd  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew;
-    g_y_3rd  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
+    g_image_region.m_3rd.x  = g_save_x_min + f_temp1*f_x_width + f_temp2*f_x_skew;
+    g_image_region.m_3rd.y  = g_save_y_max + f_temp2*f_y_height + f_temp1*f_y_skew;
     if (g_bf_math != BFMathType::NONE)
     {
         calc_corner(g_bf_x_3rd, g_bf_save_x_min, f_temp1, bf_f_x_width, f_temp2, bf_f_x_skew);
@@ -577,16 +578,16 @@ static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
        then extend these co-ords from current real screen corners to get
        new actual corners
        */
-    const double f_temp = (g_y_min - g_y_3rd) * (g_x_3rd - g_x_min) - (g_x_max - g_x_3rd) * (g_y_3rd - g_y_max);
-    g_plot_mx1 = g_x_3rd - g_x_min; // reuse the plotxxx vars is safe
-    g_plot_mx2 = g_y_3rd - g_y_max;
-    g_plot_my1 = g_y_min - g_y_3rd;
-    g_plot_my2 = g_x_max - g_x_3rd;
-    const double save_x_min = g_x_min;
-    const double save_y_max = g_y_max;
-    zoom_out_calc(g_save_x_min-save_x_min, g_save_y_max-save_y_max, &g_x_min, &g_y_max, f_temp);
-    zoom_out_calc(g_save_x_max-save_x_min, g_save_y_min-save_y_max, &g_x_max, &g_y_min, f_temp);
-    zoom_out_calc(g_save_x_3rd-save_x_min, g_save_y_3rd-save_y_max, &g_x_3rd, &g_y_3rd, f_temp);
+    const double f_temp = (g_image_region.m_min.y - g_image_region.m_3rd.y) * (g_image_region.m_3rd.x - g_image_region.m_min.x) - (g_image_region.m_max.x - g_image_region.m_3rd.x) * (g_image_region.m_3rd.y - g_image_region.m_max.y);
+    g_plot_mx1 = g_image_region.m_3rd.x - g_image_region.m_min.x; // reuse the plotxxx vars is safe
+    g_plot_mx2 = g_image_region.m_3rd.y - g_image_region.m_max.y;
+    g_plot_my1 = g_image_region.m_min.y - g_image_region.m_3rd.y;
+    g_plot_my2 = g_image_region.m_max.x - g_image_region.m_3rd.x;
+    const double save_x_min = g_image_region.m_min.x;
+    const double save_y_max = g_image_region.m_max.y;
+    zoom_out_calc(g_save_x_min-save_x_min, g_save_y_max-save_y_max, &g_image_region.m_min.x, &g_image_region.m_max.y, f_temp);
+    zoom_out_calc(g_save_x_max-save_x_min, g_save_y_min-save_y_max, &g_image_region.m_max.x, &g_image_region.m_min.y, f_temp);
+    zoom_out_calc(g_save_x_3rd-save_x_min, g_save_y_3rd-save_y_max, &g_image_region.m_3rd.x, &g_image_region.m_3rd.y, f_temp);
 }
 
 void zoom_out() // for ctl-enter, calc corners for zooming out
@@ -610,24 +611,24 @@ void aspect_ratio_crop(const float old_aspect, const float new_aspect)
     {
         // new ratio is taller, crop x
         f_temp = (1.0 - old_aspect / new_aspect) / 2;
-        x_margin = (g_x_max - g_x_3rd) * f_temp;
-        y_margin = (g_y_min - g_y_3rd) * f_temp;
-        g_x_3rd += x_margin;
-        g_y_3rd += y_margin;
+        x_margin = (g_image_region.m_max.x - g_image_region.m_3rd.x) * f_temp;
+        y_margin = (g_image_region.m_min.y - g_image_region.m_3rd.y) * f_temp;
+        g_image_region.m_3rd.x += x_margin;
+        g_image_region.m_3rd.y += y_margin;
     }
     else
     {
         // new ratio is wider, crop y
         f_temp = (1.0 - new_aspect / old_aspect) / 2;
-        x_margin = (g_x_3rd - g_x_min) * f_temp;
-        y_margin = (g_y_3rd - g_y_max) * f_temp;
-        g_x_3rd -= x_margin;
-        g_y_3rd -= y_margin;
+        x_margin = (g_image_region.m_3rd.x - g_image_region.m_min.x) * f_temp;
+        y_margin = (g_image_region.m_3rd.y - g_image_region.m_max.y) * f_temp;
+        g_image_region.m_3rd.x -= x_margin;
+        g_image_region.m_3rd.y -= y_margin;
     }
-    g_x_min += x_margin;
-    g_y_max += y_margin;
-    g_x_max -= x_margin;
-    g_y_min -= y_margin;
+    g_image_region.m_min.x += x_margin;
+    g_image_region.m_max.y += y_margin;
+    g_image_region.m_max.x -= x_margin;
+    g_image_region.m_min.y -= y_margin;
 }
 
 static int check_pan() // return 0 if can't, alignment requirement if can
@@ -1060,12 +1061,12 @@ MainState move_zoom_box(MainContext &context)
 
 void reset_zoom_corners()
 {
-    g_x_min = g_save_x_min;
-    g_x_max = g_save_x_max;
-    g_x_3rd = g_save_x_3rd;
-    g_y_max = g_save_y_max;
-    g_y_min = g_save_y_min;
-    g_y_3rd = g_save_y_3rd;
+    g_image_region.m_min.x = g_save_x_min;
+    g_image_region.m_max.x = g_save_x_max;
+    g_image_region.m_3rd.x = g_save_x_3rd;
+    g_image_region.m_max.y = g_save_y_max;
+    g_image_region.m_min.y = g_save_y_min;
+    g_image_region.m_3rd.y = g_save_y_3rd;
     if (g_bf_math != BFMathType::NONE)
     {
         copy_bf(g_bf_x_min, g_bf_save_x_min);
