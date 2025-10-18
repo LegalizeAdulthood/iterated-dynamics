@@ -69,9 +69,9 @@ void show_corners_dbl(const char *s)
                              " delta_x= {:.20Lf} delta_y= {:.20Lf}\n" //
                              "delta_x2= {:.20Lf} delta_y2= {:.20Lf}", //
             s,                                                        //
-            g_image_region.m_min.x, g_image_region.m_max.x,                                         //
-            g_image_region.m_min.y, g_image_region.m_max.y,                                         //
-            g_image_region.m_3rd.x, g_image_region.m_3rd.y,                                         //
+            g_image_region.m_min.x, g_image_region.m_max.x,           //
+            g_image_region.m_min.y, g_image_region.m_max.y,           //
+            g_image_region.m_3rd.x, g_image_region.m_3rd.y,           //
             g_delta_x, g_delta_y,                                     //
             g_delta_x2, g_delta_y2)))
     {
@@ -102,7 +102,7 @@ void show_corners_bn(const char *s)
                              "y_3rd_bn={:s}\n"
                              "y_3rd   ={:.20f}\n"
                              "\n",
-            s,                                      //
+            s,                                                     //
             bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
             bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
             bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
@@ -159,8 +159,8 @@ void show_corners_bf(const char *s)
                              "bf_y_3rd={:s}\n"
                              "y_3rd= {:.20f}\n"
                              "\n",
-            s,                                              //
-            bf_to_string(g_bf_x_min, dec).c_str(),          //
+            s,                                                             //
+            bf_to_string(g_bf_x_min, dec).c_str(),                         //
             g_image_region.m_min.x, g_decimals, g_bf_length,               //
             bf_to_string(g_bf_x_max, dec).c_str(), g_image_region.m_max.x, //
             bf_to_string(g_bf_y_min, dec).c_str(), g_image_region.m_min.y, //
@@ -175,33 +175,32 @@ void show_corners_bf(const char *s)
 void show_corners_bf_save(const char *s)
 {
     if (constexpr int dec = 20; //
-        stop_msg(fmt::format(
-        "{:s}\n"
-        "bf_save_x_min={:s}\n"
-        "x_min= {:.20f}\n"
-        "\n"
-        "bf_save_x_max={:s}\n"
-        "x_max= {:.20f}\n"
-        "\n"
-        "bf_save_y_min={:s}\n"
-        "y_min= {:.20f}\n"
-        "\n"
-        "bf_save_y_max={:s}\n"
-        "y_max= {:.20f}\n"
-        "\n"
-        "bf_save_x_3rd={:s}\n"
-        "x_3rd= {:.20f}\n"
-        "\n"
-        "bf_save_y_3rd={:s}\n"
-        "y_3rd= {:.20f}\n"
-        "\n",
-        s,                                                   //
-        bf_to_string(g_bf_save_x_min, dec).c_str(), g_image_region.m_min.x, //
-        bf_to_string(g_bf_save_x_max, dec).c_str(), g_image_region.m_max.x, //
-        bf_to_string(g_bf_save_y_min, dec).c_str(), g_image_region.m_min.y, //
-        bf_to_string(g_bf_save_y_max, dec).c_str(), g_image_region.m_max.y, //
-        bf_to_string(g_bf_save_x_3rd, dec).c_str(), g_image_region.m_3rd.x, //
-        bf_to_string(g_bf_save_y_3rd, dec).c_str(), g_image_region.m_3rd.y)))
+        stop_msg(fmt::format("{:s}\n"
+                             "bf_save_x_min={:s}\n"
+                             "x_min= {:.20f}\n"
+                             "\n"
+                             "bf_save_x_max={:s}\n"
+                             "x_max= {:.20f}\n"
+                             "\n"
+                             "bf_save_y_min={:s}\n"
+                             "y_min= {:.20f}\n"
+                             "\n"
+                             "bf_save_y_max={:s}\n"
+                             "y_max= {:.20f}\n"
+                             "\n"
+                             "bf_save_x_3rd={:s}\n"
+                             "x_3rd= {:.20f}\n"
+                             "\n"
+                             "bf_save_y_3rd={:s}\n"
+                             "y_3rd= {:.20f}\n"
+                             "\n",
+            s,                                                                  //
+            bf_to_string(g_bf_save_x_min, dec).c_str(), g_image_region.m_min.x, //
+            bf_to_string(g_bf_save_x_max, dec).c_str(), g_image_region.m_max.x, //
+            bf_to_string(g_bf_save_y_min, dec).c_str(), g_image_region.m_min.y, //
+            bf_to_string(g_bf_save_y_max, dec).c_str(), g_image_region.m_max.y, //
+            bf_to_string(g_bf_save_x_3rd, dec).c_str(), g_image_region.m_3rd.x, //
+            bf_to_string(g_bf_save_y_3rd, dec).c_str(), g_image_region.m_3rd.y)))
     {
         goodbye();
     }
