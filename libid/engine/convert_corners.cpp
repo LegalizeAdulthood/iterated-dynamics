@@ -37,10 +37,10 @@ void cvt_corners(const double ctr_x, const double ctr_y, const LDouble mag, doub
     {
         // simple, faster case
         g_image_region.m_min.x = ctr_x - w;
-        g_image_region.m_3rd.x = g_image_region.m_min.x;
+        g_image_region.m_3rd.x = ctr_x - w;
         g_image_region.m_max.x = ctr_x + w;
         g_image_region.m_min.y = ctr_y - h;
-        g_image_region.m_3rd.y = g_image_region.m_min.y;
+        g_image_region.m_3rd.y = ctr_y - h;
         g_image_region.m_max.y = ctr_y + h;
         return;
     }

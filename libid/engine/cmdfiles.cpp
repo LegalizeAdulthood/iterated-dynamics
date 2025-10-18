@@ -3691,10 +3691,10 @@ static CmdArgFlags cmd_type(const Command &cmd)
     if (!s_init_corners)
     {
         g_image_region.m_min.x = g_cur_fractal_specific->x_min;
-        g_image_region.m_3rd.x = g_image_region.m_min.x;
+        g_image_region.m_3rd.x = g_cur_fractal_specific->x_min;
         g_image_region.m_max.x = g_cur_fractal_specific->x_max;
         g_image_region.m_min.y = g_cur_fractal_specific->y_min;
-        g_image_region.m_3rd.y = g_image_region.m_min.y;
+        g_image_region.m_3rd.y = g_cur_fractal_specific->y_min;
         g_image_region.m_max.y = g_cur_fractal_specific->y_max;
     }
     if (!s_init_functions)
