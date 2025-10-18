@@ -395,8 +395,7 @@ static void backwards_info3(const FractalInfo &read_info)
     }
 
     g_calc_status = CalcStatus::PARAMS_CHANGED; // defaults if version < 4
-    g_image_region.m_3rd.x = g_image_region.m_min.x;
-    g_image_region.m_3rd.y = g_image_region.m_min.y;
+    g_image_region.m_3rd = g_image_region.m_min;
     g_user_distance_estimator_value = 0;
     g_calc_time = 0;
 }
