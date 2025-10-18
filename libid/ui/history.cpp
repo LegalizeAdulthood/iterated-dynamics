@@ -55,22 +55,18 @@ namespace
 struct ImageHistory
 {
     FractalType image_fractal_type;
-    double x_min;
-    double x_max;
-    double y_min;
-    double y_max;
-    double c_real;
-    double c_imag;
-    double potential_params[3];
+    ImageRegion image_region;
+    std::array<double, MAX_PARAMS> params;
+    std::array<double, 3> potential_params;
     int random_seed;
     bool random_seed_flag;
     int biomorph;
     int inside_color;
     long log_map_flag;
     InversionParams inversion;
-    int decomp[2];
+    std::array<int, 2> decomp;
     SymmetryType force_symmetry;
-    int init_3d[16];
+    std::array<int, 16> init_3d;
     int preview_factor;
     int adjust_3d_x;
     int adjust_3d_y;
@@ -84,48 +80,38 @@ struct ImageHistory
     int eye_separation;
     GlassesType glasses_type;
     int outside_color;
-    double x_3rd;
-    double y_3rd;
     long dist_est;
-    TrigFn trig_index[4];
+    std::array<TrigFn, 4> trig_index;
     bool finite_attractor;
-    double init_orbit[2];
+    DComplex init_orbit;
     int periodicity_check;
     bool disk_16_bit;
     int release;
     int save_release;
     Display3DMode display_3d;
-    int transparent_color_3d[2];
+    std::array<int, 2> transparent_color_3d;
     int ambient;
     int haze;
     int randomize_3d;
     int color_cycle_range_lo;
     int color_cycle_range_hi;
     int distance_estimator_width_factor;
-    double d_param3;
-    double d_param4;
     int fill_color;
     double julibrot_x_max;
     double julibrot_x_min;
     double julibrot_y_max;
     double julibrot_y_min;
     int julibrot_z_dots;
-    float julibrot_origin_fp;
-    float julibrot_depth_fp;
-    float julibrot_height_fp;
-    float julibrot_width_fp;
-    float julibrot_dist_fp;
-    float eyes_fp;
+    float julibrot_origin;
+    float julibrot_depth;
+    float julibrot_height;
+    float julibrot_width;
+    float julibrot_dist;
+    float eyes;
     FractalType new_orbit_type;
     Julibrot3DMode julibrot_mode;
     Major major_method;
     Minor inverse_julia_minor_method;
-    double d_param5;
-    double d_param6;
-    double d_param7;
-    double d_param8;
-    double d_param9;
-    double d_param10;
     long bailout;
     Bailout bailout_test;
     long iterations;
@@ -134,7 +120,7 @@ struct ImageHistory
     std::string filename;
     std::string file_item_name;
     unsigned char dac_box[256][3];
-    char  max_function;
+    char max_function;
     char user_std_calc_mode;
     bool three_pass;
     InitOrbitMode use_init_orbit;
@@ -170,12 +156,8 @@ bool dac_box_equal(const Byte lhs[256][3], const Byte rhs[256][3])
 bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
 {
     return lhs.image_fractal_type == rhs.image_fractal_type                                             //
-        && lhs.x_min == rhs.x_min                                                                       //
-        && lhs.x_max == rhs.x_max                                                                       //
-        && lhs.y_min == rhs.y_min                                                                       //
-        && lhs.y_max == rhs.y_max                                                                       //
-        && lhs.c_real == rhs.c_real                                                                     //
-        && lhs.c_imag == rhs.c_imag                                                                     //
+        && lhs.image_region == rhs.image_region                                                         //
+        && std::equal(std::begin(lhs.params), std::end(lhs.params), std::begin(rhs.params))             //
         && std::equal(std::begin(lhs.potential_params), std::end(lhs.potential_params),
                std::begin(rhs.potential_params))                                                        //
         && lhs.random_seed == rhs.random_seed                                                           //
@@ -200,12 +182,10 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.eye_separation == rhs.eye_separation                                                     //
         && lhs.glasses_type == rhs.glasses_type                                                         //
         && lhs.outside_color == rhs.outside_color                                                       //
-        && lhs.x_3rd == rhs.x_3rd                                                                       //
-        && lhs.y_3rd == rhs.y_3rd                                                                       //
         && lhs.dist_est == rhs.dist_est                                                                 //
         && std::equal(std::begin(lhs.trig_index), std::end(lhs.trig_index), std::begin(rhs.trig_index)) //
         && lhs.finite_attractor == rhs.finite_attractor                                                 //
-        && std::equal(std::begin(lhs.init_orbit), std::end(lhs.init_orbit), std::begin(rhs.init_orbit)) //
+        && lhs.init_orbit == rhs.init_orbit                                                             //
         && lhs.periodicity_check == rhs.periodicity_check                                               //
         && lhs.disk_16_bit == rhs.disk_16_bit                                                           //
         && lhs.release == rhs.release                                                                   //
@@ -219,30 +199,22 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.color_cycle_range_lo == rhs.color_cycle_range_lo                                         //
         && lhs.color_cycle_range_hi == rhs.color_cycle_range_hi                                         //
         && lhs.distance_estimator_width_factor == rhs.distance_estimator_width_factor                   //
-        && lhs.d_param3 == rhs.d_param3                                                                 //
-        && lhs.d_param4 == rhs.d_param4                                                                 //
         && lhs.fill_color == rhs.fill_color                                                             //
         && lhs.julibrot_x_max == rhs.julibrot_x_max                                                     //
         && lhs.julibrot_x_min == rhs.julibrot_x_min                                                     //
         && lhs.julibrot_y_max == rhs.julibrot_y_max                                                     //
         && lhs.julibrot_y_min == rhs.julibrot_y_min                                                     //
         && lhs.julibrot_z_dots == rhs.julibrot_z_dots                                                   //
-        && lhs.julibrot_origin_fp == rhs.julibrot_origin_fp                                             //
-        && lhs.julibrot_depth_fp == rhs.julibrot_depth_fp                                               //
-        && lhs.julibrot_height_fp == rhs.julibrot_height_fp                                             //
-        && lhs.julibrot_width_fp == rhs.julibrot_width_fp                                               //
-        && lhs.julibrot_dist_fp == rhs.julibrot_dist_fp                                                 //
-        && lhs.eyes_fp == rhs.eyes_fp                                                                   //
+        && lhs.julibrot_origin == rhs.julibrot_origin                                                   //
+        && lhs.julibrot_depth == rhs.julibrot_depth                                                     //
+        && lhs.julibrot_height == rhs.julibrot_height                                                   //
+        && lhs.julibrot_width == rhs.julibrot_width                                                     //
+        && lhs.julibrot_dist == rhs.julibrot_dist                                                       //
+        && lhs.eyes == rhs.eyes                                                                         //
         && lhs.new_orbit_type == rhs.new_orbit_type                                                     //
         && lhs.julibrot_mode == rhs.julibrot_mode                                                       //
         && lhs.major_method == rhs.major_method                                                         //
         && lhs.inverse_julia_minor_method == rhs.inverse_julia_minor_method                             //
-        && lhs.d_param5 == rhs.d_param5                                                                 //
-        && lhs.d_param6 == rhs.d_param6                                                                 //
-        && lhs.d_param7 == rhs.d_param7                                                                 //
-        && lhs.d_param8 == rhs.d_param8                                                                 //
-        && lhs.d_param9 == rhs.d_param9                                                                 //
-        && lhs.d_param10 == rhs.d_param10                                                               //
         && lhs.bailout == rhs.bailout                                                                   //
         && lhs.bailout_test == rhs.bailout_test                                                         //
         && lhs.iterations == rhs.iterations                                                             //
@@ -369,6 +341,23 @@ std::ostream &operator<<(std::ostream &str, const JsonArray<T, N> &value)
     return str;
 }
 
+struct JsonValue
+{
+    explicit JsonValue(const DComplex &value) :
+        m_value(value)
+    {
+    }
+
+    friend std::ostream &operator<<(std::ostream &str, const JsonValue &value)
+    {
+        str << '[' << value.m_value.x << ',' << value.m_value.y << ']';
+        return str;
+    }
+
+private:
+    const DComplex &m_value;
+};
+
 struct DacBox
 {
     explicit DacBox(const unsigned char dac[256][3])
@@ -404,12 +393,13 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
 {
     str << '{';
     str << R"json("image_fractal_type":)json" << value.image_fractal_type << ',';
-    str << R"json("x_min":)json" << value.x_min << ',';
-    str << R"json("x_max":)json" << value.x_max << ',';
-    str << R"json("y_min":)json" << value.y_min << ',';
-    str << R"json("y_max":)json" << value.y_max << ',';
-    str << R"json("c_real":)json" << value.c_real << ',';
-    str << R"json("c_imag":)json" << value.c_imag << ',';
+    str << R"json("x_min":)json" << value.image_region.m_min.x << ',';
+    str << R"json("y_min":)json" << value.image_region.m_min.y << ',';
+    str << R"json("x_max":)json" << value.image_region.m_max.x << ',';
+    str << R"json("y_max":)json" << value.image_region.m_max.y << ',';
+    str << R"json("x_3rd":)json" << value.image_region.m_3rd.x << ',';
+    str << R"json("y_3rd":)json" << value.image_region.m_3rd.y << ',';
+    str << R"json("params":)json" << JsonArray(value.params) << ',';
     str << R"json("potential_params":)json" << JsonArray(value.potential_params) << ',';
     str << R"json("random_seed":)json" << value.random_seed << ',';
     str << R"json("random_seed_flag":)json" << value.random_seed_flag << ',';
@@ -433,12 +423,10 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("eye_separation":)json" << value.eye_separation << ',';
     str << R"json("glasses_type":)json" << value.glasses_type << ',';
     str << R"json("outside_color":)json" << value.outside_color << ',';
-    str << R"json("x_3rd":)json" << value.x_3rd << ',';
-    str << R"json("y_3rd":)json" << value.y_3rd << ',';
     str << R"json("dist_est":)json" << value.dist_est << ',';
     str << R"json("trig_index":)json" << JsonArray(value.trig_index) << ',';
     str << R"json("finite_attractor":)json" << value.finite_attractor << ',';
-    str << R"json("init_orbit":)json" << JsonArray(value.init_orbit) << ',';
+    str << R"json("init_orbit":)json" << JsonValue(value.init_orbit) << ',';
     str << R"json("periodicity_check":)json" << value.periodicity_check << ',';
     str << R"json("disk_16_bit":)json" << value.disk_16_bit << ',';
     str << R"json("release":)json" << value.release << ',';
@@ -451,30 +439,22 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("color_cycle_range_lo":)json" << value.color_cycle_range_lo << ',';
     str << R"json("color_cycle_range_hi":)json" << value.color_cycle_range_hi << ',';
     str << R"json("distance_estimator_width_factor":)json" << value.distance_estimator_width_factor << ',';
-    str << R"json("d_param3":)json" << value.d_param3 << ',';
-    str << R"json("d_param4":)json" << value.d_param4 << ',';
     str << R"json("fill_color":)json" << value.fill_color << ',';
     str << R"json("julibrot_x_max":)json" << value.julibrot_x_max << ',';
     str << R"json("julibrot_x_min":)json" << value.julibrot_x_min << ',';
     str << R"json("julibrot_y_max":)json" << value.julibrot_y_max << ',';
     str << R"json("julibrot_y_min":)json" << value.julibrot_y_min << ',';
     str << R"json("julibrot_z_dots":)json" << value.julibrot_z_dots << ',';
-    str << R"json("julibrot_origin_fp":)json" << value.julibrot_origin_fp << ',';
-    str << R"json("julibrot_depth_fp":)json" << value.julibrot_depth_fp << ',';
-    str << R"json("julibrot_height_fp":)json" << value.julibrot_height_fp << ',';
-    str << R"json("julibrot_width_fp":)json" << value.julibrot_width_fp << ',';
-    str << R"json("julibrot_dist_fp":)json" << value.julibrot_dist_fp << ',';
-    str << R"json("eyes_fp":)json" << value.eyes_fp << ',';
+    str << R"json("julibrot_origin":)json" << value.julibrot_origin << ',';
+    str << R"json("julibrot_depth":)json" << value.julibrot_depth << ',';
+    str << R"json("julibrot_height":)json" << value.julibrot_height << ',';
+    str << R"json("julibrot_width":)json" << value.julibrot_width << ',';
+    str << R"json("julibrot_dist":)json" << value.julibrot_dist << ',';
+    str << R"json("eyes":)json" << value.eyes << ',';
     str << R"json("new_orbit_type":)json" << value.new_orbit_type << ',';
     str << R"json("julibrot_mode":)json" << value.julibrot_mode << ',';
     str << R"json("major_method":)json" << value.major_method << ',';
     str << R"json("inverse_julia_minor_method":)json" << value.inverse_julia_minor_method << ',';
-    str << R"json("d_param5":)json" << value.d_param5 << ',';
-    str << R"json("d_param6":)json" << value.d_param6 << ',';
-    str << R"json("d_param7":)json" << value.d_param7 << ',';
-    str << R"json("d_param8":)json" << value.d_param8 << ',';
-    str << R"json("d_param9":)json" << value.d_param9 << ',';
-    str << R"json("d_param10":)json" << value.d_param10 << ',';
     str << R"json("bailout":)json" << value.bailout << ',';
     str << R"json("bailout_test":)json" << value.bailout_test << ',';
     str << R"json("iterations":)json" << value.iterations << ',';
@@ -530,31 +510,16 @@ void save_history_info()
 
     ImageHistory current{};
     current.image_fractal_type = g_fractal_type;
-    current.x_min = g_image_region.m_min.x;
-    current.x_max = g_image_region.m_max.x;
-    current.y_min = g_image_region.m_min.y;
-    current.y_max = g_image_region.m_max.y;
-    current.c_real = g_params[0];
-    current.c_imag = g_params[1];
-    current.d_param3 = g_params[2];
-    current.d_param4 = g_params[3];
-    current.d_param5 = g_params[4];
-    current.d_param6 = g_params[5];
-    current.d_param7 = g_params[6];
-    current.d_param8 = g_params[7];
-    current.d_param9 = g_params[8];
-    current.d_param10 = g_params[9];
+    current.image_region = g_image_region;
+    std::copy_n(g_params, MAX_PARAMS, current.params.data());
     current.fill_color = g_fill_color;
-    current.potential_params[0] = g_potential_params[0];
-    current.potential_params[1] = g_potential_params[1];
-    current.potential_params[2] = g_potential_params[2];
+    std::copy_n(g_potential_params, 3, current.potential_params.data());
     current.random_seed_flag = g_random_seed_flag;
     current.random_seed = g_random_seed;
     current.inside_color = g_inside_color;
     current.log_map_flag = g_log_map_flag;
     current.inversion = g_inversion.params;
-    current.decomp[0] = g_decomp[0];
-    current.decomp[1] = g_decomp[1];
+    std::copy_n(g_decomp, 2, current.decomp.data());
     current.biomorph = g_biomorph;
     current.force_symmetry = g_force_symmetry;
     current.init_3d[0] = g_sphere ? 1 : 0;   // sphere? 1 = yes, 0 = no
@@ -592,19 +557,13 @@ void save_history_info()
     current.eye_separation = g_eye_separation;
     current.glasses_type = g_glasses_type;
     current.outside_color = g_outside_color;
-    current.x_3rd = g_image_region.m_3rd.x;
-    current.y_3rd = g_image_region.m_3rd.y;
     current.user_std_calc_mode = static_cast<char>(g_user_std_calc_mode);
     current.three_pass = g_three_pass;
     current.stop_pass = g_stop_pass;
     current.dist_est = g_distance_estimator;
-    current.trig_index[0] = g_trig_index[0];
-    current.trig_index[1] = g_trig_index[1];
-    current.trig_index[2] = g_trig_index[2];
-    current.trig_index[3] = g_trig_index[3];
+    std::copy_n(g_trig_index, 4, current.trig_index.data());
     current.finite_attractor = g_finite_attractor;
-    current.init_orbit[0] = g_init_orbit.x;
-    current.init_orbit[1] = g_init_orbit.y;
+    current.init_orbit = g_init_orbit;
     current.use_init_orbit = g_use_init_orbit;
     current.periodicity_check = g_periodicity_check;
     current.disk_16_bit = g_disk_16_bit;
@@ -614,8 +573,7 @@ void save_history_info()
     current.ambient = g_ambient;
     current.randomize_3d = g_randomize_3d;
     current.haze = g_haze;
-    current.transparent_color_3d[0] = g_transparent_color_3d[0];
-    current.transparent_color_3d[1] = g_transparent_color_3d[1];
+    std::copy_n(g_transparent_color_3d, 2, current.transparent_color_3d.data());
     current.color_cycle_range_lo = g_color_cycle_range_lo;
     current.color_cycle_range_hi = g_color_cycle_range_hi;
     current.distance_estimator_width_factor = g_distance_estimator_width_factor;
@@ -624,12 +582,12 @@ void save_history_info()
     current.julibrot_y_max = g_julibrot_y_max;
     current.julibrot_y_min = g_julibrot_y_min;
     current.julibrot_z_dots = g_julibrot_z_dots;
-    current.julibrot_origin_fp = g_julibrot_origin;
-    current.julibrot_depth_fp = g_julibrot_depth;
-    current.julibrot_height_fp = g_julibrot_height;
-    current.julibrot_width_fp = g_julibrot_width;
-    current.julibrot_dist_fp = g_julibrot_dist;
-    current.eyes_fp = g_eyes;
+    current.julibrot_origin = g_julibrot_origin;
+    current.julibrot_depth = g_julibrot_depth;
+    current.julibrot_height = g_julibrot_height;
+    current.julibrot_width = g_julibrot_width;
+    current.julibrot_dist = g_julibrot_dist;
+    current.eyes = g_eyes;
     current.new_orbit_type = g_new_orbit_type;
     current.julibrot_mode = g_julibrot_3d_mode;
     current.max_function = g_max_function;
@@ -720,20 +678,8 @@ void restore_history_info(const int i)
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     g_resuming = false;
     set_fractal_type(last.image_fractal_type);
-    g_image_region.m_min.x = last.x_min;
-    g_image_region.m_max.x = last.x_max;
-    g_image_region.m_min.y = last.y_min;
-    g_image_region.m_max.y = last.y_max;
-    g_params[0] = last.c_real;
-    g_params[1] = last.c_imag;
-    g_params[2] = last.d_param3;
-    g_params[3] = last.d_param4;
-    g_params[4] = last.d_param5;
-    g_params[5] = last.d_param6;
-    g_params[6] = last.d_param7;
-    g_params[7] = last.d_param8;
-    g_params[8] = last.d_param9;
-    g_params[9] = last.d_param10;
+    g_image_region = last.image_region;
+    std::copy_n(last.params.data(), MAX_PARAMS, g_params);
     g_fill_color = last.fill_color;
     g_potential_params[0] = last.potential_params[0];
     g_potential_params[1] = last.potential_params[1];
@@ -783,8 +729,6 @@ void restore_history_info(const int i)
     g_eye_separation = last.eye_separation;
     g_glasses_type = last.glasses_type;
     g_outside_color = last.outside_color;
-    g_image_region.m_3rd.x = last.x_3rd;
-    g_image_region.m_3rd.y = last.y_3rd;
     g_user_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
     g_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
     g_three_pass = last.three_pass != 0;
@@ -796,8 +740,7 @@ void restore_history_info(const int i)
     g_trig_index[2] = last.trig_index[2];
     g_trig_index[3] = last.trig_index[3];
     g_finite_attractor = last.finite_attractor;
-    g_init_orbit.x = last.init_orbit[0];
-    g_init_orbit.y = last.init_orbit[1];
+    g_init_orbit = last.init_orbit;
     g_use_init_orbit = last.use_init_orbit;
     g_periodicity_check = last.periodicity_check;
     g_user_periodicity_value = last.periodicity_check;
@@ -817,12 +760,12 @@ void restore_history_info(const int i)
     g_julibrot_y_max = last.julibrot_y_max;
     g_julibrot_y_min = last.julibrot_y_min;
     g_julibrot_z_dots = last.julibrot_z_dots;
-    g_julibrot_origin = last.julibrot_origin_fp;
-    g_julibrot_depth = last.julibrot_depth_fp;
-    g_julibrot_height = last.julibrot_height_fp;
-    g_julibrot_width = last.julibrot_width_fp;
-    g_julibrot_dist = last.julibrot_dist_fp;
-    g_eyes = last.eyes_fp;
+    g_julibrot_origin = last.julibrot_origin;
+    g_julibrot_depth = last.julibrot_depth;
+    g_julibrot_height = last.julibrot_height;
+    g_julibrot_width = last.julibrot_width;
+    g_julibrot_dist = last.julibrot_dist;
+    g_eyes = last.eyes;
     g_new_orbit_type = last.new_orbit_type;
     g_julibrot_3d_mode = last.julibrot_mode;
     g_max_function = last.max_function;
