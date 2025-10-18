@@ -74,5 +74,6 @@ inline bool operator!=(const ImageRegion &lhs, const ImageRegion &rhs)
 }
 
 extern ImageRegion g_image_region;
+extern ImageRegion g_save_image_region;
 
 } // namespace id::engine

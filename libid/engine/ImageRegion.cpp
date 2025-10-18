@@ -6,5 +6,6 @@ namespace id::engine
 {
 
 ImageRegion g_image_region{};
+ImageRegion g_save_image_region{};
 
 } // namespace id::engine

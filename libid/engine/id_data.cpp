@@ -50,9 +50,6 @@ bool g_z_scroll{};                      // screen/zoombox false fixed, true rela
 bool g_compare_gif{};                   // compare two gif files flag
 int g_save_system{};                    // from and for save files
 bool g_tab_mode{true};                  // tab display enabled
-double g_save_x_min{}, g_save_x_max{};  //
-double g_save_y_min{}, g_save_y_max{};  //
-double g_save_x_3rd{}, g_save_y_3rd{};  // displayed screen corners
 double g_plot_mx1{}, g_plot_mx2{};      //
 double g_plot_my1{}, g_plot_my2{};      // real->screen multipliers
 CalcStatus g_calc_status{CalcStatus::NO_FRACTAL};               //

@@ -120,12 +120,7 @@ static bool look(MainContext &context)
 
 static void toggle_mandelbrot_julia(MainContext &context)
 {
-    static double s_j_x_min;
-    static double s_j_x_max;
-    static double s_j_y_min;
-    static double s_j_y_max; // "Julia mode" entry point
-    static double s_j_x_3rd;
-    static double s_j_y_3rd;
+    static ImageRegion s_j; // "Julia mode" entry point
 
     if (g_fractal_type == FractalType::FORMULA)
     {
@@ -168,12 +163,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
             g_julia_c_y = JULIA_C_NOT_SET;
             g_julia_c_x = JULIA_C_NOT_SET;
         }
-        s_j_x_min = g_save_x_min;
-        s_j_x_max = g_save_x_max;
-        s_j_y_max = g_save_y_max;
-        s_j_y_min = g_save_y_min;
-        s_j_x_3rd = g_save_x_3rd;
-        s_j_y_3rd = g_save_y_3rd;
+        s_j = g_save_image_region;
         context.from_mandel = true;
         g_image_region.m_min.x = g_cur_fractal_specific->x_min;
         g_image_region.m_max.x = g_cur_fractal_specific->x_max;
@@ -200,12 +190,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
         set_fractal_type(g_cur_fractal_specific->to_mandel);
         if (context.from_mandel)
         {
-            g_image_region.m_min.x = s_j_x_min;
-            g_image_region.m_max.x = s_j_x_max;
-            g_image_region.m_min.y = s_j_y_min;
-            g_image_region.m_max.y = s_j_y_max;
-            g_image_region.m_3rd.x = s_j_x_3rd;
-            g_image_region.m_3rd.y = s_j_y_3rd;
+            g_image_region = s_j;
         }
         else
         {

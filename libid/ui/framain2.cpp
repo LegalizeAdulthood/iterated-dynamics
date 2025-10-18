@@ -539,12 +539,7 @@ MainState big_while_loop(MainContext &context)
         }
         driver_schedule_alarm(1);
 
-        g_save_x_min = g_image_region.m_min.x; // save 3 corners for zoom.c ref points
-        g_save_x_max = g_image_region.m_max.x;
-        g_save_x_3rd = g_image_region.m_3rd.x;
-        g_save_y_min = g_image_region.m_min.y;
-        g_save_y_max = g_image_region.m_max.y;
-        g_save_y_3rd = g_image_region.m_3rd.y;
+        g_save_image_region = g_image_region; // save 3 corners for zoom.c ref points
 
         if (g_bf_math != BFMathType::NONE)
         {
