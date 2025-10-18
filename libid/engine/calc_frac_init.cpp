@@ -768,28 +768,27 @@ static void adjust_to_limits(const double expand)
     double corner_x[4];
     double corner_y[4];
     constexpr double limit = 32767.99;
-    const double center_x = (g_image_region.m_min.x + g_image_region.m_max.x) / 2;
-    const double center_y = (g_image_region.m_min.y + g_image_region.m_max.y) / 2;
+    const DComplex center{g_image_region.center()};
 
-    if (g_image_region.m_min.x == center_x)
+    if (g_image_region.m_min.x == center.x)
     {
         // ohoh, infinitely thin, fix it
         smallest_add(&g_image_region.m_max.x);
-        g_image_region.m_min.x -= g_image_region.m_max.x-center_x;
+        g_image_region.m_min.x -= g_image_region.m_max.x- center.x;
     }
 
-    if (g_image_region.m_min.y == center_y)
+    if (g_image_region.m_min.y == center.y)
     {
         smallest_add(&g_image_region.m_max.y);
-        g_image_region.m_min.y -= g_image_region.m_max.y-center_y;
+        g_image_region.m_min.y -= g_image_region.m_max.y- center.y;
     }
 
-    if (g_image_region.m_3rd.x == center_x)
+    if (g_image_region.m_3rd.x == center.x)
     {
         smallest_add(&g_image_region.m_3rd.x);
     }
 
-    if (g_image_region.m_3rd.y == center_y)
+    if (g_image_region.m_3rd.y == center.y)
     {
         smallest_add(&g_image_region.m_3rd.y);
     }
@@ -810,8 +809,8 @@ static void adjust_to_limits(const double expand)
     {
         for (int i = 0; i < 4; ++i)
         {
-            corner_x[i] = center_x + (corner_x[i]-center_x)*expand;
-            corner_y[i] = center_y + (corner_y[i]-center_y)*expand;
+            corner_x[i] = center.x + (corner_x[i]- center.x)*expand;
+            corner_y[i] = center.y + (corner_y[i]- center.y)*expand;
         }
     }
     // get min/max x/y values
@@ -838,8 +837,8 @@ static void adjust_to_limits(const double expand)
     {
         for (int i = 0; i < 4; ++i)
         {
-            corner_x[i] = center_x + (corner_x[i]-center_x)*f_temp;
-            corner_y[i] = center_y + (corner_y[i]-center_y)*f_temp;
+            corner_x[i] = center.x + (corner_x[i]- center.x)*f_temp;
+            corner_y[i] = center.y + (corner_y[i]- center.y)*f_temp;
         }
     }
 

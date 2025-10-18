@@ -686,7 +686,7 @@ static void init_calc_fract()
 
         if (g_invert < 2 || g_inversion[1] == AUTO_INVERT)  // xcenter not already set
         {
-            g_inversion[1] = (g_image_region.m_min.x + g_image_region.m_max.x) / 2.0;
+            g_inversion[1] = g_image_region.center_x();
             fix_inversion(&g_inversion[1]);
             g_f_x_center = g_inversion[1];
             if (std::abs(g_f_x_center) < std::abs(size.x) / 100)
@@ -698,7 +698,7 @@ static void init_calc_fract()
 
         if (g_invert < 3 || g_inversion[2] == AUTO_INVERT)  // ycenter not already set
         {
-            g_inversion[2] = (g_image_region.m_min.y + g_image_region.m_max.y) / 2.0;
+            g_inversion[2] = g_image_region.center_y();
             fix_inversion(&g_inversion[2]);
             g_f_y_center = g_inversion[2];
             if (std::abs(g_f_y_center) < std::abs(size.y) / 100)

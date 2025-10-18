@@ -38,8 +38,8 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
     {
         // no rotation or skewing, but stretching is allowed
         const DComplex size{g_image_region.size()};
-        ctr_x = (g_image_region.m_min.x + g_image_region.m_max.x)/2.0;
-        ctr_y = (g_image_region.m_min.y + g_image_region.m_max.y)/2.0;
+        ctr_x = g_image_region.center_x();
+        ctr_y = g_image_region.center_y();
         mag  = 2.0/size.y;
         x_mag_factor =  size.y / (DEFAULT_ASPECT * size.x);
         rot = 0.0;
@@ -65,8 +65,8 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
         const double tmp_a = std::acos((a2+b2-c2)/(2*a*b)); // save tmpa for later use
         skew = 90.0 - rad_to_deg(tmp_a);
 
-        ctr_x = (g_image_region.m_min.x + g_image_region.m_max.x)*0.5;
-        ctr_y = (g_image_region.m_min.y + g_image_region.m_max.y) * 0.5;
+        ctr_x = g_image_region.center_x();
+        ctr_y = g_image_region.center_y();
 
         const double height = b * std::sin(tmp_a);
 

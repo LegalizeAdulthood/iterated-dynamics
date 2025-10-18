@@ -39,6 +39,21 @@ struct ImageRegion
         return m_3rd.y - m_min.y;
     }
 
+    double center_x() const
+    {
+        return (m_min.x + m_max.x) / 2.0;
+    }
+
+    double center_y() const
+    {
+        return (m_min.y + m_max.y) / 2.0;
+    }
+
+    math::DComplex center() const
+    {
+        return {center_x(), center_y()};
+    }
+
     // for historical reasons (before rotation):
     //    top    left  corner of screen is (min.x,max.y)
     //    bottom left  corner of screen is (3rd.x,3rd.y)

@@ -111,8 +111,8 @@ bool julibrot_per_image()
         return false;
     }
 
-    s_jb.x_offset = (g_image_region.m_max.x + g_image_region.m_min.x) / 2;     // Calculate average
-    s_jb.y_offset = (g_image_region.m_max.y + g_image_region.m_min.y) / 2;     // Calculate average
+    s_jb.x_offset = g_image_region.center_x();     // Calculate average
+    s_jb.y_offset = g_image_region.center_y();     // Calculate average
     s_jb.delta_mx = (g_julibrot_x_max - g_julibrot_x_min) / g_julibrot_z_dots;
     s_jb.delta_my = (g_julibrot_y_max - g_julibrot_y_min) / g_julibrot_z_dots;
     g_float_param = &s_jb.jb_c;
