@@ -25,6 +25,7 @@
 #include <config/port.h>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdlib>
 #include <iterator>
@@ -46,26 +47,12 @@ enum
 // for saving evolution data of center image
 struct ParamHistory
 {
-    double param0;
-    double param1;
-    double param2;
-    double param3;
-    double param4;
-    double param5;
-    double param6;
-    double param7;
-    double param8;
-    double param9;
+    std::array<double, MAX_PARAMS> params;
     int inside;
     int outside;
     int decomp0;
-    double invert0;
-    double invert1;
-    double invert2;
-    Byte trig_index0;
-    Byte trig_index1;
-    Byte trig_index2;
-    Byte trig_index3;
+    InversionParams invert;
+    std::array<TrigFn, 4> trig_index;
     Bailout bailout_test;
 };
 
@@ -217,53 +204,25 @@ void init_gene()
 void save_param_history()
 {
     // save the old parameter history
-    s_old_history.param0 = g_params[0];
-    s_old_history.param1 = g_params[1];
-    s_old_history.param2 = g_params[2];
-    s_old_history.param3 = g_params[3];
-    s_old_history.param4 = g_params[4];
-    s_old_history.param5 = g_params[5];
-    s_old_history.param6 = g_params[6];
-    s_old_history.param7 = g_params[7];
-    s_old_history.param8 = g_params[8];
-    s_old_history.param9 = g_params[9];
+    std::copy_n(g_params, MAX_PARAMS, s_old_history.params.begin());
     s_old_history.inside = g_inside_color;
     s_old_history.outside = g_outside_color;
     s_old_history.decomp0 = g_decomp[0];
-    s_old_history.invert0 = g_inversion.params[0];
-    s_old_history.invert1 = g_inversion.params[1];
-    s_old_history.invert2 = g_inversion.params[2];
-    s_old_history.trig_index0 = static_cast<Byte>(g_trig_index[0]);
-    s_old_history.trig_index1 = static_cast<Byte>(g_trig_index[1]);
-    s_old_history.trig_index2 = static_cast<Byte>(g_trig_index[2]);
-    s_old_history.trig_index3 = static_cast<Byte>(g_trig_index[3]);
+    std::copy_n(g_inversion.params.begin(), 3, s_old_history.invert.begin());
+    std::copy_n(g_trig_index, 4, s_old_history.trig_index.begin());
     s_old_history.bailout_test = g_bailout_test;
 }
 
 void restore_param_history()
 {
     // restore the old parameter history
-    g_params[0] = s_old_history.param0;
-    g_params[1] = s_old_history.param1;
-    g_params[2] = s_old_history.param2;
-    g_params[3] = s_old_history.param3;
-    g_params[4] = s_old_history.param4;
-    g_params[5] = s_old_history.param5;
-    g_params[6] = s_old_history.param6;
-    g_params[7] = s_old_history.param7;
-    g_params[8] = s_old_history.param8;
-    g_params[9] = s_old_history.param9;
+    std::copy_n(s_old_history.params.begin(), MAX_PARAMS, g_params);
     g_inside_color = s_old_history.inside;
     g_outside_color = s_old_history.outside;
     g_decomp[0] = s_old_history.decomp0;
-    g_inversion.params[0] = s_old_history.invert0;
-    g_inversion.params[1] = s_old_history.invert1;
-    g_inversion.params[2] = s_old_history.invert2;
+    g_inversion.params = s_old_history.invert;
     g_inversion.invert = g_inversion.params[0] == 0.0 ? 0 : 3;
-    g_trig_index[0] = static_cast<TrigFn>(s_old_history.trig_index0);
-    g_trig_index[1] = static_cast<TrigFn>(s_old_history.trig_index1);
-    g_trig_index[2] = static_cast<TrigFn>(s_old_history.trig_index2);
-    g_trig_index[3] = static_cast<TrigFn>(s_old_history.trig_index3);
+    std::copy_n(s_old_history.trig_index.begin(), 4, g_trig_index);
     g_bailout_test = s_old_history.bailout_test;
 }
 
