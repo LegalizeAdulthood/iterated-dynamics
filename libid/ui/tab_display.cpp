@@ -10,6 +10,7 @@
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
+#include "engine/LogicalScreen.h"
 #include "engine/param_not_used.h"
 #include "engine/pixel_grid.h"
 #include "engine/random_seed.h"

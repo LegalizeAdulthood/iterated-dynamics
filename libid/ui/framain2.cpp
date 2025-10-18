@@ -7,6 +7,7 @@
 #include "engine/color_state.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/LogicalScreen.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "geometry/line3d.h"

@@ -52,19 +52,7 @@ enum class SaveDAC
     NEXT_TIME = 2,
 };
 
-struct LogicalScreen
-{
-    int x_dots;         // # of dots on the logical screen
-    int y_dots;
-    int x_offset;       // physical top left of logical screen
-    int y_offset;
-    double x_size_dots; // xdots-1, ydots-1
-    double y_size_dots;
-};
-
 using FilenameStack = std::vector<std::string>;
-
-extern LogicalScreen g_logical_screen;
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;

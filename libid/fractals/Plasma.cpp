@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "engine/random_seed.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"

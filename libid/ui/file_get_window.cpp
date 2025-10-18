@@ -11,6 +11,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/Inversion.h"
+#include "engine/LogicalScreen.h"
 #include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"

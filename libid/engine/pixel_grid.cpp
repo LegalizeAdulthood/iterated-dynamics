@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/LogicalScreen.h"
 
 namespace id::engine
 {

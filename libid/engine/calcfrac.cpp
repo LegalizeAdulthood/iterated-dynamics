@@ -26,6 +26,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
+#include "engine/LogicalScreen.h"
 #include "engine/one_or_two_pass.h"
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"

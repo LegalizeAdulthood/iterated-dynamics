@@ -4,6 +4,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "fractals/lsys_fns.h"
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"

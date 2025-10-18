@@ -18,7 +18,6 @@ using namespace id::ui;
 namespace id::engine
 {
 
-LogicalScreen g_logical_screen{};                             //
 VideoInfo g_video_entry{};                                    //
 HelpLabels g_help_mode{};                                     //
 int g_adapter{};                                              // Video Adapter chosen from list in ...h

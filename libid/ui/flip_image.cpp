@@ -5,6 +5,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/LogicalScreen.h"
 #include "fractals/fractalp.h"
 #include "misc/Driver.h"
 #include "ui/id_keys.h"

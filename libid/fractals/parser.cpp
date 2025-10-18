@@ -24,6 +24,7 @@
 #include "engine/id_data.h"
 #include "engine/Inversion.h"
 #include "engine/jiim.h"
+#include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"

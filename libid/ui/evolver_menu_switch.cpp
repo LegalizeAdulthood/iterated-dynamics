@@ -4,6 +4,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "io/encoder.h"
 #include "misc/Driver.h"

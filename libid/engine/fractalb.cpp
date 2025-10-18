@@ -11,6 +11,7 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/LogicalScreen.h"
 #include "engine/type_has_param.h"
 #include "fractals/divide_brot.h"
 #include "fractals/fractalp.h"

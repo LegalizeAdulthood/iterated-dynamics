@@ -4,6 +4,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "fractals/fractalp.h"
 #include "io/decoder.h"
 #include "io/encoder.h"

@@ -12,14 +12,15 @@
  */
 #include "io/gifview.h"
 
-#include "geometry/plot3d.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/engine_timer.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "engine/wait_until.h"
+#include "geometry/plot3d.h"
 #include "io/decoder.h"
 #include "io/has_ext.h"
 #include "io/library.h"

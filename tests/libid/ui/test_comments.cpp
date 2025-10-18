@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "engine/LogicalScreen.h"
+
 #include <ui/comments.h>
 
 #include <engine/id_data.h>

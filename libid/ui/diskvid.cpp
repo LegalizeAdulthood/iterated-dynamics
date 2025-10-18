@@ -11,6 +11,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "math/big.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"

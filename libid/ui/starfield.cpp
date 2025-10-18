@@ -6,6 +6,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "helpdefs.h"
 #include "io/loadmap.h"
 #include "math/fixed_pt.h"

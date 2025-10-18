@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/LogicalScreen.h"
 #include "engine/wait_until.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"

@@ -6,11 +6,12 @@
 */
 #include "geometry/plot3d.h"
 
-#include "geometry/line3d.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "fractals/fractype.h"
+#include "geometry/line3d.h"
 #include "io/loadmap.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
