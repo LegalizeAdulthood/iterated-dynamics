@@ -8,7 +8,7 @@
 #include <engine/cmdfiles.h>
 #include <engine/id_data.h>
 #include <engine/Inversion.h>
-#include <engine/potential.h>
+#include <engine/Potential.h>
 #include <engine/UserData.h>
 #include <engine/Viewport.h>
 #include <fractals/fractalp.h>

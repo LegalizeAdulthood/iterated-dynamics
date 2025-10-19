@@ -13,7 +13,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"
 #include "engine/pixel_limits.h"
-#include "engine/potential.h"
+#include "engine/Potential.h"
 #include "engine/soi.h"
 #include "engine/type_has_param.h"
 #include "engine/UserData.h"

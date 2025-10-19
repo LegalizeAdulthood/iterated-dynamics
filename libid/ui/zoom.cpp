@@ -11,7 +11,7 @@
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
-#include "engine/potential.h"
+#include "engine/Potential.h"
 #include "engine/resume.h"
 #include "engine/solid_guess.h"
 #include "engine/Viewport.h"

@@ -19,7 +19,7 @@
 #include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
-#include "engine/potential.h"
+#include "engine/Potential.h"
 #include "engine/wait_until.h"
 #include "geometry/plot3d.h"
 #include "io/decoder.h"

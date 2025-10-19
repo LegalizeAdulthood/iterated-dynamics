@@ -30,7 +30,7 @@
 #include "engine/one_or_two_pass.h"
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
-#include "engine/potential.h"
+#include "engine/Potential.h"
 #include "engine/resume.h"
 #include "engine/show_dot.h"
 #include "engine/soi.h"

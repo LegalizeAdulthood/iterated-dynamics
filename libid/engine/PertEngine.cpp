@@ -13,7 +13,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
-#include "engine/potential.h"
+#include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"

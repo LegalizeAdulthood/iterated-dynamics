@@ -7,7 +7,7 @@
 #include "engine/id_data.h"
 #include "engine/Inversion.h"
 #include "engine/param_not_used.h"
-#include "engine/potential.h"
+#include "engine/Potential.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
 #include "engine/UserData.h"
