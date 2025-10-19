@@ -2,6 +2,7 @@
 //
 #include "engine/resume.h"
 
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
 
 #include <algorithm>

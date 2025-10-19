@@ -6,6 +6,7 @@
 //*********************************************************************
 #include "ui/slideshw.h"
 
+#include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "helpcom.h"
 #include "helpdefs.h"

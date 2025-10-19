@@ -4,7 +4,7 @@
 
 #include <config/port.h>
 
-#include <engine/id_data.h>
+#include <engine/calcfrac.h>
 #include <engine/LogicalScreen.h>
 #include <misc/version.h>
 #include <ui/id_keys.h>

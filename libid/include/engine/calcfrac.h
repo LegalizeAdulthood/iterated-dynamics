@@ -92,12 +92,30 @@ enum class CalcMode
     PERTURBATION = 'p',
 };
 
+// -1 no fractal
+//  0 params changed, recalculation required
+//  1 actively calculating
+//  2 interrupted, resumable
+//  3 interrupted, not resumable
+//  4 completed
+enum class CalcStatus
+{
+    NO_FRACTAL = -1,
+    PARAMS_CHANGED = 0,
+    IN_PROGRESS = 1,
+    RESUMABLE = 2,
+    NON_RESUMABLE = 3,
+    COMPLETED = 4
+};
+
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern  double               g_f_at_rad;            // finite attractor radius
 extern int                   g_atan_colors;
 extern math::DComplex        g_attractor[];
 extern int                   g_attractor_period[];
 extern int                   g_attractors;
+extern CalcStatus            g_calc_status;
+extern long                  g_calc_time;
 extern int                 (*g_calc_type)();
 extern double                g_close_enough;
 extern double                g_close_proximity;

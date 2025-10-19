@@ -134,65 +134,67 @@ static int s_show_dot_width{};        //
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
-double g_f_at_rad{};                             // finite attractor radius
-DComplex g_init{};                               //
-DComplex g_tmp_z{};                              //
-DComplex g_old_z{};                              //
-DComplex g_new_z{};                              //
-int g_color{};                                   //
-long g_color_iter{};                             //
-long g_old_color_iter{};                         //
-long g_real_color_iter{};                        //
-int g_row{};                                     //
-int g_col{};                                     //
-void (*g_put_color)(int, int, int){put_color_a}; //
-void (*g_plot)(int, int, int){put_color_a};      //
-double g_magnitude{};                            //
-double g_magnitude_limit{};                      //
-double g_magnitude_limit2{};                     //
-bool g_magnitude_calc{true};                     //
-bool g_use_old_periodicity{};                    //
-bool g_use_old_distance_estimator{};             //
-bool g_old_demm_colors{};                        //
-int (*g_calc_type)(){};                          //
-bool g_quick_calc{};                             //
-double g_close_proximity{0.01};                  //
-double g_close_enough{};                         //
-int g_pi_in_pixels{};                            // value of pi in pixels
-                                                 // ORBIT variables
-bool g_show_orbit{};                             // flag to turn on and off
-int g_orbit_save_index{};                        // index into save_orbit array
-int g_orbit_color{15};                           // XOR color
-SymmetryType g_symmetry{};                       // symmetry flag
-SymmetryType g_force_symmetry{};                 // force symmetry
-bool g_reset_periodicity{};                      // true if escape time pixel rtn to reset
-int g_keyboard_check_interval{};                 //
-int g_max_keyboard_check_interval{};             // avoids checking keyboard too often
-Point2i g_start_pt{};                            // current work list entry being computedd
-Point2i g_stop_pt{};                             // these are same as work list,
-Point2i g_begin_pt{};                            // declared as separate items
-Point2i g_i_start_pt{};                          // start point for work list
-Point2i g_i_stop_pt{};                           // start, stop here
-int g_work_pass{};                               //
-int g_work_symmetry{};                           // for the sake of calcmand
-Passes g_passes{Passes::NONE};                   // variables which must be visible for tab_display
-CalcMode g_old_std_calc_mode{};                  //
-CalcMode g_std_calc_mode{};                      // '1', '2', 'g', 'b'
-int g_current_pass{};                            //
-int g_total_passes{};                            //
-int g_current_row{};                             //
-int g_current_column{};                          //
-bool g_three_pass{};                             // for solid_guess & its subroutines
-int g_attractors{};                              // number of finite attractors
-DComplex g_attractor[MAX_NUM_ATTRACTORS]{};      // finite attractor vals (f.p)
-int g_attractor_period[MAX_NUM_ATTRACTORS]{};    // period of the finite attractor
-int g_inside_color{};                            // inside color: 1=blue
-int g_outside_color{};                           // outside color
-int g_periodicity_check{};                       //
-int g_periodicity_next_saved_incr{};             // For periodicity testing, only in standard_fractal()
-long g_first_saved_and{};                        //
-int g_atan_colors{180};                          //
-int g_and_color{};                               // "and" value used for color selection
+double g_f_at_rad{};                              // finite attractor radius
+DComplex g_init{};                                //
+DComplex g_tmp_z{};                               //
+DComplex g_old_z{};                               //
+DComplex g_new_z{};                               //
+int g_color{};                                    //
+long g_color_iter{};                              //
+long g_old_color_iter{};                          //
+long g_real_color_iter{};                         //
+int g_row{};                                      //
+int g_col{};                                      //
+void (*g_put_color)(int, int, int){put_color_a};  //
+void (*g_plot)(int, int, int){put_color_a};       //
+double g_magnitude{};                             //
+double g_magnitude_limit{};                       //
+double g_magnitude_limit2{};                      //
+bool g_magnitude_calc{true};                      //
+bool g_use_old_periodicity{};                     //
+bool g_use_old_distance_estimator{};              //
+bool g_old_demm_colors{};                         //
+CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //
+long g_calc_time{};                               //
+int (*g_calc_type)(){};                           //
+bool g_quick_calc{};                              //
+double g_close_proximity{0.01};                   //
+double g_close_enough{};                          //
+int g_pi_in_pixels{};                             // value of pi in pixels
+                                                  // ORBIT variables
+bool g_show_orbit{};                              // flag to turn on and off
+int g_orbit_save_index{};                         // index into save_orbit array
+int g_orbit_color{15};                            // XOR color
+SymmetryType g_symmetry{};                        // symmetry flag
+SymmetryType g_force_symmetry{};                  // force symmetry
+bool g_reset_periodicity{};                       // true if escape time pixel rtn to reset
+int g_keyboard_check_interval{};                  //
+int g_max_keyboard_check_interval{};              // avoids checking keyboard too often
+Point2i g_start_pt{};                             // current work list entry being computed
+Point2i g_stop_pt{};                              // these are same as work list,
+Point2i g_begin_pt{};                             // declared as separate items
+Point2i g_i_start_pt{};                           // start point for work list
+Point2i g_i_stop_pt{};                            // start, stop here
+int g_work_pass{};                                //
+int g_work_symmetry{};                            // for the sake of calcmand
+Passes g_passes{Passes::NONE};                    // variables which must be visible for tab_display
+CalcMode g_old_std_calc_mode{};                   //
+CalcMode g_std_calc_mode{};                       // '1', '2', 'g', 'b'
+int g_current_pass{};                             //
+int g_total_passes{};                             //
+int g_current_row{};                              //
+int g_current_column{};                           //
+bool g_three_pass{};                              // for solid_guess & its subroutines
+int g_attractors{};                               // number of finite attractors
+DComplex g_attractor[MAX_NUM_ATTRACTORS]{};       // finite attractor vals (f.p)
+int g_attractor_period[MAX_NUM_ATTRACTORS]{};     // period of the finite attractor
+int g_inside_color{};                             // inside color: 1=blue
+int g_outside_color{};                            // outside color
+int g_periodicity_check{};                        //
+int g_periodicity_next_saved_incr{};              // For periodicity testing, only in standard_fractal()
+long g_first_saved_and{};                         //
+int g_atan_colors{180};                           //
+int g_and_color{};                                // "and" value used for color selection
 
 static double fmod_test_bailout_or()
 {
