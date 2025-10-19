@@ -3,6 +3,7 @@
 #include "ui/make_batch_file.h"
 
 #include "engine/bailout_formula.h"
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"

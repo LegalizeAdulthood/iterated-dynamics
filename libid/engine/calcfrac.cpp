@@ -16,6 +16,7 @@
 
 #include "engine/bailout_formula.h"
 #include "engine/boundary_trace.h"
+#include "engine/calc_frac_init.h"
 #include "engine/calmanfp.h"
 #include "engine/cmdfiles.h"
 #include "engine/diffusion_scan.h"

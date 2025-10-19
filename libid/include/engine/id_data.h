@@ -2,11 +2,7 @@
 //
 #pragma once
 
-#include <config/port.h>
-
 #include <filesystem>
-#include <string>
-#include <vector>
 
 namespace id::ui
 {
@@ -41,20 +37,11 @@ extern long                  g_calc_time;
 extern CalcStatus            g_calc_status;
 extern int                   g_colors;
 extern bool                  g_compare_gif;
-extern double                g_delta_min;
-extern LDouble               g_delta_x2;
-extern LDouble               g_delta_x;
-extern LDouble               g_delta_y2;
-extern LDouble               g_delta_y;
 extern std::filesystem::path g_fractal_search_dir1;
 extern std::filesystem::path g_fractal_search_dir2;
 extern bool                  g_has_inverse;
 extern help::HelpLabels      g_help_mode;
 extern long                  g_max_iterations;
-extern double                g_plot_mx1;
-extern double                g_plot_mx2;
-extern double                g_plot_my1;
-extern double                g_plot_my2;
 extern double                g_params[];
 extern int                   g_save_system;
 extern int                   g_scale_map[];

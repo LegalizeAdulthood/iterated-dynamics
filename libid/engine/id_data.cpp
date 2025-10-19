@@ -2,10 +2,7 @@
 //
 #include "engine/id_data.h"
 
-#include <config/port.h>
-
 #include "misc/id.h"
-#include "ui/video_mode.h"
 
 #include "helpdefs.h"
 
@@ -25,16 +22,11 @@ std::filesystem::path g_fractal_search_dir2;      //
 int g_screen_x_dots{}, g_screen_y_dots{};         // # of dots on the physical screen
 int g_colors{256};                                // maximum colors available
 long g_max_iterations{};                          // try this many iterations
-LDouble g_delta_x{}, g_delta_y{};                 // screen pixel increments
-LDouble g_delta_x2{}, g_delta_y2{};               // screen pixel increments
-double g_delta_min{};                             // same as a double
 double g_params[MAX_PARAMS]{};                    // parameters
 bool g_has_inverse{};                             //
                                                   // variables defined by the command line/files processor
 bool g_compare_gif{};                             // compare two gif files flag
 int g_save_system{};                              // from and for save files
-double g_plot_mx1{}, g_plot_mx2{};                //
-double g_plot_my1{}, g_plot_my2{};                // real->screen multipliers
 CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //
 long g_calc_time{};                               //
 int g_scale_map[12]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale

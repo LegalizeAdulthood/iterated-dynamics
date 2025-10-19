@@ -2,6 +2,7 @@
 //
 #include "fractals/unity.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"

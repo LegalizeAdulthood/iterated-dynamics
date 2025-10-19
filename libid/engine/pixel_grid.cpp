@@ -2,6 +2,7 @@
 //
 #include "engine/pixel_grid.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"

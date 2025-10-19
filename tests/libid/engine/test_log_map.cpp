@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/id_data.h"
-
 #include <engine/log_map.h>
 
+#include <engine/id_data.h>
 #include <misc/ValueSaver.h>
 
 #include <gmock/gmock.h>

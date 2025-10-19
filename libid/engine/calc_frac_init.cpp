@@ -42,6 +42,12 @@ using namespace id::ui;
 namespace id::engine
 {
 
+LDouble g_delta_x{}, g_delta_y{};                 // screen pixel increments
+LDouble g_delta_x2{}, g_delta_y2{};               // screen pixel increments
+double g_delta_min{};                             // same as a double
+double g_plot_mx1{}, g_plot_mx2{};                //
+double g_plot_my1{}, g_plot_my2{};                // real->screen multipliers
+
 static void adjust_to_limits(double expand);
 static void smallest_add(double *num);
 static bool ratio_bad(double actual, double desired);

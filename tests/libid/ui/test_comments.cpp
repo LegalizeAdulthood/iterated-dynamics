@@ -2,6 +2,8 @@
 //
 #include <ui/comments.h>
 
+#include <config/port.h>
+
 #include <engine/id_data.h>
 #include <engine/LogicalScreen.h>
 #include <misc/version.h>

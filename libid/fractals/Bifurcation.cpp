@@ -2,6 +2,7 @@
 //
 #include "fractals/Bifurcation.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
 #include "engine/fractals.h"

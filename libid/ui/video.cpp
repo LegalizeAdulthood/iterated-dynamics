@@ -6,20 +6,9 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
-#include "helpdefs.h"
-#include "io/find_file.h"
 #include "io/make_path.h"
-#include "io/special_dirs.h"
-#include "math/cmplx.h"
 #include "misc/Driver.h"
-#include "misc/id.h"
-#include "misc/stack_avail.h"
 #include "ui/diskvid.h"
-#include "ui/id_main.h"
-#include "ui/init_failure.h"
-#include "ui/read_ticker.h"
-#include "ui/rotate.h"
-#include "ui/zoom.h"
 
 #include <cassert>
 #include <cstdarg>

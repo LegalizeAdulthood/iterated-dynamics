@@ -6,6 +6,7 @@
 */
 #include "ui/zoom.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
@@ -17,7 +18,6 @@
 #include "engine/Viewport.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
-#include "fractals/FrothyBasin.h"
 #include "fractals/lyapunov.h"
 #include "math/big.h"
 #include "math/biginit.h"
