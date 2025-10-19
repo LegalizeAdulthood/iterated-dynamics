@@ -9,7 +9,8 @@ namespace id::ui
 
 struct EvolutionInfo;
 
-extern EvolutionInfo g_evolve_info;
+extern bool                  g_compare_gif;
+extern EvolutionInfo         g_evolve_info;
 extern int                   g_finish_row;
 extern bool                  g_from_text;
 extern bool                  g_have_evolve_info;

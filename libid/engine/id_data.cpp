@@ -25,7 +25,6 @@ long g_max_iterations{};                          // try this many iterations
 double g_params[MAX_PARAMS]{};                    // parameters
 bool g_has_inverse{};                             //
                                                   // variables defined by the command line/files processor
-bool g_compare_gif{};                             // compare two gif files flag
 int g_save_system{};                              // from and for save files
 CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //
 long g_calc_time{};                               //

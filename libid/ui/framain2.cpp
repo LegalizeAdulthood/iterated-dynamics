@@ -64,19 +64,20 @@ using namespace id::misc;
 namespace id::ui
 {
 
+bool g_compare_gif{};           // compare two gif files flag
+bool g_from_text{};             // = true if we're in graphics mode
+int g_finish_row{};             // save when this row is finished
+EvolutionInfo g_evolve_info{};  //
+bool g_have_evolve_info{};      //
+void (*g_out_line_cleanup)(){}; //
+bool g_virtual_screens{};       //
+
 static int call_line3d(Byte *pixels, int line_len);
 static void cmp_line_cleanup();
 static int cmp_line(Byte *pixels, int line_len);
 
 static std::FILE *s_cmp_fp{};
 static int s_err_count{};
-
-bool g_from_text{}; // = true if we're in graphics mode
-int g_finish_row{}; // save when this row is finished
-EvolutionInfo g_evolve_info{};
-bool g_have_evolve_info{};
-void (*g_out_line_cleanup)(){};
-bool g_virtual_screens{};
 
 static int iround(const double value)
 {

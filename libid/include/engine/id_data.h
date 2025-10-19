@@ -36,7 +36,6 @@ extern int                   g_adapter;             // index into g_video_table[
 extern long                  g_calc_time;
 extern CalcStatus            g_calc_status;
 extern int                   g_colors;
-extern bool                  g_compare_gif;
 extern std::filesystem::path g_fractal_search_dir1;
 extern std::filesystem::path g_fractal_search_dir2;
 extern bool                  g_has_inverse;

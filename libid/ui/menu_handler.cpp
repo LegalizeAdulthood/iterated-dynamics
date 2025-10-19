@@ -18,6 +18,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/editpal.h"
 #include "ui/evolve.h"
+#include "ui/framain2.h"
 #include "ui/get_fract_type.h"
 #include "ui/history.h"
 #include "ui/id_keys.h"
