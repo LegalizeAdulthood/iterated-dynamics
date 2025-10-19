@@ -19,6 +19,7 @@
 #include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
+#include "engine/potential.h"
 #include "engine/wait_until.h"
 #include "geometry/plot3d.h"
 #include "io/decoder.h"
@@ -296,7 +297,7 @@ int gif_view()
                 }
             }
 
-            if (g_potential_16bit)
+            if (g_potential.store_16bit)
             {
                 width >>= 1;
             }

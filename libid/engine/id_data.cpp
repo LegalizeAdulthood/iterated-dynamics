@@ -30,7 +30,6 @@ LDouble g_delta_x{}, g_delta_y{};                 // screen pixel increments
 LDouble g_delta_x2{}, g_delta_y2{};               // screen pixel increments
 double g_delta_min{};                             // same as a double
 double g_params[MAX_PARAMS]{};                    // parameters
-double g_potential_params[3]{};                   // three potential parameters
 bool g_has_inverse{};                             //
 int g_user_periodicity_value{};                   // user_xxx is what the user wants,
 long g_user_distance_estimator_value{};           // vs what we may be forced to do

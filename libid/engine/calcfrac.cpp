@@ -30,6 +30,7 @@
 #include "engine/one_or_two_pass.h"
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
+#include "engine/potential.h"
 #include "engine/resume.h"
 #include "engine/show_dot.h"
 #include "engine/soi.h"
@@ -908,7 +909,7 @@ static void perform_work_list()
         g_bf_math = BFMathType::NONE;
     }
 
-    if (g_potential_flag && g_potential_16bit)
+    if (g_potential.flag && g_potential.store_16bit)
     {
         const CalcMode tmp_calc_mode = g_std_calc_mode;
 
@@ -917,7 +918,7 @@ static void perform_work_list()
         {
             if (pot_start_disk() < 0)
             {
-                g_potential_16bit = false;       // startdisk failed or cancelled
+                g_potential.store_16bit = false;       // startdisk failed or cancelled
                 g_std_calc_mode = tmp_calc_mode; // maybe we can carry on???
             }
         }
@@ -1237,7 +1238,7 @@ int calc_mandelbrot_type()
     }
     if (mandelbrot_orbit() >= 0)
     {
-        if (g_potential_flag)
+        if (g_potential.flag)
         {
             g_color_iter = potential(g_magnitude, g_real_color_iter);
         }
@@ -1711,7 +1712,7 @@ int standard_fractal_type()
         }
     }
 
-    if (g_potential_flag)
+    if (g_potential.flag)
     {
         if (g_bf_math == BFMathType::BIG_NUM)
         {
@@ -2160,11 +2161,11 @@ int potential(const double mag, const long iterations)
         if (pot > 0.0)
         {
             pot = std::sqrt(pot);
-            pot = static_cast<float>(g_potential_params[0] - pot * g_potential_params[1] - 1.0);
+            pot = static_cast<float>(g_potential.params[0] - pot * g_potential.params[1] - 1.0);
         }
         else
         {
-            pot = static_cast<float>(g_potential_params[0] - 1.0);
+            pot = static_cast<float>(g_potential.params[0] - 1.0);
         }
         pot = std::max(pot, 1.0f); // avoid color 0
     }
@@ -2174,7 +2175,7 @@ int potential(const double mag, const long iterations)
     }
     else     // inside < 0 implies inside = maxit, so use 1st pot param instead
     {
-        pot = static_cast<float>(g_potential_params[0]);
+        pot = static_cast<float>(g_potential.params[0]);
     }
 
     l_pot = static_cast<long>(pot * 256);
@@ -2185,7 +2186,7 @@ int potential(const double mag, const long iterations)
         l_pot = 255;
     }
 
-    if (g_potential_16bit)
+    if (g_potential.store_16bit)
     {
         if (!driver_is_disk())   // if putcolor won't be doing it for us
         {
@@ -2337,7 +2338,7 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
             return;
         }
     }
-    if ((g_potential_flag && g_potential_16bit) || (g_inversion.invert != 0 && g_inversion.params[2] != 0.0)//
+    if ((g_potential.flag && g_potential.store_16bit) || (g_inversion.invert != 0 && g_inversion.params[2] != 0.0)//
         || g_decomp[0] != 0//
         || g_image_region.m_min != g_image_region.m_3rd)
     {

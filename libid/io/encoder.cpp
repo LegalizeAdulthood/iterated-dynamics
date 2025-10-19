@@ -13,6 +13,7 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
+#include "engine/potential.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
@@ -795,9 +796,9 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->d_param9 = g_params[8];
     save_info->d_param10 = g_params[9];
     save_info->fill_color = static_cast<std::int16_t>(g_fill_color);
-    save_info->potential[0] = static_cast<float>(g_potential_params[0]);
-    save_info->potential[1] = static_cast<float>(g_potential_params[1]);
-    save_info->potential[2] = static_cast<float>(g_potential_params[2]);
+    save_info->potential[0] = static_cast<float>(g_potential.params[0]);
+    save_info->potential[1] = static_cast<float>(g_potential.params[1]);
+    save_info->potential[2] = static_cast<float>(g_potential.params[2]);
     save_info->random_seed_flag = static_cast<std::int16_t>(g_random_seed_flag ? 1 : 0);
     save_info->random_seed = static_cast<std::int16_t>(g_random_seed);
     save_info->inside = static_cast<std::int16_t>(g_inside_color);

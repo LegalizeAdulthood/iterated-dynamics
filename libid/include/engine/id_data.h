@@ -65,7 +65,6 @@ extern double                g_plot_mx2;
 extern double                g_plot_my1;
 extern double                g_plot_my2;
 extern double                g_params[];
-extern double                g_potential_params[];
 extern SaveDAC               g_save_dac;
 extern int                   g_save_system;
 extern int                   g_scale_map[];

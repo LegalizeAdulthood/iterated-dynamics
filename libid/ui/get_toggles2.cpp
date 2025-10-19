@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/Inversion.h"
+#include "engine/potential.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
@@ -45,22 +46,22 @@ int get_toggles2()
 
     choices[++k] = "Potential Max Color (0 means off)";
     values[k].type = 'i';
-    old_potential_param[0] = g_potential_params[0];
+    old_potential_param[0] = g_potential.params[0];
     values[k].uval.ival = static_cast<int>(old_potential_param[0]);
 
     choices[++k] = "          Slope";
     values[k].type = 'd';
-    old_potential_param[1] = g_potential_params[1];
+    old_potential_param[1] = g_potential.params[1];
     values[k].uval.dval = old_potential_param[1];
 
     choices[++k] = "          Bailout";
     values[k].type = 'i';
-    old_potential_param[2] = g_potential_params[2];
+    old_potential_param[2] = g_potential.params[2];
     values[k].uval.ival = static_cast<int>(old_potential_param[2]);
 
     choices[++k] = "          16 bit values";
     values[k].type = 'y';
-    values[k].uval.ch.val = g_potential_16bit ? 1 : 0;
+    values[k].uval.ch.val = g_potential.store_16bit ? 1 : 0;
 
     choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
     values[k].type = 'L';
@@ -128,30 +129,30 @@ int get_toggles2()
         changed = true;
     }
 
-    g_potential_params[0] = values[++k].uval.ival;
-    if (g_potential_params[0] != old_potential_param[0])
+    g_potential.params[0] = values[++k].uval.ival;
+    if (g_potential.params[0] != old_potential_param[0])
     {
         changed = true;
     }
 
-    g_potential_params[1] = values[++k].uval.dval;
-    if (g_potential_params[0] != 0.0 && g_potential_params[1] != old_potential_param[1])
+    g_potential.params[1] = values[++k].uval.dval;
+    if (g_potential.params[0] != 0.0 && g_potential.params[1] != old_potential_param[1])
     {
         changed = true;
     }
 
-    g_potential_params[2] = values[++k].uval.ival;
-    if (g_potential_params[0] != 0.0 && g_potential_params[2] != old_potential_param[2])
+    g_potential.params[2] = values[++k].uval.ival;
+    if (g_potential.params[0] != 0.0 && g_potential.params[2] != old_potential_param[2])
     {
         changed = true;
     }
 
-    if (values[++k].uval.ch.val != 0 != g_potential_16bit)
+    if (values[++k].uval.ch.val != 0 != g_potential.store_16bit)
     {
-        g_potential_16bit = values[k].uval.ch.val != 0;
-        if (g_potential_16bit)                   // turned it on
+        g_potential.store_16bit = values[k].uval.ch.val != 0;
+        if (g_potential.store_16bit)                   // turned it on
         {
-            if (g_potential_params[0] != 0.0)
+            if (g_potential.params[0] != 0.0)
             {
                 changed = true;
             }

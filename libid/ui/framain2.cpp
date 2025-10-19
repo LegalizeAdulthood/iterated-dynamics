@@ -9,6 +9,7 @@
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/potential.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "geometry/line3d.h"
@@ -483,15 +484,15 @@ MainState big_while_loop(MainContext &context)
             {
                 g_out_line = cmp_line;
             }
-            else if (g_potential_16bit)
+            else if (g_potential.store_16bit)
             {
                 // .pot format input file
                 if (pot_start_disk() < 0)
                 {
                     // pot file failed?
                     g_show_file = ShowFile::IMAGE_LOADED;
-                    g_potential_flag  = false;
-                    g_potential_16bit = false;
+                    g_potential.flag  = false;
+                    g_potential.store_16bit = false;
                     g_init_mode = -1;
                     g_calc_status = CalcStatus::RESUMABLE;         // "resume" without 16-bit
                     driver_set_for_text();
@@ -895,7 +896,7 @@ static int cmp_line(Byte *pixels, const int line_len)
         s_cmp_fp = dir_fopen(g_working_dir, "cmperr", g_init_batch != BatchMode::NONE ? "a" : "w");
         g_out_line_cleanup = cmp_line_cleanup;
     }
-    if (g_potential_16bit)
+    if (g_potential.store_16bit)
     {
         // 16 bit info, ignore odd numbered rows
         if ((row & 1) != 0)

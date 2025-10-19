@@ -13,6 +13,7 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
+#include "engine/potential.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
@@ -314,14 +315,14 @@ static void backwards_info1(const FractalInfo &read_info)
         round_float_double(&g_params[2]);
         g_params[3] = read_info.param4;
         round_float_double(&g_params[3]);
-        g_potential_params[0] = read_info.potential[0];
-        g_potential_params[1] = read_info.potential[1];
-        g_potential_params[2] = read_info.potential[2];
+        g_potential.params[0] = read_info.potential[0];
+        g_potential.params[1] = read_info.potential[1];
+        g_potential.params[2] = read_info.potential[2];
         if (g_make_parameter_file)
         {
             g_colors = read_info.colors;
         }
-        g_potential_flag = g_potential_params[0] != 0.0;
+        g_potential.flag = g_potential.params[0] != 0.0;
         g_random_seed_flag = read_info.random_seed_flag != 0;
         g_random_seed = read_info.random_seed;
         g_inside_color = read_info.inside;
@@ -430,7 +431,7 @@ static void backwards_info4(const FractalInfo &read_info)
         g_user_periodicity_value = read_info.periodicity;
     }
 
-    g_potential_16bit = false;
+    g_potential.store_16bit = false;
     g_save_system = 0;
 }
 
@@ -438,8 +439,8 @@ static void backwards_info5(const FractalInfo &read_info)
 {
     if (read_info.info_version > 4)
     {
-        g_potential_16bit = read_info.pot16bit != 0;
-        if (g_potential_16bit)
+        g_potential.store_16bit = read_info.pot16bit != 0;
+        if (g_potential.store_16bit)
         {
             g_file_x_dots >>= 1;
         }
@@ -555,7 +556,7 @@ static void backwards_info_pre5(const FractalInfo &read_info)
 
 static void backwards_info_pre8(const FractalInfo &read_info)
 {
-    if (g_potential_flag) // in version 15.x and 16.x logmap didn't work with pot
+    if (g_potential.flag) // in version 15.x and 16.x logmap didn't work with pot
     {
         if (read_info.info_version == 6 || read_info.info_version == 7)
         {
@@ -1717,9 +1718,7 @@ void backwards_legacy_v19()
     {
         if (g_file_version < 1824)
         {
-            g_inversion.params[0] = 0;
-            g_inversion.params[1] = 0;
-            g_inversion.params[2] = 0;
+            g_inversion.params.fill(0);
             g_inversion.invert = 0;
         }
     }

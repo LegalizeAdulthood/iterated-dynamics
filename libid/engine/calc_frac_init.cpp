@@ -13,6 +13,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"
 #include "engine/pixel_limits.h"
+#include "engine/potential.h"
 #include "engine/soi.h"
 #include "engine/type_has_param.h"
 #include "fractals/fractalp.h"
@@ -193,13 +194,13 @@ init_restart:
     g_distance_estimator          = g_user_distance_estimator_value;
     g_biomorph         = g_user_biomorph_value;
 
-    g_potential_flag = false;
-    if (g_potential_params[0] != 0.0                                   //
+    g_potential.flag = false;
+    if (g_potential.params[0] != 0.0                                   //
         && g_colors >= 64                                              //
         && (g_cur_fractal_specific->calc_type == standard_fractal_type //
                || g_cur_fractal_specific->calc_type == calc_mandelbrot_type))
     {
-        g_potential_flag = true;
+        g_potential.flag = true;
         g_user_distance_estimator_value = 0;
         g_distance_estimator = 0;    // can't do distest too
     }
@@ -207,9 +208,9 @@ init_restart:
     assert(g_cur_fractal_specific == get_fractal_specific(g_fractal_type));
     g_cur_fractal_specific = get_fractal_specific(g_fractal_type);
 
-    if (g_potential_flag && g_potential_params[2] != 0.0)
+    if (g_potential.flag && g_potential.params[2] != 0.0)
     {
-        g_magnitude_limit = g_potential_params[2];
+        g_magnitude_limit = g_potential.params[2];
     }
     else if (g_bailout)     // user input bailout
     {

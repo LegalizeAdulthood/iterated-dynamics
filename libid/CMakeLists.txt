@@ -39,6 +39,7 @@ add_library(libid
     include/engine/pixel_grid.h engine/pixel_grid.cpp
     include/engine/pixel_limits.h
     include/engine/Point.h
+    include/engine/Potential.h engine/Potential.cpp
     include/engine/random_seed.h engine/random_seed.cpp
     include/engine/resume.h engine/resume.cpp
     include/engine/show_dot.h engine/show_dot.cpp

@@ -237,8 +237,6 @@ extern int                   g_orbit_save_flags;
 extern std::string           g_orbit_save_name;
 extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;
-extern bool                  g_potential_16bit;
-extern bool                  g_potential_flag;
 extern bool                  g_read_color;
 extern std::filesystem::path g_read_filename;
 extern RecordColorsMode      g_record_colors;

@@ -7,6 +7,7 @@
 #include "engine/id_data.h"
 #include "engine/Inversion.h"
 #include "engine/param_not_used.h"
+#include "engine/potential.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
 #include "fractals/fractalp.h"
@@ -345,9 +346,7 @@ sel_type_restart:
     if (new_fract_type != old_fract_type)
     {
         g_inversion.invert = 0;
-        g_inversion.params[0] = 0.0;
-        g_inversion.params[1] = 0.0;
-        g_inversion.params[2] = 0.0;
+        g_inversion.params.fill(0.0);
     }
 
     saved_fractal_type.commit();
@@ -667,7 +666,7 @@ gfp_top:
 
     if (orbit_bailout)
     {
-        if (g_potential_params[0] != 0.0 && g_potential_params[2] != 0.0)
+        if (g_potential.params[0] != 0.0 && g_potential.params[2] != 0.0)
         {
             param_values[prompt_num].type = '*';
             choices[prompt_num++] = "Bailout: continuous potential (Y screen) value in use";
@@ -892,7 +891,7 @@ gfp_top:
 
     if (orbit_bailout)
     {
-        if (g_potential_params[0] != 0.0 && g_potential_params[2] != 0.0)
+        if (g_potential.params[0] != 0.0 && g_potential.params[2] != 0.0)
         {
             prompt_num++;
         }

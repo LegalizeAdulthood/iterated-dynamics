@@ -13,6 +13,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/potential.h"
 #include "engine/random_seed.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
@@ -389,7 +390,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 break;
 
             default:
-                if (g_potential_flag)
+                if (g_potential.flag)
                 {
                     index = potential(mag_squared(w), iteration);
                 }

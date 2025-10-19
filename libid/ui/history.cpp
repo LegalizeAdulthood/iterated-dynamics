@@ -9,6 +9,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
+#include "engine/potential.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
@@ -152,9 +153,8 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
 {
     return lhs.image_fractal_type == rhs.image_fractal_type                                             //
         && lhs.image_region == rhs.image_region                                                         //
-        && std::equal(std::begin(lhs.params), std::end(lhs.params), std::begin(rhs.params))             //
-        && std::equal(std::begin(lhs.potential_params), std::end(lhs.potential_params),
-               std::begin(rhs.potential_params))                                                        //
+        && lhs.params == rhs.params                                                                     //
+        && lhs.potential_params == rhs.potential_params                                                 //
         && lhs.random_seed == rhs.random_seed                                                           //
         && lhs.random_seed_flag == rhs.random_seed_flag                                                 //
         && lhs.biomorph == rhs.biomorph                                                                 //
@@ -502,7 +502,7 @@ void save_history_info()
     current.image_region = g_image_region;
     std::copy_n(g_params, MAX_PARAMS, current.params.data());
     current.fill_color = g_fill_color;
-    std::copy_n(g_potential_params, 3, current.potential_params.data());
+    current.potential_params = g_potential.params;
     current.random_seed_flag = g_random_seed_flag;
     current.random_seed = g_random_seed;
     current.inside_color = g_inside_color;
@@ -664,9 +664,7 @@ void restore_history_info(const int i)
     g_image_region = last.image_region;
     std::copy_n(last.params.data(), MAX_PARAMS, g_params);
     g_fill_color = last.fill_color;
-    g_potential_params[0] = last.potential_params[0];
-    g_potential_params[1] = last.potential_params[1];
-    g_potential_params[2] = last.potential_params[2];
+    g_potential.params = last.potential_params;
     g_random_seed_flag = last.random_seed_flag;
     g_random_seed = last.random_seed;
     g_inside_color = last.inside_color;
@@ -757,7 +755,7 @@ void restore_history_info(const int i)
     g_bailout_test = last.bailout_test;
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;
-    g_potential_flag = g_potential_params[0] != 0.0;
+    g_potential.flag = g_potential.params[0] != 0.0;
     if (g_inversion.params[0] != 0.0)
     {
         g_inversion.invert = 3;

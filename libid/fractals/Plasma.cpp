@@ -7,6 +7,7 @@
 #include "engine/fractals.h"
 #include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
+#include "engine/potential.h"
 #include "engine/random_seed.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
@@ -123,8 +124,8 @@ static U16 get_pot(const int x, const int y)
 }
 
 Plasma::Plasma() :
-    m_saved_potential_flag(g_potential_flag),
-    m_saved_potential_16_bit(g_potential_16bit),
+    m_saved_potential_flag(g_potential.flag),
+    m_saved_potential_16_bit(g_potential.store_16bit),
     m_algo(g_params[1] == 0.0 ? Algorithm::OLD : Algorithm::NEW),
     m_get_pix{GET_COLOR}
 {

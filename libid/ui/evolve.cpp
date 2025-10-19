@@ -48,13 +48,13 @@ enum
 // for saving evolution data of center image
 struct ParamHistory
 {
-    std::array<double, MAX_PARAMS> params;
-    int inside;
-    int outside;
-    int decomp0;
+    std::array<double, MAX_PARAMS> params{};
+    int inside{};
+    int outside{};
+    int decomp0{};
     InversionParams invert;
-    std::array<TrigFn, 4> trig_index;
-    Bailout bailout_test;
+    std::array<TrigFn, 4> trig_index{};
+    Bailout bailout_test{};
 };
 
 GeneBase g_gene_bank[NUM_GENES];

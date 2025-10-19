@@ -13,6 +13,7 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
+#include "engine/potential.h"
 #include "engine/random_seed.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
@@ -149,9 +150,9 @@ MakeParParams::MakeParParams()
         {
             max_color = g_decomp[0] - 1;
         }
-        if (g_potential_flag && g_potential_params[0] >= max_color)
+        if (g_potential.flag && g_potential.params[0] >= max_color)
         {
-            max_color = static_cast<int>(g_potential_params[0]);
+            max_color = static_cast<int>(g_potential.params[0]);
         }
         if (++max_color > 256)
         {
@@ -1042,7 +1043,7 @@ static void write_batch_params(
             put_param(" maxiter=%ld", g_max_iterations);
         }
 
-        if (g_bailout && (!g_potential_flag || g_potential_params[2] == 0.0))
+        if (g_bailout && (!g_potential.flag || g_potential.params[2] == 0.0))
         {
             put_param(" bailout=%ld", g_bailout);
         }
@@ -1200,11 +1201,11 @@ static void write_batch_params(
             }
         }
 
-        if (g_potential_flag)
+        if (g_potential.flag)
         {
             put_param(" potential=%d/%g/%d",
-                     static_cast<int>(g_potential_params[0]), g_potential_params[1], static_cast<int>(g_potential_params[2]));
-            if (g_potential_16bit)
+                     static_cast<int>(g_potential.params[0]), g_potential.params[1], static_cast<int>(g_potential.params[2]));
+            if (g_potential.store_16bit)
             {
                 put_param("/%s", "16bit");
             }

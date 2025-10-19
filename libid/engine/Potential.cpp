@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/Inversion.h"
+#include "engine/potential.h"
 
 namespace id::engine
 {
 
-Inversion g_inversion;
+Potential g_potential{};
 
 } // namespace id::engine

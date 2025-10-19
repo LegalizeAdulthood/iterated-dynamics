@@ -12,6 +12,7 @@
 #include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
+#include "engine/potential.h"
 #include "geometry/plot3d.h"
 #include "io/check_write_file.h"
 #include "io/dir_file.h"
@@ -220,7 +221,7 @@ int line3d(Byte * pixels, unsigned line_len)
     }
 
     g_current_row = g_row_count;           // use separate variable to allow for pot16bit files
-    if (g_potential_16bit)
+    if (g_potential.store_16bit)
     {
         g_current_row >>= 1;
     }
@@ -255,7 +256,7 @@ int line3d(Byte * pixels, unsigned line_len)
     f_old = s_f_bad;
 
     // copies pixels buffer to float type fraction buffer for fill purposes
-    if (g_potential_16bit)
+    if (g_potential.store_16bit)
     {
         if (set_pixel_buff(pixels, s_fraction.data(), line_len))
         {
@@ -369,7 +370,7 @@ int line3d(Byte * pixels, unsigned line_len)
             cur.color = s_real_color;
             f_cur.color = static_cast<float>(cur.color);  // "lake"
         }
-        else if (g_potential_16bit)
+        else if (g_potential.store_16bit)
         {
             f_cur.color += static_cast<float>(s_fraction[col]) / static_cast<float>(1 << 8);
         }
@@ -2849,7 +2850,7 @@ static int line3d_mem()
         s_cos_theta_array.resize(g_logical_screen.x_dots);
     }
     s_f_last_row.resize(g_logical_screen.x_dots);
-    if (g_potential_16bit)
+    if (g_potential.store_16bit)
     {
         s_fraction.resize(g_logical_screen.x_dots);
     }

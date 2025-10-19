@@ -3,6 +3,7 @@
 #include <engine/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
+#include "engine/potential.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "test_library.h"
@@ -1960,66 +1961,66 @@ TEST_F(TestParameterCommand, textColorsSkippedValues)
 
 TEST_F(TestParameterCommand, potentialOneValue)
 {
-    ValueSaver saved_potential_params0{g_potential_params[0], 9999.0};
-    ValueSaver saved_potential_params1{g_potential_params[1], 8888.0};
-    ValueSaver saved_potential_params2{g_potential_params[2], 7777.0};
-    ValueSaver saved_potential_16bit{g_potential_16bit, true};
+    ValueSaver saved_potential_params0{g_potential.params[0], 9999.0};
+    ValueSaver saved_potential_params1{g_potential.params[1], 8888.0};
+    ValueSaver saved_potential_params2{g_potential.params[2], 7777.0};
+    ValueSaver saved_potential_16bit{g_potential.store_16bit, true};
 
     exec_cmd_arg("potential=111");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(111.0, g_potential_params[0]);
-    EXPECT_EQ(8888.0, g_potential_params[1]);
-    EXPECT_EQ(7777.0, g_potential_params[2]);
-    EXPECT_FALSE(g_potential_16bit);
+    EXPECT_EQ(111.0, g_potential.params[0]);
+    EXPECT_EQ(8888.0, g_potential.params[1]);
+    EXPECT_EQ(7777.0, g_potential.params[2]);
+    EXPECT_FALSE(g_potential.store_16bit);
 }
 
 TEST_F(TestParameterCommand, potentialTwoValues)
 {
-    ValueSaver saved_potential_params0{g_potential_params[0], 9999.0};
-    ValueSaver saved_potential_params1{g_potential_params[1], 8888.0};
-    ValueSaver saved_potential_params2{g_potential_params[2], 7777.0};
-    ValueSaver saved_potential_16bit{g_potential_16bit, true};
+    ValueSaver saved_potential_params0{g_potential.params[0], 9999.0};
+    ValueSaver saved_potential_params1{g_potential.params[1], 8888.0};
+    ValueSaver saved_potential_params2{g_potential.params[2], 7777.0};
+    ValueSaver saved_potential_16bit{g_potential.store_16bit, true};
 
     exec_cmd_arg("potential=111/222");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(111.0, g_potential_params[0]);
-    EXPECT_EQ(222.0, g_potential_params[1]);
-    EXPECT_EQ(7777.0, g_potential_params[2]);
-    EXPECT_FALSE(g_potential_16bit);
+    EXPECT_EQ(111.0, g_potential.params[0]);
+    EXPECT_EQ(222.0, g_potential.params[1]);
+    EXPECT_EQ(7777.0, g_potential.params[2]);
+    EXPECT_FALSE(g_potential.store_16bit);
 }
 
 TEST_F(TestParameterCommand, potentialThreeValues)
 {
-    ValueSaver saved_potential_params0{g_potential_params[0], 9999.0};
-    ValueSaver saved_potential_params1{g_potential_params[1], 8888.0};
-    ValueSaver saved_potential_params2{g_potential_params[2], 7777.0};
-    ValueSaver saved_potential_16bit{g_potential_16bit, true};
+    ValueSaver saved_potential_params0{g_potential.params[0], 9999.0};
+    ValueSaver saved_potential_params1{g_potential.params[1], 8888.0};
+    ValueSaver saved_potential_params2{g_potential.params[2], 7777.0};
+    ValueSaver saved_potential_16bit{g_potential.store_16bit, true};
 
     exec_cmd_arg("potential=111/222/333");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(111.0, g_potential_params[0]);
-    EXPECT_EQ(222.0, g_potential_params[1]);
-    EXPECT_EQ(333.0, g_potential_params[2]);
-    EXPECT_FALSE(g_potential_16bit);
+    EXPECT_EQ(111.0, g_potential.params[0]);
+    EXPECT_EQ(222.0, g_potential.params[1]);
+    EXPECT_EQ(333.0, g_potential.params[2]);
+    EXPECT_FALSE(g_potential.store_16bit);
 }
 
 TEST_F(TestParameterCommand, potential16Bit)
 {
-    ValueSaver saved_potential_params0{g_potential_params[0], 9999.0};
-    ValueSaver saved_potential_params1{g_potential_params[1], 8888.0};
-    ValueSaver saved_potential_params2{g_potential_params[2], 7777.0};
-    ValueSaver saved_potential_16bit{g_potential_16bit, false};
+    ValueSaver saved_potential_params0{g_potential.params[0], 9999.0};
+    ValueSaver saved_potential_params1{g_potential.params[1], 8888.0};
+    ValueSaver saved_potential_params2{g_potential.params[2], 7777.0};
+    ValueSaver saved_potential_16bit{g_potential.store_16bit, false};
 
     exec_cmd_arg("potential=111/222/333/16bit");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(111.0, g_potential_params[0]);
-    EXPECT_EQ(222.0, g_potential_params[1]);
-    EXPECT_EQ(333.0, g_potential_params[2]);
-    EXPECT_TRUE(g_potential_16bit);
+    EXPECT_EQ(111.0, g_potential.params[0]);
+    EXPECT_EQ(222.0, g_potential.params[1]);
+    EXPECT_EQ(333.0, g_potential.params[2]);
+    EXPECT_TRUE(g_potential.store_16bit);
 }
 
 TEST_F(TestParameterCommand, paramsOneValue)

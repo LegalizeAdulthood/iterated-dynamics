@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 #include "engine/Inversion.h"
+#include "engine/potential.h"
 
 #include <io/loadfile.h>
 
@@ -84,12 +85,12 @@ protected:
     ValueSaver<int> saved_invert{g_inversion.invert};
     ValueSaver<bool> saved_make_parameter_file{g_make_parameter_file};
     ValueSaver<int> saved_colors{g_colors};
-    ValueSaver<bool> saved_potential_flag{g_potential_flag};
+    ValueSaver<bool> saved_potential_flag{g_potential.flag};
     ValueSaver<int> saved_user_biomorph_value{g_user_biomorph_value};
     ValueSaver<long> saved_user_distance_estimator_value{g_user_distance_estimator_value};
     ValueSaver<long> saved_calc_time{g_calc_time};
     ValueSaver<CalcStatus> saved_calc_status{g_calc_status};
-    ValueSaver<bool> saved_potential_16bit{g_potential_16bit};
+    ValueSaver<bool> saved_potential_16bit{g_potential.store_16bit};
     ValueSaver<int> saved_save_system{g_save_system};
     ValueSaver<int> saved_file_x_dots{g_file_x_dots};
     ValueSaver<int> saved_file_y_dots{g_file_y_dots};

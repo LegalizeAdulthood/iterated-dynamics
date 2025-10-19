@@ -19,6 +19,7 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
+#include "engine/potential.h"
 #include "engine/random_seed.h"
 #include "engine/show_dot.h"
 #include "engine/soi.h"
@@ -135,8 +136,6 @@ fs::path g_temp_dir;                                      // name of temporary d
 fs::path g_working_dir;                                   // name of directory for misc files
 std::string g_image_filename_mask{"*.gif"};               //
 fs::path g_save_filename{"fract001"};                     // save files using this name
-bool g_potential_flag{};                                  // continuous potential enabled?
-bool g_potential_16bit{};                                 // store 16 bit continuous potential values
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 bool g_ask_video{};                                       // flag for video prompting
 int g_biomorph{};                                         // flag for biomorph
@@ -528,45 +527,45 @@ static void init_vars_fractal()
     g_bailout = 0;                                       // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
     g_use_init_orbit = InitOrbitMode::NORMAL;            //
-    std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0); // initial parameter values
-    std::fill(&g_potential_params[0], &g_potential_params[3], 0.0);               // initial potential values
-    std::fill(std::begin(g_inversion.params), std::end(g_inversion.params), 0.0); // initial invert values
-    g_init_orbit.y = 0.0;                                                         //
-    g_init_orbit.x = 0.0;                                                         // initial orbit values
-    g_inversion.invert = 0;                                                       //
-    g_decomp[0] = 0;                                                              //
-    g_decomp[1] = 0;                                                              //
-    g_user_distance_estimator_value = 0;                                          //
-    g_distance_estimator_x_dots = 0;                                              //
-    g_distance_estimator_y_dots = 0;                                              //
-    g_distance_estimator_width_factor = 71;                                       //
-    g_force_symmetry = SymmetryType::NOT_FORCED;                                  //
-    g_image_region.m_min.x = -2.5;                                                //
-    g_image_region.m_3rd.x = -2.5;                                                //
-    g_image_region.m_max.x = 1.5;                                                 // initial corner values
-    g_image_region.m_min.y = -1.5;                                                //
-    g_image_region.m_3rd.y = -1.5;                                                //
-    g_image_region.m_max.y = 1.5;                                                 // initial corner values
-    g_bf_math = BFMathType::NONE;                                                 //
-    g_potential_16bit = false;                                                    //
-    g_potential_flag = false;                                                     //
-    g_log_map_flag = 0;                                                           // no logarithmic palette
-    set_trig_array(0, "sin");                                                     // trigfn defaults
-    set_trig_array(1, "sqr");                                                     //
-    set_trig_array(2, "sinh");                                                    //
-    set_trig_array(3, "cosh");                                                    //
-    g_iteration_ranges.clear();                                                   //
-    g_iteration_ranges_len = 0;                                                   //
-    g_use_center_mag = true;                                // use center-mag, not corners
-    g_color_state = ColorState::DEFAULT_MAP;                //
-    g_colors_preloaded = false;                             //
-    g_color_cycle_range_lo = 1;                             //
-    g_color_cycle_range_hi = 255;                           // color cycling default range
-    g_orbit_delay = 0;                                      // full speed orbits
-    g_orbit_interval = 1;                                   // plot all orbits
-    g_keep_screen_coords = false;                           //
-    g_draw_mode = OrbitDrawMode::RECTANGLE;                 // passes=orbits draw mode
-    g_set_orbit_corners = false;                            //
+    std::fill_n(g_params, MAX_PARAMS, 0.0);              // initial parameter values
+    g_potential.params.fill(0.0);                        // initial potential values
+    g_inversion.params.fill(0.0);                        // initial invert values
+    g_init_orbit.y = 0.0;                                //
+    g_init_orbit.x = 0.0;                                // initial orbit values
+    g_inversion.invert = 0;                              //
+    g_decomp[0] = 0;                                     //
+    g_decomp[1] = 0;                                     //
+    g_user_distance_estimator_value = 0;                 //
+    g_distance_estimator_x_dots = 0;                     //
+    g_distance_estimator_y_dots = 0;                     //
+    g_distance_estimator_width_factor = 71;              //
+    g_force_symmetry = SymmetryType::NOT_FORCED;         //
+    g_image_region.m_min.x = -2.5;                       //
+    g_image_region.m_3rd.x = -2.5;                       //
+    g_image_region.m_max.x = 1.5;                        // initial corner values
+    g_image_region.m_min.y = -1.5;                       //
+    g_image_region.m_3rd.y = -1.5;                       //
+    g_image_region.m_max.y = 1.5;                        // initial corner values
+    g_bf_math = BFMathType::NONE;                        //
+    g_potential.store_16bit = false;                     //
+    g_potential.flag = false;                            //
+    g_log_map_flag = 0;                                  // no logarithmic palette
+    set_trig_array(0, "sin");                            // trigfn defaults
+    set_trig_array(1, "sqr");                            //
+    set_trig_array(2, "sinh");                           //
+    set_trig_array(3, "cosh");                           //
+    g_iteration_ranges.clear();                          //
+    g_iteration_ranges_len = 0;                          //
+    g_use_center_mag = true;                             // use center-mag, not corners
+    g_color_state = ColorState::DEFAULT_MAP;             //
+    g_colors_preloaded = false;                          //
+    g_color_cycle_range_lo = 1;                          //
+    g_color_cycle_range_hi = 255;                        // color cycling default range
+    g_orbit_delay = 0;                                   // full speed orbits
+    g_orbit_interval = 1;                                // plot all orbits
+    g_keep_screen_coords = false;                        //
+    g_draw_mode = OrbitDrawMode::RECTANGLE;              // passes=orbits draw mode
+    g_set_orbit_corners = false;                         //
     g_orbit_corner.m_min.x = g_cur_fractal_specific->x_min; //
     g_orbit_corner.m_min.y = g_cur_fractal_specific->y_min; //
     g_orbit_corner.m_max.x = g_cur_fractal_specific->x_max; //
@@ -1967,6 +1966,7 @@ static CmdArgFlags cmd_decay(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
+// decomp=n
 static CmdArgFlags cmd_decomp(const Command &cmd)
 {
     if (cmd.total_params != cmd.num_int_params || cmd.total_params < 1)
@@ -2963,11 +2963,11 @@ static CmdArgFlags cmd_potential(const Command &cmd)
     {
         if (k == 1)
         {
-            g_potential_params[k] = std::atof(value);
+            g_potential.params[k] = std::atof(value);
         }
         else
         {
-            g_potential_params[k] = std::atoi(value);
+            g_potential.params[k] = std::atoi(value);
         }
         k++;
         value = std::strchr(value, '/');
@@ -2980,14 +2980,14 @@ static CmdArgFlags cmd_potential(const Command &cmd)
             ++value;
         }
     }
-    g_potential_16bit = false;
+    g_potential.store_16bit = false;
     if (k < 99)
     {
         if (std::string_view{value} != "16bit")
         {
             return cmd.bad_arg();
         }
-        g_potential_16bit = true;
+        g_potential.store_16bit = true;
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }
