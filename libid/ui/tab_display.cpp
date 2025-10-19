@@ -495,9 +495,9 @@ top:
         fmt::format("Driver: {:s}, {:s}", g_driver->get_name(), g_driver->get_description()));
     if (g_video_entry.x_dots && g_bf_math == BFMathType::NONE)
     {
-        std::sprintf(msg, "Video: %dx%dx%d %s",
-                g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,
-                g_video_entry.comment);
+        std::sprintf(msg, "Video: %dx%dx%d %s",                               //
+            g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors, //
+            g_video_entry.comment);
         driver_put_string(start_row++, 2, C_GENERAL_MED, msg);
     }
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM))

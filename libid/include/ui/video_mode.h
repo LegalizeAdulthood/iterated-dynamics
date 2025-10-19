@@ -2,6 +2,7 @@
 //
 #pragma once
 
+#include <cstring>
 #include <string>
 
 namespace id::misc
@@ -26,6 +27,21 @@ struct VideoInfo
     misc::Driver *driver; // associated driver for this mode
     char comment[26];     // Comments (UNTESTED, etc)
 };
+
+inline bool operator==(const VideoInfo &lhs, const VideoInfo &rhs)
+{
+    return lhs.key == rhs.key       //
+        && lhs.x_dots == rhs.x_dots //
+        && lhs.y_dots == rhs.y_dots //
+        && lhs.colors == rhs.colors //
+        && lhs.driver == rhs.driver //
+        && std::strcmp(lhs.comment, rhs.comment) == 0;
+}
+
+inline bool operator!=(const VideoInfo &lhs, const VideoInfo &rhs)
+{
+    return !(lhs == rhs);
+}
 
 extern VideoInfo             g_video_entry;
 extern VideoInfo             g_video_table[];

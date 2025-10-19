@@ -311,13 +311,12 @@ MainState big_while_loop(MainContext &context)
         driver_check_memory();
         if (g_calc_status != CalcStatus::RESUMABLE || g_show_file == ShowFile::LOAD_IMAGE)
         {
-            std::memcpy(&g_video_entry, &g_video_table[g_adapter],
-                   sizeof(g_video_entry));
-            g_logical_screen.x_dots   = g_video_entry.x_dots;       // # dots across the screen
-            g_logical_screen.y_dots   = g_video_entry.y_dots;       // # dots down the screen
-            g_colors  = g_video_entry.colors;      // # colors available
-            g_screen_x_dots  = g_logical_screen.x_dots;
-            g_screen_y_dots  = g_logical_screen.y_dots;
+            g_video_entry = g_video_table[g_adapter];
+            g_logical_screen.x_dots = g_video_entry.x_dots; // # dots across the screen
+            g_logical_screen.y_dots = g_video_entry.y_dots; // # dots down the screen
+            g_colors = g_video_entry.colors;                // # colors available
+            g_screen_x_dots = g_logical_screen.x_dots;
+            g_screen_y_dots = g_logical_screen.y_dots;
             g_logical_screen.y_offset = 0;
             g_logical_screen.x_offset = 0;
             g_color_cycle_range_hi = g_color_cycle_range_hi < g_colors ? g_color_cycle_range_hi : g_colors - 1;

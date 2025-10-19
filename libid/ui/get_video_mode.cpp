@@ -112,14 +112,13 @@ static bool video_choice_less(const VideoModeChoice &lhs, const VideoModeChoice 
 
 static void format_video_choice(const int i, const char *err, char *buf)
 {
-    std::memcpy(&g_video_entry, &g_video_table[i],
-           sizeof(g_video_entry));
+    g_video_entry = g_video_table[i];
     std::string key_name = vid_mode_key_name(g_video_entry.key);
     *fmt::format_to(buf, "{:<5s} {:<16s} {:<4s} {:5d} {:5d} {:3d} {:<25s}", // 67 chars
-        key_name, g_video_entry.driver->get_description(), err,         //
-        g_video_entry.x_dots, g_video_entry.y_dots,                     //
+        key_name, g_video_entry.driver->get_description(), err,             //
+        g_video_entry.x_dots, g_video_entry.y_dots,                         //
         g_video_entry.colors, g_video_entry.comment) = '\0';
-    g_video_entry.x_dots = 0; // so tab_display knows to display nothing
+    g_video_entry.x_dots = 0;                                               // so tab_display knows to display nothing
 }
 
 static double video_aspect(const int try_x_dots, const int try_y_dots)
@@ -357,11 +356,10 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     }
 
     // ok, we're going to return with a video mode
-    std::memcpy(&g_video_entry, &g_video_table[g_init_mode],
-           sizeof(g_video_entry));
+    g_video_entry = g_video_table[g_init_mode];
 
-    if (g_viewport.enabled
-        && g_file_x_dots == g_video_entry.x_dots
+    if (g_viewport.enabled                       //
+        && g_file_x_dots == g_video_entry.x_dots //
         && g_file_y_dots == g_video_entry.y_dots)
     {
         // pull image into a view window

@@ -210,7 +210,7 @@ get_view_restart:
     {
         g_video_entry.x_dots = g_screen_x_dots;
         g_video_entry.y_dots = g_screen_y_dots;
-        std::memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
+        g_video_table[g_adapter] = g_video_entry;
         if (g_viewport.final_aspect_ratio == 0.0)
         {
             g_viewport.final_aspect_ratio = static_cast<float>(g_screen_y_dots) / static_cast<float>(g_screen_x_dots);
