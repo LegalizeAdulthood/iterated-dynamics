@@ -138,8 +138,8 @@ static void toggle_mandelbrot_julia(MainContext &context)
             g_is_mandelbrot = true;
         }
     }
-    if (g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL && g_params[0] == 0.0 &&
-        g_params[1] == 0.0)
+    if (g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL //
+        && g_params[0] == 0.0 && g_params[1] == 0.0)
     {
         // switch to corresponding Julia set
         g_has_inverse = g_fractal_type == FractalType::MANDEL && g_bf_math == BFMathType::NONE;
