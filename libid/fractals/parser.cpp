@@ -2069,7 +2069,7 @@ static void get_func_info(Token *tok)
 {
     for (int i = 0; i < static_cast<int>(FUNC_LIST.size()); i++)
     {
-        if (!std::strcmp(FUNC_LIST[i].s, tok->str))
+        if (std::strcmp(FUNC_LIST[i].s, tok->str) == 0)
         {
             tok->id = static_cast<TokenId>(i);
             if (tok->id >= TokenId::FUNC_FN1 && tok->id <= TokenId::FUNC_FN4)
@@ -2101,7 +2101,7 @@ static void get_var_info(Token *tok)
 {
     for (int i = 0; i < static_cast<int>(VARIABLES.size()); i++)
     {
-        if (!std::strcmp(VARIABLES[i], tok->str))
+        if (std::strcmp(VARIABLES[i], tok->str) == 0)
         {
             tok->id = static_cast<TokenId>(i);
             switch (tok->id)

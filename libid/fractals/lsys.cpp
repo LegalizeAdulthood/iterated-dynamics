@@ -147,7 +147,7 @@ static bool read_lsystem_file(const char *str)
         {
             bool check = false;
             word = std::strtok(inline1, " =\t\n");
-            if (!std::strcmp(word, "axiom"))
+            if (std::strcmp(word, "axiom") == 0)
             {
                 if (save_axiom(std::strtok(nullptr, " \t\n")))
                 {
@@ -156,12 +156,12 @@ static bool read_lsystem_file(const char *str)
                 }
                 check = true;
             }
-            else if (!std::strcmp(word, "angle"))
+            else if (std::strcmp(word, "angle") == 0)
             {
                 g_max_angle = static_cast<char>(std::atoi(std::strtok(nullptr, " \t\n")));
                 check = true;
             }
-            else if (!std::strcmp(word, "}"))
+            else if (std::strcmp(word, "}") == 0)
             {
                 break;
             }

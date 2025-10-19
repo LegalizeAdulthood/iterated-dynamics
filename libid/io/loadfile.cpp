@@ -1299,7 +1299,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
             file_read(tmp_buff, 1, 110, s_fp); // read 10 extra for string compare
             for (int i = 0; i < 100; ++i)
             {
-                if (!std::strcmp(INFO_ID, &tmp_buff[i]))
+                if (std::strcmp(INFO_ID, &tmp_buff[i]) == 0)
                 {
                     // found header?
                     std::strcpy(info->info_id, INFO_ID);

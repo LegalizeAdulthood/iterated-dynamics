@@ -144,9 +144,9 @@ static std::string heading_detail(const FractalInfo *info, const ExtBlock3 *blk_
             name_ptr = "3D Transform";
         }
         result << "Type: " << name_ptr;
-        if (!std::strcmp(name_ptr, "formula")
-            || !std::strcmp(name_ptr, "lsystem")
-            || !std::strncmp(name_ptr, "ifs", 3)) // for ifs and ifs3d
+        if (std::strcmp(name_ptr, "formula") == 0     //
+            || std::strcmp(name_ptr, "lsystem") == 0  //
+            || std::strncmp(name_ptr, "ifs", 3) == 0) // for ifs and ifs3d
         {
             result << " -> " << blk_3_info->form_name;
         }
