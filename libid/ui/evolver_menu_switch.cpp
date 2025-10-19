@@ -6,6 +6,7 @@
 #include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
+#include "engine/Viewport.h"
 #include "io/encoder.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -118,7 +119,7 @@ static MainState prompt_evolver_options(MainContext &context)
 static MainState exit_evolver(MainContext &context)
 {
     g_evolving = EvolutionModeFlags::NONE;
-    g_view_window = false;
+    g_viewport.enabled = false;
     save_param_history();
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
@@ -362,7 +363,7 @@ static MainState request_mutation_level(MainContext &context)
 static MainState turn_off_evolving(MainContext &context)
 {
     g_evolving = EvolutionModeFlags::NONE;
-    g_view_window = false;
+    g_viewport.enabled = false;
     context.more_keys = false;
     g_calc_status = CalcStatus::PARAMS_CHANGED;
     return MainState::NOTHING;

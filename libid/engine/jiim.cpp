@@ -14,6 +14,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/FrothyBasin.h"
 #include "fractals/lorenz.h"
@@ -1309,12 +1310,12 @@ void InverseJulia::finish()
     g_using_jiim = false;
     if (m_key == 's' || m_key == 'S')
     {
-        g_view_window = false;
-        g_view_x_dots = 0;
-        g_view_y_dots = 0;
-        g_view_reduction = 4.2F;
-        g_view_crop = true;
-        g_final_aspect_ratio = g_screen_aspect;
+        g_viewport.enabled = false;
+        g_viewport.x_dots = 0;
+        g_viewport.y_dots = 0;
+        g_viewport.reduction = 4.2F;
+        g_viewport.crop = true;
+        g_viewport.final_aspect_ratio = g_screen_aspect;
         g_logical_screen.x_dots = g_screen_x_dots;
         g_logical_screen.y_dots = g_screen_y_dots;
         g_logical_screen.x_size_dots = g_logical_screen.x_dots - 1;

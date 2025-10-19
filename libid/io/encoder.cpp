@@ -18,6 +18,7 @@
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
+#include "engine/Viewport.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
@@ -377,8 +378,8 @@ bool encoder()
     }
 
     // TODO: pixel aspect ratio should be 1:1?
-    if (g_view_window                               // less than full screen?
-        && (g_view_x_dots == 0 || g_view_y_dots == 0))     // and we picked the dots?
+    if (g_viewport.enabled                                     // less than full screen?
+        && (g_viewport.x_dots == 0 || g_viewport.y_dots == 0)) // and we picked the dots?
     {
         i = static_cast<int>(static_cast<double>(g_screen_y_dots) / static_cast<double>(g_screen_x_dots) *
                 64.0 / g_screen_aspect -
@@ -387,7 +388,7 @@ bool encoder()
     else       // must risk loss of precision if numbers low
     {
         i = static_cast<int>(static_cast<double>(g_logical_screen.y_dots) /
-                static_cast<double>(g_logical_screen.x_dots) / g_final_aspect_ratio * 64 -
+                static_cast<double>(g_logical_screen.x_dots) / g_viewport.final_aspect_ratio * 64 -
             14.5);
     }
     i = std::max(i, 1);
@@ -864,7 +865,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->use_init_orbit = static_cast<char>(g_use_init_orbit);
     save_info->periodicity = static_cast<std::int16_t>(g_periodicity_check);
     save_info->pot16bit = static_cast<std::int16_t>(g_disk_16_bit ? 1 : 0);
-    save_info->final_aspect_ratio = g_final_aspect_ratio;
+    save_info->final_aspect_ratio = g_viewport.final_aspect_ratio;
     save_info->system = static_cast<std::int16_t>(g_save_system);
     save_info->release = static_cast<std::int16_t>(20 * 100 + 4); // legacy FRACTINT 20.04
     save_info->display_3d = static_cast<std::int16_t>(g_display_3d);

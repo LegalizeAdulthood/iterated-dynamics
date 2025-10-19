@@ -7,6 +7,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/show_dot.h"
+#include "engine/Viewport.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "helpcom.h"
@@ -203,7 +204,7 @@ static bool main_restore_start(MainContext &context)
         }
 
         g_evolving = EvolutionModeFlags::NONE;
-        g_view_window = false;
+        g_viewport.enabled = false;
         g_show_file = ShowFile::LOAD_IMAGE;
         g_help_mode = HelpLabels::NONE;
         g_tab_mode = true;

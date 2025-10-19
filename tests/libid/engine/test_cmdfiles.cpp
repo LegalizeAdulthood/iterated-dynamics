@@ -3,15 +3,11 @@
 #include <engine/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
-#include "engine/potential.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "test_library.h"
 #include "ValueUnchanged.h"
 
-#include <geometry/3d.h>
-#include <geometry/line3d.h>
-#include <geometry/plot3d.h>
 #include <config/path_limits.h>
 #include <engine/bailout_formula.h>
 #include <engine/Browse.h>
@@ -20,16 +16,21 @@
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/log_map.h>
+#include <engine/potential.h>
 #include <engine/random_seed.h>
 #include <engine/show_dot.h>
 #include <engine/soi.h>
 #include <engine/sticky_orbits.h>
 #include <engine/trig_fns.h>
+#include <engine/Viewport.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
 #include <fractals/jb.h>
 #include <fractals/lorenz.h>
 #include <fractals/parser.h>
+#include <geometry/3d.h>
+#include <geometry/line3d.h>
+#include <geometry/plot3d.h>
 #include <io/CurrentPathSaver.h>
 #include <io/library.h>
 #include <io/loadfile.h>
@@ -2406,114 +2407,114 @@ TEST_F(TestParameterCommand, orbitDrawModeFunction)
 
 TEST_F(TestParameterCommand, viewWindowsdDefaults)
 {
-    ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_view_window{g_viewport.enabled, false};
+    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
     ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_view_crop, false};
-    ValueSaver saved_view_x_dots{g_view_x_dots, 999};
-    ValueSaver saved_view_y_dots{g_view_y_dots, 999};
+    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
+    ValueSaver saved_view_crop{g_viewport.crop, false};
+    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
+    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
 
     exec_cmd_arg("viewwindows");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_TRUE(g_view_window);
-    EXPECT_EQ(4.2F, g_view_reduction);
+    EXPECT_TRUE(g_viewport.enabled);
+    EXPECT_EQ(4.2F, g_viewport.reduction);
     EXPECT_EQ(0.75F, g_screen_aspect);
-    EXPECT_EQ(0.75F, g_final_aspect_ratio);
-    EXPECT_TRUE(g_view_crop);
-    EXPECT_EQ(0, g_view_x_dots);
-    EXPECT_EQ(0, g_view_y_dots);
+    EXPECT_EQ(0.75F, g_viewport.final_aspect_ratio);
+    EXPECT_TRUE(g_viewport.crop);
+    EXPECT_EQ(0, g_viewport.x_dots);
+    EXPECT_EQ(0, g_viewport.y_dots);
 }
 
 TEST_F(TestParameterCommand, viewWindowsOneValue)
 {
-    ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_view_window{g_viewport.enabled, false};
+    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
     ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_view_crop, false};
-    ValueSaver saved_view_x_dots{g_view_x_dots, 999};
-    ValueSaver saved_view_y_dots{g_view_y_dots, 999};
+    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
+    ValueSaver saved_view_crop{g_viewport.crop, false};
+    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
+    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
 
     exec_cmd_arg("viewwindows=2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_view_reduction);
+    EXPECT_EQ(2.0F, g_viewport.reduction);
 }
 
 TEST_F(TestParameterCommand, viewWindowsTwoValues)
 {
-    ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_view_window{g_viewport.enabled, false};
+    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
     ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_view_crop, false};
-    ValueSaver saved_view_x_dots{g_view_x_dots, 999};
-    ValueSaver saved_view_y_dots{g_view_y_dots, 999};
+    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
+    ValueSaver saved_view_crop{g_viewport.crop, false};
+    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
+    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
 
     exec_cmd_arg("viewwindows=2/3");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_view_reduction);
-    EXPECT_EQ(3.0F, g_final_aspect_ratio);
+    EXPECT_EQ(2.0F, g_viewport.reduction);
+    EXPECT_EQ(3.0F, g_viewport.final_aspect_ratio);
 }
 
 TEST_F(TestParameterCommand, viewWindowsThreeValues)
 {
-    ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_view_window{g_viewport.enabled, false};
+    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
     ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_view_crop, true};
-    ValueSaver saved_view_x_dots{g_view_x_dots, 999};
-    ValueSaver saved_view_y_dots{g_view_y_dots, 999};
+    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
+    ValueSaver saved_view_crop{g_viewport.crop, true};
+    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
+    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
 
     exec_cmd_arg("viewwindows=2/3/n");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_view_reduction);
-    EXPECT_EQ(3.0F, g_final_aspect_ratio);
-    EXPECT_FALSE(g_view_crop);
+    EXPECT_EQ(2.0F, g_viewport.reduction);
+    EXPECT_EQ(3.0F, g_viewport.final_aspect_ratio);
+    EXPECT_FALSE(g_viewport.crop);
 }
 
 TEST_F(TestParameterCommand, viewWindowsFourValues)
 {
-    ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_view_window{g_viewport.enabled, false};
+    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
     ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_view_crop, true};
-    ValueSaver saved_view_x_dots{g_view_x_dots, 999};
-    ValueSaver saved_view_y_dots{g_view_y_dots, 999};
+    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
+    ValueSaver saved_view_crop{g_viewport.crop, true};
+    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
+    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
 
     exec_cmd_arg("viewwindows=2/3/n/800");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_view_reduction);
-    EXPECT_EQ(3.0F, g_final_aspect_ratio);
-    EXPECT_FALSE(g_view_crop);
-    EXPECT_EQ(800, g_view_x_dots);
+    EXPECT_EQ(2.0F, g_viewport.reduction);
+    EXPECT_EQ(3.0F, g_viewport.final_aspect_ratio);
+    EXPECT_FALSE(g_viewport.crop);
+    EXPECT_EQ(800, g_viewport.x_dots);
 }
 
 TEST_F(TestParameterCommand, viewWindowsFiveValues)
 {
-    ValueSaver saved_view_window{g_view_window, false};
-    ValueSaver saved_view_reduction{g_view_reduction, 999.0F};
+    ValueSaver saved_view_window{g_viewport.enabled, false};
+    ValueSaver saved_view_reduction{g_viewport.reduction, 999.0F};
     ValueSaver saved_screen_aspect{g_screen_aspect, 0.75F};
-    ValueSaver saved_final_aspect_ration{g_final_aspect_ratio, 999.0F};
-    ValueSaver saved_view_crop{g_view_crop, true};
-    ValueSaver saved_view_x_dots{g_view_x_dots, 999};
-    ValueSaver saved_view_y_dots{g_view_y_dots, 999};
+    ValueSaver saved_final_aspect_ration{g_viewport.final_aspect_ratio, 999.0F};
+    ValueSaver saved_view_crop{g_viewport.crop, true};
+    ValueSaver saved_view_x_dots{g_viewport.x_dots, 999};
+    ValueSaver saved_view_y_dots{g_viewport.y_dots, 999};
 
     exec_cmd_arg("viewwindows=2/3/n/800/600");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(2.0F, g_view_reduction);
-    EXPECT_EQ(3.0F, g_final_aspect_ratio);
-    EXPECT_FALSE(g_view_crop);
-    EXPECT_EQ(800, g_view_x_dots);
-    EXPECT_EQ(600, g_view_y_dots);
+    EXPECT_EQ(2.0F, g_viewport.reduction);
+    EXPECT_EQ(3.0F, g_viewport.final_aspect_ratio);
+    EXPECT_FALSE(g_viewport.crop);
+    EXPECT_EQ(800, g_viewport.x_dots);
+    EXPECT_EQ(600, g_viewport.y_dots);
 }
 
 TEST_F(TestParameterCommand, centerMagOn)

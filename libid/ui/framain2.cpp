@@ -10,6 +10,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/potential.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "geometry/line3d.h"
@@ -397,39 +398,39 @@ MainState big_while_loop(MainContext &context)
                 }
                 g_color_state = ColorState::DEFAULT_MAP;
             }
-            if (g_view_window)
+            if (g_viewport.enabled)
             {
                 // bypass for VESA virtual screen
-                const double f_temp{g_final_aspect_ratio *
+                const double f_temp{g_viewport.final_aspect_ratio *
                     (static_cast<double>(g_screen_y_dots) / static_cast<double>(g_screen_x_dots) / g_screen_aspect)};
-                g_logical_screen.x_dots = g_view_x_dots;
+                g_logical_screen.x_dots = g_viewport.x_dots;
                 if (g_logical_screen.x_dots != 0)
                 {
                     // xdots specified
-                    g_logical_screen.y_dots = g_view_y_dots;
+                    g_logical_screen.y_dots = g_viewport.y_dots;
                     if (g_logical_screen.y_dots == 0) // calc ydots?
                     {
                         g_logical_screen.y_dots = iround(g_logical_screen.x_dots * f_temp);
                     }
                 }
-                else if (g_final_aspect_ratio <= g_screen_aspect)
+                else if (g_viewport.final_aspect_ratio <= g_screen_aspect)
                 {
-                    g_logical_screen.x_dots = iround(static_cast<double>(g_screen_x_dots) / g_view_reduction);
+                    g_logical_screen.x_dots = iround(static_cast<double>(g_screen_x_dots) / g_viewport.reduction);
                     g_logical_screen.y_dots = iround(g_logical_screen.x_dots * f_temp);
                 }
                 else
                 {
-                    g_logical_screen.y_dots = iround(static_cast<double>(g_screen_y_dots) / g_view_reduction);
+                    g_logical_screen.y_dots = iround(static_cast<double>(g_screen_y_dots) / g_viewport.reduction);
                     g_logical_screen.x_dots = iround(g_logical_screen.y_dots / f_temp);
                 }
                 if (g_logical_screen.x_dots > g_screen_x_dots || g_logical_screen.y_dots > g_screen_y_dots)
                 {
                     stop_msg("View window too large; using full screen.");
-                    g_view_window = false;
-                    g_view_x_dots = g_screen_x_dots;
-                    g_logical_screen.x_dots = g_view_x_dots;
-                    g_view_y_dots = g_screen_y_dots;
-                    g_logical_screen.y_dots = g_view_y_dots;
+                    g_viewport.enabled = false;
+                    g_viewport.x_dots = g_screen_x_dots;
+                    g_logical_screen.x_dots = g_viewport.x_dots;
+                    g_viewport.y_dots = g_screen_y_dots;
+                    g_logical_screen.y_dots = g_viewport.y_dots;
                 }
                 // changed test to 1, so a 2x2 window will work with the sound feature
                 else if ((g_logical_screen.x_dots <= 1 || g_logical_screen.y_dots <= 1) &&
@@ -438,7 +439,7 @@ MainState big_while_loop(MainContext &context)
                     // so ssg works
                     // but no check if in evolve mode to allow lots of small views
                     stop_msg("View window too small; using full screen.");
-                    g_view_window = false;
+                    g_viewport.enabled = false;
                     g_logical_screen.x_dots = g_screen_x_dots;
                     g_logical_screen.y_dots = g_screen_y_dots;
                 }
@@ -447,7 +448,7 @@ MainState big_while_loop(MainContext &context)
                 {
                     stop_msg("Fractal doesn't terminate! switching off evolution.");
                     g_evolving ^= EvolutionModeFlags::FIELD_MAP;
-                    g_view_window = false;
+                    g_viewport.enabled = false;
                     g_logical_screen.x_dots = g_screen_x_dots;
                     g_logical_screen.y_dots = g_screen_y_dots;
                 }
@@ -580,7 +581,7 @@ MainState big_while_loop(MainContext &context)
             g_browse.browsing = false;       // regenerate image, turn off browsing
             g_browse.stack.clear(); // reset filename stack
             g_browse.name.clear();
-            if (g_view_window && bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
+            if (g_viewport.enabled && bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
                 g_calc_status != CalcStatus::COMPLETED)
             {
                 // generate a set of images with varied parameters on each one
@@ -609,7 +610,7 @@ MainState big_while_loop(MainContext &context)
                     g_evolve_this_generation_random_seed = g_evolve_info.this_generation_random_seed;
                     g_evolve_max_random_mutation = g_evolve_info.max_random_mutation;
                     g_evolving = static_cast<EvolutionModeFlags>(g_evolve_info.evolving);
-                    g_view_window = g_evolving != EvolutionModeFlags::NONE;
+                    g_viewport.enabled = g_evolving != EvolutionModeFlags::NONE;
                     count       = g_evolve_info.count;
                     g_have_evolve_info = false;
                 }

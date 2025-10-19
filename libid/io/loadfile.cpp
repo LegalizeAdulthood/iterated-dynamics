@@ -18,6 +18,7 @@
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
@@ -888,7 +889,7 @@ int read_overlay()      // read overlay/3D files, if required
     g_loaded_3d = false;
     if (g_fast_restore)
     {
-        g_view_window = false;
+        g_viewport.enabled = false;
     }
     if (!g_read_filename.has_extension())
     {
@@ -1109,7 +1110,7 @@ int read_overlay()      // read overlay/3D files, if required
         g_evolve_this_generation_random_seed = blk_6_info.this_generation_random_seed;
         g_evolve_max_random_mutation = blk_6_info.max_random_mutation;
         g_evolving = static_cast<EvolutionModeFlags>(blk_6_info.evolving);
-        g_view_window = g_evolving != EvolutionModeFlags::NONE;
+        g_viewport.enabled = g_evolving != EvolutionModeFlags::NONE;
         g_evolve_dist_per_x = g_evolve_x_parameter_range /(g_evolve_image_grid_size - 1);
         g_evolve_dist_per_y = g_evolve_y_parameter_range /(g_evolve_image_grid_size - 1);
         if (read_info.info_version > 14)

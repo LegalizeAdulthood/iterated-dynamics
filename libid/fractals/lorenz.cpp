@@ -15,6 +15,7 @@
 #include "engine/jiim.h"
 #include "engine/LogicalScreen.h"
 #include "engine/resume.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
@@ -1589,7 +1590,7 @@ done:
         g_logical_screen.y_offset = 0;
         g_logical_screen.x_dots = g_screen_x_dots;
         g_logical_screen.y_dots = g_screen_y_dots;
-        g_view_window = false;
+        g_viewport.enabled = false;
     }
     return status;
 }

@@ -14,6 +14,7 @@
 #include "engine/potential.h"
 #include "engine/resume.h"
 #include "engine/solid_guess.h"
+#include "engine/Viewport.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
 #include "fractals/FrothyBasin.h"
@@ -178,13 +179,13 @@ void draw_box(const bool draw_it)
 
     // calc co-ords of topleft & botright corners of box
     double tmp_x = g_zoom_box_width / -2 + f_x_adj; // from zoombox center as origin, on xdots scale
-    double tmp_y = g_zoom_box_height * g_final_aspect_ratio / 2;
+    double tmp_y = g_zoom_box_height * g_viewport.final_aspect_ratio / 2;
     double dx = rot_cos * tmp_x - rot_sin * tmp_y - tmp_x; // delta x to rotate topleft
     double dy = tmp_y - (rot_sin * tmp_x + rot_cos * tmp_y); // delta y to rotate topleft
 
     // calc co-ords of topleft
     f_temp1 = g_zoom_box_x + dx + f_x_adj;
-    double f_temp2 = g_zoom_box_y + dy / g_final_aspect_ratio;
+    double f_temp2 = g_zoom_box_y + dy / g_viewport.final_aspect_ratio;
 
     Coord top_left;
     top_left.x   = static_cast<int>(f_temp1 * (g_logical_screen.x_size_dots + PIXEL_ROUND)); // screen co-ords
@@ -199,7 +200,7 @@ void draw_box(const bool draw_it)
 
     // calc co-ords of bottom right
     f_temp1 = g_zoom_box_x + g_zoom_box_width - dx - f_x_adj;
-    f_temp2 = g_zoom_box_y - dy/g_final_aspect_ratio + g_zoom_box_height;
+    f_temp2 = g_zoom_box_y - dy/g_viewport.final_aspect_ratio + g_zoom_box_height;
     Coord bot_right;
     bot_right.x   = static_cast<int>(f_temp1 * (g_logical_screen.x_size_dots + PIXEL_ROUND));
     bot_right.y   = static_cast<int>(f_temp2 * (g_logical_screen.y_size_dots + PIXEL_ROUND));
@@ -217,7 +218,7 @@ void draw_box(const bool draw_it)
     dx = rot_cos * tmp_x - rot_sin * tmp_y - tmp_x;
     dy = tmp_y - (rot_sin*tmp_x + rot_cos*tmp_y);
     f_temp1 = g_zoom_box_x + dx - f_x_adj;
-    f_temp2 = g_zoom_box_y + dy/g_final_aspect_ratio + g_zoom_box_height;
+    f_temp2 = g_zoom_box_y + dy/g_viewport.final_aspect_ratio + g_zoom_box_height;
     Coord bot_left;
     bot_left.x   = static_cast<int>(f_temp1 * (g_logical_screen.x_size_dots + PIXEL_ROUND));
     bot_left.y   = static_cast<int>(f_temp2 * (g_logical_screen.y_size_dots + PIXEL_ROUND));
@@ -230,7 +231,7 @@ void draw_box(const bool draw_it)
         restore_stack(saved);
     }
     f_temp1 = g_zoom_box_x + g_zoom_box_width - dx + f_x_adj;
-    f_temp2 = g_zoom_box_y - dy/g_final_aspect_ratio;
+    f_temp2 = g_zoom_box_y - dy/g_viewport.final_aspect_ratio;
     Coord top_right;
     top_right.x   = static_cast<int>(f_temp1 * (g_logical_screen.x_size_dots + PIXEL_ROUND));
     top_right.y   = static_cast<int>(f_temp2 * (g_logical_screen.y_size_dots + PIXEL_ROUND));

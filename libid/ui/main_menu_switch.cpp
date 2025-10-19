@@ -9,6 +9,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/jiim.h"
 #include "engine/log_map.h"
+#include "engine/Viewport.h"
 #include "fractals/Cellular.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -487,7 +488,7 @@ static MainState request_make_batch_file(MainContext &/*context*/)
 static MainState start_evolution(MainContext &context)
 {
     g_evolving = EvolutionModeFlags::FIELD_MAP;
-    g_view_window = true;
+    g_viewport.enabled = true;
     set_mutation_level(context.key - ID_KEY_ALT_1 + 1);
     save_param_history();
     context.more_keys = false;

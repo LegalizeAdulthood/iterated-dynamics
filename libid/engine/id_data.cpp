@@ -33,13 +33,6 @@ double g_params[MAX_PARAMS]{};                    // parameters
 bool g_has_inverse{};                             //
 int g_user_periodicity_value{};                   // user_xxx is what the user wants,
 long g_user_distance_estimator_value{};           // vs what we may be forced to do
-bool g_view_window{};                             // false for full screen, true for window
-float g_view_reduction{};                         // window auto-sizing
-bool g_view_crop{};                               // true to crop default coords
-float g_final_aspect_ratio{};                     // for view shape and rotation
-int g_view_x_dots{}, g_view_y_dots{};             // explicit view sizing
-bool g_keep_aspect_ratio{};                       // true to keep virtual aspect
-bool g_z_scroll{};                                // screen/zoombox false fixed, true relaxed
                                                   // variables defined by the command line/files processor
 bool g_compare_gif{};                             // compare two gif files flag
 int g_save_system{};                              // from and for save files

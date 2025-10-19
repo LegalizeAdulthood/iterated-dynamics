@@ -19,6 +19,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "io/loadfile.h"
 #include "io/trim_filename.h"
@@ -358,7 +359,7 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     std::memcpy(&g_video_entry, &g_video_table[g_init_mode],
            sizeof(g_video_entry));
 
-    if (g_view_window
+    if (g_viewport.enabled
         && g_file_x_dots == g_video_entry.x_dots
         && g_file_y_dots == g_video_entry.y_dots)
     {
@@ -367,15 +368,15 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         {
             g_calc_status = CalcStatus::PARAMS_CHANGED;  // can't resume anyway
         }
-        if (g_view_x_dots)
+        if (g_viewport.x_dots)
         {
-            g_view_reduction = static_cast<float>(g_video_entry.x_dots / g_view_x_dots);
-            g_view_y_dots = 0;
-            g_view_x_dots = 0; // easier to use auto reduction
+            g_viewport.reduction = static_cast<float>(g_video_entry.x_dots / g_viewport.x_dots);
+            g_viewport.y_dots = 0;
+            g_viewport.x_dots = 0; // easier to use auto reduction
         }
-        g_view_reduction = std::round(g_view_reduction); // need integer value
-        g_skip_y_dots = static_cast<short>(g_view_reduction - 1);
-        g_skip_x_dots = static_cast<short>(g_view_reduction - 1);
+        g_viewport.reduction = std::round(g_viewport.reduction); // need integer value
+        g_skip_y_dots = static_cast<short>(g_viewport.reduction - 1);
+        g_skip_x_dots = static_cast<short>(g_viewport.reduction - 1);
         return 0;
     }
 
@@ -445,36 +446,36 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         --g_skip_y_dots;
     }
 
-    g_final_aspect_ratio = g_file_aspect_ratio;
-    if (g_final_aspect_ratio == 0) // assume display correct
+    g_viewport.final_aspect_ratio = g_file_aspect_ratio;
+    if (g_viewport.final_aspect_ratio == 0) // assume display correct
     {
-        g_final_aspect_ratio = static_cast<float>(video_aspect(g_file_x_dots, g_file_y_dots));
+        g_viewport.final_aspect_ratio = static_cast<float>(video_aspect(g_file_x_dots, g_file_y_dots));
     }
-    if (g_final_aspect_ratio >= g_screen_aspect-0.02
-        && g_final_aspect_ratio <= g_screen_aspect+0.02)
+    if (g_viewport.final_aspect_ratio >= g_screen_aspect-0.02
+        && g_viewport.final_aspect_ratio <= g_screen_aspect+0.02)
     {
-        g_final_aspect_ratio = g_screen_aspect;
+        g_viewport.final_aspect_ratio = g_screen_aspect;
     }
     {
-        int i = static_cast<int>(g_final_aspect_ratio * 1000.0 + 0.5);
-        g_final_aspect_ratio = static_cast<float>(i / 1000.0); // chop precision to 3 decimals
+        int i = static_cast<int>(g_viewport.final_aspect_ratio * 1000.0 + 0.5);
+        g_viewport.final_aspect_ratio = static_cast<float>(i / 1000.0); // chop precision to 3 decimals
     }
 
     // setup view window stuff
-    g_view_window = false;
-    g_view_x_dots = 0;
-    g_view_y_dots = 0;
+    g_viewport.enabled = false;
+    g_viewport.x_dots = 0;
+    g_viewport.y_dots = 0;
     if (g_file_x_dots != g_video_entry.x_dots || g_file_y_dots != g_video_entry.y_dots)
     {
         // image not exactly same size as screen
-        g_view_window = true;
-        f_temp = g_final_aspect_ratio
+        g_viewport.enabled = true;
+        f_temp = g_viewport.final_aspect_ratio
                 * static_cast<double>(g_video_entry.y_dots) / static_cast<double>(g_video_entry.x_dots)
                 / g_screen_aspect;
         float tmp_reduce;
         int i;
         int j;
-        if (g_final_aspect_ratio <= g_screen_aspect)
+        if (g_viewport.final_aspect_ratio <= g_screen_aspect)
         {
             i = static_cast<int>(std::lround(
                 static_cast<double>(g_video_entry.x_dots) / static_cast<double>(g_file_x_dots) * 20.0));
@@ -492,18 +493,18 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
         }
         if (i != g_file_x_dots || j != g_file_y_dots)  // too bad, must be explicit
         {
-            g_view_x_dots = g_file_x_dots;
-            g_view_y_dots = g_file_y_dots;
+            g_viewport.x_dots = g_file_x_dots;
+            g_viewport.y_dots = g_file_y_dots;
         }
         else
         {
-            g_view_reduction = tmp_reduce; // ok, this works
+            g_viewport.reduction = tmp_reduce; // ok, this works
         }
     }
     if (!g_make_parameter_file
         && !g_fast_restore
         && g_init_batch == BatchMode::NONE
-        && (std::abs(g_final_aspect_ratio - g_screen_aspect) > .00001 || g_view_x_dots != 0))
+        && (std::abs(g_viewport.final_aspect_ratio - g_screen_aspect) > .00001 || g_viewport.x_dots != 0))
     {
         stop_msg(StopMsgFlags::NO_BUZZER,
             "Warning: <V>iew parameters are being set to non-standard values.\n"

@@ -12,6 +12,7 @@
 #include "engine/pixel_limits.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
@@ -733,7 +734,7 @@ get_evol_restart:
 
     // now check out the results
     g_evolving = choices.read_yes_no() ? EvolutionModeFlags::FIELD_MAP : EvolutionModeFlags::NONE;
-    g_view_window = g_evolving != EvolutionModeFlags::NONE;
+    g_viewport.enabled = g_evolving != EvolutionModeFlags::NONE;
 
     if (g_evolving == EvolutionModeFlags::NONE && i != ID_KEY_F6)    // don't need any of the other parameters
     {
@@ -762,12 +763,12 @@ get_evol_restart:
     g_evolve_max_random_mutation = choices.read_float_number();
     g_evolve_mutation_reduction_factor = choices.read_float_number();
     g_evolving |= choices.read_yes_no() ? EvolutionModeFlags::NONE : EvolutionModeFlags::NO_GROUT;
-    g_view_x_dots = g_screen_x_dots / g_evolve_image_grid_size -2;
-    g_view_y_dots = g_screen_y_dots / g_evolve_image_grid_size -2;
-    if (!g_view_window)
+    g_viewport.x_dots = g_screen_x_dots / g_evolve_image_grid_size -2;
+    g_viewport.y_dots = g_screen_y_dots / g_evolve_image_grid_size -2;
+    if (!g_viewport.enabled)
     {
-        g_view_y_dots = 0;
-        g_view_x_dots = 0;
+        g_viewport.y_dots = 0;
+        g_viewport.x_dots = 0;
     }
 
     i = 0;
@@ -800,7 +801,7 @@ get_evol_restart:
         set_current_params();
         if (old_variations > 0)
         {
-            g_view_window = true;
+            g_viewport.enabled = true;
             g_evolving |= EvolutionModeFlags::FIELD_MAP;   // leave other settings alone
         }
         g_evolve_max_random_mutation = 1;

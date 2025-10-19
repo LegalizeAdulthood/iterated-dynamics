@@ -18,6 +18,7 @@
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
@@ -1413,10 +1414,10 @@ static void write_batch_params(
 
     //**** universal parameters in this section ****
 
-    if (g_view_window)
+    if (g_viewport.enabled)
     {
-        put_param(" viewwindows=%g/%g", g_view_reduction, g_final_aspect_ratio);
-        if (g_view_crop)
+        put_param(" viewwindows=%g/%g", g_viewport.reduction, g_viewport.final_aspect_ratio);
+        if (g_viewport.crop)
         {
             put_param("/%s", "yes");
         }
@@ -1424,7 +1425,7 @@ static void write_batch_params(
         {
             put_param("/%s", "no");
         }
-        put_param("/%d/%d", g_view_x_dots, g_view_y_dots);
+        put_param("/%d/%d", g_viewport.x_dots, g_viewport.y_dots);
     }
 
     if (!colors_only)

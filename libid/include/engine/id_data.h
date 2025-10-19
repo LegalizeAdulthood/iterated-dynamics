@@ -53,12 +53,10 @@ extern LDouble               g_delta_x2;
 extern LDouble               g_delta_x;
 extern LDouble               g_delta_y2;
 extern LDouble               g_delta_y;
-extern float                 g_final_aspect_ratio;
 extern std::filesystem::path g_fractal_search_dir1;
 extern std::filesystem::path g_fractal_search_dir2;
 extern bool                  g_has_inverse;
 extern help::HelpLabels      g_help_mode;
-extern bool                  g_keep_aspect_ratio;
 extern long                  g_max_iterations;
 extern double                g_plot_mx1;
 extern double                g_plot_mx2;
@@ -74,11 +72,5 @@ extern bool                  g_tab_mode;
 extern long                  g_user_distance_estimator_value;
 extern int                   g_user_periodicity_value;
 extern ui::VideoInfo         g_video_entry;
-extern bool                  g_view_crop;
-extern float                 g_view_reduction;
-extern bool                  g_view_window;
-extern int                   g_view_x_dots;
-extern int                   g_view_y_dots;
-extern bool g_z_scroll;
 
 } // namespace id::engine

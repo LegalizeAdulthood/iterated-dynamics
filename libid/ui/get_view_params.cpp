@@ -4,6 +4,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/Viewport.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -54,11 +55,11 @@ int get_view_params()
 
     driver_get_max_screen(x_max, y_max);
 
-    const bool old_view_window    = g_view_window;
-    float old_view_reduction = g_view_reduction;
-    float old_aspect_ratio = g_final_aspect_ratio;
-    int old_view_x_dots = g_view_x_dots;
-    int old_view_y_dots = g_view_y_dots;
+    const bool old_view_window    = g_viewport.enabled;
+    float old_view_reduction = g_viewport.reduction;
+    float old_aspect_ratio = g_viewport.final_aspect_ratio;
+    int old_view_x_dots = g_viewport.x_dots;
+    int old_view_y_dots = g_viewport.y_dots;
     int old_screen_x_dots = g_screen_x_dots;
     int old_screen_y_dots = g_screen_y_dots;
 
@@ -70,27 +71,27 @@ get_view_restart:
     {
         choices[++k] = "Preview display? (no for full screen)";
         values[k].type = 'y';
-        values[k].uval.ch.val = g_view_window ? 1 : 0;
+        values[k].uval.ch.val = g_viewport.enabled ? 1 : 0;
 
         choices[++k] = "Auto window size reduction factor";
         values[k].type = 'f';
-        values[k].uval.dval = g_view_reduction;
+        values[k].uval.dval = g_viewport.reduction;
 
         choices[++k] = "Final media overall aspect ratio, y/x";
         values[k].type = 'f';
-        values[k].uval.dval = g_final_aspect_ratio;
+        values[k].uval.dval = g_viewport.final_aspect_ratio;
 
         choices[++k] = "Crop starting coordinates to new aspect ratio?";
         values[k].type = 'y';
-        values[k].uval.ch.val = g_view_crop ? 1 : 0;
+        values[k].uval.ch.val = g_viewport.crop ? 1 : 0;
 
         choices[++k] = "Explicit size x pixels (0 for auto size)";
         values[k].type = 'i';
-        values[k].uval.ival = g_view_x_dots;
+        values[k].uval.ival = g_viewport.x_dots;
 
         choices[++k] = "              y pixels (0 to base on aspect ratio)";
         values[k].type = 'i';
-        values[k].uval.ival = g_view_y_dots;
+        values[k].uval.ival = g_viewport.y_dots;
     }
 
     choices[++k] = "";
@@ -108,7 +109,7 @@ get_view_restart:
 
     choices[++k] = "Keep aspect? (cuts both x & y when either too big)";
     values[k].type = 'y';
-    values[k].uval.ch.val = g_keep_aspect_ratio ? 1 : 0;
+    values[k].uval.ch.val = g_viewport.keep_aspect_ratio ? 1 : 0;
 
     {
         static const char *scroll_types[] = {"fixed", "relaxed"};
@@ -117,7 +118,7 @@ get_view_restart:
         values[k].uval.ch.vlen = 7;
         values[k].uval.ch.list_len = std::size(scroll_types);
         values[k].uval.ch.list = scroll_types;
-        values[k].uval.ch.val = g_z_scroll ? 1 : 0;
+        values[k].uval.ch.val = g_viewport.z_scroll ? 1 : 0;
     }
 
     choices[++k] = "";
@@ -151,16 +152,16 @@ get_view_restart:
 
     if (i == ID_KEY_F4 && !driver_is_disk())
     {
-        g_view_window = false;
-        g_view_x_dots = 0;
-        g_view_y_dots = 0;
-        g_view_reduction = 4.2F;
-        g_view_crop = true;
-        g_final_aspect_ratio = g_screen_aspect;
+        g_viewport.enabled = false;
+        g_viewport.x_dots = 0;
+        g_viewport.y_dots = 0;
+        g_viewport.reduction = 4.2F;
+        g_viewport.crop = true;
+        g_viewport.final_aspect_ratio = g_screen_aspect;
         g_screen_x_dots = old_screen_x_dots;
         g_screen_y_dots = old_screen_y_dots;
-        g_keep_aspect_ratio = true;
-        g_z_scroll = true;
+        g_viewport.keep_aspect_ratio = true;
+        g_viewport.z_scroll = true;
         goto get_view_restart;
     }
 
@@ -169,20 +170,20 @@ get_view_restart:
 
     if (!driver_is_disk())
     {
-        g_view_window = values[++k].uval.ch.val != 0;
-        g_view_reduction = static_cast<float>(values[++k].uval.dval);
-        g_final_aspect_ratio = static_cast<float>(values[++k].uval.dval);
-        g_view_crop = values[++k].uval.ch.val != 0;
-        g_view_x_dots = values[++k].uval.ival;
-        g_view_y_dots = values[++k].uval.ival;
+        g_viewport.enabled = values[++k].uval.ch.val != 0;
+        g_viewport.reduction = static_cast<float>(values[++k].uval.dval);
+        g_viewport.final_aspect_ratio = static_cast<float>(values[++k].uval.dval);
+        g_viewport.crop = values[++k].uval.ch.val != 0;
+        g_viewport.x_dots = values[++k].uval.ival;
+        g_viewport.y_dots = values[++k].uval.ival;
     }
 
     ++k;
 
     g_screen_x_dots = values[++k].uval.ival;
     g_screen_y_dots = values[++k].uval.ival;
-    g_keep_aspect_ratio = values[++k].uval.ch.val != 0;
-    g_z_scroll = values[++k].uval.ch.val != 0;
+    g_viewport.keep_aspect_ratio = values[++k].uval.ch.val != 0;
+    g_viewport.z_scroll = values[++k].uval.ch.val != 0;
 
     if (x_max != -1 && g_screen_x_dots > x_max)
     {
@@ -191,12 +192,12 @@ get_view_restart:
     g_screen_x_dots = std::max(g_screen_x_dots, 2);
     if (g_screen_y_dots == 0) // auto by aspect ratio request
     {
-        if (g_final_aspect_ratio == 0.0)
+        if (g_viewport.final_aspect_ratio == 0.0)
         {
-            g_final_aspect_ratio = g_view_window && g_view_x_dots != 0 && g_view_y_dots != 0 ?
-                               static_cast<float>(g_view_y_dots) / static_cast<float>(g_view_x_dots) : old_aspect_ratio;
+            g_viewport.final_aspect_ratio = g_viewport.enabled && g_viewport.x_dots != 0 && g_viewport.y_dots != 0 ?
+                               static_cast<float>(g_viewport.y_dots) / static_cast<float>(g_viewport.x_dots) : old_aspect_ratio;
         }
-        g_screen_y_dots = static_cast<int>(std::lround(g_final_aspect_ratio * g_screen_x_dots));
+        g_screen_y_dots = static_cast<int>(std::lround(g_viewport.final_aspect_ratio * g_screen_x_dots));
     }
     if (y_max != -1 && g_screen_y_dots > y_max)
     {
@@ -209,31 +210,31 @@ get_view_restart:
         g_video_entry.x_dots = g_screen_x_dots;
         g_video_entry.y_dots = g_screen_y_dots;
         std::memcpy(&g_video_table[g_adapter], &g_video_entry, sizeof(g_video_entry));
-        if (g_final_aspect_ratio == 0.0)
+        if (g_viewport.final_aspect_ratio == 0.0)
         {
-            g_final_aspect_ratio = static_cast<float>(g_screen_y_dots) / static_cast<float>(g_screen_x_dots);
+            g_viewport.final_aspect_ratio = static_cast<float>(g_screen_y_dots) / static_cast<float>(g_screen_x_dots);
         }
     }
 
-    if (g_view_x_dots != 0 && g_view_y_dots != 0 && g_view_window && g_final_aspect_ratio == 0.0)
+    if (g_viewport.x_dots != 0 && g_viewport.y_dots != 0 && g_viewport.enabled && g_viewport.final_aspect_ratio == 0.0)
     {
-        g_final_aspect_ratio = static_cast<float>(g_view_y_dots) / static_cast<float>(g_view_x_dots);
+        g_viewport.final_aspect_ratio = static_cast<float>(g_viewport.y_dots) / static_cast<float>(g_viewport.x_dots);
     }
-    else if (g_final_aspect_ratio == 0.0 && (g_view_x_dots == 0 || g_view_y_dots == 0))
+    else if (g_viewport.final_aspect_ratio == 0.0 && (g_viewport.x_dots == 0 || g_viewport.y_dots == 0))
     {
-        g_final_aspect_ratio = old_aspect_ratio;
-    }
-
-    if (g_final_aspect_ratio != old_aspect_ratio && g_view_crop)
-    {
-        aspect_ratio_crop(old_aspect_ratio, g_final_aspect_ratio);
+        g_viewport.final_aspect_ratio = old_aspect_ratio;
     }
 
-    return g_view_window != old_view_window || g_screen_x_dots != old_screen_x_dots ||
+    if (g_viewport.final_aspect_ratio != old_aspect_ratio && g_viewport.crop)
+    {
+        aspect_ratio_crop(old_aspect_ratio, g_viewport.final_aspect_ratio);
+    }
+
+    return g_viewport.enabled != old_view_window || g_screen_x_dots != old_screen_x_dots ||
             g_screen_y_dots != old_screen_y_dots ||
-            (g_view_window &&
-                (g_view_reduction != old_view_reduction || g_final_aspect_ratio != old_aspect_ratio ||
-                    g_view_x_dots != old_view_x_dots || (g_view_y_dots != old_view_y_dots && g_view_x_dots))) ? 1 : 0;
+            (g_viewport.enabled &&
+                (g_viewport.reduction != old_view_reduction || g_viewport.final_aspect_ratio != old_aspect_ratio ||
+                    g_viewport.x_dots != old_view_x_dots || (g_viewport.y_dots != old_view_y_dots && g_viewport.x_dots))) ? 1 : 0;
 }
 
 } // namespace id::ui

@@ -19,6 +19,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
+#include "engine/Viewport.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "ui/editpal.h"
@@ -684,7 +685,7 @@ resize_window()
         Xwinwidth = g_screen_x_dots;
         Xwinheight = g_screen_y_dots;
         g_screen_aspect = g_screen_y_dots/(float)g_screen_x_dots;
-        g_final_aspect_ratio = g_screen_aspect;
+        g_view.final_aspect_ratio = g_screen_aspect;
         int Xpad = 8;  // default, unless changed below
         int Xmwidth;
         if (Xdepth == 1)
@@ -1515,16 +1516,16 @@ xhandleevents()
                     }
                     bandx1 = xevent.xmotion.x;
                     bandy1 = xevent.xmotion.y;
-                    if (ABS(bandx1-bandx0)*g_final_aspect_ratio >
+                    if (ABS(bandx1-bandx0)*g_view.final_aspect_ratio >
                             ABS(bandy1-bandy0))
                     {
                         bandy1 = SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*
-                                 g_final_aspect_ratio + bandy0;
+                                 g_view.final_aspect_ratio + bandy0;
                     }
                     else
                     {
                         bandx1 = SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/
-                                 g_final_aspect_ratio + bandx0;
+                                 g_view.final_aspect_ratio + bandx0;
                     }
                     if (!banding)
                     {

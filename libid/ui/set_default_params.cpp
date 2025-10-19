@@ -7,6 +7,7 @@
 #include "engine/find_extra_param.h"
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "math/round_float_double.h"
@@ -50,9 +51,9 @@ void set_default_params()
     g_image_region.m_3rd.x = g_image_region.m_min.x;
     g_image_region.m_3rd.y = g_image_region.m_min.y;
 
-    if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
+    if (g_viewport.crop && g_viewport.final_aspect_ratio != g_screen_aspect)
     {
-        aspect_ratio_crop(g_screen_aspect, g_final_aspect_ratio);
+        aspect_ratio_crop(g_screen_aspect, g_viewport.final_aspect_ratio);
     }
     for (int i = 0; i < 4; i++)
     {

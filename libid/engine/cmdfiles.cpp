@@ -25,6 +25,7 @@
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
+#include "engine/Viewport.h"
 #include "fractals/check_orbit_name.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -467,15 +468,15 @@ static void init_vars_restart() // <ins> key init
     g_check_cur_dir = false;                           // flag to check current dire for files
     g_save_time_interval = 0;                          // no auto-save
     g_init_mode = -1;                                  // no initial video mode
-    g_view_window = false;                             // no view window
-    g_view_reduction = 4.2F;                           //
-    g_view_crop = true;                                //
+    g_viewport.enabled = false;                        // no view window
+    g_viewport.reduction = 4.2F;                       //
+    g_viewport.crop = true;                            //
     g_virtual_screens = true;                          // virtual screen modes on
-    g_final_aspect_ratio = g_screen_aspect;            //
-    g_view_y_dots = 0;                                 //
-    g_view_x_dots = 0;                                 //
-    g_keep_aspect_ratio = true;                        // keep virtual aspect
-    g_z_scroll = true;                                 // relaxed screen scrolling
+    g_viewport.final_aspect_ratio = g_screen_aspect;   //
+    g_viewport.y_dots = 0;                             //
+    g_viewport.x_dots = 0;                             //
+    g_viewport.keep_aspect_ratio = true;               // keep virtual aspect
+    g_viewport.z_scroll = true;                        // relaxed screen scrolling
     g_orbit_delay = 0;                                 // full speed orbits
     g_orbit_interval = 1;                              // plot all orbits
     g_debug_flag = DebugFlags::NONE;                   // debugging flag(s) are off
@@ -3752,32 +3753,32 @@ static CmdArgFlags cmd_view_windows(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    g_view_window = true;
-    g_view_reduction = 4.2F; // reset default values
-    g_final_aspect_ratio = g_screen_aspect;
-    g_view_crop = true;
-    g_view_x_dots = 0;
-    g_view_y_dots = 0;
+    g_viewport.enabled = true;
+    g_viewport.reduction = 4.2F; // reset default values
+    g_viewport.final_aspect_ratio = g_screen_aspect;
+    g_viewport.crop = true;
+    g_viewport.x_dots = 0;
+    g_viewport.y_dots = 0;
 
     if (cmd.total_params > 0 && cmd.float_vals[0] > 0.001)
     {
-        g_view_reduction = static_cast<float>(cmd.float_vals[0]);
+        g_viewport.reduction = static_cast<float>(cmd.float_vals[0]);
     }
     if (cmd.total_params > 1 && cmd.float_vals[1] > 0.001)
     {
-        g_final_aspect_ratio = static_cast<float>(cmd.float_vals[1]);
+        g_viewport.final_aspect_ratio = static_cast<float>(cmd.float_vals[1]);
     }
     if (cmd.total_params > 2 && cmd.yes_no_val[2] == 0)
     {
-        g_view_crop = cmd.yes_no_val[2] != 0;
+        g_viewport.crop = cmd.yes_no_val[2] != 0;
     }
     if (cmd.total_params > 3 && cmd.int_vals[3] > 0)
     {
-        g_view_x_dots = cmd.int_vals[3];
+        g_viewport.x_dots = cmd.int_vals[3];
     }
     if (cmd.total_params == 5 && cmd.int_vals[4] > 0)
     {
-        g_view_y_dots = cmd.int_vals[4];
+        g_viewport.y_dots = cmd.int_vals[4];
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }

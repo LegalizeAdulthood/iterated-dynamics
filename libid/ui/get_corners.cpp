@@ -9,6 +9,7 @@
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/sticky_orbits.h"
+#include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "helpdefs.h"
@@ -156,9 +157,9 @@ gc_loop:
         g_image_region.m_min.y = g_cur_fractal_specific->y_min;
         g_image_region.m_3rd.y = g_image_region.m_min.y;
         g_image_region.m_max.y = g_cur_fractal_specific->y_max;
-        if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
+        if (g_viewport.crop && g_viewport.final_aspect_ratio != g_screen_aspect)
         {
-            aspect_ratio_crop(g_screen_aspect, g_final_aspect_ratio);
+            aspect_ratio_crop(g_screen_aspect, g_viewport.final_aspect_ratio);
         }
         if (g_bf_math != BFMathType::NONE)
         {
@@ -342,9 +343,9 @@ gsc_loop:
         g_orbit_corner.m_max.y = g_cur_fractal_specific->y_max;
         g_orbit_corner.m_3rd = g_orbit_corner.m_min;
         g_image_region = g_orbit_corner;
-        if (g_view_crop && g_final_aspect_ratio != g_screen_aspect)
+        if (g_viewport.crop && g_viewport.final_aspect_ratio != g_screen_aspect)
         {
-            aspect_ratio_crop(g_screen_aspect, g_final_aspect_ratio);
+            aspect_ratio_crop(g_screen_aspect, g_viewport.final_aspect_ratio);
             g_orbit_corner = g_image_region;
         }
         goto gsc_loop;
