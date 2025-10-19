@@ -13,6 +13,7 @@
 #include "engine/UserData.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
+#include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "geometry/line3d.h"
 #include "io/decoder.h"
@@ -472,7 +473,14 @@ MainState big_while_loop(MainContext &context)
             g_logical_screen.y_size_dots = g_logical_screen.y_dots - 1;
         }
         // assume we save next time (except jb)
-        g_save_dac = g_save_dac == SaveDAC::NO ? SaveDAC::NEXT_TIME : SaveDAC::YES;
+        if (g_save_dac == SaveDAC::NO)
+        {
+            g_save_dac = SaveDAC::NEXT_TIME;
+        }
+        else
+        {
+            g_save_dac = SaveDAC::YES;
+        }
 
         if (g_show_file == ShowFile::LOAD_IMAGE)
         {

@@ -36,13 +36,6 @@ enum class CalcStatus
     COMPLETED = 4
 };
 
-enum class SaveDAC
-{
-    NO = 0,
-    YES = 1,
-    NEXT_TIME = 2,
-};
-
 extern int                   g_adapter;             // index into g_video_table[]
 extern long                  g_calc_time;
 extern CalcStatus            g_calc_status;
@@ -63,7 +56,6 @@ extern double                g_plot_mx2;
 extern double                g_plot_my1;
 extern double                g_plot_my2;
 extern double                g_params[];
-extern SaveDAC               g_save_dac;
 extern int                   g_save_system;
 extern int                   g_scale_map[];
 extern int                   g_screen_x_dots;

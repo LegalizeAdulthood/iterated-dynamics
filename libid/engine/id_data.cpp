@@ -37,7 +37,6 @@ double g_plot_mx1{}, g_plot_mx2{};                //
 double g_plot_my1{}, g_plot_my2{};                // real->screen multipliers
 CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //
 long g_calc_time{};                               //
-SaveDAC g_save_dac{};                             // save-the-Video DAC flag
 int g_scale_map[12]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}; // array for mapping notes to a (user defined) scale
 
 } // namespace id::engine

@@ -95,6 +95,7 @@ const char *g_julibrot_3d_options[]{
     to_string(Julibrot3DMode::RIGHT_EYE), //
     to_string(Julibrot3DMode::RED_BLUE)   //
 };
+SaveDAC g_save_dac{};                     // save-the-Video DAC flag
 
 static int s_z_pixel;
 static bool s_plotted{};

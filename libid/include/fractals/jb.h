@@ -15,6 +15,13 @@ enum class Julibrot3DMode
     RED_BLUE = 3
 };
 
+enum class SaveDAC
+{
+    NO = 0,
+    YES = 1,
+    NEXT_TIME = 2,
+};
+
 constexpr const char *to_string(const Julibrot3DMode value)
 {
     switch (value)
@@ -46,6 +53,7 @@ extern double                g_julibrot_y_min;
 extern int                   g_julibrot_z_dots;
 extern FractalType           g_new_orbit_type;
 extern const char *          g_julibrot_3d_options[];
+extern SaveDAC               g_save_dac;
 
 bool julibrot_per_image();
 int julibrot_per_pixel();

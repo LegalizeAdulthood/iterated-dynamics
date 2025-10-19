@@ -129,7 +129,7 @@ static void main_restart(const int argc, const char *const argv[], MainContext &
     driver_create_window();
     std::memcpy(g_old_dac_box, g_dac_box, 256 * 3); // save in case colors= present
     driver_set_for_text();                          // switch to text mode
-    g_save_dac = SaveDAC::NO;                     // don't save the VGA DAC
+    g_save_dac = SaveDAC::NO;                       // don't save the VGA DAC
 
     cmd_files(argc, argv);         // process the command-line
     do_pause(0);                  // pause for error msg if not batch
@@ -245,7 +245,7 @@ static bool main_restore_start(MainContext &context)
         context.resume = true;
         return true;
     }
-    g_save_dac = SaveDAC::NO; // don't save the VGA DAC
+    g_save_dac = SaveDAC::NO;
     return false;
 }
 

@@ -15,6 +15,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/FrothyBasin.h"
+#include "fractals/jb.h"
 #include "fractals/parser.h"
 #include "io/encoder.h"
 #include "io/loadfile.h"
