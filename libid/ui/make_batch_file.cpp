@@ -47,6 +47,7 @@
 #include "misc/version.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/comments.h"
+#include "ui/help.h"
 #include "ui/rotate.h"
 #include "ui/sound.h"
 #include "ui/spindac.h"

@@ -202,7 +202,7 @@ add_library(libid
     include/ui/get_video_mode.h ui/get_video_mode.cpp
     include/ui/get_view_params.h ui/get_view_params.cpp
     include/ui/goodbye.h ui/goodbye.cpp
-    ui/help.cpp
+    include/ui/help.h ui/help.cpp
     include/ui/help_title.h ui/help_title.cpp
     include/ui/history.h ui/history.cpp
     include/ui/id_keys.h

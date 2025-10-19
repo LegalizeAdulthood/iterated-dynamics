@@ -4,7 +4,6 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/engine_timer.h"
-#include "engine/id_data.h"
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/library.h"
@@ -47,6 +46,8 @@ using namespace id::ui;
 
 namespace id::help
 {
+
+HelpLabels g_help_mode{};
 
 enum
 {

@@ -6,7 +6,6 @@
 #include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/sticky_orbits.h"
 #include "engine/Viewport.h"
@@ -16,6 +15,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/double_to_string.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/zoom.h"
 

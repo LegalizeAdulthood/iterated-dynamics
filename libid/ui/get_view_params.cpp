@@ -9,6 +9,7 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/full_screen_prompt.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"

@@ -10,12 +10,10 @@
 
 using namespace id::help;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {
 
-HelpLabels g_help_mode{};                         //
 int g_adapter{};                                  // Video Adapter chosen from list in ...h
 int g_screen_x_dots{}, g_screen_y_dots{};         // # of dots on the physical screen
 int g_colors{256};                                // maximum colors available

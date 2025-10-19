@@ -13,6 +13,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/full_screen_choice.h"
 #include "ui/get_key_no_help.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"

@@ -26,6 +26,7 @@
 #include "ui/find_special_colors.h"
 #include "ui/frothy_basin.h"
 #include "ui/get_a_number.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
 #include "ui/stop_msg.h"

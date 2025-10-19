@@ -17,6 +17,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/diskvid.h"
 #include "ui/field_prompt.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/spindac.h"
 

@@ -14,6 +14,7 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
+#include "ui/help.h"
 #include "ui/slideshw.h"
 #include "ui/spindac.h"
 #include "ui/stop_msg.h"

@@ -40,6 +40,7 @@
 #include "ui/get_toggles.h"
 #include "ui/get_toggles2.h"
 #include "ui/get_view_params.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/load_params.h"
 #include "ui/make_batch_file.h"

@@ -11,6 +11,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/full_screen_choice.h"
 #include "ui/goodbye.h"
+#include "ui/help.h"
 #include "ui/help_title.h"
 #include "ui/id_keys.h"
 #include "ui/put_string_center.h"

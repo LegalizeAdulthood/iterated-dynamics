@@ -2,11 +2,10 @@
 //
 #include "ui/get_3d_params.h"
 
+#include "engine/cmdfiles.h"
+#include "fractals/fractype.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
-#include "engine/cmdfiles.h"
-#include "engine/id_data.h"
-#include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "io/check_write_file.h"
 #include "io/loadmap.h"
@@ -17,6 +16,7 @@
 #include "ui/field_prompt.h"
 #include "ui/full_screen_choice.h"
 #include "ui/full_screen_prompt.h"
+#include "ui/help.h"
 #include "ui/rotate.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"

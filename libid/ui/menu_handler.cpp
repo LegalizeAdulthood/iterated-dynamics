@@ -20,6 +20,7 @@
 #include "ui/evolve.h"
 #include "ui/framain2.h"
 #include "ui/get_fract_type.h"
+#include "ui/help.h"
 #include "ui/history.h"
 #include "ui/id_keys.h"
 #include "ui/rotate.h"

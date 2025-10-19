@@ -11,6 +11,7 @@
 #include "helpdefs.h"
 #include "io/save_timer.h"
 #include "ui/full_screen_prompt.h"
+#include "ui/help.h"
 
 #include <config/path_limits.h>
 #include <config/string_lower.h>

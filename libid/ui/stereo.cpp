@@ -19,6 +19,7 @@
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/find_special_colors.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"

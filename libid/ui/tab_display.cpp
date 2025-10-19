@@ -28,6 +28,7 @@
 #include "misc/version.h"
 #include "ui/get_calculation_time.h"
 #include "ui/get_key_no_help.h"
+#include "ui/help.h"
 #include "ui/help_title.h"
 #include "ui/id_keys.h"
 #include "ui/put_string_center.h"

@@ -23,6 +23,7 @@
 #include "ui/full_screen_choice.h"
 #include "ui/full_screen_prompt.h"
 #include "ui/get_corners.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/set_default_params.h"
 #include "ui/shell_sort.h"

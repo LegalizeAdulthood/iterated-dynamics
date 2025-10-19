@@ -4,11 +4,11 @@
 
 #include "engine/Browse.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "helpdefs.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/evolve.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 
 #include <algorithm>

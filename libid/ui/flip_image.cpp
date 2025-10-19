@@ -2,8 +2,6 @@
 //
 #include "ui/flip_image.h"
 
-#include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "fractals/fractalp.h"

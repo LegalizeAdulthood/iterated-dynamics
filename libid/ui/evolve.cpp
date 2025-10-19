@@ -21,6 +21,7 @@
 #include "math/sqr.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/zoom.h"
 

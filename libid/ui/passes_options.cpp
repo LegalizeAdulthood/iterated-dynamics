@@ -3,7 +3,6 @@
 #include "ui/passes_options.h"
 
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/sticky_orbits.h"
 #include "engine/UserData.h"
 #include "fractals/lorenz.h"
@@ -11,6 +10,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/full_screen_prompt.h"
 #include "ui/get_corners.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 
 #include <algorithm>

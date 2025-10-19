@@ -33,6 +33,7 @@
 #include "ui/get_toggles2.h"
 #include "ui/get_view_params.h"
 #include "ui/goodbye.h"
+#include "ui/help.h"
 #include "ui/history.h"
 #include "ui/id_keys.h"
 #include "ui/init_failure.h"
