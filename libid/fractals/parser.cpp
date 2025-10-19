@@ -1883,8 +1883,8 @@ int formula_per_pixel()
     }
     else
     {
-        s_vars[0].a.d.x = g_dx_pixel();
-        s_vars[0].a.d.y = g_dy_pixel();
+        s_vars[0].a.d.x = dx_pixel();
+        s_vars[0].a.d.y = dy_pixel();
     }
 
     if (g_last_init_op)

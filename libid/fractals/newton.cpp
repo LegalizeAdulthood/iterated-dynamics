@@ -42,8 +42,8 @@ static DComplex s_c_root{1.0, 0.0};
 // transform points with reciprocal function
 void invertz2(DComplex *z)
 {
-    z->x = g_dx_pixel();
-    z->y = g_dy_pixel();
+    z->x = dx_pixel();
+    z->y = dy_pixel();
     *z -= g_inversion.center;  // Normalize values to center of circle
 
     g_temp_sqr_x = sqr(z->x) + sqr(z->y);  // Get old radius

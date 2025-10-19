@@ -225,7 +225,7 @@ static bool tab_display2(char *msg)
         write_row(row++, "ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
             ixstart, ixstop, iystart, iystop, bitshift);
     */
-    write_row(row++, "minstackavail %d use_grid %s", g_soi_min_stack_available, g_use_grid ? "yes" : "no");
+    write_row(row++, "minstackavail %d use_grid %s", g_soi_min_stack_available, true ? "yes" : "no");
     put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
     *msg = 0;
 

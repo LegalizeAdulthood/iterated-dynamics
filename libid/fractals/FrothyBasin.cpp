@@ -197,8 +197,8 @@ int FrothyBasin::calc()
     }
     else
     {
-        g_old_z.x = g_dx_pixel();
-        g_old_z.y = g_dy_pixel();
+        g_old_z.x = dx_pixel();
+        g_old_z.y = dy_pixel();
     }
 
     g_temp_sqr_x = sqr(g_old_z.x);
@@ -423,8 +423,8 @@ bool froth_per_image()
 
 int froth_per_pixel()
 {
-    g_old_z.x = g_dx_pixel();
-    g_old_z.y = g_dy_pixel();
+    g_old_z.x = dx_pixel();
+    g_old_z.y = dy_pixel();
     g_temp_sqr_x = sqr(g_old_z.x);
     g_temp_sqr_y = sqr(g_old_z.y);
     return 0;

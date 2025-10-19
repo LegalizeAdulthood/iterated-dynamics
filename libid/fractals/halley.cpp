@@ -114,8 +114,8 @@ int halley_per_pixel()
     }
     else
     {
-        g_init.x = g_dx_pixel();
-        g_init.y = g_dy_pixel();
+        g_init.x = dx_pixel();
+        g_init.y = dy_pixel();
     }
 
     g_old_z = g_init;

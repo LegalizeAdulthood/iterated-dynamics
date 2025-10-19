@@ -35,7 +35,7 @@ namespace id::ui
     {
         g_ifs_definition.clear();
     }
-    free_grid_pointers();
+    free_pixel_grid();
     end_disk();
     exit_check();
     if (!g_make_parameter_file)

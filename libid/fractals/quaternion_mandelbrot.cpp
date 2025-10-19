@@ -14,8 +14,8 @@ namespace id::fractals
 
 int quaternion_jul_per_pixel()
 {
-    g_old_z.x = g_dx_pixel();
-    g_old_z.y = g_dy_pixel();
+    g_old_z.x = dx_pixel();
+    g_old_z.y = dy_pixel();
     g_float_param->x = g_params[4];
     g_float_param->y = g_params[5];
     g_quaternion_c  = g_params[0];
@@ -31,8 +31,8 @@ int quaternion_per_pixel()
     g_old_z.y = 0;
     g_float_param->x = 0;
     g_float_param->y = 0;
-    g_quaternion_c  = g_dx_pixel();
-    g_quaternion_ci = g_dy_pixel();
+    g_quaternion_c  = dx_pixel();
+    g_quaternion_ci = dy_pixel();
     g_quaternion_cj = g_params[2];
     g_quaternion_ck = g_params[3];
     return 0;

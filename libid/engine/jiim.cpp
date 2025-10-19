@@ -634,7 +634,7 @@ void InverseJulia::start()
     g_col = static_cast<int>(std::lround(m_cvt.a * m_c.x + m_cvt.b * m_c.y + m_cvt.e));
     g_row = static_cast<int>(std::lround(m_cvt.c * m_c.x + m_cvt.d * m_c.y + m_cvt.f));
 
-    fill_dx_array();
+    fill_pixel_grid();
 
     s_cursor.set_pos(g_col, g_row);
     s_cursor.show();
@@ -1144,8 +1144,8 @@ bool InverseJulia::iterate()
 
         if (!m_exact)
         {
-            m_c.x = g_dx_pixel();
-            m_c.y = g_dy_pixel();
+            m_c.x = dx_pixel();
+            m_c.y = dy_pixel();
         }
 
         m_actively_computing = true;

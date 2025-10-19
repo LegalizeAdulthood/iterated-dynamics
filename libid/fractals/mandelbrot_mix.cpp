@@ -142,8 +142,8 @@ int MandelbrotMix::per_pixel()
     }
     else
     {
-        g_init.x = g_dx_pixel();
-        g_init.y = g_dy_pixel();
+        g_init.x = dx_pixel();
+        g_init.y = dy_pixel();
     }
     g_old_z = g_tmp_z;
     cmplx_trig0(g_init, c); // c=fn1(pixel):

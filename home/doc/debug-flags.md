@@ -41,7 +41,6 @@ Example:
 | 3200 | disable auto switch back from arbitrary precision |
 | 3400 | disable auto switch from integer to float |
 | 3600 | pins the plasma corners to 1 |
-| 3800 | turns off grid pixel lookup |
 | 4010 | use old centermag conversion. |
 | 4030 | use old orbit->sound code w/integer overflow. |
 | 4200 | sets disk video cache size to minimum |

@@ -70,8 +70,8 @@ int lyapunov_type()
     }
     else
     {
-        a = g_dy_pixel();
-        b = g_dx_pixel();
+        a = dy_pixel();
+        b = dx_pixel();
     }
     g_color = lyapunov_cycles(s_filter_cycles, a, b);
     if (g_inside_color > COLOR_BLACK && g_color == 0)

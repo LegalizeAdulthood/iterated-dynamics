@@ -120,8 +120,7 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     g_color_iter = 0L;
     std::fill_n(g_rhombus_stack, 10, 0);
 
-    g_use_grid = g_debug_flag != DebugFlags::PREVENT_COORDINATE_GRID;
-    set_grid_pointers();
+    alloc_pixel_grid();
 
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::BF_MATH))
     {
@@ -255,7 +254,7 @@ init_restart:
         const DComplex size3{g_image_region.size3()};
         g_delta_x2 = static_cast<LDouble>(size3.x) / static_cast<LDouble>(g_logical_screen.y_size_dots);
         g_delta_y2 = static_cast<LDouble>(size3.y) / static_cast<LDouble>(g_logical_screen.x_size_dots);
-        fill_dx_array();
+        fill_pixel_grid();
     }
 
     // skip this if plasma to avoid 3d problems
@@ -346,7 +345,7 @@ expand_retry:
         } // end if bf_math == 0
 
         // if long double available, this is more accurate
-        fill_dx_array(); // fill up the x, y grids
+        fill_pixel_grid(); // fill up the x, y grids
 
         // re-set corners to match reality
         g_image_region.m_max.x = static_cast<double>(

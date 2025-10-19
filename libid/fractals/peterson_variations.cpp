@@ -118,8 +118,8 @@ int marks_mandel_per_pixel()
     }
     else
     {
-        g_init.x = g_dx_pixel();
-        g_init.y = g_dy_pixel();
+        g_init.x = dx_pixel();
+        g_init.y = dy_pixel();
     }
 
     if (g_use_init_orbit == InitOrbitMode::VALUE)
@@ -176,8 +176,8 @@ int marks_cplx_mand_per_pixel()
     }
     else
     {
-        g_init.x = g_dx_pixel();
-        g_init.y = g_dy_pixel();
+        g_init.x = dx_pixel();
+        g_init.y = dy_pixel();
     }
     g_old_z.x = g_init.x + g_param_z1.x; // initial perturbation of parameters set
     g_old_z.y = g_init.y + g_param_z1.y;

@@ -133,8 +133,8 @@ int phoenix_per_pixel()
     }
     else
     {
-        g_old_z.x = g_dx_pixel();
-        g_old_z.y = g_dy_pixel();
+        g_old_z.x = dx_pixel();
+        g_old_z.y = dy_pixel();
     }
     g_temp_sqr_x = sqr(g_old_z.x);  // precalculated value
     g_temp_sqr_y = sqr(g_old_z.y);
@@ -151,8 +151,8 @@ int mand_phoenix_per_pixel()
     }
     else
     {
-        g_init.x = g_dx_pixel();
-        g_init.y = g_dy_pixel();
+        g_init.x = dx_pixel();
+        g_init.y = dy_pixel();
     }
 
     if (g_use_init_orbit == InitOrbitMode::VALUE)

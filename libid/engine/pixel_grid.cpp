@@ -10,15 +10,14 @@
 namespace id::engine
 {
 
-bool g_use_grid{};
 // note that integer grid is set when integerfractal && !invert;
 // otherwise the floating point grid is set; never both at once
 // note that lx1 & ly1 values can overflow into sign bit; since
 // they're used only to add to lx0/ly0, 2s comp straightens it out
-std::vector<double> g_grid_x0;            // floating pt equivs
-std::vector<double> g_grid_y0;
-std::vector<double> g_grid_x1;
-std::vector<double> g_grid_y1;
+static std::vector<double> s_grid_x0;            // floating pt equivs
+static std::vector<double> s_grid_y0;
+static std::vector<double> s_grid_x1;
+static std::vector<double> s_grid_y1;
 
 /*
  * The following functions calculate the real and imaginary complex
@@ -41,84 +40,49 @@ std::vector<double> g_grid_y1;
  */
 
 // Real component, grid lookup version - requires dx0/dx1 arrays
-static double dx_pixel_grid()
+double dx_pixel()
 {
-    return g_grid_x0[g_col]+g_grid_x1[g_row];
-}
-
-// Real component, calculation version - does not require arrays
-static double dx_pixel_calc()
-{
-    return static_cast<double>(g_image_region.m_min.x + g_col * g_delta_x + g_row * g_delta_x2);
+    return s_grid_x0[g_col]+s_grid_x1[g_row];
 }
 
 // Imaginary component, grid lookup version - requires dy0/dy1 arrays
-static double dy_pixel_grid()
+double dy_pixel()
 {
-    return g_grid_y0[g_row]+g_grid_y1[g_col];
+    return s_grid_y0[g_row]+s_grid_y1[g_col];
 }
 
-// Imaginary component, calculation version - does not require arrays
-static double dy_pixel_calc()
+void alloc_pixel_grid()
 {
-    return static_cast<double>(g_image_region.m_max.y - g_row * g_delta_y - g_col * g_delta_y2);
+    free_pixel_grid();
+    s_grid_x0.resize(g_logical_screen.x_dots);
+    s_grid_y1.resize(g_logical_screen.x_dots);
+    s_grid_y0.resize(g_logical_screen.y_dots);
+    s_grid_x1.resize(g_logical_screen.y_dots);
 }
 
-double (*g_dx_pixel)(){dx_pixel_calc};
-double (*g_dy_pixel)(){dy_pixel_calc};
-
-void set_pixel_calc_functions()
+void free_pixel_grid()
 {
-    if (g_use_grid)
+    s_grid_x0.clear();
+    s_grid_y0.clear();
+    s_grid_x1.clear();
+    s_grid_y1.clear();
+}
+
+void fill_pixel_grid()
+{
+    s_grid_x0[0] = g_image_region.m_min.x; // fill up the x, y grids
+    s_grid_y0[0] = g_image_region.m_max.y;
+    s_grid_y1[0] = 0;
+    s_grid_x1[0] = 0;
+    for (int i = 1; i < g_logical_screen.x_dots; i++)
     {
-        g_dx_pixel = dx_pixel_grid;
-        g_dy_pixel = dy_pixel_grid;
+        s_grid_x0[i] = s_grid_x0[0] + i * static_cast<double>(g_delta_x);
+        s_grid_y1[i] = s_grid_y1[0] - i * static_cast<double>(g_delta_y2);
     }
-    else
+    for (int i = 1; i < g_logical_screen.y_dots; i++)
     {
-        g_dx_pixel = dx_pixel_calc;
-        g_dy_pixel = dy_pixel_calc;
-    }
-}
-
-void set_grid_pointers()
-{
-    free_grid_pointers();
-    g_grid_x0.resize(g_logical_screen.x_dots);
-    g_grid_y1.resize(g_logical_screen.x_dots);
-
-    g_grid_y0.resize(g_logical_screen.y_dots);
-    g_grid_x1.resize(g_logical_screen.y_dots);
-
-    set_pixel_calc_functions();
-}
-
-void free_grid_pointers()
-{
-    g_grid_x0.clear();
-    g_grid_y0.clear();
-    g_grid_x1.clear();
-    g_grid_y1.clear();
-}
-
-void fill_dx_array()
-{
-    if (g_use_grid)
-    {
-        g_grid_x0[0] = g_image_region.m_min.x;              // fill up the x, y grids
-        g_grid_y0[0] = g_image_region.m_max.y;
-        g_grid_y1[0] = 0;
-        g_grid_x1[0] = 0;
-        for (int i = 1; i < g_logical_screen.x_dots; i++)
-        {
-            g_grid_x0[i] = static_cast<double>(g_grid_x0[0] + i * g_delta_x);
-            g_grid_y1[i] = static_cast<double>(g_grid_y1[0] - i * g_delta_y2);
-        }
-        for (int i = 1; i < g_logical_screen.y_dots; i++)
-        {
-            g_grid_y0[i] = static_cast<double>(g_grid_y0[0] - i * g_delta_y);
-            g_grid_x1[i] = static_cast<double>(g_grid_x1[0] + i * g_delta_x2);
-        }
+        s_grid_y0[i] = s_grid_y0[0] - i * static_cast<double>(g_delta_y);
+        s_grid_x1[i] = s_grid_x1[0] + i * static_cast<double>(g_delta_x2);
     }
 }
 

@@ -530,14 +530,6 @@ static void init_calc_fract()
             g_true_color = false;
         }
     }
-    if (!g_use_grid)
-    {
-        if (g_user.std_calc_mode != CalcMode::ORBIT)
-        {
-            g_std_calc_mode = CalcMode::ONE_PASS;
-            g_user.std_calc_mode = CalcMode::ONE_PASS;
-        }
-    }
 
     init_misc();  // set up some variables in parser.c
 
@@ -1214,8 +1206,8 @@ int calc_mandelbrot_type()
     }
     else
     {
-        g_init.x = g_dx_pixel();
-        g_init.y = g_dy_pixel();
+        g_init.x = dx_pixel();
+        g_init.y = dy_pixel();
     }
     g_keyboard_check_interval--;                // Only check the keyboard sometimes
     if (g_keyboard_check_interval < 0)
@@ -1360,7 +1352,7 @@ int standard_fractal_type()
             clear_bf(g_saved_z_bf.y);
         }
     }
-    g_init.y = g_dy_pixel();
+    g_init.y = dy_pixel();
     if (g_distance_estimator)
     {
         if (g_use_old_distance_estimator)

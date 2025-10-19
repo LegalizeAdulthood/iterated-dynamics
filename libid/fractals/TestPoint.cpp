@@ -69,8 +69,8 @@ void TestPoint::iterate()
     {
         if (g_col <= g_i_stop_pt.x) // look at each point on screen
         {
-            g_init.x = g_dx_pixel();
-            g_init.y = g_dy_pixel();
+            g_init.x = dx_pixel();
+            g_init.y = dy_pixel();
             int color =
                 per_pixel(g_init.x, g_init.y, g_param_z1.x, g_param_z1.y, g_max_iterations, g_inside_color);
             if (color >= g_colors)
