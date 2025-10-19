@@ -75,6 +75,10 @@ enum class SecretMode
     RANDOM_RUN = 9,
 };
 
+bool g_has_inverse{};                                 // can switch between corresponding Julia/Mandelbrot set
+DComplex g_julia_c{JULIA_C_NOT_SET, JULIA_C_NOT_SET}; // C-plane location for Julia set
+DComplex g_save_c{-3000.0, -3000.0};                  //
+
 constexpr int NUMBER_FONT_HEIGHT{8};
 
 static bool s_show_numbers{};             // toggle for display of coords
@@ -99,9 +103,6 @@ static SecretMode s_secret_mode{};        //
 static float s_lucky_x{};                 //
 static float s_lucky_y{};                 //
 static CrossHairCursor s_cursor;          //
-
-DComplex g_julia_c{JULIA_C_NOT_SET, JULIA_C_NOT_SET}; //
-DComplex g_save_c{-3000.0, -3000.0};                  //
 
 static void set_aspect(double aspect)
 {

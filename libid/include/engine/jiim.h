@@ -13,9 +13,11 @@ enum class JIIMType
     ORBIT
 };
 
-extern math::DComplex        g_julia_c;
-extern math::DComplex        g_save_c;
-constexpr double             JULIA_C_NOT_SET{100000.0};
+constexpr double JULIA_C_NOT_SET{100000.0}; //
+
+extern bool g_has_inverse;                  //
+extern math::DComplex g_julia_c;            //
+extern math::DComplex g_save_c;             //
 
 void jiim(JIIMType which);
 math::DComplex pop_float();

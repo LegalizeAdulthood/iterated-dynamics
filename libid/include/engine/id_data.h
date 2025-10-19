@@ -16,7 +16,6 @@ namespace id::engine
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern int                   g_colors;
-extern bool                  g_has_inverse;
 extern help::HelpLabels      g_help_mode;
 extern long                  g_max_iterations;
 extern double                g_params[];
