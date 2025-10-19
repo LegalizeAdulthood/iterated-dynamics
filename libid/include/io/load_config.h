@@ -9,6 +9,14 @@
 namespace id::io
 {
 
+enum class ConfigStatus
+{
+    OK = 0,
+    BAD_WITH_MESSAGE = 1,
+    BAD_NO_MESSAGE = -1
+};
+
+extern ConfigStatus          g_bad_config;
 extern int                   g_cfg_line_nums[ui::MAX_VIDEO_MODES];
 
 void load_config();

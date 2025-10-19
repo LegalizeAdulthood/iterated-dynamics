@@ -38,13 +38,6 @@ enum class CalcStatus
     COMPLETED = 4
 };
 
-enum class ConfigStatus
-{
-    OK = 0,
-    BAD_WITH_MESSAGE = 1,
-    BAD_NO_MESSAGE = -1
-};
-
 enum class SaveDAC
 {
     NO = 0,
@@ -56,7 +49,6 @@ using FilenameStack = std::vector<std::string>;
 
 extern int                   g_adapter;             // index into g_video_table[]
 extern bool                  g_auto_browse;
-extern ConfigStatus          g_bad_config;
 extern std::filesystem::path g_browse_mask;
 extern bool                  g_browsing;
 extern bool                  g_browse_check_fractal_params;

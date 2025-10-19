@@ -25,6 +25,7 @@ using namespace id::ui;
 namespace id::io
 {
 
+ConfigStatus g_bad_config{}; // 'id.cfg' ok?
 int g_cfg_line_nums[MAX_VIDEO_MODES]{};
 
 /* load_config

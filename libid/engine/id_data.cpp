@@ -31,7 +31,6 @@ LDouble g_delta_x2{}, g_delta_y2{};                                    // screen
 double g_delta_min{};                                                  // same as a double
 double g_params[MAX_PARAMS]{};                                         // parameters
 double g_potential_params[3]{};                                        // three potential parameters
-ConfigStatus g_bad_config{};                                           // 'id.cfg' ok?
 bool g_has_inverse{};                                                  //
                       // user_xxx is what the user wants, vs what we may be forced to do
 int g_user_periodicity_value{};         //
