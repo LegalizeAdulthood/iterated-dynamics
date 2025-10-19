@@ -4,7 +4,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/convert_center_mag.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/work_list.h"
 #include "fractals/lorenz.h"

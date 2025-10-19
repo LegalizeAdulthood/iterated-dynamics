@@ -3,7 +3,6 @@
 #include "io/library.h"
 
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "io/find_file.h"
 #include "io/special_dirs.h"
 

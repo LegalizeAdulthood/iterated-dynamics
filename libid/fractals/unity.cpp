@@ -5,7 +5,6 @@
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "math/sqr.h"
 
 #include <cmath>
