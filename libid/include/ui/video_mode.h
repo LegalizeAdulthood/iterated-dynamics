@@ -27,6 +27,7 @@ struct VideoInfo
     char comment[26];     // Comments (UNTESTED, etc)
 };
 
+extern VideoInfo             g_video_entry;
 extern VideoInfo             g_video_table[];
 extern int                   g_video_table_len;
 

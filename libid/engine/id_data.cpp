@@ -18,7 +18,6 @@ using namespace id::ui;
 namespace id::engine
 {
 
-VideoInfo g_video_entry{};                        //
 HelpLabels g_help_mode{};                         //
 int g_adapter{};                                  // Video Adapter chosen from list in ...h
 std::filesystem::path g_fractal_search_dir1;      //
