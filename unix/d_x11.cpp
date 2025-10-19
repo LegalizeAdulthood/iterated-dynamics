@@ -22,6 +22,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "helpdefs.h"
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"

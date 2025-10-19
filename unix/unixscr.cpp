@@ -18,6 +18,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/LogicalScreen.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "ui/editpal.h"
