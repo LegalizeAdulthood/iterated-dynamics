@@ -4,6 +4,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "io/library.h"
 #include "io/search_path.h"
 
 #include <filesystem>

@@ -17,8 +17,6 @@ namespace id::engine
 
 HelpLabels g_help_mode{};                         //
 int g_adapter{};                                  // Video Adapter chosen from list in ...h
-std::filesystem::path g_fractal_search_dir1;      //
-std::filesystem::path g_fractal_search_dir2;      //
 int g_screen_x_dots{}, g_screen_y_dots{};         // # of dots on the physical screen
 int g_colors{256};                                // maximum colors available
 long g_max_iterations{};                          // try this many iterations

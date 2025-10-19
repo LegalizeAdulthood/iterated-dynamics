@@ -2,8 +2,6 @@
 //
 #pragma once
 
-#include <filesystem>
-
 namespace id::ui
 {
 struct VideoInfo;
@@ -36,8 +34,6 @@ extern int                   g_adapter;             // index into g_video_table[
 extern long                  g_calc_time;
 extern CalcStatus            g_calc_status;
 extern int                   g_colors;
-extern std::filesystem::path g_fractal_search_dir1;
-extern std::filesystem::path g_fractal_search_dir2;
 extern bool                  g_has_inverse;
 extern help::HelpLabels      g_help_mode;
 extern long                  g_max_iterations;

@@ -5,8 +5,8 @@
 #include "test_data.h"
 
 #include <engine/cmdfiles.h>
-#include <engine/id_data.h>
 #include <io/CurrentPathSaver.h>
+#include <io/library.h>
 #include <io/search_path.h>
 
 #include <gtest/gtest.h>

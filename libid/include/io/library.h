@@ -35,6 +35,9 @@ enum class WriteFile
     SOUND,
 };
 
+extern std::filesystem::path g_fractal_search_dir1;
+extern std::filesystem::path g_fractal_search_dir2;
+
 void clear_read_library_path();
 void add_read_library(std::filesystem::path path);
 

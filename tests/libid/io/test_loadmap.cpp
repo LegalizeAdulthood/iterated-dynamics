@@ -6,6 +6,7 @@
 #include "test_data.h"
 
 #include <engine/id_data.h>
+#include <io/library.h>
 #include <misc/ValueSaver.h>
 #include <ui/rotate.h>
 

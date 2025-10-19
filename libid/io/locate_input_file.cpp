@@ -3,6 +3,7 @@
 #include "io/locate_input_file.h"
 
 #include "engine/id_data.h"
+#include "io/library.h"
 #include "io/special_dirs.h"
 
 #include <filesystem>

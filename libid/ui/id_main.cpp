@@ -12,6 +12,7 @@
 #include "fractals/jb.h"
 #include "helpcom.h"
 #include "helpdefs.h"
+#include "io/library.h"
 #include "io/load_config.h"
 #include "io/loadfile.h"
 #include "io/special_dirs.h"
