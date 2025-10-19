@@ -1194,12 +1194,12 @@ void X11Driver::ev_button_press(XEvent *xevent)
                                ABS(bandy1-bandy0));
             bandx1 = xevent->xmotion.x;
             bandy1 = xevent->xmotion.y;
-            if (ABS(bandx1-bandx0)*g_view.final_aspect_ratio > ABS(bandy1-bandy0))
+            if (ABS(bandx1-bandx0)*g_viewport.final_aspect_ratio > ABS(bandy1-bandy0))
                 bandy1 =
-                    SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*g_view.final_aspect_ratio + bandy0;
+                    SIGN(bandy1-bandy0)*ABS(bandx1-bandx0)*g_viewport.final_aspect_ratio + bandy0;
             else
                 bandx1 =
-                    SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/g_view.final_aspect_ratio + bandx0;
+                    SIGN(bandx1-bandx0)*ABS(bandy1-bandy0)/g_viewport.final_aspect_ratio + bandx0;
 
             if (!banding)
             {
@@ -1681,7 +1681,7 @@ bool X11Driver::resize()
         m_min_width = g_screen_x_dots;
         m_min_height = g_screen_y_dots;
         g_screen_aspect = g_screen_y_dots/(float) g_screen_x_dots;
-        g_view.final_aspect_ratio = g_screen_aspect;
+        g_viewport.final_aspect_ratio = g_screen_aspect;
         int Xpad = 9;
         int Xmwidth;
         if (m_depth == 1)
