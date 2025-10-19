@@ -18,6 +18,7 @@
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
+#include "engine/UserData.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -882,14 +883,14 @@ static void write_batch_params(
             put_param(param.c_str());
         }
 
-        if (g_user_std_calc_mode != CalcMode::SOLID_GUESS)
+        if (g_user.std_calc_mode != CalcMode::SOLID_GUESS)
         {
-            put_param(" passes=%c", g_user_std_calc_mode);
+            put_param(" passes=%c", g_user.std_calc_mode);
         }
 
         if (g_stop_pass != 0)
         {
-            put_param(" passes=%c%c", g_user_std_calc_mode, static_cast<char>(g_stop_pass) + '0');
+            put_param(" passes=%c%c", g_user.std_calc_mode, static_cast<char>(g_stop_pass) + '0');
         }
 
         if (g_use_center_mag)
@@ -1229,9 +1230,9 @@ static void write_batch_params(
         {
             put_param(" olddemmcolors=y");
         }
-        if (g_user_biomorph_value != -1)
+        if (g_user.biomorph_value != -1)
         {
-            put_param(" biomorph=%d", g_user_biomorph_value);
+            put_param(" biomorph=%d", g_user.biomorph_value);
         }
         if (g_finite_attractor)
         {
@@ -1582,7 +1583,7 @@ static void write_batch_params(
             put_param(" screencoords=yes");
         }
 
-        if (g_user_std_calc_mode == CalcMode::ORBIT && g_set_orbit_corners && g_keep_screen_coords)
+        if (g_user.std_calc_mode == CalcMode::ORBIT && g_set_orbit_corners && g_keep_screen_coords)
         {
             put_param(" orbitcorners=");
             const int x_digits = get_prec(g_orbit_corner.m_min.x, g_orbit_corner.m_max.x, g_orbit_corner.m_3rd.x);

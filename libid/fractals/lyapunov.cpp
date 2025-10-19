@@ -8,6 +8,7 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/pixel_grid.h"
+#include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "fractals/population.h"
@@ -142,10 +143,10 @@ bool lyapunov_per_image()
         stop_msg("Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         g_inside_color = 1;
     }
-    if (g_user_std_calc_mode == CalcMode::ORBIT)
+    if (g_user.std_calc_mode == CalcMode::ORBIT)
     {
         // Oops,lyapunov type
-        g_user_std_calc_mode = CalcMode::ONE_PASS;  // doesn't use new & breaks orbits
+        g_user.std_calc_mode = CalcMode::ONE_PASS;  // doesn't use new & breaks orbits
         g_std_calc_mode = CalcMode::ONE_PASS;
     }
     return true;

@@ -22,6 +22,7 @@
 #include <engine/soi.h>
 #include <engine/sticky_orbits.h>
 #include <engine/trig_fns.h>
+#include <engine/UserData.h>
 #include <engine/Viewport.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
@@ -1538,76 +1539,76 @@ TEST_F(TestParameterCommand, iterIncrIgnored)
 
 TEST_F(TestParameterCommandError, passesInvalidValue)
 {
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
 
     exec_cmd_arg("passes=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user_std_calc_mode);
+    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user.std_calc_mode);
 }
 
 TEST_F(TestParameterCommandError, passesMissingValue)
 {
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
 
     exec_cmd_arg("passes=", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user_std_calc_mode);
+    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user.std_calc_mode);
 }
 
 TEST_F(TestParameterCommand, passesBoundaryTrace)
 {
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
 
     exec_cmd_arg("passes=b", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(CalcMode::BOUNDARY_TRACE, g_user_std_calc_mode);
+    EXPECT_EQ(CalcMode::BOUNDARY_TRACE, g_user.std_calc_mode);
 }
 
 TEST_F(TestParameterCommand, passesSolidGuess)
 {
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
     ValueSaver saved_stop_pass{g_stop_pass, -1};
 
     exec_cmd_arg("passes=g", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(CalcMode::SOLID_GUESS, g_user_std_calc_mode);
+    EXPECT_EQ(CalcMode::SOLID_GUESS, g_user.std_calc_mode);
     EXPECT_EQ(0, g_stop_pass);
 }
 
 TEST_F(TestParameterCommand, passesSolidGuess3)
 {
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
     ValueSaver saved_stop_pass{g_stop_pass, -1};
 
     exec_cmd_arg("passes=g3", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(CalcMode::SOLID_GUESS, g_user_std_calc_mode);
+    EXPECT_EQ(CalcMode::SOLID_GUESS, g_user.std_calc_mode);
     EXPECT_EQ(3, g_stop_pass);
 }
 
 TEST_F(TestParameterCommand, passesPerturbation)
 {
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
 
     exec_cmd_arg("passes=p", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(CalcMode::PERTURBATION, g_user_std_calc_mode);
+    EXPECT_EQ(CalcMode::PERTURBATION, g_user.std_calc_mode);
 }
 
 TEST_F(TestParameterCommandError, passesSolidGuessNonNumeric)
 {
-    ValueSaver saved_user_std_calc_mode{g_user_std_calc_mode, static_cast<CalcMode>('Z')};
+    ValueSaver saved_user_std_calc_mode{g_user.std_calc_mode, static_cast<CalcMode>('Z')};
 
     exec_cmd_arg("passes=gg", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user_std_calc_mode);
+    EXPECT_EQ(static_cast<CalcMode>('Z'), g_user.std_calc_mode);
 }
 
 TEST_F(TestParameterCommand, isMandYes)
@@ -2701,12 +2702,12 @@ TEST_F(TestParameterCommand, fastRestoreYes)
 
 TEST_F(TestParameterCommand, biomorph)
 {
-    ValueSaver saved_user_biomorph_value{g_user_biomorph_value, 999};
+    ValueSaver saved_user_biomorph_value{g_user.biomorph_value, 999};
 
     exec_cmd_arg("biomorph=52");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(52, g_user_biomorph_value);
+    EXPECT_EQ(52, g_user.biomorph_value);
 }
 
 TEST_F(TestParameterCommand, orbitSaveRaw)
@@ -3022,72 +3023,72 @@ TEST_F(TestParameterCommand, scaleMapValues)
 
 TEST_F(TestParameterCommand, periodicityNo)
 {
-    ValueSaver saved_user_periodicity_value{g_user_periodicity_value, -999};
+    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
 
     exec_cmd_arg("periodicity=no");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(0, g_user_periodicity_value);
+    EXPECT_EQ(0, g_user.periodicity_value);
 }
 
 TEST_F(TestParameterCommand, periodicityYes)
 {
-    ValueSaver saved_user_periodicity_value{g_user_periodicity_value, -999};
+    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
 
     exec_cmd_arg("periodicity=yes");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(1, g_user_periodicity_value);
+    EXPECT_EQ(1, g_user.periodicity_value);
 }
 
 TEST_F(TestParameterCommand, periodicityShow)
 {
-    ValueSaver saved_user_periodicity_value{g_user_periodicity_value, -999};
+    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
 
     exec_cmd_arg("periodicity=show");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-1, g_user_periodicity_value);
+    EXPECT_EQ(-1, g_user.periodicity_value);
 }
 
 TEST_F(TestParameterCommand, periodicityValue)
 {
-    ValueSaver saved_user_periodicity_value{g_user_periodicity_value, -999};
+    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
 
     exec_cmd_arg("periodicity=24");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(24, g_user_periodicity_value);
+    EXPECT_EQ(24, g_user.periodicity_value);
 }
 
 TEST_F(TestParameterCommand, periodicityShowValue)
 {
-    ValueSaver saved_user_periodicity_value{g_user_periodicity_value, -999};
+    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
 
     exec_cmd_arg("periodicity=-24");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-24, g_user_periodicity_value);
+    EXPECT_EQ(-24, g_user.periodicity_value);
 }
 
 TEST_F(TestParameterCommand, periodicityValueClampedHigh)
 {
-    ValueSaver saved_user_periodicity_value{g_user_periodicity_value, -999};
+    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
 
     exec_cmd_arg("periodicity=500");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(255, g_user_periodicity_value);
+    EXPECT_EQ(255, g_user.periodicity_value);
 }
 
 TEST_F(TestParameterCommand, periodicityValueClampedLow)
 {
-    ValueSaver saved_user_periodicity_value{g_user_periodicity_value, -999};
+    ValueSaver saved_user_periodicity_value{g_user.periodicity_value, -999};
 
     exec_cmd_arg("periodicity=-500");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(-255, g_user_periodicity_value);
+    EXPECT_EQ(-255, g_user.periodicity_value);
 }
 
 TEST_F(TestParameterCommand, logMapNo)
@@ -3337,7 +3338,7 @@ TEST_F(TestParameterCommand, decompTwoValues)
 
 TEST_F(TestParameterCommand, distEstOneValue)
 {
-    ValueSaver saved_user_distance_estimator_value{g_user_distance_estimator_value, -99L};
+    ValueSaver saved_user_distance_estimator_value{g_user.distance_estimator_value, -99L};
     ValueSaver saved_distance_estimator_width_factor{g_distance_estimator_width_factor, -99};
     ValueSaver saved_distance_estimator_x_dots{g_distance_estimator_x_dots, -99};
     ValueSaver saved_distance_estimator_y_dots{g_distance_estimator_y_dots, -99};
@@ -3345,7 +3346,7 @@ TEST_F(TestParameterCommand, distEstOneValue)
     exec_cmd_arg("distest=4");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(4L, g_user_distance_estimator_value);
+    EXPECT_EQ(4L, g_user.distance_estimator_value);
     EXPECT_EQ(71, g_distance_estimator_width_factor);
     EXPECT_EQ(0, g_distance_estimator_x_dots);
     EXPECT_EQ(0, g_distance_estimator_y_dots);
@@ -3353,7 +3354,7 @@ TEST_F(TestParameterCommand, distEstOneValue)
 
 TEST_F(TestParameterCommand, distEstTwoValues)
 {
-    ValueSaver saved_user_distance_estimator_value{g_user_distance_estimator_value, -99L};
+    ValueSaver saved_user_distance_estimator_value{g_user.distance_estimator_value, -99L};
     ValueSaver saved_distance_estimator_width_factor{g_distance_estimator_width_factor, -99};
     ValueSaver saved_distance_estimator_x_dots{g_distance_estimator_x_dots, -99};
     ValueSaver saved_distance_estimator_y_dots{g_distance_estimator_y_dots, -99};
@@ -3361,7 +3362,7 @@ TEST_F(TestParameterCommand, distEstTwoValues)
     exec_cmd_arg("distest=4/5");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(4L, g_user_distance_estimator_value);
+    EXPECT_EQ(4L, g_user.distance_estimator_value);
     EXPECT_EQ(5, g_distance_estimator_width_factor);
     EXPECT_EQ(0, g_distance_estimator_x_dots);
     EXPECT_EQ(0, g_distance_estimator_y_dots);
@@ -3369,7 +3370,7 @@ TEST_F(TestParameterCommand, distEstTwoValues)
 
 TEST_F(TestParameterCommand, distEstFourValues)
 {
-    ValueSaver saved_user_distance_estimator_value{g_user_distance_estimator_value, -99L};
+    ValueSaver saved_user_distance_estimator_value{g_user.distance_estimator_value, -99L};
     ValueSaver saved_distance_estimator_width_factor{g_distance_estimator_width_factor, -99};
     ValueSaver saved_distance_estimator_x_dots{g_distance_estimator_x_dots, -99};
     ValueSaver saved_distance_estimator_y_dots{g_distance_estimator_y_dots, -99};
@@ -3377,7 +3378,7 @@ TEST_F(TestParameterCommand, distEstFourValues)
     exec_cmd_arg("distest=4/5/6/7");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(4L, g_user_distance_estimator_value);
+    EXPECT_EQ(4L, g_user.distance_estimator_value);
     EXPECT_EQ(5, g_distance_estimator_width_factor);
     EXPECT_EQ(6, g_distance_estimator_x_dots);
     EXPECT_EQ(7, g_distance_estimator_y_dots);

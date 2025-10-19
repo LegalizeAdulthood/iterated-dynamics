@@ -10,6 +10,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/potential.h"
+#include "engine/UserData.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
@@ -854,11 +855,11 @@ resumeloop:                             // return here on failed overlays
                     || mms_value == MainState::RESTART))
             {
                 g_quick_calc = false;
-                g_user_std_calc_mode = g_old_std_calc_mode;
+                g_user.std_calc_mode = g_old_std_calc_mode;
             }
             if (g_quick_calc && g_calc_status != CalcStatus::COMPLETED)
             {
-                g_user_std_calc_mode = CalcMode::ONE_PASS;
+                g_user.std_calc_mode = CalcMode::ONE_PASS;
             }
             if (mms_value == MainState::IMAGE_START || mms_value == MainState::RESTORE_START ||
                 mms_value == MainState::RESTART)

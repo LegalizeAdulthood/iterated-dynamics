@@ -5,6 +5,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/sticky_orbits.h"
+#include "engine/UserData.h"
 #include "fractals/lorenz.h"
 #include "helpdefs.h"
 #include "misc/ValueSaver.h"
@@ -45,7 +46,7 @@ pass_option_restart:
 
     choices[++k] = "Periodicity (0=off, <0=show, >0=on, -255..+255)";
     values[k].type = 'i';
-    int old_periodicity = g_user_periodicity_value;
+    int old_periodicity = g_user.periodicity_value;
     values[k].uval.ival = old_periodicity;
 
     choices[++k] = "Orbit delay (0 = none)";
@@ -89,10 +90,10 @@ pass_option_restart:
     k = -1;
     int j = 0;   // return code
 
-    g_user_periodicity_value = values[++k].uval.ival;
-    g_user_periodicity_value = std::min(g_user_periodicity_value, 255);
-    g_user_periodicity_value = std::max(g_user_periodicity_value, -255);
-    if (g_user_periodicity_value != old_periodicity)
+    g_user.periodicity_value = values[++k].uval.ival;
+    g_user.periodicity_value = std::min(g_user.periodicity_value, 255);
+    g_user.periodicity_value = std::max(g_user.periodicity_value, -255);
+    if (g_user.periodicity_value != old_periodicity)
     {
         j = 1;
     }

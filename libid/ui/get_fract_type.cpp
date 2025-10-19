@@ -10,6 +10,7 @@
 #include "engine/potential.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
+#include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
@@ -680,7 +681,7 @@ gfp_top:
             param_values[prompt_num++].uval.Lval = old_bailout;
             param_values[prompt_num].type = '*';
             tmp_ptr = type_name;
-            if (g_user_biomorph_value != -1)
+            if (g_user.biomorph_value != -1)
             {
                 orbit_bailout = 100;
                 tmp_ptr = "biomorph";

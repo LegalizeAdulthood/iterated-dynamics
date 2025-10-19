@@ -14,6 +14,7 @@
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
+#include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
@@ -545,7 +546,7 @@ void save_history_info()
     current.eye_separation = g_eye_separation;
     current.glasses_type = g_glasses_type;
     current.outside_color = g_outside_color;
-    current.user_std_calc_mode = static_cast<char>(g_user_std_calc_mode);
+    current.user_std_calc_mode = static_cast<char>(g_user.std_calc_mode);
     current.three_pass = g_three_pass;
     current.stop_pass = g_stop_pass;
     current.dist_est = g_distance_estimator;
@@ -672,7 +673,7 @@ void restore_history_info(const int i)
     g_inversion.params = last.inversion;
     g_decomp[0] = last.decomp[0];
     g_decomp[1] = last.decomp[1];
-    g_user_biomorph_value = last.biomorph;
+    g_user.biomorph_value = last.biomorph;
     g_biomorph = last.biomorph;
     g_force_symmetry = last.force_symmetry;
     g_sphere = last.init_3d[0] != 0;                       // sphere? 1 = yes, 0 = no
@@ -709,12 +710,12 @@ void restore_history_info(const int i)
     g_eye_separation = last.eye_separation;
     g_glasses_type = last.glasses_type;
     g_outside_color = last.outside_color;
-    g_user_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
+    g_user.std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
     g_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
     g_three_pass = last.three_pass != 0;
     g_stop_pass = last.stop_pass;
     g_distance_estimator = last.dist_est;
-    g_user_distance_estimator_value = last.dist_est;
+    g_user.distance_estimator_value = last.dist_est;
     g_trig_index[0] = last.trig_index[0];
     g_trig_index[1] = last.trig_index[1];
     g_trig_index[2] = last.trig_index[2];
@@ -723,7 +724,7 @@ void restore_history_info(const int i)
     g_init_orbit = last.init_orbit;
     g_use_init_orbit = last.use_init_orbit;
     g_periodicity_check = last.periodicity_check;
-    g_user_periodicity_value = last.periodicity_check;
+    g_user.periodicity_value = last.periodicity_check;
     g_disk_16_bit = last.disk_16_bit;
     g_release = last.release;
     g_display_3d = last.display_3d;

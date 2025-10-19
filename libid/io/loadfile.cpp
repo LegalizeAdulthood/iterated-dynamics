@@ -18,6 +18,7 @@
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
+#include "engine/UserData.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"
@@ -337,7 +338,7 @@ static void backwards_info1(const FractalInfo &read_info)
         }
         g_decomp[0] = read_info.decomp[0];
         g_decomp[1] = read_info.decomp[1];
-        g_user_biomorph_value = read_info.biomorph;
+        g_user.biomorph_value = read_info.biomorph;
         g_force_symmetry = static_cast<SymmetryType>(read_info.symmetry);
     }
 }
@@ -399,7 +400,7 @@ static void backwards_info3(const FractalInfo &read_info)
 
     g_calc_status = CalcStatus::PARAMS_CHANGED; // defaults if version < 4
     g_image_region.m_3rd = g_image_region.m_min;
-    g_user_distance_estimator_value = 0;
+    g_user.distance_estimator_value = 0;
     g_calc_time = 0;
 }
 
@@ -411,14 +412,14 @@ static void backwards_info4(const FractalInfo &read_info)
         g_image_region.m_3rd.x = read_info.x3rd;
         g_image_region.m_3rd.y = read_info.y3rd;
         g_calc_status = static_cast<CalcStatus>(read_info.calc_status);
-        g_user_std_calc_mode = static_cast<CalcMode>(read_info.std_calc_mode);
+        g_user.std_calc_mode = static_cast<CalcMode>(read_info.std_calc_mode);
         g_three_pass = false;
-        if (g_user_std_calc_mode == static_cast<CalcMode>(127))
+        if (g_user.std_calc_mode == static_cast<CalcMode>(127))
         {
             g_three_pass = true;
-            g_user_std_calc_mode = CalcMode::THREE_PASS;
+            g_user.std_calc_mode = CalcMode::THREE_PASS;
         }
-        g_user_distance_estimator_value = read_info.dist_est_old;
+        g_user.distance_estimator_value = read_info.dist_est_old;
         g_bailout = read_info.bailout_old;
         g_calc_time = read_info.calc_time;
         g_trig_index[0] = static_cast<TrigFn>(read_info.trig_index[0]);
@@ -429,7 +430,7 @@ static void backwards_info4(const FractalInfo &read_info)
         g_init_orbit.x = read_info.init_orbit[0];
         g_init_orbit.y = read_info.init_orbit[1];
         g_use_init_orbit = static_cast<InitOrbitMode>(read_info.use_init_orbit);
-        g_user_periodicity_value = read_info.periodicity;
+        g_user.periodicity_value = read_info.periodicity;
     }
 
     g_potential.store_16bit = false;
@@ -622,7 +623,7 @@ static void backwards_info11(const FractalInfo &read_info)
     if (read_info.info_version > 10) // post-version 19.20
     {
         g_log_map_flag = read_info.log_map;
-        g_user_distance_estimator_value = read_info.dist_est;
+        g_user.distance_estimator_value = read_info.dist_est;
     }
 }
 
@@ -1619,11 +1620,11 @@ static void backwards_compat(const FractalInfo &info)
         break;
     case DeprecatedFractalType::DEM_M:
         set_fractal_type(FractalType::MANDEL);
-        g_user_distance_estimator_value = (info.y_dots - 1) * 2;
+        g_user.distance_estimator_value = (info.y_dots - 1) * 2;
         break;
     case DeprecatedFractalType::DEM_J:
         set_fractal_type(FractalType::JULIA);
-        g_user_distance_estimator_value = (info.y_dots - 1) * 2;
+        g_user.distance_estimator_value = (info.y_dots - 1) * 2;
         break;
     default:
         break;

@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
 #include "engine/log_map.h"
+#include "engine/UserData.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "io/save_timer.h"
@@ -66,23 +67,23 @@ int get_toggles()
     values[k].uval.ch.list_len = std::size(calc_modes);
     values[k].uval.ch.list = calc_modes;
     values[k].uval.ch.val =
-        g_user_std_calc_mode == CalcMode::ONE_PASS ? 0
-        : g_user_std_calc_mode == CalcMode::TWO_PASS ? 1
-        : g_user_std_calc_mode == CalcMode::THREE_PASS ? 2
-        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 0 ? 3
-        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 1 ? 4
-        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 2 ? 5
-        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 3 ? 6
-        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 4 ? 7
-        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 5 ? 8
-        : g_user_std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 6 ? 9
-        : g_user_std_calc_mode == CalcMode::BOUNDARY_TRACE ? 10
-        : g_user_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT ? 11
-        : g_user_std_calc_mode == CalcMode::TESSERAL ? 12
-        : g_user_std_calc_mode == CalcMode::DIFFUSION ? 13
-        : g_user_std_calc_mode == CalcMode::ORBIT ? 14
+        g_user.std_calc_mode == CalcMode::ONE_PASS ? 0
+        : g_user.std_calc_mode == CalcMode::TWO_PASS ? 1
+        : g_user.std_calc_mode == CalcMode::THREE_PASS ? 2
+        : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 0 ? 3
+        : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 1 ? 4
+        : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 2 ? 5
+        : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 3 ? 6
+        : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 4 ? 7
+        : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 5 ? 8
+        : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 6 ? 9
+        : g_user.std_calc_mode == CalcMode::BOUNDARY_TRACE ? 10
+        : g_user.std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT ? 11
+        : g_user.std_calc_mode == CalcMode::TESSERAL ? 12
+        : g_user.std_calc_mode == CalcMode::DIFFUSION ? 13
+        : g_user.std_calc_mode == CalcMode::ORBIT ? 14
         :        /* "p"erturbation */     15;
-    CalcMode old_user_std_calc_mode = g_user_std_calc_mode;
+    CalcMode old_user_std_calc_mode = g_user.std_calc_mode;
     int old_stop_pass = g_stop_pass;
     choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
     values[k].type = 'L';
@@ -206,7 +207,7 @@ int get_toggles()
 
     choices[++k] = "Biomorph Color (-1 means OFF)";
     values[k].type = 'i';
-    int old_biomorph = g_user_biomorph_value;
+    int old_biomorph = g_user.biomorph_value;
     values[k].uval.ival = old_biomorph;
 
     choices[++k] = "Decomp Option (2,4,8,..,256, 0=OFF)";
@@ -245,22 +246,22 @@ int get_toggles()
     k = -1;
     int j = 0;   // return code
 
-    g_user_std_calc_mode = static_cast<CalcMode>(calc_modes[values[++k].uval.ch.val][0]);
+    g_user.std_calc_mode = static_cast<CalcMode>(calc_modes[values[++k].uval.ch.val][0]);
     g_stop_pass = static_cast<int>(calc_modes[values[k].uval.ch.val][1]) - static_cast<int>('0');
 
-    if (g_stop_pass < 0 || g_stop_pass > 6 || g_user_std_calc_mode != CalcMode::SOLID_GUESS)
+    if (g_stop_pass < 0 || g_stop_pass > 6 || g_user.std_calc_mode != CalcMode::SOLID_GUESS)
     {
         g_stop_pass = 0;
     }
 
-    if (g_user_std_calc_mode == CalcMode::ORBIT &&
+    if (g_user.std_calc_mode == CalcMode::ORBIT &&
         g_fractal_type == FractalType::LYAPUNOV) // Oops,lyapunov type
     {
         // doesn't use 'new' & breaks orbits
-        g_user_std_calc_mode = old_user_std_calc_mode;
+        g_user.std_calc_mode = old_user_std_calc_mode;
     }
 
-    if (old_user_std_calc_mode != g_user_std_calc_mode)
+    if (old_user_std_calc_mode != g_user.std_calc_mode)
     {
         j++;
     }
@@ -375,12 +376,12 @@ int get_toggles()
         g_log_map_auto_calculate = false;          // turn it off, use the supplied value
     }
 
-    g_user_biomorph_value = values[++k].uval.ival;
-    if (g_user_biomorph_value >= g_colors)
+    g_user.biomorph_value = values[++k].uval.ival;
+    if (g_user.biomorph_value >= g_colors)
     {
-        g_user_biomorph_value = g_user_biomorph_value % g_colors + g_user_biomorph_value / g_colors;
+        g_user.biomorph_value = g_user.biomorph_value % g_colors + g_user.biomorph_value / g_colors;
     }
-    if (g_user_biomorph_value != old_biomorph)
+    if (g_user.biomorph_value != old_biomorph)
     {
         j++;
     }

@@ -25,6 +25,7 @@
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
+#include "engine/UserData.h"
 #include "engine/Viewport.h"
 #include "fractals/check_orbit_name.h"
 #include "fractals/fractalp.h"
@@ -140,7 +141,6 @@ fs::path g_save_filename{"fract001"};                     // save files using th
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 bool g_ask_video{};                                       // flag for video prompting
 int g_biomorph{};                                         // flag for biomorph
-int g_user_biomorph_value{};                              //
 ShowFile g_show_file{};                                   // zero if file display pending
 int g_decomp[2]{};                                        // Decomposition coloring
 long g_distance_estimator{};                              //
@@ -511,13 +511,13 @@ static void init_vars_restart() // <ins> key init
 static void init_vars_fractal()
 {
     g_escape_exit = false;                               // don't disable the "are you sure?" screen
-    g_user_periodicity_value = 1;                        // turn on periodicity
+    g_user.periodicity_value = 1;                        // turn on periodicity
     g_inside_color = 0;                                  // inside color = black (in default colormap)
     g_fill_color = -1;                                   // no special fill color
-    g_user_biomorph_value = -1;                          // turn off biomorph flag
+    g_user.biomorph_value = -1;                          // turn off biomorph flag
     g_outside_color = ITER;                              // outside color = -1 (not used)
     g_max_iterations = 150;                              // initial max iter
-    g_user_std_calc_mode = CalcMode::SOLID_GUESS;        // initial solid-guessing
+    g_user.std_calc_mode = CalcMode::SOLID_GUESS;        // initial solid-guessing
     g_stop_pass = 0;                                     // initial guessing stop pass
     g_quick_calc = false;                                //
     g_close_proximity = 0.01;                            //
@@ -536,7 +536,7 @@ static void init_vars_fractal()
     g_inversion.invert = 0;                              //
     g_decomp[0] = 0;                                     //
     g_decomp[1] = 0;                                     //
-    g_user_distance_estimator_value = 0;                 //
+    g_user.distance_estimator_value = 0;                 //
     g_distance_estimator_x_dots = 0;                     //
     g_distance_estimator_y_dots = 0;                     //
     g_distance_estimator_width_factor = 71;              //
@@ -1435,7 +1435,7 @@ static CmdArgFlags cmd_bf_digits(const Command &cmd)
 // biomorph=?
 static CmdArgFlags cmd_biomorph(const Command &cmd)
 {
-    g_user_biomorph_value = cmd.num_val;
+    g_user.biomorph_value = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -1990,7 +1990,7 @@ static CmdArgFlags cmd_dist_est(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_user_distance_estimator_value = static_cast<long>(cmd.float_vals[0]);
+    g_user.distance_estimator_value = static_cast<long>(cmd.float_vals[0]);
     g_distance_estimator_width_factor = 71;
     if (cmd.total_params > 1)
     {
@@ -2892,25 +2892,25 @@ static CmdArgFlags cmd_passes(const Command &cmd)
             g_stop_pass = 0;
         }
     }
-    g_user_std_calc_mode = static_cast<CalcMode>(cmd.char_val[0]);
+    g_user.std_calc_mode = static_cast<CalcMode>(cmd.char_val[0]);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
 // periodicity=?
 static CmdArgFlags cmd_periodicity(const Command &cmd)
 {
-    g_user_periodicity_value = 1;
+    g_user.periodicity_value = 1;
     if (cmd.char_val[0] == 'n' || cmd.num_val == 0)
     {
-        g_user_periodicity_value = 0;
+        g_user.periodicity_value = 0;
     }
     else if (cmd.char_val[0] == 'y')
     {
-        g_user_periodicity_value = 1;
+        g_user.periodicity_value = 1;
     }
     else if (cmd.char_val[0] == 's') // 's' for 'show'
     {
-        g_user_periodicity_value = -1;
+        g_user.periodicity_value = -1;
     }
     else if (cmd.num_val == NON_NUMERIC)
     {
@@ -2918,9 +2918,9 @@ static CmdArgFlags cmd_periodicity(const Command &cmd)
     }
     else
     {
-        g_user_periodicity_value = cmd.num_val;
-        g_user_periodicity_value = std::min(g_user_periodicity_value, 255);
-        g_user_periodicity_value = std::max(g_user_periodicity_value, -255);
+        g_user.periodicity_value = cmd.num_val;
+        g_user.periodicity_value = std::min(g_user.periodicity_value, 255);
+        g_user.periodicity_value = std::max(g_user.periodicity_value, -255);
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }

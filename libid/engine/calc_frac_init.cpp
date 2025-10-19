@@ -16,6 +16,7 @@
 #include "engine/potential.h"
 #include "engine/soi.h"
 #include "engine/type_has_param.h"
+#include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "math/biginit.h"
 #include "math/sign.h"
@@ -176,9 +177,9 @@ void calc_frac_init() // initialize a *pile* of stuff for fractal calculation
     {
         free_bf_vars();
     }
-    if (g_user_std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT && g_fractal_type != FractalType::MANDEL)
+    if (g_user.std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT && g_fractal_type != FractalType::MANDEL)
     {
-        g_user_std_calc_mode = CalcMode::ONE_PASS;
+        g_user.std_calc_mode = CalcMode::ONE_PASS;
     }
 
     // cppcheck-suppress variableScope
@@ -189,10 +190,10 @@ init_restart:
     /* the following variables may be forced to a different setting due to
        calc routine constraints;  usr_xxx is what the user last said is wanted,
        xxx is what we actually do in the current situation */
-    g_std_calc_mode      = g_user_std_calc_mode;
-    g_periodicity_check = g_user_periodicity_value;
-    g_distance_estimator          = g_user_distance_estimator_value;
-    g_biomorph         = g_user_biomorph_value;
+    g_std_calc_mode      = g_user.std_calc_mode;
+    g_periodicity_check  = g_user.periodicity_value;
+    g_distance_estimator = g_user.distance_estimator_value;
+    g_biomorph           = g_user.biomorph_value;
 
     g_potential.flag = false;
     if (g_potential.params[0] != 0.0                                   //
@@ -201,7 +202,7 @@ init_restart:
                || g_cur_fractal_specific->calc_type == calc_mandelbrot_type))
     {
         g_potential.flag = true;
-        g_user_distance_estimator_value = 0;
+        g_user.distance_estimator_value = 0;
         g_distance_estimator = 0;    // can't do distest too
     }
 

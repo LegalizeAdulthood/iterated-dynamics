@@ -9,6 +9,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/jiim.h"
 #include "engine/log_map.h"
+#include "engine/UserData.h"
 #include "engine/Viewport.h"
 #include "fractals/Cellular.h"
 #include "fractals/fractalp.h"
@@ -173,7 +174,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
         g_image_region.m_max.y = g_cur_fractal_specific->y_max;
         g_image_region.m_3rd.x = g_image_region.m_min.x;
         g_image_region.m_3rd.y = g_image_region.m_min.y;
-        if (g_user_distance_estimator_value == 0 && g_user_biomorph_value != -1)
+        if (g_user.distance_estimator_value == 0 && g_user.biomorph_value != -1)
         {
             g_image_region.m_min.x *= 3.0;
             g_image_region.m_max.x *= 3.0;
@@ -283,14 +284,14 @@ static MainState prompt_options(MainContext &context)
         && g_cur_fractal_specific->calc_type == standard_fractal_type //
         && !g_log_map_flag                                            //
         && !g_true_color // recalc not yet implemented with truecolor
-        && (g_user_std_calc_mode != CalcMode::TESSERAL || g_fill_color <= -1) // tesseral with fill doesn't work
-        && g_user_std_calc_mode != CalcMode::ORBIT                         //
+        && (g_user.std_calc_mode != CalcMode::TESSERAL || g_fill_color <= -1) // tesseral with fill doesn't work
+        && g_user.std_calc_mode != CalcMode::ORBIT                         //
         && i == 1                                                          // nothing else changed
         && g_outside_color != ATAN)
     {
         g_quick_calc = true;
-        g_old_std_calc_mode = g_user_std_calc_mode;
-        g_user_std_calc_mode = CalcMode::ONE_PASS;
+        g_old_std_calc_mode = g_user.std_calc_mode;
+        g_user.std_calc_mode = CalcMode::ONE_PASS;
         context.more_keys = false;
         g_calc_status = CalcStatus::RESUMABLE;
     }
@@ -665,11 +666,11 @@ MainState main_menu_switch(MainContext &context)
     if (g_quick_calc && g_calc_status == CalcStatus::COMPLETED)
     {
         g_quick_calc = false;
-        g_user_std_calc_mode = g_old_std_calc_mode;
+        g_user.std_calc_mode = g_old_std_calc_mode;
     }
     if (g_quick_calc && g_calc_status != CalcStatus::COMPLETED)
     {
-        g_user_std_calc_mode = g_old_std_calc_mode;
+        g_user.std_calc_mode = g_old_std_calc_mode;
     }
 
     assert(std::is_sorted(std::begin(s_handlers), std::end(s_handlers)));

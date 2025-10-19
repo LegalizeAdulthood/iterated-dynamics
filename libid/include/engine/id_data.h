@@ -69,8 +69,6 @@ extern int                   g_scale_map[];
 extern int                   g_screen_x_dots;
 extern int                   g_screen_y_dots;
 extern bool                  g_tab_mode;
-extern long                  g_user_distance_estimator_value;
-extern int                   g_user_periodicity_value;
 extern ui::VideoInfo         g_video_entry;
 
 } // namespace id::engine

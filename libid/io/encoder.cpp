@@ -18,6 +18,7 @@
 #include "engine/resume.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
+#include "engine/UserData.h"
 #include "engine/Viewport.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
@@ -808,7 +809,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->invert[1] = static_cast<float>(g_inversion.params[1]);
     save_info->invert[2] = static_cast<float>(g_inversion.params[2]);
     save_info->decomp[0] = static_cast<std::int16_t>(g_decomp[0]);
-    save_info->biomorph = static_cast<std::int16_t>(g_user_biomorph_value);
+    save_info->biomorph = static_cast<std::int16_t>(g_user.biomorph_value);
     save_info->symmetry = static_cast<std::int16_t>(g_force_symmetry);
     save_info->init3d[0] = static_cast<std::int16_t>(g_sphere ? 1 : 0);  // sphere? 1 = yes, 0 = no
     save_info->init3d[1] = static_cast<std::int16_t>(g_x_rot);            // rotate x-axis 60 degrees

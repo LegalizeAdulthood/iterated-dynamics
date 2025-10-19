@@ -9,6 +9,7 @@
 #include <engine/id_data.h>
 #include <engine/Inversion.h>
 #include <engine/potential.h>
+#include <engine/UserData.h>
 #include <engine/Viewport.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
@@ -86,8 +87,8 @@ protected:
     ValueSaver<bool> saved_make_parameter_file{g_make_parameter_file};
     ValueSaver<int> saved_colors{g_colors};
     ValueSaver<bool> saved_potential_flag{g_potential.flag};
-    ValueSaver<int> saved_user_biomorph_value{g_user_biomorph_value};
-    ValueSaver<long> saved_user_distance_estimator_value{g_user_distance_estimator_value};
+    ValueSaver<int> saved_user_biomorph_value{g_user.biomorph_value};
+    ValueSaver<long> saved_user_distance_estimator_value{g_user.distance_estimator_value};
     ValueSaver<long> saved_calc_time{g_calc_time};
     ValueSaver<CalcStatus> saved_calc_status{g_calc_status};
     ValueSaver<bool> saved_potential_16bit{g_potential.store_16bit};

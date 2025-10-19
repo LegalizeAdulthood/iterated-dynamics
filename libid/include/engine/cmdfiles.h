@@ -254,7 +254,6 @@ extern TrueColorMode         g_true_mode;
 extern bool                  g_true_color;
 extern bool                  g_use_center_mag;
 extern InitOrbitMode         g_use_init_orbit;
-extern int                   g_user_biomorph_value;
 extern std::filesystem::path g_working_dir;
 
 void cmd_files(int argc, const char *const *argv);

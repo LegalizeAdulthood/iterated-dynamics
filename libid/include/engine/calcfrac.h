@@ -134,7 +134,6 @@ extern int                   g_row;
 extern bool                  g_show_orbit;
 extern CalcMode              g_old_std_calc_mode;
 extern CalcMode              g_std_calc_mode;
-extern CalcMode              g_user_std_calc_mode;
 extern SymmetryType          g_force_symmetry;
 extern SymmetryType          g_symmetry;
 extern bool                  g_three_pass;

@@ -37,6 +37,7 @@
 #include "engine/solid_guess.h"
 #include "engine/sticky_orbits.h"
 #include "engine/tesseral.h"
+#include "engine/UserData.h"
 #include "engine/wait_until.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
@@ -176,7 +177,6 @@ int g_work_symmetry{};                           // for the sake of calcmand
 Passes g_passes{Passes::NONE};                   // variables which must be visible for tab_display
 CalcMode g_old_std_calc_mode{};                  //
 CalcMode g_std_calc_mode{};                      // '1', '2', 'g', 'b'
-CalcMode g_user_std_calc_mode{};                 //
 int g_current_pass{};                            //
 int g_total_passes{};                            //
 int g_current_row{};                             //
@@ -512,7 +512,7 @@ static void init_calc_fract()
     {
         // Have to force passes = 1
         g_std_calc_mode = CalcMode::ONE_PASS;
-        g_user_std_calc_mode = g_std_calc_mode;
+        g_user.std_calc_mode = g_std_calc_mode;
     }
     if (g_true_color)
     {
@@ -522,7 +522,7 @@ static void init_calc_fract()
         {
             // Have to force passes = 1
             g_std_calc_mode = CalcMode::ONE_PASS;
-            g_user_std_calc_mode = g_std_calc_mode;
+            g_user.std_calc_mode = g_std_calc_mode;
             g_put_color = put_true_color_disk;
         }
         else
@@ -532,10 +532,10 @@ static void init_calc_fract()
     }
     if (!g_use_grid)
     {
-        if (g_user_std_calc_mode != CalcMode::ORBIT)
+        if (g_user.std_calc_mode != CalcMode::ORBIT)
         {
             g_std_calc_mode = CalcMode::ONE_PASS;
-            g_user_std_calc_mode = CalcMode::ONE_PASS;
+            g_user.std_calc_mode = CalcMode::ONE_PASS;
         }
     }
 

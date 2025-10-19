@@ -7,6 +7,7 @@
 #include "engine/id_data.h"
 #include "engine/Inversion.h"
 #include "engine/potential.h"
+#include "engine/UserData.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
@@ -65,7 +66,7 @@ int get_toggles2()
 
     choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
     values[k].type = 'L';
-    long old_user_distance_estimator_value = g_user_distance_estimator_value;
+    long old_user_distance_estimator_value = g_user.distance_estimator_value;
     values[k].uval.Lval = old_user_distance_estimator_value;
 
     choices[++k] = "          width factor:";
@@ -171,14 +172,14 @@ int get_toggles2()
     }
 
     ++k;
-    g_user_distance_estimator_value = values[k].uval.Lval;
-    if (g_user_distance_estimator_value != old_user_distance_estimator_value)
+    g_user.distance_estimator_value = values[k].uval.Lval;
+    if (g_user.distance_estimator_value != old_user_distance_estimator_value)
     {
         changed = true;
     }
     ++k;
     g_distance_estimator_width_factor = values[k].uval.ival;
-    if (g_user_distance_estimator_value && g_distance_estimator_width_factor != old_distance_estimator_width_factor)
+    if (g_user.distance_estimator_value && g_distance_estimator_width_factor != old_distance_estimator_width_factor)
     {
         changed = true;
     }
