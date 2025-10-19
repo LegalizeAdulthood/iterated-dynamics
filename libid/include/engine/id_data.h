@@ -4,8 +4,6 @@
 
 #include <config/port.h>
 
-#include "math/Point.h"
-
 #include <filesystem>
 #include <string>
 #include <vector>
@@ -45,26 +43,16 @@ enum class SaveDAC
     NEXT_TIME = 2,
 };
 
-using FilenameStack = std::vector<std::string>;
-
 extern int                   g_adapter;             // index into g_video_table[]
-extern bool                  g_auto_browse;
-extern std::filesystem::path g_browse_mask;
-extern bool                  g_browsing;
-extern bool                  g_browse_check_fractal_params;
-extern bool                  g_browse_check_fractal_type;
-extern bool                  g_browse_sub_images;
 extern long                  g_calc_time;
 extern CalcStatus            g_calc_status;
 extern int                   g_colors;
 extern bool                  g_compare_gif;
-extern bool                  g_confirm_file_deletes;
 extern double                g_delta_min;
 extern LDouble               g_delta_x2;
 extern LDouble               g_delta_x;
 extern LDouble               g_delta_y2;
 extern LDouble               g_delta_y;
-extern FilenameStack         g_filename_stack;
 extern float                 g_final_aspect_ratio;
 extern std::filesystem::path g_fractal_search_dir1;
 extern std::filesystem::path g_fractal_search_dir2;
@@ -83,9 +71,7 @@ extern int                   g_save_system;
 extern int                   g_scale_map[];
 extern int                   g_screen_x_dots;
 extern int                   g_screen_y_dots;
-extern int                   g_smallest_box_size_shown;
 extern bool                  g_tab_mode;
-extern double                g_smallest_window_display_size;
 extern long                  g_user_distance_estimator_value;
 extern int                   g_user_periodicity_value;
 extern ui::VideoInfo         g_video_entry;

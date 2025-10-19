@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/id_data.h"
-
 #include <io/loadmap.h>
 
 #include "expected_map.h"
 #include "test_data.h"
 
+#include <engine/id_data.h>
 #include <misc/ValueSaver.h>
 #include <ui/rotate.h>
 

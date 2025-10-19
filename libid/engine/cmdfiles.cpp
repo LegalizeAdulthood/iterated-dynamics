@@ -5,6 +5,7 @@
 #include "engine/cmdfiles_test.h"
 
 #include "engine/bailout_formula.h"
+#include "engine/Browse.h"
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/color_state.h"
@@ -292,7 +293,7 @@ static void process_simple_command(char *cur_arg)
                     g_read_filename = find_file(ReadFile::IMAGE, cur_arg);
                     if (!g_read_filename.empty())
                     {
-                        g_browse_name = extract_filename(g_read_filename);
+                        g_browse.name = extract_filename(g_read_filename);
                         g_show_file = ShowFile::LOAD_IMAGE;
                     }
                     processed = true;
@@ -2049,7 +2050,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
     if (!g_read_filename.empty())
     {
         g_show_file = ShowFile::LOAD_IMAGE;
-        g_browse_name = g_read_filename.filename().string();
+        g_browse.name = g_read_filename.filename().string();
     }
     else
     {

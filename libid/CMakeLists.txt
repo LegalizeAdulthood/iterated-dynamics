@@ -8,6 +8,7 @@ find_package(cpuid CONFIG REQUIRED)
 
 add_library(libid
     include/engine/bailout_formula.h engine/bailout_formula.cpp
+    include/engine/Browse.h engine/Browse.cpp
     include/engine/boundary_trace.h engine/boundary_trace.cpp
     include/engine/calc_frac_init.h engine/calc_frac_init.cpp
     include/engine/calcfrac.h engine/calcfrac.cpp

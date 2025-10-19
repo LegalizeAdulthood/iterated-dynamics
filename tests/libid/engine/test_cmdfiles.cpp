@@ -13,6 +13,7 @@
 #include <geometry/plot3d.h>
 #include <config/path_limits.h>
 #include <engine/bailout_formula.h>
+#include <engine/Browse.h>
 #include <engine/engine_timer.h>
 #include <engine/id_data.h>
 #include <engine/ImageRegion.h>
@@ -804,7 +805,7 @@ TEST_F(TestParameterCommandError, filenameTooLong)
 {
     const std::string saved_gif_filename_mask{g_image_filename_mask};
     const ShowFile saved_show_file{g_show_file};
-    const std::string saved_browse_name{g_browse_name};
+    const std::string saved_browse_name{g_browse.name};
     const std::string too_long{"filename=" + std::string(1024, 'f')};
 
     exec_cmd_arg(too_long, CmdFile::AT_CMD_LINE);
@@ -812,7 +813,7 @@ TEST_F(TestParameterCommandError, filenameTooLong)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
     EXPECT_EQ(saved_gif_filename_mask, g_image_filename_mask);
     EXPECT_EQ(saved_show_file, g_show_file);
-    EXPECT_EQ(saved_browse_name, g_browse_name);
+    EXPECT_EQ(saved_browse_name, g_browse.name);
 }
 
 TEST_F(TestParameterCommandError, videoBadName)

@@ -2,6 +2,7 @@
 //
 #include "ui/id_main.h"
 
+#include "engine/Browse.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
@@ -93,16 +94,16 @@ static void bad_id_cfg_msg()
 static void main_restart(const int argc, const char *const argv[], MainContext &context)
 {
     driver_check_memory();
-    g_auto_browse = false;
-    g_browse_check_fractal_type = false;
-    g_browse_check_fractal_params = true;
-    g_confirm_file_deletes = true;
-    g_browse_sub_images = true;
-    g_smallest_window_display_size = 6;
-    g_smallest_box_size_shown = 3;
-    g_browse_mask = "*.gif";
-    g_browse_name.clear();
-    g_filename_stack.clear(); // init loaded files stack
+    g_browse.auto_browse = false;
+    g_browse.check_fractal_type = false;
+    g_browse.check_fractal_params = true;
+    g_browse.confirm_delete = true;
+    g_browse.sub_images = true;
+    g_browse.smallest_window = 6;
+    g_browse.smallest_box = 3;
+    g_browse.mask = "*.gif";
+    g_browse.name.clear();
+    g_browse.stack.clear(); // init loaded files stack
 
     g_evolving = EvolutionModeFlags::NONE;
     g_evolve_x_parameter_range = 4;
@@ -151,7 +152,7 @@ static void main_restart(const int argc, const char *const argv[], MainContext &
         }
     }
 
-    g_browsing = false;
+    g_browse.browsing = false;
 
     if (!g_new_bifurcation_functions_loaded)
     {
@@ -171,7 +172,7 @@ static bool main_restore_start(MainContext &context)
     while (g_show_file <= ShowFile::LOAD_IMAGE) // image is to be loaded
     {
         g_tab_mode = false;
-        if (!g_browsing) /*RB*/
+        if (!g_browse.browsing) /*RB*/
         {
             const char *hdg;
             if (g_overlay_3d)
@@ -197,8 +198,8 @@ static bool main_restore_start(MainContext &context)
                 break;
             }
 
-            g_filename_stack.clear(); // 'r' reads first filename for browsing
-            g_filename_stack.push_back(g_browse_name);
+            g_browse.stack.clear(); // 'r' reads first filename for browsing
+            g_browse.stack.push_back(g_browse.name);
         }
 
         g_evolving = EvolutionModeFlags::NONE;
@@ -216,7 +217,7 @@ static bool main_restore_start(MainContext &context)
         {
             break; // got it, exit
         }
-        if (g_browsing) // break out of infinite loop, but lose your mind
+        if (g_browse.browsing) // break out of infinite loop, but lose your mind
         {
             g_show_file = ShowFile::IMAGE_LOADED;
         }

@@ -2,6 +2,7 @@
 //
 #include "ui/menu_handler.h"
 
+#include "engine/Browse.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
@@ -154,7 +155,7 @@ MainState restore_from_image(MainContext &context)
 {
     g_compare_gif = false;
     context.from_mandel = false;
-    g_browsing = false;
+    g_browse.browsing = false;
     if (context.key == 'r')
     {
         if (g_debug_flag == DebugFlags::FORCE_DISK_RESTORE_NOT_SAVE)

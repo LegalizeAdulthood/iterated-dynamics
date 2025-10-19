@@ -2,6 +2,7 @@
 //
 #include "ui/main_menu_switch.h"
 
+#include "engine/Browse.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
@@ -70,9 +71,9 @@ static bool look(MainContext &context)
     case ID_KEY_ENTER:
     case ID_KEY_ENTER_2:
         g_show_file = ShowFile::LOAD_IMAGE; // trigger load
-        g_browsing = true;            // but don't ask for the file name as it's just been selected
-        g_filename_stack.push_back(g_browse_name);
-        merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
+        g_browse.browsing = true;           // but don't ask for the file name as it's just been selected
+        g_browse.stack.push_back(g_browse.name);
+        merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
         if (g_ask_video)
         {
             driver_stack_screen();   // save graphics image
@@ -81,13 +82,13 @@ static bool look(MainContext &context)
         return true;       // hop off and do it!!
 
     case '\\':
-        if (!g_filename_stack.empty())
+        if (!g_browse.stack.empty())
         {
             // go back one file if somewhere to go (i.e. browsing)
-            g_browse_name = g_filename_stack.back();
-            g_filename_stack.pop_back();
-            merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
-            g_browsing = true;
+            g_browse.name = g_browse.stack.back();
+            g_browse.stack.pop_back();
+            merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
+            g_browse.browsing = true;
             g_show_file = ShowFile::LOAD_IMAGE;
             if (g_ask_video)
             {
@@ -101,12 +102,12 @@ static bool look(MainContext &context)
     case ID_KEY_ESC:
     case 'l':              // turn it off
     case 'L':
-        g_browsing = false;
+        g_browse.browsing = false;
         g_help_mode = old_help_mode;
         break;
 
     case 's':
-        g_browsing = false;
+        g_browse.browsing = false;
         g_help_mode = old_help_mode;
         save_image(g_save_filename);
         break;
@@ -412,17 +413,17 @@ static MainState inverse_julia_toggle(MainContext &context)
 
 static MainState unstack_file(bool &stacked)
 {
-    if (g_filename_stack.empty())
+    if (g_browse.stack.empty())
     {
         return MainState::NOTHING;
     }
 
     // go back one file if somewhere to go (i.e. browsing)
-    g_browse_name = g_filename_stack.back();
-    g_filename_stack.pop_back();
-    merge_path_names(g_read_filename, g_browse_name.c_str(), CmdFile::AT_AFTER_STARTUP);
-    g_browsing = true;
-    g_browse_sub_images = true;
+    g_browse.name = g_browse.stack.back();
+    g_browse.stack.pop_back();
+    merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
+    g_browse.browsing = true;
+    g_browse.sub_images = true;
     g_show_file = ShowFile::LOAD_IMAGE;
     if (g_ask_video)
     {
@@ -467,7 +468,7 @@ static MainState look_for_files(MainContext &context)
 {
     if (g_zoom_box_width != 0 || driver_is_disk())
     {
-        g_browsing = false;
+        g_browse.browsing = false;
         driver_buzzer(Buzzer::PROBLEM);             // can't browse if zooming or disk video
     }
     else if (look(context))

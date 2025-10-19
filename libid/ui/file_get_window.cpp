@@ -7,6 +7,7 @@
 
 #include "config/path_limits.h"
 #include "config/string_case_compare.h"
+#include "engine/Browse.h"
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
@@ -204,9 +205,9 @@ rescan:  // entry for changed browse parms
     std::time(&last_time);
     toggle = false;
     win_count = 0;
-    g_browse_sub_images = true;
+    g_browse.sub_images = true;
     split_drive_dir(g_read_filename, drive, dir);
-    split_fname_ext(g_browse_mask, fname, ext);
+    split_fname_ext(g_browse.mask, fname, ext);
     make_path(tmp_mask, drive, dir, fname, ext);
     std::filesystem::path path{find_wildcard_first(ReadFile::IMAGE, tmp_mask)};
     status = vid_too_big || path.empty() ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
@@ -227,9 +228,9 @@ rescan:  // entry for changed browse parms
         ExtBlock7 blk_7_info;
         if (!find_fractal_info(path.string(), &read_info,                                     //
                 &blk_2_info, &blk_3_info, &blk_4_info, &blk_5_info, &blk_6_info, &blk_7_info) //
-            && (type_ok(&read_info, &blk_3_info) || !g_browse_check_fractal_type)             //
-            && (params_ok(&read_info) || !g_browse_check_fractal_params)                      //
-            && g_browse_name != path.string()                                                 //
+            && (type_ok(&read_info, &blk_3_info) || !g_browse.check_fractal_type)             //
+            && (params_ok(&read_info) || !g_browse.check_fractal_params)                      //
+            && g_browse.name != path.string()                                                 //
             && !blk_6_info.got_data                                                           //
             && window.is_visible(&read_info, &blk_5_info))                                    //
         {
@@ -335,14 +336,14 @@ rescan:  // entry for changed browse parms
                 break;
             case ID_KEY_ENTER:
             case ID_KEY_ENTER_2:   // this file please
-                g_browse_name = window.filename;
+                g_browse.name = window.filename;
                 status = FileWindowStatus::EXIT;
                 break;
 
             case ID_KEY_ESC:
             case 'l':
             case 'L':
-                g_auto_browse = false;
+                g_browse.auto_browse = false;
                 status = FileWindowStatus::ERASE_BOXES_EXIT;
                 break;
 
@@ -352,7 +353,7 @@ rescan:  // entry for changed browse parms
                 driver_wait_key_pressed(false);
                 clear_temp_msg();
                 c = driver_get_key();
-                if (c == 'Y' && g_confirm_file_deletes)
+                if (c == 'Y' && g_browse.confirm_delete)
                 {
                     text_temp_msg("ARE YOU SURE???? (Y/N)");
                     if (driver_get_key() != 'Y')
@@ -427,7 +428,7 @@ rescan:  // entry for changed browse parms
                 break;
 
             case 's': // save image with boxes
-                g_auto_browse = false;
+                g_browse.auto_browse = false;
                 window.draw(color_of_box); // current window white
                 status = FileWindowStatus::SAVE_BOXES_EXIT;
                 break;
@@ -465,7 +466,7 @@ rescan:  // entry for changed browse parms
     {
         driver_buzzer(Buzzer::INTERRUPT); //no suitable files in directory!
         text_temp_msg("Sorry... I can't find anything");
-        g_browse_sub_images = false;
+        g_browse.sub_images = false;
     }
 
     s_browse_windows.clear();
@@ -486,7 +487,7 @@ void FileWindow::draw(const int color)
 {
     g_box_color = color;
     g_box_count = 0;
-    if (win_size >= g_smallest_box_size_shown)
+    if (win_size >= g_browse.smallest_box)
     {
         // big enough on screen to show up as a box so draw it
         // corner pixels
@@ -689,7 +690,7 @@ bool FileWindow::is_visible(const FractalInfo *info, const ExtBlock5 *blk_5_info
     const double tmp_sqrt = std::sqrt(sqr(tr.x - bl.x) + sqr(tr.y - bl.y));
     win_size = tmp_sqrt; // used for box vs crosshair in drawindow()
     // reject anything too small or too big on screen
-    if (tmp_sqrt < g_smallest_window_display_size || tmp_sqrt > too_big)
+    if (tmp_sqrt < g_browse.smallest_window || tmp_sqrt > too_big)
     {
         cant_see = true;
     }
@@ -839,7 +840,7 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
 // browser are used.
 static void check_history(const char *old_name, const char *new_name)
 {
-    for (std::string &name : g_filename_stack)
+    for (std::string &name : g_browse.stack)
     {
         if (name == old_name)
         {

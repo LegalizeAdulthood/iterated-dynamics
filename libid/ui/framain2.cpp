@@ -2,6 +2,7 @@
 //
 #include "ui/framain2.h"
 
+#include "engine/Browse.h"
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
@@ -575,9 +576,9 @@ MainState big_while_loop(MainContext &context)
                 start_save_timer();
                 g_finish_row = -1;
             }
-            g_browsing = false;       // regenerate image, turn off browsing
-            g_filename_stack.clear(); // reset filename stack
-            g_browse_name.clear();
+            g_browse.browsing = false;       // regenerate image, turn off browsing
+            g_browse.stack.clear(); // reset filename stack
+            g_browse.name.clear();
             if (g_view_window && bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
                 g_calc_status != CalcStatus::COMPLETED)
             {
@@ -746,7 +747,7 @@ resumeloop:                             // return here on failed overlays
                 }
                 else      // wait for a real keystroke
                 {
-                    if (g_auto_browse && g_browse_sub_images)
+                    if (g_browse.auto_browse && g_browse.sub_images)
                     {
                         context.key = 'l';
                     }

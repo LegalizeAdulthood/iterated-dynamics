@@ -3,7 +3,6 @@
 #include "engine/one_or_two_pass.h"
 
 #include "engine/calcfrac.h"
-#include "engine/id_data.h"
 #include "engine/resume.h"
 #include "engine/work_list.h"
 #include "ui/video.h"

@@ -131,7 +131,6 @@ float g_file_aspect_ratio{};
 short g_skip_x_dots{};
 short g_skip_y_dots{};      // for decoder, when reducing image
 bool g_bad_outside{};
-std::string g_browse_name; // name for browse file
 Version g_file_version{};
 
 static bool within_eps(const float lhs, const float rhs)

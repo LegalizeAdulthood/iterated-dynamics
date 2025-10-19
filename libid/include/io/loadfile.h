@@ -294,7 +294,6 @@ inline bool operator!=(const OrbitsInfo &lhs, const OrbitsInfo &rhs)
 }
 
 extern bool                  g_bad_outside;
-extern std::string           g_browse_name;
 extern float                 g_file_aspect_ratio;
 extern int                   g_file_colors;
 extern int                   g_file_x_dots;
