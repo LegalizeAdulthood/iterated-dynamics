@@ -1564,7 +1564,7 @@ int funny_glasses_call(int (*calc)())
                 save_image(g_save_filename);
             }
             // is there a better way to clear the screen in graphics mode?
-            driver_set_video_mode(&g_video_entry);
+            driver_set_video_mode(g_video_entry);
         }
         g_which_image = StereoImage::BLUE;
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))

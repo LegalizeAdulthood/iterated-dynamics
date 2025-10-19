@@ -331,7 +331,7 @@ MainState big_while_loop(MainContext &context)
             }
             else
             {
-                driver_set_video_mode(&g_video_entry); // switch video modes
+                driver_set_video_mode(g_video_entry); // switch video modes
                 // switching video modes may have changed drivers or disk flag...
                 if (!g_good_mode)
                 {

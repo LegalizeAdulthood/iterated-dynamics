@@ -102,15 +102,15 @@ Driver *driver_find_by_name(const char *name)
     return nullptr;
 }
 
-void driver_set_video_mode(VideoInfo *mode)
+void driver_set_video_mode(const VideoInfo &mode)
 {
-    if (g_driver != mode->driver)
+    if (g_driver != mode.driver)
     {
         g_driver->pause();
-        g_driver = mode->driver;
+        g_driver = mode.driver;
         g_driver->resume();
     }
-    g_driver->set_video_mode(*mode);
+    g_driver->set_video_mode(mode);
 }
 
 } // namespace id::misc

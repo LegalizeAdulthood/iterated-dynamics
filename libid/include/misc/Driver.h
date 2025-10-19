@@ -128,7 +128,7 @@ Driver *driver_find_by_name(const char *name);
 
 extern Driver *g_driver; // current driver in use
 
-void driver_set_video_mode(ui::VideoInfo *mode);
+void driver_set_video_mode(const ui::VideoInfo &mode);
 
 inline void driver_get_max_screen(int &width, int &height)
 {
