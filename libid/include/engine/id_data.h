@@ -68,7 +68,6 @@ extern int                   g_save_system;
 extern int                   g_scale_map[];
 extern int                   g_screen_x_dots;
 extern int                   g_screen_y_dots;
-extern bool                  g_tab_mode;
 extern ui::VideoInfo         g_video_entry;
 
 } // namespace id::engine

@@ -58,6 +58,8 @@ using namespace id::misc;
 namespace id::ui
 {
 
+bool g_tab_enabled{true};
+
 static void area();
 
 // Wrapping version of putstring for long numbers

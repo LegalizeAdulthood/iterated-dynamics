@@ -34,7 +34,6 @@ bool g_has_inverse{};                             //
                                                   // variables defined by the command line/files processor
 bool g_compare_gif{};                             // compare two gif files flag
 int g_save_system{};                              // from and for save files
-bool g_tab_mode{true};                            // tab display enabled
 double g_plot_mx1{}, g_plot_mx2{};                //
 double g_plot_my1{}, g_plot_my2{};                // real->screen multipliers
 CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //

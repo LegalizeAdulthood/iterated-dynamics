@@ -15,6 +15,7 @@
 #include "ui/get_key_no_help.h"
 #include "ui/id_keys.h"
 #include "ui/stop_msg.h"
+#include "ui/tab_display.h"
 #include "ui/video_mode.h"
 
 #include <algorithm>
@@ -90,7 +91,7 @@ int select_video_mode(const int current_mode)
     }
 
     {
-        ValueSaver saved_tab_mode{g_tab_mode, false};
+        ValueSaver saved_tab_mode{g_tab_enabled, false};
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_VIDEO_MODE};
         s_modes_changed = false;
         i = full_screen_choice(ChoiceFlags::HELP, "Select Video Mode",

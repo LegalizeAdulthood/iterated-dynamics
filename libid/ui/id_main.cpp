@@ -42,6 +42,7 @@
 #include "ui/rotate.h"
 #include "ui/select_video_mode.h"
 #include "ui/stop_msg.h"
+#include "ui/tab_display.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 
@@ -172,7 +173,7 @@ static bool main_restore_start(MainContext &context)
     g_look_at_mouse = MouseLook::IGNORE_MOUSE;
     while (g_show_file <= ShowFile::LOAD_IMAGE) // image is to be loaded
     {
-        g_tab_mode = false;
+        g_tab_enabled = false;
         if (!g_browse.browsing) /*RB*/
         {
             const char *hdg;
@@ -207,7 +208,7 @@ static bool main_restore_start(MainContext &context)
         g_viewport.enabled = false;
         g_show_file = ShowFile::LOAD_IMAGE;
         g_help_mode = HelpLabels::NONE;
-        g_tab_mode = true;
+        g_tab_enabled = true;
         if (context.stacked)
         {
             driver_discard_screen();
@@ -228,7 +229,7 @@ static bool main_restore_start(MainContext &context)
         }
     }
     g_help_mode = HelpLabels::HELP_MENU; // now use this help mode
-    g_tab_mode = true;
+    g_tab_enabled = true;
     g_look_at_mouse = MouseLook::IGNORE_MOUSE;
     if (((g_overlay_3d && g_init_batch == BatchMode::NONE) || context.stacked) &&
         g_init_mode < 0) // overlay command failed

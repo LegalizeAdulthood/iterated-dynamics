@@ -15,6 +15,7 @@
 #include "ui/mouse.h"
 #include "ui/put_string_center.h"
 #include "ui/stop_msg.h"
+#include "ui/tab_display.h"
 #include "ui/text_screen.h"
 
 #include <config/fdio.h>
@@ -668,7 +669,7 @@ static int help_topic(History *curr, History *next, const int flags)
         }
 
         {
-            ValueSaver saved_tab_mode(g_tab_mode, false);
+            ValueSaver saved_tab_mode(g_tab_enabled, false);
             key = driver_get_key();
         }
 

@@ -299,14 +299,14 @@ static bool exit_prompt()
 
 int main_menu(const bool full_menu)
 {
-    ValueSaver saved_tab_mode{g_tab_mode};
+    ValueSaver saved_tab_mode{g_tab_enabled};
 
     bool prompt{true};
     int key{};
     while (prompt)
     {
         s_full_menu = full_menu;
-        g_tab_mode = false;
+        g_tab_enabled = false;
         MainMenu menu(full_menu);
 
         key = menu.prompt();

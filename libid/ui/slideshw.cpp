@@ -516,9 +516,9 @@ int handle_special_keys(int ch)
         inside_help = false;
         ch = 0;
     }
-    else if (ID_KEY_TAB == ch && g_tab_mode)
+    else if (ID_KEY_TAB == ch && g_tab_enabled)
     {
-        ValueSaver saved_tab_mode(g_tab_mode, false);
+        ValueSaver saved_tab_mode(g_tab_enabled, false);
         tab_display();
         ch = 0;
     }
