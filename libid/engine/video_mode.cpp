@@ -114,4 +114,4 @@ void vid_mode_key_name(int key, char *buffer)
     }
 }
 
-} // namespace id::ui
+} // namespace id::engine
