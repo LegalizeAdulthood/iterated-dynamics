@@ -4,7 +4,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/VideoInfo.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"

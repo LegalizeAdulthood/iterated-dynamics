@@ -25,7 +25,6 @@ add_library(libid
     include/engine/fractals.h engine/fractals.cpp
     include/engine/get_julia_attractor.h engine/get_julia_attractor.cpp
     include/engine/get_prec_big_float.h engine/get_prec_big_float.cpp
-    include/engine/id_data.h engine/id_data.cpp
     include/engine/ImageRegion.h engine/ImageRegion.cpp
     include/engine/Inversion.h engine/Inversion.cpp
     include/engine/jiim.h engine/jiim.cpp

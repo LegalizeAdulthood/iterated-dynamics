@@ -13,7 +13,6 @@
 #include "engine/engine_timer.h"
 #include "engine/fractalb.h"
 #include "engine/get_prec_big_float.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
 #include "engine/log_map.h"

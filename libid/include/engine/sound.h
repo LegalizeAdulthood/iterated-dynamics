@@ -29,6 +29,7 @@ extern int g_fm_wave_type;   //
 extern int g_fm_volume;      // volume of OPL-3 sound output
 extern int g_hi_attenuation; //
 extern int g_polyphony;      //
+extern int g_scale_map[12];  // array for mapping notes to a (user defined) scale
 extern int g_sound_flag;     // sound control flags
 
 bool sound_open();

@@ -33,6 +33,7 @@ int g_fm_volume{};
 int g_fm_wave_type{};
 int g_hi_attenuation{};
 int g_polyphony{};
+int g_scale_map[12]{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
 int g_sound_flag{};
 
 static std::FILE *s_snd_fp{};

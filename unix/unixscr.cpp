@@ -17,7 +17,6 @@
 #include "unixscr.h"
 
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/Viewport.h"
 #include "helpdefs.h"
