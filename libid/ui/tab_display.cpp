@@ -21,7 +21,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/ifs.h"
 #include "fractals/lorenz.h"
-#include "fractals/lsys.h"
+#include "fractals/lsystem.h"
 #include "fractals/parser.h"
 #include "geometry/line3d.h"
 #include "io/loadfile.h"

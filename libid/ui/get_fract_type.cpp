@@ -14,7 +14,7 @@
 #include "fractals/ifs.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
-#include "fractals/lsys.h"
+#include "fractals/lsystem.h"
 #include "fractals/parser.h"
 #include "helpcom.h"
 #include "io/load_entry_text.h"

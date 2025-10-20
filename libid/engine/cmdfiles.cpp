@@ -35,7 +35,7 @@
 #include "fractals/ifs.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
-#include "fractals/lsys.h"
+#include "fractals/lsystem.h"
 #include "fractals/parser.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"

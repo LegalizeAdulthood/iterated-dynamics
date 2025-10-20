@@ -7,7 +7,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
-#include "fractals/lsys_fns.h"
+#include "fractals/lsystem.h"
 #include "fractals/parser.h"
 #include "io/file_item.h"
 #include "io/library.h"

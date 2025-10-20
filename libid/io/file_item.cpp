@@ -2,35 +2,12 @@
 //
 #include "io/file_item.h"
 
-#include "engine/cmdfiles.h"
-#include "fractals/fractalp.h"
-#include "fractals/fractype.h"
-#include "fractals/ifs.h"
-#include "fractals/lsys_fns.h"
-#include "fractals/parser.h"
-#include "io/find_file.h"
-#include "io/load_entry_text.h"
-#include "io/make_path.h"
-#include "io/split_path.h"
-#include "io/trim_filename.h"
-#include "ui/full_screen_choice.h"
-#include "ui/get_key_no_help.h"
-#include "ui/help_title.h"
-#include "ui/id_keys.h"
-#include "ui/set_default_params.h"
-#include "ui/shell_sort.h"
 #include "ui/stop_msg.h"
-#include "ui/temp_msg.h"
-#include "ui/text_screen.h"
 
-#include <config/path_limits.h>
 #include <config/string_case_compare.h>
 
 #include <fmt/format.h>
-#include <fmt/std.h>
 
-#include <algorithm>
-#include <cctype>
 #include <cstdio>
 #include <cstring>
 #include <stdexcept>

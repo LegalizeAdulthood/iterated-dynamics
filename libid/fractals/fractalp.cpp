@@ -22,7 +22,7 @@
 #include "fractals/jb.h"
 #include "fractals/lambda_fn.h"
 #include "fractals/lorenz.h"
-#include "fractals/lsys_fns.h"
+#include "fractals/lsystem.h"
 #include "fractals/lyapunov.h"
 #include "fractals/magnet.h"
 #include "fractals/mandelbrot_mix.h"
