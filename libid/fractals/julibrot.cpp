@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "fractals/jb.h"
+#include "fractals/julibrot.h"
 
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"

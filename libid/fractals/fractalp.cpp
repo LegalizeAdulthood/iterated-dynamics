@@ -19,7 +19,7 @@
 #include "fractals/FrothyBasin.h"
 #include "fractals/halley.h"
 #include "fractals/hypercomplex_mandelbrot.h"
-#include "fractals/jb.h"
+#include "fractals/julibrot.h"
 #include "fractals/lambda_fn.h"
 #include "fractals/lorenz.h"
 #include "fractals/lsystem.h"

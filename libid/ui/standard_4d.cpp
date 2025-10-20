@@ -2,7 +2,7 @@
 //
 #include "ui/standard_4d.h"
 
-#include "fractals/jb.h"
+#include "fractals/julibrot.h"
 #include "misc/Driver.h"
 
 using namespace id::fractals;

@@ -8,7 +8,7 @@
 #include "engine/color_state.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
-#include "fractals/jb.h"
+#include "fractals/julibrot.h"
 #include "fractals/lorenz.h"
 #include "io/loadfile.h"
 #include "io/save_timer.h"

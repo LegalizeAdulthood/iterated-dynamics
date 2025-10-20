@@ -12,7 +12,7 @@
 #include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/ifs.h"
-#include "fractals/jb.h"
+#include "fractals/julibrot.h"
 #include "fractals/lorenz.h"
 #include "fractals/lsystem.h"
 #include "fractals/parser.h"

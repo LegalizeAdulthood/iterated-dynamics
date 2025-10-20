@@ -3,7 +3,7 @@
 #include "fractals/check_orbit_name.h"
 
 #include "fractals/fractalp.h"
-#include "fractals/jb.h"
+#include "fractals/julibrot.h"
 
 #include <cstring>
 

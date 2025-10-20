@@ -14,7 +14,7 @@
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
-#include "fractals/jb.h"
+#include "fractals/julibrot.h"
 #include "fractals/lorenz.h"
 #include "geometry/line3d.h"
 #include "io/decoder.h"

@@ -6,7 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/show_dot.h"
 #include "engine/Viewport.h"
-#include "fractals/jb.h"
+#include "fractals/julibrot.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "io/library.h"

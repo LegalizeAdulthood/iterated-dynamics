@@ -75,7 +75,7 @@ add_library(libid
     include/fractals/halley.h fractals/halley.cpp
     include/fractals/hypercomplex_mandelbrot.h fractals/hypercomplex_mandelbrot.cpp
     include/fractals/ifs.h fractals/ifs.cpp
-    include/fractals/jb.h fractals/jb.cpp
+    include/fractals/julibrot.h fractals/julibrot.cpp
     include/fractals/lambda_fn.h fractals/lambda_fn.cpp
     include/fractals/lorenz.h fractals/lorenz.cpp
     include/fractals/lsystem.h fractals/lsystem.cpp
