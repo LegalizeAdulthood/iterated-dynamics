@@ -150,7 +150,6 @@ extern std::string           g_ifs_name;
 extern IFSDimension          g_ifs_dim;
 extern BatchMode             g_init_batch;
 extern int                   g_init_cycle_limit;
-extern math::DComplex        g_init_orbit;
 extern std::vector<int>      g_iteration_ranges;
 extern int                   g_iteration_ranges_len;
 extern std::filesystem::path g_l_system_filename;

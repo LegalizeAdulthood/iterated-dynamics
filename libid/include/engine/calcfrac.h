@@ -139,8 +139,12 @@ extern math::DComplex        g_new_z;
 extern long                  g_old_color_iter;
 extern bool                  g_old_demm_colors;
 extern math::DComplex        g_old_z;
-extern int                   g_orbit_color;
-extern int                   g_orbit_save_index;
+
+extern math::DComplex        g_init_orbit;          // initial orbit value
+extern int                   g_orbit_color;         // XOR color
+extern int                   g_orbit_save_index;    // index into save_orbit array
+extern bool                  g_show_orbit;          // flag to turn on and off
+
 extern double                g_params[MAX_PARAMS];
 extern Passes                g_passes;
 extern int                   g_periodicity_check;
@@ -152,7 +156,6 @@ extern bool                  g_quick_calc;
 extern long                  g_real_color_iter;
 extern bool                  g_reset_periodicity;
 extern int                   g_row;
-extern bool                  g_show_orbit;
 extern CalcMode              g_old_std_calc_mode;
 extern CalcMode              g_std_calc_mode;
 extern SymmetryType          g_force_symmetry;

@@ -161,10 +161,6 @@ bool g_quick_calc{};                              //
 double g_close_proximity{0.01};                   //
 double g_close_enough{};                          //
 int g_pi_in_pixels{};                             // value of pi in pixels
-                                                  // ORBIT variables
-bool g_show_orbit{};                              // flag to turn on and off
-int g_orbit_save_index{};                         // index into save_orbit array
-int g_orbit_color{15};                            // XOR color
 SymmetryType g_symmetry{};                        // symmetry flag
 SymmetryType g_force_symmetry{};                  // force symmetry
 bool g_reset_periodicity{};                       // true if escape time pixel rtn to reset
@@ -196,6 +192,12 @@ long g_first_saved_and{};                         //
 int g_atan_colors{180};                           //
 int g_and_color{};                                // "and" value used for color selection
 double g_params[MAX_PARAMS]{};                    // parameters
+
+// ORBIT variables
+DComplex g_init_orbit{};
+int g_orbit_color{15};
+int g_orbit_save_index{};
+bool g_show_orbit{};
 
 static double fmod_test_bailout_or()
 {
