@@ -63,7 +63,9 @@ Iterated Dynamics includes support for [ZeroMQ](https://zeromq.org/), enabling d
 - Scale rendering from single-machine to cluster computing
 - Build render farms for high-resolution fractals and animations
 
-See the [ZeroMQ Integration Documentation](home/doc/zeromq-integration.md) and [examples](examples/zeromq/) for more information.
+**Are there any fractal renderers that use ZeroMQ?** Yes! See [Fractal Renderers Using ZeroMQ](home/doc/fractal-renderers-using-zeromq.md) for details.
+
+For technical details, see the [ZeroMQ Integration Documentation](home/doc/zeromq-integration.md) and [examples](examples/zeromq/).
 
 # Building
 
