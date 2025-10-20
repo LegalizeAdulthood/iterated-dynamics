@@ -28,6 +28,7 @@
 #include "engine/text_color.h"
 #include "engine/trig_fns.h"
 #include "engine/UserData.h"
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/check_orbit_name.h"
@@ -70,7 +71,6 @@
 #include "ui/slideshw.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
-#include "ui/video_mode.h"
 
 #include <config/path_limits.h>
 #include <config/string_lower.h>

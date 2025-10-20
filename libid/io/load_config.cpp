@@ -3,9 +3,9 @@
 #include "io/load_config.h"
 
 #include "engine/pixel_limits.h"
+#include "engine/video_mode.h"
 #include "io/library.h"
 #include "misc/Driver.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cassert>
@@ -19,7 +19,6 @@
 
 using namespace id::engine;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::io
 {

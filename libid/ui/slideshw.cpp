@@ -7,6 +7,7 @@
 #include "ui/slideshw.h"
 
 #include "engine/calcfrac.h"
+#include "engine/video_mode.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "io/check_write_file.h"
@@ -18,7 +19,6 @@
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
 #include "ui/temp_msg.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cassert>

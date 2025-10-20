@@ -4,7 +4,7 @@
 
 #include <string>
 
-namespace id::ui
+namespace id::engine
 {
 
 // returns g_video_table entry number if the passed keystroke is a
@@ -24,4 +24,4 @@ inline std::string vid_mode_key_name(const int key)
     return buffer;
 }
 
-} // namespace id::ui
+} // namespace id::engine

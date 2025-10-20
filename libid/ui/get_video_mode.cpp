@@ -18,6 +18,7 @@
 #include "ui/get_video_mode.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -30,7 +31,6 @@
 #include "ui/help.h"
 #include "ui/make_batch_file.h"
 #include "ui/stop_msg.h"
-#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

@@ -18,7 +18,7 @@
 #include "ui/id_keys.h"
 #include "ui/put_string_center.h"
 #include "ui/tab_display.h"
-#include "ui/video_mode.h"
+#include "engine/video_mode.h"
 
 #include <cstring>
 

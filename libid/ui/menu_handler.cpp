@@ -7,6 +7,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/spindac.h"
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/julibrot.h"
@@ -25,7 +26,6 @@
 #include "ui/history.h"
 #include "ui/id_keys.h"
 #include "ui/rotate.h"
-#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <cstring>

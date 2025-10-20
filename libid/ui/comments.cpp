@@ -4,11 +4,11 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "misc/version.h"
 #include "ui/get_calculation_time.h"
 #include "ui/stop_msg.h"
-#include "ui/video_mode.h"
 
 #include <libcpuid/libcpuid.h>
 

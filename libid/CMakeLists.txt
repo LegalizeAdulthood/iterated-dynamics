@@ -52,6 +52,7 @@ add_library(libid
     include/engine/trig_fns.h engine/trig_fns.cpp
     include/engine/type_has_param.h engine/type_has_param.cpp
     include/engine/UserData.h engine/UserData.cpp
+    include/engine/video_mode.h engine/video_mode.cpp
     include/engine/VideoInfo.h engine/VideoInfo.cpp
     include/engine/Viewport.h engine/Viewport.cpp
     include/engine/wait_until.h engine/wait_until.cpp
@@ -245,7 +246,6 @@ add_library(libid
     include/ui/text_screen.h ui/text_screen.cpp
     include/ui/thinking.h ui/thinking.cpp
     include/ui/video.h ui/video.cpp
-    include/ui/video_mode.h ui/video_mode.cpp
     include/ui/zoom.h ui/zoom.cpp
 )
 source_group_subdir("Engine" "engine")

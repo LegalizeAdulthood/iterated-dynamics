@@ -12,6 +12,7 @@
 #include "engine/sound.h"
 #include "engine/spindac.h"
 #include "engine/UserData.h"
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -39,7 +40,6 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <config/port.h>

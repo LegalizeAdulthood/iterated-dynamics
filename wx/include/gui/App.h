@@ -2,9 +2,9 @@
 //
 #pragma once
 
+#include "engine/video_mode.h"
 #include "gui/Colormap.h"
 #include "gui/Screen.h"
-#include "ui/video_mode.h"
 
 #include <wx/app.h>
 

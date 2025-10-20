@@ -6,6 +6,7 @@
 #include "engine/calcfrac.h"
 #include "engine/show_dot.h"
 #include "engine/spindac.h"
+#include "engine/video_mode.h"
 #include "engine/Viewport.h"
 #include "fractals/julibrot.h"
 #include "helpcom.h"
@@ -41,7 +42,6 @@
 #include "ui/select_video_mode.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
-#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <config/home_dir.h>

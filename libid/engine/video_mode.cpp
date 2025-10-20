@@ -1,15 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/video_mode.h"
+#include "engine/video_mode.h"
 
 #include "engine/VideoInfo.h"
 #include "ui/id_keys.h"
 
 #include <cstdio>
 
-using namespace id::engine;
+using namespace id::ui;
 
-namespace id::ui
+namespace id::engine
 {
 
 int check_vid_mode_key(const int key)

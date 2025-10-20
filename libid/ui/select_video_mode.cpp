@@ -2,6 +2,7 @@
 //
 #include "ui/select_video_mode.h"
 
+#include "engine/video_mode.h"
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/is_writeable.h"
@@ -15,7 +16,6 @@
 #include "ui/id_keys.h"
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cassert>

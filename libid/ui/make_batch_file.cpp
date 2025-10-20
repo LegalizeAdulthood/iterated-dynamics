@@ -22,6 +22,7 @@
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
 #include "engine/UserData.h"
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -54,7 +55,6 @@
 #include "ui/help.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
-#include "ui/video_mode.h"
 
 #include <config/string_case_compare.h>
 #include <config/string_lower.h>
