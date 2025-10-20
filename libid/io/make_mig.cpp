@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/make_mig.h"
+#include "io/make_mig.h"
 
 #include "engine/spindac.h"
 #include "io/library.h"
@@ -16,9 +16,8 @@
 #include <string>
 
 using namespace id::engine;
-using namespace id::io;
 
-namespace id::ui
+namespace id::io
 {
 
 static char par_key(const unsigned int x)
@@ -334,4 +333,4 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
     }
 }
 
-} // namespace id::ui
+} // namespace id::io

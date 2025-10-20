@@ -2,9 +2,9 @@
 //
 #pragma once
 
-namespace id::ui
+namespace id::io
 {
 
 void make_mig(unsigned int x_mult, unsigned int y_mult);
 
-} // namespace id::ui
+} // namespace id::io
