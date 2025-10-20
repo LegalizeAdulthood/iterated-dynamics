@@ -2,6 +2,7 @@
 //
 #include "ui/get_sound_params.h"
 
+#include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/orbit.h"
 #include "engine/sound.h"

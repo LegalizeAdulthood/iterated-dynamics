@@ -135,7 +135,6 @@ extern std::filesystem::path g_read_filename;
 extern RecordColorsMode      g_record_colors;
 extern std::filesystem::path g_save_filename;
 extern ShowFile              g_show_file;
-extern bool                  g_start_show_orbit;
 extern int                   g_stop_pass;
 extern bool                  g_targa_out;
 extern std::filesystem::path g_temp_dir;

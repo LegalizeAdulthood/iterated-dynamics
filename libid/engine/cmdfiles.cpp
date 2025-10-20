@@ -133,7 +133,6 @@ int g_distance_estimator_x_dots{};                        // x dots to use for v
 int g_distance_estimator_y_dots{};                        // y dots to use for video independence
 int g_bf_digits{};                                        // digits to use (force) for g_bf_math
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
-bool g_start_show_orbit{};                                // show orbits on at start of fractal
 fs::path g_read_filename;                                 // name of fractal input file
 fs::path g_temp_dir;                                      // name of temporary directory
 fs::path g_working_dir;                                   // name of directory for misc files

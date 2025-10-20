@@ -198,6 +198,7 @@ DComplex g_init_orbit{};
 int g_orbit_color{15};
 int g_orbit_save_index{};
 bool g_show_orbit{};
+bool g_start_show_orbit{};
 
 static double fmod_test_bailout_or()
 {
