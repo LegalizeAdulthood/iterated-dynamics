@@ -2,7 +2,7 @@
 //
 // DO NOT EDIT!
 //
-// Generated from getpid.Linux.h.in
+// Generated from getpid.unistd.h.in
 //
 #pragma once
 
