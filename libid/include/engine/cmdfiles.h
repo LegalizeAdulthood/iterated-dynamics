@@ -140,8 +140,6 @@ extern BatchMode             g_init_batch;
 extern int                   g_init_cycle_limit;
 extern std::vector<int>      g_iteration_ranges;
 extern int                   g_iteration_ranges_len;
-extern std::filesystem::path g_l_system_filename;
-extern std::string           g_l_system_name;
 extern Byte                  g_map_clut[256][3];
 extern bool                  g_map_specified;
 extern double                g_math_tol[2];

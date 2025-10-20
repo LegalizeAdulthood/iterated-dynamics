@@ -6,6 +6,9 @@
 
 #include <config/port.h>
 
+#include <filesystem>
+#include <string>
+
 namespace id::fractals
 {
 
@@ -32,7 +35,10 @@ struct LSysTurtleState
     } param;
 };
 
-extern char g_max_angle;
+extern std::filesystem::path g_l_system_filename;
+extern std::string           g_l_system_name;
+
+extern char                  g_max_angle;
 
 struct LSysCmd;
 LSysCmd *draw_lsys(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rules, int depth);

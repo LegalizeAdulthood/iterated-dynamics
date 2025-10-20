@@ -35,6 +35,7 @@
 #include "fractals/ifs.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
+#include "fractals/lsys.h"
 #include "fractals/parser.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
@@ -189,8 +190,6 @@ int g_transparent_color_3d[2]{};             // transparency min/max values
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?
-fs::path g_l_system_filename;                // file to find L-System's in
-std::string g_l_system_name;                 // Name of L-System (if not empty)
 fs::path g_parameter_file;                   // file to find parameter sets in
 std::string g_parameter_set_name;            // Name of parameter set (if not empty)
 

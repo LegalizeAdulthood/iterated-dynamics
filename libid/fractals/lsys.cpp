@@ -3,7 +3,6 @@
 #include "fractals/lsys.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/VideoInfo.h"
 #include "fractals/lsys_fns.h"
 #include "io/file_gets.h"
@@ -21,9 +20,12 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 #include <new>
 #include <string>
 #include <vector>
+
+namespace fs = std::filesystem;
 
 using namespace id::config;
 using namespace id::engine;
@@ -33,6 +35,9 @@ using namespace id::ui;
 
 namespace id::fractals
 {
+
+fs::path g_l_system_filename;                // file to find L-System's in
+std::string g_l_system_name;                 // Name of L-System (if not empty)
 
 static bool read_lsystem_file(const char *str);
 static void free_rules_mem();
