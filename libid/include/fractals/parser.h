@@ -2,11 +2,14 @@
 //
 #pragma once
 
+#include <filesystem>
 #include <string>
 
 namespace id::fractals
 {
 
+extern std::filesystem::path g_formula_filename;
+extern std::string           g_formula_name;
 extern bool                  g_frm_uses_ismand;
 extern bool                  g_frm_uses_p1;
 extern bool                  g_frm_uses_p2;

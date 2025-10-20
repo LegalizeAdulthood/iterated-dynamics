@@ -53,6 +53,8 @@
 #include <stdexcept>
 #include <vector>
 
+namespace fs = std::filesystem;
+
 using namespace id::config;
 using namespace id::engine;
 using namespace id::io;
@@ -328,6 +330,8 @@ static void end_init();
 static void d_stk_jump_on_false();
 static void d_stk_jump_on_true();
 
+fs::path g_formula_filename;                 // file to find formulas in
+std::string g_formula_name;                  // Name of the Formula (if not empty)
 unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 int g_store_index{};
