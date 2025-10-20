@@ -91,6 +91,12 @@ if(("id" IN_LIST VCPKG_MANIFEST_FEATURES) OR ("wx" IN_LIST VCPKG_MANIFEST_FEATUR
     if(BUILD_TESTING)
         add_subdirectory(tests)
     endif()
+    
+    # Add ZeroMQ examples if available
+    option(ID_BUILD_EXAMPLES "Build ZeroMQ examples" ON)
+    if(ID_BUILD_EXAMPLES)
+        add_subdirectory(examples/zeromq)
+    endif()
 
     vs_startup_project(id)
 endif()

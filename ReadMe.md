@@ -53,6 +53,18 @@ for more of what the software can do.
 See the [wiki](https://github.com/LegalizeAdulthood/iterated-dynamics/wiki)
 for the current release plan.
 
+# Features
+
+## ZeroMQ Support
+
+Iterated Dynamics includes support for [ZeroMQ](https://zeromq.org/), enabling distributed and parallel fractal rendering capabilities. This makes it possible to:
+
+- Distribute rendering tasks across multiple machines
+- Scale rendering from single-machine to cluster computing
+- Build render farms for high-resolution fractals and animations
+
+See the [ZeroMQ Integration Documentation](home/doc/zeromq-integration.md) and [examples](examples/zeromq/) for more information.
+
 # Building
 
 Iterated Dynamics uses [CMake](http://www.cmake.org) to generate build scripts
