@@ -20,7 +20,6 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
-#include "engine/id_data.h"
 #include "engine/Inversion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"

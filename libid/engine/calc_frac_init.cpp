@@ -8,7 +8,6 @@
 #include "engine/convert_corners.h"
 #include "engine/fractalb.h"
 #include "engine/get_prec_big_float.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"
@@ -23,7 +22,6 @@
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
-#include "misc/id.h"
 #include "ui/stop_msg.h"
 #include "ui/zoom.h"
 

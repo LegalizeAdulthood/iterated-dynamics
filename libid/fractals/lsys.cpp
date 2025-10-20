@@ -2,8 +2,8 @@
 //
 #include "fractals/lsys.h"
 
+#include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/VideoInfo.h"
 #include "fractals/lsys_fns.h"
 #include "io/file_gets.h"

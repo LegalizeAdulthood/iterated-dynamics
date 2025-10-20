@@ -6,7 +6,6 @@
 #include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "math/big.h"
-#include "misc/id.h"
 
 #include <complex>
 
@@ -26,9 +25,9 @@ struct AlternateMath
 
 struct MoreParams
 {
-    FractalType type;                        // index in fractalname of the fractal
-    const char *param_names[MAX_PARAMS - 4]; // name of the parameters
-    double params[MAX_PARAMS - 4];           // default parameter values
+    FractalType type;                                // index in fractalname of the fractal
+    const char *param_names[engine::MAX_PARAMS - 4]; // name of the parameters
+    double params[engine::MAX_PARAMS - 4];           // default parameter values
 };
 
 // bitmask values for FractalSpecific flags

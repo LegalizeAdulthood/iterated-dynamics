@@ -17,6 +17,7 @@ namespace id::engine
 {
 
 constexpr double AUTO_INVERT = -123456.789;
+constexpr int MAX_PARAMS{10};        // maximum number of parameters
 
 enum
 {
@@ -140,6 +141,7 @@ extern bool                  g_old_demm_colors;
 extern math::DComplex        g_old_z;
 extern int                   g_orbit_color;
 extern int                   g_orbit_save_index;
+extern double                g_params[MAX_PARAMS];
 extern Passes                g_passes;
 extern int                   g_periodicity_check;
 extern int                   g_periodicity_next_saved_incr;

@@ -6,7 +6,6 @@
 #include "engine/calcfrac.h"
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"

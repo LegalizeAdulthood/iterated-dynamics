@@ -31,7 +31,6 @@
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
 #include "helpdefs.h"
-#include "io/dir_file.h"
 #include "io/ends_with_slash.h"
 #include "io/file_gets.h"
 #include "io/has_ext.h"

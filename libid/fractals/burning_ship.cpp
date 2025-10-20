@@ -5,7 +5,6 @@
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 

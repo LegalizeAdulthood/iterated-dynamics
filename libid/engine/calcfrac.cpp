@@ -23,7 +23,6 @@
 #include "engine/engine_timer.h"
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
@@ -43,7 +42,6 @@
 #include "engine/wait_until.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
-#include "fractals/FrothyBasin.h"
 #include "fractals/lyapunov.h"
 #include "fractals/newton.h"
 #include "fractals/parser.h"
@@ -52,12 +50,12 @@
 #include "io/library.h"
 #include "io/save_timer.h"
 #include "io/update_save_name.h"
-#include "math/arg.h"
 #include "math/biginit.h"
 #include "math/fixed_pt.h"
 #include "math/sign.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/id.h"
 #include "misc/ValueSaver.h"
 #include "ui/check_key.h"
 #include "ui/diskvid.h"
@@ -197,6 +195,7 @@ int g_periodicity_next_saved_incr{};              // For periodicity testing, on
 long g_first_saved_and{};                         //
 int g_atan_colors{180};                           //
 int g_and_color{};                                // "and" value used for color selection
+double g_params[MAX_PARAMS]{};                    // parameters
 
 static double fmod_test_bailout_or()
 {
@@ -540,10 +539,10 @@ static void init_calc_fract()
 
     // following delta values useful only for types with rotation disabled
     // currently used only by bifurcation
-    g_param_z1.x   = g_params[0];
-    g_param_z1.y   = g_params[1];
-    g_param_z2.x  = g_params[2];
-    g_param_z2.y  = g_params[3];
+    g_param_z1.x = g_params[0];
+    g_param_z1.y = g_params[1];
+    g_param_z2.x = g_params[2];
+    g_param_z2.y = g_params[3];
 
     if (g_log_map_flag && g_colors < 16)
     {

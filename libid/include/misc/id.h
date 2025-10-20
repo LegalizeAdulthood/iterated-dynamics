@@ -8,7 +8,6 @@ namespace id::misc
 enum
 {
     MSG_LEN = 80,        // handy buffer size for messages
-    MAX_PARAMS = 10      // maximum number of parameters
 };
 
 #define DEFAULT_ASPECT 0.75F         // Assumed overall screen dimensions, y/x

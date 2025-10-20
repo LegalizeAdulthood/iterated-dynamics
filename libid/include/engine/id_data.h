@@ -5,7 +5,6 @@
 namespace id::engine
 {
 
-extern double                g_params[];
 extern int                   g_save_system;
 extern int                   g_scale_map[];
 

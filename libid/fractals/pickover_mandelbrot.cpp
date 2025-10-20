@@ -6,7 +6,6 @@
 #include "engine/calcfrac.h"
 #include "engine/fractalb.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "engine/trig_fns.h"
 #include "fractals/frasetup.h"
 #include "math/arg.h"

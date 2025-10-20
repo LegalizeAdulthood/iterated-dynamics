@@ -3,7 +3,6 @@
 #include "fractals/Diffusion.h"
 
 #include "engine/calcfrac.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"

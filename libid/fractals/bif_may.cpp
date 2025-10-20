@@ -4,7 +4,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/engine_timer.h"
-#include "engine/id_data.h"
 #include "fractals/fractalp.h"
 #include "fractals/population.h"
 

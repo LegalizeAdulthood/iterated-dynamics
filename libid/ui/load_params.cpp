@@ -3,7 +3,6 @@
 #include "ui/load_params.h"
 
 #include "engine/find_extra_param.h"
-#include "engine/id_data.h"
 #include "fractals/fractalp.h"
 
 using namespace id::engine;

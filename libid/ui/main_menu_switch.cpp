@@ -4,7 +4,6 @@
 
 #include "engine/Browse.h"
 #include "engine/calcfrac.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/jiim.h"
 #include "engine/log_map.h"
@@ -20,7 +19,6 @@
 #include "io/loadfile.h"
 #include "io/merge_path_names.h"
 #include "misc/Driver.h"
-#include "misc/id.h"
 #include "ui/ant.h"
 #include "ui/diskvid.h"
 #include "ui/evolve.h"

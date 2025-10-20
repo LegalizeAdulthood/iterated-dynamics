@@ -4,7 +4,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "engine/VideoInfo.h"
 
 using namespace id::engine;
