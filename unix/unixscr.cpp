@@ -16,6 +16,7 @@
  */
 #include "unixscr.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
 #include "engine/spindac.h"
