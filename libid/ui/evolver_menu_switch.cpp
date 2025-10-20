@@ -4,7 +4,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "engine/Viewport.h"
@@ -22,6 +21,7 @@
 #include "ui/id_keys.h"
 #include "ui/menu_handler.h"
 #include "ui/passes_options.h"
+#include "ui/video_mode.h"
 #include "ui/select_video_mode.h"
 #include "ui/zoom.h"
 
@@ -32,6 +32,7 @@
 using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id::ui
 {

@@ -7,7 +7,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "io/dir_file.h"
 #include "misc/Driver.h"
@@ -22,6 +21,7 @@
 #include "ui/rotate.h"
 #include "ui/spindac.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <fmt/format.h>

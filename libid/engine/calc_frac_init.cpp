@@ -24,6 +24,7 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <config/port.h>

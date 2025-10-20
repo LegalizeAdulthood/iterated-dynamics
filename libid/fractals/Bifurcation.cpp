@@ -14,12 +14,14 @@
 #include "math/arg.h"
 #include "math/fixed_pt.h"
 #include "misc/id.h"
+#include "ui/video_mode.h"
 
 #include <cmath>
 #include <vector>
 
 using namespace id::engine;
 using namespace id::math;
+using namespace id::ui;
 
 namespace id::fractals
 {

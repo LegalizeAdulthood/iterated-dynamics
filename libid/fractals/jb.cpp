@@ -18,6 +18,7 @@
 #include "ui/spindac.h"
 #include "ui/starfield.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 

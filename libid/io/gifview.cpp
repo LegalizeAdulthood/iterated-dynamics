@@ -16,7 +16,6 @@
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/engine_timer.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "engine/Potential.h"
@@ -37,6 +36,7 @@
 #include "ui/spindac.h"
 #include "ui/stereo.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 
 #include <config/path_limits.h>
 

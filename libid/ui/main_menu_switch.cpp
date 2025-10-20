@@ -50,6 +50,7 @@
 #include "ui/spindac.h"
 #include "ui/starfield.h"
 #include "ui/stereo.h"
+#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <algorithm>

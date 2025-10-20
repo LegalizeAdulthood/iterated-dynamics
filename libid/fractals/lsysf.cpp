@@ -3,7 +3,6 @@
 #include "fractals/lsys.h"
 
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "fractals/lsys_fns.h"
 #include "math/fixed_pt.h"
@@ -11,6 +10,7 @@
 #include "misc/id.h"
 #include "misc/stack_avail.h"
 #include "ui/thinking.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cmath>

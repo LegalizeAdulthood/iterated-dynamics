@@ -14,7 +14,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "io/CurrentPathSaver.h"
 #include "io/save_timer.h"
 #include "ui/diskvid.h"
@@ -26,6 +25,7 @@
 #include "ui/stop_msg.h"
 #include "ui/text_screen.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <crtdbg.h>

@@ -9,6 +9,7 @@
 #include "math/fixed_pt.h"
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 
 #include <config/string_lower.h>
 

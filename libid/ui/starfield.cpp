@@ -5,7 +5,6 @@
 #include <algorithm>
 
 #include "engine/calcfrac.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "helpdefs.h"
 #include "io/loadmap.h"
@@ -19,6 +18,7 @@
 #include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 
 using namespace id::engine;
 using namespace id::help;

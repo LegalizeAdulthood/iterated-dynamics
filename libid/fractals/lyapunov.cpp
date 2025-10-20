@@ -16,6 +16,7 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
+#include "ui/video_mode.h"
 
 #include <cmath>
 #include <cstdlib>

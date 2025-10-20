@@ -32,6 +32,7 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

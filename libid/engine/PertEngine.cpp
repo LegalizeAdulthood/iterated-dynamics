@@ -21,6 +21,7 @@
 #include "math/complex_fn.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cmath>
@@ -31,6 +32,7 @@
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
+using namespace id::ui;
 
 namespace id::engine
 {

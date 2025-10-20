@@ -15,6 +15,7 @@
 #include "fractals/newton.h"
 #include "io/loadmap.h"
 #include "ui/spindac.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cmath>

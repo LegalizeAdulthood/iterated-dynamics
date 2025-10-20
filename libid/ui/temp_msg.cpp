@@ -3,13 +3,13 @@
 #include "ui/temp_msg.h"
 
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 
 #include <config/port.h>
 

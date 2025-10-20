@@ -3,7 +3,6 @@
 #include "ui/get_view_params.h"
 
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/Viewport.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"

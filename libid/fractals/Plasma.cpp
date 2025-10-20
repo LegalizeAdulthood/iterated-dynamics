@@ -17,6 +17,7 @@
 #include "ui/rotate.h"
 #include "ui/spindac.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cstdlib>

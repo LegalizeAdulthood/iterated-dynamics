@@ -9,7 +9,6 @@
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/Potential.h"
@@ -32,6 +31,7 @@
 #include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cassert>

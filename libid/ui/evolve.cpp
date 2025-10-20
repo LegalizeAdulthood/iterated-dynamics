@@ -23,6 +23,7 @@
 #include "ui/ChoiceBuilder.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
+#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <config/port.h>

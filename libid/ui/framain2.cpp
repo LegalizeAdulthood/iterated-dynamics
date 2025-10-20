@@ -6,7 +6,6 @@
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/Potential.h"

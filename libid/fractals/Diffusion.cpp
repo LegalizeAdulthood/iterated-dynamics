@@ -10,6 +10,7 @@
 #include "math/fpu087.h"
 #include "misc/id.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cstdlib>

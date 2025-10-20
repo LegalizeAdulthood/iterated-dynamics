@@ -5,7 +5,6 @@
 #include "engine/Browse.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/show_dot.h"
 #include "engine/Viewport.h"
 #include "fractals/fractype.h"

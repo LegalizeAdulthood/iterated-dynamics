@@ -5,7 +5,9 @@
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
 #include "engine/id_data.h"
+#include "ui/video_mode.h"
 
+using namespace id::ui;
 using namespace id::engine;
 
 namespace id::fractals
@@ -14,7 +16,7 @@ namespace id::fractals
 int circle_orbit()
 {
     const long i = static_cast<long>(g_params[0] * (g_temp_sqr_x + g_temp_sqr_y));
-    g_color_iter = i%g_colors;
+    g_color_iter = i % g_colors;
     return 1;
 }
 

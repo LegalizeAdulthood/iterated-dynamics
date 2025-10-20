@@ -10,7 +10,6 @@
 #include "ui/diskvid.h"
 
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "math/big.h"
 #include "misc/Driver.h"
@@ -19,6 +18,7 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
+#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

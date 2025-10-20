@@ -43,9 +43,13 @@ inline bool operator!=(const VideoInfo &lhs, const VideoInfo &rhs)
     return !(lhs == rhs);
 }
 
-extern VideoInfo             g_video_entry;
-extern VideoInfo             g_video_table[];
-extern int                   g_video_table_len;
+extern int g_adapter;             // index into g_video_table[]
+extern int g_colors;              // maximum colors available
+extern int g_screen_x_dots;       // # of dots on the physical screen
+extern int g_screen_y_dots;       //
+extern VideoInfo g_video_entry;   //
+extern VideoInfo g_video_table[]; //
+extern int g_video_table_len;     //
 
 // returns g_video_table entry number if the passed keystroke is a
 // function key currently assigned to a video mode, -1 otherwise

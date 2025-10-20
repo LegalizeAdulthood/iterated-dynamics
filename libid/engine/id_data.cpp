@@ -14,9 +14,6 @@ using namespace id::misc;
 namespace id::engine
 {
 
-int g_adapter{};                                  // Video Adapter chosen from list in ...h
-int g_screen_x_dots{}, g_screen_y_dots{};         // # of dots on the physical screen
-int g_colors{256};                                // maximum colors available
 long g_max_iterations{};                          // try this many iterations
 double g_params[MAX_PARAMS]{};                    // parameters
                                                   // variables defined by the command line/files processor

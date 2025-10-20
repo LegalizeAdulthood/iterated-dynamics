@@ -32,6 +32,7 @@
 #include "ui/get_browse_params.h"
 #include "ui/id_keys.h"
 #include "ui/temp_msg.h"
+#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <fmt/format.h>

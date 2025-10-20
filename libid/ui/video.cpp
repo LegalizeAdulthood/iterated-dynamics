@@ -4,11 +4,11 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/LogicalScreen.h"
 #include "io/make_path.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
+#include "ui/video_mode.h"
 
 #include <cassert>
 #include <cstdarg>
