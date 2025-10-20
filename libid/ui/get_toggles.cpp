@@ -4,7 +4,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/log_map.h"
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
@@ -14,7 +13,6 @@
 #include "ui/full_screen_prompt.h"
 #include "ui/help.h"
 
-#include <config/path_limits.h>
 #include <config/string_lower.h>
 
 #include <fmt/format.h>

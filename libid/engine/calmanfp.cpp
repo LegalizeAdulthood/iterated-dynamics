@@ -9,7 +9,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "engine/orbit.h"
 #include "fractals/fractype.h"
 #include "misc/id.h"

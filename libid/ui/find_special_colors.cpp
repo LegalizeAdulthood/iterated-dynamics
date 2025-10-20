@@ -2,7 +2,6 @@
 //
 #include "ui/find_special_colors.h"
 
-#include "engine/id_data.h"
 #include "engine/VideoInfo.h"
 #include "ui/rotate.h"
 

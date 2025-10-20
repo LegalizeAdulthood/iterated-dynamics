@@ -4,9 +4,7 @@
 
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
-#include "engine/engine_timer.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/resume.h"
 #include "engine/VideoInfo.h"

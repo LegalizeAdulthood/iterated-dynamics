@@ -25,7 +25,6 @@ The sample code below is a straightforward Mandelbrot routine.
 
 #include "engine/calcfrac.h"
 #include "engine/fractals.h"
-#include "engine/id_data.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
 #include "engine/VideoInfo.h"

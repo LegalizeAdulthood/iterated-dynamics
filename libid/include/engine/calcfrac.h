@@ -132,6 +132,7 @@ extern double                g_magnitude;
 extern bool                  g_magnitude_calc;
 extern double                g_magnitude_limit;
 extern double                g_magnitude_limit2;
+extern long                  g_max_iterations;      // try this many iterations
 extern int                   g_max_keyboard_check_interval;
 extern math::DComplex        g_new_z;
 extern long                  g_old_color_iter;

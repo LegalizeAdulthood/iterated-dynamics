@@ -4,12 +4,9 @@
 
 #include "Frame.h"
 
-#include "engine/id_data.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
-#include "misc/version.h"
 #include "ui/rotate.h"
-#include "ui/video_mode.h"
 
 #include <windowsx.h>
 

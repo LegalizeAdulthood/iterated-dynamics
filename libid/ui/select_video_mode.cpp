@@ -2,13 +2,11 @@
 //
 #include "ui/select_video_mode.h"
 
-#include "engine/id_data.h"
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/is_writeable.h"
 #include "io/library.h"
 #include "io/load_config.h"
-#include "io/locate_input_file.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/full_screen_choice.h"

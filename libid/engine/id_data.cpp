@@ -14,7 +14,6 @@ using namespace id::misc;
 namespace id::engine
 {
 
-long g_max_iterations{};                          // try this many iterations
 double g_params[MAX_PARAMS]{};                    // parameters
                                                   // variables defined by the command line/files processor
 int g_save_system{};                              // from and for save files

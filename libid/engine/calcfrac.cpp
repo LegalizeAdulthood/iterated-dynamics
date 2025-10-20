@@ -151,6 +151,7 @@ void (*g_plot)(int, int, int){put_color_a};       //
 double g_magnitude{};                             //
 double g_magnitude_limit{};                       //
 double g_magnitude_limit2{};                      //
+long g_max_iterations{};                          //
 bool g_magnitude_calc{true};                      //
 bool g_use_old_periodicity{};                     //
 bool g_use_old_distance_estimator{};              //

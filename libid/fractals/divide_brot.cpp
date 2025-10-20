@@ -10,7 +10,6 @@
 #include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
 #include "fractals/newton.h"
-#include "fractals/parser.h"
 #include "math/big.h"
 #include "math/biginit.h"
 #include "math/fpu087.h"

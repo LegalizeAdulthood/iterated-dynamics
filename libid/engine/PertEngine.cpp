@@ -12,7 +12,6 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
-#include "engine/id_data.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/VideoInfo.h"
