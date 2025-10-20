@@ -381,7 +381,9 @@ bool auto_stereo_convert()
             case 'c':
             case '+':
             case '-':
-                rotate(key == 'c' ? 0 : key == '+' ? 1 : -1);
+                rotate(key == 'c'    ? SpinDirection::NONE
+                        : key == '+' ? SpinDirection::FORWARD
+                                     : SpinDirection::BACKWARD);
                 break;
             case 's':
             case 'S':

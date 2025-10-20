@@ -20,7 +20,7 @@ bool g_is_true_color{};
 
 // Rotate the colormap in the (plus or minus) "direction"
 // in "rstep" increments - or, if "direction" is 0, just replace it.
-void spin_dac(const int dir, const int inc)
+void spin_dac(const SpinDirection dir, const int inc)
 {
     if (g_colors < 16)
     {
@@ -30,12 +30,14 @@ void spin_dac(const int dir, const int inc)
     {
         return;
     }
-    if (dir != 0 && g_color_cycle_range_lo < g_colors && g_color_cycle_range_lo < g_color_cycle_range_hi)
+    if (dir != SpinDirection::NONE &&        //
+        g_color_cycle_range_lo < g_colors && //
+        g_color_cycle_range_lo < g_color_cycle_range_hi)
     {
         const int top = g_color_cycle_range_hi > g_colors ? g_colors - 1 : g_color_cycle_range_hi;
         unsigned char *dac_bot = reinterpret_cast<unsigned char *>(g_dac_box) + 3 * g_color_cycle_range_lo;
         const int len = (top - g_color_cycle_range_lo)*3*sizeof(unsigned char);
-        if (dir > 0)
+        if (dir > SpinDirection::NONE)
         {
             for (int i = 0; i < inc; i++)
             {

@@ -2602,7 +2602,7 @@ void PalTable::other_key(int key, RGBEditor *rgb)
             hide(rgb, true);
         }
         set_pal_range(0, g_colors, m_pal);
-        ui::rotate(0);
+        ui::rotate(SpinDirection::NONE);
         get_pal_range(0, g_colors, m_pal);
         update_dac();
         if (!old_hidden)

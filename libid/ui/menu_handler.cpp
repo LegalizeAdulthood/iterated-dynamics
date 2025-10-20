@@ -109,11 +109,11 @@ MainState color_cycle(MainContext &context)
     std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
     if (context.key == 'c')
     {
-        rotate(0);
+        rotate(SpinDirection::NONE);
     }
     else
     {
-        rotate(context.key == '+' ? 1 : -1);
+        rotate(context.key == '+' ? SpinDirection::FORWARD : SpinDirection::BACKWARD);
     }
     if (std::memcmp(g_old_dac_box, g_dac_box, 256 * 3) != 0)
     {

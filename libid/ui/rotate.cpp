@@ -203,7 +203,7 @@ static void set_palette_range(const int key)
 }
 
 // rotate-the-palette routine
-void rotate(int direction)
+void rotate(SpinDirection direction)
 {
     int from_red = 0;
     int from_blue = 0;
@@ -232,18 +232,18 @@ void rotate(int direction)
     int incr = 999;                         // ready to randomize
     std::srand(static_cast<unsigned>(std::time(nullptr))); // randomize things
 
-    if (direction == 0)
+    if (direction == SpinDirection::NONE)
     {
         // firing up in paused mode?
-        pause_rotate(); // then force a pause
-        direction = 1;  // and set a rotate direction
+        pause_rotate();                     // then force a pause
+        direction = SpinDirection::FORWARD; // and set a rotate direction
     }
 
     const int rotate_max = g_color_cycle_range_hi < g_colors ? g_color_cycle_range_hi : g_colors - 1;
     const int rotate_size = rotate_max - g_color_cycle_range_lo + 1;
     int last = rotate_max;                  // last box that was filled
     int next = g_color_cycle_range_lo;      // next box to be filled
-    if (direction < 0)
+    if (direction < SpinDirection::NONE)
     {
         last = g_color_cycle_range_lo;
         next = rotate_max;
@@ -269,7 +269,7 @@ void rotate(int direction)
                     // randomizing is on
                     for (int i_step = 0; i_step < step; i_step++)
                     {
-                        int j_step = next + i_step * direction;
+                        int j_step = next + i_step * +direction;
                         while (j_step < g_color_cycle_range_lo)
                         {
                             j_step += rotate_size;
@@ -317,7 +317,7 @@ void rotate(int direction)
         case '+':                       // '+' means rotate forward
         case ID_KEY_RIGHT_ARROW:        // RightArrow = rotate fwd
             f_key = 0;
-            direction = 1;
+            direction = SpinDirection::FORWARD;
             last = rotate_max;
             next = g_color_cycle_range_lo;
             incr = 999;
@@ -325,7 +325,7 @@ void rotate(int direction)
         case '-':                       // '-' means rotate backward
         case ID_KEY_LEFT_ARROW:         // LeftArrow = rotate bkwd
             f_key = 0;
-            direction = -1;
+            direction = SpinDirection::BACKWARD;
             last = g_color_cycle_range_lo;
             next = rotate_max;
             incr = 999;
@@ -411,14 +411,14 @@ void rotate(int direction)
         case ',':
             if (key == '>' || key == '.')
             {
-                direction = -1;
+                direction = SpinDirection::BACKWARD;
                 last = g_color_cycle_range_lo;
                 next = rotate_max;
                 incr = 999;
             }
             else
             {
-                direction = 1;
+                direction = SpinDirection::FORWARD;
                 last = rotate_max;
                 next = g_color_cycle_range_lo;
                 incr = 999;
