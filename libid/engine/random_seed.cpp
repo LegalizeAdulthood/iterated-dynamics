@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "engine/random_seed.h"
 
 #include <cstdlib>

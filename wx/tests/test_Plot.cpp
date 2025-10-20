@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include <gui/Plot.h>
 
 #include <wx/stc/stc.h>

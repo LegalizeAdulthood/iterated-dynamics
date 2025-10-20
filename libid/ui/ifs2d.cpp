@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: GPL-3.0-only
+//
 #include "ui/ifs2d.h"
 
 #include "fractals/lorenz.h"

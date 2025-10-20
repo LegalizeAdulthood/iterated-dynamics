@@ -1,3 +1,5 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
 find_package(fmt CONFIG REQUIRED)
 
 add_executable(TestTextScreen test_TextScreen.cpp)
