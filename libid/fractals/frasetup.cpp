@@ -14,6 +14,7 @@
 #include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
+#include "fractals/lorenz.h"
 #include "fractals/magnet.h"
 #include "fractals/peterson_variations.h"
 #include "fractals/pickover_mandelbrot.h"

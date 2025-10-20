@@ -34,12 +34,6 @@ enum class RecordColorsMode
     YES = 'y'
 };
 
-enum OrbitSaveFlags
-{
-    OSF_RAW = 1,
-    OSF_MIDI = 2
-};
-
 enum class CmdFile
 {
     AT_CMD_LINE = 0,         // command line @filename
@@ -134,8 +128,6 @@ extern Byte                  g_map_clut[256][3];
 extern bool                  g_map_specified;
 extern double                g_math_tol[2];
 extern bool                  g_new_bifurcation_functions_loaded;
-extern int                   g_orbit_save_flags;
-extern std::string           g_orbit_save_name;
 extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;
 extern bool                  g_read_color;

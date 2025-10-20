@@ -175,8 +175,6 @@ bool g_fast_restore{};
 // true: user has specified a directory for Orgform formula compilation files
 bool g_organize_formulas_search{};
 
-int g_orbit_save_flags{};                    // for IFS and LORENZ to output acrospin file
-std::string g_orbit_save_name{"orbits.raw"}; //
 int g_transparent_color_3d[2]{};             // transparency min/max values
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen

@@ -5,6 +5,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/orbit.h"
 #include "engine/wait_until.h"
+#include "fractals/lorenz.h"
 #include "io/check_write_file.h"
 #include "io/library.h"
 #include "misc/Driver.h"
@@ -17,6 +18,7 @@
 #include <ctime>
 #include <string>
 
+using namespace id::fractals;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::ui;

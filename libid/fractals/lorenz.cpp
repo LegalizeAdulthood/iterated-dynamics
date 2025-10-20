@@ -57,6 +57,19 @@ using namespace id::ui;
 namespace id::fractals
 {
 
+Minor g_inverse_julia_minor_method{};
+bool g_keep_screen_coords{};
+Major g_major_method{};
+long g_max_count{};
+ImageRegion g_orbit_corner;
+long g_orbit_interval{};
+bool g_set_orbit_corners{};
+int g_orbit_save_flags{};
+std::string g_orbit_save_name{"orbits.raw"};
+
+namespace
+{
+
 using OrbitCalc = int (*)(double *x, double *y, double *z);
 
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
@@ -71,6 +84,8 @@ enum
 {
     BAD_PIXEL = 10000L
 };
+
+} // namespace
 
 static int  ifs3d();
 static void setup_matrix(Matrix double_mat);
@@ -136,15 +151,6 @@ static const double &PAR_A{g_params[0]};
 static const double &PAR_B{g_params[1]};
 static const double &PAR_C{g_params[2]};
 static const double &PAR_D{g_params[3]};
-
-long g_max_count{};
-Major g_major_method{};
-Minor g_inverse_julia_minor_method{};
-
-bool g_keep_screen_coords{};
-bool g_set_orbit_corners{};
-long g_orbit_interval{};
-ImageRegion g_orbit_corner;
 
 // OrbitCalc is declared with no arguments so jump through hoops here
 static int orbit(double *x, double *y, double *z)

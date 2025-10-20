@@ -6,6 +6,7 @@
 #include "geometry/3d.h"
 
 #include <cstdio>
+#include <string>
 
 namespace id::fractals
 {
@@ -42,6 +43,12 @@ inline int operator+(Minor value)
 {
     return static_cast<int>(value);
 }
+
+enum OrbitSaveFlags
+{
+    OSF_RAW = 1,
+    OSF_MIDI = 2
+};
 
 // data used by 3d view transform subroutine
 struct ViewTransform3D
@@ -221,6 +228,8 @@ extern long                  g_max_count;
 extern engine::ImageRegion   g_orbit_corner;
 extern long                  g_orbit_interval;
 extern bool                  g_set_orbit_corners;
+extern int                   g_orbit_save_flags;            // for IFS and LORENZ to output acrospin file
+extern std::string           g_orbit_save_name;
 
 constexpr const char *to_string(const Major value)
 {
