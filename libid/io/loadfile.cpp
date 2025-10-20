@@ -436,7 +436,6 @@ static void backwards_info4(const FractalInfo &read_info)
     }
 
     g_potential.store_16bit = false;
-    g_save_system = 0;
 }
 
 static void backwards_info5(const FractalInfo &read_info)

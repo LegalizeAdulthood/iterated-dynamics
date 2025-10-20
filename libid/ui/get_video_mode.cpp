@@ -271,14 +271,14 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             heading_detail(info, blk_3_info))};
         if (info->info_id[0] != 'G')
         {
-            if (g_save_system)
+            if (info->system)
             {
                 heading += "Id       ";
             }
             heading += to_display_string(g_file_version);
         }
         heading += '\n';
-        if (info->info_id[0] != 'G' && g_save_system == 0)
+        if (info->info_id[0] != 'G' && info->system == +SaveSystem::DOS)
         {
             if (g_init_mode < 0)
             {

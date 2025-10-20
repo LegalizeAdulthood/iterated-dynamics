@@ -46,6 +46,17 @@ enum
     NUM_FRACTAL_INFO_FUTURE = 5
 };
 
+enum class SaveSystem
+{
+    DOS = 0,
+    WINDOWS = 1, // We always save as Windows, never as DOS
+};
+
+inline int operator+(SaveSystem value)
+{
+    return static_cast<int>(value);
+}
+
 // for saving data in GIF file
 struct FractalInfo
 {

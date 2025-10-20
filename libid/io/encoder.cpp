@@ -8,7 +8,6 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/engine_timer.h"
-#include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
@@ -867,8 +866,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->periodicity = static_cast<std::int16_t>(g_periodicity_check);
     save_info->pot16bit = static_cast<std::int16_t>(g_disk_16_bit ? 1 : 0);
     save_info->final_aspect_ratio = g_viewport.final_aspect_ratio;
-    save_info->system = static_cast<std::int16_t>(g_save_system);
-    save_info->release = static_cast<std::int16_t>(20 * 100 + 4); // legacy FRACTINT 20.04
+    save_info->system = static_cast<std::int16_t>(SaveSystem::WINDOWS); // always "Windows" for saved files
+    save_info->release = static_cast<std::int16_t>(20 * 100 + 4);       // legacy FRACTINT 20.04
     save_info->display_3d = static_cast<std::int16_t>(g_display_3d);
     save_info->ambient = static_cast<std::int16_t>(g_ambient);
     save_info->randomize = static_cast<std::int16_t>(g_randomize_3d);

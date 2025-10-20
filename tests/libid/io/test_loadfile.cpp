@@ -92,7 +92,6 @@ protected:
     ValueSaver<long> saved_calc_time{g_calc_time};
     ValueSaver<CalcStatus> saved_calc_status{g_calc_status};
     ValueSaver<bool> saved_potential_16bit{g_potential.store_16bit};
-    ValueSaver<int> saved_save_system{g_save_system};
     ValueSaver<int> saved_file_x_dots{g_file_x_dots};
     ValueSaver<int> saved_file_y_dots{g_file_y_dots};
     ValueSaver<float> saved_file_aspect_ratio{g_file_aspect_ratio};
