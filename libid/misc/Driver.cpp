@@ -2,7 +2,7 @@
 //
 #include "misc/Driver.h"
 
-#include "ui/video_mode.h"
+#include "engine/VideoInfo.h"
 
 #include <config/driver_types.h>
 
@@ -10,7 +10,7 @@
 #include <cstring>
 #include <vector>
 
-using namespace id::ui;
+using namespace id::engine;
 
 namespace id::misc
 {

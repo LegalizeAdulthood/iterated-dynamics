@@ -10,6 +10,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/Potential.h"
 #include "engine/UserData.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/jb.h"

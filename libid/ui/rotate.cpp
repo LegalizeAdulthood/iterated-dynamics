@@ -7,6 +7,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
+#include "engine/VideoInfo.h"
 #include "helpdefs.h"
 #include "io/library.h"
 #include "io/loadmap.h"
@@ -19,7 +20,6 @@
 #include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/spindac.h"
-#include "ui/video_mode.h"
 
 #include <config/path_limits.h>
 

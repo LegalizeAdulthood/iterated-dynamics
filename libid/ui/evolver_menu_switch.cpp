@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "io/encoder.h"
 #include "misc/Driver.h"
@@ -21,7 +22,6 @@
 #include "ui/id_keys.h"
 #include "ui/menu_handler.h"
 #include "ui/passes_options.h"
-#include "ui/video_mode.h"
 #include "ui/select_video_mode.h"
 #include "ui/zoom.h"
 

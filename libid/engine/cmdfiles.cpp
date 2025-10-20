@@ -26,6 +26,7 @@
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
 #include "engine/UserData.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/check_orbit_name.h"
 #include "fractals/fractalp.h"

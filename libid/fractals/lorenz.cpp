@@ -16,6 +16,7 @@
 #include "engine/jiim.h"
 #include "engine/LogicalScreen.h"
 #include "engine/resume.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -37,7 +38,6 @@
 #include "ui/sound.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

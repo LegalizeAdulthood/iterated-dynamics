@@ -9,6 +9,7 @@
 #include "engine/log_map.h"
 #include "engine/pixel_grid.h"
 #include "engine/UserData.h"
+#include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "fractals/population.h"
@@ -16,7 +17,6 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
-#include "ui/video_mode.h"
 
 #include <cmath>
 #include <cstdlib>

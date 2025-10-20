@@ -4,10 +4,9 @@
 
 #include "fractals/Plasma.h"
 
-#include "engine/id_data.h"
+#include "engine/VideoInfo.h"
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
-#include "ui/video_mode.h"
 
 using namespace id::engine;
 using namespace id::fractals;

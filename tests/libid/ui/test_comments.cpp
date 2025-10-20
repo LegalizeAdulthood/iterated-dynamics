@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "engine/VideoInfo.h"
+
 #include <ui/comments.h>
 
 #include <config/port.h>
@@ -8,7 +10,6 @@
 #include <engine/LogicalScreen.h>
 #include <misc/version.h>
 #include <ui/id_keys.h>
-#include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

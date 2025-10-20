@@ -2,11 +2,13 @@
 //
 #include <ui/video_mode.h>
 
-#include "misc/ValueSaver.h"
-#include "ui/id_keys.h"
+#include <engine/VideoInfo.h>
+#include <misc/ValueSaver.h>
+#include <ui/id_keys.h>
 
 #include <gtest/gtest.h>
 
+using namespace id::engine;
 using namespace id::misc;
 using namespace id::ui;
 

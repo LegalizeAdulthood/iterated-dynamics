@@ -5,10 +5,10 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
+#include "engine/VideoInfo.h"
 #include "io/make_path.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
-#include "ui/video_mode.h"
 
 #include <cassert>
 #include <cstdarg>

@@ -9,6 +9,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
+#include "engine/VideoInfo.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -17,7 +18,6 @@
 #include "ui/rotate.h"
 #include "ui/spindac.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cstdlib>

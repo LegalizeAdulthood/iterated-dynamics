@@ -3,8 +3,8 @@
 #include "ui/find_special_colors.h"
 
 #include "engine/id_data.h"
+#include "engine/VideoInfo.h"
 #include "ui/rotate.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 

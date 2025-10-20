@@ -13,6 +13,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "engine/Potential.h"
+#include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
 #include "io/check_write_file.h"
 #include "io/dir_file.h"
@@ -30,7 +31,6 @@
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

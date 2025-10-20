@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "ui/video_mode.h"
+#include "engine/VideoInfo.h"
 
 #include <string>
 
@@ -17,7 +17,7 @@ enum class ConfigStatus
 };
 
 extern ConfigStatus          g_bad_config;
-extern int                   g_cfg_line_nums[ui::MAX_VIDEO_MODES];
+extern int                   g_cfg_line_nums[engine::MAX_VIDEO_MODES];
 
 void load_config();
 void load_config(const std::string &cfg_path);

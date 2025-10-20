@@ -11,6 +11,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
 #include "gui/App.h"
 #include "gui/Colormap.h"

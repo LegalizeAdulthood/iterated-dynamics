@@ -39,6 +39,7 @@
 #include "engine/sticky_orbits.h"
 #include "engine/tesseral.h"
 #include "engine/UserData.h"
+#include "engine/VideoInfo.h"
 #include "engine/wait_until.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
@@ -66,7 +67,6 @@
 #include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

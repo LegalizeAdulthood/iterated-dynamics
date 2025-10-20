@@ -50,6 +50,7 @@ add_library(libid
     include/engine/trig_fns.h engine/trig_fns.cpp
     include/engine/type_has_param.h engine/type_has_param.cpp
     include/engine/UserData.h engine/UserData.cpp
+    include/engine/VideoInfo.h engine/VideoInfo.cpp
     include/engine/Viewport.h engine/Viewport.cpp
     include/engine/wait_until.h engine/wait_until.cpp
     include/engine/work_list.h engine/work_list.cpp

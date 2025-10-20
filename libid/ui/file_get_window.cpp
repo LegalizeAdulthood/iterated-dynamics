@@ -14,6 +14,7 @@
 #include "engine/Inversion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/trig_fns.h"
+#include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/lorenz.h"
@@ -32,7 +33,6 @@
 #include "ui/get_browse_params.h"
 #include "ui/id_keys.h"
 #include "ui/temp_msg.h"
-#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <fmt/format.h>

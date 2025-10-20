@@ -14,6 +14,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/FrothyBasin.h"
@@ -32,7 +33,6 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

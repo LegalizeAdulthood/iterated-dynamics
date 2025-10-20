@@ -9,19 +9,18 @@
 #include "engine/id_data.h"
 #include "engine/ImageRegion.h"
 #include "engine/resume.h"
+#include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/population.h"
 #include "math/arg.h"
 #include "math/fixed_pt.h"
 #include "misc/id.h"
-#include "ui/video_mode.h"
 
 #include <cmath>
 #include <vector>
 
 using namespace id::engine;
 using namespace id::math;
-using namespace id::ui;
 
 namespace id::fractals
 {

@@ -4,12 +4,12 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/VideoInfo.h"
 #include "fractals/lsys_fns.h"
 #include "io/file_gets.h"
 #include "math/fixed_pt.h"
 #include "ui/file_item.h"
 #include "ui/stop_msg.h"
-#include "ui/video_mode.h"
 
 #include <config/string_lower.h>
 

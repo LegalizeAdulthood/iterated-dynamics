@@ -19,6 +19,7 @@
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
 #include "engine/UserData.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractype.h"
 #include "fractals/jb.h"
@@ -46,7 +47,6 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cassert>

@@ -5,11 +5,11 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/id_data.h"
+#include "engine/VideoInfo.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"
 #include "ui/text_screen.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include "general.h"
@@ -20,7 +20,7 @@
 #include <cstdio>
 #include <cstring>
 
-using namespace id::ui;
+using namespace id::engine;
 
 namespace id::misc
 {

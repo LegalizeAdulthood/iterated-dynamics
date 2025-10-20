@@ -14,6 +14,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "engine/VideoInfo.h"
 #include "io/CurrentPathSaver.h"
 #include "io/save_timer.h"
 #include "ui/diskvid.h"

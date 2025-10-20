@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "engine/VideoInfo.h"
+
 #include <io/loadfile.h>
 
 #include "MockDriver.h"
@@ -16,7 +18,6 @@
 #include <misc/ValueSaver.h>
 #include <ui/history.h>
 #include <ui/make_batch_file.h>
-#include <ui/video_mode.h>
 
 #include <gtest/gtest.h>
 

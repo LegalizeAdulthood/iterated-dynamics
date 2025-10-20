@@ -14,6 +14,7 @@
 #include "engine/Potential.h"
 #include "engine/resume.h"
 #include "engine/solid_guess.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
@@ -31,7 +32,6 @@
 #include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cassert>

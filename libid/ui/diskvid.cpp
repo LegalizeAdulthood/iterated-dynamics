@@ -11,6 +11,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
+#include "engine/VideoInfo.h"
 #include "math/big.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
@@ -18,7 +19,6 @@
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

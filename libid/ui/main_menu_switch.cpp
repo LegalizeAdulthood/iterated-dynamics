@@ -10,6 +10,7 @@
 #include "engine/jiim.h"
 #include "engine/log_map.h"
 #include "engine/UserData.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/Cellular.h"
 #include "fractals/fractalp.h"
@@ -50,7 +51,6 @@
 #include "ui/spindac.h"
 #include "ui/starfield.h"
 #include "ui/stereo.h"
-#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <algorithm>

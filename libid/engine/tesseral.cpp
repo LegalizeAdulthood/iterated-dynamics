@@ -7,10 +7,10 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
+#include "engine/VideoInfo.h"
 #include "engine/work_list.h"
 #include "ui/check_key.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <vector>
 

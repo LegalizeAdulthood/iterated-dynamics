@@ -19,6 +19,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "engine/Potential.h"
+#include "engine/VideoInfo.h"
 #include "engine/wait_until.h"
 #include "geometry/plot3d.h"
 #include "io/decoder.h"
@@ -36,7 +37,6 @@
 #include "ui/spindac.h"
 #include "ui/stereo.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <config/path_limits.h>
 

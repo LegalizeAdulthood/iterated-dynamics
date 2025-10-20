@@ -5,10 +5,10 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/show_dot.h"
+#include "engine/VideoInfo.h"
 #include "engine/work_list.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <cstring>
 

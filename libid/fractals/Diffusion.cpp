@@ -7,10 +7,10 @@
 #include "engine/LogicalScreen.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
+#include "engine/VideoInfo.h"
 #include "math/fpu087.h"
 #include "misc/id.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cstdlib>

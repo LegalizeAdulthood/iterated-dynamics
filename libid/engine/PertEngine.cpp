@@ -15,13 +15,13 @@
 #include "engine/id_data.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
+#include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/pickover_mandelbrot.h"
 #include "math/biginit.h"
 #include "math/complex_fn.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/video_mode.h"
 
 #include <algorithm>
 #include <cmath>
@@ -32,7 +32,6 @@
 using namespace id::fractals;
 using namespace id::math;
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {

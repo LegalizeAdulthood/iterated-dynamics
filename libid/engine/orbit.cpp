@@ -7,13 +7,13 @@
 #include "engine/cmdfiles.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/VideoInfo.h"
 #include "engine/wait_until.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/sound.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 using namespace id::misc;
 using namespace id::ui;

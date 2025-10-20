@@ -6,17 +6,16 @@
 #include "engine/fractals.h"
 #include "engine/orbit.h"
 #include "engine/resume.h"
+#include "engine/VideoInfo.h"
 #include "math/arg.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
 #include "misc/id.h"
-#include "ui/video_mode.h"
 
 #include <cmath>
 
 using namespace id::engine;
 using namespace id::math;
-using namespace id::ui;
 
 namespace id::fractals
 {

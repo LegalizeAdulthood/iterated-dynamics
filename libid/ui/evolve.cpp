@@ -12,6 +12,7 @@
 #include "engine/pixel_limits.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
+#include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -23,7 +24,6 @@
 #include "ui/ChoiceBuilder.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
-#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 #include <config/port.h>

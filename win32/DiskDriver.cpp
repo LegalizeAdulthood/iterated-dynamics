@@ -11,9 +11,10 @@
 
 #include <config/driver_types.h>
 
-#include "geometry/plot3d.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "engine/VideoInfo.h"
+#include "geometry/plot3d.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
 #include "ui/spindac.h"

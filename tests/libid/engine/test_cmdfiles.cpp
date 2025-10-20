@@ -23,6 +23,7 @@
 #include <engine/sticky_orbits.h>
 #include <engine/trig_fns.h>
 #include <engine/UserData.h>
+#include <engine/VideoInfo.h>
 #include <engine/Viewport.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
@@ -50,7 +51,6 @@
 #include <ui/sound.h>
 #include <ui/stereo.h>
 #include <ui/stop_msg.h>
-#include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

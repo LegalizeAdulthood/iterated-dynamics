@@ -3,9 +3,9 @@
 #include "ui/spindac.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/VideoInfo.h"
 #include "misc/Driver.h"
 #include "ui/rotate.h"
-#include "ui/video_mode.h"
 
 #include <cstring>
 

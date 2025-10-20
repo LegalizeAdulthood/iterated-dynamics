@@ -6,13 +6,13 @@
 #include "test_config_data.h"
 
 #include <misc/Driver.h>
-#include <ui/video_mode.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
 #include <filesystem>
 
+using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::misc::test;

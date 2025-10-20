@@ -17,6 +17,7 @@
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
 #include "engine/UserData.h"
+#include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
@@ -36,7 +37,6 @@
 #include "ui/slideshw.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 
 #include <fmt/format.h>
 

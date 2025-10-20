@@ -2,12 +2,12 @@
 //
 #pragma once
 
-#include "ui/video_mode.h"
+#include "engine/VideoInfo.h"
 
 namespace id::misc
 {
 
-extern ui::VideoInfo x11_video_table[];
+extern engine::VideoInfo x11_video_table[];
 
 void load_dac();
 

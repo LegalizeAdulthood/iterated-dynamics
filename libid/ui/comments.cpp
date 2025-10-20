@@ -4,6 +4,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
+#include "engine/VideoInfo.h"
 #include "misc/version.h"
 #include "ui/get_calculation_time.h"
 #include "ui/stop_msg.h"

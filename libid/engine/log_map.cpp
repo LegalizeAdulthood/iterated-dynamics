@@ -3,13 +3,12 @@
 #include "engine/log_map.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/VideoInfo.h"
 #include "misc/ValueSaver.h"
-#include "ui/video_mode.h"
 
 #include <cmath>
 
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {
