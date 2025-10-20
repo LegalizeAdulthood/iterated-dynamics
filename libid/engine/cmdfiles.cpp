@@ -165,8 +165,6 @@ bool g_colors_preloaded{};                                // if g_dac_box preloa
 bool g_read_color{true};                                  // flag for reading color from GIF
 double g_math_tol[2]{.05, .05};                           // For math transition from double to bignum
 bool g_targa_out{};                                       // 3D full color flag
-bool g_true_color{};                                      // escape time true color flag
-TrueColorMode g_true_mode{TrueColorMode::DEFAULT_COLOR};  // true color coloring scheme
 std::string g_last_map_name;                              // from last <l> <s> or colors=@filename
 bool g_new_bifurcation_functions_loaded{};                // if function loaded for new bifs
 

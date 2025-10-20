@@ -17,6 +17,8 @@ int g_color_cycle_range_lo{};
 int g_color_cycle_range_hi{};
 int g_dac_count{};
 bool g_is_true_color{};
+bool g_true_color{};
+TrueColorMode g_true_mode{TrueColorMode::DEFAULT_COLOR};
 std::string g_map_name;
 bool g_map_set{};
 Byte g_dac_box[256][3]{};

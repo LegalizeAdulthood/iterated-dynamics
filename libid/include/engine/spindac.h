@@ -9,10 +9,18 @@
 namespace id::engine
 {
 
+enum class TrueColorMode
+{
+    DEFAULT_COLOR = 0,
+    ITERATE = 1
+};
+
 extern int g_color_cycle_range_lo; // cycling color range
 extern int g_color_cycle_range_hi; //
 extern int g_dac_count;            //
 extern bool g_is_true_color;       //
+extern TrueColorMode g_true_mode;  // true color coloring scheme
+extern bool g_true_color;          // escape time true color flag
 extern Byte g_dac_box[256][3];     //
 extern bool g_got_real_dac;        // load_dac worked, really got a dac
 extern Byte g_old_dac_box[256][3]; //

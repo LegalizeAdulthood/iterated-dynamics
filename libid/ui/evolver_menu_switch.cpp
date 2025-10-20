@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "io/encoder.h"
