@@ -16,6 +16,7 @@
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
+#include "engine/spindac.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
 #include "engine/UserData.h"
@@ -41,7 +42,6 @@
 #include "ui/get_3d_params.h"
 #include "ui/get_video_mode.h"
 #include "ui/make_batch_file.h"
-#include "ui/rotate.h"
 #include "ui/stop_msg.h"
 
 #include <fmt/format.h>

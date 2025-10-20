@@ -52,7 +52,6 @@
 #include "ui/ChoiceBuilder.h"
 #include "ui/comments.h"
 #include "ui/help.h"
-#include "ui/rotate.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 #include "ui/video_mode.h"

@@ -2,8 +2,8 @@
 //
 #include "ui/make_mig.h"
 
+#include "engine/spindac.h"
 #include "io/library.h"
-#include "ui/rotate.h"
 
 #include <fmt/format.h>
 
@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <string>
 
+using namespace id::engine;
 using namespace id::io;
 
 namespace id::ui

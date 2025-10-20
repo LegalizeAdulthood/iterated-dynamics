@@ -23,6 +23,7 @@
 #include "engine/show_dot.h"
 #include "engine/soi.h"
 #include "engine/sound.h"
+#include "engine/spindac.h"
 #include "engine/sticky_orbits.h"
 #include "engine/text_color.h"
 #include "engine/trig_fns.h"
@@ -66,7 +67,6 @@
 #include "ui/lowerize_parameter.h"
 #include "ui/make_batch_file.h"
 #include "ui/make_mig.h"
-#include "ui/rotate.h"
 #include "ui/slideshw.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
@@ -160,8 +160,6 @@ InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
 long g_bailout{};                                         // user input bailout value
-int g_color_cycle_range_lo{};                             //
-int g_color_cycle_range_hi{};                             // cycling color range
 std::vector<int> g_iteration_ranges;                      // iter->color ranges mapping
 int g_iteration_ranges_len{};                             // size of ranges array
 Byte g_map_clut[256][3];                                  // map= (default colors)

@@ -33,7 +33,6 @@
 #include "misc/id.h"
 #include "misc/version.h"
 #include "ui/diskvid.h"
-#include "ui/rotate.h"
 
 #include <config/port.h>
 

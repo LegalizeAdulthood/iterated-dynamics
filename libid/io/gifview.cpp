@@ -32,7 +32,6 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "ui/diskvid.h"
-#include "ui/rotate.h"
 #include "ui/slideshw.h"
 #include "ui/stereo.h"
 #include "ui/video.h"

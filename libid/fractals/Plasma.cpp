@@ -15,7 +15,6 @@
 #include "misc/Driver.h"
 #include "misc/sized_types.h"
 #include "ui/diskvid.h"
-#include "ui/rotate.h"
 #include "ui/video.h"
 
 #include <algorithm>

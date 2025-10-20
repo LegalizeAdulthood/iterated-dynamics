@@ -4,14 +4,13 @@
 
 #include "ColorMapSaver.h"
 
-#include <ui/rotate.h>
-
 #include <gtest/gtest.h>
 
 #include <algorithm>
 #include <array>
 #include <numeric>
 
+using namespace id::engine;
 using namespace id::ui;
 
 namespace id::test

@@ -15,7 +15,6 @@
 #include "geometry/line3d.h"
 #include "io/loadmap.h"
 #include "ui/diskvid.h"
-#include "ui/rotate.h"
 #include "ui/video.h"
 
 #include <config/port.h>

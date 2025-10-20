@@ -17,7 +17,6 @@
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
 #include "ui/diskvid.h"
-#include "ui/rotate.h"
 #include "ui/video.h"
 #include "ui/zoom.h"
 

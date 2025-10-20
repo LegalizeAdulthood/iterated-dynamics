@@ -3,6 +3,7 @@
 #include "ui/main_menu.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/spindac.h"
 #include "engine/text_color.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
@@ -16,7 +17,6 @@
 #include "ui/help_title.h"
 #include "ui/id_keys.h"
 #include "ui/put_string_center.h"
-#include "ui/rotate.h"
 #include "ui/tab_display.h"
 #include "ui/video_mode.h"
 

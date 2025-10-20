@@ -19,7 +19,6 @@
 #include <ui/diskvid.h>
 #include <ui/id_keys.h>
 #include <ui/read_ticker.h>
-#include <ui/rotate.h>
 #include <ui/slideshw.h>
 #include <ui/stop_msg.h>
 #include <ui/text_screen.h>

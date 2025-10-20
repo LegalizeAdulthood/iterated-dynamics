@@ -2,11 +2,22 @@
 //
 #pragma once
 
+#include <config/port.h>
+
+#include <string>
+
 namespace id::engine
 {
 
-extern int g_dac_count;
-extern bool g_is_true_color;
+extern int g_color_cycle_range_lo; // cycling color range
+extern int g_color_cycle_range_hi; //
+extern int g_dac_count;            //
+extern bool g_is_true_color;       //
+extern Byte g_dac_box[256][3];     //
+extern bool g_got_real_dac;        // load_dac worked, really got a dac
+extern Byte g_old_dac_box[256][3]; //
+extern std::string g_map_name;     //
+extern bool g_map_set;             //
 
 enum class SpinDirection
 {

@@ -4,10 +4,10 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
+#include "engine/spindac.h"
 #include "io/has_ext.h"
 #include "io/library.h"
 #include "misc/version.h"
-#include "ui/rotate.h"
 #include "ui/stop_msg.h"
 
 #include <config/port.h>

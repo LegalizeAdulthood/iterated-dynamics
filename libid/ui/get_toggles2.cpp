@@ -6,6 +6,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/Inversion.h"
 #include "engine/Potential.h"
+#include "engine/spindac.h"
 #include "engine/UserData.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"

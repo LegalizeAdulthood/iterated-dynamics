@@ -5,18 +5,24 @@
 #include "engine/cmdfiles.h"
 #include "engine/VideoInfo.h"
 #include "misc/Driver.h"
-#include "ui/rotate.h"
 
 #include <cstring>
 
 using namespace id::misc;
-using namespace id::ui;
 
 namespace id::engine
 {
 
+int g_color_cycle_range_lo{};
+int g_color_cycle_range_hi{};
 int g_dac_count{};
 bool g_is_true_color{};
+std::string g_map_name;
+bool g_map_set{};
+Byte g_dac_box[256][3]{};
+Byte g_old_dac_box[256][3]{};
+bool g_dac_learn{};
+bool g_got_real_dac{};
 
 // Rotate the colormap in the (plus or minus) "direction"
 // in "rstep" increments - or, if "direction" is 0, just replace it.

@@ -17,7 +17,6 @@
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "ui/diskvid.h"
-#include "ui/rotate.h"
 #include "ui/video.h"
 #include "ui/zoom.h"
 

@@ -21,6 +21,7 @@
 #include <engine/show_dot.h>
 #include <engine/soi.h>
 #include <engine/sound.h>
+#include <engine/spindac.h>
 #include <engine/sticky_orbits.h>
 #include <engine/text_color.h>
 #include <engine/trig_fns.h>
@@ -49,7 +50,6 @@
 #include <ui/history.h>
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
-#include <ui/rotate.h>
 #include <ui/slideshw.h>
 #include <ui/stereo.h>
 #include <ui/stop_msg.h>

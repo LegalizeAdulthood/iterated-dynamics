@@ -4,9 +4,9 @@
 
 #include "Frame.h"
 
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
-#include "ui/rotate.h"
 
 #include <windowsx.h>
 

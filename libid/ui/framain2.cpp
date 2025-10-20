@@ -36,7 +36,6 @@
 #include "ui/main_menu.h"
 #include "ui/main_menu_switch.h"
 #include "ui/mouse.h"
-#include "ui/rotate.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"

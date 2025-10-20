@@ -2,8 +2,8 @@
 //
 #include "ui/find_special_colors.h"
 
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
-#include "ui/rotate.h"
 
 #include <algorithm>
 

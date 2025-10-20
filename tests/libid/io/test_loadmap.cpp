@@ -5,16 +5,16 @@
 #include "expected_map.h"
 #include "test_data.h"
 
+#include <engine/spindac.h>
 #include <io/library.h>
 #include <misc/ValueSaver.h>
-#include <ui/rotate.h>
 
 #include <gtest/gtest.h>
 
+using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::test::data;
-using namespace id::ui;
 
 namespace id::test
 {

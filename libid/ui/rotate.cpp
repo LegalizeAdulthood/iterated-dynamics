@@ -63,13 +63,6 @@ static Byte s_white[3]{63, 63, 63};
 static Byte s_yellow[3]{63, 63, 0};
 static Byte s_brown[3]{31, 31, 0};
 
-std::string g_map_name;
-bool g_map_set{};
-Byte g_dac_box[256][3]{};
-Byte g_old_dac_box[256][3]{};
-bool g_dac_learn{};
-bool g_got_real_dac{}; // true if load_dac has a dacbox
-
 static void change_palette_channel(const int channel, const int increment)
 {
     for (int i = 1; i < 256; i++)
