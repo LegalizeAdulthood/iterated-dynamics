@@ -5,6 +5,7 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/log_map.h"
+#include "engine/sound.h"
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractype.h"

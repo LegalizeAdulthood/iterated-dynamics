@@ -5,7 +5,8 @@
 namespace id::engine
 {
 
-void iplot_orbit(long real, long imag, int color);
+extern int g_orbit_delay; // microsecond orbit delay
+
 void plot_orbit(double real, double imag, int color);
 void scrub_orbit();
 

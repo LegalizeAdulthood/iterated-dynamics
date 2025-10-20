@@ -7,12 +7,12 @@
 #include "engine/cmdfiles.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/sound.h"
 #include "engine/VideoInfo.h"
 #include "engine/wait_until.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
-#include "ui/sound.h"
 #include "ui/video.h"
 
 using namespace id::misc;
@@ -20,6 +20,8 @@ using namespace id::ui;
 
 namespace id::engine
 {
+
+int g_orbit_delay{};
 
 static void plot_d_orbit(double dx, double dy, int color);
 

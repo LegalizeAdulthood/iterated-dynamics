@@ -18,10 +18,12 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
+#include "engine/orbit.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/show_dot.h"
 #include "engine/soi.h"
+#include "engine/sound.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
 #include "engine/UserData.h"
@@ -64,7 +66,6 @@
 #include "ui/make_mig.h"
 #include "ui/rotate.h"
 #include "ui/slideshw.h"
-#include "ui/sound.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 #include "ui/video_mode.h"
@@ -146,8 +147,6 @@ int g_decomp[2]{};                                        // Decomposition color
 long g_distance_estimator{};                              //
 int g_distance_estimator_width_factor{};                  //
 bool g_overwrite_file{};                                  // true if file overwrite allowed
-int g_sound_flag{};                                       // sound control bitfield... see sound.c for useage
-int g_base_hertz{};                                       // sound=x/y/x hertz value
 int g_cycle_limit{};                                      // color-rotator upper limit
 int g_fill_color{};                                       // fill color: -1=normal
 bool g_finite_attractor{};                                // finite attractor logic
@@ -186,7 +185,6 @@ bool g_organize_formulas_search{};
 
 int g_orbit_save_flags{};                    // for IFS and LORENZ to output acrospin file
 std::string g_orbit_save_name{"orbits.raw"}; //
-int g_orbit_delay{};                         // microsecond orbit delay
 int g_transparent_color_3d[2]{};             // transparency min/max values
 bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen

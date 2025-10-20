@@ -9,6 +9,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/Potential.h"
+#include "engine/sound.h"
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"

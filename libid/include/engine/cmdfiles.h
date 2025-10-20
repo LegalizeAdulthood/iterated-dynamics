@@ -102,21 +102,6 @@ enum OrbitSaveFlags
     OSF_MIDI = 2
 };
 
-enum SoundFlags
-{
-    SOUNDFLAG_OFF        = 0,
-    SOUNDFLAG_BEEP       = 1,
-    SOUNDFLAG_X          = 2,
-    SOUNDFLAG_Y          = 3,
-    SOUNDFLAG_Z          = 4,
-    SOUNDFLAG_ORBIT_MASK = 0x07,
-    SOUNDFLAG_SPEAKER    = 8,
-    SOUNDFLAG_OPL3_FM    = 16,
-    SOUNDFLAG_MIDI       = 32,
-    SOUNDFLAG_QUANTIZED  = 64,
-    SOUNDFLAG_MASK       = 0x7F
-};
-
 enum class CmdFile
 {
     AT_CMD_LINE = 0,         // command line @filename
@@ -189,7 +174,6 @@ enum class IFSDimension
 extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern long                  g_bailout;
-extern int                   g_base_hertz;
 extern int                   g_biomorph;
 extern bool                  g_bof_match_book_images;
 extern bool                  g_check_cur_dir;
@@ -231,7 +215,6 @@ extern Byte                  g_map_clut[256][3];
 extern bool                  g_map_specified;
 extern double                g_math_tol[2];
 extern bool                  g_new_bifurcation_functions_loaded;
-extern int                   g_orbit_delay;
 extern int                   g_orbit_save_flags;
 extern std::string           g_orbit_save_name;
 extern bool                  g_overlay_3d;
@@ -242,7 +225,6 @@ extern RecordColorsMode      g_record_colors;
 extern std::filesystem::path g_save_filename;
 extern float                 g_screen_aspect;
 extern ShowFile              g_show_file;
-extern int                   g_sound_flag;
 extern bool                  g_start_show_orbit;
 extern int                   g_stop_pass;
 extern bool                  g_targa_out;

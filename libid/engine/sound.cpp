@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/sound.h"
+#include "engine/sound.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/orbit.h"
 #include "engine/wait_until.h"
 #include "io/check_write_file.h"
 #include "io/library.h"
-#include "io/update_save_name.h"
 #include "misc/Driver.h"
 #include "ui/stop_msg.h"
 
@@ -17,13 +17,14 @@
 #include <ctime>
 #include <string>
 
-using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
+using namespace id::ui;
 
-namespace id::ui
+namespace id::engine
 {
 
+int g_base_hertz{};
 int g_fm_attack{};
 int g_fm_decay{};
 int g_fm_release{};
@@ -32,8 +33,7 @@ int g_fm_volume{};
 int g_fm_wave_type{};
 int g_hi_attenuation{};
 int g_polyphony{};
-// TODO: this doesn't appear to be used outside this file?
-bool g_tab_or_help{}; // kludge for sound and tab or help key press
+int g_sound_flag{};
 
 static std::FILE *s_snd_fp{};
 
@@ -67,7 +67,6 @@ void write_sound(const int tone)
             std::fprintf(s_snd_fp, "%-d\n", tone);
         }
     }
-    g_tab_or_help = false;
     if (!driver_key_pressed())
     {
         // driver_key_pressed calls driver_sound_off() if TAB or F1 pressed
@@ -77,10 +76,6 @@ void write_sound(const int tone)
         if (driver_sound_on(tone))
         {
             wait_until(g_orbit_delay);
-            if (!g_tab_or_help)   // kludge because wait_until() calls driver_key_pressed
-            {
-                driver_sound_off();
-            }
         }
     }
 }
@@ -103,4 +98,4 @@ void close_sound()
     s_snd_fp = nullptr;
 }
 
-} // namespace id::ui
+} // namespace id::engine

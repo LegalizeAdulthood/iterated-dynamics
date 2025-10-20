@@ -14,7 +14,9 @@
 #include "engine/ImageRegion.h"
 #include "engine/jiim.h"
 #include "engine/LogicalScreen.h"
+#include "engine/orbit.h"
 #include "engine/resume.h"
+#include "engine/sound.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -34,7 +36,6 @@
 #include "ui/ifs2d.h"
 #include "ui/ifs3d.h"
 #include "ui/orbit3d.h"
-#include "ui/sound.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 

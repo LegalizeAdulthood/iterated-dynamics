@@ -3,6 +3,7 @@
 #include "ui/passes_options.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/orbit.h"
 #include "engine/sticky_orbits.h"
 #include "engine/UserData.h"
 #include "fractals/lorenz.h"

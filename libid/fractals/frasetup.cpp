@@ -10,6 +10,7 @@
 #include "engine/fractals.h"
 #include "engine/get_julia_attractor.h"
 #include "engine/perturbation.h"
+#include "engine/sound.h"
 #include "engine/trig_fns.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"

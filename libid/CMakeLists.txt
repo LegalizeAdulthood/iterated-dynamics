@@ -45,6 +45,7 @@ add_library(libid
     include/engine/show_dot.h engine/show_dot.cpp
     include/engine/soi.h engine/soi.cpp
     include/engine/solid_guess.h engine/solid_guess.cpp
+    include/engine/sound.h engine/sound.cpp
     include/engine/sticky_orbits.h engine/sticky_orbits.cpp
     include/engine/tesseral.h engine/tesseral.cpp
     include/engine/trig_fns.h engine/trig_fns.cpp
@@ -235,7 +236,6 @@ add_library(libid
     include/ui/set_default_params.h ui/set_default_params.cpp
     include/ui/shell_sort.h ui/shell_sort.cpp
     include/ui/slideshw.h ui/slideshw.cpp
-    include/ui/sound.h ui/sound.cpp
     include/ui/spindac.h ui/spindac.cpp
     include/ui/standard_4d.h ui/standard_4d.cpp
     include/ui/starfield.h ui/starfield.cpp

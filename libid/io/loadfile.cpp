@@ -13,6 +13,7 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
+#include "engine/orbit.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"

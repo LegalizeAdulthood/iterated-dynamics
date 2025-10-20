@@ -3,13 +3,14 @@
 #include "ui/get_sound_params.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/orbit.h"
+#include "engine/sound.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
-#include "ui/sound.h"
 
 #include <algorithm>
 #include <cmath>
