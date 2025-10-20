@@ -4,7 +4,6 @@
 
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
 #include "engine/VideoInfo.h"
 #include "io/file_gets.h"

@@ -8,9 +8,7 @@
 #include "engine/resume.h"
 #include "engine/VideoInfo.h"
 #include "math/arg.h"
-#include "math/fixed_pt.h"
 #include "math/fpu087.h"
-#include "misc/id.h"
 
 #include <cmath>
 
