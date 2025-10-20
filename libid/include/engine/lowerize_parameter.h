@@ -2,9 +2,9 @@
 //
 #pragma once
 
-namespace id::ui
+namespace id::engine
 {
 
 void lowerize_parameter(char *cur_arg);
 
-} // namespace id::ui
+} // namespace id::engine

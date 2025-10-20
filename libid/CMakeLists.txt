@@ -30,6 +30,7 @@ add_library(libid
     include/engine/jiim.h engine/jiim.cpp
     include/engine/LogicalScreen.h engine/LogicalScreen.cpp
     include/engine/log_map.h engine/log_map.cpp
+    include/engine/lowerize_parameter.h engine/lowerize_parameter.cpp
     include/engine/one_or_two_pass.h engine/one_or_two_pass.cpp
     include/engine/orbit.h engine/orbit.cpp
     include/engine/param_not_used.h engine/param_not_used.cpp
@@ -217,7 +218,6 @@ add_library(libid
     include/ui/input_field.h ui/input_field.cpp
     include/ui/inverse_julia.h ui/inverse_julia.cpp
     include/ui/load_params.h ui/load_params.cpp
-    include/ui/lowerize_parameter.h ui/lowerize_parameter.cpp
     include/ui/make_batch_file.h ui/make_batch_file.cpp
     include/ui/main_menu.h ui/main_menu.cpp
     include/ui/main_menu_switch.h ui/main_menu_switch.cpp

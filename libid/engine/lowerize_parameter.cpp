@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/lowerize_parameter.h"
+#include "engine/lowerize_parameter.h"
 
 #include <algorithm>
 #include <cstring>
 #include <string>
 
-namespace id::ui
+namespace id::engine
 {
 
 // don't convert these parameter values
@@ -37,4 +37,4 @@ void lowerize_parameter(char *cur_arg)
     }
 }
 
-} // namespace id::ui
+} // namespace id::engine

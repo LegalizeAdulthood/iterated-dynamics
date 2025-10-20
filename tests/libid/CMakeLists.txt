@@ -69,6 +69,7 @@ add_executable(test-id
     engine/test_cmdfiles.cpp
     engine/test_get_prec_big_float.cpp
     engine/test_log_map.cpp
+    engine/test_lowerize_parameter.cpp
     engine/test_resume.cpp
     fractals/test_check_orbit_name.cpp
     fractals/test_fractalp.cpp
@@ -104,7 +105,6 @@ add_executable(test-id
     ui/test_ChoiceBuilder.cpp
     ui/test_comments.cpp
     ui/test_file_item.cpp
-    ui/test_lowerize_parameter.cpp
     ui/test_main_menu_switch.cpp
     ui/test_make_batch_file.cpp
     ui/test_video_mode.cpp

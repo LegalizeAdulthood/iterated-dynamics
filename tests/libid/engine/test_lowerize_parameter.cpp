@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <ui/lowerize_parameter.h>
+#include <engine/lowerize_parameter.h>
 
 #include <boost/algorithm/string/case_conv.hpp>
 
@@ -9,7 +9,7 @@
 #include <cstring>
 
 using namespace boost::algorithm;
-using namespace id::ui;
+using namespace id::engine;
 using namespace testing;
 
 namespace id::test
