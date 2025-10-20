@@ -2,6 +2,7 @@
 //
 #include "engine/convert_center_mag.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/convert_corners.h"
 #include "engine/fractalb.h"
 #include "engine/ImageRegion.h"

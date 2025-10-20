@@ -109,7 +109,6 @@ enum class ShowFile
     IMAGE_LOADED = 1,
 };
 
-extern float                 g_aspect_drift;
 extern long                  g_bailout;
 extern int                   g_biomorph;
 extern bool                  g_bof_match_book_images;
@@ -149,7 +148,6 @@ extern bool                  g_read_color;
 extern std::filesystem::path g_read_filename;
 extern RecordColorsMode      g_record_colors;
 extern std::filesystem::path g_save_filename;
-extern float                 g_screen_aspect;
 extern ShowFile              g_show_file;
 extern bool                  g_start_show_orbit;
 extern int                   g_stop_pass;

@@ -2,6 +2,7 @@
 //
 #include "engine/convert_corners.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/ImageRegion.h"
 #include "math/biginit.h"
 #include "misc/id.h"

@@ -17,6 +17,7 @@
 */
 #include "ui/get_video_mode.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/video_mode.h"
 #include "engine/VideoInfo.h"

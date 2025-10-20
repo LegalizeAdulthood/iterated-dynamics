@@ -108,8 +108,6 @@ using namespace id::ui;
 namespace id::engine
 {
 
-#define DEFAULT_ASPECT_DRIFT 0.02F  // drift of < 2% is forced to 0%
-
 static int get_max_cur_arg_len(const char *const float_val_str[], int num_args);
 static CmdArgFlags command_file(std::FILE *handle, CmdFile mode);
 static int  next_command(
@@ -171,8 +169,6 @@ bool g_true_color{};                                      // escape time true co
 TrueColorMode g_true_mode{TrueColorMode::DEFAULT_COLOR};  // true color coloring scheme
 std::string g_last_map_name;                              // from last <l> <s> or colors=@filename
 bool g_new_bifurcation_functions_loaded{};                // if function loaded for new bifs
-float g_screen_aspect{DEFAULT_ASPECT};                    // aspect ratio of the screen
-float g_aspect_drift{DEFAULT_ASPECT_DRIFT}; // how much drift is allowed and still forced to g_screen_aspect
 
 // true - reset viewwindows prior to a restore and
 // do not display warnings when video mode changes during restore

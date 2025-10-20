@@ -7,6 +7,11 @@
 namespace id::engine
 {
 
+constexpr float DEFAULT_ASPECT{0.75F};          // Assumed overall screen dimensions, y/x
+constexpr float DEFAULT_ASPECT_DRIFT{0.02F};    // drift of < 2% is forced to 0%
+
+extern float                 g_aspect_drift;    // how much drift is allowed and still forced to g_screen_aspect
+extern float                 g_screen_aspect;   // aspect ratio of the screen
 extern double                g_delta_min;
 extern LDouble               g_delta_x2;
 extern LDouble               g_delta_x;

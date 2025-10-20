@@ -9,8 +9,10 @@
 #include "ValueUnchanged.h"
 
 #include <config/path_limits.h>
+
 #include <engine/bailout_formula.h>
 #include <engine/Browse.h>
+#include <engine/calc_frac_init.h>
 #include <engine/engine_timer.h>
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>

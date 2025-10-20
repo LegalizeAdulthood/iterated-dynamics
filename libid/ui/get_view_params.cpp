@@ -2,6 +2,7 @@
 //
 #include "ui/get_view_params.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"

@@ -41,6 +41,8 @@ using namespace id::ui;
 namespace id::engine
 {
 
+float g_screen_aspect{DEFAULT_ASPECT};
+float g_aspect_drift{DEFAULT_ASPECT_DRIFT};
 LDouble g_delta_x{}, g_delta_y{};                 // screen pixel increments
 LDouble g_delta_x2{}, g_delta_y2{};               // screen pixel increments
 double g_delta_min{};                             // same as a double

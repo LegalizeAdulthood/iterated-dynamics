@@ -2,6 +2,7 @@
 //
 #include "fractals/lsystem.h"
 
+#include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
