@@ -29,6 +29,7 @@
 #include "ui/diskvid.h"
 #include "ui/editpal.h"
 #include "ui/goodbye.h"
+#include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/intro.h"
 #include "ui/mouse.h"
