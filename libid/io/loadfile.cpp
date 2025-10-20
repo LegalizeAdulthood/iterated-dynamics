@@ -38,7 +38,7 @@
 #include "math/round_float_double.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
-#include "ui/framain2.h"
+#include "ui/big_while_loop.h"
 #include "ui/get_3d_params.h"
 #include "ui/get_video_mode.h"
 #include "ui/make_batch_file.h"

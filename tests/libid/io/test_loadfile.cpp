@@ -14,7 +14,7 @@
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
 #include <misc/ValueSaver.h>
-#include <ui/framain2.h>
+#include <ui/big_while_loop.h>
 #include <ui/history.h>
 #include <ui/make_batch_file.h>
 

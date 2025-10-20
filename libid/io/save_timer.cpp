@@ -3,7 +3,7 @@
 #include "io/save_timer.h"
 
 #include "engine/calcfrac.h"
-#include "ui/framain2.h"
+#include "ui/big_while_loop.h"
 #include "ui/read_ticker.h"
 
 #include <cmath>

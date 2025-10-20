@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/framain2.h"
+#include "ui/big_while_loop.h"
 
 #include "engine/Browse.h"
 #include "engine/calc_frac_init.h"

@@ -46,7 +46,7 @@
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
-#include <ui/framain2.h>
+#include <ui/big_while_loop.h>
 #include <ui/history.h>
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>

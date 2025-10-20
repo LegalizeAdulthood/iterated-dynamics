@@ -170,6 +170,7 @@ add_library(libid
 
     include/ui/ant.h ui/ant.cpp
     include/ui/bifurcation.h ui/bifurcation.cpp
+    include/ui/big_while_loop.h ui/big_while_loop.cpp
     include/ui/cellular.h ui/cellular.cpp
     include/ui/check_key.h ui/check_key.cpp
     include/ui/ChoiceBuilder.h
@@ -187,7 +188,6 @@ add_library(libid
     include/ui/file_item.h ui/file_item.cpp
     include/ui/find_special_colors.h ui/find_special_colors.cpp
     include/ui/flip_image.h ui/flip_image.cpp
-    include/ui/framain2.h ui/framain2.cpp
     include/ui/frothy_basin.h ui/frothy_basin.cpp
     include/ui/full_screen_choice.h ui/full_screen_choice.cpp
     include/ui/full_screen_prompt.h ui/full_screen_prompt.cpp

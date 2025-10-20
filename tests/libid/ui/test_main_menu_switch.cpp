@@ -7,7 +7,7 @@
 #include <engine/calcfrac.h>
 #include <engine/UserData.h>
 #include <misc/ValueSaver.h>
-#include <ui/framain2.h>
+#include <ui/big_while_loop.h>
 
 #include <gtest/gtest.h>
 
