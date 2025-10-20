@@ -6,6 +6,7 @@ namespace id::engine
 {
 
 int g_adapter{};
+int g_init_mode{};
 int g_screen_x_dots{};
 int g_screen_y_dots{};
 int g_colors{256};

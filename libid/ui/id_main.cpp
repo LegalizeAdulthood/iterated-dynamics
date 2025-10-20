@@ -4,10 +4,8 @@
 
 #include "engine/Browse.h"
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/show_dot.h"
 #include "engine/Viewport.h"
-#include "fractals/fractype.h"
 #include "fractals/jb.h"
 #include "helpcom.h"
 #include "helpdefs.h"
@@ -17,7 +15,6 @@
 #include "io/special_dirs.h"
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
-#include "misc/id.h"
 #include "misc/memory.h"
 #include "ui/do_pause.h"
 #include "ui/evolve.h"
@@ -48,7 +45,6 @@
 #include "ui/zoom.h"
 
 #include <config/home_dir.h>
-#include <config/port.h>
 
 #include <algorithm>
 #include <cctype>

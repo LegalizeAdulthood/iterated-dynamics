@@ -1,7 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "engine/VideoInfo.h"
-
 #include <io/loadfile.h>
 
 #include "MockDriver.h"
@@ -12,6 +10,7 @@
 #include <engine/Inversion.h>
 #include <engine/Potential.h>
 #include <engine/UserData.h>
+#include <engine/VideoInfo.h>
 #include <engine/Viewport.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
