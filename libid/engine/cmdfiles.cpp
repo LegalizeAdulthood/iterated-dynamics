@@ -142,7 +142,6 @@ fs::path g_working_dir;                                   // name of directory f
 std::string g_image_filename_mask{"*.gif"};               //
 fs::path g_save_filename{"fract001"};                     // save files using this name
 bool g_dither_flag{};                                     // true if we want to dither GIFs
-bool g_ask_video{};                                       // flag for video prompting
 int g_biomorph{};                                         // flag for biomorph
 ShowFile g_show_file{};                                   // zero if file display pending
 int g_decomp[2]{};                                        // Decomposition coloring

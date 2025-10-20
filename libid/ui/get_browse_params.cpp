@@ -8,6 +8,7 @@
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
 #include "ui/evolve.h"
+#include "ui/framain2.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
 

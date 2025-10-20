@@ -109,7 +109,6 @@ enum class ShowFile
     IMAGE_LOADED = 1,
 };
 
-extern bool                  g_ask_video;
 extern float                 g_aspect_drift;
 extern long                  g_bailout;
 extern int                   g_biomorph;
