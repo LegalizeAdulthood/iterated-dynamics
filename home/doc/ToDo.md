@@ -84,6 +84,8 @@ This file last updated May 24th, 2024.
   illustrate the images onscreen
 - Support fot HSB/HLS color models.
 - Distributed/collaborative computing of fractals over the network.
+  (See [zeromq-fractal-renderers.md](zeromq-fractal-renderers.md) for
+  information about ZeroMQ as a potential technology choice for this feature)
 
 ## Platform Support: unix/X
 - Visual selection assumed root is 8-bit psuedocolor; improve to

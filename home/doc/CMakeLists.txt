@@ -7,4 +7,4 @@ function(id_install_doc)
     install(FILES ${id_install_FILES} DESTINATION ${ID_DOC_INSTALL_DIR})
 endfunction()
 
-id_install_doc(FILES known-bugs.md debug-flags.md)
+id_install_doc(FILES known-bugs.md debug-flags.md ToDo.md zeromq-fractal-renderers.md)
