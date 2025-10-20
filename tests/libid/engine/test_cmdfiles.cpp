@@ -3,7 +3,6 @@
 #include <engine/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
-#include "engine/orbit.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "test_library.h"
@@ -16,12 +15,14 @@
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/log_map.h>
+#include <engine/orbit.h>
 #include <engine/Potential.h>
 #include <engine/random_seed.h>
 #include <engine/show_dot.h>
 #include <engine/soi.h>
 #include <engine/sound.h>
 #include <engine/sticky_orbits.h>
+#include <engine/text_color.h>
 #include <engine/trig_fns.h>
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
@@ -40,7 +41,6 @@
 #include <io/save_timer.h>
 #include <io/special_dirs.h>
 #include <misc/debug_flags.h>
-#include <misc/id.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/framain2.h>

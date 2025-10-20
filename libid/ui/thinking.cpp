@@ -2,7 +2,7 @@
 //
 #include "ui/thinking.h"
 
-#include "engine/cmdfiles.h"
+#include "engine/text_color.h"
 #include "misc/Driver.h"
 #include "ui/help_title.h"
 #include "ui/text_screen.h"

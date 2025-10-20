@@ -3,6 +3,7 @@
 #include "ui/full_screen_choice.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/text_color.h"
 #include "io/ends_with_slash.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"

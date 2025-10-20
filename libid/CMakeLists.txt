@@ -47,6 +47,7 @@ add_library(libid
     include/engine/sound.h engine/sound.cpp
     include/engine/sticky_orbits.h engine/sticky_orbits.cpp
     include/engine/tesseral.h engine/tesseral.cpp
+    include/engine/text_color.h engine/text_color.cpp
     include/engine/trig_fns.h engine/trig_fns.cpp
     include/engine/type_has_param.h engine/type_has_param.cpp
     include/engine/UserData.h engine/UserData.cpp

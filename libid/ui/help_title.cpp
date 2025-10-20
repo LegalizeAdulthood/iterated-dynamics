@@ -2,9 +2,8 @@
 //
 #include "ui/help_title.h"
 
-#include "engine/cmdfiles.h"
+#include "engine/text_color.h"
 #include "misc/Driver.h"
-#include "misc/id.h"
 #include "ui/put_string_center.h"
 
 #include <config/port_config.h>

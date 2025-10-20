@@ -11,6 +11,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
+#include "engine/text_color.h"
 #include "engine/VideoInfo.h"
 #include "math/big.h"
 #include "misc/Driver.h"

@@ -4,6 +4,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/engine_timer.h"
+#include "engine/text_color.h"
 #include "helpdefs.h"
 #include "io/find_path.h"
 #include "io/library.h"

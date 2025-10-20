@@ -5,8 +5,8 @@
  */
 #include "ui/intro.h"
 
-#include "engine/cmdfiles.h"
 #include "engine/engine_timer.h"
+#include "engine/text_color.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"

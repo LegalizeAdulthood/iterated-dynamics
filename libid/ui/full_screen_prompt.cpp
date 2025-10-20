@@ -3,6 +3,7 @@
 #include "ui/full_screen_prompt.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/text_color.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
 #include "io/load_entry_text.h"

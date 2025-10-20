@@ -13,6 +13,7 @@
 #include "engine/param_not_used.h"
 #include "engine/random_seed.h"
 #include "engine/soi.h"
+#include "engine/text_color.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
 #include "engine/UserData.h"

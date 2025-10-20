@@ -3,17 +3,16 @@
 #include "ui/file_item.h"
 
 #include "engine/cmdfiles.h"
+#include "engine/text_color.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
 #include "fractals/lsys_fns.h"
 #include "fractals/parser.h"
 #include "io/file_item.h"
-#include "io/find_file.h"
 #include "io/library.h"
 #include "io/load_entry_text.h"
 #include "io/make_path.h"
-#include "io/split_path.h"
 #include "io/trim_filename.h"
 #include "misc/Driver.h"
 #include "ui/full_screen_choice.h"
@@ -23,7 +22,6 @@
 #include "ui/set_default_params.h"
 #include "ui/shell_sort.h"
 #include "ui/stop_msg.h"
-#include "ui/temp_msg.h"
 #include "ui/text_screen.h"
 
 #include <config/path_limits.h>
