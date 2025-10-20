@@ -27,7 +27,8 @@
           "name": "libx11",
           "platform": "!windows"
         },
-        "zeromq"
+        "zeromq",
+        "cppzmq"
       ]
     },
     "tests": {

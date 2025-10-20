@@ -2,8 +2,9 @@
 
 cmake_minimum_required(VERSION 3.23)
 
-# Find ZeroMQ package
+# Find ZeroMQ packages
 find_package(ZeroMQ REQUIRED)
+find_package(cppzmq REQUIRED)
 
 # Master node executable
 add_executable(zmq_master
@@ -12,7 +13,7 @@ add_executable(zmq_master
 
 target_link_libraries(zmq_master
     PRIVATE
-        libzmq
+        cppzmq
 )
 
 set_target_properties(zmq_master PROPERTIES
@@ -27,7 +28,7 @@ add_executable(zmq_worker
 
 target_link_libraries(zmq_worker
     PRIVATE
-        libzmq
+        cppzmq
 )
 
 set_target_properties(zmq_worker PROPERTIES
