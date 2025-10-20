@@ -4,9 +4,9 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "ui/rotate.h"
-#include "ui/spindac.h"
 #include "ui/text_screen.h"
 #include "ui/video.h"
 #include "ui/zoom.h"

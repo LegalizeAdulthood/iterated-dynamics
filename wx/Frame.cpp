@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/goodbye.h"
-
 #include <gui/Frame.h>
 
 #include <gui/App.h>
 #include <gui/Plot.h>
 #include <gui/TextScreen.h>
-
+#include <ui/goodbye.h>
 #include <ui/id_keys.h>
 
 #include <wx/app.h>

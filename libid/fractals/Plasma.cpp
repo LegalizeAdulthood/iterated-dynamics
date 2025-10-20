@@ -8,6 +8,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
@@ -15,7 +16,6 @@
 #include "misc/sized_types.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
-#include "ui/spindac.h"
 #include "ui/video.h"
 
 #include <algorithm>

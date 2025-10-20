@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "ui/spindac.h"
+#include "engine/spindac.h"
 
 #include "engine/cmdfiles.h"
 #include "engine/VideoInfo.h"
@@ -9,10 +9,10 @@
 
 #include <cstring>
 
-using namespace id::engine;
 using namespace id::misc;
+using namespace id::ui;
 
-namespace id::ui
+namespace id::engine
 {
 
 int g_dac_count{};

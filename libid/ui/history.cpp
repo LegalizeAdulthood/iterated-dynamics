@@ -12,6 +12,7 @@
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
+#include "engine/spindac.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"
 #include "engine/UserData.h"
@@ -33,7 +34,6 @@
 #include "misc/version.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
-#include "ui/spindac.h"
 
 #include <config/port.h>
 

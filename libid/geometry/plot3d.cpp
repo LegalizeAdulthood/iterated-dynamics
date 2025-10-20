@@ -9,13 +9,13 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractype.h"
 #include "geometry/line3d.h"
 #include "io/loadmap.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
-#include "ui/spindac.h"
 #include "ui/video.h"
 
 #include <config/port.h>

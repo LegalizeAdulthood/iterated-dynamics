@@ -6,6 +6,7 @@
 #include "engine/get_julia_attractor.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -15,7 +16,6 @@
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/get_3d_params.h"
-#include "ui/spindac.h"
 #include "ui/starfield.h"
 #include "ui/stop_msg.h"
 

@@ -8,10 +8,10 @@
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "io/dir_file.h"
 #include "misc/Driver.h"
-#include "misc/memory.h"
 #include "misc/ValueSaver.h"
 #include "ui/field_prompt.h"
 #include "ui/find_special_colors.h"
@@ -20,9 +20,7 @@
 #include "ui/mouse.h"
 #include "ui/read_ticker.h"
 #include "ui/rotate.h"
-#include "ui/spindac.h"
 #include "ui/video.h"
-#include "ui/zoom.h"
 
 #include <fmt/format.h>
 

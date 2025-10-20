@@ -14,6 +14,7 @@
 #include "engine/Potential.h"
 #include "engine/resume.h"
 #include "engine/solid_guess.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "engine/work_list.h"
@@ -29,7 +30,6 @@
 #include "ui/frothy_basin.h"
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
-#include "ui/spindac.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 

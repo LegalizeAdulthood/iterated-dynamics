@@ -18,6 +18,7 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
+#include "engine/spindac.h"
 #include "engine/Viewport.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
@@ -26,7 +27,6 @@
 #include "ui/id_keys.h"
 #include "ui/mouse.h"
 #include "ui/rotate.h"
-#include "ui/spindac.h"
 #include "ui/video_mode.h"
 #include "ui/zoom.h"
 

@@ -7,11 +7,11 @@
 
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "helpdefs.h"
 #include "io/library.h"
 #include "io/loadmap.h"
-#include "io/merge_path_names.h"
 #include "math/rand15.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -19,7 +19,6 @@
 #include "ui/field_prompt.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
-#include "ui/spindac.h"
 
 #include <config/path_limits.h>
 

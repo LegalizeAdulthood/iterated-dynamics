@@ -6,29 +6,27 @@
  */
 #include "WxDriver.h"
 
-#include <config/cmd_shell.h>
-
-#include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
-#include "engine/VideoInfo.h"
-#include "geometry/plot3d.h"
 #include "gui/App.h"
 #include "gui/Colormap.h"
 #include "gui/Frame.h"
-#include "io/save_timer.h"
-#include "io/special_dirs.h"
-#include "misc/stack_avail.h"
-#include "ui/diskvid.h"
-#include "ui/id_keys.h"
-#include "ui/read_ticker.h"
-#include "ui/rotate.h"
-#include "ui/slideshw.h"
-#include "ui/spindac.h"
-#include "ui/stop_msg.h"
-#include "ui/text_screen.h"
-#include "ui/video.h"
-#include "ui/video_mode.h"
-#include "ui/zoom.h"
+
+#include <engine/calcfrac.h>
+#include <engine/cmdfiles.h>
+#include <engine/spindac.h>
+#include <engine/VideoInfo.h>
+#include <geometry/plot3d.h>
+#include <io/save_timer.h>
+#include <ui/diskvid.h>
+#include <ui/id_keys.h>
+#include <ui/read_ticker.h>
+#include <ui/rotate.h>
+#include <ui/slideshw.h>
+#include <ui/stop_msg.h>
+#include <ui/text_screen.h>
+#include <ui/video.h>
+#include <ui/zoom.h>
+
+#include <config/cmd_shell.h>
 
 #include <wx/log.h>
 

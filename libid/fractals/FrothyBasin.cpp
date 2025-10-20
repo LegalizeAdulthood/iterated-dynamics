@@ -11,10 +11,10 @@
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
 #include "engine/show_dot.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "fractals/newton.h"
 #include "io/loadmap.h"
-#include "ui/spindac.h"
 
 #include <algorithm>
 #include <cmath>
@@ -22,7 +22,6 @@
 using namespace id::engine;
 using namespace id::io;
 using namespace id::math;
-using namespace id::ui;
 
 namespace id::fractals
 {

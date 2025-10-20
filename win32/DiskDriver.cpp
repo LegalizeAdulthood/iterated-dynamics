@@ -13,13 +13,12 @@
 
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
 #include "ui/diskvid.h"
 #include "ui/rotate.h"
-#include "ui/spindac.h"
 #include "ui/video.h"
-#include "ui/video_mode.h"
 #include "ui/zoom.h"
 
 using namespace id::engine;

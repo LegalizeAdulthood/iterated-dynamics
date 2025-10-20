@@ -2,10 +2,11 @@
 //
 #include <gui/App.h>
 
-#include "io/CurrentPathSaver.h"
-#include "ui/id_main.h"
-
 #include <gui/Frame.h>
+
+#include <io/CurrentPathSaver.h>
+#include <ui/id_main.h>
+
 #include "../win32/instance.h"
 
 #include <fmt/format.h>

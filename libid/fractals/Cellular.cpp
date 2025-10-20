@@ -10,9 +10,9 @@
 #include "engine/engine_timer.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
+#include "engine/spindac.h"
 #include "fractals/fractalp.h"
 #include "ui/rotate.h"
-#include "ui/spindac.h"
 #include "ui/thinking.h"
 #include "ui/video.h"
 
