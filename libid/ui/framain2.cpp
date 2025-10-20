@@ -333,15 +333,11 @@ MainState big_while_loop(MainContext &context)
                 // switching video modes may have changed drivers or disk flag...
                 if (!g_good_mode)
                 {
-                    if (driver_is_disk())
-                    {
-                        g_ask_video = true;
-                    }
-                    else
+                    if (!driver_is_disk())
                     {
                         stop_msg("That video mode is not available with your adapter.");
-                        g_ask_video = true;
                     }
+                    g_ask_video = true;
                     g_init_mode = -1;
                     driver_set_for_text(); // switch to text mode
                     return MainState::RESTORE_START;
