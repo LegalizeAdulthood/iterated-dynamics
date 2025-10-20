@@ -19,6 +19,7 @@
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
+#include "fractals/ifs.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
 #include "geometry/line3d.h"

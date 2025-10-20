@@ -5,6 +5,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/text_color.h"
 #include "fractals/fractype.h"
+#include "fractals/ifs.h"
 #include "helpdefs.h"
 #include "io/load_entry_text.h"
 #include "math/round_float_double.h"

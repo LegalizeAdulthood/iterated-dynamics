@@ -22,6 +22,7 @@
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
+#include "fractals/ifs.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"

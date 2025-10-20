@@ -5,6 +5,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/pixel_grid.h"
 #include "engine/resume.h"
+#include "fractals/ifs.h"
 #include "helpcom.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
@@ -20,6 +21,7 @@
 #endif
 
 using namespace id::engine;
+using namespace id::fractals;
 using namespace id::help;
 using namespace id::misc;
 

@@ -11,6 +11,7 @@
 #include "engine/type_has_param.h"
 #include "engine/UserData.h"
 #include "fractals/fractalp.h"
+#include "fractals/ifs.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"

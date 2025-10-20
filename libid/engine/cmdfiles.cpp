@@ -32,6 +32,7 @@
 #include "fractals/check_orbit_name.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
+#include "fractals/ifs.h"
 #include "fractals/jb.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
@@ -194,10 +195,6 @@ fs::path g_l_system_filename;                // file to find L-System's in
 std::string g_l_system_name;                 // Name of L-System (if not empty)
 fs::path g_parameter_file;                   // file to find parameter sets in
 std::string g_parameter_set_name;            // Name of parameter set (if not empty)
-fs::path g_ifs_filename;                     // file to find IFS in
-std::string g_ifs_name;                      // Name of the IFS definition (if not empty)
-std::vector<float> g_ifs_definition;         // ifs parameters
-IFSDimension g_ifs_dim{IFSDimension::TWO};   // TWO or THREE
 
 static int s_init_random_seed{}; //
 static bool s_init_corners{};    // corners set via corners= or center-mag=?

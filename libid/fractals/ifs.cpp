@@ -12,6 +12,8 @@
 #include <cstdio>
 #include <cstring>
 
+namespace fs = std::filesystem;
+
 using namespace id::config;
 using namespace id::engine;
 using namespace id::io;
@@ -20,6 +22,10 @@ using namespace id::ui;
 namespace id::fractals
 {
 
+fs::path g_ifs_filename;                     // file to find IFS in
+std::string g_ifs_name;                      // Name of the IFS definition (if not empty)
+std::vector<float> g_ifs_definition;         // ifs parameters
+IFSDimension g_ifs_dim{IFSDimension::TWO};   // TWO or THREE
 int g_num_affine_transforms{};
 
 enum
