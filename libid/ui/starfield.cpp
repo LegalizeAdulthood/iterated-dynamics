@@ -92,7 +92,7 @@ int star_field()
         g_busy = false;
         return -1;
     }
-    spin_dac(0, 1);                 // load it, but don't spin
+    refresh_dac();
     for (g_row = 0; g_row < g_logical_screen.y_dots; g_row++)
     {
         for (g_col = 0; g_col < g_logical_screen.x_dots; g_col++)

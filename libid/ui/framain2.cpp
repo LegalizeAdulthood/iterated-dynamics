@@ -376,7 +376,7 @@ MainState big_while_loop(MainContext &context)
             if (g_save_dac != SaveDAC::NO || g_colors_preloaded)
             {
                 std::memcpy(g_dac_box, g_old_dac_box, 256*3); // restore the DAC
-                spin_dac(0, 1);
+                refresh_dac();
                 g_colors_preloaded = false;
             }
             else
@@ -391,7 +391,7 @@ MainState big_while_loop(MainContext &context)
                         g_dac_box[j][1] = g_map_clut[j][1];
                         g_dac_box[j][2] = g_map_clut[j][2];
                     }
-                    spin_dac(0, 1);
+                    refresh_dac();
                 }
                 else if ((driver_is_disk() && g_colors == 256) || !g_colors)
                 {

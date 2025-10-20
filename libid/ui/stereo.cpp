@@ -403,7 +403,7 @@ bool auto_stereo_convert()
 exit_stereo:
     driver_restore_graphics();
     std::memcpy(g_dac_box, save_dac_box, 256 * 3);
-    spin_dac(0, 1);
+    refresh_dac();
     return ret;
 }
 

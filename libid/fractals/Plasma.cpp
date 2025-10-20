@@ -65,7 +65,7 @@ static void set_plasma_palette()
         g_dac_box[i+170][1] = static_cast<Byte>((i * Blue[1] + (86 - i) * Red[1]) / 85);
         g_dac_box[i+170][2] = static_cast<Byte>((i * Blue[2] + (86 - i) * Red[2]) / 85);
     }
-    spin_dac(0, 1);
+    refresh_dac();
 }
 
 //**************** standalone engine for "plasma" *******************

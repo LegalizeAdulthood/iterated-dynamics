@@ -207,11 +207,11 @@ int gif_view()
     if (g_display_3d != Display3DMode::NONE && g_map_set && !glasses_alternating_or_superimpose())
     {
         validate_luts(g_map_name);  // read the palette file
-        spin_dac(0, 1); // load it, but don't spin
+        refresh_dac();
     }
     if (g_dac_box[0][0] != 255)
     {
-        spin_dac(0, 1);       // update the DAC
+        refresh_dac();
     }
     if (driver_is_disk())
     {

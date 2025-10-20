@@ -75,7 +75,7 @@ void FrothyBasin::set_froth_palette()
             return;
         }
         g_color_state = ColorState::DEFAULT_MAP; // treat map as default
-        spin_dac(0, 1);
+        refresh_dac();
     }
 }
 

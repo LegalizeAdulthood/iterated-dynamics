@@ -442,7 +442,7 @@ static void set_cellular_palette()
     g_dac_box[5][1] = BROWN[1];
     g_dac_box[5][2] = BROWN[2];
 
-    spin_dac(0, 1);
+    refresh_dac();
 }
 
 bool cellular_per_image()

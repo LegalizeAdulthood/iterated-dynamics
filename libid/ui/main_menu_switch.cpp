@@ -531,7 +531,7 @@ static MainState execute_commands(MainContext &context)
     else if (g_colors_preloaded)
     {
         // colors= was specified
-        spin_dac(0, 1);
+        refresh_dac();
         g_colors_preloaded = false;
     }
     else if (i & +CmdArgFlags::RESET) // reset was specified

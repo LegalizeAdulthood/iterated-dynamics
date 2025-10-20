@@ -493,7 +493,7 @@ static void pause_rotate()               // pause-the-rotate routine
     g_dac_box[0][0] = 48;
     g_dac_box[0][1] = 48;
     g_dac_box[0][2] = 48;
-    spin_dac(0, 1); // show white border
+    refresh_dac(); // show white border
     if (driver_is_disk())
     {
         dvid_status(100, " Paused in \"color cycling\" mode ");
@@ -507,7 +507,7 @@ static void pause_rotate()               // pause-the-rotate routine
     g_dac_box[0][0] = old_dac0;
     g_dac_box[0][1] = old_dac1;
     g_dac_box[0][2] = old_dac2;
-    spin_dac(0, 1); // show black border
+    refresh_dac(); // show black border
     g_dac_count = old_dac_count;
     s_paused = true;
 }

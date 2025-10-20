@@ -557,7 +557,7 @@ void plot_setup()
                 elem[2] = static_cast<Byte>(elem[2] * d_blue_bright);
             }
         }
-        spin_dac(0, 1); // load it, but don't spin
+        refresh_dac();
     }
 }
 

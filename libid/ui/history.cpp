@@ -788,7 +788,7 @@ void restore_history_info(const int i)
             g_map_clut[j][2] = last.dac_box[j][2];
         }
     }
-    spin_dac(0, 1);
+    refresh_dac();
     g_save_dac = g_fractal_type == FractalType::JULIBROT ? SaveDAC::NO : SaveDAC::YES;
     switch (g_fractal_type)
     {

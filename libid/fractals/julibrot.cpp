@@ -155,7 +155,7 @@ bool julibrot_per_image()
         {
             return false;
         }
-        spin_dac(0, 1);               // load it, but don't spin
+        refresh_dac();
         if (g_save_dac == SaveDAC::NEXT_TIME)
         {
             g_save_dac = SaveDAC::YES;

@@ -386,13 +386,13 @@ static void set_pal(const int pal, const int r, const int g, const int b)
     g_dac_box[pal][0] = static_cast<Byte>(r);
     g_dac_box[pal][1] = static_cast<Byte>(g);
     g_dac_box[pal][2] = static_cast<Byte>(b);
-    spin_dac(0, 1);
+    refresh_dac();
 }
 
 static void set_pal_range(const int first, const int how_many, const PalEntry *pal)
 {
     std::memmove(g_dac_box+first, pal, how_many*3);
-    spin_dac(0, 1);
+    refresh_dac();
 }
 
 static void get_pal_range(const int first, const int how_many, PalEntry *pal)
@@ -1923,7 +1923,7 @@ void PalTable::update_dac()
         }
     }
 
-    spin_dac(0, 1);
+    refresh_dac();
 }
 
 void PalTable::save_undo_data(const int first, const int last)
