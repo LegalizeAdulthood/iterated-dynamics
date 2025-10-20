@@ -9,10 +9,22 @@
 namespace id::ui
 {
 
+enum class CalibrationBars
+{
+    NONE = 0,
+    MIDDLE = 1,
+    TOP = 2,
+};
+
+inline int operator+(const CalibrationBars value)
+{
+    return static_cast<int>(value);
+}
+
 extern int                   g_auto_stereo_depth;
 extern double                g_auto_stereo_width;
-extern char                  g_calibrate;
-extern bool                  g_gray_flag;
+extern CalibrationBars       g_calibrate;           // add calibration bars to image
+extern bool                  g_gray_flag;           // flag to use gray value rather than color number
 extern bool                  g_image_map;
 extern std::string           g_stereo_map_filename;
 

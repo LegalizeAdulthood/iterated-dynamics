@@ -45,8 +45,8 @@ namespace id::ui
 std::string g_stereo_map_filename;
 int g_auto_stereo_depth{100};
 double g_auto_stereo_width{10};
-bool g_gray_flag{};  // flag to use gray value rather than color number
-char g_calibrate{1}; // add calibration bars to image
+bool g_gray_flag{};
+CalibrationBars g_calibrate{CalibrationBars::MIDDLE};
 bool g_image_map{};
 
 // TODO: sort out the crazy usage of this structure
@@ -305,7 +305,7 @@ bool auto_stereo_convert()
     AVG = AVG_CT;
     BAR_HEIGHT = 1 + g_logical_screen.y_dots / 20;
     X_CENTER = g_logical_screen.x_dots/2;
-    if (g_calibrate > 1)
+    if (g_calibrate > CalibrationBars::MIDDLE)
     {
         Y_CENTER = BAR_HEIGHT/2;
     }
@@ -367,7 +367,7 @@ bool auto_stereo_convert()
                 colour[ct++] = get_color(i - static_cast<int>(AVG), j);
             }
         }
-        bars = g_calibrate != 0;
+        bars = g_calibrate != CalibrationBars::NONE;
         toggle_bars(&bars, bar_width, colour.data());
         while (!done)
         {
