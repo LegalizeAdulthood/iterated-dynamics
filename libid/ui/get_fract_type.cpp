@@ -384,7 +384,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     double old_param[MAX_PARAMS];
     int fn_key_mask = 0;
 
-    old_bailout = g_bailout;
+    old_bailout = g_user.bailout_value;
     g_julibrot = g_fractal_type == FractalType::JULIBROT;
     FractalType current_type = g_fractal_type;
     g_cur_fractal_specific = get_fractal_specific(current_type);
@@ -680,7 +680,7 @@ gfp_top:
             const char *tmp_ptr;
             choices[prompt_num] = "Bailout value (0 means use default)";
             param_values[prompt_num].type = 'L';
-            old_bailout = g_bailout;
+            old_bailout = g_user.bailout_value;
             param_values[prompt_num++].uval.Lval = old_bailout;
             param_values[prompt_num].type = '*';
             tmp_ptr = type_name;
@@ -901,12 +901,12 @@ gfp_top:
         }
         else
         {
-            g_bailout = param_values[prompt_num++].uval.Lval;
-            if (g_bailout != 0 && (g_bailout < 1 || g_bailout > 2100000000L))
+            g_user.bailout_value = param_values[prompt_num++].uval.Lval;
+            if (g_user.bailout_value != 0 && (g_user.bailout_value < 1 || g_user.bailout_value > 2100000000L))
             {
-                g_bailout = old_bailout;
+                g_user.bailout_value = old_bailout;
             }
-            if (g_bailout != old_bailout)
+            if (g_user.bailout_value != old_bailout)
             {
                 ret = 1;
             }

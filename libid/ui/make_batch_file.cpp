@@ -1048,9 +1048,9 @@ static void write_batch_params(
             put_param(" maxiter=%ld", g_max_iterations);
         }
 
-        if (g_bailout && (!g_potential.flag || g_potential.params[2] == 0.0))
+        if (g_user.bailout_value && (!g_potential.flag || g_potential.params[2] == 0.0))
         {
-            put_param(" bailout=%ld", g_bailout);
+            put_param(" bailout=%ld", g_user.bailout_value);
         }
 
         if (g_bailout_test != Bailout::MOD)

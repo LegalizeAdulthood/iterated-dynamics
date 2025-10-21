@@ -857,7 +857,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->dist_est_old =
         static_cast<std::int16_t>(g_distance_estimator <= 32000 ? g_distance_estimator : 32000);
     save_info->float_flag = static_cast<std::int16_t>(1);
-    save_info->bailout_old = static_cast<std::int16_t>(g_bailout >= 4 && g_bailout <= 32000 ? g_bailout : 0);
+    save_info->bailout_old = static_cast<std::int16_t>(
+        g_user.bailout_value >= 4 && g_user.bailout_value <= 32000 ? g_user.bailout_value : 0);
     save_info->calc_time = static_cast<std::int32_t>(g_calc_time);
     save_info->trig_index[0] = static_cast<Byte>(g_trig_index[0]);
     save_info->trig_index[1] = static_cast<Byte>(g_trig_index[1]);
@@ -896,7 +897,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->juli3d_mode = static_cast<short>(g_julibrot_3d_mode);
     save_info->max_fn = static_cast<std::int16_t>(g_max_function);
     save_info->inverse_julia = static_cast<std::int16_t>((+g_major_method << 8) + +g_inverse_julia_minor_method);
-    save_info->bailout = static_cast<std::int32_t>(g_bailout);
+    save_info->bailout = static_cast<std::int32_t>(g_user.bailout_value);
     save_info->bailout_test = static_cast<std::int16_t>(g_bailout_test);
     save_info->iterations = static_cast<std::int32_t>(g_max_iterations);
     save_info->bf_length = static_cast<std::int16_t>(g_bn_length);

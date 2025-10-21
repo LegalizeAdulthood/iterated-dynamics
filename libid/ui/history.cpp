@@ -584,7 +584,7 @@ void save_history_info()
     current.max_function = g_max_function;
     current.major_method = g_major_method;
     current.inverse_julia_minor_method = g_inverse_julia_minor_method;
-    current.bailout = g_bailout;
+    current.bailout = g_user.bailout_value;
     current.bailout_test = g_bailout_test;
     current.iterations = g_max_iterations;
     current.old_demm_colors = g_old_demm_colors;
@@ -754,7 +754,7 @@ void restore_history_info(const int i)
     g_max_function = last.max_function;
     g_major_method = last.major_method;
     g_inverse_julia_minor_method = last.inverse_julia_minor_method;
-    g_bailout = last.bailout;
+    g_user.bailout_value = last.bailout;
     g_bailout_test = last.bailout_test;
     g_max_iterations = last.iterations;
     g_old_demm_colors = last.old_demm_colors;

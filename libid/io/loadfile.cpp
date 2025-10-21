@@ -425,7 +425,7 @@ static void backwards_info4(const FractalInfo &read_info)
             g_user.std_calc_mode = CalcMode::THREE_PASS;
         }
         g_user.distance_estimator_value = read_info.dist_est_old;
-        g_bailout = read_info.bailout_old;
+        g_user.bailout_value = read_info.bailout_old;
         g_calc_time = read_info.calc_time;
         g_trig_index[0] = static_cast<TrigFn>(read_info.trig_index[0]);
         g_trig_index[1] = static_cast<TrigFn>(read_info.trig_index[1]);
@@ -555,7 +555,7 @@ static void backwards_info_pre5(const FractalInfo &read_info)
         }
         if (g_decomp[0] > 0 && g_decomp[1] > 0)
         {
-            g_bailout = g_decomp[1];
+            g_user.bailout_value = g_decomp[1];
         }
     }
 }
@@ -604,7 +604,7 @@ static void backwards_info10(FractalInfo read_info)
     if (read_info.info_version > 9)
     {
         // post-version 18.22
-        g_bailout = read_info.bailout; // use long bailout
+        g_user.bailout_value = read_info.bailout; // use long bailout
         g_bailout_test = static_cast<Bailout>(read_info.bailout_test);
     }
     else
@@ -1698,9 +1698,9 @@ void backwards_legacy_v18()
     }
     if (g_file_version < 1800                                                                     //
         && (g_fractal_type == FractalType::MANDEL_FN || g_fractal_type == FractalType::LAMBDA_FN) //
-        && g_bailout == 0)
+        && g_user.bailout_value == 0)
     {
-        g_bailout = 2500;
+        g_user.bailout_value = 2500;
     }
 }
 

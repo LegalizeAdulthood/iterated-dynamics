@@ -12,6 +12,7 @@ The biggest difference is in the allocations of memory for the big numbers.
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "ui/goodbye.h"
@@ -458,7 +459,7 @@ void init_bf_dec(const int dec)
     {
         g_decimals = dec;
     }
-    if (g_bailout > 10)      // arbitrary value
+    if (g_user.bailout_value > 10)      // arbitrary value
     {
         // using 2 doesn't gain much and requires another test
         g_int_length = 4;
@@ -494,7 +495,7 @@ void init_bf_length(const int bnl)
 {
     g_bn_length = bnl;
 
-    if (g_bailout > 10)      // arbitrary value
+    if (g_user.bailout_value > 10)      // arbitrary value
     {
         // using 2 doesn't gain much and requires another test
         g_int_length = 4;

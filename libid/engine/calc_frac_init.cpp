@@ -219,9 +219,9 @@ init_restart:
     {
         g_magnitude_limit = g_potential.params[2];
     }
-    else if (g_bailout)     // user input bailout
+    else if (g_user.bailout_value) // user input bailout
     {
-        g_magnitude_limit = g_bailout;
+        g_magnitude_limit = g_user.bailout_value;
     }
     else if (g_biomorph != -1)     // biomorph benefits from larger bailout
     {

@@ -2746,12 +2746,12 @@ TEST_F(TestParameterCommand, orbitSaveName)
 
 TEST_F(TestParameterCommand, bailOut)
 {
-    ValueSaver saved_bailout{g_bailout, -1};
+    ValueSaver saved_bailout{g_user.bailout_value, -1};
 
     exec_cmd_arg("bailout=50");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(50L, g_bailout);
+    EXPECT_EQ(50L, g_user.bailout_value);
 }
 
 TEST_F(TestParameterCommand, bailOutTestMod)
@@ -3317,7 +3317,7 @@ TEST_F(TestParameterCommand, decompValue)
 {
     ValueSaver save_decomp0{g_decomp[0], -99};
     ValueSaver save_decomp1{g_decomp[1], -99};
-    VALUE_UNCHANGED(g_bailout, -99L);
+    ValueUnchanged saved_user_bailout_value("g_user.bailout_value", g_user.bailout_value, -99L);
 
     exec_cmd_arg("decomp=16");
 
@@ -3330,14 +3330,14 @@ TEST_F(TestParameterCommand, decompTwoValues)
 {
     ValueSaver save_decomp0{g_decomp[0], -99};
     ValueSaver save_decomp1{g_decomp[1], -99};
-    ValueSaver save_bailout{g_bailout, -99L};
+    ValueSaver save_bailout{g_user.bailout_value, -99L};
 
     exec_cmd_arg("decomp=16/4");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_EQ(16, g_decomp[0]);
     EXPECT_EQ(4, g_decomp[1]);
-    EXPECT_EQ(4, g_bailout);
+    EXPECT_EQ(4, g_user.bailout_value);
 }
 
 TEST_F(TestParameterCommand, distEstOneValue)

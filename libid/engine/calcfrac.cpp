@@ -134,6 +134,7 @@ static int s_show_dot_width{};        //
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
 double g_f_at_rad{};                              // finite attractor radius
+int g_biomorph{};                                 //
 DComplex g_init{};                                //
 DComplex g_tmp_z{};                               //
 DComplex g_old_z{};                               //

@@ -139,7 +139,6 @@ fs::path g_working_dir;                                   // name of directory f
 std::string g_image_filename_mask{"*.gif"};               //
 fs::path g_save_filename{"fract001"};                     // save files using this name
 bool g_dither_flag{};                                     // true if we want to dither GIFs
-int g_biomorph{};                                         // flag for biomorph
 ShowFile g_show_file{};                                   // zero if file display pending
 int g_decomp[2]{};                                        // Decomposition coloring
 long g_distance_estimator{};                              //
@@ -155,7 +154,6 @@ BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no 
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
-long g_bailout{};                                         // user input bailout value
 std::vector<int> g_iteration_ranges;                      // iter->color ranges mapping
 int g_iteration_ranges_len{};                             // size of ranges array
 Byte g_map_clut[256][3];                                  // map= (default colors)
@@ -469,7 +467,7 @@ static void init_vars_fractal()
     g_finite_attractor = false;                          // disable finite attractor logic
     set_fractal_type(FractalType::MANDEL);               // initial fractal type
     init_param_flags();                                  //
-    g_bailout = 0;                                       // no user-entered bailout
+    g_user.bailout_value = 0;                            // no user-entered bailout
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
     g_use_init_orbit = InitOrbitMode::NORMAL;            //
     std::fill_n(g_params, MAX_PARAMS, 0.0);              // initial parameter values
@@ -1323,7 +1321,7 @@ static CmdArgFlags cmd_bailout(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_bailout = static_cast<long>(cmd.float_vals[0]);
+    g_user.bailout_value = static_cast<long>(cmd.float_vals[0]);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -1923,7 +1921,7 @@ static CmdArgFlags cmd_decomp(const Command &cmd)
     if (cmd.total_params > 1) // backward compatibility
     {
         g_decomp[1] = cmd.int_vals[1];
-        g_bailout = cmd.int_vals[1];
+        g_user.bailout_value = cmd.int_vals[1];
     }
     return CmdArgFlags::FRACTAL_PARAM;
 }

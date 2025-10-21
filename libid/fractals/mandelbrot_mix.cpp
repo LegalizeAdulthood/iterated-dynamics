@@ -7,6 +7,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
+#include "engine/UserData.h"
 #include "fractals/newton.h"
 #include "math/arg.h"
 #include "math/cmplx.h"
@@ -125,7 +126,7 @@ bool MandelbrotMix::setup()
         g_tmp_z.y = -g_tmp_z.y;
     }
 
-    if (g_bailout == 0)
+    if (g_user.bailout_value == 0)
     {
         g_magnitude_limit = l.x;
         g_magnitude_limit2 = g_magnitude_limit * g_magnitude_limit;
