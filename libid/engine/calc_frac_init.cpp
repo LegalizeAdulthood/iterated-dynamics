@@ -3,7 +3,6 @@
 #include "engine/calc_frac_init.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
 #include "engine/fractalb.h"
@@ -49,6 +48,11 @@ LDouble g_delta_x2{}, g_delta_y2{};
 std::array<double, 2> g_math_tol{.05, .05};
 double g_plot_mx1{}, g_plot_mx2{};
 double g_plot_my1{}, g_plot_my2{};
+
+long g_distance_estimator{};
+int g_distance_estimator_x_dots{};
+int g_distance_estimator_y_dots{};
+int g_distance_estimator_width_factor{};
 
 static void adjust_to_limits(double expand);
 static void smallest_add(double *num);

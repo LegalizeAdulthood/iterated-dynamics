@@ -25,6 +25,11 @@ extern double                g_plot_mx2;
 extern double                g_plot_my1;
 extern double                g_plot_my2;
 
+extern long                  g_distance_estimator;
+extern int                   g_distance_estimator_width_factor;
+extern int                   g_distance_estimator_x_dots;       // x dots to use for video independence
+extern int                   g_distance_estimator_y_dots;       // y dots to use for video independence
+
 void calc_frac_init();
 void adjust_corner();
 void adjust_corner_bf();

@@ -132,16 +132,12 @@ static bool is_a_big_float(const char *str);
 
 // variables defined by the command line/files processor
 int g_stop_pass{};                                        // stop at this guessing pass early
-int g_distance_estimator_x_dots{};                        // x dots to use for video independence
-int g_distance_estimator_y_dots{};                        // y dots to use for video independence
 int g_bf_digits{};                                        // digits to use (force) for g_bf_math
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 std::string g_image_filename_mask{"*.gif"};               //
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 ShowFile g_show_file{};                                   // zero if file display pending
 int g_decomp[2]{};                                        // Decomposition coloring
-long g_distance_estimator{};                              //
-int g_distance_estimator_width_factor{};                  //
 bool g_overwrite_file{};                                  // true if file overwrite allowed
 int g_fill_color{};                                       // fill color: -1=normal
 bool g_finite_attractor{};                                // finite attractor logic
