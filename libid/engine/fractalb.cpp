@@ -8,7 +8,6 @@
 #include "engine/bailout_formula.h"
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"

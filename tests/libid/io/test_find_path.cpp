@@ -4,7 +4,6 @@
 
 #include "test_data.h"
 
-#include <engine/cmdfiles.h>
 #include <io/CurrentPathSaver.h>
 #include <io/library.h>
 #include <io/search_path.h>
@@ -15,7 +14,6 @@
 
 namespace fs = std::filesystem;
 
-using namespace id::engine;
 using namespace id::io;
 using namespace id::test::data;
 

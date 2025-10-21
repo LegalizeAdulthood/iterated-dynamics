@@ -2,7 +2,6 @@
 //
 #include "io/library.h"
 
-#include "engine/cmdfiles.h"
 #include "io/find_file.h"
 #include "io/special_dirs.h"
 
@@ -11,8 +10,6 @@
 #include <vector>
 
 namespace fs = std::filesystem;
-
-using namespace id::engine;
 
 namespace id::io
 {

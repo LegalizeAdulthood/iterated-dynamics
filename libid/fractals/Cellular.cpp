@@ -5,7 +5,6 @@
 #include "fractals/Cellular.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/engine_timer.h"
 #include "engine/random_seed.h"

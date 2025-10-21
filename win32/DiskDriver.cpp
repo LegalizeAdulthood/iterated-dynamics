@@ -12,7 +12,6 @@
 #include <config/driver_types.h>
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"

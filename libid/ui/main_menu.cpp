@@ -2,7 +2,6 @@
 //
 #include "ui/main_menu.h"
 
-#include "engine/cmdfiles.h"
 #include "engine/spindac.h"
 #include "engine/text_color.h"
 #include "engine/VideoInfo.h"

@@ -2,7 +2,6 @@
 //
 #include "fractals/ifs.h"
 
-#include "engine/cmdfiles.h"
 #include "io/file_gets.h"
 #include "io/file_item.h"
 #include "ui/stop_msg.h"
@@ -15,7 +14,6 @@
 namespace fs = std::filesystem;
 
 using namespace id::config;
-using namespace id::engine;
 using namespace id::io;
 using namespace id::ui;
 

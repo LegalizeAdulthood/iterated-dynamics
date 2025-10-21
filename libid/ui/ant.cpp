@@ -8,7 +8,6 @@
 //
 #include "ui/ant.h"
 
-#include "engine/cmdfiles.h"
 #include "engine/orbit.h"
 #include "fractals/Ant.h"
 #include "helpdefs.h"

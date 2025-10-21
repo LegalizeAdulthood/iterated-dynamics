@@ -3,7 +3,6 @@
 #include "ui/set_default_params.h"
 
 #include "engine/calc_frac_init.h"
-#include "engine/cmdfiles.h"
 #include "engine/find_extra_param.h"
 #include "engine/ImageRegion.h"
 #include "engine/Viewport.h"

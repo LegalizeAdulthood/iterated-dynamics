@@ -2,7 +2,6 @@
 //
 #include "engine/trig_fns.h"
 
-#include "engine/cmdfiles.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/julibrot.h"

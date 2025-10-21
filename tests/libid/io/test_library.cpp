@@ -5,7 +5,6 @@
 #include "test_data.h"
 #include "test_library.h"
 
-#include <engine/cmdfiles.h>
 #include <io/CurrentPathSaver.h>
 #include <io/special_dirs.h>
 #include <misc/ValueSaver.h>
@@ -14,7 +13,6 @@
 
 using Path = std::filesystem::path;
 
-using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::test::library;

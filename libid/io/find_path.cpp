@@ -2,15 +2,12 @@
 //
 #include "io/find_path.h"
 
-#include "engine/cmdfiles.h"
 #include "io/library.h"
 #include "io/search_path.h"
 
 #include <filesystem>
 
 namespace fs = std::filesystem;
-
-using namespace id::engine;
 
 namespace id::io
 {

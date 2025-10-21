@@ -18,7 +18,6 @@
 #include "fractals/parser.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/Inversion.h"
 #include "engine/LogicalScreen.h"

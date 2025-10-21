@@ -3,7 +3,6 @@
 #include "engine/solid_guess.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "engine/work_list.h"

@@ -3,7 +3,6 @@
 #include "engine/boundary_trace.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/show_dot.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"

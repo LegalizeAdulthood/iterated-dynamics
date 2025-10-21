@@ -5,7 +5,6 @@
 #include "engine/tesseral.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"

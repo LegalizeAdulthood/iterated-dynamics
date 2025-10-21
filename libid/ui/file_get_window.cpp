@@ -9,7 +9,6 @@
 #include "config/string_case_compare.h"
 #include "engine/Browse.h"
 #include "engine/calc_frac_init.h"
-#include "engine/cmdfiles.h"
 #include "engine/Inversion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/trig_fns.h"
