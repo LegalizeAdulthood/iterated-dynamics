@@ -1480,8 +1480,8 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     }
 
     std::strcpy(info->info_id, "GIFFILE");
-    info->iterations = 150;
-    info->iterations_old = 150;
+    info->iterations = INITIAL_MAX_ITERATIONS;
+    info->iterations_old = INITIAL_MAX_ITERATIONS;
     info->fractal_type = static_cast<short>(FractalType::PLASMA);
     info->x_min = -1;
     info->x_max = 1;

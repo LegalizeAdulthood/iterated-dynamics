@@ -119,6 +119,8 @@ enum class CalcStatus
     COMPLETED = 4
 };
 
+constexpr int INITIAL_MAX_ITERATIONS{150};
+
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern  double               g_f_at_rad;            // finite attractor radius
 extern int                   g_atan_colors;         //

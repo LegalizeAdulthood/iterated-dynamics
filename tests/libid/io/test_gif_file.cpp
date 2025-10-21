@@ -4,6 +4,7 @@
 
 #include "test_data.h"
 
+#include <engine/calcfrac.h>
 #include <fractals/fractype.h>
 #include <io/loadfile.h>
 
@@ -18,6 +19,7 @@
 #include <numeric>
 #include <string>
 
+using namespace id::engine;
 using namespace id::io;
 using namespace id::test::data;
 using namespace id::ui;
@@ -571,7 +573,7 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     const FractalInfo info{get_fractal_info(m_gif)};
 
     EXPECT_EQ("Fractal", trim(info.info_id));
-    EXPECT_EQ(150, info.iterations_old);
+    EXPECT_EQ(INITIAL_MAX_ITERATIONS, info.iterations_old);
     constexpr int MANDEL{0};
     EXPECT_EQ(MANDEL, info.fractal_type);
     EXPECT_NEAR(-2.5, info.x_min, EPS);
@@ -691,7 +693,7 @@ TEST_F(TestGIFFractalInfoExtension, decode)
     EXPECT_NEAR(0.0, info.d_param10, EPS);
     EXPECT_EQ(0, info.bailout);
     EXPECT_EQ(0, info.bailout_test);
-    EXPECT_EQ(150, info.iterations);
+    EXPECT_EQ(INITIAL_MAX_ITERATIONS, info.iterations);
     EXPECT_EQ(0, info.bf_math);
     EXPECT_EQ(0, info.bf_length);
     EXPECT_EQ(0, info.y_adjust);

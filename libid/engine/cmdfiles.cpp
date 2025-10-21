@@ -432,7 +432,7 @@ static void init_vars_fractal()
     g_fill_color = -1;                                   // no special fill color
     g_user.biomorph_value = -1;                          // turn off biomorph flag
     g_outside_color = ITER;                              // outside color = -1 (not used)
-    g_max_iterations = 150;                              // initial max iter
+    g_max_iterations = INITIAL_MAX_ITERATIONS;           // initial max iter
     g_user.std_calc_mode = CalcMode::SOLID_GUESS;        // initial solid-guessing
     g_stop_pass = 0;                                     // initial guessing stop pass
     g_quick_calc = false;                                //

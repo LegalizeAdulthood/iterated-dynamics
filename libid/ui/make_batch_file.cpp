@@ -829,7 +829,6 @@ static void write_batch_params(
 
         //***** fractal only parameters in this section ******
         put_param(" reset=%s", to_par_string(g_version).c_str());
-
         put_param(" type=%s", g_cur_fractal_specific->name);
 
         if (g_fractal_type == FractalType::JULIBROT)
@@ -1046,7 +1045,7 @@ static void write_batch_params(
             put_param(" initorbit=%.15g/%.15g", g_init_orbit.x, g_init_orbit.y);
         }
 
-        if (g_max_iterations != 150)
+        if (g_max_iterations != INITIAL_MAX_ITERATIONS)
         {
             put_param(" maxiter=%ld", g_max_iterations);
         }
