@@ -7,11 +7,11 @@
 #include "engine/LogicalScreen.h"
 #include "engine/VideoInfo.h"
 #include "io/file_gets.h"
+#include "io/file_item.h"
 #include "math/fixed_pt.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/stack_avail.h"
-#include "ui/file_item.h"
 #include "ui/stop_msg.h"
 #include "ui/thinking.h"
 

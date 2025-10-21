@@ -4,7 +4,7 @@
 
 #include "engine/cmdfiles.h"
 #include "io/file_gets.h"
-#include "ui/file_item.h"
+#include "io/file_item.h"
 #include "ui/stop_msg.h"
 
 #include <config/string_lower.h>

@@ -25,6 +25,7 @@
 #include "engine/pixel_grid.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
+#include "io/file_item.h"
 #include "io/library.h"
 #include "math/arg.h"
 #include "math/cmplx.h"
@@ -33,7 +34,6 @@
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
 #include "misc/id.h"
-#include "ui/file_item.h"
 #include "ui/stop_msg.h"
 
 #include <config/string_case_compare.h>

@@ -185,7 +185,6 @@ add_library(libid
     include/ui/evolver_menu_switch.h ui/evolver_menu_switch.cpp
     include/ui/field_prompt.h ui/field_prompt.cpp
     include/ui/file_get_window.h ui/file_get_window.cpp
-    include/ui/file_item.h ui/file_item.cpp
     include/ui/find_special_colors.h ui/find_special_colors.cpp
     include/ui/flip_image.h ui/flip_image.cpp
     include/ui/frothy_basin.h ui/frothy_basin.cpp
@@ -198,6 +197,7 @@ add_library(libid
     include/ui/get_cmd_string.h ui/get_cmd_string.cpp
     include/ui/get_commands.h ui/get_commands.cpp
     include/ui/get_corners.h ui/get_corners.cpp
+    include/ui/get_file_entry.h ui/get_file_entry.cpp
     include/ui/get_fract_type.h ui/get_fract_type.cpp
     include/ui/get_key_no_help.h ui/get_key_no_help.cpp
     include/ui/get_rds_params.h ui/get_rds_params.cpp

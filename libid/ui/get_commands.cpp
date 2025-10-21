@@ -4,13 +4,15 @@
 
 #include "helpdefs.h"
 #include "misc/ValueSaver.h"
-#include "ui/file_item.h"
+#include "io/file_item.h"
+#include "ui/get_file_entry.h"
 #include "ui/help.h"
 
 #include <cstdio>
 
 using namespace id::engine;
 using namespace id::help;
+using namespace id::io;
 using namespace id::misc;
 
 namespace id::ui

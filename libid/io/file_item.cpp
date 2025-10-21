@@ -2,18 +2,17 @@
 //
 #include "io/file_item.h"
 
+#include "engine/cmdfiles.h"
+#include "io/library.h"
+#include "misc/id.h"
 #include "ui/stop_msg.h"
 
 #include <config/string_case_compare.h>
-
 #include <fmt/format.h>
 
-#include <cstdio>
-#include <cstring>
-#include <stdexcept>
-#include <string>
-
 using namespace id::config;
+using namespace id::engine;
+using namespace id::misc;
 using namespace id::ui;
 
 namespace id::io
@@ -201,4 +200,114 @@ bool search_for_entry(std::FILE *infile, const std::string &item_name)
     return scan_entries(infile, nullptr, item_name.c_str()) == -1;
 }
 
-} // namespace id::io
+static bool check_path(const std::filesystem::path &path, std::FILE **infile, const std::string &item_name)
+{
+    if (std::FILE *f = std::fopen(path.string().c_str(), "rb"); f != nullptr)
+    {
+        if (search_for_entry(f, item_name))
+        {
+            *infile = f;
+            return true;
+        }
+
+        std::fclose(f);
+        *infile = nullptr;
+    }
+
+    return false;
+}
+
+bool find_file_item(
+    std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, const ItemType item_type)
+{
+    std::FILE *infile = nullptr;
+    bool found = false;
+
+    if (!string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
+    {
+        found = check_path(path, &infile, item_name);
+
+        if (!found && g_check_cur_dir)
+        {
+            const std::filesystem::path full_path{path.filename()};
+            found = check_path(full_path, &infile, item_name);
+            if (found)
+            {
+                path = full_path;
+            }
+        }
+    }
+
+    if (!found)
+    {
+        std::string par_search_name;
+        switch (item_type)
+        {
+        case ItemType::FORMULA:
+            par_search_name = "frm:" + item_name;
+            break;
+        case ItemType::L_SYSTEM:
+            par_search_name = "lsys:" + item_name;
+            break;
+        case ItemType::IFS:
+            par_search_name = "ifs:" + item_name;
+            break;
+        case ItemType::PAR_SET:
+        default:
+            par_search_name = item_name;
+            break;
+        }
+        found = check_path(g_parameter_file, &infile, par_search_name);
+        if (found)
+        {
+            path = g_parameter_file;
+        }
+    }
+
+    if (!found)
+    {
+        const auto read_file = [](ItemType type)
+        {
+            switch (type)
+            {
+            case ItemType::FORMULA:
+                return ReadFile::FORMULA;
+            case ItemType::L_SYSTEM:
+                return ReadFile::LSYSTEM;
+            case ItemType::IFS:
+                return ReadFile::IFS;
+            case ItemType::PAR_SET:
+                return ReadFile::PARAMETER;
+            }
+            throw std::runtime_error("Unknown ItemType " + std::to_string(static_cast<int>(type)));
+        };
+        const std::filesystem::path lib_path{find_file(read_file(item_type), path.filename())};
+        if (!lib_path.empty())
+        {
+            found = check_path(lib_path, &infile, item_name);
+        }
+        if (found)
+        {
+            path = lib_path;
+        }
+    }
+
+    if (!found)
+    {
+        stop_msg(fmt::format("'{:s}' file entry item not found", item_name));
+        return true;
+    }
+
+    // found file
+    if (file_ptr != nullptr)
+    {
+        *file_ptr = infile;
+    }
+    else if (infile != nullptr)
+    {
+        std::fclose(infile);
+    }
+    return false;
+}
+
+} // namespace id::ui

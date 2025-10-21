@@ -2,13 +2,12 @@
 //
 #include "io/library.h"
 
-#include <ui/file_item.h>
-
 #include "test_data.h"
 #include "test_library.h"
 
 #include <engine/cmdfiles.h>
 #include <io/CurrentPathSaver.h>
+#include <io/file_item.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -19,7 +18,6 @@ using namespace id::engine;
 using namespace id::io;
 using namespace id::misc;
 using namespace id::test;
-using namespace id::ui;
 
 namespace id::test
 {
