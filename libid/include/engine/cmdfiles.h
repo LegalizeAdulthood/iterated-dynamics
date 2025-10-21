@@ -93,7 +93,6 @@ extern BatchMode             g_init_batch;
 extern bool                  g_read_color;
 extern RecordColorsMode      g_record_colors;
 extern ShowFile              g_show_file;
-extern bool                  g_use_center_mag;
 
 void cmd_files(int argc, const char *const *argv);
 CmdArgFlags load_commands(std::FILE *infile);

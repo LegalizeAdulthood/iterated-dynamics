@@ -20,6 +20,8 @@ using namespace id::misc;
 namespace id::engine
 {
 
+bool g_use_center_mag{}; // use center-mag corners
+
 // most people "think" in degrees
 static double rad_to_deg(const double x)
 {

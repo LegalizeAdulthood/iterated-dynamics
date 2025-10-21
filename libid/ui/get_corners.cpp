@@ -3,7 +3,6 @@
 #include "ui/get_corners.h"
 
 #include "engine/calc_frac_init.h"
-#include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
 #include "engine/ImageRegion.h"
