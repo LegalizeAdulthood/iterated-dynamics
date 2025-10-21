@@ -57,6 +57,7 @@ using namespace id::ui;
 namespace id::fractals
 {
 
+Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 = OFF
 Minor g_inverse_julia_minor_method{};
 bool g_keep_screen_coords{};
 Major g_major_method{};

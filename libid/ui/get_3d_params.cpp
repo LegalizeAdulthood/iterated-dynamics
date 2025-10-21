@@ -9,6 +9,7 @@
 #include "geometry/plot3d.h"
 #include "helpdefs.h"
 #include "io/check_write_file.h"
+#include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "io/merge_path_names.h"
 #include "misc/Driver.h"

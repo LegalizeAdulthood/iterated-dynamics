@@ -77,14 +77,6 @@ enum class BatchMode
     BAILOUT_INTERRUPTED_SAVE
 };
 
-enum class Display3DMode
-{
-    MINUS_ONE = -1,
-    NONE = 0,
-    YES = 1,
-    B_COMMAND = 2
-};
-
 enum class ShowFile
 {
     REQUEST_IMAGE = -1,
@@ -96,7 +88,6 @@ extern std::string           g_last_map_name;
 extern bool                  g_colors_preloaded;
 extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;
-extern Display3DMode         g_display_3d;
 extern bool                  g_dither_flag;
 extern bool                  g_escape_exit;
 extern bool                  g_fast_restore;
@@ -104,7 +95,6 @@ extern bool                  g_finite_attractor;
 extern bool                  g_first_init;
 extern std::string           g_image_filename_mask;
 extern BatchMode             g_init_batch;
-extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;
 extern bool                  g_read_color;
 extern RecordColorsMode      g_record_colors;

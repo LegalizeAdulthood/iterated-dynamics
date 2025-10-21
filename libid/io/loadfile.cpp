@@ -133,6 +133,7 @@ static bool fix_period_bof();
 static std::FILE *s_fp{};
 
 bool g_loaded_3d{};
+bool g_overlay_3d{};        // 3D overlay flag
 int g_file_y_dots{};
 int g_file_x_dots{};
 int g_file_colors{};

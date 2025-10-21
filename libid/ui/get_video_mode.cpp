@@ -23,6 +23,7 @@
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
+#include "fractals/lorenz.h"
 #include "io/loadfile.h"
 #include "io/trim_filename.h"
 #include "misc/Driver.h"

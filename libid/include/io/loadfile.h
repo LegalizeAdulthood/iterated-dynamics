@@ -311,6 +311,7 @@ extern int                   g_file_colors;
 extern int                   g_file_x_dots;
 extern int                   g_file_y_dots;
 extern bool                  g_loaded_3d;
+extern bool                  g_overlay_3d;          // 3D overlay flag
 extern bool                  g_new_bifurcation_functions_loaded;
 extern short                 g_skip_x_dots;
 extern short                 g_skip_y_dots;

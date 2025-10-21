@@ -17,6 +17,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/julibrot.h"
+#include "fractals/lorenz.h"
 #include "fractals/parser.h"
 #include "io/encoder.h"
 #include "io/loadfile.h"

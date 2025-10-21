@@ -44,6 +44,7 @@
 #include "engine/wait_until.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
+#include "fractals/lorenz.h"
 #include "fractals/lyapunov.h"
 #include "fractals/newton.h"
 #include "fractals/parser.h"

@@ -138,8 +138,6 @@ bool g_dither_flag{};                                     // true if we want to 
 ShowFile g_show_file{};                                   // zero if file display pending
 bool g_overwrite_file{};                                  // true if file overwrite allowed
 bool g_finite_attractor{};                                // finite attractor logic
-Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 = OFF
-bool g_overlay_3d{};                                      // 3D overlay flag
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 bool g_use_center_mag{};                                  // use center-mag corners

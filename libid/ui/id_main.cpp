@@ -9,6 +9,7 @@
 #include "engine/video_mode.h"
 #include "engine/Viewport.h"
 #include "fractals/julibrot.h"
+#include "fractals/lorenz.h"
 #include "helpcom.h"
 #include "helpdefs.h"
 #include "io/library.h"

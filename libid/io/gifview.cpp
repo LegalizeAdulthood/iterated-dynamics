@@ -24,6 +24,7 @@
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "engine/wait_until.h"
+#include "fractals/lorenz.h"
 #include "geometry/plot3d.h"
 #include "io/decoder.h"
 #include "io/library.h"
@@ -46,6 +47,7 @@
 #include <vector>
 
 using namespace id::engine;
+using namespace id::fractals;
 using namespace id::geometry;
 using namespace id::misc;
 using namespace id::ui;

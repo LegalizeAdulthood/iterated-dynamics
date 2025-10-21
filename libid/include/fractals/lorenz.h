@@ -50,6 +50,14 @@ enum OrbitSaveFlags
     OSF_MIDI = 2
 };
 
+enum class Display3DMode
+{
+    MINUS_ONE = -1,
+    NONE = 0,
+    YES = 1,
+    B_COMMAND = 2
+};
+
 // data used by 3d view transform subroutine
 struct ViewTransform3D
 {
@@ -221,6 +229,7 @@ private:
     bool m_unbounded{};
 };
 
+extern Display3DMode         g_display_3d;                  // 3D display flag: NONE (0) = OFF
 extern Minor                 g_inverse_julia_minor_method;
 extern bool                  g_keep_screen_coords;
 extern Major                 g_major_method;
