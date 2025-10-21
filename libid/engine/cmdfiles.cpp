@@ -153,7 +153,6 @@ InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
 std::vector<int> g_iteration_ranges;                      // iter->color ranges mapping
-int g_iteration_ranges_len{};                             // size of ranges array
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
 double g_math_tol[2]{.05, .05};                           // For math transition from double to bignum
@@ -493,7 +492,6 @@ static void init_vars_fractal()
     set_trig_array(2, "sinh");                           //
     set_trig_array(3, "cosh");                           //
     g_iteration_ranges.clear();                          //
-    g_iteration_ranges_len = 0;                          //
     g_use_center_mag = true;                             // use center-mag, not corners
     g_color_state = ColorState::DEFAULT_MAP;             //
     g_colors_preloaded = false;                          //
@@ -3006,7 +3004,6 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_iteration_ranges_len = static_cast<int>(tmp_ranges.size());
     g_iteration_ranges = std::move(tmp_ranges);
     return CmdArgFlags::FRACTAL_PARAM;
 }

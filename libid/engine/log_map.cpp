@@ -74,7 +74,7 @@ long log_table_calc(const long color_iter)
 {
     long ret = 0;
 
-    if (g_log_map_flag == 0 && !g_iteration_ranges_len)   // Oops, how did we get here?
+    if (g_log_map_flag == 0 && g_iteration_ranges.empty())   // Oops, how did we get here?
     {
         return color_iter;
     }

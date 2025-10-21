@@ -194,7 +194,7 @@ int get_toggles()
     values[k].uval.ch.list = sound_modes;
     values[k].uval.ch.val = (old_sound_flag = g_sound_flag) & SOUNDFLAG_ORBIT_MASK;
 
-    if (g_iteration_ranges_len == 0)
+    if (g_iteration_ranges.empty())
     {
         choices[++k] = "Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)";
         values[k].type = 'L';

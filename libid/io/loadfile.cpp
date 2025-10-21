@@ -1036,15 +1036,9 @@ int read_overlay()      // read overlay/3D files, if required
         // perhaps in future add more here, check block_len for backward compatibility
     }
 
-    if (g_iteration_ranges_len) // free prior ranges
-    {
-        g_iteration_ranges.clear();
-        g_iteration_ranges_len = 0;
-    }
-
+    g_iteration_ranges.clear(); // free prior ranges
     if (blk_4_info.got_data)
     {
-        g_iteration_ranges_len = blk_4_info.length;
         g_iteration_ranges = blk_4_info.range_data;
     }
 

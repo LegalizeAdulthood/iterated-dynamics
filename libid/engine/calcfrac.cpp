@@ -584,12 +584,12 @@ static void init_calc_fract()
         g_log_map_table_max_size = 32767;
         g_log_map_calculate = false; // use logtable
     }
-    else if (g_iteration_ranges_len && g_max_iterations >= 32767)
+    else if (!g_iteration_ranges.empty() && g_max_iterations >= 32767)
     {
         g_log_map_table_max_size = 32766;
     }
 
-    if ((g_log_map_flag || g_iteration_ranges_len) && !g_log_map_calculate)
+    if ((g_log_map_flag || !g_iteration_ranges.empty()) && !g_log_map_calculate)
     {
         bool resized = false;
         try
@@ -603,7 +603,7 @@ static void init_calc_fract()
 
         if (!resized)
         {
-            if (g_iteration_ranges_len || g_log_map_fly_calculate == LogMapCalculate::USE_LOG_TABLE)
+            if (!g_iteration_ranges.empty() || g_log_map_fly_calculate == LogMapCalculate::USE_LOG_TABLE)
             {
                 stop_msg("Insufficient memory for logmap/ranges with this maxiter");
             }
@@ -615,14 +615,14 @@ static void init_calc_fract()
                 setup_log_table();
             }
         }
-        else if (g_iteration_ranges_len)
+        else if (!g_iteration_ranges.empty())
         {
             // Can't do ranges if MaxLTSize > 32767
             int l = 0;
             int k = 0;
             int i = 0;
             g_log_map_flag = 0; // ranges overrides logmap
-            while (i < g_iteration_ranges_len)
+            while (i < static_cast<int>(g_iteration_ranges.size()))
             {
                 int flip = 0;
                 int m = 0;
@@ -633,7 +633,7 @@ static void init_calc_fract()
                     altern = g_iteration_ranges[i++];    // sub-range iterations
                     num_val = g_iteration_ranges[i++];
                 }
-                if (num_val > static_cast<int>(g_log_map_table_max_size) || i >= g_iteration_ranges_len)
+                if (num_val > static_cast<int>(g_log_map_table_max_size) || i >= static_cast<int>(g_iteration_ranges.size()))
                 {
                     num_val = static_cast<int>(g_log_map_table_max_size);
                 }

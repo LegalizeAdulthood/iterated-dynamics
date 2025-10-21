@@ -541,10 +541,10 @@ bool encoder()
     {
         save_info.tot_extend_len += store_item_name(g_ifs_name.c_str());
     }
-    if (g_display_3d <= Display3DMode::NONE && g_iteration_ranges_len)
+    if (g_display_3d <= Display3DMode::NONE && !g_iteration_ranges.empty())
     {
         // ranges block, 004
-        const int num_bytes = g_iteration_ranges_len*2;
+        const int num_bytes = g_iteration_ranges.size() * 2;
         save_info.tot_extend_len += extend_blk_len(num_bytes);
         std::vector<char> buffer;
         for (int range : g_iteration_ranges)

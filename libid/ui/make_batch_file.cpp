@@ -1178,7 +1178,7 @@ static void write_batch_params(
             }
         }
 
-        if (g_log_map_flag && !g_iteration_ranges_len)
+        if (g_log_map_flag && g_iteration_ranges.empty())
         {
             put_param(" logmap=");
             if (g_log_map_flag == -1)
@@ -1195,7 +1195,7 @@ static void write_batch_params(
             }
         }
 
-        if (g_log_map_fly_calculate != LogMapCalculate::NONE && g_log_map_flag && !g_iteration_ranges_len)
+        if (g_log_map_fly_calculate != LogMapCalculate::NONE && g_log_map_flag && g_iteration_ranges.empty())
         {
             put_param(" logmode=");
             if (g_log_map_fly_calculate == LogMapCalculate::ON_THE_FLY)
@@ -1287,11 +1287,11 @@ static void write_batch_params(
             put_param(" rseed=%d", g_random_seed);
         }
 
-        if (g_iteration_ranges_len)
+        if (!g_iteration_ranges.empty())
         {
             put_param(" ranges=");
             i = 0;
-            while (i < g_iteration_ranges_len)
+            while (i < static_cast<int>(g_iteration_ranges.size()))
             {
                 if (i)
                 {
