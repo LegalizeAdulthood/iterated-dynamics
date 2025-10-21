@@ -17,8 +17,9 @@ using namespace id::engine;
 namespace id::io
 {
 
-std::filesystem::path g_fractal_search_dir1;      //
-std::filesystem::path g_fractal_search_dir2;      //
+bool g_check_cur_dir{};
+std::filesystem::path g_fractal_search_dir1;
+std::filesystem::path g_fractal_search_dir2;
 
 using PathList = std::vector<fs::path>;
 

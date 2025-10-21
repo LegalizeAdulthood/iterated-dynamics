@@ -35,6 +35,7 @@ enum class WriteFile
     SOUND,
 };
 
+extern bool                  g_check_cur_dir;       // flag to check current dir for files
 extern std::filesystem::path g_fractal_search_dir1;
 extern std::filesystem::path g_fractal_search_dir2;
 

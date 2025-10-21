@@ -150,7 +150,6 @@ int g_fill_color{};                                       // fill color: -1=norm
 bool g_finite_attractor{};                                // finite attractor logic
 Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 = OFF
 bool g_overlay_3d{};                                      // 3D overlay flag
-bool g_check_cur_dir{};                                   // flag to check current dir for files
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_cycle_limit{};                                 // initial cycle limit
