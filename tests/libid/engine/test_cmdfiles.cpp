@@ -48,6 +48,7 @@
 #include <io/loadfile.h>
 #include <io/save_timer.h>
 #include <io/special_dirs.h>
+#include <math/biginit.h>
 #include <misc/debug_flags.h>
 #include <misc/ValueSaver.h>
 #include <misc/version.h>

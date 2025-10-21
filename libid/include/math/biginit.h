@@ -9,6 +9,7 @@
 namespace id::math
 {
 
+extern int g_bf_digits;                 // digits to use (force) for g_bf_math
 extern int g_bf_save_len;
 extern long g_bignum_max_stack_addr;
 extern long g_max_stack;

@@ -11,7 +11,6 @@ The biggest difference is in the allocations of memory for the big numbers.
 
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/UserData.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
@@ -29,7 +28,8 @@ using namespace id::ui;
 namespace id::math
 {
 
-// globals
+int g_bf_digits{};                      // digits to use (force) for g_bf_math
+
 int g_bn_step{};
 int g_bn_length{};
 int g_int_length{};
