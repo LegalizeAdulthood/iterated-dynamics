@@ -28,6 +28,7 @@
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
 #include "io/library.h"
+#include "io/loadmap.h"
 #include "math/Point.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"

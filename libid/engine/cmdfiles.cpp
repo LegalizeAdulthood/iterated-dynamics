@@ -153,8 +153,6 @@ int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
 std::vector<int> g_iteration_ranges;                      // iter->color ranges mapping
 int g_iteration_ranges_len{};                             // size of ranges array
-Byte g_map_clut[256][3];                                  // map= (default colors)
-bool g_map_specified{};                                   // map= specified
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
 double g_math_tol[2]{.05, .05};                           // For math transition from double to bignum

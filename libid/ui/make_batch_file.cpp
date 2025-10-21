@@ -43,6 +43,7 @@
 #include "io/is_writeable.h"
 #include "io/library.h"
 #include "io/loadfile.h"
+#include "io/loadmap.h"
 #include "math/big.h"
 #include "math/biginit.h"
 #include "math/sign.h"

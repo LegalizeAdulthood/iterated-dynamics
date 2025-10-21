@@ -49,6 +49,9 @@ struct PaletteType
 
 #define DAC ((PaletteType *)g_dac_box)
 
+Byte g_map_clut[256][3]{};
+bool g_map_specified{};
+
 bool validate_luts(const std::string &map_name)
 {
     std::filesystem::path map_path{map_name};

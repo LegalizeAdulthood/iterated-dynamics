@@ -10,6 +10,7 @@
 #include "engine/random_seed.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
+#include "io/loadmap.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
@@ -21,6 +22,7 @@
 #include <cstdlib>
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::misc;
 using namespace id::ui;
 

@@ -12,6 +12,7 @@
 #include "engine/resume.h"
 #include "engine/spindac.h"
 #include "fractals/fractalp.h"
+#include "io/loadmap.h"
 #include "ui/thinking.h"
 #include "ui/video.h"
 
@@ -24,6 +25,7 @@
 #include <vector>
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::ui;
 
 namespace id::fractals
