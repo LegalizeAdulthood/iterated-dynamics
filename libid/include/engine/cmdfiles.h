@@ -84,7 +84,6 @@ enum class ShowFile
     IMAGE_LOADED = 1,
 };
 
-extern std::string           g_last_map_name;
 extern bool                  g_colors_preloaded;
 extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;

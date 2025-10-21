@@ -9,6 +9,7 @@
 namespace id::io
 {
 
+extern std::string           g_last_map_name;       // from last <l> <s> or colors=@filename
 extern Byte                  g_map_clut[256][3];    // map= (default colors)
 extern bool                  g_map_specified;       // map= specified
 

@@ -5,7 +5,6 @@
 */
 #include "ui/rotate.h"
 
-#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
@@ -19,8 +18,6 @@
 #include "ui/field_prompt.h"
 #include "ui/help.h"
 #include "ui/id_keys.h"
-
-#include <config/path_limits.h>
 
 #include <algorithm>
 #include <cassert>

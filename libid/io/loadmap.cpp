@@ -2,12 +2,9 @@
 //
 #include "io/loadmap.h"
 
-#include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/spindac.h"
-#include "io/has_ext.h"
 #include "io/library.h"
-#include "misc/version.h"
 #include "ui/stop_msg.h"
 
 #include <config/port.h>
@@ -49,8 +46,9 @@ struct PaletteType
 
 #define DAC ((PaletteType *)g_dac_box)
 
-Byte g_map_clut[256][3]{};
-bool g_map_specified{};
+std::string g_last_map_name; // from last <l> <s> or colors=@filename
+Byte g_map_clut[256][3]{};   // map= (default colors)
+bool g_map_specified{};      // map= specified
 
 bool validate_luts(const std::string &map_name)
 {
