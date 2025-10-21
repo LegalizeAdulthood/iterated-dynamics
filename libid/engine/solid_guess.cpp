@@ -45,9 +45,6 @@ int ssg_block_size()
     return block_size;
 }
 
-namespace id::engine
-{
-
 class SolidGuess
 {
 public:
@@ -705,11 +702,9 @@ void SolidGuess::plot_block(const int build_row, const int x, int y, const int c
     }
 }
 
-} // namespace id::engine
-
 int solid_guess()
 {
-    id::engine::SolidGuess sg;
+    SolidGuess sg;
 
     return sg.scan();
 }
