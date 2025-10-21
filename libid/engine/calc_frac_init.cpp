@@ -43,11 +43,12 @@ namespace id::engine
 
 float g_screen_aspect{DEFAULT_ASPECT};
 float g_aspect_drift{DEFAULT_ASPECT_DRIFT};
-LDouble g_delta_x{}, g_delta_y{};                 // screen pixel increments
-LDouble g_delta_x2{}, g_delta_y2{};               // screen pixel increments
-double g_delta_min{};                             // same as a double
-double g_plot_mx1{}, g_plot_mx2{};                //
-double g_plot_my1{}, g_plot_my2{};                // real->screen multipliers
+double g_delta_min{};
+LDouble g_delta_x{}, g_delta_y{};
+LDouble g_delta_x2{}, g_delta_y2{};
+std::array<double, 2> g_math_tol{.05, .05};
+double g_plot_mx1{}, g_plot_mx2{};
+double g_plot_my1{}, g_plot_my2{};
 
 static void adjust_to_limits(double expand);
 static void smallest_add(double *num);

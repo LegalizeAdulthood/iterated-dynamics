@@ -152,7 +152,6 @@ InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 bool g_use_center_mag{};                                  // use center-mag corners
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
-double g_math_tol[2]{.05, .05};                           // For math transition from double to bignum
 bool g_targa_out{};                                       // 3D full color flag
 std::string g_last_map_name;                              // from last <l> <s> or colors=@filename
 bool g_new_bifurcation_functions_loaded{};                // if function loaded for new bifs

@@ -111,7 +111,6 @@ extern bool                  g_finite_attractor;
 extern bool                  g_first_init;
 extern std::string           g_image_filename_mask;
 extern BatchMode             g_init_batch;
-extern double                g_math_tol[2];
 extern bool                  g_new_bifurcation_functions_loaded;
 extern bool                  g_overlay_3d;
 extern bool                  g_overwrite_file;

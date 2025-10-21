@@ -5,6 +5,7 @@
 #include "MockDriver.h"
 #include "test_migrate_gif.h"
 
+#include <engine/calc_frac_init.h>
 #include <engine/cmdfiles.h>
 #include <engine/Inversion.h>
 #include <engine/Potential.h>
