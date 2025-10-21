@@ -94,6 +94,7 @@
 #include <string>
 #include <string_view>
 #include <system_error>
+#include <utility>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -2976,50 +2977,37 @@ static CmdArgFlags cmd_ranges(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    int i = 0;
-    int prev = i;
-    int entries = prev;
+    int prev = 0;
     g_log_map_flag = 0; // ranges overrides logmap
-    int tmp_ranges[128];
-    while (i < cmd.total_params)
+    std::vector<int> tmp_ranges;
+    for (int i = 0; i < cmd.total_params; ++i)
     {
-        int k = cmd.int_vals[i++];
+        int k = cmd.int_vals[i];
         if (k < 0) // striping
         {
             k = -k;
-            if (k >= 16384 || i >= cmd.total_params)
+            if (k >= 16384 || i == cmd.total_params - 1)
             {
                 return cmd.bad_arg();
             }
-            tmp_ranges[entries++] = -1; // {-1,width,limit} for striping
-            tmp_ranges[entries++] = k;
-            k = cmd.int_vals[i++];
+            tmp_ranges.push_back(-1); // {-1,width,limit} for striping
+            tmp_ranges.push_back(k);
+            k = cmd.int_vals[i + 1];
+            ++i;
         }
         if (k < prev)
         {
             return cmd.bad_arg();
         }
         prev = k;
-        tmp_ranges[entries++] = k;
+        tmp_ranges.push_back(k);
     }
     if (prev == 0)
     {
         return cmd.bad_arg();
     }
-    try
-    {
-        g_iteration_ranges.resize(entries);
-    }
-    catch (const std::bad_alloc &)
-    {
-        stop_msg(StopMsgFlags::NO_STACK, "Insufficient memory for ranges=");
-        return CmdArgFlags::BAD_ARG;
-    }
-    g_iteration_ranges_len = entries;
-    for (int i2 = 0; i2 < g_iteration_ranges_len; ++i2)
-    {
-        g_iteration_ranges[i2] = tmp_ranges[i2];
-    }
+    g_iteration_ranges_len = static_cast<int>(tmp_ranges.size());
+    g_iteration_ranges = std::move(tmp_ranges);
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
