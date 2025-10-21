@@ -17,6 +17,8 @@ enum class TrueColorMode
 
 extern int g_color_cycle_range_lo; // cycling color range
 extern int g_color_cycle_range_hi; //
+extern int g_cycle_limit;          // color-rotator upper limit
+extern int g_init_cycle_limit;     // initial cycle limit
 extern int g_dac_count;            //
 extern bool g_is_true_color;       //
 extern TrueColorMode g_true_mode;  // true color coloring scheme

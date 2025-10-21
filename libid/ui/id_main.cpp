@@ -262,11 +262,11 @@ static MainState main_image_start(MainContext &context)
         g_calc_status = std::min(g_calc_status, CalcStatus::PARAMS_CHANGED);
     }
 
-    g_cycle_limit = g_init_cycle_limit;         // default cycle limit
-    g_adapter = g_init_mode;                  // set the video adapter up
-    g_init_mode = -1;                       // (once)
+    g_cycle_limit = g_init_cycle_limit;                               // default cycle limit
+    g_adapter = g_init_mode;                                          // set the video adapter up
+    g_init_mode = -1;                                                 // (once)
 
-    while (g_adapter < 0)                // cycle through instructions
+    while (g_adapter < 0)                                             // cycle through instructions
     {
         if (g_init_batch != BatchMode::NONE)                          // batch, nothing to do
         {

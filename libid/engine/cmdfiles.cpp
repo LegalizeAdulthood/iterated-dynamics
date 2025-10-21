@@ -143,14 +143,12 @@ int g_decomp[2]{};                                        // Decomposition color
 long g_distance_estimator{};                              //
 int g_distance_estimator_width_factor{};                  //
 bool g_overwrite_file{};                                  // true if file overwrite allowed
-int g_cycle_limit{};                                      // color-rotator upper limit
 int g_fill_color{};                                       // fill color: -1=normal
 bool g_finite_attractor{};                                // finite attractor logic
 Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 = OFF
 bool g_overlay_3d{};                                      // 3D overlay flag
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
-int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
@@ -1853,6 +1851,7 @@ static CmdArgFlags cmd_cur_dir(const Command &cmd)
     return CmdArgFlags::NONE;
 }
 
+// cyclelimit=n
 static CmdArgFlags cmd_cycle_limit(const Command &cmd)
 {
     if (cmd.num_val <= 1 || cmd.num_val > 256)

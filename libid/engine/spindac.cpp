@@ -2,7 +2,6 @@
 //
 #include "engine/spindac.h"
 
-#include "engine/cmdfiles.h"
 #include "engine/VideoInfo.h"
 #include "misc/Driver.h"
 
@@ -15,6 +14,8 @@ namespace id::engine
 
 int g_color_cycle_range_lo{};
 int g_color_cycle_range_hi{};
+int g_cycle_limit{};
+int g_init_cycle_limit{};
 int g_dac_count{};
 bool g_is_true_color{};
 bool g_true_color{};
