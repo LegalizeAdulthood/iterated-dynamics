@@ -12,6 +12,7 @@
 
 #include <engine/bailout_formula.h>
 #include <engine/Browse.h>
+#include <engine/calcfrac.h>
 #include <engine/calc_frac_init.h>
 #include <engine/engine_timer.h>
 #include <engine/fractals.h>

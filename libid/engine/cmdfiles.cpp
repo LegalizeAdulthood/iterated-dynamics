@@ -152,7 +152,6 @@ BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no 
 InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 int g_init_cycle_limit{};                                 // initial cycle limit
 bool g_use_center_mag{};                                  // use center-mag corners
-std::vector<int> g_iteration_ranges;                      // iter->color ranges mapping
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
 double g_math_tol[2]{.05, .05};                           // For math transition from double to bignum

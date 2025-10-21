@@ -8,6 +8,8 @@
 
 #include <config/port.h>
 
+#include <vector>
+
 namespace id::fractals
 {
 enum class FractalType;
@@ -129,6 +131,7 @@ extern int                   g_current_pass;
 extern int                   g_current_row;
 extern long                  g_first_saved_and;
 extern math::DComplex        g_init;
+extern std::vector<int>      g_iteration_ranges;    // iter->color ranges mapping
 extern int                   g_keyboard_check_interval;
 extern double                g_magnitude;
 extern bool                  g_magnitude_calc;

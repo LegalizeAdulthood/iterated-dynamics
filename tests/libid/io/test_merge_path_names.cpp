@@ -4,6 +4,8 @@
 
 #include "test_data.h"
 
+#include <config/port.h>
+
 #include <engine/cmdfiles.h>
 #include <io/CurrentPathSaver.h>
 

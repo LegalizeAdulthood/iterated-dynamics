@@ -144,6 +144,7 @@ int g_color{};                                    //
 long g_color_iter{};                              //
 long g_old_color_iter{};                          //
 long g_real_color_iter{};                         //
+std::vector<int> g_iteration_ranges;              //
 int g_row{};                                      //
 int g_col{};                                      //
 void (*g_put_color)(int, int, int){put_color_a};  //

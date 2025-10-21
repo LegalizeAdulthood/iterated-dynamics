@@ -2,6 +2,7 @@
 //
 #include "engine/log_map.h"
 
+#include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
 #include "engine/VideoInfo.h"
 #include "misc/ValueSaver.h"

@@ -2,14 +2,9 @@
 //
 #pragma once
 
-#include "math/cmplx.h"
-
-#include <config/port.h>
-
 #include <cstdio>
 #include <filesystem>
 #include <string>
-#include <vector>
 
 namespace id::fractals
 {
@@ -118,7 +113,6 @@ extern bool                  g_first_init;
 extern std::string           g_image_filename_mask;
 extern BatchMode             g_init_batch;
 extern int                   g_init_cycle_limit;
-extern std::vector<int>      g_iteration_ranges;
 extern double                g_math_tol[2];
 extern bool                  g_new_bifurcation_functions_loaded;
 extern bool                  g_overlay_3d;
