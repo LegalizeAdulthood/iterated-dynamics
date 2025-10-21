@@ -137,7 +137,6 @@ RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-w
 std::string g_image_filename_mask{"*.gif"};               //
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 ShowFile g_show_file{};                                   // zero if file display pending
-int g_decomp[2]{};                                        // Decomposition coloring
 bool g_overwrite_file{};                                  // true if file overwrite allowed
 int g_fill_color{};                                       // fill color: -1=normal
 bool g_finite_attractor{};                                // finite attractor logic
@@ -462,8 +461,7 @@ static void init_vars_fractal()
     g_init_orbit.y = 0.0;                                //
     g_init_orbit.x = 0.0;                                // initial orbit values
     g_inversion.invert = 0;                              //
-    g_decomp[0] = 0;                                     //
-    g_decomp[1] = 0;                                     //
+    g_decomp.fill(0);                                    // no decomposition coloring
     g_user.distance_estimator_value = 0;                 //
     g_distance_estimator_x_dots = 0;                     //
     g_distance_estimator_y_dots = 0;                     //

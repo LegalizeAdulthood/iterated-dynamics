@@ -8,6 +8,7 @@
 
 #include <config/port.h>
 
+#include <array>
 #include <vector>
 
 namespace id::fractals
@@ -129,6 +130,7 @@ extern long                  g_color_iter;
 extern int                   g_current_column;
 extern int                   g_current_pass;
 extern int                   g_current_row;
+extern std::array<int, 2>    g_decomp;              // Decomposition coloring
 extern long                  g_first_saved_and;
 extern math::DComplex        g_init;
 extern std::vector<int>      g_iteration_ranges;    // iter->color ranges mapping

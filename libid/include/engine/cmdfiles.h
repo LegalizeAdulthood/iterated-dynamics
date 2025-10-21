@@ -96,7 +96,6 @@ extern std::string           g_last_map_name;
 extern bool                  g_colors_preloaded;
 extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;
-extern int                   g_decomp[];
 extern int                   g_bf_digits;
 extern Display3DMode         g_display_3d;
 extern bool                  g_dither_flag;

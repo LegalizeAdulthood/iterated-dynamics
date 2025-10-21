@@ -135,7 +135,7 @@ static int s_show_dot_width{};        //
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
 double g_f_at_rad{};                              // finite attractor radius
-int g_biomorph{};                                 //
+int g_biomorph{};                                 // flag for biomorph
 DComplex g_init{};                                //
 DComplex g_tmp_z{};                               //
 DComplex g_old_z{};                               //
@@ -144,7 +144,8 @@ int g_color{};                                    //
 long g_color_iter{};                              //
 long g_old_color_iter{};                          //
 long g_real_color_iter{};                         //
-std::vector<int> g_iteration_ranges;              //
+std::vector<int> g_iteration_ranges;              // iter->color ranges mapping
+std::array<int, 2> g_decomp{};                    // Decomposition coloring
 int g_row{};                                      //
 int g_col{};                                      //
 void (*g_put_color)(int, int, int){put_color_a};  //
@@ -152,7 +153,7 @@ void (*g_plot)(int, int, int){put_color_a};       //
 double g_magnitude{};                             //
 double g_magnitude_limit{};                       //
 double g_magnitude_limit2{};                      //
-long g_max_iterations{};                          //
+long g_max_iterations{};                          // try this many iterations
 bool g_magnitude_calc{true};                      //
 bool g_use_old_periodicity{};                     //
 bool g_use_old_distance_estimator{};              //
@@ -193,15 +194,14 @@ int g_periodicity_check{};                        //
 int g_periodicity_next_saved_incr{};              // For periodicity testing, only in standard_fractal()
 long g_first_saved_and{};                         //
 int g_atan_colors{180};                           //
-int g_and_color{};                                // "and" value used for color selection
+int g_and_color{};                                // AND mask for iteration to get color index
 double g_params[MAX_PARAMS]{};                    // parameters
-
-// ORBIT variables
-DComplex g_init_orbit{};
-int g_orbit_color{15};
-int g_orbit_save_index{};
-bool g_show_orbit{};
-bool g_start_show_orbit{};
+                                                  // ORBIT variables
+DComplex g_init_orbit{};                          // initial orbit value
+int g_orbit_color{15};                            // XOR color
+int g_orbit_save_index{};                         // index into save_orbit array
+bool g_show_orbit{};                              // flag to turn on and off
+bool g_start_show_orbit{};                        // show orbits on at start of fractal
 
 static double fmod_test_bailout_or()
 {
@@ -2340,8 +2340,8 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
             return;
         }
     }
-    if ((g_potential.flag && g_potential.store_16bit) || (g_inversion.invert != 0 && g_inversion.params[2] != 0.0)//
-        || g_decomp[0] != 0//
+    if ((g_potential.flag && g_potential.store_16bit) || (g_inversion.invert != 0 && g_inversion.params[2] != 0.0) //
+        || g_decomp[0] != 0                                                                                        //
         || g_image_region.m_min != g_image_region.m_3rd)
     {
         return;

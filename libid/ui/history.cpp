@@ -167,7 +167,7 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.inside_color == rhs.inside_color                                                         //
         && lhs.log_map_flag == rhs.log_map_flag                                                         //
         && std::equal(std::begin(lhs.inversion), std::end(lhs.inversion), std::begin(rhs.inversion))    //
-        && std::equal(std::begin(lhs.decomp), std::end(lhs.decomp), std::begin(rhs.decomp))             //
+        && lhs.decomp == rhs.decomp                                                                     //
         && lhs.force_symmetry == rhs.force_symmetry                                                     //
         && std::equal(std::begin(lhs.init_3d), std::end(lhs.init_3d), std::begin(rhs.init_3d))          //
         && lhs.preview_factor == rhs.preview_factor                                                     //
@@ -514,7 +514,7 @@ void save_history_info()
     current.inside_color = g_inside_color;
     current.log_map_flag = g_log_map_flag;
     current.inversion = g_inversion.params;
-    std::copy_n(g_decomp, 2, current.decomp.data());
+    current.decomp = g_decomp;
     current.biomorph = g_biomorph;
     current.force_symmetry = g_force_symmetry;
     current.init_3d[0] = g_sphere ? 1 : 0;   // sphere? 1 = yes, 0 = no
@@ -676,8 +676,7 @@ void restore_history_info(const int i)
     g_inside_color = last.inside_color;
     g_log_map_flag = last.log_map_flag;
     g_inversion.params = last.inversion;
-    g_decomp[0] = last.decomp[0];
-    g_decomp[1] = last.decomp[1];
+    g_decomp = last.decomp;
     g_user.biomorph_value = last.biomorph;
     g_biomorph = last.biomorph;
     g_force_symmetry = last.force_symmetry;
