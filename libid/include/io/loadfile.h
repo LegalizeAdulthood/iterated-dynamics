@@ -306,6 +306,8 @@ inline bool operator!=(const OrbitsInfo &lhs, const OrbitsInfo &rhs)
 }
 
 extern bool                  g_bad_outside;
+extern bool                  g_fast_restore;        // true - reset viewwindows prior to a restore and
+                                                    // do not display warnings when video mode changes during restore
 extern float                 g_file_aspect_ratio;
 extern int                   g_file_colors;
 extern int                   g_file_x_dots;

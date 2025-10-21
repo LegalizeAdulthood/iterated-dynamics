@@ -146,10 +146,6 @@ bool g_read_color{true};                                  // flag for reading co
 bool g_targa_out{};                                       // 3D full color flag
 std::string g_last_map_name;                              // from last <l> <s> or colors=@filename
 
-// true - reset viewwindows prior to a restore and
-// do not display warnings when video mode changes during restore
-bool g_fast_restore{};
-
 // true: user has specified a directory for Orgform formula compilation files
 bool g_organize_formulas_search{};
 

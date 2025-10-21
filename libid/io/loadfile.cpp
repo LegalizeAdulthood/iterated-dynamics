@@ -133,14 +133,16 @@ static bool fix_period_bof();
 
 static std::FILE *s_fp{};
 
+bool g_fast_restore{}; // true - reset viewwindows prior to a restore and
+                       // do not display warnings when video mode changes during restore
 bool g_loaded_3d{};
-bool g_overlay_3d{};        // 3D overlay flag
+bool g_overlay_3d{};   // 3D overlay flag
 int g_file_y_dots{};
 int g_file_x_dots{};
 int g_file_colors{};
 float g_file_aspect_ratio{};
 short g_skip_x_dots{};
-short g_skip_y_dots{};      // for decoder, when reducing image
+short g_skip_y_dots{}; // for decoder, when reducing image
 bool g_bad_outside{};
 Version g_file_version{};
 std::filesystem::path g_read_filename;
