@@ -43,6 +43,7 @@ extern bool                  g_show_box;
 extern void                (*g_standard_plot)(int, int, int);
 extern bool                  g_targa_out;               // 3D full color flag
 extern bool                  g_targa_overlay;
+extern int                   g_transparent_color_3d[];  // transparency min/max values
 extern Vector                g_view;
 extern int                   g_x_shift;
 extern int                   g_xx_adjust;

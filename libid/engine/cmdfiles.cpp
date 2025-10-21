@@ -146,7 +146,6 @@ bool g_read_color{true};                                  // flag for reading co
 // true: user has specified a directory for Orgform formula compilation files
 bool g_organize_formulas_search{};
 
-int g_transparent_color_3d[2]{};             // transparency min/max values
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?
 fs::path g_parameter_file;                   // file to find parameter sets in

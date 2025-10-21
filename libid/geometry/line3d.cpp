@@ -8,7 +8,6 @@
 #include "geometry/line3d.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "engine/Potential.h"
@@ -181,6 +180,7 @@ int g_y_shift{};
 RayTraceFormat g_raytrace_format{}; // Flag to generate Ray trace compatible files in 3d
 bool g_brief{};                     // 1 = short ray trace files
 Vector g_view{};                // position of observer for perspective
+int g_transparent_color_3d[2]{};             // transparency min/max values
 
 int line3d(Byte * pixels, unsigned line_len)
 {
