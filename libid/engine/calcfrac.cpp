@@ -198,12 +198,14 @@ long g_first_saved_and{};                         //
 int g_atan_colors{180};                           //
 int g_and_color{};                                // AND mask for iteration to get color index
 double g_params[MAX_PARAMS]{};                    // parameters
-                                                  // ORBIT variables
-DComplex g_init_orbit{};                          // initial orbit value
-int g_orbit_color{15};                            // XOR color
-int g_orbit_save_index{};                         // index into save_orbit array
-bool g_show_orbit{};                              // flag to turn on and off
-bool g_start_show_orbit{};                        // show orbits on at start of fractal
+
+// ORBIT variables
+DComplex g_init_orbit{};                               // initial orbit value
+int g_orbit_color{15};                                 // XOR color
+int g_orbit_save_index{};                              // index into save_orbit array
+bool g_show_orbit{};                                   // flag to turn on and off
+bool g_start_show_orbit{};                             // show orbits on at start of fractal
+InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL}; // flag for init orbit
 
 static double fmod_test_bailout_or()
 {

@@ -14,13 +14,6 @@ struct FractalSpecific;
 namespace id::engine
 {
 
-enum class InitOrbitMode
-{
-    NORMAL = 0,
-    VALUE = 1,
-    PIXEL = 2
-};
-
 enum class RecordColorsMode
 {
     NONE = 0,
@@ -100,7 +93,6 @@ extern ShowFile              g_show_file;
 extern bool                  g_targa_out;
 extern int                   g_transparent_color_3d[];
 extern bool                  g_use_center_mag;
-extern InitOrbitMode         g_use_init_orbit;
 
 void cmd_files(int argc, const char *const *argv);
 CmdArgFlags load_commands(std::FILE *infile);

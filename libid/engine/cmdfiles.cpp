@@ -139,7 +139,6 @@ ShowFile g_show_file{};                                   // zero if file displa
 bool g_overwrite_file{};                                  // true if file overwrite allowed
 bool g_finite_attractor{};                                // finite attractor logic
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
-InitOrbitMode g_use_init_orbit{InitOrbitMode::NORMAL};    // flag for init orbit
 bool g_use_center_mag{};                                  // use center-mag corners
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF

@@ -27,6 +27,13 @@ enum
     MAX_NUM_ATTRACTORS = 8
 };
 
+enum class InitOrbitMode
+{
+    NORMAL = 0,
+    VALUE = 1,
+    PIXEL = 2
+};
+
 enum class SymmetryType
 {
     NONE = 0,              //  0: no symmetry
@@ -152,6 +159,7 @@ extern int                   g_orbit_color;         // XOR color
 extern int                   g_orbit_save_index;    // index into save_orbit array
 extern bool                  g_show_orbit;          // flag to turn on and off
 extern bool                  g_start_show_orbit;    // show orbits on at start of fractal
+extern InitOrbitMode         g_use_init_orbit;      // flag for init orbit
 
 extern double                g_params[MAX_PARAMS];
 extern Passes                g_passes;
