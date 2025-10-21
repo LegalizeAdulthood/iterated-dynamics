@@ -25,6 +25,7 @@
 #include "engine/random_seed.h"
 #include "engine/show_dot.h"
 #include "engine/soi.h"
+#include "engine/solid_guess.h"
 #include "engine/sound.h"
 #include "engine/spindac.h"
 #include "engine/sticky_orbits.h"
@@ -131,7 +132,6 @@ static int  get_bf(BigFloat bf, const char *cur_arg);
 static bool is_a_big_float(const char *str);
 
 // variables defined by the command line/files processor
-int g_stop_pass{};                                        // stop at this guessing pass early
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 std::string g_image_filename_mask{"*.gif"};               //
 bool g_dither_flag{};                                     // true if we want to dither GIFs

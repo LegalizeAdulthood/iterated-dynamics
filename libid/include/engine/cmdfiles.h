@@ -99,7 +99,6 @@ extern bool                  g_overwrite_file;
 extern bool                  g_read_color;
 extern RecordColorsMode      g_record_colors;
 extern ShowFile              g_show_file;
-extern int                   g_stop_pass;
 extern bool                  g_targa_out;
 extern int                   g_transparent_color_3d[];
 extern bool                  g_use_center_mag;

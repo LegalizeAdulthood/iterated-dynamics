@@ -14,6 +14,7 @@
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
+#include "engine/solid_guess.h"
 #include "engine/spindac.h"
 #include "engine/sticky_orbits.h"
 #include "engine/trig_fns.h"

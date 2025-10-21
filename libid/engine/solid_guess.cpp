@@ -20,6 +20,8 @@ using namespace id::ui;
 namespace id::engine
 {
 
+int g_stop_pass{};  // stop at this guessing pass early
+
 // MAX_X_BLK defn must match fracsubr.c
 enum
 {

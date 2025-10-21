@@ -24,6 +24,7 @@
 #include <engine/random_seed.h>
 #include <engine/show_dot.h>
 #include <engine/soi.h>
+#include <engine/solid_guess.h>
 #include <engine/sound.h>
 #include <engine/spindac.h>
 #include <engine/sticky_orbits.h>
