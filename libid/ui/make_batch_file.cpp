@@ -8,6 +8,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/color_state.h"
 #include "engine/convert_center_mag.h"
+#include "engine/fractals.h"
 #include "engine/get_prec_big_float.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"

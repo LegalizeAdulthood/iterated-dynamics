@@ -11,6 +11,7 @@ namespace id::engine
 {
 
 extern int                   g_basin;
+extern bool                  g_bof_match_book_images;   // use normal bof initialization to make bof images
 extern int                   g_c_exponent;
 extern double                g_cos_x;
 extern int                   g_degree;

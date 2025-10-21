@@ -97,7 +97,6 @@ enum class ShowFile
     IMAGE_LOADED = 1,
 };
 
-extern bool                  g_bof_match_book_images;
 extern bool                  g_check_cur_dir;
 extern std::string           g_last_map_name;
 extern bool                  g_colors_preloaded;

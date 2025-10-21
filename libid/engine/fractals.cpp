@@ -62,6 +62,7 @@ using namespace id::math;
 namespace id::engine
 {
 
+bool g_bof_match_book_images{true};
 int g_max_color{};
 int g_degree{};
 int g_basin{};

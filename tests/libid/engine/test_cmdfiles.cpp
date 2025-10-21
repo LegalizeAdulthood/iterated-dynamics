@@ -14,6 +14,7 @@
 #include <engine/Browse.h>
 #include <engine/calc_frac_init.h>
 #include <engine/engine_timer.h>
+#include <engine/fractals.h>
 #include <engine/ImageRegion.h>
 #include <engine/Inversion.h>
 #include <engine/log_map.h>

@@ -5,6 +5,7 @@
 #include "engine/bailout_formula.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
 #include "engine/log_map.h"

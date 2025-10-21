@@ -12,6 +12,7 @@
 #include "engine/convert_corners.h"
 #include "engine/engine_timer.h"
 #include "engine/fractalb.h"
+#include "engine/fractals.h"
 #include "engine/get_prec_big_float.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
@@ -173,7 +174,6 @@ bool g_fast_restore{};
 bool g_organize_formulas_search{};
 
 int g_transparent_color_3d[2]{};             // transparency min/max values
-bool g_bof_match_book_images{true};          // Flag to make inside=bof options not duplicate bof images
 bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
 bool g_first_init{true};                     // first time into cmdfiles?
 fs::path g_parameter_file;                   // file to find parameter sets in
