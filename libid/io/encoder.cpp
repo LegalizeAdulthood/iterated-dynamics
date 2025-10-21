@@ -920,7 +920,8 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->no_bof = static_cast<std::int16_t>(g_bof_match_book_images ? 0 : 1);
     save_info->orbit_interval = static_cast<std::int32_t>(g_orbit_interval);
     save_info->orbit_delay = static_cast<std::int16_t>(g_orbit_delay);
-    std::copy_n(g_math_tol.begin(), 2, save_info->math_tol);
+    save_info->math_tol[0] = g_math_tol[0]; // can't use std::copy_n because of gcc complaints about packed structs
+    save_info->math_tol[1] = g_math_tol[1];
     save_info->version_major = static_cast<std::uint8_t>(g_version.major);
     save_info->version_minor = static_cast<std::uint8_t>(g_version.minor);
     save_info->version_patch = static_cast<std::uint8_t>(g_version.patch);
