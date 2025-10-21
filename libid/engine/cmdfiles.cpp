@@ -142,7 +142,6 @@ BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no 
 bool g_use_center_mag{};                                  // use center-mag corners
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
-bool g_targa_out{};                                       // 3D full color flag
 
 // true: user has specified a directory for Orgform formula compilation files
 bool g_organize_formulas_search{};

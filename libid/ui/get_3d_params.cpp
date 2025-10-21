@@ -11,7 +11,6 @@
 #include "io/check_write_file.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
-#include "io/merge_path_names.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"

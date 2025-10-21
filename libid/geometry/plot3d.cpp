@@ -7,7 +7,6 @@
 #include "geometry/plot3d.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/LogicalScreen.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"

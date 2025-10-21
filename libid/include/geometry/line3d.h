@@ -41,8 +41,9 @@ extern std::string           g_raytrace_filename;       // just the filename
 extern RayTraceFormat        g_raytrace_format;
 extern bool                  g_show_box;
 extern void                (*g_standard_plot)(int, int, int);
+extern bool                  g_targa_out;               // 3D full color flag
 extern bool                  g_targa_overlay;
-extern Vector      g_view;
+extern Vector                g_view;
 extern int                   g_x_shift;
 extern int                   g_xx_adjust;
 extern int                   g_y_shift;

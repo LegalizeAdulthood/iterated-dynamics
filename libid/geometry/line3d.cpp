@@ -165,6 +165,7 @@ int g_ambient{};
 int g_randomize_3d{};
 int g_haze{};
 std::string g_light_name{"fract001"};
+bool g_targa_out{};                                       // 3D full color flag
 bool g_targa_overlay{};
 Byte g_background_color[3]{};
 std::string g_raytrace_filename{"fract001"};
