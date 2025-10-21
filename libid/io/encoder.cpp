@@ -71,34 +71,14 @@ using namespace id::ui;
 namespace id::io
 {
 
+std::filesystem::path g_save_filename{"fract001"};
+
 static bool compress(int row_limit);
 static int shift_write(const Byte *color, int num_colors);
 static int extend_blk_len(int data_len);
 static int put_extend_blk(int block_id, int block_len, const char *block_data);
 static int store_item_name(const char *name);
 static void setup_save_info(FractalInfo *save_info);
-
-//                        Save-To-Disk Routines (GIF)
-//
-// The following routines perform the GIF encoding when the 's' key is pressed.
-//
-// The compression logic in this file has been replaced by the classic
-// UNIX compress code. We have extensively modified the sources to fit
-// our needs, but have left the original credits where they
-// appear. Thanks to the original authors for making available these
-// classic and reliable sources. Of course, they are not responsible for
-// all the changes we have made to integrate their sources into this program.
-//
-// MEMORY ALLOCATION
-//
-// There are two large arrays:
-//
-//    long htab[HSIZE]              (5003*4 = 20012 bytes)
-//    unsigned short codetab[HSIZE] (5003*2 = 10006 bytes)
-//
-// At the moment these arrays reuse extraseg and strlocn, respectively.
-//
-//
 
 static int s_num_saves{}; // For adjusting 'save-to-disk' filenames
 static std::FILE *s_outfile{};
@@ -141,6 +121,28 @@ static constexpr Byte s_palette_ega[]{
     63, 63, 21, //
     63, 63, 63, //
 };
+
+//                        Save-To-Disk Routines (GIF)
+//
+// The following routines perform the GIF encoding when the 's' key is pressed.
+//
+// The compression logic in this file has been replaced by the classic
+// UNIX compress code. We have extensively modified the sources to fit
+// our needs, but have left the original credits where they
+// appear. Thanks to the original authors for making available these
+// classic and reliable sources. Of course, they are not responsible for
+// all the changes we have made to integrate their sources into this program.
+//
+// MEMORY ALLOCATION
+//
+// There are two large arrays:
+//
+//    long htab[HSIZE]              (5003*4 = 20012 bytes)
+//    unsigned short codetab[HSIZE] (5003*2 = 10006 bytes)
+//
+// At the moment these arrays reuse extraseg and strlocn, respectively.
+//
+//
 
 // save-to-disk routine
 int save_image(std::filesystem::path &filename)

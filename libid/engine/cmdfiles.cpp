@@ -45,6 +45,7 @@
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
 #include "helpcom.h"
+#include "io/encoder.h"
 #include "io/file_gets.h"
 #include "io/file_item.h"
 #include "io/has_ext.h"
@@ -134,9 +135,7 @@ int g_distance_estimator_x_dots{};                        // x dots to use for v
 int g_distance_estimator_y_dots{};                        // y dots to use for video independence
 int g_bf_digits{};                                        // digits to use (force) for g_bf_math
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
-fs::path g_read_filename;                                 // name of fractal input file
 std::string g_image_filename_mask{"*.gif"};               //
-fs::path g_save_filename{"fract001"};                     // save files using this name
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 ShowFile g_show_file{};                                   // zero if file display pending
 int g_decomp[2]{};                                        // Decomposition coloring

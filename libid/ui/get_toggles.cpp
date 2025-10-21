@@ -10,6 +10,7 @@
 #include "engine/VideoInfo.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
+#include "io/encoder.h"
 #include "io/save_timer.h"
 #include "ui/full_screen_prompt.h"
 #include "ui/help.h"

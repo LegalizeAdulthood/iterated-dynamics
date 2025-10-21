@@ -42,6 +42,7 @@
 #include <geometry/line3d.h>
 #include <geometry/plot3d.h>
 #include <io/CurrentPathSaver.h>
+#include <io/encoder.h>
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/save_timer.h>

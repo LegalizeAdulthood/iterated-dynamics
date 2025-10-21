@@ -13,6 +13,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/text_color.h"
 #include "engine/VideoInfo.h"
+#include "io/encoder.h"
 #include "math/big.h"
 #include "misc/Driver.h"
 #include "misc/memory.h"
@@ -32,6 +33,7 @@
 #include <vector>
 
 using namespace id::engine;
+using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 

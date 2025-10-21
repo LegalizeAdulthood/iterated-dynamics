@@ -8,6 +8,7 @@
 #include "ui/evolve.h"
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -313,6 +314,7 @@ extern bool                  g_loaded_3d;
 extern short                 g_skip_x_dots;
 extern short                 g_skip_y_dots;
 extern misc::Version         g_file_version;
+extern std::filesystem::path g_read_filename;
 
 int read_overlay();
 void set_if_old_bif();

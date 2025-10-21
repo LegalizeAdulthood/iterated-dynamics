@@ -12,6 +12,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/julibrot.h"
 #include "fractals/lorenz.h"
+#include "io/encoder.h"
 #include "io/loadfile.h"
 #include "io/save_timer.h"
 #include "io/update_save_name.h"

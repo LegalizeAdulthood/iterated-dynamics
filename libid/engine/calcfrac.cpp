@@ -49,6 +49,7 @@
 #include "fractals/parser.h"
 #include "geometry/line3d.h"
 #include "io/check_write_file.h"
+#include "io/encoder.h"
 #include "io/library.h"
 #include "io/save_timer.h"
 #include "io/update_save_name.h"

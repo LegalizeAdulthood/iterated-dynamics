@@ -25,6 +25,7 @@
 #include "fractals/lsystem.h"
 #include "fractals/parser.h"
 #include "geometry/line3d.h"
+#include "io/encoder.h"
 #include "io/loadfile.h"
 #include "io/special_dirs.h"
 #include "io/trim_filename.h"
