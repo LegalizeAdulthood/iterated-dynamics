@@ -144,6 +144,7 @@ int g_color{};                                    //
 long g_color_iter{};                              //
 long g_old_color_iter{};                          //
 long g_real_color_iter{};                         //
+int g_fill_color{};                               // fill color: -1=normal
 std::vector<int> g_iteration_ranges;              // iter->color ranges mapping
 std::array<int, 2> g_decomp{};                    // Decomposition coloring
 int g_row{};                                      //

@@ -142,6 +142,7 @@ short g_skip_y_dots{};      // for decoder, when reducing image
 bool g_bad_outside{};
 Version g_file_version{};
 std::filesystem::path g_read_filename;
+bool g_new_bifurcation_functions_loaded{};
 
 static bool within_eps(const float lhs, const float rhs)
 {

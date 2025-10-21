@@ -138,7 +138,6 @@ std::string g_image_filename_mask{"*.gif"};               //
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 ShowFile g_show_file{};                                   // zero if file display pending
 bool g_overwrite_file{};                                  // true if file overwrite allowed
-int g_fill_color{};                                       // fill color: -1=normal
 bool g_finite_attractor{};                                // finite attractor logic
 Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 = OFF
 bool g_overlay_3d{};                                      // 3D overlay flag
@@ -149,7 +148,6 @@ bool g_colors_preloaded{};                                // if g_dac_box preloa
 bool g_read_color{true};                                  // flag for reading color from GIF
 bool g_targa_out{};                                       // 3D full color flag
 std::string g_last_map_name;                              // from last <l> <s> or colors=@filename
-bool g_new_bifurcation_functions_loaded{};                // if function loaded for new bifs
 
 // true - reset viewwindows prior to a restore and
 // do not display warnings when video mode changes during restore

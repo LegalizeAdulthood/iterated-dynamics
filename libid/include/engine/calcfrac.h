@@ -127,6 +127,7 @@ extern double                g_close_proximity;
 extern int                   g_col;
 extern int                   g_color;
 extern long                  g_color_iter;
+extern int                   g_fill_color;          // fill color: -1=normal
 extern int                   g_current_column;
 extern int                   g_current_pass;
 extern int                   g_current_row;
