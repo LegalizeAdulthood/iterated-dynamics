@@ -40,19 +40,23 @@ enum class CmdArgFlags
     RESET            = 8,
     GOODBYE          = 16,
 };
+
 inline int operator+(const CmdArgFlags value)
 {
     return static_cast<int>(value);
 }
+
 inline CmdArgFlags operator|(const CmdArgFlags lhs, const CmdArgFlags rhs)
 {
     return static_cast<CmdArgFlags>(+lhs | +rhs);
 }
+
 inline CmdArgFlags &operator|=(CmdArgFlags &lhs, const CmdArgFlags rhs)
 {
     lhs = lhs | rhs;
     return lhs;
 }
+
 inline bool bit_set(const CmdArgFlags flags, const CmdArgFlags bit)
 {
     return (+flags & +bit) == +bit;
@@ -86,7 +90,6 @@ extern bool                  g_finite_attractor;
 extern bool                  g_first_init;
 extern std::string           g_image_filename_mask;
 extern BatchMode             g_init_batch;
-extern bool                  g_overwrite_file;
 extern bool                  g_read_color;
 extern RecordColorsMode      g_record_colors;
 extern ShowFile              g_show_file;

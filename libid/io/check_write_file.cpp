@@ -2,7 +2,6 @@
 //
 #include "io/check_write_file.h"
 
-#include "engine/cmdfiles.h"
 #include "io/update_save_name.h"
 
 #include <filesystem>
@@ -10,10 +9,10 @@
 
 namespace fs = std::filesystem;
 
-using namespace id::engine;
-
 namespace id::io
 {
+
+bool g_overwrite_file{}; // true if file overwrite allowed
 
 void check_write_file(std::string &name, const char *ext)
 {

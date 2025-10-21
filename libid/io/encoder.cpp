@@ -34,6 +34,7 @@
 #include "geometry/3d.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
+#include "io/check_write_file.h"
 #include "io/decode_info.h"
 #include "io/is_writeable.h"
 #include "io/library.h"

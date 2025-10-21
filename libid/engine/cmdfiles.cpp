@@ -46,6 +46,7 @@
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
 #include "helpcom.h"
+#include "io/check_write_file.h"
 #include "io/encoder.h"
 #include "io/file_gets.h"
 #include "io/file_item.h"
@@ -136,7 +137,6 @@ RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-w
 std::string g_image_filename_mask{"*.gif"};               //
 bool g_dither_flag{};                                     // true if we want to dither GIFs
 ShowFile g_show_file{};                                   // zero if file display pending
-bool g_overwrite_file{};                                  // true if file overwrite allowed
 bool g_finite_attractor{};                                // finite attractor logic
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
 bool g_use_center_mag{};                                  // use center-mag corners

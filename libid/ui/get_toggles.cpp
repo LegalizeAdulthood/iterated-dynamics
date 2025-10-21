@@ -3,7 +3,6 @@
 #include "ui/get_toggles.h"
 
 #include "engine/calcfrac.h"
-#include "engine/cmdfiles.h"
 #include "engine/log_map.h"
 #include "engine/solid_guess.h"
 #include "engine/sound.h"
@@ -11,6 +10,7 @@
 #include "engine/VideoInfo.h"
 #include "fractals/fractype.h"
 #include "helpdefs.h"
+#include "io/check_write_file.h"
 #include "io/encoder.h"
 #include "io/save_timer.h"
 #include "ui/full_screen_prompt.h"
