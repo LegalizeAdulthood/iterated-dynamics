@@ -6,6 +6,7 @@
 #include "engine/text_color.h"
 #include "engine/wait_until.h"
 #include "io/dir_file.h"
+#include "io/special_dirs.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"

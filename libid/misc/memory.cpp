@@ -4,10 +4,11 @@
 //
 #include "misc/memory.h"
 
-#include "geometry/line3d.h"
 #include "engine/cmdfiles.h"
+#include "geometry/line3d.h"
 #include "io/dir_file.h"
 #include "io/get_disk_space.h"
+#include "io/special_dirs.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/stack_avail.h"
@@ -25,6 +26,8 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
+
+namespace fs = std::filesystem;
 
 using namespace id::engine;
 using namespace id::geometry;

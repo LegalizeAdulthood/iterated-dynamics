@@ -7,5 +7,7 @@ namespace id::io
 
 std::shared_ptr<SpecialDirectories> g_special_dirs{create_special_directories()};
 std::filesystem::path g_save_dir;
+std::filesystem::path g_temp_dir;
+std::filesystem::path g_working_dir;
 
 } // namespace id::io

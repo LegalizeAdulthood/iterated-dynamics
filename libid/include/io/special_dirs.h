@@ -21,5 +21,7 @@ public:
 extern std::shared_ptr<SpecialDirectories> create_special_directories();
 extern std::shared_ptr<SpecialDirectories> g_special_dirs;
 extern std::filesystem::path g_save_dir;
+extern std::filesystem::path g_temp_dir;    // name of temporary directory
+extern std::filesystem::path g_working_dir; // name of directory for misc files
 
 } // namespace id::io

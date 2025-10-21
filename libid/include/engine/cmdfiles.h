@@ -133,11 +133,9 @@ extern std::filesystem::path g_save_filename;
 extern ShowFile              g_show_file;
 extern int                   g_stop_pass;
 extern bool                  g_targa_out;
-extern std::filesystem::path g_temp_dir;
 extern int                   g_transparent_color_3d[];
 extern bool                  g_use_center_mag;
 extern InitOrbitMode         g_use_init_orbit;
-extern std::filesystem::path g_working_dir;
 
 void cmd_files(int argc, const char *const *argv);
 CmdArgFlags load_commands(std::FILE *infile);

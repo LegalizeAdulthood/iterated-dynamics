@@ -11,6 +11,7 @@
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "io/dir_file.h"
+#include "io/special_dirs.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/field_prompt.h"

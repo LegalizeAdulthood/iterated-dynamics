@@ -25,6 +25,7 @@
 #include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "io/save_timer.h"
+#include "io/special_dirs.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"

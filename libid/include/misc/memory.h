@@ -6,6 +6,8 @@
 
 #include <config/port.h>
 
+#include <filesystem>
+
 namespace id::misc
 {
 

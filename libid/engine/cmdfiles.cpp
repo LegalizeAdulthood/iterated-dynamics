@@ -135,8 +135,6 @@ int g_distance_estimator_y_dots{};                        // y dots to use for v
 int g_bf_digits{};                                        // digits to use (force) for g_bf_math
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 fs::path g_read_filename;                                 // name of fractal input file
-fs::path g_temp_dir;                                      // name of temporary directory
-fs::path g_working_dir;                                   // name of directory for misc files
 std::string g_image_filename_mask{"*.gif"};               //
 fs::path g_save_filename{"fract001"};                     // save files using this name
 bool g_dither_flag{};                                     // true if we want to dither GIFs
