@@ -6,7 +6,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 function(add_image_test name)
-    cmake_parse_arguments(IMAGE_TEST "IGNORE_COLORMAP" "" "PARAMETERS;LABELS" ${ARGN})
+    cmake_parse_arguments(IMAGE_TEST "IGNORE_COLORMAP;DISABLED" "" "PARAMETERS;LABELS" ${ARGN})
     if(IMAGE_TEST_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "Unknown arguments: ${IMAGE_TEST_UNPARSED_ARGUMENTS}")
     endif()
@@ -30,6 +30,9 @@ function(add_image_test name)
     )
     list(APPEND IMAGE_TEST_LABELS "image")
     set_tests_properties(ImageTest.${name} PROPERTIES LABELS "${IMAGE_TEST_LABELS}")
+    if(IMAGE_TEST_DISABLED)
+        set_tests_properties(ImageTest.${name} PROPERTIES DISABLED TRUE)
+    endif()
 endfunction()
 
 function(add_fractal_type_image_test)
@@ -171,15 +174,18 @@ add_image_test("ant2" IGNORE_COLORMAP PARAMETERS "type=ant"
 add_image_test("mandel-chroma" PARAMETERS "type=mandel" "map=chroma")
 add_image_test("filament" PARAMETERS "@id")
 add_image_test("julibrot" PARAMETERS "type=julibrot" "julibrotfromto=-0.83/-0.83/0.25/-0.25"
-  "julibroteyes=2.5" "center-mag=0/0/0.6666667" "params=0/0" "inside=0"
-  "colors=@altern.map")
+    "julibroteyes=2.5" "center-mag=0/0/0.6666667" "params=0/0" "inside=0"
+    "colors=@altern.map")
 add_image_test("mandel-orbit-line" PARAMETERS "type=mandel" "passes=o" "orbitdrawmode=l" "maxiter=999")
 add_image_test("plasma-new" IGNORE_COLORMAP PARAMETERS "rseed=4567" "type=plasma" "params=1/1/1/0")
 add_image_test("testpt" PARAMETERS "type=test")
 add_image_test("decomp" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
-  "params=0/0" "inside=0" "decomp=16")
+    "params=0/0" "inside=0" "decomp=16")
 add_image_test("biomorph" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.500002/2.205e-006/0.6666676"
-  "params=0/0" "inside=0" "biomorph=1" "cyclerange=1/15")
+    "params=0/0" "inside=0" "biomorph=1" "cyclerange=1/15")
+# TODO: center-mag parameter fails
+add_image_test("skew" DISABLED IGNORE_COLORMAP PARAMETERS "type=mandel"
+    "center-mag=-0.645182/1e-007/0.9363297/1/0/-14.9314098822673937" "params=0/0" "inside=0")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
