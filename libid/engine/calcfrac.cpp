@@ -136,6 +136,11 @@ static int s_show_dot_width{};        //
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
 double g_f_at_rad{};                              // finite attractor radius
+DComplex g_attractor[MAX_NUM_ATTRACTORS]{};       // finite attractor vals (f.p)
+int g_attractor_period[MAX_NUM_ATTRACTORS]{};     // period of the finite attractor
+int g_attractors{};                               // number of finite attractors
+bool g_finite_attractor{};                        // finite attractor logic
+
 int g_biomorph{};                                 // flag for biomorph
 DComplex g_init{};                                //
 DComplex g_tmp_z{};                               //
@@ -187,9 +192,6 @@ int g_total_passes{};                             //
 int g_current_row{};                              //
 int g_current_column{};                           //
 bool g_three_pass{};                              // for solid_guess & its subroutines
-int g_attractors{};                               // number of finite attractors
-DComplex g_attractor[MAX_NUM_ATTRACTORS]{};       // finite attractor vals (f.p)
-int g_attractor_period[MAX_NUM_ATTRACTORS]{};     // period of the finite attractor
 int g_inside_color{};                             // inside color: 1=blue
 int g_outside_color{};                            // outside color
 int g_periodicity_check{};                        //

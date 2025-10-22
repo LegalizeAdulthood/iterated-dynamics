@@ -85,7 +85,6 @@ extern bool                  g_colors_preloaded;
 extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;
 extern bool                  g_escape_exit;
-extern bool                  g_finite_attractor;
 extern bool                  g_first_init;
 extern std::string           g_image_filename_mask;
 extern BatchMode             g_init_batch;

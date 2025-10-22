@@ -121,12 +121,14 @@ enum class CalcStatus
 
 constexpr int INITIAL_MAX_ITERATIONS{150};
 
-extern int                   g_and_color;           // AND mask for iteration to get color index
 extern  double               g_f_at_rad;            // finite attractor radius
+extern math::DComplex        g_attractor[];         // finite attractor vals (f.p)
+extern int                   g_attractor_period[];  // period of the finite attractor
+extern int                   g_attractors;          // number of finite attractors
+extern bool                  g_finite_attractor;    // finite attractor logic
+
+extern int                   g_and_color;           // AND mask for iteration to get color index
 extern int                   g_atan_colors;         //
-extern math::DComplex        g_attractor[];         //
-extern int                   g_attractor_period[];  //
-extern int                   g_attractors;          //
 extern int                   g_biomorph;            // flag for biomorph
 extern CalcStatus            g_calc_status;
 extern long                  g_calc_time;

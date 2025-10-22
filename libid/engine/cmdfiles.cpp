@@ -138,7 +138,6 @@ static bool is_a_big_float(const char *str);
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 std::string g_image_filename_mask{"*.gif"};               //
 ShowFile g_show_file{};                                   // zero if file display pending
-bool g_finite_attractor{};                                // finite attractor logic
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)
 bool g_colors_preloaded{};                                // if g_dac_box preloaded for next mode select
 bool g_read_color{true};                                  // flag for reading color from GIF
