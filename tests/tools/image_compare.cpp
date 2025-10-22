@@ -14,7 +14,7 @@ namespace id
 
 static int usage(const std::string_view program)
 {
-    std::cout << "Usage: [--ignore-colormap] " << program << ": file1 file2\n";
+    std::cout << "Usage: " << program << ": [--ignore-colormap] file1 file2\n";
     return 1;
 }
 
@@ -130,7 +130,9 @@ int main(const int argc, char *argv[])
             const float percentage{100.0f * static_cast<float>(pixel_count) / static_cast<float>(num_pixels)};
             if (percentage > 3.0f)
             {
-                std::cout << "Images differ by " << percentage << "%\n" << file1 << "\n" << file2 << "\n";
+                std::cout << "Images differ by " << percentage << "% (" << pixel_count << " pixels)\n"
+                          << file1 << "\n"
+                          << file2 << "\n";
                 return 1;
             }
         }
