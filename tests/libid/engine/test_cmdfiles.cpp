@@ -47,6 +47,7 @@
 #include <io/check_write_file.h>
 #include <io/CurrentPathSaver.h>
 #include <io/encoder.h>
+#include <io/gifview.h>
 #include <io/library.h>
 #include <io/loadfile.h>
 #include <io/save_timer.h>

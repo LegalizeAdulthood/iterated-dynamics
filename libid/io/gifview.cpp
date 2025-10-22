@@ -62,6 +62,10 @@ enum
 
 constexpr const char *ALTERNATE_FRACTAL_TYPE{".fra"};
 
+bool g_dither_flag{};                           // true if we want to dither GIFs
+unsigned int g_height{};
+unsigned int g_num_colors{};
+
 /*
  * DECODERLINEWIDTH is the width of the pixel buffer used by the decoder. A
  * larger buffer gives better performance. However, this buffer does not
@@ -81,14 +85,11 @@ static int out_line_migs(Byte *pixels, int line_len);
 static int out_line_too_wide(Byte *pixels, int line_len);
 
 static std::FILE *s_fp_in{};
-static int s_col_count{};                    // keeps track of current column for wide images
-static unsigned int s_gif_view_image_top{};   // (for migs)
-static unsigned int s_gif_view_image_left{};  // (for migs)
-static unsigned int s_gif_view_image_width{}; // (for migs)
+static int s_col_count{};                       // keeps track of current column for wide images
+static unsigned int s_gif_view_image_top{};     // (for migs)
+static unsigned int s_gif_view_image_left{};    // (for migs)
+static unsigned int s_gif_view_image_width{};   // (for migs)
 static std::vector<char> s_dither_buf;
-
-unsigned int g_height{};
-unsigned int g_num_colors{};
 
 int get_byte()
 {

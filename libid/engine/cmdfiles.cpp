@@ -51,6 +51,7 @@
 #include "io/encoder.h"
 #include "io/file_gets.h"
 #include "io/file_item.h"
+#include "io/gifview.h"
 #include "io/has_ext.h"
 #include "io/is_directory.h"
 #include "io/library.h"
@@ -136,7 +137,6 @@ static bool is_a_big_float(const char *str);
 // variables defined by the command line/files processor
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
 std::string g_image_filename_mask{"*.gif"};               //
-bool g_dither_flag{};                                     // true if we want to dither GIFs
 ShowFile g_show_file{};                                   // zero if file display pending
 bool g_finite_attractor{};                                // finite attractor logic
 BatchMode g_init_batch{BatchMode::NONE};                  // 1 if batch run (no kbd)

@@ -84,7 +84,6 @@ enum class ShowFile
 extern bool                  g_colors_preloaded;
 extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;
-extern bool                  g_dither_flag;
 extern bool                  g_escape_exit;
 extern bool                  g_finite_attractor;
 extern bool                  g_first_init;
