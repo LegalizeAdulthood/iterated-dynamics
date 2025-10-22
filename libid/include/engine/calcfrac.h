@@ -21,11 +21,7 @@ namespace id::engine
 
 constexpr double AUTO_INVERT = -123456.789;
 constexpr int MAX_PARAMS{10};        // maximum number of parameters
-
-enum
-{
-    MAX_NUM_ATTRACTORS = 8
-};
+constexpr int MAX_NUM_ATTRACTORS{8};
 
 enum class InitOrbitMode
 {
@@ -121,12 +117,19 @@ enum class CalcStatus
 
 constexpr int INITIAL_MAX_ITERATIONS{150};
 
-extern  double               g_f_at_rad;            // finite attractor radius
-extern math::DComplex        g_attractor[];         // finite attractor vals (f.p)
-extern int                   g_attractor_period[];  // period of the finite attractor
-extern int                   g_attractors;          // number of finite attractors
-extern bool                  g_finite_attractor;    // finite attractor logic
+template <typename T>
+using AttractorArray = std::array<T, MAX_NUM_ATTRACTORS>;
 
+struct FiniteAttractor
+{
+    bool enabled;                                   // finite attractor logic enabled
+    int count;                                      // number of finite attractors
+    double radius;                                  // finite attractor radius
+    AttractorArray<math::DComplex> z;               // finite attractor values
+    AttractorArray<int> period;                     // period of the finite attractor
+};
+
+extern FiniteAttractor       g_attractor;           //
 extern int                   g_and_color;           // AND mask for iteration to get color index
 extern int                   g_atan_colors;         //
 extern int                   g_biomorph;            // flag for biomorph

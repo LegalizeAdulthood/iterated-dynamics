@@ -434,7 +434,7 @@ static void init_vars_fractal()
     g_quick_calc = false;                                //
     g_close_proximity = 0.01;                            //
     g_is_mandelbrot = true;                              // default formula mand/jul toggle
-    g_finite_attractor = false;                          // disable finite attractor logic
+    g_attractor.enabled = false;                         // disable finite attractor logic
     set_fractal_type(FractalType::MANDEL);               // initial fractal type
     init_param_flags();                                  //
     g_user.bailout_value = 0;                            // no user-entered bailout
@@ -2006,7 +2006,7 @@ static CmdArgFlags cmd_fin_attract(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    g_finite_attractor = cmd.yes_no_val[0] != 0;
+    g_attractor.enabled = cmd.yes_no_val[0] != 0;
     return CmdArgFlags::FRACTAL_PARAM;
 }
 

@@ -20,12 +20,12 @@ namespace id::engine
 
 void get_julia_attractor(const double real, const double imag)
 {
-    if (g_attractors == 0 && !g_finite_attractor)   // not magnet & not requested
+    if (g_attractor.count == 0 && !g_attractor.enabled)   // not magnet & not requested
     {
         return;
     }
 
-    if (g_attractors >= MAX_NUM_ATTRACTORS)       // space for more attractors ?
+    if (g_attractor.count >= MAX_NUM_ATTRACTORS)       // space for more attractors ?
     {
         return;                  // Bad luck - no room left !
     }
@@ -61,9 +61,9 @@ void get_julia_attractor(const double real, const double imag)
                 if (std::abs(prev_z.x - g_new_z.x) < g_close_enough &&
                     std::abs(prev_z.y - g_new_z.y) < g_close_enough)
                 {
-                    g_attractor[g_attractors] = g_new_z;
-                    g_attractor_period[g_attractors] = i + 1;
-                    g_attractors++; // another attractor - coloured lakes !
+                    g_attractor.z[g_attractor.count] = g_new_z;
+                    g_attractor.period[g_attractor.count] = i + 1;
+                    g_attractor.count++; // another attractor - coloured lakes !
                     break;
                 }
             }
@@ -73,7 +73,7 @@ void get_julia_attractor(const double real, const double imag)
             }
         }
     }
-    if (g_attractors == 0)
+    if (g_attractor.count == 0)
     {
         g_periodicity_check = save_periodicity_check;
     }

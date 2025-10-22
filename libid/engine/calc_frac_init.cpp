@@ -251,7 +251,7 @@ init_restart:
         g_image_region.m_3rd = g_image_region.m_min;
     }
 
-    g_f_at_rad = 1.0/32768L;
+    g_attractor.radius = 1.0/32768L;
 
     // now setup arrays of real coordinates corresponding to each pixel
     if (g_bf_math != BFMathType::NONE)

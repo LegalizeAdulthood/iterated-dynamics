@@ -1344,22 +1344,22 @@ TEST_F(TestParameterCommand, fillColorNumber)
 
 TEST_F(TestParameterCommandError, finAttractInvalidValue)
 {
-    ValueSaver saved_finite_attractor{g_finite_attractor, true};
+    ValueSaver saved_finite_attractor{g_attractor.enabled, true};
 
     exec_cmd_arg("finattract=!", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_TRUE(g_finite_attractor);
+    EXPECT_TRUE(g_attractor.enabled);
 }
 
 TEST_F(TestParameterCommand, finAttractYes)
 {
-    ValueSaver saved_finite_attractor{g_finite_attractor, false};
+    ValueSaver saved_finite_attractor{g_attractor.enabled, false};
 
     exec_cmd_arg("finattract=y", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_TRUE(g_finite_attractor);
+    EXPECT_TRUE(g_attractor.enabled);
 }
 
 TEST_F(TestParameterCommandError, noBoFInvalidValue)

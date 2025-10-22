@@ -135,11 +135,11 @@ static int s_show_dot_width{};        //
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
-double g_f_at_rad{};                              // finite attractor radius
-DComplex g_attractor[MAX_NUM_ATTRACTORS]{};       // finite attractor vals (f.p)
-int g_attractor_period[MAX_NUM_ATTRACTORS]{};     // period of the finite attractor
-int g_attractors{};                               // number of finite attractors
-bool g_finite_attractor{};                        // finite attractor logic
+double g_attractor2.radius{};                              // finite attractor radius
+DComplex g_attractor2.attractor[MAX_NUM_ATTRACTORS]{};       // finite attractor vals (f.p)
+int g_attractor2.period[MAX_NUM_ATTRACTORS]{};     // period of the finite attractor
+int g_attractor2.count{};                               // number of finite attractors
+bool g_attractor2.enabled{};                        // finite attractor logic
 
 int g_biomorph{};                                 // flag for biomorph
 DComplex g_init{};                                //
@@ -520,7 +520,7 @@ static void fix_inversion(double *x) // make double converted from string look o
 
 static void init_calc_fract()
 {
-    g_attractors = 0;          // default to no known finite attractors
+    g_attractor.count = 0;          // default to no known finite attractors
     g_display_3d = Display3DMode::NONE;
     g_basin = 0;
     g_put_color = put_color_a;
@@ -1599,25 +1599,25 @@ int standard_fractal_type()
             }
         }
 
-        if (g_attractors > 0)       // finite attractor in the list
+        if (g_attractor.count > 0)       // finite attractor in the list
         {
-            for (int i = 0; i < g_attractors; i++)
+            for (int i = 0; i < g_attractor.count; i++)
             {
                 DComplex at;
-                at.x = g_new_z.x - g_attractor[i].x;
+                at.x = g_new_z.x - g_attractor.z[i].x;
                 at.x = sqr(at.x);
-                if (at.x < g_f_at_rad)
+                if (at.x < g_attractor.radius)
                 {
-                    at.y = g_new_z.y - g_attractor[i].y;
+                    at.y = g_new_z.y - g_attractor.z[i].y;
                     at.y = sqr(at.y);
-                    if (at.y < g_f_at_rad)
+                    if (at.y < g_attractor.radius)
                     {
-                        if (at.x + at.y < g_f_at_rad)
+                        if (at.x + at.y < g_attractor.radius)
                         {
                             attracted = true;
-                            if (g_finite_attractor)
+                            if (g_attractor.enabled)
                             {
-                                g_color_iter = g_color_iter % g_attractor_period[i] + 1;
+                                g_color_iter = g_color_iter % g_attractor.period[i] + 1;
                             }
                             break;
                         }

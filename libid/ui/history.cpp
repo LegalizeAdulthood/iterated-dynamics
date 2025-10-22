@@ -557,7 +557,7 @@ void save_history_info()
     current.stop_pass = g_stop_pass;
     current.dist_est = g_distance_estimator;
     std::copy_n(g_trig_index, 4, current.trig_index.data());
-    current.finite_attractor = g_finite_attractor;
+    current.finite_attractor = g_attractor.enabled;
     current.init_orbit = g_init_orbit;
     current.use_init_orbit = g_use_init_orbit;
     current.periodicity_check = g_periodicity_check;
@@ -725,7 +725,7 @@ void restore_history_info(const int i)
     g_trig_index[1] = last.trig_index[1];
     g_trig_index[2] = last.trig_index[2];
     g_trig_index[3] = last.trig_index[3];
-    g_finite_attractor = last.finite_attractor;
+    g_attractor.enabled = last.finite_attractor;
     g_init_orbit = last.init_orbit;
     g_use_init_orbit = last.use_init_orbit;
     g_periodicity_check = last.periodicity_check;

@@ -78,7 +78,7 @@ static bool use_calc_mandelbrot()
         && g_outside_color >= ATAN                             //
         && g_use_init_orbit != InitOrbitMode::VALUE            //
         && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X //
-        && !g_finite_attractor                                 //
+        && !g_attractor.enabled                                //
         && !g_using_jiim                                       //
         && g_bailout_test == Bailout::MOD                      //
         && (g_orbit_save_flags & OSF_MIDI) == 0;
@@ -159,10 +159,10 @@ bool mandel_per_image()
         break;
     case FractalType::MAGNET_1M:
     case FractalType::MAGNET_2M:
-        g_attractor[0].x = 1.0;      // 1.0 + 0.0i always attracts
-        g_attractor[0].y = 0.0;      // - both MAGNET1 and MAGNET2
-        g_attractor_period[0] = 1;
-        g_attractors = 1;
+        g_attractor.z[0].x = 1.0;      // 1.0 + 0.0i always attracts
+        g_attractor.z[0].y = 0.0;      // - both MAGNET1 and MAGNET2
+        g_attractor.period[0] = 1;
+        g_attractor.count = 1;
         break;
     case FractalType::SPIDER:
         if (g_periodicity_check == 1)   // if not user set
@@ -190,12 +190,12 @@ bool mandel_per_image()
         break;
     case FractalType::QUAT:
         g_float_param = &g_tmp_z;
-        g_attractors = 0;
+        g_attractor.count = 0;
         g_periodicity_check = 0;
         break;
     case FractalType::HYPER_CMPLX:
         g_float_param = &g_tmp_z;
-        g_attractors = 0;
+        g_attractor.count = 0;
         g_periodicity_check = 0;
         if (g_params[2] != 0)
         {
@@ -273,10 +273,10 @@ bool julia_per_image()
     case FractalType::MAGNET_2J:
         float_pre_calc_magnet2();
     case FractalType::MAGNET_1J:
-        g_attractor[0].x = 1.0;      // 1.0 + 0.0i always attracts
-        g_attractor[0].y = 0.0;      // - both MAGNET1 and MAGNET2
-        g_attractor_period[0] = 1;
-        g_attractors = 1;
+        g_attractor.z[0].x = 1.0;      // 1.0 + 0.0i always attracts
+        g_attractor.z[0].y = 0.0;      // - both MAGNET1 and MAGNET2
+        g_attractor.period[0] = 1;
+        g_attractor.count = 1;
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
     case FractalType::LAMBDA:
@@ -316,7 +316,7 @@ bool julia_per_image()
             g_symmetry = SymmetryType::NONE;
         }
     case FractalType::QUAT_JUL:
-        g_attractors = 0;   // attractors broken since code checks r,i not j,k
+        g_attractor.count = 0;   // attractors broken since code checks r,i not j,k
         g_periodicity_check = 0;
         if (g_params[4] != 0.0 || g_params[5] != 0)
         {

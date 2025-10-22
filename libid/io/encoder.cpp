@@ -869,7 +869,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->trig_index[1] = static_cast<Byte>(g_trig_index[1]);
     save_info->trig_index[2] = static_cast<Byte>(g_trig_index[2]);
     save_info->trig_index[3] = static_cast<Byte>(g_trig_index[3]);
-    save_info->finite_attractor = static_cast<std::int16_t>(g_finite_attractor ? 1 : 0);
+    save_info->finite_attractor = static_cast<std::int16_t>(g_attractor.enabled ? 1 : 0);
     save_info->init_orbit[0] = g_init_orbit.x;
     save_info->init_orbit[1] = g_init_orbit.y;
     save_info->use_init_orbit = static_cast<char>(g_use_init_orbit);

@@ -439,7 +439,7 @@ static void backwards_info4(const FractalInfo &read_info)
         g_trig_index[1] = static_cast<TrigFn>(read_info.trig_index[1]);
         g_trig_index[2] = static_cast<TrigFn>(read_info.trig_index[2]);
         g_trig_index[3] = static_cast<TrigFn>(read_info.trig_index[3]);
-        g_finite_attractor = read_info.finite_attractor != 0;
+        g_attractor.enabled = read_info.finite_attractor != 0;
         g_init_orbit.x = read_info.init_orbit[0];
         g_init_orbit.y = read_info.init_orbit[1];
         g_use_init_orbit = static_cast<InitOrbitMode>(read_info.use_init_orbit);

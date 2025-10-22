@@ -1239,7 +1239,7 @@ static void write_batch_params(
         {
             put_param(" biomorph=%d", g_user.biomorph_value);
         }
-        if (g_finite_attractor)
+        if (g_attractor.enabled)
         {
             put_param(" finattract=y");
         }
