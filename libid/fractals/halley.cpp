@@ -50,7 +50,7 @@ bool halley_per_image()
 
 static int halley_bailout()
 {
-    if (std::abs(modulus(g_new_z)-modulus(g_old_z)) < g_param_z2.x)
+    if (std::abs(mag_squared(g_new_z)-mag_squared(g_old_z)) < g_param_z2.x)
     {
         return 1;
     }

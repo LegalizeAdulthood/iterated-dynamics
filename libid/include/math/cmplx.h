@@ -93,7 +93,7 @@ bool operator!=(const Complex<T> &lhs, const Complex<U> &rhs)
 }
 
 template <typename T>
-double modulus(const Complex<T> &z)
+double mag_squared(const Complex<T> &z)
 {
     return sqr(z.x) + sqr(z.y);
 }
