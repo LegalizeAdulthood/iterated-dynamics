@@ -147,6 +147,7 @@ bool g_bad_outside{};
 Version g_file_version{};
 std::filesystem::path g_read_filename;
 bool g_new_bifurcation_functions_loaded{};
+ShowFile g_show_file{};                                   // LOAD_IMAGE if file display pending
 
 static bool within_eps(const float lhs, const float rhs)
 {

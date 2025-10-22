@@ -17,6 +17,13 @@ namespace id::io
 
 #define INFO_ID         "Fractal"
 
+enum class ShowFile
+{
+    REQUEST_IMAGE = -1,
+    LOAD_IMAGE = 0,
+    IMAGE_LOADED = 1,
+};
+
 /*
  * Note: because big endian machines store structures differently, we have
  * to do special processing of the FractalInfo structure in decode_info.cpp.
@@ -319,6 +326,7 @@ extern short                 g_skip_x_dots;
 extern short                 g_skip_y_dots;
 extern misc::Version         g_file_version;
 extern std::filesystem::path g_read_filename;
+extern ShowFile              g_show_file;           // LOAD_IMAGE if file display pending
 
 int read_overlay();
 void set_if_old_bif();

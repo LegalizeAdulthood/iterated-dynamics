@@ -74,13 +74,6 @@ enum class BatchMode
     BAILOUT_INTERRUPTED_SAVE
 };
 
-enum class ShowFile
-{
-    REQUEST_IMAGE = -1,
-    LOAD_IMAGE = 0,
-    IMAGE_LOADED = 1,
-};
-
 extern bool                  g_colors_preloaded;
 extern std::filesystem::path g_parameter_file;
 extern std::string           g_parameter_set_name;
@@ -90,7 +83,6 @@ extern std::string           g_image_filename_mask;
 extern BatchMode             g_init_batch;
 extern bool                  g_read_color;
 extern RecordColorsMode      g_record_colors;
-extern ShowFile              g_show_file;
 
 void cmd_files(int argc, const char *const *argv);
 CmdArgFlags load_commands(std::FILE *infile);
