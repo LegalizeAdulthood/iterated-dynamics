@@ -253,7 +253,7 @@
     {
       "name": "default",
       "displayName": "Test with default settings",
-      "inherits": [ "jobs", "settings" ],
+      "inherits": [ "settings" ],
       "configurePreset": "default",
       "configuration": "Debug"
     },
