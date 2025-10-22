@@ -2,7 +2,7 @@
 //
 #include "io/decode_info.h"
 
-#include "io/loadfile.h"
+#include "io/gif_extensions.h"
 #include "ui/evolve.h"
 
 #include <fmt/format.h>

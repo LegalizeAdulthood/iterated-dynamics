@@ -4,6 +4,8 @@
 
 #include <config/port.h>
 
+#include "io/gif_extensions.h"
+
 #include <boost/endian/buffers.hpp>
 #include <boost/endian/conversion.hpp>
 #include <gif_lib.h>

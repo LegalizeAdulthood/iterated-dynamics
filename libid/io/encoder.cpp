@@ -36,6 +36,7 @@
 #include "geometry/plot3d.h"
 #include "io/check_write_file.h"
 #include "io/decode_info.h"
+#include "io/gif_extensions.h"
 #include "io/is_writeable.h"
 #include "io/library.h"
 #include "io/loadfile.h"

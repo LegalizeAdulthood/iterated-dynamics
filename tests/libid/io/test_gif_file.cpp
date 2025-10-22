@@ -5,7 +5,7 @@
 #include "test_data.h"
 
 #include <engine/calcfrac.h>
-#include <fractals/fractype.h>
+#include <io/gif_extensions.h>
 #include <io/loadfile.h>
 
 #include <boost/endian/buffers.hpp>

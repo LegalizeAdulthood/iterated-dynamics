@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "io/loadfile.h"
+#include "io/gif_extensions.h"
 #include "ui/evolve.h"
 
 #include <vector>

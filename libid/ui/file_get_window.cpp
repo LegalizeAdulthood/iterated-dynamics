@@ -17,6 +17,7 @@
 #include "fractals/fractype.h"
 #include "fractals/lorenz.h"
 #include "fractals/parser.h"
+#include "io/gif_extensions.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/make_path.h"

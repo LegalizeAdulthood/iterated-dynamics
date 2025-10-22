@@ -36,6 +36,7 @@
 #include "geometry/plot3d.h"
 #include "io/decode_info.h"
 #include "io/encoder.h"
+#include "io/gif_extensions.h"
 #include "io/library.h"
 #include "math/biginit.h"
 #include "math/round_float_double.h"

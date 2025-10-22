@@ -15,7 +15,6 @@
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
 #include "io/check_write_file.h"
-#include "io/dir_file.h"
 #include "io/gifview.h"
 #include "io/library.h"
 #include "io/loadfile.h"
