@@ -186,6 +186,10 @@ add_image_test("biomorph" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-
 # TODO: center-mag parameter fails
 add_image_test("skew" DISABLED IGNORE_COLORMAP PARAMETERS "type=mandel"
     "center-mag=-0.645182/1e-007/0.9363297/1/0/-14.9314098822673937" "params=0/0" "inside=0")
+# TODO: center-mag parameter fails
+add_image_test("rotate" DISABLED IGNORE_COLORMAP PARAMETERS "type=mandel"
+    "center-mag=-0.5/7.45e-008/0.8503403/1/-14.999994501248608/-1.34634920815265846e-005" "params=0/0" "inside=0"
+    "cyclerange=1/15")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
