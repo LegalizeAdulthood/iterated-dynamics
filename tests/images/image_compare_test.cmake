@@ -29,8 +29,16 @@ endif()
 
 file(REMOVE "image/${TEST_SAVE_IMAGE}")
 execute_process(COMMAND "${ID}" ${PARAMETERS}
-    COMMAND_ERROR_IS_FATAL ANY
+    RESULT_VARIABLE ID_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})
+set(STOP_MESSAGE_FILE "stopmsg.txt")
+if(ID_RESULT)
+    if(EXISTS "${STOP_MESSAGE_FILE}")
+        file(READ "${STOP_MESSAGE_FILE}" STOP_MESSAGE)
+        message(STATUS "${STOP_MESSAGE_FILE}:\n${STOP_MESSAGE}")
+    endif()
+    message(FATAL_ERROR "Id execution failed with result ${ID_RESULT}.")
+endif()
 if(NOT EXISTS "image/${TEST_SAVE_IMAGE}")
     message(FATAL_ERROR "Image file 'image/${TEST_SAVE_IMAGE}' does not exist.")
 endif()
