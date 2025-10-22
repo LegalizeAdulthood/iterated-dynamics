@@ -1372,7 +1372,7 @@ static CmdArgFlags cmd_bright(const Command &cmd)
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D;
 }
 
-// center-mag=?/?/?[/?/?/?]
+// center-mag=[Xctr/Yctr/Mag[/Xmagfactor/Rotation/Skew]]
 static CmdArgFlags cmd_center_mag(const Command &cmd)
 {
     if (cmd.total_params != cmd.num_float_params || (cmd.total_params != 0 && cmd.total_params < 3) ||
