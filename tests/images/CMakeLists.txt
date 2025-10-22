@@ -178,6 +178,8 @@ add_image_test("plasma-new" IGNORE_COLORMAP PARAMETERS "rseed=4567" "type=plasma
 add_image_test("testpt" PARAMETERS "type=test")
 add_image_test("decomp" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
   "params=0/0" "inside=0" "decomp=16")
+add_image_test("biomorph" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.500002/2.205e-006/0.6666676"
+  "params=0/0" "inside=0" "biomorph=1" "cyclerange=1/15")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
