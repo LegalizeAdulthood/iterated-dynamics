@@ -176,6 +176,8 @@ add_image_test("julibrot" PARAMETERS "type=julibrot" "julibrotfromto=-0.83/-0.83
 add_image_test("mandel-orbit-line" PARAMETERS "type=mandel" "passes=o" "orbitdrawmode=l" "maxiter=999")
 add_image_test("plasma-new" IGNORE_COLORMAP PARAMETERS "rseed=4567" "type=plasma" "params=1/1/1/0")
 add_image_test("testpt" PARAMETERS "type=test")
+add_image_test("decomp" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+  "params=0/0" "inside=0" "decomp=16")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
