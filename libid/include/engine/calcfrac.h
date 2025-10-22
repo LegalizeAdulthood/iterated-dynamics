@@ -122,11 +122,11 @@ using AttractorArray = std::array<T, MAX_NUM_ATTRACTORS>;
 
 struct FiniteAttractor
 {
-    bool enabled;                                   // finite attractor logic enabled
-    int count;                                      // number of finite attractors
-    double radius;                                  // finite attractor radius
-    AttractorArray<math::DComplex> z;               // finite attractor values
-    AttractorArray<int> period;                     // period of the finite attractor
+    bool enabled{};                                 // finite attractor logic enabled
+    int count{};                                    // number of finite attractors
+    double radius{};                                // finite attractor radius
+    AttractorArray<math::DComplex> z{};             // finite attractor values
+    AttractorArray<int> period{};                   // period of the finite attractor
 };
 
 extern FiniteAttractor       g_attractor;           //

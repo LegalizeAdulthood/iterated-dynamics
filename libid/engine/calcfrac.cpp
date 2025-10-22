@@ -135,12 +135,7 @@ static int s_show_dot_width{};        //
 //   bits are numbered [..][y/16+1][x+1]&(1<<(y&15))
 // size of next puts a limit of MAX_PIXELS pixels across on solid guessing logic
 
-double g_attractor2.radius{};                              // finite attractor radius
-DComplex g_attractor2.attractor[MAX_NUM_ATTRACTORS]{};       // finite attractor vals (f.p)
-int g_attractor2.period[MAX_NUM_ATTRACTORS]{};     // period of the finite attractor
-int g_attractor2.count{};                               // number of finite attractors
-bool g_attractor2.enabled{};                        // finite attractor logic
-
+FiniteAttractor g_attractor;                      // finite attractor data
 int g_biomorph{};                                 // flag for biomorph
 DComplex g_init{};                                //
 DComplex g_tmp_z{};                               //
