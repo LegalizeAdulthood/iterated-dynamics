@@ -49,19 +49,20 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
     }
     else
     {
+        const auto mag_squared = [](double x, double y) { return sqr(x) + sqr(y); };
         // set up triangle ABC, having sides abc
         // side a = bottom, b = left, c = diagonal not containing (x3rd,y3rd)
-        const DComplex size{g_image_region.size()};
-        const double c2 = size.x * size.x + size.y * size.y;
+        const double c2 = mag_squared(g_image_region.width(), g_image_region.height());
 
-        const DComplex size3{g_image_region.m_max-g_image_region.m_3rd};
-        const double a2 = size3.x * size3.x + size3.y * size3.y;
+        const double x2 = g_image_region.m_max.x - g_image_region.m_3rd.x;
+        const double y2 = g_image_region.m_min.y - g_image_region.m_3rd.y;
+        const double a2 = mag_squared(x2, y2);
         const double a = std::sqrt(a2);
-        rot = -rad_to_deg(std::atan2(size3.y, size3.x));   // negative for image rotation
+        rot = -rad_to_deg(std::atan2(y2, x2));   // negative for image rotation
 
-        const double tmp_x2 = g_image_region.m_min.x - g_image_region.m_3rd.x;
-        const double tmp_y2 = g_image_region.m_max.y - g_image_region.m_3rd.y;
-        const double b2 = tmp_x2 * tmp_x2 + tmp_y2 * tmp_y2;
+        const double x3 = g_image_region.m_min.x - g_image_region.m_3rd.x;
+        const double y3 = g_image_region.m_max.y - g_image_region.m_3rd.y;
+        const double b2 = mag_squared(x3, y3);
         const double b = std::sqrt(b2);
 
         const double tmp_a = std::acos((a2+b2-c2)/(2*a*b)); // save tmpa for later use
@@ -77,7 +78,7 @@ void cvt_center_mag(double &ctr_x, double &ctr_y, LDouble &mag, double &x_mag_fa
 
         // if vector_a cross vector_b is negative
         // then adjust for left-hand coordinate system
-        if (size3.x *tmp_y2 - tmp_x2* size3.y < 0
+        if (x2*y3 - x3*y2 < 0 //
             && g_debug_flag != DebugFlags::ALLOW_NEGATIVE_CROSS_PRODUCT)
         {
             skew = -skew;
