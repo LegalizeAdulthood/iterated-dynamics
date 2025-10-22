@@ -214,6 +214,24 @@
   ],
   "testPresets": [
     {
+      "name": "jobs-20",
+      "hidden": true,
+      "displayName": "Use 20 parallel test jobs",
+      "execution": {
+        "jobs": 20
+      },
+      "condition": {
+        "lhs": "$env{NUMBER_OF_PROCESSORS}",
+        "type": "equals",
+        "rhs": "20"
+      }
+    },
+    {
+      "name": "jobs",
+      "hidden": true,
+      "inherits": [ "jobs-20" ]
+    },
+    {
       "name": "settings",
       "hidden": true,
       "output": {
@@ -235,7 +253,7 @@
     {
       "name": "default",
       "displayName": "Test with default settings",
-      "inherits": [ "settings" ],
+      "inherits": [ "jobs", "settings" ],
       "configurePreset": "default",
       "configuration": "Debug"
     },
