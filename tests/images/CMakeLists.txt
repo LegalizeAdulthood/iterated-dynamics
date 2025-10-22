@@ -190,6 +190,8 @@ add_image_test("skew" DISABLED IGNORE_COLORMAP PARAMETERS "type=mandel"
 add_image_test("rotate" DISABLED IGNORE_COLORMAP PARAMETERS "type=mandel"
     "center-mag=-0.5/7.45e-008/0.8503403/1/-14.999994501248608/-1.34634920815265846e-005" "params=0/0" "inside=0"
     "cyclerange=1/15")
+add_image_test("invert" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=0" "invert=0.500000008333333/-0.500000150000002/0")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
