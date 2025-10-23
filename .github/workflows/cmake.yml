@@ -283,7 +283,6 @@ jobs:
           echo github.ref=${{github.ref}}
           echo github.ref_name=${{github.ref_name}}
           echo github.sha=${{github.sha}}
-          umask
           git config --get user.name
           git config --get user.email
           git status
