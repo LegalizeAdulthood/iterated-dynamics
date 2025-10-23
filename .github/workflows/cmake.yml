@@ -15,6 +15,7 @@ env:
   FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
 
 jobs:
+  #############################################################################
   html-docs:
     runs-on: ubuntu-latest
 
@@ -77,6 +78,7 @@ jobs:
         name: html-docs
         path: ${{github.workspace}}/build-ci-html-docs/hc/src/id.html
 
+  #############################################################################
   build:
     needs: html-docs
     strategy:
@@ -179,6 +181,7 @@ jobs:
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
         compression-level: 0
 
+  #############################################################################
   cppcheck:
     name: cppcheck
     runs-on: ubuntu-latest
@@ -252,6 +255,7 @@ jobs:
           name: CppCheck
           path: cppcheck_report.txt
 
+  #############################################################################
   gh-pages-cppcheck:
     needs: cppcheck
 
@@ -273,6 +277,7 @@ jobs:
       - name: List Contents
         run: ls -lR *
 
+  #############################################################################
   wx:
     needs: html-docs
     strategy:
