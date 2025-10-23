@@ -296,7 +296,9 @@ o All identifiers are now inside a namespace to avoid collisions with
   prefix used by Id to identify all global variables.  (Fixes #330)
 o File output comparison tests were added for raytrace output and
   orbit output to detect major regressions in the formatted output.
-o More image comparison tests were added to cover more fractal types.\
+o More image comparison tests were added to cover more fractal types,
+  rotation and skew of the zoom box and the inversion, biomorph and
+  decomp options.  (Fixes #335, #336, #337, #341, #342)
 o The code has been restructured to increase the separation of image
   computation from user interface.
 
