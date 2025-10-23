@@ -4,7 +4,10 @@
 #include <image-tool/gif_compare.h>
 #include <image-tool/gif_json.h>
 
+#include <array>
+#include <cassert>
 #include <filesystem>
+#include <fmt/format.h>
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -119,20 +122,33 @@ int main(const int argc, char *argv[])
                 return 1;
             }
             int pixel_count{};
+            std::array<int, 256> histogram{};
             const int num_pixels{image1.ImageDesc.Width * image1.ImageDesc.Height};
             for (int j = 0; j < num_pixels; ++j)
             {
                 if (image1.RasterBits[j] != image2.RasterBits[j])
                 {
                     ++pixel_count;
+                    const int diff = std::abs(image1.RasterBits[j] - image2.RasterBits[j]);
+                    assert(diff < 256);
+                    histogram[diff]++;
                 }
             }
             const float percentage{100.0f * static_cast<float>(pixel_count) / static_cast<float>(num_pixels)};
             if (percentage > 3.0f)
             {
-                std::cout << "Images differ by " << percentage << "% (" << pixel_count << " pixels)\n"
-                          << file1 << "\n"
-                          << file2 << "\n";
+                std::cout << fmt::format("Images differ by {:f}% ({:d}/{:d} pixels)\n"
+                                         "{:s}\n"
+                                         "{:s}\n",
+                    percentage, pixel_count, num_pixels, file1, file2);
+                std::cout << "Pixel difference histogram:\n";
+                for (int j = 0; j < 256; ++j)
+                {
+                    if (histogram[j] > 0)
+                    {
+                        std::cout << fmt::format("  [{:3d}]: {:d}\n", j, histogram[j]);
+                    }
+                }
                 return 1;
             }
         }
