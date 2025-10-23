@@ -7,7 +7,7 @@ permissions:
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "develop" ]
   pull_request:
     branches: [ "master" ]
 
@@ -280,19 +280,21 @@ jobs:
 
       - name: Update Contents
         run: |
-          echo github.ref=${{github.ref}}
-          echo github.ref_name=${{github.ref_name}}
-          echo github.sha=${{github.sha}}
-          git config --get user.name
-          git config --get user.email
+          git config user.name CppCheck
+          git config user.email cppcheck-bot@example.com
           git status
+          git add dev/cppcheck
+          git status
+          git commit -m "Update CppCheck report for ${{github.sha}}" || echo "No changes to commit"
+          git status
+          git log -n 1
 
-      #- name: Push Updates
-      #  uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
-      #  with:
-      #    github_token: ${{secrets.GH_PACKAGES_TOKEN}}
-      #    branch: ${{github.ref_name}}
-      #    force: true
+      - name: Push Updates
+        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          branch: gh-pages
+          force: false
 
   #############################################################################
   wx:
