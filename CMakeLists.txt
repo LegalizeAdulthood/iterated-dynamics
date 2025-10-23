@@ -97,8 +97,13 @@ endif()
 
 install(FILES LICENSE.txt DESTINATION .)
 
+set(ID_USER_PRESETS "${CMAKE_CURRENT_LIST_DIR}/CMakeUserPresets.json")
+if(NOT EXISTS "${ID_USER_PRESETS}")
+    set(ID_USER_PRESETS "")
+endif()
 misc_target(FILES
-    "CMakePresets.json")
+    "CMakePresets.json"
+    "${ID_USER_PRESETS}")
 misc_group_sources("Documentation" FILES
     "ReadMe.md"
     "Style.md")
@@ -120,6 +125,7 @@ misc_group_sources("Git" FILES
     ".mailmap")
 misc_group_sources("GitHub" FILES
     "LICENSE.txt"
-    ".github/workflows/cmake.yml")
+    ".github/workflows/cmake.yml"
+    ".github/workflows/wx-requirements.txt")
 misc_group_sources("VcPkg" FILES
     "vcpkg.json")
