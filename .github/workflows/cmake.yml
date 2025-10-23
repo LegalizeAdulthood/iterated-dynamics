@@ -258,8 +258,9 @@ jobs:
   #############################################################################
   gh-pages-cppcheck:
     needs: cppcheck
-
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -268,14 +269,31 @@ jobs:
           ref: gh-pages
           submodules: false
 
+      - name: Clear Directory
+        run: rm -rf dev/cppcheck 
+
       - name: Get Report
         uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
         with:
           name: CppCheck
           path: dev/cppcheck
 
-      - name: List Contents
-        run: ls -lR *
+      - name: Update Contents
+        run: |
+          echo github.ref=${{github.ref}}
+          echo github.ref_name=${{github.ref_name}}
+          echo github.sha=${{github.sha}}
+          umask
+          git config --get user.name
+          git config --get user.email
+          git status
+
+      #- name: Push Updates
+      #  uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
+      #  with:
+      #    github_token: ${{secrets.GH_PACKAGES_TOKEN}}
+      #    branch: ${{github.ref_name}}
+      #    force: true
 
   #############################################################################
   wx:
