@@ -25,15 +25,13 @@ add_library(gui STATIC
     include/gui/TextScreen.h TextScreen.cpp
 )
 target_include_directories(gui PUBLIC include)
-target_link_libraries(gui PUBLIC fmt::fmt-header-only libid wx::stc wx::core wx::base)
+target_link_libraries(gui PUBLIC libid fmt::fmt-header-only wx::stc wx::core wx::base)
+if(WIN32)
+    target_link_libraries(gui PUBLIC id-resources)
+endif()
 target_folder(gui "Libraries/wx")
 
-configure_file(id.rc.in id.rc @ONLY)
 add_executable(id
-    Id.ico
-    id.rc.in
-    "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
-    resource.h
     init_failure.cpp
     WxDriver.h WxDriver.cpp
     WxSpecialDirectories.cpp

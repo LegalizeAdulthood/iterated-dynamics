@@ -9,6 +9,14 @@ endif()
 string(TIMESTAMP CURRENT_YEAR "%Y")
 configure_file(id.rc.in id.rc @ONLY)
 
+add_library(id-resources STATIC
+    Id.ico
+    id.rc.in
+    "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
+    resource.h)
+target_include_directories(id-resources PRIVATE . "${CMAKE_CURRENT_BINARY_DIR}")
+target_folder(id-resources "Libraries")
+
 if(ID_USE_WX)
     add_library(os-wx STATIC
         create_minidump.h
@@ -25,7 +33,7 @@ if(ID_USE_WX)
 
     target_compile_definitions(os-wx PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
     target_compile_options(os-wx PRIVATE ${ID_TARGET_OPTIONS})
-    target_link_libraries(os-wx PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
+    target_link_libraries(os-wx PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs id-resources)
     target_include_directories(os-wx PRIVATE ../libid/include PUBLIC .)
     target_folder(os-wx "Libraries")
     add_dependencies(os-wx native-help)
@@ -49,16 +57,12 @@ else()
 
     target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
     target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-    target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
+    target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs id-resources)
     target_include_directories(os PRIVATE ../libid/include PUBLIC .)
     target_folder(os "Libraries")
     add_dependencies(os native-help)
 
     add_executable(id
-        Id.ico
-        id.rc.in
-        "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
-        resource.h
         win_main.cpp)
     source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
     target_include_directories(id PUBLIC .)
