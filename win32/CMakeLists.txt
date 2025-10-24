@@ -20,7 +20,7 @@ target_folder(id-resources "Libraries")
 if(ID_USE_WX)
     # TODO: eliminate the need for os-wx
     add_library(os-wx STATIC
-        create_minidump.h
+        create_minidump.h create_minidump.cpp
         DiskDriver.cpp
         GDIDriver.cpp
         Win32BaseDriver.h Win32BaseDriver.cpp

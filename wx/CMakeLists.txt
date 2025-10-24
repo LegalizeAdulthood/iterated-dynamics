@@ -34,6 +34,7 @@ add_executable(id
     init_failure.cpp
     WxDriver.h WxDriver.cpp
     WxSpecialDirectories.cpp
+    wx_id.h wx_id.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)

@@ -3,26 +3,18 @@
 #include <gui/App.h>
 
 #include <gui/Frame.h>
-
 #include <io/CurrentPathSaver.h>
-#include <ui/id_main.h>
 
-#include "../win32/instance.h"
+#include "wx_id.h"
 
 #include <fmt/format.h>
 
 #include <wx/wx.h>
 #include <wx/evtloop.h>
-#ifdef WIN32
-#include <wx/msw/private.h>
-#endif
 
 #include <array>
 #include <cassert>
 #include <filesystem>
-
-using namespace id::misc;
-using namespace id::ui;
 
 wxIMPLEMENT_APP(id::gui::App);
 
@@ -31,9 +23,7 @@ namespace id::gui
 
 bool App::OnInit()
 {
-#ifdef WIN32
-    g_instance = wxGetInstance();
-#endif
+    wx::init();
 
     return true;
 }
@@ -41,7 +31,7 @@ bool App::OnInit()
 int App::OnRun()
 {
     m_mainLoop = CreateMainLoop();
-    return id_main(argc, argv);
+    return wx::main(argc, argv);
 }
 
 void App::create_window(const int width, const int height)
