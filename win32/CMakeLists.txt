@@ -18,6 +18,7 @@ target_include_directories(id-resources PRIVATE . "${CMAKE_CURRENT_BINARY_DIR}")
 target_folder(id-resources "Libraries")
 
 if(ID_USE_WX)
+    # TODO: eliminate the need for os-wx
     add_library(os-wx STATIC
         create_minidump.h
         DiskDriver.cpp

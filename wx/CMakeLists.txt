@@ -17,11 +17,9 @@ target_include_directories(os PUBLIC .)
 set_target_properties(os PROPERTIES FOLDER Libraries)
 add_dependencies(os native-help)
 
-# TODO: eliminate the need for os-wx in ../win32
+# TODO: eliminate the need for os-wx
 if(NOT WIN32)
-    add_library(os-wx STATIC init_failure.cpp)
-    target_compile_options(os-wx PRIVATE ${ID_TARGET_OPTIONS})
-    target_include_directories(os-wx PRIVATE ../libid/include PUBLIC .)
+    add_library(os-wx INTERFACE)
     target_folder(os-wx "Libraries")
     add_dependencies(os-wx native-help)
 endif()
