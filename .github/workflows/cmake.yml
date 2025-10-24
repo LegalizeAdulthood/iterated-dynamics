@@ -28,6 +28,7 @@ jobs:
     - name: Install System Dependencies for building HTML docs
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+        echo "set man-db/auto-update false" | sudo debconf-set-selections
         sudo apt-get update
         sudo apt-get install mono-complete
 
@@ -105,6 +106,7 @@ jobs:
       shell: bash
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+        echo "set man-db/auto-update false" | sudo debconf-set-selections
         sudo apt-get update
         sudo apt-get install libx11-dev mono-complete
 
@@ -193,6 +195,7 @@ jobs:
       - name: Install System Dependencies
         run: |
           ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+          echo "set man-db/auto-update false" | sudo debconf-set-selections
           sudo apt-get update
           sudo apt-get install libx11-dev mono-complete
 
@@ -323,6 +326,7 @@ jobs:
       shell: bash
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+        echo "set man-db/auto-update false" | sudo debconf-set-selections
         sudo apt-get update
         sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install
 
