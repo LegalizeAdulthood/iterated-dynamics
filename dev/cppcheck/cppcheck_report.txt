@@ -1765,15 +1765,6 @@ tests/libid/engine/test_cmdfiles.cpp:823:49: note: 'saved_browse_name' is assign
 tests/libid/engine/test_cmdfiles.cpp:831:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/ui/test_file_item.cpp:147:22: warning: The class 'TestFindFileItemCurrentDir' defines member variable with name 'saved_check_cur_dir' also defined in its parent class 'TestFindFileItem'. [duplInheritedMember]
-    ValueSaver<bool> saved_check_cur_dir{g_check_cur_dir, true};
-                     ^
-tests/libid/ui/test_file_item.cpp:35:22: note: Parent variable 'TestFindFileItem::saved_check_cur_dir'
-    ValueSaver<bool> saved_check_cur_dir{g_check_cur_dir, false};
-                     ^
-tests/libid/ui/test_file_item.cpp:147:22: note: Derived variable 'TestFindFileItemCurrentDir::saved_check_cur_dir'
-    ValueSaver<bool> saved_check_cur_dir{g_check_cur_dir, true};
-                     ^
 win32/Frame.cpp:584:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
     if (quitting)
         ^
