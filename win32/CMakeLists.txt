@@ -28,7 +28,6 @@ if(ID_USE_WX)
         instance.h instance.cpp
         Plot.h Plot.cpp
         WinText.h WinText.cpp
-        tos.h tos.cpp
         win_defines.h
     )
 
@@ -51,7 +50,6 @@ else()
         Win32BaseDriver.h Win32BaseDriver.cpp
         WinText.h WinText.cpp
         instance.h
-        tos.h tos.cpp
         special_dirs.cpp
         win_defines.h
     )

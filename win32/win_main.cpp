@@ -2,9 +2,10 @@
 //
 #include "ui/id_main.h"
 
+#include "misc/stack_avail.h"
+
 #include "create_minidump.h"
 #include "instance.h"
-#include "tos.h"
 
 #include "win_defines.h"
 #include <crtdbg.h>

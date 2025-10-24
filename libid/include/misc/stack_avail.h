@@ -5,6 +5,8 @@
 namespace id::misc
 {
 
+extern char *g_top_of_stack;
+
 long stack_avail();
 
 } // namespace id::misc
