@@ -21,13 +21,7 @@ if(ID_USE_WX)
     # TODO: eliminate the need for os-wx
     add_library(os-wx STATIC
         create_minidump.h create_minidump.cpp
-        DiskDriver.cpp
-        GDIDriver.cpp
-        Win32BaseDriver.h Win32BaseDriver.cpp
-        Frame.h Frame.cpp
         instance.h instance.cpp
-        Plot.h Plot.cpp
-        WinText.h WinText.cpp
         win_defines.h
     )
 
