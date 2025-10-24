@@ -1302,6 +1302,16 @@ TEST_F(TestParameterCommand, insideNumber)
     EXPECT_EQ(100, g_inside_color);
 }
 
+TEST_F(TestParameterCommand, insideEpsilonCross)
+{
+    ValueSaver saved_inside_color{g_inside_color, -100};
+
+    exec_cmd_arg("inside=epsiloncross", CmdFile::AT_CMD_LINE);
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(EPS_CROSS, g_inside_color);
+}
+
 TEST_F(TestParameterCommand, proximity)
 {
     ValueSaver saved_close_proximity{g_close_proximity, -123.0};

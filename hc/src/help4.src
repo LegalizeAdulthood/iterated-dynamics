@@ -131,7 +131,7 @@
   screencoords=yes|no      Maintain screen coordinates constant.
   orbitdrawmode=rect|line  Use rectangular mode or line mode for orbits.
 {Color Parameters}
-  inside=nnn|maxiter|zmag|bof60|bof61|epscr|star|per|atan|fmod
+  inside=nnn|maxiter|zmag|bof60|bof61|epsiloncross|startrail|period|atan|fmod
                            Fractal interior color ("inside=0" for black)
   outside=nnn|iter|real|imag|mult|summ|atan|fmod|tdis
                            Fractal exterior color options
