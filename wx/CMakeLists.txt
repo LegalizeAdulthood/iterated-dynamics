@@ -32,6 +32,8 @@ target_folder(gui "Libraries/wx")
 
 add_executable(id
     init_failure.cpp
+    WxBaseDriver.h WxBaseDriver.cpp
+    WxDiskDriver.h WxDiskDriver.cpp
     WxDriver.h WxDriver.cpp
     WxSpecialDirectories.cpp
     wx_id.h wx_id.cpp
