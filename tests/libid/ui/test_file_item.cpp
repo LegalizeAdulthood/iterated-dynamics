@@ -32,7 +32,7 @@ protected:
 
     std::FILE *m_file{};
     fs::path m_path;
-    ValueSaver<bool> saved_check_cur_dir{g_check_cur_dir, false};
+    ValueSaver<bool> saved_check_cur_dir_false{g_check_cur_dir, false};
 };
 
 void TestFindFileItem::TearDown()
@@ -144,7 +144,7 @@ protected:
         m_path = "non-existent";
     }
 
-    ValueSaver<bool> saved_check_cur_dir{g_check_cur_dir, true};
+    ValueSaver<bool> saved_check_cur_dir_true{g_check_cur_dir, true};
 };
 
 } // namespace
