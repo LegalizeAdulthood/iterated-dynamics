@@ -5,15 +5,8 @@
 find_package(fmt CONFIG REQUIRED)
 find_package(wxWidgets CONFIG REQUIRED)
 
-add_library(os STATIC
-    read_ticker.cpp
-)
-target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
-target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-target_link_libraries(os PUBLIC wx::core wx::base config)
-target_include_directories(os PRIVATE ../libid/include)
-target_include_directories(os PUBLIC .)
-set_target_properties(os PROPERTIES FOLDER Libraries)
+add_library(os INTERFACE)
+target_folder(os "Libraries")
 add_dependencies(os native-help)
 
 # TODO: eliminate the need for os-wx
