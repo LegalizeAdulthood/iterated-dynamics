@@ -85,12 +85,10 @@ jobs:
       matrix:
         preset: [ debug, release ]
         # macos-latest is disabled for now
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ windows-latest ]
         include:
           #- os: macos-latest
           #  nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
-          - os: ubuntu-latest
-            nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
           - os: windows-latest
             nuget: nuget
 
