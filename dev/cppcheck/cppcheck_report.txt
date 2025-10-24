@@ -1720,13 +1720,13 @@ libid/ui/get_fract_type.cpp:140:5: note: Non-local variable 's_ft_choices' will 
 libid/ui/get_rds_params.cpp:73:22: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
                 elem = ' ';
                      ^
-libid/ui/make_batch_file.cpp:1437:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1443:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
 libid/ui/make_batch_file.cpp:822:9: note: Assuming that condition 'colors_only' is not redundant
     if (colors_only)
         ^
-libid/ui/make_batch_file.cpp:1437:9: note: Condition '!colors_only' is always true
+libid/ui/make_batch_file.cpp:1443:9: note: Condition '!colors_only' is always true
     if (!colors_only)
         ^
 libid/ui/make_batch_file.cpp:259:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
