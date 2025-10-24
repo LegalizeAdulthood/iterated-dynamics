@@ -1,6 +1,3 @@
-config/tests/test_string_case_compare.cpp:19:1: error: syntax error [syntaxError]
-TEST(TestStringCaseCompareCount, secondStringEmpty)
-^
 hc/AsciiDocCompiler.cpp:44:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
@@ -79,12 +76,6 @@ hc/HelpCompiler.cpp:1229:15: style: Consider using std::accumulate algorithm ins
 hc/HelpSource.cpp:258:13: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
             {
             ^
-hc/tests/test_help_source.cpp:19:1: error: syntax error [syntaxError]
-TEST(TestLabels, labelsSortByName)
-^
-hc/tests/test_parse_options.cpp:91:1: error: syntax error [syntaxError]
-TEST_F(TestParseCompilerOptions, modeCompile)
-^
 libid/engine/cmdfiles.cpp:1337:36: style: Redundant condition: If 'EXPR == -32767', the comparison 'EXPR < 0' is always true. [redundantCondition]
     if (cmd.num_val == NON_NUMERIC || cmd.num_val < 0 || cmd.num_val > 2000)
                                    ^
@@ -1765,117 +1756,24 @@ libid/ui/stereo.cpp:264:5: note: Non-local variable 's_data' will use pointer to
 libid/ui/zoom.cpp:89:9: style: Unused variable: rgb [unusedVariable]
     int rgb[3];
         ^
-tests/libid/engine/test_cmdfiles.cpp:223:1: error: syntax error [syntaxError]
-TEST_F(TestParameterCommandError, parameterTooLong)
-^
-tests/libid/engine/test_get_prec_big_float.cpp:23:1: error: syntax error [syntaxError]
-TEST(TestGetMagnificationPrecision, powersOfTwo)
-^
-tests/libid/engine/test_log_map.cpp:39:1: error: syntax error [syntaxError]
-TEST_F(TestSetupLogTable, zeroLogMapTableMaxSize)
-^
-tests/libid/engine/test_lowerize_parameter.cpp:24:1: error: syntax error [syntaxError]
-TEST_F(TestLowerizeParameter, argumentLowered)
-^
-tests/libid/engine/test_resume.cpp:60:1: error: syntax error [syntaxError]
-TEST_F(TestResume, allocate)
-^
-tests/libid/fractals/test_check_orbit_name.cpp:34:1: error: syntax error [syntaxError]
-TEST(TestCheckOrbitName, notValidNames)
-^
-tests/libid/fractals/test_fractalp.cpp:37:1: error: syntax error [syntaxError]
-TEST(TestFractalSpecific, typeMatchesGet)
-^
-tests/libid/fractals/test_get_ifs_token.cpp:66:1: error: syntax error [syntaxError]
-TEST_F(TestGetIFSToken, firstTokenIsName)
-^
-tests/libid/io/test_check_write_file.cpp:24:1: error: syntax error [syntaxError]
-TEST(TestCheckWriteFile, existingFile2)
-^
-tests/libid/io/test_expand_dirname.cpp:46:1: error: syntax error [syntaxError]
-TEST_F(TestExpandDirName, resolvesRelativeDir)
-^
-tests/libid/io/test_find_file.cpp:37:1: error: syntax error [syntaxError]
-TEST(TestFindFile, secondTextFile)
-^
-tests/libid/io/test_find_path.cpp:47:1: error: syntax error [syntaxError]
-TEST_F(TestFindPath, fileFoundInCurrentDirectory)
-^
-tests/libid/io/test_gif_file.cpp:513:1: error: syntax error [syntaxError]
-TEST(TestCompareFractalInfo, futureFieldsAreIgnored)
-^
-tests/libid/io/test_is_directory.cpp:25:1: error: syntax error [syntaxError]
-TEST(TestIsDirectory, negative)
-^
-tests/libid/io/test_library.cpp:47:1: error: syntax error [syntaxError]
-TEST_F(TestLibrary, findConfigInLibraryDirectory)
-^
-tests/libid/io/test_load_entry_text.cpp:88:1: error: syntax error [syntaxError]
-TEST(TestLoadEntryText, columnZeroOneLine)
-^
-tests/libid/io/test_loadfile.cpp:126:1: error: syntax error [syntaxError]
-TEST_P(TestLoadFile, integerTypeMigrated)
-^
-tests/libid/io/test_locate_input_file.cpp:39:1: error: syntax error [syntaxError]
-TEST(TestLocateConfigFile, preferConfigFileFromSaveDir)
-^
-tests/libid/io/test_make_path.cpp:25:1: error: syntax error [syntaxError]
-TEST_F(TestMakePath, empty)
-^
-tests/libid/io/test_merge_path_names.cpp:46:1: error: syntax error [syntaxError]
-TEST_F(TestMergePathNames, basicGetPath)
-^
-tests/libid/io/test_path_match.cpp:25:1: error: syntax error [syntaxError]
-TEST(TestPatternMatch, anyExtension)
-^
-tests/libid/io/test_search_path.cpp:26:1: error: syntax error [syntaxError]
-TEST(TestSearchPath, fileNotInPath)
-^
-tests/libid/io/test_split_path.cpp:35:1: error: syntax error [syntaxError]
-TEST_F(TestSplitPath, absolutePath)
-^
-tests/libid/io/test_trim_filename.cpp:35:1: error: syntax error [syntaxError]
-TEST(TestTrimFilename, dropsIntermediateDirectoriesUnix)
-^
-tests/libid/io/test_trim_filename.cpp:24:1: error: syntax error [syntaxError]
-TEST(TestTrimFilename, dropsIntermediateDirectoriesWindows)
-^
-tests/libid/io/test_update_save_name.cpp:23:1: error: syntax error [syntaxError]
-TEST(TestUpdateSaveName, noNumbersAtEnd)
-^
-tests/libid/math/test_cmplx.cpp:20:1: error: syntax error [syntaxError]
-TEST(TestComplex, valueConstruct)
-^
-tests/libid/math/test_fpu087.cpp:25:1: error: syntax error [syntaxError]
-TEST(TestMath, complexDividePointerAliasY)
-^
-tests/libid/math/test_math.cpp:38:1: error: syntax error [syntaxError]
-TEST(TestMath, nanRealMultiply)
-^
-tests/libid/misc/test_ValueSaver.cpp:21:1: error: syntax error [syntaxError]
-TEST(TestValueSaver, restoresOriginalValue)
-^
-tests/libid/misc/test_version.cpp:23:1: error: syntax error [syntaxError]
-TEST(TestVersion, patchLevel)
-^
-tests/libid/ui/test_ChoiceBuilder.cpp:316:1: error: syntax error [syntaxError]
-MATCHER_P2(has_choice, n, str, "")  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
-^
-tests/libid/ui/test_comments.cpp:80:1: error: syntax error [syntaxError]
-TEST_F(TestComments, expandCpu)
-^
-tests/libid/ui/test_file_item.cpp:48:1: error: syntax error [syntaxError]
-TEST_F(TestFindFileItem, formula)
-^
-tests/libid/ui/test_main_menu_switch.cpp:34:1: error: syntax error [syntaxError]
-TEST_F(TestMainMenuSwitch, nothingChangedOnLowerCaseM)
-^
-tests/libid/ui/test_make_batch_file.cpp:74:1: error: syntax error [syntaxError]
-TEST_F(TestPutEncodedColors, increasingSixBitRamp)
-^
-tests/libid/ui/test_video_mode.cpp:31:1: error: syntax error [syntaxError]
-TEST(TestVideoMode, checkKeyNameShiftFnKey)
-^
+tests/libid/engine/test_cmdfiles.cpp:831:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+    EXPECT_EQ(saved_browse_name, g_browse.name);
+    ^
+tests/libid/engine/test_cmdfiles.cpp:823:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+    const std::string saved_browse_name{g_browse.name};
+                                                ^
+tests/libid/engine/test_cmdfiles.cpp:831:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+    EXPECT_EQ(saved_browse_name, g_browse.name);
+    ^
+tests/libid/ui/test_file_item.cpp:147:22: warning: The class 'TestFindFileItemCurrentDir' defines member variable with name 'saved_check_cur_dir' also defined in its parent class 'TestFindFileItem'. [duplInheritedMember]
+    ValueSaver<bool> saved_check_cur_dir{g_check_cur_dir, true};
+                     ^
+tests/libid/ui/test_file_item.cpp:35:22: note: Parent variable 'TestFindFileItem::saved_check_cur_dir'
+    ValueSaver<bool> saved_check_cur_dir{g_check_cur_dir, false};
+                     ^
+tests/libid/ui/test_file_item.cpp:147:22: note: Derived variable 'TestFindFileItemCurrentDir::saved_check_cur_dir'
+    ValueSaver<bool> saved_check_cur_dir{g_check_cur_dir, true};
+                     ^
 win32/Frame.cpp:584:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
     if (quitting)
         ^
