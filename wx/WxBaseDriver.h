@@ -16,7 +16,7 @@ namespace id::misc
 class WxBaseDriver : public Driver
 {
 public:
-    WxBaseDriver(const char *name) :
+    explicit WxBaseDriver(const char *name) :
         m_name(name),
         m_description("wxWidgets")
     {

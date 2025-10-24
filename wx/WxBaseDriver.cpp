@@ -362,7 +362,7 @@ void WxBaseDriver::buzzer(Buzzer kind)
     wxBell();
 }
 
-bool WxBaseDriver::sound_on(int freq)
+bool WxBaseDriver::sound_on(int frequency)
 {
     return false;
 }
