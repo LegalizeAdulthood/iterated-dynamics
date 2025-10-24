@@ -241,6 +241,7 @@ jobs:
           enable: 'style'
           force: 'enable'
           other_options: >-
+            --library=googletest
             --suppress=commaSeparatedReturn
             --suppress=cstyleCast
             --suppress=functionConst
