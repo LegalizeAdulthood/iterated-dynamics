@@ -833,8 +833,8 @@ static void write_batch_params(
 
         if (g_fractal_type == FractalType::JULIBROT)
         {
-            put_param(" %s=%.15g/%.15g/%.15g/%.15g",
-                     "julibrotfromto", g_julibrot_x_max, g_julibrot_x_min, g_julibrot_y_max, g_julibrot_y_min);
+            put_param(" julibrotfromto=%.15g/%.15g/%.15g/%.15g", //
+                g_julibrot_x_max, g_julibrot_x_min, g_julibrot_y_max, g_julibrot_y_min);
             // these rarely change
             if (g_julibrot_origin != 8
                 || g_julibrot_height != 7
@@ -919,7 +919,14 @@ static void write_batch_params(
                 cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
                 put_param(" center-mag=");
                 //          convert 1000 fudged long to double, 1000/1<<24 = 6e-5
-                put_param(g_delta_min > 6e-5 ? "%g/%g" : "%+20.17lf/%+20.17lf", x_ctr, y_ctr);
+                if (g_delta_min > 6e-5)
+                {
+                    put_param("%g/%g", x_ctr, y_ctr);
+                }
+                else
+                {
+                    put_param("%+20.17lf/%+20.17lf", x_ctr, y_ctr);
+                }
             }
             put_param("/%.7Lg", magnification); // precision of magnification not critical, but magnitude is
             // Round to avoid ugly decimals, precision here is not critical
@@ -1089,8 +1096,7 @@ static void write_batch_params(
         }
         if (g_fill_color != -1)
         {
-            put_param(" fillcolor=");
-            put_param("%d", g_fill_color);
+            put_param(" fillcolor=%d", g_fill_color);
         }
         if (g_inside_color != 1)
         {
