@@ -213,22 +213,22 @@ add_image_test("inside-atan" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-ma
 add_image_test("inside-fmod" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
     "params=0/0" "inside=fmod")
 add_image_test("outside-1" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
-    "params=0/0" "inside=0" "outside=1")
+    "params=0/0" "outside=1")
 add_image_test("outside-real" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
-    "params=0/0" "inside=0" "outside=real")
+    "params=0/0" "outside=real")
 add_image_test("outside-imag" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
-    "params=0/0" "inside=0" "outside=imag")
+    "params=0/0" "outside=imag")
 add_image_test("outside-summ" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
-    "params=0/0" "inside=0" "outside=summ")
+    "params=0/0" "outside=summ")
 add_image_test("outside-mult" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
-    "params=0/0" "inside=0" "outside=mult")
+    "params=0/0" "outside=mult")
 add_image_test("outside-atan" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
-    "params=0/0" "inside=0" "outside=atan")
+    "params=0/0" "outside=atan")
 # SKIPPED Due to the nature of the algorithm, the pixel variance is too high ~13%
 #add_image_test("outside-fmod" DISABLED IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
 #    "params=0/0" "outside=fmod" "cyclerange=1/1")
 add_image_test("outside-tdis" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
-    "params=0/0" "inside=0" "outside=tdis")
+    "params=0/0" "outside=tdis")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
