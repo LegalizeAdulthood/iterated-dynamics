@@ -192,6 +192,26 @@ add_image_test("rotate" PARAMETERS "type=mandel"
     "cyclerange=1/15")
 add_image_test("invert" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
     "params=0/0" "inside=0" "invert=0.500000008333333/-0.500000150000002/0")
+add_image_test("inside-1" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=1")
+add_image_test("inside-maxiter" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=maxiter")
+add_image_test("inside-bof60" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=bof60")
+add_image_test("inside-bof61" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=bof61")
+add_image_test("inside-zmag" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=zmag")
+add_image_test("inside-epsiloncross" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=epsiloncross")
+add_image_test("inside-startrail" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=startrail")
+add_image_test("inside-period" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=period")
+add_image_test("inside-atan" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=atan" "periodicity=0")
+add_image_test("inside-fmod" IGNORE_COLORMAP PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
+    "params=0/0" "inside=fmod")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 
