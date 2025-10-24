@@ -9,15 +9,6 @@ using namespace id::misc::test;
 namespace id::misc
 {
 
-#if ID_HAVE_X11_DRIVER
-static MockDriver s_x11_driver;
-
-Driver *get_x11_driver()
-{
-    return &s_x11_driver;
-}
-#endif
-
 #if ID_HAVE_GDI_DRIVER
 static MockDriver s_gdi_driver;
 

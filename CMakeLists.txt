@@ -81,7 +81,6 @@ if(("id" IN_LIST VCPKG_MANIFEST_FEATURES) OR ("wx" IN_LIST VCPKG_MANIFEST_FEATUR
     add_subdirectory(home)
     add_subdirectory(libid)
     add_subdirectory(win32)
-    add_subdirectory(unix)
     if(ID_USE_WX)
         add_subdirectory(wx)
     endif()
