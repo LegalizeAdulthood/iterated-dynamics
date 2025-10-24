@@ -1098,7 +1098,7 @@ static void write_batch_params(
         {
             put_param(" fillcolor=%d", g_fill_color);
         }
-        if (g_inside_color != 1)
+        if (g_inside_color != 0)
         {
             put_param(" inside=");
             if (g_inside_color == ITER)
