@@ -26,11 +26,13 @@ jobs:
         submodules: true
 
     - name: Install System Dependencies for building HTML docs
+      env:
+        DEBIAN_FRONTEND: noninteractive
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
         echo "set man-db/auto-update false" | sudo debconf-set-selections
         sudo apt-get update
-        sudo apt-get install mono-complete
+        sudo apt-get install --no-install-recommends -y mono-complete
 
     - name: Add NuGet sources
       shell: bash
@@ -104,11 +106,13 @@ jobs:
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
       shell: bash
+      env:
+        DEBIAN_FRONTEND: noninteractive
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
         echo "set man-db/auto-update false" | sudo debconf-set-selections
         sudo apt-get update
-        sudo apt-get install libx11-dev mono-complete
+        sudo apt-get install --no-install-recommends -y mono-complete
 
     #- name: Install Prerequisites macOS
     #  if: ${{matrix.os == 'macos-latest'}}
@@ -193,11 +197,13 @@ jobs:
           submodules: true
 
       - name: Install System Dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
         run: |
           ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
           echo "set man-db/auto-update false" | sudo debconf-set-selections
           sudo apt-get update
-          sudo apt-get install libx11-dev mono-complete
+          sudo apt-get install --no-install-recommends -y mono-complete
 
       - name: Add NuGet sources
         shell: bash
@@ -324,6 +330,8 @@ jobs:
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
       shell: bash
+      env:
+        DEBIAN_FRONTEND: noninteractive
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
         echo "set man-db/auto-update false" | sudo debconf-set-selections
