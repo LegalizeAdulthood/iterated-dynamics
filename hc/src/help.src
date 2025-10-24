@@ -290,6 +290,7 @@ o List of fractal types in the repository ReadMe linked and condensed.
 
 Code Cleanup in Version 1.3.2
 
+o The incomplete X11 driver for linux has been removed.  (Fixes #343)\
 o All identifiers are now inside a namespace to avoid collisions with
   external libraries.  wxWidgets on linux depends on glib which uses
   g_ prefix for all identifiers and this conflicted with the same
