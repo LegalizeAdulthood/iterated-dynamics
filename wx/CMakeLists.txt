@@ -19,7 +19,7 @@ add_dependencies(os native-help)
 
 # TODO: eliminate the need for os-wx in ../win32
 if(NOT WIN32)
-    add_library(os-wx STATIC init_failurecpp)
+    add_library(os-wx STATIC init_failure.cpp)
     target_compile_options(os-wx PRIVATE ${ID_TARGET_OPTIONS})
     target_include_directories(os-wx PRIVATE ../libid/include PUBLIC .)
     target_folder(os-wx "Libraries")
