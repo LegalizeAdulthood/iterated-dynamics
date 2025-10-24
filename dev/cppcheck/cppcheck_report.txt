@@ -1930,24 +1930,3 @@ wx/TextScreen.cpp:168:9: note: Same expression used in consecutive assignments o
 wx/TextScreen.cpp:276:18: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             cell = CGACell(' ', attr);
                  ^
-wx/WxBaseDriver.h:19:5: style: Class 'WxBaseDriver' has a constructor with 1 argument that is not explicit. [noExplicitConstructor]
-    WxBaseDriver(const char *name) :
-    ^
-wx/WxBaseDriver.cpp:365:33: style:inconclusive: Function 'sound_on' argument 1 names different: declaration 'frequency' definition 'freq'. [funcArgNamesDifferent]
-bool WxBaseDriver::sound_on(int freq)
-                                ^
-wx/WxBaseDriver.h:55:23: note: Function 'sound_on' argument 1 names different: declaration 'frequency' definition 'freq'.
-    bool sound_on(int frequency) override;
-                      ^
-wx/WxBaseDriver.cpp:365:33: note: Function 'sound_on' argument 1 names different: declaration 'frequency' definition 'freq'.
-bool WxBaseDriver::sound_on(int freq)
-                                ^
-wx/WxDriver.cpp:365:29: style:inconclusive: Function 'sound_on' argument 1 names different: declaration 'frequency' definition 'freq'. [funcArgNamesDifferent]
-bool WxDriver::sound_on(int freq)
-                            ^
-wx/WxDriver.h:52:23: note: Function 'sound_on' argument 1 names different: declaration 'frequency' definition 'freq'.
-    bool sound_on(int frequency) override;
-                      ^
-wx/WxDriver.cpp:365:29: note: Function 'sound_on' argument 1 names different: declaration 'frequency' definition 'freq'.
-bool WxDriver::sound_on(int freq)
-                            ^
