@@ -38,51 +38,49 @@ public:
         return m_description;
     }
 
-    void shell() override;
-    int key_pressed() override;
-    void terminate() override;
     bool init(int *argc, char **argv) override;
-    void unget_key(int key) override;
+    bool validate_mode(const engine::VideoInfo &mode) override;
+    void get_max_screen(int &width, int &height) override;
+    void terminate() override;
+    void schedule_alarm(int secs) override;
+    void create_window() override;
+    void draw_line(int x1, int y1, int x2, int y2, int color) override;
+    void save_graphics() override;
+    void restore_graphics() override;
     int get_key() override;
-    void hide_text_cursor() override;
+    int key_cursor(int row, int col) override;
+    int key_pressed() override;
+    int wait_key_pressed(bool timeout) override;
+    void unget_key(int key) override;
+    void shell() override;
     void set_video_mode(const engine::VideoInfo &mode) override;
     void put_string(int row, int col, int attr, const char *msg) override;
-    void scroll_up(int top, int bot) override;
+    bool is_text() override;
+    void set_for_text() override;
+    void set_for_graphics() override;
+    void set_clear() override;
     void move_cursor(int row, int col) override;
+    void hide_text_cursor() override;
     void set_attr(int row, int col, int attr, int count) override;
+    void scroll_up(int top, int bot) override;
     void stack_screen() override;
     void unstack_screen() override;
     void discard_screen() override;
     int init_fm() override;
     void buzzer(Buzzer kind) override;
-    void sound_off() override;
     bool sound_on(int frequency) override;
+    void sound_off() override;
     void mute() override;
-    bool is_disk() const override;
-    int key_cursor(int row, int col) override;
-    int wait_key_pressed(bool timeout) override;
     int get_char_attr() override;
     void put_char_attr(int char_attr) override;
     void delay(int ms) override;
     void set_keyboard_timeout(int ms) override;
+    void flush() override;
     void debug_text(const char *text) override;
     void get_cursor_pos(int &x, int &y) const override;
-    bool validate_mode(const engine::VideoInfo &mode) override;
-    void get_max_screen(int &width, int &height) override;
-    void pause() override;
-    void resume() override;
-    void schedule_alarm(int secs) override;
-    void create_window() override;
-    void save_graphics() override;
-    void restore_graphics() override;
-    bool is_text() override;
-    void set_for_text() override;
-    void set_for_graphics() override;
-    void set_clear() override;
-    void flush() override;
     void check_memory() override;
-    bool get_filename(const char *hdg, const char *type_desc, const char *type_wildcard,
-        std::string &result_filename) override;
+    bool get_filename(
+        const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename) override;
 
 protected:
     struct TextLocation

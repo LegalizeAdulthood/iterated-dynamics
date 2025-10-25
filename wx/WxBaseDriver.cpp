@@ -46,35 +46,6 @@ using namespace id::ui;
 namespace id::misc
 {
 
-#if 0
-long readticker()
-{
-    // TODO
-    return (long) 0;
-}
-
-long stackavail()
-{
-    // TODO
-    return 0L;
-}
-
-using uclock_t = unsigned long;
-uclock_t usec_clock()
-{
-    uclock_t result{};
-    // TODO
-    assert(FALSE);
-
-    return result;
-}
-
-void restart_uclock()
-{
-    // TODO
-}
-#endif
-
 static void flush_output()
 {
     static time_t start = 0;
@@ -110,10 +81,28 @@ static void flush_output()
     }
 }
 
-/***********************************************************************
-////////////////////////////////////////////////////////////////////////
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-***********************************************************************/
+bool WxBaseDriver::init(int *argc, char **argv)
+{
+    // nothing needs to be done in wxWidgets
+    return true;
+}
+
+bool WxBaseDriver::validate_mode(const VideoInfo &mode)
+{
+    int width;
+    int height;
+    get_max_screen(width, height);
+
+    // allow modes <= size of screen with 256 colors
+    return mode.x_dots <= width
+        && mode.y_dots <= height
+        && mode.colors == 256;
+}
+
+void WxBaseDriver::get_max_screen(int &width, int &height)
+{
+    wxDisplaySize(&width, &height);
+}
 
 void WxBaseDriver::terminate()
 {
@@ -121,22 +110,78 @@ void WxBaseDriver::terminate()
     m_saved_cursor.clear();
 }
 
-bool WxBaseDriver::init(int *argc, char **argv)
+void WxBaseDriver::schedule_alarm(int secs)
 {
-    // nothing needs to be done in wxWidgets
-    return true;
+    // do nothing
 }
 
-/* key_pressed
- *
- * Return 0 if no key has been pressed, or the FIK value if it has.
- * driver_get_key() must still be called to eat the key; this routine
- * only peeks ahead.
- *
- * When a keystroke has been found by the underlying wintext_xxx
- * message pump, stash it in the one key buffer for later use by
- * get_key.
- */
+void WxBaseDriver::create_window()
+{
+    wxGetApp().create_window(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
+}
+
+void WxBaseDriver::draw_line(int x1, int y1, int x2, int y2, int color)
+{
+    geometry::draw_line(x1, y1, x2, y2, color);
+}
+
+void WxBaseDriver::save_graphics()
+{
+    wxGetApp().save_graphics();
+}
+
+void WxBaseDriver::restore_graphics()
+{
+    wxGetApp().restore_graphics();
+}
+
+// get_key
+//
+// Get a keystroke, blocking if necessary.
+//
+int WxBaseDriver::get_key()
+{
+    int ch;
+    do
+    {
+        if (m_key_buffer)
+        {
+            ch = m_key_buffer;
+            m_key_buffer = 0;
+        }
+        else
+        {
+            ch = handle_special_keys(wxGetApp().get_key_press(true));
+        }
+    }
+    while (ch == 0);
+
+    return ch;
+}
+
+int WxBaseDriver::key_cursor(int row, int col)
+{
+    int result;
+    if (key_pressed())
+    {
+        result = get_key();
+    }
+    else
+    {
+        move_cursor(row, col);
+        result = get_key();
+        hide_text_cursor();
+    }
+
+    return result;
+}
+
+// key_pressed
+//
+// Return 0 if no key has been pressed, or the FIK value if it has.
+// driver_get_key() must still be called to eat the key; this routine
+// only peeks ahead.
+//
 int WxBaseDriver::key_pressed()
 {
     if (m_key_buffer)
@@ -160,42 +205,35 @@ int WxBaseDriver::key_pressed()
     return ch;
 }
 
-/* unget_key
- *
- * Unread a key!  The key buffer is only one character deep, so we
- * assert if its already full.  This should never happen in real life :-).
- */
+int WxBaseDriver::wait_key_pressed(const bool timeout)
+{
+    int count = 10;
+    while (!key_pressed())
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(25));
+        if (timeout)
+        {
+            // timeout early if zooming
+            if (count == 0 || g_zoom_box_width != 0.0)
+            {
+                break;
+            }
+            --count;
+        }
+    }
+
+    return key_pressed();
+}
+
+// unget_key
+//
+// Unread a key!  The key buffer is only one character deep, so we
+// assert if its already full.  This should never happen in real life :-).
+//
 void WxBaseDriver::unget_key(const int key)
 {
     assert(0 == m_key_buffer);
     m_key_buffer = key;
-}
-
-/* get_key
- *
- * Get a keystroke, blocking if necessary.  First, check the key buffer
- * and if that's empty ask the wintext window to pump a keystroke for us.
- * If we get it, pass it off to handle tab and help displays.  If those
- * displays ate the key, then get another one.
- */
-int WxBaseDriver::get_key()
-{
-    int ch;
-    do
-    {
-        if (m_key_buffer)
-        {
-            ch = m_key_buffer;
-            m_key_buffer = 0;
-        }
-        else
-        {
-            ch = handle_special_keys(wxGetApp().get_key_press(true));
-        }
-    }
-    while (ch == 0);
-
-    return ch;
 }
 
 // Spawn a command prompt.
@@ -208,11 +246,6 @@ void WxBaseDriver::shell()
     }
     stop_msg(
         "Couldn't run shell '" + cmd_shell_command() + "', error " + std::to_string(get_cmd_shell_error()));
-}
-
-void WxBaseDriver::hide_text_cursor()
-{
-    wxGetApp().hide_text_cursor();
 }
 
 void WxBaseDriver::set_video_mode(const VideoInfo &mode)
@@ -263,13 +296,24 @@ void WxBaseDriver::put_string(int row, int col, int attr, const char *msg)
     }
 }
 
-/************** Function scrollup(toprow, botrow) ******************
-*
-*       Scroll the screen up (from toprow to botrow)
-*/
-void WxBaseDriver::scroll_up(int top, int bot)
+bool WxBaseDriver::is_text()
 {
-    wxGetApp().scroll_up(top, bot);
+    return wxGetApp().is_text();
+}
+
+void WxBaseDriver::set_for_text()
+{
+    wxGetApp().set_for_text();
+}
+
+void WxBaseDriver::set_for_graphics()
+{
+    wxGetApp().set_for_graphics();
+}
+
+void WxBaseDriver::set_clear()
+{
+    wxGetApp().clear();
 }
 
 void WxBaseDriver::move_cursor(int row, int col)
@@ -287,6 +331,11 @@ void WxBaseDriver::move_cursor(int row, int col)
     wxGetApp().move_cursor(g_text_col_base + m_cursor.col, g_text_row_base + m_cursor.row);
 }
 
+void WxBaseDriver::hide_text_cursor()
+{
+    wxGetApp().hide_text_cursor();
+}
+
 void WxBaseDriver::set_attr(int row, int col, int attr, int count)
 {
     if (-1 != row)
@@ -300,10 +349,16 @@ void WxBaseDriver::set_attr(int row, int col, int attr, int count)
     wxGetApp().set_attr(g_text_row_base + g_text_row, g_text_col_base + g_text_col, attr, count);
 }
 
-/*
-* Implement stack and unstack window functions by using multiple curses
-* windows.
-*/
+// Scroll the screen up (from top row to bot row)
+//
+void WxBaseDriver::scroll_up(int top, int bot)
+{
+    wxGetApp().scroll_up(top, bot);
+}
+
+// Implement stack and unstack window functions by using multiple curses
+// windows.
+//
 void WxBaseDriver::stack_screen()
 {
     // set for text mode if this is the first screen stacked
@@ -375,48 +430,6 @@ void WxBaseDriver::mute()
 {
 }
 
-bool WxBaseDriver::is_disk() const
-{
-    return false;
-}
-
-int WxBaseDriver::key_cursor(int row, int col)
-{
-    int result;
-    if (key_pressed())
-    {
-        result = get_key();
-    }
-    else
-    {
-        move_cursor(row, col);
-        result = get_key();
-        hide_text_cursor();
-    }
-
-    return result;
-}
-
-int WxBaseDriver::wait_key_pressed(const bool timeout)
-{
-    int count = 10;
-    while (!key_pressed())
-    {
-        std::this_thread::sleep_for(std::chrono::milliseconds(25));
-        if (timeout)
-        {
-            // timeout early if zooming
-            if (count == 0 || g_zoom_box_width != 0.0)
-            {
-                break;
-            }
-            --count;
-        }
-    }
-
-    return key_pressed();
-}
-
 int WxBaseDriver::get_char_attr()
 {
     return wxGetApp().get_char_attr(g_text_row, g_text_col);
@@ -438,6 +451,11 @@ void WxBaseDriver::set_keyboard_timeout(int ms)
     wxGetApp().set_keyboard_timeout(ms);
 }
 
+void WxBaseDriver::flush()
+{
+    wxGetApp().flush();
+}
+
 void WxBaseDriver::debug_text(const char *text)
 {
     wxLogDebug(text);
@@ -446,78 +464,6 @@ void WxBaseDriver::debug_text(const char *text)
 void WxBaseDriver::get_cursor_pos(int &x, int &y) const
 {
     wxGetApp().get_cursor_pos(x, y);
-}
-
-bool WxBaseDriver::validate_mode(const VideoInfo &mode)
-{
-    int width;
-    int height;
-    get_max_screen(width, height);
-
-    // allow modes <= size of screen with 256 colors
-    return mode.x_dots <= width
-        && mode.y_dots <= height
-        && mode.colors == 256;
-}
-
-void WxBaseDriver::get_max_screen(int &width, int &height)
-{
-    wxDisplaySize(&width, &height);
-}
-
-void WxBaseDriver::pause()
-{
-    wxGetApp().pause();
-}
-
-void WxBaseDriver::resume()
-{
-    wxGetApp().resume();
-}
-
-void WxBaseDriver::schedule_alarm(int secs)
-{
-    // do nothing
-}
-
-void WxBaseDriver::create_window()
-{
-    wxGetApp().create_window(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
-}
-
-void WxBaseDriver::save_graphics()
-{
-    wxGetApp().save_graphics();
-}
-
-void WxBaseDriver::restore_graphics()
-{
-    wxGetApp().restore_graphics();
-}
-
-bool WxBaseDriver::is_text()
-{
-    return wxGetApp().is_text();
-}
-
-void WxBaseDriver::set_for_text()
-{
-    wxGetApp().set_for_text();
-}
-
-void WxBaseDriver::set_for_graphics()
-{
-    wxGetApp().set_for_graphics();
-}
-
-void WxBaseDriver::set_clear()
-{
-    wxGetApp().clear();
-}
-
-void WxBaseDriver::flush()
-{
-    wxGetApp().flush();
 }
 
 void WxBaseDriver::check_memory()

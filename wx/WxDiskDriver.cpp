@@ -133,11 +133,6 @@ void WxDiskDriver::set_video_mode(const VideoInfo &mode)
     set_clear();
 }
 
-void WxDiskDriver::set_clear()
-{
-    WxBaseDriver::set_clear();
-}
-
 bool WxDiskDriver::is_disk() const
 {
     return true;
@@ -219,11 +214,6 @@ int WxDiskDriver::read_pixel(int x, int y)
 void WxDiskDriver::write_pixel(int x, int y, int color)
 {
     put_color_a(x, y, color);
-}
-
-void WxDiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
-{
-    geometry::draw_line(x1, y1, x2, y2, color);
 }
 
 void WxDiskDriver::display_string(int x, int y, int fg, int bg, const char *text)
