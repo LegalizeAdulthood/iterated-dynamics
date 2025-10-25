@@ -70,17 +70,27 @@ private:
     unsigned char m_clut[256][3]{};
 };
 
-#define DRIVER_MODE(width_, height_ ) \
-    { 0, width_, height_, 256, nullptr, "                        " }
-static VideoInfo s_modes[] =
-{
-    DRIVER_MODE( 800,  600),
-    DRIVER_MODE(1024,  768),
-    DRIVER_MODE(1200,  900),
-    DRIVER_MODE(1280,  960),
-    DRIVER_MODE(1400, 1050),
-    DRIVER_MODE(1500, 1125),
-    DRIVER_MODE(1600, 1200)
+#define DRIVER_MODE(width_, height_, comment_) \
+    { 0, width_, height_, 256, nullptr, comment_ }
+static VideoInfo s_modes[] = {
+    // clang-format off
+    DRIVER_MODE(640, 480,   "VGA                     "),
+    DRIVER_MODE(800, 600,   "SVGA                    "),
+    DRIVER_MODE(1024, 768,  "XGA                     "),
+    DRIVER_MODE(1280, 768,  "WXGA                    "),
+    DRIVER_MODE(1280, 800,  "WXGA                    "),
+    DRIVER_MODE(1280, 960,  "                        "),
+    DRIVER_MODE(1280, 1024, "SXGA                    "),
+    DRIVER_MODE(1400, 1050, "SXGA+                   "),
+    DRIVER_MODE(1920, 1080, "HD 1080                 "),
+    DRIVER_MODE(2048, 1080, "2K                      "),
+    DRIVER_MODE(1500, 1125, "                        "),
+    DRIVER_MODE(1600, 1200, "UXGA                    "),
+    DRIVER_MODE(1920, 1200, "WUXGA                   "),
+    DRIVER_MODE(2048, 1536, "QXGA                    "),
+    DRIVER_MODE(2560, 1600, "WQXGA                   "),
+    DRIVER_MODE(2560, 2048, "QSXGA                   "),
+    // clang-format on
 };
 #undef DRIVER_MODE
 
