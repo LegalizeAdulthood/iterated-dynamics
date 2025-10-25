@@ -1798,13 +1798,13 @@ win32/WinText.cpp:476:9: note: Same expression used in consecutive assignments o
 win32/WinText.cpp:606:32: portability: Shifting a negative value is technically undefined behaviour [shiftNegativeLHS]
             int background = k >> 4;
                                ^
-wx/Frame.cpp:252:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
+wx/Frame.cpp:260:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
     if (quitting)
         ^
-wx/Frame.cpp:233:12: note: Assuming that condition '!quitting' is not redundant
+wx/Frame.cpp:241:12: note: Assuming that condition '!quitting' is not redundant
     while (!quitting)
            ^
-wx/Frame.cpp:252:9: note: Condition 'quitting' is always true
+wx/Frame.cpp:260:9: note: Condition 'quitting' is always true
     if (quitting)
         ^
 wx/TextScreen.cpp:168:9: style:inconclusive: Same expression used in consecutive assignments of 'max_col' and 'col'. [duplicateAssignExpression]
