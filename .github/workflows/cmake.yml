@@ -30,7 +30,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
-        echo "set man-db/auto-update false" | sudo debconf-set-selections
+        echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
         sudo dpkg-reconfigure man-db
         sudo apt-get update
         sudo apt-get install --no-install-recommends -y mono-complete
@@ -111,7 +111,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
-        echo "set man-db/auto-update false" | sudo debconf-set-selections
+        echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
         sudo dpkg-reconfigure man-db
         sudo apt-get update
         sudo apt-get install --no-install-recommends -y mono-complete
@@ -203,7 +203,7 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
         run: |
           ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
-          echo "set man-db/auto-update false" | sudo debconf-set-selections
+          echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
           sudo dpkg-reconfigure man-db
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y mono-complete
@@ -338,7 +338,7 @@ jobs:
         DEBIAN_FRONTEND: noninteractive
       run: |
         ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
-        echo "set man-db/auto-update false" | sudo debconf-set-selections
+        echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
         sudo dpkg-reconfigure man-db
         sudo apt-get update
         sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install
