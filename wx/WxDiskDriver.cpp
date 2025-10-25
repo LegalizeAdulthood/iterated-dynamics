@@ -102,46 +102,17 @@ bool WxDiskDriver::init(int *argc, char **argv)
 
     return true;
 }
-void WxDiskDriver::set_video_mode(const VideoInfo &mode)
-{
-    // This should already be the case, but let's confirm assumptions.
-    assert(g_video_table[g_adapter].x_dots == mode.x_dots);
-    assert(g_video_table[g_adapter].y_dots == mode.y_dots);
-    assert(g_video_table[g_adapter].colors == mode.colors);
-    assert(g_video_table[g_adapter].driver == this);
-
-    // initially, set the virtual line to be the scan line length
-    g_is_true_color = false;            // assume not truecolor
-    g_vesa_x_res = 0;                   // reset indicators used for
-    g_vesa_y_res = 0;                   // virtual screen limits estimation
-    g_good_mode = true;
-    g_and_color = g_colors - 1;
-    g_box_count = 0;
-    g_dac_count = g_cycle_limit;
-    g_got_real_dac = true; // we are "VGA"
-    read_palette();
-
-    resize();
-    wxGetApp().clear();
-    if (g_disk_flag)
-    {
-        end_disk();
-    }
-    set_normal_dot();
-    set_normal_span();
-    set_for_graphics();
-    set_clear();
-}
-
-bool WxDiskDriver::is_disk() const
-{
-    return true;
-}
 
 bool WxDiskDriver::validate_mode(const VideoInfo &mode)
 {
     // allow modes of any size with 256 colors
     return mode.colors == 256;
+}
+
+void WxDiskDriver::get_max_screen(int &width, int &height)
+{
+    width = -1;
+    height = -1;
 }
 
 void WxDiskDriver::pause()
@@ -156,6 +127,7 @@ void WxDiskDriver::resume()
 
 void WxDiskDriver::create_window()
 {
+    // TODO: pass in width, height for text window size
     wxGetApp().create_window(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
 }
 
@@ -201,11 +173,6 @@ void WxDiskDriver::write_palette()
     }
 }
 
-void WxDiskDriver::schedule_alarm(int secs)
-{
-    WxBaseDriver::schedule_alarm(secs);
-}
-
 int WxDiskDriver::read_pixel(int x, int y)
 {
     return get_color(x, y);
@@ -219,6 +186,47 @@ void WxDiskDriver::write_pixel(int x, int y, int color)
 void WxDiskDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
     // intentionally do nothing
+}
+
+void WxDiskDriver::save_graphics()
+{
+    // intentionally do nothing
+}
+
+void WxDiskDriver::restore_graphics()
+{
+    // intentionally do nothing
+}
+
+void WxDiskDriver::set_video_mode(const VideoInfo &mode)
+{
+    // This should already be the case, but let's confirm assumptions.
+    assert(g_video_table[g_adapter].x_dots == mode.x_dots);
+    assert(g_video_table[g_adapter].y_dots == mode.y_dots);
+    assert(g_video_table[g_adapter].colors == mode.colors);
+    assert(g_video_table[g_adapter].driver == this);
+
+    // initially, set the virtual line to be the scan line length
+    g_is_true_color = false;            // assume not truecolor
+    g_vesa_x_res = 0;                   // reset indicators used for
+    g_vesa_y_res = 0;                   // virtual screen limits estimation
+    g_good_mode = true;
+    g_and_color = g_colors - 1;
+    g_box_count = 0;
+    g_dac_count = g_cycle_limit;
+    g_got_real_dac = true; // we are "VGA"
+    read_palette();
+
+    resize();
+    wxGetApp().clear();
+    if (g_disk_flag)
+    {
+        end_disk();
+    }
+    set_normal_dot();
+    set_normal_span();
+    set_for_graphics();
+    set_clear();
 }
 
 bool WxDiskDriver::is_text()
@@ -236,20 +244,9 @@ void WxDiskDriver::set_for_graphics()
     hide_text_cursor();
 }
 
-void WxDiskDriver::save_graphics()
+bool WxDiskDriver::is_disk() const
 {
-    // intentionally do nothing
-}
-
-void WxDiskDriver::restore_graphics()
-{
-    // intentionally do nothing
-}
-
-void WxDiskDriver::get_max_screen(int &width, int &height)
-{
-    width = -1;
-    height = -1;
+    return true;
 }
 
 void WxDiskDriver::flush()
