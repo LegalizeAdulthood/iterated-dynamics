@@ -145,21 +145,20 @@ bool WxDiskDriver::is_disk() const
 
 bool WxDiskDriver::validate_mode(const VideoInfo &mode)
 {
-    int width;
-    int height;
-    get_max_screen(width, height);
-
-    // allow modes <= size of screen with 256 colors
-    return mode.x_dots <= width && mode.y_dots <= height && mode.colors == 256;
+    // allow modes of any size with 256 colors
+    return mode.colors == 256;
 }
 
 void WxDiskDriver::pause()
 {
+    // TODO: hide text window
     WxBaseDriver::pause();
 }
 
 void WxDiskDriver::resume()
 {
+    // TODO: show text window
+    // resume text window
     WxBaseDriver::resume();
 }
 
@@ -217,12 +216,12 @@ void WxDiskDriver::schedule_alarm(int secs)
 
 int WxDiskDriver::read_pixel(int x, int y)
 {
-    return wxGetApp().read_pixel(x, y);
+    return get_color(x, y);
 }
 
 void WxDiskDriver::write_pixel(int x, int y, int color)
 {
-    wxGetApp().write_pixel(x, y, color);
+    put_color_a(x, y, color);
 }
 
 void WxDiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
@@ -232,42 +231,43 @@ void WxDiskDriver::draw_line(int x1, int y1, int x2, int y2, int color)
 
 void WxDiskDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
-    wxGetApp().display_string(x, y, fg, bg, text);
+    // intentionally do nothing
 }
 
 bool WxDiskDriver::is_text()
 {
-    return WxBaseDriver::is_text();
+    return true;
 }
 
 void WxDiskDriver::set_for_text()
 {
-    WxBaseDriver::set_for_text();
+    // intentionally do nothing
 }
 
 void WxDiskDriver::set_for_graphics()
 {
-    WxBaseDriver::set_for_graphics();
+    hide_text_cursor();
 }
 
 void WxDiskDriver::save_graphics()
 {
-    wxGetApp().save_graphics();
+    // intentionally do nothing
 }
 
 void WxDiskDriver::restore_graphics()
 {
-    wxGetApp().restore_graphics();
+    // intentionally do nothing
 }
 
 void WxDiskDriver::get_max_screen(int &width, int &height)
 {
-    WxBaseDriver::get_max_screen(width, height);
+    width = -1;
+    height = -1;
 }
 
 void WxDiskDriver::flush()
 {
-    WxBaseDriver::flush();
+    // intentionally do nothing
 }
 
 static WxDiskDriver s_wx_disk_driver{};

@@ -133,12 +133,12 @@ void App::get_cursor_pos(int &x, int &y) const
 
 void App::pause()
 {
-    m_frame->Hide();
+    m_frame->Hide(); // TODO is this correct?
 }
 
 void App::resume()
 {
-    m_frame->Show();
+    m_frame->Show(); // TODO is this correct?
 }
 
 Colormap App::read_palette()
