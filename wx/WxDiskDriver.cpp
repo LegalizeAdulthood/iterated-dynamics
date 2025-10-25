@@ -133,19 +133,9 @@ void WxDiskDriver::set_video_mode(const VideoInfo &mode)
     set_clear();
 }
 
-void WxDiskDriver::discard_screen()
+void WxDiskDriver::set_clear()
 {
-    if (!m_saved_screens.empty())
-    {
-        // unstack
-        m_saved_screens.pop_back();
-        m_saved_cursor.pop_back();
-    }
-    // discarding last text screen reverts to showing graphics
-    if (m_saved_screens.empty() && !is_disk())
-    {
-        set_for_graphics();
-    }
+    WxBaseDriver::set_clear();
 }
 
 bool WxDiskDriver::is_disk() const
@@ -160,9 +150,17 @@ bool WxDiskDriver::validate_mode(const VideoInfo &mode)
     get_max_screen(width, height);
 
     // allow modes <= size of screen with 256 colors
-    return mode.x_dots <= width
-        && mode.y_dots <= height
-        && mode.colors == 256;
+    return mode.x_dots <= width && mode.y_dots <= height && mode.colors == 256;
+}
+
+void WxDiskDriver::pause()
+{
+    WxBaseDriver::pause();
+}
+
+void WxDiskDriver::resume()
+{
+    WxBaseDriver::resume();
 }
 
 void WxDiskDriver::create_window()
@@ -212,6 +210,11 @@ void WxDiskDriver::write_palette()
     }
 }
 
+void WxDiskDriver::schedule_alarm(int secs)
+{
+    WxBaseDriver::schedule_alarm(secs);
+}
+
 int WxDiskDriver::read_pixel(int x, int y)
 {
     return wxGetApp().read_pixel(x, y);
@@ -232,6 +235,21 @@ void WxDiskDriver::display_string(int x, int y, int fg, int bg, const char *text
     wxGetApp().display_string(x, y, fg, bg, text);
 }
 
+bool WxDiskDriver::is_text()
+{
+    return WxBaseDriver::is_text();
+}
+
+void WxDiskDriver::set_for_text()
+{
+    WxBaseDriver::set_for_text();
+}
+
+void WxDiskDriver::set_for_graphics()
+{
+    WxBaseDriver::set_for_graphics();
+}
+
 void WxDiskDriver::save_graphics()
 {
     wxGetApp().save_graphics();
@@ -240,6 +258,16 @@ void WxDiskDriver::save_graphics()
 void WxDiskDriver::restore_graphics()
 {
     wxGetApp().restore_graphics();
+}
+
+void WxDiskDriver::get_max_screen(int &width, int &height)
+{
+    WxBaseDriver::get_max_screen(width, height);
+}
+
+void WxDiskDriver::flush()
+{
+    WxBaseDriver::flush();
 }
 
 static WxDiskDriver s_wx_disk_driver{};

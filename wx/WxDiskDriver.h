@@ -26,20 +26,28 @@ public:
     WxDiskDriver &operator=(WxDiskDriver &&) = delete;
 
     bool init(int *argc, char **argv) override;
-    void set_video_mode(const engine::VideoInfo &mode) override;
-    void discard_screen() override;
-    bool is_disk() const override;
-    bool validate_mode(const engine::VideoInfo &mode) override;
-    void create_window() override;
     bool resize() override;
     void read_palette() override;
     void write_palette() override;
-    int read_pixel(int x, int y) override;
+    void schedule_alarm(int secs) override;
     void write_pixel(int x, int y, int color) override;
+    int read_pixel(int x, int y) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
+    void create_window() override;
+    void set_video_mode(const engine::VideoInfo &mode) override;
+    void set_clear() override;
     void display_string(int x, int y, int fg, int bg, const char *text) override;
+    bool is_text() override;
+    void set_for_text() override;
+    void set_for_graphics() override;
+    bool is_disk() const override;
+    bool validate_mode(const engine::VideoInfo &mode) override;
+    void pause() override;
+    void resume() override;
     void save_graphics() override;
     void restore_graphics() override;
+    void get_max_screen(int &width, int &height) override;
+    void flush() override;
 
 private:
     int m_width{};
