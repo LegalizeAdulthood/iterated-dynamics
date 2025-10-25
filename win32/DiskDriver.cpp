@@ -131,8 +131,7 @@ static void init_dac_box()
 
 bool DiskDriver::init(int *argc, char **argv)
 {
-    const bool base_init = Win32BaseDriver::init(argc, argv);
-    if (!base_init)
+    if (!Win32BaseDriver::init(argc, argv))
     {
         return false;
     }
