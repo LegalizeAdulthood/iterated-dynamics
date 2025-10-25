@@ -6,51 +6,102 @@
  */
 #include "WxDiskDriver.h"
 
-#include "gui/App.h"
-#include "gui/Colormap.h"
-#include "gui/Frame.h"
-
 #include <engine/calcfrac.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
-#include <io/save_timer.h>
+#include <gui/App.h>
 #include <ui/diskvid.h>
-#include <ui/id_keys.h>
-#include <ui/read_ticker.h>
-#include <ui/slideshw.h>
-#include <ui/stop_msg.h>
-#include <ui/text_screen.h>
 #include <ui/video.h>
 #include <ui/zoom.h>
 
-#include <config/cmd_shell.h>
-
-#include <wx/log.h>
-
-#include <cassert>
-#include <chrono>
-#include <ctime>
-#include <stdexcept>
-#include <string>
-#include <thread>
-
-#ifdef WIN32
-#include <crtdbg.h>
-#endif
-
-using namespace id::config;
 using namespace id::engine;
 using namespace id::ui;
 
 namespace id::misc
 {
 
-/***********************************************************************
-////////////////////////////////////////////////////////////////////////
-\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-***********************************************************************/
+#define DRIVER_MODE(width_, height_, comment_) \
+    { 0, width_, height_, 256, nullptr, comment_ }
+static VideoInfo s_modes[] = {
+    // clang-format off
+    DRIVER_MODE(640, 480,   "VGA                     "),
+    DRIVER_MODE(800, 600,   "SVGA                    "),
+    DRIVER_MODE(1024, 768,  "XGA                     "),
+    DRIVER_MODE(1280, 768,  "WXGA                    "),
+    DRIVER_MODE(1280, 800,  "WXGA                    "),
+    DRIVER_MODE(1280, 960,  "                        "),
+    DRIVER_MODE(1280, 1024, "SXGA                    "),
+    DRIVER_MODE(1400, 1050, "SXGA+                   "),
+    DRIVER_MODE(1920, 1080, "HD 1080                 "),
+    DRIVER_MODE(2048, 1080, "2K                      "),
+    DRIVER_MODE(1500, 1125, "                        "),
+    DRIVER_MODE(1600, 1200, "UXGA                    "),
+    DRIVER_MODE(1920, 1200, "WUXGA                   "),
+    DRIVER_MODE(2048, 1536, "QXGA                    "),
+    DRIVER_MODE(2560, 1600, "WQXGA                   "),
+    DRIVER_MODE(2560, 2048, "QSXGA                   "),
+    // clang-format on
+};
+#undef DRIVER_MODE
 
+/*----------------------------------------------------------------------
+*
+* initdacbox --
+*
+* Put something nice in the dac.
+*
+* The conditions are:
+*   Colors 1 and 2 should be bright so ifs fractals show up.
+*   Color 15 should be bright for lsystem.
+*   Color 1 should be bright for bifurcation.
+*   Colors 1, 2, 3 should be distinct for periodicity.
+*   The color map should look good for mandelbrot.
+*
+* Results:
+*   None.
+*
+* Side effects:
+*   Loads the dac.
+*
+*----------------------------------------------------------------------
+*/
+static void init_dac_box()
+{
+    for (int i = 0; i < 256; i++)
+    {
+        g_dac_box[i][0] = (i >> 5)*8+7;
+        g_dac_box[i][1] = ((i + 16 & 28) >> 2)*8+7;
+        g_dac_box[i][2] = (i + 2 & 3)*16+15;
+    }
+    g_dac_box[0][0] = 0;
+    g_dac_box[0][1] = 0;
+    g_dac_box[0][2] = 0;
+    g_dac_box[1][0] = 255;
+    g_dac_box[1][1] = 255;
+    g_dac_box[1][2] = 255;
+    g_dac_box[2][0] = 190;
+    g_dac_box[2][1] = 255;
+    g_dac_box[2][2] = 255;
+}
+
+bool WxDiskDriver::init(int *argc, char **argv)
+{
+    if (!WxBaseDriver::init(argc, argv))
+    {
+        return false;
+    }
+
+    init_dac_box();
+
+    // add default list of video modes
+    for (VideoInfo &mode : s_modes)
+    {
+        add_video_mode(this, &mode);
+    }
+
+    return true;
+}
 void WxDiskDriver::set_video_mode(const VideoInfo &mode)
 {
     // This should already be the case, but let's confirm assumptions.

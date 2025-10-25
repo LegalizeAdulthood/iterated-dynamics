@@ -24,6 +24,7 @@ public:
     WxDiskDriver &operator=(const WxDiskDriver &) = delete;
     WxDiskDriver &operator=(WxDiskDriver &&) = delete;
 
+    bool init(int *argc, char **argv) override;
     void set_video_mode(const engine::VideoInfo &mode) override;
     void discard_screen() override;
     bool is_disk() const override;
