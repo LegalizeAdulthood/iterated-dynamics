@@ -22,7 +22,11 @@ public:
     {
     }
 
+    WxBaseDriver(const WxBaseDriver &) = delete;
+    WxBaseDriver(WxBaseDriver &&) = delete;
     ~WxBaseDriver() override = default;
+    WxBaseDriver &operator=(const WxBaseDriver &) = delete;
+    WxBaseDriver &operator=(WxBaseDriver &&) = delete;
 
     const std::string &get_name() const override
     {

@@ -3,13 +3,9 @@
 #pragma once
 
 #include <config/driver_types.h>
+#include <misc/Driver.h>
 
-#include "gui/Screen.h"
-#include "misc/Driver.h"
 #include "WxBaseDriver.h"
-
-#include <string>
-#include <vector>
 
 namespace id::misc
 {
@@ -17,10 +13,16 @@ namespace id::misc
 class WxDiskDriver : public WxBaseDriver
 {
 public:
-    WxDiskDriver() : WxBaseDriver("disk")
+    WxDiskDriver() :
+        WxBaseDriver("disk")
     {
     }
+
+    WxDiskDriver(const WxDiskDriver &) = delete;
+    WxDiskDriver(WxDiskDriver &&) = delete;
     ~WxDiskDriver() override = default;
+    WxDiskDriver &operator=(const WxDiskDriver &) = delete;
+    WxDiskDriver &operator=(WxDiskDriver &&) = delete;
 
     void set_video_mode(const engine::VideoInfo &mode) override;
     void discard_screen() override;
