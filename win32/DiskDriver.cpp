@@ -333,6 +333,7 @@ void DiskDriver::set_clear()
 
 void DiskDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
+    // intentionally do nothing
 }
 
 bool DiskDriver::is_text()
@@ -342,6 +343,7 @@ bool DiskDriver::is_text()
 
 void DiskDriver::set_for_text()
 {
+    // intentionally do nothing
 }
 
 void DiskDriver::set_for_graphics()
@@ -384,10 +386,12 @@ void DiskDriver::resume()
 
 void DiskDriver::save_graphics()
 {
+    // intentionally do nothing
 }
 
 void DiskDriver::restore_graphics()
 {
+    // intentionally do nothing
 }
 
 void DiskDriver::get_max_screen(int &width, int &height)
@@ -398,6 +402,7 @@ void DiskDriver::get_max_screen(int &width, int &height)
 
 void DiskDriver::flush()
 {
+    // intentionally do nothing
 }
 
 static DiskDriver s_disk_driver{};
