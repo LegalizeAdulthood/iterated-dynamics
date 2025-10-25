@@ -968,7 +968,7 @@ Orbit2D::Orbit2D() :
         break;
     }
 
-    if (g_inside_color > COLOR_BLACK)
+    if (g_inside_color > +ColorMethod::COLOR_BLACK)
     {
         m_color = g_inside_color;
     }
@@ -1231,7 +1231,7 @@ bool dynamic2d_per_image()
             s_dt = 0.01;
         }
     }
-    if (g_outside_color == SUM)
+    if (g_outside_color == +ColorMethod::SUM)
     {
         g_plot = plot_hist;
     }
@@ -1257,7 +1257,7 @@ Dynamic2D::Dynamic2D() :
         m_sound_var = &m_z;
     }
 
-    if (g_inside_color > COLOR_BLACK)
+    if (g_inside_color > +ColorMethod::COLOR_BLACK)
     {
         m_color = g_inside_color;
     }
@@ -1449,7 +1449,7 @@ int plot_orbits2d_setup()
 
     s_o_color = 1;
 
-    if (g_outside_color == SUM)
+    if (g_outside_color == +ColorMethod::SUM)
     {
         g_plot = plot_hist;
     }
@@ -1491,7 +1491,7 @@ int plot_orbits2d()
         end_resume();
     }
 
-    if (g_inside_color > COLOR_BLACK)
+    if (g_inside_color > +ColorMethod::COLOR_BLACK)
     {
         s_o_color = g_inside_color;
     }

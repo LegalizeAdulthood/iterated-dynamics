@@ -427,7 +427,7 @@ static void init_vars_fractal()
     g_inside_color = 0;                                  // inside color = black (in default colormap)
     g_fill_color = -1;                                   // no special fill color
     g_user.biomorph_value = -1;                          // turn off biomorph flag
-    g_outside_color = ITER;                              // outside color = -1 (not used)
+    g_outside_color = +ColorMethod::ITER;                // outside color = -1 (not used)
     g_max_iterations = INITIAL_MAX_ITERATIONS;           // initial max iter
     g_user.std_calc_mode = CalcMode::SOLID_GUESS;        // initial solid-guessing
     g_stop_pass = 0;                                     // initial guessing stop pass
@@ -2169,15 +2169,15 @@ static CmdArgFlags cmd_inside(const Command &cmd)
     };
 
     const Inside inside_names[] = {
-        {"zmag", ZMAG},              //
-        {"bof60", BOF60},            //
-        {"bof61", BOF61},            //
-        {"epsiloncross", EPS_CROSS}, //
-        {"startrail", STAR_TRAIL},   //
-        {"period", PERIOD},          //
-        {"fmod", FMODI},             //
-        {"atan", ATANI},             //
-        {"maxiter", -1}              //
+        {"zmag", +ColorMethod::ZMAG},              //
+        {"bof60", +ColorMethod::BOF60},            //
+        {"bof61", +ColorMethod::BOF61},            //
+        {"epsiloncross", +ColorMethod::EPS_CROSS}, //
+        {"startrail", +ColorMethod::STAR_TRAIL},   //
+        {"period", +ColorMethod::PERIOD},          //
+        {"fmod", +ColorMethod::FMODI},             //
+        {"atan", +ColorMethod::ATANI},             //
+        {"maxiter", +ColorMethod::ITER}            //
     };
     for (const auto &[arg, inside] : inside_names)
     {
@@ -2703,27 +2703,27 @@ static CmdArgFlags cmd_outside(const Command &cmd)
     struct Outside
     {
         std::string_view arg;
-        int outside;
+        ColorMethod outside;
     };
     static const Outside OUTSIDES[] = {
-        {"iter", ITER}, //
-        {"real", REAL}, //
-        {"imag", IMAG}, //
-        {"mult", MULT}, //
-        {"summ", SUM},  //
-        {"atan", ATAN}, //
-        {"fmod", FMOD}, //
-        {"tdis", TDIS}  //
+        {"iter", ColorMethod::ITER}, //
+        {"real", ColorMethod::REAL}, //
+        {"imag", ColorMethod::IMAG}, //
+        {"mult", ColorMethod::MULT}, //
+        {"summ", ColorMethod::SUM},  //
+        {"atan", ColorMethod::ATAN}, //
+        {"fmod", ColorMethod::FMOD}, //
+        {"tdis", ColorMethod::TDIS}  //
     };
     for (const auto &[arg, outside] : OUTSIDES)
     {
         if (cmd.value == arg)
         {
-            g_outside_color = outside;
+            g_outside_color = +outside;
             return CmdArgFlags::FRACTAL_PARAM;
         }
     }
-    if (cmd.num_val == NON_NUMERIC || cmd.num_val < TDIS || cmd.num_val > 255)
+    if (cmd.num_val == NON_NUMERIC || cmd.num_val < +ColorMethod::TDIS || cmd.num_val > 255)
     {
         return cmd.bad_arg();
     }

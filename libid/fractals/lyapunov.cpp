@@ -74,7 +74,7 @@ int lyapunov_type()
         b = dx_pixel();
     }
     g_color = lyapunov_cycles(s_filter_cycles, a, b);
-    if (g_inside_color > COLOR_BLACK && g_color == 0)
+    if (g_inside_color > +ColorMethod::COLOR_BLACK && g_color == 0)
     {
         g_color = g_inside_color;
     }
@@ -138,7 +138,7 @@ bool lyapunov_per_image()
         s_lya_rxy[s_lya_length++] = (i & 1 << t) != 0;
     }
     s_lya_rxy[s_lya_length++] = 0;
-    if (g_inside_color < COLOR_BLACK)
+    if (g_inside_color < +ColorMethod::COLOR_BLACK)
     {
         stop_msg("Sorry, inside options other than inside=nnn are not supported by the lyapunov");
         g_inside_color = 1;

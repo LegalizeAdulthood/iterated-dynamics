@@ -26,7 +26,7 @@ static int s_periodicity_color{};
 
 void calc_mandelbrot_init()
 {
-    s_inside_color = g_inside_color < COLOR_BLACK ? g_max_iterations : g_inside_color;
+    s_inside_color = g_inside_color < +ColorMethod::COLOR_BLACK ? g_max_iterations : g_inside_color;
     s_periodicity_color = g_periodicity_check < 0 ? 7 : s_inside_color;
     g_old_color_iter = 0;
 }
@@ -153,7 +153,7 @@ pop_stack:
     return g_color_iter;
 
 over_bailout_87:
-    if (g_outside_color <= REAL)
+    if (g_outside_color <= +ColorMethod::REAL)
     {
         g_new_z.x = x;
         g_new_z.y = y;
@@ -173,38 +173,38 @@ over_bailout_87:
         g_color_iter = 1;
     }
     g_keyboard_check_interval -= g_real_color_iter;
-    if (g_outside_color == ITER)
+    if (g_outside_color == +ColorMethod::ITER)
     {
     }
-    else if (g_outside_color > REAL)
+    else if (g_outside_color > +ColorMethod::REAL)
     {
         g_color_iter = g_outside_color;
     }
     else
     {
         // special_outside
-        if (g_outside_color == REAL)
+        if (g_outside_color == +ColorMethod::REAL)
         {
             g_color_iter += static_cast<long>(g_new_z.x) + 7;
         }
-        else if (g_outside_color == IMAG)
+        else if (g_outside_color == +ColorMethod::IMAG)
         {
             g_color_iter += static_cast<long>(g_new_z.y) + 7;
         }
-        else if (g_outside_color == MULT && g_new_z.y != 0.0)
+        else if (g_outside_color == +ColorMethod::MULT && g_new_z.y != 0.0)
         {
             g_color_iter = static_cast<long>(static_cast<double>(g_color_iter) * (g_new_z.x / g_new_z.y));
         }
-        else if (g_outside_color == SUM)
+        else if (g_outside_color == +ColorMethod::SUM)
         {
             g_color_iter += static_cast<long>(g_new_z.x + g_new_z.y);
         }
-        else if (g_outside_color == ATAN)
+        else if (g_outside_color == +ColorMethod::ATAN)
         {
             g_color_iter = static_cast<long>(std::abs(std::atan2(g_new_z.y, g_new_z.x) * g_atan_colors / PI));
         }
         // check_color
-        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != FMOD)
+        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != +ColorMethod::FMOD)
         {
             g_color_iter = 1;
         }

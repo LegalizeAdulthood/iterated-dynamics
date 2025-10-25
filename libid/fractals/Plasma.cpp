@@ -160,7 +160,7 @@ Plasma::Plasma() :
         if (pot_start_disk() >= 0)
         {
             m_max_plasma = 0xFFFF;
-            if (g_outside_color >= COLOR_BLACK)
+            if (g_outside_color >= +ColorMethod::COLOR_BLACK)
             {
                 g_plot = plot_cast(put_pot_border);
             }
@@ -174,7 +174,7 @@ Plasma::Plasma() :
         {
             m_max_plasma = 0;        // can't do potential (startdisk failed)
             g_params[3]   = 0;
-            if (g_outside_color >= COLOR_BLACK)
+            if (g_outside_color >= +ColorMethod::COLOR_BLACK)
             {
                 g_plot    = put_color_border;
             }
@@ -187,7 +187,7 @@ Plasma::Plasma() :
     }
     else
     {
-        if (g_outside_color >= COLOR_BLACK)
+        if (g_outside_color >= +ColorMethod::COLOR_BLACK)
         {
             g_plot    = put_color_border;
         }

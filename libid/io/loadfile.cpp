@@ -587,8 +587,9 @@ static void backwards_info_pre9(const FractalInfo &read_info)
     {
         /* forcesymmetry==1000 means we want to force symmetry but don't
             know which symmetry yet, will find out in setsymmetry() */
-        if (g_outside_color == REAL || g_outside_color == IMAG || g_outside_color == MULT ||
-            g_outside_color == SUM || g_outside_color == ATAN)
+        if (g_outside_color == +ColorMethod::REAL || g_outside_color == +ColorMethod::IMAG ||
+            g_outside_color == +ColorMethod::MULT || g_outside_color == +ColorMethod::SUM ||
+            g_outside_color == +ColorMethod::ATAN)
         {
             if (g_force_symmetry == SymmetryType::NOT_FORCED)
             {
@@ -1744,9 +1745,9 @@ void backwards_legacy_v20()
     // Fractype == FP type is not seen from PAR file ?????
     g_bad_outside = g_file_version <= 1960                                                 //
         && (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::JULIA) //
-        && g_outside_color <= REAL && g_outside_color >= SUM;
+        && g_outside_color <= +ColorMethod::REAL && g_outside_color >= +ColorMethod::SUM;
 
-    if (g_file_version < 1961 && g_inside_color == EPS_CROSS)
+    if (g_file_version < 1961 && g_inside_color == +ColorMethod::EPS_CROSS)
     {
         g_close_proximity = 0.01;
     }

@@ -309,7 +309,8 @@ int wrapped_positive_vary_int(const int rand_value, const int limit, const Varia
 
 void vary_inside(GeneBase gene[], const int rand_val, const int i)
 {
-    constexpr int choices[9] = { ZMAG, BOF60, BOF61, EPS_CROSS, STAR_TRAIL, PERIOD, FMODI, ATANI, ITER };
+    constexpr int choices[9] = {+ColorMethod::ZMAG, +ColorMethod::BOF60, +ColorMethod::BOF61, +ColorMethod::EPS_CROSS,
+        +ColorMethod::STAR_TRAIL, +ColorMethod::PERIOD, +ColorMethod::FMODI, +ColorMethod::ATANI, +ColorMethod::ITER};
     if (gene[i].mutate != Variations::NONE)
     {
         *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
@@ -318,7 +319,8 @@ void vary_inside(GeneBase gene[], const int rand_val, const int i)
 
 void vary_outside(GeneBase gene[], const int rand_val, const int i)
 {
-    constexpr int choices[8] = { ITER, REAL, IMAG, MULT, SUM, ATAN, FMOD, TDIS };
+    constexpr int choices[8] = {+ColorMethod::ITER, +ColorMethod::REAL, +ColorMethod::IMAG, +ColorMethod::MULT,
+        +ColorMethod::SUM, +ColorMethod::ATAN, +ColorMethod::FMOD, +ColorMethod::TDIS};
     if (gene[i].mutate != Variations::NONE)
     {
         *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 8, gene[i].mutate)];

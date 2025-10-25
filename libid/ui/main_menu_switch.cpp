@@ -279,15 +279,15 @@ static MainState prompt_options(MainContext &context)
         g_true_color = false;          // truecolor doesn't play well with the evolver
     }
     if (g_max_iterations > old_max_iterations                         //
-        && g_inside_color >= COLOR_BLACK                              //
+        && g_inside_color >= +ColorMethod::COLOR_BLACK                //
         && g_calc_status == CalcStatus::COMPLETED                     //
         && g_cur_fractal_specific->calc_type == standard_fractal_type //
         && !g_log_map_flag                                            //
-        && !g_true_color // recalc not yet implemented with truecolor
+        && !g_true_color                                              // recalc not yet implemented with truecolor
         && (g_user.std_calc_mode != CalcMode::TESSERAL || g_fill_color <= -1) // tesseral with fill doesn't work
-        && g_user.std_calc_mode != CalcMode::ORBIT                         //
-        && i == 1                                                          // nothing else changed
-        && g_outside_color != ATAN)
+        && g_user.std_calc_mode != CalcMode::ORBIT                            //
+        && i == 1                                                             // nothing else changed
+        && g_outside_color != +ColorMethod::ATAN)
     {
         g_quick_calc = true;
         g_old_std_calc_mode = g_user.std_calc_mode;

@@ -142,15 +142,15 @@ MakeParParams::MakeParParams()
     if (m_prompt_record_colors)
     {
         --max_color;
-        if (g_inside_color > COLOR_BLACK && g_inside_color > max_color)
+        if (g_inside_color > +ColorMethod::COLOR_BLACK && g_inside_color > max_color)
         {
             max_color = g_inside_color;
         }
-        if (g_outside_color > COLOR_BLACK && g_outside_color > max_color)
+        if (g_outside_color > +ColorMethod::COLOR_BLACK && g_outside_color > max_color)
         {
             max_color = g_outside_color;
         }
-        if (g_distance_estimator < COLOR_BLACK && -g_distance_estimator > max_color)
+        if (g_distance_estimator < +ColorMethod::COLOR_BLACK && -g_distance_estimator > max_color)
         {
             max_color = static_cast<int>(-g_distance_estimator);
         }
@@ -1098,42 +1098,42 @@ static void write_batch_params(
         {
             put_param(" fillcolor=%d", g_fill_color);
         }
-        if (g_inside_color != 0)
+        if (g_inside_color != +ColorMethod::COLOR_BLACK)
         {
             put_param(" inside=");
-            if (g_inside_color == ITER)
+            if (g_inside_color == +ColorMethod::ITER)
             {
                 put_param("maxiter");
             }
-            else if (g_inside_color == ZMAG)
+            else if (g_inside_color == +ColorMethod::ZMAG)
             {
                 put_param("zmag");
             }
-            else if (g_inside_color == BOF60)
+            else if (g_inside_color == +ColorMethod::BOF60)
             {
                 put_param("bof60");
             }
-            else if (g_inside_color == BOF61)
+            else if (g_inside_color == +ColorMethod::BOF61)
             {
                 put_param("bof61");
             }
-            else if (g_inside_color == EPS_CROSS)
+            else if (g_inside_color == +ColorMethod::EPS_CROSS)
             {
                 put_param("epsiloncross");
             }
-            else if (g_inside_color == STAR_TRAIL)
+            else if (g_inside_color == +ColorMethod::STAR_TRAIL)
             {
                 put_param("startrail");
             }
-            else if (g_inside_color == PERIOD)
+            else if (g_inside_color == +ColorMethod::PERIOD)
             {
                 put_param("period");
             }
-            else if (g_inside_color == FMODI)
+            else if (g_inside_color == +ColorMethod::FMODI)
             {
                 put_param("fmod");
             }
-            else if (g_inside_color == ATANI)
+            else if (g_inside_color == +ColorMethod::ATANI)
             {
                 put_param("atan");
             }
@@ -1142,39 +1142,40 @@ static void write_batch_params(
                 put_param("%d", g_inside_color);
             }
         }
-        if (g_close_proximity != 0.01
-            && (g_inside_color == EPS_CROSS || g_inside_color == FMODI || g_outside_color == FMOD))
+        if (g_close_proximity != 0.01 &&
+            (g_inside_color == +ColorMethod::EPS_CROSS || g_inside_color == +ColorMethod::FMODI ||
+                g_outside_color == +ColorMethod::FMOD))
         {
             put_param(" proximity=%.15g", g_close_proximity);
         }
-        if (g_outside_color != ITER)
+        if (g_outside_color != +ColorMethod::ITER)
         {
             put_param(" outside=");
-            if (g_outside_color == REAL)
+            if (g_outside_color == +ColorMethod::REAL)
             {
                 put_param("real");
             }
-            else if (g_outside_color == IMAG)
+            else if (g_outside_color == +ColorMethod::IMAG)
             {
                 put_param("imag");
             }
-            else if (g_outside_color == MULT)
+            else if (g_outside_color == +ColorMethod::MULT)
             {
                 put_param("mult");
             }
-            else if (g_outside_color == SUM)
+            else if (g_outside_color == +ColorMethod::SUM)
             {
                 put_param("summ");
             }
-            else if (g_outside_color == ATAN)
+            else if (g_outside_color == +ColorMethod::ATAN)
             {
                 put_param("atan");
             }
-            else if (g_outside_color == FMOD)
+            else if (g_outside_color == +ColorMethod::FMOD)
             {
                 put_param("fmod");
             }
-            else if (g_outside_color == TDIS)
+            else if (g_outside_color == +ColorMethod::TDIS)
             {
                 put_param("tdis");
             }

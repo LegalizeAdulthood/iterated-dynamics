@@ -51,7 +51,7 @@ enum class SymmetryType
 };
 
 // values for inside/outside
-enum
+enum class ColorMethod
 {
     COLOR_BLACK = 0,
     ITER = -1,
@@ -71,6 +71,11 @@ enum
     FMODI = -103,
     ATANI = -104
 };
+
+constexpr int operator+(ColorMethod value)
+{
+    return static_cast<int>(value);
+}
 
 enum class Passes
 {

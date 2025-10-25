@@ -85,7 +85,7 @@ Bifurcation::Bifurcation()
     }
     if (m_mono)
     {
-        if (g_inside_color != COLOR_BLACK)
+        if (g_inside_color != +ColorMethod::COLOR_BLACK)
         {
             m_outside_x = 0;
             g_inside_color = 1;

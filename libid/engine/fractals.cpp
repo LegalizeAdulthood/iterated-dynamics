@@ -188,7 +188,7 @@ int mandel_per_pixel()
         g_old_z = g_init;
     }
 
-    if ((g_inside_color == BOF60 || g_inside_color == BOF61) && g_bof_match_book_images)
+    if ((g_inside_color == +ColorMethod::BOF60 || g_inside_color == +ColorMethod::BOF61) && g_bof_match_book_images)
     {
         /* kludge to match "Beauty of Fractals" picture since we start
            Mandelbrot iteration with init rather than 0 */
