@@ -23,18 +23,16 @@ Driver *g_driver{};
 
 void load_driver(Driver *drv, int *argc, char **argv)
 {
-    if (drv != nullptr)
+    if (drv == nullptr || !drv->init(argc, argv))
     {
-        const int num = drv->init(argc, argv);
-        if (num > 0)
-        {
-            if (! g_driver)
-            {
-                g_driver = drv;
-            }
-            s_available.push_back(drv);
-        }
+        return;
     }
+
+    if (!g_driver)
+    {
+        g_driver = drv;
+    }
+    s_available.push_back(drv);
 }
 
 //------------------------------------------------------------
