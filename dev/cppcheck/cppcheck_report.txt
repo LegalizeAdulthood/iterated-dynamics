@@ -94,9 +94,6 @@ libid/engine/cmdfiles.cpp:3458:18: style: Consider using std::fill or std::gener
 libid/engine/cmdfiles.cpp:2168:13: style: struct member 'Inside::inside' is never used. [unusedStructMember]
         int inside;
             ^
-libid/engine/cmdfiles.cpp:2706:13: style: struct member 'Outside::outside' is never used. [unusedStructMember]
-        int outside;
-            ^
 libid/fractals/Ant.cpp:258:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
@@ -1642,13 +1639,13 @@ libid/io/library.cpp:104:9: style: Consider using std::any_of algorithm instead 
 libid/io/library.cpp:112:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/loadfile.cpp:1754:19: style: Variable 'g_bad_outside' is reassigned a value before the old one has been used. [redundantAssignment]
+libid/io/loadfile.cpp:1755:19: style: Variable 'g_bad_outside' is reassigned a value before the old one has been used. [redundantAssignment]
     g_bad_outside = false;
                   ^
-libid/io/loadfile.cpp:1745:19: note: g_bad_outside is assigned
+libid/io/loadfile.cpp:1746:19: note: g_bad_outside is assigned
     g_bad_outside = g_file_version <= 1960                                                 //
                   ^
-libid/io/loadfile.cpp:1754:19: note: g_bad_outside is overwritten
+libid/io/loadfile.cpp:1755:19: note: g_bad_outside is overwritten
     g_bad_outside = false;
                   ^
 libid/io/make_mig.cpp:330:25: style: The if condition is the same as the previous if condition [duplicateCondition]
@@ -1681,13 +1678,13 @@ libid/ui/editpal.cpp:2214:23: note: Calling function 'set_curr', 1st argument '-
 libid/ui/editpal.cpp:1639:22: note: Negative array index
     else if (curr == m_curr[which] || curr < 0)
                      ^
-libid/ui/evolve.cpp:783:27: style: The comparison 'old_variations > 0' is always false. [knownConditionTrueFalse]
+libid/ui/evolve.cpp:785:27: style: The comparison 'old_variations > 0' is always false. [knownConditionTrueFalse]
         || old_variations > 0)
                           ^
-libid/ui/evolve.cpp:634:26: note: 'old_variations' is assigned value '0' here.
+libid/ui/evolve.cpp:636:26: note: 'old_variations' is assigned value '0' here.
     int old_variations = 0;
                          ^
-libid/ui/evolve.cpp:783:27: note: The comparison 'old_variations > 0' is always false.
+libid/ui/evolve.cpp:785:27: note: The comparison 'old_variations > 0' is always false.
         || old_variations > 0)
                           ^
 libid/ui/file_get_window.cpp:847:18: style: Consider using std::replace_if algorithm instead of a raw loop. [useStlAlgorithm]
@@ -1711,13 +1708,13 @@ libid/ui/get_fract_type.cpp:140:5: note: Non-local variable 's_ft_choices' will 
 libid/ui/get_rds_params.cpp:73:22: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
                 elem = ' ';
                      ^
-libid/ui/make_batch_file.cpp:1443:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1444:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
 libid/ui/make_batch_file.cpp:822:9: note: Assuming that condition 'colors_only' is not redundant
     if (colors_only)
         ^
-libid/ui/make_batch_file.cpp:1443:9: note: Condition '!colors_only' is always true
+libid/ui/make_batch_file.cpp:1444:9: note: Condition '!colors_only' is always true
     if (!colors_only)
         ^
 libid/ui/make_batch_file.cpp:259:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
@@ -1798,13 +1795,13 @@ win32/WinText.cpp:476:9: note: Same expression used in consecutive assignments o
 win32/WinText.cpp:606:32: portability: Shifting a negative value is technically undefined behaviour [shiftNegativeLHS]
             int background = k >> 4;
                                ^
-wx/Frame.cpp:260:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
+wx/Frame.cpp:265:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
     if (quitting)
         ^
-wx/Frame.cpp:241:12: note: Assuming that condition '!quitting' is not redundant
+wx/Frame.cpp:246:12: note: Assuming that condition '!quitting' is not redundant
     while (!quitting)
            ^
-wx/Frame.cpp:260:9: note: Condition 'quitting' is always true
+wx/Frame.cpp:265:9: note: Condition 'quitting' is always true
     if (quitting)
         ^
 wx/TextScreen.cpp:168:9: style:inconclusive: Same expression used in consecutive assignments of 'max_col' and 'col'. [duplicateAssignExpression]
