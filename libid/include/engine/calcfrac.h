@@ -59,8 +59,8 @@ enum class ColorMethod
     IMAG = -3,
     MULT = -4,
     SUM = -5,
-    ATAN = -6,
-    FMOD = -7,
+    ATAN = -6, // for outside
+    FMOD = -7, // for outside
     TDIS = -8,
     ZMAG = -59,
     BOF60 = -60,
@@ -68,8 +68,8 @@ enum class ColorMethod
     EPS_CROSS = -100,
     STAR_TRAIL = -101,
     PERIOD = -102,
-    FMODI = -103,
-    ATANI = -104
+    FMODI = -103, // for inside
+    ATANI = -104  // for inside
 };
 
 constexpr int operator+(ColorMethod value)
