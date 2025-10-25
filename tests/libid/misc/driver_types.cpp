@@ -36,4 +36,13 @@ Driver *get_wx_driver()
 }
 #endif
 
+#if ID_HAVE_WX_DISK_DRIVER
+static MockDriver s_wx_disk_driver;
+
+Driver *get_wx_disk_driver()
+{
+    return &s_wx_disk_driver;
+}
+#endif
+
 } // namespace id::misc

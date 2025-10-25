@@ -8,11 +8,13 @@
 
 // Define the drivers to be included in the compilation:
 //  ID_HAVE_WX_DRIVER          wxWidgets driver
+//  ID_HAVE_WX_DISK_DRIVER     wxWidgets disk driver
 //  ID_HAVE_CURSES_DRIVER      Curses based disk driver (no current implementation)
 //  ID_HAVE_GDI_DRIVER         Win32 GDI driver
 //  ID_HAVE_WIN32_DISK_DRIVER  Win32 disk driver
 //
 #cmakedefine01 ID_HAVE_WX_DRIVER
+#cmakedefine01 ID_HAVE_WX_DISK_DRIVER
 #cmakedefine01 ID_HAVE_CURSES_DRIVER
 #cmakedefine01 ID_HAVE_GDI_DRIVER
 #cmakedefine01 ID_HAVE_WIN32_DISK_DRIVER
@@ -29,6 +31,9 @@ extern Driver *get_disk_driver();
 #endif
 #if ID_HAVE_WX_DRIVER
 extern Driver *get_wx_driver();
+#endif
+#if ID_HAVE_WX_DISK_DRIVER
+extern Driver *get_wx_disk_driver();
 #endif
 
 } // namespace id::misc

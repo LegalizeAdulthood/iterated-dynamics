@@ -27,11 +27,13 @@ check_include_file("Windows.h"  HAVE_WINDOWS_H)
 # Determine available driver types
 if(ID_USE_WX)
     set(ID_HAVE_WX_DRIVER           ON)
+    set(ID_HAVE_WX_DISK_DRIVER      ON)
     set(ID_HAVE_CURSES_DRIVER       OFF)
     set(ID_HAVE_GDI_DRIVER          OFF)
     set(ID_HAVE_WIN32_DISK_DRIVER   OFF)
 else()
     set(ID_HAVE_WX_DRIVER           OFF)
+    set(ID_HAVE_WX_DISK_DRIVER      OFF)
     set(ID_HAVE_CURSES_DRIVER       OFF) # not yet implemented
     set(ID_HAVE_GDI_DRIVER          ${HAVE_WINDOWS_H})
     set(ID_HAVE_WIN32_DISK_DRIVER   ${HAVE_WINDOWS_H})

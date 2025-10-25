@@ -56,6 +56,9 @@ int init_drivers(int *argc, char **argv)
 #if ID_HAVE_WX_DRIVER
     load_driver(get_wx_driver(), argc, argv);
 #endif
+#if ID_HAVE_WX_DISK_DRIVER
+    load_driver(get_wx_disk_driver(), argc, argv);
+#endif
 
     return static_cast<int>(s_available.size()); // number of drivers supported at runtime
 }
