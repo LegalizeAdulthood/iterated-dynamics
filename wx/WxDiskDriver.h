@@ -32,6 +32,8 @@ public:
     bool validate_mode(const engine::VideoInfo &mode) override;
     void create_window() override;
     bool resize() override;
+    void read_palette() override;
+    void write_palette() override;
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;

@@ -485,59 +485,6 @@ void WxBaseDriver::create_window()
     wxGetApp().create_window(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
 }
 
-bool WxBaseDriver::resize()
-{
-    return wxGetApp().resize(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
-}
-
-void WxBaseDriver::read_palette()
-{
-    if (!g_got_real_dac)
-    {
-        return;
-    }
-
-    gui::Colormap map{wxGetApp().read_palette()};
-    for (size_t i = 0; i < map.size(); ++i)
-    {
-        g_dac_box[i][0] = map[i][0];
-        g_dac_box[i][1] = map[i][1];
-        g_dac_box[i][2] = map[i][2];
-    }
-}
-
-void WxBaseDriver::write_palette()
-{
-    gui::Colormap map{};
-    for (size_t i = 0; i < map.size(); ++i)
-    {
-        map[i][0] = g_dac_box[i][0];
-        map[i][1] = g_dac_box[i][1];
-        map[i][2] = g_dac_box[i][2];
-    }
-    wxGetApp().write_palette(map);
-}
-
-int WxBaseDriver::read_pixel(int x, int y)
-{
-    return wxGetApp().read_pixel(x, y);
-}
-
-void WxBaseDriver::write_pixel(int x, int y, int color)
-{
-    wxGetApp().write_pixel(x, y, color);
-}
-
-void WxBaseDriver::draw_line(int x1, int y1, int x2, int y2, int color)
-{
-    geometry::draw_line(x1, y1, x2, y2, color);
-}
-
-void WxBaseDriver::display_string(int x, int y, int fg, int bg, const char *text)
-{
-    wxGetApp().display_string(x, y, fg, bg, text);
-}
-
 void WxBaseDriver::save_graphics()
 {
     wxGetApp().save_graphics();

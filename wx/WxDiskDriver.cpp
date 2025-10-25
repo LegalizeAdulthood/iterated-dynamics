@@ -188,6 +188,30 @@ bool WxDiskDriver::resize()
     return true;
 }
 
+void WxDiskDriver::read_palette()
+{
+    if (!g_got_real_dac)
+    {
+        return;
+    }
+    for (int i = 0; i < 256; i++)
+    {
+        g_dac_box[i][0] = m_clut[i][0];
+        g_dac_box[i][1] = m_clut[i][1];
+        g_dac_box[i][2] = m_clut[i][2];
+    }
+}
+
+void WxDiskDriver::write_palette()
+{
+    for (int i = 0; i < 256; i++)
+    {
+        m_clut[i][0] = g_dac_box[i][0];
+        m_clut[i][1] = g_dac_box[i][1];
+        m_clut[i][2] = g_dac_box[i][2];
+    }
+}
+
 int WxDiskDriver::read_pixel(int x, int y)
 {
     return wxGetApp().read_pixel(x, y);
