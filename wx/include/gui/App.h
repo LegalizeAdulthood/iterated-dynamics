@@ -2,8 +2,6 @@
 //
 #pragma once
 
-#include "engine/video_mode.h"
-#include "engine/VideoInfo.h"
 #include "gui/Colormap.h"
 #include "gui/Screen.h"
 
@@ -60,4 +58,4 @@ private:
 
 } // namespace id::gui
 
-id::gui::App &wxGetApp();
+wxDECLARE_APP(id::gui::App);
