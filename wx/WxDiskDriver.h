@@ -3,6 +3,7 @@
 #pragma once
 
 #include <config/driver_types.h>
+#include <config/port.h>
 #include <misc/Driver.h>
 
 #include "WxBaseDriver.h"
@@ -37,6 +38,11 @@ public:
     void display_string(int x, int y, int fg, int bg, const char *text) override;
     void save_graphics() override;
     void restore_graphics() override;
+
+private:
+    int m_width{};
+    int m_height{};
+    Byte m_clut[256][3]{};
 };
 
 Driver *get_wx_disk_driver();

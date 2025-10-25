@@ -90,6 +90,14 @@ void Frame::restore_graphics()
     m_plot->restore_graphics();
 }
 
+void Frame::fit_to_text()
+{
+    if (GetClientSize() != m_text_screen->GetBestSize())
+    {
+        SetClientSize(m_text_screen->GetBestSize());
+    }
+}
+
 wxSize Frame::DoGetBestSize() const
 {
     return get_client_size();

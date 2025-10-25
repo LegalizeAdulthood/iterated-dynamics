@@ -181,8 +181,7 @@ void App::restore_graphics()
     m_frame->restore_graphics();
 }
 
-bool App::get_filename(
-    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
+bool App::get_filename(const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
 {
     io::CurrentPathSaver saved_current;
     std::filesystem::path path{result_filename};
@@ -210,6 +209,11 @@ bool App::get_filename(
         return false;
     }
     return true;
+}
+
+void App::fit_to_text()
+{
+    m_frame->fit_to_text();
 }
 
 } // namespace id::gui

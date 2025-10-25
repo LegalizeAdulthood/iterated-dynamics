@@ -59,6 +59,7 @@ public:
     void display_string(int x, int y, int fg, int bg, const char *text);
     void save_graphics();
     void restore_graphics();
+    void fit_to_text();
 
 protected:
     // Override DoGetBestSize to return the maximum size needed for either control

@@ -172,7 +172,20 @@ void WxDiskDriver::create_window()
 
 bool WxDiskDriver::resize()
 {
-    return wxGetApp().resize(g_video_table[g_adapter].x_dots, g_video_table[g_adapter].y_dots);
+    wxGetApp().fit_to_text();
+    if (g_video_table[g_adapter].x_dots == m_width
+        && g_video_table[g_adapter].y_dots == m_height)
+    {
+        return false;
+    }
+
+    if (g_disk_flag)
+    {
+        end_disk();
+    }
+    start_disk();
+
+    return true;
 }
 
 int WxDiskDriver::read_pixel(int x, int y)
