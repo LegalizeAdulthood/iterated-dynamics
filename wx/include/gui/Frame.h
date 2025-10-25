@@ -60,6 +60,7 @@ public:
     void save_graphics();
     void restore_graphics();
     void fit_to_text();
+    void show_text_window(bool show);
 
 protected:
     // Override DoGetBestSize to return the maximum size needed for either control

@@ -151,15 +151,12 @@ bool WxDiskDriver::validate_mode(const VideoInfo &mode)
 
 void WxDiskDriver::pause()
 {
-    // TODO: hide text window
-    WxBaseDriver::pause();
+    wxGetApp().show_text_window(false);
 }
 
 void WxDiskDriver::resume()
 {
-    // TODO: show text window
-    // resume text window
-    WxBaseDriver::resume();
+    wxGetApp().show_text_window(true);
 }
 
 void WxDiskDriver::create_window()

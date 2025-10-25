@@ -98,6 +98,11 @@ void Frame::fit_to_text()
     }
 }
 
+void Frame::show_text_window(bool show)
+{
+    m_text_screen->Show(show);
+}
+
 wxSize Frame::DoGetBestSize() const
 {
     return get_client_size();

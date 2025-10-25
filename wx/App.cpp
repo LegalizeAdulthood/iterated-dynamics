@@ -216,4 +216,9 @@ void App::fit_to_text()
     m_frame->fit_to_text();
 }
 
+void App::show_text_window(bool show)
+{
+    m_frame->show_text_window(show);
+}
+
 } // namespace id::gui

@@ -51,6 +51,7 @@ public:
     void restore_graphics();
     bool get_filename(const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename);
     void fit_to_text();
+    void show_text_window(bool show);
 
 private:
     Frame *m_frame{};
