@@ -17,7 +17,7 @@
 
 #include <fmt/format.h>
 
-#include <array> // std::size
+#include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -35,10 +35,10 @@ namespace id::ui
 
 int get_toggles2()
 {
-    const char *choices[18];
-    FullScreenValues values[23];
-    double old_potential_param[3];
-    double old_inversion[3];
+    std::array<const char *, 18> choices;
+    std::array<FullScreenValues, 23> values;
+    std::array<double, 3> old_potential_param;
+    std::array<double, 3> old_inversion;
 
     // fill up the choices (and previous values) arrays
     int k = -1;
@@ -114,7 +114,7 @@ int get_toggles2()
     {
         const int i = full_screen_prompt("Extended Options\n"
                               "(not all combinations make sense)",
-                              k+1, choices, values, 0, nullptr);
+                              k+1, choices.data(), values.data(), 0, nullptr);
         g_help_mode = old_help_mode;
         if (i < 0)
         {
