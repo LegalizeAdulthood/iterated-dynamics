@@ -14,6 +14,7 @@
 #include "ui/id_keys.h"
 
 #include <algorithm>
+#include <array>
 #include <iterator>
 
 using namespace id::engine;
@@ -30,10 +31,9 @@ namespace id::ui
 
 int passes_options()
 {
-    const char *choices[20];
+    std::array<const char *, 20> choices;
     const char *pass_calc_modes[] = {"rect", "line"};
-
-    FullScreenValues values[25];
+    std::array<FullScreenValues, 25> values;
     int i;
 
     const bool old_keep_screen_coords = g_keep_screen_coords;
@@ -79,7 +79,8 @@ pass_option_restart:
         i = full_screen_prompt("Passes Options\n"
                               "(not all combinations make sense)\n"
                               "(Press F2 for corner parameters)\n"
-                              "(Press F6 for calculation parameters)", k+1, choices, values, 64 | 4, nullptr);
+                              "(Press F6 for calculation parameters)", k+1,
+                              choices.data(), values.data(), 64 | 4, nullptr);
     }
     if (i < 0)
     {
