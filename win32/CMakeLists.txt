@@ -9,12 +9,12 @@ endif()
 string(TIMESTAMP CURRENT_YEAR "%Y")
 configure_file(id.rc.in id.rc @ONLY)
 
-add_library(id-resources STATIC
+add_library(id-resources INTERFACE
     Id.ico
     id.rc.in
     "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
     resource.h)
-target_include_directories(id-resources PRIVATE . "${CMAKE_CURRENT_BINARY_DIR}")
+target_include_directories(id-resources INTERFACE . "${CMAKE_CURRENT_BINARY_DIR}")
 target_folder(id-resources "Libraries")
 
 if(ID_USE_WX)
