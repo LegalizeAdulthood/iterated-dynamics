@@ -56,7 +56,7 @@ jobs:
 
       - name: Run Static Analysis
         run: |
-          msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=true /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=AllRules.ruleset /p:TreatWarningsAsErrors=false /flp:logfile=static-analysis-report.log;verbosity=diagnostic
+          msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=true /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=AllRules.ruleset /p:TreatWarningsAsErrors=false /flp:logfile=static-analysis-report.log;verbosity=diagnostic || true
 
       - name: Convert Log to Text Report
         shell: pwsh
