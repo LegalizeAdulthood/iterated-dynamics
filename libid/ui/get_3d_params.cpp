@@ -48,8 +48,8 @@ int get_3d_params()     // prompt for 3D parameters
 {
     int sphere;
     const char *s;
-    const char *prompts3d[21];
-    FullScreenValues values[21];
+    std::array<const char *, 21> prompts3d;
+    std::array<FullScreenValues, 21> values;
     int k;
 
 restart_1:
@@ -113,7 +113,7 @@ restart_1:
 
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_MODE};
-        k = full_screen_prompt("3D Mode Selection", k+1, prompts3d, values, 0, nullptr);
+        k = full_screen_prompt("3D Mode Selection", k+1, prompts3d.data(), values.data(), 0, nullptr);
     }
     if (k < 0)
     {
@@ -173,8 +173,8 @@ restart_1:
 
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
-        const char *choices[11];
-        int attributes[21];
+        std::array<const char *,11>choices;
+        std::array<int, 21> attributes;
         k = 0;
         choices[k++] = "make a surface grid";
         choices[k++] = "just draw the points";
@@ -198,8 +198,8 @@ restart_1:
         int i;
         {
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_FILL};
-            i = full_screen_choice(ChoiceFlags::HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices,
-                attributes, 0, 0, 0, +g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
+            i = full_screen_choice(ChoiceFlags::HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices.data(),
+                attributes.data(), 0, 0, 0, +g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
         }
         if (i < 0)
         {
@@ -315,7 +315,7 @@ restart_3:
     }
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_PARAMETERS};
-        k = full_screen_prompt(s, k, prompts3d, values, 0, nullptr);
+        k = full_screen_prompt(s, k, prompts3d.data(), values.data(), 0, nullptr);
     }
     if (k < 0)
     {
