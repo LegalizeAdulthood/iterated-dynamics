@@ -55,8 +55,9 @@ jobs:
           cmake --preset ci-debug
 
       - name: Run Static Analysis
+        continue-on-error: true
         run: |
-          msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=true /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=AllRules.ruleset /p:TreatWarningsAsErrors=false /flp:logfile=static-analysis-report.log;verbosity=diagnostic || true
+          msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=true /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=AllRules.ruleset /p:TreatWarningsAsErrors=false /flp:logfile=static-analysis-report.log;verbosity=diagnostic
 
       - name: Convert Log to Text Report
         shell: pwsh
