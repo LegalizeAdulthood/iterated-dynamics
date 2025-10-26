@@ -124,7 +124,8 @@ misc_group_sources("Git" FILES
     ".mailmap")
 misc_group_sources("GitHub" FILES
     "LICENSE.txt"
-    ".github/workflows/cmake.yml"
+    ".github/workflows/analysis.yml"
+    ".github/workflows/build.yml"
     ".github/workflows/wx-requirements.txt")
 misc_group_sources("VcPkg" FILES
     "vcpkg.json")
