@@ -67,42 +67,6 @@ jobs:
             /p:TreatWarningsAsErrors=false
             /flp:logfile=msvc-static-analysis-report.txt;verbosity=q
 
-            #/flp:logfile=static-analysis-report.log;verbosity=q
-            # with verbosity=q[uiet], only warnings and errors are logged and we don't need to format the output
-
-      #- name: Convert Log to Text Report
-      #  shell: pwsh
-      #  run: |
-      #    $logContent = Get-Content "static-analysis-report.log" -Raw
-      #    $analysisWarnings = $logContent | Select-String -Pattern "warning CA\d+:|warning C\d+:" -AllMatches
-      #    
-      #    $reportContent = @"
-      #    MSVC Static Analysis Report
-      #    Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC')
-      #    Repository: ${{github.repository}}
-      #    Commit: ${{github.sha}}
-      #    
-      #    ========================================
-      #    ANALYSIS SUMMARY
-      #    ========================================
-      #    
-      #    "@
-      #    
-      #    if ($analysisWarnings.Count -eq 0) {
-      #        $reportContent += "No static analysis warnings found.`n"
-      #    } else {
-      #        $reportContent += "Total warnings found: $($analysisWarnings.Count)`n`n"
-      #        $reportContent += "========================================`n"
-      #        $reportContent += "DETAILED WARNINGS`n"
-      #        $reportContent += "========================================`n`n"
-      #        
-      #        foreach ($warning in $analysisWarnings) {
-      #            $reportContent += "$($warning.Line)`n"
-      #        }
-      #    }
-      #    
-      #    $reportContent | Out-File -FilePath "msvc-static-analysis-report.txt" -Encoding UTF8
-
       - name: Upload Static Analysis Report
         uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
         with:
