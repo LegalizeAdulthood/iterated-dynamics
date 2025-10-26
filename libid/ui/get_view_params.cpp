@@ -16,6 +16,7 @@
 #include <fmt/format.h>
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -45,8 +46,8 @@ namespace id::ui
 
 int get_view_params()
 {
-    const char *choices[16];
-    FullScreenValues values[25];
+    std::array<const char *, 16> choices;
+    std::array<FullScreenValues, 25> values;
     int i;
     int x_max;
     int y_max;
@@ -143,7 +144,7 @@ get_view_restart:
 
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_VIEW};
-        i = full_screen_prompt("View Window Options", k+1, choices, values, 16, nullptr);
+        i = full_screen_prompt("View Window Options", k+1, choices.data(), values.data(), 16, nullptr);
     }
     if (i < 0)
     {
