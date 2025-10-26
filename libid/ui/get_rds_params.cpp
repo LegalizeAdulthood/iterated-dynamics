@@ -9,6 +9,7 @@
 #include "ui/help.h"
 #include "ui/stereo.h"
 
+#include <array>
 #include <cstring>
 #include <string>
 
@@ -25,22 +26,21 @@ int get_rds_params()
 {
     char rds6[60];
     const char *stereo_bars[] = {"none", "middle", "top"};
-    const char *rds_prompts[7] =
-    {
-        "Depth Effect (negative reverses front and back)",
-        "Image width in inches",
-        "Use grayscale value for depth? (if \"no\" uses color number)",
-        "Calibration bars",
-        "Use image map? (if \"no\" uses random dots)",
-        "  If yes, use current image map name? (see below)",
-        rds6
+    std::array<const char *, 7> rds_prompts{
+        "Depth Effect (negative reverses front and back)",              //
+        "Image width in inches",                                        //
+        "Use grayscale value for depth? (if \"no\" uses color number)", //
+        "Calibration bars",                                             //
+        "Use image map? (if \"no\" uses random dots)",                  //
+        "  If yes, use current image map name? (see below)",            //
+        rds6                                                            //
     };
     int ret;
     static char reuse = 0;
     driver_stack_screen();
     while (true)
     {
-        FullScreenValues values[7];
+        std::array<FullScreenValues, 7> values;
         ret = 0;
 
         int k = 0;
@@ -95,7 +95,8 @@ int get_rds_params()
         int choice;
         {
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS};
-            choice = full_screen_prompt("Random Dot Stereogram Parameters", k, rds_prompts, values, 0, nullptr);
+            choice = full_screen_prompt(
+                "Random Dot Stereogram Parameters", k, rds_prompts.data(), values.data(), 0, nullptr);
         }
         if (choice < 0)
         {
