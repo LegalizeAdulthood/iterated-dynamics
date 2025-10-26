@@ -83,6 +83,91 @@ jobs:
         path: ${{github.workspace}}/build-ci-html-docs/hc/src/id.html
 
   #############################################################################
+  msvc-static-analysis:
+    name: MSVC Static Analysis
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
+        with:
+          submodules: true
+
+      - name: Add NuGet sources
+        shell: bash
+        run: |
+          nuget \
+            sources add \
+            -Source "${{env.FEED_URL}}" \
+            -StorePasswordInClearText \
+            -Name GitHubPackages \
+            -UserName "${{github.repository_owner}}" \
+            -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+          nuget \
+            setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+            -Source "${{env.FEED_URL}}"
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
+        with:
+          cmake-version: '3.31'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2.0.0
+
+      - name: Configure CMake for Static Analysis
+        env: 
+          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+        run: |
+          cmake --version
+          cmake --preset ci-debug
+
+      - name: Run Static Analysis
+        run: |
+          msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=true /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=AllRules.ruleset /p:TreatWarningsAsErrors=false /flp:logfile=static-analysis-report.log;verbosity=diagnostic
+
+      - name: Convert Log to Text Report
+        shell: pwsh
+        run: |
+          $logContent = Get-Content "static-analysis-report.log" -Raw
+          $analysisWarnings = $logContent | Select-String -Pattern "warning CA\d+:|warning C\d+:" -AllMatches
+          
+          $reportContent = @"
+          MSVC Static Analysis Report
+          Generated: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss UTC')
+          Repository: ${{github.repository}}
+          Commit: ${{github.sha}}
+          
+          ========================================
+          ANALYSIS SUMMARY
+          ========================================
+          
+          "@
+          
+          if ($analysisWarnings.Count -eq 0) {
+              $reportContent += "No static analysis warnings found.`n"
+          } else {
+              $reportContent += "Total warnings found: $($analysisWarnings.Count)`n`n"
+              $reportContent += "========================================`n"
+              $reportContent += "DETAILED WARNINGS`n"
+              $reportContent += "========================================`n`n"
+              
+              foreach ($warning in $analysisWarnings) {
+                  $reportContent += "$($warning.Line)`n"
+              }
+          }
+          
+          $reportContent | Out-File -FilePath "msvc-static-analysis-report.txt" -Encoding UTF8
+
+      - name: Upload Static Analysis Report
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+        with:
+          name: MSVC-Static-Analysis
+          path: |
+            msvc-static-analysis-report.txt
+            static-analysis-report.log
+
+  #############################################################################
   build:
     needs: html-docs
     strategy:
