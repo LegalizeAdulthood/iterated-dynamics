@@ -32,6 +32,7 @@
 
 #include <fmt/format.h>
 
+#include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -125,9 +126,9 @@ static FractalType select_fract_type(FractalType t)
         MAX_FRACT_TYPES = 200
     };
     char type_name[40];
-    FractalTypeChoice storage[MAX_FRACT_TYPES]{};
-    FractalTypeChoice *choices[MAX_FRACT_TYPES];
-    int attributes[MAX_FRACT_TYPES];
+    std::array<FractalTypeChoice, MAX_FRACT_TYPES> storage{};
+    std::array<FractalTypeChoice *, MAX_FRACT_TYPES> choices;
+    std::array<int, MAX_FRACT_TYPES> attributes;
 
     // steal existing array for "choices"
     choices[0] = &storage[0];
@@ -172,8 +173,8 @@ static FractalType select_fract_type(FractalType t)
     type_name[0] = 0;
     const int done = full_screen_choice(ChoiceFlags::HELP | ChoiceFlags::INSTRUCTIONS,
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
-        "Press F2 for a description of the highlighted type", num_types, (const char **) choices, attributes,
-        0, 0, 0, j, nullptr, type_name, nullptr, sel_fract_type_help);
+        "Press F2 for a description of the highlighted type", num_types, (const char **) choices.data(),
+        attributes.data(), 0, 0, 0, j, nullptr, type_name, nullptr, sel_fract_type_help);
     if (done < 0)
     {
         return FractalType::NO_FRACTAL;
@@ -361,8 +362,8 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     const char *julia_orbit_name = nullptr;
     int num_params;
     int num_trig;
-    FullScreenValues param_values[30];
-    const char *choices[30];
+    std::array<FullScreenValues, 30> param_values;
+    std::array<const char *, 30> choices;
     // ReSharper disable once CppTooWideScope
     char bailout_msg[50];
     long old_bailout = 0L;
@@ -380,7 +381,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     FractalSpecific *jb_orbit = nullptr;
     int first_param = 0;
     int last_param  = MAX_PARAMS;
-    double old_param[MAX_PARAMS];
+    std::array<double, MAX_PARAMS> old_param;
     int fn_key_mask = 0;
 
     old_bailout = g_user.bailout_value;
@@ -592,7 +593,7 @@ gfp_top:
         int j = 0;
         for (int i = first_param; i < last_param; i++)
         {
-            const char *param_prompt[MAX_PARAMS];
+            std::array<const char *, MAX_PARAMS> param_prompt;
             char tmp_buf[30];
             if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, &param_prompt[j]))
             {
@@ -816,7 +817,7 @@ gfp_top:
     while (true)
     {
         ValueSaver saved_help_mode{g_help_mode, g_cur_fractal_specific->help_text};
-        int i = full_screen_prompt(msg, prompt_num, choices, param_values, fn_key_mask, s_tmp_stack);
+        int i = full_screen_prompt(msg, prompt_num, choices.data(), param_values.data(), fn_key_mask, s_tmp_stack);
         if (i < 0)
         {
             if (g_julibrot)
