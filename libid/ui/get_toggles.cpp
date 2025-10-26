@@ -21,6 +21,7 @@
 #include <fmt/format.h>
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cstdlib>
 #include <cstring>
@@ -52,8 +53,8 @@ namespace id::ui
 */
 int get_toggles()
 {
-    const char *choices[20];
-    FullScreenValues values[25];
+    std::array<const char *, 20> choices;
+    std::array<FullScreenValues, 25> values;
     int old_sound_flag;
     const char *calc_modes[] = {
         "1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
@@ -238,7 +239,7 @@ int get_toggles()
     const HelpLabels old_help_mode = g_help_mode;
     g_help_mode = HelpLabels::HELP_X_OPTIONS;
     const int i = full_screen_prompt(
-        "Basic Options\n(not all combinations make sense)", k + 1, choices, values, 0, nullptr);
+        "Basic Options\n(not all combinations make sense)", k + 1, choices.data(), values.data(), 0, nullptr);
     g_help_mode = old_help_mode;
     if (i < 0)
     {
