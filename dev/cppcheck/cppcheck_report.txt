@@ -1693,18 +1693,12 @@ libid/ui/file_get_window.cpp:847:18: style: Consider using std::replace_if algor
 libid/ui/flip_image.cpp:25:35: style: Parameter 'context' can be declared with const [constParameter]
 MainState flip_image(MainContext &context)
                                   ^
-libid/ui/get_fract_type.cpp:140:5: error: Non-local variable 's_ft_choices' will use pointer to local variable 'choices'. [danglingLifetime]
-    s_ft_choices = &choices[0];
-    ^
-libid/ui/get_fract_type.cpp:140:20: note: Address of variable taken here.
-    s_ft_choices = &choices[0];
-                   ^
-libid/ui/get_fract_type.cpp:129:24: note: Variable created here.
-    FractalTypeChoice *choices[MAX_FRACT_TYPES];
-                       ^
-libid/ui/get_fract_type.cpp:140:5: note: Non-local variable 's_ft_choices' will use pointer to local variable 'choices'.
-    s_ft_choices = &choices[0];
-    ^
+libid/ui/get_fract_type.cpp:613:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+            if (choices[prompt_num][0] == '+')
+                                       ^
+libid/ui/get_fract_type.cpp:618:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+            else if (choices[prompt_num][0] == '#')
+                                            ^
 libid/ui/get_rds_params.cpp:73:22: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
                 elem = ' ';
                      ^
