@@ -27,7 +27,7 @@ void init()
 #endif
 }
 
-int main(int argc, char *argv[])
+int run(int argc, char *argv[])
 {
     int result = 0;
     g_top_of_stack = reinterpret_cast<char *>(&result);

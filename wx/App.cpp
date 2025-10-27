@@ -31,7 +31,7 @@ bool App::OnInit()
 int App::OnRun()
 {
     m_mainLoop = CreateMainLoop();
-    return wx::main(argc, argv);
+    return wx::run(argc, argv);
 }
 
 void App::create_window(const int width, const int height)
