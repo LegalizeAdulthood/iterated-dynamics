@@ -3,7 +3,8 @@ SPDX-License-Identifier: GPL-3.0-only
 -->
 [![GitHub Release](https://img.shields.io/github/v/release/LegalizeAdulthood/iterated-dynamics?label=Latest+Release)](https://github.com/LegalizeAdulthood/iterated-dynamics/releases)
 [![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/LegalizeAdulthood/iterated-dynamics/latest/total?label=Downloads&color=blue)](https://github.com/LegalizeAdulthood/iterated-dynamics/releases)
-[![CMake workflow](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/cmake.yml/badge.svg)](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/cmake.yml)
+[![Build workflow](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/build.yml/badge.svg)](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/build.yml)
+[![Analysis workflow](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/analysis.yml/badge.svg)](https://github.com/LegalizeAdulthood/iterated-dynamics/actions/workflows/analysis.yml)
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)](https://en.wikipedia.org/wiki/C%2B%2B17)
 [![License](https://img.shields.io/github/license/LegalizeAdulthood/iterated-dynamics?label=License)](https://github.com/LegalizeAdulthood/iterated-dynamics/blob/master/LICENSE.txt)
 
