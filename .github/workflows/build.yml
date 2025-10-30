@@ -132,6 +132,7 @@ jobs:
         asciidoctor-pdf --version
         asciidoctor-pdf \
           --require asciidoctor-mathematical \
+          --attribute stem=latexmath \
           --attribute mathematical-format=svg \
           --attribute allow-uri-read \
           build-ci-ascii-doc/hc/src/id.adoc
