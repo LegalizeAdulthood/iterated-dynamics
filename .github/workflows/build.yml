@@ -93,6 +93,19 @@ jobs:
         name: ascii-doc
         path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/
 
+    - name: Install mathematical rendering dependencies
+      run: |
+        echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
+        sudo dpkg-reconfigure man-db
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          texlive-latex-base \
+          texlive-latex-recommended \
+          texlive-fonts-recommended \
+          texlive-latex-extra \
+          imagemagick \
+          ghostscript
+
     - name: Setup ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -103,14 +116,19 @@ jobs:
       with:
         version: 2.0.18
 
-    - name: Install AsciiDoctor PDF
+    - name: Install AsciiDoctor PDF and mathematical extensions
       run: |
         gem install asciidoctor-pdf
+        gem install asciidoctor-mathematical
 
-    - name: Run AsciiDoctor PDF
+    - name: Run AsciiDoctor PDF with mathematical rendering
       run: |
         asciidoctor-pdf --version
-        asciidoctor-pdf build-ci-ascii-doc/hc/src/id.adoc
+        asciidoctor-pdf \
+          --require asciidoctor-mathematical \
+          --attribute mathematical-format=svg \
+          --attribute allow-uri-read \
+          build-ci-ascii-doc/hc/src/id.adoc
 
     - name: Upload PDF artifact
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
