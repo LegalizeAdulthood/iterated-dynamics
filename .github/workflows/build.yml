@@ -87,7 +87,7 @@ jobs:
     - name: Setup ruby
       uses: ruby/setup-ruby@v1
       with:
-        ruby-version: 2.7
+        ruby-version: 3.1
 
     - name: Setup AsciiDoctor
       uses: reitzig/actions-asciidoctor@c642db5eedd1d729bb8c92034770d0b2f769eda6 # v2.0.2
