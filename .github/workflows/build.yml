@@ -196,6 +196,11 @@ jobs:
       with:
         submodules: true
 
+    - name: Get HTML documentation
+      uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
+      with:
+        name: html-docs
+
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
       shell: bash
@@ -232,11 +237,6 @@ jobs:
       uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
       with:
         cmake-version: '3.31'
-
-    - name: Get HTML documentation
-      uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
-      with:
-        name: html-docs
 
     - name: Run Workflow
       env: 
@@ -303,6 +303,11 @@ jobs:
       with:
         submodules: true
 
+    - name: Get HTML documentation
+      uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
+      with:
+        name: html-docs
+
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
       shell: bash
@@ -339,11 +344,6 @@ jobs:
       uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
       with:
         cmake-version: '3.31'
-
-    - name: Get HTML documentation
-      uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
-      with:
-        name: html-docs
 
     - name: Run Workflow
       env: 
