@@ -61,11 +61,20 @@ jobs:
         cmake --version
         cmake --workflow --preset ci-ascii-doc
 
+    - name: Copy images for AsciiDoc processing
+      run: |
+        if [ -d "hc/src/images" ]; then
+          mkdir -p build-ci-ascii-doc/hc/src/help/images
+          cp -r hc/src/images/* build-ci-ascii-doc/hc/src/help/images/
+        fi
+
     - name: Upload AsciiDoc artifact
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       with:
         name: ascii-doc
-        path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.adoc
+        path: |
+          ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.adoc
+          ${{github.workspace}}/build-ci-ascii-doc/hc/src/help/images/
 
   #############################################################################
   pdf-doc:
