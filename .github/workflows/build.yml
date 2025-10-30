@@ -16,7 +16,7 @@ env:
 
 jobs:
   #############################################################################
-  html-docs:
+  ascii-doc:
     runs-on: ubuntu-latest
 
     steps:
@@ -25,7 +25,7 @@ jobs:
       with:
         submodules: true
 
-    - name: Install System Dependencies for building HTML docs
+    - name: Install System Dependencies for building AsciiDoc
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
@@ -59,7 +59,30 @@ jobs:
         VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
       run: |
         cmake --version
-        cmake --workflow --preset ci-html-docs
+        cmake --workflow --preset ci-ascii-doc
+
+    - name: Upload AsciiDoc artifact
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      with:
+        name: ascii-doc
+        path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.adoc
+
+  #############################################################################
+  html-docs:
+    needs: ascii-doc
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
+      with:
+        submodules: true
+
+    - name: Get AsciiDoc artifact
+      uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
+      with:
+        name: ascii-doc
+        path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/
 
     - name: Setup ruby
       uses: ruby/setup-ruby@v1
@@ -74,13 +97,13 @@ jobs:
     - name: Run AsciiDoctor
       run: |
         asciidoctor --version
-        asciidoctor build-ci-html-docs/hc/src/id.adoc
+        asciidoctor build-ci-ascii-doc/hc/src/id.adoc
 
     - name: Upload HTML artifact
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       with:
         name: html-docs
-        path: ${{github.workspace}}/build-ci-html-docs/hc/src/id.html
+        path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.html
 
   #############################################################################
   build:
@@ -144,7 +167,7 @@ jobs:
     - name: Get HTML documentation
       uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
       with:
-        name: html-docs
+      name: html-docs
 
     - name: Run Workflow
       env: 
@@ -221,13 +244,13 @@ jobs:
         echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
         sudo dpkg-reconfigure man-db
         sudo apt-get update
-        sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install
+        sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install 
 
     #- name: Install Prerequisites macOS
     #  if: ${{matrix.os == 'macos-latest'}}
     #  shell: bash
     #  run: |
-    #    ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+    # ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
 
     - name: Add NuGet sources
       shell: bash

@@ -135,7 +135,7 @@
       }
     },
     {
-      "name": "ci-html-docs",
+      "name": "ci-ascii-doc",
       "displayName": "CI Configure HTML docs with Release settings for HTML",
       "inherits": [ "ci-preset-build-dir", "no-testing", "feature-hc", "release-config", "default" ]
     },
@@ -205,9 +205,9 @@
       "targets": [ "package" ]
     },
     {
-      "name": "ci-html-docs",
+      "name": "ci-ascii-doc",
       "displayName": "CI Build HTML docs with Release settings",
-      "configurePreset": "ci-html-docs",
+      "configurePreset": "ci-ascii-doc",
       "configuration": "Release",
       "targets": "ascii-doc"
     }
@@ -521,16 +521,16 @@
       ]
     },
     {
-      "name": "ci-html-docs",
+      "name": "ci-ascii-doc",
       "displayName": "CI Workflow for HTML docs with Release settings: configure, build",
       "steps": [
         {
           "type": "configure",
-          "name": "ci-html-docs"
+          "name": "ci-ascii-doc"
         },
         {
           "type": "build",
-          "name": "ci-html-docs"
+          "name": "ci-ascii-doc"
         }
       ]
     },
