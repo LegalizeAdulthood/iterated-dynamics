@@ -104,7 +104,9 @@ jobs:
           texlive-fonts-recommended \
           texlive-latex-extra \
           imagemagick \
-          ghostscript
+          ghostscript \
+          libglib2.0-dev \
+          pkg-config
 
     - name: Setup ruby
       uses: ruby/setup-ruby@v1
