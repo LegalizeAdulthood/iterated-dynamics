@@ -167,7 +167,7 @@ jobs:
     - name: Get HTML documentation
       uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
       with:
-      name: html-docs
+        name: html-docs
 
     - name: Run Workflow
       env: 
