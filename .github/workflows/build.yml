@@ -68,6 +68,48 @@ jobs:
         path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.adoc
 
   #############################################################################
+  pdf-doc:
+    needs: ascii-doc
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683   # v4.2.2
+      with:
+        submodules: true
+
+    - name: Get AsciiDoc artifact
+      uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
+      with:
+        name: ascii-doc
+        path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/
+
+    - name: Setup ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+
+    - name: Setup AsciiDoctor
+      uses: reitzig/actions-asciidoctor@c642db5eedd1d729bb8c92034770d0b2f769eda6 # v2.0.2
+      with:
+        version: 2.0.18
+
+    - name: Install AsciiDoctor PDF
+      run: |
+        gem install asciidoctor-pdf
+
+    - name: Run AsciiDoctor PDF
+      run: |
+        asciidoctor-pdf --version
+        asciidoctor-pdf build-ci-ascii-doc/hc/src/id.adoc
+
+    - name: Upload PDF artifact
+      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      with:
+        name: pdf-docs
+        path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.pdf
+
+  #############################################################################
   html-docs:
     needs: ascii-doc
     runs-on: ubuntu-latest
