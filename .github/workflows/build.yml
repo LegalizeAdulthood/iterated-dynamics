@@ -129,20 +129,22 @@ jobs:
       with:
         version: 2.0.18
 
-    - name: Install AsciiDoctor PDF and mathematical extensions
+    - name: Install AsciiDoctor PDF
       run: |
         gem install asciidoctor-pdf
         gem install asciidoctor-mathematical
 
-    - name: Run AsciiDoctor PDF with mathematical rendering
+    - name: Run AsciiDoctor PDF
       run: |
-        asciidoctor-pdf --version
-        asciidoctor-pdf \
+        docker run --rm \
+          -v ${{github.workspace}}/build-ci-ascii-doc/hc/src:/documents \
+          docker.io/asciidoctor/docker-asciidoctor:latest \
+          asciidoctor-pdf \
           --require asciidoctor-mathematical \
           --attribute stem=asciimath \
           --attribute mathematical-format=svg \
           --attribute allow-uri-read \
-          build-ci-ascii-doc/hc/src/id.adoc
+          /documents/id.adoc
 
     - name: Upload PDF artifact
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
