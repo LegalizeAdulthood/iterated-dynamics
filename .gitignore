@@ -9,3 +9,5 @@ CMakeUserPresets.json
 build-ci-*
 home/**/*.gif
 **/stopmsg.txt
+id.html
+id.pdf
