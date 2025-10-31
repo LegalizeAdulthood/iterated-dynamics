@@ -3,6 +3,7 @@
 # Copyright 2018 Richard Thomson
 
 find_program(ASCII_DOCTOR asciidoctor)
+find_program(ASCII_DOC_PDF asciidoctor-pdf)
 
 set(ID_HELP_SOURCES help.src help2.src help3.src help4.src help5.src)
 
@@ -69,6 +70,23 @@ elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.html)
     message(STATUS "Installing prebuilt id.html")
     install(FILES ${CMAKE_SOURCE_DIR}/id.html DESTINATION .)
     set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
+endif()
+
+if(ASCII_DOC_PDF)
+    add_custom_target("pdf-doc" ALL
+        DEPENDS hc "ascii-doc"
+        SOURCES ${CMAKE_CURRENT_BINARY_DIR}/id.pdf ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
+    add_custom_command(
+        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/id.pdf
+        COMMAND "asciidoctor-pdf" ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
+    target_folder("pdf-doc" "Docs")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.html DESTINATION .)
+    set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
+elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.pdf)
+    message(STATUS "Installing prebuilt id.pdf")
+    install(FILES ${CMAKE_SOURCE_DIR}/id.pdf DESTINATION .)
+    set_property(INSTALL "id.pdf" PROPERTY CPACK_START_MENU_SHORTCUTS "PDF Documentation")
 endif()
 
 add_custom_target(doc-file ALL
