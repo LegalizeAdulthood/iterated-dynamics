@@ -151,7 +151,7 @@ jobs:
 
   #############################################################################
   build:
-    needs: html-docs
+    needs: [ html-docs, pdf-docs ]
     strategy:
       matrix:
         preset: [ debug, release ]
@@ -171,10 +171,10 @@ jobs:
       with:
         submodules: true
 
-    - name: Get HTML documentation
+    - name: Get prebuilt documentation
       uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
       with:
-        name: html-docs
+        artifact-ids: html-docs,pdf-docs
 
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
