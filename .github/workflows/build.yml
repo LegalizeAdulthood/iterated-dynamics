@@ -110,7 +110,6 @@ jobs:
           fonts-liberation2 \
           fonts-noto-core \
           fonts-noto-mono \
-          fonts-computer-modern \
           imagemagick \
           ghostscript \
           libglib2.0-dev \
