@@ -93,47 +93,6 @@ jobs:
         name: ascii-doc
         path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/
 
-    - name: Install mathematical rendering dependencies
-      run: |
-        echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
-        sudo dpkg-reconfigure man-db
-        sudo apt-get update
-        sudo apt-get install -y --no-install-recommends \
-          texlive-latex-base \
-          texlive-latex-recommended \
-          texlive-fonts-recommended \
-          texlive-latex-extra \
-          texlive-fonts-extra \
-          fonts-liberation \
-          fonts-dejavu \
-          fonts-dejavu-extra \
-          fonts-liberation2 \
-          fonts-noto-core \
-          fonts-noto-mono \
-          imagemagick \
-          ghostscript \
-          libglib2.0-dev \
-          pkg-config \
-          libcairo2-dev \
-          libpango1.0-dev \
-          libgdk-pixbuf2.0-dev \
-          build-essential
-
-    - name: Setup ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.1
-
-    - name: Setup AsciiDoctor
-      uses: reitzig/actions-asciidoctor@c642db5eedd1d729bb8c92034770d0b2f769eda6 # v2.0.2
-      with:
-        version: 2.0.18
-
-    - name: Install AsciiDoctor PDF
-      run: |
-        gem install asciidoctor-pdf
-        gem install asciidoctor-mathematical
-
     - name: Run AsciiDoctor PDF
       run: |
         docker run --rm \
