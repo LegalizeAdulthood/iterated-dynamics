@@ -248,7 +248,17 @@ add_library(libid
     include/ui/thinking.h ui/thinking.cpp
     include/ui/video.h ui/video.cpp
     include/ui/zoom.h ui/zoom.cpp
+
+    "GlobalsIndex.md"
+    "EngineGlobals.md"
+    "FractalGlobals.md"
+    "GeometryGlobals.md"
+    "IOGlobals.md"
+    "MathGlobals.md"
+    "MiscGlobals.md"
+    "UIGlobals.md"
 )
+source_group("Docs" REGULAR_EXPRESSION ".*\\.md$")
 source_group_subdir("Engine" "engine")
 source_group_subdir("Fractal Specific" "fractals")
 source_group_subdir("Geometry" "geometry")
