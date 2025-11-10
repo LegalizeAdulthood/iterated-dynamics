@@ -66,7 +66,7 @@ source repository, initialize and update git submodules with the commands:
 ```
 mkdir id
 cd id
-git clone https://github.com:LegalizeAdulthood/iterated-dynamics
+git clone https://github.com/LegalizeAdulthood/iterated-dynamics.git
 cd iterated-dynamics
 git submodule init
 git submodule update
