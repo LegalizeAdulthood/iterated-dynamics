@@ -3275,7 +3275,7 @@ is a 1, the ant turns right and puts a zero in current cell, otherwise it
 turns left and put a number in the current cell.  An empty rule string causes
 the rule to be generated randomly.
 
-Id's 2nd parameter is a maximum iteration to guarantee that the fractal
+The 2nd parameter is a maximum iteration to guarantee that the fractal
 will terminate.
 
 The 3rd parameter is the number of ants (up to 256).  If you select 0 ants,
