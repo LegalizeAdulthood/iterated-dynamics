@@ -3669,10 +3669,21 @@ from correspondence with others, including Dr. Alexander.
 The equations that generate this fractal are not very different from those
 that generate many other orbit fractals.
 
-~Format-
+~Format-,ADoc-
       Z(0) = pixel;
       Z(n+1) = Z(n)^2 - C*conj(Z(n))
       where C = 1 + A*i
+~ADoc+,Online-,Doc-
+
+[stem]
+++++
+\{:
+(z_0 = "pixel"),
+(z_(n+1) = z_n^2 - C "conj"(z_n))
+\:}
+++++
+
+~Online+,Doc+
 ~Format+
 
 One of the things that makes this fractal so interesting is the shape of
