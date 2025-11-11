@@ -779,18 +779,27 @@ by the test to the "bailout" value set via the <Z> screen.  The default
 bailout test compares the magnitude or modulus of a complex variable to some
 bailout value:
 
+~ADoc-
 bailout test = |z| = sqrt(x^2 + y^2) >= 2
+~Online-,Doc-,ADoc+,Format-
+bailout test = stem:[|z| = sqrt(x^2 + y^2) >= 2]
+~Online+,Doc+,Format+
 
 As a computational speedup, we square both sides of this equation and the
 bailout test used by Id is:
 
+~ADoc-
 bailout test = |z|^2 = x^2 + y^2 >= 4
+~Online-,Doc-,ADoc+,Format-
+bailout test = stem:[|z|^2 = x^2 + y^2 >= 4]
+~Online+,Doc+,Format+
 
 Using a bailout other than 4 allows us to change when the bailout will occur.
 ~OnlineFF
 
 The following bailout tests have been implemented on the <Z> screen:
 
+~ADoc-
    mod:     x^2 + y^2 >= bailout
 
    real:    x^2       >= bailout
@@ -804,6 +813,25 @@ The following bailout tests have been implemented on the <Z> screen:
    manh:    (abs(x) + abs(y))^2 >= bailout  (based on Manhattan metric)
 
    manr:    (x + y)^2 >= bailout
+~Online-,Doc-,ADoc+,Format-
+[cols="^1,<7"]
+|===
+|mod
+|stem:[x^2 + y^2 >= "bailout"]
+|real
+|stem:[x^2       >= "bailout"]
+|imag
+|stem:[y^2       >= "bailout"]
+|or
+|stem:[x^2 >= bailout  or   y^2 >= "bailout"]
+|and
+|stem:[x^2 >= bailout  and  y^2 >= "bailout"]
+|manh
+|stem:[(abs(x) + abs(y))^2 >= "bailout"]  (based on Manhattan metric)
+|manr
+|stem:[(x + y)^2 >= "bailout"]
+|===
+~Online+,Doc+,Format+
 
 The bailout test feature has not been implemented for all applicable fractal
 types.  This is due to the speedups used for these types.
