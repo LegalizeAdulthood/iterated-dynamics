@@ -2032,6 +2032,7 @@ and becomes completely silly at a gridsize of three!
 to the evolution parameters varied by the hotkeys described above.\
 These are:
 
+~ADoc-
     Gridsize.            The number of sub images per side of the screen.  Use
                          odd numbers only.
 
@@ -2044,6 +2045,23 @@ These are:
     Grouting             Turns on or off the gap between sub images, at large
                          values of gridsize this can reclaim valuable screen
                          area for display use.
+~Doc-,Online-,ADoc+,Format-
+[cols="^1,<9"]
+|===
+|Parameter
+|Description
+|Gridsize
+|The number of sub images per side of the screen.  Use odd numbers only.
+|Max Mutation
+|The maximum amount by which a parameter may be varied
+|Mutation Reduction
+|The Max mutation value is multiplied by this between generations.+
+This can be used to automatically goal seek without having to use the <F2> key.
+|Grouting
+|Turns on or off the gap between sub images, at large values of gridsize this+
+can reclaim valuable screen area for display use.
+|===
+~Doc+,Online+,Format+
 
 Pressing <F6> brings up a screen from which you can control what parameters
 get varied and in what manner.  You'll notice that as well as the mutation
