@@ -144,7 +144,7 @@ SUMMARY OF FRACTAL TYPES
 {=HT_MARTIN chip }
 ~Label=HF_CHIP
     Chip attractor from Michael Peters - orbit in two dimensions.
-      z(0) = y(0) = 0;
+      x(0) = y(0) = 0;
       x(n+1) = y(n) - sign(x(n)) * cos(sqr(ln(abs(b*x(n)-c))))
                                  * arctan(sqr(ln(abs(c*x(n)-b))))
       y(n+1) = a - x(n)
