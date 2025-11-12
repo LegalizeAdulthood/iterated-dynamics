@@ -878,51 +878,113 @@ exist.
 
 As with quaternions, we will define multiplication in terms of the basis
 vectors 1, i, j, and k, but with subtly different rules.
-~Format-
 
 Multiplication rules for hypercomplex basis vectors:
+
+~Format-,ADoc-
 ij = k  jk = -i ki = -j
 ji = k  kj = -i ik = -j
 ii = jj = -kk = -1
 ijk = 1
+~ADoc+,Doc-,Online-
+
+[stem]
+++++
+\{:
+(ij = k,  jk = -i, ki = -j),
+(ji = k,  kj = -i, ik = -j),
+(ii = -1, jj = -1, kk = 1),
+(ijk = 1,,)
+:\}
+++++
+
+~Format+,Doc+,Online+
 
 Note that now ij = k and ji = k, and similarly for other products of pairs
 of basis vectors, so the commutative law holds.
 
+~Format-,ADoc-
 Hypercomplex multiplication formula:
 Let h1 = x1 + y1i + z1j + w1k and h2 = x2 + y2i + z2j + w2k.
 Then  h1h2 =  1(x1x2 - y1y2 - z1z2 + w1w2) +
               i(y1x2 + x1y2 - w1z2 - z1w2) +
               j(z1x2 - w1y2 + x1z2 - y1w2) +
               k(w1x2 + z1y2 + y1z2 + x1w2)
+~ADoc+,Doc-,Online-
+Hypercomplex multiplication formula:
+Let stem:[h_1 = x_1 + y_1 i + z_1 j + w_1 k] and stem:[h_2 = x_2 + y_2 i + z_2 j + w_2 k].
+Then
+
+[stem]
+++++
+\{:
+(h_1 h_2,=,(x_1 x_2 - y_1 y_2 - z_1 z_2 + w_1 w_2) +),
+(,,         i(y_1 x_2 + x_1 y_2 - w_1 z_2 - z_1 w_2) +),
+(,,         j(z_1 x_2 - w_1 y_2 + x_1 z_2 - y_1 w_2) +),
+(,,         k(w_1 x_2 + z_1 y_2 + y_1 z_2 + x_1 w_2))
+:\}
+++++
+~Doc+,Online+,Format+
 
 As an added bonus, we'll give you the formula for the reciprocal.
 
+~Format-,ADoc-
 Let det = [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)]
 Then 1/h =   1[ x(x^2+y^2+z^2+w^2)-2w(xw-yz)]/det +
              i[-y(x^2+y^2+z^2+w^2)-2z(xw-yz)]/det +
              j[-z(x^2+y^2+z^2+w^2)-2y(xw-yz)]/det +
              k[ w(x^2+y^2+z^2+w^2)-2x(xw-yz)]/det
+~ADoc+,Doc-,Online-
+Let stem:["det" = ((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)]
+Then
 
-~Format+
+[stem]
+++++
+\{:
+(1/h,=,      [ x(x^2+y^2+z^2+w^2)-2w(xw-yz)]/"det" +),
+(,,         i[-y(x^2+y^2+z^2+w^2)-2z(xw-yz)]/"det" +),
+(,,         j[-z(x^2+y^2+z^2+w^2)-2y(xw-yz)]/"det" +),
+(,,         k[ w(x^2+y^2+z^2+w^2)-2x(xw-yz)]/"det")
+:\}
+++++
+
+~Format+,Doc+,Online+
 A look at this formula shows the difficulty with hypercomplex numbers.
 In order to calculate 1/h, you have to divide by the quantity
-det = [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)].  So when this quantity is zero,
+~ADoc-
+det = [((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)].
+~ADoc+,Doc-,Online-
+stem:["det" = ((x-w)^2+(y+z)^2)((x+w)^2+(y-z)^2)].
+~Doc+,Online+
+So when this quantity is zero,
 the multiplicative inverse will not exist.
 
 Hypercomplex numbers have an elegant generalization of any unary
 complex valued function defined on the complex numbers.  First, note that
 hypercomplex numbers can be represented as a pair of complex numbers in the
 following way.
-~Format-
+~Format-,ADoc-
+
 Let h = x + yi + zj + wk.
     a = (x-w) + i(y+z)
     b = (x+w) + i(y-z)
-~Format+
+~ADoc+,Doc-,Online-
+Let
+
+[stem]
+++++
+\{:
+(h,=,x + y i + z j + w k),
+(a,=,(x-w) + i(y+z)),
+(b,=,(x+w) + i(y-z))
+:\}
+++++
+
+~Format+,Doc+,Online+
 The numbers a and b are complex numbers.  We can represent h as the pair of
 complex numbers (a,b).  Conversely, if we have a hypercomplex number given
 to us in the form (a,b), we can solve for x, y, z, and w.  The solution to
-~Format-
+~Format-,ADoc-
    c = (x-w) + i(y+z)
    d = (x+w) + i(y-z)
 is
@@ -930,7 +992,29 @@ is
    y = (imag(c) + imag(d))/2
    z = (imag(c) - imag(d))/2
    w = (real(d) - real(c))/2
-~Format+
+~ADoc+,Doc-,Online-
+
+[stem]
+++++
+\{:
+(c,=,(x-w) + i(y+z)),
+(d,=,(x+w) + i(y-z))
+:\}
+++++
+
+is
+
+[stem]
+++++
+\{:
+(x = ("real"(c) + "real"(d))/2),
+(y = ("imag"(c) + "imag"(d))/2),
+(z = ("imag"(c) - "imag"(d))/2),
+(w = ("real"(d) - "real"(c))/2)
+:\}
+++++
+
+~Format+,Doc+,Online+
 We can now, for example, compute sin(h).  First compute the two complex
 numbers a and b as above, then set c = sin(a) and d = sin(b) where sin() is
 the complex version of the sin function.  Now use the equations above to
