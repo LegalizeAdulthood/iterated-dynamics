@@ -817,7 +817,7 @@ superset of the complex numbers, and the basis vectors 1 and i are the
 familiar basis vectors for the complex algebra.  Any quaternion q can be
 represented as a linear combination q = x + yi + zj + wk of the basis
 vectors just as any complex number can be written in the form z = a + bi.
-~Format-
+~Format-,ADoc-
 
 Multiplication rules for quaternion basis vectors:
 ij =  k jk =  i ki = j
@@ -825,18 +825,48 @@ ji = -k kj = -i ik = -j
 ii = jj = kk = -1
 ijk = -1
 
+~ADoc+,Doc-,Online-
+
+Multiplication rules for quaternion basis vectors:
+
+[stem]
+++++
+\{:
+(ij = k, jk =i, ki = j),
+(ji = -k, kj = -i, ik = -j),
+(ii = -1, jj = -1, kk = -1),
+(ijk = -1,,)
+:\}
+++++
+
+~Doc+,Online+,Format+
 Note that ij = k but ji = -k, showing the failure of the commutative law.
 The rules for multiplying any two quaternions follow from the behavior
 of the basis vectors just described.  However, for your convenience, the
 following formula works out the details.
 
+~Format-,ADoc-
 Let q1 = x1 + y1i + z1j + w1k and q2 = x2 + y2i + z2j + w2k.
-Then q1q2 = 1(x1x2 - y1y2 - z1z2 - w1w2) +
+Then q1q2 = (x1x2 - y1y2 - z1z2 - w1w2) +
             i(y1x2 + x1y2 - w1z2 + z1w2) +
             j(z1x2 + w1y2 + x1z2 - y1w2) +
             k(w1x2 + z1y2 - y1z2 + x1w2)
 
-~Format+
+~ADoc+,Doc-,Online-
+Let stem:[q_1 = x_1 + y_1 i + z_1 j + w_1 k and q_2 = x_2 + y_2 i + z_2 j + w_2 k].
+Then
+
+[stem]
+++++
+\{:
+(q_1 q_2,=,(x_1 x_2 - y_1 y_2 - z_1 z_2 - w_1 w_2) +),
+(,,         i(y_1 x_2 + x_1 y_2 - w_1 z_2 + z_1 w_2) +),
+(,,         j(z_1 x_2 + w_1 y_2 + x_1 z_2 - y_1 w_2) +),
+(,,         k(w_1 x_2 + z_1 y_2 - y_1 z_2 + x_1 w_2))
+:\}
+++++
+
+~Doc+,Online+,Format+
 Quaternions are not the only possible four dimensional supersets of the
 complex numbers.  William Rowan Hamilton, who discovered quaternions in 1843,
 considered the alternative called the hypercomplex number system.  Unlike
