@@ -2900,7 +2900,7 @@ z(0) = y(0) = 0:\
       x(n+1) = y(n) - sign(x(n))*sqrt(abs(b*x(n)-c))\
       y(n+1) = a - x(n)\
 ~Online-,Doc-,ADoc+,Format-
-stem:[z_0 = y_0 = 0]:
+ stem:[z_0 = y_0 = 0]:
 
 [stem]
 ++++
