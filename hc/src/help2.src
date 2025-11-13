@@ -3628,9 +3628,6 @@ time to initialize the sequence.  This could cause a different fractal to be
 generated each time the formula is used depending on how the formula is
 written.
 
-A formula containing one of the predefined variables "maxit", "scrnpix" or
-"scrnmax" will be automatically run in floating point mode.
-
 The rounding functions must be used cautiously; formulas that depend on
 exact values of numbers will not work reliably in all cases.  For example,
 in floating point mode, trunc(6/3) returns 1 while trunc(6/real(3)) returns
