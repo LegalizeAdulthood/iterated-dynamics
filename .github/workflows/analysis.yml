@@ -158,6 +158,9 @@ jobs:
 
       - name: Install Doxygen
         run: |
+          ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+          echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
+          sudo dpkg-reconfigure man-db
           sudo apt-get update
           sudo apt-get install --no-install-recommends -y doxygen graphviz
 
@@ -169,12 +172,12 @@ jobs:
       - name: Configure Project
         run: |
           cmake --version
-          cmake -B build-docs -DCMAKE_BUILD_TYPE=Release
+          cmake --preset cppcheck
 
       - name: Get Project Version
         id: version
         run: |
-          PROJECT_VERSION=$(cmake --build build-docs --target help | grep -o "PROJECT_VERSION:[^=]*=\S*" | cut -d= -f2 || echo "1.3.2.0")
+          PROJECT_VERSION=$(grep -E "^\s*VERSION\s+[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+" CMakeLists.txt | sed -E 's/^\s*VERSION\s+([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           echo "version=${PROJECT_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Generate Documentation
