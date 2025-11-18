@@ -284,6 +284,9 @@ o The previous browse history limit of 16 files was relaxed; it is
 
 Bugs Fixed in Version 1.3.2
 
+o Doxygen pages are now being generated from the source code.  Documentation
+  comments will be added over time to improve the generated documentation.
+  (Fixes #263)
 o @parfile functionality restored.  (It processes the first parameter
   set in the file.)
 o List of fractal types in the repository ReadMe linked and condensed.
