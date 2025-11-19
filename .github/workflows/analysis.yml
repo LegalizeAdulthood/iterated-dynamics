@@ -218,20 +218,34 @@ jobs:
             python3 "$IWYU_TOOL_PATH" -p build-cppcheck \
               -- --no_fwd_decls 2>&1 | tee iwyu_report.txt || true
           else
-            echo "iwyu_tool.py not found, running include-what-you-use manually on source files..."
+            echo "iwyu_tool.py not found, running include-what-you-use manually on C++ source files..."
             # Create a manual IWYU analysis
             echo "Include What You Use Analysis" > iwyu_report.txt
             echo "=============================" >> iwyu_report.txt
+            echo "C++ Project Analysis (C++14)" >> iwyu_report.txt
             echo "" >> iwyu_report.txt
             
-            # Find C++ source files and run IWYU on a subset
-            find . -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | \
+            # Find C++ source files and run IWYU on them
+            echo "Analyzing C++ source files..." >> iwyu_report.txt
+            find . -name "*.cpp" | \
               grep -v -E "(vcpkg|build-|legacy)" | \
               head -20 | \
               while read file; do
-                echo "Analyzing: $file" >> iwyu_report.txt
+                echo "Analyzing C++ file: $file" >> iwyu_report.txt
                 include-what-you-use -std=c++14 "$file" 2>&1 | \
-                  head -50 >> iwyu_report.txt || echo "Failed to analyze $file" >> iwyu_report.txt
+                  head -100 >> iwyu_report.txt || echo "Failed to analyze $file" >> iwyu_report.txt
+                echo "" >> iwyu_report.txt
+              done
+            
+            # Find C++ header files and run IWYU on them
+            echo "Analyzing C++ header files..." >> iwyu_report.txt
+            find . -name "*.h" | \
+              grep -v -E "(vcpkg|build-|legacy)" | \
+              head -20 | \
+              while read file; do
+                echo "Analyzing header file: $file" >> iwyu_report.txt
+                include-what-you-use -x c++-header -std=c++14 "$file" 2>&1 | \
+                  head -100 >> iwyu_report.txt || echo "Failed to analyze $file" >> iwyu_report.txt
                 echo "" >> iwyu_report.txt
               done
           fi
@@ -242,7 +256,7 @@ jobs:
           echo "===================================="
           if [ -f iwyu_report.txt ]; then
             echo "Report size: $(wc -l < iwyu_report.txt) lines"
-            echo "Files mentioned: $(grep -c -E "\.(cpp|h|hpp)" iwyu_report.txt || echo "0")"
+            echo "Files mentioned: $(grep -c -E "\.(cpp|h)" iwyu_report.txt || echo "0")"
             echo "Suggestion patterns found: $(grep -c "should" iwyu_report.txt || echo "0")"
             echo ""
             echo "First 50 lines of report:"
