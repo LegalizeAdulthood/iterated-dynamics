@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['enumerations_0',['enumerations',['../md_Style.html#autotoc_md22',1,'A Few Words About Enumerations'],['../md_Style.html#autotoc_md11',1,'Enumerations']]],
+  ['enumerations_0',['enumerations',['../md_Style.html#autotoc_md26',1,'A Few Words About Enumerations'],['../md_Style.html#autotoc_md15',1,'Enumerations']]],
   ['evolutioninfo_1',['EvolutionInfo',['../structid_1_1ui_1_1EvolutionInfo.html',1,'id::ui']]],
   ['extblock2_2',['ExtBlock2',['../structid_1_1io_1_1ExtBlock2.html',1,'id::io']]],
   ['extblock3_3',['ExtBlock3',['../structid_1_1io_1_1ExtBlock3.html',1,'id::io']]],
