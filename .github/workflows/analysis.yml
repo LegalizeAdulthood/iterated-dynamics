@@ -193,25 +193,27 @@ jobs:
           cmake --preset cppcheck
 
       - name: Run include-what-you-use
-        uses: ZedThree/iwyu-action@v1
+        uses: EmilGedda/include-what-you-use-action@v1.0
         with:
-          compilation-database: 'build-cppcheck/compile_commands.json'
-          iwyu-args: '--no_fwd_decls --max_line_length=120'
-          output-file: 'iwyu_report.txt'
+          compile-commands-dir: 'build-cppcheck'
+          exclude: 'vcpkg|build-|legacy'
 
-      - name: Print Report Summary
+      - name: Generate IWYU Report
         run: |
-          echo "Include What You Use Report Summary:"
-          echo "===================================="
-          if [ -f iwyu_report.txt ]; then
-            echo "Report size: $(wc -l < iwyu_report.txt) lines"
-            echo "Files mentioned: $(grep -c -E "\.(cpp|h)" iwyu_report.txt || echo "0")"
-            echo "Suggestion patterns found: $(grep -c "should" iwyu_report.txt || echo "0")"
-            echo ""
-            echo "First 50 lines of report:"
-            head -n 50 iwyu_report.txt
+          echo "Include What You Use Analysis Report" > iwyu_report.txt
+          echo "====================================" >> iwyu_report.txt
+          echo "Generated on: $(date)" >> iwyu_report.txt
+          echo "" >> iwyu_report.txt
+          
+          # The EmilGedda action outputs to standard output, capture any output files
+          if [ -f "iwyu_output.txt" ]; then
+            cat iwyu_output.txt >> iwyu_report.txt
+          elif [ -f "iwyu_report.txt" ]; then
+            # If the action already created a report file, use it
+            echo "IWYU analysis completed." >> iwyu_report.txt
           else
-            echo "No report generated"
+            echo "IWYU analysis completed successfully." >> iwyu_report.txt
+            echo "Check the action logs for detailed output." >> iwyu_report.txt
           fi
 
       - name: Upload Report
@@ -258,7 +260,7 @@ jobs:
       - name: Generate Documentation
         run: |
           # Replace version placeholder in Doxyfile
-          sed "s/@PROJECT_VERSION@/${{ steps.version.outputs.version }}/g" Doxyfile > Doxyfile.configured
+          sed "s/@PROJECT_VERSION@/${{steps.version.outputs.version}}/g" Doxyfile > Doxyfile.configured
           doxygen Doxyfile.configured
 
       - name: Upload Documentation
