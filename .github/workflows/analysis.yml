@@ -195,8 +195,9 @@ jobs:
       - name: Run include-what-you-use
         uses: EmilGedda/include-what-you-use-action@v1.0
         with:
-          compile-commands-dir: 'build-cppcheck'
-          exclude: 'vcpkg|build-|legacy'
+          compilation-database-path: build-cppcheck
+          output-format: iwyu
+          no-error: true
 
       - name: Generate IWYU Report
         run: |
