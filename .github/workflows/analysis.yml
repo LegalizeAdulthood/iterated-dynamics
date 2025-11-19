@@ -164,7 +164,7 @@ jobs:
           echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
           sudo dpkg-reconfigure man-db
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y mono-complete iwyu clang python3
+          sudo apt-get install --no-install-recommends -y mono-complete
 
       - name: Add NuGet sources
         shell: bash
@@ -192,63 +192,12 @@ jobs:
           cmake --version
           cmake --preset cppcheck
 
-      - name: Find IWYU Tools
-        run: |
-          # Find iwyu_tool location
-          IWYU_TOOL_PATH=$(find /usr -name "iwyu_tool.py" 2>/dev/null | head -1)
-          if [ -z "$IWYU_TOOL_PATH" ]; then
-            echo "iwyu_tool.py not found, checking alternative locations..."
-            # Check if it's in a different location or named differently
-            find /usr -name "*iwyu*" -type f 2>/dev/null | grep -E "\.(py|tool)" || true
-            # Try to find include-what-you-use binary
-            which include-what-you-use || echo "include-what-you-use binary not found"
-            # List iwyu package contents
-            dpkg -L iwyu | grep -E "\.(py|tool)" || echo "No Python tools found in iwyu package"
-          else
-            echo "Found iwyu_tool.py at: $IWYU_TOOL_PATH"
-            echo "IWYU_TOOL_PATH=$IWYU_TOOL_PATH" >> $GITHUB_ENV
-          fi
-
-      - name: Run Include What You Use
-        continue-on-error: true
-        run: |
-          # Create IWYU report using the found tool or fallback method
-          if [ -n "$IWYU_TOOL_PATH" ]; then
-            echo "Running IWYU with iwyu_tool.py..."
-            python3 "$IWYU_TOOL_PATH" -p build-cppcheck \
-              -- --no_fwd_decls 2>&1 | tee iwyu_report.txt || true
-          else
-            echo "iwyu_tool.py not found, running include-what-you-use manually on C++ source files..."
-            # Create a manual IWYU analysis
-            echo "Include What You Use Analysis" > iwyu_report.txt
-            echo "=============================" >> iwyu_report.txt
-            echo "C++ Project Analysis (C++14)" >> iwyu_report.txt
-            echo "" >> iwyu_report.txt
-            
-            # Find C++ source files and run IWYU on them
-            echo "Analyzing C++ source files..." >> iwyu_report.txt
-            find . -name "*.cpp" | \
-              grep -v -E "(vcpkg|build-|legacy)" | \
-              head -20 | \
-              while read file; do
-                echo "Analyzing C++ file: $file" >> iwyu_report.txt
-                include-what-you-use -std=c++14 "$file" 2>&1 | \
-                  head -100 >> iwyu_report.txt || echo "Failed to analyze $file" >> iwyu_report.txt
-                echo "" >> iwyu_report.txt
-              done
-            
-            # Find C++ header files and run IWYU on them
-            echo "Analyzing C++ header files..." >> iwyu_report.txt
-            find . -name "*.h" | \
-              grep -v -E "(vcpkg|build-|legacy)" | \
-              head -20 | \
-              while read file; do
-                echo "Analyzing header file: $file" >> iwyu_report.txt
-                include-what-you-use -x c++-header -std=c++14 "$file" 2>&1 | \
-                  head -100 >> iwyu_report.txt || echo "Failed to analyze $file" >> iwyu_report.txt
-                echo "" >> iwyu_report.txt
-              done
-          fi
+      - name: Run include-what-you-use
+        uses: ZedThree/iwyu-action@v1
+        with:
+          compilation-database: 'build-cppcheck/compile_commands.json'
+          iwyu-args: '--no_fwd_decls --max_line_length=120'
+          output-file: 'iwyu_report.txt'
 
       - name: Print Report Summary
         run: |
