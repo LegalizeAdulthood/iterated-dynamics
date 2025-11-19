@@ -104,6 +104,7 @@ misc_target(FILES
     "CMakePresets.json"
     "${ID_USER_PRESETS}")
 misc_group_sources("Documentation" FILES
+    "Doxyfile"
     "ReadMe.md"
     "Style.md")
 misc_group_sources("CMake Scripts" FILES
