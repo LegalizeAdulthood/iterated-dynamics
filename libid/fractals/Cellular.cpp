@@ -17,9 +17,11 @@
 
 #include <fmt/format.h>
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cstdlib>
+#include <iterator>
 #include <string>
 #include <vector>
 
@@ -110,10 +112,7 @@ Cellular::Cellular()
         {
             throw CellularError(*this, STRING1);
         }
-        for (U16 &elem : init_string)
-        {
-            elem = 0; // zero the array
-        }
+        std::fill(std::begin(init_string), std::end(init_string), 0);
         const S16 t2 = static_cast<S16>((16 - t) / 2);
         for (int i = 0; i < t; i++)
         {
