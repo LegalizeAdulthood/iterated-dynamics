@@ -9,6 +9,7 @@
 #include <boost/algorithm/string/replace.hpp>
 
 #include <algorithm>
+#include <cassert>
 #include <cctype>
 #include <filesystem>
 #include <fstream>
@@ -386,6 +387,7 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
     case LinkTypes::LT_LABEL:
     {
         const Label *label = g_src.find_label(link.name.c_str());
+        assert(label);
         const Topic &topic = g_src.topics[label->topic_num];
         anchor_name = topic.title;
         break;

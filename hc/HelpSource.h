@@ -157,7 +157,7 @@ struct HelpSource
     int add_link(Link &l);
     int add_topic(const Topic &t);
     int add_label(const Label &l);
-    Label *find_label(const char *name);
+    const Label *find_label(const char *name) const;
     void sort_labels();
 
     std::vector<Content> contents;

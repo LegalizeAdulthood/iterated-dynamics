@@ -248,21 +248,12 @@ static void check_buffer(const unsigned int off)
     check_buffer(g_src.curr, off, g_src.buffer.data());
 }
 
-Label *HelpSource::find_label(const char *name)
+const Label *HelpSource::find_label(const char *name) const
 {
-    const auto finder = [=](std::vector<Label> &collection) -> Label *
-    {
-        for (Label &label : collection)
-        {
-            if (name == label.name)
-            {
-                return &label;
-            }
-        }
-        return nullptr;
-    };
-
-    return finder(name[0] == '@' ? private_labels : labels);
+    const std::vector<Label> &collection{name[0] == '@' ? private_labels : labels};
+    const auto it = std::find_if(collection.begin(), collection.end(),
+        [name](const Label &label) { return name == label.name; });
+    return it != collection.end() ? &*it : nullptr;
 }
 
 void HelpSource::sort_labels()
