@@ -82,36 +82,44 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">expand_dirname.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../df/d2e/expand__dirname_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;io/expand_dirname.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../df/d6b/expand__dirname_8h.html">io/expand_dirname.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;io/fix_dirname.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d9/d4c/fix__dirname_8h.html">io/fix_dirname.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span>fs = std::filesystem;</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span>id::io</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>{</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// converts relative path to absolute path</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">int</span> expand_dir_name(<span class="keywordtype">char</span> *dirname, <span class="keywordtype">char</span> *drive)</div>
+<div class="foldopen" id="foldopen00016" data-start="{" data-end="}">
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#ae0a2ecd1df1c5d2944a6a888458a86d2">   16</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#ae0a2ecd1df1c5d2944a6a888458a86d2">expand_dir_name</a>(<span class="keywordtype">char</span> *dirname, <span class="keywordtype">char</span> *drive)</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    fs::path path{dirname};</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">if</span> (path.has_relative_path())</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    fs::path <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>{dirname};</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.has_relative_path())</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        path = absolute(path).make_preferred();</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        std::strcpy(drive, path.root_name().string().c_str());</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        std::strcpy(dirname, path.string().substr(std::strlen(drive)).c_str());</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a> = absolute(<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>).make_preferred();</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        std::strcpy(drive, <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.root_name().string().c_str());</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        std::strcpy(dirname, <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.string().substr(std::strlen(drive)).c_str());</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    }</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    fix_dir_name(dirname);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#add98be85bcd877bbab4f888bdfb4bebe">fix_dir_name</a>(dirname);</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>}</div>
+</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>} <span class="comment">// namespace id::io</span></div>
+<div class="ttc" id="aexpand__dirname_8h_html"><div class="ttname"><a href="../../df/d6b/expand__dirname_8h.html">expand_dirname.h</a></div></div>
+<div class="ttc" id="afile__get__window_8cpp_html_a01a3a5e8c9197c526526a8936d06af4f"><div class="ttname"><a href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a></div><div class="ttdeci">std::filesystem::path path</div><div class="ttdef"><b>Definition</b> <a href="../../db/d7d/file__get__window_8cpp_source.html#l00079">file_get_window.cpp:79</a></div></div>
+<div class="ttc" id="afix__dirname_8h_html"><div class="ttname"><a href="../../d9/d4c/fix__dirname_8h.html">fix_dirname.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_add98be85bcd877bbab4f888bdfb4bebe"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#add98be85bcd877bbab4f888bdfb4bebe">id::io::fix_dir_name</a></div><div class="ttdeci">void fix_dir_name(char *dirname)</div><div class="ttdef"><b>Definition</b> <a href="../../da/db1/fix__dirname_8cpp_source.html#l00016">fix_dirname.cpp:16</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_ae0a2ecd1df1c5d2944a6a888458a86d2"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#ae0a2ecd1df1c5d2944a6a888458a86d2">id::io::expand_dir_name</a></div><div class="ttdeci">int expand_dir_name(char *dirname, char *drive)</div><div class="ttdef"><b>Definition</b> <a href="../../df/d2e/expand__dirname_8cpp_source.html#l00016">expand_dirname.cpp:16</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

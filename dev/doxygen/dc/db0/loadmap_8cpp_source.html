@@ -82,14 +82,14 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">loadmap.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../dc/db0/loadmap_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;io/loadmap.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../da/d6d/loadmap_8h.html">io/loadmap.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;engine/color_state.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;engine/spindac.h&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;io/library.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;ui/stop_msg.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../da/d56/color__state_8h.html">engine/color_state.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../df/d7f/spindac_8h.html">engine/spindac.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d08/library_8h.html">io/library.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/d31/stop__msg_8h.html">ui/stop_msg.h</a>&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;config/port.h&gt;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
@@ -99,10 +99,10 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;cstdio&gt;</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">using namespace </span>id::engine;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">using namespace </span>id::ui;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a>;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span>id::io</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="comment">//*************************************************************************</span></div>
@@ -114,95 +114,124 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#pragma pack(push, 1)</span></div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">#define ID_PACKED</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#define ID_PACKED __attribute__((packed))</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="../../dc/db0/loadmap_8cpp.html#a69e20f0dcba8479c80b90d6dc672e86f">   33</a></span><span class="preprocessor">#define ID_PACKED __attribute__((packed))</span></div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="keyword">struct </span>PaletteType</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>{</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    Byte red;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    Byte green;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    Byte blue;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>} ID_PACKED;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="../../dc/db0/loadmap_8cpp.html#a9b2249ae0b3882aaf27e96c396a5bb13">   37</a></span>    Byte <a class="code hl_variable" href="../../dc/db0/loadmap_8cpp.html#a9b2249ae0b3882aaf27e96c396a5bb13">red</a>;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="../../dc/db0/loadmap_8cpp.html#a40093bf40480ad4ae7f43bda1bb6954b">   38</a></span>    Byte <a class="code hl_variable" href="../../dc/db0/loadmap_8cpp.html#a40093bf40480ad4ae7f43bda1bb6954b">green</a>;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="../../dc/db0/loadmap_8cpp.html#a101bb7f248e248bd71231690a6f515ea">   39</a></span>    Byte <a class="code hl_variable" href="../../dc/db0/loadmap_8cpp.html#a101bb7f248e248bd71231690a6f515ea">blue</a>;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>} <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a9232f8be2b586742cc4190ad0648f3cb">ID_PACKED</a>;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#ifdef _WIN32</span></div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#pragma pack(pop)</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>} <span class="comment">// namespace</span></div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">#define DAC ((PaletteType *)g_dac_box)</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="../../dc/db0/loadmap_8cpp.html#a4aa2a4ab86ce00c23035e5cee2e7fc7e">   47</a></span><span class="preprocessor">#define DAC ((PaletteType *)g_dac_box)</span></div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>std::string g_last_map_name; <span class="comment">// from last &lt;l&gt; &lt;s&gt; or colors=@filename</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>Byte g_map_clut[256][3]{};   <span class="comment">// map= (default colors)</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="keywordtype">bool</span> g_map_specified{};      <span class="comment">// map= specified</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#a6b3f01760ba339f63ea3eb9113125397">   49</a></span>std::string <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a6b3f01760ba339f63ea3eb9113125397">g_last_map_name</a>; <span class="comment">// from last &lt;l&gt; &lt;s&gt; or colors=@filename</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#a8a24f10e1b9cf4c87bf71b77874fe1a2">   50</a></span>Byte <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a8a24f10e1b9cf4c87bf71b77874fe1a2">g_map_clut</a>[256][3]{};   <span class="comment">// map= (default colors)</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#af60751e0d5bec98ae14e3d3e4588003d">   51</a></span><span class="keywordtype">bool</span> <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#af60751e0d5bec98ae14e3d3e4588003d">g_map_specified</a>{};      <span class="comment">// map= specified</span></div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keywordtype">bool</span> validate_luts(<span class="keyword">const</span> std::string &amp;map_name)</div>
+<div class="foldopen" id="foldopen00053" data-start="{" data-end="}">
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#aaf75f7c295bbca53b7ba4e15a912d093">   53</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#aaf75f7c295bbca53b7ba4e15a912d093">validate_luts</a>(<span class="keyword">const</span> std::string &amp;map_name)</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>{</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    std::filesystem::path map_path{map_name};</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="keywordflow">if</span> (!map_path.has_extension())</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    {</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        map_path.replace_extension(<span class="stringliteral">&quot;.map&quot;</span>);</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    }</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    map_path = find_file(ReadFile::MAP, map_path);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    std::FILE *f = std::fopen(map_path.string().c_str(), <span class="stringliteral">&quot;r&quot;</span>); <span class="comment">// search the dos path</span></div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">if</span> (f == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    map_path = <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#abc9f9cb024c6b371e2df28a9684a1043">find_file</a>(<a class="code hl_enumvalue" href="../../d0/d19/namespaceid_1_1io.html#a2cf8b633dbb325b1d506fde8398fb96ba5af1a3a285c2bdee4192223e31e1f833">ReadFile::MAP</a>, map_path);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    std::FILE *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82">f</a> = std::fopen(map_path.string().c_str(), <span class="stringliteral">&quot;r&quot;</span>); <span class="comment">// search the dos path</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82">f</a> == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    {</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        stop_msg(fmt::format(<span class="stringliteral">&quot;Could not load color map {:s}&quot;</span>, map_name));</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">stop_msg</a>(fmt::format(<span class="stringliteral">&quot;Could not load color map {:s}&quot;</span>, map_name));</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    }</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="keywordtype">int</span> index;</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordflow">for</span> (index = 0; index &lt; 256; index++)</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    {</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keywordtype">char</span> line[160];</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="keywordflow">if</span> (std::fgets(line, std::size(line), f) == <span class="keyword">nullptr</span>)</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="keywordflow">if</span> (std::fgets(line, std::size(line), <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82">f</a>) == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        {</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>            <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        }</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> r{};</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>{};</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> g{};</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> b{};</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordflow">if</span> (<span class="keywordtype">int</span> count = std::sscanf(line, <span class="stringliteral">&quot;%u %u %u&quot;</span>, &amp;r, &amp;g, &amp;b); count != 3)</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="keywordflow">if</span> (<span class="keywordtype">int</span> count = std::sscanf(line, <span class="stringliteral">&quot;%u %u %u&quot;</span>, &amp;<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>, &amp;g, &amp;b); count != 3)</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        {</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            stop_msg(fmt::format(<span class="stringliteral">&quot;Malformed map entry on line {:d}, only {:d} channels but expected 3.\n&quot;</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">stop_msg</a>(fmt::format(<span class="stringliteral">&quot;Malformed map entry on line {:d}, only {:d} channels but expected 3.\n&quot;</span></div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                                 <span class="stringliteral">&quot;Skipping remaining lines.&quot;</span>,</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>                index, count));</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        }</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <span class="comment">//* load global dac values *</span></div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        DAC[index].red = <span class="keyword">static_cast&lt;</span>Byte<span class="keyword">&gt;</span>(r % 256);</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        DAC[index].green = <span class="keyword">static_cast&lt;</span>Byte<span class="keyword">&gt;</span>(g % 256);</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        DAC[index].blue = <span class="keyword">static_cast&lt;</span>Byte<span class="keyword">&gt;</span>(b % 256);</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <a class="code hl_define" href="../../dc/db0/loadmap_8cpp.html#a4aa2a4ab86ce00c23035e5cee2e7fc7e">DAC</a>[index].red = <span class="keyword">static_cast&lt;</span>Byte<span class="keyword">&gt;</span>(<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a> % 256);</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <a class="code hl_define" href="../../dc/db0/loadmap_8cpp.html#a4aa2a4ab86ce00c23035e5cee2e7fc7e">DAC</a>[index].green = <span class="keyword">static_cast&lt;</span>Byte<span class="keyword">&gt;</span>(g % 256);</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <a class="code hl_define" href="../../dc/db0/loadmap_8cpp.html#a4aa2a4ab86ce00c23035e5cee2e7fc7e">DAC</a>[index].blue = <span class="keyword">static_cast&lt;</span>Byte<span class="keyword">&gt;</span>(b % 256);</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    }</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    std::fclose(f);</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    std::fclose(<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82">f</a>);</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="keywordflow">while</span> (index &lt; 256)</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    {</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="comment">// zap unset entries</span></div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        DAC[index].green = 40;</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        DAC[index].blue = 40;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        DAC[index].red = 40;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <a class="code hl_define" href="../../dc/db0/loadmap_8cpp.html#a4aa2a4ab86ce00c23035e5cee2e7fc7e">DAC</a>[index].green = 40;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <a class="code hl_define" href="../../dc/db0/loadmap_8cpp.html#a4aa2a4ab86ce00c23035e5cee2e7fc7e">DAC</a>[index].blue = 40;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        <a class="code hl_define" href="../../dc/db0/loadmap_8cpp.html#a4aa2a4ab86ce00c23035e5cee2e7fc7e">DAC</a>[index].red = 40;</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        ++index;</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    }</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    g_color_state = ColorState::MAP_FILE;</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    g_last_map_name = map_name;</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#af2f071bded22c58b35aabe45c45c4460">g_color_state</a> = ColorState::MAP_FILE;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a6b3f01760ba339f63ea3eb9113125397">g_last_map_name</a> = map_name;</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>}</div>
+</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="comment">//*************************************************************************</span></div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="keywordtype">void</span> set_color_palette_name(<span class="keyword">const</span> std::string &amp;map_name)</div>
+<div class="foldopen" id="foldopen00106" data-start="{" data-end="}">
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#a22f009d7f3ea01dfddd8fab98dbf9590">  106</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a22f009d7f3ea01dfddd8fab98dbf9590">set_color_palette_name</a>(<span class="keyword">const</span> std::string &amp;map_name)</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>{</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordflow">if</span> (validate_luts(map_name))</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#aaf75f7c295bbca53b7ba4e15a912d093">validate_luts</a>(map_name))</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    {</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    }</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 256; ++i)</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    {</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        g_map_clut[i][0] = g_dac_box[i][0];</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        g_map_clut[i][1] = g_dac_box[i][1];</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        g_map_clut[i][2] = g_dac_box[i][2];</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a8a24f10e1b9cf4c87bf71b77874fe1a2">g_map_clut</a>[i][0] = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][0];</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a8a24f10e1b9cf4c87bf71b77874fe1a2">g_map_clut</a>[i][1] = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][1];</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a8a24f10e1b9cf4c87bf71b77874fe1a2">g_map_clut</a>[i][2] = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][2];</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    }</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    g_map_specified = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#af60751e0d5bec98ae14e3d3e4588003d">g_map_specified</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>}</div>
+</div>
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>} <span class="comment">// namespace id::io</span></div>
+<div class="ttc" id="acolor__state_8h_html"><div class="ttname"><a href="../../da/d56/color__state_8h.html">color_state.h</a></div></div>
+<div class="ttc" id="ahelp_8cpp_html_a83fcd78492ca8164a577f3f1f349f67d"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a></div><div class="ttdeci">Byte r</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00073">help.cpp:73</a></div></div>
+<div class="ttc" id="alibrary_8h_html"><div class="ttname"><a href="../../dd/d08/library_8h.html">library.h</a></div></div>
+<div class="ttc" id="aloadmap_8cpp_html_a101bb7f248e248bd71231690a6f515ea"><div class="ttname"><a href="../../dc/db0/loadmap_8cpp.html#a101bb7f248e248bd71231690a6f515ea">blue</a></div><div class="ttdeci">Byte blue</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00039">loadmap.cpp:39</a></div></div>
+<div class="ttc" id="aloadmap_8cpp_html_a40093bf40480ad4ae7f43bda1bb6954b"><div class="ttname"><a href="../../dc/db0/loadmap_8cpp.html#a40093bf40480ad4ae7f43bda1bb6954b">green</a></div><div class="ttdeci">Byte green</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00038">loadmap.cpp:38</a></div></div>
+<div class="ttc" id="aloadmap_8cpp_html_a4aa2a4ab86ce00c23035e5cee2e7fc7e"><div class="ttname"><a href="../../dc/db0/loadmap_8cpp.html#a4aa2a4ab86ce00c23035e5cee2e7fc7e">DAC</a></div><div class="ttdeci">#define DAC</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00047">loadmap.cpp:47</a></div></div>
+<div class="ttc" id="aloadmap_8cpp_html_a9b2249ae0b3882aaf27e96c396a5bb13"><div class="ttname"><a href="../../dc/db0/loadmap_8cpp.html#a9b2249ae0b3882aaf27e96c396a5bb13">red</a></div><div class="ttdeci">Byte red</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00037">loadmap.cpp:37</a></div></div>
+<div class="ttc" id="aloadmap_8h_html"><div class="ttname"><a href="../../da/d6d/loadmap_8h.html">loadmap.h</a></div></div>
+<div class="ttc" id="alsystem_8cpp_html_a64818c4898c1da8fb119990aa049fe82"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82">f</a></div><div class="ttdeci">void(* f)(LSysTurtleState *)</div><div class="ttdef"><b>Definition</b> <a href="../../da/db4/lsystem_8cpp_source.html#l00077">lsystem.cpp:77</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a4106701ee2eed91555d1b34e19d08bbc"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">id::engine::g_dac_box</a></div><div class="ttdeci">Byte g_dac_box[256][3]</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/spindac_8cpp_source.html#l00025">spindac.cpp:25</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_af2f071bded22c58b35aabe45c45c4460"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#af2f071bded22c58b35aabe45c45c4460">id::engine::g_color_state</a></div><div class="ttdeci">ColorState g_color_state</div><div class="ttdef"><b>Definition</b> <a href="../../de/d75/color__state_8cpp_source.html#l00008">color_state.cpp:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a22f009d7f3ea01dfddd8fab98dbf9590"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a22f009d7f3ea01dfddd8fab98dbf9590">id::io::set_color_palette_name</a></div><div class="ttdeci">void set_color_palette_name(const std::string &amp;map_name)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00106">loadmap.cpp:106</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a2cf8b633dbb325b1d506fde8398fb96ba5af1a3a285c2bdee4192223e31e1f833"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a2cf8b633dbb325b1d506fde8398fb96ba5af1a3a285c2bdee4192223e31e1f833">id::io::ReadFile::MAP</a></div><div class="ttdeci">@ MAP</div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a6b3f01760ba339f63ea3eb9113125397"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a6b3f01760ba339f63ea3eb9113125397">id::io::g_last_map_name</a></div><div class="ttdeci">std::string g_last_map_name</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00049">loadmap.cpp:49</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a8a24f10e1b9cf4c87bf71b77874fe1a2"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a8a24f10e1b9cf4c87bf71b77874fe1a2">id::io::g_map_clut</a></div><div class="ttdeci">Byte g_map_clut[256][3]</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00050">loadmap.cpp:50</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a9232f8be2b586742cc4190ad0648f3cb"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a9232f8be2b586742cc4190ad0648f3cb">id::io::ID_PACKED</a></div><div class="ttdeci">struct id::io::FractalInfo ID_PACKED</div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_aaf75f7c295bbca53b7ba4e15a912d093"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#aaf75f7c295bbca53b7ba4e15a912d093">id::io::validate_luts</a></div><div class="ttdeci">bool validate_luts(const std::string &amp;map_name)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00053">loadmap.cpp:53</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_abc9f9cb024c6b371e2df28a9684a1043"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#abc9f9cb024c6b371e2df28a9684a1043">id::io::find_file</a></div><div class="ttdeci">std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &amp;file_path)</div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_af60751e0d5bec98ae14e3d3e4588003d"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#af60751e0d5bec98ae14e3d3e4588003d">id::io::g_map_specified</a></div><div class="ttdeci">bool g_map_specified</div><div class="ttdef"><b>Definition</b> <a href="../../dc/db0/loadmap_8cpp_source.html#l00051">loadmap.cpp:51</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_acbae3c6d9528edef7e9d33ea09213597"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">id::ui::stop_msg</a></div><div class="ttdeci">bool stop_msg(StopMsgFlags flags, const std::string &amp;msg)</div><div class="ttdef"><b>Definition</b> <a href="../../d6/de6/stop__msg_8cpp_source.html#l00055">stop_msg.cpp:55</a></div></div>
+<div class="ttc" id="aspindac_8h_html"><div class="ttname"><a href="../../df/d7f/spindac_8h.html">spindac.h</a></div></div>
+<div class="ttc" id="astop__msg_8h_html"><div class="ttname"><a href="../../d1/d31/stop__msg_8h.html">stop_msg.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

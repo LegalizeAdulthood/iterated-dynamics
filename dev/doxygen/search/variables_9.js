@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['j_0',['j',['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#a8e55143e201e1aedda8efb7f431be477',1,'id::fractals::MandelbrotMix']]],
+  ['jb_5fc_1',['jb_c',['../d2/d1e/julibrot_8cpp.html#a697b8a6b89546140d1d2ee5bf12d9ef7',1,'julibrot.cpp']]],
+  ['juli3d_5fmode_2',['juli3d_mode',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a93aba02cb8a3f51a9e118918db607c51',1,'id::io::FractalInfo']]],
+  ['julia_5fc_5fnot_5fset_3',['JULIA_C_NOT_SET',['../dc/d31/namespaceid_1_1engine.html#a0432fd5781ef469ceb250b511458f034',1,'id::engine']]],
+  ['julibrot_5fdepth_4',['julibrot_depth',['../d1/d3e/history_8cpp.html#aaa3ce51bd24f2550a02e11e447af752c',1,'history.cpp']]],
+  ['julibrot_5fdepth_5ffp_5',['julibrot_depth_fp',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a01b247feb10287bb3601583c5162e59c',1,'id::io::FractalInfo']]],
+  ['julibrot_5fdist_6',['julibrot_dist',['../d1/d3e/history_8cpp.html#a605565a4626627d814684430c0e6c8e4',1,'history.cpp']]],
+  ['julibrot_5fdist_5ffp_7',['julibrot_dist_fp',['../dc/da2/structid_1_1io_1_1FractalInfo.html#ad43f5149075991c264bf41f80ebc7356',1,'id::io::FractalInfo']]],
+  ['julibrot_5fheight_8',['julibrot_height',['../d1/d3e/history_8cpp.html#a95c658cb8e57e08aad30485a9b9a4374',1,'history.cpp']]],
+  ['julibrot_5fheight_5ffp_9',['julibrot_height_fp',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a0770b9d25b1849dcc2f3455acabe4f1f',1,'id::io::FractalInfo']]],
+  ['julibrot_5fmode_10',['julibrot_mode',['../d1/d3e/history_8cpp.html#a747db897c173cbcf499ab8f28b5ba89f',1,'history.cpp']]],
+  ['julibrot_5forigin_11',['julibrot_origin',['../d1/d3e/history_8cpp.html#ae3840ecf0e2e113ea093c47b7dac1489',1,'history.cpp']]],
+  ['julibrot_5forigin_5ffp_12',['julibrot_origin_fp',['../dc/da2/structid_1_1io_1_1FractalInfo.html#ac433bedc5f308472e99004085479d441',1,'id::io::FractalInfo']]],
+  ['julibrot_5fwidth_13',['julibrot_width',['../d1/d3e/history_8cpp.html#a650c30a8912688f50a0ceed66be49a16',1,'history.cpp']]],
+  ['julibrot_5fwidth_5ffp_14',['julibrot_width_fp',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a37dd8124c56391402fcbaf1eca06fb9a',1,'id::io::FractalInfo']]],
+  ['julibrot_5fx_5fmax_15',['julibrot_x_max',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a8a491f5504a22f9ba2e7ba636a414d72',1,'id::io::FractalInfo::julibrot_x_max'],['../d1/d3e/history_8cpp.html#a62741ecf0049c66296bf5ac577ff8fd9',1,'julibrot_x_max:&#160;history.cpp']]],
+  ['julibrot_5fx_5fmin_16',['julibrot_x_min',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a7017ed78308add2afed51b213bb495d2',1,'id::io::FractalInfo::julibrot_x_min'],['../d1/d3e/history_8cpp.html#ad96b981ce4f482317bdc3183b9d6c773',1,'julibrot_x_min:&#160;history.cpp']]],
+  ['julibrot_5fy_5fmax_17',['julibrot_y_max',['../dc/da2/structid_1_1io_1_1FractalInfo.html#ab7bc55f091c53687d1f55ee526943d6d',1,'id::io::FractalInfo::julibrot_y_max'],['../d1/d3e/history_8cpp.html#a894b01000d482079b32ae9be673070ad',1,'julibrot_y_max:&#160;history.cpp']]],
+  ['julibrot_5fy_5fmin_18',['julibrot_y_min',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a974636674e4a73d07b7b19edccf22155',1,'id::io::FractalInfo::julibrot_y_min'],['../d1/d3e/history_8cpp.html#a09c3b90eb5c083b37d8a2d193c651444',1,'julibrot_y_min:&#160;history.cpp']]],
+  ['julibrot_5fz_5fdots_19',['julibrot_z_dots',['../dc/da2/structid_1_1io_1_1FractalInfo.html#aa3efee1896d45757a2c6c172c059944e',1,'id::io::FractalInfo::julibrot_z_dots'],['../d1/d3e/history_8cpp.html#a8a8bd1f1ac5363a94befadd33157a8ad',1,'julibrot_z_dots:&#160;history.cpp']]],
+  ['jump_5flod_5fptr_20',['jump_lod_ptr',['../dc/ddd/parser_8cpp.html#ac110b86ac2bd15262d101e5177091bc5',1,'parser.cpp']]],
+  ['jump_5fop_5fptr_21',['jump_op_ptr',['../dc/ddd/parser_8cpp.html#a90996bc8bf105728df2046aaec8b4e9f',1,'parser.cpp']]],
+  ['jump_5fsto_5fptr_22',['jump_sto_ptr',['../dc/ddd/parser_8cpp.html#abb80d4244a72692d30fca02e5a4c46c3',1,'parser.cpp']]],
+  ['jx_23',['jx',['../d2/d1e/julibrot_8cpp.html#addd10dfe6b6422c398b3a13e85dcb50d',1,'julibrot.cpp']]],
+  ['jy_24',['jy',['../d2/d1e/julibrot_8cpp.html#a178c63116e94ac30b62e463f851f10b4',1,'julibrot.cpp']]]
+];

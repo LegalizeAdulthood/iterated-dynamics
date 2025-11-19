@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['bailout_5fformula_2ecpp_0',['bailout_formula.cpp',['../d5/d7d/bailout__formula_8cpp.html',1,'']]],
+  ['bailout_5fformula_2eh_1',['bailout_formula.h',['../d1/d84/bailout__formula_8h.html',1,'']]],
+  ['barnsley_2ecpp_2',['barnsley.cpp',['../d5/d91/barnsley_8cpp.html',1,'']]],
+  ['barnsley_2eh_3',['barnsley.h',['../dd/d21/barnsley_8h.html',1,'']]],
+  ['bif_5fmay_2ecpp_4',['bif_may.cpp',['../d8/dee/bif__may_8cpp.html',1,'']]],
+  ['bif_5fmay_2eh_5',['bif_may.h',['../da/ddc/bif__may_8h.html',1,'']]],
+  ['bifurcation_2ecpp_6',['bifurcation.cpp',['../da/d3a/bifurcation_8cpp.html',1,'(Global Namespace)'],['../df/d32/Bifurcation_8cpp.html',1,'(Global Namespace)']]],
+  ['bifurcation_2eh_7',['bifurcation.h',['../d6/dc9/bifurcation_8h.html',1,'(Global Namespace)'],['../d7/df9/Bifurcation_8h.html',1,'(Global Namespace)']]],
+  ['big_2eh_8',['big.h',['../d0/d67/big_8h.html',1,'']]],
+  ['big_5fwhile_5floop_2ecpp_9',['big_while_loop.cpp',['../dd/d48/big__while__loop_8cpp.html',1,'']]],
+  ['big_5fwhile_5floop_2eh_10',['big_while_loop.h',['../db/da0/big__while__loop_8h.html',1,'']]],
+  ['bigflt_2ecpp_11',['bigflt.cpp',['../de/da6/bigflt_8cpp.html',1,'']]],
+  ['biginit_2ecpp_12',['biginit.cpp',['../d2/d3a/biginit_8cpp.html',1,'']]],
+  ['biginit_2eh_13',['biginit.h',['../de/de3/biginit_8h.html',1,'']]],
+  ['bignum_2ecpp_14',['bignum.cpp',['../d2/d67/bignum_8cpp.html',1,'']]],
+  ['bignumc_2ecpp_15',['bignumc.cpp',['../d0/da6/bignumc_8cpp.html',1,'']]],
+  ['boundary_5ftrace_2ecpp_16',['boundary_trace.cpp',['../d5/dc3/boundary__trace_8cpp.html',1,'']]],
+  ['boundary_5ftrace_2eh_17',['boundary_trace.h',['../d4/d84/boundary__trace_8h.html',1,'']]],
+  ['browse_2ecpp_18',['Browse.cpp',['../d3/dd6/Browse_8cpp.html',1,'']]],
+  ['browse_2eh_19',['Browse.h',['../da/d3d/Browse_8h.html',1,'']]],
+  ['burning_5fship_2ecpp_20',['burning_ship.cpp',['../d2/d22/burning__ship_8cpp.html',1,'']]],
+  ['burning_5fship_2eh_21',['burning_ship.h',['../df/d71/burning__ship_8h.html',1,'']]]
+];

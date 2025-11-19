@@ -82,23 +82,33 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">Compiler.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../de/dfa/Compiler_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;Compiler.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d2c/Compiler_8h.html">Compiler.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;AsciiDocCompiler.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;HelpCompiler.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d2/dd3/AsciiDocCompiler_8h.html">AsciiDocCompiler.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../db/d56/HelpCompiler_8h.html">HelpCompiler.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>hc</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d9/dcc/namespacehc.html">hc</a></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>{</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>std::shared_ptr&lt;Compiler&gt; create_compiler(<span class="keyword">const</span> Options &amp;options)</div>
+<div class="foldopen" id="foldopen00011" data-start="{" data-end="}">
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#ae60fe2410b780a516b00c9472df402ec">   11</a></span>std::shared_ptr&lt;Compiler&gt; <a class="code hl_function" href="../../d9/dcc/namespacehc.html#ae60fe2410b780a516b00c9472df402ec">create_compiler</a>(<span class="keyword">const</span> <a class="code hl_struct" href="../../d1/d0b/structhc_1_1Options.html">Options</a> &amp;options)</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keywordflow">return</span> options.mode == Mode::ASCII_DOC ? std::make_shared&lt;AsciiDocCompiler&gt;(options)</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keywordflow">return</span> options.<a class="code hl_variable" href="../../d1/d0b/structhc_1_1Options.html#af10df7b873384e187f884add5a19e968">mode</a> == <a class="code hl_enumvalue" href="../../d9/dcc/namespacehc.html#a0bf96c9ff7ac5b68a1c5e9c7cd0918ceacf8ca571e88eea28a1cbe04c50ed3295">Mode::ASCII_DOC</a> ? std::make_shared&lt;AsciiDocCompiler&gt;(options)</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>                                            : std::make_shared&lt;HelpCompiler&gt;(options);</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>}</div>
+</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>} <span class="comment">// namespace hc</span></div>
+<div class="ttc" id="aAsciiDocCompiler_8h_html"><div class="ttname"><a href="../../d2/dd3/AsciiDocCompiler_8h.html">AsciiDocCompiler.h</a></div></div>
+<div class="ttc" id="aCompiler_8h_html"><div class="ttname"><a href="../../d3/d2c/Compiler_8h.html">Compiler.h</a></div></div>
+<div class="ttc" id="aHelpCompiler_8h_html"><div class="ttname"><a href="../../db/d56/HelpCompiler_8h.html">HelpCompiler.h</a></div></div>
+<div class="ttc" id="anamespacehc_html"><div class="ttname"><a href="../../d9/dcc/namespacehc.html">hc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/dd3/AsciiDocCompiler_8h_source.html#l00007">AsciiDocCompiler.h:8</a></div></div>
+<div class="ttc" id="anamespacehc_html_a0bf96c9ff7ac5b68a1c5e9c7cd0918ceacf8ca571e88eea28a1cbe04c50ed3295"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a0bf96c9ff7ac5b68a1c5e9c7cd0918ceacf8ca571e88eea28a1cbe04c50ed3295">hc::Mode::ASCII_DOC</a></div><div class="ttdeci">@ ASCII_DOC</div></div>
+<div class="ttc" id="anamespacehc_html_ae60fe2410b780a516b00c9472df402ec"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#ae60fe2410b780a516b00c9472df402ec">hc::create_compiler</a></div><div class="ttdeci">std::shared_ptr&lt; Compiler &gt; create_compiler(const Options &amp;options)</div><div class="ttdef"><b>Definition</b> <a href="../../de/dfa/Compiler_8cpp_source.html#l00011">Compiler.cpp:11</a></div></div>
+<div class="ttc" id="astructhc_1_1Options_html"><div class="ttname"><a href="../../d1/d0b/structhc_1_1Options.html">hc::Options</a></div><div class="ttdef"><b>Definition</b> <a href="../../d5/d76/Options_8h_source.html#l00013">Options.h:14</a></div></div>
+<div class="ttc" id="astructhc_1_1Options_html_af10df7b873384e187f884add5a19e968"><div class="ttname"><a href="../../d1/d0b/structhc_1_1Options.html#af10df7b873384e187f884add5a19e968">hc::Options::mode</a></div><div class="ttdeci">Mode mode</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d76/Options_8h_source.html#l00015">Options.h:15</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -82,22 +82,23 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">make_path.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d5/d83/make__path_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;io/make_path.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../df/ddb/make__path_8h.html">io/make_path.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>fs = std::filesystem;</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span>id::io</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>std::string make_path(<span class="keyword">const</span> <span class="keywordtype">char</span> *drive, <span class="keyword">const</span> <span class="keywordtype">char</span> *dir, <span class="keyword">const</span> <span class="keywordtype">char</span> *fname, <span class="keyword">const</span> <span class="keywordtype">char</span> *ext)</div>
+<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#a6fcec4f2adfb257e7daed0cea7bf65a0">   13</a></span>std::string <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a6fcec4f2adfb257e7daed0cea7bf65a0">make_path</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *drive, <span class="keyword">const</span> <span class="keywordtype">char</span> *dir, <span class="keyword">const</span> <span class="keywordtype">char</span> *fname, <span class="keyword">const</span> <span class="keywordtype">char</span> *ext)</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    fs::path result;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keyword">const</span> <span class="keyword">auto</span> not_empty = [](<span class="keyword">const</span> <span class="keywordtype">char</span> *ptr) { <span class="keywordflow">return</span> ptr != <span class="keyword">nullptr</span> &amp;&amp; ptr[0] != 0; };</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keyword">const</span> <span class="keyword">auto</span> not_empty = [](<span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#a2e7ebd0890b730ef7feded871bf97ad6">ptr</a>) { <span class="keywordflow">return</span> <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#a2e7ebd0890b730ef7feded871bf97ad6">ptr</a> != <span class="keyword">nullptr</span> &amp;&amp; <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#a2e7ebd0890b730ef7feded871bf97ad6">ptr</a>[0] != 0; };</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keywordflow">if</span> (not_empty(drive))</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    {</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        result = drive;</div>
@@ -121,8 +122,13 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    }</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keywordflow">return</span> result.lexically_normal().make_preferred().string();</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>}</div>
+</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>} <span class="comment">// namespace id::io</span></div>
+<div class="ttc" id="amake__path_8h_html"><div class="ttname"><a href="../../df/ddb/make__path_8h.html">make_path.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a6fcec4f2adfb257e7daed0cea7bf65a0"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a6fcec4f2adfb257e7daed0cea7bf65a0">id::io::make_path</a></div><div class="ttdeci">std::string make_path(const char *drive, const char *dir, const char *fname, const char *ext)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d83/make__path_8cpp_source.html#l00013">make_path.cpp:13</a></div></div>
+<div class="ttc" id="aparser_8cpp_html_a2e7ebd0890b730ef7feded871bf97ad6"><div class="ttname"><a href="../../dc/ddd/parser_8cpp.html#a2e7ebd0890b730ef7feded871bf97ad6">ptr</a></div><div class="ttdeci">FunctionPtr * ptr</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00282">parser.cpp:282</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -82,33 +82,44 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">get_key_no_help.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d4/d7c/get__key__no__help_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/get_key_no_help.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../de/d80/get__key__no__help_8h.html">ui/get_key_no_help.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;misc/Driver.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;ui/id_keys.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/de4/id__keys_8h.html">ui/id_keys.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span>id::misc;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">/*</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"> * This routine returns a key, ignoring F1</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">int</span> get_a_key_no_help()</div>
+<div class="foldopen" id="foldopen00016" data-start="{" data-end="}">
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a908a5b8b3b2f445b9a0a381f511c6be7">   16</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a908a5b8b3b2f445b9a0a381f511c6be7">get_a_key_no_help</a>()</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">int</span> ch;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a>;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">do</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        ch = driver_get_key();</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a> = <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">driver_get_key</a>();</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    }</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">while</span> (ID_KEY_F1 == ch);</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> ch;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">while</span> (<a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a95ec79234d5941814bc62749a2e31dc5a3a71adc1403549a3ea66e5e98979a439">ID_KEY_F1</a> == <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a>);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a>;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}</div>
+</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
+<div class="ttc" id="aget__key__no__help_8h_html"><div class="ttname"><a href="../../de/d80/get__key__no__help_8h.html">get_key_no_help.h</a></div></div>
+<div class="ttc" id="aid__keys_8h_html"><div class="ttname"><a href="../../d7/de4/id__keys_8h.html">id_keys.h</a></div></div>
+<div class="ttc" id="alsystem_8cpp_html_af53f92900705f7de3c139a05b2f9ef16"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a></div><div class="ttdeci">char ch</div><div class="ttdef"><b>Definition</b> <a href="../../da/db4/lsystem_8cpp_source.html#l00084">lsystem.cpp:84</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ac52f797fd56ee3e32bb756bace47991e"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ac52f797fd56ee3e32bb756bace47991e">id::misc::driver_get_key</a></div><div class="ttdeci">int driver_get_key()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00183">Driver.h:183</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a908a5b8b3b2f445b9a0a381f511c6be7"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a908a5b8b3b2f445b9a0a381f511c6be7">id::ui::get_a_key_no_help</a></div><div class="ttdeci">int get_a_key_no_help()</div><div class="ttdef"><b>Definition</b> <a href="../../d4/d7c/get__key__no__help_8cpp_source.html#l00016">get_key_no_help.cpp:16</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a95ec79234d5941814bc62749a2e31dc5a3a71adc1403549a3ea66e5e98979a439"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a95ec79234d5941814bc62749a2e31dc5a3a71adc1403549a3ea66e5e98979a439">id::ui::ID_KEY_F1</a></div><div class="ttdeci">@ ID_KEY_F1</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00036">id_keys.h:36</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

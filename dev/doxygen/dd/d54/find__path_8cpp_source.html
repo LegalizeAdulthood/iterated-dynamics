@@ -82,31 +82,32 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">find_path.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../dd/d54/find__path_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;io/find_path.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d2/dd2/find__path_8h.html">io/find_path.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;io/library.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;io/search_path.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d08/library_8h.html">io/library.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d9/de5/search__path_8h.html">io/search_path.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span>fs = std::filesystem;</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span>id::io</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>{</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// find_path</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">//</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment">//      Find where a file is.</span></div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">//</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>std::string find_path(<span class="keyword">const</span> <span class="keywordtype">char</span> *filename,</div>
+<div class="foldopen" id="foldopen00019" data-start="{" data-end="}">
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#a667d82adda805263d6e06aa51aee2562">   19</a></span>std::string <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a667d82adda805263d6e06aa51aee2562">find_path</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#ae80f820219e45772366a2a68de6a54c4">filename</a>,</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keyword">const</span> std::function&lt;<span class="keyword">const</span> <span class="keywordtype">char</span> *(<span class="keyword">const</span> <span class="keywordtype">char</span> *)&gt; &amp;get_env) <span class="comment">// return full pathnames</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">const</span> fs::path file_path{fs::path{filename}.make_preferred()};</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">const</span> fs::path file_path{fs::path{<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#ae80f820219e45772366a2a68de6a54c4">filename</a>}.make_preferred()};</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="comment">// check current directory if curdir= parameter set</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">if</span> (g_check_cur_dir &amp;&amp; fs::exists(file_path.filename()))   <span class="comment">// file exists</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a788265b4558df49e3c98d1c4508f442d">g_check_cur_dir</a> &amp;&amp; fs::exists(file_path.filename()))   <span class="comment">// file exists</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    {</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keywordflow">return</span> (fs::current_path() / file_path.filename()).make_preferred().string();</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    }</div>
@@ -124,24 +125,35 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    };</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="comment">// check FRACTDIR</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    std::string dir1_path{check_dir(g_fractal_search_dir1)};</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    std::string dir1_path{check_dir(<a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a16abf106f2e24c5a71569e13a80332f8">g_fractal_search_dir1</a>)};</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordflow">if</span> (!dir1_path.empty())</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    {</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordflow">return</span> dir1_path;</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    }</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="comment">// check SRCDIR</span></div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    std::string dir2_path{check_dir(g_fractal_search_dir2)};</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    std::string dir2_path{check_dir(<a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#a5e54b497db409fe789eac451e5f07a63">g_fractal_search_dir2</a>)};</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keywordflow">if</span> (!dir2_path.empty())</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    {</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="keywordflow">return</span> dir2_path;</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    }</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="comment">// check PATH</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> search_path(file_path.filename().string().c_str(), <span class="stringliteral">&quot;PATH&quot;</span>, get_env);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a7571ca37d65ee70a86c3a4d90ef682cd">search_path</a>(file_path.filename().string().c_str(), <span class="stringliteral">&quot;PATH&quot;</span>, get_env);</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>}</div>
+</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>} <span class="comment">// namespace id::io</span></div>
+<div class="ttc" id="afile__get__window_8cpp_html_ae80f820219e45772366a2a68de6a54c4"><div class="ttname"><a href="../../db/d7d/file__get__window_8cpp.html#ae80f820219e45772366a2a68de6a54c4">filename</a></div><div class="ttdeci">std::string filename</div><div class="ttdef"><b>Definition</b> <a href="../../db/d7d/file__get__window_8cpp_source.html#l00078">file_get_window.cpp:78</a></div></div>
+<div class="ttc" id="afind__path_8h_html"><div class="ttname"><a href="../../d2/dd2/find__path_8h.html">find_path.h</a></div></div>
+<div class="ttc" id="alibrary_8h_html"><div class="ttname"><a href="../../dd/d08/library_8h.html">library.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a16abf106f2e24c5a71569e13a80332f8"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a16abf106f2e24c5a71569e13a80332f8">id::io::g_fractal_search_dir1</a></div><div class="ttdeci">std::filesystem::path g_fractal_search_dir1</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d7d/library_8cpp_source.html#l00018">library.cpp:18</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a5e54b497db409fe789eac451e5f07a63"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a5e54b497db409fe789eac451e5f07a63">id::io::g_fractal_search_dir2</a></div><div class="ttdeci">std::filesystem::path g_fractal_search_dir2</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d7d/library_8cpp_source.html#l00019">library.cpp:19</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a667d82adda805263d6e06aa51aee2562"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a667d82adda805263d6e06aa51aee2562">id::io::find_path</a></div><div class="ttdeci">std::string find_path(const char *filename, const std::function&lt; const char *(const char *)&gt; &amp;get_env)</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d54/find__path_8cpp_source.html#l00019">find_path.cpp:19</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a7571ca37d65ee70a86c3a4d90ef682cd"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a7571ca37d65ee70a86c3a4d90ef682cd">id::io::search_path</a></div><div class="ttdeci">std::string search_path(const char *filename, const char *path_var, const GetEnv &amp;get_env)</div><div class="ttdef"><b>Definition</b> <a href="../../db/dea/search__path_8cpp_source.html#l00016">search_path.cpp:16</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a788265b4558df49e3c98d1c4508f442d"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a788265b4558df49e3c98d1c4508f442d">id::io::g_check_cur_dir</a></div><div class="ttdeci">bool g_check_cur_dir</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d7d/library_8cpp_source.html#l00017">library.cpp:17</a></div></div>
+<div class="ttc" id="asearch__path_8h_html"><div class="ttname"><a href="../../d9/de5/search__path_8h.html">search_path.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

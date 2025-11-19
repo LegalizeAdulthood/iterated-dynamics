@@ -82,43 +82,59 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">get_a_number.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../df/d61/get__a__number_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/get_a_number.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d5/d13/get__a__number_8h.html">ui/get_a_number.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;misc/Driver.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;ui/ChoiceBuilder.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d4/d57/ChoiceBuilder_8h.html">ui/ChoiceBuilder.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span>id::misc;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keywordtype">int</span> get_a_number(<span class="keywordtype">double</span> *x, <span class="keywordtype">double</span> *y)</div>
+<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a117c0aaeead39a28f36a25a4e2c031b0">   13</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a117c0aaeead39a28f36a25a4e2c031b0">get_a_number</a>(<span class="keywordtype">double</span> *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keywordtype">double</span> *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>)</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    driver_stack_screen();</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a7b5b79e2e0f7c6277e54231689cd570e">driver_stack_screen</a>();</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="comment">// fill up the previous values arrays</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    ChoiceBuilder&lt;2&gt; builder;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    builder.double_number(<span class="stringliteral">&quot;X coordinate at cursor&quot;</span>, *x);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    builder.double_number(<span class="stringliteral">&quot;Y coordinate at cursor&quot;</span>, *y);</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <a class="code hl_class" href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html">ChoiceBuilder&lt;2&gt;</a> builder;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    builder.<a class="code hl_function" href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#a43ca7f010da3e0685f5ff02c327ba2c8">double_number</a>(<span class="stringliteral">&quot;X coordinate at cursor&quot;</span>, *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    builder.<a class="code hl_function" href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#a43ca7f010da3e0685f5ff02c327ba2c8">double_number</a>(<span class="stringliteral">&quot;Y coordinate at cursor&quot;</span>, *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>);</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> i = builder.prompt(<span class="stringliteral">&quot;Set Cursor Coordinates&quot;</span>, 16 | 8 | 1);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> i = builder.<a class="code hl_function" href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#a928a5be88b128e7047e09b23fed1363e">prompt</a>(<span class="stringliteral">&quot;Set Cursor Coordinates&quot;</span>, 16 | 8 | 1);</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">if</span> (i &lt; 0)</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        driver_unstack_screen();</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a6035cf4bbf888b4508f859a21ca5c3a0">driver_unstack_screen</a>();</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    }</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="comment">// now check out the results (*hopefully* in the same order &lt;grin&gt;)</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    *x = builder.read_double_number();</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    *y = builder.read_double_number();</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a> = builder.<a class="code hl_function" href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#a83983e7a2314f851835fc9a8d3f1dd93">read_double_number</a>();</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a> = builder.<a class="code hl_function" href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#a83983e7a2314f851835fc9a8d3f1dd93">read_double_number</a>();</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    driver_unstack_screen();</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a6035cf4bbf888b4508f859a21ca5c3a0">driver_unstack_screen</a>();</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordflow">return</span> i;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}</div>
+</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aChoiceBuilder_8h_html"><div class="ttname"><a href="../../d4/d57/ChoiceBuilder_8h.html">ChoiceBuilder.h</a></div></div>
+<div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
+<div class="ttc" id="aclassid_1_1ui_1_1ChoiceBuilder_html"><div class="ttname"><a href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html">id::ui::ChoiceBuilder</a></div><div class="ttdef"><b>Definition</b> <a href="../../d4/d57/ChoiceBuilder_8h_source.html#l00025">ChoiceBuilder.h:26</a></div></div>
+<div class="ttc" id="aclassid_1_1ui_1_1ChoiceBuilder_html_a43ca7f010da3e0685f5ff02c327ba2c8"><div class="ttname"><a href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#a43ca7f010da3e0685f5ff02c327ba2c8">id::ui::ChoiceBuilder::double_number</a></div><div class="ttdeci">ChoiceBuilder &amp; double_number(const char *choice, double value)</div><div class="ttdef"><b>Definition</b> <a href="../../d4/d57/ChoiceBuilder_8h_source.html#l00060">ChoiceBuilder.h:60</a></div></div>
+<div class="ttc" id="aclassid_1_1ui_1_1ChoiceBuilder_html_a83983e7a2314f851835fc9a8d3f1dd93"><div class="ttname"><a href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#a83983e7a2314f851835fc9a8d3f1dd93">id::ui::ChoiceBuilder::read_double_number</a></div><div class="ttdeci">double read_double_number() const</div><div class="ttdef"><b>Definition</b> <a href="../../d4/d57/ChoiceBuilder_8h_source.html#l00164">ChoiceBuilder.h:164</a></div></div>
+<div class="ttc" id="aclassid_1_1ui_1_1ChoiceBuilder_html_a928a5be88b128e7047e09b23fed1363e"><div class="ttname"><a href="../../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#a928a5be88b128e7047e09b23fed1363e">id::ui::ChoiceBuilder::prompt</a></div><div class="ttdeci">int prompt(const char *hdg, int fn_key_mask, char *extra_info)</div><div class="ttdef"><b>Definition</b> <a href="../../d4/d57/ChoiceBuilder_8h_source.html#l00128">ChoiceBuilder.h:128</a></div></div>
+<div class="ttc" id="aget__a__number_8h_html"><div class="ttname"><a href="../../d5/d13/get__a__number_8h.html">get_a_number.h</a></div></div>
+<div class="ttc" id="ajulibrot_8cpp_html_ab927965981178aa1fba979a37168db2a"><div class="ttname"><a href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a></div><div class="ttdeci">double y</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d1e/julibrot_8cpp_source.html#l00039">julibrot.cpp:39</a></div></div>
+<div class="ttc" id="ajulibrot_8cpp_html_af88b946fb90d5f08b5fb740c70e98c10"><div class="ttname"><a href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a></div><div class="ttdeci">double x</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d1e/julibrot_8cpp_source.html#l00038">julibrot.cpp:38</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a6035cf4bbf888b4508f859a21ca5c3a0"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a6035cf4bbf888b4508f859a21ca5c3a0">id::misc::driver_unstack_screen</a></div><div class="ttdeci">void driver_unstack_screen()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00283">Driver.h:283</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a7b5b79e2e0f7c6277e54231689cd570e"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a7b5b79e2e0f7c6277e54231689cd570e">id::misc::driver_stack_screen</a></div><div class="ttdeci">void driver_stack_screen()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00278">Driver.h:278</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a117c0aaeead39a28f36a25a4e2c031b0"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a117c0aaeead39a28f36a25a4e2c031b0">id::ui::get_a_number</a></div><div class="ttdeci">int get_a_number(double *x, double *y)</div><div class="ttdef"><b>Definition</b> <a href="../../df/d61/get__a__number_8cpp_source.html#l00013">get_a_number.cpp:13</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

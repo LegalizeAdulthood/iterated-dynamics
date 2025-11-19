@@ -82,36 +82,48 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">ifs3d.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d7/d56/ifs3d_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/ifs3d.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../da/d01/ifs3d_8h.html">ui/ifs3d.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;fractals/lorenz.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;misc/Driver.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/db2/lorenz_8h.html">fractals/lorenz.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span>id::fractals;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span>id::misc;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a>;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keywordtype">int</span> ifs3d_calc()</div>
+<div class="foldopen" id="foldopen00014" data-start="{" data-end="}">
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a0d48f48f734e7427c762e7adc90416fb">   14</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a0d48f48f734e7427c762e7adc90416fb">ifs3d_calc</a>()</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>{</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <a class="code hl_class" href="../../dd/dfa/classid_1_1fractals_1_1IFS3D.html">IFS3D</a> ifs;</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keywordflow">while</span> (!ifs.done())</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keywordflow">while</span> (!ifs.<a class="code hl_function" href="../../dd/dfa/classid_1_1fractals_1_1IFS3D.html#a21fd9152922704dde8bd4f9aac96c6fa">done</a>())</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    {</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        <span class="comment">// keypress bails out</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        <span class="keywordflow">if</span> (driver_key_pressed())</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">driver_key_pressed</a>())</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        {</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        }</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        ifs.iterate();</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        ifs.<a class="code hl_function" href="../../dd/dfa/classid_1_1fractals_1_1IFS3D.html#a0e19ed330593f514df80d9cdbb2f4f8b">iterate</a>();</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    }</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>}</div>
+</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
 <div class="ttc" id="aclassid_1_1fractals_1_1IFS3D_html"><div class="ttname"><a href="../../dd/dfa/classid_1_1fractals_1_1IFS3D.html">id::fractals::IFS3D</a></div><div class="ttdef"><b>Definition</b> <a href="../../d7/db2/lorenz_8h_source.html#l00208">lorenz.h:209</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1IFS3D_html_a0e19ed330593f514df80d9cdbb2f4f8b"><div class="ttname"><a href="../../dd/dfa/classid_1_1fractals_1_1IFS3D.html#a0e19ed330593f514df80d9cdbb2f4f8b">id::fractals::IFS3D::iterate</a></div><div class="ttdeci">void iterate()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/dfc/lorenz_8cpp_source.html#l01643">lorenz.cpp:1643</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1IFS3D_html_a21fd9152922704dde8bd4f9aac96c6fa"><div class="ttname"><a href="../../dd/dfa/classid_1_1fractals_1_1IFS3D.html#a21fd9152922704dde8bd4f9aac96c6fa">id::fractals::IFS3D::done</a></div><div class="ttdeci">bool done() const</div><div class="ttdef"><b>Definition</b> <a href="../../dd/dfc/lorenz_8cpp_source.html#l01638">lorenz.cpp:1638</a></div></div>
+<div class="ttc" id="aifs3d_8h_html"><div class="ttname"><a href="../../da/d01/ifs3d_8h.html">ifs3d.h</a></div></div>
+<div class="ttc" id="alorenz_8h_html"><div class="ttname"><a href="../../d7/db2/lorenz_8h.html">lorenz.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00014">calcfrac.h:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ad698e1042eebf4696c125d22bb014c9c"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">id::misc::driver_key_pressed</a></div><div class="ttdeci">int driver_key_pressed()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00208">Driver.h:208</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a0d48f48f734e7427c762e7adc90416fb"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a0d48f48f734e7427c762e7adc90416fb">id::ui::ifs3d_calc</a></div><div class="ttdeci">int ifs3d_calc()</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d56/ifs3d_8cpp_source.html#l00014">ifs3d.cpp:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

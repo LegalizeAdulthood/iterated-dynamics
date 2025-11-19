@@ -82,24 +82,30 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">round_float_double.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../db/d5e/round__float__double_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;math/round_float_double.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d2/de6/round__float__double_8h.html">math/round_float_double.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;cstdio&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;cstdlib&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>id::math</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/db0/namespaceid_1_1math.html">id::math</a></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>{</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keywordtype">void</span> round_float_double(<span class="keywordtype">double</span> *x) <span class="comment">// make double converted from float look ok</span></div>
+<div class="foldopen" id="foldopen00011" data-start="{" data-end="}">
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="../../d0/db0/namespaceid_1_1math.html#a1850eacf18c0ebdc830945f7d75d1860">   11</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d0/db0/namespaceid_1_1math.html#a1850eacf18c0ebdc830945f7d75d1860">round_float_double</a>(<span class="keywordtype">double</span> *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>) <span class="comment">// make double converted from float look ok</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keywordtype">char</span> buf[30];</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    std::sprintf(buf, <span class="stringliteral">&quot;%-10.7g&quot;</span>, *x);</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    *x = std::atof(buf);</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    std::sprintf(buf, <span class="stringliteral">&quot;%-10.7g&quot;</span>, *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>);</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    *<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a> = std::atof(buf);</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>}</div>
+</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>} <span class="comment">// namespace id::math</span></div>
+<div class="ttc" id="ajulibrot_8cpp_html_af88b946fb90d5f08b5fb740c70e98c10"><div class="ttname"><a href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a></div><div class="ttdeci">double x</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d1e/julibrot_8cpp_source.html#l00038">julibrot.cpp:38</a></div></div>
+<div class="ttc" id="anamespaceid_1_1math_html"><div class="ttname"><a href="../../d0/db0/namespaceid_1_1math.html">id::math</a></div><div class="ttdef"><b>Definition</b> <a href="../../d5/d15/arg_8h_source.html#l00009">arg.h:10</a></div></div>
+<div class="ttc" id="anamespaceid_1_1math_html_a1850eacf18c0ebdc830945f7d75d1860"><div class="ttname"><a href="../../d0/db0/namespaceid_1_1math.html#a1850eacf18c0ebdc830945f7d75d1860">id::math::round_float_double</a></div><div class="ttdeci">void round_float_double(double *x)</div><div class="ttdef"><b>Definition</b> <a href="../../db/d5e/round__float__double_8cpp_source.html#l00011">round_float_double.cpp:11</a></div></div>
+<div class="ttc" id="around__float__double_8h_html"><div class="ttname"><a href="../../d2/de6/round__float__double_8h.html">round_float_double.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

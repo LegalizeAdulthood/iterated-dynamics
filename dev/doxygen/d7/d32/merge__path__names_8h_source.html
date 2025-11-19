@@ -82,19 +82,19 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">merge_path_names.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d7/d32/merge__path__names_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span>id::engine</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>{</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">enum class</span> CmdFile;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">enum class</span> <a class="code hl_enumeration" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a>;</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>}</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span>id::io</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// copies the proposed new filename to the fullpath variable</span></div>
@@ -102,10 +102,14 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">// (modes AT_AFTER_STARTUP and AT_CMD_LINE_SET_NAME)</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">// attempts to extract directory and test for existence</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">// (modes AT_CMD_LINE and SSTOOLS_INI)</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keywordtype">int</span> merge_path_names(std::string &amp;old_full_path, <span class="keyword">const</span> <span class="keywordtype">char</span> *new_filename, engine::CmdFile mode);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keywordtype">int</span> merge_path_names(std::filesystem::path &amp;old_full_path, <span class="keyword">const</span> <span class="keywordtype">char</span> *new_filename, engine::CmdFile mode);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keywordtype">int</span> <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a710a5c00b7c86a752ed584f928bbc6cc">merge_path_names</a>(std::string &amp;old_full_path, <span class="keyword">const</span> <span class="keywordtype">char</span> *new_filename, <a class="code hl_enumeration" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">engine::CmdFile</a> mode);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keywordtype">int</span> <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a710a5c00b7c86a752ed584f928bbc6cc">merge_path_names</a>(std::filesystem::path &amp;old_full_path, <span class="keyword">const</span> <span class="keywordtype">char</span> *new_filename, <a class="code hl_enumeration" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">engine::CmdFile</a> mode);</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>} <span class="comment">// namespace id::io</span></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_af68143cd48b47c6c8345824b1b7f9160"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">id::engine::CmdFile</a></div><div class="ttdeci">CmdFile</div><div class="ttdef"><b>Definition</b> <a href="../../db/dda/cmdfiles_8h_source.html#l00025">cmdfiles.h:26</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a710a5c00b7c86a752ed584f928bbc6cc"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a710a5c00b7c86a752ed584f928bbc6cc">id::io::merge_path_names</a></div><div class="ttdeci">int merge_path_names(std::string &amp;old_full_path, const char *new_filename, engine::CmdFile mode)</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d3d/merge__path__names_8cpp_source.html#l00151">merge_path_names.cpp:151</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

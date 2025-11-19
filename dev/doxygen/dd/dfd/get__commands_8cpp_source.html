@@ -82,43 +82,62 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">get_commands.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../dd/dfd/get__commands_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/get_commands.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/d3d/get__commands_8h.html">ui/get_commands.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;helpdefs.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;misc/ValueSaver.h&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;io/file_item.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;ui/get_file_entry.h&quot;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;ui/help.h&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d59/ValueSaver_8h.html">misc/ValueSaver.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../d6/d68/file__item_8h.html">io/file_item.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="../../dc/d59/get__file__entry_8h.html">ui/get_file_entry.h</a>&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="../../db/df1/help_8h.html">ui/help.h</a>&quot;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;cstdio&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">using namespace </span>id::engine;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">using namespace </span>id::help;</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">using namespace </span>id::io;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">using namespace </span>id::misc;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d0/d5f/namespaceid_1_1help.html">id::help</a>;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a>;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment">// execute commands from file</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>CmdArgFlags get_commands()</div>
+<div class="foldopen" id="foldopen00022" data-start="{" data-end="}">
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#aaba5dd15a6b1964fbfee797e47a88d3e">   22</a></span><a class="code hl_enumeration" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#aaba5dd15a6b1964fbfee797e47a88d3e">get_commands</a>()</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>{</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    std::FILE *param_file;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    CmdArgFlags ret{CmdArgFlags::NONE};</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_class" href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">ValueSaver</a> saved_help_mode{g_help_mode, HelpLabels::HELP_PARAM_FILE};</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordtype">long</span> point = get_file_entry(ItemType::PAR_SET, g_parameter_file, g_parameter_set_name);</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordflow">if</span> (point &gt;= 0 &amp;&amp; (param_file = std::fopen(g_parameter_file.string().c_str(), <span class="stringliteral">&quot;rb&quot;</span>)) != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <a class="code hl_enumeration" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a> ret{CmdArgFlags::NONE};</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_class" href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">ValueSaver</a> saved_help_mode{<a class="code hl_variable" href="../../d0/d5f/namespaceid_1_1help.html#ad0b971ac3cf639a418a3972f67014ded">g_help_mode</a>, HelpLabels::HELP_PARAM_FILE};</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    <span class="keywordtype">long</span> point = <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a8c8cfdbb26167d53f4dc9df6d339b44e">get_file_entry</a>(ItemType::PAR_SET, <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ae5f5add92e4701e7b4a3072ce0ae37c7">g_parameter_file</a>, <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a1d7d9715fea6f61fe0b7e8941843dfd3">g_parameter_set_name</a>);</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordflow">if</span> (point &gt;= 0 &amp;&amp; (param_file = std::fopen(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ae5f5add92e4701e7b4a3072ce0ae37c7">g_parameter_file</a>.string().c_str(), <span class="stringliteral">&quot;rb&quot;</span>)) != <span class="keyword">nullptr</span>)</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    {</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        std::fseek(param_file, point, SEEK_SET);</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        ret = load_commands(param_file);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        ret = <a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a25ab8257ebcd4a311d1ec0727d8bc6d7">load_commands</a>(param_file);</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    }</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keywordflow">return</span> ret;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>}</div>
+</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aValueSaver_8h_html"><div class="ttname"><a href="../../d3/d59/ValueSaver_8h.html">ValueSaver.h</a></div></div>
 <div class="ttc" id="aclassid_1_1misc_1_1ValueSaver_html"><div class="ttname"><a href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">id::misc::ValueSaver</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d59/ValueSaver_8h_source.html#l00011">ValueSaver.h:12</a></div></div>
+<div class="ttc" id="afile__item_8h_html"><div class="ttname"><a href="../../d6/d68/file__item_8h.html">file_item.h</a></div></div>
+<div class="ttc" id="aget__commands_8h_html"><div class="ttname"><a href="../../d1/d3d/get__commands_8h.html">get_commands.h</a></div></div>
+<div class="ttc" id="aget__file__entry_8h_html"><div class="ttname"><a href="../../dc/d59/get__file__entry_8h.html">get_file_entry.h</a></div></div>
+<div class="ttc" id="ahelp_8h_html"><div class="ttname"><a href="../../db/df1/help_8h.html">help.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a1d7d9715fea6f61fe0b7e8941843dfd3"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a1d7d9715fea6f61fe0b7e8941843dfd3">id::engine::g_parameter_set_name</a></div><div class="ttdeci">std::string g_parameter_set_name</div><div class="ttdef"><b>Definition</b> <a href="../../df/de8/cmdfiles_8cpp_source.html#l00150">cmdfiles.cpp:150</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a25ab8257ebcd4a311d1ec0727d8bc6d7"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a25ab8257ebcd4a311d1ec0727d8bc6d7">id::engine::load_commands</a></div><div class="ttdeci">CmdArgFlags load_commands(std::FILE *infile)</div><div class="ttdef"><b>Definition</b> <a href="../../df/de8/cmdfiles_8cpp_source.html#l00330">cmdfiles.cpp:330</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a42c836e07f1574c898e98d78505a7a16"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">id::engine::CmdArgFlags</a></div><div class="ttdeci">CmdArgFlags</div><div class="ttdef"><b>Definition</b> <a href="../../db/dda/cmdfiles_8h_source.html#l00033">cmdfiles.h:34</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_ae5f5add92e4701e7b4a3072ce0ae37c7"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#ae5f5add92e4701e7b4a3072ce0ae37c7">id::engine::g_parameter_file</a></div><div class="ttdeci">std::filesystem::path g_parameter_file</div><div class="ttdef"><b>Definition</b> <a href="../../df/de8/cmdfiles_8cpp_source.html#l00149">cmdfiles.cpp:149</a></div></div>
+<div class="ttc" id="anamespaceid_1_1help_html"><div class="ttname"><a href="../../d0/d5f/namespaceid_1_1help.html">id::help</a></div><div class="ttdef"><b>Definition</b> <a href="../../db/df1/help_8h_source.html#l00005">help.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1help_html_ad0b971ac3cf639a418a3972f67014ded"><div class="ttname"><a href="../../d0/d5f/namespaceid_1_1help.html#ad0b971ac3cf639a418a3972f67014ded">id::help::g_help_mode</a></div><div class="ttdeci">HelpLabels g_help_mode</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00050">help.cpp:50</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a8c8cfdbb26167d53f4dc9df6d339b44e"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a8c8cfdbb26167d53f4dc9df6d339b44e">id::ui::get_file_entry</a></div><div class="ttdeci">long get_file_entry(io::ItemType type, std::filesystem::path &amp;path, std::string &amp;entry_name)</div><div class="ttdef"><b>Definition</b> <a href="../../df/dbf/get__file__entry_8cpp_source.html#l00385">get_file_entry.cpp:385</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_aaba5dd15a6b1964fbfee797e47a88d3e"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#aaba5dd15a6b1964fbfee797e47a88d3e">id::ui::get_commands</a></div><div class="ttdeci">engine::CmdArgFlags get_commands()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/dfd/get__commands_8cpp_source.html#l00022">get_commands.cpp:22</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

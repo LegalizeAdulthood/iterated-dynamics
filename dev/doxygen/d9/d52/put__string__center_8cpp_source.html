@@ -82,20 +82,21 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">put_string_center.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d9/d52/put__string__center_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/put_string_center.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../da/d8d/put__string__center_8h.html">ui/put_string_center.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;misc/Driver.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span>id::misc;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keywordtype">int</span> put_string_center(<span class="keyword">const</span> <span class="keywordtype">int</span> row, <span class="keyword">const</span> <span class="keywordtype">int</span> col, <span class="keyword">const</span> <span class="keywordtype">int</span> width, <span class="keyword">const</span> <span class="keywordtype">int</span> attr, <span class="keyword">const</span> <span class="keywordtype">char</span> *msg)</div>
+<div class="foldopen" id="foldopen00014" data-start="{" data-end="}">
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255">   14</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255">put_string_center</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> row, <span class="keyword">const</span> <span class="keywordtype">int</span> col, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> attr, <span class="keyword">const</span> <span class="keywordtype">char</span> *msg)</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>{</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keywordtype">char</span> buf[81];</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keywordtype">int</span> i = 0;</div>
@@ -107,25 +108,33 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    {</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    }</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordflow">if</span> (i &gt;= width)</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordflow">if</span> (i &gt;= <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>)</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    {</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        i = width - 1; <span class="comment">// sanity check</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        i = <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a> - 1; <span class="comment">// sanity check</span></div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    }</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keywordtype">int</span> j = (width - i) / 2;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    j -= (width + 10 - i) / 20; <span class="comment">// when wide a bit left of center looks better</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    std::memset(buf, <span class="charliteral">&#39; &#39;</span>, width);</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    buf[width] = 0;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keywordtype">int</span> j = (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a> - i) / 2;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    j -= (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a> + 10 - i) / 20; <span class="comment">// when wide a bit left of center looks better</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    std::memset(buf, <span class="charliteral">&#39; &#39;</span>, <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>);</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    buf[<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>] = 0;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    i = 0;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordtype">int</span> k = j;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">while</span> (msg[i])</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    {</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        buf[k++] = msg[i++]; <span class="comment">// std::strcpy for a</span></div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    }</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    driver_put_string(row, col, attr, buf);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a829fa7d67c1a1667eade936e5242e0d8">driver_put_string</a>(row, col, attr, buf);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">return</span> j;</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>}</div>
+</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
+<div class="ttc" id="ahelp_8cpp_html_a2474a5474cbff19523a51eb1de01cda4"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a></div><div class="ttdeci">int width</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00074">help.cpp:74</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a829fa7d67c1a1667eade936e5242e0d8"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a829fa7d67c1a1667eade936e5242e0d8">id::misc::driver_put_string</a></div><div class="ttdeci">void driver_put_string(const int row, const int col, const int attr, const char *msg)</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00228">Driver.h:228</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a83d44a8dbe5bcf918863b49efe1eb255"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255">id::ui::put_string_center</a></div><div class="ttdeci">int put_string_center(int row, int col, int width, int attr, const char *msg)</div><div class="ttdef"><b>Definition</b> <a href="../../d9/d52/put__string__center_8cpp_source.html#l00014">put_string_center.cpp:14</a></div></div>
+<div class="ttc" id="aput__string__center_8h_html"><div class="ttname"><a href="../../da/d8d/put__string__center_8h.html">put_string_center.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

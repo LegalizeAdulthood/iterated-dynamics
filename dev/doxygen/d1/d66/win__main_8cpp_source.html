@@ -82,41 +82,56 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">win_main.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d1/d66/win__main_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/id_main.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d0/dc8/id__main_8h.html">ui/id_main.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;misc/stack_avail.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d8/d28/stack__avail_8h.html">misc/stack_avail.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;create_minidump.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;instance.h&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../d9/d53/create__minidump_8h.html">create_minidump.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="../../d9/dda/instance_8h.html">instance.h</a>&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;win_defines.h&quot;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="../../df/dad/win__defines_8h.html">win_defines.h</a>&quot;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;crtdbg.h&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;Shlwapi.h&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;Windows.h&gt;</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">using namespace </span>id::misc;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">using namespace </span>id::ui;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a>;</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keywordtype">int</span> __stdcall WinMain(HINSTANCE hinstance, HINSTANCE <span class="comment">/*prev_instance*/</span>, LPSTR <span class="comment">/*cmd_line*/</span>, <span class="keywordtype">int</span> <span class="comment">/*show*/</span>)</div>
+<div class="foldopen" id="foldopen00018" data-start="{" data-end="}">
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="../../d1/d66/win__main_8cpp.html#abc055912d3092fd7a9580db14ce2bbea">   18</a></span><span class="keywordtype">int</span> __stdcall <a class="code hl_function" href="../../d1/d66/win__main_8cpp.html#abc055912d3092fd7a9580db14ce2bbea">WinMain</a>(<a class="code hl_typedef" href="../../d9/dda/instance_8h.html#a2160c20e90a9c1818ac7287e5416f746">HINSTANCE</a> hinstance, <a class="code hl_typedef" href="../../d9/dda/instance_8h.html#a2160c20e90a9c1818ac7287e5416f746">HINSTANCE</a> <span class="comment">/*prev_instance*/</span>, LPSTR <span class="comment">/*cmd_line*/</span>, <span class="keywordtype">int</span> <span class="comment">/*show*/</span>)</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keywordtype">int</span> result = 0;</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    __try  <span class="comment">// NOLINT(clang-diagnostic-language-extension-token)</span></div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        g_top_of_stack = <span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">char</span> *<span class="keyword">&gt;</span>(&amp;result);</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        g_instance = hinstance;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#ac07238ec6bdf20e3bc0ce825bdb6d988">g_top_of_stack</a> = <span class="keyword">reinterpret_cast&lt;</span><span class="keywordtype">char</span> *<span class="keyword">&gt;</span>(&amp;result);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a2df45a7989296386221242f5ea8ea3b0">g_instance</a> = hinstance;</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        _CrtSetDbgFlag(_CrtSetDbgFlag(_CRTDBG_REPORT_FLAG) | _CRTDBG_CHECK_ALWAYS_DF | _CRTDBG_LEAK_CHECK_DF);</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        result = id_main(__argc, __argv);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        result = <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a5963978325f4b5cbeb7d17e2ace368fa">id_main</a>(__argc, __argv);</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    }</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    __except (create_minidump(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    __except (<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad9621b643ab46406479f8fb5eedc669f">create_minidump</a>(GetExceptionInformation()), EXCEPTION_EXECUTE_HANDLER)</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    {</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        result = -1;</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    }</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordflow">return</span> result;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>}</div>
+</div>
+<div class="ttc" id="acreate__minidump_8h_html"><div class="ttname"><a href="../../d9/d53/create__minidump_8h.html">create_minidump.h</a></div></div>
+<div class="ttc" id="aid__main_8h_html"><div class="ttname"><a href="../../d0/dc8/id__main_8h.html">id_main.h</a></div></div>
+<div class="ttc" id="ainstance_8h_html"><div class="ttname"><a href="../../d9/dda/instance_8h.html">instance.h</a></div></div>
+<div class="ttc" id="ainstance_8h_html_a2160c20e90a9c1818ac7287e5416f746"><div class="ttname"><a href="../../d9/dda/instance_8h.html#a2160c20e90a9c1818ac7287e5416f746">HINSTANCE</a></div><div class="ttdeci">void * HINSTANCE</div><div class="ttdef"><b>Definition</b> <a href="../../d9/dda/instance_8h_source.html#l00009">instance.h:9</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a2df45a7989296386221242f5ea8ea3b0"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a2df45a7989296386221242f5ea8ea3b0">id::misc::g_instance</a></div><div class="ttdeci">HINSTANCE g_instance</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d8e/instance_8cpp_source.html#l00008">instance.cpp:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ac07238ec6bdf20e3bc0ce825bdb6d988"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ac07238ec6bdf20e3bc0ce825bdb6d988">id::misc::g_top_of_stack</a></div><div class="ttdeci">char * g_top_of_stack</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d95/stack__avail_8cpp_source.html#l00013">stack_avail.cpp:13</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ad9621b643ab46406479f8fb5eedc669f"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ad9621b643ab46406479f8fb5eedc669f">id::misc::create_minidump</a></div><div class="ttdeci">void create_minidump(EXCEPTION_POINTERS *ep)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d6c/create__minidump_8cpp_source.html#l00038">create_minidump.cpp:38</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a5963978325f4b5cbeb7d17e2ace368fa"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a5963978325f4b5cbeb7d17e2ace368fa">id::ui::id_main</a></div><div class="ttdeci">int id_main(int argc, char *argv[])</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d82/id__main_8cpp_source.html#l00405">id_main.cpp:405</a></div></div>
+<div class="ttc" id="astack__avail_8h_html"><div class="ttname"><a href="../../d8/d28/stack__avail_8h.html">stack_avail.h</a></div></div>
+<div class="ttc" id="awin__defines_8h_html"><div class="ttname"><a href="../../df/dad/win__defines_8h.html">win_defines.h</a></div></div>
+<div class="ttc" id="awin__main_8cpp_html_abc055912d3092fd7a9580db14ce2bbea"><div class="ttname"><a href="../../d1/d66/win__main_8cpp.html#abc055912d3092fd7a9580db14ce2bbea">WinMain</a></div><div class="ttdeci">int __stdcall WinMain(HINSTANCE hinstance, HINSTANCE, LPSTR, int)</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d66/win__main_8cpp_source.html#l00018">win_main.cpp:18</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

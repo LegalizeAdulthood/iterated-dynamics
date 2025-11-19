@@ -1,11 +1,19 @@
 var searchData=
 [
-  ['tess_0',['Tess',['../df/dc6/structid_1_1engine_1_1Tess.html',1,'id::engine']]],
-  ['tesseral_1',['Tesseral',['../dd/d1a/classid_1_1engine_1_1Tesseral.html',1,'id::engine']]],
-  ['test_20cases_2',['Test Cases',['../d5/d38/md_Style.html#autotoc_md22',1,'']]],
-  ['testpoint_3',['TestPoint',['../d8/da3/classid_1_1fractals_1_1TestPoint.html',1,'id::fractals']]],
-  ['the_20standard_20library_4',['The Standard Library',['../d5/d38/md_Style.html#autotoc_md9',1,'']]],
-  ['third_20party_20libraries_5',['Third Party Libraries',['../d5/d38/md_Style.html#autotoc_md10',1,'']]],
-  ['topic_6',['Topic',['../d8/dff/structhc_1_1Topic.html',1,'hc']]],
-  ['types_7',['Types',['../d5/d38/md_Style.html#autotoc_md12',1,'']]]
+  ['quadrup_5ftwo_0',['QUADRUP_TWO',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dcae55261009a6f151d4aafb4ea208d7fb9',1,'id::fractals']]],
+  ['quadrup_5ftwo2d_5forbit_1',['quadrup_two2d_orbit',['../d5/d38/namespaceid_1_1fractals.html#a905b3bab866a310c0d5bb075690efd7d',1,'id::fractals']]],
+  ['quartic_5fmandelbrot_2ecpp_2',['quartic_mandelbrot.cpp',['../d3/d20/quartic__mandelbrot_8cpp.html',1,'']]],
+  ['quartic_5fmandelbrot_2eh_3',['quartic_mandelbrot.h',['../d8/d0a/quartic__mandelbrot_8h.html',1,'']]],
+  ['quat_4',['QUAT',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca615e6ad9dd3831dd830c555780bb0f87',1,'id::fractals']]],
+  ['quat_5fjul_5',['QUAT_JUL',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca4105a8e1df419810b51fed710914ed13',1,'id::fractals']]],
+  ['quaternion_5fjul_5fper_5fpixel_6',['quaternion_jul_per_pixel',['../d5/d38/namespaceid_1_1fractals.html#a29ef2b5370fccddabf14b4ac0bbb6008',1,'id::fractals']]],
+  ['quaternion_5fmandelbrot_2ecpp_7',['quaternion_mandelbrot.cpp',['../d4/d0d/quaternion__mandelbrot_8cpp.html',1,'']]],
+  ['quaternion_5fmandelbrot_2eh_8',['quaternion_mandelbrot.h',['../de/da4/quaternion__mandelbrot_8h.html',1,'']]],
+  ['quaternion_5forbit_9',['quaternion_orbit',['../d5/d38/namespaceid_1_1fractals.html#a5ff56f263afb72496dea5a7c23ab48f8',1,'id::fractals']]],
+  ['quaternion_5fper_5fpixel_10',['quaternion_per_pixel',['../d5/d38/namespaceid_1_1fractals.html#a41d9958a0b24a12a9f392d7bd8152956',1,'id::fractals']]],
+  ['queue_5fempty_11',['queue_empty',['../dc/d31/namespaceid_1_1engine.html#a0bf91bcc5466bac4a6c24822997b31df',1,'id::engine']]],
+  ['queue_5ffull_12',['queue_full',['../dc/d31/namespaceid_1_1engine.html#a1ab012f3b3397efff0905e2333c9ceb3',1,'id::engine']]],
+  ['queue_5ffull_5falmost_13',['queue_full_almost',['../dc/d31/namespaceid_1_1engine.html#a20bcb867f07e5c2708343d102b579e8a',1,'id::engine']]],
+  ['quick_5fcalc_14',['quick_calc',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a5c12162a3d3c8e9f644940c820137f22',1,'id::io::FractalInfo']]],
+  ['quiet_5fmode_15',['quiet_mode',['../d1/d0b/structhc_1_1Options.html#aaee81691ef8e19dee24691d22112d57d',1,'hc::Options']]]
 ];

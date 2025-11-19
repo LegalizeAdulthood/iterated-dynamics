@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['dark_0',['DARK',['../dc/d31/namespaceid_1_1engine.html#ae1e7ed4c7813e157d0919ec72c72ff69aacaef50d33fc86532c260a045c672f3e',1,'id::engine']]],
+  ['data_1',['DATA',['../d9/dcc/namespacehc.html#af7940d48d9d8d5e416f2671e0a62aea5ae44f9e348e41cb272efa87387728571b',1,'hc']]],
+  ['default_5fcolor_2',['DEFAULT_COLOR',['../dc/d31/namespaceid_1_1engine.html#ad12521cfa0a188fd51546a1ffa7923c7a90ba3bd6d59970327061e7f889839c35',1,'id::engine']]],
+  ['default_5ffilter_3',['DEFAULT_FILTER',['../d5/d38/namespaceid_1_1fractals.html#a5651443abb7f85e3890e683008ff5ec1acb85a0108d1d66a533e0c92a531573a1',1,'id::fractals']]],
+  ['default_5fmap_4',['DEFAULT_MAP',['../dc/d31/namespaceid_1_1engine.html#a207dda9b1e9fbf1acd1bd8b8ee50ed78ae6f91bb7b18982ecbfdcc86c6c5b2526',1,'id::engine']]],
+  ['delete_5',['DELETE',['../d9/dcc/namespacehc.html#a0bf96c9ff7ac5b68a1c5e9c7cd0918cea32f68a60cef40faedbc6af20298c1a1e',1,'hc']]],
+  ['depth_5ffirst_6',['DEPTH_FIRST',['../d5/d38/namespaceid_1_1fractals.html#af63f6dcecb7dc8e41bfc273d0660d0e6a9fca5f9126fc3ac7e2c0c33fafa60153',1,'id::fractals']]],
+  ['diffusion_7',['diffusion',['../dc/d31/namespaceid_1_1engine.html#a09cc3d2f46cdaf1157659c50b159bb25ac9f4e4b1345e4e958a307bf67ae358a7',1,'id::engine::DIFFUSION'],['../dc/d31/namespaceid_1_1engine.html#aadeb2a327f9088edd3860e017e9dbecfac9f4e4b1345e4e958a307bf67ae358a7',1,'id::engine::DIFFUSION'],['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dcac9f4e4b1345e4e958a307bf67ae358a7',1,'id::fractals::DIFFUSION']]],
+  ['disk_8',['DISK',['../df/d6d/namespaceid_1_1misc.html#a711c9db7dfdac128667c32c802b2c3aea290d4b81f4e2b47d86fd1b0170e9aab7',1,'id::misc']]],
+  ['disk_5ffull_9',['DISK_FULL',['../d6/daa/namespaceid_1_1geometry.html#afed5e78b418f58178079f185cc5d467fa266c3e565a5b03d2174d5f11c1c9126f',1,'id::geometry']]],
+  ['disk_5fwrite_5flen_10',['DISK_WRITE_LEN',['../df/d6d/namespaceid_1_1misc.html#a503a467edb0f92095efec2a45db8f3c6a27786a68005e288359f50463a1d78859',1,'id::misc']]],
+  ['display_5fmemory_5fstatistics_11',['DISPLAY_MEMORY_STATISTICS',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebaa0c0f4b0f3ba89d342f8d2f91b186cd0',1,'id::misc']]],
+  ['divide_5fbrot5_12',['DIVIDE_BROT5',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca93b624d4feffe82ca235be62ce25a5ff',1,'id::fractals']]],
+  ['dkb_5fpovray_13',['DKB_POVRAY',['../d6/daa/namespaceid_1_1geometry.html#a75b93a745d0e367e938aed7f2b72e5cbaa292399cb3c9209a01877fa32571c99b',1,'id::geometry']]],
+  ['doc_14',['DOC',['../d0/d5f/namespaceid_1_1help.html#a1eae85ba6c254ee9f8396c6d39f9ea66a2e09a5b01eac28408404f266726d465c',1,'id::help']]],
+  ['dos_15',['DOS',['../d0/d19/namespaceid_1_1io.html#a28722499294f64ef912180708094f4daaa58e0423869da99d6ca169de8a000cc7',1,'id::io']]],
+  ['dot_16',['DOT',['../d0/d19/namespaceid_1_1io.html#a4b3ff89f8f933adcbe67154ea39c839ba40679521b5da0954b705341a2859f782',1,'id::io']]],
+  ['dot_5fdot_17',['DOT_DOT',['../d0/d19/namespaceid_1_1io.html#a4b3ff89f8f933adcbe67154ea39c839bad55bbc8bd3dac814a7ca51e7989af78c',1,'id::io']]],
+  ['double_18',['DOUBLE',['../dc/d76/namespaceid_1_1ui.html#a3866d1342c4dd9900f26f13724369290afd3e4ece78a7d422280d5ed379482229',1,'id::ui']]],
+  ['draw_5finterval_19',['DRAW_INTERVAL',['../df/d6d/namespaceid_1_1misc.html#ad414801554b2dbf292ca2b4942adc437ad8aa434725abe9601afe151fa193ae6c',1,'id::misc']]],
+  ['dxf_20',['DXF',['../d6/daa/namespaceid_1_1geometry.html#a75b93a745d0e367e938aed7f2b72e5cba95382e19cba08e260c9981e453eda8d0',1,'id::geometry']]],
+  ['dynamic_21',['DYNAMIC',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca0fcc90da4811c877ba9f9c12f7d60bc9',1,'id::fractals']]]
+];

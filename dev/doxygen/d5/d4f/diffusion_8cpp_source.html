@@ -82,36 +82,47 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">diffusion.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d5/d4f/diffusion_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/diffusion.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/de7/diffusion_8h.html">ui/diffusion.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;fractals/Diffusion.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;ui/check_key.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d8/de9/Diffusion_8h.html">fractals/Diffusion.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/dba/check__key_8h.html">ui/check_key.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span>id::fractals;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a>;</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keywordtype">int</span> diffusion_type()</div>
+<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#aba2fdee7f1206a09a5ffccb7e413a178">   13</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#aba2fdee7f1206a09a5ffccb7e413a178">diffusion_type</a>()</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <a class="code hl_class" href="../../dd/d94/classid_1_1fractals_1_1Diffusion.html">Diffusion</a> d;</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keywordflow">while</span> (d.iterate())</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keywordflow">while</span> (d.<a class="code hl_function" href="../../dd/d94/classid_1_1fractals_1_1Diffusion.html#a10b07650da5435fa22c3399b3e2819c8">iterate</a>())</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    {</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        <span class="keywordflow">if</span> (check_key())</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">check_key</a>())</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        {</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>            d.suspend();</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>            d.<a class="code hl_function" href="../../dd/d94/classid_1_1fractals_1_1Diffusion.html#aae7779670dc74ec2af485b32938859f9">suspend</a>();</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>            <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        }</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    }</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>}</div>
+</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aDiffusion_8h_html"><div class="ttname"><a href="../../d8/de9/Diffusion_8h.html">Diffusion.h</a></div></div>
+<div class="ttc" id="acheck__key_8h_html"><div class="ttname"><a href="../../d1/dba/check__key_8h.html">check_key.h</a></div></div>
 <div class="ttc" id="aclassid_1_1fractals_1_1Diffusion_html"><div class="ttname"><a href="../../dd/d94/classid_1_1fractals_1_1Diffusion.html">id::fractals::Diffusion</a></div><div class="ttdef"><b>Definition</b> <a href="../../d8/de9/Diffusion_8h_source.html#l00015">Diffusion.h:16</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1Diffusion_html_a10b07650da5435fa22c3399b3e2819c8"><div class="ttname"><a href="../../dd/d94/classid_1_1fractals_1_1Diffusion.html#a10b07650da5435fa22c3399b3e2819c8">id::fractals::Diffusion::iterate</a></div><div class="ttdeci">bool iterate()</div><div class="ttdef"><b>Definition</b> <a href="../../d9/d2f/Diffusion_8cpp_source.html#l00185">Diffusion.cpp:185</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1Diffusion_html_aae7779670dc74ec2af485b32938859f9"><div class="ttname"><a href="../../dd/d94/classid_1_1fractals_1_1Diffusion.html#aae7779670dc74ec2af485b32938859f9">id::fractals::Diffusion::suspend</a></div><div class="ttdeci">void suspend()</div><div class="ttdef"><b>Definition</b> <a href="../../d9/d2f/Diffusion_8cpp_source.html#l00172">Diffusion.cpp:172</a></div></div>
+<div class="ttc" id="adiffusion_8h_html"><div class="ttname"><a href="../../d1/de7/diffusion_8h.html">diffusion.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00014">calcfrac.h:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a4aa0ffdec8ad2f8ef523e1241c8b7150"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">id::ui::check_key</a></div><div class="ttdeci">bool check_key()</div><div class="ttdef"><b>Definition</b> <a href="../../de/d04/check__key_8cpp_source.html#l00015">check_key.cpp:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_aba2fdee7f1206a09a5ffccb7e413a178"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#aba2fdee7f1206a09a5ffccb7e413a178">id::ui::diffusion_type</a></div><div class="ttdeci">int diffusion_type()</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d4f/diffusion_8cpp_source.html#l00013">diffusion.cpp:13</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

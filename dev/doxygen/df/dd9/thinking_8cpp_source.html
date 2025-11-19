@@ -82,21 +82,21 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">thinking.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../df/dd9/thinking_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/thinking.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d8/d40/thinking_8h.html">ui/thinking.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;engine/text_color.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;misc/Driver.h&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;ui/help_title.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;ui/text_screen.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/df6/text__color_8h.html">engine/text_color.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../de/d77/help__title_8h.html">ui/help_title.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/df2/text__screen_8h.html">ui/text_screen.h</a>&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">using namespace </span>id::engine;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">using namespace </span>id::misc;</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">/* thinking(1,message):</span></div>
@@ -111,28 +111,31 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">static</span> <span class="keywordtype">int</span> s_think_col{};</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">static</span> <span class="keywordtype">int</span> s_think_count{};</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keywordtype">void</span> thinking_end()</div>
+<div class="foldopen" id="foldopen00030" data-start="{" data-end="}">
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#aaa1966e829c8197f5a55eb8b9c34007c">   30</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#aaa1966e829c8197f5a55eb8b9c34007c">thinking_end</a>()</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>{</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordflow">if</span> (s_think_state &gt;= 0)</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    {</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        s_think_state = -1;</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        driver_unstack_screen();</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a6035cf4bbf888b4508f859a21ca5c3a0">driver_unstack_screen</a>();</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    }</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
+</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keywordtype">bool</span> thinking(<span class="keyword">const</span> <span class="keywordtype">char</span> *msg)</div>
+<div class="foldopen" id="foldopen00039" data-start="{" data-end="}">
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a51f6cefb004f7f5cfa1a5ebd08dac903">   39</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a51f6cefb004f7f5cfa1a5ebd08dac903">thinking</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *msg)</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>{</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordflow">if</span> (s_think_state &lt; 0)</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        driver_stack_screen();</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a7b5b79e2e0f7c6277e54231689cd570e">driver_stack_screen</a>();</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        s_think_state = 0;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        help_title();</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#aa9b2eed86688d88b3d762eabdbc41d4b">help_title</a>();</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordtype">char</span> buf[81];</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        std::strcpy(buf, <span class="stringliteral">&quot;  &quot;</span>);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        std::strcat(buf, msg);</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        std::strcat(buf, <span class="stringliteral">&quot;    &quot;</span>);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        driver_put_string(4, 10, C_GENERAL_HI, buf);</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        s_think_col = g_text_col - 3;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a829fa7d67c1a1667eade936e5242e0d8">driver_put_string</a>(4, 10, <a class="code hl_define" href="../../d7/df6/text__color_8h.html#a36819472adac45a5c43f365d1b1a9e0e">C_GENERAL_HI</a>, buf);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        s_think_col = <a class="code hl_variable" href="../../dc/d76/namespaceid_1_1ui.html#ab52fe1ef0680761191393d2e7e0b33e7">g_text_col</a> - 3;</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        s_think_count = 0;</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    }</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordflow">if</span> (s_think_count++ &lt; 100)</div>
@@ -140,13 +143,32 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    }</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    s_think_count = 0;</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    driver_put_string(4, s_think_col, C_GENERAL_HI, s_wheel[s_think_state]);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    driver_hide_text_cursor(); <span class="comment">// turn off cursor</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a829fa7d67c1a1667eade936e5242e0d8">driver_put_string</a>(4, s_think_col, <a class="code hl_define" href="../../d7/df6/text__color_8h.html#a36819472adac45a5c43f365d1b1a9e0e">C_GENERAL_HI</a>, s_wheel[s_think_state]);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ae976ceeae1d5c782d323fcd69157f7fa">driver_hide_text_cursor</a>(); <span class="comment">// turn off cursor</span></div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    s_think_state = s_think_state + 1 &amp; 3;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">return</span> driver_key_pressed() != 0;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">driver_key_pressed</a>() != 0;</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}</div>
+</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
+<div class="ttc" id="ahelp__title_8h_html"><div class="ttname"><a href="../../de/d77/help__title_8h.html">help_title.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a6035cf4bbf888b4508f859a21ca5c3a0"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a6035cf4bbf888b4508f859a21ca5c3a0">id::misc::driver_unstack_screen</a></div><div class="ttdeci">void driver_unstack_screen()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00283">Driver.h:283</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a7b5b79e2e0f7c6277e54231689cd570e"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a7b5b79e2e0f7c6277e54231689cd570e">id::misc::driver_stack_screen</a></div><div class="ttdeci">void driver_stack_screen()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00278">Driver.h:278</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a829fa7d67c1a1667eade936e5242e0d8"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a829fa7d67c1a1667eade936e5242e0d8">id::misc::driver_put_string</a></div><div class="ttdeci">void driver_put_string(const int row, const int col, const int attr, const char *msg)</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00228">Driver.h:228</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ad698e1042eebf4696c125d22bb014c9c"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">id::misc::driver_key_pressed</a></div><div class="ttdeci">int driver_key_pressed()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00208">Driver.h:208</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ae976ceeae1d5c782d323fcd69157f7fa"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ae976ceeae1d5c782d323fcd69157f7fa">id::misc::driver_hide_text_cursor</a></div><div class="ttdeci">void driver_hide_text_cursor()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00263">Driver.h:263</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a51f6cefb004f7f5cfa1a5ebd08dac903"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a51f6cefb004f7f5cfa1a5ebd08dac903">id::ui::thinking</a></div><div class="ttdeci">bool thinking(const char *msg)</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/thinking_8cpp_source.html#l00039">thinking.cpp:39</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_aa9b2eed86688d88b3d762eabdbc41d4b"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#aa9b2eed86688d88b3d762eabdbc41d4b">id::ui::help_title</a></div><div class="ttdeci">void help_title()</div><div class="ttdef"><b>Definition</b> <a href="../../d7/df7/help__title_8cpp_source.html#l00022">help_title.cpp:22</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_aaa1966e829c8197f5a55eb8b9c34007c"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#aaa1966e829c8197f5a55eb8b9c34007c">id::ui::thinking_end</a></div><div class="ttdeci">void thinking_end()</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/thinking_8cpp_source.html#l00030">thinking.cpp:30</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ab52fe1ef0680761191393d2e7e0b33e7"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ab52fe1ef0680761191393d2e7e0b33e7">id::ui::g_text_col</a></div><div class="ttdeci">int g_text_col</div><div class="ttdef"><b>Definition</b> <a href="../../dc/dd7/text__screen_8cpp_source.html#l00009">text_screen.cpp:9</a></div></div>
+<div class="ttc" id="atext__color_8h_html"><div class="ttname"><a href="../../d7/df6/text__color_8h.html">text_color.h</a></div></div>
+<div class="ttc" id="atext__color_8h_html_a36819472adac45a5c43f365d1b1a9e0e"><div class="ttname"><a href="../../d7/df6/text__color_8h.html#a36819472adac45a5c43f365d1b1a9e0e">C_GENERAL_HI</a></div><div class="ttdeci">#define C_GENERAL_HI</div><div class="ttdef"><b>Definition</b> <a href="../../d7/df6/text__color_8h_source.html#l00051">text_color.h:51</a></div></div>
+<div class="ttc" id="atext__screen_8h_html"><div class="ttname"><a href="../../d1/df2/text__screen_8h.html">text_screen.h</a></div></div>
+<div class="ttc" id="athinking_8h_html"><div class="ttname"><a href="../../d8/d40/thinking_8h.html">thinking.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

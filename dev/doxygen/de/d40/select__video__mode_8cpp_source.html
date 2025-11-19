@@ -82,24 +82,24 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">select_video_mode.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../de/d40/select__video__mode_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/select_video_mode.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d5/d75/select__video__mode_8h.html">ui/select_video_mode.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;engine/video_mode.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d4/d36/video__mode_8h.html">engine/video_mode.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;helpdefs.h&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;io/find_path.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;io/is_writeable.h&quot;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;io/library.h&quot;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;io/load_config.h&quot;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;misc/Driver.h&quot;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;misc/ValueSaver.h&quot;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;ui/full_screen_choice.h&quot;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;ui/get_key_no_help.h&quot;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;ui/help.h&quot;</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;ui/id_keys.h&quot;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;ui/stop_msg.h&quot;</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;ui/tab_display.h&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../d2/dd2/find__path_8h.html">io/find_path.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="../../d0/d25/is__writeable_8h.html">io/is_writeable.h</a>&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d08/library_8h.html">io/library.h</a>&quot;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="../../df/d3e/load__config_8h.html">io/load_config.h</a>&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d59/ValueSaver_8h.html">misc/ValueSaver.h</a>&quot;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="../../d4/dfc/full__screen__choice_8h.html">ui/full_screen_choice.h</a>&quot;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="../../de/d80/get__key__no__help_8h.html">ui/get_key_no_help.h</a>&quot;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;<a class="code" href="../../db/df1/help_8h.html">ui/help.h</a>&quot;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/de4/id__keys_8h.html">ui/id_keys.h</a>&quot;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/d31/stop__msg_8h.html">ui/stop_msg.h</a>&quot;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="../../d6/dac/tab__display_8h.html">ui/tab_display.h</a>&quot;</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;cassert&gt;</span></div>
@@ -112,12 +112,12 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">namespace </span>fs = std::filesystem;</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">using namespace </span>id::engine;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">using namespace </span>id::help;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">using namespace </span>id::io;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">using namespace </span>id::misc;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d0/d5f/namespaceid_1_1help.html">id::help</a>;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a>;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>{</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">static</span> std::vector&lt;int&gt; s_entry_nums;</div>
@@ -130,22 +130,23 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="keyword">static</span> <span class="keywordtype">void</span> format_vid_table(<span class="keyword">const</span> <span class="keywordtype">int</span> choice, <span class="keywordtype">char</span> *buf)</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>{</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> idx = s_entry_nums[choice];</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    assert(idx &lt; g_video_table_len);</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    g_video_entry = g_video_table[idx];</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keyword">const</span> std::string key_name = vid_mode_key_name(g_video_entry.key);</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    assert(idx &lt; <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>);</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a> = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[idx];</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keyword">const</span> std::string key_name = <a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a2c786ab86634f32ebcf2304c49cbce50">vid_mode_key_name</a>(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a1c5afaab64aaed9eec8b12ce992a37fc">key</a>);</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    std::sprintf(buf, <span class="stringliteral">&quot;%-5s %-12s %5d %5d %3d  %.12s %.26s&quot;</span>,               <span class="comment">// 34 chars</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        key_name.c_str(), g_video_entry.driver-&gt;get_description().c_str(), <span class="comment">//</span></div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,  <span class="comment">//</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        g_video_entry.driver-&gt;get_name().c_str(),                          <span class="comment">//</span></div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        g_video_entry.comment);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        key_name.c_str(), <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a3159e0b086f206ea39ba88bb42141046">driver</a>-&gt;<a class="code hl_function" href="../../d3/def/classid_1_1misc_1_1Driver.html#a70a6f20b9afe112067151e834e9321e9">get_description</a>().c_str(), <span class="comment">//</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a17eeabe85f7c91b7d88952a5f7506079">x_dots</a>, <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#ad48269bea4fb15031668660d987e6427">y_dots</a>, <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#afe89db6b0b3a6ab6a88ea36f5c39ce2f">colors</a>,  <span class="comment">//</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a3159e0b086f206ea39ba88bb42141046">driver</a>-&gt;<a class="code hl_function" href="../../d3/def/classid_1_1misc_1_1Driver.html#a241ed8679ad9394f36e59fb0536db4f2">get_name</a>().c_str(),                          <span class="comment">//</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a8c1909d159f6a34dd61708bfbf1578eb">comment</a>);</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>}</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="keywordtype">int</span> select_video_mode(<span class="keyword">const</span> <span class="keywordtype">int</span> current_mode)</div>
+<div class="foldopen" id="foldopen00059" data-start="{" data-end="}">
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ab37205356e0d463d932ecfc5d13712c1">   59</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ab37205356e0d463d932ecfc5d13712c1">select_video_mode</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> current_mode)</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>{</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    std::vector&lt;int&gt; attributes;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    attributes.resize(g_video_table_len);</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    s_entry_nums.resize(g_video_table_len);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    attributes.resize(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    s_entry_nums.resize(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>);</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="comment">// init tables</span></div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    std::fill(attributes.begin(), attributes.end(), 1);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    std::iota(s_entry_nums.begin(), s_entry_nums.end(), 0);</div>
@@ -154,40 +155,40 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    <span class="comment">// pick default mode</span></div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordflow">if</span> (current_mode &lt; 0)</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    {</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        g_video_entry.colors = 256;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#afe89db6b0b3a6ab6a88ea36f5c39ce2f">colors</a> = 256;</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    }</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    {</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        g_video_entry = g_video_table[current_mode];</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a> = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[current_mode];</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    }</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordtype">int</span> i;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">for</span> (i = 0; i &lt; g_video_table_len; ++i)  <span class="comment">// find default mode</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>; ++i)  <span class="comment">// find default mode</span></div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    {</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        <span class="keywordflow">if</span> (g_video_entry.colors == g_video_table[s_entry_nums[i]].colors <span class="comment">//</span></div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            &amp;&amp; (current_mode &lt; 0 || g_video_entry == g_video_table[s_entry_nums[i]]))</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#afe89db6b0b3a6ab6a88ea36f5c39ce2f">colors</a> == <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[s_entry_nums[i]].<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#afe89db6b0b3a6ab6a88ea36f5c39ce2f">colors</a> <span class="comment">//</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            &amp;&amp; (current_mode &lt; 0 || <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a> == <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[s_entry_nums[i]]))</div>
 <div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        {</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        }</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    }</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="keywordflow">if</span> (i &gt;= g_video_table_len) <span class="comment">// no match, default to first entry</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="keywordflow">if</span> (i &gt;= <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>) <span class="comment">// no match, default to first entry</span></div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    {</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        i = 0;</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    }</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    {</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <a class="code hl_class" href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">ValueSaver</a> saved_tab_mode{g_tab_enabled, <span class="keyword">false</span>};</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <a class="code hl_class" href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">ValueSaver</a> saved_help_mode{g_help_mode, HelpLabels::HELP_VIDEO_MODE};</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <a class="code hl_class" href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">ValueSaver</a> saved_tab_mode{<a class="code hl_variable" href="../../dc/d76/namespaceid_1_1ui.html#ab02ae6bb5f0a112a62982599f1dd7882">g_tab_enabled</a>, <span class="keyword">false</span>};</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <a class="code hl_class" href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">ValueSaver</a> saved_help_mode{<a class="code hl_variable" href="../../d0/d5f/namespaceid_1_1help.html#ad0b971ac3cf639a418a3972f67014ded">g_help_mode</a>, HelpLabels::HELP_VIDEO_MODE};</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        s_modes_changed = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        i = full_screen_choice(ChoiceFlags::HELP, <span class="stringliteral">&quot;Select Video Mode&quot;</span>,</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            <span class="stringliteral">&quot;key...name..........xdot..ydot.colr.driver......comment......&quot;</span>, <span class="keyword">nullptr</span>, g_video_table_len,</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        i = <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a35c10a5c801dee1d04c26dadbd24ae8e">full_screen_choice</a>(<a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a9f7061365fdd422f042ac348be5d5b32a4fc963e213bba362778f5c175eb4d5ff">ChoiceFlags::HELP</a>, <span class="stringliteral">&quot;Select Video Mode&quot;</span>,</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>            <span class="stringliteral">&quot;key...name..........xdot..ydot.colr.driver......comment......&quot;</span>, <span class="keyword">nullptr</span>, <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>,</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            <span class="keyword">nullptr</span>, attributes.data(), 1, 16, 74, i, format_vid_table, <span class="keyword">nullptr</span>, <span class="keyword">nullptr</span>, check_mode_key);</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    }</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordflow">if</span> (i == -1)</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    {</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <span class="comment">// update id.cfg for new key assignments</span></div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        <span class="keywordflow">if</span> (s_modes_changed</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            &amp;&amp; g_bad_config == ConfigStatus::OK</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>            &amp;&amp; stop_msg(StopMsgFlags::CANCEL | StopMsgFlags::NO_BUZZER | StopMsgFlags::INFO_ONLY,</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>            &amp;&amp; <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#aca2718c8c4bfd4e95930b252a2feb2d0">g_bad_config</a> == ConfigStatus::OK</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>            &amp;&amp; <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">stop_msg</a>(<a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a6428b6f2e947653fb517cca8b57cf7c5a2027c027133e22c8929e2874dc44dd36">StopMsgFlags::CANCEL</a> | <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a6428b6f2e947653fb517cca8b57cf7c5a4611ab66633fb0fefa42dac45519eaa3">StopMsgFlags::NO_BUZZER</a> | <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a6428b6f2e947653fb517cca8b57cf7c5ad91fc2ad3807abcd21d8187f0cac9020">StopMsgFlags::INFO_ONLY</a>,</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                <span class="stringliteral">&quot;Save new function key assignments or cancel changes?&quot;</span>) == 0)</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        {</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>            update_id_cfg();</div>
@@ -197,39 +198,40 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="comment">// picked by function key or ENTER key</span></div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>    i = i &lt; 0 ? -1 - i : s_entry_nums[i];</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="comment">// the selected entry now in g_video_entry</span></div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    g_video_entry = g_video_table[i];</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a> = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i];</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="comment">// copy id.cfg table to resident table, note selected entry</span></div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keywordtype">int</span> k = 0;</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    <span class="keywordflow">for</span> (i = 0; i &lt; g_video_table_len; ++i)</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>    <span class="keywordflow">for</span> (i = 0; i &lt; <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>; ++i)</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    {</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        <span class="keywordflow">if</span> (g_video_table[i].key &gt; 0)</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i].key &gt; 0)</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        {</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>            <span class="keywordflow">if</span> (g_video_entry == g_video_table[i])</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a> == <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i])</div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>            {</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>                k = g_video_table[i].key;</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>                k = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i].<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a1c5afaab64aaed9eec8b12ce992a37fc">key</a>;</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>            }</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        }</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    }</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keywordtype">int</span> ret = k;</div>
 <div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>    <span class="keywordflow">if</span> (k == 0)  <span class="comment">// selected entry not a copied (assigned to key) one</span></div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    {</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        g_video_table[MAX_VIDEO_MODES - 1] = g_video_entry;</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[<a class="code hl_enumvalue" href="../../dc/d31/namespaceid_1_1engine.html#acfbe7683759b1fb482e2725daf751ddca24d73638b37fe7060f2fa77657a3e954">MAX_VIDEO_MODES</a> - 1] = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">g_video_entry</a>;</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        ret = 1400; <span class="comment">// special value for check_vidmode_key</span></div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    }</div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
 <div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <span class="comment">// update id.cfg for new key assignments</span></div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    <span class="keywordflow">if</span> (s_modes_changed &amp;&amp; g_bad_config == ConfigStatus::OK)</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>    <span class="keywordflow">if</span> (s_modes_changed &amp;&amp; <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#aca2718c8c4bfd4e95930b252a2feb2d0">g_bad_config</a> == ConfigStatus::OK)</div>
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    {</div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        update_id_cfg();</div>
 <div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>    }</div>
 <div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span> </div>
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>    <span class="keywordflow">return</span> ret;</div>
 <div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>}</div>
+</div>
 <div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
 <div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="keyword">static</span> <span class="keywordtype">int</span> check_mode_key(<span class="keyword">const</span> <span class="keywordtype">int</span> key, <span class="keyword">const</span> <span class="keywordtype">int</span> choice)</div>
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>{</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keywordtype">int</span> i = check_vid_mode_key(key); i &gt;= 0)</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keywordtype">int</span> i = <a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a69b7deacaadf3bf63d259f830587f350">check_vid_mode_key</a>(key); i &gt;= 0)</div>
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    {</div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        <span class="keywordflow">return</span> -1 - i;</div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>    }</div>
@@ -240,23 +242,23 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>    }</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> i = s_entry_nums[choice];</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    <span class="keywordflow">if</span> (g_video_table[i].key != 0 &amp;&amp; g_video_table[i].key &lt; ID_KEY_SHF_F1)</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i].key != 0 &amp;&amp; <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i].key &lt; <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a95ec79234d5941814bc62749a2e31dc5a3262f399f28b09ce20cac1a9c9c33299">ID_KEY_SHF_F1</a>)</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    {</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    }</div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <span class="keywordflow">if</span> (g_bad_config != ConfigStatus::OK)</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#aca2718c8c4bfd4e95930b252a2feb2d0">g_bad_config</a> != ConfigStatus::OK)</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    {</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        stop_msg(<span class="stringliteral">&quot;Missing or bad id.cfg file. Can&#39;t reassign keys.&quot;</span>);</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">stop_msg</a>(<span class="stringliteral">&quot;Missing or bad id.cfg file. Can&#39;t reassign keys.&quot;</span>);</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    }</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    <span class="keywordflow">if</span> (key == <span class="charliteral">&#39;-&#39;</span>)</div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    {</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        <span class="comment">// unassign key?</span></div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        <span class="keywordflow">if</span> (g_video_table[i].key &gt;= ID_KEY_SHF_F1)</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i].key &gt;= <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a95ec79234d5941814bc62749a2e31dc5a3262f399f28b09ce20cac1a9c9c33299">ID_KEY_SHF_F1</a>)</div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        {</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            g_video_table[i].key = 0;</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>            <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i].<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a1c5afaab64aaed9eec8b12ce992a37fc">key</a> = 0;</div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>            s_modes_changed = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        }</div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>        <span class="keywordflow">return</span> 0;</div>
@@ -264,17 +266,17 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>    <span class="comment">// assign key?</span></div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    <span class="keywordtype">int</span> ret = 0;</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keywordtype">int</span> j = get_a_key_no_help(); j &gt;= ID_KEY_SHF_F1 &amp;&amp; j &lt;= ID_KEY_ALT_F10)</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keywordtype">int</span> j = <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a908a5b8b3b2f445b9a0a381f511c6be7">get_a_key_no_help</a>(); j &gt;= <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a95ec79234d5941814bc62749a2e31dc5a3262f399f28b09ce20cac1a9c9c33299">ID_KEY_SHF_F1</a> &amp;&amp; j &lt;= <a class="code hl_enumvalue" href="../../dc/d76/namespaceid_1_1ui.html#a95ec79234d5941814bc62749a2e31dc5a4af9d8ec75e6578a0af3b4cfbd216da2">ID_KEY_ALT_F10</a>)</div>
 <div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    {</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> k = 0; k &lt; g_video_table_len; ++k)</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> k = 0; k &lt; <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>; ++k)</div>
 <div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>        {</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            <span class="keywordflow">if</span> (g_video_table[k].key == j)</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[k].key == j)</div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>            {</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                g_video_table[k].key = 0;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>                <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[k].<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a1c5afaab64aaed9eec8b12ce992a37fc">key</a> = 0;</div>
 <div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>                ret = -1; <span class="comment">// force redisplay</span></div>
 <div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>            }</div>
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        }</div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        g_video_table[i].key = j;</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[i].<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a1c5afaab64aaed9eec8b12ce992a37fc">key</a> = j;</div>
 <div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>        s_modes_changed = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    }</div>
 <div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="keywordflow">return</span> ret;</div>
@@ -282,12 +284,12 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
 <div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="keyword">static</span> <span class="keywordtype">bool</span> ent_less(<span class="keyword">const</span> <span class="keywordtype">int</span> lhs, <span class="keyword">const</span> <span class="keywordtype">int</span> rhs)</div>
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>{</div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <span class="keywordtype">int</span> i = g_video_table[lhs].key;</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <span class="keywordtype">int</span> i = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[lhs].<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a1c5afaab64aaed9eec8b12ce992a37fc">key</a>;</div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <span class="keywordflow">if</span> (i == 0)</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    {</div>
 <div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        i = 9999;</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    }</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keywordtype">int</span> j = g_video_table[rhs].key;</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keywordtype">int</span> j = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[rhs].<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a1c5afaab64aaed9eec8b12ce992a37fc">key</a>;</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <span class="keywordflow">if</span> (j == 0)</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    {</div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        j = 9999;</div>
@@ -297,25 +299,25 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
 <div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span><span class="keyword">static</span> <span class="keywordtype">void</span> update_id_cfg()</div>
 <div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>{</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    <span class="keyword">const</span> fs::path save_path{get_save_path(WriteFile::ID_CONFIG, <span class="stringliteral">&quot;id.cfg&quot;</span>)};</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    <span class="keyword">const</span> fs::path save_path{<a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#ac8c9c768737c180b714ce62bcdefef95">get_save_path</a>(WriteFile::ID_CONFIG, <span class="stringliteral">&quot;id.cfg&quot;</span>)};</div>
 <div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    assert(!save_path.empty());</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    <span class="keywordflow">if</span> (!is_writeable(save_path))</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    <span class="keywordflow">if</span> (!<a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a12e26eb1c0f0cbdad51c76601d9cc2f3">is_writeable</a>(save_path))</div>
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    {</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        stop_msg(<span class="stringliteral">&quot;Can&#39;t write &quot;</span> + save_path.string());</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">stop_msg</a>(<span class="stringliteral">&quot;Can&#39;t write &quot;</span> + save_path.string());</div>
 <div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>    }</div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    <span class="keyword">const</span> fs::path cfg_path{find_file(ReadFile::ID_CONFIG, <span class="stringliteral">&quot;id.cfg&quot;</span>)};</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>    <span class="keyword">const</span> fs::path cfg_path{<a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#abc9f9cb024c6b371e2df28a9684a1043">find_file</a>(ReadFile::ID_CONFIG, <span class="stringliteral">&quot;id.cfg&quot;</span>)};</div>
 <div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    <span class="keywordflow">if</span> (!cfg_path.empty())</div>
 <div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    {</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        stop_msg(<span class="stringliteral">&quot;Couldn&#39;t locate id.cfg&quot;</span>);</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">stop_msg</a>(<span class="stringliteral">&quot;Couldn&#39;t locate id.cfg&quot;</span>);</div>
 <div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    }</div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    std::FILE *cfg_file = std::fopen(cfg_path.string().c_str(), <span class="stringliteral">&quot;r&quot;</span>);</div>
 <div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    <span class="keywordflow">if</span> (cfg_file == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    {</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        stop_msg(<span class="stringliteral">&quot;Couldn&#39;t open &quot;</span> + cfg_path.string() + <span class="stringliteral">&quot; for reading, error &quot;</span> + std::to_string(errno)  + <span class="stringliteral">&quot;.&quot;</span>);</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">stop_msg</a>(<span class="stringliteral">&quot;Couldn&#39;t open &quot;</span> + cfg_path.string() + <span class="stringliteral">&quot; for reading, error &quot;</span> + std::to_string(errno)  + <span class="stringliteral">&quot;.&quot;</span>);</div>
 <div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>    }</div>
 <div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
@@ -323,18 +325,18 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>    std::FILE *out_file = std::fopen(out_path.string().c_str(), <span class="stringliteral">&quot;w&quot;</span>);</div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <span class="keywordflow">if</span> (out_file == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>    {</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        stop_msg(<span class="stringliteral">&quot;Can&#39;t create &quot;</span> + out_path.string() + <span class="stringliteral">&quot;, error &quot;</span> + std::to_string(errno));</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">stop_msg</a>(<span class="stringliteral">&quot;Can&#39;t create &quot;</span> + out_path.string() + <span class="stringliteral">&quot;, error &quot;</span> + std::to_string(errno));</div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        std::fclose(cfg_file);</div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>    }</div>
 <div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
 <div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    <span class="keywordtype">int</span> next_mode = 0;</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    <span class="keywordflow">while</span> (g_cfg_line_nums[next_mode] == -1)</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>    <span class="keywordflow">while</span> (<a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#adb1f1339796b34e87775e94d084cc84f">g_cfg_line_nums</a>[next_mode] == -1)</div>
 <div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>    {</div>
 <div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>        ++next_mode;</div>
 <div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    }</div>
 <div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>    <span class="keywordtype">int</span> line_num = 0;</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    <span class="keywordtype">int</span> next_line_num = g_cfg_line_nums[next_mode];</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    <span class="keywordtype">int</span> next_line_num = <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#adb1f1339796b34e87775e94d084cc84f">g_cfg_line_nums</a>[next_mode];</div>
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    <span class="keywordtype">char</span> line[121];</div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>    <span class="keywordflow">while</span> (std::fgets(line, std::size(line), cfg_file))</div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    {</div>
@@ -342,20 +344,20 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        <span class="comment">// replace this line?</span></div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        <span class="keywordflow">if</span> (line_num == next_line_num)</div>
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        {</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>            <span class="keyword">const</span> <span class="keyword">auto</span> [key, x_dots, y_dots, colors, driver, comment] = g_video_table[next_mode];</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>            <span class="keyword">const</span> <span class="keyword">auto</span> [key, x_dots, y_dots, colors, driver, comment] = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[next_mode];</div>
 <div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>            std::fprintf(out_file, <span class="stringliteral">&quot;%-4s,%4d,%5d,%3d,%s,%s\n&quot;</span>, <span class="comment">//</span></div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                vid_mode_key_name(key).c_str(),                <span class="comment">//</span></div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>                <a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a2c786ab86634f32ebcf2304c49cbce50">vid_mode_key_name</a>(key).c_str(),                <span class="comment">//</span></div>
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                x_dots, y_dots,                                <span class="comment">//</span></div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>                colors,                                        <span class="comment">//</span></div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>                driver-&gt;get_name().c_str(),                    <span class="comment">//</span></div>
 <div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>                comment);</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            <span class="keywordflow">if</span> (++next_mode &gt;= g_video_table_len)</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            <span class="keywordflow">if</span> (++next_mode &gt;= <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>)</div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>            {</div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>                next_line_num = 32767;</div>
 <div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>            }</div>
 <div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>            {</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                next_line_num = g_cfg_line_nums[next_mode];</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>                next_line_num = <a class="code hl_variable" href="../../d0/d19/namespaceid_1_1io.html#adb1f1339796b34e87775e94d084cc84f">g_cfg_line_nums</a>[next_mode];</div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>            }</div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        }</div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        <span class="keywordflow">else</span></div>
@@ -370,22 +372,79 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>    fs::rename(out_path, save_path); <span class="comment">// since we checked earlier with access</span></div>
 <div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>}</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span> </div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span><span class="keywordtype">void</span> request_video_mode(<span class="keywordtype">int</span> &amp;kbd_char)</div>
+<div class="foldopen" id="foldopen00289" data-start="{" data-end="}">
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#af58e6e66f37af99c3ce3d34b96dd5edf">  289</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#af58e6e66f37af99c3ce3d34b96dd5edf">request_video_mode</a>(<span class="keywordtype">int</span> &amp;kbd_char)</div>
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>{</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    driver_stack_screen();</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    kbd_char = select_video_mode(g_adapter);</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    <span class="keywordflow">if</span> (check_vid_mode_key(kbd_char) &gt;= 0) <span class="comment">// picked a new mode?</span></div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a7b5b79e2e0f7c6277e54231689cd570e">driver_stack_screen</a>();</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>    kbd_char = <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ab37205356e0d463d932ecfc5d13712c1">select_video_mode</a>(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a7f94a2f2cfb4f194769c29bca04be10c">g_adapter</a>);</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a69b7deacaadf3bf63d259f830587f350">check_vid_mode_key</a>(kbd_char) &gt;= 0) <span class="comment">// picked a new mode?</span></div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>    {</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        driver_discard_screen();</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#aabb6ee0fa010ff9e95d2b2265a7bba88">driver_discard_screen</a>();</div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>    }</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>    <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    {</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        driver_unstack_screen();</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a6035cf4bbf888b4508f859a21ca5c3a0">driver_unstack_screen</a>();</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>    }</div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>}</div>
+</div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
+<div class="ttc" id="aValueSaver_8h_html"><div class="ttname"><a href="../../d3/d59/ValueSaver_8h.html">ValueSaver.h</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Driver_html_a241ed8679ad9394f36e59fb0536db4f2"><div class="ttname"><a href="../../d3/def/classid_1_1misc_1_1Driver.html#a241ed8679ad9394f36e59fb0536db4f2">id::misc::Driver::get_name</a></div><div class="ttdeci">virtual const std::string &amp; get_name() const =0</div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Driver_html_a70a6f20b9afe112067151e834e9321e9"><div class="ttname"><a href="../../d3/def/classid_1_1misc_1_1Driver.html#a70a6f20b9afe112067151e834e9321e9">id::misc::Driver::get_description</a></div><div class="ttdeci">virtual const std::string &amp; get_description() const =0</div></div>
 <div class="ttc" id="aclassid_1_1misc_1_1ValueSaver_html"><div class="ttname"><a href="../../db/dc9/classid_1_1misc_1_1ValueSaver.html">id::misc::ValueSaver</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d59/ValueSaver_8h_source.html#l00011">ValueSaver.h:12</a></div></div>
+<div class="ttc" id="afind__path_8h_html"><div class="ttname"><a href="../../d2/dd2/find__path_8h.html">find_path.h</a></div></div>
+<div class="ttc" id="afull__screen__choice_8h_html"><div class="ttname"><a href="../../d4/dfc/full__screen__choice_8h.html">full_screen_choice.h</a></div></div>
+<div class="ttc" id="aget__key__no__help_8h_html"><div class="ttname"><a href="../../de/d80/get__key__no__help_8h.html">get_key_no_help.h</a></div></div>
+<div class="ttc" id="ahelp_8h_html"><div class="ttname"><a href="../../db/df1/help_8h.html">help.h</a></div></div>
+<div class="ttc" id="aid__keys_8h_html"><div class="ttname"><a href="../../d7/de4/id__keys_8h.html">id_keys.h</a></div></div>
+<div class="ttc" id="ais__writeable_8h_html"><div class="ttname"><a href="../../d0/d25/is__writeable_8h.html">is_writeable.h</a></div></div>
+<div class="ttc" id="alibrary_8h_html"><div class="ttname"><a href="../../dd/d08/library_8h.html">library.h</a></div></div>
+<div class="ttc" id="aload__config_8h_html"><div class="ttname"><a href="../../df/d3e/load__config_8h.html">load_config.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a2c786ab86634f32ebcf2304c49cbce50"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a2c786ab86634f32ebcf2304c49cbce50">id::engine::vid_mode_key_name</a></div><div class="ttdeci">void vid_mode_key_name(int key, char *buffer)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d98/video__mode_8cpp_source.html#l00085">video_mode.cpp:85</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a4968e9d8867b202d15ae20cb44921482"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">id::engine::g_video_table</a></div><div class="ttdeci">VideoInfo g_video_table[]</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00014">VideoInfo.cpp:14</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a69b7deacaadf3bf63d259f830587f350"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a69b7deacaadf3bf63d259f830587f350">id::engine::check_vid_mode_key</a></div><div class="ttdeci">int check_vid_mode_key(int key)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d98/video__mode_8cpp_source.html#l00015">video_mode.cpp:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a7f94a2f2cfb4f194769c29bca04be10c"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a7f94a2f2cfb4f194769c29bca04be10c">id::engine::g_adapter</a></div><div class="ttdeci">int g_adapter</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00008">VideoInfo.cpp:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a82fcb4aa91df5f29bf525f1041543dd7"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">id::engine::g_video_table_len</a></div><div class="ttdeci">int g_video_table_len</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00015">VideoInfo.cpp:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_ac51a5b86403405676f89706230195bf6"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#ac51a5b86403405676f89706230195bf6">id::engine::g_video_entry</a></div><div class="ttdeci">VideoInfo g_video_entry</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00013">VideoInfo.cpp:13</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_acfbe7683759b1fb482e2725daf751ddca24d73638b37fe7060f2fa77657a3e954"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#acfbe7683759b1fb482e2725daf751ddca24d73638b37fe7060f2fa77657a3e954">id::engine::MAX_VIDEO_MODES</a></div><div class="ttdeci">@ MAX_VIDEO_MODES</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00018">VideoInfo.h:17</a></div></div>
+<div class="ttc" id="anamespaceid_1_1help_html"><div class="ttname"><a href="../../d0/d5f/namespaceid_1_1help.html">id::help</a></div><div class="ttdef"><b>Definition</b> <a href="../../db/df1/help_8h_source.html#l00005">help.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1help_html_ad0b971ac3cf639a418a3972f67014ded"><div class="ttname"><a href="../../d0/d5f/namespaceid_1_1help.html#ad0b971ac3cf639a418a3972f67014ded">id::help::g_help_mode</a></div><div class="ttdeci">HelpLabels g_help_mode</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00050">help.cpp:50</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a12e26eb1c0f0cbdad51c76601d9cc2f3"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a12e26eb1c0f0cbdad51c76601d9cc2f3">id::io::is_writeable</a></div><div class="ttdeci">bool is_writeable(const std::filesystem::path &amp;path)</div><div class="ttdef"><b>Definition</b> <a href="../../d0/d25/is__writeable_8h_source.html#l00010">is_writeable.h:10</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_abc9f9cb024c6b371e2df28a9684a1043"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#abc9f9cb024c6b371e2df28a9684a1043">id::io::find_file</a></div><div class="ttdeci">std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &amp;file_path)</div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_ac8c9c768737c180b714ce62bcdefef95"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#ac8c9c768737c180b714ce62bcdefef95">id::io::get_save_path</a></div><div class="ttdeci">std::filesystem::path get_save_path(WriteFile kind, const std::string &amp;filename)</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d7d/library_8cpp_source.html#l00210">library.cpp:210</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_aca2718c8c4bfd4e95930b252a2feb2d0"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#aca2718c8c4bfd4e95930b252a2feb2d0">id::io::g_bad_config</a></div><div class="ttdeci">ConfigStatus g_bad_config</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d96/load__config_8cpp_source.html#l00026">load_config.cpp:26</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_adb1f1339796b34e87775e94d084cc84f"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#adb1f1339796b34e87775e94d084cc84f">id::io::g_cfg_line_nums</a></div><div class="ttdeci">int g_cfg_line_nums[engine::MAX_VIDEO_MODES]</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d96/load__config_8cpp_source.html#l00027">load_config.cpp:27</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a6035cf4bbf888b4508f859a21ca5c3a0"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a6035cf4bbf888b4508f859a21ca5c3a0">id::misc::driver_unstack_screen</a></div><div class="ttdeci">void driver_unstack_screen()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00283">Driver.h:283</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a7b5b79e2e0f7c6277e54231689cd570e"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a7b5b79e2e0f7c6277e54231689cd570e">id::misc::driver_stack_screen</a></div><div class="ttdeci">void driver_stack_screen()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00278">Driver.h:278</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_aabb6ee0fa010ff9e95d2b2265a7bba88"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#aabb6ee0fa010ff9e95d2b2265a7bba88">id::misc::driver_discard_screen</a></div><div class="ttdeci">void driver_discard_screen()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00288">Driver.h:288</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a35c10a5c801dee1d04c26dadbd24ae8e"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a35c10a5c801dee1d04c26dadbd24ae8e">id::ui::full_screen_choice</a></div><div class="ttdeci">int full_screen_choice(ChoiceFlags flags, const char *hdg, const char *hdg2, const char *instr, int num_choices, const char **choices, const int *attributes, int box_width, int box_depth, int col_width, int current, FormatItem *format_item, char *speed_string, SpeedPrompt *speed_prompt, CheckKey *check_key)</div><div class="ttdef"><b>Definition</b> <a href="../../db/ddc/full__screen__choice_8cpp_source.html#l00171">full_screen_choice.cpp:171</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a6428b6f2e947653fb517cca8b57cf7c5a2027c027133e22c8929e2874dc44dd36"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a6428b6f2e947653fb517cca8b57cf7c5a2027c027133e22c8929e2874dc44dd36">id::ui::StopMsgFlags::CANCEL</a></div><div class="ttdeci">@ CANCEL</div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a6428b6f2e947653fb517cca8b57cf7c5a4611ab66633fb0fefa42dac45519eaa3"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a6428b6f2e947653fb517cca8b57cf7c5a4611ab66633fb0fefa42dac45519eaa3">id::ui::StopMsgFlags::NO_BUZZER</a></div><div class="ttdeci">@ NO_BUZZER</div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a6428b6f2e947653fb517cca8b57cf7c5ad91fc2ad3807abcd21d8187f0cac9020"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a6428b6f2e947653fb517cca8b57cf7c5ad91fc2ad3807abcd21d8187f0cac9020">id::ui::StopMsgFlags::INFO_ONLY</a></div><div class="ttdeci">@ INFO_ONLY</div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a908a5b8b3b2f445b9a0a381f511c6be7"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a908a5b8b3b2f445b9a0a381f511c6be7">id::ui::get_a_key_no_help</a></div><div class="ttdeci">int get_a_key_no_help()</div><div class="ttdef"><b>Definition</b> <a href="../../d4/d7c/get__key__no__help_8cpp_source.html#l00016">get_key_no_help.cpp:16</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a95ec79234d5941814bc62749a2e31dc5a3262f399f28b09ce20cac1a9c9c33299"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a95ec79234d5941814bc62749a2e31dc5a3262f399f28b09ce20cac1a9c9c33299">id::ui::ID_KEY_SHF_F1</a></div><div class="ttdeci">@ ID_KEY_SHF_F1</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00057">id_keys.h:57</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a95ec79234d5941814bc62749a2e31dc5a4af9d8ec75e6578a0af3b4cfbd216da2"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a95ec79234d5941814bc62749a2e31dc5a4af9d8ec75e6578a0af3b4cfbd216da2">id::ui::ID_KEY_ALT_F10</a></div><div class="ttdeci">@ ID_KEY_ALT_F10</div><div class="ttdef"><b>Definition</b> <a href="../../d7/de4/id__keys_8h_source.html#l00086">id_keys.h:86</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a9f7061365fdd422f042ac348be5d5b32a4fc963e213bba362778f5c175eb4d5ff"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a9f7061365fdd422f042ac348be5d5b32a4fc963e213bba362778f5c175eb4d5ff">id::ui::ChoiceFlags::HELP</a></div><div class="ttdeci">@ HELP</div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ab02ae6bb5f0a112a62982599f1dd7882"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ab02ae6bb5f0a112a62982599f1dd7882">id::ui::g_tab_enabled</a></div><div class="ttdeci">bool g_tab_enabled</div><div class="ttdef"><b>Definition</b> <a href="../../de/d91/tab__display_8cpp_source.html#l00065">tab_display.cpp:65</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ab37205356e0d463d932ecfc5d13712c1"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ab37205356e0d463d932ecfc5d13712c1">id::ui::select_video_mode</a></div><div class="ttdeci">int select_video_mode(int current_mode)</div><div class="ttdef"><b>Definition</b> <a href="../../de/d40/select__video__mode_8cpp_source.html#l00059">select_video_mode.cpp:59</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_acbae3c6d9528edef7e9d33ea09213597"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#acbae3c6d9528edef7e9d33ea09213597">id::ui::stop_msg</a></div><div class="ttdeci">bool stop_msg(StopMsgFlags flags, const std::string &amp;msg)</div><div class="ttdef"><b>Definition</b> <a href="../../d6/de6/stop__msg_8cpp_source.html#l00055">stop_msg.cpp:55</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_af58e6e66f37af99c3ce3d34b96dd5edf"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#af58e6e66f37af99c3ce3d34b96dd5edf">id::ui::request_video_mode</a></div><div class="ttdeci">void request_video_mode(int &amp;kbd_char)</div><div class="ttdef"><b>Definition</b> <a href="../../de/d40/select__video__mode_8cpp_source.html#l00289">select_video_mode.cpp:289</a></div></div>
+<div class="ttc" id="aselect__video__mode_8h_html"><div class="ttname"><a href="../../d5/d75/select__video__mode_8h.html">select_video_mode.h</a></div></div>
+<div class="ttc" id="astop__msg_8h_html"><div class="ttname"><a href="../../d1/d31/stop__msg_8h.html">stop_msg.h</a></div></div>
+<div class="ttc" id="astructid_1_1engine_1_1VideoInfo_html_a17eeabe85f7c91b7d88952a5f7506079"><div class="ttname"><a href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a17eeabe85f7c91b7d88952a5f7506079">id::engine::VideoInfo::x_dots</a></div><div class="ttdeci">int x_dots</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00023">VideoInfo.h:23</a></div></div>
+<div class="ttc" id="astructid_1_1engine_1_1VideoInfo_html_a1c5afaab64aaed9eec8b12ce992a37fc"><div class="ttname"><a href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a1c5afaab64aaed9eec8b12ce992a37fc">id::engine::VideoInfo::key</a></div><div class="ttdeci">int key</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00022">VideoInfo.h:22</a></div></div>
+<div class="ttc" id="astructid_1_1engine_1_1VideoInfo_html_a3159e0b086f206ea39ba88bb42141046"><div class="ttname"><a href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a3159e0b086f206ea39ba88bb42141046">id::engine::VideoInfo::driver</a></div><div class="ttdeci">misc::Driver * driver</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00026">VideoInfo.h:26</a></div></div>
+<div class="ttc" id="astructid_1_1engine_1_1VideoInfo_html_a8c1909d159f6a34dd61708bfbf1578eb"><div class="ttname"><a href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a8c1909d159f6a34dd61708bfbf1578eb">id::engine::VideoInfo::comment</a></div><div class="ttdeci">char comment[26]</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00027">VideoInfo.h:27</a></div></div>
+<div class="ttc" id="astructid_1_1engine_1_1VideoInfo_html_ad48269bea4fb15031668660d987e6427"><div class="ttname"><a href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#ad48269bea4fb15031668660d987e6427">id::engine::VideoInfo::y_dots</a></div><div class="ttdeci">int y_dots</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00024">VideoInfo.h:24</a></div></div>
+<div class="ttc" id="astructid_1_1engine_1_1VideoInfo_html_afe89db6b0b3a6ab6a88ea36f5c39ce2f"><div class="ttname"><a href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#afe89db6b0b3a6ab6a88ea36f5c39ce2f">id::engine::VideoInfo::colors</a></div><div class="ttdeci">int colors</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00025">VideoInfo.h:25</a></div></div>
+<div class="ttc" id="atab__display_8h_html"><div class="ttname"><a href="../../d6/dac/tab__display_8h.html">tab_display.h</a></div></div>
+<div class="ttc" id="avideo__mode_8h_html"><div class="ttname"><a href="../../d4/d36/video__mode_8h.html">video_mode.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

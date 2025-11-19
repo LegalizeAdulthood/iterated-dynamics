@@ -82,45 +82,63 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">inverse_julia.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d7/d41/inverse__julia_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/inverse_julia.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d4/d68/inverse__julia_8h.html">ui/inverse_julia.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;engine/jiim.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;engine/resume.h&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;fractals/fractalp.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;ui/check_key.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d84/jiim_8h.html">engine/jiim.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d2/d95/resume_8h.html">engine/resume.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/d61/fractalp_8h.html">fractals/fractalp.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/dba/check__key_8h.html">ui/check_key.h</a>&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">using namespace </span>id::engine;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">using namespace </span>id::fractals;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a>;</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">int</span> inverse_julia_fractal_type()</div>
+<div class="foldopen" id="foldopen00016" data-start="{" data-end="}">
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ae207042bd1d6e583eb916f78118b5286">   16</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae207042bd1d6e583eb916f78118b5286">inverse_julia_fractal_type</a>()</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">int</span> color = 0;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keywordflow">if</span> (g_resuming)              <span class="comment">// can&#39;t resume</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a96ec00608d2152fbf3dd55610d54a9e2">g_resuming</a>)              <span class="comment">// can&#39;t resume</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    {</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    }</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">while</span> (color &gt;= 0)       <span class="comment">// generate points</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    {</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keywordflow">if</span> (check_key())</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">check_key</a>())</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        {</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>            free_queue();</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>            <a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a909dfe751c02738bec37e0508adfdd32">free_queue</a>();</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        }</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        color = g_cur_fractal_specific-&gt;orbit_calc();</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        g_old_z = g_new_z;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        color = <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#ac5f6eb64b7e4b50d1dafd13a39d324d6">g_cur_fractal_specific</a>-&gt;<a class="code hl_variable" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a24f45fda57c239b903e92a245a20f540">orbit_calc</a>();</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a9302c5331f1a1a4c7a5c6aae66a9ab67">g_old_z</a> = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#aece6a4cc6190e38c984fd347d26c0e10">g_new_z</a>;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    }</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    free_queue();</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a909dfe751c02738bec37e0508adfdd32">free_queue</a>();</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
+</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="acheck__key_8h_html"><div class="ttname"><a href="../../d1/dba/check__key_8h.html">check_key.h</a></div></div>
+<div class="ttc" id="afractalp_8h_html"><div class="ttname"><a href="../../d7/d61/fractalp_8h.html">fractalp.h</a></div></div>
+<div class="ttc" id="ainverse__julia_8h_html"><div class="ttname"><a href="../../d4/d68/inverse__julia_8h.html">inverse_julia.h</a></div></div>
+<div class="ttc" id="ajiim_8h_html"><div class="ttname"><a href="../../dd/d84/jiim_8h.html">jiim.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a909dfe751c02738bec37e0508adfdd32"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a909dfe751c02738bec37e0508adfdd32">id::engine::free_queue</a></div><div class="ttdeci">void free_queue()</div><div class="ttdef"><b>Definition</b> <a href="../../d4/dc4/jiim_8cpp_source.html#l00298">jiim.cpp:298</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a9302c5331f1a1a4c7a5c6aae66a9ab67"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a9302c5331f1a1a4c7a5c6aae66a9ab67">id::engine::g_old_z</a></div><div class="ttdeci">math::DComplex g_old_z</div><div class="ttdef"><b>Definition</b> <a href="../../d9/da8/calcfrac_8cpp_source.html#l00142">calcfrac.cpp:142</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a96ec00608d2152fbf3dd55610d54a9e2"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a96ec00608d2152fbf3dd55610d54a9e2">id::engine::g_resuming</a></div><div class="ttdeci">bool g_resuming</div><div class="ttdef"><b>Definition</b> <a href="../../dd/df8/resume_8cpp_source.html#l00016">resume.cpp:16</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_aece6a4cc6190e38c984fd347d26c0e10"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#aece6a4cc6190e38c984fd347d26c0e10">id::engine::g_new_z</a></div><div class="ttdeci">math::DComplex g_new_z</div><div class="ttdef"><b>Definition</b> <a href="../../d9/da8/calcfrac_8cpp_source.html#l00143">calcfrac.cpp:143</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00014">calcfrac.h:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_ac5f6eb64b7e4b50d1dafd13a39d324d6"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#ac5f6eb64b7e4b50d1dafd13a39d324d6">id::fractals::g_cur_fractal_specific</a></div><div class="ttdeci">FractalSpecific * g_cur_fractal_specific</div><div class="ttdef"><b>Definition</b> <a href="../../dd/dc7/fractalp_8cpp_source.html#l01958">fractalp.cpp:1958</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a4aa0ffdec8ad2f8ef523e1241c8b7150"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">id::ui::check_key</a></div><div class="ttdeci">bool check_key()</div><div class="ttdef"><b>Definition</b> <a href="../../de/d04/check__key_8cpp_source.html#l00015">check_key.cpp:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ae207042bd1d6e583eb916f78118b5286"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ae207042bd1d6e583eb916f78118b5286">id::ui::inverse_julia_fractal_type</a></div><div class="ttdeci">int inverse_julia_fractal_type()</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d41/inverse__julia_8cpp_source.html#l00016">inverse_julia.cpp:16</a></div></div>
+<div class="ttc" id="aresume_8h_html"><div class="ttname"><a href="../../d2/d95/resume_8h.html">resume.h</a></div></div>
+<div class="ttc" id="astructid_1_1fractals_1_1FractalSpecific_html_a24f45fda57c239b903e92a245a20f540"><div class="ttname"><a href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a24f45fda57c239b903e92a245a20f540">id::fractals::FractalSpecific::orbit_calc</a></div><div class="ttdeci">int(* orbit_calc)()</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d61/fractalp_8h_source.html#l00109">fractalp.h:109</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

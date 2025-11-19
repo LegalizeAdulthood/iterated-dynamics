@@ -82,28 +82,35 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">stack_avail.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../dc/d95/stack__avail_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;misc/stack_avail.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d8/d28/stack__avail_8h.html">misc/stack_avail.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span>id::misc</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>{</div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">enum</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>{</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    WIN32_STACK_SIZE = 1024 * 1024</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>};</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>    <a class="code hl_enumvalue" href="../../df/d6d/namespaceid_1_1misc.html#ae22ea687782e3d89b246aeab8849c0c2a594faceee519153a8978ee888763ad10">WIN32_STACK_SIZE</a> = 1024 * 1024</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#ae22ea687782e3d89b246aeab8849c0c2a594faceee519153a8978ee888763ad10">   11</a></span>};</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keywordtype">char</span> *g_top_of_stack{};</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#ac07238ec6bdf20e3bc0ce825bdb6d988">   13</a></span><span class="keywordtype">char</span> *<a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#ac07238ec6bdf20e3bc0ce825bdb6d988">g_top_of_stack</a>{};</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment">// Return available stack space ... shouldn&#39;t be needed in Win32, should it?</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">long</span> stack_avail()</div>
+<div class="foldopen" id="foldopen00016" data-start="{" data-end="}">
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#a0860d368a202a680958aeb4d6c26cbb3">   16</a></span><span class="keywordtype">long</span> <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a0860d368a202a680958aeb4d6c26cbb3">stack_avail</a>()</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">char</span> junk{};</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">return</span> WIN32_STACK_SIZE - <span class="keyword">static_cast&lt;</span><span class="keywordtype">long</span><span class="keyword">&gt;</span>(g_top_of_stack - &amp;junk);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">return</span> <a class="code hl_enumvalue" href="../../df/d6d/namespaceid_1_1misc.html#ae22ea687782e3d89b246aeab8849c0c2a594faceee519153a8978ee888763ad10">WIN32_STACK_SIZE</a> - <span class="keyword">static_cast&lt;</span><span class="keywordtype">long</span><span class="keyword">&gt;</span>(<a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#ac07238ec6bdf20e3bc0ce825bdb6d988">g_top_of_stack</a> - &amp;junk);</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>}</div>
+</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>} <span class="comment">// namespace id::misc</span></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a0860d368a202a680958aeb4d6c26cbb3"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a0860d368a202a680958aeb4d6c26cbb3">id::misc::stack_avail</a></div><div class="ttdeci">long stack_avail()</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d95/stack__avail_8cpp_source.html#l00016">stack_avail.cpp:16</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ac07238ec6bdf20e3bc0ce825bdb6d988"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ac07238ec6bdf20e3bc0ce825bdb6d988">id::misc::g_top_of_stack</a></div><div class="ttdeci">char * g_top_of_stack</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d95/stack__avail_8cpp_source.html#l00013">stack_avail.cpp:13</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ae22ea687782e3d89b246aeab8849c0c2a594faceee519153a8978ee888763ad10"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ae22ea687782e3d89b246aeab8849c0c2a594faceee519153a8978ee888763ad10">id::misc::WIN32_STACK_SIZE</a></div><div class="ttdeci">@ WIN32_STACK_SIZE</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d95/stack__avail_8cpp_source.html#l00011">stack_avail.cpp:10</a></div></div>
+<div class="ttc" id="astack__avail_8h_html"><div class="ttname"><a href="../../d8/d28/stack__avail_8h.html">stack_avail.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

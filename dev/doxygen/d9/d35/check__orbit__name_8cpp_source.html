@@ -82,33 +82,46 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">check_orbit_name.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d9/d35/check__orbit__name_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;fractals/check_orbit_name.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d8/d64/check__orbit__name_8h.html">fractals/check_orbit_name.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;fractals/fractalp.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;fractals/julibrot.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/d61/fractalp_8h.html">fractals/fractalp.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d6/dca/julibrot_8h.html">fractals/julibrot.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span>id::fractals</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keywordtype">bool</span> check_orbit_name(<span class="keyword">const</span> <span class="keywordtype">char</span> *orbit_name)</div>
+<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="../../d5/d38/namespaceid_1_1fractals.html#a0d8b3c02b2e8dfcc90ed069be3462f41">   13</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../d5/d38/namespaceid_1_1fractals.html#a0d8b3c02b2e8dfcc90ed069be3462f41">check_orbit_name</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *orbit_name)</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; g_num_fractal_types; i++)</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#ad852d72cdd09d408d2e91cd3dd8fea81">g_num_fractal_types</a>; i++)</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        <span class="keywordflow">if</span> (<span class="keyword">const</span> FractalSpecific &amp; fs{g_fractal_specific[i]};</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>            bit_set(fs.flags, FractalFlags::OK_JB) &amp;&amp; std::strcmp(orbit_name, fs.name) == 0)</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>        <span class="keywordflow">if</span> (<span class="keyword">const</span> <a class="code hl_struct" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> &amp; fs{<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a65823937a6ced37d2b620ce2c1da38e3">g_fractal_specific</a>[i]};</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>            <a class="code hl_function" href="../../d5/d38/namespaceid_1_1fractals.html#aab9372ab2e9da08f67ceed825741b07d">bit_set</a>(fs.flags, <a class="code hl_enumvalue" href="../../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91a9421ff95c7a3bbc979271d0ecd08d29a">FractalFlags::OK_JB</a>) &amp;&amp; std::strcmp(orbit_name, fs.name) == 0)</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        {</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>            g_new_orbit_type = fs.type;</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>            <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8906dae548f1896e6aa796ec59cb882d">g_new_orbit_type</a> = fs.type;</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>            <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// found a match</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        }</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    }</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}</div>
+</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>} <span class="comment">// namespace id::fractals</span></div>
+<div class="ttc" id="acheck__orbit__name_8h_html"><div class="ttname"><a href="../../d8/d64/check__orbit__name_8h.html">check_orbit_name.h</a></div></div>
+<div class="ttc" id="afractalp_8h_html"><div class="ttname"><a href="../../d7/d61/fractalp_8h.html">fractalp.h</a></div></div>
+<div class="ttc" id="ajulibrot_8h_html"><div class="ttname"><a href="../../d6/dca/julibrot_8h.html">julibrot.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00014">calcfrac.h:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_a0d8b3c02b2e8dfcc90ed069be3462f41"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a0d8b3c02b2e8dfcc90ed069be3462f41">id::fractals::check_orbit_name</a></div><div class="ttdeci">bool check_orbit_name(const char *orbit_name)</div><div class="ttdef"><b>Definition</b> <a href="../../d9/d35/check__orbit__name_8cpp_source.html#l00013">check_orbit_name.cpp:13</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_a65823937a6ced37d2b620ce2c1da38e3"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a65823937a6ced37d2b620ce2c1da38e3">id::fractals::g_fractal_specific</a></div><div class="ttdeci">FractalSpecific g_fractal_specific[]</div><div class="ttdef"><b>Definition</b> <a href="../../dd/dc7/fractalp_8cpp_source.html#l00212">fractalp.cpp:212</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_a861db74cd05f15795af4e24adff55d91a9421ff95c7a3bbc979271d0ecd08d29a"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91a9421ff95c7a3bbc979271d0ecd08d29a">id::fractals::FractalFlags::OK_JB</a></div><div class="ttdeci">@ OK_JB</div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_a8906dae548f1896e6aa796ec59cb882d"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a8906dae548f1896e6aa796ec59cb882d">id::fractals::g_new_orbit_type</a></div><div class="ttdeci">FractalType g_new_orbit_type</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d1e/julibrot_8cpp_source.html#l00091">julibrot.cpp:91</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_aab9372ab2e9da08f67ceed825741b07d"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#aab9372ab2e9da08f67ceed825741b07d">id::fractals::bit_set</a></div><div class="ttdeci">bool bit_set(const FractalFlags value, const FractalFlags bit)</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d61/fractalp_8h_source.html#l00078">fractalp.h:78</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_ad852d72cdd09d408d2e91cd3dd8fea81"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#ad852d72cdd09d408d2e91cd3dd8fea81">id::fractals::g_num_fractal_types</a></div><div class="ttdeci">int g_num_fractal_types</div><div class="ttdef"><b>Definition</b> <a href="../../dd/dc7/fractalp_8cpp_source.html#l01956">fractalp.cpp:1956</a></div></div>
+<div class="ttc" id="astructid_1_1fractals_1_1FractalSpecific_html"><div class="ttname"><a href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">id::fractals::FractalSpecific</a></div><div class="ttdef"><b>Definition</b> <a href="../../d7/d61/fractalp_8h_source.html#l00092">fractalp.h:93</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -82,27 +82,41 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">circle_pattern.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d2/d0e/circle__pattern_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;fractals/circle_pattern.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d0/dcc/circle__pattern_8h.html">fractals/circle_pattern.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;engine/calcfrac.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;engine/fractals.h&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;engine/VideoInfo.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d6/dd9/calcfrac_8h.html">engine/calcfrac.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d4/daf/fractals_8h.html">engine/fractals.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d7e/VideoInfo_8h.html">engine/VideoInfo.h</a>&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span>id::engine;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span>id::fractals</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keywordtype">int</span> circle_orbit()</div>
+<div class="foldopen" id="foldopen00014" data-start="{" data-end="}">
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="../../d5/d38/namespaceid_1_1fractals.html#a469e57e28f1df15e889b9f4cf6438a68">   14</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../d5/d38/namespaceid_1_1fractals.html#a469e57e28f1df15e889b9f4cf6438a68">circle_orbit</a>()</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>{</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keyword">const</span> <span class="keywordtype">long</span> i = <span class="keyword">static_cast&lt;</span><span class="keywordtype">long</span><span class="keyword">&gt;</span>(g_params[0] * (g_temp_sqr_x + g_temp_sqr_y));</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    g_color_iter = i % g_colors;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keyword">const</span> <span class="keywordtype">long</span> i = <span class="keyword">static_cast&lt;</span><span class="keywordtype">long</span><span class="keyword">&gt;</span>(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a756d293016f20caa3997437da9f2c7e1">g_params</a>[0] * (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#abc180aa23309b96c9a7e5447dc339a1e">g_temp_sqr_x</a> + <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a0edf82fb4a4869e3fb9cd25b58361a0e">g_temp_sqr_y</a>));</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a2d7a7a9c8ad16977dca53895111f449d">g_color_iter</a> = i % <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a5bc64b54a5618b68e02d4cf6976296a7">g_colors</a>;</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>}</div>
+</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>} <span class="comment">// namespace id::fractals</span></div>
+<div class="ttc" id="aVideoInfo_8h_html"><div class="ttname"><a href="../../d3/d7e/VideoInfo_8h.html">VideoInfo.h</a></div></div>
+<div class="ttc" id="acalcfrac_8h_html"><div class="ttname"><a href="../../d6/dd9/calcfrac_8h.html">calcfrac.h</a></div></div>
+<div class="ttc" id="acircle__pattern_8h_html"><div class="ttname"><a href="../../d0/dcc/circle__pattern_8h.html">circle_pattern.h</a></div></div>
+<div class="ttc" id="afractals_8h_html"><div class="ttname"><a href="../../d4/daf/fractals_8h.html">fractals.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a0edf82fb4a4869e3fb9cd25b58361a0e"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a0edf82fb4a4869e3fb9cd25b58361a0e">id::engine::g_temp_sqr_y</a></div><div class="ttdeci">double g_temp_sqr_y</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d58/fractals_8cpp_source.html#l00077">fractals.cpp:77</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a2d7a7a9c8ad16977dca53895111f449d"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a2d7a7a9c8ad16977dca53895111f449d">id::engine::g_color_iter</a></div><div class="ttdeci">long g_color_iter</div><div class="ttdef"><b>Definition</b> <a href="../../d9/da8/calcfrac_8cpp_source.html#l00145">calcfrac.cpp:145</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a5bc64b54a5618b68e02d4cf6976296a7"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a5bc64b54a5618b68e02d4cf6976296a7">id::engine::g_colors</a></div><div class="ttdeci">int g_colors</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00012">VideoInfo.cpp:12</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a756d293016f20caa3997437da9f2c7e1"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a756d293016f20caa3997437da9f2c7e1">id::engine::g_params</a></div><div class="ttdeci">double g_params[MAX_PARAMS]</div><div class="ttdef"><b>Definition</b> <a href="../../d9/da8/calcfrac_8cpp_source.html#l00197">calcfrac.cpp:197</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_abc180aa23309b96c9a7e5447dc339a1e"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#abc180aa23309b96c9a7e5447dc339a1e">id::engine::g_temp_sqr_x</a></div><div class="ttdeci">double g_temp_sqr_x</div><div class="ttdef"><b>Definition</b> <a href="../../d8/d58/fractals_8cpp_source.html#l00076">fractals.cpp:76</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00014">calcfrac.h:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_a469e57e28f1df15e889b9f4cf6438a68"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a469e57e28f1df15e889b9f4cf6438a68">id::fractals::circle_orbit</a></div><div class="ttdeci">int circle_orbit()</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d0e/circle__pattern_8cpp_source.html#l00014">circle_pattern.cpp:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

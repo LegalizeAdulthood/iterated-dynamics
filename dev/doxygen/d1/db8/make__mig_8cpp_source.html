@@ -82,12 +82,12 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">make_mig.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d1/db8/make__mig_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;io/make_mig.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../dc/d59/make__mig_8h.html">io/make_mig.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;engine/spindac.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;io/library.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../df/d7f/spindac_8h.html">engine/spindac.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d08/library_8h.html">io/library.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;fmt/format.h&gt;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
@@ -99,14 +99,14 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">using namespace </span>id::engine;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span>id::io</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">static</span> <span class="keywordtype">char</span> par_key(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> x)</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">static</span> <span class="keywordtype">char</span> par_key(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>)</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">return</span> x &lt; 10 ? <span class="charliteral">&#39;0&#39;</span> + x : <span class="charliteral">&#39;a&#39;</span> - 10 + x;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a> &lt; 10 ? <span class="charliteral">&#39;0&#39;</span> + <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a> : <span class="charliteral">&#39;a&#39;</span> - 10 + <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>;</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>}</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="comment">/* make_mig() takes a collection of individual GIF images (all</span></div>
@@ -117,7 +117,8 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="comment">   with the &#39;x&#39; and &#39;y&#39; parameters</span></div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="comment">*/</span></div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keywordtype">void</span> make_mig(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> x_mult, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> y_mult)</div>
+<div class="foldopen" id="foldopen00036" data-start="{" data-end="}">
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#a8482ea77fcfbfd069c877968a2c28f91">   36</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a8482ea77fcfbfd069c877968a2c28f91">make_mig</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> x_mult, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> y_mult)</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>{</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> x_res;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> y_res;</div>
@@ -139,7 +140,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    std::string gif_out{<span class="stringliteral">&quot;fractmig.gif&quot;</span>};</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    temp = &amp;g_old_dac_box[0][0];                 <span class="comment">// a safe place for our temp data</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    temp = &amp;<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#aebc95353e56e7cd2d7110784e33b5a84">g_old_dac_box</a>[0][0];                 <span class="comment">// a safe place for our temp data</span></div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="comment">// process each input image, one at a time</span></div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">for</span> (<span class="keywordtype">unsigned</span> y_step = 0U; y_step &lt; y_mult; y_step++)</div>
@@ -153,9 +154,9 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                            <span class="stringliteral">&quot;\n&quot;</span>,</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                    gif_out.c_str(), x_mult, y_mult);</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                <span class="comment">// attempt to create the output file</span></div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                <span class="keyword">const</span> std::filesystem::path path{get_save_path(WriteFile::IMAGE, gif_out)};</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                assert(!path.empty());</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                out = std::fopen(path.string().c_str(), <span class="stringliteral">&quot;wb&quot;</span>);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                <span class="keyword">const</span> std::filesystem::path <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>{<a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#ac8c9c768737c180b714ce62bcdefef95">get_save_path</a>(<a class="code hl_enumvalue" href="../../d0/d19/namespaceid_1_1io.html#afef8aa2e895599e54fa155d399d514f4a23a12f67f614b5518c7f1c2465bf95e3">WriteFile::IMAGE</a>, gif_out)};</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                assert(!<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.empty());</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                out = std::fopen(<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.string().c_str(), <span class="stringliteral">&quot;wb&quot;</span>);</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                <span class="keywordflow">if</span> (out == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                {</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                    std::printf(<span class="stringliteral">&quot;Cannot create output file %s!\n&quot;</span>, gif_out.c_str());</div>
@@ -164,13 +165,13 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            }</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            gif_in = fmt::format(<span class="stringliteral">&quot;frmig_{:c}{:c}.gif&quot;</span>, par_key(x_step), par_key(y_step));</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            <span class="keyword">const</span> std::filesystem::path path{find_file(ReadFile::IMAGE, gif_in)};</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <span class="keywordflow">if</span> (path.empty())</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>            <span class="keyword">const</span> std::filesystem::path <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>{<a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#abc9f9cb024c6b371e2df28a9684a1043">find_file</a>(<a class="code hl_enumvalue" href="../../d0/d19/namespaceid_1_1io.html#a2cf8b633dbb325b1d506fde8398fb96ba23a12f67f614b5518c7f1c2465bf95e3">ReadFile::IMAGE</a>, gif_in)};</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.empty())</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>            {</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>                fmt::print(<span class="stringliteral">&quot;Can&#39;t locate file {:s}!\n&quot;</span>, gif_in);</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>                std::exit(1);</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>            }</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            in = std::fopen(path.string().c_str(), <span class="stringliteral">&quot;rb&quot;</span>);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>            in = std::fopen(<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.string().c_str(), <span class="stringliteral">&quot;rb&quot;</span>);</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            <span class="keywordflow">if</span> (in == <span class="keyword">nullptr</span>)</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>            {</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>                std::printf(<span class="stringliteral">&quot;Can&#39;t open file %s!\n&quot;</span>, gif_in.c_str());</div>
@@ -416,8 +417,22 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>        std::printf(<span class="stringliteral">&quot;File %s has been created (and its component files deleted)\n&quot;</span>, gif_out.c_str());</div>
 <div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    }</div>
 <div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>}</div>
+</div>
 <div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span> </div>
 <div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>} <span class="comment">// namespace id::io</span></div>
+<div class="ttc" id="afile__get__window_8cpp_html_a01a3a5e8c9197c526526a8936d06af4f"><div class="ttname"><a href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a></div><div class="ttdeci">std::filesystem::path path</div><div class="ttdef"><b>Definition</b> <a href="../../db/d7d/file__get__window_8cpp_source.html#l00079">file_get_window.cpp:79</a></div></div>
+<div class="ttc" id="ajulibrot_8cpp_html_af88b946fb90d5f08b5fb740c70e98c10"><div class="ttname"><a href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a></div><div class="ttdeci">double x</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d1e/julibrot_8cpp_source.html#l00038">julibrot.cpp:38</a></div></div>
+<div class="ttc" id="alibrary_8h_html"><div class="ttname"><a href="../../dd/d08/library_8h.html">library.h</a></div></div>
+<div class="ttc" id="amake__mig_8h_html"><div class="ttname"><a href="../../dc/d59/make__mig_8h.html">make_mig.h</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_aebc95353e56e7cd2d7110784e33b5a84"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#aebc95353e56e7cd2d7110784e33b5a84">id::engine::g_old_dac_box</a></div><div class="ttdeci">Byte g_old_dac_box[256][3]</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/spindac_8cpp_source.html#l00026">spindac.cpp:26</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a2cf8b633dbb325b1d506fde8398fb96ba23a12f67f614b5518c7f1c2465bf95e3"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a2cf8b633dbb325b1d506fde8398fb96ba23a12f67f614b5518c7f1c2465bf95e3">id::io::ReadFile::IMAGE</a></div><div class="ttdeci">@ IMAGE</div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a8482ea77fcfbfd069c877968a2c28f91"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a8482ea77fcfbfd069c877968a2c28f91">id::io::make_mig</a></div><div class="ttdeci">void make_mig(unsigned int x_mult, unsigned int y_mult)</div><div class="ttdef"><b>Definition</b> <a href="../../d1/db8/make__mig_8cpp_source.html#l00036">make_mig.cpp:36</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_abc9f9cb024c6b371e2df28a9684a1043"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#abc9f9cb024c6b371e2df28a9684a1043">id::io::find_file</a></div><div class="ttdeci">std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &amp;file_path)</div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_ac8c9c768737c180b714ce62bcdefef95"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#ac8c9c768737c180b714ce62bcdefef95">id::io::get_save_path</a></div><div class="ttdeci">std::filesystem::path get_save_path(WriteFile kind, const std::string &amp;filename)</div><div class="ttdef"><b>Definition</b> <a href="../../d7/d7d/library_8cpp_source.html#l00210">library.cpp:210</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_afef8aa2e895599e54fa155d399d514f4a23a12f67f614b5518c7f1c2465bf95e3"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#afef8aa2e895599e54fa155d399d514f4a23a12f67f614b5518c7f1c2465bf95e3">id::io::WriteFile::IMAGE</a></div><div class="ttdeci">@ IMAGE</div></div>
+<div class="ttc" id="aspindac_8h_html"><div class="ttname"><a href="../../df/d7f/spindac_8h.html">spindac.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

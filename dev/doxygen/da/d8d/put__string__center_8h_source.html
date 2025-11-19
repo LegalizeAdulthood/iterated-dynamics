@@ -82,24 +82,29 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">put_string_center.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../da/d8d/put__string__center_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>{</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keywordtype">int</span> put_string_center(<span class="keywordtype">int</span> row, <span class="keywordtype">int</span> col, <span class="keywordtype">int</span> width, <span class="keywordtype">int</span> attr, <span class="keyword">const</span> <span class="keywordtype">char</span> *msg);</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255">put_string_center</a>(<span class="keywordtype">int</span> row, <span class="keywordtype">int</span> col, <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>, <span class="keywordtype">int</span> attr, <span class="keyword">const</span> <span class="keywordtype">char</span> *msg);</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">inline</span> <span class="keywordtype">int</span> put_string_center(</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> row, <span class="keyword">const</span> <span class="keywordtype">int</span> col, <span class="keyword">const</span> <span class="keywordtype">int</span> width, <span class="keyword">const</span> <span class="keywordtype">int</span> attr, <span class="keyword">const</span> std::string &amp;msg)</div>
+<div class="foldopen" id="foldopen00012" data-start="{" data-end="}">
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#aea81142d17242dba5ddeffa0369c4eb4">   12</a></span><span class="keyword">inline</span> <span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255">put_string_center</a>(</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> row, <span class="keyword">const</span> <span class="keywordtype">int</span> col, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> attr, <span class="keyword">const</span> std::string &amp;msg)</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keywordflow">return</span> put_string_center(row, col, width, attr, msg.c_str());</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255">put_string_center</a>(row, col, <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>, attr, msg.c_str());</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>}</div>
+</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="ahelp_8cpp_html_a2474a5474cbff19523a51eb1de01cda4"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a></div><div class="ttdeci">int width</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00074">help.cpp:74</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a83d44a8dbe5bcf918863b49efe1eb255"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255">id::ui::put_string_center</a></div><div class="ttdeci">int put_string_center(int row, int col, int width, int attr, const char *msg)</div><div class="ttdef"><b>Definition</b> <a href="../../d9/d52/put__string__center_8cpp_source.html#l00014">put_string_center.cpp:14</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

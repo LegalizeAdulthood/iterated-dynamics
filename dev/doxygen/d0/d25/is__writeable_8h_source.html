@@ -82,23 +82,28 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">is_writeable.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d0/d25/is__writeable_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span>id::io</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>{</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">inline</span> <span class="keywordtype">bool</span> is_writeable(<span class="keyword">const</span> std::filesystem::path &amp;path)</div>
+<div class="foldopen" id="foldopen00010" data-start="{" data-end="}">
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="../../d0/d19/namespaceid_1_1io.html#a12e26eb1c0f0cbdad51c76601d9cc2f3">   10</a></span><span class="keyword">inline</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#a12e26eb1c0f0cbdad51c76601d9cc2f3">is_writeable</a>(<span class="keyword">const</span> std::filesystem::path &amp;<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>)</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    <span class="keyword">namespace </span>fs = std::filesystem;</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">constexpr</span> fs::perms read_write{fs::perms::owner_read | fs::perms::owner_write};</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keywordflow">return</span> (status(path).permissions() &amp; read_write) == read_write;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>    <span class="keywordflow">return</span> (status(<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>).permissions() &amp; read_write) == read_write;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>}</div>
+</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>} <span class="comment">// namespace id::io</span></div>
+<div class="ttc" id="afile__get__window_8cpp_html_a01a3a5e8c9197c526526a8936d06af4f"><div class="ttname"><a href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a></div><div class="ttdeci">std::filesystem::path path</div><div class="ttdef"><b>Definition</b> <a href="../../db/d7d/file__get__window_8cpp_source.html#l00079">file_get_window.cpp:79</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1io_html_a12e26eb1c0f0cbdad51c76601d9cc2f3"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#a12e26eb1c0f0cbdad51c76601d9cc2f3">id::io::is_writeable</a></div><div class="ttdeci">bool is_writeable(const std::filesystem::path &amp;path)</div><div class="ttdef"><b>Definition</b> <a href="../../d0/d25/is__writeable_8h_source.html#l00010">is_writeable.h:10</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

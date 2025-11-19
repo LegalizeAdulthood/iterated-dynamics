@@ -82,38 +82,47 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">Point.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d8/dc0/math_2Point_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span>id::math</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/db0/namespaceid_1_1math.html">id::math</a></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span>{</div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="foldopen" id="foldopen00009" data-start="{" data-end="};">
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="../../d2/d31/structid_1_1math_1_1Point2.html">    9</a></span><span class="keyword">struct </span><a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2</a></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>{</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>    T x;</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>    T y;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="../../d2/d31/structid_1_1math_1_1Point2.html#adb2a1f02b71804e7c9f723ecf273c1e0">   11</a></span>    T <a class="code hl_variable" href="../../d2/d31/structid_1_1math_1_1Point2.html#adb2a1f02b71804e7c9f723ecf273c1e0">x</a>;</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="../../d2/d31/structid_1_1math_1_1Point2.html#a40bb7ea392158a30f02df3388790c37e">   12</a></span>    T <a class="code hl_variable" href="../../d2/d31/structid_1_1math_1_1Point2.html#a40bb7ea392158a30f02df3388790c37e">y</a>;</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>};</div>
 </div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2&lt;T&gt;</a> &amp;rhs)</div>
+<div class="foldopen" id="foldopen00016" data-start="{" data-end="}">
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="../../d0/db0/namespaceid_1_1math.html#a96f4c6c44871f4bab2d9e646eb330dff">   16</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../d0/db0/namespaceid_1_1math.html#a8b6333992c57f22a82e4eedae0a7752a">operator==</a>(<span class="keyword">const</span> <a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2&lt;T&gt;</a> &amp;rhs)</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordflow">return</span> lhs.x == rhs.x &amp;&amp; lhs.y == rhs.y;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordflow">return</span> lhs.<a class="code hl_variable" href="../../d2/d31/structid_1_1math_1_1Point2.html#adb2a1f02b71804e7c9f723ecf273c1e0">x</a> == rhs.<a class="code hl_variable" href="../../d2/d31/structid_1_1math_1_1Point2.html#adb2a1f02b71804e7c9f723ecf273c1e0">x</a> &amp;&amp; lhs.<a class="code hl_variable" href="../../d2/d31/structid_1_1math_1_1Point2.html#a40bb7ea392158a30f02df3388790c37e">y</a> == rhs.<a class="code hl_variable" href="../../d2/d31/structid_1_1math_1_1Point2.html#a40bb7ea392158a30f02df3388790c37e">y</a>;</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>}</div>
+</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keywordtype">bool</span> operator!=(<span class="keyword">const</span> Point2&lt;T&gt; &amp;lhs, <span class="keyword">const</span> Point2&lt;T&gt; &amp;rhs)</div>
+<div class="foldopen" id="foldopen00022" data-start="{" data-end="}">
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="../../d0/db0/namespaceid_1_1math.html#a0e45ca9f57ab89bb31355f155f95042c">   22</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../d0/db0/namespaceid_1_1math.html#a8662f01f25782308042ffa070ed2bcf8">operator!=</a>(<span class="keyword">const</span> <a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2&lt;T&gt;</a> &amp;lhs, <span class="keyword">const</span> <a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2&lt;T&gt;</a> &amp;rhs)</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>{</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">return</span> !(lhs == rhs);</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>}</div>
+</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="keyword">using </span>Point2i = Point2&lt;int&gt;;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="../../d0/db0/namespaceid_1_1math.html#a8d72fde170f940da4ee5505076ad62f4">   27</a></span><span class="keyword">using </span><a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2i</a> = <a class="code hl_struct" href="../../d2/d31/structid_1_1math_1_1Point2.html">Point2&lt;int&gt;</a>;</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>} <span class="comment">// namespace id::math</span></div>
+<div class="ttc" id="anamespaceid_1_1math_html"><div class="ttname"><a href="../../d0/db0/namespaceid_1_1math.html">id::math</a></div><div class="ttdef"><b>Definition</b> <a href="../../d5/d15/arg_8h_source.html#l00009">arg.h:10</a></div></div>
+<div class="ttc" id="anamespaceid_1_1math_html_a8662f01f25782308042ffa070ed2bcf8"><div class="ttname"><a href="../../d0/db0/namespaceid_1_1math.html#a8662f01f25782308042ffa070ed2bcf8">id::math::operator!=</a></div><div class="ttdeci">bool operator!=(const Complex&lt; T &gt; &amp;lhs, const Complex&lt; U &gt; &amp;rhs)</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d19/cmplx_8h_source.html#l00090">cmplx.h:90</a></div></div>
+<div class="ttc" id="anamespaceid_1_1math_html_a8b6333992c57f22a82e4eedae0a7752a"><div class="ttname"><a href="../../d0/db0/namespaceid_1_1math.html#a8b6333992c57f22a82e4eedae0a7752a">id::math::operator==</a></div><div class="ttdeci">bool operator==(const Complex&lt; T &gt; &amp;lhs, const Complex&lt; U &gt; &amp;rhs)</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d19/cmplx_8h_source.html#l00085">cmplx.h:85</a></div></div>
 <div class="ttc" id="astructid_1_1math_1_1Point2_html"><div class="ttname"><a href="../../d2/d31/structid_1_1math_1_1Point2.html">id::math::Point2</a></div><div class="ttdef"><b>Definition</b> <a href="../../d8/dc0/math_2Point_8h_source.html#l00009">Point.h:10</a></div></div>
+<div class="ttc" id="astructid_1_1math_1_1Point2_html_a40bb7ea392158a30f02df3388790c37e"><div class="ttname"><a href="../../d2/d31/structid_1_1math_1_1Point2.html#a40bb7ea392158a30f02df3388790c37e">id::math::Point2::y</a></div><div class="ttdeci">T y</div><div class="ttdef"><b>Definition</b> <a href="../../d8/dc0/math_2Point_8h_source.html#l00012">Point.h:12</a></div></div>
+<div class="ttc" id="astructid_1_1math_1_1Point2_html_adb2a1f02b71804e7c9f723ecf273c1e0"><div class="ttname"><a href="../../d2/d31/structid_1_1math_1_1Point2.html#adb2a1f02b71804e7c9f723ecf273c1e0">id::math::Point2::x</a></div><div class="ttdeci">T x</div><div class="ttdef"><b>Definition</b> <a href="../../d8/dc0/math_2Point_8h_source.html#l00011">Point.h:11</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

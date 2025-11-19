@@ -82,11 +82,11 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">Driver.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../df/dd9/Driver_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;misc/Driver.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;engine/VideoInfo.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d7e/VideoInfo_8h.html">engine/VideoInfo.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;config/driver_types.h&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
@@ -94,30 +94,32 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;cstring&gt;</span></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">using namespace </span>id::engine;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">namespace </span>id::misc</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>{</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment">// Array of drivers that are supported by source code in Id.</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="comment">// The default driver is first one in the list that initializes.</span></div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">static</span> std::vector&lt;Driver *&gt; s_available;</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>Driver *g_driver{};</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">   22</a></span><a class="code hl_class" href="../../d3/def/classid_1_1misc_1_1Driver.html">Driver</a> *<a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a>{};</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keywordtype">void</span> load_driver(Driver *drv, <span class="keywordtype">int</span> *argc, <span class="keywordtype">char</span> **argv)</div>
+<div class="foldopen" id="foldopen00024" data-start="{" data-end="}">
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#a5c137e62c5a8995f4a33a19453b528e0">   24</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a5c137e62c5a8995f4a33a19453b528e0">load_driver</a>(<a class="code hl_class" href="../../d3/def/classid_1_1misc_1_1Driver.html">Driver</a> *drv, <span class="keywordtype">int</span> *argc, <span class="keywordtype">char</span> **argv)</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>{</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordflow">if</span> (drv == <span class="keyword">nullptr</span> || !drv-&gt;init(argc, argv))</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <span class="keywordflow">if</span> (drv == <span class="keyword">nullptr</span> || !drv-&gt;<a class="code hl_function" href="../../d3/def/classid_1_1misc_1_1Driver.html#a9f03b50b8ce9acdab5275d351ef0d952">init</a>(argc, argv))</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    {</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    }</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">if</span> (!g_driver)</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a>)</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        g_driver = drv;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a> = drv;</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    }</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    s_available.push_back(drv);</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>}</div>
+</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="comment">//------------------------------------------------------------</span></div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">// init_drivers</span></div>
@@ -125,77 +127,111 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment">// Go through the static list of drivers defined and try to initialize</span></div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment">// them one at a time.  Returns the number of drivers initialized.</span></div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment">//</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keywordtype">int</span> init_drivers(<span class="keywordtype">int</span> *argc, <span class="keywordtype">char</span> **argv)</div>
+<div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#ae3910465da872caba174c2704315d246">   44</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ae3910465da872caba174c2704315d246">init_drivers</a>(<span class="keywordtype">int</span> *argc, <span class="keywordtype">char</span> **argv)</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>{</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">#if ID_HAVE_WIN32_DISK_DRIVER</span></div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    load_driver(get_disk_driver(), argc, argv);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a5c137e62c5a8995f4a33a19453b528e0">load_driver</a>(<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a34cf03faebd677d61c9790551b297950">get_disk_driver</a>(), argc, argv);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">#if ID_HAVE_GDI_DRIVER</span></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    load_driver(get_gdi_driver(), argc, argv);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a5c137e62c5a8995f4a33a19453b528e0">load_driver</a>(<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#aa7fc03c3ce154252c71ed541fd49f34e">get_gdi_driver</a>(), argc, argv);</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span><span class="preprocessor">#if ID_HAVE_WX_DRIVER</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    load_driver(get_wx_driver(), argc, argv);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a5c137e62c5a8995f4a33a19453b528e0">load_driver</a>(get_wx_driver(), argc, argv);</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span><span class="preprocessor">#if ID_HAVE_WX_DISK_DRIVER</span></div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    load_driver(get_wx_disk_driver(), argc, argv);</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a5c137e62c5a8995f4a33a19453b528e0">load_driver</a>(get_wx_disk_driver(), argc, argv);</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span> <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(s_available.size()); <span class="comment">// number of drivers supported at runtime</span></div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
+</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="comment">// add_video_mode</span></div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="comment">//</span></div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="comment">// a driver uses this to inform the system of an available video mode</span></div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span><span class="comment">//</span></div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keywordtype">void</span> add_video_mode(Driver *drv, <a class="code hl_struct" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html">VideoInfo</a> *mode)</div>
+<div class="foldopen" id="foldopen00068" data-start="{" data-end="}">
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#a8ffc14f3c2d084f86364466d8a27d7bd">   68</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a8ffc14f3c2d084f86364466d8a27d7bd">add_video_mode</a>(<a class="code hl_class" href="../../d3/def/classid_1_1misc_1_1Driver.html">Driver</a> *drv, <a class="code hl_struct" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html">VideoInfo</a> *mode)</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>{</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="preprocessor">#if defined(_WIN32)</span></div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    _ASSERTE(g_video_table_len &lt; MAX_VIDEO_MODES);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    _ASSERTE(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a> &lt; <a class="code hl_enumvalue" href="../../dc/d31/namespaceid_1_1engine.html#acfbe7683759b1fb482e2725daf751ddca24d73638b37fe7060f2fa77657a3e954">MAX_VIDEO_MODES</a>);</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="comment">// stash away driver pointer so we can init driver for selected mode</span></div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    mode-&gt;driver = drv;</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    std::memcpy(&amp;g_video_table[g_video_table_len], mode, <span class="keyword">sizeof</span>(g_video_table[0]));</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    g_video_table_len++;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    mode-&gt;<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a3159e0b086f206ea39ba88bb42141046">driver</a> = drv;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    std::memcpy(&amp;<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>], mode, <span class="keyword">sizeof</span>(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">g_video_table</a>[0]));</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">g_video_table_len</a>++;</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>}</div>
+</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keywordtype">void</span> close_drivers()</div>
+<div class="foldopen" id="foldopen00079" data-start="{" data-end="}">
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#aba4e77b8e624916d0e6fef6663873b78">   79</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#aba4e77b8e624916d0e6fef6663873b78">close_drivers</a>()</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>{</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    <span class="comment">// terminate drivers in reverse order of initialization</span></div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordflow">while</span> (!s_available.empty())</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    {</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        Driver *drv = s_available.back();</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <a class="code hl_class" href="../../d3/def/classid_1_1misc_1_1Driver.html">Driver</a> *drv = s_available.back();</div>
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        s_available.pop_back();</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        drv-&gt;terminate();</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        drv-&gt;<a class="code hl_function" href="../../d3/def/classid_1_1misc_1_1Driver.html#aed2fdc9c217663ef48253c42ee60161a">terminate</a>();</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    }</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    g_driver = <span class="keyword">nullptr</span>;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a> = <span class="keyword">nullptr</span>;</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>}</div>
+</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>Driver *driver_find_by_name(<span class="keyword">const</span> <span class="keywordtype">char</span> *name)</div>
+<div class="foldopen" id="foldopen00091" data-start="{" data-end="}">
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#a10504e7d3c4fce98acb58fa0faac1a8a">   91</a></span><a class="code hl_class" href="../../d3/def/classid_1_1misc_1_1Driver.html">Driver</a> *<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a10504e7d3c4fce98acb58fa0faac1a8a">driver_find_by_name</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../dd/d9e/get__fract__type_8cpp.html#a6bccb8d69041825bceb9c678a8d1134d">name</a>)</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>{</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> <span class="keyword">auto</span> it = std::find_if(</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            s_available.begin(), s_available.end(), [name](Driver *drv) { return drv-&gt;get_name() == name; });</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            s_available.begin(), s_available.end(), [<a class="code hl_variable" href="../../dd/d9e/get__fract__type_8cpp.html#a6bccb8d69041825bceb9c678a8d1134d">name</a>](<a class="code hl_class" href="../../d3/def/classid_1_1misc_1_1Driver.html">Driver</a> *drv) { return drv-&gt;get_name() == name; });</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        it != s_available.end())</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    {</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        <span class="keywordflow">return</span> *it;</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    }</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>}</div>
+</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="keywordtype">void</span> driver_set_video_mode(<span class="keyword">const</span> <a class="code hl_struct" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html">VideoInfo</a> &amp;mode)</div>
+<div class="foldopen" id="foldopen00102" data-start="{" data-end="}">
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#a3e07e6862449877df4cfa6f6d75f2c1d">  102</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a3e07e6862449877df4cfa6f6d75f2c1d">driver_set_video_mode</a>(<span class="keyword">const</span> <a class="code hl_struct" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html">VideoInfo</a> &amp;mode)</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>{</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">if</span> (g_driver != mode.driver)</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a> != mode.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a3159e0b086f206ea39ba88bb42141046">driver</a>)</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    {</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        g_driver-&gt;pause();</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        g_driver = mode.driver;</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        g_driver-&gt;resume();</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a>-&gt;<a class="code hl_function" href="../../d3/def/classid_1_1misc_1_1Driver.html#a48c0a9079ce3f6ffce0f38d93c2b65ed">pause</a>();</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a> = mode.<a class="code hl_variable" href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a3159e0b086f206ea39ba88bb42141046">driver</a>;</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a>-&gt;<a class="code hl_function" href="../../d3/def/classid_1_1misc_1_1Driver.html#a636f7ef9f88805e4f95fba42b692352f">resume</a>();</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    }</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    g_driver-&gt;set_video_mode(mode);</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">g_driver</a>-&gt;<a class="code hl_function" href="../../d3/def/classid_1_1misc_1_1Driver.html#a2844bac3063a28967b80e8fe40772ae5">set_video_mode</a>(mode);</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>}</div>
+</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>} <span class="comment">// namespace id::misc</span></div>
+<div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
+<div class="ttc" id="aVideoInfo_8h_html"><div class="ttname"><a href="../../d3/d7e/VideoInfo_8h.html">VideoInfo.h</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Driver_html"><div class="ttname"><a href="../../d3/def/classid_1_1misc_1_1Driver.html">id::misc::Driver</a></div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00061">Driver.h:62</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Driver_html_a2844bac3063a28967b80e8fe40772ae5"><div class="ttname"><a href="../../d3/def/classid_1_1misc_1_1Driver.html#a2844bac3063a28967b80e8fe40772ae5">id::misc::Driver::set_video_mode</a></div><div class="ttdeci">virtual void set_video_mode(const engine::VideoInfo &amp;mode)=0</div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Driver_html_a48c0a9079ce3f6ffce0f38d93c2b65ed"><div class="ttname"><a href="../../d3/def/classid_1_1misc_1_1Driver.html#a48c0a9079ce3f6ffce0f38d93c2b65ed">id::misc::Driver::pause</a></div><div class="ttdeci">virtual void pause()=0</div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Driver_html_a636f7ef9f88805e4f95fba42b692352f"><div class="ttname"><a href="../../d3/def/classid_1_1misc_1_1Driver.html#a636f7ef9f88805e4f95fba42b692352f">id::misc::Driver::resume</a></div><div class="ttdeci">virtual void resume()=0</div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Driver_html_a9f03b50b8ce9acdab5275d351ef0d952"><div class="ttname"><a href="../../d3/def/classid_1_1misc_1_1Driver.html#a9f03b50b8ce9acdab5275d351ef0d952">id::misc::Driver::init</a></div><div class="ttdeci">virtual bool init(int *argc, char **argv)=0</div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Driver_html_aed2fdc9c217663ef48253c42ee60161a"><div class="ttname"><a href="../../d3/def/classid_1_1misc_1_1Driver.html#aed2fdc9c217663ef48253c42ee60161a">id::misc::Driver::terminate</a></div><div class="ttdeci">virtual void terminate()=0</div></div>
+<div class="ttc" id="aget__fract__type_8cpp_html_a6bccb8d69041825bceb9c678a8d1134d"><div class="ttname"><a href="../../dd/d9e/get__fract__type_8cpp.html#a6bccb8d69041825bceb9c678a8d1134d">name</a></div><div class="ttdeci">char name[15]</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d9e/get__fract__type_8cpp_source.html#l00058">get_fract_type.cpp:58</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a4968e9d8867b202d15ae20cb44921482"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a4968e9d8867b202d15ae20cb44921482">id::engine::g_video_table</a></div><div class="ttdeci">VideoInfo g_video_table[]</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00014">VideoInfo.cpp:14</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a82fcb4aa91df5f29bf525f1041543dd7"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a82fcb4aa91df5f29bf525f1041543dd7">id::engine::g_video_table_len</a></div><div class="ttdeci">int g_video_table_len</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00015">VideoInfo.cpp:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_acfbe7683759b1fb482e2725daf751ddca24d73638b37fe7060f2fa77657a3e954"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#acfbe7683759b1fb482e2725daf751ddca24d73638b37fe7060f2fa77657a3e954">id::engine::MAX_VIDEO_MODES</a></div><div class="ttdeci">@ MAX_VIDEO_MODES</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00018">VideoInfo.h:17</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a10504e7d3c4fce98acb58fa0faac1a8a"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a10504e7d3c4fce98acb58fa0faac1a8a">id::misc::driver_find_by_name</a></div><div class="ttdeci">Driver * driver_find_by_name(const char *name)</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/Driver_8cpp_source.html#l00091">Driver.cpp:91</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a200207c77a02f37d4a247a14ed7abe5e"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a200207c77a02f37d4a247a14ed7abe5e">id::misc::g_driver</a></div><div class="ttdeci">Driver * g_driver</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/Driver_8cpp_source.html#l00022">Driver.cpp:22</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a34cf03faebd677d61c9790551b297950"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a34cf03faebd677d61c9790551b297950">id::misc::get_disk_driver</a></div><div class="ttdeci">Driver * get_disk_driver()</div><div class="ttdef"><b>Definition</b> <a href="../../d4/d8c/DiskDriver_8cpp_source.html#l00410">DiskDriver.cpp:410</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a3e07e6862449877df4cfa6f6d75f2c1d"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a3e07e6862449877df4cfa6f6d75f2c1d">id::misc::driver_set_video_mode</a></div><div class="ttdeci">void driver_set_video_mode(const engine::VideoInfo &amp;mode)</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/Driver_8cpp_source.html#l00102">Driver.cpp:102</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a5c137e62c5a8995f4a33a19453b528e0"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a5c137e62c5a8995f4a33a19453b528e0">id::misc::load_driver</a></div><div class="ttdeci">void load_driver(Driver *drv, int *argc, char **argv)</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/Driver_8cpp_source.html#l00024">Driver.cpp:24</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a8ffc14f3c2d084f86364466d8a27d7bd"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a8ffc14f3c2d084f86364466d8a27d7bd">id::misc::add_video_mode</a></div><div class="ttdeci">void add_video_mode(Driver *drv, engine::VideoInfo *mode)</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/Driver_8cpp_source.html#l00068">Driver.cpp:68</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_aa7fc03c3ce154252c71ed541fd49f34e"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#aa7fc03c3ce154252c71ed541fd49f34e">id::misc::get_gdi_driver</a></div><div class="ttdeci">Driver * get_gdi_driver()</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d72/GDIDriver_8cpp_source.html#l00388">GDIDriver.cpp:388</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_aba4e77b8e624916d0e6fef6663873b78"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#aba4e77b8e624916d0e6fef6663873b78">id::misc::close_drivers</a></div><div class="ttdeci">void close_drivers()</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/Driver_8cpp_source.html#l00079">Driver.cpp:79</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ae3910465da872caba174c2704315d246"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ae3910465da872caba174c2704315d246">id::misc::init_drivers</a></div><div class="ttdeci">int init_drivers(int *argc, char **argv)</div><div class="ttdef"><b>Definition</b> <a href="../../df/dd9/Driver_8cpp_source.html#l00044">Driver.cpp:44</a></div></div>
 <div class="ttc" id="astructid_1_1engine_1_1VideoInfo_html"><div class="ttname"><a href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html">id::engine::VideoInfo</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00020">VideoInfo.h:21</a></div></div>
+<div class="ttc" id="astructid_1_1engine_1_1VideoInfo_html_a3159e0b086f206ea39ba88bb42141046"><div class="ttname"><a href="../../df/d1e/structid_1_1engine_1_1VideoInfo.html#a3159e0b086f206ea39ba88bb42141046">id::engine::VideoInfo::driver</a></div><div class="ttdeci">misc::Driver * driver</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00026">VideoInfo.h:26</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -82,15 +82,15 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">Plot.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../da/d2d/Plot_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;Plot.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d69/Plot_8h.html">Plot.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;Frame.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d7/db3/Frame_8h.html">Frame.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;engine/spindac.h&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;engine/VideoInfo.h&quot;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;geometry/plot3d.h&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../df/d7f/spindac_8h.html">engine/spindac.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d7e/VideoInfo_8h.html">engine/VideoInfo.h</a>&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="../../d4/d81/plot3d_8h.html">geometry/plot3d.h</a>&quot;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;windowsx.h&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
@@ -98,17 +98,17 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">using namespace </span>id::engine;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">using namespace </span>id::geometry;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">using namespace </span>id::ui;</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d6/daa/namespaceid_1_1geometry.html">id::geometry</a>;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a>;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span>id::misc</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">enum</span></div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>{</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    PLOT_TIMER_ID = 1</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>};</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    <a class="code hl_enumvalue" href="../../df/d6d/namespaceid_1_1misc.html#adc0ec5d836ae6b16a606f2b4a83ad569a5d05a98e08bb7ae8b56e230c77d8aae3">PLOT_TIMER_ID</a> = 1</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="../../df/d6d/namespaceid_1_1misc.html#adc0ec5d836ae6b16a606f2b4a83ad569a5d05a98e08bb7ae8b56e230c77d8aae3">   27</a></span>};</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">static</span> Plot *s_plot{};</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<span class="keyword">const</span> WINDOW_CLASS{<span class="stringliteral">&quot;IdPlot&quot;</span>};</div>
@@ -261,41 +261,41 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>    }</div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span>};</div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span> </div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span><span class="keywordtype">void</span> Plot::set_dirty_region(<span class="keyword">const</span> <span class="keywordtype">int</span> x_min, <span class="keyword">const</span> <span class="keywordtype">int</span> y_min, <span class="keyword">const</span> <span class="keywordtype">int</span> x_max, <span class="keyword">const</span> <span class="keywordtype">int</span> y_max)</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span><span class="keywordtype">void</span> Plot::set_dirty_region(<span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#add2473c5c4546982731f5f34e2686a73">x_min</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a09f4dd3c80995d7cde037a79285436b7">y_min</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a254ee7ed702b85b39e74ea6cbce87bdb">x_max</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a>)</div>
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>{</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    RECT *r = &amp;m_dirty_region;</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>    RECT *<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a> = &amp;m_dirty_region;</div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    _ASSERTE(x_min &lt; x_max);</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    _ASSERTE(y_min &lt; y_max);</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    _ASSERTE(r-&gt;left &lt;= r-&gt;right &amp;&amp; (r-&gt;top &lt;= r-&gt;bottom));</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keywordflow">if</span> (r-&gt;left &lt; 0)</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>    _ASSERTE(<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#add2473c5c4546982731f5f34e2686a73">x_min</a> &lt; <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a254ee7ed702b85b39e74ea6cbce87bdb">x_max</a>);</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>    _ASSERTE(<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a09f4dd3c80995d7cde037a79285436b7">y_min</a> &lt; <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a>);</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>    _ASSERTE(<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;left &lt;= <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;right &amp;&amp; (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;top &lt;= <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;bottom));</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;left &lt; 0)</div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    {</div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        r-&gt;left = x_min;</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        r-&gt;right = x_max;</div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        r-&gt;top = y_min;</div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        r-&gt;bottom = y_max;</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>        <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;left = <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#add2473c5c4546982731f5f34e2686a73">x_min</a>;</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;right = <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a254ee7ed702b85b39e74ea6cbce87bdb">x_max</a>;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;top = <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a09f4dd3c80995d7cde037a79285436b7">y_min</a>;</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>        <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;bottom = <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a>;</div>
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>        m_dirty = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>    }</div>
 <div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="keywordflow">else</span></div>
 <div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    {</div>
 <div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="keywordflow">if</span> (x_min &lt; r-&gt;left)</div>
 <div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        {</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>            r-&gt;left = x_min;</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>            <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;left = <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#add2473c5c4546982731f5f34e2686a73">x_min</a>;</div>
 <div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>            m_dirty = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        }</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        <span class="keywordflow">if</span> (x_max &gt; r-&gt;right)</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a254ee7ed702b85b39e74ea6cbce87bdb">x_max</a> &gt; <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;right)</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        {</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>            r-&gt;right = x_max;</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>            <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;right = <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a254ee7ed702b85b39e74ea6cbce87bdb">x_max</a>;</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>            m_dirty = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        }</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="keywordflow">if</span> (y_min &lt; r-&gt;top)</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>        {</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            r-&gt;top = y_min;</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>            <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;top = <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a09f4dd3c80995d7cde037a79285436b7">y_min</a>;</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>            m_dirty = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        }</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keywordflow">if</span> (y_max &gt; r-&gt;bottom)</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a> &gt; <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;bottom)</div>
 <div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        {</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            r-&gt;bottom = y_max;</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;bottom = <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a>;</div>
 <div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>            m_dirty = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>        }</div>
 <div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    }</div>
@@ -310,8 +310,8 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>{</div>
 <div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>    m_pixels.clear();</div>
 <div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    m_saved_pixels.clear();</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    m_width = g_screen_x_dots;</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    m_height = g_screen_y_dots;</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    m_width = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#acc7e51648eb9996f27c7c39cf1a0fed7">g_screen_x_dots</a>;</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>    m_height = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a0c55290c73df4abe117d5ea01c5b2ff3">g_screen_y_dots</a>;</div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>    m_row_len = m_width * <span class="keyword">sizeof</span>(Byte);</div>
 <div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    m_row_len = (m_row_len + 3) / 4 *4;</div>
 <div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>    m_pixels_len = m_row_len * m_height;</div>
@@ -337,16 +337,17 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    }</div>
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>}</div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span> </div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="keywordtype">void</span> Plot::on_paint(<span class="keyword">const</span> HWND window)</div>
+<div class="foldopen" id="foldopen00256" data-start="{" data-end="}">
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a798009f60498ae7cc00780f6054f87c9">  256</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a798009f60498ae7cc00780f6054f87c9">Plot::on_paint</a>(<span class="keyword">const</span> HWND window)</div>
 <div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>{</div>
 <div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>    PAINTSTRUCT ps;</div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    <span class="keyword">const</span> HDC dc = BeginPaint(window, &amp;ps);</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    <span class="keyword">const</span> RECT *r = &amp;ps.rcPaint;</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> width = r-&gt;right - r-&gt;left;</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> height = r-&gt;bottom - r-&gt;top;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    <span class="keyword">const</span> RECT *<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a> = &amp;ps.rcPaint;</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a> = <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;right - <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;left;</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> height = <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;bottom - <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>-&gt;top;</div>
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span> </div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    _ASSERTE(width &gt;= 0 &amp;&amp; height &gt;= 0);</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    <span class="keywordflow">if</span> (width &gt; 0 &amp;&amp; height &gt; 0)</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    _ASSERTE(<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a> &gt;= 0 &amp;&amp; height &gt;= 0);</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a> &gt; 0 &amp;&amp; height &gt; 0)</div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    {</div>
 <div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        <span class="keyword">const</span> DWORD status = StretchDIBits(dc, 0, 0, m_width, m_height, 0, 0, m_width, m_height, m_pixels.data(),</div>
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            &amp;m_bmi, DIB_RGB_COLORS, SRCCOPY);</div>
@@ -354,48 +355,49 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>    }</div>
 <div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    EndPaint(window, &amp;ps);</div>
 <div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>}</div>
+</div>
 <div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
 <div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_paint(<span class="keyword">const</span> HWND window)</div>
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>{</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    s_plot-&gt;on_paint(window);</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    s_plot-&gt;<a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a798009f60498ae7cc00780f6054f87c9">on_paint</a>(window);</div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>}</div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
 <div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_primary_button_down(</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    <span class="keyword">const</span> HWND window, <span class="keyword">const</span> BOOL double_click, <span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> UINT key_flags)</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>    <span class="keyword">const</span> HWND window, <span class="keyword">const</span> BOOL double_click, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> UINT key_flags)</div>
 <div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>{</div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    g_frame.on_primary_button_down(window, double_click, x, y, key_flags);</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a2100414146547c8f7ba7c85050bed8f0">g_frame</a>.<a class="code hl_function" href="../../d0/d59/classid_1_1misc_1_1Frame.html#a811e07af219e88e5525fbcc06d2e44af">on_primary_button_down</a>(window, double_click, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, key_flags);</div>
 <div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>}</div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_primary_button_up(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> UINT key_flags)</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_primary_button_up(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> UINT key_flags)</div>
 <div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>{</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    g_frame.on_primary_button_up(window, x, y, key_flags);</div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a2100414146547c8f7ba7c85050bed8f0">g_frame</a>.<a class="code hl_function" href="../../d0/d59/classid_1_1misc_1_1Frame.html#aefeea3527f35149bdb1cc0defe5b982d">on_primary_button_up</a>(window, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, key_flags);</div>
 <div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>}</div>
 <div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
 <div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_secondary_button_down(</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <span class="keyword">const</span> HWND window, <span class="keyword">const</span> BOOL double_click, <span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> UINT key_flags)</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>    <span class="keyword">const</span> HWND window, <span class="keyword">const</span> BOOL double_click, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> UINT key_flags)</div>
 <div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>{</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    g_frame.on_secondary_button_down(window, double_click, x, y, key_flags);</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a2100414146547c8f7ba7c85050bed8f0">g_frame</a>.<a class="code hl_function" href="../../d0/d59/classid_1_1misc_1_1Frame.html#a39a507cc33f597bd69e3ef11bda42058">on_secondary_button_down</a>(window, double_click, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, key_flags);</div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>}</div>
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_secondary_button_up(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> UINT key_flags)</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_secondary_button_up(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> UINT key_flags)</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>{</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    g_frame.on_secondary_button_up(window, x, y, key_flags);</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a2100414146547c8f7ba7c85050bed8f0">g_frame</a>.<a class="code hl_function" href="../../d0/d59/classid_1_1misc_1_1Frame.html#a34433f971784bd01580acb9e4f1936df">on_secondary_button_up</a>(window, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, key_flags);</div>
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>}</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_middle_button_down(</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    <span class="keyword">const</span> HWND window, <span class="keyword">const</span> BOOL double_click, <span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> UINT key_flags)</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>    <span class="keyword">const</span> HWND window, <span class="keyword">const</span> BOOL double_click, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> UINT key_flags)</div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>{</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    g_frame.on_middle_button_down(window, double_click, x, y, key_flags);</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a2100414146547c8f7ba7c85050bed8f0">g_frame</a>.<a class="code hl_function" href="../../d0/d59/classid_1_1misc_1_1Frame.html#a1f069f438bc23c8ba02c01869f78deae">on_middle_button_down</a>(window, double_click, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, key_flags);</div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>}</div>
 <div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span> </div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_middle_button_up(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> UINT key_flags)</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_middle_button_up(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> UINT key_flags)</div>
 <div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>{</div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    g_frame.on_middle_button_up(window, x, y, key_flags);</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a2100414146547c8f7ba7c85050bed8f0">g_frame</a>.<a class="code hl_function" href="../../d0/d59/classid_1_1misc_1_1Frame.html#a9fcdb1310923a79b7ea0952d7ca5b2c5">on_middle_button_up</a>(window, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, key_flags);</div>
 <div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>}</div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span> </div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_mouse_move(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> UINT key_flags)</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span><span class="keyword">static</span> <span class="keywordtype">void</span> plot_on_mouse_move(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> UINT key_flags)</div>
 <div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>{</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    g_frame.on_mouse_move(window, x, y, key_flags);</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>    <a class="code hl_variable" href="../../df/d6d/namespaceid_1_1misc.html#a2100414146547c8f7ba7c85050bed8f0">g_frame</a>.<a class="code hl_function" href="../../d0/d59/classid_1_1misc_1_1Frame.html#ae4d1ceb8cfe9307010e02fe81fda479f">on_mouse_move</a>(window, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, key_flags);</div>
 <div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>}</div>
 <div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span> </div>
 <div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span><span class="keyword">static</span> LRESULT CALLBACK plot_proc(<span class="keyword">const</span> HWND window, <span class="keyword">const</span> UINT message, <span class="keyword">const</span> WPARAM wp, <span class="keyword">const</span> LPARAM lp)</div>
@@ -454,12 +456,13 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>}</div>
 <div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span> </div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span><span class="keywordtype">int</span> Plot::init(<span class="keyword">const</span> HINSTANCE instance, <span class="keyword">const</span> LPCSTR title)</div>
+<div class="foldopen" id="foldopen00373" data-start="{" data-end="}">
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a5771fdb59ef941ebc997fffaaefb5f63">  373</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a5771fdb59ef941ebc997fffaaefb5f63">Plot::init</a>(<span class="keyword">const</span> <a class="code hl_typedef" href="../../d9/dda/instance_8h.html#a2160c20e90a9c1818ac7287e5416f746">HINSTANCE</a> instance, <span class="keyword">const</span> LPCSTR <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a025bb2939646900edeb3f2a699c11c61">title</a>)</div>
 <div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>{</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span>    WNDCLASS  wc;</div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span> </div>
 <div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>    m_instance = instance;</div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>    m_title = title;</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>    m_title = <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a025bb2939646900edeb3f2a699c11c61">title</a>;</div>
 <div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span> </div>
 <div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>    <span class="keywordtype">int</span> result = GetClassInfoA(m_instance, WINDOW_CLASS, &amp;wc);</div>
 <div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>    <span class="keywordflow">if</span> (!result)</div>
@@ -480,8 +483,10 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span> </div>
 <div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>    <span class="keywordflow">return</span> result;</div>
 <div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span>}</div>
+</div>
 <div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span> </div>
-<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span><span class="keywordtype">void</span> Plot::terminate()</div>
+<div class="foldopen" id="foldopen00400" data-start="{" data-end="}">
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a7cea9753c2411abf43f6012ea275b812">  400</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a7cea9753c2411abf43f6012ea275b812">Plot::terminate</a>()</div>
 <div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span>{</div>
 <div class="line"><a id="l00402" name="l00402"></a><span class="lineno">  402</span>    {</div>
 <div class="line"><a id="l00403" name="l00403"></a><span class="lineno">  403</span>        <span class="keyword">const</span> HBITMAP rendering = <span class="keyword">static_cast&lt;</span>HBITMAP<span class="keyword">&gt;</span>(SelectObject(m_memory_dc, m_backup));</div>
@@ -491,6 +496,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    DeleteDC(m_memory_dc);</div>
 <div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>    DestroyWindow(m_window);</div>
 <div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>}</div>
+</div>
 <div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span> </div>
 <div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span><span class="keywordtype">void</span> Plot::create_backing_store()</div>
 <div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>{</div>
@@ -513,7 +519,8 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span>    SetBkMode(m_memory_dc, OPAQUE);</div>
 <div class="line"><a id="l00430" name="l00430"></a><span class="lineno">  430</span>}</div>
 <div class="line"><a id="l00431" name="l00431"></a><span class="lineno">  431</span> </div>
-<div class="line"><a id="l00432" name="l00432"></a><span class="lineno">  432</span><span class="keywordtype">void</span> Plot::create_window(<span class="keyword">const</span> HWND parent)</div>
+<div class="foldopen" id="foldopen00432" data-start="{" data-end="}">
+<div class="line"><a id="l00432" name="l00432"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a2056f2e86562a7bc55544c7fb573c46f">  432</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a2056f2e86562a7bc55544c7fb573c46f">Plot::create_window</a>(<span class="keyword">const</span> HWND parent)</div>
 <div class="line"><a id="l00433" name="l00433"></a><span class="lineno">  433</span>{</div>
 <div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span>    <span class="keywordflow">if</span> (<span class="keyword">nullptr</span> == m_window)</div>
 <div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span>    {</div>
@@ -527,36 +534,42 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>            CW_USEDEFAULT,                           <span class="comment">// default vertical position</span></div>
 <div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>            m_width, m_height,                       <span class="comment">//</span></div>
 <div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>            parent,                                  <span class="comment">//</span></div>
-<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>            nullptr,                                 <span class="comment">//</span></div>
+<div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>            <span class="keyword">nullptr</span>,                                 <span class="comment">//</span></div>
 <div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>            m_instance,                              <span class="comment">//</span></div>
-<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>            nullptr);</div>
+<div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>            <span class="keyword">nullptr</span>);</div>
 <div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span> </div>
 <div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>        create_backing_store();</div>
 <div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>    }</div>
 <div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>}</div>
+</div>
 <div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span> </div>
-<div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span><span class="keywordtype">void</span> Plot::write_pixel(<span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> <span class="keywordtype">int</span> color)</div>
+<div class="foldopen" id="foldopen00454" data-start="{" data-end="}">
+<div class="line"><a id="l00454" name="l00454"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a3627d228ccdebed14182389adefc28de">  454</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a3627d228ccdebed14182389adefc28de">Plot::write_pixel</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> color)</div>
 <div class="line"><a id="l00455" name="l00455"></a><span class="lineno">  455</span>{</div>
 <div class="line"><a id="l00456" name="l00456"></a><span class="lineno">  456</span>    _ASSERTE(m_pixels.size() == m_width* m_height);</div>
 <div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>    <span class="keywordflow">if</span> (x &lt; 0 || x &gt; m_width || y &lt; 0 || y &gt; m_height)</div>
 <div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>    {</div>
 <div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>    }</div>
-<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>    m_pixels[(m_height - y - 1)*m_row_len + x] = <span class="keyword">static_cast&lt;</span>Byte<span class="keyword">&gt;</span>(color &amp; 0xFF);</div>
-<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>    set_dirty_region(x, y, x+1, y+1);</div>
+<div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>    m_pixels[(m_height - <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a> - 1)*m_row_len + <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>] = <span class="keyword">static_cast&lt;</span>Byte<span class="keyword">&gt;</span>(color &amp; 0xFF);</div>
+<div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>    set_dirty_region(<a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>+1, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>+1);</div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>}</div>
+</div>
 <div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span> </div>
-<div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span><span class="keywordtype">int</span> Plot::read_pixel(<span class="keyword">const</span> <span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y)</div>
+<div class="foldopen" id="foldopen00465" data-start="{" data-end="}">
+<div class="line"><a id="l00465" name="l00465"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a1f6d593f04208a1c1a6dc5f83e7014b3">  465</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a1f6d593f04208a1c1a6dc5f83e7014b3">Plot::read_pixel</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>)</div>
 <div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>{</div>
 <div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>    _ASSERTE(m_pixels.size() == m_width* m_height);</div>
 <div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>    <span class="keywordflow">if</span> (x &lt; 0 || x &gt; m_width || y &lt; 0 || y &gt; m_height)</div>
 <div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>    {</div>
 <div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00471" name="l00471"></a><span class="lineno">  471</span>    }</div>
-<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>    <span class="keywordflow">return</span> m_pixels[(m_height - 1 - y) * m_row_len + x];</div>
+<div class="line"><a id="l00472" name="l00472"></a><span class="lineno">  472</span>    <span class="keywordflow">return</span> m_pixels[(m_height - 1 - <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>) * m_row_len + <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>];</div>
 <div class="line"><a id="l00473" name="l00473"></a><span class="lineno">  473</span>}</div>
+</div>
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span> </div>
-<div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span><span class="keywordtype">void</span> Plot::flush()</div>
+<div class="foldopen" id="foldopen00475" data-start="{" data-end="}">
+<div class="line"><a id="l00475" name="l00475"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a53841d8aeb004beb771e2bebebf30b3e">  475</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a53841d8aeb004beb771e2bebebf30b3e">Plot::flush</a>()</div>
 <div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span>{</div>
 <div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span>    <span class="keywordflow">if</span> (m_dirty)</div>
 <div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span>    {</div>
@@ -565,15 +578,19 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00481" name="l00481"></a><span class="lineno">  481</span>        m_dirty_region = {-1, -1, -1, -1};</div>
 <div class="line"><a id="l00482" name="l00482"></a><span class="lineno">  482</span>    }</div>
 <div class="line"><a id="l00483" name="l00483"></a><span class="lineno">  483</span>}</div>
+</div>
 <div class="line"><a id="l00484" name="l00484"></a><span class="lineno">  484</span> </div>
-<div class="line"><a id="l00485" name="l00485"></a><span class="lineno">  485</span><span class="keywordtype">void</span> Plot::draw_line(<span class="keyword">const</span> <span class="keywordtype">int</span> x1, <span class="keyword">const</span> <span class="keywordtype">int</span> y1, <span class="keyword">const</span> <span class="keywordtype">int</span> x2, <span class="keyword">const</span> <span class="keywordtype">int</span> y2, <span class="keyword">const</span> <span class="keywordtype">int</span> color)</div>
+<div class="foldopen" id="foldopen00485" data-start="{" data-end="}">
+<div class="line"><a id="l00485" name="l00485"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a8562c8992f54b47703cd63a034f58c12">  485</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a8562c8992f54b47703cd63a034f58c12">Plot::draw_line</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> x1, <span class="keyword">const</span> <span class="keywordtype">int</span> y1, <span class="keyword">const</span> <span class="keywordtype">int</span> x2, <span class="keyword">const</span> <span class="keywordtype">int</span> y2, <span class="keyword">const</span> <span class="keywordtype">int</span> color)</div>
 <div class="line"><a id="l00486" name="l00486"></a><span class="lineno">  486</span>{</div>
-<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>    geometry::draw_line(x1, y1, x2, y2, color);</div>
+<div class="line"><a id="l00487" name="l00487"></a><span class="lineno">  487</span>    <a class="code hl_function" href="../../d6/daa/namespaceid_1_1geometry.html#ae356608293982192db0ce0e7b4199b8e">geometry::draw_line</a>(x1, y1, x2, y2, color);</div>
 <div class="line"><a id="l00488" name="l00488"></a><span class="lineno">  488</span>}</div>
+</div>
 <div class="line"><a id="l00489" name="l00489"></a><span class="lineno">  489</span> </div>
-<div class="line"><a id="l00490" name="l00490"></a><span class="lineno">  490</span><span class="keywordtype">int</span> Plot::resize()</div>
+<div class="foldopen" id="foldopen00490" data-start="{" data-end="}">
+<div class="line"><a id="l00490" name="l00490"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a075a5c49c00f0683459db8ee06bd8a67">  490</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a075a5c49c00f0683459db8ee06bd8a67">Plot::resize</a>()</div>
 <div class="line"><a id="l00491" name="l00491"></a><span class="lineno">  491</span>{</div>
-<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>    <span class="keywordflow">if</span> (g_screen_x_dots == m_width &amp;&amp; g_screen_y_dots == m_height)</div>
+<div class="line"><a id="l00492" name="l00492"></a><span class="lineno">  492</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#acc7e51648eb9996f27c7c39cf1a0fed7">g_screen_x_dots</a> == m_width &amp;&amp; <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a0c55290c73df4abe117d5ea01c5b2ff3">g_screen_y_dots</a> == m_height)</div>
 <div class="line"><a id="l00493" name="l00493"></a><span class="lineno">  493</span>    {</div>
 <div class="line"><a id="l00494" name="l00494"></a><span class="lineno">  494</span>        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00495" name="l00495"></a><span class="lineno">  495</span>    }</div>
@@ -584,101 +601,166 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00500" name="l00500"></a><span class="lineno">  500</span> </div>
 <div class="line"><a id="l00501" name="l00501"></a><span class="lineno">  501</span>    <span class="keywordflow">return</span> 1;</div>
 <div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>}</div>
+</div>
 <div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span> </div>
-<div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span><span class="keywordtype">void</span> Plot::read_palette()</div>
+<div class="foldopen" id="foldopen00504" data-start="{" data-end="}">
+<div class="line"><a id="l00504" name="l00504"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a7580743c9364030cc9ee957e4bc3c426">  504</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a7580743c9364030cc9ee957e4bc3c426">Plot::read_palette</a>()</div>
 <div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>{</div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>    <span class="keywordflow">if</span> (!g_got_real_dac)</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>    <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a6de7f26cf15a3412a34a1f4866af1be8">g_got_real_dac</a>)</div>
 <div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>    {</div>
 <div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>    }</div>
 <div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span> </div>
 <div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 256; i++)</div>
 <div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>    {</div>
-<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>        g_dac_box[i][0] = m_clut[i][0];</div>
-<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>        g_dac_box[i][1] = m_clut[i][1];</div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>        g_dac_box[i][2] = m_clut[i][2];</div>
+<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][0] = m_clut[i][0];</div>
+<div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][1] = m_clut[i][1];</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>        <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][2] = m_clut[i][2];</div>
 <div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>    }</div>
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>}</div>
+</div>
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span> </div>
-<div class="line"><a id="l00519" name="l00519"></a><span class="lineno">  519</span><span class="keywordtype">int</span> Plot::write_palette()</div>
+<div class="foldopen" id="foldopen00519" data-start="{" data-end="}">
+<div class="line"><a id="l00519" name="l00519"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a5eed7d60a3ba50c5896493205277ad8a">  519</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a5eed7d60a3ba50c5896493205277ad8a">Plot::write_palette</a>()</div>
 <div class="line"><a id="l00520" name="l00520"></a><span class="lineno">  520</span>{</div>
 <div class="line"><a id="l00521" name="l00521"></a><span class="lineno">  521</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 256; i++)</div>
 <div class="line"><a id="l00522" name="l00522"></a><span class="lineno">  522</span>    {</div>
-<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>        m_clut[i][0] = g_dac_box[i][0];</div>
-<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>        m_clut[i][1] = g_dac_box[i][1];</div>
-<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>        m_clut[i][2] = g_dac_box[i][2];</div>
+<div class="line"><a id="l00523" name="l00523"></a><span class="lineno">  523</span>        m_clut[i][0] = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][0];</div>
+<div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>        m_clut[i][1] = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][1];</div>
+<div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>        m_clut[i][2] = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][2];</div>
 <div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span> </div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>        m_bmi.bmiColors[i].rgbRed = g_dac_box[i][0];</div>
-<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>        m_bmi.bmiColors[i].rgbGreen = g_dac_box[i][1];</div>
-<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>        m_bmi.bmiColors[i].rgbBlue = g_dac_box[i][2];</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>        m_bmi.bmiColors[i].rgbRed = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][0];</div>
+<div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>        m_bmi.bmiColors[i].rgbGreen = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][1];</div>
+<div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>        m_bmi.bmiColors[i].rgbBlue = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">g_dac_box</a>[i][2];</div>
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>    }</div>
 <div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span>    redraw();</div>
 <div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span> </div>
 <div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>}</div>
+</div>
 <div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span> </div>
 <div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span><span class="keyword">static</span> VOID CALLBACK redraw_window(<span class="keyword">const</span> HWND window, UINT msg, UINT_PTR <span class="comment">/*id_event*/</span>, DWORD time)</div>
 <div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>{</div>
 <div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>    InvalidateRect(window, <span class="keyword">nullptr</span>, FALSE);</div>
-<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>    KillTimer(window, PLOT_TIMER_ID);</div>
+<div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>    KillTimer(window, <a class="code hl_enumvalue" href="../../df/d6d/namespaceid_1_1misc.html#adc0ec5d836ae6b16a606f2b4a83ad569a5d05a98e08bb7ae8b56e230c77d8aae3">PLOT_TIMER_ID</a>);</div>
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>}</div>
 <div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span> </div>
-<div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span><span class="keywordtype">void</span> Plot::schedule_alarm(<span class="keyword">const</span> <span class="keywordtype">int</span> secs)</div>
+<div class="foldopen" id="foldopen00542" data-start="{" data-end="}">
+<div class="line"><a id="l00542" name="l00542"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a78aaeaf41dedd3bc7f6583ebc31d9f0e">  542</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a78aaeaf41dedd3bc7f6583ebc31d9f0e">Plot::schedule_alarm</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> secs)</div>
 <div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>{</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    UINT_PTR result = SetTimer(m_window, PLOT_TIMER_ID, secs, redraw_window);</div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    UINT_PTR result = SetTimer(m_window, <a class="code hl_enumvalue" href="../../df/d6d/namespaceid_1_1misc.html#adc0ec5d836ae6b16a606f2b4a83ad569a5d05a98e08bb7ae8b56e230c77d8aae3">PLOT_TIMER_ID</a>, secs, redraw_window);</div>
 <div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>    <span class="keywordflow">if</span> (!result)</div>
 <div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>    {</div>
 <div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>        <span class="keyword">const</span> DWORD error = GetLastError();</div>
 <div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;SetTimer failed: &quot;</span> + std::to_string(error));</div>
 <div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>    }</div>
 <div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>}</div>
+</div>
 <div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span> </div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span><span class="keywordtype">void</span> Plot::clear()</div>
+<div class="foldopen" id="foldopen00552" data-start="{" data-end="}">
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#ad80bfe6ad3cb850f1534b441de78ae42">  552</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#ad80bfe6ad3cb850f1534b441de78ae42">Plot::clear</a>()</div>
 <div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>{</div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>    <span class="keyword">const</span> RECT r{0, 0, m_width, m_height};</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>    m_dirty_region = r;</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>    <span class="keyword">const</span> RECT <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>{0, 0, m_width, m_height};</div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>    m_dirty_region = <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>;</div>
 <div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    m_dirty = <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>    std::memset(m_pixels.data(), 0, m_pixels_len);</div>
 <div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>}</div>
+</div>
 <div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span> </div>
 <div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span><span class="keywordtype">void</span> Plot::redraw()</div>
 <div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>{</div>
 <div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>    InvalidateRect(m_window, <span class="keyword">nullptr</span>, FALSE);</div>
 <div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>}</div>
 <div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span> </div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span><span class="keywordtype">void</span> Plot::display_string(<span class="keywordtype">int</span> x, <span class="keyword">const</span> <span class="keywordtype">int</span> y, <span class="keyword">const</span> <span class="keywordtype">int</span> fg, <span class="keyword">const</span> <span class="keywordtype">int</span> bg, <span class="keyword">const</span> <span class="keywordtype">char</span> *text)</div>
+<div class="foldopen" id="foldopen00565" data-start="{" data-end="}">
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a2dd46384931af763e502821dadb5fc9f">  565</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a2dd46384931af763e502821dadb5fc9f">Plot::display_string</a>(<span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <span class="keyword">const</span> <span class="keywordtype">int</span> fg, <span class="keyword">const</span> <span class="keywordtype">int</span> bg, <span class="keyword">const</span> <span class="keywordtype">char</span> *text)</div>
 <div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>{</div>
 <div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>    <span class="keywordflow">while</span> (*text)</div>
 <div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>    {</div>
 <div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> row = 0; row &lt; 8; row++)</div>
 <div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>        {</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>            <span class="keywordtype">int</span> x1 = x;</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>            <span class="keywordtype">int</span> x1 = <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>;</div>
 <div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>            <span class="keywordtype">int</span> col = 8;</div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>            <span class="keyword">const</span> Byte pixel = FONT_8x8[row][<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*text)];</div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>            <span class="keyword">const</span> Byte <a class="code hl_variable" href="../../d7/da9/diskvid_8cpp.html#adc5fc0781c3ea3ba7c884084e3b718c0">pixel</a> = FONT_8x8[row][<span class="keyword">static_cast&lt;</span><span class="keywordtype">unsigned</span> <span class="keywordtype">char</span><span class="keyword">&gt;</span>(*text)];</div>
 <div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>            <span class="keywordflow">while</span> (col-- &gt; 0)</div>
 <div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>            {</div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                <span class="keyword">const</span> <span class="keywordtype">int</span> color = pixel &amp; 1 &lt;&lt; col ? fg : bg;</div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                write_pixel(x1++, y + row, color);</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>                <span class="keyword">const</span> <span class="keywordtype">int</span> color = <a class="code hl_variable" href="../../d7/da9/diskvid_8cpp.html#adc5fc0781c3ea3ba7c884084e3b718c0">pixel</a> &amp; 1 &lt;&lt; col ? fg : bg;</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>                <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a3627d228ccdebed14182389adefc28de">write_pixel</a>(x1++, <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a> + row, color);</div>
 <div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>            }</div>
 <div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>        }</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>        x += 8;</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>        <a class="code hl_variable" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a> += 8;</div>
 <div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>        text++;</div>
 <div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>    }</div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    flush();</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a53841d8aeb004beb771e2bebebf30b3e">flush</a>();</div>
 <div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>}</div>
+</div>
 <div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span> </div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span><span class="keywordtype">void</span> Plot::save_graphics()</div>
+<div class="foldopen" id="foldopen00586" data-start="{" data-end="}">
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a9dca90e637d32b108604a6f1f36831a4">  586</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a9dca90e637d32b108604a6f1f36831a4">Plot::save_graphics</a>()</div>
 <div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>{</div>
 <div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>    m_saved_pixels = m_pixels;</div>
 <div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>}</div>
+</div>
 <div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span> </div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span><span class="keywordtype">void</span> Plot::restore_graphics()</div>
+<div class="foldopen" id="foldopen00591" data-start="{" data-end="}">
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno"><a class="line" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a4235ec4a9e6bacdd538ade0fdc12b16f">  591</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d4/d08/structid_1_1misc_1_1Plot.html#a4235ec4a9e6bacdd538ade0fdc12b16f">Plot::restore_graphics</a>()</div>
 <div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>{</div>
 <div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>    m_pixels = m_saved_pixels;</div>
 <div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>    redraw();</div>
 <div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>}</div>
+</div>
 <div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span> </div>
 <div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>} <span class="comment">// namespace id::misc</span></div>
+<div class="ttc" id="aFrame_8h_html"><div class="ttname"><a href="../../d7/db3/Frame_8h.html">Frame.h</a></div></div>
+<div class="ttc" id="aPlot_8h_html"><div class="ttname"><a href="../../d3/d69/Plot_8h.html">Plot.h</a></div></div>
+<div class="ttc" id="aVideoInfo_8h_html"><div class="ttname"><a href="../../d3/d7e/VideoInfo_8h.html">VideoInfo.h</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Frame_html_a1f069f438bc23c8ba02c01869f78deae"><div class="ttname"><a href="../../d0/d59/classid_1_1misc_1_1Frame.html#a1f069f438bc23c8ba02c01869f78deae">id::misc::Frame::on_middle_button_down</a></div><div class="ttdeci">void on_middle_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/de0/Frame_8cpp_source.html#l00745">Frame.cpp:745</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Frame_html_a34433f971784bd01580acb9e4f1936df"><div class="ttname"><a href="../../d0/d59/classid_1_1misc_1_1Frame.html#a34433f971784bd01580acb9e4f1936df">id::misc::Frame::on_secondary_button_up</a></div><div class="ttdeci">void on_secondary_button_up(HWND window, int x, int y, UINT key_flags)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/de0/Frame_8cpp_source.html#l00768">Frame.cpp:768</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Frame_html_a39a507cc33f597bd69e3ef11bda42058"><div class="ttname"><a href="../../d0/d59/classid_1_1misc_1_1Frame.html#a39a507cc33f597bd69e3ef11bda42058">id::misc::Frame::on_secondary_button_down</a></div><div class="ttdeci">void on_secondary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/de0/Frame_8cpp_source.html#l00737">Frame.cpp:737</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Frame_html_a811e07af219e88e5525fbcc06d2e44af"><div class="ttname"><a href="../../d0/d59/classid_1_1misc_1_1Frame.html#a811e07af219e88e5525fbcc06d2e44af">id::misc::Frame::on_primary_button_down</a></div><div class="ttdeci">void on_primary_button_down(HWND window, BOOL double_click, int x, int y, UINT key_flags)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/de0/Frame_8cpp_source.html#l00729">Frame.cpp:729</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Frame_html_a9fcdb1310923a79b7ea0952d7ca5b2c5"><div class="ttname"><a href="../../d0/d59/classid_1_1misc_1_1Frame.html#a9fcdb1310923a79b7ea0952d7ca5b2c5">id::misc::Frame::on_middle_button_up</a></div><div class="ttdeci">void on_middle_button_up(HWND window, int x, int y, UINT key_flags)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/de0/Frame_8cpp_source.html#l00776">Frame.cpp:776</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Frame_html_ae4d1ceb8cfe9307010e02fe81fda479f"><div class="ttname"><a href="../../d0/d59/classid_1_1misc_1_1Frame.html#ae4d1ceb8cfe9307010e02fe81fda479f">id::misc::Frame::on_mouse_move</a></div><div class="ttdeci">void on_mouse_move(HWND window, int x, int y, UINT key_flags)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/de0/Frame_8cpp_source.html#l00674">Frame.cpp:674</a></div></div>
+<div class="ttc" id="aclassid_1_1misc_1_1Frame_html_aefeea3527f35149bdb1cc0defe5b982d"><div class="ttname"><a href="../../d0/d59/classid_1_1misc_1_1Frame.html#aefeea3527f35149bdb1cc0defe5b982d">id::misc::Frame::on_primary_button_up</a></div><div class="ttdeci">void on_primary_button_up(HWND window, int x, int y, UINT key_flags)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/de0/Frame_8cpp_source.html#l00753">Frame.cpp:753</a></div></div>
+<div class="ttc" id="adiskvid_8cpp_html_adc5fc0781c3ea3ba7c884084e3b718c0"><div class="ttname"><a href="../../d7/da9/diskvid_8cpp.html#adc5fc0781c3ea3ba7c884084e3b718c0">pixel</a></div><div class="ttdeci">Byte pixel[BLOCK_LEN]</div><div class="ttdef"><b>Definition</b> <a href="../../d7/da9/diskvid_8cpp_source.html#l00063">diskvid.cpp:63</a></div></div>
+<div class="ttc" id="ahelp_8cpp_html_a025bb2939646900edeb3f2a699c11c61"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#a025bb2939646900edeb3f2a699c11c61">title</a></div><div class="ttdeci">char title[81]</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00113">help.cpp:113</a></div></div>
+<div class="ttc" id="ahelp_8cpp_html_a2474a5474cbff19523a51eb1de01cda4"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a></div><div class="ttdeci">int width</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00074">help.cpp:74</a></div></div>
+<div class="ttc" id="ahelp_8cpp_html_a83fcd78492ca8164a577f3f1f349f67d"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a></div><div class="ttdeci">Byte r</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00073">help.cpp:73</a></div></div>
+<div class="ttc" id="ainstance_8h_html_a2160c20e90a9c1818ac7287e5416f746"><div class="ttname"><a href="../../d9/dda/instance_8h.html#a2160c20e90a9c1818ac7287e5416f746">HINSTANCE</a></div><div class="ttdeci">void * HINSTANCE</div><div class="ttdef"><b>Definition</b> <a href="../../d9/dda/instance_8h_source.html#l00009">instance.h:9</a></div></div>
+<div class="ttc" id="ajulibrot_8cpp_html_ab927965981178aa1fba979a37168db2a"><div class="ttname"><a href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a></div><div class="ttdeci">double y</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d1e/julibrot_8cpp_source.html#l00039">julibrot.cpp:39</a></div></div>
+<div class="ttc" id="ajulibrot_8cpp_html_af88b946fb90d5f08b5fb740c70e98c10"><div class="ttname"><a href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a></div><div class="ttdeci">double x</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d1e/julibrot_8cpp_source.html#l00038">julibrot.cpp:38</a></div></div>
+<div class="ttc" id="alsystem_8cpp_html_a09f4dd3c80995d7cde037a79285436b7"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#a09f4dd3c80995d7cde037a79285436b7">y_min</a></div><div class="ttdeci">LDouble y_min</div><div class="ttdef"><b>Definition</b> <a href="../../da/db4/lsystem_8cpp_source.html#l00066">lsystem.cpp:66</a></div></div>
+<div class="ttc" id="alsystem_8cpp_html_a254ee7ed702b85b39e74ea6cbce87bdb"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#a254ee7ed702b85b39e74ea6cbce87bdb">x_max</a></div><div class="ttdeci">LDouble x_max</div><div class="ttdef"><b>Definition</b> <a href="../../da/db4/lsystem_8cpp_source.html#l00066">lsystem.cpp:66</a></div></div>
+<div class="ttc" id="alsystem_8cpp_html_a5e7d585a7ecbab18e3057f67b19ee2c7"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a></div><div class="ttdeci">LDouble y_max</div><div class="ttdef"><b>Definition</b> <a href="../../da/db4/lsystem_8cpp_source.html#l00066">lsystem.cpp:66</a></div></div>
+<div class="ttc" id="alsystem_8cpp_html_add2473c5c4546982731f5f34e2686a73"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#add2473c5c4546982731f5f34e2686a73">x_min</a></div><div class="ttdeci">LDouble x_min</div><div class="ttdef"><b>Definition</b> <a href="../../da/db4/lsystem_8cpp_source.html#l00066">lsystem.cpp:66</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a0c55290c73df4abe117d5ea01c5b2ff3"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a0c55290c73df4abe117d5ea01c5b2ff3">id::engine::g_screen_y_dots</a></div><div class="ttdeci">int g_screen_y_dots</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00011">VideoInfo.cpp:11</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a4106701ee2eed91555d1b34e19d08bbc"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a4106701ee2eed91555d1b34e19d08bbc">id::engine::g_dac_box</a></div><div class="ttdeci">Byte g_dac_box[256][3]</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/spindac_8cpp_source.html#l00025">spindac.cpp:25</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a6de7f26cf15a3412a34a1f4866af1be8"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a6de7f26cf15a3412a34a1f4866af1be8">id::engine::g_got_real_dac</a></div><div class="ttdeci">bool g_got_real_dac</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d5d/spindac_8cpp_source.html#l00028">spindac.cpp:28</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_acc7e51648eb9996f27c7c39cf1a0fed7"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#acc7e51648eb9996f27c7c39cf1a0fed7">id::engine::g_screen_x_dots</a></div><div class="ttdeci">int g_screen_x_dots</div><div class="ttdef"><b>Definition</b> <a href="../../d3/de5/VideoInfo_8cpp_source.html#l00010">VideoInfo.cpp:10</a></div></div>
+<div class="ttc" id="anamespaceid_1_1geometry_html"><div class="ttname"><a href="../../d6/daa/namespaceid_1_1geometry.html">id::geometry</a></div><div class="ttdef"><b>Definition</b> <a href="../../d5/d1f/3d_8h_source.html#l00005">3d.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1geometry_html_ae356608293982192db0ce0e7b4199b8e"><div class="ttname"><a href="../../d6/daa/namespaceid_1_1geometry.html#ae356608293982192db0ce0e7b4199b8e">id::geometry::draw_line</a></div><div class="ttdeci">void draw_line(int x1, int y1, int x2, int y2, int color)</div><div class="ttdef"><b>Definition</b> <a href="../../d3/d14/plot3d_8cpp_source.html#l00065">plot3d.cpp:65</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a2100414146547c8f7ba7c85050bed8f0"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a2100414146547c8f7ba7c85050bed8f0">id::misc::g_frame</a></div><div class="ttdeci">Frame g_frame</div><div class="ttdef"><b>Definition</b> <a href="../../d5/de0/Frame_8cpp_source.html#l00027">Frame.cpp:27</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_adc0ec5d836ae6b16a606f2b4a83ad569a5d05a98e08bb7ae8b56e230c77d8aae3"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#adc0ec5d836ae6b16a606f2b4a83ad569a5d05a98e08bb7ae8b56e230c77d8aae3">id::misc::PLOT_TIMER_ID</a></div><div class="ttdeci">@ PLOT_TIMER_ID</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00027">Plot.cpp:26</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="aplot3d_8h_html"><div class="ttname"><a href="../../d4/d81/plot3d_8h.html">plot3d.h</a></div></div>
+<div class="ttc" id="aspindac_8h_html"><div class="ttname"><a href="../../df/d7f/spindac_8h.html">spindac.h</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a075a5c49c00f0683459db8ee06bd8a67"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a075a5c49c00f0683459db8ee06bd8a67">id::misc::Plot::resize</a></div><div class="ttdeci">int resize()</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00490">Plot.cpp:490</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a1f6d593f04208a1c1a6dc5f83e7014b3"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a1f6d593f04208a1c1a6dc5f83e7014b3">id::misc::Plot::read_pixel</a></div><div class="ttdeci">int read_pixel(int x, int y)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00465">Plot.cpp:465</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a2056f2e86562a7bc55544c7fb573c46f"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a2056f2e86562a7bc55544c7fb573c46f">id::misc::Plot::create_window</a></div><div class="ttdeci">void create_window(HWND parent)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00432">Plot.cpp:432</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a2dd46384931af763e502821dadb5fc9f"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a2dd46384931af763e502821dadb5fc9f">id::misc::Plot::display_string</a></div><div class="ttdeci">void display_string(int x, int y, int fg, int bg, const char *text)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00565">Plot.cpp:565</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a3627d228ccdebed14182389adefc28de"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a3627d228ccdebed14182389adefc28de">id::misc::Plot::write_pixel</a></div><div class="ttdeci">void write_pixel(int x, int y, int color)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00454">Plot.cpp:454</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a4235ec4a9e6bacdd538ade0fdc12b16f"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a4235ec4a9e6bacdd538ade0fdc12b16f">id::misc::Plot::restore_graphics</a></div><div class="ttdeci">void restore_graphics()</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00591">Plot.cpp:591</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a53841d8aeb004beb771e2bebebf30b3e"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a53841d8aeb004beb771e2bebebf30b3e">id::misc::Plot::flush</a></div><div class="ttdeci">void flush()</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00475">Plot.cpp:475</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a5771fdb59ef941ebc997fffaaefb5f63"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a5771fdb59ef941ebc997fffaaefb5f63">id::misc::Plot::init</a></div><div class="ttdeci">int init(HINSTANCE instance, LPCSTR title)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00373">Plot.cpp:373</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a5eed7d60a3ba50c5896493205277ad8a"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a5eed7d60a3ba50c5896493205277ad8a">id::misc::Plot::write_palette</a></div><div class="ttdeci">int write_palette()</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00519">Plot.cpp:519</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a7580743c9364030cc9ee957e4bc3c426"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a7580743c9364030cc9ee957e4bc3c426">id::misc::Plot::read_palette</a></div><div class="ttdeci">void read_palette()</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00504">Plot.cpp:504</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a78aaeaf41dedd3bc7f6583ebc31d9f0e"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a78aaeaf41dedd3bc7f6583ebc31d9f0e">id::misc::Plot::schedule_alarm</a></div><div class="ttdeci">void schedule_alarm(int secs)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00542">Plot.cpp:542</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a798009f60498ae7cc00780f6054f87c9"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a798009f60498ae7cc00780f6054f87c9">id::misc::Plot::on_paint</a></div><div class="ttdeci">void on_paint(HWND window)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00256">Plot.cpp:256</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a7cea9753c2411abf43f6012ea275b812"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a7cea9753c2411abf43f6012ea275b812">id::misc::Plot::terminate</a></div><div class="ttdeci">void terminate()</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00400">Plot.cpp:400</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a8562c8992f54b47703cd63a034f58c12"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a8562c8992f54b47703cd63a034f58c12">id::misc::Plot::draw_line</a></div><div class="ttdeci">void draw_line(int x1, int y1, int x2, int y2, int color)</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00485">Plot.cpp:485</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_a9dca90e637d32b108604a6f1f36831a4"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#a9dca90e637d32b108604a6f1f36831a4">id::misc::Plot::save_graphics</a></div><div class="ttdeci">void save_graphics()</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00586">Plot.cpp:586</a></div></div>
+<div class="ttc" id="astructid_1_1misc_1_1Plot_html_ad80bfe6ad3cb850f1534b441de78ae42"><div class="ttname"><a href="../../d4/d08/structid_1_1misc_1_1Plot.html#ad80bfe6ad3cb850f1534b441de78ae42">id::misc::Plot::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdef"><b>Definition</b> <a href="../../da/d2d/Plot_8cpp_source.html#l00552">Plot.cpp:552</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

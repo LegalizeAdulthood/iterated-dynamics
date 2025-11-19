@@ -82,49 +82,68 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">testpt.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d5/d13/testpt_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;ui/testpt.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d21/testpt_8h.html">ui/testpt.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;engine/resume.h&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;fractals/TestPoint.h&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;misc/Driver.h&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d2/d95/resume_8h.html">engine/resume.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/dce/TestPoint_8h.html">fractals/TestPoint.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../dd/d3c/Driver_8h.html">misc/Driver.h</a>&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span>id::engine;</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">using namespace </span>id::fractals;</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">using namespace </span>id::misc;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a>;</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a>;</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span>id::ui</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment">// standalone engine for &quot;test&quot;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keywordtype">int</span> test_type()</div>
+<div class="foldopen" id="foldopen00017" data-start="{" data-end="}">
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a8c64eb5334cc5130ff0f56e09afd36e8">   17</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a8c64eb5334cc5130ff0f56e09afd36e8">test_type</a>()</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>{</div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <a class="code hl_class" href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html">TestPoint</a> test;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keywordflow">if</span> (g_resuming)</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a96ec00608d2152fbf3dd55610d54a9e2">g_resuming</a>)</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    {</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        test.resume();</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        test.<a class="code hl_function" href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a30b693daab79cce1fbd631063b412260">resume</a>();</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    }</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">if</span> (test.start())   <span class="comment">// assume it was stand-alone, doesn&#39;t want passes logic</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    <span class="keywordflow">if</span> (test.<a class="code hl_function" href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#aff65a365e34659982c7a88e1ac8b0811">start</a>())   <span class="comment">// assume it was stand-alone, doesn&#39;t want passes logic</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    {</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    }</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordflow">while</span> (!test.done())</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordflow">while</span> (!test.<a class="code hl_function" href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a24c02ca68ddc23b58bf10e7bb34f3e3a">done</a>())</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    {</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keywordflow">if</span> (driver_key_pressed())</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">driver_key_pressed</a>())</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            test.suspend();</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            test.<a class="code hl_function" href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a7e3de4c28dbda9541f0c3ef71bea9eed">suspend</a>();</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        }</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        test.iterate();</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        test.<a class="code hl_function" href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a919c435feadde7fcfda04539c4e19d48">iterate</a>();</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    }</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    test.finish();</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    test.<a class="code hl_function" href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a3f5ec413669813bb80ed70e24f694bf3">finish</a>();</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>}</div>
+</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="ttc" id="aDriver_8h_html"><div class="ttname"><a href="../../dd/d3c/Driver_8h.html">Driver.h</a></div></div>
+<div class="ttc" id="aTestPoint_8h_html"><div class="ttname"><a href="../../d1/dce/TestPoint_8h.html">TestPoint.h</a></div></div>
 <div class="ttc" id="aclassid_1_1fractals_1_1TestPoint_html"><div class="ttname"><a href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html">id::fractals::TestPoint</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/dce/TestPoint_8h_source.html#l00008">TestPoint.h:9</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1TestPoint_html_a24c02ca68ddc23b58bf10e7bb34f3e3a"><div class="ttname"><a href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a24c02ca68ddc23b58bf10e7bb34f3e3a">id::fractals::TestPoint::done</a></div><div class="ttdeci">bool done()</div><div class="ttdef"><b>Definition</b> <a href="../../db/d4f/TestPoint_8cpp_source.html#l00061">TestPoint.cpp:61</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1TestPoint_html_a30b693daab79cce1fbd631063b412260"><div class="ttname"><a href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a30b693daab79cce1fbd631063b412260">id::fractals::TestPoint::resume</a></div><div class="ttdeci">void resume()</div><div class="ttdef"><b>Definition</b> <a href="../../db/d4f/TestPoint_8cpp_source.html#l00045">TestPoint.cpp:45</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1TestPoint_html_a3f5ec413669813bb80ed70e24f694bf3"><div class="ttname"><a href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a3f5ec413669813bb80ed70e24f694bf3">id::fractals::TestPoint::finish</a></div><div class="ttdeci">void finish()</div><div class="ttdef"><b>Definition</b> <a href="../../db/d4f/TestPoint_8cpp_source.html#l00143">TestPoint.cpp:143</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1TestPoint_html_a7e3de4c28dbda9541f0c3ef71bea9eed"><div class="ttname"><a href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a7e3de4c28dbda9541f0c3ef71bea9eed">id::fractals::TestPoint::suspend</a></div><div class="ttdeci">void suspend()</div><div class="ttdef"><b>Definition</b> <a href="../../db/d4f/TestPoint_8cpp_source.html#l00054">TestPoint.cpp:54</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1TestPoint_html_a919c435feadde7fcfda04539c4e19d48"><div class="ttname"><a href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#a919c435feadde7fcfda04539c4e19d48">id::fractals::TestPoint::iterate</a></div><div class="ttdeci">void iterate()</div><div class="ttdef"><b>Definition</b> <a href="../../db/d4f/TestPoint_8cpp_source.html#l00066">TestPoint.cpp:66</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1TestPoint_html_aff65a365e34659982c7a88e1ac8b0811"><div class="ttname"><a href="../../d8/da3/classid_1_1fractals_1_1TestPoint.html#aff65a365e34659982c7a88e1ac8b0811">id::fractals::TestPoint::start</a></div><div class="ttdeci">bool start()</div><div class="ttdef"><b>Definition</b> <a href="../../db/d4f/TestPoint_8cpp_source.html#l00137">TestPoint.cpp:137</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a96ec00608d2152fbf3dd55610d54a9e2"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a96ec00608d2152fbf3dd55610d54a9e2">id::engine::g_resuming</a></div><div class="ttdeci">bool g_resuming</div><div class="ttdef"><b>Definition</b> <a href="../../dd/df8/resume_8cpp_source.html#l00016">resume.cpp:16</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00014">calcfrac.h:15</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d7e/VideoInfo_8h_source.html#l00007">VideoInfo.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_ad698e1042eebf4696c125d22bb014c9c"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#ad698e1042eebf4696c125d22bb014c9c">id::misc::driver_key_pressed</a></div><div class="ttdeci">int driver_key_pressed()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/d3c/Driver_8h_source.html#l00208">Driver.h:208</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a8c64eb5334cc5130ff0f56e09afd36e8"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a8c64eb5334cc5130ff0f56e09afd36e8">id::ui::test_type</a></div><div class="ttdeci">int test_type()</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d13/testpt_8cpp_source.html#l00017">testpt.cpp:17</a></div></div>
+<div class="ttc" id="aresume_8h_html"><div class="ttname"><a href="../../d2/d95/resume_8h.html">resume.h</a></div></div>
+<div class="ttc" id="atestpt_8h_html"><div class="ttname"><a href="../../dd/d21/testpt_8h.html">testpt.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

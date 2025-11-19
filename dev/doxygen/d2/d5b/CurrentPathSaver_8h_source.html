@@ -82,39 +82,45 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">CurrentPathSaver.h</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../d2/d5b/CurrentPathSaver_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span>id::io</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span>{</div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
 <div class="foldopen" id="foldopen00010" data-start="{" data-end="};">
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">   10</a></span><span class="keyword">class </span><a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span>    <span class="keyword">explicit</span> <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a>(<span class="keyword">const</span> std::filesystem::path &amp;new_path) :</div>
+<div class="foldopen" id="foldopen00013" data-start="{" data-end="}">
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a00f4220e1d573ed743cf9ebaf46f066e">   13</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a00f4220e1d573ed743cf9ebaf46f066e">CurrentPathSaver</a>(<span class="keyword">const</span> std::filesystem::path &amp;new_path) :</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>        m_old_path(std::filesystem::current_path())</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    {</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        current_path(new_path);</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    }</div>
+</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keyword">explicit</span> <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a>() :</div>
+<div class="foldopen" id="foldopen00019" data-start="{" data-end="}">
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a66d39ece9a63352cc0ea8e94ffd28c56">   19</a></span>    <span class="keyword">explicit</span> <a class="code hl_function" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a66d39ece9a63352cc0ea8e94ffd28c56">CurrentPathSaver</a>() :</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        m_old_path(std::filesystem::current_path())</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    {</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    }</div>
+</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">~CurrentPathSaver</a>()</div>
+<div class="foldopen" id="foldopen00024" data-start="{" data-end="}">
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a0f6b1b036e8f80944a836d25965b2d09">   24</a></span>    <a class="code hl_function" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a0f6b1b036e8f80944a836d25965b2d09">~CurrentPathSaver</a>()</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    {</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        current_path(m_old_path);</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    }</div>
+</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a>(<span class="keyword">const</span> <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;rhs) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a>(<a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;&amp;rhs) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;operator=(<span class="keyword">const</span> <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;rhs) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;operator=(<a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;&amp;rhs) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a66da73e4df8dfebe95863179342de42f">   29</a></span>    <a class="code hl_function" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a66da73e4df8dfebe95863179342de42f">CurrentPathSaver</a>(<span class="keyword">const</span> <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;rhs) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a45f0a7907fdd9aed4b2603bf59a6a3cc">   30</a></span>    <a class="code hl_function" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a45f0a7907fdd9aed4b2603bf59a6a3cc">CurrentPathSaver</a>(<a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;&amp;rhs) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a7e1f72490122bb3697d4f151d87474b5">   31</a></span>    <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;<a class="code hl_function" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a7e1f72490122bb3697d4f151d87474b5">operator=</a>(<span class="keyword">const</span> <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;rhs) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a35e3e6e79f4d9de72cd3a4b6c624defa">   32</a></span>    <a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;<a class="code hl_function" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a35e3e6e79f4d9de72cd3a4b6c624defa">operator=</a>(<a class="code hl_class" href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">CurrentPathSaver</a> &amp;&amp;rhs) = <span class="keyword">delete</span>;</div>
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    std::filesystem::path m_old_path;</div>
@@ -123,6 +129,14 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>} <span class="comment">// namespace id::io</span></div>
 <div class="ttc" id="aclassid_1_1io_1_1CurrentPathSaver_html"><div class="ttname"><a href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html">id::io::CurrentPathSaver</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d5b/CurrentPathSaver_8h_source.html#l00010">CurrentPathSaver.h:11</a></div></div>
+<div class="ttc" id="aclassid_1_1io_1_1CurrentPathSaver_html_a00f4220e1d573ed743cf9ebaf46f066e"><div class="ttname"><a href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a00f4220e1d573ed743cf9ebaf46f066e">id::io::CurrentPathSaver::CurrentPathSaver</a></div><div class="ttdeci">CurrentPathSaver(const std::filesystem::path &amp;new_path)</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d5b/CurrentPathSaver_8h_source.html#l00013">CurrentPathSaver.h:13</a></div></div>
+<div class="ttc" id="aclassid_1_1io_1_1CurrentPathSaver_html_a0f6b1b036e8f80944a836d25965b2d09"><div class="ttname"><a href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a0f6b1b036e8f80944a836d25965b2d09">id::io::CurrentPathSaver::~CurrentPathSaver</a></div><div class="ttdeci">~CurrentPathSaver()</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d5b/CurrentPathSaver_8h_source.html#l00024">CurrentPathSaver.h:24</a></div></div>
+<div class="ttc" id="aclassid_1_1io_1_1CurrentPathSaver_html_a35e3e6e79f4d9de72cd3a4b6c624defa"><div class="ttname"><a href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a35e3e6e79f4d9de72cd3a4b6c624defa">id::io::CurrentPathSaver::operator=</a></div><div class="ttdeci">CurrentPathSaver &amp; operator=(CurrentPathSaver &amp;&amp;rhs)=delete</div></div>
+<div class="ttc" id="aclassid_1_1io_1_1CurrentPathSaver_html_a45f0a7907fdd9aed4b2603bf59a6a3cc"><div class="ttname"><a href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a45f0a7907fdd9aed4b2603bf59a6a3cc">id::io::CurrentPathSaver::CurrentPathSaver</a></div><div class="ttdeci">CurrentPathSaver(CurrentPathSaver &amp;&amp;rhs)=delete</div></div>
+<div class="ttc" id="aclassid_1_1io_1_1CurrentPathSaver_html_a66d39ece9a63352cc0ea8e94ffd28c56"><div class="ttname"><a href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a66d39ece9a63352cc0ea8e94ffd28c56">id::io::CurrentPathSaver::CurrentPathSaver</a></div><div class="ttdeci">CurrentPathSaver()</div><div class="ttdef"><b>Definition</b> <a href="../../d2/d5b/CurrentPathSaver_8h_source.html#l00019">CurrentPathSaver.h:19</a></div></div>
+<div class="ttc" id="aclassid_1_1io_1_1CurrentPathSaver_html_a66da73e4df8dfebe95863179342de42f"><div class="ttname"><a href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a66da73e4df8dfebe95863179342de42f">id::io::CurrentPathSaver::CurrentPathSaver</a></div><div class="ttdeci">CurrentPathSaver(const CurrentPathSaver &amp;rhs)=delete</div></div>
+<div class="ttc" id="aclassid_1_1io_1_1CurrentPathSaver_html_a7e1f72490122bb3697d4f151d87474b5"><div class="ttname"><a href="../../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a7e1f72490122bb3697d4f151d87474b5">id::io::CurrentPathSaver::operator=</a></div><div class="ttdeci">CurrentPathSaver &amp; operator=(const CurrentPathSaver &amp;rhs)=delete</div></div>
+<div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

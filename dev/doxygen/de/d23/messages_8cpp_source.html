@@ -82,9 +82,9 @@ $(document).ready(function() { init_codefold(1); });
   <div class="headertitle"><div class="title">messages.cpp</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
+<a href="../../de/d23/messages_8cpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">// SPDX-License-Identifier: GPL-3.0-only</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;messages.h&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d5/d48/messages_8h.html">messages.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;fmt/format.h&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
@@ -92,115 +92,145 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;cstdio&gt;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;cstdlib&gt;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span>hc</div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d9/dcc/namespacehc.html">hc</a></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keywordtype">bool</span> g_quiet_mode{};                 <span class="comment">// true if &quot;/Q&quot; option used</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keywordtype">int</span> g_errors{};                      <span class="comment">// number of errors reported</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keywordtype">int</span> g_warnings{};                    <span class="comment">// number of warnings reported</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keywordtype">int</span> g_src_line{};                    <span class="comment">// .SRC line number (used for errors)</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>std::string g_current_src_filename;  <span class="comment">// current .SRC filename</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#ab3591059cc056ff949aa52b972efbe46">   14</a></span><span class="keywordtype">bool</span> <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#ab3591059cc056ff949aa52b972efbe46">g_quiet_mode</a>{};                 <span class="comment">// true if &quot;/Q&quot; option used</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#ac43fe9d4da9f93a635ab29fcd60d0a0b">   15</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#ac43fe9d4da9f93a635ab29fcd60d0a0b">g_errors</a>{};                      <span class="comment">// number of errors reported</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#a64b2f68b2437afccb42057ed35dbeea7">   16</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#a64b2f68b2437afccb42057ed35dbeea7">g_warnings</a>{};                    <span class="comment">// number of warnings reported</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#aa444d37a789fee34bfe6a85e42d2041e">   17</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#aa444d37a789fee34bfe6a85e42d2041e">g_src_line</a>{};                    <span class="comment">// .SRC line number (used for errors)</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#abe33686872bc1397181943fb3c12ae0f">   18</a></span>std::string <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#abe33686872bc1397181943fb3c12ae0f">g_current_src_filename</a>;  <span class="comment">// current .SRC filename</span></div>
 <div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="comment">/*</span></div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="comment"> * error/warning/message reporting functions.</span></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keywordtype">void</span> report_errors()</div>
+<div class="foldopen" id="foldopen00023" data-start="{" data-end="}">
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#afbd6b9c888ffea0726389747d65a1a9c">   23</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d9/dcc/namespacehc.html#afbd6b9c888ffea0726389747d65a1a9c">report_errors</a>()</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    fmt::print(<span class="stringliteral">&quot;\n&quot;</span></div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>               <span class="stringliteral">&quot;Compiler Status:\n&quot;</span></div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>               <span class="stringliteral">&quot;{:8d} Error{:c}\n&quot;</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>               <span class="stringliteral">&quot;{:8d} Warning{:c}\n&quot;</span>,</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        g_errors, g_errors == 1 ? <span class="charliteral">&#39; &#39;</span> : <span class="stringliteral">&#39;s&#39;</span>, <span class="comment">//</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        g_warnings, g_warnings == 1 ? <span class="stringliteral">&#39; &#39;</span> : <span class="stringliteral">&#39;s&#39;</span>);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#ac43fe9d4da9f93a635ab29fcd60d0a0b">g_errors</a>, <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#ac43fe9d4da9f93a635ab29fcd60d0a0b">g_errors</a> == 1 ? <span class="charliteral">&#39; &#39;</span> : <span class="charliteral">&#39;s&#39;</span>, <span class="comment">//</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#a64b2f68b2437afccb42057ed35dbeea7">g_warnings</a>, <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#a64b2f68b2437afccb42057ed35dbeea7">g_warnings</a> == 1 ? <span class="charliteral">&#39; &#39;</span> : <span class="charliteral">&#39;s&#39;</span>);</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>}</div>
+</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">static</span> <span class="keywordtype">void</span> print_msg(<span class="keyword">const</span> <span class="keywordtype">char</span> *type, <span class="keywordtype">int</span> line_num, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, std::va_list arg)</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="keyword">static</span> <span class="keywordtype">void</span> print_msg(<span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>, <span class="keywordtype">int</span> line_num, <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, std::va_list <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>)</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>{</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordflow">if</span> (type != <span class="keyword">nullptr</span>)</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a> != <span class="keyword">nullptr</span>)</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        fmt::print(<span class="stringliteral">&quot;   {:s}&quot;</span>, type);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        fmt::print(<span class="stringliteral">&quot;   {:s}&quot;</span>, <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>);</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">if</span> (line_num &gt; 0)</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            fmt::print(<span class="stringliteral">&quot; {:s} {:d}&quot;</span>, g_current_src_filename.c_str(), line_num);</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            fmt::print(<span class="stringliteral">&quot; {:s} {:d}&quot;</span>, <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#abe33686872bc1397181943fb3c12ae0f">g_current_src_filename</a>.c_str(), line_num);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        }</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        fmt::print(<span class="stringliteral">&quot;: &quot;</span>);</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    }</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    std::vprintf(format, arg);</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    std::vprintf(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    fmt::print(<span class="stringliteral">&quot;\n&quot;</span>);</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    std::fflush(stdout);</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>}</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">static</span> <span class="keywordtype">void</span> fatal_msg(<span class="keyword">const</span> <span class="keywordtype">int</span> line_offset, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...)</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">static</span> <span class="keywordtype">void</span> fatal_msg(<span class="keyword">const</span> <span class="keywordtype">int</span> line_offset, <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, ...)</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>{</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    std::va_list arg;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    va_start(arg, format);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    std::va_list <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    va_start(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>);</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    print_msg(<span class="stringliteral">&quot;Fatal&quot;</span>, g_src_line-line_offset, format, arg);</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    va_end(arg);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    print_msg(<span class="stringliteral">&quot;Fatal&quot;</span>, <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#aa444d37a789fee34bfe6a85e42d2041e">g_src_line</a>-line_offset, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    va_end(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">if</span> (g_errors || g_warnings)</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d9/dcc/namespacehc.html#ac43fe9d4da9f93a635ab29fcd60d0a0b">g_errors</a> || <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#a64b2f68b2437afccb42057ed35dbeea7">g_warnings</a>)</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        report_errors();</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <a class="code hl_function" href="../../d9/dcc/namespacehc.html#afbd6b9c888ffea0726389747d65a1a9c">report_errors</a>();</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    }</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    std::exit(g_errors + 1);</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    std::exit(<a class="code hl_variable" href="../../d9/dcc/namespacehc.html#ac43fe9d4da9f93a635ab29fcd60d0a0b">g_errors</a> + 1);</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>}</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="keywordtype">void</span> error_msg(<span class="keyword">const</span> <span class="keywordtype">int</span> line_offset, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...)</div>
+<div class="foldopen" id="foldopen00065" data-start="{" data-end="}">
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#a76a96fee883975cfc07421a956411563">   65</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d9/dcc/namespacehc.html#a76a96fee883975cfc07421a956411563">error_msg</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> line_offset, <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, ...)</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>{</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    std::va_list arg;</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    va_start(arg, format);</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    std::va_list <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    va_start(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>);</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    print_msg(<span class="stringliteral">&quot;Error&quot;</span>, g_src_line-line_offset, format, arg);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    va_end(arg);</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    print_msg(<span class="stringliteral">&quot;Error&quot;</span>, <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#aa444d37a789fee34bfe6a85e42d2041e">g_src_line</a>-line_offset, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    va_end(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">if</span> (++g_errors &gt;= MAX_ERRORS)</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">if</span> (++<a class="code hl_variable" href="../../d9/dcc/namespacehc.html#ac43fe9d4da9f93a635ab29fcd60d0a0b">g_errors</a> &gt;= <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#a610a8c8d7855ef2fd18e31157e87acc6">MAX_ERRORS</a>)</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    {</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        fatal_msg(0, <span class="stringliteral">&quot;Too many errors!&quot;</span>);</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    }</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>}</div>
+</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keywordtype">void</span> warn_msg(<span class="keyword">const</span> <span class="keywordtype">int</span> line_offset, <span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...)</div>
+<div class="foldopen" id="foldopen00079" data-start="{" data-end="}">
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#a022ed0d67744b529dce19c5e5a112348">   79</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d9/dcc/namespacehc.html#a022ed0d67744b529dce19c5e5a112348">warn_msg</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> line_offset, <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, ...)</div>
 <div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>{</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    std::va_list arg;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    va_start(arg, format);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    std::va_list <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    va_start(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>);</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    print_msg(<span class="stringliteral">&quot;Warning&quot;</span>, g_src_line-line_offset, format, arg);</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    va_end(arg);</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    print_msg(<span class="stringliteral">&quot;Warning&quot;</span>, <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#aa444d37a789fee34bfe6a85e42d2041e">g_src_line</a>-line_offset, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    va_end(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keywordflow">if</span> (++g_warnings &gt;= MAX_WARNINGS)</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keywordflow">if</span> (++<a class="code hl_variable" href="../../d9/dcc/namespacehc.html#a64b2f68b2437afccb42057ed35dbeea7">g_warnings</a> &gt;= <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#a5c58898fea318cc45250dfc53322f9cb">MAX_WARNINGS</a>)</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    {</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        fatal_msg(0, <span class="stringliteral">&quot;Too many warnings!&quot;</span>);</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    }</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>}</div>
+</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keywordtype">void</span> notice_msg(<span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...)</div>
+<div class="foldopen" id="foldopen00093" data-start="{" data-end="}">
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#a12af999d97207e377f0ee6513e6daac5">   93</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d9/dcc/namespacehc.html#a12af999d97207e377f0ee6513e6daac5">notice_msg</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, ...)</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>{</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    std::va_list arg;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    va_start(arg, format);</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    print_msg(<span class="stringliteral">&quot;Note&quot;</span>, g_src_line, format, arg);</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    va_end(arg);</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    std::va_list <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    va_start(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>);</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    print_msg(<span class="stringliteral">&quot;Note&quot;</span>, <a class="code hl_variable" href="../../d9/dcc/namespacehc.html#aa444d37a789fee34bfe6a85e42d2041e">g_src_line</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    va_end(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>}</div>
+</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="keywordtype">void</span> msg_msg(<span class="keyword">const</span> <span class="keywordtype">char</span> *format, ...)</div>
+<div class="foldopen" id="foldopen00101" data-start="{" data-end="}">
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#a4667611a667adcebe1829388a3a3a41e">  101</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d9/dcc/namespacehc.html#a4667611a667adcebe1829388a3a3a41e">msg_msg</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, ...)</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>{</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    std::va_list arg;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    std::va_list <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>;</div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">if</span> (g_quiet_mode)</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d9/dcc/namespacehc.html#ab3591059cc056ff949aa52b972efbe46">g_quiet_mode</a>)</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    {</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    }</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    va_start(arg, format);</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    print_msg(<span class="keyword">nullptr</span>, 0, format, arg);</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    va_end(arg);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    va_start(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>);</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    print_msg(<span class="keyword">nullptr</span>, 0, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a>, <a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    va_end(<a class="code hl_variable" href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a>);</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
+</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="keywordtype">void</span> show_line(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> line)</div>
+<div class="foldopen" id="foldopen00114" data-start="{" data-end="}">
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="../../d9/dcc/namespacehc.html#a6d42b941c65751b6af22350ce9198e06">  114</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../d9/dcc/namespacehc.html#a6d42b941c65751b6af22350ce9198e06">show_line</a>(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> line)</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>{</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    fmt::print(<span class="stringliteral">&quot;[{:04d}] &quot;</span>, line);</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>}</div>
+</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>} <span class="comment">// namespace hc</span></div>
+<div class="ttc" id="acmdfiles_8cpp_html_a153cd42ae99dd12d85ddfaa57e5e27df"><div class="ttname"><a href="../../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df">arg</a></div><div class="ttdeci">std::string_view arg</div><div class="ttdef"><b>Definition</b> <a href="../../df/de8/cmdfiles_8cpp_source.html#l02992">cmdfiles.cpp:2992</a></div></div>
+<div class="ttc" id="acmdfiles_8cpp_html_a60b280f6221ecf607ecb3d8e51914fd2"><div class="ttname"><a href="../../df/de8/cmdfiles_8cpp.html#a60b280f6221ecf607ecb3d8e51914fd2">format</a></div><div class="ttdeci">RayTraceFormat format</div><div class="ttdef"><b>Definition</b> <a href="../../df/de8/cmdfiles_8cpp_source.html#l02993">cmdfiles.cpp:2993</a></div></div>
+<div class="ttc" id="amessages_8h_html"><div class="ttname"><a href="../../d5/d48/messages_8h.html">messages.h</a></div></div>
+<div class="ttc" id="anamespacehc_html"><div class="ttname"><a href="../../d9/dcc/namespacehc.html">hc</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/dd3/AsciiDocCompiler_8h_source.html#l00007">AsciiDocCompiler.h:8</a></div></div>
+<div class="ttc" id="anamespacehc_html_a022ed0d67744b529dce19c5e5a112348"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a022ed0d67744b529dce19c5e5a112348">hc::warn_msg</a></div><div class="ttdeci">void warn_msg(const int line_offset, const char *format,...)</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00079">messages.cpp:79</a></div></div>
+<div class="ttc" id="anamespacehc_html_a12af999d97207e377f0ee6513e6daac5"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a12af999d97207e377f0ee6513e6daac5">hc::notice_msg</a></div><div class="ttdeci">void notice_msg(const char *format,...)</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00093">messages.cpp:93</a></div></div>
+<div class="ttc" id="anamespacehc_html_a4667611a667adcebe1829388a3a3a41e"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a4667611a667adcebe1829388a3a3a41e">hc::msg_msg</a></div><div class="ttdeci">void msg_msg(const char *format,...)</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00101">messages.cpp:101</a></div></div>
+<div class="ttc" id="anamespacehc_html_a5c58898fea318cc45250dfc53322f9cb"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a5c58898fea318cc45250dfc53322f9cb">hc::MAX_WARNINGS</a></div><div class="ttdeci">constexpr int MAX_WARNINGS</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d48/messages_8h_source.html#l00033">messages.h:33</a></div></div>
+<div class="ttc" id="anamespacehc_html_a610a8c8d7855ef2fd18e31157e87acc6"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a610a8c8d7855ef2fd18e31157e87acc6">hc::MAX_ERRORS</a></div><div class="ttdeci">constexpr int MAX_ERRORS</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d48/messages_8h_source.html#l00032">messages.h:32</a></div></div>
+<div class="ttc" id="anamespacehc_html_a64b2f68b2437afccb42057ed35dbeea7"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a64b2f68b2437afccb42057ed35dbeea7">hc::g_warnings</a></div><div class="ttdeci">int g_warnings</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00016">messages.cpp:16</a></div></div>
+<div class="ttc" id="anamespacehc_html_a6d42b941c65751b6af22350ce9198e06"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a6d42b941c65751b6af22350ce9198e06">hc::show_line</a></div><div class="ttdeci">void show_line(unsigned int line)</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00114">messages.cpp:114</a></div></div>
+<div class="ttc" id="anamespacehc_html_a76a96fee883975cfc07421a956411563"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#a76a96fee883975cfc07421a956411563">hc::error_msg</a></div><div class="ttdeci">void error_msg(const int line_offset, const char *format,...)</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00065">messages.cpp:65</a></div></div>
+<div class="ttc" id="anamespacehc_html_aa444d37a789fee34bfe6a85e42d2041e"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#aa444d37a789fee34bfe6a85e42d2041e">hc::g_src_line</a></div><div class="ttdeci">int g_src_line</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00017">messages.cpp:17</a></div></div>
+<div class="ttc" id="anamespacehc_html_ab3591059cc056ff949aa52b972efbe46"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#ab3591059cc056ff949aa52b972efbe46">hc::g_quiet_mode</a></div><div class="ttdeci">bool g_quiet_mode</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00014">messages.cpp:14</a></div></div>
+<div class="ttc" id="anamespacehc_html_abe33686872bc1397181943fb3c12ae0f"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#abe33686872bc1397181943fb3c12ae0f">hc::g_current_src_filename</a></div><div class="ttdeci">std::string g_current_src_filename</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00018">messages.cpp:18</a></div></div>
+<div class="ttc" id="anamespacehc_html_ac43fe9d4da9f93a635ab29fcd60d0a0b"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#ac43fe9d4da9f93a635ab29fcd60d0a0b">hc::g_errors</a></div><div class="ttdeci">int g_errors</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00015">messages.cpp:15</a></div></div>
+<div class="ttc" id="anamespacehc_html_afbd6b9c888ffea0726389747d65a1a9c"><div class="ttname"><a href="../../d9/dcc/namespacehc.html#afbd6b9c888ffea0726389747d65a1a9c">hc::report_errors</a></div><div class="ttdeci">void report_errors()</div><div class="ttdef"><b>Definition</b> <a href="../../de/d23/messages_8cpp_source.html#l00023">messages.cpp:23</a></div></div>
+<div class="ttc" id="aparser_8cpp_html_ac1a6b8e717172dda4f0bc27962b78b61"><div class="ttname"><a href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a></div><div class="ttdeci">JumpControlType type</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00266">parser.cpp:266</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
