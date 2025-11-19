@@ -164,7 +164,7 @@ jobs:
           echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
           sudo dpkg-reconfigure man-db
           sudo apt-get update
-          sudo apt-get install --no-install-recommends -y mono-complete iwyu
+          sudo apt-get install --no-install-recommends -y mono-complete iwyu clang python3
 
       - name: Add NuGet sources
         shell: bash
@@ -192,22 +192,58 @@ jobs:
           cmake --version
           cmake --preset cppcheck
 
+      - name: Find IWYU Tools
+        run: |
+          # Find iwyu_tool location
+          IWYU_TOOL_PATH=$(find /usr -name "iwyu_tool.py" 2>/dev/null | head -1)
+          if [ -z "$IWYU_TOOL_PATH" ]; then
+            echo "iwyu_tool.py not found, checking alternative locations..."
+            # Check if it's in a different location or named differently
+            find /usr -name "*iwyu*" -type f 2>/dev/null | grep -E "\.(py|tool)" || true
+            # Try to find include-what-you-use binary
+            which include-what-you-use || echo "include-what-you-use binary not found"
+            # List iwyu package contents
+            dpkg -L iwyu | grep -E "\.(py|tool)" || echo "No Python tools found in iwyu package"
+          else
+            echo "Found iwyu_tool.py at: $IWYU_TOOL_PATH"
+            echo "IWYU_TOOL_PATH=$IWYU_TOOL_PATH" >> $GITHUB_ENV
+          fi
+
       - name: Run Include What You Use
         continue-on-error: true
         run: |
-          # Create IWYU report
-          iwyu_tool.py -p build-cppcheck \
-            -- --no_fwd_decls \
-            --mapping_file=iwyu.imp 2>&1 | tee iwyu_report.txt || true
+          # Create IWYU report using the found tool or fallback method
+          if [ -n "$IWYU_TOOL_PATH" ]; then
+            echo "Running IWYU with iwyu_tool.py..."
+            python3 "$IWYU_TOOL_PATH" -p build-cppcheck \
+              -- --no_fwd_decls 2>&1 | tee iwyu_report.txt || true
+          else
+            echo "iwyu_tool.py not found, running include-what-you-use manually on source files..."
+            # Create a manual IWYU analysis
+            echo "Include What You Use Analysis" > iwyu_report.txt
+            echo "=============================" >> iwyu_report.txt
+            echo "" >> iwyu_report.txt
+            
+            # Find C++ source files and run IWYU on a subset
+            find . -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | \
+              grep -v -E "(vcpkg|build-|legacy)" | \
+              head -20 | \
+              while read file; do
+                echo "Analyzing: $file" >> iwyu_report.txt
+                include-what-you-use -std=c++14 "$file" 2>&1 | \
+                  head -50 >> iwyu_report.txt || echo "Failed to analyze $file" >> iwyu_report.txt
+                echo "" >> iwyu_report.txt
+              done
+          fi
 
       - name: Print Report Summary
         run: |
           echo "Include What You Use Report Summary:"
           echo "===================================="
           if [ -f iwyu_report.txt ]; then
-            echo "Total files analyzed: $(grep -c "\.cpp\|\.h\|\.hpp" iwyu_report.txt || echo "0")"
-            echo "Files with suggestions: $(grep -c "should add these lines" iwyu_report.txt || echo "0")"
-            echo "Files that can remove includes: $(grep -c "should remove these lines" iwyu_report.txt || echo "0")"
+            echo "Report size: $(wc -l < iwyu_report.txt) lines"
+            echo "Files mentioned: $(grep -c -E "\.(cpp|h|hpp)" iwyu_report.txt || echo "0")"
+            echo "Suggestion patterns found: $(grep -c "should" iwyu_report.txt || echo "0")"
             echo ""
             echo "First 50 lines of report:"
             head -n 50 iwyu_report.txt
