@@ -146,6 +146,82 @@ jobs:
           path: cppcheck_report.txt
 
   #############################################################################
+  include-what-you-use:
+    name: include-what-you-use
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
+        with:
+          submodules: true
+
+      - name: Install System Dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
+          echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
+          sudo dpkg-reconfigure man-db
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y mono-complete iwyu
+
+      - name: Add NuGet sources
+        shell: bash
+        run: |
+          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
+            sources add \
+            -Source "${{env.FEED_URL}}" \
+            -StorePasswordInClearText \
+            -Name GitHubPackages \
+            -UserName "${{github.repository_owner}}" \
+            -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
+            setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+            -Source "${{env.FEED_URL}}"
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
+        with:
+          cmake-version: '3.31'
+
+      - name: Configure Compilation Database
+        env: 
+          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+        run: |
+          cmake --version
+          cmake --preset cppcheck
+
+      - name: Run Include What You Use
+        continue-on-error: true
+        run: |
+          # Create IWYU report
+          iwyu_tool.py -p build-cppcheck \
+            -- --no_fwd_decls \
+            --mapping_file=iwyu.imp 2>&1 | tee iwyu_report.txt || true
+
+      - name: Print Report Summary
+        run: |
+          echo "Include What You Use Report Summary:"
+          echo "===================================="
+          if [ -f iwyu_report.txt ]; then
+            echo "Total files analyzed: $(grep -c "\.cpp\|\.h\|\.hpp" iwyu_report.txt || echo "0")"
+            echo "Files with suggestions: $(grep -c "should add these lines" iwyu_report.txt || echo "0")"
+            echo "Files that can remove includes: $(grep -c "should remove these lines" iwyu_report.txt || echo "0")"
+            echo ""
+            echo "First 50 lines of report:"
+            head -n 50 iwyu_report.txt
+          else
+            echo "No report generated"
+          fi
+
+      - name: Upload Report
+        uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+        with:
+          name: include-what-you-use
+          path: iwyu_report.txt
+
+  #############################################################################
   doxygen:
     name: doxygen
     runs-on: ubuntu-latest
@@ -264,6 +340,47 @@ jobs:
           git add dev/msvc-static-analysis
           git status
           git commit -m "Update MSVC Static Analysis report for ${{github.sha}}" || echo "No changes to commit"
+          git status
+          git log -n 1
+
+      - name: Push Updates
+        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
+        with:
+          github_token: ${{secrets.GITHUB_TOKEN}}
+          branch: gh-pages
+          force: false
+
+  #############################################################################
+  gh-pages-include-what-you-use:
+    needs: include-what-you-use
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
+        with:
+          ref: gh-pages
+          submodules: false
+
+      - name: Clear Directory
+        run: rm -rf dev/include-what-you-use
+
+      - name: Get Report
+        uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
+        with:
+          name: include-what-you-use
+          path: dev/include-what-you-use
+
+      - name: Update Contents
+        run: |
+          git config user.name "Include What You Use"
+          git config user.email iwyu-bot@example.com
+          git status
+          git add dev/include-what-you-use
+          git status
+          git commit -m "Update Include What You Use report for ${{github.sha}}" || echo "No changes to commit"
           git status
           git log -n 1
 
