@@ -1223,11 +1223,8 @@ void HelpCompiler::report_memory()
 
 void HelpCompiler::report_stats()
 {
-    int  pages = 0;
-    for (const Topic &t : g_src.topics)
-    {
-        pages += t.num_page;
-    }
+    const int pages = std::accumulate(
+        g_src.topics.begin(), g_src.topics.end(), 0, [](int sum, const Topic &t) { return sum + t.num_page; });
 
     fmt::print("\n"
                "Statistics:\n"
