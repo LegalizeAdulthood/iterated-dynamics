@@ -11,7 +11,7 @@ var searchData=
   ['find_5ffile_8',['find_file',['../d0/d19/namespaceid_1_1io.html#a1c0408ee5afd5c5355dbaa6fd6f8c8cf',1,'id::io::find_file(const ReadFile kind, const fs::path &amp;file_path)'],['../d0/d19/namespaceid_1_1io.html#abc9f9cb024c6b371e2df28a9684a1043',1,'id::io::find_file(ReadFile kind, const std::filesystem::path &amp;file_path)']]],
   ['find_5ffile_5fitem_9',['find_file_item',['../d0/d19/namespaceid_1_1io.html#a7112828329510c64b151c6a1df1c26f5',1,'id::io']]],
   ['find_5ffractal_5finfo_10',['find_fractal_info',['../d0/d19/namespaceid_1_1io.html#a18570ecedeed5d7a6a33639e9e131164',1,'id::io']]],
-  ['find_5flabel_11',['find_label',['../db/dec/structhc_1_1HelpSource.html#adc827d95f653b57cc34e60345c4ff3de',1,'hc::HelpSource']]],
+  ['find_5flabel_11',['find_label',['../db/dec/structhc_1_1HelpSource.html#a77051ef3fbea1d73a6897c06e0907032',1,'hc::HelpSource']]],
   ['find_5fline_5fwidth_12',['find_line_width',['../d0/d5f/namespaceid_1_1help.html#aad5e336422d8b457146e817f387069bd',1,'id::help']]],
   ['find_5fpath_13',['find_path',['../d0/d19/namespaceid_1_1io.html#a667d82adda805263d6e06aa51aee2562',1,'id::io::find_path(const char *filename, const std::function&lt; const char *(const char *)&gt; &amp;get_env)'],['../d0/d19/namespaceid_1_1io.html#ac9e6b3940074b76f8b836f0840b896b0',1,'id::io::find_path(const char *filename)']]],
   ['find_5fspecial_5fcolors_14',['find_special_colors',['../dc/d76/namespaceid_1_1ui.html#ab99d0322aad0fe42520a8341e7e41602',1,'id::ui']]],
