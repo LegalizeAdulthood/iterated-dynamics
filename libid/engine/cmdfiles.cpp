@@ -93,6 +93,7 @@
 #include <ctime>
 #include <filesystem>
 #include <functional>
+#include <iterator>
 #include <numeric>
 #include <optional>
 #include <string>
@@ -3453,10 +3454,7 @@ static CmdArgFlags cmd_text_colors(const Command &cmd)
 {
     if (const char *value = cmd.value; std::string_view(value) == "mono")
     {
-        for (Byte &elem : g_text_color)
-        {
-            elem = BLACK * 16 + WHITE;
-        }
+        std::fill(std::begin(g_text_color), std::end(g_text_color), BLACK * 16 + WHITE);
         g_text_color[28] = WHITE * 16 + BLACK;
         g_text_color[27] = WHITE * 16 + BLACK;
         g_text_color[20] = WHITE * 16 + BLACK;
