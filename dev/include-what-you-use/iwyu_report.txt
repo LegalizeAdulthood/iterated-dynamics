@@ -1,1 +1,140 @@
-/home/runner/work/_temp/79139b04-8ea4-4f4b-99a2-bcffe55f65b6.sh: line 2: iwyu_tool.py: command not found
+Include What You Use Analysis
+=============================
+
+Analyzing: ./hc/AsciiDocCompiler.h
+error: invalid argument '-std=c++14' not allowed with 'C'
+In file included from ./hc/AsciiDocCompiler.h:5:
+In file included from ./hc/HelpCompiler.h:5:
+./hc/Compiler.h:5:10: fatal error: 'memory' file not found
+    5 | #include <memory>
+      |          ^~~~~~~~
+
+Analyzing: ./hc/hc.cpp
+
+hc/hc.cpp should add these lines:
+#include <exception>   // for exception
+#include <memory>      // for __shared_ptr_access, shared_ptr
+
+hc/hc.cpp should remove these lines:
+
+The full include-list for hc/hc.cpp:
+#include <exception>   // for exception
+#include <iostream>    // for char_traits, operator<<, basic_ostream, cerr
+#include <memory>      // for __shared_ptr_access, shared_ptr
+#include "Compiler.h"  // for create_compiler, Compiler
+#include "Options.h"   // for parse_options
+---
+
+Analyzing: ./hc/modes.h
+error: invalid argument '-std=c++14' not allowed with 'C'
+
+(hc/modes.h has correct #includes/fwd-decls)
+
+Analyzing: ./hc/HelpSource.cpp
+./hc/HelpSource.cpp:8:10: fatal error: 'config/fdio.h' file not found
+    8 | #include <config/fdio.h>
+      |          ^~~~~~~~~~~~~~~
+
+Analyzing: ./hc/Options.cpp
+./hc/Options.cpp:15:13: warning: 'if' initialization statements are a C++17 extension [-Wc++17-extensions]
+   15 |         if (std::string arg{argv[i]}; arg[0] == '/' || arg[0] == '-')
+      |             ^
+
+(hc/Options.h has correct #includes/fwd-decls)
+
+(hc/Options.cpp has correct #includes/fwd-decls)
+
+Analyzing: ./hc/HelpCompiler.h
+error: invalid argument '-std=c++14' not allowed with 'C'
+In file included from ./hc/HelpCompiler.h:5:
+./hc/Compiler.h:5:10: fatal error: 'memory' file not found
+    5 | #include <memory>
+      |          ^~~~~~~~
+
+Analyzing: ./hc/AsciiDocCompiler.cpp
+./hc/AsciiDocCompiler.cpp:8:10: fatal error: 'boost/algorithm/string/case_conv.hpp' file not found
+    8 | #include <boost/algorithm/string/case_conv.hpp>
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Analyzing: ./hc/messages.h
+error: invalid argument '-std=c++14' not allowed with 'C'
+./hc/messages.h:5:10: fatal error: 'string' file not found
+    5 | #include <string>
+      |          ^~~~~~~~
+
+Analyzing: ./hc/messages.cpp
+./hc/messages.cpp:5:10: fatal error: 'fmt/format.h' file not found
+    5 | #include <fmt/format.h>
+      |          ^~~~~~~~~~~~~~
+
+Analyzing: ./hc/Compiler.cpp
+
+(hc/Compiler.h has correct #includes/fwd-decls)
+
+hc/Compiler.cpp should add these lines:
+#include "Options.h"           // for Options
+#include "modes.h"             // for Mode
+
+hc/Compiler.cpp should remove these lines:
+
+The full include-list for hc/Compiler.cpp:
+#include "Compiler.h"
+#include "AsciiDocCompiler.h"  // for AsciiDocCompiler
+#include "HelpCompiler.h"      // for HelpCompiler
+#include "Options.h"           // for Options
+#include "modes.h"             // for Mode
+---
+
+Analyzing: ./hc/Options.h
+error: invalid argument '-std=c++14' not allowed with 'C'
+./hc/Options.h:7:10: fatal error: 'string' file not found
+    7 | #include <string>
+      |          ^~~~~~~~
+
+Analyzing: ./hc/HelpSource.h
+error: invalid argument '-std=c++14' not allowed with 'C'
+./hc/HelpSource.h:7:10: fatal error: 'string' file not found
+    7 | #include <string>
+      |          ^~~~~~~~
+
+Analyzing: ./hc/HelpCompiler.cpp
+./hc/HelpCompiler.cpp:12:10: fatal error: 'config/fdio.h' file not found
+   12 | #include <config/fdio.h>
+      |          ^~~~~~~~~~~~~~~
+
+Analyzing: ./hc/tests/test_compiler.cpp
+./hc/tests/test_compiler.cpp:3:10: fatal error: 'Compiler.h' file not found
+    3 | #include <Compiler.h>
+      |          ^~~~~~~~~~~~
+
+Analyzing: ./hc/tests/test_help_source.cpp
+./hc/tests/test_help_source.cpp:3:10: fatal error: 'HelpSource.h' file not found
+    3 | #include <HelpSource.h>
+      |          ^~~~~~~~~~~~~~
+
+Analyzing: ./hc/tests/test_parse_options.cpp
+./hc/tests/test_parse_options.cpp:3:10: fatal error: 'Compiler.h' file not found
+    3 | #include <Compiler.h>
+      |          ^~~~~~~~~~~~
+
+Analyzing: ./hc/Compiler.h
+error: invalid argument '-std=c++14' not allowed with 'C'
+./hc/Compiler.h:5:10: fatal error: 'memory' file not found
+    5 | #include <memory>
+      |          ^~~~~~~~
+
+Analyzing: ./libid/math/cmplx.cpp
+./libid/math/cmplx.cpp:3:10: fatal error: 'math/cmplx.h' file not found
+    3 | #include "math/cmplx.h"
+      |          ^~~~~~~~~~~~~~
+
+Analyzing: ./libid/math/biginit.cpp
+./libid/math/biginit.cpp:10:10: fatal error: 'math/biginit.h' file not found
+   10 | #include "math/biginit.h"
+      |          ^~~~~~~~~~~~~~~~
+
+Analyzing: ./libid/math/bignumc.cpp
+./libid/math/bignumc.cpp:8:10: fatal error: 'math/big.h' file not found
+    8 | #include "math/big.h"
+      |          ^~~~~~~~~~~~
+
