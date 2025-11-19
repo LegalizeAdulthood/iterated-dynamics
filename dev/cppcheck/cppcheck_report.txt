@@ -1,132 +1,120 @@
-hc/AsciiDocCompiler.cpp:44:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/AsciiDocCompiler.cpp:45:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/AsciiDocCompiler.cpp:40:9: note: First condition
+hc/AsciiDocCompiler.cpp:41:9: note: First condition
     if (!g_errors)
         ^
-hc/AsciiDocCompiler.cpp:44:9: note: Second condition
+hc/AsciiDocCompiler.cpp:45:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1523:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1520:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1519:9: note: First condition
+hc/HelpCompiler.cpp:1516:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1523:9: note: Second condition
+hc/HelpCompiler.cpp:1520:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1527:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1524:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1523:9: note: First condition
+hc/HelpCompiler.cpp:1520:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1527:9: note: Second condition
+hc/HelpCompiler.cpp:1524:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1531:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1528:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1527:9: note: First condition
+hc/HelpCompiler.cpp:1524:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1531:9: note: Second condition
+hc/HelpCompiler.cpp:1528:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1535:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1532:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1531:9: note: First condition
+hc/HelpCompiler.cpp:1528:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1535:9: note: Second condition
+hc/HelpCompiler.cpp:1532:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1539:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1536:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1535:9: note: First condition
+hc/HelpCompiler.cpp:1532:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1539:9: note: Second condition
+hc/HelpCompiler.cpp:1536:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1543:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1540:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1539:9: note: First condition
+hc/HelpCompiler.cpp:1536:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1543:9: note: Second condition
+hc/HelpCompiler.cpp:1540:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1573:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1570:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1569:9: note: First condition
+hc/HelpCompiler.cpp:1566:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1573:9: note: Second condition
+hc/HelpCompiler.cpp:1570:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1229:15: style: Consider using std::accumulate algorithm instead of a raw loop. [useStlAlgorithm]
-        pages += t.num_page;
-              ^
-hc/HelpSource.cpp:258:13: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
-            {
-            ^
-libid/engine/cmdfiles.cpp:1337:36: style: Redundant condition: If 'EXPR == -32767', the comparison 'EXPR < 0' is always true. [redundantCondition]
+libid/engine/cmdfiles.cpp:1338:36: style: Redundant condition: If 'EXPR == -32767', the comparison 'EXPR < 0' is always true. [redundantCondition]
     if (cmd.num_val == NON_NUMERIC || cmd.num_val < 0 || cmd.num_val > 2000)
                                    ^
-libid/engine/cmdfiles.cpp:169:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:170:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3566:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3564:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:3978:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3976:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
-libid/engine/cmdfiles.cpp:3458:18: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
-            elem = BLACK * 16 + WHITE;
-                 ^
-libid/engine/cmdfiles.cpp:2168:13: style: struct member 'Inside::inside' is never used. [unusedStructMember]
+libid/engine/cmdfiles.cpp:2169:13: style: struct member 'Inside::inside' is never used. [unusedStructMember]
         int inside;
             ^
 libid/fractals/Ant.cpp:258:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
-libid/fractals/Cellular.cpp:109:14: style: Condition 't>16' is always false [knownConditionTrueFalse]
+libid/fractals/Cellular.cpp:111:14: style: Condition 't>16' is always false [knownConditionTrueFalse]
         if (t>16 || t <= 0)
              ^
-libid/fractals/Cellular.cpp:108:39: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
+libid/fractals/Cellular.cpp:110:39: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
         const S16 t = static_cast<S16>(buf.length());
                                       ^
-libid/fractals/Cellular.cpp:109:14: note: Condition 't>16' is always false
+libid/fractals/Cellular.cpp:111:14: note: Condition 't>16' is always false
         if (t>16 || t <= 0)
              ^
-libid/fractals/Cellular.cpp:109:23: style: Condition 't<=0' is always false [knownConditionTrueFalse]
+libid/fractals/Cellular.cpp:111:23: style: Condition 't<=0' is always false [knownConditionTrueFalse]
         if (t>16 || t <= 0)
                       ^
-libid/fractals/Cellular.cpp:108:39: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
+libid/fractals/Cellular.cpp:110:39: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
         const S16 t = static_cast<S16>(buf.length());
                                       ^
-libid/fractals/Cellular.cpp:109:23: note: Condition 't<=0' is always false
+libid/fractals/Cellular.cpp:111:23: note: Condition 't<=0' is always false
         if (t>16 || t <= 0)
                       ^
-libid/fractals/Cellular.cpp:146:32: style: Condition 't<0' is always false [knownConditionTrueFalse]
+libid/fractals/Cellular.cpp:145:32: style: Condition 't<0' is always false [knownConditionTrueFalse]
     if (m_rule_digits < t || t < 0)
                                ^
-libid/fractals/Cellular.cpp:145:35: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
+libid/fractals/Cellular.cpp:144:35: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
     const S16 t = static_cast<S16>(buf.length());
                                   ^
-libid/fractals/Cellular.cpp:146:32: note: Condition 't<0' is always false
+libid/fractals/Cellular.cpp:145:32: note: Condition 't<0' is always false
     if (m_rule_digits < t || t < 0)
                                ^
-libid/fractals/Cellular.cpp:115:18: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
-            elem = 0; // zero the array
-                 ^
 libid/fractals/Plasma.cpp:39:18: error: There is an unknown macro here somewhere. Configuration is required. If U16 is a macro then please configure it. [unknownMacro]
 static constexpr U16 (*GET_COLOR)(int x, int y){
                  ^
