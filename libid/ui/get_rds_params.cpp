@@ -9,8 +9,10 @@
 #include "ui/help.h"
 #include "ui/stereo.h"
 
+#include <algorithm>
 #include <array>
 #include <cstring>
+#include <iterator>
 #include <string>
 
 using namespace id::engine;
@@ -68,10 +70,7 @@ int get_rds_params()
             values[k++].type = 'y';
 
             values[k++].type = '*';
-            for (char &elem : rds6)
-            {
-                elem = ' ';
-            }
+            std::fill(std::begin(rds6), std::end(rds6), ' ');
             auto p = g_stereo_map_filename.find(SLASH_CH);
             if (p == std::string::npos ||
                     static_cast<int>(g_stereo_map_filename.length()) < sizeof(rds6)-2)
