@@ -1335,7 +1335,7 @@ static CmdArgFlags cmd_bailout_test(const Command &cmd)
 
 static CmdArgFlags cmd_bf_digits(const Command &cmd)
 {
-    if (cmd.num_val == NON_NUMERIC || cmd.num_val < 0 || cmd.num_val > 2000)
+    if (cmd.num_val < 0 || cmd.num_val > 2000)
     {
         return cmd.bad_arg();
     }
