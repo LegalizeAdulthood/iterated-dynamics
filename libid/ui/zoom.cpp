@@ -86,7 +86,6 @@ static void calc_corner(BigFloat target, BigFloat p1, const double p2, BigFloat 
 void display_box()
 {
     const int box_color = g_colors - 1 & g_box_color;
-    int rgb[3];
     for (int i = 0; i < g_box_count; i++)
     {
         g_box_values[i] = get_color(g_box_x[i]-g_logical_screen.x_offset, g_box_y[i]-g_logical_screen.y_offset);
