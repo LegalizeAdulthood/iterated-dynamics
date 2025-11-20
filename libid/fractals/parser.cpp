@@ -347,6 +347,10 @@ bool g_frm_uses_p5{};
 bool g_frm_uses_ismand{};
 char g_max_function{};
 
+static bool s_debug_trace_enabled{};
+static std::FILE* s_debug_trace_file{};
+static int s_debug_indent_level{};
+static long s_debug_operation_count{};
 static std::vector<JumpControl> s_jump_control;
 static int s_jump_index{};
 static std::array<Arg, 20> s_stack{};
@@ -665,6 +669,62 @@ static const char *parse_error_text(ParseError which)
     return MESSAGES[+which];
 }
 
+// Debug trace utility functions
+static void debug_trace_init()
+{
+    if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
+    {
+        s_debug_trace_enabled = true;
+        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "formula_trace.txt")};
+        s_debug_trace_file = std::fopen(path.string().c_str(), "w");
+        if (s_debug_trace_file)
+        {
+            fmt::print(s_debug_trace_file, "Formula Execution Trace\n");
+            fmt::print(s_debug_trace_file, "========================\n\n");
+        }
+    }
+}
+
+static void debug_trace_close()
+{
+    if (s_debug_trace_file)
+    {
+        std::fclose(s_debug_trace_file);
+        s_debug_trace_file = nullptr;
+    }
+    s_debug_trace_enabled = false;
+}
+
+static void debug_trace_operation(const char* op_name, const Arg* arg1 = nullptr, const Arg* arg2 = nullptr)
+{
+    if (!s_debug_trace_enabled || !s_debug_trace_file) return;
+
+    fmt::print(s_debug_trace_file, "{:04d}: {}{}\n", 
+               s_debug_operation_count++, 
+               std::string(s_debug_indent_level * 2, ' '), 
+               op_name);
+
+    if (arg1)
+    {
+        fmt::print(s_debug_trace_file, "      arg1: ({:.6f}, {:.6f})\n", 
+                   arg1->d.x, arg1->d.y);
+    }
+    if (arg2)
+    {
+        fmt::print(s_debug_trace_file, "      arg2: ({:.6f}, {:.6f})\n", 
+                   arg2->d.x, arg2->d.y);
+    }
+}
+
+static void debug_trace_stack_state()
+{
+    if (!s_debug_trace_enabled || !s_debug_trace_file) return;
+
+    fmt::print(s_debug_trace_file, "      stack top: ({:.6f}, {:.6f})\n", 
+               g_arg1->d.x, g_arg1->d.y);
+    std::fflush(s_debug_trace_file);
+}
+
 /* use the following when only float functions are implemented to
    get MP math and Integer math */
 
@@ -717,33 +777,40 @@ static void random_seed()
 
 static void d_stk_srand()
 {
+    debug_trace_operation("SRAND", g_arg1);
     s_rand_x = static_cast<long>(g_arg1->d.x * (1L << BIT_SHIFT));
     s_rand_y = static_cast<long>(g_arg1->d.y * (1L << BIT_SHIFT));
     set_random();
     d_random();
     g_arg1->d = s_vars[7].a.d;
+    debug_trace_stack_state();
 }
 
 static void d_stk_lod_dup()
 {
+    debug_trace_operation("LOD_DUP", s_load[g_load_index]);
     g_arg1 += 2;
     g_arg2 += 2;
     *g_arg1 = *s_load[g_load_index];
     *g_arg2 = *g_arg1;
     g_load_index += 2;
+    debug_trace_stack_state();
 }
 
 static void d_stk_lod_sqr()
 {
+    debug_trace_operation("LOD_SQR", s_load[g_load_index]);
     g_arg1++;
     g_arg2++;
     g_arg1->d.y = s_load[g_load_index]->d.x * s_load[g_load_index]->d.y * 2.0;
     g_arg1->d.x = s_load[g_load_index]->d.x * s_load[g_load_index]->d.x - s_load[g_load_index]->d.y * s_load[g_load_index]->d.y;
     g_load_index++;
+    debug_trace_stack_state();
 }
 
 static void d_stk_lod_sqr2()
 {
+    debug_trace_operation("LOD_SQR2", s_load[g_load_index]);
     g_arg1++;
     g_arg2++;
     LAST_SQR.d.x = s_load[g_load_index]->d.x * s_load[g_load_index]->d.x;
@@ -753,169 +820,236 @@ static void d_stk_lod_sqr2()
     LAST_SQR.d.x += LAST_SQR.d.y;
     LAST_SQR.d.y = 0;
     g_load_index++;
+    debug_trace_stack_state();
 }
 
 static void d_stk_lod_dbl()
 {
+    debug_trace_operation("LOD_DBL", s_load[g_load_index]);
     g_arg1++;
     g_arg2++;
     g_arg1->d.x = s_load[g_load_index]->d.x * 2.0;
     g_arg1->d.y = s_load[g_load_index]->d.y * 2.0;
     g_load_index++;
+    debug_trace_stack_state();
 }
 
 static void d_stk_sqr0()
 {
+    debug_trace_operation("SQR0", g_arg1);
     LAST_SQR.d.y = g_arg1->d.y * g_arg1->d.y; // use LastSqr as temp storage
     g_arg1->d.y = g_arg1->d.x * g_arg1->d.y * 2.0;
     g_arg1->d.x = g_arg1->d.x * g_arg1->d.x - LAST_SQR.d.y;
+    debug_trace_stack_state();
 }
 
 static void d_stk_sqr3()
 {
+    debug_trace_operation("SQR3", g_arg1);
     g_arg1->d.x = g_arg1->d.x * g_arg1->d.x;
+    debug_trace_stack_state();
 }
 
 void d_stk_abs()
 {
+    debug_trace_operation("ABS", g_arg1);
     g_arg1->d.x = std::abs(g_arg1->d.x);
     g_arg1->d.y = std::abs(g_arg1->d.y);
+    debug_trace_stack_state();
 }
 
 void d_stk_sqr()
 {
+    debug_trace_operation("SQR", g_arg1);
     LAST_SQR.d.x = g_arg1->d.x * g_arg1->d.x;
     LAST_SQR.d.y = g_arg1->d.y * g_arg1->d.y;
     g_arg1->d.y = g_arg1->d.x * g_arg1->d.y * 2.0;
     g_arg1->d.x = LAST_SQR.d.x - LAST_SQR.d.y;
     LAST_SQR.d.x += LAST_SQR.d.y;
     LAST_SQR.d.y = 0;
+    debug_trace_stack_state();
 }
 
 static void d_stk_add()
 {
+    debug_trace_operation("ADD", g_arg1, g_arg2);
     g_arg2->d.x += g_arg1->d.x;
     g_arg2->d.y += g_arg1->d.y;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_sub()
 {
+    debug_trace_operation("SUB", g_arg1, g_arg2);
     g_arg2->d.x -= g_arg1->d.x;
     g_arg2->d.y -= g_arg1->d.y;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 void d_stk_conj()
 {
+    debug_trace_operation("CONJ", g_arg1);
     g_arg1->d.y = -g_arg1->d.y;
+    debug_trace_stack_state();
 }
 
 void d_stk_floor()
 {
+    debug_trace_operation("FLOOR", g_arg1);
     g_arg1->d.x = floor(g_arg1->d.x);
     g_arg1->d.y = floor(g_arg1->d.y);
+    debug_trace_stack_state();
 }
 
 void d_stk_ceil()
 {
+    debug_trace_operation("CEIL", g_arg1);
     g_arg1->d.x = ceil(g_arg1->d.x);
     g_arg1->d.y = ceil(g_arg1->d.y);
+    debug_trace_stack_state();
 }
 
 void d_stk_trunc()
 {
+    debug_trace_operation("TRUNC", g_arg1);
     g_arg1->d.x = static_cast<int>(g_arg1->d.x);
     g_arg1->d.y = static_cast<int>(g_arg1->d.y);
+    debug_trace_stack_state();
 }
 
 void d_stk_round()
 {
+    debug_trace_operation("ROUND", g_arg1);
     g_arg1->d.x = floor(g_arg1->d.x+.5);
     g_arg1->d.y = floor(g_arg1->d.y+.5);
+    debug_trace_stack_state();
 }
 
 void d_stk_zero()
 {
+    debug_trace_operation("ZERO");
     g_arg1->d.x = 0.0;
-    g_arg1->d.y = g_arg1->d.x;
+    g_arg1->d.y = 0.0;
+    debug_trace_stack_state();
 }
 
 void d_stk_one()
 {
+    debug_trace_operation("ONE");
     g_arg1->d.x = 1.0;
     g_arg1->d.y = 0.0;
+    debug_trace_stack_state();
 }
 
 static void d_stk_real()
 {
+    debug_trace_operation("REAL", g_arg1);
     g_arg1->d.y = 0.0;
+    debug_trace_stack_state();
 }
 
 static void d_stk_imag()
 {
+    debug_trace_operation("IMAG", g_arg1);
     g_arg1->d.x = g_arg1->d.y;
     g_arg1->d.y = 0.0;
+    debug_trace_stack_state();
 }
 
 static void d_stk_neg()
 {
+    debug_trace_operation("NEG", g_arg1);
     g_arg1->d.x = -g_arg1->d.x;
     g_arg1->d.y = -g_arg1->d.y;
+    debug_trace_stack_state();
 }
 
 void d_stk_mul()
 {
+    debug_trace_operation("MUL", g_arg1, g_arg2);
     fpu_cmplx_mul(&g_arg2->d, &g_arg1->d, &g_arg2->d);
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_div()
 {
+    debug_trace_operation("DIV", g_arg1, g_arg2);
     fpu_cmplx_div(&g_arg2->d, &g_arg1->d, &g_arg2->d);
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_mod()
 {
+    debug_trace_operation("MOD", g_arg1);
     g_arg1->d.x = g_arg1->d.x * g_arg1->d.x + g_arg1->d.y * g_arg1->d.y;
     g_arg1->d.y = 0.0;
+    debug_trace_stack_state();
 }
 
 static void stk_sto()
 {
+    debug_trace_operation("STO", g_arg1);
     assert(s_store[g_store_index] != nullptr);
     *s_store[g_store_index++] = *g_arg1;
+    debug_trace_stack_state();
 }
 
 static void stk_lod()
 {
+    if (s_debug_trace_enabled && s_debug_trace_file)
+    {
+        // Try to identify which variable we're loading
+        const char* var_name = "unknown";
+        if (g_load_index < static_cast<int>(s_vars.size()))
+        {
+            for (size_t i = 0; i < VARIABLES.size(); ++i)
+            {
+                if (&s_vars[i].a == s_load[g_load_index])
+                {
+                    var_name = VARIABLES[i];
+                    break;
+                }
+            }
+        }
+        fmt::print(s_debug_trace_file, "{:04d}: {}LOAD {}\n", //
+            s_debug_operation_count++, std::string(s_debug_indent_level * 2, ' '), var_name);
+    }
     g_arg1++;
     g_arg2++;
     *g_arg1 = *s_load[g_load_index++];
+    debug_trace_stack_state();
 }
 
 static void stk_clr()
 {
+    debug_trace_operation("CLR", g_arg1);
     s_stack[0] = *g_arg1;
     g_arg1 = s_stack.data();
     g_arg2 = s_stack.data();
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 void d_stk_flip()
 {
+    debug_trace_operation("FLIP", g_arg1);
     const double t = g_arg1->d.x;
     g_arg1->d.x = g_arg1->d.y;
     g_arg1->d.y = t;
+    debug_trace_stack_state();
 }
 
 void d_stk_sin()
 {
+    debug_trace_operation("SIN", g_arg1);
     double sin_x;
     double cos_x;
     double sinh_y;
@@ -925,6 +1059,7 @@ void d_stk_sin()
     sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
     g_arg1->d.x = sin_x*cosh_y;
     g_arg1->d.y = cos_x*sinh_y;
+    debug_trace_stack_state();
 }
 
 /* The following functions are supported by both the parser and for fn
@@ -932,6 +1067,7 @@ void d_stk_sin()
 */
 void d_stk_tan()
 {
+    debug_trace_operation("TAN", g_arg1);
     double sin_x;
     double cos_x;
     double sinh_y;
@@ -947,10 +1083,12 @@ void d_stk_tan()
     }
     g_arg1->d.x = sin_x/denom;
     g_arg1->d.y = sinh_y/denom;
+    debug_trace_stack_state();
 }
 
 void d_stk_tanh()
 {
+    debug_trace_operation("TANH", g_arg1);
     double sin_y;
     double cos_y;
     double sinh_x;
@@ -966,10 +1104,12 @@ void d_stk_tanh()
     }
     g_arg1->d.x = sinh_x/denom;
     g_arg1->d.y = sin_y/denom;
+    debug_trace_stack_state();
 }
 
 void d_stk_cotan()
 {
+    debug_trace_operation("COTAN", g_arg1);
     double sin_x;
     double cos_x;
     double sinh_y;
@@ -981,14 +1121,17 @@ void d_stk_cotan()
     const double denom = cosh_y - cos_x;
     if (check_denom(denom))
     {
+        debug_trace_stack_state();
         return;
     }
     g_arg1->d.x = sin_x/denom;
     g_arg1->d.y = -sinh_y/denom;
+    debug_trace_stack_state();
 }
 
 void d_stk_cotanh()
 {
+    debug_trace_operation("COTANH", g_arg1);
     double sin_y;
     double cos_y;
     double sinh_x;
@@ -1000,10 +1143,12 @@ void d_stk_cotanh()
     const double denom = cosh_x - cos_y;
     if (check_denom(denom))
     {
+        debug_trace_stack_state();
         return;
     }
     g_arg1->d.x = sinh_x/denom;
     g_arg1->d.y = -sin_y/denom;
+    debug_trace_stack_state();
 }
 
 /* The following functions are not directly used by the parser - support
@@ -1015,22 +1160,28 @@ void d_stk_cotanh()
 
 void d_stk_recip()
 {
+    debug_trace_operation("RECIP", g_arg1);
     const double mod = g_arg1->d.x * g_arg1->d.x + g_arg1->d.y * g_arg1->d.y;
     if (check_denom(mod))
     {
+        debug_trace_stack_state();
         return;
     }
     g_arg1->d.x =  g_arg1->d.x/mod;
     g_arg1->d.y = -g_arg1->d.y/mod;
+    debug_trace_stack_state();
 }
 
 void stk_ident()
 {
+    debug_trace_operation("IDENT", g_arg1);
     // do nothing - the function Z
+    debug_trace_stack_state();
 }
 
 void d_stk_sinh()
 {
+    debug_trace_operation("SINH", g_arg1);
     double sin_y;
     double cos_y;
     double sinh_x;
@@ -1040,10 +1191,12 @@ void d_stk_sinh()
     sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
     g_arg1->d.x = sinh_x*cos_y;
     g_arg1->d.y = cosh_x*sin_y;
+    debug_trace_stack_state();
 }
 
 void d_stk_cos()
 {
+    debug_trace_operation("COS", g_arg1);
     double sin_x;
     double cos_x;
     double sinh_y;
@@ -1053,18 +1206,22 @@ void d_stk_cos()
     sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
     g_arg1->d.x = cos_x*cosh_y;
     g_arg1->d.y = -sin_x*sinh_y;
+    debug_trace_stack_state();
 }
 
 // Bogus version of cos, to replicate bug which was in regular cos till v16:
 
 void d_stk_cosxx()
 {
+    debug_trace_operation("COSXX", g_arg1);
     d_stk_cos();
     g_arg1->d.y = -g_arg1->d.y;
+    debug_trace_stack_state();
 }
 
 void d_stk_cosh()
 {
+    debug_trace_operation("COSH", g_arg1);
     double sin_y;
     double cos_y;
     double sinh_x;
@@ -1074,128 +1231,167 @@ void d_stk_cosh()
     sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
     g_arg1->d.x = cosh_x*cos_y;
     g_arg1->d.y = sinh_x*sin_y;
+    debug_trace_stack_state();
 }
 
 void d_stk_asin()
 {
+    debug_trace_operation("ASIN", g_arg1);
     asin_z(g_arg1->d, &g_arg1->d);
+    debug_trace_stack_state();
 }
 
 void d_stk_asinh()
 {
+    debug_trace_operation("ASINH", g_arg1);
     asinh_z(g_arg1->d, &g_arg1->d);
+    debug_trace_stack_state();
 }
 
 void d_stk_acos()
 {
+    debug_trace_operation("ACOS", g_arg1);
     acos_z(g_arg1->d, &g_arg1->d);
+    debug_trace_stack_state();
 }
 
 void d_stk_acosh()
 {
+    debug_trace_operation("ACOSH", g_arg1);
     acosh_z(g_arg1->d, &g_arg1->d);
+    debug_trace_stack_state();
 }
 
 void d_stk_atan()
 {
+    debug_trace_operation("ATAN", g_arg1);
     atan_z(g_arg1->d, &g_arg1->d);
+    debug_trace_stack_state();
 }
 
 void d_stk_atanh()
 {
+    debug_trace_operation("ATANH", g_arg1);
     atanh_z(g_arg1->d, &g_arg1->d);
+    debug_trace_stack_state();
 }
 
 void d_stk_sqrt()
 {
+    debug_trace_operation("SQRT", g_arg1);
     g_arg1->d = complex_sqrt_float(g_arg1->d.x, g_arg1->d.y);
+    debug_trace_stack_state();
 }
 
 void d_stk_cabs()
 {
+    debug_trace_operation("CABS", g_arg1);
     g_arg1->d.x = std::sqrt(sqr(g_arg1->d.x)+sqr(g_arg1->d.y));
     g_arg1->d.y = 0.0;
+    debug_trace_stack_state();
 }
 
 static void d_stk_lt()
 {
+    debug_trace_operation("LT", g_arg1, g_arg2);
     g_arg2->d.x = static_cast<double>(g_arg2->d.x < g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_gt()
 {
+    debug_trace_operation("GT", g_arg1, g_arg2);
     g_arg2->d.x = static_cast<double>(g_arg2->d.x > g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_lte()
 {
+    debug_trace_operation("LTE", g_arg1, g_arg2);
     g_arg2->d.x = static_cast<double>(g_arg2->d.x <= g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_gte()
 {
+    debug_trace_operation("GTE", g_arg1, g_arg2);
     g_arg2->d.x = static_cast<double>(g_arg2->d.x >= g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_eq()
 {
+    debug_trace_operation("EQ", g_arg1, g_arg2);
     g_arg2->d.x = static_cast<double>(g_arg2->d.x == g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_ne()
 {
+    debug_trace_operation("NE", g_arg1, g_arg2);
     g_arg2->d.x = static_cast<double>(g_arg2->d.x != g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_or()
 {
+    debug_trace_operation("OR", g_arg1, g_arg2);
     g_arg2->d.x = static_cast<double>(g_arg2->d.x || g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void d_stk_and()
 {
+    debug_trace_operation("AND", g_arg1, g_arg2);
     g_arg2->d.x = static_cast<double>(g_arg2->d.x && g_arg1->d.x);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 void d_stk_log()
 {
+    debug_trace_operation("LOG", g_arg1);
     fpu_cmplx_log(&g_arg1->d, &g_arg1->d);
+    debug_trace_stack_state();
 }
 
 void d_stk_exp()
 {
+    debug_trace_operation("EXP", g_arg1);
     fpu_cmplx_exp(&g_arg1->d, &g_arg1->d);
+    debug_trace_stack_state();
 }
 
 void d_stk_pwr()
 {
+    debug_trace_operation("PWR", g_arg1, g_arg2);
     g_arg2->d = complex_power(g_arg2->d, g_arg1->d);
     g_arg1--;
     g_arg2--;
+    debug_trace_stack_state();
 }
 
 static void end_init()
@@ -1206,6 +1402,14 @@ static void end_init()
 
 static void stk_jump()
 {
+    if (s_debug_trace_enabled && s_debug_trace_file)
+    {
+        fmt::print(s_debug_trace_file, "{:04d}: {}JUMP\n", s_debug_operation_count++,
+            std::string(s_debug_indent_level * 2, ' '));
+        fmt::print(s_debug_trace_file, "      from op_ptr: {} to: {}\n", s_op_ptr,
+            s_jump_control[s_jump_index].ptrs.jump_op_ptr);
+    }
+
     s_op_ptr =  s_jump_control[s_jump_index].ptrs.jump_op_ptr;
     g_load_index = s_jump_control[s_jump_index].ptrs.jump_lod_ptr;
     g_store_index = s_jump_control[s_jump_index].ptrs.jump_sto_ptr;
@@ -1214,7 +1418,20 @@ static void stk_jump()
 
 static void d_stk_jump_on_false()
 {
-    if (g_arg1->d.x == 0)
+    const bool will_jump = g_arg1->d.x == 0.0;
+
+    if (s_debug_trace_enabled && s_debug_trace_file)
+    {
+        fmt::print(
+            s_debug_trace_file, "      condition: {:.6f}, will jump: {}\n", g_arg1->d.x, will_jump ? "YES" : "NO");
+        if (will_jump)
+        {
+            fmt::print(
+                s_debug_trace_file, "      jumping to index: {}\n", s_jump_control[s_jump_index].dest_jump_index);
+        }
+    }
+
+    if (will_jump)
     {
         stk_jump();
     }
@@ -1226,7 +1443,20 @@ static void d_stk_jump_on_false()
 
 static void d_stk_jump_on_true()
 {
-    if (g_arg1->d.x)
+    const bool will_jump = g_arg1->d.x != 0.0;
+
+    if (s_debug_trace_enabled && s_debug_trace_file)
+    {
+        fmt::print(
+            s_debug_trace_file, "      condition: {:.6f}, will jump: {}\n", g_arg1->d.x, will_jump ? "YES" : "NO");
+        if (will_jump)
+        {
+            fmt::print(
+                s_debug_trace_file, "      jumping to index: {}\n", s_jump_control[s_jump_index].dest_jump_index);
+        }
+    }
+
+    if (will_jump)
     {
         stk_jump();
     }
@@ -1329,8 +1559,8 @@ static ConstArg *is_const(const char *str, const int len)
     }
     s_vars[g_variable_index].s = str;
     s_vars[g_variable_index].len = len;
+    s_vars[g_variable_index].a.d.x = 0.0;
     s_vars[g_variable_index].a.d.y = 0.0;
-    s_vars[g_variable_index].a.d.x = s_vars[g_variable_index].a.d.y;
 
     if (std::isdigit(str[0])
         || (str[0] == '-' && (std::isdigit(str[1]) || str[1] == '.'))
@@ -1822,6 +2052,14 @@ int formula_orbit()
         return 1;
     }
 
+    if (s_debug_trace_enabled && s_debug_trace_file)
+    {
+        fmt::print(s_debug_trace_file, "\n=== Orbit Calculation ===\n");
+        fmt::print(s_debug_trace_file, "Input z: ({:.6f}, {:.6f})\n", 
+                   g_old_z.x, g_old_z.y);
+        s_debug_operation_count = 0;
+    }
+
     g_load_index = s_init_load_ptr;
     g_store_index = s_init_store_ptr;
     s_op_ptr = s_init_op_ptr;
@@ -1843,6 +2081,15 @@ int formula_orbit()
 
     g_new_z = s_vars[3].a.d;
     g_old_z = g_new_z;
+
+    if (s_debug_trace_enabled && s_debug_trace_file)
+    {
+        fmt::print(s_debug_trace_file, "Output z: ({:.6f}, {:.6f})\n", g_new_z.x, g_new_z.y);
+        fmt::print(s_debug_trace_file, "Bailout test: {} (result: {})\n", g_arg1->d.x,
+            g_arg1->d.x == 0.0 ? "continue" : "bailout");
+        std::fflush(s_debug_trace_file);
+    }
+
     return g_arg1->d.x == 0.0;
 }
 
@@ -1852,6 +2099,15 @@ int formula_per_pixel()
     {
         return 1;
     }
+
+    debug_trace_init(); // Initialize tracing
+    if (s_debug_trace_enabled && s_debug_trace_file)
+    {
+        fmt::print(s_debug_trace_file, "\n=== Per-Pixel Initialization ===\n");
+        fmt::print(s_debug_trace_file, "Pixel: ({}, {})\n", g_col, g_row);
+        fmt::print(s_debug_trace_file, "Pixel coords: ({:.6f}, {:.6f})\n", dx_pixel(), dy_pixel());
+    }
+
     g_overflow = false;
     s_jump_index = 0;
     s_op_ptr = 0;
@@ -1889,6 +2145,11 @@ int formula_per_pixel()
     if (g_last_init_op)
     {
         g_last_init_op = s_op_count;
+    }
+    if (s_debug_trace_enabled && s_debug_trace_file)
+    {
+        fmt::print(s_debug_trace_file, "\nInitialization operations:\n");
+        s_debug_operation_count = 0;
     }
     while (s_op_ptr < g_last_init_op)
     {
@@ -3045,7 +3306,12 @@ bool run_formula(const std::string &name, const bool report_bad_sym)
 
 bool formula_per_image()
 {
-    return !run_formula(g_formula_name, false); // run_formula() returns true for failure
+    const bool result = !run_formula(g_formula_name, false);
+    if (!result)
+    {
+        debug_trace_close();
+    }
+    return result; // run_formula() returns true for failure
 }
 
 void init_misc()

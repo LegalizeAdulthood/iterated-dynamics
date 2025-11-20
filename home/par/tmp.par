@@ -1,0 +1,53 @@
+Sun_in_the_Jungle  { ; time=0:00:26.86-SF5 on P4-2000
+  reset=1960 type=formula formulafile=jim.frm
+  formulaname=TowerMinExp02 passes=1 center-mag=0.14\
+  3673/0/2.532 params=2/0/0/0/0/0 float=y maxiter=400
+  inside=bof61 logmap=yes symmetry=xaxis
+  periodicity=10
+  colors=000oIg000B0G3F2NMD63KQM9Vv4_lPFqdTdW0aotjEp\
+  eGm`JiWLF0lM7eTE__LTfgMfaNfXNcgedaZeXTwbaqZXkVSPxl\
+  beVcaTdZReVPjLFxCZrIVlNRzz2uq7phDk_IMOO2YH8ZxHXnQV\
+  eZTWohTiw0pUxmTnkTenCZq7bFMLKKGPIBUG5ZE0iSVfUTcXR`\
+  ZPLdZ5jhFnUOrGReHVSIYFJZfHbZKThLOh4sKynNljQ_n_jkXb\
+  hUVbBJ278EFoLIhTM`_PUSrmXida`WXgr_cja_bdWVr6aoCYlH\
+  UiNQWOMzaZpXTJwbv3cpCYkKSEOMLPMTQN_RNtxl7UcJTYVSSy\
+  O7tPBoQFjRJaeEdZJ059FDETLJbamdYdeVWhV9gTGyLRoPPn4h\
+  AAARJHI_KVWM81iQFYtgDpcGm_IiWLLZMTWN_UNaWAmngKRYQR\
+  VWSSaSPIVvRUjZTZfoTfgRf_Pp0zlAliJ_xF13un5Ofn9olEhj\
+  J`hOUsUoyrXIUJEmDTbIljLjcMhYN4NiOQYyWFrUIlTLwPVsQT\
+  nRRjSPFl_TaTRKWVMUZORbQPX0A`AFcJJaE`EKUTOQYKibOYJR\
+  utDToIRjNPO2NYFNgaUfYRfVP53qOGa3nOHfNUZNSJHWLJ_OKc\
+  QMMoQTgP__ORrIZdL9uTImRQfQZZOa9LcGMeMNX37aGFzRkThr\
+  s77lIFBZTRVQyhWrbTlXQuXJmULV95`JEYh3U3lZCcbKVRjLXc\
+  MaYNEQuTRcWrZqyEkhJHdnzz0
+}
+
+frm:TowerMinExp02 {; Jim Muth
+  z=pixel, c=p2+(p3*pixel):
+  z=z^(-z^(z+p1))+c,
+  |z| <= 100
+}
+
+Egg                { ; FN*FN   SINH/SQR                     Richard Hughes
+   reset type=fn*fn function=sinh/sqr
+   corners=-0.0067631/0.0187092/1.991193/2.0105618 float=y maxiter=256
+   inside=0 outside=real logmap=yes
+   colors=000ssEssC<20>sECsCCqCC<21>ACCCCC<21>sCs<20>ECsCCsCEs<19>CqsCssCsq<8>C\
+   s_CsYECE<20>sCs<20>ECsCCsCEs<19>CqsCssCsq<19>CsECsCEsE<19>qsqsssssq<18>ssG
+}
+
+EvilFrog          { ; Kermit with rabies                   Wesley Loewer
+   reset type=frothybasin passes=1
+   corners=0.1987794025371462/0.1987794025306378/-1.287290394040766/-1.2872\
+   90394029171/0.1987794025292465/-1.287290394030193 params=6/1 float=y
+   maxiter=100
+   colors=000z00<82>M00z0z<40>M0M0z0<40>0M000z<40>00Mzz0<40>MM0000000000
+}
+
+mandala            { ; Sqr(1/FN)  IDENT                     Richard Hughes
+   reset type=sqr(1/fn) function=ident  ; TW changed - cotan was broken
+   corners=-1.984573/1.98143/-1.486908/1.487839 maxiter=256 inside=0
+   outside=real
+   colors=000ztn<49>zV1zU0zU0zT0<28>z10z00z00y00<30>c00b11a11`22_22<23>GEEFFFFF\
+   FFFF<29>x11z00z10<29>zx0zz0zz1<29>zzxzzzzzz<10>zto
+}
