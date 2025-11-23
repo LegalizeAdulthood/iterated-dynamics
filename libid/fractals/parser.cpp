@@ -643,31 +643,32 @@ static void debug_trace_close()
 
 static void debug_trace_operation(const char* op_name, const Arg* arg1 = nullptr, const Arg* arg2 = nullptr)
 {
-    if (!s_debug_trace_enabled || !s_debug_trace_file) return;
+    if (!s_debug_trace_enabled || !s_debug_trace_file)
+    {
+        return;
+    }
 
-    fmt::print(s_debug_trace_file, "{:04d}: {}{}\n", 
-               s_debug_operation_count++, 
-               std::string(s_debug_indent_level * 2, ' '), 
-               op_name);
+    fmt::print(s_debug_trace_file, "{:04d}: {}{}\n", s_debug_operation_count++,
+        std::string(s_debug_indent_level * 2, ' '), op_name);
 
     if (arg1)
     {
-        fmt::print(s_debug_trace_file, "      arg1: ({:.6f}, {:.6f})\n", 
-                   arg1->d.x, arg1->d.y);
+        fmt::print(s_debug_trace_file, "      arg1: ({:.6f}, {:.6f})\n", arg1->d.x, arg1->d.y);
     }
     if (arg2)
     {
-        fmt::print(s_debug_trace_file, "      arg2: ({:.6f}, {:.6f})\n", 
-                   arg2->d.x, arg2->d.y);
+        fmt::print(s_debug_trace_file, "      arg2: ({:.6f}, {:.6f})\n", arg2->d.x, arg2->d.y);
     }
 }
 
 static void debug_trace_stack_state()
 {
-    if (!s_debug_trace_enabled || !s_debug_trace_file) return;
+    if (!s_debug_trace_enabled || !s_debug_trace_file)
+    {
+        return;
+    }
 
-    fmt::print(s_debug_trace_file, "      stack top: ({:.6f}, {:.6f})\n", 
-               g_arg1->d.x, g_arg1->d.y);
+    fmt::print(s_debug_trace_file, "      stack top: ({:.6f}, {:.6f})\n", g_arg1->d.x, g_arg1->d.y);
     std::fflush(s_debug_trace_file);
 }
 
