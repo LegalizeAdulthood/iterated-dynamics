@@ -187,7 +187,9 @@ int g_total_passes{};                             //
 int g_current_row{};                              //
 int g_current_column{};                           //
 bool g_three_pass{};                              // for solid_guess & its subroutines
+ColorMethod g_inside_method{};                    // inside coloring method
 int g_inside_color{};                             // inside color: 1=blue
+ColorMethod g_outside_method{};                   // outside coloring method
 int g_outside_color{};                            // outside color
 int g_periodicity_check{};                        //
 int g_periodicity_next_saved_incr{};              // For periodicity testing, only in standard_fractal()

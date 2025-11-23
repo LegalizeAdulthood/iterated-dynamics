@@ -202,7 +202,9 @@ extern math::Point2i         g_begin_pt;
 extern int                   g_work_pass;
 extern int                   g_work_symmetry;
 
+extern ColorMethod           g_inside_method;
 extern int                   g_inside_color;
+extern ColorMethod           g_outside_method;
 extern int                   g_outside_color;
 
 int calc_fract();
