@@ -97,15 +97,6 @@ inline void cmplx_pwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     out = complex_power(arg1, arg2);
 }
-inline void cmplx_mult1(const DComplex &arg1, const DComplex &arg2, DComplex &out)
-{
-    g_arg2->d = arg1;
-    g_arg1->d = arg2;
-    fractals::d_stk_mul();
-    g_arg1++;
-    g_arg2++;
-    out = g_arg2->d;
-}
 inline void cmplx_mult(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
     DComplex tmp;
