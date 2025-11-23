@@ -70,21 +70,15 @@ hc/HelpCompiler.cpp:1566:9: note: First condition
 hc/HelpCompiler.cpp:1570:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/cmdfiles.cpp:1338:36: style: Redundant condition: If 'EXPR == -32767', the comparison 'EXPR < 0' is always true. [redundantCondition]
-    if (cmd.num_val == NON_NUMERIC || cmd.num_val < 0 || cmd.num_val > 2000)
-                                   ^
 libid/engine/cmdfiles.cpp:170:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3564:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3570:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:3976:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3982:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
-libid/engine/cmdfiles.cpp:2169:13: style: struct member 'Inside::inside' is never used. [unusedStructMember]
-        int inside;
-            ^
 libid/fractals/Ant.cpp:258:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
@@ -133,16 +127,16 @@ libid/fractals/lyapunov.cpp:131:19: portability: Shifting signed 32-bit value by
 libid/fractals/lyapunov.cpp:131:19: error: Signed integer overflow for expression '1<<t'. [integerOverflow]
         if (i & 1 << t)
                   ^
-libid/fractals/parser.cpp:1462:34: style: Array index 's_next_op' is used before limits check. [arrayIndexThenCheck]
+libid/fractals/parser.cpp:1639:34: style: Array index 's_next_op' is used before limits check. [arrayIndexThenCheck]
     while (s_op[this_op].p > s_op[s_next_op].p && s_next_op < g_operation_index)
                                  ^
-libid/fractals/parser.cpp:1603:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+libid/fractals/parser.cpp:1727:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
         if (!text[s_n])
             ^
-libid/fractals/parser.cpp:1601:23: note: outer condition: text[s_n]
+libid/fractals/parser.cpp:1725:23: note: outer condition: text[s_n]
     for (s_n = 0; text[s_n]; s_n++)
                       ^
-libid/fractals/parser.cpp:1603:13: note: opposite inner condition: !text[s_n]
+libid/fractals/parser.cpp:1727:13: note: opposite inner condition: !text[s_n]
         if (!text[s_n])
             ^
 libid/geometry/line3d.cpp:1891:19: style: Condition 'path.empty()' is always false [knownConditionTrueFalse]
@@ -1627,13 +1621,13 @@ libid/io/library.cpp:104:9: style: Consider using std::any_of algorithm instead 
 libid/io/library.cpp:112:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/loadfile.cpp:1755:19: style: Variable 'g_bad_outside' is reassigned a value before the old one has been used. [redundantAssignment]
+libid/io/loadfile.cpp:1764:19: style: Variable 'g_bad_outside' is reassigned a value before the old one has been used. [redundantAssignment]
     g_bad_outside = false;
                   ^
-libid/io/loadfile.cpp:1746:19: note: g_bad_outside is assigned
+libid/io/loadfile.cpp:1755:19: note: g_bad_outside is assigned
     g_bad_outside = g_file_version <= 1960                                                 //
                   ^
-libid/io/loadfile.cpp:1755:19: note: g_bad_outside is overwritten
+libid/io/loadfile.cpp:1764:19: note: g_bad_outside is overwritten
     g_bad_outside = false;
                   ^
 libid/io/make_mig.cpp:330:25: style: The if condition is the same as the previous if condition [duplicateCondition]
@@ -1666,13 +1660,13 @@ libid/ui/editpal.cpp:2214:23: note: Calling function 'set_curr', 1st argument '-
 libid/ui/editpal.cpp:1639:22: note: Negative array index
     else if (curr == m_curr[which] || curr < 0)
                      ^
-libid/ui/evolve.cpp:785:27: style: The comparison 'old_variations > 0' is always false. [knownConditionTrueFalse]
+libid/ui/evolve.cpp:791:27: style: The comparison 'old_variations > 0' is always false. [knownConditionTrueFalse]
         || old_variations > 0)
                           ^
-libid/ui/evolve.cpp:636:26: note: 'old_variations' is assigned value '0' here.
+libid/ui/evolve.cpp:642:26: note: 'old_variations' is assigned value '0' here.
     int old_variations = 0;
                          ^
-libid/ui/evolve.cpp:785:27: note: The comparison 'old_variations > 0' is always false.
+libid/ui/evolve.cpp:791:27: note: The comparison 'old_variations > 0' is always false.
         || old_variations > 0)
                           ^
 libid/ui/file_get_window.cpp:847:18: style: Consider using std::replace_if algorithm instead of a raw loop. [useStlAlgorithm]
@@ -1687,9 +1681,6 @@ libid/ui/get_fract_type.cpp:613:40: warning: Char literal compared with pointer 
 libid/ui/get_fract_type.cpp:618:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
-libid/ui/get_rds_params.cpp:73:22: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
-                elem = ' ';
-                     ^
 libid/ui/make_batch_file.cpp:1444:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
@@ -1732,9 +1723,6 @@ libid/ui/stereo.cpp:255:16: note: Variable created here.
 libid/ui/stereo.cpp:264:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data->save_dac = save_dac_box;
     ^
-libid/ui/zoom.cpp:89:9: style: Unused variable: rgb [unusedVariable]
-    int rgb[3];
-        ^
 tests/libid/engine/test_cmdfiles.cpp:831:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
