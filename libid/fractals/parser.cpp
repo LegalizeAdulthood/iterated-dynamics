@@ -1301,7 +1301,7 @@ static void d_stk_ne()
 static void d_stk_or()
 {
     debug_trace_operation("OR", g_arg1, g_arg2);
-    g_arg2->d.x = static_cast<double>(g_arg2->d.x || g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x != 0.0 || g_arg1->d.x != 0.0);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
@@ -1311,7 +1311,7 @@ static void d_stk_or()
 static void d_stk_and()
 {
     debug_trace_operation("AND", g_arg1, g_arg2);
-    g_arg2->d.x = static_cast<double>(g_arg2->d.x && g_arg1->d.x);
+    g_arg2->d.x = static_cast<double>(g_arg2->d.x != 0.0 && g_arg1->d.x != 0.0);
     g_arg2->d.y = 0.0;
     g_arg1--;
     g_arg2--;
