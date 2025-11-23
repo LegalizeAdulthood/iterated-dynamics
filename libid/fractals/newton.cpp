@@ -147,7 +147,7 @@ bool complex_newton_per_image()
         s_c_root.y = g_params[3];
         s_c_degree.x = g_params[0];
         s_c_degree.y = g_params[1];
-        fpu_cmplx_log(s_c_root, s_base_log);
+        cmplx_log(s_c_root, s_base_log);
         s_two_pi = std::asin(1.0) * 4;
     }
     return true;
@@ -210,7 +210,7 @@ int complex_basin_orbit()
         {
             g_old_z.y = 0.0;
         }
-        fpu_cmplx_log(g_old_z, s_temp);
+        cmplx_log(g_old_z, s_temp);
         fpu_cmplx_mul(s_temp, s_c_degree, g_tmp_z);
         const double mod = g_tmp_z.y/s_two_pi;
         g_color_iter = static_cast<long>(mod);

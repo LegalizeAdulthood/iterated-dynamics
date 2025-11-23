@@ -78,16 +78,6 @@ inline void cmplx_cosh(const DComplex &arg, DComplex &out)
     fractals::d_stk_cosh();
     out = g_arg1->d;
 }
-inline void cmplx_log(const DComplex &arg, DComplex &out)
-{
-    g_arg1->d = arg;
-    fractals::d_stk_log();
-    out = g_arg1->d;
-}
-inline void cmplx_exp(const DComplex &arg, DComplex &out)
-{
-    fpu_cmplx_exp(arg, out);
-}
 inline void cmplx_sqr(const DComplex &arg, DComplex &out)
 {
     out.x = sqr(arg.x) - sqr(arg.y);

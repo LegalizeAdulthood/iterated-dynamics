@@ -198,10 +198,10 @@ int divide_brot5_orbit() /* from formula by Jim Muth */
     tmp_sqr.y = g_old_z.x * g_old_z.y * 2.0;
 
     /* z^(a) = e^(a * log(z))*/
-    fpu_cmplx_log(g_old_z, tmp1);
+    cmplx_log(g_old_z, tmp1);
     tmp1.x *= g_c_exponent;
     tmp1.y *= g_c_exponent;
-    fpu_cmplx_exp(tmp1, tmp2);
+    cmplx_exp(tmp1, tmp2);
     /* then add b */
     tmp2.x += g_b_const;
     /* sqr(z)/(z^(a)+b) */

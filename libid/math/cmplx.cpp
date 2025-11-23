@@ -42,9 +42,9 @@ DComplex complex_power(const DComplex xx, const DComplex yy)
         return z;
     }
 
-    fpu_cmplx_log(xx, c_log);
+    cmplx_log(xx, c_log);
     fpu_cmplx_mul(c_log, yy, t);
-    fpu_cmplx_exp(t, z);
+    cmplx_exp(t, z);
     return z;
 }
 
@@ -69,7 +69,7 @@ void asin_z(const DComplex z, DComplex *rz)
     temp_z2.y = z.x;                // tempz2 = i*z
     temp_z1.x += temp_z2.x;
     temp_z1.y += temp_z2.y;    // tempz1 += tempz2
-    fpu_cmplx_log(temp_z1, temp_z1);
+    cmplx_log(temp_z1, temp_z1);
     rz->x = temp_z1.y;
     rz->y = -temp_z1.x;           // rz = (-i)*tempz1
 }   // end. Arcsinz
@@ -86,7 +86,7 @@ void acos_z(const DComplex z, DComplex *rz)
     temp.x += z.x;
     temp.y += z.y;                // temp = z + temp
 
-    fpu_cmplx_log(temp, temp);
+    cmplx_log(temp, temp);
     rz->x = temp.y;
     rz->y = -temp.x;              // rz = (-i)*tempz1
 }   // end. Arccosz
@@ -100,7 +100,7 @@ void asinh_z(const DComplex z, DComplex *rz)
     temp = complex_sqrt_float(temp);
     temp.x += z.x;
     temp.y += z.y;                // temp = z + temp
-    fpu_cmplx_log(temp, *rz);
+    cmplx_log(temp, *rz);
 }  // end. Arcsinhz
 
 // rz=Arccosh(z)=Log(z+sqrt(z*z-1)}
@@ -112,7 +112,7 @@ void acosh_z(const DComplex z, DComplex *rz)
     temp_z = complex_sqrt_float(temp_z);
     temp_z.x = z.x + temp_z.x;
     temp_z.y = z.y + temp_z.y;  // tempz = z + tempz
-    fpu_cmplx_log(temp_z, *rz);
+    cmplx_log(temp_z, *rz);
 }   // end. Arccoshz
 
 // rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)}
@@ -144,7 +144,7 @@ void atanh_z(const DComplex z, DComplex *rz)
             temp1.x = 1 - z.x;
             temp1.y = -z.y;            // temp1 = 1 - z
             fpu_cmplx_div(temp0, temp1, temp2);
-            fpu_cmplx_log(temp2, temp2);
+            cmplx_log(temp2, temp2);
             rz->x = .5*temp2.x;
             rz->y = .5*temp2.y;       // rz = .5*temp2
         }
@@ -187,7 +187,7 @@ void atan_z(const DComplex z, DComplex *rz)
         temp2.y = temp0.y;       // temp2 = 1 + temp0
 
         fpu_cmplx_div(temp1, temp2, temp3);
-        fpu_cmplx_log(temp3, temp3);
+        cmplx_log(temp3, temp3);
         rz->x = -temp3.y*.5;
         rz->y = .5*temp3.x;           // .5*i*temp0
     }

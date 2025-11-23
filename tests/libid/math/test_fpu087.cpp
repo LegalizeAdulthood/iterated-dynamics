@@ -38,7 +38,7 @@ TEST(TestMath, complexLogZeroIsZero)
     const DComplex x{0.0, 0.0};
     DComplex z{1.0, 1.0};
 
-    fpu_cmplx_log(x, z); // z = log(x)
+    cmplx_log(x, z); // z = log(x)
 
     EXPECT_EQ(0.0, z.x);
     EXPECT_EQ(0.0, z.y);
@@ -49,7 +49,7 @@ TEST(TestMath, complexLogReal)
     const DComplex x{5.0, 0.0};
     DComplex z{1.0, 1.0};
 
-    fpu_cmplx_log(x, z); // z = log(x)
+    cmplx_log(x, z); // z = log(x)
 
     EXPECT_NEAR(std::log(5.0), z.x, 1e-9);
     EXPECT_EQ(0.0, z.y);
@@ -59,7 +59,7 @@ TEST(TestMath, complexLogPointerAlias)
 {
     DComplex z{1.0, 2.0};
 
-    fpu_cmplx_log(z, z); // z = log(z)
+    cmplx_log(z, z); // z = log(z)
 
     EXPECT_NEAR(std::log(std::sqrt(5)), z.x, 1e-9);
     EXPECT_NEAR(std::atan2(2.0, 1.0), z.y, 1e-9);

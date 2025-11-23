@@ -1321,14 +1321,14 @@ static void d_stk_and()
 void d_stk_log()
 {
     debug_trace_operation("LOG", g_arg1);
-    fpu_cmplx_log(g_arg1->d, g_arg1->d);
+    cmplx_log(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
 void d_stk_exp()
 {
     debug_trace_operation("EXP", g_arg1);
-    fpu_cmplx_exp(g_arg1->d, g_arg1->d);
+    cmplx_exp(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 

@@ -30,7 +30,7 @@ TEST(TestMath, nanExponent)
     const DComplex x{std::nan("1"), 0.0};
     DComplex z{};
 
-    fpu_cmplx_exp(x, z); // z = e^x
+    cmplx_exp(x, z); // z = e^x
 
     EXPECT_EQ((DComplex{1.0, 0.0}), z);
 }

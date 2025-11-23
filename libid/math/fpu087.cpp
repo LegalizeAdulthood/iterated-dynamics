@@ -98,7 +98,7 @@ void sinh_cosh(const double angle, double &sine, double &cosine)
     }
 }
 
-void fpu_cmplx_log(const DComplex &x, DComplex &z)
+void cmplx_log(const DComplex &x, DComplex &z)
 {
     if (x.x == 0.0 && x.y == 0.0)
     {
@@ -123,7 +123,7 @@ void fpu_cmplx_log(const DComplex &x, DComplex &z)
     z.y = imag;
 }
 
-void fpu_cmplx_exp(const DComplex &x, DComplex &z)
+void cmplx_exp(const DComplex &x, DComplex &z)
 {
     const double y = x.y;
     double pow = std::exp(x.x);
