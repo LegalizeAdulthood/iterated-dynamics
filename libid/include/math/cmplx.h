@@ -100,18 +100,18 @@ double mag_squared(const Complex<T> &z)
 
 using DComplex = Complex<double>;
 
-DComplex complex_sqrt_float(double x, double y);
-inline DComplex complex_sqrt_float(const DComplex &z)
+DComplex sqrt(double x, double y);
+inline DComplex sqrt(const DComplex &z)
 {
-    return complex_sqrt_float(z.x, z.y);
+    return sqrt(z.x, z.y);
 }
-DComplex complex_power(DComplex xx, DComplex yy);
+DComplex pow(const DComplex &xx, const DComplex &yy);
 
-void asin_z(DComplex z, DComplex *rz);
-void acos_z(DComplex z, DComplex *rz);
-void asinh_z(DComplex z, DComplex *rz);
-void acosh_z(DComplex z, DComplex *rz);
-void atanh_z(DComplex z, DComplex *rz);
-void atan_z(DComplex z, DComplex *rz);
+void asin(const DComplex &z, DComplex &rz);
+void acos(const DComplex &z, DComplex &rz);
+void asinh(const DComplex &z, DComplex &rz);
+void acosh(const DComplex &z, DComplex &rz);
+void atanh(const DComplex &z, DComplex &rz);
+void atan(const DComplex &z, DComplex &rz);
 
 } // namespace id::math

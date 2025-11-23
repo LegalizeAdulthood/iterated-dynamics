@@ -1184,49 +1184,49 @@ void d_stk_cosh()
 void d_stk_asin()
 {
     debug_trace_operation("ASIN", g_arg1);
-    asin_z(g_arg1->d, &g_arg1->d);
+    asin(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
 void d_stk_asinh()
 {
     debug_trace_operation("ASINH", g_arg1);
-    asinh_z(g_arg1->d, &g_arg1->d);
+    asinh(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
 void d_stk_acos()
 {
     debug_trace_operation("ACOS", g_arg1);
-    acos_z(g_arg1->d, &g_arg1->d);
+    acos(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
 void d_stk_acosh()
 {
     debug_trace_operation("ACOSH", g_arg1);
-    acosh_z(g_arg1->d, &g_arg1->d);
+    acosh(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
 void d_stk_atan()
 {
     debug_trace_operation("ATAN", g_arg1);
-    atan_z(g_arg1->d, &g_arg1->d);
+    atan(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
 void d_stk_atanh()
 {
     debug_trace_operation("ATANH", g_arg1);
-    atanh_z(g_arg1->d, &g_arg1->d);
+    atanh(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
 void d_stk_sqrt()
 {
     debug_trace_operation("SQRT", g_arg1);
-    g_arg1->d = complex_sqrt_float(g_arg1->d.x, g_arg1->d.y);
+    g_arg1->d = sqrt(g_arg1->d.x, g_arg1->d.y);
     debug_trace_stack_state();
 }
 
@@ -1335,7 +1335,7 @@ void d_stk_exp()
 void d_stk_pwr()
 {
     debug_trace_operation("PWR", g_arg1, g_arg2);
-    g_arg2->d = complex_power(g_arg2->d, g_arg1->d);
+    g_arg2->d = pow(g_arg2->d, g_arg1->d);
     g_arg1--;
     g_arg2--;
     debug_trace_stack_state();

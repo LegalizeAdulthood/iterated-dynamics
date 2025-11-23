@@ -85,7 +85,7 @@ inline void cmplx_sqr(const DComplex &arg, DComplex &out)
 }
 inline void cmplx_pwr(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {
-    out = complex_power(arg1, arg2);
+    out = pow(arg1, arg2);
 }
 inline void cmplx_mult(const DComplex &arg1, const DComplex &arg2, DComplex &out)
 {

@@ -889,8 +889,8 @@ bool InverseJulia::iterate_jiim()
                 s_lucky_x = 0.0f;
                 for (int i = 0; i < 199; i++)
                 {
-                    g_old_z = complex_sqrt_float(g_old_z.x - m_c.x, g_old_z.y - m_c.y);
-                    g_new_z = complex_sqrt_float(g_new_z.x - m_c.x, g_new_z.y - m_c.y);
+                    g_old_z = sqrt(g_old_z.x - m_c.x, g_old_z.y - m_c.y);
+                    g_new_z = sqrt(g_new_z.x - m_c.x, g_new_z.y - m_c.y);
                     enqueue_float(static_cast<float>(g_new_z.x), static_cast<float>(g_new_z.y));
                     enqueue_float(static_cast<float>(-g_old_z.x), static_cast<float>(-g_old_z.y));
                 }
@@ -910,7 +910,7 @@ bool InverseJulia::iterate_jiim()
         if (m_color < s_max_hits)
         {
             c_put_color(m_x, m_y, m_color + 1);
-            g_new_z = complex_sqrt_float(g_old_z.x - m_c.x, g_old_z.y - m_c.y);
+            g_new_z = sqrt(g_old_z.x - m_c.x, g_old_z.y - m_c.y);
             enqueue_float(static_cast<float>(g_new_z.x), static_cast<float>(g_new_z.y));
             enqueue_float(static_cast<float>(-g_new_z.x), static_cast<float>(-g_new_z.y));
         }
@@ -1182,11 +1182,11 @@ bool InverseJulia::iterate()
             DComplex f1;
             DComplex f2;
             // Fixed points of Julia
-            DComplex sqrt = complex_sqrt_float(1 - 4 * m_c.x, -4 * m_c.y);
-            f1.x = (1 + sqrt.x) / 2;
-            f2.x = (1 - sqrt.x) / 2;
-            f1.y = sqrt.y / 2;
-            f2.y = -sqrt.y / 2;
+            const DComplex s = sqrt(1 - 4 * m_c.x, -4 * m_c.y);
+            f1.x = (1 + s.x) / 2;
+            f2.x = (1 - s.x) / 2;
+            f1.y = s.y / 2;
+            f2.y = -s.y / 2;
 
             clear_queue();
             s_max_hits = 1;

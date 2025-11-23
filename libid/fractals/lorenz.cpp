@@ -427,7 +427,7 @@ bool orbit3d_per_image()
         setup_convert_to_screen(&s_cvt);
 
         // find fixed points: guaranteed to be in the set
-        DComplex sqrt = complex_sqrt_float(1 - 4 * s_cx, -4 * s_cy);
+        const DComplex s = sqrt(1 - 4 * s_cx, -4 * s_cy);
         switch (g_major_method)
         {
         case Major::BREADTH_FIRST:
@@ -437,8 +437,8 @@ bool orbit3d_per_image()
                 fallback_to_random_walk();
                 goto random_walk;
             }
-            enqueue_float(static_cast<float>((1 + sqrt.x) / 2), static_cast<float>(sqrt.y / 2));
-            enqueue_float(static_cast<float>((1 - sqrt.x) / 2), static_cast<float>(-sqrt.y / 2));
+            enqueue_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
+            enqueue_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
             break;
         case Major::DEPTH_FIRST:                      // depth first (choose direction)
             if (!init_queue(32*1024UL))
@@ -450,27 +450,27 @@ bool orbit3d_per_image()
             switch (g_inverse_julia_minor_method)
             {
             case Minor::LEFT_FIRST:
-                push_float(static_cast<float>((1 + sqrt.x) / 2), static_cast<float>(sqrt.y / 2));
-                push_float(static_cast<float>((1 - sqrt.x) / 2), static_cast<float>(-sqrt.y / 2));
+                push_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
+                push_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
                 break;
             case Minor::RIGHT_FIRST:
-                push_float(static_cast<float>((1 - sqrt.x) / 2), static_cast<float>(-sqrt.y / 2));
-                push_float(static_cast<float>((1 + sqrt.x) / 2), static_cast<float>(sqrt.y / 2));
+                push_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
+                push_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
                 break;
             }
             break;
         case Major::RANDOM_WALK:
 random_walk:
-            s_init_orbit[0] = 1 + sqrt.x / 2;
+            s_init_orbit[0] = 1 + s.x / 2;
             g_new_z.x = s_init_orbit[0];
-            s_init_orbit[1] = sqrt.y / 2;
+            s_init_orbit[1] = s.y / 2;
             g_new_z.y = s_init_orbit[1];
             break;
         case Major::RANDOM_RUN:       // random run, choose intervals
             g_major_method = Major::RANDOM_RUN;
-            s_init_orbit[0] = 1 + sqrt.x / 2;
+            s_init_orbit[0] = 1 + s.x / 2;
             g_new_z.x = s_init_orbit[0];
-            s_init_orbit[1] = sqrt.y / 2;
+            s_init_orbit[1] = s.y / 2;
             g_new_z.y = s_init_orbit[1];
             break;
         }
@@ -535,7 +535,7 @@ int inverse_julia_orbit()
      * Now find the next point(s), and flip a coin to choose one.
      */
 
-    g_new_z = complex_sqrt_float(g_new_z.x - s_cx, g_new_z.y - s_cy);
+    g_new_z = sqrt(g_new_z.x - s_cx, g_new_z.y - s_cy);
     const int left_right = random(2) ? 1 : -1;
 
     if (new_col < 1 || new_col >= g_logical_screen.x_dots || new_row < 1 || new_row >= g_logical_screen.y_dots)

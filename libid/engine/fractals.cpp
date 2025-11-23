@@ -132,7 +132,7 @@ int julia_orbit()
 
 int mandel_z_power_cmplx_orbit()
 {
-    g_new_z = complex_power(g_old_z, g_param_z2);
+    g_new_z = pow(g_old_z, g_param_z2);
     g_new_z.x += g_float_param->x;
     g_new_z.y += g_float_param->y;
     return g_bailout_float();

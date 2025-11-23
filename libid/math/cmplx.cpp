@@ -9,7 +9,7 @@
 namespace id::math
 {
 
-DComplex complex_sqrt_float(const double x, const double y)
+DComplex sqrt(const double x, const double y)
 {
     DComplex  result;
 
@@ -29,7 +29,7 @@ DComplex complex_sqrt_float(const double x, const double y)
     return result;
 }
 
-DComplex complex_power(const DComplex xx, const DComplex yy)
+DComplex pow(const DComplex &xx, const DComplex &yy)
 {
     DComplex z;
     DComplex c_log;
@@ -55,7 +55,7 @@ DComplex complex_power(const DComplex xx, const DComplex yy)
 */
 
 // rz=Arcsin(z)=-i*Log{i*z+sqrt(1-z*z)}
-void asin_z(const DComplex z, DComplex *rz)
+void asin(const DComplex &z, DComplex &rz)
 {
     DComplex temp_z1;
     DComplex temp_z2;
@@ -63,60 +63,60 @@ void asin_z(const DComplex z, DComplex *rz)
     fpu_cmplx_mul(z, z, temp_z1);
     temp_z1.x = 1 - temp_z1.x;
     temp_z1.y = -temp_z1.y;  // tempz1 = 1 - tempz1
-    temp_z1 = complex_sqrt_float(temp_z1);
+    temp_z1 = sqrt(temp_z1);
 
     temp_z2.x = -z.y;
     temp_z2.y = z.x;                // tempz2 = i*z
     temp_z1.x += temp_z2.x;
     temp_z1.y += temp_z2.y;    // tempz1 += tempz2
     cmplx_log(temp_z1, temp_z1);
-    rz->x = temp_z1.y;
-    rz->y = -temp_z1.x;           // rz = (-i)*tempz1
+    rz.x = temp_z1.y;
+    rz.y = -temp_z1.x;           // rz = (-i)*tempz1
 }   // end. Arcsinz
 
 // rz=Arccos(z)=-i*Log{z+sqrt(z*z-1)}
-void acos_z(const DComplex z, DComplex *rz)
+void acos(const DComplex &z, DComplex &rz)
 {
     DComplex temp;
 
     fpu_cmplx_mul(z, z, temp);
     temp.x -= 1;                                 // temp = temp - 1
-    temp = complex_sqrt_float(temp);
+    temp = sqrt(temp);
 
     temp.x += z.x;
     temp.y += z.y;                // temp = z + temp
 
     cmplx_log(temp, temp);
-    rz->x = temp.y;
-    rz->y = -temp.x;              // rz = (-i)*tempz1
+    rz.x = temp.y;
+    rz.y = -temp.x;              // rz = (-i)*tempz1
 }   // end. Arccosz
 
-void asinh_z(const DComplex z, DComplex *rz)
+void asinh(const DComplex &z, DComplex &rz)
 {
     DComplex temp;
 
     fpu_cmplx_mul(z, z, temp);
     temp.x += 1;                                 // temp = temp + 1
-    temp = complex_sqrt_float(temp);
+    temp = sqrt(temp);
     temp.x += z.x;
     temp.y += z.y;                // temp = z + temp
-    cmplx_log(temp, *rz);
+    cmplx_log(temp, rz);
 }  // end. Arcsinhz
 
 // rz=Arccosh(z)=Log(z+sqrt(z*z-1)}
-void acosh_z(const DComplex z, DComplex *rz)
+void acosh(const DComplex &z, DComplex &rz)
 {
     DComplex temp_z;
     fpu_cmplx_mul(z, z, temp_z);
     temp_z.x -= 1;                              // tempz = tempz - 1
-    temp_z = complex_sqrt_float(temp_z);
+    temp_z = sqrt(temp_z);
     temp_z.x = z.x + temp_z.x;
     temp_z.y = z.y + temp_z.y;  // tempz = z + tempz
-    cmplx_log(temp_z, *rz);
+    cmplx_log(temp_z, rz);
 }   // end. Arccoshz
 
 // rz=Arctanh(z)=1/2*Log{(1+z)/(1-z)}
-void atanh_z(const DComplex z, DComplex *rz)
+void atanh(const DComplex &z, DComplex &rz)
 {
     DComplex temp0;
     DComplex temp1;
@@ -124,8 +124,8 @@ void atanh_z(const DComplex z, DComplex *rz)
 
     if (z.x == 0.0)
     {
-        rz->x = 0;
-        rz->y = std::atan(z.y);
+        rz.x = 0;
+        rz.y = std::atan(z.y);
     }
     else
     {
@@ -134,8 +134,8 @@ void atanh_z(const DComplex z, DComplex *rz)
         }
         else if (std::abs(z.x) < 1.0 && z.y == 0.0)
         {
-            rz->x = std::log((1+z.x)/(1-z.x))/2;
-            rz->y = 0;
+            rz.x = std::log((1+z.x)/(1-z.x))/2;
+            rz.y = 0;
         }
         else
         {
@@ -145,14 +145,14 @@ void atanh_z(const DComplex z, DComplex *rz)
             temp1.y = -z.y;            // temp1 = 1 - z
             fpu_cmplx_div(temp0, temp1, temp2);
             cmplx_log(temp2, temp2);
-            rz->x = .5*temp2.x;
-            rz->y = .5*temp2.y;       // rz = .5*temp2
+            rz.x = .5*temp2.x;
+            rz.y = .5*temp2.y;       // rz = .5*temp2
         }
     }
 }   // end. Arctanhz
 
 // rz=Arctan(z)=i/2*Log{(1-i*z)/(1+i*z)}
-void atan_z(const DComplex z, DComplex *rz)
+void atan(const DComplex &z, DComplex &rz)
 {
     DComplex temp0;
     DComplex temp1;
@@ -160,21 +160,21 @@ void atan_z(const DComplex z, DComplex *rz)
     DComplex temp3;
     if (z.x == 0.0 && z.y == 0.0)
     {
-        rz->y = 0;
-        rz->x = 0;
+        rz.y = 0;
+        rz.x = 0;
     }
     else if (z.x != 0.0 && z.y == 0.0)
     {
-        rz->x = std::atan(z.x);
-        rz->y = 0;
+        rz.x = std::atan(z.x);
+        rz.y = 0;
     }
     else if (z.x == 0.0 && z.y != 0.0)
     {
         temp0.x = z.y;
         temp0.y = 0.0;
-        atanh_z(temp0, &temp0);
-        rz->x = -temp0.y;
-        rz->y = temp0.x;              // i*temp0
+        atanh(temp0, temp0);
+        rz.x = -temp0.y;
+        rz.y = temp0.x;              // i*temp0
     }
     else if (z.x != 0.0 && z.y != 0.0)
     {
@@ -188,8 +188,8 @@ void atan_z(const DComplex z, DComplex *rz)
 
         fpu_cmplx_div(temp1, temp2, temp3);
         cmplx_log(temp3, temp3);
-        rz->x = -temp3.y*.5;
-        rz->y = .5*temp3.x;           // .5*i*temp0
+        rz.x = -temp3.y*.5;
+        rz.y = .5*temp3.x;           // .5*i*temp0
     }
 }   // end. Arctanz
 

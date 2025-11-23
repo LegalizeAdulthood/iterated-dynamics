@@ -170,7 +170,7 @@ void mandel_z_power_perturb(
 int mandel_z_to_z_plus_z_pwr_orbit()
 {
     pow(&g_old_z, static_cast<int>(g_params[2]), &g_new_z);
-    g_old_z = complex_power(g_old_z, g_old_z);
+    g_old_z = pow(g_old_z, g_old_z);
     g_new_z.x = g_new_z.x + g_old_z.x +g_float_param->x;
     g_new_z.y = g_new_z.y + g_old_z.y +g_float_param->y;
     return g_bailout_float();

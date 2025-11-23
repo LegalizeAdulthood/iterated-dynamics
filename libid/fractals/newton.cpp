@@ -164,7 +164,7 @@ int complex_newton_orbit()
     cd1.x = s_c_degree.x - 1.0;
     cd1.y = s_c_degree.y;
 
-    s_temp = complex_power(g_old_z, cd1);
+    s_temp = pow(g_old_z, cd1);
     fpu_cmplx_mul(s_temp, g_old_z, g_new_z);
 
     g_tmp_z.x = g_new_z.x - s_c_root.x;
@@ -199,7 +199,7 @@ int complex_basin_orbit()
     cd1.x = s_c_degree.x - 1.0;
     cd1.y = s_c_degree.y;
 
-    s_temp = complex_power(g_old_z, cd1);
+    s_temp = pow(g_old_z, cd1);
     fpu_cmplx_mul(s_temp, g_old_z, g_new_z);
 
     g_tmp_z.x = g_new_z.x - s_c_root.x;
