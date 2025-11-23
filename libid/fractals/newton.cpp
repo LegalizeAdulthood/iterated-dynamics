@@ -147,7 +147,7 @@ bool complex_newton_per_image()
         s_c_root.y = g_params[3];
         s_c_degree.x = g_params[0];
         s_c_degree.y = g_params[1];
-        fpu_cmplx_log(&s_c_root, &s_base_log);
+        fpu_cmplx_log(s_c_root, s_base_log);
         s_two_pi = std::asin(1.0) * 4;
     }
     return true;
@@ -165,7 +165,7 @@ int complex_newton_orbit()
     cd1.y = s_c_degree.y;
 
     s_temp = complex_power(g_old_z, cd1);
-    fpu_cmplx_mul(&s_temp, &g_old_z, &g_new_z);
+    fpu_cmplx_mul(s_temp, g_old_z, g_new_z);
 
     g_tmp_z.x = g_new_z.x - s_c_root.x;
     g_tmp_z.y = g_new_z.y - s_c_root.y;
@@ -174,12 +174,12 @@ int complex_newton_orbit()
         return 1;
     }
 
-    fpu_cmplx_mul(&g_new_z, &cd1, &g_tmp_z);
+    fpu_cmplx_mul(g_new_z, cd1, g_tmp_z);
     g_tmp_z.x += s_c_root.x;
     g_tmp_z.y += s_c_root.y;
 
-    fpu_cmplx_mul(&s_temp, &s_c_degree, &cd1);
-    fpu_cmplx_div(&g_tmp_z, &cd1, &g_old_z);
+    fpu_cmplx_mul(s_temp, s_c_degree, cd1);
+    fpu_cmplx_div(g_tmp_z, cd1, g_old_z);
     if (g_overflow)
     {
         return 1;
@@ -200,7 +200,7 @@ int complex_basin_orbit()
     cd1.y = s_c_degree.y;
 
     s_temp = complex_power(g_old_z, cd1);
-    fpu_cmplx_mul(&s_temp, &g_old_z, &g_new_z);
+    fpu_cmplx_mul(s_temp, g_old_z, g_new_z);
 
     g_tmp_z.x = g_new_z.x - s_c_root.x;
     g_tmp_z.y = g_new_z.y - s_c_root.y;
@@ -210,8 +210,8 @@ int complex_basin_orbit()
         {
             g_old_z.y = 0.0;
         }
-        fpu_cmplx_log(&g_old_z, &s_temp);
-        fpu_cmplx_mul(&s_temp, &s_c_degree, &g_tmp_z);
+        fpu_cmplx_log(g_old_z, s_temp);
+        fpu_cmplx_mul(s_temp, s_c_degree, g_tmp_z);
         const double mod = g_tmp_z.y/s_two_pi;
         g_color_iter = static_cast<long>(mod);
         if (std::abs(mod - g_color_iter) > 0.5)
@@ -233,12 +233,12 @@ int complex_basin_orbit()
         return 1;
     }
 
-    fpu_cmplx_mul(&g_new_z, &cd1, &g_tmp_z);
+    fpu_cmplx_mul(g_new_z, cd1, g_tmp_z);
     g_tmp_z.x += s_c_root.x;
     g_tmp_z.y += s_c_root.y;
 
-    fpu_cmplx_mul(&s_temp, &s_c_degree, &cd1);
-    fpu_cmplx_div(&g_tmp_z, &cd1, &g_old_z);
+    fpu_cmplx_mul(s_temp, s_c_degree, cd1);
+    fpu_cmplx_div(g_tmp_z, cd1, g_old_z);
     if (g_overflow)
     {
         return 1;

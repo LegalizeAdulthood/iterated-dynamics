@@ -86,7 +86,7 @@ inline void cmplx_log(const DComplex &arg, DComplex &out)
 }
 inline void cmplx_exp(const DComplex &arg, DComplex &out)
 {
-    fpu_cmplx_exp(&arg, &out);
+    fpu_cmplx_exp(arg, out);
 }
 inline void cmplx_sqr(const DComplex &arg, DComplex &out)
 {

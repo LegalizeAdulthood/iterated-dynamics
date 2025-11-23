@@ -50,10 +50,10 @@ int phoenix_plus_fractal()
     for (int i = 1; i < g_degree; i++)
     {
         // degree >= 2, degree=degree-1 in setup
-        fpu_cmplx_mul(&g_old_z, &g_tmp_z, &g_tmp_z); // = old^(degree-1)
+        fpu_cmplx_mul(g_old_z, g_tmp_z, g_tmp_z); // = old^(degree-1)
     }
     old_plus.x += g_float_param->x;
-    fpu_cmplx_mul(&g_tmp_z, &old_plus, &new_minus);
+    fpu_cmplx_mul(g_tmp_z, old_plus, new_minus);
     g_new_z.x = new_minus.x + g_float_param->y * s_tmp2.x;
     g_new_z.y = new_minus.y + g_float_param->y * s_tmp2.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
@@ -65,15 +65,15 @@ int phoenix_minus_fractal()
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
     DComplex old_sqr;
     DComplex new_minus;
-    fpu_cmplx_mul(&g_old_z, &g_old_z, &old_sqr);
+    fpu_cmplx_mul(g_old_z, g_old_z, old_sqr);
     g_tmp_z = g_old_z;
     for (int i = 1; i < g_degree; i++)
     {
         // degree >= 3, degree=degree-2 in setup
-        fpu_cmplx_mul(&g_old_z, &g_tmp_z, &g_tmp_z); // = old^(degree-2)
+        fpu_cmplx_mul(g_old_z, g_tmp_z, g_tmp_z); // = old^(degree-2)
     }
     old_sqr.x += g_float_param->x;
-    fpu_cmplx_mul(&g_tmp_z, &old_sqr, &new_minus);
+    fpu_cmplx_mul(g_tmp_z, old_sqr, new_minus);
     g_new_z.x = new_minus.x + g_float_param->y * s_tmp2.x;
     g_new_z.y = new_minus.y + g_float_param->y * s_tmp2.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
@@ -89,12 +89,12 @@ int phoenix_cplx_plus_fractal()
     for (int i = 1; i < g_degree; i++)
     {
         // degree >= 2, degree=degree-1 in setup
-        fpu_cmplx_mul(&g_old_z, &g_tmp_z, &g_tmp_z); // = old^(degree-1)
+        fpu_cmplx_mul(g_old_z, g_tmp_z, g_tmp_z); // = old^(degree-1)
     }
     old_plus.x += g_float_param->x;
     old_plus.y += g_float_param->y;
-    fpu_cmplx_mul(&g_tmp_z, &old_plus, &new_minus);
-    fpu_cmplx_mul(&g_param_z2, &s_tmp2, &g_tmp_z);
+    fpu_cmplx_mul(g_tmp_z, old_plus, new_minus);
+    fpu_cmplx_mul(g_param_z2, s_tmp2, g_tmp_z);
     g_new_z.x = new_minus.x + g_tmp_z.x;
     g_new_z.y = new_minus.y + g_tmp_z.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value
@@ -106,17 +106,17 @@ int phoenix_cplx_minus_fractal()
     // z(n+1) = z(n)^(degree-2) * (z(n)^2 + p) + qy(n),  y(n+1) = z(n)
     DComplex old_sqr;
     DComplex new_minus;
-    fpu_cmplx_mul(&g_old_z, &g_old_z, &old_sqr);
+    fpu_cmplx_mul(g_old_z, g_old_z, old_sqr);
     g_tmp_z = g_old_z;
     for (int i = 1; i < g_degree; i++)
     {
         // degree >= 3, degree=degree-2 in setup
-        fpu_cmplx_mul(&g_old_z, &g_tmp_z, &g_tmp_z); // = old^(degree-2)
+        fpu_cmplx_mul(g_old_z, g_tmp_z, g_tmp_z); // = old^(degree-2)
     }
     old_sqr.x += g_float_param->x;
     old_sqr.y += g_float_param->y;
-    fpu_cmplx_mul(&g_tmp_z, &old_sqr, &new_minus);
-    fpu_cmplx_mul(&g_param_z2, &s_tmp2, &g_tmp_z);
+    fpu_cmplx_mul(g_tmp_z, old_sqr, new_minus);
+    fpu_cmplx_mul(g_param_z2, s_tmp2, g_tmp_z);
     g_new_z.x = new_minus.x + g_tmp_z.x;
     g_new_z.y = new_minus.y + g_tmp_z.y;
     s_tmp2 = g_old_z; // set tmp2 to Y value

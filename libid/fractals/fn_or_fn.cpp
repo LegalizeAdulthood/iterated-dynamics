@@ -69,12 +69,12 @@ int lambda_trig_or_trig_orbit()
     if (cmplx_mod(g_old_z) < g_param_z2.x)
     {
         cmplx_trig0(g_old_z, g_old_z);
-        fpu_cmplx_mul(g_float_param, &g_old_z, &g_new_z);
+        fpu_cmplx_mul(*g_float_param, g_old_z, g_new_z);
     }
     else
     {
         cmplx_trig1(g_old_z, g_old_z);
-        fpu_cmplx_mul(g_float_param, &g_old_z, &g_new_z);
+        fpu_cmplx_mul(*g_float_param, g_old_z, g_new_z);
     }
     return g_bailout_float();
 }

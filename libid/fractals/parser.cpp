@@ -918,7 +918,7 @@ static void d_stk_neg()
 void d_stk_mul()
 {
     debug_trace_operation("MUL", g_arg1, g_arg2);
-    fpu_cmplx_mul(&g_arg2->d, &g_arg1->d, &g_arg2->d);
+    fpu_cmplx_mul(g_arg2->d, g_arg1->d, g_arg2->d);
     g_arg1--;
     g_arg2--;
     debug_trace_stack_state();
@@ -927,7 +927,7 @@ void d_stk_mul()
 static void d_stk_div()
 {
     debug_trace_operation("DIV", g_arg1, g_arg2);
-    fpu_cmplx_div(&g_arg2->d, &g_arg1->d, &g_arg2->d);
+    fpu_cmplx_div(g_arg2->d, g_arg1->d, g_arg2->d);
     g_arg1--;
     g_arg2--;
     debug_trace_stack_state();
@@ -1002,8 +1002,8 @@ void d_stk_sin()
     double sinh_y;
     double cosh_y;
 
-    sin_cos(g_arg1->d.x, &sin_x, &cos_x);
-    sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
+    sin_cos(g_arg1->d.x, sin_x, cos_x);
+    sinh_cosh(g_arg1->d.y, sinh_y, cosh_y);
     g_arg1->d.x = sin_x*cosh_y;
     g_arg1->d.y = cos_x*sinh_y;
     debug_trace_stack_state();
@@ -1021,8 +1021,8 @@ void d_stk_tan()
     double cosh_y;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(g_arg1->d.x, &sin_x, &cos_x);
-    sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
+    sin_cos(g_arg1->d.x, sin_x, cos_x);
+    sinh_cosh(g_arg1->d.y, sinh_y, cosh_y);
     const double denom = cos_x + cosh_y;
     if (check_denom(denom))
     {
@@ -1042,8 +1042,8 @@ void d_stk_tanh()
     double cosh_x;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(g_arg1->d.y, &sin_y, &cos_y);
-    sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
+    sin_cos(g_arg1->d.y, sin_y, cos_y);
+    sinh_cosh(g_arg1->d.x, sinh_x, cosh_x);
     const double denom = cosh_x + cos_y;
     if (check_denom(denom))
     {
@@ -1063,8 +1063,8 @@ void d_stk_cotan()
     double cosh_y;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(g_arg1->d.x, &sin_x, &cos_x);
-    sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
+    sin_cos(g_arg1->d.x, sin_x, cos_x);
+    sinh_cosh(g_arg1->d.y, sinh_y, cosh_y);
     const double denom = cosh_y - cos_x;
     if (check_denom(denom))
     {
@@ -1085,8 +1085,8 @@ void d_stk_cotanh()
     double cosh_x;
     g_arg1->d.x *= 2;
     g_arg1->d.y *= 2;
-    sin_cos(g_arg1->d.y, &sin_y, &cos_y);
-    sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
+    sin_cos(g_arg1->d.y, sin_y, cos_y);
+    sinh_cosh(g_arg1->d.x, sinh_x, cosh_x);
     const double denom = cosh_x - cos_y;
     if (check_denom(denom))
     {
@@ -1134,8 +1134,8 @@ void d_stk_sinh()
     double sinh_x;
     double cosh_x;
 
-    sin_cos(g_arg1->d.y, &sin_y, &cos_y);
-    sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
+    sin_cos(g_arg1->d.y, sin_y, cos_y);
+    sinh_cosh(g_arg1->d.x, sinh_x, cosh_x);
     g_arg1->d.x = sinh_x*cos_y;
     g_arg1->d.y = cosh_x*sin_y;
     debug_trace_stack_state();
@@ -1149,8 +1149,8 @@ void d_stk_cos()
     double sinh_y;
     double cosh_y;
 
-    sin_cos(g_arg1->d.x, &sin_x, &cos_x);
-    sinh_cosh(g_arg1->d.y, &sinh_y, &cosh_y);
+    sin_cos(g_arg1->d.x, sin_x, cos_x);
+    sinh_cosh(g_arg1->d.y, sinh_y, cosh_y);
     g_arg1->d.x = cos_x*cosh_y;
     g_arg1->d.y = -sin_x*sinh_y;
     debug_trace_stack_state();
@@ -1174,8 +1174,8 @@ void d_stk_cosh()
     double sinh_x;
     double cosh_x;
 
-    sin_cos(g_arg1->d.y, &sin_y, &cos_y);
-    sinh_cosh(g_arg1->d.x, &sinh_x, &cosh_x);
+    sin_cos(g_arg1->d.y, sin_y, cos_y);
+    sinh_cosh(g_arg1->d.x, sinh_x, cosh_x);
     g_arg1->d.x = cosh_x*cos_y;
     g_arg1->d.y = sinh_x*sin_y;
     debug_trace_stack_state();
@@ -1321,14 +1321,14 @@ static void d_stk_and()
 void d_stk_log()
 {
     debug_trace_operation("LOG", g_arg1);
-    fpu_cmplx_log(&g_arg1->d, &g_arg1->d);
+    fpu_cmplx_log(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
 void d_stk_exp()
 {
     debug_trace_operation("EXP", g_arg1);
-    fpu_cmplx_exp(&g_arg1->d, &g_arg1->d);
+    fpu_cmplx_exp(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 

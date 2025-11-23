@@ -84,7 +84,7 @@ static int lambda_exponent_fractal()
     }
     double sin_y;
     double cos_y;
-    sin_cos(g_old_z.y, &sin_y, &cos_y);
+    sin_cos(g_old_z.y, sin_y, cos_y);
 
     if (g_old_z.x >= g_magnitude_limit && cos_y >= 0.0)
     {

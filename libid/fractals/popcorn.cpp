@@ -55,14 +55,14 @@ int popcorn_fractal()
     g_tmp_z = g_old_z;
     g_tmp_z.x *= 3.0;
     g_tmp_z.y *= 3.0;
-    sin_cos(g_tmp_z.x, &g_sin_x, &g_cos_x);
+    sin_cos(g_tmp_z.x, g_sin_x, g_cos_x);
     double sin_y;
     double cos_y;
-    sin_cos(g_tmp_z.y, &sin_y, &cos_y);
+    sin_cos(g_tmp_z.y, sin_y, cos_y);
     g_tmp_z.x = g_sin_x/g_cos_x + g_old_z.x;
     g_tmp_z.y = sin_y/cos_y + g_old_z.y;
-    sin_cos(g_tmp_z.x, &g_sin_x, &g_cos_x);
-    sin_cos(g_tmp_z.y, &sin_y, &cos_y);
+    sin_cos(g_tmp_z.x, g_sin_x, g_cos_x);
+    sin_cos(g_tmp_z.y, sin_y, cos_y);
     g_new_z.x = g_old_z.x - g_param_z1.x*sin_y;
     g_new_z.y = g_old_z.y - g_param_z1.x*g_sin_x;
     if (g_plot == no_plot)

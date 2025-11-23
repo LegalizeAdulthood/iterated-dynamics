@@ -137,7 +137,7 @@ void Diffusion::release_new_particle()
         const double angle = 2 * static_cast<double>(std::rand()) / (RAND_MAX / PI);
         double cosine;
         double sine;
-        sin_cos(angle, &sine, &cosine);
+        sin_cos(angle, sine, cosine);
         m_x = static_cast<int>(cosine * (m_x_max - m_x_min) + g_logical_screen.x_dots);
         m_y = static_cast<int>(sine * (m_y_max - m_y_min) + g_logical_screen.y_dots);
         m_x /= 2;
@@ -157,7 +157,7 @@ void Diffusion::release_new_particle()
         const double angle = 2 * static_cast<double>(std::rand()) / (RAND_MAX / PI);
         double cosine;
         double sine;
-        sin_cos(angle, &sine, &cosine);
+        sin_cos(angle, sine, cosine);
         m_x = static_cast<int>(cosine * m_radius + g_logical_screen.x_dots);
         m_y = static_cast<int>(sine * m_radius + g_logical_screen.y_dots);
         m_x /= 2;

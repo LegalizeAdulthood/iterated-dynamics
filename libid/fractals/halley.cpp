@@ -76,10 +76,10 @@ int halley_orbit()
     x_to_a_less_one = g_old_z;
     for (int deg = 2; deg < g_degree; deg++)
     {
-        fpu_cmplx_mul(&g_old_z, &x_to_a_less_one, &x_to_a_less_one);
+        fpu_cmplx_mul(g_old_z, x_to_a_less_one, x_to_a_less_one);
     }
-    fpu_cmplx_mul(&g_old_z, &x_to_a_less_one, &x_to_a);
-    fpu_cmplx_mul(&g_old_z, &x_to_a, &x_to_a_plus_one);
+    fpu_cmplx_mul(g_old_z, x_to_a_less_one, x_to_a);
+    fpu_cmplx_mul(g_old_z, x_to_a, x_to_a_plus_one);
 
     fx = x_to_a_plus_one - g_old_z;        // FX = X^(a+1) - X  = F
     f2_prime.x = s_halley_a_plus_one_times_degree * x_to_a_less_one.x; // g_halley_a_plus_one_times_degree in setup
@@ -88,17 +88,17 @@ int halley_orbit()
     f1_prime.x = s_halley_a_plus_one * x_to_a.x - 1.0;
     f1_prime.y = s_halley_a_plus_one * x_to_a.y;                             //  F'
 
-    fpu_cmplx_mul(&f2_prime, &fx, &numer1);                  //  F * F"
+    fpu_cmplx_mul(f2_prime, fx, numer1);                  //  F * F"
     denom.x = f1_prime.x + f1_prime.x;
     denom.y = f1_prime.y + f1_prime.y;                     //  2 * F'
 
-    fpu_cmplx_div(&numer1, &denom, &numer1);         //  F"F/2F'
+    fpu_cmplx_div(numer1, denom, numer1);         //  F"F/2F'
     numer2 = f1_prime - numer1;          //  F' - F"F/2F'
-    fpu_cmplx_div(&fx, &numer2, &numer2);
+    fpu_cmplx_div(fx, numer2, numer2);
     // parm.y is relaxation coef.
     relax.x = g_param_z1.y;
     relax.y = g_params[3];
-    fpu_cmplx_mul(&relax, &numer2, &numer2);
+    fpu_cmplx_mul(relax, numer2, numer2);
     g_new_z.x = g_old_z.x - numer2.x;
     g_new_z.y = g_old_z.y - numer2.y;
     return halley_bailout();
