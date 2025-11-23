@@ -103,7 +103,7 @@ var searchData=
   ['rgbeditornotification_100',['RGBEditorNotification',['../de/d5f/classid_1_1ui_1_1RGBEditorNotification.html',1,'id::ui']]],
   ['rgt_101',['rgt',['../df/dc6/structid_1_1engine_1_1Tess.html#a10bdaaa294c1759cca1980e563dae460',1,'id::engine::Tess']]],
   ['richard_5f8_5forbit_102',['richard_8_orbit',['../d5/d38/namespaceid_1_1fractals.html#af32b229da3b51f9ed69fc75faa8f377d',1,'id::fractals']]],
-  ['right_5feye_103',['right_eye',['../d2/d1e/julibrot_8cpp.html#affa4112d6c1d215eaf19c9a9905a3554',1,'right_eye:&#160;julibrot.cpp'],['../d5/d38/namespaceid_1_1fractals.html#a603cca7d14b34f23a787c62b46432cbbaa1b900513572a1938a19508ac3d2598f',1,'id::fractals::RIGHT_EYE']]],
+  ['right_5feye_103',['right_eye',['../d5/d38/namespaceid_1_1fractals.html#a603cca7d14b34f23a787c62b46432cbbaa1b900513572a1938a19508ac3d2598f',1,'id::fractals::RIGHT_EYE'],['../d2/d1e/julibrot_8cpp.html#affa4112d6c1d215eaf19c9a9905a3554',1,'right_eye:&#160;julibrot.cpp']]],
   ['right_5ffirst_104',['RIGHT_FIRST',['../d5/d38/namespaceid_1_1fractals.html#a855a0c55fea54af723c172c9b98b132da03f8c67e5827449a03b2eb04dea884b4',1,'id::fractals']]],
   ['root_105',['ROOT',['../d0/d19/namespaceid_1_1io.html#afef8aa2e895599e54fa155d399d514f4aea2adde5c377cb5e09d14b71935c6f32',1,'id::io']]],
   ['rossler_106',['ROSSLER',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dcaa68e43a1478d4ff66362315bc2a92bc2',1,'id::fractals']]],

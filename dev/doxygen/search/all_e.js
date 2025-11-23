@@ -31,7 +31,7 @@ var searchData=
   ['no_5fgrout_28',['NO_GROUT',['../dc/d76/namespaceid_1_1ui.html#a1b2e6fb4d63c6958cfcaab2e0715c89dac2bebec951409600865a27b2e70e3b9a',1,'id::ui']]],
   ['no_5fguess_29',['NO_GUESS',['../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91a2ccc5d27fe5e1492a423dcc90808e74d',1,'id::fractals']]],
   ['no_5foverlap_30',['NO_OVERLAP',['../dc/d31/namespaceid_1_1engine.html#ae9558f7cb0768644cedc31fe170573aca814c8d61dc09e48c426c62c52f9f0546',1,'id::engine']]],
-  ['no_5fplot_31',['no_plot',['../dc/d31/namespaceid_1_1engine.html#af4c2834f4c388e93be6ff71cf0f6e5baa66ec3bcb94e4bf16dba55fc1d5fe0ac2',1,'id::engine::NO_PLOT'],['../dc/d31/namespaceid_1_1engine.html#a848a81184f805220d956cb9a34c5ffaf',1,'id::engine::no_plot(int x, int y, int color)']]],
+  ['no_5fplot_31',['no_plot',['../dc/d31/namespaceid_1_1engine.html#a848a81184f805220d956cb9a34c5ffaf',1,'id::engine::no_plot(int x, int y, int color)'],['../dc/d31/namespaceid_1_1engine.html#af4c2834f4c388e93be6ff71cf0f6e5baa66ec3bcb94e4bf16dba55fc1d5fe0ac2',1,'id::engine::NO_PLOT']]],
   ['no_5fresume_32',['NO_RESUME',['../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91a2fcfa954e66f7decf7e1f8b963e3ae0e',1,'id::fractals']]],
   ['no_5frotate_33',['NO_ROTATE',['../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91ad2c5be0340ffa71293ad9d7f4c7cf32a',1,'id::fractals']]],
   ['no_5fstack_34',['NO_STACK',['../dc/d76/namespaceid_1_1ui.html#a6428b6f2e947653fb517cca8b57cf7c5a7fa6ae218166f19c704f6c5549cd9049',1,'id::ui']]],
