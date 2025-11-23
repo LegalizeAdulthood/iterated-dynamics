@@ -50,7 +50,9 @@ enum
 struct ParamHistory
 {
     std::array<double, MAX_PARAMS> params{};
+    ColorMethod inside_method{};
     int inside{};
+    ColorMethod outside_method{};
     int outside{};
     int decomp0{};
     InversionParams invert;
@@ -186,8 +188,8 @@ void init_gene()
         { &g_params[7], vary_dbl, Variations::NONE,           "Param 4 imag"   , 1 },
         { &g_params[8], vary_dbl, Variations::NONE,           "Param 5 real"   , 1 },
         { &g_params[9], vary_dbl, Variations::NONE,           "Param 5 imag"   , 1 },
-        { &g_inside_color, vary_inside, Variations::NONE,     "inside color"   , 2 },
-        { &g_outside_color, vary_outside, Variations::NONE,   "outside color"  , 3 },
+        { &g_inside_method, vary_inside, Variations::NONE,    "inside color"   , 2 },
+        { &g_outside_method, vary_outside, Variations::NONE,  "outside color"  , 3 },
         { &g_decomp[0], vary_pwr2, Variations::NONE,          "decomposition"  , 4 },
         { &g_inversion.params[0], vary_inv, Variations::NONE, "invert radius"  , 7 },
         { &g_inversion.params[1], vary_inv, Variations::NONE, "invert center x", 7 },
@@ -207,7 +209,9 @@ void save_param_history()
 {
     // save the old parameter history
     std::copy_n(g_params, MAX_PARAMS, s_old_history.params.begin());
+    s_old_history.inside_method = g_inside_method;
     s_old_history.inside = g_inside_color;
+    s_old_history.outside_method = g_outside_method;
     s_old_history.outside = g_outside_color;
     s_old_history.decomp0 = g_decomp[0];
     std::copy_n(g_inversion.params.begin(), 3, s_old_history.invert.begin());
@@ -219,7 +223,9 @@ void restore_param_history()
 {
     // restore the old parameter history
     std::copy_n(s_old_history.params.begin(), MAX_PARAMS, g_params);
+    g_inside_method = s_old_history.inside_method;
     g_inside_color = s_old_history.inside;
+    g_outside_method = s_old_history.outside_method;
     g_outside_color = s_old_history.outside;
     g_decomp[0] = s_old_history.decomp0;
     g_inversion.params = s_old_history.invert;
@@ -307,23 +313,23 @@ int wrapped_positive_vary_int(const int rand_value, const int limit, const Varia
     return i < 0 ? limit + i : i;
 }
 
-void vary_inside(GeneBase gene[], const int rand_val, const int i)
+static void vary_inside(GeneBase gene[], const int rand_val, const int i)
 {
-    constexpr int choices[9] = {+ColorMethod::ZMAG, +ColorMethod::BOF60, +ColorMethod::BOF61, +ColorMethod::EPS_CROSS,
-        +ColorMethod::STAR_TRAIL, +ColorMethod::PERIOD, +ColorMethod::FMODI, +ColorMethod::ATANI, +ColorMethod::ITER};
+    constexpr ColorMethod choices[9]{ColorMethod::ZMAG, ColorMethod::BOF60, ColorMethod::BOF61, ColorMethod::EPS_CROSS,
+        ColorMethod::STAR_TRAIL, ColorMethod::PERIOD, ColorMethod::FMODI, ColorMethod::ATANI, ColorMethod::ITER};
     if (gene[i].mutate != Variations::NONE)
     {
-        *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
+        *static_cast<ColorMethod *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 9, gene[i].mutate)];
     }
 }
 
-void vary_outside(GeneBase gene[], const int rand_val, const int i)
+static void vary_outside(GeneBase gene[], const int rand_val, const int i)
 {
-    constexpr int choices[8] = {+ColorMethod::ITER, +ColorMethod::REAL, +ColorMethod::IMAG, +ColorMethod::MULT,
-        +ColorMethod::SUM, +ColorMethod::ATAN, +ColorMethod::FMOD, +ColorMethod::TDIS};
+    constexpr ColorMethod choices[8]{ColorMethod::ITER, ColorMethod::REAL, ColorMethod::IMAG, ColorMethod::MULT,
+        ColorMethod::SUM, ColorMethod::ATAN, ColorMethod::FMOD, ColorMethod::TDIS};
     if (gene[i].mutate != Variations::NONE)
     {
-        *static_cast<int *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 8, gene[i].mutate)];
+        *static_cast<ColorMethod *>(gene[i].addr) = choices[wrapped_positive_vary_int(rand_val, 8, gene[i].mutate)];
     }
 }
 

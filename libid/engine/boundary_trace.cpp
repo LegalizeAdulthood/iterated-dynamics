@@ -67,7 +67,8 @@ static void step_col_row()
 
 int boundary_trace()
 {
-    if (g_inside_color == +ColorMethod::COLOR_BLACK || g_outside_color == +ColorMethod::COLOR_BLACK)
+    if ((g_inside_method == ColorMethod::COLOR && g_inside_color == 0) ||
+        (g_outside_method == ColorMethod::COLOR && g_outside_color == 0))
     {
         stop_msg("Boundary tracing cannot be used with inside=0 or outside=0");
         return -1;

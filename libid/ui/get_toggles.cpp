@@ -45,7 +45,7 @@ namespace id::ui
         -1  routine was ESCAPEd - no need to re-generate the image.
          0  nothing changed, or minor variable such as "overwrite=".
             No need to re-generate the image.
-         1  major variable changed (such as "inside=").  Re-generate
+        >0  major variable changed (such as "inside=").  Re-generate
             the image.
 
         Finally, remember to insert variables in the list *and* check
@@ -96,7 +96,7 @@ int get_toggles()
 
     choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
     values[k].type = 'i';
-    if (g_inside_color >= +ColorMethod::COLOR_BLACK)
+    if (g_inside_method >= ColorMethod::COLOR)
     {
         values[k].uval.ival = g_inside_color;
     }
@@ -110,51 +110,52 @@ int get_toggles()
     values[k].uval.ch.vlen = 12;
     values[k].uval.ch.list_len = std::size(inside_modes);
     values[k].uval.ch.list = inside_modes;
-    if (g_inside_color >= +ColorMethod::COLOR_BLACK)    // numb
+    if (g_inside_method >= ColorMethod::COLOR)    // numb
     {
         values[k].uval.ch.val = 0;
     }
-    else if (g_inside_color == +ColorMethod::ITER)
+    else if (g_inside_method == ColorMethod::ITER)
     {
         values[k].uval.ch.val = 1;
     }
-    else if (g_inside_color == +ColorMethod::ZMAG)
+    else if (g_inside_method == ColorMethod::ZMAG)
     {
         values[k].uval.ch.val = 2;
     }
-    else if (g_inside_color == +ColorMethod::BOF60)
+    else if (g_inside_method == ColorMethod::BOF60)
     {
         values[k].uval.ch.val = 3;
     }
-    else if (g_inside_color == +ColorMethod::BOF61)
+    else if (g_inside_method == ColorMethod::BOF61)
     {
         values[k].uval.ch.val = 4;
     }
-    else if (g_inside_color == +ColorMethod::EPS_CROSS)
+    else if (g_inside_method == ColorMethod::EPS_CROSS)
     {
         values[k].uval.ch.val = 5;
     }
-    else if (g_inside_color == +ColorMethod::STAR_TRAIL)
+    else if (g_inside_method == ColorMethod::STAR_TRAIL)
     {
         values[k].uval.ch.val = 6;
     }
-    else if (g_inside_color == +ColorMethod::PERIOD)
+    else if (g_inside_method == ColorMethod::PERIOD)
     {
         values[k].uval.ch.val = 7;
     }
-    else if (g_inside_color == +ColorMethod::ATANI)
+    else if (g_inside_method == ColorMethod::ATANI)
     {
         values[k].uval.ch.val = 8;
     }
-    else if (g_inside_color == +ColorMethod::FMODI)
+    else if (g_inside_method == ColorMethod::FMODI)
     {
         values[k].uval.ch.val = 9;
     }
-    int old_inside = g_inside_color;
+    const ColorMethod old_inside_method{g_inside_method};
+    const int old_inside = g_inside_color;
 
     choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
     values[k].type = 'i';
-    if (g_outside_color >= +ColorMethod::COLOR_BLACK)
+    if (g_outside_method >= ColorMethod::COLOR)
     {
         values[k].uval.ival = g_outside_color;
     }
@@ -168,14 +169,15 @@ int get_toggles()
     values[k].uval.ch.vlen = 4;
     values[k].uval.ch.list_len = std::size(outside_modes);
     values[k].uval.ch.list = outside_modes;
-    if (g_outside_color >= +ColorMethod::COLOR_BLACK)    // numb
+    if (g_outside_method >= ColorMethod::COLOR)    // numb
     {
         values[k].uval.ch.val = 0;
     }
     else
     {
-        values[k].uval.ch.val = -g_outside_color;
+        values[k].uval.ch.val = -+g_outside_method;
     }
+    ColorMethod old_outside_method{g_outside_method};
     int old_outside = g_outside_color;
 
     choices[++k] = "Savename (.GIF implied)";
@@ -287,7 +289,7 @@ int get_toggles()
     }
 
     g_inside_color = values[++k].uval.ival;
-    if (g_inside_color < +ColorMethod::COLOR_BLACK)
+    if (g_inside_color < 0)
     {
         g_inside_color = -g_inside_color;
     }
@@ -296,49 +298,58 @@ int get_toggles()
         g_inside_color = g_inside_color % g_colors + g_inside_color / g_colors;
     }
 
+    if (int tmp = values[++k].uval.ch.val; tmp > 0)
     {
-        int tmp = values[++k].uval.ch.val;
-        if (tmp > 0)
+        switch (tmp)
         {
-            switch (tmp)
-            {
-            case 1:
-                g_inside_color = +ColorMethod::ITER;
-                break;
-            case 2:
-                g_inside_color = +ColorMethod::ZMAG;
-                break;
-            case 3:
-                g_inside_color = +ColorMethod::BOF60;
-                break;
-            case 4:
-                g_inside_color = +ColorMethod::BOF61;
-                break;
-            case 5:
-                g_inside_color = +ColorMethod::EPS_CROSS;
-                break;
-            case 6:
-                g_inside_color = +ColorMethod::STAR_TRAIL;
-                break;
-            case 7:
-                g_inside_color = +ColorMethod::PERIOD;
-                break;
-            case 8:
-                g_inside_color = +ColorMethod::ATANI;
-                break;
-            case 9:
-                g_inside_color = +ColorMethod::FMODI;
-                break;
-            }
+        case 0:
+            g_inside_method = ColorMethod::COLOR;
+            break;
+        case 1:
+            g_inside_method = ColorMethod::ITER;
+            g_inside_color = 0;
+            break;
+        case 2:
+            g_inside_method = ColorMethod::ZMAG;
+            g_inside_color = 0;
+            break;
+        case 3:
+            g_inside_method = ColorMethod::BOF60;
+            g_inside_color = 0;
+            break;
+        case 4:
+            g_inside_method = ColorMethod::BOF61;
+            g_inside_color = 0;
+            break;
+        case 5:
+            g_inside_method = ColorMethod::EPS_CROSS;
+            g_inside_color = 0;
+            break;
+        case 6:
+            g_inside_method = ColorMethod::STAR_TRAIL;
+            g_inside_color = 0;
+            break;
+        case 7:
+            g_inside_method = ColorMethod::PERIOD;
+            g_inside_color = 0;
+            break;
+        case 8:
+            g_inside_method = ColorMethod::ATANI;
+            g_inside_color = 0;
+            break;
+        case 9:
+            g_inside_method = ColorMethod::FMODI;
+            g_inside_color = 0;
+            break;
         }
     }
-    if (g_inside_color != old_inside)
+    if (g_inside_color != old_inside || g_inside_method != old_inside_method)
     {
         j++;
     }
 
     g_outside_color = values[++k].uval.ival;
-    if (g_outside_color < +ColorMethod::COLOR_BLACK)
+    if (g_outside_color < 0)
     {
         g_outside_color = -g_outside_color;
     }
@@ -347,14 +358,12 @@ int get_toggles()
         g_outside_color = g_outside_color % g_colors + g_outside_color / g_colors;
     }
 
+    if (int tmp = values[++k].uval.ch.val; tmp > 0)
     {
-        int tmp = values[++k].uval.ch.val;
-        if (tmp > 0)
-        {
-            g_outside_color = -tmp;
-        }
+        g_outside_method = static_cast<ColorMethod>(-tmp);
+        g_outside_color = -1;
     }
-    if (g_outside_color != old_outside)
+    if (g_outside_color != old_outside || g_outside_method != old_outside_method)
     {
         j++;
     }

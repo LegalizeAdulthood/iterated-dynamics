@@ -53,7 +53,7 @@ enum class SymmetryType
 // values for inside/outside
 enum class ColorMethod
 {
-    COLOR_BLACK = 0,
+    COLOR = 0,
     ITER = -1,
     REAL = -2,
     IMAG = -3,

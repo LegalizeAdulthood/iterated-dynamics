@@ -1274,42 +1274,50 @@ TEST_F(TestParameterCommand, typeSierpinski)
 
 TEST_F(TestParameterCommandError, insideInvalidValue)
 {
+    ValueSaver saved_inside_method{g_inside_method, static_cast<ColorMethod>(-9999)};
     ValueSaver saved_inside_color{g_inside_color, -9999};
 
     exec_cmd_arg("inside=foo", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_EQ(-9999, +g_inside_method);
     EXPECT_EQ(-9999, g_inside_color);
 }
 
 TEST_F(TestParameterCommand, insideZMag)
 {
+    ValueSaver saved_inside_method{g_inside_method, static_cast<ColorMethod>(-9999)};
     ValueSaver saved_inside_color{g_inside_color, -9999};
 
     exec_cmd_arg("inside=zmag", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(+ColorMethod::ZMAG, g_inside_color);
+    EXPECT_EQ(ColorMethod::ZMAG, g_inside_method);
+    EXPECT_EQ(-1, g_inside_color);
 }
 
 TEST_F(TestParameterCommand, insideNumber)
 {
+    ValueSaver saved_inside_method{g_inside_method, static_cast<ColorMethod>(-9999)};
     ValueSaver saved_inside_color{g_inside_color, -9999};
 
     exec_cmd_arg("inside=100", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(ColorMethod::COLOR, g_inside_method);
     EXPECT_EQ(100, g_inside_color);
 }
 
 TEST_F(TestParameterCommand, insideEpsilonCross)
 {
+    ValueSaver saved_inside_method{g_inside_method, static_cast<ColorMethod>(-9999)};
     ValueSaver saved_inside_color{g_inside_color, -9999};
 
     exec_cmd_arg("inside=epsiloncross", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(+ColorMethod::EPS_CROSS, g_inside_color);
+    EXPECT_EQ(ColorMethod::EPS_CROSS, g_inside_method);
+    EXPECT_EQ(-1, g_inside_color);
 }
 
 TEST_F(TestParameterCommand, proximity)
@@ -1454,31 +1462,37 @@ TEST_F(TestParameterCommand, functionSinCosTanCot)
 
 TEST_F(TestParameterCommand, outsideReal)
 {
+    ValueSaver saved_outside_method{g_outside_method, static_cast<ColorMethod>(-9999)};
     ValueSaver saved_outside{g_outside_color, -9999};
 
     exec_cmd_arg("outside=real", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ(+ColorMethod::REAL, g_outside_color);
+    EXPECT_EQ(ColorMethod::REAL, g_outside_method);
+    EXPECT_EQ(-1, g_outside_color);
 }
 
 TEST_F(TestParameterCommand, outsideNumber)
 {
+    ValueSaver saved_outside_method{g_outside_method, static_cast<ColorMethod>(-9999)};
     ValueSaver saved_outside{g_outside_color, -9999};
 
     exec_cmd_arg("outside=100", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(ColorMethod::COLOR, g_outside_method);
     EXPECT_EQ(100, g_outside_color);
 }
 
 TEST_F(TestParameterCommandError, outsideInvalidName)
 {
+    ValueSaver saved_outside_method{g_outside_method, static_cast<ColorMethod>(-9999)};
     ValueSaver saved_outside{g_outside_color, -9999};
 
     exec_cmd_arg("outside=zmag", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_EQ(-9999, +g_outside_method);
     EXPECT_EQ(-9999, g_outside_color);
 }
 

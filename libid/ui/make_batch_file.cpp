@@ -142,15 +142,15 @@ MakeParParams::MakeParParams()
     if (m_prompt_record_colors)
     {
         --max_color;
-        if (g_inside_color > +ColorMethod::COLOR_BLACK && g_inside_color > max_color)
+        if (g_inside_method == ColorMethod::COLOR && g_inside_color > max_color)
         {
             max_color = g_inside_color;
         }
-        if (g_outside_color > +ColorMethod::COLOR_BLACK && g_outside_color > max_color)
+        if (g_outside_method == ColorMethod::COLOR && g_outside_color > max_color)
         {
             max_color = g_outside_color;
         }
-        if (g_distance_estimator < +ColorMethod::COLOR_BLACK && -g_distance_estimator > max_color)
+        if (g_distance_estimator < 0 && -g_distance_estimator > max_color)
         {
             max_color = static_cast<int>(-g_distance_estimator);
         }
@@ -1098,84 +1098,84 @@ static void write_batch_params(
         {
             put_param(" fillcolor=%d", g_fill_color);
         }
-        if (g_inside_color != +ColorMethod::COLOR_BLACK)
+        if (g_inside_method != ColorMethod::COLOR)
         {
             put_param(" inside=");
-            if (g_inside_color == +ColorMethod::ITER)
+            if (g_inside_method == ColorMethod::ITER)
             {
                 put_param("maxiter");
             }
-            else if (g_inside_color == +ColorMethod::ZMAG)
+            else if (g_inside_method == ColorMethod::ZMAG)
             {
                 put_param("zmag");
             }
-            else if (g_inside_color == +ColorMethod::BOF60)
+            else if (g_inside_method == ColorMethod::BOF60)
             {
                 put_param("bof60");
             }
-            else if (g_inside_color == +ColorMethod::BOF61)
+            else if (g_inside_method == ColorMethod::BOF61)
             {
                 put_param("bof61");
             }
-            else if (g_inside_color == +ColorMethod::EPS_CROSS)
+            else if (g_inside_method == ColorMethod::EPS_CROSS)
             {
                 put_param("epsiloncross");
             }
-            else if (g_inside_color == +ColorMethod::STAR_TRAIL)
+            else if (g_inside_method == ColorMethod::STAR_TRAIL)
             {
                 put_param("startrail");
             }
-            else if (g_inside_color == +ColorMethod::PERIOD)
+            else if (g_inside_method == ColorMethod::PERIOD)
             {
                 put_param("period");
             }
-            else if (g_inside_color == +ColorMethod::FMODI)
+            else if (g_inside_method == ColorMethod::FMODI)
             {
                 put_param("fmod");
             }
-            else if (g_inside_color == +ColorMethod::ATANI)
+            else if (g_inside_method == ColorMethod::ATANI)
             {
                 put_param("atan");
             }
-            else
-            {
-                put_param("%d", g_inside_color);
-            }
+        }
+        else if (g_inside_color > 0)
+        {
+            put_param("inside=%d", g_inside_color);
         }
         if (g_close_proximity != 0.01 &&
-            (g_inside_color == +ColorMethod::EPS_CROSS || g_inside_color == +ColorMethod::FMODI ||
-                g_outside_color == +ColorMethod::FMOD))
+            (g_inside_method == ColorMethod::EPS_CROSS || g_inside_method == ColorMethod::FMODI ||
+                g_outside_method == ColorMethod::FMOD))
         {
             put_param(" proximity=%.15g", g_close_proximity);
         }
-        if (g_outside_color != +ColorMethod::ITER)
+        if (g_outside_method != ColorMethod::ITER)
         {
             put_param(" outside=");
-            if (g_outside_color == +ColorMethod::REAL)
+            if (g_outside_method == ColorMethod::REAL)
             {
                 put_param("real");
             }
-            else if (g_outside_color == +ColorMethod::IMAG)
+            else if (g_outside_method == ColorMethod::IMAG)
             {
                 put_param("imag");
             }
-            else if (g_outside_color == +ColorMethod::MULT)
+            else if (g_outside_method == ColorMethod::MULT)
             {
                 put_param("mult");
             }
-            else if (g_outside_color == +ColorMethod::SUM)
+            else if (g_outside_method == ColorMethod::SUM)
             {
                 put_param("summ");
             }
-            else if (g_outside_color == +ColorMethod::ATAN)
+            else if (g_outside_method == ColorMethod::ATAN)
             {
                 put_param("atan");
             }
-            else if (g_outside_color == +ColorMethod::FMOD)
+            else if (g_outside_method == ColorMethod::FMOD)
             {
                 put_param("fmod");
             }
-            else if (g_outside_color == +ColorMethod::TDIS)
+            else if (g_outside_method == ColorMethod::TDIS)
             {
                 put_param("tdis");
             }

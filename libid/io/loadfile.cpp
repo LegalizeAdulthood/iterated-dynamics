@@ -341,7 +341,16 @@ static void backwards_info1(const FractalInfo &read_info)
         g_potential.flag = g_potential.params[0] != 0.0;
         g_random_seed_flag = read_info.random_seed_flag != 0;
         g_random_seed = read_info.random_seed;
-        g_inside_color = read_info.inside;
+        if (read_info.inside < 0)
+        {
+            g_inside_method = static_cast<ColorMethod>(read_info.inside);
+            g_inside_color = -1;
+        }
+        else
+        {
+            g_inside_method = ColorMethod::COLOR;
+            g_inside_color = read_info.inside;
+        }
         g_log_map_flag = read_info.log_map_old;
         g_inversion.params[0] = read_info.invert[0];
         g_inversion.params[1] = read_info.invert[1];
@@ -587,9 +596,9 @@ static void backwards_info_pre9(const FractalInfo &read_info)
     {
         /* forcesymmetry==1000 means we want to force symmetry but don't
             know which symmetry yet, will find out in setsymmetry() */
-        if (g_outside_color == +ColorMethod::REAL || g_outside_color == +ColorMethod::IMAG ||
-            g_outside_color == +ColorMethod::MULT || g_outside_color == +ColorMethod::SUM ||
-            g_outside_color == +ColorMethod::ATAN)
+        if (g_outside_method == ColorMethod::REAL || g_outside_method == ColorMethod::IMAG ||
+            g_outside_method == ColorMethod::MULT || g_outside_method == ColorMethod::SUM ||
+            g_outside_method == ColorMethod::ATAN)
         {
             if (g_force_symmetry == SymmetryType::NOT_FORCED)
             {
@@ -1745,9 +1754,9 @@ void backwards_legacy_v20()
     // Fractype == FP type is not seen from PAR file ?????
     g_bad_outside = g_file_version <= 1960                                                 //
         && (g_fractal_type == FractalType::MANDEL || g_fractal_type == FractalType::JULIA) //
-        && g_outside_color <= +ColorMethod::REAL && g_outside_color >= +ColorMethod::SUM;
+        && g_outside_method <= ColorMethod::REAL && g_outside_method >= ColorMethod::SUM;
 
-    if (g_file_version < 1961 && g_inside_color == +ColorMethod::EPS_CROSS)
+    if (g_file_version < 1961 && g_inside_method == ColorMethod::EPS_CROSS)
     {
         g_close_proximity = 0.01;
     }

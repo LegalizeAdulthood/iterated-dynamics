@@ -70,6 +70,7 @@ struct ImageHistory
     int random_seed;
     bool random_seed_flag;
     int biomorph;
+    ColorMethod inside_method;
     int inside_color;
     long log_map_flag;
     InversionParams inversion;
@@ -87,6 +88,7 @@ struct ImageHistory
     int converge_x_adjust;
     int eye_separation;
     GlassesType glasses_type;
+    ColorMethod outside_method;
     int outside_color;
     long dist_est;
     std::array<TrigFn, 4> trig_index;
@@ -165,6 +167,7 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.random_seed == rhs.random_seed                                                           //
         && lhs.random_seed_flag == rhs.random_seed_flag                                                 //
         && lhs.biomorph == rhs.biomorph                                                                 //
+        && lhs.inside_method == rhs.inside_method                                                       //
         && lhs.inside_color == rhs.inside_color                                                         //
         && lhs.log_map_flag == rhs.log_map_flag                                                         //
         && std::equal(std::begin(lhs.inversion), std::end(lhs.inversion), std::begin(rhs.inversion))    //
@@ -182,6 +185,7 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.converge_x_adjust == rhs.converge_x_adjust                                               //
         && lhs.eye_separation == rhs.eye_separation                                                     //
         && lhs.glasses_type == rhs.glasses_type                                                         //
+        && lhs.outside_method == rhs.outside_method                                                     //
         && lhs.outside_color == rhs.outside_color                                                       //
         && lhs.dist_est == rhs.dist_est                                                                 //
         && std::equal(std::begin(lhs.trig_index), std::end(lhs.trig_index), std::begin(rhs.trig_index)) //
@@ -385,6 +389,48 @@ std::ostream &operator<<(std::ostream &str, const DacBox &value)
     return str;
 }
 
+std::ostream &operator<<(std::ostream &str, ColorMethod value)
+{
+    switch (value)
+    {
+    case ColorMethod::COLOR:
+        return str << "color";
+    case ColorMethod::ITER:
+        return str << "iter";
+    case ColorMethod::REAL:
+        return str << "real";
+    case ColorMethod::IMAG:
+        return str << "imag";
+    case ColorMethod::MULT:
+        return str << "mult";
+    case ColorMethod::SUM:
+        return str << "sum";
+    case ColorMethod::ATAN:
+        return str << "atan";
+    case ColorMethod::FMOD:
+        return str << "fmod";
+    case ColorMethod::TDIS:
+        return str << "tdis";
+    case ColorMethod::ZMAG:
+        return str << "zmag";
+    case ColorMethod::BOF60:
+        return str << "bof60";
+    case ColorMethod::BOF61:
+        return str << "bof61";
+    case ColorMethod::EPS_CROSS:
+        return str << "eps_cross";
+    case ColorMethod::STAR_TRAIL:
+        return str << "star_trail";
+    case ColorMethod::PERIOD:
+        return str << "period";
+    case ColorMethod::FMODI:
+        return str << "fmodi";
+    case ColorMethod::ATANI:
+        return str << "atani";
+    }
+    throw std::runtime_error("Unknown coloring method " + std::to_string(+value));
+}
+
 std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
 {
     str << '{';
@@ -400,6 +446,7 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("random_seed":)json" << value.random_seed << ',';
     str << R"json("random_seed_flag":)json" << value.random_seed_flag << ',';
     str << R"json("biomorph":)json" << value.biomorph << ',';
+    str << R"json("inside_method":)json" << value.inside_method << ',';
     str << R"json("inside_color":)json" << value.inside_color << ',';
     str << R"json("log_map_flag":)json" << value.log_map_flag << ',';
     str << R"json("inversion":)json" << JsonArray(value.inversion) << ',';
@@ -418,6 +465,7 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("converge_x_adjust":)json" << value.converge_x_adjust << ',';
     str << R"json("eye_separation":)json" << value.eye_separation << ',';
     str << R"json("glasses_type":)json" << value.glasses_type << ',';
+    str << R"json("outside_method":)json" << value.outside_method << ',';
     str << R"json("outside_color":)json" << value.outside_color << ',';
     str << R"json("dist_est":)json" << value.dist_est << ',';
     str << R"json("trig_index":)json" << JsonArray(value.trig_index) << ',';
@@ -512,6 +560,7 @@ void save_history_info()
     current.potential_params = g_potential.params;
     current.random_seed_flag = g_random_seed_flag;
     current.random_seed = g_random_seed;
+    current.inside_method = g_inside_method;
     current.inside_color = g_inside_color;
     current.log_map_flag = g_log_map_flag;
     current.inversion = g_inversion.params;
@@ -551,6 +600,7 @@ void save_history_info()
     current.converge_y_adjust = g_converge_y_adjust;
     current.eye_separation = g_eye_separation;
     current.glasses_type = g_glasses_type;
+    current.outside_method = g_outside_method;
     current.outside_color = g_outside_color;
     current.user_std_calc_mode = static_cast<char>(g_user.std_calc_mode);
     current.three_pass = g_three_pass;
@@ -674,6 +724,7 @@ void restore_history_info(const int i)
     g_potential.params = last.potential_params;
     g_random_seed_flag = last.random_seed_flag;
     g_random_seed = last.random_seed;
+    g_inside_method = last.inside_method;
     g_inside_color = last.inside_color;
     g_log_map_flag = last.log_map_flag;
     g_inversion.params = last.inversion;
@@ -714,6 +765,7 @@ void restore_history_info(const int i)
     g_converge_y_adjust = last.converge_y_adjust;
     g_eye_separation = last.eye_separation;
     g_glasses_type = last.glasses_type;
+    g_outside_method = last.outside_method;
     g_outside_color = last.outside_color;
     g_user.std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);
     g_std_calc_mode = static_cast<CalcMode>(last.user_std_calc_mode);

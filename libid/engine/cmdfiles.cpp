@@ -425,10 +425,12 @@ static void init_vars_fractal()
 {
     g_escape_exit = false;                               // don't disable the "are you sure?" screen
     g_user.periodicity_value = 1;                        // turn on periodicity
+    g_inside_method = ColorMethod::COLOR;                // inside method = color
     g_inside_color = 0;                                  // inside color = black (in default colormap)
     g_fill_color = -1;                                   // no special fill color
     g_user.biomorph_value = -1;                          // turn off biomorph flag
-    g_outside_color = +ColorMethod::ITER;                // outside color = -1 (not used)
+    g_outside_method = ColorMethod::ITER;                // outside color = iteration
+    g_outside_color = -1;                                // outside color = -1 (not used)
     g_max_iterations = INITIAL_MAX_ITERATIONS;           // initial max iter
     g_user.std_calc_mode = CalcMode::SOLID_GUESS;        // initial solid-guessing
     g_stop_pass = 0;                                     // initial guessing stop pass
@@ -2166,25 +2168,26 @@ static CmdArgFlags cmd_inside(const Command &cmd)
     struct Inside
     {
         std::string_view arg;
-        int inside;
+        ColorMethod inside;
     };
 
     const Inside inside_names[] = {
-        {"zmag", +ColorMethod::ZMAG},              //
-        {"bof60", +ColorMethod::BOF60},            //
-        {"bof61", +ColorMethod::BOF61},            //
-        {"epsiloncross", +ColorMethod::EPS_CROSS}, //
-        {"startrail", +ColorMethod::STAR_TRAIL},   //
-        {"period", +ColorMethod::PERIOD},          //
-        {"fmod", +ColorMethod::FMODI},             //
-        {"atan", +ColorMethod::ATANI},             //
-        {"maxiter", +ColorMethod::ITER}            //
+        {"zmag", ColorMethod::ZMAG},              //
+        {"bof60", ColorMethod::BOF60},            //
+        {"bof61", ColorMethod::BOF61},            //
+        {"epsiloncross", ColorMethod::EPS_CROSS}, //
+        {"startrail", ColorMethod::STAR_TRAIL},   //
+        {"period", ColorMethod::PERIOD},          //
+        {"fmod", ColorMethod::FMODI},             //
+        {"atan", ColorMethod::ATANI},             //
+        {"maxiter", ColorMethod::ITER}            //
     };
     for (const auto &[arg, inside] : inside_names)
     {
         if (arg == cmd.value)
         {
-            g_inside_color = inside;
+            g_inside_method = inside;
+            g_inside_color = -1;
             return CmdArgFlags::FRACTAL_PARAM;
         }
     }
@@ -2193,6 +2196,7 @@ static CmdArgFlags cmd_inside(const Command &cmd)
         return cmd.bad_arg();
     }
 
+    g_inside_method = ColorMethod::COLOR;
     g_inside_color = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -2720,7 +2724,8 @@ static CmdArgFlags cmd_outside(const Command &cmd)
     {
         if (cmd.value == arg)
         {
-            g_outside_color = +outside;
+            g_outside_method = outside;
+            g_outside_color = -1;
             return CmdArgFlags::FRACTAL_PARAM;
         }
     }
@@ -2728,6 +2733,7 @@ static CmdArgFlags cmd_outside(const Command &cmd)
     {
         return cmd.bad_arg();
     }
+    g_outside_method = ColorMethod::COLOR;
     g_outside_color = cmd.num_val;
     return CmdArgFlags::FRACTAL_PARAM;
 }

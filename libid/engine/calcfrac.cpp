@@ -1249,7 +1249,7 @@ int calc_mandelbrot_type()
         }
         if ((!g_log_map_table.empty() || g_log_map_calculate) // map color, but not if maxit & adjusted for inside,etc
             && (g_real_color_iter < g_max_iterations
-                || (g_inside_color < +ColorMethod::COLOR_BLACK && g_color_iter == g_max_iterations)))
+                || (g_inside_method != ColorMethod::COLOR && g_color_iter == g_max_iterations)))
         {
             g_color_iter = log_table_calc(g_color_iter);
         }
@@ -1314,16 +1314,16 @@ int standard_fractal_type()
     DComplex last_z{};
 
     const long save_max_it = g_max_iterations;
-    if (g_inside_color == +ColorMethod::STAR_TRAIL)
+    if (g_inside_method == ColorMethod::STAR_TRAIL)
     {
         std::fill(std::begin(tan_table), std::end(tan_table), 0.0);
         g_max_iterations = 16;
     }
-    if (g_periodicity_check == 0 || g_inside_color == +ColorMethod::ZMAG || g_inside_color == +ColorMethod::STAR_TRAIL)
+    if (g_periodicity_check == 0 || g_inside_method == ColorMethod::ZMAG || g_inside_method == ColorMethod::STAR_TRAIL)
     {
         g_old_color_iter = 2147483647L;       // don't check periodicity at all
     }
-    else if (g_inside_color == +ColorMethod::PERIOD)       // for display-periodicity
+    else if (g_inside_method == ColorMethod::PERIOD)       // for display-periodicity
     {
         g_old_color_iter = g_max_iterations / 5 * 4; // don't check until nearly done
     }
@@ -1390,7 +1390,7 @@ int standard_fractal_type()
     }
     caught_a_cycle = false;
     long saved_and;
-    if (g_inside_color == +ColorMethod::PERIOD)
+    if (g_inside_method == ColorMethod::PERIOD)
     {
         saved_and = 16;           // begin checking every 16th cycle
     }
@@ -1404,7 +1404,7 @@ int standard_fractal_type()
     }
     int saved_incr = 1;               // for periodicity checking, start checking the very first time
 
-    if (g_inside_color <= +ColorMethod::BOF60 && g_inside_color >= +ColorMethod::BOF61)
+    if (g_inside_method <= ColorMethod::BOF60 && g_inside_method >= ColorMethod::BOF61)
     {
         g_magnitude = 0;
         min_orbit = 100000.0;
@@ -1415,7 +1415,7 @@ int standard_fractal_type()
 
     attracted = false;
 
-    if (g_outside_color == +ColorMethod::TDIS)
+    if (g_outside_method == ColorMethod::TDIS)
     {
         if (g_bf_math == BFMathType::BIG_NUM)
         {
@@ -1511,7 +1511,7 @@ int standard_fractal_type()
             g_old_z = g_new_z;
         }
         // the usual case
-        else if ((g_cur_fractal_specific->orbit_calc() && g_inside_color != +ColorMethod::STAR_TRAIL) || g_overflow)
+        else if ((g_cur_fractal_specific->orbit_calc() && g_inside_method != ColorMethod::STAR_TRAIL) || g_overflow)
         {
             break;
         }
@@ -1522,10 +1522,10 @@ int standard_fractal_type()
             plot_orbit(g_new_z.x, g_new_z.y, -1);
         }
 
-        if (g_inside_color < +ColorMethod::ITER)
+        if (g_inside_method < ColorMethod::ITER)
         {
             set_new_z_from_bignum();
-            if (g_inside_color == +ColorMethod::STAR_TRAIL)
+            if (g_inside_method == ColorMethod::STAR_TRAIL)
             {
                 if (0 < g_color_iter && g_color_iter < 16)
                 {
@@ -1543,7 +1543,7 @@ int standard_fractal_type()
                     }
                 }
             }
-            else if (g_inside_color == +ColorMethod::EPS_CROSS)
+            else if (g_inside_method == ColorMethod::EPS_CROSS)
             {
                 hooper = 0;
                 if (std::abs(g_new_z.x) < std::abs(g_close_proximity))
@@ -1557,14 +1557,14 @@ int standard_fractal_type()
                     goto plot_inside;
                 }
             }
-            else if (g_inside_color == +ColorMethod::FMODI)
+            else if (g_inside_method == ColorMethod::FMODI)
             {
                 if (const double mag = fmod_test(); mag < g_close_proximity)
                 {
                     mem_value = mag;
                 }
             }
-            else if (g_inside_color <= +ColorMethod::BOF60 && g_inside_color >= +ColorMethod::BOF61)
+            else if (g_inside_method <= ColorMethod::BOF60 && g_inside_method >= ColorMethod::BOF61)
             {
                 if (g_magnitude == 0.0 || g_magnitude_calc)
                 {
@@ -1578,16 +1578,16 @@ int standard_fractal_type()
             }
         }
 
-        if (g_outside_color == +ColorMethod::TDIS || g_outside_color == +ColorMethod::FMOD)
+        if (g_outside_method == ColorMethod::TDIS || g_outside_method == ColorMethod::FMOD)
         {
             set_new_z_from_bignum();
-            if (g_outside_color == +ColorMethod::TDIS)
+            if (g_outside_method == ColorMethod::TDIS)
             {
                 total_dist += std::sqrt(sqr(last_z.x-g_new_z.x)+sqr(last_z.y-g_new_z.y));
                 last_z.x = g_new_z.x;
                 last_z.y = g_new_z.y;
             }
-            else if (g_outside_color == +ColorMethod::FMOD)
+            else if (g_outside_method == ColorMethod::FMOD)
             {
                 if (const double mag = fmod_test(); mag < g_close_proximity)
                 {
@@ -1743,41 +1743,41 @@ int standard_fractal_type()
         goto plot_inside;         // distest, decomp, biomorph don't apply
     }
 
-    if (g_outside_color < +ColorMethod::ITER)
+    if (g_outside_method < ColorMethod::ITER)
     {
         set_new_z_from_bignum();
         // Add 7 to overcome negative values on the MANDEL
-        if (g_outside_color == +ColorMethod::REAL)
+        if (g_outside_method == ColorMethod::REAL)
         {
             g_color_iter += static_cast<long>(g_new_z.x) + 7;
         }
-        else if (g_outside_color == +ColorMethod::IMAG)
+        else if (g_outside_method == ColorMethod::IMAG)
         {
             g_color_iter += static_cast<long>(g_new_z.y) + 7;
         }
-        else if (g_outside_color == +ColorMethod::MULT  && g_new_z.y)
+        else if (g_outside_method == ColorMethod::MULT  && g_new_z.y)
         {
             g_color_iter = static_cast<long>(static_cast<double>(g_color_iter) * (g_new_z.x / g_new_z.y));
         }
-        else if (g_outside_color == +ColorMethod::SUM)
+        else if (g_outside_method == ColorMethod::SUM)
         {
             g_color_iter += static_cast<long>(g_new_z.x + g_new_z.y);
         }
-        else if (g_outside_color == +ColorMethod::ATAN)
+        else if (g_outside_method == ColorMethod::ATAN)
         {
             g_color_iter = static_cast<long>(std::abs(std::atan2(g_new_z.y, g_new_z.x) * g_atan_colors / PI));
         }
-        else if (g_outside_color == +ColorMethod::FMOD)
+        else if (g_outside_method == ColorMethod::FMOD)
         {
             g_color_iter = static_cast<long>(mem_value * g_colors / g_close_proximity);
         }
-        else if (g_outside_color == +ColorMethod::TDIS)
+        else if (g_outside_method == ColorMethod::TDIS)
         {
             g_color_iter = static_cast<long>(total_dist);
         }
 
         // eliminate negative colors & wrap arounds
-        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_color != +ColorMethod::FMOD)
+        if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_method != ColorMethod::FMOD)
         {
             g_color_iter = 1;
         }
@@ -1846,7 +1846,7 @@ int standard_fractal_type()
         }
     }
 
-    if (g_outside_color >= +ColorMethod::COLOR_BLACK && !attracted)       // merge escape-time stripes
+    if (g_outside_method >= ColorMethod::COLOR && !attracted)       // merge escape-time stripes
     {
         g_color_iter = g_outside_color;
     }
@@ -1861,13 +1861,13 @@ plot_inside: // we're "inside"
     {
         g_color_iter = 7;           // show periodicity
     }
-    else if (g_inside_color >= +ColorMethod::COLOR_BLACK)
+    else if (g_inside_method >= ColorMethod::COLOR)
     {
         g_color_iter = g_inside_color;              // set to specified color, ignore logpal
     }
     else
     {
-        if (g_inside_color == +ColorMethod::STAR_TRAIL)
+        if (g_inside_method == ColorMethod::STAR_TRAIL)
         {
             g_color_iter = 0;
             for (int i = 1; i < 16; i++)
@@ -1879,7 +1879,7 @@ plot_inside: // we're "inside"
                 }
             }
         }
-        else if (g_inside_color == +ColorMethod::PERIOD)
+        else if (g_inside_method == ColorMethod::PERIOD)
         {
             if (cycle_len > 0)
             {
@@ -1890,7 +1890,7 @@ plot_inside: // we're "inside"
                 g_color_iter = g_max_iterations;
             }
         }
-        else if (g_inside_color == +ColorMethod::EPS_CROSS)
+        else if (g_inside_method == ColorMethod::EPS_CROSS)
         {
             if (hooper == 1)
             {
@@ -1911,23 +1911,23 @@ plot_inside: // we're "inside"
                 scrub_orbit();
             }
         }
-        else if (g_inside_color == +ColorMethod::FMODI)
+        else if (g_inside_method == ColorMethod::FMODI)
         {
             g_color_iter = static_cast<long>(mem_value * g_colors / g_close_proximity);
         }
-        else if (g_inside_color == +ColorMethod::ATANI)            // "atan"
+        else if (g_inside_method == ColorMethod::ATANI)            // "atan"
         {
             g_color_iter = static_cast<long>(std::abs(std::atan2(g_new_z.y, g_new_z.x) * g_atan_colors / PI));
         }
-        else if (g_inside_color == +ColorMethod::BOF60)
+        else if (g_inside_method == ColorMethod::BOF60)
         {
             g_color_iter = static_cast<long>(std::sqrt(min_orbit) * 75);
         }
-        else if (g_inside_color == +ColorMethod::BOF61)
+        else if (g_inside_method == ColorMethod::BOF61)
         {
             g_color_iter = min_index;
         }
-        else if (g_inside_color == +ColorMethod::ZMAG)
+        else if (g_inside_method == ColorMethod::ZMAG)
         {
             g_color_iter = static_cast<long>((sqr(g_new_z.x) + sqr(g_new_z.y)) * (g_max_iterations >> 1) + 1);
         }
@@ -2174,7 +2174,7 @@ int potential(const double mag, const long iterations)
         }
         pot = std::max(pot, 1.0f); // avoid color 0
     }
-    else if (g_inside_color >= +ColorMethod::COLOR_BLACK)
+    else if (g_inside_method == ColorMethod::COLOR)
     {
         pot = static_cast<float>(g_inside_color);
     }
@@ -2364,15 +2364,15 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
     {
         g_force_symmetry = sym;  // for backwards compatibility
     }
-    else if (g_outside_color == +ColorMethod::REAL //
-        || g_outside_color == +ColorMethod::IMAG   //
-        || g_outside_color == +ColorMethod::MULT   //
-        || g_outside_color == +ColorMethod::SUM    //
-        || g_outside_color == +ColorMethod::ATAN   //
-        || g_outside_color == +ColorMethod::FMOD   //
-        || g_outside_color == +ColorMethod::TDIS   //
+    else if (g_outside_method == ColorMethod::REAL //
+        || g_outside_method == ColorMethod::IMAG   //
+        || g_outside_method == ColorMethod::MULT   //
+        || g_outside_method == ColorMethod::SUM    //
+        || g_outside_method == ColorMethod::ATAN   //
+        || g_outside_method == ColorMethod::FMOD   //
+        || g_outside_method == ColorMethod::TDIS   //
         || g_bailout_test == Bailout::MANR         //
-        || g_inside_color == +ColorMethod::FMODI)
+        || g_inside_method == ColorMethod::FMODI)
     {
         return;
     }

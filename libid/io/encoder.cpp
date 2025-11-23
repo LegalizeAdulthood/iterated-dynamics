@@ -812,7 +812,14 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->potential[2] = static_cast<float>(g_potential.params[2]);
     save_info->random_seed_flag = static_cast<std::int16_t>(g_random_seed_flag ? 1 : 0);
     save_info->random_seed = static_cast<std::int16_t>(g_random_seed);
-    save_info->inside = static_cast<std::int16_t>(g_inside_color);
+    if (g_inside_method != ColorMethod::COLOR)
+    {
+        save_info->inside = static_cast<std::int16_t>(+g_inside_method);
+    }
+    else
+    {
+        save_info->inside = static_cast<std::int16_t>(g_inside_color);
+    }
     save_info->log_map_old = static_cast<std::int16_t>(g_log_map_flag <= SHRT_MAX ? g_log_map_flag : SHRT_MAX);
     save_info->invert[0] = static_cast<float>(g_inversion.params[0]);
     save_info->invert[1] = static_cast<float>(g_inversion.params[1]);
@@ -854,7 +861,14 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->y_adjust = static_cast<std::int16_t>(g_converge_y_adjust);
     save_info->eye_separation = static_cast<std::int16_t>(g_eye_separation);
     save_info->glasses_type = static_cast<std::int16_t>(g_glasses_type);
-    save_info->outside = static_cast<std::int16_t>(g_outside_color);
+    if (g_outside_method != ColorMethod::COLOR)
+    {
+        save_info->outside = static_cast<std::int16_t>(+g_outside_method);
+    }
+    else
+    {
+        save_info->outside = static_cast<std::int16_t>(g_outside_color);
+    }
     save_info->x3rd = g_image_region.m_3rd.x;
     save_info->y3rd = g_image_region.m_3rd.y;
     save_info->calc_status = static_cast<std::int16_t>(g_calc_status);

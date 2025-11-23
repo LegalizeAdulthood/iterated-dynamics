@@ -254,7 +254,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
         iteration++;
         magnitude = mag_squared(m_xn[iteration] + delta_sub_n);
 
-        if (g_inside_color == +ColorMethod::BOF60 || g_inside_color == +ColorMethod::BOF61)
+        if (g_inside_method == ColorMethod::BOF60 || g_inside_method == ColorMethod::BOF61)
         {
             if (magnitude < min_orbit)
             {
@@ -304,9 +304,9 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
         }
         else
         {
-            switch (g_outside_color)
+            switch (g_outside_method)
             {
-            case +ColorMethod::COLOR_BLACK: // no filter
+            case ColorMethod::COLOR: // no filter
                 if (iteration == g_max_iterations)
                 {
                     index = g_max_iterations;
@@ -317,7 +317,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 }
                 break;
 
-            case +ColorMethod::ZMAG:
+            case ColorMethod::ZMAG:
                 if (iteration == g_max_iterations)
                 {
                     index = static_cast<int>(
@@ -329,7 +329,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 }
                 break;
 
-            case +ColorMethod::REAL:
+            case ColorMethod::REAL:
                 if (iteration == g_max_iterations)
                 {
                     index = g_max_iterations;
@@ -340,7 +340,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 }
                 break;
 
-            case +ColorMethod::IMAG:
+            case ColorMethod::IMAG:
                 if (iteration == g_max_iterations)
                 {
                     index = g_max_iterations;
@@ -351,7 +351,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 }
                 break;
 
-            case +ColorMethod::MULT:
+            case ColorMethod::MULT:
                 if (iteration == g_max_iterations)
                 {
                     index = g_max_iterations;
@@ -366,7 +366,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 }
                 break;
 
-            case +ColorMethod::SUM:
+            case ColorMethod::SUM:
                 if (iteration == g_max_iterations)
                 {
                     index = g_max_iterations;
@@ -377,7 +377,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 }
                 break;
 
-            case +ColorMethod::ATAN:
+            case ColorMethod::ATAN:
                 if (iteration == g_max_iterations)
                 {
                     index = g_max_iterations;
@@ -407,7 +407,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                 break;
             }
 
-            if (g_inside_color >= +ColorMethod::COLOR_BLACK) // no filter
+            if (g_inside_method >= ColorMethod::COLOR) // no filter
             {
                 if (iteration == g_max_iterations)
                 {
@@ -420,21 +420,21 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
             }
             else
             {
-                switch (g_inside_color)
+                switch (g_inside_method)
                 {
-                case +ColorMethod::ZMAG:
+                case ColorMethod::ZMAG:
                     if (iteration == g_max_iterations)
                     {
                         index = static_cast<int>(mag_squared(w) * (g_max_iterations >> 1) + 1);
                     }
                     break;
-                case +ColorMethod::BOF60:
+                case ColorMethod::BOF60:
                     if (iteration == g_max_iterations)
                     {
                         index = static_cast<int>(std::sqrt(min_orbit) * 75.0);
                     }
                     break;
-                case +ColorMethod::BOF61:
+                case ColorMethod::BOF61:
                     if (iteration == g_max_iterations)
                     {
                         index = min_index;

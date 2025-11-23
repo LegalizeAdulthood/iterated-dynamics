@@ -74,8 +74,8 @@ static bool use_calc_mandelbrot()
         && !g_distance_estimator                               //
         && g_decomp[0] == 0                                    //
         && g_biomorph == -1                                    //
-        && g_inside_color >= +ColorMethod::ITER                //
-        && g_outside_color >= +ColorMethod::ATAN               //
+        && g_inside_method >= ColorMethod::ITER                //
+        && g_outside_method >= ColorMethod::ATAN               //
         && g_use_init_orbit != InitOrbitMode::VALUE            //
         && (g_sound_flag & SOUNDFLAG_ORBIT_MASK) < SOUNDFLAG_X //
         && !g_attractor.enabled                                //
@@ -354,9 +354,10 @@ bool julia_per_image()
     }
 
     case FractalType::CIRCLE:
-        if (g_inside_color == +ColorMethod::STAR_TRAIL)   // CIRCLE locks up when used with STAR_TRAIL
+        if (g_inside_method == ColorMethod::STAR_TRAIL)   // CIRCLE locks up when used with STAR_TRAIL
         {
-            g_inside_color = +ColorMethod::COLOR_BLACK; // arbitrarily set inside = NUMB
+            g_inside_method = ColorMethod::COLOR;
+            g_inside_color = 0; // arbitrarily set inside = 0
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;
