@@ -80,7 +80,7 @@ var searchData=
   ['at_5fafter_5fstartup_77',['AT_AFTER_STARTUP',['../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160a9757f421531cd9802aa863e0c66e7c00',1,'id::engine']]],
   ['at_5fcmd_5fline_78',['AT_CMD_LINE',['../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160a7e040cd9bef1c5312e4e556383d9cf56',1,'id::engine']]],
   ['at_5fcmd_5fline_5fset_5fname_79',['AT_CMD_LINE_SET_NAME',['../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160a451f30d3276a2cc1087d02a31f5b2968',1,'id::engine']]],
-  ['atan_80',['atan',['../d0/db0/namespaceid_1_1math.html#aaf79479baf0a8a30dc6b44cb5c131be8',1,'id::math::atan()'],['../dc/d31/namespaceid_1_1engine.html#ad509286bccbad45bd562c53aebc7a6a5ac48a365c0a15f8c01a4006d6a17da5be',1,'id::engine::ATAN']]],
+  ['atan_80',['atan',['../dc/d31/namespaceid_1_1engine.html#ad509286bccbad45bd562c53aebc7a6a5ac48a365c0a15f8c01a4006d6a17da5be',1,'id::engine::ATAN'],['../d0/db0/namespaceid_1_1math.html#aaf79479baf0a8a30dc6b44cb5c131be8',1,'id::math::atan(const DComplex &amp;z, DComplex &amp;rz)']]],
   ['atan2_5fbf_81',['atan2_bf',['../d0/db0/namespaceid_1_1math.html#a107328213b00734b8cc8324afd981594',1,'id::math']]],
   ['atan2_5fbn_82',['atan2_bn',['../d0/db0/namespaceid_1_1math.html#a487cbf987b6a364478e6708e3704b5de',1,'id::math']]],
   ['atan_5fbf_83',['atan_bf',['../d0/db0/namespaceid_1_1math.html#a7814d05dcf132a2f4d138e9191bad43c',1,'id::math']]],

@@ -2,7 +2,7 @@ var searchData=
 [
   ['j_0',['j',['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#a8e55143e201e1aedda8efb7f431be477',1,'id::fractals::MandelbrotMix']]],
   ['jb_5fc_1',['jb_c',['../d2/d1e/julibrot_8cpp.html#a697b8a6b89546140d1d2ee5bf12d9ef7',1,'julibrot.cpp']]],
-  ['jiim_2',['jiim',['../dc/d31/namespaceid_1_1engine.html#af86b81d37aa9bfc9ce1f96dfc5096cc5',1,'id::engine::jiim(JIIMType which)'],['../dc/d31/namespaceid_1_1engine.html#adbc8fdfc213e1bbe9c9c171e881d94b5ae2f26a956d3da87de8d0ec31eb799fa6',1,'id::engine::JIIM']]],
+  ['jiim_2',['jiim',['../dc/d31/namespaceid_1_1engine.html#adbc8fdfc213e1bbe9c9c171e881d94b5ae2f26a956d3da87de8d0ec31eb799fa6',1,'id::engine::JIIM'],['../dc/d31/namespaceid_1_1engine.html#af86b81d37aa9bfc9ce1f96dfc5096cc5',1,'id::engine::jiim(JIIMType which)']]],
   ['jiim_2ecpp_3',['jiim.cpp',['../d4/dc4/jiim_8cpp.html',1,'']]],
   ['jiim_2eh_4',['jiim.h',['../dd/d84/jiim_8h.html',1,'']]],
   ['jiimtype_5',['JIIMType',['../dc/d31/namespaceid_1_1engine.html#adbc8fdfc213e1bbe9c9c171e881d94b5',1,'id::engine']]],

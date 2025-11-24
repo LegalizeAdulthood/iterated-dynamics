@@ -37,7 +37,7 @@ var searchData=
   ['potential_5fparams_34',['potential_params',['../d1/d3e/history_8cpp.html#ae8879506368c38dd698700bcdfe9f28f',1,'history.cpp']]],
   ['preview_5ffactor_35',['preview_factor',['../d1/d3e/history_8cpp.html#a7bf92905c78810eacfe5910958558419',1,'preview_factor:&#160;history.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#ae5d873cbd09ebd6e6c301e2d8e091293',1,'id::io::FractalInfo::preview_factor']]],
   ['private_5flabels_36',['private_labels',['../db/dec/structhc_1_1HelpSource.html#a21412b93a46ad1dffd7fb7881281ce2f',1,'hc::HelpSource']]],
-  ['ptr_37',['ptr',['../dc/ddd/parser_8cpp.html#aef565e5502196fb85f662a37cfec4227',1,'parser.cpp']]],
+  ['ptr_37',['ptr',['../dc/ddd/parser_8cpp.html#a2e7ebd0890b730ef7feded871bf97ad6',1,'parser.cpp']]],
   ['ptrs_38',['ptrs',['../dc/ddd/parser_8cpp.html#add742ed3bfc6d01e66a49fb7098dbdf4',1,'parser.cpp']]],
   ['px_39',['px',['../de/deb/structid_1_1io_1_1ExtBlock6.html#a10a3a05c545c02526310b007eaede25b',1,'id::io::ExtBlock6::px'],['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a50e4a2ac4ab16c5d4c099e6a5fa31c26',1,'id::ui::EvolutionInfo::px']]],
   ['py_40',['py',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a1dbeca2ddba0df675d6cf00ad1d0d782',1,'id::ui::EvolutionInfo::py'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#ad11918e34fcf459136339ef5b06a2a64',1,'id::io::ExtBlock6::py']]]
