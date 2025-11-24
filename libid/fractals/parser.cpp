@@ -279,7 +279,7 @@ struct Token
 struct FunctList
 {
     const char *s;
-    FunctionPtr *ptr;
+    FunctionPtr ptr;
 };
 
 struct SymmetryName
@@ -325,9 +325,12 @@ static void d_stk_eq();
 static void d_stk_ne();
 static void d_stk_or();
 static void d_stk_and();
+static void d_stk_fn1();
+static void d_stk_fn2();
+static void d_stk_fn3();
+static void d_stk_fn4();
 static void end_init();
 static void d_stk_jump_on_false();
-static void d_stk_jump_on_true();
 
 fs::path g_formula_filename;                 // file to find formulas in
 std::string g_formula_name;                  // Name of the Formula (if not empty)
@@ -389,95 +392,42 @@ static constexpr std::array<const char *, 4> JUMP_LIST
 static std::string s_formula;
 static std::array<ErrorData, 3> s_errors{};
 
-static FunctionPtr s_srand{d_stk_srand};
-static FunctionPtr s_abs{d_stk_abs};
-static FunctionPtr s_sqr{d_stk_sqr};
-static FunctionPtr s_add{d_stk_add};
-static FunctionPtr s_sub{d_stk_sub};
-static FunctionPtr s_conj{d_stk_conj};
-static FunctionPtr s_floor{d_stk_floor};
-static FunctionPtr s_ceil{d_stk_ceil};
-static FunctionPtr s_trunc{d_stk_trunc};
-static FunctionPtr s_round{d_stk_round};
-static FunctionPtr s_zero{d_stk_zero};
-static FunctionPtr s_one{d_stk_one};
-static FunctionPtr s_real{d_stk_real};
-static FunctionPtr s_imag{d_stk_imag};
-static FunctionPtr s_neg{d_stk_neg};
-static FunctionPtr s_mul{d_stk_mul};
-static FunctionPtr s_div{d_stk_div};
-static FunctionPtr s_mod{d_stk_mod};
-static FunctionPtr s_flip{d_stk_flip};
-static FunctionPtr s_sin{d_stk_sin};
-static FunctionPtr s_tan{d_stk_tan};
-static FunctionPtr s_tanh{d_stk_tanh};
-static FunctionPtr s_cotan{d_stk_cotan};
-static FunctionPtr s_cotanh{d_stk_cotanh};
-static FunctionPtr s_sinh{d_stk_sinh};
-static FunctionPtr s_cos{d_stk_cos};
-static FunctionPtr s_cosxx{d_stk_cosxx};
-static FunctionPtr s_cosh{d_stk_cosh};
-static FunctionPtr s_asin{d_stk_asin};
-static FunctionPtr s_asinh{d_stk_asinh};
-static FunctionPtr s_acos{d_stk_acos};
-static FunctionPtr s_acosh{d_stk_acosh};
-static FunctionPtr s_atan{d_stk_atan};
-static FunctionPtr s_atanh{d_stk_atanh};
-static FunctionPtr s_sqrt{d_stk_sqrt};
-static FunctionPtr s_cabs{d_stk_cabs};
-static FunctionPtr s_lt{d_stk_lt};
-static FunctionPtr s_gt{d_stk_gt};
-static FunctionPtr s_lte{d_stk_lte};
-static FunctionPtr s_gte{d_stk_gte};
-static FunctionPtr s_eq{d_stk_eq};
-static FunctionPtr s_ne{d_stk_ne};
-static FunctionPtr s_or{d_stk_or};
-static FunctionPtr s_and{d_stk_and};
-static FunctionPtr s_log{d_stk_log};
-static FunctionPtr s_exp{d_stk_exp};
-static FunctionPtr s_pwr{d_stk_pwr};
-static FunctionPtr s_jump_on_false{d_stk_jump_on_false};
-static FunctionPtr s_jump_on_true{d_stk_jump_on_true};
-static FunctionPtr s_trig0{d_stk_sin};
-static FunctionPtr s_trig1{d_stk_sqr};
-static FunctionPtr s_trig2{d_stk_sinh};
-static FunctionPtr s_trig3{d_stk_cosh};
-static constexpr std::array<FunctList, 34> FUNC_LIST
+static const std::array<FunctList, 34> FUNC_LIST
 {
-    FunctList{"sin",   &s_sin},
-    FunctList{"sinh",  &s_sinh},
-    FunctList{"cos",   &s_cos},
-    FunctList{"cosh",  &s_cosh},
-    FunctList{"sqr",   &s_sqr},
-    FunctList{"log",   &s_log},
-    FunctList{"exp",   &s_exp},
-    FunctList{"abs",   &s_abs},
-    FunctList{"conj",  &s_conj},
-    FunctList{"real",  &s_real},
-    FunctList{"imag",  &s_imag},
-    FunctList{"fn1",   &s_trig0},
-    FunctList{"fn2",   &s_trig1},
-    FunctList{"fn3",   &s_trig2},
-    FunctList{"fn4",   &s_trig3},
-    FunctList{"flip",  &s_flip},
-    FunctList{"tan",   &s_tan},
-    FunctList{"tanh",  &s_tanh},
-    FunctList{"cotan", &s_cotan},
-    FunctList{"cotanh", &s_cotanh},
-    FunctList{"cosxx", &s_cosxx},
-    FunctList{"srand", &s_srand},
-    FunctList{"asin",  &s_asin},
-    FunctList{"asinh", &s_asinh},
-    FunctList{"acos",  &s_acos},
-    FunctList{"acosh", &s_acosh},
-    FunctList{"atan",  &s_atan},
-    FunctList{"atanh", &s_atanh},
-    FunctList{"sqrt",  &s_sqrt},
-    FunctList{"cabs",  &s_cabs},
-    FunctList{"floor", &s_floor},
-    FunctList{"ceil",  &s_ceil},
-    FunctList{"trunc", &s_trunc},
-    FunctList{"round", &s_round},
+    FunctList{"sin",   d_stk_sin},
+    FunctList{"sinh",  d_stk_sinh},
+    FunctList{"cos",   d_stk_cos},
+    FunctList{"cosh",  d_stk_cosh},
+    FunctList{"sqr",   d_stk_sqr},
+    FunctList{"log",   d_stk_log},
+    FunctList{"exp",   d_stk_exp},
+    FunctList{"abs",   d_stk_abs},
+    FunctList{"conj",  d_stk_conj},
+    FunctList{"real",  d_stk_real},
+    FunctList{"imag",  d_stk_imag},
+    FunctList{"fn1",   d_stk_fn1},
+    FunctList{"fn2",   d_stk_fn2},
+    FunctList{"fn3",   d_stk_fn3},
+    FunctList{"fn4",   d_stk_fn4},
+    FunctList{"flip",  d_stk_flip},
+    FunctList{"tan",   d_stk_tan},
+    FunctList{"tanh",  d_stk_tanh},
+    FunctList{"cotan", d_stk_cotan},
+    FunctList{"cotanh", d_stk_cotanh},
+    FunctList{"cosxx", d_stk_cosxx},
+    FunctList{"srand", d_stk_srand},
+    FunctList{"asin",  d_stk_asin},
+    FunctList{"asinh", d_stk_asinh},
+    FunctList{"acos",  d_stk_acos},
+    FunctList{"acosh", d_stk_acosh},
+    FunctList{"atan",  d_stk_atan},
+    FunctList{"atanh", d_stk_atanh},
+    FunctList{"sqrt",  d_stk_sqrt},
+    FunctList{"cabs",  d_stk_cabs},
+    FunctList{"floor", d_stk_floor},
+    FunctList{"ceil",  d_stk_ceil},
+    FunctList{"trunc", d_stk_trunc},
+    FunctList{"round", d_stk_round},
 };
 static std::array<const char *, 17> s_op_list
 {
@@ -1045,6 +995,26 @@ void d_stk_flip()
     debug_trace_stack_state();
 }
 
+static void d_stk_fn1()
+{
+    g_d_trig0();
+}
+
+static void d_stk_fn2()
+{
+    g_d_trig1();
+}
+
+static void d_stk_fn3()
+{
+    g_d_trig2();
+}
+
+static void d_stk_fn4()
+{
+    g_d_trig3();
+}
+
 void d_stk_sin()
 {
     debug_trace_operation("SIN", g_arg1);
@@ -1567,7 +1537,7 @@ static ConstArg *is_const(const char *str, const int len)
         DComplex z;
         assert(g_operation_index > 0);
         assert(g_operation_index == s_op.size());
-        if (s_op.back().f == s_neg)
+        if (s_op.back().f == d_stk_neg)
         {
             s_op.pop_back();
             g_operation_index--;
@@ -1726,59 +1696,6 @@ static bool parse_formula_text(const std::string &text)
     s_jump_index = 0;
     s_jump_control.clear();
 
-    s_add = d_stk_add;
-    s_sub = d_stk_sub;
-    s_neg = d_stk_neg;
-    s_mul = d_stk_mul;
-    s_sin = d_stk_sin;
-    s_sinh = d_stk_sinh;
-    s_lt = d_stk_lt;
-    s_lte = d_stk_lte;
-    s_mod = d_stk_mod;
-    s_sqr = d_stk_sqr;
-    s_cos = d_stk_cos;
-    s_cosh = d_stk_cosh;
-    s_log = d_stk_log;
-    s_exp = d_stk_exp;
-    s_pwr = d_stk_pwr;
-    s_div = d_stk_div;
-    s_abs = d_stk_abs;
-    s_real = d_stk_real;
-    s_imag = d_stk_imag;
-    s_conj = d_stk_conj;
-    s_trig0 = g_d_trig0;
-    s_trig1 = g_d_trig1;
-    s_trig2 = g_d_trig2;
-    s_trig3 = g_d_trig3;
-    s_flip = d_stk_flip;
-    s_tan = d_stk_tan;
-    s_tanh = d_stk_tanh;
-    s_cotan = d_stk_cotan;
-    s_cotanh = d_stk_cotanh;
-    s_cosxx = d_stk_cosxx;
-    s_gt = d_stk_gt;
-    s_gte = d_stk_gte;
-    s_eq = d_stk_eq;
-    s_ne = d_stk_ne;
-    s_and = d_stk_and;
-    s_or = d_stk_or;
-    s_srand = d_stk_srand;
-    s_asin = d_stk_asin;
-    s_asinh = d_stk_asinh;
-    s_acos = d_stk_acos;
-    s_acosh = d_stk_acosh;
-    s_atan = d_stk_atan;
-    s_atanh = d_stk_atanh;
-    s_cabs = d_stk_cabs;
-    s_sqrt = d_stk_sqrt;
-    s_zero = d_stk_zero;
-    s_floor = d_stk_floor;
-    s_ceil = d_stk_ceil;
-    s_trunc = d_stk_trunc;
-    s_round = d_stk_round;
-    s_jump_on_true = d_stk_jump_on_true;
-    s_jump_on_false = d_stk_jump_on_false;
-    s_one = d_stk_one;
     g_max_function = 0;
     for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(VARIABLES.size()); g_variable_index++)
     {
@@ -1851,7 +1768,7 @@ static bool parse_formula_text(const std::string &text)
             {
                 s_expecting_arg = true;
                 s_n++;
-                push_pending_op(s_or, 7 - (s_paren + equals) * 15);
+                push_pending_op(d_stk_or, 7 - (s_paren + equals) * 15);
             }
             else if (mod_flag == s_paren-1)
             {
@@ -1862,7 +1779,7 @@ static bool parse_formula_text(const std::string &text)
             {
                 assert(m_d_stk < mods.size());
                 mods[m_d_stk++] = mod_flag;
-                push_pending_op(s_mod, 2 - (s_paren + equals) * 15);
+                push_pending_op(d_stk_mod, 2 - (s_paren + equals) * 15);
                 mod_flag = s_paren++;
             }
             break;
@@ -1887,28 +1804,28 @@ static bool parse_formula_text(const std::string &text)
             break;
         case '+':
             s_expecting_arg = true;
-            push_pending_op(s_add, 4 - (s_paren + equals)*15);
+            push_pending_op(d_stk_add, 4 - (s_paren + equals)*15);
             break;
         case '-':
             if (s_expecting_arg)
             {
-                push_pending_op(s_neg, 2 - (s_paren + equals)*15);
+                push_pending_op(d_stk_neg, 2 - (s_paren + equals)*15);
             }
             else
             {
-                push_pending_op(s_sub, 4 - (s_paren + equals)*15);
+                push_pending_op(d_stk_sub, 4 - (s_paren + equals)*15);
                 s_expecting_arg = true;
             }
             break;
         case '&':
             s_expecting_arg = true;
             s_n++;
-            push_pending_op(s_and, 7 - (s_paren + equals)*15);
+            push_pending_op(d_stk_and, 7 - (s_paren + equals)*15);
             break;
         case '!':
             s_expecting_arg = true;
             s_n++;
-            push_pending_op(s_ne, 6 - (s_paren + equals)*15);
+            push_pending_op(d_stk_ne, 6 - (s_paren + equals)*15);
             break;
         case '<':
             s_expecting_arg = true;
@@ -1917,11 +1834,11 @@ static bool parse_formula_text(const std::string &text)
                 if (text[s_n + 1] == '=')
                 {
                     s_n++;
-                    fn = s_lte;
+                    fn = d_stk_lte;
                 }
                 else
                 {
-                    fn = s_lt;
+                    fn = d_stk_lt;
                 }
                 push_pending_op(fn, 6 - (s_paren + equals) * 15);
             }
@@ -1933,33 +1850,33 @@ static bool parse_formula_text(const std::string &text)
                 if (text[s_n + 1] == '=')
                 {
                     s_n++;
-                    fn = s_gte;
+                    fn = d_stk_gte;
                 }
                 else
                 {
-                    fn = s_gt;
+                    fn = d_stk_gt;
                 }
                 push_pending_op(fn, 6 - (s_paren + equals) * 15);
             }
             break;
         case '*':
             s_expecting_arg = true;
-            push_pending_op(s_mul, 3 - (s_paren + equals)*15);
+            push_pending_op(d_stk_mul, 3 - (s_paren + equals)*15);
             break;
         case '/':
             s_expecting_arg = true;
-            push_pending_op(s_div, 3 - (s_paren + equals)*15);
+            push_pending_op(d_stk_div, 3 - (s_paren + equals)*15);
             break;
         case '^':
             s_expecting_arg = true;
-            push_pending_op(s_pwr, 2 - (s_paren + equals)*15);
+            push_pending_op(d_stk_pwr, 2 - (s_paren + equals)*15);
             break;
         case '=':
             s_expecting_arg = true;
             if (text[s_n+1] == '=')
             {
                 s_n++;
-                push_pending_op(s_eq, 6 - (s_paren + equals)*15);
+                push_pending_op(d_stk_eq, 6 - (s_paren + equals)*15);
             }
             else
             {
@@ -1984,7 +1901,7 @@ static bool parse_formula_text(const std::string &text)
                 case JumpControlType::IF:
                     s_expecting_arg = true;
                     push_jump(JumpControlType::IF);
-                    push_pending_op(s_jump_on_false, 1);
+                    push_pending_op(d_stk_jump_on_false, 1);
                     break;
                 case JumpControlType::ELSE_IF:
                     s_expecting_arg = true;
@@ -1993,7 +1910,7 @@ static bool parse_formula_text(const std::string &text)
                     push_pending_op(stk_jump, 1);
                     push_pending_op(nullptr, 15);
                     push_pending_op(stk_clr, -30000);
-                    push_pending_op(s_jump_on_false, 1);
+                    push_pending_op(d_stk_jump_on_false, 1);
                     break;
                 case JumpControlType::ELSE:
                     push_jump(JumpControlType::ELSE);
@@ -2220,7 +2137,7 @@ static bool fill_jump_struct()
                 switch (s_jump_control[i].type)
                 {
                 case JumpControlType::IF:
-                    jump_func = s_jump_on_false;
+                    jump_func = d_stk_jump_on_false;
                     break;
                 case JumpControlType::ELSE_IF:
                     check_for_else = !check_for_else;
@@ -2230,7 +2147,7 @@ static bool fill_jump_struct()
                     }
                     else
                     {
-                        jump_func = s_jump_on_false;
+                        jump_func = d_stk_jump_on_false;
                     }
                     break;
                 case JumpControlType::ELSE:
