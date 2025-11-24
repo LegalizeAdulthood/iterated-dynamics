@@ -365,9 +365,6 @@ static int s_init_store_ptr{};
 static int s_init_op_ptr{};
 static bool s_uses_jump{};
 static std::vector<Arg *> s_store;
-static unsigned long s_num_ops{};
-static unsigned long s_num_loads{};
-static unsigned long s_num_stores{};
 static unsigned long s_num_jumps{};
 static int s_init_jump_index{};
 static std::vector<PendingOp> s_op;
@@ -3500,9 +3497,6 @@ static bool frm_prescan(std::FILE * open_file)
     constexpr int MAX_PARENS{sizeof(long) * 8};
 
     s_num_jumps = 0UL;
-    s_num_stores = 0UL;
-    s_num_loads = 0UL;
-    s_num_ops = 0UL;
     s_chars_in_formula = 0U;
     s_uses_jump = false;
     s_paren = 0;
@@ -3617,8 +3611,6 @@ static bool frm_prescan(std::FILE * open_file)
             }
             break;
         case FormulaTokenType::PARAM_VARIABLE: //i.e. p1, p2, p3, p4 or p5
-            s_num_ops++;
-            s_num_loads++;
             new_statement = false;
             if (!expecting_arg)
             {
@@ -3627,8 +3619,6 @@ static bool frm_prescan(std::FILE * open_file)
             expecting_arg = false;
             break;
         case FormulaTokenType::USER_NAMED_VARIABLE: // i.e. c, iter, etc.
-            s_num_ops++;
-            s_num_loads++;
             new_statement = false;
             if (!expecting_arg)
             {
@@ -3637,8 +3627,6 @@ static bool frm_prescan(std::FILE * open_file)
             expecting_arg = false;
             break;
         case FormulaTokenType::PREDEFINED_VARIABLE: // i.e. z, pixel, whitesq, etc.
-            s_num_ops++;
-            s_num_loads++;
             new_statement = false;
             if (!expecting_arg)
             {
@@ -3648,8 +3636,6 @@ static bool frm_prescan(std::FILE * open_file)
             break;
         case FormulaTokenType::REAL_CONSTANT: // i.e. 4, (4,0), etc.
             assignment_ok = false;
-            s_num_ops++;
-            s_num_loads++;
             new_statement = false;
             if (!expecting_arg)
             {
@@ -3659,8 +3645,6 @@ static bool frm_prescan(std::FILE * open_file)
             break;
         case FormulaTokenType::COMPLEX_CONSTANT: // i.e. (1,2) etc.
             assignment_ok = false;
-            s_num_ops++;
-            s_num_loads++;
             new_statement = false;
             if (!expecting_arg)
             {
@@ -3671,7 +3655,6 @@ static bool frm_prescan(std::FILE * open_file)
         case FormulaTokenType::FUNCTION:
             assignment_ok = false;
             new_statement = false;
-            s_num_ops++;
             if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
@@ -3679,7 +3662,6 @@ static bool frm_prescan(std::FILE * open_file)
             break;
         case FormulaTokenType::PARAM_FUNCTION:
             assignment_ok = false;
-            s_num_ops++;
             if (!expecting_arg)
             {
                 record_error(ParseError::SHOULD_BE_OPERATOR);
@@ -3688,7 +3670,6 @@ static bool frm_prescan(std::FILE * open_file)
             break;
         case FormulaTokenType::FLOW_CONTROL:
             assignment_ok = false;
-            s_num_ops++;
             s_num_jumps++;
             if (!new_statement)
             {
@@ -3704,7 +3685,6 @@ static bool frm_prescan(std::FILE * open_file)
                     waiting_for_endif++;
                     break;
                 case TokenId::JUMP_ELSE_IF: //ELSEIF
-                    s_num_ops += 3; //else + two clear statements
                     s_num_jumps++;  // this involves two jumps
                     if (else_has_been_used % 2)
                     {
@@ -3741,12 +3721,10 @@ static bool frm_prescan(std::FILE * open_file)
             }
             break;
         case FormulaTokenType::OPERATOR:
-            s_num_ops++; //This will be corrected below in certain cases
             switch (this_token.id)
             {
             case TokenId::OP_COMMA:
             case TokenId::OP_COLON:    // end of statement and :
-                s_num_ops++; // ParseStr inserts a dummy op
                 if (s_paren)
                 {
                     record_error(ParseError::NEED_MORE_CLOSE_PARENS);
@@ -3759,14 +3737,6 @@ static bool frm_prescan(std::FILE * open_file)
                 }
                 if (!expecting_arg)
                 {
-                    if (this_token.id == TokenId::OP_COLON)
-                    {
-                        s_num_ops += 2;
-                    }
-                    else
-                    {
-                        s_num_ops++;
-                    }
                 }
                 else if (!new_statement)
                 {
@@ -3799,9 +3769,6 @@ static bool frm_prescan(std::FILE * open_file)
                 expecting_arg = true;
                 break;
             case TokenId::OP_ASSIGN:     // =
-                s_num_ops--; //this just converts a load to a store
-                s_num_loads--;
-                s_num_stores++;
                 if (!assignment_ok)
                 {
                     record_error(ParseError::ILLEGAL_ASSIGNMENT);
@@ -3852,7 +3819,6 @@ static bool frm_prescan(std::FILE * open_file)
                 assignment_ok = false;
                 if (!(waiting_for_mod & 1L))
                 {
-                    s_num_ops--;
                 }
                 if (!(waiting_for_mod & 1L) && !expecting_arg)
                 {
@@ -3931,7 +3897,6 @@ static bool frm_prescan(std::FILE * open_file)
             }
             break;
         case FormulaTokenType::END_OF_FORMULA:
-            s_num_ops += 3; // Just need one, but a couple of extra just for the heck of it
             if (s_paren)
             {
                 record_error(ParseError::NEED_MORE_CLOSE_PARENS);
