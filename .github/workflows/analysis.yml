@@ -193,8 +193,8 @@ jobs:
           path: docs/html/
 
   #############################################################################
-  gh-pages-cppcheck:
-    needs: cppcheck
+  gh-pages-dev:
+    needs: [cppcheck, doxygen, msvc-static-analysis]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -207,50 +207,21 @@ jobs:
           submodules: false
 
       - name: Clear Directory
-        run: rm -rf dev/cppcheck 
+        run: rm -rf dev/cppcheck dev/doxygen dev/msvc-static-analysis
 
-      - name: Get Report
+      - name: Get CppCheck Report
         uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
         with:
           name: CppCheck
           path: dev/cppcheck
 
-      - name: Update Contents
-        run: |
-          git config user.name CppCheck
-          git config user.email cppcheck-bot@example.com
-          git status
-          git add dev/cppcheck
-          git status
-          git commit -m "Update CppCheck report for ${{github.sha}}" || echo "No changes to commit"
-          git status
-          git log -n 1
-
-      - name: Push Updates
-        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
+      - name: Get Doxygen Documentation
+        uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
         with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          branch: gh-pages
-          force: false
+          name: doxygen
+          path: dev/doxygen
 
-  #############################################################################
-  gh-pages-msvc-static-analysis:
-    needs: msvc-static-analysis
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
-        with:
-          ref: gh-pages
-          submodules: false
-
-      - name: Clear Directory
-        run: rm -rf dev/msvc-static-analysis
-
-      - name: Get Report
+      - name: Get Static Anaysis Report
         uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
         with:
           name: msvc-static-analysis
@@ -258,53 +229,12 @@ jobs:
 
       - name: Update Contents
         run: |
-          git config user.name "MSVC Static Analysis"
-          git config user.email msvc-static-analysis-bot@example.com
+          git config user.name github-pages
+          git config user.email pages-bot@example.com
           git status
-          git add dev/msvc-static-analysis
+          git add dev
           git status
-          git commit -m "Update MSVC Static Analysis report for ${{github.sha}}" || echo "No changes to commit"
-          git status
-          git log -n 1
-
-      - name: Push Updates
-        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
-        with:
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          branch: gh-pages
-          force: false
-
-  #############################################################################
-  gh-pages-doxygen:
-    needs: doxygen
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683       # v4.2.2
-        with:
-          ref: gh-pages
-          submodules: false
-
-      - name: Clear Directory
-        run: rm -rf dev/doxygen
-
-      - name: Get Documentation
-        uses: actions/download-artifact@7a1cd3216ca9260cd8022db641d960b1db4d1be4 # v4.0.0
-        with:
-          name: doxygen
-          path: dev/doxygen
-
-      - name: Update Contents
-        run: |
-          git config user.name Doxygen
-          git config user.email doxygen-bot@example.com
-          git status
-          git add dev/doxygen
-          git status
-          git commit -m "Update Doxygen documentation for ${{github.sha}}" || echo "No changes to commit"
+          git commit -m "Update developer reports for ${{github.sha}}" || echo "No changes to commit"
           git status
           git log -n 1
 
