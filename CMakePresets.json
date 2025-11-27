@@ -142,7 +142,7 @@
     {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
-      "inherits": [ "sibling-preset-build-dir", "compile-commands", "no-testing", "vcpkg" ]
+      "inherits": [ "sibling-preset-build-dir", "use-wx", "compile-commands", "no-testing", "vcpkg" ]
     },
     {
       "name": "hc",

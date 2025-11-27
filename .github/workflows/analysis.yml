@@ -131,10 +131,11 @@ jobs:
             --suppress=variableHidingEnum
             --suppress=variableScope
             --inline-suppr
-            -I headers hc common headers unix win32
+            -I libid/include
             -ilegacy
             -ivcpkg
             -i../build-cppcheck/vcpkg_installed
+            hc helpcom libid win32 wx
 
       - name: Print Report
         run: cmake -E cat cppcheck_report.txt
