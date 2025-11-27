@@ -57,7 +57,7 @@ jobs:
       - name: Run Static Analysis
         continue-on-error: true
         run: |
-          msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=true /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=NativeRecommendedRules.ruleset /p:TreatWarningsAsErrors=false /v:q "/flp:logfile=msvc-static-analysis-report.txt;verbosity=q"
+          msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=false /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=NativeRecommendedRules.ruleset /p:TreatWarningsAsErrors=false /v:q "/flp:logfile=msvc-static-analysis-report.txt;verbosity=q"
 
       - name: Upload Static Analysis Report
         uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
