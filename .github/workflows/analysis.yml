@@ -167,16 +167,32 @@ jobs:
           sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install 
           sudo apt-get install --no-install-recommends -y doxygen graphviz
 
+      - name: Add NuGet sources
+        shell: bash
+        run: |
+          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
+            sources add \
+            -Source "${{env.FEED_URL}}" \
+            -StorePasswordInClearText \
+            -Name GitHubPackages \
+            -UserName "${{github.repository_owner}}" \
+            -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
+            setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+            -Source "${{env.FEED_URL}}"
+
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
         with:
           cmake-version: '3.31'
 
-      - name: Configure Project
+      - name: Configure Compilation Database
+        env: 
+          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
         run: |
           cmake --version
           cmake --preset cppcheck
-
+  
       - name: Get Project Version
         id: version
         run: |
