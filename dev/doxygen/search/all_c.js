@@ -21,7 +21,7 @@ var searchData=
   ['latoo_5forbit_18',['latoo_orbit',['../d5/d38/namespaceid_1_1fractals.html#a0e0d0967674b88e1cabd686b6c3e000e',1,'id::fractals']]],
   ['lbl_19',['lbl',['../d1/d16/structhc_1_1PaginateDocIno.html#a6a46d8b10cfb27deb2531ea2e768f5f5',1,'hc::PaginateDocIno']]],
   ['ld_5fmath_20',['LD_MATH',['../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91ab88b871ea2ba145db78532fde45e2afa',1,'id::fractals']]],
-  ['left_5feye_21',['left_eye',['../d2/d1e/julibrot_8cpp.html#a34c7f5ecff00654ea263cdd533f4f662',1,'left_eye:&#160;julibrot.cpp'],['../d5/d38/namespaceid_1_1fractals.html#a603cca7d14b34f23a787c62b46432cbbace8edac89ce4d2bbc53b4473568e3ed9',1,'id::fractals::LEFT_EYE']]],
+  ['left_5feye_21',['left_eye',['../d5/d38/namespaceid_1_1fractals.html#a603cca7d14b34f23a787c62b46432cbbace8edac89ce4d2bbc53b4473568e3ed9',1,'id::fractals::LEFT_EYE'],['../d2/d1e/julibrot_8cpp.html#a34c7f5ecff00654ea263cdd533f4f662',1,'left_eye:&#160;julibrot.cpp']]],
   ['left_5ffirst_22',['LEFT_FIRST',['../d5/d38/namespaceid_1_1fractals.html#a855a0c55fea54af723c172c9b98b132dab8f77c81549438aacbb3782b29e9a6ee',1,'id::fractals']]],
   ['left_5fpos_23',['LEFT_POS',['../df/d6d/namespaceid_1_1misc.html#a448f6208c34fde03dd87bfe0d2cf1c29',1,'id::misc']]],
   ['legacy_24',['legacy',['../de/d26/structid_1_1misc_1_1Version.html#a0afda806891d3a5e4ac0c9cc038ac6fe',1,'id::misc::Version']]],
