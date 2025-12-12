@@ -257,6 +257,7 @@ add_library(libid
     "doc/MathGlobals.md"
     "doc/MiscGlobals.md"
     "doc/UIGlobals.md"
+    "doc/NetworkArchitecture.md"
 )
 source_group("Docs" REGULAR_EXPRESSION ".*\\.md$")
 source_group_subdir("Engine" "engine")
