@@ -2,6 +2,7 @@
 //
 #include "fractals/formula.h"
 
+#include "fractals/interpreter.h"
 #include "fractals/parser.h"
 
 namespace id::fractals
