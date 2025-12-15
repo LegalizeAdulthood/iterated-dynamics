@@ -251,6 +251,24 @@ inline int operator+(ParseError value)
     return static_cast<int>(value);
 }
 
+enum class GetFormulaError
+{
+    NONE = 0,
+    UNEXPECTED_EOF,
+    UNEXPECTED_EOL,
+    NAME_TOO_LONG,
+    NO_LEFT_BRACKET_FIRST_LINE,
+    NO_MATCH_RIGHT_PAREN,
+    BAD_SYMMETRY,
+};
+
+struct FormulaEntry
+{
+    std::string name;
+    SymmetryType symmetry;
+    std::string body;
+};
+
 struct PendingOp
 {
     FunctionPtr f;
@@ -2913,24 +2931,6 @@ int frm_get_param_stuff(const char *name)
     }
     return 1;
 }
-
-enum class GetFormulaError
-{
-    NONE = 0,
-    UNEXPECTED_EOF,
-    UNEXPECTED_EOL,
-    NAME_TOO_LONG,
-    NO_LEFT_BRACKET_FIRST_LINE,
-    NO_MATCH_RIGHT_PAREN,
-    BAD_SYMMETRY,
-};
-
-struct FormulaEntry
-{
-    std::string name;
-    SymmetryType symmetry;
-    std::string body;
-};
 
 static std::string get_formula_name(std::FILE *open_file, int &c, GetFormulaError &err)
 {
