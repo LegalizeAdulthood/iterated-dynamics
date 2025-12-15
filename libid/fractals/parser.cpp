@@ -255,7 +255,6 @@ enum class GetFormulaError
 {
     NONE = 0,
     UNEXPECTED_EOF,
-    UNEXPECTED_EOL,
     NAME_TOO_LONG,
     NO_LEFT_BRACKET_FIRST_LINE,
     NO_MATCH_RIGHT_PAREN,
@@ -410,6 +409,7 @@ static constexpr std::array<const char *, 4> JUMP_LIST
     "else",
     "endif"
 };
+static FormulaEntry s_formula_entry;
 static std::string s_formula;
 static std::array<ErrorData, 3> s_errors{};
 
@@ -2950,7 +2950,7 @@ static std::string get_formula_name(std::FILE *open_file, int &c, GetFormulaErro
             return {};
         case '\r':
         case '\n':
-            err = GetFormulaError::UNEXPECTED_EOL;
+            err = GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE;
             return {};
         case ' ':
         case '\t':
@@ -3079,37 +3079,76 @@ static std::string get_formula_body(std::FILE *open_file, int &c, GetFormulaErro
     return result;
 }
 
+class FilePositionSaver
+{
+public:
+    FilePositionSaver(std::FILE *file) :
+        m_file(file),
+        m_position(std::ftell(file))
+    {
+    }
+
+    ~FilePositionSaver()
+    {
+        std::fseek(m_file, m_position, SEEK_SET);
+    }
+
+    void cancel()
+    {
+        m_position = std::ftell(m_file);
+    }
+
+private:
+    std::FILE *m_file;
+    long m_position;
+};
+
 static FormulaEntry get_formula_entry(std::FILE *open_file, GetFormulaError &err)
 {
+    FilePositionSaver saved_pos{open_file};
     FormulaEntry result;
-    const long file_pos = std::ftell(open_file);
 
     int c;
     result.name = get_formula_name(open_file, c, err);
     if (err != GetFormulaError::NONE)
     {
-        fseek(open_file, SEEK_SET, file_pos);
         return {};
     }
 
-    if (c == '(')
-    {
-        result.symmetry = get_formula_symmetry(open_file, c, err);
-    }
+    result.symmetry = c == '(' ? get_formula_symmetry(open_file, c, err) : SymmetryType::NONE;
     if (err != GetFormulaError::NONE)
     {
-        fseek(open_file, SEEK_SET, file_pos);
         return {};
     }
 
     result.body = get_formula_body(open_file, c, err);
     if (err != GetFormulaError::NONE)
     {
-        fseek(open_file, SEEK_SET, file_pos);
         return {};
     }
 
+    saved_pos.cancel();
     return result;
+}
+
+static std::string to_string(GetFormulaError err)
+{
+    switch (err)
+    {
+    case GetFormulaError::NONE:
+        break;
+    case GetFormulaError::UNEXPECTED_EOF:
+        return parse_error_text(ParseError::UNEXPECTED_EOF);
+    case GetFormulaError::NAME_TOO_LONG:
+        return parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE);
+    case GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE:
+        return parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE);
+    case GetFormulaError::NO_MATCH_RIGHT_PAREN:
+        return parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN);
+    case GetFormulaError::BAD_SYMMETRY:
+        return parse_error_text(ParseError::INVALID_SYM_USING_NOSYM);
+    }
+    throw std::runtime_error("Unknown formula error code: " + std::to_string(static_cast<int>(err)));
 }
 
 /* frm_check_name_and_sym():
@@ -3401,6 +3440,16 @@ bool run_formula(const std::string &name, const bool report_bad_sym)
         return true;
     }
 
+    {
+        FilePositionSaver saved_pos{entry_file};
+        GetFormulaError err{};
+        s_formula_entry = get_formula_entry(entry_file, err);
+        if (err != GetFormulaError::NONE)
+        {
+            stop_msg(to_string(err));
+            return true;
+        }
+    }
     s_formula = prepare_formula(entry_file, report_bad_sym);
     std::fclose(entry_file);
 
