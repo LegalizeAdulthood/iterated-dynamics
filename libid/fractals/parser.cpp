@@ -538,7 +538,6 @@ static void push_jump(const JumpControlType type)
     JumpControl value{};
     value.type = type;
     s_formula.jump_control.push_back(value);
-    ++s_runtime.jump_index;
 }
 
 #define CASE_TERMINATOR case',':\
@@ -2227,8 +2226,8 @@ static bool fill_jump_struct()
     }
 
     // Following for safety only; all should always be false
-    if (i != s_runtime.jump_index
-        || s_formula.jump_control[i - 1].type != JumpControlType::END_IF
+    if (i != static_cast<int>(s_formula.jump_control.size())             //
+        || s_formula.jump_control[i - 1].type != JumpControlType::END_IF //
         || s_formula.jump_control[0].type != JumpControlType::IF)
     {
         return true;
