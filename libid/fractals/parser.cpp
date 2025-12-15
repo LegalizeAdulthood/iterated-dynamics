@@ -1733,10 +1733,7 @@ static bool parse_formula_text(const std::string &text)
     double rotation;
     double skew;
     LDouble magnification;
-    s_runtime.set_random = false;
-    s_runtime.randomized = false;
     s_formula.uses_jump = false;
-    s_runtime.jump_index = 0;
     s_formula.jump_control.clear();
 
     g_max_function = 0;
@@ -1782,7 +1779,6 @@ static bool parse_formula_text(const std::string &text)
     s_formula.ops.clear();
     g_store_index = 0;
     g_load_index = 0;
-    s_runtime.op_ptr = 0;
     s_parser.paren = 0;
     g_last_init_op = 0;
     s_parser.expecting_arg = true;
@@ -2069,6 +2065,8 @@ int formula_per_pixel()
     g_overflow = false;
     s_runtime.jump_index = 0;
     s_runtime.op_ptr = 0;
+    s_runtime.set_random = false;
+    s_runtime.randomized = false;
     g_store_index = 0;
     g_load_index = 0;
     g_arg1 = s_runtime.stack.data();
