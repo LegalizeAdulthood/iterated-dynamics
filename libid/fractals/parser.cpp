@@ -2964,10 +2964,10 @@ static std::string get_formula_name(std::FILE *open_file, int &c, GetFormulaErro
             if (!at_end_of_name)
             {
                 i++;
+                result.append(1, static_cast<char>(c));
             }
             break;
         }
-        result.append(1, static_cast<char>(c));
     }
 
     if (i > ITEM_NAME_LEN)
@@ -3065,10 +3065,6 @@ static std::string get_formula_body(std::FILE *open_file, int &c, GetFormulaErro
         case EOF:
             err = GetFormulaError::UNEXPECTED_EOF;
             return {};
-        case '\r':
-        case '\n':
-            err = GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE;
-            return {};
         case '}':
             break;
         default :
@@ -3106,7 +3102,7 @@ private:
 static FormulaEntry get_formula_entry(std::FILE *open_file, GetFormulaError &err)
 {
     FilePositionSaver saved_pos{open_file};
-    FormulaEntry result;
+    FormulaEntry result{};
 
     int c;
     result.name = get_formula_name(open_file, c, err);
@@ -3653,7 +3649,7 @@ static void frm_error(std::FILE * open_file, const long begin_frm)
 
   The function returns 1 if success, and 0 if errors are found.
 */
-static bool frm_prescan(std::FILE * open_file)
+static bool frm_prescan(std::FILE *open_file)
 {
     long file_pos{};
     bool done{};
