@@ -24,6 +24,7 @@
 #include "engine/pixel_grid.h"
 #include "fractals/formula.h"
 #include "fractals/fractalp.h"
+#include "fractals/interpreter.h"
 #include "fractals/newton.h"
 #include "io/file_item.h"
 #include "io/library.h"
@@ -380,7 +381,6 @@ struct DebugState
 static bool frm_prescan(std::FILE *open_file);
 static void parser_allocate();
 static void d_stk_srand();
-static void d_stk_add();
 static void d_stk_sub();
 static void d_stk_real();
 static void d_stk_imag();
@@ -850,16 +850,6 @@ void d_stk_sqr()
     g_arg1->d.x = LAST_SQR.d.x - LAST_SQR.d.y;
     LAST_SQR.d.x += LAST_SQR.d.y;
     LAST_SQR.d.y = 0;
-    debug_trace_stack_state();
-}
-
-static void d_stk_add()
-{
-    debug_trace_operation("ADD", g_arg1, g_arg2);
-    g_arg2->d.x += g_arg1->d.x;
-    g_arg2->d.y += g_arg1->d.y;
-    g_arg1--;
-    g_arg2--;
     debug_trace_stack_state();
 }
 

@@ -10,6 +10,7 @@ struct Arg;
 namespace id::fractals
 {
 
+void d_stk_add();
 void d_stk_mul();
 void d_stk_abs();
 void d_stk_sqr();

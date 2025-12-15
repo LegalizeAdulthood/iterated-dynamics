@@ -3,6 +3,8 @@
 #include "math/arg.h"
 #include "math/fixed_pt.h"
 
+#include <cmath>
+
 using namespace id::math;
 
 namespace id::fractals
@@ -16,6 +18,16 @@ static bool check_denom(const double denom)
         return true;
     }
     return false;
+}
+
+void d_stk_add()
+{
+    debug_trace_operation("ADD", g_arg1, g_arg2);
+    g_arg2->d.x += g_arg1->d.x;
+    g_arg2->d.y += g_arg1->d.y;
+    g_arg1--;
+    g_arg2--;
+    debug_trace_stack_state();
 }
 
 void d_stk_mul()
