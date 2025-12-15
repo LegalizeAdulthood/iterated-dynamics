@@ -3439,7 +3439,7 @@ int bad_formula()
 }
 
 //  returns true if an error occurred
-bool run_formula(const std::string &name, const bool report_bad_sym)
+bool parse_formula(const std::string &name, const bool report_bad_sym)
 {
     //  first set the pointers so they point to a fn which always returns 1
     assert(g_cur_fractal_specific == get_fractal_specific(FractalType::FORMULA));
@@ -3494,7 +3494,7 @@ bool run_formula(const std::string &name, const bool report_bad_sym)
 
 bool formula_per_image()
 {
-    const bool result = !run_formula(g_formula_name, false);
+    const bool result = !parse_formula(g_formula_name, false);
     if (!result)
     {
         debug_trace_close();

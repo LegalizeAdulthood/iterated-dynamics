@@ -63,7 +63,7 @@ int formula_orbit();
 int bad_formula();
 int formula_per_pixel();
 int frm_get_param_stuff(const char *name);
-bool run_formula(const std::string &name, bool report_bad_sym);
+bool parse_formula(const std::string &name, bool report_bad_sym);
 bool formula_per_image();
 void init_misc();
 void free_work_area();
