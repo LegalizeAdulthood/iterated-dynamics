@@ -49,6 +49,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <functional>
 #include <stdexcept>
 #include <string_view>
 #include <tuple>
@@ -2200,14 +2201,14 @@ static bool fill_jump_struct()
     return i < 0;
 }
 
-static int frm_get_char(std::FILE *open_file)
+static int frm_get_char(const std::function<int()> &get_char)
 {
     int c;
     bool done = false;
     bool line_wrap = false;
     while (!done)
     {
-        c = std::getc(open_file);
+        c = get_char();
         switch (c)
         {
         case '\r':
@@ -2218,7 +2219,7 @@ static int frm_get_char(std::FILE *open_file)
             line_wrap = true;
             break;
         case ';' :
-            while ((c = std::getc(open_file)) != '\n' && c != EOF)
+            while ((c = get_char()) != '\n' && c != EOF)
             {
             }
             if (c == EOF)
@@ -2238,6 +2239,11 @@ static int frm_get_char(std::FILE *open_file)
         }
     }
     return std::tolower(c);
+}
+
+static int frm_get_char(std::FILE *open_file)
+{
+    return frm_get_char([open_file] { return std::getc(open_file); });
 }
 
 // This function also gets flow control info
