@@ -50,6 +50,8 @@
 #include <cstring>
 #include <ctime>
 #include <stdexcept>
+#include <string_view>
+#include <tuple>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -2656,7 +2658,7 @@ static void frm_get_eos(std::FILE *open_file, Token *this_token)
     }
 }
 
-/*frmgettoken fills token structure; returns 1 on success and 0 on
+/*frm_get_token fills token structure; returns true on success and false on
   NOT_A_TOKEN and END_OF_FORMULA
 */
 static bool frm_get_token(std::FILE *open_file, Token *this_token)
@@ -2904,6 +2906,204 @@ int frm_get_param_stuff(const char *name)
         return 0;
     }
     return 1;
+}
+
+enum class GetFormulaError
+{
+    NONE = 0,
+    UNEXPECTED_EOF,
+    UNEXPECTED_EOL,
+    NAME_TOO_LONG,
+    NO_LEFT_BRACKET_FIRST_LINE,
+    NO_MATCH_RIGHT_PAREN,
+    BAD_SYMMETRY,
+};
+
+struct FormulaEntry
+{
+    std::string name;
+    SymmetryType symmetry;
+    std::string body;
+};
+
+static std::string get_formula_name(std::FILE *open_file, int &c, GetFormulaError &err)
+{
+    std::string result;
+    result.reserve(ITEM_NAME_LEN);
+
+    int i{};
+    bool done{};
+    bool at_end_of_name{};
+    while (!done)
+    {
+        c = std::getc(open_file);
+        switch (c)
+        {
+        case EOF:
+            err = GetFormulaError::UNEXPECTED_EOF;
+            return {};
+        case '\r':
+        case '\n':
+            err = GetFormulaError::UNEXPECTED_EOL;
+            return {};
+        case ' ':
+        case '\t':
+            at_end_of_name = true;
+            break;
+        case '(':
+        case '{':
+            done = true;
+            break;
+        default :
+            if (!at_end_of_name)
+            {
+                i++;
+            }
+            break;
+        }
+        result.append(1, static_cast<char>(c));
+    }
+
+    if (i > ITEM_NAME_LEN)
+    {
+        err = GetFormulaError::NAME_TOO_LONG;
+        return {};
+    }
+
+    return result;
+}
+
+static SymmetryType get_formula_symmetry(std::FILE *open_file, int &c, GetFormulaError &err)
+{
+    SymmetryType symmetry = SymmetryType::NONE;
+    if (c == '(')
+    {
+        char sym_buf[20];
+        bool done = false;
+        int i = 0;
+        while (!done)
+        {
+            c = std::getc(open_file);
+            switch (c)
+            {
+            case EOF:
+                err = GetFormulaError::UNEXPECTED_EOF;
+                return {};
+            case '\r':
+            case '\n':
+                err = GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE;
+                return {};
+            case '{':
+                err = GetFormulaError::NO_MATCH_RIGHT_PAREN;
+                return {};
+            case ' ':
+            case '\t':
+                break;
+            case ')':
+                done = true;
+                break;
+            default :
+                if (i < 19)
+                {
+                    sym_buf[i++] = static_cast<char>(std::toupper(c));
+                }
+                break;
+            }
+        }
+        sym_buf[i] = static_cast<char>(0);
+        const auto it = std::find_if(SYMMETRY_NAMES.begin(),
+            SYMMETRY_NAMES.end(),
+            [&sym_buf](const SymmetryName &sym_name) { return string_case_equal(sym_name.s, sym_buf); });
+        if (it == SYMMETRY_NAMES.end())
+        {
+            err = GetFormulaError::BAD_SYMMETRY;
+            return {};
+        }
+        symmetry = it->n;
+    }
+    return symmetry;
+}
+
+static std::string get_formula_body(std::FILE *open_file, int &c, GetFormulaError &err)
+{
+    std::string result;
+    result.reserve(1024);
+    while (c != '{')
+    {
+        bool done = false;
+        while (!done)
+        {
+            c = std::getc(open_file);
+            switch (c)
+            {
+            case EOF:
+                err = GetFormulaError::UNEXPECTED_EOF;
+                return {};
+            case '\r':
+            case '\n':
+                err = GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE;
+                return {};
+            case '{':
+                done = true;
+                break;
+            default :
+                break;
+            }
+        }
+    }
+    while (c != '}')
+    {
+        c = std::getc(open_file);
+        switch (c)
+        {
+        case EOF:
+            err = GetFormulaError::UNEXPECTED_EOF;
+            return {};
+        case '\r':
+        case '\n':
+            err = GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE;
+            return {};
+        case '}':
+            break;
+        default :
+            result.append(1, static_cast<char>(c));
+            break;
+        }
+    }
+    return result;
+}
+
+static FormulaEntry get_formula_entry(std::FILE *open_file, GetFormulaError &err)
+{
+    FormulaEntry result;
+    const long file_pos = std::ftell(open_file);
+
+    int c;
+    result.name = get_formula_name(open_file, c, err);
+    if (err != GetFormulaError::NONE)
+    {
+        fseek(open_file, SEEK_SET, file_pos);
+        return {};
+    }
+
+    if (c == '(')
+    {
+        result.symmetry = get_formula_symmetry(open_file, c, err);
+    }
+    if (err != GetFormulaError::NONE)
+    {
+        fseek(open_file, SEEK_SET, file_pos);
+        return {};
+    }
+
+    result.body = get_formula_body(open_file, c, err);
+    if (err != GetFormulaError::NONE)
+    {
+        fseek(open_file, SEEK_SET, file_pos);
+        return {};
+    }
+
+    return result;
 }
 
 /* frm_check_name_and_sym():
@@ -3858,6 +4058,324 @@ static bool frm_prescan(std::FILE * open_file)
     std::fseek(open_file, orig_pos, SEEK_SET);
 
     return true;
+}
+
+using OperationName = std::tuple<FunctionPtr, std::string_view>;
+
+static const std::array<OperationName, 67> s_op_names{
+    OperationName{d_stk_add, "ADD"},                     //
+    OperationName{d_stk_sub, "SUB"},                     //
+    OperationName{d_stk_mul, "MUL"},                     //
+    OperationName{d_stk_div, "DIV"},                     //
+    OperationName{d_stk_sqr, "SQR"},                     //
+    OperationName{d_stk_sin, "SIN"},                     //
+    OperationName{d_stk_cos, "COS"},                     //
+    OperationName{d_stk_cosh, "COSH"},                   //
+    OperationName{d_stk_sinh, "SINH"},                   //
+    OperationName{d_stk_tan, "TAN"},                     //
+    OperationName{d_stk_tanh, "TANH"},                   //
+    OperationName{d_stk_cotan, "COTAN"},                 //
+    OperationName{d_stk_cotanh, "COTANH"},               //
+    OperationName{d_stk_cosxx, "COSXX"},                 //
+    OperationName{d_stk_log, "LOG"},                     //
+    OperationName{d_stk_exp, "EXP"},                     //
+    OperationName{d_stk_sqrt, "SQRT"},                   //
+    OperationName{d_stk_abs, "ABS"},                     //
+    OperationName{d_stk_conj, "CONJ"},                   //
+    OperationName{d_stk_real, "REAL"},                   //
+    OperationName{d_stk_imag, "IMAG"},                   //
+    OperationName{d_stk_flip, "FLIP"},                   //
+    OperationName{d_stk_neg, "NEG"},                     //
+    OperationName{d_stk_pwr, "PWR"},                     //
+    OperationName{d_stk_mod, "MOD"},                     //
+    OperationName{d_stk_lt, "LT"},                       //
+    OperationName{d_stk_gt, "GT"},                       //
+    OperationName{d_stk_lte, "LTE"},                     //
+    OperationName{d_stk_gte, "GTE"},                     //
+    OperationName{d_stk_eq, "EQ"},                       //
+    OperationName{d_stk_ne, "NE"},                       //
+    OperationName{d_stk_or, "OR"},                       //
+    OperationName{d_stk_and, "AND"},                     //
+    OperationName{d_stk_asin, "ASIN"},                   //
+    OperationName{d_stk_asinh, "ASINH"},                 //
+    OperationName{d_stk_acos, "ACOS"},                   //
+    OperationName{d_stk_acosh, "ACOSH"},                 //
+    OperationName{d_stk_atan, "ATAN"},                   //
+    OperationName{d_stk_atanh, "ATANH"},                 //
+    OperationName{d_stk_cabs, "CABS"},                   //
+    OperationName{d_stk_floor, "FLOOR"},                 //
+    OperationName{d_stk_ceil, "CEIL"},                   //
+    OperationName{d_stk_trunc, "TRUNC"},                 //
+    OperationName{d_stk_round, "ROUND"},                 //
+    OperationName{d_stk_zero, "ZERO"},                   //
+    OperationName{d_stk_one, "ONE"},                     //
+    OperationName{d_stk_srand, "SRAND"},                 //
+    OperationName{d_stk_fn1, "FN1"},                     //
+    OperationName{d_stk_fn2, "FN2"},                     //
+    OperationName{d_stk_fn3, "FN3"},                     //
+    OperationName{d_stk_fn4, "FN4"},                     //
+    OperationName{stk_lod, "LOAD"},                      //
+    OperationName{d_stk_lod_dup, "LOAD_DUP"},            //
+    OperationName{d_stk_lod_sqr, "LOAD_SQR"},            //
+    OperationName{d_stk_lod_sqr2, "LOAD_SQR2"},          //
+    OperationName{d_stk_lod_dbl, "LOAD_DBL"},            //
+    OperationName{stk_sto, "STORE"},                     //
+    OperationName{stk_clr, "CLEAR"},                     //
+    OperationName{d_stk_jump_on_false, "JUMP_IF_FALSE"}, //
+    OperationName{d_stk_jump_on_true, "JUMP_IF_TRUE"},   //
+    OperationName{stk_jump, "JUMP"},                     //
+    OperationName{stk_jump_label, "JUMP_LABEL"},         //
+    OperationName{end_init, "END_INIT"},                 //
+    OperationName{d_stk_sqr0, "SQR0"},                   //
+    OperationName{d_stk_sqr3, "SQR3"},                   //
+    OperationName{stk_ident, "IDENT"},                   //
+    OperationName{d_stk_recip, "RECIP"},                 //
+};
+
+static const char *get_operation_name(FunctionPtr fn)
+{
+    const auto it = std::find_if(s_op_names.begin(), s_op_names.end(),
+        [fn](const OperationName &op_name) { return std::get<0>(op_name) == fn; });
+    return it != s_op_names.end() ? std::get<1>(*it).data() : "?unknown function";
+}
+
+static std::string get_variable_name(int var_index)
+{
+    // Check if it's a predefined variable
+    if (var_index < static_cast<int>(VARIABLES.size()))
+    {
+        return std::string(VARIABLES[var_index]);
+    }
+
+    // Check if it's in the valid range of parsed variables
+    if (var_index < static_cast<int>(s_vars.size()) && var_index < static_cast<int>(g_variable_index))
+    {
+        const ConstArg &var = s_vars[var_index];
+        if (var.s != nullptr && var.len > 0)
+        {
+            // Use len to avoid reading past the intended string
+            return std::string(var.s, var.len);
+        }
+    }
+
+    return fmt::format("VAR_{}", var_index);
+}
+
+static int operator+(SymmetryType value)
+{
+    return static_cast<int>(value);
+}
+
+static void get_globals(std::ostringstream &oss)
+{
+    oss << fmt::format("=== Formula: {} ===\n", g_formula_name);
+    oss << fmt::format("Symmetry: {}\n", +g_symmetry);
+    oss << fmt::format("Total Operations: {}\n", s_op_count);
+    oss << fmt::format("Init Operations: {}\n", g_last_init_op);
+    oss << fmt::format("Variables: {}\n", g_variable_index);
+    oss << fmt::format("Uses Jumps: {}\n", s_uses_jump ? "yes" : "no");
+    oss << fmt::format("Uses p1: {} p2: {} p3: {} p4: {} p5: {}\n", g_frm_uses_p1, g_frm_uses_p2, g_frm_uses_p3,
+        g_frm_uses_p4, g_frm_uses_p5);
+    oss << fmt::format("Uses ismand: {}\n", g_frm_uses_ismand);
+    oss << "\n";
+}
+
+static void get_variables(std::ostringstream &oss)
+{
+    // Dump variables
+    oss << "=== Variables ===\n";
+    for (unsigned int i = 0; i < g_variable_index && i < static_cast<unsigned int>(s_vars.size()); ++i)
+    {
+        oss << fmt::format(
+            "{:3d}: {:15s} = ({:.6f}, {:.6f})\n", i, get_variable_name(i), s_vars[i].a.d.x, s_vars[i].a.d.y);
+    }
+    oss << "\n";
+}
+
+static void get_operations(std::ostringstream &oss)
+{
+    // Dump operations
+    oss << "=== Operations ===\n";
+    for (int i = 0; i < static_cast<int>(s_fns.size()); ++i)
+    {
+        oss << fmt::format("{:3d}: {}\n", i, get_operation_name(s_fns[i]));
+    }
+    oss << "\n";
+}
+
+static void get_load_table(std::ostringstream &oss)
+{
+    // Count actual loads used by scanning operations
+    int load_count = 0;
+    for (size_t i = 0; i < s_fns.size(); ++i)
+    {
+        FunctionPtr fn = s_fns[i];
+        if (fn == stk_lod)
+        {
+            load_count++;
+        }
+        else if (fn == d_stk_lod_dup)
+        {
+            load_count += 2;  // LOD_DUP uses 2 loads
+        }
+        else if (fn == d_stk_lod_sqr || fn == d_stk_lod_sqr2 || fn == d_stk_lod_dbl)
+        {
+            load_count++;
+        }
+    }
+
+    // Dump load table - only entries actually used
+    oss << "=== Load Table ===\n";
+    for (int i = 0; i < load_count && i < static_cast<int>(s_load.size()); ++i)
+    {
+        int var_idx = -1;
+        if (s_load[i] != nullptr)
+        {
+            for (unsigned v = 0; v < g_variable_index; ++v)
+            {
+                if (s_load[i] == &s_vars[v].a)
+                {
+                    var_idx = v;
+                    break;
+                }
+            }
+        }
+        oss << fmt::format("{:3d}: {}\n", i, var_idx >= 0 ? get_variable_name(var_idx) : "UNKNOWN");
+    }
+    oss << "\n";
+}
+
+static void get_store_table(std::ostringstream &oss)
+{
+    // Count actual stores used by scanning operations
+    int store_count = 0;
+    for (const FunctionPtr &fn : s_fns)
+    {
+        if (fn == stk_sto)
+        {
+            store_count++;
+        }
+    }
+
+    // Dump store table - only entries actually used
+    oss << "=== Store Table ===\n";
+    for (int i = 0; i < store_count && i < static_cast<int>(s_store.size()); ++i)
+    {
+        int var_idx = -1;
+        if (s_store[i] != nullptr)
+        {
+            for (unsigned v = 0; v < g_variable_index; ++v)
+            {
+                if (s_store[i] == &s_vars[v].a)
+                {
+                    var_idx = v;
+                    break;
+                }
+            }
+        }
+        oss << fmt::format("{:3d}: {}\n", i, var_idx >= 0 ? get_variable_name(var_idx) : "UNKNOWN");
+    }
+    oss << "\n";
+}
+
+static void get_jump_control_table(std::ostringstream &oss)
+{
+    // Dump jump control table
+    if (s_uses_jump)
+    {
+        oss << "=== Jump Control Table ===\n";
+        for (size_t i = 0; i < s_jump_control.size(); ++i)
+        {
+            const char *type_name = "UNKNOWN";
+            switch (s_jump_control[i].type)
+            {
+            case JumpControlType::IF:
+                type_name = "IF";
+                break;
+            case JumpControlType::ELSE_IF:
+                type_name = "ELSE_IF";
+                break;
+            case JumpControlType::ELSE:
+                type_name = "ELSE";
+                break;
+            case JumpControlType::END_IF:
+                type_name = "END_IF";
+                break;
+            default:
+                break;
+            }
+            oss << fmt::format("{:3d}: {:8s} -> op:{:3d} load:{:3d} store:{:3d} dest:{:3d}\n", i, type_name,
+                s_jump_control[i].ptrs.jump_op_ptr, s_jump_control[i].ptrs.jump_lod_ptr,
+                s_jump_control[i].ptrs.jump_sto_ptr, s_jump_control[i].dest_jump_index);
+        }
+        oss << "\n";
+    }
+}
+
+std::string get_parser_state()
+{
+    if (g_formula_name.empty() || s_fns.empty())
+    {
+        return "No formula loaded\n";
+    }
+
+    std::ostringstream oss;
+    get_globals(oss);
+    get_variables(oss);
+    get_operations(oss);
+    get_load_table(oss);
+    get_store_table(oss);
+    get_jump_control_table(oss);
+    return oss.str();
+}
+
+bool parse_formula(const std::string &formula_text, std::string &error_msg)
+{
+    // Clear previous state
+    free_work_area();
+    s_formula = formula_text;
+    g_formula_name = "TEST_FORMULA";
+
+    // Allocate structures
+    parser_allocate();
+
+    // Parse
+    if (parse_formula_text(s_formula))
+    {
+        error_msg = "Parse failed";
+        return false;
+    }
+
+    // Fill jump structures if needed
+    if (s_uses_jump && fill_jump_struct())
+    {
+        error_msg = "Jump structure fill failed";
+        return false;
+    }
+
+    error_msg.clear();
+    return true;
+}
+
+void parser_reset()
+{
+    free_work_area();
+    g_formula_name.clear();
+    s_formula.clear();
+    g_operation_index = 0;
+    g_variable_index = 0;
+    g_last_init_op = 0;
+    g_store_index = 0;
+    g_load_index = 0;
+    g_frm_uses_p1 = false;
+    g_frm_uses_p2 = false;
+    g_frm_uses_p3 = false;
+    g_frm_uses_p4 = false;
+    g_frm_uses_p5 = false;
+    g_frm_uses_ismand = false;
+    g_max_function = 0;
+    s_uses_jump = false;
+    s_jump_control.clear();
 }
 
 } // namespace id::fractals

@@ -74,6 +74,7 @@ add_executable(test-id
     fractals/test_check_orbit_name.cpp
     fractals/test_fractalp.cpp
     fractals/test_get_ifs_token.cpp
+    fractals/test_parser.cpp
     io/test_check_write_file.cpp
     io/test_check_write_file_data.h.in
     io/test_expand_dirname.cpp

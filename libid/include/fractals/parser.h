@@ -68,4 +68,13 @@ bool formula_per_image();
 void init_misc();
 void free_work_area();
 
+/// Get current parser state for testing/debugging
+std::string get_parser_state();
+
+/// Parse formula for testing without executing
+bool parse_formula(const std::string &formula_text, std::string &error_msg);
+
+// Reset parser state
+void parser_reset();
+
 } // namespace id::fractals
