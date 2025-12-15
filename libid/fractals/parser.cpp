@@ -22,6 +22,7 @@
 #include "engine/Inversion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"
+#include "fractals/formula.h"
 #include "fractals/fractalp.h"
 #include "fractals/newton.h"
 #include "io/file_item.h"
@@ -675,7 +676,7 @@ static void debug_trace_init()
     }
 }
 
-static void debug_trace_close()
+void debug_trace_close()
 {
     if (s_debug.trace_file)
     {
@@ -3431,13 +3432,6 @@ static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
     return formula_text;
 }
 
-int bad_formula()
-{
-    //  this is called when a formula is bad, instead of calling
-    //     the normal functions which will produce undefined results
-    return 1;
-}
-
 //  returns true if an error occurred
 bool parse_formula(const std::string &name, const bool report_bad_sym)
 {
@@ -3490,16 +3484,6 @@ bool parse_formula(const std::string &name, const bool report_bad_sym)
         return false;
     }
     return true; // error in making string
-}
-
-bool formula_per_image()
-{
-    const bool result = !parse_formula(g_formula_name, false);
-    if (!result)
-    {
-        debug_trace_close();
-    }
-    return result; // run_formula() returns true for failure
 }
 
 void init_misc()

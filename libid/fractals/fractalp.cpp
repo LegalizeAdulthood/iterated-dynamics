@@ -15,6 +15,7 @@
 #include "fractals/divide_brot.h"
 #include "fractals/escher.h"
 #include "fractals/fn_or_fn.h"
+#include "fractals/formula.h"
 #include "fractals/frasetup.h"
 #include "fractals/FrothyBasin.h"
 #include "fractals/halley.h"

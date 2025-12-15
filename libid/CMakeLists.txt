@@ -72,6 +72,7 @@ add_library(libid
     include/fractals/divide_brot.h fractals/divide_brot.cpp
     include/fractals/escher.h fractals/escher.cpp
     include/fractals/fn_or_fn.h fractals/fn_or_fn.cpp
+    include/fractals/formula.h fractals/formula.cpp
     include/fractals/fractalp.h fractals/fractalp.cpp
     include/fractals/fractype.h fractals/fractype.cpp
     include/fractals/frasetup.h fractals/frasetup.cpp

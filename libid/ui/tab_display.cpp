@@ -19,6 +19,7 @@
 #include "engine/type_has_param.h"
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
+#include "fractals/formula.h"
 #include "fractals/fractalp.h"
 #include "fractals/ifs.h"
 #include "fractals/lorenz.h"

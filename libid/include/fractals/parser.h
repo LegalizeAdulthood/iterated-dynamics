@@ -59,12 +59,8 @@ void d_stk_floor();
 void d_stk_ceil();
 void d_stk_trunc();
 void d_stk_round();
-int formula_orbit();
-int bad_formula();
-int formula_per_pixel();
 int frm_get_param_stuff(const char *name);
 bool parse_formula(const std::string &name, bool report_bad_sym);
-bool formula_per_image();
 void init_misc();
 void free_work_area();
 
@@ -76,5 +72,7 @@ bool parse_formula(const std::string &formula_text, std::string &error_msg);
 
 // Reset parser state
 void parser_reset();
+
+void debug_trace_close();
 
 } // namespace id::fractals
