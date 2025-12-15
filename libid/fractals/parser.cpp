@@ -324,6 +324,55 @@ struct ConstArg
     Arg a;
 };
 
+struct CompiledFormula
+{
+    std::string formula;                      // Source text
+    std::vector<FunctionPtr> fns;            // Compiled operations (bytecode)
+    std::vector<Arg *> load;                 // Load table
+    std::vector<Arg *> store;                // Store table
+    std::vector<ConstArg> vars;              // All constants/variables
+    std::vector<JumpControl> jump_control;   // Jump control structure
+    std::vector<PendingOp> ops;              // Pending operations (used during compilation)
+    unsigned int op_count{};                 // Total compiled operations
+    bool uses_jump{};                        // Whether formula uses jumps
+};
+
+struct RuntimeState
+{
+    std::array<Arg, 20> stack{};
+    int op_ptr{};
+    int jump_index{};
+
+    int init_op_ptr{};
+    int init_jump_index{};
+    int init_load_ptr{};
+    int init_store_ptr{};
+
+    bool set_random{};
+    bool randomized{};
+    unsigned long rand_num{};
+    long rand_x{};
+    long rand_y{};
+};
+
+struct ParserState
+{
+    int paren{};
+    unsigned int n{};
+    unsigned int next_op{};
+    unsigned int init_n{};
+    bool expecting_arg{};
+    unsigned int chars_in_formula{};
+};
+
+struct DebugState
+{
+    bool trace_enabled{};
+    std::FILE *trace_file{};
+    int indent_level{};
+    long operation_count{};
+};
+
 } // namespace
 
 // forward declarations
@@ -370,38 +419,12 @@ bool g_frm_uses_p5{};
 bool g_frm_uses_ismand{};
 char g_max_function{};
 
-static bool s_debug_trace_enabled{};
-static std::FILE* s_debug_trace_file{};
-static int s_debug_indent_level{};
-static long s_debug_operation_count{};
-static std::vector<JumpControl> s_jump_control;
-static int s_jump_index{};
-static std::array<Arg, 20> s_stack{};
-static std::vector<Arg *> s_load;
-static int s_op_ptr{};
-static std::vector<FunctionPtr> s_fns;
-static std::vector<ConstArg> s_vars;
-#define LAST_SQR (s_vars[4].a)
-static unsigned int s_op_count{};
-static int s_init_load_ptr{};
-static int s_init_store_ptr{};
-static int s_init_op_ptr{};
-static bool s_uses_jump{};
-static std::vector<Arg *> s_store;
-static unsigned long s_num_jumps{};
-static int s_init_jump_index{};
-static std::vector<PendingOp> s_op;
-static unsigned int s_n{};
-static unsigned int s_next_op{};
-static unsigned int s_init_n{};
-static int s_paren{};
-static bool s_expecting_arg{};
-static bool s_set_random{};
-static bool s_randomized{};
-static unsigned long s_rand_num{};
-static long s_rand_x{};
-static long s_rand_y{};
-static unsigned int s_chars_in_formula{};
+static CompiledFormula s_formula;
+static RuntimeState s_runtime;
+static ParserState s_parser;
+static DebugState s_debug;
+
+#define LAST_SQR (s_formula.vars[4].a)
 static constexpr std::array<const char *, 4> JUMP_LIST
 {
     "if",
@@ -410,7 +433,6 @@ static constexpr std::array<const char *, 4> JUMP_LIST
     "endif"
 };
 static FormulaEntry s_formula_entry;
-static std::string s_formula;
 static std::array<ErrorData, 3> s_errors{};
 
 static const std::array<FunctList, 34> FUNC_LIST
@@ -514,8 +536,8 @@ static void push_jump(const JumpControlType type)
 {
     JumpControl value{};
     value.type = type;
-    s_jump_control.push_back(value);
-    ++s_jump_index;
+    s_formula.jump_control.push_back(value);
+    ++s_runtime.jump_index;
 }
 
 #define CASE_TERMINATOR case',':\
@@ -642,56 +664,56 @@ static void debug_trace_init()
 {
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        s_debug_trace_enabled = true;
+        s_debug.trace_enabled = true;
         const std::filesystem::path path{get_save_path(WriteFile::ROOT, "formula_trace.txt")};
-        s_debug_trace_file = std::fopen(path.string().c_str(), "w");
-        if (s_debug_trace_file)
+        s_debug.trace_file = std::fopen(path.string().c_str(), "w");
+        if (s_debug.trace_file)
         {
-            fmt::print(s_debug_trace_file, "Formula Execution Trace\n");
-            fmt::print(s_debug_trace_file, "========================\n\n");
+            fmt::print(s_debug.trace_file, "Formula Execution Trace\n");
+            fmt::print(s_debug.trace_file, "========================\n\n");
         }
     }
 }
 
 static void debug_trace_close()
 {
-    if (s_debug_trace_file)
+    if (s_debug.trace_file)
     {
-        std::fclose(s_debug_trace_file);
-        s_debug_trace_file = nullptr;
+        std::fclose(s_debug.trace_file);
+        s_debug.trace_file = nullptr;
     }
-    s_debug_trace_enabled = false;
+    s_debug.trace_enabled = false;
 }
 
 static void debug_trace_operation(const char* op_name, const Arg* arg1 = nullptr, const Arg* arg2 = nullptr)
 {
-    if (!s_debug_trace_enabled || !s_debug_trace_file)
+    if (!s_debug.trace_enabled || !s_debug.trace_file)
     {
         return;
     }
 
-    fmt::print(s_debug_trace_file, "{:04d}: {}{}\n", s_debug_operation_count++,
-        std::string(s_debug_indent_level * 2, ' '), op_name);
+    fmt::print(s_debug.trace_file, "{:04d}: {}{}\n", s_debug.operation_count++,
+        std::string(s_debug.indent_level * 2, ' '), op_name);
 
     if (arg1)
     {
-        fmt::print(s_debug_trace_file, "      arg1: ({:.6f}, {:.6f})\n", arg1->d.x, arg1->d.y);
+        fmt::print(s_debug.trace_file, "      arg1: ({:.6f}, {:.6f})\n", arg1->d.x, arg1->d.y);
     }
     if (arg2)
     {
-        fmt::print(s_debug_trace_file, "      arg2: ({:.6f}, {:.6f})\n", arg2->d.x, arg2->d.y);
+        fmt::print(s_debug.trace_file, "      arg2: ({:.6f}, {:.6f})\n", arg2->d.x, arg2->d.y);
     }
 }
 
 static void debug_trace_stack_state()
 {
-    if (!s_debug_trace_enabled || !s_debug_trace_file)
+    if (!s_debug.trace_enabled || !s_debug.trace_file)
     {
         return;
     }
 
-    fmt::print(s_debug_trace_file, "      stack top: ({:.6f}, {:.6f})\n", g_arg1->d.x, g_arg1->d.y);
-    std::fflush(s_debug_trace_file);
+    fmt::print(s_debug.trace_file, "      stack top: ({:.6f}, {:.6f})\n", g_arg1->d.x, g_arg1->d.y);
+    std::fflush(s_debug.trace_file);
 }
 
 /* use the following when only float functions are implemented to
@@ -699,8 +721,8 @@ static void debug_trace_stack_state()
 
 static unsigned long new_random_num()
 {
-    s_rand_num = (s_rand_num << 15) + RAND15() ^ s_rand_num;
-    return s_rand_num;
+    s_runtime.rand_num = (s_runtime.rand_num << 15) + RAND15() ^ s_runtime.rand_num;
+    return s_runtime.rand_num;
 }
 
 static void d_random()
@@ -709,20 +731,20 @@ static void d_random()
            the same fractals when the srand() function is used. */
     const long x = new_random_num() >> (32 - BIT_SHIFT);
     const long y = new_random_num() >> (32 - BIT_SHIFT);
-    s_vars[7].a.d.x = static_cast<double>(x) / (1L << BIT_SHIFT);
-    s_vars[7].a.d.y = static_cast<double>(y) / (1L << BIT_SHIFT);
+    s_formula.vars[7].a.d.x = static_cast<double>(x) / (1L << BIT_SHIFT);
+    s_formula.vars[7].a.d.y = static_cast<double>(y) / (1L << BIT_SHIFT);
 }
 
 static void set_random()
 {
-    if (!s_set_random)
+    if (!s_runtime.set_random)
     {
-        s_rand_num = s_rand_x ^ s_rand_y;
+        s_runtime.rand_num = s_runtime.rand_x ^ s_runtime.rand_y;
     }
 
-    const unsigned int seed = static_cast<unsigned>(s_rand_num) ^ static_cast<unsigned>(s_rand_num >> 16);
+    const unsigned int seed = static_cast<unsigned>(s_runtime.rand_num) ^ static_cast<unsigned>(s_runtime.rand_num >> 16);
     std::srand(seed);
-    s_set_random = true;
+    s_runtime.set_random = true;
 
     // Clear out the seed
     new_random_num();
@@ -741,26 +763,26 @@ static void random_seed()
     new_random_num();
     new_random_num();
     new_random_num();
-    s_randomized = true;
+    s_runtime.randomized = true;
 }
 
 static void d_stk_srand()
 {
     debug_trace_operation("SRAND", g_arg1);
-    s_rand_x = static_cast<long>(g_arg1->d.x * (1L << BIT_SHIFT));
-    s_rand_y = static_cast<long>(g_arg1->d.y * (1L << BIT_SHIFT));
+    s_runtime.rand_x = static_cast<long>(g_arg1->d.x * (1L << BIT_SHIFT));
+    s_runtime.rand_y = static_cast<long>(g_arg1->d.y * (1L << BIT_SHIFT));
     set_random();
     d_random();
-    g_arg1->d = s_vars[7].a.d;
+    g_arg1->d = s_formula.vars[7].a.d;
     debug_trace_stack_state();
 }
 
 static void d_stk_lod_dup()
 {
-    debug_trace_operation("LOD_DUP", s_load[g_load_index]);
+    debug_trace_operation("LOD_DUP", s_formula.load[g_load_index]);
     g_arg1 += 2;
     g_arg2 += 2;
-    *g_arg1 = *s_load[g_load_index];
+    *g_arg1 = *s_formula.load[g_load_index];
     *g_arg2 = *g_arg1;
     g_load_index += 2;
     debug_trace_stack_state();
@@ -768,23 +790,23 @@ static void d_stk_lod_dup()
 
 static void d_stk_lod_sqr()
 {
-    debug_trace_operation("LOD_SQR", s_load[g_load_index]);
+    debug_trace_operation("LOD_SQR", s_formula.load[g_load_index]);
     g_arg1++;
     g_arg2++;
-    g_arg1->d.y = s_load[g_load_index]->d.x * s_load[g_load_index]->d.y * 2.0;
-    g_arg1->d.x = s_load[g_load_index]->d.x * s_load[g_load_index]->d.x - s_load[g_load_index]->d.y * s_load[g_load_index]->d.y;
+    g_arg1->d.y = s_formula.load[g_load_index]->d.x * s_formula.load[g_load_index]->d.y * 2.0;
+    g_arg1->d.x = s_formula.load[g_load_index]->d.x * s_formula.load[g_load_index]->d.x - s_formula.load[g_load_index]->d.y * s_formula.load[g_load_index]->d.y;
     g_load_index++;
     debug_trace_stack_state();
 }
 
 static void d_stk_lod_sqr2()
 {
-    debug_trace_operation("LOD_SQR2", s_load[g_load_index]);
+    debug_trace_operation("LOD_SQR2", s_formula.load[g_load_index]);
     g_arg1++;
     g_arg2++;
-    LAST_SQR.d.x = s_load[g_load_index]->d.x * s_load[g_load_index]->d.x;
-    LAST_SQR.d.y = s_load[g_load_index]->d.y * s_load[g_load_index]->d.y;
-    g_arg1->d.y = s_load[g_load_index]->d.x * s_load[g_load_index]->d.y * 2.0;
+    LAST_SQR.d.x = s_formula.load[g_load_index]->d.x * s_formula.load[g_load_index]->d.x;
+    LAST_SQR.d.y = s_formula.load[g_load_index]->d.y * s_formula.load[g_load_index]->d.y;
+    g_arg1->d.y = s_formula.load[g_load_index]->d.x * s_formula.load[g_load_index]->d.y * 2.0;
     g_arg1->d.x = LAST_SQR.d.x - LAST_SQR.d.y;
     LAST_SQR.d.x += LAST_SQR.d.y;
     LAST_SQR.d.y = 0;
@@ -794,11 +816,11 @@ static void d_stk_lod_sqr2()
 
 static void d_stk_lod_dbl()
 {
-    debug_trace_operation("LOD_DBL", s_load[g_load_index]);
+    debug_trace_operation("LOD_DBL", s_formula.load[g_load_index]);
     g_arg1++;
     g_arg2++;
-    g_arg1->d.x = s_load[g_load_index]->d.x * 2.0;
-    g_arg1->d.y = s_load[g_load_index]->d.y * 2.0;
+    g_arg1->d.x = s_formula.load[g_load_index]->d.x * 2.0;
+    g_arg1->d.y = s_formula.load[g_load_index]->d.y * 2.0;
     g_load_index++;
     debug_trace_stack_state();
 }
@@ -966,43 +988,43 @@ static void d_stk_mod()
 static void stk_sto()
 {
     debug_trace_operation("STO", g_arg1);
-    assert(s_store[g_store_index] != nullptr);
-    *s_store[g_store_index++] = *g_arg1;
+    assert(s_formula.store[g_store_index] != nullptr);
+    *s_formula.store[g_store_index++] = *g_arg1;
     debug_trace_stack_state();
 }
 
 static void stk_lod()
 {
-    if (s_debug_trace_enabled && s_debug_trace_file)
+    if (s_debug.trace_enabled && s_debug.trace_file)
     {
         // Try to identify which variable we're loading
         const char* var_name = "unknown";
-        if (g_load_index < static_cast<int>(s_vars.size()))
+        if (g_load_index < static_cast<int>(s_formula.vars.size()))
         {
             for (size_t i = 0; i < VARIABLES.size(); ++i)
             {
-                if (&s_vars[i].a == s_load[g_load_index])
+                if (&s_formula.vars[i].a == s_formula.load[g_load_index])
                 {
                     var_name = VARIABLES[i];
                     break;
                 }
             }
         }
-        fmt::print(s_debug_trace_file, "{:04d}: {}LOAD {}\n", //
-            s_debug_operation_count++, std::string(s_debug_indent_level * 2, ' '), var_name);
+        fmt::print(s_debug.trace_file, "{:04d}: {}LOAD {}\n", //
+            s_debug.operation_count++, std::string(s_debug.indent_level * 2, ' '), var_name);
     }
     g_arg1++;
     g_arg2++;
-    *g_arg1 = *s_load[g_load_index++];
+    *g_arg1 = *s_formula.load[g_load_index++];
     debug_trace_stack_state();
 }
 
 static void stk_clr()
 {
     debug_trace_operation("CLR", g_arg1);
-    s_stack[0] = *g_arg1;
-    g_arg1 = s_stack.data();
-    g_arg2 = s_stack.data();
+    s_runtime.stack[0] = *g_arg1;
+    g_arg1 = s_runtime.stack.data();
+    g_arg2 = s_runtime.stack.data();
     g_arg2--;
     debug_trace_stack_state();
 }
@@ -1385,38 +1407,38 @@ void d_stk_pwr()
 
 static void end_init()
 {
-    g_last_init_op = s_op_ptr;
-    s_init_jump_index = s_jump_index;
+    g_last_init_op = s_runtime.op_ptr;
+    s_runtime.init_jump_index = s_runtime.jump_index;
 }
 
 static void stk_jump()
 {
-    if (s_debug_trace_enabled && s_debug_trace_file)
+    if (s_debug.trace_enabled && s_debug.trace_file)
     {
-        fmt::print(s_debug_trace_file, "{:04d}: {}JUMP\n", s_debug_operation_count++,
-            std::string(s_debug_indent_level * 2, ' '));
-        fmt::print(s_debug_trace_file, "      from op_ptr: {} to: {}\n", s_op_ptr,
-            s_jump_control[s_jump_index].ptrs.jump_op_ptr);
+        fmt::print(s_debug.trace_file, "{:04d}: {}JUMP\n", s_debug.operation_count++,
+            std::string(s_debug.indent_level * 2, ' '));
+        fmt::print(s_debug.trace_file, "      from op_ptr: {} to: {}\n", s_runtime.op_ptr,
+            s_formula.jump_control[s_runtime.jump_index].ptrs.jump_op_ptr);
     }
 
-    s_op_ptr =  s_jump_control[s_jump_index].ptrs.jump_op_ptr;
-    g_load_index = s_jump_control[s_jump_index].ptrs.jump_lod_ptr;
-    g_store_index = s_jump_control[s_jump_index].ptrs.jump_sto_ptr;
-    s_jump_index = s_jump_control[s_jump_index].dest_jump_index;
+    s_runtime.op_ptr =  s_formula.jump_control[s_runtime.jump_index].ptrs.jump_op_ptr;
+    g_load_index = s_formula.jump_control[s_runtime.jump_index].ptrs.jump_lod_ptr;
+    g_store_index = s_formula.jump_control[s_runtime.jump_index].ptrs.jump_sto_ptr;
+    s_runtime.jump_index = s_formula.jump_control[s_runtime.jump_index].dest_jump_index;
 }
 
 static void d_stk_jump_on_false()
 {
     const bool will_jump = g_arg1->d.x == 0.0;
 
-    if (s_debug_trace_enabled && s_debug_trace_file)
+    if (s_debug.trace_enabled && s_debug.trace_file)
     {
         fmt::print(
-            s_debug_trace_file, "      condition: {:.6f}, will jump: {}\n", g_arg1->d.x, will_jump ? "YES" : "NO");
+            s_debug.trace_file, "      condition: {:.6f}, will jump: {}\n", g_arg1->d.x, will_jump ? "YES" : "NO");
         if (will_jump)
         {
             fmt::print(
-                s_debug_trace_file, "      jumping to index: {}\n", s_jump_control[s_jump_index].dest_jump_index);
+                s_debug.trace_file, "      jumping to index: {}\n", s_formula.jump_control[s_runtime.jump_index].dest_jump_index);
         }
     }
 
@@ -1426,7 +1448,7 @@ static void d_stk_jump_on_false()
     }
     else
     {
-        s_jump_index++;
+        s_runtime.jump_index++;
     }
 }
 
@@ -1434,14 +1456,14 @@ static void d_stk_jump_on_true()
 {
     const bool will_jump = g_arg1->d.x != 0.0;
 
-    if (s_debug_trace_enabled && s_debug_trace_file)
+    if (s_debug.trace_enabled && s_debug.trace_file)
     {
         fmt::print(
-            s_debug_trace_file, "      condition: {:.6f}, will jump: {}\n", g_arg1->d.x, will_jump ? "YES" : "NO");
+            s_debug.trace_file, "      condition: {:.6f}, will jump: {}\n", g_arg1->d.x, will_jump ? "YES" : "NO");
         if (will_jump)
         {
             fmt::print(
-                s_debug_trace_file, "      jumping to index: {}\n", s_jump_control[s_jump_index].dest_jump_index);
+                s_debug.trace_file, "      jumping to index: {}\n", s_formula.jump_control[s_runtime.jump_index].dest_jump_index);
         }
     }
 
@@ -1451,13 +1473,13 @@ static void d_stk_jump_on_true()
     }
     else
     {
-        s_jump_index++;
+        s_runtime.jump_index++;
     }
 }
 
 static void stk_jump_label()
 {
-    s_jump_index++;
+    s_runtime.jump_index++;
 }
 
 static unsigned int skip_white_space(const char *str)
@@ -1507,9 +1529,9 @@ static ConstArg *is_const(const char *str, const int len)
     // next line enforces variable vs constant naming convention
     for (unsigned n = 0U; n < g_variable_index; n++)
     {
-        if (s_vars[n].len == len)
+        if (s_formula.vars[n].len == len)
         {
-            if (string_case_equal(s_vars[n].s, str, len))
+            if (string_case_equal(s_formula.vars[n].s, str, len))
             {
                 if (n == 1)          // The formula uses 'p1'.
                 {
@@ -1541,15 +1563,15 @@ static ConstArg *is_const(const char *str, const int len)
                 }
                 if (!is_const_pair(str))
                 {
-                    return &s_vars[n];
+                    return &s_formula.vars[n];
                 }
             }
         }
     }
-    s_vars[g_variable_index].s = str;
-    s_vars[g_variable_index].len = len;
-    s_vars[g_variable_index].a.d.x = 0.0;
-    s_vars[g_variable_index].a.d.y = 0.0;
+    s_formula.vars[g_variable_index].s = str;
+    s_formula.vars[g_variable_index].len = len;
+    s_formula.vars[g_variable_index].a.d.x = 0.0;
+    s_formula.vars[g_variable_index].a.d.y = 0.0;
 
     if (std::isdigit(str[0])
         || (str[0] == '-' && (std::isdigit(str[1]) || str[1] == '.'))
@@ -1557,14 +1579,14 @@ static ConstArg *is_const(const char *str, const int len)
     {
         DComplex z;
         assert(g_operation_index > 0);
-        assert(g_operation_index == s_op.size());
-        if (s_op.back().f == d_stk_neg)
+        assert(g_operation_index == s_formula.ops.size());
+        if (s_formula.ops.back().f == d_stk_neg)
         {
-            s_op.pop_back();
+            s_formula.ops.pop_back();
             g_operation_index--;
             str = str - 1;
-            s_init_n--;
-            s_vars[g_variable_index].len++;
+            s_parser.init_n--;
+            s_formula.vars[g_variable_index].len++;
         }
         unsigned n;
         for (n = 1; std::isdigit(str[n]) || str[n] == '.'; n++)
@@ -1581,7 +1603,7 @@ static ConstArg *is_const(const char *str, const int len)
                 for (; std::isdigit(str[j]) || str[j] == '.' || str[j] == '-'; j++)
                 {
                 }
-                s_vars[g_variable_index].len = j;
+                s_formula.vars[g_variable_index].len = j;
             }
             else
             {
@@ -1593,10 +1615,10 @@ static ConstArg *is_const(const char *str, const int len)
             z.y = 0.0;
         }
         z.x = std::atof(str);
-        s_vars[g_variable_index].a.d = z;
-        s_vars[g_variable_index].s = str;
+        s_formula.vars[g_variable_index].a.d = z;
+        s_formula.vars[g_variable_index].s = str;
     }
-    return &s_vars[g_variable_index++];
+    return &s_formula.vars[g_variable_index++];
 }
 
 /* return values
@@ -1677,25 +1699,25 @@ static FunctionPtr is_func(const char *str, const int len)
 
 static void sort_precedence()
 {
-    const int this_op = s_next_op++;
-    while (s_op[this_op].p > s_op[s_next_op].p && s_next_op < g_operation_index)
+    const int this_op = s_parser.next_op++;
+    while (s_formula.ops[this_op].p > s_formula.ops[s_parser.next_op].p && s_parser.next_op < g_operation_index)
     {
         sort_precedence();
     }
-    if (s_op_ptr > static_cast<int>(s_fns.size()))
+    if (s_runtime.op_ptr > static_cast<int>(s_formula.fns.size()))
     {
         throw std::runtime_error(
-            "OpPtr (" + std::to_string(s_op_ptr) + ") exceeds size of f[] (" + std::to_string(s_fns.size()) + ")");
+            "OpPtr (" + std::to_string(s_runtime.op_ptr) + ") exceeds size of f[] (" + std::to_string(s_formula.fns.size()) + ")");
     }
-    s_fns.push_back(s_op[this_op].f);
-    ++s_op_ptr;
+    s_formula.fns.push_back(s_formula.ops[this_op].f);
+    ++s_runtime.op_ptr;
 }
 
 static void push_pending_op(const FunctionPtr f, const int p)
 {
-    s_op.push_back(PendingOp{f, p});
+    s_formula.ops.push_back(PendingOp{f, p});
     ++g_operation_index;
-    assert(g_operation_index == s_op.size());
+    assert(g_operation_index == s_formula.ops.size());
 }
 
 static bool parse_formula_text(const std::string &text)
@@ -1711,67 +1733,67 @@ static bool parse_formula_text(const std::string &text)
     double rotation;
     double skew;
     LDouble magnification;
-    s_set_random = false;
-    s_randomized = false;
-    s_uses_jump = false;
-    s_jump_index = 0;
-    s_jump_control.clear();
+    s_runtime.set_random = false;
+    s_runtime.randomized = false;
+    s_formula.uses_jump = false;
+    s_runtime.jump_index = 0;
+    s_formula.jump_control.clear();
 
     g_max_function = 0;
     for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(VARIABLES.size()); g_variable_index++)
     {
-        s_vars[g_variable_index].s = VARIABLES[g_variable_index];
-        s_vars[g_variable_index].len = static_cast<int>(std::strlen(VARIABLES[g_variable_index]));
+        s_formula.vars[g_variable_index].s = VARIABLES[g_variable_index];
+        s_formula.vars[g_variable_index].len = static_cast<int>(std::strlen(VARIABLES[g_variable_index]));
     }
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     const double const_pi = std::atan(1.0) * 4;
     const double const_e = std::exp(1.0);
-    s_vars[7].a.d.y = 0.0;
-    s_vars[7].a.d.x = s_vars[7].a.d.y;
-    s_vars[11].a.d.x = static_cast<double>(g_logical_screen.x_dots);
-    s_vars[11].a.d.y = static_cast<double>(g_logical_screen.y_dots);
-    s_vars[12].a.d.x = static_cast<double>(g_max_iterations);
-    s_vars[12].a.d.y = 0;
-    s_vars[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
-    s_vars[13].a.d.y = 0;
-    s_vars[14].a.d.x = x_ctr;
-    s_vars[14].a.d.y = y_ctr;
-    s_vars[15].a.d.x = static_cast<double>(magnification);
-    s_vars[15].a.d.y = x_mag_factor;
-    s_vars[16].a.d.x = rotation;
-    s_vars[16].a.d.y = skew;
+    s_formula.vars[7].a.d.y = 0.0;
+    s_formula.vars[7].a.d.x = s_formula.vars[7].a.d.y;
+    s_formula.vars[11].a.d.x = static_cast<double>(g_logical_screen.x_dots);
+    s_formula.vars[11].a.d.y = static_cast<double>(g_logical_screen.y_dots);
+    s_formula.vars[12].a.d.x = static_cast<double>(g_max_iterations);
+    s_formula.vars[12].a.d.y = 0;
+    s_formula.vars[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
+    s_formula.vars[13].a.d.y = 0;
+    s_formula.vars[14].a.d.x = x_ctr;
+    s_formula.vars[14].a.d.y = y_ctr;
+    s_formula.vars[15].a.d.x = static_cast<double>(magnification);
+    s_formula.vars[15].a.d.y = x_mag_factor;
+    s_formula.vars[16].a.d.x = rotation;
+    s_formula.vars[16].a.d.y = skew;
 
-    s_vars[1].a.d.x = g_params[0];
-    s_vars[1].a.d.y = g_params[1];
-    s_vars[2].a.d.x = g_params[2];
-    s_vars[2].a.d.y = g_params[3];
-    s_vars[5].a.d.x = const_pi;
-    s_vars[5].a.d.y = 0.0;
-    s_vars[6].a.d.x = const_e;
-    s_vars[6].a.d.y = 0.0;
-    s_vars[8].a.d.x = g_params[4];
-    s_vars[8].a.d.y = g_params[5];
-    s_vars[17].a.d.x = g_params[6];
-    s_vars[17].a.d.y = g_params[7];
-    s_vars[18].a.d.x = g_params[8];
-    s_vars[18].a.d.y = g_params[9];
+    s_formula.vars[1].a.d.x = g_params[0];
+    s_formula.vars[1].a.d.y = g_params[1];
+    s_formula.vars[2].a.d.x = g_params[2];
+    s_formula.vars[2].a.d.y = g_params[3];
+    s_formula.vars[5].a.d.x = const_pi;
+    s_formula.vars[5].a.d.y = 0.0;
+    s_formula.vars[6].a.d.x = const_e;
+    s_formula.vars[6].a.d.y = 0.0;
+    s_formula.vars[8].a.d.x = g_params[4];
+    s_formula.vars[8].a.d.y = g_params[5];
+    s_formula.vars[17].a.d.x = g_params[6];
+    s_formula.vars[17].a.d.y = g_params[7];
+    s_formula.vars[18].a.d.x = g_params[8];
+    s_formula.vars[18].a.d.y = g_params[9];
 
     g_operation_index = 0;
-    s_op.clear();
+    s_formula.ops.clear();
     g_store_index = 0;
     g_load_index = 0;
-    s_op_ptr = 0;
-    s_paren = 0;
+    s_runtime.op_ptr = 0;
+    s_parser.paren = 0;
     g_last_init_op = 0;
-    s_expecting_arg = true;
-    for (s_n = 0; text[s_n]; s_n++)
+    s_parser.expecting_arg = true;
+    for (s_parser.n = 0; text[s_parser.n]; s_parser.n++)
     {
-        if (!text[s_n])
+        if (!text[s_parser.n])
         {
             break;
         }
-        s_init_n = s_n;
-        switch (text[s_n])
+        s_parser.init_n = s_parser.n;
+        switch (text[s_parser.n])
         {
         case ' ':
         case '\t':
@@ -1779,153 +1801,153 @@ static bool parse_formula_text(const std::string &text)
         case '\n':
             break;
         case '(':
-            s_paren++;
+            s_parser.paren++;
             break;
         case ')':
-            s_paren--;
+            s_parser.paren--;
             break;
         case '|':
-            if (text[s_n+1] == '|')
+            if (text[s_parser.n+1] == '|')
             {
-                s_expecting_arg = true;
-                s_n++;
-                push_pending_op(d_stk_or, 7 - (s_paren + equals) * 15);
+                s_parser.expecting_arg = true;
+                s_parser.n++;
+                push_pending_op(d_stk_or, 7 - (s_parser.paren + equals) * 15);
             }
-            else if (mod_flag == s_paren-1)
+            else if (mod_flag == s_parser.paren-1)
             {
-                s_paren--;
+                s_parser.paren--;
                 mod_flag = mods[--m_d_stk];
             }
             else
             {
                 assert(m_d_stk < mods.size());
                 mods[m_d_stk++] = mod_flag;
-                push_pending_op(d_stk_mod, 2 - (s_paren + equals) * 15);
-                mod_flag = s_paren++;
+                push_pending_op(d_stk_mod, 2 - (s_parser.paren + equals) * 15);
+                mod_flag = s_parser.paren++;
             }
             break;
         case ',':
         case ';':
-            if (!s_expecting_arg)
+            if (!s_parser.expecting_arg)
             {
-                s_expecting_arg = true;
+                s_parser.expecting_arg = true;
                 push_pending_op(nullptr, 15);
                 push_pending_op(stk_clr, -30000);
-                s_paren = 0;
+                s_parser.paren = 0;
                 equals = 0;
             }
             break;
         case ':':
-            s_expecting_arg = true;
+            s_parser.expecting_arg = true;
             push_pending_op(nullptr, 15);
             push_pending_op(end_init, -30000);
-            s_paren = 0;
+            s_parser.paren = 0;
             equals = 0;
             g_last_init_op = 10000;
             break;
         case '+':
-            s_expecting_arg = true;
-            push_pending_op(d_stk_add, 4 - (s_paren + equals)*15);
+            s_parser.expecting_arg = true;
+            push_pending_op(d_stk_add, 4 - (s_parser.paren + equals)*15);
             break;
         case '-':
-            if (s_expecting_arg)
+            if (s_parser.expecting_arg)
             {
-                push_pending_op(d_stk_neg, 2 - (s_paren + equals)*15);
+                push_pending_op(d_stk_neg, 2 - (s_parser.paren + equals)*15);
             }
             else
             {
-                push_pending_op(d_stk_sub, 4 - (s_paren + equals)*15);
-                s_expecting_arg = true;
+                push_pending_op(d_stk_sub, 4 - (s_parser.paren + equals)*15);
+                s_parser.expecting_arg = true;
             }
             break;
         case '&':
-            s_expecting_arg = true;
-            s_n++;
-            push_pending_op(d_stk_and, 7 - (s_paren + equals)*15);
+            s_parser.expecting_arg = true;
+            s_parser.n++;
+            push_pending_op(d_stk_and, 7 - (s_parser.paren + equals)*15);
             break;
         case '!':
-            s_expecting_arg = true;
-            s_n++;
-            push_pending_op(d_stk_ne, 6 - (s_paren + equals)*15);
+            s_parser.expecting_arg = true;
+            s_parser.n++;
+            push_pending_op(d_stk_ne, 6 - (s_parser.paren + equals)*15);
             break;
         case '<':
-            s_expecting_arg = true;
+            s_parser.expecting_arg = true;
             {
                 FunctionPtr fn;
-                if (text[s_n + 1] == '=')
+                if (text[s_parser.n + 1] == '=')
                 {
-                    s_n++;
+                    s_parser.n++;
                     fn = d_stk_lte;
                 }
                 else
                 {
                     fn = d_stk_lt;
                 }
-                push_pending_op(fn, 6 - (s_paren + equals) * 15);
+                push_pending_op(fn, 6 - (s_parser.paren + equals) * 15);
             }
             break;
         case '>':
-            s_expecting_arg = true;
+            s_parser.expecting_arg = true;
             {
                 FunctionPtr fn;
-                if (text[s_n + 1] == '=')
+                if (text[s_parser.n + 1] == '=')
                 {
-                    s_n++;
+                    s_parser.n++;
                     fn = d_stk_gte;
                 }
                 else
                 {
                     fn = d_stk_gt;
                 }
-                push_pending_op(fn, 6 - (s_paren + equals) * 15);
+                push_pending_op(fn, 6 - (s_parser.paren + equals) * 15);
             }
             break;
         case '*':
-            s_expecting_arg = true;
-            push_pending_op(d_stk_mul, 3 - (s_paren + equals)*15);
+            s_parser.expecting_arg = true;
+            push_pending_op(d_stk_mul, 3 - (s_parser.paren + equals)*15);
             break;
         case '/':
-            s_expecting_arg = true;
-            push_pending_op(d_stk_div, 3 - (s_paren + equals)*15);
+            s_parser.expecting_arg = true;
+            push_pending_op(d_stk_div, 3 - (s_parser.paren + equals)*15);
             break;
         case '^':
-            s_expecting_arg = true;
-            push_pending_op(d_stk_pwr, 2 - (s_paren + equals)*15);
+            s_parser.expecting_arg = true;
+            push_pending_op(d_stk_pwr, 2 - (s_parser.paren + equals)*15);
             break;
         case '=':
-            s_expecting_arg = true;
-            if (text[s_n+1] == '=')
+            s_parser.expecting_arg = true;
+            if (text[s_parser.n+1] == '=')
             {
-                s_n++;
-                push_pending_op(d_stk_eq, 6 - (s_paren + equals)*15);
+                s_parser.n++;
+                push_pending_op(d_stk_eq, 6 - (s_parser.paren + equals)*15);
             }
             else
             {
-                s_op[g_operation_index-1].f = stk_sto;
-                s_op[g_operation_index-1].p = 5 - (s_paren + equals)*15;
-                s_store[g_store_index++] = s_load[--g_load_index];
+                s_formula.ops[g_operation_index-1].f = stk_sto;
+                s_formula.ops[g_operation_index-1].p = 5 - (s_parser.paren + equals)*15;
+                s_formula.store[g_store_index++] = s_formula.load[--g_load_index];
                 equals++;
             }
             break;
         default:
-            while (std::isalnum(text[s_n+1]) || text[s_n+1] == '.' || text[s_n+1] == '_')
+            while (std::isalnum(text[s_parser.n+1]) || text[s_parser.n+1] == '.' || text[s_parser.n+1] == '_')
             {
-                s_n++;
+                s_parser.n++;
             }
-            len = s_n + 1 -s_init_n;
-            s_expecting_arg = false;
-            if (const JumpControlType type = is_jump(&text[s_init_n], len); type != JumpControlType::NONE)
+            len = s_parser.n + 1 -s_parser.init_n;
+            s_parser.expecting_arg = false;
+            if (const JumpControlType type = is_jump(&text[s_parser.init_n], len); type != JumpControlType::NONE)
             {
-                s_uses_jump = true;
+                s_formula.uses_jump = true;
                 switch (type)
                 {
                 case JumpControlType::IF:
-                    s_expecting_arg = true;
+                    s_parser.expecting_arg = true;
                     push_jump(JumpControlType::IF);
                     push_pending_op(d_stk_jump_on_false, 1);
                     break;
                 case JumpControlType::ELSE_IF:
-                    s_expecting_arg = true;
+                    s_parser.expecting_arg = true;
                     push_jump(JumpControlType::ELSE_IF);
                     push_jump(JumpControlType::ELSE_IF);
                     push_pending_op(stk_jump, 1);
@@ -1947,35 +1969,35 @@ static bool parse_formula_text(const std::string &text)
             }
             else
             {
-                if (const FunctionPtr fn = is_func(&text[s_init_n], len); fn != not_a_funct)
+                if (const FunctionPtr fn = is_func(&text[s_parser.init_n], len); fn != not_a_funct)
                 {
-                    push_pending_op(fn,  1 - (s_paren + equals)*15);
-                    s_expecting_arg = true;
+                    push_pending_op(fn,  1 - (s_parser.paren + equals)*15);
+                    s_parser.expecting_arg = true;
                 }
                 else
                 {
-                    ConstArg *c = is_const(&text[s_init_n], len);
-                    s_load[g_load_index++] = &c->a;
-                    push_pending_op(stk_lod, 1 - (s_paren + equals)*15);
-                    s_n = s_init_n + c->len - 1;
+                    ConstArg *c = is_const(&text[s_parser.init_n], len);
+                    s_formula.load[g_load_index++] = &c->a;
+                    push_pending_op(stk_lod, 1 - (s_parser.paren + equals)*15);
+                    s_parser.n = s_parser.init_n + c->len - 1;
                 }
             }
             break;
         }
     }
     push_pending_op(nullptr, 16);
-    s_next_op = 0;
-    s_op_count = g_operation_index;
-    while (s_next_op < g_operation_index)
+    s_parser.next_op = 0;
+    s_formula.op_count = g_operation_index;
+    while (s_parser.next_op < g_operation_index)
     {
-        if (s_op[s_next_op].f)
+        if (s_formula.ops[s_parser.next_op].f)
         {
             sort_precedence();
         }
         else
         {
-            s_next_op++;
-            s_op_count--;
+            s_parser.next_op++;
+            s_formula.op_count--;
         }
     }
     return false;
@@ -1988,42 +2010,42 @@ int formula_orbit()
         return 1;
     }
 
-    if (s_debug_trace_enabled && s_debug_trace_file)
+    if (s_debug.trace_enabled && s_debug.trace_file)
     {
-        fmt::print(s_debug_trace_file, "\n=== Orbit Calculation ===\n");
-        fmt::print(s_debug_trace_file, "Input z: ({:.6f}, {:.6f})\n", 
+        fmt::print(s_debug.trace_file, "\n=== Orbit Calculation ===\n");
+        fmt::print(s_debug.trace_file, "Input z: ({:.6f}, {:.6f})\n", 
                    g_old_z.x, g_old_z.y);
-        s_debug_operation_count = 0;
+        s_debug.operation_count = 0;
     }
 
-    g_load_index = s_init_load_ptr;
-    g_store_index = s_init_store_ptr;
-    s_op_ptr = s_init_op_ptr;
-    s_jump_index = s_init_jump_index;
+    g_load_index = s_runtime.init_load_ptr;
+    g_store_index = s_runtime.init_store_ptr;
+    s_runtime.op_ptr = s_runtime.init_op_ptr;
+    s_runtime.jump_index = s_runtime.init_jump_index;
     // Set the random number
-    if (s_set_random || s_randomized)
+    if (s_runtime.set_random || s_runtime.randomized)
     {
         d_random();
     }
 
-    g_arg1 = s_stack.data();
-    g_arg2 = s_stack.data();
+    g_arg1 = s_runtime.stack.data();
+    g_arg2 = s_runtime.stack.data();
     --g_arg2;
-    while (s_op_ptr < static_cast<int>(s_op_count))
+    while (s_runtime.op_ptr < static_cast<int>(s_formula.op_count))
     {
-        s_fns[s_op_ptr]();
-        s_op_ptr++;
+        s_formula.fns[s_runtime.op_ptr]();
+        s_runtime.op_ptr++;
     }
 
-    g_new_z = s_vars[3].a.d;
+    g_new_z = s_formula.vars[3].a.d;
     g_old_z = g_new_z;
 
-    if (s_debug_trace_enabled && s_debug_trace_file)
+    if (s_debug.trace_enabled && s_debug.trace_file)
     {
-        fmt::print(s_debug_trace_file, "Output z: ({:.6f}, {:.6f})\n", g_new_z.x, g_new_z.y);
-        fmt::print(s_debug_trace_file, "Bailout test: {} (result: {})\n", g_arg1->d.x,
+        fmt::print(s_debug.trace_file, "Output z: ({:.6f}, {:.6f})\n", g_new_z.x, g_new_z.y);
+        fmt::print(s_debug.trace_file, "Bailout test: {} (result: {})\n", g_arg1->d.x,
             g_arg1->d.x == 0.0 ? "continue" : "bailout");
-        std::fflush(s_debug_trace_file);
+        std::fflush(s_debug.trace_file);
     }
 
     return g_arg1->d.x == 0.0;
@@ -2037,66 +2059,66 @@ int formula_per_pixel()
     }
 
     debug_trace_init(); // Initialize tracing
-    if (s_debug_trace_enabled && s_debug_trace_file)
+    if (s_debug.trace_enabled && s_debug.trace_file)
     {
-        fmt::print(s_debug_trace_file, "\n=== Per-Pixel Initialization ===\n");
-        fmt::print(s_debug_trace_file, "Pixel: ({}, {})\n", g_col, g_row);
-        fmt::print(s_debug_trace_file, "Pixel coords: ({:.6f}, {:.6f})\n", dx_pixel(), dy_pixel());
+        fmt::print(s_debug.trace_file, "\n=== Per-Pixel Initialization ===\n");
+        fmt::print(s_debug.trace_file, "Pixel: ({}, {})\n", g_col, g_row);
+        fmt::print(s_debug.trace_file, "Pixel coords: ({:.6f}, {:.6f})\n", dx_pixel(), dy_pixel());
     }
 
     g_overflow = false;
-    s_jump_index = 0;
-    s_op_ptr = 0;
+    s_runtime.jump_index = 0;
+    s_runtime.op_ptr = 0;
     g_store_index = 0;
     g_load_index = 0;
-    g_arg1 = s_stack.data();
-    g_arg2 = s_stack.data();
+    g_arg1 = s_runtime.stack.data();
+    g_arg2 = s_runtime.stack.data();
     g_arg2--;
 
-    s_vars[10].a.d.x = static_cast<double>(g_col);
-    s_vars[10].a.d.y = static_cast<double>(g_row);
+    s_formula.vars[10].a.d.x = static_cast<double>(g_col);
+    s_formula.vars[10].a.d.y = static_cast<double>(g_row);
 
     if (g_row + g_col & 1)
     {
-        s_vars[9].a.d.x = 1.0;
+        s_formula.vars[9].a.d.x = 1.0;
     }
     else
     {
-        s_vars[9].a.d.x = 0.0;
+        s_formula.vars[9].a.d.x = 0.0;
     }
-    s_vars[9].a.d.y = 0.0;
+    s_formula.vars[9].a.d.y = 0.0;
 
     if (g_inversion.invert != 0)
     {
         invertz2(&g_old_z);
-        s_vars[0].a.d.x = g_old_z.x;
-        s_vars[0].a.d.y = g_old_z.y;
+        s_formula.vars[0].a.d.x = g_old_z.x;
+        s_formula.vars[0].a.d.y = g_old_z.y;
     }
     else
     {
-        s_vars[0].a.d.x = dx_pixel();
-        s_vars[0].a.d.y = dy_pixel();
+        s_formula.vars[0].a.d.x = dx_pixel();
+        s_formula.vars[0].a.d.y = dy_pixel();
     }
 
     if (g_last_init_op)
     {
-        g_last_init_op = s_op_count;
+        g_last_init_op = s_formula.op_count;
     }
-    if (s_debug_trace_enabled && s_debug_trace_file)
+    if (s_debug.trace_enabled && s_debug.trace_file)
     {
-        fmt::print(s_debug_trace_file, "\nInitialization operations:\n");
-        s_debug_operation_count = 0;
+        fmt::print(s_debug.trace_file, "\nInitialization operations:\n");
+        s_debug.operation_count = 0;
     }
-    while (s_op_ptr < g_last_init_op)
+    while (s_runtime.op_ptr < g_last_init_op)
     {
-        s_fns[s_op_ptr]();
-        s_op_ptr++;
+        s_formula.fns[s_runtime.op_ptr]();
+        s_runtime.op_ptr++;
     }
-    s_init_load_ptr = g_load_index;
-    s_init_store_ptr = g_store_index;
-    s_init_op_ptr = s_op_ptr;
+    s_runtime.init_load_ptr = g_load_index;
+    s_runtime.init_store_ptr = g_store_index;
+    s_runtime.init_op_ptr = s_runtime.op_ptr;
     // Set old variable for orbits
-    g_old_z = s_vars[3].a.d;
+    g_old_z = s_formula.vars[3].a.d;
 
     return g_overflow ? 0 : 1;
 }
@@ -2108,22 +2130,22 @@ static int fill_if_group(const int endif_index, JumpPtrs *jump_data)
     while (i > 0)
     {
         i--;
-        switch (s_jump_control[i].type)
+        switch (s_formula.jump_control[i].type)
         {
         case JumpControlType::IF:    //if (); this concludes processing of this group
-            s_jump_control[i].ptrs = jump_data[ljp];
-            s_jump_control[i].dest_jump_index = ljp + 1;
+            s_formula.jump_control[i].ptrs = jump_data[ljp];
+            s_formula.jump_control[i].dest_jump_index = ljp + 1;
             return i;
         case JumpControlType::ELSE_IF:    //elseif* (2 jumps, the 'else' and the 'if')
             // first, the "if" part
-            s_jump_control[i].ptrs = jump_data[ljp];
-            s_jump_control[i].dest_jump_index = ljp + 1;
+            s_formula.jump_control[i].ptrs = jump_data[ljp];
+            s_formula.jump_control[i].dest_jump_index = ljp + 1;
 
             // then, the else part
             i--; //fall through to "else" is intentional
         case JumpControlType::ELSE:
-            s_jump_control[i].ptrs = jump_data[endif_index];
-            s_jump_control[i].dest_jump_index = endif_index + 1;
+            s_formula.jump_control[i].ptrs = jump_data[endif_index];
+            s_formula.jump_control[i].dest_jump_index = endif_index + 1;
             ljp = i;
             break;
         case JumpControlType::END_IF:    //endif
@@ -2149,13 +2171,13 @@ static bool fill_jump_struct()
 
     std::vector<JumpPtrs> jump_data;
 
-    for (s_op_ptr = 0; s_op_ptr < static_cast<int>(s_op_count); s_op_ptr++)
+    for (s_runtime.op_ptr = 0; s_runtime.op_ptr < static_cast<int>(s_formula.op_count); s_runtime.op_ptr++)
     {
         if (find_new_func)
         {
-            if (i < static_cast<int>(s_jump_control.size()))
+            if (i < static_cast<int>(s_formula.jump_control.size()))
             {
-                switch (s_jump_control[i].type)
+                switch (s_formula.jump_control[i].type)
                 {
                 case JumpControlType::IF:
                     jump_func = d_stk_jump_on_false;
@@ -2183,18 +2205,18 @@ static bool fill_jump_struct()
             }
             find_new_func = false;
         }
-        if (*s_fns[s_op_ptr] == stk_lod)
+        if (*s_formula.fns[s_runtime.op_ptr] == stk_lod)
         {
             load_count++;
         }
-        else if (*s_fns[s_op_ptr] == stk_sto)
+        else if (*s_formula.fns[s_runtime.op_ptr] == stk_sto)
         {
             store_count++;
         }
-        else if (*s_fns[s_op_ptr] == jump_func)
+        else if (*s_formula.fns[s_runtime.op_ptr] == jump_func)
         {
             JumpPtrs value{};
-            value.jump_op_ptr = s_op_ptr;
+            value.jump_op_ptr = s_runtime.op_ptr;
             value.jump_lod_ptr = load_count;
             value.jump_sto_ptr = store_count;
             jump_data.push_back(value);
@@ -2204,9 +2226,9 @@ static bool fill_jump_struct()
     }
 
     // Following for safety only; all should always be false
-    if (i != s_jump_index
-        || s_jump_control[i - 1].type != JumpControlType::END_IF
-        || s_jump_control[0].type != JumpControlType::IF)
+    if (i != s_runtime.jump_index
+        || s_formula.jump_control[i - 1].type != JumpControlType::END_IF
+        || s_formula.jump_control[0].type != JumpControlType::IF)
     {
         return true;
     }
@@ -3310,7 +3332,7 @@ static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
         return {};
     }
 
-    if (s_chars_in_formula > 8190)
+    if (s_parser.chars_in_formula > 8190)
     {
         std::fseek(file, file_pos, SEEK_SET);
         return {};
@@ -3446,17 +3468,17 @@ bool run_formula(const std::string &name, const bool report_bad_sym)
             return true;
         }
     }
-    s_formula = prepare_formula(entry_file, report_bad_sym);
+    s_formula.formula = prepare_formula(entry_file, report_bad_sym);
     std::fclose(entry_file);
 
-    if (!s_formula.empty())  //  No errors while making string
+    if (!s_formula.formula.empty())  //  No errors while making string
     {
         parser_allocate();  //  parse_formula_text() will test if this alloc worked
-        if (parse_formula_text(s_formula))
+        if (parse_formula_text(s_formula.formula))
         {
             return true;   //  parse failed, don't change fn pointers
         }
-        if (s_uses_jump && fill_jump_struct())
+        if (s_formula.uses_jump && fill_jump_struct())
         {
             stop_msg(parse_error_text(ParseError::ERROR_IN_PARSING_JUMP_STATEMENTS));
             return true;
@@ -3484,16 +3506,16 @@ void init_misc()
 {
     static Arg arg_first;
     static Arg arg_second;
-    if (s_vars.empty())
+    if (s_formula.vars.empty())
     {
-        s_vars.resize(5);
+        s_formula.vars.resize(5);
     }
     g_arg1 = &arg_first;
     g_arg2 = &arg_second; // needed by all the ?stk* functions
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;
-    s_uses_jump = false;
+    s_formula.uses_jump = false;
     g_frm_uses_ismand = false;
     g_frm_uses_p4 = false;
     g_frm_uses_p5 = false;
@@ -3505,12 +3527,12 @@ static void parser_allocate()
     g_max_function_ops = 2300;
     g_max_function_args = static_cast<unsigned>(g_max_function_ops / 2.5);
 
-    s_fns.reserve(g_max_function_ops);
-    s_store.resize(MAX_STORES);
-    s_load.resize(MAX_LOADS);
-    s_vars.resize(g_max_function_args);
+    s_formula.fns.reserve(g_max_function_ops);
+    s_formula.store.resize(MAX_STORES);
+    s_formula.load.resize(MAX_LOADS);
+    s_formula.vars.resize(g_max_function_args);
 
-    if (!parse_formula_text(s_formula))
+    if (!parse_formula_text(s_formula.formula))
     {
         // per Chuck Ebbert, fudge these up a little
         g_max_function_ops = g_operation_index + 4;
@@ -3525,10 +3547,10 @@ static void parser_allocate()
 
 void free_work_area()
 {
-    s_store.clear();
-    s_load.clear();
-    s_vars.clear();
-    s_fns.clear();
+    s_formula.store.clear();
+    s_formula.load.clear();
+    s_formula.vars.clear();
+    s_formula.fns.clear();
 }
 
 static void frm_error(std::FILE * open_file, const long begin_frm)
@@ -3664,10 +3686,10 @@ static bool frm_prescan(std::FILE *open_file)
     int waiting_for_endif{};
     constexpr int MAX_PARENS{sizeof(long) * 8};
 
-    s_num_jumps = 0UL;
-    s_chars_in_formula = 0U;
-    s_uses_jump = false;
-    s_paren = 0;
+    unsigned long num_jumps{};
+    s_parser.chars_in_formula = 0U;
+    s_formula.uses_jump = false;
+    s_parser.paren = 0;
 
     long statement_pos{std::ftell(open_file)};
     const long orig_pos{statement_pos};
@@ -3691,7 +3713,7 @@ static bool frm_prescan(std::FILE *open_file)
     {
         file_pos = std::ftell(open_file);
         frm_get_token(open_file, &this_token);
-        s_chars_in_formula += static_cast<int>(std::strlen(this_token.str));
+        s_parser.chars_in_formula += static_cast<int>(std::strlen(this_token.str));
         switch (this_token.type)
         {
         case FormulaTokenType::NOT_A_TOKEN:
@@ -3741,7 +3763,7 @@ static bool frm_prescan(std::FILE *open_file)
             switch (this_token.id)
             {
             case TokenId::OPEN_PARENS:
-                if (++s_paren > MAX_PARENS)
+                if (++s_parser.paren > MAX_PARENS)
                 {
                     record_error(ParseError::NESTING_TO_DEEP);
                 }
@@ -3752,14 +3774,14 @@ static bool frm_prescan(std::FILE *open_file)
                 waiting_for_mod = waiting_for_mod << 1;
                 break;
             case TokenId::CLOSE_PARENS:
-                if (s_paren)
+                if (s_parser.paren)
                 {
-                    s_paren--;
+                    s_parser.paren--;
                 }
                 else
                 {
                     record_error(ParseError::NEED_A_MATCHING_OPEN_PARENS);
-                    s_paren = 0;
+                    s_parser.paren = 0;
                 }
                 if (waiting_for_mod & 1L)
                 {
@@ -3838,14 +3860,14 @@ static bool frm_prescan(std::FILE *open_file)
             break;
         case FormulaTokenType::FLOW_CONTROL:
             assignment_ok = false;
-            s_num_jumps++;
+            num_jumps++;
             if (!new_statement)
             {
                 record_error(ParseError::JUMP_NOT_FIRST);
             }
             else
             {
-                s_uses_jump = true;
+                s_formula.uses_jump = true;
                 switch (this_token.id)
                 {
                 case TokenId::JUMP_IF:  // if
@@ -3853,7 +3875,7 @@ static bool frm_prescan(std::FILE *open_file)
                     waiting_for_endif++;
                     break;
                 case TokenId::JUMP_ELSE_IF: //ELSEIF
-                    s_num_jumps++;  // this involves two jumps
+                    num_jumps++;  // this involves two jumps
                     if (else_has_been_used % 2)
                     {
                         record_error(ParseError::ENDIF_REQUIRED_AFTER_ELSE);
@@ -3893,10 +3915,10 @@ static bool frm_prescan(std::FILE *open_file)
             {
             case TokenId::OP_COMMA:
             case TokenId::OP_COLON:    // end of statement and :
-                if (s_paren)
+                if (s_parser.paren)
                 {
                     record_error(ParseError::NEED_MORE_CLOSE_PARENS);
-                    s_paren = 0;
+                    s_parser.paren = 0;
                 }
                 if (waiting_for_mod)
                 {
@@ -4065,10 +4087,10 @@ static bool frm_prescan(std::FILE *open_file)
             }
             break;
         case FormulaTokenType::END_OF_FORMULA:
-            if (s_paren)
+            if (s_parser.paren)
             {
                 record_error(ParseError::NEED_MORE_CLOSE_PARENS);
-                s_paren = 0;
+                s_parser.paren = 0;
             }
             if (waiting_for_mod)
             {
@@ -4086,7 +4108,7 @@ static bool frm_prescan(std::FILE *open_file)
                 statement_pos = std::ftell(open_file);
             }
 
-            if (s_num_jumps >= MAX_JUMPS)
+            if (num_jumps >= MAX_JUMPS)
             {
                 record_error(ParseError::TOO_MANY_JUMPS);
             }
@@ -4199,9 +4221,9 @@ static std::string get_variable_name(int var_index)
     }
 
     // Check if it's in the valid range of parsed variables
-    if (var_index < static_cast<int>(s_vars.size()) && var_index < static_cast<int>(g_variable_index))
+    if (var_index < static_cast<int>(s_formula.vars.size()) && var_index < static_cast<int>(g_variable_index))
     {
-        const ConstArg &var = s_vars[var_index];
+        const ConstArg &var = s_formula.vars[var_index];
         if (var.s != nullptr && var.len > 0)
         {
             // Use len to avoid reading past the intended string
@@ -4221,10 +4243,10 @@ static void get_globals(std::ostringstream &oss)
 {
     oss << fmt::format("=== Formula: {} ===\n", g_formula_name);
     oss << fmt::format("Symmetry: {}\n", +g_symmetry);
-    oss << fmt::format("Total Operations: {}\n", s_op_count);
+    oss << fmt::format("Total Operations: {}\n", s_formula.op_count);
     oss << fmt::format("Init Operations: {}\n", g_last_init_op);
     oss << fmt::format("Variables: {}\n", g_variable_index);
-    oss << fmt::format("Uses Jumps: {}\n", s_uses_jump ? "yes" : "no");
+    oss << fmt::format("Uses Jumps: {}\n", s_formula.uses_jump ? "yes" : "no");
     oss << fmt::format("Uses p1: {} p2: {} p3: {} p4: {} p5: {}\n", g_frm_uses_p1, g_frm_uses_p2, g_frm_uses_p3,
         g_frm_uses_p4, g_frm_uses_p5);
     oss << fmt::format("Uses ismand: {}\n", g_frm_uses_ismand);
@@ -4235,10 +4257,10 @@ static void get_variables(std::ostringstream &oss)
 {
     // Dump variables
     oss << "=== Variables ===\n";
-    for (unsigned int i = 0; i < g_variable_index && i < static_cast<unsigned int>(s_vars.size()); ++i)
+    for (unsigned int i = 0; i < g_variable_index && i < static_cast<unsigned int>(s_formula.vars.size()); ++i)
     {
         oss << fmt::format(
-            "{:3d}: {:15s} = ({:.6f}, {:.6f})\n", i, get_variable_name(i), s_vars[i].a.d.x, s_vars[i].a.d.y);
+            "{:3d}: {:15s} = ({:.6f}, {:.6f})\n", i, get_variable_name(i), s_formula.vars[i].a.d.x, s_formula.vars[i].a.d.y);
     }
     oss << "\n";
 }
@@ -4247,9 +4269,9 @@ static void get_operations(std::ostringstream &oss)
 {
     // Dump operations
     oss << "=== Operations ===\n";
-    for (int i = 0; i < static_cast<int>(s_fns.size()); ++i)
+    for (int i = 0; i < static_cast<int>(s_formula.fns.size()); ++i)
     {
-        oss << fmt::format("{:3d}: {}\n", i, get_operation_name(s_fns[i]));
+        oss << fmt::format("{:3d}: {}\n", i, get_operation_name(s_formula.fns[i]));
     }
     oss << "\n";
 }
@@ -4258,9 +4280,9 @@ static void get_load_table(std::ostringstream &oss)
 {
     // Count actual loads used by scanning operations
     int load_count = 0;
-    for (size_t i = 0; i < s_fns.size(); ++i)
+    for (size_t i = 0; i < s_formula.fns.size(); ++i)
     {
-        FunctionPtr fn = s_fns[i];
+        FunctionPtr fn = s_formula.fns[i];
         if (fn == stk_lod)
         {
             load_count++;
@@ -4277,14 +4299,14 @@ static void get_load_table(std::ostringstream &oss)
 
     // Dump load table - only entries actually used
     oss << "=== Load Table ===\n";
-    for (int i = 0; i < load_count && i < static_cast<int>(s_load.size()); ++i)
+    for (int i = 0; i < load_count && i < static_cast<int>(s_formula.load.size()); ++i)
     {
         int var_idx = -1;
-        if (s_load[i] != nullptr)
+        if (s_formula.load[i] != nullptr)
         {
             for (unsigned v = 0; v < g_variable_index; ++v)
             {
-                if (s_load[i] == &s_vars[v].a)
+                if (s_formula.load[i] == &s_formula.vars[v].a)
                 {
                     var_idx = v;
                     break;
@@ -4300,7 +4322,7 @@ static void get_store_table(std::ostringstream &oss)
 {
     // Count actual stores used by scanning operations
     int store_count = 0;
-    for (const FunctionPtr &fn : s_fns)
+    for (const FunctionPtr &fn : s_formula.fns)
     {
         if (fn == stk_sto)
         {
@@ -4310,14 +4332,14 @@ static void get_store_table(std::ostringstream &oss)
 
     // Dump store table - only entries actually used
     oss << "=== Store Table ===\n";
-    for (int i = 0; i < store_count && i < static_cast<int>(s_store.size()); ++i)
+    for (int i = 0; i < store_count && i < static_cast<int>(s_formula.store.size()); ++i)
     {
         int var_idx = -1;
-        if (s_store[i] != nullptr)
+        if (s_formula.store[i] != nullptr)
         {
             for (unsigned v = 0; v < g_variable_index; ++v)
             {
-                if (s_store[i] == &s_vars[v].a)
+                if (s_formula.store[i] == &s_formula.vars[v].a)
                 {
                     var_idx = v;
                     break;
@@ -4332,13 +4354,13 @@ static void get_store_table(std::ostringstream &oss)
 static void get_jump_control_table(std::ostringstream &oss)
 {
     // Dump jump control table
-    if (s_uses_jump)
+    if (s_formula.uses_jump)
     {
         oss << "=== Jump Control Table ===\n";
-        for (size_t i = 0; i < s_jump_control.size(); ++i)
+        for (size_t i = 0; i < s_formula.jump_control.size(); ++i)
         {
             const char *type_name = "UNKNOWN";
-            switch (s_jump_control[i].type)
+            switch (s_formula.jump_control[i].type)
             {
             case JumpControlType::IF:
                 type_name = "IF";
@@ -4356,8 +4378,8 @@ static void get_jump_control_table(std::ostringstream &oss)
                 break;
             }
             oss << fmt::format("{:3d}: {:8s} -> op:{:3d} load:{:3d} store:{:3d} dest:{:3d}\n", i, type_name,
-                s_jump_control[i].ptrs.jump_op_ptr, s_jump_control[i].ptrs.jump_lod_ptr,
-                s_jump_control[i].ptrs.jump_sto_ptr, s_jump_control[i].dest_jump_index);
+                s_formula.jump_control[i].ptrs.jump_op_ptr, s_formula.jump_control[i].ptrs.jump_lod_ptr,
+                s_formula.jump_control[i].ptrs.jump_sto_ptr, s_formula.jump_control[i].dest_jump_index);
         }
         oss << "\n";
     }
@@ -4365,7 +4387,7 @@ static void get_jump_control_table(std::ostringstream &oss)
 
 std::string get_parser_state()
 {
-    if (g_formula_name.empty() || s_fns.empty())
+    if (g_formula_name.empty() || s_formula.fns.empty())
     {
         return "No formula loaded\n";
     }
@@ -4384,21 +4406,21 @@ bool parse_formula(const std::string &formula_text, std::string &error_msg)
 {
     // Clear previous state
     free_work_area();
-    s_formula = formula_text;
+    s_formula.formula = formula_text;
     g_formula_name = "TEST_FORMULA";
 
     // Allocate structures
     parser_allocate();
 
     // Parse
-    if (parse_formula_text(s_formula))
+    if (parse_formula_text(s_formula.formula))
     {
         error_msg = "Parse failed";
         return false;
     }
 
     // Fill jump structures if needed
-    if (s_uses_jump && fill_jump_struct())
+    if (s_formula.uses_jump && fill_jump_struct())
     {
         error_msg = "Jump structure fill failed";
         return false;
@@ -4411,8 +4433,10 @@ bool parse_formula(const std::string &formula_text, std::string &error_msg)
 void parser_reset()
 {
     free_work_area();
+    s_formula.formula.clear();
+    s_formula.uses_jump = false;
+    s_formula.jump_control.clear();
     g_formula_name.clear();
-    s_formula.clear();
     g_operation_index = 0;
     g_variable_index = 0;
     g_last_init_op = 0;
@@ -4425,8 +4449,6 @@ void parser_reset()
     g_frm_uses_p5 = false;
     g_frm_uses_ismand = false;
     g_max_function = 0;
-    s_uses_jump = false;
-    s_jump_control.clear();
 }
 
 } // namespace id::fractals
