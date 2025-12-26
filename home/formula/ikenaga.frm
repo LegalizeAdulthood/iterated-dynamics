@@ -178,7 +178,7 @@ IkeNewtJul          { ; from REB001.FRM - by Ron Barnett
 
 F'FunctionIke       { ; generalized by Jon Horner
                       ; from RecipIke in REB001.FRM
-   : - by Ron Barnett
+                      ; - by Ron Barnett
    z = pixel:
    z = fn1(z*z*z + (p1-1) * z - p1),
    |z| <= 4
