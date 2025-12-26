@@ -923,13 +923,13 @@ RCL_9 (XAXIS) { ; Ron Lewen
 
 RCL_12 (XAXIS) { ; Ron Lewen
    z=pixel:
-   z=(z^2+3z+pixel)/(z^2-3z-pixel)
+   z=(z^2+3*z+pixel)/(z^2-3*z-pixel)
    |z| <= 10
 }
 
 RCL_13 (XAXIS) { ; Ron Lewen
    z=pixel:
-   z=(z^2+2z+pixel)/(z^2-2z+pixel)
+   z=(z^2+2*z+pixel)/(z^2-2*z+pixel)
    |z| <= 100
 }
 
