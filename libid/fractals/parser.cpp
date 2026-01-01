@@ -1817,7 +1817,7 @@ static bool fill_jump_struct()
 
     std::vector<JumpPtrs> jump_data;
 
-    for (s_runtime.op_ptr = 0; s_runtime.op_ptr < static_cast<int>(s_formula.op_count); s_runtime.op_ptr++)
+    for (int op = 0; op < static_cast<int>(s_formula.op_count); op++)
     {
         if (find_new_func)
         {
@@ -1851,18 +1851,18 @@ static bool fill_jump_struct()
             }
             find_new_func = false;
         }
-        if (*s_formula.fns[s_runtime.op_ptr] == stk_lod)
+        if (*s_formula.fns[op] == stk_lod)
         {
             load_count++;
         }
-        else if (*s_formula.fns[s_runtime.op_ptr] == stk_sto)
+        else if (*s_formula.fns[op] == stk_sto)
         {
             store_count++;
         }
-        else if (*s_formula.fns[s_runtime.op_ptr] == jump_func)
+        else if (*s_formula.fns[op] == jump_func)
         {
             JumpPtrs value{};
-            value.jump_op_ptr = s_runtime.op_ptr;
+            value.jump_op_ptr = op;
             value.jump_lod_ptr = load_count;
             value.jump_sto_ptr = store_count;
             jump_data.push_back(value);
