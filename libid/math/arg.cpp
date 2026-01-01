@@ -2,6 +2,8 @@
 //
 #include "math/arg.h"
 
+#include "fractals/interpreter.h"
+
 using namespace id::fractals;
 
 namespace id::math

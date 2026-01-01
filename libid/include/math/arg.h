@@ -2,7 +2,6 @@
 //
 #pragma once
 
-#include "fractals/interpreter.h"
 #include "math/cmplx.h"
 #include "math/fpu087.h"
 

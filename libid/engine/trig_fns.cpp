@@ -4,6 +4,7 @@
 
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
+#include "fractals/interpreter.h"
 #include "fractals/julibrot.h"
 #include "fractals/parser.h"
 #include "math/arg.h"
