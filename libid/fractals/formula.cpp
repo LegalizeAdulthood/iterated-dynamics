@@ -63,7 +63,7 @@ int formula_per_pixel()
     {
         random_seed();
     }
-    g_store_index = 0;
+    g_runtime.store_index = 0;
     g_runtime.load_index = 0;
     g_arg1 = g_runtime.stack.data();
     g_arg2 = g_runtime.stack.data();
@@ -105,7 +105,7 @@ int formula_per_pixel()
         g_runtime.op_index++;
     }
     g_runtime.init_load_index = g_runtime.load_index;
-    g_runtime.init_store_index = g_store_index;
+    g_runtime.init_store_index = g_runtime.store_index;
     g_runtime.init_op_index = g_runtime.op_index;
     // Set old variable for orbits
     g_old_z = g_formula.vars[3].a.d;
@@ -123,7 +123,7 @@ int formula_orbit()
     g_runtime.orbit_begin();
 
     g_runtime.load_index = g_runtime.init_load_index;
-    g_store_index = g_runtime.init_store_index;
+    g_runtime.store_index = g_runtime.init_store_index;
     g_runtime.op_index = g_runtime.init_op_index;
     g_runtime.jump_index = g_runtime.init_jump_index;
     // Set the random number

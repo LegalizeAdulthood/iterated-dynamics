@@ -64,6 +64,7 @@ struct CompiledFormula
     bool uses_rand{};                      // Whether formula uses rand
     int last_init_op{};                    //
     int load_index{};                      //
+    int store_index{};                     //
 };
 
 extern CompiledFormula       g_formula;
@@ -71,7 +72,6 @@ extern char                  g_max_function;
 extern unsigned              g_max_function_args;
 extern unsigned              g_max_function_ops;
 extern unsigned              g_operation_index;
-extern int                   g_store_index;
 extern unsigned              g_variable_index;
 
 int frm_get_param_stuff(std::filesystem::path &path, const char *name);

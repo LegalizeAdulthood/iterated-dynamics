@@ -659,8 +659,8 @@ void d_stk_mod()
 void stk_sto()
 {
     debug_trace_operation("STO", g_arg1);
-    assert(g_formula.store[g_store_index] != nullptr);
-    *g_formula.store[g_store_index++] = *g_arg1;
+    assert(g_formula.store[g_runtime.store_index] != nullptr);
+    *g_formula.store[g_runtime.store_index++] = *g_arg1;
     debug_trace_stack_state();
 }
 
@@ -818,7 +818,7 @@ void stk_jump()
 
     g_runtime.op_index =  g_formula.jump_control[g_runtime.jump_index].ptrs.jump_op_ptr;
     g_runtime.load_index = g_formula.jump_control[g_runtime.jump_index].ptrs.jump_lod_ptr;
-    g_store_index = g_formula.jump_control[g_runtime.jump_index].ptrs.jump_sto_ptr;
+    g_runtime.store_index = g_formula.jump_control[g_runtime.jump_index].ptrs.jump_sto_ptr;
     g_runtime.jump_index = g_formula.jump_control[g_runtime.jump_index].dest_jump_index;
 }
 

@@ -21,6 +21,7 @@ struct RuntimeState
     int op_index{};
     int jump_index{};
     int load_index{};
+    int store_index{};
 
     int init_op_index{};
     int init_jump_index{};

@@ -303,7 +303,6 @@ static void parser_allocate();
 
 unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
-int g_store_index{};
 unsigned int g_operation_index{};
 unsigned int g_variable_index{};
 char g_max_function{};
@@ -844,7 +843,7 @@ static bool parse_formula_text(const std::string &text)
 
     g_operation_index = 0;
     g_formula.ops.clear();
-    g_store_index = 0;
+    g_formula.store_index = 0;
     g_formula.load_index = 0;
     s_parser.paren = 0;
     g_formula.last_init_op = 0;
@@ -988,7 +987,7 @@ static bool parse_formula_text(const std::string &text)
             {
                 g_formula.ops[g_operation_index-1].f = stk_sto;
                 g_formula.ops[g_operation_index-1].p = 5 - (s_parser.paren + equals)*15;
-                g_formula.store[g_store_index++] = g_formula.load[--g_formula.load_index];
+                g_formula.store[g_formula.store_index++] = g_formula.load[--g_formula.load_index];
                 equals++;
             }
             break;
@@ -3368,7 +3367,7 @@ void parser_reset()
     g_operation_index = 0;
     g_variable_index = 0;
     g_formula.last_init_op = 0;
-    g_store_index = 0;
+    g_formula.store_index = 0;
     g_formula.load_index = 0;
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
