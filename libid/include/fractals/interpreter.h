@@ -2,6 +2,10 @@
 //
 #pragma once
 
+#include "math/arg.h"
+
+#include <array>
+
 namespace id::math
 {
 struct Arg;
@@ -9,6 +13,26 @@ struct Arg;
 
 namespace id::fractals
 {
+
+struct RuntimeState
+{
+    std::array<math::Arg, 20> stack{};
+    int op_ptr{};
+    int jump_index{};
+
+    int init_op_ptr{};
+    int init_jump_index{};
+    int init_load_ptr{};
+    int init_store_ptr{};
+
+    bool set_random{};
+    bool randomized{};
+    unsigned long rand_num{};
+    long rand_x{};
+    long rand_y{};
+};
+
+extern RuntimeState s_runtime;
 
 void d_stk_add();
 void d_stk_mul();

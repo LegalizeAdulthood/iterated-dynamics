@@ -109,34 +109,14 @@ struct CompiledFormula
     bool uses_rand{};                        // Whether formula uses rand
 };
 
-struct RuntimeState
-{
-    std::array<math::Arg, 20> stack{};
-    int op_ptr{};
-    int jump_index{};
-
-    int init_op_ptr{};
-    int init_jump_index{};
-    int init_load_ptr{};
-    int init_store_ptr{};
-
-    bool set_random{};
-    bool randomized{};
-    unsigned long rand_num{};
-    long rand_x{};
-    long rand_y{};
-};
-
 constexpr int BIT_SHIFT{16};
 
 extern CompiledFormula s_formula;
 extern DebugState s_debug;
-extern RuntimeState s_runtime;
 void debug_trace_init();
 void random_seed();
 void d_stk_srand();
 void d_random();
-
 void d_stk_lod_dup();
 void d_stk_lod_sqr();
 void d_stk_lod_sqr2();
