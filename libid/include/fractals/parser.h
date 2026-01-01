@@ -67,6 +67,12 @@ struct CompiledFormula
     int store_index{};                     //
     int op_index{};                        //
     int var_index{};                       //
+    bool uses_ismand{};                    // true if the formula uses ismand variable
+    bool uses_p1{};                        // true if the formula uses p1 variable
+    bool uses_p2{};                        // true if the formula uses p2 variable
+    bool uses_p3{};                        // true if the formula uses p3 variable
+    bool uses_p4{};                        // true if the formula uses p4 variable
+    bool uses_p5{};                        // true if the formula uses p5 variable
 };
 
 extern CompiledFormula       g_formula;

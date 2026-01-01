@@ -226,7 +226,7 @@ static bool tab_display2(char *msg)
               g_start_pt.x, g_stop_pt.x, g_start_pt.y, g_stop_pt.y,
               g_cur_fractal_specific->orbit_calc ==  formula_orbit ? "slow parser" :
               g_cur_fractal_specific->orbit_calc ==  bad_formula ? "bad formula" :
-              "", g_frm_uses_ismand ? 1 : 0);
+              "", g_formula.uses_ismand ? 1 : 0);
     /*
         write_row(row++, "ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
             ixstart, ixstop, iystart, iystop, bitshift);

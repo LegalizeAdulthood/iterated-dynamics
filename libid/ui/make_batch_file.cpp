@@ -34,6 +34,7 @@
 #include "fractals/julibrot.h"
 #include "fractals/lorenz.h"
 #include "fractals/lsystem.h"
+#include "fractals/parser.h"
 #include "geometry/3d.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
@@ -863,7 +864,7 @@ static void write_batch_params(
         {
             put_filename("formulafile", g_formula_filename.string().c_str());
             put_param(" formulaname=%s", g_formula_name.c_str());
-            if (g_frm_uses_ismand)
+            if (g_formula.uses_ismand)
             {
                 put_param(" ismand=%c", g_frm_is_mandelbrot ? 'y' : 'n');
             }

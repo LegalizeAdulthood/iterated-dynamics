@@ -4,6 +4,7 @@
 
 #include "fractals/formula.h"
 #include "fractals/fractype.h"
+#include "fractals/parser.h"
 
 using namespace id::fractals;
 
@@ -28,31 +29,31 @@ bool param_not_used(const int param)
     switch (param/2)
     {
     case 0:
-        if (!g_frm_uses_p1)
+        if (!g_formula.uses_p1)
         {
             ret = true;
         }
         break;
     case 1:
-        if (!g_frm_uses_p2)
+        if (!g_formula.uses_p2)
         {
             ret = true;
         }
         break;
     case 2:
-        if (!g_frm_uses_p3)
+        if (!g_formula.uses_p3)
         {
             ret = true;
         }
         break;
     case 3:
-        if (!g_frm_uses_p4)
+        if (!g_formula.uses_p4)
         {
             ret = true;
         }
         break;
     case 4:
-        if (!g_frm_uses_p5)
+        if (!g_formula.uses_p5)
         {
             ret = true;
         }

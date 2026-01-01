@@ -487,19 +487,19 @@ int get_variations()
 
     if (g_fractal_type == FractalType::FORMULA)
     {
-        if (g_frm_uses_p1)    // set first parameter
+        if (g_formula.uses_p1)    // set first parameter
         {
             first_param = 0;
         }
-        else if (g_frm_uses_p2)
+        else if (g_formula.uses_p2)
         {
             first_param = 2;
         }
-        else if (g_frm_uses_p3)
+        else if (g_formula.uses_p3)
         {
             first_param = 4;
         }
-        else if (g_frm_uses_p4)
+        else if (g_formula.uses_p4)
         {
             first_param = 6;
         }
@@ -508,19 +508,19 @@ int get_variations()
             first_param = 8; // uses_p5 or no parameter
         }
 
-        if (g_frm_uses_p5)   // set last parameter
+        if (g_formula.uses_p5)   // set last parameter
         {
             last_param = 10;
         }
-        else if (g_frm_uses_p4)
+        else if (g_formula.uses_p4)
         {
             last_param = 8;
         }
-        else if (g_frm_uses_p3)
+        else if (g_formula.uses_p3)
         {
             last_param = 6;
         }
-        else if (g_frm_uses_p2)
+        else if (g_formula.uses_p2)
         {
             last_param = 4;
         }

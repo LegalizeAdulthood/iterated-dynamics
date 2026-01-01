@@ -530,19 +530,19 @@ gfp_top:
 
     if (g_fractal_type == FractalType::FORMULA)
     {
-        if (g_frm_uses_p1)    // set first parameter
+        if (g_formula.uses_p1)    // set first parameter
         {
             first_param = 0;
         }
-        else if (g_frm_uses_p2)
+        else if (g_formula.uses_p2)
         {
             first_param = 2;
         }
-        else if (g_frm_uses_p3)
+        else if (g_formula.uses_p3)
         {
             first_param = 4;
         }
-        else if (g_frm_uses_p4)
+        else if (g_formula.uses_p4)
         {
             first_param = 6;
         }
@@ -551,19 +551,19 @@ gfp_top:
             first_param = 8; // uses_p5 or no parameter
         }
 
-        if (g_frm_uses_p5)    // set last parameter
+        if (g_formula.uses_p5)    // set last parameter
         {
             last_param = 10;
         }
-        else if (g_frm_uses_p4)
+        else if (g_formula.uses_p4)
         {
             last_param = 8;
         }
-        else if (g_frm_uses_p3)
+        else if (g_formula.uses_p3)
         {
             last_param = 6;
         }
-        else if (g_frm_uses_p2)
+        else if (g_formula.uses_p2)
         {
             last_param = 4;
         }
@@ -789,7 +789,7 @@ gfp_top:
         param_values[prompt_num++].uval.ch.val  = static_cast<int>(g_inverse_julia_minor_method);
     }
 
-    if (current_type == FractalType::FORMULA && g_frm_uses_ismand)
+    if (current_type == FractalType::FORMULA && g_formula.uses_ismand)
     {
         choices[prompt_num] = "ismand";
         param_values[prompt_num].type = 'y';
@@ -941,7 +941,7 @@ gfp_top:
         g_major_method = static_cast<Major>(param_values[prompt_num++].uval.ch.val);
         g_inverse_julia_minor_method = static_cast<Minor>(param_values[prompt_num++].uval.ch.val);
     }
-    if (current_type == FractalType::FORMULA && g_frm_uses_ismand)
+    if (current_type == FractalType::FORMULA && g_formula.uses_ismand)
     {
         if (g_frm_is_mandelbrot != (param_values[prompt_num].uval.ch.val != 0))
         {

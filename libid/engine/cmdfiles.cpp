@@ -436,7 +436,7 @@ static void init_vars_fractal()
     g_stop_pass = 0;                                     // initial guessing stop pass
     g_quick_calc = false;                                //
     g_close_proximity = 0.01;                            //
-    g_frm_is_mandelbrot = true;                              // default formula mand/jul toggle
+    g_frm_is_mandelbrot = true;                          // default formula mand/jul toggle
     g_attractor.enabled = false;                         // disable finite attractor logic
     set_fractal_type(FractalType::MANDEL);               // initial fractal type
     init_param_flags();                                  //

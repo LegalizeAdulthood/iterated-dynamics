@@ -598,11 +598,11 @@ static ConstArg *is_const(const char *str, const int len)
             {
                 if (n == 1)          // The formula uses 'p1'.
                 {
-                    g_frm_uses_p1 = true;
+                    g_formula.uses_p1 = true;
                 }
                 if (n == 2)          // The formula uses 'p2'.
                 {
-                    g_frm_uses_p2 = true;
+                    g_formula.uses_p2 = true;
                 }
                 if (n == 7)          // The formula uses 'rand'.
                 {
@@ -610,19 +610,19 @@ static ConstArg *is_const(const char *str, const int len)
                 }
                 if (n == 8)          // The formula uses 'p3'.
                 {
-                    g_frm_uses_p3 = true;
+                    g_formula.uses_p3 = true;
                 }
                 if (n == 13)          // The formula uses 'ismand'.
                 {
-                    g_frm_uses_ismand = true;
+                    g_formula.uses_ismand = true;
                 }
                 if (n == 17)          // The formula uses 'p4'.
                 {
-                    g_frm_uses_p4 = true;
+                    g_formula.uses_p4 = true;
                 }
                 if (n == 18)          // The formula uses 'p5'.
                 {
-                    g_frm_uses_p5 = true;
+                    g_formula.uses_p5 = true;
                 }
                 if (!is_const_pair(str))
                 {
@@ -1780,13 +1780,13 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
     int c;
     Token current_token;
     std::FILE * entry_file = nullptr;
-    g_frm_uses_p1 = false;
-    g_frm_uses_p2 = false;
-    g_frm_uses_p3 = false;
-    g_frm_uses_ismand = false;
+    g_formula.uses_ismand = false;
+    g_formula.uses_p1 = false;
+    g_formula.uses_p2 = false;
+    g_formula.uses_p3 = false;
+    g_formula.uses_p4 = false;
+    g_formula.uses_p5 = false;
     g_max_function = 0;
-    g_frm_uses_p4 = false;
-    g_frm_uses_p5 = false;
 
     if (g_formula_name.empty())
     {
@@ -1843,27 +1843,27 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
         case FormulaTokenType::PARAM_VARIABLE:
             if (current_token.id == TokenId::VAR_P1)
             {
-                g_frm_uses_p1 = true;
+                g_formula.uses_p1 = true;
             }
             else if (current_token.id == TokenId::VAR_P2)
             {
-                g_frm_uses_p2 = true;
+                g_formula.uses_p2 = true;
             }
             else if (current_token.id == TokenId::VAR_P3)
             {
-                g_frm_uses_p3 = true;
-            }
-            else if (current_token.id == TokenId::VAR_IS_MANDEL)
-            {
-                g_frm_uses_ismand = true;
+                g_formula.uses_p3 = true;
             }
             else if (current_token.id == TokenId::VAR_P4)
             {
-                g_frm_uses_p4 = true;
+                g_formula.uses_p4 = true;
             }
             else if (current_token.id == TokenId::VAR_P5)
             {
-                g_frm_uses_p5 = true;
+                g_formula.uses_p5 = true;
+            }
+            else if (current_token.id == TokenId::VAR_IS_MANDEL)
+            {
+                g_formula.uses_ismand = true;
             }
             break;
         case FormulaTokenType::PARAM_FUNCTION:
@@ -1883,13 +1883,13 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
     }
     if (current_token.type != FormulaTokenType::END_OF_FORMULA)
     {
-        g_frm_uses_p1 = false;
-        g_frm_uses_p2 = false;
-        g_frm_uses_p3 = false;
-        g_frm_uses_ismand = false;
+        g_formula.uses_ismand = false;
+        g_formula.uses_p1 = false;
+        g_formula.uses_p2 = false;
+        g_formula.uses_p3 = false;
+        g_formula.uses_p4 = false;
+        g_formula.uses_p5 = false;
         g_max_function = 0;
-        g_frm_uses_p4 = false;
-        g_frm_uses_p5 = false;
         return 0;
     }
     return 1;
@@ -2436,14 +2436,14 @@ void init_misc()
     }
     g_arg1 = &arg_first;
     g_arg2 = &arg_second; // needed by all the ?stk* functions
-    g_frm_uses_p1 = false;
-    g_frm_uses_p2 = false;
-    g_frm_uses_p3 = false;
+    g_formula.uses_p1 = false;
+    g_formula.uses_p2 = false;
+    g_formula.uses_p3 = false;
+    g_formula.uses_p4 = false;
+    g_formula.uses_p5 = false;
     g_formula.uses_jump = false;
     g_formula.uses_rand = false;
-    g_frm_uses_ismand = false;
-    g_frm_uses_p4 = false;
-    g_frm_uses_p5 = false;
+    g_formula.uses_ismand = false;
 }
 
 static void parser_allocate()
@@ -2463,11 +2463,11 @@ static void parser_allocate()
         g_max_function_ops = g_formula.op_index + 4;
         g_max_function_args = g_formula.var_index + 4;
     }
-    g_frm_uses_p1 = false;
-    g_frm_uses_p2 = false;
-    g_frm_uses_p3 = false;
-    g_frm_uses_p4 = false;
-    g_frm_uses_p5 = false;
+    g_formula.uses_p1 = false;
+    g_formula.uses_p2 = false;
+    g_formula.uses_p3 = false;
+    g_formula.uses_p4 = false;
+    g_formula.uses_p5 = false;
 }
 
 void free_work_area()
@@ -3172,9 +3172,10 @@ static void get_globals(std::ostringstream &oss)
     oss << fmt::format("Init Operations: {}\n", g_formula.last_init_op);
     oss << fmt::format("Variables: {}\n", g_formula.var_index);
     oss << fmt::format("Uses Jumps: {}\n", g_formula.uses_jump ? "yes" : "no");
-    oss << fmt::format("Uses p1: {} p2: {} p3: {} p4: {} p5: {}\n", g_frm_uses_p1, g_frm_uses_p2, g_frm_uses_p3,
-        g_frm_uses_p4, g_frm_uses_p5);
-    oss << fmt::format("Uses ismand: {}\n", g_frm_uses_ismand);
+    oss << fmt::format("Uses p1: {} p2: {} p3: {} p4: {} p5: {}\n", //
+        g_formula.uses_p1, g_formula.uses_p2, g_formula.uses_p3,    //
+        g_formula.uses_p4, g_formula.uses_p5);
+    oss << fmt::format("Uses ismand: {}\n", g_formula.uses_ismand);
     oss << "\n";
 }
 
@@ -3367,12 +3368,12 @@ void parser_reset()
     g_formula.last_init_op = 0;
     g_formula.store_index = 0;
     g_formula.load_index = 0;
-    g_frm_uses_p1 = false;
-    g_frm_uses_p2 = false;
-    g_frm_uses_p3 = false;
-    g_frm_uses_p4 = false;
-    g_frm_uses_p5 = false;
-    g_frm_uses_ismand = false;
+    g_formula.uses_p1 = false;
+    g_formula.uses_p2 = false;
+    g_formula.uses_p3 = false;
+    g_formula.uses_p4 = false;
+    g_formula.uses_p5 = false;
+    g_formula.uses_ismand = false;
     g_max_function = 0;
 }
 

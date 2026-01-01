@@ -746,13 +746,13 @@ static int store_item_name(const char *name)
     std::strncpy(formula_info.form_name, name, std::size(formula_info.form_name));
     if (g_fractal_type == FractalType::FORMULA)
     {
-        formula_info.uses_p1 = static_cast<std::int16_t>(g_frm_uses_p1);
-        formula_info.uses_p2 = static_cast<std::int16_t>(g_frm_uses_p2);
-        formula_info.uses_p3 = static_cast<std::int16_t>(g_frm_uses_p3);
-        formula_info.uses_ismand = static_cast<std::int16_t>(g_frm_uses_ismand);
+        formula_info.uses_p1 = static_cast<std::int16_t>(g_formula.uses_p1);
+        formula_info.uses_p2 = static_cast<std::int16_t>(g_formula.uses_p2);
+        formula_info.uses_p3 = static_cast<std::int16_t>(g_formula.uses_p3);
+        formula_info.uses_p4 = static_cast<std::int16_t>(g_formula.uses_p4);
+        formula_info.uses_p5 = static_cast<std::int16_t>(g_formula.uses_p5);
+        formula_info.uses_ismand = static_cast<std::int16_t>(g_formula.uses_ismand);
         formula_info.ismand = static_cast<std::int16_t>(g_frm_is_mandelbrot);
-        formula_info.uses_p4 = static_cast<std::int16_t>(g_frm_uses_p4);
-        formula_info.uses_p5 = static_cast<std::int16_t>(g_frm_uses_p5);
     }
     else
     {
