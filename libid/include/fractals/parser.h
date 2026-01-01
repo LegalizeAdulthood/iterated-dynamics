@@ -101,6 +101,6 @@ struct CompiledFormula
     bool uses_rand{};                      // Whether formula uses rand
 };
 
-extern CompiledFormula s_formula;
+extern CompiledFormula g_formula;
 
 } // namespace id::fractals

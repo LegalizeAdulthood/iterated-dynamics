@@ -55,7 +55,7 @@ int formula_per_pixel()
     s_runtime.jump_index = 0;
     s_runtime.op_ptr = 0;
     s_runtime.set_random = false;
-    if (s_formula.uses_rand && !s_runtime.randomized)
+    if (g_formula.uses_rand && !s_runtime.randomized)
     {
         random_seed();
     }
@@ -65,34 +65,34 @@ int formula_per_pixel()
     g_arg2 = s_runtime.stack.data();
     g_arg2--;
 
-    s_formula.vars[10].a.d.x = static_cast<double>(g_col);
-    s_formula.vars[10].a.d.y = static_cast<double>(g_row);
+    g_formula.vars[10].a.d.x = static_cast<double>(g_col);
+    g_formula.vars[10].a.d.y = static_cast<double>(g_row);
 
     if (g_row + g_col & 1)
     {
-        s_formula.vars[9].a.d.x = 1.0;
+        g_formula.vars[9].a.d.x = 1.0;
     }
     else
     {
-        s_formula.vars[9].a.d.x = 0.0;
+        g_formula.vars[9].a.d.x = 0.0;
     }
-    s_formula.vars[9].a.d.y = 0.0;
+    g_formula.vars[9].a.d.y = 0.0;
 
     if (g_inversion.invert != 0)
     {
         invertz2(&g_old_z);
-        s_formula.vars[0].a.d.x = g_old_z.x;
-        s_formula.vars[0].a.d.y = g_old_z.y;
+        g_formula.vars[0].a.d.x = g_old_z.x;
+        g_formula.vars[0].a.d.y = g_old_z.y;
     }
     else
     {
-        s_formula.vars[0].a.d.x = dx_pixel();
-        s_formula.vars[0].a.d.y = dy_pixel();
+        g_formula.vars[0].a.d.x = dx_pixel();
+        g_formula.vars[0].a.d.y = dy_pixel();
     }
 
     if (g_last_init_op)
     {
-        g_last_init_op = s_formula.op_count;
+        g_last_init_op = g_formula.op_count;
     }
     if (s_debug.trace_enabled && s_debug.trace_file)
     {
@@ -101,14 +101,14 @@ int formula_per_pixel()
     }
     while (s_runtime.op_ptr < g_last_init_op)
     {
-        s_formula.fns[s_runtime.op_ptr]();
+        g_formula.fns[s_runtime.op_ptr]();
         s_runtime.op_ptr++;
     }
     s_runtime.init_load_ptr = g_load_index;
     s_runtime.init_store_ptr = g_store_index;
     s_runtime.init_op_ptr = s_runtime.op_ptr;
     // Set old variable for orbits
-    g_old_z = s_formula.vars[3].a.d;
+    g_old_z = g_formula.vars[3].a.d;
 
     return g_overflow ? 0 : 1;
 }
@@ -141,13 +141,13 @@ int formula_orbit()
     g_arg1 = s_runtime.stack.data();
     g_arg2 = s_runtime.stack.data();
     --g_arg2;
-    while (s_runtime.op_ptr < static_cast<int>(s_formula.op_count))
+    while (s_runtime.op_ptr < static_cast<int>(g_formula.op_count))
     {
-        s_formula.fns[s_runtime.op_ptr]();
+        g_formula.fns[s_runtime.op_ptr]();
         s_runtime.op_ptr++;
     }
 
-    g_new_z = s_formula.vars[3].a.d;
+    g_new_z = g_formula.vars[3].a.d;
     g_old_z = g_new_z;
 
     if (s_debug.trace_enabled && s_debug.trace_file)
