@@ -40,4 +40,18 @@ bool parse_formula(const std::string &formula_text, std::string &error_msg);
 // Reset parser state
 void parser_reset();
 
+
+//////////////////////////////////////////////////
+
+struct DebugState
+{
+    bool trace_enabled{};
+    std::FILE *trace_file{};
+    int indent_level{};
+    long operation_count{};
+};
+
+extern DebugState s_debug;
+void debug_trace_init();
+
 } // namespace id::fractals

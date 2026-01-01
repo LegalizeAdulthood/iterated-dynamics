@@ -368,14 +368,6 @@ struct ParserState
     unsigned int chars_in_formula{};
 };
 
-struct DebugState
-{
-    bool trace_enabled{};
-    std::FILE *trace_file{};
-    int indent_level{};
-    long operation_count{};
-};
-
 } // namespace
 
 // forward declarations
@@ -424,7 +416,6 @@ char g_max_function{};
 static CompiledFormula s_formula;
 static RuntimeState s_runtime;
 static ParserState s_parser;
-static DebugState s_debug;
 
 #define LAST_SQR (s_formula.vars[4].a)
 static constexpr std::array<const char *, 4> JUMP_LIST
@@ -658,63 +649,6 @@ static const char *parse_error_text(ParseError which)
         which = static_cast<ParseError>(last_err);
     }
     return MESSAGES[+which];
-}
-
-// Debug trace utility functions
-static void debug_trace_init()
-{
-    if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
-    {
-        s_debug.trace_enabled = true;
-        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "formula_trace.txt")};
-        s_debug.trace_file = std::fopen(path.string().c_str(), "w");
-        if (s_debug.trace_file)
-        {
-            fmt::print(s_debug.trace_file, "Formula Execution Trace\n");
-            fmt::print(s_debug.trace_file, "========================\n\n");
-        }
-    }
-}
-
-void debug_trace_close()
-{
-    if (s_debug.trace_file)
-    {
-        std::fclose(s_debug.trace_file);
-        s_debug.trace_file = nullptr;
-    }
-    s_debug.trace_enabled = false;
-}
-
-void debug_trace_operation(const char* op_name, const Arg* arg1, const Arg* arg2)
-{
-    if (!s_debug.trace_enabled || !s_debug.trace_file)
-    {
-        return;
-    }
-
-    fmt::print(s_debug.trace_file, "{:04d}: {}{}\n", s_debug.operation_count++,
-        std::string(s_debug.indent_level * 2, ' '), op_name);
-
-    if (arg1)
-    {
-        fmt::print(s_debug.trace_file, "      arg1: ({:.6f}, {:.6f})\n", arg1->d.x, arg1->d.y);
-    }
-    if (arg2)
-    {
-        fmt::print(s_debug.trace_file, "      arg2: ({:.6f}, {:.6f})\n", arg2->d.x, arg2->d.y);
-    }
-}
-
-void debug_trace_stack_state()
-{
-    if (!s_debug.trace_enabled || !s_debug.trace_file)
-    {
-        return;
-    }
-
-    fmt::print(s_debug.trace_file, "      stack top: ({:.6f}, {:.6f})\n", g_arg1->d.x, g_arg1->d.y);
-    std::fflush(s_debug.trace_file);
 }
 
 /* use the following when only float functions are implemented to
