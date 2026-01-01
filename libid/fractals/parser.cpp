@@ -305,16 +305,9 @@ unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 int g_store_index{};
 int g_load_index{};
-bool g_frm_is_mandelbrot{true};
 unsigned int g_operation_index{};
 unsigned int g_variable_index{};
 int g_last_init_op{};
-bool g_frm_uses_p1{};
-bool g_frm_uses_p2{};
-bool g_frm_uses_p3{};
-bool g_frm_uses_p4{};
-bool g_frm_uses_p5{};
-bool g_frm_uses_ismand{};
 char g_max_function{};
 
 CompiledFormula g_formula;

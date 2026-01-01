@@ -21,6 +21,13 @@ namespace id::fractals
 
 std::filesystem::path g_formula_filename; // file to find formulas in
 std::string g_formula_name;               // Name of the Formula (if not empty)
+bool g_frm_is_mandelbrot{true};           // true if the formula is a mandelbrot type
+bool g_frm_uses_ismand{};                 // true if the formula uses ismand variable
+bool g_frm_uses_p1{};                     // true if the formula uses p1 variable
+bool g_frm_uses_p2{};                     // true if the formula uses p2 variable
+bool g_frm_uses_p3{};                     // true if the formula uses p3 variable
+bool g_frm_uses_p4{};                     // true if the formula uses p4 variable
+bool g_frm_uses_p5{};                     // true if the formula uses p5 variable
 
 int bad_formula()
 {

@@ -41,7 +41,6 @@
 #include <fractals/julibrot.h>
 #include <fractals/lorenz.h>
 #include <fractals/lsystem.h>
-#include <fractals/parser.h>
 #include <geometry/3d.h>
 #include <geometry/line3d.h>
 #include <geometry/plot3d.h>

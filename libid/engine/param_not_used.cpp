@@ -2,8 +2,8 @@
 //
 #include "engine/param_not_used.h"
 
+#include "fractals/formula.h"
 #include "fractals/fractype.h"
-#include "fractals/parser.h"
 
 using namespace id::fractals;
 
