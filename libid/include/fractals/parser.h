@@ -31,8 +31,8 @@ extern unsigned              g_operation_index;
 extern int                   g_store_index;
 extern unsigned              g_variable_index;
 
-int frm_get_param_stuff(const char *name);
-bool parse_formula(const std::string &name, bool report_bad_sym);
+int frm_get_param_stuff(std::filesystem::path &path, const char *name);
+bool parse_formula(std::filesystem::path &path, const std::string &name, bool report_bad_sym);
 void init_misc();
 void free_work_area();
 

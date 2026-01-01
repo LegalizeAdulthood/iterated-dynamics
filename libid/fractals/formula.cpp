@@ -28,7 +28,7 @@ int bad_formula()
 
 bool formula_per_image()
 {
-    const bool result = !parse_formula(g_formula_name, false);
+    const bool result = !parse_formula(g_formula_filename, g_formula_name, false);
     if (!result)
     {
         debug_trace_close();

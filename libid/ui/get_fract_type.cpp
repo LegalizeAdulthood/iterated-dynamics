@@ -449,7 +449,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
             std::fclose(entry_file);
             if (g_fractal_type == FractalType::FORMULA)
             {
-                frm_get_param_stuff(entry_name); // no error check, should be okay, from above
+                frm_get_param_stuff(g_formula_filename, entry_name); // no error check, should be okay, from above
             }
         }
     }

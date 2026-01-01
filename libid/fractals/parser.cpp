@@ -1788,7 +1788,7 @@ CASE_TERMINATOR:
     }
 }
 
-int frm_get_param_stuff(const char *name)
+int frm_get_param_stuff(std::filesystem::path &path, const char *name)
 {
     std::FILE *debug_token = nullptr;
     int c;
@@ -1806,7 +1806,7 @@ int frm_get_param_stuff(const char *name)
     {
         return 0;  //  and don't reset the pointers
     }
-    if (find_file_item(g_formula_filename, name, &entry_file, ItemType::FORMULA))
+    if (find_file_item(path, name, &entry_file, ItemType::FORMULA))
     {
         stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
@@ -2387,7 +2387,7 @@ static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
 }
 
 //  returns true if an error occurred
-bool parse_formula(const std::string &name, const bool report_bad_sym)
+bool parse_formula(std::filesystem::path &path, const std::string &name, const bool report_bad_sym)
 {
     //  first set the pointers so they point to a fn which always returns 1
     assert(g_cur_fractal_specific == get_fractal_specific(FractalType::FORMULA));
@@ -2400,7 +2400,7 @@ bool parse_formula(const std::string &name, const bool report_bad_sym)
     }
 
     std::FILE *entry_file{};
-    if (find_file_item(g_formula_filename, name, &entry_file, ItemType::FORMULA))
+    if (find_file_item(path, name, &entry_file, ItemType::FORMULA))
     {
         stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return true;
