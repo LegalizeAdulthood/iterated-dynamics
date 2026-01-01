@@ -3050,7 +3050,11 @@ static bool frm_prescan(std::FILE *open_file)
     return true;
 }
 
-using OperationName = std::tuple<FunctionPtr, std::string_view>;
+struct OperationName
+{
+    FunctionPtr fn;
+    std::string_view name;
+};
 
 static const std::array<OperationName, 67> s_op_names{
     OperationName{d_stk_add, "ADD"},                     //
@@ -3124,9 +3128,13 @@ static const std::array<OperationName, 67> s_op_names{
 
 static const char *get_operation_name(FunctionPtr fn)
 {
-    const auto it = std::find_if(s_op_names.begin(), s_op_names.end(),
-        [fn](const OperationName &op_name) { return std::get<0>(op_name) == fn; });
-    return it != s_op_names.end() ? std::get<1>(*it).data() : "?unknown function";
+    if (const auto it = std::find_if(s_op_names.begin(), s_op_names.end(),
+            [fn](const OperationName &op_name) { return op_name.fn == fn; });
+        it != s_op_names.end())
+    {
+        return it->name.data();
+    }
+    return "?unknown function";
 }
 
 static std::string get_variable_name(int var_index)
