@@ -5,83 +5,19 @@
 #include "engine/calcfrac.h"
 #include "engine/Inversion.h"
 #include "engine/pixel_grid.h"
-#include "engine/random_seed.h"
 #include "fractals/interpreter.h"
 #include "fractals/newton.h"
 #include "fractals/parser.h"
-#include "io/library.h"
-#include "math/arg.h"
 #include "math/fixed_pt.h"
-#include "misc/debug_flags.h"
 
 #include <fmt/format.h>
 
 using namespace id::engine;
-using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
 
 namespace id::fractals
 {
-
-DebugState s_debug;
-
-// Debug trace utility functions
-void debug_trace_init()
-{
-    if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
-    {
-        s_debug.trace_enabled = true;
-        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "formula_trace.txt")};
-        s_debug.trace_file = std::fopen(path.string().c_str(), "w");
-        if (s_debug.trace_file)
-        {
-            fmt::print(s_debug.trace_file, "Formula Execution Trace\n");
-            fmt::print(s_debug.trace_file, "========================\n\n");
-        }
-    }
-}
-
-void debug_trace_close()
-{
-    if (s_debug.trace_file)
-    {
-        std::fclose(s_debug.trace_file);
-        s_debug.trace_file = nullptr;
-    }
-    s_debug.trace_enabled = false;
-}
-
-void debug_trace_operation(const char* op_name, const Arg* arg1, const Arg* arg2)
-{
-    if (!s_debug.trace_enabled || !s_debug.trace_file)
-    {
-        return;
-    }
-
-    fmt::print(s_debug.trace_file, "{:04d}: {}{}\n", s_debug.operation_count++,
-        std::string(s_debug.indent_level * 2, ' '), op_name);
-
-    if (arg1)
-    {
-        fmt::print(s_debug.trace_file, "      arg1: ({:.6f}, {:.6f})\n", arg1->d.x, arg1->d.y);
-    }
-    if (arg2)
-    {
-        fmt::print(s_debug.trace_file, "      arg2: ({:.6f}, {:.6f})\n", arg2->d.x, arg2->d.y);
-    }
-}
-
-void debug_trace_stack_state()
-{
-    if (!s_debug.trace_enabled || !s_debug.trace_file)
-    {
-        return;
-    }
-
-    fmt::print(s_debug.trace_file, "      stack top: ({:.6f}, {:.6f})\n", g_arg1->d.x, g_arg1->d.y);
-    std::fflush(s_debug.trace_file);
-}
 
 int bad_formula()
 {
@@ -151,7 +87,7 @@ int formula_per_pixel()
     else
     {
         s_formula.vars[0].a.d.x = dx_pixel();
-        s_formula.vars[0].a.d.y = engine::dy_pixel();
+        s_formula.vars[0].a.d.y = dy_pixel();
     }
 
     if (g_last_init_op)
@@ -172,7 +108,7 @@ int formula_per_pixel()
     s_runtime.init_store_ptr = g_store_index;
     s_runtime.init_op_ptr = s_runtime.op_ptr;
     // Set old variable for orbits
-    engine::g_old_z = s_formula.vars[3].a.d;
+    g_old_z = s_formula.vars[3].a.d;
 
     return g_overflow ? 0 : 1;
 }
