@@ -33,7 +33,7 @@ struct DebugState
     long operation_count{};
 };
 
-RuntimeState s_runtime;
+RuntimeState g_runtime;
 
 static DebugState s_debug;
 
@@ -474,8 +474,8 @@ void d_stk_round()
 
 static unsigned long new_random_num()
 {
-    s_runtime.rand_num = (s_runtime.rand_num << 15) + RAND15() ^ s_runtime.rand_num;
-    return s_runtime.rand_num;
+    g_runtime.rand_num = (g_runtime.rand_num << 15) + RAND15() ^ g_runtime.rand_num;
+    return g_runtime.rand_num;
 }
 
 void d_random()
@@ -490,14 +490,14 @@ void d_random()
 
 static void set_random()
 {
-    if (!s_runtime.set_random)
+    if (!g_runtime.set_random)
     {
-        s_runtime.rand_num = s_runtime.rand_x ^ s_runtime.rand_y;
+        g_runtime.rand_num = g_runtime.rand_x ^ g_runtime.rand_y;
     }
 
-    const unsigned int seed = static_cast<unsigned>(s_runtime.rand_num) ^ static_cast<unsigned>(s_runtime.rand_num >> 16);
+    const unsigned int seed = static_cast<unsigned>(g_runtime.rand_num) ^ static_cast<unsigned>(g_runtime.rand_num >> 16);
     std::srand(seed);
-    s_runtime.set_random = true;
+    g_runtime.set_random = true;
 
     // Clear out the seed
     new_random_num();
@@ -516,14 +516,14 @@ void random_seed()
     new_random_num();
     new_random_num();
     new_random_num();
-    s_runtime.randomized = true;
+    g_runtime.randomized = true;
 }
 
 void d_stk_srand()
 {
     debug_trace_operation("SRAND", g_arg1);
-    s_runtime.rand_x = static_cast<long>(g_arg1->d.x * (1L << BIT_SHIFT));
-    s_runtime.rand_y = static_cast<long>(g_arg1->d.y * (1L << BIT_SHIFT));
+    g_runtime.rand_x = static_cast<long>(g_arg1->d.x * (1L << BIT_SHIFT));
+    g_runtime.rand_y = static_cast<long>(g_arg1->d.y * (1L << BIT_SHIFT));
     set_random();
     d_random();
     g_arg1->d = g_formula.vars[7].a.d;
@@ -693,9 +693,9 @@ void stk_lod()
 void stk_clr()
 {
     debug_trace_operation("CLR", g_arg1);
-    s_runtime.stack[0] = *g_arg1;
-    g_arg1 = s_runtime.stack.data();
-    g_arg2 = s_runtime.stack.data();
+    g_runtime.stack[0] = *g_arg1;
+    g_arg1 = g_runtime.stack.data();
+    g_arg2 = g_runtime.stack.data();
     g_arg2--;
     debug_trace_stack_state();
 }
@@ -802,8 +802,8 @@ void d_stk_and()
 
 void end_init()
 {
-    g_last_init_op = s_runtime.op_ptr;
-    s_runtime.init_jump_index = s_runtime.jump_index;
+    g_last_init_op = g_runtime.op_ptr;
+    g_runtime.init_jump_index = g_runtime.jump_index;
 }
 
 void stk_jump()
@@ -812,14 +812,14 @@ void stk_jump()
     {
         fmt::print(s_debug.trace_file, "{:04d}: {}JUMP\n", s_debug.operation_count++,
             std::string(s_debug.indent_level * 2, ' '));
-        fmt::print(s_debug.trace_file, "      from op_ptr: {} to: {}\n", s_runtime.op_ptr,
-            g_formula.jump_control[s_runtime.jump_index].ptrs.jump_op_ptr);
+        fmt::print(s_debug.trace_file, "      from op_ptr: {} to: {}\n", g_runtime.op_ptr,
+            g_formula.jump_control[g_runtime.jump_index].ptrs.jump_op_ptr);
     }
 
-    s_runtime.op_ptr =  g_formula.jump_control[s_runtime.jump_index].ptrs.jump_op_ptr;
-    g_load_index = g_formula.jump_control[s_runtime.jump_index].ptrs.jump_lod_ptr;
-    g_store_index = g_formula.jump_control[s_runtime.jump_index].ptrs.jump_sto_ptr;
-    s_runtime.jump_index = g_formula.jump_control[s_runtime.jump_index].dest_jump_index;
+    g_runtime.op_ptr =  g_formula.jump_control[g_runtime.jump_index].ptrs.jump_op_ptr;
+    g_load_index = g_formula.jump_control[g_runtime.jump_index].ptrs.jump_lod_ptr;
+    g_store_index = g_formula.jump_control[g_runtime.jump_index].ptrs.jump_sto_ptr;
+    g_runtime.jump_index = g_formula.jump_control[g_runtime.jump_index].dest_jump_index;
 }
 
 void d_stk_jump_on_false()
@@ -833,7 +833,7 @@ void d_stk_jump_on_false()
         if (will_jump)
         {
             fmt::print(
-                s_debug.trace_file, "      jumping to index: {}\n", g_formula.jump_control[s_runtime.jump_index].dest_jump_index);
+                s_debug.trace_file, "      jumping to index: {}\n", g_formula.jump_control[g_runtime.jump_index].dest_jump_index);
         }
     }
 
@@ -843,7 +843,7 @@ void d_stk_jump_on_false()
     }
     else
     {
-        s_runtime.jump_index++;
+        g_runtime.jump_index++;
     }
 }
 
@@ -858,7 +858,7 @@ void d_stk_jump_on_true()
         if (will_jump)
         {
             fmt::print(
-                s_debug.trace_file, "      jumping to index: {}\n", g_formula.jump_control[s_runtime.jump_index].dest_jump_index);
+                s_debug.trace_file, "      jumping to index: {}\n", g_formula.jump_control[g_runtime.jump_index].dest_jump_index);
         }
     }
 
@@ -868,13 +868,13 @@ void d_stk_jump_on_true()
     }
     else
     {
-        s_runtime.jump_index++;
+        g_runtime.jump_index++;
     }
 }
 
 void stk_jump_label()
 {
-    s_runtime.jump_index++;
+    g_runtime.jump_index++;
 }
 
 } // namespace id::fractals

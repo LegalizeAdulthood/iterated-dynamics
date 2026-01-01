@@ -43,20 +43,20 @@ int formula_per_pixel()
         return 1;
     }
 
-    s_runtime.per_pixel_begin();
+    g_runtime.per_pixel_begin();
 
     g_overflow = false;
-    s_runtime.jump_index = 0;
-    s_runtime.op_ptr = 0;
-    s_runtime.set_random = false;
-    if (g_formula.uses_rand && !s_runtime.randomized)
+    g_runtime.jump_index = 0;
+    g_runtime.op_ptr = 0;
+    g_runtime.set_random = false;
+    if (g_formula.uses_rand && !g_runtime.randomized)
     {
         random_seed();
     }
     g_store_index = 0;
     g_load_index = 0;
-    g_arg1 = s_runtime.stack.data();
-    g_arg2 = s_runtime.stack.data();
+    g_arg1 = g_runtime.stack.data();
+    g_arg2 = g_runtime.stack.data();
     g_arg2--;
 
     g_formula.vars[10].a.d.x = static_cast<double>(g_col);
@@ -88,15 +88,15 @@ int formula_per_pixel()
     {
         g_last_init_op = g_formula.op_count;
     }
-    s_runtime.per_pixel_init();
-    while (s_runtime.op_ptr < g_last_init_op)
+    g_runtime.per_pixel_init();
+    while (g_runtime.op_ptr < g_last_init_op)
     {
-        g_formula.fns[s_runtime.op_ptr]();
-        s_runtime.op_ptr++;
+        g_formula.fns[g_runtime.op_ptr]();
+        g_runtime.op_ptr++;
     }
-    s_runtime.init_load_ptr = g_load_index;
-    s_runtime.init_store_ptr = g_store_index;
-    s_runtime.init_op_ptr = s_runtime.op_ptr;
+    g_runtime.init_load_ptr = g_load_index;
+    g_runtime.init_store_ptr = g_store_index;
+    g_runtime.init_op_ptr = g_runtime.op_ptr;
     // Set old variable for orbits
     g_old_z = g_formula.vars[3].a.d;
 
@@ -110,31 +110,31 @@ int formula_orbit()
         return 1;
     }
 
-    s_runtime.orbit_begin();
+    g_runtime.orbit_begin();
 
-    g_load_index = s_runtime.init_load_ptr;
-    g_store_index = s_runtime.init_store_ptr;
-    s_runtime.op_ptr = s_runtime.init_op_ptr;
-    s_runtime.jump_index = s_runtime.init_jump_index;
+    g_load_index = g_runtime.init_load_ptr;
+    g_store_index = g_runtime.init_store_ptr;
+    g_runtime.op_ptr = g_runtime.init_op_ptr;
+    g_runtime.jump_index = g_runtime.init_jump_index;
     // Set the random number
-    if (s_runtime.set_random || s_runtime.randomized)
+    if (g_runtime.set_random || g_runtime.randomized)
     {
         d_random();
     }
 
-    g_arg1 = s_runtime.stack.data();
-    g_arg2 = s_runtime.stack.data();
+    g_arg1 = g_runtime.stack.data();
+    g_arg2 = g_runtime.stack.data();
     --g_arg2;
-    while (s_runtime.op_ptr < static_cast<int>(g_formula.op_count))
+    while (g_runtime.op_ptr < static_cast<int>(g_formula.op_count))
     {
-        g_formula.fns[s_runtime.op_ptr]();
-        s_runtime.op_ptr++;
+        g_formula.fns[g_runtime.op_ptr]();
+        g_runtime.op_ptr++;
     }
 
     g_new_z = g_formula.vars[3].a.d;
     g_old_z = g_new_z;
 
-    s_runtime.orbit_end();
+    g_runtime.orbit_end();
 
     return g_arg1->d.x == 0.0;
 }

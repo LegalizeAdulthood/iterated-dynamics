@@ -38,7 +38,7 @@ struct RuntimeState
     void per_pixel_init();
 };
 
-extern RuntimeState s_runtime;
+extern RuntimeState g_runtime;
 
 void d_stk_lod_dup();
 void d_stk_lod_sqr();
