@@ -320,7 +320,6 @@ bool g_frm_uses_ismand{};
 char g_max_function{};
 
 CompiledFormula s_formula;
-RuntimeState s_runtime;
 static ParserState s_parser;
 
 static constexpr std::array<const char *, 4> JUMP_LIST

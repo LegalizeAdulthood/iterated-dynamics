@@ -16,6 +16,8 @@ using namespace id::math;
 namespace id::fractals
 {
 
+RuntimeState s_runtime;
+
 static bool check_denom(const double denom)
 {
     if (std::abs(denom) <= DBL_MIN)
