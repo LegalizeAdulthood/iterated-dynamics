@@ -13,6 +13,8 @@
 #include <cfloat>
 #include <cmath>
 
+#define LAST_SQR (s_formula.vars[4].a)
+
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;

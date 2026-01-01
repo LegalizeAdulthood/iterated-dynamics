@@ -76,8 +76,6 @@ void d_stk_jump_on_false();
 void d_stk_jump_on_true();
 void stk_jump_label();
 
-#define LAST_SQR (s_formula.vars[4].a)
-
 extern const std::array<const char *, 19> VARIABLES;
 
 void debug_trace_init();
