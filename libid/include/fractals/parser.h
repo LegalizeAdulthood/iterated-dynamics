@@ -78,14 +78,6 @@ struct JumpControl
     int dest_jump_index;
 };
 
-struct DebugState
-{
-    bool trace_enabled{};
-    std::FILE *trace_file{};
-    int indent_level{};
-    long operation_count{};
-};
-
 using Function = void();
 using FunctionPtr = Function *;
 
@@ -112,46 +104,5 @@ struct CompiledFormula
 constexpr int BIT_SHIFT{16};
 
 extern CompiledFormula s_formula;
-extern DebugState s_debug;
-void debug_trace_init();
-void random_seed();
-void d_stk_srand();
-void d_random();
-void d_stk_lod_dup();
-void d_stk_lod_sqr();
-void d_stk_lod_sqr2();
-void d_stk_lod_dbl();
-void d_stk_sqr0();
-void d_stk_sqr3();
-void d_stk_sub();
-void d_stk_real();
-void d_stk_imag();
-void d_stk_neg();
-void d_stk_div();
-void d_stk_mod();
-void stk_sto();
-void stk_lod();
-void d_stk_lt();
-void d_stk_gt();
-void d_stk_lte();
-void d_stk_gte();
-void d_stk_eq();
-void d_stk_ne();
-void d_stk_or();
-void d_stk_and();
-void d_stk_fn1();
-void stk_clr();
-void d_stk_fn2();
-void d_stk_fn3();
-void d_stk_fn4();
-void end_init();
-void stk_jump();
-void d_stk_jump_on_false();
-void d_stk_jump_on_true();
-void stk_jump_label();
-
-#define LAST_SQR (s_formula.vars[4].a)
-
-extern const std::array<const char *, 19> VARIABLES;
 
 } // namespace id::fractals
