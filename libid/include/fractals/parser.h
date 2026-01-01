@@ -101,8 +101,6 @@ struct CompiledFormula
     bool uses_rand{};                      // Whether formula uses rand
 };
 
-constexpr int BIT_SHIFT{16};
-
 extern CompiledFormula s_formula;
 
 } // namespace id::fractals

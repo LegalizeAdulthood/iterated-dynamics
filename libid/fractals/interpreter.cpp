@@ -25,6 +25,8 @@ namespace id::fractals
 RuntimeState s_runtime;
 DebugState s_debug;
 
+constexpr int BIT_SHIFT{16};
+
 // Debug trace utility functions
 void debug_trace_init()
 {
