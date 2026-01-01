@@ -774,7 +774,7 @@ static void setup_save_info(FractalInfo *save_info)
 {
     if (g_fractal_type != FractalType::FORMULA)
     {
-        g_max_function = 0;
+        g_formula.max_function = 0;
     }
     // set save parameters in save structure
     std::strcpy(save_info->info_id, INFO_ID);
@@ -916,7 +916,7 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->eyes_fp = g_eyes;
     save_info->orbit_type = static_cast<std::int16_t>(g_new_orbit_type);
     save_info->juli3d_mode = static_cast<short>(g_julibrot_3d_mode);
-    save_info->max_fn = static_cast<std::int16_t>(g_max_function);
+    save_info->max_fn = static_cast<std::int16_t>(g_formula.max_function);
     save_info->inverse_julia = static_cast<std::int16_t>((+g_major_method << 8) + +g_inverse_julia_minor_method);
     save_info->bailout = static_cast<std::int32_t>(g_user.bailout_value);
     save_info->bailout_test = static_cast<std::int16_t>(g_bailout_test);

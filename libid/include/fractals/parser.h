@@ -67,6 +67,9 @@ struct CompiledFormula
     int store_index{};                     //
     int op_index{};                        //
     int var_index{};                       //
+    int max_function{};                    //
+    int max_ops{};                         //
+    int max_args{};                        //
     bool uses_ismand{};                    // true if the formula uses ismand variable
     bool uses_p1{};                        // true if the formula uses p1 variable
     bool uses_p2{};                        // true if the formula uses p2 variable
@@ -76,9 +79,6 @@ struct CompiledFormula
 };
 
 extern CompiledFormula       g_formula;
-extern char                  g_max_function;
-extern unsigned              g_max_function_args;
-extern unsigned              g_max_function_ops;
 
 int frm_get_param_stuff(std::filesystem::path &path, const char *name);
 bool parse_formula(std::filesystem::path &path, const std::string &name, bool report_bad_sym);

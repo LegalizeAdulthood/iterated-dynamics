@@ -205,7 +205,7 @@ static bool tab_display2(char *msg)
                   g_formula.op_index, g_formula.var_index);
         write_row(row++, "   StoreIdx %d LoadIdx %d MaxOps var %u MaxArgs var %u LastInitOp %d", //
             g_formula.store_index, g_formula.load_index,                                         //
-            g_max_function_ops, g_max_function_args, g_formula.last_init_op);
+            g_formula.max_ops, g_formula.max_args, g_formula.last_init_op);
     }
     else if (g_rhombus_stack[0])
     {

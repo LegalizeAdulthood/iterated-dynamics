@@ -540,7 +540,7 @@ static void backwards_info9(const FractalInfo &read_info)
         g_eyes = read_info.eyes_fp;
         g_new_orbit_type = static_cast<FractalType>(read_info.orbit_type);
         g_julibrot_3d_mode = static_cast<Julibrot3DMode>(read_info.juli3d_mode);
-        g_max_function = static_cast<char>(read_info.max_fn);
+        g_formula.max_function = read_info.max_fn;
         g_major_method = static_cast<Major>(read_info.inverse_julia >> 8);
         g_inverse_julia_minor_method = static_cast<Minor>(read_info.inverse_julia & 255);
         g_params[4] = read_info.d_param5;

@@ -108,7 +108,7 @@ void trig_details(char *buf)
     }
     if (g_fractal_type == FractalType::FORMULA)
     {
-        num_fn = g_max_function;
+        num_fn = g_formula.max_function;
     }
     *buf = 0; // null string if none
     if (num_fn > 0)

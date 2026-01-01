@@ -637,7 +637,7 @@ gfp_top:
     num_trig = +g_cur_fractal_specific->flags >> 6 & 7;
     if (current_type == FractalType::FORMULA)
     {
-        num_trig = g_max_function;
+        num_trig = g_formula.max_function;
     }
 
     trig_name_ptr.resize(g_num_trig_functions);

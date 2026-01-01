@@ -816,7 +816,7 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
     {
         if (string_case_equal(blk_3_info->form_name, g_formula_name.c_str()))
         {
-            num_fn = g_max_function;
+            num_fn = g_formula.max_function;
             if (num_fn > 0)
             {
                 return function_ok(info, num_fn);

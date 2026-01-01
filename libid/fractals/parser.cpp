@@ -301,10 +301,6 @@ struct ParserState
 static bool frm_prescan(std::FILE *open_file);
 static void parser_allocate();
 
-unsigned int g_max_function_ops{MAX_OPS};
-unsigned int g_max_function_args{MAX_ARGS};
-char g_max_function{};
-
 CompiledFormula g_formula;
 static ParserState s_parser;
 
@@ -481,8 +477,8 @@ static void push_jump(const JumpControlType type)
 
 // MAX_STORES must be even to make Unix alignment work
 
-#define MAX_STORES ((g_max_function_ops/4)*2)  // at most only half the ops can be stores
-#define MAX_LOADS  ((unsigned)(g_max_function_ops*.8))  // and 80% can be loads
+#define MAX_STORES ((g_formula.max_ops/4)*2)  // at most only half the ops can be stores
+#define MAX_LOADS  ((unsigned)(g_formula.max_ops*.8))  // and 80% can be loads
 
 static bool check_denom(const double denom)
 {
@@ -744,13 +740,9 @@ static FunctionPtr is_func(const char *str, const int len)
             if (string_case_equal(FUNC_LIST[n].s, str, len))
             {
                 // count function variables
-                int funct_num = which_fn(str, len);
-                if (funct_num != 0)
+                if (const int funct_num = which_fn(str, len))
                 {
-                    if (funct_num > g_max_function)
-                    {
-                        g_max_function = static_cast<char>(funct_num);
-                    }
+                    g_formula.max_function = std::max(funct_num, g_formula.max_function);
                 }
                 return *FUNC_LIST[n].ptr;
             }
@@ -800,7 +792,7 @@ static bool parse_formula_text(const std::string &text)
     g_formula.uses_rand = false;
     g_formula.jump_control.clear();
 
-    g_max_function = 0;
+    g_formula.max_function = 0;
     for (g_formula.var_index = 0; g_formula.var_index < static_cast<unsigned>(VARIABLES.size()); g_formula.var_index++)
     {
         g_formula.vars[g_formula.var_index].s = VARIABLES[g_formula.var_index];
@@ -1786,7 +1778,7 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
     g_formula.uses_p3 = false;
     g_formula.uses_p4 = false;
     g_formula.uses_p5 = false;
-    g_max_function = 0;
+    g_formula.max_function = 0;
 
     if (g_formula_name.empty())
     {
@@ -1867,9 +1859,9 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
             }
             break;
         case FormulaTokenType::PARAM_FUNCTION:
-            if (+current_token.id - 10 > g_max_function)
+            if (+current_token.id - 10 > g_formula.max_function)
             {
-                g_max_function = static_cast<char>(+current_token.id - 10);
+                g_formula.max_function = static_cast<char>(+current_token.id - 10);
             }
             break;
         default:
@@ -1889,7 +1881,7 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
         g_formula.uses_p3 = false;
         g_formula.uses_p4 = false;
         g_formula.uses_p5 = false;
-        g_max_function = 0;
+        g_formula.max_function = 0;
         return 0;
     }
     return 1;
@@ -2449,19 +2441,19 @@ void init_misc()
 static void parser_allocate()
 {
     free_work_area();
-    g_max_function_ops = 2300;
-    g_max_function_args = static_cast<unsigned>(g_max_function_ops / 2.5);
+    g_formula.max_ops = 2300;
+    g_formula.max_args = static_cast<unsigned>(g_formula.max_ops / 2.5);
 
-    g_formula.fns.reserve(g_max_function_ops);
+    g_formula.fns.reserve(g_formula.max_ops);
     g_formula.store.resize(MAX_STORES);
     g_formula.load.resize(MAX_LOADS);
-    g_formula.vars.resize(g_max_function_args);
+    g_formula.vars.resize(g_formula.max_args);
 
     if (!parse_formula_text(g_formula.formula))
     {
         // per Chuck Ebbert, fudge these up a little
-        g_max_function_ops = g_formula.op_index + 4;
-        g_max_function_args = g_formula.var_index + 4;
+        g_formula.max_ops = g_formula.op_index + 4;
+        g_formula.max_args = g_formula.var_index + 4;
     }
     g_formula.uses_p1 = false;
     g_formula.uses_p2 = false;
@@ -3374,7 +3366,7 @@ void parser_reset()
     g_formula.uses_p4 = false;
     g_formula.uses_p5 = false;
     g_formula.uses_ismand = false;
-    g_max_function = 0;
+    g_formula.max_function = 0;
 }
 
 } // namespace id::fractals

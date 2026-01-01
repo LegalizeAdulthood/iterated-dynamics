@@ -401,7 +401,7 @@ static int get_the_rest()
     int num_trig = +g_cur_fractal_specific->flags >> 6 & 7;
     if (g_fractal_type == FractalType::FORMULA)
     {
-        num_trig = g_max_function;
+        num_trig = g_formula.max_function;
     }
 
 choose_vars_restart:

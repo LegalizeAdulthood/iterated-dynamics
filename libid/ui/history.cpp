@@ -131,7 +131,7 @@ struct ImageHistory
     std::string filename;
     std::string file_item_name;
     unsigned char dac_box[256][3];
-    char max_function;
+    int max_function;
     char user_std_calc_mode;
     bool three_pass;
     InitOrbitMode use_init_orbit;
@@ -636,7 +636,7 @@ void save_history_info()
     current.eyes = g_eyes;
     current.new_orbit_type = g_new_orbit_type;
     current.julibrot_mode = g_julibrot_3d_mode;
-    current.max_function = g_max_function;
+    current.max_function = g_formula.max_function;
     current.major_method = g_major_method;
     current.inverse_julia_minor_method = g_inverse_julia_minor_method;
     current.bailout = g_user.bailout_value;
@@ -807,7 +807,7 @@ void restore_history_info(const int i)
     g_eyes = last.eyes;
     g_new_orbit_type = last.new_orbit_type;
     g_julibrot_3d_mode = last.julibrot_mode;
-    g_max_function = last.max_function;
+    g_formula.max_function = last.max_function;
     g_major_method = last.major_method;
     g_inverse_julia_minor_method = last.inverse_julia_minor_method;
     g_user.bailout_value = last.bailout;
