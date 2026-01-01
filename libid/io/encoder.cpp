@@ -750,7 +750,7 @@ static int store_item_name(const char *name)
         formula_info.uses_p2 = static_cast<std::int16_t>(g_frm_uses_p2);
         formula_info.uses_p3 = static_cast<std::int16_t>(g_frm_uses_p3);
         formula_info.uses_ismand = static_cast<std::int16_t>(g_frm_uses_ismand);
-        formula_info.ismand = static_cast<std::int16_t>(g_is_mandelbrot);
+        formula_info.ismand = static_cast<std::int16_t>(g_frm_is_mandelbrot);
         formula_info.uses_p4 = static_cast<std::int16_t>(g_frm_uses_p4);
         formula_info.uses_p5 = static_cast<std::int16_t>(g_frm_uses_p5);
     }

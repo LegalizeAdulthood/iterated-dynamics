@@ -127,17 +127,17 @@ static void toggle_mandelbrot_julia(MainContext &context)
 
     if (g_fractal_type == FractalType::FORMULA)
     {
-        if (g_is_mandelbrot)
+        if (g_frm_is_mandelbrot)
         {
             get_fractal_specific(g_fractal_type)->to_julia = g_fractal_type;
             get_fractal_specific(g_fractal_type)->to_mandel = FractalType::NO_FRACTAL;
-            g_is_mandelbrot = false;
+            g_frm_is_mandelbrot = false;
         }
         else
         {
             get_fractal_specific(g_fractal_type)->to_julia = FractalType::NO_FRACTAL;
             get_fractal_specific(g_fractal_type)->to_mandel = g_fractal_type;
-            g_is_mandelbrot = true;
+            g_frm_is_mandelbrot = true;
         }
     }
     if (g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL //

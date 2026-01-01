@@ -19,7 +19,7 @@ extern bool                  g_frm_uses_p2;
 extern bool                  g_frm_uses_p3;
 extern bool                  g_frm_uses_p4;
 extern bool                  g_frm_uses_p5;
-extern bool                  g_is_mandelbrot;
+extern bool                  g_frm_is_mandelbrot;
 extern int                   g_last_init_op;
 extern int                   g_load_index;
 extern char                  g_max_function;

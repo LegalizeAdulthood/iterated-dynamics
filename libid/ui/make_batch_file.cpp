@@ -866,7 +866,7 @@ static void write_batch_params(
             put_param(" formulaname=%s", g_formula_name.c_str());
             if (g_frm_uses_ismand)
             {
-                put_param(" ismand=%c", g_is_mandelbrot ? 'y' : 'n');
+                put_param(" ismand=%c", g_frm_is_mandelbrot ? 'y' : 'n');
             }
         }
         if (g_fractal_type == FractalType::L_SYSTEM)

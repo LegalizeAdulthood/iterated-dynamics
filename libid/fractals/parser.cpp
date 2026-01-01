@@ -305,7 +305,7 @@ unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 int g_store_index{};
 int g_load_index{};
-bool g_is_mandelbrot{true};
+bool g_frm_is_mandelbrot{true};
 unsigned int g_operation_index{};
 unsigned int g_variable_index{};
 int g_last_init_op{};
@@ -827,7 +827,7 @@ static bool parse_formula_text(const std::string &text)
     g_formula.vars[11].a.d.y = static_cast<double>(g_logical_screen.y_dots);
     g_formula.vars[12].a.d.x = static_cast<double>(g_max_iterations);
     g_formula.vars[12].a.d.y = 0;
-    g_formula.vars[13].a.d.x = g_is_mandelbrot ? 1.0 : 0.0;
+    g_formula.vars[13].a.d.x = g_frm_is_mandelbrot ? 1.0 : 0.0;
     g_formula.vars[13].a.d.y = 0;
     g_formula.vars[14].a.d.x = x_ctr;
     g_formula.vars[14].a.d.y = y_ctr;

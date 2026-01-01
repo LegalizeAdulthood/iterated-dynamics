@@ -1650,12 +1650,12 @@ TEST_F(TestParameterCommandError, passesSolidGuessNonNumeric)
 
 TEST_F(TestParameterCommand, isMandYes)
 {
-    ValueSaver saved_is_mandelbrot{g_is_mandelbrot, false};
+    ValueSaver saved_is_mandelbrot{g_frm_is_mandelbrot, false};
 
     exec_cmd_arg("ismand=y", CmdFile::AT_CMD_LINE);
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_TRUE(g_is_mandelbrot);
+    EXPECT_TRUE(g_frm_is_mandelbrot);
 }
 
 TEST_F(TestParameterCommandError, cycleLimitTooLow)
