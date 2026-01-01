@@ -328,7 +328,7 @@ struct ConstArg
 
 struct CompiledFormula
 {
-    std::string formula;                      // Source text
+    std::string formula;                     // Source text
     std::vector<FunctionPtr> fns;            // Compiled operations (bytecode)
     std::vector<Arg *> load;                 // Load table
     std::vector<Arg *> store;                // Store table
@@ -337,6 +337,7 @@ struct CompiledFormula
     std::vector<PendingOp> ops;              // Pending operations (used during compilation)
     unsigned int op_count{};                 // Total compiled operations
     bool uses_jump{};                        // Whether formula uses jumps
+    bool uses_rand{};                        // Whether formula uses rand
 };
 
 struct RuntimeState
@@ -1185,7 +1186,7 @@ static ConstArg *is_const(const char *str, const int len)
                 }
                 if (n == 7)          // The formula uses 'rand'.
                 {
-                    random_seed();
+                    s_formula.uses_rand = true;
                 }
                 if (n == 8)          // The formula uses 'p3'.
                 {
@@ -1376,6 +1377,7 @@ static bool parse_formula_text(const std::string &text)
     double skew;
     LDouble magnification;
     s_formula.uses_jump = false;
+    s_formula.uses_rand = false;
     s_formula.jump_control.clear();
 
     g_max_function = 0;
@@ -1709,7 +1711,10 @@ int formula_per_pixel()
     s_runtime.jump_index = 0;
     s_runtime.op_ptr = 0;
     s_runtime.set_random = false;
-    s_runtime.randomized = false;
+    if (s_formula.uses_rand && !s_runtime.randomized)
+    {
+        random_seed();
+    }
     g_store_index = 0;
     g_load_index = 0;
     g_arg1 = s_runtime.stack.data();
@@ -3140,6 +3145,7 @@ void init_misc()
     g_frm_uses_p2 = false;
     g_frm_uses_p3 = false;
     s_formula.uses_jump = false;
+    s_formula.uses_rand = false;
     g_frm_uses_ismand = false;
     g_frm_uses_p4 = false;
     g_frm_uses_p5 = false;
