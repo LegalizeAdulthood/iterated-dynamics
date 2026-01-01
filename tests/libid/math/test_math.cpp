@@ -2,7 +2,6 @@
 //
 #include <math/fpu087.h>
 
-#include <fractals/parser.h>
 #include <math/fixed_pt.h>
 
 #include <gtest/gtest.h>

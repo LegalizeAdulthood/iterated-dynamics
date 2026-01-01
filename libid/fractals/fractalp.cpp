@@ -28,7 +28,6 @@
 #include "fractals/magnet.h"
 #include "fractals/mandelbrot_mix.h"
 #include "fractals/newton.h"
-#include "fractals/parser.h"
 #include "fractals/peterson_variations.h"
 #include "fractals/phoenix.h"
 #include "fractals/pickover_mandelbrot.h"
