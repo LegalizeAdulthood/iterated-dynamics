@@ -37,6 +37,7 @@
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/check_orbit_name.h"
+#include "fractals/formula.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"

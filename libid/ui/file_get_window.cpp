@@ -13,6 +13,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/trig_fns.h"
 #include "engine/VideoInfo.h"
+#include "fractals/formula.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "fractals/lorenz.h"

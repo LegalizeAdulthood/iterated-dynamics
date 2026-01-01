@@ -3,10 +3,10 @@
 #include "ui/full_screen_prompt.h"
 
 #include "engine/text_color.h"
+#include "fractals/formula.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
 #include "fractals/lsystem.h"
-#include "fractals/parser.h"
 #include "helpdefs.h"
 #include "io/file_item.h"
 #include "io/load_entry_text.h"

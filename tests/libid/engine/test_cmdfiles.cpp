@@ -3,6 +3,7 @@
 #include <engine/cmdfiles_test.h>
 
 #include "ColorMapSaver.h"
+#include "fractals/formula.h"
 #include "MockDriver.h"
 #include "test_data.h"
 #include "test_library.h"

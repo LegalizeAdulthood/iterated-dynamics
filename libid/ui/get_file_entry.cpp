@@ -3,6 +3,7 @@
 #include "ui/get_file_entry.h"
 
 #include "engine/text_color.h"
+#include "fractals/formula.h"
 #include "fractals/fractalp.h"
 #include "fractals/ifs.h"
 #include "fractals/lsystem.h"

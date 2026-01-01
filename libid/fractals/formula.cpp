@@ -19,6 +19,9 @@ using namespace id::misc;
 namespace id::fractals
 {
 
+std::filesystem::path g_formula_filename; // file to find formulas in
+std::string g_formula_name;               // Name of the Formula (if not empty)
+
 int bad_formula()
 {
     //  this is called when a formula is bad, instead of calling

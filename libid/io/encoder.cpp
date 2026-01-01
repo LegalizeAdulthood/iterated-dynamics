@@ -25,6 +25,7 @@
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
+#include "fractals/formula.h"
 #include "fractals/fractype.h"
 #include "fractals/ifs.h"
 #include "fractals/julibrot.h"

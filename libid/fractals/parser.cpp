@@ -301,8 +301,6 @@ struct ParserState
 static bool frm_prescan(std::FILE *open_file);
 static void parser_allocate();
 
-fs::path g_formula_filename;                 // file to find formulas in
-std::string g_formula_name;                  // Name of the Formula (if not empty)
 unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
 int g_store_index{};
