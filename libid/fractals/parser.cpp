@@ -1339,20 +1339,20 @@ static FunctionPtr is_func(const char *str, const int len)
     return not_a_funct;
 }
 
-static void sort_precedence()
+static void sort_precedence(int &op_index)
 {
     const int this_op = s_parser.next_op++;
     while (s_formula.ops[this_op].p > s_formula.ops[s_parser.next_op].p && s_parser.next_op < g_operation_index)
     {
-        sort_precedence();
+        sort_precedence(op_index);
     }
-    if (s_runtime.op_ptr > static_cast<int>(s_formula.fns.size()))
+    if (op_index > static_cast<int>(s_formula.fns.size()))
     {
         throw std::runtime_error(
-            "OpPtr (" + std::to_string(s_runtime.op_ptr) + ") exceeds size of f[] (" + std::to_string(s_formula.fns.size()) + ")");
+            "OpPtr (" + std::to_string(op_index) + ") exceeds size of f[] (" + std::to_string(s_formula.fns.size()) + ")");
     }
     s_formula.fns.push_back(s_formula.ops[this_op].f);
-    ++s_runtime.op_ptr;
+    ++op_index;
 }
 
 static void push_pending_op(const FunctionPtr f, const int p)
@@ -1626,11 +1626,12 @@ static bool parse_formula_text(const std::string &text)
     push_pending_op(nullptr, 16);
     s_parser.next_op = 0;
     s_formula.op_count = g_operation_index;
+    int op_index{};
     while (s_parser.next_op < g_operation_index)
     {
         if (s_formula.ops[s_parser.next_op].f)
         {
-            sort_precedence();
+            sort_precedence(op_index);
         }
         else
         {
