@@ -204,7 +204,7 @@ static bool tab_display2(char *msg)
         write_row(row++, "Max_Ops (posp) %u Max_Args (vsp) %u",
                   g_operation_index, g_variable_index);
         write_row(row++, "   Store ptr %d Loadptr %d Max_Ops var %u Max_Args var %u LastInitOp %d",
-                  g_store_index, g_load_index, g_max_function_ops, g_max_function_args, g_formula.last_init_op);
+                  g_store_index, g_formula.load_index, g_max_function_ops, g_max_function_args, g_formula.last_init_op);
     }
     else if (g_rhombus_stack[0])
     {

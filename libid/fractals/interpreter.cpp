@@ -532,49 +532,49 @@ void d_stk_srand()
 
 void d_stk_lod_dup()
 {
-    debug_trace_operation("LOD_DUP", g_formula.load[g_load_index]);
+    debug_trace_operation("LOD_DUP", g_formula.load[g_runtime.load_index]);
     g_arg1 += 2;
     g_arg2 += 2;
-    *g_arg1 = *g_formula.load[g_load_index];
+    *g_arg1 = *g_formula.load[g_runtime.load_index];
     *g_arg2 = *g_arg1;
-    g_load_index += 2;
+    g_runtime.load_index += 2;
     debug_trace_stack_state();
 }
 
 void d_stk_lod_sqr()
 {
-    debug_trace_operation("LOD_SQR", g_formula.load[g_load_index]);
+    debug_trace_operation("LOD_SQR", g_formula.load[g_runtime.load_index]);
     g_arg1++;
     g_arg2++;
-    g_arg1->d.y = g_formula.load[g_load_index]->d.x * g_formula.load[g_load_index]->d.y * 2.0;
-    g_arg1->d.x = g_formula.load[g_load_index]->d.x * g_formula.load[g_load_index]->d.x - g_formula.load[g_load_index]->d.y * g_formula.load[g_load_index]->d.y;
-    g_load_index++;
+    g_arg1->d.y = g_formula.load[g_runtime.load_index]->d.x * g_formula.load[g_runtime.load_index]->d.y * 2.0;
+    g_arg1->d.x = g_formula.load[g_runtime.load_index]->d.x * g_formula.load[g_runtime.load_index]->d.x - g_formula.load[g_runtime.load_index]->d.y * g_formula.load[g_runtime.load_index]->d.y;
+    g_runtime.load_index++;
     debug_trace_stack_state();
 }
 
 void d_stk_lod_sqr2()
 {
-    debug_trace_operation("LOD_SQR2", g_formula.load[g_load_index]);
+    debug_trace_operation("LOD_SQR2", g_formula.load[g_runtime.load_index]);
     g_arg1++;
     g_arg2++;
-    LAST_SQR.d.x = g_formula.load[g_load_index]->d.x * g_formula.load[g_load_index]->d.x;
-    LAST_SQR.d.y = g_formula.load[g_load_index]->d.y * g_formula.load[g_load_index]->d.y;
-    g_arg1->d.y = g_formula.load[g_load_index]->d.x * g_formula.load[g_load_index]->d.y * 2.0;
+    LAST_SQR.d.x = g_formula.load[g_runtime.load_index]->d.x * g_formula.load[g_runtime.load_index]->d.x;
+    LAST_SQR.d.y = g_formula.load[g_runtime.load_index]->d.y * g_formula.load[g_runtime.load_index]->d.y;
+    g_arg1->d.y = g_formula.load[g_runtime.load_index]->d.x * g_formula.load[g_runtime.load_index]->d.y * 2.0;
     g_arg1->d.x = LAST_SQR.d.x - LAST_SQR.d.y;
     LAST_SQR.d.x += LAST_SQR.d.y;
     LAST_SQR.d.y = 0;
-    g_load_index++;
+    g_runtime.load_index++;
     debug_trace_stack_state();
 }
 
 void d_stk_lod_dbl()
 {
-    debug_trace_operation("LOD_DBL", g_formula.load[g_load_index]);
+    debug_trace_operation("LOD_DBL", g_formula.load[g_runtime.load_index]);
     g_arg1++;
     g_arg2++;
-    g_arg1->d.x = g_formula.load[g_load_index]->d.x * 2.0;
-    g_arg1->d.y = g_formula.load[g_load_index]->d.y * 2.0;
-    g_load_index++;
+    g_arg1->d.x = g_formula.load[g_runtime.load_index]->d.x * 2.0;
+    g_arg1->d.y = g_formula.load[g_runtime.load_index]->d.y * 2.0;
+    g_runtime.load_index++;
     debug_trace_stack_state();
 }
 
@@ -670,11 +670,11 @@ void stk_lod()
     {
         // Try to identify which variable we're loading
         const char* var_name = "unknown";
-        if (g_load_index < static_cast<int>(g_formula.vars.size()))
+        if (g_runtime.load_index < static_cast<int>(g_formula.vars.size()))
         {
             for (size_t i = 0; i < VARIABLES.size(); ++i)
             {
-                if (&g_formula.vars[i].a == g_formula.load[g_load_index])
+                if (&g_formula.vars[i].a == g_formula.load[g_runtime.load_index])
                 {
                     var_name = VARIABLES[i];
                     break;
@@ -686,7 +686,7 @@ void stk_lod()
     }
     g_arg1++;
     g_arg2++;
-    *g_arg1 = *g_formula.load[g_load_index++];
+    *g_arg1 = *g_formula.load[g_runtime.load_index++];
     debug_trace_stack_state();
 }
 
@@ -802,7 +802,7 @@ void d_stk_and()
 
 void end_init()
 {
-    g_formula.last_init_op = g_runtime.op_ptr;
+    g_formula.last_init_op = g_runtime.op_index;
     g_runtime.init_jump_index = g_runtime.jump_index;
 }
 
@@ -812,12 +812,12 @@ void stk_jump()
     {
         fmt::print(s_debug.trace_file, "{:04d}: {}JUMP\n", s_debug.operation_count++,
             std::string(s_debug.indent_level * 2, ' '));
-        fmt::print(s_debug.trace_file, "      from op_ptr: {} to: {}\n", g_runtime.op_ptr,
+        fmt::print(s_debug.trace_file, "      from op_ptr: {} to: {}\n", g_runtime.op_index,
             g_formula.jump_control[g_runtime.jump_index].ptrs.jump_op_ptr);
     }
 
-    g_runtime.op_ptr =  g_formula.jump_control[g_runtime.jump_index].ptrs.jump_op_ptr;
-    g_load_index = g_formula.jump_control[g_runtime.jump_index].ptrs.jump_lod_ptr;
+    g_runtime.op_index =  g_formula.jump_control[g_runtime.jump_index].ptrs.jump_op_ptr;
+    g_runtime.load_index = g_formula.jump_control[g_runtime.jump_index].ptrs.jump_lod_ptr;
     g_store_index = g_formula.jump_control[g_runtime.jump_index].ptrs.jump_sto_ptr;
     g_runtime.jump_index = g_formula.jump_control[g_runtime.jump_index].dest_jump_index;
 }

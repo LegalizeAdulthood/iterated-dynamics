@@ -18,13 +18,14 @@ namespace id::fractals
 struct RuntimeState
 {
     std::array<math::Arg, 20> stack{};
-    int op_ptr{};
+    int op_index{};
     int jump_index{};
+    int load_index{};
 
-    int init_op_ptr{};
+    int init_op_index{};
     int init_jump_index{};
-    int init_load_ptr{};
-    int init_store_ptr{};
+    int init_load_index{};
+    int init_store_index{};
 
     bool set_random{};
     bool randomized{};

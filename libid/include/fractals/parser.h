@@ -63,10 +63,10 @@ struct CompiledFormula
     bool uses_jump{};                      // Whether formula uses jumps
     bool uses_rand{};                      // Whether formula uses rand
     int last_init_op{};                    //
+    int load_index{};                      //
 };
 
 extern CompiledFormula       g_formula;
-extern int                   g_load_index;
 extern char                  g_max_function;
 extern unsigned              g_max_function_args;
 extern unsigned              g_max_function_ops;

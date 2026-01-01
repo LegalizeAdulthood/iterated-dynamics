@@ -57,14 +57,14 @@ int formula_per_pixel()
 
     g_overflow = false;
     g_runtime.jump_index = 0;
-    g_runtime.op_ptr = 0;
+    g_runtime.op_index = 0;
     g_runtime.set_random = false;
     if (g_formula.uses_rand && !g_runtime.randomized)
     {
         random_seed();
     }
     g_store_index = 0;
-    g_load_index = 0;
+    g_runtime.load_index = 0;
     g_arg1 = g_runtime.stack.data();
     g_arg2 = g_runtime.stack.data();
     g_arg2--;
@@ -99,14 +99,14 @@ int formula_per_pixel()
         g_formula.last_init_op = g_formula.op_count;
     }
     g_runtime.per_pixel_init();
-    while (g_runtime.op_ptr < g_formula.last_init_op)
+    while (g_runtime.op_index < g_formula.last_init_op)
     {
-        g_formula.fns[g_runtime.op_ptr]();
-        g_runtime.op_ptr++;
+        g_formula.fns[g_runtime.op_index]();
+        g_runtime.op_index++;
     }
-    g_runtime.init_load_ptr = g_load_index;
-    g_runtime.init_store_ptr = g_store_index;
-    g_runtime.init_op_ptr = g_runtime.op_ptr;
+    g_runtime.init_load_index = g_runtime.load_index;
+    g_runtime.init_store_index = g_store_index;
+    g_runtime.init_op_index = g_runtime.op_index;
     // Set old variable for orbits
     g_old_z = g_formula.vars[3].a.d;
 
@@ -122,9 +122,9 @@ int formula_orbit()
 
     g_runtime.orbit_begin();
 
-    g_load_index = g_runtime.init_load_ptr;
-    g_store_index = g_runtime.init_store_ptr;
-    g_runtime.op_ptr = g_runtime.init_op_ptr;
+    g_runtime.load_index = g_runtime.init_load_index;
+    g_store_index = g_runtime.init_store_index;
+    g_runtime.op_index = g_runtime.init_op_index;
     g_runtime.jump_index = g_runtime.init_jump_index;
     // Set the random number
     if (g_runtime.set_random || g_runtime.randomized)
@@ -135,10 +135,10 @@ int formula_orbit()
     g_arg1 = g_runtime.stack.data();
     g_arg2 = g_runtime.stack.data();
     --g_arg2;
-    while (g_runtime.op_ptr < static_cast<int>(g_formula.op_count))
+    while (g_runtime.op_index < static_cast<int>(g_formula.op_count))
     {
-        g_formula.fns[g_runtime.op_ptr]();
-        g_runtime.op_ptr++;
+        g_formula.fns[g_runtime.op_index]();
+        g_runtime.op_index++;
     }
 
     g_new_z = g_formula.vars[3].a.d;
