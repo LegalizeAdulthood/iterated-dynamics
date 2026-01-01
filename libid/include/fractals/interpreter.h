@@ -15,14 +15,6 @@ struct Arg;
 namespace id::fractals
 {
 
-struct DebugState
-{
-    bool trace_enabled{};
-    std::FILE *trace_file{};
-    int indent_level{};
-    long operation_count{};
-};
-
 struct RuntimeState
 {
     std::array<math::Arg, 20> stack{};
@@ -39,10 +31,15 @@ struct RuntimeState
     unsigned long rand_num{};
     long rand_x{};
     long rand_y{};
+
+    void orbit_begin();
+    void orbit_end();
+    void per_pixel_begin();
+    void per_pixel_init();
 };
 
 extern RuntimeState s_runtime;
-extern DebugState s_debug;
+
 void d_stk_lod_dup();
 void d_stk_lod_sqr();
 void d_stk_lod_sqr2();

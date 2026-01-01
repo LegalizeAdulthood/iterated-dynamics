@@ -1,5 +1,7 @@
 #include "fractals/interpreter.h"
 
+#include "engine/calcfrac.h"
+#include "engine/pixel_grid.h"
 #include "fractals/parser.h"
 #include "io/library.h"
 #include "math/arg.h"
@@ -15,6 +17,7 @@
 
 #define LAST_SQR (g_formula.vars[4].a)
 
+using namespace id::engine;
 using namespace id::io;
 using namespace id::math;
 using namespace id::misc;
@@ -22,10 +25,60 @@ using namespace id::misc;
 namespace id::fractals
 {
 
+struct DebugState
+{
+    bool trace_enabled{};
+    std::FILE *trace_file{};
+    int indent_level{};
+    long operation_count{};
+};
+
 RuntimeState s_runtime;
-DebugState s_debug;
+
+static DebugState s_debug;
 
 constexpr int BIT_SHIFT{16};
+
+void RuntimeState::orbit_begin()
+{
+    if (s_debug.trace_enabled && s_debug.trace_file)
+    {
+        fmt::print(s_debug.trace_file, "\n=== Orbit Calculation ===\n");
+        fmt::print(s_debug.trace_file, "Input z: ({:.6f}, {:.6f})\n", g_old_z.x, g_old_z.y);
+        s_debug.operation_count = 0;
+    }
+}
+
+void RuntimeState::orbit_end()
+{
+    if (s_debug.trace_enabled && s_debug.trace_file)
+    {
+        fmt::print(s_debug.trace_file, "Output z: ({:.6f}, {:.6f})\n", g_new_z.x, g_new_z.y);
+        fmt::print(s_debug.trace_file, "Bailout test: {} (result: {})\n", g_arg1->d.x,
+            g_arg1->d.x == 0.0 ? "continue" : "bailout");
+        std::fflush(s_debug.trace_file);
+    }
+}
+
+void RuntimeState::per_pixel_begin()
+{
+    debug_trace_init(); // Initialize tracing
+    if (s_debug.trace_enabled && s_debug.trace_file)
+    {
+        fmt::print(s_debug.trace_file, "\n=== Per-Pixel Initialization ===\n");
+        fmt::print(s_debug.trace_file, "Pixel: ({}, {})\n", g_col, g_row);
+        fmt::print(s_debug.trace_file, "Pixel coords: ({:.6f}, {:.6f})\n", dx_pixel(), dy_pixel());
+    }
+}
+
+void RuntimeState::per_pixel_init()
+{
+    if (s_debug.trace_enabled && s_debug.trace_file)
+    {
+        fmt::print(s_debug.trace_file, "\nInitialization operations:\n");
+        s_debug.operation_count = 0;
+    }
+}
 
 // Debug trace utility functions
 void debug_trace_init()

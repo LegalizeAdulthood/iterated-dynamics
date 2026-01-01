@@ -43,13 +43,7 @@ int formula_per_pixel()
         return 1;
     }
 
-    debug_trace_init(); // Initialize tracing
-    if (s_debug.trace_enabled && s_debug.trace_file)
-    {
-        fmt::print(s_debug.trace_file, "\n=== Per-Pixel Initialization ===\n");
-        fmt::print(s_debug.trace_file, "Pixel: ({}, {})\n", g_col, g_row);
-        fmt::print(s_debug.trace_file, "Pixel coords: ({:.6f}, {:.6f})\n", dx_pixel(), dy_pixel());
-    }
+    s_runtime.per_pixel_begin();
 
     g_overflow = false;
     s_runtime.jump_index = 0;
@@ -94,11 +88,7 @@ int formula_per_pixel()
     {
         g_last_init_op = g_formula.op_count;
     }
-    if (s_debug.trace_enabled && s_debug.trace_file)
-    {
-        fmt::print(s_debug.trace_file, "\nInitialization operations:\n");
-        s_debug.operation_count = 0;
-    }
+    s_runtime.per_pixel_init();
     while (s_runtime.op_ptr < g_last_init_op)
     {
         g_formula.fns[s_runtime.op_ptr]();
@@ -120,13 +110,7 @@ int formula_orbit()
         return 1;
     }
 
-    if (s_debug.trace_enabled && s_debug.trace_file)
-    {
-        fmt::print(s_debug.trace_file, "\n=== Orbit Calculation ===\n");
-        fmt::print(s_debug.trace_file, "Input z: ({:.6f}, {:.6f})\n", 
-                   g_old_z.x, g_old_z.y);
-        s_debug.operation_count = 0;
-    }
+    s_runtime.orbit_begin();
 
     g_load_index = s_runtime.init_load_ptr;
     g_store_index = s_runtime.init_store_ptr;
@@ -150,13 +134,7 @@ int formula_orbit()
     g_new_z = g_formula.vars[3].a.d;
     g_old_z = g_new_z;
 
-    if (s_debug.trace_enabled && s_debug.trace_file)
-    {
-        fmt::print(s_debug.trace_file, "Output z: ({:.6f}, {:.6f})\n", g_new_z.x, g_new_z.y);
-        fmt::print(s_debug.trace_file, "Bailout test: {} (result: {})\n", g_arg1->d.x,
-            g_arg1->d.x == 0.0 ? "continue" : "bailout");
-        std::fflush(s_debug.trace_file);
-    }
+    s_runtime.orbit_end();
 
     return g_arg1->d.x == 0.0;
 }
