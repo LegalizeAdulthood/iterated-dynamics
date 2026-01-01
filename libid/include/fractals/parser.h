@@ -89,16 +89,16 @@ struct PendingOp
 
 struct CompiledFormula
 {
-    std::string formula;                     // Source text
-    std::vector<FunctionPtr> fns;            // Compiled operations (bytecode)
-    std::vector<math::Arg *> load;                 // Load table
-    std::vector<math::Arg *> store;                // Store table
-    std::vector<ConstArg> vars;              // All constants/variables
-    std::vector<JumpControl> jump_control;   // Jump control structure
-    std::vector<PendingOp> ops;              // Pending operations (used during compilation)
-    unsigned int op_count{};                 // Total compiled operations
-    bool uses_jump{};                        // Whether formula uses jumps
-    bool uses_rand{};                        // Whether formula uses rand
+    std::string formula;                   // Source text
+    std::vector<FunctionPtr> fns;          // Compiled operations (bytecode)
+    std::vector<math::Arg *> load;         // Load table
+    std::vector<math::Arg *> store;        // Store table
+    std::vector<ConstArg> vars;            // All constants/variables
+    std::vector<JumpControl> jump_control; // Jump control structure
+    std::vector<PendingOp> ops;            // Pending operations (used during compilation)
+    unsigned int op_count{};               // Total compiled operations
+    bool uses_jump{};                      // Whether formula uses jumps
+    bool uses_rand{};                      // Whether formula uses rand
 };
 
 constexpr int BIT_SHIFT{16};
