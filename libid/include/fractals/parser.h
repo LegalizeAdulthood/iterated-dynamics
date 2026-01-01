@@ -65,14 +65,14 @@ struct CompiledFormula
     int last_init_op{};                    //
     int load_index{};                      //
     int store_index{};                     //
+    int op_index{};                        //
+    int var_index{};                       //
 };
 
 extern CompiledFormula       g_formula;
 extern char                  g_max_function;
 extern unsigned              g_max_function_args;
 extern unsigned              g_max_function_ops;
-extern unsigned              g_operation_index;
-extern unsigned              g_variable_index;
 
 int frm_get_param_stuff(std::filesystem::path &path, const char *name);
 bool parse_formula(std::filesystem::path &path, const std::string &name, bool report_bad_sym);

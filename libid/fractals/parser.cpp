@@ -303,8 +303,6 @@ static void parser_allocate();
 
 unsigned int g_max_function_ops{MAX_OPS};
 unsigned int g_max_function_args{MAX_ARGS};
-unsigned int g_operation_index{};
-unsigned int g_variable_index{};
 char g_max_function{};
 
 CompiledFormula g_formula;
@@ -592,7 +590,7 @@ static bool is_const_pair(const char *str)
 static ConstArg *is_const(const char *str, const int len)
 {
     // next line enforces variable vs constant naming convention
-    for (unsigned n = 0U; n < g_variable_index; n++)
+    for (unsigned n = 0U; n < g_formula.var_index; n++)
     {
         if (g_formula.vars[n].len == len)
         {
@@ -633,25 +631,25 @@ static ConstArg *is_const(const char *str, const int len)
             }
         }
     }
-    g_formula.vars[g_variable_index].s = str;
-    g_formula.vars[g_variable_index].len = len;
-    g_formula.vars[g_variable_index].a.d.x = 0.0;
-    g_formula.vars[g_variable_index].a.d.y = 0.0;
+    g_formula.vars[g_formula.var_index].s = str;
+    g_formula.vars[g_formula.var_index].len = len;
+    g_formula.vars[g_formula.var_index].a.d.x = 0.0;
+    g_formula.vars[g_formula.var_index].a.d.y = 0.0;
 
     if (std::isdigit(str[0])
         || (str[0] == '-' && (std::isdigit(str[1]) || str[1] == '.'))
         || str[0] == '.')
     {
         DComplex z;
-        assert(g_operation_index > 0);
-        assert(g_operation_index == g_formula.ops.size());
+        assert(g_formula.op_index > 0);
+        assert(g_formula.op_index == g_formula.ops.size());
         if (g_formula.ops.back().f == d_stk_neg)
         {
             g_formula.ops.pop_back();
-            g_operation_index--;
+            g_formula.op_index--;
             str = str - 1;
             s_parser.init_n--;
-            g_formula.vars[g_variable_index].len++;
+            g_formula.vars[g_formula.var_index].len++;
         }
         unsigned n;
         for (n = 1; std::isdigit(str[n]) || str[n] == '.'; n++)
@@ -668,7 +666,7 @@ static ConstArg *is_const(const char *str, const int len)
                 for (; std::isdigit(str[j]) || str[j] == '.' || str[j] == '-'; j++)
                 {
                 }
-                g_formula.vars[g_variable_index].len = j;
+                g_formula.vars[g_formula.var_index].len = j;
             }
             else
             {
@@ -680,10 +678,10 @@ static ConstArg *is_const(const char *str, const int len)
             z.y = 0.0;
         }
         z.x = std::atof(str);
-        g_formula.vars[g_variable_index].a.d = z;
-        g_formula.vars[g_variable_index].s = str;
+        g_formula.vars[g_formula.var_index].a.d = z;
+        g_formula.vars[g_formula.var_index].s = str;
     }
-    return &g_formula.vars[g_variable_index++];
+    return &g_formula.vars[g_formula.var_index++];
 }
 
 /* return values
@@ -765,7 +763,7 @@ static FunctionPtr is_func(const char *str, const int len)
 static void sort_precedence(int &op_index)
 {
     const int this_op = s_parser.next_op++;
-    while (g_formula.ops[this_op].p > g_formula.ops[s_parser.next_op].p && s_parser.next_op < g_operation_index)
+    while (g_formula.ops[this_op].p > g_formula.ops[s_parser.next_op].p && s_parser.next_op < g_formula.op_index)
     {
         sort_precedence(op_index);
     }
@@ -781,8 +779,8 @@ static void sort_precedence(int &op_index)
 static void push_pending_op(const FunctionPtr f, const int p)
 {
     g_formula.ops.push_back(PendingOp{f, p});
-    ++g_operation_index;
-    assert(g_operation_index == g_formula.ops.size());
+    ++g_formula.op_index;
+    assert(g_formula.op_index == g_formula.ops.size());
 }
 
 static bool parse_formula_text(const std::string &text)
@@ -803,10 +801,10 @@ static bool parse_formula_text(const std::string &text)
     g_formula.jump_control.clear();
 
     g_max_function = 0;
-    for (g_variable_index = 0; g_variable_index < static_cast<unsigned>(VARIABLES.size()); g_variable_index++)
+    for (g_formula.var_index = 0; g_formula.var_index < static_cast<unsigned>(VARIABLES.size()); g_formula.var_index++)
     {
-        g_formula.vars[g_variable_index].s = VARIABLES[g_variable_index];
-        g_formula.vars[g_variable_index].len = static_cast<int>(std::strlen(VARIABLES[g_variable_index]));
+        g_formula.vars[g_formula.var_index].s = VARIABLES[g_formula.var_index];
+        g_formula.vars[g_formula.var_index].len = static_cast<int>(std::strlen(VARIABLES[g_formula.var_index]));
     }
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     const double const_pi = std::atan(1.0) * 4;
@@ -841,7 +839,7 @@ static bool parse_formula_text(const std::string &text)
     g_formula.vars[18].a.d.x = g_params[8];
     g_formula.vars[18].a.d.y = g_params[9];
 
-    g_operation_index = 0;
+    g_formula.op_index = 0;
     g_formula.ops.clear();
     g_formula.store_index = 0;
     g_formula.load_index = 0;
@@ -985,8 +983,8 @@ static bool parse_formula_text(const std::string &text)
             }
             else
             {
-                g_formula.ops[g_operation_index-1].f = stk_sto;
-                g_formula.ops[g_operation_index-1].p = 5 - (s_parser.paren + equals)*15;
+                g_formula.ops[g_formula.op_index-1].f = stk_sto;
+                g_formula.ops[g_formula.op_index-1].p = 5 - (s_parser.paren + equals)*15;
                 g_formula.store[g_formula.store_index++] = g_formula.load[--g_formula.load_index];
                 equals++;
             }
@@ -1049,9 +1047,9 @@ static bool parse_formula_text(const std::string &text)
     }
     push_pending_op(nullptr, 16);
     s_parser.next_op = 0;
-    g_formula.op_count = g_operation_index;
+    g_formula.op_count = g_formula.op_index;
     int op_index{};
-    while (s_parser.next_op < g_operation_index)
+    while (s_parser.next_op < g_formula.op_index)
     {
         if (g_formula.ops[s_parser.next_op].f)
         {
@@ -2462,8 +2460,8 @@ static void parser_allocate()
     if (!parse_formula_text(g_formula.formula))
     {
         // per Chuck Ebbert, fudge these up a little
-        g_max_function_ops = g_operation_index + 4;
-        g_max_function_args = g_variable_index + 4;
+        g_max_function_ops = g_formula.op_index + 4;
+        g_max_function_args = g_formula.var_index + 4;
     }
     g_frm_uses_p1 = false;
     g_frm_uses_p2 = false;
@@ -3148,7 +3146,7 @@ static std::string get_variable_name(int var_index)
     }
 
     // Check if it's in the valid range of parsed variables
-    if (var_index < static_cast<int>(g_formula.vars.size()) && var_index < static_cast<int>(g_variable_index))
+    if (var_index < static_cast<int>(g_formula.vars.size()) && var_index < g_formula.var_index)
     {
         const ConstArg &var = g_formula.vars[var_index];
         if (var.s != nullptr && var.len > 0)
@@ -3172,7 +3170,7 @@ static void get_globals(std::ostringstream &oss)
     oss << fmt::format("Symmetry: {}\n", +g_symmetry);
     oss << fmt::format("Total Operations: {}\n", g_formula.op_count);
     oss << fmt::format("Init Operations: {}\n", g_formula.last_init_op);
-    oss << fmt::format("Variables: {}\n", g_variable_index);
+    oss << fmt::format("Variables: {}\n", g_formula.var_index);
     oss << fmt::format("Uses Jumps: {}\n", g_formula.uses_jump ? "yes" : "no");
     oss << fmt::format("Uses p1: {} p2: {} p3: {} p4: {} p5: {}\n", g_frm_uses_p1, g_frm_uses_p2, g_frm_uses_p3,
         g_frm_uses_p4, g_frm_uses_p5);
@@ -3184,7 +3182,7 @@ static void get_variables(std::ostringstream &oss)
 {
     // Dump variables
     oss << "=== Variables ===\n";
-    for (unsigned int i = 0; i < g_variable_index && i < static_cast<unsigned int>(g_formula.vars.size()); ++i)
+    for (int i = 0; i < g_formula.var_index && i < static_cast<int>(g_formula.vars.size()); ++i)
     {
         oss << fmt::format(
             "{:3d}: {:15s} = ({:.6f}, {:.6f})\n", i, get_variable_name(i), g_formula.vars[i].a.d.x, g_formula.vars[i].a.d.y);
@@ -3231,7 +3229,7 @@ static void get_load_table(std::ostringstream &oss)
         int var_idx = -1;
         if (g_formula.load[i] != nullptr)
         {
-            for (unsigned v = 0; v < g_variable_index; ++v)
+            for (unsigned v = 0; v < g_formula.var_index; ++v)
             {
                 if (g_formula.load[i] == &g_formula.vars[v].a)
                 {
@@ -3264,7 +3262,7 @@ static void get_store_table(std::ostringstream &oss)
         int var_idx = -1;
         if (g_formula.store[i] != nullptr)
         {
-            for (unsigned v = 0; v < g_variable_index; ++v)
+            for (unsigned v = 0; v < g_formula.var_index; ++v)
             {
                 if (g_formula.store[i] == &g_formula.vars[v].a)
                 {
@@ -3364,8 +3362,8 @@ void parser_reset()
     g_formula.uses_jump = false;
     g_formula.jump_control.clear();
     g_formula_name.clear();
-    g_operation_index = 0;
-    g_variable_index = 0;
+    g_formula.op_index = 0;
+    g_formula.var_index = 0;
     g_formula.last_init_op = 0;
     g_formula.store_index = 0;
     g_formula.load_index = 0;

@@ -202,7 +202,7 @@ static bool tab_display2(char *msg)
     if (g_fractal_type == FractalType::FORMULA)
     {
         write_row(row++, "Max_Ops (posp) %u Max_Args (vsp) %u",
-                  g_operation_index, g_variable_index);
+                  g_formula.op_index, g_formula.var_index);
         write_row(row++, "   StoreIdx %d LoadIdx %d MaxOps var %u MaxArgs var %u LastInitOp %d", //
             g_formula.store_index, g_formula.load_index,                                         //
             g_max_function_ops, g_max_function_args, g_formula.last_init_op);
