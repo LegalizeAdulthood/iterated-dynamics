@@ -1,7 +1,9 @@
 #include "fractals/interpreter.h"
 
+#include "fractals/parser.h"
 #include "math/arg.h"
 #include "math/fixed_pt.h"
+#include "math/rand15.h"
 
 #include <cfloat>
 #include <cmath>
@@ -375,6 +377,64 @@ void d_stk_round()
     debug_trace_operation("ROUND", g_arg1);
     g_arg1->d.x = floor(g_arg1->d.x+.5);
     g_arg1->d.y = floor(g_arg1->d.y+.5);
+    debug_trace_stack_state();
+}
+
+static unsigned long new_random_num()
+{
+    s_runtime.rand_num = (s_runtime.rand_num << 15) + RAND15() ^ s_runtime.rand_num;
+    return s_runtime.rand_num;
+}
+
+void d_random()
+{
+    /* Use the same algorithm as for fixed math so that they will generate
+           the same fractals when the srand() function is used. */
+    const long x = new_random_num() >> (32 - BIT_SHIFT);
+    const long y = new_random_num() >> (32 - BIT_SHIFT);
+    s_formula.vars[7].a.d.x = static_cast<double>(x) / (1L << BIT_SHIFT);
+    s_formula.vars[7].a.d.y = static_cast<double>(y) / (1L << BIT_SHIFT);
+}
+
+static void set_random()
+{
+    if (!s_runtime.set_random)
+    {
+        s_runtime.rand_num = s_runtime.rand_x ^ s_runtime.rand_y;
+    }
+
+    const unsigned int seed = static_cast<unsigned>(s_runtime.rand_num) ^ static_cast<unsigned>(s_runtime.rand_num >> 16);
+    std::srand(seed);
+    s_runtime.set_random = true;
+
+    // Clear out the seed
+    new_random_num();
+    new_random_num();
+    new_random_num();
+}
+
+void random_seed()
+{
+    std::time_t now;
+
+    // Use the current time to randomize the random number sequence.
+    std::time(&now);
+    std::srand(static_cast<unsigned int>(now));
+
+    new_random_num();
+    new_random_num();
+    new_random_num();
+    s_runtime.randomized = true;
+}
+
+void d_stk_srand()
+{
+    debug_trace_operation("SRAND", g_arg1);
+    s_runtime.rand_x = static_cast<long>(g_arg1->d.x * (1L << BIT_SHIFT));
+    s_runtime.rand_y = static_cast<long>(g_arg1->d.y * (1L << BIT_SHIFT));
+    set_random();
+    d_random();
+    g_arg1->d = s_formula.vars[7].a.d;
     debug_trace_stack_state();
 }
 

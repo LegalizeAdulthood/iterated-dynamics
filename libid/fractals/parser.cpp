@@ -285,8 +285,6 @@ struct ErrorData
     ParseError error_number;
 };
 
-constexpr int BIT_SHIFT{16};
-
 struct ParserState
 {
     int paren{};
@@ -302,7 +300,6 @@ struct ParserState
 // forward declarations
 static bool frm_prescan(std::FILE *open_file);
 static void parser_allocate();
-static void d_stk_srand();
 static void d_stk_sub();
 static void d_stk_real();
 static void d_stk_imag();
@@ -582,64 +579,6 @@ static const char *parse_error_text(ParseError which)
 
 /* use the following when only float functions are implemented to
    get MP math and Integer math */
-
-static unsigned long new_random_num()
-{
-    s_runtime.rand_num = (s_runtime.rand_num << 15) + RAND15() ^ s_runtime.rand_num;
-    return s_runtime.rand_num;
-}
-
-static void d_random()
-{
-    /* Use the same algorithm as for fixed math so that they will generate
-           the same fractals when the srand() function is used. */
-    const long x = new_random_num() >> (32 - BIT_SHIFT);
-    const long y = new_random_num() >> (32 - BIT_SHIFT);
-    s_formula.vars[7].a.d.x = static_cast<double>(x) / (1L << BIT_SHIFT);
-    s_formula.vars[7].a.d.y = static_cast<double>(y) / (1L << BIT_SHIFT);
-}
-
-static void set_random()
-{
-    if (!s_runtime.set_random)
-    {
-        s_runtime.rand_num = s_runtime.rand_x ^ s_runtime.rand_y;
-    }
-
-    const unsigned int seed = static_cast<unsigned>(s_runtime.rand_num) ^ static_cast<unsigned>(s_runtime.rand_num >> 16);
-    std::srand(seed);
-    s_runtime.set_random = true;
-
-    // Clear out the seed
-    new_random_num();
-    new_random_num();
-    new_random_num();
-}
-
-void random_seed()
-{
-    std::time_t now;
-
-    // Use the current time to randomize the random number sequence.
-    std::time(&now);
-    std::srand(static_cast<unsigned int>(now));
-
-    new_random_num();
-    new_random_num();
-    new_random_num();
-    s_runtime.randomized = true;
-}
-
-static void d_stk_srand()
-{
-    debug_trace_operation("SRAND", g_arg1);
-    s_runtime.rand_x = static_cast<long>(g_arg1->d.x * (1L << BIT_SHIFT));
-    s_runtime.rand_y = static_cast<long>(g_arg1->d.y * (1L << BIT_SHIFT));
-    set_random();
-    d_random();
-    g_arg1->d = s_formula.vars[7].a.d;
-    debug_trace_stack_state();
-}
 
 static void d_stk_lod_dup()
 {
@@ -1505,54 +1444,6 @@ static bool parse_formula_text(const std::string &text)
         }
     }
     return false;
-}
-
-int formula_orbit()
-{
-    if (g_formula_name.empty() || g_overflow)
-    {
-        return 1;
-    }
-
-    if (s_debug.trace_enabled && s_debug.trace_file)
-    {
-        fmt::print(s_debug.trace_file, "\n=== Orbit Calculation ===\n");
-        fmt::print(s_debug.trace_file, "Input z: ({:.6f}, {:.6f})\n", 
-                   g_old_z.x, g_old_z.y);
-        s_debug.operation_count = 0;
-    }
-
-    g_load_index = s_runtime.init_load_ptr;
-    g_store_index = s_runtime.init_store_ptr;
-    s_runtime.op_ptr = s_runtime.init_op_ptr;
-    s_runtime.jump_index = s_runtime.init_jump_index;
-    // Set the random number
-    if (s_runtime.set_random || s_runtime.randomized)
-    {
-        d_random();
-    }
-
-    g_arg1 = s_runtime.stack.data();
-    g_arg2 = s_runtime.stack.data();
-    --g_arg2;
-    while (s_runtime.op_ptr < static_cast<int>(s_formula.op_count))
-    {
-        s_formula.fns[s_runtime.op_ptr]();
-        s_runtime.op_ptr++;
-    }
-
-    g_new_z = s_formula.vars[3].a.d;
-    g_old_z = g_new_z;
-
-    if (s_debug.trace_enabled && s_debug.trace_file)
-    {
-        fmt::print(s_debug.trace_file, "Output z: ({:.6f}, {:.6f})\n", g_new_z.x, g_new_z.y);
-        fmt::print(s_debug.trace_file, "Bailout test: {} (result: {})\n", g_arg1->d.x,
-            g_arg1->d.x == 0.0 ? "continue" : "bailout");
-        std::fflush(s_debug.trace_file);
-    }
-
-    return g_arg1->d.x == 0.0;
 }
 
 static int fill_if_group(const int endif_index, JumpPtrs *jump_data)

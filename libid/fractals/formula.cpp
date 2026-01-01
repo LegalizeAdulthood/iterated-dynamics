@@ -177,4 +177,52 @@ int formula_per_pixel()
     return g_overflow ? 0 : 1;
 }
 
+int formula_orbit()
+{
+    if (g_formula_name.empty() || g_overflow)
+    {
+        return 1;
+    }
+
+    if (s_debug.trace_enabled && s_debug.trace_file)
+    {
+        fmt::print(s_debug.trace_file, "\n=== Orbit Calculation ===\n");
+        fmt::print(s_debug.trace_file, "Input z: ({:.6f}, {:.6f})\n", 
+                   g_old_z.x, g_old_z.y);
+        s_debug.operation_count = 0;
+    }
+
+    g_load_index = s_runtime.init_load_ptr;
+    g_store_index = s_runtime.init_store_ptr;
+    s_runtime.op_ptr = s_runtime.init_op_ptr;
+    s_runtime.jump_index = s_runtime.init_jump_index;
+    // Set the random number
+    if (s_runtime.set_random || s_runtime.randomized)
+    {
+        d_random();
+    }
+
+    g_arg1 = s_runtime.stack.data();
+    g_arg2 = s_runtime.stack.data();
+    --g_arg2;
+    while (s_runtime.op_ptr < static_cast<int>(s_formula.op_count))
+    {
+        s_formula.fns[s_runtime.op_ptr]();
+        s_runtime.op_ptr++;
+    }
+
+    g_new_z = s_formula.vars[3].a.d;
+    g_old_z = g_new_z;
+
+    if (s_debug.trace_enabled && s_debug.trace_file)
+    {
+        fmt::print(s_debug.trace_file, "Output z: ({:.6f}, {:.6f})\n", g_new_z.x, g_new_z.y);
+        fmt::print(s_debug.trace_file, "Bailout test: {} (result: {})\n", g_arg1->d.x,
+            g_arg1->d.x == 0.0 ? "continue" : "bailout");
+        std::fflush(s_debug.trace_file);
+    }
+
+    return g_arg1->d.x == 0.0;
+}
+
 } // namespace id::fractals

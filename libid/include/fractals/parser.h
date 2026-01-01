@@ -127,10 +127,14 @@ struct RuntimeState
     long rand_y{};
 };
 
+constexpr int BIT_SHIFT{16};
+
 extern CompiledFormula s_formula;
 extern DebugState s_debug;
 extern RuntimeState s_runtime;
 void debug_trace_init();
 void random_seed();
+void d_stk_srand();
+void d_random();
 
 } // namespace id::fractals
