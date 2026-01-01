@@ -90,15 +90,7 @@ void d_stk_flip()
 void d_stk_sin()
 {
     debug_trace_operation("SIN", g_arg1);
-    double sin_x;
-    double cos_x;
-    double sinh_y;
-    double cosh_y;
-
-    sin_cos(g_arg1->d.x, sin_x, cos_x);
-    sinh_cosh(g_arg1->d.y, sinh_y, cosh_y);
-    g_arg1->d.x = sin_x*cosh_y;
-    g_arg1->d.y = cos_x*sinh_y;
+    cmplx_sin(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
