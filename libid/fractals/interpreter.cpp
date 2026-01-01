@@ -229,15 +229,7 @@ void d_stk_sinh()
 void d_stk_cos()
 {
     debug_trace_operation("COS", g_arg1);
-    double sin_x;
-    double cos_x;
-    double sinh_y;
-    double cosh_y;
-
-    sin_cos(g_arg1->d.x, sin_x, cos_x);
-    sinh_cosh(g_arg1->d.y, sinh_y, cosh_y);
-    g_arg1->d.x = cos_x*cosh_y;
-    g_arg1->d.y = -sin_x*sinh_y;
+    cmplx_cos(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 

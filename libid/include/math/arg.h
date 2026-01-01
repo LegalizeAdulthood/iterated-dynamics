@@ -68,9 +68,15 @@ inline void cmplx_sin(const DComplex &arg, DComplex &out)
 }
 inline void cmplx_cos(const DComplex &arg, DComplex &out)
 {
-    g_arg1->d = arg;
-    fractals::d_stk_cos();
-    out = g_arg1->d;
+    double sin_x;
+    double cos_x;
+    double sinh_y;
+    double cosh_y;
+
+    sin_cos(arg.x, sin_x, cos_x);
+    sinh_cosh(arg.y, sinh_y, cosh_y);
+    out.x = cos_x*cosh_y;
+    out.y = -sin_x*sinh_y;
 }
 inline void cmplx_sinh(const DComplex &arg, DComplex &out)
 {
