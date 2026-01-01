@@ -72,23 +72,11 @@ namespace id::fractals
 namespace
 {
 
-using Function = void();
-using FunctionPtr = Function *;
-
 enum
 {
     MAX_OPS = 250,
     MAX_ARGS = 100,
     MAX_JUMPS = 200 // size of JUMP_CONTROL array
-};
-
-enum class JumpControlType
-{
-    NONE = 0,
-    IF = 1,
-    ELSE_IF = 2,
-    ELSE = 3,
-    END_IF = 4
 };
 
 // token_type definitions
@@ -270,26 +258,6 @@ struct FormulaEntry
     std::string body;
 };
 
-struct PendingOp
-{
-    FunctionPtr f;
-    int p;
-};
-
-struct JumpPtrs
-{
-    int jump_op_ptr;
-    int jump_lod_ptr;
-    int jump_sto_ptr;
-};
-
-struct JumpControl
-{
-    JumpControlType type;
-    JumpPtrs ptrs;
-    int dest_jump_index;
-};
-
 struct Token
 {
     char str[80];
@@ -318,45 +286,6 @@ struct ErrorData
 };
 
 constexpr int BIT_SHIFT{16};
-
-struct ConstArg
-{
-    const char *s;
-    int len;
-    Arg a;
-};
-
-struct CompiledFormula
-{
-    std::string formula;                     // Source text
-    std::vector<FunctionPtr> fns;            // Compiled operations (bytecode)
-    std::vector<Arg *> load;                 // Load table
-    std::vector<Arg *> store;                // Store table
-    std::vector<ConstArg> vars;              // All constants/variables
-    std::vector<JumpControl> jump_control;   // Jump control structure
-    std::vector<PendingOp> ops;              // Pending operations (used during compilation)
-    unsigned int op_count{};                 // Total compiled operations
-    bool uses_jump{};                        // Whether formula uses jumps
-    bool uses_rand{};                        // Whether formula uses rand
-};
-
-struct RuntimeState
-{
-    std::array<Arg, 20> stack{};
-    int op_ptr{};
-    int jump_index{};
-
-    int init_op_ptr{};
-    int init_jump_index{};
-    int init_load_ptr{};
-    int init_store_ptr{};
-
-    bool set_random{};
-    bool randomized{};
-    unsigned long rand_num{};
-    long rand_x{};
-    long rand_y{};
-};
 
 struct ParserState
 {
@@ -413,8 +342,8 @@ bool g_frm_uses_p5{};
 bool g_frm_uses_ismand{};
 char g_max_function{};
 
-static CompiledFormula s_formula;
-static RuntimeState s_runtime;
+CompiledFormula s_formula;
+RuntimeState s_runtime;
 static ParserState s_parser;
 
 #define LAST_SQR (s_formula.vars[4].a)
@@ -687,7 +616,7 @@ static void set_random()
     new_random_num();
 }
 
-static void random_seed()
+void random_seed()
 {
     std::time_t now;
 
@@ -1624,83 +1553,6 @@ int formula_orbit()
     }
 
     return g_arg1->d.x == 0.0;
-}
-
-int formula_per_pixel()
-{
-    if (g_formula_name.empty())
-    {
-        return 1;
-    }
-
-    debug_trace_init(); // Initialize tracing
-    if (s_debug.trace_enabled && s_debug.trace_file)
-    {
-        fmt::print(s_debug.trace_file, "\n=== Per-Pixel Initialization ===\n");
-        fmt::print(s_debug.trace_file, "Pixel: ({}, {})\n", g_col, g_row);
-        fmt::print(s_debug.trace_file, "Pixel coords: ({:.6f}, {:.6f})\n", dx_pixel(), dy_pixel());
-    }
-
-    g_overflow = false;
-    s_runtime.jump_index = 0;
-    s_runtime.op_ptr = 0;
-    s_runtime.set_random = false;
-    if (s_formula.uses_rand && !s_runtime.randomized)
-    {
-        random_seed();
-    }
-    g_store_index = 0;
-    g_load_index = 0;
-    g_arg1 = s_runtime.stack.data();
-    g_arg2 = s_runtime.stack.data();
-    g_arg2--;
-
-    s_formula.vars[10].a.d.x = static_cast<double>(g_col);
-    s_formula.vars[10].a.d.y = static_cast<double>(g_row);
-
-    if (g_row + g_col & 1)
-    {
-        s_formula.vars[9].a.d.x = 1.0;
-    }
-    else
-    {
-        s_formula.vars[9].a.d.x = 0.0;
-    }
-    s_formula.vars[9].a.d.y = 0.0;
-
-    if (g_inversion.invert != 0)
-    {
-        invertz2(&g_old_z);
-        s_formula.vars[0].a.d.x = g_old_z.x;
-        s_formula.vars[0].a.d.y = g_old_z.y;
-    }
-    else
-    {
-        s_formula.vars[0].a.d.x = dx_pixel();
-        s_formula.vars[0].a.d.y = dy_pixel();
-    }
-
-    if (g_last_init_op)
-    {
-        g_last_init_op = s_formula.op_count;
-    }
-    if (s_debug.trace_enabled && s_debug.trace_file)
-    {
-        fmt::print(s_debug.trace_file, "\nInitialization operations:\n");
-        s_debug.operation_count = 0;
-    }
-    while (s_runtime.op_ptr < g_last_init_op)
-    {
-        s_formula.fns[s_runtime.op_ptr]();
-        s_runtime.op_ptr++;
-    }
-    s_runtime.init_load_ptr = g_load_index;
-    s_runtime.init_store_ptr = g_store_index;
-    s_runtime.init_op_ptr = s_runtime.op_ptr;
-    // Set old variable for orbits
-    g_old_z = s_formula.vars[3].a.d;
-
-    return g_overflow ? 0 : 1;
 }
 
 static int fill_if_group(const int endif_index, JumpPtrs *jump_data)

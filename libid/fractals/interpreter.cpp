@@ -3,6 +3,7 @@
 #include "math/arg.h"
 #include "math/fixed_pt.h"
 
+#include <cfloat>
 #include <cmath>
 
 using namespace id::math;
