@@ -94,12 +94,12 @@ int formula_per_pixel()
         g_formula.vars[0].a.d.y = dy_pixel();
     }
 
-    if (g_last_init_op)
+    if (g_formula.last_init_op)
     {
-        g_last_init_op = g_formula.op_count;
+        g_formula.last_init_op = g_formula.op_count;
     }
     g_runtime.per_pixel_init();
-    while (g_runtime.op_ptr < g_last_init_op)
+    while (g_runtime.op_ptr < g_formula.last_init_op)
     {
         g_formula.fns[g_runtime.op_ptr]();
         g_runtime.op_ptr++;

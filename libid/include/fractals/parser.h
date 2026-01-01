@@ -4,40 +4,12 @@
 
 #include "math/arg.h"
 
-#include <array>
-#include <cstdio>
 #include <filesystem>
 #include <string>
 #include <vector>
 
 namespace id::fractals
 {
-
-extern int                   g_last_init_op;
-extern int                   g_load_index;
-extern char                  g_max_function;
-extern unsigned              g_max_function_args;
-extern unsigned              g_max_function_ops;
-extern unsigned              g_operation_index;
-extern int                   g_store_index;
-extern unsigned              g_variable_index;
-
-int frm_get_param_stuff(std::filesystem::path &path, const char *name);
-bool parse_formula(std::filesystem::path &path, const std::string &name, bool report_bad_sym);
-void init_misc();
-void free_work_area();
-
-/// Get current parser state for testing/debugging
-std::string get_parser_state();
-
-/// Parse formula for testing without executing
-bool parse_formula(const std::string &formula_text, std::string &error_msg);
-
-// Reset parser state
-void parser_reset();
-
-
-//////////////////////////////////////////////////
 
 enum class JumpControlType
 {
@@ -90,8 +62,30 @@ struct CompiledFormula
     unsigned int op_count{};               // Total compiled operations
     bool uses_jump{};                      // Whether formula uses jumps
     bool uses_rand{};                      // Whether formula uses rand
+    int last_init_op{};                    //
 };
 
-extern CompiledFormula g_formula;
+extern CompiledFormula       g_formula;
+extern int                   g_load_index;
+extern char                  g_max_function;
+extern unsigned              g_max_function_args;
+extern unsigned              g_max_function_ops;
+extern unsigned              g_operation_index;
+extern int                   g_store_index;
+extern unsigned              g_variable_index;
+
+int frm_get_param_stuff(std::filesystem::path &path, const char *name);
+bool parse_formula(std::filesystem::path &path, const std::string &name, bool report_bad_sym);
+void init_misc();
+void free_work_area();
+
+/// Get current parser state for testing/debugging
+std::string get_parser_state();
+
+/// Parse formula for testing without executing
+bool parse_formula(const std::string &formula_text, std::string &error_msg);
+
+// Reset parser state
+void parser_reset();
 
 } // namespace id::fractals

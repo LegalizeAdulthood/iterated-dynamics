@@ -307,7 +307,6 @@ int g_store_index{};
 int g_load_index{};
 unsigned int g_operation_index{};
 unsigned int g_variable_index{};
-int g_last_init_op{};
 char g_max_function{};
 
 CompiledFormula g_formula;
@@ -849,7 +848,7 @@ static bool parse_formula_text(const std::string &text)
     g_store_index = 0;
     g_load_index = 0;
     s_parser.paren = 0;
-    g_last_init_op = 0;
+    g_formula.last_init_op = 0;
     s_parser.expecting_arg = true;
     for (s_parser.n = 0; text[s_parser.n]; s_parser.n++)
     {
@@ -908,7 +907,7 @@ static bool parse_formula_text(const std::string &text)
             push_pending_op(end_init, -30000);
             s_parser.paren = 0;
             equals = 0;
-            g_last_init_op = 10000;
+            g_formula.last_init_op = 10000;
             break;
         case '+':
             s_parser.expecting_arg = true;
@@ -3174,7 +3173,7 @@ static void get_globals(std::ostringstream &oss)
     oss << fmt::format("=== Formula: {} ===\n", g_formula_name);
     oss << fmt::format("Symmetry: {}\n", +g_symmetry);
     oss << fmt::format("Total Operations: {}\n", g_formula.op_count);
-    oss << fmt::format("Init Operations: {}\n", g_last_init_op);
+    oss << fmt::format("Init Operations: {}\n", g_formula.last_init_op);
     oss << fmt::format("Variables: {}\n", g_variable_index);
     oss << fmt::format("Uses Jumps: {}\n", g_formula.uses_jump ? "yes" : "no");
     oss << fmt::format("Uses p1: {} p2: {} p3: {} p4: {} p5: {}\n", g_frm_uses_p1, g_frm_uses_p2, g_frm_uses_p3,
@@ -3369,7 +3368,7 @@ void parser_reset()
     g_formula_name.clear();
     g_operation_index = 0;
     g_variable_index = 0;
-    g_last_init_op = 0;
+    g_formula.last_init_op = 0;
     g_store_index = 0;
     g_load_index = 0;
     g_frm_uses_p1 = false;

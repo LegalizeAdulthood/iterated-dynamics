@@ -802,7 +802,7 @@ void d_stk_and()
 
 void end_init()
 {
-    g_last_init_op = g_runtime.op_ptr;
+    g_formula.last_init_op = g_runtime.op_ptr;
     g_runtime.init_jump_index = g_runtime.jump_index;
 }
 
