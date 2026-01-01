@@ -83,13 +83,15 @@ DAFrm07 {
    |z| <= 4
 }
 
-DAFrm09 {
-   z = pixel, c = z + z^ (z - 1):
-   tmp = fn1(z)
-   real(tmp) = real(tmp) * real(c) - imag(tmp) * imag(c)
-   imag(tmp) = real(tmp) * imag(c) - imag(tmp) * real(c)
-   z = tmp + pixel + 12
-   |z| <= 4
+DAFrm09 {; Edited for Fractint v. 20 by George Martin, 10/98
+         ; The revision is to give the result that the author
+         ; intended 
+  z = pixel, c = z + z^ (z - 1):
+  tmp = fn1(z)
+  tmp = real(tmp)*real(c)-imag(tmp)*imag(c)\
+         + flip(real(tmp)*imag(c)-imag(tmp)*real(c))
+  z = tmp + pixel + 12
+  |z| <= 4
 }
 
 dafrm21 {
