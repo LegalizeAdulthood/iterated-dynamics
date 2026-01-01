@@ -214,15 +214,7 @@ void stk_ident()
 void d_stk_sinh()
 {
     debug_trace_operation("SINH", g_arg1);
-    double sin_y;
-    double cos_y;
-    double sinh_x;
-    double cosh_x;
-
-    sin_cos(g_arg1->d.y, sin_y, cos_y);
-    sinh_cosh(g_arg1->d.x, sinh_x, cosh_x);
-    g_arg1->d.x = sinh_x*cos_y;
-    g_arg1->d.y = cosh_x*sin_y;
+    cmplx_sinh(g_arg1->d, g_arg1->d);
     debug_trace_stack_state();
 }
 
