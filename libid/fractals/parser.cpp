@@ -538,9 +538,6 @@ static const char *parse_error_text(ParseError which)
     return MESSAGES[+which];
 }
 
-/* use the following when only float functions are implemented to
-   get MP math and Integer math */
-
 static unsigned int skip_white_space(const char *str)
 {
     unsigned n;
@@ -680,13 +677,6 @@ static ConstArg *is_const(const char *str, const int len)
     return &g_formula.vars[g_formula.var_index++];
 }
 
-/* return values
-    0 - Not a jump
-    1 - if
-    2 - elseif
-    3 - else
-    4 - endif
-*/
 static JumpControlType is_jump(const char *str, const int len)
 {
     for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++)
@@ -1281,11 +1271,16 @@ static void get_var_info(Token *tok)
     tok->id   = TokenId::NONE;
 }
 
-// fills in token structure where numeric constant is indicated
-/* Note - this function will be called twice to fill in the components
-        of a complex constant. See is_complex_constant() below. */
-
-// returns 1 on success, 0 on NOT_A_TOKEN
+/// @brief Fills in token structure where numeric constant is indicated.
+///
+/// This function parses numeric constants from the input file stream, including
+/// support for scientific notation (e.g., 1.23e-4). It is called twice to fill
+/// in the components of a complex constant (see is_complex_constant()).
+///
+/// @param open_file The open file stream from which to read the constant.
+/// @param tok The Token structure to fill with the parsed constant information.
+/// @return true on success, false if the token is NOT_A_TOKEN.
+///
 static bool frm_get_constant(std::FILE *open_file, Token *tok)
 {
     int i = 1;
@@ -1637,9 +1632,18 @@ static void frm_get_eos(std::FILE *open_file, Token *this_token)
     }
 }
 
-/*frm_get_token fills token structure; returns true on success and false on
-  NOT_A_TOKEN and END_OF_FORMULA
-*/
+/// @brief Fills the token structure with the next token from the input file.
+///
+/// This function reads the next token from the provided file stream and populates
+/// the given Token structure with the token's details. It handles various token
+/// types including operators, constants, variables, functions, and flow control
+/// keywords.
+///
+/// @param open_file The open file stream from which to read the token.
+/// @param this_token The Token structure to fill with token information.
+/// @return true if a valid token was successfully read and parsed, false if the
+///         token is NOT_A_TOKEN or END_OF_FORMULA.
+///
 static bool frm_get_token(std::FILE *open_file, Token *this_token)
 {
     int i = 1;
@@ -2102,11 +2106,11 @@ static std::string to_string(GetFormulaError err)
     throw std::runtime_error("Unknown formula error code: " + std::to_string(static_cast<int>(err)));
 }
 
-/* frm_check_name_and_sym():
-     error checking to the open brace on the first line; return true
-     on success, and false if errors are found which should cause the
-     formula not to be executed
-*/
+/// @brief Performs error checking on the formula name and symmetry up to the open brace on the first line.
+/// @param open_file Pointer to the open file containing the formula.
+/// @param report_bad_sym Boolean flag indicating whether to report invalid symmetry.
+/// @return true on success, false if errors are found that should prevent formula execution.
+///
 static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_sym)
 {
     const long file_pos = std::ftell(open_file);
@@ -2241,14 +2245,17 @@ static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_
     return true;
 }
 
-/* This function sets the
-    symmetry and converts a formula into a string  with no spaces,
-    and one comma after each expression except where the ':' is placed
-    and except the final expression in the formula. The open file passed
-    as an argument is open in "rb" mode and is positioned at the first
-    letter of the name of the formula to be prepared. This function
-    is called from run_formula() below.
-*/
+/// @brief Sets the symmetry and converts a formula into a string with no spaces.
+///
+/// This function converts a formula into a string with one comma after each expression
+/// except where the ':' is placed and except the final expression in the formula. The
+/// open file passed as an argument is open in "rb" mode and is positioned at the first
+/// letter of the name of the formula to be prepared.
+///
+/// @param file The open file containing the formula.
+/// @param report_bad_sym Boolean flag indicating whether to report invalid symmetry.
+/// @return A string containing the prepared formula, or an empty string on error.
+///
 static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
 {
     const long file_pos{std::ftell(file)};
@@ -2581,13 +2588,15 @@ static void frm_error(std::FILE * open_file, const long begin_frm)
     stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
 }
 
-/*frm_prescan() takes an open file with the file pointer positioned at
-  the beginning of the relevant formula, and parses the formula, token
-  by token, for syntax errors. The function also accumulates data for
-  memory allocation to be done later.
-
-  The function returns 1 if success, and 0 if errors are found.
-*/
+/// @brief Parses the formula from an open file for syntax errors and accumulates data for memory allocation.
+///
+/// This function takes an open file with the file pointer positioned at the beginning of the relevant formula,
+/// and parses the formula, token by token, for syntax errors. It also accumulates data for memory allocation
+/// to be done later.
+///
+/// @param open_file Pointer to the open file containing the formula.
+/// @return true if parsing succeeds (no errors found), false if errors are found.
+///
 static bool frm_prescan(std::FILE *open_file)
 {
     long file_pos{};
