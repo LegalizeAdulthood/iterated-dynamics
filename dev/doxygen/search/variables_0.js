@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['a_0',['a',['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#a0153d509ef257f2076af1b2457eae4a6',1,'id::fractals::MandelbrotMix::a'],['../dc/ddd/parser_8cpp.html#af16d1c377d8d6cb2fcf5bdc6e53dc696',1,'a:&#160;parser.cpp'],['../d1/d40/structid_1_1fractals_1_1Affine.html#a723819f856e192df521c15af3185e070',1,'id::fractals::Affine::a']]],
+  ['a_0',['a',['../d0/d15/structid_1_1fractals_1_1ConstArg.html#aa1fe6b9a2b52de00a503e3a0111cc1a0',1,'id::fractals::ConstArg::a'],['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#a0153d509ef257f2076af1b2457eae4a6',1,'id::fractals::MandelbrotMix::a'],['../d1/d40/structid_1_1fractals_1_1Affine.html#a723819f856e192df521c15af3185e070',1,'id::fractals::Affine::a']]],
   ['addr_1',['addr',['../d0/d31/structid_1_1ui_1_1GeneBase.html#a5590d2ff37d87bc7b2153a814f32d98f',1,'id::ui::GeneBase']]],
   ['adjust_5f3d_2',['adjust_3d',['../d1/d3e/history_8cpp.html#aefd474191dcf68bc7b61b1920d35a922',1,'history.cpp']]],
   ['all_5flinks_3',['all_links',['../db/dec/structhc_1_1HelpSource.html#a9cfa58b3967d3fc8abe9995fc01c3dcc',1,'hc::HelpSource']]],
@@ -9,7 +9,7 @@ var searchData=
   ['ambient_6',['ambient',['../dc/da2/structid_1_1io_1_1FractalInfo.html#aef7b3e87ffaff90fd6709d79bc3f3609',1,'id::io::FractalInfo::ambient'],['../d1/d3e/history_8cpp.html#a549ea32b7d543245dd23fc3eae077f88',1,'ambient:&#160;history.cpp']]],
   ['angle_7',['angle',['../da/db4/lsystem_8cpp.html#a2c2656a436dbadc7a66c7900e3395b27',1,'lsystem.cpp']]],
   ['apm_5fdata_8',['apm_data',['../d3/de8/structid_1_1io_1_1ExtBlock5.html#add44f207d05908b3909b23df2422bc14',1,'id::io::ExtBlock5']]],
-  ['arg_9',['arg',['../da/d3b/structid_1_1engine_1_1Command.html#aa4c40d5b3a59568fb2b8d6baff318342',1,'id::engine::Command::arg'],['../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df',1,'arg:&#160;cmdfiles.cpp']]],
+  ['arg_9',['arg',['../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df',1,'arg:&#160;cmdfiles.cpp'],['../da/d3b/structid_1_1engine_1_1Command.html#aa4c40d5b3a59568fb2b8d6baff318342',1,'id::engine::Command::arg']]],
   ['array_10',['array',['../d1/d3e/history_8cpp.html#a038b84700aec4a2cfbb200bd6311ebf6',1,'history.cpp']]],
   ['aspect_11',['aspect',['../da/db4/lsystem_8cpp.html#a4480ca228c6a2fef9116f9333faac2ac',1,'lsystem.cpp']]],
   ['attribute_12',['attribute',['../dd/d06/structid_1_1io_1_1FindResult.html#a53e3f8f322f4512410ed1777d4cc5fdd',1,'id::io::FindResult']]],

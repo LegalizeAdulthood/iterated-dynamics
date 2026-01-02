@@ -86,84 +86,87 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/d49/param__not__used_8h.html">engine/param_not_used.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d4/d8b/fractype_8h.html">fractals/fractype.h</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d5/d36/parser_8h.html">fractals/parser.h</a>&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a>;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">/*</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment"> *  Returns 1 if the formula parameter is not used in the current</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> *  formula.  If the parameter is used, or not a formula fractal,</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment"> *  a 0 is returned.  Note: this routine only works for formula types.</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment"> */</span></div>
-<div class="foldopen" id="foldopen00018" data-start="{" data-end="}">
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="../../dc/d31/namespaceid_1_1engine.html#a81df0f108ece3f5b43488f1af95bacf9">   18</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a81df0f108ece3f5b43488f1af95bacf9">param_not_used</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a35e9c2a8d58bcb47f9fde31c764a6d25">param</a>)</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>{</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="comment">// sanity check</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8898c104e963fc6badfc418e0c2a8c5e">g_fractal_type</a> != FractalType::FORMULA)</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    }</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordflow">switch</span> (<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a35e9c2a8d58bcb47f9fde31c764a6d25">param</a>/2)</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    {</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keywordflow">case</span> 0:</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a7c97a4822195140e0cae7129058a56c0">g_frm_uses_p1</a>)</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            ret = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        }</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">case</span> 1:</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a6540c0a1aabca28423f8627f9fbb4f1c">g_frm_uses_p2</a>)</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        {</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>            ret = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        }</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordflow">case</span> 2:</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a3f6ab464b7b6726b5ba6aada459d11e3">g_frm_uses_p3</a>)</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        {</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>            ret = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        }</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="keywordflow">case</span> 3:</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a0d8b5e2052dd1bd3143eb1dc34ec1047">g_frm_uses_p4</a>)</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        {</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            ret = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        }</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordflow">case</span> 4:</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#ac6fc1aab5692f63e5f6a66553888e804">g_frm_uses_p5</a>)</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        {</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>            ret = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        }</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">default</span>:</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        ret = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    }</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keywordflow">return</span> ret;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>}</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d9a/formula_8h.html">fractals/formula.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d4/d8b/fractype_8h.html">fractals/fractype.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../d5/d36/parser_8h.html">fractals/parser.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a>;</div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="comment">/*</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="comment"> *  Returns 1 if the formula parameter is not used in the current</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="comment"> *  formula.  If the parameter is used, or not a formula fractal,</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="comment"> *  a 0 is returned.  Note: this routine only works for formula types.</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="comment"> */</span></div>
+<div class="foldopen" id="foldopen00019" data-start="{" data-end="}">
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="../../dc/d31/namespaceid_1_1engine.html#a81df0f108ece3f5b43488f1af95bacf9">   19</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="../../dc/d31/namespaceid_1_1engine.html#a81df0f108ece3f5b43488f1af95bacf9">param_not_used</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a0a5e0157b6667d5a2022bac323d62545">param</a>)</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keywordtype">bool</span> ret = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="comment">// sanity check</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8898c104e963fc6badfc418e0c2a8c5e">g_fractal_type</a> != FractalType::FORMULA)</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    {</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    }</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordflow">switch</span> (<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a0a5e0157b6667d5a2022bac323d62545">param</a>/2)</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">case</span> 0:</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#aaf1dcf25a0b7ef23d4ac769b679b900a">g_formula</a>.<a class="code hl_variable" href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#ac17ea54431370d89c26bd6d613176971">uses_p1</a>)</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        {</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            ret = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordflow">case</span> 1:</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#aaf1dcf25a0b7ef23d4ac769b679b900a">g_formula</a>.<a class="code hl_variable" href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a94ce10fbf5a44d7cead76ed6d51d7ccb">uses_p2</a>)</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        {</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            ret = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        }</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordflow">case</span> 2:</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#aaf1dcf25a0b7ef23d4ac769b679b900a">g_formula</a>.<a class="code hl_variable" href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a8964a48a4428012c05768ea7b05f3f94">uses_p3</a>)</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            ret = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        }</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    <span class="keywordflow">case</span> 3:</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#aaf1dcf25a0b7ef23d4ac769b679b900a">g_formula</a>.<a class="code hl_variable" href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a8f4f0be3b9d2c55af0df74fbe7425879">uses_p4</a>)</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            ret = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        }</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordflow">case</span> 4:</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#aaf1dcf25a0b7ef23d4ac769b679b900a">g_formula</a>.<a class="code hl_variable" href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a00411f0bd128268a9ddf6d8e069f20e9">uses_p5</a>)</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            ret = <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        }</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">default</span>:</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        ret = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    }</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">return</span> ret;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>}</div>
 </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>} <span class="comment">// namespace id::engine</span></div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>} <span class="comment">// namespace id::engine</span></div>
+<div class="ttc" id="aformula_8h_html"><div class="ttname"><a href="../../d3/d9a/formula_8h.html">formula.h</a></div></div>
 <div class="ttc" id="afractype_8h_html"><div class="ttname"><a href="../../d4/d8b/fractype_8h.html">fractype.h</a></div></div>
-<div class="ttc" id="alsystem_8cpp_html_a35e9c2a8d58bcb47f9fde31c764a6d25"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#a35e9c2a8d58bcb47f9fde31c764a6d25">param</a></div><div class="ttdeci">union id::fractals::@304::LSysTurtleState::@35 param</div></div>
+<div class="ttc" id="alsystem_8cpp_html_a0a5e0157b6667d5a2022bac323d62545"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#a0a5e0157b6667d5a2022bac323d62545">param</a></div><div class="ttdeci">union id::fractals::@308::LSysTurtleState::@35 param</div></div>
 <div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
-<div class="ttc" id="anamespaceid_1_1engine_html_a81df0f108ece3f5b43488f1af95bacf9"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a81df0f108ece3f5b43488f1af95bacf9">id::engine::param_not_used</a></div><div class="ttdeci">bool param_not_used(int param)</div><div class="ttdef"><b>Definition</b> <a href="../../d8/dca/param__not__used_8cpp_source.html#l00018">param_not_used.cpp:18</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a81df0f108ece3f5b43488f1af95bacf9"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a81df0f108ece3f5b43488f1af95bacf9">id::engine::param_not_used</a></div><div class="ttdeci">bool param_not_used(int param)</div><div class="ttdef"><b>Definition</b> <a href="../../d8/dca/param__not__used_8cpp_source.html#l00019">param_not_used.cpp:19</a></div></div>
 <div class="ttc" id="anamespaceid_1_1fractals_html"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00014">calcfrac.h:15</a></div></div>
-<div class="ttc" id="anamespaceid_1_1fractals_html_a0d8b5e2052dd1bd3143eb1dc34ec1047"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a0d8b5e2052dd1bd3143eb1dc34ec1047">id::fractals::g_frm_uses_p4</a></div><div class="ttdeci">bool g_frm_uses_p4</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00348">parser.cpp:348</a></div></div>
-<div class="ttc" id="anamespaceid_1_1fractals_html_a3f6ab464b7b6726b5ba6aada459d11e3"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a3f6ab464b7b6726b5ba6aada459d11e3">id::fractals::g_frm_uses_p3</a></div><div class="ttdeci">bool g_frm_uses_p3</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00347">parser.cpp:347</a></div></div>
-<div class="ttc" id="anamespaceid_1_1fractals_html_a6540c0a1aabca28423f8627f9fbb4f1c"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a6540c0a1aabca28423f8627f9fbb4f1c">id::fractals::g_frm_uses_p2</a></div><div class="ttdeci">bool g_frm_uses_p2</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00346">parser.cpp:346</a></div></div>
-<div class="ttc" id="anamespaceid_1_1fractals_html_a7c97a4822195140e0cae7129058a56c0"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a7c97a4822195140e0cae7129058a56c0">id::fractals::g_frm_uses_p1</a></div><div class="ttdeci">bool g_frm_uses_p1</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00345">parser.cpp:345</a></div></div>
 <div class="ttc" id="anamespaceid_1_1fractals_html_a8898c104e963fc6badfc418e0c2a8c5e"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a8898c104e963fc6badfc418e0c2a8c5e">id::fractals::g_fractal_type</a></div><div class="ttdeci">FractalType g_fractal_type</div><div class="ttdef"><b>Definition</b> <a href="../../df/ded/fractype_8cpp_source.html#l00008">fractype.cpp:8</a></div></div>
-<div class="ttc" id="anamespaceid_1_1fractals_html_ac6fc1aab5692f63e5f6a66553888e804"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#ac6fc1aab5692f63e5f6a66553888e804">id::fractals::g_frm_uses_p5</a></div><div class="ttdeci">bool g_frm_uses_p5</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00349">parser.cpp:349</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_aaf1dcf25a0b7ef23d4ac769b679b900a"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#aaf1dcf25a0b7ef23d4ac769b679b900a">id::fractals::g_formula</a></div><div class="ttdeci">CompiledFormula g_formula</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00389">parser.cpp:389</a></div></div>
 <div class="ttc" id="aparam__not__used_8h_html"><div class="ttname"><a href="../../d1/d49/param__not__used_8h.html">param_not_used.h</a></div></div>
 <div class="ttc" id="aparser_8h_html"><div class="ttname"><a href="../../d5/d36/parser_8h.html">parser.h</a></div></div>
+<div class="ttc" id="astructid_1_1fractals_1_1CompiledFormula_html_a00411f0bd128268a9ddf6d8e069f20e9"><div class="ttname"><a href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a00411f0bd128268a9ddf6d8e069f20e9">id::fractals::CompiledFormula::uses_p5</a></div><div class="ttdeci">bool uses_p5</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d36/parser_8h_source.html#l00078">parser.h:78</a></div></div>
+<div class="ttc" id="astructid_1_1fractals_1_1CompiledFormula_html_a8964a48a4428012c05768ea7b05f3f94"><div class="ttname"><a href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a8964a48a4428012c05768ea7b05f3f94">id::fractals::CompiledFormula::uses_p3</a></div><div class="ttdeci">bool uses_p3</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d36/parser_8h_source.html#l00076">parser.h:76</a></div></div>
+<div class="ttc" id="astructid_1_1fractals_1_1CompiledFormula_html_a8f4f0be3b9d2c55af0df74fbe7425879"><div class="ttname"><a href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a8f4f0be3b9d2c55af0df74fbe7425879">id::fractals::CompiledFormula::uses_p4</a></div><div class="ttdeci">bool uses_p4</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d36/parser_8h_source.html#l00077">parser.h:77</a></div></div>
+<div class="ttc" id="astructid_1_1fractals_1_1CompiledFormula_html_a94ce10fbf5a44d7cead76ed6d51d7ccb"><div class="ttname"><a href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a94ce10fbf5a44d7cead76ed6d51d7ccb">id::fractals::CompiledFormula::uses_p2</a></div><div class="ttdeci">bool uses_p2</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d36/parser_8h_source.html#l00075">parser.h:75</a></div></div>
+<div class="ttc" id="astructid_1_1fractals_1_1CompiledFormula_html_ac17ea54431370d89c26bd6d613176971"><div class="ttname"><a href="../../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#ac17ea54431370d89c26bd6d613176971">id::fractals::CompiledFormula::uses_p1</a></div><div class="ttdeci">bool uses_p1</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d36/parser_8h_source.html#l00074">parser.h:74</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

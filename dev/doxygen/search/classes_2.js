@@ -7,11 +7,13 @@ var searchData=
   ['coloreditornotification_4',['ColorEditorNotification',['../df/d3f/classid_1_1ui_1_1ColorEditorNotification.html',1,'id::ui']]],
   ['command_5',['Command',['../da/d3b/structid_1_1engine_1_1Command.html',1,'id::engine']]],
   ['commandhandler_6',['CommandHandler',['../df/ddb/structid_1_1engine_1_1CommandHandler.html',1,'id::engine']]],
-  ['compiler_7',['Compiler',['../d0/de5/classhc_1_1Compiler.html',1,'hc']]],
-  ['complex_8',['Complex',['../dc/dd7/structid_1_1math_1_1Complex.html',1,'id::math']]],
-  ['complex_3c_20double_20_3e_9',['Complex&lt; double &gt;',['../dc/dd7/structid_1_1math_1_1Complex.html',1,'id::math']]],
-  ['content_10',['Content',['../d4/d84/structhc_1_1Content.html',1,'hc']]],
-  ['coord_11',['Coord',['../d5/d2a/structid_1_1ui_1_1Coord.html',1,'id::ui']]],
-  ['crosshaircursor_12',['CrossHairCursor',['../d6/ddb/classid_1_1ui_1_1CrossHairCursor.html',1,'id::ui']]],
-  ['currentpathsaver_13',['CurrentPathSaver',['../df/d30/classid_1_1io_1_1CurrentPathSaver.html',1,'id::io']]]
+  ['compiledformula_7',['CompiledFormula',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html',1,'id::fractals']]],
+  ['compiler_8',['Compiler',['../d0/de5/classhc_1_1Compiler.html',1,'hc']]],
+  ['complex_9',['Complex',['../dc/dd7/structid_1_1math_1_1Complex.html',1,'id::math']]],
+  ['complex_3c_20double_20_3e_10',['Complex&lt; double &gt;',['../dc/dd7/structid_1_1math_1_1Complex.html',1,'id::math']]],
+  ['constarg_11',['ConstArg',['../d0/d15/structid_1_1fractals_1_1ConstArg.html',1,'id::fractals']]],
+  ['content_12',['Content',['../d4/d84/structhc_1_1Content.html',1,'hc']]],
+  ['coord_13',['Coord',['../d5/d2a/structid_1_1ui_1_1Coord.html',1,'id::ui']]],
+  ['crosshaircursor_14',['CrossHairCursor',['../d6/ddb/classid_1_1ui_1_1CrossHairCursor.html',1,'id::ui']]],
+  ['currentpathsaver_15',['CurrentPathSaver',['../df/d30/classid_1_1io_1_1CurrentPathSaver.html',1,'id::io']]]
 ];

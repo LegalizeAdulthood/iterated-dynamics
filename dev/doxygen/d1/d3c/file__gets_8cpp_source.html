@@ -100,13 +100,13 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>    {</div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>        <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    }</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#afed088663f8704004425cdae2120b9b3">len</a> = 0;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">while</span> (<a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#afed088663f8704004425cdae2120b9b3">len</a> &lt; max_len)</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a4960e0db764d064fd8e2ed33fe9bdbe9">len</a> = 0;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    <span class="keywordflow">while</span> (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a4960e0db764d064fd8e2ed33fe9bdbe9">len</a> &lt; max_len)</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>    {</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>        <span class="keyword">const</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a> = std::getc(infile);</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a> == EOF)</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>        {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#afed088663f8704004425cdae2120b9b3">len</a>)</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>            <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a4960e0db764d064fd8e2ed33fe9bdbe9">len</a>)</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>            {</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>                <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>            }</div>
@@ -118,20 +118,20 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        }</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a> != <span class="charliteral">&#39;\r&#39;</span>)</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        {</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>            buf[<a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#afed088663f8704004425cdae2120b9b3">len</a>++] = <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a>);    <span class="comment">// ignore c/r</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>            buf[<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a4960e0db764d064fd8e2ed33fe9bdbe9">len</a>++] = <span class="keyword">static_cast&lt;</span><span class="keywordtype">char</span><span class="keyword">&gt;</span>(<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a>);    <span class="comment">// ignore c/r</span></div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        }</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    buf[<a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#afed088663f8704004425cdae2120b9b3">len</a>] = 0;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#afed088663f8704004425cdae2120b9b3">len</a>;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    buf[<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a4960e0db764d064fd8e2ed33fe9bdbe9">len</a>] = 0;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a4960e0db764d064fd8e2ed33fe9bdbe9">len</a>;</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>}</div>
 </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>} <span class="comment">// namespace id::io</span></div>
 <div class="ttc" id="afile__gets_8h_html"><div class="ttname"><a href="../../d8/d17/file__gets_8h.html">file_gets.h</a></div></div>
+<div class="ttc" id="ahelp_8cpp_html_a4960e0db764d064fd8e2ed33fe9bdbe9"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#a4960e0db764d064fd8e2ed33fe9bdbe9">len</a></div><div class="ttdeci">unsigned len</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00089">help.cpp:89</a></div></div>
 <div class="ttc" id="ahelp_8cpp_html_ace750fb09c482b08a31e24228dd719b7"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a></div><div class="ttdeci">Byte c</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00073">help.cpp:73</a></div></div>
 <div class="ttc" id="anamespaceid_1_1io_html"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html">id::io</a></div><div class="ttdef"><b>Definition</b> <a href="../../d2/d3f/check__write__file_8h_source.html#l00007">check_write_file.h:8</a></div></div>
 <div class="ttc" id="anamespaceid_1_1io_html_af313f9792b367773b88121ee568569bf"><div class="ttname"><a href="../../d0/d19/namespaceid_1_1io.html#af313f9792b367773b88121ee568569bf">id::io::file_gets</a></div><div class="ttdeci">int file_gets(char *buf, int max_len, std::FILE *infile)</div><div class="ttdef"><b>Definition</b> <a href="../../d1/d3c/file__gets_8cpp_source.html#l00010">file_gets.cpp:10</a></div></div>
-<div class="ttc" id="aparser_8cpp_html_afed088663f8704004425cdae2120b9b3"><div class="ttname"><a href="../../dc/ddd/parser_8cpp.html#afed088663f8704004425cdae2120b9b3">len</a></div><div class="ttdeci">int len</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00303">parser.cpp:303</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

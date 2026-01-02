@@ -8,7 +8,8 @@ var searchData=
   ['error_5fpos_5',['error_pos',['../dc/ddd/parser_8cpp.html#a35bee0ef3f93d06e975dfddc2821242b',1,'parser.cpp']]],
   ['esc_6',['esc',['../de/d47/soi_8cpp.html#a618ba936a7c5217ba096fcba2c367747',1,'soi.cpp']]],
   ['evolving_7',['evolving',['../de/deb/structid_1_1io_1_1ExtBlock6.html#a4946de6558fbfe3d102fb792407dcab1',1,'id::io::ExtBlock6::evolving'],['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a9209e01dbd443f07c58a090e5579b998',1,'id::ui::EvolutionInfo::evolving']]],
-  ['eye_5fseparation_8',['eye_separation',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a1485a60b7b5e28ba0b7c5ed2cb9aa534',1,'id::io::FractalInfo::eye_separation'],['../d1/d3e/history_8cpp.html#ae7bd555b40170e20b61e823d834854cc',1,'eye_separation:&#160;history.cpp']]],
-  ['eyes_9',['eyes',['../d1/d3e/history_8cpp.html#a0db6a353dbc90eb36f5fc6ff61dcc269',1,'history.cpp']]],
-  ['eyes_5ffp_10',['eyes_fp',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a3aa3c9936262dc91e49e9bf1591f9e12',1,'id::io::FractalInfo']]]
+  ['expecting_5farg_8',['expecting_arg',['../dc/ddd/parser_8cpp.html#a7aafad5a748bc2a4d51d7b05ee4ed803',1,'parser.cpp']]],
+  ['eye_5fseparation_9',['eye_separation',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a1485a60b7b5e28ba0b7c5ed2cb9aa534',1,'id::io::FractalInfo::eye_separation'],['../d1/d3e/history_8cpp.html#ae7bd555b40170e20b61e823d834854cc',1,'eye_separation:&#160;history.cpp']]],
+  ['eyes_10',['eyes',['../d1/d3e/history_8cpp.html#a0db6a353dbc90eb36f5fc6ff61dcc269',1,'history.cpp']]],
+  ['eyes_5ffp_11',['eyes_fp',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a3aa3c9936262dc91e49e9bf1591f9e12',1,'id::io::FractalInfo']]]
 ];

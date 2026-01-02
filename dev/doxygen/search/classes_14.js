@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['wildcardsearch_0',['WildcardSearch',['../dd/d12/structid_1_1io_1_1WildcardSearch.html',1,'id::io']]],
-  ['win32basedriver_1',['Win32BaseDriver',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html',1,'id::misc']]],
-  ['wintext_2',['WinText',['../db/de5/classid_1_1misc_1_1WinText.html',1,'id::misc']]],
-  ['worklist_3',['WorkList',['../da/dac/structid_1_1engine_1_1WorkList.html',1,'id::engine']]],
-  ['writebatchdata_4',['WriteBatchData',['../d9/d9b/structid_1_1ui_1_1WriteBatchData.html',1,'id::ui']]]
+  ['valuesaver_0',['ValueSaver',['../db/dc9/classid_1_1misc_1_1ValueSaver.html',1,'id::misc']]],
+  ['valuesaver_3c_20bool_20_3e_1',['ValueSaver&lt; bool &gt;',['../db/dc9/classid_1_1misc_1_1ValueSaver.html',1,'id::misc']]],
+  ['version_2',['Version',['../de/d26/structid_1_1misc_1_1Version.html',1,'id::misc']]],
+  ['videoinfo_3',['VideoInfo',['../df/d1e/structid_1_1engine_1_1VideoInfo.html',1,'id::engine']]],
+  ['viewport_4',['Viewport',['../da/d47/structid_1_1engine_1_1Viewport.html',1,'id::engine']]],
+  ['viewtransform3d_5',['ViewTransform3D',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html',1,'id::fractals']]]
 ];

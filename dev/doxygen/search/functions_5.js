@@ -42,7 +42,7 @@ var searchData=
   ['free_5fqueue_39',['free_queue',['../dc/d31/namespaceid_1_1engine.html#a909dfe751c02738bec37e0508adfdd32',1,'id::engine']]],
   ['free_5ftemp_5fmsg_40',['free_temp_msg',['../dc/d76/namespaceid_1_1ui.html#ab86284d655e4f50d4ba2433642dc19a4',1,'id::ui']]],
   ['free_5fwork_5farea_41',['free_work_area',['../d5/d38/namespaceid_1_1fractals.html#a9fc13ccca9d1b5c757ac8dda7af13cc5',1,'id::fractals']]],
-  ['frm_5fget_5fparam_5fstuff_42',['frm_get_param_stuff',['../d5/d38/namespaceid_1_1fractals.html#a84271d42735f0d950f2f812ebd7ab4a8',1,'id::fractals']]],
+  ['frm_5fget_5fparam_5fstuff_42',['frm_get_param_stuff',['../d5/d38/namespaceid_1_1fractals.html#a9e2e5642656ef5a250721d4c2a750ada',1,'id::fractals']]],
   ['from_5fdigit_43',['from_digit',['../d5/d38/namespaceid_1_1fractals.html#a11c266106868c9d994c4ad79190ff855',1,'id::fractals']]],
   ['from_5fmem_5fdisk_44',['from_mem_disk',['../dc/d76/namespaceid_1_1ui.html#a4d5285da849f9211dc3d5ab78ad75adb',1,'id::ui']]],
   ['from_5fmemory_45',['from_memory',['../d2/d2f/structid_1_1misc_1_1MemoryHandle.html#a46e83276a4663cdd3fc312321b58928b',1,'id::misc::MemoryHandle']]],

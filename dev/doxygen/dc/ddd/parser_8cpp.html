@@ -75,6 +75,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#define-members">Macros</a> &#124;
 <a href="#func-members">Functions</a>  </div>
@@ -87,7 +88,9 @@ $(function() {
 <code>#include &quot;<a class="el" href="../../da/d2f/Inversion_8h_source.html">engine/Inversion.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../df/dab/LogicalScreen_8h_source.html">engine/LogicalScreen.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d4/d69/pixel__grid_8h_source.html">engine/pixel_grid.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d3/d9a/formula_8h_source.html">fractals/formula.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d7/d61/fractalp_8h_source.html">fractals/fractalp.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d3/d97/interpreter_8h_source.html">fractals/interpreter.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d5/da2/newton_8h_source.html">fractals/newton.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d6/d68/file__item_8h_source.html">io/file_item.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../dd/d08/library_8h_source.html">io/library.h</a>&quot;</code><br />
@@ -111,11 +114,19 @@ $(function() {
 <code>#include &lt;cstdlib&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;ctime&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
+<code>#include &lt;string_view&gt;</code><br />
+<code>#include &lt;tuple&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div>
 <p><a href="../../dc/ddd/parser_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/da1/structid_1_1fractals_1_1OperationName.html">id::fractals::OperationName</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:d5/dd7/namespaceid" id="r_d5/dd7/namespaceid"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dd7/namespaceid.html">id</a></td></tr>
@@ -125,103 +136,35 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
-<tr class="memitem:afd6ce00b1c97119802be76daee5069b8" id="r_afd6ce00b1c97119802be76daee5069b8"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/parser_8cpp.html#afd6ce00b1c97119802be76daee5069b8">LAST_SQR</a>&#160;&#160;&#160;(s_vars[4].<a class="el" href="../../dc/ddd/parser_8cpp.html#af16d1c377d8d6cb2fcf5bdc6e53dc696">a</a>)</td></tr>
-<tr class="separator:afd6ce00b1c97119802be76daee5069b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87d8f4af4b6d511b7557acd38373cae6" id="r_a87d8f4af4b6d511b7557acd38373cae6"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/parser_8cpp.html#a87d8f4af4b6d511b7557acd38373cae6">CASE_TERMINATOR</a></td></tr>
 <tr class="separator:a87d8f4af4b6d511b7557acd38373cae6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0435315e622fcb8848f272227a51990" id="r_ad0435315e622fcb8848f272227a51990"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/parser_8cpp.html#ad0435315e622fcb8848f272227a51990">CASE_ALPHA</a></td></tr>
 <tr class="separator:ad0435315e622fcb8848f272227a51990"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a160ba5ef42248d37bdeed255d47ad0d0" id="r_a160ba5ef42248d37bdeed255d47ad0d0"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/parser_8cpp.html#a160ba5ef42248d37bdeed255d47ad0d0">CASE_NUM</a></td></tr>
 <tr class="separator:a160ba5ef42248d37bdeed255d47ad0d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad824199a7c2c485c909ac45e2a10ae50" id="r_ad824199a7c2c485c909ac45e2a10ae50"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/parser_8cpp.html#ad824199a7c2c485c909ac45e2a10ae50">MAX_STORES</a>&#160;&#160;&#160;((g_max_function_ops/4)*2)</td></tr>
+<tr class="memitem:ad824199a7c2c485c909ac45e2a10ae50" id="r_ad824199a7c2c485c909ac45e2a10ae50"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/parser_8cpp.html#ad824199a7c2c485c909ac45e2a10ae50">MAX_STORES</a>&#160;&#160;&#160;((g_formula.max_ops/4)*2)</td></tr>
 <tr class="separator:ad824199a7c2c485c909ac45e2a10ae50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c39a9f0acd264279f05f867c2d5efa1" id="r_a5c39a9f0acd264279f05f867c2d5efa1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/parser_8cpp.html#a5c39a9f0acd264279f05f867c2d5efa1">MAX_LOADS</a>&#160;&#160;&#160;((unsigned)(g_max_function_ops*.8))</td></tr>
+<tr class="memitem:a5c39a9f0acd264279f05f867c2d5efa1" id="r_a5c39a9f0acd264279f05f867c2d5efa1"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/ddd/parser_8cpp.html#a5c39a9f0acd264279f05f867c2d5efa1">MAX_LOADS</a>&#160;&#160;&#160;((unsigned)(g_formula.max_ops*.8))</td></tr>
 <tr class="separator:a5c39a9f0acd264279f05f867c2d5efa1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a39fe20808da97c11730074f1d123e031" id="r_a39fe20808da97c11730074f1d123e031"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a39fe20808da97c11730074f1d123e031">id::fractals::d_stk_abs</a> ()</td></tr>
-<tr class="separator:a39fe20808da97c11730074f1d123e031"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab22f7ff1f33a48ab3736af3ad61cb718" id="r_ab22f7ff1f33a48ab3736af3ad61cb718"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab22f7ff1f33a48ab3736af3ad61cb718">id::fractals::d_stk_sqr</a> ()</td></tr>
-<tr class="separator:ab22f7ff1f33a48ab3736af3ad61cb718"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72f71aa9cef8d18a4ab8d0cf287e0198" id="r_a72f71aa9cef8d18a4ab8d0cf287e0198"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a72f71aa9cef8d18a4ab8d0cf287e0198">id::fractals::d_stk_conj</a> ()</td></tr>
-<tr class="separator:a72f71aa9cef8d18a4ab8d0cf287e0198"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6131dc7aac0a7257a20688c501d869e" id="r_ab6131dc7aac0a7257a20688c501d869e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab6131dc7aac0a7257a20688c501d869e">id::fractals::d_stk_floor</a> ()</td></tr>
-<tr class="separator:ab6131dc7aac0a7257a20688c501d869e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f70fe66ff8ef0f4a74bb173c7dc65a8" id="r_a3f70fe66ff8ef0f4a74bb173c7dc65a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a3f70fe66ff8ef0f4a74bb173c7dc65a8">id::fractals::d_stk_ceil</a> ()</td></tr>
-<tr class="separator:a3f70fe66ff8ef0f4a74bb173c7dc65a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68dc08c0e0dfbaec6743347e8e14f085" id="r_a68dc08c0e0dfbaec6743347e8e14f085"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a68dc08c0e0dfbaec6743347e8e14f085">id::fractals::d_stk_trunc</a> ()</td></tr>
-<tr class="separator:a68dc08c0e0dfbaec6743347e8e14f085"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e96bd80a1bdc5e1c798b788f12968ef" id="r_a4e96bd80a1bdc5e1c798b788f12968ef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a4e96bd80a1bdc5e1c798b788f12968ef">id::fractals::d_stk_round</a> ()</td></tr>
-<tr class="separator:a4e96bd80a1bdc5e1c798b788f12968ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31511e7fd145989928abd9173a5576e4" id="r_a31511e7fd145989928abd9173a5576e4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a31511e7fd145989928abd9173a5576e4">id::fractals::d_stk_zero</a> ()</td></tr>
-<tr class="separator:a31511e7fd145989928abd9173a5576e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a763f95c39440093161e264b351ccc81c" id="r_a763f95c39440093161e264b351ccc81c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a763f95c39440093161e264b351ccc81c">id::fractals::d_stk_one</a> ()</td></tr>
-<tr class="separator:a763f95c39440093161e264b351ccc81c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cc97e07b47bf8d36b7fb7ce89b9013c" id="r_a8cc97e07b47bf8d36b7fb7ce89b9013c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a8cc97e07b47bf8d36b7fb7ce89b9013c">id::fractals::d_stk_mul</a> ()</td></tr>
-<tr class="separator:a8cc97e07b47bf8d36b7fb7ce89b9013c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae510945bdc33f3d2d50481c883c22438" id="r_ae510945bdc33f3d2d50481c883c22438"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ae510945bdc33f3d2d50481c883c22438">id::fractals::d_stk_flip</a> ()</td></tr>
-<tr class="separator:ae510945bdc33f3d2d50481c883c22438"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a739184147ff19d1c163c78221268bad3" id="r_a739184147ff19d1c163c78221268bad3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a739184147ff19d1c163c78221268bad3">id::fractals::d_stk_sin</a> ()</td></tr>
-<tr class="separator:a739184147ff19d1c163c78221268bad3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad31e7b38ebb9aefcaed003b4ded785d" id="r_aad31e7b38ebb9aefcaed003b4ded785d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#aad31e7b38ebb9aefcaed003b4ded785d">id::fractals::d_stk_tan</a> ()</td></tr>
-<tr class="separator:aad31e7b38ebb9aefcaed003b4ded785d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66dcb400f3576369e4ec2e29525b18f8" id="r_a66dcb400f3576369e4ec2e29525b18f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a66dcb400f3576369e4ec2e29525b18f8">id::fractals::d_stk_tanh</a> ()</td></tr>
-<tr class="separator:a66dcb400f3576369e4ec2e29525b18f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f7322e0d17a11ea9421657f24f1e9d9" id="r_a8f7322e0d17a11ea9421657f24f1e9d9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a8f7322e0d17a11ea9421657f24f1e9d9">id::fractals::d_stk_cotan</a> ()</td></tr>
-<tr class="separator:a8f7322e0d17a11ea9421657f24f1e9d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16beb756e3ae00c5f123b932f8b63550" id="r_a16beb756e3ae00c5f123b932f8b63550"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a16beb756e3ae00c5f123b932f8b63550">id::fractals::d_stk_cotanh</a> ()</td></tr>
-<tr class="separator:a16beb756e3ae00c5f123b932f8b63550"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84648bb1cf6dddfeec2011c868d6107d" id="r_a84648bb1cf6dddfeec2011c868d6107d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a84648bb1cf6dddfeec2011c868d6107d">id::fractals::d_stk_recip</a> ()</td></tr>
-<tr class="separator:a84648bb1cf6dddfeec2011c868d6107d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6620552a764c39ae1fe8a2e894f1c22" id="r_ae6620552a764c39ae1fe8a2e894f1c22"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ae6620552a764c39ae1fe8a2e894f1c22">id::fractals::stk_ident</a> ()</td></tr>
-<tr class="separator:ae6620552a764c39ae1fe8a2e894f1c22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad90f16333a4bcbb8b8d082e563d7ae44" id="r_ad90f16333a4bcbb8b8d082e563d7ae44"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ad90f16333a4bcbb8b8d082e563d7ae44">id::fractals::d_stk_sinh</a> ()</td></tr>
-<tr class="separator:ad90f16333a4bcbb8b8d082e563d7ae44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a49d2f811187ccf0d544a60f36656e4be" id="r_a49d2f811187ccf0d544a60f36656e4be"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a49d2f811187ccf0d544a60f36656e4be">id::fractals::d_stk_cos</a> ()</td></tr>
-<tr class="separator:a49d2f811187ccf0d544a60f36656e4be"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22c8954477a44a4e897d44ef10892865" id="r_a22c8954477a44a4e897d44ef10892865"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a22c8954477a44a4e897d44ef10892865">id::fractals::d_stk_cosxx</a> ()</td></tr>
-<tr class="separator:a22c8954477a44a4e897d44ef10892865"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2087a442e11480e9feb229767d5bf2f5" id="r_a2087a442e11480e9feb229767d5bf2f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a2087a442e11480e9feb229767d5bf2f5">id::fractals::d_stk_cosh</a> ()</td></tr>
-<tr class="separator:a2087a442e11480e9feb229767d5bf2f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe8722657bf18a5409b132472795ae6a" id="r_abe8722657bf18a5409b132472795ae6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#abe8722657bf18a5409b132472795ae6a">id::fractals::d_stk_asin</a> ()</td></tr>
-<tr class="separator:abe8722657bf18a5409b132472795ae6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab63f5790bb12355b27d6080b09366d34" id="r_ab63f5790bb12355b27d6080b09366d34"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab63f5790bb12355b27d6080b09366d34">id::fractals::d_stk_asinh</a> ()</td></tr>
-<tr class="separator:ab63f5790bb12355b27d6080b09366d34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aceb17c77599bdb5ef0668006da01a3f2" id="r_aceb17c77599bdb5ef0668006da01a3f2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#aceb17c77599bdb5ef0668006da01a3f2">id::fractals::d_stk_acos</a> ()</td></tr>
-<tr class="separator:aceb17c77599bdb5ef0668006da01a3f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf7ab990bd3cd9ade497e429576afd5f" id="r_abf7ab990bd3cd9ade497e429576afd5f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#abf7ab990bd3cd9ade497e429576afd5f">id::fractals::d_stk_acosh</a> ()</td></tr>
-<tr class="separator:abf7ab990bd3cd9ade497e429576afd5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0232b6a6051a26ff126cc453e216b574" id="r_a0232b6a6051a26ff126cc453e216b574"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a0232b6a6051a26ff126cc453e216b574">id::fractals::d_stk_atan</a> ()</td></tr>
-<tr class="separator:a0232b6a6051a26ff126cc453e216b574"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8dd23baa3b12148ffcf70710dd2924d" id="r_af8dd23baa3b12148ffcf70710dd2924d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#af8dd23baa3b12148ffcf70710dd2924d">id::fractals::d_stk_atanh</a> ()</td></tr>
-<tr class="separator:af8dd23baa3b12148ffcf70710dd2924d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdd0dee3febb215c66fed96fe3497b52" id="r_acdd0dee3febb215c66fed96fe3497b52"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#acdd0dee3febb215c66fed96fe3497b52">id::fractals::d_stk_sqrt</a> ()</td></tr>
-<tr class="separator:acdd0dee3febb215c66fed96fe3497b52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a183caf47011e4ed9d5d8b2c47ff37666" id="r_a183caf47011e4ed9d5d8b2c47ff37666"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a183caf47011e4ed9d5d8b2c47ff37666">id::fractals::d_stk_cabs</a> ()</td></tr>
-<tr class="separator:a183caf47011e4ed9d5d8b2c47ff37666"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c3b9738968e31827fab77f4abb554a7" id="r_a7c3b9738968e31827fab77f4abb554a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a7c3b9738968e31827fab77f4abb554a7">id::fractals::d_stk_log</a> ()</td></tr>
-<tr class="separator:a7c3b9738968e31827fab77f4abb554a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cd82b704ce3ad0805b5b64105edbb43" id="r_a0cd82b704ce3ad0805b5b64105edbb43"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a0cd82b704ce3ad0805b5b64105edbb43">id::fractals::d_stk_exp</a> ()</td></tr>
-<tr class="separator:a0cd82b704ce3ad0805b5b64105edbb43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f75b98f1e4d3e8c8fb910ec5837f6b4" id="r_a3f75b98f1e4d3e8c8fb910ec5837f6b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a3f75b98f1e4d3e8c8fb910ec5837f6b4">id::fractals::d_stk_pwr</a> ()</td></tr>
-<tr class="separator:a3f75b98f1e4d3e8c8fb910ec5837f6b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade96e65a15f2d946e35241da0684120c" id="r_ade96e65a15f2d946e35241da0684120c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ade96e65a15f2d946e35241da0684120c">id::fractals::formula_orbit</a> ()</td></tr>
-<tr class="separator:ade96e65a15f2d946e35241da0684120c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab016d7056c2108baf97879195cbc7f43" id="r_ab016d7056c2108baf97879195cbc7f43"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab016d7056c2108baf97879195cbc7f43">id::fractals::formula_per_pixel</a> ()</td></tr>
-<tr class="separator:ab016d7056c2108baf97879195cbc7f43"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84271d42735f0d950f2f812ebd7ab4a8" id="r_a84271d42735f0d950f2f812ebd7ab4a8"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a84271d42735f0d950f2f812ebd7ab4a8">id::fractals::frm_get_param_stuff</a> (const char *<a class="el" href="../../dd/d9e/get__fract__type_8cpp.html#a6bccb8d69041825bceb9c678a8d1134d">name</a>)</td></tr>
-<tr class="separator:a84271d42735f0d950f2f812ebd7ab4a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10ce61de907a766e06255baa25667cd7" id="r_a10ce61de907a766e06255baa25667cd7"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a10ce61de907a766e06255baa25667cd7">id::fractals::bad_formula</a> ()</td></tr>
-<tr class="separator:a10ce61de907a766e06255baa25667cd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affd6c7ae2f267b0658c6a5ea591247fe" id="r_affd6c7ae2f267b0658c6a5ea591247fe"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#affd6c7ae2f267b0658c6a5ea591247fe">id::fractals::run_formula</a> (const std::string &amp;<a class="el" href="../../dd/d9e/get__fract__type_8cpp.html#a6bccb8d69041825bceb9c678a8d1134d">name</a>, bool report_bad_sym)</td></tr>
-<tr class="separator:affd6c7ae2f267b0658c6a5ea591247fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba0f48723ab042e91df9c6147ab002f4" id="r_aba0f48723ab042e91df9c6147ab002f4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#aba0f48723ab042e91df9c6147ab002f4">id::fractals::formula_per_image</a> ()</td></tr>
-<tr class="separator:aba0f48723ab042e91df9c6147ab002f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e2e5642656ef5a250721d4c2a750ada" id="r_a9e2e5642656ef5a250721d4c2a750ada"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9e2e5642656ef5a250721d4c2a750ada">id::fractals::frm_get_param_stuff</a> (std::filesystem::path &amp;<a class="el" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>, const char *<a class="el" href="../../dd/d9e/get__fract__type_8cpp.html#a6bccb8d69041825bceb9c678a8d1134d">name</a>)</td></tr>
+<tr class="separator:a9e2e5642656ef5a250721d4c2a750ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8b441af2ccab0e6c4c7e674f89e37ea" id="r_ab8b441af2ccab0e6c4c7e674f89e37ea"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab8b441af2ccab0e6c4c7e674f89e37ea">id::fractals::parse_formula</a> (std::filesystem::path &amp;<a class="el" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>, const std::string &amp;<a class="el" href="../../dd/d9e/get__fract__type_8cpp.html#a6bccb8d69041825bceb9c678a8d1134d">name</a>, bool report_bad_sym)</td></tr>
+<tr class="separator:ab8b441af2ccab0e6c4c7e674f89e37ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48b7cff85150496607697820fb63a558" id="r_a48b7cff85150496607697820fb63a558"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a48b7cff85150496607697820fb63a558">id::fractals::init_misc</a> ()</td></tr>
 <tr class="separator:a48b7cff85150496607697820fb63a558"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fc13ccca9d1b5c757ac8dda7af13cc5" id="r_a9fc13ccca9d1b5c757ac8dda7af13cc5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9fc13ccca9d1b5c757ac8dda7af13cc5">id::fractals::free_work_area</a> ()</td></tr>
 <tr class="separator:a9fc13ccca9d1b5c757ac8dda7af13cc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a147b27618cd072592639ab7a7c270b72" id="r_a147b27618cd072592639ab7a7c270b72"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a147b27618cd072592639ab7a7c270b72">id::fractals::get_parser_state</a> ()</td></tr>
+<tr class="memdesc:a147b27618cd072592639ab7a7c270b72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get current parser state for testing/debugging.  <br /></td></tr>
+<tr class="separator:a147b27618cd072592639ab7a7c270b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acfff2d7afbf6f3f424640938afeadd34" id="r_acfff2d7afbf6f3f424640938afeadd34"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#acfff2d7afbf6f3f424640938afeadd34">id::fractals::parse_formula</a> (const <a class="el" href="../../d3/d22/structid_1_1fractals_1_1FormulaEntry.html">FormulaEntry</a> &amp;formula_entry, bool report_bad_sym)</td></tr>
+<tr class="memdesc:acfff2d7afbf6f3f424640938afeadd34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parse formula for testing without executing.  <br /></td></tr>
+<tr class="separator:acfff2d7afbf6f3f424640938afeadd34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae9b177056fba8bebd266b5561841e24f" id="r_ae9b177056fba8bebd266b5561841e24f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ae9b177056fba8bebd266b5561841e24f">id::fractals::parser_reset</a> ()</td></tr>
+<tr class="separator:ae9b177056fba8bebd266b5561841e24f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
 <a id="ad0435315e622fcb8848f272227a51990" name="ad0435315e622fcb8848f272227a51990"></a>
@@ -262,7 +205,7 @@ Functions</h2></td></tr>
 <div class="line">                        <span class="keywordflow">case</span> <span class="charliteral">&#39;y&#39;</span>:\</div>
 <div class="line">                        <span class="keywordflow">case</span> <span class="charliteral">&#39;z&#39;</span></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00518">518</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00525">525</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -288,7 +231,7 @@ Functions</h2></td></tr>
 <div class="line">                        <span class="keywordflow">case</span> <span class="charliteral">&#39;8&#39;</span>:\</div>
 <div class="line">                        <span class="keywordflow">case</span> <span class="charliteral">&#39;9&#39;</span></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00545">545</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00552">552</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -321,23 +264,7 @@ Functions</h2></td></tr>
 <div class="line">                        <span class="keywordflow">case</span> <span class="charliteral">&#39;/&#39;</span>:\</div>
 <div class="line">                        <span class="keywordflow">case</span> <span class="charliteral">&#39;^&#39;</span></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00500">500</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
-
-</div>
-</div>
-<a id="afd6ce00b1c97119802be76daee5069b8" name="afd6ce00b1c97119802be76daee5069b8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd6ce00b1c97119802be76daee5069b8">&#9670;&#160;</a></span>LAST_SQR</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">#define LAST_SQR&#160;&#160;&#160;(s_vars[4].<a class="el" href="../../dc/ddd/parser_8cpp.html#af16d1c377d8d6cb2fcf5bdc6e53dc696">a</a>)</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00364">364</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00507">507</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -348,12 +275,12 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define MAX_LOADS&#160;&#160;&#160;((unsigned)(g_max_function_ops*.8))</td>
+          <td class="memname">#define MAX_LOADS&#160;&#160;&#160;((unsigned)(g_formula.max_ops*.8))</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00559">559</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00566">566</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -364,29 +291,29 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define MAX_STORES&#160;&#160;&#160;((g_max_function_ops/4)*2)</td>
+          <td class="memname">#define MAX_STORES&#160;&#160;&#160;((g_formula.max_ops/4)*2)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00558">558</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00565">565</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>
-<a id="af16d1c377d8d6cb2fcf5bdc6e53dc696" name="af16d1c377d8d6cb2fcf5bdc6e53dc696"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af16d1c377d8d6cb2fcf5bdc6e53dc696">&#9670;&#160;</a></span>a</h2>
+<a id="a08b3bf5950d751b8b23b74c4f15d4099" name="a08b3bf5950d751b8b23b74c4f15d4099"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a08b3bf5950d751b8b23b74c4f15d4099">&#9670;&#160;</a></span>chars_in_formula</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d8/de8/structid_1_1math_1_1Arg.html">Arg</a> a</td>
+          <td class="memname">unsigned int chars_in_formula {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00304">304</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00288">288</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -402,23 +329,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00276">276</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a5ec254206c9435d4c3052740335bb370" name="a5ec254206c9435d4c3052740335bb370"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ec254206c9435d4c3052740335bb370">&#9670;&#160;</a></span>dest_jump_index</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int dest_jump_index</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00268">268</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00259">259</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -434,7 +345,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00295">295</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00278">278</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -450,23 +361,23 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00294">294</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00277">277</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a6500789436e7a0a3c5865cc4c11e9053" name="a6500789436e7a0a3c5865cc4c11e9053"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6500789436e7a0a3c5865cc4c11e9053">&#9670;&#160;</a></span>f</h2>
+<a id="a7aafad5a748bc2a4d51d7b05ee4ed803" name="a7aafad5a748bc2a4d51d7b05ee4ed803"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7aafad5a748bc2a4d51d7b05ee4ed803">&#9670;&#160;</a></span>expecting_arg</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">FunctionPtr f</td>
+          <td class="memname">bool expecting_arg {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00253">253</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00287">287</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -482,103 +393,71 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00275">275</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00258">258</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ac110b86ac2bd15262d101e5177091bc5" name="ac110b86ac2bd15262d101e5177091bc5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac110b86ac2bd15262d101e5177091bc5">&#9670;&#160;</a></span>jump_lod_ptr</h2>
+<a id="a5ddc796272d9452249c80ae94bfaf934" name="a5ddc796272d9452249c80ae94bfaf934"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ddc796272d9452249c80ae94bfaf934">&#9670;&#160;</a></span>init_n</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int jump_lod_ptr</td>
+          <td class="memname">unsigned int init_n {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00260">260</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00286">286</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
-<a id="a90996bc8bf105728df2046aaec8b4e9f" name="a90996bc8bf105728df2046aaec8b4e9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90996bc8bf105728df2046aaec8b4e9f">&#9670;&#160;</a></span>jump_op_ptr</h2>
+<a id="a7d46b74409bd32b539089ef4721ea544" name="a7d46b74409bd32b539089ef4721ea544"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d46b74409bd32b539089ef4721ea544">&#9670;&#160;</a></span>n</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int jump_op_ptr</td>
+          <td class="memname">unsigned int n {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00259">259</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00271">271</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
-<a id="abb80d4244a72692d30fca02e5a4c46c3" name="abb80d4244a72692d30fca02e5a4c46c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abb80d4244a72692d30fca02e5a4c46c3">&#9670;&#160;</a></span>jump_sto_ptr</h2>
+<a id="abdfd12deea3953ce81836317c0edfb69" name="abdfd12deea3953ce81836317c0edfb69"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abdfd12deea3953ce81836317c0edfb69">&#9670;&#160;</a></span>next_op</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int jump_sto_ptr</td>
+          <td class="memname">unsigned int next_op {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00261">261</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00285">285</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
-<a id="afed088663f8704004425cdae2120b9b3" name="afed088663f8704004425cdae2120b9b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afed088663f8704004425cdae2120b9b3">&#9670;&#160;</a></span>len</h2>
+<a id="aa07b400fcc45bfc5c3e4f3db77c7414f" name="aa07b400fcc45bfc5c3e4f3db77c7414f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa07b400fcc45bfc5c3e4f3db77c7414f">&#9670;&#160;</a></span>paren</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int len</td>
+          <td class="memname">int paren {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00303">303</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a9871e01ff9b1ebcbb5675c9f6fbe392c" name="a9871e01ff9b1ebcbb5675c9f6fbe392c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9871e01ff9b1ebcbb5675c9f6fbe392c">&#9670;&#160;</a></span>n</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af4c2834f4c388e93be6ff71cf0f6e5ba">SymmetryType</a> n</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00288">288</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a533391314665d6bf1b5575e9a9cd8552" name="a533391314665d6bf1b5575e9a9cd8552"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a533391314665d6bf1b5575e9a9cd8552">&#9670;&#160;</a></span>p</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int p</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00254">254</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00283">283</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -594,23 +473,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00282">282</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
-
-</div>
-</div>
-<a id="add742ed3bfc6d01e66a49fb7098dbdf4" name="add742ed3bfc6d01e66a49fb7098dbdf4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add742ed3bfc6d01e66a49fb7098dbdf4">&#9670;&#160;</a></span>ptrs</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">JumpPtrs ptrs</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00267">267</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00265">265</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -626,7 +489,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00281">281</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00264">264</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -642,7 +505,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00293">293</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00276">276</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -658,7 +521,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00273">273</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00256">256</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>
@@ -674,7 +537,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00266">266</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/ddd/parser_8cpp_source.html#l00257">257</a> of file <a class="el" href="../../dc/ddd/parser_8cpp_source.html">parser.cpp</a>.</p>
 
 </div>
 </div>

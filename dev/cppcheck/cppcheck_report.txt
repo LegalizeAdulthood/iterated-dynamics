@@ -127,17 +127,29 @@ libid/fractals/lyapunov.cpp:131:19: portability: Shifting signed 32-bit value by
 libid/fractals/lyapunov.cpp:131:19: error: Signed integer overflow for expression '1<<t'. [integerOverflow]
         if (i & 1 << t)
                   ^
-libid/fractals/parser.cpp:1660:34: style: Array index 's_next_op' is used before limits check. [arrayIndexThenCheck]
-    while (s_op[this_op].p > s_op[s_next_op].p && s_next_op < g_operation_index)
-                                 ^
-libid/fractals/parser.cpp:1748:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
-        if (!text[s_n])
+libid/fractals/parser.cpp:362:5: style: Class 'ReaderPositionSaver' has a constructor with 1 argument that is not explicit. [noExplicitConstructor]
+    ReaderPositionSaver(Reader &reader) :
+    ^
+libid/fractals/parser.cpp:914:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+        if (!text[s_parser.n])
             ^
-libid/fractals/parser.cpp:1746:23: note: outer condition: text[s_n]
-    for (s_n = 0; text[s_n]; s_n++)
-                      ^
-libid/fractals/parser.cpp:1748:13: note: opposite inner condition: !text[s_n]
-        if (!text[s_n])
+libid/fractals/parser.cpp:912:30: note: outer condition: text[s_parser.n]
+    for (s_parser.n = 0; text[s_parser.n]; s_parser.n++)
+                             ^
+libid/fractals/parser.cpp:914:13: note: opposite inner condition: !text[s_parser.n]
+        if (!text[s_parser.n])
+            ^
+libid/fractals/parser.cpp:1885:37: style: Local variable 'path' shadows outer argument [shadowArgument]
+        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmtokens.txt")};
+                                    ^
+libid/fractals/parser.cpp:1849:48: note: Shadowed declaration
+int frm_get_param_stuff(std::filesystem::path &path, const char *name)
+                                               ^
+libid/fractals/parser.cpp:1885:37: note: Shadow variable
+        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmtokens.txt")};
+                                    ^
+libid/fractals/parser.cpp:3307:13: style: Consider using std::count_if algorithm instead of a raw loop. [useStlAlgorithm]
+            store_count++;
             ^
 libid/geometry/line3d.cpp:1891:19: style: Condition 'path.empty()' is always false [knownConditionTrueFalse]
     if (path.empty())
@@ -1621,13 +1633,13 @@ libid/io/library.cpp:104:9: style: Consider using std::any_of algorithm instead 
 libid/io/library.cpp:112:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/loadfile.cpp:1764:19: style: Variable 'g_bad_outside' is reassigned a value before the old one has been used. [redundantAssignment]
+libid/io/loadfile.cpp:1765:19: style: Variable 'g_bad_outside' is reassigned a value before the old one has been used. [redundantAssignment]
     g_bad_outside = false;
                   ^
-libid/io/loadfile.cpp:1755:19: note: g_bad_outside is assigned
+libid/io/loadfile.cpp:1756:19: note: g_bad_outside is assigned
     g_bad_outside = g_file_version <= 1960                                                 //
                   ^
-libid/io/loadfile.cpp:1764:19: note: g_bad_outside is overwritten
+libid/io/loadfile.cpp:1765:19: note: g_bad_outside is overwritten
     g_bad_outside = false;
                   ^
 libid/io/make_mig.cpp:330:25: style: The if condition is the same as the previous if condition [duplicateCondition]
@@ -1660,37 +1672,37 @@ libid/ui/editpal.cpp:2214:23: note: Calling function 'set_curr', 1st argument '-
 libid/ui/editpal.cpp:1639:22: note: Negative array index
     else if (curr == m_curr[which] || curr < 0)
                      ^
-libid/ui/evolve.cpp:791:27: style: The comparison 'old_variations > 0' is always false. [knownConditionTrueFalse]
+libid/ui/evolve.cpp:792:27: style: The comparison 'old_variations > 0' is always false. [knownConditionTrueFalse]
         || old_variations > 0)
                           ^
-libid/ui/evolve.cpp:642:26: note: 'old_variations' is assigned value '0' here.
+libid/ui/evolve.cpp:643:26: note: 'old_variations' is assigned value '0' here.
     int old_variations = 0;
                          ^
-libid/ui/evolve.cpp:791:27: note: The comparison 'old_variations > 0' is always false.
+libid/ui/evolve.cpp:792:27: note: The comparison 'old_variations > 0' is always false.
         || old_variations > 0)
                           ^
-libid/ui/file_get_window.cpp:847:18: style: Consider using std::replace_if algorithm instead of a raw loop. [useStlAlgorithm]
+libid/ui/file_get_window.cpp:848:18: style: Consider using std::replace_if algorithm instead of a raw loop. [useStlAlgorithm]
             name = new_name;
                  ^
 libid/ui/flip_image.cpp:25:35: style: Parameter 'context' can be declared with const [constParameter]
 MainState flip_image(MainContext &context)
                                   ^
-libid/ui/get_fract_type.cpp:613:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+libid/ui/get_fract_type.cpp:614:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             if (choices[prompt_num][0] == '+')
                                        ^
-libid/ui/get_fract_type.cpp:618:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+libid/ui/get_fract_type.cpp:619:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
-libid/ui/make_batch_file.cpp:1444:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1445:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:822:9: note: Assuming that condition 'colors_only' is not redundant
+libid/ui/make_batch_file.cpp:823:9: note: Assuming that condition 'colors_only' is not redundant
     if (colors_only)
         ^
-libid/ui/make_batch_file.cpp:1444:9: note: Condition '!colors_only' is always true
+libid/ui/make_batch_file.cpp:1445:9: note: Condition '!colors_only' is always true
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:259:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
+libid/ui/make_batch_file.cpp:260:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             comment = builder.read_string_buff(MAX_COMMENT_LEN - 1);
                     ^
 libid/ui/menu_handler.cpp:107:36: style: Parameter 'context' can be declared with const [constParameter]

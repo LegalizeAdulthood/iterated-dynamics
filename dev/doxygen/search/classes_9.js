@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['keymnemonic_0',['KeyMnemonic',['../d6/db5/structid_1_1ui_1_1KeyMnemonic.html',1,'id::ui']]]
+  ['jumpcontrol_0',['JumpControl',['../db/def/structid_1_1fractals_1_1JumpControl.html',1,'id::fractals']]],
+  ['jumpptrs_1',['JumpPtrs',['../d3/d90/structid_1_1fractals_1_1JumpPtrs.html',1,'id::fractals']]]
 ];
