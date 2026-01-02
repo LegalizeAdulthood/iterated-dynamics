@@ -295,10 +295,102 @@ struct ParserState
     unsigned int chars_in_formula{};
 };
 
+class Reader
+{
+public:
+    virtual~Reader() = default;
+    virtual int get_char() = 0;
+    virtual long tell() const = 0;
+    virtual void seek(size_t pos) = 0;
+};
+
+class StringReader : public Reader
+{
+public:
+    explicit StringReader(const std::string &text) :
+        m_text(text),
+        m_pos(0)
+    {
+    }
+    virtual ~StringReader() = default;
+
+    int get_char() override
+    {
+        return m_pos >= m_text.size() ? EOF : static_cast<unsigned char>(m_text[m_pos++]);
+    }
+
+    long tell() const override
+    {
+        return m_pos;
+    }
+
+    void seek(size_t pos) override
+    {
+        m_pos = std::min(pos, m_text.size());
+    }
+
+private:
+    const std::string &m_text;
+    long m_pos;
+};
+
+class FileReader : public Reader
+{
+public:
+    explicit FileReader(std::FILE *file) :
+        m_file(file)
+    {
+    }
+
+    ~FileReader() override = default;
+
+    int get_char() override
+    {
+        return std::fgetc(m_file);
+    }
+
+    long tell() const override
+    {
+        return std::ftell(m_file);
+    }
+
+    void seek(size_t pos) override
+    {
+        std::fseek(m_file, static_cast<long>(pos), SEEK_SET);
+    }
+
+private:
+    std::FILE *m_file;
+};
+
+class ReaderPositionSaver
+{
+public:
+    ReaderPositionSaver(Reader &reader) :
+        m_reader(reader),
+        m_position(reader.tell())
+    {
+    }
+
+    ~ReaderPositionSaver()
+    {
+        m_reader.seek(m_position);
+    }
+
+    void cancel()
+    {
+        m_position = m_reader.tell();
+    }
+
+private:
+    Reader &m_reader;
+    long m_position;
+};
+
 } // namespace
 
 // forward declarations
-static bool frm_prescan(std::FILE *open_file);
+static bool frm_prescan(Reader &reader);
 static void parser_allocate();
 
 CompiledFormula g_formula;
@@ -1164,14 +1256,14 @@ static bool fill_jump_struct()
     return i < 0;
 }
 
-static int frm_get_char(const std::function<int()> &get_char)
+static int frm_get_char(Reader &reader)
 {
     int c;
     bool done = false;
     bool line_wrap = false;
     while (!done)
     {
-        c = get_char();
+        c = reader.get_char();
         switch (c)
         {
         case '\r':
@@ -1182,7 +1274,7 @@ static int frm_get_char(const std::function<int()> &get_char)
             line_wrap = true;
             break;
         case ';' :
-            while ((c = get_char()) != '\n' && c != EOF)
+            while ((c = reader.get_char()) != '\n' && c != EOF)
             {
             }
             if (c == EOF)
@@ -1202,11 +1294,6 @@ static int frm_get_char(const std::function<int()> &get_char)
         }
     }
     return std::tolower(c);
-}
-
-static int frm_get_char(std::FILE *open_file)
-{
-    return frm_get_char([open_file] { return std::getc(open_file); });
 }
 
 // This function also gets flow control info
@@ -1277,15 +1364,15 @@ static void get_var_info(Token *tok)
 /// support for scientific notation (e.g., 1.23e-4). It is called twice to fill
 /// in the components of a complex constant (see is_complex_constant()).
 ///
-/// @param open_file The open file stream from which to read the constant.
+/// @param reader The open file stream from which to read the constant.
 /// @param tok The Token structure to fill with the parsed constant information.
 /// @return true on success, false if the token is NOT_A_TOKEN.
 ///
-static bool frm_get_constant(std::FILE *open_file, Token *tok)
+static bool frm_get_constant(Reader &reader, Token *tok)
 {
     int i = 1;
     bool getting_base = true;
-    long file_pos = std::ftell(open_file);
+    long file_pos = reader.tell();
     bool got_decimal_already = false;
     bool done = false;
     tok->constant.x = 0.0;          //initialize values to 0
@@ -1296,7 +1383,7 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
     }
     while (!done)
     {
-        switch (int c = frm_get_char(open_file); c)
+        switch (int c = frm_get_char(reader); c)
         {
         case EOF:
             tok->str[i] = static_cast<char>(0);
@@ -1305,7 +1392,7 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
             return false;
         CASE_NUM:
             tok->str[i++] = static_cast<char>(c);
-            file_pos = std::ftell(open_file);
+            file_pos = reader.tell();
             break;
         case '.':
             if (got_decimal_already || !getting_base)
@@ -1318,7 +1405,7 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
             }
             tok->str[i++] = static_cast<char>(c);
             got_decimal_already = true;
-            file_pos = std::ftell(open_file);
+            file_pos = reader.tell();
             break;
         default :
             if (c == 'e' && getting_base && (std::isdigit(tok->str[i-1]) || (tok->str[i-1] == '.' && i > 1)))
@@ -1326,16 +1413,16 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
                 tok->str[i++] = static_cast<char>(c);
                 getting_base = false;
                 got_decimal_already = false;
-                file_pos = std::ftell(open_file);
-                c = frm_get_char(open_file);
+                file_pos = reader.tell();
+                c = frm_get_char(reader);
                 if (c == '-' || c == '+')
                 {
                     tok->str[i++] = static_cast<char>(c);
-                    file_pos = std::ftell(open_file);
+                    file_pos = reader.tell();
                 }
                 else
                 {
-                    std::fseek(open_file, file_pos, SEEK_SET);
+                    reader.seek(file_pos);
                 }
             }
             else if (std::isalpha(c) || c == '_')
@@ -1356,7 +1443,7 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
             }
             else
             {
-                std::fseek(open_file, file_pos, SEEK_SET);
+                reader.seek(file_pos);
                 tok->str[i++] = static_cast<char>(0);
                 done = true;
             }
@@ -1376,7 +1463,7 @@ static bool frm_get_constant(std::FILE *open_file, Token *tok)
     return true;
 }
 
-static void is_complex_constant(std::FILE *open_file, Token *tok)
+static void is_complex_constant(Reader &reader, Token *tok)
 {
     assert(tok->str[0] == '(');
     Token temp_tok;
@@ -1386,7 +1473,7 @@ static void is_complex_constant(std::FILE *open_file, Token *tok)
     std::FILE * debug_token = nullptr;
     tok->str[1] = static_cast<char>(0);  // so we can concatenate later
 
-    const long file_pos = std::ftell(open_file);
+    const long file_pos = reader.tell();
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
         const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmconst.txt")};
@@ -1396,7 +1483,7 @@ static void is_complex_constant(std::FILE *open_file, Token *tok)
 
     while (!done)
     {
-        int c = frm_get_char(open_file);
+        int c = frm_get_char(reader);
         switch (c)
         {
 CASE_NUM :
@@ -1413,7 +1500,7 @@ CASE_NUM :
                 fmt::print(debug_token,  "First char is a minus\n");
             }
             sign_value = -1;
-            c = frm_get_char(open_file);
+            c = frm_get_char(reader);
             if (c == '.' || std::isdigit(c))
             {
                 if (debug_token != nullptr)
@@ -1444,9 +1531,9 @@ CASE_NUM :
             fmt::print(debug_token, "Calling frmgetconstant unless done is true; done is {:s}\n",
                 done ? "true" : "false");
         }
-        if (!done && frm_get_constant(open_file, &temp_tok))
+        if (!done && frm_get_constant(reader, &temp_tok))
         {
-            c = frm_get_char(open_file);
+            c = frm_get_char(reader);
             if (debug_token != nullptr)
             {
                 fmt::print(debug_token, "frmgetconstant returned 1; next token is {:c}\n", c);
@@ -1492,7 +1579,7 @@ CASE_NUM :
             done = true;
         }
     }
-    std::fseek(open_file, file_pos, SEEK_SET);
+    reader.seek(file_pos);
     tok->str[1] = static_cast<char>(0);
     tok->constant.x = 0.0;
     tok->constant.y = tok->constant.x;
@@ -1505,15 +1592,15 @@ CASE_NUM :
     }
 }
 
-static bool frm_get_alpha(std::FILE *open_file, Token *tok)
+static bool frm_get_alpha(Reader &reader, Token *tok)
 {
     int c;
     int i = 1;
     bool var_name_too_long = false;
-    long last_file_pos = std::ftell(open_file);
-    while ((c = frm_get_char(open_file)) != EOF)
+    long last_file_pos = reader.tell();
+    while ((c = frm_get_char(reader)) != EOF)
     {
-        const long file_pos = std::ftell(open_file);
+        const long file_pos = reader.tell();
         switch (c)
         {
 CASE_ALPHA:
@@ -1547,11 +1634,11 @@ CASE_NUM:
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id   = TokenId::TOKEN_TOO_LONG;
                 tok->str[i] = static_cast<char>(0);
-                std::fseek(open_file, last_file_pos, SEEK_SET);
+                reader.seek(last_file_pos);
                 return false;
             }
             tok->str[i] = static_cast<char>(0);
-            std::fseek(open_file, last_file_pos, SEEK_SET);
+            reader.seek(last_file_pos);
             get_func_info(tok);
             if (c == '(') //getfuncinfo() correctly filled structure
             {
@@ -1603,18 +1690,18 @@ CASE_NUM:
     return false;
 }
 
-static void frm_get_eos(std::FILE *open_file, Token *this_token)
+static void frm_get_eos(Reader &reader, Token *this_token)
 {
-    long last_file_pos = std::ftell(open_file);
+    long last_file_pos = reader.tell();
     int c;
 
-    for (c = frm_get_char(open_file); c == '\n' || c == ',' || c == ':'; c = frm_get_char(open_file))
+    for (c = frm_get_char(reader); c == '\n' || c == ',' || c == ':'; c = frm_get_char(reader))
     {
         if (c == ':')
         {
             this_token->str[0] = ':';
         }
-        last_file_pos = std::ftell(open_file);
+        last_file_pos = reader.tell();
     }
     if (c == '}')
     {
@@ -1624,7 +1711,7 @@ static void frm_get_eos(std::FILE *open_file, Token *this_token)
     }
     else
     {
-        std::fseek(open_file, last_file_pos, SEEK_SET);
+        reader.seek(last_file_pos);
         if (this_token->str[0] == '\n')
         {
             this_token->str[0] = ',';
@@ -1639,52 +1726,52 @@ static void frm_get_eos(std::FILE *open_file, Token *this_token)
 /// types including operators, constants, variables, functions, and flow control
 /// keywords.
 ///
-/// @param open_file The open file stream from which to read the token.
+/// @param reader The open file stream from which to read the token.
 /// @param this_token The Token structure to fill with token information.
 /// @return true if a valid token was successfully read and parsed, false if the
 ///         token is NOT_A_TOKEN or END_OF_FORMULA.
 ///
-static bool frm_get_token(std::FILE *open_file, Token *this_token)
+static bool frm_get_token(Reader &reader, Token *this_token)
 {
     int i = 1;
     long file_pos;
 
-    switch (int c = frm_get_char(open_file); c)
+    switch (int c = frm_get_char(reader); c)
     {
 CASE_NUM:
     case '.':
         this_token->str[0] = static_cast<char>(c);
-        return frm_get_constant(open_file, this_token);
+        return frm_get_constant(reader, this_token);
 CASE_ALPHA:
     case '_':
         this_token->str[0] = static_cast<char>(c);
-        return frm_get_alpha(open_file, this_token);
+        return frm_get_alpha(reader, this_token);
 CASE_TERMINATOR:
         this_token->type = FormulaTokenType::OPERATOR; // this may be changed below
         this_token->str[0] = static_cast<char>(c);
-        file_pos = std::ftell(open_file);
+        file_pos = reader.tell();
         if (c == '<' || c == '>' || c == '=')
         {
-            c = frm_get_char(open_file);
+            c = frm_get_char(reader);
             if (c == '=')
             {
                 this_token->str[i++] = static_cast<char>(c);
             }
             else
             {
-                std::fseek(open_file, file_pos, SEEK_SET);
+                reader.seek(file_pos);
             }
         }
         else if (c == '!')
         {
-            c = frm_get_char(open_file);
+            c = frm_get_char(reader);
             if (c == '=')
             {
                 this_token->str[i++] = static_cast<char>(c);
             }
             else
             {
-                std::fseek(open_file, file_pos, SEEK_SET);
+                reader.seek(file_pos);
                 this_token->str[1] = static_cast<char>(0);
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = TokenId::ILLEGAL_OPERATOR;
@@ -1693,26 +1780,26 @@ CASE_TERMINATOR:
         }
         else if (c == '|')
         {
-            c = frm_get_char(open_file);
+            c = frm_get_char(reader);
             if (c == '|')
             {
                 this_token->str[i++] = static_cast<char>(c);
             }
             else
             {
-                std::fseek(open_file, file_pos, SEEK_SET);
+                reader.seek(file_pos);
             }
         }
         else if (c == '&')
         {
-            c = frm_get_char(open_file);
+            c = frm_get_char(reader);
             if (c == '&')
             {
                 this_token->str[i++] = static_cast<char>(c);
             }
             else
             {
-                std::fseek(open_file, file_pos, SEEK_SET);
+                reader.seek(file_pos);
                 this_token->str[1] = static_cast<char>(0);
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = TokenId::ILLEGAL_OPERATOR;
@@ -1728,7 +1815,7 @@ CASE_TERMINATOR:
             || this_token->str[0] == ','
             || this_token->str[0] == ':')
         {
-            frm_get_eos(open_file, this_token);
+            frm_get_eos(reader, this_token);
         }
         else if (this_token->str[0] == ')')
         {
@@ -1740,7 +1827,7 @@ CASE_TERMINATOR:
             /* the following function will set token_type to PARENS and
                token_id to OPEN_PARENS if this is not the start of a
                complex constant */
-            is_complex_constant(open_file, this_token);
+            is_complex_constant(reader, this_token);
             return true;
         }
         this_token->str[i] = static_cast<char>(0);
@@ -1775,7 +1862,7 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
     std::FILE *debug_token = nullptr;
     int c;
     Token current_token;
-    std::FILE * entry_file = nullptr;
+    std::FILE *entry_file{};
     g_formula.uses_ismand = false;
     g_formula.uses_p1 = false;
     g_formula.uses_p2 = false;
@@ -1793,7 +1880,8 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
         stop_msg(parse_error_text(ParseError::COULD_NOT_OPEN_FILE_WHERE_FORMULA_LOCATED));
         return 0;
     }
-    while ((c = frm_get_char(entry_file)) != '{' && c != EOF)
+    FileReader reader{entry_file};
+    while ((c = frm_get_char(reader)) != '{' && c != EOF)
     {
     }
     if (c != '{')
@@ -1813,7 +1901,7 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
             fmt::print(debug_token, "{:s}\n", name);
         }
     }
-    while (frm_get_token(entry_file, &current_token))
+    while (frm_get_token(reader, &current_token))
     {
         if (debug_token != nullptr)
         {
@@ -2034,33 +2122,10 @@ static std::string get_formula_body(std::FILE *open_file, int &c, GetFormulaErro
     return result;
 }
 
-class FilePositionSaver
-{
-public:
-    FilePositionSaver(std::FILE *file) :
-        m_file(file),
-        m_position(std::ftell(file))
-    {
-    }
-
-    ~FilePositionSaver()
-    {
-        std::fseek(m_file, m_position, SEEK_SET);
-    }
-
-    void cancel()
-    {
-        m_position = std::ftell(m_file);
-    }
-
-private:
-    std::FILE *m_file;
-    long m_position;
-};
-
 static FormulaEntry get_formula_entry(std::FILE *open_file, GetFormulaError &err)
 {
-    FilePositionSaver saved_pos{open_file};
+    FileReader reader{open_file};
+    ReaderPositionSaver saved_pos{reader};
     FormulaEntry result{};
 
     int c;
@@ -2107,13 +2172,13 @@ static std::string to_string(GetFormulaError err)
 }
 
 /// @brief Performs error checking on the formula name and symmetry up to the open brace on the first line.
-/// @param open_file Pointer to the open file containing the formula.
+/// @param reader Pointer to the open file containing the formula.
 /// @param report_bad_sym Boolean flag indicating whether to report invalid symmetry.
 /// @return true on success, false if errors are found that should prevent formula execution.
 ///
-static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_sym)
+static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
 {
-    const long file_pos = std::ftell(open_file);
+    const size_t file_pos = reader.tell();
     int c;
     bool at_end_of_name = false;
 
@@ -2122,7 +2187,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_
     bool done = false;
     while (!done)
     {
-        c = std::getc(open_file);
+        c = reader.get_char();
         switch (c)
         {
         case EOF:
@@ -2156,10 +2221,10 @@ static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_
         char msg_buff[100];
         std::strcpy(msg_buff, parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
         std::strcat(msg_buff, ":\n   ");
-        std::fseek(open_file, file_pos, SEEK_SET);
+        reader.seek(file_pos);
         for (j = 0; j < i && j < 25; j++)
         {
-            msg_buff[j+k+2] = static_cast<char>(std::getc(open_file));
+            msg_buff[j+k+2] = static_cast<char>(reader.get_char());
         }
         msg_buff[j+k+2] = static_cast<char>(0);
         stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
@@ -2174,7 +2239,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_
         i = 0;
         while (!done)
         {
-            c = std::getc(open_file);
+            c = reader.get_char();
             switch (c)
             {
             case EOF:
@@ -2224,7 +2289,7 @@ static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_
         done = false;
         while (!done)
         {
-            c = std::getc(open_file);
+            c = reader.get_char();
             switch (c)
             {
             case EOF:
@@ -2252,29 +2317,29 @@ static bool frm_check_name_and_sym(std::FILE * open_file, const bool report_bad_
 /// open file passed as an argument is open in "rb" mode and is positioned at the first
 /// letter of the name of the formula to be prepared.
 ///
-/// @param file The open file containing the formula.
+/// @param reader The open file containing the formula.
 /// @param report_bad_sym Boolean flag indicating whether to report invalid symmetry.
 /// @return A string containing the prepared formula, or an empty string on error.
 ///
-static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
+static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
 {
-    const long file_pos{std::ftell(file)};
+    const long file_pos{reader.tell()};
 
     // Test for a repeat
-    if (!frm_check_name_and_sym(file, report_bad_sym))
+    if (!frm_check_name_and_sym(reader, report_bad_sym))
     {
-        std::fseek(file, file_pos, SEEK_SET);
+        reader.seek(file_pos);
         return {};
     }
-    if (!frm_prescan(file))
+    if (!frm_prescan(reader))
     {
-        std::fseek(file, file_pos, SEEK_SET);
+        reader.seek(file_pos);
         return {};
     }
 
     if (s_parser.chars_in_formula > 8190)
     {
-        std::fseek(file, file_pos, SEEK_SET);
+        reader.seek(file_pos);
         return {};
     }
 
@@ -2307,11 +2372,11 @@ static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
     Token temp_tok;
     while (!done)
     {
-        frm_get_token(file, &temp_tok);
+        frm_get_token(reader, &temp_tok);
         if (temp_tok.type == FormulaTokenType::NOT_A_TOKEN)
         {
             stop_msg(StopMsgFlags::FIXED_FONT, "Unexpected token error in PrepareFormula\n");
-            std::fseek(file, file_pos, SEEK_SET);
+            reader.seek(file_pos);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -2321,7 +2386,7 @@ static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
         if (temp_tok.type == FormulaTokenType::END_OF_FORMULA)
         {
             stop_msg(StopMsgFlags::FIXED_FONT, "Formula has no executable instructions\n");
-            std::fseek(file, file_pos, SEEK_SET);
+            reader.seek(file_pos);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -2338,12 +2403,12 @@ static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
     done = false;
     while (!done)
     {
-        frm_get_token(file, &temp_tok);
+        frm_get_token(reader, &temp_tok);
         switch (temp_tok.type)
         {
         case FormulaTokenType::NOT_A_TOKEN:
             stop_msg(StopMsgFlags::FIXED_FONT, "Unexpected token error in prepare_formula\n");
-            std::fseek(file, file_pos, SEEK_SET);
+            reader.seek(file_pos);
             if (debug_fp != nullptr)
             {
                 std::fclose(debug_fp);
@@ -2351,7 +2416,7 @@ static std::string prepare_formula(std::FILE *file, const bool report_bad_sym)
             return {};
         case FormulaTokenType::END_OF_FORMULA:
             done = true;
-            std::fseek(file, file_pos, SEEK_SET);
+            reader.seek(file_pos);
             break;
         default:
             formula_text += temp_tok.str;
@@ -2392,7 +2457,12 @@ bool parse_formula(std::filesystem::path &path, const std::string &name, const b
     }
 
     {
-        FilePositionSaver saved_pos{entry_file};
+        FileReader reader{entry_file};
+        g_formula.formula = prepare_formula(reader, report_bad_sym);
+    }
+    {
+        FileReader reader{entry_file};
+        ReaderPositionSaver saved_pos{reader};
         GetFormulaError err{};
         s_formula_entry = get_formula_entry(entry_file, err);
         if (err != GetFormulaError::NONE)
@@ -2401,8 +2471,31 @@ bool parse_formula(std::filesystem::path &path, const std::string &name, const b
             return true;
         }
     }
-    g_formula.formula = prepare_formula(entry_file, report_bad_sym);
     std::fclose(entry_file);
+    {
+        std::string entry{s_formula_entry.name};
+        if (s_formula_entry.symmetry != SymmetryType::NONE)
+        {
+            entry.append(1, '(');
+            const auto it = std::find_if(std::begin(SYMMETRY_NAMES), std::end(SYMMETRY_NAMES),
+                [](const SymmetryName &item) { return item.n == s_formula_entry.symmetry; });
+            if (it != std::end(SYMMETRY_NAMES))
+            {
+                entry.append(it->s);
+            }
+            entry.append(1, ')');
+        }
+        entry.append(" {");
+        entry.append(s_formula_entry.body);
+        entry.append("\n}");
+        StringReader reader{entry};
+        const std::string prepared{prepare_formula(reader, report_bad_sym)};
+        if (g_formula.formula != prepared)
+        {
+            stop_msg("File and string prepared formulas don't match");
+            return true;
+        }
+    }
 
     if (!g_formula.formula.empty())  //  No errors while making string
     {
@@ -2477,7 +2570,7 @@ void free_work_area()
     g_formula.fns.clear();
 }
 
-static void frm_error(std::FILE * open_file, const long begin_frm)
+static void frm_error(Reader &reader, const long begin_frm)
 {
     Token tok;
     int chars_to_error = 0;
@@ -2488,11 +2581,11 @@ static void frm_error(std::FILE * open_file, const long begin_frm)
     for (int j = 0; j < 3 && s_errors[j].start_pos; j++)
     {
         const bool initialization_error = s_errors[j].error_number == ParseError::SECOND_COLON;
-        std::fseek(open_file, begin_frm, SEEK_SET);
+        reader.seek(begin_frm);
         int line_number = 1;
-        while (std::ftell(open_file) != s_errors[j].error_pos)
+        while (reader.tell() != s_errors[j].error_pos)
         {
-            int i = std::fgetc(open_file);
+            int i = reader.get_char();
             if (i == '\n')
             {
                 line_number++;
@@ -2500,8 +2593,8 @@ static void frm_error(std::FILE * open_file, const long begin_frm)
             else if (i == EOF || i == '}')
             {
                 stop_msg("Unexpected EOF or end-of-formula in error function.\n");
-                std::fseek(open_file, s_errors[j].error_pos, SEEK_SET);
-                frm_get_token(open_file, &tok); //reset file to end of error token
+                reader.seek(s_errors[j].error_pos);
+                frm_get_token(reader, &tok); //reset file to end of error token
                 return;
             }
         }
@@ -2510,24 +2603,24 @@ static void frm_error(std::FILE * open_file, const long begin_frm)
                 +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number))
                 .c_str());
         int i = static_cast<int>(std::strlen(msg_buff));
-        std::fseek(open_file, s_errors[j].start_pos, SEEK_SET);
+        reader.seek(s_errors[j].start_pos);
         int token_count = 0;
         int statement_len = token_count;
         bool done = false;
         while (!done)
         {
-            long file_pos = std::ftell(open_file);
+            long file_pos = reader.tell();
             if (file_pos == s_errors[j].error_pos)
             {
                 chars_to_error = statement_len;
-                frm_get_token(open_file, &tok);
+                frm_get_token(reader, &tok);
                 chars_in_error = static_cast<int>(std::strlen(tok.str));
                 statement_len += chars_in_error;
                 token_count++;
             }
             else
             {
-                frm_get_token(open_file, &tok);
+                frm_get_token(reader, &tok);
                 statement_len += static_cast<int>(std::strlen(tok.str));
                 token_count++;
             }
@@ -2542,29 +2635,29 @@ static void frm_error(std::FILE * open_file, const long begin_frm)
                 }
             }
         }
-        std::fseek(open_file, s_errors[j].start_pos, SEEK_SET);
+        reader.seek(s_errors[j].start_pos);
         if (chars_in_error < 74)
         {
             while (chars_to_error + chars_in_error > 74)
             {
-                frm_get_token(open_file, &tok);
+                frm_get_token(reader, &tok);
                 chars_to_error -= static_cast<int>(std::strlen(tok.str));
                 token_count--;
             }
         }
         else
         {
-            std::fseek(open_file, s_errors[j].error_pos, SEEK_SET);
+            reader.seek(s_errors[j].error_pos);
             chars_to_error = 0;
             token_count = 1;
         }
         while (static_cast<int>(std::strlen(&msg_buff[i])) <=74 && token_count--)
         {
-            frm_get_token(open_file, &tok);
+            frm_get_token(reader, &tok);
             std::strcat(msg_buff, tok.str);
         }
-        std::fseek(open_file, s_errors[j].error_pos, SEEK_SET);
-        frm_get_token(open_file, &tok);
+        reader.seek(s_errors[j].error_pos);
+        frm_get_token(reader, &tok);
         if (static_cast<int>(std::strlen(&msg_buff[i])) > 74)
         {
             msg_buff[i + 74] = static_cast<char>(0);
@@ -2594,10 +2687,10 @@ static void frm_error(std::FILE * open_file, const long begin_frm)
 /// and parses the formula, token by token, for syntax errors. It also accumulates data for memory allocation
 /// to be done later.
 ///
-/// @param open_file Pointer to the open file containing the formula.
+/// @param reader Pointer to the open file containing the formula.
 /// @return true if parsing succeeds (no errors found), false if errors are found.
 ///
-static bool frm_prescan(std::FILE *open_file)
+static bool frm_prescan(Reader &reader)
 {
     long file_pos{};
     bool done{};
@@ -2617,7 +2710,7 @@ static bool frm_prescan(std::FILE *open_file)
     g_formula.uses_jump = false;
     s_parser.paren = 0;
 
-    long statement_pos{std::ftell(open_file)};
+    long statement_pos{reader.tell()};
     const long orig_pos{statement_pos};
     for (ErrorData &error : s_errors)
     {
@@ -2637,8 +2730,8 @@ static bool frm_prescan(std::FILE *open_file)
 
     while (!done)
     {
-        file_pos = std::ftell(open_file);
-        frm_get_token(open_file, &this_token);
+        file_pos = reader.tell();
+        frm_get_token(reader, &this_token);
         s_parser.chars_in_formula += static_cast<int>(std::strlen(this_token.str));
         switch (this_token.type)
         {
@@ -2648,7 +2741,7 @@ static bool frm_prescan(std::FILE *open_file)
             {
             case TokenId::END_OF_FILE:
                 stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
-                std::fseek(open_file, orig_pos, SEEK_SET);
+                reader.seek(orig_pos);
                 return false;
             case TokenId::ILLEGAL_CHARACTER:
                 record_error(ParseError::ILLEGAL_CHAR);
@@ -2679,7 +2772,7 @@ static bool frm_prescan(std::FILE *open_file)
                 break;
             default:
                 stop_msg("Unexpected arrival at default case in prescan()");
-                std::fseek(open_file, orig_pos, SEEK_SET);
+                reader.seek(orig_pos);
                 return false;
             }
             break;
@@ -2874,7 +2967,7 @@ static bool frm_prescan(std::FILE *open_file)
                 new_statement = true;
                 expecting_arg = true;
                 assignment_ok = true;
-                statement_pos = std::ftell(open_file);
+                statement_pos = reader.tell();
                 break;
             case TokenId::OP_NOT_EQUAL:     // !=
                 assignment_ok = false;
@@ -2996,15 +3089,15 @@ static bool frm_prescan(std::FILE *open_file)
                 {
                     record_error(ParseError::SHOULD_BE_ARGUMENT);
                 }
-                file_pos = std::ftell(open_file);
-                frm_get_token(open_file, &this_token);
+                file_pos = reader.tell();
+                frm_get_token(reader, &this_token);
                 if (this_token.str[0] == '-')
                 {
                     record_error(ParseError::NO_NEG_AFTER_EXPONENT);
                 }
                 else
                 {
-                    std::fseek(open_file, file_pos, SEEK_SET);
+                    reader.seek(file_pos);
                 }
                 expecting_arg = true;
                 break;
@@ -3031,7 +3124,7 @@ static bool frm_prescan(std::FILE *open_file)
             if (expecting_arg && !new_statement)
             {
                 record_error(ParseError::SHOULD_BE_ARGUMENT);
-                statement_pos = std::ftell(open_file);
+                statement_pos = reader.tell();
             }
 
             if (num_jumps >= MAX_JUMPS)
@@ -3050,11 +3143,11 @@ static bool frm_prescan(std::FILE *open_file)
     }
     if (s_errors[0].start_pos)
     {
-        frm_error(open_file, orig_pos);
-        std::fseek(open_file, orig_pos, SEEK_SET);
+        frm_error(reader, orig_pos);
+        reader.seek(orig_pos);
         return false;
     }
-    std::fseek(open_file, orig_pos, SEEK_SET);
+    reader.seek(orig_pos);
 
     return true;
 }
