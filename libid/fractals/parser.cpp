@@ -251,13 +251,6 @@ enum class GetFormulaError
     BAD_SYMMETRY,
 };
 
-struct FormulaEntry
-{
-    std::string name;
-    std::string symmetry;
-    std::string body;
-};
-
 struct Token
 {
     char str[80];
@@ -868,6 +861,7 @@ static bool parse_formula_text(const std::string &text)
     g_formula.uses_jump = false;
     g_formula.uses_rand = false;
     g_formula.jump_control.clear();
+    g_formula.fns.clear();
 
     g_formula.max_function = 0;
     for (g_formula.var_index = 0; g_formula.var_index < static_cast<unsigned>(VARIABLES.size()); g_formula.var_index++)
@@ -2453,10 +2447,6 @@ bool parse_formula(std::filesystem::path &path, const std::string &name, const b
 
     {
         FileReader reader{entry_file};
-        g_formula.formula = prepare_formula(reader, report_bad_sym);
-    }
-    {
-        FileReader reader{entry_file};
         ReaderPositionSaver saved_pos{reader};
         GetFormulaError err{};
         s_formula_entry = get_formula_entry(entry_file, err);
@@ -2467,36 +2457,15 @@ bool parse_formula(std::filesystem::path &path, const std::string &name, const b
         }
     }
     std::fclose(entry_file);
-    {
-        const std::string entry{to_string(s_formula_entry)};
-        StringReader reader{entry};
-        const std::string prepared{prepare_formula(reader, report_bad_sym)};
-        if (g_formula.formula != prepared)
-        {
-            stop_msg("File and string prepared formulas don't match");
-            return true;
-        }
-    }
 
-    if (!g_formula.formula.empty())  //  No errors while making string
+    const bool result{parse_formula(s_formula_entry, report_bad_sym)};
+    if (result)
     {
-        parser_allocate();  //  parse_formula_text() will test if this alloc worked
-        if (parse_formula_text(g_formula.formula))
-        {
-            return true;   //  parse failed, don't change fn pointers
-        }
-        if (g_formula.uses_jump && fill_jump_struct())
-        {
-            stop_msg(parse_error_text(ParseError::ERROR_IN_PARSING_JUMP_STATEMENTS));
-            return true;
-        }
-
         // all parses succeeded so set the pointers back to good functions
         g_cur_fractal_specific->per_pixel = formula_per_pixel;
         g_cur_fractal_specific->orbit_calc = formula_orbit;
-        return false;
     }
-    return true; // error in making string
+    return !result;
 }
 
 void init_misc()
@@ -3278,7 +3247,7 @@ static void get_operations(std::ostringstream &oss)
 {
     // Dump operations
     oss << "=== Operations ===\n";
-    for (int i = 0; i < static_cast<int>(g_formula.fns.size()); ++i)
+    for (int i = 0; i < g_formula.op_count; ++i)
     {
         oss << fmt::format("{:3d}: {}\n", i, get_operation_name(g_formula.fns[i]));
     }
@@ -3289,7 +3258,7 @@ static void get_load_table(std::ostringstream &oss)
 {
     // Count actual loads used by scanning operations
     int load_count = 0;
-    for (size_t i = 0; i < g_formula.fns.size(); ++i)
+    for (size_t i = 0; i < g_formula.op_count; ++i)
     {
         FunctionPtr fn = g_formula.fns[i];
         if (fn == stk_lod)
@@ -3411,31 +3380,31 @@ std::string get_parser_state()
     return oss.str();
 }
 
-bool parse_formula(const std::string &formula_text, std::string &error_msg)
+// returns false on failure
+bool parse_formula(const FormulaEntry &formula_entry, const bool report_bad_sym)
 {
-    // Clear previous state
-    free_work_area();
-    g_formula.formula = formula_text;
-    g_formula_name = "TEST_FORMULA";
+    {
+        const std::string entry{to_string(formula_entry)};
+        StringReader reader{entry};
+        g_formula.formula = prepare_formula(reader, report_bad_sym);
+    }
 
-    // Allocate structures
-    parser_allocate();
+    if (g_formula.formula.empty()) //  No errors while making string
+    {
+        return false;              // error in making string
+    }
 
-    // Parse
+    parser_allocate();             //  parse_formula_text() will test if this alloc worked
     if (parse_formula_text(g_formula.formula))
     {
-        error_msg = "Parse failed";
-        return false;
+        return false;              //  parse failed, don't change fn pointers
     }
-
-    // Fill jump structures if needed
     if (g_formula.uses_jump && fill_jump_struct())
     {
-        error_msg = "Jump structure fill failed";
+        stop_msg(parse_error_text(ParseError::ERROR_IN_PARSING_JUMP_STATEMENTS));
         return false;
     }
 
-    error_msg.clear();
     return true;
 }
 

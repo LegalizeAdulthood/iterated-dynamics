@@ -59,7 +59,7 @@ struct CompiledFormula
     std::vector<ConstArg> vars;            // All constants/variables
     std::vector<JumpControl> jump_control; // Jump control structure
     std::vector<PendingOp> ops;            // Pending operations (used during compilation)
-    unsigned int op_count{};               // Total compiled operations
+    int op_count{};                        // Total compiled operations
     bool uses_jump{};                      // Whether formula uses jumps
     bool uses_rand{};                      // Whether formula uses rand
     int last_init_op{};                    //
@@ -88,8 +88,15 @@ void free_work_area();
 /// Get current parser state for testing/debugging
 std::string get_parser_state();
 
+struct FormulaEntry
+{
+    std::string name;
+    std::string symmetry;
+    std::string body;
+};
+
 /// Parse formula for testing without executing
-bool parse_formula(const std::string &formula_text, std::string &error_msg);
+bool parse_formula(const FormulaEntry &formula_entry, bool report_bad_sym);
 
 // Reset parser state
 void parser_reset();
