@@ -246,7 +246,7 @@ enum class GetFormulaError
     NONE = 0,
     UNEXPECTED_EOF,
     NAME_TOO_LONG,
-    NO_LEFT_BRACKET_FIRST_LINE,
+    NO_LEFT_BRACE_FIRST_LINE,
     NO_MATCH_RIGHT_PAREN,
     BAD_SYMMETRY,
 };
@@ -1909,7 +1909,7 @@ static std::string get_formula_name(std::FILE *open_file, int &c, GetFormulaErro
             return {};
         case '\r':
         case '\n':
-            err = GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE;
+            err = GetFormulaError::NO_LEFT_BRACE_FIRST_LINE;
             return {};
         case ' ':
         case '\t':
@@ -1956,7 +1956,7 @@ static SymmetryType get_formula_symmetry(std::FILE *open_file, int &c, GetFormul
                 return {};
             case '\r':
             case '\n':
-                err = GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE;
+                err = GetFormulaError::NO_LEFT_BRACE_FIRST_LINE;
                 return {};
             case '{':
                 err = GetFormulaError::NO_MATCH_RIGHT_PAREN;
@@ -2006,7 +2006,7 @@ static std::string get_formula_body(std::FILE *open_file, int &c, GetFormulaErro
                 return {};
             case '\r':
             case '\n':
-                err = GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE;
+                err = GetFormulaError::NO_LEFT_BRACE_FIRST_LINE;
                 return {};
             case '{':
                 done = true;
@@ -2096,7 +2096,7 @@ static std::string to_string(GetFormulaError err)
         return parse_error_text(ParseError::UNEXPECTED_EOF);
     case GetFormulaError::NAME_TOO_LONG:
         return parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE);
-    case GetFormulaError::NO_LEFT_BRACKET_FIRST_LINE:
+    case GetFormulaError::NO_LEFT_BRACE_FIRST_LINE:
         return parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE);
     case GetFormulaError::NO_MATCH_RIGHT_PAREN:
         return parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN);
