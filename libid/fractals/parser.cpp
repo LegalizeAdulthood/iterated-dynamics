@@ -254,7 +254,7 @@ enum class GetFormulaError
 struct FormulaEntry
 {
     std::string name;
-    SymmetryType symmetry;
+    std::string symmetry;
     std::string body;
 };
 
@@ -572,14 +572,9 @@ static void push_jump(const JumpControlType type)
 #define MAX_STORES ((g_formula.max_ops/4)*2)  // at most only half the ops can be stores
 #define MAX_LOADS  ((unsigned)(g_formula.max_ops*.8))  // and 80% can be loads
 
-static bool check_denom(const double denom)
+static std::string to_string(const FormulaEntry &entry)
 {
-    if (std::abs(denom) <= DBL_MIN)
-    {
-        g_overflow = true;
-        return true;
-    }
-    return false;
+    return entry.name + (entry.symmetry.empty() ? "" : (" (" + entry.symmetry + ")")) + " {" + entry.body + "\n}";
 }
 
 static const char *parse_error_text(ParseError which)
@@ -2026,12 +2021,11 @@ static std::string get_formula_name(std::FILE *open_file, int &c, GetFormulaErro
     return result;
 }
 
-static SymmetryType get_formula_symmetry(std::FILE *open_file, int &c, GetFormulaError &err)
+static std::string get_formula_symmetry(std::FILE *open_file, int &c, GetFormulaError &err)
 {
-    SymmetryType symmetry = SymmetryType::NONE;
+    std::string symmetry;
     if (c == '(')
     {
-        char sym_buf[20];
         bool done = false;
         int i = 0;
         while (!done)
@@ -2058,21 +2052,19 @@ static SymmetryType get_formula_symmetry(std::FILE *open_file, int &c, GetFormul
             default :
                 if (i < 19)
                 {
-                    sym_buf[i++] = static_cast<char>(std::toupper(c));
+                    symmetry.append(1, static_cast<char>(std::toupper(c)));
                 }
                 break;
             }
         }
-        sym_buf[i] = static_cast<char>(0);
         const auto it = std::find_if(SYMMETRY_NAMES.begin(),
             SYMMETRY_NAMES.end(),
-            [&sym_buf](const SymmetryName &sym_name) { return string_case_equal(sym_name.s, sym_buf); });
+            [&symmetry](const SymmetryName &sym_name) { return string_case_equal(sym_name.s, symmetry.c_str()); });
         if (it == SYMMETRY_NAMES.end())
         {
             err = GetFormulaError::BAD_SYMMETRY;
             return {};
         }
-        symmetry = it->n;
     }
     return symmetry;
 }
@@ -2135,7 +2127,10 @@ static FormulaEntry get_formula_entry(std::FILE *open_file, GetFormulaError &err
         return {};
     }
 
-    result.symmetry = c == '(' ? get_formula_symmetry(open_file, c, err) : SymmetryType::NONE;
+    if (c == '(')
+    {
+        result.symmetry = get_formula_symmetry(open_file, c, err);
+    }
     if (err != GetFormulaError::NONE)
     {
         return {};
@@ -2473,21 +2468,7 @@ bool parse_formula(std::filesystem::path &path, const std::string &name, const b
     }
     std::fclose(entry_file);
     {
-        std::string entry{s_formula_entry.name};
-        if (s_formula_entry.symmetry != SymmetryType::NONE)
-        {
-            entry.append(1, '(');
-            const auto it = std::find_if(std::begin(SYMMETRY_NAMES), std::end(SYMMETRY_NAMES),
-                [](const SymmetryName &item) { return item.n == s_formula_entry.symmetry; });
-            if (it != std::end(SYMMETRY_NAMES))
-            {
-                entry.append(it->s);
-            }
-            entry.append(1, ')');
-        }
-        entry.append(" {");
-        entry.append(s_formula_entry.body);
-        entry.append("\n}");
+        const std::string entry{to_string(s_formula_entry)};
         StringReader reader{entry};
         const std::string prepared{prepare_formula(reader, report_bad_sym)};
         if (g_formula.formula != prepared)
