@@ -903,12 +903,12 @@ static void corners(Matrix m, const bool show, double *x_min, double *y_min, dou
      * "bottom" - these points are the corners of the screen in the x-y plane.
      * The "t"'s stand for Top - they are the top of the cube where 255 color
      * points hit. */
-    *z_min = INT_MAX;
-    *y_min = *z_min;
-    *x_min = *y_min;
-    *z_max = INT_MIN;
-    *y_max = *z_max;
-    *x_max = *y_max;
+    *z_min = DBL_MAX;
+    *y_min = DBL_MAX;
+    *x_min = DBL_MAX;
+    *z_max = DBL_MIN;
+    *y_max = DBL_MIN;
+    *x_max = DBL_MIN;
 
     for (int j = 0; j < 4; ++j)
     {
