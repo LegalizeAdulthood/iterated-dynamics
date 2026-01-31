@@ -995,12 +995,12 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00903" name="l00903"></a><span class="lineno">  903</span><span class="comment">     * &quot;bottom&quot; - these points are the corners of the screen in the x-y plane.</span></div>
 <div class="line"><a id="l00904" name="l00904"></a><span class="lineno">  904</span><span class="comment">     * The &quot;t&quot;&#39;s stand for Top - they are the top of the cube where 255 color</span></div>
 <div class="line"><a id="l00905" name="l00905"></a><span class="lineno">  905</span><span class="comment">     * points hit. */</span></div>
-<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>    *z_min = INT_MAX;</div>
-<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>    *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a09f4dd3c80995d7cde037a79285436b7">y_min</a> = *z_min;</div>
-<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>    *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#add2473c5c4546982731f5f34e2686a73">x_min</a> = *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a09f4dd3c80995d7cde037a79285436b7">y_min</a>;</div>
-<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>    *z_max = INT_MIN;</div>
-<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>    *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a> = *z_max;</div>
-<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>    *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a254ee7ed702b85b39e74ea6cbce87bdb">x_max</a> = *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a>;</div>
+<div class="line"><a id="l00906" name="l00906"></a><span class="lineno">  906</span>    *z_min = DBL_MAX;</div>
+<div class="line"><a id="l00907" name="l00907"></a><span class="lineno">  907</span>    *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a09f4dd3c80995d7cde037a79285436b7">y_min</a> = DBL_MAX;</div>
+<div class="line"><a id="l00908" name="l00908"></a><span class="lineno">  908</span>    *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#add2473c5c4546982731f5f34e2686a73">x_min</a> = DBL_MAX;</div>
+<div class="line"><a id="l00909" name="l00909"></a><span class="lineno">  909</span>    *z_max = DBL_MIN;</div>
+<div class="line"><a id="l00910" name="l00910"></a><span class="lineno">  910</span>    *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a5e7d585a7ecbab18e3057f67b19ee2c7">y_max</a> = DBL_MIN;</div>
+<div class="line"><a id="l00911" name="l00911"></a><span class="lineno">  911</span>    *<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#a254ee7ed702b85b39e74ea6cbce87bdb">x_max</a> = DBL_MIN;</div>
 <div class="line"><a id="l00912" name="l00912"></a><span class="lineno">  912</span> </div>
 <div class="line"><a id="l00913" name="l00913"></a><span class="lineno">  913</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> j = 0; j &lt; 4; ++j)</div>
 <div class="line"><a id="l00914" name="l00914"></a><span class="lineno">  914</span>    {</div>
