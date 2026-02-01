@@ -63,6 +63,7 @@
 #include <cstring>
 #include <filesystem>
 #include <iterator>
+#include <limits>
 #include <string>
 
 using namespace id::engine;
@@ -780,7 +781,7 @@ static void setup_save_info(FractalInfo *save_info)
     std::strcpy(save_info->info_id, INFO_ID);
     save_info->info_version = FRACTAL_INFO_VERSION;
     save_info->iterations_old =
-        static_cast<std::int16_t>(g_max_iterations <= SHRT_MAX ? g_max_iterations : SHRT_MAX);
+        static_cast<std::int16_t>(g_max_iterations <= std::numeric_limits<short>::max() ? g_max_iterations : std::numeric_limits<short>::max());
     save_info->fractal_type = static_cast<std::int16_t>(+g_fractal_type);
     save_info->x_min = g_image_region.m_min.x;
     save_info->x_max = g_image_region.m_max.x;
@@ -821,7 +822,7 @@ static void setup_save_info(FractalInfo *save_info)
     {
         save_info->inside = static_cast<std::int16_t>(g_inside_color);
     }
-    save_info->log_map_old = static_cast<std::int16_t>(g_log_map_flag <= SHRT_MAX ? g_log_map_flag : SHRT_MAX);
+    save_info->log_map_old = static_cast<std::int16_t>(g_log_map_flag <= std::numeric_limits<short>::max() ? g_log_map_flag : std::numeric_limits<short>::max());
     save_info->invert[0] = static_cast<float>(g_inversion.params[0]);
     save_info->invert[1] = static_cast<float>(g_inversion.params[1]);
     save_info->invert[2] = static_cast<float>(g_inversion.params[2]);

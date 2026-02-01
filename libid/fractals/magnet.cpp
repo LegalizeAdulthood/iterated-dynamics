@@ -8,6 +8,7 @@
 #include "math/cmplx.h"
 
 #include <cfloat>
+#include <limits>
 
 using namespace id::engine;
 using namespace id::math;
@@ -57,7 +58,7 @@ int magnet1_orbit()
     bot.y = g_old_z.y + g_old_z.y + g_float_param->y;
 
     const double div = bot.x * bot.x + bot.y * bot.y;           // tmp = top/bot
-    if (div < FLT_MIN)
+    if (div < std::numeric_limits<float>::min())
     {
         return 1;
     }
@@ -96,7 +97,7 @@ int magnet2_orbit()
         + s_t_cm1_cm2.y;
 
     const double div = bot.x * bot.x + bot.y * bot.y;                // tmp = top/bot
-    if (div < FLT_MIN)
+    if (div < std::numeric_limits<float>::min())
     {
         return 1;
     }

@@ -62,6 +62,7 @@
 #include <cfloat>
 #include <cmath>
 #include <cstring>
+#include <limits>
 
 using namespace id::math;
 
@@ -215,12 +216,12 @@ bool normalize_vector(Vector v)
     double length = dot_product(v, v);
 
     // bailout if zero length
-    if (length < FLT_MIN || length > FLT_MAX)
+    if (length < std::numeric_limits<float>::min() || length > std::numeric_limits<float>::max())
     {
         return true;
     }
     length = std::sqrt(length);
-    if (length < FLT_MIN)
+    if (length < std::numeric_limits<float>::min())
     {
         return true;
     }

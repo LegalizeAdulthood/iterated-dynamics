@@ -78,6 +78,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <limits>
 #include <new>
 #include <vector>
 
@@ -92,6 +93,8 @@ namespace id::engine
 {
 
 constexpr double DEM_BAILOUT{535.5};
+constexpr double STAR_TRAIL_MAX{std::numeric_limits<float>::max()}; // just a convenient large number
+constexpr double STAR_TRAIL_MIN{-STAR_TRAIL_MAX};
 
 enum class ShowDotAction
 {
@@ -1281,7 +1284,6 @@ int calc_mandelbrot_type()
     }
     return g_color;
 }
-#define STAR_TRAIL_MAX FLT_MAX // just a convenient large number
 
 static void set_new_z_from_bignum()
 {
@@ -1530,9 +1532,9 @@ int standard_fractal_type()
                 if (0 < g_color_iter && g_color_iter < 16)
                 {
                     g_new_z.x = std::min<double>(g_new_z.x, STAR_TRAIL_MAX);
-                    g_new_z.x = std::max<double>(g_new_z.x, -STAR_TRAIL_MAX);
+                    g_new_z.x = std::max<double>(g_new_z.x, STAR_TRAIL_MIN);
                     g_new_z.y = std::min<double>(g_new_z.y, STAR_TRAIL_MAX);
-                    g_new_z.y = std::max<double>(g_new_z.y, -STAR_TRAIL_MAX);
+                    g_new_z.y = std::max<double>(g_new_z.y, STAR_TRAIL_MIN);
                     g_temp_sqr_x = g_new_z.x * g_new_z.x;
                     g_temp_sqr_y = g_new_z.y * g_new_z.y;
                     g_magnitude = g_temp_sqr_x + g_temp_sqr_y;
@@ -1823,7 +1825,7 @@ int standard_fractal_type()
             {
                 g_color_iter = static_cast<long>(dist / s_dem_width + 1);
             }
-            g_color_iter &= LONG_MAX;  // oops - color can be negative
+            g_color_iter &= std::numeric_limits<long>::max();  // oops - color can be negative
             goto plot_pixel;       // no further adjustments apply
         }
         if (g_use_old_distance_estimator)
@@ -2641,7 +2643,7 @@ static long auto_log_map()
     // calculate round screen edges to avoid wasted colours in logmap
     const int x_stop = g_logical_screen.x_dots - 1; // don't use symmetry
     const int y_stop = g_logical_screen.y_dots - 1; // don't use symmetry
-    long min_color = LONG_MAX;
+    long min_color = std::numeric_limits<long>::max();
     g_row = 0;
     g_reset_periodicity = false;
     const long old_max_it = g_max_iterations;

@@ -33,9 +33,7 @@ int get_prec_bf_mag()
     // this is just to find magnification
     cvt_center_mag_bf(b_x_ctr, b_y_ctr, magnification, x_mag_factor, rotation, skew);
 
-    // I don't know if this is portable, but something needs to
-    // be used in case compiler's LDBL_MAX is not big enough
-    if (magnification > LDBL_MAX || magnification < -LDBL_MAX)
+    if (std::isnan(magnification) || std::isinf(magnification))
     {
         return -1;
     }

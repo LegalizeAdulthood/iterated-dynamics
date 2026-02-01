@@ -37,6 +37,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -903,12 +904,12 @@ static void corners(Matrix m, const bool show, double *x_min, double *y_min, dou
      * "bottom" - these points are the corners of the screen in the x-y plane.
      * The "t"'s stand for Top - they are the top of the cube where 255 color
      * points hit. */
-    *z_min = DBL_MAX;
-    *y_min = DBL_MAX;
-    *x_min = DBL_MAX;
-    *z_max = DBL_MIN;
-    *y_max = DBL_MIN;
-    *x_max = DBL_MIN;
+    *z_min = std::numeric_limits<double>::max();
+    *y_min = std::numeric_limits<double>::max();
+    *x_min = std::numeric_limits<double>::max();
+    *z_max = std::numeric_limits<double>::min();
+    *y_max = std::numeric_limits<double>::min();
+    *x_max = std::numeric_limits<double>::min();
 
     for (int j = 0; j < 4; ++j)
     {
@@ -1186,8 +1187,8 @@ static void put_triangle(const PointColor pt1, const PointColor pt2, const Point
 
     for (int y = miny; y <= maxy; y++)
     {
-        s_min_max_x[y].min_x = INT_MAX;
-        s_min_max_x[y].max_x = INT_MIN;
+        s_min_max_x[y].min_x = std::numeric_limits<int>::max();
+        s_min_max_x[y].max_x = std::numeric_limits<int>::min();
     }
 
     // set plot to "fake" plot function

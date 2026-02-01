@@ -15,6 +15,7 @@
 #include <cassert>
 #include <cfloat>
 #include <cmath>
+#include <limits>
 #include <vector>
 
 using namespace id::engine;
@@ -47,13 +48,13 @@ void invertz2(DComplex *z)
     *z -= g_inversion.center;  // Normalize values to center of circle
 
     g_temp_sqr_x = sqr(z->x) + sqr(z->y);  // Get old radius
-    if (std::abs(g_temp_sqr_x) > FLT_MIN)
+    if (std::abs(g_temp_sqr_x) > std::numeric_limits<float>::min())
     {
         g_temp_sqr_x = g_inversion.radius / g_temp_sqr_x;
     }
     else
     {
-        g_temp_sqr_x = FLT_MAX;   // a big number, but not TOO big
+        g_temp_sqr_x = std::numeric_limits<float>::max();   // a big number, but not TOO big
     }
     z->x *= g_temp_sqr_x;
     z->y *= g_temp_sqr_x;         // Perform inversion
@@ -124,7 +125,7 @@ int newton_orbit()
 
     // Watch for divide underflow
     double t2 = g_tmp_z.x * g_tmp_z.x + g_tmp_z.y * g_tmp_z.y;
-    if (t2 < FLT_MIN)
+    if (t2 < std::numeric_limits<float>::min())
     {
         return 1;
     }

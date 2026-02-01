@@ -94,6 +94,7 @@
 #include <filesystem>
 #include <functional>
 #include <iterator>
+#include <limits>
 #include <numeric>
 #include <optional>
 #include <string>
@@ -881,11 +882,14 @@ Command::Command(char *cur_arg, const CmdFile a_mode) :
             }
         }
         // using arbitrary precision and above failed
-        else if (static_cast<int>(std::strlen(arg_ptr)) > 513 // very long command
-            || (total_params > 0 && float_vals[total_params - 1] == FLT_MAX && total_params < 6) || is_a_big_float(arg_ptr))
+        else if (static_cast<int>(std::strlen(arg_ptr)) > 513                           // very long command
+            || (total_params > 0                                                        //
+                   && float_vals[total_params - 1] == std::numeric_limits<float>::max() //
+                   && total_params < 6)                                                 //
+            || is_a_big_float(arg_ptr))
         {
             ++num_float_params;
-            float_vals[total_params] = FLT_MAX;
+            float_vals[total_params] = std::numeric_limits<float>::max();
             float_val_strs[total_params] = arg_ptr;
         }
         ++total_params;
@@ -1398,9 +1402,7 @@ static CmdArgFlags cmd_center_mag(const Command &cmd)
     LDouble magnification;
     std::sscanf(cmd.float_val_strs[2], "%Lf", &magnification);
 
-    // I don't know if this is portable, but something needs to
-    // be used in case compiler's LDBL_MAX is not big enough
-    if (magnification > LDBL_MAX || magnification < -LDBL_MAX)
+    if (std::isnan(magnification) || std::isinf(magnification))
     {
         return cmd.bad_arg(); // ie: magnification is +-1.#INF
     }

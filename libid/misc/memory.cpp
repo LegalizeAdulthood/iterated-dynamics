@@ -25,8 +25,7 @@
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
-
-namespace fs = std::filesystem;
+#include <limits>
 
 using namespace id::engine;
 using namespace id::geometry;
@@ -378,7 +377,7 @@ static int check_bounds(const long start, const long length, const U16 handle)
         display_handle(handle);
         return 1;
     }
-    if (length > static_cast<long>(USHRT_MAX))
+    if (length > static_cast<long>(std::numeric_limits<unsigned short>::max()))
     {
         stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Tried to move > 65,535 bytes.");
         display_handle(handle);
