@@ -101,7 +101,7 @@ var searchData=
   ['pertengine_2ecpp_98',['PertEngine.cpp',['../dc/d6a/PertEngine_8cpp.html',1,'']]],
   ['pertengine_2eh_99',['PertEngine.h',['../d1/dd3/PertEngine_8h.html',1,'']]],
   ['perturb_100',['PERTURB',['../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91a5390b251d091b1b19334fa18d47e31f6',1,'id::fractals']]],
-  ['perturbation_101',['perturbation',['../dc/d31/namespaceid_1_1engine.html#aadeb2a327f9088edd3860e017e9dbecfae2280f80764ea639bbda96fe83bf146b',1,'id::engine::PERTURBATION'],['../dc/d31/namespaceid_1_1engine.html#a50445775e827176689602ae665b64c3f',1,'id::engine::perturbation()']]],
+  ['perturbation_101',['perturbation',['../dc/d31/namespaceid_1_1engine.html#a50445775e827176689602ae665b64c3f',1,'id::engine::perturbation()'],['../dc/d31/namespaceid_1_1engine.html#aadeb2a327f9088edd3860e017e9dbecfae2280f80764ea639bbda96fe83bf146b',1,'id::engine::PERTURBATION']]],
   ['perturbation_2ecpp_102',['perturbation.cpp',['../d6/da8/perturbation_8cpp.html',1,'']]],
   ['perturbation_2eh_103',['perturbation.h',['../d7/df1/perturbation_8h.html',1,'']]],
   ['perturbationpoint_104',['PerturbationPoint',['../d5/d38/namespaceid_1_1fractals.html#a38ef6a5a23ea8bf05a6811e77d9c7543',1,'id::fractals']]],

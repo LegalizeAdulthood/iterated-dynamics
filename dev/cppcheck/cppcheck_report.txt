@@ -70,13 +70,13 @@ hc/HelpCompiler.cpp:1566:9: note: First condition
 hc/HelpCompiler.cpp:1570:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/cmdfiles.cpp:170:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:171:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3570:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3572:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:3982:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3984:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
 libid/fractals/Ant.cpp:258:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
@@ -151,10 +151,10 @@ libid/fractals/parser.cpp:1885:37: note: Shadow variable
 libid/fractals/parser.cpp:3307:13: style: Consider using std::count_if algorithm instead of a raw loop. [useStlAlgorithm]
             store_count++;
             ^
-libid/geometry/line3d.cpp:1891:19: style: Condition 'path.empty()' is always false [knownConditionTrueFalse]
+libid/geometry/line3d.cpp:1892:19: style: Condition 'path.empty()' is always false [knownConditionTrueFalse]
     if (path.empty())
                   ^
-libid/geometry/line3d.cpp:1649:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+libid/geometry/line3d.cpp:1650:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
 libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
@@ -1657,7 +1657,7 @@ libid/io/path_match.cpp:97:17: style: Condition 'pat_ext==".*"' is always false 
 libid/io/split_path.cpp:24:40: style: Condition 'dir_name.empty()' is always false [knownConditionTrueFalse]
         std::strcpy(dir, dir_name.empty() ? "" : (dir_name + static_cast<char>(fs::path::preferred_separator)).c_str());
                                        ^
-libid/misc/memory.cpp:366:21: style: Array index 'counter' is used before limits check. [arrayIndexThenCheck]
+libid/misc/memory.cpp:365:21: style: Array index 'counter' is used before limits check. [arrayIndexThenCheck]
     while (s_handles[counter].stored_at != MemoryLocation::NOWHERE && counter < MAX_HANDLES)
                     ^
 libid/ui/diskvid.cpp:219:14: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
