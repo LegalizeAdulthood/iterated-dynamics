@@ -72,7 +72,12 @@ git submodule init
 git submodule update
 ```
 
-CMake presets are provided to simplify building the code.  The command
+CMake presets are provided to simplify building the code.
+
+## Building for Win32 on Windows
+
+The Windows build supports the existing Win32 port with the `default` preset.
+The command
 
 ```
 cmake --workflow --preset default
@@ -84,6 +89,24 @@ a sibling directory to the source code in `id/iterated-dynamics`.
 The build will first compile `hc`, the help compiler.  This generates
 the run-time help file from the help source files and an include file
 used by the iterated dynamics compile.
+
+## Building for wxWidgets on Windows and Linux
+
+The ongoing wxWidgets port can be built on either Windows or Linux with
+the `wx` preset.  The command
+
+```
+cmake --workflow --preset wx
+```
+
+will configure, build and test the code in the directory `id/build-wx`,
+a sibling directory to the source code in `id/iterated-dynamics`.
+
+Things are pretty much the same as described for the `default` preset for
+the Win32 port above, but:
+
+- the wxWidgets port is incomplete and largely untested
+- the image based tests are not yet working
 
 # Contributing
 
@@ -104,6 +127,23 @@ without contributions from many persons!
 
 To ensure your code will fit in wth the existing code base, check our
 [Style Guide](Style.md) and adjust your code to match.
+
+## Developing Against a Stable Baseline
+
+If you wish to contribute but don't want to deal with the shifting changes
+on the master branch, checkout the code at the tag for the most recent
+release (currently the v1.3.1 tag) and create your own development branch
+from there:
+
+```
+git checkout v1.3.1
+git checkout -b develop
+```
+
+If you're having trouble, please [file an
+issue](https://github.com/LegalizeAdulthood/iterated-dynamics/issues) or ask questions
+in the [discussion
+area](https://github.com/LegalizeAdulthood/iterated-dynamics/discussions).
 
 # Code Structure
 
