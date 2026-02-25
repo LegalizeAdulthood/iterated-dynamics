@@ -147,17 +147,36 @@ Building</h1>
 <div class="line">cd iterated-dynamics</div>
 <div class="line">git submodule init</div>
 <div class="line">git submodule update</div>
-</div><!-- fragment --><p>CMake presets are provided to simplify building the code. The command</p>
+</div><!-- fragment --><p>CMake presets are provided to simplify building the code.</p>
+<h2><a class="anchor" id="autotoc_md2"></a>
+Building for Win32 on Windows</h2>
+<p>The Windows build supports the existing Win32 port with the <code>default</code> preset. The command</p>
 <div class="fragment"><div class="line">cmake --workflow --preset default</div>
 </div><!-- fragment --><p>will configure, build and test the code in the directory <code>id/build-default</code>, a sibling directory to the source code in <code>id/iterated-dynamics</code>.</p>
 <p>The build will first compile <code>hc</code>, the help compiler. This generates the run-time help file from the help source files and an include file used by the iterated dynamics compile.</p>
-<h1><a class="anchor" id="autotoc_md2"></a>
+<h2><a class="anchor" id="autotoc_md3"></a>
+Building for wxWidgets on Windows and Linux</h2>
+<p>The ongoing wxWidgets port can be built on either Windows or Linux with the <code>wx</code> preset. The command</p>
+<div class="fragment"><div class="line">cmake --workflow --preset wx</div>
+</div><!-- fragment --><p>will configure, build and test the code in the directory <code>id/build-wx</code>, a sibling directory to the source code in <code>id/iterated-dynamics</code>.</p>
+<p>Things are pretty much the same as described for the <code>default</code> preset for the Win32 port above, but:</p>
+<ul>
+<li>the wxWidgets port is incomplete and largely untested</li>
+<li>the image based tests are not yet working</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md4"></a>
 Contributing</h1>
 <p>Iterated Dynamics welcomes contributions from everyone! The code has a long history of contributions from many people over the years. There are many small ways in which the code can be improved as well as large changes that are on the <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/wiki">release plan</a>.</p>
 <p>To get started, fork the repository into your github account. We recommend using the <a href="https://guides.github.com/introduction/flow/index.html">github workflow</a> to make contributions to Iterated Dynamics. We recommend you enable <a href="https://docs.github.com/en/actions">GitHub Actions</a> on your repository to get feedback on your changes as you push to your branch in your repository.</p>
 <p>Once your change is ready, prepare a pull request and submit it back for incorporation into the main repository. We couldn't have gotten this far without contributions from many persons!</p>
 <p>To ensure your code will fit in wth the existing code base, check our <a class="el" href="../../d5/d38/md_Style.html">Style Guide</a> and adjust your code to match.</p>
-<h1><a class="anchor" id="autotoc_md3"></a>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Developing Against a Stable Baseline</h2>
+<p>If you wish to contribute but don't want to deal with the shifting changes on the master branch, checkout the code at the tag for the most recent release (currently the v1.3.1 tag) and create your own development branch from there:</p>
+<div class="fragment"><div class="line">git checkout v1.3.1</div>
+<div class="line">git checkout -b develop</div>
+</div><!-- fragment --><p>If you're having trouble, please <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/issues">file an issue</a> or ask questions in the <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/discussions">discussion area</a>.</p>
+<h1><a class="anchor" id="autotoc_md6"></a>
 Code Structure</h1>
 <p>Most of the source code is in a library named <code>libid</code> in a directory by the same name. Additional subdirectories serve to categorize the role of the source files in that directory. Include files are similarly grouped in subdirectories of <code>include</code>. The subdirectories are:</p>
 <ul>

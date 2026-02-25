@@ -659,7 +659,7 @@ var searchData=
   ['glasses_5ftype_656',['glasses_type',['../dc/da2/structid_1_1io_1_1FractalInfo.html#acb0c576a4a217cc4bbdd4e4cb5254f69',1,'id::io::FractalInfo::glasses_type'],['../d1/d3e/history_8cpp.html#a49ccf82b85c7f26de870949b108a05b4',1,'glasses_type:&#160;history.cpp']]],
   ['glassestype_657',['GlassesType',['../d6/daa/namespaceid_1_1geometry.html#a9a4dbed60bc305dea7a99929beeaaf5e',1,'id::geometry']]],
   ['glitch_5ftolerance_658',['GLITCH_TOLERANCE',['../dc/d31/namespaceid_1_1engine.html#adbf6c932e4de5d099f93453120aa370e',1,'id::engine']]],
-  ['global_20variables_659',['Global Variables',['../d5/d38/md_Style.html#autotoc_md20',1,'']]],
+  ['global_20variables_659',['Global Variables',['../d5/d38/md_Style.html#autotoc_md23',1,'']]],
   ['go_5fin_5flong_5fzig_5fzags_660',['GO_IN_LONG_ZIG_ZAGS',['../dc/d31/namespaceid_1_1engine.html#a598600a9b24c3ba23463c6072a8550daa078fc3d8aab9a1fc594c9bcd9fbd679a',1,'id::engine']]],
   ['go_5fnegative_5fif_5fmax_5fcolor_661',['GO_NEGATIVE_IF_MAX_COLOR',['../dc/d31/namespaceid_1_1engine.html#a598600a9b24c3ba23463c6072a8550daa403ac4c053886cd4b86068853b0d335f',1,'id::engine']]],
   ['go_5fone_5fdir_5fdraw_5fother_5fdir_662',['GO_ONE_DIR_DRAW_OTHER_DIR',['../dc/d31/namespaceid_1_1engine.html#a598600a9b24c3ba23463c6072a8550daac16c8ab35675698a5810086e848ab500',1,'id::engine']]],
@@ -672,6 +672,6 @@ var searchData=
   ['gray_669',['GRAY',['../dc/d31/namespaceid_1_1engine.html#a1c5b4939e426a771f0422c5608a8ffcea244cdea1f122d6a7d26990a0837db976',1,'id::engine']]],
   ['green_670',['green',['../df/d57/structid_1_1ui_1_1PalEntry.html#a7ec9d9b215e5a55b1f6da8ebf7eebc74',1,'id::ui::PalEntry::green'],['../dc/d31/namespaceid_1_1engine.html#a1c5b4939e426a771f0422c5608a8ffcea6f70d7e2de7e610dfe5459ec149a7c81',1,'id::engine::GREEN'],['../dc/db0/loadmap_8cpp.html#a40093bf40480ad4ae7f43bda1bb6954b',1,'green:&#160;loadmap.cpp']]],
   ['ground_671',['ground',['../d6/d21/stereo_8cpp.html#aa5109b7484893febdf204af9312ffef1',1,'GROUND:&#160;stereo.cpp'],['../d6/dad/structid_1_1ui_1_1StereoData.html#a8f8b5f22ed9ebfc1758a0c2bb2008ec8',1,'id::ui::StereoData::ground']]],
-  ['guards_672',['Header Guards',['../d5/d38/md_Style.html#autotoc_md29',1,'']]],
-  ['guidelines_673',['Additional Guidelines',['../d5/d38/md_Style.html#autotoc_md31',1,'']]]
+  ['guards_672',['Header Guards',['../d5/d38/md_Style.html#autotoc_md32',1,'']]],
+  ['guidelines_673',['Additional Guidelines',['../d5/d38/md_Style.html#autotoc_md34',1,'']]]
 ];

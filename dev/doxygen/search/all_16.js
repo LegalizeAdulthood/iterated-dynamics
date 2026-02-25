@@ -11,7 +11,7 @@ var searchData=
   ['valuesaver_3c_20bool_20_3e_8',['ValueSaver&lt; bool &gt;',['../db/dc9/classid_1_1misc_1_1ValueSaver.html',1,'id::misc']]],
   ['var_5findex_9',['var_index',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a69bca59c00e60a002cfbbb00ef9cfdb8',1,'id::fractals::CompiledFormula']]],
   ['variable_10',['variable',['../da/d3b/structid_1_1engine_1_1Command.html#a2141a2a50457179f7eebea5192887e90',1,'id::engine::Command']]],
-  ['variables_11',['variables',['../d5/d38/md_Style.html#autotoc_md20',1,'Global Variables'],['../d5/d38/md_Style.html#autotoc_md18',1,'Member Variables'],['../d5/d38/md_Style.html#autotoc_md19',1,'Static Variables'],['../d5/d38/md_Style.html#autotoc_md17',1,'Variables'],['../d5/d38/namespaceid_1_1fractals.html#a5129303d164af7398060ef9c33bf3389',1,'id::fractals::VARIABLES']]],
+  ['variables_11',['variables',['../d5/d38/md_Style.html#autotoc_md23',1,'Global Variables'],['../d5/d38/md_Style.html#autotoc_md21',1,'Member Variables'],['../d5/d38/md_Style.html#autotoc_md22',1,'Static Variables'],['../d5/d38/md_Style.html#autotoc_md20',1,'Variables'],['../d5/d38/namespaceid_1_1fractals.html#a5129303d164af7398060ef9c33bf3389',1,'id::fractals::VARIABLES']]],
   ['variations_12',['Variations',['../dc/d76/namespaceid_1_1ui.html#aa145e9b2a6fbeb36339666e4da0f08b7',1,'id::ui']]],
   ['vars_13',['vars',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a46b6d382bac25719472bff3ed3457131',1,'id::fractals::CompiledFormula']]],
   ['vary_5ffn_14',['vary_fn',['../d0/d31/structid_1_1ui_1_1GeneBase.html#a729a7e508653f72901645a66d83aec84',1,'id::ui::GeneBase']]],

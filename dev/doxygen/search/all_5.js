@@ -29,7 +29,7 @@ var searchData=
   ['engine_5ftimer_2eh_26',['engine_timer.h',['../d9/dce/engine__timer_8h.html',1,'']]],
   ['enqueue_5ffloat_27',['enqueue_float',['../dc/d31/namespaceid_1_1engine.html#afd44852c87c309120043f9ac6b3775b3',1,'id::engine']]],
   ['entry_5fnum_28',['entry_num',['../df/d16/get__video__mode_8cpp.html#a18ff92e83df3b7bb2448ac6459760c72',1,'get_video_mode.cpp']]],
-  ['enumerations_29',['enumerations',['../d5/d38/md_Style.html#autotoc_md26',1,'A Few Words About Enumerations'],['../d5/d38/md_Style.html#autotoc_md15',1,'Enumerations']]],
+  ['enumerations_29',['enumerations',['../d5/d38/md_Style.html#autotoc_md29',1,'A Few Words About Enumerations'],['../d5/d38/md_Style.html#autotoc_md18',1,'Enumerations']]],
   ['eps_5fcross_30',['EPS_CROSS',['../dc/d31/namespaceid_1_1engine.html#ad509286bccbad45bd562c53aebc7a6a5a61dd635f4d77eb9b5f54cccaadc6a1a0',1,'id::engine']]],
   ['erase_31',['erase',['../d0/d6e/classid_1_1ui_1_1MoveBox.html#ab22cc6abf5568e615d96d7131d12e6f5',1,'id::ui::MoveBox']]],
   ['erase_5fboxes_5fexit_32',['ERASE_BOXES_EXIT',['../dc/d76/namespaceid_1_1ui.html#aae45742c0c439b12efabc426735bdcf8a40f1327cdc19d2a4530bb461079864e6',1,'id::ui']]],

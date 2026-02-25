@@ -31,7 +31,7 @@ var searchData=
   ['hcmplx_5fsub_28',['hcmplx_sub',['../d0/db0/namespaceid_1_1math.html#aa6dfee901190eff2db8900fa0448631a',1,'id::math']]],
   ['hcmplx_5ftrig0_29',['hcmplx_trig0',['../d0/db0/namespaceid_1_1math.html#a9e9b7af39c5260556bcae7e244eb1366',1,'id::math']]],
   ['hdr_5ffilename_30',['hdr_filename',['../db/dec/structhc_1_1HelpSource.html#aba84967f8e04e3f3254cd37de412e2aa',1,'hc::HelpSource']]],
-  ['header_20guards_31',['Header Guards',['../d5/d38/md_Style.html#autotoc_md29',1,'']]],
+  ['header_20guards_31',['Header Guards',['../d5/d38/md_Style.html#autotoc_md32',1,'']]],
   ['height_32',['height',['../db/ded/structid_1_1engine_1_1ImageRegion.html#a76c97bc28e1d671d51cbcd641aea395f',1,'id::engine::ImageRegion']]],
   ['height3_33',['height3',['../db/ded/structid_1_1engine_1_1ImageRegion.html#a2782781f0648564d0bbd090385bd20a8',1,'id::engine::ImageRegion']]],
   ['help_34',['help',['../dc/d76/namespaceid_1_1ui.html#a9f7061365fdd422f042ac348be5d5b32a4fc963e213bba362778f5c175eb4d5ff',1,'id::ui::HELP'],['../d0/d5f/namespaceid_1_1help.html#aa77b984f5cbafb3849ddca1c09e057eb',1,'id::help::help()']]],
