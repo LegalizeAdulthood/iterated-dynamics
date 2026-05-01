@@ -149,9 +149,17 @@ static int check_mode_key(int key, int choice)
         return 0;
     }
 
-    const int i = s_entry_nums[choice];
-    if (g_video_table[i].key != 0 && g_video_table[i].key < ID_KEY_SHF_F1)
+    const auto is_mode_key = [](int mode_key)
     {
+        // F1 is for help, it can't be assigned to a video mode
+        return mode_key != 0 &&                                //
+            ((mode_key >= ID_KEY_F2 && mode_key <= ID_KEY_F10) //
+                || (mode_key >= ID_KEY_SHF_F1 && mode_key <= ID_KEY_ALT_F10));
+    };
+    const int i = s_entry_nums[choice];
+    if (const int mode_key = g_video_table[i].key; mode_key != 0 && !is_mode_key(mode_key))
+    {
+        // video mode key wasn't valid?
         return 0;
     }
 
@@ -164,7 +172,7 @@ static int check_mode_key(int key, int choice)
     if (key == '-')
     {
         // unassign key?
-        if (g_video_table[i].key >= ID_KEY_SHF_F1)
+        if (g_video_table[i].key != 0)
         {
             g_video_table[i].key = 0;
             s_modes_changed = true;
@@ -174,7 +182,7 @@ static int check_mode_key(int key, int choice)
 
     // assign key?
     int ret = 0;
-    if (int j = get_a_key_no_help(); j >= ID_KEY_SHF_F1 && j <= ID_KEY_ALT_F10)
+    if (int j = get_a_key_no_help(); is_mode_key(j))
     {
         for (int k = 0; k < g_video_table_len; ++k)
         {
