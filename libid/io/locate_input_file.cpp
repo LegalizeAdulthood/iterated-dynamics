@@ -6,16 +6,23 @@
 #include "io/special_dirs.h"
 
 #include <filesystem>
-#include <initializer_list>
 #include <string>
+#include <vector>
 
 namespace id::io
 {
 
 std::string locate_input_file(const std::string &name)
 {
-    const std::initializer_list dirs{
-        std::filesystem::current_path(), g_save_dir, g_fractal_search_dir1, g_fractal_search_dir2};
+    std::vector dirs{g_save_dir, g_fractal_search_dir1, g_fractal_search_dir2};
+    if (g_check_cur_dir)
+    {
+        dirs.insert(dirs.begin(), std::filesystem::current_path());
+    }
+    else
+    {
+        dirs.push_back(std::filesystem::current_path());
+    }
     for (std::filesystem::path path : dirs)
     {
         path /= name;

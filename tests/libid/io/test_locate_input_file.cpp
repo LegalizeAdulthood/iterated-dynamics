@@ -30,6 +30,7 @@ TEST(TestLocateConfigFile, preferCurrentDirectory)
     ValueSaver saved_save_dir{g_save_dir, ID_TEST_SAVE_DIR};
     ValueSaver saved_search_dir1{g_fractal_search_dir1, ID_TEST_HOME_DIR};
     CurrentPathSaver saved_current{ID_TEST_HOME_DIR};
+    ValueSaver saved_check_cur_dir{g_check_cur_dir, true};
 
     const std::filesystem::path result{locate_input_file(ID_TEST_CFG)};
 
@@ -40,6 +41,8 @@ TEST(TestLocateConfigFile, preferConfigFileFromSaveDir)
 {
     ValueSaver saved_save_dir{g_save_dir, ID_TEST_SAVE_DIR};
     ValueSaver saved_search_dir1{g_fractal_search_dir1, ID_TEST_HOME_DIR};
+    CurrentPathSaver saved_current{ID_TEST_HOME_DIR};
+    ValueSaver saved_check_cur_dir{g_check_cur_dir, false};
 
     const std::filesystem::path result{locate_input_file(ID_TEST_CFG)};
 
