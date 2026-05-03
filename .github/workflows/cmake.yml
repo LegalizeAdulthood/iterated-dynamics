@@ -199,7 +199,7 @@ jobs:
           GH_TOKEN: ${{github.token}}
           TAG: ${{github.ref_name}}
         run: |
-          rm release-assets/html-docs*
+          ls -lR release-assets
           gh release create "$TAG" \
             release-assets/* \
             --draft \
