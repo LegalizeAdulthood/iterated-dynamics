@@ -40,9 +40,13 @@ add_executable(id WIN32
     id.rc.in
     "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
     resource.h
+    app-manifest.xml
     win_main.cpp)
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
+target_link_options(id PRIVATE
+    "/manifest:embed"
+    "/manifestinput:${CMAKE_CURRENT_SOURCE_DIR}/app-manifest.xml")
 target_link_libraries(id PUBLIC libid)
 set_property(TARGET id PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home")
 install(TARGETS id
