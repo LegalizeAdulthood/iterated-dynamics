@@ -4,7 +4,6 @@
 // Microsoft Visual C++ generated include file.
 // Used by fractint.rc
 //
-#define IDI_ICON1                       101
 #define IDI_ITERATED_DYNAMICS           101
 
 // Next default values for new objects

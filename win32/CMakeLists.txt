@@ -13,7 +13,11 @@ add_library(id-resources INTERFACE
     Id.ico
     id.rc.in
     "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
+    app-manifest.xml
     resource.h)
+target_link_options(id-resources INTERFACE
+    "/manifest:embed"
+    "/manifestinput:${CMAKE_CURRENT_SOURCE_DIR}/app-manifest.xml")
 target_include_directories(id-resources INTERFACE . "${CMAKE_CURRENT_BINARY_DIR}")
 target_folder(id-resources "Libraries")
 
