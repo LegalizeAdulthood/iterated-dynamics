@@ -60,7 +60,7 @@ jobs:
         ruby-version: 2.7
 
     - name: Setup AsciiDoctor
-      uses: reitzig/actions-asciidoctor@c642db5eedd1d729bb8c92034770d0b2f769eda6 # v2.2.0
+      uses: reitzig/actions-asciidoctor@fc32dc82a65a0e93b67383531d4c68cec34c7f27 # v2.0.4
       with:
         version: 2.0.18
 
