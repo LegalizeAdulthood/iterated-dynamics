@@ -31,7 +31,7 @@ set(ID_PROJECT_NAME "${ID_PROGRAM_NAME}" CACHE STRING "Project name for IDEs")
 option(ID_USE_WX "Enable wxWidgets for the GUI" OFF)
 
 project("${ID_PROJECT_NAME}"
-    VERSION 1.3.2.0
+    VERSION 1.3.3.0
     DESCRIPTION "${ID_PROGRAM_NAME} is a fractal generator"
     HOMEPAGE_URL "https://LegalizeAdulthood.github.io/iterated-dynamics"
     LANGUAGES CXX C)
