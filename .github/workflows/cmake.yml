@@ -149,6 +149,7 @@ jobs:
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'windows-latest'}}
       with:
+        archive: false
         name: Setup-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*-Setup.exe
         compression-level: 0
@@ -157,6 +158,7 @@ jobs:
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'windows-latest'}}
       with:
+        archive: false
         name: Msi-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.msi
         compression-level: 0
@@ -165,6 +167,7 @@ jobs:
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'windows-latest'}}
       with:
+        archive: false
         name: Zip-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
         compression-level: 0
@@ -173,6 +176,7 @@ jobs:
       uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
       if: ${{matrix.os == 'ubuntu-latest'}}
       with:
+        archive: false
         name: Tar-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
         compression-level: 0
