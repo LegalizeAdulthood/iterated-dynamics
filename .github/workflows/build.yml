@@ -69,7 +69,7 @@ jobs:
         fi
 
     - name: Upload AsciiDoc artifact
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: ascii-doc
         path: |
@@ -106,7 +106,7 @@ jobs:
           /documents/id.adoc
 
     - name: Upload PDF artifact
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: pdf-docs
         path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.pdf
@@ -144,7 +144,7 @@ jobs:
         asciidoctor build-ci-ascii-doc/hc/src/id.adoc
 
     - name: Upload HTML artifact
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       with:
         name: html-docs
         path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.html
@@ -223,7 +223,7 @@ jobs:
       run: cmake --build --preset ci-${{matrix.preset}} --target setup
 
     - name: Upload setup package artifacts
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{matrix.os == 'windows-latest' && matrix.preset == 'release'}}
       with:
         archive: false
@@ -232,7 +232,7 @@ jobs:
         compression-level: 0
 
     - name: Upload msi package artifacts
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{matrix.os == 'windows-latest' && matrix.preset == 'release'}}
       with:
         archive: false
@@ -241,7 +241,7 @@ jobs:
         compression-level: 0
 
     - name: Upload zip package artifacts
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{matrix.os == 'windows-latest' && matrix.preset == 'release'}}
       with:
         archive: false
@@ -250,7 +250,7 @@ jobs:
         compression-level: 0
 
     - name: Upload tar.gz package artifacts
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{matrix.os == 'ubuntu-latest' && matrix.preset == 'release'}}
       with:
         archive: false
@@ -334,7 +334,7 @@ jobs:
       run: cmake --build --preset ci-${{matrix.preset}} --target setup
 
     - name: Upload setup package artifacts
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
       with:
         archive: false
@@ -343,7 +343,7 @@ jobs:
         compression-level: 0
 
     - name: Upload msi package artifacts
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
       with:
         archive: false
@@ -352,7 +352,7 @@ jobs:
         compression-level: 0
 
     - name: Upload zip package artifacts
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
       with:
         archive: false
@@ -361,7 +361,7 @@ jobs:
         compression-level: 0
 
     - name: Upload tar.gz package artifacts
-      uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
       if: ${{matrix.os == 'ubuntu-latest' && matrix.preset == 'wx-release'}}
       with:
         archive: false
