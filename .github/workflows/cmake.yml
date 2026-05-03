@@ -4,7 +4,7 @@ name: CMake
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "id-*" ]
   pull_request:
     branches: [ "master" ]
 
