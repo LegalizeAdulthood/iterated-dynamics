@@ -270,7 +270,7 @@ Found a bug?  File an issue on our github project!\
 
 Version 1.3.2 is an interim bug fix release on the way to version 2.0.
 
-New Features in Version 1.3.2
+New Features in Version 1.3.3
 
 o The documentation is now available in PDF format.  (Fixes #262)\
 o The raytrace output format can now be specified by name instead of
@@ -282,7 +282,7 @@ o Libraries are used to group data files for Id.  See {Libraries}.
 o The previous browse history limit of 16 files was relaxed; it is
   now limited only by available memory.
 
-Bugs Fixed in Version 1.3.2
+Bugs Fixed in Version 1.3.3
 
 o Doxygen pages are now being generated from the source code.  Documentation
   comments will be added over time to improve the generated documentation.
@@ -292,7 +292,7 @@ o @parfile functionality restored.  (It processes the first parameter
 o List of fractal types in the repository ReadMe linked and condensed.
   (Fixes #332)
 
-Code Cleanup in Version 1.3.2
+Code Cleanup in Version 1.3.3
 
 o The incomplete X11 driver for linux has been removed.  (Fixes #343)\
 o All identifiers are now inside a namespace to avoid collisions with

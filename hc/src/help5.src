@@ -1735,7 +1735,16 @@ its own history spanning many years.  Please consult the Fractint help
 for its history.  To avoid being confused with a new release of Fractint,
 the code has been rebranded Iterated Dynamics, or Id for short, throughout.
 
-Version 1.3.1 is an interim bug fix release on the way to version 2.0.
+Version 1.3.2 is an interim bug fix release on the way to version 2.0.
+
+Bugs Fixed in Version 1.3.2
+
+o Interactively changing key assignments in the select video mode screen
+  works again (Fixes #383)
+o When curdir=no (the default), locate id.cfg from the user's save
+  directory before looking for id.cfg in the current directory.
+  (Fixes #384)
+o On Windows, advertise Id as *not* high DPI aware.  (Fixes #385)
 
 New Features in Version 1.3.1
 
