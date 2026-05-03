@@ -43,7 +43,7 @@ jobs:
           -Source "${{env.FEED_URL}}"
 
     - name: Setup CMake
-      uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
+      uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
         cmake-version: '3.31'
 
@@ -60,7 +60,7 @@ jobs:
         ruby-version: 2.7
 
     - name: Setup AsciiDoctor
-      uses: reitzig/actions-asciidoctor@c642db5eedd1d729bb8c92034770d0b2f769eda6 # v2.0.2
+      uses: reitzig/actions-asciidoctor@c642db5eedd1d729bb8c92034770d0b2f769eda6 # v2.2.0
       with:
         version: 2.0.18
 
@@ -127,7 +127,7 @@ jobs:
           -Source "${{env.FEED_URL}}"
 
     - name: Setup CMake
-      uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
+      uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
         cmake-version: '3.31'
 
@@ -208,7 +208,7 @@ jobs:
             -Source "${{env.FEED_URL}}"
 
       - name: Setup CMake
-        uses: jwlawson/actions-setup-cmake@802fa1a2c4e212495c05bf94dba2704a92a472be # v2.0.2
+        uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
         with:
           cmake-version: '3.31'
 
