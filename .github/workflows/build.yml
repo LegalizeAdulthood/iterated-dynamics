@@ -7,9 +7,9 @@ permissions:
 
 on:
   push:
-    branches: [ "master", "develop" ]
+    branches: [ "master", "develop", "id-*" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "id-*" ]
 
 env:
   FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
