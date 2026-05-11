@@ -50,7 +50,7 @@ void create_minidump(EXCEPTION_POINTERS *ep)
     {
         MessageBoxA(
             nullptr, "Could not locate MiniDumpWriteDump", ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
-        ::FreeLibrary(debug_hlp);
+        FreeLibrary(debug_hlp);
         return;
     }
 
@@ -69,7 +69,7 @@ void create_minidump(EXCEPTION_POINTERS *ep)
     {
         MessageBoxA(nullptr, ("Could not open dump file " + path.string() + " for writing.").c_str(),
             ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
-        ::FreeLibrary(debug_hlp);
+        FreeLibrary(debug_hlp);
         return;
     }
 
