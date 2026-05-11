@@ -274,7 +274,7 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
     }
     const double xd = g_logical_screen.x_size_dots / det;
     scrn_cnvt->a =  xd*(g_image_region.m_max.y-g_image_region.m_3rd.y);
-    scrn_cnvt->b =  xd*(g_image_region.width3());
+    scrn_cnvt->b =  xd* g_image_region.width3();
     scrn_cnvt->e = -scrn_cnvt->a*g_image_region.m_min.x - scrn_cnvt->b*g_image_region.m_max.y;
 
     det = //

@@ -193,13 +193,13 @@ int out_line_stereo(Byte *pixels, const int line_len)
     {
         if (REVERSE)
         {
-            SEP = GROUND - static_cast<int>((DEPTH * (get_depth(x, Y) - MIN_C) / MAX_CC));
+            SEP = GROUND - static_cast<int>(DEPTH * (get_depth(x, Y) - MIN_C) / MAX_CC);
         }
         else
         {
-            SEP = GROUND - static_cast<int>((DEPTH * (MAX_CC - (get_depth(x, Y) - MIN_C)) / MAX_CC));
+            SEP = GROUND - static_cast<int>(DEPTH * (MAX_CC - (get_depth(x, Y) - MIN_C)) / MAX_CC);
         }
-        SEP = static_cast<int>((SEP * 10.0 / WIDTH));         // adjust for media WIDTH
+        SEP = static_cast<int>(SEP * 10.0 / WIDTH);         // adjust for media WIDTH
 
         // get average value under calibration bars
         if (X1 <= x && x <= X2 && Y1 <= Y && Y <= Y2)

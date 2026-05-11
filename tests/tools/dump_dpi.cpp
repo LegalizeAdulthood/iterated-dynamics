@@ -31,7 +31,7 @@ static BOOL CALLBACK enum_monitor_proc(
 
     std::printf("monitor: %s%s\n",
         mi.szDevice,
-        (mi.dwFlags & MONITORINFOF_PRIMARY) ? " primary" : "");
+        mi.dwFlags & MONITORINFOF_PRIMARY ? " primary" : "");
 
     std::printf("  rect:    left=%ld top=%ld right=%ld bottom=%ld\n",
         mi.rcMonitor.left,
@@ -47,7 +47,7 @@ static BOOL CALLBACK enum_monitor_proc(
 
     if (SUCCEEDED(hr)) {
         std::printf("  dpi:     %u x %u\n", dpi_x, dpi_y);
-        std::printf("  scale:   %.2f%%\n", (dpi_x * 100.0) / 96.0);
+        std::printf("  scale:   %.2f%%\n", dpi_x * 100.0 / 96.0);
     } else {
         std::printf("  GetDpiForMonitor failed: HRESULT 0x%08lx\n",
             static_cast<unsigned long>(hr));

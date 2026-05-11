@@ -507,7 +507,7 @@ static void zoom_out_calc(const double dx, const double dy, double *new_x, doubl
     const double temp_y = dx * g_plot_my1 - dy * g_plot_my2;
 
     // calc new corner by extending from current screen corners
-    *new_x = g_save_image_region.m_min.x + temp_x*(g_save_image_region.m_max.x-g_save_image_region.m_3rd.x)/f_temp + temp_y*(g_save_image_region.width3())/f_temp;
+    *new_x = g_save_image_region.m_min.x + temp_x*(g_save_image_region.m_max.x-g_save_image_region.m_3rd.x)/f_temp + temp_y* g_save_image_region.width3() /f_temp;
     *new_y = g_save_image_region.m_max.y + temp_y*(g_save_image_region.m_3rd.y-g_save_image_region.m_max.y)/f_temp + temp_x*(g_save_image_region.m_min.y-g_save_image_region.m_3rd.y)/f_temp;
 }
 
@@ -579,7 +579,7 @@ static void zoom_out_dbl() // for ctl-enter, calc corners for zooming out
        then extend these co-ords from current real screen corners to get
        new actual corners
        */
-    const double f_temp = (g_image_region.m_min.y - g_image_region.m_3rd.y) * (g_image_region.width3()) - (g_image_region.m_max.x - g_image_region.m_3rd.x) * (g_image_region.m_3rd.y - g_image_region.m_max.y);
+    const double f_temp = (g_image_region.m_min.y - g_image_region.m_3rd.y) * g_image_region.width3() - (g_image_region.m_max.x - g_image_region.m_3rd.x) * (g_image_region.m_3rd.y - g_image_region.m_max.y);
     g_plot_mx1 = g_image_region.width3(); // reuse the plotxxx vars is safe
     g_plot_mx2 = g_image_region.m_3rd.y - g_image_region.m_max.y;
     g_plot_my1 = g_image_region.m_min.y - g_image_region.m_3rd.y;

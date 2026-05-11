@@ -570,7 +570,7 @@ BigNum unsafe_inv_bn(BigNum r, BigNum n)
     // orig_bntmp1        = g_bn_tmp1;
 
     // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -758,7 +758,7 @@ BigNum sqrt_bn(BigNum r, BigNum n)
     BigNum orig_n = n;
 
     // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -891,7 +891,7 @@ BigNum unsafe_ln_bn(BigNum r, BigNum n)
     int_to_bn(g_bn_tmp4, 1); // set before setting new values
 
     // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -1157,7 +1157,7 @@ BigNum unsafe_atan_bn(BigNum r, BigNum n)
     BigNum orig_bn_tmp3 = g_bn_tmp3;
 
     // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 

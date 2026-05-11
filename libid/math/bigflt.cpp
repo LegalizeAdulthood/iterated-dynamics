@@ -378,7 +378,7 @@ BigFloat unsafe_inv_bf(BigFloat r, BigFloat n)
     // orig_bftmp1        = g_bf_tmp1;
 
     // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -515,7 +515,7 @@ BigFloat unsafe_sqrt_bf(BigFloat r, BigFloat n)
     BigFloat orig_n = n;
 
     // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -636,7 +636,7 @@ BigFloat unsafe_ln_bf(BigFloat r, BigFloat n)
     BigFloat orig_bf_tmp5 = g_bf_tmp5;
 
     // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
@@ -921,7 +921,7 @@ BigFloat unsafe_atan_bf(BigFloat r, BigFloat n)
     BigFloat orig_bf_tmp3 = g_bf_tmp3;
 
     // calculate new starting values
-    g_bn_length = g_int_length + static_cast<int>((LDBL_DIG / LOG10_256)) + 1; // round up
+    g_bn_length = g_int_length + static_cast<int>(LDBL_DIG / LOG10_256) + 1; // round up
     g_bn_length = std::min(g_bn_length, orig_bn_length);
     calc_lengths();
 
