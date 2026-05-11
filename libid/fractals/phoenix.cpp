@@ -43,9 +43,8 @@ int phoenix_fractal_cplx_orbit()
 int phoenix_plus_fractal()
 {
     // z(n+1) = z(n)^(degree-1) * (z(n) + p) + qy(n),  y(n+1) = z(n)
-    DComplex old_plus;
     DComplex new_minus;
-    old_plus = g_old_z;
+    DComplex old_plus = g_old_z;
     g_tmp_z = g_old_z;
     for (int i = 1; i < g_degree; i++)
     {
