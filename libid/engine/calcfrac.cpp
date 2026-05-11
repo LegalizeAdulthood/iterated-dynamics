@@ -2314,14 +2314,13 @@ static bool y_sym_split(const int y_axis_col, const bool y_axis_between)
     return false; // tell set_symmetry it's a go
 }
 
-static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper symmetrical plot functions
+// set up proper symmetrical plot functions
+static void set_symmetry(SymmetryType sym, const bool use_list)
 {
     int i;
     // pixel number for origin
     bool x_axis_between = false;
     bool y_axis_between = false;         // if axis between 2 pixels, not on one
-    bool x_axis_on_screen = false;
-    bool y_axis_on_screen = false;
     double f_temp;
     BigFloat bft1;
     int saved = 0;
@@ -2404,6 +2403,8 @@ static void set_symmetry(SymmetryType sym, const bool use_list) // set up proper
     }
     int y_axis_col = -1;
     int x_axis_row = -1;
+    bool x_axis_on_screen;
+    bool y_axis_on_screen;
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
