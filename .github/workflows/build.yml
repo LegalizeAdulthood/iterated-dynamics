@@ -2,9 +2,6 @@
 #
 name: build
 
-permissions:
-  packages: write
-
 on:
   push:
     branches: [ "master", "develop", "id-*" ]
