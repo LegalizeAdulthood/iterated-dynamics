@@ -74,8 +74,6 @@ namespace
 
 enum
 {
-    MAX_OPS = 250,
-    MAX_ARGS = 100,
     MAX_JUMPS = 200 // size of JUMP_CONTROL array
 };
 
