@@ -357,7 +357,7 @@ private:
 class ReaderPositionSaver
 {
 public:
-    ReaderPositionSaver(Reader &reader) :
+    explicit ReaderPositionSaver(Reader &reader) :
         m_reader(reader),
         m_position(reader.tell())
     {
