@@ -171,14 +171,14 @@ template <size_t N>
 static bool equal(const float (&lhs)[N], const float (&rhs)[N])
 {
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs), //
-        [](const float lhs, const float rhs) { return within_eps(lhs, rhs); });
+        [](const float left, const float right) { return within_eps(left, right); });
 }
 
 template <size_t N>
 static bool equal(const double (&lhs)[N], const double (&rhs)[N])
 {
     return std::equal(std::begin(lhs), std::end(lhs), std::begin(rhs), //
-        [](const double lhs, const double rhs) { return within_eps(lhs, rhs); });
+        [](const double left, const double right) { return within_eps(left, right); });
 }
 
 bool operator==(const FractalInfo &lhs, const FractalInfo &rhs)
@@ -890,8 +890,8 @@ static constexpr MigrateReadType MIGRATED_TYPES[]{
 FractalType migrate_integer_types(int read_type)
 {
     if (const auto it = std::lower_bound(std::begin(MIGRATED_TYPES), std::end(MIGRATED_TYPES), read_type,
-            [](const MigrateReadType &migrate, const int read_type)
-            { return +migrate.deprecated < read_type; });
+            [](const MigrateReadType &migrate, const int type)
+            { return +migrate.deprecated < type; });
         it != std::end(MIGRATED_TYPES) && +it->deprecated == read_type)
     {
         return it->migrated;

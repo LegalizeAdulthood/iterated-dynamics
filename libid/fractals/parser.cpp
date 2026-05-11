@@ -1880,9 +1880,9 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
 
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmtokens.txt")};
-        assert(!path.empty());
-        debug_token = std::fopen(path.string().c_str(), "at");
+        const std::filesystem::path debug_path{get_save_path(WriteFile::ROOT, "frmtokens.txt")};
+        assert(!debug_path.empty());
+        debug_token = std::fopen(debug_path.string().c_str(), "at");
         if (debug_token != nullptr)
         {
             fmt::print(debug_token, "{:s}\n", name);
