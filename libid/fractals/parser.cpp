@@ -305,7 +305,7 @@ public:
         m_pos(0)
     {
     }
-    virtual ~StringReader() = default;
+    ~StringReader() override = default;
 
     int get_char() override
     {
