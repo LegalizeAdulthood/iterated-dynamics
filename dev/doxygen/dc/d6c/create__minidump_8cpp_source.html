@@ -135,7 +135,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    {</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        MessageBoxA(</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            <span class="keyword">nullptr</span>, <span class="stringliteral">&quot;Could not locate MiniDumpWriteDump&quot;</span>, ID_PROGRAM_NAME <span class="stringliteral">&quot;: Unexpected Error&quot;</span>, MB_OK);</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        ::FreeLibrary(debug_hlp);</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        FreeLibrary(debug_hlp);</div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    }</div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
@@ -154,7 +154,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    {</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        MessageBoxA(<span class="keyword">nullptr</span>, (<span class="stringliteral">&quot;Could not open dump file &quot;</span> + <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.string() + <span class="stringliteral">&quot; for writing.&quot;</span>).c_str(),</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>            ID_PROGRAM_NAME <span class="stringliteral">&quot;: Unexpected Error&quot;</span>, MB_OK);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        ::FreeLibrary(debug_hlp);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        FreeLibrary(debug_hlp);</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    }</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>

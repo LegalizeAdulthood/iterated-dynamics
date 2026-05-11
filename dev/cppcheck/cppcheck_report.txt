@@ -127,28 +127,16 @@ libid/fractals/lyapunov.cpp:131:19: portability: Shifting signed 32-bit value by
 libid/fractals/lyapunov.cpp:131:19: error: Signed integer overflow for expression '1<<t'. [integerOverflow]
         if (i & 1 << t)
                   ^
-libid/fractals/parser.cpp:362:5: style: Class 'ReaderPositionSaver' has a constructor with 1 argument that is not explicit. [noExplicitConstructor]
-    ReaderPositionSaver(Reader &reader) :
-    ^
-libid/fractals/parser.cpp:914:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+libid/fractals/parser.cpp:912:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
         if (!text[s_parser.n])
             ^
-libid/fractals/parser.cpp:912:30: note: outer condition: text[s_parser.n]
+libid/fractals/parser.cpp:910:30: note: outer condition: text[s_parser.n]
     for (s_parser.n = 0; text[s_parser.n]; s_parser.n++)
                              ^
-libid/fractals/parser.cpp:914:13: note: opposite inner condition: !text[s_parser.n]
+libid/fractals/parser.cpp:912:13: note: opposite inner condition: !text[s_parser.n]
         if (!text[s_parser.n])
             ^
-libid/fractals/parser.cpp:1885:37: style: Local variable 'path' shadows outer argument [shadowArgument]
-        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmtokens.txt")};
-                                    ^
-libid/fractals/parser.cpp:1849:48: note: Shadowed declaration
-int frm_get_param_stuff(std::filesystem::path &path, const char *name)
-                                               ^
-libid/fractals/parser.cpp:1885:37: note: Shadow variable
-        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmtokens.txt")};
-                                    ^
-libid/fractals/parser.cpp:3307:13: style: Consider using std::count_if algorithm instead of a raw loop. [useStlAlgorithm]
+libid/fractals/parser.cpp:3305:13: style: Consider using std::count_if algorithm instead of a raw loop. [useStlAlgorithm]
             store_count++;
             ^
 libid/geometry/line3d.cpp:1892:19: style: Condition 'path.empty()' is always false [knownConditionTrueFalse]
