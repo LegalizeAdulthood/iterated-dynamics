@@ -132,7 +132,7 @@ var searchData=
   ['pickover_5forbit_129',['pickover_orbit',['../d5/d38/namespaceid_1_1fractals.html#ad5564f45902b1722ce6d7032f3f205e7',1,'id::fractals']]],
   ['piece_5fx_5fdots_130',['piece_x_dots',['../de/dfd/structid_1_1ui_1_1MakeParParams.html#a93893991391fa002b4569765b39430a0',1,'id::ui::MakeParParams']]],
   ['piece_5fy_5fdots_131',['piece_y_dots',['../de/dfd/structid_1_1ui_1_1MakeParParams.html#afb8d362269b48ce0b910757364543657',1,'id::ui::MakeParParams']]],
-  ['pixel_132',['pixel',['../d7/da9/diskvid_8cpp.html#adc5fc0781c3ea3ba7c884084e3b718c0',1,'pixel:&#160;diskvid.cpp'],['../dc/d31/namespaceid_1_1engine.html#a44e0c5bf140d63dd9b74ac63c3c3d8b7a06e536f5c0819e7aa379dcd35556f441',1,'id::engine::PIXEL']]],
+  ['pixel_132',['pixel',['../dc/d31/namespaceid_1_1engine.html#a44e0c5bf140d63dd9b74ac63c3c3d8b7a06e536f5c0819e7aa379dcd35556f441',1,'id::engine::PIXEL'],['../d7/da9/diskvid_8cpp.html#adc5fc0781c3ea3ba7c884084e3b718c0',1,'pixel:&#160;diskvid.cpp']]],
   ['pixel_5fgrid_2ecpp_133',['pixel_grid.cpp',['../d9/d35/pixel__grid_8cpp.html',1,'']]],
   ['pixel_5fgrid_2eh_134',['pixel_grid.h',['../d4/d69/pixel__grid_8h.html',1,'']]],
   ['pixel_5flimits_2eh_135',['pixel_limits.h',['../d4/d5b/pixel__limits_8h.html',1,'']]],

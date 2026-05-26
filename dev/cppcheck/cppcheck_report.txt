@@ -145,1456 +145,1456 @@ libid/geometry/line3d.cpp:1892:19: style: Condition 'path.empty()' is always fal
 libid/geometry/line3d.cpp:1650:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:64:38: note: Address of variable taken here.
+libid/io/decode_info.cpp:67:38: note: Address of variable taken here.
     get_int16(&info->iterations_old, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:64:38: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:67:38: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->iterations_old, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:65:36: note: Address of variable taken here.
+libid/io/decode_info.cpp:68:36: note: Address of variable taken here.
     get_int16(&info->fractal_type, &buf_ptr, dir);
                                    ^
-libid/io/decode_info.cpp:65:36: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:68:36: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->fractal_type, &buf_ptr, dir);
                                    ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
-                                                                                    ^
-libid/io/decode_info.cpp:72:26: note: Address of variable taken here.
-    get_int16(&info->ax, &buf_ptr, dir);
-                         ^
-libid/io/decode_info.cpp:72:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_int16(&info->ax, &buf_ptr, dir);
-                         ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
-                                                                                    ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
-                                                                                    ^
-libid/io/decode_info.cpp:73:26: note: Address of variable taken here.
-    get_int16(&info->bx, &buf_ptr, dir);
-                         ^
-libid/io/decode_info.cpp:73:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_int16(&info->bx, &buf_ptr, dir);
-                         ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
-                                                                                    ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
-                                                                                    ^
-libid/io/decode_info.cpp:74:26: note: Address of variable taken here.
-    get_int16(&info->cx, &buf_ptr, dir);
-                         ^
-libid/io/decode_info.cpp:74:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_int16(&info->cx, &buf_ptr, dir);
-                         ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
-                                                                                    ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
 libid/io/decode_info.cpp:75:26: note: Address of variable taken here.
-    get_int16(&info->dx, &buf_ptr, dir);
+    get_int16(&info->ax, &buf_ptr, dir);
                          ^
 libid/io/decode_info.cpp:75:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_int16(&info->ax, &buf_ptr, dir);
+                         ^
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+                                                                                    ^
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+                                                                                    ^
+libid/io/decode_info.cpp:76:26: note: Address of variable taken here.
+    get_int16(&info->bx, &buf_ptr, dir);
+                         ^
+libid/io/decode_info.cpp:76:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_int16(&info->bx, &buf_ptr, dir);
+                         ^
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+                                                                                    ^
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+                                                                                    ^
+libid/io/decode_info.cpp:77:26: note: Address of variable taken here.
+    get_int16(&info->cx, &buf_ptr, dir);
+                         ^
+libid/io/decode_info.cpp:77:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_int16(&info->cx, &buf_ptr, dir);
+                         ^
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+                                                                                    ^
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+                                                                                    ^
+libid/io/decode_info.cpp:78:26: note: Address of variable taken here.
     get_int16(&info->dx, &buf_ptr, dir);
                          ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:78:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_int16(&info->dx, &buf_ptr, dir);
+                         ^
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:76:32: note: Address of variable taken here.
+libid/io/decode_info.cpp:79:32: note: Address of variable taken here.
     get_int16(&info->dot_mode, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:76:32: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:79:32: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->dot_mode, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:77:30: note: Address of variable taken here.
+libid/io/decode_info.cpp:80:30: note: Address of variable taken here.
     get_int16(&info->x_dots, &buf_ptr, dir);
                              ^
-libid/io/decode_info.cpp:77:30: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:80:30: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->x_dots, &buf_ptr, dir);
                              ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:78:30: note: Address of variable taken here.
+libid/io/decode_info.cpp:81:30: note: Address of variable taken here.
     get_int16(&info->y_dots, &buf_ptr, dir);
                              ^
-libid/io/decode_info.cpp:78:30: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:81:30: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->y_dots, &buf_ptr, dir);
                              ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:244:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:79:30: note: Address of variable taken here.
+libid/io/decode_info.cpp:82:30: note: Address of variable taken here.
     get_int16(&info->colors, &buf_ptr, dir);
                              ^
-libid/io/decode_info.cpp:79:30: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:82:30: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->colors, &buf_ptr, dir);
                              ^
-libid/io/decode_info.cpp:244:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:247:85: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
                                                                                     ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:103:37: note: Address of variable taken here.
+libid/io/decode_info.cpp:106:37: note: Address of variable taken here.
         get_int16(&info->init3d[i], &buf_ptr, dir);
                                     ^
-libid/io/decode_info.cpp:103:37: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:106:37: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
         get_int16(&info->init3d[i], &buf_ptr, dir);
                                     ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:205:37: note: Address of variable taken here.
+libid/io/decode_info.cpp:208:37: note: Address of variable taken here.
         get_int16(&info->future[i], &buf_ptr, dir);
                                     ^
-libid/io/decode_info.cpp:205:37: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:208:37: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
         get_int16(&info->future[i], &buf_ptr, dir);
                                     ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:457:32: note: Address of variable taken here.
+libid/io/decode_info.cpp:460:32: note: Address of variable taken here.
     get_int16(&info->evolving, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:457:32: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:460:32: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->evolving, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:458:39: note: Address of variable taken here.
+libid/io/decode_info.cpp:461:39: note: Address of variable taken here.
     get_int16(&info->image_grid_size, &buf_ptr, dir);
                                       ^
-libid/io/decode_info.cpp:458:39: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:461:39: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->image_grid_size, &buf_ptr, dir);
                                       ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:459:78: note: Address of variable taken here.
+libid/io/decode_info.cpp:462:78: note: Address of variable taken here.
     get_int16(reinterpret_cast<short *>(&info->this_generation_random_seed), &buf_ptr, dir);
                                                                              ^
-libid/io/decode_info.cpp:459:78: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:462:78: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(reinterpret_cast<short *>(&info->this_generation_random_seed), &buf_ptr, dir);
                                                                              ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:465:51: note: Address of variable taken here.
+libid/io/decode_info.cpp:468:51: note: Address of variable taken here.
     get_int16(&info->discrete_x_parameter_offset, &buf_ptr, dir);
                                                   ^
-libid/io/decode_info.cpp:465:51: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:468:51: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->discrete_x_parameter_offset, &buf_ptr, dir);
                                                   ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:466:51: note: Address of variable taken here.
+libid/io/decode_info.cpp:469:51: note: Address of variable taken here.
     get_int16(&info->discrete_y_parameter_offset, &buf_ptr, dir);
                                                   ^
-libid/io/decode_info.cpp:466:51: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:469:51: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->discrete_y_parameter_offset, &buf_ptr, dir);
                                                   ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:467:26: note: Address of variable taken here.
+libid/io/decode_info.cpp:470:26: note: Address of variable taken here.
     get_int16(&info->px, &buf_ptr, dir);
                          ^
-libid/io/decode_info.cpp:467:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:470:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->px, &buf_ptr, dir);
                          ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:468:26: note: Address of variable taken here.
+libid/io/decode_info.cpp:471:26: note: Address of variable taken here.
     get_int16(&info->py, &buf_ptr, dir);
                          ^
-libid/io/decode_info.cpp:468:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:471:26: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->py, &buf_ptr, dir);
                          ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:249:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:252:15: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:469:39: note: Address of variable taken here.
+libid/io/decode_info.cpp:472:39: note: Address of variable taken here.
     get_int16(&info->screen_x_offset, &buf_ptr, dir);
                                       ^
-libid/io/decode_info.cpp:469:39: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:472:39: note: Calling function 'get_int16', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int16(&info->screen_x_offset, &buf_ptr, dir);
                                       ^
-libid/io/decode_info.cpp:249:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:252:15: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
         (*src)[1] = (*dst & 0xff00) >> 8;
               ^
-libid/io/decode_info.cpp:263:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:266:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:123:38: note: Address of variable taken here.
+libid/io/decode_info.cpp:126:38: note: Address of variable taken here.
     get_int32(&info->tot_extend_len, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:123:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:126:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->tot_extend_len, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:263:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:266:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:263:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:266:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:131:33: note: Address of variable taken here.
+libid/io/decode_info.cpp:134:33: note: Address of variable taken here.
     get_int32(&info->calc_time, &buf_ptr, dir);
                                 ^
-libid/io/decode_info.cpp:131:33: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:134:33: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->calc_time, &buf_ptr, dir);
                                 ^
-libid/io/decode_info.cpp:263:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:266:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:263:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:266:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:177:31: note: Address of variable taken here.
+libid/io/decode_info.cpp:180:31: note: Address of variable taken here.
     get_int32(&info->bailout, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:177:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:180:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->bailout, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:263:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:266:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:263:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:266:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:179:34: note: Address of variable taken here.
+libid/io/decode_info.cpp:182:34: note: Address of variable taken here.
     get_int32(&info->iterations, &buf_ptr, dir);
                                  ^
-libid/io/decode_info.cpp:179:34: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:182:34: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->iterations, &buf_ptr, dir);
                                  ^
-libid/io/decode_info.cpp:263:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:266:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:263:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:266:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:184:31: note: Address of variable taken here.
+libid/io/decode_info.cpp:187:31: note: Address of variable taken here.
     get_int32(&info->log_map, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:184:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:187:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->log_map, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:263:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:266:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:263:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:266:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:185:32: note: Address of variable taken here.
+libid/io/decode_info.cpp:188:32: note: Address of variable taken here.
     get_int32(&info->dist_est, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:185:32: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:188:32: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->dist_est, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:263:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:266:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:263:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:266:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:194:38: note: Address of variable taken here.
+libid/io/decode_info.cpp:197:38: note: Address of variable taken here.
     get_int32(&info->orbit_interval, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:194:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:197:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->orbit_interval, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:263:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:266:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[1]) << 8) +
                                                  ^
-libid/io/decode_info.cpp:264:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:267:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:123:38: note: Address of variable taken here.
+libid/io/decode_info.cpp:126:38: note: Address of variable taken here.
     get_int32(&info->tot_extend_len, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:123:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:126:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->tot_extend_len, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:264:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:267:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:264:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:267:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:131:33: note: Address of variable taken here.
+libid/io/decode_info.cpp:134:33: note: Address of variable taken here.
     get_int32(&info->calc_time, &buf_ptr, dir);
                                 ^
-libid/io/decode_info.cpp:131:33: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:134:33: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->calc_time, &buf_ptr, dir);
                                 ^
-libid/io/decode_info.cpp:264:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:267:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:264:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:267:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:177:31: note: Address of variable taken here.
+libid/io/decode_info.cpp:180:31: note: Address of variable taken here.
     get_int32(&info->bailout, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:177:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:180:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->bailout, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:264:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:267:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:264:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:267:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:179:34: note: Address of variable taken here.
+libid/io/decode_info.cpp:182:34: note: Address of variable taken here.
     get_int32(&info->iterations, &buf_ptr, dir);
                                  ^
-libid/io/decode_info.cpp:179:34: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:182:34: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->iterations, &buf_ptr, dir);
                                  ^
-libid/io/decode_info.cpp:264:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:267:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:264:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:267:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:184:31: note: Address of variable taken here.
+libid/io/decode_info.cpp:187:31: note: Address of variable taken here.
     get_int32(&info->log_map, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:184:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:187:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->log_map, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:264:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:267:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:264:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:267:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:185:32: note: Address of variable taken here.
+libid/io/decode_info.cpp:188:32: note: Address of variable taken here.
     get_int32(&info->dist_est, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:185:32: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:188:32: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->dist_est, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:264:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:267:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:264:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:267:50: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:194:38: note: Address of variable taken here.
+libid/io/decode_info.cpp:197:38: note: Address of variable taken here.
     get_int32(&info->orbit_interval, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:194:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:197:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->orbit_interval, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:264:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:267:50: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<unsigned long>((*src)[2]) << 16) +
                                                  ^
-libid/io/decode_info.cpp:265:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:268:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:123:38: note: Address of variable taken here.
+libid/io/decode_info.cpp:126:38: note: Address of variable taken here.
     get_int32(&info->tot_extend_len, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:123:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:126:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->tot_extend_len, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:265:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:268:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:265:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:268:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:131:33: note: Address of variable taken here.
+libid/io/decode_info.cpp:134:33: note: Address of variable taken here.
     get_int32(&info->calc_time, &buf_ptr, dir);
                                 ^
-libid/io/decode_info.cpp:131:33: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:134:33: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->calc_time, &buf_ptr, dir);
                                 ^
-libid/io/decode_info.cpp:265:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:268:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:265:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:268:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:177:31: note: Address of variable taken here.
+libid/io/decode_info.cpp:180:31: note: Address of variable taken here.
     get_int32(&info->bailout, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:177:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:180:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->bailout, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:265:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:268:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:265:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:268:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:179:34: note: Address of variable taken here.
+libid/io/decode_info.cpp:182:34: note: Address of variable taken here.
     get_int32(&info->iterations, &buf_ptr, dir);
                                  ^
-libid/io/decode_info.cpp:179:34: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:182:34: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->iterations, &buf_ptr, dir);
                                  ^
-libid/io/decode_info.cpp:265:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:268:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:265:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:268:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:184:31: note: Address of variable taken here.
+libid/io/decode_info.cpp:187:31: note: Address of variable taken here.
     get_int32(&info->log_map, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:184:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:187:31: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->log_map, &buf_ptr, dir);
                               ^
-libid/io/decode_info.cpp:265:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:268:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:265:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:268:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:185:32: note: Address of variable taken here.
+libid/io/decode_info.cpp:188:32: note: Address of variable taken here.
     get_int32(&info->dist_est, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:185:32: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:188:32: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->dist_est, &buf_ptr, dir);
                                ^
-libid/io/decode_info.cpp:265:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:268:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:265:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:268:65: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:194:38: note: Address of variable taken here.
+libid/io/decode_info.cpp:197:38: note: Address of variable taken here.
     get_int32(&info->orbit_interval, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:194:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:197:38: note: Calling function 'get_int32', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_int32(&info->orbit_interval, &buf_ptr, dir);
                                      ^
-libid/io/decode_info.cpp:265:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:268:65: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
                (static_cast<long>(reinterpret_cast<char *>(*src)[3]) << 24);
                                                                 ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:460:44: note: Address of variable taken here.
+libid/io/decode_info.cpp:463:44: note: Address of variable taken here.
     get_double(&info->max_random_mutation, &buf_ptr, dir);
                                            ^
-libid/io/decode_info.cpp:460:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:463:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->max_random_mutation, &buf_ptr, dir);
                                            ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:461:42: note: Address of variable taken here.
+libid/io/decode_info.cpp:464:42: note: Address of variable taken here.
     get_double(&info->x_parameter_range, &buf_ptr, dir);
                                          ^
-libid/io/decode_info.cpp:461:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:464:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->x_parameter_range, &buf_ptr, dir);
                                          ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:462:42: note: Address of variable taken here.
+libid/io/decode_info.cpp:465:42: note: Address of variable taken here.
     get_double(&info->y_parameter_range, &buf_ptr, dir);
                                          ^
-libid/io/decode_info.cpp:462:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:465:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->y_parameter_range, &buf_ptr, dir);
                                          ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:463:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:466:43: note: Address of variable taken here.
     get_double(&info->x_parameter_offset, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:463:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:466:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->x_parameter_offset, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:464:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:467:43: note: Address of variable taken here.
     get_double(&info->y_parameter_offset, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:464:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:467:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->y_parameter_offset, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
-            if ((*src)[i] != 0)
-                      ^
-libid/io/decode_info.cpp:505:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:505:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
-            if ((*src)[i] != 0)
-                      ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
-            if ((*src)[i] != 0)
-                      ^
-libid/io/decode_info.cpp:506:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:506:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
-            if ((*src)[i] != 0)
-                      ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
-            if ((*src)[i] != 0)
-                      ^
-libid/io/decode_info.cpp:507:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:507:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
-            if ((*src)[i] != 0)
-                      ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
             if ((*src)[i] != 0)
                       ^
 libid/io/decode_info.cpp:508:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:508:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:303:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
             if ((*src)[i] != 0)
                       ^
 libid/io/decode_info.cpp:509:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:509:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:303:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
             if ((*src)[i] != 0)
                       ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:460:44: note: Address of variable taken here.
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:460:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:461:42: note: Address of variable taken here.
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:461:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:462:42: note: Address of variable taken here.
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:462:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:463:43: note: Address of variable taken here.
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:463:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:464:43: note: Address of variable taken here.
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:464:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:505:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:505:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:506:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:506:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[7] = s | (e & 0x7f0) >> 4;
-                  ^
-libid/io/decode_info.cpp:507:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+            if ((*src)[i] != 0)
+                      ^
+libid/io/decode_info.cpp:510:43: note: Address of variable taken here.
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:507:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:510:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+            if ((*src)[i] != 0)
+                      ^
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+            if ((*src)[i] != 0)
+                      ^
+libid/io/decode_info.cpp:511:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:511:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+            if ((*src)[i] != 0)
+                      ^
+libid/io/decode_info.cpp:306:23: warning: The address of local variable 'buf_ptr' might be accessed at non-zero index. [objectIndex]
+            if ((*src)[i] != 0)
+                      ^
+libid/io/decode_info.cpp:512:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:512:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:306:23: note: The address of local variable 'buf_ptr' might be accessed at non-zero index.
+            if ((*src)[i] != 0)
+                      ^
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[7] = s | (e & 0x7f0) >> 4;
                   ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:463:44: note: Address of variable taken here.
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:463:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:464:42: note: Address of variable taken here.
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:464:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:465:42: note: Address of variable taken here.
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:465:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:466:43: note: Address of variable taken here.
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:466:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:467:43: note: Address of variable taken here.
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:467:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[7] = s | (e & 0x7f0) >> 4;
                   ^
 libid/io/decode_info.cpp:508:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:508:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[7] = s | (e & 0x7f0) >> 4;
                   ^
-libid/io/decode_info.cpp:353:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[7] = s | (e & 0x7f0) >> 4;
                   ^
 libid/io/decode_info.cpp:509:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:509:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:353:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[7] = s | (e & 0x7f0) >> 4;
                   ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[7] = s | (e & 0x7f0) >> 4;
                   ^
-libid/io/decode_info.cpp:460:44: note: Address of variable taken here.
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:460:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:461:42: note: Address of variable taken here.
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:461:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:462:42: note: Address of variable taken here.
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:462:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:463:43: note: Address of variable taken here.
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:463:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:464:43: note: Address of variable taken here.
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:464:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:505:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:505:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:506:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:506:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
-                  ^
-libid/io/decode_info.cpp:507:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:510:43: note: Address of variable taken here.
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:507:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:510:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:511:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:511:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:356:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:512:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:512:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:356:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[7] = s | (e & 0x7f0) >> 4;
+                  ^
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
                   ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:463:44: note: Address of variable taken here.
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:463:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:464:42: note: Address of variable taken here.
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:464:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:465:42: note: Address of variable taken here.
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:465:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:466:43: note: Address of variable taken here.
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:466:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:467:43: note: Address of variable taken here.
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:467:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
                   ^
 libid/io/decode_info.cpp:508:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:508:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
                   ^
-libid/io/decode_info.cpp:355:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
                   ^
 libid/io/decode_info.cpp:509:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:509:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:355:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
                   ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[5] = static_cast<int>(f) & 0xff;
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
                   ^
-libid/io/decode_info.cpp:460:44: note: Address of variable taken here.
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:460:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:461:42: note: Address of variable taken here.
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:461:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:462:42: note: Address of variable taken here.
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:462:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:463:43: note: Address of variable taken here.
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:463:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:464:43: note: Address of variable taken here.
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:464:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:505:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:505:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:506:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:506:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[5] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:507:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:510:43: note: Address of variable taken here.
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:507:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:510:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:511:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:511:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:358:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:512:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:512:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:358:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[6] = (e & 0x0f) << 4 | static_cast<int>(f) & 0x0f;
+                  ^
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[5] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:463:44: note: Address of variable taken here.
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:463:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:464:42: note: Address of variable taken here.
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:464:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:465:42: note: Address of variable taken here.
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:465:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:466:43: note: Address of variable taken here.
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:466:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:467:43: note: Address of variable taken here.
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:467:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[5] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:508:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:508:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[5] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:357:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[5] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:509:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:509:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:357:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[5] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[4] = static_cast<int>(f) & 0xff;
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[5] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:460:44: note: Address of variable taken here.
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:460:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:461:42: note: Address of variable taken here.
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:461:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:462:42: note: Address of variable taken here.
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:462:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:463:43: note: Address of variable taken here.
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:463:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:464:43: note: Address of variable taken here.
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:464:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:505:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:505:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:506:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:506:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[4] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:507:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:510:43: note: Address of variable taken here.
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:507:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:510:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:511:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:511:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:360:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:512:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:512:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:360:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[5] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[4] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:463:44: note: Address of variable taken here.
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:463:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:464:42: note: Address of variable taken here.
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:464:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:465:42: note: Address of variable taken here.
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:465:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:466:43: note: Address of variable taken here.
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:466:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:467:43: note: Address of variable taken here.
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:467:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[4] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:508:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:508:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[4] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:359:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[4] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:509:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:509:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:359:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[4] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[3] = static_cast<int>(f) & 0xff;
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[4] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:460:44: note: Address of variable taken here.
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:460:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:461:42: note: Address of variable taken here.
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:461:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:462:42: note: Address of variable taken here.
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:462:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:463:43: note: Address of variable taken here.
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:463:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:464:43: note: Address of variable taken here.
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:464:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:505:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:505:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:506:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:506:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[3] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:507:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:510:43: note: Address of variable taken here.
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:507:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:510:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:511:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:511:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:362:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:512:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:512:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:362:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[4] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[3] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:463:44: note: Address of variable taken here.
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:463:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:464:42: note: Address of variable taken here.
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:464:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:465:42: note: Address of variable taken here.
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:465:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:466:43: note: Address of variable taken here.
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:466:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:467:43: note: Address of variable taken here.
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:467:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[3] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:508:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:508:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[3] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:361:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[3] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:509:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:509:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:361:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[3] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[2] = static_cast<int>(f) & 0xff;
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[3] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:460:44: note: Address of variable taken here.
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:460:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:461:42: note: Address of variable taken here.
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:461:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:462:42: note: Address of variable taken here.
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:462:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:463:43: note: Address of variable taken here.
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:463:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:464:43: note: Address of variable taken here.
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:464:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:505:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:505:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:506:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:506:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[2] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:507:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:510:43: note: Address of variable taken here.
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:507:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:510:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:511:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:511:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:364:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:512:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:512:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:364:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[3] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[2] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:463:44: note: Address of variable taken here.
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:463:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:464:42: note: Address of variable taken here.
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:464:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:465:42: note: Address of variable taken here.
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:465:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:466:43: note: Address of variable taken here.
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:466:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:467:43: note: Address of variable taken here.
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:467:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[2] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:508:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:508:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[2] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:363:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[2] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:509:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:509:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:363:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[2] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[1] = static_cast<int>(f) & 0xff;
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[2] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:460:44: note: Address of variable taken here.
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:460:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->max_random_mutation, &buf_ptr, dir);
-                                           ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:461:42: note: Address of variable taken here.
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:461:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:462:42: note: Address of variable taken here.
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:462:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_range, &buf_ptr, dir);
-                                         ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:463:43: note: Address of variable taken here.
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:463:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->x_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:464:43: note: Address of variable taken here.
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:464:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->y_parameter_offset, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:505:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:505:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:506:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:506:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
-                                          ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
-            (*src)[1] = static_cast<int>(f) & 0xff;
-                  ^
-libid/io/decode_info.cpp:507:43: note: Address of variable taken here.
+libid/io/decode_info.cpp:510:43: note: Address of variable taken here.
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:507:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+libid/io/decode_info.cpp:510:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
     get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:511:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:511:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:366:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:512:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:512:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:366:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[2] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[1] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:463:44: note: Address of variable taken here.
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:463:44: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->max_random_mutation, &buf_ptr, dir);
+                                           ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:464:42: note: Address of variable taken here.
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:464:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:465:42: note: Address of variable taken here.
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:465:42: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_range, &buf_ptr, dir);
+                                         ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:466:43: note: Address of variable taken here.
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:466:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->x_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:467:43: note: Address of variable taken here.
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:467:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->y_parameter_offset, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[1] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:508:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:508:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
-    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+    get_double(&info->orbit_corner_min_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[1] = static_cast<int>(f) & 0xff;
                   ^
-libid/io/decode_info.cpp:365:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
             (*src)[1] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/decode_info.cpp:509:43: note: Address of variable taken here.
-    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
                                           ^
 libid/io/decode_info.cpp:509:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:510:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:510:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_min_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:511:43: note: Address of variable taken here.
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:511:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_max_y, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:368:19: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
+            (*src)[1] = static_cast<int>(f) & 0xff;
+                  ^
+libid/io/decode_info.cpp:512:43: note: Address of variable taken here.
     get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
                                           ^
-libid/io/decode_info.cpp:365:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
+libid/io/decode_info.cpp:512:43: note: Calling function 'get_double', 2nd argument '&buf_ptr' value is lifetime=buf_ptr
+    get_double(&info->orbit_corner_3rd_x, &buf_ptr, dir);
+                                          ^
+libid/io/decode_info.cpp:368:19: note: The address of local variable 'buf_ptr' is accessed at non-zero index.
             (*src)[1] = static_cast<int>(f) & 0xff;
                   ^
 libid/io/find_path.cpp:44:9: style: Condition '!dir1_path.empty()' is always true [knownConditionTrueFalse]
@@ -1630,13 +1630,13 @@ libid/io/loadfile.cpp:1756:19: note: g_bad_outside is assigned
 libid/io/loadfile.cpp:1765:19: note: g_bad_outside is overwritten
     g_bad_outside = false;
                   ^
-libid/io/make_mig.cpp:330:25: style: The if condition is the same as the previous if condition [duplicateCondition]
+libid/io/make_mig.cpp:331:25: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (error_flag == 0 && input_error_flag == 0)
                         ^
-libid/io/make_mig.cpp:317:25: note: First condition
+libid/io/make_mig.cpp:318:25: note: First condition
     if (error_flag == 0 && input_error_flag == 0)
                         ^
-libid/io/make_mig.cpp:330:25: note: Second condition
+libid/io/make_mig.cpp:331:25: note: Second condition
     if (error_flag == 0 && input_error_flag == 0)
                         ^
 libid/io/path_match.cpp:97:17: style: Condition 'pat_ext==".*"' is always false [knownConditionTrueFalse]
@@ -1723,13 +1723,13 @@ libid/ui/stereo.cpp:255:16: note: Variable created here.
 libid/ui/stereo.cpp:264:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data->save_dac = save_dac_box;
     ^
-tests/libid/engine/test_cmdfiles.cpp:831:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+tests/libid/engine/test_cmdfiles.cpp:865:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/engine/test_cmdfiles.cpp:823:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+tests/libid/engine/test_cmdfiles.cpp:857:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
     const std::string saved_browse_name{g_browse.name};
                                                 ^
-tests/libid/engine/test_cmdfiles.cpp:831:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+tests/libid/engine/test_cmdfiles.cpp:865:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
 win32/Frame.cpp:584:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
