@@ -9,6 +9,7 @@
 
 #include <array> // std::size
 #include <cassert>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -35,12 +36,12 @@ static char par_key(const unsigned int x)
 
 void make_mig(unsigned int x_mult, unsigned int y_mult)
 {
-    unsigned int x_res;
-    unsigned int y_res;
-    unsigned int x_tot;
-    unsigned int y_tot;
-    unsigned int x_loc;
-    unsigned int y_loc;
+    std::uint16_t x_res;
+    std::uint16_t y_res;
+    std::uint16_t x_tot;
+    std::uint16_t y_tot;
+    std::uint16_t x_loc;
+    std::uint16_t y_loc;
     unsigned int i;
     std::string gif_in;
     unsigned char *temp;
@@ -98,8 +99,8 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
             {
                 input_error_flag = 1;
             }
-            std::memcpy(&x_res, &temp[6], 2);     // X-resolution
-            std::memcpy(&y_res, &temp[8], 2);     // Y-resolution
+            std::memcpy(&x_res, &temp[6], sizeof(x_res));     // X-resolution
+            std::memcpy(&y_res, &temp[8], sizeof(y_res));     // Y-resolution
 
             if (x_step == 0 && y_step == 0)  // first time through?
             {
@@ -107,8 +108,8 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                 all_y_res = y_res;
                 x_tot = x_res * x_mult;        // adjust the image size
                 y_tot = y_res * y_mult;
-                std::memcpy(&temp[6], &x_tot, 2);
-                std::memcpy(&temp[8], &y_tot, 2);
+                std::memcpy(&temp[6], &x_tot, sizeof(x_tot));
+                std::memcpy(&temp[8], &y_tot, sizeof(y_tot));
                 temp[12] = 0; // reserved
                 if (std::fwrite(temp, 13, 1, out) != 1)     // write out the header
                 {
@@ -160,12 +161,12 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                     {
                         input_error_flag = 4;
                     }
-                    std::memcpy(&x_loc, &temp[1], 2); // X-location
-                    std::memcpy(&y_loc, &temp[3], 2); // Y-location
+                    std::memcpy(&x_loc, &temp[1], sizeof(x_loc)); // X-location
+                    std::memcpy(&y_loc, &temp[3], sizeof(y_loc)); // Y-location
                     x_loc += x_step * x_res;     // adjust the locations
                     y_loc += y_step * y_res;
-                    std::memcpy(&temp[1], &x_loc, 2);
-                    std::memcpy(&temp[3], &y_loc, 2);
+                    std::memcpy(&temp[1], &x_loc, sizeof(x_loc));
+                    std::memcpy(&temp[3], &y_loc, sizeof(y_loc));
                     if (std::fwrite(temp, 10, 1, out) != 1)     // write out the Image Descriptor
                     {
                         error_flag = 4;
