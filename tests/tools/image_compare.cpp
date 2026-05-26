@@ -11,14 +11,78 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <vector>
 
 namespace id
 {
 
 static int usage(const std::string_view program)
 {
-    std::cout << "Usage: " << program << ": [--ignore-colormap] file1 file2\n";
+    std::cout << "Usage: " << program << ": [--ignore-colormap] [--diff-image file] file1 file2\n";
     return 1;
+}
+
+static ColorMapObject *make_grayscale_color_map()
+{
+    ColorMapObject *color_map = GifMakeMapObject(256, nullptr);
+    if (color_map == nullptr)
+    {
+        throw std::runtime_error{"Could not allocate GIF color map."};
+    }
+    for (int i = 0; i < 256; ++i)
+    {
+        color_map->Colors[i].Red = i;
+        color_map->Colors[i].Green = i;
+        color_map->Colors[i].Blue = i;
+    }
+    return color_map;
+}
+
+static void write_difference_gif(const std::filesystem::path &path, const SavedImage &image1, const SavedImage &image2)
+{
+    const int width{image1.ImageDesc.Width};
+    const int height{image1.ImageDesc.Height};
+    std::vector<GifByteType> pixels(static_cast<std::size_t>(width) * static_cast<std::size_t>(height));
+    for (std::size_t i = 0; i < pixels.size(); ++i)
+    {
+        pixels[i] = static_cast<GifByteType>(std::abs(image1.RasterBits[i] - image2.RasterBits[i]));
+    }
+
+    int gif_error{};
+    GifFileType *gif = EGifOpenFileName(path.string().c_str(), false, &gif_error);
+    if (gif == nullptr)
+    {
+        throw std::runtime_error{"Could not open " + path.string() + " for writing: " + std::to_string(gif_error)};
+    }
+
+    ColorMapObject *color_map = make_grayscale_color_map();
+    int result = EGifPutScreenDesc(gif, width, height, 8, 0, color_map);
+    GifFreeMapObject(color_map);
+    if (result == GIF_ERROR)
+    {
+        EGifCloseFile(gif, &gif_error);
+        throw std::runtime_error{"Could not write GIF screen description to " + path.string()};
+    }
+
+    if (EGifPutImageDesc(gif, 0, 0, width, height, false, nullptr) == GIF_ERROR)
+    {
+        EGifCloseFile(gif, &gif_error);
+        throw std::runtime_error{"Could not write GIF image description to " + path.string()};
+    }
+
+    for (int row = 0; row < height; ++row)
+    {
+        if (EGifPutLine(gif, &pixels[static_cast<std::size_t>(row) * static_cast<std::size_t>(width)], width) == GIF_ERROR)
+        {
+            EGifCloseFile(gif, &gif_error);
+            throw std::runtime_error{"Could not write GIF raster data to " + path.string()};
+        }
+    }
+
+    if (EGifCloseFile(gif, &gif_error) == GIF_ERROR)
+    {
+        throw std::runtime_error{"Could not close " + path.string() + " after writing: " + std::to_string(gif_error)};
+    }
 }
 
 } // namespace id
@@ -26,23 +90,37 @@ static int usage(const std::string_view program)
 int main(const int argc, char *argv[])
 {
     using namespace id;
-    if (argc < 3 || argc > 4)
+    if (argc < 3)
     {
         return usage(argv[0]);
     }
     bool compare_colormap{true};
     int start_arg{1};
-    if (argc == 4)
+    std::filesystem::path diff_image;
+    while (start_arg < argc && std::string_view{argv[start_arg]}.substr(0, 2) == "--")
     {
-        if (std::string{argv[1]} == "--ignore-colormap")
+        if (std::string{argv[start_arg]} == "--ignore-colormap")
         {
             compare_colormap = false;
             ++start_arg;
+        }
+        else if (std::string{argv[start_arg]} == "--diff-image")
+        {
+            ++start_arg;
+            if (start_arg >= argc)
+            {
+                return usage(argv[0]);
+            }
+            diff_image = argv[start_arg++];
         }
         else
         {
             return usage(argv[0]);
         }
+    }
+    if (start_arg + 2 != argc)
+    {
+        return usage(argv[0]);
     }
     const std::string file1{argv[start_arg]};
     const std::string file2{argv[start_arg + 1]};
@@ -134,9 +212,15 @@ int main(const int argc, char *argv[])
                     histogram[diff]++;
                 }
             }
+
             const float percentage{100.0f * static_cast<float>(pixel_count) / static_cast<float>(num_pixels)};
             if (percentage > 3.0f)
             {
+                if (!diff_image.empty())
+                {
+                    write_difference_gif(diff_image.make_preferred(), image1, image2);
+                    std::cout << "Wrote difference image to " << diff_image << '\n';
+                }
                 std::cout << fmt::format("Images differ by {:f}% ({:d}/{:d} pixels)\n"
                                          "{:s}\n"
                                          "{:s}\n",

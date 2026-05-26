@@ -347,7 +347,7 @@ SWT-027            { ; magnet2m                             Scott Taylor
 }
 
 SWT-029            { ; lambdafn, EXP                        Scott Taylor
-   reset type=lambdafn function=exp symmetry=xaxis
+   reset=2002 type=lambdafn function=exp symmetry=xaxis
    corners=-4.340851/4.336975/-3.250305/3.254669 params=1.9/0.4 maxiter=512
    inside=255 potential=255/455/0 colors=@royal.map
 }

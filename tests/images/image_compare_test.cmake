@@ -20,6 +20,7 @@ if(DEBUG)
     dump_var(PARAMETERS)
     dump_var(TEST_SAVE_IMAGE)
     dump_var(TEST_KEEP_IMAGE)
+    dump_var(DIFF_IMAGE)
     dump_var(IMAGE_TEST_IGNORE_COLORMAP)
     message(STATUS "Parameters:")
     foreach(par ${PARAMETERS})
@@ -28,6 +29,7 @@ if(DEBUG)
 endif()
 
 file(REMOVE "image/${TEST_SAVE_IMAGE}")
+file(REMOVE "${DIFF_IMAGE}")
 execute_process(COMMAND "${ID}" ${PARAMETERS}
     RESULT_VARIABLE ID_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})
@@ -48,6 +50,7 @@ set(IMAGE_COMPARE_ARGS "")
 if(IMAGE_TEST_IGNORE_COLORMAP)
     list(APPEND IMAGE_COMPARE_ARGS "--ignore-colormap")
 endif()
+list(APPEND IMAGE_COMPARE_ARGS "--diff-image" "${DIFF_IMAGE}")
 list(APPEND IMAGE_COMPARE_ARGS "${GOLD_IMAGE}" "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}")
 execute_process(COMMAND "${IMAGE_COMPARE}" ${IMAGE_COMPARE_ARGS}
     COMMAND_ERROR_IS_FATAL ANY

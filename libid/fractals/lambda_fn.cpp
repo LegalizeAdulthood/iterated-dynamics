@@ -10,11 +10,13 @@
 #include "fractals/fractalp.h"
 #include "fractals/frasetup.h"
 #include "math/arg.h"
+#include "misc/version.h"
 
 #include <cmath>
 
 using namespace id::engine;
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::fractals
 {
@@ -74,11 +76,14 @@ static int lambda_trig_fractal2()
 static int lambda_exponent_fractal()
 {
     // found this in  "Science of Fractal Images"
-    if (std::abs(g_old_z.y) >= 1.0e3)
+    const bool use_old_bailout = g_version <= parse_legacy_version(2002);
+    const double y_limit = use_old_bailout ? 1.0e8 : 1.0e3;
+    const double x_limit = use_old_bailout ? 6.4e2 : 8.0;
+    if (std::abs(g_old_z.y) >= y_limit)
     {
         return 1;
     }
-    if (std::abs(g_old_z.x) >= 8)
+    if (std::abs(g_old_z.x) >= x_limit)
     {
         return 1;
     }

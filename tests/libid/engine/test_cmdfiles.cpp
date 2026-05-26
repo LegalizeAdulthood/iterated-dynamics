@@ -39,6 +39,7 @@
 #include <fractals/fractype.h>
 #include <fractals/ifs.h>
 #include <fractals/julibrot.h>
+#include <fractals/lambda_fn.h>
 #include <fractals/lorenz.h>
 #include <fractals/lsystem.h>
 #include <geometry/3d.h>
@@ -603,6 +604,39 @@ TEST_F(TestParameterCommand, resetVersionAllFields)
     EXPECT_EQ(3, g_version.patch);
     EXPECT_EQ(4, g_version.tweak);
     EXPECT_FALSE(g_version.legacy);
+}
+
+TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
+{
+    ValueSaver saved_release{g_release};
+    ValueSaver saved_version{g_version};
+    ValueSaver saved_fractal_type{g_fractal_type};
+    ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific};
+    ValueSaver saved_trig_index{g_trig_index[0]};
+    ValueSaver saved_float_param{g_float_param};
+    ValueSaver saved_param_z1{g_param_z1};
+    ValueSaver saved_old_z{g_old_z};
+    ValueSaver saved_magnitude_limit{g_magnitude_limit};
+
+    exec_cmd_arg("reset=2002");
+    set_trig_array(0, "exp");
+    set_fractal_type(FractalType::LAMBDA_FN);
+    g_param_z1 = DComplex{1.9, 0.4};
+    g_float_param = &g_param_z1;
+    g_magnitude_limit = 64.0;
+    lambda_trig_per_image();
+    g_old_z = DComplex{9.0, 0.0};
+    EXPECT_EQ(0, g_cur_fractal_specific->orbit_calc());
+
+    exec_cmd_arg("reset=2003");
+    set_trig_array(0, "exp");
+    set_fractal_type(FractalType::LAMBDA_FN);
+    g_param_z1 = DComplex{1.9, 0.4};
+    g_float_param = &g_param_z1;
+    g_magnitude_limit = 64.0;
+    lambda_trig_per_image();
+    g_old_z = DComplex{9.0, 0.0};
+    EXPECT_EQ(1, g_cur_fractal_specific->orbit_calc());
 }
 
 TEST_F(TestParameterCommand, resetInsideZero)
