@@ -157,8 +157,8 @@ void end_help();
 bool is_hyphen(const char *ptr);
 
 /* Get an int from an unaligned pointer
- * This routine is needed because this program uses unaligned 2 byte
- * pointers all over the place.
+ * This routine is needed because this program stores unaligned int
+ * values in help text buffers.
  */
 inline int get_int(const char *ptr)
 {
