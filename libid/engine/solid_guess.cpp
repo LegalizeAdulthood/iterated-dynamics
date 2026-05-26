@@ -59,6 +59,7 @@ public:
     int scan();
 
 private:
+    void fill_prefix_plane(int plane, unsigned int value);
     bool guess_row(bool first_pass, int y, int block_size);
     void fill_d_stack(int x1, int x2, Byte value);
     void plot_block(int build_row, int x, int y, int color);
@@ -122,7 +123,7 @@ int SolidGuess::scan()
         if (g_i_start_pt.y <= g_start_pt.y) // first time for this window, init it
         {
             g_current_row = 0;
-            std::memset(&m_prefix[1][0][0], 0, MAX_X_BLK*MAX_Y_BLK*2); // noskip flags off
+            fill_prefix_plane(1, 0); // noskip flags off
             g_reset_periodicity = true;
             g_row = g_i_start_pt.y;
             for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
@@ -141,7 +142,7 @@ int SolidGuess::scan()
         }
         else
         {
-            std::memset(&m_prefix[1][0][0], -1, MAX_X_BLK*MAX_Y_BLK*2); // noskip flags on
+            fill_prefix_plane(1, ~0U); // noskip flags on
         }
         for (int y = g_i_start_pt.y; y <= g_i_stop_pt.y; y += m_block_size)
         {
@@ -225,7 +226,7 @@ int SolidGuess::scan()
     }
     else   // first pass already done
     {
-        std::memset(&m_prefix[0][0][0], -1, MAX_X_BLK*MAX_Y_BLK*2); // noskip flags on
+        fill_prefix_plane(0, ~0U); // noskip flags on
     }
     if (g_three_pass)
     {
@@ -273,6 +274,11 @@ int SolidGuess::scan()
     }
 
     return 0;
+}
+
+void SolidGuess::fill_prefix_plane(const int plane, const unsigned int value)
+{
+    std::fill_n(&m_prefix[plane][0][0], MAX_Y_BLK * MAX_X_BLK, value);
 }
 
 static int calc_a_dot(const int x, const int y)
