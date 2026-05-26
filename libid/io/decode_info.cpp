@@ -17,9 +17,12 @@ using namespace id::ui;
 namespace id::io
 {
 
+constexpr int DOS_FLOAT_SIZE = 4;
+constexpr int DOS_DOUBLE_SIZE = 8;
+
 // Assumptions about the floating-point types used in the blob structures.
-static_assert(sizeof(float) == 4, "sizeof(float) != 4");
-static_assert(sizeof(double) == 8, "sizeof(double) != 8");
+static_assert(sizeof(float) == DOS_FLOAT_SIZE, "sizeof(float) != DOS_FLOAT_SIZE");
+static_assert(sizeof(double) == DOS_DOUBLE_SIZE, "sizeof(double) != DOS_DOUBLE_SIZE");
 
 // The size of these structures must remain fixed in order to maintain
 // compatibility with the binary blobs written into GIF files.
@@ -298,14 +301,14 @@ static void get_double(double *dst, unsigned char **src, const int dir)
     if (dir == 1)
     {
         int i;
-        for (i = 0; i < 8; i++)
+        for (i = 0; i < DOS_DOUBLE_SIZE; i++)
         {
             if ((*src)[i] != 0)
             {
                 break;
             }
         }
-        if (i == 8)
+        if (i == DOS_DOUBLE_SIZE)
         {
             *dst = 0;
         }
@@ -326,7 +329,7 @@ static void get_double(double *dst, unsigned char **src, const int dir)
     {
         if (*dst == 0)
         {
-            std::memset(*src, 0, 8);
+            std::memset(*src, 0, DOS_DOUBLE_SIZE);
         }
         else
         {
@@ -367,7 +370,7 @@ static void get_double(double *dst, unsigned char **src, const int dir)
             (*src)[0] = static_cast<int>(f) & 0xff;
         }
     }
-    *src += 8; // sizeof(double) in MSDOS
+    *src += DOS_DOUBLE_SIZE;
 }
 
 /*
@@ -381,14 +384,14 @@ static void get_float(float *dst, unsigned char **src, const int dir)
     if (dir == 1)
     {
         int i;
-        for (i = 0; i < 4; i++)
+        for (i = 0; i < DOS_FLOAT_SIZE; i++)
         {
             if ((*src)[i] != 0)
             {
                 break;
             }
         }
-        if (i == 4)
+        if (i == DOS_FLOAT_SIZE)
         {
             *dst = 0;
         }
@@ -408,7 +411,7 @@ static void get_float(float *dst, unsigned char **src, const int dir)
     {
         if (*dst == 0)
         {
-            std::memset(*src, 0, 4);
+            std::memset(*src, 0, DOS_FLOAT_SIZE);
         }
         else
         {
@@ -441,7 +444,7 @@ static void get_float(float *dst, unsigned char **src, const int dir)
             (*src)[0] = static_cast<int>(f) & 0xff;
         }
     }
-    *src += 4; // sizeof(float) in MSDOS
+    *src += DOS_FLOAT_SIZE;
 }
 
 void decode_evolver_info_big_endian(EvolutionInfo *info, const int dir)
