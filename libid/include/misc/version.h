@@ -74,4 +74,9 @@ inline bool operator<=(const Version &lhs, const int legacy_version)
     return lhs <= parse_legacy_version(legacy_version);
 }
 
+inline bool operator>(const Version &lhs, const int legacy_version)
+{
+    return !(lhs <= legacy_version);
+}
+
 } // namespace id::misc

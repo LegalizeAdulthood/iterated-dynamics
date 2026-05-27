@@ -672,7 +672,7 @@ static void init_calc_fract()
         }
     }
 
-    g_atan_colors = g_colors;
+    init_atan_colors();
 
     // ORBIT stuff
     g_show_orbit = g_start_show_orbit;
@@ -873,6 +873,11 @@ int calc_fract()
     finish_calc_fract();
 
     return g_calc_status == CalcStatus::COMPLETED ? 0 : -1;
+}
+
+void init_atan_colors()
+{
+    g_atan_colors = g_version > 2002 ? g_colors : 180;
 }
 
 // locate alternate math record

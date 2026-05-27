@@ -657,6 +657,32 @@ TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
     EXPECT_EQ(1, g_cur_fractal_specific->orbit_calc());
 }
 
+TEST_F(TestParameterCommand, atanColorsUseLegacyScaleThrough2002)
+{
+    ValueSaver saved_version{g_version};
+    ValueSaver saved_colors{g_colors};
+    ValueSaver saved_atan_colors{g_atan_colors};
+
+    g_version = parse_legacy_version(2002);
+    g_colors = 256;
+    init_atan_colors();
+
+    EXPECT_EQ(180, g_atan_colors);
+}
+
+TEST_F(TestParameterCommand, atanColorsUsePaletteSizeAfter2002)
+{
+    ValueSaver saved_version{g_version};
+    ValueSaver saved_colors{g_colors};
+    ValueSaver saved_atan_colors{g_atan_colors};
+
+    g_version = parse_legacy_version(2003);
+    g_colors = 256;
+    init_atan_colors();
+
+    EXPECT_EQ(g_colors, g_atan_colors);
+}
+
 TEST_F(TestParameterCommand, resetInsideZero)
 {
     ValueSaver saved_inside_color{g_inside_color, -9999};

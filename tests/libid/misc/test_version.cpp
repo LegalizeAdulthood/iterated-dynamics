@@ -161,6 +161,13 @@ TEST(TestVersion, idVersionGreaterThanLegacyVersion)
     EXPECT_GT(lhs, rhs);
 }
 
+TEST(TestVersion, versionGreaterThanLegacyInteger)
+{
+    const Version lhs{parse_legacy_version(2003)};
+
+    EXPECT_GT(lhs, 2002);
+}
+
 TEST(TestVersion, legacyLesserMajorVersion)
 {
     const Version lhs{parse_legacy_version(1301)};
