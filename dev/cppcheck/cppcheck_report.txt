@@ -79,7 +79,7 @@ libid/engine/cmdfiles.cpp:3584:9: style: Condition '!value.empty()' is always tr
 libid/engine/cmdfiles.cpp:3996:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
-libid/fractals/Ant.cpp:257:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
+libid/fractals/Ant.cpp:279:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
 libid/fractals/Cellular.cpp:111:14: style: Condition 't>16' is always false [knownConditionTrueFalse]
@@ -1666,19 +1666,19 @@ libid/ui/file_get_window.cpp:848:18: style: Consider using std::replace_if algor
 libid/ui/flip_image.cpp:25:35: style: Parameter 'context' can be declared with const [constParameter]
 MainState flip_image(MainContext &context)
                                   ^
-libid/ui/get_fract_type.cpp:614:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+libid/ui/get_fract_type.cpp:616:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             if (choices[prompt_num][0] == '+')
                                        ^
-libid/ui/get_fract_type.cpp:619:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+libid/ui/get_fract_type.cpp:620:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
-libid/ui/make_batch_file.cpp:1445:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1456:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:823:9: note: Assuming that condition 'colors_only' is not redundant
+libid/ui/make_batch_file.cpp:879:9: note: Assuming that condition 'colors_only' is not redundant
     if (colors_only)
         ^
-libid/ui/make_batch_file.cpp:1445:9: note: Condition '!colors_only' is always true
+libid/ui/make_batch_file.cpp:1456:9: note: Condition '!colors_only' is always true
     if (!colors_only)
         ^
 libid/ui/make_batch_file.cpp:260:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
