@@ -445,6 +445,7 @@ static void init_vars_fractal()
     g_bof_match_book_images = true;                      // use normal bof initialization to make bof images
     g_use_init_orbit = InitOrbitMode::NORMAL;            //
     std::fill_n(g_params, MAX_PARAMS, 0.0);              // initial parameter values
+    g_param_text.fill({});                               // initial parameter text
     g_potential.params.fill(0.0);                        // initial potential values
     g_inversion.params.fill(0.0);                        // initial invert values
     g_init_orbit.y = 0.0;                                //
@@ -2760,6 +2761,16 @@ static CmdArgFlags cmd_params(const Command &cmd)
     for (int k = 0; k < MAX_PARAMS; ++k)
     {
         g_params[k] = k < cmd.total_params ? cmd.float_vals[k] : 0.0;
+        if (k < cmd.total_params)
+        {
+            const char *end = std::strchr(cmd.float_val_strs[k], '/');
+            g_param_text[k] = end == nullptr ? cmd.float_val_strs[k] :
+                std::string{cmd.float_val_strs[k], end};
+        }
+        else
+        {
+            g_param_text[k].clear();
+        }
     }
     if (g_bf_math != BFMathType::NONE)
     {

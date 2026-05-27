@@ -181,6 +181,7 @@ add_image_test("SWT-029" IGNORE_COLORMAP PARAMETERS "@id.par/SWT-029")
 add_image_test("triangles5" IGNORE_COLORMAP PARAMETERS "@cellular.par/triangles5")
 add_image_test("x-mas-tree" IGNORE_COLORMAP PARAMETERS "@cellular.par/X-mas_tree")
 add_image_test("Achute" IGNORE_COLORMAP PARAMETERS "@example2.par/Achute")
+add_image_test("Ant" IGNORE_COLORMAP PARAMETERS "@example2.par/Ant")
 add_image_test("julibrot" PARAMETERS "type=julibrot" "julibrotfromto=-0.83/-0.83/0.25/-0.25"
     "julibroteyes=2.5" "center-mag=0/0/0.6666667" "params=0/0" "inside=0"
     "colors=@altern.map")

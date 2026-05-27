@@ -9,6 +9,7 @@
 #include <config/port.h>
 
 #include <array>
+#include <string>
 #include <vector>
 
 namespace id::fractals
@@ -174,6 +175,7 @@ extern bool                  g_start_show_orbit;    // show orbits on at start o
 extern InitOrbitMode         g_use_init_orbit;      // flag for init orbit
 
 extern double                g_params[MAX_PARAMS];
+extern std::array<std::string, MAX_PARAMS> g_param_text;
 extern Passes                g_passes;
 extern int                   g_periodicity_check;
 extern int                   g_periodicity_next_saved_incr;

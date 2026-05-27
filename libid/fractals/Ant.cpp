@@ -16,9 +16,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
 #include <cstdlib>
-#include <iomanip>
-#include <sstream>
 #include <string>
 #include <vector>
 
@@ -109,11 +108,11 @@ Ant::Ant()
 
     const auto get_rule = [](const double param)
     {
-        std::ostringstream buff;
-        buff << std::setprecision(17) << std::fixed << param;
-        return buff.str();
+        char buff[32];
+        std::snprintf(buff, sizeof(buff), "%.17g", param);
+        return std::string{buff};
     };
-    rule_text = get_rule(g_params[0]);
+    rule_text = g_param_text[0].empty() ? get_rule(g_params[0]) : g_param_text[0];
     rule_len = static_cast<int>(rule_text.length());
     if (rule_len > 1)
     {

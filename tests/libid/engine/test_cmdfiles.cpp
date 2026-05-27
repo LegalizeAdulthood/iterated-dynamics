@@ -2141,6 +2141,36 @@ TEST_F(TestParameterCommand, paramsTwoValues)
     EXPECT_EQ(0.0, g_params[2]);
 }
 
+TEST_F(TestParameterCommand, paramsStoresText)
+{
+    ValueSaver saved_param_text{g_param_text};
+    ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
+
+    exec_cmd_arg("params=112112112/1200000/3/1/1/0");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ("112112112", g_param_text[0]);
+    EXPECT_EQ("1200000", g_param_text[1]);
+    EXPECT_EQ("3", g_param_text[2]);
+    EXPECT_EQ("1", g_param_text[3]);
+    EXPECT_EQ("1", g_param_text[4]);
+    EXPECT_EQ("0", g_param_text[5]);
+    EXPECT_EQ("", g_param_text[6]);
+}
+
+TEST_F(TestParameterCommand, paramsStoresExplicitDecimalText)
+{
+    ValueSaver saved_param_text{g_param_text};
+    ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
+
+    exec_cmd_arg("params=112112112.000/1200000.0");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ("112112112.000", g_param_text[0]);
+    EXPECT_EQ("1200000.0", g_param_text[1]);
+    EXPECT_EQ("", g_param_text[2]);
+}
+
 TEST_F(TestParameterCommand, miimBreadthFirstLeftToRight)
 {
     ValueSaver saved_major_method{g_major_method, Major::RANDOM_RUN};

@@ -201,6 +201,7 @@ long g_first_saved_and{};                         //
 int g_atan_colors{180};                           //
 int g_and_color{};                                // AND mask for iteration to get color index
 double g_params[MAX_PARAMS]{};                    // parameters
+std::array<std::string, MAX_PARAMS> g_param_text; // parameter text
 
 // ORBIT variables
 DComplex g_init_orbit{};                               // initial orbit value

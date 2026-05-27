@@ -303,6 +303,8 @@ o The @id.par/mandala parameter set now explicitly selects reset=1730 so
   legacy outside=real coloring is used.  (Fixes #106)
 o The @example1.par/fireworks parameter set was removed because its
   appearance depends on Fractint fixed-point artifacts.  (Fixes #391)
+o Ant rule strings from params= are now preserved so @example2.par/Ant
+  renders with the intended rule.  (Fixes #393)
 
 Code Cleanup in Version 1.3.3
 
