@@ -307,6 +307,8 @@ o Ant rule strings from params= are now preserved so @example2.par/Ant
   renders with the intended rule.  (Fixes #393)
 o Legacy outside=atan coloring now uses the Fractint-compatible color
   scaling selected by reset.  (Fixes #394)
+o @example2.par/Barnsleyj2-manr now selects the Fractint reset version
+  needed for its logmap=old coloring.  (Fixes #395)
 
 Code Cleanup in Version 1.3.3
 
