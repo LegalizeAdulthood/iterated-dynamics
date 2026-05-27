@@ -297,6 +297,8 @@ o Lambdafn with function=exp now honors the reset version when selecting
   the Fractint-compatible bailout behavior.  (Fixes #107)
 o Legacy parameter sets now use the Fractint-compatible logmap table and
   outside coloring behavior selected by reset.  (Fixes #104)
+o FrothyBasin now honors legacy Fractint parameter semantics selected by
+  reset, allowing @id.par/EvilFrog to render correctly.  (Fixes #105)
 
 Code Cleanup in Version 1.3.3
 

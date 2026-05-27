@@ -15,6 +15,7 @@
 #include "engine/VideoInfo.h"
 #include "fractals/newton.h"
 #include "io/loadmap.h"
+#include "misc/version.h"
 
 #include <algorithm>
 #include <cmath>
@@ -22,6 +23,7 @@
 using namespace id::engine;
 using namespace id::io;
 using namespace id::math;
+using namespace id::misc;
 
 namespace id::fractals
 {
@@ -84,48 +86,77 @@ bool FrothyBasin::per_image()
     constexpr double sin_theta = SQRT3 / 2; // sin(2*PI/3)
     constexpr double cos_theta = -0.5;      // cos(2*PI/3)
 
-    if (g_params[0] != 2.0)
+    if (g_version <= 1821)                  // book version is 18.21
     {
-        g_params[0] = 1.0;
-    }
-    if (g_params[1] != 0.0)
-    {
-        g_params[1] = 1.0;
-    }
-    m_repeat_mapping = g_params[0] == 2.0;
-    m_alt_color = static_cast<int>(g_params[1]);
-    m_a = g_params[2];
-    if (std::abs(m_a) <= FROTH_CRITICAL_A)
-    {
+        m_repeat_mapping = static_cast<int>(g_params[0]) == 6 || static_cast<int>(g_params[0]) == 2;
+        m_alt_color = static_cast<int>(g_params[1]);
+        g_params[2] = 0.0;
+
         m_attractors = !m_repeat_mapping ? 3 : 6;
+
+        m_a = 1.02871376822;
+        m_half_a = m_a / 2;
+
+        m_top_x1 = -1.04368901270;
+        m_top_x2 = 1.33928675524;
+        m_top_x3 = -0.339286755220;
+        m_top_x4 = -0.339286755220;
+
+        m_left_x1 = 0.07639837810;
+        m_left_x2 = -1.11508950586;
+        m_left_x3 = -0.27580275066;
+        m_left_x4 = -0.27580275066;
+
+        m_right_x1 = 0.96729063460;
+        m_right_x2 = -0.22419724936;
+        m_right_x3 = 0.61508950585;
+        m_right_x4 = 0.61508950585;
     }
     else
     {
-        m_attractors = !m_repeat_mapping ? 2 : 3;
+        if (g_params[0] != 2.0)
+        {
+            g_params[0] = 1.0;
+        }
+        if (g_params[1] != 0.0)
+        {
+            g_params[1] = 1.0;
+        }
+        m_repeat_mapping = g_params[0] == 2.0;
+        m_alt_color = static_cast<int>(g_params[1]);
+        m_a = g_params[2];
+        if (std::abs(m_a) <= FROTH_CRITICAL_A)
+        {
+            m_attractors = !m_repeat_mapping ? 3 : 6;
+        }
+        else
+        {
+            m_attractors = !m_repeat_mapping ? 2 : 3;
+        }
+
+        // new improved values
+        // 0.5 is the value that causes the mapping to reach a minimum
+        constexpr double x0 = 0.5;
+        // a/2 is the value that causes the y value to be invariant over the mappings
+        m_half_a = m_a / 2;
+        const double y0 = m_half_a;
+        m_top_x1 = top_x_mapping(x0);
+        m_top_x2 = top_x_mapping(m_top_x1);
+        m_top_x3 = top_x_mapping(m_top_x2);
+        m_top_x4 = top_x_mapping(m_top_x3);
+
+        // rotate 120 degrees counter-clock-wise
+        m_left_x1 = m_top_x1 * cos_theta - y0 * sin_theta;
+        m_left_x2 = m_top_x2 * cos_theta - y0 * sin_theta;
+        m_left_x3 = m_top_x3 * cos_theta - y0 * sin_theta;
+        m_left_x4 = m_top_x4 * cos_theta - y0 * sin_theta;
+
+        // rotate 120 degrees clock-wise
+        m_right_x1 = m_top_x1 * cos_theta + y0 * sin_theta;
+        m_right_x2 = m_top_x2 * cos_theta + y0 * sin_theta;
+        m_right_x3 = m_top_x3 * cos_theta + y0 * sin_theta;
+        m_right_x4 = m_top_x4 * cos_theta + y0 * sin_theta;
     }
-
-    // new improved values
-    // 0.5 is the value that causes the mapping to reach a minimum
-    constexpr double x0 = 0.5;
-    // a/2 is the value that causes the y value to be invariant over the mappings
-    m_half_a = m_a/2;
-    const double y0 = m_half_a;
-    m_top_x1 = top_x_mapping(x0);
-    m_top_x2 = top_x_mapping(m_top_x1);
-    m_top_x3 = top_x_mapping(m_top_x2);
-    m_top_x4 = top_x_mapping(m_top_x3);
-
-    // rotate 120 degrees counter-clock-wise
-    m_left_x1 = m_top_x1 * cos_theta - y0 * sin_theta;
-    m_left_x2 = m_top_x2 * cos_theta - y0 * sin_theta;
-    m_left_x3 = m_top_x3 * cos_theta - y0 * sin_theta;
-    m_left_x4 = m_top_x4 * cos_theta - y0 * sin_theta;
-
-    // rotate 120 degrees clock-wise
-    m_right_x1 = m_top_x1 * cos_theta + y0 * sin_theta;
-    m_right_x2 = m_top_x2 * cos_theta + y0 * sin_theta;
-    m_right_x3 = m_top_x3 * cos_theta + y0 * sin_theta;
-    m_right_x4 = m_top_x4 * cos_theta + y0 * sin_theta;
 
     // if 2 attractors, use same shades as 3 attractors
     m_shades = (g_colors-1) / std::max(3, m_attractors);

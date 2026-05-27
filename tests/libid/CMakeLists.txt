@@ -72,6 +72,7 @@ add_executable(test-id
     engine/test_lowerize_parameter.cpp
     engine/test_resume.cpp
     fractals/test_check_orbit_name.cpp
+    fractals/test_frothy_basin.cpp
     fractals/test_fractalp.cpp
     fractals/test_get_ifs_token.cpp
     fractals/test_parser.cpp

@@ -359,7 +359,7 @@ SWT-030            { ; lambdafn, COSH                       Scott Taylor
 }
 
 EvilFrog          { ; Kermit with rabies                   Wesley Loewer
-   reset type=frothybasin passes=1
+   reset=1730 type=frothybasin passes=1
    corners=0.1987794025371462/0.1987794025306378/-1.287290394040766/-1.2872\
    90394029171/0.1987794025292465/-1.287290394030193 params=6/1 float=y
    maxiter=100
