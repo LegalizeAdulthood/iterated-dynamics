@@ -70,13 +70,13 @@ hc/HelpCompiler.cpp:1566:9: note: First condition
 hc/HelpCompiler.cpp:1570:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/cmdfiles.cpp:171:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:175:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3584:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3651:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:3996:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4063:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
 libid/fractals/Ant.cpp:279:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
@@ -1666,10 +1666,10 @@ libid/ui/file_get_window.cpp:848:18: style: Consider using std::replace_if algor
 libid/ui/flip_image.cpp:25:35: style: Parameter 'context' can be declared with const [constParameter]
 MainState flip_image(MainContext &context)
                                   ^
-libid/ui/get_fract_type.cpp:616:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+libid/ui/get_fract_type.cpp:625:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             if (choices[prompt_num][0] == '+')
                                        ^
-libid/ui/get_fract_type.cpp:620:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+libid/ui/get_fract_type.cpp:629:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
 libid/ui/make_batch_file.cpp:1456:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
