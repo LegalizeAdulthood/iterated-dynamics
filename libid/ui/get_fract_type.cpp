@@ -365,6 +365,10 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     int num_trig;
     std::array<FullScreenValues, 30> param_values;
     std::array<const char *, 30> choices;
+    constexpr int PARAM_TEXT_FIELD_LEN{70};
+    std::array<std::array<char, PARAM_TEXT_FIELD_LEN + 1>, MAX_PARAMS> param_text_buffers{};
+    std::array<std::string, MAX_PARAMS> old_param_text;
+    std::array<std::string, MAX_PARAMS> old_displayed_param_text;
     // ReSharper disable once CppTooWideScope
     char bailout_msg[50];
     long old_bailout = 0L;
@@ -382,7 +386,6 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     FractalSpecific *jb_orbit = nullptr;
     int first_param = 0;
     int last_param  = MAX_PARAMS;
-    std::array<double, MAX_PARAMS> old_param;
     int fn_key_mask = 0;
 
     old_bailout = g_user.bailout_value;
@@ -595,7 +598,6 @@ gfp_top:
         for (int i = first_param; i < last_param; i++)
         {
             std::array<const char *, MAX_PARAMS> param_prompt;
-            char tmp_buf[30];
             if (!type_has_param(g_julibrot ? g_new_orbit_type : g_fractal_type, i, &param_prompt[j]))
             {
                 if (current_type == FractalType::FORMULA)
@@ -609,20 +611,22 @@ gfp_top:
             }
             num_params++;
             choices[prompt_num] = param_prompt[j++];
-            param_values[prompt_num].type = 'd';
+            param_values[prompt_num].type = 0x100 + PARAM_TEXT_FIELD_LEN;
 
             if (choices[prompt_num][0] == '+')
             {
                 choices[prompt_num]++;
-                param_values[prompt_num].type = 'D';
             }
             else if (choices[prompt_num][0] == '#')
             {
                 choices[prompt_num]++;
             }
-            *fmt::format_to(tmp_buf, "{:.17g}", g_params[i]).out = '\0';
-            param_values[prompt_num].uval.dval = std::atof(tmp_buf);
-            old_param[i] = param_values[prompt_num++].uval.dval;
+            old_param_text[i] = g_param_text[i].empty() ? fmt::format("{:.17g}", g_params[i]) : g_param_text[i];
+            std::strncpy(param_text_buffers[i].data(), old_param_text[i].c_str(), PARAM_TEXT_FIELD_LEN);
+            param_text_buffers[i][PARAM_TEXT_FIELD_LEN] = '\0';
+            old_displayed_param_text[i] = param_text_buffers[i].data();
+            param_values[prompt_num].uval.sbuf = param_text_buffers[i].data();
+            ++prompt_num;
         }
     }
 
@@ -853,9 +857,11 @@ gfp_top:
                 continue;
             }
         }
-        if (old_param[i] != param_values[prompt_num].uval.dval)
+        const std::string new_param_text{param_values[prompt_num].uval.sbuf};
+        if (old_displayed_param_text[i] != new_param_text)
         {
-            g_params[i] = param_values[prompt_num].uval.dval;
+            g_param_text[i] = new_param_text;
+            g_params[i] = std::atof(new_param_text.c_str());
             ret = 1;
         }
         ++prompt_num;

@@ -169,9 +169,9 @@ add_image_test("ifs-3dfern" PARAMETERS "type=ifs3d" "ifsfile=id.ifs" "ifs=3dfern
     "center-mag=1.77636e-15/-1.77636e-15/0.3725782/1.3333" "params=1"
     "maxiter=500" "inside=0" "rotation=60/30/0" "perspective=0" "xyshift=0/0")
 add_image_test("ant1" IGNORE_COLORMAP PARAMETERS "type=ant"
-    "center-mag=0/0/1/1.3333" "params=10100.0/999999.0/25.0/1.0/1.0/-400.0" "inside=0" LABELS "ant")
+    "center-mag=0/0/1/1.3333" "params=10100000000000000000000/999999.0/25.0/1.0/1.0/-400.0" "inside=0" LABELS "ant")
 add_image_test("ant2" IGNORE_COLORMAP PARAMETERS "type=ant"
-    "center-mag=0/0/1/1.3333" "params=11111.0/999999.0/25.0/2.0/1.0/-400.0" "inside=0" LABELS "ant")
+    "center-mag=0/0/1/1.3333" "params=11111000000000000000000/999999.0/25.0/2.0/1.0/-400.0" "inside=0" LABELS "ant")
 add_image_test("mandel-chroma" PARAMETERS "type=mandel" "map=chroma")
 add_image_test("Egg" IGNORE_COLORMAP PARAMETERS "@id.par/Egg")
 add_image_test("EvilFrog" IGNORE_COLORMAP PARAMETERS "@id.par/EvilFrog")

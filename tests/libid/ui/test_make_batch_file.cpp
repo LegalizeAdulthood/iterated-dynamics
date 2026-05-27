@@ -3,14 +3,23 @@
 #include <ui/make_batch_file.h>
 
 #include "ColorMapSaver.h"
+#include "engine/calcfrac.h"
+#include "fractals/fractalp.h"
+#include "fractals/fractype.h"
+#include "misc/debug_flags.h"
+#include "misc/ValueSaver.h"
 
 #include <gtest/gtest.h>
 
 #include <algorithm>
 #include <array>
 #include <numeric>
+#include <string>
+#include <string_view>
 
 using namespace id::engine;
+using namespace id::fractals;
+using namespace id::misc;
 using namespace id::ui;
 
 namespace id::test
@@ -25,6 +34,46 @@ protected:
     void iota4(int count);
     ColorMapSaver m_saved_dac_box;
     std::array<Byte, 256> values{};
+    WriteBatchData m_data{};
+};
+
+class MakeBatchParamSaver
+{
+public:
+    MakeBatchParamSaver()
+    {
+        std::copy(&g_params[0], &g_params[MAX_PARAMS], m_params.begin());
+        m_param_text = g_param_text;
+    }
+    ~MakeBatchParamSaver()
+    {
+        std::copy(m_params.begin(), m_params.end(), &g_params[0]);
+        g_param_text = m_param_text;
+    }
+
+private:
+    std::array<double, MAX_PARAMS> m_params{};
+    std::array<std::string, MAX_PARAMS> m_param_text;
+};
+
+class TestPutFractalParams : public testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        std::fill(&g_params[0], &g_params[MAX_PARAMS], 0.0);
+        g_param_text.fill({});
+        g_params[0] = 1100.0;
+        g_params[1] = 1200000.0;
+        g_params[2] = 3.0;
+        g_params[3] = 2.0;
+    }
+
+    MakeBatchParamSaver m_saved_params;
+    ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::ANT};
+    ValueSaver<FractalSpecific *> m_saved_fractal_specific{
+        g_cur_fractal_specific, get_fractal_specific(FractalType::ANT)};
+    ValueSaver<DebugFlags> m_saved_debug_flag{g_debug_flag, DebugFlags::NONE};
     WriteBatchData m_data{};
 };
 
@@ -172,6 +221,26 @@ TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
     put_encoded_colors(m_data, NUM_COLORS);
 
     constexpr std::string_view expected{"#434343"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(TestPutFractalParams, antUsesTextRuleForFirstParam)
+{
+    g_param_text[0] = "101001011001";
+
+    put_fractal_params(m_data);
+
+    constexpr std::string_view expected{"params=101001011001/1200000.0/3.0/2.0/0.0/0.0"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(TestPutFractalParams, antUsesNumericRuleWhenTextIsEmpty)
+{
+    put_fractal_params(m_data);
+
+    constexpr std::string_view expected{"params=1100.0/1200000.0/3.0/2.0/0.0/0.0"};
     const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }

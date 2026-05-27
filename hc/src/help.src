@@ -305,6 +305,8 @@ o The @example1.par/fireworks parameter set was removed because its
   appearance depends on Fractint fixed-point artifacts.  (Fixes #391)
 o Ant rule strings from params= are now preserved so @example2.par/Ant
   renders with the intended rule.  (Fixes #393)
+o Ant rules can now use exact integer text in params=, allowing rule
+  strings wider than Fractint's numeric formatting permits.
 o Legacy outside=atan coloring now uses the Fractint-compatible color
   scaling selected by reset.  (Fixes #394)
 o @example2.par/Barnsleyj2-manr now selects the Fractint reset version

@@ -12,6 +12,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/random_seed.h"
 #include "engine/wait_until.h"
+#include "misc/version.h"
 #include "ui/video.h"
 
 #include <algorithm>
@@ -19,9 +20,11 @@
 #include <cstdio>
 #include <cstdlib>
 #include <string>
+#include <string_view>
 #include <vector>
 
 using namespace id::engine;
+using namespace id::misc;
 using namespace id::ui;
 
 namespace id::fractals
@@ -32,6 +35,31 @@ static int random(const int n)
 {
     return static_cast<int>(static_cast<long>(std::rand()) * static_cast<long>(n) >> 15);
 }
+
+namespace
+{
+
+bool is_integer_rule(const std::string_view text)
+{
+    return !text.empty()
+        && std::all_of(text.begin(), text.end(), [](const char ch) { return ch >= '0' && ch <= '9'; });
+}
+
+bool use_drifted_id_rule_format()
+{
+    constexpr Version first_drifted{1, 0, 0, 0, false};
+    constexpr Version last_drifted{1, 3, 2, 0, false};
+    return !(g_version < first_drifted) && g_version <= last_drifted;
+}
+
+std::string ant_numeric_rule_text(const double param)
+{
+    char buff[64];
+    std::snprintf(buff, sizeof(buff), use_drifted_id_rule_format() ? "%.17f" : "%.17g", param);
+    return std::string{buff};
+}
+
+} // namespace
 
 #define XO              (g_logical_screen.x_dots/2)
 #define YO              (g_logical_screen.y_dots/2)
@@ -106,13 +134,7 @@ Ant::Ant()
 
     wrap = g_params[4] != 0.0;
 
-    const auto get_rule = [](const double param)
-    {
-        char buff[32];
-        std::snprintf(buff, sizeof(buff), "%.17g", param);
-        return std::string{buff};
-    };
-    rule_text = g_param_text[0].empty() ? get_rule(g_params[0]) : g_param_text[0];
+    rule_text = ant_rule_text();
     rule_len = static_cast<int>(rule_text.length());
     if (rule_len > 1)
     {
@@ -361,6 +383,12 @@ bool Ant::iterate(const bool step, const long wait)
         ++count;
     }
     return count < count_end;
+}
+
+std::string ant_rule_text()
+{
+    const std::string_view raw_rule{g_param_text[0]};
+    return is_integer_rule(raw_rule) ? std::string{raw_rule} : ant_numeric_rule_text(g_params[0]);
 }
 
 } // namespace id::fractals

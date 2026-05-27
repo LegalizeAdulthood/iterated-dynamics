@@ -3265,15 +3265,20 @@ the University of Bielefeld.
 
 The ant wanders around the screen, starting at the middle.  A rule string,
 which the user can input as Id's first parameter, determines the ant's
-direction.  This rule string is stored as a double precision number in our
-implementation.  Only the digit 1 is significant -- all other digits are
+direction.  Only the digit 1 is significant -- all other characters are
 treated as 0.  When the type 1 ant leaves a cell (a pixel on the screen) of
 color k, it turns right if the kth symbol in the rule string is a 1, or left
 otherwise.  Then the color in the abandoned cell is incremented.  The type 2
 ant uses only the rule string to move around.  If the digit of the rule string
-is a 1, the ant turns right and puts a zero in current cell, otherwise it
-turns left and put a number in the current cell.  An empty rule string causes
+is a 1, the ant turns right and puts a zero in the current cell, otherwise it
+turns left and puts a number in the current cell.  An empty rule string causes
 the rule to be generated randomly.
+
+When the first parameter is written as integer text, Id preserves that text as
+the rule string.  This allows exact rule strings wider than Fractint's double
+precision numeric formatting can represent.  When the first parameter uses
+decimal or exponent notation, Id follows Fractint compatibility and interprets
+the numeric value using Fractint's rule formatting.
 
 The 2nd parameter is a maximum iteration to guarantee that the fractal
 will terminate.
@@ -3281,7 +3286,7 @@ will terminate.
 The 3rd parameter is the number of ants (up to 256).  If you select 0 ants,
 then the number of ants is random.
 
-The 4th paramter allows you to select ant type 1 (the original), or type 2.
+The 4th parameter allows you to select ant type 1 (the original), or type 2.
 
 The 5th parameter determines whether the ant's progress stops when the edge
 of the screen is reaches (as in the original implementation), or whether the

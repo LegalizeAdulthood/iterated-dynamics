@@ -62,4 +62,6 @@ private:
     long count_end{};
 };
 
+std::string ant_rule_text();
+
 } // namespace id::fractals

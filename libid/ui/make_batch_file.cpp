@@ -804,6 +804,62 @@ void put_encoded_colors(WriteBatchData &wb_data, const int max_color)
     }
 }
 
+void put_fractal_params(WriteBatchData &wb_data)
+{
+    int i;
+    for (i = MAX_PARAMS - 1; i >= 0; --i)
+    {
+        if (type_has_param(
+                g_fractal_type == FractalType::JULIBROT ? g_new_orbit_type : g_fractal_type, i))
+        {
+            break;
+        }
+    }
+
+    if (i < 0)
+    {
+        return;
+    }
+
+    if (g_fractal_type == FractalType::ANT && !g_param_text[0].empty())
+    {
+        put_param(wb_data, " params=%s", g_param_text[0].c_str());
+    }
+    else if (g_fractal_type == FractalType::CELLULAR || g_fractal_type == FractalType::ANT)
+    {
+        put_param(wb_data, " params=%.1f", g_params[0]);
+    }
+    else
+    {
+        if (g_debug_flag == DebugFlags::FORCE_LONG_DOUBLE_PARAM_OUTPUT)
+        {
+            put_param(wb_data, " params=%.17Lg", (long double)g_params[0]);
+        }
+        else
+        {
+            put_param(wb_data, " params=%.17g", g_params[0]);
+        }
+    }
+    for (int j = 1; j <= i; ++j)
+    {
+        if (g_fractal_type == FractalType::CELLULAR || g_fractal_type == FractalType::ANT)
+        {
+            put_param(wb_data, "/%.1f", g_params[j]);
+        }
+        else
+        {
+            if (g_debug_flag == DebugFlags::FORCE_LONG_DOUBLE_PARAM_OUTPUT)
+            {
+                put_param(wb_data, "/%.17Lg", (long double)g_params[j]);
+            }
+            else
+            {
+                put_param(wb_data, "/%.17g", g_params[j]);
+            }
+        }
+    }
+}
+
 static void write_batch_params(
     const char *color_inf, const bool colors_only, const int max_color, const int ii, const int jj)
 {
@@ -997,52 +1053,7 @@ static void write_batch_params(
             }
         }
 
-        int i;
-        for (i = MAX_PARAMS - 1; i >= 0; --i)
-        {
-            if (type_has_param(
-                    g_fractal_type == FractalType::JULIBROT ? g_new_orbit_type : g_fractal_type, i))
-            {
-                break;
-            }
-        }
-
-        if (i >= 0)
-        {
-            if (g_fractal_type == FractalType::CELLULAR || g_fractal_type == FractalType::ANT)
-            {
-                put_param(" params=%.1f", g_params[0]);
-            }
-            else
-            {
-                if (g_debug_flag == DebugFlags::FORCE_LONG_DOUBLE_PARAM_OUTPUT)
-                {
-                    put_param(" params=%.17Lg", (long double)g_params[0]);
-                }
-                else
-                {
-                    put_param(" params=%.17g", g_params[0]);
-                }
-            }
-            for (int j = 1; j <= i; ++j)
-            {
-                if (g_fractal_type == FractalType::CELLULAR || g_fractal_type == FractalType::ANT)
-                {
-                    put_param("/%.1f", g_params[j]);
-                }
-                else
-                {
-                    if (g_debug_flag == DebugFlags::FORCE_LONG_DOUBLE_PARAM_OUTPUT)
-                    {
-                        put_param("/%.17Lg", (long double)g_params[j]);
-                    }
-                    else
-                    {
-                        put_param("/%.17g", g_params[j]);
-                    }
-                }
-            }
-        }
+        put_fractal_params(s_wb_data);
 
         if (g_use_init_orbit == InitOrbitMode::PIXEL)
         {
@@ -1298,7 +1309,7 @@ static void write_batch_params(
         if (!g_iteration_ranges.empty())
         {
             put_param(" ranges=");
-            i = 0;
+            int i = 0;
             while (i < static_cast<int>(g_iteration_ranges.size()))
             {
                 if (i)
