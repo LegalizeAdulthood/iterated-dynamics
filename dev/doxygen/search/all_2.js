@@ -20,7 +20,7 @@ var searchData=
   ['bad_5fvalue_17',['BAD_VALUE',['../d6/daa/namespaceid_1_1geometry.html#a2003f6f1ab95a7e7b271fb7ba5d75d50',1,'id::geometry']]],
   ['bad_5fwith_5fmessage_18',['BAD_WITH_MESSAGE',['../d0/d19/namespaceid_1_1io.html#ae40bcd1edfb057e006f531a4c9654c90a821d82f7ea398d77af7ee1bd4d7bb960',1,'id::io']]],
   ['bail_5ftest_19',['BAIL_TEST',['../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91a429df64e426d02b435ab4a6df8d423fa',1,'id::fractals']]],
-  ['bailout_20',['bailout',['../dc/d31/namespaceid_1_1engine.html#ad4fb2948d94a1d93992c23cc2bd6ea28',1,'id::engine::Bailout'],['../d1/d3e/history_8cpp.html#ac23385b6665eed4ba24e14eef5f16829',1,'bailout:&#160;history.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#a1d860c5c8aa60e75f16e128880bab163',1,'id::io::FractalInfo::bailout']]],
+  ['bailout_20',['bailout',['../d1/d3e/history_8cpp.html#ac23385b6665eed4ba24e14eef5f16829',1,'bailout:&#160;history.cpp'],['../dc/d31/namespaceid_1_1engine.html#ad4fb2948d94a1d93992c23cc2bd6ea28',1,'id::engine::Bailout'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#a1d860c5c8aa60e75f16e128880bab163',1,'id::io::FractalInfo::bailout']]],
   ['bailout_5ferror_5fno_5fsave_21',['BAILOUT_ERROR_NO_SAVE',['../dc/d31/namespaceid_1_1engine.html#a42fff7171407f977eb5d8d0393a262e5a69f2376327a1dd76ba5968f80c4005ed',1,'id::engine']]],
   ['bailout_5fformula_2ecpp_22',['bailout_formula.cpp',['../d5/d7d/bailout__formula_8cpp.html',1,'']]],
   ['bailout_5fformula_2eh_23',['bailout_formula.h',['../d1/d84/bailout__formula_8h.html',1,'']]],

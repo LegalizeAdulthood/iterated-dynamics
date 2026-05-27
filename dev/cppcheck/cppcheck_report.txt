@@ -73,10 +73,10 @@ hc/HelpCompiler.cpp:1570:9: note: Second condition
 libid/engine/cmdfiles.cpp:171:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3572:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3573:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:3984:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3985:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
 libid/fractals/Ant.cpp:258:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
@@ -1621,15 +1621,6 @@ libid/io/library.cpp:104:9: style: Consider using std::any_of algorithm instead 
 libid/io/library.cpp:112:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/loadfile.cpp:1765:19: style: Variable 'g_bad_outside' is reassigned a value before the old one has been used. [redundantAssignment]
-    g_bad_outside = false;
-                  ^
-libid/io/loadfile.cpp:1756:19: note: g_bad_outside is assigned
-    g_bad_outside = g_file_version <= 1960                                                 //
-                  ^
-libid/io/loadfile.cpp:1765:19: note: g_bad_outside is overwritten
-    g_bad_outside = false;
-                  ^
 libid/io/make_mig.cpp:331:25: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (error_flag == 0 && input_error_flag == 0)
                         ^
@@ -1723,13 +1714,13 @@ libid/ui/stereo.cpp:255:16: note: Variable created here.
 libid/ui/stereo.cpp:264:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data->save_dac = save_dac_box;
     ^
-tests/libid/engine/test_cmdfiles.cpp:865:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+tests/libid/engine/test_cmdfiles.cpp:883:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/engine/test_cmdfiles.cpp:857:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+tests/libid/engine/test_cmdfiles.cpp:875:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
     const std::string saved_browse_name{g_browse.name};
                                                 ^
-tests/libid/engine/test_cmdfiles.cpp:865:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+tests/libid/engine/test_cmdfiles.cpp:883:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
 win32/Frame.cpp:584:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
