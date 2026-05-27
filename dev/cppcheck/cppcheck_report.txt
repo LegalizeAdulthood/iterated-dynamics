@@ -73,13 +73,13 @@ hc/HelpCompiler.cpp:1570:9: note: Second condition
 libid/engine/cmdfiles.cpp:171:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3573:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3584:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:3985:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3996:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
-libid/fractals/Ant.cpp:258:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
+libid/fractals/Ant.cpp:257:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
 libid/fractals/Cellular.cpp:111:14: style: Condition 't>16' is always false [knownConditionTrueFalse]
