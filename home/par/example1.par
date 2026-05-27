@@ -60,12 +60,6 @@ star_burst         { ; Jonathan Osuch
    inside=0
 }
 
-fireworks          { ; Jonathan Osuch
-   reset type=bifstewart function=cotanh
-   corners=1.07614/1.281547/0.025189/1.168775 params=1000/0.66
-   inside=0
-}
-
 bifmay_test        { ; Jonathan Osuch
    reset type=bifmay corners=57.48834/82.879774/-0.564521/6.948902
    params=300/0.9/5 float=y inside=0 colors=@default

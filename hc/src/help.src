@@ -301,6 +301,8 @@ o FrothyBasin now honors legacy Fractint parameter semantics selected by
   reset, allowing @id.par/EvilFrog to render correctly.  (Fixes #105)
 o The @id.par/mandala parameter set now explicitly selects reset=1730 so
   legacy outside=real coloring is used.  (Fixes #106)
+o The @example1.par/fireworks parameter set was removed because its
+  appearance depends on Fractint fixed-point artifacts.  (Fixes #391)
 
 Code Cleanup in Version 1.3.3
 
