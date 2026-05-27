@@ -61,6 +61,7 @@
 #include "misc/Driver.h"
 #include "misc/id.h"
 #include "misc/ValueSaver.h"
+#include "misc/version.h"
 #include "ui/check_key.h"
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
@@ -581,12 +582,16 @@ static void init_calc_fract()
     g_log_map_calculate = false;
     // below, 32767 is used as the allowed value for maximum iteration count for
     // historical reasons.  TODO: increase this limit
-    if (g_log_map_flag && (g_max_iterations > 32767 || g_log_map_fly_calculate == LogMapCalculate::ON_THE_FLY))
+    if (g_log_map_flag
+        && ((g_max_iterations > 32767 && !(g_version <= 1920))
+            || g_log_map_fly_calculate == LogMapCalculate::ON_THE_FLY))
     {
         g_log_map_calculate = true; // calculate on the fly
         setup_log_table();
     }
-    else if (g_log_map_flag && g_log_map_fly_calculate == LogMapCalculate::USE_LOG_TABLE)
+    else if (g_log_map_flag
+        && ((g_max_iterations > 32767 && g_version <= 1920)
+            || g_log_map_fly_calculate == LogMapCalculate::USE_LOG_TABLE))
     {
         g_log_map_table_max_size = 32767;
         g_log_map_calculate = false; // use logtable
@@ -1781,7 +1786,7 @@ int standard_fractal_type()
         // eliminate negative colors & wrap arounds
         if ((g_color_iter <= 0 || g_color_iter > g_max_iterations) && g_outside_method != ColorMethod::FMOD)
         {
-            g_color_iter = 1;
+            g_color_iter = g_version < 1961 ? 0 : 1;
         }
     }
 

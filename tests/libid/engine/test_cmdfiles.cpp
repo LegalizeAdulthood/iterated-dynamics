@@ -515,6 +515,7 @@ TEST_F(TestParameterCommand, resetNoArg)
 {
     ValueSaver saved_release{g_release, 102};
     ValueSaver saved_version{g_version, Version{1, 2, 0, 0, false}};
+    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset");
 
@@ -525,6 +526,11 @@ TEST_F(TestParameterCommand, resetNoArg)
     EXPECT_EQ(0, g_version.patch);
     EXPECT_EQ(0, g_version.tweak);
     EXPECT_FALSE(g_version.legacy);
+    EXPECT_EQ(1, g_file_version.major);
+    EXPECT_EQ(2, g_file_version.minor);
+    EXPECT_EQ(0, g_file_version.patch);
+    EXPECT_EQ(0, g_file_version.tweak);
+    EXPECT_FALSE(g_file_version.legacy);
 }
 
 TEST_F(TestParameterCommand, resetVersion10)
@@ -579,6 +585,7 @@ TEST_F(TestParameterCommand, resetLegacyVersion)
 {
     ValueSaver saved_release{g_release, 0};
     ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, false}};
+    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, false}};
 
     exec_cmd_arg("reset=1906");
 
@@ -589,11 +596,17 @@ TEST_F(TestParameterCommand, resetLegacyVersion)
     EXPECT_EQ(0, g_version.patch);
     EXPECT_EQ(0, g_version.tweak);
     EXPECT_TRUE(g_version.legacy);
+    EXPECT_EQ(19, g_file_version.major);
+    EXPECT_EQ(6, g_file_version.minor);
+    EXPECT_EQ(0, g_file_version.patch);
+    EXPECT_EQ(0, g_file_version.tweak);
+    EXPECT_TRUE(g_file_version.legacy);
 }
 
 TEST_F(TestParameterCommand, resetVersionAllFields)
 {
     ValueSaver saved_release{g_release, 0};
+    ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset=1/2/3/4");
 
@@ -604,6 +617,11 @@ TEST_F(TestParameterCommand, resetVersionAllFields)
     EXPECT_EQ(3, g_version.patch);
     EXPECT_EQ(4, g_version.tweak);
     EXPECT_FALSE(g_version.legacy);
+    EXPECT_EQ(1, g_file_version.major);
+    EXPECT_EQ(2, g_file_version.minor);
+    EXPECT_EQ(3, g_file_version.patch);
+    EXPECT_EQ(4, g_file_version.tweak);
+    EXPECT_FALSE(g_file_version.legacy);
 }
 
 TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)

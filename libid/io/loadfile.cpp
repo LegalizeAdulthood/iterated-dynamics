@@ -1762,7 +1762,6 @@ void backwards_legacy_v20()
         g_close_proximity = 0.01;
     }
 
-    g_bad_outside = false;
     if (!g_new_bifurcation_functions_loaded)
     {
         set_function_param_defaults();

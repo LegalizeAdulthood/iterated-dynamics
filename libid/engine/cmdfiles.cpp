@@ -3102,6 +3102,7 @@ static CmdArgFlags cmd_reset(const Command &cmd)
             g_version.tweak = cmd.int_vals[3];
         }
     }
+    g_file_version = g_version;
     return CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET;
 }
 

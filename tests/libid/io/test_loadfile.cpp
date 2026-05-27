@@ -67,6 +67,62 @@ void PrintTo(const FileFractalType &value, std::ostream *str)
     *str << value;
 }
 
+TEST(TestBackwardsLegacyV20, oldMandelOutsideRealSetsBadOutside)
+{
+    ValueSaver saved_bad_outside{g_bad_outside, false};
+    ValueSaver saved_file_version{g_file_version, Version{19, 60, 0, 0, true}};
+    ValueSaver saved_fractal_type{g_fractal_type, FractalType::MANDEL};
+    ValueSaver saved_outside_method{g_outside_method, ColorMethod::REAL};
+    ValueSaver saved_inside_method{g_inside_method, ColorMethod::ITER};
+    ValueSaver saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
+
+    backwards_legacy_v20();
+
+    EXPECT_TRUE(g_bad_outside);
+}
+
+TEST(TestBackwardsLegacyV20, oldJuliaOutsideSummSetsBadOutside)
+{
+    ValueSaver saved_bad_outside{g_bad_outside, false};
+    ValueSaver saved_file_version{g_file_version, Version{19, 60, 0, 0, true}};
+    ValueSaver saved_fractal_type{g_fractal_type, FractalType::JULIA};
+    ValueSaver saved_outside_method{g_outside_method, ColorMethod::SUM};
+    ValueSaver saved_inside_method{g_inside_method, ColorMethod::ITER};
+    ValueSaver saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
+
+    backwards_legacy_v20();
+
+    EXPECT_TRUE(g_bad_outside);
+}
+
+TEST(TestBackwardsLegacyV20, modernMandelOutsideRealClearsBadOutside)
+{
+    ValueSaver saved_bad_outside{g_bad_outside, true};
+    ValueSaver saved_file_version{g_file_version, Version{19, 61, 0, 0, true}};
+    ValueSaver saved_fractal_type{g_fractal_type, FractalType::MANDEL};
+    ValueSaver saved_outside_method{g_outside_method, ColorMethod::REAL};
+    ValueSaver saved_inside_method{g_inside_method, ColorMethod::ITER};
+    ValueSaver saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
+
+    backwards_legacy_v20();
+
+    EXPECT_FALSE(g_bad_outside);
+}
+
+TEST(TestBackwardsLegacyV20, oldNonMandelOutsideRealClearsBadOutside)
+{
+    ValueSaver saved_bad_outside{g_bad_outside, true};
+    ValueSaver saved_file_version{g_file_version, Version{19, 60, 0, 0, true}};
+    ValueSaver saved_fractal_type{g_fractal_type, FractalType::FN_PLUS_FN};
+    ValueSaver saved_outside_method{g_outside_method, ColorMethod::REAL};
+    ValueSaver saved_inside_method{g_inside_method, ColorMethod::ITER};
+    ValueSaver saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded, true};
+
+    backwards_legacy_v20();
+
+    EXPECT_FALSE(g_bad_outside);
+}
+
 class TestLoadFile : public TestWithParam<FileFractalType>
 {
 public:

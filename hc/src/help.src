@@ -295,6 +295,8 @@ o Solid guessing no longer leaves parts of images unfinished when
   symmetry splits work, such as in 640x480 video mode.  (Fixes #257)
 o Lambdafn with function=exp now honors the reset version when selecting
   the Fractint-compatible bailout behavior.  (Fixes #107)
+o Legacy parameter sets now use the Fractint-compatible logmap table and
+  outside coloring behavior selected by reset.  (Fixes #104)
 
 Code Cleanup in Version 1.3.3
 

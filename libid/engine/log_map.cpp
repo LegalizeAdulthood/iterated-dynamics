@@ -5,7 +5,9 @@
 #include "engine/calcfrac.h"
 #include "engine/VideoInfo.h"
 #include "misc/ValueSaver.h"
+#include "misc/version.h"
 
+#include <algorithm>
 #include <cmath>
 
 using namespace id::misc;
@@ -23,6 +25,112 @@ bool g_log_map_calculate{};
 static double s_mlf{};
 static unsigned long s_lf{};
 
+static float legacy_log14(const float value)
+{
+    constexpr float FIXED_SCALE{65536.0F};
+    const auto fixed = static_cast<long>(std::log(static_cast<double>(value)) * FIXED_SCALE);
+    return static_cast<float>(fixed) / FIXED_SCALE;
+}
+
+static float legacy_exp14(const float value)
+{
+    constexpr float LOG_TWO{0.6931472F};
+    constexpr float FIXED_SCALE{65536.0F};
+    const int fudge = 23 - static_cast<int>(value / LOG_TWO);
+    const float scale = std::ldexp(1.0F, fudge);
+    const auto fixed = static_cast<long>(value * FIXED_SCALE);
+    const auto ans = static_cast<long>(std::exp(static_cast<double>(fixed) / FIXED_SCALE) * scale);
+    return static_cast<float>(ans) / scale;
+}
+
+static float legacy_sqrt14(const float value)
+{
+    return legacy_exp14(legacy_log14(value) / 2.0F);
+}
+
+static void setup_legacy_log_table()
+{
+    if (g_log_map_table.empty())
+    {
+        return;
+    }
+
+    unsigned long prev{};
+    unsigned long limit{};
+    if (g_log_map_flag > -2)
+    {
+        s_lf = g_log_map_flag > 1 ? g_log_map_flag : 0;
+        if (s_lf >= static_cast<unsigned long>(g_log_map_table_max_size))
+        {
+            s_lf = g_log_map_table_max_size - 1;
+        }
+        float m = legacy_log14(static_cast<float>(g_log_map_table_max_size - s_lf));
+        const float c = static_cast<float>(g_colors - (s_lf ? 2 : 1));
+        m /= c;
+        for (prev = 1; prev <= s_lf; prev++)
+        {
+            g_log_map_table[prev] = 1;
+        }
+        for (unsigned n = s_lf ? 2U : 1U; n < static_cast<unsigned>(g_colors); n++)
+        {
+            float f = static_cast<float>(n);
+            f *= m;
+            const float l = legacy_exp14(f);
+            limit = static_cast<unsigned long>(l) + s_lf;
+            if (limit > static_cast<unsigned long>(g_log_map_table_max_size) || n == static_cast<unsigned>(g_colors - 1))
+            {
+                limit = g_log_map_table_max_size;
+            }
+            while (prev <= limit)
+            {
+                g_log_map_table[prev++] = static_cast<Byte>(n);
+            }
+        }
+    }
+    else
+    {
+        s_lf = 0 - g_log_map_flag;
+        if (s_lf >= static_cast<unsigned long>(g_log_map_table_max_size))
+        {
+            s_lf = g_log_map_table_max_size - 1;
+        }
+        float m = legacy_sqrt14(static_cast<float>(g_log_map_table_max_size - s_lf));
+        const float c = static_cast<float>(g_colors - 2);
+        m /= c;
+        for (prev = 1; prev <= s_lf; prev++)
+        {
+            g_log_map_table[prev] = 1;
+        }
+        for (unsigned n = 2; n < static_cast<unsigned>(g_colors); n++)
+        {
+            float f = static_cast<float>(n);
+            f *= m;
+            f *= f;
+            limit = static_cast<unsigned long>(f) + s_lf;
+            if (limit > static_cast<unsigned long>(g_log_map_table_max_size) || n == static_cast<unsigned>(g_colors - 1))
+            {
+                limit = g_log_map_table_max_size;
+            }
+            while (prev <= limit)
+            {
+                g_log_map_table[prev++] = static_cast<Byte>(n);
+            }
+        }
+    }
+
+    g_log_map_table[0] = 0;
+    if (g_log_map_flag != -1)
+    {
+        for (unsigned long sptop = 1; sptop < static_cast<unsigned long>(g_log_map_table_max_size); sptop++)
+        {
+            if (g_log_map_table[sptop] > g_log_map_table[sptop - 1])
+            {
+                g_log_map_table[sptop] = static_cast<Byte>(g_log_map_table[sptop - 1] + 1);
+            }
+        }
+    }
+}
+
 /* int LogFlag;
    LogFlag == 1  -- standard log palettes
    LogFlag == -1 -- 'old' log palettes
@@ -31,31 +139,34 @@ static unsigned long s_lf{};
 */
 void setup_log_table()
 {
-    // set up on-the-fly variables
-    if (g_log_map_flag > 0)
+    if (!(g_version <= 1920) || g_log_map_fly_calculate == LogMapCalculate::ON_THE_FLY)
     {
-        // new log function
-        s_lf = g_log_map_flag > 1 ? g_log_map_flag : 0;
-        if (s_lf >= static_cast<unsigned long>(g_log_map_table_max_size))
+        // set up on-the-fly variables
+        if (g_log_map_flag > 0)
         {
-            s_lf = g_log_map_table_max_size - 1;
+            // new log function
+            s_lf = g_log_map_flag > 1 ? g_log_map_flag : 0;
+            if (s_lf >= static_cast<unsigned long>(g_log_map_table_max_size))
+            {
+                s_lf = g_log_map_table_max_size - 1;
+            }
+            s_mlf = (g_colors - (s_lf ? 2 : 1)) / std::log(static_cast<double>(g_log_map_table_max_size - s_lf));
         }
-        s_mlf = (g_colors - (s_lf ? 2 : 1)) / std::log(static_cast<double>(g_log_map_table_max_size - s_lf));
-    }
-    else if (g_log_map_flag == -1)
-    {
-        // old log function
-        s_mlf = (g_colors - 1) / std::log(static_cast<double>(g_log_map_table_max_size));
-    }
-    else if (g_log_map_flag <= -2)
-    {
-        // sqrt function
-        s_lf = 0 - g_log_map_flag;
-        if (s_lf >= static_cast<unsigned long>(g_log_map_table_max_size))
+        else if (g_log_map_flag == -1)
         {
-            s_lf = g_log_map_table_max_size - 1;
+            // old log function
+            s_mlf = (g_colors - 1) / std::log(static_cast<double>(g_log_map_table_max_size));
         }
-        s_mlf = (g_colors - 2) / std::sqrt(static_cast<double>(g_log_map_table_max_size - s_lf));
+        else if (g_log_map_flag <= -2)
+        {
+            // sqrt function
+            s_lf = 0 - g_log_map_flag;
+            if (s_lf >= static_cast<unsigned long>(g_log_map_table_max_size))
+            {
+                s_lf = g_log_map_table_max_size - 1;
+            }
+            s_mlf = (g_colors - 2) / std::sqrt(static_cast<double>(g_log_map_table_max_size - s_lf));
+        }
     }
 
     if (g_log_map_calculate)
@@ -63,11 +174,17 @@ void setup_log_table()
         return; // LogTable not defined, bail out now
     }
 
-    ValueSaver saved_log_map_calculate{g_log_map_calculate, true}; // turn it on
-    for (long i = 0U; i < static_cast<long>(g_log_map_table.size()); i++)
+    if (!(g_version <= 1920))
     {
-        g_log_map_table[i] = static_cast<Byte>(log_table_calc(i));
+        ValueSaver saved_log_map_calculate{g_log_map_calculate, true}; // turn it on
+        for (long i = 0U; i < static_cast<long>(g_log_map_table.size()); i++)
+        {
+            g_log_map_table[i] = static_cast<Byte>(log_table_calc(i));
+        }
+        return;
     }
+
+    setup_legacy_log_table();
 }
 
 long log_table_calc(const long color_iter)
@@ -92,7 +209,8 @@ long log_table_calc(const long color_iter)
         }
         else if ((color_iter - s_lf)/std::log(static_cast<double>(color_iter - s_lf)) <= s_mlf)
         {
-            ret = static_cast<long>(color_iter - s_lf);
+            ret = g_version < 2002 ? static_cast<long>(color_iter - s_lf + (s_lf ? 1 : 0)) :
+                                      static_cast<long>(color_iter - s_lf);
         }
         else
         {

@@ -3,7 +3,9 @@
 #include <engine/log_map.h>
 
 #include <engine/calcfrac.h>
+#include <engine/VideoInfo.h>
 #include <misc/ValueSaver.h>
+#include <misc/version.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -29,6 +31,8 @@ protected:
     ValueSaver<long> saved_log_map_flag{g_log_map_flag, 0};
     ValueSaver<bool> saved_log_map_calculate{g_log_map_calculate, false};
     ValueSaver<long> saved_log_map_table_max_size{g_log_map_table_max_size, 0};
+    ValueSaver<Version> saved_version{g_version, Version{1, 0, 0, 0, false}};
+    ValueSaver<int> saved_colors{g_colors, 256};
 };
 
 void TestSetupLogTable::SetUp()
@@ -207,6 +211,41 @@ TEST_F(TestSetupLogTable, sqrtPaletteLogMapFlagMinusTwoHundred)
         EXPECT_EQ(expected[i], g_log_map_table[i]) << "index " << i;
     }
     EXPECT_THAT(g_log_map_table, testing::ElementsAreArray(expected));
+}
+
+TEST_F(TestSetupLogTable, legacyVersionUsesLegacyLogTable)
+{
+    g_version = parse_legacy_version(1730);
+    g_max_iterations = 256;
+    g_log_map_flag = 1;
+    g_log_map_table_max_size = 256L;
+    g_log_map_table.resize(g_log_map_table_max_size + 1);
+
+    setup_log_table();
+
+    EXPECT_FALSE(g_log_map_calculate);
+    EXPECT_EQ(256U + 1U, g_log_map_table.size());
+    EXPECT_EQ(256L, g_log_map_table_max_size);
+    std::array<int, 257> expected{};
+    std::iota(expected.begin(), expected.end(), 0);
+    expected.back() = 255;
+    EXPECT_THAT(g_log_map_table, testing::ElementsAreArray(expected));
+}
+
+TEST_F(TestSetupLogTable, pre2002LogTableCalcKeepsLegacyCompressionOffset)
+{
+    g_version = parse_legacy_version(2001);
+    g_log_map_calculate = true;
+    g_log_map_flag = 16;
+    g_log_map_table_max_size = 256L;
+    setup_log_table();
+
+    EXPECT_EQ(3, log_table_calc(18));
+
+    g_version = parse_legacy_version(2002);
+    setup_log_table();
+
+    EXPECT_EQ(2, log_table_calc(18));
 }
 
 } // namespace id::test
