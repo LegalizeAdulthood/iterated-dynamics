@@ -223,7 +223,7 @@ Graphs             { ; Better than a graphic calculator!
 
 G-3-03-M           { ; Uses the new round function.
                      ; (c) Sylvie Gallet, 1996
-   reset type=formula formulafile=id.frm formulaname=G-3-03-M
+   reset=1960 type=formula formulafile=id.frm formulaname=G-3-03-M
    function=sinh/atanh passes=1
    center-mag=-0.292907/-0.345016/0.1164033/1/44.999 params=10/0/5/15
    float=y outside=atan decomp=256 periodicity=0
