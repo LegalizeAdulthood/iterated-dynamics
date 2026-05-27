@@ -133,6 +133,10 @@ static void init_vars_restart();
 static void init_vars_fractal();
 static void init_vars3d();
 static void reset_ifs_definition();
+static bool type_needs_file_entry();
+static bool type_has_file_entry();
+static void reset_startup_commands();
+static void resolve_startup_file_entry();
 static int  get_bf(BigFloat bf, const char *cur_arg);
 static bool is_a_big_float(const char *str);
 
@@ -177,6 +181,35 @@ static void process_sstools_ini()
     {
         command_file(init_file, CmdFile::SSTOOLS_INI); // process it
     }
+}
+
+static bool type_needs_file_entry()
+{
+    return g_fractal_type == FractalType::FORMULA || g_fractal_type == FractalType::L_SYSTEM ||
+        g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D;
+}
+
+static bool type_has_file_entry()
+{
+    switch (g_fractal_type)
+    {
+    case FractalType::FORMULA:
+        return !g_formula_name.empty();
+    case FractalType::L_SYSTEM:
+        return !g_l_system_name.empty();
+    case FractalType::IFS:
+    case FractalType::IFS_3D:
+        return !g_ifs_name.empty();
+    default:
+        return true;
+    }
+}
+
+static void reset_startup_commands()
+{
+    init_vars_restart();
+    init_vars_fractal();
+    process_sstools_ini();
 }
 
 static void process_simple_command(char *cur_arg)
@@ -264,6 +297,39 @@ static void process_file(char *cur_arg)
     command_file(init_file, CmdFile::AT_CMD_LINE_SET_NAME);
 }
 
+static void resolve_startup_file_entry()
+{
+    if (!type_needs_file_entry() || type_has_file_entry())
+    {
+        return;
+    }
+
+    if (g_init_batch != BatchMode::NONE)
+    {
+        switch (g_fractal_type)
+        {
+        case FractalType::FORMULA:
+            arg_error("type=formula requires formulaname=");
+            break;
+        case FractalType::L_SYSTEM:
+            arg_error("type=lsystem requires lname=");
+            break;
+        case FractalType::IFS:
+        case FractalType::IFS_3D:
+            arg_error("type=ifs requires ifs=");
+            break;
+        default:
+            break;
+        }
+        return;
+    }
+
+    if (!select_fractal_file_entry())
+    {
+        reset_startup_commands();
+    }
+}
+
 void cmd_files(const int argc, const char *const *argv)
 {
     if (g_first_init)
@@ -302,6 +368,7 @@ void cmd_files(const int argc, const char *const *argv)
             process_file(cur_arg);
         }
     }
+    resolve_startup_file_entry();
 
     if (!g_first_init)
     {

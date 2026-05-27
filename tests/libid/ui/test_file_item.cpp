@@ -81,6 +81,19 @@ TEST_F(TestFindFileItem, lindenmayerSystem)
     EXPECT_EQ(fs::path{data::ID_TEST_LSYSTEM_DIR} / data::ID_TEST_LSYSTEM_FILE, m_path);
 }
 
+TEST_F(TestFindFileItem, emptyItemName)
+{
+    ValueSaver saved_first_init{g_first_init, false};
+    ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
+    m_path = data::ID_TEST_LSYSTEM_DIR;
+    m_path /= data::ID_TEST_LSYSTEM_FILE;
+
+    const bool result{find_file_item(m_path, "", &m_file, ItemType::L_SYSTEM)};
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(nullptr, m_file);
+}
+
 namespace
 {
 

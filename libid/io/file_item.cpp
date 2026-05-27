@@ -220,6 +220,12 @@ static bool check_path(const std::filesystem::path &path, std::FILE **infile, co
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, const ItemType item_type)
 {
+    if (item_name.empty())
+    {
+        stop_msg("File entry item name is empty");
+        return true;
+    }
+
     std::FILE *infile = nullptr;
     bool found = false;
 

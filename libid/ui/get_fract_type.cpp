@@ -285,14 +285,8 @@ private:
 
 } // namespace
 
-// prompt for new fractal type parameters; returns true on params accepted.
-static bool select_type_params(const FractalType new_fract_type, const FractalType old_fract_type)
+bool select_fractal_file_entry()
 {
-    SaveFractalType saved_fractal_type;
-
-sel_type_restart:
-    set_fractal_type(new_fract_type);
-
     if (g_fractal_type == FractalType::L_SYSTEM)
     {
         ValueSaver saved_help_mode(g_help_mode, HelpLabels::HT_L_SYSTEM);
@@ -328,6 +322,21 @@ sel_type_restart:
             g_ifs_name = saved_name;
             return false;
         }
+    }
+    return true;
+}
+
+// prompt for new fractal type parameters; returns true on params accepted.
+static bool select_type_params(const FractalType new_fract_type, const FractalType old_fract_type)
+{
+    SaveFractalType saved_fractal_type;
+
+sel_type_restart:
+    set_fractal_type(new_fract_type);
+
+    if (!select_fractal_file_entry())
+    {
+        return false;
     }
 
     save_trig_functions();
