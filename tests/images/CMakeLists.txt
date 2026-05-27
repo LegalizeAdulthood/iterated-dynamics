@@ -175,6 +175,7 @@ add_image_test("ant2" IGNORE_COLORMAP PARAMETERS "type=ant"
 add_image_test("mandel-chroma" PARAMETERS "type=mandel" "map=chroma")
 add_image_test("Egg" IGNORE_COLORMAP PARAMETERS "@id.par/Egg")
 add_image_test("EvilFrog" IGNORE_COLORMAP PARAMETERS "@id.par/EvilFrog")
+add_image_test("mandala" IGNORE_COLORMAP PARAMETERS "@id.par/mandala")
 add_image_test("filament" PARAMETERS "@id")
 add_image_test("SWT-029" IGNORE_COLORMAP PARAMETERS "@id.par/SWT-029")
 add_image_test("julibrot" PARAMETERS "type=julibrot" "julibrotfromto=-0.83/-0.83/0.25/-0.25"

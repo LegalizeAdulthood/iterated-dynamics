@@ -236,7 +236,7 @@ Egg                { ; FN*FN   SINH/SQR                     Richard Hughes
 }
 
 mandala            { ; Sqr(1/FN)  IDENT                     Richard Hughes
-   reset type=sqr(1/fn) function=ident  ; TW changed - cotan was broken
+   reset=1730 type=sqr(1/fn) function=ident  ; TW changed - cotan was broken
    corners=-1.984573/1.98143/-1.486908/1.487839 maxiter=256 inside=0
    outside=real
    colors=000ztn<49>zV1zU0zU0zT0<28>z10z00z00y00<30>c00b11a11`22_22<23>GEEFFFFF\
