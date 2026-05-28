@@ -115,28 +115,28 @@ TEST(TestVersion, currentVersionStringMajorMinor)
 {
     const Version version{3, 4, 0, 0, false};
 
-    EXPECT_EQ("3.4", to_current_version_string(version));
+    EXPECT_EQ("3.4", to_string(version));
 }
 
 TEST(TestVersion, currentVersionStringMajorMinorPatch)
 {
     const Version version{3, 4, 5, 0, false};
 
-    EXPECT_EQ("3.4.5", to_current_version_string(version));
+    EXPECT_EQ("3.4.5", to_string(version));
 }
 
 TEST(TestVersion, currentVersionStringMajorMinorPatchTweak)
 {
     const Version version{3, 4, 5, 6, false};
 
-    EXPECT_EQ("3.4.5.6", to_current_version_string(version));
+    EXPECT_EQ("3.4.5.6", to_string(version));
 }
 
 TEST(TestVersion, currentVersionStringMajorMinorTweak)
 {
     const Version version{3, 4, 0, 1, false};
 
-    EXPECT_EQ("3.4.0.1", to_current_version_string(version));
+    EXPECT_EQ("3.4.0.1", to_string(version));
 }
 
 TEST(TestVersion, parStringMajor)

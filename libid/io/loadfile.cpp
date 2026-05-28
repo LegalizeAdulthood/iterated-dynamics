@@ -325,6 +325,41 @@ bool operator==(const OrbitsInfo &lhs, const OrbitsInfo &rhs)
         && lhs.draw_mode == rhs.draw_mode;                  //
 }
 
+Version fractal_info_version(const FractalInfo &read_info)
+{
+    if (read_info.info_version > FRACTAL_INFO_VERSION_LEGACY_20_4)
+    {
+        return Version{read_info.version_major, read_info.version_minor,
+            read_info.version_patch, read_info.version_tweak, false};
+    }
+    if (read_info.info_version == FRACTAL_INFO_VERSION_LEGACY_20_4 &&
+        (read_info.release == 100 || read_info.release == 101))
+    {
+        return Version{read_info.release / 100, read_info.release % 100, 0, 0, false};
+    }
+    if (read_info.info_version > 4)
+    {
+        if (read_info.info_version == 5 && (read_info.release <= 0 || read_info.release >= 4000))
+        {
+            return parse_legacy_version(1410);
+        }
+        return parse_legacy_version(read_info.release);
+    }
+    if (read_info.info_version > 3)
+    {
+        return parse_legacy_version(1400);
+    }
+    if (read_info.info_version > 2)
+    {
+        return parse_legacy_version(1300);
+    }
+    if (read_info.info_version > 1)
+    {
+        return parse_legacy_version(1200);
+    }
+    return parse_legacy_version(1100);
+}
+
 static void backwards_info1(const FractalInfo &read_info)
 {
     if (read_info.info_version > 0)
@@ -372,7 +407,6 @@ static void backwards_info2(const FractalInfo &read_info)
 {
     if (read_info.info_version > 1)
     {
-        g_file_version = Version{12, 0, 0, 0, true};
         if (g_display_3d == Display3DMode::NONE                       //
             && (read_info.info_version <= 4                           //
                    || read_info.display_3d > 0                        //
@@ -419,7 +453,6 @@ static void backwards_info3(const FractalInfo &read_info)
 {
     if (read_info.info_version > 2)
     {
-        g_file_version = Version{13, 0, 0, 0, true};
         g_outside_color = read_info.outside;
     }
 
@@ -433,7 +466,6 @@ static void backwards_info4(const FractalInfo &read_info)
 {
     if (read_info.info_version > 3)
     {
-        g_file_version = Version{14, 0, 0, 0, true};
         g_image_region.m_3rd.x = read_info.x3rd;
         g_image_region.m_3rd.y = read_info.y3rd;
         g_calc_status = static_cast<CalcStatus>(read_info.calc_status);
@@ -474,12 +506,6 @@ static void backwards_info5(const FractalInfo &read_info)
         if (g_file_aspect_ratio < 0.01) // fix files produced in early v14.1
         {
             g_file_aspect_ratio = g_screen_aspect;
-        }
-        g_file_version = parse_legacy_version(read_info.release);
-        if (read_info.info_version == 5 /* except a few early fmt 5 cases: */
-            && (read_info.release <= 0 || read_info.release >= 4000))
-        {
-            g_file_version = parse_legacy_version(1410);
         }
         if (g_display_3d == Display3DMode::NONE && read_info.display_3d > 0)
         {
@@ -713,28 +739,6 @@ static void backwards_info17(const FractalInfo &read_info)
         g_orbit_delay = read_info.orbit_delay;
         // read_info.math_tol[0] value for integer -> float transition is ignored.
         g_math_tol[1] = read_info.math_tol[1];
-    }
-}
-
-static void backwards_id1_1(const FractalInfo &read_info)
-{
-    // Id 1.0 and 1.1 used a legacy info version but wrote new version into release field
-    if (read_info.info_version == FRACTAL_INFO_VERSION_LEGACY_20_4)
-    {
-        if (read_info.release == 100 || read_info.release == 101)
-        {
-            g_file_version = Version{read_info.release / 100, read_info.release % 100, 0, 0, false};
-        }
-    }
-}
-
-static void backwards_id1_2(const FractalInfo &read_info)
-{
-    // Id 1.2
-    if (read_info.info_version > FRACTAL_INFO_VERSION_LEGACY_20_4)
-    {
-        g_file_version = Version{read_info.version_major, read_info.version_minor, //
-            read_info.version_patch, read_info.version_tweak, false};
     }
 }
 
@@ -984,7 +988,7 @@ int read_overlay()      // read overlay/3D files, if required
     g_image_region.m_max.y = read_info.y_max;
     g_params[0] = read_info.c_real;
     g_params[1] = read_info.c_imag;
-    g_file_version = Version{11, 0, 0, 0, true};
+    g_file_version = fractal_info_version(read_info);
 
     g_inversion.invert = 0;
     backwards_info1(read_info);
@@ -1009,11 +1013,10 @@ int read_overlay()      // read overlay/3D files, if required
     backwards_info15();
     backwards_info16(read_info);
     backwards_info17(read_info);
-    backwards_id1_1(read_info);
-    backwards_id1_2(read_info);
     backwards_legacy_v18();
     backwards_legacy_v19();
     backwards_legacy_v20();
+    g_version = g_file_version;
 
     if (g_overlay_3d)
     {

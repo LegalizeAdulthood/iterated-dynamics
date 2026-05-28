@@ -1923,7 +1923,8 @@ static int ray_header()
 
     if (g_raytrace_format != RayTraceFormat::DXF)
     {
-        fmt::print(s_raytrace_file, "{{ Created by " ID_PROGRAM_NAME " Ver. {:s} }}\n\n", to_string(g_version));
+        fmt::print(s_raytrace_file, "{{ Created by " ID_PROGRAM_NAME " Ver. {:s} }}\n\n",
+            to_string(current_id_version()));
     }
 
     if (g_raytrace_format == RayTraceFormat::RAYSHADE)

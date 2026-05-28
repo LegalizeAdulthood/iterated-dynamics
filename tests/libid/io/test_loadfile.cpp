@@ -14,6 +14,7 @@
 #include <engine/Viewport.h>
 #include <fractals/fractalp.h>
 #include <fractals/fractype.h>
+#include <io/gif_extensions.h>
 #include <misc/ValueSaver.h>
 #include <ui/big_while_loop.h>
 #include <ui/history.h>
@@ -123,6 +124,46 @@ TEST(TestBackwardsLegacyV20, oldNonMandelOutsideRealClearsBadOutside)
     EXPECT_FALSE(g_bad_outside);
 }
 
+TEST(TestFractalInfoVersion, legacyFractintRelease)
+{
+    FractalInfo info{};
+    info.info_version = FRACTAL_INFO_VERSION_LEGACY_20_4;
+    info.release = 1960;
+
+    EXPECT_EQ(parse_legacy_version(1960), fractal_info_version(info));
+}
+
+TEST(TestFractalInfoVersion, idOneOneUsesLegacyReleaseField)
+{
+    FractalInfo info{};
+    info.info_version = FRACTAL_INFO_VERSION_LEGACY_20_4;
+    info.release = 101;
+
+    EXPECT_EQ((Version{1, 1, 0, 0, false}), fractal_info_version(info));
+}
+
+TEST(TestFractalInfoVersion, modernIdUsesFourVersionFields)
+{
+    FractalInfo info{};
+    info.info_version = FRACTAL_INFO_VERSION;
+    info.release = 2004;
+    info.version_major = 1;
+    info.version_minor = 2;
+    info.version_patch = 3;
+    info.version_tweak = 4;
+
+    EXPECT_EQ((Version{1, 2, 3, 4, false}), fractal_info_version(info));
+}
+
+TEST(TestFractalInfoVersion, legacyInvalidReleaseFallsBackToFractintFourteenTen)
+{
+    FractalInfo info{};
+    info.info_version = 5;
+    info.release = 4000;
+
+    EXPECT_EQ(parse_legacy_version(1410), fractal_info_version(info));
+}
+
 class TestLoadFile : public TestWithParam<FileFractalType>
 {
 public:
@@ -155,6 +196,7 @@ protected:
     ValueSaver<bool> saved_new_bifurcation_functions_loaded{g_new_bifurcation_functions_loaded};
     ValueSaver<double> saved_math_tol0{g_math_tol[0]};
     ValueSaver<double> saved_math_tol1{g_math_tol[1]};
+    ValueSaver<Version> saved_version{g_version};
     ValueSaver<Version> saved_file_version{g_file_version};
     ValueSaver<bool> saved_ask_video{g_ask_video, false};
     ValueSaver<int> saved_video_table_len{g_video_table_len, 1};
@@ -187,6 +229,7 @@ TEST_P(TestLoadFile, integerTypeMigrated)
 
     EXPECT_EQ(0, result);
     EXPECT_EQ(GetParam().type, g_fractal_type);
+    EXPECT_EQ(g_file_version, g_version);
 }
 
 static FileFractalType s_int_types[]{

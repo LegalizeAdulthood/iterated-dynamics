@@ -23,41 +23,6 @@ All compatibility checks must use `g_version` or `g_file_version`, never a
 parallel integer release value.  `<Insert>` must restore `g_version` to the
 latest compiled Id version.
 
-## Slice 4: Update GIF Load Version Flow
-
-Work items:
-
-- Keep `g_file_version` as the version decoded or inferred from the GIF.
-- Use `g_file_version` for one-time GIF migration and load compatibility.
-- After GIF load migration is complete, set `g_version = g_file_version`
-  for recalculation compatibility.
-- For modern Id GIFs, set `g_file_version` from the four Id version fields:
-  `version_major`, `version_minor`, `version_patch`, and `version_tweak`.
-- For Fractint GIFs, set `g_file_version` from the legacy `release` field.
-- Prefer the four Id version fields when present.  Use legacy `release`
-  only when the file has no Id four-part version.
-- Preserve existing special inference for old file format versions.
-
-Tests:
-
-- In `tests/libid/io/test_loadfile.cpp`, load or synthesize a Fractint
-  GIF info block with `release=1960`.
-- Verify load migration uses:
-  `g_file_version == parse_legacy_version(1960)`.
-- Verify final active `g_version == parse_legacy_version(1960)`.
-- Add a modern Id GIF version case with non-zero tweak and verify both
-  globals become that full Id version after load.
-- Verify a modern Id GIF ignores `FractalInfo.release=2004` for Id version
-  selection when the four Id version fields are present.
-- Existing `g_bad_outside`, EPS cross, distance-estimator, and palette
-  compatibility tests should assert `g_file_version` for load decisions and
-  `g_version` for later recalculation decisions.
-
-Verified state:
-
-- Load-time gates use `g_file_version`.
-- Post-load recalculation gates use `g_version`.
-
 ## Slice 5: Replace History Version Storage
 
 Work items:
@@ -91,7 +56,7 @@ Verified state:
 Work items:
 
 - Change tab display to use `current_id_version()` for the compiled Id
-  version.
+  version, formatted with `to_string(current_id_version())`.
 - Format compiled Id version display as
   `major.minor[.patch[.tweak]]`.
 - Omit patch and tweak when both are zero: `3.4`.
@@ -101,7 +66,7 @@ Work items:
 - Consider showing the active compatibility version separately if useful,
   using `to_display_string(g_version)`.
 - Change comment expansion `version` to derive from the compiled Id
-  version using the same formatting rule.
+  version using `to_string(current_id_version())`.
 - Change comment expansion `patch` to derive from
   `current_id_version().patch`.
 
