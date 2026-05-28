@@ -329,6 +329,11 @@ Version fractal_info_version(const FractalInfo &read_info)
 {
     if (read_info.info_version > FRACTAL_INFO_VERSION_LEGACY_20_4)
     {
+        if (read_info.version_major == 0 && read_info.version_minor == 0 &&
+            read_info.version_patch == 0 && read_info.version_tweak == 0)
+        {
+            return parse_legacy_version(read_info.release);
+        }
         return Version{read_info.version_major, read_info.version_minor,
             read_info.version_patch, read_info.version_tweak, false};
     }

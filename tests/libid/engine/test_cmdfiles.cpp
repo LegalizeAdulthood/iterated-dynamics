@@ -501,6 +501,32 @@ foo                {
         read_file_contents(path)) << path;
 }
 
+TEST_F(TestCommandMakePar, makeParWritesLegacyResetFromCompatibilityVersion)
+{
+    const fs::path path{par_path("legacy-reset.par")};
+    fs::remove(path);
+    g_version = parse_legacy_version(1730);
+
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_THAT(read_file_contents(path), HasSubstr("  reset=1730 type=mandel"));
+}
+
+TEST_F(TestCommandMakePar, makeParWritesIdResetFromCompatibilityVersion)
+{
+    const fs::path path{par_path("id-reset.par")};
+    fs::remove(path);
+    g_version = Version{1, 3, 2, 0, false};
+
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+
+    const std::string text{read_file_contents(path)};
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_THAT(text, HasSubstr("; Id Version 1.3.2"));
+    EXPECT_THAT(text, HasSubstr("  reset=1/3/2 type=mandel"));
+}
+
 TEST_F(TestParameterCommandError, resetBadArg)
 {
     ValueSaver saved_version{g_version, Version{1, 2, 3, 4, false}};

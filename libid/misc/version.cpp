@@ -48,6 +48,11 @@ std::string to_string(const Version &value)
 
 std::string to_par_string(const Version &value)
 {
+    if (value.legacy)
+    {
+        return std::to_string(value.major * 100 + value.minor);
+    }
+
     std::string result{std::to_string(value.major) + '/' + std::to_string(value.minor)};
     if (value.patch)
     {

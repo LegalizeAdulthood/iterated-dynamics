@@ -23,37 +23,6 @@ All compatibility checks must use `g_version` or `g_file_version`, never a
 parallel integer release value.  `<Insert>` must restore `g_version` to the
 latest compiled Id version.
 
-## Slice 8: Update Parameter Save And GIF Save
-
-Work items:
-
-- Confirm `make_batch_file` writes `reset=` from `g_version`.
-- Confirm parameter save for current Id compatibility writes the current Id
-  version.
-- Confirm parameter save for legacy compatibility writes the legacy version
-  selected by `g_version`.
-- Confirm GIF save keeps `FractalInfo.release` hardcoded to Fractint 20.04.
-- Confirm GIF save writes the real Id version in the four Id version
-  fields: `version_major`, `version_minor`, `version_patch`, and
-  `version_tweak`.
-- Document that `FractalInfo.release` is legacy Fractint metadata.
-
-Tests:
-
-- Update `tests/libid/ui/test_make_batch_file.cpp`.
-- Seed `g_version = parse_legacy_version(1730)` and verify saved
-  parameter output contains `reset=1730`.
-- Seed `g_version = Version{1, 3, 2, 0, false}` and verify output contains
-  `reset=1/3/2`.
-- Verify `FractalInfo.release == 2004`.
-- Verify GIF Id version fields preserve all four current Id components.
-- Verify a non-zero tweak round-trips through GIF metadata.
-
-Verified state:
-
-- Saved parameter sets preserve active compatibility.
-- New GIF files preserve legacy and Id version metadata.
-
 ## Slice 9: End-To-End Compatibility Tests
 
 Work items:

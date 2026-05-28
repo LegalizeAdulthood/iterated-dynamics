@@ -83,7 +83,6 @@ static int shift_write(const Byte *color, int num_colors);
 static int extend_blk_len(int data_len);
 static int put_extend_blk(int block_id, int block_len, const char *block_data);
 static int store_item_name(const char *name);
-static void setup_save_info(FractalInfo *save_info);
 
 static int s_num_saves{}; // For adjusting 'save-to-disk' filenames
 static std::FILE *s_outfile{};
@@ -771,7 +770,7 @@ static int store_item_name(const char *name)
     return extend_blk_len(sizeof(formula_info));
 }
 
-static void setup_save_info(FractalInfo *save_info)
+void setup_save_info(FractalInfo *save_info)
 {
     if (g_fractal_type != FractalType::FORMULA)
     {
@@ -939,10 +938,22 @@ static void setup_save_info(FractalInfo *save_info)
     save_info->orbit_delay = static_cast<std::int16_t>(g_orbit_delay);
     save_info->math_tol[0] = g_math_tol[0]; // can't use std::copy_n because of gcc complaints about packed structs
     save_info->math_tol[1] = g_math_tol[1];
-    save_info->version_major = static_cast<std::uint8_t>(g_version.major);
-    save_info->version_minor = static_cast<std::uint8_t>(g_version.minor);
-    save_info->version_patch = static_cast<std::uint8_t>(g_version.patch);
-    save_info->version_tweak = static_cast<std::uint8_t>(g_version.tweak);
+    if (g_version.legacy)
+    {
+        save_info->release = static_cast<std::int16_t>(g_version.major * 100 + g_version.minor);
+        save_info->version_major = 0;
+        save_info->version_minor = 0;
+        save_info->version_patch = 0;
+        save_info->version_tweak = 0;
+    }
+    else
+    {
+        save_info->release = static_cast<std::int16_t>(20 * 100 + 4); // legacy FRACTINT 20.04
+        save_info->version_major = static_cast<std::uint8_t>(g_version.major);
+        save_info->version_minor = static_cast<std::uint8_t>(g_version.minor);
+        save_info->version_patch = static_cast<std::uint8_t>(g_version.patch);
+        save_info->version_tweak = static_cast<std::uint8_t>(g_version.tweak);
+    }
     // NOTE: can't use std::fill here on gcc due to packed constraints.
     for (int i = 0; i < static_cast<int>(std::size(save_info->future)); ++i) // NOLINT(modernize-loop-convert)
     {

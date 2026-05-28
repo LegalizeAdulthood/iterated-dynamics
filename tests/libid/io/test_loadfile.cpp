@@ -155,6 +155,15 @@ TEST(TestFractalInfoVersion, modernIdUsesFourVersionFields)
     EXPECT_EQ((Version{1, 2, 3, 4, false}), fractal_info_version(info));
 }
 
+TEST(TestFractalInfoVersion, modernIdUsesLegacyVersionField)
+{
+    FractalInfo info{};
+    info.info_version = FRACTAL_INFO_VERSION;
+    info.release = 1730;
+
+    EXPECT_EQ(parse_legacy_version(1730), fractal_info_version(info));
+}
+
 TEST(TestFractalInfoVersion, legacyInvalidReleaseFallsBackToFractintFourteenTen)
 {
     FractalInfo info{};

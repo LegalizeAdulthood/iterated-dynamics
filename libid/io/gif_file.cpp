@@ -656,6 +656,10 @@ void put_fractal_info(GifFileType *gif, const FractalInfo &info)
     ser.insert_int32(info.orbit_interval);
     ser.insert_int16(info.orbit_delay);
     ser.insert_double(info.math_tol);
+    ser.insert_byte(info.version_major);
+    ser.insert_byte(info.version_minor);
+    ser.insert_byte(info.version_patch);
+    ser.insert_byte(info.version_tweak);
     for (int16_t zero : info.future)
     {
         zero = 0;

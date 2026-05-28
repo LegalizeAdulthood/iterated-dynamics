@@ -136,6 +136,13 @@ TEST(TestVersion, parStringMajor)
     EXPECT_EQ("5/0", to_par_string(g_version));
 }
 
+TEST(TestVersion, parStringLegacy)
+{
+    ValueSaver saved_version{g_version, parse_legacy_version(1730)};
+
+    EXPECT_EQ("1730", to_par_string(g_version));
+}
+
 TEST(TestVersion, parStringMajorMinor)
 {
     ValueSaver saved_version{g_version, Version{5, 6, 0, 0, false}};
