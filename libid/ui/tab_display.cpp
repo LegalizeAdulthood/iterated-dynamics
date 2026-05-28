@@ -174,7 +174,8 @@ static bool tab_display2(char *msg)
     int row = 1;
     put_string_center(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
-    write_row(++row, "Version %d patch %d", g_release, g_patch_level);
+    const std::string version{to_string(current_id_version())};
+    write_row(++row, "Version %s", version.c_str());
     write_row(++row, "%ld of %ld bignum memory used", g_bignum_max_stack_addr, g_max_stack);
     write_row(++row, "   %ld used for bignum globals", g_start_stack);
     write_row(++row, "   %ld stack used == %ld variables of length %d", //

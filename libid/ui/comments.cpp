@@ -119,13 +119,13 @@ static std::string expand_var(const std::string &var, const std::time_t local_ti
     {
         return get_calculation_time(g_calc_time);
     }
-    if (var == "version")  // 4 chars
+    if (var == "version")
     {
-        return std::to_string(g_release);
+        return to_string(current_id_version());
     }
     if (var == "patch")   // 1 or 2 chars
     {
-        return std::to_string(g_patch_level);
+        return std::to_string(current_id_version().patch);
     }
     if (var == "xdots")   // 2 to 4 chars
     {

@@ -23,44 +23,6 @@ All compatibility checks must use `g_version` or `g_file_version`, never a
 parallel integer release value.  `<Insert>` must restore `g_version` to the
 latest compiled Id version.
 
-## Slice 6: Replace Display And Comment Uses
-
-Work items:
-
-- Change tab display to use `current_id_version()` for the compiled Id
-  version, formatted with `to_string(current_id_version())`.
-- Format compiled Id version display as
-  `major.minor[.patch[.tweak]]`.
-- Omit patch and tweak when both are zero: `3.4`.
-- Include patch when patch is non-zero: `3.4.5`.
-- Include both patch and tweak when tweak is non-zero, even if patch is
-  zero: `3.4.0.1`.
-- Consider showing the active compatibility version separately if useful,
-  using `to_display_string(g_version)`.
-- Change comment expansion `version` to derive from the compiled Id
-  version using `to_string(current_id_version())`.
-- Change comment expansion `patch` to derive from
-  `current_id_version().patch`.
-
-Tests:
-
-- In `tests/libid/ui/test_comments.cpp`, set:
-  `g_version = parse_legacy_version(1730)`.
-- Verify comment variable `version` expands to the compiled Id version.
-- Verify `version` omits zero patch and tweak fields.
-- Verify `version` includes `.0.tweak` when tweak is non-zero and patch is
-  zero.
-- Verify `patch` expands from the compiled version.
-- Add a tab display test only if existing test coverage can observe rows
-  without large UI changes.
-
-Verified state:
-
-- User-visible compiled version is independent of `g_version`.
-- Compatibility behavior remains controlled only by `g_version`.
-- `g_patch_level` no longer has runtime users after display and comment
-  expansion use `current_id_version()`.
-
 ## Slice 7: Remove `g_release`
 
 Work items:

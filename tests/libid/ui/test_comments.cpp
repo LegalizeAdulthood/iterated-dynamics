@@ -37,7 +37,7 @@ protected:
     {
         init_comments();
         m_saved_calc_time = g_calc_time;
-        m_saved_version = g_release;
+        m_saved_version = g_version;
         m_saved_x_dots = g_logical_screen.x_dots;
         m_saved_y_dots = g_logical_screen.y_dots;
         m_saved_video_key = g_video_entry.key;
@@ -57,7 +57,7 @@ protected:
         g_video_entry.key = m_saved_video_key;
         g_logical_screen.y_dots = m_saved_y_dots;
         g_logical_screen.x_dots = m_saved_x_dots;
-        g_release = m_saved_version;
+        g_version = m_saved_version;
         g_calc_time = m_saved_calc_time;
     }
 
@@ -71,7 +71,7 @@ protected:
 
 private:
     long m_saved_calc_time{};
-    int m_saved_version{};
+    Version m_saved_version{};
     int m_saved_x_dots{};
     int m_saved_y_dots{};
     int m_saved_video_key{};
@@ -194,12 +194,12 @@ TEST_F(TestComments, expandDaysCalcTime)
 
 TEST_F(TestComments, expandVersion)
 {
-    g_release = 1964;
+    g_version = parse_legacy_version(1730);
     std::strcpy(g_par_comment[0], "$version$");
 
     const std::string &result{expand_command_comment(0)};
 
-    EXPECT_EQ("1964", result);
+    EXPECT_EQ(to_string(current_id_version()), result);
 }
 
 TEST_F(TestComments, expandPatch)
@@ -208,7 +208,7 @@ TEST_F(TestComments, expandPatch)
 
     const std::string &result{expand_command_comment(0)};
 
-    EXPECT_EQ(std::to_string(ID_VERSION_PATCH), result);
+    EXPECT_EQ(std::to_string(current_id_version().patch), result);
 }
 
 TEST_F(TestComments, expandXDots)
