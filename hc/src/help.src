@@ -316,6 +316,11 @@ o The default inside color now matches Fractint, allowing
 o Legacy 6-bit palette values are now expanded to the full 8-bit range
   when loading old parameter colors, affected Id GIF files, and legacy
   map files.
+o @lyapunov.par/Blob1 now renders correctly by restoring the legacy
+  Lyapunov reset behavior used by Fractint.  (Fixes #400)
+o Compatibility version handling now follows Fractint's model: <Insert>
+  restores the current Id version, bare reset selects Fractint 17.30
+  behavior, and explicit reset= values preserve old parameter behavior.
 o Setting type=formula, type=lsystem, or type=ifs on the command line
   without specifying an item name now behaves like selecting the type
   interactively.  (Fixes #71)
@@ -754,7 +759,10 @@ usually by entering the command "exit".
 <Insert>\
 Restart at the "credits" screen and reset most parameters to their initial
 state.  Parameters which are not reset are: savename, lightname, video,
-startup filename.
+startup filename.  This also resets compatibility checks to the current
+Id version.  In parameter files, a bare reset selects Fractint 17.30
+compatibility; use an explicit reset= value to preserve behavior for old
+parameter sets.
 
 <L>\
 Enter Browsing Mode.  See {Browse Commands}.
