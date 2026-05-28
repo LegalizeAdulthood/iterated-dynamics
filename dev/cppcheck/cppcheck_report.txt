@@ -70,13 +70,13 @@ hc/HelpCompiler.cpp:1566:9: note: First condition
 hc/HelpCompiler.cpp:1570:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/cmdfiles.cpp:176:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:175:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3687:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3683:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:4099:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4095:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
 libid/fractals/Ant.cpp:279:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
@@ -1600,12 +1600,6 @@ libid/io/encoder.cpp:896:24: note: save_info->release is assigned
 libid/io/encoder.cpp:943:28: note: save_info->release is overwritten
         save_info->release = static_cast<std::int16_t>(g_version.major * 100 + g_version.minor);
                            ^
-libid/io/find_path.cpp:44:9: style: Condition '!dir1_path.empty()' is always true [knownConditionTrueFalse]
-    if (!dir1_path.empty())
-        ^
-libid/io/find_path.cpp:51:9: style: Condition '!dir2_path.empty()' is always true [knownConditionTrueFalse]
-    if (!dir2_path.empty())
-        ^
 libid/io/gif_file.cpp:88:19: style: Consider using std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             value = extract_byte();
                   ^
@@ -1618,27 +1612,27 @@ libid/io/gif_file.cpp:137:19: style: Consider using std::generate algorithm inst
 libid/io/gif_file.cpp:154:19: style: Consider using std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             value = extract_double();
                   ^
-libid/io/library.cpp:104:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+libid/io/library.cpp:123:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/library.cpp:112:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+libid/io/library.cpp:177:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/make_mig.cpp:331:25: style: The if condition is the same as the previous if condition [duplicateCondition]
+libid/io/library.cpp:185:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+        {
+        ^
+libid/io/make_mig.cpp:332:25: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (error_flag == 0 && input_error_flag == 0)
                         ^
-libid/io/make_mig.cpp:318:25: note: First condition
+libid/io/make_mig.cpp:319:25: note: First condition
     if (error_flag == 0 && input_error_flag == 0)
                         ^
-libid/io/make_mig.cpp:331:25: note: Second condition
+libid/io/make_mig.cpp:332:25: note: Second condition
     if (error_flag == 0 && input_error_flag == 0)
                         ^
 libid/io/path_match.cpp:97:17: style: Condition 'pat_ext==".*"' is always false [knownConditionTrueFalse]
     if (pat_ext == ".*" || pat_ext.empty())
                 ^
-libid/io/split_path.cpp:24:40: style: Condition 'dir_name.empty()' is always false [knownConditionTrueFalse]
-        std::strcpy(dir, dir_name.empty() ? "" : (dir_name + static_cast<char>(fs::path::preferred_separator)).c_str());
-                                       ^
 libid/misc/memory.cpp:365:21: style: Array index 'counter' is used before limits check. [arrayIndexThenCheck]
     while (s_handles[counter].stored_at != MemoryLocation::NOWHERE && counter < MAX_HANDLES)
                     ^
@@ -1663,9 +1657,6 @@ libid/ui/evolve.cpp:643:26: note: 'old_variations' is assigned value '0' here.
 libid/ui/evolve.cpp:792:27: note: The comparison 'old_variations > 0' is always false.
         || old_variations > 0)
                           ^
-libid/ui/file_get_window.cpp:848:18: style: Consider using std::replace_if algorithm instead of a raw loop. [useStlAlgorithm]
-            name = new_name;
-                 ^
 libid/ui/flip_image.cpp:25:35: style: Parameter 'context' can be declared with const [constParameter]
 MainState flip_image(MainContext &context)
                                   ^
@@ -1675,16 +1666,16 @@ libid/ui/get_fract_type.cpp:625:40: warning: Char literal compared with pointer 
 libid/ui/get_fract_type.cpp:629:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
-libid/ui/make_batch_file.cpp:1456:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1457:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:879:9: note: Assuming that condition 'colors_only' is not redundant
+libid/ui/make_batch_file.cpp:880:9: note: Assuming that condition 'colors_only' is not redundant
     if (colors_only)
         ^
-libid/ui/make_batch_file.cpp:1456:9: note: Condition '!colors_only' is always true
+libid/ui/make_batch_file.cpp:1457:9: note: Condition '!colors_only' is always true
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:260:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
+libid/ui/make_batch_file.cpp:261:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             comment = builder.read_string_buff(MAX_COMMENT_LEN - 1);
                     ^
 libid/ui/menu_handler.cpp:107:36: style: Parameter 'context' can be declared with const [constParameter]
@@ -1717,13 +1708,13 @@ libid/ui/stereo.cpp:255:16: note: Variable created here.
 libid/ui/stereo.cpp:264:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data->save_dac = save_dac_box;
     ^
-tests/libid/engine/test_cmdfiles.cpp:998:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+tests/libid/engine/test_cmdfiles.cpp:999:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/engine/test_cmdfiles.cpp:990:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+tests/libid/engine/test_cmdfiles.cpp:991:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
     const std::string saved_browse_name{g_browse.name};
                                                 ^
-tests/libid/engine/test_cmdfiles.cpp:998:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+tests/libid/engine/test_cmdfiles.cpp:999:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
 win32/Frame.cpp:584:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]

@@ -85,7 +85,10 @@ $(function() {
 <div class="textblock"><code>#include &quot;<a class="el" href="../../dd/d08/library_8h_source.html">io/library.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d4/d67/find__file_8h_source.html">io/find_file.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../da/d42/special__dirs_8h_source.html">io/special_dirs.h</a>&quot;</code><br />
+<code>#include &lt;config/home_dir.h&gt;</code><br />
+<code>#include &lt;cstdlib&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;string_view&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div>
@@ -114,6 +117,12 @@ Functions</h2></td></tr>
 <tr class="separator:a202bf6dc5a1f51523a453fdb700a4cba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca0272d0b967ae27fff209b440fa6cb7" id="r_aca0272d0b967ae27fff209b440fa6cb7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#aca0272d0b967ae27fff209b440fa6cb7">id::io::add_read_library</a> (fs::path <a class="el" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>)</td></tr>
 <tr class="separator:aca0272d0b967ae27fff209b440fa6cb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fbdfead410faf2b52ad4f6535961bfa" id="r_a7fbdfead410faf2b52ad4f6535961bfa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a7fbdfead410faf2b52ad4f6535961bfa">id::io::add_read_libraries</a> (std::string_view path_list)</td></tr>
+<tr class="separator:a7fbdfead410faf2b52ad4f6535961bfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24637491e1a35f790bec86ef3cb737ba" id="r_a24637491e1a35f790bec86ef3cb737ba"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a24637491e1a35f790bec86ef3cb737ba">id::io::init_default_read_libraries</a> ()</td></tr>
+<tr class="separator:a24637491e1a35f790bec86ef3cb737ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b5e3b595601b088378b2e27fba2a510" id="r_a1b5e3b595601b088378b2e27fba2a510"><td class="memItemLeft" align="right" valign="top">fs::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a1b5e3b595601b088378b2e27fba2a510">id::io::find_file_in_read_library</a> (const fs::path &amp;file_path)</td></tr>
+<tr class="separator:a1b5e3b595601b088378b2e27fba2a510"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c0408ee5afd5c5355dbaa6fd6f8c8cf" id="r_a1c0408ee5afd5c5355dbaa6fd6f8c8cf"><td class="memItemLeft" align="right" valign="top">fs::path&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a1c0408ee5afd5c5355dbaa6fd6f8c8cf">id::io::find_file</a> (const <a class="el" href="../../d0/d19/namespaceid_1_1io.html#a2cf8b633dbb325b1d506fde8398fb96b">ReadFile</a> kind, const fs::path &amp;file_path)</td></tr>
 <tr class="separator:a1c0408ee5afd5c5355dbaa6fd6f8c8cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83e9ff657608a2fd67bec7b9c8de5c4b" id="r_a83e9ff657608a2fd67bec7b9c8de5c4b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a83e9ff657608a2fd67bec7b9c8de5c4b">id::io::clear_save_library</a> ()</td></tr>

@@ -5,5 +5,6 @@ var searchData=
   ['bigfloat_2',['BigFloat',['../d0/db0/namespaceid_1_1math.html#aa93de6765751aa560bcefb0e5003cdd1',1,'id::math']]],
   ['bigfloat10_3',['BigFloat10',['../d0/db0/namespaceid_1_1math.html#a0f5543099c8a732b0757cc2690a5f590',1,'id::math']]],
   ['bignum_4',['BigNum',['../d0/db0/namespaceid_1_1math.html#af9a5880d41792cf76edb67ff25e52dfe',1,'id::math']]],
-  ['bncomplex_5',['BNComplex',['../d0/db0/namespaceid_1_1math.html#a2c8355930ec6836db1d3f619d9f9fb3f',1,'id::math']]]
+  ['bncomplex_5',['BNComplex',['../d0/db0/namespaceid_1_1math.html#a2c8355930ec6836db1d3f619d9f9fb3f',1,'id::math']]],
+  ['browsepathstack_6',['BrowsePathStack',['../dc/d31/namespaceid_1_1engine.html#a854c3bc36e59f7fcf5c7c83fdf831c94',1,'id::engine']]]
 ];
