@@ -34,6 +34,17 @@ TEST(TestVersion, versionComponentsFitInUInt8)
     EXPECT_GT(256, ID_VERSION_TWEAK);
 }
 
+TEST(TestVersion, currentIdVersion)
+{
+    const Version version{current_id_version()};
+
+    EXPECT_EQ(ID_VERSION_MAJOR, version.major);
+    EXPECT_EQ(ID_VERSION_MINOR, version.minor);
+    EXPECT_EQ(ID_VERSION_PATCH, version.patch);
+    EXPECT_EQ(ID_VERSION_TWEAK, version.tweak);
+    EXPECT_FALSE(version.legacy);
+}
+
 TEST(TestVersion, legacyVersionToString)
 {
     const Version v{20, 4, 0, 0, true};
@@ -81,6 +92,34 @@ TEST(TestVersion, toStringMajorMinorTweak)
     const Version v{5, 6, 0, 8, false};
 
     EXPECT_EQ("5.6.0.8", to_string(v));
+}
+
+TEST(TestVersion, currentVersionStringMajorMinor)
+{
+    const Version version{3, 4, 0, 0, false};
+
+    EXPECT_EQ("3.4", to_current_version_string(version));
+}
+
+TEST(TestVersion, currentVersionStringMajorMinorPatch)
+{
+    const Version version{3, 4, 5, 0, false};
+
+    EXPECT_EQ("3.4.5", to_current_version_string(version));
+}
+
+TEST(TestVersion, currentVersionStringMajorMinorPatchTweak)
+{
+    const Version version{3, 4, 5, 6, false};
+
+    EXPECT_EQ("3.4.5.6", to_current_version_string(version));
+}
+
+TEST(TestVersion, currentVersionStringMajorMinorTweak)
+{
+    const Version version{3, 4, 0, 1, false};
+
+    EXPECT_EQ("3.4.0.1", to_current_version_string(version));
 }
 
 TEST(TestVersion, parStringMajor)

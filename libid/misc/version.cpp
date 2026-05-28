@@ -18,15 +18,15 @@ int g_release{ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR};
 // g_patch_level can't be modified.
 const int g_patch_level{ID_VERSION_PATCH};
 
-Version g_version{ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH, ID_VERSION_TWEAK, false};
-
-std::string to_string(const Version &value)
+Version current_id_version()
 {
-    if (value.legacy)
-    {
-        return fmt::format("{:d}.{:02d}", value.major, value.minor);
-    }
+    return Version{ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH, ID_VERSION_TWEAK, false};
+}
 
+Version g_version{current_id_version()};
+
+std::string to_current_version_string(const Version &value)
+{
     std::string text = fmt::format("{:d}.{:d}", value.major, value.minor);
     if (value.patch || value.tweak)
     {
@@ -37,6 +37,16 @@ std::string to_string(const Version &value)
         text += fmt::format(".{:d}", value.tweak);
     }
     return text;
+}
+
+std::string to_string(const Version &value)
+{
+    if (value.legacy)
+    {
+        return fmt::format("{:d}.{:02d}", value.major, value.minor);
+    }
+
+    return to_current_version_string(value);
 }
 
 std::string to_par_string(const Version &value)

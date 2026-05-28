@@ -23,31 +23,6 @@ All compatibility checks must use `g_version` or `g_file_version`, never a
 parallel integer release value.  `<Insert>` must restore `g_version` to the
 latest compiled Id version.
 
-## Slice 1: Add Current Version Helpers
-
-Work items:
-
-- Add `current_id_version()` in `libid/misc/version.cpp`.
-- Add `to_current_version_string()` or equivalent for user-facing current
-  Id version text.
-- Keep `parse_legacy_version(int)` as the only legacy integer parser.
-
-Tests:
-
-- In `tests/libid/misc/test_version.cpp`, verify
-  `current_id_version()` equals `ID_VERSION_MAJOR`,
-  `ID_VERSION_MINOR`, `ID_VERSION_PATCH`, and `ID_VERSION_TWEAK`.
-- Verify `current_id_version().legacy == false`.
-- Verify current version display formatting:
-  - `Version{3, 4, 0, 0, false}` -> `3.4`.
-  - `Version{3, 4, 5, 0, false}` -> `3.4.5`.
-  - `Version{3, 4, 5, 6, false}` -> `3.4.5.6`.
-  - `Version{3, 4, 0, 1, false}` -> `3.4.0.1`.
-
-Verified state:
-
-- Current version helpers are pure functions.
-
 ## Slice 2: Reset Startup Compatibility Version
 
 Work items:
