@@ -1888,12 +1888,11 @@ ENTITIES
 static int ray_header()
 {
     // Open the ray tracing output file
-    std::string path{get_save_path(WriteFile::RAYTRACE, g_raytrace_filename).string()};
+    const std::string path{get_checked_save_path(WriteFile::RAYTRACE, g_raytrace_filename).string()};
     if (path.empty())
     {
         return -1;              // Oops, something's wrong!
     }
-    check_write_file(path, ".ray");
     s_raytrace_file = std::fopen(path.c_str(), "w");
     if (s_raytrace_file == nullptr)
     {
@@ -2470,9 +2469,8 @@ static int first_time(const int line_len, Vector v)
         }
         else
         {
-            std::string path{get_save_path(WriteFile::IMAGE, g_light_name).string()};
+            const std::string path{get_checked_save_path(WriteFile::IMAGE, g_light_name).string()};
             assert(!path.empty());
-            check_write_file(path, ".tga");
             if (start_targa(path))     // Open new file
             {
                 return -1;

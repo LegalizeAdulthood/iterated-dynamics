@@ -534,8 +534,7 @@ static void init_calc_fract()
     }
     if (g_true_color)
     {
-        std::string light_path{get_save_path(WriteFile::IMAGE, g_light_name).string()};
-        check_write_file(light_path, ".tga");
+        const std::string light_path{get_checked_save_path(WriteFile::IMAGE, g_light_name).string()};
         if (!start_targa(light_path))
         {
             // Have to force passes = 1

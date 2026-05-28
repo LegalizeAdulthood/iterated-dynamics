@@ -1966,9 +1966,8 @@ static std::FILE *open_orbit_save()
 {
     if (g_orbit_save_flags & OSF_RAW)
     {
-        std::string path{get_save_path(WriteFile::ORBIT, g_orbit_save_name).string()};
+        const std::string path{get_checked_save_path(WriteFile::ORBIT, g_orbit_save_name).string()};
         assert(!path.empty());
-        check_write_file(path, ".raw");
         if (std::FILE *fp = std::fopen(path.c_str(), "w"); fp != nullptr)
         {
             fmt::print(fp, "pointlist x y z color\n");

@@ -397,9 +397,9 @@ void record_show(const int key)
     s_ticks = std::clock();  // current time
     if (s_slide_show_file == nullptr)
     {
-        std::string path{get_save_path(WriteFile::KEY, g_auto_name.filename().string()).string()};
+        const std::string path{
+            get_checked_save_path(WriteFile::KEY, g_auto_name.filename().string()).string()};
         assert(!path.empty());
-        check_write_file(path, ".key");
         s_slide_show_file = std::fopen(path.c_str(), "w");
         if (s_slide_show_file == nullptr)
         {

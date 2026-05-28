@@ -27,25 +27,7 @@ not preserve the old helpers as replacement APIs.
   image, and autokey output paths must use the save library before
   overwrite.
 
-## Slice 1: Migrate Existing Output Callers
-
-Move output paths to `get_checked_save_path`.
-
-Work items:
-
-- Update sound save.
-- Update orbit save.
-- Update raytrace save.
-- Update autokey save.
-- Update existing light image saves that already use `get_save_path`.
-
-Tests:
-
-- Existing unit and image tests must pass.
-- Verify these callers no longer call `check_write_file` directly.
-- Verify each caller passes a `WriteFile` kind, not a prebuilt directory.
-
-## Slice 2: Fix Wrong-Directory Light Name Check
+## Slice 1: Fix Wrong-Directory Light Name Check
 
 Fix light-name overwrite handling in the 3D parameter flow.
 
@@ -64,7 +46,7 @@ Tests:
 - Verify a collision in the final save-library path advances the filename
   when overwrite is off.
 
-## Slice 3: Apply Overwrite To Direct Outputs
+## Slice 2: Apply Overwrite To Direct Outputs
 
 Route remaining user-visible outputs through `get_checked_save_path`.
 
@@ -85,7 +67,7 @@ Tests:
 - Verify `makemig.bat` advances filename when overwrite is off.
 - Verify parameter entry replacement behavior is unchanged.
 
-## Slice 4: Fold Legacy Search Dirs Into Libraries
+## Slice 3: Fold Legacy Search Dirs Into Libraries
 
 Make the read-library list the only generic input search mechanism.
 
@@ -111,7 +93,7 @@ Tests:
 - Verify save-library fallback is unchanged where currently supported.
 - Verify missing files still fail the same way.
 
-## Slice 5: Final Audit
+## Slice 4: Final Audit
 
 Remove transitional APIs and verify policy coverage.
 
