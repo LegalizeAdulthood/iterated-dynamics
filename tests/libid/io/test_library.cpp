@@ -375,6 +375,62 @@ TEST_F(TestLibrary, findWildcardSequenceRootFilesAfterSubdirFiles)
     EXPECT_EQ(expected, results);
 }
 
+TEST_F(TestLibrary, findWildcardCurrentDirectoryWhenEnabled)
+{
+    CurrentPathSaver saved_cur_dir{ID_TEST_LIBRARY_DIR2};
+    ValueSaver saved_check_cur_dir{g_check_cur_dir, true};
+    add_read_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{find_wildcard_first(ReadFile::IMAGE, "*.gif")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"test.gif"}, path.filename()) << path;
+    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{"image"} / "test.gif", path) << path;
+}
+
+TEST_F(TestLibrary, findWildcardExplicitRelativeDirectory)
+{
+    CurrentPathSaver saved_cur_dir{ID_TEST_LIBRARY_DIR};
+    add_read_library(ID_TEST_LIBRARY_DIR3);
+    const Path wildcard{Path{"lib1"} / "*.gif"};
+
+    const Path path{find_wildcard_first(ReadFile::IMAGE, wildcard.string())};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"root.gif"}, path.filename()) << path;
+    EXPECT_EQ(Path{"lib1"} / "root.gif", path) << path;
+}
+
+TEST_F(TestLibrary, findWildcardExplicitRelativeDirectorySequence)
+{
+    CurrentPathSaver saved_cur_dir{ID_TEST_LIBRARY_DIR};
+    add_read_library(ID_TEST_LIBRARY_DIR3);
+    const Path wildcard{Path{"lib1"} / "*.gif"};
+    std::vector<Path> results;
+
+    for (Path next{find_wildcard_first(ReadFile::IMAGE, wildcard.string())}; !next.empty();
+        next = find_wildcard_next())
+    {
+        results.emplace_back(next);
+    }
+
+    const std::vector expected{Path{"lib1"} / "root.gif"};
+    EXPECT_EQ(expected, results);
+}
+
+TEST_F(TestLibrary, findWildcardExplicitAbsoluteDirectory)
+{
+    add_read_library(ID_TEST_LIBRARY_DIR3);
+    const Path wildcard{Path{ID_TEST_LIBRARY_DIR1} / "*.gif"};
+
+    const Path path{find_wildcard_first(ReadFile::IMAGE, wildcard.string())};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"root.gif"}, path.filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR1}, path.parent_path()) << path;
+}
+
 TEST_F(TestLibrary, findWildcardSaveLibrarySubDir)
 {
     add_read_library(ID_TEST_LIBRARY_DIR1);

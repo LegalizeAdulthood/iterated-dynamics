@@ -29,32 +29,7 @@ not preserve the old helpers as replacement APIs.
   image, and autokey output paths must use the save library before
   overwrite.
 
-## Slice 1: Strengthen Library Input Tests
-
-Pin the library behavior needed by the old merge users.
-
-Work items:
-
-- Add path-aware wildcard tests to `tests/libid/io/test_library.cpp`.
-- Treat a bare wildcard as a library lookup.
-- Treat a wildcard with a parent path as an explicit directory lookup.
-- Treat an absolute wildcard as an explicit absolute directory lookup.
-- Keep `find_wildcard_next` on the same search source chosen by
-  `find_wildcard_first`.
-- Keep current-dir behavior under `g_check_cur_dir`.
-- Keep save-library fallback for bare input lookups.
-
-Tests:
-
-- Verify bare `*.gif` searches read libraries in order.
-- Verify bare image searches check `image` subdirectories before library
-  roots.
-- Verify explicit relative `dir/*.gif` searches only that directory.
-- Verify explicit absolute `dir/*.gif` searches only that directory.
-- Verify `find_wildcard_next` continues the same lookup mode.
-- Verify save-library fallback remains after read libraries.
-
-## Slice 2: Migrate Browse Scan To Read Libraries
+## Slice 1: Migrate Browse Scan To Read Libraries
 
 Remove manual drive/directory assembly from browse scanning.
 
@@ -75,7 +50,7 @@ Tests:
 - Library wildcard tests from slice 1 cover the path resolution behavior.
 - Add a focused test only if browse selection logic is extracted from UI.
 
-## Slice 3: Preserve Selected Browse Paths
+## Slice 2: Preserve Selected Browse Paths
 
 Stop rebuilding selected browse paths from filenames.
 
@@ -95,7 +70,7 @@ Tests:
 - Verify stack restore preserves the full path, not only the filename.
 - Verify display name remains the filename component.
 
-## Slice 4: Migrate Browse Load To Read Libraries
+## Slice 3: Migrate Browse Load To Read Libraries
 
 Remove `merge_path_names` from image load paths.
 
@@ -116,7 +91,7 @@ Tests:
 - Verify `rg "merge_path_names\\(" libid` finds only the helper before
   deletion.
 
-## Slice 5: Delete Split/Build/Merge Helpers
+## Slice 4: Delete Split/Build/Merge Helpers
 
 Delete the obsolete path helper family after input callers migrate.
 
@@ -140,7 +115,7 @@ Tests:
   finds no production or test use.
 - Build proves no stale include remains.
 
-## Slice 6: Add Save-Library Overwrite Helper
+## Slice 5: Add Save-Library Overwrite Helper
 
 Introduce one output helper that combines save-library routing and
 overwrite policy.
@@ -167,7 +142,7 @@ Tests:
   in the save library.
 - Verify the final path keeps the correct `WriteFile` subdirectory.
 
-## Slice 7: Migrate Existing Output Callers
+## Slice 6: Migrate Existing Output Callers
 
 Move output paths to `get_checked_save_path`.
 
@@ -185,7 +160,7 @@ Tests:
 - Verify these callers no longer call `check_write_file` directly.
 - Verify each caller passes a `WriteFile` kind, not a prebuilt directory.
 
-## Slice 8: Fix Wrong-Directory Light Name Check
+## Slice 7: Fix Wrong-Directory Light Name Check
 
 Fix light-name overwrite handling in the 3D parameter flow.
 
@@ -204,7 +179,7 @@ Tests:
 - Verify a collision in the final save-library path advances the filename
   when overwrite is off.
 
-## Slice 9: Apply Overwrite To Direct Outputs
+## Slice 8: Apply Overwrite To Direct Outputs
 
 Route remaining user-visible outputs through `get_checked_save_path`.
 
@@ -225,7 +200,7 @@ Tests:
 - Verify `makemig.bat` advances filename when overwrite is off.
 - Verify parameter entry replacement behavior is unchanged.
 
-## Slice 10: Fold Legacy Search Dirs Into Libraries
+## Slice 9: Fold Legacy Search Dirs Into Libraries
 
 Make the read-library list the only generic input search mechanism.
 
@@ -251,7 +226,7 @@ Tests:
 - Verify save-library fallback is unchanged where currently supported.
 - Verify missing files still fail the same way.
 
-## Slice 11: Final Audit
+## Slice 10: Final Audit
 
 Remove transitional APIs and verify policy coverage.
 

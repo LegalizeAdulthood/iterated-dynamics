@@ -23,10 +23,9 @@ using PathList = std::vector<fs::path>;
 struct WildcardSearch
 {
     ReadFile kind;
-    std::string wildcard;
-    PathList::const_iterator read_it;
-    bool subdirs{};
-    bool save_library{};
+    std::vector<fs::path> patterns;
+    std::size_t pattern{};
+    bool active{};
 };
 
 static PathList s_read_libraries;
@@ -226,166 +225,119 @@ fs::path get_save_path(const WriteFile kind, const std::string &filename)
     return result;
 }
 
-fs::path find_wildcard_next()
+static fs::path find_next_file_in_pattern()
 {
-    while (s_wildcard.read_it != s_read_libraries.end())
-    {
-        if (fr_find_next())
-        {
-            bool dir_exhausted{};
-            while (g_dta.attribute == SUB_DIR)
-            {
-                if (!fr_find_next())
-                {
-                    dir_exhausted = true;
-                    break;
-                }
-            }
-            if (!dir_exhausted)
-            {
-                return g_dta.path;
-            }
-        }
-        ++s_wildcard.read_it;
-        while (s_wildcard.read_it != s_read_libraries.end())
-        {
-            const std::string wildcard{
-                (s_wildcard.subdirs ? *s_wildcard.read_it / subdir(s_wildcard.kind) / s_wildcard.wildcard
-                                    : *s_wildcard.read_it / s_wildcard.wildcard)
-                    .string()};
-            while (fr_find_first(wildcard.c_str()))
-            {
-                bool dir_exhausted{};
-                while (g_dta.attribute == SUB_DIR)
-                {
-                    if (!fr_find_next())
-                    {
-                        dir_exhausted = true;
-                        break;
-                    }
-                }
-                if (!dir_exhausted)
-                {
-                    return g_dta.path;
-                }
-            }
-            ++s_wildcard.read_it;
-        }
-    }
-    if (!s_wildcard.subdirs)
+    if (!fr_find_next())
     {
         return {};
     }
-    s_wildcard.subdirs = false;
-    s_wildcard.read_it = s_read_libraries.begin();
-    while (s_wildcard.read_it != s_read_libraries.end())
+    while (g_dta.attribute == SUB_DIR)
     {
-        const std::string wildcard{(*s_wildcard.read_it / s_wildcard.wildcard).string()};
-        while (fr_find_first(wildcard.c_str()))
+        if (!fr_find_next())
         {
-            bool dir_exhausted{};
-            while (g_dta.attribute == SUB_DIR)
+            return {};
+        }
+    }
+    return g_dta.path;
+}
+
+fs::path find_wildcard_next()
+{
+    if (s_wildcard.active)
+    {
+        if (const fs::path path{find_next_file_in_pattern()}; !path.empty())
+        {
+            return path;
+        }
+        s_wildcard.active = false;
+        ++s_wildcard.pattern;
+    }
+
+    while (s_wildcard.pattern < s_wildcard.patterns.size())
+    {
+        const std::string pattern{s_wildcard.patterns[s_wildcard.pattern].string()};
+        if (!fr_find_first(pattern.c_str()))
+        {
+            ++s_wildcard.pattern;
+            continue;
+        }
+        s_wildcard.active = true;
+        while (g_dta.attribute == SUB_DIR)
+        {
+            if (!fr_find_next())
             {
-                if (!fr_find_next())
-                {
-                    dir_exhausted = true;
-                    break;
-                }
-            }
-            if (!dir_exhausted)
-            {
-                return g_dta.path;
+                break;
             }
         }
-        ++s_wildcard.read_it;
+        if (g_dta.attribute != SUB_DIR)
+        {
+            return g_dta.path;
+        }
+        s_wildcard.active = false;
+        ++s_wildcard.pattern;
     }
+
     return {};
 }
 
 fs::path find_wildcard_first(const ReadFile kind, const std::string &wildcard)
 {
-    s_wildcard.subdirs = true;
     s_wildcard.kind = kind;
-    s_wildcard.wildcard = wildcard;
-    s_wildcard.read_it = s_read_libraries.begin();
-    while (s_wildcard.read_it != s_read_libraries.end())
+    s_wildcard.patterns.clear();
+    s_wildcard.pattern = 0;
+    s_wildcard.active = false;
+
+    const fs::path wildcard_path{wildcard};
+    if (wildcard_path.has_parent_path())
     {
-        const std::string path{(*s_wildcard.read_it / subdir(kind) / wildcard).string()};
-        if (fr_find_first(path.c_str()))
-        {
-            bool dir_exhausted{};
-            while (g_dta.attribute == SUB_DIR)
-            {
-                if (!fr_find_next())
-                {
-                    dir_exhausted = true;
-                    break;
-                }
-            }
-            if (!dir_exhausted)
-            {
-                return g_dta.path;
-            }
-        }
-        ++s_wildcard.read_it;
+        s_wildcard.patterns.push_back(wildcard_path);
     }
-    s_wildcard.subdirs = false;
-    s_wildcard.read_it = s_read_libraries.begin();
-    while (s_wildcard.read_it != s_read_libraries.end())
+    else
     {
-        const std::string path{(*s_wildcard.read_it / wildcard).string()};
-        if (fr_find_first(path.c_str()))
+        if (g_check_cur_dir)
         {
-            bool dir_exhausted{};
-            while (g_dta.attribute == SUB_DIR)
-            {
-                if (!fr_find_next())
-                {
-                    dir_exhausted = true;
-                    break;
-                }
-            }
-            if (!dir_exhausted)
-            {
-                return g_dta.path;
-            }
+            s_wildcard.patterns.push_back(fs::path{subdir(kind)} / wildcard_path);
+            s_wildcard.patterns.push_back(wildcard_path);
         }
-        ++s_wildcard.read_it;
+        for (const fs::path &dir : s_read_libraries)
+        {
+            s_wildcard.patterns.push_back(dir / subdir(kind) / wildcard_path);
+        }
+        for (const fs::path &dir : s_read_libraries)
+        {
+            s_wildcard.patterns.push_back(dir / wildcard_path);
+        }
+        if (!s_save_library.empty())
+        {
+            s_wildcard.patterns.push_back(s_save_library / subdir(kind) / wildcard_path);
+            s_wildcard.patterns.push_back(s_save_library / wildcard_path);
+        }
     }
-    s_wildcard.save_library = true;
-    if (const std::string path{(s_save_library / subdir(kind) / wildcard).string()};
-        fr_find_first(path.c_str()))
+
+    while (s_wildcard.pattern < s_wildcard.patterns.size())
     {
-        bool dir_exhausted{};
+        const std::string pattern{s_wildcard.patterns[s_wildcard.pattern].string()};
+        if (!fr_find_first(pattern.c_str()))
+        {
+            ++s_wildcard.pattern;
+            continue;
+        }
+        s_wildcard.active = true;
         while (g_dta.attribute == SUB_DIR)
         {
             if (!fr_find_next())
             {
-                dir_exhausted = true;
                 break;
             }
         }
-        if (!dir_exhausted)
+        if (g_dta.attribute != SUB_DIR)
         {
             return g_dta.path;
         }
+        s_wildcard.active = false;
+        ++s_wildcard.pattern;
     }
-    if (const std::string path{(s_save_library / wildcard).string()}; fr_find_first(path.c_str()))
-    {
-        bool dir_exhausted{};
-        while (g_dta.attribute == SUB_DIR)
-        {
-            if (!fr_find_next())
-            {
-                dir_exhausted = true;
-                break;
-            }
-        }
-        if (!dir_exhausted)
-        {
-            return g_dta.path;
-        }
-    }
+
     return {};
 }
 
