@@ -27,34 +27,7 @@ not preserve the old helpers as replacement APIs.
   image, and autokey output paths must use the save library before
   overwrite.
 
-## Slice 1: Add Save-Library Overwrite Helper
-
-Introduce one output helper that combines save-library routing and
-overwrite policy.
-
-Work items:
-
-- Add a path-based helper near the existing write/check path code.
-- Proposed API:
-  `std::filesystem::path get_checked_save_path(WriteFile kind,
-  const std::filesystem::path &name)`.
-- The helper calls `get_save_path(kind, name.string())` first.
-- The helper applies the default extension through `get_save_path`.
-- If `g_overwrite_file` is true, return the final path unchanged.
-- If `g_overwrite_file` is false, advance the final filename until unused.
-- Keep `check_write_file` only as a temporary compatibility wrapper.
-
-Tests:
-
-- Add or extend `tests/libid/io/test_check_write_file.cpp`.
-- Verify `g_overwrite_file=false` advances an existing final path.
-- Verify `g_overwrite_file=true` reuses an existing final path.
-- Verify `g_save_dir` and save library state affect the checked path.
-- Verify a current-directory collision is ignored when the final path is
-  in the save library.
-- Verify the final path keeps the correct `WriteFile` subdirectory.
-
-## Slice 2: Migrate Existing Output Callers
+## Slice 1: Migrate Existing Output Callers
 
 Move output paths to `get_checked_save_path`.
 
@@ -72,7 +45,7 @@ Tests:
 - Verify these callers no longer call `check_write_file` directly.
 - Verify each caller passes a `WriteFile` kind, not a prebuilt directory.
 
-## Slice 3: Fix Wrong-Directory Light Name Check
+## Slice 2: Fix Wrong-Directory Light Name Check
 
 Fix light-name overwrite handling in the 3D parameter flow.
 
@@ -91,7 +64,7 @@ Tests:
 - Verify a collision in the final save-library path advances the filename
   when overwrite is off.
 
-## Slice 4: Apply Overwrite To Direct Outputs
+## Slice 3: Apply Overwrite To Direct Outputs
 
 Route remaining user-visible outputs through `get_checked_save_path`.
 
@@ -112,7 +85,7 @@ Tests:
 - Verify `makemig.bat` advances filename when overwrite is off.
 - Verify parameter entry replacement behavior is unchanged.
 
-## Slice 5: Fold Legacy Search Dirs Into Libraries
+## Slice 4: Fold Legacy Search Dirs Into Libraries
 
 Make the read-library list the only generic input search mechanism.
 
@@ -138,7 +111,7 @@ Tests:
 - Verify save-library fallback is unchanged where currently supported.
 - Verify missing files still fail the same way.
 
-## Slice 6: Final Audit
+## Slice 5: Final Audit
 
 Remove transitional APIs and verify policy coverage.
 
