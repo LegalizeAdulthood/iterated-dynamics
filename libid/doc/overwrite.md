@@ -1,0 +1,297 @@
+# Overwrite And Library Path Plan
+
+## Summary
+
+Refactor path handling by use case.
+
+1. Input files are resolved through the ordered read libraries.
+2. Output files are resolved through the single save library.
+3. Overwrite checks happen only after the final save-library path is
+   known.
+
+The old split/build/merge helpers exist to splice filenames into old drive
+and directory strings.  `std::filesystem::path` handles path component
+work, and the library APIs now own input and output location policy.  Do
+not preserve the old helpers as replacement APIs.
+
+## Call-Site Classification
+
+- `file_get_window.cpp` is input.  It scans images for browse mode and
+  must use `find_wildcard_first(ReadFile::IMAGE, ...)`.
+- `main_menu_switch.cpp` is input.  It loads the image chosen by browse
+  mode and must use the selected browse path or
+  `find_file(ReadFile::IMAGE, ...)`.
+- `merge_path_names.cpp` is obsolete input glue.  Delete it after callers
+  use library paths directly.
+- `make_mig.cpp` has both use cases.  GIF input uses
+  `find_file(ReadFile::IMAGE, ...)`; GIF output uses the save library.
+- `rotate.cpp`, `make_batch_file.cpp`, sound, orbit, raytrace, light
+  image, and autokey output paths must use the save library before
+  overwrite.
+
+## Slice 1: Strengthen Library Input Tests
+
+Pin the library behavior needed by the old merge users.
+
+Work items:
+
+- Add path-aware wildcard tests to `tests/libid/io/test_library.cpp`.
+- Treat a bare wildcard as a library lookup.
+- Treat a wildcard with a parent path as an explicit directory lookup.
+- Treat an absolute wildcard as an explicit absolute directory lookup.
+- Keep `find_wildcard_next` on the same search source chosen by
+  `find_wildcard_first`.
+- Keep current-dir behavior under `g_check_cur_dir`.
+- Keep save-library fallback for bare input lookups.
+
+Tests:
+
+- Verify bare `*.gif` searches read libraries in order.
+- Verify bare image searches check `image` subdirectories before library
+  roots.
+- Verify explicit relative `dir/*.gif` searches only that directory.
+- Verify explicit absolute `dir/*.gif` searches only that directory.
+- Verify `find_wildcard_next` continues the same lookup mode.
+- Verify save-library fallback remains after read libraries.
+
+## Slice 2: Migrate Browse Scan To Read Libraries
+
+Remove manual drive/directory assembly from browse scanning.
+
+Work items:
+
+- Remove `split_drive_dir`, `split_fname_ext`, and `make_path` use from
+  `file_get_window.cpp`.
+- Pass `g_browse.mask` directly to
+  `find_wildcard_first(ReadFile::IMAGE, ...)`.
+- If the mask already contains a directory, let the library wildcard API
+  handle it as an explicit input path.
+- Keep `FileWindow::path` as the authoritative selected image path.
+- Keep `FileWindow::filename` as display text only.
+
+Tests:
+
+- Existing browse code must compile without `make_path` or `split_path`.
+- Library wildcard tests from slice 1 cover the path resolution behavior.
+- Add a focused test only if browse selection logic is extracted from UI.
+
+## Slice 3: Preserve Selected Browse Paths
+
+Stop rebuilding selected browse paths from filenames.
+
+Work items:
+
+- Add a filesystem path field to `Browse` for the selected image path.
+- Change the browse stack from filename strings to filesystem paths.
+- On browse selection, store `window.path` in the browse path field.
+- Keep `g_browse.name` as the selected filename for display and messages.
+- On stack restore, restore the full path and derive `name` from
+  `path.filename()`.
+
+Tests:
+
+- Add focused tests for the browse path stack if a small helper is
+  extracted.
+- Verify stack restore preserves the full path, not only the filename.
+- Verify display name remains the filename component.
+
+## Slice 4: Migrate Browse Load To Read Libraries
+
+Remove `merge_path_names` from image load paths.
+
+Work items:
+
+- In `main_menu_switch.cpp`, replace each `merge_path_names` call.
+- If browse has a selected path, assign it directly to `g_read_filename`.
+- If only a filename is available, resolve it with
+  `find_file(ReadFile::IMAGE, filename)`.
+- Keep `g_show_file = ShowFile::LOAD_IMAGE` behavior unchanged.
+- Keep browse history/back behavior unchanged except that it stores paths.
+
+Tests:
+
+- Existing image load and browse tests must pass.
+- Verify no `main_menu_switch.cpp` include of `merge_path_names.h`
+  remains.
+- Verify `rg "merge_path_names\\(" libid` finds only the helper before
+  deletion.
+
+## Slice 5: Delete Split/Build/Merge Helpers
+
+Delete the obsolete path helper family after input callers migrate.
+
+Work items:
+
+- Delete `libid/io/split_path.cpp`.
+- Delete `libid/include/io/split_path.h`.
+- Delete `libid/io/make_path.cpp`.
+- Delete `libid/include/io/make_path.h`.
+- Delete `libid/io/merge_path_names.cpp`.
+- Delete `libid/include/io/merge_path_names.h`.
+- Remove all six files from `libid/CMakeLists.txt`.
+- Remove obsolete helper tests and test CMake entries.
+
+Tests:
+
+- Remove `tests/libid/io/test_split_path.cpp`.
+- Remove `tests/libid/io/test_make_path.cpp`.
+- Remove `tests/libid/io/test_merge_path_names.cpp`.
+- Verify `rg "split_path|make_path|merge_path_names" libid tests`
+  finds no production or test use.
+- Build proves no stale include remains.
+
+## Slice 6: Add Save-Library Overwrite Helper
+
+Introduce one output helper that combines save-library routing and
+overwrite policy.
+
+Work items:
+
+- Add a path-based helper near the existing write/check path code.
+- Proposed API:
+  `std::filesystem::path get_checked_save_path(WriteFile kind,
+  const std::filesystem::path &name)`.
+- The helper calls `get_save_path(kind, name.string())` first.
+- The helper applies the default extension through `get_save_path`.
+- If `g_overwrite_file` is true, return the final path unchanged.
+- If `g_overwrite_file` is false, advance the final filename until unused.
+- Keep `check_write_file` only as a temporary compatibility wrapper.
+
+Tests:
+
+- Add or extend `tests/libid/io/test_check_write_file.cpp`.
+- Verify `g_overwrite_file=false` advances an existing final path.
+- Verify `g_overwrite_file=true` reuses an existing final path.
+- Verify `g_save_dir` and save library state affect the checked path.
+- Verify a current-directory collision is ignored when the final path is
+  in the save library.
+- Verify the final path keeps the correct `WriteFile` subdirectory.
+
+## Slice 7: Migrate Existing Output Callers
+
+Move output paths to `get_checked_save_path`.
+
+Work items:
+
+- Update sound save.
+- Update orbit save.
+- Update raytrace save.
+- Update autokey save.
+- Update existing light image saves that already use `get_save_path`.
+
+Tests:
+
+- Existing unit and image tests must pass.
+- Verify these callers no longer call `check_write_file` directly.
+- Verify each caller passes a `WriteFile` kind, not a prebuilt directory.
+
+## Slice 8: Fix Wrong-Directory Light Name Check
+
+Fix light-name overwrite handling in the 3D parameter flow.
+
+Work items:
+
+- Remove the pre-save `check_write_file(g_light_name, ".tga")`.
+- Resolve the output with `get_checked_save_path(WriteFile::IMAGE, ...)`.
+- Apply overwrite handling to that final save-library path.
+- After save, update `g_light_name` from the chosen final filename.
+
+Tests:
+
+- Add focused helper coverage for this bug class.
+- Verify a raw filename collision in the current directory does not affect
+  a non-colliding final save-library path.
+- Verify a collision in the final save-library path advances the filename
+  when overwrite is off.
+
+## Slice 9: Apply Overwrite To Direct Outputs
+
+Route remaining user-visible outputs through `get_checked_save_path`.
+
+Work items:
+
+- `rotate.cpp`: palette and map save respects overwrite.
+- `make_mig.cpp`: generated multi-image GIF respects overwrite.
+- `make_batch_file.cpp`: generated `makemig.bat` respects overwrite.
+- Leave temp swap files such as `id.tmp` out of overwrite policy.
+- Leave parameter-entry replacement guarded by the existing
+  duplicate-entry prompt, not by `overwrite`.
+
+Tests:
+
+- Add focused tests where seams already exist.
+- Verify map save advances filename when overwrite is off.
+- Verify MIG GIF save advances filename when overwrite is off.
+- Verify `makemig.bat` advances filename when overwrite is off.
+- Verify parameter entry replacement behavior is unchanged.
+
+## Slice 10: Fold Legacy Search Dirs Into Libraries
+
+Make the read-library list the only generic input search mechanism.
+
+Work items:
+
+- Replace `g_fractal_search_dir1` and `g_fractal_search_dir2` with read
+  library entries.
+- Populate read libraries from `librarydirs`.
+- Append `FRACTDIR` entries to the read-library list.
+- Append `SRCDIR` or the program directory fallback to the read-library
+  list.
+- Parse `FRACTDIR` with the platform path separator.
+- Update `find_path` to use the read-library list before `PATH`.
+- Update `locate_input_file` to use the read-library list.
+- Keep `g_check_cur_dir` precedence unchanged.
+
+Tests:
+
+- Add or extend focused file-location tests.
+- Verify multiple `FRACTDIR` entries are searched in order.
+- Verify `librarydirs` order precedes `FRACTDIR`.
+- Verify current directory precedence is unchanged.
+- Verify save-library fallback is unchanged where currently supported.
+- Verify missing files still fail the same way.
+
+## Slice 11: Final Audit
+
+Remove transitional APIs and verify policy coverage.
+
+Work items:
+
+- Remove `check_write_file` compatibility if no longer used.
+- Confirm no production use remains for split/build/merge helpers.
+- Confirm no input caller manually combines directory and filename.
+- Confirm no output caller checks overwrite before save-library routing.
+- Confirm no user-visible save-category writer bypasses overwrite.
+- Keep explicit exemptions documented.
+- The implementation commit for this slice closes issue 268.
+
+Tests:
+
+- Run `cmake --workflow rt-default`.
+- Run `rg` audits for removed helpers and raw overwrite bypasses.
+- Existing image tests must pass.
+
+## Behavior Rules
+
+- Input paths use read-library lookup or explicit input paths.
+- Output paths use save-library routing.
+- `overwrite=no` protects final destination files only.
+- Save-library routing happens before overwrite checks.
+- User-visible generated files must not overwrite existing files when
+  `overwrite=no`.
+- Temporary implementation files are exempt.
+- Parameter-file entry replacement keeps its existing duplicate-entry
+  prompt.
+- New GIF, image, map, sound, orbit, raytrace, and key outputs use the
+  same final-path overwrite rule.
+
+## Assumptions
+
+- Public browse behavior may change only by searching libraries instead of
+  reconstructing paths from the previous image filename.
+- Explicit input paths remain explicit and do not get combined with read
+  libraries.
+- Search directory order preserves current lookup precedence after it is
+  expressed as read-library order.
+- Temporary files, append-only logs, history files, and config rewrite
+  scratch files are outside the overwrite policy.
