@@ -133,8 +133,8 @@ Work items:
   using `to_display_string(g_version)`.
 - Change comment expansion `version` to derive from the compiled Id
   version using the same formatting rule.
-- Keep comment expansion `patch` derived from `current_id_version().patch`
-  for backward compatibility with existing comments.
+- Change comment expansion `patch` to derive from
+  `current_id_version().patch`.
 
 Tests:
 
@@ -152,22 +152,28 @@ Verified state:
 
 - User-visible compiled version is independent of `g_version`.
 - Compatibility behavior remains controlled only by `g_version`.
+- `g_patch_level` no longer has runtime users after display and comment
+  expansion use `current_id_version()`.
 
 ## Slice 7: Remove `g_release`
 
 Work items:
 
 - Remove `extern int g_release` from `libid/include/misc/version.h`.
+- Remove `extern const int g_patch_level` from
+  `libid/include/misc/version.h`.
 - Remove the definition from `libid/misc/version.cpp`.
 - Replace all remaining reads with helper calls or `g_version`.
 - Replace all remaining writes with `reset_version_to_current()` or direct
   `g_version` assignment.
 - Remove `ValueSaver<int>` usage for `g_release` from tests.
-- Update comments that describe `g_release` as history state.
+- Remove tests for `g_patch_level`.
+- Update comments that describe `g_release` or `g_patch_level`.
 
 Tests:
 
 - Run a source search for `g_release`; expected result is no matches.
+- Run a source search for `g_patch_level`; expected result is no matches.
 - Run a source search for `save_release`; expected matches only in
   Fractint reference sources or documentation.
 - Build should fail if any stale declaration remains.
@@ -275,6 +281,7 @@ rg "save_release" libid tests hc home
 Expected:
 
 - No `g_release` matches.
+- No `g_patch_level` matches.
 - No `save_release` matches outside documentation that explains Fractint.
 - All behavior checks use `g_version` or `g_file_version`.
 - `<Insert>` restores `g_version == current_id_version()`.
