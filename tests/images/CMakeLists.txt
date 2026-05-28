@@ -197,6 +197,7 @@ add_image_test("Achute" PARAMETERS "@example2.par/Achute")
 add_image_test("Ant" PARAMETERS "@example2.par/Ant")
 add_image_test("Barnsleyj2-manh" PARAMETERS "@example2.par/Barnsleyj2-manh")
 add_image_test("Barnsleyj2-manr" PARAMETERS "@example2.par/Barnsleyj2-manr")
+add_image_test("lyapunov-Blob1" PARAMETERS "@lyapunov/Blob1")
 add_image_test("MandelTile" PARAMETERS "@example2.par/TileMandel")
 add_image_test("julibrot" PARAMETERS "type=julibrot" "julibrotfromto=-0.83/-0.83/0.25/-0.25"
     "julibroteyes=2.5" "center-mag=0/0/0.6666667" "params=0/0" "inside=0"

@@ -15,8 +15,10 @@
 #include "math/fixed_pt.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/version.h"
 #include "ui/stop_msg.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 
@@ -113,6 +115,38 @@ int lyapunov_type()
 //         7       aaaab
 //         8       aabbbb  etc.
 //
+LyapunovSequence build_lyapunov_sequence(long order)
+{
+    LyapunovSequence result{};
+    result.length = 1;
+    if (g_version < parse_legacy_version(1732))
+    {
+        order &= 0x0FFFFL;
+    }
+    result.rxy[0] = 1;
+    int t;
+    for (t = 31; t >= 0; t--)
+    {
+        if (order & 1L << t)
+        {
+            break;
+        }
+    }
+    for (; t >= 0; t--)
+    {
+        result.rxy[result.length++] = (order & 1L << t) != 0;
+    }
+    result.rxy[result.length++] = 0;
+    if (g_version < parse_legacy_version(1732))
+    {
+        for (t = result.length; t >= 0; t--)
+        {
+            result.rxy[t] = !result.rxy[t];
+        }
+    }
+    return result;
+}
+
 bool lyapunov_per_image()
 {
     s_filter_cycles = static_cast<long>(g_params[2]);
@@ -121,23 +155,19 @@ bool lyapunov_per_image()
         s_filter_cycles = g_max_iterations/2;
     }
     s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL;
-    s_lya_length = 1;
 
-    const long i = static_cast<long>(g_params[0]);
-    s_lya_rxy[0] = 1;
-    int t;
-    for (t = 31; t >= 0; t--)
+    const LyapunovSequence sequence{build_lyapunov_sequence(static_cast<long>(g_params[0]))};
+    s_lya_length = sequence.length;
+    std::copy(sequence.rxy.begin(), sequence.rxy.end(), s_lya_rxy);
+    if (g_version < parse_legacy_version(1731))
     {
-        if (i & 1 << t)
+        g_user.std_calc_mode = CalcMode::ONE_PASS;
+        g_std_calc_mode = CalcMode::ONE_PASS;
+        if (g_inside_method == ColorMethod::COLOR && g_inside_color == 1)
         {
-            break;
+            g_inside_color = 0;
         }
     }
-    for (; t >= 0; t--)
-    {
-        s_lya_rxy[s_lya_length++] = (i & 1 << t) != 0;
-    }
-    s_lya_rxy[s_lya_length++] = 0;
     if (g_inside_method < ColorMethod::COLOR)
     {
         stop_msg("Sorry, inside options other than inside=nnn are not supported by the lyapunov");

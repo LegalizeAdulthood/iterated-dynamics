@@ -521,17 +521,17 @@ TEST_F(TestParameterCommand, resetNoArg)
     exec_cmd_arg("reset");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(102, g_release);
-    EXPECT_EQ(1, g_version.major);
-    EXPECT_EQ(2, g_version.minor);
+    EXPECT_EQ(1730, g_release);
+    EXPECT_EQ(17, g_version.major);
+    EXPECT_EQ(30, g_version.minor);
     EXPECT_EQ(0, g_version.patch);
     EXPECT_EQ(0, g_version.tweak);
-    EXPECT_FALSE(g_version.legacy);
-    EXPECT_EQ(1, g_file_version.major);
-    EXPECT_EQ(2, g_file_version.minor);
+    EXPECT_TRUE(g_version.legacy);
+    EXPECT_EQ(17, g_file_version.major);
+    EXPECT_EQ(30, g_file_version.minor);
     EXPECT_EQ(0, g_file_version.patch);
     EXPECT_EQ(0, g_file_version.tweak);
-    EXPECT_FALSE(g_file_version.legacy);
+    EXPECT_TRUE(g_file_version.legacy);
 }
 
 TEST_F(TestParameterCommand, resetVersion10)

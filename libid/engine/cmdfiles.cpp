@@ -260,7 +260,12 @@ static bool process_file_set_name(const std::string &filename, const std::string
 {
     const std::filesystem::path saved_path{g_parameter_file};
     const std::string saved_name{g_parameter_set_name};
-    g_parameter_file = filename;
+    fs::path path{filename};
+    if (!path.has_extension())
+    {
+        path.replace_extension(".par");
+    }
+    g_parameter_file = path;
     g_parameter_set_name = param_name;
     std::FILE *init_file = nullptr;
     if (find_file_item(g_parameter_file, g_parameter_set_name, &init_file, ItemType::PAR_SET) ||
@@ -3157,7 +3162,12 @@ static CmdArgFlags cmd_reset(const Command &cmd)
     }
 
     init_vars_fractal();
-    if (cmd.num_int_params == 1)
+    if (cmd.num_int_params == 0)
+    {
+        g_release = 1730;
+        g_version = parse_legacy_version(g_release);
+    }
+    else if (cmd.num_int_params == 1)
     {
         // Id version: reset=100, reset=101; legacy version: reset=1960
         if (cmd.int_vals[0] >= 100)
