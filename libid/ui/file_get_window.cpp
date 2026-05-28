@@ -5,7 +5,6 @@
 */
 #include "ui/file_get_window.h"
 
-#include "config/path_limits.h"
 #include "config/string_case_compare.h"
 #include "engine/Browse.h"
 #include "engine/calc_frac_init.h"
@@ -21,8 +20,6 @@
 #include "io/gif_extensions.h"
 #include "io/library.h"
 #include "io/loadfile.h"
-#include "io/make_path.h"
-#include "io/split_path.h"
 #include "math/big.h"
 #include "math/biginit.h"
 #include "math/round_float_double.h"
@@ -153,11 +150,6 @@ int file_get_window()
     bool toggle{};
     int color_of_box;
     FileWindow window;
-    char drive[ID_FILE_MAX_DRIVE];
-    char dir[ID_FILE_MAX_DIR];
-    char fname[ID_FILE_MAX_FNAME];
-    char ext[ID_FILE_MAX_EXT];
-    char tmp_mask[ID_FILE_MAX_PATH];
     bool vid_too_big{};
     int saved;
 
@@ -207,10 +199,7 @@ rescan:  // entry for changed browse parms
     toggle = false;
     win_count = 0;
     g_browse.sub_images = true;
-    split_drive_dir(g_read_filename, drive, dir);
-    split_fname_ext(g_browse.mask, fname, ext);
-    make_path(tmp_mask, drive, dir, fname, ext);
-    std::filesystem::path path{find_wildcard_first(ReadFile::IMAGE, tmp_mask)};
+    std::filesystem::path path{find_wildcard_first(ReadFile::IMAGE, g_browse.mask.string())};
     status = vid_too_big || path.empty() ? FileWindowStatus::EXIT : FileWindowStatus::CONTINUE;
     // draw all visible windows
     while (status == FileWindowStatus::CONTINUE)
