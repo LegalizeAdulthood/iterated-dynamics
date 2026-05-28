@@ -73,10 +73,10 @@ hc/HelpCompiler.cpp:1570:9: note: Second condition
 libid/engine/cmdfiles.cpp:176:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3679:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3687:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:4091:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4099:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
 libid/fractals/Ant.cpp:279:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
@@ -1717,13 +1717,13 @@ libid/ui/stereo.cpp:255:16: note: Variable created here.
 libid/ui/stereo.cpp:264:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data->save_dac = save_dac_box;
     ^
-tests/libid/engine/test_cmdfiles.cpp:997:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+tests/libid/engine/test_cmdfiles.cpp:998:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/engine/test_cmdfiles.cpp:989:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+tests/libid/engine/test_cmdfiles.cpp:990:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
     const std::string saved_browse_name{g_browse.name};
                                                 ^
-tests/libid/engine/test_cmdfiles.cpp:997:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+tests/libid/engine/test_cmdfiles.cpp:998:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
 win32/Frame.cpp:584:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
