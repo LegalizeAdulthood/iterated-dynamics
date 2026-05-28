@@ -322,6 +322,8 @@ o @lyapunov.par/Blob1 now renders correctly by restoring the legacy
 o Compatibility version handling now follows Fractint's model: <Insert>
   restores the current Id version, bare reset selects Fractint 17.30
   behavior, and explicit reset= values preserve old parameter behavior.
+o Included parameter sets now render consistently with the resolved Fractint
+  compatibility expectations.  (Fixes #117)
 o Setting type=formula, type=lsystem, or type=ifs on the command line
   without specifying an item name now behaves like selecting the type
   interactively.  (Fixes #71)
