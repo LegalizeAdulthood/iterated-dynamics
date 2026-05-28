@@ -82,7 +82,8 @@
                            exp, log, sqr, recip (1/z), ident (identity),
                            conj, flip, zero, one, cosxx (cos with bug), asin,
                            asinh, acos, acosh, atan, atanh, sqrt, abs, cabs,
-                           floor, ceil, trunc, round
+                           floor, ceil, trunc, round.  Reset defaults are
+                           sin/sqr/sinh/cosh; omitted values are unchanged.
   formulaname=name         Formula name for "type=formula" fractals
   lname=name               L-system name for "type=lsystem" fractals
   ifs=name                 IFS name for "type=ifs" fractals
@@ -670,7 +671,11 @@ log, sqr, recip (i.e. 1/z), ident (i.e. identity), cosxx (cos with a
 bug), flip, zero, one, asin, asinh, acos, acosh, atan, atanh,
 sqrt, abs (abs(x)+i*abs(y)), cabs (sqrt(x*x+y*y)), and the various
 rounding-to-integer functions: floor (round down), ceil
-(round up), trunc (round toward zero), and round (round to nearest).
+(round up), trunc (round toward zero), and round (round to nearest).  At
+reset, fn1 defaults to sin, fn2 defaults to sqr, fn3 defaults to sinh, and
+fn4 defaults to cosh.  A function= command with fewer than four values leaves
+the omitted functions unchanged; function= with no values leaves all current
+functions unchanged.
 
 FORMULANAME=[formulaname]\
 Specifies the default formula name for type=formula fractals.  (That is,
