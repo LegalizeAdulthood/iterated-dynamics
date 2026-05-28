@@ -184,6 +184,7 @@ add_image_test("Achute" IGNORE_COLORMAP PARAMETERS "@example2.par/Achute")
 add_image_test("Ant" IGNORE_COLORMAP PARAMETERS "@example2.par/Ant")
 add_image_test("Barnsleyj2-manh" IGNORE_COLORMAP PARAMETERS "@example2.par/Barnsleyj2-manh")
 add_image_test("Barnsleyj2-manr" IGNORE_COLORMAP PARAMETERS "@example2.par/Barnsleyj2-manr")
+add_image_test("MandelTile" IGNORE_COLORMAP PARAMETERS "@example2.par/TileMandel")
 add_image_test("julibrot" PARAMETERS "type=julibrot" "julibrotfromto=-0.83/-0.83/0.25/-0.25"
     "julibroteyes=2.5" "center-mag=0/0/0.6666667" "params=0/0" "inside=0"
     "colors=@altern.map")

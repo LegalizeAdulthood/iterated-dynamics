@@ -683,14 +683,34 @@ TEST_F(TestParameterCommand, atanColorsUsePaletteSizeAfter2002)
     EXPECT_EQ(g_colors, g_atan_colors);
 }
 
-TEST_F(TestParameterCommand, resetInsideZero)
+TEST_F(TestParameterCommand, resetInsideOne)
 {
     ValueSaver saved_inside_color{g_inside_color, -9999};
 
     exec_cmd_arg("reset");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(0, g_inside_color);
+    EXPECT_EQ(1, g_inside_color);
+}
+
+TEST_F(TestParameterCommand, resetLegacyInsideOne)
+{
+    ValueSaver saved_inside_color{g_inside_color, -9999};
+
+    exec_cmd_arg("reset=1960");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(1, g_inside_color);
+}
+
+TEST_F(TestParameterCommand, resetIdInsideOne)
+{
+    ValueSaver saved_inside_color{g_inside_color, -9999};
+
+    exec_cmd_arg("reset=100");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
+    EXPECT_EQ(1, g_inside_color);
 }
 
 TEST_F(TestParameterCommand, longFilenameExtensionOK)
