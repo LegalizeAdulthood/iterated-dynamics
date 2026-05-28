@@ -261,5 +261,6 @@ add_image_dump_test("halley")
 
 option(ID_RUN_SLOW_TESTS "Run slow image tests" OFF)
 if(ID_RUN_SLOW_TESTS)
-    add_image_test(mossy-garden PARAMETERS "@MossyFractalGarden.par/MossyFractalGarden" LABELS "slow")
+    add_image_test("mossy-garden" PARAMETERS "@MossyFractalGarden.par/MossyFractalGarden" LABELS "slow")
+    add_image_test("orbits-demonic_moose" PARAMETERS "@orbits/demonic_moose" LABELS "slow")
 endif()
