@@ -29,28 +29,7 @@ not preserve the old helpers as replacement APIs.
   image, and autokey output paths must use the save library before
   overwrite.
 
-## Slice 1: Migrate Browse Load To Read Libraries
-
-Remove `merge_path_names` from image load paths.
-
-Work items:
-
-- In `main_menu_switch.cpp`, replace each `merge_path_names` call.
-- If browse has a selected path, assign it directly to `g_read_filename`.
-- If only a filename is available, resolve it with
-  `find_file(ReadFile::IMAGE, filename)`.
-- Keep `g_show_file = ShowFile::LOAD_IMAGE` behavior unchanged.
-- Keep browse history/back behavior unchanged except that it stores paths.
-
-Tests:
-
-- Existing image load and browse tests must pass.
-- Verify no `main_menu_switch.cpp` include of `merge_path_names.h`
-  remains.
-- Verify `rg "merge_path_names\\(" libid` finds only the helper before
-  deletion.
-
-## Slice 2: Delete Split/Build/Merge Helpers
+## Slice 1: Delete Split/Build/Merge Helpers
 
 Delete the obsolete path helper family after input callers migrate.
 
@@ -74,7 +53,7 @@ Tests:
   finds no production or test use.
 - Build proves no stale include remains.
 
-## Slice 3: Add Save-Library Overwrite Helper
+## Slice 2: Add Save-Library Overwrite Helper
 
 Introduce one output helper that combines save-library routing and
 overwrite policy.
@@ -101,7 +80,7 @@ Tests:
   in the save library.
 - Verify the final path keeps the correct `WriteFile` subdirectory.
 
-## Slice 4: Migrate Existing Output Callers
+## Slice 3: Migrate Existing Output Callers
 
 Move output paths to `get_checked_save_path`.
 
@@ -119,7 +98,7 @@ Tests:
 - Verify these callers no longer call `check_write_file` directly.
 - Verify each caller passes a `WriteFile` kind, not a prebuilt directory.
 
-## Slice 5: Fix Wrong-Directory Light Name Check
+## Slice 4: Fix Wrong-Directory Light Name Check
 
 Fix light-name overwrite handling in the 3D parameter flow.
 
@@ -138,7 +117,7 @@ Tests:
 - Verify a collision in the final save-library path advances the filename
   when overwrite is off.
 
-## Slice 6: Apply Overwrite To Direct Outputs
+## Slice 5: Apply Overwrite To Direct Outputs
 
 Route remaining user-visible outputs through `get_checked_save_path`.
 
@@ -159,7 +138,7 @@ Tests:
 - Verify `makemig.bat` advances filename when overwrite is off.
 - Verify parameter entry replacement behavior is unchanged.
 
-## Slice 7: Fold Legacy Search Dirs Into Libraries
+## Slice 6: Fold Legacy Search Dirs Into Libraries
 
 Make the read-library list the only generic input search mechanism.
 
@@ -185,7 +164,7 @@ Tests:
 - Verify save-library fallback is unchanged where currently supported.
 - Verify missing files still fail the same way.
 
-## Slice 8: Final Audit
+## Slice 7: Final Audit
 
 Remove transitional APIs and verify policy coverage.
 

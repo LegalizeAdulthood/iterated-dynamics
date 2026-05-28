@@ -20,8 +20,8 @@
 #include "fractals/julibrot.h"
 #include "fractals/lorenz.h"
 #include "io/encoder.h"
+#include "io/library.h"
 #include "io/loadfile.h"
-#include "io/merge_path_names.h"
 #include "misc/Driver.h"
 #include "ui/ant.h"
 #include "ui/big_while_loop.h"
@@ -64,6 +64,12 @@ using namespace id::misc;
 namespace id::ui
 {
 
+static void set_read_filename_from_browse()
+{
+    g_read_filename = !g_browse.selected_path.empty() ? g_browse.selected_path :
+                                                        find_file(ReadFile::IMAGE, g_browse.name);
+}
+
 static bool look(MainContext &context)
 {
     const HelpLabels old_help_mode = g_help_mode;
@@ -75,7 +81,7 @@ static bool look(MainContext &context)
         g_show_file = ShowFile::LOAD_IMAGE; // trigger load
         g_browse.browsing = true;           // but don't ask for the file name as it's just been selected
         g_browse.stack.push_back(g_read_filename);
-        merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
+        set_read_filename_from_browse();
         if (g_ask_video)
         {
             driver_stack_screen();   // save graphics image
@@ -90,7 +96,7 @@ static bool look(MainContext &context)
             g_browse.selected_path = g_browse.stack.back();
             g_browse.name = g_browse.selected_path.filename().string();
             g_browse.stack.pop_back();
-            merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
+            set_read_filename_from_browse();
             g_browse.browsing = true;
             g_show_file = ShowFile::LOAD_IMAGE;
             if (g_ask_video)
@@ -425,7 +431,7 @@ static MainState unstack_file(bool &stacked)
     g_browse.selected_path = g_browse.stack.back();
     g_browse.name = g_browse.selected_path.filename().string();
     g_browse.stack.pop_back();
-    merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
+    set_read_filename_from_browse();
     g_browse.browsing = true;
     g_browse.sub_images = true;
     g_show_file = ShowFile::LOAD_IMAGE;
