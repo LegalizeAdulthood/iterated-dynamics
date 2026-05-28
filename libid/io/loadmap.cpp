@@ -3,8 +3,10 @@
 #include "io/loadmap.h"
 
 #include "engine/color_state.h"
+#include "engine/color_utils.h"
 #include "engine/spindac.h"
 #include "io/library.h"
+#include "misc/version.h"
 #include "ui/stop_msg.h"
 
 #include <config/port.h>
@@ -16,6 +18,7 @@
 #include <cstring>
 
 using namespace id::engine;
+using namespace id::misc;
 using namespace id::ui;
 
 namespace id::io
@@ -49,6 +52,42 @@ struct PaletteType
 std::string g_last_map_name; // from last <l> <s> or colors=@filename
 Byte g_map_clut[256][3]{};   // map= (default colors)
 bool g_map_specified{};      // map= specified
+
+static bool map_is_6bit_quantized()
+{
+    for (const auto &color : g_dac_box)
+    {
+        for (const Byte component : color)
+        {
+            if ((component & 0x03) != 0)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+static void backwards_id1_3_map()
+{
+    const Version first_8bit_maps{1, 3, 1, 0, false};
+    if (!(g_version < first_8bit_maps))
+    {
+        return;
+    }
+    if (!map_is_6bit_quantized())
+    {
+        return;
+    }
+
+    for (auto &color : g_dac_box)
+    {
+        for (Byte &component : color)
+        {
+            component = expand_8bit_color(component);
+        }
+    }
+}
 
 bool validate_luts(const std::string &map_name)
 {
@@ -96,6 +135,7 @@ bool validate_luts(const std::string &map_name)
         DAC[index].red = 40;
         ++index;
     }
+    backwards_id1_3_map();
     g_color_state = ColorState::MAP_FILE;
     g_last_map_name = map_name;
     return false;

@@ -9,6 +9,7 @@
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/color_state.h"
+#include "engine/color_utils.h"
 #include "engine/convert_center_mag.h"
 #include "engine/convert_corners.h"
 #include "engine/engine_timer.h"
@@ -1616,7 +1617,7 @@ static int parse_6bit_color(const char *&value)
     {
         k -= '_' - 36;
     }
-    return k * 4; // move value to high 6 bits.
+    return k;
 }
 
 static CmdArgFlags parse_colors(const char *value)
@@ -1649,6 +1650,7 @@ static CmdArgFlags parse_colors(const char *value)
     {
         int smooth{};
         int i{};
+        bool hex_colors{};
         while (*value)
         {
             if (i >= 256)
@@ -1672,6 +1674,7 @@ static CmdArgFlags parse_colors(const char *value)
                 const bool hex_color{*value == '#'};
                 if (hex_color)
                 {
+                    hex_colors = true;
                     ++value;
                 }
                 for (int j = 0; j < 3; ++j)
@@ -1722,6 +1725,16 @@ static CmdArgFlags parse_colors(const char *value)
             g_dac_box[i][1] = 40;
             g_dac_box[i][2] = 40;
             ++i;
+        }
+        if (!hex_colors)
+        {
+            for (auto &color : g_dac_box)
+            {
+                for (Byte &component : color)
+                {
+                    component = expand_6bit_color(component);
+                }
+            }
         }
         g_color_state = ColorState::UNKNOWN_MAP;
     }

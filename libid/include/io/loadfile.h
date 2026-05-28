@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <config/port.h>
+
 #include "fractals/fractype.h"
 #include "misc/version.h"
 
@@ -63,6 +65,8 @@ void set_function_param_defaults();
 void backwards_legacy_v18();
 void backwards_legacy_v19();
 void backwards_legacy_v20();
+bool backwards_id1_3_palette_needed(const misc::Version &version, const Byte palette[256][3], unsigned int colors);
+void backwards_id1_3_palette(Byte palette[256][3], unsigned int colors);
 // return true on error, false on success
 bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     ExtBlock2 *blk_2_info, ExtBlock3 *blk_3_info, ExtBlock4 *blk_4_info, //

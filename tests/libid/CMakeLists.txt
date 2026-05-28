@@ -66,6 +66,7 @@ add_executable(test-id
     "include/test_library.h.in"
     "include/test_migrate_gif.h.in"
     expected_map.cpp
+    engine/test_color_utils.cpp
     engine/test_cmdfiles.cpp
     engine/test_get_prec_big_float.cpp
     engine/test_log_map.cpp
@@ -84,6 +85,7 @@ add_executable(test-id
     io/test_find_file.txt.in
     io/test_find_path.cpp
     io/test_gif_file.cpp
+    io/test_gifview.cpp
     io/test_is_directory.cpp
     io/test_library.cpp
     io/test_loadfile.cpp

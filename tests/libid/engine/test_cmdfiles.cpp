@@ -15,6 +15,7 @@
 #include <engine/Browse.h>
 #include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
+#include <engine/color_utils.h>
 #include <engine/convert_center_mag.h>
 #include <engine/engine_timer.h>
 #include <engine/fractals.h>
@@ -1013,13 +1014,14 @@ TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
 
     exec_cmd_arg("colors", CmdFile::AT_CMD_LINE);
 
+    const Byte default_color = expand_6bit_color(40);
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
-    EXPECT_EQ(40, g_dac_box[0][0]);
-    EXPECT_EQ(40, g_dac_box[0][1]);
-    EXPECT_EQ(40, g_dac_box[0][2]);
-    EXPECT_EQ(40, g_dac_box[255][0]);
-    EXPECT_EQ(40, g_dac_box[255][1]);
-    EXPECT_EQ(40, g_dac_box[255][2]);
+    EXPECT_EQ(default_color, g_dac_box[0][0]);
+    EXPECT_EQ(default_color, g_dac_box[0][1]);
+    EXPECT_EQ(default_color, g_dac_box[0][2]);
+    EXPECT_EQ(default_color, g_dac_box[255][0]);
+    EXPECT_EQ(default_color, g_dac_box[255][1]);
+    EXPECT_EQ(default_color, g_dac_box[255][2]);
 }
 
 TEST_F(TestParameterCommandError, recordColorsInvalidValue)
@@ -4255,7 +4257,7 @@ TEST_F(TestParameterCommand, colorsIncreasingSixBitRamp)
 
     for (int i = 0; i < 256; ++i)
     {
-        const Byte val = i % 64U *4U;
+        const Byte val = expand_6bit_color(i % 64U);
         EXPECT_EQ(val, g_dac_box[i][0]);
         EXPECT_EQ(val, g_dac_box[i][1]);
         EXPECT_EQ(val, g_dac_box[i][2]);
@@ -4294,9 +4296,9 @@ TEST_F(TestParameterCommand, color6BitMappedTo8Bit)
 
     exec_cmd_arg("colors=zzz");
 
-    EXPECT_EQ(63U*4U, g_dac_box[0][0]);
-    EXPECT_EQ(63U*4U, g_dac_box[0][1]);
-    EXPECT_EQ(63U*4U, g_dac_box[0][2]);
+    EXPECT_EQ(expand_6bit_color(63), g_dac_box[0][0]);
+    EXPECT_EQ(expand_6bit_color(63), g_dac_box[0][1]);
+    EXPECT_EQ(expand_6bit_color(63), g_dac_box[0][2]);
 }
 
 TEST_F(TestParameterCommand, singleReadLibraryDir)

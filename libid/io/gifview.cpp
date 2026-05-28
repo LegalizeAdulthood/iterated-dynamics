@@ -203,6 +203,7 @@ int gif_view()
             }
         }
     }
+    backwards_id1_3_palette(g_dac_box, g_num_colors);
     g_color_state = ColorState::UNKNOWN_MAP; // colors aren't default and not a known .map file
 
     // don't read if glasses

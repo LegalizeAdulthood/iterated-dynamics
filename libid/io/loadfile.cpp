@@ -9,6 +9,7 @@
 #include "engine/calc_frac_init.h"
 #include "engine/calcfrac.h"
 #include "engine/cmdfiles.h"
+#include "engine/color_utils.h"
 #include "engine/fractals.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
@@ -734,6 +735,44 @@ static void backwards_id1_2(const FractalInfo &read_info)
     {
         g_file_version = Version{read_info.version_major, read_info.version_minor, //
             read_info.version_patch, read_info.version_tweak, false};
+    }
+}
+
+bool backwards_id1_3_palette_needed(const Version &version, const Byte palette[256][3], const unsigned int colors)
+{
+    const Version first_quantized_gif{1, 3, 1, 0, false};
+    const Version first_expanded_gif{1, 3, 3, 0, false};
+    if (version < first_quantized_gif || !(version < first_expanded_gif))
+    {
+        return false;
+    }
+
+    for (unsigned int i = 0; i < colors; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            if ((palette[i][j] & 0x03) != 0)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void backwards_id1_3_palette(Byte palette[256][3], const unsigned int colors)
+{
+    if (!backwards_id1_3_palette_needed(g_file_version, palette, colors))
+    {
+        return;
+    }
+
+    for (unsigned int i = 0; i < colors; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            palette[i][j] = expand_8bit_color(palette[i][j]);
+        }
     }
 }
 
