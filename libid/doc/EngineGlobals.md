@@ -417,8 +417,9 @@ Variables for image browsing mode:
 - `g_browse.smallest_box` - smallest selection box size
 - `g_browse.smallest_window` - smallest window size
 - `g_browse.mask` - filename mask for browsing
-- `g_browse.name` - current browse file name
-- `g_browse.stack` - stack of filenames while browsing
+- `g_browse.selected_path` - selected browse file path
+- `g_browse.name` - current browse file name for display
+- `g_browse.stack` - stack of file paths while browsing
 
 ## 29. Timer Group
 

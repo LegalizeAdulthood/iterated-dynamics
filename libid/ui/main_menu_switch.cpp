@@ -74,7 +74,7 @@ static bool look(MainContext &context)
     case ID_KEY_ENTER_2:
         g_show_file = ShowFile::LOAD_IMAGE; // trigger load
         g_browse.browsing = true;           // but don't ask for the file name as it's just been selected
-        g_browse.stack.push_back(g_browse.name);
+        g_browse.stack.push_back(g_read_filename);
         merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
         if (g_ask_video)
         {
@@ -87,7 +87,8 @@ static bool look(MainContext &context)
         if (!g_browse.stack.empty())
         {
             // go back one file if somewhere to go (i.e. browsing)
-            g_browse.name = g_browse.stack.back();
+            g_browse.selected_path = g_browse.stack.back();
+            g_browse.name = g_browse.selected_path.filename().string();
             g_browse.stack.pop_back();
             merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
             g_browse.browsing = true;
@@ -421,7 +422,8 @@ static MainState unstack_file(bool &stacked)
     }
 
     // go back one file if somewhere to go (i.e. browsing)
-    g_browse.name = g_browse.stack.back();
+    g_browse.selected_path = g_browse.stack.back();
+    g_browse.name = g_browse.selected_path.filename().string();
     g_browse.stack.pop_back();
     merge_path_names(g_read_filename, g_browse.name.c_str(), CmdFile::AT_AFTER_STARTUP);
     g_browse.browsing = true;

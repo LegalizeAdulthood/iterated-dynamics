@@ -585,7 +585,8 @@ MainState big_while_loop(MainContext &context)
                 g_finish_row = -1;
             }
             g_browse.browsing = false;       // regenerate image, turn off browsing
-            g_browse.stack.clear(); // reset filename stack
+            g_browse.stack.clear(); // reset browse path stack
+            g_browse.selected_path.clear();
             g_browse.name.clear();
             if (g_viewport.enabled && bit_set(g_evolving, EvolutionModeFlags::FIELD_MAP) &&
                 g_calc_status != CalcStatus::COMPLETED)

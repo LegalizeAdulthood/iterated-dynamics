@@ -241,6 +241,7 @@ static void process_simple_command(char *cur_arg)
                     g_read_filename = find_file(ReadFile::IMAGE, cur_arg);
                     if (!g_read_filename.empty())
                     {
+                        g_browse.selected_path = g_read_filename;
                         g_browse.name = extract_filename(g_read_filename);
                         g_show_file = ShowFile::LOAD_IMAGE;
                     }
@@ -2062,6 +2063,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
     if (!g_read_filename.empty())
     {
         g_show_file = ShowFile::LOAD_IMAGE;
+        g_browse.selected_path = g_read_filename;
         g_browse.name = g_read_filename.filename().string();
     }
     else

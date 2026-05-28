@@ -326,6 +326,7 @@ rescan:  // entry for changed browse parms
                 break;
             case ID_KEY_ENTER:
             case ID_KEY_ENTER_2:   // this file please
+                g_browse.selected_path = window.path;
                 g_browse.name = window.filename;
                 status = FileWindowStatus::EXIT;
                 break;
@@ -830,11 +831,11 @@ static bool type_ok(const FractalInfo *info, const ExtBlock3 *blk_3_info)
 // browser are used.
 static void check_history(const char *old_name, const char *new_name)
 {
-    for (std::string &name : g_browse.stack)
+    for (std::filesystem::path &path : g_browse.stack)
     {
-        if (name == old_name)
+        if (path.filename() == old_name)
         {
-            name = new_name;
+            path.replace_filename(new_name);
         }
     }
 }

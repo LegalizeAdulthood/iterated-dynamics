@@ -102,8 +102,9 @@ static void main_restart(const int argc, const char *const argv[], MainContext &
     g_browse.smallest_window = 6;
     g_browse.smallest_box = 3;
     g_browse.mask = "*.gif";
+    g_browse.selected_path.clear();
     g_browse.name.clear();
-    g_browse.stack.clear(); // init loaded files stack
+    g_browse.stack.clear(); // init loaded file path stack
 
     g_evolving = EvolutionModeFlags::NONE;
     g_evolve_x_parameter_range = 4;
@@ -198,8 +199,8 @@ static bool main_restore_start(MainContext &context)
                 break;
             }
 
-            g_browse.stack.clear(); // 'r' reads first filename for browsing
-            g_browse.stack.push_back(g_browse.name);
+            g_browse.stack.clear(); // 'r' reads first path for browsing
+            g_browse.stack.push_back(g_read_filename);
         }
 
         g_evolving = EvolutionModeFlags::NONE;
