@@ -52,6 +52,7 @@
 #include <io/gifview.h>
 #include <io/library.h>
 #include <io/loadfile.h>
+#include <io/loadmap.h>
 #include <io/save_timer.h>
 #include <io/special_dirs.h>
 #include <math/biginit.h>
@@ -1089,6 +1090,19 @@ TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
     EXPECT_EQ(default_color, g_dac_box[255][0]);
     EXPECT_EQ(default_color, g_dac_box[255][1]);
     EXPECT_EQ(default_color, g_dac_box[255][2]);
+}
+
+TEST_F(TestParameterCommand, colorsMapAddsDefaultExtension)
+{
+    ColorMapSaver saved_dac_box;
+    ValueSaver saved_map_name{g_map_name, ""};
+    ValueSaver saved_last_map_name{g_last_map_name, ""};
+
+    exec_cmd_arg("colors=@test", CmdFile::AT_CMD_LINE_SET_NAME);
+
+    EXPECT_EQ(CmdArgFlags::NONE, m_result);
+    EXPECT_EQ("test.map", g_map_name);
+    EXPECT_EQ("test", g_last_map_name);
 }
 
 TEST_F(TestParameterCommandError, recordColorsInvalidValue)

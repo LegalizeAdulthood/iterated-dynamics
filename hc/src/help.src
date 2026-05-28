@@ -316,6 +316,7 @@ o The default inside color now matches Fractint, allowing
 o Legacy 6-bit palette values are now expanded to the full 8-bit range
   when loading old parameter colors, affected Id GIF files, and legacy
   map files.
+o Parameter colors=@name now finds name.map when the extension is omitted.\
 o @lyapunov.par/Blob1 now renders correctly by restoring the legacy
   Lyapunov reset behavior used by Fractint.  (Fixes #400)
 o Compatibility version handling now follows Fractint's model: <Insert>

@@ -1630,13 +1630,21 @@ static CmdArgFlags parse_colors(const char *value)
 {
     if (*value == '@')
     {
-        if (const fs::path path{find_file(ReadFile::MAP, &value[1])}; !path.empty())
+        fs::path map_path{&value[1]};
+        fs::path path{find_file(ReadFile::MAP, map_path)};
+        if (path.empty() && !map_path.has_extension())
+        {
+            map_path.replace_extension(".map");
+            path = find_file(ReadFile::MAP, map_path);
+        }
+        if (!path.empty())
         {
             g_map_name = path.filename().string();
         }
         else
         {
             init_msg("", &value[1], CmdFile::AT_CMD_LINE_SET_NAME);
+            goto bad_color;
         }
         if (validate_luts(g_map_name))
         {
