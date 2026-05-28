@@ -92,6 +92,17 @@ TEST(TestGetCheckedSavePath, defaultExtensionIsAdded)
     clear_save_library();
 }
 
+TEST(TestGetCheckedSavePath, explicitExtensionIsPreserved)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, false};
+    set_save_library(ID_TEST_SAVE_DIR);
+
+    const fs::path path{get_checked_save_path(WriteFile::IMAGE, "newimage.tga")};
+
+    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/newimage.tga", path);
+    clear_save_library();
+}
+
 TEST(TestGetCheckedSavePath, saveDirIsUsedWithoutSaveLibrary)
 {
     ValueSaver saved_overwrite{g_overwrite_file, false};

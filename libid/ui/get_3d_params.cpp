@@ -24,6 +24,7 @@
 #include <algorithm>
 #include <array>
 #include <cstring>
+#include <filesystem>
 #include <string>
 
 using namespace id::engine;
@@ -39,6 +40,16 @@ namespace id::ui
 static  bool get_light_params();
 static  bool check_map_file();
 static  bool get_funny_glasses_params();
+
+static std::filesystem::path targa_save_name(const std::string &name)
+{
+    std::filesystem::path path{name};
+    if (!path.has_extension())
+    {
+        path.replace_extension(".tga");
+    }
+    return path;
+}
 
 static std::string s_funny_glasses_map_name;
 
@@ -380,10 +391,6 @@ static bool get_light_params()
     {
         builder.int_number("Haze Factor        (0 - 100, '0' disables)", g_haze);
 
-        if (!g_targa_overlay)
-        {
-            check_write_file(g_light_name, ".tga");
-        }
         builder.string("Targa File Name  (Assume .tga)", g_light_name.c_str())
             .comment("Background Color (0 - 255)")
             .int_number("   Red", g_background_color[0])
@@ -421,11 +428,15 @@ static bool get_light_params()
         g_haze = std::min(g_haze, 100);
         g_haze = std::max(g_haze, 0);
         g_light_name = builder.read_string();
-        /* In case light_name conflicts with an existing name it is checked again in line3d */
         g_background_color[0] = static_cast<char>(builder.read_int_number() % 255);
         g_background_color[1] = static_cast<char>(builder.read_int_number() % 255);
         g_background_color[2] = static_cast<char>(builder.read_int_number() % 255);
-        g_targa_overlay = builder.read_yes_no();
+        const bool targa_overlay = builder.read_yes_no();
+        if (!targa_overlay)
+        {
+            g_light_name = get_checked_save_path(WriteFile::IMAGE, targa_save_name(g_light_name)).string();
+        }
+        g_targa_overlay = targa_overlay;
     }
     return false;
 }

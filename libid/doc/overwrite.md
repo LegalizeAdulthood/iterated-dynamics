@@ -27,26 +27,7 @@ not preserve the old helpers as replacement APIs.
   image, and autokey output paths must use the save library before
   overwrite.
 
-## Slice 1: Fix Wrong-Directory Light Name Check
-
-Fix light-name overwrite handling in the 3D parameter flow.
-
-Work items:
-
-- Remove the pre-save `check_write_file(g_light_name, ".tga")`.
-- Resolve the output with `get_checked_save_path(WriteFile::IMAGE, ...)`.
-- Apply overwrite handling to that final save-library path.
-- After save, update `g_light_name` from the chosen final filename.
-
-Tests:
-
-- Add focused helper coverage for this bug class.
-- Verify a raw filename collision in the current directory does not affect
-  a non-colliding final save-library path.
-- Verify a collision in the final save-library path advances the filename
-  when overwrite is off.
-
-## Slice 2: Apply Overwrite To Direct Outputs
+## Slice 1: Apply Overwrite To Direct Outputs
 
 Route remaining user-visible outputs through `get_checked_save_path`.
 
@@ -67,7 +48,7 @@ Tests:
 - Verify `makemig.bat` advances filename when overwrite is off.
 - Verify parameter entry replacement behavior is unchanged.
 
-## Slice 3: Fold Legacy Search Dirs Into Libraries
+## Slice 2: Fold Legacy Search Dirs Into Libraries
 
 Make the read-library list the only generic input search mechanism.
 
@@ -93,7 +74,7 @@ Tests:
 - Verify save-library fallback is unchanged where currently supported.
 - Verify missing files still fail the same way.
 
-## Slice 4: Final Audit
+## Slice 3: Final Audit
 
 Remove transitional APIs and verify policy coverage.
 
