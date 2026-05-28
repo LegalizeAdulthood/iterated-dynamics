@@ -4,10 +4,58 @@
 #include <image-tool/gif_compare.h>
 #include <image-tool/gif_format.h>
 
+#include <cctype>
 #include <exception>
 #include <filesystem>
 #include <iostream>
 #include <string>
+
+namespace
+{
+
+char printable(const GifByteType value)
+{
+    return std::isprint(value) ? static_cast<char>(value) : '.';
+}
+
+void dump_bytes(const GifByteType *bytes, const int count)
+{
+    for (int offset = 0; offset < count; offset += 16)
+    {
+        std::cout << fmt::format("    {:04x}: ", offset);
+        for (int i = 0; i < 16; ++i)
+        {
+            if (offset + i < count)
+            {
+                std::cout << fmt::format("{:02x} ", static_cast<int>(bytes[offset + i]));
+            }
+            else
+            {
+                std::cout << "   ";
+            }
+        }
+        std::cout << " ";
+        for (int i = 0; i < 16 && offset + i < count; ++i)
+        {
+            std::cout << printable(bytes[offset + i]);
+        }
+        std::cout << '\n';
+    }
+}
+
+void dump_extensions(const GifFileType *gif)
+{
+    std::cout << "  Extension blocks: " << gif->ExtensionBlockCount << '\n';
+    for (int i = 0; i < gif->ExtensionBlockCount; ++i)
+    {
+        const ExtensionBlock &block{gif->ExtensionBlocks[i]};
+        std::cout << fmt::format("  Extension {}: function: {}, bytes: {}\n", //
+            i, block.Function, block.ByteCount);
+        dump_bytes(block.Bytes, block.ByteCount);
+    }
+}
+
+}
 
 int main(const int argc, char *argv[])
 {
@@ -41,10 +89,13 @@ int main(const int argc, char *argv[])
         gif.slurp();
 
         std::cout << file << ":\n";
+        const GifFileType *gif_file{static_cast<GifFileType *>(gif)};
         std::cout << "  Screen width: " << gif.screen_width() << '\n';
         std::cout << "  Screen height: " << gif.screen_height() << '\n';
         std::cout << "  Color resolution: " << gif.color_resolution() << '\n';
-        std::cout << "  Color map: " << gif.color_map() << '\n';
+        std::cout << "  Color map: " << gif.color_map() << "\n\n";
+        dump_extensions(gif_file);
+        std::cout << '\n';
         std::cout << "  Number of images: " << gif.num_images() << '\n';
         for (int i = 0; i < gif.num_images(); ++i)
         {
@@ -54,6 +105,7 @@ int main(const int argc, char *argv[])
             {
                 continue;
             }
+            std::cout << '\n';
             for (int y = 0; y < image.ImageDesc.Height; ++y)
             {
                 std::cout << fmt::format("  {:4d}: ", y);

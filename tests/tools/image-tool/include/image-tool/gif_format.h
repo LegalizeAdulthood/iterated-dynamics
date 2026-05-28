@@ -27,7 +27,7 @@ inline std::ostream &operator<<(std::ostream &str, const ColorMapObject &value)
         str << "    " << value.Colors[i];
         first = false;
     }
-    return str << '\n';
+    return str;
 }
 
 std::ostream &operator<<(std::ostream &str, const GifImageDesc &value)
@@ -40,7 +40,7 @@ std::ostream &operator<<(std::ostream &str, const GifImageDesc &value)
     }
     else
     {
-        str << "(none)\n";
+        str << "(none)";
     }
-    return str << "\n";
+    return str;
 }
