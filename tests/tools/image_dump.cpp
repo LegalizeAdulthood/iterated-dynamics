@@ -11,12 +11,24 @@
 
 int main(const int argc, char *argv[])
 {
-    if (argc < 2 || argc > 2)
+    if (argc < 2 || argc > 3)
     {
-        std::cout << "Usage: " << argv[0] << ": file\n";
+        std::cout << "Usage: " << argv[0] << ": [--no-scanlines] file\n";
         return 1;
     }
-    const std::string file{argv[1]};
+    bool scanlines{true};
+    int file_arg{1};
+    if (std::string{argv[1]} == "--no-scanlines")
+    {
+        scanlines = false;
+        file_arg = 2;
+    }
+    if (file_arg >= argc)
+    {
+        std::cout << "Usage: " << argv[0] << ": [--no-scanlines] file\n";
+        return 1;
+    }
+    const std::string file{argv[file_arg]};
     if (!std::filesystem::exists(file))
     {
         std::cout << file << " does not exist.\n";
@@ -38,6 +50,10 @@ int main(const int argc, char *argv[])
         {
             const SavedImage &image{gif.get_image(i)};
             std::cout << "  Image " << i << ": " << image.ImageDesc << '\n';
+            if (!scanlines)
+            {
+                continue;
+            }
             for (int y = 0; y < image.ImageDesc.Height; ++y)
             {
                 std::cout << fmt::format("  {:4d}: ", y);

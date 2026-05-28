@@ -9,7 +9,7 @@
 
 inline std::ostream &operator<<(std::ostream &str, const GifColorType &value)
 {
-    return str << fmt::format("#{0:02xd}{1:02xd}{2:02xd} {0:3d} {1:3d} {2:3d}", //
+    return str << fmt::format("#{0:02x}{1:02x}{2:02x} {0:3d} {1:3d} {2:3d}", //
                static_cast<int>(value.Red), static_cast<int>(value.Green), static_cast<int>(value.Blue));
 }
 

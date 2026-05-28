@@ -76,6 +76,19 @@ function(add_colormap_test name)
     set_tests_properties(ColormapTest.${name} PROPERTIES LABELS "colormap")
 endfunction()
 
+function(add_image_dump_test name)
+    add_test(NAME ImageDumpTest.${name}
+        COMMAND ${CMAKE_COMMAND}
+            "-DIMAGE_DUMP=$<SHELL_PATH:$<TARGET_FILE:image-dump>>"
+            "-DINPUT_IMAGE=gold-${name}.gif"
+            "-DGOLD_DUMP=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}-dump.txt"
+            "-DTEST_DUMP=${CMAKE_CURRENT_BINARY_DIR}/test-${name}-dump.txt"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/image_dump_test.cmake"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+    set_tests_properties(ImageDumpTest.${name} PROPERTIES LABELS "image-dump")
+endfunction()
+
 function(add_passes_test name passes)
     cmake_parse_arguments(PASSES_TEST "IGNORE_COLORMAP" "" "PARAMETERS" ${ARGN})
     if(PASSES_TEST_UNPARSED_ARGUMENTS)
@@ -243,6 +256,7 @@ add_image_test("outside-tdis" PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-00
     "params=0/0" "outside=tdis")
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
+add_image_dump_test("halley")
 
 option(ID_RUN_SLOW_TESTS "Run slow image tests" OFF)
 if(ID_RUN_SLOW_TESTS)
