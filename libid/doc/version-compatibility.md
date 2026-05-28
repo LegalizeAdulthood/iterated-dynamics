@@ -23,34 +23,6 @@ All compatibility checks must use `g_version` or `g_file_version`, never a
 parallel integer release value.  `<Insert>` must restore `g_version` to the
 latest compiled Id version.
 
-## Slice 5: Replace History Version Storage
-
-Work items:
-
-- Replace `HistoryEntry::release` and `HistoryEntry::save_release` with:
-  `Version version` and `Version file_version`.
-- Save `g_version` into `HistoryEntry::version`.
-- Save `g_file_version` into `HistoryEntry::file_version`.
-- Restore both globals from history.
-- Update history JSON read/write and equality checks.
-- If old history JSON is supported, migrate `release` and `save_release` to
-  `Version` values during decode.
-
-Tests:
-
-- Add or update `tests/libid/ui/test_history.cpp`.
-- Seed `g_version = parse_legacy_version(1730)`.
-- Seed `g_file_version = parse_legacy_version(2004)`.
-- Save history and then overwrite both globals with current Id version.
-- Restore history and verify both globals exactly match the seeded values.
-- Verify serialized history contains `version` and `file_version`.
-- If old JSON migration exists, verify `save_release` controls
-  `g_version` and `release` is ignored for behavior.
-
-Verified state:
-
-- History restores both behavior and file-origin versions.
-
 ## Slice 6: Replace Display And Comment Uses
 
 Work items:

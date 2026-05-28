@@ -31,6 +31,7 @@
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
 #include "io/library.h"
+#include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "math/Point.h"
 #include "misc/debug_flags.h"
@@ -97,8 +98,8 @@ struct ImageHistory
     DComplex init_orbit;
     int periodicity_check;
     bool disk_16_bit;
-    int release;
-    int save_release;
+    Version version;
+    Version file_version;
     Display3DMode display_3d;
     std::array<int, 2> transparent_color_3d;
     int ambient;
@@ -194,8 +195,8 @@ bool operator==(const ImageHistory &lhs, const ImageHistory &rhs)
         && lhs.init_orbit == rhs.init_orbit                                                             //
         && lhs.periodicity_check == rhs.periodicity_check                                               //
         && lhs.disk_16_bit == rhs.disk_16_bit                                                           //
-        && lhs.release == rhs.release                                                                   //
-        && lhs.save_release == rhs.save_release                                                         //
+        && lhs.version == rhs.version                                                                   //
+        && lhs.file_version == rhs.file_version                                                         //
         && lhs.display_3d == rhs.display_3d                                                             //
         && std::equal(std::begin(lhs.transparent_color_3d), std::end(lhs.transparent_color_3d),
                std::begin(rhs.transparent_color_3d))                                                    //
@@ -359,6 +360,27 @@ private:
     const DComplex &m_value;
 };
 
+struct JsonVersion
+{
+    explicit JsonVersion(const Version &value) :
+        m_value(value)
+    {
+    }
+
+    friend std::ostream &operator<<(std::ostream &str, const JsonVersion &value)
+    {
+        str << R"json({"major":)json" << value.m_value.major //
+            << R"json(,"minor":)json" << value.m_value.minor //
+            << R"json(,"patch":)json" << value.m_value.patch //
+            << R"json(,"tweak":)json" << value.m_value.tweak //
+            << R"json(,"legacy":)json" << value.m_value.legacy << '}';
+        return str;
+    }
+
+private:
+    const Version &m_value;
+};
+
 struct DacBox
 {
     explicit DacBox(const unsigned char dac[256][3])
@@ -474,8 +496,8 @@ std::ostream &operator<<(std::ostream &str, const ImageHistory &value)
     str << R"json("init_orbit":)json" << JsonValue(value.init_orbit) << ',';
     str << R"json("periodicity_check":)json" << value.periodicity_check << ',';
     str << R"json("disk_16_bit":)json" << value.disk_16_bit << ',';
-    str << R"json("release":)json" << value.release << ',';
-    str << R"json("save_release":)json" << value.save_release << ',';
+    str << R"json("version":)json" << JsonVersion(value.version) << ',';
+    str << R"json("file_version":)json" << JsonVersion(value.file_version) << ',';
     str << R"json("display_3d":)json" << value.display_3d << ',';
     str << R"json("transparent_color_3d":)json" << JsonArray(value.transparent_color_3d) << ',';
     str << R"json("ambient":)json" << value.ambient << ',';
@@ -613,8 +635,8 @@ void save_history_info()
     current.use_init_orbit = g_use_init_orbit;
     current.periodicity_check = g_periodicity_check;
     current.disk_16_bit = g_disk_16_bit;
-    current.release = g_release;
-    current.save_release = g_release;
+    current.version = g_version;
+    current.file_version = g_file_version;
     current.display_3d = g_display_3d;
     current.ambient = g_ambient;
     current.randomize_3d = g_randomize_3d;
@@ -784,7 +806,9 @@ void restore_history_info(const int i)
     g_periodicity_check = last.periodicity_check;
     g_user.periodicity_value = last.periodicity_check;
     g_disk_16_bit = last.disk_16_bit;
-    g_release = last.release;
+    g_version = last.version;
+    g_file_version = last.file_version;
+    g_release = g_version.major * 100 + g_version.minor;
     g_display_3d = last.display_3d;
     g_ambient = last.ambient;
     g_randomize_3d = last.randomize_3d;
