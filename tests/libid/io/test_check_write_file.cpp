@@ -11,6 +11,7 @@
 #include <misc/ValueSaver.h>
 
 #include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 
 using namespace id::io;
@@ -22,6 +23,12 @@ namespace fs = std::filesystem;
 
 namespace id::test
 {
+
+static void create_file(const fs::path &path)
+{
+    fs::create_directories(path.parent_path());
+    std::ofstream out{path};
+}
 
 TEST(TestCheckWriteFile, newFile)
 {
@@ -122,6 +129,45 @@ TEST(TestGetCheckedSavePath, currentDirectoryCollisionDoesNotAdvanceFinalPath)
     const fs::path path{get_checked_save_path(WriteFile::IMAGE, "fract001")};
 
     EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/fract001.gif", path);
+    clear_save_library();
+}
+
+TEST(TestGetCheckedSavePath, mapCollisionAdvancesWhenOverwriteIsOff)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, false};
+    set_save_library(ID_TEST_SAVE_DIR);
+    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "map/colors.map"};
+    create_file(existing);
+
+    const fs::path path{get_checked_save_path(WriteFile::MAP, "colors")};
+
+    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "map/colors2.map", path);
+    clear_save_library();
+}
+
+TEST(TestGetCheckedSavePath, migGifCollisionAdvancesWhenOverwriteIsOff)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, false};
+    set_save_library(ID_TEST_SAVE_DIR);
+    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "image/fractmig.gif"};
+    create_file(existing);
+
+    const fs::path path{get_checked_save_path(WriteFile::IMAGE, "fractmig.gif")};
+
+    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "image/fractmig2.gif", path);
+    clear_save_library();
+}
+
+TEST(TestGetCheckedSavePath, makeMigBatchCollisionAdvancesWhenOverwriteIsOff)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, false};
+    set_save_library(ID_TEST_SAVE_DIR);
+    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "makemig.bat"};
+    create_file(existing);
+
+    const fs::path path{get_checked_save_path(WriteFile::ROOT, "makemig.bat")};
+
+    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "makemig2.bat", path);
     clear_save_library();
 }
 

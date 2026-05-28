@@ -39,6 +39,7 @@
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
 #include "helpdefs.h"
+#include "io/check_write_file.h"
 #include "io/ends_with_slash.h"
 #include "io/file_gets.h"
 #include "io/has_ext.h"
@@ -437,7 +438,7 @@ skip_ui:
         if (params.x_multiple > 1 || params.y_multiple > 1)
         {
             have_3rd = g_image_region.m_min.x != g_image_region.m_3rd.x || g_image_region.m_min.y != g_image_region.m_3rd.y;
-            const fs::path path{get_save_path(WriteFile::ROOT, "makemig.bat")};
+            const fs::path path{get_checked_save_path(WriteFile::ROOT, "makemig.bat")};
             assert(!path.empty());
             bat_file = std::fopen(path.string().c_str(), "w");
             if (bat_file == nullptr)

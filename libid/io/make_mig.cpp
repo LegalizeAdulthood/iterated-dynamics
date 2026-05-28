@@ -3,6 +3,7 @@
 #include "io/make_mig.h"
 
 #include "engine/spindac.h"
+#include "io/check_write_file.h"
 #include "io/library.h"
 
 #include <fmt/format.h>
@@ -70,7 +71,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
                             "\n",
                     gif_out.c_str(), x_mult, y_mult);
                 // attempt to create the output file
-                const std::filesystem::path path{get_save_path(WriteFile::IMAGE, gif_out)};
+                const std::filesystem::path path{get_checked_save_path(WriteFile::IMAGE, gif_out)};
                 assert(!path.empty());
                 out = std::fopen(path.string().c_str(), "wb");
                 if (out == nullptr)

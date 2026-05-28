@@ -27,28 +27,7 @@ not preserve the old helpers as replacement APIs.
   image, and autokey output paths must use the save library before
   overwrite.
 
-## Slice 1: Apply Overwrite To Direct Outputs
-
-Route remaining user-visible outputs through `get_checked_save_path`.
-
-Work items:
-
-- `rotate.cpp`: palette and map save respects overwrite.
-- `make_mig.cpp`: generated multi-image GIF respects overwrite.
-- `make_batch_file.cpp`: generated `makemig.bat` respects overwrite.
-- Leave temp swap files such as `id.tmp` out of overwrite policy.
-- Leave parameter-entry replacement guarded by the existing
-  duplicate-entry prompt, not by `overwrite`.
-
-Tests:
-
-- Add focused tests where seams already exist.
-- Verify map save advances filename when overwrite is off.
-- Verify MIG GIF save advances filename when overwrite is off.
-- Verify `makemig.bat` advances filename when overwrite is off.
-- Verify parameter entry replacement behavior is unchanged.
-
-## Slice 2: Fold Legacy Search Dirs Into Libraries
+## Slice 1: Fold Legacy Search Dirs Into Libraries
 
 Make the read-library list the only generic input search mechanism.
 
@@ -74,7 +53,7 @@ Tests:
 - Verify save-library fallback is unchanged where currently supported.
 - Verify missing files still fail the same way.
 
-## Slice 3: Final Audit
+## Slice 2: Final Audit
 
 Remove transitional APIs and verify policy coverage.
 

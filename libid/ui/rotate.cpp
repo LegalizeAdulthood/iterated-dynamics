@@ -9,6 +9,7 @@
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "helpdefs.h"
+#include "io/check_write_file.h"
 #include "io/library.h"
 #include "io/loadmap.h"
 #include "math/rand15.h"
@@ -560,7 +561,7 @@ void save_palette()
         {
             std::strcat(filename, ".map");
         }
-        const std::filesystem::path pal_name{get_save_path(WriteFile::MAP, filename)};
+        const std::filesystem::path pal_name{get_checked_save_path(WriteFile::MAP, filename)};
         assert(!pal_name.empty());
         if (std::FILE *dac_file = std::fopen(pal_name.string().c_str(), "w"); dac_file == nullptr)
         {
