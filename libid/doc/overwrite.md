@@ -21,39 +21,13 @@ not preserve the old helpers as replacement APIs.
 - `main_menu_switch.cpp` is input.  It loads the image chosen by browse
   mode and must use the selected browse path or
   `find_file(ReadFile::IMAGE, ...)`.
-- `merge_path_names.cpp` is obsolete input glue.  Delete it after callers
-  use library paths directly.
 - `make_mig.cpp` has both use cases.  GIF input uses
   `find_file(ReadFile::IMAGE, ...)`; GIF output uses the save library.
 - `rotate.cpp`, `make_batch_file.cpp`, sound, orbit, raytrace, light
   image, and autokey output paths must use the save library before
   overwrite.
 
-## Slice 1: Delete Split/Build/Merge Helpers
-
-Delete the obsolete path helper family after input callers migrate.
-
-Work items:
-
-- Delete `libid/io/split_path.cpp`.
-- Delete `libid/include/io/split_path.h`.
-- Delete `libid/io/make_path.cpp`.
-- Delete `libid/include/io/make_path.h`.
-- Delete `libid/io/merge_path_names.cpp`.
-- Delete `libid/include/io/merge_path_names.h`.
-- Remove all six files from `libid/CMakeLists.txt`.
-- Remove obsolete helper tests and test CMake entries.
-
-Tests:
-
-- Remove `tests/libid/io/test_split_path.cpp`.
-- Remove `tests/libid/io/test_make_path.cpp`.
-- Remove `tests/libid/io/test_merge_path_names.cpp`.
-- Verify `rg "split_path|make_path|merge_path_names" libid tests`
-  finds no production or test use.
-- Build proves no stale include remains.
-
-## Slice 2: Add Save-Library Overwrite Helper
+## Slice 1: Add Save-Library Overwrite Helper
 
 Introduce one output helper that combines save-library routing and
 overwrite policy.
@@ -80,7 +54,7 @@ Tests:
   in the save library.
 - Verify the final path keeps the correct `WriteFile` subdirectory.
 
-## Slice 3: Migrate Existing Output Callers
+## Slice 2: Migrate Existing Output Callers
 
 Move output paths to `get_checked_save_path`.
 
@@ -98,7 +72,7 @@ Tests:
 - Verify these callers no longer call `check_write_file` directly.
 - Verify each caller passes a `WriteFile` kind, not a prebuilt directory.
 
-## Slice 4: Fix Wrong-Directory Light Name Check
+## Slice 3: Fix Wrong-Directory Light Name Check
 
 Fix light-name overwrite handling in the 3D parameter flow.
 
@@ -117,7 +91,7 @@ Tests:
 - Verify a collision in the final save-library path advances the filename
   when overwrite is off.
 
-## Slice 5: Apply Overwrite To Direct Outputs
+## Slice 4: Apply Overwrite To Direct Outputs
 
 Route remaining user-visible outputs through `get_checked_save_path`.
 
@@ -138,7 +112,7 @@ Tests:
 - Verify `makemig.bat` advances filename when overwrite is off.
 - Verify parameter entry replacement behavior is unchanged.
 
-## Slice 6: Fold Legacy Search Dirs Into Libraries
+## Slice 5: Fold Legacy Search Dirs Into Libraries
 
 Make the read-library list the only generic input search mechanism.
 
@@ -164,7 +138,7 @@ Tests:
 - Verify save-library fallback is unchanged where currently supported.
 - Verify missing files still fail the same way.
 
-## Slice 7: Final Audit
+## Slice 6: Final Audit
 
 Remove transitional APIs and verify policy coverage.
 

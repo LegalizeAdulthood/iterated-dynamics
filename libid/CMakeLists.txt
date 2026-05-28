@@ -136,13 +136,10 @@ add_library(libid
     include/io/load_entry_text.h io/load_entry_text.cpp
     include/io/locate_input_file.h io/locate_input_file.cpp
     include/io/make_mig.h io/make_mig.cpp
-    include/io/make_path.h io/make_path.cpp
-    include/io/merge_path_names.h io/merge_path_names.cpp
     include/io/path_match.h io/path_match.cpp
     include/io/save_timer.h io/save_timer.cpp
     include/io/search_path.h io/search_path.cpp
     include/io/special_dirs.h io/special_dirs.cpp
-    include/io/split_path.h io/split_path.cpp
     include/io/trim_filename.h io/trim_filename.cpp
     include/io/update_save_name.h io/update_save_name.cpp
 
