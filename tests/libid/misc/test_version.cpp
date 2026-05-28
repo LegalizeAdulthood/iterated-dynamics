@@ -3,6 +3,7 @@
 #include <misc/version.h>
 
 #include <config/port_config.h>
+#include <io/loadfile.h>
 #include <misc/ValueSaver.h>
 
 #include <gtest/gtest.h>
@@ -10,6 +11,7 @@
 #include <iostream>
 
 using namespace id::config;
+using namespace id::io;
 using namespace id::misc;
 
 namespace id::test
@@ -43,6 +45,21 @@ TEST(TestVersion, currentIdVersion)
     EXPECT_EQ(ID_VERSION_PATCH, version.patch);
     EXPECT_EQ(ID_VERSION_TWEAK, version.tweak);
     EXPECT_FALSE(version.legacy);
+}
+
+TEST(TestVersion, resetVersionToCurrent)
+{
+    ValueSaver saved_version{g_version};
+    ValueSaver saved_file_version{g_file_version};
+    g_version = parse_legacy_version(1730);
+    g_file_version = parse_legacy_version(1730);
+
+    reset_version_to_current();
+
+    EXPECT_EQ(current_id_version(), g_version);
+    EXPECT_EQ(current_id_version(), g_file_version);
+    EXPECT_FALSE(g_version.legacy);
+    EXPECT_FALSE(g_file_version.legacy);
 }
 
 TEST(TestVersion, legacyVersionToString)

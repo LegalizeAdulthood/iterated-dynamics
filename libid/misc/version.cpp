@@ -4,6 +4,8 @@
 
 #include <config/port_config.h>
 
+#include "io/loadfile.h"
+
 #include <fmt/format.h>
 
 using namespace id::config;
@@ -24,6 +26,13 @@ Version current_id_version()
 }
 
 Version g_version{current_id_version()};
+
+void reset_version_to_current()
+{
+    const Version version{current_id_version()};
+    g_version = version;
+    io::g_file_version = version;
+}
 
 std::string to_current_version_string(const Version &value)
 {

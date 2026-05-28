@@ -18,9 +18,11 @@ struct Version
     bool legacy;
 };
 
-extern const int             g_patch_level;
-extern int                   g_release;
-extern Version               g_version;
+// clang-format off
+extern const int                        g_patch_level;
+extern int                              g_release;
+extern Version                          g_version;
+// clang-format on
 
 inline Version id_version(const int major, const int minor)
 {
@@ -28,6 +30,7 @@ inline Version id_version(const int major, const int minor)
 }
 
 Version current_id_version();
+void reset_version_to_current();
 
 std::string to_current_version_string(const Version &value);
 
@@ -73,6 +76,7 @@ inline bool operator<=(const Version &lhs, const Version &rhs)
 {
     return lhs < rhs || lhs == rhs;
 }
+
 inline bool operator<=(const Version &lhs, const int legacy_version)
 {
     return lhs <= parse_legacy_version(legacy_version);

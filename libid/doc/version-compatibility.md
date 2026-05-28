@@ -23,33 +23,6 @@ All compatibility checks must use `g_version` or `g_file_version`, never a
 parallel integer release value.  `<Insert>` must restore `g_version` to the
 latest compiled Id version.
 
-## Slice 2: Reset Startup Compatibility Version
-
-Work items:
-
-- Add `reset_version_to_current()` or equivalent helper.
-- Call it from the `<Insert>` initialization path, currently
-  `init_vars_restart()`.
-- Ensure `cmd_files()` startup also begins with current compiled
-  compatibility before command-line parameters are processed.
-- Set both `g_version` and `g_file_version` to the current Id version at
-  restart.  A subsequent parameter `reset` may override both.
-
-Tests:
-
-- Add a focused command-file/startup test that seeds:
-  `g_version = parse_legacy_version(1730)` and
-  `g_file_version = parse_legacy_version(1730)`.
-- Invoke the same path used by `<Insert>` or a small exposed helper.
-- Verify `g_version == current_id_version()`.
-- Verify `g_file_version == current_id_version()`.
-- Verify no calculation globals such as `g_inside_color` are asserted here.
-
-Verified state:
-
-- `<Insert>` restores latest compiled compatibility behavior.
-- `g_version.legacy == false` after restart.
-
 ## Slice 3: Restore Fractint Reset Semantics
 
 Work items:

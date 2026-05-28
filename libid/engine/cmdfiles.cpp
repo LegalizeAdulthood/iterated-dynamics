@@ -446,6 +446,7 @@ static void init_libraries()
 
 static void init_vars_restart() // <ins> key init
 {
+    reset_version_to_current();
     g_record_colors = RecordColorsMode::AUTOMATIC;     // use mapfiles in PARs
     g_dither_flag = false;                             // no dithering
     g_ask_video = true;                                // turn on video-prompt flag
