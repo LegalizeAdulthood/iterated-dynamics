@@ -86,6 +86,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="../../d1/dbd/calc__frac__init_8h_source.html">engine/calc_frac_init.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d6/dd9/calcfrac_8h_source.html">engine/calcfrac.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../db/dda/cmdfiles_8h_source.html">engine/cmdfiles.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d2/d20/color__utils_8h_source.html">engine/color_utils.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d4/daf/fractals_8h_source.html">engine/fractals.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d9/db9/ImageRegion_8h_source.html">engine/ImageRegion.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../da/d2f/Inversion_8h_source.html">engine/Inversion.h</a>&quot;</code><br />
@@ -158,6 +159,12 @@ Functions</h2></td></tr>
 <tr class="separator:ac3229c7219c3e6e612dd473507e210f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ca44ec9d86320f29c3fbb08510b0741" id="r_a1ca44ec9d86320f29c3fbb08510b0741"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a1ca44ec9d86320f29c3fbb08510b0741">id::io::operator==</a> (const <a class="el" href="../../dc/d64/structid_1_1io_1_1OrbitsInfo.html">OrbitsInfo</a> &amp;lhs, const <a class="el" href="../../dc/d64/structid_1_1io_1_1OrbitsInfo.html">OrbitsInfo</a> &amp;rhs)</td></tr>
 <tr class="separator:a1ca44ec9d86320f29c3fbb08510b0741"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a67d6adba44d9261f000a3e43fac6d6c7" id="r_a67d6adba44d9261f000a3e43fac6d6c7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../de/d26/structid_1_1misc_1_1Version.html">misc::Version</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a67d6adba44d9261f000a3e43fac6d6c7">id::io::fractal_info_version</a> (const <a class="el" href="../../dc/da2/structid_1_1io_1_1FractalInfo.html">FractalInfo</a> &amp;read_info)</td></tr>
+<tr class="separator:a67d6adba44d9261f000a3e43fac6d6c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ca00cbeddd8a746602a51d28b8ecd4e" id="r_a4ca00cbeddd8a746602a51d28b8ecd4e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a4ca00cbeddd8a746602a51d28b8ecd4e">id::io::backwards_id1_3_palette_needed</a> (const <a class="el" href="../../de/d26/structid_1_1misc_1_1Version.html">misc::Version</a> &amp;<a class="el" href="../../d1/d3e/history_8cpp.html#ac620c19e22394db7bca83528aab69634">version</a>, const Byte palette[256][3], unsigned int colors)</td></tr>
+<tr class="separator:a4ca00cbeddd8a746602a51d28b8ecd4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af89d10334bf2c63f6a275d7fb0536e8a" id="r_af89d10334bf2c63f6a275d7fb0536e8a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#af89d10334bf2c63f6a275d7fb0536e8a">id::io::backwards_id1_3_palette</a> (Byte palette[256][3], unsigned int colors)</td></tr>
+<tr class="separator:af89d10334bf2c63f6a275d7fb0536e8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0921cb6939e2e088a3338cfd3d87a77c" id="r_a0921cb6939e2e088a3338cfd3d87a77c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">fractals::FractalType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a0921cb6939e2e088a3338cfd3d87a77c">id::io::migrate_integer_types</a> (int read_type)</td></tr>
 <tr class="separator:a0921cb6939e2e088a3338cfd3d87a77c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a28bc2626e6eb7ee42c19ba4312396d8c" id="r_a28bc2626e6eb7ee42c19ba4312396d8c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d19/namespaceid_1_1io.html#a28bc2626e6eb7ee42c19ba4312396d8c">id::io::read_overlay</a> ()</td></tr>
@@ -205,7 +212,7 @@ Functions</h2></td></tr>
 <div class="line">                                ((*((<span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>*)&amp;(<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a>)+1)) &lt;&lt; 8)</div>
 <div class="ttc" id="ahelp_8cpp_html_ace750fb09c482b08a31e24228dd719b7"><div class="ttname"><a href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a></div><div class="ttdeci">Byte c</div><div class="ttdef"><b>Definition</b> <a href="../../d0/dff/help_8cpp_source.html#l00073">help.cpp:73</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="../../da/d29/loadfile_8cpp_source.html#l00067">67</a> of file <a class="el" href="../../da/d29/loadfile_8cpp_source.html">loadfile.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../da/d29/loadfile_8cpp_source.html#l00068">68</a> of file <a class="el" href="../../da/d29/loadfile_8cpp_source.html">loadfile.cpp</a>.</p>
 
 </div>
 </div>
@@ -222,7 +229,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/d29/loadfile_8cpp_source.html#l00818">818</a> of file <a class="el" href="../../da/d29/loadfile_8cpp_source.html">loadfile.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../da/d29/loadfile_8cpp_source.html#l00866">866</a> of file <a class="el" href="../../da/d29/loadfile_8cpp_source.html">loadfile.cpp</a>.</p>
 
 </div>
 </div>
@@ -238,7 +245,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../da/d29/loadfile_8cpp_source.html#l00819">819</a> of file <a class="el" href="../../da/d29/loadfile_8cpp_source.html">loadfile.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../da/d29/loadfile_8cpp_source.html#l00867">867</a> of file <a class="el" href="../../da/d29/loadfile_8cpp_source.html">loadfile.cpp</a>.</p>
 
 </div>
 </div>

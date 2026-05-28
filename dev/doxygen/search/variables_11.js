@@ -17,9 +17,9 @@ var searchData=
   ['red_14',['red',['../dc/db0/loadmap_8cpp.html#a9b2249ae0b3882aaf27e96c396a5bb13',1,'red:&#160;loadmap.cpp'],['../df/d57/structid_1_1ui_1_1PalEntry.html#a702ead3ba9106e15a231f64937ef9539',1,'id::ui::PalEntry::red']]],
   ['red_5fbright_15',['red_bright',['../d1/d3e/history_8cpp.html#ac610128375d767bf9732096f2c6ec304',1,'red_bright:&#160;history.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#a6477d0e5affd60a52de41c7306e2ca82',1,'id::io::FractalInfo::red_bright']]],
   ['red_5fcrop_5fleft_16',['red_crop_left',['../d1/d3e/history_8cpp.html#a5af34c1dbeddc479c80477fdd3f5435c',1,'red_crop_left:&#160;history.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#ae867262af3780249f4a641d19aa6db95',1,'id::io::FractalInfo::red_crop_left']]],
-  ['red_5fcrop_5fright_17',['red_crop_right',['../d1/d3e/history_8cpp.html#aa506cc99231db206a3032d939cd71e5f',1,'red_crop_right:&#160;history.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#aa53d45224baadc51f279b349d7929334',1,'id::io::FractalInfo::red_crop_right']]],
+  ['red_5fcrop_5fright_17',['red_crop_right',['../dc/da2/structid_1_1io_1_1FractalInfo.html#aa53d45224baadc51f279b349d7929334',1,'id::io::FractalInfo::red_crop_right'],['../d1/d3e/history_8cpp.html#aa506cc99231db206a3032d939cd71e5f',1,'red_crop_right:&#160;history.cpp']]],
   ['reduction_18',['reduction',['../da/d47/structid_1_1engine_1_1Viewport.html#a55f7f9c3606da62190b0537df968e56f',1,'id::engine::Viewport']]],
-  ['release_19',['release',['../d1/d3e/history_8cpp.html#a7c97eb876977f934d544e77118e8df0a',1,'release:&#160;history.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#adc99979ecc220932a13e080251c8c330',1,'id::io::FractalInfo::release']]],
+  ['release_19',['release',['../dc/da2/structid_1_1io_1_1FractalInfo.html#adc99979ecc220932a13e080251c8c330',1,'id::io::FractalInfo']]],
   ['resume_20',['resume',['../df/d34/structid_1_1ui_1_1MainContext.html#a0b38e1a0ca91fe89add8bddf1430ce2a',1,'id::ui::MainContext']]],
   ['resume_5fdata_21',['resume_data',['../dd/dfd/structid_1_1io_1_1ExtBlock2.html#acffa3fb07f1e5ff4ba3417ac2602b6f1',1,'id::io::ExtBlock2']]],
   ['reverse_22',['reverse',['../da/db4/lsystem_8cpp.html#a5a604e770f9bc2d5b56e132dbf51270d',1,'reverse:&#160;lsystem.cpp'],['../d6/dad/structid_1_1ui_1_1StereoData.html#a9ee953fd53340402f6b077608fe65c1c',1,'id::ui::StereoData::reverse']]],
@@ -29,5 +29,6 @@ var searchData=
   ['rotate_5flo_26',['rotate_lo',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a7bb7e7ea6bfde356f31442ac24893b58',1,'id::io::FractalInfo']]],
   ['row_27',['row',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#a8025abb41a16a3cbc7671b01bf18c805',1,'id::fractals::ViewTransform3D']]],
   ['row1_28',['row1',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#ae803e62765105f5c96df7112b5284e13',1,'id::fractals::ViewTransform3D']]],
-  ['rq_29',['rq',['../de/d47/soi_8cpp.html#a9efbfe1dab868d5a623c493e272fb29f',1,'soi.cpp']]]
+  ['rq_29',['rq',['../de/d47/soi_8cpp.html#a9efbfe1dab868d5a623c493e272fb29f',1,'soi.cpp']]],
+  ['rxy_30',['rxy',['../da/d49/structid_1_1fractals_1_1LyapunovSequence.html#aca86117bbedffa4338514c1f2dfe0c00',1,'id::fractals::LyapunovSequence']]]
 ];

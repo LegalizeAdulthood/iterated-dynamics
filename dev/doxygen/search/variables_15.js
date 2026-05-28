@@ -8,7 +8,7 @@ var searchData=
   ['variables_5',['VARIABLES',['../d5/d38/namespaceid_1_1fractals.html#a5129303d164af7398060ef9c33bf3389',1,'id::fractals']]],
   ['vars_6',['vars',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a46b6d382bac25719472bff3ed3457131',1,'id::fractals::CompiledFormula']]],
   ['vary_5ffn_7',['vary_fn',['../d0/d31/structid_1_1ui_1_1GeneBase.html#a729a7e508653f72901645a66d83aec84',1,'id::ui::GeneBase']]],
-  ['version_8',['version',['../db/dec/structhc_1_1HelpSource.html#a6ede96084d435cadbcf6fd2352f84efe',1,'hc::HelpSource::version'],['../df/da1/structid_1_1help_1_1HelpSignature.html#a25604faefc223dfe6fd43ca170f93c3a',1,'id::help::HelpSignature::version']]],
+  ['version_8',['version',['../d1/d3e/history_8cpp.html#ac620c19e22394db7bca83528aab69634',1,'version:&#160;history.cpp'],['../df/da1/structid_1_1help_1_1HelpSignature.html#a25604faefc223dfe6fd43ca170f93c3a',1,'id::help::HelpSignature::version'],['../db/dec/structhc_1_1HelpSource.html#a6ede96084d435cadbcf6fd2352f84efe',1,'hc::HelpSource::version']]],
   ['version_5fmajor_9',['version_major',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a245a8a78fa27f41f212ad56fddabf226',1,'id::io::FractalInfo']]],
   ['version_5fminor_10',['version_minor',['../dc/da2/structid_1_1io_1_1FractalInfo.html#ac5d9e69d5e356b92600bc6c5d3b8e032',1,'id::io::FractalInfo']]],
   ['version_5fpatch_11',['version_patch',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a39fa1dca2ec168cd58ad1a30ee097ef7',1,'id::io::FractalInfo']]],
