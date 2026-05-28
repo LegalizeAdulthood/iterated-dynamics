@@ -808,7 +808,6 @@ void restore_history_info(const int i)
     g_disk_16_bit = last.disk_16_bit;
     g_version = last.version;
     g_file_version = last.file_version;
-    g_release = g_version.major * 100 + g_version.minor;
     g_display_3d = last.display_3d;
     g_ambient = last.ambient;
     g_randomize_3d = last.randomize_3d;

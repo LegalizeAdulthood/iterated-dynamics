@@ -2,8 +2,8 @@
 
 ## Goal
 
-Drop the `g_release` variable and restore the Fractint compatibility model
-using `g_version` and `g_file_version`.
+Drop the old integer release global and restore the Fractint compatibility
+model using `g_version` and `g_file_version`.
 
 Fractint has two version concepts:
 
@@ -22,34 +22,6 @@ Id should use:
 All compatibility checks must use `g_version` or `g_file_version`, never a
 parallel integer release value.  `<Insert>` must restore `g_version` to the
 latest compiled Id version.
-
-## Slice 7: Remove `g_release`
-
-Work items:
-
-- Remove `extern int g_release` from `libid/include/misc/version.h`.
-- Remove `extern const int g_patch_level` from
-  `libid/include/misc/version.h`.
-- Remove the definition from `libid/misc/version.cpp`.
-- Replace all remaining reads with helper calls or `g_version`.
-- Replace all remaining writes with `reset_version_to_current()` or direct
-  `g_version` assignment.
-- Remove `ValueSaver<int>` usage for `g_release` from tests.
-- Remove tests for `g_patch_level`.
-- Update comments that describe `g_release` or `g_patch_level`.
-
-Tests:
-
-- Run a source search for `g_release`; expected result is no matches.
-- Run a source search for `g_patch_level`; expected result is no matches.
-- Run a source search for `save_release`; expected matches only in
-  Fractint reference sources or documentation.
-- Build should fail if any stale declaration remains.
-
-Verified state:
-
-- The active runtime has one compatibility global: `g_version`.
-- Loaded files retain source-version context in `g_file_version`.
 
 ## Slice 8: Update Parameter Save And GIF Save
 
@@ -118,7 +90,8 @@ Work items:
 - Document bare `reset` as Fractint 17.30 compatibility.
 - Document explicit `reset=` as the way to preserve old behavior in par
   files.
-- Remove stale references to `g_release` from developer docs.
+- Remove stale references to retired integer version globals from developer
+  docs.
 
 Tests:
 
@@ -142,14 +115,11 @@ cmake --workflow rt-default
 Also run these searches:
 
 ```text
-rg "g_release" libid tests hc home
 rg "save_release" libid tests hc home
 ```
 
 Expected:
 
-- No `g_release` matches.
-- No `g_patch_level` matches.
 - No `save_release` matches outside documentation that explains Fractint.
 - All behavior checks use `g_version` or `g_file_version`.
 - `<Insert>` restores `g_version == current_id_version()`.

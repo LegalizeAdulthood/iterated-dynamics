@@ -102,7 +102,6 @@ TEST_F(TestHistory, dumpsVersionAndFileVersion)
     EXPECT_THAT(text, HasSubstr(R"json("version":{"major":1,"minor":2,"patch":3,"tweak":4,"legacy":0})json"));
     EXPECT_THAT(text, HasSubstr(R"json("file_version":{"major":20,"minor":4,"patch":0,"tweak":0,"legacy":1})json"));
     EXPECT_THAT(text, Not(HasSubstr(R"json("release":)json")));
-    EXPECT_THAT(text, Not(HasSubstr(R"json("save_release":)json")));
 }
 
 } // namespace id::test

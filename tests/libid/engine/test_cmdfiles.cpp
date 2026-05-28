@@ -416,7 +416,6 @@ protected:
     void SetUp() override;
 
     ValueSaver<Version> m_saved_version{g_version, Version{1, 2, 3, 4, false}};
-    ValueSaver<int> m_saved_release{g_release};
     ValueSaver<fs::path> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
     ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
@@ -504,28 +503,24 @@ foo                {
 
 TEST_F(TestParameterCommandError, resetBadArg)
 {
-    ValueSaver saved_escape_exit{g_release, 123};
     ValueSaver saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver saved_file_version{g_file_version, Version{5, 6, 7, 8, false}};
 
     exec_cmd_arg("reset=foo");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(123, g_release);
     EXPECT_EQ((Version{1, 2, 3, 4, false}), g_version);
     EXPECT_EQ((Version{5, 6, 7, 8, false}), g_file_version);
 }
 
 TEST_F(TestParameterCommand, resetNoArg)
 {
-    ValueSaver saved_release{g_release, 102};
     ValueSaver saved_version{g_version, Version{1, 2, 0, 0, false}};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1730, g_release);
     EXPECT_EQ(17, g_version.major);
     EXPECT_EQ(30, g_version.minor);
     EXPECT_EQ(0, g_version.patch);
@@ -540,28 +535,24 @@ TEST_F(TestParameterCommand, resetNoArg)
 
 TEST_F(TestParameterCommand, resetZero)
 {
-    ValueSaver saved_release{g_release, 102};
     ValueSaver saved_version{g_version, Version{1, 2, 0, 0, false}};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset=0");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1730, g_release);
     EXPECT_EQ(parse_legacy_version(1730), g_version);
     EXPECT_EQ(parse_legacy_version(1730), g_file_version);
 }
 
 TEST_F(TestParameterCommand, resetVersion10)
 {
-    ValueSaver saved_release{g_release, 0};
     ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset=100");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(100, g_release);
     EXPECT_EQ(1, g_version.major);
     EXPECT_EQ(0, g_version.minor);
     EXPECT_EQ(0, g_version.patch);
@@ -572,14 +563,12 @@ TEST_F(TestParameterCommand, resetVersion10)
 
 TEST_F(TestParameterCommand, resetVersion11)
 {
-    ValueSaver saved_release{g_release, 0};
     ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset=101");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(101, g_release);
     EXPECT_EQ(1, g_version.major);
     EXPECT_EQ(1, g_version.minor);
     EXPECT_EQ(0, g_version.patch);
@@ -590,14 +579,12 @@ TEST_F(TestParameterCommand, resetVersion11)
 
 TEST_F(TestParameterCommand, resetVersion12)
 {
-    ValueSaver saved_release{g_release, 0};
     ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, true}};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset=1/2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(102, g_release);
     EXPECT_EQ(1, g_version.major);
     EXPECT_EQ(2, g_version.minor);
     EXPECT_EQ(0, g_version.patch);
@@ -608,14 +595,12 @@ TEST_F(TestParameterCommand, resetVersion12)
 
 TEST_F(TestParameterCommand, resetLegacyVersion)
 {
-    ValueSaver saved_release{g_release, 0};
     ValueSaver saved_version{g_version, Version{2222, 3333, 4444, 5555, false}};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, false}};
 
     exec_cmd_arg("reset=1906");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(1906, g_release);
     EXPECT_EQ(19, g_version.major);
     EXPECT_EQ(6, g_version.minor);
     EXPECT_EQ(0, g_version.patch);
@@ -630,13 +615,11 @@ TEST_F(TestParameterCommand, resetLegacyVersion)
 
 TEST_F(TestParameterCommand, resetVersionAllFields)
 {
-    ValueSaver saved_release{g_release, 0};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset=1/2/3/4");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(102, g_release);
     EXPECT_EQ(1, g_version.major);
     EXPECT_EQ(2, g_version.minor);
     EXPECT_EQ(3, g_version.patch);
@@ -651,48 +634,41 @@ TEST_F(TestParameterCommand, resetVersionAllFields)
 
 TEST_F(TestParameterCommand, resetVersionMajorMinorPatch)
 {
-    ValueSaver saved_release{g_release, 0};
     ValueSaver saved_file_version{g_file_version, Version{9, 9, 9, 9, true}};
 
     exec_cmd_arg("reset=1/3/2");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::RESET, m_result);
-    EXPECT_EQ(103, g_release);
     EXPECT_EQ((Version{1, 3, 2, 0, false}), g_version);
     EXPECT_EQ((Version{1, 3, 2, 0, false}), g_file_version);
 }
 
 TEST_F(TestParameterCommandError, resetYesBadArg)
 {
-    ValueSaver saved_release{g_release, 123};
     ValueSaver saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver saved_file_version{g_file_version, Version{5, 6, 7, 8, false}};
 
     exec_cmd_arg("reset=y");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(123, g_release);
     EXPECT_EQ((Version{1, 2, 3, 4, false}), g_version);
     EXPECT_EQ((Version{5, 6, 7, 8, false}), g_file_version);
 }
 
 TEST_F(TestParameterCommandError, releaseIsNotResetAlias)
 {
-    ValueSaver saved_release{g_release, 123};
     ValueSaver saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver saved_file_version{g_file_version, Version{5, 6, 7, 8, false}};
 
     exec_cmd_arg("release=1906");
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
-    EXPECT_EQ(123, g_release);
     EXPECT_EQ((Version{1, 2, 3, 4, false}), g_version);
     EXPECT_EQ((Version{5, 6, 7, 8, false}), g_file_version);
 }
 
 TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
 {
-    ValueSaver saved_release{g_release};
     ValueSaver saved_version{g_version};
     ValueSaver saved_fractal_type{g_fractal_type};
     ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific};

@@ -13,13 +13,6 @@ using namespace id::config;
 namespace id::misc
 {
 
-// g_release is pushed/popped on the history stack to provide backward compatibility with previous
-// behavior, so it can't be const.
-int g_release{ID_VERSION_MAJOR * 100 + ID_VERSION_MINOR};
-
-// g_patch_level can't be modified.
-const int g_patch_level{ID_VERSION_PATCH};
-
 Version current_id_version()
 {
     return Version{ID_VERSION_MAJOR, ID_VERSION_MINOR, ID_VERSION_PATCH, ID_VERSION_TWEAK, false};

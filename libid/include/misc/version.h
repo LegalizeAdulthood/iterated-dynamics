@@ -19,8 +19,6 @@ struct Version
 };
 
 // clang-format off
-extern const int                        g_patch_level;
-extern int                              g_release;
 extern Version                          g_version;
 // clang-format on
 
@@ -41,7 +39,7 @@ std::string to_par_string(const Version &value);
 // String for displaying to the user.
 std::string to_display_string(const Version &value);
 
-// Parse legacy g_release style version.
+// Parse legacy Fractint integer version.
 Version parse_legacy_version(int version);
 
 inline bool operator==(const Version &lhs, const Version &rhs)

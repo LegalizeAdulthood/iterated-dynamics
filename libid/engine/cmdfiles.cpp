@@ -3165,30 +3165,30 @@ static CmdArgFlags cmd_reset(const Command &cmd)
     init_vars_fractal();
     if (cmd.num_int_params == 0)
     {
-        g_release = 1730;
-        g_version = parse_legacy_version(g_release);
+        g_version = parse_legacy_version(1730);
     }
     else if (cmd.num_int_params == 1)
     {
         if (cmd.int_vals[0] == 0)
         {
-            g_release = 1730;
-            g_version = parse_legacy_version(g_release);
+            g_version = parse_legacy_version(1730);
         }
         // Id version: reset=100, reset=101; legacy version: reset=1960
         else if (cmd.int_vals[0] >= 100)
         {
-            g_release = cmd.int_vals[0];
-            g_version.major = g_release / 100;
-            g_version.minor = g_release % 100;
-            g_version.patch = 0;
-            g_version.tweak = 0;
-            g_version.legacy = cmd.int_vals[0] != 100 && cmd.int_vals[0] != 101;
+            const int version{cmd.int_vals[0]};
+            if (version == 100 || version == 101)
+            {
+                g_version = Version{version / 100, version % 100, 0, 0, false};
+            }
+            else
+            {
+                g_version = parse_legacy_version(version);
+            }
         }
         // Id version: reset=<major>
         else
         {
-            g_release = cmd.int_vals[0] * 100;
             g_version = Version{};
             g_version.major = cmd.int_vals[0];
         }
@@ -3196,7 +3196,6 @@ static CmdArgFlags cmd_reset(const Command &cmd)
     // Id version: reset=<major>/<minor>[/<patch>[/<tweak>]]
     else if (cmd.num_int_params > 1)
     {
-        g_release = cmd.int_vals[0] * 100 + cmd.int_vals[1];
         g_version = Version{};
         g_version.major = cmd.int_vals[0];
         g_version.minor = cmd.int_vals[1];
