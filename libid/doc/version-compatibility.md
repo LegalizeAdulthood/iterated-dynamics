@@ -23,37 +23,6 @@ All compatibility checks must use `g_version` or `g_file_version`, never a
 parallel integer release value.  `<Insert>` must restore `g_version` to the
 latest compiled Id version.
 
-## Slice 3: Restore Fractint Reset Semantics
-
-Work items:
-
-- Keep bare `reset` as Fractint compatibility:
-  `g_version = parse_legacy_version(1730)`.
-- Make `reset=0` match Fractint and also select 17.30.
-- Keep `reset=1730` and other `>= 100` values as legacy Fractint style
-  versions, except existing Id special cases that must remain supported.
-- Keep `reset=1/3/2` as modern Id version syntax.
-- Set `g_file_version = g_version` after any parameter-file reset.
-- Decide whether to implement Fractint `release=nnnn` as an alias for
-  `reset=nnnn`; document the decision in tests.
-
-Tests:
-
-- `reset` verifies:
-  `g_version == parse_legacy_version(1730)` and
-  `g_file_version == parse_legacy_version(1730)`.
-- `reset=0` verifies the same state.
-- `reset=1906` verifies both globals are Fractint 19.06.
-- `reset=1/3/2` verifies both globals are Id 1.3.2.
-- `reset=y` verifies `BAD_ARG` and both globals are unchanged.
-- If `release=1906` is supported, verify it sets both globals to Fractint
-  19.06 and returns the same flags as `reset=1906`.
-
-Verified state:
-
-- `g_version` is the active compatibility version.
-- `g_file_version` mirrors parameter-file compatibility after reset.
-
 ## Slice 4: Update GIF Load Version Flow
 
 Work items:

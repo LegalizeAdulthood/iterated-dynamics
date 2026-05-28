@@ -3170,8 +3170,13 @@ static CmdArgFlags cmd_reset(const Command &cmd)
     }
     else if (cmd.num_int_params == 1)
     {
+        if (cmd.int_vals[0] == 0)
+        {
+            g_release = 1730;
+            g_version = parse_legacy_version(g_release);
+        }
         // Id version: reset=100, reset=101; legacy version: reset=1960
-        if (cmd.int_vals[0] >= 100)
+        else if (cmd.int_vals[0] >= 100)
         {
             g_release = cmd.int_vals[0];
             g_version.major = g_release / 100;
