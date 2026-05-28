@@ -385,28 +385,8 @@ static MainState main_image_start(MainContext &context)
     return MainState::CONTINUE;
 }
 
-static void set_search_dirs()
-{
-    const char *fract_dir = getenv("FRACTDIR");
-    if (fract_dir == nullptr)
-    {
-        fract_dir = ".";
-    }
-    g_fractal_search_dir1 = fract_dir;
-    if (std::filesystem::exists(HOME_DIR))
-    {
-        g_fractal_search_dir2 = HOME_DIR;
-    }
-    else
-    {
-        g_fractal_search_dir2 = g_special_dirs->program_dir();
-    }
-}
-
 int id_main(int argc, char *argv[])
 {
-    set_search_dirs();
-
     // this traps non-math library floating point errors
     std::signal(SIGFPE, my_floating_point_err);
 

@@ -58,7 +58,6 @@
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
-#include "io/locate_input_file.h"
 #include "io/make_mig.h"
 #include "io/save_timer.h"
 #include "io/special_dirs.h"
@@ -172,7 +171,7 @@ static std::string extract_filename(const fs::path &source)
 
 static void process_sstools_ini()
 {
-    const std::string sstools_ini{locate_input_file("sstools.ini")}; // look for SSTOOLS.INI
+    const std::string sstools_ini{find_file(ReadFile::ID_CONFIG, "sstools.ini").string()}; // look for SSTOOLS.INI
     if (sstools_ini.empty())
     {
         return;
@@ -443,6 +442,7 @@ static void init_libraries()
     const fs::path docs_dir{g_special_dirs->documents_dir() / ID_PROGRAM_NAME};
     add_read_library(docs_dir);
     set_save_library(docs_dir);
+    init_default_read_libraries();
 }
 
 static void init_vars_restart() // <ins> key init
@@ -2428,13 +2428,7 @@ static CmdArgFlags cmd_library_dirs(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    const char *start = cmd.value;
-    for (const char *comma = std::strchr(start, ','); comma != nullptr; comma = std::strchr(start, ','))
-    {
-        add_read_library(std::string{start, comma});
-        start = comma + 1;
-    }
-    add_read_library(start);
+    add_read_libraries(std::string_view{cmd.value, static_cast<std::size_t>(cmd.value_len)});
     return CmdArgFlags::NONE;
 }
 

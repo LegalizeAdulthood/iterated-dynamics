@@ -60,8 +60,8 @@ Variables for GIF image decoding:
 Variables for file search paths and directories:
 
 - `g_check_cur_dir` - flag to check current directory for files
-- `g_fractal_search_dir1` - first additional search directory for fractal files
-- `g_fractal_search_dir2` - second additional search directory for fractal files
+- read libraries - ordered input search paths populated by `librarydirs`,
+  `FRACTDIR`, and the program fallback
 
 ## 6. Special Directories Group
 
@@ -122,7 +122,7 @@ These variable groups follow typical I/O operation patterns:
 
 5. **File Search**:
    - Check `g_check_cur_dir` first
-   - Search `g_fractal_search_dir1` and `g_fractal_search_dir2`
+   - Search read libraries in order
    - Use `g_special_dirs` for system paths
    - Use `g_working_dir`, `g_save_dir`, and `g_temp_dir` for file operations
 

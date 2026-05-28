@@ -94,7 +94,6 @@ add_executable(test-id
     io/test_loadmap.cpp
     io/test_load_config.cpp
     io/test_load_entry_text.cpp
-    io/test_locate_input_file.cpp
     io/test_path_match.cpp
     io/test_search_path.cpp
     io/test_trim_filename.cpp

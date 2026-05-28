@@ -5,7 +5,11 @@
 #include "io/find_file.h"
 #include "io/special_dirs.h"
 
+#include <config/home_dir.h>
+
+#include <cstdlib>
 #include <string>
+#include <string_view>
 #include <utility>
 #include <vector>
 
@@ -15,8 +19,6 @@ namespace id::io
 {
 
 bool g_check_cur_dir{};
-std::filesystem::path g_fractal_search_dir1;
-std::filesystem::path g_fractal_search_dir2;
 
 using PathList = std::vector<fs::path>;
 
@@ -29,6 +31,7 @@ struct WildcardSearch
 };
 
 static PathList s_read_libraries;
+static PathList s_fallback_read_libraries;
 static fs::path s_save_library;
 static WildcardSearch s_wildcard;
 
@@ -59,11 +62,82 @@ static std::string_view subdir(ReadFile kind)
 void clear_read_library_path()
 {
     s_read_libraries.clear();
+    s_fallback_read_libraries.clear();
 }
 
 void add_read_library(fs::path path)
 {
     s_read_libraries.emplace_back(std::move(path));
+}
+
+void add_read_libraries(const std::string_view path_list)
+{
+    constexpr std::string_view separator{","};
+    for (std::size_t start = 0; start <= path_list.size();)
+    {
+        const std::size_t end = path_list.find_first_of(separator, start);
+        const std::string_view path{
+            path_list.substr(start, end == std::string_view::npos ? std::string_view::npos : end - start)};
+        if (!path.empty())
+        {
+            s_read_libraries.emplace_back(path);
+        }
+        if (end == std::string_view::npos)
+        {
+            break;
+        }
+        start = end + 1;
+    }
+}
+
+static void add_fallback_read_library(fs::path path)
+{
+    s_fallback_read_libraries.emplace_back(std::move(path));
+}
+
+void init_default_read_libraries()
+{
+    if (const char *fract_dir = std::getenv("FRACTDIR"); fract_dir != nullptr)
+    {
+        add_fallback_read_library(fract_dir);
+    }
+    else
+    {
+        add_fallback_read_library(".");
+    }
+    if (fs::exists(id::config::HOME_DIR))
+    {
+        add_fallback_read_library(id::config::HOME_DIR);
+    }
+    else
+    {
+        add_fallback_read_library(g_special_dirs->program_dir());
+    }
+}
+
+static fs::path find_file_in_dirs(const PathList &dirs, const fs::path &file_path)
+{
+    for (const fs::path &dir : dirs)
+    {
+        if (const fs::path path = dir / file_path; fs::exists(path))
+        {
+            return path;
+        }
+    }
+    return {};
+}
+
+fs::path find_file_in_read_library(const fs::path &file_path)
+{
+    if (file_path.is_absolute() && fs::exists(file_path))
+    {
+        return file_path;
+    }
+    if (const fs::path path = find_file_in_dirs(s_read_libraries, file_path); !path.empty())
+    {
+        return path;
+    }
+    return find_file_in_dirs(s_fallback_read_libraries, file_path);
 }
 
 fs::path find_file(const ReadFile kind, const fs::path &file_path)
@@ -118,14 +192,12 @@ fs::path find_file(const ReadFile kind, const fs::path &file_path)
         return path;
     }
 
-    if (const fs::path path = check_dir(g_fractal_search_dir1); !path.empty())
+    for (const fs::path &dir : s_fallback_read_libraries)
     {
-        return path;
-    }
-
-    if (const fs::path path = check_dir(g_fractal_search_dir2); !path.empty())
-    {
-        return path;
+        if (const fs::path path = check_dir(dir); !path.empty())
+        {
+            return path;
+        }
     }
 
     return {};

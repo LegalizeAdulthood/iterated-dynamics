@@ -11,6 +11,9 @@
 
 #include <gtest/gtest.h>
 
+#include <cstdlib>
+#include <string>
+
 using Path = std::filesystem::path;
 
 using namespace id::io;
@@ -28,6 +31,47 @@ public:
 protected:
     void SetUp() override;
     void TearDown() override;
+};
+
+class EnvVarSaver
+{
+public:
+    EnvVarSaver(const char *name, const char *value) :
+        m_name{name}
+    {
+        if (const char *old_value = std::getenv(name); old_value != nullptr)
+        {
+            m_had_value = true;
+            m_value = old_value;
+        }
+        set(value);
+    }
+
+    ~EnvVarSaver()
+    {
+        set(m_had_value ? m_value.c_str() : nullptr);
+    }
+
+private:
+    void set(const char *value) const
+    {
+#ifdef _WIN32
+        _putenv_s(m_name.c_str(), value == nullptr ? "" : value);
+#else
+        if (value == nullptr)
+        {
+            unsetenv(m_name.c_str());
+        }
+        else
+        {
+            setenv(m_name.c_str(), value, 1);
+        }
+#endif
+    }
+
+    std::string m_name;
+    bool m_had_value{};
+    std::string m_value;
 };
 
 void TestLibrary::SetUp()
@@ -112,6 +156,20 @@ TEST_F(TestLibrary, findFormulaSearchMultiplePaths)
     ASSERT_FALSE(path.empty()) << path;
     EXPECT_EQ(Path{ID_TEST_FRM_FILE}, path.filename()) << path;
     EXPECT_EQ(Path{"formula"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, findFileReadLibraryPrecedesFallback)
+{
+    add_read_library(ID_TEST_LIBRARY_DIR2);
+    EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
+    init_default_read_libraries();
+
+    const Path path{find_file(ReadFile::IMAGE, ID_TEST_IMAGE_FILE)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{ID_TEST_IMAGE_FILE}, path.filename()) << path;
+    EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
 }
 
@@ -212,9 +270,10 @@ TEST_F(TestLibrary, saveRaytrace)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
 
-TEST_F(TestLibrary, findFileCheckSearchDir1Root)
+TEST_F(TestLibrary, findFileCheckFallbackRoot)
 {
-    ValueSaver saved_search_dir{g_fractal_search_dir1, ID_TEST_SEARCH_DIR1};
+    EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
+    init_default_read_libraries();
 
     const Path path{find_file(ReadFile::FORMULA, "root.frm")};
 
@@ -223,32 +282,10 @@ TEST_F(TestLibrary, findFileCheckSearchDir1Root)
     EXPECT_EQ(Path{ID_TEST_SEARCH_DIR1}, path.parent_path()) << path;
 }
 
-TEST_F(TestLibrary, findFilePreferSearchDir1SubDir)
+TEST_F(TestLibrary, findFilePreferFallbackSubDir)
 {
-    ValueSaver saved_search_dir{g_fractal_search_dir1, ID_TEST_SEARCH_DIR1};
-
-    const Path path{find_file(ReadFile::IFS, ID_TEST_IFS_FILE)};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{ID_TEST_IFS_FILE}, path.filename()) << path;
-    EXPECT_EQ(Path{"ifs"}, path.parent_path().filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_SEARCH_DIR1}, path.parent_path().parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findFileCheckSearchDir2Root)
-{
-    ValueSaver saved_search_dir{g_fractal_search_dir2, ID_TEST_SEARCH_DIR1};
-
-    const Path path{find_file(ReadFile::FORMULA, "root.frm")};
-
-    ASSERT_FALSE(path.empty()) << path;
-    EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
-    EXPECT_EQ(Path{ID_TEST_SEARCH_DIR1}, path.parent_path()) << path;
-}
-
-TEST_F(TestLibrary, findFilePreferSearchDir2SubDir)
-{
-    ValueSaver saved_search_dir{g_fractal_search_dir2, ID_TEST_SEARCH_DIR1};
+    EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
+    init_default_read_libraries();
 
     const Path path{find_file(ReadFile::IFS, ID_TEST_IFS_FILE)};
 
@@ -276,9 +313,8 @@ TEST_F(TestLibrary, findFileCurrentDirectory)
     CurrentPathSaver saved_cur_dir{ID_TEST_SEARCH_DIR2};
     ValueSaver saved_check_cur_dir{g_check_cur_dir, true};
     // these are all the places it could look
-    ValueSaver saved_search_dir1{g_fractal_search_dir1, data::ID_TEST_DATA_SUBDIR};
-    ValueSaver saved_search_dir2{g_fractal_search_dir2, data::ID_TEST_DATA_SUBDIR};
     ValueSaver saved_save_dir{g_save_dir, data::ID_TEST_DATA_SUBDIR};
+    add_read_library(data::ID_TEST_DATA_SUBDIR);
     set_save_library(data::ID_TEST_DATA_SUBDIR);
 
     const Path path{find_file(ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
@@ -287,6 +323,19 @@ TEST_F(TestLibrary, findFileCurrentDirectory)
     EXPECT_EQ(Path{ID_TEST_FORMULA_FILE2}, path.filename()) << path;
     EXPECT_EQ(id::test::data::ID_TEST_FRM_SUBDIR, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{"formula"} / ID_TEST_FORMULA_FILE2, path) << path;
+}
+
+TEST_F(TestLibrary, defaultReadLibrariesUseCurrentDirectoryWhenFractDirUnset)
+{
+    EnvVarSaver fract_dir{"FRACTDIR", nullptr};
+    CurrentPathSaver saved_cur_dir{ID_TEST_SEARCH_DIR1};
+    init_default_read_libraries();
+
+    const Path path{find_file(ReadFile::FORMULA, "root.frm")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"root.frm"}, path.filename()) << path;
+    EXPECT_EQ(Path{"root.frm"}, path) << path;
 }
 
 TEST_F(TestLibrary, findWildcardNoMatches)

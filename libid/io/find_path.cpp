@@ -33,24 +33,11 @@ std::string find_path(const char *filename,
         return file_path.string();
     }
 
-    const auto check_dir = [&](const fs::path &dir)
+    // check read libraries
+    fs::path read_library_path{find_file_in_read_library(file_path)};
+    if (!read_library_path.empty())
     {
-        fs::path check_path{dir / file_path};
-        return fs::exists(check_path) ? check_path.make_preferred().string() : std::string{};
-    };
-
-    // check FRACTDIR
-    std::string dir1_path{check_dir(g_fractal_search_dir1)};
-    if (!dir1_path.empty())
-    {
-        return dir1_path;
-    }
-
-    // check SRCDIR
-    std::string dir2_path{check_dir(g_fractal_search_dir2)};
-    if (!dir2_path.empty())
-    {
-        return dir2_path;
+        return read_library_path.make_preferred().string();
     }
 
     // check PATH

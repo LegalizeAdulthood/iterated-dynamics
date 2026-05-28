@@ -40,8 +40,7 @@ void TestFindPath::SetUp()
 {
     Test::SetUp();
     g_check_cur_dir = false;
-    g_fractal_search_dir1.clear();
-    g_fractal_search_dir2.clear();
+    clear_read_library_path();
 }
 
 TEST_F(TestFindPath, fileFoundInCurrentDirectory)
@@ -75,36 +74,18 @@ TEST_F(TestFindPath, notFoundInCurrentDirectory)
     ASSERT_TRUE(result.empty());
 }
 
-TEST_F(TestFindPath, foundInSearchDir1)
+TEST_F(TestFindPath, foundInReadLibrary)
 {
-    g_fractal_search_dir1 = ID_TEST_DATA_DIR;
+    add_read_library(ID_TEST_DATA_DIR);
 
     const std::string result = find_path(ID_TEST_IFS_FILE, m_empty_env);
 
     ASSERT_EQ((fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).make_preferred(), fs::path{result});
 }
 
-TEST_F(TestFindPath, notFoundInSearchDir1)
+TEST_F(TestFindPath, notFoundInReadLibrary)
 {
-    g_fractal_search_dir1 = ID_TEST_DATA_DIR;
-
-    const std::string result = find_path(m_non_existent, m_empty_env);
-
-    ASSERT_TRUE(result.empty());
-}
-
-TEST_F(TestFindPath, foundInSearchDir2)
-{
-    g_fractal_search_dir2 = ID_TEST_DATA_DIR;
-
-    const std::string result = find_path(ID_TEST_IFS_FILE, m_empty_env);
-
-    ASSERT_EQ((fs::path{ID_TEST_DATA_DIR} / ID_TEST_IFS_FILE).make_preferred(), fs::path{result});
-}
-
-TEST_F(TestFindPath, notFoundInSearchDir2)
-{
-    g_fractal_search_dir2 = ID_TEST_DATA_DIR;
+    add_read_library(ID_TEST_DATA_DIR);
 
     const std::string result = find_path(m_non_existent, m_empty_env);
 

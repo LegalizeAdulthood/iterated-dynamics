@@ -827,13 +827,14 @@ TEST_F(TestParameterCommandError, mapTooLong)
 TEST_F(TestParameterCommand, mapSpecifiesSubdir)
 {
     ValueSaver saved_map_name{g_map_name, ""};
-    ValueSaver saved_search_dir1{g_fractal_search_dir1, ID_TEST_HOME_DIR};
+    add_read_library(ID_TEST_HOME_DIR);
 
     exec_cmd_arg(
         std::string{"map="} + ID_TEST_MAP_SUBDIR + SLASH + ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(std::string{ID_TEST_MAP_SUBDIR} + SLASH + ID_TEST_MAP_FILE, g_map_name);
+    clear_read_library_path();
 }
 
 TEST_F(TestParameterCommand, mapSpecifiesExistingFile)

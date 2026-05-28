@@ -134,7 +134,6 @@ add_library(libid
     include/io/loadmap.h io/loadmap.cpp
     include/io/load_config.h io/load_config.cpp
     include/io/load_entry_text.h io/load_entry_text.cpp
-    include/io/locate_input_file.h io/locate_input_file.cpp
     include/io/make_mig.h io/make_mig.cpp
     include/io/path_match.h io/path_match.cpp
     include/io/save_timer.h io/save_timer.cpp

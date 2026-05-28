@@ -3,6 +3,7 @@
 #pragma once
 
 #include <filesystem>
+#include <string_view>
 
 namespace id::io
 {
@@ -36,13 +37,14 @@ enum class WriteFile
 };
 
 extern bool                  g_check_cur_dir;       // flag to check current dir for files
-extern std::filesystem::path g_fractal_search_dir1;
-extern std::filesystem::path g_fractal_search_dir2;
 
 void clear_read_library_path();
 void add_read_library(std::filesystem::path path);
+void add_read_libraries(std::string_view path_list);
+void init_default_read_libraries();
 
 std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file_path);
+std::filesystem::path find_file_in_read_library(const std::filesystem::path &file_path);
 
 void clear_save_library();
 void set_save_library(std::filesystem::path path);
