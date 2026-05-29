@@ -120,6 +120,18 @@ TEST_F(TestFindFileItemParFile, formula)
     EXPECT_EQ(g_parameter_file, m_path);
 }
 
+TEST_F(TestFindFileItemParFile, formulaPrefersParameterFile)
+{
+    m_path = data::ID_TEST_FRM_DIR;
+    m_path /= data::ID_TEST_FRM_FILE;
+
+    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA)};
+
+    EXPECT_FALSE(result);
+    EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(g_parameter_file, m_path);
+}
+
 TEST_F(TestFindFileItemParFile, ifs)
 {
     m_path = "missing.ifs";

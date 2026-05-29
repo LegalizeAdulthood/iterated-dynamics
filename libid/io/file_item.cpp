@@ -217,6 +217,36 @@ static bool check_path(const std::filesystem::path &path, std::FILE **infile, co
     return false;
 }
 
+static std::string par_search_name(const ItemType item_type, const std::string &item_name)
+{
+    switch (item_type)
+    {
+    case ItemType::FORMULA:
+        return "frm:" + item_name;
+    case ItemType::L_SYSTEM:
+        return "lsys:" + item_name;
+    case ItemType::IFS:
+        return "ifs:" + item_name;
+    case ItemType::PAR_SET:
+    default:
+        return item_name;
+    }
+}
+
+static bool check_parameter_file(
+    std::filesystem::path &path,
+    std::FILE **infile,
+    const std::string &item_name,
+    const ItemType item_type)
+{
+    const bool found{check_path(g_parameter_file, infile, par_search_name(item_type, item_name))};
+    if (found)
+    {
+        path = g_parameter_file;
+    }
+    return found;
+}
+
 bool find_file_item(
     std::filesystem::path &path, const std::string &item_name, std::FILE **file_ptr, const ItemType item_type)
 {
@@ -229,9 +259,14 @@ bool find_file_item(
     std::FILE *infile = nullptr;
     bool found = false;
 
+    if (item_type == ItemType::FORMULA)
+    {
+        found = check_parameter_file(path, &infile, item_name, item_type);
+    }
+
     if (!string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
     {
-        found = check_path(path, &infile, item_name);
+        found = found || check_path(path, &infile, item_name);
 
         if (!found && g_check_cur_dir)
         {
@@ -246,28 +281,7 @@ bool find_file_item(
 
     if (!found)
     {
-        std::string par_search_name;
-        switch (item_type)
-        {
-        case ItemType::FORMULA:
-            par_search_name = "frm:" + item_name;
-            break;
-        case ItemType::L_SYSTEM:
-            par_search_name = "lsys:" + item_name;
-            break;
-        case ItemType::IFS:
-            par_search_name = "ifs:" + item_name;
-            break;
-        case ItemType::PAR_SET:
-        default:
-            par_search_name = item_name;
-            break;
-        }
-        found = check_path(g_parameter_file, &infile, par_search_name);
-        if (found)
-        {
-            path = g_parameter_file;
-        }
+        found = check_parameter_file(path, &infile, item_name, item_type);
     }
 
     if (!found)

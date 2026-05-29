@@ -2136,8 +2136,8 @@ static CmdArgFlags cmd_formula_file(const Command &cmd)
         return CmdArgFlags::FRACTAL_PARAM;
     }
 
-    cmd.init_msg();
-    return CmdArgFlags::NONE;
+    g_formula_filename = cmd.value;
+    return CmdArgFlags::FRACTAL_PARAM;
 }
 
 // formulaname=?

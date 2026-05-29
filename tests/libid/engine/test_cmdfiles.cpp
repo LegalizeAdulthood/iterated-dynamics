@@ -3642,6 +3642,16 @@ TEST_F(TestParameterCommand, formulaFileFilename)
     EXPECT_EQ(home_file(ID_TEST_FRM_SUBDIR, ID_TEST_FRM_FILE), g_formula_filename);
 }
 
+TEST_F(TestParameterCommand, formulaFileMissingFilename)
+{
+    ValueSaver saved_formula_filename{g_formula_filename, ""};
+
+    exec_cmd_arg("formulafile=missing.frm");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(fs::path{"missing.frm"}, g_formula_filename);
+}
+
 TEST_F(TestParameterCommand, formulaName)
 {
     ValueSaver saved_formula_name{g_formula_name, ""};
