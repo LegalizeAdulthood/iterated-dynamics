@@ -8,6 +8,7 @@
 #include "math/fixed_pt.h"
 #include "math/rand15.h"
 #include "misc/debug_flags.h"
+#include "misc/version.h"
 
 #include <fmt/format.h>
 
@@ -145,6 +146,27 @@ static bool check_denom(const double denom)
         return true;
     }
     return false;
+}
+
+static DComplex formula_power(const DComplex &base, const DComplex &exponent)
+{
+    if (base.x == 0.0 && base.y == 0.0 && !(g_version < 1900))
+    {
+        g_overflow = true;
+        return {};
+    }
+    if (exponent.y == 0.0)
+    {
+        if (exponent.x == 0.0)
+        {
+            return {1.0, 0.0};
+        }
+        if (exponent.x == 1.0)
+        {
+            return base;
+        }
+    }
+    return pow(base, exponent);
 }
 
 void d_stk_add()
@@ -377,7 +399,7 @@ void d_stk_exp()
 void d_stk_pwr()
 {
     debug_trace_operation("PWR", g_arg1, g_arg2);
-    g_arg2->d = pow(g_arg2->d, g_arg1->d);
+    g_arg2->d = formula_power(g_arg2->d, g_arg1->d);
     g_arg1--;
     g_arg2--;
     debug_trace_stack_state();

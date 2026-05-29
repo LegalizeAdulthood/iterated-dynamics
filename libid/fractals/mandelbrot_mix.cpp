@@ -102,11 +102,9 @@ bool MandelbrotMix::setup()
            in which the fractal does not match the formula version
          */
         case 15:                    // 1111
+        case 12:                    // 1100
         case 10:                    // 1010
-        case 6:                     // 0110
-        case 5:                     // 0101
-        case 3:                     // 0011
-        case 0:                     // 0000
+        case 9:                     // 1001
             g_tmp_z.y = -g_tmp_z.y; // swap sign bit
         default:                    // do nothing - remaining cases already OK
             ;

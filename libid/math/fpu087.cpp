@@ -106,7 +106,7 @@ void cmplx_log(const DComplex &x, DComplex &z)
         z.y = 0.0;
         return;
     }
-    if (x.y == 0.0)// x is real
+    if (x.y == 0.0 && x.x > 0.0) // x is positive real
     {
         z.x = std::log(x.x);
         z.y = 0.0;

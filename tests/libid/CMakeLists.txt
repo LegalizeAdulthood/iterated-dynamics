@@ -77,6 +77,7 @@ add_executable(test-id
     fractals/test_frothy_basin.cpp
     fractals/test_fractalp.cpp
     fractals/test_get_ifs_token.cpp
+    fractals/test_interpreter.cpp
     fractals/test_lyapunov.cpp
     fractals/test_parser.cpp
     io/test_check_write_file.cpp

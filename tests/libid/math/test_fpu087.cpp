@@ -55,6 +55,17 @@ TEST(TestMath, complexLogReal)
     EXPECT_EQ(0.0, z.y);
 }
 
+TEST(TestMath, complexLogNegativeReal)
+{
+    const DComplex x{-5.0, 0.0};
+    DComplex z{1.0, 1.0};
+
+    cmplx_log(x, z); // z = log(x)
+
+    EXPECT_NEAR(std::log(5.0), z.x, 1e-9);
+    EXPECT_NEAR(std::acos(-1.0), z.y, 1e-9);
+}
+
 TEST(TestMath, complexLogPointerAlias)
 {
     DComplex z{1.0, 2.0};
