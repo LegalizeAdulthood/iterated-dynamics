@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
+add_subdirectory(autokey)
 add_subdirectory(images)
 add_subdirectory(libid)
 add_subdirectory(orbit)
