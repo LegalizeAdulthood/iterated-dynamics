@@ -4,6 +4,7 @@
 
 #include "engine/LogicalScreen.h"
 #include "fractals/fractalp.h"
+#include "io/check_write_file.h"
 #include "io/decoder.h"
 #include "io/encoder.h"
 #include "io/library.h"
@@ -59,7 +60,7 @@ static int timer(const TimerType type, int (*fn)(), ...)
     }
     if (do_bench)
     {
-        fp = std::fopen(get_save_path(WriteFile::ROOT, "id-bench.txt").string().c_str(), "a");
+        fp = std::fopen(get_append_save_path(WriteFile::DEBUG, "id-bench").string().c_str(), "a");
     }
     g_engine_timer_start = std::clock();
     switch (type)

@@ -39,8 +39,10 @@
   makedoc=filename         Create Id documentation file
   maxhistory=<nnn>         Set image capacity of history feature.  A higher
                            number stores more images but uses more memory.
+  debugflag=<nnn>          Set developer debugging behavior.  debug=nnn is
+                           accepted as a synonym.
   tempdir=directory        Place temporary files here
-  workdir=directory        Directory for miscellaneous written files
+  workdir=directory        Directory for miscellaneous non-debug files
   curdir=yes|no            When set to yes, Id checks current directory
                            before default directory when opening files.  Use
                            this command when testing temporary .frm, .l, etc.
@@ -361,6 +363,7 @@ The following subdirectories in the save library are created for
 output files:
 
   config            Configuration files (id.cfg)\
+  debug             Debug output files (.txt, .json)\
   formula           Formula definition files (.frm)\
   ifs               IFS definitions files (.ifs)\
   image             Image files (.gif)\
@@ -369,7 +372,7 @@ output files:
   map               Colormap definition files (.map)\
   orbit             Raw orbit files (.raw)\
   par               Parameter set definition files (.par)\
-  ratyrace          Raytrace output files (.ray)\
+  raytrace          Raytrace output files (.ray)\
   sound             Raw sound output (.txt)\
 
 Some files, such as MIG batch files, are written directly to the save
@@ -500,8 +503,15 @@ This command allows to specify the directory where Id writes temporary
 files.
 
 WORKDIR=[directory]\
-This command sets the directory where miscellaneous Id files get
-written.
+This command sets the directory where miscellaneous non-debug Id files get
+written.  Debug output is written under the save library debug
+subdirectory.
+
+DEBUGFLAG=nnn, DEBUG=nnn\
+This developer option enables internal debugging behavior.  Debug output
+files are written under the save library debug subdirectory.  New debug
+files honor overwrite=no by choosing an incremented name, while append-mode
+debug logs keep appending to the same file.
 
 ~ONLINEFF
 FILENAME=[name]\

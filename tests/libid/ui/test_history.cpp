@@ -90,7 +90,7 @@ TEST_F(TestHistory, restoresVersionAndFileVersion)
 
 TEST_F(TestHistory, dumpsVersionAndFileVersion)
 {
-    const std::filesystem::path history_file{std::filesystem::path{ID_TEST_DATA_DIR} / "history.json"};
+    const std::filesystem::path history_file{std::filesystem::path{ID_TEST_DATA_DIR} / "debug/history.json"};
     std::filesystem::remove(history_file);
     g_debug_flag = DebugFlags::HISTORY_DUMP_JSON;
     g_version = Version{1, 2, 3, 4, false};

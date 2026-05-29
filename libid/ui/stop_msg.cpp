@@ -5,8 +5,7 @@
 #include "engine/cmdfiles.h"
 #include "engine/text_color.h"
 #include "engine/wait_until.h"
-#include "io/dir_file.h"
-#include "io/special_dirs.h"
+#include "io/check_write_file.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
@@ -18,6 +17,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 
 using namespace id::engine;
 using namespace id::io;
@@ -58,7 +58,11 @@ bool stop_msg(const StopMsgFlags flags, const std::string &msg)
     static bool batch_mode = false;
     if (g_debug_flag != DebugFlags::NONE || g_init_batch >= BatchMode::NORMAL)
     {
-        if (std::FILE *fp = dir_fopen(g_working_dir, "stopmsg.txt", g_init_batch == BatchMode::NONE ? "w" : "a"))
+        const bool append{g_init_batch != BatchMode::NONE};
+        const std::filesystem::path path{append ?
+            get_append_save_path(WriteFile::DEBUG, "stopmsg") :
+            get_checked_save_path(WriteFile::DEBUG, "stopmsg")};
+        if (std::FILE *fp = std::fopen(path.string().c_str(), append ? "a" : "w"))
         {
             std::fprintf(fp, "%s\n", msg.c_str());
             std::fclose(fp);

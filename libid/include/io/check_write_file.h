@@ -14,5 +14,6 @@ extern bool g_overwrite_file; // true if file overwrite allowed
 
 void check_write_file(std::string &name, const char *ext);
 std::filesystem::path get_checked_save_path(WriteFile kind, const std::filesystem::path &name);
+std::filesystem::path get_append_save_path(WriteFile kind, const std::filesystem::path &name);
 
 } // namespace id::io

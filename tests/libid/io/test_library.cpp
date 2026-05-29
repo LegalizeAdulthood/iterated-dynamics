@@ -270,6 +270,30 @@ TEST_F(TestLibrary, saveRaytrace)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
 }
 
+TEST_F(TestLibrary, saveDebug)
+{
+    set_save_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{get_save_path(WriteFile::DEBUG, "trace")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"trace.txt"}, path.filename()) << path;
+    EXPECT_EQ(Path{"debug"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, saveDebugJson)
+{
+    set_save_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path path{get_save_path(WriteFile::DEBUG_JSON, "history")};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{"history.json"}, path.filename()) << path;
+    EXPECT_EQ(Path{"debug"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+}
+
 TEST_F(TestLibrary, findFileCheckFallbackRoot)
 {
     EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};

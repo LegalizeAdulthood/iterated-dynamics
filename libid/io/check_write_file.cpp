@@ -24,6 +24,11 @@ fs::path get_checked_save_path(const WriteFile kind, const fs::path &name)
     return path;
 }
 
+fs::path get_append_save_path(const WriteFile kind, const fs::path &name)
+{
+    return get_save_path(kind, name.string());
+}
+
 void check_write_file(std::string &name, const char *ext)
 {
     do

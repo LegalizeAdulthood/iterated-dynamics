@@ -3,6 +3,7 @@
 #include "engine/calcfrac.h"
 #include "engine/pixel_grid.h"
 #include "fractals/parser.h"
+#include "io/check_write_file.h"
 #include "io/library.h"
 #include "math/arg.h"
 #include "math/fixed_pt.h"
@@ -87,7 +88,7 @@ void debug_trace_init()
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
         s_debug.trace_enabled = true;
-        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "formula_trace.txt")};
+        const std::filesystem::path path{get_checked_save_path(WriteFile::DEBUG, "formula_trace")};
         s_debug.trace_file = std::fopen(path.string().c_str(), "w");
         if (s_debug.trace_file)
         {

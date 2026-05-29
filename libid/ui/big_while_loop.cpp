@@ -19,13 +19,12 @@
 #include "fractals/julibrot.h"
 #include "fractals/lorenz.h"
 #include "geometry/line3d.h"
+#include "io/check_write_file.h"
 #include "io/decoder.h"
-#include "io/dir_file.h"
 #include "io/gifview.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
 #include "io/save_timer.h"
-#include "io/special_dirs.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "ui/diskvid.h"
@@ -53,6 +52,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <filesystem>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -901,7 +901,11 @@ static int cmp_line(Byte *pixels, const int line_len)
     if (row == 0)
     {
         s_err_count = 0;
-        s_cmp_fp = dir_fopen(g_working_dir, "cmperr", g_init_batch != BatchMode::NONE ? "a" : "w");
+        const bool append{g_init_batch != BatchMode::NONE};
+        const std::filesystem::path path{append ?
+            get_append_save_path(WriteFile::DEBUG, "cmperr") :
+            get_checked_save_path(WriteFile::DEBUG, "cmperr")};
+        s_cmp_fp = std::fopen(path.string().c_str(), append ? "a" : "w");
         g_out_line_cleanup = cmp_line_cleanup;
     }
     if (g_potential.store_16bit)

@@ -30,6 +30,7 @@
 #include "geometry/3d.h"
 #include "geometry/line3d.h"
 #include "geometry/plot3d.h"
+#include "io/check_write_file.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
@@ -46,6 +47,7 @@
 #include <array>
 #include <cassert>
 #include <cstring>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <vector>
@@ -723,7 +725,7 @@ void save_history_info()
     }
     if (g_debug_flag == DebugFlags::HISTORY_DUMP_JSON)
     {
-        std::filesystem::path path{get_save_path(WriteFile::ROOT, "history.json")};
+        std::filesystem::path path{get_append_save_path(WriteFile::DEBUG_JSON, "history")};
         assert(!path.empty());
         std::ofstream str(path, std::ios_base::app);
         str << current;

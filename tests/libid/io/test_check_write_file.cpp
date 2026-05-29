@@ -171,4 +171,43 @@ TEST(TestGetCheckedSavePath, makeMigBatchCollisionAdvancesWhenOverwriteIsOff)
     clear_save_library();
 }
 
+TEST(TestGetCheckedSavePath, debugCollisionAdvancesWhenOverwriteIsOff)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, false};
+    set_save_library(ID_TEST_SAVE_DIR);
+    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "debug/debugfrm.txt"};
+    create_file(existing);
+
+    const fs::path path{get_checked_save_path(WriteFile::DEBUG, "debugfrm")};
+
+    EXPECT_EQ(fs::path{ID_TEST_SAVE_DIR} / "debug/debugfrm2.txt", path);
+    clear_save_library();
+}
+
+TEST(TestGetCheckedSavePath, debugCollisionIsReusedWhenOverwriteIsOn)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, true};
+    set_save_library(ID_TEST_SAVE_DIR);
+    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "debug/stopmsg.txt"};
+    create_file(existing);
+
+    const fs::path path{get_checked_save_path(WriteFile::DEBUG, "stopmsg")};
+
+    EXPECT_EQ(existing, path);
+    clear_save_library();
+}
+
+TEST(TestGetCheckedSavePath, appendPathIgnoresOverwritePolicy)
+{
+    ValueSaver saved_overwrite{g_overwrite_file, false};
+    set_save_library(ID_TEST_SAVE_DIR);
+    const fs::path existing{fs::path{ID_TEST_SAVE_DIR} / "debug/frmtokens.txt"};
+    create_file(existing);
+
+    const fs::path path{get_append_save_path(WriteFile::DEBUG, "frmtokens")};
+
+    EXPECT_EQ(existing, path);
+    clear_save_library();
+}
+
 } // namespace id::test

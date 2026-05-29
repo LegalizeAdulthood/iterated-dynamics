@@ -26,6 +26,7 @@
 #include "fractals/fractalp.h"
 #include "fractals/interpreter.h"
 #include "fractals/newton.h"
+#include "io/check_write_file.h"
 #include "io/file_item.h"
 #include "io/library.h"
 #include "math/arg.h"
@@ -1463,7 +1464,7 @@ static void is_complex_constant(Reader &reader, Token *tok)
     const long file_pos = reader.tell();
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "frmconst.txt")};
+        const std::filesystem::path path{get_append_save_path(WriteFile::DEBUG, "frmconst")};
         assert(!path.empty());
         debug_token = std::fopen(path.string().c_str(), "at");
     }
@@ -1880,7 +1881,7 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
 
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        const std::filesystem::path debug_path{get_save_path(WriteFile::ROOT, "frmtokens.txt")};
+        const std::filesystem::path debug_path{get_append_save_path(WriteFile::DEBUG, "frmtokens")};
         assert(!debug_path.empty());
         debug_token = std::fopen(debug_path.string().c_str(), "at");
         if (debug_token != nullptr)
@@ -2333,7 +2334,7 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
     std::FILE *debug_fp{};
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
     {
-        const std::filesystem::path path{get_save_path(WriteFile::ROOT, "debugfrm.txt")};
+        const std::filesystem::path path{get_append_save_path(WriteFile::DEBUG, "debugfrm")};
         assert(!path.empty());
         debug_fp = std::fopen(path.string().c_str(), "at");
         if (debug_fp != nullptr)

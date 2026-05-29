@@ -33,7 +33,7 @@ file(REMOVE "${DIFF_IMAGE}")
 execute_process(COMMAND "${ID}" ${PARAMETERS}
     RESULT_VARIABLE ID_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})
-set(STOP_MESSAGE_FILE "stopmsg.txt")
+set(STOP_MESSAGE_FILE "debug/stopmsg.txt")
 if(ID_RESULT)
     if(EXISTS "${STOP_MESSAGE_FILE}")
         file(READ "${STOP_MESSAGE_FILE}" STOP_MESSAGE)

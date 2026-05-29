@@ -239,6 +239,9 @@ static std::string_view subdir(WriteFile kind)
         return "sound";
     case WriteFile::RAYTRACE:
         return "raytrace";
+    case WriteFile::DEBUG:
+    case WriteFile::DEBUG_JSON:
+        return "debug";
     case WriteFile::ROOT:
         return {};
     }
@@ -273,6 +276,10 @@ static const char *file_extension(WriteFile kind)
         return ".raw";
     case WriteFile::SOUND:
         return ".txt";
+    case WriteFile::DEBUG:
+        return ".txt";
+    case WriteFile::DEBUG_JSON:
+        return ".json";
     }
 
     throw std::runtime_error("Unknown WriteFile type " + std::to_string(static_cast<int>(kind)));

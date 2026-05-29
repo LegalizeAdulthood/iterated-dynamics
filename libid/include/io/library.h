@@ -34,6 +34,8 @@ enum class WriteFile
     ID_CONFIG,
     ORBIT,
     SOUND,
+    DEBUG,
+    DEBUG_JSON,
 };
 
 extern bool                  g_check_cur_dir;       // flag to check current dir for files
