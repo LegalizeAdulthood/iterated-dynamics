@@ -94,7 +94,7 @@ function(add_make_mig_test)
         COMMAND ${CMAKE_COMMAND}
             "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
             "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
-            "-DCOMPONENT_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/make_mig_input.gif"
+            "-DCOMPONENT_IMAGE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
             "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig.gif"
             "-DTEST_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/test-make_mig.gif"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/make_mig_test.cmake"
