@@ -335,6 +335,8 @@ o Debug output files are now written under the debug subdirectory of the
   same file.
 o Scratch files now use the temporary directory instead of the working
   directory.
+o MIG image component files are now removed from the image save library
+  after the final image is assembled.
 
 Code Cleanup in Version 1.3.3
 

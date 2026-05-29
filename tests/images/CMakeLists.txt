@@ -89,6 +89,20 @@ function(add_image_dump_test name)
     set_tests_properties(ImageDumpTest.${name} PROPERTIES LABELS "image-dump")
 endfunction()
 
+function(add_make_mig_test)
+    add_test(NAME ImageTest.make-mig
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
+            "-DCOMPONENT_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/make_mig_input.gif"
+            "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig.gif"
+            "-DTEST_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/test-make_mig.gif"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/make_mig_test.cmake"
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
+    )
+    set_tests_properties(ImageTest.make-mig PROPERTIES LABELS "image;mig")
+endfunction()
+
 function(add_passes_test name passes)
     cmake_parse_arguments(PASSES_TEST "IGNORE_COLORMAP" "" "PARAMETERS" ${ARGN})
     if(PASSES_TEST_UNPARSED_ARGUMENTS)
@@ -258,6 +272,7 @@ add_image_test("outside-tdis" PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-00
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 add_image_dump_test("halley")
+add_make_mig_test()
 
 option(ID_RUN_SLOW_TESTS "Run slow image tests" OFF)
 if(ID_RUN_SLOW_TESTS)

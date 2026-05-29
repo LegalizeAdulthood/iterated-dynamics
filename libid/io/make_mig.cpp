@@ -323,7 +323,7 @@ void make_mig(unsigned int x_mult, unsigned int y_mult)
             for (unsigned x_step = 0U; x_step < x_mult; x_step++)
             {
                 gif_in = fmt::format("frmig_{:c}{:c}.gif", par_key(x_step), par_key(y_step));
-                std::filesystem::remove(gif_in);
+                std::filesystem::remove(get_save_path(WriteFile::IMAGE, gif_in));
             }
         }
     }
