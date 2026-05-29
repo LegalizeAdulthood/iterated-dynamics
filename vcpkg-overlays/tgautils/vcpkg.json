@@ -1,0 +1,17 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "tgautils",
+  "version-date": "2026-05-29",
+  "description": "C library and tools for reading and writing Targa images.",
+  "homepage": "https://github.com/LegalizeAdulthood/tgautils",
+  "dependencies": [
+    {
+      "name": "vcpkg-cmake",
+      "host": true
+    },
+    {
+      "name": "vcpkg-cmake-config",
+      "host": true
+    }
+  ]
+}

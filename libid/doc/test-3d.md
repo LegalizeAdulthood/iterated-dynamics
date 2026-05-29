@@ -81,16 +81,7 @@ tests only when it removes immediate duplication.
 
 ## Work Slices
 
-1. Add a local vcpkg recipe for `tgautils`.
-
-   Add an overlay port under `vcpkg-overlays/tgautils` that fetches
-   `LegalizeAdulthood/tgautils` from GitHub at a pinned commit. Record the
-   `SHA512` in `portfile.cmake` and expose a CMake target for consumers.
-
-   Add the overlay path to `vcpkg-configuration.json`, then add `tgautils`
-   and `libpng` to the `tests` feature in `vcpkg.json`.
-
-2. Add true-color loading to `image-compare`.
+1. Add true-color loading to `image-compare`.
 
    Keep the existing GIF/POT comparison path unchanged. Add a second path
    for true-color images when either input is `.tga` or `.png`.
@@ -104,7 +95,7 @@ tests only when it removes immediate duplication.
    Normalize both loaders to one RGB buffer shape and compare RGB values
    exactly.
 
-3. Add `AutokeyTest.3dlook-targa`.
+2. Add `AutokeyTest.3dlook-targa`.
 
    Use a private home directory. In the CMake script, generate
    `potntial.pot` first, then run Id with `@radar/3dlook` and an autokey
@@ -117,19 +108,19 @@ tests only when it removes immediate duplication.
    Id test version should fail cleanly if the gold PNG does not exist and
    should print the full generated TGA path.
 
-4. Check in gold images after manual verification.
+3. Check in gold images after manual verification.
 
    Accept `gold-3dlook01.pot` after the potential image is verified.
    Convert the verified TGA to PNG and check it in as
    `gold-3dlook-targa.png`.
 
-5. Optional cleanup.
+4. Optional cleanup.
 
    If the new helpers are clearly better, migrate `ImageTest.make-mig` and
    `AutokeyTest.makepar-mig-pieces` to them in a later mechanical slice.
    Keep that separate from the 3D behavior test.
 
-6. Validate.
+5. Validate.
 
    Run focused tests first:
 

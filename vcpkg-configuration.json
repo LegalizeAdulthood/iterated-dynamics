@@ -1,0 +1,10 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg-configuration.schema.json",
+  "default-registry": {
+    "kind": "builtin",
+    "baseline": "ce613c41372b23b1f51333815feb3edd87ef8a8b"
+  },
+  "overlay-ports": [
+    "vcpkg-overlays/tgautils"
+  ]
+}
