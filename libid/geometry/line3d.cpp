@@ -37,6 +37,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <filesystem>
 #include <limits>
 #include <string>
 #include <vector>
@@ -123,6 +124,7 @@ static float s_min_xyz[3]{}, s_max_xyz[3]{};             // For Raytrace output
 static int s_line_length1{};                             //
 static int s_targa_header_24 = 18;                       // Size of current Targa-24 header
 static std::FILE *s_raytrace_file{};                     //
+static std::filesystem::path s_raytrace_path;            //
 static unsigned int s_i_ambient{};                       //
 static int s_rand_factor{};                              //
 static int s_haze_mult{};                                //
@@ -853,7 +855,8 @@ loop_bottom:
                 if (std::ferror(s_raytrace_file))
                 {
                     std::fclose(s_raytrace_file);
-                    std::remove(g_light_name.c_str());
+                    s_raytrace_file = nullptr;
+                    std::filesystem::remove(s_raytrace_path);
                     file_error(g_raytrace_filename, FileError::DISK_FULL);
                     return -1;
                 }
@@ -1888,12 +1891,12 @@ ENTITIES
 static int ray_header()
 {
     // Open the ray tracing output file
-    const std::string path{get_checked_save_path(WriteFile::RAYTRACE, g_raytrace_filename).string()};
-    if (path.empty())
+    s_raytrace_path = get_checked_save_path(WriteFile::RAYTRACE, g_raytrace_filename);
+    if (s_raytrace_path.empty())
     {
         return -1;              // Oops, something's wrong!
     }
-    s_raytrace_file = std::fopen(path.c_str(), "w");
+    s_raytrace_file = std::fopen(s_raytrace_path.string().c_str(), "w");
     if (s_raytrace_file == nullptr)
     {
         return -1;              // Oops, something's wrong!
