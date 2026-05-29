@@ -5,12 +5,9 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     return()
 endif()
 
-set(MAKEPAR_MIG_PIECES_HOME "${CMAKE_CURRENT_BINARY_DIR}/makepar-mig-pieces/home")
-file(MAKE_DIRECTORY "${MAKEPAR_MIG_PIECES_HOME}")
-file(COPY_FILE "${CMAKE_SOURCE_DIR}/home/sstools.ini"
-    "${MAKEPAR_MIG_PIECES_HOME}/sstools.ini")
-file(COPY_FILE "${CMAKE_SOURCE_DIR}/home/id.cfg"
-    "${MAKEPAR_MIG_PIECES_HOME}/id.cfg")
+include(IdTestHome)
+
+id_make_test_home(makepar-mig-pieces MAKEPAR_MIG_PIECES_HOME)
 
 add_test(NAME AutokeyTest.makepar-mig-pieces
     COMMAND ${CMAKE_COMMAND}

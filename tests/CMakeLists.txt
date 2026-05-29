@@ -1,5 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 add_subdirectory(autokey)
 add_subdirectory(images)
 add_subdirectory(libid)
