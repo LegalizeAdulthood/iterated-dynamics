@@ -349,6 +349,7 @@ o File output comparison tests were added for raytrace output and
   orbit output to detect major regressions in the formatted output.
 o An autokey-driven UI test was added for generating MIG PAR and BAT
   files.
+o Help text spelling was normalized to American English.
 o More image comparison tests were added to cover more fractal types,
   rotation and skew of the zoom box and the inversion, biomorph and
   decomp options.  (Fixes #335, #336, #337, #341, #342)
@@ -1667,12 +1668,12 @@ file (.map assumed).  See {Color Maps}.
   Home             Restore original palette
   Right/Left       Re-/Set the direction of the color-cycling (just like +/-)
   Up/Down          SpeedUp/SlowDown the color cycling process
-  F2 thru F10      Select Short--Medium--Long (randomly-generated) color bands
-  1 thru 9         Cycle through N colors between screen updates (default=1)
+  F2 through F10   Select Short--Medium--Long (randomly-generated) color bands
+  1 through 9      Cycle through N colors between screen updates (default=1)
   Enter            Randomly (re)-select all new colors  [TRY THIS ONE!]
   Spacebar         Pause until another key is hit
   < or >           Pause and single-step through one color-cycle
-* SF1 thru AF10    Pause and reset the Palette to one of 30 fixed sequences
+* SF1 through AF10 Pause and reset the Palette to one of 30 fixed sequences
   d or a           Pause and load the palette from default.map or altern.map
   l                Load palette from a map file
   s                Save palette to a map file
@@ -1816,7 +1817,7 @@ original palette is stored in the area associated with <Shift+F2>.
 
 <F2> ... <F9>\
 Restore the palette from a temporary save area.  If you haven't previously
-saved a palette for the function key, you'll get a simple grey scale.
+saved a palette for the function key, you'll get a simple gray scale.
 
 <L>\
 Pause and load an external color map (.map file).  See {Color Maps}.
@@ -1904,21 +1905,21 @@ For more details see {Freestyle mode tutorial}
 It can be confusing working out what's going on in freestyle mode
 so here's a quick walk through...\
 
-Freestyle palette editing is intended to be a way of colouring an image in
+Freestyle palette editing is intended to be a way of coloring an image in
 an intuitive fashion with the minimum of keyboard usage.  In fact everything
 is controllable with the mouse, as the following shows:
 
-To start with, generate a plasma type fractal as it has all 256 colours on
+To start with, generate a plasma type fractal as it has all 256 colors on
 screen at once.  Now bring up the palette editor and press <W> to set up
-a greyscale palette as a blank canvas on which to splash some colour.
+a grayscale palette as a blank canvas on which to splash some color.
 Pressing <F> puts us in freestyle mode... crosshairs appear on the screen and
-a colour band is applied, centred on the cursor.  Although, at the moment,
-the colour of this band is grey and you won't see much!
+a color band is applied, centered on the cursor.  Although, at the moment,
+the color of this band is gray and you won't see much!
 
-In order to change the colour of the band, hold down the primary mouse
+In order to change the color of the band, hold down the primary mouse
 button and drag up and down.  This changes the amount of red in the band.
 You'll see the values change in the status box above the palette grid.
-Double clicking the secondary mouse button changes the colour component
+Double clicking the secondary mouse button changes the color component
 that's varied in an r-g-b-r-cycle.... try it out and conjure up any shade
 you like!
 
@@ -1929,14 +1930,14 @@ watch out as the mouse movements get buffered.
 Once you've got the band in a satisfactory position then double click the
 primary button to fix it in place.
 
-Continue like this for as long as you like, adding different colours to the
-grey palette.
+Continue like this for as long as you like, adding different colors to the
+gray palette.
 
-You'll notice how the band relates to the existing colour, the RGB values give
-the middle colour which are then smoothly shaded out to the colours at the
+You'll notice how the band relates to the existing color, the RGB values give
+the middle color which are then smoothly shaded out to the colors at the
 ends of the band.  This can lead to some sudden jumps in the shading as the
 band is moved about the screen and the edges come to overlap different areas
-of colour.
+of color.
 
 For really violent jumps in shading try starting with an image that has areas
 that change chaotically, such as a Mandlbrot set.  You'll see what I mean when
@@ -1944,9 +1945,9 @@ you move the cross hairs into an area close to the 'lake' where the change in
 value from one pixel to the next is sudden, chaotic and large.  Watch out! --
 the strobing effect can be somewhat disturbing.  This is nothing to worry
 about but just a consequence of the manipulation of the palette and the way in
-which the colour bands are calculated.
+which the color bands are calculated.
 
-I hope that you'll find this a useful tool in colouring an image.  Remember
+I hope that you'll find this a useful tool in coloring an image.  Remember
 that the <H> key can be used to hide the palette box and expose the whole
 image.
 ;
@@ -2173,7 +2174,7 @@ In the example shown above, you were just exploring the variation in two
 'real' parameters, i.e. they can take fractional values, and the idea of
 being able to create an image half way between two others is valid.  However,
 many of the parameters in Id are discrete, i.e. can be only one of a
-set of specific values.  Examples of discrete parameters are inside colouring
+set of specific values.  Examples of discrete parameters are inside coloring
 method or decomposition values and the way in which these are explored is
 different in that parameter zooming has no meaning for discrete parameters.
 

@@ -117,7 +117,7 @@
   initorbit=pixel          Sets the value used to initialize Mandelbrot orbits
                            to the complex number corresponding to the screen
                            pixel.  This is the default for most types.
-  rseed=nnnnn              Random number seed, for reproducable plasma clouds
+  rseed=nnnnn              Random number seed, for reproducible plasma clouds
   showdot=[auto|bright|medium|dark|nn]/size  Colors the current dot being
                            calculated color nn or an automatically calculated
                            color (-1 disables).  The second parameter is the
@@ -246,7 +246,7 @@
   interocular=nnn          Sets 3D interocular distance default value
   converge=nnn             Sets 3D convergence default value
   crop=nnn/nnn/nnn/nnn     Sets 3D red-left, red-right, blue-left,
-                           and blue-right cropping default valuess
+                           and blue-right cropping default values
   bright=nnn/nnn           Sets 3D red and blue brightness defaults,
 
   longitude=nn/nn          Longitude minumim and maximum
@@ -790,7 +790,7 @@ Colors the current dot being calculated color <nnn> or an automatically
 calculated color taken from the current palette.  The second parameter is
 the size of the traveling pointer in units of pixels of 1/1024th of a screen.
 
-The travelling pointer may strobe or flicker with fast fractals because of
+The traveling pointer may strobe or flicker with fast fractals because of
 interaction with the monitor's vertical refresh.  The orbitdelay parameter
 can be used to introduce a per-pixel delay when showdot is turned on.
 Try orbitdelay=1000 with "showdot=b/20" to get a feel for how the showdot

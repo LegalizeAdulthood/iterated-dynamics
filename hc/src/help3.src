@@ -103,7 +103,7 @@ the other passes options, sets "passes=1" and no symmetry, and then plots
 the orbits for each pixel.  Zooming into a "passes=o" image is in fact
 zooming into the "passes=1" image, and the resulting image may not be what
 is expected.  To find interesting places to investigate, press <O> after an
-image has completed and watch the behaviour of the orbits as the cursor is
+image has completed and watch the behavior of the orbits as the cursor is
 moved around the screen.  See {Orbits Window}.
 
 The "outside=summ" option causes orbits to increment a pixel's color
@@ -760,7 +760,7 @@ Id is distributed with some sample .map files:
    glasses1.map  used with 3D glasses modes
    glasses2.map  used with 3D glasses modes
    green.map     shaded green
-   grey.map      another grey variant
+   grey.map      another gray variant
    grid.map      for stereo surface grid images
    headache.map  major stripes, by D. Egnor (try cycling and hitting <2>)
    landscap.map  Guruka Singh Khalsa's favorite map for plasma "landscapes"
@@ -1015,10 +1015,10 @@ Ray trace output:\
    file, you will view the image from above and watch it partitioned into
    triangles.
 
-   The color of each triangle is the average of the color of its verticies
+   The color of each triangle is the average of the color of its vertices
    in the original image, unless brief is selected.
 
-   If brief is selected, a default color is assigned at the begining of the
+   If brief is selected, a default color is assigned at the beginning of the
    file and is used for all triangles.
 
    Also see {Interfacing with Ray Tracing Programs}.
@@ -1027,7 +1027,7 @@ Brief output:\
    This is a ray tracing sub-option.
    When it is set to yes, Id creates a considerably
    smaller and somewhat faster file.  In this mode, all triangles
-   use the default color specified at the begining of the file.
+   use the default color specified at the beginning of the file.
    This color should be edited to supply the color of your choice.
 
 Targa output:\
@@ -1163,10 +1163,10 @@ by the "coarse" parameter setting.  While generating the ray tracing
 file, you will view the image from above and watch it partitioned into
 triangles.
 +
-The color of each triangle is the average of the color of its verticies
+The color of each triangle is the average of the color of its vertices
 in the original image, unless brief is selected.
 +
-If brief is selected, a default color is assigned at the begining of the
+If brief is selected, a default color is assigned at the beginning of the
 file and is used for all triangles.
 +
 Also see {Interfacing with Ray Tracing Programs}.
@@ -1175,7 +1175,7 @@ Brief output::
 This is a ray tracing sub-option.
 When it is set to yes, Id creates a considerably
 smaller and somewhat faster file.  In this mode, all triangles
-use the default color specified at the begining of the file.
+use the default color specified at the beginning of the file.
 This color should be edited to supply the color of your choice.
 
 Targa output::

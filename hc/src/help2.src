@@ -1468,7 +1468,7 @@ Id are the results of mistakes!  Nevertheless, thanks to Kevin for keeping
 us accurate!
 
 (See description of "initorbit=" command in {Image Calculation Parameters}
-for a way to experiment with different orbit intializations).
+for a way to experiment with different orbit initializations).
 ;
 ;
 ~Topic=Circle, Label=HT_CIRCLE
@@ -3699,7 +3699,7 @@ segments which overlap to form an equilateral triangle.  This attractor
 triangle can be seen by using the "show orbits" option (the <O> key) or
 the "orbits window" option (the <Ctrl+O> key).
 
-The number of attractors present is dependant on the value of A, the
+The number of attractors present is dependent on the value of A, the
 imaginary part of C.  For values where A <= 1.028713768218725..., there
 are three attractors.  When A is larger than this critical value, two of
 attractors merge into one, leaving only two attractors.  An interesting
@@ -3790,7 +3790,7 @@ Orbit parameters - the next screen lets you fill in any parameters
 ~Format+
 
 Distance between the eyes - set this to 2.5 if you want a red/blue
-   anaglyph image, 0 for a normal greyscale image.
+   anaglyph image, 0 for a normal grayscale image.
 
 Number of z pixels - this sets how many layers are rendered in the screen
    z-axis.  Use a higher value with higher resolution video modes.

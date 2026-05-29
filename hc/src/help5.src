@@ -1407,8 +1407,8 @@ fixing computers back in the final days of CP/M, via some interesting work
 with Transputers (an innovative British cpu that was designed to run in
 massively parallel configurations, and made a very good Mandlebrot set
 calculating machine when a few dozen or more were set to the task), through
-to his position of senior engineer for a third party suppport company where
-he spends his time travelling the south west of Britain sorting out peoples
+to his position of senior engineer for a third party support company where
+he spends his time traveling the south west of Britain sorting out peoples
 IT problems.
 
 When not playing with computers Robin likes to relax by experimenting with
@@ -1529,7 +1529,7 @@ Viscek, Tamas: "Fractal Growth Phenomena", World Scientific, 1989.\
 ~Topic=Sound Controls, label=HELP_SOUND
 
 On this screen, accessed by hitting <Ctrl+F>, you'll find a few parameters
-that you recognise from the <X> menu handily gathered together, plus a few
+that you recognize from the <X> menu handily gathered together, plus a few
 new ones.  You can find the descriptions for the basic parms over at the
 {Sound Parameters} help.
 
@@ -1939,7 +1939,7 @@ o On Windows, crash dump files are saved to the savedir location.
   (Fixes #133)
 o When changing fractal types, if the the fractal parameters screen or
   entry name screen (for formula, ifs or L-system fractal types) were
-  cancelled, the previous fractal type and associated parameters were
+  canceled, the previous fractal type and associated parameters were
   lost.  Now, canceling those screens restores the previous state.
   (Fixes #129)
 
@@ -2023,7 +2023,7 @@ o All online help text has been reviewed and revised to drop DOS specific
   that Id is a program operating in a windowed environment.
 o The release parameter resets all values to their default but does not enable
   any backwards compatible behavior in this release.  For backward
-  compatability with old behavior, use Fractint.
+  compatibility with old behavior, use Fractint.
 o The monitorwidth parameter was renamed to stereowidth.  The old parameter
   name is still accepted but will be deprecated in a future release.
 o Printing an image has been removed.  Use your operating system for that.
