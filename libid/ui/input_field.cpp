@@ -29,6 +29,19 @@ int input_field(const InputFieldFlags options, //
     int (*check_key)(int key)                  // routine to check non data keys, or nullptr
 )
 {
+    return input_field(options, attr, fld, len, len, row, col, check_key);
+}
+
+int input_field(const InputFieldFlags options, //
+    const int attr,                            // display attribute
+    char *fld,                                 // the field itself
+    const int len,                             // field length (declare as 1 larger for \0)
+    const int display_len,                     // display width
+    const int row,                             // display row
+    const int col,                             // display column
+    int (*check_key)(int key)                  // routine to check non data keys, or nullptr
+)
+{
     char save_fld[81];
     char buf[81];
     int j;
@@ -38,23 +51,38 @@ int input_field(const InputFieldFlags options, //
     int insert = 0;
     bool started = false;
     int offset = 0;
+    int window_start = 0;
     bool display = true;
     while (true)
     {
-        std::strcpy(buf, fld);
+        const int visible_len = display_len > 0 && display_len < len ? display_len : len;
+        const int old_window_start = window_start;
+        if (offset < window_start)
+        {
+            window_start = offset;
+        }
+        if (offset > window_start + visible_len)
+        {
+            window_start = offset - visible_len;
+        }
+        if (old_window_start != window_start)
+        {
+            display = true;
+        }
+        std::strncpy(buf, fld + window_start, visible_len);
         int i = static_cast<int>(std::strlen(buf));
-        while (i < len)
+        while (i < visible_len)
         {
             buf[i++] = ' ';
         }
-        buf[len] = 0;
+        buf[visible_len] = 0;
         if (display)
         {
             // display current value
             driver_put_string(row, col, attr, buf);
             display = false;
         }
-        int key = driver_key_cursor(row + insert, col + offset);  // get a keystroke
+        int key = driver_key_cursor(row + insert, col + offset - window_start);  // get a keystroke
         if (key == 1047) // numeric keypad /  TODO: map scan code to ID_KEY value
         {
             key = 47; // numeric slash

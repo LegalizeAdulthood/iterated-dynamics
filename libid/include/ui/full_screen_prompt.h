@@ -14,6 +14,7 @@ struct FullScreenValues
               // 0x100+n for string of length n
               // 'l' for one of a list of strings
               // 'L' for long
+    int display_len{}; // display width override for 0x100+n strings
     union
     {
         double dval;   // when type 'd' or 'f'

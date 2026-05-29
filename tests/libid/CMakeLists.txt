@@ -110,6 +110,7 @@ add_executable(test-id
     ui/test_comments.cpp
     ui/test_file_item.cpp
     ui/test_history.cpp
+    ui/test_input_field.cpp
     ui/test_main_menu_switch.cpp
     ui/test_make_batch_file.cpp
     ui/test_video_mode.cpp

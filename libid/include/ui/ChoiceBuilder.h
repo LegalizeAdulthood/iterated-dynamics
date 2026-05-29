@@ -102,9 +102,14 @@ public:
     }
     ChoiceBuilder &string_buff(const char *choice, char *buffer, const int len)
     {
+        return string_buff(choice, buffer, len, 0);
+    }
+    ChoiceBuilder &string_buff(const char *choice, char *buffer, const int len, const int display_len)
+    {
         check_build_overflow();
         m_choices[m_current_build] = choice;
         m_values[m_current_build].type = 0x100 + len;
+        m_values[m_current_build].display_len = display_len;
         m_values[m_current_build].uval.sbuf = buffer;
         return advance();
     }

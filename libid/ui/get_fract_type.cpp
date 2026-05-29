@@ -621,6 +621,7 @@ gfp_top:
             num_params++;
             choices[prompt_num] = param_prompt[j++];
             param_values[prompt_num].type = 0x100 + PARAM_TEXT_FIELD_LEN;
+            param_values[prompt_num].display_len = 20;
 
             if (choices[prompt_num][0] == '+')
             {

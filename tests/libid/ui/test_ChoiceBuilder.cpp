@@ -293,11 +293,21 @@ FullScreenValuePredicate has_string(const char *text)
     };
 }
 
-FullScreenValuePredicate has_string_buff(char *buff, const int len)
+FullScreenValuePredicate has_string_buff(char *buff, const int len, const int display_len = 0)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
         bool result{check_type(listener, value, 0x100 + len)};
+
+        if (value.display_len != display_len)
+        {
+            *listener << "; expected display length " << display_len << ", got " << value.display_len;
+            result = false;
+        }
+        else
+        {
+            *listener << "; has display length " << value.display_len;
+        }
 
         if (value.uval.sbuf != buff)
         {
@@ -500,6 +510,20 @@ TEST_F(TestChoiceBuilderPrompting, stringBufferChoice)
     expect_choice_value("Browse search filename mask ", has_string_buff(buff, len));
 
     builder.string_buff("Browse search filename mask ", buff, len);
+    builder.prompt("Evolution Mode Options", 255);
+
+    EXPECT_EQ(1, builder.count());
+}
+
+TEST_F(TestChoiceBuilderPrompting, stringBufferChoiceWithDisplayLength)
+{
+    ChoiceBuilder<1, Shim> builder;
+    constexpr int len{80};
+    constexpr int display_len{20};
+    char buff[len];
+    expect_choice_value("Browse search filename mask ", has_string_buff(buff, len, display_len));
+
+    builder.string_buff("Browse search filename mask ", buff, len, display_len);
     builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());

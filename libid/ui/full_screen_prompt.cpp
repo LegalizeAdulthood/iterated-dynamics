@@ -45,6 +45,7 @@ static int prompt_check_key(int key);
 static int prompt_check_key_scroll(int key);
 static  int input_field_list(int attr, char *field, int field_len, const char **list, int list_len,
                              int row, int col, int (*check_key)(int key));
+static int prompt_field_len(const FullScreenValues *val);
 static int prompt_value_string(char *buf, const FullScreenValues *val);
 
 static int s_fn_key_mask{};
@@ -714,7 +715,8 @@ int Prompt::prompt_params()
             {
                 j = InputFieldFlags::NUMERIC;
             }
-            i = input_field(j, C_PROMPT_INPUT, buf, cur_len, prompt_row + cur_choice, value_col,
+            i = input_field(j, C_PROMPT_INPUT, buf, prompt_field_len(&values[cur_choice]), cur_len,
+                prompt_row + cur_choice, value_col,
                 in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
             switch (values[cur_choice].type)
             {
@@ -945,9 +947,33 @@ static int prompt_value_string(char *buf, const FullScreenValues *val)
         break;
     default: // assume 0x100+n
         std::strcpy(buf, val->uval.sbuf);
-        ret = val->type & 0xff;
+        ret = val->display_len != 0 ? val->display_len : val->type & 0xff;
     }
     return ret;
+}
+
+static int prompt_field_len(const FullScreenValues *val)
+{
+    switch (val->type)
+    {
+    case 'd':
+    case 'D':
+        return 20;
+    case 'f':
+        return 14;
+    case 'i':
+        return 6;
+    case 'L':
+        return 10;
+    case 's':
+        return 15;
+    case 'l':
+        return val->uval.ch.vlen;
+    case '*':
+        return 0;
+    default:
+        return val->type & 0xff;
+    }
 }
 
 static int fn_key_mask_selected(const int key)
