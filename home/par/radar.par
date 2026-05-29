@@ -1,0 +1,112 @@
+; Article 2670 of alt.fractals:
+; Path: news.claremont.edu!uunet!mcsun!uknet!keele!csa18
+; From: csa18@seq1.keele.ac.uk (R.J. Husmo)
+; Newsgroups: alt.fractals
+; Subject: Parameter files
+; Message-ID: <2590@keele.keele.ac.uk>
+; Date: 28 Apr 92 14:05:55 GMT
+; Organization: University of Keele, England
+; Lines: 100
+;
+;
+; For those of you who are still in search of interesting colour-palettes
+; - or are looking for other regions of the Mandelbrot set to examine -
+; here's one of my earlier parameter files.
+;
+; Unfortunately this version of vi doesn't understand ':%s/.$//', so each
+; line has got a control character on the end which you may want to edit out.
+;
+; The pictures get more interesting towards the end. 3dlook is especially
+; interesting for giving that extra depth to pictures already saved.
+;
+; There is also a julia picture in there which demonstrates very nicely the
+; dangers of integer arithmetic. Or whatever the method FractInt uses is
+; called. Or at least that's what I think is wrong with the picture, if
+; nobody else gets a screwed-up picture I may have to reconsider.
+;
+; None of the pictures require an fpu.
+;
+; Have fun - Radar
+
+Yadv               { ; Yet another dragon valley
+  reset type=mandel passes=2
+  corners=0.375555227/0.375578085/0.206602329/0.206560409/0.375578085/0.206560\
+  409 maxiter=1600 inside=maxiter logmap=140
+  }
+
+curly-wurlies      {
+  reset type=mandel
+  corners=-0.930600312/-0.930415479/0.244768998/0.244907577 maxiter=1024
+  inside=maxiter logmap=80
+  }
+
+curly-wurlies2     {
+  reset type=mandel
+  corners=-0.930508392/-0.930489337/0.244783593/0.24479788 maxiter=2048
+  inside=maxiter logmap=220
+  colors=CCCCsYECE<20>sCs<20>ECsCCsCEs<19>CqsCssCsq<19>CsECsCEsE<19>qsqsssssq<\
+  19>ssEssCsqC<19>sECsCCqCC<21>ACCCCC<21>sCs<8>aCsZCtXCtUCuSCu<6>AAz<32>z_0000
+  }
+
+julia-wrong        { ; Something is going seriously wrong here.
+                     ; Anybody care to test?
+  reset type=julia
+  corners=0.082238229/0.0822706223/0.103695236/0.103719523
+  params=-1.25136156582111/0.0290455380808344 maxiter=2000 inside=maxiter
+  logmap=400 colors=@chroma.map
+  }
+
+fractal            { ; yamf
+  reset type=mandel
+  corners=0.346426861/0.346442105/0.551113067/0.551124496 maxiter=1000
+  logmap=50
+  }
+
+3dlook01           { ; Sample mandelbrot to use with 3dlook (potential)
+                     ; The 3d version is rather better than expected
+  reset type=mandel passes=1
+  corners=0.3983588/0.4726048/0.3134205/0.4019287 maxiter=1024
+  inside=maxiter potential=256/5555/2048/16bit
+  colors=CCC000ECE<20>sCs<20>ECsCCsCEs<19>CqsCssCsq<19>CsECsCEsE<19>qsqsssssq<\
+  19>ssEssCsqC<19>sECsCCqCC<21>ACCCCC<21>sCs<20>ECsCCsCEs<6>CSsCUsEUq<20>z_0k0\
+  0
+  }
+
+3dlook             { ; Gives a 3D feel to 2D pictures
+                     ; `tload' into Piclab, makepal, map & gsave
+  3d=yes filename=potntial.pot scalexyz=100/100 roughness=30 waterline=0
+  filltype=5 lightsource=1/-1/1 smoothing=3 fullcolor=y ambient=20
+  rotation=0/0/0 perspective=0 xyshift=0/0
+  }
+
+Julia              { ; A Julia suitable for 3d look. Use LOTS of colours.
+  reset type=julia
+  corners=-0.0712304581/-0.0712114032/0.836098487/0.836112773
+  params=-0.259283512594819/0.644744709101695 maxiter=10000 inside=maxiter
+  logmap=600
+  }
+
+Curly mandelbrot   { ; A prime candidate for 3D-look
+  reset type=mandel
+  corners=-0.687374802/-0.687369086/0.382380338/0.382384624 maxiter=1900
+  inside=maxiter logmap=200
+  colors=zP0u0g<22>h0lh0lg1lf1me2me3n<24>MIyLJyKKzKLzJMz<28>1xz0zz0zy<29>0zV0z\
+  T0zT<4>3wO4vN5vM5vM<37>chAdhAehAehAfgA<16>tZ4uY3tY4<15>aMM_LO`LP<45>y1y000
+  }
+
+Julia2-3D          { ; Julia2 with that cool 3D look
+  3d=yes scalexyz=120/90 roughness=160 waterline=0 filltype=6
+  lightsource=1/-1/1 ambient=20 rotation=50/0/0 perspective=250
+  xyshift=0/0 xyadjust=14/-43
+  colors=CCC<21>sCs<20>ECsCCsCEs<19>CqsCssCsq<19>CsECsCEsE<19>qsqsssssq<19>ssE\
+  ssCsqC<19>sECsCCqCC<21>ACCCCC<21>sCs<20>ECsCCsCEs<19>CqsCssCsq<9>CsY
+  }
+
+Yamp               { ; Yet another Mandelbrot picture - use 3D look
+  reset type=mandel passes=2
+  corners=-1.39968877/-1.39962208/0.0004464239/0.0004964266 maxiter=3900
+  inside=maxiter logmap=270
+  }
+
+
+

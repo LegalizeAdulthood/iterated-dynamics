@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-only
+﻿# SPDX-License-Identifier: GPL-3.0-only
 #
 id_install_home(FILES
     BurningShip.par
@@ -15,4 +15,5 @@ id_install_home(FILES
     newphoen.par
     orbits.par
     phoenix.par
+    radar.par
 )

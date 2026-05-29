@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: GPL-3.0-only
+﻿# SPDX-License-Identifier: GPL-3.0-only
 #
 # Until the unix port is complete, we can't run end-to-end image tests there
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -87,6 +87,32 @@ function(add_image_dump_test name)
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )
     set_tests_properties(ImageDumpTest.${name} PROPERTIES LABELS "image-dump")
+endfunction()
+
+function(add_potential_image_test name)
+    cmake_parse_arguments(POTENTIAL_TEST "" "" "PARAMETERS" ${ARGN})
+    if(POTENTIAL_TEST_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "Unknown arguments: ${POTENTIAL_TEST_UNPARSED_ARGUMENTS}")
+    endif()
+    list(APPEND POTENTIAL_TEST_PARAMETERS "batch=yes" "video=F6")
+    add_test(NAME ImageTest.${name}
+        COMMAND ${CMAKE_COMMAND}
+            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+            "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
+            "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}.pot"
+            "-DPARAMETERS=${POTENTIAL_TEST_PARAMETERS}"
+            "-DTEST_SAVE_IMAGE=test-${name}.pot"
+            "-DTEST_KEEP_IMAGE=${CMAKE_CURRENT_BINARY_DIR}"
+            "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/${name}-diff.gif"
+            "-DIMAGE_TEST_IGNORE_COLORMAP=OFF"
+            -P "${CMAKE_CURRENT_SOURCE_DIR}/image_compare_test.cmake"
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
+    )
+    set_tests_properties(ImageTest.${name} PROPERTIES LABELS "image;potential")
+    if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}.pot")
+        set_tests_properties(ImageTest.${name}
+            PROPERTIES DISABLED TRUE)
+    endif()
 endfunction()
 
 function(add_make_mig_test)
@@ -272,6 +298,7 @@ add_image_test("outside-tdis" PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-00
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 add_image_dump_test("halley")
+add_potential_image_test("3dlook01" PARAMETERS "@radar/3dlook01")
 add_make_mig_test()
 
 option(ID_RUN_SLOW_TESTS "Run slow image tests" OFF)
