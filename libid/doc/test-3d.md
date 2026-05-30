@@ -53,7 +53,10 @@ include these helpers only from the tests that need them.
 
 Add small helpers before changing test behavior:
 
-- `id_make_test_home(<name> <out-var> [PARS <par>...])`
+- `id_make_test_home(<name> <out-var>
+  [IMAGES <image>...]
+  [KEYS <key>...]
+  [PARS <par>...])`
 
   Create `${CMAKE_CURRENT_BINARY_DIR}/<name>/home` and copy `sstools.ini`
   and `id.cfg`. Do not precreate empty library subdirectories; write paths
@@ -65,6 +68,14 @@ Add small helpers before changing test behavior:
   `PARS` entries are plain filenames. Additional parameter collections
   should be modeled as separate library roots, not subdirectories under
   `home/par`.
+
+  If `KEYS` is supplied, copy each named file from the current test
+  directory to the test home `key` directory.
+
+  If `IMAGES` is supplied, copy each named file from
+  `${CMAKE_SOURCE_DIR}/tests/images` to the test home `image` directory.
+  Use `source=dest` when a test needs a staged image renamed, such as
+  `gold-3dlook01.pot=potntial.pot`.
 
 - `id_run(...)`
 
@@ -81,13 +92,41 @@ tests only when it removes immediate duplication.
 
 ## Work Slices
 
-1. Optional cleanup.
+1. Add focused autokey tests for the remaining 3D restore and overlay UI.
+
+   These should use isolated homes from `id_make_test_home`, stage key
+   files with `KEYS`, stage POT or GIF inputs with `IMAGES`, and keep
+   source `home` untouched. When a slice needs a new gold image, stop and
+   ask for the gold image before running the test that requires it.
+
+   1. `AutokeyTest.3d-map-prompt`
+
+      Drive `@radar/3dlook`, choose a fill/color mode that opens the map
+      prompt, enter a staged map filename, and compare output. This covers
+      the field prompt that resolves map files through the library
+      mechanism.
+
+   2. `AutokeyTest.3d-stereo`
+
+      Drive `@radar/3dlook`, enable stereo or funny-glasses output, accept
+      the funny-glasses parameter screen, and compare the resulting image.
+      Start with the stereo mode most likely to write a deterministic
+      image.
+
+   3. `AutokeyTest.3d-overlay`
+
+      Load a normal GIF input, invoke `#` for 3D overlay instead of `3`,
+      accept defaults, and compare the overlay result. This should prove
+      the overlay path uses the current image and does not rely only on
+      restore-from-file behavior.
+
+2. Optional cleanup.
 
    If the new helpers are clearly better, migrate `ImageTest.make-mig` and
    `AutokeyTest.makepar-mig-pieces` to them in a later mechanical slice.
    Keep that separate from the 3D behavior test.
 
-2. Validate.
+3. Validate.
 
    Run focused tests first:
 
