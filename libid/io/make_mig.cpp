@@ -16,6 +16,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <limits>
 #include <string>
 #include <utility>
 
@@ -157,6 +158,88 @@ static char par_key(const unsigned int x)
     return x < 10 ? '0' + x : 'a' - 10 + x;
 }
 
+struct MigMetadata
+{
+    int width{};
+    int height{};
+    int color_count{};
+    int color_resolution{};
+    int background_color{};
+    int aspect_byte{};
+};
+
+static MigMetadata get_metadata(const GifFileType *gif)
+{
+    return MigMetadata{
+        gif->SWidth,
+        gif->SHeight,
+        gif->SColorMap == nullptr ? 0 : gif->SColorMap->ColorCount,
+        gif->SColorResolution,
+        gif->SBackGroundColor,
+        gif->AspectByte};
+}
+
+static std::string input_gif_name(const unsigned int x_step, const unsigned int y_step)
+{
+    return fmt::format("frmig_{:c}{:c}.gif", par_key(x_step), par_key(y_step));
+}
+
+static void validate_canvas_size(const MigMetadata &metadata, const unsigned int x_mult, const unsigned int y_mult)
+{
+    constexpr std::uint64_t MAX_GIF_DIMENSION{std::numeric_limits<std::uint16_t>::max()};
+    const std::uint64_t width = static_cast<std::uint64_t>(metadata.width) * x_mult;
+    const std::uint64_t height = static_cast<std::uint64_t>(metadata.height) * y_mult;
+    if (width > MAX_GIF_DIMENSION || height > MAX_GIF_DIMENSION)
+    {
+        std::printf("MIG output dimensions %llu x %llu exceed GIF limits!\n", width, height);
+        std::exit(1);
+    }
+}
+
+static MigMetadata validate_input_gifs(const unsigned int x_mult, const unsigned int y_mult)
+{
+    MigMetadata first{};
+    bool have_first{false};
+    for (unsigned y_step = 0U; y_step < y_mult; y_step++)
+    {
+        for (unsigned x_step = 0U; x_step < x_mult; x_step++)
+        {
+            const std::string gif_in{input_gif_name(x_step, y_step)};
+            const std::filesystem::path path{find_file(ReadFile::IMAGE, gif_in)};
+            if (path.empty())
+            {
+                fmt::print("Can't locate file {:s}!\n", gif_in);
+                std::exit(1);
+            }
+            InputGif gif{read_input_gif(path)};
+            if (gif.get() == nullptr)
+            {
+                std::printf("Can't open file %s!\n", gif_in.c_str());
+                std::exit(1);
+            }
+            if (gif.slurp_result() != GIF_OK)
+            {
+                std::printf("\007 Process failed = early EOF on input file %s\n", gif_in.c_str());
+                std::exit(1);
+            }
+            const MigMetadata metadata{get_metadata(gif.get())};
+            if (!have_first)
+            {
+                first = metadata;
+                validate_canvas_size(first, x_mult, y_mult);
+                have_first = true;
+            }
+            if (metadata.width != first.width || metadata.height != first.height ||
+                metadata.color_count != first.color_count)
+            {
+                std::printf("File %s doesn't have the same resolution as its predecessors!\n", gif_in.c_str());
+                std::exit(1);
+            }
+        }
+    }
+    return first;
+}
+
 /* make_mig() takes a collection of individual GIF images (all
    presumably the same resolution and all presumably generated
    by this program and its "divide and conquer" algorithm) and builds
@@ -167,6 +250,8 @@ static char par_key(const unsigned int x)
 
 void make_mig(unsigned int x_mult, unsigned int y_mult)
 {
+    validate_input_gifs(x_mult, y_mult);
+
     std::uint16_t x_res;
     std::uint16_t y_res;
     std::uint16_t x_tot;
