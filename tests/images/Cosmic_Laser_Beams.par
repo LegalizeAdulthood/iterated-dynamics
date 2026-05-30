@@ -1,0 +1,69 @@
+; June 11, 1997: Cosmic Laser Beams 
+;
+; pseudosphere
+;
+; Fractal visionaries:
+;
+; I've already unloaded my frustration, so let's get to today's fractal.
+; I named it "Sinister" because it has a sinister aura about it.  When I
+; look at the twisted, tortured shapes and tendrils in this image, I fancy
+; myself at the mouth of a dragon's cave on some far away forgotten world.
+;
+; The scene is part of the Z^3 mandeloid, sliced in a direction almost but
+; not exactly in the YZ direction.  The ever-present horizontal bands of
+; high-iteration chaos stand out in front of the deep violet alien sky, as
+; the very ground twists and swirls and tears itself apart in response to
+; unimaginable forces.
+;
+; Hold it!
+;
+; I seem to be getting carried away here.  The picture is a bit unusual,
+; but it's not *that* unusual.  I'm posting it because it illustrates the
+; riches that lie in the virtually unexplored XZ, YZ, XW, and YW planes of
+; the Mandeloid family.  Tomorrow, I'll post six different versions of the
+; prominent midget on the left stem of the north bud of the Mandelbrot
+; set, each version sliced in a different direction.  And then I'll
+; forcibly tear myself away from the odd planes and return to fractals in
+; the best plane of all -- the XY plane.
+;
+; For those who wish to view today's sinister image without tying up their
+; computers, it has been posted to a.b.p.f. and a.f.p.  And by tomorrow,
+; I'll hopefully be out of the low-level funk I've worked myself into.
+;
+; Jim Muth
+; jamth@mindspring.com
+;
+; START COMBINED FILE FOR 19.6===============================
+
+Cosmic_Laser_Beams { ; time=0:00:54.60-SF5 on P4-2000
+  reset=1960 type=formula formulafile=basicer.frm
+  formulaname=ManN-YZ passes=t center-mag=-1.15016/\
+  0.100378/24/1.8078 params=0/0.5/3/0/1.01/0 float=y
+  maxiter=7200 inside=253 logmap=4 periodicity=10
+  colors=000783884A95CA6EB7GC8ID9KFAMHBOJCQMDUREYWE_\
+  _DadDehCilCmpBmqDmqFmrIlrKlsMltOltQluTluVlvXlwZkw`\
+  kxckxekygkyihwgeuebsc_qaXo_VmZSkXPiVMgTJeRGcPDaNB_\
+  M9XK8UI7RH6PF5ME4JC3GB2E91B80865B8BF9GIBMLDROFXSGa\
+  VIaWJ`YK`ZL__N_aOZbPZdQYeRYfSXhTXiVWjWWlXVmYYlW`jU\
+  biSehQhfOkeMmcKpbIpbLpaNpaQoaTo`Vo`Yo__oYao_bO2wS7\
+  tWCq_HocMlgRikWfhibhibihbihbigbjgbjfcjfckeckeckdcl\
+  dclcclccmbcmbcmadnadn`dn`do_do_dszdrwdrsdqpdqldpid\
+  pedobdVJcZNccQdgUdkXdea7fa9faAgaCgaEh`Gh`Hi`Ji`Lj`\
+  Nj`Ok`Qk`Sl`Ul`Vm_Xm_Zn_`n_ao_cz5zzGzzQzzczzczz4zz\
+  5zz7zz8zzAzzczzczzczzczzczzczzczzczzNzzPzzQzzSzzTz\
+  zVzzWzzYzzZzzVzzazzazzazzazz`zz`zz`zz`zz`zz`zz_zz_\
+  zz_zz0zzTzzUzzVzzWzzXzzYzzZzz2zz4zz5zz7zz9zzAzzCzz\
+  EzzFzzHzzJzzKzzMzzNzzPzzRzzSzzUzzWzzXzzZzzn2zk9ziF\
+  zfMzdSzaZzbzzbzzbzzbzzazzazzazzazzazzazz`zz`zz`zz`\
+  zz`zz`zz_zz_zz_zKHKz_zzlz
+}
+
+frm:ManN-YZ {
+  z=real(pixel)+flip(real(p1)),
+  c=flip(imag(pixel))+imag(p1):
+  z=z^p2+(p3*c),
+  |z| <= 16
+}
+
+; END COMBINED FILE FOR 19.6=================================
+;

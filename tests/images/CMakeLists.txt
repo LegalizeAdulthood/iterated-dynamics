@@ -305,9 +305,9 @@ function(add_par_test name)
         LABELS par)
 endfunction()
 
-add_par_test(Killer_Mosquito)
-add_par_test(Broken_Arches)
-add_par_test(Waves_in_the_Night)
+foreach(par Killer_Mosquito Broken_Arches Waves_in_the_Night Cosmic_Laser_Beams)
+    add_par_test(${par})
+endforeach()
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 add_image_dump_test("halley")
