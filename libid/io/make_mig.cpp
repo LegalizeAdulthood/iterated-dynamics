@@ -234,6 +234,87 @@ static void set_output_screen(
     return output;
 }
 
+static std::size_t raster_size(const SavedImage &image)
+{
+    return static_cast<std::size_t>(image.ImageDesc.Width) * image.ImageDesc.Height;
+}
+
+static bool same_color_map(const ColorMapObject *lhs, const ColorMapObject *rhs)
+{
+    if (lhs == nullptr || rhs == nullptr)
+    {
+        return lhs == rhs;
+    }
+    return lhs->ColorCount == rhs->ColorCount &&
+        std::memcmp(lhs->Colors, rhs->Colors, lhs->ColorCount * sizeof(GifColorType)) == 0;
+}
+
+static bool same_image(const SavedImage &lhs, const SavedImage &rhs)
+{
+    return lhs.ImageDesc.Left == rhs.ImageDesc.Left && lhs.ImageDesc.Top == rhs.ImageDesc.Top &&
+        lhs.ImageDesc.Width == rhs.ImageDesc.Width && lhs.ImageDesc.Height == rhs.ImageDesc.Height &&
+        lhs.ImageDesc.Interlace == rhs.ImageDesc.Interlace &&
+        same_color_map(lhs.ImageDesc.ColorMap, rhs.ImageDesc.ColorMap) &&
+        std::memcmp(lhs.RasterBits, rhs.RasterBits, raster_size(lhs)) == 0;
+}
+
+static void copy_saved_image(GifFileType *output, const SavedImage &image)
+{
+    if (GifMakeSavedImage(output, &image) == nullptr)
+    {
+        std::printf("Cannot copy image into output GIF!\n");
+        std::exit(1);
+    }
+}
+
+static void verify_single_image_output(
+    const std::filesystem::path &path,
+    const GifFileType *first_input,
+    const unsigned int x_mult,
+    const unsigned int y_mult)
+{
+    InputGif output{read_input_gif(path)};
+    if (output.get() == nullptr || output.slurp_result() != GIF_OK)
+    {
+        std::printf("Cannot read output file %s!\n", path.filename().string().c_str());
+        std::exit(1);
+    }
+    const MigMetadata input_metadata{get_metadata(first_input)};
+    const MigMetadata output_metadata{get_metadata(output.get())};
+    if (output_metadata.width != input_metadata.width * static_cast<int>(x_mult) ||
+        output_metadata.height != input_metadata.height * static_cast<int>(y_mult) ||
+        output_metadata.color_resolution != input_metadata.color_resolution ||
+        output_metadata.background_color != input_metadata.background_color ||
+        output_metadata.aspect_byte != input_metadata.aspect_byte ||
+        !same_color_map(output.get()->SColorMap, first_input->SColorMap) || output.get()->ImageCount != 1 ||
+        !same_image(output.get()->SavedImages[0], first_input->SavedImages[0]))
+    {
+        std::printf("Output file %s failed GIF verification!\n", path.filename().string().c_str());
+        std::exit(1);
+    }
+}
+
+[[maybe_unused]] static void write_single_image_gif(
+    const std::filesystem::path &path,
+    const GifFileType *first_input,
+    const unsigned int x_mult,
+    const unsigned int y_mult)
+{
+    if (first_input->ImageCount < 1)
+    {
+        std::printf("Input file contains no images!\n");
+        std::exit(1);
+    }
+    OutputGif output{create_output_gif(path, first_input, x_mult, y_mult)};
+    copy_saved_image(output.get(), first_input->SavedImages[0]);
+    if (output.spew() != GIF_OK)
+    {
+        std::printf("Cannot write output file %s!\n", path.filename().string().c_str());
+        std::exit(1);
+    }
+    verify_single_image_output(path, first_input, x_mult, y_mult);
+}
+
 static MigMetadata validate_input_gifs(const unsigned int x_mult, const unsigned int y_mult)
 {
     MigMetadata first{};
