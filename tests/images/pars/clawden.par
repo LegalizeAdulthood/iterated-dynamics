@@ -1,0 +1,18 @@
+clawden            { ; Fractal of the day, 11-08-97
+                     ; 20 minutes at 100mhz, 640x480
+  reset=1960 type=formula formulaname=ManMinusN-YZ
+  passes=t
+  center-mag=+0.21698546721226190/-0.00229092592479926/1161.966/0.5374/0/-\
+  51.603 params=0/-1.15/1.5/0/1/0 float=y maxiter=5000 bailout=100
+  inside=0 logmap=yes symmetry=none periodicity=0
+  colors=000iqn<37>kGk<5>JlU<7>P`hQZjQZi<23>C`KB`JC0C<4>C0C7aB<3>5a74b54b5\
+  <42>fAL<15>19B<8>MbaPfePce<9>T1oT2o<38>ogKpiJphJ<9>pPT<29>_un
+  }
+
+frm:ManMinusN-YZ {; Jim Muth
+z=real(pixel)+flip(real(p1)),
+c=flip(imag(pixel))+imag(p1):
+z=(-z)^p2+(p3*c),
+|z| <= 16
+}
+
