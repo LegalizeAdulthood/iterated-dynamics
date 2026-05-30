@@ -1,0 +1,80 @@
+; June 10, 1997: Waves in the Night 
+;
+; waves
+;
+; Fractal visionaries:
+;
+; About eight years ago, when I saw the Mandelbrot set appear on my screen
+; for the first time, the first area I examined was Seahorse Valley.  I
+; don't think it had been given its name yet, but it was the most
+; interesting area of the whole set.  Since that time, Seahorse Valley,
+; located at -0.75, has been my favorite place to go when I wanted a good
+; fractal with as little work as possible.
+;
+; I never did find a seahorse as convincing as the elephants parading out
+; of East Valley; I saw only their tails.  But that doesn't matter -- I'm
+; sure the seahorses are there.  Otherwise, why would it have been named
+; Seahorse Valley.
+;
+; Today's fractal, which I named "Midnight" because of the somber colors,
+; is an oblique slice of Seahorse Valley, best viewed in reduced light.  I
+; won't even attempt to describe the orientation of the slice.  I can say
+; only that it is near horizontal, but off to the side and tilted at
+; something like a 10 degree angle.
+;
+; These oblique planes of the M-set are filled throughout with swirling
+; and stretching elements, much as in today's image.  But the rippling
+; effect where the two prominent center elements skew off the plane of the
+; screen is new to me.  Nothing like it appears anywhere in the classic
+; Mandelbrot or Julia sets.
+;
+; I'm becoming a bit hooked on the oblique slices of the Julibrot, which
+; are virtually unexplored.  When that happens there's nothing to do but
+; explore like crazy until my enthusiasm runs its course.  So bear with me
+; if I post a few more oblique images.  I'll soon return to fancier
+; fractals.
+;
+; As is always the case, the finished image has been posted to a.b.p.f.
+; and a.f.p. for convenience.
+;
+; Jim Muth
+; jamth@mindspring.com
+;
+; START COMBINED FILE FOR 19.6===============================
+
+Waves_in_the_Night { ; time=0:02:19.78-SF5 on P4-2000
+  reset=1960 type=formula formulafile=basicer.frm
+  formulaname=Man-YZ-XZ passes=t center-mag=1.25579\
+  /-0.144754/25.40284 params=0.16/0.75/0.1/0 float=y
+  maxiter=14400 inside=253 logmap=10 periodicity=10
+  colors=0008CC8BB8BB7AA7997986876866755745645635524\
+  514404405515515626626636736746747857857967967968A7\
+  8A78A88B88B99B99CA9CA9CA9DBADBAECAECAEDAFDBFEBFEBG\
+  FBGFBGFCHGCHGCHHCIHCIIDJIDJJDJJDKKDKKEKKELLELLELME\
+  MMFMNFMNFNOFNOGOPGOPGOPGPQGPQHPRHQRHQSHQSHRTIRTIRT\
+  ISUISUISVJTVJTWJUWJUXJUXKVYKVYKVYKWZKWZLW_LX_LX`LX\
+  `LYaMYaMZbMZbMZbM_cN_cN_dN`dN`eN`eOafOafOafObgObgP\
+  chPchPciPdiPdjQdjQekQekQekPdiOdhOdgNceNcdMccMcbLba\
+  Lb_KbZKbYJaXJaVIaUIaTH`SG`RG`PF`OF_NE_ME_LD_JDZICZ\
+  HCZGBZEBYDAYCAYBBXCBXKBXKCXKCXKCXKCXKDXUDXUDXUDXUE\
+  XUEXUEXUEXUFXUFXUFXUFXUGXUGXUGXUGXUHXcHXcHXcHXcIXc\
+  IXcIXcIXcJXcJXcJXcJXcKXcKXcKXcKXcLXmLXmLXmLXmMXmMX\
+  mMWmMWmNWmNWmNWmNWmOWmOWmOWmOWmPWmPWmPWmPWmQWmQWmQ\
+  WmQWmRWmRWmRWmRWmSWmSWmSWmSWmTWmTWmTWmTWmUWmUWmUWm\
+  UWmVWmVWmVWmVWmWWmWWmWWmWWmXWmXWmXWmUUmUUmUUmUUmUU\
+  mUUmUUmUUmUUmUUmCDFUUmUUm
+}
+
+frm:Man-YZ-XZ {; Jim Muth, Thanks to Benno
+  ; p2 = 0 = Julibrot YZ plane
+  ; p2 = 1 = Julibrot XZ plane
+  ; p2 = >0 <1 = Oblique planes
+  z=real(pixel)+flip(real(p1)),
+  c=imag(pixel)+flip(imag(p1)),
+  a=p2, b=flip(cos(asin(p2))):
+  z=sqr(z)+((a+b)*c),
+  |z| <= 25
+}
+
+; END COMBINED FILE FOR 19.6=================================
+;

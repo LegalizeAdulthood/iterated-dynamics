@@ -307,6 +307,7 @@ endfunction()
 
 add_par_test(Killer_Mosquito)
 add_par_test(Broken_Arches)
+add_par_test(Waves_in_the_Night)
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 add_image_dump_test("halley")
