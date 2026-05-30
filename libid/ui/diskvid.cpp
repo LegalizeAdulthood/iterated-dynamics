@@ -26,8 +26,10 @@
 #include <array>
 #include <cassert>
 #include <chrono>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
+#include <filesystem>
 #include <string>
 #include <vector>
 
@@ -91,6 +93,7 @@ static int s_row_size{};                    // doubles as a disk video not ok fl
 static int s_col_size{};                    // sydots, *2 when pot16bit
 static std::vector<Byte> s_mem_buf;         //
 static MemoryHandle s_dv_handle{};          //
+static std::filesystem::path s_targa_disk_path;
 static long s_mem_offset{};                 //
 static long s_old_mem_offset{};             //
 static Byte *s_mem_buf_ptr{};               //
@@ -145,6 +148,16 @@ int targa_start_disk(std::FILE *targa_fp, const int overhead)
     s_high_offset = 100000000L; // targa not necessarily init'd to zeros
 
     return i;
+}
+
+void set_targa_disk_path(const std::filesystem::path &path)
+{
+    s_targa_disk_path = path;
+}
+
+const std::filesystem::path &targa_disk_path()
+{
+    return s_targa_disk_path;
 }
 
 int common_start_disk(const long new_row_size, const long new_col_size, const int colors)
@@ -253,6 +266,7 @@ int common_start_disk(const long new_row_size, const long new_col_size, const in
             s_mem_buf[i] = static_cast<Byte>(std::fgetc(s_fp));
         }
         std::fclose(s_fp);
+        s_fp = nullptr;
         s_dv_handle = memory_alloc(BLOCK_LEN, memory_size, MemoryLocation::DISK);
     }
     else
@@ -307,18 +321,24 @@ int common_start_disk(const long new_row_size, const long new_col_size, const in
 
 void end_disk()
 {
-    if (s_fp != nullptr)
+    const bool trim_targa{g_disk_targa && !s_targa_disk_path.empty()};
+    const std::uintmax_t targa_size{
+        static_cast<std::uintmax_t>(s_header_length)
+        + static_cast<std::uintmax_t>(s_row_size) * static_cast<std::uintmax_t>(s_col_size)};
+
+    if (g_disk_targa && s_cache_start != nullptr)
     {
-        if (g_disk_targa) // flush the cache
+        for (s_cache_lru = s_cache_start; s_cache_lru < s_cache_end; ++s_cache_lru)
         {
-            for (s_cache_lru = s_cache_start; s_cache_lru < s_cache_end; ++s_cache_lru)
+            if (s_cache_lru->dirty)
             {
-                if (s_cache_lru->dirty)
-                {
-                    write_cache_lru();
-                }
+                write_cache_lru();
             }
         }
+    }
+
+    if (s_fp != nullptr)
+    {
         std::fclose(s_fp);
         s_fp = nullptr;
     }
@@ -328,12 +348,18 @@ void end_disk()
         memory_release(s_dv_handle);
         s_dv_handle = MemoryHandle{};
     }
+    if (trim_targa)
+    {
+        std::error_code ignore;
+        std::filesystem::resize_file(s_targa_disk_path, targa_size, ignore);
+    }
     if (s_cache_start != nullptr)
     {
         free(s_cache_start);
         s_cache_start = nullptr;
     }
     s_mem_buf.clear();
+    s_targa_disk_path.clear();
     g_disk_flag = false;
     s_row_size = 0;
     g_disk_16_bit = false;

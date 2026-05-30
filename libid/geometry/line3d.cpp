@@ -1585,6 +1585,7 @@ static bool start_targa_overlay(const std::string &path, std::FILE *source, cons
         }
     }
 
+    set_targa_disk_path(path);
     if (targa_start_disk(fps, s_targa_header_24) != 0)
     {
         end_disk();

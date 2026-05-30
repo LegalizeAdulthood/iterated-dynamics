@@ -4,7 +4,6 @@
 //
 #include "misc/memory.h"
 
-#include "geometry/line3d.h"
 #include "io/dir_file.h"
 #include "io/get_disk_space.h"
 #include "io/special_dirs.h"
@@ -28,7 +27,6 @@
 #include <limits>
 
 using namespace id::engine;
-using namespace id::geometry;
 using namespace id::io;
 using namespace id::ui;
 
@@ -505,7 +503,7 @@ MemoryHandle memory_alloc(const U16 size, const long count, const MemoryLocation
     case MemoryLocation::DISK: // MemoryAlloc
         if (g_disk_targa)
         {
-            s_handles[handle].disk.file = dir_fopen(g_temp_dir, g_light_name, "a+b");
+            s_handles[handle].disk.file = std::fopen(targa_disk_path().string().c_str(), "a+b");
         }
         else
         {
@@ -529,7 +527,7 @@ MemoryHandle memory_alloc(const U16 size, const long count, const MemoryLocation
         success = true;
         std::fclose(s_handles[handle].disk.file); // so clusters aren't lost if we crash while running
         s_handles[handle].disk.file = g_disk_targa ?
-            dir_fopen(g_temp_dir, g_light_name, "r+b") :
+            std::fopen(targa_disk_path().string().c_str(), "r+b") :
             dir_fopen(g_temp_dir, mem_filename(handle), "r+b");
         // cppcheck-suppress useClosedFile
         std::fseek(s_handles[handle].disk.file, 0, SEEK_SET);
@@ -572,7 +570,10 @@ void memory_release(const MemoryHandle handle)
 
     case MemoryLocation::DISK: // MemoryRelease
         std::fclose(s_handles[index].disk.file);
-        dir_remove(g_temp_dir, mem_filename(index));
+        if (!g_disk_targa)
+        {
+            dir_remove(g_temp_dir, mem_filename(index));
+        }
         s_handles[index].disk.file = nullptr;
         s_handles[index].size = 0;
         s_handles[index].stored_at = MemoryLocation::NOWHERE;

@@ -5,6 +5,7 @@
 #include <config/port.h>
 
 #include <cstdio>
+#include <filesystem>
 #include <string>
 
 namespace id::ui
@@ -18,6 +19,8 @@ extern bool                  g_good_mode;       // video mode ok?
 int start_disk();
 int pot_start_disk();
 int targa_start_disk(std::FILE *targa_fp, int overhead);
+void set_targa_disk_path(const std::filesystem::path &path);
+const std::filesystem::path &targa_disk_path();
 void end_disk();
 int disk_read_pixel(int col, int row);
 void disk_write_pixel(int col, int row, int color);

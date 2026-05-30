@@ -4,6 +4,7 @@
 #include <image-tool/gif_compare.h>
 #include <image-tool/gif_json.h>
 
+#include <algorithm>
 #include <array>
 #include <cassert>
 #include <cctype>
@@ -27,28 +28,57 @@ static int usage(const std::string_view program)
     return 1;
 }
 
-static ColorMapObject *make_grayscale_color_map()
-{
-    ColorMapObject *color_map = GifMakeMapObject(256, nullptr);
-    if (color_map == nullptr)
-    {
-        throw std::runtime_error{"Could not allocate GIF color map."};
-    }
-    for (int i = 0; i < 256; ++i)
-    {
-        color_map->Colors[i].Red = i;
-        color_map->Colors[i].Green = i;
-        color_map->Colors[i].Blue = i;
-    }
-    return color_map;
-}
-
 struct RgbImage
 {
     int width{};
     int height{};
     std::vector<std::uint8_t> pixels;
 };
+
+static void write_png(const std::filesystem::path &path, const RgbImage &image)
+{
+    png_image png{};
+    png.version = PNG_IMAGE_VERSION;
+    png.width = image.width;
+    png.height = image.height;
+    png.format = PNG_FORMAT_RGB;
+    if (png_image_write_to_file(&png, path.string().c_str(), 0, image.pixels.data(), 0, nullptr) == 0)
+    {
+        throw std::runtime_error{"Could not write PNG " + path.string() + ": " + png.message};
+    }
+}
+
+static int rgb_delta(const std::uint8_t *pixel1, const std::uint8_t *pixel2)
+{
+    return std::abs(pixel1[0] - pixel2[0]) //
+        + std::abs(pixel1[1] - pixel2[1]) //
+        + std::abs(pixel1[2] - pixel2[2]);
+}
+
+static RgbImage make_difference_image(const RgbImage &image1, const RgbImage &image2)
+{
+    RgbImage result{image1.width, image1.height};
+    result.pixels.resize(static_cast<std::size_t>(result.width) * static_cast<std::size_t>(result.height) * 3U);
+    const int num_pixels{image1.width * image1.height};
+    for (int i = 0; i < num_pixels; ++i)
+    {
+        const std::size_t offset{static_cast<std::size_t>(i) * 3U};
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+        if (delta == 0)
+        {
+            result.pixels[offset + 0] = 0;
+            result.pixels[offset + 1] = 255;
+            result.pixels[offset + 2] = 0;
+        }
+        else
+        {
+            result.pixels[offset + 0] = 255;
+            result.pixels[offset + 1] = 0;
+            result.pixels[offset + 2] = static_cast<std::uint8_t>(std::min(255, delta * 255 / 765));
+        }
+    }
+    return result;
+}
 
 static std::string lower_extension(const std::filesystem::path &path)
 {
@@ -194,7 +224,8 @@ static RgbImage load_rgb_image(const std::filesystem::path &path)
     throw std::runtime_error{"Unsupported true-color image type: " + path.string()};
 }
 
-static int compare_rgb_images(const std::string &file1, const std::string &file2)
+static int compare_rgb_images(
+    const std::string &file1, const std::string &file2, const std::filesystem::path &diff_image)
 {
     const RgbImage image1{load_rgb_image(file1)};
     const RgbImage image2{load_rgb_image(file2)};
@@ -207,24 +238,70 @@ static int compare_rgb_images(const std::string &file1, const std::string &file2
     }
 
     int pixel_count{};
+    long long total_delta{};
+    int max_delta{};
+    int first_mismatch{-1};
+    int min_x{image1.width};
+    int min_y{image1.height};
+    int max_x{};
+    int max_y{};
+    std::array<int, 766> histogram{};
     const int num_pixels{image1.width * image1.height};
     for (int i = 0; i < num_pixels; ++i)
     {
         const std::size_t offset{static_cast<std::size_t>(i) * 3U};
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
         if (image1.pixels[offset + 0] != image2.pixels[offset + 0] //
             || image1.pixels[offset + 1] != image2.pixels[offset + 1]
             || image1.pixels[offset + 2] != image2.pixels[offset + 2])
         {
+            if (first_mismatch < 0)
+            {
+                first_mismatch = i;
+            }
+            const int x{i % image1.width};
+            const int y{i / image1.width};
+            min_x = std::min(min_x, x);
+            min_y = std::min(min_y, y);
+            max_x = std::max(max_x, x);
+            max_y = std::max(max_y, y);
             ++pixel_count;
+            total_delta += delta;
+            max_delta = std::max(max_delta, delta);
+            ++histogram[delta];
         }
     }
     if (pixel_count > 0)
     {
         const float percentage{100.0f * static_cast<float>(pixel_count) / static_cast<float>(num_pixels)};
+        if (!diff_image.empty())
+        {
+            std::filesystem::path diff_path{diff_image};
+            write_png(diff_path.make_preferred(), make_difference_image(image1, image2));
+            std::cout << "Wrote difference image to " << diff_image << '\n';
+        }
         std::cout << fmt::format("Images differ by {:f}% ({:d}/{:d} pixels)\n"
                                  "{:s}\n"
                                  "{:s}\n",
             percentage, pixel_count, num_pixels, file1, file2);
+        std::cout << fmt::format("RGB delta: avg={:.3f}, max={:d}\n",
+            static_cast<double>(total_delta) / static_cast<double>(num_pixels), max_delta);
+        std::cout << fmt::format("Difference bounds: ({:d},{:d}) - ({:d},{:d})\n", min_x, min_y, max_x, max_y);
+        const int first_x{first_mismatch % image1.width};
+        const int first_y{first_mismatch / image1.width};
+        const std::size_t first_offset{static_cast<std::size_t>(first_mismatch) * 3U};
+        std::cout << fmt::format("First mismatch at ({:d},{:d}): ({:d},{:d},{:d}) != ({:d},{:d},{:d})\n",
+            first_x, first_y, image1.pixels[first_offset], image1.pixels[first_offset + 1],
+            image1.pixels[first_offset + 2], image2.pixels[first_offset], image2.pixels[first_offset + 1],
+            image2.pixels[first_offset + 2]);
+        std::cout << "RGB delta histogram:\n";
+        for (std::size_t i = 0; i < histogram.size(); ++i)
+        {
+            if (histogram[i] > 0)
+            {
+                std::cout << fmt::format("  [{:3d}]: {:d}\n", i, histogram[i]);
+            }
+        }
         return 1;
     }
 
@@ -232,51 +309,52 @@ static int compare_rgb_images(const std::string &file1, const std::string &file2
     return 0;
 }
 
-static void write_difference_gif(const std::filesystem::path &path, const SavedImage &image1, const SavedImage &image2)
+static const ColorMapObject &image_color_map(const SavedImage &image, const ColorMapObject &fallback)
 {
-    const int width{image1.ImageDesc.Width};
-    const int height{image1.ImageDesc.Height};
-    std::vector<GifByteType> pixels(static_cast<std::size_t>(width) * static_cast<std::size_t>(height));
-    for (std::size_t i = 0; i < pixels.size(); ++i)
-    {
-        pixels[i] = static_cast<GifByteType>(std::abs(image1.RasterBits[i] - image2.RasterBits[i]));
-    }
+    return image.ImageDesc.ColorMap != nullptr ? *image.ImageDesc.ColorMap : fallback;
+}
 
-    int gif_error{};
-    GifFileType *gif = EGifOpenFileName(path.string().c_str(), false, &gif_error);
-    if (gif == nullptr)
+static void set_indexed_pixel(
+    RgbImage &image, const SavedImage &saved_image, const ColorMapObject &color_map, const int pixel)
+{
+    const int color_index{saved_image.RasterBits[pixel]};
+    if (color_index < 0 || color_index >= color_map.ColorCount)
     {
-        throw std::runtime_error{"Could not open " + path.string() + " for writing: " + std::to_string(gif_error)};
+        throw std::runtime_error{"GIF color index out of range."};
     }
+    const GifColorType &color{color_map.Colors[color_index]};
+    const std::size_t offset{static_cast<std::size_t>(pixel) * 3U};
+    image.pixels[offset + 0] = color.Red;
+    image.pixels[offset + 1] = color.Green;
+    image.pixels[offset + 2] = color.Blue;
+}
 
-    ColorMapObject *color_map = make_grayscale_color_map();
-    int result = EGifPutScreenDesc(gif, width, height, 8, 0, color_map);
-    GifFreeMapObject(color_map);
-    if (result == GIF_ERROR)
+static RgbImage indexed_to_rgb(const SavedImage &image, const ColorMapObject &color_map)
+{
+    RgbImage result{image.ImageDesc.Width, image.ImageDesc.Height};
+    result.pixels.resize(static_cast<std::size_t>(result.width) * static_cast<std::size_t>(result.height) * 3U);
+    const int num_pixels{result.width * result.height};
+    for (int i = 0; i < num_pixels; ++i)
     {
-        EGifCloseFile(gif, &gif_error);
-        throw std::runtime_error{"Could not write GIF screen description to " + path.string()};
+        set_indexed_pixel(result, image, color_map, i);
     }
+    return result;
+}
 
-    if (EGifPutImageDesc(gif, 0, 0, width, height, false, nullptr) == GIF_ERROR)
+static RgbImage indexed_to_grayscale(const SavedImage &image)
+{
+    RgbImage result{image.ImageDesc.Width, image.ImageDesc.Height};
+    result.pixels.resize(static_cast<std::size_t>(result.width) * static_cast<std::size_t>(result.height) * 3U);
+    const int num_pixels{result.width * result.height};
+    for (int i = 0; i < num_pixels; ++i)
     {
-        EGifCloseFile(gif, &gif_error);
-        throw std::runtime_error{"Could not write GIF image description to " + path.string()};
+        const std::uint8_t color{image.RasterBits[i]};
+        const std::size_t offset{static_cast<std::size_t>(i) * 3U};
+        result.pixels[offset + 0] = color;
+        result.pixels[offset + 1] = color;
+        result.pixels[offset + 2] = color;
     }
-
-    for (int row = 0; row < height; ++row)
-    {
-        if (EGifPutLine(gif, &pixels[static_cast<std::size_t>(row) * static_cast<std::size_t>(width)], width) == GIF_ERROR)
-        {
-            EGifCloseFile(gif, &gif_error);
-            throw std::runtime_error{"Could not write GIF raster data to " + path.string()};
-        }
-    }
-
-    if (EGifCloseFile(gif, &gif_error) == GIF_ERROR)
-    {
-        throw std::runtime_error{"Could not close " + path.string() + " after writing: " + std::to_string(gif_error)};
-    }
+    return result;
 }
 
 } // namespace id
@@ -333,7 +411,7 @@ int main(const int argc, char *argv[])
 
         if (is_true_color_path(file1) || is_true_color_path(file2))
         {
-            return compare_rgb_images(file1, file2);
+            return compare_rgb_images(file1, file2, diff_image);
         }
 
         GIFInputFile gif1{file1};
@@ -399,15 +477,39 @@ int main(const int argc, char *argv[])
                 return 1;
             }
             int pixel_count{};
-            std::array<int, 256> histogram{};
+            long long total_delta{};
+            int max_delta{};
+            int first_mismatch{-1};
+            int min_x{image1.ImageDesc.Width};
+            int min_y{image1.ImageDesc.Height};
+            int max_x{};
+            int max_y{};
+            std::array<int, 766> histogram{};
             const int num_pixels{image1.ImageDesc.Width * image1.ImageDesc.Height};
+            const RgbImage rgb1{compare_colormap ? indexed_to_rgb(image1, image_color_map(image1, gif1.color_map())) :
+                                                 indexed_to_grayscale(image1)};
+            const RgbImage rgb2{compare_colormap ? indexed_to_rgb(image2, image_color_map(image2, gif2.color_map())) :
+                                                 indexed_to_grayscale(image2)};
             for (int j = 0; j < num_pixels; ++j)
             {
-                if (image1.RasterBits[j] != image2.RasterBits[j])
+                const std::size_t offset{static_cast<std::size_t>(j) * 3U};
+                const int diff{rgb_delta(&rgb1.pixels[offset], &rgb2.pixels[offset])};
+                if (diff != 0)
                 {
                     ++pixel_count;
-                    const int diff = std::abs(image1.RasterBits[j] - image2.RasterBits[j]);
-                    assert(diff < 256);
+                    if (first_mismatch < 0)
+                    {
+                        first_mismatch = j;
+                    }
+                    const int x{j % image1.ImageDesc.Width};
+                    const int y{j / image1.ImageDesc.Width};
+                    min_x = std::min(min_x, x);
+                    min_y = std::min(min_y, y);
+                    max_x = std::max(max_x, x);
+                    max_y = std::max(max_y, y);
+                    total_delta += diff;
+                    max_delta = std::max(max_delta, diff);
+                    assert(diff < static_cast<int>(histogram.size()));
                     histogram[diff]++;
                 }
             }
@@ -417,19 +519,40 @@ int main(const int argc, char *argv[])
             {
                 if (!diff_image.empty())
                 {
-                    write_difference_gif(diff_image.make_preferred(), image1, image2);
+                    write_png(diff_image.make_preferred(), make_difference_image(rgb1, rgb2));
                     std::cout << "Wrote difference image to " << diff_image << '\n';
                 }
                 std::cout << fmt::format("Images differ by {:f}% ({:d}/{:d} pixels)\n"
                                          "{:s}\n"
                                          "{:s}\n",
                     percentage, pixel_count, num_pixels, file1, file2);
+                std::cout << fmt::format("Pixel delta: avg={:.3f}, max={:d}\n",
+                    static_cast<double>(total_delta) / static_cast<double>(num_pixels), max_delta);
+                std::cout << fmt::format(
+                    "Difference bounds: ({:d},{:d}) - ({:d},{:d})\n", min_x, min_y, max_x, max_y);
+                const int first_x{first_mismatch % image1.ImageDesc.Width};
+                const int first_y{first_mismatch / image1.ImageDesc.Width};
+                const std::size_t first_offset{static_cast<std::size_t>(first_mismatch) * 3U};
+                if (compare_colormap)
+                {
+                    std::cout << fmt::format(
+                        "First mismatch at ({:d},{:d}): index {:d} ({:d},{:d},{:d}) != index {:d} ({:d},{:d},{:d})\n",
+                        first_x, first_y, image1.RasterBits[first_mismatch], rgb1.pixels[first_offset],
+                        rgb1.pixels[first_offset + 1], rgb1.pixels[first_offset + 2],
+                        image2.RasterBits[first_mismatch], rgb2.pixels[first_offset], rgb2.pixels[first_offset + 1],
+                        rgb2.pixels[first_offset + 2]);
+                }
+                else
+                {
+                    std::cout << fmt::format("First mismatch at ({:d},{:d}): {:d} != {:d}\n",
+                        first_x, first_y, image1.RasterBits[first_mismatch], image2.RasterBits[first_mismatch]);
+                }
                 std::cout << "Pixel difference histogram:\n";
-                for (int j = 0; j < 256; ++j)
+                for (std::size_t j = 0; j < histogram.size(); ++j)
                 {
                     if (histogram[j] > 0)
                     {
-                        std::cout << fmt::format("  [{:3d}]: {:d}\n", j, histogram[j]);
+                        std::cout << fmt::format("  [{:3d}]: {:d}\n", static_cast<int>(j), histogram[j]);
                     }
                 }
                 return 1;

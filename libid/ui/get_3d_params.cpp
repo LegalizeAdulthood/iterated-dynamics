@@ -428,13 +428,14 @@ static bool get_light_params()
         g_haze = std::min(g_haze, 100);
         g_haze = std::max(g_haze, 0);
         g_light_name = builder.read_string();
+        builder.read_comment();
         g_background_color[0] = static_cast<char>(builder.read_int_number() % 255);
         g_background_color[1] = static_cast<char>(builder.read_int_number() % 255);
         g_background_color[2] = static_cast<char>(builder.read_int_number() % 255);
         const bool targa_overlay = builder.read_yes_no();
         if (!targa_overlay)
         {
-            g_light_name = get_checked_save_path(WriteFile::IMAGE, targa_save_name(g_light_name)).string();
+            g_light_name = targa_save_name(g_light_name).string();
         }
         g_targa_overlay = targa_overlay;
     }

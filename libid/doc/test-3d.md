@@ -8,7 +8,7 @@ Cover the `radar.par` `3dlook01` and `3dlook` workflow end to end:
 - compare that POT file as GIF data;
 - render `3dlook` from the POT file through the 3D UI defaults;
 - write the full-color Targa lightfile;
-- compare the TGA output against a gold PNG image.
+- compare the TGA output against a gold TGA image.
 
 Do not make tests depend on the sibling `id-libraries` checkout. Add
 `radar.par` to `home/par` and retain the original top comment authorship.
@@ -27,7 +27,7 @@ Use two focused tests. The second test still creates its own POT input.
    Create an isolated test home, generate `potntial.pot` with
    `@radar/3dlook01`, then run `@radar/3dlook` with an autokey script that
    accepts the 3D parameter screens. Compare the generated TGA lightfile to
-   `gold-3dlook-targa.png`.
+   `gold-3dlook-targa.tga`.
 
 This keeps the POT test simple while making the Targa test exercise the
 real two-stage flow in one CTest invocation.
@@ -44,7 +44,7 @@ real two-stage flow in one CTest invocation.
 - `tests/images/gold-3dlook01.pot`
 - `tests/autokey/3dlook_targa.key`
 - `tests/autokey/3dlook_targa_test.cmake`
-- `tests/autokey/gold-3dlook-targa.png`
+- `tests/autokey/gold-3dlook-targa.tga`
 
 Add `tests/cmake` to `CMAKE_MODULE_PATH` from `tests/CMakeLists.txt`, then
 include these helpers only from the tests that need them.
@@ -81,32 +81,13 @@ tests only when it removes immediate duplication.
 
 ## Work Slices
 
-1. Add `AutokeyTest.3dlook-targa`.
-
-   Use a private home directory. In the CMake script, generate
-   `potntial.pot` first, then run Id with `@radar/3dlook` and an autokey
-   file that accepts the default 3D screens. Use a deterministic lightfile
-   name, such as `lightname=3dlook-targa`.
-
-   Use FRACTINT to generate the initial full-color Targa baseline from the
-   same two-stage parameter flow, convert that verified TGA to
-   `gold-3dlook-targa.png`, and compare Id's generated TGA to it. The first
-   Id test version should fail cleanly if the gold PNG does not exist and
-   should print the full generated TGA path.
-
-2. Check in gold images after manual verification.
-
-   Accept `gold-3dlook01.pot` after the potential image is verified.
-   Convert the verified TGA to PNG and check it in as
-   `gold-3dlook-targa.png`.
-
-3. Optional cleanup.
+1. Optional cleanup.
 
    If the new helpers are clearly better, migrate `ImageTest.make-mig` and
    `AutokeyTest.makepar-mig-pieces` to them in a later mechanical slice.
    Keep that separate from the 3D behavior test.
 
-4. Validate.
+2. Validate.
 
    Run focused tests first:
 
