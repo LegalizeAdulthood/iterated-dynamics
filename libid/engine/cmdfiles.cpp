@@ -265,6 +265,11 @@ static bool process_file_set_name(const std::string &filename, const std::string
     {
         path.replace_extension(".par");
     }
+    path = find_file(ReadFile::PARAMETER, path);
+    if (path.empty())
+    {
+        return false;
+    }
     g_parameter_file = path;
     g_parameter_set_name = param_name;
     std::FILE *init_file = nullptr;

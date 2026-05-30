@@ -9,6 +9,7 @@
 #include "fractals/lsystem.h"
 #include "fractals/parser.h"
 #include "io/file_item.h"
+#include "io/library.h"
 #include "io/load_entry_text.h"
 #include "io/trim_filename.h"
 #include "misc/Driver.h"
@@ -353,10 +354,29 @@ static long get_file_entry(const ItemType type, const char *type_desc, const cha
     std::filesystem::path &path, std::string &entry_name)
 {
     const std::string hdg{fmt::format("Select {:s} File", type_desc)};
+    const auto read_file = [](ItemType item_type)
+    {
+        switch (item_type)
+        {
+        case ItemType::FORMULA:
+            return ReadFile::FORMULA;
+        case ItemType::L_SYSTEM:
+            return ReadFile::LSYSTEM;
+        case ItemType::IFS:
+            return ReadFile::IFS;
+        case ItemType::PAR_SET:
+            return ReadFile::PARAMETER;
+        }
+        throw std::runtime_error("Unknown ItemType " + std::to_string(static_cast<int>(item_type)));
+    };
     while (true)
     {
         // binary mode used here - it is more work, but much faster,
         //     especially when ftell or fgetpos is used
+        if (const std::filesystem::path lib_path{find_file(read_file(type), path)}; !lib_path.empty())
+        {
+            path = lib_path;
+        }
         s_gfe.file = std::fopen(path.string().c_str(), "rb");
         while (s_gfe.file == nullptr)
         {
