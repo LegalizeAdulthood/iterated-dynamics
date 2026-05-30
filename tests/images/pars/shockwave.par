@@ -1,0 +1,22 @@
+shockwave          { ; Fractal of the day, 10-09-97
+                     ; 12 min at 100mhz on a 486 at 640x480
+  reset=1960 type=formula 
+  formulaname=XY-YZrot-N passes=1
+  center-mag=0.560488/-0.39823/0.2826667 params=30/1.05/0/0/0/0.4
+  float=y maxiter=500 bailout=100 inside=bof60 logmap=yes
+  symmetry=none periodicity=10
+  colors=000kH_<10>iF9iF7kH6<14>z_1<18>5E4<15>62BKdK<12>YW1<20>HBrHAtICs<2\
+  0>`f``g`biQcjFdk5<10>CBX<2>31R<20>QMa<3>0fF<23>5S3<20>I9nDSg8j`<12>5IC<1\
+  4>xmF<11>nWXnUYkIdkIb
+  }
+
+frm:XY-YZrot-N {; Jim Muth, thanks to Benno
+; real(p1) = rotation angle in degrees, imag(p1 = exponent of Z,
+; p2 = parallel planes,
+; p3 = point of rotation and parallel planes,
+z=sin(real(p1)*.01745329251994)*real(pixel)+p2,
+c=cos(real(p1)*.01745329251994)*real(pixel)+flip(imag(pixel))+p3:
+z=(-z)^imag(p1)+c,
+|z| <= 25
+}
+
