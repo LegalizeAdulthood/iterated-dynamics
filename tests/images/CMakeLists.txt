@@ -6,40 +6,7 @@ if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 include(IdTestHome)
-
-function(add_image_test name)
-    cmake_parse_arguments(IMAGE_TEST "DISABLED;IGNORE_COLORMAP" "WORKING_DIRECTORY" "PARAMETERS;LABELS" ${ARGN})
-    if(IMAGE_TEST_UNPARSED_ARGUMENTS)
-        message(FATAL_ERROR "Unknown arguments: ${IMAGE_TEST_UNPARSED_ARGUMENTS}")
-    endif()
-    if(NOT IMAGE_TEST_WORKING_DIRECTORY)
-        set(IMAGE_TEST_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home")
-    endif()
-    set(IMAGE_TEST_IGNORE_COLORMAP_VALUE OFF)
-    if(IMAGE_TEST_IGNORE_COLORMAP)
-        set(IMAGE_TEST_IGNORE_COLORMAP_VALUE ON)
-        list(APPEND IMAGE_TEST_LABELS "ignore-colormap")
-    endif()
-    list(APPEND IMAGE_TEST_PARAMETERS "batch=yes" "video=F6")
-    add_test(NAME ImageTest.${name}
-        COMMAND ${CMAKE_COMMAND}
-            "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
-            "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
-            "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}.gif"
-            "-DPARAMETERS=${IMAGE_TEST_PARAMETERS}"
-            "-DTEST_SAVE_IMAGE=test-${name}.gif"
-            "-DTEST_KEEP_IMAGE=${CMAKE_CURRENT_BINARY_DIR}"
-            "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/${name}-diff.gif"
-            "-DIMAGE_TEST_IGNORE_COLORMAP=${IMAGE_TEST_IGNORE_COLORMAP_VALUE}"
-            -P "${CMAKE_CURRENT_SOURCE_DIR}/image_compare_test.cmake"
-        WORKING_DIRECTORY "${IMAGE_TEST_WORKING_DIRECTORY}"
-    )
-    list(APPEND IMAGE_TEST_LABELS "image")
-    set_tests_properties(ImageTest.${name} PROPERTIES LABELS "${IMAGE_TEST_LABELS}")
-    if(IMAGE_TEST_DISABLED)
-        set_tests_properties(ImageTest.${name} PROPERTIES DISABLED TRUE)
-    endif()
-endfunction()
+include(AddImageTest)
 
 function(add_fractal_type_image_test)
     foreach(type ${ARGN})
@@ -223,11 +190,6 @@ add_image_test("ant2" PARAMETERS "type=ant"
 add_image_test("mandel-chroma" PARAMETERS "type=mandel" "map=chroma")
 add_image_test("Egg" PARAMETERS "@id.par/Egg")
 add_image_test("EvilFrog" PARAMETERS "@id.par/EvilFrog")
-id_make_test_home(Land_of_Loti LAND_OF_LOTI_HOME
-    PARS "${CMAKE_CURRENT_SOURCE_DIR}/Land_of_Loti.par")
-add_image_test("Land_of_Loti"
-    PARAMETERS "@Land_of_Loti.par/Land_of_Loti"
-    WORKING_DIRECTORY "${LAND_OF_LOTI_HOME}")
 add_image_test("mandala" PARAMETERS "@id.par/mandala")
 add_image_test("filament" PARAMETERS "@id")
 add_image_test("SWT-029" PARAMETERS "@id.par/SWT-029")
@@ -296,20 +258,6 @@ add_image_test("outside-atan" PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-00
 add_image_test("outside-tdis" PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
     "params=0/0" "outside=tdis")
 
-function(add_par_test name)
-    id_make_test_home(${name} PAR_TEST_HOME
-        PARS "${CMAKE_CURRENT_SOURCE_DIR}/${name}.par")
-    add_image_test("${name}"
-        PARAMETERS "@${name}.par/${name}"
-        WORKING_DIRECTORY "${PAR_TEST_HOME}"
-        LABELS par)
-endfunction()
-
-foreach(par Killer_Mosquito Broken_Arches Waves_in_the_Night Cosmic_Laser_Beams
-        Mass_Ejection Faces_in_the_Night)
-    add_par_test(${par})
-endforeach()
-
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 add_image_dump_test("halley")
 add_potential_image_test("3dlook01" PARAMETERS "@radar/3dlook01")
@@ -320,3 +268,5 @@ if(ID_RUN_SLOW_TESTS)
     add_image_test("mossy-garden" PARAMETERS "@MossyFractalGarden.par/MossyFractalGarden" LABELS "slow")
     add_image_test("orbits-demonic_moose" PARAMETERS "@orbits/demonic_moose" LABELS "slow")
 endif()
+
+add_subdirectory(pars)
