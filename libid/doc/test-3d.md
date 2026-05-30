@@ -99,21 +99,14 @@ tests only when it removes immediate duplication.
    source `home` untouched. When a slice needs a new gold image, stop and
    ask for the gold image before running the test that requires it.
 
-   1. `AutokeyTest.3d-map-prompt`
-
-      Drive `@radar/3dlook`, choose a fill/color mode that opens the map
-      prompt, enter a staged map filename, and compare output. This covers
-      the field prompt that resolves map files through the library
-      mechanism.
-
-   2. `AutokeyTest.3d-stereo`
+   1. `AutokeyTest.3d-stereo`
 
       Drive `@radar/3dlook`, enable stereo or funny-glasses output, accept
       the funny-glasses parameter screen, and compare the resulting image.
       Start with the stereo mode most likely to write a deterministic
       image.
 
-   3. `AutokeyTest.3d-overlay`
+   2. `AutokeyTest.3d-overlay`
 
       Load a normal GIF input, invoke `#` for 3D overlay instead of `3`,
       accept defaults, and compare the overlay result. This should prove
