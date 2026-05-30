@@ -295,11 +295,18 @@ add_image_test("outside-atan" PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-00
 #    "params=0/0" "outside=fmod" "cyclerange=1/1")
 add_image_test("outside-tdis" PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-008/0.6666667"
     "params=0/0" "outside=tdis")
-id_make_test_home(Killer_Mosquito KILLER_MOSQUITO_HOME
-    PARS "${CMAKE_CURRENT_SOURCE_DIR}/Killer_Mosquito.par")
-add_image_test("Killer_Mosquito"
-    PARAMETERS "@Killer_Mosquito.par/Killer_Mosquito"
-    WORKING_DIRECTORY "${KILLER_MOSQUITO_HOME}")
+
+function(add_par_test name)
+    id_make_test_home(${name} PAR_TEST_HOME
+        PARS "${CMAKE_CURRENT_SOURCE_DIR}/${name}.par")
+    add_image_test("${name}"
+        PARAMETERS "@${name}.par/${name}"
+        WORKING_DIRECTORY "${PAR_TEST_HOME}"
+        LABELS par)
+endfunction()
+
+add_par_test(Killer_Mosquito)
+add_par_test(Broken_Arches)
 
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 add_image_dump_test("halley")

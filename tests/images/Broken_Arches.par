@@ -1,0 +1,80 @@
+; June 8, 1997: Broken Arches 
+;
+; arches
+;
+; Fractal visionaries:
+;
+; As promised, todays fractal, which I named "Arches", is another view of
+; Seahorse Valley.  But whereas yesterday's image showed Seahorse Valley
+; as it might be viewed from the X-axis, at the left edge of the screen,
+; today's image shows the valley as it might be viewed from the top of the
+; screen on the Y-axis.  In both cases, the Mandelbrot set must be
+; imagined as a three-dimensional object existing in space on both sides
+; of the screen.
+;
+; But one might ask, "where in the picture is the Seahorse Valley?  I see
+; nothing but a few arches."  Look again at the picture, notice the
+; straight horizontal ribbon of chaos toward the top of the screen.  That
+; straight band is Seahorse Valley.  Viewed from this angle, it's totally
+; unrecognizable.  Even more unrecognizable is the valley at -1.25.
+; That's it -- that straight-edged band of chaos nearly buried in the
+; rubble toward the bottom of the screen.
+;
+; The odd slices of the Julibrot figure are filled with perfectly straight
+; bands of high-iteration chaos such as those in today's fractal.  When I
+; first saw these bands, I thought the formula wasn't working.  But the
+; bands are real features, since they correspond to features in the
+; classic M-set.
+;
+; Before I go, I must thank Benno Schmid for those 4-D formulas he sent a
+; couple days ago.  They gave me just the hints I needed.  I had been
+; struggling with similar formulas for several months, but I just couldn't
+; get them right until I saw how Benno had solved the same problem.  After
+; I made a few minor corrections in my formulas, they worked perfectly.
+;
+; For tomorrow, we'll leave the world of four dimensions and return to the
+; familiar and easy to comprehend world of the two dimensional screen.
+; I've got a good fractal waiting to be posted.
+;
+; Jim Muth
+; jamth@mindspring.com
+;
+; START COMBINED FILE FOR 19.6===============================
+
+Broken_Arches      { ; time=0:00:11.21-SF5 on P4-2000
+  reset=1960 type=formula formulafile=basicer.frm
+  formulaname=Man-YZ-XZ passes=t
+  center-mag=0/-1.38484/1.908986/0.5157
+  params=0/0.18/1.06/0 float=y maxiter=3600
+  inside=253 logmap=7 symmetry=yaxis periodicity=10
+  colors=000WpKNtSTnQPkOLhMHdLF_JEWHCRFBNE9LC8KA7J99\
+  IAAHBDGDFFFHEHJDJLELNGNQIPSKRUMTWOVYQX_SZZUaYWcYYe\
+  X_gWajWclVenUgpUgrOdhJ`ZEYRCSZBUNAQJ8WH7aG6gE5mD8n\
+  CAoCCpCEqCGrCJsCLtCNuCPvCRwCTxCRwFQvHPuJOtMNsOMrQL\
+  qSKpVJoXInZHm`GlcFkeEjgDiiHgeLeaPcYTbVX`R`ZNdXJhWG\
+  gZJfaLfdOegQejTdmVcpYcs_bvbbxdftWiqOlnGggJbaMYWOUQ\
+  RPKUKEWF8ZB2`haneZmbXl_UlXSkVPkSNjPKjMIiKFiHDhEAhB\
+  8g96gCBdEGbHK`lUDpYBMToNUoOUoOUoPVpQVpRWpRWpSXpTXq\
+  TYqUZqV_qW`qWarXbrYcrZdrZes_fs`gsahsaisbjtcktcltdm\
+  tentfoufpugquhruisvitvjuvkvvlwvlxwmywnzwnzwozwpzxq\
+  zxqzxrzxszytzytzyuzyvzywzzwzzxzzyzzyzzxzyxzyxzyxzy\
+  xzyxzyxzyxzywzywzywzywzywzywzywzywzzwzzvzzvzzvzzvz\
+  zvzzvzzvzzvzzuzzuzzuzzuzzuzzuzzuzzuzzuzztzztzztzzt\
+  zztzztzztzztzzszzszzszzszzszzszwszwszwszwrzwrzwrzw\
+  rzwrzwrzwrzwrzwqzwqzwqzwqzwqzwqzwqzvqzvqzvpzvpzvpz\
+  vpzvpzvpzvpzvpzv00Zmz6lz7
+}
+
+frm:Man-YZ-XZ {; Jim Muth (thanks to Benno)
+  ; p2 = 0 = Julibrot YZ plane
+  ; p2 = 1 = Julibrot XZ plane
+  ; p2 = >0 <1 = Oblique planes
+  z=real(pixel)+flip(real(p1)),
+  c=imag(pixel)+flip(imag(p1)),
+  a=p2, b=flip(cos(asin(p2))):
+  z=sqr(z)+((a+b)*c),
+  |z| <= 25
+}
+
+; END COMBINED FILE FOR 19.6=========================================
+;
