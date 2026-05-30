@@ -234,8 +234,8 @@ These variables are deeply embedded in the calculation engine and would require 
 
 Arbitrary precision math is expensive:
 
-- BigNum operations are 10-100× slower than double precision
-- BigFloat operations are 100-1000× slower than double precision
+- BigNum operations are 10-100x slower than double precision
+- BigFloat operations are 100-1000x slower than double precision
 - Memory allocation overhead is significant
 - Cache locality matters for temporary variables
 - Reusing temporaries is crucial for performance

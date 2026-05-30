@@ -1,4 +1,4 @@
-﻿# SPDX-License-Identifier: GPL-3.0-only
+# SPDX-License-Identifier: GPL-3.0-only
 #
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH

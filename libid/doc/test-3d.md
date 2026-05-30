@@ -1,4 +1,4 @@
-﻿# Plan: 3D Potential And Targa Tests
+# Plan: 3D Potential And Targa Tests
 
 ## Goal
 

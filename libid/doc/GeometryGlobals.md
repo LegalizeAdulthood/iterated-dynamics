@@ -151,8 +151,8 @@ Geometry globals interact with multiple subsystems:
 
 The geometry subsystem uses mathematical structures for 3D transformations:
 
-- **Matrix** (4×4 double) - represents coordinate transformations
-- **MatrixL** (4×4 long) - integer version for fixed-point math
+- **Matrix** (4x4 double) - represents coordinate transformations
+- **MatrixL** (4x4 long) - integer version for fixed-point math
 - **Vector** (3D double) - represents position or direction
 - **VectorL** (3D long) - integer version for fixed-point math
 
