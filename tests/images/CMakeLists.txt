@@ -305,7 +305,8 @@ function(add_par_test name)
         LABELS par)
 endfunction()
 
-foreach(par Killer_Mosquito Broken_Arches Waves_in_the_Night Cosmic_Laser_Beams)
+foreach(par Killer_Mosquito Broken_Arches Waves_in_the_Night Cosmic_Laser_Beams
+        Mass_Ejection)
     add_par_test(${par})
 endforeach()
 

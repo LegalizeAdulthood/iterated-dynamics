@@ -1,0 +1,74 @@
+; June 15, 1997: Mass Ejection 
+;
+; ejection
+;
+; Fractal visionaries:
+;
+; For today's fractal we leave the odd planes and present a fractal that
+; is just plain pretty.  After all, that's what fractal art is all about.
+; I named the picture "Corona" because it reminds me of an eclipsed sun.
+; (I think I have another picture named "Corona" on file -- I'm not sure.)
+;
+; The formula takes advantage of the new if-else feature of Fractint
+; 19.6.  This formula, which I picked up from this group and added a few
+; variables to, draws fractals that are filled with wavy sinuous lines.
+; Some of the fractals it draws are remarkably relaxing.  If I hadn't
+; gotten distracted by the odd slices formulas I've been preoccupied with
+; lately, I would have had some real beauties from this formula.
+;
+; But I still am preoccupied by the formulas that draw the odd slices, and
+; I'm finding some real beauties in those obscure planes also.  I'll post
+; one of my better efforts tomorrow.
+;
+; My love for art is battling my love for math.  I want to see what can be
+; done with my if-else formula, and at the same time I'm curious about
+; what the oh-so-familiar Mandelbrot set looks like when viewed from
+; directions that I can't even imagine.
+;
+; That's how it is with the world of fractals.  No matter how much one
+; explores, they will never scratch the surface of all that exists.
+; Today's finished image has been posted to a.b.p.f. and a.f.p. as always.
+;
+; Jim Muth
+; jamth@mindspring.com
+;
+; START COMBINED FILE FOR 19.6===============================
+
+Mass_Ejection      { ; time=0:00:14.88-SF5 on P4-2000
+  reset=1960 type=formula formulafile=basicer.frm
+  formulaname=IfElse03 function=conj/cotan passes=1
+  center-mag=0/0/0.4131455 params=0.5/-3/0/0/1/0
+  float=y maxiter=350 inside=bof60 logmap=yes
+  symmetry=origin periodicity=10
+  colors=000070R0I0A3ZXJ0A40A40A50B50B60B6THLTHMTIMS\
+  INSINSIOSJORJPRJPRJPSJPTJPUKPUKPVLPWLPXMPYMPYMPZNP\
+  _NP`OPaOPbPPbPPcQUdRZeScfThfUmgVrhWriXwjYwj_zkazlc\
+  zYJOYJPZJPZJQ_JQ_JR`IR`ISaISaITbITbIUbIUcIVcIVdIWd\
+  IWeHXeHXfHYfHYgHZgHZgHZgIZgJZgJYgKYfLXfLXfMWfNWfNV\
+  fOVfPVfQUeQUeRTeSTeSSeTSeUReURdVQdWQdWQdXPdYPdYOdZ\
+  Od_Nc_Nc`McaMcbMcbLccLcdKbdKbeJbfJbfIbgIbhHbhHbiHa\
+  jGajGakFalFalEamEanD`nD`oD`pC`qC`qB`rB`sA`sAat9cu9\
+  eu8gv8iw7kv8mu9ktAisAgsBerCcqDcpDcoEdnFdmGemGelHfk\
+  IfjJgiJghKhhLhgMifNieNjdOjcPkbQkbQlaRl`Sm_TmZTnYUn\
+  XVoXWoWWpVXpUYpUYpTXpSWoSVoRUnQUnQTnPSmORmOQlNPlMO\
+  lMNkLNkKMjKLjJKjIJiIIiHHhGHhFGgFFgEEgDDfDCfCBeBBeB\
+  AeA9d98d97c86c75c74b64b53a52a41`30`30`30`30`31`41_\
+  42_42_42_53_53_53Z54Z64Z65Z65Z65Z76Z76Y76Y77Y87Y88\
+  Y88Y88X99X99X99X9AXAAXABWABWABWBCWBCWBCWBDWCDVCEVC\
+  EVCEVDFVDFVDFUDGUEGUEHUEH
+}
+
+frm:IfElse03 {; Jim Muth
+  z=y=pixel, a=real(p1), b=imag(p1),
+  c=p2+(p3*pixel), w=0:
+  IF(w)
+    z=fn1(real(y))+fn2(imag(y)), w=0
+  ELSE
+    z=(y*a), w=w+1
+  ENDIF
+  z=z^b+c, y=z,
+  |z| <= 100 
+}
+
+; END COMBINED FILE FOR 19.6=================================
+;
