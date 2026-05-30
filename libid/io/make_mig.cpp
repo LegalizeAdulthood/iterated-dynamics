@@ -91,6 +91,67 @@ private:
     return gif;
 }
 
+class OutputGif
+{
+public:
+    explicit OutputGif(const std::filesystem::path &path) :
+        m_path(path),
+        m_gif(EGifOpenFileName(m_path.string().c_str(), false, &m_error))
+    {
+    }
+
+    ~OutputGif()
+    {
+        close();
+    }
+
+    OutputGif(const OutputGif &rhs) = delete;
+    OutputGif(OutputGif &&rhs) noexcept :
+        m_path(std::move(rhs.m_path)),
+        m_gif(std::exchange(rhs.m_gif, nullptr)),
+        m_error(rhs.m_error),
+        m_spew_result(rhs.m_spew_result)
+    {
+    }
+    OutputGif &operator=(const OutputGif &rhs) = delete;
+    OutputGif &operator=(OutputGif &&rhs) = delete;
+
+    // clang-format off
+    const std::filesystem::path &path() const  { return m_path; }
+    GifFileType *get() const                   { return m_gif; }
+    int error() const                          { return m_error; }
+    int spew_result() const                    { return m_spew_result; }
+    // clang-format on
+
+    int spew()
+    {
+        if (m_gif == nullptr)
+        {
+            m_spew_result = GIF_ERROR;
+            return m_spew_result;
+        }
+        m_spew_result = EGifSpew(m_gif);
+        m_gif = nullptr;
+        return m_spew_result;
+    }
+
+private:
+    void close()
+    {
+        if (m_gif != nullptr)
+        {
+            int close_error{};
+            EGifCloseFile(m_gif, &close_error);
+            m_gif = nullptr;
+        }
+    }
+
+    std::filesystem::path m_path;
+    GifFileType *m_gif{};
+    int m_error{};
+    int m_spew_result{GIF_ERROR};
+};
+
 static char par_key(const unsigned int x)
 {
     return x < 10 ? '0' + x : 'a' - 10 + x;
