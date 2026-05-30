@@ -1,0 +1,68 @@
+; May 27, 1997: Killer Mosquito 
+;
+; mosquito
+;
+; Fractal visionaries:
+;
+; I'm following with interest the progress of the collaborative fractal
+; montage that we're trying to get going.  But I'm not sure exactly what
+; we'll have if and when the thing actually comes to fruition.
+;
+; When I first read of the plan, I pictured an immense printed image of
+; the Mandelbrot set -- an image with a resolution of something like
+; 250,000 x 250,000 pixels -- large enough and with enough detail to cover
+; a soccer field without losing sharpness.  Such an item, if we could
+; overcome the obstacles, would surely be newsworthy, and perhaps raise
+; the public awareness of the basically unexplored world of fractal
+; geometry.  The higher the public interest in fractals, the easier it
+; will be for us to earn some decent money.
+;
+; And speaking of decency, today's fractal, named Eruption, is a pretty
+; decent one, and it's also a pretty good one.  It's made with one of my
+; experimental Newton's formulas.  When I first saw it, it reminded me of
+; an erupting volcano in Hawaii.  It no longer seems very volcano-like,
+; but the name has stuck.  So, for what it's worth, here is my erupting
+; volcano.  The draw time is 10 minutes or so.
+;
+; Tomorrow, we'll go back to the good old Mandelbrot set, and look at an
+; old midget from a new angle.
+;
+; Jim Muth
+; jamth@mindspring.com
+;
+; START PARAMETER-FORMULA FILE FOR 19.6=============================
+
+Killer_Mosquito    { ; time=0:00:39.05-SF5 on P4-2000
+  reset=1960 type=formula formulafile=basicer.frm
+  formulaname=MandNewt05 function=log passes=1
+  center-mag=-1.45284/0/0.2180685/1/90/0
+  params=1.5/0/1/0/1e-031/0 float=y maxiter=250
+  inside=bof60 logmap=yes periodicity=0
+  colors=0008Gf7Gh6Gj5Gk4Gm3Gn4Fl5Ej5Eh6Dg6Ce7Cc7Ba8\
+  A_8AZ99XA9VA8TB7RB7QC6OC5MD5KD4IE3HE3FF2DO3FY4Hf6K\
+  p7My8OxBPwERuHStKUsNVrQXqUYoXZn_`mbalecjhdikfhngin\
+  ejodjobkp`lpZmqYnqWnrUorSpsRqsPrtNrtLsuKtuItuHsrJr\
+  pLrnNqlPqjRpgTpeVocXoaZn_`nYalXbkWbjWciVchVdgUdfUd\
+  eTedTecSfbSfaRf`Rg_QgZQhYPhXPhWOiVOiUNjTNjSMjRMkQL\
+  kPLlOKlPJmQJmRInSInTHoUGpVGpXFqYFqZEr_Ds`DsaCtbCtc\
+  BubCqaEl`Fh_Hc_I_ZKVYLRXNMWOIWPEXOGYNHZNI_MJ_LL`LM\
+  aKNbKOcJPdIQeIReHTfGUgGVhFWeKZbO`_TcYXfVahSekPjmMn\
+  pPaQSQ0NN8HJGCGN6CV19b19c28d28e27f27g36h36i79jBCkF\
+  FlIImMLnQOoUSpYVpaYqe`rhcslftpiutlvufvv`vwVvwPuxJu\
+  yDuy7uxGswPqwXpvenumlqjinhgjedfcac`Z_ZXWWUTTRPROLO\
+  MIMJEJGHNJKRMNVPQZSTbVWfYZi_bmbfqejug_W6_T9_QB_NE_\
+  KG`HJ`EL`BO`8Q`5T`2V`0Xb1Zc2`d2be3df3eg4gh4ii5kg6j\
+  d8ib9g_AfYBeVDdTEbQFaOG`LI_JJYGKXJMYLOZOQ_QS`TUaVW\
+  aYYb__cbaddcegefBGaAGc9Gd
+}
+
+frm:MandNewt05 {; Jim Muth
+  z=c=fn1(pixel):
+  a=z^2+(c-p1)*z-c
+  b=p2*z^2+c-1
+  z=z-1*a/b
+  p3 <= |a|
+}
+
+; END PARAMETER-FORMULA FILE FOR 19.6===============================
+;
