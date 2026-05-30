@@ -351,7 +351,21 @@ static InputGif read_tile_gif(const unsigned int x_step, const unsigned int y_st
     return gif;
 }
 
-static void verify_tiled_first_images_output(
+static int total_tile_image_count(const unsigned int x_mult, const unsigned int y_mult)
+{
+    int image_count{};
+    for (unsigned y_step = 0U; y_step < y_mult; y_step++)
+    {
+        for (unsigned x_step = 0U; x_step < x_mult; x_step++)
+        {
+            InputGif input{read_tile_gif(x_step, y_step)};
+            image_count += input.get()->ImageCount;
+        }
+    }
+    return image_count;
+}
+
+static void verify_tiled_images_output(
     const std::filesystem::path &path,
     const GifFileType *first_input,
     const unsigned int x_mult,
@@ -368,7 +382,7 @@ static void verify_tiled_first_images_output(
     if (output_metadata.width != input_metadata.width * static_cast<int>(x_mult) ||
         output_metadata.height != input_metadata.height * static_cast<int>(y_mult) ||
         !same_color_map(output.get()->SColorMap, first_input->SColorMap) ||
-        output.get()->ImageCount != static_cast<int>(x_mult * y_mult))
+        output.get()->ImageCount != total_tile_image_count(x_mult, y_mult))
     {
         std::printf("Output file %s failed GIF layout verification!\n", path.filename().string().c_str());
         std::exit(1);
@@ -381,16 +395,19 @@ static void verify_tiled_first_images_output(
             InputGif input{read_tile_gif(x_step, y_step)};
             const int left{static_cast<int>(x_step) * input_metadata.width};
             const int top{static_cast<int>(y_step) * input_metadata.height};
-            if (!same_image_at_offset(output.get()->SavedImages[image_number++], input.get()->SavedImages[0], left, top))
+            for (int i = 0; i < input.get()->ImageCount; i++)
             {
-                std::printf("Output file %s failed GIF offset verification!\n", path.filename().string().c_str());
-                std::exit(1);
+                if (!same_image_at_offset(output.get()->SavedImages[image_number++], input.get()->SavedImages[i], left, top))
+                {
+                    std::printf("Output file %s failed GIF offset verification!\n", path.filename().string().c_str());
+                    std::exit(1);
+                }
             }
         }
     }
 }
 
-[[maybe_unused]] static void write_tiled_first_images_gif(
+[[maybe_unused]] static void write_tiled_images_gif(
     const std::filesystem::path &path, const unsigned int x_mult, const unsigned int y_mult)
 {
     InputGif first_input{read_tile_gif(0, 0)};
@@ -403,7 +420,10 @@ static void verify_tiled_first_images_output(
             InputGif input{read_tile_gif(x_step, y_step)};
             const int left{static_cast<int>(x_step) * input_metadata.width};
             const int top{static_cast<int>(y_step) * input_metadata.height};
-            copy_saved_image_at_offset(output.get(), input.get()->SavedImages[0], left, top);
+            for (int i = 0; i < input.get()->ImageCount; i++)
+            {
+                copy_saved_image_at_offset(output.get(), input.get()->SavedImages[i], left, top);
+            }
         }
     }
     if (output.spew() != GIF_OK)
@@ -411,7 +431,7 @@ static void verify_tiled_first_images_output(
         std::printf("Cannot write output file %s!\n", path.filename().string().c_str());
         std::exit(1);
     }
-    verify_tiled_first_images_output(path, first_input.get(), x_mult, y_mult);
+    verify_tiled_images_output(path, first_input.get(), x_mult, y_mult);
 }
 
 static MigMetadata validate_input_gifs(const unsigned int x_mult, const unsigned int y_mult)
