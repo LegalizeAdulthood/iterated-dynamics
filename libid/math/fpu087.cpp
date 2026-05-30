@@ -29,8 +29,8 @@ void fpu_cmplx_mul(const DComplex &x, const DComplex &y, DComplex &z)
         tx = x.x * y.x - x.y * y.y;
         ty = x.x * y.y + x.y * y.x;
     }
-    z.x = std::isnan(tx) || std::isinf(tx) ? ID_INFINITY : tx;
-    z.y = std::isnan(ty) || std::isinf(ty) ? ID_INFINITY : ty;
+    z.x = tx;
+    z.y = ty;
 }
 
 void fpu_cmplx_div(const DComplex &x, const DComplex &y, DComplex &z)

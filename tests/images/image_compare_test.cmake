@@ -28,6 +28,7 @@ if(DEBUG)
     endforeach()
 endif()
 
+file(MAKE_DIRECTORY "image")
 file(REMOVE "image/${TEST_SAVE_IMAGE}")
 file(REMOVE "${DIFF_IMAGE}")
 execute_process(COMMAND "${ID}" ${PARAMETERS}

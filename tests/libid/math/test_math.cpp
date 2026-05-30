@@ -43,7 +43,8 @@ TEST(TestMath, nanRealMultiply)
     DComplex result;
     fpu_cmplx_mul(lhs, rhs, result);
 
-    EXPECT_EQ((DComplex{ID_INFINITY, 0.0}), result);
+    EXPECT_TRUE(std::isnan(result.x));
+    EXPECT_EQ(0.0, result.y);
 }
 
 TEST(TestMath, infRealMultiply)
@@ -54,7 +55,8 @@ TEST(TestMath, infRealMultiply)
     DComplex result;
     fpu_cmplx_mul(lhs, rhs, result);
 
-    EXPECT_EQ((DComplex{ID_INFINITY, 0.0}), result);
+    EXPECT_TRUE(std::isinf(result.x));
+    EXPECT_EQ(0.0, result.y);
 }
 
 TEST(TestMath, nanImagMultiply)
@@ -65,7 +67,8 @@ TEST(TestMath, nanImagMultiply)
     DComplex result;
     fpu_cmplx_mul(lhs, rhs, result);
 
-    EXPECT_EQ((DComplex{0.0, ID_INFINITY}), result);
+    EXPECT_EQ(0.0, result.x);
+    EXPECT_TRUE(std::isnan(result.y));
 }
 
 TEST(TestMath, infImagMultiply)
@@ -76,7 +79,8 @@ TEST(TestMath, infImagMultiply)
     DComplex result;
     fpu_cmplx_mul(lhs, rhs, result);
 
-    EXPECT_EQ((DComplex{0.0, ID_INFINITY}), result);
+    EXPECT_EQ(0.0, result.x);
+    EXPECT_TRUE(std::isinf(result.y));
 }
 
 TEST(TestMath, zeroDivide)

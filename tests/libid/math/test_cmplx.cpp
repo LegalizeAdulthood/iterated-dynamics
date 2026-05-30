@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+#include <cmath>
+
 using namespace id::math;
 
 namespace id::test
@@ -117,6 +119,14 @@ TEST(TestComplex, scalarMultiplyLeft)
 
     EXPECT_EQ(2.0, result.x);
     EXPECT_EQ(4.0, result.y);
+}
+
+TEST(TestComplex, powerPropagatesInfiniteLog)
+{
+    const DComplex result = pow({INFINITY, 1.0}, {1.0, 0.0});
+
+    EXPECT_TRUE(std::isinf(result.x));
+    EXPECT_EQ(0.0, result.y);
 }
 
 } // namespace id::test

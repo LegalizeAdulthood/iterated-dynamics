@@ -9,6 +9,32 @@
 namespace id::math
 {
 
+namespace
+{
+
+void cmplx_log_for_power(const DComplex &x, DComplex &z)
+{
+    if (x.x == 0.0 && x.y == 0.0)
+    {
+        z.x = 0.0;
+        z.y = 0.0;
+        return;
+    }
+    if (x.y == 0.0 && x.x > 0.0) // x is positive real
+    {
+        z.x = std::log(x.x);
+        z.y = 0.0;
+        return;
+    }
+    const double mod = x.x * x.x + x.y * x.y;
+    const double real = 0.5 * std::log(mod);
+    const double imag = std::atan2(x.y, x.x);
+    z.x = real;
+    z.y = imag;
+}
+
+} // namespace
+
 DComplex sqrt(const double x, const double y)
 {
     DComplex  result;
@@ -42,7 +68,7 @@ DComplex pow(const DComplex &xx, const DComplex &yy)
         return z;
     }
 
-    cmplx_log(xx, c_log);
+    cmplx_log_for_power(xx, c_log);
     fpu_cmplx_mul(c_log, yy, t);
     cmplx_exp(t, z);
     return z;
