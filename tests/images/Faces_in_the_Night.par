@@ -1,0 +1,78 @@
+; July 19, 1997: Faces in the Night 
+;
+; faces
+;
+; Fractal visionaries:
+;
+; Today's rather ominous fractal is a scene in some remote oblique or skew
+; plane of the julibrot.  I'm not sure of its orientation because I'm
+; still trying to master this perhaps too ambitious formula of mine.
+;
+; When I began my Fractal of the day series, it was with the intention of
+; showing what could be done with simple 3-line formulas, but now I see
+; that my formulas are starting to look suspiciously like those long,
+; complex formulas which I originally put down.
+;
+; Today's formula is not quite as complex as it seems, however.  It has
+; some awkward expressions that could be made simpler, but I'm having so
+; much fun working with it that I just haven't gotten around to tightening
+; it up.
+;
+; The picture is part of the Z^2+(0.005*Z^-3) julibrot.  Adding such a
+; tiny portion of the -3 power of Z to the iteration fills the interior of
+; the figure with chaotic detail.  Taking the odd planes stretches the
+; inner detail out into tortured threads such as we see in today's
+; picture.
+;
+; When I saw the image, I pictured a ghost rising from the depths, so I
+; named the picture "Wraith".  The complete image has been posted to
+; alt.binaries.pictures.fractals and alt.fractals.pictures, though since
+; the image draws in only 3 minutes, it would probably be faster to draw
+; it from the parameter file than to wait for it to download.
+;
+; Tomorrow, I'll return to the odd planes of the Z^2+(0.2*Z^3) mandeloid.
+; In its XY direction, that figure is one of my favorites.  Surprisingly,
+; its perturbed planes hold more of interest than its "true" slice.
+;
+; Jim Muth
+; jamth@mindspring.com
+;
+; START 19.6 FILE=============================================
+
+Faces_in_the_Night { ; time=0:00:08.62-SF5 on P4-2000
+  reset=1960 type=formula formulafile=basicer.frm
+  formulaname=SkewPlanes passes=1 center-mag=0.08976\
+  /0.069479/0.7473842 params=0.4/0.4/0.3/0/0.005/-3
+  float=y maxiter=1200 inside=253 logmap=yes
+  symmetry=none periodicity=10
+  colors=000145566987EA8IC9MEAQGCUIEYKGaMIdNKhPMnQMs\
+  PMvRMzSMzUMzUMzUMzTMvTMvTMuTMtSMtSMsSMrSMrSMqRLpRL\
+  oRLoRLnQLmQLmQLlQLkPLkPLjPLjPLkRKkTKlVKlWJmYJm_Jna\
+  JnbIndIofIohIpiHpkHllJhmLcmO_nQWoSSpUNpXJqZFr`Km_P\
+  h_UdZZ_ZcVYhQYmMXrHXwCWqI_jOddUhY`mSfqLlvFrzFpxEnu\
+  ElsEkpEinDgkDeiDcgCadC_bCZ_CXYBVVBTTJTORUJZUDfU8aW\
+  FXYMS_TNb_IdeDfl8hs3jz5kx7kv8luAmsCmqEnoGonIolJpjL\
+  qhNqfPreRrcTsaUt_WtYYuX_vVavTcwRdxQfxOhyMhvLhtKhqJ\
+  hnIgkHgiGgfFgcEgaEgZDgWCgUBfRAfO9fL8fJ7fG6iEAlDEoB\
+  IkEJgHKcKM_NNWQOSTPOWQKZSGaTCdUDbTF`TG_SIYSJWRKUQM\
+  SQNRPPPPQNORLNTJNUIMWGMXELYCK_AK`9Jb7Jc5Id9KfCMgGO\
+  iJPjNRlRTmUVnYXp`Zqd_sgatkcnhYgeTabNV_HPXCGQI8KO0E\
+  U3DV6DX9CYCC_FB`HBbKAcNAeQ9fT9hW8iZ8ka7ld7ng6oi6ql\
+  5ro5tr4uu4wx3xt5wq7wm8viAvfCubEuZGtWItSJsOLrKNrHPq\
+  DRq9Sp6Up2Wo6ZnBanFdmKglOjkTmkXpjYphZpf_pd`pbap`bo\
+  YcoWdoUeoSfoQgoOzozioKznN
+}
+
+frm:SkewPlanes {; Jim Muth
+  ;p1=(0,0)=YW, (0,1)=XW, (1,0)=XZ, (1,1)=YZ
+  ;p2=parallel planes, p3=optional variable extra term
+  a=real(p1), b=flip(cos(asin(real(p1)))), d=a+b,
+  f=imag(p1), g=flip(cos(asin(imag(p1)))), h=f+g,
+  z=real(pixel)+flip(real(p2)),
+  c=flip(imag(pixel))+imag(p2):
+  z=(d*(sqr(z)))+(real(p3))*(z^(imag(p3)))+(h*c),
+  |z| <= 36
+}
+
+; END 19.6 FILE===============================================
+;

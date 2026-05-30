@@ -306,7 +306,7 @@ function(add_par_test name)
 endfunction()
 
 foreach(par Killer_Mosquito Broken_Arches Waves_in_the_Night Cosmic_Laser_Beams
-        Mass_Ejection)
+        Mass_Ejection Faces_in_the_Night)
     add_par_test(${par})
 endforeach()
 
