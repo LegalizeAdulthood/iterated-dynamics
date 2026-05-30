@@ -187,7 +187,7 @@ static void validate_canvas_size(const MigMetadata &metadata, const unsigned int
     const std::uint64_t height = static_cast<std::uint64_t>(metadata.height) * y_mult;
     if (width > MAX_GIF_DIMENSION || height > MAX_GIF_DIMENSION)
     {
-        std::printf("MIG output dimensions %llu x %llu exceed GIF limits!\n", width, height);
+        fmt::print("MIG output dimensions {:d} x {:d} exceed GIF limits!\n", width, height);
         std::exit(1);
     }
 }
