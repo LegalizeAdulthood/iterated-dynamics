@@ -1,0 +1,24 @@
+Semi-Symmetrical   { ; Fractal of the day, 12-11-97
+                     ; 3.12 min on a 486-100mhz, at 640x480
+  reset=1960 type=formula 
+  formulaname=minN-XY-YZrot passes=t
+  center-mag=-0.475426/-1.77636e-015/1.012821/1/-90
+  params=90/1.25/0/0/-1.115/0 float=y maxiter=1200 bailout=100
+  inside=0 logmap=yes symmetry=none periodicity=10
+  colors=000KEB<5>0B6<13>OU7<2>brmkpQso3<3>Le2Ta1_Y1<6>Ldj<15>c\
+  Fr<6>mzDV0K<10>Z2nZ2pY4n<12>QQU<2>s1z<2>P01<10>JQxDSw7Uv<4>fq\
+  5<3>xP3<6>mKdoLfDz6Ou0<14>pNfxLs<10>qLh__S<5>oNfLlU<10>oNgr29\
+  <16>qKfBIR<3>iLebm6<4>feGWfdM_ZDUUn3g<14>01N<14>Pche1w<7>4az<\
+  3>lIkmIjnJjoPcoJioKipKh
+  }
+
+frm:minN-XY-YZrot {; Jim Muth, thanks to Benno
+; real(p1)=rotation angle in degrees, imag(p1)=power of Z
+; p2=parallel planes, p3=rotation point and parallel planes
+a=real(p1), b=imag(p1),
+z=sin(a*.01745329251994)*real(pixel)+p2,
+c=cos(a*.01745329251994)*real(pixel)+flip(imag(pixel))+p3:
+z=(-z)^b+c,
+|z| <= 16
+}
+
