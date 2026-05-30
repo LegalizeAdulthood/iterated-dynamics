@@ -73,10 +73,10 @@ hc/HelpCompiler.cpp:1570:9: note: Second condition
 libid/engine/cmdfiles.cpp:175:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3683:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3688:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:4095:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4100:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
 libid/fractals/Ant.cpp:279:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
@@ -121,22 +121,19 @@ libid/fractals/lsystem.cpp:923:21: style: Consider using std::transform algorith
 libid/fractals/lsystem.cpp:938:25: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
             s_rule_cmds.push_back(lsys_draw_transform(rule.c_str(), &ts));
                         ^
-libid/fractals/parser.cpp:912:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
+libid/fractals/parser.cpp:913:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
         if (!text[s_parser.n])
             ^
-libid/fractals/parser.cpp:910:30: note: outer condition: text[s_parser.n]
+libid/fractals/parser.cpp:911:30: note: outer condition: text[s_parser.n]
     for (s_parser.n = 0; text[s_parser.n]; s_parser.n++)
                              ^
-libid/fractals/parser.cpp:912:13: note: opposite inner condition: !text[s_parser.n]
+libid/fractals/parser.cpp:913:13: note: opposite inner condition: !text[s_parser.n]
         if (!text[s_parser.n])
             ^
-libid/fractals/parser.cpp:3305:13: style: Consider using std::count_if algorithm instead of a raw loop. [useStlAlgorithm]
+libid/fractals/parser.cpp:3306:13: style: Consider using std::count_if algorithm instead of a raw loop. [useStlAlgorithm]
             store_count++;
             ^
-libid/geometry/line3d.cpp:1892:19: style: Condition 'path.empty()' is always false [knownConditionTrueFalse]
-    if (path.empty())
-                  ^
-libid/geometry/line3d.cpp:1650:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+libid/geometry/line3d.cpp:1654:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
 libid/io/decode_info.cpp:247:85: error: The address of local variable 'buf_ptr' is accessed at non-zero index. [objectIndex]
@@ -1621,22 +1618,19 @@ libid/io/library.cpp:177:9: style: Consider using std::any_of algorithm instead 
 libid/io/library.cpp:185:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/make_mig.cpp:332:25: style: The if condition is the same as the previous if condition [duplicateCondition]
-    if (error_flag == 0 && input_error_flag == 0)
-                        ^
-libid/io/make_mig.cpp:319:25: note: First condition
-    if (error_flag == 0 && input_error_flag == 0)
-                        ^
-libid/io/make_mig.cpp:332:25: note: Second condition
-    if (error_flag == 0 && input_error_flag == 0)
-                        ^
+libid/io/make_mig.cpp:190:14: warning: %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+        std::printf("MIG output dimensions %llu x %llu exceed GIF limits!\n", width, height);
+             ^
+libid/io/make_mig.cpp:190:14: warning: %llu in format string (no. 2) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
+        std::printf("MIG output dimensions %llu x %llu exceed GIF limits!\n", width, height);
+             ^
 libid/io/path_match.cpp:97:17: style: Condition 'pat_ext==".*"' is always false [knownConditionTrueFalse]
     if (pat_ext == ".*" || pat_ext.empty())
                 ^
-libid/misc/memory.cpp:365:21: style: Array index 'counter' is used before limits check. [arrayIndexThenCheck]
+libid/misc/memory.cpp:363:21: style: Array index 'counter' is used before limits check. [arrayIndexThenCheck]
     while (s_handles[counter].stored_at != MemoryLocation::NOWHERE && counter < MAX_HANDLES)
                     ^
-libid/ui/diskvid.cpp:219:14: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
+libid/ui/diskvid.cpp:232:14: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
         elem = 0xffff; // 0xffff marks the end of a hash chain
              ^
 libid/ui/editpal.cpp:1639:22: error: Array index -1 is out of bounds. [negativeContainerIndex]
@@ -1660,10 +1654,10 @@ libid/ui/evolve.cpp:792:27: note: The comparison 'old_variations > 0' is always 
 libid/ui/flip_image.cpp:25:35: style: Parameter 'context' can be declared with const [constParameter]
 MainState flip_image(MainContext &context)
                                   ^
-libid/ui/get_fract_type.cpp:625:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+libid/ui/get_fract_type.cpp:626:40: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             if (choices[prompt_num][0] == '+')
                                        ^
-libid/ui/get_fract_type.cpp:629:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
+libid/ui/get_fract_type.cpp:630:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
 libid/ui/make_batch_file.cpp:1457:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
@@ -1717,6 +1711,54 @@ tests/libid/engine/test_cmdfiles.cpp:991:49: note: 'saved_browse_name' is assign
 tests/libid/engine/test_cmdfiles.cpp:999:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
+tests/tools/image_compare.cpp:54:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]
+        + std::abs(pixel1[1] - pixel2[1]) //
+                         ^
+tests/tools/image_compare.cpp:66:35: note: Address of variable taken here.
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+                                  ^
+tests/tools/image_compare.cpp:66:35: note: Calling function 'rgb_delta', 1st argument '&image1.pixels[offset]' value is lifetime=pixels
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+                                  ^
+tests/tools/image_compare.cpp:54:26: note: The address of local variable 'pixels' is accessed at non-zero index.
+        + std::abs(pixel1[1] - pixel2[1]) //
+                         ^
+tests/tools/image_compare.cpp:54:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]
+        + std::abs(pixel1[1] - pixel2[1]) //
+                         ^
+tests/tools/image_compare.cpp:253:35: note: Address of variable taken here.
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+                                  ^
+tests/tools/image_compare.cpp:253:35: note: Calling function 'rgb_delta', 1st argument '&image1.pixels[offset]' value is lifetime=pixels
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+                                  ^
+tests/tools/image_compare.cpp:54:26: note: The address of local variable 'pixels' is accessed at non-zero index.
+        + std::abs(pixel1[1] - pixel2[1]) //
+                         ^
+tests/tools/image_compare.cpp:55:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]
+        + std::abs(pixel1[2] - pixel2[2]);
+                         ^
+tests/tools/image_compare.cpp:66:35: note: Address of variable taken here.
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+                                  ^
+tests/tools/image_compare.cpp:66:35: note: Calling function 'rgb_delta', 1st argument '&image1.pixels[offset]' value is lifetime=pixels
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+                                  ^
+tests/tools/image_compare.cpp:55:26: note: The address of local variable 'pixels' is accessed at non-zero index.
+        + std::abs(pixel1[2] - pixel2[2]);
+                         ^
+tests/tools/image_compare.cpp:55:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]
+        + std::abs(pixel1[2] - pixel2[2]);
+                         ^
+tests/tools/image_compare.cpp:253:35: note: Address of variable taken here.
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+                                  ^
+tests/tools/image_compare.cpp:253:35: note: Calling function 'rgb_delta', 1st argument '&image1.pixels[offset]' value is lifetime=pixels
+        const int delta{rgb_delta(&image1.pixels[offset], &image2.pixels[offset])};
+                                  ^
+tests/tools/image_compare.cpp:55:26: note: The address of local variable 'pixels' is accessed at non-zero index.
+        + std::abs(pixel1[2] - pixel2[2]);
+                         ^
 win32/Frame.cpp:584:9: style: Condition 'quitting' is always true [knownConditionTrueFalse]
     if (quitting)
         ^

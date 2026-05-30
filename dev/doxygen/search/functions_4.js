@@ -12,7 +12,7 @@ var searchData=
   ['engine_5ftimer_9',['engine_timer',['../dc/d31/namespaceid_1_1engine.html#a0403c59fc3e169642ba0b0f0a18976a8',1,'id::engine']]],
   ['enqueue_5ffloat_10',['enqueue_float',['../dc/d31/namespaceid_1_1engine.html#afd44852c87c309120043f9ac6b3775b3',1,'id::engine']]],
   ['erase_11',['erase',['../d0/d6e/classid_1_1ui_1_1MoveBox.html#ab22cc6abf5568e615d96d7131d12e6f5',1,'id::ui::MoveBox']]],
-  ['error_12',['error',['../dd/d2d/classid_1_1fractals_1_1Cellular.html#a85517be65fb3b555cc360e9d88821f6f',1,'id::fractals::Cellular']]],
+  ['error_12',['error',['../d1/d86/classid_1_1io_1_1OutputGif.html#af6d625604936c8a1a16547388caaae75',1,'id::io::OutputGif::error()'],['../dd/d2d/classid_1_1fractals_1_1Cellular.html#a85517be65fb3b555cc360e9d88821f6f',1,'id::fractals::Cellular::error()'],['../da/db8/classid_1_1io_1_1InputGif.html#a43d9b585f2a231ee552ff1c7ed97046a',1,'id::io::InputGif::error()']]],
   ['error_5fmsg_13',['error_msg',['../d9/dcc/namespacehc.html#a76a96fee883975cfc07421a956411563',1,'hc']]],
   ['escher_5forbit_14',['escher_orbit',['../d5/d38/namespaceid_1_1fractals.html#a5e29942487b2928c91610db49bc3bb29',1,'id::fractals']]],
   ['evolver_5fmenu_5fswitch_15',['evolver_menu_switch',['../dc/d76/namespaceid_1_1ui.html#ac96c2c43f7668038c1cc0000a5d537ea',1,'id::ui']]],

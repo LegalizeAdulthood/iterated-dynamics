@@ -97,8 +97,10 @@ $(function() {
 <code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
 <code>#include &lt;chrono&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;cstdio&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
+<code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div>
@@ -141,6 +143,10 @@ Functions</h2></td></tr>
 <tr class="separator:a776855881398c5bb889103552dc254a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf967b52795c7e3b2baefd960ddf3309" id="r_aaf967b52795c7e3b2baefd960ddf3309"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#aaf967b52795c7e3b2baefd960ddf3309">id::ui::targa_start_disk</a> (std::FILE *targa_fp, int overhead)</td></tr>
 <tr class="separator:aaf967b52795c7e3b2baefd960ddf3309"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f20a00db12f69127897029e472bfe33" id="r_a1f20a00db12f69127897029e472bfe33"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1f20a00db12f69127897029e472bfe33">id::ui::set_targa_disk_path</a> (const std::filesystem::path &amp;<a class="el" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>)</td></tr>
+<tr class="separator:a1f20a00db12f69127897029e472bfe33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0273f340549628e5a2adbc5cabe5fb7c" id="r_a0273f340549628e5a2adbc5cabe5fb7c"><td class="memItemLeft" align="right" valign="top">const std::filesystem::path &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a0273f340549628e5a2adbc5cabe5fb7c">id::ui::targa_disk_path</a> ()</td></tr>
+<tr class="separator:a0273f340549628e5a2adbc5cabe5fb7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7f8c1b32e6f9dc244b1037e98a7f8c6" id="r_aa7f8c1b32e6f9dc244b1037e98a7f8c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#aa7f8c1b32e6f9dc244b1037e98a7f8c6">id::ui::common_start_disk</a> (long new_row_size, long new_col_size, int colors)</td></tr>
 <tr class="separator:aa7f8c1b32e6f9dc244b1037e98a7f8c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d6e537314a0987f2e4d255f409fc85d" id="r_a4d6e537314a0987f2e4d255f409fc85d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a4d6e537314a0987f2e4d255f409fc85d">id::ui::end_disk</a> ()</td></tr>
@@ -173,7 +179,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00065">65</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00067">67</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
@@ -189,7 +195,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00064">64</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00066">66</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
@@ -205,7 +211,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00066">66</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00068">68</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
@@ -221,7 +227,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00062">62</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00064">64</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
@@ -237,7 +243,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00063">63</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00065">65</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>

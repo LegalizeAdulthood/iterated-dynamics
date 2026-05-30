@@ -13,10 +13,11 @@ var searchData=
   ['arg_10',['arg',['../df/de8/cmdfiles_8cpp.html#a153cd42ae99dd12d85ddfaa57e5e27df',1,'arg:&#160;cmdfiles.cpp'],['../da/d3b/structid_1_1engine_1_1Command.html#aa4c40d5b3a59568fb2b8d6baff318342',1,'id::engine::Command::arg']]],
   ['array_11',['array',['../d1/d3e/history_8cpp.html#a038b84700aec4a2cfbb200bd6311ebf6',1,'history.cpp']]],
   ['aspect_12',['aspect',['../da/db4/lsystem_8cpp.html#a4480ca228c6a2fef9116f9333faac2ac',1,'lsystem.cpp']]],
-  ['attribute_13',['attribute',['../dd/d06/structid_1_1io_1_1FindResult.html#a53e3f8f322f4512410ed1777d4cc5fdd',1,'id::io::FindResult']]],
-  ['auto_5fbrowse_14',['auto_browse',['../de/d5e/structid_1_1engine_1_1Browse.html#ab2ed9165325e4d768d0a893d110b4e96',1,'id::engine::Browse']]],
-  ['auto_5finvert_15',['AUTO_INVERT',['../dc/d31/namespaceid_1_1engine.html#a048c23b223a776c60865ae94c5672221',1,'id::engine']]],
-  ['avg_16',['avg',['../d6/dad/structid_1_1ui_1_1StereoData.html#acbb2847d385d8c1b1808245b098b1141',1,'id::ui::StereoData']]],
-  ['avg_5fct_17',['avg_ct',['../d6/dad/structid_1_1ui_1_1StereoData.html#af25069fc56087d607d828d944de39777',1,'id::ui::StereoData']]],
-  ['ax_18',['ax',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a629d4e3288274e4c7235b36640ef9916',1,'id::io::FractalInfo']]]
+  ['aspect_5fbyte_13',['aspect_byte',['../d5/d7d/structid_1_1io_1_1MigMetadata.html#ad9de57729f1cdebe5e3deb9283805e16',1,'id::io::MigMetadata']]],
+  ['attribute_14',['attribute',['../dd/d06/structid_1_1io_1_1FindResult.html#a53e3f8f322f4512410ed1777d4cc5fdd',1,'id::io::FindResult']]],
+  ['auto_5fbrowse_15',['auto_browse',['../de/d5e/structid_1_1engine_1_1Browse.html#ab2ed9165325e4d768d0a893d110b4e96',1,'id::engine::Browse']]],
+  ['auto_5finvert_16',['AUTO_INVERT',['../dc/d31/namespaceid_1_1engine.html#a048c23b223a776c60865ae94c5672221',1,'id::engine']]],
+  ['avg_17',['avg',['../d6/dad/structid_1_1ui_1_1StereoData.html#acbb2847d385d8c1b1808245b098b1141',1,'id::ui::StereoData']]],
+  ['avg_5fct_18',['avg_ct',['../d6/dad/structid_1_1ui_1_1StereoData.html#af25069fc56087d607d828d944de39777',1,'id::ui::StereoData']]],
+  ['ax_19',['ax',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a629d4e3288274e4c7235b36640ef9916',1,'id::io::FractalInfo']]]
 ];
