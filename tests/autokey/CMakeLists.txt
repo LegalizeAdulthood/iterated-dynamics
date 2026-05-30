@@ -7,20 +7,14 @@ endif()
 
 include(IdTestHome)
 
-id_make_test_home(makepar-mig-pieces MAKEPAR_MIG_PIECES_HOME)
-id_make_test_home(3dlook-targa THREE_D_LOOK_TARGA_HOME PARS radar.par)
-file(MAKE_DIRECTORY "${THREE_D_LOOK_TARGA_HOME}/image")
-file(MAKE_DIRECTORY "${THREE_D_LOOK_TARGA_HOME}/key")
-file(COPY_FILE "${CMAKE_SOURCE_DIR}/tests/images/gold-3dlook01.pot"
-    "${THREE_D_LOOK_TARGA_HOME}/image/potntial.pot")
-file(COPY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/3dlook_targa.key"
-    "${THREE_D_LOOK_TARGA_HOME}/key/3dlook_targa.key")
-
+id_make_test_home(makepar-mig-pieces MAKEPAR_MIG_PIECES_HOME
+    IMAGES make_mig_input.gif
+    KEYS make_mig_pieces.key)
 add_test(NAME AutokeyTest.makepar-mig-pieces
     COMMAND ${CMAKE_COMMAND}
         "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
-        "-DINPUT_IMAGE=${CMAKE_SOURCE_DIR}/tests/images/make_mig_input.gif"
-        "-DAUTO_KEY=${CMAKE_CURRENT_SOURCE_DIR}/make_mig_pieces.key"
+        "-DINPUT_IMAGE=image/make_mig_input.gif"
+        "-DAUTO_KEY=key/make_mig_pieces.key"
         "-DGOLD_BAT=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.bat"
         "-DGOLD_PAR=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.par"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/make_mig_pieces_test.cmake"
@@ -29,6 +23,10 @@ add_test(NAME AutokeyTest.makepar-mig-pieces
 set_tests_properties(AutokeyTest.makepar-mig-pieces
     PROPERTIES LABELS "autokey;ui")
 
+id_make_test_home(3dlook-targa THREE_D_LOOK_TARGA_HOME
+    IMAGES gold-3dlook01.pot=potntial.pot
+    KEYS 3dlook_targa.key
+    PARS radar.par)
 add_test(NAME AutokeyTest.3dlook-targa
     COMMAND ${CMAKE_COMMAND}
         "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
