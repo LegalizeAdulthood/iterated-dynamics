@@ -1,0 +1,23 @@
+nameless           { ; Fractal of the day, 07-11-97
+                     ; 3 min at 100mhz on a 486, 640x480
+  reset=1960 type=formula 
+  formulaname=minN-XY-YZrot passes=1
+  center-mag=-0.262911/6.10623e-016/1.041667
+  params=90/1.5/0/0/-0.742/0 float=y maxiter=1200 bailout=100
+  inside=253 logmap=yes symmetry=xaxis periodicity=10
+  colors=000QLW<7>K1o<15>nbt<18>iIciHcfIb<14>BVQ<8>JI8<22>ebNvrz<13\
+  >nMz<5>hz`<13>x96<4>Kw9FUZB0x<5>8_P<4>wI1aA`<4>6qZlj6mZOnOenDw<14\
+  >cEd7qk<15>vp9<3>AfQ<5>acCecAkdGqdMvdR<13>F9xiMN`NNSNN<4>UQNlhSVR\
+  N<21>gcRVcE<2>TWMrexRRRQOU
+  }
+
+frm:minN-XY-YZrot {; Jim Muth, thanks to Benno
+; real(p1)=rotation angle in degrees, imag(p1)=power of Z
+; p2=parallel planes, p3=rotation point and parallel planes
+a=real(p1), b=imag(p1),
+z=sin(a*.01745329251994)*real(pixel)+p2,
+c=cos(a*.01745329251994)*real(pixel)+flip(imag(pixel))+p3:
+z=(-z)^b+c,
+|z| <= 16
+}
+
