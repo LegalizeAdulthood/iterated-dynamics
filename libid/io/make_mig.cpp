@@ -249,12 +249,36 @@ static bool same_color_map(const ColorMapObject *lhs, const ColorMapObject *rhs)
         std::memcmp(lhs->Colors, rhs->Colors, lhs->ColorCount * sizeof(GifColorType)) == 0;
 }
 
+static bool same_extension_blocks(
+    const int lhs_count,
+    const ExtensionBlock *lhs_blocks,
+    const int rhs_count,
+    const ExtensionBlock *rhs_blocks)
+{
+    if (lhs_count != rhs_count)
+    {
+        return false;
+    }
+    for (int i = 0; i < lhs_count; i++)
+    {
+        if (lhs_blocks[i].Function != rhs_blocks[i].Function ||
+            lhs_blocks[i].ByteCount != rhs_blocks[i].ByteCount ||
+            std::memcmp(lhs_blocks[i].Bytes, rhs_blocks[i].Bytes, lhs_blocks[i].ByteCount) != 0)
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 static bool same_image(const SavedImage &lhs, const SavedImage &rhs)
 {
     return lhs.ImageDesc.Left == rhs.ImageDesc.Left && lhs.ImageDesc.Top == rhs.ImageDesc.Top &&
         lhs.ImageDesc.Width == rhs.ImageDesc.Width && lhs.ImageDesc.Height == rhs.ImageDesc.Height &&
         lhs.ImageDesc.Interlace == rhs.ImageDesc.Interlace &&
         same_color_map(lhs.ImageDesc.ColorMap, rhs.ImageDesc.ColorMap) &&
+        same_extension_blocks(
+            lhs.ExtensionBlockCount, lhs.ExtensionBlocks, rhs.ExtensionBlockCount, rhs.ExtensionBlocks) &&
         std::memcmp(lhs.RasterBits, rhs.RasterBits, raster_size(lhs)) == 0;
 }
 
@@ -264,7 +288,35 @@ static bool same_image_at_offset(const SavedImage &lhs, const SavedImage &rhs, c
         lhs.ImageDesc.Width == rhs.ImageDesc.Width && lhs.ImageDesc.Height == rhs.ImageDesc.Height &&
         lhs.ImageDesc.Interlace == rhs.ImageDesc.Interlace &&
         same_color_map(lhs.ImageDesc.ColorMap, rhs.ImageDesc.ColorMap) &&
+        same_extension_blocks(
+            lhs.ExtensionBlockCount, lhs.ExtensionBlocks, rhs.ExtensionBlockCount, rhs.ExtensionBlocks) &&
         std::memcmp(lhs.RasterBits, rhs.RasterBits, raster_size(lhs)) == 0;
+}
+
+static void clear_extensions(SavedImage *image)
+{
+    if (image->ExtensionBlockCount > 0)
+    {
+        GifFreeExtensions(&image->ExtensionBlockCount, &image->ExtensionBlocks);
+    }
+}
+
+static void copy_extension_blocks(GifFileType *output, const GifFileType *input)
+{
+    for (int i = 0; i < input->ExtensionBlockCount; i++)
+    {
+        const ExtensionBlock &block{input->ExtensionBlocks[i]};
+        if (GifAddExtensionBlock(
+                &output->ExtensionBlockCount,
+                &output->ExtensionBlocks,
+                block.Function,
+                block.ByteCount,
+                block.Bytes) == GIF_ERROR)
+        {
+            std::printf("Cannot copy GIF extension block!\n");
+            std::exit(1);
+        }
+    }
 }
 
 static SavedImage *copy_saved_image(GifFileType *output, const SavedImage &image)
@@ -278,11 +330,20 @@ static SavedImage *copy_saved_image(GifFileType *output, const SavedImage &image
     return saved_image;
 }
 
-static void copy_saved_image_at_offset(GifFileType *output, const SavedImage &image, const int left, const int top)
+static void copy_saved_image_at_offset(
+    GifFileType *output,
+    const SavedImage &image,
+    const int left,
+    const int top,
+    const bool keep_extensions)
 {
     SavedImage *saved_image{copy_saved_image(output, image)};
     saved_image->ImageDesc.Left += left;
     saved_image->ImageDesc.Top += top;
+    if (!keep_extensions)
+    {
+        clear_extensions(saved_image);
+    }
 }
 
 static void verify_single_image_output(
@@ -393,17 +454,34 @@ static void verify_tiled_images_output(
         for (unsigned x_step = 0U; x_step < x_mult; x_step++)
         {
             InputGif input{read_tile_gif(x_step, y_step)};
+            const bool final_tile{x_step == x_mult - 1 && y_step == y_mult - 1};
             const int left{static_cast<int>(x_step) * input_metadata.width};
             const int top{static_cast<int>(y_step) * input_metadata.height};
             for (int i = 0; i < input.get()->ImageCount; i++)
             {
-                if (!same_image_at_offset(output.get()->SavedImages[image_number++], input.get()->SavedImages[i], left, top))
+                SavedImage expected{input.get()->SavedImages[i]};
+                if (!final_tile)
+                {
+                    expected.ExtensionBlockCount = 0;
+                    expected.ExtensionBlocks = nullptr;
+                }
+                if (!same_image_at_offset(output.get()->SavedImages[image_number++], expected, left, top))
                 {
                     std::printf("Output file %s failed GIF offset verification!\n", path.filename().string().c_str());
                     std::exit(1);
                 }
             }
         }
+    }
+    InputGif final_input{read_tile_gif(x_mult - 1, y_mult - 1)};
+    if (!same_extension_blocks(
+            output.get()->ExtensionBlockCount,
+            output.get()->ExtensionBlocks,
+            final_input.get()->ExtensionBlockCount,
+            final_input.get()->ExtensionBlocks))
+    {
+        std::printf("Output file %s failed GIF extension verification!\n", path.filename().string().c_str());
+        std::exit(1);
     }
 }
 
@@ -418,11 +496,16 @@ static void verify_tiled_images_output(
         for (unsigned x_step = 0U; x_step < x_mult; x_step++)
         {
             InputGif input{read_tile_gif(x_step, y_step)};
+            const bool final_tile{x_step == x_mult - 1 && y_step == y_mult - 1};
             const int left{static_cast<int>(x_step) * input_metadata.width};
             const int top{static_cast<int>(y_step) * input_metadata.height};
             for (int i = 0; i < input.get()->ImageCount; i++)
             {
-                copy_saved_image_at_offset(output.get(), input.get()->SavedImages[i], left, top);
+                copy_saved_image_at_offset(output.get(), input.get()->SavedImages[i], left, top, final_tile);
+            }
+            if (final_tile)
+            {
+                copy_extension_blocks(output.get(), input.get());
             }
         }
     }
