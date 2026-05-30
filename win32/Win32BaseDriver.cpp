@@ -510,9 +510,9 @@ bool Win32BaseDriver::get_filename(
         result_filename = info.lpstrFile;
         return false;
     }
-    if (const DWORD last_error{GetLastError()}; last_error != ERROR_SUCCESS)
+    if (const DWORD last_error{CommDlgExtendedError()}; last_error != 0)
     {
-        debug_text(("GetOpenFileNameA failed: " + std::to_string(last_error)).c_str());
+        debug_text(("GetOpenFileNameA failed: " + std::to_string(last_error) + '\n').c_str());
     }
     return true;
 }
