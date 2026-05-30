@@ -1,0 +1,24 @@
+petals             { ; Fractal of the day, 16-11-97
+                     ; 45 seconds on a 486-100mhz, 640x480
+  reset=1960 type=formula 
+  formulaname=M-O-rotation passes=t
+  center-mag=-5.55112e-016/-3.33067e-015/0.9332872/0.9766
+  params=9/45/0/0/0/0 float=y maxiter=300 bailout=100 inside=0
+  logmap=yes symmetry=xyaxis periodicity=10
+  colors=000M3K<12>2GX<6>Gqx<8>uEU<3>A2_MIXXXV<10>vOD<14>E1s71s\
+  <5>1_1<8>FkPMoZHmSInUKoXsuP<6>PpYDQXYHj<5>Mk_fi0<5>OoU`JI<8>M\
+  mYfRF<10>MnYWpRSpUOpX7re<4>Jp_AKv<5>JhdKlaKsS<2>LpYimw<12>Opa\
+  Mp_InN<14>LpZM1Y<5>LiZghA<9>NpXPju<9>Lp`Pf_<9>LpZK6KLUSaKy<11\
+  >Mn`86P<12>LmZiJe<5>ZYb
+  }
+
+frm:M-O-rotation {; Jim Muth
+; real(p1)=power of Z,  imag(p1)=angle of rotation
+; p2=parallel planes,  p3=rotation point and parallel planes
+a=real(p1), b=imag(p1)+.0000000000001,
+z=sin(b*.01745329251994)*real(pixel)+p2,
+c=cos(b*.01745329251994)*real(pixel)+flip(imag(pixel))+p3:
+z=Z^a-(1.1*z)+c,
+|z| <=25
+}
+
