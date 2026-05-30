@@ -293,7 +293,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>    <span class="keyword">const</span> std::uint64_t height = <span class="keyword">static_cast&lt;</span>std::uint64_t<span class="keyword">&gt;</span>(metadata.height) * y_mult;</div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a> &gt; MAX_GIF_DIMENSION || height &gt; MAX_GIF_DIMENSION)</div>
 <div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>    {</div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        std::printf(<span class="stringliteral">&quot;MIG output dimensions %llu x %llu exceed GIF limits!\n&quot;</span>, <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>, height);</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>        fmt::print(<span class="stringliteral">&quot;MIG output dimensions {:d} x {:d} exceed GIF limits!\n&quot;</span>, <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#a2474a5474cbff19523a51eb1de01cda4">width</a>, height);</div>
 <div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>        std::exit(1);</div>
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    }</div>
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span>}</div>

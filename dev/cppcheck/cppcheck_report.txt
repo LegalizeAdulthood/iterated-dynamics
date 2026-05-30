@@ -1618,12 +1618,6 @@ libid/io/library.cpp:177:9: style: Consider using std::any_of algorithm instead 
 libid/io/library.cpp:185:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/make_mig.cpp:190:14: warning: %llu in format string (no. 1) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
-        std::printf("MIG output dimensions %llu x %llu exceed GIF limits!\n", width, height);
-             ^
-libid/io/make_mig.cpp:190:14: warning: %llu in format string (no. 2) requires 'unsigned long long' but the argument type is 'unsigned long'. [invalidPrintfArgType_uint]
-        std::printf("MIG output dimensions %llu x %llu exceed GIF limits!\n", width, height);
-             ^
 libid/io/path_match.cpp:97:17: style: Condition 'pat_ext==".*"' is always false [knownConditionTrueFalse]
     if (pat_ext == ".*" || pat_ext.empty())
                 ^
