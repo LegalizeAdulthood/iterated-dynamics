@@ -126,20 +126,16 @@ void cmplx_log(const DComplex &x, DComplex &z)
 void cmplx_exp(const DComplex &x, DComplex &z)
 {
     const double y = x.y;
-    double pow = std::exp(x.x);
-    if (std::isnan(pow) || std::isinf(pow))
-    {
-        pow = 1.0;
-    }
+    const double pow = x.x < -690.0 ? 0.0 : std::exp(x.x);
     if (x.y == 0.0) /* x is real */
     {
-        z.x = pow;
+        z.x = static_cast<double>(pow);
         z.y = 0.0;
     }
     else
     {
-        z.x = pow * std::cos(y);
-        z.y = pow * std::sin(y);
+        z.x = static_cast<double>(pow * std::cos(y));
+        z.y = static_cast<double>(pow * std::sin(y));
     }
 }
 

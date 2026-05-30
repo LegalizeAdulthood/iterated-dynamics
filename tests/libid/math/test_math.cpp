@@ -31,7 +31,8 @@ TEST(TestMath, nanExponent)
 
     cmplx_exp(x, z); // z = e^x
 
-    EXPECT_EQ((DComplex{1.0, 0.0}), z);
+    EXPECT_TRUE(std::isnan(z.x));
+    EXPECT_EQ(0.0, z.y);
 }
 
 TEST(TestMath, nanRealMultiply)

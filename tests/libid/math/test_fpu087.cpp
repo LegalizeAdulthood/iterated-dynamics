@@ -76,4 +76,26 @@ TEST(TestMath, complexLogPointerAlias)
     EXPECT_NEAR(std::atan2(2.0, 1.0), z.y, 1e-9);
 }
 
+TEST(TestMath, complexExpUnderflowMatchesFractint)
+{
+    const DComplex x{-691.0, 1.0};
+    DComplex z{1.0, 1.0};
+
+    cmplx_exp(x, z); // z = exp(x)
+
+    EXPECT_EQ(0.0, z.x);
+    EXPECT_EQ(0.0, z.y);
+}
+
+TEST(TestMath, complexExpOverflowMatchesFractint)
+{
+    const DComplex x{1000.0, 0.0};
+    DComplex z{1.0, 1.0};
+
+    cmplx_exp(x, z); // z = exp(x)
+
+    EXPECT_TRUE(std::isinf(z.x));
+    EXPECT_EQ(0.0, z.y);
+}
+
 } // namespace id::test
