@@ -1,0 +1,19 @@
+slithy_tove         { ; Fractal of the day, 14-11-97
+                      ; 2 min on a 486-100mhz at 640x480
+  reset=1960 type=formula 
+  formulaname=OblateN passes=1
+  center-mag=-1.05426/0.158163/1.558837/1.07/-128.201/29.029
+  params=0/0.19/1.25/0 float=y maxiter=1200 bailout=100 inside=0
+  logmap=yes symmetry=none periodicity=10
+  colors=000M3L<12>K34JA8NJC<3>SnSZzUTvWNiYcRTp3Nq7Q<9>UjjPmk<9\
+  >nsn<28>NjX<31>vS1dFOO3j<21>Ilf<28>oYSpYRs_T<11>WJ7UI5UG3<31>\
+  ESC<7>guq<11>WWhVUhWTiP9L<4>69M<13>lB9<2>`X9M3M
+  }
+
+frm:OblateN {; Jim Muth
+z=real(pixel)+flip(real(p1)),
+c=flip(imag(pixel))+imag(p1):
+z=z^p2+c,
+|z| <= 16
+}
+
