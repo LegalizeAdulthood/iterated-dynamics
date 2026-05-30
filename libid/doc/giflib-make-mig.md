@@ -64,20 +64,13 @@ sizes, sub-blocks, local color tables, extension chains, and the trailer.
 Each slice should compile on its own. Add or adjust tests with the slice
 that changes behavior.
 
-1. Tile-offset slice
-
-   Extend image copying to all tiles. After each `GifMakeSavedImage`,
-   adjust `ImageDesc.Left` and `ImageDesc.Top` by
-   `x_step * tile_width` and `y_step * tile_height`. Verify a 2x2 stitch
-   has the expected output screen size, image count, and image offsets.
-
-2. Multi-image tile slice
+1. Multi-image tile slice
 
    Preserve the legacy loop over every image descriptor by copying every
    `SavedImage` from each tile, not just image zero. Verify image count
    equals the sum of all tile image counts.
 
-3. Extension slice
+2. Extension slice
 
    Match the current extension policy: discard copied extension blocks for
    non-last tiles, preserve image-local and trailing extension blocks only
@@ -85,21 +78,21 @@ that changes behavior.
    Do not migrate Fractint extension contents; preserve the last tile's
    bytes verbatim.
 
-4. Cleanup and errors slice
+3. Cleanup and errors slice
 
     Replace the old `error_flag` and `input_error_flag` paths with giflib
     error handling. Keep input tiles until all operations succeed. Delete
     input tiles from the image save library only after `EGifSpew` succeeds
     and all GIF handles are closed.
 
-5. Remove raw I/O slice
+4. Remove raw I/O slice
 
     Delete the remaining `std::FILE`, `std::fread`, `std::fwrite`,
     byte-buffer, `std::memcpy`, and `std::memset` logic from
     `make_mig.cpp`. Keep `par_key()` and the user-visible messages unless
     a test requires a wording update.
 
-6. Full verification slice
+5. Full verification slice
 
     Run the focused make_mig tests and the Make MIG autokey test, then run
     `cmake --workflow rt-default` in the top-level source directory.
