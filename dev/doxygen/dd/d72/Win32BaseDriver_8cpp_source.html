@@ -654,9 +654,9 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>        result_filename = info.lpstrFile;</div>
 <div class="line"><a id="l00511" name="l00511"></a><span class="lineno">  511</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00512" name="l00512"></a><span class="lineno">  512</span>    }</div>
-<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> DWORD last_error{GetLastError()}; last_error != ERROR_SUCCESS)</div>
+<div class="line"><a id="l00513" name="l00513"></a><span class="lineno">  513</span>    <span class="keywordflow">if</span> (<span class="keyword">const</span> DWORD last_error{CommDlgExtendedError()}; last_error != 0)</div>
 <div class="line"><a id="l00514" name="l00514"></a><span class="lineno">  514</span>    {</div>
-<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>        <a class="code hl_function" href="../../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a46452c8de199b74bea915be483212594">debug_text</a>((<span class="stringliteral">&quot;GetOpenFileNameA failed: &quot;</span> + std::to_string(last_error)).c_str());</div>
+<div class="line"><a id="l00515" name="l00515"></a><span class="lineno">  515</span>        <a class="code hl_function" href="../../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a46452c8de199b74bea915be483212594">debug_text</a>((<span class="stringliteral">&quot;GetOpenFileNameA failed: &quot;</span> + std::to_string(last_error) + <span class="charliteral">&#39;\n&#39;</span>).c_str());</div>
 <div class="line"><a id="l00516" name="l00516"></a><span class="lineno">  516</span>    }</div>
 <div class="line"><a id="l00517" name="l00517"></a><span class="lineno">  517</span>    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
 <div class="line"><a id="l00518" name="l00518"></a><span class="lineno">  518</span>}</div>
