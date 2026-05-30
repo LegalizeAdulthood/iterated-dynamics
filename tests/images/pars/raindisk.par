@@ -1,0 +1,19 @@
+raindisk           { ; Fractal of the day, 29-08-97
+                     ; 18 min on 486-100mhz, 640x480
+  reset=1960 type=formula formulaname=YZplaneN
+  passes=1
+  center-mag=-1.08856603773584900/+0.32649398895422020/65007.41/0.004773
+  params=0/0.98/-100/0 float=y maxiter=1200 bailout=100 inside=255
+  logmap=yes symmetry=xaxis periodicity=10
+  colors=000S6d<2>U6e<5>ueK<17>AaT<12>EFq<5>68T<9>W1z<18>32j<5>GLmIOmJPj<1\
+  2>OQI<21>PRJ<4>91CUDBmPA<20>fMYfMZcN`<14>4Nquiw<8>YqSWqPVpQ<17>FhX<17>qm\
+  q<20>4Po<7>YTN<8>CCBO8b<2>Q7cF0H
+  }
+
+frm:YZplaneN {; Jim Muth
+z=real(pixel)+flip(real(p1)),
+c=flip(imag(pixel))+imag(p1):
+z=z^p2+c,
+|z| <= 36
+}
+
