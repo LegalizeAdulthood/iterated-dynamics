@@ -18,6 +18,6 @@ function(add_par_test name)
 endfunction()
 
 foreach(par Land_of_Loti Killer_Mosquito Broken_Arches Waves_in_the_Night
-        Cosmic_Laser_Beams Mass_Ejection Faces_in_the_Night)
+        Cosmic_Laser_Beams Mass_Ejection Faces_in_the_Night alien)
     add_par_test(${par})
 endforeach()

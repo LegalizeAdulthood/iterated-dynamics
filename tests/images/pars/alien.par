@@ -1,0 +1,20 @@
+alien              { ; Fractal of the day, 16-08-97
+                     ; 8 minutes on a 486-100mhz, 640x480
+  reset=1960 type=formula formulaname=HyperSqrTest
+  passes=t center-mag=0.413029/8.88178e-016/1.371155
+  params=-0.15/1/2/1/1/1 float=y maxiter=1200 bailout=100 inside=0
+  symmetry=xaxis periodicity=0
+  colors=000MJ9B6A<21>WL6<14>Fn3<23>p_O<12>ohM<2>ulL<4>s9_s1ap6c<11>Nzt<15\
+  >2lg<2>DJVTSgh`too9b8l<14>5Ck<10>RFAewO<5>Dp3<7>PEm<14>jhf<13>kHy<4>Cfa<\
+  9>WZ3YZ0`_1<4>ja6<15>bTkXccSmX<9>od1<6>EGr<3>cfci`Gii5YW7
+  }
+
+frm:HyperSqrTest {; Jim Muth
+a=real(p1), b=imag(p1), c=real(p2),
+d=imag(p2), e=real(p3), f=imag(p3):
+g=(a^c)-(b^d)+pixel
+b=e*a*b+f
+a=g,
+|a|+|b| <= 100
+}
+
