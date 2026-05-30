@@ -81,21 +81,7 @@ tests only when it removes immediate duplication.
 
 ## Work Slices
 
-1. Add true-color loading to `image-compare`.
-
-   Keep the existing GIF/POT comparison path unchanged. Add a second path
-   for true-color images when either input is `.tga` or `.png`.
-
-   Use the local vcpkg `tgautils` package for TGA loading. Do not hand-roll
-   a TGA parser in the test tool.
-
-   Use libpng from vcpkg for PNG loading. Use `find_package(PNG REQUIRED)`
-   and link `image-tool` or `image-compare` with `PNG::PNG`.
-
-   Normalize both loaders to one RGB buffer shape and compare RGB values
-   exactly.
-
-2. Add `AutokeyTest.3dlook-targa`.
+1. Add `AutokeyTest.3dlook-targa`.
 
    Use a private home directory. In the CMake script, generate
    `potntial.pot` first, then run Id with `@radar/3dlook` and an autokey
@@ -108,19 +94,19 @@ tests only when it removes immediate duplication.
    Id test version should fail cleanly if the gold PNG does not exist and
    should print the full generated TGA path.
 
-3. Check in gold images after manual verification.
+2. Check in gold images after manual verification.
 
    Accept `gold-3dlook01.pot` after the potential image is verified.
    Convert the verified TGA to PNG and check it in as
    `gold-3dlook-targa.png`.
 
-4. Optional cleanup.
+3. Optional cleanup.
 
    If the new helpers are clearly better, migrate `ImageTest.make-mig` and
    `AutokeyTest.makepar-mig-pieces` to them in a later mechanical slice.
    Keep that separate from the 3D behavior test.
 
-5. Validate.
+4. Validate.
 
    Run focused tests first:
 

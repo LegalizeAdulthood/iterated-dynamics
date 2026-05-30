@@ -6,11 +6,16 @@
 
 #include <array>
 #include <cassert>
+#include <cctype>
+#include <cstdio>
+#include <cstdint>
 #include <filesystem>
 #include <fmt/format.h>
 #include <iostream>
+#include <png.h>
 #include <string>
 #include <string_view>
+#include <tga.h>
 #include <vector>
 
 namespace id
@@ -36,6 +41,195 @@ static ColorMapObject *make_grayscale_color_map()
         color_map->Colors[i].Blue = i;
     }
     return color_map;
+}
+
+struct RgbImage
+{
+    int width{};
+    int height{};
+    std::vector<std::uint8_t> pixels;
+};
+
+static std::string lower_extension(const std::filesystem::path &path)
+{
+    std::string ext{path.extension().string()};
+    for (char &ch : ext)
+    {
+        ch = static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+    }
+    return ext;
+}
+
+static bool is_true_color_path(const std::filesystem::path &path)
+{
+    const std::string ext{lower_extension(path)};
+    return ext == ".png" || ext == ".tga";
+}
+
+static RgbImage load_png(const std::filesystem::path &path)
+{
+    png_image image{};
+    image.version = PNG_IMAGE_VERSION;
+    if (png_image_begin_read_from_file(&image, path.string().c_str()) == 0)
+    {
+        throw std::runtime_error{"Could not read PNG " + path.string() + ": " + image.message};
+    }
+    image.format = PNG_FORMAT_RGB;
+    RgbImage result{static_cast<int>(image.width), static_cast<int>(image.height)};
+    result.pixels.resize(PNG_IMAGE_SIZE(image));
+    if (png_image_finish_read(&image, nullptr, result.pixels.data(), 0, nullptr) == 0)
+    {
+        const std::string message{image.message};
+        png_image_free(&image);
+        throw std::runtime_error{"Could not read PNG pixels " + path.string() + ": " + message};
+    }
+    png_image_free(&image);
+    return result;
+}
+
+static std::uint8_t scale_5_to_8(const unsigned int value)
+{
+    return static_cast<std::uint8_t>((value << 3) | (value >> 2));
+}
+
+static void set_tga_pixel(RgbImage &image, const TGAFile &tga, const int file_y, const int file_x, const unsigned char *src)
+{
+    const bool right_to_left{(tga.imageDesc & 0x10) != 0};
+    const bool top_to_bottom{(tga.imageDesc & 0x20) != 0};
+    const int x{right_to_left ? image.width - 1 - file_x : file_x};
+    const int y{top_to_bottom ? file_y : image.height - 1 - file_y};
+    const std::size_t offset{(static_cast<std::size_t>(y) * image.width + x) * 3U};
+    if (tga.pixelDepth == 16)
+    {
+        const unsigned int value{static_cast<unsigned int>(src[0]) | (static_cast<unsigned int>(src[1]) << 8)};
+        image.pixels[offset + 0] = scale_5_to_8((value >> 10) & 0x1f);
+        image.pixels[offset + 1] = scale_5_to_8((value >> 5) & 0x1f);
+        image.pixels[offset + 2] = scale_5_to_8(value & 0x1f);
+        return;
+    }
+    image.pixels[offset + 0] = src[2];
+    image.pixels[offset + 1] = src[1];
+    image.pixels[offset + 2] = src[0];
+}
+
+static RgbImage load_tga(const std::filesystem::path &path)
+{
+    FILE *file{std::fopen(path.string().c_str(), "rb")};
+    if (file == nullptr)
+    {
+        throw std::runtime_error{"Could not open TGA " + path.string()};
+    }
+    TGAFile tga{};
+    const int read_result{ReadTGAFile(file, &tga)};
+    if (read_result < 0)
+    {
+        std::fclose(file);
+        throw std::runtime_error{"Could not read TGA " + path.string() + ": " + std::to_string(read_result)};
+    }
+    if (tga.imageType != 2 && tga.imageType != 10)
+    {
+        FreeTGAFile(&tga);
+        std::fclose(file);
+        throw std::runtime_error{"Unsupported TGA image type in " + path.string() + ": " + std::to_string(tga.imageType)};
+    }
+    if (tga.pixelDepth != 16 && tga.pixelDepth != 24 && tga.pixelDepth != 32)
+    {
+        FreeTGAFile(&tga);
+        std::fclose(file);
+        throw std::runtime_error{"Unsupported TGA pixel depth in " + path.string() + ": " + std::to_string(tga.pixelDepth)};
+    }
+
+    const int bytes_per_pixel{(tga.pixelDepth + 7) / 8};
+    const long image_offset{18L + tga.idLength + ((tga.mapWidth + 7) >> 3) * static_cast<long>(tga.mapLength)};
+    if (std::fseek(file, image_offset, SEEK_SET) != 0)
+    {
+        FreeTGAFile(&tga);
+        std::fclose(file);
+        throw std::runtime_error{"Could not seek to TGA pixels in " + path.string()};
+    }
+
+    RgbImage result{tga.imageWidth, tga.imageHeight};
+    result.pixels.resize(static_cast<std::size_t>(result.width) * static_cast<std::size_t>(result.height) * 3U);
+    std::vector<unsigned char> row(static_cast<std::size_t>(result.width) * bytes_per_pixel);
+    for (int y = 0; y < result.height; ++y)
+    {
+        const int row_bytes{result.width * bytes_per_pixel};
+        int row_result{};
+        if (tga.imageType == 10)
+        {
+            row_result = ReadRLERow(file, row.data(), row_bytes, bytes_per_pixel);
+        }
+        else
+        {
+            row_result = static_cast<int>(std::fread(row.data(), 1, row_bytes, file)) == row_bytes ? 0 : -1;
+        }
+        if (row_result < 0)
+        {
+            FreeTGAFile(&tga);
+            std::fclose(file);
+            throw std::runtime_error{"Could not read TGA pixel row from " + path.string()};
+        }
+        for (int x = 0; x < result.width; ++x)
+        {
+            set_tga_pixel(result, tga, y, x, &row[static_cast<std::size_t>(x) * bytes_per_pixel]);
+        }
+    }
+
+    FreeTGAFile(&tga);
+    std::fclose(file);
+    return result;
+}
+
+static RgbImage load_rgb_image(const std::filesystem::path &path)
+{
+    const std::string ext{lower_extension(path)};
+    if (ext == ".png")
+    {
+        return load_png(path);
+    }
+    if (ext == ".tga")
+    {
+        return load_tga(path);
+    }
+    throw std::runtime_error{"Unsupported true-color image type: " + path.string()};
+}
+
+static int compare_rgb_images(const std::string &file1, const std::string &file2)
+{
+    const RgbImage image1{load_rgb_image(file1)};
+    const RgbImage image2{load_rgb_image(file2)};
+    if (image1.width != image2.width || image1.height != image2.height)
+    {
+        std::cout << "Image dimensions don't match: "                                    //
+                  << file1 << ": " << image1.width << "x" << image1.height << " != " //
+                  << file2 << ": " << image2.width << "x" << image2.height << '\n';
+        return 1;
+    }
+
+    int pixel_count{};
+    const int num_pixels{image1.width * image1.height};
+    for (int i = 0; i < num_pixels; ++i)
+    {
+        const std::size_t offset{static_cast<std::size_t>(i) * 3U};
+        if (image1.pixels[offset + 0] != image2.pixels[offset + 0] //
+            || image1.pixels[offset + 1] != image2.pixels[offset + 1]
+            || image1.pixels[offset + 2] != image2.pixels[offset + 2])
+        {
+            ++pixel_count;
+        }
+    }
+    if (pixel_count > 0)
+    {
+        const float percentage{100.0f * static_cast<float>(pixel_count) / static_cast<float>(num_pixels)};
+        std::cout << fmt::format("Images differ by {:f}% ({:d}/{:d} pixels)\n"
+                                 "{:s}\n"
+                                 "{:s}\n",
+            percentage, pixel_count, num_pixels, file1, file2);
+        return 1;
+    }
+
+    std::cout << file1 << " compares equal to " << file2 << '\n';
+    return 0;
 }
 
 static void write_difference_gif(const std::filesystem::path &path, const SavedImage &image1, const SavedImage &image2)
@@ -135,6 +329,11 @@ int main(const int argc, char *argv[])
         {
             std::cout << file2 << " does not exist.\n";
             return 1;
+        }
+
+        if (is_true_color_path(file1) || is_true_color_path(file2))
+        {
+            return compare_rgb_images(file1, file2);
         }
 
         GIFInputFile gif1{file1};
