@@ -64,33 +64,27 @@ sizes, sub-blocks, local color tables, extension chains, and the trailer.
 Each slice should compile on its own. Add or adjust tests with the slice
 that changes behavior.
 
-1. Output screen slice
-
-   Create the output `GifFileType` through giflib and assign the logical
-   screen fields from the first tile. Copy the first tile's global color
-   map with `GifMakeMapObject`. Do not write images yet.
-
-2. Single-image copy slice
+1. Single-image copy slice
 
    Copy the first tile's first `SavedImage` with `GifMakeSavedImage`, write
    it with `EGifSpew`, and verify the output slurps successfully with the
    same screen, color map, image descriptor, and raster pixels. Compare
    decoded pixels, not file bytes.
 
-3. Tile-offset slice
+2. Tile-offset slice
 
    Extend image copying to all tiles. After each `GifMakeSavedImage`,
    adjust `ImageDesc.Left` and `ImageDesc.Top` by
    `x_step * tile_width` and `y_step * tile_height`. Verify a 2x2 stitch
    has the expected output screen size, image count, and image offsets.
 
-4. Multi-image tile slice
+3. Multi-image tile slice
 
    Preserve the legacy loop over every image descriptor by copying every
    `SavedImage` from each tile, not just image zero. Verify image count
    equals the sum of all tile image counts.
 
-5. Extension slice
+4. Extension slice
 
    Match the current extension policy: discard copied extension blocks for
    non-last tiles, preserve image-local and trailing extension blocks only
@@ -98,21 +92,21 @@ that changes behavior.
    Do not migrate Fractint extension contents; preserve the last tile's
    bytes verbatim.
 
-6. Cleanup and errors slice
+5. Cleanup and errors slice
 
     Replace the old `error_flag` and `input_error_flag` paths with giflib
     error handling. Keep input tiles until all operations succeed. Delete
     input tiles from the image save library only after `EGifSpew` succeeds
     and all GIF handles are closed.
 
-7. Remove raw I/O slice
+6. Remove raw I/O slice
 
     Delete the remaining `std::FILE`, `std::fread`, `std::fwrite`,
     byte-buffer, `std::memcpy`, and `std::memset` logic from
     `make_mig.cpp`. Keep `par_key()` and the user-visible messages unless
     a test requires a wording update.
 
-8. Full verification slice
+7. Full verification slice
 
     Run the focused make_mig tests and the Make MIG autokey test, then run
     `cmake --workflow rt-default` in the top-level source directory.

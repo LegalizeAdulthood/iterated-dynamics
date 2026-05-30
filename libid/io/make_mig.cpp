@@ -196,6 +196,44 @@ static void validate_canvas_size(const MigMetadata &metadata, const unsigned int
     }
 }
 
+static void set_output_screen(
+    GifFileType *output, const GifFileType *first_input, const unsigned int x_mult, const unsigned int y_mult)
+{
+    const MigMetadata metadata{get_metadata(first_input)};
+    validate_canvas_size(metadata, x_mult, y_mult);
+    output->SWidth = metadata.width * x_mult;
+    output->SHeight = metadata.height * y_mult;
+    output->SColorResolution = metadata.color_resolution;
+    output->SBackGroundColor = metadata.background_color;
+    output->AspectByte = metadata.aspect_byte;
+    if (first_input->SColorMap != nullptr)
+    {
+        output->SColorMap = GifMakeMapObject(
+            first_input->SColorMap->ColorCount, first_input->SColorMap->Colors);
+        if (output->SColorMap == nullptr)
+        {
+            std::printf("Cannot allocate output color map!\n");
+            std::exit(1);
+        }
+    }
+}
+
+[[maybe_unused]] static OutputGif create_output_gif(
+    const std::filesystem::path &path,
+    const GifFileType *first_input,
+    const unsigned int x_mult,
+    const unsigned int y_mult)
+{
+    OutputGif output{path};
+    if (output.get() == nullptr)
+    {
+        std::printf("Cannot create output file %s!\n", path.filename().string().c_str());
+        std::exit(1);
+    }
+    set_output_screen(output.get(), first_input, x_mult, y_mult);
+    return output;
+}
+
 static MigMetadata validate_input_gifs(const unsigned int x_mult, const unsigned int y_mult)
 {
     MigMetadata first{};
