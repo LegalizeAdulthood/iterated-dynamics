@@ -7,6 +7,7 @@
 #include "io/library.h"
 
 #include <fmt/format.h>
+#include <gif_lib.h>
 
 #include <array> // std::size
 #include <cassert>
@@ -16,11 +17,79 @@
 #include <cstring>
 #include <filesystem>
 #include <string>
+#include <utility>
 
 using namespace id::engine;
 
 namespace id::io
 {
+
+class InputGif
+{
+public:
+    explicit InputGif(const std::filesystem::path &path) :
+        m_path(path),
+        m_gif(DGifOpenFileName(m_path.string().c_str(), &m_error))
+    {
+    }
+
+    ~InputGif()
+    {
+        close();
+    }
+
+    InputGif(const InputGif &rhs) = delete;
+    InputGif(InputGif &&rhs) noexcept :
+        m_path(std::move(rhs.m_path)),
+        m_gif(std::exchange(rhs.m_gif, nullptr)),
+        m_error(rhs.m_error),
+        m_slurp_result(rhs.m_slurp_result)
+    {
+    }
+    InputGif &operator=(const InputGif &rhs) = delete;
+    InputGif &operator=(InputGif &&rhs) = delete;
+
+    // clang-format off
+    const std::filesystem::path &path() const  { return m_path; }
+    GifFileType *get() const                   { return m_gif; }
+    int error() const                          { return m_error; }
+    int slurp_result() const                   { return m_slurp_result; }
+    // clang-format on
+
+    int slurp()
+    {
+        if (m_gif == nullptr)
+        {
+            m_slurp_result = GIF_ERROR;
+            return m_slurp_result;
+        }
+        m_slurp_result = DGifSlurp(m_gif);
+        return m_slurp_result;
+    }
+
+private:
+    void close()
+    {
+        if (m_gif != nullptr)
+        {
+            int close_error{};
+            DGifCloseFile(m_gif, &close_error);
+            m_gif = nullptr;
+        }
+    }
+
+    std::filesystem::path m_path;
+    GifFileType *m_gif{};
+    int m_error{};
+    int m_slurp_result{GIF_ERROR};
+};
+
+[[maybe_unused]] static InputGif read_input_gif(const std::filesystem::path &path)
+{
+    InputGif gif{path};
+    gif.slurp();
+    return gif;
+}
 
 static char par_key(const unsigned int x)
 {
