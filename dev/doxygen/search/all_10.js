@@ -222,13 +222,14 @@ var searchData=
   ['put_5ffractal_5fparams_219',['put_fractal_params',['../dc/d76/namespaceid_1_1ui.html#ad431a7978fb4392560b8f00740cda79e',1,'id::ui']]],
   ['put_5forbits_5finfo_220',['put_orbits_info',['../d0/d19/namespaceid_1_1io.html#af3d6120a552745f9deed27eb44b16b8e',1,'id::io']]],
   ['put_5franges_5finfo_221',['put_ranges_info',['../d0/d19/namespaceid_1_1io.html#a60a72965a172568dfb5472622cd35b6e',1,'id::io']]],
-  ['put_5fresume_222',['put_resume',['../dc/d31/namespaceid_1_1engine.html#a533665ee60f266ec7210e06160f66010',1,'id::engine::put_resume(const Head &amp;head, const Tail &amp;...tail)'],['../dc/d31/namespaceid_1_1engine.html#a97b89ad7ae99d539370d57ebeec28f6f',1,'id::engine::put_resume(const T &amp;value)']]],
-  ['put_5fresume_5flen_223',['put_resume_len',['../dc/d31/namespaceid_1_1engine.html#a9608709e0a269586984eabdbd0642cde',1,'id::engine']]],
-  ['put_5frow_224',['put_row',['../dc/d76/namespaceid_1_1ui.html#a5cde054e24f50f5ff71c1c382da2d1fb',1,'id::ui']]],
-  ['put_5fstring_225',['put_string',['../d3/def/classid_1_1misc_1_1Driver.html#a1195e59f45ad422e14abad61d74a035b',1,'id::misc::Driver::put_string()'],['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#abb741074c2df88470041a3fd79388ab4',1,'id::misc::Win32BaseDriver::put_string()'],['../db/de5/classid_1_1misc_1_1WinText.html#a2be0c74e7cc2fb8c4eec2664cdb5385b',1,'id::misc::WinText::put_string()']]],
-  ['put_5fstring_5fcenter_226',['put_string_center',['../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255',1,'id::ui::put_string_center(int row, int col, int width, int attr, const char *msg)'],['../dc/d76/namespaceid_1_1ui.html#aea81142d17242dba5ddeffa0369c4eb4',1,'id::ui::put_string_center(const int row, const int col, const int width, const int attr, const std::string &amp;msg)']]],
-  ['put_5fstring_5fcenter_2ecpp_227',['put_string_center.cpp',['../d9/d52/put__string__center_8cpp.html',1,'']]],
-  ['put_5fstring_5fcenter_2eh_228',['put_string_center.h',['../da/d8d/put__string__center_8h.html',1,'']]],
-  ['px_229',['px',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a50e4a2ac4ab16c5d4c099e6a5fa31c26',1,'id::ui::EvolutionInfo::px'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#a10a3a05c545c02526310b007eaede25b',1,'id::io::ExtBlock6::px']]],
-  ['py_230',['py',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a1dbeca2ddba0df675d6cf00ad1d0d782',1,'id::ui::EvolutionInfo::py'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#ad11918e34fcf459136339ef5b06a2a64',1,'id::io::ExtBlock6::py']]]
+  ['put_5frds_5fparams_222',['put_rds_params',['../dc/d76/namespaceid_1_1ui.html#a34571ea7b37abe0b5b6ea85f7a35a098',1,'id::ui']]],
+  ['put_5fresume_223',['put_resume',['../dc/d31/namespaceid_1_1engine.html#a533665ee60f266ec7210e06160f66010',1,'id::engine::put_resume(const Head &amp;head, const Tail &amp;...tail)'],['../dc/d31/namespaceid_1_1engine.html#a97b89ad7ae99d539370d57ebeec28f6f',1,'id::engine::put_resume(const T &amp;value)']]],
+  ['put_5fresume_5flen_224',['put_resume_len',['../dc/d31/namespaceid_1_1engine.html#a9608709e0a269586984eabdbd0642cde',1,'id::engine']]],
+  ['put_5frow_225',['put_row',['../dc/d76/namespaceid_1_1ui.html#a5cde054e24f50f5ff71c1c382da2d1fb',1,'id::ui']]],
+  ['put_5fstring_226',['put_string',['../d3/def/classid_1_1misc_1_1Driver.html#a1195e59f45ad422e14abad61d74a035b',1,'id::misc::Driver::put_string()'],['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#abb741074c2df88470041a3fd79388ab4',1,'id::misc::Win32BaseDriver::put_string()'],['../db/de5/classid_1_1misc_1_1WinText.html#a2be0c74e7cc2fb8c4eec2664cdb5385b',1,'id::misc::WinText::put_string()']]],
+  ['put_5fstring_5fcenter_227',['put_string_center',['../dc/d76/namespaceid_1_1ui.html#a83d44a8dbe5bcf918863b49efe1eb255',1,'id::ui::put_string_center(int row, int col, int width, int attr, const char *msg)'],['../dc/d76/namespaceid_1_1ui.html#aea81142d17242dba5ddeffa0369c4eb4',1,'id::ui::put_string_center(const int row, const int col, const int width, const int attr, const std::string &amp;msg)']]],
+  ['put_5fstring_5fcenter_2ecpp_228',['put_string_center.cpp',['../d9/d52/put__string__center_8cpp.html',1,'']]],
+  ['put_5fstring_5fcenter_2eh_229',['put_string_center.h',['../da/d8d/put__string__center_8h.html',1,'']]],
+  ['px_230',['px',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a50e4a2ac4ab16c5d4c099e6a5fa31c26',1,'id::ui::EvolutionInfo::px'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#a10a3a05c545c02526310b007eaede25b',1,'id::io::ExtBlock6::px']]],
+  ['py_231',['py',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a1dbeca2ddba0df675d6cf00ad1d0d782',1,'id::ui::EvolutionInfo::py'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#ad11918e34fcf459136339ef5b06a2a64',1,'id::io::ExtBlock6::py']]]
 ];

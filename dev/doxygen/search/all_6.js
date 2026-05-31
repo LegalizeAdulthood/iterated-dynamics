@@ -139,7 +139,7 @@ var searchData=
   ['fr_5ffind_5ffirst_136',['fr_find_first',['../d0/d19/namespaceid_1_1io.html#a9d1975341af37979418bd21b1990e4c7',1,'id::io']]],
   ['fr_5ffind_5fnext_137',['fr_find_next',['../d0/d19/namespaceid_1_1io.html#aea2f29b14b3cf768f221211ba1dadc3e',1,'id::io']]],
   ['fractal_5ffloat_5fto_5fbf_138',['fractal_float_to_bf',['../dc/d31/namespaceid_1_1engine.html#aeb45ad1906a223bf1dd8b55739cabbdf',1,'id::engine']]],
-  ['fractal_5finfo_5fversion_139',['fractal_info_version',['../d0/d19/namespaceid_1_1io.html#a36c8e237128c869d3637d736cd5e1734a172e2be924a7cb434a15d1b19c9ca338',1,'id::io::FRACTAL_INFO_VERSION'],['../d0/d19/namespaceid_1_1io.html#a67d6adba44d9261f000a3e43fac6d6c7',1,'id::io::fractal_info_version(const FractalInfo &amp;read_info)']]],
+  ['fractal_5finfo_5fversion_139',['fractal_info_version',['../d0/d19/namespaceid_1_1io.html#a67d6adba44d9261f000a3e43fac6d6c7',1,'id::io::fractal_info_version(const FractalInfo &amp;read_info)'],['../d0/d19/namespaceid_1_1io.html#a36c8e237128c869d3637d736cd5e1734a172e2be924a7cb434a15d1b19c9ca338',1,'id::io::FRACTAL_INFO_VERSION']]],
   ['fractal_5finfo_5fversion_5flegacy_5f20_5f4_140',['FRACTAL_INFO_VERSION_LEGACY_20_4',['../d0/d19/namespaceid_1_1io.html#a36c8e237128c869d3637d736cd5e1734a503beb69a273e48e559da08fdf14cfa3',1,'id::io']]],
   ['fractal_5fparam_141',['FRACTAL_PARAM',['../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16ab929b79c4a95187e08e4ee1ca326a14b',1,'id::engine']]],
   ['fractal_5ftype_142',['fractal_type',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a186d219c83f6f56a5807013dca48379e',1,'id::io::FractalInfo']]],

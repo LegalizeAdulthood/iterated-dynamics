@@ -45,5 +45,6 @@ var searchData=
   ['atanh_42',['atanh',['../d0/db0/namespaceid_1_1math.html#a1b994b92d746728b91096744cfacfc5e',1,'id::math']]],
   ['attrs_43',['attrs',['../d0/d95/structid_1_1misc_1_1Screen.html#afb9b205a0a88527ba9f47506d80ee98f',1,'id::misc::Screen']]],
   ['auto_5fsave_5fneeded_44',['auto_save_needed',['../d0/d19/namespaceid_1_1io.html#ab57a29be5665d9b07f400eb4f5b2db7e',1,'id::io']]],
-  ['auto_5fstereo_5fconvert_45',['auto_stereo_convert',['../dc/d76/namespaceid_1_1ui.html#a22290794a916f7274d750a040cbca418',1,'id::ui']]]
+  ['auto_5fstereo_5fbatch_5fconvert_45',['auto_stereo_batch_convert',['../dc/d76/namespaceid_1_1ui.html#a657a4708eea901ad30e0c2d7a85feabd',1,'id::ui']]],
+  ['auto_5fstereo_5fconvert_46',['auto_stereo_convert',['../dc/d76/namespaceid_1_1ui.html#a22290794a916f7274d750a040cbca418',1,'id::ui']]]
 ];
