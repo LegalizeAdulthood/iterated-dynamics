@@ -257,6 +257,27 @@ void random_dot_line(Byte *pixels, const int line_len)
     }
 }
 
+class StereoSaveRestore
+{
+public:
+    explicit StereoSaveRestore(StereoData &v)
+    {
+        v.save_dac = m_save_dac_box;
+        driver_save_graphics();                        // save graphics image
+        std::memcpy(m_save_dac_box, g_dac_box, 256 * 3); // save colors
+    }
+
+    ~StereoSaveRestore()
+    {
+        driver_restore_graphics();
+        std::memcpy(g_dac_box, m_save_dac_box, 256 * 3);
+        refresh_dac();
+    }
+
+private:
+    Byte m_save_dac_box[256*3];
+};
+
 /**************************************************************************
         Convert current image into Auto Stereo Picture
 **************************************************************************/
@@ -265,8 +286,6 @@ static bool convert_stereo_image(const bool interactive)
 {
     // TODO: replace this stack variable with static data s_data
     StereoData v;
-    Byte save_dac_box[256*3];
-    bool ret = false;
     bool bars;
     std::vector<int> colour;
     colour.resize(g_logical_screen.x_dots);
@@ -276,18 +295,15 @@ static bool convert_stereo_image(const bool interactive)
         g_save_rds_params = false;
     }
     s_data = &v;   // set static vars to stack structure
-    s_data->save_dac = save_dac_box;
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS_KEYS};
-    driver_save_graphics();                        // save graphics image
-    std::memcpy(save_dac_box, g_dac_box, 256 * 3); // save colors
+    StereoSaveRestore saved_stereo{v};
 
     if (g_logical_screen.x_dots > OLD_MAX_PIXELS)
     {
         stop_msg("Stereo not allowed with resolution > 2048 pixels wide");
         driver_buzzer(Buzzer::INTERRUPT);
-        ret = true;
-        goto exit_stereo;
+        return true;
     }
 
     // empirically determined adjustment to make WIDTH scale correctly
@@ -310,8 +326,7 @@ static bool convert_stereo_image(const bool interactive)
         if (get_min_max())
         {
             driver_buzzer(Buzzer::INTERRUPT);
-            ret = true;
-            goto exit_stereo;
+            return true;
         }
         MAX_CC = MAX_C - MIN_C + 1;
         AVG_CT = 0L;
@@ -341,8 +356,7 @@ static bool convert_stereo_image(const bool interactive)
             {
                 if (gif_view())
                 {
-                    ret = true;
-                    goto exit_stereo;
+                    return true;
                 }
             }
         }
@@ -355,8 +369,7 @@ static bool convert_stereo_image(const bool interactive)
             {
                 if (driver_key_pressed())
                 {
-                    ret = true;
-                    goto exit_stereo;
+                    return true;
                 }
                 random_dot_line(buf.data(), g_logical_screen.x_dots);
                 out_line_stereo(buf.data(), g_logical_screen.x_dots);
@@ -417,14 +430,10 @@ static bool convert_stereo_image(const bool interactive)
     }
     else if (save_image(g_save_filename) != 0)
     {
-        ret = true;
+        return true;
     }
 
-exit_stereo:
-    driver_restore_graphics();
-    std::memcpy(g_dac_box, save_dac_box, 256 * 3);
-    refresh_dac();
-    return ret;
+    return false;
 }
 
 bool auto_stereo_convert()
