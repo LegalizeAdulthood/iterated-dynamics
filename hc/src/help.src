@@ -281,6 +281,10 @@ o Libraries are used to group data files for Id.  See {Libraries}.
   (Fixes #95)
 o The previous browse history limit of 16 files was relaxed; it is
   now limited only by available memory.
+o Random-dot stereogram generation now honors rseed=, making RDS output
+  deterministic when a seed is specified.
+o Autokey files can now use caret notation for control-key command
+  initiators, such as ^S for <Ctrl+S>.
 
 Bugs Fixed in Version 1.3.3
 
