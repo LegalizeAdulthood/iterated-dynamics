@@ -500,6 +500,7 @@ static MainState look_for_files(MainContext &context)
 static MainState request_make_batch_file(MainContext &/*context*/)
 {
     make_batch_file();
+    g_save_rds_params = false;
     return MainState::NOTHING;
 }
 

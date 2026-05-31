@@ -8,6 +8,7 @@
 #include "fractals/fractype.h"
 #include "misc/debug_flags.h"
 #include "misc/ValueSaver.h"
+#include "ui/stereo.h"
 
 #include <gtest/gtest.h>
 
@@ -74,6 +75,12 @@ protected:
     ValueSaver<FractalSpecific *> m_saved_fractal_specific{
         g_cur_fractal_specific, get_fractal_specific(FractalType::ANT)};
     ValueSaver<DebugFlags> m_saved_debug_flag{g_debug_flag, DebugFlags::NONE};
+    WriteBatchData m_data{};
+};
+
+class TestPutRdsParams : public testing::Test
+{
+protected:
     WriteBatchData m_data{};
 };
 
@@ -241,6 +248,49 @@ TEST_F(TestPutFractalParams, antUsesNumericRuleWhenTextIsEmpty)
     put_fractal_params(m_data);
 
     constexpr std::string_view expected{"params=1100.0/1200000.0/3.0/2.0/0.0/0.0"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(TestPutRdsParams, skippedWhenImageIsNotRds)
+{
+    ValueSaver saved_save_rds_params{g_save_rds_params, false};
+
+    put_rds_params(m_data);
+
+    EXPECT_EQ(0, m_data.len);
+    EXPECT_STREQ("", m_data.buf);
+}
+
+TEST_F(TestPutRdsParams, randomDotsIncludeDepthBarsWidthAndGrayscale)
+{
+    ValueSaver saved_save_rds_params{g_save_rds_params, true};
+    ValueSaver saved_image_map{g_image_map, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, -120};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
+    ValueSaver saved_auto_stereo_width{g_auto_stereo_width, 4.5};
+    ValueSaver saved_gray_flag{g_gray_flag, true};
+
+    put_rds_params(m_data);
+
+    constexpr std::string_view expected{"rds=random/-120/top stereowidth=4.5 usegrayscale=y"};
+    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
+    EXPECT_EQ(expected, actual);
+}
+
+TEST_F(TestPutRdsParams, textureIncludesFilename)
+{
+    ValueSaver saved_save_rds_params{g_save_rds_params, true};
+    ValueSaver saved_image_map{g_image_map, true};
+    ValueSaver saved_stereo_map_filename{g_stereo_map_filename, "textures\\Texture.GIF"};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 80};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::NONE};
+    ValueSaver saved_auto_stereo_width{g_auto_stereo_width, 10.0};
+    ValueSaver saved_gray_flag{g_gray_flag, false};
+
+    put_rds_params(m_data);
+
+    constexpr std::string_view expected{"rds=texture/80/none rds-texture=Texture.GIF"};
     const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
     EXPECT_EQ(expected, actual);
 }

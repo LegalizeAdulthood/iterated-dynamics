@@ -46,6 +46,7 @@ std::string g_stereo_map_filename;
 int g_auto_stereo_depth{100};
 bool g_auto_stereo_batch{};
 double g_auto_stereo_width{10};
+bool g_save_rds_params{};
 bool g_gray_flag{};
 CalibrationBars g_calibrate{CalibrationBars::MIDDLE};
 bool g_image_map{};
@@ -270,6 +271,10 @@ static bool convert_stereo_image(const bool interactive)
     std::vector<int> colour;
     colour.resize(g_logical_screen.x_dots);
 
+    if (interactive)
+    {
+        g_save_rds_params = false;
+    }
     s_data = &v;   // set static vars to stack structure
     s_data->save_dac = save_dac_box;
 
@@ -398,6 +403,7 @@ static bool convert_stereo_image(const bool interactive)
                 save_image(g_save_filename);
                 break;
             default:
+                g_save_rds_params = key == 'b' || key == 'B';
                 if (key == ID_KEY_ESC)     // if ESC avoid returning to menu
                 {
                     key = 255;

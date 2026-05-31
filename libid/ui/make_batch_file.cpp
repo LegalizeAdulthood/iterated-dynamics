@@ -105,6 +105,7 @@ static void put_param(const char *param, ...);
 static void put_param_line();
 static void put_float(int slash, double value, int prec);
 static void put_bf(int slash, BigFloat r, int prec);
+static void put_filename(WriteBatchData &wb_data, const char *keyword, const char *fname);
 static void put_filename(const char *keyword, const char *fname);
 static void strip_zeros(char *buf);
 static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj);
@@ -861,6 +862,45 @@ void put_fractal_params(WriteBatchData &wb_data)
     }
 }
 
+static const char *rds_bars_name()
+{
+    switch (g_calibrate)
+    {
+    case CalibrationBars::NONE:
+        return "none";
+
+    case CalibrationBars::MIDDLE:
+        return "middle";
+
+    case CalibrationBars::TOP:
+        return "top";
+    }
+    return "middle";
+}
+
+void put_rds_params(WriteBatchData &wb_data)
+{
+    if (!g_save_rds_params)
+    {
+        return;
+    }
+
+    put_param(wb_data, " rds=%s/%d/%s", g_image_map ? "texture" : "random", g_auto_stereo_depth,
+        rds_bars_name());
+    if (g_image_map)
+    {
+        put_filename(wb_data, "rds-texture", g_stereo_map_filename.c_str());
+    }
+    if (g_auto_stereo_width != 10.0)
+    {
+        put_param(wb_data, " stereowidth=%g", g_auto_stereo_width);
+    }
+    if (g_gray_flag)
+    {
+        put_param(wb_data, " usegrayscale=y");
+    }
+}
+
 static void write_batch_params(
     const char *color_inf, const bool colors_only, const int max_color, const int ii, const int jj)
 {
@@ -1456,6 +1496,8 @@ static void write_batch_params(
 
     if (!colors_only)
     {
+        put_rds_params(s_wb_data);
+
         if (g_color_cycle_range_lo != 1 || g_color_cycle_range_hi != 255)
         {
             put_param(" cyclerange=%d/%d", g_color_cycle_range_lo, g_color_cycle_range_hi);
@@ -1662,7 +1704,7 @@ do_colors:
     }
 }
 
-static void put_filename(const char *keyword, const char *fname)
+static void put_filename(WriteBatchData &wb_data, const char *keyword, const char *fname)
 {
     if (*fname && !ends_with_slash(fname))
     {
@@ -1675,8 +1717,13 @@ static void put_filename(const char *keyword, const char *fname)
                 return;
             }
         }
-        put_param(" %s=%s", keyword, fname);
+        put_param(wb_data, " %s=%s", keyword, fname);
     }
+}
+
+static void put_filename(const char *keyword, const char *fname)
+{
+    put_filename(s_wb_data, keyword, fname);
 }
 
 static void put_param(WriteBatchData &wb_data, const char *param, std::va_list args)

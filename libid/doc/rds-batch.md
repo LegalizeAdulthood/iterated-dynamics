@@ -60,17 +60,7 @@ rds=texture/100/middle rds-texture=textures\grain.gif
 
 ## Slices
 
-### Slice 1: Emit RDS Parameters In PAR Output
-
-- When the user exits an interactive RDS view by requesting parameter-file
-  or batch-file creation, remember that the displayed image was an RDS
-  result.
-- Emit `rds=`, `rds-texture=`, `stereowidth=`, and `usegrayscale=` as
-  needed so the generated parameter set can recreate the RDS output.
-- Add `make_batch_file` tests for random-dot and texture RDS parameter
-  output, including width, grayscale, depth, and calibration bars.
-
-### Slice 2: Rename RDS Texture Wording
+### Slice 1: Rename RDS Texture Wording
 
 - Change user-facing RDS wording in source prompts, help text, and UI from
   "image map" to "texture map".

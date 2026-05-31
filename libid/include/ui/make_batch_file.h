@@ -24,5 +24,6 @@ extern int g_max_line_length;
 void make_batch_file();
 void put_encoded_colors(WriteBatchData &wb_data, int max_color);
 void put_fractal_params(WriteBatchData &wb_data);
+void put_rds_params(WriteBatchData &wb_data); // RDS options for PAR output
 
 } // namespace id::ui
