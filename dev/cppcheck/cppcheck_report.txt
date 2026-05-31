@@ -1654,16 +1654,19 @@ libid/ui/get_fract_type.cpp:626:40: warning: Char literal compared with pointer 
 libid/ui/get_fract_type.cpp:630:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
-libid/ui/make_batch_file.cpp:1497:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1496:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:920:9: note: Assuming that condition 'colors_only' is not redundant
+libid/ui/make_batch_file.cpp:919:9: note: Assuming that condition 'colors_only' is not redundant
     if (colors_only)
         ^
-libid/ui/make_batch_file.cpp:1497:9: note: Condition '!colors_only' is always true
+libid/ui/make_batch_file.cpp:1496:9: note: Condition '!colors_only' is always true
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:262:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
+libid/ui/make_batch_file.cpp:1711:13: style: Condition '!filename.empty()' is always true [knownConditionTrueFalse]
+        if (!filename.empty())
+            ^
+libid/ui/make_batch_file.cpp:261:21: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             comment = builder.read_string_buff(MAX_COMMENT_LEN - 1);
                     ^
 libid/ui/menu_handler.cpp:107:36: style: Parameter 'context' can be declared with const [constParameter]
