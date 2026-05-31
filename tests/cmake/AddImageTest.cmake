@@ -2,9 +2,14 @@
 #
 
 function(add_image_test name)
-    cmake_parse_arguments(IMAGE_TEST "DISABLED;IGNORE_COLORMAP" "WORKING_DIRECTORY" "PARAMETERS;LABELS" ${ARGN})
+    cmake_parse_arguments(IMAGE_TEST "DISABLED;IGNORE_COLORMAP;POTENTIAL" "WORKING_DIRECTORY"
+        "PARAMETERS;LABELS" ${ARGN})
     if(IMAGE_TEST_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "Unknown arguments: ${IMAGE_TEST_UNPARSED_ARGUMENTS}")
+    endif()
+    set(IMAGE_TEST_SUFFIX "gif")
+    if(IMAGE_TEST_POTENTIAL)
+        set(IMAGE_TEST_SUFFIX "pot")
     endif()
     if(NOT IMAGE_TEST_WORKING_DIRECTORY)
         set(IMAGE_TEST_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home")
@@ -19,9 +24,9 @@ function(add_image_test name)
         COMMAND ${CMAKE_COMMAND}
             "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
             "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
-            "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}.gif"
+            "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}.${IMAGE_TEST_SUFFIX}"
             "-DPARAMETERS=${IMAGE_TEST_PARAMETERS}"
-            "-DTEST_SAVE_IMAGE=test-${name}.gif"
+            "-DTEST_SAVE_IMAGE=test-${name}.${IMAGE_TEST_SUFFIX}"
             "-DTEST_KEEP_IMAGE=${CMAKE_CURRENT_BINARY_DIR}"
             "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/${name}-diff.gif"
             "-DIMAGE_TEST_IGNORE_COLORMAP=${IMAGE_TEST_IGNORE_COLORMAP_VALUE}"
