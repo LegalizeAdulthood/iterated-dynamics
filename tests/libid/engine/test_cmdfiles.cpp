@@ -353,11 +353,12 @@ void TestParameterCommandMakeDoc::SetUp()
     g_driver = &m_driver;
     EXPECT_CALL(m_driver, set_clear());
     EXPECT_CALL(m_driver, put_string(0, 0, _, HasSubstr("Iterated Dynamics")));
-    EXPECT_CALL(m_driver, set_attr(1, 0, C_DVID_BKGRD, 80*24));
+    EXPECT_CALL(m_driver, set_attr(1, 0, C_DVID_BKGRD, 80 * 24));
     EXPECT_CALL(m_driver, set_attr(_, 11, C_DVID_LO, 57)).Times(12);
     EXPECT_CALL(m_driver, put_string(8, 15, C_DVID_HI, HasSubstr("Creating Help Document")));
     EXPECT_CALL(m_driver, put_string(12, 15, C_DVID_LO, HasSubstr("Status:")));
 }
+
 void TestParameterCommandMakeDoc::TearDown()
 {
     g_driver = m_prev_driver;
@@ -419,7 +420,8 @@ protected:
     ValueSaver<Version> m_saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver<fs::path> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
+    ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{
+        g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<int> m_saved_x_dots{g_file_x_dots, 800};
     ValueSaver<int> m_saved_y_dots{g_file_y_dots, 600};
     MockDriver m_driver;
@@ -457,7 +459,8 @@ TEST_F(TestCommandMakePar, makeParNewFile)
 }
 
 )par",
-        read_file_contents(path)) << path;
+        read_file_contents(path))
+        << path;
 }
 
 static void set_file_contents(const fs::path &path, const std::string_view contents)
@@ -499,7 +502,8 @@ foo                {
 }
 
 )par",
-        read_file_contents(path)) << path;
+        read_file_contents(path))
+        << path;
 }
 
 TEST_F(TestCommandMakePar, makeParWritesLegacyResetFromCompatibilityVersion)
@@ -829,8 +833,7 @@ TEST_F(TestParameterCommand, mapSpecifiesSubdir)
     ValueSaver saved_map_name{g_map_name, ""};
     add_read_library(ID_TEST_HOME_DIR);
 
-    exec_cmd_arg(
-        std::string{"map="} + ID_TEST_MAP_SUBDIR + SLASH + ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
+    exec_cmd_arg(std::string{"map="} + ID_TEST_MAP_SUBDIR + SLASH + ID_TEST_MAP_FILE, CmdFile::SSTOOLS_INI);
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(std::string{ID_TEST_MAP_SUBDIR} + SLASH + ID_TEST_MAP_FILE, g_map_name);
@@ -1057,6 +1060,7 @@ public:
             m_dac_box[i][2] = g_dac_box[i][2];
         }
     }
+
     ~DACSaver()
     {
         for (int i = 0; i < 256; ++i)
@@ -1074,7 +1078,7 @@ private:
 TEST_F(TestParameterCommand, colorsEmptySetsDefaultDAC)
 {
     DACSaver saved_dac_box;
-    for (int i = 0; i < 256; ++i)  // NOLINT(modernize-loop-convert)
+    for (int i = 0; i < 256; ++i) // NOLINT(modernize-loop-convert)
     {
         g_dac_box[i][0] = 0x10;
         g_dac_box[i][1] = 0x20;
@@ -4145,6 +4149,103 @@ TEST_F(TestParameterCommand, trueModeValue)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM | CmdArgFlags::PARAM_3D, m_result);
     EXPECT_EQ(TrueColorMode::ITERATE, g_true_mode);
+}
+
+TEST_F(TestParameterCommand, rdsNo)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, true};
+    ValueSaver saved_image_map{g_image_map, true};
+
+    exec_cmd_arg("rds=no");
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
+    EXPECT_FALSE(g_auto_stereo_batch);
+    EXPECT_TRUE(g_image_map);
+}
+
+TEST_F(TestParameterCommand, rdsYesDefaultsToRandom)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 123};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
+    ValueSaver saved_image_map{g_image_map, true};
+
+    exec_cmd_arg("rds=yes");
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_image_map);
+    EXPECT_EQ(123, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+}
+
+TEST_F(TestParameterCommand, rdsRandomDepthAndNamedBars)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 100};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
+    ValueSaver saved_image_map{g_image_map, true};
+
+    exec_cmd_arg("rds=random/-120/top");
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_image_map);
+    EXPECT_EQ(-120, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+}
+
+TEST_F(TestParameterCommand, rdsTextureNumericBars)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 100};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
+    ValueSaver saved_image_map{g_image_map, false};
+
+    exec_cmd_arg("rds=texture/80/0");
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_TRUE(g_image_map);
+    EXPECT_EQ(80, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::NONE, g_calibrate);
+}
+
+TEST_F(TestParameterCommand, rdsEmptyFieldsPreserveDefaults)
+{
+    ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
+    ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
+    ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
+    ValueSaver saved_image_map{g_image_map, true};
+
+    exec_cmd_arg("rds=random//top");
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
+    EXPECT_TRUE(g_auto_stereo_batch);
+    EXPECT_FALSE(g_image_map);
+    EXPECT_EQ(77, g_auto_stereo_depth);
+    EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
+}
+
+TEST_F(TestParameterCommandError, rdsInvalidMode)
+{
+    exec_cmd_arg("rds=fmeh");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+}
+
+TEST_F(TestParameterCommandError, rdsInvalidDepth)
+{
+    exec_cmd_arg("rds=random/deep");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+}
+
+TEST_F(TestParameterCommandError, rdsInvalidBars)
+{
+    exec_cmd_arg("rds=random/100/bottom");
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
 TEST_F(TestParameterCommand, useGrayScaleNo)
