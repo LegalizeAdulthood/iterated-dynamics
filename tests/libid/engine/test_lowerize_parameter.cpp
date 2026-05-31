@@ -40,8 +40,17 @@ TEST_P(TestLowerizeParameter, valueUnchanged)
     EXPECT_EQ(to_lower_copy(param) + "=SOME_ARG", m_line);
 }
 
+TEST_F(TestLowerizeParameter, rdsTextureValueUnchanged)
+{
+    std::strcpy(m_line, "RDS-TEXTURE=C:\\Tmp\\Texture.GIF");
+
+    lowerize_parameter(m_line);
+
+    EXPECT_STREQ("rds-texture=C:\\Tmp\\Texture.GIF", m_line);
+}
+
 INSTANTIATE_TEST_SUITE_P(TestCaseSensitiveParameters, TestLowerizeParameter,
     Values("autokeyname", "colors", "comment", "filename", "formulafile", "ifsfile", "lfile", "lightname",
-        "makedoc", "map", "orbitsavename", "parmfile", "savename"));
+        "makedoc", "map", "orbitsavename", "parmfile", "rds-texture", "savename"));
 
 } // namespace id::test
