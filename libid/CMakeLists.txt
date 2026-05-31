@@ -248,15 +248,19 @@ add_library(libid
     include/ui/video.h ui/video.cpp
     include/ui/zoom.h ui/zoom.cpp
 
-    "doc/GlobalsIndex.md"
+    "doc/calc_type-divergence.md"
     "doc/EngineGlobals.md"
     "doc/FractalGlobals.md"
     "doc/GeometryGlobals.md"
+    "doc/GlobalsIndex.md"
     "doc/IOGlobals.md"
     "doc/MathGlobals.md"
     "doc/MiscGlobals.md"
-    "doc/UIGlobals.md"
     "doc/NetworkArchitecture.md"
+    "doc/parser-bignum.md"
+    "doc/rds-batch.md"
+    "doc/UIGlobals.md"
+    "doc/unify-random-number.md"
 )
 source_group("Docs" REGULAR_EXPRESSION ".*\\.md$")
 source_group_subdir("Engine" "engine")
