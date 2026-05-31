@@ -4248,6 +4248,30 @@ TEST_F(TestParameterCommandError, rdsInvalidBars)
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
 }
 
+TEST_F(TestParameterCommand, rdsTexture)
+{
+    ValueSaver saved_stereo_map_filename{g_stereo_map_filename, "old.gif"};
+    ValueSaver saved_image_map{g_image_map, false};
+
+    exec_cmd_arg("rds-texture=texture.gif");
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
+    EXPECT_EQ("texture.gif", g_stereo_map_filename);
+    EXPECT_TRUE(g_image_map);
+}
+
+TEST_F(TestParameterCommand, rdsTextureEmptyDoesNotSelectImageMap)
+{
+    ValueSaver saved_stereo_map_filename{g_stereo_map_filename, "old.gif"};
+    ValueSaver saved_image_map{g_image_map, false};
+
+    exec_cmd_arg("rds-texture=");
+
+    EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
+    EXPECT_EQ("", g_stereo_map_filename);
+    EXPECT_FALSE(g_image_map);
+}
+
 TEST_F(TestParameterCommand, useGrayScaleNo)
 {
     ValueSaver saved_gray_flag{g_gray_flag, true};

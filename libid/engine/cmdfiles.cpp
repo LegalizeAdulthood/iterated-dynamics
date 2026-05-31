@@ -3336,6 +3336,16 @@ static CmdArgFlags cmd_rds(const Command &cmd)
     return CmdArgFlags::PARAM_3D;
 }
 
+static CmdArgFlags cmd_rds_texture(const Command &cmd)
+{
+    g_stereo_map_filename = cmd.value;
+    if (cmd.value_len > 0)
+    {
+        g_image_map = true;
+    }
+    return CmdArgFlags::PARAM_3D;
+}
+
 static CmdArgFlags cmd_save_dir(const Command &cmd)
 {
     g_save_dir = cmd.value;
@@ -3974,7 +3984,7 @@ static CmdArgFlags cmd_xy_shift(const Command &cmd)
 }
 
 // Keep this sorted by parameter name for binary search to work correctly.
-static std::array<CommandHandler, 159> s_commands{
+static std::array<CommandHandler, 160> s_commands{
     CommandHandler{"3d", cmd_3d},                           //
     CommandHandler{"3dmode", cmd_3d_mode},                  //
     CommandHandler{"ambient", cmd_ambient},                 //
@@ -4088,6 +4098,7 @@ static std::array<CommandHandler, 159> s_commands{
     CommandHandler{"ranges", cmd_ranges},                   //
     CommandHandler{"ray", cmd_ray},                         //
     CommandHandler{"rds", cmd_rds},                         //
+    CommandHandler{"rds-texture", cmd_rds_texture},         //
     CommandHandler{"recordcolors", cmd_record_colors},      //
     CommandHandler{"release", cmd_release},                 //
     CommandHandler{"reset", cmd_reset},                     //
