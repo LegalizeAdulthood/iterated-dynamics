@@ -4,6 +4,7 @@
 
 #include "engine/Browse.h"
 #include "engine/calcfrac.h"
+#include "engine/cmdfiles.h"
 #include "engine/ImageRegion.h"
 #include "engine/jiim.h"
 #include "engine/load_params.h"
@@ -469,6 +470,14 @@ static MainState request_save_image(MainContext &/*context*/)
     if (driver_is_disk() && g_disk_targa)
     {
         return MainState::CONTINUE; // disk video and targa, nothing to save
+    }
+    if (g_init_batch != BatchMode::NONE && g_auto_stereo_batch)
+    {
+        if (auto_stereo_batch_convert())
+        {
+            g_init_batch = BatchMode::BAILOUT_ERROR_NO_SAVE;
+        }
+        return MainState::CONTINUE;
     }
     save_image(g_save_filename);
     return MainState::CONTINUE;
