@@ -60,18 +60,12 @@ rds=texture/100/middle rds-texture=textures\grain.gif
 
 ## Slices
 
-### Slice 1: Add Batch-Safe RDS Conversion
-
-- Split RDS conversion into interactive and batch-safe paths.  Batch path:
-  convert completed image, apply requested bars, save the RDS image,
-  restore original screen and palette, then exit.
-
-### Slice 2: Save RDS In Batch
+### Slice 1: Save RDS In Batch
 
 - In batch save handling, when `g_auto_stereo_batch` is set, save the
   converted RDS image instead of the source image.
 
-### Slice 3: Emit RDS Parameters In PAR Output
+### Slice 2: Emit RDS Parameters In PAR Output
 
 - When the user exits an interactive RDS view by requesting parameter-file
   or batch-file creation, remember that the displayed image was an RDS
@@ -81,7 +75,7 @@ rds=texture/100/middle rds-texture=textures\grain.gif
 - Add `make_batch_file` tests for random-dot and texture RDS parameter
   output, including width, grayscale, depth, and calibration bars.
 
-### Slice 4: Rename RDS Texture Wording
+### Slice 3: Rename RDS Texture Wording
 
 - Change user-facing RDS wording in source prompts, help text, and UI from
   "image map" to "texture map".

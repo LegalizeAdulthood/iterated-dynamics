@@ -260,7 +260,7 @@ void random_dot_line(Byte *pixels, const int line_len)
         Convert current image into Auto Stereo Picture
 **************************************************************************/
 
-bool auto_stereo_convert()
+static bool convert_stereo_image(const bool interactive)
 {
     // TODO: replace this stack variable with static data s_data
     StereoData v;
@@ -274,8 +274,8 @@ bool auto_stereo_convert()
     s_data->save_dac = save_dac_box;
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS_KEYS};
-    driver_save_graphics();                      // save graphics image
-    std::memcpy(save_dac_box, g_dac_box, 256 * 3);  // save colors
+    driver_save_graphics();                        // save graphics image
+    std::memcpy(save_dac_box, g_dac_box, 256 * 3); // save colors
 
     if (g_logical_screen.x_dots > OLD_MAX_PIXELS)
     {
@@ -285,7 +285,7 @@ bool auto_stereo_convert()
         goto exit_stereo;
     }
 
-    // empircally determined adjustment to make WIDTH scale correctly
+    // empirically determined adjustment to make WIDTH scale correctly
     WIDTH = g_auto_stereo_width*.67;
     WIDTH = std::max(WIDTH, 1.0);
     GROUND = g_logical_screen.x_dots / 8;
@@ -362,20 +362,21 @@ bool auto_stereo_convert()
     find_special_colors();
     AVG /= AVG_CT;
     AVG /= 2;
+    int ct = 0;
+    const int bar_width = 1 + g_logical_screen.x_dots / 200;
+    for (int i = X_CENTER; i < X_CENTER + bar_width; i++)
+    {
+        for (int j = Y_CENTER; j < Y_CENTER + BAR_HEIGHT; j++)
+        {
+            colour[ct++] = get_color(i + static_cast<int>(AVG), j);
+            colour[ct++] = get_color(i - static_cast<int>(AVG), j);
+        }
+    }
+    bars = g_calibrate != CalibrationBars::NONE;
+    toggle_bars(&bars, bar_width, colour.data());
+    if (interactive)
     {
         bool done = false;
-        int ct = 0;
-        const int bar_width = 1 + g_logical_screen.x_dots / 200;
-        for (int i = X_CENTER; i < X_CENTER + bar_width; i++)
-        {
-            for (int j = Y_CENTER; j < Y_CENTER + BAR_HEIGHT; j++)
-            {
-                colour[ct++] = get_color(i + static_cast<int>(AVG), j);
-                colour[ct++] = get_color(i - static_cast<int>(AVG), j);
-            }
-        }
-        bars = g_calibrate != CalibrationBars::NONE;
-        toggle_bars(&bars, bar_width, colour.data());
         while (!done)
         {
             driver_wait_key_pressed(false);
@@ -408,12 +409,26 @@ bool auto_stereo_convert()
             }
         }
     }
+    else if (save_image(g_save_filename) != 0)
+    {
+        ret = true;
+    }
 
 exit_stereo:
     driver_restore_graphics();
     std::memcpy(g_dac_box, save_dac_box, 256 * 3);
     refresh_dac();
     return ret;
+}
+
+bool auto_stereo_convert()
+{
+    return convert_stereo_image(true);
+}
+
+bool auto_stereo_batch_convert()
+{
+    return convert_stereo_image(false);
 }
 
 } // namespace id::ui
