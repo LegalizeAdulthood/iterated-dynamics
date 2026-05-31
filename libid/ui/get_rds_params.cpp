@@ -38,7 +38,6 @@ int get_rds_params()
         rds6                                                            //
     };
     int ret;
-    static char reuse = 0;
     driver_stack_screen();
     while (true)
     {
@@ -66,7 +65,7 @@ int get_rds_params()
 
         if (!g_stereo_map_filename.empty() && g_image_map)
         {
-            values[k].uval.ch.val = reuse;
+            values[k].uval.ch.val = g_stereo_map_reuse ? 1 : 0;
             values[k++].type = 'y';
 
             values[k++].type = '*';
@@ -90,6 +89,7 @@ int get_rds_params()
         else
         {
             g_stereo_map_filename.clear();
+            g_stereo_map_reuse = false;
         }
         int choice;
         {
@@ -110,13 +110,13 @@ int get_rds_params()
         g_image_map = values[k++].uval.ch.val != 0;
         if (!g_stereo_map_filename.empty() && g_image_map)
         {
-            reuse = static_cast<char>(values[k++].uval.ch.val);
+            g_stereo_map_reuse = values[k++].uval.ch.val != 0;
         }
         else
         {
-            reuse = 0;
+            g_stereo_map_reuse = false;
         }
-        if (g_image_map && !reuse)
+        if (g_image_map && !g_stereo_map_reuse)
         {
             if (driver_get_filename("Select an Imagemap File", "Imagemap", s_masks[1], g_stereo_map_filename))
             {

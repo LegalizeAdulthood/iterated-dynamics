@@ -3331,6 +3331,7 @@ static CmdArgFlags cmd_rds(const Command &cmd)
 
     g_auto_stereo_batch = true;
     g_image_map = mode == "texture";
+    g_stereo_map_reuse = g_image_map && !g_stereo_map_filename.empty();
     g_auto_stereo_depth = depth;
     g_calibrate = bars;
     return CmdArgFlags::PARAM_3D;
@@ -3339,7 +3340,8 @@ static CmdArgFlags cmd_rds(const Command &cmd)
 static CmdArgFlags cmd_rds_texture(const Command &cmd)
 {
     g_stereo_map_filename = cmd.value;
-    if (cmd.value_len > 0)
+    g_stereo_map_reuse = cmd.value_len > 0;
+    if (g_stereo_map_reuse)
     {
         g_image_map = true;
     }

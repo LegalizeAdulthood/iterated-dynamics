@@ -49,6 +49,7 @@ double g_auto_stereo_width{10};
 bool g_gray_flag{};
 CalibrationBars g_calibrate{CalibrationBars::MIDDLE};
 bool g_image_map{};
+bool g_stereo_map_reuse{};
 
 // TODO: sort out the crazy usage of this structure
 

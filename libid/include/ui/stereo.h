@@ -28,6 +28,7 @@ extern CalibrationBars       g_calibrate;           // add calibration bars to i
 extern bool                  g_gray_flag;           // flag to use gray value rather than color number
 extern bool                  g_image_map;
 extern std::string           g_stereo_map_filename;
+extern bool                  g_stereo_map_reuse;    // reuse current image map filename
 
 bool auto_stereo_convert();
 int out_line_stereo(Byte *pixels, int line_len);
