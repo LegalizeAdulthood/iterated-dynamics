@@ -4154,13 +4154,13 @@ TEST_F(TestParameterCommand, trueModeValue)
 TEST_F(TestParameterCommand, rdsNo)
 {
     ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, true};
-    ValueSaver saved_image_map{g_image_map, true};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
 
     exec_cmd_arg("rds=no");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_FALSE(g_auto_stereo_batch);
-    EXPECT_TRUE(g_image_map);
+    EXPECT_TRUE(g_use_stereo_texture);
 }
 
 TEST_F(TestParameterCommand, rdsYesDefaultsToRandom)
@@ -4168,15 +4168,15 @@ TEST_F(TestParameterCommand, rdsYesDefaultsToRandom)
     ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
     ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 123};
     ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
-    ValueSaver saved_image_map{g_image_map, true};
-    ValueSaver saved_stereo_map_reuse{g_stereo_map_reuse, true};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
 
     exec_cmd_arg("rds=yes");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_image_map);
-    EXPECT_FALSE(g_stereo_map_reuse);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
     EXPECT_EQ(123, g_auto_stereo_depth);
     EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
 }
@@ -4186,15 +4186,15 @@ TEST_F(TestParameterCommand, rdsRandomDepthAndNamedBars)
     ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
     ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 100};
     ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
-    ValueSaver saved_image_map{g_image_map, true};
-    ValueSaver saved_stereo_map_reuse{g_stereo_map_reuse, true};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
 
     exec_cmd_arg("rds=random/-120/top");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_image_map);
-    EXPECT_FALSE(g_stereo_map_reuse);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
     EXPECT_EQ(-120, g_auto_stereo_depth);
     EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
 }
@@ -4204,16 +4204,16 @@ TEST_F(TestParameterCommand, rdsTextureNumericBars)
     ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
     ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 100};
     ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
-    ValueSaver saved_image_map{g_image_map, false};
-    ValueSaver saved_stereo_map_filename{g_stereo_map_filename, "old.gif"};
-    ValueSaver saved_stereo_map_reuse{g_stereo_map_reuse, false};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
 
     exec_cmd_arg("rds=texture/80/0");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_TRUE(g_image_map);
-    EXPECT_TRUE(g_stereo_map_reuse);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_TRUE(g_stereo_texture_reuse);
     EXPECT_EQ(80, g_auto_stereo_depth);
     EXPECT_EQ(CalibrationBars::NONE, g_calibrate);
 }
@@ -4221,16 +4221,16 @@ TEST_F(TestParameterCommand, rdsTextureNumericBars)
 TEST_F(TestParameterCommand, rdsTextureNoFilenameDoesNotReuse)
 {
     ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
-    ValueSaver saved_image_map{g_image_map, false};
-    ValueSaver saved_stereo_map_filename{g_stereo_map_filename, ""};
-    ValueSaver saved_stereo_map_reuse{g_stereo_map_reuse, true};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, ""};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
 
     exec_cmd_arg("rds=texture");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_TRUE(g_image_map);
-    EXPECT_FALSE(g_stereo_map_reuse);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
 }
 
 TEST_F(TestParameterCommand, rdsEmptyFieldsPreserveDefaults)
@@ -4238,15 +4238,15 @@ TEST_F(TestParameterCommand, rdsEmptyFieldsPreserveDefaults)
     ValueSaver saved_auto_stereo_batch{g_auto_stereo_batch, false};
     ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 77};
     ValueSaver saved_calibrate{g_calibrate, CalibrationBars::MIDDLE};
-    ValueSaver saved_image_map{g_image_map, true};
-    ValueSaver saved_stereo_map_reuse{g_stereo_map_reuse, true};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
 
     exec_cmd_arg("rds=random//top");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
     EXPECT_TRUE(g_auto_stereo_batch);
-    EXPECT_FALSE(g_image_map);
-    EXPECT_FALSE(g_stereo_map_reuse);
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
     EXPECT_EQ(77, g_auto_stereo_depth);
     EXPECT_EQ(CalibrationBars::TOP, g_calibrate);
 }
@@ -4274,30 +4274,30 @@ TEST_F(TestParameterCommandError, rdsInvalidBars)
 
 TEST_F(TestParameterCommand, rdsTexture)
 {
-    ValueSaver saved_stereo_map_filename{g_stereo_map_filename, "old.gif"};
-    ValueSaver saved_image_map{g_image_map, false};
-    ValueSaver saved_stereo_map_reuse{g_stereo_map_reuse, false};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, false};
 
     exec_cmd_arg("rds-texture=texture.gif");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ("texture.gif", g_stereo_map_filename);
-    EXPECT_TRUE(g_image_map);
-    EXPECT_TRUE(g_stereo_map_reuse);
+    EXPECT_EQ("texture.gif", g_stereo_texture_filename);
+    EXPECT_TRUE(g_use_stereo_texture);
+    EXPECT_TRUE(g_stereo_texture_reuse);
 }
 
-TEST_F(TestParameterCommand, rdsTextureEmptyDoesNotSelectImageMap)
+TEST_F(TestParameterCommand, rdsTextureEmptyDoesNotSelectTextureMap)
 {
-    ValueSaver saved_stereo_map_filename{g_stereo_map_filename, "old.gif"};
-    ValueSaver saved_image_map{g_image_map, false};
-    ValueSaver saved_stereo_map_reuse{g_stereo_map_reuse, true};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "old.gif"};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
+    ValueSaver saved_stereo_texture_reuse{g_stereo_texture_reuse, true};
 
     exec_cmd_arg("rds-texture=");
 
     EXPECT_EQ(CmdArgFlags::PARAM_3D, m_result);
-    EXPECT_EQ("", g_stereo_map_filename);
-    EXPECT_FALSE(g_image_map);
-    EXPECT_FALSE(g_stereo_map_reuse);
+    EXPECT_TRUE(g_stereo_texture_filename.empty());
+    EXPECT_FALSE(g_use_stereo_texture);
+    EXPECT_FALSE(g_stereo_texture_reuse);
 }
 
 TEST_F(TestParameterCommand, useGrayScaleNo)

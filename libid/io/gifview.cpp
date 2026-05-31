@@ -123,7 +123,7 @@ int gif_view()
     // Open the file
     if (g_out_line == out_line_stereo)
     {
-        input_file = g_stereo_map_filename;
+        input_file = g_stereo_texture_filename;
     }
     else
     {

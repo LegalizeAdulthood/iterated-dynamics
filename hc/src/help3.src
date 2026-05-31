@@ -704,23 +704,24 @@ later they will appear in the middle.  Hint: if you cycle the colors and find
 you can't see the calibration bar, press <Enter> or <Space> twice, and the
 bars will turn to a more visible color.
 
-The fifth parameter asks if you want to use an image map GIF file instead of
-using random dots.  An image map can give your RDS image a more interesting
-background texture than the random dots.  If you answer "yes" at the "Use
-image map?" prompt, Id will present you with a file selection list of GIF
-images.  Id will then go ahead and transform your original image to
-RDS using the selected image map to provide the "random" dots.
+The fifth parameter asks if you want to use a texture map GIF file instead
+of using random dots.  A texture map can give your RDS image a more
+interesting background texture than the random dots.  If you answer "yes"
+at the "Use texture map?" prompt, Id will present you with a file selection
+list of GIF images.  Id will then go ahead and transform your original
+image to RDS using the selected texture map to provide the "random" dots.
 
-After you have selected an image map file, the next time you reach
+After you have selected a texture map file, the next time you reach
 the RDS Parameters screen you will see an additional prompt asking if you
-want to use the same image map file again.  Answering "yes" avoids the file
-selection menu.
+want to use the same texture map file again.  Answering "yes" avoids the
+file selection menu.
 
-The best images to use as image maps are detailed textures with no solid
+The best images to use as texture maps are detailed textures with no solid
 spots.  The default type=circle fractal works well, as do the barnsley
-fractals if you zoom in a little way.  If the image map is smaller than your
-RDS image, the image map will repeated to fill the space.  If the image map
-is larger, just the upper left corner of the image map will be used.
+fractals if you zoom in a little way.  If the texture map is smaller than
+your RDS image, the texture map will be repeated to fill the space.  If
+the texture map is larger, just the upper left corner of the texture map
+will be used.
 
 The original image you are using for your stereogram is saved, so if you
 want to modify the stereogram parameters and try again, just press <Ctrl+S>

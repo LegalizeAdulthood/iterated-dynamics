@@ -885,11 +885,11 @@ void put_rds_params(WriteBatchData &wb_data)
         return;
     }
 
-    put_param(wb_data, " rds=%s/%d/%s", g_image_map ? "texture" : "random", g_auto_stereo_depth,
+    put_param(wb_data, " rds=%s/%d/%s", g_use_stereo_texture ? "texture" : "random", g_auto_stereo_depth,
         rds_bars_name());
-    if (g_image_map)
+    if (g_use_stereo_texture)
     {
-        put_filename(wb_data, "rds-texture", g_stereo_map_filename.c_str());
+        put_filename(wb_data, "rds-texture", g_stereo_texture_filename.c_str());
     }
     if (g_auto_stereo_width != 10.0)
     {

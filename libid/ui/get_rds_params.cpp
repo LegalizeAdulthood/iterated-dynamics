@@ -33,8 +33,8 @@ int get_rds_params()
         "Image width in inches",                                        //
         "Use grayscale value for depth? (if \"no\" uses color number)", //
         "Calibration bars",                                             //
-        "Use image map? (if \"no\" uses random dots)",                  //
-        "  If yes, use current image map name? (see below)",            //
+        "Use texture map? (if \"no\" uses random dots)",                //
+        "  If yes, use current texture map name? (see below)",          //
         rds6                                                            //
     };
     int ret;
@@ -60,19 +60,19 @@ int get_rds_params()
         values[k].uval.ch.list_len = 3;
         values[k++].uval.ch.val  = +g_calibrate;
 
-        values[k].uval.ch.val = g_image_map ? 1 : 0;
+        values[k].uval.ch.val = g_use_stereo_texture ? 1 : 0;
         values[k++].type = 'y';
 
-        if (!g_stereo_map_filename.empty() && g_image_map)
+        if (!g_stereo_texture_filename.empty() && g_use_stereo_texture)
         {
-            values[k].uval.ch.val = g_stereo_map_reuse ? 1 : 0;
+            values[k].uval.ch.val = g_stereo_texture_reuse ? 1 : 0;
             values[k++].type = 'y';
 
             values[k++].type = '*';
             std::fill(std::begin(rds6), std::end(rds6), ' ');
-            auto p = g_stereo_map_filename.find(SLASH_CH);
+            auto p = g_stereo_texture_filename.find(SLASH_CH);
             if (p == std::string::npos ||
-                    static_cast<int>(g_stereo_map_filename.length()) < sizeof(rds6)-2)
+                    static_cast<int>(g_stereo_texture_filename.length()) < sizeof(rds6)-2)
             {
                 p = 0;
             }
@@ -81,15 +81,15 @@ int get_rds_params()
                 p++;
             }
             // center file name
-            rds6[(sizeof(rds6)- static_cast<int>(g_stereo_map_filename.length() - p) +2)/2] = 0;
+            rds6[(sizeof(rds6)- static_cast<int>(g_stereo_texture_filename.length() - p) +2)/2] = 0;
             std::strcat(rds6, "[");
-            std::strcat(rds6, &g_stereo_map_filename.c_str()[p]);
+            std::strcat(rds6, &g_stereo_texture_filename.c_str()[p]);
             std::strcat(rds6, "]");
         }
         else
         {
-            g_stereo_map_filename.clear();
-            g_stereo_map_reuse = false;
+            g_stereo_texture_filename.clear();
+            g_stereo_texture_reuse = false;
         }
         int choice;
         {
@@ -107,18 +107,19 @@ int get_rds_params()
         g_auto_stereo_width = values[k++].uval.dval;
         g_gray_flag = values[k++].uval.ch.val != 0;
         g_calibrate = static_cast<CalibrationBars>(values[k++].uval.ch.val);
-        g_image_map = values[k++].uval.ch.val != 0;
-        if (!g_stereo_map_filename.empty() && g_image_map)
+        g_use_stereo_texture = values[k++].uval.ch.val != 0;
+        if (!g_stereo_texture_filename.empty() && g_use_stereo_texture)
         {
-            g_stereo_map_reuse = values[k++].uval.ch.val != 0;
+            g_stereo_texture_reuse = values[k++].uval.ch.val != 0;
         }
         else
         {
-            g_stereo_map_reuse = false;
+            g_stereo_texture_reuse = false;
         }
-        if (g_image_map && !g_stereo_map_reuse)
+        if (g_use_stereo_texture && !g_stereo_texture_reuse)
         {
-            if (driver_get_filename("Select an Imagemap File", "Imagemap", s_masks[1], g_stereo_map_filename))
+            if (driver_get_filename(
+                    "Select a Texture Map File", "Texture Map", s_masks[1], g_stereo_texture_filename))
             {
                 continue;
             }

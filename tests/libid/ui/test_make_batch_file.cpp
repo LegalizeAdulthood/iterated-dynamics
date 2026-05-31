@@ -265,7 +265,7 @@ TEST_F(TestPutRdsParams, skippedWhenImageIsNotRds)
 TEST_F(TestPutRdsParams, randomDotsIncludeDepthBarsWidthAndGrayscale)
 {
     ValueSaver saved_save_rds_params{g_save_rds_params, true};
-    ValueSaver saved_image_map{g_image_map, false};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, false};
     ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, -120};
     ValueSaver saved_calibrate{g_calibrate, CalibrationBars::TOP};
     ValueSaver saved_auto_stereo_width{g_auto_stereo_width, 4.5};
@@ -281,8 +281,8 @@ TEST_F(TestPutRdsParams, randomDotsIncludeDepthBarsWidthAndGrayscale)
 TEST_F(TestPutRdsParams, textureIncludesFilename)
 {
     ValueSaver saved_save_rds_params{g_save_rds_params, true};
-    ValueSaver saved_image_map{g_image_map, true};
-    ValueSaver saved_stereo_map_filename{g_stereo_map_filename, "textures\\Texture.GIF"};
+    ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "textures\\Texture.GIF"};
     ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 80};
     ValueSaver saved_calibrate{g_calibrate, CalibrationBars::NONE};
     ValueSaver saved_auto_stereo_width{g_auto_stereo_width, 10.0};

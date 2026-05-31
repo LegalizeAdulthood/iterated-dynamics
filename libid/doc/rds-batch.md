@@ -58,16 +58,6 @@ rds=random/80/none
 rds=texture/100/middle rds-texture=textures\grain.gif
 ```
 
-## Slices
-
-### Slice 1: Rename RDS Texture Wording
-
-- Change user-facing RDS wording in source prompts, help text, and UI from
-  "image map" to "texture map".
-- Keep internal identifiers such as `g_image_map` and
-  `g_stereo_map_filename` unless another slice already touches them.
-- Update help goldens or UI tests that assert the old wording.
-
 ## Parameter Sets
 
 Use these as image-test inputs after copying the named depth and texture

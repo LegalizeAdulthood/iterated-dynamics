@@ -42,15 +42,15 @@ using namespace id::misc;
 namespace id::ui
 {
 
-std::string g_stereo_map_filename;
+std::string g_stereo_texture_filename;
 int g_auto_stereo_depth{100};
 bool g_auto_stereo_batch{};
 double g_auto_stereo_width{10};
 bool g_save_rds_params{};
 bool g_gray_flag{};
 CalibrationBars g_calibrate{CalibrationBars::MIDDLE};
-bool g_image_map{};
-bool g_stereo_map_reuse{};
+bool g_use_stereo_texture{};
+bool g_stereo_texture_reuse{};
 
 // TODO: sort out the crazy usage of this structure
 
@@ -334,7 +334,7 @@ static bool convert_stereo_image(const bool interactive)
         Y2 = Y_CENTER + BAR_HEIGHT/2;
 
         Y = 0;
-        if (g_image_map)
+        if (g_use_stereo_texture)
         {
             g_out_line = out_line_stereo;
             while (Y < g_logical_screen.y_dots)

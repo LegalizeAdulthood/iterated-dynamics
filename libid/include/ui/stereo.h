@@ -21,15 +21,17 @@ inline int operator+(const CalibrationBars value)
     return static_cast<int>(value);
 }
 
+// clang-format off
 extern int                   g_auto_stereo_depth;
 extern bool                  g_auto_stereo_batch;
 extern double                g_auto_stereo_width;
-extern bool                  g_save_rds_params;     // save RDS params in PAR output
-extern CalibrationBars       g_calibrate;           // add calibration bars to image
-extern bool                  g_gray_flag;           // flag to use gray value rather than color number
-extern bool                  g_image_map;
-extern std::string           g_stereo_map_filename;
-extern bool                  g_stereo_map_reuse;    // reuse current image map filename
+extern bool                  g_save_rds_params;         // save RDS params in PAR output
+extern CalibrationBars       g_calibrate;               // add calibration bars to image
+extern bool                  g_gray_flag;               // flag to use gray value rather than color number
+extern bool                  g_use_stereo_texture;      //
+extern std::string           g_stereo_texture_filename; //
+extern bool                  g_stereo_texture_reuse;    // reuse current texture map filename
+// clang-format on
 
 bool auto_stereo_convert();
 bool auto_stereo_batch_convert(); // convert, save, restore without prompting
