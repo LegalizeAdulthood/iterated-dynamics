@@ -60,58 +60,48 @@ rds=texture/100/middle rds-texture=textures\grain.gif
 
 ## Slices
 
-### Slice 1: Honor `rseed=` For RDS Random Dots
-
-- Replace the time-based `std::srand()` in RDS generation with the existing
-  image RNG path that honors `rseed=`.
-- Keep random-dot RDS output unchanged when `rseed=` is not specified,
-  apart from using the shared image RNG implementation.
-- Add tests proving two runs with the same `rseed=` produce identical
-  random dot RDS output.
-- Reference issue 363 in the commit message for this slice.
-
-### Slice 2: Add Batch RDS State
+### Slice 1: Add Batch RDS State
 
 - Add `g_auto_stereo_batch` near existing RDS globals in `ui/stereo.h`
   and `ui/stereo.cpp`.
 - Default it off so current interactive and batch saves keep existing
   behavior until `rds=` requests conversion.
 
-### Slice 3: Parse `rds=`
+### Slice 2: Parse `rds=`
 
 - Add `cmd_rds()` in `engine/cmdfiles.cpp`; parse slash fields, preserve
   empty fields as defaults, and reject bad mode, depth, or bars values.
 - Set `g_auto_stereo_batch`, `g_image_map`, `g_auto_stereo_depth`, and
   `g_calibrate` from valid input.
 
-### Slice 4: Parse `rds-texture=`
+### Slice 3: Parse `rds-texture=`
 
 - Add `cmd_rds_texture()` to set `g_stereo_map_filename`; make non-empty
   `rds-texture=` also set `g_image_map=true`.
 
-### Slice 5: Preserve Texture Filename Case
+### Slice 4: Preserve Texture Filename Case
 
 - Add `rds-texture` to `lowerize_parameter.cpp` unchanged-value handling so
   filename case is preserved.  `rds=` does not need unchanged handling
   because it has no filename field.
 
-### Slice 6: Keep Interactive RDS Defaults
+### Slice 5: Keep Interactive RDS Defaults
 
 - Keep Ctrl+S behavior unchanged except that parsed values become the
   current defaults for the RDS parameter screen.
 
-### Slice 7: Add Batch-Safe RDS Conversion
+### Slice 6: Add Batch-Safe RDS Conversion
 
 - Split RDS conversion into interactive and batch-safe paths.  Batch path:
   convert completed image, apply requested bars, save the RDS image,
   restore original screen and palette, then exit.
 
-### Slice 8: Save RDS In Batch
+### Slice 7: Save RDS In Batch
 
 - In batch save handling, when `g_auto_stereo_batch` is set, save the
   converted RDS image instead of the source image.
 
-### Slice 9: Emit RDS Parameters In PAR Output
+### Slice 8: Emit RDS Parameters In PAR Output
 
 - When the user exits an interactive RDS view by requesting parameter-file
   or batch-file creation, remember that the displayed image was an RDS
@@ -121,7 +111,7 @@ rds=texture/100/middle rds-texture=textures\grain.gif
 - Add `make_batch_file` tests for random-dot and texture RDS parameter
   output, including width, grayscale, depth, and calibration bars.
 
-### Slice 10: Rename RDS Texture Wording
+### Slice 9: Rename RDS Texture Wording
 
 - Change user-facing RDS wording in source prompts, help text, and UI from
   "image map" to "texture map".

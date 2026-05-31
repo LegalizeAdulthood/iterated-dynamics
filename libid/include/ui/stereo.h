@@ -30,5 +30,6 @@ extern std::string           g_stereo_map_filename;
 
 bool auto_stereo_convert();
 int out_line_stereo(Byte *pixels, int line_len);
+void random_dot_line(Byte *pixels, int line_len);
 
 } // namespace id::ui

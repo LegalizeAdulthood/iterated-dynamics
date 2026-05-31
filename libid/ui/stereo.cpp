@@ -10,6 +10,7 @@
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
+#include "engine/random_seed.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "helpdefs.h"
@@ -30,7 +31,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
-#include <ctime>
 #include <vector>
 
 using namespace id::engine;
@@ -245,6 +245,14 @@ int out_line_stereo(Byte *pixels, const int line_len)
     return 0;
 }
 
+void random_dot_line(Byte *pixels, const int line_len)
+{
+    for (int i = 0; i < line_len; i++)
+    {
+        pixels[i] = static_cast<unsigned char>(std::rand() % g_colors);
+    }
+}
+
 /**************************************************************************
         Convert current image into Auto Stereo Picture
 **************************************************************************/
@@ -256,16 +264,11 @@ bool auto_stereo_convert()
     Byte save_dac_box[256*3];
     bool ret = false;
     bool bars;
-    std::time_t now;
     std::vector<int> colour;
     colour.resize(g_logical_screen.x_dots);
 
     s_data = &v;   // set static vars to stack structure
     s_data->save_dac = save_dac_box;
-
-    // Use the current time to randomize the random number sequence.
-    std::time(&now);
-    std::srand(static_cast<unsigned int>(now));
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS_KEYS};
     driver_save_graphics();                      // save graphics image
@@ -334,6 +337,7 @@ bool auto_stereo_convert()
     }
     else
     {
+        set_random_seed();
         std::vector<Byte> buf;
         buf.resize(g_logical_screen.x_dots);
         while (Y < g_logical_screen.y_dots)
@@ -343,10 +347,7 @@ bool auto_stereo_convert()
                 ret = true;
                 goto exit_stereo;
             }
-            for (int i = 0; i < g_logical_screen.x_dots; i++)
-            {
-                buf[i] = static_cast<unsigned char>(std::rand() % g_colors);
-            }
+            random_dot_line(buf.data(), g_logical_screen.x_dots);
             out_line_stereo(buf.data(), g_logical_screen.x_dots);
         }
     }
