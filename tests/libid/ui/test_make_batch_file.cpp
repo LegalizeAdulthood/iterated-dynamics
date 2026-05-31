@@ -282,7 +282,7 @@ TEST_F(TestPutRdsParams, textureIncludesFilename)
 {
     ValueSaver saved_save_rds_params{g_save_rds_params, true};
     ValueSaver saved_use_stereo_texture{g_use_stereo_texture, true};
-    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "textures\\Texture.GIF"};
+    ValueSaver saved_stereo_texture_filename{g_stereo_texture_filename, "textures/Texture.GIF"};
     ValueSaver saved_auto_stereo_depth{g_auto_stereo_depth, 80};
     ValueSaver saved_calibrate{g_calibrate, CalibrationBars::NONE};
     ValueSaver saved_auto_stereo_width{g_auto_stereo_width, 10.0};

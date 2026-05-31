@@ -40,7 +40,6 @@
 #include "geometry/plot3d.h"
 #include "helpdefs.h"
 #include "io/check_write_file.h"
-#include "io/ends_with_slash.h"
 #include "io/file_gets.h"
 #include "io/has_ext.h"
 #include "io/is_writeable.h"
@@ -1706,18 +1705,13 @@ do_colors:
 
 static void put_filename(WriteBatchData &wb_data, const char *keyword, const char *fname)
 {
-    if (*fname && !ends_with_slash(fname))
+    if (*fname)
     {
-        const char *p = std::strrchr(fname, SLASH_CH);
-        if (p != nullptr)
+        const std::string filename{fs::path{fname}.filename().string()};
+        if (!filename.empty())
         {
-            fname = p+1;
-            if (*fname == 0)
-            {
-                return;
-            }
+            put_param(wb_data, " %s=%s", keyword, filename.c_str());
         }
-        put_param(wb_data, " %s=%s", keyword, fname);
     }
 }
 
