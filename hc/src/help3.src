@@ -177,11 +177,16 @@ line.  Autokey files can contain the following:
     CTRL_RIGHT CTRL_LEFT            CTRL_DOWN  CTRL_UP\
     CTRL_HOME CTRL_END\
 
+  Control characters can be written with caret notation.  For example,\
+      ^S -- <Ctrl+S> together\
+      ^B -- <Ctrl+B> together\
+
   WAIT <nnn.n> -- wait nnn.n seconds before continuing
 
   CALCWAIT -- pause until the current fractal calculation or file save or
-  restore is finished.  This command makes demo files more robust since
-  calculation times depend on the speed of the machine running the demo -
+  restore or RDS generation is finished.  This command makes demo files
+  more robust since calculation times depend on the speed of the machine
+  running the demo -
   a "WAIT 10" command may allow enough time to complete a fractal on one
   machine, but not on another.  The record mode does not generate this
   command - it should be added by hand to the autokey file whenever there

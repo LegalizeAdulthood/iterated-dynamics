@@ -63,7 +63,6 @@ static void sleep_secs(int secs);
 static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *txt);
 static void message(int secs, const char *buf);
 static void slide_show_err(const char *msg);
-static int  get_scancode(const char *mn);
 static void get_mnemonic(int code, char *mnemonic);
 
 SlidesMode g_slides{SlidesMode::OFF};          // PLAY autokey=play, RECORD autokey=record
@@ -102,11 +101,20 @@ static bool s_calc_wait{};
 static int s_repeats{};
 static int s_last1{};
 
-static int get_scancode(const char *mn)
+int get_slide_show_key_code(const char *mnemonic)
 {
+    if (mnemonic[0] == '^' && mnemonic[1] != 0 && mnemonic[2] == 0)
+    {
+        const int ch = std::toupper(static_cast<unsigned char>(mnemonic[1]));
+        if (ch > '@' && ch <= '_')
+        {
+            return ch - '@';
+        }
+    }
+
     for (const KeyMnemonic &it : s_key_mnemonics)
     {
-        if (std::strcmp(mn, it.mnemonic) == 0)
+        if (std::strcmp(mnemonic, it.mnemonic) == 0)
         {
             return it.code;
         }
@@ -324,7 +332,7 @@ start:
             goto start;
         }
     }
-    else if ((i = get_scancode(buffer)) > 0)
+    else if ((i = get_slide_show_key_code(buffer)) > 0)
     {
         out = i;
     }
@@ -438,6 +446,10 @@ void record_show(const int key)
         if (*mn)
         {
             std::fprintf(s_slide_show_file, "%s", mn);
+        }
+        else if (key > 0 && key < ID_KEY_SPACE)
+        {
+            std::fprintf(s_slide_show_file, "^%c", key + '@');
         }
         else if (check_vid_mode_key(key) >= 0)
         {

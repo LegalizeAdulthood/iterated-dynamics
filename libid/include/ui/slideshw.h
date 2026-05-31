@@ -18,6 +18,7 @@ extern std::filesystem::path g_auto_name;
 extern bool                  g_busy;
 extern SlidesMode            g_slides;
 
+int get_slide_show_key_code(const char *mnemonic);
 int slide_show();
 SlidesMode start_slide_show();
 void stop_slide_show();
