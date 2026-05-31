@@ -23,6 +23,7 @@
 #include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/rotate.h"
+#include "ui/slideshw.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
@@ -294,61 +295,65 @@ bool auto_stereo_convert()
     {
         REVERSE = 0;
     }
-    DEPTH = static_cast<long>(g_logical_screen.x_dots) * static_cast<long>(g_auto_stereo_depth) / 4000L;
-    DEPTH = std::abs(DEPTH) + 1;
-    if (get_min_max())
     {
-        driver_buzzer(Buzzer::INTERRUPT);
-        ret = true;
-        goto exit_stereo;
-    }
-    MAX_CC = MAX_C - MIN_C + 1;
-    AVG_CT = 0L;
-    AVG = AVG_CT;
-    BAR_HEIGHT = 1 + g_logical_screen.y_dots / 20;
-    X_CENTER = g_logical_screen.x_dots/2;
-    if (g_calibrate > CalibrationBars::MIDDLE)
-    {
-        Y_CENTER = BAR_HEIGHT/2;
-    }
-    else
-    {
-        Y_CENTER = g_logical_screen.y_dots/2;
-    }
+        ValueSaver saved_busy{g_busy, true};
 
-    // box to average for calibration bars
-    X1 = X_CENTER - g_logical_screen.x_dots/16;
-    X2 = X_CENTER + g_logical_screen.x_dots/16;
-    Y1 = Y_CENTER - BAR_HEIGHT/2;
-    Y2 = Y_CENTER + BAR_HEIGHT/2;
-
-    Y = 0;
-    if (g_image_map)
-    {
-        g_out_line = out_line_stereo;
-        while (Y < g_logical_screen.y_dots)
+        DEPTH = static_cast<long>(g_logical_screen.x_dots) * static_cast<long>(g_auto_stereo_depth) / 4000L;
+        DEPTH = std::abs(DEPTH) + 1;
+        if (get_min_max())
         {
-            if (gif_view())
+            driver_buzzer(Buzzer::INTERRUPT);
+            ret = true;
+            goto exit_stereo;
+        }
+        MAX_CC = MAX_C - MIN_C + 1;
+        AVG_CT = 0L;
+        AVG = AVG_CT;
+        BAR_HEIGHT = 1 + g_logical_screen.y_dots / 20;
+        X_CENTER = g_logical_screen.x_dots/2;
+        if (g_calibrate > CalibrationBars::MIDDLE)
+        {
+            Y_CENTER = BAR_HEIGHT/2;
+        }
+        else
+        {
+            Y_CENTER = g_logical_screen.y_dots/2;
+        }
+
+        // box to average for calibration bars
+        X1 = X_CENTER - g_logical_screen.x_dots/16;
+        X2 = X_CENTER + g_logical_screen.x_dots/16;
+        Y1 = Y_CENTER - BAR_HEIGHT/2;
+        Y2 = Y_CENTER + BAR_HEIGHT/2;
+
+        Y = 0;
+        if (g_image_map)
+        {
+            g_out_line = out_line_stereo;
+            while (Y < g_logical_screen.y_dots)
             {
-                ret = true;
-                goto exit_stereo;
+                if (gif_view())
+                {
+                    ret = true;
+                    goto exit_stereo;
+                }
             }
         }
-    }
-    else
-    {
-        set_random_seed();
-        std::vector<Byte> buf;
-        buf.resize(g_logical_screen.x_dots);
-        while (Y < g_logical_screen.y_dots)
+        else
         {
-            if (driver_key_pressed())
+            set_random_seed();
+            std::vector<Byte> buf;
+            buf.resize(g_logical_screen.x_dots);
+            while (Y < g_logical_screen.y_dots)
             {
-                ret = true;
-                goto exit_stereo;
+                if (driver_key_pressed())
+                {
+                    ret = true;
+                    goto exit_stereo;
+                }
+                random_dot_line(buf.data(), g_logical_screen.x_dots);
+                out_line_stereo(buf.data(), g_logical_screen.x_dots);
             }
-            random_dot_line(buf.data(), g_logical_screen.x_dots);
-            out_line_stereo(buf.data(), g_logical_screen.x_dots);
         }
     }
 

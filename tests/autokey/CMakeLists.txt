@@ -37,3 +37,17 @@ add_test(NAME AutokeyTest.3dlook-targa
 )
 set_tests_properties(AutokeyTest.3dlook-targa
     PROPERTIES LABELS "autokey;ui;targa")
+
+id_make_test_home(rds-random RDS_RANDOM_HOME
+    KEYS rds_random.key)
+add_test(NAME AutokeyTest.rds-random
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
+        "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-rds-random.gif"
+        "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/rds-random-diff.gif"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/rds_random_test.cmake"
+    WORKING_DIRECTORY "${RDS_RANDOM_HOME}"
+)
+set_tests_properties(AutokeyTest.rds-random
+    PROPERTIES LABELS "autokey;ui;rds")
