@@ -44,6 +44,7 @@ namespace id::ui
 
 std::string g_stereo_map_filename;
 int g_auto_stereo_depth{100};
+bool g_auto_stereo_batch{};
 double g_auto_stereo_width{10};
 bool g_gray_flag{};
 CalibrationBars g_calibrate{CalibrationBars::MIDDLE};

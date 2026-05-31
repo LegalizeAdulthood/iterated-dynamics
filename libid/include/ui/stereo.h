@@ -22,6 +22,7 @@ inline int operator+(const CalibrationBars value)
 }
 
 extern int                   g_auto_stereo_depth;
+extern bool                  g_auto_stereo_batch;
 extern double                g_auto_stereo_width;
 extern CalibrationBars       g_calibrate;           // add calibration bars to image
 extern bool                  g_gray_flag;           // flag to use gray value rather than color number
