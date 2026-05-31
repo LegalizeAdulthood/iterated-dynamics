@@ -32,7 +32,8 @@ var searchData=
   ['_7ergbeditornotification_29',['~RGBEditorNotification',['../de/d5f/classid_1_1ui_1_1RGBEditorNotification.html#a8eff107b36b61a196d6dfc788dee50fe',1,'id::ui::RGBEditorNotification']]],
   ['_7esolidguess_30',['~SolidGuess',['../d6/d94/classid_1_1engine_1_1SolidGuess.html#a608d428f28ccebae39b51bb07298db99',1,'id::engine::SolidGuess']]],
   ['_7especialdirectories_31',['~SpecialDirectories',['../df/d81/classid_1_1io_1_1SpecialDirectories.html#a2715b1af239503f54c0fec7b367ef793',1,'id::io::SpecialDirectories']]],
-  ['_7etestpoint_32',['~TestPoint',['../d8/da3/classid_1_1fractals_1_1TestPoint.html#a3751bf1e411bbffab445f49da38c8f84',1,'id::fractals::TestPoint']]],
-  ['_7evaluesaver_33',['~ValueSaver',['../db/dc9/classid_1_1misc_1_1ValueSaver.html#a1401faa376120532f58d3ce24d32ee13',1,'id::misc::ValueSaver']]],
-  ['_7ewin32basedriver_34',['~Win32BaseDriver',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a5395a71bd227a0a417e4cb4fa8424b0a',1,'id::misc::Win32BaseDriver']]]
+  ['_7estereosaverestore_32',['~StereoSaveRestore',['../d9/de8/classid_1_1ui_1_1StereoSaveRestore.html#abeda7f3a38e92026ad1a5be7a38e7b66',1,'id::ui::StereoSaveRestore']]],
+  ['_7etestpoint_33',['~TestPoint',['../d8/da3/classid_1_1fractals_1_1TestPoint.html#a3751bf1e411bbffab445f49da38c8f84',1,'id::fractals::TestPoint']]],
+  ['_7evaluesaver_34',['~ValueSaver',['../db/dc9/classid_1_1misc_1_1ValueSaver.html#a1401faa376120532f58d3ce24d32ee13',1,'id::misc::ValueSaver']]],
+  ['_7ewin32basedriver_35',['~Win32BaseDriver',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a5395a71bd227a0a417e4cb4fa8424b0a',1,'id::misc::Win32BaseDriver']]]
 ];
