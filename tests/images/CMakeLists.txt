@@ -70,6 +70,19 @@ function(add_potential_image_test name)
         LABELS potential)
 endfunction()
 
+function(add_rds_image_test name)
+    cmake_parse_arguments(RDS_IMAGE_TEST "" "" "IMAGES;PARAMETERS" ${ARGN})
+    if(RDS_IMAGE_TEST_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "Unknown arguments: ${RDS_IMAGE_TEST_UNPARSED_ARGUMENTS}")
+    endif()
+    id_make_test_home(${name} RDS_IMAGE_TEST_HOME
+        IMAGES ${RDS_IMAGE_TEST_IMAGES})
+    add_image_test(${name}
+        WORKING_DIRECTORY "${RDS_IMAGE_TEST_HOME}"
+        PARAMETERS ${RDS_IMAGE_TEST_PARAMETERS}
+        LABELS rds)
+endfunction()
+
 function(add_make_mig_test)
     add_test(NAME ImageTest.make-mig
         COMMAND ${CMAKE_COMMAND}
@@ -250,6 +263,25 @@ add_image_test("outside-tdis" PARAMETERS "type=mandel" "center-mag=-0.5/-2.5e-00
 add_colormap_test("grey" MAP "grey.map" PARAMETERS "type=mandel")
 add_image_dump_test("halley")
 add_potential_image_test("3dlook01" PARAMETERS "@radar/3dlook01")
+
+add_rds_image_test("rds-random-computed"
+    PARAMETERS "corners=-2.0/1.0/-1.2/1.2" "rseed=12345" "rds=random//none")
+add_rds_image_test("rds-random-loaded"
+    IMAGES "rds-depth.gif"
+    PARAMETERS "filename=rds-depth.gif" "rseed=12345" "rds=yes")
+add_rds_image_test("rds-random-gray"
+    PARAMETERS "corners=-2.0/1.0/-1.2/1.2" "rseed=12345"
+        "rds=random/-120/top" "usegrayscale=yes" "stereowidth=4.5")
+add_rds_image_test("rds-texture-computed"
+    IMAGES "rds-texture.gif"
+    PARAMETERS "corners=-2.0/1.0/-1.2/1.2" "rds=texture//none"
+        "rds-texture=rds-texture.gif")
+add_rds_image_test("rds-texture-loaded"
+    IMAGES "rds-depth.gif" "rds-texture.gif"
+    PARAMETERS "filename=rds-depth.gif" "rds=texture/-120/top"
+        "rds-texture=rds-texture.gif" "usegrayscale=yes" "stereowidth=4.5")
+add_rds_image_test("rds-disabled-control"
+    PARAMETERS "corners=-2.0/1.0/-1.2/1.2" "rds=no")
 add_make_mig_test()
 
 option(ID_RUN_SLOW_TESTS "Run slow image tests" OFF)

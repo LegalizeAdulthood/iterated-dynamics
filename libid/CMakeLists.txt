@@ -258,7 +258,6 @@ add_library(libid
     "doc/MiscGlobals.md"
     "doc/NetworkArchitecture.md"
     "doc/parser-bignum.md"
-    "doc/rds-batch.md"
     "doc/UIGlobals.md"
     "doc/unify-random-number.md"
 )
