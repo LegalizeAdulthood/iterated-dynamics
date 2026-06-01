@@ -112,7 +112,9 @@ BigFloat g_bf_params[10]{}; // (g_bf_length + 2)*10
 BigFloat g_bf_tmp{};
 BigFloat g_bf10_tmp{}; // g_bf_decimals + 4
 
-static char s_storage[4096];
+constexpr long BIGNUM_ARENA_SIZE{0x10000L}; // 64 KB
+
+static char s_storage[BIGNUM_ARENA_SIZE];
 static BigNum s_bn_root{};
 static BigNum s_stack_ptr{}; // memory allocator base after global variables
 
@@ -267,7 +269,7 @@ static void init_bf2()
     g_start_stack = ptr;
 
     // max stack offset from s_bn_root
-    g_max_stack = 0x10000L-(g_bf_length+2)*22;
+    g_max_stack = BIGNUM_ARENA_SIZE - (g_bf_length + 2) * 22;
 
     // sanity check
     // leave room for NUMVARS variables allocated from stack
