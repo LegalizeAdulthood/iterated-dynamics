@@ -246,7 +246,7 @@
       "hidden": true,
       "filter": {
         "exclude": {
-          "label": "image|colormap|orbit|raytrace"
+          "label": "autokey|image|colormap|orbit|raytrace"
         }
       }
     },
