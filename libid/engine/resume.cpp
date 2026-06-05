@@ -6,11 +6,12 @@
 
 #include <algorithm>
 #include <cstdarg>
+#include <cstddef>
 
 namespace id::engine
 {
 
-static int s_resume_offset{}; // offset in resume info gets
+static int s_resume_offset{};    // offset in resume info gets
 
 std::vector<Byte> g_resume_data; // resume info
 bool g_resuming{};               // true if resuming after interrupt
@@ -40,7 +41,14 @@ int put_resume_len(int len, ...)
 int alloc_resume(const int max_size, const int version)
 {
     g_resume_data.clear();
-    g_resume_data.resize(sizeof(int)*max_size);
+    if (max_size <= 0)
+    {
+        g_calc_status = CalcStatus::NON_RESUMABLE;
+        return -1;
+    }
+
+    const std::size_t resume_size = sizeof(int) * static_cast<std::size_t>(max_size);
+    g_resume_data = std::vector<Byte>(resume_size);
     g_resume_len = 0;
     put_resume(version);
     g_calc_status = CalcStatus::RESUMABLE;
