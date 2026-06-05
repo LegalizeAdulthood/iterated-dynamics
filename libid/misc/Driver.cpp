@@ -51,6 +51,10 @@ int init_drivers(int *argc, char **argv)
     load_driver(get_gdi_driver(), argc, argv);
 #endif
 
+#if ID_HAVE_X11_DRIVER
+    load_driver(get_x11_driver(), argc, argv);
+#endif
+
 #if ID_HAVE_WX_DRIVER
     load_driver(get_wx_driver(), argc, argv);
 #endif

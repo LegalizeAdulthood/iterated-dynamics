@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright 2014-2025 Richard Thomson
+# Copyright 2014-2026 Richard Thomson
 #
 cmake_minimum_required(VERSION 3.23)
 
@@ -81,6 +81,9 @@ if(("id" IN_LIST VCPKG_MANIFEST_FEATURES) OR ("wx" IN_LIST VCPKG_MANIFEST_FEATUR
     add_subdirectory(home)
     add_subdirectory(libid)
     add_subdirectory(win32)
+    if(NOT WIN32 AND NOT ID_USE_WX)
+        add_subdirectory(x11)
+    endif()
     if(ID_USE_WX)
         add_subdirectory(wx)
     endif()

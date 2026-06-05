@@ -25,6 +25,12 @@ check_include_file("unistd.h"   HAVE_UNISTD_H)
 check_include_file("Windows.h"  HAVE_WINDOWS_H)
 
 # Determine available driver types
+set(ID_HAVE_X11_DRIVER          OFF)
+if(NOT ID_USE_WX AND NOT WIN32)
+    find_package(X11 QUIET)
+    set(ID_HAVE_X11_DRIVER      ${X11_FOUND})
+endif()
+
 if(ID_USE_WX)
     set(ID_HAVE_WX_DRIVER           ON)
     set(ID_HAVE_WX_DISK_DRIVER      ON)

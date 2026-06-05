@@ -27,6 +27,15 @@ Driver *get_disk_driver()
 }
 #endif
 
+#if ID_HAVE_X11_DRIVER
+static MockDriver s_x11_driver;
+
+Driver *get_x11_driver()
+{
+    return &s_x11_driver;
+}
+#endif
+
 #if ID_HAVE_WX_DRIVER
 static MockDriver s_wx_driver;
 

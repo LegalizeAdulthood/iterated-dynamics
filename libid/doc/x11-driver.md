@@ -63,34 +63,6 @@ Use RAII wrappers for Xlib handles where practical. Xlib itself is C, but
 ownership must still be explicit: `Display *`, `Window`, `GC`, `XImage`,
 `Pixmap`, `XFontStruct *`, atoms, and allocated memory all need one clear owner.
 
-## Slice 1: Build and Driver Discovery
-
-Goal: add an X11 driver skeleton that configures and links on Linux, but does
-not yet open a window.
-
-Work:
-
-- Ensure `vcpkg.json` declares any X11-related dependencies with a non-Windows
-  platform expression, such as `!windows`, so Linux and macOS builds can both
-  resolve Xlib dependencies.
-- Add `ID_HAVE_X11_DRIVER` to `config/driver_types.h.in`.
-- Set `ID_HAVE_X11_DRIVER` in `config/CMakeLists.txt` when not using wx and
-  `find_package(X11)` succeeds.
-- Add `extern Driver *get_x11_driver();` under `#if ID_HAVE_X11_DRIVER`.
-- Add the X11 driver to `libid/misc/Driver.cpp` after disk drivers and before
-  wx drivers.
-- Add an `x11/CMakeLists.txt` that is enabled only when X11 is available. It
-  builds an `os` library and `id` executable, links `X11::X11`, `libid`,
-  `os-hc`, and `help-defs`.
-- Wire `add_subdirectory(x11)` from the root when not Windows and not wx.
-- Update `tests/libid/misc/driver_types.cpp` with a mock `get_x11_driver()`.
-
-Review boundary:
-
-- Compiles with no display required.
-- Driver appears in preprocessor configuration.
-- No X server connection is attempted yet.
-
 ## Slice 2: X11 Connection and Top-Level Window
 
 Goal: create and destroy an X11 top-level window with no rendering.
