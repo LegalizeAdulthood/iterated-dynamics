@@ -12,6 +12,7 @@ if(NOT X11_FOUND)
 endif()
 
 add_library(os STATIC
+    init_failure.cpp
     X11Driver.cpp
     X11SpecialDirectories.cpp
 )
