@@ -5,6 +5,7 @@
 #pragma once
 
 #include "X11Frame.h"
+#include "X11Plot.h"
 #include "X11Text.h"
 
 #include "misc/Driver.h"
@@ -98,6 +99,7 @@ protected:
 
     X11Frame m_frame;
     X11Text m_text;
+    X11Plot m_plot;
     int m_key_buffer{};
     std::vector<X11Screen> m_saved_screens;
     std::vector<TextLocation> m_saved_cursor;

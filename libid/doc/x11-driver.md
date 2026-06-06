@@ -63,35 +63,7 @@ Use RAII wrappers for Xlib handles where practical. Xlib itself is C, but
 ownership must still be explicit: `Display *`, `Window`, `GC`, `XImage`,
 `Pixmap`, `XFontStruct *`, atoms, and allocated memory all need one clear owner.
 
-## Slice 1: Graphics Backing Store
-
-Goal: implement the indexed graphics pixel buffer without palette cycling yet.
-
-Work:
-
-- Implement `X11Plot` as a child window with one byte per image pixel, matching
-  `Plot::m_pixels`.
-- Keep `read_pixel()`, `write_pixel()`, `clear()`, `save_graphics()`, and
-  `restore_graphics()` semantics compatible with GDI.
-- Track a dirty rectangle in image coordinates.
-- Convert dirty indexed pixels into an X server image using the current color
-  lookup table and the selected visual masks. The default path must work for
-  TrueColor visuals and must not rely on mutable X colormap entries.
-- Use `XCreateImage()`/`XPutImage()` for the first version. Prefer a
-  caller-owned byte vector for image data so destruction is deterministic.
-- Keep coordinate orientation compatible with the current drivers:
-  fractal coordinates are top-left for drawing, while stored pixels follow the
-  existing `m_height - y - 1` read/write convention.
-- Implement `flush()` to push the dirty region and `Expose` handling to repaint
-  either the exposed region or the whole image.
-
-Review boundary:
-
-- A simple generated image draws and redraws after expose.
-- `read_pixel()` returns the last written indexed color.
-- `save_graphics()` and `restore_graphics()` round-trip the indexed buffer.
-
-## Slice 2: Palette and Graphics Text
+## Slice 1: Palette and Graphics Text
 
 Goal: match GDI palette behavior closely enough for palette cycling and labels.
 
@@ -112,7 +84,7 @@ Review boundary:
 - Palette cycling visibly updates existing pixels.
 - Graphics labels survive expose and save/restore.
 
-## Slice 3: Text/Graphics Switching and Mode Setup
+## Slice 2: Text/Graphics Switching and Mode Setup
 
 Goal: make `X11Driver` comparable to `GDIDriver`.
 
@@ -137,7 +109,7 @@ Review boundary:
 - The driver can start, choose a mode, switch between text and graphics, and
   return to graphics after stacked text screens.
 
-## Slice 4: Mouse Handling
+## Slice 3: Mouse Handling
 
 Goal: feed mouse movement and buttons into the existing UI mouse notification
 paths.
@@ -160,7 +132,7 @@ Review boundary:
 - Mouse zoom workflows work in graphics mode.
 - `get_cursor_pos()` reports the latest pointer location.
 
-## Slice 5: Platform Services
+## Slice 4: Platform Services
 
 Goal: finish the non-rendering `Driver` surface.
 
@@ -185,7 +157,7 @@ Review boundary:
 - All pure virtual `Driver` methods are implemented.
 - No toolkit dependency is introduced.
 
-## Slice 6: End-to-End Validation
+## Slice 5: End-to-End Validation
 
 Goal: harden behavior against real X servers and CI constraints.
 

@@ -17,6 +17,7 @@ add_library(os STATIC
     X11Connection.h X11Connection.cpp
     X11Driver.cpp
     X11Frame.h X11Frame.cpp
+    X11Plot.h X11Plot.cpp
     X11SpecialDirectories.cpp
     X11Text.h X11Text.cpp
 )

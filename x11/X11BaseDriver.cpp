@@ -5,6 +5,7 @@
 #include "X11BaseDriver.h"
 
 #include <engine/VideoInfo.h>
+#include <geometry/plot3d.h>
 #include <io/save_timer.h>
 #include <ui/id_keys.h>
 #include <ui/slideshw.h>
@@ -35,8 +36,13 @@ bool X11BaseDriver::init(int * /*argc*/, char ** /*argv*/)
         return false;
     }
 
-    m_frame.set_event_handler([this](const XEvent &event) { m_text.handle_event(event); });
-    return m_text.init(m_frame.connection());
+    m_frame.set_event_handler(
+        [this](const XEvent &event)
+        {
+            m_text.handle_event(event);
+            m_plot.handle_event(event);
+        });
+    return m_text.init(m_frame.connection()) && m_plot.init(m_frame.connection());
 }
 
 bool X11BaseDriver::validate_mode(const VideoInfo & /*mode*/)
@@ -53,6 +59,7 @@ void X11BaseDriver::terminate()
 {
     m_saved_screens.clear();
     m_saved_cursor.clear();
+    m_plot.destroy();
     m_text.destroy();
     m_frame.set_event_handler({});
     m_frame.terminate();
@@ -80,6 +87,11 @@ void X11BaseDriver::create_window()
         m_frame.add_input_window(m_text.window());
         m_text.show();
     }
+    if (m_plot.create(m_frame.window(), m_text.width(), m_text.height()))
+    {
+        m_frame.add_input_window(m_plot.window());
+        m_plot.hide();
+    }
 }
 
 bool X11BaseDriver::resize()
@@ -97,17 +109,28 @@ void X11BaseDriver::write_palette()
 {
 }
 
-int X11BaseDriver::read_pixel(int /*x*/, int /*y*/)
+int X11BaseDriver::read_pixel(const int x, const int y)
 {
-    return 0;
+    if (g_screen_x_dots <= 0 || g_screen_y_dots <= 0)
+    {
+        return 0;
+    }
+    return m_plot.read_pixel(x, y);
 }
 
-void X11BaseDriver::write_pixel(int /*x*/, int /*y*/, int /*color*/)
+void X11BaseDriver::write_pixel(const int x, const int y, const int color)
 {
+    if (g_screen_x_dots <= 0 || g_screen_y_dots <= 0)
+    {
+        return;
+    }
+    m_plot.resize(g_screen_x_dots, g_screen_y_dots);
+    m_plot.write_pixel(x, y, color);
 }
 
-void X11BaseDriver::draw_line(int /*x1*/, int /*y1*/, int /*x2*/, int /*y2*/, int /*color*/)
+void X11BaseDriver::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
+    id::geometry::draw_line(x1, y1, x2, y2, color);
 }
 
 void X11BaseDriver::display_string(int /*x*/, int /*y*/, int /*fg*/, int /*bg*/, const char * /*text*/)
@@ -116,10 +139,12 @@ void X11BaseDriver::display_string(int /*x*/, int /*y*/, int /*fg*/, int /*bg*/,
 
 void X11BaseDriver::save_graphics()
 {
+    m_plot.save_graphics();
 }
 
 void X11BaseDriver::restore_graphics()
 {
+    m_plot.restore_graphics();
 }
 
 int X11BaseDriver::get_key()
@@ -251,7 +276,18 @@ void X11BaseDriver::set_for_graphics()
 
 void X11BaseDriver::set_clear()
 {
-    m_text.clear();
+    if (m_text_not_graphics)
+    {
+        m_text.clear();
+    }
+    else
+    {
+        if (g_screen_x_dots > 0 && g_screen_y_dots > 0)
+        {
+            m_plot.resize(g_screen_x_dots, g_screen_y_dots);
+            m_plot.clear();
+        }
+    }
 }
 
 void X11BaseDriver::move_cursor(const int row, const int col)
@@ -387,6 +423,7 @@ void X11BaseDriver::set_keyboard_timeout(const int ms)
 
 void X11BaseDriver::flush()
 {
+    m_plot.flush();
     m_frame.pump_messages(false);
 }
 
