@@ -63,31 +63,7 @@ Use RAII wrappers for Xlib handles where practical. Xlib itself is C, but
 ownership must still be explicit: `Display *`, `Window`, `GC`, `XImage`,
 `Pixmap`, `XFontStruct *`, atoms, and allocated memory all need one clear owner.
 
-## Slice 2: X11 Connection and Top-Level Window
-
-Goal: create and destroy an X11 top-level window with no rendering.
-
-Work:
-
-- Implement `X11Connection` to open the display with `XOpenDisplay(nullptr)`,
-  cache the default screen, root window, default visual, depth, default X
-  colormap for window creation, and useful atoms such as `WM_DELETE_WINDOW`.
-  This must not require or request a PseudoColor visual.
-- Implement `X11Frame::init()`, `create_window(width, height)`, `resize()`,
-  `pause()`, `resume()`, and `terminate()`.
-- Select events needed for later slices: exposure, structure notify, key press,
-  pointer motion, button press/release, focus change, and client messages.
-- Handle `WM_DELETE_WINDOW` by calling the existing shutdown path used by other
-  drivers.
-- Implement `get_max_screen()` using `DisplayWidth()` and `DisplayHeight()`.
-
-Review boundary:
-
-- Running `id` creates a titled X11 window with the requested fixed client size.
-- Closing the window exits through the normal application goodbye path.
-- No text or graphics drawing yet.
-
-## Slice 3: Event Pump, Key Queue, and Timers
+## Slice 2: Event Pump, Key Queue, and Timers
 
 Goal: make the raw Xlib message loop match the blocking/nonblocking behavior
 expected by `Driver::get_key()`, `key_pressed()`, and `wait_key_pressed()`.
@@ -113,7 +89,7 @@ Review boundary:
   and close-window behavior.
 - No text or graphics logic is required for this slice.
 
-## Slice 4: X11 Key Translation
+## Slice 3: X11 Key Translation
 
 Goal: translate X11 `KeyPress` events into the same values used by Win32 and
 wx.
@@ -138,7 +114,7 @@ Review boundary:
   keys, Ctrl combinations, Shift+Tab, and Alt shortcuts.
 - The event pump remains toolkit-free.
 
-## Slice 5: Text Screen Model
+## Slice 4: Text Screen Model
 
 Goal: implement the 80x25 text buffer independent of X drawing details.
 
@@ -159,7 +135,7 @@ Review boundary:
   save/restore, and char/attribute packing.
 - No X drawing is required for this slice.
 
-## Slice 6: X11 Text Rendering
+## Slice 5: X11 Text Rendering
 
 Goal: draw the text screen into an X11 child window.
 
@@ -184,7 +160,7 @@ Review boundary:
 - Text stack/unstack restores content and cursor position.
 - Graphics mode is still allowed to be absent or hidden.
 
-## Slice 7: Graphics Backing Store
+## Slice 6: Graphics Backing Store
 
 Goal: implement the indexed graphics pixel buffer without palette cycling yet.
 
@@ -212,7 +188,7 @@ Review boundary:
 - `read_pixel()` returns the last written indexed color.
 - `save_graphics()` and `restore_graphics()` round-trip the indexed buffer.
 
-## Slice 8: Palette and Graphics Text
+## Slice 7: Palette and Graphics Text
 
 Goal: match GDI palette behavior closely enough for palette cycling and labels.
 
@@ -233,7 +209,7 @@ Review boundary:
 - Palette cycling visibly updates existing pixels.
 - Graphics labels survive expose and save/restore.
 
-## Slice 9: Text/Graphics Switching and Mode Setup
+## Slice 8: Text/Graphics Switching and Mode Setup
 
 Goal: make `X11Driver` comparable to `GDIDriver`.
 
@@ -258,7 +234,7 @@ Review boundary:
 - The driver can start, choose a mode, switch between text and graphics, and
   return to graphics after stacked text screens.
 
-## Slice 10: Mouse Handling
+## Slice 9: Mouse Handling
 
 Goal: feed mouse movement and buttons into the existing UI mouse notification
 paths.
@@ -281,7 +257,7 @@ Review boundary:
 - Mouse zoom workflows work in graphics mode.
 - `get_cursor_pos()` reports the latest pointer location.
 
-## Slice 11: Platform Services
+## Slice 10: Platform Services
 
 Goal: finish the non-rendering `Driver` surface.
 
@@ -306,7 +282,7 @@ Review boundary:
 - All pure virtual `Driver` methods are implemented.
 - No toolkit dependency is introduced.
 
-## Slice 12: End-to-End Validation
+## Slice 11: End-to-End Validation
 
 Goal: harden behavior against real X servers and CI constraints.
 

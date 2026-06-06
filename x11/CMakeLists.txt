@@ -13,7 +13,9 @@ endif()
 
 add_library(os STATIC
     init_failure.cpp
+    X11Connection.h X11Connection.cpp
     X11Driver.cpp
+    X11Frame.h X11Frame.cpp
     X11SpecialDirectories.cpp
 )
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)

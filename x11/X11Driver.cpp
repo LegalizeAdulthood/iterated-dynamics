@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+#include "X11Frame.h"
+
 #include "misc/Driver.h"
 
 namespace id::misc
@@ -7,6 +9,12 @@ namespace id::misc
 
 namespace
 {
+
+enum
+{
+    DEFAULT_WINDOW_WIDTH = 640,
+    DEFAULT_WINDOW_HEIGHT = 480,
+};
 
 class X11Driver : public Driver
 {
@@ -70,6 +78,7 @@ public:
         const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename) override;
 
 private:
+    X11Frame m_frame;
     const std::string m_name;
     const std::string m_description;
 };
@@ -92,7 +101,7 @@ const std::string &X11Driver::get_description() const
 
 bool X11Driver::init(int * /*argc*/, char ** /*argv*/)
 {
-    return true;
+    return m_frame.init("Iterated Dynamics");
 }
 
 bool X11Driver::validate_mode(const engine::VideoInfo & /*mode*/)
@@ -102,20 +111,22 @@ bool X11Driver::validate_mode(const engine::VideoInfo & /*mode*/)
 
 void X11Driver::get_max_screen(int &width, int &height)
 {
-    width = -1;
-    height = -1;
+    m_frame.get_max_screen(width, height);
 }
 
 void X11Driver::terminate()
 {
+    m_frame.terminate();
 }
 
 void X11Driver::pause()
 {
+    m_frame.pause();
 }
 
 void X11Driver::resume()
 {
+    m_frame.resume();
 }
 
 void X11Driver::schedule_alarm(int /*secs*/)
@@ -124,11 +135,12 @@ void X11Driver::schedule_alarm(int /*secs*/)
 
 void X11Driver::create_window()
 {
+    m_frame.create_window(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 }
 
 bool X11Driver::resize()
 {
-    return false;
+    return m_frame.resize(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
 }
 
 void X11Driver::read_palette()
@@ -166,6 +178,7 @@ void X11Driver::restore_graphics()
 
 int X11Driver::get_key()
 {
+    m_frame.pump_messages();
     return 0;
 }
 
@@ -176,11 +189,13 @@ int X11Driver::key_cursor(int /*row*/, int /*col*/)
 
 int X11Driver::key_pressed()
 {
+    m_frame.pump_messages();
     return 0;
 }
 
 int X11Driver::wait_key_pressed(bool /*timeout*/)
 {
+    m_frame.pump_messages();
     return 0;
 }
 
@@ -283,6 +298,7 @@ void X11Driver::put_char_attr(int /*char_attr*/)
 
 void X11Driver::delay(int /*ms*/)
 {
+    m_frame.pump_messages();
 }
 
 void X11Driver::set_keyboard_timeout(int /*ms*/)
@@ -291,6 +307,7 @@ void X11Driver::set_keyboard_timeout(int /*ms*/)
 
 void X11Driver::flush()
 {
+    m_frame.pump_messages();
 }
 
 void X11Driver::debug_text(const char * /*text*/)
