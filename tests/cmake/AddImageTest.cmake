@@ -19,7 +19,7 @@ function(add_image_test name)
         set(IMAGE_TEST_IGNORE_COLORMAP_VALUE ON)
         list(APPEND IMAGE_TEST_LABELS "ignore-colormap")
     endif()
-    list(APPEND IMAGE_TEST_PARAMETERS "batch=yes" "video=F6")
+    list(APPEND IMAGE_TEST_PARAMETERS "batch=yes" "video=F6" "sound=off")
     add_test(NAME ImageTest.${name}
         COMMAND ${CMAKE_COMMAND}
             "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
