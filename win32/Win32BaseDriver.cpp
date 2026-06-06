@@ -89,6 +89,7 @@ void Win32BaseDriver::terminate()
     m_win_text.destroy();
     m_saved_screens.clear();
     m_saved_cursor.clear();
+    m_saved_text_state.clear();
     g_frame.terminate();
 }
 
@@ -282,11 +283,8 @@ void Win32BaseDriver::set_attr(const int row, const int col, const int attr, con
 */
 void Win32BaseDriver::stack_screen()
 {
-    // set for text mode if this is the first screen stacked
-    if (m_saved_screens.empty())
-    {
-        driver_set_for_text();
-    }
+    m_saved_text_state.push_back(is_text());
+    driver_set_for_text();
     m_saved_cursor.push_back(g_text_row * 80 + g_text_col);
     m_saved_screens.push_back(m_win_text.get_screen());
     driver_set_clear();
@@ -295,19 +293,23 @@ void Win32BaseDriver::stack_screen()
 void Win32BaseDriver::unstack_screen()
 {
     _ASSERTE(!m_saved_cursor.empty());
+    _ASSERTE(!m_saved_screens.empty());
+    _ASSERTE(!m_saved_text_state.empty());
+    const bool restore_text{m_saved_text_state.back()};
+    m_saved_text_state.pop_back();
     const int packed{m_saved_cursor.back()};
     m_saved_cursor.pop_back();
     g_text_row = packed / 80;
     g_text_col = packed % 80;
-    if (!m_saved_screens.empty())
+    // unstack
+    m_win_text.set_screen(m_saved_screens.back());
+    m_saved_screens.pop_back();
+    move_cursor(-1, -1);
+    if (restore_text)
     {
-        // unstack
-        m_win_text.set_screen(m_saved_screens.back());
-        m_saved_screens.pop_back();
-        move_cursor(-1, -1);
+        set_for_text();
     }
-    // unstacking the last saved screen reverts to graphics display
-    if (m_saved_screens.empty())
+    else
     {
         set_for_graphics();
     }
@@ -317,14 +319,21 @@ void Win32BaseDriver::discard_screen()
 {
     if (!m_saved_screens.empty())
     {
+        _ASSERTE(!m_saved_cursor.empty());
+        _ASSERTE(!m_saved_text_state.empty());
+        const bool restore_text{m_saved_text_state.back()};
         // unstack
         m_saved_screens.pop_back();
         m_saved_cursor.pop_back();
-    }
-    // discarding last text screen reverts to showing graphics
-    if (m_saved_screens.empty())
-    {
-        set_for_graphics();
+        m_saved_text_state.pop_back();
+        if (restore_text)
+        {
+            set_for_text();
+        }
+        else
+        {
+            set_for_graphics();
+        }
     }
 }
 

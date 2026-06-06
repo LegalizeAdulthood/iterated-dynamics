@@ -77,6 +77,7 @@ protected:
 
     std::vector<Screen> m_saved_screens;
     std::vector<int> m_saved_cursor;
+    std::vector<bool> m_saved_text_state;
     bool m_cursor_shown{};
     int m_cursor_row{};
     int m_cursor_col{};
