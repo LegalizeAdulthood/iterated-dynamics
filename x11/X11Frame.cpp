@@ -3,13 +3,17 @@
 #include "X11Frame.h"
 
 #include "ui/goodbye.h"
+#include "ui/id_keys.h"
 
+#include <X11/keysym.h>
 #include <X11/Xutil.h>
 
 #include <algorithm>
 #include <cassert>
 #include <cerrno>
 #include <chrono>
+#include <cstddef>
+#include <iterator>
 #include <limits>
 #include <poll.h>
 
@@ -18,6 +22,14 @@ namespace id::misc
 
 namespace
 {
+
+using namespace id::ui;
+
+struct X11KeyMap
+{
+    KeySym key_symbol;
+    int id_key;
+};
 
 long window_event_mask()
 {
@@ -30,6 +42,135 @@ int clamp_timeout_ms(const std::chrono::steady_clock::duration duration)
     const auto ms{std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()};
     return static_cast<int>(std::clamp<long long>(ms, 0, std::numeric_limits<int>::max()));
 }
+
+bool has_modifier(const XKeyEvent &event, const unsigned int modifier)
+{
+    return (event.state & modifier) != 0;
+}
+
+template <size_t N>
+int lookup_key(const X11KeyMap (&map)[N], const KeySym key_symbol)
+{
+    const auto it = std::find_if(std::begin(map), std::end(map),
+        [key_symbol](const X11KeyMap &entry) { return entry.key_symbol == key_symbol; });
+    return it == std::end(map) ? 0 : it->id_key;
+}
+
+int lookup_alt_key(const KeySym key_symbol)
+{
+    KeySym lower{};
+    KeySym upper{};
+    XConvertCase(key_symbol, &lower, &upper);
+    if (lower == XK_a)
+    {
+        return ID_KEY_ALT_A;
+    }
+    if (lower == XK_s)
+    {
+        return ID_KEY_ALT_S;
+    }
+    if (key_symbol >= XK_1 && key_symbol <= XK_7)
+    {
+        return ID_KEY_ALT_1 + static_cast<int>(key_symbol - XK_1);
+    }
+    if (key_symbol >= XK_KP_1 && key_symbol <= XK_KP_7)
+    {
+        return ID_KEY_ALT_1 + static_cast<int>(key_symbol - XK_KP_1);
+    }
+    return 0;
+}
+
+int lookup_function_key(const KeySym key_symbol, const bool shift, const bool control, const bool alt)
+{
+    if (key_symbol < XK_F1 || key_symbol > XK_F10)
+    {
+        return 0;
+    }
+
+    const int offset{static_cast<int>(key_symbol - XK_F1)};
+    if (shift)
+    {
+        return ID_KEY_SHF_F1 + offset;
+    }
+    if (control)
+    {
+        return ID_KEY_CTL_F1 + offset;
+    }
+    if (alt)
+    {
+        return ID_KEY_ALT_F1 + offset;
+    }
+    return ID_KEY_F1 + offset;
+}
+
+const X11KeyMap KEY_MAP[]{
+    {XK_KP_Enter, ID_KEY_ENTER_2},
+    {XK_Return, ID_KEY_ENTER},
+    {XK_KP_Home, ID_KEY_HOME},
+    {XK_Home, ID_KEY_HOME},
+    {XK_KP_Up, ID_KEY_UP_ARROW},
+    {XK_Up, ID_KEY_UP_ARROW},
+    {XK_KP_Page_Up, ID_KEY_PAGE_UP},
+    {XK_Page_Up, ID_KEY_PAGE_UP},
+    {XK_KP_Left, ID_KEY_LEFT_ARROW},
+    {XK_Left, ID_KEY_LEFT_ARROW},
+    {XK_KP_Begin, ID_KEY_KEYPAD_5},
+    {XK_KP_5, ID_KEY_KEYPAD_5},
+    {XK_KP_Right, ID_KEY_RIGHT_ARROW},
+    {XK_Right, ID_KEY_RIGHT_ARROW},
+    {XK_KP_End, ID_KEY_END},
+    {XK_End, ID_KEY_END},
+    {XK_KP_Down, ID_KEY_DOWN_ARROW},
+    {XK_Down, ID_KEY_DOWN_ARROW},
+    {XK_KP_Page_Down, ID_KEY_PAGE_DOWN},
+    {XK_Page_Down, ID_KEY_PAGE_DOWN},
+    {XK_KP_Insert, ID_KEY_INSERT},
+    {XK_Insert, ID_KEY_INSERT},
+    {XK_KP_Delete, ID_KEY_DELETE},
+    {XK_Delete, ID_KEY_DELETE},
+    {XK_ISO_Left_Tab, ID_KEY_SHF_TAB},
+    {XK_KP_Tab, ID_KEY_TAB},
+    {XK_Tab, ID_KEY_TAB},
+    {XK_KP_Add, '+'},
+    {XK_KP_Subtract, '-'},
+    {XK_BackSpace, ID_KEY_BACKSPACE},
+    {XK_Escape, ID_KEY_ESC},
+};
+
+const X11KeyMap CONTROL_KEY_MAP[]{
+    {XK_KP_Enter, ID_KEY_CTL_ENTER_2},
+    {XK_Return, ID_KEY_CTL_ENTER},
+    {XK_KP_Left, ID_KEY_CTL_LEFT_ARROW},
+    {XK_Left, ID_KEY_CTL_LEFT_ARROW},
+    {XK_KP_Right, ID_KEY_CTL_RIGHT_ARROW},
+    {XK_Right, ID_KEY_CTL_RIGHT_ARROW},
+    {XK_KP_End, ID_KEY_CTL_END},
+    {XK_End, ID_KEY_CTL_END},
+    {XK_KP_Page_Down, ID_KEY_CTL_PAGE_DOWN},
+    {XK_Page_Down, ID_KEY_CTL_PAGE_DOWN},
+    {XK_KP_Home, ID_KEY_CTL_HOME},
+    {XK_Home, ID_KEY_CTL_HOME},
+    {XK_KP_Page_Up, ID_KEY_CTL_PAGE_UP},
+    {XK_Page_Up, ID_KEY_CTL_PAGE_UP},
+    {XK_KP_Up, ID_KEY_CTL_UP_ARROW},
+    {XK_Up, ID_KEY_CTL_UP_ARROW},
+    {XK_KP_Subtract, ID_KEY_CTL_MINUS},
+    {XK_minus, ID_KEY_CTL_MINUS},
+    {XK_KP_Begin, ID_KEY_CTL_KEYPAD_5},
+    {XK_KP_5, ID_KEY_CTL_KEYPAD_5},
+    {XK_KP_Add, ID_KEY_CTL_PLUS},
+    {XK_plus, ID_KEY_CTL_PLUS},
+    {XK_equal, ID_KEY_CTL_PLUS},
+    {XK_KP_Down, ID_KEY_CTL_DOWN_ARROW},
+    {XK_Down, ID_KEY_CTL_DOWN_ARROW},
+    {XK_KP_Insert, ID_KEY_CTL_INSERT},
+    {XK_Insert, ID_KEY_CTL_INSERT},
+    {XK_KP_Delete, ID_KEY_CTL_DEL},
+    {XK_Delete, ID_KEY_CTL_DEL},
+    {XK_KP_Tab, ID_KEY_CTL_TAB},
+    {XK_Tab, ID_KEY_CTL_TAB},
+    {XK_ISO_Left_Tab, ID_KEY_CTL_TAB},
+};
 
 } // namespace
 
@@ -293,6 +434,28 @@ void X11Frame::handle_key_press(XKeyEvent event)
     char text[8]{};
     KeySym key_symbol{};
     const int text_length = XLookupString(&event, text, sizeof(text), &key_symbol, nullptr);
+    const bool shift{has_modifier(event, ShiftMask)};
+    const bool control{has_modifier(event, ControlMask)};
+    const bool alt{has_modifier(event, Mod1Mask)};
+
+    int key{lookup_function_key(key_symbol, shift, control, alt)};
+    if (key == 0 && control)
+    {
+        key = lookup_key(CONTROL_KEY_MAP, key_symbol);
+    }
+    if (key == 0 && alt)
+    {
+        key = lookup_alt_key(key_symbol);
+    }
+    if (key == 0)
+    {
+        key = lookup_key(KEY_MAP, key_symbol);
+    }
+    if (key != 0)
+    {
+        add_key_press(key);
+        return;
+    }
     if (text_length == 1)
     {
         add_key_press(static_cast<unsigned char>(text[0]));
