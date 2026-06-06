@@ -36,7 +36,7 @@ namespace
 
 bool has_graphics_mode()
 {
-    return g_adapter >= 0 && g_adapter < g_video_table_len && g_video_table[g_adapter].x_dots > 0 &&
+    return g_adapter >= 0 && g_adapter < MAX_VIDEO_MODES && g_video_table[g_adapter].x_dots > 0 &&
         g_video_table[g_adapter].y_dots > 0;
 }
 
