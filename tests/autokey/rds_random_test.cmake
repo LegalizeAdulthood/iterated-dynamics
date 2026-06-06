@@ -28,7 +28,7 @@ file(REMOVE "${DIFF_IMAGE}")
 
 execute_process(
     COMMAND "${ID}" ${ID_EXTRA_ARGS} "video=F6" "askvideo=no" "type=mandel"
-        "rseed=363" "savedir=." "savename=rds-random.gif" "overwrite=yes"
+        "sound=off" "rseed=363" "savedir=." "savename=rds-random.gif" "overwrite=yes"
         "exitnoask=yes" "autokeyname=rds_random.key" "autokey=play"
     RESULT_VARIABLE ID_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})

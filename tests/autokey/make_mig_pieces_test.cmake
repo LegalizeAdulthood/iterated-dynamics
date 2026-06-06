@@ -31,7 +31,7 @@ file(REMOVE
 
 execute_process(
     COMMAND "${ID}" ${ID_EXTRA_ARGS} "${INPUT_IMAGE}" "video=F6" "askvideo=no"
-        "savedir=." "overwrite=yes" "exitnoask=yes"
+        "sound=off" "savedir=." "overwrite=yes" "exitnoask=yes"
         "autokeyname=${AUTO_KEY}" "autokey=play"
     RESULT_VARIABLE ID_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})

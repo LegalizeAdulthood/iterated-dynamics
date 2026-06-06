@@ -31,7 +31,7 @@ endif()
 
 execute_process(
     COMMAND "${ID}" ${ID_EXTRA_ARGS} "video=F6" "askvideo=no" "parmfile=radar.par"
-        "librarydirs=." "savedir=." "overwrite=yes" "exitnoask=yes"
+        "sound=off" "librarydirs=." "savedir=." "overwrite=yes" "exitnoask=yes"
         "lightname=3dlook-targa" "autokeyname=3dlook_targa.key" "autokey=play"
         "@radar/3dlook"
     RESULT_VARIABLE ID_RESULT
