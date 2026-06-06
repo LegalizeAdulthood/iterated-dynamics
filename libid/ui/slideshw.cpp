@@ -27,7 +27,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <ctime>
 #include <sstream>
 #include <system_error>
 #include <thread>
@@ -65,10 +64,14 @@ static void message(int secs, const char *buf);
 static void slide_show_err(const char *msg);
 static void get_mnemonic(int code, char *mnemonic);
 
+using SlideClock = std::chrono::steady_clock;
+using SlideDuration = SlideClock::duration;
+
 SlidesMode g_slides{SlidesMode::OFF};          // PLAY autokey=play, RECORD autokey=record
 std::filesystem::path g_auto_name{"auto.key"}; // record auto keystrokes here
 bool g_busy{};
 
+// clang-format off
 static KeyMnemonic s_key_mnemonics[] =
 {
     { ID_KEY_ENTER,            "ENTER"     },
@@ -92,9 +95,11 @@ static KeyMnemonic s_key_mnemonics[] =
     { ID_KEY_CTL_END,          "CTRL_END"  },
     { ID_KEY_CTL_HOME,         "CTRL_HOME" }
 };
+// clang-format on
 static std::FILE *s_slide_show_file{};
-static long s_start_tick{};
-static long s_ticks{};
+static SlideClock::time_point s_start_time{};
+static SlideClock::time_point s_record_time{};
+static SlideDuration s_delay{};
 static int s_slow_count{};
 static bool s_quotes{};
 static bool s_calc_wait{};
@@ -134,6 +139,12 @@ static void get_mnemonic(const int code, char *mnemonic)
             break;
         }
     }
+}
+
+static int delay_milliseconds(const SlideDuration delay)
+{
+    const int millis{static_cast<int>(std::chrono::duration_cast<std::chrono::milliseconds>(delay).count())};
+    return std::max(millis, 1);
 }
 
 // places a temporary message on the screen in text mode
@@ -177,13 +188,13 @@ int slide_show()
     char buffer[81];
     if (s_calc_wait)
     {
-        if (g_calc_status == CalcStatus::IN_PROGRESS || g_busy)   // restart timer - process not done
+        if (g_calc_status == CalcStatus::IN_PROGRESS || g_busy) // restart timer - process not done
         {
             return 0; // wait for calc to finish before reading more keystrokes
         }
         s_calc_wait = false;
     }
-    if (s_slide_show_file == nullptr)     // open files first time through
+    if (s_slide_show_file == nullptr) // open files first time through
     {
         if (start_slide_show() == SlidesMode::OFF)
         {
@@ -192,26 +203,28 @@ int slide_show()
         }
     }
 
-    const clock_t now = std::clock();
-    if (s_ticks) // if waiting, see if waited long enough
+    const SlideClock::time_point now = SlideClock::now();
+    if (s_delay != SlideDuration::zero()) // if waiting, see if waited long enough
     {
-        if (now - s_start_tick < s_ticks)   // haven't waited long enough
+        if (now - s_start_time < s_delay) // haven't waited long enough
         {
             return 0;
         }
-        s_ticks = 0;
+        s_delay = SlideDuration::zero();
     }
     constexpr int SLOW_ADJUST_CHAR_COUNT = 15;
     constexpr int SLOW_INITIAL_CHAR_COUNT = 5;
+    constexpr std::chrono::milliseconds SLOW_INITIAL_DELAY{100};
+    constexpr std::chrono::milliseconds SLOW_FAST_DELAY{50};
     if (++s_slow_count <= SLOW_ADJUST_CHAR_COUNT)
     {
-        s_start_tick = now;
-        s_ticks = CLOCKS_PER_SEC/10; // a slight delay so keystrokes are visible
+        s_start_time = now;
+        s_delay = SLOW_INITIAL_DELAY; // a slight delay so keystrokes are visible
         if (s_slow_count > SLOW_INITIAL_CHAR_COUNT)
         {
-            s_ticks = std::max(CLOCKS_PER_SEC/150, s_ticks/2);
+            s_delay = SLOW_FAST_DELAY;
         }
-        driver_set_keyboard_timeout(1000 * s_ticks /CLOCKS_PER_SEC);
+        driver_set_keyboard_timeout(delay_milliseconds(s_delay));
     }
     if (s_repeats > 0)
     {
@@ -248,9 +261,9 @@ start:
         }
         goto start;
     case '*':
-        if (std::fscanf(s_slide_show_file, "%d", &s_repeats) != 1
-            || s_repeats <= 1
-            || s_repeats >= 256
+        if (std::fscanf(s_slide_show_file, "%d", &s_repeats) != 1 //
+            || s_repeats <= 1                                     //
+            || s_repeats >= 256                                   //
             || std::feof(s_slide_show_file))
         {
             slide_show_err("error in * argument");
@@ -338,14 +351,13 @@ start:
     }
     else if (std::strcmp("WAIT", buffer) == 0)
     {
-        float f_ticks;
-        const int count = std::fscanf(s_slide_show_file, "%f", &f_ticks); // how many seconds to wait
-        driver_set_keyboard_timeout(static_cast<int>(f_ticks * 1000.f)); // timeout in ms
-        f_ticks *= CLOCKS_PER_SEC;             // convert from seconds to ticks
+        float seconds;
+        const int count = std::fscanf(s_slide_show_file, "%f", &seconds); // how many seconds to wait
         if (count == 1)
         {
-            s_ticks = static_cast<long>(f_ticks);
-            s_start_tick = now;  // start timing
+            s_delay = std::chrono::duration_cast<SlideDuration>(std::chrono::duration<float>(seconds));
+            s_start_time = now; // start timing
+            driver_set_keyboard_timeout(delay_milliseconds(s_delay));
         }
         else
         {
@@ -382,7 +394,7 @@ SlidesMode start_slide_show()
     {
         g_slides = SlidesMode::OFF;
     }
-    s_ticks = 0;
+    s_delay = SlideDuration::zero();
     s_quotes = false;
     s_calc_wait = false;
     s_slow_count = 0;
@@ -396,13 +408,14 @@ void stop_slide_show()
         std::fclose(s_slide_show_file);
     }
     s_slide_show_file = nullptr;
+    s_record_time = {};
     g_slides = SlidesMode::OFF;
 }
 
 void record_show(const int key)
 {
-    float dt = static_cast<float>(s_ticks);      // save time of last call
-    s_ticks = std::clock();  // current time
+    const SlideClock::time_point now = SlideClock::now();
+    const bool first_key{s_record_time == SlideClock::time_point{}};
     if (s_slide_show_file == nullptr)
     {
         const std::string path{
@@ -414,9 +427,10 @@ void record_show(const int key)
             return;
         }
     }
-    dt = s_ticks-dt;
-    dt /= CLOCKS_PER_SEC;  // dt now in seconds
-    if (dt > .5) // don't bother with less than half a second
+    const std::chrono::duration<float> delta{first_key ? SlideDuration::zero() : now - s_record_time};
+    const float dt = delta.count();
+    s_record_time = now;
+    if (dt > .5)      // don't bother with less than half a second
     {
         if (s_quotes) // close quotes first
         {
