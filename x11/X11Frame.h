@@ -34,6 +34,7 @@ public:
     void set_event_handler(EventHandler handler);
     void add_input_window(Window window);
     void remove_input_window(Window window);
+    void get_cursor_pos(int &x, int &y) const;
 
 private:
     enum
@@ -50,6 +51,13 @@ private:
     void destroy_window();
     void handle_event(const XEvent &event);
     void handle_key_press(XKeyEvent event);
+    void handle_button_press(XButtonEvent event);
+    void handle_button_release(XButtonEvent event);
+    void handle_mouse_move(XMotionEvent event);
+    void update_cursor_pos(int x, int y);
+    bool is_double_click(const XButtonEvent &event) const;
+    void grab_pointer(Time time);
+    void ungrab_pointer(Time time);
     bool is_input_window(Window window) const;
     void set_fixed_size(int width, int height);
 
@@ -69,6 +77,14 @@ private:
     bool m_timed_out{};
     std::chrono::milliseconds m_keyboard_timeout_interval{};
     std::chrono::steady_clock::time_point m_keyboard_deadline{};
+    int m_cursor_x{};
+    int m_cursor_y{};
+    Window m_last_button_window{};
+    unsigned int m_last_button{};
+    Time m_last_button_time{};
+    int m_last_button_x{};
+    int m_last_button_y{};
+    bool m_pointer_grabbed{};
 };
 
 } // namespace id::misc

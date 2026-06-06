@@ -109,7 +109,8 @@ bool X11Text::create(const Window parent, const int x, const int y)
     attributes.background_pixel = color(0);
     attributes.border_pixel = color(0);
     attributes.colormap = m_connection->colormap();
-    attributes.event_mask = ExposureMask | StructureNotifyMask | KeyPressMask;
+    attributes.event_mask =
+        ExposureMask | StructureNotifyMask | KeyPressMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask;
 
     m_window = XCreateWindow(display, parent, x, y, width(), height(), 0, m_connection->depth(), InputOutput,
         m_connection->visual(), CWBackPixel | CWBorderPixel | CWColormap | CWEventMask, &attributes);

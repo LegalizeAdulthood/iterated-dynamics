@@ -161,7 +161,8 @@ bool X11Plot::create(const Window parent, const int width, const int height)
     attributes.background_pixel = m_color_lookup[0];
     attributes.border_pixel = m_color_lookup[0];
     attributes.colormap = m_connection->colormap();
-    attributes.event_mask = ExposureMask | StructureNotifyMask | KeyPressMask;
+    attributes.event_mask =
+        ExposureMask | StructureNotifyMask | KeyPressMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask;
 
     m_window = XCreateWindow(display, parent, 0, 0, m_width, m_height, 0, m_connection->depth(), InputOutput,
         m_connection->visual(), CWBackPixel | CWBorderPixel | CWColormap | CWEventMask, &attributes);

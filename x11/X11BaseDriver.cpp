@@ -513,8 +513,7 @@ void X11BaseDriver::debug_text(const char * /*text*/)
 
 void X11BaseDriver::get_cursor_pos(int &x, int &y) const
 {
-    x = 0;
-    y = 0;
+    m_frame.get_cursor_pos(x, y);
 }
 
 void X11BaseDriver::check_memory()

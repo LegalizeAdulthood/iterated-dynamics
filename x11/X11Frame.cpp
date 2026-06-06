@@ -2,8 +2,10 @@
 //
 #include "X11Frame.h"
 
+#include "misc/Driver.h"
 #include "ui/goodbye.h"
 #include "ui/id_keys.h"
+#include "ui/mouse.h"
 
 #include <X11/keysym.h>
 #include <X11/Xutil.h>
@@ -13,6 +15,7 @@
 #include <cerrno>
 #include <chrono>
 #include <cstddef>
+#include <cstdlib>
 #include <iterator>
 #include <limits>
 #include <poll.h>
@@ -26,6 +29,15 @@ namespace
 
 using namespace id::ui;
 
+enum X11MouseFlag
+{
+    X11_MOUSE_LEFT = 0x0001,
+    X11_MOUSE_RIGHT = 0x0002,
+    X11_MOUSE_SHIFT = 0x0004,
+    X11_MOUSE_CONTROL = 0x0008,
+    X11_MOUSE_MIDDLE = 0x0010,
+};
+
 struct X11KeyMap
 {
     KeySym key_symbol;
@@ -37,6 +49,98 @@ long window_event_mask()
     return ExposureMask | StructureNotifyMask | KeyPressMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
         FocusChangeMask;
 }
+
+int button_flag(const unsigned int button)
+{
+    switch (button)
+    {
+    case Button1:
+        return X11_MOUSE_LEFT;
+    case Button2:
+        return X11_MOUSE_MIDDLE;
+    case Button3:
+        return X11_MOUSE_RIGHT;
+    default:
+        return 0;
+    }
+}
+
+int button_state_flags(const unsigned int state)
+{
+    int result{};
+    if ((state & Button1Mask) != 0)
+    {
+        result |= X11_MOUSE_LEFT;
+    }
+    if ((state & Button2Mask) != 0)
+    {
+        result |= X11_MOUSE_MIDDLE;
+    }
+    if ((state & Button3Mask) != 0)
+    {
+        result |= X11_MOUSE_RIGHT;
+    }
+    if ((state & ShiftMask) != 0)
+    {
+        result |= X11_MOUSE_SHIFT;
+    }
+    if ((state & ControlMask) != 0)
+    {
+        result |= X11_MOUSE_CONTROL;
+    }
+    return result;
+}
+
+int press_key_flags(const XButtonEvent &event)
+{
+    return button_state_flags(event.state) | button_flag(event.button);
+}
+
+int release_key_flags(const XButtonEvent &event)
+{
+    return button_state_flags(event.state) & ~button_flag(event.button);
+}
+
+std::string key_flags_string(const int value)
+{
+    std::string result;
+    const auto append_flag = [&](const int flag, const char *label)
+    {
+        if ((value & flag) != 0)
+        {
+            if (!result.empty())
+            {
+                result += " | ";
+            }
+            result += label;
+        }
+    };
+    append_flag(X11_MOUSE_LEFT, "LEFT");
+    append_flag(X11_MOUSE_RIGHT, "RIGHT");
+    append_flag(X11_MOUSE_SHIFT, "SHIFT");
+    append_flag(X11_MOUSE_CONTROL, "CONTROL");
+    append_flag(X11_MOUSE_MIDDLE, "MIDDLE");
+    return result.empty() ? "NONE" : result;
+}
+
+int get_mouse_look_key()
+{
+    const int key{+g_look_at_mouse};
+    assert(key < 0);
+    return -key;
+}
+
+#undef ID_DEBUG_MOUSE
+#ifdef ID_DEBUG_MOUSE
+void debug_mouse(const std::string &text)
+{
+    driver_debug_line(text);
+}
+#else
+void debug_mouse(const std::string & /*text*/)
+{
+}
+#endif
 
 int clamp_timeout_ms(const std::chrono::steady_clock::duration duration)
 {
@@ -412,6 +516,12 @@ void X11Frame::remove_input_window(const Window window)
     m_input_windows.erase(std::remove(m_input_windows.begin(), m_input_windows.end(), window), m_input_windows.end());
 }
 
+void X11Frame::get_cursor_pos(int &x, int &y) const
+{
+    x = m_cursor_x;
+    y = m_cursor_y;
+}
+
 void X11Frame::add_key_press(const unsigned int key)
 {
     if (key_buffer_full())
@@ -452,6 +562,18 @@ void X11Frame::handle_event(const XEvent &event)
     if (event.type == KeyPress && is_input_window(event.xkey.window))
     {
         handle_key_press(event.xkey);
+    }
+    if (event.type == MotionNotify && is_input_window(event.xmotion.window))
+    {
+        handle_mouse_move(event.xmotion);
+    }
+    if (event.type == ButtonPress && is_input_window(event.xbutton.window))
+    {
+        handle_button_press(event.xbutton);
+    }
+    if (event.type == ButtonRelease && is_input_window(event.xbutton.window))
+    {
+        handle_button_release(event.xbutton);
     }
     if (event.type == DestroyNotify && event.xdestroywindow.window == m_window)
     {
@@ -504,6 +626,127 @@ void X11Frame::handle_key_press(XKeyEvent event)
     {
         add_key_press(static_cast<unsigned char>(text[0]));
     }
+}
+
+void X11Frame::handle_button_press(XButtonEvent event)
+{
+    update_cursor_pos(event.x, event.y);
+    const int key_flags{press_key_flags(event)};
+    const bool double_click{is_double_click(event)};
+    grab_pointer(event.time);
+
+    switch (event.button)
+    {
+    case Button1:
+        mouse_notify_primary_down(double_click, event.x, event.y, key_flags);
+        debug_mouse((double_click ? "left down: (double) " : "left down: ") + std::to_string(event.x) + "," +
+            std::to_string(event.y) + ", flags: " + key_flags_string(key_flags));
+        break;
+    case Button2:
+        mouse_notify_middle_down(double_click, event.x, event.y, key_flags);
+        debug_mouse((double_click ? "middle down: (double) " : "middle down: ") + std::to_string(event.x) + "," +
+            std::to_string(event.y) + ", flags: " + key_flags_string(key_flags));
+        break;
+    case Button3:
+        mouse_notify_secondary_down(double_click, event.x, event.y, key_flags);
+        debug_mouse((double_click ? "right down: (double) " : "right down: ") + std::to_string(event.x) + "," +
+            std::to_string(event.y) + ", flags: " + key_flags_string(key_flags));
+        break;
+    default:
+        break;
+    }
+
+    m_last_button_window = event.window;
+    m_last_button = event.button;
+    m_last_button_time = event.time;
+    m_last_button_x = event.x;
+    m_last_button_y = event.y;
+}
+
+void X11Frame::handle_button_release(XButtonEvent event)
+{
+    update_cursor_pos(event.x, event.y);
+    const int key_flags{release_key_flags(event)};
+    switch (event.button)
+    {
+    case Button1:
+        mouse_notify_primary_up(event.x, event.y, key_flags);
+        if (+g_look_at_mouse < 0)
+        {
+            add_key_press(get_mouse_look_key());
+        }
+        else
+        {
+            debug_mouse("left up: " + std::to_string(event.x) + "," + std::to_string(event.y) +
+                ", flags: " + key_flags_string(key_flags));
+        }
+        break;
+    case Button2:
+        mouse_notify_middle_up(event.x, event.y, key_flags);
+        debug_mouse("middle up: " + std::to_string(event.x) + "," + std::to_string(event.y) +
+            ", flags: " + key_flags_string(key_flags));
+        break;
+    case Button3:
+        mouse_notify_secondary_up(event.x, event.y, key_flags);
+        debug_mouse("right up: " + std::to_string(event.x) + "," + std::to_string(event.y) +
+            ", flags: " + key_flags_string(key_flags));
+        break;
+    default:
+        break;
+    }
+    if ((key_flags & (X11_MOUSE_LEFT | X11_MOUSE_RIGHT | X11_MOUSE_MIDDLE)) == 0)
+    {
+        ungrab_pointer(event.time);
+    }
+}
+
+void X11Frame::handle_mouse_move(XMotionEvent event)
+{
+    update_cursor_pos(event.x, event.y);
+    const int key_flags{button_state_flags(event.state)};
+    mouse_notify_move(event.x, event.y, key_flags);
+    debug_mouse("movement: " + std::to_string(event.x) + "," + std::to_string(event.y) +
+        ", flags: " + key_flags_string(key_flags));
+}
+
+void X11Frame::update_cursor_pos(const int x, const int y)
+{
+    m_cursor_x = x;
+    m_cursor_y = y;
+}
+
+bool X11Frame::is_double_click(const XButtonEvent &event) const
+{
+    constexpr Time DOUBLE_CLICK_MS{500};
+    constexpr int DOUBLE_CLICK_DISTANCE{4};
+    return m_last_button_window == event.window && m_last_button == event.button &&
+        event.time - m_last_button_time <= DOUBLE_CLICK_MS &&
+        std::abs(event.x - m_last_button_x) <= DOUBLE_CLICK_DISTANCE &&
+        std::abs(event.y - m_last_button_y) <= DOUBLE_CLICK_DISTANCE;
+}
+
+void X11Frame::grab_pointer(const Time time)
+{
+    if (m_window == None || m_pointer_grabbed)
+    {
+        return;
+    }
+
+    const int result = XGrabPointer(m_connection.display(), m_window, True,
+        PointerMotionMask | ButtonPressMask | ButtonReleaseMask, GrabModeAsync, GrabModeAsync, None, None, time);
+    m_pointer_grabbed = result == GrabSuccess;
+}
+
+void X11Frame::ungrab_pointer(const Time time)
+{
+    if (!m_pointer_grabbed)
+    {
+        return;
+    }
+
+    XUngrabPointer(m_connection.display(), time);
+    XFlush(m_connection.display());
+    m_pointer_grabbed = false;
 }
 
 bool X11Frame::is_input_window(const Window window) const
