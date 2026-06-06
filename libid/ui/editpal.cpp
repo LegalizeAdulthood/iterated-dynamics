@@ -748,6 +748,7 @@ void MoveBox::draw()
 
     ver_dot_line(m_x, m_y, depth);
     ver_dot_line(m_x + width - 1, m_y, depth);
+    driver_flush();
 }
 
 void MoveBox::erase()
@@ -1079,6 +1080,7 @@ bool MoveBox::process()
     g_cursor_mouse_tracking = false;
 
     erase();
+    driver_flush(); // No following draw flushes this final erase.
 
     m_should_hide = key == 'H' || key == 'h';
 
