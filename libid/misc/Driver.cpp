@@ -94,12 +94,27 @@ void close_drivers()
 
 Driver *driver_find_by_name(const char *name)
 {
-    if (const auto it = std::find_if(
-            s_available.begin(), s_available.end(), [name](Driver *drv) { return drv->get_name() == name; });
-        it != s_available.end())
+    const auto find_driver = [](const char *driver_name) -> Driver *
     {
-        return *it;
+        if (const auto it = std::find_if(s_available.begin(), s_available.end(),
+                [driver_name](Driver *drv) { return drv->get_name() == driver_name; });
+            it != s_available.end())
+        {
+            return *it;
+        }
+        return nullptr;
+    };
+
+    if (Driver *driver = find_driver(name); driver != nullptr)
+    {
+        return driver;
     }
+#if ID_HAVE_X11_DRIVER && !ID_HAVE_GDI_DRIVER
+    if (std::strcmp(name, "gdi") == 0)
+    {
+        return find_driver("x11");
+    }
+#endif
     return nullptr;
 }
 
