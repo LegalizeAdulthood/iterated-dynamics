@@ -3057,6 +3057,7 @@ TEST_F(TestParameterCommand, soundYes)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER, g_sound_flag);
+    EXPECT_TRUE(sound_buzzer_enabled());
 }
 
 TEST_F(TestParameterCommand, soundNo)
@@ -3067,6 +3068,7 @@ TEST_F(TestParameterCommand, soundNo)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_OFF | SOUNDFLAG_SPEAKER, g_sound_flag);
+    EXPECT_FALSE(sound_buzzer_enabled());
 }
 
 TEST_F(TestParameterCommand, soundBeep)
@@ -3077,6 +3079,7 @@ TEST_F(TestParameterCommand, soundBeep)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_BEEP | SOUNDFLAG_SPEAKER, g_sound_flag);
+    EXPECT_TRUE(sound_buzzer_enabled());
 }
 
 TEST_F(TestParameterCommand, soundOrbitX)
@@ -3087,6 +3090,7 @@ TEST_F(TestParameterCommand, soundOrbitX)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_X | SOUNDFLAG_SPEAKER, g_sound_flag);
+    EXPECT_FALSE(sound_buzzer_enabled());
 }
 
 TEST_F(TestParameterCommand, soundOrbitY)
@@ -3097,6 +3101,7 @@ TEST_F(TestParameterCommand, soundOrbitY)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_Y | SOUNDFLAG_SPEAKER, g_sound_flag);
+    EXPECT_FALSE(sound_buzzer_enabled());
 }
 
 TEST_F(TestParameterCommand, soundOrbitZ)
@@ -3107,6 +3112,7 @@ TEST_F(TestParameterCommand, soundOrbitZ)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(SOUNDFLAG_Z | SOUNDFLAG_SPEAKER, g_sound_flag);
+    EXPECT_FALSE(sound_buzzer_enabled());
 }
 
 TEST_F(TestParameterCommand, soundOrbitZMidi)

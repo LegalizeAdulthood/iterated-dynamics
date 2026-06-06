@@ -5,6 +5,7 @@
 #include "X11BaseDriver.h"
 
 #include <config/cmd_shell.h>
+#include <engine/sound.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
@@ -475,7 +476,7 @@ int X11BaseDriver::init_fm()
 
 void X11BaseDriver::buzzer(Buzzer /*kind*/)
 {
-    if (!m_frame.connection().is_open())
+    if (!sound_buzzer_enabled() || !m_frame.connection().is_open())
     {
         return;
     }

@@ -38,6 +38,11 @@ int g_sound_flag{};
 
 static std::FILE *s_snd_fp{};
 
+bool sound_buzzer_enabled()
+{
+    return (g_sound_flag & SOUNDFLAG_ORBIT_MASK) == SOUNDFLAG_BEEP;
+}
+
 // open sound file
 bool sound_open()
 {

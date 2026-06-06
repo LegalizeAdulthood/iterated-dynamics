@@ -13,6 +13,7 @@
 #include "ods.h"
 
 #include "engine/calcfrac.h"
+#include "engine/sound.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "io/CurrentPathSaver.h"
@@ -335,6 +336,11 @@ int Win32BaseDriver::init_fm()
 
 void Win32BaseDriver::buzzer(const Buzzer kind)
 {
+    if (!sound_buzzer_enabled())
+    {
+        return;
+    }
+
     UINT beep{MB_OK};
     switch (kind)
     {
