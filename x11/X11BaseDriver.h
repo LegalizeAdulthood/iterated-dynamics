@@ -103,6 +103,7 @@ protected:
     std::vector<TextLocation> m_saved_cursor;
     TextLocation m_cursor;
     bool m_cursor_shown{};
+    bool m_text_not_graphics{true};
 
 private:
     std::string m_name;

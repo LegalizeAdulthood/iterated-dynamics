@@ -16,6 +16,7 @@
 #include <iterator>
 #include <limits>
 #include <poll.h>
+#include <utility>
 
 namespace id::misc
 {
@@ -215,6 +216,8 @@ void X11Frame::create_window(const int width, const int height)
 
     m_width = width;
     m_height = height;
+    m_input_windows.clear();
+    add_input_window(m_window);
     XStoreName(display, m_window, m_title.c_str());
     Atom delete_window = m_connection.wm_delete_window();
     XSetWMProtocols(display, m_window, &delete_window, 1);
@@ -374,6 +377,41 @@ void X11Frame::get_max_screen(int &width, int &height) const
     height = DisplayHeight(display, m_connection.screen());
 }
 
+X11Connection &X11Frame::connection()
+{
+    return m_connection;
+}
+
+const X11Connection &X11Frame::connection() const
+{
+    return m_connection;
+}
+
+Window X11Frame::window() const
+{
+    return m_window;
+}
+
+void X11Frame::set_event_handler(EventHandler handler)
+{
+    m_event_handler = std::move(handler);
+}
+
+void X11Frame::add_input_window(const Window window)
+{
+    if (window == None || is_input_window(window))
+    {
+        return;
+    }
+
+    m_input_windows.push_back(window);
+}
+
+void X11Frame::remove_input_window(const Window window)
+{
+    m_input_windows.erase(std::remove(m_input_windows.begin(), m_input_windows.end(), window), m_input_windows.end());
+}
+
 void X11Frame::add_key_press(const unsigned int key)
 {
     if (key_buffer_full())
@@ -401,6 +439,7 @@ void X11Frame::destroy_window()
     XFlush(m_connection.display());
     m_window = None;
     m_mapped = false;
+    m_input_windows.clear();
 }
 
 void X11Frame::handle_event(const XEvent &event)
@@ -410,7 +449,7 @@ void X11Frame::handle_event(const XEvent &event)
     {
         ui::goodbye();
     }
-    if (event.type == KeyPress && event.xkey.window == m_window)
+    if (event.type == KeyPress && is_input_window(event.xkey.window))
     {
         handle_key_press(event.xkey);
     }
@@ -418,6 +457,7 @@ void X11Frame::handle_event(const XEvent &event)
     {
         m_window = None;
         m_mapped = false;
+        m_input_windows.clear();
     }
     if (event.type == ConfigureNotify && event.xconfigure.window == m_window)
     {
@@ -426,6 +466,10 @@ void X11Frame::handle_event(const XEvent &event)
             XResizeWindow(m_connection.display(), m_window, m_width, m_height);
             XFlush(m_connection.display());
         }
+    }
+    if (m_event_handler)
+    {
+        m_event_handler(event);
     }
 }
 
@@ -460,6 +504,11 @@ void X11Frame::handle_key_press(XKeyEvent event)
     {
         add_key_press(static_cast<unsigned char>(text[0]));
     }
+}
+
+bool X11Frame::is_input_window(const Window window) const
+{
+    return std::find(m_input_windows.begin(), m_input_windows.end(), window) != m_input_windows.end();
 }
 
 void X11Frame::set_fixed_size(const int width, const int height)

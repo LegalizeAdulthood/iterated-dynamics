@@ -41,7 +41,13 @@ X11BaseDriver::X11BaseDriver(const char *name, const char *description) :
 
 bool X11BaseDriver::init(int * /*argc*/, char ** /*argv*/)
 {
-    return m_frame.init("Iterated Dynamics");
+    if (!m_frame.init("Iterated Dynamics"))
+    {
+        return false;
+    }
+
+    m_frame.set_event_handler([this](const XEvent &event) { m_text.handle_event(event); });
+    return m_text.init(m_frame.connection());
 }
 
 bool X11BaseDriver::validate_mode(const VideoInfo & /*mode*/)
@@ -58,6 +64,8 @@ void X11BaseDriver::terminate()
 {
     m_saved_screens.clear();
     m_saved_cursor.clear();
+    m_text.destroy();
+    m_frame.set_event_handler({});
     m_frame.terminate();
 }
 
@@ -77,12 +85,19 @@ void X11BaseDriver::schedule_alarm(int /*secs*/)
 
 void X11BaseDriver::create_window()
 {
-    m_frame.create_window(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+    m_frame.create_window(
+        std::max(DEFAULT_WINDOW_WIDTH, m_text.width()), std::max(DEFAULT_WINDOW_HEIGHT, m_text.height()));
+    if (m_text.create(m_frame.window()))
+    {
+        m_frame.add_input_window(m_text.window());
+        m_text.show();
+    }
 }
 
 bool X11BaseDriver::resize()
 {
-    return m_frame.resize(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+    return m_frame.resize(
+        std::max(DEFAULT_WINDOW_WIDTH, m_text.width()), std::max(DEFAULT_WINDOW_HEIGHT, m_text.height()));
 }
 
 void X11BaseDriver::read_palette()
@@ -229,15 +244,20 @@ void X11BaseDriver::put_string(const int row, const int col, const int attr, con
 
 bool X11BaseDriver::is_text()
 {
-    return true;
+    return m_text_not_graphics;
 }
 
 void X11BaseDriver::set_for_text()
 {
+    m_text_not_graphics = true;
+    m_text.show();
 }
 
 void X11BaseDriver::set_for_graphics()
 {
+    m_text_not_graphics = false;
+    m_text.show();
+    hide_text_cursor();
 }
 
 void X11BaseDriver::set_clear()
@@ -258,11 +278,13 @@ void X11BaseDriver::move_cursor(const int row, const int col)
         g_text_col = col;
     }
     m_cursor_shown = true;
+    m_text.move_cursor(g_text_row_base + m_cursor.row, g_text_col_base + m_cursor.col);
 }
 
 void X11BaseDriver::hide_text_cursor()
 {
     m_cursor_shown = false;
+    m_text.hide_cursor();
 }
 
 void X11BaseDriver::set_attr(const int row, const int col, const int attr, const int count)

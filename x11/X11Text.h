@@ -4,6 +4,8 @@
 //
 #pragma once
 
+#include "X11Connection.h"
+
 #include <config/port.h>
 
 #include <array>
@@ -49,7 +51,13 @@ class X11Text
 {
 public:
     X11Text();
+    ~X11Text();
 
+    bool init(X11Connection &connection);
+    bool create(Window parent);
+    void destroy();
+    void show();
+    void hide();
     void put_string(int x_pos, int y_pos, int attr, const char *text, int &end_row, int &end_col);
     void scroll_up(int top, int bot);
     void set_attr(int row, int col, int attr, int count);
@@ -58,11 +66,36 @@ public:
     void set_screen(const X11Screen &screen);
     int get_char_attr(int row, int col) const;
     void put_char_attr(int row, int col, int char_attr);
+    void move_cursor(int row, int col);
+    void hide_cursor();
+    bool handle_event(const XEvent &event);
+    Window window() const;
+    int width() const;
+    int height() const;
 
 private:
+    void load_colors();
+    unsigned long color(int index) const;
+    void invalidate(int left, int top, int right, int bottom);
+    void paint_region(int pixel_x, int pixel_y, int pixel_width, int pixel_height);
+    void paint_cells(int left, int top, int right, int bottom);
+    void paint_cursor(int left, int top, int right, int bottom);
     int offset(int row, int col) const;
     bool is_valid_position(int row, int col) const;
 
+    X11Connection *m_connection{};
+    Window m_window{};
+    GC m_gc{};
+    XFontStruct *m_font{};
+    std::array<unsigned long, 16> m_colors{};
+    int m_char_width{8};
+    int m_char_ascent{10};
+    int m_char_descent{3};
+    int m_char_height{13};
+    int m_cursor_row{};
+    int m_cursor_col{};
+    bool m_cursor_visible{};
+    bool m_mapped{};
     X11Screen m_screen;
 };
 

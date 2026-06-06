@@ -6,7 +6,9 @@
 
 #include <array>
 #include <chrono>
+#include <functional>
 #include <string>
+#include <vector>
 
 namespace id::misc
 {
@@ -14,6 +16,8 @@ namespace id::misc
 class X11Frame
 {
 public:
+    using EventHandler = std::function<void(const XEvent &)>;
+
     bool init(const char *title);
     void terminate();
     void create_window(int width, int height);
@@ -24,6 +28,12 @@ public:
     int get_key_press(bool wait);
     void set_keyboard_timeout(int ms);
     void get_max_screen(int &width, int &height) const;
+    X11Connection &connection();
+    const X11Connection &connection() const;
+    Window window() const;
+    void set_event_handler(EventHandler handler);
+    void add_input_window(Window window);
+    void remove_input_window(Window window);
 
 private:
     enum
@@ -40,6 +50,7 @@ private:
     void destroy_window();
     void handle_event(const XEvent &event);
     void handle_key_press(XKeyEvent event);
+    bool is_input_window(Window window) const;
     void set_fixed_size(int width, int height);
 
     X11Connection m_connection;
@@ -48,6 +59,8 @@ private:
     int m_width{};
     int m_height{};
     bool m_mapped{};
+    EventHandler m_event_handler;
+    std::vector<Window> m_input_windows;
     std::array<int, KEY_BUF_MAX> m_key_press_buffer{};
     int m_key_press_count{};
     int m_key_press_head{};
