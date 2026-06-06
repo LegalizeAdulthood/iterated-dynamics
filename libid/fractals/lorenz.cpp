@@ -14,6 +14,7 @@
 #include "engine/jiim.h"
 #include "engine/LogicalScreen.h"
 #include "engine/orbit.h"
+#include "engine/random_seed.h"
 #include "engine/resume.h"
 #include "engine/sound.h"
 #include "engine/VideoInfo.h"
@@ -29,7 +30,6 @@
 #include "io/library.h"
 #include "math/arg.h"
 #include "math/cmplx.h"
-#include "math/rand15.h"
 #include "math/sign.h"
 #include "misc/Driver.h"
 #include "ui/ifs2d.h"
@@ -56,7 +56,7 @@ using namespace id::ui;
 namespace id::fractals
 {
 
-Display3DMode g_display_3d{Display3DMode::NONE};          // 3D display flag: 0 = OFF
+Display3DMode g_display_3d{Display3DMode::NONE}; // 3D display flag: 0 = OFF
 Minor g_inverse_julia_minor_method{};
 bool g_keep_screen_coords{};
 Major g_major_method{};
@@ -87,7 +87,7 @@ enum
 
 } // namespace
 
-static int  ifs3d();
+static int ifs3d();
 static void setup_matrix(Matrix double_mat);
 static bool float_view_transf3d(ViewTransform3D *inf);
 static std::FILE *open_orbit_save();
@@ -115,9 +115,9 @@ static double s_zdt{};
 static double s_init_orbit[3]{};
 
 // The following declarations used for Inverse Julia.
-static int      s_max_hits{};
-static int      s_run_length{};
-static Affine   s_cvt{};
+static int s_max_hits{};
+static int s_run_length{};
+static Affine s_cvt{};
 
 static double s_cx{};
 static double s_cy{};
@@ -170,8 +170,7 @@ static int random(const int x)
 
 static void fallback_to_random_walk()
 {
-    stop_msg(
-        StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
+    stop_msg(StopMsgFlags::INFO_ONLY | StopMsgFlags::NO_BUZZER, "Not enough memory: switching to random walk.\n");
     g_major_method = Major::RANDOM_WALK;
 }
 
@@ -273,9 +272,9 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
         return true;
     }
     const double xd = g_logical_screen.x_size_dots / det;
-    scrn_cnvt->a =  xd*(g_image_region.m_max.y-g_image_region.m_3rd.y);
-    scrn_cnvt->b =  xd* g_image_region.width3();
-    scrn_cnvt->e = -scrn_cnvt->a*g_image_region.m_min.x - scrn_cnvt->b*g_image_region.m_max.y;
+    scrn_cnvt->a = xd * (g_image_region.m_max.y - g_image_region.m_3rd.y);
+    scrn_cnvt->b = xd * g_image_region.width3();
+    scrn_cnvt->e = -scrn_cnvt->a * g_image_region.m_min.x - scrn_cnvt->b * g_image_region.m_max.y;
 
     det = //
         (g_image_region.m_3rd.x - g_image_region.m_max.x) * (g_image_region.m_min.y - g_image_region.m_max.y) +
@@ -285,9 +284,9 @@ bool setup_convert_to_screen(Affine *scrn_cnvt)
         return true;
     }
     const double yd = g_logical_screen.y_size_dots / det;
-    scrn_cnvt->c =  yd*(g_image_region.m_min.y-g_image_region.m_3rd.y);
-    scrn_cnvt->d =  yd*(g_image_region.m_3rd.x-g_image_region.m_max.x);
-    scrn_cnvt->f = -scrn_cnvt->c*g_image_region.m_min.x - scrn_cnvt->d*g_image_region.m_max.y;
+    scrn_cnvt->c = yd * (g_image_region.m_min.y - g_image_region.m_3rd.y);
+    scrn_cnvt->d = yd * (g_image_region.m_3rd.x - g_image_region.m_max.x);
+    scrn_cnvt->f = -scrn_cnvt->c * g_image_region.m_min.x - scrn_cnvt->d * g_image_region.m_max.y;
     return false;
 }
 
@@ -332,13 +331,13 @@ bool orbit3d_per_image()
     s_init_orbit[2] = 1;
     if (g_fractal_type == FractalType::GINGERBREAD)
     {
-        s_init_orbit[0] = g_params[0];        // initial conditions
+        s_init_orbit[0] = g_params[0]; // initial conditions
         s_init_orbit[1] = g_params[1];
     }
 
     if (g_fractal_type == FractalType::ICON || g_fractal_type == FractalType::ICON_3D)
     {
-        s_init_orbit[0] = 0.01;  // initial conditions
+        s_init_orbit[0] = 0.01; // initial conditions
         s_init_orbit[1] = 0.003;
         s_connect = false;
         s_waste = 2000;
@@ -351,33 +350,33 @@ bool orbit3d_per_image()
 
     if (g_fractal_type == FractalType::HENON || g_fractal_type == FractalType::PICKOVER)
     {
-        s_a =  g_params[0];
-        s_b =  g_params[1];
-        s_c =  g_params[2];
-        s_d =  g_params[3];
+        s_a = g_params[0];
+        s_b = g_params[1];
+        s_c = g_params[2];
+        s_d = g_params[3];
     }
     else if (g_fractal_type == FractalType::ICON || g_fractal_type == FractalType::ICON_3D)
     {
-        s_init_orbit[0] = 0.01;  // initial conditions
+        s_init_orbit[0] = 0.01; // initial conditions
         s_init_orbit[1] = 0.003;
         s_connect = false;
         s_waste = 2000;
         // Initialize parameters
-        s_a  =   g_params[0];
-        s_b  =   g_params[1];
-        s_c  =   g_params[2];
-        s_d  =   g_params[3];
+        s_a = g_params[0];
+        s_b = g_params[1];
+        s_c = g_params[2];
+        s_d = g_params[3];
     }
     else if (g_fractal_type == FractalType::KAM || g_fractal_type == FractalType::KAM_3D)
     {
         g_max_count = 1L;
-        s_a = g_params[0];           // angle
+        s_a = g_params[0]; // angle
         if (g_params[1] <= 0.0)
         {
             g_params[1] = .01;
         }
-        s_b = g_params[1];          // stepsize
-        s_c = g_params[2];          // stop
+        s_b = g_params[1];                      // stepsize
+        s_c = g_params[2];                      // stop
         s_l_d = static_cast<long>(g_params[3]); //
         s_t = static_cast<int>(g_params[3]);    // points per orbit
         g_sin_x = std::sin(s_a);
@@ -393,14 +392,14 @@ bool orbit3d_per_image()
         || g_fractal_type == FractalType::QUADRUP_TWO //
         || g_fractal_type == FractalType::THREEPLY)
     {
-        s_init_orbit[0] = 0;  // initial conditions
+        s_init_orbit[0] = 0;                          // initial conditions
         s_init_orbit[1] = 0;
         s_init_orbit[2] = 0;
         s_connect = false;
-        s_a =  g_params[0];
-        s_b =  g_params[1];
-        s_c =  g_params[2];
-        s_d =  g_params[3];
+        s_a = g_params[0];
+        s_b = g_params[1];
+        s_c = g_params[2];
+        s_d = g_params[3];
         if (g_fractal_type == FractalType::THREEPLY)
         {
             s_cos_b = std::cos(s_b);
@@ -412,7 +411,7 @@ bool orbit3d_per_image()
         s_cx = g_params[0];
         s_cy = g_params[1];
 
-        s_max_hits    = static_cast<int>(g_params[2]);
+        s_max_hits = static_cast<int>(g_params[2]);
         s_run_length = static_cast<int>(g_params[3]);
         if (s_max_hits <= 0)
         {
@@ -431,7 +430,7 @@ bool orbit3d_per_image()
         switch (g_major_method)
         {
         case Major::BREADTH_FIRST:
-            if (!init_queue(32*1024UL))
+            if (!init_queue(32 * 1024UL))
             {
                 // can't get queue memory: fall back to random walk
                 fallback_to_random_walk();
@@ -440,8 +439,8 @@ bool orbit3d_per_image()
             enqueue_float(static_cast<float>((1 + s.x) / 2), static_cast<float>(s.y / 2));
             enqueue_float(static_cast<float>((1 - s.x) / 2), static_cast<float>(-s.y / 2));
             break;
-        case Major::DEPTH_FIRST:                      // depth first (choose direction)
-            if (!init_queue(32*1024UL))
+        case Major::DEPTH_FIRST: // depth first (choose direction)
+            if (!init_queue(32 * 1024UL))
             {
                 // can't get queue memory: fall back to random walk
                 fallback_to_random_walk();
@@ -466,7 +465,7 @@ random_walk:
             s_init_orbit[1] = s.y / 2;
             g_new_z.y = s_init_orbit[1];
             break;
-        case Major::RANDOM_RUN:       // random run, choose intervals
+        case Major::RANDOM_RUN: // random run, choose intervals
             g_major_method = Major::RANDOM_RUN;
             s_init_orbit[0] = 1 + s.x / 2;
             g_new_z.x = s_init_orbit[0];
@@ -478,15 +477,15 @@ random_walk:
     else
     {
         s_dt = g_params[0];
-        s_a =  g_params[1];
-        s_b =  g_params[2];
-        s_c =  g_params[3];
+        s_a = g_params[1];
+        s_b = g_params[2];
+        s_c = g_params[3];
     }
 
     // precalculations for speed
-    s_adt = s_a*s_dt;
-    s_bdt = s_b*s_dt;
-    s_cdt = s_c*s_dt;
+    s_adt = s_a * s_dt;
+    s_bdt = s_b * s_dt;
+    s_cdt = s_c * s_dt;
 
     return true;
 }
@@ -547,12 +546,10 @@ int inverse_julia_orbit()
         switch (g_major_method)
         {
         case Major::BREADTH_FIRST:
-            enqueue_float(
-                static_cast<float>(left_right * g_new_z.x), static_cast<float>(left_right * g_new_z.y));
+            enqueue_float(static_cast<float>(left_right * g_new_z.x), static_cast<float>(left_right * g_new_z.y));
             return 1;
         case Major::DEPTH_FIRST:
-            push_float(
-                static_cast<float>(left_right * g_new_z.x), static_cast<float>(left_right * g_new_z.y));
+            push_float(static_cast<float>(left_right * g_new_z.x), static_cast<float>(left_right * g_new_z.y));
             return 1;
         case Major::RANDOM_RUN:
         case Major::RANDOM_WALK:
@@ -571,7 +568,7 @@ int inverse_julia_orbit()
     case Major::BREADTH_FIRST:
         if (color < s_max_hits)
         {
-            g_put_color(new_col, new_row, color+1);
+            g_put_color(new_col, new_row, color + 1);
             enqueue_float(static_cast<float>(g_new_z.x), static_cast<float>(g_new_z.y));
             enqueue_float(static_cast<float>(-g_new_z.x), static_cast<float>(-g_new_z.y));
         }
@@ -579,7 +576,7 @@ int inverse_julia_orbit()
     case Major::DEPTH_FIRST:
         if (color < s_max_hits)
         {
-            g_put_color(new_col, new_row, color+1);
+            g_put_color(new_col, new_row, color + 1);
             if (g_inverse_julia_minor_method == Minor::LEFT_FIRST)
             {
                 if (queue_full_almost())
@@ -614,26 +611,26 @@ int inverse_julia_orbit()
         }
         switch (random_dir)
         {
-        case 0:     // left
+        case 0: // left
             break;
-        case 1:     // right
+        case 1: // right
             g_new_z.x = -g_new_z.x;
             g_new_z.y = -g_new_z.y;
             break;
-        case 2:     // random direction
+        case 2: // random direction
             g_new_z.x = left_right * g_new_z.x;
             g_new_z.y = left_right * g_new_z.y;
             break;
         }
-        if (color < g_colors-1)
+        if (color < g_colors - 1)
         {
-            g_put_color(new_col, new_row, color+1);
+            g_put_color(new_col, new_row, color + 1);
         }
         break;
     case Major::RANDOM_WALK:
-        if (color < g_colors-1)
+        if (color < g_colors - 1)
         {
-            g_put_color(new_col, new_row, color+1);
+            g_put_color(new_col, new_row, color + 1);
         }
         g_new_z.x = left_right * g_new_z.x;
         g_new_z.y = left_right * g_new_z.y;
@@ -644,16 +641,15 @@ int inverse_julia_orbit()
 
 int lorenz3d1_orbit(double *x, double *y, double *z)
 {
-    s_xdt = *x *s_dt;
-    s_ydt = *y *s_dt;
-    s_zdt = *z *s_dt;
+    s_xdt = *x * s_dt;
+    s_ydt = *y * s_dt;
+    s_zdt = *z * s_dt;
 
     // 1-lobe Lorenz
     const double norm = std::sqrt(*x * *x + *y * *y);
-    s_dx   = (-s_adt-s_dt)* *x + (s_adt-s_bdt)* *y + (s_dt-s_adt)*norm + s_ydt* *z;
-    s_dy   = (s_bdt-s_adt)* *x - (s_adt+s_dt)* *y + (s_bdt+s_adt)*norm - s_xdt* *z -
-           norm*s_zdt;
-    s_dz   = s_ydt / 2 - s_cdt* *z;
+    s_dx = (-s_adt - s_dt) * *x + (s_adt - s_bdt) * *y + (s_dt - s_adt) * norm + s_ydt * *z;
+    s_dy = (s_bdt - s_adt) * *x - (s_adt + s_dt) * *y + (s_bdt + s_adt) * norm - s_xdt * *z - norm * s_zdt;
+    s_dz = s_ydt / 2 - s_cdt * *z;
 
     *x += s_dx;
     *y += s_dy;
@@ -663,14 +659,14 @@ int lorenz3d1_orbit(double *x, double *y, double *z)
 
 int lorenz3d_orbit(double *x, double *y, double *z)
 {
-    s_xdt = *x *s_dt;
-    s_ydt = *y *s_dt;
-    s_zdt = *z *s_dt;
+    s_xdt = *x * s_dt;
+    s_ydt = *y * s_dt;
+    s_zdt = *z * s_dt;
 
     // 2-lobe Lorenz (the original)
-    s_dx  = -s_adt* *x + s_adt* *y;
-    s_dy  =  s_bdt* *x - s_ydt - *z *s_xdt;
-    s_dz  = -s_cdt* *z + *x *s_ydt;
+    s_dx = -s_adt * *x + s_adt * *y;
+    s_dy = s_bdt * *x - s_ydt - *z * s_xdt;
+    s_dz = -s_cdt * *z + *x * s_ydt;
 
     *x += s_dx;
     *y += s_dy;
@@ -680,19 +676,17 @@ int lorenz3d_orbit(double *x, double *y, double *z)
 
 int lorenz3d3_orbit(double *x, double *y, double *z)
 {
-    s_xdt = *x *s_dt;
-    s_ydt = *y *s_dt;
-    s_zdt = *z *s_dt;
+    s_xdt = *x * s_dt;
+    s_ydt = *y * s_dt;
+    s_zdt = *z * s_dt;
 
     // 3-lobe Lorenz
     const double norm = std::sqrt(*x * *x + *y * *y);
-    s_dx   = (-(s_adt+s_dt)* *x + (s_adt-s_bdt+s_zdt)* *y) / 3 +
-           ((s_dt-s_adt)*(*x * *x - *y * *y) +
-            2*(s_bdt+s_adt-s_zdt)* *x * *y)/(3*norm);
-    s_dy   = ((s_bdt-s_adt-s_zdt)* *x - (s_adt+s_dt)* *y) / 3 +
-           (2*(s_adt-s_dt)* *x * *y +
-            (s_bdt+s_adt-s_zdt)*(*x * *x - *y * *y))/(3*norm);
-    s_dz   = (3*s_xdt* *x * *y -s_ydt* *y * *y)/2 - s_cdt* *z;
+    s_dx = (-(s_adt + s_dt) * *x + (s_adt - s_bdt + s_zdt) * *y) / 3 +
+        ((s_dt - s_adt) * (*x * *x - *y * *y) + 2 * (s_bdt + s_adt - s_zdt) * *x * *y) / (3 * norm);
+    s_dy = ((s_bdt - s_adt - s_zdt) * *x - (s_adt + s_dt) * *y) / 3 +
+        (2 * (s_adt - s_dt) * *x * *y + (s_bdt + s_adt - s_zdt) * (*x * *x - *y * *y)) / (3 * norm);
+    s_dz = (3 * s_xdt * *x * *y - s_ydt * *y * *y) / 2 - s_cdt * *z;
 
     *x += s_dx;
     *y += s_dy;
@@ -702,18 +696,18 @@ int lorenz3d3_orbit(double *x, double *y, double *z)
 
 int lorenz3d4_orbit(double *x, double *y, double *z)
 {
-    s_xdt = *x *s_dt;
-    s_ydt = *y *s_dt;
-    s_zdt = *z *s_dt;
+    s_xdt = *x * s_dt;
+    s_ydt = *y * s_dt;
+    s_zdt = *z * s_dt;
 
     // 4-lobe Lorenz
-    s_dx   = (-s_adt* *x * *x * *x + (2*s_adt+s_bdt-s_zdt)* *x * *x * *y +
-            (s_adt-2*s_dt)* *x * *y * *y + (s_zdt-s_bdt)* *y * *y * *y) /
-           (2 * (*x * *x + *y * *y));
-    s_dy   = ((s_bdt-s_zdt)* *x * *x * *x + (s_adt-2*s_dt)* *x * *x * *y +
-            (-2*s_adt-s_bdt+s_zdt)* *x * *y * *y - s_adt* *y * *y * *y) /
-           (2 * (*x * *x + *y * *y));
-    s_dz   = 2 * s_xdt * *x * *x * *y - 2 * s_xdt * *y * *y * *y - s_cdt * *z;
+    s_dx = (-s_adt * *x * *x * *x + (2 * s_adt + s_bdt - s_zdt) * *x * *x * *y + (s_adt - 2 * s_dt) * *x * *y * *y +
+               (s_zdt - s_bdt) * *y * *y * *y) /
+        (2 * (*x * *x + *y * *y));
+    s_dy = ((s_bdt - s_zdt) * *x * *x * *x + (s_adt - 2 * s_dt) * *x * *x * *y +
+               (-2 * s_adt - s_bdt + s_zdt) * *x * *y * *y - s_adt * *y * *y * *y) /
+        (2 * (*x * *x + *y * *y));
+    s_dz = 2 * s_xdt * *x * *x * *y - 2 * s_xdt * *y * *y * *y - s_cdt * *z;
 
     *x += s_dx;
     *y += s_dy;
@@ -732,12 +726,12 @@ int henon_orbit(double *x, double *y, double * /*z*/)
 
 int rossler_orbit(double *x, double *y, double *z)
 {
-    s_xdt = *x *s_dt;
-    s_ydt = *y *s_dt;
+    s_xdt = *x * s_dt;
+    s_ydt = *y * s_dt;
 
-    s_dx = -s_ydt - *z *s_dt;
-    s_dy = s_xdt + *y *s_adt;
-    s_dz = s_bdt + *z *s_xdt - *z *s_cdt;
+    s_dx = -s_ydt - *z * s_dt;
+    s_dy = s_xdt + *y * s_adt;
+    s_dz = s_bdt + *z * s_xdt - *z * s_cdt;
 
     *x += s_dx;
     *y += s_dy;
@@ -784,8 +778,8 @@ int kam_torus_orbit(double *r, double *s, double *z)
         }
     }
     const double srr = *s - *r * *r;
-    *s = *r *g_sin_x+srr*g_cos_x;
-    *r = *r *g_cos_x-srr*g_sin_x;
+    *s = *r * g_sin_x + srr * g_cos_x;
+    *r = *r * g_cos_x - srr * g_sin_x;
     return 0;
 }
 
@@ -810,8 +804,7 @@ int chip2d_orbit(double *x, double *y, double * /*z*/)
 int quadrup_two2d_orbit(double *x, double *y, double * /*z*/)
 {
     const double tmp = *y -
-        sign(*x) * std::sin(std::log(std::abs(s_b * *x - s_c))) *
-            std::atan(sqr(std::log(std::abs(s_c * *x - s_b))));
+        sign(*x) * std::sin(std::log(std::abs(s_b * *x - s_c))) * std::atan(sqr(std::log(std::abs(s_c * *x - s_b))));
     *y = s_a - *x;
     *x = tmp;
     return 0;
@@ -852,7 +845,7 @@ int dynamic_orbit(double *x, double *y, double * /*z*/)
 {
     DComplex cp;
     DComplex tmp;
-    cp.x = s_b* *x;
+    cp.x = s_b * *x;
     cp.y = 0;
     cmplx_trig0(cp, tmp);
     const double new_y = *y + s_dt * std::sin(*x + s_a * tmp.x);
@@ -861,7 +854,7 @@ int dynamic_orbit(double *x, double *y, double * /*z*/)
         *y = new_y;
     }
 
-    cp.x = s_b* *y;
+    cp.x = s_b * *y;
     cp.y = 0;
     cmplx_trig0(cp, tmp);
     const double new_x = *x - s_dt * std::sin(*y + s_a * tmp.x);
@@ -902,23 +895,23 @@ int latoo_orbit(double *x, double *y, double * /*z*/)
 
     //    *x = sin(yold * PAR_B) + PAR_C * sin(xold * PAR_B);
     g_old_z.x = y_old * PAR_B;
-    g_old_z.y = 0;          // old = (y * B) + 0i (in the complex)
+    g_old_z.y = 0; // old = (y * B) + 0i (in the complex)
     cmplx_trig0(g_old_z, g_new_z);
     double tmp = g_new_z.x;
     g_old_z.x = x_old * PAR_B;
-    g_old_z.y = 0;          // old = (x * B) + 0i
+    g_old_z.y = 0; // old = (x * B) + 0i
     cmplx_trig1(g_old_z, g_new_z);
-    *x  = PAR_C * g_new_z.x + tmp;
+    *x = PAR_C * g_new_z.x + tmp;
 
     //    *y = sin(xold * PAR_A) + PAR_D * sin(yold * PAR_A);
     g_old_z.x = x_old * PAR_A;
-    g_old_z.y = 0;          // old = (y * A) + 0i (in the complex)
+    g_old_z.y = 0; // old = (y * A) + 0i (in the complex)
     cmplx_trig2(g_old_z, g_new_z);
     tmp = g_new_z.x;
     g_old_z.x = y_old * PAR_A;
-    g_old_z.y = 0;          // old = (x * B) + 0i
+    g_old_z.y = 0; // old = (x * B) + 0i
     cmplx_trig3(g_old_z, g_new_z);
-    *y  = PAR_D * g_new_z.x + tmp;
+    *y = PAR_D * g_new_z.x + tmp;
 
     return 0;
 }
@@ -984,7 +977,7 @@ Orbit2D::Orbit2D() :
     }
     else
     {
-        g_max_count = g_max_iterations*1024L;
+        g_max_count = g_max_iterations * 1024L;
     }
 }
 
@@ -1029,9 +1022,9 @@ void Orbit2D::iterate()
     {
         // time to switch colors?
         m_count = 0;
-        if (++m_color >= g_colors)   // another color to switch to?
+        if (++m_color >= g_colors) // another color to switch to?
         {
-            m_color = 1;  // (don't use the background color)
+            m_color = 1;           // (don't use the background color)
         }
     }
 
@@ -1057,7 +1050,7 @@ void Orbit2D::iterate()
         else
         {
             // should this be using plothist()?
-            m_color = get_color(col, row)+1;
+            m_color = get_color(col, row) + 1;
             if (m_color < g_colors) // color sticks on last value
             {
                 g_plot(col, row, m_color);
@@ -1134,9 +1127,9 @@ void Orbit3D::iterate()
     {
         // time to switch colors?
         m_count = 0;
-        if (++m_color >= g_colors)     // another color to switch to?
+        if (++m_color >= g_colors) // another color to switch to?
         {
-            m_color = 1;        // (don't use the background color)
+            m_color = 1;           // (don't use the background color)
         }
     }
 
@@ -1157,16 +1150,15 @@ void Orbit3D::iterate()
             if ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP)
             {
                 write_sound(static_cast<int>(
-                    m_inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)] * 100 +
-                    g_base_hertz));
+                    m_inf.view_vect[((g_sound_flag & SOUNDFLAG_ORBIT_MASK) - SOUNDFLAG_X)] * 100 + g_base_hertz));
             }
             if (m_old_col != -1 && s_connect)
             {
-                driver_draw_line(m_inf.col, m_inf.row, m_old_col, m_old_row, m_color%g_colors);
+                driver_draw_line(m_inf.col, m_inf.row, m_old_col, m_old_row, m_color % g_colors);
             }
             else
             {
-                g_plot(m_inf.col, m_inf.row, m_color%g_colors);
+                g_plot(m_inf.col, m_inf.row, m_color % g_colors);
             }
         }
         else if (m_inf.col == -2)
@@ -1184,11 +1176,11 @@ void Orbit3D::iterate()
             {
                 if (m_old_col1 != -1 && s_connect)
                 {
-                    driver_draw_line(m_inf.col1, m_inf.row1, m_old_col1, m_old_row1, m_color%g_colors);
+                    driver_draw_line(m_inf.col1, m_inf.row1, m_old_col1, m_old_row1, m_color % g_colors);
                 }
                 else
                 {
-                    g_plot(m_inf.col1, m_inf.row1, m_color%g_colors);
+                    g_plot(m_inf.col1, m_inf.row1, m_color % g_colors);
                 }
             }
             else if (m_inf.col1 == -2)
@@ -1357,17 +1349,17 @@ void Dynamic2D::iterate()
             {
                 if (m_old_col != -1 && s_connect)
                 {
-                    driver_draw_line(col, row, m_old_col, m_old_row, m_color%g_colors);
+                    driver_draw_line(col, row, m_old_col, m_old_row, m_color % g_colors);
                 }
                 else if (m_count > 0 || g_fractal_type != FractalType::MANDEL_CLOUD)
                 {
-                    g_plot(col, row, m_color%g_colors);
+                    g_plot(col, row, m_color % g_colors);
                 }
             }
             m_old_col = col;
             m_old_row = row;
         }
-        else if (static_cast<long>(std::abs(row)) + static_cast<long>(std::abs(col)) > BAD_PIXEL)   // sanity check
+        else if (static_cast<long>(std::abs(row)) + static_cast<long>(std::abs(col)) > BAD_PIXEL) // sanity check
         {
             m_unbounded = true;
             return;
@@ -1400,9 +1392,9 @@ static int setup_orbits_to_screen(Affine *scrn_cnvt)
         return -1;
     }
     const double xd = g_logical_screen.x_size_dots / det;
-    scrn_cnvt->a =  xd*(g_orbit_corner.m_max.y-g_orbit_corner.m_3rd.y);
-    scrn_cnvt->b =  xd*g_orbit_corner.width3();
-    scrn_cnvt->e = -scrn_cnvt->a*g_orbit_corner.m_min.x - scrn_cnvt->b*g_orbit_corner.m_max.y;
+    scrn_cnvt->a = xd * (g_orbit_corner.m_max.y - g_orbit_corner.m_3rd.y);
+    scrn_cnvt->b = xd * g_orbit_corner.width3();
+    scrn_cnvt->e = -scrn_cnvt->a * g_orbit_corner.m_min.x - scrn_cnvt->b * g_orbit_corner.m_max.y;
 
     det = //
         (g_orbit_corner.m_3rd.x - g_orbit_corner.m_max.x) * (g_orbit_corner.m_min.y - g_orbit_corner.m_max.y) +
@@ -1412,9 +1404,9 @@ static int setup_orbits_to_screen(Affine *scrn_cnvt)
         return -1;
     }
     const double yd = g_logical_screen.y_size_dots / det;
-    scrn_cnvt->c =  yd*(g_orbit_corner.m_min.y-g_orbit_corner.m_3rd.y);
-    scrn_cnvt->d =  yd*(g_orbit_corner.m_3rd.x-g_orbit_corner.m_max.x);
-    scrn_cnvt->f = -scrn_cnvt->c*g_orbit_corner.m_min.x - scrn_cnvt->d*g_orbit_corner.m_max.y;
+    scrn_cnvt->c = yd * (g_orbit_corner.m_min.y - g_orbit_corner.m_3rd.y);
+    scrn_cnvt->d = yd * (g_orbit_corner.m_3rd.x - g_orbit_corner.m_max.x);
+    scrn_cnvt->f = -scrn_cnvt->c * g_orbit_corner.m_min.x - scrn_cnvt->d * g_orbit_corner.m_max.y;
 
     return 0;
 }
@@ -1442,7 +1434,7 @@ int plot_orbits2d_setup()
     s_o_cvt.e += 0.5;
     s_o_cvt.f += 0.5;
 
-    if (g_orbit_delay >= g_max_iterations)   // make sure we get an image
+    if (g_orbit_delay >= g_max_iterations) // make sure we get an image
     {
         g_orbit_delay = static_cast<int>(g_max_iterations - 1);
     }
@@ -1499,9 +1491,9 @@ int plot_orbits2d()
     {
         // inside <= 0
         s_o_color++;
-        if (s_o_color >= g_colors)   // another color to switch to?
+        if (s_o_color >= g_colors) // another color to switch to?
         {
-            s_o_color = 1;    // (don't use the background color)
+            s_o_color = 1;         // (don't use the background color)
         }
     }
 
@@ -1511,12 +1503,12 @@ int plot_orbits2d()
     {
         if (orbit_calc() == 1 && g_periodicity_check)
         {
-            continue;  // bailed out, don't plot
+            continue; // bailed out, don't plot
         }
 
-        if (count < g_orbit_delay || count%g_orbit_interval)
+        if (count < g_orbit_delay || count % g_orbit_interval)
         {
-            continue;  // don't plot it
+            continue; // don't plot it
         }
 
         // else count >= orbit_delay, and we want to plot it
@@ -1530,7 +1522,7 @@ int plot_orbits2d()
                 write_sound(static_cast<int>(*sound_var * 100 + g_base_hertz));
             }
 
-            g_plot(col, row, s_o_color%g_colors);
+            g_plot(col, row, s_o_color % g_colors);
         }
         else
         {
@@ -1585,13 +1577,13 @@ int funny_glasses_call(int (*calc)())
         {
             goto done;
         }
-        if (g_glasses_type == GlassesType::PHOTO)   // photographer's mode
+        if (g_glasses_type == GlassesType::PHOTO) // photographer's mode
         {
             stop_msg(StopMsgFlags::INFO_ONLY, "Second image (right eye) is ready");
         }
     }
 done:
-    if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2*g_logical_screen.x_dots)
+    if (g_glasses_type == GlassesType::STEREO_PAIR && g_screen_x_dots >= 2 * g_logical_screen.x_dots)
     {
         // turn off view windows so will save properly
         g_logical_screen.x_offset = 0;
@@ -1609,7 +1601,7 @@ IFS3D::IFS3D() :
 {
     // setup affine screen coord conversion
     setup_convert_to_screen(&m_inf.cvt);
-    std::srand(1);
+    set_random_seed(1);
 
     m_inf.orbit[0] = 0;
     m_inf.orbit[1] = 0;
@@ -1643,8 +1635,7 @@ bool IFS3D::done() const
 void IFS3D::iterate()
 {
     ++g_color_iter;
-    double r = std::rand();      // generate a random number between 0 and 1
-    r /= RAND_MAX;
+    double r = random_unit(); // generate a random number between 0 and 1
 
     // pick which iterated function to execute, weighted by probability
     constexpr int prob_index = NUM_IFS_3D_PARAMS - 1; // last parameter is probability
@@ -1735,7 +1726,7 @@ IFS2D::IFS2D() :
 {
     // setup affine screen coord conversion
     setup_convert_to_screen(&m_cvt);
-    std::srand(1);
+    set_random_seed(1);
     g_max_count = g_max_iterations > 0x1fffffL ? 0x7fffffffL : g_max_iterations * 1024L;
     g_color_iter = 0L;
 }
@@ -1758,12 +1749,12 @@ void IFS2D::iterate()
 {
     ++g_color_iter;
 
-    const double r = static_cast<double>(RAND15())/32767.0; // generate random number between 0 and 1
+    const double r = random_unit(); // generate random number between 0 and 1
 
     // pick which iterated function to execute, weighted by probability
-    double sum = g_ifs_definition[6];  // [0][6]
+    double sum = g_ifs_definition[6];                  // [0][6]
     int k = 0;
-    while (sum < r && k < g_num_affine_transforms-1)    // fixed bug of error if sum < 1
+    while (sum < r && k < g_num_affine_transforms - 1) // fixed bug of error if sum < 1
     {
         sum += g_ifs_definition[++k * NUM_IFS_2D_PARAMS + 6];
     }
@@ -1793,18 +1784,18 @@ void IFS2D::iterate()
             // color is count of hits on this pixel
             color = get_color(col, row) + 1;
         }
-        if (color < g_colors)     // color sticks on last value
+        if (color < g_colors) // color sticks on last value
         {
             g_plot(col, row, color);
         }
     }
-    else if (static_cast<long>(std::abs(row)) + static_cast<long>(std::abs(col)) > BAD_PIXEL)   // sanity check
+    else if (static_cast<long>(std::abs(row)) + static_cast<long>(std::abs(col)) > BAD_PIXEL) // sanity check
     {
         m_unbounded = true;
     }
 }
 
-int ifs_type()                       // front-end for ifs2d and ifs3d
+int ifs_type() // front-end for ifs2d and ifs3d
 {
     if (g_ifs_definition.empty() && ifs_load() < 0)
     {
@@ -1829,7 +1820,7 @@ static void setup_matrix(Matrix double_mat)
 
 int orbit3d_type()
 {
-    g_display_3d = Display3DMode::MINUS_ONE ;
+    g_display_3d = Display3DMode::MINUS_ONE;
     s_real_time = g_glasses_type > GlassesType::NONE && g_glasses_type < GlassesType::PHOTO;
     return funny_glasses_call(orbit3d_calc);
 }
@@ -1844,11 +1835,11 @@ static int ifs3d()
 
 static bool float_view_transf3d(ViewTransform3D *inf)
 {
-    if (g_color_iter == 1)  // initialize on first call
+    if (g_color_iter == 1) // initialize on first call
     {
         for (int i = 0; i < 3; i++)
         {
-            inf->min_vals[i] =  100000.0; // impossible value
+            inf->min_vals[i] = 100000.0; // impossible value
             inf->max_vals[i] = -100000.0;
         }
         setup_matrix(inf->double_mat);
@@ -1881,15 +1872,15 @@ static bool float_view_transf3d(ViewTransform3D *inf)
         }
         if (g_color_iter == s_waste) // time to work it out
         {
-            g_view[0] = 0; // center on origin
+            g_view[0] = 0;           // center on origin
             g_view[1] = 0;
             /* z value of user's eye - should be more negative than extreme
                               negative part of image */
-            g_view[2] = (inf->min_vals[2]-inf->max_vals[2])* static_cast<double>(g_viewer_z) /100.0;
+            g_view[2] = (inf->min_vals[2] - inf->max_vals[2]) * static_cast<double>(g_viewer_z) / 100.0;
 
             // center image on origin
-            double tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/2.0; // center x
-            double tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
+            double tmp_x = (-inf->min_vals[0] - inf->max_vals[0]) / 2.0; // center x
+            double tmp_y = (-inf->min_vals[1] - inf->max_vals[1]) / 2.0; // center y
 
             // apply perspective shift
             const DComplex size{g_image_region.size()};
@@ -1901,8 +1892,8 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             if (s_real_time)
             {
                 // center image on origin
-                tmp_x = (-inf->min_vals[0]-inf->max_vals[0])/2.0; // center x
-                tmp_y = (-inf->min_vals[1]-inf->max_vals[1])/2.0; // center y
+                tmp_x = (-inf->min_vals[0] - inf->max_vals[0]) / 2.0; // center x
+                tmp_y = (-inf->min_vals[1] - inf->max_vals[1]) / 2.0; // center y
 
                 tmp_x += static_cast<double>(g_x_shift1) * size.x / g_logical_screen.x_dots;
                 tmp_y += static_cast<double>(g_y_shift1) * size.y / g_logical_screen.y_dots;
@@ -1922,10 +1913,10 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             perspective(inf->view_vect1);
         }
     }
-    inf->row = static_cast<int>(
-        inf->cvt.c * inf->view_vect[0] + inf->cvt.d * inf->view_vect[1] + inf->cvt.f + g_yy_adjust);
-    inf->col = static_cast<int>(
-        inf->cvt.a * inf->view_vect[0] + inf->cvt.b * inf->view_vect[1] + inf->cvt.e + g_xx_adjust);
+    inf->row =
+        static_cast<int>(inf->cvt.c * inf->view_vect[0] + inf->cvt.d * inf->view_vect[1] + inf->cvt.f + g_yy_adjust);
+    inf->col =
+        static_cast<int>(inf->cvt.a * inf->view_vect[0] + inf->cvt.b * inf->view_vect[1] + inf->cvt.e + g_xx_adjust);
     if (inf->col < 0 || inf->col >= g_logical_screen.x_dots || inf->row < 0 || inf->row >= g_logical_screen.y_dots)
     {
         if (static_cast<long>(std::abs(inf->col)) + static_cast<long>(std::abs(inf->row)) > BAD_PIXEL)
@@ -1945,7 +1936,8 @@ static bool float_view_transf3d(ViewTransform3D *inf)
             inf->cvt.c * inf->view_vect1[0] + inf->cvt.d * inf->view_vect1[1] + inf->cvt.f + g_yy_adjust1);
         inf->col1 = static_cast<int>(
             inf->cvt.a * inf->view_vect1[0] + inf->cvt.b * inf->view_vect1[1] + inf->cvt.e + g_xx_adjust1);
-        if (inf->col1 < 0 || inf->col1 >= g_logical_screen.x_dots || inf->row1 < 0 || inf->row1 >= g_logical_screen.y_dots)
+        if (inf->col1 < 0 || inf->col1 >= g_logical_screen.x_dots || inf->row1 < 0 ||
+            inf->row1 >= g_logical_screen.y_dots)
         {
             if (static_cast<long>(std::abs(inf->col1)) + static_cast<long>(std::abs(inf->row1)) > BAD_PIXEL)
             {

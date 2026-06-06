@@ -30,7 +30,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
 #include <cstring>
 #include <vector>
 
@@ -85,24 +84,24 @@ static StereoData *s_data{};
 
 // TODO: eliminate all these macros for structure access
 
-#define AVG         (s_data->avg)
-#define AVG_CT      (s_data->avg_ct)
-#define DEPTH       (s_data->depth)
-#define BAR_HEIGHT  (s_data->bar_height)
-#define GROUND      (s_data->ground)
-#define MAX_CC      (s_data->max_cc)
-#define MAX_C       (s_data->max_c)
-#define MIN_C       (s_data->min_c)
-#define REVERSE     (s_data->reverse)
-#define SEP         (s_data->sep)
-#define WIDTH       (s_data->width)
-#define X1          (s_data->x1)
-#define X2          (s_data->x2)
-#define Y           (s_data->y)
-#define Y1          (s_data->y1)
-#define Y2          (s_data->y2)
-#define X_CENTER    (s_data->x_center)
-#define Y_CENTER    (s_data->y_center)
+#define AVG (s_data->avg)
+#define AVG_CT (s_data->avg_ct)
+#define DEPTH (s_data->depth)
+#define BAR_HEIGHT (s_data->bar_height)
+#define GROUND (s_data->ground)
+#define MAX_CC (s_data->max_cc)
+#define MAX_C (s_data->max_c)
+#define MIN_C (s_data->min_c)
+#define REVERSE (s_data->reverse)
+#define SEP (s_data->sep)
+#define WIDTH (s_data->width)
+#define X1 (s_data->x1)
+#define X2 (s_data->x2)
+#define Y (s_data->y)
+#define Y1 (s_data->y1)
+#define Y2 (s_data->y2)
+#define X_CENTER (s_data->x_center)
+#define Y_CENTER (s_data->y_center)
 
 /*
    The getdepth() function allows using the grayscale value of the color
@@ -112,7 +111,7 @@ static StereoData *s_data{};
    0 to 255.
 */
 
-#define DAC   (*((DACBox)(s_data->save_dac)))
+#define DAC (*((DACBox) (s_data->save_dac)))
 
 static int get_depth(const int xd, const int yd)
 {
@@ -120,7 +119,8 @@ static int get_depth(const int xd, const int yd)
     if (g_gray_flag)
     {
         // effectively (30*R + 59*G + 11*B)/100 scaled 0 to 255
-        pal = static_cast<int>(DAC[pal][0]) * 77 + static_cast<int>(DAC[pal][1]) * 151 + static_cast<int>(DAC[pal][2]) * 28;
+        pal = static_cast<int>(DAC[pal][0]) * 77 + static_cast<int>(DAC[pal][1]) * 151 +
+            static_cast<int>(DAC[pal][2]) * 28;
         pal >>= 6;
     }
     return pal;
@@ -165,8 +165,8 @@ static void toggle_bars(bool *bars, const int bar_width, const int *colour)
         {
             if (*bars)
             {
-                g_put_color(i + static_cast<int>(AVG), j , g_color_bright);
-                g_put_color(i - static_cast<int>(AVG), j , g_color_bright);
+                g_put_color(i + static_cast<int>(AVG), j, g_color_bright);
+                g_put_color(i - static_cast<int>(AVG), j, g_color_bright);
             }
             else
             {
@@ -203,7 +203,7 @@ int out_line_stereo(Byte *pixels, const int line_len)
         {
             SEP = GROUND - static_cast<int>(DEPTH * (MAX_CC - (get_depth(x, Y) - MIN_C)) / MAX_CC);
         }
-        SEP = static_cast<int>(SEP * 10.0 / WIDTH);         // adjust for media WIDTH
+        SEP = static_cast<int>(SEP * 10.0 / WIDTH); // adjust for media WIDTH
 
         // get average value under calibration bars
         if (X1 <= x && x <= X2 && Y1 <= Y && Y <= Y2)
@@ -253,7 +253,7 @@ void random_dot_line(Byte *pixels, const int line_len)
 {
     for (int i = 0; i < line_len; i++)
     {
-        pixels[i] = static_cast<unsigned char>(std::rand() % g_colors);
+        pixels[i] = static_cast<unsigned char>(random_int(g_colors));
     }
 }
 
@@ -263,7 +263,7 @@ public:
     explicit StereoSaveRestore(StereoData &v)
     {
         v.save_dac = m_save_dac_box;
-        driver_save_graphics();                        // save graphics image
+        driver_save_graphics();                          // save graphics image
         std::memcpy(m_save_dac_box, g_dac_box, 256 * 3); // save colors
     }
 
@@ -275,7 +275,7 @@ public:
     }
 
 private:
-    Byte m_save_dac_box[256*3];
+    Byte m_save_dac_box[256 * 3];
 };
 
 /**************************************************************************
@@ -294,7 +294,7 @@ static bool convert_stereo_image(const bool interactive)
     {
         g_save_rds_params = false;
     }
-    s_data = &v;   // set static vars to stack structure
+    s_data = &v; // set static vars to stack structure
 
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_RDS_KEYS};
     StereoSaveRestore saved_stereo{v};
@@ -307,7 +307,7 @@ static bool convert_stereo_image(const bool interactive)
     }
 
     // empirically determined adjustment to make WIDTH scale correctly
-    WIDTH = g_auto_stereo_width*.67;
+    WIDTH = g_auto_stereo_width * .67;
     WIDTH = std::max(WIDTH, 1.0);
     GROUND = g_logical_screen.x_dots / 8;
     if (g_auto_stereo_depth < 0)
@@ -332,21 +332,21 @@ static bool convert_stereo_image(const bool interactive)
         AVG_CT = 0L;
         AVG = AVG_CT;
         BAR_HEIGHT = 1 + g_logical_screen.y_dots / 20;
-        X_CENTER = g_logical_screen.x_dots/2;
+        X_CENTER = g_logical_screen.x_dots / 2;
         if (g_calibrate > CalibrationBars::MIDDLE)
         {
-            Y_CENTER = BAR_HEIGHT/2;
+            Y_CENTER = BAR_HEIGHT / 2;
         }
         else
         {
-            Y_CENTER = g_logical_screen.y_dots/2;
+            Y_CENTER = g_logical_screen.y_dots / 2;
         }
 
         // box to average for calibration bars
-        X1 = X_CENTER - g_logical_screen.x_dots/16;
-        X2 = X_CENTER + g_logical_screen.x_dots/16;
-        Y1 = Y_CENTER - BAR_HEIGHT/2;
-        Y2 = Y_CENTER + BAR_HEIGHT/2;
+        X1 = X_CENTER - g_logical_screen.x_dots / 16;
+        X2 = X_CENTER + g_logical_screen.x_dots / 16;
+        Y1 = Y_CENTER - BAR_HEIGHT / 2;
+        Y2 = Y_CENTER + BAR_HEIGHT / 2;
 
         Y = 0;
         if (g_use_stereo_texture)
@@ -400,7 +400,7 @@ static bool convert_stereo_image(const bool interactive)
             driver_wait_key_pressed(false);
             switch (int key = driver_get_key(); key)
             {
-            case ID_KEY_ENTER:   // toggle bars
+            case ID_KEY_ENTER: // toggle bars
             case ID_KEY_SPACE:
                 toggle_bars(&bars, bar_width, colour.data());
                 break;
@@ -417,7 +417,7 @@ static bool convert_stereo_image(const bool interactive)
                 break;
             default:
                 g_save_rds_params = key == 'b' || key == 'B';
-                if (key == ID_KEY_ESC)     // if ESC avoid returning to menu
+                if (key == ID_KEY_ESC) // if ESC avoid returning to menu
                 {
                     key = 255;
                 }

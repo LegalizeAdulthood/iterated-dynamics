@@ -5,9 +5,15 @@
 namespace id::engine
 {
 
-extern int                   g_random_seed;
-extern bool                  g_random_seed_flag;
+constexpr int RANDOM_MAX{0x7FFF};
 
+extern int g_random_seed;
+extern bool g_random_seed_flag;
+
+void set_random_seed(int seed);
 void set_random_seed();
+int random15();
+int random_int(int limit);
+double random_unit();
 
 } // namespace id::engine

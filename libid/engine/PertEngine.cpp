@@ -23,7 +23,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
 #include <cstring>
 #include <stdexcept>
 
@@ -143,7 +142,7 @@ int PertEngine::calculate_one_frame()
 
             set_random_seed();
 
-            const int index{static_cast<int>(static_cast<double>(std::rand()) / RAND_MAX * m_remaining_point_count)};
+            const int index{static_cast<int>(random_unit() * m_remaining_point_count)};
             Point pt{m_points_remaining[index]};
             // Get the complex point at the chosen reference point
             const double delta_real = magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius;
@@ -231,8 +230,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
     // when the reference point isn't in the center. That's why for the first reference,
     // m_calculated_real_delta and m_calculated_imaginary_delta are 0: it's calculating relative to the
     // center.
-    const double delta_real =
-        magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius - m_delta_real;
+    const double delta_real = magnified_radius * (2 * pt.get_x() - g_screen_x_dots) / window_radius - m_delta_real;
     const double delta_imaginary =
         -magnified_radius * (2 * pt.get_y() - g_screen_y_dots) / window_radius - m_delta_imag;
     const std::complex<double> delta_sub_0{delta_real, delta_imaginary};
@@ -268,8 +266,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
         // for why it looks so weird, it's because I've squared both sides of his equation and moved the
         // |ZsubN| to the other side to be precalculated. For more information, look at where the reference
         // point is calculated. I also only want to store this point once.
-        if (m_calculate_glitches && !glitched &&
-            magnitude < m_perturbation_tolerance_check[iteration])
+        if (m_calculate_glitches && !glitched && magnitude < m_perturbation_tolerance_check[iteration])
         {
             m_glitch_points[m_glitch_point_count] = Point(pt.get_x(), pt.get_y(), iteration);
             m_glitch_point_count++;
@@ -320,8 +317,7 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
             case ColorMethod::ZMAG:
                 if (iteration == g_max_iterations)
                 {
-                    index = static_cast<int>(
-                        (w.real() * w.real() + w.imag() + w.imag()) * (g_max_iterations >> 1) + 1);
+                    index = static_cast<int>((w.real() * w.real() + w.imag() + w.imag()) * (g_max_iterations >> 1) + 1);
                 }
                 else
                 {

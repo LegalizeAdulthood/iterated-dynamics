@@ -12,7 +12,6 @@
 #include "ui/video.h"
 
 #include <algorithm>
-#include <cstdlib>
 
 //**************** standalone engine for "diffusion" *******************
 
@@ -25,7 +24,7 @@ namespace id::fractals
 
 static int random(const int x)
 {
-    return std::rand() % x;
+    return random_int(x);
 }
 
 bool Diffusion::keyboard_check_needed()
@@ -103,8 +102,8 @@ Diffusion::Diffusion() :
                 g_put_color(g_logical_screen.x_dots / 2 - g_logical_screen.y_dots / 2, i, m_current_color);
                 g_put_color(g_logical_screen.x_dots / 2 + g_logical_screen.y_dots / 2, i, m_current_color);
                 g_put_color(g_logical_screen.x_dots / 2 - g_logical_screen.y_dots / 2 + i, 0, m_current_color);
-                g_put_color(g_logical_screen.x_dots / 2 - g_logical_screen.y_dots / 2 + i,
-                    g_logical_screen.y_dots - 1, m_current_color);
+                g_put_color(g_logical_screen.x_dots / 2 - g_logical_screen.y_dots / 2 + i, g_logical_screen.y_dots - 1,
+                    m_current_color);
             }
         }
         else
@@ -112,8 +111,8 @@ Diffusion::Diffusion() :
             for (int i = 0; i < g_logical_screen.x_dots; i++)
             {
                 g_put_color(0, g_logical_screen.y_dots / 2 - g_logical_screen.x_dots / 2 + i, m_current_color);
-                g_put_color(g_logical_screen.x_dots - 1,
-                    g_logical_screen.y_dots / 2 - g_logical_screen.x_dots / 2 + i, m_current_color);
+                g_put_color(g_logical_screen.x_dots - 1, g_logical_screen.y_dots / 2 - g_logical_screen.x_dots / 2 + i,
+                    m_current_color);
                 g_put_color(i, g_logical_screen.y_dots / 2 - g_logical_screen.x_dots / 2, m_current_color);
                 g_put_color(i, g_logical_screen.y_dots / 2 + g_logical_screen.x_dots / 2, m_current_color);
             }
@@ -134,7 +133,7 @@ void Diffusion::release_new_particle()
     case DiffusionMode::CENTRAL:
     {
         // Release new point on a circle inside the box
-        const double angle = 2 * static_cast<double>(std::rand()) / (RAND_MAX / PI);
+        const double angle = 2 * static_cast<double>(random15()) / (RANDOM_MAX / PI);
         double cosine;
         double sine;
         sin_cos(angle, sine, cosine);
@@ -154,7 +153,7 @@ void Diffusion::release_new_particle()
     case DiffusionMode::SQUARE_CAVITY:
     {
         // Release new point on a circle inside the box with radius given by the radius variable
-        const double angle = 2 * static_cast<double>(std::rand()) / (RAND_MAX / PI);
+        const double angle = 2 * static_cast<double>(random15()) / (RANDOM_MAX / PI);
         double cosine;
         double sine;
         sin_cos(angle, sine, cosine);
@@ -300,9 +299,7 @@ bool Diffusion::adjust_limits()
     switch (m_mode)
     {
     case DiffusionMode::CENTRAL:
-        if (m_x + m_border > m_x_max ||
-            m_x - m_border < m_x_min ||
-            m_y - m_border < m_y_min ||
+        if (m_x + m_border > m_x_max || m_x - m_border < m_x_min || m_y - m_border < m_y_min ||
             m_y + m_border > m_y_max)
         {
             // Increase box size, but not past the edge of the screen

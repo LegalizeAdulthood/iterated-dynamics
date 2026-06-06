@@ -7,8 +7,6 @@
 #include <gtest/gtest.h>
 
 #include <array>
-#include <cstdint>
-#include <cstdlib>
 
 using namespace id::engine;
 using namespace id::misc;
@@ -19,47 +17,63 @@ namespace
 {
 
 constexpr int SEED{4567};
-constexpr std::size_t SEQUENCE_LENGTH{12};
-
-std::array<int, SEQUENCE_LENGTH> msvc_rand15_sequence(const int seed)
-{
-    std::array<int, SEQUENCE_LENGTH> result{};
-    std::uint32_t state{static_cast<std::uint32_t>(seed)};
-    for (std::size_t i{}; i < result.size(); ++i)
-    {
-        state = state * 214013U + 2531011U;
-        result[i] = static_cast<int>((state >> 16U) & 0x7FFFU);
-    }
-    return result;
-}
-
-std::array<int, SEQUENCE_LENGTH> current_c_rand15_sequence(const int seed)
-{
-    std::array<int, SEQUENCE_LENGTH> result{};
-    ValueSaver saved_random_seed{g_random_seed, seed};
-    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
-
-    set_random_seed();
-    for (std::size_t i{}; i < result.size(); ++i)
-    {
-        result[i] = std::rand() & 0x7FFF;
-    }
-    return result;
-}
+constexpr std::array<int, 12> MSVC_RAND15_SEQUENCE{
+    14952, 9227, 14589, 28486, 27900, 21076, 1617, 32765, 19715, 1795, 18494, 32654};
 
 } // namespace
 
-TEST(TestRandomSeed, cRuntimeRand15SequenceIsMsvcSequenceOnlyOnWindows)
+TEST(TestRandomSeed, random15MatchesMsvcCRuntimeSequence)
 {
-    const auto reference{msvc_rand15_sequence(SEED)};
-    const auto actual{current_c_rand15_sequence(SEED)};
+    ValueSaver saved_random_seed{g_random_seed, SEED};
+    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
 
-    // Existing gold images were generated with the MSVC C runtime sequence.
-#if defined(_WIN32)
-    EXPECT_EQ(reference, actual);
-#else
-    EXPECT_NE(reference, actual);
-#endif
+    set_random_seed();
+
+    for (const int value : MSVC_RAND15_SEQUENCE)
+    {
+        EXPECT_EQ(value, random15());
+    }
+    EXPECT_EQ(SEED, g_random_seed);
+}
+
+TEST(TestRandomSeed, nonFixedSeedAdvancesStoredSeedAfterSeeding)
+{
+    ValueSaver saved_random_seed{g_random_seed, SEED};
+    ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
+
+    set_random_seed();
+
+    EXPECT_EQ(SEED + 1, g_random_seed);
+    EXPECT_EQ(MSVC_RAND15_SEQUENCE.front(), random15());
+}
+
+TEST(TestRandomSeed, explicitSeedDoesNotChangeStoredSeed)
+{
+    ValueSaver saved_random_seed{g_random_seed, 99};
+    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
+
+    set_random_seed(SEED);
+
+    EXPECT_EQ(99, g_random_seed);
+    EXPECT_TRUE(g_random_seed_flag);
+    EXPECT_EQ(MSVC_RAND15_SEQUENCE.front(), random15());
+}
+
+TEST(TestRandomSeed, randomIntUsesMsvcSequenceModuloLimit)
+{
+    set_random_seed(SEED);
+
+    EXPECT_EQ(MSVC_RAND15_SEQUENCE[0] % 10, random_int(10));
+    EXPECT_EQ(MSVC_RAND15_SEQUENCE[1] % 100, random_int(100));
+    EXPECT_EQ(0, random_int(1));
+    EXPECT_EQ(0, random_int(0));
+}
+
+TEST(TestRandomSeed, randomUnitScalesMsvcSequenceToUnitInterval)
+{
+    set_random_seed(SEED);
+
+    EXPECT_DOUBLE_EQ(static_cast<double>(MSVC_RAND15_SEQUENCE.front()) / RANDOM_MAX, random_unit());
 }
 
 } // namespace id::test

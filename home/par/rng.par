@@ -1,0 +1,5 @@
+rng_plasma_4567 {
+  reset=2004 type=plasma
+  params=2/0/0/0
+  rseed=4567
+}

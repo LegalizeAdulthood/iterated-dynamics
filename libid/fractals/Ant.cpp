@@ -18,7 +18,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -33,7 +32,7 @@ namespace id::fractals
 // Generate Random Number 0 <= r < n
 static int random(const int n)
 {
-    return static_cast<int>(static_cast<long>(std::rand()) * static_cast<long>(n) >> 15);
+    return static_cast<int>(static_cast<long>(random15()) * static_cast<long>(n) >> 15);
 }
 
 namespace
@@ -41,8 +40,7 @@ namespace
 
 bool is_integer_rule(const std::string_view text)
 {
-    return !text.empty()
-        && std::all_of(text.begin(), text.end(), [](const char ch) { return ch >= '0' && ch <= '9'; });
+    return !text.empty() && std::all_of(text.begin(), text.end(), [](const char ch) { return ch >= '0' && ch <= '9'; });
 }
 
 bool use_drifted_id_rule_format()
@@ -61,8 +59,8 @@ std::string ant_numeric_rule_text(const double param)
 
 } // namespace
 
-#define XO              (g_logical_screen.x_dots/2)
-#define YO              (g_logical_screen.y_dots/2)
+#define XO (g_logical_screen.x_dots / 2)
+#define YO (g_logical_screen.y_dots / 2)
 
 enum
 {
@@ -258,9 +256,8 @@ void Ant::turk_mite1(const bool step, const long wait)
             dir &= 3;
             if (!wrap)
             {
-                if ((dir == 0 && y == g_logical_screen.y_dots - 1) ||
-                    (dir == 1 && x == g_logical_screen.x_dots - 1) || (dir == 2 && y == 0) ||
-                    (dir == 3 && x == 0))
+                if ((dir == 0 && y == g_logical_screen.y_dots - 1) || (dir == 1 && x == g_logical_screen.x_dots - 1) ||
+                    (dir == 2 && y == 0) || (dir == 3 && x == 0))
                 {
                     return;
                 }
@@ -289,7 +286,7 @@ void Ant::init_mite2()
             // init the various turmites N.B. don't use
             // x[0], y[0], dir[0]
             dir[color] = random(DIRS);
-            rule[color] = std::rand() << random(2) | random(2);
+            rule[color] = random15() << random(2) | random(2);
             x[color] = random(g_logical_screen.x_dots);
             y[color] = random(g_logical_screen.y_dots);
         }
@@ -352,9 +349,8 @@ void Ant::turk_mite2(const bool step, const long wait)
             dir &= 3;
             if (!wrap)
             {
-                if ((dir == 0 && y == g_logical_screen.y_dots - 1) ||
-                    (dir == 1 && x == g_logical_screen.x_dots - 1) || (dir == 2 && y == 0) ||
-                    (dir == 3 && x == 0))
+                if ((dir == 0 && y == g_logical_screen.y_dots - 1) || (dir == 1 && x == g_logical_screen.x_dots - 1) ||
+                    (dir == 2 && y == 0) || (dir == 3 && x == 0))
                 {
                     return;
                 }

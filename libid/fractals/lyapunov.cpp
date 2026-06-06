@@ -7,6 +7,7 @@
 #include "engine/Inversion.h"
 #include "engine/log_map.h"
 #include "engine/pixel_grid.h"
+#include "engine/random_seed.h"
 #include "engine/UserData.h"
 #include "engine/VideoInfo.h"
 #include "fractals/fractalp.h"
@@ -20,7 +21,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
 
 using namespace id::engine;
 using namespace id::math;
@@ -50,13 +50,13 @@ int lyapunov_type()
     g_overflow = false;
     if (g_params[1] == 1)
     {
-        g_population = (1.0+std::rand())/(2.0+RAND_MAX);
+        g_population = (1.0 + random15()) / (2.0 + RANDOM_MAX);
     }
     else if (g_params[1] == 0)
     {
         if (population_exceeded() || g_population == 0 || g_population == 1)
         {
-            g_population = (1.0+std::rand())/(2.0+RAND_MAX);
+            g_population = (1.0 + random15()) / (2.0 + RANDOM_MAX);
         }
     }
     else
@@ -80,9 +80,9 @@ int lyapunov_type()
     {
         g_color = g_inside_color;
     }
-    else if (g_color>=g_colors)
+    else if (g_color >= g_colors)
     {
-        g_color = g_colors-1;
+        g_color = g_colors - 1;
     }
     g_plot(g_col, g_row, g_color);
     return g_color;
@@ -152,7 +152,11 @@ bool lyapunov_per_image()
     s_filter_cycles = static_cast<long>(g_params[2]);
     if (s_filter_cycles == 0)
     {
-        s_filter_cycles = g_max_iterations/2;
+        s_filter_cycles = g_max_iterations / 2;
+    }
+    if (g_params[1] == 0 || g_params[1] == 1)
+    {
+        set_random_seed();
     }
     s_lya_seed_ok = g_params[1] > 0 && g_params[1] <= 1 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL;
 
@@ -177,7 +181,7 @@ bool lyapunov_per_image()
     if (g_user.std_calc_mode == CalcMode::ORBIT)
     {
         // Oops,lyapunov type
-        g_user.std_calc_mode = CalcMode::ONE_PASS;  // doesn't use new & breaks orbits
+        g_user.std_calc_mode = CalcMode::ONE_PASS; // doesn't use new & breaks orbits
         g_std_calc_mode = CalcMode::ONE_PASS;
     }
     return true;
@@ -204,7 +208,7 @@ static int lyapunov_cycles(const long filter_cycles, const double a, const doubl
             }
         }
     }
-    for (i = 0; i < g_max_iterations/2; i++)
+    for (i = 0; i < g_max_iterations / 2; i++)
     {
         for (int count = 0; count < s_lya_length; count++)
         {
@@ -214,7 +218,7 @@ static int lyapunov_cycles(const long filter_cycles, const double a, const doubl
                 g_overflow = true;
                 goto jump_out;
             }
-            temp = std::abs(g_rate-2.0*g_rate*g_population);
+            temp = std::abs(g_rate - 2.0 * g_rate * g_population);
             total *= temp;
             if (total == 0)
             {
@@ -244,11 +248,11 @@ jump_out:
         double lyap;
         if (g_log_map_flag)
         {
-            lyap = -temp/(static_cast<double>(s_lya_length) *i);
+            lyap = -temp / (static_cast<double>(s_lya_length) * i);
         }
         else
         {
-            lyap = 1 - std::exp(temp/(static_cast<double>(s_lya_length) *i));
+            lyap = 1 - std::exp(temp / (static_cast<double>(s_lya_length) * i));
         }
         color = 1 + static_cast<int>(lyap * (g_colors - 1));
     }

@@ -11,7 +11,6 @@
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "io/loadmap.h"
-#include "math/rand15.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/sized_types.h"
@@ -19,7 +18,6 @@
 #include "ui/video.h"
 
 #include <algorithm>
-#include <cstdlib>
 
 using namespace id::engine;
 using namespace id::io;
@@ -29,11 +27,11 @@ using namespace id::ui;
 namespace id::fractals
 {
 
-using PlotFn = void(*)(int x, int y, int color);
+using PlotFn = void (*)(int x, int y, int color);
 
 PlotFn plot_cast(void (*f)(int x, int y, U16 color))
 {
-    return reinterpret_cast<PlotFn>(f);  // NOLINT(clang-diagnostic-cast-function-type-strict)
+    return reinterpret_cast<PlotFn>(f); // NOLINT(clang-diagnostic-cast-function-type-strict)
 }
 
 static constexpr U16 (*GET_COLOR)(int x, int y){
@@ -43,12 +41,12 @@ static void set_plasma_palette()
 {
     if (g_map_specified || g_colors_preloaded)
     {
-        return;    // map= specified
+        return; // map= specified
     }
 
-    static constexpr Byte Red[3]   = { 255, 0, 0 };
-    static constexpr Byte Green[3] = { 0, 255, 0 };
-    static constexpr Byte Blue[3]  = { 0,  0, 255 };
+    static constexpr Byte Red[3] = {255, 0, 0};
+    static constexpr Byte Green[3] = {0, 255, 0};
+    static constexpr Byte Blue[3] = {0, 0, 255};
 
     g_dac_box[0][0] = 0;
     g_dac_box[0][1] = 0;
@@ -59,12 +57,12 @@ static void set_plasma_palette()
         g_dac_box[i][1] = static_cast<Byte>((i * Green[1] + (86 - i) * Blue[1]) / 85);
         g_dac_box[i][2] = static_cast<Byte>((i * Green[2] + (86 - i) * Blue[2]) / 85);
 
-        g_dac_box[i+85][0] = static_cast<Byte>((i * Red[0] + (86 - i) * Green[0]) / 85);
-        g_dac_box[i+85][1] = static_cast<Byte>((i * Red[1] + (86 - i) * Green[1]) / 85);
-        g_dac_box[i+85][2] = static_cast<Byte>((i * Red[2] + (86 - i) * Green[2]) / 85);
-        g_dac_box[i+170][0] = static_cast<Byte>((i * Blue[0] + (86 - i) * Red[0]) / 85);
-        g_dac_box[i+170][1] = static_cast<Byte>((i * Blue[1] + (86 - i) * Red[1]) / 85);
-        g_dac_box[i+170][2] = static_cast<Byte>((i * Blue[2] + (86 - i) * Red[2]) / 85);
+        g_dac_box[i + 85][0] = static_cast<Byte>((i * Red[0] + (86 - i) * Green[0]) / 85);
+        g_dac_box[i + 85][1] = static_cast<Byte>((i * Red[1] + (86 - i) * Green[1]) / 85);
+        g_dac_box[i + 85][2] = static_cast<Byte>((i * Red[2] + (86 - i) * Green[2]) / 85);
+        g_dac_box[i + 170][0] = static_cast<Byte>((i * Blue[0] + (86 - i) * Red[0]) / 85);
+        g_dac_box[i + 170][1] = static_cast<Byte>((i * Blue[1] + (86 - i) * Red[1]) / 85);
+        g_dac_box[i + 170][2] = static_cast<Byte>((i * Blue[2] + (86 - i) * Red[2]) / 85);
     }
     refresh_dac();
 }
@@ -74,9 +72,9 @@ static void set_plasma_palette()
 // returns a random 16 bit value that is never 0
 static U16 rand16()
 {
-    U16 value = static_cast<U16>(RAND15());
+    U16 value = static_cast<U16>(random15());
     value <<= 1;
-    value = static_cast<U16>(value + (RAND15() & 1));
+    value = static_cast<U16>(value + (random15() & 1));
     value = std::max<U16>(value, 1U);
     return value;
 }
@@ -84,14 +82,15 @@ static U16 rand16()
 static void put_pot(const int x, const int y, U16 color)
 {
     color = std::max<U16>(color, 1U);
-    g_put_color(x, y, color >> 8 ? color >> 8 : 1);  // don't write 0
+    g_put_color(x, y, color >> 8 ? color >> 8 : 1); // don't write 0
     /* we don't write this if driver_diskp() because the above putcolor
           was already a "writedisk" in that case */
     if (!driver_is_disk())
     {
-        disk_write_pixel(x+g_logical_screen.x_offset, y+g_logical_screen.y_offset, color >> 8);    // upper 8 bits
+        disk_write_pixel(x + g_logical_screen.x_offset, y + g_logical_screen.y_offset, color >> 8);   // upper 8 bits
     }
-    disk_write_pixel(x+g_logical_screen.x_offset, y+g_screen_y_dots+g_logical_screen.y_offset, color&255); // lower 8 bits
+    disk_write_pixel(
+        x + g_logical_screen.x_offset, y + g_screen_y_dots + g_logical_screen.y_offset, color & 255); // lower 8 bits
 }
 
 // fixes border
@@ -139,7 +138,7 @@ Plasma::Plasma() :
     {
         m_i_param_x = 800;
     }
-    g_params[0] = static_cast<double>(m_i_param_x) / 8.0;  // let user know what was used
+    g_params[0] = static_cast<double>(m_i_param_x) / 8.0; // let user know what was used
     // limit parameter values
     g_params[1] = std::clamp(g_params[1], 0.0, 1.0);
     g_params[2] = std::clamp(g_params[2], 0.0, 1.0);
@@ -153,7 +152,7 @@ Plasma::Plasma() :
     {
         g_random_seed = static_cast<int>(g_params[2]);
     }
-    m_max_plasma = static_cast<U16>(g_params[3]);  // max_plasma is used as a flag for potential
+    m_max_plasma = static_cast<U16>(g_params[3]); // max_plasma is used as a flag for potential
 
     if (m_max_plasma != 0)
     {
@@ -172,15 +171,15 @@ Plasma::Plasma() :
         }
         else
         {
-            m_max_plasma = 0;        // can't do potential (startdisk failed)
-            g_params[3]   = 0;
+            m_max_plasma = 0; // can't do potential (startdisk failed)
+            g_params[3] = 0;
             if (g_outside_method >= ColorMethod::COLOR)
             {
-                g_plot    = put_color_border;
+                g_plot = put_color_border;
             }
             else
             {
-                g_plot    = g_put_color;
+                g_plot = g_put_color;
             }
             m_get_pix = GET_COLOR;
         }
@@ -189,19 +188,19 @@ Plasma::Plasma() :
     {
         if (g_outside_method >= ColorMethod::COLOR)
         {
-            g_plot    = put_color_border;
+            g_plot = put_color_border;
         }
         else
         {
-            g_plot    = g_put_color;
+            g_plot = g_put_color;
         }
-            m_get_pix = GET_COLOR;
+        m_get_pix = GET_COLOR;
     }
     set_random_seed();
 
-    if (g_colors == 256)                     // set the (256-color) palette
+    if (g_colors == 256)      // set the (256-color) palette
     {
-        set_plasma_palette();             // skip this if < 256 colors
+        set_plasma_palette(); // skip this if < 256 colors
     }
     if (g_colors > 16)
     {
@@ -229,7 +228,7 @@ Plasma::Plasma() :
         m_p_colors = std::min(g_colors, 256);
         for (U16 &elem : m_rnd)
         {
-            elem = static_cast<U16>(1 + ((RAND15() / m_p_colors * (m_p_colors - 1)) >> (m_shift_value - 11)));
+            elem = static_cast<U16>(1 + ((random15() / m_p_colors * (m_p_colors - 1)) >> (m_shift_value - 11)));
         }
     }
     else
@@ -247,10 +246,10 @@ Plasma::Plasma() :
         }
     }
 
-    g_plot(0,      0,  m_rnd[0]);
-    g_plot(g_logical_screen.x_dots-1,      0,  m_rnd[1]);
-    g_plot(g_logical_screen.x_dots-1, g_logical_screen.y_dots-1,  m_rnd[2]);
-    g_plot(0, g_logical_screen.y_dots-1,  m_rnd[3]);
+    g_plot(0, 0, m_rnd[0]);
+    g_plot(g_logical_screen.x_dots - 1, 0, m_rnd[1]);
+    g_plot(g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1, m_rnd[2]);
+    g_plot(0, g_logical_screen.y_dots - 1, m_rnd[3]);
 
     m_recur_level = 0;
 
@@ -277,15 +276,16 @@ bool Plasma::done() const
 
 U16 Plasma::adjust(const int xa, const int ya, const int x, const int y, const int xb, const int yb, const int scale)
 {
-    S32 pseudorandom = m_i_param_x * (RAND15() - 16383);
+    S32 pseudorandom = m_i_param_x * (random15() - 16383);
     pseudorandom = pseudorandom * scale;
     pseudorandom = pseudorandom >> m_shift_value;
-    pseudorandom = ((static_cast<S32>(m_get_pix(xa, ya)) + static_cast<S32>(m_get_pix(xb, yb)) +1) >> 1)+pseudorandom;
+    pseudorandom =
+        ((static_cast<S32>(m_get_pix(xa, ya)) + static_cast<S32>(m_get_pix(xb, yb)) + 1) >> 1) + pseudorandom;
     if (m_max_plasma == 0)
     {
         if (pseudorandom >= m_p_colors)
         {
-            pseudorandom = m_p_colors-1;
+            pseudorandom = m_p_colors - 1;
         }
     }
     else if (pseudorandom >= static_cast<S32>(m_max_plasma))
@@ -362,7 +362,7 @@ void Plasma::subdivide_new(const int x1, const int y1, const int x2, const int y
 
     while (m_sub_y.top >= 1)
     {
-        while (m_sub_y.level[m_sub_y.top-1] < level)
+        while (m_sub_y.level[m_sub_y.top - 1] < level)
         {
             //     1.  Create new entry at top of the stack
             //     2.  Copy old top value to new top value.
@@ -373,13 +373,13 @@ void Plasma::subdivide_new(const int x1, const int y1, const int x2, const int y
             //            of largest and smallest
 
             m_sub_y.top++;
-            m_sub_y.value[m_sub_y.top] = m_sub_y.value[m_sub_y.top-1];
-            ny1  = m_sub_y.value[m_sub_y.top];
-            ny   = m_sub_y.value[m_sub_y.top-2];
-            m_sub_y.level[m_sub_y.top] = m_sub_y.level[m_sub_y.top-1];
-            m_sub_y.value[m_sub_y.top-1]   = (ny1 + ny) >> 1;
-            y    = m_sub_y.value[m_sub_y.top-1];
-            m_sub_y.level[m_sub_y.top-1]   = std::max(m_sub_y.level[m_sub_y.top], m_sub_y.level[m_sub_y.top - 2]) + 1;
+            m_sub_y.value[m_sub_y.top] = m_sub_y.value[m_sub_y.top - 1];
+            ny1 = m_sub_y.value[m_sub_y.top];
+            ny = m_sub_y.value[m_sub_y.top - 2];
+            m_sub_y.level[m_sub_y.top] = m_sub_y.level[m_sub_y.top - 1];
+            m_sub_y.value[m_sub_y.top - 1] = (ny1 + ny) >> 1;
+            y = m_sub_y.value[m_sub_y.top - 1];
+            m_sub_y.level[m_sub_y.top - 1] = std::max(m_sub_y.level[m_sub_y.top], m_sub_y.level[m_sub_y.top - 2]) + 1;
         }
         m_sub_x.top = 2;
         m_sub_x.value[0] = x2;
@@ -394,16 +394,17 @@ void Plasma::subdivide_new(const int x1, const int y1, const int x2, const int y
 
         while (m_sub_x.top >= 1)
         {
-            while (m_sub_x.level[m_sub_x.top-1] < level)
+            while (m_sub_x.level[m_sub_x.top - 1] < level)
             {
                 m_sub_x.top++; // move the top ofthe stack up 1
-                m_sub_x.value[m_sub_x.top] = m_sub_x.value[m_sub_x.top-1];
-                nx1  = m_sub_x.value[m_sub_x.top];
-                nx   = m_sub_x.value[m_sub_x.top-2];
-                m_sub_x.level[m_sub_x.top] = m_sub_x.level[m_sub_x.top-1];
-                m_sub_x.value[m_sub_x.top-1]   = (nx1 + nx) >> 1;
-                x    = m_sub_x.value[m_sub_x.top-1];
-                m_sub_x.level[m_sub_x.top-1]   = std::max(m_sub_x.level[m_sub_x.top], m_sub_x.level[m_sub_x.top - 2]) + 1;
+                m_sub_x.value[m_sub_x.top] = m_sub_x.value[m_sub_x.top - 1];
+                nx1 = m_sub_x.value[m_sub_x.top];
+                nx = m_sub_x.value[m_sub_x.top - 2];
+                m_sub_x.level[m_sub_x.top] = m_sub_x.level[m_sub_x.top - 1];
+                m_sub_x.value[m_sub_x.top - 1] = (nx1 + nx) >> 1;
+                x = m_sub_x.value[m_sub_x.top - 1];
+                m_sub_x.level[m_sub_x.top - 1] =
+                    std::max(m_sub_x.level[m_sub_x.top], m_sub_x.level[m_sub_x.top - 2]) + 1;
             }
 
             S32 i = m_get_pix(nx, y);
@@ -435,13 +436,13 @@ void Plasma::subdivide_new(const int x1, const int y1, const int x2, const int y
                 g_plot(x, y, static_cast<U16>((v + 2) >> 2));
             }
 
-            if (m_sub_x.level[m_sub_x.top-1] == level)
+            if (m_sub_x.level[m_sub_x.top - 1] == level)
             {
                 m_sub_x.top = m_sub_x.top - 2;
             }
         }
 
-        if (m_sub_y.level[m_sub_y.top-1] == level)
+        if (m_sub_y.level[m_sub_y.top - 1] == level)
         {
             m_sub_y.top = m_sub_y.top - 2;
         }
@@ -461,7 +462,7 @@ void Plasma::iterate()
         if (!m_done)
         {
             m_k *= 2;
-            if (m_k  > static_cast<int>(std::max(g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1)))
+            if (m_k > static_cast<int>(std::max(g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1)))
             {
                 m_done = true;
             }
