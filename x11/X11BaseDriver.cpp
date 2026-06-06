@@ -5,13 +5,21 @@
 #include "X11BaseDriver.h"
 
 #include <config/cmd_shell.h>
+#include <config/path_limits.h>
+#include <config/string_case_compare.h>
+#include <engine/Browse.h>
 #include <engine/sound.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
+#include <io/find_path.h>
+#include <io/path_match.h>
 #include <io/save_timer.h>
+#include <io/trim_filename.h>
 #include <ui/diskvid.h>
+#include <ui/full_screen_choice.h>
 #include <ui/id_keys.h>
+#include <ui/shell_sort.h>
 #include <ui/slideshw.h>
 #include <ui/stop_msg.h>
 #include <ui/text_screen.h>
@@ -21,10 +29,15 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <cstddef>
 #include <cstdio>
+#include <cstring>
+#include <filesystem>
 #include <string>
 #include <string_view>
+#include <system_error>
 #include <thread>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::ui;
@@ -40,7 +53,27 @@ namespace id::misc
 namespace
 {
 
+namespace fs = std::filesystem;
+
 constexpr std::chrono::milliseconds OUTPUT_FLUSH_INTERVAL{100};
+constexpr int MAX_NUM_FILES{2977};
+constexpr const char *NO_FILES{"*nofiles*"};
+
+enum class FilenameSpeedState
+{
+    MATCHING,
+    TEMPLATE,
+    SEARCH_PATH
+};
+
+FilenameSpeedState g_filename_speed_state{FilenameSpeedState::MATCHING};
+
+struct FileChoice
+{
+    char full_name[id::config::ID_FILE_MAX_PATH]{};
+    bool sub_dir{};
+    fs::path path;
+};
 
 bool has_graphics_mode()
 {
@@ -94,6 +127,300 @@ std::string consume_geometry_arg(int *argc, char **argv)
         ++i;
     }
     return geometry;
+}
+
+template <std::size_t N>
+void copy_cstr(char (&buffer)[N], const std::string &text)
+{
+    const std::size_t length{std::min(text.size(), N - 1)};
+    std::memcpy(buffer, text.data(), length);
+    buffer[length] = '\0';
+}
+
+bool has_wildcard(const std::string &filename)
+{
+    return filename.find_first_of("*?") != std::string::npos;
+}
+
+bool has_path_component(const std::string &filename)
+{
+    return filename.find_first_of("/\\") != std::string::npos;
+}
+
+fs::path initial_directory(const std::string &filename)
+{
+    if (filename.empty())
+    {
+        return fs::path{"."};
+    }
+
+    std::error_code err;
+    const fs::path path{filename};
+    if (fs::is_directory(path, err))
+    {
+        return path;
+    }
+    if (path.has_parent_path())
+    {
+        return path.parent_path();
+    }
+    return fs::path{"."};
+}
+
+std::string initial_filename(const std::string &filename)
+{
+    if (filename.empty())
+    {
+        return {};
+    }
+
+    std::error_code err;
+    const fs::path path{filename};
+    if (fs::is_directory(path, err))
+    {
+        return {};
+    }
+    return path.filename().string();
+}
+
+std::string initial_pattern(const char *type_wildcard)
+{
+    return type_wildcard != nullptr && type_wildcard[0] != '\0' ? type_wildcard : "*";
+}
+
+void add_file_choice(
+    std::vector<FileChoice> &choices, const std::string &name, const fs::path &path, const bool sub_dir)
+{
+    if (choices.size() >= MAX_NUM_FILES)
+    {
+        return;
+    }
+
+    choices.emplace_back();
+    FileChoice &choice{choices.back()};
+    copy_cstr(choice.full_name, name);
+    choice.sub_dir = sub_dir;
+    choice.path = path;
+}
+
+void build_file_choices(const fs::path &directory, const std::string &pattern, std::vector<FileChoice> &choices)
+{
+    choices.clear();
+    add_file_choice(choices, "..", directory / "..", true);
+
+    std::error_code err;
+    const auto match{id::io::match_fn(pattern)};
+    for (fs::directory_iterator it{directory, err}; !err && it != fs::directory_iterator{}; it.increment(err))
+    {
+        const fs::directory_entry &entry{*it};
+        const std::string name{entry.path().filename().string()};
+        std::error_code entry_err;
+        if (entry.is_directory(entry_err))
+        {
+            add_file_choice(choices, name + "/", entry.path(), true);
+        }
+        else if (!entry_err && entry.is_regular_file(entry_err) && match(entry.path().filename()))
+        {
+            add_file_choice(choices, name, entry.path(), false);
+        }
+    }
+
+    if (choices.empty())
+    {
+        add_file_choice(choices, NO_FILES, {}, false);
+    }
+}
+
+int check_file_browser_key(const int key, const int)
+{
+    if (key == ID_KEY_F4 || key == ID_KEY_F6)
+    {
+        return -key;
+    }
+    return key;
+}
+
+int filename_speed_prompt(const int row, const int col, const int vid, const char *speed_string, const int speed_match)
+{
+    const std::string speed{speed_string};
+    const char *prompt{};
+    if (has_wildcard(speed) || has_path_component(speed))
+    {
+        g_filename_speed_state = FilenameSpeedState::TEMPLATE;
+        prompt = "File Template";
+    }
+    else if (speed_match)
+    {
+        g_filename_speed_state = FilenameSpeedState::SEARCH_PATH;
+        prompt = "Search Path for";
+    }
+    else
+    {
+        g_filename_speed_state = FilenameSpeedState::MATCHING;
+        prompt = "Speed key string";
+    }
+    driver_put_string(row, col, vid, prompt);
+    return static_cast<int>(std::strlen(prompt));
+}
+
+std::vector<FileChoice *> sorted_file_choices(std::vector<FileChoice> &storage, const bool sort)
+{
+    std::vector<FileChoice *> choices;
+    choices.reserve(storage.size());
+    for (FileChoice &choice : storage)
+    {
+        choices.push_back(&choice);
+    }
+    if (sort)
+    {
+        shell_sort(choices.data(), static_cast<int>(choices.size()), sizeof(FileChoice *));
+    }
+    return choices;
+}
+
+std::string make_file_browser_heading(const char *hdg, const fs::path &directory, const std::string &pattern)
+{
+    return std::string{hdg} + "\nTemplate: " + id::io::trim_filename(directory / pattern, 66);
+}
+
+fs::path typed_template_path(const fs::path &directory, const std::string &speed_string)
+{
+    const fs::path typed{speed_string};
+    return typed.has_parent_path() ? typed : directory / typed;
+}
+
+bool choose_typed_template(
+    const std::string &speed_string, fs::path &directory, std::string &pattern, std::string &result_filename)
+{
+    const fs::path typed{typed_template_path(directory, speed_string)};
+    const std::string typed_filename{typed.filename().string()};
+    if (typed_filename.empty())
+    {
+        directory = typed.lexically_normal();
+        return true;
+    }
+
+    if (has_wildcard(typed_filename))
+    {
+        directory = typed.parent_path().empty() ? fs::path{"."} : typed.parent_path();
+        pattern = typed_filename;
+        return true;
+    }
+
+    std::error_code err;
+    if (fs::is_directory(typed, err))
+    {
+        directory = typed.lexically_normal();
+        return true;
+    }
+
+    result_filename = typed.lexically_normal().string();
+    g_browse.name = typed.filename().string();
+    return false;
+}
+
+bool choose_search_path(const fs::path &directory, const std::string &speed_string, std::string &result_filename)
+{
+    const std::string found{id::io::find_path(speed_string.c_str())};
+    fs::path selected{found.empty() ? typed_template_path(directory, speed_string) : fs::path{found}};
+    selected = selected.lexically_normal();
+    result_filename = selected.string();
+    g_browse.name = selected.filename().string();
+    return false;
+}
+
+bool choice_matches_speed(const FileChoice *choice, const std::string &speed_string)
+{
+    return speed_string.empty() ||
+        id::config::string_case_equal(speed_string.c_str(), choice->full_name, speed_string.size());
+}
+
+bool get_a_file_name(const char *hdg, const char *type_wildcard, std::string &result_filename)
+{
+    const std::string old_filename{result_filename};
+    fs::path directory{initial_directory(result_filename)};
+    std::string selected_name{initial_filename(result_filename)};
+    std::string pattern{initial_pattern(type_wildcard)};
+    bool do_sort{true};
+
+    for (;;)
+    {
+        std::vector<FileChoice> storage;
+        build_file_choices(directory, pattern, storage);
+        std::vector<FileChoice *> choices{sorted_file_choices(storage, do_sort)};
+        std::vector<const char *> labels;
+        std::vector<int> attributes(choices.size(), 1);
+        labels.reserve(choices.size());
+        for (const FileChoice *choice : choices)
+        {
+            labels.push_back(choice->full_name);
+        }
+
+        char speed_string[81]{};
+        copy_cstr(speed_string, selected_name);
+        const std::string heading{make_file_browser_heading(hdg, directory, pattern)};
+        const std::string instructions{
+            std::string{"Press F4 to toggle sort "} + (do_sort ? "off" : "on") + ", F6 for current directory"};
+        g_filename_speed_state = FilenameSpeedState::MATCHING;
+        const ChoiceFlags flags{ChoiceFlags::INSTRUCTIONS | (do_sort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED)};
+        const int choice{full_screen_choice(flags, heading.c_str(), nullptr, instructions.c_str(),
+            static_cast<int>(labels.size()), labels.data(), attributes.data(), 0, 99, 0, 0, nullptr, speed_string,
+            filename_speed_prompt, check_file_browser_key)};
+
+        if (choice == -ID_KEY_F4)
+        {
+            do_sort = !do_sort;
+            continue;
+        }
+        if (choice == -ID_KEY_F6)
+        {
+            directory = fs::path{"."};
+            selected_name.clear();
+            continue;
+        }
+        if (choice < 0)
+        {
+            result_filename = old_filename;
+            return true;
+        }
+
+        const std::string speed{speed_string};
+        const FileChoice *selected{choices[choice]};
+        if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::TEMPLATE)
+        {
+            if (choose_typed_template(speed, directory, pattern, result_filename))
+            {
+                selected_name.clear();
+                continue;
+            }
+            return false;
+        }
+        if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::SEARCH_PATH)
+        {
+            return choose_search_path(directory, speed, result_filename);
+        }
+        if (!choice_matches_speed(selected, speed))
+        {
+            return choose_search_path(directory, speed, result_filename);
+        }
+
+        if (std::strcmp(selected->full_name, NO_FILES) == 0)
+        {
+            selected_name.clear();
+            continue;
+        }
+        if (selected->sub_dir)
+        {
+            directory = selected->path.lexically_normal();
+            selected_name.clear();
+            continue;
+        }
+
+        const fs::path selected_path{selected->path.lexically_normal()};
+        result_filename = selected_path.string();
+        g_browse.name = selected_path.filename().string();
+        return false;
+    }
 }
 
 } // namespace
@@ -599,9 +926,10 @@ void X11BaseDriver::check_memory()
 }
 
 bool X11BaseDriver::get_filename(
-    const char * /*hdg*/, const char * /*type_desc*/, const char * /*type_wildcard*/, std::string & /*result_filename*/)
+    const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename)
 {
-    return true;
+    (void) type_desc;
+    return get_a_file_name(hdg, type_wildcard, result_filename);
 }
 
 X11BaseDriver::WindowLayout X11BaseDriver::get_window_layout() const
