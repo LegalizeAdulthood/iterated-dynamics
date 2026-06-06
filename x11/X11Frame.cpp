@@ -171,15 +171,20 @@ void X11Frame::handle_event(const XEvent &event)
     }
     if (event.type == ConfigureNotify && event.xconfigure.window == m_window)
     {
-        m_width = event.xconfigure.width;
-        m_height = event.xconfigure.height;
+        if (event.xconfigure.width != m_width || event.xconfigure.height != m_height)
+        {
+            XResizeWindow(m_connection.display(), m_window, m_width, m_height);
+            XFlush(m_connection.display());
+        }
     }
 }
 
 void X11Frame::set_fixed_size(const int width, const int height)
 {
     XSizeHints hints{};
-    hints.flags = PMinSize | PMaxSize | PBaseSize;
+    hints.flags = USSize | PSize | PMinSize | PMaxSize | PBaseSize;
+    hints.width = width;
+    hints.height = height;
     hints.min_width = width;
     hints.min_height = height;
     hints.max_width = width;
