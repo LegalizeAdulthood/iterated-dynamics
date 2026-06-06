@@ -72,11 +72,14 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
 #include <fstream>
+#include <memory>
 #include <sstream>
 #include <string_view>
+#include <utility>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -195,6 +198,71 @@ static fs::path home_file(const char *subdir, const char *filename)
 {
     return fs::path{ID_TEST_HOME_DIR} / subdir / filename;
 }
+
+class EnvVarSaver
+{
+public:
+    EnvVarSaver(const char *name, const char *value) :
+        m_name{name}
+    {
+        if (const char *old_value = std::getenv(name); old_value != nullptr)
+        {
+            m_had_value = true;
+            m_value = old_value;
+        }
+        set(value);
+    }
+
+    ~EnvVarSaver()
+    {
+        set(m_had_value ? m_value.c_str() : nullptr);
+    }
+
+private:
+    void set(const char *value) const
+    {
+#ifdef _WIN32
+        _putenv_s(m_name.c_str(), value == nullptr ? "" : value);
+#else
+        if (value == nullptr)
+        {
+            unsetenv(m_name.c_str());
+        }
+        else
+        {
+            setenv(m_name.c_str(), value, 1);
+        }
+#endif
+    }
+
+    std::string m_name;
+    bool m_had_value{};
+    std::string m_value;
+};
+
+class TestSpecialDirectories : public SpecialDirectories
+{
+public:
+    TestSpecialDirectories(fs::path program_dir, fs::path documents_dir) :
+        m_program_dir{std::move(program_dir)},
+        m_documents_dir{std::move(documents_dir)}
+    {
+    }
+
+    fs::path program_dir() const override
+    {
+        return m_program_dir;
+    }
+
+    fs::path documents_dir() const override
+    {
+        return m_documents_dir;
+    }
+
+private:
+    fs::path m_program_dir;
+    fs::path m_documents_dir;
+};
 
 class TestParameterCommandError : public TestParameterCommand
 {
@@ -2096,6 +2164,25 @@ TEST_F(TestParameterCommand, tempDirExisting)
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(new_dir.string(), adjust_dir(g_temp_dir.string()));
+}
+
+TEST_F(TestParameterCommand, startupUsesTmpDirWhenTmpAndTempUnset)
+{
+    fs::path temp_dir{ID_TEST_DATA_DIR};
+    temp_dir.make_preferred();
+    EnvVarSaver saved_tmp{"TMP", nullptr};
+    EnvVarSaver saved_temp{"TEMP", nullptr};
+    EnvVarSaver saved_tmp_dir{"TMPDIR", temp_dir.string().c_str()};
+    ValueSaver saved_first_init{g_first_init, true};
+    ValueSaver saved_temp_dir{g_temp_dir, fs::path{}};
+    ValueSaver saved_special_dirs{g_special_dirs,
+        std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
+    CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
+    const char *argv[]{"id"};
+
+    cmd_files(1, argv);
+
+    EXPECT_EQ(temp_dir.string(), adjust_dir(g_temp_dir.string()));
 }
 
 TEST_F(TestParameterCommand, workDirExisting)

@@ -427,6 +427,10 @@ static void init_vars_run()              // once per run init
     {
         p = getenv("TEMP");
     }
+    if (p == nullptr)
+    {
+        p = getenv("TMPDIR");
+    }
     if (p != nullptr)
     {
         if (is_a_directory(p))
@@ -434,9 +438,9 @@ static void init_vars_run()              // once per run init
             g_temp_dir = p;
         }
     }
-    else
+    if (g_temp_dir.empty())
     {
-        g_temp_dir.clear();
+        g_temp_dir = fs::temp_directory_path();
     }
 }
 
