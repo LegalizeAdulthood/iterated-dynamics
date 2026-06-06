@@ -4,12 +4,16 @@
 //
 #include "X11BaseDriver.h"
 
+#include <engine/calcfrac.h>
+#include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
 #include <io/save_timer.h>
+#include <ui/diskvid.h>
 #include <ui/id_keys.h>
 #include <ui/slideshw.h>
 #include <ui/text_screen.h>
+#include <ui/video.h>
 #include <ui/zoom.h>
 
 #include <algorithm>
@@ -22,6 +26,17 @@ using namespace id::ui;
 
 namespace id::misc
 {
+
+namespace
+{
+
+bool has_graphics_mode()
+{
+    return g_adapter >= 0 && g_adapter < g_video_table_len && g_video_table[g_adapter].x_dots > 0 &&
+        g_video_table[g_adapter].y_dots > 0;
+}
+
+} // namespace
 
 X11BaseDriver::X11BaseDriver(const char *name, const char *description) :
     m_name(name),
@@ -45,9 +60,12 @@ bool X11BaseDriver::init(int * /*argc*/, char ** /*argv*/)
     return m_text.init(m_frame.connection()) && m_plot.init(m_frame.connection());
 }
 
-bool X11BaseDriver::validate_mode(const VideoInfo & /*mode*/)
+bool X11BaseDriver::validate_mode(const VideoInfo &mode)
 {
-    return false;
+    int width{};
+    int height{};
+    get_max_screen(width, height);
+    return mode.x_dots <= width && mode.y_dots <= height && mode.colors == 256;
 }
 
 void X11BaseDriver::get_max_screen(int &width, int &height)
@@ -72,7 +90,20 @@ void X11BaseDriver::pause()
 
 void X11BaseDriver::resume()
 {
+    if (m_frame.window() == None)
+    {
+        create_window();
+        return;
+    }
     m_frame.resume();
+    if (m_text_not_graphics)
+    {
+        set_for_text();
+    }
+    else
+    {
+        set_for_graphics();
+    }
 }
 
 void X11BaseDriver::schedule_alarm(int /*secs*/)
@@ -81,24 +112,34 @@ void X11BaseDriver::schedule_alarm(int /*secs*/)
 
 void X11BaseDriver::create_window()
 {
-    m_frame.create_window(m_text.width(), m_text.height());
-    if (m_text.create(m_frame.window(), 0, 0))
+    const WindowLayout layout{get_window_layout()};
+    m_frame.create_window(layout.frame_width, layout.frame_height);
+    if (m_text.create(m_frame.window(), layout.text_x, layout.text_y))
     {
         m_frame.add_input_window(m_text.window());
-        m_text.show();
     }
-    if (m_plot.create(m_frame.window(), m_text.width(), m_text.height()))
+    if (m_plot.create(m_frame.window(), layout.plot_width, layout.plot_height))
     {
         m_frame.add_input_window(m_plot.window());
-        m_plot.hide();
+    }
+    center_windows(layout);
+    if (m_text_not_graphics)
+    {
+        set_for_text();
+    }
+    else
+    {
+        set_for_graphics();
     }
 }
 
 bool X11BaseDriver::resize()
 {
-    const bool resized{m_frame.resize(m_text.width(), m_text.height())};
-    m_text.set_position(0, 0);
-    return resized;
+    const WindowLayout layout{get_window_layout()};
+    const bool frame_resized{m_frame.resize(layout.frame_width, layout.frame_height)};
+    const bool plot_resized{m_plot.resize(layout.plot_width, layout.plot_height)};
+    center_windows(layout);
+    return frame_resized || plot_resized;
 }
 
 void X11BaseDriver::read_palette()
@@ -242,8 +283,33 @@ void X11BaseDriver::shell()
 {
 }
 
-void X11BaseDriver::set_video_mode(const VideoInfo & /*mode*/)
+void X11BaseDriver::set_video_mode(const VideoInfo &mode)
 {
+    assert(g_video_table[g_adapter].x_dots == mode.x_dots);
+    assert(g_video_table[g_adapter].y_dots == mode.y_dots);
+    assert(g_video_table[g_adapter].colors == mode.colors);
+    assert(g_video_table[g_adapter].driver == this);
+
+    g_is_true_color = false;
+    g_vesa_x_res = 0;
+    g_vesa_y_res = 0;
+    g_good_mode = true;
+    g_and_color = g_colors - 1;
+    g_box_count = 0;
+    g_dac_count = g_cycle_limit;
+    g_got_real_dac = true;
+    read_palette();
+
+    resize();
+    m_plot.clear();
+    if (g_disk_flag)
+    {
+        end_disk();
+    }
+    set_normal_dot();
+    set_normal_span();
+    set_for_graphics();
+    set_clear();
 }
 
 void X11BaseDriver::put_string(const int row, const int col, const int attr, const char *msg)
@@ -272,21 +338,21 @@ bool X11BaseDriver::is_text()
 void X11BaseDriver::set_for_text()
 {
     m_text_not_graphics = true;
+    m_plot.hide();
     m_text.show();
 }
 
 void X11BaseDriver::set_for_graphics()
 {
     m_text_not_graphics = false;
-    m_text.show();
     hide_text_cursor();
+    m_text.hide();
+    m_plot.show();
 }
 
 void X11BaseDriver::set_clear()
 {
-    const bool text_mapped{m_text.is_mapped()};
-    const bool plot_mapped{m_plot.is_mapped()};
-    if (m_text_not_graphics || (text_mapped && !plot_mapped))
+    if (m_text_not_graphics)
     {
         m_text.clear();
     }
@@ -455,6 +521,28 @@ bool X11BaseDriver::get_filename(
     const char * /*hdg*/, const char * /*type_desc*/, const char * /*type_wildcard*/, std::string & /*result_filename*/)
 {
     return false;
+}
+
+X11BaseDriver::WindowLayout X11BaseDriver::get_window_layout() const
+{
+    WindowLayout result{};
+    const int text_width{m_text.width()};
+    const int text_height{m_text.height()};
+    result.plot_width = has_graphics_mode() ? g_video_table[g_adapter].x_dots : text_width;
+    result.plot_height = has_graphics_mode() ? g_video_table[g_adapter].y_dots : text_height;
+    result.frame_width = std::max(text_width, result.plot_width);
+    result.frame_height = std::max(text_height, result.plot_height);
+    result.text_x = (result.frame_width - text_width) / 2;
+    result.text_y = (result.frame_height - text_height) / 2;
+    result.plot_x = (result.frame_width - result.plot_width) / 2;
+    result.plot_y = (result.frame_height - result.plot_height) / 2;
+    return result;
+}
+
+void X11BaseDriver::center_windows(const WindowLayout &layout)
+{
+    m_text.set_position(layout.text_x, layout.text_y);
+    m_plot.set_position(layout.plot_x, layout.plot_y);
 }
 
 } // namespace id::misc

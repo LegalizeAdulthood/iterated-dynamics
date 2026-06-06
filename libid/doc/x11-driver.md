@@ -63,32 +63,7 @@ Use RAII wrappers for Xlib handles where practical. Xlib itself is C, but
 ownership must still be explicit: `Display *`, `Window`, `GC`, `XImage`,
 `Pixmap`, `XFontStruct *`, atoms, and allocated memory all need one clear owner.
 
-## Slice 1: Text/Graphics Switching and Mode Setup
-
-Goal: make `X11Driver` comparable to `GDIDriver`.
-
-Work:
-
-- Add `X11Driver : public X11BaseDriver` with driver name `"x11"` and
-  description `"X11"`.
-- Add the same built-in 256-color modes as `GDIDriver`, filtered by
-  `get_max_screen()`.
-- Implement `create_window()` to create the frame, text child, and plot child,
-  then center the smaller child when text and graphics sizes differ.
-- Implement `resize()` using the current `g_video_table[g_adapter]` dimensions
-  and text max size.
-- Implement `set_for_text()`, `set_for_graphics()`, `is_text()`, and
-  `set_clear()` by mapping/unmapping or raising/hiding the child windows.
-- Implement `set_video_mode()` with the same global setup as GDI/wx:
-  `g_is_true_color`, `g_good_mode`, `g_and_color`, DAC state, disk end,
-  `set_normal_dot()`, `set_normal_span()`, graphics switch, and clear.
-
-Review boundary:
-
-- The driver can start, choose a mode, switch between text and graphics, and
-  return to graphics after stacked text screens.
-
-## Slice 2: Mouse Handling
+## Slice 1: Mouse Handling
 
 Goal: feed mouse movement and buttons into the existing UI mouse notification
 paths.
@@ -111,7 +86,7 @@ Review boundary:
 - Mouse zoom workflows work in graphics mode.
 - `get_cursor_pos()` reports the latest pointer location.
 
-## Slice 3: Platform Services
+## Slice 2: Platform Services
 
 Goal: finish the non-rendering `Driver` surface.
 
@@ -136,7 +111,7 @@ Review boundary:
 - All pure virtual `Driver` methods are implemented.
 - No toolkit dependency is introduced.
 
-## Slice 4: End-to-End Validation
+## Slice 3: End-to-End Validation
 
 Goal: harden behavior against real X servers and CI constraints.
 

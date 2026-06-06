@@ -97,6 +97,21 @@ protected:
         int col{};
     };
 
+    struct WindowLayout
+    {
+        int frame_width{};
+        int frame_height{};
+        int text_x{};
+        int text_y{};
+        int plot_x{};
+        int plot_y{};
+        int plot_width{};
+        int plot_height{};
+    };
+
+    WindowLayout get_window_layout() const;
+    void center_windows(const WindowLayout &layout);
+
     X11Frame m_frame;
     X11Text m_text;
     X11Plot m_plot;
