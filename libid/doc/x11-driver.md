@@ -63,33 +63,7 @@ Use RAII wrappers for Xlib handles where practical. Xlib itself is C, but
 ownership must still be explicit: `Display *`, `Window`, `GC`, `XImage`,
 `Pixmap`, `XFontStruct *`, atoms, and allocated memory all need one clear owner.
 
-## Slice 2: Event Pump, Key Queue, and Timers
-
-Goal: make the raw Xlib message loop match the blocking/nonblocking behavior
-expected by `Driver::get_key()`, `key_pressed()`, and `wait_key_pressed()`.
-
-Work:
-
-- Implement `X11Frame::pump_messages(bool wait)` using `XPending()`,
-  `XNextEvent()`, and a wait strategy based on the X connection file
-  descriptor from `ConnectionNumber(display)`.
-- Use `poll()` or `select()` for blocking waits so timers and keyboard timeouts
-  can wake without busy loops.
-- Add a fixed-size key queue equivalent to `Frame::KEY_BUF_MAX`.
-- Implement `set_keyboard_timeout(ms)` as a deadline in the event pump rather
-  than an X server timer.
-- Port the `Win32BaseDriver`/`WxBaseDriver` input-buffer pattern into
-  `X11BaseDriver`: one-key `m_key_buffer`, auto-save fake key, and
-  `handle_special_keys()`.
-- Implement `delay(ms)` by pumping pending X events, then sleeping.
-
-Review boundary:
-
-- A temporary key-debug path can prove nonblocking poll, blocking wait, timeout,
-  and close-window behavior.
-- No text or graphics logic is required for this slice.
-
-## Slice 3: X11 Key Translation
+## Slice 1: X11 Key Translation
 
 Goal: translate X11 `KeyPress` events into the same values used by Win32 and
 wx.
@@ -114,7 +88,7 @@ Review boundary:
   keys, Ctrl combinations, Shift+Tab, and Alt shortcuts.
 - The event pump remains toolkit-free.
 
-## Slice 4: Text Screen Model
+## Slice 2: Text Screen Model
 
 Goal: implement the 80x25 text buffer independent of X drawing details.
 
@@ -135,7 +109,7 @@ Review boundary:
   save/restore, and char/attribute packing.
 - No X drawing is required for this slice.
 
-## Slice 5: X11 Text Rendering
+## Slice 3: X11 Text Rendering
 
 Goal: draw the text screen into an X11 child window.
 
@@ -160,7 +134,7 @@ Review boundary:
 - Text stack/unstack restores content and cursor position.
 - Graphics mode is still allowed to be absent or hidden.
 
-## Slice 6: Graphics Backing Store
+## Slice 4: Graphics Backing Store
 
 Goal: implement the indexed graphics pixel buffer without palette cycling yet.
 
@@ -188,7 +162,7 @@ Review boundary:
 - `read_pixel()` returns the last written indexed color.
 - `save_graphics()` and `restore_graphics()` round-trip the indexed buffer.
 
-## Slice 7: Palette and Graphics Text
+## Slice 5: Palette and Graphics Text
 
 Goal: match GDI palette behavior closely enough for palette cycling and labels.
 
@@ -209,7 +183,7 @@ Review boundary:
 - Palette cycling visibly updates existing pixels.
 - Graphics labels survive expose and save/restore.
 
-## Slice 8: Text/Graphics Switching and Mode Setup
+## Slice 6: Text/Graphics Switching and Mode Setup
 
 Goal: make `X11Driver` comparable to `GDIDriver`.
 
@@ -234,7 +208,7 @@ Review boundary:
 - The driver can start, choose a mode, switch between text and graphics, and
   return to graphics after stacked text screens.
 
-## Slice 9: Mouse Handling
+## Slice 7: Mouse Handling
 
 Goal: feed mouse movement and buttons into the existing UI mouse notification
 paths.
@@ -257,7 +231,7 @@ Review boundary:
 - Mouse zoom workflows work in graphics mode.
 - `get_cursor_pos()` reports the latest pointer location.
 
-## Slice 10: Platform Services
+## Slice 8: Platform Services
 
 Goal: finish the non-rendering `Driver` surface.
 
@@ -282,7 +256,7 @@ Review boundary:
 - All pure virtual `Driver` methods are implemented.
 - No toolkit dependency is introduced.
 
-## Slice 11: End-to-End Validation
+## Slice 9: End-to-End Validation
 
 Goal: harden behavior against real X servers and CI constraints.
 

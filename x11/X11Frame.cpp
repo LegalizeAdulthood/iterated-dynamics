@@ -6,6 +6,13 @@
 
 #include <X11/Xutil.h>
 
+#include <algorithm>
+#include <cassert>
+#include <cerrno>
+#include <chrono>
+#include <limits>
+#include <poll.h>
+
 namespace id::misc
 {
 
@@ -16,6 +23,12 @@ long window_event_mask()
 {
     return ExposureMask | StructureNotifyMask | KeyPressMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
         FocusChangeMask;
+}
+
+int clamp_timeout_ms(const std::chrono::steady_clock::duration duration)
+{
+    const auto ms{std::chrono::duration_cast<std::chrono::milliseconds>(duration).count()};
+    return static_cast<int>(std::clamp<long long>(ms, 0, std::numeric_limits<int>::max()));
 }
 
 } // namespace
@@ -115,19 +128,95 @@ void X11Frame::resume()
     m_mapped = true;
 }
 
-void X11Frame::pump_messages()
+void X11Frame::pump_messages(const bool wait)
 {
     if (!m_connection.is_open())
     {
         return;
     }
 
-    while (XPending(m_connection.display()) > 0)
+    m_timed_out = false;
+    Display *display = m_connection.display();
+    while (true)
     {
-        XEvent event{};
-        XNextEvent(m_connection.display(), &event);
-        handle_event(event);
+        while (XPending(display) > 0)
+        {
+            XEvent event{};
+            XNextEvent(display, &event);
+            handle_event(event);
+        }
+
+        if (!wait || m_key_press_count != 0 || m_timed_out)
+        {
+            return;
+        }
+
+        int timeout_ms = -1;
+        if (m_keyboard_timeout_active)
+        {
+            const auto now{std::chrono::steady_clock::now()};
+            if (now >= m_keyboard_deadline)
+            {
+                m_timed_out = true;
+                m_keyboard_deadline = now + m_keyboard_timeout_interval;
+                return;
+            }
+            timeout_ms = clamp_timeout_ms(m_keyboard_deadline - now);
+        }
+
+        pollfd descriptor{ConnectionNumber(display), POLLIN, 0};
+        const int result = poll(&descriptor, 1, timeout_ms);
+        if (result < 0)
+        {
+            if (errno == EINTR)
+            {
+                continue;
+            }
+            return;
+        }
+        if (result == 0)
+        {
+            m_timed_out = true;
+            m_keyboard_deadline = std::chrono::steady_clock::now() + m_keyboard_timeout_interval;
+            return;
+        }
+        if ((descriptor.revents & (POLLERR | POLLHUP | POLLNVAL)) != 0)
+        {
+            ui::goodbye();
+            return;
+        }
     }
+}
+
+int X11Frame::get_key_press(const bool wait)
+{
+    pump_messages(wait);
+    if (wait && m_timed_out)
+    {
+        return 0;
+    }
+
+    if (m_key_press_count == 0)
+    {
+        assert(!wait);
+        return 0;
+    }
+
+    const int key{m_key_press_buffer[m_key_press_tail]};
+    if (++m_key_press_tail >= KEY_BUF_MAX)
+    {
+        m_key_press_tail = 0;
+    }
+    --m_key_press_count;
+    return key;
+}
+
+void X11Frame::set_keyboard_timeout(const int ms)
+{
+    m_timed_out = false;
+    m_keyboard_timeout_active = true;
+    m_keyboard_timeout_interval = std::chrono::milliseconds(std::max(ms, 1));
+    m_keyboard_deadline = std::chrono::steady_clock::now() + m_keyboard_timeout_interval;
 }
 
 void X11Frame::get_max_screen(int &width, int &height) const
@@ -142,6 +231,22 @@ void X11Frame::get_max_screen(int &width, int &height) const
     Display *display = m_connection.display();
     width = DisplayWidth(display, m_connection.screen());
     height = DisplayHeight(display, m_connection.screen());
+}
+
+void X11Frame::add_key_press(const unsigned int key)
+{
+    if (key_buffer_full())
+    {
+        assert(m_key_press_count < KEY_BUF_MAX);
+        return;
+    }
+
+    m_key_press_buffer[m_key_press_head] = key;
+    if (++m_key_press_head >= KEY_BUF_MAX)
+    {
+        m_key_press_head = 0;
+    }
+    ++m_key_press_count;
 }
 
 void X11Frame::destroy_window()
@@ -164,6 +269,10 @@ void X11Frame::handle_event(const XEvent &event)
     {
         ui::goodbye();
     }
+    if (event.type == KeyPress && event.xkey.window == m_window)
+    {
+        handle_key_press(event.xkey);
+    }
     if (event.type == DestroyNotify && event.xdestroywindow.window == m_window)
     {
         m_window = None;
@@ -176,6 +285,17 @@ void X11Frame::handle_event(const XEvent &event)
             XResizeWindow(m_connection.display(), m_window, m_width, m_height);
             XFlush(m_connection.display());
         }
+    }
+}
+
+void X11Frame::handle_key_press(XKeyEvent event)
+{
+    char text[8]{};
+    KeySym key_symbol{};
+    const int text_length = XLookupString(&event, text, sizeof(text), &key_symbol, nullptr);
+    if (text_length == 1)
+    {
+        add_key_press(static_cast<unsigned char>(text[0]));
     }
 }
 
