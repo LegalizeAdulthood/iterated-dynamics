@@ -32,14 +32,10 @@ Run from `home` after a Linux build:
 
 Validate these workflows on a real X server:
 
-- startup and shutdown
-- default video mode selection
 - text menu rendering and centering
 - help display and escape handling
 - stacked text overlays and `<Delete>` text-screen clearing
 - keyboard menu navigation and interrupt keys
-- graphics rendering after video mode selection
-- repaint after image completion without forcing an expose event
 - palette cycling
 - mouse zoom and double-click handling
 - expose redraw after covering and uncovering the window

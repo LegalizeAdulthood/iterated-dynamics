@@ -119,9 +119,11 @@ protected:
     int m_key_buffer{};
     std::vector<X11Screen> m_saved_screens;
     std::vector<TextLocation> m_saved_cursor;
+    std::vector<bool> m_saved_text_state;
     TextLocation m_cursor;
     bool m_cursor_shown{};
     bool m_text_not_graphics{true};
+    bool m_have_graphics_mode{};
 
 private:
     void flush_output();

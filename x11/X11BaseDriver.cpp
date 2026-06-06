@@ -466,6 +466,8 @@ void X11BaseDriver::terminate()
 {
     m_saved_screens.clear();
     m_saved_cursor.clear();
+    m_saved_text_state.clear();
+    m_have_graphics_mode = false;
     m_plot.destroy();
     m_text.destroy();
     m_frame.set_event_handler({});
@@ -702,6 +704,7 @@ void X11BaseDriver::set_video_mode(const VideoInfo &mode)
     g_got_real_dac = true;
     read_palette();
 
+    m_have_graphics_mode = true;
     resize();
     m_plot.clear();
     if (g_disk_flag)
@@ -812,10 +815,8 @@ void X11BaseDriver::scroll_up(const int top, const int bot)
 
 void X11BaseDriver::stack_screen()
 {
-    if (m_saved_screens.empty())
-    {
-        set_for_text();
-    }
+    m_saved_text_state.push_back(m_text_not_graphics);
+    set_for_text();
     m_saved_cursor.push_back(TextLocation{g_text_row, g_text_col});
     m_saved_screens.push_back(m_text.get_screen());
     set_clear();
@@ -824,17 +825,22 @@ void X11BaseDriver::stack_screen()
 void X11BaseDriver::unstack_screen()
 {
     assert(!m_saved_cursor.empty());
+    assert(!m_saved_screens.empty());
+    assert(!m_saved_text_state.empty());
+    const bool restore_text{m_saved_text_state.back()};
+    m_saved_text_state.pop_back();
     const TextLocation packed{m_saved_cursor.back()};
     m_saved_cursor.pop_back();
     g_text_row = packed.row;
     g_text_col = packed.col;
-    if (!m_saved_screens.empty())
+    m_text.set_screen(m_saved_screens.back());
+    m_saved_screens.pop_back();
+    move_cursor(-1, -1);
+    if (restore_text)
     {
-        m_text.set_screen(m_saved_screens.back());
-        m_saved_screens.pop_back();
-        move_cursor(-1, -1);
+        set_for_text();
     }
-    if (m_saved_screens.empty())
+    else
     {
         set_for_graphics();
     }
@@ -844,12 +850,20 @@ void X11BaseDriver::discard_screen()
 {
     if (!m_saved_screens.empty())
     {
+        assert(!m_saved_cursor.empty());
+        assert(!m_saved_text_state.empty());
+        const bool restore_text{m_saved_text_state.back()};
         m_saved_screens.pop_back();
         m_saved_cursor.pop_back();
-    }
-    if (m_saved_screens.empty())
-    {
-        set_for_graphics();
+        m_saved_text_state.pop_back();
+        if (restore_text)
+        {
+            set_for_text();
+        }
+        else
+        {
+            set_for_graphics();
+        }
     }
 }
 
@@ -944,8 +958,9 @@ X11BaseDriver::WindowLayout X11BaseDriver::get_window_layout() const
     WindowLayout result{};
     const int text_width{m_text.width()};
     const int text_height{m_text.height()};
-    result.plot_width = has_graphics_mode() ? g_video_table[g_adapter].x_dots : text_width;
-    result.plot_height = has_graphics_mode() ? g_video_table[g_adapter].y_dots : text_height;
+    const bool graphics_mode{m_have_graphics_mode && has_graphics_mode()};
+    result.plot_width = graphics_mode ? g_video_table[g_adapter].x_dots : text_width;
+    result.plot_height = graphics_mode ? g_video_table[g_adapter].y_dots : text_height;
     result.frame_width = std::max(text_width, result.plot_width);
     result.frame_height = std::max(text_height, result.plot_height);
     result.text_x = (result.frame_width - text_width) / 2;
