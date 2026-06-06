@@ -160,10 +160,12 @@ jobs:
       matrix:
         preset: [ debug, release ]
         # macos-latest is disabled for now
-        os: [ windows-latest ]
+        os: [ ubuntu-latest, windows-latest ]
         include:
           #- os: macos-latest
           #  nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
+          - os: ubuntu-latest
+            nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
           - os: windows-latest
             nuget: nuget
 
@@ -193,7 +195,7 @@ jobs:
         echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
         sudo dpkg-reconfigure man-db
         sudo apt-get update
-        sudo apt-get install --no-install-recommends -y mono-complete
+        sudo apt-get install --no-install-recommends -y mono-complete xauth xvfb
 
     #- name: Install Prerequisites macOS
     #  if: ${{matrix.os == 'macos-latest'}}
@@ -220,7 +222,14 @@ jobs:
       with:
         cmake-version: '3.31'
 
+    - name: Run Workflow Linux
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      env:
+        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+      run: xvfb-run -a cmake --workflow --preset ci-${{matrix.preset}}
+
     - name: Run Workflow
+      if: ${{matrix.os != 'ubuntu-latest'}}
       env: 
         VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
       run: cmake --workflow --preset ci-${{matrix.preset}}
