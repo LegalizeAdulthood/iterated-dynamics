@@ -134,6 +134,36 @@ std::optional<X11WindowPosition> load_window_position(Display *display, const in
     return position;
 }
 
+std::optional<X11WindowPosition> parse_geometry_position(
+    const std::string &geometry, Display *display, const int screen, const int width, const int height)
+{
+    if (geometry.empty())
+    {
+        return {};
+    }
+
+    int x{};
+    int y{};
+    unsigned int geometry_width{};
+    unsigned int geometry_height{};
+    const int mask{XParseGeometry(geometry.c_str(), &x, &y, &geometry_width, &geometry_height)};
+    if ((mask & (XValue | YValue)) == 0)
+    {
+        return {};
+    }
+
+    X11WindowPosition position{};
+    if ((mask & XValue) != 0)
+    {
+        position.x = (mask & XNegative) != 0 ? DisplayWidth(display, screen) - width + x : x;
+    }
+    if ((mask & YValue) != 0)
+    {
+        position.y = (mask & YNegative) != 0 ? DisplayHeight(display, screen) - height + y : y;
+    }
+    return position;
+}
+
 void set_size_hints(Display *display, const Window window, const int width, const int height,
     const std::optional<X11WindowPosition> &position)
 {
@@ -397,6 +427,11 @@ void X11Frame::terminate()
     m_connection.close();
 }
 
+void X11Frame::set_geometry(std::string geometry)
+{
+    m_geometry = std::move(geometry);
+}
+
 void X11Frame::create_window(const int width, const int height)
 {
     if (!m_connection.is_open())
@@ -417,7 +452,12 @@ void X11Frame::create_window(const int width, const int height)
     attributes.colormap = m_connection.colormap();
     attributes.event_mask = window_event_mask();
 
-    const std::optional<X11WindowPosition> position{load_window_position(display, m_connection.screen())};
+    std::optional<X11WindowPosition> position{
+        parse_geometry_position(m_geometry, display, m_connection.screen(), width, height)};
+    if (!position)
+    {
+        position = load_window_position(display, m_connection.screen());
+    }
     const int x{position ? position->x : 0};
     const int y{position ? position->y : 0};
     m_window = XCreateWindow(display, m_connection.root_window(), x, y, width, height, 0, m_connection.depth(),

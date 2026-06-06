@@ -20,6 +20,7 @@ public:
 
     bool init(const char *title);
     void terminate();
+    void set_geometry(std::string geometry);
     void create_window(int width, int height);
     bool resize(int width, int height);
     void pause();
@@ -65,6 +66,7 @@ private:
     X11Connection m_connection;
     Window m_window{};
     std::string m_title;
+    std::string m_geometry;
     int m_width{};
     int m_height{};
     bool m_mapped{};

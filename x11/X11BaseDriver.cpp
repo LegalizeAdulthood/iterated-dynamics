@@ -23,6 +23,7 @@
 #include <chrono>
 #include <cstdio>
 #include <string>
+#include <string_view>
 #include <thread>
 
 using namespace id::engine;
@@ -47,6 +48,54 @@ bool has_graphics_mode()
         g_video_table[g_adapter].y_dots > 0;
 }
 
+void remove_args(int *argc, char **argv, const int first, const int count)
+{
+    for (int i{first}; i + count <= *argc; ++i)
+    {
+        argv[i] = argv[i + count];
+    }
+    *argc -= count;
+}
+
+std::string consume_geometry_arg(int *argc, char **argv)
+{
+    std::string geometry;
+    for (int i{1}; i < *argc;)
+    {
+        const std::string_view arg{argv[i]};
+        if (arg == "-geometry" || arg == "--geometry" || arg == "-g")
+        {
+            if (i + 1 < *argc)
+            {
+                geometry = argv[i + 1];
+                remove_args(argc, argv, i, 2);
+            }
+            else
+            {
+                remove_args(argc, argv, i, 1);
+            }
+            continue;
+        }
+
+        constexpr std::string_view GEOMETRY_OPTION{"-geometry="};
+        constexpr std::string_view GEOMETRY_LONG_OPTION{"--geometry="};
+        if (arg.rfind(GEOMETRY_OPTION, 0) == 0)
+        {
+            geometry = std::string{arg.substr(GEOMETRY_OPTION.size())};
+            remove_args(argc, argv, i, 1);
+            continue;
+        }
+        if (arg.rfind(GEOMETRY_LONG_OPTION, 0) == 0)
+        {
+            geometry = std::string{arg.substr(GEOMETRY_LONG_OPTION.size())};
+            remove_args(argc, argv, i, 1);
+            continue;
+        }
+        ++i;
+    }
+    return geometry;
+}
+
 } // namespace
 
 X11BaseDriver::X11BaseDriver(const char *name, const char *description) :
@@ -55,12 +104,13 @@ X11BaseDriver::X11BaseDriver(const char *name, const char *description) :
 {
 }
 
-bool X11BaseDriver::init(int * /*argc*/, char ** /*argv*/)
+bool X11BaseDriver::init(int *argc, char **argv)
 {
     if (!m_frame.init("Iterated Dynamics"))
     {
         return false;
     }
+    m_frame.set_geometry(consume_geometry_arg(argc, argv));
 
     m_frame.set_event_handler(
         [this](const XEvent &event)
