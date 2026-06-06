@@ -1,120 +1,63 @@
-# Plan: Raw X11 Driver
+# X11 Driver
 
-## Goal
+The raw X11 driver is the non-wx Linux GUI path.  It is implemented
+directly on Xlib, keeps Xlib headers out of the shared `Driver` surface,
+and mirrors the Win32 GDI driver split:
 
-Add a Linux driver implemented directly on libX11/Xlib, comparable to the
-Win32 GDI driver, without GTK, wxWidgets, SDL, Qt, or another GUI toolkit.
+- `X11Driver` registers 256-color video modes.
+- `X11BaseDriver` owns driver-level behavior and text/graphics switching.
+- `X11Frame` owns the top-level window, event pump, keyboard queue, mouse
+  notifications, focus, close handling, and fixed client sizing.
+- `X11Text` draws 80x25 CGA-style text screens.
+- `X11Plot` stores one byte per image pixel and expands indexed pixels to
+  the X server visual during flush.
 
-The target is a normal `Driver` implementation that supports the same user
-visible responsibilities as `GDIDriver`:
+## Build
 
-- 256-color graphics modes backed by the existing indexed pixel model.
-- 80x25 text screens for menus, prompts, help, and stacked text overlays.
-- Keyboard and mouse input translated into the existing `ID_KEY_*` and
-  mouse notification paths.
-- Text/graphics switching, palette cycling, save/restore graphics,
-  flushing, resize handling, pause/resume, shell, and file selection
-  fallback behavior.
-- Driver registration through `driver_types.h` and `init_drivers()`.
+On Linux, configure with `ID_USE_WX=OFF`.  When X11 is found, CMake builds
+the `x11/` executable and links the raw X11 `os` library.  `ID_USE_WX=ON`
+continues to select the wxWidgets path, and Windows continues to use GDI.
 
-## Non-Goals
+The driver assumes a modern TrueColor visual.  It does not require an
+8-bit PseudoColor visual; the application-owned 8-bit buffer remains the
+source image, and `X11Plot` maps palette entries to server pixels.
 
-- Do not build a GTK or wxWidgets integration.
-- Do not replace the existing wx driver.
-- Do not change fractal rendering code, `Driver`, or global video semantics
-  unless an X11 requirement exposes a narrow bug.
-- Do not assume an 8-bit PseudoColor visual exists. Modern TrueColor
-  visuals are the baseline: keep the application-owned 8-bit buffer and
-  expand it to the X server pixel format during flush.
+## Manual Validation
 
-## Current GDI Shape To Mirror
+Run from `home` after a Linux build:
 
-The Win32 implementation is split into four roles:
+```sh
+../../build-rt-default/x11/Release/id
+```
 
-- `GDIDriver` registers modes, switches between text and graphics, owns
-  the `Plot` surface, and delegates common driver behavior to
-  `Win32BaseDriver`.
-- `Win32BaseDriver` owns driver-level behavior: input buffering,
-  auto-save fake keys, `handle_special_keys()`, shell, text screen stack,
-  cursor, delay, debug text, memory check, file dialog, sound stubs, and
-  common video-mode setup.
-- `Frame` owns the top-level window, message pump, keyboard queue, mouse
-  notifications, timer timeouts, focus, and fixed client sizing.
-- `WinText` and `Plot` own the two child surfaces. `WinText` draws the
-  80x25 CGA-style text buffer, while `Plot` stores one byte per image
-  pixel and uses the palette when repainting.
+Validate these workflows on a real X server:
 
-The X11 driver should keep the same separation. That lets each slice land
-with small reviews and keeps platform-specific Xlib code out of the shared
-engine.
+- startup and shutdown
+- default video mode selection
+- text menu rendering and centering
+- help display and escape handling
+- stacked text overlays and `<Delete>` text-screen clearing
+- keyboard menu navigation and interrupt keys
+- graphics rendering after video mode selection
+- repaint after image completion without forcing an expose event
+- palette cycling
+- mouse zoom and double-click handling
+- expose redraw after covering and uncovering the window
+- fixed-size behavior when the window manager tries to resize the window
+- resize after mode changes
+- command shell return to the X11 application
 
-## Target File Layout
+Use `Xvfb` only as a smoke environment unless the event loop is made
+deterministic enough for reliable automated GUI assertions.
 
-Create a new top-level `x11/` directory, parallel to `win32/` and `wx/`:
+## Current Limitations
 
-- `x11/CMakeLists.txt`
-- `x11/X11Connection.h`, `x11/X11Connection.cpp`
-- `x11/X11Frame.h`, `x11/X11Frame.cpp`
-- `x11/X11Text.h`, `x11/X11Text.cpp`
-- `x11/X11Plot.h`, `x11/X11Plot.cpp`
-- `x11/X11BaseDriver.h`, `x11/X11BaseDriver.cpp`
-- `x11/X11Driver.cpp`
-- `x11/x11_main.cpp`
-- `x11/X11SpecialDirectories.cpp`
-
-Use RAII wrappers for Xlib handles where practical. Xlib itself is C, but
-ownership must still be explicit: `Display *`, `Window`, `GC`, `XImage`,
-`Pixmap`, `XFontStruct *`, atoms, and allocated memory all need one clear
-owner.
-
-## Slice 1: End-to-End Validation
-
-Goal: harden behavior against real X servers and CI constraints.
-
-Work:
-
-- Build with `ID_USE_WX=OFF` on Linux.
-- Run unit tests that do not require a display.
-- Run the executable manually under a real X server and under `Xvfb` when
-  available.
-- Validate:
-  - startup and shutdown
-  - default video mode selection
-  - text menu rendering
-  - graphics rendering
-  - palette cycling
-  - keyboard navigation and interrupt keys
-  - mouse zoom
-  - expose redraw after covering/uncovering the window
-  - resize after mode changes
-  - pause/resume when switching drivers, if more than one driver is present
-- Add a minimal smoke-test hook only after the event loop is deterministic
-  enough to avoid flaky CI behavior.
-
-Review boundary:
-
-- The Linux X11 driver is usable as the non-wx GUI path.
-- Known limitations are documented in the same file or a follow-up issue.
-
-## Implementation Notes
-
-- Keep all Xlib headers out of `libid/include/misc/Driver.h`.
-- Prefer small pure helpers for key mapping, color conversion,
-  dirty-rectangle merging, and text buffer operations so most behavior is
-  testable without an X server.
-- Xlib is not thread-safe by default. Keep all X calls on the main UI
-  thread and do not introduce background flushing.
-- Call `XFlush()` only when needed. The driver already has a `flush()`
-  contract; use that as the main rendering boundary.
-- Be careful with `XImage` ownership. If `XDestroyImage()` would free
-  memory owned by a `std::vector`, clear `image->data` before destroy or
-  wrap the image so ownership is unambiguous.
-- For TrueColor visuals, compute server pixel values from visual masks
-  instead of assuming 24-bit RGB byte order.
-- Treat X11 PseudoColor support as optional compatibility code only if it
-  ever becomes useful. The driver must build, start, draw, and cycle
-  palettes without PseudoColor by expanding indexed pixels into the server
-  visual format.
-- Avoid copying the large 8x8 bitmap font a third time if a focused
-  extraction is acceptable during a later slice. If extraction makes the
-  review noisy, copy it first and deduplicate later.
+- File selection has no X11 dialog.  The driver returns cancel, letting
+  the existing text/browser fallback handle selection.
+- Continuous sound output is not implemented.  `buzzer()` uses `XBell()`;
+  `sound_on()`, `sound_off()`, `mute()`, and `init_fm()` are stubs.
+- No automated X11 smoke test is enabled.  Manual integration testing
+  remains the acceptance path for display, event, and window-manager
+  behavior.
+- PseudoColor visuals are optional compatibility territory and are not a
+  validation target.
