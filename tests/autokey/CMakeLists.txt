@@ -1,9 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Until the unix port is complete, we can't run end-to-end UI tests there.
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    return()
-endif()
 
 include(IdTestHome)
 
