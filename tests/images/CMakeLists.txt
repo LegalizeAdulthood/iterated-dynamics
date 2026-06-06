@@ -1,6 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
 include(IdTestHome)
+include(PlatformArgs)
 include(AddImageTest)
 
 function(add_fractal_type_image_test)
@@ -31,6 +32,7 @@ function(add_colormap_test name)
             "-DTEST_KEEP_IMAGE=${CMAKE_CURRENT_BINARY_DIR}"
             "-DMAP_FILE=${COLORMAP_TEST_MAP}"
             "-DMAP_DIR=${CMAKE_SOURCE_DIR}/home/map"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/colormap_compare_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )
@@ -86,6 +88,7 @@ function(add_make_mig_test)
             "-DCOMPONENT_IMAGE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
             "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig.gif"
             "-DTEST_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/test-make_mig.gif"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/make_mig_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )

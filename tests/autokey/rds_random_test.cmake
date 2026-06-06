@@ -16,6 +16,7 @@ if(DEBUG)
     dump_var(IMAGE_COMPARE)
     dump_var(GOLD_IMAGE)
     dump_var(DIFF_IMAGE)
+    dump_var(ID_EXTRA_ARGS)
 endif()
 
 set(STOP_MESSAGE_FILE "debug/stopmsg.txt")
@@ -26,7 +27,7 @@ file(REMOVE "${TEST_IMAGE}")
 file(REMOVE "${DIFF_IMAGE}")
 
 execute_process(
-    COMMAND "${ID}" "video=F6" "askvideo=no" "type=mandel"
+    COMMAND "${ID}" ${ID_EXTRA_ARGS} "video=F6" "askvideo=no" "type=mandel"
         "rseed=363" "savedir=." "savename=rds-random.gif" "overwrite=yes"
         "exitnoask=yes" "autokeyname=rds_random.key" "autokey=play"
     RESULT_VARIABLE ID_RESULT

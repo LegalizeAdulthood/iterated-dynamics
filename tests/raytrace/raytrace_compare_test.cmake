@@ -17,6 +17,7 @@ if(DEBUG)
     dump_var(GOLD_TRACE)
     dump_var(PARAMETERS)
     dump_var(TEST_KEEP_RAYTRACE)
+    dump_var(ID_EXTRA_ARGS)
     message(STATUS "Parameters:")
     foreach(par ${PARAMETERS})
         message(STATUS "    ${par}")
@@ -33,7 +34,7 @@ endif()
 
 set(TEST_OUTPUT "${TEST_KEEP_RAYTRACE}/${RAYTRACE_NAME}.txt")
 
-execute_process(COMMAND "${ID}" ${PARAMETERS}
+execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${PARAMETERS}
     COMMAND_ERROR_IS_FATAL ANY
     COMMAND_ECHO ${COMMAND_ECHO})
 file(RENAME "${RAYTRACE_OUTPUT}" "${TEST_OUTPUT}")

@@ -20,6 +20,7 @@ if(DEBUG)
     dump_var(TEST_KEEP_IMAGE)
     dump_var(MAP_FILE)
     dump_var(MAP_DIR)
+    dump_var(ID_EXTRA_ARGS)
     message(STATUS "Parameters:")
     foreach(par ${PARAMETERS})
         message(STATUS "    ${par}")
@@ -27,7 +28,7 @@ if(DEBUG)
 endif()
 
 file(REMOVE "image/${TEST_SAVE_IMAGE}")
-execute_process(COMMAND "${ID}" ${PARAMETERS}
+execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${PARAMETERS}
     COMMAND_ERROR_IS_FATAL ANY
     COMMAND_ECHO ${COMMAND_ECHO})
 if(NOT EXISTS "image/${TEST_SAVE_IMAGE}")

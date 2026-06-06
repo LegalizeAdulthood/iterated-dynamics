@@ -2,6 +2,7 @@
 #
 
 include(IdTestHome)
+include(PlatformArgs)
 
 id_make_test_home(makepar-mig-pieces MAKEPAR_MIG_PIECES_HOME
     IMAGES make_mig_input.gif
@@ -13,6 +14,7 @@ add_test(NAME AutoKeyTest.makepar-mig-pieces
         "-DAUTO_KEY=key/make_mig_pieces.key"
         "-DGOLD_BAT=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.bat"
         "-DGOLD_PAR=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.par"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/make_mig_pieces_test.cmake"
     WORKING_DIRECTORY "${MAKEPAR_MIG_PIECES_HOME}"
 )
@@ -28,6 +30,7 @@ add_test(NAME AutoKeyTest.3dlook-targa
         "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
         "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
         "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-3dlook-targa.tga"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/3dlook_targa_test.cmake"
     WORKING_DIRECTORY "${THREE_D_LOOK_TARGA_HOME}"
 )
@@ -42,6 +45,7 @@ add_test(NAME AutoKeyTest.rds-random
         "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
         "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-rds-random.gif"
         "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/rds-random-diff.gif"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/rds_random_test.cmake"
     WORKING_DIRECTORY "${RDS_RANDOM_HOME}"
 )

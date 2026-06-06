@@ -17,6 +17,7 @@ if(DEBUG)
     dump_var(COMPONENT_IMAGE_DIR)
     dump_var(GOLD_IMAGE)
     dump_var(TEST_IMAGE)
+    dump_var(ID_EXTRA_ARGS)
 endif()
 
 set(OUTPUT "image/fractmig.gif")
@@ -43,7 +44,7 @@ foreach(component 00 01 10 11)
     file(COPY_FILE "${COMPONENT_IMAGE}" "image/frmig_${component}.gif")
 endforeach()
 
-execute_process(COMMAND "${ID}" "batch=yes" "video=F6" "savedir=." "makemig=2/2"
+execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} "batch=yes" "video=F6" "savedir=." "makemig=2/2"
     RESULT_VARIABLE ID_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})
 if(ID_RESULT)

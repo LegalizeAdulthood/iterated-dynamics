@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
 
+include(PlatformArgs)
+
 set(RAYTRACE_TYPE_acrospin "6")
 set(RAYTRACE_TYPE_dxf "7")
 set(RAYTRACE_TYPE_mtv "4")
@@ -28,6 +30,7 @@ function(add_raytrace_test name)
             "-DGOLD_TRACE=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}.txt"
             "-DPARAMETERS=${RAYTRACE_TEST_PARAMETERS}"
             "-DTEST_KEEP_RAYTRACE=${CMAKE_CURRENT_BINARY_DIR}"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/raytrace_compare_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )

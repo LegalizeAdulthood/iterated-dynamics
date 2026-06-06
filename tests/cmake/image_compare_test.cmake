@@ -22,6 +22,7 @@ if(DEBUG)
     dump_var(TEST_KEEP_IMAGE)
     dump_var(DIFF_IMAGE)
     dump_var(IMAGE_TEST_IGNORE_COLORMAP)
+    dump_var(ID_EXTRA_ARGS)
     message(STATUS "Parameters:")
     foreach(par ${PARAMETERS})
         message(STATUS "    ${par}")
@@ -31,7 +32,7 @@ endif()
 file(MAKE_DIRECTORY "image")
 file(REMOVE "image/${TEST_SAVE_IMAGE}")
 file(REMOVE "${DIFF_IMAGE}")
-execute_process(COMMAND "${ID}" ${PARAMETERS}
+execute_process(COMMAND "${ID}" ${ID_EXTRA_ARGS} ${PARAMETERS}
     RESULT_VARIABLE ID_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})
 set(STOP_MESSAGE_FILE "debug/stopmsg.txt")

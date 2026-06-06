@@ -17,6 +17,7 @@ if(DEBUG)
     dump_var(AUTO_KEY)
     dump_var(GOLD_BAT)
     dump_var(GOLD_PAR)
+    dump_var(ID_EXTRA_ARGS)
 endif()
 
 set(STOP_MESSAGE_FILE "debug/stopmsg.txt")
@@ -29,7 +30,7 @@ file(REMOVE
     "${PAR_FILE}")
 
 execute_process(
-    COMMAND "${ID}" "${INPUT_IMAGE}" "video=F6" "askvideo=no"
+    COMMAND "${ID}" ${ID_EXTRA_ARGS} "${INPUT_IMAGE}" "video=F6" "askvideo=no"
         "savedir=." "overwrite=yes" "exitnoask=yes"
         "autokeyname=${AUTO_KEY}" "autokey=play"
     RESULT_VARIABLE ID_RESULT

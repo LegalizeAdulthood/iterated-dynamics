@@ -33,6 +33,7 @@ function(add_image_test name)
             "-DTEST_KEEP_IMAGE=${CMAKE_CURRENT_BINARY_DIR}"
             "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/${name}-diff.gif"
             "-DIMAGE_TEST_IGNORE_COLORMAP=${IMAGE_TEST_IGNORE_COLORMAP_VALUE}"
+            "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
             -P "${CMAKE_CURRENT_FUNCTION_LIST_DIR}/image_compare_test.cmake"
         WORKING_DIRECTORY "${IMAGE_TEST_WORKING_DIRECTORY}"
     )

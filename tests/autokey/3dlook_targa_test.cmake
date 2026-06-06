@@ -15,6 +15,7 @@ if(DEBUG)
     dump_var(ID)
     dump_var(IMAGE_COMPARE)
     dump_var(GOLD_IMAGE)
+    dump_var(ID_EXTRA_ARGS)
 endif()
 
 set(STOP_MESSAGE_FILE "debug/stopmsg.txt")
@@ -29,7 +30,7 @@ if(NOT EXISTS "${POT_FILE}")
 endif()
 
 execute_process(
-    COMMAND "${ID}" "video=F6" "askvideo=no" "parmfile=radar.par"
+    COMMAND "${ID}" ${ID_EXTRA_ARGS} "video=F6" "askvideo=no" "parmfile=radar.par"
         "librarydirs=." "savedir=." "overwrite=yes" "exitnoask=yes"
         "lightname=3dlook-targa" "autokeyname=3dlook_targa.key" "autokey=play"
         "@radar/3dlook"
