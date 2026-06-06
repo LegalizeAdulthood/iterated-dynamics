@@ -74,17 +74,28 @@ git submodule update
 
 CMake presets are provided to simplify building the code.
 
-## Building for Win32 on Windows
+## Building the Native Driver on Windows and Linux
 
-The Windows build supports the existing Win32 port with the `default` preset.
+The `default` preset builds the native user interface for the host
+platform.  On Windows this is the Win32 GDI driver.  On Linux this is the
+native X11 driver, which uses Xlib directly.
+
 The command
 
 ```
 cmake --workflow --preset default
 ```
 
-will configure, build and test the code in the directory `id/build-default`,
-a sibling directory to the source code in `id/iterated-dynamics`.
+will configure, build and test the code in the directory
+`id/build-default`, a sibling directory to the source code in
+`id/iterated-dynamics`.
+
+On Linux, the workflow runs GUI-based tests and needs an X server.  In a
+headless environment, run the workflow under Xvfb:
+
+```
+xvfb-run -a cmake --workflow --preset default
+```
 
 The build will first compile `hc`, the help compiler.  This generates
 the run-time help file from the help source files and an include file
@@ -103,7 +114,7 @@ will configure, build and test the code in the directory `id/build-wx`,
 a sibling directory to the source code in `id/iterated-dynamics`.
 
 Things are pretty much the same as described for the `default` preset for
-the Win32 port above, but:
+the native driver above, but:
 
 - the wxWidgets port is incomplete and largely untested
 - the image based tests are not yet working

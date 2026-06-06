@@ -1565,11 +1565,31 @@ command to re-plot it.
 ;
 ~Topic=Id on Unix
 
-This initial 1.0 release of Iterated Dynamics builds on unix, but the port
-is incomplete.  A subsequent release will restore parity of functionality
-between unix and Windows, resulting in a truly cross-platform release.
-This should also make a macOS release possible, marking the first time this
-code base has been ported to the Macintosh line of computers.
+On Linux, Id uses a native X11 driver.  The driver uses an ordinary
+TrueColor X visual and keeps Id's 256-color image buffer internally, so a
+PseudoColor display is not required.
+
+The Linux X11 driver uses the same id.cfg video mode table as the Win32
+GDI driver.  Video modes whose driver field is "gdi" are accepted by the
+X11 driver when the requested size fits on the current X screen and the
+mode uses 256 colors.  The standard video= parameter and video mode
+selection screen are available.
+
+The X11 window is fixed to the selected text or graphics size.  Window
+position is remembered in the user's XDG configuration area, and a
+standard X geometry option such as "-geometry +100+100" can be used on
+the command line to choose the initial position for a run.
+
+Keyboard menus, help, text overlays, the text-mode file browser, mouse
+zoom, double-click zoom, image rendering, palette cycling, command shell
+return, and expose redraw are implemented.  Output files use the normal
+savedir rules; on Linux the default save library follows
+XDG_DOCUMENTS_DIR or user-dirs.dirs and falls back to $HOME/Documents.
+See {File Parameters} and {Libraries}.
+
+Current Unix support is Linux/X11.  Continuous sound output is not
+implemented; the completion buzzer uses the X server bell when sound is
+enabled.  macOS and non-X11 Unix desktops are not currently supported.
 ;
 ;
 ;
