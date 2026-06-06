@@ -25,11 +25,8 @@ namespace id::misc
 namespace
 {
 
-enum
-{
-    DEFAULT_WINDOW_WIDTH = 640,
-    DEFAULT_WINDOW_HEIGHT = 480,
-};
+constexpr int DEFAULT_WINDOW_WIDTH{640};
+constexpr int DEFAULT_WINDOW_HEIGHT{480};
 
 } // namespace
 

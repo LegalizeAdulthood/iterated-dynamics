@@ -77,7 +77,7 @@ bool X11Text::init(X11Connection &connection)
         }
 
         const int text_width{XTextWidth(m_font, "W", 1)};
-        m_char_width = std::max(text_width, m_font->max_bounds.width);
+        m_char_width = std::max(text_width, static_cast<int>(m_font->max_bounds.width));
         m_char_width = std::max(m_char_width, 1);
         m_char_ascent = std::max(m_font->ascent, 1);
         m_char_descent = std::max(m_font->descent, 0);
