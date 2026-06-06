@@ -71,6 +71,7 @@ add_executable(test-id
     engine/test_get_prec_big_float.cpp
     engine/test_log_map.cpp
     engine/test_lowerize_parameter.cpp
+    engine/test_random_seed.cpp
     engine/test_resume.cpp
     fractals/test_ant.cpp
     fractals/test_check_orbit_name.cpp
