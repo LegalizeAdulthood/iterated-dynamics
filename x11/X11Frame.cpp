@@ -16,9 +16,14 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdlib>
+#include <filesystem>
+#include <fstream>
 #include <iterator>
 #include <limits>
+#include <optional>
 #include <poll.h>
+#include <string>
+#include <system_error>
 #include <utility>
 
 namespace id::misc
@@ -44,10 +49,111 @@ struct X11KeyMap
     int id_key;
 };
 
+struct X11WindowPosition
+{
+    int x{};
+    int y{};
+};
+
+constexpr const char *const WINDOW_POSITION_DIR{"iterated-dynamics"};
+constexpr const char *const WINDOW_POSITION_FILE{"x11-window.ini"};
+
 long window_event_mask()
 {
     return ExposureMask | StructureNotifyMask | KeyPressMask | PointerMotionMask | ButtonPressMask | ButtonReleaseMask |
         FocusChangeMask;
+}
+
+std::filesystem::path window_position_path()
+{
+    if (const char *config_home = std::getenv("XDG_CONFIG_HOME"); config_home != nullptr && config_home[0] != '\0')
+    {
+        return std::filesystem::path{config_home} / WINDOW_POSITION_DIR / WINDOW_POSITION_FILE;
+    }
+
+    if (const char *home = std::getenv("HOME"); home != nullptr && home[0] != '\0')
+    {
+        return std::filesystem::path{home} / ".config" / WINDOW_POSITION_DIR / WINDOW_POSITION_FILE;
+    }
+
+    return {};
+}
+
+bool read_int_value(const std::string &line, const char *key, int &value)
+{
+    const std::string prefix{std::string{key} + "="};
+    if (line.rfind(prefix, 0) != 0)
+    {
+        return false;
+    }
+
+    try
+    {
+        value = std::stoi(line.substr(prefix.size()));
+    }
+    catch (...)
+    {
+        return false;
+    }
+    return true;
+}
+
+std::optional<X11WindowPosition> load_window_position(Display *display, const int screen)
+{
+    const std::filesystem::path path{window_position_path()};
+    if (path.empty())
+    {
+        return {};
+    }
+
+    std::ifstream in{path};
+    if (!in)
+    {
+        return {};
+    }
+
+    X11WindowPosition position{};
+    bool have_x{};
+    bool have_y{};
+    for (std::string line; std::getline(in, line);)
+    {
+        have_x = read_int_value(line, "left", position.x) || have_x;
+        have_y = read_int_value(line, "top", position.y) || have_y;
+    }
+    if (!have_x || !have_y)
+    {
+        return {};
+    }
+
+    const int screen_width{DisplayWidth(display, screen)};
+    const int screen_height{DisplayHeight(display, screen)};
+    if (position.x < 0 || position.y < 0 || position.x >= screen_width || position.y >= screen_height)
+    {
+        return {};
+    }
+    return position;
+}
+
+void set_size_hints(Display *display, const Window window, const int width, const int height,
+    const std::optional<X11WindowPosition> &position)
+{
+    XSizeHints hints{};
+    hints.flags = USSize | PSize | PMinSize | PMaxSize | PBaseSize;
+    hints.width = width;
+    hints.height = height;
+    hints.min_width = width;
+    hints.min_height = height;
+    hints.max_width = width;
+    hints.max_height = height;
+    hints.base_width = width;
+    hints.base_height = height;
+    if (position)
+    {
+        hints.flags |= USPosition | PPosition;
+        hints.x = position->x;
+        hints.y = position->y;
+    }
+    XSetWMNormalHints(display, window, &hints);
 }
 
 int button_flag(const unsigned int button)
@@ -311,7 +417,10 @@ void X11Frame::create_window(const int width, const int height)
     attributes.colormap = m_connection.colormap();
     attributes.event_mask = window_event_mask();
 
-    m_window = XCreateWindow(display, m_connection.root_window(), 0, 0, width, height, 0, m_connection.depth(),
+    const std::optional<X11WindowPosition> position{load_window_position(display, m_connection.screen())};
+    const int x{position ? position->x : 0};
+    const int y{position ? position->y : 0};
+    m_window = XCreateWindow(display, m_connection.root_window(), x, y, width, height, 0, m_connection.depth(),
         InputOutput, m_connection.visual(), CWBackPixel | CWBorderPixel | CWColormap | CWEventMask, &attributes);
     if (m_window == None)
     {
@@ -325,7 +434,7 @@ void X11Frame::create_window(const int width, const int height)
     XStoreName(display, m_window, m_title.c_str());
     Atom delete_window = m_connection.wm_delete_window();
     XSetWMProtocols(display, m_window, &delete_window, 1);
-    set_fixed_size(width, height);
+    set_size_hints(display, m_window, width, height, position);
     XMapWindow(display, m_window);
     XFlush(display);
     m_mapped = true;
@@ -545,6 +654,7 @@ void X11Frame::destroy_window()
         return;
     }
 
+    save_window_position();
     XDestroyWindow(m_connection.display(), m_window);
     XFlush(m_connection.display());
     m_window = None;
@@ -557,6 +667,7 @@ void X11Frame::handle_event(const XEvent &event)
     if (event.type == ClientMessage && event.xclient.window == m_window &&
         static_cast<Atom>(event.xclient.data.l[0]) == m_connection.wm_delete_window())
     {
+        save_window_position();
         ui::goodbye();
     }
     if (event.type == KeyPress && is_input_window(event.xkey.window))
@@ -756,17 +867,47 @@ bool X11Frame::is_input_window(const Window window) const
 
 void X11Frame::set_fixed_size(const int width, const int height)
 {
-    XSizeHints hints{};
-    hints.flags = USSize | PSize | PMinSize | PMaxSize | PBaseSize;
-    hints.width = width;
-    hints.height = height;
-    hints.min_width = width;
-    hints.min_height = height;
-    hints.max_width = width;
-    hints.max_height = height;
-    hints.base_width = width;
-    hints.base_height = height;
-    XSetWMNormalHints(m_connection.display(), m_window, &hints);
+    set_size_hints(m_connection.display(), m_window, width, height, {});
+}
+
+void X11Frame::save_window_position() const
+{
+    if (m_window == None)
+    {
+        return;
+    }
+
+    const std::filesystem::path path{window_position_path()};
+    if (path.empty())
+    {
+        return;
+    }
+
+    Display *display{m_connection.display()};
+    int x{};
+    int y{};
+    Window child{};
+    if (!XTranslateCoordinates(display, m_window, m_connection.root_window(), 0, 0, &x, &y, &child))
+    {
+        return;
+    }
+
+    std::error_code error;
+    std::filesystem::create_directories(path.parent_path(), error);
+    if (error)
+    {
+        return;
+    }
+
+    std::ofstream out{path};
+    if (!out)
+    {
+        return;
+    }
+    out << "left=" << x << '\n';
+    out << "top=" << y << '\n';
+    out << "screen_width=" << DisplayWidth(display, m_connection.screen()) << '\n';
+    out << "screen_height=" << DisplayHeight(display, m_connection.screen()) << '\n';
 }
 
 } // namespace id::misc

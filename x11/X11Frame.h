@@ -60,6 +60,7 @@ private:
     void ungrab_pointer(Time time);
     bool is_input_window(Window window) const;
     void set_fixed_size(int width, int height);
+    void save_window_position() const;
 
     X11Connection m_connection;
     Window m_window{};
