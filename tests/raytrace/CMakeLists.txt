@@ -16,7 +16,7 @@ function(add_raytrace_test name)
     if(RAYTRACE_TEST_UNPARSED_ARGUMENTS)
         message(FATAL_ERROR "Unknown arguments: ${RAYTRACE_TEST_UNPARSED_ARGUMENTS}")
     endif()
-    list(APPEND RAYTRACE_TEST_PARAMETERS "batch=yes" "video=F6" "3d=yes"
+    list(APPEND RAYTRACE_TEST_PARAMETERS "batch=yes" "video=F6" "sound=off" "3d=yes"
         "scalexyz=90/90" "roughness=30" "waterline=0" "filltype=2"
         "ambient=20" "rotation=60/30/0" "perspective=0" "xyshift=0/0"
         "ray=${RAYTRACE_TYPE_${name}}"
