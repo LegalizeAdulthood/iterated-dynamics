@@ -63,28 +63,7 @@ Use RAII wrappers for Xlib handles where practical. Xlib itself is C, but
 ownership must still be explicit: `Display *`, `Window`, `GC`, `XImage`,
 `Pixmap`, `XFontStruct *`, atoms, and allocated memory all need one clear owner.
 
-## Slice 1: Palette and Graphics Text
-
-Goal: match GDI palette behavior closely enough for palette cycling and labels.
-
-Work:
-
-- Store a 256-entry application palette as RGB bytes owned by `X11Plot`.
-- Implement `read_palette()` and `write_palette()` through `g_dac_box`.
-- On `write_palette()`, update the lookup table and repaint the visible image
-  from the indexed buffer.
-- Implement `display_string()` using the same 8x8 bitmap font strategy as
-  `win32/Plot.cpp`, or extract that bitmap into a shared internal helper to
-  avoid another copy.
-- Ensure `display_string()` writes indexed pixels, not only transient X text,
-  so save/restore and expose remain correct.
-
-Review boundary:
-
-- Palette cycling visibly updates existing pixels.
-- Graphics labels survive expose and save/restore.
-
-## Slice 2: Text/Graphics Switching and Mode Setup
+## Slice 1: Text/Graphics Switching and Mode Setup
 
 Goal: make `X11Driver` comparable to `GDIDriver`.
 
@@ -109,7 +88,7 @@ Review boundary:
 - The driver can start, choose a mode, switch between text and graphics, and
   return to graphics after stacked text screens.
 
-## Slice 3: Mouse Handling
+## Slice 2: Mouse Handling
 
 Goal: feed mouse movement and buttons into the existing UI mouse notification
 paths.
@@ -132,7 +111,7 @@ Review boundary:
 - Mouse zoom workflows work in graphics mode.
 - `get_cursor_pos()` reports the latest pointer location.
 
-## Slice 4: Platform Services
+## Slice 3: Platform Services
 
 Goal: finish the non-rendering `Driver` surface.
 
@@ -157,7 +136,7 @@ Review boundary:
 - All pure virtual `Driver` methods are implemented.
 - No toolkit dependency is introduced.
 
-## Slice 5: End-to-End Validation
+## Slice 4: End-to-End Validation
 
 Goal: harden behavior against real X servers and CI constraints.
 

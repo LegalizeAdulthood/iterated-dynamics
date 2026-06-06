@@ -103,10 +103,12 @@ bool X11BaseDriver::resize()
 
 void X11BaseDriver::read_palette()
 {
+    m_plot.read_palette();
 }
 
 void X11BaseDriver::write_palette()
 {
+    m_plot.write_palette();
 }
 
 int X11BaseDriver::read_pixel(const int x, const int y)
@@ -133,8 +135,14 @@ void X11BaseDriver::draw_line(const int x1, const int y1, const int x2, const in
     id::geometry::draw_line(x1, y1, x2, y2, color);
 }
 
-void X11BaseDriver::display_string(int /*x*/, int /*y*/, int /*fg*/, int /*bg*/, const char * /*text*/)
+void X11BaseDriver::display_string(const int x, const int y, const int fg, const int bg, const char *text)
 {
+    if (g_screen_x_dots <= 0 || g_screen_y_dots <= 0)
+    {
+        return;
+    }
+    m_plot.resize(g_screen_x_dots, g_screen_y_dots);
+    m_plot.display_string(x, y, fg, bg, text);
 }
 
 void X11BaseDriver::save_graphics()

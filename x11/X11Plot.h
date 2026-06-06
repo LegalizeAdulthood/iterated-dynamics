@@ -41,9 +41,12 @@ public:
     void hide();
     void set_position(int x, int y);
     bool resize(int width, int height);
+    void read_palette();
+    void write_palette();
     void clear();
     void write_pixel(int x, int y, int color);
     int read_pixel(int x, int y) const;
+    void display_string(int x, int y, int fg, int bg, const char *text);
     void flush();
     void save_graphics();
     void restore_graphics();
@@ -53,7 +56,8 @@ public:
     int height() const;
 
 private:
-    void init_color_lookup();
+    void init_palette();
+    void update_color_lookup();
     void init_color_masks();
     unsigned long make_pixel(Byte red, Byte green, Byte blue) const;
     void mark_dirty(int left, int top, int right, int bottom);
@@ -69,6 +73,7 @@ private:
     X11ColorMask m_red_mask;
     X11ColorMask m_green_mask;
     X11ColorMask m_blue_mask;
+    std::array<std::array<Byte, 3>, 256> m_clut{};
     std::array<unsigned long, 256> m_color_lookup{};
     std::vector<Byte> m_pixels;
     std::vector<Byte> m_saved_pixels;
