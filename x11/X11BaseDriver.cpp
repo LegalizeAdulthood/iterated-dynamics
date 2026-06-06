@@ -8,6 +8,7 @@
 #include <io/save_timer.h>
 #include <ui/id_keys.h>
 #include <ui/slideshw.h>
+#include <ui/text_screen.h>
 #include <ui/zoom.h>
 
 #include <algorithm>
@@ -55,6 +56,8 @@ void X11BaseDriver::get_max_screen(int &width, int &height)
 
 void X11BaseDriver::terminate()
 {
+    m_saved_screens.clear();
+    m_saved_cursor.clear();
     m_frame.terminate();
 }
 
@@ -206,8 +209,22 @@ void X11BaseDriver::set_video_mode(const VideoInfo & /*mode*/)
 {
 }
 
-void X11BaseDriver::put_string(int /*row*/, int /*col*/, int /*attr*/, const char * /*msg*/)
+void X11BaseDriver::put_string(const int row, const int col, const int attr, const char *msg)
 {
+    if (row != -1)
+    {
+        g_text_row = row;
+    }
+    if (col != -1)
+    {
+        g_text_col = col;
+    }
+
+    const int abs_row{g_text_row_base + g_text_row};
+    const int abs_col{g_text_col_base + g_text_col};
+    assert(abs_row >= 0 && abs_row < X11_TEXT_MAX_ROW);
+    assert(abs_col >= 0 && abs_col < X11_TEXT_MAX_COL);
+    m_text.put_string(abs_col, abs_row, attr, msg, g_text_row, g_text_col);
 }
 
 bool X11BaseDriver::is_text()
@@ -225,34 +242,88 @@ void X11BaseDriver::set_for_graphics()
 
 void X11BaseDriver::set_clear()
 {
+    m_text.clear();
 }
 
-void X11BaseDriver::move_cursor(int /*row*/, int /*col*/)
+void X11BaseDriver::move_cursor(const int row, const int col)
 {
+    if (row != -1)
+    {
+        m_cursor.row = row;
+        g_text_row = row;
+    }
+    if (col != -1)
+    {
+        m_cursor.col = col;
+        g_text_col = col;
+    }
+    m_cursor_shown = true;
 }
 
 void X11BaseDriver::hide_text_cursor()
 {
+    m_cursor_shown = false;
 }
 
-void X11BaseDriver::set_attr(int /*row*/, int /*col*/, int /*attr*/, int /*count*/)
+void X11BaseDriver::set_attr(const int row, const int col, const int attr, const int count)
 {
+    if (row != -1)
+    {
+        g_text_row = row;
+    }
+    if (col != -1)
+    {
+        g_text_col = col;
+    }
+    m_text.set_attr(g_text_row_base + g_text_row, g_text_col_base + g_text_col, attr, count);
 }
 
-void X11BaseDriver::scroll_up(int /*top*/, int /*bot*/)
+void X11BaseDriver::scroll_up(const int top, const int bot)
 {
+    m_text.scroll_up(top, bot);
 }
 
 void X11BaseDriver::stack_screen()
 {
+    if (m_saved_screens.empty())
+    {
+        set_for_text();
+    }
+    m_saved_cursor.push_back(TextLocation{g_text_row, g_text_col});
+    m_saved_screens.push_back(m_text.get_screen());
+    set_clear();
 }
 
 void X11BaseDriver::unstack_screen()
 {
+    assert(!m_saved_cursor.empty());
+    const TextLocation packed{m_saved_cursor.back()};
+    m_saved_cursor.pop_back();
+    g_text_row = packed.row;
+    g_text_col = packed.col;
+    if (!m_saved_screens.empty())
+    {
+        m_text.set_screen(m_saved_screens.back());
+        m_saved_screens.pop_back();
+        move_cursor(-1, -1);
+    }
+    if (m_saved_screens.empty())
+    {
+        set_for_graphics();
+    }
 }
 
 void X11BaseDriver::discard_screen()
 {
+    if (!m_saved_screens.empty())
+    {
+        m_saved_screens.pop_back();
+        m_saved_cursor.pop_back();
+    }
+    if (m_saved_screens.empty())
+    {
+        set_for_graphics();
+    }
 }
 
 int X11BaseDriver::init_fm()
@@ -284,11 +355,12 @@ bool X11BaseDriver::is_disk() const
 
 int X11BaseDriver::get_char_attr()
 {
-    return 0;
+    return m_text.get_char_attr(g_text_row, g_text_col);
 }
 
-void X11BaseDriver::put_char_attr(int /*char_attr*/)
+void X11BaseDriver::put_char_attr(const int char_attr)
 {
+    m_text.put_char_attr(g_text_row, g_text_col, char_attr);
 }
 
 void X11BaseDriver::delay(const int ms)

@@ -18,6 +18,7 @@ add_library(os STATIC
     X11Driver.cpp
     X11Frame.h X11Frame.cpp
     X11SpecialDirectories.cpp
+    X11Text.h X11Text.cpp
 )
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})

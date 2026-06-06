@@ -5,10 +5,12 @@
 #pragma once
 
 #include "X11Frame.h"
+#include "X11Text.h"
 
 #include "misc/Driver.h"
 
 #include <string>
+#include <vector>
 
 namespace id::misc
 {
@@ -88,8 +90,19 @@ public:
         const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename) override;
 
 protected:
+    struct TextLocation
+    {
+        int row{};
+        int col{};
+    };
+
     X11Frame m_frame;
+    X11Text m_text;
     int m_key_buffer{};
+    std::vector<X11Screen> m_saved_screens;
+    std::vector<TextLocation> m_saved_cursor;
+    TextLocation m_cursor;
+    bool m_cursor_shown{};
 
 private:
     std::string m_name;
