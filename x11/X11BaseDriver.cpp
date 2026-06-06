@@ -4,6 +4,7 @@
 //
 #include "X11BaseDriver.h"
 
+#include <config/cmd_shell.h>
 #include <engine/spindac.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
@@ -11,6 +12,7 @@
 #include <ui/diskvid.h>
 #include <ui/id_keys.h>
 #include <ui/slideshw.h>
+#include <ui/stop_msg.h>
 #include <ui/text_screen.h>
 #include <ui/video.h>
 #include <ui/zoom.h>
@@ -18,6 +20,8 @@
 #include <algorithm>
 #include <cassert>
 #include <chrono>
+#include <cstdio>
+#include <string>
 #include <thread>
 
 using namespace id::engine;
@@ -288,6 +292,13 @@ void X11BaseDriver::unget_key(const int key)
 
 void X11BaseDriver::shell()
 {
+    const auto timeout{[] { driver_flush(); }};
+    if (config::cmd_shell(timeout))
+    {
+        return;
+    }
+    stop_msg("Couldn't run shell '" + config::cmd_shell_command() + "', error " +
+        std::to_string(config::get_cmd_shell_error()));
 }
 
 void X11BaseDriver::set_video_mode(const VideoInfo &mode)
@@ -464,6 +475,12 @@ int X11BaseDriver::init_fm()
 
 void X11BaseDriver::buzzer(Buzzer /*kind*/)
 {
+    if (!m_frame.connection().is_open())
+    {
+        return;
+    }
+    XBell(m_frame.connection().display(), 0);
+    XFlush(m_frame.connection().display());
 }
 
 bool X11BaseDriver::sound_on(int /*frequency*/)
@@ -511,8 +528,14 @@ void X11BaseDriver::flush()
     m_frame.pump_messages(false);
 }
 
-void X11BaseDriver::debug_text(const char * /*text*/)
+void X11BaseDriver::debug_text(const char *text)
 {
+    if (text == nullptr)
+    {
+        return;
+    }
+    std::fputs(text, stderr);
+    std::fflush(stderr);
 }
 
 void X11BaseDriver::get_cursor_pos(int &x, int &y) const
@@ -527,7 +550,7 @@ void X11BaseDriver::check_memory()
 bool X11BaseDriver::get_filename(
     const char * /*hdg*/, const char * /*type_desc*/, const char * /*type_wildcard*/, std::string & /*result_filename*/)
 {
-    return false;
+    return true;
 }
 
 X11BaseDriver::WindowLayout X11BaseDriver::get_window_layout() const

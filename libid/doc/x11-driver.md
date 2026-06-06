@@ -67,33 +67,7 @@ ownership must still be explicit: `Display *`, `Window`, `GC`, `XImage`,
 `Pixmap`, `XFontStruct *`, atoms, and allocated memory all need one clear
 owner.
 
-## Slice 1: Platform Services
-
-Goal: finish the non-rendering `Driver` surface.
-
-Work:
-
-- Implement `shell()` with the existing `cmd_shell()` helper and an X event
-  pump timeout callback.
-- Implement `debug_text()` to write to stderr or syslog-style output.
-  Keep it simple and deterministic.
-- Implement `buzzer()` with `XBell()`.
-- Keep `sound_on()`, `sound_off()`, `mute()`, and `init_fm()` as stubs
-  unless a later audio requirement appears.
-- Implement `check_memory()` as a no-op or debug assertion hook on Linux.
-- Implement `get_filename()` as a terminal fallback: preserve the current
-  path handling, but return cancel unless a simple prompt-based
-  implementation is explicitly acceptable. Do not introduce GTK just for
-  file selection.
-- Implement `X11SpecialDirectories.cpp` if the non-wx Linux executable
-  needs a platform-specific `SpecialDirectories` provider.
-
-Review boundary:
-
-- All pure virtual `Driver` methods are implemented.
-- No toolkit dependency is introduced.
-
-## Slice 2: End-to-End Validation
+## Slice 1: End-to-End Validation
 
 Goal: harden behavior against real X servers and CI constraints.
 

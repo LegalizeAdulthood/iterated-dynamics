@@ -9,9 +9,12 @@
 #include <config/cmd_shell.h>
 
 #include <cerrno>
+#include <chrono>
 #include <cstdlib>
-#include <stdlib.h>
 #include <string>
+#include <sys/wait.h>
+#include <thread>
+#include <unistd.h>
 
 namespace id::config
 {
@@ -36,18 +39,47 @@ std::string cmd_shell_command()
 bool cmd_shell(TimeoutCallback *timeout)
 {
     s_cmd_shell_error = 0;
-    if (system(nullptr) == 0)
-    {
-        // do nothing, shell is not available
-        return true;
-    }
-
-    if (system(cmd_shell_command().c_str()) == -1)
+    const std::string shell{cmd_shell_command()};
+    const pid_t child{fork()};
+    if (child < 0)
     {
         s_cmd_shell_error = errno;
         return false;
     }
-    return false;
+    if (child == 0)
+    {
+        execl(shell.c_str(), shell.c_str(), static_cast<char *>(nullptr));
+        std::_Exit(127);
+    }
+
+    int status{};
+    while (true)
+    {
+        const pid_t result{waitpid(child, &status, WNOHANG)};
+        if (result == child)
+        {
+            if (WIFEXITED(status) && WEXITSTATUS(status) == 127)
+            {
+                s_cmd_shell_error = ENOENT;
+                return false;
+            }
+            return true;
+        }
+        if (result < 0)
+        {
+            if (errno == EINTR)
+            {
+                continue;
+            }
+            s_cmd_shell_error = errno;
+            return false;
+        }
+        if (timeout != nullptr)
+        {
+            timeout();
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
 }
 
 } // namespace id::config
