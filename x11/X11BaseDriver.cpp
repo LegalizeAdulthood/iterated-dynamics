@@ -34,6 +34,8 @@ namespace id::misc
 namespace
 {
 
+constexpr std::chrono::milliseconds OUTPUT_FLUSH_INTERVAL{100};
+
 bool has_graphics_mode()
 {
     return g_adapter >= 0 && g_adapter < MAX_VIDEO_MODES && g_video_table[g_adapter].x_dots > 0 &&
@@ -238,6 +240,7 @@ int X11BaseDriver::key_cursor(const int row, const int col)
 
 int X11BaseDriver::key_pressed()
 {
+    flush_output();
     if (m_key_buffer)
     {
         return m_key_buffer;
@@ -314,6 +317,7 @@ void X11BaseDriver::set_video_mode(const VideoInfo &mode)
     set_normal_span();
     set_for_graphics();
     set_clear();
+    m_flush_started = false;
 }
 
 void X11BaseDriver::put_string(const int row, const int col, const int attr, const char *msg)
@@ -546,6 +550,24 @@ void X11BaseDriver::center_windows(const WindowLayout &layout)
 {
     m_text.set_position(layout.text_x, layout.text_y);
     m_plot.set_position(layout.plot_x, layout.plot_y);
+}
+
+void X11BaseDriver::flush_output()
+{
+    if (m_text_not_graphics)
+    {
+        return;
+    }
+
+    const auto now{std::chrono::steady_clock::now()};
+    if (m_flush_started && now - m_last_flush < OUTPUT_FLUSH_INTERVAL)
+    {
+        return;
+    }
+
+    flush();
+    m_last_flush = now;
+    m_flush_started = true;
 }
 
 } // namespace id::misc

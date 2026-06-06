@@ -10,6 +10,7 @@
 
 #include "misc/Driver.h"
 
+#include <chrono>
 #include <string>
 #include <vector>
 
@@ -123,8 +124,12 @@ protected:
     bool m_text_not_graphics{true};
 
 private:
+    void flush_output();
+
     std::string m_name;
     std::string m_description;
+    std::chrono::steady_clock::time_point m_last_flush;
+    bool m_flush_started{};
 };
 
 } // namespace id::misc
