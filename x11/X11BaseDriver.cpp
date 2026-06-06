@@ -56,6 +56,7 @@ namespace
 namespace fs = std::filesystem;
 
 constexpr std::chrono::milliseconds OUTPUT_FLUSH_INTERVAL{100};
+constexpr int OUTPUT_FLUSH_CHECK_PIXELS{256};
 constexpr int MAX_NUM_FILES{2977};
 constexpr const char *NO_FILES{"*nofiles*"};
 
@@ -557,6 +558,11 @@ void X11BaseDriver::write_pixel(const int x, const int y, const int color)
     }
     m_plot.resize(g_screen_x_dots, g_screen_y_dots);
     m_plot.write_pixel(x, y, color);
+    if (--m_output_flush_countdown <= 0)
+    {
+        m_output_flush_countdown = OUTPUT_FLUSH_CHECK_PIXELS;
+        flush_output();
+    }
 }
 
 void X11BaseDriver::draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
@@ -706,6 +712,7 @@ void X11BaseDriver::set_video_mode(const VideoInfo &mode)
     set_normal_span();
     set_for_graphics();
     set_clear();
+    m_output_flush_countdown = 0;
     m_flush_started = false;
 }
 

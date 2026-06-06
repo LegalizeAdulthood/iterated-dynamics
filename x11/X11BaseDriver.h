@@ -129,6 +129,7 @@ private:
     std::string m_name;
     std::string m_description;
     std::chrono::steady_clock::time_point m_last_flush;
+    int m_output_flush_countdown{};
     bool m_flush_started{};
 };
 
