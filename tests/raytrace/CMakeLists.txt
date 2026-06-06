@@ -1,9 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Until the unix port is complete, we can't run end-to-end raytrace tests there
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    return()
-endif()
 
 set(RAYTRACE_TYPE_acrospin "6")
 set(RAYTRACE_TYPE_dxf "7")
