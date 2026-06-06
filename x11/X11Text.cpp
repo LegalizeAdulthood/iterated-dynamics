@@ -87,7 +87,7 @@ bool X11Text::init(X11Connection &connection)
     return true;
 }
 
-bool X11Text::create(const Window parent)
+bool X11Text::create(const Window parent, const int x, const int y)
 {
     if (m_connection == nullptr || !m_connection->is_open() || parent == None)
     {
@@ -99,6 +99,7 @@ bool X11Text::create(const Window parent)
     }
     if (m_window != None)
     {
+        set_position(x, y);
         show();
         return true;
     }
@@ -110,7 +111,7 @@ bool X11Text::create(const Window parent)
     attributes.colormap = m_connection->colormap();
     attributes.event_mask = ExposureMask | StructureNotifyMask | KeyPressMask;
 
-    m_window = XCreateWindow(display, parent, 0, 0, width(), height(), 0, m_connection->depth(), InputOutput,
+    m_window = XCreateWindow(display, parent, x, y, width(), height(), 0, m_connection->depth(), InputOutput,
         m_connection->visual(), CWBackPixel | CWBorderPixel | CWColormap | CWEventMask, &attributes);
     if (m_window == None)
     {
@@ -188,6 +189,17 @@ void X11Text::hide()
     XUnmapWindow(m_connection->display(), m_window);
     XFlush(m_connection->display());
     m_mapped = false;
+}
+
+void X11Text::set_position(const int x, const int y)
+{
+    if (m_connection == nullptr || !m_connection->is_open() || m_window == None)
+    {
+        return;
+    }
+
+    XMoveWindow(m_connection->display(), m_window, x, y);
+    XFlush(m_connection->display());
 }
 
 void X11Text::put_string(const int x_pos, const int y_pos, const int attr, const char *text, int &end_row, int &end_col)

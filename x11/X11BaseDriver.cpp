@@ -22,14 +22,6 @@ using namespace id::ui;
 namespace id::misc
 {
 
-namespace
-{
-
-constexpr int DEFAULT_WINDOW_WIDTH{640};
-constexpr int DEFAULT_WINDOW_HEIGHT{480};
-
-} // namespace
-
 X11BaseDriver::X11BaseDriver(const char *name, const char *description) :
     m_name(name),
     m_description(description)
@@ -82,9 +74,8 @@ void X11BaseDriver::schedule_alarm(int /*secs*/)
 
 void X11BaseDriver::create_window()
 {
-    m_frame.create_window(
-        std::max(DEFAULT_WINDOW_WIDTH, m_text.width()), std::max(DEFAULT_WINDOW_HEIGHT, m_text.height()));
-    if (m_text.create(m_frame.window()))
+    m_frame.create_window(m_text.width(), m_text.height());
+    if (m_text.create(m_frame.window(), 0, 0))
     {
         m_frame.add_input_window(m_text.window());
         m_text.show();
@@ -93,8 +84,9 @@ void X11BaseDriver::create_window()
 
 bool X11BaseDriver::resize()
 {
-    return m_frame.resize(
-        std::max(DEFAULT_WINDOW_WIDTH, m_text.width()), std::max(DEFAULT_WINDOW_HEIGHT, m_text.height()));
+    const bool resized{m_frame.resize(m_text.width(), m_text.height())};
+    m_text.set_position(0, 0);
+    return resized;
 }
 
 void X11BaseDriver::read_palette()

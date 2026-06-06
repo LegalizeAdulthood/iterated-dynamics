@@ -54,10 +54,11 @@ public:
     ~X11Text();
 
     bool init(X11Connection &connection);
-    bool create(Window parent);
+    bool create(Window parent, int x, int y);
     void destroy();
     void show();
     void hide();
+    void set_position(int x, int y);
     void put_string(int x_pos, int y_pos, int attr, const char *text, int &end_row, int &end_col);
     void scroll_up(int top, int bot);
     void set_attr(int row, int col, int attr, int count);
