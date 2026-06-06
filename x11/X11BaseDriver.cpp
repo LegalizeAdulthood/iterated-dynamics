@@ -284,7 +284,9 @@ void X11BaseDriver::set_for_graphics()
 
 void X11BaseDriver::set_clear()
 {
-    if (m_text_not_graphics)
+    const bool text_mapped{m_text.is_mapped()};
+    const bool plot_mapped{m_plot.is_mapped()};
+    if (m_text_not_graphics || (text_mapped && !plot_mapped))
     {
         m_text.clear();
     }

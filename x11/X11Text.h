@@ -71,6 +71,7 @@ public:
     void hide_cursor();
     bool handle_event(const XEvent &event);
     Window window() const;
+    bool is_mapped() const;
     int width() const;
     int height() const;
 

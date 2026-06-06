@@ -419,6 +419,11 @@ Window X11Plot::window() const
     return m_window;
 }
 
+bool X11Plot::is_mapped() const
+{
+    return m_mapped;
+}
+
 int X11Plot::width() const
 {
     return m_width;

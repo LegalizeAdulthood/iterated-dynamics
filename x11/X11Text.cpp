@@ -398,6 +398,11 @@ Window X11Text::window() const
     return m_window;
 }
 
+bool X11Text::is_mapped() const
+{
+    return m_mapped;
+}
+
 int X11Text::width() const
 {
     return X11_TEXT_MAX_COL * m_char_width;

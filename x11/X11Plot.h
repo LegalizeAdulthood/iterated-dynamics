@@ -52,6 +52,7 @@ public:
     void restore_graphics();
     bool handle_event(const XEvent &event);
     Window window() const;
+    bool is_mapped() const;
     int width() const;
     int height() const;
 
