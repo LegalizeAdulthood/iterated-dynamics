@@ -327,6 +327,12 @@ files.  A save library is used for writing output files.  Read
 library locations are specified with the librarydirs parameter and
 the save library location is specified with the savedir parameter.
 
+The default save library is "Iterated Dynamics" in the user's
+Documents folder on Windows.  On Linux, the Documents folder is taken
+from XDG_DOCUMENTS_DIR or from user-dirs.dirs in XDG_CONFIG_HOME or
+$HOME/.config.  If no Linux Documents folder is configured,
+$HOME/Documents is used.
+
 To locate an input file, Id looks in the following locations.
 First, if the input file is specified as an absolute path, it is
 loaded directly without consulting the library locations.
@@ -1159,7 +1165,9 @@ locations with a comma.  See {Libraries}.
 SAVEDIR=<path>\
 Sets the save library location used for writing output files.  All output
 files are created under this location.  The default save library is
-"Iterated Dynamics" in the user's Documents folder.  See {Libraries}.
+"Iterated Dynamics" in the user's Documents folder on Windows.  On Linux,
+the Documents folder is read from XDG_DOCUMENTS_DIR or user-dirs.dirs,
+falling back to $HOME/Documents.  See {Libraries}.
 
 SAVENAME=[<path>\\][name]\
 Set the path and/or filename to use when you <S>ave a screen.  The default
