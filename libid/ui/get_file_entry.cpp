@@ -49,6 +49,15 @@ struct GetFileEntry
 
 static GetFileEntry s_gfe{};
 
+static void close_gfe_file()
+{
+    if (s_gfe.file != nullptr)
+    {
+        std::fclose(s_gfe.file);
+        s_gfe.file = nullptr;
+    }
+}
+
 static bool is_newline(const int c)
 {
     return c == '\n' || c == '\r';
@@ -299,7 +308,7 @@ retry:
     if (num_entries == 0)
     {
         stop_msg("File doesn't contain any valid entries");
-        std::fclose(s_gfe.file);
+        close_gfe_file();
         return -2; // back to file list
     }
     std::strcpy(instr, o_instr);
@@ -338,7 +347,7 @@ retry:
         do_sort = !do_sort;
         goto retry;
     }
-    std::fclose(s_gfe.file);
+    close_gfe_file();
     if (i < 0)
     {
         // go back to file list or cancel
@@ -390,8 +399,7 @@ static long get_file_entry(const ItemType type, const char *type_desc, const cha
         const long entry_pointer = gfe_choose_entry(type, type_desc, path, entry_name);
         if (entry_pointer == -2)
         {
-            std::fclose(s_gfe.file);
-            s_gfe.file = nullptr;
+            close_gfe_file();
             // either they cancel browsing for a new file, in which case
             // filename is unchanged, or they browsed for a new file that's
             // been stored in filename.  Either way, we need to open the
