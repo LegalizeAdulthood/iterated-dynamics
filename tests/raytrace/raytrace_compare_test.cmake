@@ -4,6 +4,8 @@ function(dump_var name)
     message(STATUS "${name}=${${name}}")
 endfunction()
 
+include(CompareGoldText)
+
 set(DEBUG ON)
 if(DEBUG)
     set(COMMAND_ECHO "STDOUT")
@@ -42,7 +44,5 @@ if(EXISTS "image/fract001.gif")
     file(REMOVE "image/fract001.gif")
 endif()
 
-execute_process(COMMAND ${CMAKE_COMMAND}
-    -E compare_files "${GOLD_TRACE}" "${TEST_OUTPUT}"
-    COMMAND_ERROR_IS_FATAL ANY
-    COMMAND_ECHO ${COMMAND_ECHO})
+compare_gold_text_files("${GOLD_TRACE}" "${TEST_OUTPUT}"
+    "Generated raytrace file differs from '${GOLD_TRACE}'.")

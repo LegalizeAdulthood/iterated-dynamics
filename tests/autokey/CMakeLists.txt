@@ -15,6 +15,7 @@ add_test(NAME AutoKeyTest.makepar-mig-pieces
         "-DGOLD_BAT=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.bat"
         "-DGOLD_PAR=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.par"
         "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/tests/cmake"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/make_mig_pieces_test.cmake"
     WORKING_DIRECTORY "${MAKEPAR_MIG_PIECES_HOME}"
 )

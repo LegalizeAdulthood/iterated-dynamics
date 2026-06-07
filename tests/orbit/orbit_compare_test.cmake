@@ -4,6 +4,8 @@ function(dump_var name)
     message(STATUS "${name}=${${name}}")
 endfunction()
 
+include(CompareGoldText)
+
 set(DEBUG ON)
 if(DEBUG)
     set(COMMAND_ECHO "STDOUT")
@@ -35,7 +37,5 @@ execute_process(COMMAND "${ID}" ${PARAMETERS}
     COMMAND_ECHO ${COMMAND_ECHO})
 file(RENAME "${TEST_ORBIT}" "${TEST_OUTPUT}")
 
-execute_process(COMMAND ${CMAKE_COMMAND}
-    -E compare_files "${GOLD_ORBIT}" "${TEST_OUTPUT}"
-    COMMAND_ERROR_IS_FATAL ANY
-    COMMAND_ECHO ${COMMAND_ECHO})
+compare_gold_text_files("${GOLD_ORBIT}" "${TEST_OUTPUT}"
+    "Generated orbit file differs from '${GOLD_ORBIT}'.")

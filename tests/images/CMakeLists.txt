@@ -46,6 +46,7 @@ function(add_image_dump_test name)
             "-DINPUT_IMAGE=gold-${name}.gif"
             "-DGOLD_DUMP=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}-dump.txt"
             "-DTEST_DUMP=${CMAKE_CURRENT_BINARY_DIR}/test-${name}-dump.txt"
+            "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/tests/cmake"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/image_dump_test.cmake"
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     )

@@ -11,7 +11,7 @@ function(add_orbit_test name)
         message(FATAL_ERROR "Unknown arguments: ${ORBIT_TEST_UNPARSED_ARGUMENTS}")
     endif()
     set(TEST_ORBIT "test-${name}")
-    list(APPEND ORBIT_TEST_PARAMETERS "batch=yes" "video=F6"
+    list(APPEND ORBIT_TEST_PARAMETERS "batch=yes" "video=F6" "sound=off"
         "orbitsave=y" "orbitsavename=${TEST_ORBIT}" "savedir=."
         "maxiter=2" "type=${name}"
     )
@@ -23,6 +23,7 @@ function(add_orbit_test name)
             "-DGOLD_ORBIT=${CMAKE_CURRENT_SOURCE_DIR}/gold-${name}.txt"
             "-DPARAMETERS=${ORBIT_TEST_PARAMETERS}"
             "-DTEST_KEEP_ORBIT=${CMAKE_CURRENT_BINARY_DIR}"
+            "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/tests/cmake"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/orbit_compare_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )

@@ -4,6 +4,8 @@ function(dump_var name)
     message(STATUS "${name}=${${name}}")
 endfunction()
 
+include(CompareGoldText)
+
 set(DEBUG ON)
 if(DEBUG)
     set(COMMAND_ECHO "STDOUT")
@@ -49,16 +51,7 @@ if(NOT EXISTS "${PAR_FILE}")
     message(FATAL_ERROR "MIG parameter file '${PAR_FILE}' does not exist.")
 endif()
 
-execute_process(COMMAND ${CMAKE_COMMAND} -E compare_files "${GOLD_BAT}" "${BAT_FILE}"
-    RESULT_VARIABLE BAT_COMPARE_RESULT
-    COMMAND_ECHO ${COMMAND_ECHO})
-if(BAT_COMPARE_RESULT)
-    message(FATAL_ERROR "Generated MIG batch file differs from '${GOLD_BAT}'.")
-endif()
-
-execute_process(COMMAND ${CMAKE_COMMAND} -E compare_files "${GOLD_PAR}" "${PAR_FILE}"
-    RESULT_VARIABLE PAR_COMPARE_RESULT
-    COMMAND_ECHO ${COMMAND_ECHO})
-if(PAR_COMPARE_RESULT)
-    message(FATAL_ERROR "Generated MIG parameter file differs from '${GOLD_PAR}'.")
-endif()
+compare_gold_text_files("${GOLD_BAT}" "${BAT_FILE}"
+    "Generated MIG batch file differs from '${GOLD_BAT}'.")
+compare_gold_text_files("${GOLD_PAR}" "${PAR_FILE}"
+    "Generated MIG parameter file differs from '${GOLD_PAR}'.")

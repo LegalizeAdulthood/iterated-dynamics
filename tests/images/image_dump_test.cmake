@@ -4,6 +4,8 @@ function(dump_var name)
     message(STATUS "${name}=${${name}}")
 endfunction()
 
+include(CompareGoldText)
+
 set(DEBUG ON)
 if(DEBUG)
     set(COMMAND_ECHO "STDOUT")
@@ -23,7 +25,5 @@ execute_process(COMMAND "${IMAGE_DUMP}" --no-scanlines "${INPUT_IMAGE}"
     COMMAND_ERROR_IS_FATAL ANY
     COMMAND_ECHO ${COMMAND_ECHO})
 
-execute_process(COMMAND ${CMAKE_COMMAND}
-    -E compare_files "${GOLD_DUMP}" "${TEST_DUMP}"
-    COMMAND_ERROR_IS_FATAL ANY
-    COMMAND_ECHO ${COMMAND_ECHO})
+compare_gold_text_files("${GOLD_DUMP}" "${TEST_DUMP}"
+    "Generated image dump differs from '${GOLD_DUMP}'.")

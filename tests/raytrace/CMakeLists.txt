@@ -31,6 +31,7 @@ function(add_raytrace_test name)
             "-DPARAMETERS=${RAYTRACE_TEST_PARAMETERS}"
             "-DTEST_KEEP_RAYTRACE=${CMAKE_CURRENT_BINARY_DIR}"
             "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+            "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/tests/cmake"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/raytrace_compare_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"
     )

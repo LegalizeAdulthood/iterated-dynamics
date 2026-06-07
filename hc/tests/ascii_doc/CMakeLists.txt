@@ -13,6 +13,7 @@ function(add_asciidoc_test name)
             "-DPARAMETERS=${HC_TEST_PARAMETERS}"
             "-DGOLD_FILE=${CMAKE_CURRENT_SOURCE_DIR}/${name}.adoc"
             "-DADOC_FILE=${HC_TEST_DIR}/${name}/id.adoc"
+            "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/tests/cmake"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/help_compare_test.cmake"
         WORKING_DIRECTORY "${HC_TEST_DIR}"
     )
