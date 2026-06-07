@@ -94,6 +94,7 @@ var menudata={children:[
 {text:"m",url:"namespacemembers_vars_m.html#index_m"},
 {text:"n",url:"namespacemembers_vars_n.html#index_n"},
 {text:"p",url:"namespacemembers_vars_p.html#index_p"},
+{text:"r",url:"namespacemembers_vars_r.html#index_r"},
 {text:"s",url:"namespacemembers_vars_s.html#index_s"},
 {text:"t",url:"namespacemembers_vars_t.html#index_t"},
 {text:"v",url:"namespacemembers_vars_v.html#index_v"},

@@ -149,17 +149,20 @@ Building</h1>
 <div class="line">git submodule update</div>
 </div><!-- fragment --><p>CMake presets are provided to simplify building the code.</p>
 <h2><a class="anchor" id="autotoc_md2"></a>
-Building for Win32 on Windows</h2>
-<p>The Windows build supports the existing Win32 port with the <code>default</code> preset. The command</p>
+Building the Native Driver on Windows and Linux</h2>
+<p>The <code>default</code> preset builds the native user interface for the host platform. On Windows this is the Win32 GDI driver. On Linux this is the native X11 driver, which uses Xlib directly.</p>
+<p>The command</p>
 <div class="fragment"><div class="line">cmake --workflow --preset default</div>
 </div><!-- fragment --><p>will configure, build and test the code in the directory <code>id/build-default</code>, a sibling directory to the source code in <code>id/iterated-dynamics</code>.</p>
-<p>The build will first compile <code>hc</code>, the help compiler. This generates the run-time help file from the help source files and an include file used by the iterated dynamics compile.</p>
+<p>On Linux, the workflow runs GUI-based tests and needs an X server. In a headless environment, run the workflow under Xvfb:</p>
+<div class="fragment"><div class="line">xvfb-run -a cmake --workflow --preset default</div>
+</div><!-- fragment --><p>The build will first compile <code>hc</code>, the help compiler. This generates the run-time help file from the help source files and an include file used by the iterated dynamics compile.</p>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Building for wxWidgets on Windows and Linux</h2>
 <p>The ongoing wxWidgets port can be built on either Windows or Linux with the <code>wx</code> preset. The command</p>
 <div class="fragment"><div class="line">cmake --workflow --preset wx</div>
 </div><!-- fragment --><p>will configure, build and test the code in the directory <code>id/build-wx</code>, a sibling directory to the source code in <code>id/iterated-dynamics</code>.</p>
-<p>Things are pretty much the same as described for the <code>default</code> preset for the Win32 port above, but:</p>
+<p>Things are pretty much the same as described for the <code>default</code> preset for the native driver above, but:</p>
 <ul>
 <li>the wxWidgets port is incomplete and largely untested</li>
 <li>the image based tests are not yet working</li>

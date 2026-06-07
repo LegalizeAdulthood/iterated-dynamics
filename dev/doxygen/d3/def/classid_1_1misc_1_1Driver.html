@@ -130,6 +130,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a77f4f24143ff14a30d549b2e95e29135"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c5cb720f6a4b1ae41eb8a6924928f12" id="r_a3c5cb720f6a4b1ae41eb8a6924928f12"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/def/classid_1_1misc_1_1Driver.html#a3c5cb720f6a4b1ae41eb8a6924928f12">draw_line</a> (int x1, int y1, int x2, int y2, int color)=0</td></tr>
 <tr class="separator:a3c5cb720f6a4b1ae41eb8a6924928f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6ce5e1034f294182975e8ef564b8a2f" id="r_ab6ce5e1034f294182975e8ef564b8a2f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/def/classid_1_1misc_1_1Driver.html#ab6ce5e1034f294182975e8ef564b8a2f">draw_xor_line</a> (int x1, int y1, int x2, int y2)=0</td></tr>
+<tr class="separator:ab6ce5e1034f294182975e8ef564b8a2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2160f34e90931097e7253c7054f5c79" id="r_ab2160f34e90931097e7253c7054f5c79"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/def/classid_1_1misc_1_1Driver.html#ab2160f34e90931097e7253c7054f5c79">clear_xor_lines</a> ()=0</td></tr>
+<tr class="separator:ab2160f34e90931097e7253c7054f5c79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e7a33fc11b7c08bdcce28eaca83a0a2" id="r_a5e7a33fc11b7c08bdcce28eaca83a0a2"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/def/classid_1_1misc_1_1Driver.html#a5e7a33fc11b7c08bdcce28eaca83a0a2">display_string</a> (int <a class="el" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, int <a class="el" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, int fg, int bg, const char *text)=0</td></tr>
 <tr class="separator:a5e7a33fc11b7c08bdcce28eaca83a0a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a30b0bf97028d7975557544aab22a0a3f" id="r_a30b0bf97028d7975557544aab22a0a3f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/def/classid_1_1misc_1_1Driver.html#a30b0bf97028d7975557544aab22a0a3f">save_graphics</a> ()=0</td></tr>
@@ -287,6 +291,33 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Implemented in <a class="el" href="../../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a67c798ed62f5efaa0b2eebe6914590cc">id::misc::Win32BaseDriver</a>.</p>
+
+</div>
+</div>
+<a id="ab2160f34e90931097e7253c7054f5c79" name="ab2160f34e90931097e7253c7054f5c79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2160f34e90931097e7253c7054f5c79">&#9670;&#160;</a></span>clear_xor_lines()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void id::misc::Driver::clear_xor_lines </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="../../df/d26/classid_1_1misc_1_1DiskDriver.html#abd56c35a34952c0f58e97e91696014c2">id::misc::DiskDriver</a>, and <a class="el" href="../../da/d48/classid_1_1misc_1_1GDIDriver.html#ad407180321c1f7433e15eeb1111709ca">id::misc::GDIDriver</a>.</p>
 
 </div>
 </div>
@@ -509,6 +540,56 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Implemented in <a class="el" href="../../df/d26/classid_1_1misc_1_1DiskDriver.html#ade58ed2ab4076448be21fbeb09f668ba">id::misc::DiskDriver</a>, and <a class="el" href="../../da/d48/classid_1_1misc_1_1GDIDriver.html#a63985f34c1b592a183831f7dda53366a">id::misc::GDIDriver</a>.</p>
+
+</div>
+</div>
+<a id="ab6ce5e1034f294182975e8ef564b8a2f" name="ab6ce5e1034f294182975e8ef564b8a2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6ce5e1034f294182975e8ef564b8a2f">&#9670;&#160;</a></span>draw_xor_line()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void id::misc::Driver::draw_xor_line </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>y1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>x2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>y2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Implemented in <a class="el" href="../../df/d26/classid_1_1misc_1_1DiskDriver.html#a00f82d37325655055db725fc0df9c4ad">id::misc::DiskDriver</a>, and <a class="el" href="../../da/d48/classid_1_1misc_1_1GDIDriver.html#a4734bb428af05ab7224e3aa940e35c2e">id::misc::GDIDriver</a>.</p>
 
 </div>
 </div>

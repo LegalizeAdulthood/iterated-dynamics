@@ -73,43 +73,43 @@ hc/HelpCompiler.cpp:1570:9: note: Second condition
 libid/engine/cmdfiles.cpp:175:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3786:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3790:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:4200:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4204:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
-libid/fractals/Ant.cpp:279:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
+libid/fractals/Ant.cpp:276:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
-libid/fractals/Cellular.cpp:111:14: style: Condition 't>16' is always false [knownConditionTrueFalse]
-        if (t>16 || t <= 0)
-             ^
-libid/fractals/Cellular.cpp:110:39: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
+libid/fractals/Cellular.cpp:110:15: style: Condition 't>16' is always false [knownConditionTrueFalse]
+        if (t > 16 || t <= 0)
+              ^
+libid/fractals/Cellular.cpp:109:39: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
         const S16 t = static_cast<S16>(buf.length());
                                       ^
-libid/fractals/Cellular.cpp:111:14: note: Condition 't>16' is always false
-        if (t>16 || t <= 0)
-             ^
-libid/fractals/Cellular.cpp:111:23: style: Condition 't<=0' is always false [knownConditionTrueFalse]
-        if (t>16 || t <= 0)
-                      ^
-libid/fractals/Cellular.cpp:110:39: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
+libid/fractals/Cellular.cpp:110:15: note: Condition 't>16' is always false
+        if (t > 16 || t <= 0)
+              ^
+libid/fractals/Cellular.cpp:110:25: style: Condition 't<=0' is always false [knownConditionTrueFalse]
+        if (t > 16 || t <= 0)
+                        ^
+libid/fractals/Cellular.cpp:109:39: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
         const S16 t = static_cast<S16>(buf.length());
                                       ^
-libid/fractals/Cellular.cpp:111:23: note: Condition 't<=0' is always false
-        if (t>16 || t <= 0)
-                      ^
-libid/fractals/Cellular.cpp:145:32: style: Condition 't<0' is always false [knownConditionTrueFalse]
+libid/fractals/Cellular.cpp:110:25: note: Condition 't<=0' is always false
+        if (t > 16 || t <= 0)
+                        ^
+libid/fractals/Cellular.cpp:144:32: style: Condition 't<0' is always false [knownConditionTrueFalse]
     if (m_rule_digits < t || t < 0)
                                ^
-libid/fractals/Cellular.cpp:144:35: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
+libid/fractals/Cellular.cpp:143:35: note: Assignment 't=static_cast<S16>(buf.length())', assigned value is 1
     const S16 t = static_cast<S16>(buf.length());
                                   ^
-libid/fractals/Cellular.cpp:145:32: note: Condition 't<0' is always false
+libid/fractals/Cellular.cpp:144:32: note: Condition 't<0' is always false
     if (m_rule_digits < t || t < 0)
                                ^
-libid/fractals/Plasma.cpp:39:18: error: There is an unknown macro here somewhere. Configuration is required. If U16 is a macro then please configure it. [unknownMacro]
+libid/fractals/Plasma.cpp:37:18: error: There is an unknown macro here somewhere. Configuration is required. If U16 is a macro then please configure it. [unknownMacro]
 static constexpr U16 (*GET_COLOR)(int x, int y){
                  ^
 libid/fractals/lsystem.cpp:112:20: style: Opposite expression on both sides of '&'. [oppositeExpression]
@@ -1627,13 +1627,13 @@ libid/misc/memory.cpp:363:21: style: Array index 'counter' is used before limits
 libid/ui/diskvid.cpp:232:14: style: Consider using std::fill algorithm instead of a raw loop. [useStlAlgorithm]
         elem = 0xffff; // 0xffff marks the end of a hash chain
              ^
-libid/ui/editpal.cpp:1639:22: error: Array index -1 is out of bounds. [negativeContainerIndex]
+libid/ui/editpal.cpp:1619:22: error: Array index -1 is out of bounds. [negativeContainerIndex]
     else if (curr == m_curr[which] || curr < 0)
                      ^
-libid/ui/editpal.cpp:2214:23: note: Calling function 'set_curr', 1st argument '-1' value is -1
+libid/ui/editpal.cpp:2194:23: note: Calling function 'set_curr', 1st argument '-1' value is -1
             set_curr(-1, 0);
                       ^
-libid/ui/editpal.cpp:1639:22: note: Negative array index
+libid/ui/editpal.cpp:1619:22: note: Negative array index
     else if (curr == m_curr[which] || curr < 0)
                      ^
 libid/ui/evolve.cpp:792:27: style: The comparison 'old_variations > 0' is always false. [knownConditionTrueFalse]
@@ -1672,28 +1672,28 @@ libid/ui/make_batch_file.cpp:261:21: style: Consider using std::fill or std::gen
 libid/ui/menu_handler.cpp:107:36: style: Parameter 'context' can be declared with const [constParameter]
 MainState color_cycle(MainContext &context)
                                    ^
-libid/ui/slideshw.cpp:132:9: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
+libid/ui/slideshw.cpp:137:9: style: Consider using std::find_if algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
 libid/ui/stereo.cpp:297:5: error: Non-local variable 's_data' will use pointer to local variable 'v'. [danglingLifetime]
-    s_data = &v;   // set static vars to stack structure
+    s_data = &v; // set static vars to stack structure
     ^
 libid/ui/stereo.cpp:297:14: note: Address of variable taken here.
-    s_data = &v;   // set static vars to stack structure
+    s_data = &v; // set static vars to stack structure
              ^
 libid/ui/stereo.cpp:288:16: note: Variable created here.
     StereoData v;
                ^
 libid/ui/stereo.cpp:297:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
-    s_data = &v;   // set static vars to stack structure
+    s_data = &v; // set static vars to stack structure
     ^
-tests/libid/engine/test_cmdfiles.cpp:1002:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+tests/libid/engine/test_cmdfiles.cpp:1070:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/engine/test_cmdfiles.cpp:994:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+tests/libid/engine/test_cmdfiles.cpp:1062:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
     const std::string saved_browse_name{g_browse.name};
                                                 ^
-tests/libid/engine/test_cmdfiles.cpp:1002:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+tests/libid/engine/test_cmdfiles.cpp:1070:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
 tests/tools/image_compare.cpp:54:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]
@@ -1753,7 +1753,7 @@ win32/Frame.cpp:559:12: note: Assuming that condition '!quitting' is not redunda
 win32/Frame.cpp:584:9: note: Condition 'quitting' is always true
     if (quitting)
         ^
-win32/Plot.cpp:576:52: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
+win32/Plot.cpp:680:52: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
                 const int color = pixel & 1 << col ? fg : bg;
                                                    ^
 win32/WinText.cpp:560:23: style: Variable 'm_buffer_init' is reassigned a value before the old one has been used. [redundantAssignment]
@@ -1798,3 +1798,45 @@ wx/TextScreen.cpp:168:9: note: Same expression used in consecutive assignments o
 wx/TextScreen.cpp:276:18: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             cell = CGACell(' ', attr);
                  ^
+x11/X11BaseDriver.cpp:332:29: style: Condition 'typed_filename.empty()' is always false [knownConditionTrueFalse]
+    if (typed_filename.empty())
+                            ^
+x11/X11BaseDriver.cpp:360:34: style: Condition 'found.empty()' is always false [knownConditionTrueFalse]
+    fs::path selected{found.empty() ? typed_template_path(directory, speed_string) : fs::path{found}};
+                                 ^
+x11/X11BaseDriver.cpp:424:13: style: Condition '!speed.empty()' is always true [knownConditionTrueFalse]
+        if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::TEMPLATE)
+            ^
+x11/X11BaseDriver.cpp:433:13: style: Condition '!speed.empty()' is always false [knownConditionTrueFalse]
+        if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::SEARCH_PATH)
+            ^
+x11/X11BaseDriver.cpp:424:25: note: Assuming that condition 'speed.empty()' is not redundant
+        if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::TEMPLATE)
+                        ^
+x11/X11BaseDriver.cpp:433:13: note: Condition '!speed.empty()' is always false
+        if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::SEARCH_PATH)
+            ^
+x11/X11BaseDriver.cpp:307:17: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
+        choices.push_back(&choice);
+                ^
+x11/X11BaseDriver.cpp:391:20: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
+            labels.push_back(choice->full_name);
+                   ^
+x11/X11Text.cpp:600:15: style: Condition 'right<left' is always false [knownConditionTrueFalse]
+    if (right < left || bottom < top)
+              ^
+x11/X11Text.cpp:598:21: note: Assignment 'right=std::min(right,X11_TEXT_MAX_COL-1)', assigned value is 79
+    right = std::min(right, X11_TEXT_MAX_COL - 1);
+                    ^
+x11/X11Text.cpp:600:15: note: Condition 'right<left' is always false
+    if (right < left || bottom < top)
+              ^
+x11/X11Text.cpp:600:32: style: Condition 'bottom<top' is always false [knownConditionTrueFalse]
+    if (right < left || bottom < top)
+                               ^
+x11/X11Text.cpp:599:22: note: Assignment 'bottom=std::min(bottom,X11_TEXT_MAX_ROW-1)', assigned value is 24
+    bottom = std::min(bottom, X11_TEXT_MAX_ROW - 1);
+                     ^
+x11/X11Text.cpp:600:32: note: Condition 'bottom<top' is always false
+    if (right < left || bottom < top)
+                               ^
