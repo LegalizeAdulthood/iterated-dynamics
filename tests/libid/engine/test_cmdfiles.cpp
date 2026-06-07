@@ -397,6 +397,32 @@ void TestParameterGoodbye::TearDown()
     TestParameterCommand::TearDown();
 }
 
+class TestParameterCommandBatchError : public TestParameterCommandError
+{
+public:
+    ~TestParameterCommandBatchError() override = default;
+
+protected:
+    void SetUp() override;
+    void TearDown() override;
+
+    StrictMock<MockFunction<cmd_files_test::Goodbye>> m_goodbye;
+    cmd_files_test::GoodbyeFn m_prev_goodbye;
+};
+
+void TestParameterCommandBatchError::SetUp()
+{
+    TestParameterCommandError::SetUp();
+    m_prev_goodbye = cmd_files_test::get_goodbye();
+    cmd_files_test::set_goodbye(m_goodbye.AsStdFunction());
+}
+
+void TestParameterCommandBatchError::TearDown()
+{
+    cmd_files_test::set_goodbye(m_prev_goodbye);
+    TestParameterCommandError::TearDown();
+}
+
 class TestParameterCommandMakeDoc : public TestParameterGoodbye
 {
 public:
@@ -1177,6 +1203,24 @@ TEST_F(TestParameterCommand, colorsMapAddsDefaultExtension)
     EXPECT_EQ("test.map", g_map_name);
     EXPECT_EQ("test", g_last_map_name);
 }
+
+#if !defined(_WIN32)
+TEST_F(TestParameterCommandBatchError, colorsMapNameIsCaseSensitive)
+{
+    ColorMapSaver saved_dac_box;
+    ValueSaver saved_map_name{g_map_name, ""};
+    ValueSaver saved_last_map_name{g_last_map_name, ""};
+    ValueSaver saved_first_init{g_first_init, false};
+    ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
+    EXPECT_CALL(m_goodbye, Call());
+
+    exec_cmd_arg("colors=@TEST", CmdFile::AT_CMD_LINE_SET_NAME);
+
+    EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
+    EXPECT_TRUE(g_map_name.empty());
+    EXPECT_TRUE(g_last_map_name.empty());
+}
+#endif
 
 TEST_F(TestParameterCommandError, recordColorsInvalidValue)
 {

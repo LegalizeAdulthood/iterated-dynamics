@@ -217,6 +217,15 @@ static bool check_path(const std::filesystem::path &path, std::FILE **infile, co
     return false;
 }
 
+static bool same_path_name(const std::filesystem::path &lhs, const std::filesystem::path &rhs)
+{
+#if defined(_WIN32)
+    return string_case_equal(lhs.string().c_str(), rhs.string().c_str());
+#else
+    return lhs == rhs;
+#endif
+}
+
 static std::string par_search_name(const ItemType item_type, const std::string &item_name)
 {
     switch (item_type)
@@ -264,7 +273,7 @@ bool find_file_item(
         found = check_parameter_file(path, &infile, item_name, item_type);
     }
 
-    if (!string_case_equal(path.string().c_str(), g_parameter_file.string().c_str()))
+    if (!same_path_name(path, g_parameter_file))
     {
         found = found || check_path(path, &infile, item_name);
 

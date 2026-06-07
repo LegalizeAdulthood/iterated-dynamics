@@ -12,6 +12,9 @@
 
 #include <gtest/gtest.h>
 
+#include <cctype>
+#include <string>
+
 namespace fs = std::filesystem;
 
 using namespace id::engine;
@@ -21,6 +24,17 @@ using namespace id::test;
 
 namespace id::test
 {
+
+#if !defined(_WIN32)
+static std::string to_upper_copy(std::string text)
+{
+    for (char &ch : text)
+    {
+        ch = static_cast<char>(std::toupper(static_cast<unsigned char>(ch)));
+    }
+    return text;
+}
+#endif
 
 class TestFindFileItem : public testing::Test
 {
@@ -56,6 +70,21 @@ TEST_F(TestFindFileItem, formula)
     EXPECT_NE(nullptr, m_file);
     EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
 }
+
+#if !defined(_WIN32)
+TEST_F(TestFindFileItem, parameterFileCaseVariantDoesNotHideFormulaPath)
+{
+    m_path = fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE;
+    const fs::path case_variant{m_path.parent_path() / to_upper_copy(m_path.filename().string())};
+    ValueSaver<fs::path> saved_parameter_file{g_parameter_file, case_variant};
+
+    const bool result{find_file_item(m_path, "Fractint", &m_file, ItemType::FORMULA)};
+
+    EXPECT_FALSE(result);
+    EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
+}
+#endif
 
 TEST_F(TestFindFileItem, ifs)
 {

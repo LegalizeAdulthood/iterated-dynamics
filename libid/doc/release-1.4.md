@@ -10,29 +10,7 @@ it from this plan and renumber the remaining slices from 1.
 
 ## Slices
 
-### Slice 1: Case-sensitive filename comparisons
-
-Issue: #323
-
-Goal: compare filenames in a way that respects case-sensitive file systems.
-
-Work:
-
-- Find filename comparisons that still normalize or ignore case.
-- Keep user-entered path text unchanged.
-- Use case-sensitive comparison when matching naked filenames.
-
-Acceptance:
-
-- On Linux, files whose names differ only by case remain distinct.
-- Existing Windows behavior is not regressed.
-
-Verification:
-
-- Add focused coverage where the compared filename source is stable.
-- Run `cmake --workflow rt-default`.
-
-### Slice 2: Honor orbitdelay without showdot
+### Slice 1: Honor orbitdelay without showdot
 
 Issue: #325
 
@@ -55,7 +33,7 @@ Verification:
 - Manually verify an image with `orbitdelay` and `showdot` both ways.
 - Run `cmake --workflow rt-default`.
 
-### Slice 3: Make formula rand repeatable with rseed
+### Slice 2: Make formula rand repeatable with rseed
 
 Issue: #363
 
@@ -77,7 +55,7 @@ Verification:
 - Add an image or parameterized test for a formula that calls `rand`.
 - Run `cmake --workflow rt-default`.
 
-### Slice 4: Preserve user input case for named entries
+### Slice 3: Preserve user input case for named entries
 
 Issue: #364
 
@@ -99,7 +77,7 @@ Verification:
 - Add focused tests for formula, IFS, and L-system name handling.
 - Run `cmake --workflow rt-default`.
 
-### Slice 5: Make makepar work from any directory
+### Slice 4: Make makepar work from any directory
 
 Issue: #368
 
@@ -121,7 +99,7 @@ Verification:
 - Add an acceptance test that runs `makepar` from a temporary directory.
 - Run `cmake --workflow rt-default`.
 
-### Slice 6: Generate Linux makemig scripts
+### Slice 5: Generate Linux makemig scripts
 
 Issue: #370
 
@@ -144,7 +122,7 @@ Verification:
 - Keep existing Windows batch expectations passing.
 - Run `cmake --workflow rt-default`.
 
-### Slice 7: Fix Windows executable resources
+### Slice 6: Fix Windows executable resources
 
 Issue: #386
 
@@ -166,7 +144,7 @@ Verification:
 - Verify resources in a Windows build artifact.
 - Run `cmake --workflow rt-default`.
 
-### Slice 8: Normalize version-sensitive test output
+### Slice 7: Normalize version-sensitive test output
 
 Issue: #387
 
@@ -188,7 +166,7 @@ Verification:
 - Run the affected text, help, and raytrace tests directly.
 - Run `cmake --workflow rt-default`.
 
-### Slice 9: Prefer inline formulas from parameter files
+### Slice 8: Prefer inline formulas from parameter files
 
 Issue: #389
 
@@ -212,7 +190,7 @@ Verification:
 - Manually verify the reported FOTD parameter set if assets are present.
 - Run `cmake --workflow rt-default`.
 
-### Slice 10: Add periodicity-checking image coverage
+### Slice 9: Add periodicity-checking image coverage
 
 Issue: #354
 
@@ -234,7 +212,7 @@ Verification:
 - Run the new image test on Windows and Linux.
 - Run `cmake --workflow rt-default`.
 
-### Slice 11: Add Chaos and Fractals bibliography entry
+### Slice 10: Add Chaos and Fractals bibliography entry
 
 Issue: #365
 
@@ -254,7 +232,7 @@ Verification:
 
 - Run the help generation or affected help tests.
 
-### Slice 12: Add online documentation permalinks
+### Slice 11: Add online documentation permalinks
 
 Issue: #366
 

@@ -2,15 +2,44 @@
 //
 #include "io/path_match.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
-
 #include <cctype>
 #include <regex>
+#include <string>
 
 namespace fs = std::filesystem;
 
 namespace id::io
 {
+
+static char lower_copy(const char ch)
+{
+    return static_cast<char>(std::tolower(static_cast<unsigned char>(ch)));
+}
+
+static bool match_char(const char pattern, const char text)
+{
+#if defined(_WIN32)
+    return lower_copy(pattern) == lower_copy(text);
+#else
+    return pattern == text;
+#endif
+}
+
+static bool match_string(const std::string &pattern, const std::string &text)
+{
+    if (text.length() != pattern.length())
+    {
+        return false;
+    }
+    for (std::size_t i = 0; i < text.length(); ++i)
+    {
+        if (!match_char(pattern[i], text[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
 
 static bool match_wild_string(const std::string &pattern, const std::string &text)
 {
@@ -20,7 +49,7 @@ static bool match_wild_string(const std::string &pattern, const std::string &tex
     }
     for (std::size_t i = 0; i < text.length(); ++i)
     {
-        if (pattern[i] != '?' && std::tolower(pattern[i]) != std::tolower(text[i]))
+        if (pattern[i] != '?' && !match_char(pattern[i], text[i]))
         {
             return false;
         }
@@ -50,12 +79,15 @@ static std::regex wild_regex(const std::string &wildcard)
             pat += c;
         }
     }
-    return std::regex(pat, std::regex_constants::ECMAScript | std::regex_constants::icase);
+    std::regex_constants::syntax_option_type flags{std::regex_constants::ECMAScript};
+#if defined(_WIN32)
+    flags |= std::regex_constants::icase;
+#endif
+    return std::regex(pat, flags);
 }
 
 MatchFn match_fn(const fs::path &pattern)
 {
-    using namespace boost::algorithm;
     MatchFn always = [](const fs::path &) { return true; };
 
     MatchFn match_stem;
@@ -87,8 +119,7 @@ MatchFn match_fn(const fs::path &pattern)
     // match exact filename
     else
     {
-        match_stem = [=](const fs::path &path)
-        { return to_lower_copy(pat_stem) == to_lower_copy(path.stem().string()); };
+        match_stem = [=](const fs::path &path) { return match_string(pat_stem, path.stem().string()); };
     }
 
     MatchFn match_ext;
@@ -119,8 +150,7 @@ MatchFn match_fn(const fs::path &pattern)
     else
     // match exact extension
     {
-        match_ext = [=](const fs::path &path)
-        { return to_lower_copy(pat_ext) == to_lower_copy(path.extension().string()); };
+        match_ext = [=](const fs::path &path) { return match_string(pat_ext, path.extension().string()); };
     }
 
     return [=](const fs::path &path) { return match_stem(path) && match_ext(path); };

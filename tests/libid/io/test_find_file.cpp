@@ -25,6 +25,17 @@ using namespace testing;
 namespace id::test
 {
 
+static void expect_case_variant_match(const bool result)
+{
+#if defined(_WIN32)
+    EXPECT_TRUE(result);
+    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, g_dta.filename);
+    EXPECT_EQ(0, g_dta.attribute);
+#else
+    EXPECT_FALSE(result);
+#endif
+}
+
 TEST(TestFindFile, firstTextFile)
 {
     const bool result = fr_find_first((fs::path(ID_TEST_DATA_FIND_FILE_DIR) / "*.txt").string().c_str());
@@ -91,7 +102,7 @@ TEST(TestFindFile, findFileCurrentDirectory)
     EXPECT_EQ(0, g_dta.attribute);
 }
 
-TEST(TestFindFile, caseInsensitiveExtension)
+TEST(TestFindFile, caseVariantExtension)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
@@ -99,12 +110,10 @@ TEST(TestFindFile, caseInsensitiveExtension)
 
     const bool result = fr_find_first("*.txt");
 
-    EXPECT_TRUE(result);
-    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, g_dta.filename);
-    EXPECT_EQ(0, g_dta.attribute);
+    expect_case_variant_match(result);
 }
 
-TEST(TestFindFile, caseInsensitiveExtensionWildcard)
+TEST(TestFindFile, caseVariantExtensionWildcard)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
@@ -112,12 +121,10 @@ TEST(TestFindFile, caseInsensitiveExtensionWildcard)
 
     const bool result = fr_find_first("*.?xt");
 
-    EXPECT_TRUE(result);
-    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, g_dta.filename);
-    EXPECT_EQ(0, g_dta.attribute);
+    expect_case_variant_match(result);
 }
 
-TEST(TestFindFile, caseInsensitiveExtensionWildcardRegex)
+TEST(TestFindFile, caseVariantExtensionWildcardRegex)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
@@ -125,12 +132,10 @@ TEST(TestFindFile, caseInsensitiveExtensionWildcardRegex)
 
     const bool result = fr_find_first("*.?x*");
 
-    EXPECT_TRUE(result);
-    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, g_dta.filename);
-    EXPECT_EQ(0, g_dta.attribute);
+    expect_case_variant_match(result);
 }
 
-TEST(TestFindFile, caseInsensitiveFilename)
+TEST(TestFindFile, caseVariantFilename)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
@@ -139,12 +144,10 @@ TEST(TestFindFile, caseInsensitiveFilename)
 
     const bool result = fr_find_first(filename.c_str());
 
-    EXPECT_TRUE(result);
-    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, g_dta.filename);
-    EXPECT_EQ(0, g_dta.attribute);
+    expect_case_variant_match(result);
 }
 
-TEST(TestFindFile, caseInsensitiveFilenameWildcard)
+TEST(TestFindFile, caseVariantFilenameWildcard)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
@@ -154,12 +157,10 @@ TEST(TestFindFile, caseInsensitiveFilenameWildcard)
 
     const bool result = fr_find_first(filename.c_str());
 
-    EXPECT_TRUE(result);
-    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, g_dta.filename);
-    EXPECT_EQ(0, g_dta.attribute);
+    expect_case_variant_match(result);
 }
 
-TEST(TestFindFile, caseInsensitiveFilenameWildcardRegex)
+TEST(TestFindFile, caseVariantFilenameWildcardRegex)
 {
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
@@ -169,9 +170,7 @@ TEST(TestFindFile, caseInsensitiveFilenameWildcardRegex)
 
     const bool result = fr_find_first(filename.c_str());
 
-    EXPECT_TRUE(result);
-    EXPECT_EQ(ID_TEST_FIND_FILE_CASE, g_dta.filename);
-    EXPECT_EQ(0, g_dta.attribute);
+    expect_case_variant_match(result);
 }
 
 } // namespace id::test
