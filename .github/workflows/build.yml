@@ -245,6 +245,7 @@ jobs:
         archive: false
         name: Setup-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*-Setup.exe
+        if-no-files-found: error
         compression-level: 0
 
     - name: Upload msi package artifacts
@@ -254,6 +255,7 @@ jobs:
         archive: false
         name: Msi-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.msi
+        if-no-files-found: error
         compression-level: 0
 
     - name: Upload zip package artifacts
@@ -263,6 +265,7 @@ jobs:
         archive: false
         name: Zip-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
+        if-no-files-found: error
         compression-level: 0
 
     - name: Upload tar.gz package artifacts
@@ -272,6 +275,7 @@ jobs:
         archive: false
         name: Tar-${{matrix.preset}}
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
+        if-no-files-found: error
         compression-level: 0
 
   # When a tag is pushed, create a draft release from the build assets
@@ -286,11 +290,35 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download package artifacts
+      - name: Download setup package artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           path: release-assets
-          pattern: "Iterated Dynamics-*"
+          pattern: "Iterated Dynamics-*-Setup.exe"
+          merge-multiple: true
+          skip-decompress: true
+
+      - name: Download msi package artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: release-assets
+          pattern: "Iterated Dynamics-*.msi"
+          merge-multiple: true
+          skip-decompress: true
+
+      - name: Download tar.gz package artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: release-assets
+          pattern: "Iterated Dynamics-*.tar.gz"
+          merge-multiple: true
+          skip-decompress: true
+
+      - name: Download zip package artifacts
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          path: release-assets
+          pattern: "Iterated Dynamics-*.zip"
           merge-multiple: true
           skip-decompress: true
 
@@ -300,6 +328,10 @@ jobs:
           TAG: ${{github.ref_name}}
         run: |
           ls -lR release-assets
+          compgen -G "release-assets/*-Setup.exe" > /dev/null
+          compgen -G "release-assets/*.msi" > /dev/null
+          compgen -G "release-assets/*.tar.gz" > /dev/null
+          compgen -G "release-assets/*.zip" > /dev/null
           gh release create "$TAG" \
             release-assets/* \
             --draft \
