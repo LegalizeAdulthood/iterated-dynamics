@@ -18,7 +18,7 @@ class X11Frame
 public:
     using EventHandler = std::function<void(const XEvent &)>;
 
-    bool init(const char *title);
+    bool init(std::string title);
     void terminate();
     void set_geometry(std::string geometry);
     void create_window(int width, int height);

@@ -4,6 +4,8 @@
 //
 #include "X11BaseDriver.h"
 
+#include <config/port_config.h>
+
 #include <config/cmd_shell.h>
 #include <config/path_limits.h>
 #include <config/string_case_compare.h>
@@ -39,6 +41,7 @@
 #include <thread>
 #include <vector>
 
+using namespace id::config;
 using namespace id::engine;
 using namespace id::ui;
 
@@ -70,6 +73,19 @@ enum class FilenameSpeedState
 FilenameSpeedState g_filename_speed_state{FilenameSpeedState::MATCHING};
 std::string g_font_name;
 std::string g_geometry;
+
+std::string window_title()
+{
+    std::string title{ID_PROGRAM_NAME " "        //
+        + std::to_string(ID_VERSION_MAJOR) + "." //
+        + std::to_string(ID_VERSION_MINOR) + "." //
+        + std::to_string(ID_VERSION_PATCH)};
+    if (ID_VERSION_TWEAK)
+    {
+        title += "." + std::to_string(ID_VERSION_TWEAK);
+    }
+    return title;
+}
 
 struct FileChoice
 {
@@ -468,7 +484,7 @@ X11BaseDriver::X11BaseDriver(const char *name, const char *description) :
 
 bool X11BaseDriver::init(int *argc, char **argv)
 {
-    if (!m_frame.init("Iterated Dynamics"))
+    if (!m_frame.init(window_title()))
     {
         return false;
     }

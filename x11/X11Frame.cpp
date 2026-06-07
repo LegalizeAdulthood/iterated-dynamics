@@ -415,9 +415,9 @@ const X11KeyMap CONTROL_KEY_MAP[]{
 
 } // namespace
 
-bool X11Frame::init(const char *title)
+bool X11Frame::init(std::string title)
 {
-    m_title = title;
+    m_title = std::move(title);
     return m_connection.open();
 }
 
