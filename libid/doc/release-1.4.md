@@ -10,31 +10,7 @@ it from this plan and renumber the remaining slices from 1.
 
 ## Slices
 
-### Slice 1: Prefer inline formulas from parameter files
-
-Issue: #389
-
-Goal: avoid an error when a parameter file contains the needed formula
-inline.
-
-Work:
-
-- Detect formulas embedded in the selected parameter file.
-- Prefer the embedded formula over a missing external formula file.
-- Decide whether an existing external file should be ignored or warned.
-
-Acceptance:
-
-- The 1997.04.17 FOTD parameter set loads without a missing-file error.
-- Existing external formula file loading remains unchanged otherwise.
-
-Verification:
-
-- Add a regression test using an inline formula and missing `formulafile`.
-- Manually verify the reported FOTD parameter set if assets are present.
-- Run `cmake --workflow rt-default`.
-
-### Slice 2: Add periodicity-checking image coverage
+### Slice 1: Add periodicity-checking image coverage
 
 Issue: #354
 
@@ -56,7 +32,7 @@ Verification:
 - Run the new image test on Windows and Linux.
 - Run `cmake --workflow rt-default`.
 
-### Slice 3: Add Chaos and Fractals bibliography entry
+### Slice 2: Add Chaos and Fractals bibliography entry
 
 Issue: #365
 
@@ -76,7 +52,7 @@ Verification:
 
 - Run the help generation or affected help tests.
 
-### Slice 4: Add online documentation permalinks
+### Slice 3: Add online documentation permalinks
 
 Issue: #366
 

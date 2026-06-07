@@ -358,6 +358,9 @@ o makepar= now writes PAR files correctly when Id is launched from a
   directory other than the home library.  (Fixes #368)
 o Library searches now accept FRACTINT-style formulas, maps, and pars
   subdirectories as read-only aliases.  (Fixes #421)
+o Formula entries embedded in a selected PAR file now load when
+  formulafile= names a missing formula file, matching Fractint fallback
+  behavior.  (Fixes #389)
 o MIG image component files are now removed from the image save library
   after the final image is assembled.
 o Windows executables now embed icon and version resources directly.

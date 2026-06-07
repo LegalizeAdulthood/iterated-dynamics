@@ -185,7 +185,7 @@ TEST_F(TestFindFileItemParFile, formula)
     EXPECT_EQ(g_parameter_file, m_path);
 }
 
-TEST_F(TestFindFileItemParFile, formulaPrefersParameterFile)
+TEST_F(TestFindFileItemParFile, formulaUsesExistingFileBeforeParameterFile)
 {
     m_path = data::ID_TEST_FRM_DIR;
     m_path /= data::ID_TEST_FRM_FILE;
@@ -194,7 +194,7 @@ TEST_F(TestFindFileItemParFile, formulaPrefersParameterFile)
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);
-    EXPECT_EQ(g_parameter_file, m_path);
+    EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
 }
 
 TEST_F(TestFindFileItemParFile, ifs)

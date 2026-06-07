@@ -1,12 +1,19 @@
 #include "fractals/formula.h"
 #include "misc/ValueSaver.h"
+#include "test_data.h"
 
+#include <engine/cmdfiles.h>
+#include <fractals/fractalp.h>
 #include <fractals/parser.h>
 
 #include <gtest/gtest.h>
 
+namespace fs = std::filesystem;
+
+using namespace id::engine;
 using namespace id::fractals;
 using namespace id::misc;
+using namespace id::test::data;
 
 // clang-format off
 const FormulaEntry s_moe{"moe", "",
@@ -164,4 +171,17 @@ TEST_F(ParserTest, moe)
               "test=100,else,test=real(p1),endif:z=fn2(z)^s+c,|z|<=test",
         g_formula.formula);
     EXPECT_EQ(s_moe_state, get_parser_state());
+}
+
+TEST_F(ParserTest, inlineFormulaIsUsedWhenFormulaFileIsMissing)
+{
+    fs::path path{"missing.frm"};
+    ValueSaver saved_parameter_file{g_parameter_file, fs::path{ID_TEST_PAR_DIR} / ID_TEST_PAR_FILE};
+    ValueSaver saved_formula_name{g_formula_name, "Fractint"};
+    ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::FORMULA)};
+
+    const bool error{parse_formula(path, g_formula_name, true)};
+
+    EXPECT_FALSE(error);
+    EXPECT_EQ(g_parameter_file, path);
 }

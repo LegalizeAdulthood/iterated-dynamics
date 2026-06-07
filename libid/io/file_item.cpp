@@ -268,11 +268,6 @@ bool find_file_item(
     std::FILE *infile = nullptr;
     bool found = false;
 
-    if (item_type == ItemType::FORMULA)
-    {
-        found = check_parameter_file(path, &infile, item_name, item_type);
-    }
-
     if (!same_path_name(path, g_parameter_file))
     {
         found = found || check_path(path, &infile, item_name);
