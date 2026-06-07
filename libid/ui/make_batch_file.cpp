@@ -1795,7 +1795,7 @@ static void put_param_line()
         ++len;
     }
     s_wb_data.len -= len;
-    std::strcpy(s_wb_data.buf, s_wb_data.buf+len);
+    std::memmove(s_wb_data.buf, s_wb_data.buf + len, s_wb_data.len + 1);
 }
 
 /*
