@@ -732,14 +732,6 @@ void X11Frame::handle_event(const XEvent &event)
         m_mapped = false;
         m_input_windows.clear();
     }
-    if (event.type == ConfigureNotify && event.xconfigure.window == m_window)
-    {
-        if (event.xconfigure.width != m_width || event.xconfigure.height != m_height)
-        {
-            XResizeWindow(m_connection.display(), m_window, m_width, m_height);
-            XFlush(m_connection.display());
-        }
-    }
     if (m_event_handler)
     {
         m_event_handler(event);
