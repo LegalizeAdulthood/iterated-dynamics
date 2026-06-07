@@ -3611,11 +3611,13 @@ TEST_F(TestParameterCommand, randomSeedValue)
 TEST_F(TestParameterCommand, orbitDelayValue)
 {
     ValueSaver save_orbit_delay{g_orbit_delay, -999};
+    ValueSaver save_orbit_skip_points{g_orbit_skip_points, -999};
 
     exec_cmd_arg("orbitdelay=301");
 
     EXPECT_EQ(CmdArgFlags::NONE, m_result);
     EXPECT_EQ(301, g_orbit_delay);
+    EXPECT_EQ(301, g_orbit_skip_points);
 }
 
 TEST_F(TestParameterCommand, orbitIntervalValue)

@@ -21,6 +21,7 @@ namespace id::engine
 {
 
 int g_orbit_delay{};
+int g_orbit_skip_points{};
 
 static void plot_d_orbit(double dx, double dy, int color);
 

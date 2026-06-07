@@ -37,6 +37,7 @@ int get_sound_params()
 
     int old_sound_flag = g_sound_flag;
     int old_orbit_delay = g_orbit_delay;
+    int old_orbit_skip_points = g_orbit_skip_points;
     bool old_start_show_orbit = g_start_show_orbit;
 
     /* g_sound_flag bits 0..7 used as thus:
@@ -55,7 +56,7 @@ get_sound_restart:
         .yes_no("Use sound card output?", (g_sound_flag & SOUNDFLAG_OPL3_FM) != 0)
         .yes_no("Midi...not implemented yet", (g_sound_flag & SOUNDFLAG_MIDI) != 0)
         .yes_no("Quantize note pitch ?", (g_sound_flag & SOUNDFLAG_QUANTIZED) != 0)
-        .int_number("Orbit delay in ms (0 = none)", g_orbit_delay)
+        .int_number("Orbit delay in 1/10000 sec (0 = none)", g_orbit_delay)
         .int_number("Base Hz Value", g_base_hertz)
         .yes_no("Show orbits?", g_start_show_orbit)
         .comment("")
@@ -70,6 +71,7 @@ get_sound_restart:
     {
         g_sound_flag = old_sound_flag;
         g_orbit_delay = old_orbit_delay;
+        g_orbit_skip_points = old_orbit_skip_points;
         g_start_show_orbit = old_start_show_orbit;
         return -1; /*escaped */
     }
@@ -81,6 +83,7 @@ get_sound_restart:
     g_sound_flag |= builder.read_yes_no() ? SOUNDFLAG_QUANTIZED : 0;
 
     g_orbit_delay = builder.read_int_number();
+    g_orbit_skip_points = g_orbit_delay;
     g_base_hertz = builder.read_int_number();
     g_start_show_orbit = builder.read_yes_no();
 
@@ -106,6 +109,7 @@ get_sound_restart:
     {
         g_sound_flag = SOUNDFLAG_SPEAKER | SOUNDFLAG_BEEP; /* reset to default */
         g_orbit_delay = 0;
+        g_orbit_skip_points = 0;
         g_base_hertz = 440;
         g_start_show_orbit = false;
         goto get_sound_restart;

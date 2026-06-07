@@ -849,6 +849,7 @@ void restore_history_info(const int i)
     g_close_proximity = last.close_proximity;
     g_bof_match_book_images = last.bof_match_book_images;
     g_orbit_delay = last.orbit_delay;
+    g_orbit_skip_points = g_orbit_delay;
     g_orbit_interval = last.orbit_interval;
     g_orbit_corner = last.orbit_corner;
     g_keep_screen_coords = last.keep_screen_coords;

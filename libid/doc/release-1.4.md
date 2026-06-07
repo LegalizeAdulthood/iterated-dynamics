@@ -10,30 +10,7 @@ it from this plan and renumber the remaining slices from 1.
 
 ## Slices
 
-### Slice 1: Honor orbitdelay without showdot
-
-Issue: #325
-
-Goal: make `orbitdelay` work even when `showdot` is disabled.
-
-Work:
-
-- Locate the render path where orbit delay is gated by `showdot`.
-- Separate the delay behavior from dot drawing.
-- Keep `showdot` responsible only for visual orbit dot output.
-
-Acceptance:
-
-- `orbitdelay` slows orbit rendering whether or not `showdot` is enabled.
-- `showdot` behavior remains unchanged.
-
-Verification:
-
-- Add or update a focused behavior test if the timing can be isolated.
-- Manually verify an image with `orbitdelay` and `showdot` both ways.
-- Run `cmake --workflow rt-default`.
-
-### Slice 2: Make formula rand repeatable with rseed
+### Slice 1: Make formula rand repeatable with rseed
 
 Issue: #363
 
@@ -55,7 +32,7 @@ Verification:
 - Add an image or parameterized test for a formula that calls `rand`.
 - Run `cmake --workflow rt-default`.
 
-### Slice 3: Preserve user input case for named entries
+### Slice 2: Preserve user input case for named entries
 
 Issue: #364
 
@@ -77,7 +54,7 @@ Verification:
 - Add focused tests for formula, IFS, and L-system name handling.
 - Run `cmake --workflow rt-default`.
 
-### Slice 4: Make makepar work from any directory
+### Slice 3: Make makepar work from any directory
 
 Issue: #368
 
@@ -99,7 +76,7 @@ Verification:
 - Add an acceptance test that runs `makepar` from a temporary directory.
 - Run `cmake --workflow rt-default`.
 
-### Slice 5: Generate Linux makemig scripts
+### Slice 4: Generate Linux makemig scripts
 
 Issue: #370
 
@@ -122,7 +99,7 @@ Verification:
 - Keep existing Windows batch expectations passing.
 - Run `cmake --workflow rt-default`.
 
-### Slice 6: Fix Windows executable resources
+### Slice 5: Fix Windows executable resources
 
 Issue: #386
 
@@ -144,7 +121,7 @@ Verification:
 - Verify resources in a Windows build artifact.
 - Run `cmake --workflow rt-default`.
 
-### Slice 7: Normalize version-sensitive test output
+### Slice 6: Normalize version-sensitive test output
 
 Issue: #387
 
@@ -166,7 +143,7 @@ Verification:
 - Run the affected text, help, and raytrace tests directly.
 - Run `cmake --workflow rt-default`.
 
-### Slice 8: Prefer inline formulas from parameter files
+### Slice 7: Prefer inline formulas from parameter files
 
 Issue: #389
 
@@ -190,7 +167,7 @@ Verification:
 - Manually verify the reported FOTD parameter set if assets are present.
 - Run `cmake --workflow rt-default`.
 
-### Slice 9: Add periodicity-checking image coverage
+### Slice 8: Add periodicity-checking image coverage
 
 Issue: #354
 
@@ -212,7 +189,7 @@ Verification:
 - Run the new image test on Windows and Linux.
 - Run `cmake --workflow rt-default`.
 
-### Slice 10: Add Chaos and Fractals bibliography entry
+### Slice 9: Add Chaos and Fractals bibliography entry
 
 Issue: #365
 
@@ -232,7 +209,7 @@ Verification:
 
 - Run the help generation or affected help tests.
 
-### Slice 11: Add online documentation permalinks
+### Slice 10: Add online documentation permalinks
 
 Issue: #366
 

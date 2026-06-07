@@ -1345,7 +1345,7 @@ void Dynamic2D::iterate()
                 write_sound(static_cast<int>(*m_sound_var * 100 + g_base_hertz));
             }
 
-            if (m_count >= g_orbit_delay)
+            if (m_count >= g_orbit_skip_points)
             {
                 if (m_old_col != -1 && s_connect)
                 {
@@ -1434,9 +1434,9 @@ int plot_orbits2d_setup()
     s_o_cvt.e += 0.5;
     s_o_cvt.f += 0.5;
 
-    if (g_orbit_delay >= g_max_iterations) // make sure we get an image
+    if (g_orbit_skip_points >= g_max_iterations) // make sure we get an image
     {
-        g_orbit_delay = static_cast<int>(g_max_iterations - 1);
+        g_orbit_skip_points = static_cast<int>(g_max_iterations - 1);
     }
 
     s_o_color = 1;
@@ -1506,12 +1506,12 @@ int plot_orbits2d()
             continue; // bailed out, don't plot
         }
 
-        if (count < g_orbit_delay || count % g_orbit_interval)
+        if (count < g_orbit_skip_points || count % g_orbit_interval)
         {
             continue; // don't plot it
         }
 
-        // else count >= orbit_delay, and we want to plot it
+        // else count >= g_orbit_skip_points, and we want to plot it
         const int col = static_cast<int>(s_o_cvt.a * g_new_z.x + s_o_cvt.b * g_new_z.y + s_o_cvt.e);
         const int row = static_cast<int>(s_o_cvt.c * g_new_z.x + s_o_cvt.d * g_new_z.y + s_o_cvt.f);
         if (col > 0 && col < g_logical_screen.x_dots && row > 0 && row < g_logical_screen.y_dots)

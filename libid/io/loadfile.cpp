@@ -737,11 +737,13 @@ static void backwards_info16(const FractalInfo &read_info)
 static void backwards_info17(const FractalInfo &read_info)
 {
     g_orbit_delay = 0;
+    g_orbit_skip_points = 0;
     g_math_tol[0] = 0.05;
     g_math_tol[1] = 0.05;
     if (read_info.info_version > 16) // post-version 20.4.0
     {
         g_orbit_delay = read_info.orbit_delay;
+        g_orbit_skip_points = g_orbit_delay;
         // read_info.math_tol[0] value for integer -> float transition is ignored.
         g_math_tol[1] = read_info.math_tol[1];
     }

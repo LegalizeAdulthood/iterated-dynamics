@@ -458,7 +458,7 @@ static bool put_sound_line(const int row, const int col_start, const int col_sto
         g_put_color(col, row, *pixels);
         if (g_orbit_delay > 0)
         {
-            sleep_ms(g_orbit_delay);
+            sleep_orbit_delay(g_orbit_delay);
         }
         write_sound(static_cast<int>(*pixels++) * 3000 / g_colors + g_base_hertz);
     }

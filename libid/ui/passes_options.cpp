@@ -51,7 +51,7 @@ pass_option_restart:
 
     choices[++k] = "Orbit delay (0 = none)";
     values[k].type = 'i';
-    int old_orbit_delay = g_orbit_delay;
+    int old_orbit_delay = g_orbit_skip_points;
     values[k].uval.ival = old_orbit_delay;
 
     choices[++k] = "Orbit interval (1 ... 255)";
@@ -100,7 +100,8 @@ pass_option_restart:
     }
 
     g_orbit_delay = values[++k].uval.ival;
-    if (g_orbit_delay != old_orbit_delay)
+    g_orbit_skip_points = g_orbit_delay;
+    if (g_orbit_skip_points != old_orbit_delay)
     {
         j = 1;
     }

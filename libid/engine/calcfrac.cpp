@@ -508,7 +508,7 @@ static int calc_type_show_dot()
     show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::SAVE);
     if (g_orbit_delay > 0)
     {
-        sleep_ms(g_orbit_delay);
+        sleep_orbit_delay(g_orbit_delay);
     }
     const int out = s_calc_type_tmp();
     show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::RESTORE);
@@ -548,7 +548,8 @@ static void init_calc_fract()
         }
     }
 
-    init_misc();  // set up some variables in parser.c
+    init_misc(); // set up some variables in parser.c
+    reset_wait_until();
 
     // following delta values useful only for types with rotation disabled
     // currently used only by bifurcation
@@ -1442,7 +1443,8 @@ int standard_fractal_type()
     }
 
     int check_freq;
-    if (((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_X || g_show_dot >= 0) && g_orbit_delay > 0)
+    const bool orbit_sound = (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP;
+    if ((orbit_sound || g_show_dot >= 0) && g_orbit_delay > 0)
     {
         check_freq = 16;
     }

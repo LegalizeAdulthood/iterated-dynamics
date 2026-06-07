@@ -476,6 +476,7 @@ static void init_vars_restart() // <ins> key init
     g_viewport.keep_aspect_ratio = true;               // keep virtual aspect
     g_viewport.z_scroll = true;                        // relaxed screen scrolling
     g_orbit_delay = 0;                                 // full speed orbits
+    g_orbit_skip_points = 0;                           // skip no orbit points
     g_orbit_interval = 1;                              // plot all orbits
     g_debug_flag = DebugFlags::NONE;                   // debugging flag(s) are off
     g_timer_flag = false;                              // timer flags are off
@@ -562,6 +563,7 @@ static void init_vars_fractal()
     g_color_cycle_range_lo = 1;                          //
     g_color_cycle_range_hi = 255;                        // color cycling default range
     g_orbit_delay = 0;                                   // full speed orbits
+    g_orbit_skip_points = 0;                             // skip no orbit points
     g_orbit_interval = 1;                                // plot all orbits
     g_keep_screen_coords = false;                        //
     g_draw_mode = OrbitDrawMode::RECTANGLE;              // passes=orbits draw mode
@@ -2726,6 +2728,7 @@ static CmdArgFlags cmd_old_demm_colors(const Command &cmd)
 static CmdArgFlags cmd_orbit_delay(const Command &cmd)
 {
     g_orbit_delay = cmd.num_val;
+    g_orbit_skip_points = cmd.num_val;
     return CmdArgFlags::NONE;
 }
 

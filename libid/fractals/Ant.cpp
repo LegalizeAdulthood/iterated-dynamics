@@ -249,7 +249,7 @@ void Ant::turk_mite1(const bool step, const long wait)
             if (wait > 0 && !step)
             {
                 g_put_color(x, y, 15);
-                sleep_ms(wait);
+                sleep_orbit_delay(wait);
             }
             g_put_color(x, y, next_col[pixel]);
             dir += rule[pixel];
@@ -331,7 +331,7 @@ void Ant::turk_mite2(const bool step, const long wait)
 
             if (wait > 0 && !step)
             {
-                sleep_ms(wait);
+                sleep_orbit_delay(wait);
             }
 
             if (rule[pixel] & rule_mask)

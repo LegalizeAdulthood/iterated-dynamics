@@ -349,10 +349,11 @@ o Scratch files now use the temporary directory instead of the working
   directory.
 o MIG image component files are now removed from the image save library
   after the final image is assembled.
-o 3D Targa output now writes rendered pixels to the image save library.
+o 3D Targa output now writes rendered pixels to the image save library.\
 o The bignum storage arena now matches the 64 KB allocator limit, avoiding
   memory corruption in arbitrary precision math.
-o sound=off now suppresses completion buzzers.
+o sound=off now suppresses completion buzzers.\
+o Restore orbitdelay= paced timing for orbit sound (Fixes #325).\
 
 Code Cleanup in Version 1.3.3
 
@@ -365,7 +366,7 @@ o File output comparison tests were added for raytrace output and
   orbit output to detect major regressions in the formatted output.
 o An autokey-driven UI test was added for generating MIG PAR and BAT
   files.
-o Help text spelling was normalized to American English.
+o Help text spelling was normalized to American English.\
 o More image comparison tests were added to cover more fractal types,
   rotation and skew of the zoom box and the inversion, biomorph and
   decomp options.  (Fixes #335, #336, #337, #341, #342)
