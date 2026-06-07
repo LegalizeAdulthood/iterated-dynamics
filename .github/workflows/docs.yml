@@ -1,0 +1,175 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+name: docs
+
+on:
+  push:
+    tags: [ "v*" ]
+
+permissions:
+  contents: write
+
+env:
+  FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
+
+jobs:
+  publish-versioned-docs:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{steps.version.outputs.version}}
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        submodules: true
+        path: source
+
+    - name: Install System Dependencies
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      working-directory: source
+      run: |
+        ./vcpkg/bootstrap-vcpkg.sh
+        echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
+        sudo dpkg-reconfigure man-db
+        sudo apt-get update
+        sudo apt-get install --no-install-recommends -y mono-complete
+
+    - name: Add NuGet sources
+      shell: bash
+      working-directory: source
+      run: |
+        mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
+          sources add \
+          -Source "${{env.FEED_URL}}" \
+          -StorePasswordInClearText \
+          -Name GitHubPackages \
+          -UserName "${{github.repository_owner}}" \
+          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+        mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
+          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+          -Source "${{env.FEED_URL}}"
+
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
+      with:
+        cmake-version: '3.31'
+
+    - name: Generate AsciiDoc
+      working-directory: source
+      env:
+        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+      run: |
+        cmake --version
+        cmake --workflow --preset ci-ascii-doc
+
+    - name: Copy Images
+      working-directory: source
+      run: |
+        if [ -d "hc/src/images" ]; then
+          mkdir -p build-ci-ascii-doc/hc/src/help/images
+          cp -r hc/src/images/* build-ci-ascii-doc/hc/src/help/images/
+        fi
+
+    - name: Setup ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+
+    - name: Setup AsciiDoctor
+      uses: reitzig/actions-asciidoctor@fc32dc82a65a0e93b67383531d4c68cec34c7f27 # v2.0.4
+      with:
+        version: 2.0.18
+
+    - name: Generate HTML
+      working-directory: source
+      run: |
+        asciidoctor --version
+        asciidoctor build-ci-ascii-doc/hc/src/id.adoc
+
+    - name: Checkout Pages
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        ref: gh-pages
+        submodules: false
+        path: pages
+
+    - name: Resolve Version
+      id: version
+      env:
+        REF_NAME: ${{github.ref_name}}
+      run: |
+        DOC_VERSION="${REF_NAME}"
+        if ! echo "${DOC_VERSION}" | grep -Eq '^v[0-9]+[.][0-9]+[.][0-9]+$'; then
+          echo "Invalid version permalink: ${DOC_VERSION}"
+          exit 1
+        fi
+        echo "version=${DOC_VERSION}" >> "${GITHUB_OUTPUT}"
+
+    - name: Publish Versioned Documentation
+      env:
+        DOC_VERSION: ${{steps.version.outputs.version}}
+      run: |
+        rm -rf "pages/${DOC_VERSION}"
+        install -D source/build-ci-ascii-doc/hc/src/id.html \
+          "pages/${DOC_VERSION}/index.html"
+        if [ -d source/build-ci-ascii-doc/hc/src/help ]; then
+          cp -R source/build-ci-ascii-doc/hc/src/help \
+            "pages/${DOC_VERSION}/help"
+        fi
+
+    - name: Update Contents
+      working-directory: pages
+      run: |
+        git config user.name github-pages
+        git config user.email pages-bot@example.com
+        git add -A .
+        git status
+        git commit -m "Publish online documentation for ${{github.ref_name}}" || echo "No changes to commit"
+        git log -n 1
+
+    - name: Push Updates
+      working-directory: pages
+      run: git push origin gh-pages
+
+  promote-current-docs:
+    needs: publish-versioned-docs
+    runs-on: ubuntu-latest
+    environment: current-documentation
+
+    steps:
+    - name: Checkout Pages
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        ref: gh-pages
+        submodules: false
+        path: pages
+
+    - name: Promote Versioned Documentation
+      env:
+        DOC_VERSION: ${{needs.publish-versioned-docs.outputs.version}}
+      run: |
+        test -f "pages/${DOC_VERSION}/index.html"
+        install -D "pages/${DOC_VERSION}/index.html" pages/index.html
+        rm -rf pages/help
+        if [ -d "pages/${DOC_VERSION}/help" ]; then
+          cp -R "pages/${DOC_VERSION}/help" pages/help
+        fi
+
+    - name: Update Contents
+      working-directory: pages
+      run: |
+        git config user.name github-pages
+        git config user.email pages-bot@example.com
+        git add -A .
+        git status
+        git commit -m "Promote online documentation for ${{needs.publish-versioned-docs.outputs.version}}" || echo "No changes to commit"
+        git log -n 1
+
+    - name: Push Updates
+      working-directory: pages
+      run: git push origin gh-pages
