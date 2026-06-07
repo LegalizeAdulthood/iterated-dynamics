@@ -1,25 +1,33 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Until the unix port is complete, we can't run end-to-end image tests there
-if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    return()
-endif()
-
 include(IdTestHome)
 include(AddImageTest)
 
 function(add_par_test name)
+    cmake_parse_arguments(PAR_TEST "" "GOLD" "" ${ARGN})
+    if(PAR_TEST_UNPARSED_ARGUMENTS)
+        message(FATAL_ERROR "Unknown arguments: ${PAR_TEST_UNPARSED_ARGUMENTS}")
+    endif()
+    if(PAR_TEST_GOLD)
+        set(PAR_TEST_GOLD_ARG GOLD "${PAR_TEST_GOLD}")
+    endif()
     id_make_test_home(${name} PAR_TEST_HOME
         PARS "${CMAKE_CURRENT_SOURCE_DIR}/${name}.par")
     add_image_test("${name}"
+        ${PAR_TEST_GOLD_ARG}
         PARAMETERS "@${name}.par/${name}"
         WORKING_DIRECTORY "${PAR_TEST_HOME}"
         LABELS par)
 endfunction()
 
-foreach(par Land_of_Loti Killer_Mosquito Broken_Arches Waves_in_the_Night
+foreach(par Land_of_Loti Broken_Arches Waves_in_the_Night
         Cosmic_Laser_Beams Mass_Ejection Faces_in_the_Night alien shockwave
         nameless Semi-Symmetrical monument clawden raindisk slithy_tove
         petals)
     add_par_test(${par})
 endforeach()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(KILLER_MOSQUITO_GOLD GOLD "gold-linux-Killer_Mosquito")
+endif()
+add_par_test(Killer_Mosquito ${KILLER_MOSQUITO_GOLD})
