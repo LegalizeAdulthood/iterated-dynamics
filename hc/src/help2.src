@@ -1551,7 +1551,12 @@ stem:[x^2 + y^2]
 for
 each pixel in a piece of the complex plane.  After multiplication by a
 magnification factor (the parameter), the number is truncated to an integer
+~ADoc-
 and mapped to a color via color = value modulo (number of colors).  That is,
+~ADoc+,Doc-,Online-
+and mapped to a color via
+stem:["color" = "value" "mod" ("number of colors")].  That is,
+~Doc+,Online+
 the integer is divided by the number of colors, and the remainder is the
 color index value used.  The resulting image is not a fractal because all
 detail is lost after zooming in too far.  Try it with different resolution
@@ -3799,14 +3804,27 @@ three dimensional solid fractals.  Originally Mark Peterson developed
 this rendering mechanism to view a 3-D sections of a 4-D structure he
 called a "Julibrot".  This structure, also called "layered Julia set" in
 the fractal literature, hinges on the relationship between the Mandelbrot
+~ADoc-
 and Julia sets.  Each Julia set is created using a fixed value c in the
 iterated formula z^2 + c.  The Julibrot is created by layering Julia sets
 in the x-y plane and continuously varying c, creating new Julia sets as z is
 incremented.  The solid shape thus created is rendered by shading the surface
 using a brightness inversely proportional to the virtual viewer's eye.
+~ADoc+,Doc-,Online-
+and Julia sets.  Each Julia set is created using a fixed value stem:[c] in
+the iterated formula stem:[z^2 + c].  The Julibrot is created by layering
+Julia sets in the x-y plane and continuously varying stem:[c], creating new
+Julia sets as stem:[z] is incremented.  The solid shape thus created is
+rendered by shading the surface using a brightness inversely proportional to
+the virtual viewer's eye.
+~Doc+,Online+
 
 The Julibrot engine can be used with other Julia formulas besides the
+~ADoc-
 classic z^2 + c.  The first field on the Julibrot parameter screen lets
+~ADoc+,Doc-,Online-
+classic stem:[z^2 + c].  The first field on the Julibrot parameter screen lets
+~Doc+,Online+
 you select which orbit formula to use.
 
 You can also use the Julibrot renderer to visualize 3D cross sections of

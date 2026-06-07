@@ -339,6 +339,8 @@ o Setting type=formula, type=lsystem, or type=ifs on the command line
   interactively.  (Fixes #71)
 o The function= parameter documentation now lists the default variable
   functions.  (Fixes #390)
+o More mathematical formulas now render correctly in the AsciiDoc
+  documentation.
 o Debug output files are now written under the debug subdirectory of the
   save library.  New debug files honor overwrite=no by choosing an
   incremented name, while append-mode debug logs keep appending to the

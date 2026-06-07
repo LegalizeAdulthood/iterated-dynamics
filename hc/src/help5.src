@@ -169,7 +169,12 @@ are invariably right at the edge the lake.
 
 Thanks to Mark Peterson for pointing out (well, he more like beat us over
 the head until we paid attention) that the iteration values in the middle
+~ADoc-
 of Mandelbrot Lake tend to decay to periodic loops (i.e., Z(n+m) == Z(n),
+~ADoc+,Doc-,Online-
+of Mandelbrot Lake tend to decay to periodic loops (i.e.,
+stem:[Z_(n+m) = Z_n],
+~Doc+,Online+
 a fact that is pointed out on pages 58-61 of "The Beauty of Fractals").  An
 intelligent program (like the one he wrote) would check for this
 periodicity once in a while, recognize that iterations caught in a loop
@@ -436,6 +441,7 @@ Here is an attempted explanation of what the "inside=bof60" and
 Mariano, who badgered it out of us!  For the real explanation, see
 "Beauty of Fractals", page 62.
 
+~ADoc-
 Let p(z) be the function that is repeatedly iterated to generate a fractal
 using the escape-time algorithm.  For example, p(z) = z^2+c in the case of
 a Julia set.  Then let pk(z) be the result of iterating the function p for
@@ -448,6 +454,21 @@ way, a(c) is the closest to the origin any point in the orbit starting
 with 0 gets.  Then the index (c) is the value of k (the iteration) when
 that closest point was achieved.  Since there may be more than one,
 index(c) is the least such.  Got it?  Good, because the "Beauty of
+~ADoc+,Doc-,Online-
+Let stem:[p(z)] be the function that is repeatedly iterated to generate a
+fractal using the escape-time algorithm.  For example, stem:[p(z) = z^2+c]
+in the case of a Julia set.  Then let stem:[p^k(z)] be the result of
+iterating the function stem:[p] for stem:[k] iterations.  We could also
+use the notation stem:[p_c^k(z)] when the function stem:[p] has a parameter
+stem:[c], as it does in our example.  Now hold your breath and get your
+thinking cap on.  Define stem:[a(c) = inf_(k=1,2,3,...) |p_c^k(0)|].  In
+English - stem:[a(c)] is the greatest lower bound of the images of zero of
+as many iterations as you like.  Put another way, stem:[a(c)] is the closest
+to the origin any point in the orbit starting with 0 gets.  Then the
+stem:["index"(c)] is the value of stem:[k] (the iteration) when that
+closest point was achieved.  Since there may be more than one,
+stem:["index"(c)] is the least such.  Got it?  Good, because the "Beauty of
+~Doc+,Online+
 Fractals" explanation of this, is, ahhhh, terse!  Now for the punch
 line.  "Inside=bof60" colors the lake alternating shades according to the
 level sets of a(c).  Each band represents solid areas of the fractal where
@@ -465,6 +486,7 @@ the bof60 and bof61 options:
   generated from a given X,Y coordinate.  The picture on page 61 shows
   the index (or number) in the sequence of the closest point.
 
+~ADoc-
 "Inside=zmag" is similar.  This option colors inside pixels according to
 the magnitude of the orbit point when maxiter was reached, using the formula
 color = (x^2 + y^2) * maxiter/2 + 1.
@@ -472,15 +494,32 @@ color = (x^2 + y^2) * maxiter/2 + 1.
 "Inside=fmod" colors inside pixels according to the magnitude of the last
 orbit point which is within a set distance from the origin.  Then:\
   color = magnitude * colors / closeprox\
+~ADoc+,Doc-,Online-
+"Inside=zmag" is similar.  This option colors inside pixels according to
+the magnitude of the orbit point when maxiter was reached, using the formula
+stem:["color" = (x^2 + y^2) * "maxiter"/2 + 1].
+
+"Inside=fmod" colors inside pixels according to the magnitude of the last
+orbit point which is within a set distance from the origin.  Then
+stem:["color" = "magnitude" * "colors" / "closeprox"].
+~Doc+,Online+
 The magnitude used for the comparison is now based on the same calculation as
 is used for the bailout test.  The value of closeprox can be varied
 interactively.  This feature was contributed by Iain Stirling.
 
+~ADoc-
 "Inside=period" colors pixels according to the length of their eventual cycle.
 For example, points that approach a fixed point have color=1.  Points that
 approach a 2-cycle have color=2.  Points that do not approach a cycle during
 the iterations performed have color=maxit.  This option works best with a
 fairly large number of iterations.
+~ADoc+,Doc-,Online-
+"Inside=period" colors pixels according to the length of their eventual cycle.
+For example, points that approach a fixed point have stem:["color" = 1].
+Points that approach a 2-cycle have stem:["color" = 2].  Points that do not
+approach a cycle during the iterations performed have stem:["color" = "maxit"].
+This option works best with a fairly large number of iterations.
+~Doc+,Online+
 
 "Inside=atan" colors by determining the angle in degrees the last iterated
 value has with respect to the real axis, and using the absolute value.  This
@@ -663,8 +702,13 @@ The following trig identities are invaluable for coding fractals that use
 complex-valued transcendental functions of a complex variable in terms of
 real-valued functions of a real variable, which are usually found in
 compiler math libraries.  In what follows, we sometimes use "*" for
+~ADoc-
 multiplication, but leave it out when clarity is not lost.  We use "^" for
 exponentiation; x^y is x to the y power.
+~ADoc+,Doc-,Online-
+multiplication, but leave it out when clarity is not lost.  We use "^" for
+exponentiation; stem:[x^y] is x to the y power.
+~Doc+,Online+
 ~Format-,ADoc-
 
    (u+iv) + (x+iy) = (u+x) + i(v+y)
@@ -787,7 +831,12 @@ sqrt(x+iy) = sqrt(sqrt(x^2+y^2)) (cos(tan^(-1)(y/x)/2) + i sin(tan^(-1)(y/x)/2))
 ++++
 
 ~Format+,Online+,Doc+
+~ADoc-
 Id's definitions of abs(x+iy) and |x+iy| below are non-standard.
+~ADoc+,Doc-,Online-
+Id's definitions of stem:["abs"(x+iy)] and stem:[|x+iy|] below are
+non-standard.
+~Doc+,Online+
 Math texts define both absolute value and modulus of a complex number to
 be the same thing.  They are both equal to cabs(x+iy) as defined above.
 ~Format-,ADoc-
@@ -806,6 +855,7 @@ be the same thing.  They are both equal to cabs(x+iy) as defined above.
 ;
 ~Topic=Quaternion and Hypercomplex Algebra
 
+~ADoc-
 Quaternions are four dimensional generalizations of complex numbers.
 They almost obey the familiar field properties of real numbers, but
 fail the commutative law of multiplication, since x*y is not generally
@@ -817,6 +867,20 @@ superset of the complex numbers, and the basis vectors 1 and i are the
 familiar basis vectors for the complex algebra.  Any quaternion q can be
 represented as a linear combination q = x + yi + zj + wk of the basis
 vectors just as any complex number can be written in the form z = a + bi.
+~ADoc+,Doc-,Online-
+Quaternions are four dimensional generalizations of complex numbers.
+They almost obey the familiar field properties of real numbers, but
+fail the commutative law of multiplication, since stem:[x y] is not
+generally equal to stem:[y x].
+
+Quaternion algebra is most compactly described by specifying the rules
+for multiplying the basis vectors 1, i, j, and k.  Quaternions form a
+superset of the complex numbers, and the basis vectors 1 and i are the
+familiar basis vectors for the complex algebra.  Any quaternion stem:[q]
+can be represented as a linear combination stem:[q = x + yi + zj + wk] of
+the basis vectors just as any complex number can be written in the form
+stem:[z = a + bi].
+~Doc+,Online+
 ~Format-,ADoc-
 
 Multiplication rules for quaternion basis vectors:
@@ -840,7 +904,12 @@ Multiplication rules for quaternion basis vectors:
 ++++
 
 ~Doc+,Online+,Format+
+~ADoc-
 Note that ij = k but ji = -k, showing the failure of the commutative law.
+~ADoc+,Doc-,Online-
+Note that stem:[ij = k] but stem:[ji = -k], showing the failure of the
+commutative law.
+~Doc+,Online+
 The rules for multiplying any two quaternions follow from the behavior
 of the basis vectors just described.  However, for your convenience, the
 following formula works out the details.
@@ -900,8 +969,13 @@ ijk = 1
 
 ~Format+,Doc+,Online+
 
+~ADoc-
 Note that now ij = k and ji = k, and similarly for other products of pairs
 of basis vectors, so the commutative law holds.
+~ADoc+,Doc-,Online-
+Note that now stem:[ij = k] and stem:[ji = k], and similarly for other
+products of pairs of basis vectors, so the commutative law holds.
+~Doc+,Online+
 
 ~Format-,ADoc-
 Hypercomplex multiplication formula:
@@ -1015,6 +1089,7 @@ is
 ++++
 
 ~Format+,Doc+,Online+
+~ADoc-
 We can now, for example, compute sin(h).  First compute the two complex
 numbers a and b as above, then set c = sin(a) and d = sin(b) where sin() is
 the complex version of the sin function.  Now use the equations above to
@@ -1026,6 +1101,22 @@ function we use.  Instead of sin, we could have used cos, sinh, ln, or z^2.
 Using this technique, Id can create 3D fractals using the formula
 h' = fn(h) + c, where "fn" is any of the built-in functions.  Where fn is
 sqr(), this is the famous mandelbrot formula, generalized to four dimensions.
+~ADoc+,Doc-,Online-
+We can now, for example, compute stem:[sin(h)].  First compute the two
+complex numbers stem:[a] and stem:[b] as above, then set
+stem:[c = sin(a)] and stem:[d = sin(b)] where stem:[sin()] is the complex
+version of the sin function.  Now use the equations above to solve for
+stem:[x], stem:[y], stem:[z], and stem:[w] in terms of stem:[c] and
+stem:[d].  The hypercomplex number stem:[(x,y,z,w)] thus obtained is
+stem:[sin(h)].
+
+The beauty of this is that it really doesn't make any difference what
+function we use.  Instead of sin, we could have used cos, sinh, ln, or
+stem:[z^2].  Using this technique, Id can create 3D fractals using the
+formula stem:[h' = "fn"(h) + c], where "fn" is any of the built-in
+functions.  Where fn is sqr(), this is the famous mandelbrot formula,
+generalized to four dimensions.
+~Doc+,Online+
 
 For more information, see _Fractal Creations, Second Edition_ by Tim Wegner
 and Bert Tyler, Waite Group Press, 1993.
