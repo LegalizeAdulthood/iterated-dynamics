@@ -10,6 +10,7 @@
 
 #include <array>
 #include <cstddef>
+#include <string>
 
 namespace id::misc
 {
@@ -53,6 +54,7 @@ public:
     X11Text();
     ~X11Text();
 
+    void set_font_name(std::string font_name);
     bool init(X11Connection &connection);
     bool create(Window parent, int x, int y);
     void destroy();
@@ -89,6 +91,7 @@ private:
     Window m_window{};
     GC m_gc{};
     XFontStruct *m_font{};
+    std::string m_font_name;
     std::array<unsigned long, 16> m_colors{};
     int m_char_width{8};
     int m_char_ascent{10};

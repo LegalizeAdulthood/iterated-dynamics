@@ -12,6 +12,7 @@
 #include <cmath>
 #include <cstdlib>
 #include <string>
+#include <utility>
 
 namespace id::misc
 {
@@ -169,6 +170,18 @@ XFontStruct *load_scaled_font(Display *display, const int screen)
     return XLoadQueryFont(display, FONT_NAME);
 }
 
+XFontStruct *load_text_font(Display *display, const int screen, const std::string &font_name)
+{
+    if (!font_name.empty())
+    {
+        if (XFontStruct *font{XLoadQueryFont(display, font_name.c_str())}; font != nullptr)
+        {
+            return font;
+        }
+    }
+    return load_scaled_font(display, screen);
+}
+
 } // namespace
 
 X11Text::X11Text()
@@ -179,6 +192,11 @@ X11Text::X11Text()
 X11Text::~X11Text()
 {
     destroy();
+}
+
+void X11Text::set_font_name(std::string font_name)
+{
+    m_font_name = std::move(font_name);
 }
 
 bool X11Text::init(X11Connection &connection)
@@ -192,7 +210,7 @@ bool X11Text::init(X11Connection &connection)
     Display *display = m_connection->display();
     if (m_font == nullptr)
     {
-        m_font = load_scaled_font(display, m_connection->screen());
+        m_font = load_text_font(display, m_connection->screen(), m_font_name);
         if (m_font == nullptr)
         {
             return false;

@@ -68,6 +68,7 @@ enum class FilenameSpeedState
 };
 
 FilenameSpeedState g_filename_speed_state{FilenameSpeedState::MATCHING};
+std::string g_font_name;
 std::string g_geometry;
 
 struct FileChoice
@@ -129,6 +130,38 @@ std::string consume_geometry_arg(int *argc, char **argv)
         ++i;
     }
     return geometry;
+}
+
+std::string consume_font_arg(int *argc, char **argv)
+{
+    std::string font_name;
+    for (int i{1}; i < *argc;)
+    {
+        const std::string_view arg{argv[i]};
+        if (arg == "-fn" || arg == "--font")
+        {
+            if (i + 1 < *argc)
+            {
+                font_name = argv[i + 1];
+                remove_args(argc, argv, i, 2);
+            }
+            else
+            {
+                remove_args(argc, argv, i, 1);
+            }
+            continue;
+        }
+
+        constexpr std::string_view FONT_LONG_OPTION{"--font="};
+        if (arg.rfind(FONT_LONG_OPTION, 0) == 0)
+        {
+            font_name = std::string{arg.substr(FONT_LONG_OPTION.size())};
+            remove_args(argc, argv, i, 1);
+            continue;
+        }
+        ++i;
+    }
+    return font_name;
 }
 
 template <std::size_t N>
@@ -445,6 +478,12 @@ bool X11BaseDriver::init(int *argc, char **argv)
         g_geometry = geometry;
     }
     m_frame.set_geometry(g_geometry);
+    const std::string font_name{consume_font_arg(argc, argv)};
+    if (!font_name.empty())
+    {
+        g_font_name = font_name;
+    }
+    m_text.set_font_name(g_font_name);
 
     m_frame.set_event_handler(
         [this](const XEvent &event)

@@ -1577,7 +1577,9 @@ window manager.  If the window manager allows manual resizing, the video
 mode and image buffer remain the selected size.  Window position is
 remembered in the user's XDG configuration area, and a standard X
 geometry option such as "-geometry +100+100" can be used on the command
-line to choose the initial position for a run.
+line to choose the initial position for a run.  An X11 font can be
+selected with "-fn <font>" or "--font <font>"; otherwise Id chooses a
+fixed font from the display DPI.
 
 Keyboard menus, help, text overlays, the text-mode file browser, mouse
 zoom, double-click zoom, image rendering, palette cycling, command shell
