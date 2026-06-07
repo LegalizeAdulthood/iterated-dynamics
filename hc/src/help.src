@@ -301,6 +301,8 @@ o List of fractal types in the repository ReadMe linked and condensed.
   (Fixes #332)
 o Solid guessing no longer leaves parts of images unfinished when
   symmetry splits work, such as in 640x480 video mode.  (Fixes #257)
+o Solid guessing no longer crashes in disk-video modes wider than 2048
+  pixels, such as the 8K disk-video mode.
 o Lambdafn with function=exp now honors the reset version when selecting
   the Fractint-compatible bailout behavior.  (Fixes #107)
 o Legacy parameter sets now use the Fractint-compatible logmap table and

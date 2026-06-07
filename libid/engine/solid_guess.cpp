@@ -11,7 +11,9 @@
 #include "ui/video.h"
 
 #include <algorithm>
-#include <cstring>
+#include <cassert>
+#include <cstddef>
+#include <vector>
 
 using namespace id::misc;
 using namespace id::ui;
@@ -70,7 +72,8 @@ private:
     int m_max_block{};                                //
     int m_half_block{};                               //
     unsigned int m_prefix[2][MAX_Y_BLK][MAX_X_BLK]{}; // common temp
-    Byte m_stack[4096]{};                             // common temp, two put_line calls
+    int m_stack_row_offset{};                         // offset of second scratch row
+    std::vector<Byte> m_stack;                        // common temp, two write_span calls
     int m_block_size{};                               //
 };
 
@@ -82,6 +85,8 @@ SolidGuess::SolidGuess() :
     m_right_guess(g_plot == sym_plot2j ||
         ((g_plot == g_put_color || g_plot == sym_plot2) && g_i_stop_pt.x + 1 == g_logical_screen.x_dots)),
     m_max_block(ssg_block_size()),
+    m_stack_row_offset(std::max(g_logical_screen.x_dots, 1)),
+    m_stack(static_cast<std::size_t>(m_stack_row_offset) * 2),
     m_block_size(m_max_block)
 {
     // there seems to be a bug in solid guessing at bottom and side
@@ -612,7 +617,7 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
         j = y+i+m_half_block;
         if (j <= g_i_stop_pt.y)
         {
-            write_span(j, g_start_pt.x, g_i_stop_pt.x, &m_stack[g_start_pt.x+OLD_MAX_PIXELS]);
+            write_span(j, g_start_pt.x, g_i_stop_pt.x, &m_stack[g_start_pt.x + m_stack_row_offset]);
         }
         if (driver_key_pressed())
         {
@@ -630,9 +635,9 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
                 j = g_i_stop_pt.x - (i - g_start_pt.x);
                 m_stack[i] = m_stack[j];
                 m_stack[j] = static_cast<Byte>(color);
-                j += OLD_MAX_PIXELS;
-                color = m_stack[i + OLD_MAX_PIXELS];
-                m_stack[i + OLD_MAX_PIXELS] = m_stack[j];
+                j += m_stack_row_offset;
+                color = m_stack[i + m_stack_row_offset];
+                m_stack[i + m_stack_row_offset] = m_stack[j];
                 m_stack[j] = static_cast<Byte>(color);
             }
         }
@@ -646,7 +651,7 @@ bool SolidGuess::guess_row(bool first_pass, int y, int block_size)
             j = g_stop_pt.y-(y+i+m_half_block-g_start_pt.y);
             if (j > g_i_stop_pt.y && j < g_logical_screen.y_dots)
             {
-                write_span(j, g_start_pt.x, g_i_stop_pt.x, &m_stack[g_start_pt.x+OLD_MAX_PIXELS]);
+                write_span(j, g_start_pt.x, g_i_stop_pt.x, &m_stack[g_start_pt.x + m_stack_row_offset]);
             }
             if (driver_key_pressed())
             {
@@ -661,7 +666,8 @@ void SolidGuess::fill_d_stack(const int x1, const int x2, const Byte value)
 {
     const int begin = std::min(x1, x2);
     const int end = std::max(x1, x2);
-    std::fill(&m_stack[begin], &m_stack[end], value);
+    assert(0 <= begin && end <= static_cast<int>(m_stack.size()));
+    std::fill(m_stack.begin() + begin, m_stack.begin() + end, value);
 }
 
 void SolidGuess::plot_block(const int build_row, const int x, int y, const int color)
@@ -679,7 +685,7 @@ void SolidGuess::plot_block(const int build_row, const int x, int y, const int c
         }
         else
         {
-            fill_d_stack(x + OLD_MAX_PIXELS, x_lim + OLD_MAX_PIXELS, static_cast<Byte>(color));
+            fill_d_stack(x + m_stack_row_offset, x_lim + m_stack_row_offset, static_cast<Byte>(color));
         }
         if (x >= g_start_pt.x)   // when x reduced for alignment, paint those dots too
         {
