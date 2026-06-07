@@ -528,12 +528,9 @@ int X11Plot::height() const
 
 void X11Plot::init_palette()
 {
-    for (size_t i = 0; i < m_clut.size(); ++i)
+    for (std::array<Byte, 3> &color : m_clut)
     {
-        const Byte shade{static_cast<Byte>(i)};
-        m_clut[i][0] = shade;
-        m_clut[i][1] = shade;
-        m_clut[i][2] = shade;
+        color.fill(0);
     }
 }
 

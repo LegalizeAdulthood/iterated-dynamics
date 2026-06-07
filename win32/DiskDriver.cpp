@@ -96,46 +96,6 @@ static VideoInfo s_modes[] = {
 };
 #undef DRIVER_MODE
 
-/*----------------------------------------------------------------------
-*
-* initdacbox --
-*
-* Put something nice in the dac.
-*
-* The conditions are:
-*   Colors 1 and 2 should be bright so ifs fractals show up.
-*   Color 15 should be bright for lsystem.
-*   Color 1 should be bright for bifurcation.
-*   Colors 1, 2, 3 should be distinct for periodicity.
-*   The color map should look good for mandelbrot.
-*
-* Results:
-*   None.
-*
-* Side effects:
-*   Loads the dac.
-*
-*----------------------------------------------------------------------
-*/
-static void init_dac_box()
-{
-    for (int i = 0; i < 256; i++)
-    {
-        g_dac_box[i][0] = (i >> 5)*8+7;
-        g_dac_box[i][1] = ((i + 16 & 28) >> 2)*8+7;
-        g_dac_box[i][2] = (i + 2 & 3)*16+15;
-    }
-    g_dac_box[0][0] = 0;
-    g_dac_box[0][1] = 0;
-    g_dac_box[0][2] = 0;
-    g_dac_box[1][0] = 255;
-    g_dac_box[1][1] = 255;
-    g_dac_box[1][2] = 255;
-    g_dac_box[2][0] = 190;
-    g_dac_box[2][1] = 255;
-    g_dac_box[2][2] = 255;
-}
-
 /***********************************************************************
 ////////////////////////////////////////////////////////////////////////
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
@@ -147,8 +107,6 @@ bool DiskDriver::init(int *argc, char **argv)
     {
         return false;
     }
-
-    init_dac_box();
 
     // add default list of video modes
     for (VideoInfo &mode : s_modes)
