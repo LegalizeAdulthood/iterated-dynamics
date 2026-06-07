@@ -10,29 +10,7 @@ it from this plan and renumber the remaining slices from 1.
 
 ## Slices
 
-### Slice 1: Add periodicity-checking image coverage
-
-Issue: #354
-
-Goal: cover non-default periodicity checking through image tests.
-
-Work:
-
-- Pick one stable fractal with visible periodicity-checking behavior.
-- Add an image test with non-default periodicity parameters.
-- Keep the gold image deterministic across supported platforms.
-
-Acceptance:
-
-- Periodicity-related render paths are covered by at least one image test.
-- The test is stable on Windows and Linux.
-
-Verification:
-
-- Run the new image test on Windows and Linux.
-- Run `cmake --workflow rt-default`.
-
-### Slice 2: Add Chaos and Fractals bibliography entry
+### Slice 1: Add Chaos and Fractals bibliography entry
 
 Issue: #365
 
@@ -52,7 +30,7 @@ Verification:
 
 - Run the help generation or affected help tests.
 
-### Slice 3: Add online documentation permalinks
+### Slice 2: Add online documentation permalinks
 
 Issue: #366
 

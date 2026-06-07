@@ -193,6 +193,9 @@ add_image_test("ant1" PARAMETERS "type=ant"
 add_image_test("ant2" PARAMETERS "type=ant"
     "center-mag=0/0/1/1.3333" "params=11111000000000000000000/999999.0/25.0/2.0/1.0/-400.0" "inside=0" LABELS "ant")
 add_image_test("mandel-chroma" PARAMETERS "type=mandel" "map=chroma")
+add_image_test("mandel-periodicity-10"
+    PARAMETERS "type=mandel" "periodicity=10"
+    LABELS "periodicity")
 add_image_test("Egg" PARAMETERS "@id.par/Egg")
 add_image_test("EvilFrog" PARAMETERS "@id.par/EvilFrog")
 add_image_test("mandala" PARAMETERS "@id.par/mandala")
