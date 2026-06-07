@@ -18,7 +18,7 @@
    { Introduction }                         { Distribution of Iterated Dynamics }
    { Conditions on Use }                    { Contacting the Author }
    { Getting Started }                      { The Stone Soup Story }
-   { New Features in 1.3.3 }                { A Word About the Authors }
+   { New Features in 1.4.0 }                { A Word About the Authors }
 
    { Display Mode Commands }
    { Color Cycling Commands }               { Id on Unix }
@@ -39,7 +39,7 @@
 ;
 ;
 ~DocContents
-{     , 0, "New Features in 1.3.3", FF}
+{     , 0, "New Features in 1.4.0", FF}
 {     , 0, "Introduction", "Conditions on Use", FF}
 
 {1.   , 0, Iterated Dynamics Commands, FF}
@@ -260,7 +260,7 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ;
-~Topic=New Features in 1.3.3
+~Topic=New Features in 1.4.0
 
 The source code for Iterated Dynamics lives on github:\
   <https://github.com/LegalizeAdulthood/iterated-dynamics>
@@ -268,9 +268,9 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-Version 1.3.3 is an interim bug fix release on the way to version 2.0.
+Version 1.4.0 is an interim release on the way to version 2.0.
 
-New Features in Version 1.3.3
+New Features in Version 1.4.0
 
 o The documentation is now available in PDF format.  (Fixes #262)\
 o The raytrace output format can now be specified by name instead of
@@ -303,7 +303,7 @@ o The Linux/X11 port is complete.  It provides native Linux text and
 o MIG piece generation now writes a makemig.sh shell script on Linux.
   (Fixes #370)
 
-Bugs Fixed in Version 1.3.3
+Bugs Fixed in Version 1.4.0
 
 o Doxygen pages are now being generated from the source code.  Documentation
   comments will be added over time to improve the generated documentation.
@@ -377,7 +377,7 @@ o The bignum storage arena now matches the 64 KB allocator limit, avoiding
 o sound=off now suppresses completion buzzers.\
 o Restore orbitdelay= paced timing for orbit sound (Fixes #325).\
 
-Code Cleanup in Version 1.3.3
+Code Cleanup in Version 1.4.0
 
 o The incomplete X11 driver for linux has been removed.  (Fixes #343)\
 o All identifiers are now inside a namespace to avoid collisions with
