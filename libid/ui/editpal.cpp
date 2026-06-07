@@ -132,10 +132,6 @@ private:
     int m_csize{};
     bool m_moved{};
     bool m_should_hide{};
-    std::vector<char> m_t;
-    std::vector<char> m_b;
-    std::vector<char> m_l;
-    std::vector<char> m_r;
 };
 
 class MoveBoxNotification : public NullMouseNotification
@@ -726,41 +722,24 @@ MoveBox::MoveBox(const int x, const int y, const int csize, const int base_width
     m_base_depth(base_depth),
     m_csize(csize)
 {
-    m_t.resize(g_screen_x_dots);
-    m_b.resize(g_screen_x_dots);
-    m_l.resize(g_screen_y_dots);
-    m_r.resize(g_screen_y_dots);
 }
 
 void MoveBox::draw()
 {
     const int width = m_base_width + m_csize * 16 + 1;
     const int depth = m_base_depth + m_csize * 16 + 1;
+    const int x2 = m_x + width - 1;
+    const int y2 = m_y + depth - 1;
 
-    get_row(m_x, m_y, width, m_t.data());
-    get_row(m_x, m_y + depth - 1, width, m_b.data());
-
-    ver_get_row(m_x, m_y, depth, m_l.data());
-    ver_get_row(m_x + width - 1, m_y, depth, m_r.data());
-
-    hor_dot_line(m_x, m_y, width);
-    hor_dot_line(m_x, m_y + depth - 1, width);
-
-    ver_dot_line(m_x, m_y, depth);
-    ver_dot_line(m_x + width - 1, m_y, depth);
-    driver_flush();
+    driver_draw_xor_line(m_x, m_y, x2, m_y);
+    driver_draw_xor_line(m_x, y2, x2, y2);
+    driver_draw_xor_line(m_x, m_y, m_x, y2);
+    driver_draw_xor_line(x2, m_y, x2, y2);
 }
 
 void MoveBox::erase()
 {
-    const int width = m_base_width + m_csize * 16 + 1;
-    const int depth = m_base_depth + m_csize * 16 + 1;
-
-    ver_put_row(m_x, m_y, depth, m_l.data());
-    ver_put_row(m_x + width - 1, m_y, depth, m_r.data());
-
-    put_row(m_x, m_y, width, m_t.data());
-    put_row(m_x, m_y + depth - 1, width, m_b.data());
+    driver_clear_xor_lines();
 }
 
 ColorEditor::ColorEditor(const int x, const int y, const char letter, ColorEditorNotification *observer) :
@@ -1080,7 +1059,6 @@ bool MoveBox::process()
     g_cursor_mouse_tracking = false;
 
     erase();
-    driver_flush(); // No following draw flushes this final erase.
 
     m_should_hide = key == 'H' || key == 'h';
 

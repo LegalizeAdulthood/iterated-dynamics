@@ -572,6 +572,16 @@ void X11BaseDriver::draw_line(const int x1, const int y1, const int x2, const in
     id::geometry::draw_line(x1, y1, x2, y2, color);
 }
 
+void X11BaseDriver::draw_xor_line(const int x1, const int y1, const int x2, const int y2)
+{
+    m_plot.draw_xor_line(x1, y1, x2, y2);
+}
+
+void X11BaseDriver::clear_xor_lines()
+{
+    m_plot.clear_xor_lines();
+}
+
 void X11BaseDriver::display_string(const int x, const int y, const int fg, const int bg, const char *text)
 {
     if (g_screen_x_dots <= 0 || g_screen_y_dots <= 0)

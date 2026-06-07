@@ -31,6 +31,13 @@ struct X11DirtyRect
     bool active{};
 };
 
+struct X11XorPixel
+{
+    int x{};
+    int y{};
+    Byte color{};
+};
+
 class X11Plot
 {
 public:
@@ -46,6 +53,8 @@ public:
     void clear();
     void write_pixel(int x, int y, int color);
     int read_pixel(int x, int y) const;
+    void draw_xor_line(int x1, int y1, int x2, int y2);
+    void clear_xor_lines();
     void display_string(int x, int y, int fg, int bg, const char *text);
     void flush();
     void save_graphics();
@@ -67,6 +76,8 @@ private:
     int pixel_offset(int x, int y) const;
     bool has_pixels() const;
     bool is_valid_position(int x, int y) const;
+    void save_xor_line(int x1, int y1, int x2, int y2);
+    void save_xor_pixel(int x, int y);
 
     X11Connection *m_connection{};
     Window m_window{};
@@ -78,6 +89,7 @@ private:
     std::array<unsigned long, 256> m_color_lookup{};
     std::vector<Byte> m_pixels;
     std::vector<Byte> m_saved_pixels;
+    std::vector<X11XorPixel> m_xor_pixels;
     int m_width{};
     int m_height{};
     size_t m_row_len{};

@@ -72,6 +72,8 @@ public:
     int read_pixel(int x, int y) override;
     void write_pixel(int x, int y, int color) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
+    void draw_xor_line(int x1, int y1, int x2, int y2) override;
+    void clear_xor_lines() override;
     void display_string(int x, int y, int fg, int bg, const char *text) override;
     void save_graphics() override;
     void restore_graphics() override;
@@ -90,19 +92,33 @@ protected:
         int row{};
         int col{};
     };
+
+    struct XorPixel
+    {
+        int x{};
+        int y{};
+        int color{};
+    };
+
     std::string m_name;
     std::string m_description;
 
     /* key_buffer
-    *
-    * When we peeked ahead and saw a keypress, stash it here for later
-    * feeding to our caller.
-    */
+     *
+     * When we peeked ahead and saw a keypress, stash it here for later
+     * feeding to our caller.
+     */
     mutable int m_key_buffer{};
 
     std::vector<gui::Screen> m_saved_screens;
     std::vector<TextLocation> m_saved_cursor;
+    std::vector<XorPixel> m_xor_pixels;
     TextLocation m_cursor;
+
+private:
+    bool has_xor_pixel(int x, int y) const;
+    void draw_xor_pixel(int x, int y);
+    void draw_xor_line_pixels(int x1, int y1, int x2, int y2);
 };
 
 } // namespace id::misc

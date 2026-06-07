@@ -13,6 +13,13 @@
 namespace id::misc
 {
 
+struct XorPixel
+{
+    int x{};
+    int y{};
+    Byte color{};
+};
+
 struct Plot
 {
     int init(HINSTANCE instance, LPCSTR title);
@@ -22,6 +29,8 @@ struct Plot
     int read_pixel(int x, int y);
     void flush();
     void draw_line(int x1, int y1, int x2, int y2, int color);
+    void draw_xor_line(int x1, int y1, int x2, int y2);
+    void clear_xor_lines();
     int resize();
     void read_palette();
     int write_palette();
@@ -51,6 +60,8 @@ private:
     void set_dirty_region(int x_min, int y_min, int x_max, int y_max);
     void init_pixels();
     void create_backing_store();
+    void save_xor_line(int x1, int y1, int x2, int y2);
+    void save_xor_pixel(int x, int y);
 
     HINSTANCE m_instance{};
     std::string m_title;
@@ -66,6 +77,7 @@ private:
     RGBQUAD m_bmi_colors[255]{}; // color look up table NOLINT(clang-diagnostic-unused-private-field)
     std::vector<Byte> m_pixels;
     std::vector<Byte> m_saved_pixels;
+    std::vector<XorPixel> m_xor_pixels;
     size_t m_pixels_len{};
     size_t m_row_len{};
     int m_width{};

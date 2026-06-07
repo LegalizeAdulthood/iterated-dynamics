@@ -28,6 +28,7 @@
 
 #include <wx/log.h>
 
+#include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <ctime>
@@ -108,6 +109,7 @@ void WxBaseDriver::terminate()
 {
     m_saved_screens.clear();
     m_saved_cursor.clear();
+    m_xor_pixels.clear();
 }
 
 void WxBaseDriver::schedule_alarm(int secs)
@@ -125,6 +127,67 @@ void WxBaseDriver::draw_line(int x1, int y1, int x2, int y2, int color)
     geometry::draw_line(x1, y1, x2, y2, color);
 }
 
+bool WxBaseDriver::has_xor_pixel(const int x, const int y) const
+{
+    return std::any_of(
+        m_xor_pixels.begin(), m_xor_pixels.end(), [=](const XorPixel &pixel) { return pixel.x == x && pixel.y == y; });
+}
+
+void WxBaseDriver::draw_xor_pixel(const int x, const int y)
+{
+    const int color{read_pixel(x, y)};
+    if (!has_xor_pixel(x, y))
+    {
+        m_xor_pixels.push_back(XorPixel{x, y, color});
+    }
+    write_pixel(x, y, color ^ 0xff);
+}
+
+void WxBaseDriver::draw_xor_line_pixels(int x1, int y1, const int x2, const int y2)
+{
+    const int dx{x2 > x1 ? x2 - x1 : x1 - x2};
+    const int sx{x1 < x2 ? 1 : -1};
+    const int dy{y2 > y1 ? y1 - y2 : y2 - y1};
+    const int sy{y1 < y2 ? 1 : -1};
+    int err{dx + dy};
+
+    while (true)
+    {
+        draw_xor_pixel(x1, y1);
+        if (x1 == x2 && y1 == y2)
+        {
+            break;
+        }
+        const int e2{2 * err};
+        if (e2 >= dy)
+        {
+            err += dy;
+            x1 += sx;
+        }
+        if (e2 <= dx)
+        {
+            err += dx;
+            y1 += sy;
+        }
+    }
+}
+
+void WxBaseDriver::draw_xor_line(const int x1, const int y1, const int x2, const int y2)
+{
+    draw_xor_line_pixels(x1, y1, x2, y2);
+    flush();
+}
+
+void WxBaseDriver::clear_xor_lines()
+{
+    for (const XorPixel &pixel : m_xor_pixels)
+    {
+        write_pixel(pixel.x, pixel.y, pixel.color);
+    }
+    m_xor_pixels.clear();
+    flush();
+}
+
 void WxBaseDriver::save_graphics()
 {
     wxGetApp().save_graphics();
@@ -132,6 +195,7 @@ void WxBaseDriver::save_graphics()
 
 void WxBaseDriver::restore_graphics()
 {
+    m_xor_pixels.clear();
     wxGetApp().restore_graphics();
 }
 
@@ -313,6 +377,7 @@ void WxBaseDriver::set_for_graphics()
 
 void WxBaseDriver::set_clear()
 {
+    m_xor_pixels.clear();
     wxGetApp().clear();
 }
 

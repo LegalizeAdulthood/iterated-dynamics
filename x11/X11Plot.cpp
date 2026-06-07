@@ -260,6 +260,7 @@ bool X11Plot::resize(const int width, const int height)
     m_row_len = static_cast<size_t>(m_width);
     m_pixels.assign(m_row_len * static_cast<size_t>(m_height), 0);
     m_saved_pixels.clear();
+    m_xor_pixels.clear();
     reset_dirty();
     mark_dirty(0, 0, m_width, m_height);
 
@@ -279,6 +280,7 @@ void X11Plot::clear()
     }
 
     std::fill(m_pixels.begin(), m_pixels.end(), 0);
+    m_xor_pixels.clear();
     mark_dirty(0, 0, m_width, m_height);
 }
 
@@ -301,6 +303,94 @@ int X11Plot::read_pixel(const int x, const int y) const
     }
 
     return m_pixels[pixel_offset(x, y)];
+}
+
+void X11Plot::save_xor_pixel(const int x, const int y)
+{
+    if (!is_valid_position(x, y))
+    {
+        return;
+    }
+    m_xor_pixels.push_back(X11XorPixel{x, y, m_pixels[pixel_offset(x, y)]});
+}
+
+void X11Plot::save_xor_line(int x1, int y1, const int x2, const int y2)
+{
+    const int dx{x2 > x1 ? x2 - x1 : x1 - x2};
+    const int sx{x1 < x2 ? 1 : -1};
+    const int dy{y2 > y1 ? y1 - y2 : y2 - y1};
+    const int sy{y1 < y2 ? 1 : -1};
+    int err{dx + dy};
+
+    while (true)
+    {
+        save_xor_pixel(x1, y1);
+        if (x1 == x2 && y1 == y2)
+        {
+            break;
+        }
+        const int e2{2 * err};
+        if (e2 >= dy)
+        {
+            err += dy;
+            x1 += sx;
+        }
+        if (e2 <= dx)
+        {
+            err += dx;
+            y1 += sy;
+        }
+    }
+}
+
+void X11Plot::draw_xor_line(const int x1, const int y1, const int x2, const int y2)
+{
+    if (m_connection == nullptr || !m_connection->is_open() || m_window == None || !m_mapped)
+    {
+        return;
+    }
+
+    flush();
+    save_xor_line(x1, y1, x2, y2);
+    Display *display{m_connection->display()};
+    XGCValues values{};
+    values.function = GXxor;
+    values.foreground = WhitePixel(display, m_connection->screen());
+    values.line_style = LineOnOffDash;
+    values.cap_style = CapButt;
+    GC xor_gc{XCreateGC(display, m_window, GCFunction | GCForeground | GCLineStyle | GCCapStyle, &values)};
+    if (xor_gc == nullptr)
+    {
+        return;
+    }
+
+    const char dashes[]{2, 2};
+    XSetDashes(display, xor_gc, 0, dashes, static_cast<int>(sizeof(dashes)));
+    XDrawLine(display, m_window, xor_gc, x1, y1, x2, y2);
+    XFreeGC(display, xor_gc);
+    XFlush(display);
+}
+
+void X11Plot::clear_xor_lines()
+{
+    if (m_xor_pixels.empty())
+    {
+        return;
+    }
+    if (m_connection == nullptr || !m_connection->is_open() || m_window == None || m_gc == nullptr || !m_mapped)
+    {
+        m_xor_pixels.clear();
+        return;
+    }
+
+    Display *display{m_connection->display()};
+    for (const X11XorPixel &pixel : m_xor_pixels)
+    {
+        XSetForeground(display, m_gc, m_color_lookup[pixel.color]);
+        XDrawPoint(display, m_window, m_gc, pixel.x, pixel.y);
+    }
+    XFlush(display);
+    m_xor_pixels.clear();
 }
 
 void X11Plot::read_palette()
@@ -382,6 +472,7 @@ void X11Plot::restore_graphics()
     }
 
     m_pixels = m_saved_pixels;
+    m_xor_pixels.clear();
     mark_dirty(0, 0, m_width, m_height);
 }
 

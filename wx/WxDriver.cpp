@@ -28,6 +28,7 @@
 
 #include <wx/log.h>
 
+#include <algorithm>
 #include <cassert>
 #include <chrono>
 #include <ctime>
@@ -119,6 +120,7 @@ void WxDriver::terminate()
 {
     m_saved_screens.clear();
     m_saved_cursor.clear();
+    m_xor_pixels.clear();
 }
 
 bool WxDriver::init(int *argc, char **argv)
@@ -533,6 +535,67 @@ void WxDriver::draw_line(int x1, int y1, int x2, int y2, int color)
     geometry::draw_line(x1, y1, x2, y2, color);
 }
 
+bool WxDriver::has_xor_pixel(const int x, const int y) const
+{
+    return std::any_of(
+        m_xor_pixels.begin(), m_xor_pixels.end(), [=](const XorPixel &pixel) { return pixel.x == x && pixel.y == y; });
+}
+
+void WxDriver::draw_xor_pixel(const int x, const int y)
+{
+    const int color{read_pixel(x, y)};
+    if (!has_xor_pixel(x, y))
+    {
+        m_xor_pixels.push_back(XorPixel{x, y, color});
+    }
+    write_pixel(x, y, color ^ 0xff);
+}
+
+void WxDriver::draw_xor_line_pixels(int x1, int y1, const int x2, const int y2)
+{
+    const int dx{x2 > x1 ? x2 - x1 : x1 - x2};
+    const int sx{x1 < x2 ? 1 : -1};
+    const int dy{y2 > y1 ? y1 - y2 : y2 - y1};
+    const int sy{y1 < y2 ? 1 : -1};
+    int err{dx + dy};
+
+    while (true)
+    {
+        draw_xor_pixel(x1, y1);
+        if (x1 == x2 && y1 == y2)
+        {
+            break;
+        }
+        const int e2{2 * err};
+        if (e2 >= dy)
+        {
+            err += dy;
+            x1 += sx;
+        }
+        if (e2 <= dx)
+        {
+            err += dx;
+            y1 += sy;
+        }
+    }
+}
+
+void WxDriver::draw_xor_line(const int x1, const int y1, const int x2, const int y2)
+{
+    draw_xor_line_pixels(x1, y1, x2, y2);
+    flush();
+}
+
+void WxDriver::clear_xor_lines()
+{
+    for (const XorPixel &pixel : m_xor_pixels)
+    {
+        write_pixel(pixel.x, pixel.y, pixel.color);
+    }
+    m_xor_pixels.clear();
+    flush();
+}
+
 void WxDriver::display_string(int x, int y, int fg, int bg, const char *text)
 {
     wxGetApp().display_string(x, y, fg, bg, text);
@@ -545,6 +608,7 @@ void WxDriver::save_graphics()
 
 void WxDriver::restore_graphics()
 {
+    m_xor_pixels.clear();
     wxGetApp().restore_graphics();
 }
 
@@ -565,6 +629,7 @@ void WxDriver::set_for_graphics()
 
 void WxDriver::set_clear()
 {
+    m_xor_pixels.clear();
     wxGetApp().clear();
 }
 

@@ -234,6 +234,7 @@ void Plot::init_pixels()
     _ASSERTE(m_pixels_len > 0);
     m_pixels.resize(m_pixels_len);
     std::memset(m_pixels.data(), 0, m_pixels_len);
+    m_xor_pixels.clear();
     m_dirty = false;
     {
         constexpr RECT dirty_rect{-1, -1, -1, -1};
@@ -487,6 +488,108 @@ void Plot::draw_line(const int x1, const int y1, const int x2, const int y2, con
     geometry::draw_line(x1, y1, x2, y2, color);
 }
 
+void Plot::save_xor_pixel(const int x, const int y)
+{
+    if (x < 0 || x >= m_width || y < 0 || y >= m_height)
+    {
+        return;
+    }
+    m_xor_pixels.push_back(XorPixel{x, y, m_pixels[(m_height - 1 - y) * m_row_len + x]});
+}
+
+void Plot::save_xor_line(int x1, int y1, const int x2, const int y2)
+{
+    const int dx{x2 > x1 ? x2 - x1 : x1 - x2};
+    const int sx{x1 < x2 ? 1 : -1};
+    const int dy{y2 > y1 ? y1 - y2 : y2 - y1};
+    const int sy{y1 < y2 ? 1 : -1};
+    int err{dx + dy};
+
+    while (true)
+    {
+        save_xor_pixel(x1, y1);
+        if (x1 == x2 && y1 == y2)
+        {
+            break;
+        }
+        const int e2{2 * err};
+        if (e2 >= dy)
+        {
+            err += dy;
+            x1 += sx;
+        }
+        if (e2 <= dx)
+        {
+            err += dx;
+            y1 += sy;
+        }
+    }
+}
+
+void Plot::draw_xor_line(const int x1, const int y1, const int x2, const int y2)
+{
+    if (m_window == nullptr)
+    {
+        return;
+    }
+
+    flush();
+    UpdateWindow(m_window);
+    save_xor_line(x1, y1, x2, y2);
+    HDC dc{GetDC(m_window)};
+    if (dc == nullptr)
+    {
+        return;
+    }
+
+    const int old_rop{SetROP2(dc, R2_XORPEN)};
+    HPEN pen{CreatePen(PS_DOT, 1, RGB(255, 255, 255))};
+    if (pen == nullptr)
+    {
+        SetROP2(dc, old_rop);
+        ReleaseDC(m_window, dc);
+        return;
+    }
+
+    HGDIOBJ old_pen{SelectObject(dc, pen)};
+    MoveToEx(dc, x1, y1, nullptr);
+    const int end_x{x2 + (x2 > x1 ? 1 : x2 < x1 ? -1 : 0)};
+    const int end_y{y2 + (y2 > y1 ? 1 : y2 < y1 ? -1 : 0)};
+    LineTo(dc, end_x, end_y);
+    SelectObject(dc, old_pen);
+    DeleteObject(pen);
+    SetROP2(dc, old_rop);
+    ReleaseDC(m_window, dc);
+}
+
+void Plot::clear_xor_lines()
+{
+    if (m_xor_pixels.empty())
+    {
+        return;
+    }
+    if (m_window == nullptr)
+    {
+        m_xor_pixels.clear();
+        return;
+    }
+
+    HDC dc{GetDC(m_window)};
+    if (dc == nullptr)
+    {
+        m_xor_pixels.clear();
+        return;
+    }
+
+    for (const XorPixel &pixel : m_xor_pixels)
+    {
+        SetPixelV(dc, pixel.x, pixel.y, RGB(m_clut[pixel.color][0], m_clut[pixel.color][1], m_clut[pixel.color][2]));
+    }
+    GdiFlush();
+    ReleaseDC(m_window, dc);
+    m_xor_pixels.clear();
+}
+
 int Plot::resize()
 {
     if (g_screen_x_dots == m_width && g_screen_y_dots == m_height)
@@ -555,6 +658,7 @@ void Plot::clear()
     m_dirty_region = r;
     m_dirty = true;
     std::memset(m_pixels.data(), 0, m_pixels_len);
+    m_xor_pixels.clear();
 }
 
 void Plot::redraw()
@@ -591,6 +695,7 @@ void Plot::save_graphics()
 void Plot::restore_graphics()
 {
     m_pixels = m_saved_pixels;
+    m_xor_pixels.clear();
     redraw();
 }
 

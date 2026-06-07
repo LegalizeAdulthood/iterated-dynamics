@@ -79,43 +79,44 @@ public:
     virtual int read_pixel(int x, int y) = 0;                                 // reads a single pixel
     virtual void write_pixel(int x, int y, int color) = 0;                    // writes a single pixel
     virtual void draw_line(int x1, int y1, int x2, int y2, int color) = 0;    // draw line
-    virtual void display_string(
-        int x, int y, int fg, int bg, const char *text) = 0;                  // draw string in graphics mode
-    virtual void save_graphics() = 0;                                         // save graphics
-    virtual void restore_graphics() = 0;                                      // restore graphics
-    virtual int get_key() = 0;                                                // poll or block for a key
-    virtual int key_cursor(int row, int col) = 0;                             //
-    virtual int key_pressed() = 0;                                            //
-    virtual int wait_key_pressed(bool timeout) = 0;                           //
-    virtual void unget_key(int key) = 0;                                      //
-    virtual void shell() = 0;                                                 // invoke a command shell
-    virtual void set_video_mode(const engine::VideoInfo &mode) = 0;               //
-    virtual void put_string(int row, int col, int attr, const char *msg) = 0; //
-    virtual bool is_text() = 0;                                               //
-    virtual void set_for_text() = 0;                                          // set for text mode & save gfx
-    virtual void set_for_graphics() = 0;                                      // restores graphics and data
-    virtual void set_clear() = 0;                                             // clears text screen
-    virtual void move_cursor(int row, int col) = 0;                           // text screen functions
-    virtual void hide_text_cursor() = 0;                                      //
-    virtual void set_attr(int row, int col, int attr, int count) = 0;         //
-    virtual void scroll_up(int top, int bot) = 0;                             //
-    virtual void stack_screen() = 0;                                          //
-    virtual void unstack_screen() = 0;                                        //
-    virtual void discard_screen() = 0;                                        //
-    virtual int init_fm() = 0;                                                // sound routines
-    virtual void buzzer(Buzzer kind) = 0;                                     //
-    virtual bool sound_on(int frequency) = 0;                                 //
-    virtual void sound_off() = 0;                                             //
-    virtual void mute() = 0;                                                  //
-    virtual bool is_disk() const = 0;                                         // is a disk driver?
-    virtual int get_char_attr() = 0;                                          //
-    virtual void put_char_attr(int char_attr) = 0;                            //
-    virtual void delay(int ms) = 0;                                           //
-    virtual void set_keyboard_timeout(int ms) = 0;                            //
-    virtual void flush() = 0;                                                 //
-    virtual void debug_text(const char *text) = 0;         // Emit debug text (no EOL assumed)
-    virtual void get_cursor_pos(int &x, int &y) const = 0; // get cursor position within frame
-    virtual void check_memory() = 0;                       // check memory for corrupted heap
+    virtual void draw_xor_line(int x1, int y1, int x2, int y2) = 0;           // draw transient xor line
+    virtual void clear_xor_lines() = 0;                                       // restore transient xor lines
+    virtual void display_string(int x, int y, int fg, int bg, const char *text) = 0; // draw string in graphics mode
+    virtual void save_graphics() = 0;                                                // save graphics
+    virtual void restore_graphics() = 0;                                             // restore graphics
+    virtual int get_key() = 0;                                                       // poll or block for a key
+    virtual int key_cursor(int row, int col) = 0;                                    //
+    virtual int key_pressed() = 0;                                                   //
+    virtual int wait_key_pressed(bool timeout) = 0;                                  //
+    virtual void unget_key(int key) = 0;                                             //
+    virtual void shell() = 0;                                                        // invoke a command shell
+    virtual void set_video_mode(const engine::VideoInfo &mode) = 0;                  //
+    virtual void put_string(int row, int col, int attr, const char *msg) = 0;        //
+    virtual bool is_text() = 0;                                                      //
+    virtual void set_for_text() = 0;                                                 // set for text mode & save gfx
+    virtual void set_for_graphics() = 0;                                             // restores graphics and data
+    virtual void set_clear() = 0;                                                    // clears text screen
+    virtual void move_cursor(int row, int col) = 0;                                  // text screen functions
+    virtual void hide_text_cursor() = 0;                                             //
+    virtual void set_attr(int row, int col, int attr, int count) = 0;                //
+    virtual void scroll_up(int top, int bot) = 0;                                    //
+    virtual void stack_screen() = 0;                                                 //
+    virtual void unstack_screen() = 0;                                               //
+    virtual void discard_screen() = 0;                                               //
+    virtual int init_fm() = 0;                                                       // sound routines
+    virtual void buzzer(Buzzer kind) = 0;                                            //
+    virtual bool sound_on(int frequency) = 0;                                        //
+    virtual void sound_off() = 0;                                                    //
+    virtual void mute() = 0;                                                         //
+    virtual bool is_disk() const = 0;                                                // is a disk driver?
+    virtual int get_char_attr() = 0;                                                 //
+    virtual void put_char_attr(int char_attr) = 0;                                   //
+    virtual void delay(int ms) = 0;                                                  //
+    virtual void set_keyboard_timeout(int ms) = 0;                                   //
+    virtual void flush() = 0;                                                        //
+    virtual void debug_text(const char *text) = 0;                                   // Emit debug text (no EOL assumed)
+    virtual void get_cursor_pos(int &x, int &y) const = 0;                           // get cursor position within frame
+    virtual void check_memory() = 0;                                                 // check memory for corrupted heap
     virtual bool get_filename(
         const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename) = 0;
 };
@@ -178,6 +179,16 @@ inline void driver_write_pixel(const int x, const int y, const int color)
 inline void driver_draw_line(const int x1, const int y1, const int x2, const int y2, const int color)
 {
     g_driver->draw_line(x1, y1, x2, y2, color);
+}
+
+inline void driver_draw_xor_line(const int x1, const int y1, const int x2, const int y2)
+{
+    g_driver->draw_xor_line(x1, y1, x2, y2);
+}
+
+inline void driver_clear_xor_lines()
+{
+    g_driver->clear_xor_lines();
 }
 
 inline int driver_get_key()

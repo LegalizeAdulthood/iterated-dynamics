@@ -48,6 +48,8 @@ public:
     void write_pixel(int x, int y, int color) override;
     int read_pixel(int x, int y) override;
     void draw_line(int x1, int y1, int x2, int y2, int color) override;
+    void draw_xor_line(int x1, int y1, int x2, int y2) override;
+    void clear_xor_lines() override;
     void create_window() override;
     void set_video_mode(const VideoInfo &mode) override;
     void set_clear() override;
@@ -299,6 +301,14 @@ void DiskDriver::draw_line(const int x1, const int y1, const int x2, const int y
 {
     ODS5("DiskDriver::draw_line (%d,%d) (%d,%d) %d", x1, y1, x2, y2, color);
     geometry::draw_line(x1, y1, x2, y2, color);
+}
+
+void DiskDriver::draw_xor_line(int /*x1*/, int /*y1*/, int /*x2*/, int /*y2*/)
+{
+}
+
+void DiskDriver::clear_xor_lines()
+{
 }
 
 void DiskDriver::create_window()

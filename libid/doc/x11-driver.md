@@ -32,15 +32,7 @@ Run from `home` after a Linux build:
 
 Validate these workflows on a real X server:
 
-- text menu rendering and centering
-- help display and escape handling
-- stacked text overlays and `<Delete>` text-screen clearing
-- keyboard menu navigation and interrupt keys
-- palette cycling
-- mouse zoom and double-click handling
-- expose redraw after covering and uncovering the window
 - fixed-size behavior when the window manager tries to resize the window
-- resize after mode changes
 - command shell return to the X11 application
 
 Use `Xvfb` only as a smoke environment unless the event loop is made

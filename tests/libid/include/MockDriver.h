@@ -28,6 +28,8 @@ public:
     MOCK_METHOD(int, read_pixel, (int, int), (override));
     MOCK_METHOD(void, write_pixel, (int, int, int), (override));
     MOCK_METHOD(void, draw_line, (int, int, int, int, int), (override));
+    MOCK_METHOD(void, draw_xor_line, (int, int, int, int), (override));
+    MOCK_METHOD(void, clear_xor_lines, (), (override));
     MOCK_METHOD(void, display_string, (int, int, int, int, char const *), (override));
     MOCK_METHOD(void, save_graphics, (), (override));
     MOCK_METHOD(void, restore_graphics, (), (override));
