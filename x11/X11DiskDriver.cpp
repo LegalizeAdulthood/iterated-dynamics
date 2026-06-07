@@ -4,7 +4,6 @@
 //
 #include "X11BaseDriver.h"
 
-#include "engine/calcfrac.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
