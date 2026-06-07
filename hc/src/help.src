@@ -292,6 +292,8 @@ o Formula, IFS, and L-system item names now preserve user-entered case
   (Fixes #364)
 o Image tests now cover periodicity checking with non-default settings.
   (Fixes #354)
+o The bibliography now includes "Chaos and Fractals: New Frontiers of
+  Science".  (Fixes #365)
 o Autokey files can now use caret notation for control-key command
   initiators, such as ^S for <Ctrl+S>.
 o The Linux/X11 port is complete.  It provides native Linux text and

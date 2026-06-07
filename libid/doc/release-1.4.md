@@ -10,27 +10,7 @@ it from this plan and renumber the remaining slices from 1.
 
 ## Slices
 
-### Slice 1: Add Chaos and Fractals bibliography entry
-
-Issue: #365
-
-Goal: add the requested bibliography item to the help source.
-
-Work:
-
-- Add the book to the bibliography in the help source.
-- Keep help formatting consistent with nearby entries.
-
-Acceptance:
-
-- The generated help includes the new bibliography entry.
-- No unrelated revision-history text is changed.
-
-Verification:
-
-- Run the help generation or affected help tests.
-
-### Slice 2: Add online documentation permalinks
+### Slice 1: Add online documentation permalinks
 
 Issue: #366
 
