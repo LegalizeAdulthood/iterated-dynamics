@@ -32,7 +32,35 @@ Verification:
 - Add an acceptance test that runs `makepar` from a temporary directory.
 - Run `cmake --workflow rt-default`.
 
-### Slice 2: Generate Linux makemig scripts
+### Slice 2: Search plural library subdirectories
+
+Issue: #421
+
+Goal: find FRACTINT-style plural input subdirectories under library
+directories.
+
+Work:
+
+- Search `formulas`, `maps`, and `pars` as aliases for the existing
+  `formula`, `map`, and `par` library subdirectories.
+- Keep Id's canonical directory names singular.
+- Apply plural aliases only when reading from configured library
+  directories.
+
+Acceptance:
+
+- `librarydirs` can find formula, map, and parameter files in plural
+  subdirectories.
+- Existing singular library subdirectory behavior is unchanged.
+- Id does not create or prefer plural output directories.
+
+Verification:
+
+- Add library lookup tests for plural formula, map, and parameter
+  subdirectories.
+- Run `cmake --workflow rt-default`.
+
+### Slice 3: Generate Linux makemig scripts
 
 Issue: #370
 
@@ -55,7 +83,7 @@ Verification:
 - Keep existing Windows batch expectations passing.
 - Run `cmake --workflow rt-default`.
 
-### Slice 3: Fix Windows executable resources
+### Slice 4: Fix Windows executable resources
 
 Issue: #386
 
@@ -77,7 +105,7 @@ Verification:
 - Verify resources in a Windows build artifact.
 - Run `cmake --workflow rt-default`.
 
-### Slice 4: Normalize version-sensitive test output
+### Slice 5: Normalize version-sensitive test output
 
 Issue: #387
 
@@ -99,7 +127,7 @@ Verification:
 - Run the affected text, help, and raytrace tests directly.
 - Run `cmake --workflow rt-default`.
 
-### Slice 5: Prefer inline formulas from parameter files
+### Slice 6: Prefer inline formulas from parameter files
 
 Issue: #389
 
@@ -123,7 +151,7 @@ Verification:
 - Manually verify the reported FOTD parameter set if assets are present.
 - Run `cmake --workflow rt-default`.
 
-### Slice 6: Add periodicity-checking image coverage
+### Slice 7: Add periodicity-checking image coverage
 
 Issue: #354
 
@@ -145,7 +173,7 @@ Verification:
 - Run the new image test on Windows and Linux.
 - Run `cmake --workflow rt-default`.
 
-### Slice 7: Add Chaos and Fractals bibliography entry
+### Slice 8: Add Chaos and Fractals bibliography entry
 
 Issue: #365
 
@@ -165,7 +193,7 @@ Verification:
 
 - Run the help generation or affected help tests.
 
-### Slice 8: Add online documentation permalinks
+### Slice 9: Add online documentation permalinks
 
 Issue: #366
 
