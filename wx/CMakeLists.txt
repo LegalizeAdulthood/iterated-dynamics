@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright 2018-2024 Richard Thomson
+# Copyright 2018-2026 Richard Thomson
 
 find_package(fmt CONFIG REQUIRED)
 find_package(wxWidgets CONFIG REQUIRED)
@@ -25,9 +25,6 @@ add_library(gui STATIC
 )
 target_include_directories(gui PUBLIC include)
 target_link_libraries(gui PUBLIC libid fmt::fmt-header-only wx::stc wx::core wx::base)
-if(WIN32)
-    target_link_libraries(gui PUBLIC id-resources)
-endif()
 target_folder(gui "Libraries/wx")
 
 add_executable(id
@@ -41,6 +38,9 @@ add_executable(id
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
 target_include_directories(id PUBLIC .)
 target_link_libraries(id PUBLIC gui)
+if(WIN32)
+    target_id_resources(id)
+endif()
 gui_executable(id)
 vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
 install(TARGETS id

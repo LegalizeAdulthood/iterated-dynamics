@@ -10,29 +10,7 @@ it from this plan and renumber the remaining slices from 1.
 
 ## Slices
 
-### Slice 1: Fix Windows executable resources
-
-Issue: #386
-
-Goal: compile Windows resources directly into the executable.
-
-Work:
-
-- Stop relying on a resource-only static library to carry resources.
-- Attach the resource script to each Windows executable that needs it.
-- Keep shared resource definitions in one source location.
-
-Acceptance:
-
-- Windows executables contain the expected icon and version resources.
-- Non-Windows builds do not see resource files.
-
-Verification:
-
-- Verify resources in a Windows build artifact.
-- Run `cmake --workflow rt-default`.
-
-### Slice 2: Normalize version-sensitive test output
+### Slice 1: Normalize version-sensitive test output
 
 Issue: #387
 
@@ -54,7 +32,7 @@ Verification:
 - Run the affected text, help, and raytrace tests directly.
 - Run `cmake --workflow rt-default`.
 
-### Slice 3: Prefer inline formulas from parameter files
+### Slice 2: Prefer inline formulas from parameter files
 
 Issue: #389
 
@@ -78,7 +56,7 @@ Verification:
 - Manually verify the reported FOTD parameter set if assets are present.
 - Run `cmake --workflow rt-default`.
 
-### Slice 4: Add periodicity-checking image coverage
+### Slice 3: Add periodicity-checking image coverage
 
 Issue: #354
 
@@ -100,7 +78,7 @@ Verification:
 - Run the new image test on Windows and Linux.
 - Run `cmake --workflow rt-default`.
 
-### Slice 5: Add Chaos and Fractals bibliography entry
+### Slice 4: Add Chaos and Fractals bibliography entry
 
 Issue: #365
 
@@ -120,7 +98,7 @@ Verification:
 
 - Run the help generation or affected help tests.
 
-### Slice 6: Add online documentation permalinks
+### Slice 5: Add online documentation permalinks
 
 Issue: #366
 

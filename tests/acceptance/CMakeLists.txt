@@ -21,6 +21,20 @@ add_test(NAME AcceptanceTest.makepar-from-any-directory
 set_tests_properties(AcceptanceTest.makepar-from-any-directory
     PROPERTIES LABELS "acceptance;makepar")
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    add_executable(version-resource-check version_resource_check.cpp)
+    target_link_libraries(version-resource-check Version.lib)
+    target_folder(version-resource-check "Tests/Acceptance")
+
+    add_test(NAME AcceptanceTest.windows-version-resource
+        COMMAND version-resource-check
+            "$<TARGET_FILE:id>"
+            "${PROJECT_VERSION}"
+    )
+    set_tests_properties(AcceptanceTest.windows-version-resource
+        PROPERTIES LABELS "acceptance;windows;resources")
+endif()
+
 if(NOT ID_ACCEPTANCE_SAVEDIR_TESTS)
     return()
 endif()

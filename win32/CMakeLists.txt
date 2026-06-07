@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright 2018 Richard Thomson
+# Copyright 2018-2026 Richard Thomson
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
     return()
@@ -9,17 +9,24 @@ endif()
 string(TIMESTAMP CURRENT_YEAR "%Y")
 configure_file(id.rc.in id.rc @ONLY)
 
-add_library(id-resources INTERFACE
-    Id.ico
-    id.rc.in
-    "${CMAKE_CURRENT_BINARY_DIR}/id.rc"
-    app-manifest.xml
-    resource.h)
-target_link_options(id-resources INTERFACE
-    "/manifest:embed"
-    "/manifestinput:${CMAKE_CURRENT_SOURCE_DIR}/app-manifest.xml")
-target_include_directories(id-resources INTERFACE . "${CMAKE_CURRENT_BINARY_DIR}")
-target_folder(id-resources "Libraries")
+set(ID_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "Id resource source directory")
+set(ID_RESOURCE_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "Id resource binary directory")
+set(ID_RESOURCE_SCRIPT "${CMAKE_CURRENT_BINARY_DIR}/id.rc" CACHE INTERNAL "Id resource script")
+
+function(target_id_resources target)
+    target_sources("${target}" PRIVATE
+        "${ID_RESOURCE_DIR}/Id.ico"
+        "${ID_RESOURCE_DIR}/id.rc.in"
+        "${ID_RESOURCE_SCRIPT}"
+        "${ID_RESOURCE_DIR}/app-manifest.xml"
+        "${ID_RESOURCE_DIR}/resource.h")
+    target_link_options("${target}" PRIVATE
+        "/manifest:embed"
+        "/manifestinput:${ID_RESOURCE_DIR}/app-manifest.xml")
+    target_include_directories("${target}" PRIVATE
+        "${ID_RESOURCE_DIR}"
+        "${ID_RESOURCE_BINARY_DIR}")
+endfunction()
 
 if(ID_USE_WX)
     # TODO: eliminate the need for os-wx
@@ -31,7 +38,7 @@ if(ID_USE_WX)
 
     target_compile_definitions(os-wx PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
     target_compile_options(os-wx PRIVATE ${ID_TARGET_OPTIONS})
-    target_link_libraries(os-wx PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs id-resources)
+    target_link_libraries(os-wx PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
     target_include_directories(os-wx PRIVATE ../libid/include PUBLIC .)
     target_folder(os-wx "Libraries")
     add_dependencies(os-wx native-help)
@@ -54,7 +61,7 @@ else()
 
     target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
     target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
-    target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs id-resources)
+    target_link_libraries(os PUBLIC gdi32.lib user32.lib shlwapi.lib os-hc help-defs)
     target_include_directories(os PRIVATE ../libid/include PUBLIC .)
     target_folder(os "Libraries")
     add_dependencies(os native-help)
@@ -64,6 +71,7 @@ else()
     source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")
     target_include_directories(id PUBLIC .)
     target_link_libraries(id PUBLIC libid)
+    target_id_resources(id)
     gui_executable(id)
     vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
     install(TARGETS id

@@ -360,6 +360,8 @@ o Library searches now accept FRACTINT-style formulas, maps, and pars
   subdirectories as read-only aliases.  (Fixes #421)
 o MIG image component files are now removed from the image save library
   after the final image is assembled.
+o Windows executables now embed icon and version resources directly.
+  (Fixes #386)
 o 3D Targa output now writes rendered pixels to the image save library.\
 o The bignum storage arena now matches the 64 KB allocator limit, avoiding
   memory corruption in arbitrary precision math.
