@@ -195,7 +195,7 @@ jobs:
         echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
         sudo dpkg-reconfigure man-db
         sudo apt-get update
-        sudo apt-get install --no-install-recommends -y mono-complete xauth xvfb
+        sudo apt-get install --no-install-recommends -y mono-complete libx11-dev xauth xvfb
 
     #- name: Install Prerequisites macOS
     #  if: ${{matrix.os == 'macos-latest'}}
