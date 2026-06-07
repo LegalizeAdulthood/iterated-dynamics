@@ -71,6 +71,18 @@ TEST_F(TestFindFileItem, formula)
     EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
 }
 
+TEST_F(TestFindFileItem, formulaEntryNameCaseVariant)
+{
+    m_path = data::ID_TEST_FRM_DIR;
+    m_path /= data::ID_TEST_FRM_FILE;
+
+    const bool result{find_file_item(m_path, "fractINT", &m_file, ItemType::FORMULA)};
+
+    EXPECT_FALSE(result);
+    EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(fs::path{data::ID_TEST_FRM_DIR} / data::ID_TEST_FRM_FILE, m_path);
+}
+
 #if !defined(_WIN32)
 TEST_F(TestFindFileItem, parameterFileCaseVariantDoesNotHideFormulaPath)
 {
@@ -98,12 +110,36 @@ TEST_F(TestFindFileItem, ifs)
     EXPECT_EQ(fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE, m_path);
 }
 
+TEST_F(TestFindFileItem, ifsEntryNameCaseVariant)
+{
+    m_path = data::ID_TEST_IFS_DIR;
+    m_path /= data::ID_TEST_IFS_FILE;
+
+    const bool result{find_file_item(m_path, "BINARY", &m_file, ItemType::IFS)};
+
+    EXPECT_FALSE(result);
+    EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(fs::path{data::ID_TEST_IFS_DIR} / data::ID_TEST_IFS_FILE, m_path);
+}
+
 TEST_F(TestFindFileItem, lindenmayerSystem)
 {
     m_path = data::ID_TEST_LSYSTEM_DIR;
     m_path /= data::ID_TEST_LSYSTEM_FILE;
 
     const bool result{find_file_item(m_path, "Koch1", &m_file, ItemType::L_SYSTEM)};
+
+    EXPECT_FALSE(result);
+    EXPECT_NE(nullptr, m_file);
+    EXPECT_EQ(fs::path{data::ID_TEST_LSYSTEM_DIR} / data::ID_TEST_LSYSTEM_FILE, m_path);
+}
+
+TEST_F(TestFindFileItem, lindenmayerSystemEntryNameCaseVariant)
+{
+    m_path = data::ID_TEST_LSYSTEM_DIR;
+    m_path /= data::ID_TEST_LSYSTEM_FILE;
+
+    const bool result{find_file_item(m_path, "koch1", &m_file, ItemType::L_SYSTEM)};
 
     EXPECT_FALSE(result);
     EXPECT_NE(nullptr, m_file);

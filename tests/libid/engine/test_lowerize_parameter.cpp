@@ -50,7 +50,7 @@ TEST_F(TestLowerizeParameter, rdsTextureValueUnchanged)
 }
 
 INSTANTIATE_TEST_SUITE_P(TestCaseSensitiveParameters, TestLowerizeParameter,
-    Values("autokeyname", "colors", "comment", "filename", "formulafile", "ifsfile", "lfile", "lightname",
-        "makedoc", "map", "orbitsavename", "parmfile", "rds-texture", "savename"));
+    Values("autokeyname", "colors", "comment", "filename", "formulafile", "formulaname", "ifs", "ifs3d", "ifsfile",
+        "lfile", "lightname", "lname", "makedoc", "map", "orbitsavename", "parmfile", "rds-texture", "savename"));
 
 } // namespace id::test

@@ -3802,7 +3802,7 @@ TEST_F(TestParameterCommand, formulaName)
     exec_cmd_arg("formulaname=Monongahela");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("monongahela", g_formula_name);
+    EXPECT_EQ("Monongahela", g_formula_name);
 }
 
 TEST_F(TestParameterCommand, lFileFilename)
@@ -3822,7 +3822,7 @@ TEST_F(TestParameterCommand, lName)
     exec_cmd_arg("lname=Monongahela");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("monongahela", g_l_system_name);
+    EXPECT_EQ("Monongahela", g_l_system_name);
 }
 
 TEST_F(TestParameterCommand, ifsFileFilename)
@@ -3842,7 +3842,7 @@ TEST_F(TestParameterCommand, ifsName)
     exec_cmd_arg("ifs=Monongahela");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("monongahela", g_ifs_name);
+    EXPECT_EQ("Monongahela", g_ifs_name);
 }
 
 TEST_F(TestParameterCommand, ifs3DName)
@@ -3852,7 +3852,7 @@ TEST_F(TestParameterCommand, ifs3DName)
     exec_cmd_arg("ifs3d=Monongahela");
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
-    EXPECT_EQ("monongahela", g_ifs_name);
+    EXPECT_EQ("Monongahela", g_ifs_name);
 }
 
 TEST_F(TestParameterCommand, parmFile)

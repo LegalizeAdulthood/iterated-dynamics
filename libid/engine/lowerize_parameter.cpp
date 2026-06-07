@@ -10,8 +10,8 @@ namespace id::engine
 {
 
 // don't convert these parameter values
-static constexpr const char *const UNCHANGED_PARAMS[] = {"autokeyname", "colors", "comment", "filename",
-    "formulafile", "ifsfile", "lfile", "librarydirs", "lightname", "makedoc", "makepar", "map",
+static constexpr const char *const UNCHANGED_PARAMS[] = {"autokeyname", "colors", "comment", "filename", "formulafile",
+    "formulaname", "ifs", "ifs3d", "ifsfile", "lfile", "librarydirs", "lightname", "lname", "makedoc", "makepar", "map",
     "orbitsavename", "orgfrmdir", "parmfile", "rds-texture", "savename", "savedir", "tempdir", "workdir"};
 
 void lowerize_parameter(char *cur_arg)
