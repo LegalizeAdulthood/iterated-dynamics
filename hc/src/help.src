@@ -287,6 +287,8 @@ o Random-dot stereograms can now be generated in batch mode using rds=
   and rds-texture=.  (Fixes #227)
 o Autokey files can now use caret notation for control-key command
   initiators, such as ^S for <Ctrl+S>.
+o The Linux/X11 port is complete.  It provides native Linux text and
+  graphics windows and uses the standard id.cfg video mode table.
 
 Bugs Fixed in Version 1.3.3
 
@@ -378,11 +380,6 @@ o Sound output does nothing, although all controls can be set through
 o Some formulas don't render correctly.  These problems have been around
   forever as xfractint also renders them incorrectly.  This will be fixed
   in a subsequent release.
-o The code compiles on Linux, but the Linux port is incomplete and is
-  planned on being completed with the switch to wxWidgets in version 2.0.
-  It may be feasible to run the Windows version of Id, via the ZIP package,
-  under Wine (Windows Emulation), but this has not been verified.  Give it
-  a try and let us know if it works!
 ;
 ;
 ;
@@ -472,9 +469,9 @@ As soon as you select a video mode, Id begins drawing an image - the
 
 For a quick start, after starting Id try one of the following:
 
-o Win32 GDI 800x600 small size image:       <F6>\
-o Win32 GDI 1024x768 medium size image:     <F7>\
-o Win32 GDI 1200x900 large size image:      <F8>\
+o 800x600 small size image:       <F6>\
+o 1024x768 medium size image:     <F7>\
+o 1200x900 large size image:      <F8>\
 
 After the initial Mandelbrot image has been displayed, try zooming
 into it (see {Zoom Box Commands}) and color cycling (see
@@ -629,9 +626,9 @@ Commands marked with an '*' are also available at the credits screen.
 Function keys & various combinations are used to select a video mode and
 redraw the screen.  For a quick start try one of the following:
 
-o Win32 GDI 800x600 small size image:       <F6>\
-o Win32 GDI 1024x768 medium size image:     <F7>\
-o Win32 GDI 1200x900 large size image:      <F8>\
+o 800x600 small size image:       <F6>\
+o 1024x768 medium size image:     <F7>\
+o 1200x900 large size image:      <F8>\
 
 ~Doc-
 //
@@ -1575,10 +1572,12 @@ X11 driver when the requested size fits on the current X screen and the
 mode uses 256 colors.  The standard video= parameter and video mode
 selection screen are available.
 
-The X11 window is fixed to the selected text or graphics size.  Window
-position is remembered in the user's XDG configuration area, and a
-standard X geometry option such as "-geometry +100+100" can be used on
-the command line to choose the initial position for a run.
+The X11 window requests the selected text or graphics size from the
+window manager.  If the window manager allows manual resizing, the video
+mode and image buffer remain the selected size.  Window position is
+remembered in the user's XDG configuration area, and a standard X
+geometry option such as "-geometry +100+100" can be used on the command
+line to choose the initial position for a run.
 
 Keyboard menus, help, text overlays, the text-mode file browser, mouse
 zoom, double-click zoom, image rendering, palette cycling, command shell

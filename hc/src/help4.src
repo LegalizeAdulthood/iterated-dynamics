@@ -1580,8 +1580,9 @@ The fields are defined as:
 3. The number of pixels across the screen (X, from 2 to 32767)
 4. The number of pixels down the screen (Y, from 2 to 32767)
 5. The number of available colors (2, 4, 16, or 256)
-6. The name of the driver for the video mode.  Currently, only "gdi" and
-   "disk" driver names are supported.
+6. The name of the driver for the video mode.  The Win32 GDI and Linux X11
+   drivers use "gdi".  On Linux, X11 accepts 256-color "gdi" modes that
+   fit on the current X screen.  Disk modes use "disk".
 7. A comment describing the mode (25 chars max, leading blanks are OK)
 ~Format+
 ;

@@ -419,8 +419,8 @@ All we can say is that non-productivity software has never been so potent,
 and we're sorry, it's our fault!
 
 Id was compiled using Microsoft Visual Studio on Windows and the GNU C++
-compiler, g++, on unix.  Id source code is available directly through its
-project page on github a Windows MSI installer is also available there.
+compiler, g++, on Unix-like systems.  Id source code and release packages
+are available directly through its project page on github.
 See {Distribution of Iterated Dynamics}.
 ;
 ;
@@ -1105,8 +1105,8 @@ DISTRIBUTION OF ID
 New versions of Iterated Dynamics are released through github,
 <https://github.com/LegalizeAdulthood/iterated-dynamics>,
 and make their way to other systems from that point.  Id is available as
-a Windows MSI installer, a ZIP file containing binaries and as a
-source code ZIP file.
+a Windows MSI installer, a Windows ZIP file containing binaries, a Linux
+tar.gz package and as a source code ZIP file.
 
 The latest version of the code can always be found on the github repository.
 ;
@@ -1233,10 +1233,10 @@ fork from Fractint.
 
 Richard decoupled the DOS and assembly language code from the rest of the
 code and created a driver abstraction that could be used to connect the
-code to modern environments.  He implemented the disk and gdi drivers for
-Win32 used to provide their correspnding video modes.  The CGA text window
-is emulated in order to have the user interface and help system.  He
-converted the entirety of the code to C++ to allow object
+code to modern environments.  He implemented the disk, Win32 GDI, and
+Linux X11 drivers used to provide their corresponding video modes.  The
+CGA text window is emulated in order to have the user interface and help
+system.  He converted the entirety of the code to C++ to allow object
 oriented programming paradigms to be used.
 
 Many magic numbers throughout the code were replaced with enums or other
@@ -1268,11 +1268,11 @@ each other.  Unit testing changes before applying them helps ensure that
 forward progress doesn't come at the expense of bugs.
 
 Github's actions provide continuous integration (CI) builds on Windows and
-linux with every commit to the repository.  The actions build all the code
-and run all the unit tests every time the repository is updated.  Richard
-uses Windows as his primary development environment and the CI builds
-ensure that the code continues to build on linux.  (This trips you up
-more often than you might think!)
+Linux with every commit to the repository.  The actions build all the code
+and run the unit and acceptance tests every time the repository is
+updated.  Richard uses Windows as his primary development environment and
+the CI builds ensure that the code continues to build and run on Linux.
+(This trips you up more often than you might think!)
 
 Other libraries Richard has brought in are the boost.algorithm library for
 some string algorithms, the boost.endian library for marshalling the GIF
@@ -1280,11 +1280,11 @@ extension blocks between little and big endian machines and the giflib library
 for reading and writing GIF files.
 
 The 2017 version of the ISO C++ language standard is required to build Id.
-This is readily available through open source compilers on unix, such as gcc
-and clang, and on Windows through Visual Studio Community Edition.  Visual
-Studio Community Edition is a full-featured compiler and development
-environment with no license restrictions.  It can be downloaded from
-<https://VisualStudio.com>.
+This is readily available through open source compilers on Unix-like
+systems, such as gcc and clang, and on Windows through Visual Studio
+Community Edition.  Visual Studio Community Edition is a full-featured
+compiler and development environment with no license restrictions.  It
+can be downloaded from <https://VisualStudio.com>.
 
 Every line of the help files were examined and updated to have a consistent
 style throughout.  Discussion of old DOS related information was removed and,
