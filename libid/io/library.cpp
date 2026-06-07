@@ -60,6 +60,40 @@ static std::string_view subdir(ReadFile kind)
     throw std::runtime_error("Unknown ReadFile type " + std::to_string(static_cast<int>(kind)));
 }
 
+static std::string_view plural_subdir(ReadFile kind)
+{
+    switch (kind)
+    {
+    case ReadFile::FORMULA:
+        return "formulas";
+    case ReadFile::MAP:
+        return "maps";
+    case ReadFile::PARAMETER:
+        return "pars";
+    default:
+        return {};
+    }
+}
+
+static fs::path find_file_in_subdir(const fs::path &dir, const std::string_view subdir_name, const fs::path &filename)
+{
+    const fs::path path{dir / subdir_name / filename};
+    return fs::exists(path) ? path : fs::path{};
+}
+
+static fs::path find_file_in_read_library_subdirs(const ReadFile kind, const fs::path &dir, const fs::path &filename)
+{
+    if (const fs::path path = find_file_in_subdir(dir, subdir(kind), filename); !path.empty())
+    {
+        return path;
+    }
+    if (const std::string_view plural = plural_subdir(kind); !plural.empty())
+    {
+        return find_file_in_subdir(dir, plural, filename);
+    }
+    return {};
+}
+
 void clear_read_library_path()
 {
     s_read_libraries.clear();
@@ -161,7 +195,7 @@ fs::path find_file(const ReadFile kind, const fs::path &file_path)
     const fs::path filename{file_path.filename()};
     const auto check_dir = [&](const fs::path &dir) -> fs::path
     {
-        if (const fs::path path = dir / subdir(kind) / filename; fs::exists(path))
+        if (const fs::path path = find_file_in_subdir(dir, subdir(kind), filename); !path.empty())
         {
             return path;
         }
@@ -184,7 +218,7 @@ fs::path find_file(const ReadFile kind, const fs::path &file_path)
 
     for (const fs::path &dir : s_read_libraries)
     {
-        if (const fs::path path = dir / subdir(kind) / filename; fs::exists(path))
+        if (const fs::path path = find_file_in_read_library_subdirs(kind, dir, filename); !path.empty())
         {
             return path;
         }
@@ -370,6 +404,16 @@ fs::path find_wildcard_next()
     return {};
 }
 
+static void add_read_library_subdir_patterns(
+    std::vector<fs::path> &patterns, const fs::path &dir, const ReadFile kind, const fs::path &wildcard_path)
+{
+    patterns.push_back(dir / subdir(kind) / wildcard_path);
+    if (const std::string_view plural = plural_subdir(kind); !plural.empty())
+    {
+        patterns.push_back(dir / plural / wildcard_path);
+    }
+}
+
 fs::path find_wildcard_first(const ReadFile kind, const std::string &wildcard)
 {
     s_wildcard.kind = kind;
@@ -391,7 +435,7 @@ fs::path find_wildcard_first(const ReadFile kind, const std::string &wildcard)
         }
         for (const fs::path &dir : s_read_libraries)
         {
-            s_wildcard.patterns.push_back(dir / subdir(kind) / wildcard_path);
+            add_read_library_subdir_patterns(s_wildcard.patterns, dir, kind, wildcard_path);
         }
         for (const fs::path &dir : s_read_libraries)
         {

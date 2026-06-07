@@ -210,6 +210,52 @@ TEST_F(TestLibrary, findFormulaSearchMultiplePaths)
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
 }
 
+TEST_F(TestLibrary, findFormulaInLibraryPluralSubDirectory)
+{
+    add_read_library(ID_TEST_LIBRARY_DIR2);
+
+    const Path path{find_file(ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{ID_TEST_FORMULA_FILE2}, path.filename()) << path;
+    EXPECT_EQ(Path{"formulas"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, findMapInLibraryPluralSubDirectory)
+{
+    add_read_library(ID_TEST_LIBRARY_DIR2);
+
+    const Path path{find_file(ReadFile::MAP, ID_TEST_MAP_FILE2)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{ID_TEST_MAP_FILE2}, path.filename()) << path;
+    EXPECT_EQ(Path{"maps"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, findParameterInLibraryPluralSubDirectory)
+{
+    add_read_library(ID_TEST_LIBRARY_DIR2);
+
+    const Path path{find_file(ReadFile::PARAMETER, ID_TEST_PAR_FILE2)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{ID_TEST_PAR_FILE2}, path.filename()) << path;
+    EXPECT_EQ(Path{"pars"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, findFileIgnoresPluralFallbackSubDirectory)
+{
+    EnvVarSaver fract_dir{"FRACTDIR", ID_TEST_SEARCH_DIR1};
+    init_default_read_libraries();
+
+    const Path path{find_file(ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
+
+    EXPECT_TRUE(path.empty()) << path;
+}
+
 TEST_F(TestLibrary, findFileReadLibraryPrecedesFallback)
 {
     add_read_library(ID_TEST_LIBRARY_DIR2);
@@ -283,6 +329,19 @@ TEST_F(TestLibrary, saveFileAddsExtension)
     EXPECT_EQ(Path{"foo.map"}, path.filename()) << path;
     EXPECT_EQ(Path{"map"}, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR3}, path.parent_path().parent_path()) << path;
+}
+
+TEST_F(TestLibrary, saveFormulaMapAndParameterUseSingularSubDirectories)
+{
+    set_save_library(ID_TEST_LIBRARY_DIR3);
+
+    const Path formula_path{get_save_path(WriteFile::FORMULA, "foo")};
+    const Path map_path{get_save_path(WriteFile::MAP, "foo")};
+    const Path par_path{get_save_path(WriteFile::PARAMETER, "foo")};
+
+    EXPECT_EQ(Path{"formula"}, formula_path.parent_path().filename()) << formula_path;
+    EXPECT_EQ(Path{"map"}, map_path.parent_path().filename()) << map_path;
+    EXPECT_EQ(Path{"par"}, par_path.parent_path().filename()) << par_path;
 }
 
 TEST_F(TestLibrary, saveOrbit)
@@ -511,6 +570,18 @@ TEST_F(TestLibrary, findWildcardCurrentDirectoryWhenEnabled)
     EXPECT_EQ(Path{"test.gif"}, path.filename()) << path;
     EXPECT_EQ(Path{"image"}, path.parent_path().filename()) << path;
     EXPECT_EQ(Path{"image"} / "test.gif", path) << path;
+}
+
+TEST_F(TestLibrary, findWildcardPluralSubDirectory)
+{
+    add_read_library(ID_TEST_LIBRARY_DIR2);
+
+    const Path path{find_wildcard_first(ReadFile::FORMULA, ID_TEST_FORMULA_FILE2)};
+
+    ASSERT_FALSE(path.empty()) << path;
+    EXPECT_EQ(Path{ID_TEST_FORMULA_FILE2}, path.filename()) << path;
+    EXPECT_EQ(Path{"formulas"}, path.parent_path().filename()) << path;
+    EXPECT_EQ(Path{ID_TEST_LIBRARY_DIR2}, path.parent_path().parent_path()) << path;
 }
 
 TEST_F(TestLibrary, findWildcardExplicitRelativeDirectory)
