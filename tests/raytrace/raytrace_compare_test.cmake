@@ -45,4 +45,5 @@ if(EXISTS "image/fract001.gif")
 endif()
 
 compare_gold_text_files("${GOLD_TRACE}" "${TEST_OUTPUT}"
-    "Generated raytrace file differs from '${GOLD_TRACE}'.")
+    "Generated raytrace file differs from '${GOLD_TRACE}'."
+    NORMALIZE_VERSION)

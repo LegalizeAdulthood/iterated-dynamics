@@ -30,4 +30,4 @@ execute_process(COMMAND "${HC}" ${PARAMETERS}
 
 file(REAL_PATH "${TEXT_FILE}" text)
 compare_gold_text_files("${GOLD_FILE}" "${text}" "The files are different."
-    IGNORE_EOL)
+    IGNORE_EOL NORMALIZE_VERSION)
