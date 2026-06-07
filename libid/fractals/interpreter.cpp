@@ -2,12 +2,12 @@
 
 #include "engine/calcfrac.h"
 #include "engine/pixel_grid.h"
+#include "engine/random_seed.h"
 #include "fractals/parser.h"
 #include "io/check_write_file.h"
 #include "io/library.h"
 #include "math/arg.h"
 #include "math/fixed_pt.h"
-#include "math/rand15.h"
 #include "misc/debug_flags.h"
 #include "misc/version.h"
 
@@ -497,7 +497,7 @@ void d_stk_round()
 
 static unsigned long new_random_num()
 {
-    g_runtime.rand_num = (g_runtime.rand_num << 15) + RAND15() ^ g_runtime.rand_num;
+    g_runtime.rand_num = ((g_runtime.rand_num << 15) + random15(g_runtime.rand_state)) ^ g_runtime.rand_num;
     return g_runtime.rand_num;
 }
 
@@ -518,8 +518,9 @@ static void set_random()
         g_runtime.rand_num = g_runtime.rand_x ^ g_runtime.rand_y;
     }
 
-    const unsigned int seed = static_cast<unsigned>(g_runtime.rand_num) ^ static_cast<unsigned>(g_runtime.rand_num >> 16);
-    std::srand(seed);
+    const unsigned int seed =
+        static_cast<unsigned>(g_runtime.rand_num) ^ static_cast<unsigned>(g_runtime.rand_num >> 16);
+    g_runtime.rand_state = seed;
     g_runtime.set_random = true;
 
     // Clear out the seed
@@ -530,16 +531,23 @@ static void set_random()
 
 void random_seed()
 {
-    std::time_t now;
-
-    // Use the current time to randomize the random number sequence.
-    std::time(&now);
-    std::srand(static_cast<unsigned int>(now));
-
+    const int seed = g_random_seed;
+    set_random_seed();
+    g_runtime.rand_state = static_cast<std::uint32_t>(seed);
     new_random_num();
     new_random_num();
     new_random_num();
     g_runtime.randomized = true;
+}
+
+void reset_formula_random()
+{
+    g_runtime.set_random = false;
+    g_runtime.randomized = false;
+    g_runtime.rand_state = 0;
+    g_runtime.rand_num = 0;
+    g_runtime.rand_x = 0;
+    g_runtime.rand_y = 0;
 }
 
 void d_stk_srand()

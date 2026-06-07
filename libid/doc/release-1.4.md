@@ -10,29 +10,7 @@ it from this plan and renumber the remaining slices from 1.
 
 ## Slices
 
-### Slice 1: Make formula rand repeatable with rseed
-
-Issue: #363
-
-Goal: make formulas using `rand` repeatable when `rseed` is specified.
-
-Work:
-
-- Remove unconditional reseeding from the formula interpreter.
-- Route formula random use through the image random seed path.
-- Preserve existing behavior when no seed is specified.
-
-Acceptance:
-
-- A formula using `rand` produces repeatable output with the same `rseed`.
-- Different seeds still produce different random streams.
-
-Verification:
-
-- Add an image or parameterized test for a formula that calls `rand`.
-- Run `cmake --workflow rt-default`.
-
-### Slice 2: Preserve user input case for named entries
+### Slice 1: Preserve user input case for named entries
 
 Issue: #364
 
@@ -54,7 +32,7 @@ Verification:
 - Add focused tests for formula, IFS, and L-system name handling.
 - Run `cmake --workflow rt-default`.
 
-### Slice 3: Make makepar work from any directory
+### Slice 2: Make makepar work from any directory
 
 Issue: #368
 
@@ -76,7 +54,7 @@ Verification:
 - Add an acceptance test that runs `makepar` from a temporary directory.
 - Run `cmake --workflow rt-default`.
 
-### Slice 4: Generate Linux makemig scripts
+### Slice 3: Generate Linux makemig scripts
 
 Issue: #370
 
@@ -99,7 +77,7 @@ Verification:
 - Keep existing Windows batch expectations passing.
 - Run `cmake --workflow rt-default`.
 
-### Slice 5: Fix Windows executable resources
+### Slice 4: Fix Windows executable resources
 
 Issue: #386
 
@@ -121,7 +99,7 @@ Verification:
 - Verify resources in a Windows build artifact.
 - Run `cmake --workflow rt-default`.
 
-### Slice 6: Normalize version-sensitive test output
+### Slice 5: Normalize version-sensitive test output
 
 Issue: #387
 
@@ -143,7 +121,7 @@ Verification:
 - Run the affected text, help, and raytrace tests directly.
 - Run `cmake --workflow rt-default`.
 
-### Slice 7: Prefer inline formulas from parameter files
+### Slice 6: Prefer inline formulas from parameter files
 
 Issue: #389
 
@@ -167,7 +145,7 @@ Verification:
 - Manually verify the reported FOTD parameter set if assets are present.
 - Run `cmake --workflow rt-default`.
 
-### Slice 8: Add periodicity-checking image coverage
+### Slice 7: Add periodicity-checking image coverage
 
 Issue: #354
 
@@ -189,7 +167,7 @@ Verification:
 - Run the new image test on Windows and Linux.
 - Run `cmake --workflow rt-default`.
 
-### Slice 9: Add Chaos and Fractals bibliography entry
+### Slice 8: Add Chaos and Fractals bibliography entry
 
 Issue: #365
 
@@ -209,7 +187,7 @@ Verification:
 
 - Run the help generation or affected help tests.
 
-### Slice 10: Add online documentation permalinks
+### Slice 9: Add online documentation permalinks
 
 Issue: #366
 

@@ -5,6 +5,7 @@
 #include "math/arg.h"
 
 #include <array>
+#include <cstdint>
 #include <cstdio>
 
 namespace id::math
@@ -30,6 +31,7 @@ struct RuntimeState
 
     bool set_random{};
     bool randomized{};
+    std::uint32_t rand_state{};
     unsigned long rand_num{};
     long rand_x{};
     long rand_y{};
@@ -79,6 +81,7 @@ extern const std::array<const char *, 19> VARIABLES;
 
 void debug_trace_init();
 void random_seed();
+void reset_formula_random();
 void d_stk_srand();
 void d_random();
 void d_stk_add();

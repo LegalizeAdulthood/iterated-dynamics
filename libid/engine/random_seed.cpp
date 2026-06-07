@@ -34,8 +34,13 @@ void set_random_seed()
 
 int random15()
 {
-    s_random_state = s_random_state * RANDOM_MULTIPLIER + RANDOM_INCREMENT;
-    return static_cast<int>((s_random_state >> 16U) & RANDOM_MAX);
+    return random15(s_random_state);
+}
+
+int random15(std::uint32_t &state)
+{
+    state = state * RANDOM_MULTIPLIER + RANDOM_INCREMENT;
+    return static_cast<int>((state >> 16U) & RANDOM_MAX);
 }
 
 int random_int(const int limit)

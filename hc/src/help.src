@@ -285,6 +285,8 @@ o Random-dot stereogram generation now honors rseed=, making RDS output
   deterministic when a seed is specified.
 o Random-dot stereograms can now be generated in batch mode using rds=
   and rds-texture=.  (Fixes #227)
+o Formula rand now honors rseed=, making formulas that use rand repeatable
+  when a seed is specified.  (Fixes #363)
 o Autokey files can now use caret notation for control-key command
   initiators, such as ^S for <Ctrl+S>.
 o The Linux/X11 port is complete.  It provides native Linux text and
