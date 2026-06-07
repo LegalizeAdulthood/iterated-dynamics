@@ -4,8 +4,14 @@
 //
 #include "X11Text.h"
 
+#include <X11/Xresource.h>
+
 #include <algorithm>
+#include <array>
 #include <cassert>
+#include <cmath>
+#include <cstdlib>
+#include <string>
 
 namespace id::misc
 {
@@ -16,6 +22,11 @@ namespace
 constexpr Byte DEFAULT_ATTR{0xf0};
 constexpr Byte SCROLL_ATTR{0x00};
 constexpr const char *FONT_NAME{"fixed"};
+constexpr double DEFAULT_DPI{96.0};
+constexpr int BASE_FONT_PIXELS{13};
+constexpr int MIN_FONT_PIXELS{13};
+constexpr int MAX_FONT_PIXELS{32};
+constexpr const char *FONT_REGISTRIES[]{"iso10646-1", "iso8859-1"};
 
 struct RgbColor
 {
@@ -47,6 +58,117 @@ constexpr RgbColor TEXT_COLORS[]{
     {INTENSITY_255, INTENSITY_255, INTENSITY_255},
 };
 
+double parse_resource_dpi(const XrmValue &value)
+{
+    if (value.addr == nullptr || value.size == 0)
+    {
+        return 0.0;
+    }
+
+    const std::string text{value.addr, value.size};
+    char *end{};
+    const double result{std::strtod(text.c_str(), &end)};
+    if (end == text.c_str() || !std::isfinite(result) || result <= 0.0)
+    {
+        return 0.0;
+    }
+    return result;
+}
+
+double xft_dpi(Display *display)
+{
+    char *resources{XResourceManagerString(display)};
+    if (resources == nullptr)
+    {
+        return 0.0;
+    }
+
+    XrmInitialize();
+    XrmDatabase database{XrmGetStringDatabase(resources)};
+    if (database == nullptr)
+    {
+        return 0.0;
+    }
+
+    char *type{};
+    XrmValue value{};
+    double result{};
+    if (XrmGetResource(database, "Xft.dpi", "Xft.Dpi", &type, &value))
+    {
+        result = parse_resource_dpi(value);
+    }
+    XrmDestroyDatabase(database);
+    return result;
+}
+
+double display_dpi(Display *display, const int screen)
+{
+    const int width_mm{DisplayWidthMM(display, screen)};
+    if (width_mm <= 0)
+    {
+        return 0.0;
+    }
+    return DisplayWidth(display, screen) * 25.4 / width_mm;
+}
+
+int scaled_font_pixels(Display *display, const int screen)
+{
+    double dpi{xft_dpi(display)};
+    if (dpi <= 0.0)
+    {
+        dpi = display_dpi(display, screen);
+    }
+    if (dpi <= 0.0)
+    {
+        dpi = DEFAULT_DPI;
+    }
+
+    const double scale{dpi / DEFAULT_DPI};
+    return std::clamp(static_cast<int>(BASE_FONT_PIXELS * scale + 0.5), MIN_FONT_PIXELS, MAX_FONT_PIXELS);
+}
+
+XFontStruct *load_font_match(Display *display, const std::string &pattern)
+{
+    int count{};
+    char **names{XListFonts(display, pattern.c_str(), 1, &count)};
+    if (names == nullptr || count == 0)
+    {
+        return nullptr;
+    }
+
+    XFontStruct *result{XLoadQueryFont(display, names[0])};
+    XFreeFontNames(names);
+    return result;
+}
+
+XFontStruct *load_scaled_font(Display *display, const int screen)
+{
+    const int target{scaled_font_pixels(display, screen)};
+    std::array<int, 8> sizes{13, 14, 15, 18, 20, 24, 28, 32};
+    std::sort(sizes.begin(), sizes.end(),
+        [target](const int lhs, const int rhs)
+        {
+            const int lhs_distance{std::abs(lhs - target)};
+            const int rhs_distance{std::abs(rhs - target)};
+            return lhs_distance == rhs_distance ? lhs > rhs : lhs_distance < rhs_distance;
+        });
+
+    for (const int size : sizes)
+    {
+        for (const char *registry : FONT_REGISTRIES)
+        {
+            XFontStruct *font{load_font_match(
+                display, "-misc-fixed-medium-r-normal--" + std::to_string(size) + "-*-*-*-*-*-" + registry)};
+            if (font != nullptr)
+            {
+                return font;
+            }
+        }
+    }
+
+    return XLoadQueryFont(display, FONT_NAME);
+}
+
 } // namespace
 
 X11Text::X11Text()
@@ -70,7 +192,7 @@ bool X11Text::init(X11Connection &connection)
     Display *display = m_connection->display();
     if (m_font == nullptr)
     {
-        m_font = XLoadQueryFont(display, FONT_NAME);
+        m_font = load_scaled_font(display, m_connection->screen());
         if (m_font == nullptr)
         {
             return false;
