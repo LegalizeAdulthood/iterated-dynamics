@@ -15,6 +15,7 @@ add_library(os STATIC
     init_failure.cpp
     X11BaseDriver.h X11BaseDriver.cpp
     X11Connection.h X11Connection.cpp
+    X11DiskDriver.cpp
     X11Driver.cpp
     X11Frame.h X11Frame.cpp
     X11Plot.h X11Plot.cpp

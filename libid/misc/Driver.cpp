@@ -43,7 +43,7 @@ void load_driver(Driver *drv, int *argc, char **argv)
 //
 int init_drivers(int *argc, char **argv)
 {
-#if ID_HAVE_WIN32_DISK_DRIVER
+#if ID_HAVE_DISK_DRIVER
     load_driver(get_disk_driver(), argc, argv);
 #endif
 

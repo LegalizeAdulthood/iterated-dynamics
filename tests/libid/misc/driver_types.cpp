@@ -18,7 +18,7 @@ Driver *get_gdi_driver()
 }
 #endif
 
-#if ID_HAVE_WIN32_DISK_DRIVER
+#if ID_HAVE_DISK_DRIVER
 static MockDriver s_disk_driver;
 
 Driver *get_disk_driver()

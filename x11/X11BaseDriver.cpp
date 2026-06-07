@@ -68,6 +68,7 @@ enum class FilenameSpeedState
 };
 
 FilenameSpeedState g_filename_speed_state{FilenameSpeedState::MATCHING};
+std::string g_geometry;
 
 struct FileChoice
 {
@@ -438,7 +439,12 @@ bool X11BaseDriver::init(int *argc, char **argv)
     {
         return false;
     }
-    m_frame.set_geometry(consume_geometry_arg(argc, argv));
+    const std::string geometry{consume_geometry_arg(argc, argv)};
+    if (!geometry.empty())
+    {
+        g_geometry = geometry;
+    }
+    m_frame.set_geometry(g_geometry);
 
     m_frame.set_event_handler(
         [this](const XEvent &event)
