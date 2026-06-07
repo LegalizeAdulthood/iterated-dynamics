@@ -36,7 +36,7 @@ class DiskDriver : public Win32BaseDriver
 {
 public:
     DiskDriver() :
-        Win32BaseDriver("disk", "Windows Disk")
+        Win32BaseDriver("disk", "Disk")
     {
     }
 

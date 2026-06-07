@@ -32,7 +32,7 @@ class X11DiskDriver : public X11BaseDriver
 {
 public:
     X11DiskDriver() :
-        X11BaseDriver("disk", "Linux Disk")
+        X11BaseDriver("disk", "Disk")
     {
     }
 
