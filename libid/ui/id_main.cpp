@@ -39,6 +39,7 @@
 #include "ui/intro.h"
 #include "ui/main_menu.h"
 #include "ui/main_state.h"
+#include "ui/make_mig_script.h"
 #include "ui/mouse.h"
 #include "ui/select_video_mode.h"
 #include "ui/stop_msg.h"
@@ -389,6 +390,7 @@ int id_main(int argc, char *argv[])
 {
     // this traps non-math library floating point errors
     std::signal(SIGFPE, my_floating_point_err);
+    set_make_mig_script_executable(argc > 0 ? argv[0] : nullptr);
 
     init_asm_vars();                       // initialize ASM stuff
     init_memory();

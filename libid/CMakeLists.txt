@@ -6,6 +6,11 @@ find_package(fmt CONFIG REQUIRED)
 find_package(GIF REQUIRED)
 find_package(cpuid CONFIG REQUIRED)
 
+set(ID_MAKE_MIG_SCRIPT_SOURCE ui/make_mig_script_unix.cpp)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(ID_MAKE_MIG_SCRIPT_SOURCE ui/make_mig_script_windows.cpp)
+endif()
+
 add_library(libid
     include/engine/bailout_formula.h engine/bailout_formula.cpp
     include/engine/Browse.h engine/Browse.cpp
@@ -221,6 +226,7 @@ add_library(libid
     include/ui/make_batch_file.h ui/make_batch_file.cpp
     include/ui/main_menu.h ui/main_menu.cpp
     include/ui/main_menu_switch.h ui/main_menu_switch.cpp
+    include/ui/make_mig_script.h ${ID_MAKE_MIG_SCRIPT_SOURCE}
     include/ui/main_state.h
     include/ui/menu_handler.h ui/menu_handler.cpp
     include/ui/mouse.h ui/mouse.cpp

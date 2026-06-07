@@ -4,23 +4,42 @@
 include(IdTestHome)
 include(PlatformArgs)
 
+set(MAKEPAR_MIG_SCRIPT_FILE "makemig.bat")
+set(MAKEPAR_MIG_GOLD_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.bat")
+set(MAKEPAR_MIG_NORMALIZE_SCRIPT_EXECUTABLE OFF)
+set(MAKEPAR_MIG_RUN_SCRIPT OFF)
+set(MAKEPAR_MIG_LABELS "autokey;ui")
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(MAKEPAR_MIG_SCRIPT_FILE "makemig.sh")
+    set(MAKEPAR_MIG_GOLD_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.sh")
+    set(MAKEPAR_MIG_NORMALIZE_SCRIPT_EXECUTABLE ON)
+    set(MAKEPAR_MIG_RUN_SCRIPT ON)
+    set(MAKEPAR_MIG_LABELS "acceptance;autokey;ui")
+endif()
+
 id_make_test_home(makepar-mig-pieces MAKEPAR_MIG_PIECES_HOME
     IMAGES make_mig_input.gif
     KEYS make_mig_pieces.key)
 add_test(NAME AutoKeyTest.makepar-mig-pieces
     COMMAND ${CMAKE_COMMAND}
         "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
         "-DINPUT_IMAGE=image/make_mig_input.gif"
         "-DAUTO_KEY=key/make_mig_pieces.key"
-        "-DGOLD_BAT=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.bat"
+        "-DGOLD_IMAGE=${CMAKE_SOURCE_DIR}/tests/images/gold-make_mig.gif"
+        "-DTEST_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/test-make_mig_script.gif"
+        "-DSCRIPT_FILE=${MAKEPAR_MIG_SCRIPT_FILE}"
+        "-DGOLD_SCRIPT=${MAKEPAR_MIG_GOLD_SCRIPT}"
         "-DGOLD_PAR=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.par"
         "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        "-DNORMALIZE_SCRIPT_EXECUTABLE=${MAKEPAR_MIG_NORMALIZE_SCRIPT_EXECUTABLE}"
+        "-DRUN_SCRIPT=${MAKEPAR_MIG_RUN_SCRIPT}"
         "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/tests/cmake"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/make_mig_pieces_test.cmake"
     WORKING_DIRECTORY "${MAKEPAR_MIG_PIECES_HOME}"
 )
 set_tests_properties(AutoKeyTest.makepar-mig-pieces
-    PROPERTIES LABELS "autokey;ui")
+    PROPERTIES LABELS "${MAKEPAR_MIG_LABELS}")
 
 id_make_test_home(3dlook-targa THREE_D_LOOK_TARGA_HOME
     IMAGES gold-3dlook01.pot=potntial.pot

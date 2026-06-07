@@ -57,6 +57,7 @@
 #include "ui/ChoiceBuilder.h"
 #include "ui/comments.h"
 #include "ui/help.h"
+#include "ui/make_mig_script.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 
@@ -336,7 +337,8 @@ void make_batch_file()
     fs::path in_path;
     char buf2[128];
     std::FILE *infile{};
-    std::FILE *bat_file{};
+    std::FILE *script_file{};
+    fs::path script_path;
 
     driver_stack_screen();
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_PARAM_FILE};
@@ -438,13 +440,17 @@ skip_ui:
         if (params.x_multiple > 1 || params.y_multiple > 1)
         {
             have_3rd = g_image_region.m_min.x != g_image_region.m_3rd.x || g_image_region.m_min.y != g_image_region.m_3rd.y;
-            const fs::path path{get_checked_save_path(WriteFile::ROOT, "makemig.bat")};
-            assert(!path.empty());
-            bat_file = std::fopen(path.string().c_str(), "w");
-            if (bat_file == nullptr)
+            script_path = get_checked_save_path(WriteFile::ROOT, make_mig_script_filename().string());
+            assert(!script_path.empty());
+            script_file = std::fopen(script_path.string().c_str(), "w");
+            if (script_file == nullptr)
             {
                 params.x_multiple = 0;
                 params.y_multiple = 0;
+            }
+            else
+            {
+                write_make_mig_script_header(script_file);
             }
             piece_delta_x  = (g_image_region.m_max.x - g_image_region.m_3rd.x) / (params.x_multiple * params.piece_x_dots - 1);   // calculate step sizes
             piece_delta_y  = (g_image_region.m_max.y - g_image_region.m_3rd.y) / (params.y_multiple * params.piece_y_dots - 1);
@@ -492,14 +498,7 @@ skip_ui:
                         g_image_region.m_3rd.x = g_image_region.m_min.x;
                         g_image_region.m_3rd.y = g_image_region.m_min.y;
                     }
-                    fmt::print(bat_file,
-                        "start/wait"
-                        " id"
-                        " batch=yes"
-                        " overwrite=yes"
-                        " @{:s}/{:s}\n"
-                        "if errorlevel 2 goto oops\n",
-                        g_parameter_file.string(), piece_command_name);
+                    write_make_mig_script_piece(script_file, g_parameter_file, piece_command_name);
                 }
                 else
                 {
@@ -563,13 +562,9 @@ skip_ui:
         }
         if (params.x_multiple > 1 || params.y_multiple > 1)
         {
-            fmt::print(bat_file,
-                "start/wait"
-                " id"
-                " makemig={:d}/{:d}\n"
-                ":oops\n",
-                params.x_multiple, params.y_multiple);
-            std::fclose(bat_file);
+            write_make_mig_script_finish(script_file, params.x_multiple, params.y_multiple);
+            std::fclose(script_file);
+            finish_make_mig_script(script_path);
         }
         //******end here
 

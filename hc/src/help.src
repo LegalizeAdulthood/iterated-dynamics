@@ -294,6 +294,8 @@ o Autokey files can now use caret notation for control-key command
   initiators, such as ^S for <Ctrl+S>.
 o The Linux/X11 port is complete.  It provides native Linux text and
   graphics windows and uses the standard id.cfg video mode table.
+o MIG piece generation now writes a makemig.sh shell script on Linux.
+  (Fixes #370)
 
 Bugs Fixed in Version 1.3.3
 
@@ -1049,9 +1051,10 @@ o At the bottom of the input screen are inputs for Id's "pieces"
 
 o The last item defaults to the current video mode.  If either X Multiples or
   Y Multiples are greater than 1, then multiple numbered par entries for the
-  pieces are added to the par file, and a makemig.bat file is created that
-  builds all of the component pieces and then stitches them together into
-  a "multi-image" GIF.  The current limitations of the "divide and conquer"
+  pieces are added to the par file, and a makemig.bat or makemig.sh script is
+  created that builds all of the component pieces and then stitches them
+  together into a "multi-image" GIF.  The current limitations of the "divide
+  and conquer"
   algorithm are 36 or fewer X and Y multiples (so you are limited to "only"
   36x36=1296 component images), and a final resolution limit in both the
   X and Y directions of 65,535 (a limitation of "only" four billion pixels

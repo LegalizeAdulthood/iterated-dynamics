@@ -381,8 +381,8 @@ output files:
   raytrace          Raytrace output files (.ray)\
   sound             Raw sound output (.txt)\
 
-Some files, such as MIG batch files, are written directly to the save
-library location and not to a subdirectory.
+Some files, such as MIG scripts, are written directly to the save library
+location and not to a subdirectory.
 ;
 ;
 ~Topic=Setting Defaults (sstools.ini File)

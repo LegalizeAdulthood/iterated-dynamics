@@ -10,30 +10,7 @@ it from this plan and renumber the remaining slices from 1.
 
 ## Slices
 
-### Slice 1: Generate Linux makemig scripts
-
-Issue: #370
-
-Goal: generate a Linux shell equivalent of `makemig.bat`.
-
-Work:
-
-- Split platform-specific script text from shared `makemig` behavior.
-- Generate a shell script on Linux and a batch file on Windows.
-- Quote paths and arguments safely for the generated shell script.
-
-Acceptance:
-
-- Linux `makemig` output can regenerate the expected image sequence.
-- Windows `makemig.bat` output is unchanged.
-
-Verification:
-
-- Add Linux-only acceptance coverage for generated shell script output.
-- Keep existing Windows batch expectations passing.
-- Run `cmake --workflow rt-default`.
-
-### Slice 2: Fix Windows executable resources
+### Slice 1: Fix Windows executable resources
 
 Issue: #386
 
@@ -55,7 +32,7 @@ Verification:
 - Verify resources in a Windows build artifact.
 - Run `cmake --workflow rt-default`.
 
-### Slice 3: Normalize version-sensitive test output
+### Slice 2: Normalize version-sensitive test output
 
 Issue: #387
 
@@ -77,7 +54,7 @@ Verification:
 - Run the affected text, help, and raytrace tests directly.
 - Run `cmake --workflow rt-default`.
 
-### Slice 4: Prefer inline formulas from parameter files
+### Slice 3: Prefer inline formulas from parameter files
 
 Issue: #389
 
@@ -101,7 +78,7 @@ Verification:
 - Manually verify the reported FOTD parameter set if assets are present.
 - Run `cmake --workflow rt-default`.
 
-### Slice 5: Add periodicity-checking image coverage
+### Slice 4: Add periodicity-checking image coverage
 
 Issue: #354
 
@@ -123,7 +100,7 @@ Verification:
 - Run the new image test on Windows and Linux.
 - Run `cmake --workflow rt-default`.
 
-### Slice 6: Add Chaos and Fractals bibliography entry
+### Slice 5: Add Chaos and Fractals bibliography entry
 
 Issue: #365
 
@@ -143,7 +120,7 @@ Verification:
 
 - Run the help generation or affected help tests.
 
-### Slice 7: Add online documentation permalinks
+### Slice 6: Add online documentation permalinks
 
 Issue: #366
 
