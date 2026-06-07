@@ -9,10 +9,14 @@
 #include <io/special_dirs.h>
 #include <misc/ValueSaver.h>
 
+#include <config/port_config.h>
+
 #include <gtest/gtest.h>
 
 #include <cstdlib>
+#include <fstream>
 #include <string>
+#include <utility>
 
 using Path = std::filesystem::path;
 
@@ -22,6 +26,35 @@ using namespace id::test::library;
 
 namespace id::test
 {
+
+namespace
+{
+
+class TestSpecialDirectories : public SpecialDirectories
+{
+public:
+    TestSpecialDirectories(Path program_dir, Path documents_dir) :
+        m_program_dir{std::move(program_dir)},
+        m_documents_dir{std::move(documents_dir)}
+    {
+    }
+
+    Path program_dir() const override
+    {
+        return m_program_dir;
+    }
+
+    Path documents_dir() const override
+    {
+        return m_documents_dir;
+    }
+
+private:
+    Path m_program_dir;
+    Path m_documents_dir;
+};
+
+} // namespace
 
 class TestLibrary : public testing::Test
 {
@@ -86,6 +119,24 @@ void TestLibrary::TearDown()
     clear_read_library_path();
     clear_save_library();
     Test::TearDown();
+}
+
+TEST_F(TestLibrary, initLibrariesFindsConfigAwayFromCurrentDirectory)
+{
+    const Path current_dir{Path{data::ID_TEST_DATA_DIR} / "other-current-dir"};
+    const Path documents_dir{Path{data::ID_TEST_DATA_DIR} / "documents"};
+    const Path config_path{documents_dir / ID_PROGRAM_NAME / "config" / "id.cfg"};
+    std::filesystem::create_directories(current_dir);
+    std::filesystem::create_directories(config_path.parent_path());
+    std::ofstream{config_path} << "; test config\n";
+    CurrentPathSaver saved_cur_dir{current_dir};
+    ValueSaver saved_special_dirs{
+        g_special_dirs, std::make_shared<TestSpecialDirectories>(Path{"missing-program-dir"}, documents_dir)};
+    EnvVarSaver fract_dir{"FRACTDIR", nullptr};
+
+    init_libraries();
+
+    EXPECT_EQ(config_path, find_file(ReadFile::ID_CONFIG, "id.cfg"));
 }
 
 TEST_F(TestLibrary, findConfigInLibraryDirectory)

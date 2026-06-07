@@ -444,16 +444,6 @@ static void init_vars_run()              // once per run init
     }
 }
 
-static void init_libraries()
-{
-    clear_read_library_path();
-    clear_save_library();
-    const fs::path docs_dir{g_special_dirs->documents_dir() / ID_PROGRAM_NAME};
-    add_read_library(docs_dir);
-    set_save_library(docs_dir);
-    init_default_read_libraries();
-}
-
 static void init_vars_restart() // <ins> key init
 {
     reset_version_to_current();

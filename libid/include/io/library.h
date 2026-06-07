@@ -43,6 +43,7 @@ extern bool                  g_check_cur_dir;       // flag to check current dir
 void clear_read_library_path();
 void add_read_library(std::filesystem::path path);
 void add_read_libraries(std::string_view path_list);
+void init_libraries();
 void init_default_read_libraries();
 
 std::filesystem::path find_file(ReadFile kind, const std::filesystem::path &file_path);

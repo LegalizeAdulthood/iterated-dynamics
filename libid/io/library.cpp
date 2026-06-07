@@ -6,6 +6,7 @@
 #include "io/special_dirs.h"
 
 #include <config/home_dir.h>
+#include <config/port_config.h>
 
 #include <cstdlib>
 #include <string>
@@ -88,6 +89,16 @@ void add_read_libraries(const std::string_view path_list)
         }
         start = end + 1;
     }
+}
+
+void init_libraries()
+{
+    clear_read_library_path();
+    clear_save_library();
+    const fs::path docs_dir{g_special_dirs->documents_dir() / ID_PROGRAM_NAME};
+    add_read_library(docs_dir);
+    set_save_library(docs_dir);
+    init_default_read_libraries();
 }
 
 static void add_fallback_read_library(fs::path path)

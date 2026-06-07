@@ -3,10 +3,27 @@
 # Copyright 2014-2026 Richard Thomson
 #
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    return()
+    set(ID_ACCEPTANCE_SAVEDIR_TESTS OFF)
+else()
+    set(ID_ACCEPTANCE_SAVEDIR_TESTS ON)
 endif()
 
 include(PlatformArgs)
+
+add_test(NAME AcceptanceTest.makepar-from-any-directory
+    COMMAND ${CMAKE_COMMAND}
+        "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
+        "-DINPUT_IMAGE=${CMAKE_SOURCE_DIR}/tests/images/gold-manfn-plus-exp.gif"
+        "-DTEST_ROOT=${CMAKE_CURRENT_BINARY_DIR}/makepar-from-any-directory"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/makepar_test.cmake"
+)
+set_tests_properties(AcceptanceTest.makepar-from-any-directory
+    PROPERTIES LABELS "acceptance;makepar")
+
+if(NOT ID_ACCEPTANCE_SAVEDIR_TESTS)
+    return()
+endif()
 
 function(add_savedir_acceptance_test name)
     cmake_parse_arguments(SAVEDIR_TEST "USER_DIRS" "" "" ${ARGN})

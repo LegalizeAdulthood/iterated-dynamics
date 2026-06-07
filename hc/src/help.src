@@ -352,6 +352,8 @@ o Debug output files are now written under the debug subdirectory of the
   same file.
 o Scratch files now use the temporary directory instead of the working
   directory.
+o makepar= now writes PAR files correctly when Id is launched from a
+  directory other than the home library.  (Fixes #368)
 o MIG image component files are now removed from the image save library
   after the final image is assembled.
 o 3D Targa output now writes rendered pixels to the image save library.\
