@@ -2,7 +2,6 @@
 #
 include(GoogleTest)
 
-find_package(boost_algorithm CONFIG REQUIRED)
 find_package(boost_endian CONFIG REQUIRED)
 find_package(GTest CONFIG REQUIRED)
 
@@ -141,6 +140,6 @@ source_group_subdir("Math" "math")
 source_group_subdir("Miscellaneous" "misc")
 source_group_subdir("UI" "ui")
 target_include_directories(test-id PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/include")
-target_link_libraries(test-id PRIVATE GTest::gmock_main algos Boost::algorithm Boost::endian libid)
+target_link_libraries(test-id PRIVATE GTest::gmock_main algos Boost::endian libid)
 target_folder(test-id "Tests")
 gtest_discover_tests(test-id PROPERTIES LABELS id)

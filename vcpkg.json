@@ -11,14 +11,12 @@
     "hc": {
       "description": "Help compiler",
       "dependencies": [
-        "boost-algorithm",
         "fmt"
       ]
     },
     "id": {
       "description": "Iterated Dynamics",
       "dependencies": [
-        "boost-algorithm",
         "boost-endian",
         "cpuid",
         "fmt",
