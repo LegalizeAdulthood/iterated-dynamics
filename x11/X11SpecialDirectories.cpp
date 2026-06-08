@@ -9,6 +9,7 @@
 #include <optional>
 #include <string>
 #include <string_view>
+#include <system_error>
 
 namespace id::io
 {
@@ -19,6 +20,7 @@ namespace
 namespace fs = std::filesystem;
 
 constexpr std::string_view DOCUMENTS_KEY{"XDG_DOCUMENTS_DIR"};
+constexpr const char *PROC_SELF_EXE{"/proc/self/exe"};
 constexpr const char *USER_DIRS_FILE{"user-dirs.dirs"};
 
 class X11SpecialDirectories : public SpecialDirectories
@@ -141,6 +143,12 @@ std::optional<fs::path> read_user_documents_dir()
 
 std::filesystem::path X11SpecialDirectories::program_dir() const
 {
+    std::error_code err;
+    const fs::path executable{fs::read_symlink(PROC_SELF_EXE, err)};
+    if (!err && !executable.empty())
+    {
+        return executable.parent_path();
+    }
     return fs::current_path();
 }
 
