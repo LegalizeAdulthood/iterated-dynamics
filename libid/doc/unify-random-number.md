@@ -50,11 +50,12 @@ Implemented:
 - Generated parameter files emit `rseed=` when the seed was fixed.
 - Random seed tests cover fixed and non-fixed seed behavior and prove C RNG
   calls do not affect image RNG output.
+- Ant, cellular, and plasma reuse-last seed paths are covered by focused
+  tests.
+- Lyapunov random population seed behavior is covered by focused tests.
 
 Remaining gaps:
 
-- Seeded fractal conversions need focused tests for reuse-last seed paths.
-- Lyapunov random population seed behavior needs focused tests.
 - IFS2D and IFS3D call `set_random_seed(1)`, so they are deterministic but
   do not honor `rseed=`.
 - Lorenz and inverse Julia random-walk paths still use `std::rand()`.
@@ -79,37 +80,7 @@ These may keep a UI-local random source, but must not affect image RNG:
 
 ## Remaining Work
 
-### Slice 1: Cover Converted Seeded Fractals
-
-Goal: test the seed-specific behavior for random fractal types already
-converted to image RNG helpers.
-
-Work:
-
-- Add an ant reuse-last seed test that verifies `g_random_seed` is
-  preserved.
-- Add a plasma reuse-last seed test that verifies `g_random_seed` is
-  preserved.
-- Add a cellular reuse-last seed test that verifies `g_random_seed` is
-  preserved.
-- Add lyapunov random population tests for `params[1] == 0` or
-  `params[1] == 1`.
-- Verify identical `rseed=` values give identical lyapunov initial
-  populations.
-- Verify different `rseed=` values give different lyapunov initial
-  populations.
-- Verify explicit lyapunov `params[1]` does not consume image RNG state.
-
-Tests:
-
-- Existing image tests for ant, cellular, diffusion, plasma, and lyapunov.
-- Focused unit tests where type-specific seed logic can be isolated.
-
-Done when:
-
-- Converted fractal types have direct coverage for their seed contracts.
-
-### Slice 2: Convert IFS And Lorenz Random Paths
+### Slice 1: Convert IFS And Lorenz Random Paths
 
 Goal: remove hardcoded and unseeded random use from IFS and Lorenz paths.
 
@@ -137,7 +108,7 @@ Done when:
   `std::rand()`, or `RAND15()`.
 - IFS2D and IFS3D honor `rseed=`.
 
-### Slice 3: Convert 3D Randomized Coloring
+### Slice 2: Convert 3D Randomized Coloring
 
 Goal: make 3D randomized color perturbation use the image RNG stream.
 
@@ -161,7 +132,7 @@ Done when:
 
 - 3D random coloring is not affected by UI RNG calls.
 
-### Slice 4: Audit Remaining Image RNG Calls
+### Slice 3: Audit Remaining Image RNG Calls
 
 Goal: make all remaining image-generation random calls explicit.
 
@@ -189,7 +160,7 @@ Done when:
 - Every fractal type uses `set_random_seed()` before consuming image RNG.
 - UI RNG cannot poison image-generation RNG.
 
-### Slice 5: Save, Load, And Batch Round Trip
+### Slice 4: Save, Load, And Batch Round Trip
 
 Goal: preserve repeatability through saved images and generated parameter
 sets.
@@ -216,7 +187,7 @@ Done when:
 
 - Repeatability survives save/load and generated PAR workflows.
 
-### Slice 6: Final Regression Pass
+### Slice 5: Final Regression Pass
 
 Goal: prove image RNG behavior is unified.
 

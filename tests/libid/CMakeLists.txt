@@ -81,6 +81,7 @@ add_executable(test-id
     fractals/test_interpreter.cpp
     fractals/test_lyapunov.cpp
     fractals/test_parser.cpp
+    fractals/test_seeded_fractals.cpp
     io/test_check_write_file.cpp
     io/test_check_write_file_data.h.in
     io/test_expand_dirname.cpp
