@@ -416,38 +416,38 @@ jobs:
       if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
       run: cmake --build --preset ci-${{matrix.preset}} --target setup
 
-    - name: Upload setup package artifacts
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
-      with:
-        archive: false
-        name: Setup-${{matrix.preset}}
-        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*-Setup.exe
-        compression-level: 0
-
-    - name: Upload msi package artifacts
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
-      with:
-        archive: false
-        name: Msi-${{matrix.preset}}
-        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.msi
-        compression-level: 0
-
-    - name: Upload zip package artifacts
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
-      with:
-        archive: false
-        name: Zip-${{matrix.preset}}
-        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
-        compression-level: 0
-
-    - name: Upload tar.gz package artifacts
-      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      if: ${{matrix.os == 'ubuntu-latest' && matrix.preset == 'wx-release'}}
-      with:
-        archive: false
-        name: Tar-${{matrix.preset}}
-        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
-        compression-level: 0
+#    - name: Upload setup package artifacts
+#      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+#      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
+#      with:
+#        archive: false
+#        name: Setup-${{matrix.preset}}
+#        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*-Setup.exe
+#        compression-level: 0
+#
+#    - name: Upload msi package artifacts
+#      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+#      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
+#      with:
+#        archive: false
+#        name: Msi-${{matrix.preset}}
+#        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.msi
+#        compression-level: 0
+#
+#    - name: Upload zip package artifacts
+#      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+#      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
+#      with:
+#        archive: false
+#        name: Zip-${{matrix.preset}}
+#        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
+#        compression-level: 0
+#
+#    - name: Upload tar.gz package artifacts
+#      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+#      if: ${{matrix.os == 'ubuntu-latest' && matrix.preset == 'wx-release'}}
+#      with:
+#        archive: false
+#        name: Tar-${{matrix.preset}}
+#        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
+#        compression-level: 0
