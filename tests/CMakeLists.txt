@@ -3,6 +3,7 @@
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 add_subdirectory(acceptance)
+add_subdirectory(algos)
 add_subdirectory(autokey)
 add_subdirectory(images)
 add_subdirectory(libid)

@@ -49,38 +49,7 @@ Build wiring:
 - `vcpkg.json`
   - `boost-algorithm` in the `hc` and `id` features
 
-## Slice 1: Add Local String Algorithms
-
-Goal: introduce the replacement API without changing existing callers.
-
-Work:
-
-- Add a small local target for string algorithms.
-- Add a public header under `libid/include`.
-- Add implementations for:
-  - `ascii_to_lower_copy(std::string_view)`
-  - `ascii_to_upper_copy(std::string_view)`
-  - `replace_all(std::string &, std::string_view, std::string_view)`
-  - `split(std::string_view, char)`
-  - `split_any(std::string_view, std::string_view)`
-- Keep behavior ASCII-only.  Current command, help, and file matching code
-  is ASCII-oriented, and this avoids locale-sensitive surprises.
-- Decide and document empty-field behavior for splitting before callers
-  move.
-
-Tests:
-
-- Add focused unit tests for the new helpers.
-- Cover empty input, no delimiters, adjacent delimiters, leading
-  delimiters, trailing delimiters, repeated replacement, and ASCII case
-  conversion.
-
-Done when:
-
-- The new target builds and is tested.
-- No Boost callers have been changed yet.
-
-## Slice 2: Move Test Helpers Off Boost
+## Slice 1: Move Test Helpers Off Boost
 
 Goal: prove the replacement helpers are sufficient for test-only use.
 
@@ -101,7 +70,7 @@ Done when:
 - No test source file includes `<boost/algorithm/...>`.
 - Test behavior is unchanged.
 
-## Slice 3: Move Help Compiler Off Boost
+## Slice 2: Move Help Compiler Off Boost
 
 Goal: remove the help compiler production dependency on Boost Algorithm.
 
@@ -127,7 +96,7 @@ Done when:
 - `hc` has no Boost Algorithm includes.
 - Generated help output is unchanged.
 
-## Slice 4: Move libid Off Boost
+## Slice 3: Move libid Off Boost
 
 Goal: remove the libid production dependency on Boost Algorithm.
 
@@ -150,7 +119,7 @@ Done when:
 - `libid` has no Boost Algorithm includes.
 - Search path behavior is unchanged on Windows and Linux.
 
-## Slice 5: Remove Package Dependency
+## Slice 4: Remove Package Dependency
 
 Goal: remove `boost-algorithm` from build configuration after all callers
 are gone.

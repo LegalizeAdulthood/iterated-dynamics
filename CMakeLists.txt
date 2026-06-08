@@ -76,6 +76,7 @@ endif()
 # Enable parallel builds with MSVC
 add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 
+add_subdirectory(algos)
 add_subdirectory(config)
 add_subdirectory(hc)
 add_subdirectory(helpcom)
