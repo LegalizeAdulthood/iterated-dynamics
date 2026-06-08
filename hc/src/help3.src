@@ -576,6 +576,10 @@ an image generated with 16bit continuous potential:\
    think they should perhaps not be called GIF - hence the .pot filename
    extension.
 
+Because .pot files store the extra 8 bits by doubling the saved GIF
+width, 16bit potential images can be saved only when the fractal image is
+no larger than 32767 pixels wide by 65535 pixels high.
+
 A 16bit (.pot) file can be converted to an ordinary 8 bit GIF by
 <R>estoring it, changing "16bit" to "no" on the <Y> options screen, and
 <S>aving.
