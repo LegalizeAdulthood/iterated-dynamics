@@ -11,6 +11,7 @@
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_limits.h"
 #include "engine/Potential.h"
+#include "engine/random_seed.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
@@ -18,7 +19,6 @@
 #include "io/gifview.h"
 #include "io/library.h"
 #include "io/loadfile.h"
-#include "math/rand15.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
 #include "misc/id.h"
@@ -36,7 +36,6 @@
 #include <climits>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <filesystem>
 #include <limits>
 #include <string>
@@ -508,10 +507,10 @@ int line3d(Byte * pixels, unsigned line_len)
         {
             if (cur.color > g_water_line)
             {
-                rnd = RAND15() >> 8;     // 7-bit number
+                rnd = random15() >> 8;     // 7-bit number
                 rnd = rnd * rnd >> s_rand_factor;  // n-bit number
 
-                if (std::rand() & 1)
+                if (random_int(2))
                 {
                     rnd = -rnd;   // Make +/- n-bit number
                 }
@@ -2483,6 +2482,10 @@ static int first_time(const int line_len, Vector v)
     }
 
     s_rand_factor = 14 - g_randomize_3d;
+    if (g_randomize_3d != 0)
+    {
+        set_random_seed();
+    }
 
     s_z_coord = g_file_colors;
 

@@ -55,11 +55,11 @@ Implemented:
 - Lyapunov random population seed behavior is covered by focused tests.
 - IFS2D and IFS3D seed through `set_random_seed()` and honor `rseed=`.
 - Lorenz and inverse Julia random-walk paths consume image RNG helpers.
+- 3D randomized coloring seeds through `set_random_seed()` and consumes
+  image RNG helpers.
 
 Remaining gaps:
 
-- 3D randomized coloring in `line3d.cpp` still uses `RAND15()` and
-  `std::rand()`.
 - JIIM random inverse Julia paths still use `std::rand()`.
 - `RAND15()` remains a process-global C RNG macro.
 - Generated parameter file behavior for non-fixed generated image seeds is
@@ -79,31 +79,7 @@ These may keep a UI-local random source, but must not affect image RNG:
 
 ## Remaining Work
 
-### Slice 1: Convert 3D Randomized Coloring
-
-Goal: make 3D randomized color perturbation use the image RNG stream.
-
-Work:
-
-- Identify the 3D render setup point that corresponds to one image.
-- Call `set_random_seed()` there when `randomize=` requires random colors.
-- Replace `std::rand()` and `RAND15()` in `line3d.cpp` with image RNG
-  helpers.
-- Preserve `randomize=0` behavior.
-
-Tests:
-
-- Add or update a 3D image test using `randomize=` and explicit `rseed=`.
-- Verify the same `rseed=` gives the same randomized colors.
-- Verify `randomize=0` does not consume image RNG state.
-- Verify `randomize=` with no `rseed=` still varies between generated
-  images.
-
-Done when:
-
-- 3D random coloring is not affected by UI RNG calls.
-
-### Slice 2: Audit Remaining Image RNG Calls
+### Slice 1: Audit Remaining Image RNG Calls
 
 Goal: make all remaining image-generation random calls explicit.
 
@@ -131,7 +107,7 @@ Done when:
 - Every fractal type uses `set_random_seed()` before consuming image RNG.
 - UI RNG cannot poison image-generation RNG.
 
-### Slice 3: Save, Load, And Batch Round Trip
+### Slice 2: Save, Load, And Batch Round Trip
 
 Goal: preserve repeatability through saved images and generated parameter
 sets.
@@ -158,7 +134,7 @@ Done when:
 
 - Repeatability survives save/load and generated PAR workflows.
 
-### Slice 4: Final Regression Pass
+### Slice 3: Final Regression Pass
 
 Goal: prove image RNG behavior is unified.
 
