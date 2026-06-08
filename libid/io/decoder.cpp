@@ -97,7 +97,7 @@ static Byte s_suffix[10000]{};
 //
 
 static int s_bad_code_count{};
-static Byte s_decoder_line[MAX_PIXELS]{};
+static Byte s_decoder_line[GIF_MAX_PIXELS]{};
 
 // The reason we have these separated like this instead of using
 // a structure like the original Wilhite code did, is because this
@@ -106,8 +106,8 @@ static Byte s_decoder_line[MAX_PIXELS]{};
 // C for speed or for space optimization, see Efficient C by Tom Plum,
 // published by Plum-Hall Associates...)
 //
-// short decoder(linewidth)
-//    short linewidth;              * Pixels per line of image *
+// int decoder(linewidth)
+//    int linewidth;                * Pixels per line of image *
 //
 // - This function decodes an LZW image, according to the method used
 // in the GIF spec.  Every *linewidth* "characters" (i.e. pixels) decoded
@@ -128,13 +128,17 @@ static Byte s_decoder_line[MAX_PIXELS]{};
 // moved sizeofstring here for possible re-use elsewhere
 static short s_sizeof_string[MAX_CODES + 1]{};  // size of string list
 
-short decoder(const short line_width)
+int decoder(const int line_width)
 {
-    U16 prefix[MAX_CODES+1]{};     // Prefix linked list
-    short ret;
+    U16 prefix[MAX_CODES + 1]{}; // Prefix linked list
+    int ret;
     short c;
 
     // Initialize for decoding a new image...
+    if (line_width < 1 || line_width > GIF_MAX_PIXELS)
+    {
+        return WRITE_ERROR;
+    }
 
     const short size = static_cast<short>(get_byte());
     if (size < 0)
@@ -153,8 +157,8 @@ short decoder(const short line_width)
     const short new_codes = static_cast<short>(ending + 1);       // First available code
     short slot = new_codes;                       // Last read code
     short old_code = 0;
-    short y_skip = 0;
-    short x_skip = 0;
+    int y_skip = 0;
+    int x_skip = 0;
     s_sizeof_string[slot] = 0;
     s_num_bits_left = 0;
     s_num_avail_bytes = 0;
@@ -171,7 +175,7 @@ short decoder(const short line_width)
     Byte decode_stack[4096]{};
     Byte *sp = decode_stack;
     Byte *buf_ptr = s_decoder_line;
-    short buf_cnt = line_width; // how many empty spaces left in buffer
+    int buf_cnt = line_width; // how many empty spaces left in buffer
 
     // This is the main loop.  For each code we get we pass through the linked
     // list of prefix codes, pushing the corresponding "character" for each
@@ -276,8 +280,7 @@ short decoder(const short line_width)
                     {
                         if (--y_skip < 0)
                         {
-                            ret = static_cast<short>(
-                                g_out_line(s_decoder_line, static_cast<int>(buf_ptr - s_decoder_line)));
+                            ret = g_out_line(s_decoder_line, static_cast<int>(buf_ptr - s_decoder_line));
                             if (ret < 0)
                             {
                                 return ret;
@@ -336,7 +339,7 @@ short decoder(const short line_width)
             {
                 if (--y_skip < 0)
                 {
-                    ret = static_cast<short>(g_out_line(s_decoder_line, static_cast<int>(buf_ptr - s_decoder_line)));
+                    ret = g_out_line(s_decoder_line, static_cast<int>(buf_ptr - s_decoder_line));
                     if (ret < 0)
                     {
                         return ret;

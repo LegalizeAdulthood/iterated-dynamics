@@ -40,28 +40,7 @@ Do not change:
 - Image reduction uses short skip counters.
 - Some generated scripts already allow total dimensions up to 65535.
 
-## Slice 1: Remove Decoder Line-Width Limits
-
-Goal: allow GIF decoding of lines up to 65535 pixels.
-
-Work:
-
-- Change `decoder(short line_width)` to use an integer width type.
-- Change internal line counters such as `buf_cnt` away from `short`.
-- Ensure the decoder line buffer can hold the maximum GIF line width.
-- Audit code that assumes a decoded line is no wider than signed 16-bit.
-
-Tests:
-
-- Add decoder tests for line widths 32767, 32768, and 65535.
-- Add regression tests for existing small GIFs.
-
-Done when:
-
-- The LZW decoder can process maximum-width GIF lines.
-- Existing GIF decode behavior is unchanged.
-
-## Slice 2: Increase Disk Video Generation Limits
+## Slice 1: Increase Disk Video Generation Limits
 
 Goal: let disk video generate GIF-sized images.
 
@@ -93,7 +72,7 @@ Done when:
 - Disk video rejects modes above 65535.
 - Disk video reports allocation failure cleanly.
 
-## Slice 3: Audit Windows Display Drivers
+## Slice 2: Audit Windows Display Drivers
 
 Goal: remove Id-only artificial limits from Windows display modes.
 
@@ -117,7 +96,7 @@ Done when:
   color depth.
 - Windows disk driver accepts GIF-sized disk modes.
 
-## Slice 4: Audit X11 Display Drivers
+## Slice 3: Audit X11 Display Drivers
 
 Goal: remove Id-only artificial limits from X11 display modes.
 
@@ -141,7 +120,7 @@ Done when:
   color depth.
 - X11 disk driver accepts GIF-sized disk modes.
 
-## Slice 5: Update User Documentation
+## Slice 4: Update User Documentation
 
 Goal: document the new image size behavior.
 
@@ -162,7 +141,7 @@ Done when:
 - Online help matches the implemented limit.
 - Generated help tests pass.
 
-## Slice 6: Full Workflow Verification
+## Slice 5: Full Workflow Verification
 
 Goal: verify the completed size-limit change.
 

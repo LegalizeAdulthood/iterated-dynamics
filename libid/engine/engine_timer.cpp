@@ -70,7 +70,7 @@ static int timer(const TimerType type, int (*fn)(), ...)
         break;
     case TimerType::DECODER:
         i = va_arg(arg_marker, int);
-        out = static_cast<int>(decoder(static_cast<short>(i)));
+        out = decoder(i);
         break;
     case TimerType::ENCODER:
         out = encoder();

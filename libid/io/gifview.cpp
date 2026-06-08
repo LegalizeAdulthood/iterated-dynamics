@@ -39,7 +39,6 @@
 
 #include <config/path_limits.h>
 
-#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -66,23 +65,9 @@ bool g_dither_flag{};                           // true if we want to dither GIF
 unsigned int g_height{};
 unsigned int g_num_colors{};
 
-/*
- * DECODERLINEWIDTH is the width of the pixel buffer used by the decoder. A
- * larger buffer gives better performance. However, this buffer does not
- * have to be a whole line width, although historically it has
- * been: images were decoded line by line and a whole line written to the
- * screen at once. The requirement to have a whole line buffered at once
- * has now been relaxed in order to support larger images. The one exception
- * to this is in the case where the image is being decoded to a smaller size.
- * The skipxdots and skipydots logic assumes that the buffer holds one line.
- */
-
-constexpr int DECODER_LINE_WIDTH{MAX_PIXELS};
-
 static void close_file();
 static int out_line_dither(Byte *pixels, int line_len);
 static int out_line_migs(Byte *pixels, int line_len);
-static int out_line_too_wide(Byte *pixels, int line_len);
 
 static std::FILE *s_fp_in{};
 static int s_col_count{};                       // keeps track of current column for wide images
@@ -170,8 +155,8 @@ int gif_view()
         return -1;
     }
 
-    unsigned width = buffer[6] | buffer[7] << 8;
-    g_height = buffer[8] | buffer[9] << 8;
+    int width = read_gif_uint16(&buffer[6]);
+    g_height = read_gif_uint16(&buffer[8]);
     int planes = (buffer[10] & 0x0F) + 1;
     s_gif_view_image_width = width;
 
@@ -271,8 +256,8 @@ int gif_view()
 
             left   = buffer[0] | buffer[1] << 8;
             top    = buffer[2] | buffer[3] << 8;
-            width  = buffer[4] | buffer[5] << 8;
-            g_height = buffer[6] | buffer[7] << 8;
+            width = read_gif_uint16(&buffer[4]);
+            g_height = read_gif_uint16(&buffer[6]);
 
             // adjustments for handling MIGs
             s_gif_view_image_top  = top;
@@ -292,10 +277,6 @@ int gif_view()
                 {
                     // we're using normal decoding and we have a MIG
                     g_out_line = out_line_migs;
-                }
-                else if (width > DECODER_LINE_WIDTH && g_skip_x_dots == 0)
-                {
-                    g_out_line = out_line_too_wide;
                 }
             }
 
@@ -333,14 +314,7 @@ int gif_view()
                 g_calc_status = CalcStatus::PARAMS_CHANGED;
             }
             g_busy = true;      // for slideshow CALCWAIT
-            /*
-             * Call decoder(width) via timer.
-             * Width is limited to DECODERLINE_WIDTH.
-             */
-            if (g_skip_x_dots == 0)
-            {
-                width = std::min(width, static_cast<unsigned>(DECODER_LINE_WIDTH));
-            }
+            // Call decoder(width) via timer.
             status = decoder_timer(width);
             g_busy = false;      // for slideshow CALCWAIT
             if (g_calc_status == CalcStatus::IN_PROGRESS) // e.g., set by line3d
@@ -419,36 +393,6 @@ static int out_line_dither(Byte *pixels, const int line_len)
         s_dither_buf[i+1] = static_cast<char>(err / 3);
     }
     return out_line(pixels, line_len);
-}
-
-// routine for images wider than the row buffer
-
-static int out_line_too_wide(Byte *pixels, int line_len)
-{
-    const int width = g_logical_screen.x_dots;
-    while (line_len > 0)
-    {
-        int extra = s_col_count + line_len - width;
-        if (extra > 0) // line wraps
-        {
-            write_span(g_row_count, s_col_count, width-1, pixels);
-            pixels += width-s_col_count;
-            line_len -= width-s_col_count;
-            s_col_count = width;
-        }
-        else
-        {
-            write_span(g_row_count, s_col_count, s_col_count+line_len-1, pixels);
-            s_col_count += line_len;
-            line_len = 0;
-        }
-        if (s_col_count >= width)
-        {
-            s_col_count = 0;
-            g_row_count++;
-        }
-    }
-    return 0;
 }
 
 static bool put_sound_line(const int row, const int col_start, const int col_stop, const Byte *pixels)
