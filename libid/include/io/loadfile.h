@@ -53,13 +53,15 @@ extern int                   g_file_y_dots;
 extern bool                  g_loaded_3d;
 extern bool                  g_overlay_3d;          // 3D overlay flag
 extern bool                  g_new_bifurcation_functions_loaded;
-extern short                 g_skip_x_dots;
-extern short                 g_skip_y_dots;
+extern int                   g_skip_x_dots;
+extern int                   g_skip_y_dots;
 extern misc::Version         g_file_version;
 extern std::filesystem::path g_read_filename;
 extern ShowFile              g_show_file;           // LOAD_IMAGE if file display pending
 
 int read_overlay();
+int read_gif_uint16(const Byte *data);
+bool read_gif_screen_dimensions(const Byte *header, int &width, int &height);
 void set_if_old_bif();
 void set_function_param_defaults();
 void backwards_legacy_v18();

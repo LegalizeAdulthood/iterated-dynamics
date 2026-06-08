@@ -62,13 +62,6 @@
 #include <system_error>
 #include <vector>
 
-#ifdef LOW_BYTE_FIRST
-#define GET16(c, i)              (i) = *((U16*)(&(c)))
-#else
-#define GET16(c, i)              (i) = (*(unsigned char *)&(c))+\
-                                ((*((unsigned char*)&(c)+1)) << 8)
-#endif
-
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::geometry;
@@ -144,8 +137,8 @@ int g_file_y_dots{};
 int g_file_x_dots{};
 int g_file_colors{};
 float g_file_aspect_ratio{};
-short g_skip_x_dots{};
-short g_skip_y_dots{}; // for decoder, when reducing image
+int g_skip_x_dots{};
+int g_skip_y_dots{}; // for decoder, when reducing image
 bool g_bad_outside{};
 Version g_file_version{};
 std::filesystem::path g_read_filename;
@@ -160,6 +153,22 @@ static bool within_eps(const float lhs, const float rhs)
 static bool within_eps(const double lhs, const double rhs)
 {
     return std::abs(lhs - rhs) < 1.0e-6f;
+}
+
+int read_gif_uint16(const Byte *data)
+{
+    return static_cast<int>(data[0]) | (static_cast<int>(data[1]) << 8);
+}
+
+bool read_gif_screen_dimensions(const Byte *header, int &width, int &height)
+{
+    if (header == nullptr || std::strncmp(reinterpret_cast<const char *>(header), "GIF", 3) != 0)
+    {
+        return false;
+    }
+    width = read_gif_uint16(&header[6]);
+    height = read_gif_uint16(&header[8]);
+    return width > 0 && height > 0;
 }
 
 template <size_t N, typename T>
@@ -1266,15 +1275,13 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
         return true;
     }
     file_read(gif_start, 13, 1, s_fp);
-    if (std::strncmp(reinterpret_cast<char *>(gif_start), "GIF", 3) != 0)
+    if (!read_gif_screen_dimensions(gif_start, g_file_x_dots, g_file_y_dots))
     {
         // not GIF, maybe old .tga?
         std::fclose(s_fp);
         return true;
     }
 
-    GET16(gif_start[6], g_file_x_dots);
-    GET16(gif_start[8], g_file_y_dots);
     g_file_colors = 2 << (gif_start[10] & 7);
     g_file_aspect_ratio = 0; // unknown
     if (gif_start[12])

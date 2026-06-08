@@ -17,11 +17,14 @@
 #include <io/gif_extensions.h>
 #include <misc/ValueSaver.h>
 #include <ui/big_while_loop.h>
+#include <ui/get_video_mode.h>
 #include <ui/history.h>
+#include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
 
 #include <gtest/gtest.h>
 
+#include <array>
 #include <filesystem>
 #include <iostream>
 
@@ -66,6 +69,22 @@ std::ostream &operator<<(std::ostream &str, const FileFractalType &value)
 void PrintTo(const FileFractalType &value, std::ostream *str)
 {
     *str << value;
+}
+
+static std::array<Byte, 13> make_gif_header(const int width, const int height)
+{
+    std::array<Byte, 13> header{};
+    header[0] = 'G';
+    header[1] = 'I';
+    header[2] = 'F';
+    header[3] = '8';
+    header[4] = '9';
+    header[5] = 'a';
+    header[6] = static_cast<Byte>(width & 0xff);
+    header[7] = static_cast<Byte>(width >> 8);
+    header[8] = static_cast<Byte>(height & 0xff);
+    header[9] = static_cast<Byte>(height >> 8);
+    return header;
 }
 
 TEST(TestBackwardsLegacyV20, oldMandelOutsideRealSetsBadOutside)
@@ -171,6 +190,90 @@ TEST(TestFractalInfoVersion, legacyInvalidReleaseFallsBackToFractintFourteenTen)
     info.release = 4000;
 
     EXPECT_EQ(parse_legacy_version(1410), fractal_info_version(info));
+}
+
+class TestGifScreenDimensions : public TestWithParam<int>
+{
+};
+
+TEST_P(TestGifScreenDimensions, readsUnsignedDimension)
+{
+    const int size{GetParam()};
+    const auto header{make_gif_header(size, size)};
+    int width{};
+    int height{};
+
+    EXPECT_TRUE(read_gif_screen_dimensions(header.data(), width, height));
+
+    EXPECT_EQ(size, width);
+    EXPECT_EQ(size, height);
+}
+
+INSTANTIATE_TEST_SUITE_P(UnsignedBounds, TestGifScreenDimensions, Values(32767, 32768, 65535));
+
+TEST(TestGifScreenDimensions, rejectsNonGifHeader)
+{
+    auto header{make_gif_header(800, 600)};
+    header[0] = 'B';
+    int width{};
+    int height{};
+
+    EXPECT_FALSE(read_gif_screen_dimensions(header.data(), width, height));
+}
+
+TEST(TestGifScreenDimensions, rejectsZeroWidth)
+{
+    const auto header{make_gif_header(0, 600)};
+    int width{};
+    int height{};
+
+    EXPECT_FALSE(read_gif_screen_dimensions(header.data(), width, height));
+}
+
+TEST(TestGifScreenDimensions, rejectsZeroHeight)
+{
+    const auto header{make_gif_header(800, 0)};
+    int width{};
+    int height{};
+
+    EXPECT_FALSE(read_gif_screen_dimensions(header.data(), width, height));
+}
+
+TEST(TestGetVideoMode, reducesLargeGifView)
+{
+    ValueSaver saved_init_mode{g_init_mode};
+    ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
+    ValueSaver saved_ask_video{g_ask_video, false};
+    ValueSaver saved_make_parameter_file{g_make_parameter_file, false};
+    ValueSaver saved_fast_restore{g_fast_restore, false};
+    ValueSaver saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
+    ValueSaver saved_viewport{g_viewport, Viewport{}};
+    ValueSaver saved_video_entry{g_video_entry};
+    ValueSaver saved_video_table_len{g_video_table_len, 1};
+    ValueSaver saved_video_key{g_video_table[0].key, ID_KEY_F2};
+    ValueSaver saved_video_width{g_video_table[0].x_dots, 800};
+    ValueSaver saved_video_height{g_video_table[0].y_dots, 600};
+    ValueSaver saved_video_colors{g_video_table[0].colors, 256};
+    ValueSaver saved_video_driver{g_video_table[0].driver, static_cast<Driver *>(nullptr)};
+    ValueSaver saved_file_x_dots{g_file_x_dots, 65535};
+    ValueSaver saved_file_y_dots{g_file_y_dots, 65535};
+    ValueSaver saved_file_colors{g_file_colors, 256};
+    ValueSaver saved_file_aspect_ratio{g_file_aspect_ratio, 0.0f};
+    ValueSaver saved_screen_aspect{g_screen_aspect, 0.75f};
+    ValueSaver saved_skip_x_dots{g_skip_x_dots, 0};
+    ValueSaver saved_skip_y_dots{g_skip_y_dots, 0};
+    FractalInfo info{};
+    info.x_dots = 800;
+    info.y_dots = 600;
+    info.colors = 256;
+    ExtBlock3 block_3_info{};
+
+    EXPECT_EQ(0, get_video_mode(&info, &block_3_info));
+
+    EXPECT_EQ(596, g_file_x_dots);
+    EXPECT_EQ(596, g_file_y_dots);
+    EXPECT_EQ(109, g_skip_x_dots);
+    EXPECT_EQ(109, g_skip_y_dots);
 }
 
 class TestLoadFile : public TestWithParam<FileFractalType>

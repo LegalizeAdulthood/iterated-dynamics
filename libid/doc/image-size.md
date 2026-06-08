@@ -40,31 +40,7 @@ Do not change:
 - Image reduction uses short skip counters.
 - Some generated scripts already allow total dimensions up to 65535.
 
-## Slice 1: Read GIF Headers Above 32767
-
-Goal: load large GIF dimensions without signed truncation.
-
-Work:
-
-- Ensure GIF header width and height are read as unsigned 16-bit values.
-- Keep file dimensions in `int` runtime variables.
-- Audit view reduction setup for large input images.
-- Replace short reduction counters only where the larger image size can
-  overflow them.
-- Keep existing behavior for images that fit the selected display mode.
-
-Tests:
-
-- Add header-read tests for 32767, 32768, and 65535.
-- Add image load tests that reduce a large GIF into a smaller display.
-- Add rejection tests for malformed or inconsistent GIF dimensions.
-
-Done when:
-
-- Id can inspect and select modes for GIFs wider or taller than 32767.
-- View reduction does not overflow for maximum GIF dimensions.
-
-## Slice 2: Remove Decoder Line-Width Limits
+## Slice 1: Remove Decoder Line-Width Limits
 
 Goal: allow GIF decoding of lines up to 65535 pixels.
 
@@ -85,7 +61,7 @@ Done when:
 - The LZW decoder can process maximum-width GIF lines.
 - Existing GIF decode behavior is unchanged.
 
-## Slice 3: Increase Disk Video Generation Limits
+## Slice 2: Increase Disk Video Generation Limits
 
 Goal: let disk video generate GIF-sized images.
 
@@ -117,7 +93,7 @@ Done when:
 - Disk video rejects modes above 65535.
 - Disk video reports allocation failure cleanly.
 
-## Slice 4: Audit Windows Display Drivers
+## Slice 3: Audit Windows Display Drivers
 
 Goal: remove Id-only artificial limits from Windows display modes.
 
@@ -141,7 +117,7 @@ Done when:
   color depth.
 - Windows disk driver accepts GIF-sized disk modes.
 
-## Slice 5: Audit X11 Display Drivers
+## Slice 4: Audit X11 Display Drivers
 
 Goal: remove Id-only artificial limits from X11 display modes.
 
@@ -165,7 +141,7 @@ Done when:
   color depth.
 - X11 disk driver accepts GIF-sized disk modes.
 
-## Slice 6: Update User Documentation
+## Slice 5: Update User Documentation
 
 Goal: document the new image size behavior.
 
@@ -186,7 +162,7 @@ Done when:
 - Online help matches the implemented limit.
 - Generated help tests pass.
 
-## Slice 7: Full Workflow Verification
+## Slice 6: Full Workflow Verification
 
 Goal: verify the completed size-limit change.
 

@@ -378,13 +378,17 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
             g_viewport.x_dots = 0; // easier to use auto reduction
         }
         g_viewport.reduction = std::round(g_viewport.reduction); // need integer value
-        g_skip_y_dots = static_cast<short>(g_viewport.reduction - 1);
-        g_skip_x_dots = static_cast<short>(g_viewport.reduction - 1);
+        g_skip_y_dots = static_cast<int>(g_viewport.reduction - 1);
+        g_skip_x_dots = static_cast<int>(g_viewport.reduction - 1);
         return 0;
     }
 
     g_skip_y_dots = 0;
     g_skip_x_dots = 0; // set for no reduction
+    if (g_file_aspect_ratio == 0)
+    {
+        g_file_aspect_ratio = static_cast<float>(video_aspect(g_file_x_dots, g_file_y_dots));
+    }
     if (g_video_entry.x_dots < g_file_x_dots || g_video_entry.y_dots < g_file_y_dots)
     {
         // set up to load only every nth pixel to make image fit
