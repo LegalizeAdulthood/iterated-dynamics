@@ -11,6 +11,7 @@
 #include <windowsx.h>
 
 #include <cstring>
+#include <limits>
 #include <stdexcept>
 #include <string>
 
@@ -26,8 +27,51 @@ enum
     PLOT_TIMER_ID = 1
 };
 
+constexpr std::size_t DIB_ROW_ALIGNMENT{4};
+
+struct PlotBufferSize
+{
+    std::size_t row_len{};
+    std::size_t pixels_len{};
+};
+
 static Plot *s_plot{};
 static const char *const WINDOW_CLASS{"IdPlot"};
+
+static PlotBufferSize get_plot_buffer_size(const int width, const int height)
+{
+    if (width <= 0 || height <= 0)
+    {
+        throw std::invalid_argument("Invalid plot dimensions");
+    }
+
+    const std::size_t max_size{std::numeric_limits<std::size_t>::max()};
+    const std::size_t byte_width{static_cast<std::size_t>(width)};
+    if (byte_width > max_size / sizeof(Byte))
+    {
+        throw std::overflow_error("Plot row length overflow");
+    }
+    const std::size_t unaligned_row_len{byte_width * sizeof(Byte)};
+    if (unaligned_row_len > max_size - (DIB_ROW_ALIGNMENT - 1))
+    {
+        throw std::overflow_error("Plot row length overflow");
+    }
+
+    const std::size_t row_len{
+        (unaligned_row_len + DIB_ROW_ALIGNMENT - 1) / DIB_ROW_ALIGNMENT * DIB_ROW_ALIGNMENT};
+    const std::size_t rows{static_cast<std::size_t>(height)};
+    if (row_len > max_size / rows)
+    {
+        throw std::overflow_error("Plot buffer length overflow");
+    }
+
+    return {row_len, row_len * rows};
+}
+
+static std::size_t plot_pixel_offset(const int x, const int y, const int height, const std::size_t row_len)
+{
+    return static_cast<std::size_t>(height - 1 - y) * row_len + static_cast<std::size_t>(x);
+}
 
 static const Byte FONT_8x8[8][1024/8] =
 {
@@ -224,13 +268,16 @@ void Plot::set_dirty_region(const int x_min, const int y_min, const int x_max, c
  */
 void Plot::init_pixels()
 {
+    const int width{g_screen_x_dots};
+    const int height{g_screen_y_dots};
+    const PlotBufferSize buffer_size{get_plot_buffer_size(width, height)};
+
     m_pixels.clear();
     m_saved_pixels.clear();
-    m_width = g_screen_x_dots;
-    m_height = g_screen_y_dots;
-    m_row_len = m_width * sizeof(Byte);
-    m_row_len = (m_row_len + 3) / 4 *4;
-    m_pixels_len = m_row_len * m_height;
+    m_width = width;
+    m_height = height;
+    m_row_len = buffer_size.row_len;
+    m_pixels_len = buffer_size.pixels_len;
     _ASSERTE(m_pixels_len > 0);
     m_pixels.resize(m_pixels_len);
     std::memset(m_pixels.data(), 0, m_pixels_len);
@@ -454,23 +501,23 @@ void Plot::create_window(const HWND parent)
 
 void Plot::write_pixel(const int x, const int y, const int color)
 {
-    _ASSERTE(m_pixels.size() == m_width* m_height);
-    if (x < 0 || x > m_width || y < 0 || y > m_height)
+    _ASSERTE(m_pixels.size() == m_pixels_len);
+    if (x < 0 || x >= m_width || y < 0 || y >= m_height)
     {
         return;
     }
-    m_pixels[(m_height - y - 1)*m_row_len + x] = static_cast<Byte>(color & 0xFF);
+    m_pixels[plot_pixel_offset(x, y, m_height, m_row_len)] = static_cast<Byte>(color & 0xFF);
     set_dirty_region(x, y, x+1, y+1);
 }
 
 int Plot::read_pixel(const int x, const int y)
 {
-    _ASSERTE(m_pixels.size() == m_width* m_height);
-    if (x < 0 || x > m_width || y < 0 || y > m_height)
+    _ASSERTE(m_pixels.size() == m_pixels_len);
+    if (x < 0 || x >= m_width || y < 0 || y >= m_height)
     {
         return 0;
     }
-    return m_pixels[(m_height - 1 - y) * m_row_len + x];
+    return m_pixels[plot_pixel_offset(x, y, m_height, m_row_len)];
 }
 
 void Plot::flush()
@@ -494,7 +541,7 @@ void Plot::save_xor_pixel(const int x, const int y)
     {
         return;
     }
-    m_xor_pixels.push_back(XorPixel{x, y, m_pixels[(m_height - 1 - y) * m_row_len + x]});
+    m_xor_pixels.push_back(XorPixel{x, y, m_pixels[plot_pixel_offset(x, y, m_height, m_row_len)]});
 }
 
 void Plot::save_xor_line(int x1, int y1, const int x2, const int y2)

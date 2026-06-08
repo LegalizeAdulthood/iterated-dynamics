@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <limits>
 
 using namespace id::engine;
 
@@ -47,6 +48,30 @@ int first_bit(unsigned long mask)
 X11ColorMask make_color_mask(const unsigned long mask)
 {
     return X11ColorMask{mask, first_bit(mask), count_bits(mask)};
+}
+
+struct PlotBufferSize
+{
+    std::size_t row_len{};
+    std::size_t pixels_len{};
+};
+
+bool get_plot_buffer_size(const int width, const int height, PlotBufferSize &result)
+{
+    if (width <= 0 || height <= 0)
+    {
+        return false;
+    }
+
+    const std::size_t row_len{static_cast<std::size_t>(width)};
+    const std::size_t rows{static_cast<std::size_t>(height)};
+    if (row_len > std::numeric_limits<std::size_t>::max() / rows)
+    {
+        return false;
+    }
+
+    result = {row_len, row_len * rows};
+    return true;
 }
 
 unsigned long scale_component(const Byte value, const X11ColorMask mask)
@@ -246,7 +271,8 @@ void X11Plot::set_position(const int x, const int y)
 
 bool X11Plot::resize(const int width, const int height)
 {
-    if (width <= 0 || height <= 0)
+    PlotBufferSize buffer_size{};
+    if (!get_plot_buffer_size(width, height, buffer_size))
     {
         return false;
     }
@@ -257,8 +283,9 @@ bool X11Plot::resize(const int width, const int height)
 
     m_width = width;
     m_height = height;
-    m_row_len = static_cast<size_t>(m_width);
-    m_pixels.assign(m_row_len * static_cast<size_t>(m_height), 0);
+    m_row_len = buffer_size.row_len;
+    m_pixels_len = buffer_size.pixels_len;
+    m_pixels.assign(m_pixels_len, 0);
     m_saved_pixels.clear();
     m_xor_pixels.clear();
     reset_dirty();
@@ -615,7 +642,8 @@ void X11Plot::paint_region(int x, int y, int width, int height)
         return;
     }
 
-    std::vector<char> image_data(static_cast<size_t>(image->bytes_per_line) * static_cast<size_t>(image_height));
+    std::vector<char> image_data{
+        static_cast<std::size_t>(image->bytes_per_line) * static_cast<std::size_t>(image_height)};
     image->data = image_data.data();
     for (int row = 0; row < image_height; ++row)
     {
@@ -632,14 +660,14 @@ void X11Plot::paint_region(int x, int y, int width, int height)
     XDestroyImage(image);
 }
 
-int X11Plot::pixel_offset(const int x, const int y) const
+std::size_t X11Plot::pixel_offset(const int x, const int y) const
 {
-    return static_cast<int>((static_cast<size_t>(m_height - y - 1) * m_row_len) + static_cast<size_t>(x));
+    return static_cast<std::size_t>(m_height - y - 1) * m_row_len + static_cast<std::size_t>(x);
 }
 
 bool X11Plot::has_pixels() const
 {
-    return m_width > 0 && m_height > 0 && !m_pixels.empty();
+    return m_width > 0 && m_height > 0 && m_pixels.size() == m_pixels_len;
 }
 
 bool X11Plot::is_valid_position(const int x, const int y) const

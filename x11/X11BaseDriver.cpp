@@ -12,6 +12,7 @@
 #include <engine/Browse.h>
 #include <engine/sound.h>
 #include <engine/spindac.h>
+#include <engine/video_mode.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
 #include <io/find_path.h>
@@ -515,7 +516,7 @@ bool X11BaseDriver::validate_mode(const VideoInfo &mode)
     int width{};
     int height{};
     get_max_screen(width, height);
-    return mode.x_dots <= width && mode.y_dots <= height && mode.colors == 256;
+    return is_valid_display_video_mode(mode, width, height);
 }
 
 void X11BaseDriver::get_max_screen(int &width, int &height)

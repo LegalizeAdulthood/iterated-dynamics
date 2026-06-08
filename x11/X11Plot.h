@@ -73,7 +73,7 @@ private:
     void mark_dirty(int left, int top, int right, int bottom);
     void reset_dirty();
     void paint_region(int x, int y, int width, int height);
-    int pixel_offset(int x, int y) const;
+    std::size_t pixel_offset(int x, int y) const;
     bool has_pixels() const;
     bool is_valid_position(int x, int y) const;
     void save_xor_line(int x1, int y1, int x2, int y2);
@@ -92,7 +92,8 @@ private:
     std::vector<X11XorPixel> m_xor_pixels;
     int m_width{};
     int m_height{};
-    size_t m_row_len{};
+    std::size_t m_row_len{};
+    std::size_t m_pixels_len{};
     X11DirtyRect m_dirty;
     bool m_mapped{};
 };

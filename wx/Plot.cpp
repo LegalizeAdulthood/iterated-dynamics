@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <limits>
 #include <stdexcept>
 #include <string>
 
@@ -18,7 +19,29 @@ enum
     PLOT_TIMER_ID = 1
 };
 
+struct PlotBufferSize
+{
+    std::size_t pixels_len{};
+};
+
 wxIMPLEMENT_DYNAMIC_CLASS(Plot, wxControl);
+
+static PlotBufferSize get_plot_buffer_size(const int width, const int height)
+{
+    if (width <= 0 || height <= 0)
+    {
+        throw std::invalid_argument("Invalid plot dimensions");
+    }
+
+    const std::size_t columns{static_cast<std::size_t>(width)};
+    const std::size_t rows{static_cast<std::size_t>(height)};
+    if (columns > std::numeric_limits<std::size_t>::max() / rows)
+    {
+        throw std::overflow_error("Plot buffer length overflow");
+    }
+
+    return {columns * rows};
+}
 
 static const Byte FONT_8x8[8][1024 / 8] = {
     {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -106,10 +129,12 @@ void Plot::set_dirty_region(const wxRect &rect)
  */
 void Plot::init_pixels()
 {
+    const PlotBufferSize buffer_size{get_plot_buffer_size(m_width, m_height)};
+
     m_pixels.clear();
     m_saved_pixels.clear();
-    m_pixels.resize(m_width*m_height);
-    std::memset(m_pixels.data(), 0, m_pixels.size());
+    m_pixels_len = buffer_size.pixels_len;
+    m_pixels.assign(m_pixels_len, 0);
     m_dirty = false;
     m_dirty_region = wxRect{};
 }
@@ -140,33 +165,34 @@ void Plot::on_paint(wxPaintEvent &event)
 
 void Plot::write_pixel(int x, int y, const int color)
 {
-    if (x < 0 || x > m_width || y < 0 || y > m_height)
+    if (x < 0 || x >= m_width || y < 0 || y >= m_height)
     {
         return;
     }
 
-    assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
-    m_pixels[(m_height - y - 1) * m_width + x] = static_cast<Byte>(color & 0xFF);
+    assert(m_pixels.size() == m_pixels_len);
+    const int color_index{color & 0xFF};
+    m_pixels[pixel_offset(x, y)] = static_cast<Byte>(color_index);
 
     const wxNativePixelData data{m_rendering};
     assert(data.GetWidth() == m_width);
     assert(data.GetHeight() == m_height);
     auto it = data.GetPixels();
     it.MoveTo(data, x, y);
-    it.Red() = m_clut[color][0];
-    it.Green() = m_clut[color][1];
-    it.Blue() = m_clut[color][2];
+    it.Red() = m_clut[color_index][0];
+    it.Green() = m_clut[color_index][1];
+    it.Blue() = m_clut[color_index][2];
     set_dirty_region({x, y, 1, 1});
 }
 
 int Plot::read_pixel(const int x, const int y)
 {
-    assert(m_pixels.size() == static_cast<size_t>(m_width * m_height));
-    if (x < 0 || x > m_width || y < 0 || y > m_height)
+    assert(m_pixels.size() == m_pixels_len);
+    if (x < 0 || x >= m_width || y < 0 || y >= m_height)
     {
         return 0;
     }
-    return m_pixels[(m_height - 1 - y) * m_width + x];
+    return m_pixels[pixel_offset(x, y)];
 }
 
 void Plot::flush()
@@ -227,7 +253,7 @@ void Plot::clear()
 {
     m_dirty_region = wxRect{0, 0, m_width, m_height};
     m_dirty = true;
-    std::memset(m_pixels.data(), 0, m_pixels.size());
+    std::fill(m_pixels.begin(), m_pixels.end(), 0);
 }
 
 void Plot::redraw()
@@ -254,17 +280,41 @@ void Plot::save_graphics()
 
 void Plot::restore_graphics()
 {
+    if (m_saved_pixels.size() != m_pixels.size())
+    {
+        return;
+    }
+
     m_pixels = m_saved_pixels;
     redraw();
 }
 
 void Plot::DoSetSize(const int x, const int y, int width, int height, const int flags)
 {
+    if (width < 0)
+    {
+        width = m_width;
+    }
+    if (height < 0)
+    {
+        height = m_height;
+    }
+    if (width <= 0 || height <= 0)
+    {
+        return;
+    }
+
     m_width = width;
     m_height = height;
     wxControl::DoSetSize(x, y, width, height, flags | wxSIZE_FORCE);
     m_rendering = wxBitmap(m_width, m_height);
     init_pixels();
+}
+
+std::size_t Plot::pixel_offset(const int x, const int y) const
+{
+    return static_cast<std::size_t>(m_height - 1 - y) * static_cast<std::size_t>(m_width) +
+        static_cast<std::size_t>(x);
 }
 
 wxSize Plot::DoGetBestSize() const

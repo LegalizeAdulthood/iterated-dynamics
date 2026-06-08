@@ -2,6 +2,7 @@
 //
 #include "X11BaseDriver.h"
 
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 
 using namespace id::engine;
@@ -51,7 +52,7 @@ bool X11Driver::init(int *argc, char **argv)
     get_max_screen(width, height);
     for (VideoInfo &mode : s_modes)
     {
-        if (mode.x_dots <= width && mode.y_dots <= height)
+        if (is_valid_display_video_mode(mode, width, height))
         {
             add_video_mode(this, &mode);
         }

@@ -124,4 +124,15 @@ bool is_valid_disk_video_mode(const VideoInfo &mode)
         && mode.y_dots <= GIF_MAX_PIXELS;
 }
 
+bool is_valid_display_video_mode(const VideoInfo &mode, const int max_width, const int max_height)
+{
+    return mode.colors == 256         //
+        && mode.x_dots > 0            //
+        && mode.y_dots > 0            //
+        && max_width > 0              //
+        && max_height > 0             //
+        && mode.x_dots <= max_width   //
+        && mode.y_dots <= max_height;
+}
+
 } // namespace id::engine

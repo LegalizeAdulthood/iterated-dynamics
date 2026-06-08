@@ -12,6 +12,7 @@
 
 #include <engine/calcfrac.h>
 #include <engine/spindac.h>
+#include <engine/video_mode.h>
 #include <engine/VideoInfo.h>
 #include <geometry/plot3d.h>
 #include <io/save_timer.h>
@@ -456,10 +457,7 @@ bool WxDriver::validate_mode(const VideoInfo &mode)
     int height;
     get_max_screen(width, height);
 
-    // allow modes <= size of screen with 256 colors
-    return mode.x_dots <= width
-        && mode.y_dots <= height
-        && mode.colors == 256;
+    return is_valid_display_video_mode(mode, width, height);
 }
 
 void WxDriver::get_max_screen(int &width, int &height)

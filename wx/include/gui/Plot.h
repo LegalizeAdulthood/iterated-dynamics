@@ -9,6 +9,7 @@
 #include <wx/wx.h>
 
 #include <array>
+#include <cstddef>
 #include <string>
 #include <vector>
 
@@ -50,9 +51,11 @@ private:
     void redraw();
     void set_dirty_region(const wxRect &rect);
     void init_pixels();
+    std::size_t pixel_offset(int x, int y) const;
 
     int m_width{};
     int m_height{};
+    std::size_t m_pixels_len{};
     Colormap m_clut{};
     wxBitmap m_rendering;
     wxFont m_font;

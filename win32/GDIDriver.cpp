@@ -14,6 +14,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/spindac.h"
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "ui/diskvid.h"
 #include "ui/video.h"
@@ -183,7 +184,7 @@ bool GDIDriver::init(int *argc, char **argv)
 
         for (VideoInfo &mode : s_modes)
         {
-            if (mode.x_dots <= width && mode.y_dots <= height)
+            if (is_valid_display_video_mode(mode, width, height))
             {
                 add_video_mode(this, &mode);
             }
@@ -346,10 +347,7 @@ bool GDIDriver::validate_mode(const VideoInfo &mode)
     int height;
     get_max_screen(width, height);
 
-    // allow modes <= size of screen with 256 colors
-    return mode.x_dots <= width
-        && mode.y_dots <= height
-        && mode.colors == 256;
+    return is_valid_display_video_mode(mode, width, height);
 }
 
 void GDIDriver::pause()
