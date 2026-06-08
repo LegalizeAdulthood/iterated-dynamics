@@ -154,6 +154,58 @@ jobs:
         path: ${{github.workspace}}/build-ci-ascii-doc/hc/src/id.html
 
   #############################################################################
+  wx_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_wx: ${{steps.changed_files.outputs.run_wx}}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        submodules: false
+
+    - name: Check for wx changes
+      id: changed_files
+      env:
+        BEFORE: ${{github.event.before}}
+        HEAD: ${{github.sha}}
+        PR_BASE: ${{github.event.pull_request.base.sha}}
+        REF_TYPE: ${{github.ref_type}}
+      run: |
+        run_wx=false
+        if [ "$REF_TYPE" != "tag" ]; then
+          base="$BEFORE"
+          if [ -n "$PR_BASE" ]; then
+            base="$PR_BASE"
+          fi
+          if [ -z "$base" ] || [[ "$base" =~ ^0+$ ]]; then
+            changed_files="$(git ls-tree -r --name-only "$HEAD")"
+          else
+            changed_files="$(git diff --name-only "$base" "$HEAD")"
+          fi
+          for path in $changed_files; do
+            case "$path" in
+              wx/*)
+                run_wx=true
+                break
+                ;;
+            esac
+            if git grep -q "ID_USE_WX" "$HEAD" -- "$path" 2>/dev/null; then
+              run_wx=true
+              break
+            fi
+            if [ -n "$base" ] && ! [[ "$base" =~ ^0+$ ]] &&
+                git grep -q "ID_USE_WX" "$base" -- "$path" 2>/dev/null; then
+              run_wx=true
+              break
+            fi
+          done
+        fi
+        echo "run_wx=$run_wx" >> "$GITHUB_OUTPUT"
+
+  #############################################################################
   build:
     needs: [ html-docs, pdf-docs ]
     strategy:
@@ -345,7 +397,8 @@ jobs:
 
   #############################################################################
   wx:
-    needs: [ html-docs, pdf-docs ]
+    if: ${{needs.wx_changes.outputs.run_wx == 'true'}}
+    needs: [ html-docs, pdf-docs, wx_changes ]
     strategy:
       matrix:
         preset: [ wx-debug, wx-release ]
