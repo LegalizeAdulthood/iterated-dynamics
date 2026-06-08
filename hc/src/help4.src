@@ -1520,10 +1520,10 @@ work with fractal types which can be resumed.  See
 These "video modes" do not involve a graphic display at all.  They use
 memory or your disk drive (as file id.$$$) to store the fractal image.
 These modes are useful for creating images beyond the size of your
-screen, right up to the current internal limit of 32767 x 32767 x 256,
-e.g. for subsequent printing.  They're also useful for background
-processing - create an image in a disk-video mode, save it, then
-restore it in a real video mode.
+screen, right up to the GIF image limit of 65535 x 65535 x 256, memory
+permitting.  They're also useful for background processing - create an
+image in a disk-video mode, save it, then restore it in a real video
+mode.
 
 While you are using a disk-video mode, your screen will display text
 information indicating whether memory or your disk drive is being used,
@@ -1577,14 +1577,17 @@ The fields are defined as:
    Blank if no key is assigned to the mode.
 2. The name of the video mode (25 chars max, no leading blanks).
    This field is only used for display in the vide mode selection screen.
-3. The number of pixels across the screen (X, from 2 to 32767)
-4. The number of pixels down the screen (Y, from 2 to 32767)
+3. The number of pixels across the screen (X, from 2 to 65535)
+4. The number of pixels down the screen (Y, from 2 to 65535)
 5. The number of available colors (2, 4, 16, or 256)
 6. The name of the driver for the video mode.  The Win32 GDI and Linux X11
    drivers use "gdi".  On Linux, X11 accepts 256-color "gdi" modes that
    fit on the current X screen.  Disk modes use "disk".
 7. A comment describing the mode (25 chars max, leading blanks are OK)
 ~Format+
+
+Disk-video modes may use X and Y values up to 65535, the GIF image limit.
+Windowed display modes are limited by the current display size.
 ;
 ;
 ;
