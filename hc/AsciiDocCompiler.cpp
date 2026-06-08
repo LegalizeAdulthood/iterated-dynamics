@@ -5,8 +5,7 @@
 #include "HelpSource.h"
 #include "messages.h"
 
-#include <boost/algorithm/string/case_conv.hpp>
-#include <boost/algorithm/string/replace.hpp>
+#include <algos/string_algorithms.h>
 
 #include <algorithm>
 #include <cassert>
@@ -17,6 +16,7 @@
 #include <stdexcept>
 
 using namespace id::help;
+using namespace id::algos;
 
 namespace hc
 {
@@ -407,7 +407,7 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
     {
         m_link_text.erase(last_non_space + 1);
     }
-    m_link_markup = boost::algorithm::to_lower_copy(anchor_name);
+    m_link_markup = ascii_to_lower_copy(anchor_name);
     for (const char c : " .-")
     {
         std::replace(m_link_markup.begin(), m_link_markup.end(), c, '_');
@@ -418,7 +418,7 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
     {
         m_link_markup.erase(pos, 1);
     }
-    boost::algorithm::replace_all(m_link_markup, "__", "_");
+    replace_all(m_link_markup, "__", "_");
     m_link_markup = "<<_" + m_link_markup;
     if (m_link_text != anchor_name)
     {

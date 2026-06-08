@@ -2,8 +2,9 @@
 
 ## Goal
 
-Remove the `boost-algorithm` vcpkg dependency by replacing the small set of
-string helpers used by Id with local, straightforward implementations.
+Remove the `boost-algorithm` vcpkg dependency by replacing the small
+set of string helpers used by Id with local, straightforward
+implementations.
 
 Keep the replacement narrow.  This is not a general string library.  It
 only needs to cover the algorithms used today:
@@ -49,33 +50,7 @@ Build wiring:
 - `vcpkg.json`
   - `boost-algorithm` in the `hc` and `id` features
 
-## Slice 1: Move Help Compiler Off Boost
-
-Goal: remove the help compiler production dependency on Boost Algorithm.
-
-Work:
-
-- Replace `boost::algorithm::to_lower_copy` in
-  `hc/AsciiDocCompiler.cpp`.
-- Replace `boost::algorithm::replace_all` in
-  `hc/AsciiDocCompiler.cpp`.
-- Link `libhc` to the local string-algorithm target.
-- Remove `Boost::algorithm` from `libhc`.
-- Remove `find_package(boost_algorithm CONFIG REQUIRED)` from
-  `hc/CMakeLists.txt` if no other help compiler target needs it.
-
-Tests:
-
-- Build the help compiler.
-- Run the help compiler, AsciiDoc, HTML, PDF, and text comparison tests
-  that exercise generated help output.
-
-Done when:
-
-- `hc` has no Boost Algorithm includes.
-- Generated help output is unchanged.
-
-## Slice 2: Move libid Off Boost
+## Slice 1: Move libid Off Boost
 
 Goal: remove the libid production dependency on Boost Algorithm.
 
@@ -98,7 +73,7 @@ Done when:
 - `libid` has no Boost Algorithm includes.
 - Search path behavior is unchanged on Windows and Linux.
 
-## Slice 3: Remove Package Dependency
+## Slice 2: Remove Package Dependency
 
 Goal: remove `boost-algorithm` from build configuration after all callers
 are gone.
