@@ -89,18 +89,18 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d0/d2e/HelpSource_8h.html">HelpSource.h</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d5/d48/messages_8h.html">messages.h</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;boost/algorithm/string/case_conv.hpp&gt;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;boost/algorithm/string/replace.hpp&gt;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;cassert&gt;</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;cctype&gt;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;fstream&gt;</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;<a class="code" href="../../df/db5/helpcom_8h.html">helpcom.h</a>&gt;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d0/d5f/namespaceid_1_1help.html">id::help</a>;</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;algos/string_algorithms.h&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;cassert&gt;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;cctype&gt;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;filesystem&gt;</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;fstream&gt;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &lt;<a class="code" href="../../df/db5/helpcom_8h.html">helpcom.h</a>&gt;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d0/d5f/namespaceid_1_1help.html">id::help</a>;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">using namespace </span>id::algos;</div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../d9/dcc/namespacehc.html">hc</a></div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
@@ -491,7 +491,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    {</div>
 <div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>        m_link_text.erase(last_non_space + 1);</div>
 <div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>    }</div>
-<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>    m_link_markup = boost::algorithm::to_lower_copy(anchor_name);</div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>    m_link_markup = ascii_to_lower_copy(anchor_name);</div>
 <div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">char</span> <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a> : <span class="stringliteral">&quot; .-&quot;</span>)</div>
 <div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span>    {</div>
 <div class="line"><a id="l00413" name="l00413"></a><span class="lineno">  413</span>        std::replace(m_link_markup.begin(), m_link_markup.end(), <a class="code hl_variable" href="../../d0/dff/help_8cpp.html#ace750fb09c482b08a31e24228dd719b7">c</a>, <span class="charliteral">&#39;_&#39;</span>);</div>
@@ -502,7 +502,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00418" name="l00418"></a><span class="lineno">  418</span>    {</div>
 <div class="line"><a id="l00419" name="l00419"></a><span class="lineno">  419</span>        m_link_markup.erase(pos, 1);</div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>    }</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>    boost::algorithm::replace_all(m_link_markup, <span class="stringliteral">&quot;__&quot;</span>, <span class="stringliteral">&quot;_&quot;</span>);</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>    replace_all(m_link_markup, <span class="stringliteral">&quot;__&quot;</span>, <span class="stringliteral">&quot;_&quot;</span>);</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>    m_link_markup = <span class="stringliteral">&quot;&lt;&lt;_&quot;</span> + m_link_markup;</div>
 <div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>    <span class="keywordflow">if</span> (m_link_text != anchor_name)</div>
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>    {</div>
