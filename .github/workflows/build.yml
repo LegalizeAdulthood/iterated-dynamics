@@ -230,14 +230,17 @@ jobs:
         fetch-depth: 0
         submodules: true
 
-    - name: Get prebuilt documentation
+    - name: Get prebuilt HTML documentation
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
+        name: html-docs
         path: ${{github.workspace}}
-        pattern: |
-          html-docs
-          pdf-docs
-        merge-multiple: true
+
+    - name: Get prebuilt PDF documentation
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: pdf-docs
+        path: ${{github.workspace}}
 
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
@@ -421,14 +424,17 @@ jobs:
         fetch-depth: 0
         submodules: true
 
-    - name: Get prebuilt documentation
+    - name: Get prebuilt HTML documentation
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
+        name: html-docs
         path: ${{github.workspace}}
-        pattern: |
-          html-docs
-          pdf-docs
-        merge-multiple: true
+
+    - name: Get prebuilt PDF documentation
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: pdf-docs
+        path: ${{github.workspace}}
 
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
