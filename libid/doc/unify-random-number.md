@@ -57,10 +57,13 @@ Implemented:
 - Lorenz and inverse Julia random-walk paths consume image RNG helpers.
 - 3D randomized coloring seeds through `set_random_seed()` and consumes
   image RNG helpers.
+- JIIM random inverse Julia fallback paths seed through `set_random_seed()`
+  and consume image RNG helpers.
+- The remaining C RNG audit matches are tests, UI-only callers, GIF view
+  dithering, or the legacy `RAND15()` macro.
 
 Remaining gaps:
 
-- JIIM random inverse Julia paths still use `std::rand()`.
 - `RAND15()` remains a process-global C RNG macro.
 - Generated parameter file behavior for non-fixed generated image seeds is
   undecided and untested.
@@ -79,35 +82,7 @@ These may keep a UI-local random source, but must not affect image RNG:
 
 ## Remaining Work
 
-### Slice 1: Audit Remaining Image RNG Calls
-
-Goal: make all remaining image-generation random calls explicit.
-
-Work:
-
-- Audit all `std::rand()`, `std::srand()`, and `RAND15()` callers.
-- Convert JIIM random inverse Julia callers to image RNG helpers, or prove
-  they are not image-generation callers and document that classification.
-- Move any other fractal-generation caller to image RNG helpers.
-- Mark non-image UI callers with short comments only where the
-  classification is not obvious.
-- Keep UI RNG separate from image RNG.
-
-Tests:
-
-- `rg` audit must show no image-generation use of:
-  - `std::rand()`
-  - `std::srand()`
-  - `RAND15()`
-- Remaining matches must be UI, tests, or explicit compatibility code.
-- Run existing image tests.
-
-Done when:
-
-- Every fractal type uses `set_random_seed()` before consuming image RNG.
-- UI RNG cannot poison image-generation RNG.
-
-### Slice 2: Save, Load, And Batch Round Trip
+### Slice 1: Save, Load, And Batch Round Trip
 
 Goal: preserve repeatability through saved images and generated parameter
 sets.
@@ -134,7 +109,7 @@ Done when:
 
 - Repeatability survives save/load and generated PAR workflows.
 
-### Slice 3: Final Regression Pass
+### Slice 2: Final Regression Pass
 
 Goal: prove image RNG behavior is unified.
 

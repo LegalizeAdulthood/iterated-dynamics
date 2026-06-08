@@ -371,6 +371,7 @@ static int out_line_dither(Byte *pixels, const int line_len)
     s_dither_buf.resize(line_len + 1);
     std::fill(s_dither_buf.begin(), s_dither_buf.end(), 0);
 
+    // Viewing-only dither noise; do not consume the image RNG stream.
     int next_err = (std::rand() & 0x1f) - 16;
     for (int i = 0; i < line_len; i++)
     {

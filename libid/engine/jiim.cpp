@@ -12,6 +12,7 @@
 #include "engine/ImageRegion.h"
 #include "engine/LogicalScreen.h"
 #include "engine/pixel_grid.h"
+#include "engine/random_seed.h"
 #include "engine/VideoInfo.h"
 #include "engine/Viewport.h"
 #include "fractals/fractalp.h"
@@ -35,7 +36,6 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
 #include <string>
 #include <vector>
 
@@ -542,6 +542,10 @@ void InverseJulia::start()
     {
         s_ok_to_miim = init_queue(8 * 1024UL); // Queue Set-up Successful?
     }
+    if (m_which == JIIMType::JIIM && !s_ok_to_miim)
+    {
+        set_random_seed();
+    }
 
     s_max_hits = 1;
     if (m_which == JIIMType::ORBIT)
@@ -948,7 +952,7 @@ bool InverseJulia::iterate_jiim()
         {
         case SecretMode::UNMODIFIED_RANDOM_WALK:
         default:
-            if (std::rand() % 2)
+            if (random_int(2))
             {
                 g_new_z.x = -g_new_z.x;
                 g_new_z.y = -g_new_z.y;
@@ -1050,7 +1054,7 @@ bool InverseJulia::iterate_jiim()
             switch (s_ran_dir)
             {
             case 0: // go random direction for a while
-                if (std::rand() % 2)
+                if (random_int(2))
                 {
                     g_new_z.x = -g_new_z.x;
                     g_new_z.y = -g_new_z.y;
@@ -1058,7 +1062,7 @@ bool InverseJulia::iterate_jiim()
                 if (++s_ran_cnt > 1024)
                 {
                     s_ran_cnt = 0;
-                    if (std::rand() % 2)
+                    if (random_int(2))
                     {
                         s_ran_dir = 1;
                     }
