@@ -4,11 +4,10 @@
 
 #include "test_data.h"
 
+#include <algos/string_algorithms.h>
 #include <io/CurrentPathSaver.h>
 
 #include <gmock/gmock.h>
-
-#include <boost/algorithm/string/case_conv.hpp>
 
 #include <algorithm>
 #include <filesystem>
@@ -16,8 +15,8 @@
 #include <vector>
 
 namespace fs = std::filesystem;
-namespace algo = boost::algorithm;
 
+using namespace id::algos;
 using namespace id::io;
 using namespace id::test::data;
 using namespace testing;
@@ -140,7 +139,7 @@ TEST(TestFindFile, caseVariantFilename)
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
     CurrentPathSaver saver{search_dir};
-    const std::string filename{algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME} + ".*")};
+    const std::string filename{ascii_to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME} + ".*")};
 
     const bool result = fr_find_first(filename.c_str());
 
@@ -152,8 +151,7 @@ TEST(TestFindFile, caseVariantFilenameWildcard)
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
     CurrentPathSaver saver{search_dir};
-    const std::string filename{
-        '?' + algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME}).substr(1)};
+    const std::string filename{'?' + ascii_to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME}).substr(1)};
 
     const bool result = fr_find_first(filename.c_str());
 
@@ -165,8 +163,7 @@ TEST(TestFindFile, caseVariantFilenameWildcardRegex)
     fs::path search_dir{ID_TEST_DATA_FIND_FILE_DIR};
     search_dir /= ID_TEST_FIND_FILE_CASEDIR;
     CurrentPathSaver saver{search_dir};
-    const std::string filename{
-        "?*" + algo::to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME}).substr(2)};
+    const std::string filename{"?*" + ascii_to_lower_copy(std::string{ID_TEST_FIND_FILE_CASE_FILENAME}).substr(2)};
 
     const bool result = fr_find_first(filename.c_str());
 

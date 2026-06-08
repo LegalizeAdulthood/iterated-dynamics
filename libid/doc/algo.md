@@ -49,28 +49,7 @@ Build wiring:
 - `vcpkg.json`
   - `boost-algorithm` in the `hc` and `id` features
 
-## Slice 1: Move Test Helpers Off Boost
-
-Goal: prove the replacement helpers are sufficient for test-only use.
-
-Work:
-
-- Replace Boost case conversion in `test_lowerize_parameter.cpp`.
-- Replace Boost case conversion in `test_find_file.cpp`.
-- Replace Boost line splitting in `test_load_entry_text.cpp`.
-- Link `test-id` to the local string-algorithm target.
-
-Tests:
-
-- Run the affected `test-id` cases.
-- Run the full `test-id` target if the isolated cases pass.
-
-Done when:
-
-- No test source file includes `<boost/algorithm/...>`.
-- Test behavior is unchanged.
-
-## Slice 2: Move Help Compiler Off Boost
+## Slice 1: Move Help Compiler Off Boost
 
 Goal: remove the help compiler production dependency on Boost Algorithm.
 
@@ -96,7 +75,7 @@ Done when:
 - `hc` has no Boost Algorithm includes.
 - Generated help output is unchanged.
 
-## Slice 3: Move libid Off Boost
+## Slice 2: Move libid Off Boost
 
 Goal: remove the libid production dependency on Boost Algorithm.
 
@@ -119,7 +98,7 @@ Done when:
 - `libid` has no Boost Algorithm includes.
 - Search path behavior is unchanged on Windows and Linux.
 
-## Slice 4: Remove Package Dependency
+## Slice 3: Remove Package Dependency
 
 Goal: remove `boost-algorithm` from build configuration after all callers
 are gone.

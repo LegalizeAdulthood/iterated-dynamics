@@ -2,13 +2,13 @@
 //
 #include <engine/lowerize_parameter.h>
 
-#include <boost/algorithm/string/case_conv.hpp>
+#include <algos/string_algorithms.h>
 
 #include <gtest/gtest.h>
 
 #include <cstring>
 
-using namespace boost::algorithm;
+using namespace id::algos;
 using namespace id::engine;
 using namespace testing;
 
@@ -33,11 +33,11 @@ TEST_F(TestLowerizeParameter, argumentLowered)
 TEST_P(TestLowerizeParameter, valueUnchanged)
 {
     const std::string param{GetParam()};
-    std::strcpy(m_line, (to_upper_copy(param) + "=SOME_ARG").c_str());
+    std::strcpy(m_line, (ascii_to_upper_copy(param) + "=SOME_ARG").c_str());
 
     lowerize_parameter(m_line);
 
-    EXPECT_EQ(to_lower_copy(param) + "=SOME_ARG", m_line);
+    EXPECT_EQ(ascii_to_lower_copy(param) + "=SOME_ARG", m_line);
 }
 
 TEST_F(TestLowerizeParameter, rdsTextureValueUnchanged)

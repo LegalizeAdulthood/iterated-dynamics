@@ -4,14 +4,17 @@
 
 #include "test_data.h"
 
-#include <boost/algorithm/string/split.hpp>
+#include <algos/string_algorithms.h>
+
 #include <gtest/gtest.h>
 
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
 #include <string_view>
+#include <vector>
 
+using namespace id::algos;
 using namespace id::io;
 using namespace id::test::data;
 
@@ -80,9 +83,7 @@ R"frm(Fractint { ; Sylvie Gallet, 1996
 
 static std::vector<std::string> split_lines(std::string_view text)
 {
-    std::vector<std::string> result;
-    boost::algorithm::split(result, text, [](const char c) { return c == '\n'; });
-    return result;
+    return split(text, '\n');
 }
 
 TEST(TestLoadEntryText, columnZeroOneLine)
