@@ -3,11 +3,11 @@
 function(normalize_versioned_text input_file output_file)
     file(READ "${input_file}" contents)
     string(REGEX REPLACE
-        "Iterated Dynamics Version [0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?[ ]+Page"
+        "Iterated Dynamics Version [0-9]+\\.[0-9]+(\\.[0-9]+)?(\\.[0-9]+)?[ ]+Page"
         "Iterated Dynamics Version <version> Page"
         contents "${contents}")
     string(REGEX REPLACE
-        "Created by Iterated Dynamics Ver\\. [0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?"
+        "Created by Iterated Dynamics Ver\\. [0-9]+\\.[0-9]+(\\.[0-9]+)?(\\.[0-9]+)?"
         "Created by Iterated Dynamics Ver. <version>"
         contents "${contents}")
     file(WRITE "${output_file}" "${contents}")
