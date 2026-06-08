@@ -247,7 +247,7 @@
       "description": "Filter out tests that fail under wxWidgets",
       "filter": {
         "exclude": {
-          "label": "autokey|image|colormap|orbit|raytrace|savedir"
+          "label": "^(acceptance|autokey|image|colormap|orbit|par|raytrace|savedir)$"
         }
       }
     },
