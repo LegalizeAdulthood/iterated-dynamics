@@ -3305,6 +3305,8 @@ set randomly if the starting row is set randomly.
 
 A zero rule will randomly generate the rule to use.
 
+Random starting rows and randomly generated rules honor the rseed= command.
+
 Hitting the space bar toggles between continuously generating the cellular
 automata and stopping at the end of the current screen.
 
@@ -3357,7 +3359,9 @@ ant's path wraps to the opposite side of the screen.  You can slow down the
 ant to see her better using the <P> screen orbit delay - try 10.
 
 The 6th parameter accepts a random seed, allowing you to duplicate images
-using random values (empty rule string or 0 maximum ants.
+using random values (empty rule string or 0 ants).  The rseed= command is
+used when the 6th parameter is 0 or 1.  Any other 6th parameter value is
+the Ant seed and overrides rseed= regardless of command-line or PAR order.
 
 Try rule string 10.  In this case, the ant moves in a seemingly random
 pattern, then suddenly marches off in a straight line.  This happens for
@@ -3925,6 +3929,9 @@ deposited.  If you set it to 150, for example, then the color of the
 points will shift every 150 points leading to a radial color pattern
 if you are using the standards diffusion type.
 
+Diffusion's random motion and optional random coloring honor rseed=, so a
+fixed seed makes the same image repeatable.
+
 Diffusion was inspired by a Scientific American article a couple of
 years back which includes actual pictures of real physical phenomena
 that behave like this.
@@ -3989,6 +3996,9 @@ and 1 are interpreted in a special manner.  A seed of 1 will choose a random
 number between 0 and 1 at the start of each pixel.  A seed of 0 will suppress
 resetting the seed value between pixels unless the population model diverges
 in which case a random seed will be used on the next pixel.
+
+These random population choices honor rseed=, so a fixed rseed= makes the
+random population sequence repeatable.
 
 Filter Cycles:\
 Like the Bifurcation model, the Lyapunov allow you to set the number of

@@ -287,6 +287,8 @@ o Random-dot stereograms can now be generated in batch mode using rds=
   and rds-texture=.  (Fixes #227)
 o Formula rand now honors rseed=, making formulas that use rand repeatable
   when a seed is specified.  (Fixes #363)
+o Fractal types using random numbers now consistently honor rseed=,
+  making seeded random fractals repeatable across fractal types.
 o Formula, IFS, and L-system item names now preserve user-entered case
   in parameter output while still matching entries case-insensitively.
   (Fixes #364)

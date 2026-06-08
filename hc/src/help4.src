@@ -117,7 +117,7 @@
   initorbit=pixel          Sets the value used to initialize Mandelbrot orbits
                            to the complex number corresponding to the screen
                            pixel.  This is the default for most types.
-  rseed=nnnnn              Random number seed, for reproducible plasma clouds
+  rseed=nnnnn              Random seed for reproducible random image output
   showdot=[auto|bright|medium|dark|nn]/size  Colors the current dot being
                            calculated color nn or an automatically calculated
                            color (-1 disables).  The second parameter is the
@@ -264,6 +264,7 @@
   transparent=mm/nn        Sets colors mm to nn as transparent
   xyadjust=nnn/nnn         Sets 3D X and Y adjustment defaults,
   randomize=nnn            smoothes 3D color transitions between elevations
+                           and honors rseed= for repeatable output
   fullcolor=yes            allows creation of full color .TGA image with
                            light source fill types
   ambient=nnn              sets depth of shadows and contrast when using

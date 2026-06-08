@@ -652,6 +652,9 @@ eyes, looking through the screen rather than at the screen surface.  The
 image will (hopefully) resolve itself into the hills and valleys of the
 3D Plasma fractal.
 
+Random-dot RDS output honors rseed=, so a fixed seed makes the dot pattern
+repeatable.
+
 Because pressing the two-keyed <Ctrl+S> gets tiresome after a while, we have
 made <K> key a synonym for <Ctrl+S> for convenience.  Don't get too attached
 to <K> though; we reserve the right to reuse it for another purpose later.
@@ -1424,6 +1427,7 @@ Now, for the final option.  This one will smooth the transition between
 colors by randomizing them and reduce the banding that occurs with some
 maps.  Select the value of randomize to between 0 (for no effect) and 7 (to
 randomize your colors almost beyond use). 3 is a good starting point.
+This randomization honors rseed=.
 
 That's all for this screen.  Press <Enter> for these parameters and the
 next and final screen will appear (honestly!).
@@ -1571,7 +1575,8 @@ features for you to work with.  When doing 3D transformations, banding tends
 to occur because all pixels of a given height end up the same color.  Now,
 colors can be randomized to make the transitions between different colors
 at different altitudes smoother.  Use the "randomize=n" parameter to
-accomplish this.  If your light source images all look like lunar
+accomplish this; use "rseed=n" as well when you need repeatable
+randomization.  If your light source images all look like lunar
 landscapes since they are all monochrome and have very dark shadows, we
 now allow you to set the ambient light for adjusting the contrast of the
 final image.  Use the "ambient=n" parameter.  In addition to being able to
