@@ -240,8 +240,8 @@ FractalInfo get_fractal_info(GifFileType *gif)
     result.cx = deser.extract_int16();
     result.dx = deser.extract_int16();
     result.dot_mode = deser.extract_int16();
-    result.x_dots = deser.extract_int16();
-    result.y_dots = deser.extract_int16();
+    result.x_dots = deser.extract_uint16();
+    result.y_dots = deser.extract_uint16();
     result.colors = deser.extract_int16();
     result.info_version = deser.extract_int16();
     result.param3 = deser.extract_float();
@@ -558,8 +558,8 @@ void put_fractal_info(GifFileType *gif, const FractalInfo &info)
     ser.insert_int16(info.cx);
     ser.insert_int16(info.dx);
     ser.insert_int16(info.dot_mode);
-    ser.insert_int16(info.x_dots);
-    ser.insert_int16(info.y_dots);
+    ser.insert_uint16(info.x_dots);
+    ser.insert_uint16(info.y_dots);
     ser.insert_int16(info.colors);
     ser.insert_int16(info.info_version);
     ser.insert_float(info.param3);
@@ -801,8 +801,8 @@ EvolutionInfo get_evolution_info(const GifFileType *gif)
     result.py = deser.extract_int16();
     result.screen_x_offset = deser.extract_int16();
     result.screen_y_offset = deser.extract_int16();
-    result.x_dots = deser.extract_int16();
-    result.y_dots = deser.extract_int16();
+    result.x_dots = deser.extract_uint16();
+    result.y_dots = deser.extract_uint16();
     deser.extract_int16(result.mutate);
     result.count = deser.extract_int16();
     return result;
@@ -825,8 +825,8 @@ void put_evolution_info(GifFileType *gif, const EvolutionInfo &info)
     ser.insert_int16(info.py);
     ser.insert_int16(info.screen_x_offset);
     ser.insert_int16(info.screen_y_offset);
-    ser.insert_int16(info.x_dots);
-    ser.insert_int16(info.y_dots);
+    ser.insert_uint16(info.x_dots);
+    ser.insert_uint16(info.y_dots);
     ser.insert_int16(info.mutate);
     ser.insert_int16(info.count);
     for (int16_t zero : info.future)

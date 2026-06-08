@@ -1558,8 +1558,8 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     info->cx = 255;
     info->dx = 255;
     info->dot_mode = 0;
-    info->x_dots = static_cast<short>(g_file_x_dots);
-    info->y_dots = static_cast<short>(g_file_y_dots);
+    info->x_dots = static_cast<std::uint16_t>(g_file_x_dots);
+    info->y_dots = static_cast<std::uint16_t>(g_file_y_dots);
     info->colors = static_cast<short>(g_file_colors);
     info->info_version = 0; // this forces lots more init at calling end too
 

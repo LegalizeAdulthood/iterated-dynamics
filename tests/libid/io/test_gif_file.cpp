@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <iterator>
 #include <numeric>
 #include <string>
@@ -431,6 +432,10 @@ public:
     ~TestGIFOrbitInfoExtension() override = default;
 };
 
+class TestGIFDimensionMetadata : public testing::TestWithParam<std::uint16_t>
+{
+};
+
 template <typename T>
 class VecPrinter
 {
@@ -725,6 +730,25 @@ TEST_F(TestGIFFractalInfoExtension, encode)
     EXPECT_EQ(info, info2);
 }
 
+TEST_P(TestGIFDimensionMetadata, fractalInfoRoundTripsUnsignedDimensions)
+{
+    const std::uint16_t dimension{GetParam()};
+    FractalInfo info{};
+    info.x_dots = dimension;
+    info.y_dots = dimension;
+    info.x_trans = -123;
+    info.y_trans = -456;
+    GIFOutputFile out{ID_TEST_GIF_WRITE1_FILE};
+
+    put_fractal_info(out, info);
+
+    const FractalInfo info2{get_fractal_info(out)};
+    EXPECT_EQ(dimension, info2.x_dots);
+    EXPECT_EQ(dimension, info2.y_dots);
+    EXPECT_EQ(info.x_trans, info2.x_trans);
+    EXPECT_EQ(info.y_trans, info2.y_trans);
+}
+
 TEST_F(TestGIFResumeInfoExtension, check)
 {
     EXPECT_NE(GIF_ERROR, m_result);
@@ -896,6 +920,28 @@ TEST_F(TestGIFEvolutionInfoExtension, encode)
     const EvolutionInfo info2{get_evolution_info(out)};
     EXPECT_EQ(info1, info2) << info1 << " != " << info2;
 }
+
+TEST_P(TestGIFDimensionMetadata, evolutionInfoRoundTripsUnsignedDimensions)
+{
+    const std::uint16_t dimension{GetParam()};
+    EvolutionInfo info{};
+    info.x_dots = dimension;
+    info.y_dots = dimension;
+    info.screen_x_offset = -123;
+    info.screen_y_offset = -456;
+    GIFOutputFile out{ID_TEST_GIF_WRITE6_FILE};
+
+    put_evolution_info(out, info);
+
+    const EvolutionInfo info2{get_evolution_info(out)};
+    EXPECT_EQ(dimension, info2.x_dots);
+    EXPECT_EQ(dimension, info2.y_dots);
+    EXPECT_EQ(info.screen_x_offset, info2.screen_x_offset);
+    EXPECT_EQ(info.screen_y_offset, info2.screen_y_offset);
+}
+
+INSTANTIATE_TEST_SUITE_P(GifDimension, TestGIFDimensionMetadata,
+    testing::Values(std::uint16_t{32767}, std::uint16_t{32768}, std::uint16_t{65535}));
 
 TEST_F(TestGIFOrbitInfoExtension, check)
 {

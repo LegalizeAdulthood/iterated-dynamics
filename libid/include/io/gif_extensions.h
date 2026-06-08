@@ -61,8 +61,8 @@ struct FractalInfo
     std::int16_t cx;               //
     std::int16_t dx;               //
     std::int16_t dot_mode;         //
-    std::int16_t x_dots;           //
-    std::int16_t y_dots;           //
+    std::uint16_t x_dots;          //
+    std::uint16_t y_dots;          //
     std::int16_t colors;           //
     std::int16_t info_version;     //
     float param3;                  //
@@ -231,8 +231,8 @@ struct ExtBlock6
     short  py;
     short  sx_offs;
     short  sy_offs;
-    short  x_dots;
-    short  y_dots;
+    std::uint16_t x_dots;
+    std::uint16_t y_dots;
     short  e_count;
     short  mutate[ui::NUM_GENES];
 };

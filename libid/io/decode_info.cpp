@@ -43,6 +43,7 @@ static_assert(sizeof(OrbitsInfo) == 200, "OrbitsInfo size is incorrect");
 
 static void get_uint8(std::uint8_t *dst, unsigned char **src, int dir);
 static void get_int16(std::int16_t *dst, unsigned char **src, int dir);
+static void get_uint16(std::uint16_t *dst, unsigned char **src, int dir);
 static void get_int32(std::int32_t *dst, unsigned char **src, int dir);
 static void get_float(float *dst, unsigned char **src, int dir);
 static void get_double(double *dst, unsigned char **src, int dir);
@@ -77,8 +78,8 @@ void decode_fractal_info_big_endian(FractalInfo *info, const int dir)
     get_int16(&info->cx, &buf_ptr, dir);
     get_int16(&info->dx, &buf_ptr, dir);
     get_int16(&info->dot_mode, &buf_ptr, dir);
-    get_int16(&info->x_dots, &buf_ptr, dir);
-    get_int16(&info->y_dots, &buf_ptr, dir);
+    get_uint16(&info->x_dots, &buf_ptr, dir);
+    get_uint16(&info->y_dots, &buf_ptr, dir);
     get_int16(&info->colors, &buf_ptr, dir);
     get_int16(&info->info_version, &buf_ptr, dir);
     get_float(&info->param3, &buf_ptr, dir);
@@ -245,6 +246,24 @@ static void get_int16(std::int16_t *dst, unsigned char **src, const int dir)
     if (dir == 1)
     {
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+    }
+    else
+    {
+        (*src)[0] = *dst & 0xff;
+        (*src)[1] = (*dst & 0xff00) >> 8;
+    }
+    *src += 2; // sizeof(std::uint16_t)
+}
+
+/*
+ * This routine gets a uint16_t out of the buffer.
+ * It updates the buffer pointer accordingly.
+ */
+static void get_uint16(std::uint16_t *dst, unsigned char **src, const int dir)
+{
+    if (dir == 1)
+    {
+        *dst = static_cast<std::uint16_t>((*src)[0]) + (static_cast<std::uint16_t>((*src)[1]) << 8);
     }
     else
     {
@@ -471,8 +490,8 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, const int dir)
     get_int16(&info->py, &buf_ptr, dir);
     get_int16(&info->screen_x_offset, &buf_ptr, dir);
     get_int16(&info->screen_y_offset, &buf_ptr, dir);
-    get_int16(&info->x_dots, &buf_ptr, dir);
-    get_int16(&info->y_dots, &buf_ptr, dir);
+    get_uint16(&info->x_dots, &buf_ptr, dir);
+    get_uint16(&info->y_dots, &buf_ptr, dir);
     for (int i = 0; i < NUM_GENES; i++)  // NOLINT(modernize-loop-convert)
     {
         get_int16(&info->mutate[i], &buf_ptr, dir);

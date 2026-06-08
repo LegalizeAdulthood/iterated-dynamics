@@ -591,8 +591,8 @@ bool encoder()
             evolution_info.py              = static_cast<std::int16_t>(g_evolve_param_grid_y);
             evolution_info.screen_x_offset          = static_cast<std::int16_t>(g_logical_screen.x_offset);
             evolution_info.screen_y_offset          = static_cast<std::int16_t>(g_logical_screen.y_offset);
-            evolution_info.x_dots           = static_cast<std::int16_t>(g_logical_screen.x_dots);
-            evolution_info.y_dots           = static_cast<std::int16_t>(g_logical_screen.y_dots);
+            evolution_info.x_dots = static_cast<std::uint16_t>(g_logical_screen.x_dots);
+            evolution_info.y_dots = static_cast<std::uint16_t>(g_logical_screen.y_dots);
             evolution_info.image_grid_size = static_cast<std::int16_t>(g_evolve_image_grid_size);
             evolution_info.evolving        = static_cast<std::int16_t>(+g_evolving);
             evolution_info.this_generation_random_seed =
@@ -794,8 +794,8 @@ void setup_save_info(FractalInfo *save_info)
     save_info->dx = 0;
     constexpr std::int16_t LEGACY_DOT_MODE{19};
     save_info->dot_mode = LEGACY_DOT_MODE;
-    save_info->x_dots = static_cast<std::int16_t>(g_video_entry.x_dots);
-    save_info->y_dots = static_cast<std::int16_t>(g_video_entry.y_dots);
+    save_info->x_dots = static_cast<std::uint16_t>(g_video_entry.x_dots);
+    save_info->y_dots = static_cast<std::uint16_t>(g_video_entry.y_dots);
     save_info->colors = static_cast<std::int16_t>(g_video_entry.colors);
     save_info->param3 = 0;        // pre version==7 fields
     save_info->param4 = 0;

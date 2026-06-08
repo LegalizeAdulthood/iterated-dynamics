@@ -57,8 +57,8 @@ struct EvolutionInfo      // for saving evolution data in a GIF file
     std::int16_t py;
     std::int16_t screen_x_offset;
     std::int16_t screen_y_offset;
-    std::int16_t x_dots;
-    std::int16_t y_dots;
+    std::uint16_t x_dots;
+    std::uint16_t y_dots;
     std::int16_t mutate[NUM_GENES];
     std::int16_t count; // count of how many images have been calc'ed so far
     std::int16_t future[66 - NUM_GENES];      // total of 200 bytes

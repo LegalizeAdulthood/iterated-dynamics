@@ -677,8 +677,8 @@ done:
                     g_evolve_info.py              = static_cast<short>(g_evolve_param_grid_y);
                     g_evolve_info.screen_x_offset          = static_cast<short>(g_logical_screen.x_offset);
                     g_evolve_info.screen_y_offset          = static_cast<short>(g_logical_screen.y_offset);
-                    g_evolve_info.x_dots           = static_cast<short>(g_logical_screen.x_dots);
-                    g_evolve_info.y_dots           = static_cast<short>(g_logical_screen.y_dots);
+                    g_evolve_info.x_dots = static_cast<std::uint16_t>(g_logical_screen.x_dots);
+                    g_evolve_info.y_dots = static_cast<std::uint16_t>(g_logical_screen.y_dots);
                     g_evolve_info.image_grid_size = static_cast<short>(g_evolve_image_grid_size);
                     g_evolve_info.this_generation_random_seed = static_cast<short>(g_evolve_this_generation_random_seed);
                     g_evolve_info.max_random_mutation = g_evolve_max_random_mutation;
