@@ -9,6 +9,7 @@
 #include <engine/cmdfiles.h>
 #include <engine/Inversion.h>
 #include <engine/Potential.h>
+#include <engine/random_seed.h>
 #include <engine/UserData.h>
 #include <engine/VideoInfo.h>
 #include <engine/Viewport.h>
@@ -342,6 +343,28 @@ TEST_P(TestLoadFile, integerTypeMigrated)
     EXPECT_EQ(0, result);
     EXPECT_EQ(GetParam().type, g_fractal_type);
     EXPECT_EQ(g_file_version, g_version);
+}
+
+TEST_F(TestLoadFile, randomSeedRestored)
+{
+    FractalInfo info{};
+    ExtBlock2 block_2_info{};
+    ExtBlock3 block_3_info{};
+    ExtBlock4 block_4_info{};
+    ExtBlock5 block_5_info{};
+    ExtBlock6 block_6_info{};
+    ExtBlock7 block_7_info{};
+    ASSERT_FALSE(find_fractal_info(ID_TEST_GIF_MANDEL_INT, &info, &block_2_info, &block_3_info, //
+        &block_4_info, &block_5_info, &block_6_info, &block_7_info));
+    ValueSaver saved_read_filename{g_read_filename, ID_TEST_GIF_MANDEL_INT};
+    ValueSaver saved_random_seed{g_random_seed, -999};
+    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
+
+    const int result{read_overlay()};
+
+    EXPECT_EQ(0, result);
+    EXPECT_EQ(info.random_seed, g_random_seed);
+    EXPECT_EQ(info.random_seed_flag != 0, g_random_seed_flag);
 }
 
 static FileFractalType s_int_types[]{

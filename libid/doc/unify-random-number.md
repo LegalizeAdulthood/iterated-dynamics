@@ -47,7 +47,8 @@ Implemented:
   consume `random15()`.
 - GIF save/load stores and restores `g_random_seed` and
   `g_random_seed_flag`.
-- Generated parameter files emit `rseed=` when the seed was fixed.
+- Generated parameter files emit `rseed=` when the seed was fixed and
+  omit generated image seeds.
 - Random seed tests cover fixed and non-fixed seed behavior and prove C RNG
   calls do not affect image RNG output.
 - Ant, cellular, and plasma reuse-last seed paths are covered by focused
@@ -65,8 +66,6 @@ Implemented:
 Remaining gaps:
 
 - `RAND15()` remains a process-global C RNG macro.
-- Generated parameter file behavior for non-fixed generated image seeds is
-  undecided and untested.
 - The final RNG source audit and developer note are not done.
 
 ## UI Or Non-Fractal RNG Users
@@ -82,34 +81,7 @@ These may keep a UI-local random source, but must not affect image RNG:
 
 ## Remaining Work
 
-### Slice 1: Save, Load, And Batch Round Trip
-
-Goal: preserve repeatability through saved images and generated parameter
-sets.
-
-Work:
-
-- Verify GIF save/load tests cover `g_random_seed` and
-  `g_random_seed_flag`.
-- Generate a PAR with fixed `rseed=` and verify `rseed=` is emitted.
-- Decide whether generated parameter sets should write the generated seed
-  when no fixed `rseed=` was supplied.
-- If generated seeds are emitted, document and test that behavior.
-- If generated seeds are not emitted, document and test that behavior.
-
-Tests:
-
-- Load a GIF with stored seed data and verify:
-  - `g_random_seed`
-  - `g_random_seed_flag`
-- Generate a PAR with fixed `rseed=` and verify `rseed=` is emitted.
-- Generate a PAR without fixed `rseed=` and verify documented behavior.
-
-Done when:
-
-- Repeatability survives save/load and generated PAR workflows.
-
-### Slice 2: Final Regression Pass
+### Slice 1: Final Regression Pass
 
 Goal: prove image RNG behavior is unified.
 

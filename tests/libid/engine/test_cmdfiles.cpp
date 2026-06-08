@@ -557,6 +557,32 @@ TEST_F(TestCommandMakePar, makeParNewFile)
         << path;
 }
 
+TEST_F(TestCommandMakePar, makeParWritesFixedRandomSeed)
+{
+    const fs::path path{par_path("fixed-rseed.par")};
+    fs::remove(path);
+    ValueSaver saved_random_seed{g_random_seed, 4567};
+    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
+
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_THAT(read_file_contents(path), HasSubstr(" rseed=4567"));
+}
+
+TEST_F(TestCommandMakePar, makeParOmitsGeneratedRandomSeed)
+{
+    const fs::path path{par_path("generated-rseed.par")};
+    fs::remove(path);
+    ValueSaver saved_random_seed{g_random_seed, 4567};
+    ValueSaver saved_random_seed_flag{g_random_seed_flag, false};
+
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_THAT(read_file_contents(path), Not(HasSubstr("rseed=")));
+}
+
 static void set_file_contents(const fs::path &path, const std::string_view contents)
 {
     fs::create_directories(path.parent_path());
