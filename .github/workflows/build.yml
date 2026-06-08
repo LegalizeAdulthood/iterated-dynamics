@@ -224,6 +224,9 @@ jobs:
       with:
         cmake-version: '3.31'
 
+    - name: Verify prebuilt documentation
+      run: cmake -E sha256sum id.html id.pdf
+
     - name: Run Workflow Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
       env:
@@ -410,6 +413,9 @@ jobs:
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
         cmake-version: '3.31'
+
+    - name: Verify prebuilt documentation
+      run: cmake -E sha256sum id.html id.pdf
 
     - name: Run Workflow
       env: 
