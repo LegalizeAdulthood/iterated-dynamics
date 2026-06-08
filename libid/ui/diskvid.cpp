@@ -28,8 +28,10 @@
 #include <chrono>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <filesystem>
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -58,10 +60,12 @@ enum
 namespace
 {
 
+using DiskOffset = std::int64_t;
+
 // structure of each cache entry
 struct Cache
 {
-    long offset;            // pixel offset in image
+    DiskOffset offset;      // pixel offset in image
     Byte pixel[BLOCK_LEN];  // one pixel per byte
     unsigned int hash_link; // ptr to next cache entry with same hash
     bool dirty;             // changed since read?
@@ -81,11 +85,11 @@ static Cache *s_cache_end{};                //
 static Cache *s_cache_lru{};                //
 static Cache *s_cur_cache{};                //
 static Cache *s_cache_start{};              //
-static long s_high_offset{};                // highwater mark of writes
-static long s_seek_offset{};                // what we'll get next if we don't seek
-static long s_cur_offset{};                 // offset of last block referenced
+static DiskOffset s_high_offset{};          // highwater mark of writes
+static DiskOffset s_seek_offset{};          // what we'll get next if we don't seek
+static DiskOffset s_cur_offset{};           // offset of last block referenced
 static int s_cur_row{};                     //
-static long s_cur_row_base{};               //
+static DiskOffset s_cur_row_base{};         //
 static unsigned int s_hash_ptr[HASH_SIZE]{}; //
 static int s_pixel_shift{};                 //
 static int s_header_length{};               //
@@ -94,16 +98,20 @@ static int s_col_size{};                    // sydots, *2 when pot16bit
 static std::vector<Byte> s_mem_buf;         //
 static MemoryHandle s_dv_handle{};          //
 static std::filesystem::path s_targa_disk_path;
-static long s_mem_offset{};                 //
-static long s_old_mem_offset{};             //
+static std::uint64_t s_mem_offset{};         //
+static std::uint64_t s_old_mem_offset{};     //
 static Byte *s_mem_buf_ptr{};               //
 
-static void find_load_cache(long offset);
-static Cache *find_cache(long offset);
+static int get_pixel_shift(int colors);
+static DiskOffset block_offset(DiskOffset offset);
+static int block_index(DiskOffset offset);
+static unsigned int hash_index(DiskOffset offset);
+static void find_load_cache(DiskOffset offset);
+static Cache *find_cache(DiskOffset offset);
 static void write_cache_lru();
 static void mem_putc(Byte c);
 static Byte mem_getc();
-static void mem_seek(long offset);
+static void mem_seek(std::uint64_t offset);
 
 int start_disk()
 {
@@ -145,7 +153,7 @@ int targa_start_disk(std::FILE *targa_fp, const int overhead)
     s_fp = targa_fp;
     g_disk_targa = true;
     const int i = common_start_disk(g_logical_screen.x_dots * 3, g_logical_screen.y_dots, g_colors);
-    s_high_offset = 100000000L; // targa not necessarily init'd to zeros
+    s_high_offset = 100000000; // targa not necessarily init'd to zeros
 
     return i;
 }
@@ -160,7 +168,77 @@ const std::filesystem::path &targa_disk_path()
     return s_targa_disk_path;
 }
 
-int common_start_disk(const long new_row_size, const long new_col_size, const int colors)
+static int get_pixel_shift(const int colors)
+{
+    int pixel_shift = 3;
+    int color_count = 2;
+    while (color_count < colors && pixel_shift > 0)
+    {
+        color_count *= color_count;
+        --pixel_shift;
+    }
+    return pixel_shift;
+}
+
+static DiskOffset block_offset(const DiskOffset offset)
+{
+    return offset & ~(static_cast<DiskOffset>(BLOCK_LEN) - 1);
+}
+
+static int block_index(const DiskOffset offset)
+{
+    return static_cast<int>(offset & (BLOCK_LEN - 1));
+}
+
+static unsigned int hash_index(const DiskOffset offset)
+{
+    return static_cast<unsigned int>((static_cast<std::uint64_t>(offset) >> BLOCK_SHIFT) & (HASH_SIZE - 1));
+}
+
+bool disk_video_memory_blocks(const std::int64_t row_size, const std::int64_t col_size, const int colors,
+    const int header_length, std::uint64_t &blocks)
+{
+    blocks = 0;
+    if (row_size <= 0 || col_size <= 0 || colors < 2 || header_length < 0)
+    {
+        return false;
+    }
+    const auto unsigned_row_size = static_cast<std::uint64_t>(row_size);
+    const auto unsigned_col_size = static_cast<std::uint64_t>(col_size);
+    if (unsigned_row_size > std::numeric_limits<std::uint64_t>::max() / unsigned_col_size)
+    {
+        return false;
+    }
+    std::uint64_t storage_bytes = unsigned_row_size * unsigned_col_size;
+    const int pixel_shift = get_pixel_shift(colors);
+    if (pixel_shift > 0)
+    {
+        const std::uint64_t packed_pixels = (std::uint64_t{1} << pixel_shift) - 1;
+        if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - packed_pixels)
+        {
+            return false;
+        }
+        storage_bytes = (storage_bytes + packed_pixels) >> pixel_shift;
+    }
+    if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - static_cast<std::uint64_t>(header_length))
+    {
+        return false;
+    }
+    storage_bytes += static_cast<std::uint64_t>(header_length);
+    if (storage_bytes > std::numeric_limits<std::uint64_t>::max() - (BLOCK_LEN - 1))
+    {
+        return false;
+    }
+    blocks = (storage_bytes + BLOCK_LEN - 1) / BLOCK_LEN;
+    return blocks > 0;
+}
+
+MemoryLocation disk_video_memory_type()
+{
+    return s_dv_handle ? memory_type(s_dv_handle) : MemoryLocation::NOWHERE;
+}
+
+int common_start_disk(const std::int64_t new_row_size, const std::int64_t new_col_size, const int colors)
 {
     if (g_disk_flag)
     {
@@ -188,39 +266,47 @@ int common_start_disk(const long new_row_size, const long new_col_size, const in
         }
         driver_put_string(BOX_ROW+8, BOX_COL+4, C_DVID_LO, "Save name: " + g_save_filename.string());
         driver_put_string(BOX_ROW+10, BOX_COL+4, C_DVID_LO, "Status:");
-        dvid_status(0, "clearing the 'screen'");
+        dvid_status(0, "allocating the 'screen'");
+    }
+    if (new_row_size > std::numeric_limits<int>::max() || new_col_size > std::numeric_limits<int>::max())
+    {
+        stop_msg("*** disk video dimensions are too large ***");
+        return -1;
     }
     s_high_offset = -1;
     s_seek_offset = s_high_offset;
     s_cur_offset = s_seek_offset;
     s_cur_row    = -1;
-    if (g_disk_targa)
-    {
-        s_pixel_shift = 0;
-    }
-    else
-    {
-        s_pixel_shift = 3;
-        int i = 2;
-        while (i < colors)
-        {
-            i *= i;
-            --s_pixel_shift;
-        }
-    }
+    s_mem_offset = 0;
+    s_old_mem_offset = 0;
+    s_pixel_shift = g_disk_targa ? 0 : get_pixel_shift(colors);
     s_time_to_display = g_bf_math != BFMathType::NONE ? 10 : 1000;  // time-to-g_driver-status counter
+    std::uint64_t memory_size = 0;
+    if (!disk_video_memory_blocks(new_row_size, new_col_size, colors, s_header_length, memory_size))
+    {
+        stop_msg("*** disk video dimensions overflow allocation size ***");
+        return -1;
+    }
 
     constexpr unsigned int CACHE_SIZE{CACHE_MAX};
-    long long_tmp = static_cast<long>(CACHE_SIZE) << 10;
-    s_cache_start = static_cast<Cache *>(malloc(long_tmp));
-    s_cache_lru = s_cache_start;
-    s_cache_end = s_cache_lru + long_tmp/sizeof(*s_cache_start);
-    s_mem_buf.resize(BLOCK_LEN);
+    const std::size_t cache_bytes{static_cast<std::size_t>(CACHE_SIZE) << 10};
+    s_cache_start = static_cast<Cache *>(std::malloc(cache_bytes));
     if (s_cache_start == nullptr)
     {
         stop_msg("*** insufficient free memory for cache buffers ***");
         return -1;
     }
+    s_cache_lru = s_cache_start;
+    s_cache_end = s_cache_lru + cache_bytes/sizeof(*s_cache_start);
+    s_mem_buf.resize(BLOCK_LEN);
+    const auto release_cache = []
+    {
+        std::free(s_cache_start);
+        s_cache_start = nullptr;
+        s_cache_lru = nullptr;
+        s_cache_end = nullptr;
+        s_mem_buf.clear();
+    };
     if (driver_is_disk())
     {
         driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, fmt::format("Cache size: {:d}K", CACHE_SIZE));
@@ -231,31 +317,21 @@ int common_start_disk(const long new_row_size, const long new_col_size, const in
     {
         elem = 0xffff; // 0xffff marks the end of a hash chain
     }
-    long_tmp = 100000000L;
+    DiskOffset long_tmp = 100000000;
     for (Cache *ptr1 = s_cache_start; ptr1 < s_cache_end; ++ptr1)
     {
         ptr1->dirty = false;
         ptr1->lru = false;
         long_tmp += BLOCK_LEN;
-        unsigned int *fwd_link = &s_hash_ptr[static_cast<unsigned short>(long_tmp) >> BLOCK_SHIFT & HASH_SIZE - 1];
+        unsigned int *fwd_link = &s_hash_ptr[hash_index(long_tmp)];
         ptr1->offset = long_tmp;
         ptr1->hash_link = *fwd_link;
         *fwd_link = static_cast<int>(reinterpret_cast<char *>(ptr1) - reinterpret_cast<char *>(s_cache_start));
     }
 
-    long memory_size = new_col_size *new_row_size + s_header_length;
-    {
-        const int i = static_cast<short>(memory_size) & BLOCK_LEN - 1;
-        if (i != 0)
-        {
-            memory_size += BLOCK_LEN - i;
-        }
-    }
-    memory_size >>= s_pixel_shift;
-    memory_size >>= BLOCK_SHIFT;
     g_disk_flag = true;
-    s_row_size = static_cast<unsigned int>(new_row_size);
-    s_col_size = static_cast<unsigned int>(new_col_size);
+    s_row_size = static_cast<int>(new_row_size);
+    s_col_size = static_cast<int>(new_col_size);
 
     if (g_disk_targa)
     {
@@ -278,6 +354,9 @@ int common_start_disk(const long new_row_size, const long new_col_size, const in
         stop_msg("*** insufficient free memory/disk space ***");
         g_good_mode = false;
         s_row_size = 0;
+        s_col_size = 0;
+        g_disk_flag = false;
+        release_cache();
         return -1;
     }
 
@@ -293,23 +372,6 @@ int common_start_disk(const long new_row_size, const long new_col_size, const in
     {
         // Put header information in the file
         s_dv_handle.from_memory(s_mem_buf.data(), static_cast<U16>(s_header_length), 1L, 0);
-    }
-    else
-    {
-        for (long offset = 0; offset < memory_size; offset++)
-        {
-            s_dv_handle.set(0, BLOCK_LEN, 1L, offset);
-            if (driver_key_pressed())           // user interrupt
-            {
-                // esc to cancel, else continue
-                if (stop_msg(StopMsgFlags::CANCEL, "Disk Video initialization interrupted:\n"))
-                {
-                    end_disk();
-                    g_good_mode = false;
-                    return -2;            // -1 == failed, -2 == cancel
-                }
-            }
-        }
     }
 
     if (driver_is_disk())
@@ -386,36 +448,40 @@ int disk_read_pixel(const int col, int row)
     }
     if (row != s_cur_row) // try to avoid ghastly code generated for multiply
     {
-        if (row >= s_col_size) // while we're at it avoid this test if not needed
+        if (row < 0 || row >= s_col_size) // while we're at it avoid this test if not needed
         {
             return 0;
         }
         s_cur_row = row;
-        s_cur_row_base = static_cast<long>(s_cur_row) * s_row_size;
+        s_cur_row_base = static_cast<DiskOffset>(s_cur_row) * s_row_size;
     }
-    if (col >= s_row_size)
+    if (col < 0 || col >= s_row_size)
     {
         return 0;
     }
-    const long offset = s_cur_row_base + col;
-    const int col_index = static_cast<short>(offset) & BLOCK_LEN - 1; // offset within cache entry
-    if (s_cur_offset != (offset & 0L - BLOCK_LEN)) // same entry as last ref?
+    const DiskOffset offset = s_cur_row_base + col;
+    const int col_index = block_index(offset); // offset within cache entry
+    if (s_cur_offset != block_offset(offset)) // same entry as last ref?
     {
-        find_load_cache(offset & 0L - BLOCK_LEN);
+        find_load_cache(block_offset(offset));
     }
     return s_cur_cache->pixel[col_index];
 }
 
-bool from_mem_disk(const long offset, const int size, void *dest)
+bool from_mem_disk(const std::int64_t offset, const int size, void *dest)
 {
-    const int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
+    if (offset < 0 || size < 0)
+    {
+        return false;
+    }
+    const int col_index = block_index(offset);
     if (col_index + size > BLOCK_LEN)            // access violates  a
     {
         return false;                                 //   cache boundary
     }
-    if (s_cur_offset != (offset & 0L - BLOCK_LEN)) // same entry as last ref?
+    if (s_cur_offset != block_offset(offset)) // same entry as last ref?
     {
-        find_load_cache(offset & 0L - BLOCK_LEN);
+        find_load_cache(block_offset(offset));
     }
     std::memcpy(dest, &s_cur_cache->pixel[col_index], size);
     s_cur_cache->dirty = false;
@@ -442,24 +508,24 @@ void disk_write_pixel(const int col, int row, const int color)
         }
         s_time_to_display = 1000;
     }
-    if (row != static_cast<unsigned int>(s_cur_row))     // try to avoid ghastly code generated for multiply
+    if (row != s_cur_row)     // try to avoid ghastly code generated for multiply
     {
-        if (row >= s_col_size) // while we're at it avoid this test if not needed
+        if (row < 0 || row >= s_col_size) // while we're at it avoid this test if not needed
         {
             return;
         }
         s_cur_row = row;
-        s_cur_row_base = static_cast<long>(s_cur_row) *s_row_size;
+        s_cur_row_base = static_cast<DiskOffset>(s_cur_row) * s_row_size;
     }
-    if (col >= s_row_size)
+    if (col < 0 || col >= s_row_size)
     {
         return;
     }
-    const long offset = s_cur_row_base + col;
-    const int col_index = static_cast<short>(offset) & BLOCK_LEN - 1;
-    if (s_cur_offset != (offset & 0L - BLOCK_LEN)) // same entry as last ref?
+    const DiskOffset offset = s_cur_row_base + col;
+    const int col_index = block_index(offset);
+    if (s_cur_offset != block_offset(offset)) // same entry as last ref?
     {
-        find_load_cache(offset & 0L - BLOCK_LEN);
+        find_load_cache(block_offset(offset));
     }
     if (s_cur_cache->pixel[col_index] != (color & 0xff))
     {
@@ -468,18 +534,22 @@ void disk_write_pixel(const int col, int row, const int color)
     }
 }
 
-bool to_mem_disk(const long offset, const int size, const void *src)
+bool to_mem_disk(const std::int64_t offset, const int size, const void *src)
 {
-    const int col_index = static_cast<int>(offset & BLOCK_LEN - 1);
+    if (offset < 0 || size < 0)
+    {
+        return false;
+    }
+    const int col_index = block_index(offset);
 
     if (col_index + size > BLOCK_LEN)           // access violates  a
     {
         return false;                           //   cache boundary
     }
 
-    if (s_cur_offset != (offset & 0L - BLOCK_LEN)) // same entry as last ref?
+    if (s_cur_offset != block_offset(offset)) // same entry as last ref?
     {
-        find_load_cache(offset & 0L - BLOCK_LEN);
+        find_load_cache(block_offset(offset));
     }
 
     std::memcpy(&s_cur_cache->pixel[col_index], src, size);
@@ -494,11 +564,11 @@ void targa_write_disk(unsigned int col, const unsigned int row, const Byte red, 
     disk_write_pixel(col+1, row, red);
 }
 
-static void find_load_cache(const long offset) // used by read/write
+static void find_load_cache(const DiskOffset offset) // used by read/write
 {
     s_cur_offset = offset; // note this for next reference
     // check if required entry is in cache - lookup by hash
-    unsigned int tbl_offset = s_hash_ptr[static_cast<unsigned short>(offset) >> BLOCK_SHIFT & HASH_SIZE - 1];
+    unsigned int tbl_offset = s_hash_ptr[hash_index(offset)];
     while (tbl_offset != 0xffff)  // follow the hash chain
     {
         s_cur_cache = reinterpret_cast<Cache *>(reinterpret_cast<char *>(s_cache_start) + tbl_offset);
@@ -527,8 +597,7 @@ static void find_load_cache(const long offset) // used by read/write
         write_cache_lru();
     }
     // remove block at cache_lru from its hash chain
-    unsigned int *fwd_link =
-        &s_hash_ptr[(static_cast<unsigned short>(s_cache_lru->offset) >> BLOCK_SHIFT & HASH_SIZE - 1)];
+    unsigned int *fwd_link = &s_hash_ptr[hash_index(s_cache_lru->offset)];
     tbl_offset = static_cast<int>(reinterpret_cast<char *>(s_cache_lru) - reinterpret_cast<char *>(s_cache_start));
     while (*fwd_link != tbl_offset)
     {
@@ -549,7 +618,7 @@ static void find_load_cache(const long offset) // used by read/write
     {
         if (offset != s_seek_offset)
         {
-            mem_seek(offset >> s_pixel_shift);
+            mem_seek(static_cast<std::uint64_t>(offset) >> s_pixel_shift);
         }
         s_seek_offset = offset + BLOCK_LEN;
         switch (s_pixel_shift)
@@ -592,16 +661,16 @@ static void find_load_cache(const long offset) // used by read/write
         }
     }
     // add new block to its hash chain
-    fwd_link = &s_hash_ptr[(static_cast<unsigned short>(offset) >> BLOCK_SHIFT & HASH_SIZE - 1)];
+    fwd_link = &s_hash_ptr[hash_index(offset)];
     s_cache_lru->hash_link = *fwd_link;
     *fwd_link = static_cast<int>(reinterpret_cast<char *>(s_cache_lru) - reinterpret_cast<char *>(s_cache_start));
     s_cur_cache = s_cache_lru;
 }
 
 // lookup for write_cache_lru
-static Cache *find_cache(const long offset)
+static Cache *find_cache(const DiskOffset offset)
 {
-    unsigned int tbl_offset = s_hash_ptr[static_cast<unsigned short>(offset) >> BLOCK_SHIFT & HASH_SIZE - 1];
+    unsigned int tbl_offset = s_hash_ptr[hash_index(offset)];
     while (tbl_offset != 0xffff)
     {
         Cache *ptr1 = reinterpret_cast<Cache *>(reinterpret_cast<char *>(s_cache_start) + tbl_offset);
@@ -624,7 +693,7 @@ static void  write_cache_lru()
     Byte tmp_char = 0;
     // scan back to also write any preceding dirty blocks, skipping small gaps
     Cache *ptr1 = s_cache_lru;
-    long offset = ptr1->offset;
+    DiskOffset offset = ptr1->offset;
     int i = 0;
     while (++i <= WRITE_GAP)
     {
@@ -640,7 +709,7 @@ static void  write_cache_lru()
     // keep going past small gaps
 
 write_seek:
-    mem_seek(ptr1->offset >> s_pixel_shift);
+    mem_seek(static_cast<std::uint64_t>(ptr1->offset) >> s_pixel_shift);
 
 write_stuff:
     const Byte *pixel_ptr = &ptr1->pixel[0];
@@ -712,9 +781,9 @@ write_stuff:
 // sequences with a seek between them.  A mem_getc is never followed by
 // a mem_putc nor v.v. without a seek between them.
 //
-static void mem_seek(long offset)        // mem seek
+static void mem_seek(std::uint64_t offset)        // mem seek
 {
-    offset += s_header_length;
+    offset += static_cast<std::uint64_t>(s_header_length);
     s_mem_offset = offset >> BLOCK_SHIFT;
     if (s_mem_offset != s_old_mem_offset)
     {

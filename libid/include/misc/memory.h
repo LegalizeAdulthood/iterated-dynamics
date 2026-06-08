@@ -6,6 +6,7 @@
 
 #include <config/port.h>
 
+#include <cstdint>
 #include <filesystem>
 
 namespace id::misc
@@ -27,9 +28,9 @@ struct MemoryHandle
         return index != 0;
     }
 
-    bool from_memory(const Byte *buffer, U16 size, long count, long offset);
-    bool to_memory(Byte *buffer, U16 size, long count, long offset);
-    bool set(int value, U16 size, long count, long offset);
+    bool from_memory(const Byte *buffer, U16 size, std::uint64_t count, std::uint64_t offset);
+    bool to_memory(Byte *buffer, U16 size, std::uint64_t count, std::uint64_t offset);
+    bool set(int value, U16 size, std::uint64_t count, std::uint64_t offset);
 };
 
 // TODO: Get rid of this and use regular memory routines;
@@ -37,7 +38,7 @@ struct MemoryHandle
 MemoryLocation memory_type(MemoryHandle handle);
 void init_memory();
 void exit_check();
-MemoryHandle memory_alloc(U16 size, long count, MemoryLocation stored_at);
+MemoryHandle memory_alloc(U16 size, std::uint64_t count, MemoryLocation stored_at);
 void memory_release(MemoryHandle handle);
 
 } // namespace id::misc

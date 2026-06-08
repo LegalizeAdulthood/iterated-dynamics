@@ -2,6 +2,7 @@
 //
 #include "engine/video_mode.h"
 
+#include "engine/pixel_limits.h"
 #include "engine/VideoInfo.h"
 #include "ui/id_keys.h"
 
@@ -112,6 +113,15 @@ void vid_mode_key_name(int key, char *buffer)
         }
         std::sprintf(buffer, "F%d", key);
     }
+}
+
+bool is_valid_disk_video_mode(const VideoInfo &mode)
+{
+    return mode.colors == 256              //
+        && mode.x_dots > 0                 //
+        && mode.y_dots > 0                 //
+        && mode.x_dots <= GIF_MAX_PIXELS   //
+        && mode.y_dots <= GIF_MAX_PIXELS;
 }
 
 } // namespace id::engine

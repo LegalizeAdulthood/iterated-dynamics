@@ -7,6 +7,8 @@
 namespace id::engine
 {
 
+struct VideoInfo;
+
 // returns g_video_table entry number if the passed keystroke is a
 // function key currently assigned to a video mode, -1 otherwise
 int check_vid_mode_key(int key);
@@ -16,6 +18,9 @@ int check_vid_mode_key_name(const char *key_name);
 
 // set buffer to name of passed key number
 void vid_mode_key_name(int key, char *buffer);
+
+// true if a disk video mode can be represented by a GIF image
+bool is_valid_disk_video_mode(const VideoInfo &mode);
 
 inline std::string vid_mode_key_name(const int key)
 {

@@ -109,6 +109,7 @@ add_executable(test-id
     misc/test_version.cpp
     ui/test_ChoiceBuilder.cpp
     ui/test_comments.cpp
+    ui/test_diskvid.cpp
     ui/test_file_item.cpp
     ui/test_history.cpp
     ui/test_input_field.cpp

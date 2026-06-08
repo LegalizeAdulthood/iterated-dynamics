@@ -4,9 +4,15 @@
 
 #include <config/port.h>
 
+#include <cstdint>
 #include <cstdio>
 #include <filesystem>
 #include <string>
+
+namespace id::misc
+{
+enum class MemoryLocation;
+}
 
 namespace id::ui
 {
@@ -31,8 +37,11 @@ inline void dvid_status(const int line, const std::string &msg)
 {
     dvid_status(line, msg.c_str());
 }
-int common_start_disk(long new_row_size, long new_col_size, int colors);
-bool from_mem_disk(long offset, int size, void *dest);
-bool to_mem_disk(long offset, int size, const void *src);
+bool disk_video_memory_blocks(std::int64_t row_size, std::int64_t col_size, int colors, int header_length,
+    std::uint64_t &blocks);
+id::misc::MemoryLocation disk_video_memory_type();
+int common_start_disk(std::int64_t new_row_size, std::int64_t new_col_size, int colors);
+bool from_mem_disk(std::int64_t offset, int size, void *dest);
+bool to_mem_disk(std::int64_t offset, int size, const void *src);
 
 } // namespace id::ui

@@ -5,6 +5,7 @@
 #include "X11BaseDriver.h"
 
 #include "engine/spindac.h"
+#include "engine/video_mode.h"
 #include "engine/VideoInfo.h"
 #include "geometry/plot3d.h"
 #include "ui/diskvid.h"
@@ -84,6 +85,9 @@ VideoInfo s_modes[]{
     DRIVER_MODE(2048, 1536, "QXGA                    "),
     DRIVER_MODE(2560, 1600, "WQXGA                   "),
     DRIVER_MODE(2560, 2048, "QSXGA                   "),
+    DRIVER_MODE(15360, 8640, "4x 2160p AA             "),
+    DRIVER_MODE(16384, 16384, "16K Square              "),
+    DRIVER_MODE(65535, 65535, "Maximum GIF             "),
     // clang-format on
 };
 #undef DRIVER_MODE
@@ -236,7 +240,7 @@ bool X11DiskDriver::is_disk() const
 
 bool X11DiskDriver::validate_mode(const VideoInfo &mode)
 {
-    return mode.colors == 256;
+    return is_valid_disk_video_mode(mode);
 }
 
 void X11DiskDriver::save_graphics()

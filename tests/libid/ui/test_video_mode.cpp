@@ -2,6 +2,7 @@
 //
 #include <engine/video_mode.h>
 
+#include <engine/pixel_limits.h>
 #include <engine/VideoInfo.h>
 #include <misc/ValueSaver.h>
 #include <ui/id_keys.h>
@@ -141,6 +142,21 @@ TEST(TestVideoMode, keyName)
     EXPECT_EQ("AF10", vid_mode_key_name(ID_KEY_ALT_F10));
     EXPECT_EQ("", vid_mode_key_name(-1));
     EXPECT_EQ("", vid_mode_key_name(ID_KEY_CTL_A));
+}
+
+TEST(TestVideoMode, diskVideoModeAcceptsGifSizedImages)
+{
+    EXPECT_TRUE(is_valid_disk_video_mode({0, 32768, 32768, 256, nullptr, ""}));
+    EXPECT_TRUE(is_valid_disk_video_mode({0, GIF_MAX_PIXELS, GIF_MAX_PIXELS, 256, nullptr, ""}));
+}
+
+TEST(TestVideoMode, diskVideoModeRejectsNonGifSizedImages)
+{
+    EXPECT_FALSE(is_valid_disk_video_mode({0, 0, 480, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode({0, 640, 0, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode({0, GIF_MAX_PIXELS + 1, 480, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode({0, 640, GIF_MAX_PIXELS + 1, 256, nullptr, ""}));
+    EXPECT_FALSE(is_valid_disk_video_mode({0, 640, 480, 16, nullptr, ""}));
 }
 
 } // namespace id::test
