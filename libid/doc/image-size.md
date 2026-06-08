@@ -36,38 +36,11 @@ Do not change:
 
 - GIF logical screen dimensions are unsigned 16-bit values.
 - `MAX_PIXELS` is 32767, a signed 16-bit limit.
-- GIF header writing stores only two bytes from `int` values.
 - GIF decoding uses `short` for `decoder(line_width)` and `buf_cnt`.
 - Image reduction uses short skip counters.
 - Some generated scripts already allow total dimensions up to 65535.
 
-## Slice 1: Save GIF Headers With Unsigned Dimensions
-
-Goal: write GIF logical screen and image descriptor dimensions correctly.
-
-Work:
-
-- Replace raw two-byte writes from `int` dimension variables with
-  explicit unsigned 16-bit writes.
-- Check logical screen width and height before writing.
-- Check image descriptor width and height before writing.
-- Keep current error handling for unsupported sizes.
-- Audit 16-bit potential and Targa work paths for width multiplication
-  before writing dimensions.
-
-Tests:
-
-- Save GIFs at 32767, 32768, and 65535 in each dimension where practical
-  without rendering a full image.
-- Verify GIF header bytes contain the expected unsigned dimensions.
-- Verify 65536 is rejected before writing.
-
-Done when:
-
-- Saved GIF headers are correct above 32767.
-- No save path writes truncated dimensions.
-
-## Slice 2: Read GIF Headers Above 32767
+## Slice 1: Read GIF Headers Above 32767
 
 Goal: load large GIF dimensions without signed truncation.
 
@@ -91,7 +64,7 @@ Done when:
 - Id can inspect and select modes for GIFs wider or taller than 32767.
 - View reduction does not overflow for maximum GIF dimensions.
 
-## Slice 3: Remove Decoder Line-Width Limits
+## Slice 2: Remove Decoder Line-Width Limits
 
 Goal: allow GIF decoding of lines up to 65535 pixels.
 
@@ -112,7 +85,7 @@ Done when:
 - The LZW decoder can process maximum-width GIF lines.
 - Existing GIF decode behavior is unchanged.
 
-## Slice 4: Increase Disk Video Generation Limits
+## Slice 3: Increase Disk Video Generation Limits
 
 Goal: let disk video generate GIF-sized images.
 
@@ -144,7 +117,7 @@ Done when:
 - Disk video rejects modes above 65535.
 - Disk video reports allocation failure cleanly.
 
-## Slice 5: Audit Windows Display Drivers
+## Slice 4: Audit Windows Display Drivers
 
 Goal: remove Id-only artificial limits from Windows display modes.
 
@@ -168,7 +141,7 @@ Done when:
   color depth.
 - Windows disk driver accepts GIF-sized disk modes.
 
-## Slice 6: Audit X11 Display Drivers
+## Slice 5: Audit X11 Display Drivers
 
 Goal: remove Id-only artificial limits from X11 display modes.
 
@@ -192,7 +165,7 @@ Done when:
   color depth.
 - X11 disk driver accepts GIF-sized disk modes.
 
-## Slice 7: Update User Documentation
+## Slice 6: Update User Documentation
 
 Goal: document the new image size behavior.
 
@@ -213,7 +186,7 @@ Done when:
 - Online help matches the implemented limit.
 - Generated help tests pass.
 
-## Slice 8: Full Workflow Verification
+## Slice 7: Full Workflow Verification
 
 Goal: verify the completed size-limit change.
 

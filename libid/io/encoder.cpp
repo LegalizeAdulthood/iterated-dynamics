@@ -15,6 +15,7 @@
 #include "engine/log_map.h"
 #include "engine/LogicalScreen.h"
 #include "engine/orbit.h"
+#include "engine/pixel_limits.h"
 #include "engine/Potential.h"
 #include "engine/random_seed.h"
 #include "engine/resume.h"
@@ -125,6 +126,17 @@ static constexpr Byte s_palette_ega[]{
     63, 63, 21, //
     63, 63, 63, //
 };
+
+bool write_gif_uint16(std::FILE *file, const int value)
+{
+    if (file == nullptr || value < 0 || value > GIF_MAX_PIXELS)
+    {
+        return false;
+    }
+    const auto dimension{static_cast<std::uint16_t>(value)};
+    const Byte bytes[]{static_cast<Byte>(dimension & 0xFF), static_cast<Byte>(dimension >> 8)};
+    return std::fwrite(bytes, sizeof(bytes), 1, file) == 1;
+}
 
 //                        Save-To-Disk Routines (GIF)
 //
@@ -365,14 +377,18 @@ bool encoder()
         // of row is low 8 bits diskvid: ydots rows of colors followed by ydots
         // rows of low 8 bits decoder: returns (row of color info then row of
         // low 8 bits) * ydots
-        row_limit <<= 1;
-        width <<= 1;
+        if (width > GIF_MAX_PIXELS / 2 || row_limit > std::numeric_limits<int>::max() / 2)
+        {
+            goto oops;
+        }
+        row_limit *= 2;
+        width *= 2;
     }
-    if (std::fwrite(&width, 2, 1, s_outfile) != 1)
+    if (!write_gif_uint16(s_outfile, width))
     {
         goto oops;                // screen descriptor
     }
-    if (std::fwrite(&g_logical_screen.y_dots, 2, 1, s_outfile) != 1)
+    if (!write_gif_uint16(s_outfile, g_logical_screen.y_dots))
     {
         goto oops;
     }
@@ -473,19 +489,19 @@ bool encoder()
         goto oops;                // Image Descriptor
     }
     i = 0;
-    if (std::fwrite(&i, 2, 1, s_outfile) != 1)
+    if (!write_gif_uint16(s_outfile, i))
     {
         goto oops;
     }
-    if (std::fwrite(&i, 2, 1, s_outfile) != 1)
+    if (!write_gif_uint16(s_outfile, i))
     {
         goto oops;
     }
-    if (std::fwrite(&width, 2, 1, s_outfile) != 1)
+    if (!write_gif_uint16(s_outfile, width))
     {
         goto oops;
     }
-    if (std::fwrite(&g_logical_screen.y_dots, 2, 1, s_outfile) != 1)
+    if (!write_gif_uint16(s_outfile, g_logical_screen.y_dots))
     {
         goto oops;
     }
