@@ -53,12 +53,11 @@ Implemented:
 - Ant, cellular, and plasma reuse-last seed paths are covered by focused
   tests.
 - Lyapunov random population seed behavior is covered by focused tests.
+- IFS2D and IFS3D seed through `set_random_seed()` and honor `rseed=`.
+- Lorenz and inverse Julia random-walk paths consume image RNG helpers.
 
 Remaining gaps:
 
-- IFS2D and IFS3D call `set_random_seed(1)`, so they are deterministic but
-  do not honor `rseed=`.
-- Lorenz and inverse Julia random-walk paths still use `std::rand()`.
 - 3D randomized coloring in `line3d.cpp` still uses `RAND15()` and
   `std::rand()`.
 - JIIM random inverse Julia paths still use `std::rand()`.
@@ -80,35 +79,7 @@ These may keep a UI-local random source, but must not affect image RNG:
 
 ## Remaining Work
 
-### Slice 1: Convert IFS And Lorenz Random Paths
-
-Goal: remove hardcoded and unseeded random use from IFS and Lorenz paths.
-
-Work:
-
-- Replace `set_random_seed(1)` in IFS2D and IFS3D setup with
-  `set_random_seed()`.
-- Verify explicit `rseed=` changes the IFS transform sequence.
-- Replace Lorenz and inverse Julia random-walk `std::rand()` calls with
-  image RNG helpers.
-- Seed Lorenz image-generation random paths through `set_random_seed()`.
-- Do not change UI-only random selection behavior.
-
-Tests:
-
-- Add or update image tests for IFS3D with explicit `rseed=`.
-- Verify repeated IFS3D render with the same `rseed=` is identical.
-- Verify different `rseed=` changes the random transform sequence.
-- Add a focused Lorenz random-walk test if the path can be isolated without
-  broad UI setup.
-
-Done when:
-
-- No fractal-generation code in `lorenz.cpp` calls `std::srand()`,
-  `std::rand()`, or `RAND15()`.
-- IFS2D and IFS3D honor `rseed=`.
-
-### Slice 2: Convert 3D Randomized Coloring
+### Slice 1: Convert 3D Randomized Coloring
 
 Goal: make 3D randomized color perturbation use the image RNG stream.
 
@@ -132,7 +103,7 @@ Done when:
 
 - 3D random coloring is not affected by UI RNG calls.
 
-### Slice 3: Audit Remaining Image RNG Calls
+### Slice 2: Audit Remaining Image RNG Calls
 
 Goal: make all remaining image-generation random calls explicit.
 
@@ -160,7 +131,7 @@ Done when:
 - Every fractal type uses `set_random_seed()` before consuming image RNG.
 - UI RNG cannot poison image-generation RNG.
 
-### Slice 4: Save, Load, And Batch Round Trip
+### Slice 3: Save, Load, And Batch Round Trip
 
 Goal: preserve repeatability through saved images and generated parameter
 sets.
@@ -187,7 +158,7 @@ Done when:
 
 - Repeatability survives save/load and generated PAR workflows.
 
-### Slice 5: Final Regression Pass
+### Slice 4: Final Regression Pass
 
 Goal: prove image RNG behavior is unified.
 

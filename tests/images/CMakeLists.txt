@@ -185,7 +185,7 @@ foreach(bailout "and" "imag" "manh" "manr" "or" "real")
     add_image_test(bailout-${bailout} PARAMETERS "type=mandel" "bailoutest=${bailout}")
 endforeach()
 add_image_test("ifs-dragon-1" PARAMETERS "type=ifs" "ifs=dragon" "params=1" "maxiter=500")
-add_image_test("ifs-3dfern" PARAMETERS "type=ifs3d" "ifsfile=id.ifs" "ifs=3dfern"
+add_image_test("ifs-3dfern" PARAMETERS "rseed=1" "type=ifs3d" "ifsfile=id.ifs" "ifs=3dfern"
     "center-mag=1.77636e-15/-1.77636e-15/0.3725782/1.3333" "params=1"
     "maxiter=500" "inside=0" "rotation=60/30/0" "perspective=0" "xyshift=0/0")
 add_image_test("ant1" PARAMETERS "type=ant"

@@ -43,7 +43,6 @@
 #include <cassert>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
 #include <vector>
 
 using namespace id::engine;
@@ -161,11 +160,6 @@ static int orbit(double *x, double *y, double *z)
 static int orbit(double *x, double *y)
 {
     return orbit(x, y, nullptr);
-}
-
-static int random(const int x)
-{
-    return std::rand() % x;
 }
 
 static void fallback_to_random_walk()
@@ -473,6 +467,10 @@ random_walk:
             g_new_z.y = s_init_orbit[1];
             break;
         }
+        if (g_major_method == Major::RANDOM_WALK || g_major_method == Major::RANDOM_RUN)
+        {
+            set_random_seed();
+        }
     }
     else
     {
@@ -535,7 +533,7 @@ int inverse_julia_orbit()
      */
 
     g_new_z = sqrt(g_new_z.x - s_cx, g_new_z.y - s_cy);
-    const int left_right = random(2) ? 1 : -1;
+    const int left_right = random_int(2) ? 1 : -1;
 
     if (new_col < 1 || new_col >= g_logical_screen.x_dots || new_row < 1 || new_row >= g_logical_screen.y_dots)
     {
@@ -606,8 +604,8 @@ int inverse_julia_orbit()
     case Major::RANDOM_RUN:
         if (random_len-- == 0)
         {
-            random_len = random(s_run_length);
-            random_dir = random(3);
+            random_len = random_int(s_run_length);
+            random_dir = random_int(3);
         }
         switch (random_dir)
         {
@@ -1601,7 +1599,7 @@ IFS3D::IFS3D() :
 {
     // setup affine screen coord conversion
     setup_convert_to_screen(&m_inf.cvt);
-    set_random_seed(1);
+    set_random_seed();
 
     m_inf.orbit[0] = 0;
     m_inf.orbit[1] = 0;
@@ -1726,7 +1724,7 @@ IFS2D::IFS2D() :
 {
     // setup affine screen coord conversion
     setup_convert_to_screen(&m_cvt);
-    set_random_seed(1);
+    set_random_seed();
     g_max_count = g_max_iterations > 0x1fffffL ? 0x7fffffffL : g_max_iterations * 1024L;
     g_color_iter = 0L;
 }
