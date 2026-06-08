@@ -27,7 +27,8 @@ Public image RNG API:
 - `random15()`
 - `random_unit()`
 
-Fractal code must use these helpers instead of `std::rand()` or `RAND15()`.
+Fractal code must use these helpers instead of `std::rand()` or UI-local
+random helpers.
 
 Formula `srand()` remains formula-language behavior.  It should seed the
 formula runtime random state, not the UI RNG and not unrelated image RNG
@@ -60,13 +61,15 @@ Implemented:
   image RNG helpers.
 - JIIM random inverse Julia fallback paths seed through `set_random_seed()`
   and consume image RNG helpers.
-- The remaining C RNG audit matches are tests, UI-only callers, GIF view
-  dithering, or the legacy `RAND15()` macro.
+- The legacy 15-bit C RNG macro was removed.  Remaining C RNG audit
+  matches are tests, UI-only callers, formula-runtime seeding, or GIF view
+  dithering.
+- `engine/random_seed` documents allowed image, formula, and UI random
+  sources.
 
 Remaining gaps:
 
-- `RAND15()` remains a process-global C RNG macro.
-- The final RNG source audit and developer note are not done.
+- None.
 
 ## UI Or Non-Fractal RNG Users
 
@@ -81,33 +84,4 @@ These may keep a UI-local random source, but must not affect image RNG:
 
 ## Remaining Work
 
-### Slice 1: Final Regression Pass
-
-Goal: prove image RNG behavior is unified.
-
-Work:
-
-- Add a short developer note to the RNG code naming allowed RNG sources.
-- Remove obsolete random helper comments that refer to C RNG.
-- Remove `RAND15()` or confine it to explicit UI or compatibility callers.
-- Update stale documentation.
-
-Tests:
-
-- Run `cmake --workflow rt-default`.
-- Run targeted image tests for:
-  - ant
-  - cellular
-  - diffusion
-  - plasma
-  - lyapunov
-  - IFS3D
-  - 3D randomized coloring
-- Run `rg` audits for random calls.
-
-Done when:
-
-- Fixed `rseed=` makes all fractal random behavior repeatable.
-- Missing `rseed=` uses a generated seed.
-- UI random calls do not affect image random calls.
-- Issue 363 is fixed.
+None.

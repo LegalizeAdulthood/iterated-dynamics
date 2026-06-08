@@ -480,7 +480,7 @@ static void init_vars_restart() // <ins> key init
     g_ifs_filename = "id.ifs";                         //
     g_ifs_name.clear();                                //
     reset_ifs_definition();                            //
-    g_random_seed_flag = false;                        // not a fixed srand() seed
+    g_random_seed_flag = false;                        // not a fixed image RNG seed
     g_random_seed = s_init_random_seed;                //
     g_read_filename.clear();                           // initially empty
     g_show_file = ShowFile::IMAGE_LOADED;              //

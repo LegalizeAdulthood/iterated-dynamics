@@ -3,6 +3,7 @@
 #include "ui/starfield.h"
 
 #include <algorithm>
+#include <cstdlib>
 
 #include "engine/calcfrac.h"
 #include "engine/LogicalScreen.h"
@@ -11,7 +12,6 @@
 #include "helpdefs.h"
 #include "io/loadmap.h"
 #include "math/fixed_pt.h"
-#include "math/rand15.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/ChoiceBuilder.h"
@@ -37,6 +37,16 @@ static long s_concentration{};
 static int s_offset{};
 static double s_star_field_values[4]{30.0, 100.0, 5.0, 0.0};
 
+namespace
+{
+
+int ui_random15()
+{
+    return std::rand() & 0x7FFF;
+}
+
+}
+
 //
 // Generate a gaussian distributed number.
 // The right half of the distribution is folded onto the lower half.
@@ -53,12 +63,12 @@ static int gaussian_number(const int probability, const int range)
     long p = divide(static_cast<long>(probability) << 16, static_cast<long>(range) << 16, 16);
     p = multiply(p, s_concentration, 16);
     p = multiply(static_cast<long>(s_distribution) << 16, p, 16);
-    if (!(RAND15() % (s_distribution - static_cast<int>(p >> 16) + 1)))
+    if (!(ui_random15() % (s_distribution - static_cast<int>(p >> 16) + 1)))
     {
         long accum = 0;
         for (int n = 0; n < s_slope; n++)
         {
-            accum += RAND15();
+            accum += ui_random15();
         }
         accum /= s_slope;
         int r = static_cast<int>(multiply(static_cast<long>(range) << 15, accum, 15) >> 14);

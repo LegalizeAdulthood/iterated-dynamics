@@ -33,7 +33,6 @@
 #include "math/cmplx.h"
 #include "math/fixed_pt.h"
 #include "math/fpu087.h"
-#include "math/rand15.h"
 #include "misc/debug_flags.h"
 #include "misc/id.h"
 #include "ui/stop_msg.h"

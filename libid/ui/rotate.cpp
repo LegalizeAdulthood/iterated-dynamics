@@ -12,7 +12,6 @@
 #include "io/check_write_file.h"
 #include "io/library.h"
 #include "io/loadmap.h"
-#include "math/rand15.h"
 #include "misc/Driver.h"
 #include "misc/ValueSaver.h"
 #include "ui/diskvid.h"
@@ -44,6 +43,11 @@ enum
     CH_GREEN = 1,
     CH_BLUE = 2,
 };
+
+int ui_random15()
+{
+    return std::rand() & 0x7FFF;
+}
 
 }
 
@@ -273,13 +277,13 @@ void rotate(SpinDirection direction)
                         {
                             // time to randomize
                             incr = 1;
-                            f_step = ((f_steps[f_key-1]* (RAND15() >> 8)) >> 6) + 1;
+                            f_step = ((f_steps[f_key-1]* (ui_random15() >> 8)) >> 6) + 1;
                             from_red   = g_dac_box[last][0];
                             from_green = g_dac_box[last][1];
                             from_blue  = g_dac_box[last][2];
-                            to_red     = RAND15() >> 9;
-                            to_green   = RAND15() >> 9;
-                            to_blue    = RAND15() >> 9;
+                            to_red     = ui_random15() >> 9;
+                            to_green   = ui_random15() >> 9;
+                            to_blue    = ui_random15() >> 9;
                         }
                         g_dac_box[j_step][0] = static_cast<Byte>(from_red + (to_red - from_red) * incr / f_step);
                         g_dac_box[j_step][1] = static_cast<Byte>(from_green + (to_green - from_green) * incr / f_step);
@@ -361,7 +365,7 @@ void rotate(SpinDirection direction)
             break;
         case ID_KEY_ENTER:              // enter key: randomize all colors
         case ID_KEY_ENTER_2:            // also the Numeric-Keypad Enter
-            f_key = RAND15()/3277 + 1;
+            f_key = ui_random15()/3277 + 1;
             f_step = 1;
             incr = 999;
             old_step = step;

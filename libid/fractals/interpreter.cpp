@@ -503,8 +503,8 @@ static unsigned long new_random_num()
 
 void d_random()
 {
-    /* Use the same algorithm as for fixed math so that they will generate
-           the same fractals when the srand() function is used. */
+    // Use one formula-runtime algorithm for fixed and floating math so
+    // formula srand() generates the same fractals in both modes.
     const long x = new_random_num() >> (32 - BIT_SHIFT);
     const long y = new_random_num() >> (32 - BIT_SHIFT);
     g_formula.vars[7].a.d.x = static_cast<double>(x) / (1L << BIT_SHIFT);
