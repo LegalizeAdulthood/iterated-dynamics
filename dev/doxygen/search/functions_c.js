@@ -55,7 +55,7 @@ var searchData=
   ['match_5ffn_52',['match_fn',['../d0/d19/namespaceid_1_1io.html#a5344bef0f60e660d534c0c798812867f',1,'id::io::match_fn(const std::filesystem::path &amp;pattern)'],['../d0/d19/namespaceid_1_1io.html#ab59c0ca2972d59b3ee98284808bc5873',1,'id::io::match_fn(const fs::path &amp;pattern)']]],
   ['max_5fbf_53',['max_bf',['../d0/db0/namespaceid_1_1math.html#a0902d967bfa168fc61e2858f38d901fb',1,'id::math']]],
   ['max_5fbn_54',['max_bn',['../d0/db0/namespaceid_1_1math.html#ad84901b89a7ec8f7cf3ee037c70f244e',1,'id::math']]],
-  ['memory_5falloc_55',['memory_alloc',['../df/d6d/namespaceid_1_1misc.html#af721e3657ec8470f798c58b4c5948adb',1,'id::misc']]],
+  ['memory_5falloc_55',['memory_alloc',['../df/d6d/namespaceid_1_1misc.html#a20ea6f48005db176a8cf1f93ae0fe483',1,'id::misc']]],
   ['memory_5frelease_56',['memory_release',['../df/d6d/namespaceid_1_1misc.html#a08b395d2d240123cfd5dcf96a0179f51',1,'id::misc']]],
   ['memory_5ftype_57',['memory_type',['../df/d6d/namespaceid_1_1misc.html#a626a2909c4468d94c0324619ad0e6518',1,'id::misc']]],
   ['middle_5fdown_58',['middle_down',['../df/d23/classid_1_1ui_1_1NullMouseNotification.html#aca9c649b10ef415771c092d1e24fcb21',1,'id::ui::NullMouseNotification::middle_down()'],['../dd/df9/classid_1_1ui_1_1MouseNotification.html#adcab4e29876653f9dd22f95880c6bd3c',1,'id::ui::MouseNotification::middle_down(bool double_click, int i, int y, int key_flags)=0']]],

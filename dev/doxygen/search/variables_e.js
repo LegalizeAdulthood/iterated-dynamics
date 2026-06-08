@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['offset_0',['offset',['../d8/dff/structhc_1_1Topic.html#af8dc3f721556786484f04f3c6cd820ec',1,'hc::Topic::offset'],['../d7/da9/diskvid_8cpp.html#adcce6ee751c1469525aec834a4d37ea8',1,'offset:&#160;diskvid.cpp'],['../d0/dff/help_8cpp.html#a168f35d517cfce69f73ba48cfb43dbe4',1,'offset:&#160;help.cpp'],['../d6/dfa/structhc_1_1Page.html#a7d855ea8d4989a6f02322545beb8070c',1,'hc::Page::offset']]],
+  ['offset_0',['offset',['../d8/dff/structhc_1_1Topic.html#af8dc3f721556786484f04f3c6cd820ec',1,'hc::Topic::offset'],['../d7/da9/diskvid_8cpp.html#a9ea864d84709b75e3308596fa580b4d4',1,'offset:&#160;diskvid.cpp'],['../d0/dff/help_8cpp.html#a168f35d517cfce69f73ba48cfb43dbe4',1,'offset:&#160;help.cpp'],['../d6/dfa/structhc_1_1Page.html#a7d855ea8d4989a6f02322545beb8070c',1,'hc::Page::offset']]],
   ['old_5fdemm_5fcolors_1',['old_demm_colors',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a777fcc8ee124f6ee9b60e4d9e3219093',1,'id::io::FractalInfo::old_demm_colors'],['../d1/d3e/history_8cpp.html#af99119c6f8ac609054f6765242859ea6',1,'old_demm_colors:&#160;history.cpp']]],
   ['op_5fcount_2',['op_count',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#ae0f4d4d63446de62537d0df3c30723e9',1,'id::fractals::CompiledFormula']]],
   ['op_5findex_3',['op_index',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#abfde68612e170cb0c605b2dd43b72969',1,'id::fractals::CompiledFormula::op_index'],['../d1/dd6/structid_1_1fractals_1_1RuntimeState.html#a5255e8b8f9109251f258246206a625b3',1,'id::fractals::RuntimeState::op_index']]],

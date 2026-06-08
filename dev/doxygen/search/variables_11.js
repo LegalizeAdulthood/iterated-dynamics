@@ -30,6 +30,7 @@ var searchData=
   ['rotate_5flo_27',['rotate_lo',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a7bb7e7ea6bfde356f31442ac24893b58',1,'id::io::FractalInfo']]],
   ['row_28',['row',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#a8025abb41a16a3cbc7671b01bf18c805',1,'id::fractals::ViewTransform3D']]],
   ['row1_29',['row1',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#ae803e62765105f5c96df7112b5284e13',1,'id::fractals::ViewTransform3D']]],
-  ['rq_30',['rq',['../de/d47/soi_8cpp.html#a9efbfe1dab868d5a623c493e272fb29f',1,'soi.cpp']]],
-  ['rxy_31',['rxy',['../da/d49/structid_1_1fractals_1_1LyapunovSequence.html#aca86117bbedffa4338514c1f2dfe0c00',1,'id::fractals::LyapunovSequence']]]
+  ['row_5flen_30',['row_len',['../d0/d3a/structid_1_1misc_1_1PlotBufferSize.html#a2ecf0543e3596d4bb2f8c0f4a416f769',1,'id::misc::PlotBufferSize']]],
+  ['rq_31',['rq',['../de/d47/soi_8cpp.html#a9efbfe1dab868d5a623c493e272fb29f',1,'soi.cpp']]],
+  ['rxy_32',['rxy',['../da/d49/structid_1_1fractals_1_1LyapunovSequence.html#aca86117bbedffa4338514c1f2dfe0c00',1,'id::fractals::LyapunovSequence']]]
 ];

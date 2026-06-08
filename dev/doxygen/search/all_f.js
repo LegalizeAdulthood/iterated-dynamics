@@ -10,7 +10,7 @@ var searchData=
   ['ods4_7',['ODS4',['../d4/d00/ods_8h.html#ac9f1d2f48e1c5a6e99ea79a8617b1892',1,'ods.h']]],
   ['ods5_8',['ODS5',['../d4/d00/ods_8h.html#a27fc8bb1d1e857fa5e07428c5c165d85',1,'ods.h']]],
   ['off_9',['OFF',['../dc/d76/namespaceid_1_1ui.html#a13259b8a718facd36168fba0150a0794a88559a0cfd8250c9d65970cc145c92d4',1,'id::ui']]],
-  ['offset_10',['offset',['../d7/da9/diskvid_8cpp.html#adcce6ee751c1469525aec834a4d37ea8',1,'offset:&#160;diskvid.cpp'],['../d0/dff/help_8cpp.html#a168f35d517cfce69f73ba48cfb43dbe4',1,'offset:&#160;help.cpp'],['../d6/dfa/structhc_1_1Page.html#a7d855ea8d4989a6f02322545beb8070c',1,'hc::Page::offset'],['../d8/dff/structhc_1_1Topic.html#af8dc3f721556786484f04f3c6cd820ec',1,'hc::Topic::offset']]],
+  ['offset_10',['offset',['../d7/da9/diskvid_8cpp.html#a9ea864d84709b75e3308596fa580b4d4',1,'offset:&#160;diskvid.cpp'],['../d0/dff/help_8cpp.html#a168f35d517cfce69f73ba48cfb43dbe4',1,'offset:&#160;help.cpp'],['../d6/dfa/structhc_1_1Page.html#a7d855ea8d4989a6f02322545beb8070c',1,'hc::Page::offset'],['../d8/dff/structhc_1_1Topic.html#af8dc3f721556786484f04f3c6cd820ec',1,'hc::Topic::offset']]],
   ['ok_11',['OK',['../d0/d19/namespaceid_1_1io.html#ae40bcd1edfb057e006f531a4c9654c90ae0aa021e21dddbd6d8cecec71e9cf564',1,'id::io']]],
   ['ok_5fjb_12',['OK_JB',['../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91a9421ff95c7a3bbc979271d0ecd08d29a',1,'id::fractals']]],
   ['old_5fdemm_5fcolors_13',['old_demm_colors',['../d1/d3e/history_8cpp.html#af99119c6f8ac609054f6765242859ea6',1,'old_demm_colors:&#160;history.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#a777fcc8ee124f6ee9b60e4d9e3219093',1,'id::io::FractalInfo::old_demm_colors']]],

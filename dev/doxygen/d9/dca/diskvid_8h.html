@@ -82,6 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;config/port.h&gt;</code><br />
+<code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;cstdio&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
@@ -91,6 +92,8 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:d5/dd7/namespaceid" id="r_d5/dd7/namespaceid"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dd7/namespaceid.html">id</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:df/d6d/namespaceid_1_1misc" id="r_df/d6d/namespaceid_1_1misc"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d6d/namespaceid_1_1misc.html">id::misc</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:dc/d76/namespaceid_1_1ui" id="r_dc/d76/namespaceid_1_1ui"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -121,12 +124,16 @@ Functions</h2></td></tr>
 <tr class="separator:a5fdb857e8f61ce626ff81e4a662575de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05c364c3535fd732aa3f6f4e03aa925b" id="r_a05c364c3535fd732aa3f6f4e03aa925b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a05c364c3535fd732aa3f6f4e03aa925b">id::ui::dvid_status</a> (const int line, const std::string &amp;msg)</td></tr>
 <tr class="separator:a05c364c3535fd732aa3f6f4e03aa925b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7f8c1b32e6f9dc244b1037e98a7f8c6" id="r_aa7f8c1b32e6f9dc244b1037e98a7f8c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#aa7f8c1b32e6f9dc244b1037e98a7f8c6">id::ui::common_start_disk</a> (long new_row_size, long new_col_size, int colors)</td></tr>
-<tr class="separator:aa7f8c1b32e6f9dc244b1037e98a7f8c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d5285da849f9211dc3d5ab78ad75adb" id="r_a4d5285da849f9211dc3d5ab78ad75adb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a4d5285da849f9211dc3d5ab78ad75adb">id::ui::from_mem_disk</a> (long <a class="el" href="../../d7/da9/diskvid_8cpp.html#adcce6ee751c1469525aec834a4d37ea8">offset</a>, int <a class="el" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>, void *dest)</td></tr>
-<tr class="separator:a4d5285da849f9211dc3d5ab78ad75adb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc7888e4e017f627a6f5090412b0643c" id="r_adc7888e4e017f627a6f5090412b0643c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#adc7888e4e017f627a6f5090412b0643c">id::ui::to_mem_disk</a> (long <a class="el" href="../../d7/da9/diskvid_8cpp.html#adcce6ee751c1469525aec834a4d37ea8">offset</a>, int <a class="el" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>, const void *src)</td></tr>
-<tr class="separator:adc7888e4e017f627a6f5090412b0643c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bfd6756a7e57847708d1057c633b495" id="r_a2bfd6756a7e57847708d1057c633b495"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a2bfd6756a7e57847708d1057c633b495">id::ui::disk_video_memory_blocks</a> (std::int64_t row_size, std::int64_t col_size, int colors, int header_length, std::uint64_t &amp;blocks)</td></tr>
+<tr class="separator:a2bfd6756a7e57847708d1057c633b495"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5600222d743415a5808f9a1d0f4992a" id="r_af5600222d743415a5808f9a1d0f4992a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/d6d/namespaceid_1_1misc.html#a711c9db7dfdac128667c32c802b2c3ae">id::misc::MemoryLocation</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#af5600222d743415a5808f9a1d0f4992a">id::ui::disk_video_memory_type</a> ()</td></tr>
+<tr class="separator:af5600222d743415a5808f9a1d0f4992a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d3c1cc1e568ce00af20cba2f50caafd" id="r_a5d3c1cc1e568ce00af20cba2f50caafd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5d3c1cc1e568ce00af20cba2f50caafd">id::ui::common_start_disk</a> (std::int64_t new_row_size, std::int64_t new_col_size, int colors)</td></tr>
+<tr class="separator:a5d3c1cc1e568ce00af20cba2f50caafd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a062afda1b16e187cd07fdbdfdddb650c" id="r_a062afda1b16e187cd07fdbdfdddb650c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a062afda1b16e187cd07fdbdfdddb650c">id::ui::from_mem_disk</a> (std::int64_t <a class="el" href="../../d7/da9/diskvid_8cpp.html#a9ea864d84709b75e3308596fa580b4d4">offset</a>, int <a class="el" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>, void *dest)</td></tr>
+<tr class="separator:a062afda1b16e187cd07fdbdfdddb650c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a64ecbb5bf68fb7f88c8a78417bf0b2" id="r_a3a64ecbb5bf68fb7f88c8a78417bf0b2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a3a64ecbb5bf68fb7f88c8a78417bf0b2">id::ui::to_mem_disk</a> (std::int64_t <a class="el" href="../../d7/da9/diskvid_8cpp.html#a9ea864d84709b75e3308596fa580b4d4">offset</a>, int <a class="el" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>, const void *src)</td></tr>
+<tr class="separator:a3a64ecbb5bf68fb7f88c8a78417bf0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>

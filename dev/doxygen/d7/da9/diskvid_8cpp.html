@@ -99,8 +99,10 @@ $(function() {
 <code>#include &lt;chrono&gt;</code><br />
 <code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;cstdio&gt;</code><br />
+<code>#include &lt;cstdlib&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
+<code>#include &lt;limits&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div>
@@ -147,20 +149,24 @@ Functions</h2></td></tr>
 <tr class="separator:a1f20a00db12f69127897029e472bfe33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0273f340549628e5a2adbc5cabe5fb7c" id="r_a0273f340549628e5a2adbc5cabe5fb7c"><td class="memItemLeft" align="right" valign="top">const std::filesystem::path &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a0273f340549628e5a2adbc5cabe5fb7c">id::ui::targa_disk_path</a> ()</td></tr>
 <tr class="separator:a0273f340549628e5a2adbc5cabe5fb7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7f8c1b32e6f9dc244b1037e98a7f8c6" id="r_aa7f8c1b32e6f9dc244b1037e98a7f8c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#aa7f8c1b32e6f9dc244b1037e98a7f8c6">id::ui::common_start_disk</a> (long new_row_size, long new_col_size, int colors)</td></tr>
-<tr class="separator:aa7f8c1b32e6f9dc244b1037e98a7f8c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bfd6756a7e57847708d1057c633b495" id="r_a2bfd6756a7e57847708d1057c633b495"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a2bfd6756a7e57847708d1057c633b495">id::ui::disk_video_memory_blocks</a> (std::int64_t row_size, std::int64_t col_size, int colors, int header_length, std::uint64_t &amp;blocks)</td></tr>
+<tr class="separator:a2bfd6756a7e57847708d1057c633b495"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5600222d743415a5808f9a1d0f4992a" id="r_af5600222d743415a5808f9a1d0f4992a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/d6d/namespaceid_1_1misc.html#a711c9db7dfdac128667c32c802b2c3ae">id::misc::MemoryLocation</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#af5600222d743415a5808f9a1d0f4992a">id::ui::disk_video_memory_type</a> ()</td></tr>
+<tr class="separator:af5600222d743415a5808f9a1d0f4992a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d3c1cc1e568ce00af20cba2f50caafd" id="r_a5d3c1cc1e568ce00af20cba2f50caafd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5d3c1cc1e568ce00af20cba2f50caafd">id::ui::common_start_disk</a> (std::int64_t new_row_size, std::int64_t new_col_size, int colors)</td></tr>
+<tr class="separator:a5d3c1cc1e568ce00af20cba2f50caafd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4d6e537314a0987f2e4d255f409fc85d" id="r_a4d6e537314a0987f2e4d255f409fc85d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a4d6e537314a0987f2e4d255f409fc85d">id::ui::end_disk</a> ()</td></tr>
 <tr class="separator:a4d6e537314a0987f2e4d255f409fc85d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70371a17a26f7f7661610a8864f6e93b" id="r_a70371a17a26f7f7661610a8864f6e93b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a70371a17a26f7f7661610a8864f6e93b">id::ui::disk_read_pixel</a> (int col, int row)</td></tr>
 <tr class="separator:a70371a17a26f7f7661610a8864f6e93b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d5285da849f9211dc3d5ab78ad75adb" id="r_a4d5285da849f9211dc3d5ab78ad75adb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a4d5285da849f9211dc3d5ab78ad75adb">id::ui::from_mem_disk</a> (long <a class="el" href="../../d7/da9/diskvid_8cpp.html#adcce6ee751c1469525aec834a4d37ea8">offset</a>, int <a class="el" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>, void *dest)</td></tr>
-<tr class="separator:a4d5285da849f9211dc3d5ab78ad75adb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a062afda1b16e187cd07fdbdfdddb650c" id="r_a062afda1b16e187cd07fdbdfdddb650c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a062afda1b16e187cd07fdbdfdddb650c">id::ui::from_mem_disk</a> (std::int64_t <a class="el" href="../../d7/da9/diskvid_8cpp.html#a9ea864d84709b75e3308596fa580b4d4">offset</a>, int <a class="el" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>, void *dest)</td></tr>
+<tr class="separator:a062afda1b16e187cd07fdbdfdddb650c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e5f44963737a63759875bbdd8c753c3" id="r_a1e5f44963737a63759875bbdd8c753c3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1e5f44963737a63759875bbdd8c753c3">id::ui::targa_read_disk</a> (unsigned int col, unsigned int row, Byte *<a class="el" href="../../dc/db0/loadmap_8cpp.html#a9b2249ae0b3882aaf27e96c396a5bb13">red</a>, Byte *<a class="el" href="../../dc/db0/loadmap_8cpp.html#a40093bf40480ad4ae7f43bda1bb6954b">green</a>, Byte *<a class="el" href="../../dc/db0/loadmap_8cpp.html#a101bb7f248e248bd71231690a6f515ea">blue</a>)</td></tr>
 <tr class="separator:a1e5f44963737a63759875bbdd8c753c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1732fc6fdb6dddeaa65535845abb7ee" id="r_ad1732fc6fdb6dddeaa65535845abb7ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ad1732fc6fdb6dddeaa65535845abb7ee">id::ui::disk_write_pixel</a> (int col, int row, int color)</td></tr>
 <tr class="separator:ad1732fc6fdb6dddeaa65535845abb7ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc7888e4e017f627a6f5090412b0643c" id="r_adc7888e4e017f627a6f5090412b0643c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#adc7888e4e017f627a6f5090412b0643c">id::ui::to_mem_disk</a> (long <a class="el" href="../../d7/da9/diskvid_8cpp.html#adcce6ee751c1469525aec834a4d37ea8">offset</a>, int <a class="el" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>, const void *src)</td></tr>
-<tr class="separator:adc7888e4e017f627a6f5090412b0643c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a64ecbb5bf68fb7f88c8a78417bf0b2" id="r_a3a64ecbb5bf68fb7f88c8a78417bf0b2"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a3a64ecbb5bf68fb7f88c8a78417bf0b2">id::ui::to_mem_disk</a> (std::int64_t <a class="el" href="../../d7/da9/diskvid_8cpp.html#a9ea864d84709b75e3308596fa580b4d4">offset</a>, int <a class="el" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>, const void *src)</td></tr>
+<tr class="separator:a3a64ecbb5bf68fb7f88c8a78417bf0b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a62dc68765ee9688f1fc3bd457e0b5ab5" id="r_a62dc68765ee9688f1fc3bd457e0b5ab5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a62dc68765ee9688f1fc3bd457e0b5ab5">id::ui::targa_write_disk</a> (unsigned int col, unsigned int row, Byte <a class="el" href="../../dc/db0/loadmap_8cpp.html#a9b2249ae0b3882aaf27e96c396a5bb13">red</a>, Byte <a class="el" href="../../dc/db0/loadmap_8cpp.html#a40093bf40480ad4ae7f43bda1bb6954b">green</a>, Byte <a class="el" href="../../dc/db0/loadmap_8cpp.html#a101bb7f248e248bd71231690a6f515ea">blue</a>)</td></tr>
 <tr class="separator:a62dc68765ee9688f1fc3bd457e0b5ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5fdb857e8f61ce626ff81e4a662575de" id="r_a5fdb857e8f61ce626ff81e4a662575de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5fdb857e8f61ce626ff81e4a662575de">id::ui::dvid_status</a> (int line, const char *msg)</td></tr>
@@ -179,7 +185,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00067">67</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00071">71</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
@@ -195,7 +201,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00066">66</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00070">70</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
@@ -211,23 +217,23 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00068">68</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00072">72</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
-<a id="adcce6ee751c1469525aec834a4d37ea8" name="adcce6ee751c1469525aec834a4d37ea8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adcce6ee751c1469525aec834a4d37ea8">&#9670;&#160;</a></span>offset</h2>
+<a id="a9ea864d84709b75e3308596fa580b4d4" name="a9ea864d84709b75e3308596fa580b4d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ea864d84709b75e3308596fa580b4d4">&#9670;&#160;</a></span>offset</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">long offset</td>
+          <td class="memname">DiskOffset offset</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00064">64</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00068">68</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
@@ -243,7 +249,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00065">65</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00069">69</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
 
 </div>
 </div>
