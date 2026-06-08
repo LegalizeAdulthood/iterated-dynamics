@@ -50,30 +50,7 @@ Build wiring:
 - `vcpkg.json`
   - `boost-algorithm` in the `hc` and `id` features
 
-## Slice 1: Move libid Off Boost
-
-Goal: remove the libid production dependency on Boost Algorithm.
-
-Work:
-
-- Replace Boost splitting in `libid/io/search_path.cpp`.
-- Link `libid` to the local string-algorithm target.
-- Remove `Boost::algorithm` from `libid`.
-- Remove `find_package(boost_algorithm CONFIG REQUIRED)` from
-  `libid/CMakeLists.txt` if no other libid source needs it.
-
-Tests:
-
-- Run `TestSearchPath.*`.
-- Run any file lookup tests that cover environment search paths.
-- Run the full `test-id` target if isolated tests pass.
-
-Done when:
-
-- `libid` has no Boost Algorithm includes.
-- Search path behavior is unchanged on Windows and Linux.
-
-## Slice 2: Remove Package Dependency
+## Slice 1: Remove Package Dependency
 
 Goal: remove `boost-algorithm` from build configuration after all callers
 are gone.

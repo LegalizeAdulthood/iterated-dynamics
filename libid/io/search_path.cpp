@@ -2,13 +2,13 @@
 //
 #include "io/search_path.h"
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
+#include <algos/string_algorithms.h>
 
 #include <filesystem>
-#include <vector>
 
 namespace fs = std::filesystem;
+
+using namespace id::algos;
 
 namespace id::io
 {
@@ -26,9 +26,7 @@ std::string search_path(const char *filename, const char *path_var, const GetEnv
         return {};
     }
 
-    std::vector<std::string> parts;
-    split(parts, path, boost::algorithm::is_any_of(PATH_SEPARATOR));
-    for (const fs::path dir : parts)
+    for (const fs::path dir : split_any(path, PATH_SEPARATOR))
     {
         fs::path candidate{dir / filename};
         if (fs::exists(candidate))
