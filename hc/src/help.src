@@ -369,6 +369,8 @@ o Formula entries embedded in a selected PAR file now load when
   behavior.  (Fixes #389)
 o MIG image component files are now removed from the image save library
   after the final image is assembled.
+o The Linux executable is now named xid to avoid conflicting with the
+  standard id system utility.
 o Windows executables now embed icon and version resources directly.
   (Fixes #386)
 o 3D Targa output now writes rendered pixels to the image save library.\
@@ -1593,6 +1595,10 @@ command to re-plot it.
 On Linux, Id uses a native X11 driver.  The driver uses an ordinary
 TrueColor X visual and keeps Id's 256-color image buffer internally, so a
 PseudoColor display is not required.
+
+On Linux, the executable file is named xid rather than id to avoid the
+standard system id utility.  Command-line examples that start with id
+should be typed with xid on Linux.
 
 The Linux X11 driver uses the same id.cfg video mode table as the Win32
 GDI driver.  Video modes whose driver field is "gdi" are accepted by the

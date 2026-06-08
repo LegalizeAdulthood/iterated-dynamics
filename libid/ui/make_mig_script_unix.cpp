@@ -16,7 +16,7 @@ namespace id::ui
 namespace
 {
 
-fs::path s_executable{"id"};
+fs::path s_executable{"xid"};
 
 std::string shell_quote(const std::string_view text)
 {
