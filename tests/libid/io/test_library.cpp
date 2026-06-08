@@ -14,6 +14,7 @@
 #include <gtest/gtest.h>
 
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <string>
 #include <utility>
@@ -135,6 +136,24 @@ TEST_F(TestLibrary, initLibrariesFindsConfigAwayFromCurrentDirectory)
     EnvVarSaver fract_dir{"FRACTDIR", nullptr};
 
     init_libraries();
+
+    EXPECT_EQ(config_path, find_file(ReadFile::ID_CONFIG, "id.cfg"));
+}
+
+TEST_F(TestLibrary, defaultReadLibrariesPreferProgramDirectoryToCompiledHomeDirectory)
+{
+    const Path current_dir{Path{data::ID_TEST_DATA_DIR} / "program-dir-current-dir"};
+    const Path program_dir{Path{data::ID_TEST_DATA_DIR} / "program-dir"};
+    const Path config_path{program_dir / "config" / "id.cfg"};
+    std::filesystem::create_directories(current_dir);
+    std::filesystem::create_directories(config_path.parent_path());
+    std::ofstream{config_path} << "; test config\n";
+    CurrentPathSaver saved_cur_dir{current_dir};
+    ValueSaver saved_special_dirs{
+        g_special_dirs, std::make_shared<TestSpecialDirectories>(program_dir, Path{"missing-documents-dir"})};
+    EnvVarSaver fract_dir{"FRACTDIR", nullptr};
+
+    init_default_read_libraries();
 
     EXPECT_EQ(config_path, find_file(ReadFile::ID_CONFIG, "id.cfg"));
 }

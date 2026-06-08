@@ -17,9 +17,6 @@
 #include "ui/tab_display.h"
 #include "ui/text_screen.h"
 
-#include <config/fdio.h>
-#include <config/filelength.h>
-#include <config/home_dir.h>
 #include <config/port.h>
 
 #include <fmt/format.h>
@@ -30,13 +27,9 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
-#include <fcntl.h>
-#include <filesystem>
 #include <new>
 #include <system_error>
 #include <vector>
-
-namespace fs = std::filesystem;
 
 using namespace id::config;
 using namespace id::engine;
@@ -951,27 +944,6 @@ int help()
     return 0;
 }
 
-static bool can_read_file(const std::string &path)
-{
-    int handle = open(path.c_str(), O_RDONLY);
-    if (handle != -1)
-    {
-        close(handle);
-        return true;
-    }
-    return false;
-}
-
-static std::string find_file(const char *filename)
-{
-    std::string path{(fs::path(HOME_DIR) / filename).string()};
-    if (can_read_file(path))
-    {
-        return path;
-    }
-    return find_path(filename);
-}
-
 static int read_help_topic(const int topic, const int off, const int len, void *buf)
 {
     static int  curr_topic = -1;
@@ -1356,7 +1328,7 @@ int init_help()
 
     s_help_file = nullptr;
 
-    const std::string path{find_file("id.hlp")};
+    const std::string path{find_path("id.hlp")};
     if (!path.empty())
     {
         s_help_file = std::fopen(path.c_str(), "rb");

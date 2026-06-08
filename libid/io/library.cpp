@@ -150,13 +150,10 @@ void init_default_read_libraries()
     {
         add_fallback_read_library(".");
     }
+    add_fallback_read_library(g_special_dirs->program_dir());
     if (fs::exists(id::config::HOME_DIR))
     {
         add_fallback_read_library(id::config::HOME_DIR);
-    }
-    else
-    {
-        add_fallback_read_library(g_special_dirs->program_dir());
     }
 }
 
