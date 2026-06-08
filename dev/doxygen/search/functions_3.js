@@ -72,7 +72,7 @@ var searchData=
   ['decode_5ffractal_5finfo_5fbig_5fendian_69',['decode_fractal_info_big_endian',['../d0/d19/namespaceid_1_1io.html#a4e2e848080a90f280a2b0b612b222f36',1,'id::io']]],
   ['decode_5forbits_5finfo_70',['decode_orbits_info',['../d0/d19/namespaceid_1_1io.html#a23a46ac5fbbef940550080cdd96df528',1,'id::io']]],
   ['decode_5forbits_5finfo_5fbig_5fendian_71',['decode_orbits_info_big_endian',['../d0/d19/namespaceid_1_1io.html#a48aa2b4dfcc8f868d3b440ea6e51a3db',1,'id::io']]],
-  ['decoder_72',['decoder',['../d0/d19/namespaceid_1_1io.html#a499966db23447f7a84191e2cf461217a',1,'id::io']]],
+  ['decoder_72',['decoder',['../d0/d19/namespaceid_1_1io.html#a451970f8236daa405f696f56e2345716',1,'id::io']]],
   ['decoder_5ftimer_73',['decoder_timer',['../dc/d31/namespaceid_1_1engine.html#a55240ecec983fe7e31bd20dfb8e2d4a0',1,'id::engine']]],
   ['decrease_5fzoom_5faspect_74',['decrease_zoom_aspect',['../dc/d76/namespaceid_1_1ui.html#a4f27f8599f08d36672e3f6fa9ae9b05f',1,'id::ui']]],
   ['delay_75',['delay',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#acb95840474105523648c16d0c15a780a',1,'id::misc::Win32BaseDriver::delay()'],['../d3/def/classid_1_1misc_1_1Driver.html#acab15557b2dc00509415332974931a5c',1,'id::misc::Driver::delay()']]],
