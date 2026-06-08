@@ -16,17 +16,6 @@ UI random behavior is separate.  UI code may still use its own random
 source, but UI random calls must not change the image-generation random
 stream while an image is being calculated.
 
-## Current Problems
-
-- Formula `rand` ignores `rseed=` because the interpreter seeds from
-  current time directly.
-- Some fractal types already call `set_random_seed()`, but still consume
-  the process-global C RNG.
-- Some fractal paths seed directly with `std::srand()`.
-- UI code also uses the process-global C RNG.  Any UI code that calls
-  `std::srand()` or `std::rand()` can poison image generation if image
-  generation also uses that same global stream.
-
 ## Desired RNG Ownership
 
 The engine owns an image RNG stream in `engine/random_seed`.
@@ -44,25 +33,42 @@ Formula `srand()` remains formula-language behavior.  It should seed the
 formula runtime random state, not the UI RNG and not unrelated image RNG
 users.
 
-## Current Image RNG Consumers
+## Audit Status
 
-Already seeded through `set_random_seed()`:
+Implemented:
 
-- `type=ant`
-- `type=cellular`
-- `type=diffusion`
-- `type=plasma`
-- perturbation random reference selection
+- `engine/random_seed` owns private image RNG state and exposes the image
+  RNG helper API.
+- `type=ant`, `type=cellular`, `type=diffusion`, `type=plasma`, and
+  perturbation random reference selection consume image RNG helpers.
+- Formula default `rand` seeds through `set_random_seed()`.
+- Formula-language `srand()` seeds formula runtime random state only.
+- Lyapunov random population modes seed through `set_random_seed()` and
+  consume `random15()`.
+- GIF save/load stores and restores `g_random_seed` and
+  `g_random_seed_flag`.
+- Generated parameter files emit `rseed=` when the seed was fixed.
 
-Known gaps:
+Remaining gaps:
 
-- formula interpreter default `rand`
-- lyapunov random population seed
-- IFS3D hardcoded `std::srand(1)`
-- 3D randomize colors in `line3d.cpp`
-- Lorenz and inverse Julia random-walk paths using `std::rand()`
+- Seed tests do not prove that interleaved UI calls to `std::srand()` and
+  `std::rand()` leave image RNG output unchanged.
+- Seeded fractal conversions need focused tests for reuse-last seed paths.
+- Lyapunov random population seed behavior needs focused tests.
+- IFS2D and IFS3D call `set_random_seed(1)`, so they are deterministic but
+  do not honor `rseed=`.
+- Lorenz and inverse Julia random-walk paths still use `std::rand()`.
+- 3D randomized coloring in `line3d.cpp` still uses `RAND15()` and
+  `std::rand()`.
+- JIIM random inverse Julia paths still use `std::rand()`.
+- `RAND15()` remains a process-global C RNG macro.
+- Generated parameter file behavior for non-fixed generated image seeds is
+  undecided and untested.
+- The final RNG source audit and developer note are not done.
 
-UI or non-fractal RNG users to keep separate:
+## UI Or Non-Fractal RNG Users
+
+These may keep a UI-local random source, but must not affect image RNG:
 
 - intro screen
 - evolver UI and evolver generation state
@@ -71,171 +77,71 @@ UI or non-fractal RNG users to keep separate:
 - GIF view dithering
 - starfield UI
 
-## Slice 1: Random Seed Tests
+## Remaining Work
 
-Goal: lock down the current seed contract before changing consumers.
+### Slice 1: Close Seed Test Gaps
+
+Goal: prove the image RNG stream is independent from the process-global C
+RNG.
 
 Work:
 
-- Add focused tests for `set_random_seed()`.
-- Verify fixed `rseed=` does not mutate `g_random_seed`.
-- Verify non-fixed seeding uses the generated image seed policy.
+- Add a test proving image RNG output is unchanged by interleaved UI calls
+  to `std::srand()` and `std::rand()`.
 - Verify repeat calls with the same fixed seed produce the same first
   values.
 - Verify different fixed seeds produce different first values.
-- Add a test proving image RNG output is unchanged by interleaved UI calls
-  to `std::srand()` and `std::rand()`.
+- Keep existing checks for fixed and non-fixed `g_random_seed` behavior.
 
 Tests:
 
-- New `tests/libid/engine/test_random_seed.cpp`.
-- Check exact state:
-  - `g_random_seed`
-  - `g_random_seed_flag`
-  - first `random15()` values
-  - first `random_int()` values
+- `tests/libid/engine/test_random_seed.cpp`
 
 Done when:
 
-- Existing `std::rand()` users are still unchanged.
-- New tests describe the target behavior for later slices.
+- Image RNG tests prove C RNG calls cannot poison image RNG output.
 
-## Slice 2: Add Image RNG Helpers
+### Slice 2: Cover Converted Seeded Fractals
 
-Goal: make image RNG independent from the process-global C RNG.
+Goal: test the seed-specific behavior for random fractal types already
+converted to image RNG helpers.
 
 Work:
 
-- Move image RNG state into `engine/random_seed.cpp`.
-- Keep `set_random_seed()` as the only public image seed function.
-- Add `random15()`.
-- Add `random_int(int limit)`.
-- Add `random_unit()`.
-- Preserve the current sequence used by existing image tests as closely as
-  practical.
-- Keep `std::rand()` and `std::srand()` available only for transitional
-  callers and UI code.
+- Add an ant reuse-last seed test that verifies `g_random_seed` is
+  preserved.
+- Add a plasma reuse-last seed test that verifies `g_random_seed` is
+  preserved.
+- Add a cellular reuse-last seed test that verifies `g_random_seed` is
+  preserved.
+- Add lyapunov random population tests for `params[1] == 0` or
+  `params[1] == 1`.
+- Verify identical `rseed=` values give identical lyapunov initial
+  populations.
+- Verify different `rseed=` values give different lyapunov initial
+  populations.
+- Verify explicit lyapunov `params[1]` does not consume image RNG state.
 
 Tests:
 
-- Unit test deterministic sequences for fixed seeds.
-- Unit test `random_int(limit)` bounds:
-  - `limit == 1`
-  - small limits
-  - large limits
-- Unit test `random_unit()` bounds:
-  - greater than or equal to `0`
-  - less than or equal to `1`
-- Unit test UI poisoning:
-  - seed image RNG
-  - read one image RNG value
-  - call `std::srand()` and `std::rand()`
-  - verify the next image RNG value is unchanged from the expected sequence
+- Existing image tests for ant, cellular, diffusion, plasma, and lyapunov.
+- Focused unit tests where type-specific seed logic can be isolated.
 
 Done when:
 
-- Image RNG can be used without depending on process-global C RNG state.
+- Converted fractal types have direct coverage for their seed contracts.
 
-## Slice 3: Convert Seeded Fractal Types
+### Slice 3: Convert IFS And Lorenz Random Paths
 
-Goal: convert existing `set_random_seed()` users to consume image RNG
-helpers.
-
-Work:
-
-- Convert `Ant.cpp` from `std::rand()` to image RNG helpers.
-- Convert `Cellular.cpp` from `std::rand()` to image RNG helpers.
-- Convert `Diffusion.cpp` from `std::rand()` to image RNG helpers.
-- Convert `Plasma.cpp` from `RAND15()` to `random15()`.
-- Convert `PertEngine.cpp` from `std::rand()` to image RNG helpers.
-- Keep existing type-specific seed parameter handling:
-  - ant `params[5]`
-  - cellular random/reuse parameters
-  - plasma `params[2]`
-
-Tests:
-
-- Existing image tests for random fractal types still pass:
-  - ant random tests
-  - cellular tests using `rseed=4567`
-  - diffusion
-  - plasma
-- Add focused unit tests only where a type has direct seed logic:
-  - ant reuse-last seed path preserves `g_random_seed`
-  - plasma reuse-last seed path preserves `g_random_seed`
-  - cellular reuse-last seed path preserves `g_random_seed`
-
-Done when:
-
-- These types no longer call `std::rand()` or `RAND15()`.
-- Their image tests still prove repeatability.
-
-## Slice 4: Fix Formula Default `rand`
-
-Goal: make formula `rand` honor `rseed=`.
+Goal: remove hardcoded and unseeded random use from IFS and Lorenz paths.
 
 Work:
 
-- Replace interpreter default time-based `random_seed()` with image RNG
-  seeding through `set_random_seed()`.
-- Move formula `rand` consumption off `RAND15()`.
-- Keep formula-language `srand()` as an explicit formula-local seed.
-- Ensure a formula using `rand` and no explicit formula `srand()` uses the
-  image seed.
-- Ensure a formula using explicit `srand()` remains repeatable independent
-  of the global `rseed=` value after the formula seed is set.
-
-Tests:
-
-- Add a small formula using `rand`.
-- Render or unit-test with `rseed=1234` twice and verify identical output.
-- Render or unit-test with `rseed=1234` and `rseed=5678` and verify
-  different random values.
-- Verify formula explicit `srand()` produces the same sequence regardless
-  of `g_random_seed`.
-- Verify formula default `rand` mutates only formula runtime random state:
-  - `g_runtime.rand_num`
-  - `g_runtime.randomized`
-  - `g_runtime.set_random`
-
-Done when:
-
-- Issue 363 is reproducible by a test before the change and fixed after the
-  change.
-
-## Slice 5: Convert Lyapunov
-
-Goal: make lyapunov random population selection honor `rseed=`.
-
-Work:
-
-- Seed in `lyapunov_per_image()` when population seed mode needs random
-  values.
-- Replace `std::rand()` in `lyapunov_type()` with image RNG helpers.
-- Keep fixed population seed behavior unchanged when `params[1]` is a
-  normal explicit value.
-
-Tests:
-
-- Add a focused lyapunov test with `params[1] == 0` or `params[1] == 1`.
-- Verify identical `rseed=` gives identical initial `g_population`.
-- Verify different `rseed=` gives different `g_population`.
-- Verify explicit `params[1]` does not consume the image RNG.
-
-Done when:
-
-- Lyapunov random population is repeatable with `rseed=`.
-
-## Slice 6: Convert IFS3D And Lorenz Random Walk
-
-Goal: remove hardcoded and unseeded random use from 3D IFS and Lorenz
-paths.
-
-Work:
-
-- Replace `std::srand(1)` in IFS3D setup with `set_random_seed()`.
-- Replace IFS3D `std::rand()` and `RAND15()` calls with image RNG helpers.
-- Audit Lorenz random-walk and random-run paths.
+- Replace `set_random_seed(1)` in IFS2D and IFS3D setup with
+  `set_random_seed()`.
+- Verify explicit `rseed=` changes the IFS transform sequence.
+- Replace Lorenz and inverse Julia random-walk `std::rand()` calls with
+  image RNG helpers.
 - Seed Lorenz image-generation random paths through `set_random_seed()`.
 - Do not change UI-only random selection behavior.
 
@@ -251,8 +157,9 @@ Done when:
 
 - No fractal-generation code in `lorenz.cpp` calls `std::srand()`,
   `std::rand()`, or `RAND15()`.
+- IFS2D and IFS3D honor `rseed=`.
 
-## Slice 7: Convert 3D Randomized Coloring
+### Slice 4: Convert 3D Randomized Coloring
 
 Goal: make 3D randomized color perturbation use the image RNG stream.
 
@@ -267,7 +174,7 @@ Work:
 Tests:
 
 - Add or update a 3D image test using `randomize=` and explicit `rseed=`.
-- Verify same `rseed=` gives the same randomized colors.
+- Verify the same `rseed=` gives the same randomized colors.
 - Verify `randomize=0` does not consume image RNG state.
 - Verify `randomize=` with no `rseed=` still varies between generated
   images.
@@ -276,14 +183,16 @@ Done when:
 
 - 3D random coloring is not affected by UI RNG calls.
 
-## Slice 8: Audit Remaining Fractal RNG Calls
+### Slice 5: Audit Remaining Image RNG Calls
 
-Goal: make remaining image-generation random calls explicit.
+Goal: make all remaining image-generation random calls explicit.
 
 Work:
 
 - Audit all `std::rand()`, `std::srand()`, and `RAND15()` callers.
-- Move any remaining fractal-generation caller to image RNG helpers.
+- Convert JIIM random inverse Julia callers to image RNG helpers, or prove
+  they are not image-generation callers and document that classification.
+- Move any other fractal-generation caller to image RNG helpers.
 - Mark non-image UI callers with short comments only where the
   classification is not obvious.
 - Keep UI RNG separate from image RNG.
@@ -302,18 +211,20 @@ Done when:
 - Every fractal type uses `set_random_seed()` before consuming image RNG.
 - UI RNG cannot poison image-generation RNG.
 
-## Slice 9: Save, Load, And Batch Round Trip
+### Slice 6: Save, Load, And Batch Round Trip
 
 Goal: preserve repeatability through saved images and generated parameter
 sets.
 
 Work:
 
-- Verify GIF save/load preserves `g_random_seed` and
+- Verify GIF save/load tests cover `g_random_seed` and
   `g_random_seed_flag`.
-- Verify generated parameter sets write `rseed=` when the seed was fixed.
+- Generate a PAR with fixed `rseed=` and verify `rseed=` is emitted.
 - Decide whether generated parameter sets should write the generated seed
-  when no fixed `rseed=` was supplied.  If yes, document and test it.
+  when no fixed `rseed=` was supplied.
+- If generated seeds are emitted, document and test that behavior.
+- If generated seeds are not emitted, document and test that behavior.
 
 Tests:
 
@@ -327,7 +238,7 @@ Done when:
 
 - Repeatability survives save/load and generated PAR workflows.
 
-## Slice 10: Final Regression Pass
+### Slice 7: Final Regression Pass
 
 Goal: prove image RNG behavior is unified.
 
@@ -335,13 +246,13 @@ Work:
 
 - Add a short developer note to the RNG code naming allowed RNG sources.
 - Remove obsolete random helper comments that refer to C RNG.
-- Update any stale documentation.
+- Remove `RAND15()` or confine it to explicit UI or compatibility callers.
+- Update stale documentation.
 
 Tests:
 
 - Run `cmake --workflow rt-default`.
 - Run targeted image tests for:
-  - formula `rand`
   - ant
   - cellular
   - diffusion
