@@ -36,40 +36,13 @@ Do not change:
 
 - GIF logical screen dimensions are unsigned 16-bit values.
 - `MAX_PIXELS` is 32767, a signed 16-bit limit.
-- `id.cfg` rejects modes above `MAX_PIXELS`.
-- `load_config.cpp` casts parsed mode dimensions through `short`.
 - GIF extension image dimensions are stored as `int16_t`.
 - GIF header writing stores only two bytes from `int` values.
 - GIF decoding uses `short` for `decoder(line_width)` and `buf_cnt`.
 - Image reduction uses short skip counters.
 - Some generated scripts already allow total dimensions up to 65535.
 
-## Slice 1: Define GIF Dimension Limits
-
-Goal: make the intended limit explicit.
-
-Work:
-
-- Add a named GIF image dimension limit of 65535.
-- Keep `MIN_PIXELS`.
-- Replace image-size validation that uses `MAX_PIXELS` when the format
-  boundary is really GIF.
-- Keep `OLD_MAX_PIXELS` for old fixed-array code paths.
-- Update comments that describe the old signed 16-bit limit.
-
-Tests:
-
-- Add unit coverage for the new limit constants.
-- Add `id.cfg` parsing coverage for 32767, 32768, and 65535.
-- Add rejection coverage for 65536.
-
-Done when:
-
-- `id.cfg` can accept disk modes above 32767.
-- Values above 65535 are rejected.
-- Existing modes still parse unchanged.
-
-## Slice 2: Relax GIF Dimension Metadata
+## Slice 1: Relax GIF Dimension Metadata
 
 Goal: store image dimensions as unsigned 16-bit metadata.
 
@@ -93,7 +66,7 @@ Done when:
 - Existing files with dimensions below 32768 still read correctly.
 - No non-dimension metadata field type changes.
 
-## Slice 3: Save GIF Headers With Unsigned Dimensions
+## Slice 2: Save GIF Headers With Unsigned Dimensions
 
 Goal: write GIF logical screen and image descriptor dimensions correctly.
 
@@ -119,7 +92,7 @@ Done when:
 - Saved GIF headers are correct above 32767.
 - No save path writes truncated dimensions.
 
-## Slice 4: Read GIF Headers Above 32767
+## Slice 3: Read GIF Headers Above 32767
 
 Goal: load large GIF dimensions without signed truncation.
 
@@ -143,7 +116,7 @@ Done when:
 - Id can inspect and select modes for GIFs wider or taller than 32767.
 - View reduction does not overflow for maximum GIF dimensions.
 
-## Slice 5: Remove Decoder Line-Width Limits
+## Slice 4: Remove Decoder Line-Width Limits
 
 Goal: allow GIF decoding of lines up to 65535 pixels.
 
@@ -164,7 +137,7 @@ Done when:
 - The LZW decoder can process maximum-width GIF lines.
 - Existing GIF decode behavior is unchanged.
 
-## Slice 6: Increase Disk Video Generation Limits
+## Slice 5: Increase Disk Video Generation Limits
 
 Goal: let disk video generate GIF-sized images.
 
@@ -196,7 +169,7 @@ Done when:
 - Disk video rejects modes above 65535.
 - Disk video reports allocation failure cleanly.
 
-## Slice 7: Audit Windows Display Drivers
+## Slice 6: Audit Windows Display Drivers
 
 Goal: remove Id-only artificial limits from Windows display modes.
 
@@ -220,7 +193,7 @@ Done when:
   color depth.
 - Windows disk driver accepts GIF-sized disk modes.
 
-## Slice 8: Audit X11 Display Drivers
+## Slice 7: Audit X11 Display Drivers
 
 Goal: remove Id-only artificial limits from X11 display modes.
 
@@ -244,7 +217,7 @@ Done when:
   color depth.
 - X11 disk driver accepts GIF-sized disk modes.
 
-## Slice 9: Update User Documentation
+## Slice 8: Update User Documentation
 
 Goal: document the new image size behavior.
 
@@ -265,7 +238,7 @@ Done when:
 - Online help matches the implemented limit.
 - Generated help tests pass.
 
-## Slice 10: Full Workflow Verification
+## Slice 9: Full Workflow Verification
 
 Goal: verify the completed size-limit change.
 

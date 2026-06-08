@@ -103,8 +103,8 @@ void load_config(const std::string &cfg_path)
 
         if (j < 4 ||
                 key < 0 ||
-                x_dots < MIN_PIXELS || x_dots > MAX_PIXELS ||
-                y_dots < MIN_PIXELS || y_dots > MAX_PIXELS ||
+                x_dots < MIN_PIXELS || x_dots > GIF_MAX_PIXELS ||
+                y_dots < MIN_PIXELS || y_dots > GIF_MAX_PIXELS ||
                 (colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
                  colors != 256)
            )
@@ -118,8 +118,8 @@ void load_config(const std::string &cfg_path)
         std::strncpy(&video_entry.comment[0], fields[4], std::size(video_entry.comment));
         video_entry.comment[25] = 0;
         video_entry.key      = key;
-        video_entry.x_dots       = static_cast<short>(x_dots);
-        video_entry.y_dots       = static_cast<short>(y_dots);
+        video_entry.x_dots = static_cast<int>(x_dots);
+        video_entry.y_dots = static_cast<int>(y_dots);
         video_entry.colors      = colors;
 
         // if valid, add to supported modes
