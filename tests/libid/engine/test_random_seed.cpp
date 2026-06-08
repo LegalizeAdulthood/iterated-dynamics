@@ -7,6 +7,7 @@
 #include <gtest/gtest.h>
 
 #include <array>
+#include <cstdlib>
 
 using namespace id::engine;
 using namespace id::misc;
@@ -57,6 +58,50 @@ TEST(TestRandomSeed, explicitSeedDoesNotChangeStoredSeed)
     EXPECT_EQ(99, g_random_seed);
     EXPECT_TRUE(g_random_seed_flag);
     EXPECT_EQ(MSVC_RAND15_SEQUENCE.front(), random15());
+}
+
+TEST(TestRandomSeed, sameFixedSeedRepeatsSequence)
+{
+    ValueSaver saved_random_seed{g_random_seed, SEED};
+    ValueSaver saved_random_seed_flag{g_random_seed_flag, true};
+
+    set_random_seed();
+    const int first{random15()};
+    const int second{random15()};
+
+    set_random_seed();
+
+    EXPECT_EQ(first, random15());
+    EXPECT_EQ(second, random15());
+    EXPECT_EQ(SEED, g_random_seed);
+}
+
+TEST(TestRandomSeed, differentFixedSeedsProduceDifferentFirstValue)
+{
+    set_random_seed(SEED);
+    const int first{random15()};
+
+    set_random_seed(SEED + 1);
+
+    EXPECT_NE(first, random15());
+}
+
+TEST(TestRandomSeed, cRuntimeRandomCallsDoNotChangeImageSequence)
+{
+    set_random_seed(SEED);
+
+    EXPECT_EQ(MSVC_RAND15_SEQUENCE[0], random15());
+
+    std::srand(99);
+    static_cast<void>(std::rand());
+    static_cast<void>(std::rand());
+
+    EXPECT_EQ(MSVC_RAND15_SEQUENCE[1], random15());
+
+    std::srand(100);
+    static_cast<void>(std::rand());
+
+    EXPECT_EQ(MSVC_RAND15_SEQUENCE[2], random15());
 }
 
 TEST(TestRandomSeed, randomIntUsesMsvcSequenceModuloLimit)

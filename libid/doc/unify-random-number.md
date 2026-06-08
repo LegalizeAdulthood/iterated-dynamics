@@ -48,11 +48,11 @@ Implemented:
 - GIF save/load stores and restores `g_random_seed` and
   `g_random_seed_flag`.
 - Generated parameter files emit `rseed=` when the seed was fixed.
+- Random seed tests cover fixed and non-fixed seed behavior and prove C RNG
+  calls do not affect image RNG output.
 
 Remaining gaps:
 
-- Seed tests do not prove that interleaved UI calls to `std::srand()` and
-  `std::rand()` leave image RNG output unchanged.
 - Seeded fractal conversions need focused tests for reuse-last seed paths.
 - Lyapunov random population seed behavior needs focused tests.
 - IFS2D and IFS3D call `set_random_seed(1)`, so they are deterministic but
@@ -79,29 +79,7 @@ These may keep a UI-local random source, but must not affect image RNG:
 
 ## Remaining Work
 
-### Slice 1: Close Seed Test Gaps
-
-Goal: prove the image RNG stream is independent from the process-global C
-RNG.
-
-Work:
-
-- Add a test proving image RNG output is unchanged by interleaved UI calls
-  to `std::srand()` and `std::rand()`.
-- Verify repeat calls with the same fixed seed produce the same first
-  values.
-- Verify different fixed seeds produce different first values.
-- Keep existing checks for fixed and non-fixed `g_random_seed` behavior.
-
-Tests:
-
-- `tests/libid/engine/test_random_seed.cpp`
-
-Done when:
-
-- Image RNG tests prove C RNG calls cannot poison image RNG output.
-
-### Slice 2: Cover Converted Seeded Fractals
+### Slice 1: Cover Converted Seeded Fractals
 
 Goal: test the seed-specific behavior for random fractal types already
 converted to image RNG helpers.
@@ -131,7 +109,7 @@ Done when:
 
 - Converted fractal types have direct coverage for their seed contracts.
 
-### Slice 3: Convert IFS And Lorenz Random Paths
+### Slice 2: Convert IFS And Lorenz Random Paths
 
 Goal: remove hardcoded and unseeded random use from IFS and Lorenz paths.
 
@@ -159,7 +137,7 @@ Done when:
   `std::rand()`, or `RAND15()`.
 - IFS2D and IFS3D honor `rseed=`.
 
-### Slice 4: Convert 3D Randomized Coloring
+### Slice 3: Convert 3D Randomized Coloring
 
 Goal: make 3D randomized color perturbation use the image RNG stream.
 
@@ -183,7 +161,7 @@ Done when:
 
 - 3D random coloring is not affected by UI RNG calls.
 
-### Slice 5: Audit Remaining Image RNG Calls
+### Slice 4: Audit Remaining Image RNG Calls
 
 Goal: make all remaining image-generation random calls explicit.
 
@@ -211,7 +189,7 @@ Done when:
 - Every fractal type uses `set_random_seed()` before consuming image RNG.
 - UI RNG cannot poison image-generation RNG.
 
-### Slice 6: Save, Load, And Batch Round Trip
+### Slice 5: Save, Load, And Batch Round Trip
 
 Goal: preserve repeatability through saved images and generated parameter
 sets.
@@ -238,7 +216,7 @@ Done when:
 
 - Repeatability survives save/load and generated PAR workflows.
 
-### Slice 7: Final Regression Pass
+### Slice 6: Final Regression Pass
 
 Goal: prove image RNG behavior is unified.
 
