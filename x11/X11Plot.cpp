@@ -642,8 +642,8 @@ void X11Plot::paint_region(int x, int y, int width, int height)
         return;
     }
 
-    std::vector<char> image_data{
-        static_cast<std::size_t>(image->bytes_per_line) * static_cast<std::size_t>(image_height)};
+    std::vector<char> image_data(
+        static_cast<std::size_t>(image->bytes_per_line) * static_cast<std::size_t>(image_height));
     image->data = image_data.data();
     for (int row = 0; row < image_height; ++row)
     {
