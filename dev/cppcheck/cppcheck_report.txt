@@ -1609,13 +1609,13 @@ libid/io/gif_file.cpp:137:19: style: Consider using std::generate algorithm inst
 libid/io/gif_file.cpp:154:19: style: Consider using std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             value = extract_double();
                   ^
-libid/io/library.cpp:168:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+libid/io/library.cpp:165:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/library.cpp:222:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+libid/io/library.cpp:219:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
-libid/io/library.cpp:230:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
+libid/io/library.cpp:227:9: style: Consider using std::any_of algorithm instead of a raw loop. [useStlAlgorithm]
         {
         ^
 libid/io/path_match.cpp:128:17: style: Condition 'pat_ext==".*"' is always false [knownConditionTrueFalse]
@@ -1654,6 +1654,9 @@ libid/ui/get_fract_type.cpp:626:40: warning: Char literal compared with pointer 
 libid/ui/get_fract_type.cpp:630:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
+libid/ui/help.cpp:1332:9: style: Condition '!path.empty()' is always true [knownConditionTrueFalse]
+    if (!path.empty())
+        ^
 libid/ui/make_batch_file.cpp:1491:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
