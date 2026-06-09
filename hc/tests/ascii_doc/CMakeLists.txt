@@ -20,6 +20,21 @@ function(add_asciidoc_test name)
     set_tests_properties(TestAsciiDocOutput.${name} PROPERTIES LABELS "hc;run-hc;adoc")
 endfunction()
 
+function(add_asciidoc_failure_test name)
+    cmake_parse_arguments(HC_TEST "" "" "PARAMETERS" ${ARGN})
+    list(APPEND HC_TEST_PARAMETERS /adoc /r ${name} /o ${name} ${name}.src)
+    configure_file(${name}.src ${HC_TEST_DIR}/${name}.src COPYONLY)
+    file(MAKE_DIRECTORY ${HC_TEST_DIR}/${name})
+    add_test(NAME TestAsciiDocOutput.${name}
+        COMMAND "$<TARGET_FILE:hc>" ${HC_TEST_PARAMETERS}
+        WORKING_DIRECTORY "${HC_TEST_DIR}"
+    )
+    set_tests_properties(TestAsciiDocOutput.${name} PROPERTIES
+        LABELS "hc;run-hc;adoc"
+        WILL_FAIL TRUE
+    )
+endfunction()
+
 add_asciidoc_test(toc)
 add_asciidoc_test(sections)
 add_asciidoc_test(keys)
@@ -27,3 +42,4 @@ add_asciidoc_test(bullets)
 add_asciidoc_test(links)
 add_asciidoc_test(table)
 add_asciidoc_test(stem_matrix)
+add_asciidoc_failure_test(missing_link)

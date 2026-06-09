@@ -26,28 +26,7 @@ The input syntax in `home/doc/help-compiler.md` is part of the contract.
 - Escaped reserved characters such as `\{` prevent hot-link parsing, but
   the escape marker is not retained by the ADoc output layer.
 
-## Slice 1: Return `/adoc` Errors
-
-Goal: make `/adoc` fail when the compiler reports errors.
-
-Files:
-
-- `hc/AsciiDocCompiler.cpp`
-- `hc/tests`
-
-Work:
-
-- Return `g_errors` from `AsciiDocCompiler::process()`.
-- Add a focused test with malformed ADoc input or a missing hot-link
-  target.
-- Keep existing successful ADoc acceptance tests passing.
-
-Done when:
-
-- Bad `/adoc` input exits nonzero.
-- Valid `/adoc` input still exits zero.
-
-## Slice 2: Make ADoc Exclusion Explicit
+## Slice 1: Make ADoc Exclusion Explicit
 
 Goal: make `TOK_XADOC` a first-class skip token in the document walker.
 
@@ -69,7 +48,7 @@ Done when:
 - ADoc excluded spans do not act like zero-width words.
 - Whole paragraph variants render without paragraph merging surprises.
 
-## Slice 3: Preserve Link Text
+## Slice 2: Preserve Link Text
 
 Goal: ADoc output should not drop visible link text when no HTML link can
 be emitted.
@@ -93,7 +72,7 @@ Done when:
 - Special hot-links in "Printing Id Documentation" still show their text.
 - Unsupported links no longer vanish silently.
 
-## Slice 4: Replace ADoc Pagination
+## Slice 3: Replace ADoc Pagination
 
 Goal: remove the misleading online-pagination copy from the ADoc path.
 
@@ -115,7 +94,7 @@ Done when:
 - ADoc link resolution no longer depends on online page layout.
 - No ADoc status message says "Paginating HTML."
 
-## Slice 5: Emit Explicit Anchors
+## Slice 4: Emit Explicit Anchors
 
 Goal: stop guessing Asciidoctor-generated section IDs.
 
@@ -137,7 +116,7 @@ Done when:
 - Cross references do not rely on Asciidoctor's implicit ID algorithm.
 - Titles with punctuation link predictably.
 
-## Slice 6: Isolate Raw ADoc Blocks
+## Slice 5: Isolate Raw ADoc Blocks
 
 Goal: keep raw AsciiDoc block structure away from prose newline logic.
 
@@ -159,7 +138,7 @@ Done when:
 - Raw ADoc blocks bypass prose-only newline compression.
 - Stem matrices do not require markup workarounds.
 
-## Slice 7: Harden Inline Heuristics
+## Slice 6: Harden Inline Heuristics
 
 Goal: reduce false positives in key and bullet conversion.
 
@@ -182,7 +161,7 @@ Done when:
 - Non-key angle-bracket text stays literal.
 - Non-bullet `o ` lines stay literal.
 
-## Slice 8: Add Rendered ADoc Tests
+## Slice 7: Add Rendered ADoc Tests
 
 Goal: catch cases where generated `.adoc` compares clean but renders
 wrong.
@@ -205,7 +184,7 @@ Done when:
 - Syntax-valid but badly rendered ADoc has a focused test path.
 - Machines without Asciidoctor can still run the normal unit suite.
 
-## Slice 9: Document ADoc Authoring Rules
+## Slice 8: Document ADoc Authoring Rules
 
 Goal: make the source authoring contract explicit.
 

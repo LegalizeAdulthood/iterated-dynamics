@@ -55,7 +55,7 @@ int AsciiDocCompiler::process()
         report_errors();
     }
 
-    return 0;
+    return g_errors;
 }
 
 void AsciiDocCompiler::paginate_ascii_doc()
