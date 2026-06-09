@@ -11369,27 +11369,27 @@ Adrian Mariano, who badgered it out of us!  For the real explanation,
 see "Beauty of Fractals", page 62.</p>
 </div>
 <div class="paragraph">
-<p>Let \$p(z)\$ be the function that is repeatedly iterated to generate a
-fractal using the escape-time algorithm.  For example, \$p(z) = z^2+c\$
-in the case of a Julia set.  Then let \$p^k(z)\$ be the result of
-iterating the function \$p\$ for \$k\$ iterations.  We could also
-use the notation \$p_c^k(z)\$ when the function \$p\$ has a parameter
-\$c\$, as it does in our example.  Now hold your breath and get your
-thinking cap on.  Define \$a(c) = inf_(k=1,2,3,...) |p_c^k(0)|\$.  In
-English - \$a(c)\$ is the greatest lower bound of the images of zero of
-as many iterations as you like.  Put another way, \$a(c)\$ is the closest
-to the origin any point in the orbit starting with 0 gets.  Then the
-\$"index"(c)\$ is the value of \$k\$ (the iteration) when that
-closest point was achieved.  Since there may be more than one,
-\$"index"(c)\$ is the least such.  Got it?  Good, because the "Beauty of
-Fractals" explanation of this, is, ahhhh, terse!  Now for the punch
-line.  "Inside=bof60" colors the lake alternating shades according to
-the level sets of a(c).  Each band represents solid areas of the fractal
-where the closest value of the orbit to the origin is the same.
-"Inside=bof61" show domains where index(c) is constant.  That is, areas
-where the iteration when the orbit swooped closest to the origin has the
-same value.  Well, folks, that&#8217;s the best we can do!  Improved
-explanations will be accepted for the next edition!</p>
+<p>Let \$p(z)\$ be the function that is repeatedly iterated to generate
+a fractal using the escape-time algorithm.  For example, \$p(z) =
+z^2+c\$ in the case of a Julia set.  Then let \$p^k(z)\$ be the result
+of iterating the function \$p\$ for \$k\$ iterations.  We could
+also use the notation \$p_c^k(z)\$ when the function \$p\$ has a
+parameter \$c\$, as it does in our example.  Now hold your breath and
+get your thinking cap on.  Define \$a(c) = inf_(k=1,2,3,...)
+|p_c^k(0)|\$.  In English - \$a(c)\$ is the greatest lower bound of
+the images of zero of as many iterations as you like.  Put another way,
+\$a(c)\$ is the closest to the origin any point in the orbit starting
+with 0 gets.  Then the \$"index"(c)\$ is the value of \$k\$ (the
+iteration) when that closest point was achieved.  Since there may be
+more than one, \$"index"(c)\$ is the least such.  Got it?  Good,
+because the "Beauty of Fractals" explanation of this, is, ahhhh, terse!
+Now for the punch line.  "Inside=bof60" colors the lake alternating
+shades according to the level sets of a(c).  Each band represents solid
+areas of the fractal where the closest value of the orbit to the origin
+is the same.  "Inside=bof61" show domains where index(c) is constant.
+That is, areas where the iteration when the orbit swooped closest to the
+origin has the same value.  Well, folks, that&#8217;s the best we can do!
+Improved explanations will be accepted for the next edition!</p>
 </div>
 <div class="paragraph">
 <p>In response to this request for lucidity, Herb Savage offers this
@@ -11411,15 +11411,18 @@ formula \$"color" = (x^2 + y^2) * "maxiter"/2 + 1\$.</p>
 <div class="paragraph">
 <p>"Inside=fmod" colors inside pixels according to the magnitude of the
 last orbit point which is within a set distance from the origin.  Then
-\$"color" = "magnitude" * "colors" / "closeprox"\$. The magnitude
+\$"color" = "magnitude" * "colors" / "closeprox"\$.  The magnitude
 used for the comparison is now based on the same calculation as is used
 for the bailout test.  The value of closeprox can be varied
 interactively.  This feature was contributed by Iain Stirling.</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>"Inside=period" colors pixels according to the length of their eventual cycle.  For example, points that approach a fixed point have stem:["color" = 1].  Points that approach a 2-cycle have stem:["color" = 2].  Points that do not approach a cycle during the iterations performed have stem:["color" = "maxit"].  This option works best with a fairly large number of iterations.</pre>
-</div>
+<div class="paragraph">
+<p>"Inside=period" colors pixels according to the length of their eventual
+cycle.  For example, points that approach a fixed point have
+\$"color" = 1\$.  Points that approach a 2-cycle have \$"color" =
+2\$.  Points that do not approach a cycle during the iterations performed
+have \$"color" = "maxit"\$.  This option works best with a fairly
+large number of iterations.</p>
 </div>
 <div class="paragraph">
 <p>"Inside=atan" colors by determining the angle in degrees the last
@@ -11660,6 +11663,7 @@ with a bug in its \$cos\$ calculation)</p>
 \$tan^(-1)(z) = i (1/2)log((1-i z)/(1+i z))\$
 \$sinh^(-1)(z) = log(z+sqrt(z^2+1))\$
 \$cosh^(-1)(z) = log(z+sqrt(z^2-1))\$
+<br>
 \$tanh^(-1)(z) = (1/2) log((1+z)/(1-z))\$
 \$(x+iy)^2 = (x^2-y^2) + i 2xy\$
 \$sqrt(x+iy) = sqrt(sqrt(x^2+y^2)) (cos(tan^(-1)(y/x)/2) + i sin(tan^(-1)(y/x)/2))\$
@@ -11669,7 +11673,6 @@ with a bug in its \$cos\$ calculation)</p>
 \$"flip"(x+iy) = y + ix\$
 \$"zero"(x+iy) = 0\$
 \$"one"(x+iy)  = 1\$
-<br>
 \$"cabs"(x+iy) = sqrt(x^2 + y^2)\$
 \$"floor"(x+iy) = "floor"(x) + i "floor"(y)\$
 \$"ceil"(x+iy)  = "ceil"(x) + i"ceil"(y)\$
@@ -11732,8 +11735,9 @@ Then</p>
 \${:
 (q_1 q_2,=,(x_1 x_2 - y_1 y_2 - z_1 z_2 - w_1 w_2) +),
 (,,         i(y_1 x_2 + x_1 y_2 - w_1 z_2 + z_1 w_2) +),
-(,,         j(z_1 x_2 + w_1 y_2 + x_1 z_2 - y_1 w_2) +),
-(,,         k(w_1 x_2 + z_1 y_2 - y_1 z_2 + x_1 w_2))
+(,,         j(z_1 x_2 + w_1 y_2 + x_1 z_2 - y_1 w_2) +),\$
+<br>
+\$(,,         k(w_1 x_2 + z_1 y_2 - y_1 z_2 + x_1 w_2))
 :}\$
 </div>
 </div>
@@ -11795,8 +11799,9 @@ Then</p>
 <div class="content">
 \${:
 (1/h,=,      [ x(x^2+y^2+z^2+w^2)-2w(xw-yz)]/"det" +),
-(,,         i[-y(x^2+y^2+z^2+w^2)-2z(xw-yz)]/"det" +),
-(,,         j[-z(x^2+y^2+z^2+w^2)-2y(xw-yz)]/"det" +),
+(,,         i[-y(x^2+y^2+z^2+w^2)-2z(xw-yz)]/"det" +),\$
+<br>
+\$(,,         j[-z(x^2+y^2+z^2+w^2)-2y(xw-yz)]/"det" +),
 (,,         k[ w(x^2+y^2+z^2+w^2)-2x(xw-yz)]/"det")
 :}\$
 </div>
@@ -12939,7 +12944,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-09 14:58:31 UTC
+Last updated 2026-06-09 15:28:11 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
