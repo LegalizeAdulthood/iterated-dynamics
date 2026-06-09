@@ -23,28 +23,7 @@ The proposed direction is sound.  The important gaps are:
 - Tag documentation publication and current-doc promotion should stay
   unchanged.
 
-## Slice 1: Publish Master Documentation
-
-Work:
-
-- Add a `master-docs` job in `build.yml`.
-- Run it only on `push` events to the `master` branch.
-- Make it depend on `html-docs` and `pdf-docs`.
-- Checkout `gh-pages`.
-- Replace the `master` directory with the downloaded docs.
-- Publish `id.html` as `master/index.html`.
-- Publish `id.pdf` as `master/id.pdf`.
-- Publish HTML images under `master/help/images`.
-- Commit and push only when the generated output changes.
-- Add concurrency so two Pages publishes do not race.
-
-Tests:
-
-- Run the job on a `master` push and verify `/master/index.html`.
-- Verify `/master/id.pdf` is present.
-- Verify tag docs and current-doc promotion still behave as before.
-
-## Slice 2: End-To-End Workflow Checks
+## Slice 1: End-To-End Workflow Checks
 
 Work:
 
