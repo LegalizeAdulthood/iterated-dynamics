@@ -1,11 +1,17 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-# Copyright 2018 Richard Thomson
+# Copyright 2018-2026 Richard Thomson
 
 find_program(ASCII_DOCTOR asciidoctor)
 find_program(ASCII_DOC_PDF asciidoctor-pdf)
 
+option(ID_PACKAGE_REQUIRE_HTML_DOC "Require HTML documentation in packages" OFF)
+option(ID_PACKAGE_REQUIRE_PDF_DOC "Require PDF documentation in packages" OFF)
+
 set(ID_HELP_SOURCES help.src help2.src help3.src help4.src help5.src)
+set(ID_HTML_DOC ${CMAKE_CURRENT_BINARY_DIR}/id.html)
+set(ID_PDF_DOC ${CMAKE_CURRENT_BINARY_DIR}/id.pdf)
+set(ID_INSTALL_HTML_DOC OFF)
 
 add_custom_target(native-help
     DEPENDS hc ${CMAKE_CURRENT_BINARY_DIR}/helpdefs.h "${CMAKE_CURRENT_BINARY_DIR}/id.hlp"
@@ -56,33 +62,47 @@ add_custom_command(
 target_folder(ascii-doc "Docs")
 
 if(ASCII_DOCTOR)
-    add_custom_target(html-doc ALL
+    set(ID_HTML_DOC_ALL)
+    if(NOT ID_PACKAGE_REQUIRE_HTML_DOC)
+        set(ID_HTML_DOC_ALL ALL)
+    endif()
+    add_custom_target(html-doc ${ID_HTML_DOC_ALL}
         DEPENDS hc ascii-doc
-        SOURCES ${CMAKE_CURRENT_BINARY_DIR}/id.html ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
+        SOURCES ${ID_HTML_DOC} ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/id.html
+        OUTPUT ${ID_HTML_DOC}
         COMMAND asciidoctor ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     target_folder(html-doc "Docs")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.html DESTINATION .)
+endif()
+if(ASCII_DOCTOR OR ID_PACKAGE_REQUIRE_HTML_DOC)
+    set(ID_INSTALL_HTML_DOC ON)
+    install(FILES ${ID_HTML_DOC} DESTINATION .)
     set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
 elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.html)
+    set(ID_INSTALL_HTML_DOC ON)
     message(STATUS "Installing prebuilt id.html")
     install(FILES ${CMAKE_SOURCE_DIR}/id.html DESTINATION .)
     set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
 endif()
 
 if(ASCII_DOC_PDF)
-    add_custom_target("pdf-doc" ALL
+    set(ID_PDF_DOC_ALL)
+    if(NOT ID_PACKAGE_REQUIRE_PDF_DOC)
+        set(ID_PDF_DOC_ALL ALL)
+    endif()
+    add_custom_target("pdf-doc" ${ID_PDF_DOC_ALL}
         DEPENDS hc "ascii-doc"
-        SOURCES ${CMAKE_CURRENT_BINARY_DIR}/id.pdf ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
+        SOURCES ${ID_PDF_DOC} ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     add_custom_command(
-        OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/id.pdf
+        OUTPUT ${ID_PDF_DOC}
         COMMAND "asciidoctor-pdf" ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     target_folder("pdf-doc" "Docs")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/id.html DESTINATION .)
-    set_property(INSTALL "id.html" PROPERTY CPACK_START_MENU_SHORTCUTS "HTML Documentation")
+endif()
+if(ASCII_DOC_PDF OR ID_PACKAGE_REQUIRE_PDF_DOC)
+    install(FILES ${ID_PDF_DOC} DESTINATION .)
+    set_property(INSTALL "id.pdf" PROPERTY CPACK_START_MENU_SHORTCUTS "PDF Documentation")
 elseif(EXISTS ${CMAKE_SOURCE_DIR}/id.pdf)
     message(STATUS "Installing prebuilt id.pdf")
     install(FILES ${CMAKE_SOURCE_DIR}/id.pdf DESTINATION .)
@@ -202,7 +222,11 @@ set(image_files
 )
 foreach(image ${image_files})
     configure_file(images/${image} help/images/${image} COPYONLY)
-    install(FILES images/${image} DESTINATION help/images)
     configure_file(images/thumbnails/${image} help/images/thumbnails/${image} COPYONLY)
-    install(FILES images/thumbnails/${image} DESTINATION help/images/thumbnails)
+    if(ID_INSTALL_HTML_DOC)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/help/images/${image}
+            DESTINATION help/images)
+        install(FILES ${CMAKE_CURRENT_BINARY_DIR}/help/images/thumbnails/${image}
+            DESTINATION help/images/thumbnails)
+    endif()
 endforeach()

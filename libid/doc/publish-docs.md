@@ -23,28 +23,7 @@ The proposed direction is sound.  The important gaps are:
 - Tag documentation publication and current-doc promotion should stay
   unchanged.
 
-## Slice 1: Require Package Docs In CMake
-
-Work:
-
-- Add CMake options for required package HTML and PDF docs.
-- Default both options to `OFF` for local developer builds.
-- Keep optional local behavior when the options are `OFF`.
-- In required mode, install docs from their normal generated-doc build
-  locations.
-- Do not make package jobs build `html-doc` or `pdf-doc`.
-- Let CPack fail through the install rules when required docs are missing.
-- Fix the PDF install rule to install `id.pdf`.
-
-Tests:
-
-- Configure with both options `OFF` and no AsciiDoctor tools.
-- Configure with both options `ON` and missing doc artifacts; packaging
-  must fail.
-- Configure with both options `ON` and doc artifacts present; packaging
-  must include `id.html` and `id.pdf`.
-
-## Slice 2: Put CI Package Presets In Required Mode
+## Slice 1: Put CI Package Presets In Required Mode
 
 Work:
 
@@ -66,7 +45,7 @@ Tests:
   the doc artifacts.
 - Confirm missing docs fail before artifacts are uploaded.
 
-## Slice 3: Align CMake Documentation Targets
+## Slice 2: Align CMake Documentation Targets
 
 Work:
 
@@ -83,7 +62,7 @@ Tests:
 - Verify `id.html` references copied `help/images` paths.
 - Verify `id.pdf` embeds images and does not require copied images.
 
-## Slice 4: Package Documentation Artifacts For Pages
+## Slice 3: Package Documentation Artifacts For Pages
 
 Work:
 
@@ -99,7 +78,7 @@ Tests:
 - Inspect `html-docs` artifacts and confirm `id.html` plus `help/images`.
 - Inspect `pdf-docs` artifacts and confirm it only contains `id.pdf`.
 
-## Slice 5: Publish Master Documentation
+## Slice 4: Publish Master Documentation
 
 Work:
 
@@ -120,7 +99,7 @@ Tests:
 - Verify `/master/id.pdf` is present.
 - Verify tag docs and current-doc promotion still behave as before.
 
-## Slice 6: End-To-End Workflow Checks
+## Slice 5: End-To-End Workflow Checks
 
 Work:
 
