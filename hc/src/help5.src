@@ -876,6 +876,12 @@ Quaternions are four dimensional generalizations of complex numbers.
 They almost obey the familiar field properties of real numbers, but
 fail the commutative law of multiplication, since x*y is not generally
 equal to y*x.
+~ADoc+,Doc-,Online-,Format-
+Quaternions are four dimensional generalizations of complex numbers.
+They almost obey the familiar field properties of real numbers, but
+fail the commutative law of multiplication, since stem:[x y] is not
+generally equal to stem:[y x].
+~ADoc-,Doc+,Online+,Format+
 
 Quaternion algebra is most compactly described by specifying the rules
 for multiplying the basis vectors 1, i, j, and k.  Quaternions form a
@@ -883,12 +889,7 @@ superset of the complex numbers, and the basis vectors 1 and i are the
 familiar basis vectors for the complex algebra.  Any quaternion q can be
 represented as a linear combination q = x + yi + zj + wk of the basis
 vectors just as any complex number can be written in the form z = a + bi.
-~ADoc+,Doc-,Online-
-Quaternions are four dimensional generalizations of complex numbers.
-They almost obey the familiar field properties of real numbers, but
-fail the commutative law of multiplication, since stem:[x y] is not
-generally equal to stem:[y x].
-
+~ADoc+,Doc-,Online-,Format-
 Quaternion algebra is most compactly described by specifying the rules
 for multiplying the basis vectors 1, i, j, and k.  Quaternions form a
 superset of the complex numbers, and the basis vectors 1 and i are the
@@ -896,8 +897,7 @@ familiar basis vectors for the complex algebra.  Any quaternion stem:[q]
 can be represented as a linear combination stem:[q = x + yi + zj + wk] of
 the basis vectors just as any complex number can be written in the form
 stem:[z = a + bi].
-~Doc+,Online+
-~Format-,ADoc-
+~Doc+,Online+,ADoc-
 
 Multiplication rules for quaternion basis vectors:
 ij =  k jk =  i ki = j
