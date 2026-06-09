@@ -1,0 +1,21 @@
+= Iterated Dynamics
+:stem:
+:toc: left
+:toclevels: 4
+:experimental:
+
+== Stem Matrix
+
+Hypercomplex multiplication formula:
+Let stem:[h_1 = x_1 + y_1 i + z_1 j + w_1 k] and stem:[h_2 = x_2 + y_2 i + z_2 j + w_2 k].
+Then
+
+[stem]
+++++
+{:
+(h_1 h_2,=,(x_1 x_2 - y_1 y_2 - z_1 z_2 + w_1 w_2) +),
+(,,         i(y_1 x_2 + x_1 y_2 - w_1 z_2 - z_1 w_2) +),
+(,,         j(z_1 x_2 - w_1 y_2 + x_1 z_2 - y_1 w_2) +),
+(,,         k(w_1 x_2 + z_1 y_2 + y_1 z_2 + x_1 w_2))
+:}
+++++

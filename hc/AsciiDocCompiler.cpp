@@ -216,6 +216,8 @@ private:
     void print_inside_key(char c);
     void print_char(char c, int n);
     void print_string(const char *s, int n);
+    void update_stem_passthrough_state();
+
     void print_string(const std::string &text)
     {
         print_string(text.c_str(), static_cast<int>(text.size()));
@@ -237,6 +239,9 @@ private:
     bool m_inside_bullet{};
     std::string m_link_text;
     std::string m_link_markup;
+    std::string m_line_text;
+    bool m_after_stem_attribute{};
+    bool m_inside_stem_passthrough{};
 };
 
 bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
@@ -528,10 +533,52 @@ void AsciiDocProcessor::print_inside_key(const char c)
     }
 }
 
+void AsciiDocProcessor::update_stem_passthrough_state()
+{
+    if (m_line_text == "[stem]")
+    {
+        m_after_stem_attribute = true;
+    }
+    else if (m_line_text == "++++")
+    {
+        if (m_after_stem_attribute)
+        {
+            m_inside_stem_passthrough = true;
+        }
+        else if (m_inside_stem_passthrough)
+        {
+            m_inside_stem_passthrough = false;
+        }
+        m_after_stem_attribute = false;
+    }
+    else if (!m_line_text.empty())
+    {
+        m_after_stem_attribute = false;
+    }
+}
+
 void AsciiDocProcessor::print_char(const char c, int n)
 {
     while (n-- > 0)
     {
+        if (c == '\n' || c == '\f')
+        {
+            const bool blank_line = m_line_text.find_first_not_of(' ') == std::string::npos;
+            update_stem_passthrough_state();
+            m_line_text.clear();
+            if (m_inside_stem_passthrough && blank_line)
+            {
+                m_start_of_line = true;
+                m_indented_line = false;
+                m_spaces = 0;
+                continue;
+            }
+        }
+        else
+        {
+            m_line_text += c;
+        }
+
         if (m_inside_key)
         {
             print_inside_key(c);

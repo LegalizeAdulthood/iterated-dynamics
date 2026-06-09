@@ -1,0 +1,34 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~DocContents
+{1.   , 0, "Stem Matrix"}
+;
+;
+;
+~Topic=Stem Matrix
+
+~Format-,ADoc-
+Hypercomplex multiplication formula:
+Let h1 = x1 + y1i + z1j + w1k and h2 = x2 + y2i + z2j + w2k.
+Then  h1h2 =  1(x1x2 - y1y2 - z1z2 + w1w2) +
+              i(y1x2 + x1y2 - w1z2 - z1w2) +
+              j(z1x2 - w1y2 + x1z2 - y1w2) +
+              k(w1x2 + z1y2 + y1z2 + x1w2)
+~ADoc+,Doc-,Online-
+Hypercomplex multiplication formula:
+Let stem:[h_1 = x_1 + y_1 i + z_1 j + w_1 k] and stem:[h_2 = x_2 + y_2 i + z_2 j + w_2 k].
+Then
+
+[stem]
+++++
+\{:
+(h_1 h_2,=,(x_1 x_2 - y_1 y_2 - z_1 z_2 + w_1 w_2) +),
+(,,         i(y_1 x_2 + x_1 y_2 - w_1 z_2 - z_1 w_2) +),
+(,,         j(z_1 x_2 - w_1 y_2 + x_1 z_2 - y_1 w_2) +),
+(,,         k(w_1 x_2 + z_1 y_2 + y_1 z_2 + x_1 w_2))
+:\}
+++++
+~Doc+,Online+,Format+
