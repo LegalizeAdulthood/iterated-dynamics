@@ -848,10 +848,10 @@ sqrt(x+iy) = sqrt(sqrt(x^2+y^2)) (cos(tan^(-1)(y/x)/2) + i sin(tan^(-1)(y/x)/2))
 ~Format+,Online+,Doc+
 ~ADoc-
 Id's definitions of abs(x+iy) and |x+iy| below are non-standard.
-~ADoc+,Doc-,Online-
+~ADoc+,Doc-,Online-,Format-
 Id's definitions of stem:["abs"(x+iy)] and stem:[|x+iy|] below are
 non-standard.
-~Doc+,Online+
+~Doc+,Online+,Format+
 Math texts define both absolute value and modulus of a complex number to
 be the same thing.  They are both equal to cabs(x+iy) as defined above.
 ~Format-,ADoc-
