@@ -16,7 +16,12 @@
 {2.   , 0, "Fractal Types", FF}
 {2.1  , 1, "The Mandelbrot Set"}
 
-{3.   , 0, "\"3D\" Commands"}
+{3.   , 0, "Punctuation: A/B (C)"}
+
+{4.   , 0, Duplicate One, DUP_ONE}
+{5.   , 0, Duplicate Two, DUP_TWO}
+
+{6.   , 0, "\"3D\" Commands"}
 ;
 ; End of DoContents
 ;
@@ -24,6 +29,7 @@
 ;
 ~Topic=New Features in 1.0
 See {Getting Started}.  See {"3D" Commands}.
+See {Punctuation: A/B (C)}.  See {=DUP_TWO second Same-Title}.
 
 Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.
@@ -128,6 +134,63 @@ Lots of text.  Lots of text.  Lots of text.  Lots of text.
 ~Topic=The Mandelbrot Set, Label=HT_MANDEL
 (type=mandel)
 
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+;
+;
+;
+~Topic=Punctuation: A/B (C)
+See {=DUP_ONE first Same Title}.
+
+Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+;
+;
+;
+~Topic=Same Title, Label=DUP_ONE
+See {=DUP_TWO second Same-Title}.
+
+Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.
+;
+;
+;
+~Topic=Same-Title, Label=DUP_TWO
+See {=DUP_ONE first Same Title}.
+
+Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.

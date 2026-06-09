@@ -4,8 +4,11 @@
 :toclevels: 4
 :experimental:
 
+[[id-content-1]]
 == Bullet Demonstration
 
+[[id-content-2]]
+[[id-topic-1]]
 === Bullets
 
 This is a paragraph before.

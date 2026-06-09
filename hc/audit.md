@@ -26,29 +26,7 @@ The input syntax in `home/doc/help-compiler.md` is part of the contract.
 - Escaped reserved characters such as `\{` prevent hot-link parsing, but
   the escape marker is not retained by the ADoc output layer.
 
-## Slice 1: Emit Explicit Anchors
-
-Goal: stop guessing Asciidoctor-generated section IDs.
-
-Files:
-
-- `hc/AsciiDocCompiler.cpp`
-- `hc/HelpCompiler.cpp` if `write_help_links()` should share code
-- `hc/tests/ascii_doc/links.*`
-
-Work:
-
-- Generate stable explicit anchors for contents and topics.
-- Link to those anchors instead of normalized section titles.
-- Share one normalizer for HTML help links if practical.
-- Add punctuation and duplicate-title tests.
-
-Done when:
-
-- Cross references do not rely on Asciidoctor's implicit ID algorithm.
-- Titles with punctuation link predictably.
-
-## Slice 2: Isolate Raw ADoc Blocks
+## Slice 1: Isolate Raw ADoc Blocks
 
 Goal: keep raw AsciiDoc block structure away from prose newline logic.
 
@@ -70,7 +48,7 @@ Done when:
 - Raw ADoc blocks bypass prose-only newline compression.
 - Stem matrices do not require markup workarounds.
 
-## Slice 3: Harden Inline Heuristics
+## Slice 2: Harden Inline Heuristics
 
 Goal: reduce false positives in key and bullet conversion.
 
@@ -93,7 +71,7 @@ Done when:
 - Non-key angle-bracket text stays literal.
 - Non-bullet `o ` lines stay literal.
 
-## Slice 4: Add Rendered ADoc Tests
+## Slice 3: Add Rendered ADoc Tests
 
 Goal: catch cases where generated `.adoc` compares clean but renders
 wrong.
@@ -116,7 +94,7 @@ Done when:
 - Syntax-valid but badly rendered ADoc has a focused test path.
 - Machines without Asciidoctor can still run the normal unit suite.
 
-## Slice 5: Document ADoc Authoring Rules
+## Slice 4: Document ADoc Authoring Rules
 
 Goal: make the source authoring contract explicit.
 

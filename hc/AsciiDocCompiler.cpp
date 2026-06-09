@@ -5,10 +5,7 @@
 #include "HelpSource.h"
 #include "messages.h"
 
-#include <algos/string_algorithms.h>
-
 #include <algorithm>
-#include <cassert>
 #include <cctype>
 #include <filesystem>
 #include <fstream>
@@ -16,7 +13,6 @@
 #include <stdexcept>
 
 using namespace id::help;
-using namespace id::algos;
 
 namespace hc
 {
@@ -67,6 +63,16 @@ static void report_link_not_in_ascii_doc(const Link &link)
     g_src_line = -1;
 }
 
+static std::string make_content_anchor(const int content_num)
+{
+    return "id-content-" + std::to_string(content_num);
+}
+
+static std::string make_topic_anchor(const int topic_num)
+{
+    return "id-topic-" + std::to_string(topic_num);
+}
+
 class AsciiDocProcessor
 {
 public:
@@ -92,6 +98,7 @@ private:
     void print_inside_key(char c);
     void print_char(char c, int n);
     void print_string(const char *s, int n);
+    void print_anchor(const std::string &anchor);
     void update_stem_passthrough_state();
 
     void print_string(const std::string &text)
@@ -105,6 +112,9 @@ private:
     int m_spaces{};
     int m_newlines{};
     bool m_start_of_line{};
+    std::string m_content_anchor;
+    std::string m_section_topic_anchor;
+    std::string m_topic_anchor;
     std::string m_content;
     std::string m_topic;
     bool m_inside_key{};
@@ -131,6 +141,16 @@ bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
         }
         const Content &content{g_src.contents[m_content_num]};
         m_topic_num = -1;
+        m_content_anchor = make_content_anchor(m_content_num);
+        m_section_topic_anchor.clear();
+        if (content.num_topic > 0)
+        {
+            const Topic &topic{g_src.topics[content.topic_num[0]]};
+            if (topic.title == content.name)
+            {
+                m_section_topic_anchor = make_topic_anchor(content.topic_num[0]);
+            }
+        }
         pd->id = content.id.c_str();
         m_content = std::string(content.indent + 2, '=') + ' ' + content.name;
         pd->title = m_content.c_str();
@@ -146,6 +166,7 @@ bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
             return false;
         }
         const Topic &topic{g_src.topics[content.topic_num[m_topic_num]]};
+        m_topic_anchor = make_topic_anchor(content.topic_num[m_topic_num]);
         if (topic.title != content.name)
         {
             m_topic = std::string(content.indent + 3, '=') + ' ' + topic.title;
@@ -200,6 +221,11 @@ bool AsciiDocProcessor::output(const PrintDocCommand cmd, ProcessDocumentInfo *p
 
     case PrintDocCommand::PD_START_SECTION:
         print_char('\n', 1);
+        print_anchor(m_content_anchor);
+        if (!m_section_topic_anchor.empty())
+        {
+            print_anchor(m_section_topic_anchor);
+        }
         print_string(pd->title, std::strlen(pd->title));
         print_char('\n', 2);
         return true;
@@ -208,6 +234,7 @@ bool AsciiDocProcessor::output(const PrintDocCommand cmd, ProcessDocumentInfo *p
         if (!m_topic.empty())
         {
             print_char('\n', 1);
+            print_anchor(m_topic_anchor);
             print_string(m_topic.data(), static_cast<int>(m_topic.length()));
             print_char('\n', 2);
         }
@@ -251,20 +278,15 @@ static std::string to_string(LinkTypes type)
 
 void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInfo *pd)
 {
-    std::string anchor_name;
+    std::string anchor_title;
     switch (link.type)
     {
     case LinkTypes::LT_TOPIC:
-        anchor_name = link.name;
+        anchor_title = g_src.topics[link.topic_num].title;
         break;
     case LinkTypes::LT_LABEL:
-    {
-        const Label *label = g_src.find_label(link.name.c_str());
-        assert(label);
-        const Topic &topic = g_src.topics[label->topic_num];
-        anchor_name = topic.title;
+        anchor_title = g_src.topics[link.topic_num].title;
         break;
-    }
     default:
         throw std::runtime_error("Unknown link type " + to_string(link.type));
     }
@@ -280,20 +302,8 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
     {
         m_link_text.erase(last_non_space + 1);
     }
-    m_link_markup = ascii_to_lower_copy(anchor_name);
-    for (const char c : " .-")
-    {
-        std::replace(m_link_markup.begin(), m_link_markup.end(), c, '_');
-    }
-    constexpr const char *const BAD_CHARS{R"bad_chars(=|/()<>@")bad_chars"};
-    for (auto pos = m_link_markup.find_first_of(BAD_CHARS); pos != std::string::npos;
-         pos = m_link_markup.find_first_of(BAD_CHARS, pos))
-    {
-        m_link_markup.erase(pos, 1);
-    }
-    replace_all(m_link_markup, "__", "_");
-    m_link_markup = "<<_" + m_link_markup;
-    if (m_link_text != anchor_name)
+    m_link_markup = "<<" + make_topic_anchor(link.topic_num);
+    if (m_link_text != anchor_title)
     {
         m_link_markup += "," + m_link_text;
     }
@@ -546,6 +556,12 @@ void AsciiDocProcessor::print_string(const char *s, int n)
             print_char(*s++, 1);
         }
     }
+}
+
+void AsciiDocProcessor::print_anchor(const std::string &anchor)
+{
+    print_string("[[" + anchor + "]]");
+    print_char('\n', 1);
 }
 
 void AsciiDocCompiler::print_ascii_doc()

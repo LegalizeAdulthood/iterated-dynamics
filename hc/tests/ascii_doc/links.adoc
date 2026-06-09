@@ -4,9 +4,12 @@
 :toclevels: 4
 :experimental:
 
+[[id-content-1]]
+[[id-topic-1]]
 == New Features in 1.0
 
-See <<_getting_started>>.  See <<_3d_commands>>.
+See <<id-topic-4>>.  See <<id-topic-10>>.  See <<id-topic-7>>.  See
+<<id-topic-9,second Same-Title>>.
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
@@ -20,6 +23,8 @@ of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.
 
+[[id-content-2]]
+[[id-topic-2]]
 == Introduction
 
 Introduction.  Lots of text.  Lots of text.  Lots of text.  Lots of
@@ -34,6 +39,7 @@ of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.
 
+[[id-topic-3]]
 === Conditions on Use
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
@@ -48,9 +54,11 @@ of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.
 
+[[id-content-3]]
+[[id-topic-4]]
 === Getting Started
 
-See <<_fractal_types>>.
+See <<id-topic-5>>.
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
@@ -64,9 +72,11 @@ of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.
 
+[[id-content-4]]
+[[id-topic-5]]
 == Fractal Types
 
-Fracal types.  See <<_introduction>>.
+Fracal types.  See <<id-topic-2>>.
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
@@ -80,7 +90,7 @@ of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.
 
-* <<_the_mandelbrot_set>>
+* <<id-topic-6>>
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
@@ -94,6 +104,8 @@ of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.
 
+[[id-content-5]]
+[[id-topic-6]]
 === The Mandelbrot Set
 
 (type=mandel)
@@ -110,6 +122,66 @@ of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.
 
+[[id-content-6]]
+[[id-topic-7]]
+== Punctuation: A/B (C)
+
+See <<id-topic-8,first Same Title>>.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.
+
+[[id-content-7]]
+== Duplicate One
+
+[[id-topic-8]]
+=== Same Title
+
+See <<id-topic-9,second Same-Title>>.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.
+
+[[id-content-8]]
+== Duplicate Two
+
+[[id-topic-9]]
+=== Same-Title
+
+See <<id-topic-8,first Same Title>>.
+
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots
+of text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.
+Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
+text.  Lots of text.  Lots of text.
+
+[[id-content-9]]
+[[id-topic-10]]
 == "3D" Commands
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of

@@ -4,6 +4,8 @@
 :toclevels: 4
 :experimental:
 
+[[id-content-1]]
+[[id-topic-1]]
 == Stem Matrix
 
 Hypercomplex multiplication formula:

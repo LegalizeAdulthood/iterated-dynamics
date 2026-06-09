@@ -4,6 +4,8 @@
 :toclevels: 4
 :experimental:
 
+[[id-content-1]]
+[[id-topic-1]]
 == New Features in 1.0
 
 Iterated Dynamics is a fork of the DOS program Fractint.  Fractint has
@@ -12,6 +14,8 @@ for its history.  To avoid being confused with a new release of
 Fractint, the code has been rebranded Iterated Dynamics, or Id for
 short, throughout.
 
+[[id-content-2]]
+[[id-topic-2]]
 == Introduction
 
 Iterated Dynamics, or Id for short, plots and manipulates images of
@@ -19,25 +23,33 @@ Iterated Dynamics, or Id for short, plots and manipulates images of
 dimension.  For now, these sets of points have three important
 properties:
 
+[[id-topic-3]]
 === Conditions on Use
 
 Iterated Dynamics is open source software.  The copyright is retained by
 the primary author, Richard Thomson.  Legacy code is copyright the Stone
 Soup Group.
 
+[[id-content-3]]
 == Iterated Dynamics Commands
 
+[[id-content-4]]
+[[id-topic-4]]
 === Getting Started
 
 To start the program, locate the Id executable in the installation
 directory.  The program displays an initial "credits" screen.
 
+[[id-content-5]]
+[[id-topic-5]]
 == Fractal Types
 
 A list of the fractal types and their mathematics can be found in the
 Summary of Fractal Types.  Some notes about how Id calculates them are
 in "A Little Code".
 
+[[id-content-6]]
+[[id-topic-6]]
 === The Mandelbrot Set
 
 (type=mandel)
@@ -50,8 +62,11 @@ two independent quantities, with various colors used to symbolize levels
 of a third quantity which depends on the first two.  So far, so good:
 basic analytic geometry.
 
+[[id-content-7]]
 == Doodads, Bells, and Whistles
 
+[[id-content-8]]
+[[id-topic-8]]
 === Drawing Method
 
 The "passes option" (kbd:[X] options screen or "passes=" parameter) selects
@@ -59,8 +74,12 @@ one of the single-pass, dual-pass, triple-pass, solid-guessing
 (default), solid-guessing after pass n, boundary tracing, tesseral,
 synchronous orbits, or orbits modes.
 
+[[id-content-9]]
+[[id-topic-9]]
 == "3D" Images
 
+[[id-content-10]]
+[[id-topic-10]]
 === 3D Mode Selection
 
 After hitting kbd:[3] and getting past the filename prompt and video mode
@@ -69,8 +88,11 @@ wish to change the default for any of the following parameters, use the
 arrow keys to move through the menu.  When you're satisfied press
 kbd:[Enter].
 
+[[id-content-11]]
 == Command Line Parameters, Parameter Files, Batch Mode
 
+[[id-content-12]]
+[[id-topic-11]]
 === Using the Command Line
 
 You can specify parameters when you start Id by using a command like:
@@ -81,10 +103,14 @@ The individual parameters are separated by one or more spaces (an
 parameter itself may not include spaces).  Upper or lower case may be
 used, and parameters can be in any order.
 
+[[id-content-13]]
 == Hardware Support
 
+[[id-content-14]]
 === Notes on Video Modes, "Standard" and Otherwise
 
+[[id-content-15]]
+[[id-topic-12]]
 === "Disk-Video" Modes
 
 These "video modes" do not involve a graphic display at all.  They use
@@ -95,6 +121,8 @@ e.g. for subsequent printing.  They're also useful for background
 processing - create an image in a disk-video mode, save it, then restore
 it in a real video mode.
 
+[[id-content-16]]
+[[id-topic-13]]
 == Common Problems
 
 Here are some common problems and their possible solutions:
@@ -105,10 +133,15 @@ driver to interact with the screen and therefore can't display any sort
 of error message.  Try starting Id from the directory containing this
 file.
 
+[[id-content-17]]
+[[id-topic-14]]
 == Fractals and the PC
 
+[[id-content-18]]
 === A Little History
 
+[[id-content-19]]
+[[id-topic-15]]
 ==== Before Mandelbrot
 
 Like new forms of life, new branches of mathematics and science don't
@@ -119,8 +152,10 @@ irony, the "abstract" mathematics descended from that work has now
 turned out to be more appropriate than any other for describing many
 natural shapes and processes.
 
+[[id-content-20]]
 == Mathematics of the Fractal Types
 
+[[id-topic-16]]
 === Summary of Fractal Types
 
 SUMMARY OF FRACTAL TYPES
@@ -139,8 +174,10 @@ ants wrap the screen or stop at the edge.  The 6th parameter is a random
 seed.  You can slow down the ants to see them better using the kbd:[P]
 screen Orbit Delay.
 
+[[id-content-21]]
 == Stone Soup With Pixels: The Authors
 
+[[id-topic-17]]
 === The Stone Soup Story
 
 THE STONE SOUP STORY

@@ -4,8 +4,11 @@
 :toclevels: 4
 :experimental:
 
+[[id-content-1]]
 == Table Demonstration
 
+[[id-content-2]]
+[[id-topic-1]]
 === Burning Ship
 
 (type=burning-ship)
@@ -16,6 +19,8 @@ This fractal is a derivative of the classic Mandelbrot fractal with a
 twist.  Some parts use absolute values in the equations and this gives
 an amazing angular quality to the fractal.
 
+[[id-content-3]]
+[[id-topic-2]]
 === Cellular Automata
 
 (type=cellular)
