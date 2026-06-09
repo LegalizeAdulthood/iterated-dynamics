@@ -11368,10 +11368,28 @@ z(n+1) = z(n) +(2*x(n)*dt*x(n)^2*y(n) - 2*x(n)*dt*y(n)^3 - c*dt*z(n))</pre>
 Adrian Mariano, who badgered it out of us!  For the real explanation,
 see "Beauty of Fractals", page 62.</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>Let stem:[p(z)] be the function that is repeatedly iterated to generate a fractal using the escape-time algorithm.  For example, stem:[p(z) = z^2+c] in the case of a Julia set.  Then let stem:[p^k(z)] be the result of iterating the function stem:[p] for stem:[k] iterations.  We could also use the notation stem:[p_c^k(z)] when the function stem:[p] has a parameter stem:[c], as it does in our example.  Now hold your breath and get your thinking cap on.  Define stem:[a(c) = inf_(k=1,2,3,...) |p_c^k(0)|].  In English - stem:[a(c)] is the greatest lower bound of the images of zero of as many iterations as you like.  Put another way, stem:[a(c)] is the closest to the origin any point in the orbit starting with 0 gets.  Then the stem:["index"(c)] is the value of stem:[k] (the iteration) when that closest point was achieved.  Since there may be more than one, stem:["index"(c)] is the least such.  Got it?  Good, because the "Beauty of Fractals" explanation of this, is, ahhhh, terse!  Now for the punch line.  "Inside=bof60" colors the lake alternating shades according to the level sets of a(c).  Each band represents solid areas of the fractal where the closest value of the orbit to the origin is the same.  "Inside=bof61" show domains where index(c) is constant.  That is, areas where the iteration when the orbit swooped closest to the origin has the same value.  Well, folks, that's the best we can do!  Improved explanations will be accepted for the next edition!</pre>
-</div>
+<div class="paragraph">
+<p>Let \$p(z)\$ be the function that is repeatedly iterated to generate a
+fractal using the escape-time algorithm.  For example, \$p(z) = z^2+c\$
+in the case of a Julia set.  Then let \$p^k(z)\$ be the result of
+iterating the function \$p\$ for \$k\$ iterations.  We could also
+use the notation \$p_c^k(z)\$ when the function \$p\$ has a parameter
+\$c\$, as it does in our example.  Now hold your breath and get your
+thinking cap on.  Define \$a(c) = inf_(k=1,2,3,...) |p_c^k(0)|\$.  In
+English - \$a(c)\$ is the greatest lower bound of the images of zero of
+as many iterations as you like.  Put another way, \$a(c)\$ is the closest
+to the origin any point in the orbit starting with 0 gets.  Then the
+\$"index"(c)\$ is the value of \$k\$ (the iteration) when that
+closest point was achieved.  Since there may be more than one,
+\$"index"(c)\$ is the least such.  Got it?  Good, because the "Beauty of
+Fractals" explanation of this, is, ahhhh, terse!  Now for the punch
+line.  "Inside=bof60" colors the lake alternating shades according to
+the level sets of a(c).  Each band represents solid areas of the fractal
+where the closest value of the orbit to the origin is the same.
+"Inside=bof61" show domains where index(c) is constant.  That is, areas
+where the iteration when the orbit swooped closest to the origin has the
+same value.  Well, folks, that&#8217;s the best we can do!  Improved
+explanations will be accepted for the next edition!</p>
 </div>
 <div class="paragraph">
 <p>In response to this request for lucidity, Herb Savage offers this
@@ -11606,7 +11624,6 @@ for multiplication, but leave it out when clarity is not lost.  We use
 \$(u+iv) (x+iy) = (ux - vy) + i(vx + uy)\$
 \$(u+iv) / (x+iy) = ((ux + vy) + i(vx - uy)) / (x^2 + y^2)\$
 \$e^(x+iy) = e^x (cos(y) + i sin(y))\$
-<br>
 \$log(x+iy) = (1/2)log(x^2 + y^2) + i(tan^(-1)(y/x) + 2k pi)\$
 \$"for " k = 0, -1, 1, -2, 2, ...\$
 </div>
@@ -11652,6 +11669,7 @@ with a bug in its \$cos\$ calculation)</p>
 \$"flip"(x+iy) = y + ix\$
 \$"zero"(x+iy) = 0\$
 \$"one"(x+iy)  = 1\$
+<br>
 \$"cabs"(x+iy) = sqrt(x^2 + y^2)\$
 \$"floor"(x+iy) = "floor"(x) + i "floor"(y)\$
 \$"ceil"(x+iy)  = "ceil"(x) + i"ceil"(y)\$
@@ -11741,9 +11759,8 @@ vectors 1, i, j, and k, but with subtly different rules.</p>
 \${:
 (ij = k,  jk = -i, ki = -j),
 (ji = k,  kj = -i, ik = -j),
-(ii = -1, jj = -1, kk = 1),\$
-<br>
-\$(ijk = 1,,)
+(ii = -1, jj = -1, kk = 1),
+(ijk = 1,,)
 :}\$
 </div>
 </div>
@@ -12922,7 +12939,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-09 14:17:52 UTC
+Last updated 2026-06-09 14:58:31 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
