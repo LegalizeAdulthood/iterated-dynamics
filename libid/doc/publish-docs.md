@@ -23,23 +23,7 @@ The proposed direction is sound.  The important gaps are:
 - Tag documentation publication and current-doc promotion should stay
   unchanged.
 
-## Slice 1: Package Documentation Artifacts For Pages
-
-Work:
-
-- Change the `html-docs` artifact to include `id.html` and `help/images`.
-- Leave the `pdf-docs` artifact as only `id.pdf`.
-- Keep artifact paths shaped so publishing can copy them directly into a
-  Pages directory.
-- Preserve the existing doc jobs as the source for GitHub Pages
-  publication.
-
-Tests:
-
-- Inspect `html-docs` artifacts and confirm `id.html` plus `help/images`.
-- Inspect `pdf-docs` artifacts and confirm it only contains `id.pdf`.
-
-## Slice 2: Publish Master Documentation
+## Slice 1: Publish Master Documentation
 
 Work:
 
@@ -60,7 +44,7 @@ Tests:
 - Verify `/master/id.pdf` is present.
 - Verify tag docs and current-doc promotion still behave as before.
 
-## Slice 3: End-To-End Workflow Checks
+## Slice 2: End-To-End Workflow Checks
 
 Work:
 
