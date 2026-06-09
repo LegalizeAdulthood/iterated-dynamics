@@ -23,24 +23,7 @@ The proposed direction is sound.  The important gaps are:
 - Tag documentation publication and current-doc promotion should stay
   unchanged.
 
-## Slice 1: Align CMake Documentation Targets
-
-Work:
-
-- Make the CMake `pdf-doc` command use the same `asciidoctor-pdf` options
-  currently used by CI.
-- Ensure CMake-generated HTML has access to `help/images`.
-- Keep `ascii-doc`, `html-doc`, and `pdf-doc` target dependencies explicit.
-- Keep local developer builds free of required PDF or HTML tools unless the
-  package-doc options are enabled.
-
-Tests:
-
-- Build `ascii-doc`, `html-doc`, and `pdf-doc` targets directly.
-- Verify `id.html` references copied `help/images` paths.
-- Verify `id.pdf` embeds images and does not require copied images.
-
-## Slice 2: Package Documentation Artifacts For Pages
+## Slice 1: Package Documentation Artifacts For Pages
 
 Work:
 
@@ -56,7 +39,7 @@ Tests:
 - Inspect `html-docs` artifacts and confirm `id.html` plus `help/images`.
 - Inspect `pdf-docs` artifacts and confirm it only contains `id.pdf`.
 
-## Slice 3: Publish Master Documentation
+## Slice 2: Publish Master Documentation
 
 Work:
 
@@ -77,7 +60,7 @@ Tests:
 - Verify `/master/id.pdf` is present.
 - Verify tag docs and current-doc promotion still behave as before.
 
-## Slice 4: End-To-End Workflow Checks
+## Slice 3: End-To-End Workflow Checks
 
 Work:
 

@@ -71,7 +71,7 @@ if(ASCII_DOCTOR)
         SOURCES ${ID_HTML_DOC} ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     add_custom_command(
         OUTPUT ${ID_HTML_DOC}
-        COMMAND asciidoctor ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
+        COMMAND ${ASCII_DOCTOR} ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     target_folder(html-doc "Docs")
 endif()
@@ -96,7 +96,12 @@ if(ASCII_DOC_PDF)
         SOURCES ${ID_PDF_DOC} ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     add_custom_command(
         OUTPUT ${ID_PDF_DOC}
-        COMMAND "asciidoctor-pdf" ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
+        COMMAND ${ASCII_DOC_PDF}
+            --require asciidoctor-mathematical
+            --attribute stem=asciimath
+            --attribute mathematical-format=svg
+            --attribute allow-uri-read
+            ${CMAKE_CURRENT_BINARY_DIR}/id.adoc
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/id.adoc)
     target_folder("pdf-doc" "Docs")
 endif()
