@@ -454,7 +454,16 @@ way, a(c) is the closest to the origin any point in the orbit starting
 with 0 gets.  Then the index (c) is the value of k (the iteration) when
 that closest point was achieved.  Since there may be more than one,
 index(c) is the least such.  Got it?  Good, because the "Beauty of
-~Format-,ADoc+,Doc-,Online-
+Fractals" explanation of this, is, ahhhh, terse!  Now for the punch
+line.  "Inside=bof60" colors the lake alternating shades according to the
+level sets of a(c).  Each band represents solid areas of the fractal where
+the closest value of the orbit to the origin is the same.  "Inside=bof61"
+show domains where index(c) is constant.  That is, areas where the
+iteration when the orbit swooped closest to the origin has the same value.
+Well, folks, that's the best we can do!  Improved explanations will be
+accepted for the next edition!
+
+~ADoc+,Doc-,Online-
 Let stem:[p(z)] be the function that is repeatedly iterated to generate a
 fractal using the escape-time algorithm.  For example, stem:[p(z) = z^2+c]
 in the case of a Julia set.  Then let stem:[p^k(z)] be the result of
@@ -468,7 +477,6 @@ to the origin any point in the orbit starting with 0 gets.  Then the
 stem:["index"(c)] is the value of stem:[k] (the iteration) when that
 closest point was achieved.  Since there may be more than one,
 stem:["index"(c)] is the least such.  Got it?  Good, because the "Beauty of
-~Doc+,Online+,Format+
 Fractals" explanation of this, is, ahhhh, terse!  Now for the punch
 line.  "Inside=bof60" colors the lake alternating shades according to the
 level sets of a(c).  Each band represents solid areas of the fractal where
@@ -477,6 +485,7 @@ show domains where index(c) is constant.  That is, areas where the
 iteration when the orbit swooped closest to the origin has the same value.
 Well, folks, that's the best we can do!  Improved explanations will be
 accepted for the next edition!
+~Doc+,Online+
 
 In response to this request for lucidity, Herb Savage offers this explanation
 the bof60 and bof61 options:
@@ -494,6 +503,11 @@ color = (x^2 + y^2) * maxiter/2 + 1.
 "Inside=fmod" colors inside pixels according to the magnitude of the last
 orbit point which is within a set distance from the origin.  Then:\
   color = magnitude * colors / closeprox\
+
+The magnitude used for the comparison is now based on the same calculation as
+is used for the bailout test.  The value of closeprox can be varied
+interactively.  This feature was contributed by Iain Stirling.
+
 ~ADoc+,Doc-,Online-
 "Inside=zmag" is similar.  This option colors inside pixels according to
 the magnitude of the orbit point when maxiter was reached, using the formula
@@ -501,11 +515,11 @@ stem:["color" = (x^2 + y^2) * "maxiter"/2 + 1].
 
 "Inside=fmod" colors inside pixels according to the magnitude of the last
 orbit point which is within a set distance from the origin.  Then
-stem:["color" = "magnitude" * "colors" / "closeprox"].
-~Doc+,Online+
-The magnitude used for the comparison is now based on the same calculation as
+stem:["color" = "magnitude" * "colors" / "closeprox"].  The magnitude
+used for the comparison is now based on the same calculation as
 is used for the bailout test.  The value of closeprox can be varied
 interactively.  This feature was contributed by Iain Stirling.
+~Doc+,Online+
 
 ~ADoc-
 "Inside=period" colors pixels according to the length of their eventual cycle.
@@ -513,6 +527,7 @@ For example, points that approach a fixed point have color=1.  Points that
 approach a 2-cycle have color=2.  Points that do not approach a cycle during
 the iterations performed have color=maxit.  This option works best with a
 fairly large number of iterations.
+
 ~ADoc+,Doc-,Online-
 "Inside=period" colors pixels according to the length of their eventual cycle.
 For example, points that approach a fixed point have stem:["color" = 1].
