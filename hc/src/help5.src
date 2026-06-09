@@ -470,8 +470,8 @@ in the case of a Julia set.  Then let stem:[p^k(z)] be the result of
 iterating the function stem:[p] for stem:[k] iterations.  We could also
 use the notation stem:[p_c^k(z)] when the function stem:[p] has a parameter
 stem:[c], as it does in our example.  Now hold your breath and get your
-thinking cap on.  Define stem:[a(c) = inf_(k=1,2,3,...) |p_c^k(0)|].  In
-English - stem:[a(c)] is the greatest lower bound of the images of zero of
+thinking cap on.  Define stem:[a(c) = underset(k=1,2,3,...)("inf")|p_c^k(0)|].
+In English - stem:[a(c)] is the greatest lower bound of the images of zero of
 as many iterations as you like.  Put another way, stem:[a(c)] is the closest
 to the origin any point in the orbit starting with 0 gets.  Then the
 stem:["index"(c)] is the value of stem:[k] (the iteration) when that
