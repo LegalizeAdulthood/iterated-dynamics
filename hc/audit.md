@@ -26,29 +26,7 @@ The input syntax in `home/doc/help-compiler.md` is part of the contract.
 - Escaped reserved characters such as `\{` prevent hot-link parsing, but
   the escape marker is not retained by the ADoc output layer.
 
-## Slice 1: Replace ADoc Pagination
-
-Goal: remove the misleading online-pagination copy from the ADoc path.
-
-Files:
-
-- `hc/AsciiDocCompiler.cpp`
-- possibly `hc/HelpCompiler.cpp` if shared link helpers move
-
-Work:
-
-- Replace `paginate_ascii_doc()` with an ADoc link reachability pass.
-- Stop using `TokenMode::ONLINE` for ADoc bookkeeping.
-- Rename messages so they describe ADoc generation, not HTML pagination.
-- Keep document membership as an explicit Boolean if that is all ADoc
-  needs.
-
-Done when:
-
-- ADoc link resolution no longer depends on online page layout.
-- No ADoc status message says "Paginating HTML."
-
-## Slice 2: Emit Explicit Anchors
+## Slice 1: Emit Explicit Anchors
 
 Goal: stop guessing Asciidoctor-generated section IDs.
 
@@ -70,7 +48,7 @@ Done when:
 - Cross references do not rely on Asciidoctor's implicit ID algorithm.
 - Titles with punctuation link predictably.
 
-## Slice 3: Isolate Raw ADoc Blocks
+## Slice 2: Isolate Raw ADoc Blocks
 
 Goal: keep raw AsciiDoc block structure away from prose newline logic.
 
@@ -92,7 +70,7 @@ Done when:
 - Raw ADoc blocks bypass prose-only newline compression.
 - Stem matrices do not require markup workarounds.
 
-## Slice 4: Harden Inline Heuristics
+## Slice 3: Harden Inline Heuristics
 
 Goal: reduce false positives in key and bullet conversion.
 
@@ -115,7 +93,7 @@ Done when:
 - Non-key angle-bracket text stays literal.
 - Non-bullet `o ` lines stay literal.
 
-## Slice 5: Add Rendered ADoc Tests
+## Slice 4: Add Rendered ADoc Tests
 
 Goal: catch cases where generated `.adoc` compares clean but renders
 wrong.
@@ -138,7 +116,7 @@ Done when:
 - Syntax-valid but badly rendered ADoc has a focused test path.
 - Machines without Asciidoctor can still run the normal unit suite.
 
-## Slice 6: Document ADoc Authoring Rules
+## Slice 5: Document ADoc Authoring Rules
 
 Goal: make the source authoring contract explicit.
 

@@ -34,10 +34,6 @@ int AsciiDocCompiler::process()
 
     make_hot_links();
 
-    if (g_errors == 0)
-    {
-        paginate_ascii_doc();
-    }
     if (!g_errors)
     {
         calc_offsets();
@@ -58,138 +54,17 @@ int AsciiDocCompiler::process()
     return g_errors;
 }
 
-void AsciiDocCompiler::paginate_ascii_doc()
+static bool is_link_in_ascii_doc(const Link &link)
 {
-    if (g_src.contents.empty())
-    {
-        return;
-    }
+    return link.doc_page != -1;
+}
 
-    int size;
-    int width;
-
-    MSG_MSG("Paginating HTML.");
-
-    for (Topic &t : g_src.topics)
-    {
-        if (bit_set(t.flags, TopicFlags::DATA))
-        {
-            continue;    // don't paginate data topics
-        }
-
-        const char *text = t.get_topic_text();
-        const char *curr = text;
-        unsigned int len = t.text_len;
-
-        const char *start = curr;
-        bool skip_blanks = false;
-        int line_num = 0;
-        int num_links = 0;
-        int col = 0;
-
-        while (len > 0)
-        {
-            switch (TokenType tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width); tok)
-            {
-            case TokenType::TOK_PARA:
-            {
-                ++curr;
-                const int indent = *curr++;
-                const int margin = *curr++;
-                len -= 3;
-                col = indent;
-                while (true)
-                {
-                    tok = find_token_length(TokenMode::ONLINE, curr, len, &size, &width);
-
-                    if (tok == TokenType::TOK_DONE || tok == TokenType::TOK_NL || tok == TokenType::TOK_FF)
-                    {
-                        break;
-                    }
-
-                    if (tok == TokenType::TOK_PARA)
-                    {
-                        col = 0;   // fake a nl
-                        ++ line_num;
-                        break;
-                    }
-
-                    if (tok == TokenType::TOK_XONLINE || tok == TokenType::TOK_XDOC)
-                    {
-                        curr += size;
-                        len -= size;
-                        continue;
-                    }
-
-                    // now tok is SPACE or LINK or WORD
-                    if (col+width > SCREEN_WIDTH)
-                    {
-                        // go to next line...
-                        if (tok == TokenType::TOK_SPACE)
-                        {
-                            width = 0;    // skip spaces at start of a line
-                        }
-
-                        col = margin;
-                    }
-
-                    col += width;
-                    curr += size;
-                    len -= size;
-                }
-
-                skip_blanks = false;
-                size = 0;
-                width = 0;
-                break;
-            }
-
-            case TokenType::TOK_NL:
-                if (skip_blanks && col == 0)
-                {
-                    start += size;
-                    break;
-                }
-                ++line_num;
-                col = 0;
-                break;
-
-            case TokenType::TOK_FF:
-                col = 0;
-                if (skip_blanks)
-                {
-                    start += size;
-                    break;
-                }
-                start = curr + size;
-                num_links = 0;
-                break;
-
-            case TokenType::TOK_DONE:
-            case TokenType::TOK_XONLINE:   // skip
-            case TokenType::TOK_XDOC:      // ignore
-            case TokenType::TOK_CENTER:    // ignore
-                break;
-
-            case TokenType::TOK_LINK:
-                ++num_links;
-
-                // fall-through
-
-            default:    // SPACE, LINK, WORD
-                skip_blanks = false;
-                break;
-            } // switch
-
-            curr += size;
-            len  -= size;
-            col  += width;
-        } // while
-
-        m_max_pages = std::max(m_max_pages, t.num_page);
-
-        t.release_topic_text(false);
-    } // for
+static void report_link_not_in_ascii_doc(const Link &link)
+{
+    g_current_src_filename = link.src_file;
+    g_src_line = link.src_line;
+    MSG_ERROR(0, "Hot-link destination is not in the AsciiDoc output.");
+    g_src_line = -1;
 }
 
 class AsciiDocProcessor
@@ -199,6 +74,7 @@ public:
         m_str(str)
     {
     }
+
     AsciiDocProcessor(const AsciiDocProcessor &rhs) = delete;
     AsciiDocProcessor(AsciiDocProcessor &&rhs) = delete;
     ~AsciiDocProcessor() = default;
@@ -286,17 +162,13 @@ bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
     case PrintDocCommand::PD_GET_LINK_PAGE:
     {
         const Link &link{g_src.all_links[get_int(pd->s)]};
-        if (link.doc_page == -1)
+        if (!is_link_in_ascii_doc(link))
         {
-            g_current_src_filename = link.src_file;
-            g_src_line = link.src_line;
-            MSG_ERROR(0, "Hot-link destination is not in the AsciiDoc output.");
-            g_src_line = -1;
+            report_link_not_in_ascii_doc(link);
             return false;
         }
 
         set_link_text(link, pd);
-        pd->i = link.doc_page;
         pd->link_page.clear();
         return true;
     }
