@@ -454,7 +454,7 @@ way, a(c) is the closest to the origin any point in the orbit starting
 with 0 gets.  Then the index (c) is the value of k (the iteration) when
 that closest point was achieved.  Since there may be more than one,
 index(c) is the least such.  Got it?  Good, because the "Beauty of
-~ADoc+,Doc-,Online-
+~Format-,ADoc+,Doc-,Online-
 Let stem:[p(z)] be the function that is repeatedly iterated to generate a
 fractal using the escape-time algorithm.  For example, stem:[p(z) = z^2+c]
 in the case of a Julia set.  Then let stem:[p^k(z)] be the result of
@@ -468,7 +468,7 @@ to the origin any point in the orbit starting with 0 gets.  Then the
 stem:["index"(c)] is the value of stem:[k] (the iteration) when that
 closest point was achieved.  Since there may be more than one,
 stem:["index"(c)] is the least such.  Got it?  Good, because the "Beauty of
-~Doc+,Online+
+~Doc+,Online+,Format+
 Fractals" explanation of this, is, ahhhh, terse!  Now for the punch
 line.  "Inside=bof60" colors the lake alternating shades according to the
 level sets of a(c).  Each band represents solid areas of the fractal where
