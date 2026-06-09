@@ -1555,7 +1555,7 @@ magnification factor (the parameter), the number is truncated to an integer
 and mapped to a color via color = value modulo (number of colors).  That is,
 ~ADoc+,Doc-,Online-
 and mapped to a color via
-stem:["color" = "value" mod "number of colors"].  That is,
+stem:["color" = "value" mod "number-of-colors"].  That is,
 ~Doc+,Online+
 the integer is divided by the number of colors, and the remainder is the
 color index value used.  The resulting image is not a fractal because all
