@@ -3021,9 +3021,8 @@ numbers: a b c d e f g h i j k l p, defining:</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\${: ["matrix","vector","prob"],\$
-<br>
-\$[[[a,b,c],[d,e,f],[g,h,i]],[[j],[k],[l]],p]
+\${: ["matrix","vector","prob"],
+[[[a,b,c],[d,e,f],[g,h,i]],[[j],[k],[l]],p]
 :}\$
 </div>
 </div>
@@ -5215,9 +5214,8 @@ iterations.</p>
 <div class="content">
 \${:
 (x_(n+1) = y_n - sin(x_n)),
-(y_(n+1) = a - x_n)\$
-<br>
-\$:}\$
+(y_(n+1) = a - x_n)
+:}\$
 </div>
 </div>
 <div class="paragraph">
@@ -11664,7 +11662,6 @@ with a bug in its \$cos\$ calculation)</p>
 \$tan^(-1)(z) = i (1/2)log((1-i z)/(1+i z))\$
 \$sinh^(-1)(z) = log(z+sqrt(z^2+1))\$
 \$cosh^(-1)(z) = log(z+sqrt(z^2-1))\$
-<br>
 \$tanh^(-1)(z) = (1/2) log((1+z)/(1-z))\$
 \$(x+iy)^2 = (x^2-y^2) + i 2xy\$
 \$sqrt(x+iy) = sqrt(sqrt(x^2+y^2)) (cos(tan^(-1)(y/x)/2) + i sin(tan^(-1)(y/x)/2))\$
@@ -11783,9 +11780,9 @@ Then</p>
 </div>
 <div class="stemblock">
 <div class="content">
-\${: (h_1 h_2,=,(x_1 x_2 - y_1 y_2 - z_1 z_2 + w_1 w_2) +),\$
-<br>
-\$(,,         i(y_1 x_2 + x_1 y_2 - w_1 z_2 - z_1 w_2) +),
+\${:
+(h_1 h_2,=,(x_1 x_2 - y_1 y_2 - z_1 z_2 + w_1 w_2) +),
+(,,         i(y_1 x_2 + x_1 y_2 - w_1 z_2 - z_1 w_2) +),
 (,,         j(z_1 x_2 - w_1 y_2 + x_1 z_2 - y_1 w_2) +),
 (,,         k(w_1 x_2 + z_1 y_2 + y_1 z_2 + x_1 w_2))
 :}\$
@@ -12950,7 +12947,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-09 19:19:52 UTC
+Last updated 2026-06-09 19:49:08 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
