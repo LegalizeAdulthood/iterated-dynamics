@@ -1,0 +1,17 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~DocContents
+{1.   , 0, "Online Special Link"}
+;
+;
+;
+~Topic=Online Special Link
+
+~ADoc-
+Choose {=-100 Generate id.txt now}.
+
+~ADoc+
+Visible AsciiDoc text.

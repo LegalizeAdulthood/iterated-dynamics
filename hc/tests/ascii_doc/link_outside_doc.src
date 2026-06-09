@@ -1,0 +1,19 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~DocContents
+{1.   , 0, "Visible Link"}
+;
+;
+;
+~Topic=Visible Link
+
+See {Hidden Target}.
+;
+;
+;
+~Topic=Hidden Target
+
+This target is not in DocContents.

@@ -226,7 +226,6 @@ private:
     std::ostream &m_str;
     int m_content_num{};
     int m_topic_num{};
-    bool m_link_dest_warn{};
     int m_spaces{};
     int m_newlines{};
     bool m_start_of_line{};
@@ -289,13 +288,10 @@ bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
         const Link &link{g_src.all_links[get_int(pd->s)]};
         if (link.doc_page == -1)
         {
-            if (m_link_dest_warn)
-            {
-                g_current_src_filename = link.src_file;
-                g_src_line = link.src_line;
-                MSG_WARN(0, "Hot-link destination is not in the document.");
-                g_src_line = -1;
-            }
+            g_current_src_filename = link.src_file;
+            g_src_line = link.src_line;
+            MSG_ERROR(0, "Hot-link destination is not in the AsciiDoc output.");
+            g_src_line = -1;
             return false;
         }
 
