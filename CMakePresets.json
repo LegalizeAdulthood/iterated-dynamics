@@ -76,6 +76,15 @@
       }
     },
     {
+      "name": "require-package-docs",
+      "hidden": true,
+      "description": "Require documentation files when packaging",
+      "cacheVariables": {
+        "ID_PACKAGE_REQUIRE_HTML_DOC": true,
+        "ID_PACKAGE_REQUIRE_PDF_DOC": true
+      }
+    },
+    {
       "name": "default",
       "displayName": "Configure with default settings",
       "inherits": [ "sibling-preset-build-dir", "project-name-preset", "vcpkg" ]
@@ -108,22 +117,22 @@
     {
       "name": "ci-debug",
       "displayName": "CI Configure with Debug settings",
-      "inherits": [ "ci-preset-build-dir", "default", "debug-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "default", "debug-config", "run-slow-tests", "require-package-docs" ]
     },
     {
       "name": "ci-release",
       "displayName": "CI Configure with Release settings",
-      "inherits": [ "ci-preset-build-dir", "default", "release-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "default", "release-config", "run-slow-tests", "require-package-docs" ]
     },
     {
       "name": "ci-wx-debug",
       "displayName": "CI Configure with wxWidgets Debug settings",
-      "inherits": [ "ci-preset-build-dir", "use-wx", "debug-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "use-wx", "debug-config", "run-slow-tests", "require-package-docs" ]
     },
     {
       "name": "ci-wx-release",
       "displayName": "CI Configure with wxWidgets Release settings",
-      "inherits": [ "ci-preset-build-dir", "use-wx", "release-config", "run-slow-tests" ]
+      "inherits": [ "ci-preset-build-dir", "use-wx", "release-config", "run-slow-tests", "require-package-docs" ]
     },
     {
       "name": "feature-hc",

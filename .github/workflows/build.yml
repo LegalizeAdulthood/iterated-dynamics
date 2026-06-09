@@ -234,13 +234,13 @@ jobs:
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: html-docs
-        path: ${{github.workspace}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src
 
     - name: Get prebuilt PDF documentation
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: pdf-docs
-        path: ${{github.workspace}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src
 
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
@@ -280,7 +280,10 @@ jobs:
         cmake-version: '3.31'
 
     - name: Verify prebuilt documentation
-      run: cmake -E sha256sum id.html id.pdf
+      run: >
+        cmake -E sha256sum
+        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.html
+        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.pdf
 
     - name: Run Workflow Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
@@ -428,13 +431,13 @@ jobs:
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: html-docs
-        path: ${{github.workspace}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src
 
     - name: Get prebuilt PDF documentation
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: pdf-docs
-        path: ${{github.workspace}}
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src
 
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
@@ -474,7 +477,10 @@ jobs:
         cmake-version: '3.31'
 
     - name: Verify prebuilt documentation
-      run: cmake -E sha256sum id.html id.pdf
+      run: >
+        cmake -E sha256sum
+        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.html
+        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.pdf
 
     - name: Run Workflow
       env: 

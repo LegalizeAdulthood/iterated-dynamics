@@ -23,29 +23,7 @@ The proposed direction is sound.  The important gaps are:
 - Tag documentation publication and current-doc promotion should stay
   unchanged.
 
-## Slice 1: Put CI Package Presets In Required Mode
-
-Work:
-
-- Add a hidden CMake preset fragment that enables required package docs.
-- Inherit it from `ci-debug`, `ci-release`, `ci-wx-debug`, and
-  `ci-wx-release`.
-- Download `html-docs` and `pdf-docs` into the same build-tree locations
-  used by local doc builds before package creation.
-- Download artifacts inside each package build directory, not from the
-  parent of the build directory.
-- Remove dependency on downloaded source-root `id.html` and `id.pdf`.
-- Keep the normal and wx package paths consistent.
-
-Tests:
-
-- Run `ci-release` far enough to prove the package target consumes the
-  doc artifacts.
-- Run `ci-wx-release` far enough to prove the wx package path also consumes
-  the doc artifacts.
-- Confirm missing docs fail before artifacts are uploaded.
-
-## Slice 2: Align CMake Documentation Targets
+## Slice 1: Align CMake Documentation Targets
 
 Work:
 
@@ -62,7 +40,7 @@ Tests:
 - Verify `id.html` references copied `help/images` paths.
 - Verify `id.pdf` embeds images and does not require copied images.
 
-## Slice 3: Package Documentation Artifacts For Pages
+## Slice 2: Package Documentation Artifacts For Pages
 
 Work:
 
@@ -78,7 +56,7 @@ Tests:
 - Inspect `html-docs` artifacts and confirm `id.html` plus `help/images`.
 - Inspect `pdf-docs` artifacts and confirm it only contains `id.pdf`.
 
-## Slice 4: Publish Master Documentation
+## Slice 3: Publish Master Documentation
 
 Work:
 
@@ -99,7 +77,7 @@ Tests:
 - Verify `/master/id.pdf` is present.
 - Verify tag docs and current-doc promotion still behave as before.
 
-## Slice 5: End-To-End Workflow Checks
+## Slice 4: End-To-End Workflow Checks
 
 Work:
 
