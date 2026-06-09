@@ -922,10 +922,10 @@ Multiplication rules for quaternion basis vectors:
 ~Doc+,Online+,Format+
 ~ADoc-
 Note that ij = k but ji = -k, showing the failure of the commutative law.
-~ADoc+,Doc-,Online-
+~ADoc+,Doc-,Online-,Format-
 Note that stem:[ij = k] but stem:[ji = -k], showing the failure of the
 commutative law.
-~Doc+,Online+
+~Doc+,Online+,Format+
 The rules for multiplying any two quaternions follow from the behavior
 of the basis vectors just described.  However, for your convenience, the
 following formula works out the details.
