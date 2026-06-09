@@ -99,7 +99,8 @@ private:
     void print_char(char c, int n);
     void print_string(const char *s, int n);
     void print_anchor(const std::string &anchor);
-    void update_stem_passthrough_state();
+    void print_raw_char(char c);
+    void update_raw_block_state();
 
     void print_string(const std::string &text)
     {
@@ -125,8 +126,8 @@ private:
     std::string m_link_text;
     std::string m_link_markup;
     std::string m_line_text;
-    bool m_after_stem_attribute{};
-    bool m_inside_stem_passthrough{};
+    bool m_inside_raw_block{};
+    std::string m_raw_block_delimiter;
 };
 
 bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
@@ -411,50 +412,83 @@ void AsciiDocProcessor::print_inside_key(const char c)
     }
 }
 
-void AsciiDocProcessor::update_stem_passthrough_state()
+static std::string trim_right_copy(const std::string &text)
 {
-    if (m_line_text == "[stem]")
+    std::string trimmed{text};
+    while (!trimmed.empty() && trimmed.back() == ' ')
     {
-        m_after_stem_attribute = true;
+        trimmed.pop_back();
     }
-    else if (m_line_text == "++++")
+    return trimmed;
+}
+
+static bool is_raw_block_delimiter(const std::string &line)
+{
+    return line == "++++" || line == "|===" || line == "----" || line == "...." || line == "====" || line == "____" ||
+        line == "****" || line == "////" || line == "--";
+}
+
+static bool is_raw_adoc_line(const std::string &line)
+{
+    return line.rfind("image::", 0) == 0;
+}
+
+void AsciiDocProcessor::update_raw_block_state()
+{
+    const std::string line{trim_right_copy(m_line_text)};
+    if (m_inside_raw_block)
     {
-        if (m_after_stem_attribute)
+        if (line == m_raw_block_delimiter)
         {
-            m_inside_stem_passthrough = true;
+            m_inside_raw_block = false;
+            m_raw_block_delimiter.clear();
         }
-        else if (m_inside_stem_passthrough)
-        {
-            m_inside_stem_passthrough = false;
-        }
-        m_after_stem_attribute = false;
+        return;
     }
-    else if (!m_line_text.empty())
+
+    if (is_raw_block_delimiter(line))
     {
-        m_after_stem_attribute = false;
+        m_inside_raw_block = true;
+        m_raw_block_delimiter = line;
     }
+}
+
+void AsciiDocProcessor::print_raw_char(const char c)
+{
+    if (c == '\n' || c == '\f')
+    {
+        ++m_newlines;
+        m_start_of_line = true;
+        m_indented_line = false;
+        m_spaces = 0;
+        m_str << c;
+        return;
+    }
+
+    emit_char(c);
 }
 
 void AsciiDocProcessor::print_char(const char c, int n)
 {
     while (n-- > 0)
     {
+        bool raw_line = m_inside_raw_block;
         if (c == '\n' || c == '\f')
         {
-            const bool blank_line = m_line_text.find_first_not_of(' ') == std::string::npos;
-            update_stem_passthrough_state();
+            raw_line = raw_line || is_raw_adoc_line(m_line_text);
+            update_raw_block_state();
             m_line_text.clear();
-            if (m_inside_stem_passthrough && blank_line)
-            {
-                m_start_of_line = true;
-                m_indented_line = false;
-                m_spaces = 0;
-                continue;
-            }
         }
         else
         {
             m_line_text += c;
+            raw_line = raw_line || is_raw_adoc_line(m_line_text);
+        }
+
+        if (raw_line)
+        {
+            print_raw_char(c);
+            continue;
         }
 
         if (m_inside_key)

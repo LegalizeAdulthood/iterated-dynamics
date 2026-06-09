@@ -1,0 +1,34 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~DocContents
+{1.   , 0, "Raw Blocks"}
+;
+;
+;
+~Topic=Raw Blocks
+
+Before raw blocks.
+
+~Online-,Doc-,Format-
+image::help/images/example.png[<not a key>]
+
+[source]
+----
+o not a bullet
+
+
+<not a key>
+----
+
+[cols="1"]
+|===
+|Cell before blank
+
+|Cell after blank
+|===
+~Online+,Doc+,Format+
+
+After raw blocks.

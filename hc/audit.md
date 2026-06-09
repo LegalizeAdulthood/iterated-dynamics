@@ -26,29 +26,7 @@ The input syntax in `home/doc/help-compiler.md` is part of the contract.
 - Escaped reserved characters such as `\{` prevent hot-link parsing, but
   the escape marker is not retained by the ADoc output layer.
 
-## Slice 1: Isolate Raw ADoc Blocks
-
-Goal: keep raw AsciiDoc block structure away from prose newline logic.
-
-Files:
-
-- `hc/AsciiDocCompiler.cpp`
-- `hc/tests/ascii_doc`
-
-Work:
-
-- Track raw block contexts before global blank-line compression.
-- Cover `[stem]` passthrough blocks, tables, image macros, listing blocks,
-  and other delimiter-based blocks used by the current sources.
-- Preserve intentional blank lines inside raw blocks.
-- Keep the escaped brace stem-matrix test.
-
-Done when:
-
-- Raw ADoc blocks bypass prose-only newline compression.
-- Stem matrices do not require markup workarounds.
-
-## Slice 2: Harden Inline Heuristics
+## Slice 1: Harden Inline Heuristics
 
 Goal: reduce false positives in key and bullet conversion.
 
@@ -71,7 +49,7 @@ Done when:
 - Non-key angle-bracket text stays literal.
 - Non-bullet `o ` lines stay literal.
 
-## Slice 3: Add Rendered ADoc Tests
+## Slice 2: Add Rendered ADoc Tests
 
 Goal: catch cases where generated `.adoc` compares clean but renders
 wrong.
@@ -94,7 +72,7 @@ Done when:
 - Syntax-valid but badly rendered ADoc has a focused test path.
 - Machines without Asciidoctor can still run the normal unit suite.
 
-## Slice 4: Document ADoc Authoring Rules
+## Slice 3: Document ADoc Authoring Rules
 
 Goal: make the source authoring contract explicit.
 

@@ -66,6 +66,7 @@ examined, resulting in a 7 digit rule.
 |===
 |kr|#'s in rule|example rule|kr |#'s in rule|example rule
 
+
 |21
 |4
 |1010
