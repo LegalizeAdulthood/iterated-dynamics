@@ -1,0 +1,4 @@
+contains:<a href="#id-topic-4">Getting Started</a>
+contains:<a href="#id-topic-6">The Mandelbrot Set</a>
+contains:<a href="#id-topic-9">second Same-Title</a>
+not-contains:<a href="#_getting_started">

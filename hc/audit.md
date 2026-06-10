@@ -26,30 +26,7 @@ The input syntax in `home/doc/help-compiler.md` is part of the contract.
 - Escaped reserved characters such as `\{` prevent hot-link parsing, but
   the escape marker is not retained by the ADoc output layer.
 
-## Slice 1: Add Rendered ADoc Tests
-
-Goal: catch cases where generated `.adoc` compares clean but renders
-wrong.
-
-Files:
-
-- `hc/tests/ascii_doc`
-- `hc/tests/cmake` if a shared rendered-compare helper is useful
-- `hc/src/CMakeLists.txt` only if test discovery needs Asciidoctor paths
-
-Work:
-
-- Keep current gold-file tests as fast source-output checks.
-- Add a small rendered HTML test set for stem matrices, tables, images,
-  key macros, and cross references.
-- Skip rendered tests cleanly when Asciidoctor is unavailable.
-
-Done when:
-
-- Syntax-valid but badly rendered ADoc has a focused test path.
-- Machines without Asciidoctor can still run the normal unit suite.
-
-## Slice 2: Document ADoc Authoring Rules
+## Slice 1: Document ADoc Authoring Rules
 
 Goal: make the source authoring contract explicit.
 

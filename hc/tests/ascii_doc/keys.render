@@ -1,0 +1,4 @@
+contains:<kbd>Enter</kbd>
+contains:<span class="keyseq"><kbd>Ctrl</kbd>+<kbd>E</kbd></span>
+contains:&lt;n&gt;, &lt;path&gt;, &lt;value&gt;, &lt;x&gt;.
+not-contains:<kbd>n</kbd>
