@@ -95,6 +95,7 @@ private:
     bool output(PrintDocCommand cmd, ProcessDocumentInfo *pd);
     void emit_char(char c);
     void emit_key_name();
+    void flush_bullet_candidate(bool bullet);
     void print_inside_key(char c);
     void print_char(char c, int n);
     void print_string(const char *s, int n);
@@ -121,6 +122,9 @@ private:
     bool m_inside_key{};
     std::string m_key_name;
     bool m_bullet_started{};
+    bool m_bullet_indented{};
+    int m_bullet_spaces{};
+    std::string m_bullet_probe;
     bool m_indented_line{};
     bool m_inside_bullet{};
     std::string m_link_text;
@@ -311,6 +315,37 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
     m_link_markup += ">>";
 }
 
+static bool is_single_character_key_name(const std::string &name)
+{
+    if (name.size() != 1)
+    {
+        return false;
+    }
+
+    const unsigned char c{static_cast<unsigned char>(name[0])};
+    const std::string punctuation_keys{"+-#\\<>@!,=.[]"};
+    return std::isupper(c) != 0 || std::isdigit(c) != 0 || punctuation_keys.find(name[0]) != std::string::npos;
+}
+
+static bool starts_legacy_bullet_item(const char c)
+{
+    const unsigned char ch{static_cast<unsigned char>(c)};
+    return std::isupper(ch) != 0 || std::isdigit(ch) != 0 || c == '<' || c == '"' || c == '\'' || c == '@' || c == '#';
+}
+
+static bool is_bullet_probe_char(const char c)
+{
+    const unsigned char ch{static_cast<unsigned char>(c)};
+    return std::isalnum(ch) != 0 || c == '-' || c == '_' || c == '=' || c == ':';
+}
+
+static bool is_legacy_bullet_word(const std::string &word)
+{
+    return !word.empty() &&
+        (starts_legacy_bullet_item(word[0]) || word.find('-') != std::string::npos ||
+            word.find('=') != std::string::npos || word.back() == ':');
+}
+
 static bool is_key_name(const std::string &name)
 {
     const auto is_function_key_name = [&name]
@@ -321,7 +356,7 @@ static bool is_key_name(const std::string &name)
     const auto is_modified_key_name = [&name](const std::string &prefix)
     { return name.substr(0, prefix.size()) == prefix && is_key_name(name.substr(prefix.size())); };
 
-    return name.size() == 1                                                          //
+    return is_single_character_key_name(name)                                        //
         || name == "Enter" || name == "Esc" || name == "Delete" || name == "Insert"  //
         || name == "Tab" || name == "Space"                                          //
         || name == "Shift" || name == "Ctrl" || name == "Alt"                        //
@@ -359,6 +394,30 @@ void AsciiDocProcessor::emit_key_name()
     {
         emit_char(c);
     }
+}
+
+void AsciiDocProcessor::flush_bullet_candidate(const bool bullet)
+{
+    if (bullet)
+    {
+        emit_char('*');
+        m_inside_bullet = true;
+    }
+    else
+    {
+        emit_char('o');
+        m_inside_bullet = false;
+    }
+
+    m_spaces += m_bullet_spaces;
+    for (const char c : m_bullet_probe)
+    {
+        emit_char(c);
+    }
+    m_bullet_started = false;
+    m_bullet_indented = false;
+    m_bullet_spaces = 0;
+    m_bullet_probe.clear();
 }
 
 void AsciiDocProcessor::print_inside_key(const char c)
@@ -491,6 +550,41 @@ void AsciiDocProcessor::print_char(const char c, int n)
             continue;
         }
 
+        if (m_bullet_started)
+        {
+            if (c == ' ' && m_bullet_probe.empty())
+            {
+                ++m_bullet_spaces;
+                continue;
+            }
+            if (c == '\n' || c == '\f')
+            {
+                flush_bullet_candidate(
+                    (m_bullet_indented && !m_bullet_probe.empty()) || is_legacy_bullet_word(m_bullet_probe));
+            }
+            else if (m_bullet_spaces == 0)
+            {
+                flush_bullet_candidate(false);
+            }
+            else if (m_bullet_indented && m_bullet_probe.empty())
+            {
+                flush_bullet_candidate(true);
+            }
+            else if (m_bullet_probe.empty() && starts_legacy_bullet_item(c))
+            {
+                flush_bullet_candidate(true);
+            }
+            else if (is_bullet_probe_char(c))
+            {
+                m_bullet_probe += c;
+                continue;
+            }
+            else
+            {
+                flush_bullet_candidate(m_bullet_indented || is_legacy_bullet_word(m_bullet_probe));
+            }
+        }
+
         if (m_inside_key)
         {
             print_inside_key(c);
@@ -498,21 +592,15 @@ void AsciiDocProcessor::print_char(const char c, int n)
         else if (m_start_of_line && c == 'o')
         {
             m_bullet_started = true;
-            m_inside_bullet = true;
+            m_bullet_indented = m_spaces > 0;
         }
         else if (c == '<' && m_link_text.empty() && (!m_indented_line || m_inside_bullet))
         {
-            m_bullet_started = false;
             m_inside_key = true;
             m_key_name.clear();
         }
         else if (c == ' ')
         {
-            if (m_bullet_started)
-            {
-                emit_char('*');
-                m_bullet_started = false;
-            }
             if (!m_link_text.empty() && m_link_text.front() == ' ')
             {
                 m_link_text.erase(0, 1);
@@ -524,12 +612,11 @@ void AsciiDocProcessor::print_char(const char c, int n)
         }
         else if (c == '\n' || c == '\f')
         {
-            if (m_bullet_started)
-            {
-                emit_char('o');
-                m_bullet_started = false;
-            }
             ++m_newlines;
+            if (m_newlines >= 2)
+            {
+                m_inside_bullet = false;
+            }
             m_start_of_line = true;
             m_indented_line = false;
             m_spaces = 0; // strip spaces before a new-line
@@ -544,12 +631,6 @@ void AsciiDocProcessor::print_char(const char c, int n)
         }
         else
         {
-            if (m_bullet_started)
-            {
-                emit_char('o');
-                m_bullet_started = false;
-            }
-
             if (!m_link_text.empty())
             {
                 if (c == m_link_text.front())

@@ -26,30 +26,7 @@ The input syntax in `home/doc/help-compiler.md` is part of the contract.
 - Escaped reserved characters such as `\{` prevent hot-link parsing, but
   the escape marker is not retained by the ADoc output layer.
 
-## Slice 1: Harden Inline Heuristics
-
-Goal: reduce false positives in key and bullet conversion.
-
-Files:
-
-- `hc/AsciiDocCompiler.cpp`
-- `hc/tests/ascii_doc/keys.*`
-- `hc/tests/ascii_doc/bullets.*`
-
-Work:
-
-- Add false-positive tests for literal `<...>` text and placeholders.
-- Add false-positive tests for prose beginning with `o `.
-- Move recognition closer to paragraph/source context if practical.
-- Preserve existing `kbd:[]` and legacy bullet behavior.
-
-Done when:
-
-- Known key names still become `kbd:[]`.
-- Non-key angle-bracket text stays literal.
-- Non-bullet `o ` lines stay literal.
-
-## Slice 2: Add Rendered ADoc Tests
+## Slice 1: Add Rendered ADoc Tests
 
 Goal: catch cases where generated `.adoc` compares clean but renders
 wrong.
@@ -72,7 +49,7 @@ Done when:
 - Syntax-valid but badly rendered ADoc has a focused test path.
 - Machines without Asciidoctor can still run the normal unit suite.
 
-## Slice 3: Document ADoc Authoring Rules
+## Slice 2: Document ADoc Authoring Rules
 
 Goal: make the source authoring contract explicit.
 

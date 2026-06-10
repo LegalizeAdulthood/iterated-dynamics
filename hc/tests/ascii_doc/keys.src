@@ -14,6 +14,8 @@
 
 Urls pass through: <https://github.com>
 
+Placeholders stay literal: <n>, <path>, <value>, <x>.
+
 Try pressing <X>, <Enter>, <Esc>, <Left>, <Right>, <Up>, <Down>, <F12>,
 <Insert>, <Delete>, <Tab>, <Space>, <Shift+B>, <Ctrl+E>,
 <PageUp>, <PageDown>,

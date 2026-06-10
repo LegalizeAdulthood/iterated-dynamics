@@ -13,7 +13,11 @@
 
 This is a paragraph before.
 
+o is a letter at the start of this paragraph, not a list marker.
+
 * This is a single line bullet.
+* sound=off remains a lowercase legacy bullet item.
+* maxlinelength: remains a lowercase parameter bullet item.
 * This is another bullet, across multiple source lines.  It goes on for
   long enough that it will consume multiple output lines when formatted
   as a printed document.
@@ -23,6 +27,7 @@ This is a paragraph after.
 
 Now we have some indented bullets.
 
+  * restore the existing image.
   * This is the first indented bullet.
   * This is the second indented bullet.  It goes on for long enough that
     it will consume multiple output lines when formatted as a printed
