@@ -90,105 +90,203 @@ Classification</h2>
 <p>Quotes and separators:</p>
 <p>Use quote blocks or thematic breaks. These should not be monospace just because the source was indented for visual effect.</p>
 <h2><a class="anchor" id="autotoc_md2"></a>
-Slice 1: Description Lists Rendered As Literals</h2>
-<p>Files:</p>
-<ul>
-<li><code>help3.src:163-210</code>: Autokey accepted input forms.</li>
-<li><code>help3.src:215-249</code>: Autokey authoring suggestions.</li>
-<li><code>help3.src:428-444</code>: <code>logmap=</code> value descriptions.</li>
-<li><code>help2.src:3837-3858</code>: Julibrot parameter screen descriptions.</li>
-<li><code>help5.src:386-394</code>: fractal engine callback descriptions.</li>
-</ul>
-<p>Nature:</p>
-<p>These are prose lists. The indentation is only an old visual convention for "this text belongs under this term".</p>
-<p>ADoc alternative:</p>
-<p>Add whole-block <code>ADoc+</code> variants using AsciiDoc description lists. Convert short items such as <code>WAIT &lt;nnn.n&gt;</code> and <code>logmap=1</code> to <code>term:: description</code>. For multi-paragraph items, use list continuations with <code>+</code> inside the ADoc variant.</p>
+Slicing Rule</h2>
+<p>Each slice below changes one source block or one topic. When a slice is implemented, remove it and renumber the remaining slices from 1.</p>
 <h2><a class="anchor" id="autotoc_md3"></a>
-Slice 2: Key And Command Reference Tables</h2>
-<p>Files:</p>
-<ul>
-<li><code>help.src:964-967</code>: image restore choices.</li>
-<li><code>help.src:1236-1252</code>: Orbits window keys.</li>
-<li><code>help.src:1782-1786</code>: palette status legend.</li>
-<li><code>help.src:2298-2319</code>: Evolver command keys.</li>
-<li><code>help.src:1100-1108</code>: <code>&lt;X&gt;</code> screen links.</li>
-</ul>
-<p>Nature:</p>
-<p>These are compact key legends. The first field is the key or screen label; the remainder is explanatory prose.</p>
-<p>ADoc alternative:</p>
-<p>Use description lists for short legends. Use an AsciiDoc table only where multiple columns are significant. Keep the source as one <code>ADoc+</code> variant per whole legend block so line folding cannot split items into literal blocks.</p>
+Slice 1: Autokey Input Forms</h2>
+<p>Source: <code>help3.src:163-210</code></p>
+<p>Nature: prose descriptions with embedded examples.</p>
+<p>ADoc: use a whole-block <code>ADoc+</code> variant with <code>Format-</code>. Use a description list for input forms and listing blocks for examples.</p>
 <h2><a class="anchor" id="autotoc_md4"></a>
-Slice 3: Parameter And Library Tables</h2>
-<p>Files:</p>
-<ul>
-<li><code>help4.src:30-275</code>: startup parameter summary.</li>
-<li><code>help4.src:359-366</code>: preferred read-library subdirectories.</li>
-<li><code>help4.src:372-383</code>: save-library subdirectories.</li>
-<li><code>help4.src:487-491</code>: parameter syntax terms.</li>
-<li><code>help4.src:573-581</code>: <code>comment=</code> variable expansion table.</li>
-<li><code>help4.src:997-1038</code>: <code>textcolors=</code> meaning table and default.</li>
-<li><code>help4.src:1076-1080</code>: color specification table.</li>
-</ul>
-<p>Nature:</p>
-<p>These are fixed-width column tables, not prose. The indentation is carrying column layout from the text-mode help.</p>
-<p>ADoc alternative:</p>
-<p>Use AsciiDoc tables for true columns. For the long startup parameter summary, prefer a two-column table with parameter and description, preserving wrapped descriptions inside the table cell. Use a source block only for the <code>textcolors=</code> default value itself.</p>
+Slice 2: Autokey Authoring Suggestions</h2>
+<p>Source: <code>help3.src:215-249</code></p>
+<p>Nature: advice list.</p>
+<p>ADoc: use a whole-block <code>ADoc+</code> variant with <code>Format-</code>. Use an unordered list, with listing blocks for <code>.KEY</code> fragments.</p>
 <h2><a class="anchor" id="autotoc_md5"></a>
-Slice 4: File And Command Examples</h2>
-<p>Files:</p>
-<ul>
-<li><code>help4.src:301</code>: simple command-line example.</li>
-<li><code>help4.src:401-405</code>: <code>sstools.ini</code> example.</li>
-<li><code>help4.src:420-427</code>: parameter-file examples.</li>
-<li><code>help3.src:1598-1612</code>: terrain parameter sequence.</li>
-<li><code>help4.src:1444-1451</code>: batch-mode setup steps.</li>
-<li><code>help4.src:1463-1497</code>: batch-mode command examples.</li>
-</ul>
-<p>Nature:</p>
-<p>These are real examples, but their literal rendering should be intentional. Some adjacent prose is currently pulled into literal blocks because the whole example was not isolated in ADoc.</p>
-<p>ADoc alternative:</p>
-<p>Use <code>[source,console]</code>, <code>[source,ini]</code>, or plain listing blocks as appropriate. Wrap the entire example, including setup comments, in a single ADoc variant. Use normal AsciiDoc lists for the batch-mode steps.</p>
+Slice 3: Logmap Value Descriptions</h2>
+<p>Source: <code>help3.src:428-444</code></p>
+<p>Nature: parameter-value descriptions.</p>
+<p>ADoc: use a description list. Terms are <code>logmap=1</code>, <code>logmap=N</code>, <code>logmap=-N</code>, <code>logmap=2 or -2</code>, and <code>logmap=-1</code>.</p>
 <h2><a class="anchor" id="autotoc_md6"></a>
-Slice 5: Math And Formula Blocks</h2>
-<p>Files:</p>
-<ul>
-<li><code>help2.src:1048-1052</code>: Mandelbrot complex-coordinate display.</li>
-<li><code>help2.src:2090-2096</code>: MandelbrotMix4 formula source.</li>
-<li><code>help2.src:2114-2119</code>: DivideBrot5 formula source.</li>
-<li><code>help2.src:3457-3467</code>: formula flow-control pseudo-code.</li>
-<li><code>help2.src:3628</code>: formula expression example.</li>
-<li><code>help2.src:4284-4667</code>: L-system grammar, commands, and examples.</li>
-<li><code>help2.src:2781</code>: Lorenz default-value display.</li>
-<li><code>help2.src:3983-3986</code>: Lyapunov string and numeric examples.</li>
-<li><code>help2.src:3-950</code>: summary of fractal types.</li>
-</ul>
-<p>Nature:</p>
-<p>This is mixed mathematical notation and source syntax. Monospace can be correct for formula-file and L-system source, but mathematical prose should be display math or normal prose.</p>
-<p>ADoc alternative:</p>
-<p>Use <code>[stem]</code> blocks for display equations and <code>[source]</code> blocks for formula or L-system source. The summary of fractal types is constrained by <code>get_fract_params()</code> comments, so add ADoc variants around whole summary entries rather than editing the rigid online/source structure in place.</p>
+Slice 4: Julibrot Parameter Screens</h2>
+<p>Source: <code>help2.src:3837-3858</code></p>
+<p>Nature: screen-field descriptions.</p>
+<p>ADoc: use a description list. Keep <code>From/To Parameters</code> as its own term rather than as indented prose under <code>Orbit parameters</code>.</p>
 <h2><a class="anchor" id="autotoc_md7"></a>
-Slice 6: Quotes, Callouts, And Thematic Text</h2>
-<p>Files:</p>
-<ul>
-<li><code>help5.src:493-496</code>: Herb Savage explanation quote.</li>
-<li><code>help5.src:157-159</code>: "Who Is This Guy" quote.</li>
-<li><code>help5.src:1283</code>: Stone Soup story separator.</li>
-</ul>
-<p>Nature:</p>
-<p>These are quoted or decorative text. The indentation is presentation, not code.</p>
-<p>ADoc alternative:</p>
-<p>Use quote blocks for quoted paragraphs. Use an AsciiDoc thematic break for the <code>***</code> separator if it is meant as a break, or keep it as normal prose if it is part of the story text.</p>
+Slice 5: Fractal Engine Callbacks</h2>
+<p>Source: <code>help5.src:386-394</code></p>
+<p>Nature: ordered prose list.</p>
+<p>ADoc: use an ordered list. Do not use a description list here.</p>
 <h2><a class="anchor" id="autotoc_md8"></a>
-Slice 7: Accepted Literal-Like Blocks</h2>
-<p>Files:</p>
-<ul>
-<li><code>help5.src:1695-1733</code>: waveform diagrams.</li>
-<li><code>help5.src:1796-1835</code>: sound-envelope diagrams.</li>
-</ul>
-<p>Nature:</p>
-<p>These are ASCII art or intentionally fixed-width diagrams. They are not prose bugs, but they still rely on accidental indentation today.</p>
-<p>ADoc alternative:</p>
-<p>Replace accidental indentation with explicit listing blocks. Do this only after the prose and table cases are fixed, because the rendered behavior is already close to the intended output. </p>
+Slice 6: Image Restore Choices</h2>
+<p>Source: <code>help.src:964-967</code></p>
+<p>Nature: compact key legend.</p>
+<p>ADoc: use a description list.</p>
+<h2><a class="anchor" id="autotoc_md9"></a>
+Slice 7: Orbits Window Keys</h2>
+<p>Source: <code>help.src:1236-1252</code></p>
+<p>Nature: key legend with wrapped descriptions.</p>
+<p>ADoc: use a description list, with list continuations for wrapped text.</p>
+<h2><a class="anchor" id="autotoc_md10"></a>
+Slice 8: Palette Status Legend</h2>
+<p>Source: <code>help.src:1782-1786</code></p>
+<p>Nature: compact status-symbol legend.</p>
+<p>ADoc: use a two-column table or a description list.</p>
+<h2><a class="anchor" id="autotoc_md11"></a>
+Slice 9: Evolver Command Keys</h2>
+<p>Source: <code>help.src:2298-2319</code></p>
+<p>Nature: key-command legend.</p>
+<p>ADoc: use a description list, with continuations for long key descriptions.</p>
+<h2><a class="anchor" id="autotoc_md12"></a>
+Slice 10: X Options Screen Links</h2>
+<p>Source: <code>help.src:1100-1108</code></p>
+<p>Nature: topic link list.</p>
+<p>ADoc: use an unordered list or description list with cross references.</p>
+<h2><a class="anchor" id="autotoc_md13"></a>
+Slice 11: Startup Parameter Summary</h2>
+<p>Source: <code>help4.src:30-275</code></p>
+<p>Nature: large fixed-width parameter table.</p>
+<p>ADoc: use a two-column table with parameter and description cells.</p>
+<h2><a class="anchor" id="autotoc_md14"></a>
+Slice 12: Read-Library Subdirectories</h2>
+<p>Source: <code>help4.src:359-366</code></p>
+<p>Nature: directory-name table.</p>
+<p>ADoc: use a two-column table.</p>
+<h2><a class="anchor" id="autotoc_md15"></a>
+Slice 13: Save-Library Subdirectories</h2>
+<p>Source: <code>help4.src:372-383</code></p>
+<p>Nature: directory-name table.</p>
+<p>ADoc: use a two-column table.</p>
+<h2><a class="anchor" id="autotoc_md16"></a>
+Slice 14: Parameter Syntax Terms</h2>
+<p>Source: <code>help4.src:487-491</code></p>
+<p>Nature: compact syntax legend.</p>
+<p>ADoc: use a description list.</p>
+<h2><a class="anchor" id="autotoc_md17"></a>
+Slice 15: Comment Variable Expansion Table</h2>
+<p>Source: <code>help4.src:573-581</code></p>
+<p>Nature: two side-by-side fixed-width tables.</p>
+<p>ADoc: use one table with variable, expansion, and example columns.</p>
+<h2><a class="anchor" id="autotoc_md18"></a>
+Slice 16: Textcolors Meaning Table</h2>
+<p>Source: <code>help4.src:997-1038</code></p>
+<p>Nature: grouped numeric legend plus a long default value.</p>
+<p>ADoc: use a table for meanings and a source block for the default value.</p>
+<h2><a class="anchor" id="autotoc_md19"></a>
+Slice 17: Color Specification Table</h2>
+<p>Source: <code>help4.src:1076-1080</code></p>
+<p>Nature: compact value legend.</p>
+<p>ADoc: use a two-column table.</p>
+<h2><a class="anchor" id="autotoc_md20"></a>
+Slice 18: Simple Command-Line Example</h2>
+<p>Source: <code>help4.src:301</code></p>
+<p>Nature: command-line example.</p>
+<p>ADoc: use a <code>[source,console]</code> or listing block.</p>
+<h2><a class="anchor" id="autotoc_md21"></a>
+Slice 19: Sstools.ini Example</h2>
+<p>Source: <code>help4.src:401-405</code></p>
+<p>Nature: <code>.ini</code> file example.</p>
+<p>ADoc: use a <code>[source,ini]</code> block.</p>
+<h2><a class="anchor" id="autotoc_md22"></a>
+Slice 20: Parameter-File Examples</h2>
+<p>Source: <code>help4.src:420-427</code></p>
+<p>Nature: parameter-file examples.</p>
+<p>ADoc: use a source block.</p>
+<h2><a class="anchor" id="autotoc_md23"></a>
+Slice 21: Terrain Parameter Sequence</h2>
+<p>Source: <code>help3.src:1598-1612</code></p>
+<p>Nature: commented parameter sequence.</p>
+<p>ADoc: use a source block around the complete sequence.</p>
+<h2><a class="anchor" id="autotoc_md24"></a>
+Slice 22: Batch Setup Steps</h2>
+<p>Source: <code>help4.src:1444-1451</code></p>
+<p>Nature: procedural steps.</p>
+<p>ADoc: use an unordered list, not a literal block.</p>
+<h2><a class="anchor" id="autotoc_md25"></a>
+Slice 23: Batch Command Examples</h2>
+<p>Source: <code>help4.src:1463-1497</code></p>
+<p>Nature: command-line examples.</p>
+<p>ADoc: use <code>[source,console]</code> blocks around the commands.</p>
+<h2><a class="anchor" id="autotoc_md26"></a>
+Slice 24: Mandelbrot Coordinate Display</h2>
+<p>Source: <code>help2.src:1048-1052</code></p>
+<p>Nature: displayed math expression.</p>
+<p>ADoc: use inline prose or a <code>[stem]</code> block.</p>
+<h2><a class="anchor" id="autotoc_md27"></a>
+Slice 25: MandelbrotMix4 Formula Source</h2>
+<p>Source: <code>help2.src:2090-2096</code></p>
+<p>Nature: formula-file source.</p>
+<p>ADoc: use a source block.</p>
+<h2><a class="anchor" id="autotoc_md28"></a>
+Slice 26: DivideBrot5 Formula Source</h2>
+<p>Source: <code>help2.src:2114-2119</code></p>
+<p>Nature: formula-file source.</p>
+<p>ADoc: use a source block.</p>
+<h2><a class="anchor" id="autotoc_md29"></a>
+Slice 27: Formula Flow-Control Pseudo-Code</h2>
+<p>Source: <code>help2.src:3457-3467</code></p>
+<p>Nature: pseudo-code.</p>
+<p>ADoc: use a source block.</p>
+<h2><a class="anchor" id="autotoc_md30"></a>
+Slice 28: Formula Expression Example</h2>
+<p>Source: <code>help2.src:3628</code></p>
+<p>Nature: formula expression.</p>
+<p>ADoc: use a source block or inline monospace.</p>
+<h2><a class="anchor" id="autotoc_md31"></a>
+Slice 29: L-System Source And Command Reference</h2>
+<p>Source: <code>help2.src:4284-4667</code></p>
+<p>Nature: one topic containing grammar, examples, and command reference.</p>
+<p>ADoc: add ADoc variants inside the topic one block at a time, but keep the slice scoped to this topic.</p>
+<h2><a class="anchor" id="autotoc_md32"></a>
+Slice 30: Lorenz Default-Value Display</h2>
+<p>Source: <code>help2.src:2781</code></p>
+<p>Nature: parenthetical note displayed by indentation.</p>
+<p>ADoc: make it normal prose.</p>
+<h2><a class="anchor" id="autotoc_md33"></a>
+Slice 31: Lyapunov String Example</h2>
+<p>Source: <code>help2.src:3983-3986</code></p>
+<p>Nature: worked string-to-number example.</p>
+<p>ADoc: use a source block or a table.</p>
+<h2><a class="anchor" id="autotoc_md34"></a>
+Slice 32: Summary Barnsleyj3 Formula</h2>
+<p>Source: <code>help2.src:57-64</code></p>
+<p>Nature: summary formula source.</p>
+<p>ADoc: add a whole-entry <code>ADoc+</code> variant around the <code>barnsleyj3</code> summary.</p>
+<h2><a class="anchor" id="autotoc_md35"></a>
+Slice 33: Summary Barnsleym3 Formula</h2>
+<p>Source: <code>help2.src:83-90</code></p>
+<p>Nature: summary formula source.</p>
+<p>ADoc: add a whole-entry <code>ADoc+</code> variant around the <code>barnsleym3</code> summary.</p>
+<h2><a class="anchor" id="autotoc_md36"></a>
+Slice 34: Summary Test Fractal Description</h2>
+<p>Source: <code>help2.src:897-901</code></p>
+<p>Nature: short prose description accidentally split into a literal block.</p>
+<p>ADoc: add a whole-entry <code>ADoc+</code> variant with normal prose.</p>
+<h2><a class="anchor" id="autotoc_md37"></a>
+Slice 35: Herb Savage Explanation Quote</h2>
+<p>Source: <code>help5.src:493-496</code></p>
+<p>Nature: quoted explanation.</p>
+<p>ADoc: use a quote block.</p>
+<h2><a class="anchor" id="autotoc_md38"></a>
+Slice 36: Mandelbrot Impact Quote</h2>
+<p>Source: <code>help5.src:157-159</code></p>
+<p>Nature: quoted statement.</p>
+<p>ADoc: use a quote block.</p>
+<h2><a class="anchor" id="autotoc_md39"></a>
+Slice 37: Stone Soup Story Separator</h2>
+<p>Source: <code>help5.src:1283</code></p>
+<p>Nature: thematic break.</p>
+<p>ADoc: use an AsciiDoc thematic break.</p>
+<h2><a class="anchor" id="autotoc_md40"></a>
+Slice 38: Waveform Diagrams</h2>
+<p>Source: <code>help5.src:1695-1733</code></p>
+<p>Nature: intentional ASCII art.</p>
+<p>ADoc: use explicit listing blocks.</p>
+<h2><a class="anchor" id="autotoc_md41"></a>
+Slice 39: Sound-Envelope Diagrams</h2>
+<p>Source: <code>help5.src:1796-1835</code></p>
+<p>Nature: intentional ASCII art.</p>
+<p>ADoc: use explicit listing blocks. </p>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <!-- start footer part -->

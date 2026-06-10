@@ -78,7 +78,7 @@ $(function() {
  <a href="https://user.xmission.com/~legalize/fractals/fotd/index.html">Fractal of the Day</a>, 2005.01.20<br  />
  Dont Square This (<a href="https://user.xmission.com/~legalize/fractals/fotd/2005/01/2005.01.20-Dont_Square_This.par">parameter file</a>)<br  />
 </p>
-<h1><a class="anchor" id="autotoc_md9"></a>
+<h1><a class="anchor" id="autotoc_md42"></a>
 Iterated Dynamics</h1>
 <p>Iterated Dynamics is an open source fractal renderer that can generate the following fractal types:</p>
 <table class="markdownTable">
@@ -137,7 +137,7 @@ Iterated Dynamics</h1>
 </table>
 <p>See the <a href="http://legalizeadulthood.github.io/iterated-dynamics/">on-line help</a> for more of what the software can do.</p>
 <p>See the <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/wiki">wiki</a> for the current release plan.</p>
-<h1><a class="anchor" id="autotoc_md10"></a>
+<h1><a class="anchor" id="autotoc_md43"></a>
 Building</h1>
 <p>Iterated Dynamics uses <a href="http://www.cmake.org">CMake</a> to generate build scripts and <a href="http://vcpkg.io">vcpkg</a> to manage third party library dependencies. You will need a C++ compiler capable of supporting the C++17 standard.</p>
 <p>Make a directory for the source code and build directories and then clone this source repository, initialize and update git submodules with the commands:</p>
@@ -148,7 +148,7 @@ Building</h1>
 <div class="line">git submodule init</div>
 <div class="line">git submodule update</div>
 </div><!-- fragment --><p>CMake presets are provided to simplify building the code.</p>
-<h2><a class="anchor" id="autotoc_md11"></a>
+<h2><a class="anchor" id="autotoc_md44"></a>
 Building the Native Driver on Windows and Linux</h2>
 <p>The <code>default</code> preset builds the native user interface for the host platform. On Windows this is the Win32 GDI driver. On Linux this is the native X11 driver, which uses Xlib directly.</p>
 <p>The command</p>
@@ -157,7 +157,7 @@ Building the Native Driver on Windows and Linux</h2>
 <p>On Linux, the workflow runs GUI-based tests and needs an X server. In a headless environment, run the workflow under Xvfb:</p>
 <div class="fragment"><div class="line">xvfb-run -a cmake --workflow --preset default</div>
 </div><!-- fragment --><p>The build will first compile <code>hc</code>, the help compiler. This generates the run-time help file from the help source files and an include file used by the iterated dynamics compile.</p>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md45"></a>
 Building for wxWidgets on Windows and Linux</h2>
 <p>The ongoing wxWidgets port can be built on either Windows or Linux with the <code>wx</code> preset. The command</p>
 <div class="fragment"><div class="line">cmake --workflow --preset wx</div>
@@ -167,19 +167,19 @@ Building for wxWidgets on Windows and Linux</h2>
 <li>the wxWidgets port is incomplete and largely untested</li>
 <li>the image based tests are not yet working</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md13"></a>
+<h1><a class="anchor" id="autotoc_md46"></a>
 Contributing</h1>
 <p>Iterated Dynamics welcomes contributions from everyone! The code has a long history of contributions from many people over the years. There are many small ways in which the code can be improved as well as large changes that are on the <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/wiki">release plan</a>.</p>
 <p>To get started, fork the repository into your github account. We recommend using the <a href="https://guides.github.com/introduction/flow/index.html">github workflow</a> to make contributions to Iterated Dynamics. We recommend you enable <a href="https://docs.github.com/en/actions">GitHub Actions</a> on your repository to get feedback on your changes as you push to your branch in your repository.</p>
 <p>Once your change is ready, prepare a pull request and submit it back for incorporation into the main repository. We couldn't have gotten this far without contributions from many persons!</p>
 <p>To ensure your code will fit in wth the existing code base, check our <a class="el" href="../../d5/d38/md_Style.html">Style Guide</a> and adjust your code to match.</p>
-<h2><a class="anchor" id="autotoc_md14"></a>
+<h2><a class="anchor" id="autotoc_md47"></a>
 Developing Against a Stable Baseline</h2>
 <p>If you wish to contribute but don't want to deal with the shifting changes on the master branch, checkout the code at the tag for the most recent release (currently the v1.3.1 tag) and create your own development branch from there:</p>
 <div class="fragment"><div class="line">git checkout v1.3.1</div>
 <div class="line">git checkout -b develop</div>
 </div><!-- fragment --><p>If you're having trouble, please <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/issues">file an issue</a> or ask questions in the <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/discussions">discussion area</a>.</p>
-<h1><a class="anchor" id="autotoc_md15"></a>
+<h1><a class="anchor" id="autotoc_md48"></a>
 Code Structure</h1>
 <p>Most of the source code is in a library named <code>libid</code> in a directory by the same name. Additional subdirectories serve to categorize the role of the source files in that directory. Include files are similarly grouped in subdirectories of <code>include</code>. The subdirectories are:</p>
 <ul>
