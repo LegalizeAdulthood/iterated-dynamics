@@ -479,12 +479,12 @@ nor any acceptance of liability, express or implied.
  **********************************************************************\
  * Contribution policy: Don't want money. Got money. Want admiration. *\
  **********************************************************************
-~ADoc+,Doc-,Online-
+~ADoc+,Doc-,Online-,Format-
 .Contribution policy
 ****
 Don't want money. Got money. Want admiration.
 ****
-~Doc+,Online+
+~Doc+,Online+,Format+
 ~OnlineFF
 
 Source code for Iterated Dynamics is freely available on github at\
