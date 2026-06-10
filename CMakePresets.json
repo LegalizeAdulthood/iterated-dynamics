@@ -145,18 +145,13 @@
     },
     {
       "name": "ci-ascii-doc",
-      "displayName": "CI Configure HTML docs with Release settings for HTML",
-      "inherits": [ "ci-preset-build-dir", "no-testing", "feature-hc", "release-config", "default" ]
+      "displayName": "CI Configure HTML docs with Release settings",
+      "inherits": [ "ci-preset-build-dir", "feature-hc", "release-config", "default" ]
     },
     {
       "name": "cppcheck",
       "displayName": "Configure for use with cppcheck",
       "inherits": [ "sibling-preset-build-dir", "use-wx", "compile-commands", "no-testing", "vcpkg" ]
-    },
-    {
-      "name": "hc",
-      "displayName": "Configure help compiler for generating docs",
-      "inherits": [ "sibling-preset-build-dir", "no-testing", "feature-hc", "release-config", "vcpkg" ]
     }
   ],
   "buildPresets": [
@@ -169,11 +164,6 @@
       "name": "wx",
       "displayName": "Build with wxWidgets settings",
       "configurePreset": "wx"
-    },
-    {
-      "name": "hc",
-      "displayName": "Build with help compiler settings",
-      "configurePreset": "hc"
     },
     {
       "name": "debug",
@@ -218,7 +208,7 @@
       "displayName": "CI Build HTML docs with Release settings",
       "configurePreset": "ci-ascii-doc",
       "configuration": "Release",
-      "targets": "ascii-doc"
+      "targets": [ "ascii-doc", "test-config", "test-hc" ]
     }
   ],
   "testPresets": [
@@ -287,6 +277,13 @@
       "inherits": [ "settings" ],
       "configurePreset": "release",
       "configuration": "RelWithDebInfo"
+    },
+    {
+      "name": "ci-ascii-doc",
+      "displayName": "CI Test HTML docs with Release settings",
+      "inherits": [ "settings" ],
+      "configurePreset": "ci-ascii-doc",
+      "configuration": "Release"
     },
     {
       "name": "ci-debug",
@@ -532,7 +529,7 @@
     },
     {
       "name": "ci-ascii-doc",
-      "displayName": "CI Workflow for HTML docs with Release settings: configure, build",
+      "displayName": "CI Workflow for HTML docs with Release settings: configure, build and test",
       "steps": [
         {
           "type": "configure",
@@ -541,20 +538,10 @@
         {
           "type": "build",
           "name": "ci-ascii-doc"
-        }
-      ]
-    },
-    {
-      "name": "hc",
-      "displayName": "CI Workflow for HTML docs with Release settings: configure, build",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "hc"
         },
         {
-          "type": "build",
-          "name": "hc"
+          "type": "test",
+          "name": "ci-ascii-doc"
         }
       ]
     }

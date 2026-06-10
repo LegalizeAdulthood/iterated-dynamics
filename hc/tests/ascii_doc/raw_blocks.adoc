@@ -25,6 +25,7 @@ o not a bullet
 |Cell before blank
 
 |Cell after blank
+|See <<id-topic-1>>
 |===
 
 After raw blocks.

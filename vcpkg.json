@@ -11,7 +11,8 @@
     "hc": {
       "description": "Help compiler",
       "dependencies": [
-        "fmt"
+        "fmt",
+        "gtest"
       ]
     },
     "id": {

@@ -51,6 +51,16 @@ jobs:
           setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
           -Source "${{env.FEED_URL}}"
 
+    - name: Setup ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7
+
+    - name: Setup AsciiDoctor
+      uses: reitzig/actions-asciidoctor@fc32dc82a65a0e93b67383531d4c68cec34c7f27 # v2.0.4
+      with:
+        version: 2.0.18
+
     - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
@@ -63,7 +73,7 @@ jobs:
         cmake --version
         cmake --workflow --preset ci-ascii-doc
 
-    - name: Copy images for AsciiDoc processing
+    - name: Copy images for AsciiDoc artifact
       run: |
         if [ -d "hc/src/images" ]; then
           mkdir -p build-ci-ascii-doc/hc/src/help/images

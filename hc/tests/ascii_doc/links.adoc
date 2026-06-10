@@ -91,6 +91,7 @@ Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.
 
 * <<id-topic-6>>
+* <<id-topic-9,online Same-Title>>
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots

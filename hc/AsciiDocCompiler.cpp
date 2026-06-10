@@ -514,6 +514,24 @@ void AsciiDocProcessor::update_raw_block_state()
 
 void AsciiDocProcessor::print_raw_char(const char c)
 {
+    if (!m_link_text.empty())
+    {
+        if (c == m_link_text.front())
+        {
+            m_link_text.erase(0, 1);
+        }
+        else
+        {
+            throw std::runtime_error("Unexpected character '" + std::string{c} + "'");
+        }
+        if (m_link_text.empty())
+        {
+            print_string(m_link_markup);
+        }
+        m_start_of_line = false;
+        return;
+    }
+
     if (c == '\n' || c == '\f')
     {
         ++m_newlines;
@@ -548,6 +566,11 @@ void AsciiDocProcessor::print_char(const char c, int n)
         {
             print_raw_char(c);
             continue;
+        }
+
+        if (m_bullet_started && !m_link_text.empty())
+        {
+            flush_bullet_candidate(m_bullet_spaces > 0);
         }
 
         if (m_bullet_started)
@@ -589,7 +612,7 @@ void AsciiDocProcessor::print_char(const char c, int n)
         {
             print_inside_key(c);
         }
-        else if (m_start_of_line && c == 'o')
+        else if (m_start_of_line && c == 'o' && m_link_text.empty())
         {
             m_bullet_started = true;
             m_bullet_indented = m_spaces > 0;
