@@ -87,6 +87,30 @@ file and the second specifying the output `.adoc` file.  If omitted,
 the names `help.src` and `id.adoc` are used, respectively.  In this mode,
 no header file is written and no binary help file is written.
 
+### AsciiDoc Source Variants
+
+The `ADoc+` and `ADoc-` commands select text for the AsciiDoc output.
+They do not create an Asciidoctor paragraph or block boundary by
+themselves.  AsciiDoc-specific variants should cover a whole compiler
+paragraph or a whole block, rather than individual source lines inside
+the paragraph.  This keeps the online help, printed text and AsciiDoc
+text from disagreeing about where paragraphs begin and end.
+
+When `Format+` is active, the help compiler folds physical source lines
+into compiler paragraphs.  A compiler paragraph ends on a blank line, a
+change of indentation after the second line, a line ending with a
+backslash (`\`), or a `FormatExclude` boundary.  If an AsciiDoc variant
+changes only part of a compiler paragraph, the surrounding source lines
+may still be joined before the AsciiDoc layer sees them.
+
+Raw AsciiDoc blocks, such as tables, source blocks and stem blocks,
+should be written in an `ADoc+` variant with `Format-` active.  This lets
+the block pass through without paragraph filling or line wrapping.
+
+Escaping a reserved source character, such as `\{`, prevents source
+hot-link parsing.  The escape marker is consumed by the source reader,
+so the AsciiDoc output receives the reserved character itself.
+
 # Source File Format
 
 The source file consists of comments, commands and help text arranged into

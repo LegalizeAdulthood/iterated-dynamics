@@ -26,21 +26,6 @@ The input syntax in `home/doc/help-compiler.md` is part of the contract.
 - Escaped reserved characters such as `\{` prevent hot-link parsing, but
   the escape marker is not retained by the ADoc output layer.
 
-## Slice 1: Document ADoc Authoring Rules
+## Remaining Slices
 
-Goal: make the source authoring contract explicit.
-
-Files:
-
-- `home/doc/help-compiler.md`
-
-Work:
-
-- Document that ADoc variants should cover whole compiler paragraphs or
-  blocks.
-- Document that raw AsciiDoc blocks require `Format-`.
-- Document the escape behavior for reserved characters in raw ADoc.
-
-Done when:
-
-- Future doc edits do not need to rediscover the paragraph-boundary rule.
+None.
