@@ -43,158 +43,325 @@ Quotes and separators:
 Use quote blocks or thematic breaks.  These should not be monospace just
 because the source was indented for visual effect.
 
-## Slice 1: Description Lists Rendered As Literals
+## Slicing Rule
 
-Files:
+Each slice below changes one source block or one topic.  When a slice is
+implemented, remove it and renumber the remaining slices from 1.
 
-- `help3.src:163-210`: Autokey accepted input forms.
-- `help3.src:215-249`: Autokey authoring suggestions.
-- `help3.src:428-444`: `logmap=` value descriptions.
-- `help2.src:3837-3858`: Julibrot parameter screen descriptions.
-- `help5.src:386-394`: fractal engine callback descriptions.
+## Slice 1: Autokey Input Forms
 
-Nature:
+Source: `help3.src:163-210`
 
-These are prose lists.  The indentation is only an old visual convention
-for "this text belongs under this term".
+Nature: prose descriptions with embedded examples.
 
-ADoc alternative:
+ADoc: use a whole-block `ADoc+` variant with `Format-`.  Use a
+description list for input forms and listing blocks for examples.
 
-Add whole-block `ADoc+` variants using AsciiDoc description lists.  Convert
-short items such as `WAIT <nnn.n>` and `logmap=1` to `term:: description`.
-For multi-paragraph items, use list continuations with `+` inside the ADoc
-variant.
+## Slice 2: Autokey Authoring Suggestions
 
-## Slice 2: Key And Command Reference Tables
+Source: `help3.src:215-249`
 
-Files:
+Nature: advice list.
 
-- `help.src:964-967`: image restore choices.
-- `help.src:1236-1252`: Orbits window keys.
-- `help.src:1782-1786`: palette status legend.
-- `help.src:2298-2319`: Evolver command keys.
-- `help.src:1100-1108`: `<X>` screen links.
+ADoc: use a whole-block `ADoc+` variant with `Format-`.  Use an
+unordered list, with listing blocks for `.KEY` fragments.
 
-Nature:
+## Slice 3: Logmap Value Descriptions
 
-These are compact key legends.  The first field is the key or screen label;
-the remainder is explanatory prose.
+Source: `help3.src:428-444`
 
-ADoc alternative:
+Nature: parameter-value descriptions.
 
-Use description lists for short legends.  Use an AsciiDoc table only
-where multiple columns are significant.  Keep the source as one `ADoc+`
-variant per whole legend block so line folding cannot split items into
-literal blocks.
+ADoc: use a description list.  Terms are `logmap=1`, `logmap=N`,
+`logmap=-N`, `logmap=2 or -2`, and `logmap=-1`.
 
-## Slice 3: Parameter And Library Tables
+## Slice 4: Julibrot Parameter Screens
 
-Files:
+Source: `help2.src:3837-3858`
 
-- `help4.src:30-275`: startup parameter summary.
-- `help4.src:359-366`: preferred read-library subdirectories.
-- `help4.src:372-383`: save-library subdirectories.
-- `help4.src:487-491`: parameter syntax terms.
-- `help4.src:573-581`: `comment=` variable expansion table.
-- `help4.src:997-1038`: `textcolors=` meaning table and default.
-- `help4.src:1076-1080`: color specification table.
+Nature: screen-field descriptions.
 
-Nature:
+ADoc: use a description list.  Keep `From/To Parameters` as its own term
+rather than as indented prose under `Orbit parameters`.
 
-These are fixed-width column tables, not prose.  The indentation is
-carrying column layout from the text-mode help.
+## Slice 5: Fractal Engine Callbacks
 
-ADoc alternative:
+Source: `help5.src:386-394`
 
-Use AsciiDoc tables for true columns.  For the long startup parameter
-summary, prefer a two-column table with parameter and description,
-preserving wrapped descriptions inside the table cell.  Use a source
-block only for the `textcolors=` default value itself.
+Nature: ordered prose list.
 
-## Slice 4: File And Command Examples
+ADoc: use an ordered list.  Do not use a description list here.
 
-Files:
+## Slice 6: Image Restore Choices
 
-- `help4.src:301`: simple command-line example.
-- `help4.src:401-405`: `sstools.ini` example.
-- `help4.src:420-427`: parameter-file examples.
-- `help3.src:1598-1612`: terrain parameter sequence.
-- `help4.src:1444-1451`: batch-mode setup steps.
-- `help4.src:1463-1497`: batch-mode command examples.
+Source: `help.src:964-967`
 
-Nature:
+Nature: compact key legend.
 
-These are real examples, but their literal rendering should be intentional.
-Some adjacent prose is currently pulled into literal blocks because the
-whole example was not isolated in ADoc.
+ADoc: use a description list.
 
-ADoc alternative:
+## Slice 7: Orbits Window Keys
 
-Use `[source,console]`, `[source,ini]`, or plain listing blocks as
-appropriate.  Wrap the entire example, including setup comments, in a
-single ADoc variant.
-Use normal AsciiDoc lists for the batch-mode steps.
+Source: `help.src:1236-1252`
 
-## Slice 5: Math And Formula Blocks
+Nature: key legend with wrapped descriptions.
 
-Files:
+ADoc: use a description list, with list continuations for wrapped text.
 
-- `help2.src:1048-1052`: Mandelbrot complex-coordinate display.
-- `help2.src:2090-2096`: MandelbrotMix4 formula source.
-- `help2.src:2114-2119`: DivideBrot5 formula source.
-- `help2.src:3457-3467`: formula flow-control pseudo-code.
-- `help2.src:3628`: formula expression example.
-- `help2.src:4284-4667`: L-system grammar, commands, and examples.
-- `help2.src:2781`: Lorenz default-value display.
-- `help2.src:3983-3986`: Lyapunov string and numeric examples.
-- `help2.src:3-950`: summary of fractal types.
+## Slice 8: Palette Status Legend
 
-Nature:
+Source: `help.src:1782-1786`
 
-This is mixed mathematical notation and source syntax.  Monospace can be
-correct for formula-file and L-system source, but mathematical prose
-should be display math or normal prose.
+Nature: compact status-symbol legend.
 
-ADoc alternative:
+ADoc: use a two-column table or a description list.
 
-Use `[stem]` blocks for display equations and `[source]` blocks for formula
-or L-system source.  The summary of fractal types is constrained by
-`get_fract_params()` comments, so add ADoc variants around whole summary
-entries rather than editing the rigid online/source structure in place.
+## Slice 9: Evolver Command Keys
 
-## Slice 6: Quotes, Callouts, And Thematic Text
+Source: `help.src:2298-2319`
 
-Files:
+Nature: key-command legend.
 
-- `help5.src:493-496`: Herb Savage explanation quote.
-- `help5.src:157-159`: "Who Is This Guy" quote.
-- `help5.src:1283`: Stone Soup story separator.
+ADoc: use a description list, with continuations for long key
+descriptions.
 
-Nature:
+## Slice 10: X Options Screen Links
 
-These are quoted or decorative text.  The indentation is presentation, not
-code.
+Source: `help.src:1100-1108`
 
-ADoc alternative:
+Nature: topic link list.
 
-Use quote blocks for quoted paragraphs.  Use an AsciiDoc thematic break
-for the `***` separator if it is meant as a break, or keep it as normal
-prose if it is part of the story text.
+ADoc: use an unordered list or description list with cross references.
 
-## Slice 7: Accepted Literal-Like Blocks
+## Slice 11: Startup Parameter Summary
 
-Files:
+Source: `help4.src:30-275`
 
-- `help5.src:1695-1733`: waveform diagrams.
-- `help5.src:1796-1835`: sound-envelope diagrams.
+Nature: large fixed-width parameter table.
 
-Nature:
+ADoc: use a two-column table with parameter and description cells.
 
-These are ASCII art or intentionally fixed-width diagrams.  They are not
-prose bugs, but they still rely on accidental indentation today.
+## Slice 12: Read-Library Subdirectories
 
-ADoc alternative:
+Source: `help4.src:359-366`
 
-Replace accidental indentation with explicit listing blocks.  Do this only
-after the prose and table cases are fixed, because the rendered behavior is
-already close to the intended output.
+Nature: directory-name table.
+
+ADoc: use a two-column table.
+
+## Slice 13: Save-Library Subdirectories
+
+Source: `help4.src:372-383`
+
+Nature: directory-name table.
+
+ADoc: use a two-column table.
+
+## Slice 14: Parameter Syntax Terms
+
+Source: `help4.src:487-491`
+
+Nature: compact syntax legend.
+
+ADoc: use a description list.
+
+## Slice 15: Comment Variable Expansion Table
+
+Source: `help4.src:573-581`
+
+Nature: two side-by-side fixed-width tables.
+
+ADoc: use one table with variable, expansion, and example columns.
+
+## Slice 16: Textcolors Meaning Table
+
+Source: `help4.src:997-1038`
+
+Nature: grouped numeric legend plus a long default value.
+
+ADoc: use a table for meanings and a source block for the default value.
+
+## Slice 17: Color Specification Table
+
+Source: `help4.src:1076-1080`
+
+Nature: compact value legend.
+
+ADoc: use a two-column table.
+
+## Slice 18: Simple Command-Line Example
+
+Source: `help4.src:301`
+
+Nature: command-line example.
+
+ADoc: use a `[source,console]` or listing block.
+
+## Slice 19: Sstools.ini Example
+
+Source: `help4.src:401-405`
+
+Nature: `.ini` file example.
+
+ADoc: use a `[source,ini]` block.
+
+## Slice 20: Parameter-File Examples
+
+Source: `help4.src:420-427`
+
+Nature: parameter-file examples.
+
+ADoc: use a source block.
+
+## Slice 21: Terrain Parameter Sequence
+
+Source: `help3.src:1598-1612`
+
+Nature: commented parameter sequence.
+
+ADoc: use a source block around the complete sequence.
+
+## Slice 22: Batch Setup Steps
+
+Source: `help4.src:1444-1451`
+
+Nature: procedural steps.
+
+ADoc: use an unordered list, not a literal block.
+
+## Slice 23: Batch Command Examples
+
+Source: `help4.src:1463-1497`
+
+Nature: command-line examples.
+
+ADoc: use `[source,console]` blocks around the commands.
+
+## Slice 24: Mandelbrot Coordinate Display
+
+Source: `help2.src:1048-1052`
+
+Nature: displayed math expression.
+
+ADoc: use inline prose or a `[stem]` block.
+
+## Slice 25: MandelbrotMix4 Formula Source
+
+Source: `help2.src:2090-2096`
+
+Nature: formula-file source.
+
+ADoc: use a source block.
+
+## Slice 26: DivideBrot5 Formula Source
+
+Source: `help2.src:2114-2119`
+
+Nature: formula-file source.
+
+ADoc: use a source block.
+
+## Slice 27: Formula Flow-Control Pseudo-Code
+
+Source: `help2.src:3457-3467`
+
+Nature: pseudo-code.
+
+ADoc: use a source block.
+
+## Slice 28: Formula Expression Example
+
+Source: `help2.src:3628`
+
+Nature: formula expression.
+
+ADoc: use a source block or inline monospace.
+
+## Slice 29: L-System Source And Command Reference
+
+Source: `help2.src:4284-4667`
+
+Nature: one topic containing grammar, examples, and command reference.
+
+ADoc: add ADoc variants inside the topic one block at a time, but keep the
+slice scoped to this topic.
+
+## Slice 30: Lorenz Default-Value Display
+
+Source: `help2.src:2781`
+
+Nature: parenthetical note displayed by indentation.
+
+ADoc: make it normal prose.
+
+## Slice 31: Lyapunov String Example
+
+Source: `help2.src:3983-3986`
+
+Nature: worked string-to-number example.
+
+ADoc: use a source block or a table.
+
+## Slice 32: Summary Barnsleyj3 Formula
+
+Source: `help2.src:57-64`
+
+Nature: summary formula source.
+
+ADoc: add a whole-entry `ADoc+` variant around the `barnsleyj3` summary.
+
+## Slice 33: Summary Barnsleym3 Formula
+
+Source: `help2.src:83-90`
+
+Nature: summary formula source.
+
+ADoc: add a whole-entry `ADoc+` variant around the `barnsleym3` summary.
+
+## Slice 34: Summary Test Fractal Description
+
+Source: `help2.src:897-901`
+
+Nature: short prose description accidentally split into a literal block.
+
+ADoc: add a whole-entry `ADoc+` variant with normal prose.
+
+## Slice 35: Herb Savage Explanation Quote
+
+Source: `help5.src:493-496`
+
+Nature: quoted explanation.
+
+ADoc: use a quote block.
+
+## Slice 36: Mandelbrot Impact Quote
+
+Source: `help5.src:157-159`
+
+Nature: quoted statement.
+
+ADoc: use a quote block.
+
+## Slice 37: Stone Soup Story Separator
+
+Source: `help5.src:1283`
+
+Nature: thematic break.
+
+ADoc: use an AsciiDoc thematic break.
+
+## Slice 38: Waveform Diagrams
+
+Source: `help5.src:1695-1733`
+
+Nature: intentional ASCII art.
+
+ADoc: use explicit listing blocks.
+
+## Slice 39: Sound-Envelope Diagrams
+
+Source: `help5.src:1796-1835`
+
+Nature: intentional ASCII art.
+
+ADoc: use explicit listing blocks.
