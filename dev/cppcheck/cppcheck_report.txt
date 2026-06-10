@@ -4,13 +4,13 @@ algos/string_algorithms.cpp:48:16: style: Consider using std::transform algorith
 algos/string_algorithms.cpp:59:16: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
         result.push_back(ascii_to_upper(ch));
                ^
-hc/AsciiDocCompiler.cpp:45:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/AsciiDocCompiler.cpp:37:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/AsciiDocCompiler.cpp:41:9: note: First condition
+hc/AsciiDocCompiler.cpp:33:9: note: First condition
     if (!g_errors)
         ^
-hc/AsciiDocCompiler.cpp:45:9: note: Second condition
+hc/AsciiDocCompiler.cpp:37:9: note: Second condition
     if (!g_errors)
         ^
 hc/HelpCompiler.cpp:1520:9: style: The if condition is the same as the previous if condition [duplicateCondition]

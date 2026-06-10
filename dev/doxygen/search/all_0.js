@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['3d_2ecpp_0',['3d.cpp',['../df/dcd/3d_8cpp.html',1,'']]],
-  ['3d_2eh_1',['3d.h',['../d5/d1f/3d_8h.html',1,'']]]
+  ['1_3a_20description_20lists_20rendered_20as_20literals_0',['Slice 1: Description Lists Rendered As Literals',['../d3/da4/md_hc_2src_2indent.html#autotoc_md2',1,'']]]
 ];
