@@ -185,7 +185,6 @@ prose if it is part of the story text.
 
 Files:
 
-- `help.src:478-480`: contribution-policy ASCII banner.
 - `help5.src:1695-1733`: waveform diagrams.
 - `help5.src:1796-1835`: sound-envelope diagrams.
 

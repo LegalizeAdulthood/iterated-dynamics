@@ -475,9 +475,16 @@ commercial products without explicit permission from Richard Thomson.
 There is no warranty of Iterated Dynamics's suitability for any purpose,
 nor any acceptance of liability, express or implied.
 
+~ADoc-
  **********************************************************************\
  * Contribution policy: Don't want money. Got money. Want admiration. *\
  **********************************************************************
+~ADoc+,Doc-,Online-
+.Contribution policy
+****
+Don't want money. Got money. Want admiration.
+****
+~Doc+,Online+
 ~OnlineFF
 
 Source code for Iterated Dynamics is freely available on github at\
