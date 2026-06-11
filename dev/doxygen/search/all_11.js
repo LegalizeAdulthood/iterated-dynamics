@@ -211,7 +211,7 @@ var searchData=
   ['input_5fcommand_5ffile_208',['input_command_file',['../de/dfd/structid_1_1ui_1_1MakeParParams.html#aa8a82fdb9607d14b43c6f3170061b693',1,'id::ui::MakeParParams']]],
   ['input_5fcommand_5fname_209',['input_command_name',['../de/dfd/structid_1_1ui_1_1MakeParParams.html#ad8624d14e9f424be441bf15f610d93d7',1,'id::ui::MakeParParams']]],
   ['input_5fcomment_210',['input_comment',['../de/dfd/structid_1_1ui_1_1MakeParParams.html#aa4f2d26a41f873891971276b2e8ae4af',1,'id::ui::MakeParParams']]],
-  ['input_5ffield_211',['input_field',['../dc/d76/namespaceid_1_1ui.html#ac2ba598ce9563df2011be2282cdaa846',1,'id::ui::input_field(InputFieldFlags options, int attr, char *fld, int len, int row, int col, int(*check_key)(int key))'],['../dc/d76/namespaceid_1_1ui.html#a1d691796bbe9dacaeb4744c722a6cb14',1,'id::ui::input_field(InputFieldFlags options, int attr, char *fld, int len, int display_len, int row, int col, int(*check_key)(int key))']]],
+  ['input_5ffield_211',['input_field',['../dc/d76/namespaceid_1_1ui.html#abaefd24677e4c487fe373522b61cf89c',1,'id::ui::input_field(InputFieldFlags options, int attr, std::string &amp;fld, int len, int row, int col, int(*check_key)(int key))'],['../dc/d76/namespaceid_1_1ui.html#a022dbb31d30cc0caade8f35f7e2fa721',1,'id::ui::input_field(InputFieldFlags options, int attr, std::string &amp;fld, int len, int display_len, int row, int col, int(*check_key)(int key))']]],
   ['input_5ffield_2ecpp_212',['input_field.cpp',['../d9/dda/input__field_8cpp.html',1,'']]],
   ['input_5ffield_2eh_213',['input_field.h',['../df/d16/input__field_8h.html',1,'']]],
   ['inputfieldflags_214',['InputFieldFlags',['../dc/d76/namespaceid_1_1ui.html#a3866d1342c4dd9900f26f13724369290',1,'id::ui']]],
