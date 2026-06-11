@@ -664,6 +664,7 @@ int Prompt::prompt_params()
         const int cur_type = values[cur_choice].type;
         char buf[81];
         const int cur_len = prompt_value_string(buf, &values[cur_choice]);
+        std::string field{buf};
         if (!rewrite_extra_info)
         {
             put_string_center(instr_row, 0, 80, C_PROMPT_BKGRD,
@@ -691,6 +692,7 @@ int Prompt::prompt_params()
                 }
             }
             values[cur_choice].uval.ch.val = j;
+            field = buf;
         }
         else
         {
@@ -715,40 +717,35 @@ int Prompt::prompt_params()
             {
                 j = InputFieldFlags::NUMERIC;
             }
-            i = input_field(j, C_PROMPT_INPUT, buf, prompt_field_len(&values[cur_choice]), cur_len,
-                prompt_row + cur_choice, value_col,
-                in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
+            i = input_field(j, C_PROMPT_INPUT, field, prompt_field_len(&values[cur_choice]), cur_len,
+                prompt_row + cur_choice, value_col, in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
             switch (values[cur_choice].type)
             {
             case 'd':
             case 'D':
-                values[cur_choice].uval.dval = std::atof(buf);
+                values[cur_choice].uval.dval = std::atof(field.c_str());
                 break;
             case 'f':
-                values[cur_choice].uval.dval = std::atof(buf);
+                values[cur_choice].uval.dval = std::atof(field.c_str());
                 round_float_double(&values[cur_choice].uval.dval);
                 break;
             case 'i':
-                values[cur_choice].uval.ival = std::atoi(buf);
+                values[cur_choice].uval.ival = std::atoi(field.c_str());
                 break;
             case 'L':
-                values[cur_choice].uval.Lval = std::atol(buf);
+                values[cur_choice].uval.Lval = std::atol(field.c_str());
                 break;
             case 's':
-                std::strncpy(values[cur_choice].uval.sval, buf, 16);
+                std::strncpy(values[cur_choice].uval.sval, field.c_str(), 16);
                 break;
             default: // assume 0x100+n
-                std::strcpy(values[cur_choice].uval.sbuf, buf);
+                std::strcpy(values[cur_choice].uval.sbuf, field.c_str());
             }
         }
 
         driver_put_string(prompt_row + cur_choice, prompt_col, C_PROMPT_LO, prompts[cur_choice]);
-        {
-            const int j = static_cast<int>(std::strlen(buf));
-            std::memset(&buf[j], ' ', 80 - j);
-        }
-        buf[cur_len] = 0;
-        driver_put_string(prompt_row + cur_choice, value_col, C_PROMPT_LO, buf);
+        field.resize(cur_len, ' ');
+        driver_put_string(prompt_row + cur_choice, value_col, C_PROMPT_LO, field.c_str());
 
         switch (i)
         {

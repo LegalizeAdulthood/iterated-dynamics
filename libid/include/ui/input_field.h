@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <string>
+
 namespace id::ui
 {
 
@@ -39,11 +41,11 @@ inline bool bit_set(const InputFieldFlags value, const InputFieldFlags flags)
     return (value & flags) == flags;
 }
 
-int input_field(InputFieldFlags options, int attr, char *fld, int len, //
-    int row, int col,                                                  //
+int input_field(InputFieldFlags options, int attr, std::string &fld, int len,                  //
+    int row, int col,                                                                          //
     int (*check_key)(int key));
-int input_field(InputFieldFlags options, int attr, char *fld, int len, int display_len, //
-    int row, int col,                                                                  //
+int input_field(InputFieldFlags options, int attr, std::string &fld, int len, int display_len, //
+    int row, int col,                                                                          //
     int (*check_key)(int key));
 
 } // namespace id::ui

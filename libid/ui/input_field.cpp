@@ -12,7 +12,6 @@
 
 #include <cmath>
 #include <cstdio>
-#include <cstring>
 #include <string>
 
 using namespace id::math;
@@ -23,7 +22,7 @@ namespace id::ui
 
 int input_field(const InputFieldFlags options, //
     const int attr,                            // display attribute
-    char *fld,                                 // the field itself
+    std::string &fld,                          // the field itself
     const int len,                             // field length (declare as 1 larger for \0)
     const int row,                             // display row
     const int col,                             // display column
@@ -35,7 +34,7 @@ int input_field(const InputFieldFlags options, //
 
 int input_field(const InputFieldFlags options, //
     const int attr,                            // display attribute
-    char *fld,                                 // the field itself
+    std::string &fld,                          // the field itself
     const int len,                             // field length (declare as 1 larger for \0)
     const int display_len,                     // display width
     const int row,                             // display row
@@ -44,7 +43,6 @@ int input_field(const InputFieldFlags options, //
 )
 {
     const std::string save_fld{fld};
-    int j;
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
     int insert = 0;
@@ -72,7 +70,7 @@ int input_field(const InputFieldFlags options, //
         {
             display = true;
         }
-        std::string buf{fld + window_start};
+        std::string buf{window_start < static_cast<int>(fld.size()) ? fld.substr(window_start) : std::string{}};
         buf.resize(visible_len, ' ');
         if (display)
         {
@@ -112,17 +110,16 @@ int input_field(const InputFieldFlags options, //
             started = true;
             break;
         case ID_KEY_END:
-            offset = static_cast<int>(std::strlen(fld));
+            offset = static_cast<int>(fld.size());
             started = true;
             break;
         case ID_KEY_BACKSPACE:
         case 127:                              // backspace
             if (offset > 0)
             {
-                j = static_cast<int>(std::strlen(fld));
-                for (int k = offset-1; k < j; ++k)
+                if (offset <= static_cast<int>(fld.size()))
                 {
-                    fld[k] = fld[k+1];
+                    fld.erase(static_cast<std::size_t>(offset - 1), 1);
                 }
                 --offset;
             }
@@ -130,10 +127,9 @@ int input_field(const InputFieldFlags options, //
             display = true;
             break;
         case ID_KEY_DELETE:                           // delete
-            j = static_cast<int>(std::strlen(fld));
-            for (int k = offset; k < j; ++k)
+            if (offset < static_cast<int>(fld.size()))
             {
-                fld[k] = fld[k+1];
+                fld.erase(static_cast<std::size_t>(offset), 1);
             }
             started = true;
             display = true;
@@ -143,7 +139,7 @@ int input_field(const InputFieldFlags options, //
             started = true;
             break;
         case ID_KEY_F5:
-            std::strcpy(fld, save_fld.c_str());
+            fld = save_fld;
             offset = 0;
             insert = 0;
             started = false;
@@ -162,7 +158,7 @@ int input_field(const InputFieldFlags options, //
             {
                 break;                // at end of field
             }
-            if (insert && started && std::strlen(fld) >= static_cast<size_t>(len))
+            if (insert && started && fld.size() >= static_cast<size_t>(len))
             {
                 break;                                // insert & full
             }
@@ -184,34 +180,37 @@ int input_field(const InputFieldFlags options, //
             }
             if (!started)   // first char is data, zap field
             {
-                fld[0] = 0;
+                fld.clear();
             }
-            if (insert)
+            if (static_cast<std::size_t>(offset) > fld.size())
             {
-                j = static_cast<int>(std::strlen(fld));
-                while (j >= offset)
-                {
-                    fld[j+1] = fld[j];
-                    --j;
-                }
+                fld.resize(static_cast<std::size_t>(offset), ' ');
             }
-            if (static_cast<size_t>(offset) >= std::strlen(fld))
+            if (insert && started)
             {
-                fld[offset+1] = 0;
+                fld.insert(static_cast<std::size_t>(offset), 1, static_cast<char>(key));
             }
-            fld[offset++] = static_cast<char>(key);
+            else if (static_cast<std::size_t>(offset) == fld.size())
+            {
+                fld.push_back(static_cast<char>(key));
+            }
+            else
+            {
+                fld[static_cast<std::size_t>(offset)] = static_cast<char>(key);
+            }
+            ++offset;
             // if "e" or "p" in first col make number e or pi
             if ((options & (InputFieldFlags::NUMERIC | InputFieldFlags::INTEGER)) == InputFieldFlags::NUMERIC)
             {
                 // floating point
                 double tmp_d;
                 bool special_val = false;
-                if (*fld == 'e' || *fld == 'E')
+                if (fld[0] == 'e' || fld[0] == 'E')
                 {
                     tmp_d = std::exp(1.0);
                     special_val = true;
                 }
-                if (*fld == 'p' || *fld == 'P')
+                if (fld[0] == 'p' || fld[0] == 'P')
                 {
                     tmp_d = std::atan(1.0) * 4;
                     special_val = true;
@@ -227,7 +226,7 @@ int input_field(const InputFieldFlags options, //
                     {
                         tmp_fld.resize(static_cast<size_t>(len - 1));
                     }
-                    std::strcpy(fld, tmp_fld.c_str());
+                    fld = tmp_fld;
                     offset = 0;
                 }
             }

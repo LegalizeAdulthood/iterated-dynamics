@@ -10,6 +10,7 @@
 #include "ui/text_screen.h"
 
 #include <algorithm>
+#include <string>
 
 using namespace id::engine;
 using namespace id::misc;
@@ -83,7 +84,13 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
     {
         put_string_center(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
     }
-    return input_field(InputFieldFlags::NONE, C_PROMPT_INPUT, fld, len, title_row + title_lines + 1, prompt_col, check_key);
+    std::string field{fld};
+    const int ret{input_field(
+        InputFieldFlags::NONE, C_PROMPT_INPUT, field, len, title_row + title_lines + 1, prompt_col, check_key)};
+    const std::size_t copy_len{std::min(field.size(), static_cast<std::size_t>(std::max(len, 0)))};
+    std::copy_n(field.data(), copy_len, fld);
+    fld[copy_len] = 0;
+    return ret;
 }
 
 } // namespace id::ui

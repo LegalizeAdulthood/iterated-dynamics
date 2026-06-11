@@ -10,7 +10,6 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <array>
 #include <string>
 
 using namespace id::misc;
@@ -30,7 +29,7 @@ protected:
 
 TEST_F(TestInputField, scrollsRightWhenCursorMovesPastDisplayLength)
 {
-    char field[7]{"abcdef"};
+    std::string field{"abcdef"};
 
     InSequence sequence;
     EXPECT_CALL(m_driver, put_string(4, 10, 7, StrEq("abc")));
@@ -46,7 +45,7 @@ TEST_F(TestInputField, scrollsRightWhenCursorMovesPastDisplayLength)
 
 TEST_F(TestInputField, scrollsLeftWhenCursorMovesBeforeDisplayWindow)
 {
-    char field[7]{"abcdef"};
+    std::string field{"abcdef"};
 
     InSequence sequence;
     EXPECT_CALL(m_driver, put_string(4, 10, 7, StrEq("abc")));
@@ -64,22 +63,20 @@ TEST_F(TestInputField, scrollsLeftWhenCursorMovesBeforeDisplayWindow)
 
 TEST_F(TestInputField, displaysFieldsWiderThanScratchBuffer)
 {
-    std::array<char, 96> field{};
+    std::string field(90, 'x');
     const std::string expected(90, 'x');
-    expected.copy(field.data(), expected.size());
 
     InSequence sequence;
     EXPECT_CALL(m_driver, put_string(4, 10, 7, StrEq(expected)));
     EXPECT_CALL(m_driver, key_cursor(4, 10)).WillOnce(Return(ID_KEY_ENTER));
 
-    EXPECT_EQ(0, input_field(InputFieldFlags::NONE, 7, field.data(), 90, 90, 4, 10, nullptr));
+    EXPECT_EQ(0, input_field(InputFieldFlags::NONE, 7, field, 90, 90, 4, 10, nullptr));
 }
 
 TEST_F(TestInputField, f5RestoresFieldsWiderThanScratchBuffer)
 {
-    std::array<char, 96> field{};
+    std::string field(90, 'a');
     const std::string expected(90, 'a');
-    expected.copy(field.data(), expected.size());
     std::string changed{"b"};
     changed.resize(90, ' ');
 
@@ -91,13 +88,13 @@ TEST_F(TestInputField, f5RestoresFieldsWiderThanScratchBuffer)
     EXPECT_CALL(m_driver, put_string(4, 10, 7, StrEq(expected)));
     EXPECT_CALL(m_driver, key_cursor(4, 10)).WillOnce(Return(ID_KEY_ENTER));
 
-    EXPECT_EQ(0, input_field(InputFieldFlags::NONE, 7, field.data(), 90, 90, 4, 10, nullptr));
-    EXPECT_THAT(field.data(), StrEq(expected));
+    EXPECT_EQ(0, input_field(InputFieldFlags::NONE, 7, field, 90, 90, 4, 10, nullptr));
+    EXPECT_THAT(field, Eq(expected));
 }
 
 TEST_F(TestInputField, piExpansionWorksInLongField)
 {
-    std::array<char, 96> field{};
+    std::string field;
     const std::string initial(40, ' ');
     std::string expected{"3.141593"};
     expected.resize(40, ' ');
@@ -108,8 +105,8 @@ TEST_F(TestInputField, piExpansionWorksInLongField)
     EXPECT_CALL(m_driver, put_string(4, 10, 7, StrEq(expected)));
     EXPECT_CALL(m_driver, key_cursor(4, 10)).WillOnce(Return(ID_KEY_ENTER));
 
-    EXPECT_EQ(0, input_field(InputFieldFlags::NUMERIC, 7, field.data(), 40, 40, 4, 10, nullptr));
-    EXPECT_THAT(field.data(), StrEq("3.141593"));
+    EXPECT_EQ(0, input_field(InputFieldFlags::NUMERIC, 7, field, 40, 40, 4, 10, nullptr));
+    EXPECT_THAT(field, Eq("3.141593"));
 }
 
 } // namespace id::test
