@@ -13,6 +13,7 @@
 #include <cmath>
 #include <cstdio>
 #include <cstring>
+#include <string>
 
 using namespace id::math;
 using namespace id::misc;
@@ -42,12 +43,10 @@ int input_field(const InputFieldFlags options, //
     int (*check_key)(int key)                  // routine to check non data keys, or nullptr
 )
 {
-    char save_fld[81];
-    char buf[81];
+    const std::string save_fld{fld};
     int j;
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
-    std::strcpy(save_fld, fld);
     int insert = 0;
     bool started = false;
     int offset = 0;
@@ -55,7 +54,11 @@ int input_field(const InputFieldFlags options, //
     bool display = true;
     while (true)
     {
-        const int visible_len = display_len > 0 && display_len < len ? display_len : len;
+        int visible_len = display_len > 0 && display_len < len ? display_len : len;
+        if (visible_len < 0)
+        {
+            visible_len = 0;
+        }
         const int old_window_start = window_start;
         if (offset < window_start)
         {
@@ -69,17 +72,12 @@ int input_field(const InputFieldFlags options, //
         {
             display = true;
         }
-        std::strncpy(buf, fld + window_start, visible_len);
-        int i = static_cast<int>(std::strlen(buf));
-        while (i < visible_len)
-        {
-            buf[i++] = ' ';
-        }
-        buf[visible_len] = 0;
+        std::string buf{fld + window_start};
+        buf.resize(visible_len, ' ');
         if (display)
         {
             // display current value
-            driver_put_string(row, col, attr, buf);
+            driver_put_string(row, col, attr, buf.c_str());
             display = false;
         }
         int key = driver_key_cursor(row + insert, col + offset - window_start);  // get a keystroke
@@ -145,7 +143,7 @@ int input_field(const InputFieldFlags options, //
             started = true;
             break;
         case ID_KEY_F5:
-            std::strcpy(fld, save_fld);
+            std::strcpy(fld, save_fld.c_str());
             offset = 0;
             insert = 0;
             started = false;
@@ -220,14 +218,16 @@ int input_field(const InputFieldFlags options, //
                 }
                 if (special_val)
                 {
-                    char tmp_fld[30];
                     if (!bit_set(options, InputFieldFlags::DOUBLE))
                     {
                         round_float_double(&tmp_d);
                     }
-                    *fmt::format_to(tmp_fld, "{:.15g}", tmp_d).out = '\0';
-                    tmp_fld[len-1] = 0; // safety, field should be long enough
-                    std::strcpy(fld, tmp_fld);
+                    std::string tmp_fld{fmt::format("{:.15g}", tmp_d)};
+                    if (len > 0 && tmp_fld.size() >= static_cast<size_t>(len))
+                    {
+                        tmp_fld.resize(static_cast<size_t>(len - 1));
+                    }
+                    std::strcpy(fld, tmp_fld.c_str());
                     offset = 0;
                 }
             }
