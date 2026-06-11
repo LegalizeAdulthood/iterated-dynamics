@@ -6,14 +6,13 @@ on:
   push:
     tags: [ "v*" ]
 
-permissions:
-  contents: write
-
 env:
   FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
 
 jobs:
   publish-versioned-docs:
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     outputs:
       version: ${{steps.version.outputs.version}}
@@ -137,6 +136,8 @@ jobs:
 
   promote-current-docs:
     needs: publish-versioned-docs
+    permissions:
+      contents: write
     runs-on: ubuntu-latest
     environment: current-documentation
 
