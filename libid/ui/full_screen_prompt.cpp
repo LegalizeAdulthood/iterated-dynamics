@@ -45,8 +45,9 @@ static int prompt_check_key(int key);
 static int prompt_check_key_scroll(int key);
 static  int input_field_list(int attr, char *field, int field_len, const char **list, int list_len,
                              int row, int col, int (*check_key)(int key));
+static int prompt_display_len(const FullScreenValues *val);
 static int prompt_field_len(const FullScreenValues *val);
-static int prompt_value_string(char *buf, const FullScreenValues *val);
+static std::string prompt_value_string(const FullScreenValues *val);
 
 static int s_fn_key_mask{};
 
@@ -62,6 +63,13 @@ void full_screen_reset_scrolling()
 
 namespace
 {
+
+void copy_string(char *dest, const int max_chars, const std::string &source)
+{
+    const std::size_t copy_len{std::min(source.size(), static_cast<std::size_t>(std::max(max_chars, 0)))};
+    std::copy_n(source.data(), copy_len, dest);
+    dest[copy_len] = 0;
+}
 
 struct Prompt
 {
@@ -369,9 +377,7 @@ void Prompt::set_horizontal_positions()
         {
             any_input = true;
             max_prompt_width = std::max(j, max_prompt_width);
-            char buf[81];
-            j = prompt_value_string(buf, &values[i]);
-            max_field_width = std::max(j, max_field_width);
+            max_field_width = std::max(prompt_display_len(&values[i]), max_field_width);
         }
     }
     box_width = max_prompt_width + max_field_width + 2;
@@ -510,9 +516,8 @@ void Prompt::display_initial_values()
     for (int i = 0; i < num_prompts; i++)
     {
         driver_put_string(prompt_row + i, prompt_col, C_PROMPT_LO, prompts[i]);
-        char buf[81];
-        prompt_value_string(buf, &values[i]);
-        driver_put_string(prompt_row + i, value_col, C_PROMPT_LO, buf);
+        const std::string value{prompt_value_string(&values[i])};
+        driver_put_string(prompt_row + i, value_col, C_PROMPT_LO, value.c_str());
     }
 }
 
@@ -662,9 +667,8 @@ int Prompt::prompt_params()
         }
 
         const int cur_type = values[cur_choice].type;
-        char buf[81];
-        const int cur_len = prompt_value_string(buf, &values[cur_choice]);
-        std::string field{buf};
+        const int cur_len = prompt_display_len(&values[cur_choice]);
+        std::string field{prompt_value_string(&values[cur_choice])};
         if (!rewrite_extra_info)
         {
             put_string_center(instr_row, 0, 80, C_PROMPT_BKGRD,
@@ -680,6 +684,8 @@ int Prompt::prompt_params()
         int i;
         if (cur_type == 'l')
         {
+            char buf[81];
+            copy_string(buf, cur_len, field);
             i = input_field_list(C_PROMPT_CHOOSE, buf, cur_len, values[cur_choice].uval.ch.list,
                 values[cur_choice].uval.ch.list_len, prompt_row + cur_choice, value_col,
                 in_scrolling_mode ? prompt_check_key_scroll : prompt_check_key);
@@ -736,10 +742,10 @@ int Prompt::prompt_params()
                 values[cur_choice].uval.Lval = std::atol(field.c_str());
                 break;
             case 's':
-                std::strncpy(values[cur_choice].uval.sval, field.c_str(), 16);
+                copy_string(values[cur_choice].uval.sval, 15, field);
                 break;
             default: // assume 0x100+n
-                std::strcpy(values[cur_choice].uval.sbuf, field.c_str());
+                copy_string(values[cur_choice].uval.sbuf, prompt_field_len(&values[cur_choice]), field);
             }
         }
 
@@ -903,50 +909,38 @@ int full_screen_prompt(       // full-screen prompting routine
     return Prompt{hdg, num_prompts, prompts, values, fn_key_mask, extra_info}.prompt();
 }
 
-// format value into buf, return field width
-static int prompt_value_string(char *buf, const FullScreenValues *val)
+static std::string prompt_value_string(const FullScreenValues *val)
 {
-    int ret;
     switch (val->type)
     {
     case 'd':
-        ret = 20;
+    {
+        char buf[81];
         double_to_string(buf, val->uval.dval);
-        break;
-    case 'D':
-        std::strcpy(buf, fmt::format("{:d}", std::lround(val->uval.dval)).c_str());
-        ret = 20;
-        break;
-    case 'f':
-        std::strcpy(buf, fmt::format("{:.7g}", val->uval.dval).c_str());
-        ret = 14;
-        break;
-    case 'i':
-        std::strcpy(buf, fmt::format("{:d}", val->uval.ival).c_str());
-        ret = 6;
-        break;
-    case 'L':
-        std::strcpy(buf, fmt::format("{:d}", val->uval.Lval).c_str());
-        ret = 10;
-        break;
-    case '*':
-        ret = 0;
-        *buf = static_cast<char>(ret);
-        break;
-    case 's':
-        std::strncpy(buf, val->uval.sval, 16);
-        buf[15] = 0;
-        ret = 15;
-        break;
-    case 'l':
-        std::strcpy(buf, val->uval.ch.list[val->uval.ch.val]);
-        ret = val->uval.ch.vlen;
-        break;
-    default: // assume 0x100+n
-        std::strcpy(buf, val->uval.sbuf);
-        ret = val->display_len != 0 ? val->display_len : val->type & 0xff;
+        return buf;
     }
-    return ret;
+    case 'D':
+        return fmt::format("{:d}", std::lround(val->uval.dval));
+    case 'f':
+        return fmt::format("{:.7g}", val->uval.dval);
+    case 'i':
+        return fmt::format("{:d}", val->uval.ival);
+    case 'L':
+        return fmt::format("{:d}", val->uval.Lval);
+    case '*':
+        return {};
+    case 's':
+        return val->uval.sval;
+    case 'l':
+        return val->uval.ch.list[val->uval.ch.val];
+    default: // assume 0x100+n
+        return val->uval.sbuf;
+    }
+}
+
+static int prompt_display_len(const FullScreenValues *val)
+{
+    return val->display_len != 0 ? val->display_len : prompt_field_len(val);
 }
 
 static int prompt_field_len(const FullScreenValues *val)

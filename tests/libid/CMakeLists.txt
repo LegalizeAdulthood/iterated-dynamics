@@ -112,6 +112,7 @@ add_executable(test-id
     ui/test_comments.cpp
     ui/test_diskvid.cpp
     ui/test_file_item.cpp
+    ui/test_full_screen_prompt.cpp
     ui/test_history.cpp
     ui/test_input_field.cpp
     ui/test_main_menu_switch.cpp
