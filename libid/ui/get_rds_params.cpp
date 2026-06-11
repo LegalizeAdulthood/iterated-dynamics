@@ -11,7 +11,7 @@
 
 #include <algorithm>
 #include <array>
-#include <cstring>
+#include <filesystem>
 #include <iterator>
 #include <string>
 
@@ -69,22 +69,20 @@ int get_rds_params()
             values[k++].type = 'y';
 
             values[k++].type = '*';
-            std::fill(std::begin(rds6), std::end(rds6), ' ');
-            auto p = g_stereo_texture_filename.find(SLASH_CH);
-            if (p == std::string::npos ||
-                    static_cast<int>(g_stereo_texture_filename.length()) < sizeof(rds6)-2)
+            constexpr std::size_t max_rds_label_len{sizeof(rds6) - 1};
+            constexpr std::size_t max_texture_filename_len{max_rds_label_len - 2};
+            std::string texture_filename{std::filesystem::path{g_stereo_texture_filename}.filename().string()};
+            if (texture_filename.length() > max_texture_filename_len)
             {
-                p = 0;
+                texture_filename.erase(0, texture_filename.length() - max_texture_filename_len);
             }
-            else
-            {
-                p++;
-            }
+            const std::string rds_texture_label{"[" + texture_filename + "]"};
+            const std::size_t center_col{(max_rds_label_len - rds_texture_label.length()) / 2};
+
             // center file name
-            rds6[(sizeof(rds6)- static_cast<int>(g_stereo_texture_filename.length() - p) +2)/2] = 0;
-            std::strcat(rds6, "[");
-            std::strcat(rds6, &g_stereo_texture_filename.c_str()[p]);
-            std::strcat(rds6, "]");
+            std::fill(std::begin(rds6), std::end(rds6) - 1, ' ');
+            rds6[max_rds_label_len] = 0;
+            std::copy(rds_texture_label.begin(), rds_texture_label.end(), std::begin(rds6) + center_col);
         }
         else
         {
