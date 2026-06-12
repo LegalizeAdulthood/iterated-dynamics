@@ -119,13 +119,6 @@ namespace id::engine
 
 static int get_max_cur_arg_len(const char *const float_val_str[], int num_args);
 static CmdArgFlags command_file(std::FILE *handle, CmdFile mode);
-static int  next_command(
-    char *cmd_buf,
-    int max_len,
-    std::FILE *handle,
-    char *line_buf,
-    int *line_offset,
-    CmdFile mode);
 static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode);
 static void arg_error(const char *bad_arg);
 static void init_vars_run();
@@ -672,7 +665,7 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
     return change_flag;
 }
 
-static int next_command(
+int next_command(
     char *cmd_buf, const int max_len, std::FILE *handle, char *line_buf, int *line_offset, const CmdFile mode)
 {
     int cmd_len{};

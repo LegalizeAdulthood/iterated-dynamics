@@ -60,6 +60,7 @@
 #include <misc/ValueSaver.h>
 #include <misc/version.h>
 #include <ui/big_while_loop.h>
+#include <ui/comments.h>
 #include <ui/history.h>
 #include <ui/id_keys.h>
 #include <ui/make_batch_file.h>
@@ -72,6 +73,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
@@ -192,6 +194,186 @@ void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, const CmdFil
     m_buffer.resize(cur_arg.size() + 1);
     std::strcpy(m_buffer.data(), cur_arg.c_str());
     m_result = cmd_arg(m_buffer.data(), mode);
+}
+
+class TestNextCommand : public Test
+{
+protected:
+    void SetUp() override
+    {
+        clear_command_comments();
+    }
+
+    void TearDown() override
+    {
+        if (m_file != nullptr)
+        {
+            std::fclose(m_file);
+            m_file = nullptr;
+        }
+        std::error_code ignored;
+        fs::remove(m_input_path, ignored);
+        clear_command_comments();
+    }
+
+    void open_input(const std::string &text)
+    {
+        m_input_path = test_input_path();
+        ASSERT_FALSE(m_input_path.empty());
+        m_file = std::fopen(m_input_path.string().c_str(), "w+b");
+        ASSERT_NE(nullptr, m_file);
+        ASSERT_EQ(text.size(), std::fwrite(text.data(), 1, text.size(), m_file));
+        std::rewind(m_file);
+    }
+
+    int read_next(const CmdFile mode = CmdFile::AT_CMD_LINE, const int max_len = 0)
+    {
+        const int buffer_len{max_len == 0 ? static_cast<int>(sizeof(m_cmd_buf)) : max_len};
+        return next_command(m_cmd_buf, buffer_len, m_file, m_line_buf, &m_line_offset, mode);
+    }
+
+    std::string command() const
+    {
+        return m_cmd_buf;
+    }
+
+    fs::path test_input_path() const
+    {
+        const TestInfo *info = UnitTest::GetInstance()->current_test_info();
+        std::string name{info->test_suite_name()};
+        name += '_';
+        name += info->name();
+        std::replace_if(name.begin(), name.end(), [](const unsigned char ch) { return std::isalnum(ch) == 0; }, '_');
+        return fs::temp_directory_path() / (name + ".tmp");
+    }
+
+    char m_cmd_buf[32]{};
+    char m_line_buf[513]{};
+    int m_line_offset{};
+    fs::path m_input_path;
+    std::FILE *m_file{};
+};
+
+class TestNextCommandError : public TestNextCommand
+{
+protected:
+    void SetUp() override
+    {
+        TestNextCommand::SetUp();
+        m_prev_stop_msg = cmd_files_test::get_stop_msg();
+        cmd_files_test::set_stop_msg(m_stop_msg.AsStdFunction());
+        EXPECT_CALL(m_stop_msg, Call(StopMsgFlags::NONE, _)).WillOnce(Return(false));
+    }
+
+    void TearDown() override
+    {
+        cmd_files_test::set_stop_msg(m_prev_stop_msg);
+        TestNextCommand::TearDown();
+    }
+
+    cmd_files_test::StopMsgFn m_prev_stop_msg;
+    StrictMock<MockFunction<cmd_files_test::StopMsg>> m_stop_msg;
+};
+
+TEST_F(TestNextCommand, readsCommandsAcrossLines)
+{
+    open_input("  alpha beta\r\n\tgamma\n");
+
+    EXPECT_EQ(5, read_next());
+    EXPECT_EQ("alpha", command());
+    EXPECT_EQ(4, read_next());
+    EXPECT_EQ("beta", command());
+    EXPECT_EQ(5, read_next());
+    EXPECT_EQ("gamma", command());
+    EXPECT_EQ(-1, read_next());
+}
+
+TEST_F(TestNextCommand, emptyInputReturnsEof)
+{
+    open_input("");
+
+    EXPECT_EQ(-1, read_next());
+}
+
+TEST_F(TestNextCommand, semicolonStartsComment)
+{
+    open_input("alpha ; ignored\nbeta\n");
+
+    EXPECT_EQ(5, read_next());
+    EXPECT_EQ("alpha", command());
+    EXPECT_EQ(4, read_next());
+    EXPECT_EQ("beta", command());
+    EXPECT_EQ(-1, read_next());
+}
+
+TEST_F(TestNextCommand, savesTrimmedCommentsForCommandSet)
+{
+    open_input("; first\n; \tsecond\n}\n");
+
+    EXPECT_EQ(1, read_next(CmdFile::AT_CMD_LINE_SET_NAME));
+    EXPECT_EQ("}", command());
+    EXPECT_EQ("first", g_command_comment[0]);
+    EXPECT_EQ("second", g_command_comment[1]);
+}
+
+TEST_F(TestNextCommand, savesOnlyFourComments)
+{
+    open_input("; one\n; two\n; three\n; four\n; five\n}\n");
+
+    EXPECT_EQ(1, read_next(CmdFile::AT_CMD_LINE_SET_NAME));
+    EXPECT_EQ("}", command());
+    EXPECT_THAT(g_command_comment, ElementsAre("one", "two", "three", "four"));
+}
+
+TEST_F(TestNextCommand, ignoresCommentsForCommandLine)
+{
+    open_input("; first\nalpha\n");
+
+    EXPECT_EQ(5, read_next());
+    EXPECT_EQ("alpha", command());
+    EXPECT_EQ("", g_command_comment[0]);
+}
+
+TEST_F(TestNextCommand, truncatesSavedCommentToParCommentLength)
+{
+    const std::string comment(MAX_COMMENT_LEN + 10, 'x');
+    open_input("; " + comment + "\n}\n");
+
+    EXPECT_EQ(1, read_next(CmdFile::AT_AFTER_STARTUP));
+    EXPECT_EQ("}", command());
+    EXPECT_EQ(std::string(MAX_COMMENT_LEN - 1, 'x'), g_command_comment[0]);
+}
+
+TEST_F(TestNextCommand, joinsContinuationLine)
+{
+    open_input("alpha\\\n    beta gamma\n");
+
+    EXPECT_EQ(9, read_next());
+    EXPECT_EQ("alphabeta", command());
+    EXPECT_EQ(5, read_next());
+    EXPECT_EQ("gamma", command());
+}
+
+TEST_F(TestNextCommand, sstoolsSkipsNonIdSections)
+{
+    open_input("[other]\nfoo\n[id]\nbar\n");
+
+    EXPECT_EQ(3, read_next(CmdFile::SSTOOLS_INI));
+    EXPECT_EQ("bar", command());
+}
+
+TEST_F(TestNextCommandError, returnsErrorForMissingContinuationLine)
+{
+    open_input("alpha\\");
+
+    EXPECT_EQ(-1, read_next());
+}
+
+TEST_F(TestNextCommandError, returnsErrorWhenCommandExceedsBuffer)
+{
+    open_input("abcdef\n");
+
+    EXPECT_EQ(-1, read_next(CmdFile::AT_CMD_LINE, 4));
 }
 
 static fs::path home_file(const char *subdir, const char *filename)
