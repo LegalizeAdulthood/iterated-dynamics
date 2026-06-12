@@ -76,15 +76,24 @@ hc/HelpCompiler.cpp:1566:9: note: First condition
 hc/HelpCompiler.cpp:1570:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/cmdfiles.cpp:175:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:168:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3783:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3763:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:4197:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4177:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
+libid/engine/cmdfiles.cpp:1741:24: style: Local variable 'color' shadows outer variable [shadowVariable]
+            for (auto &color : g_dac_box)
+                       ^
+libid/engine/cmdfiles.cpp:1663:21: note: Shadowed declaration
+        const char *color{colors.c_str()};
+                    ^
+libid/engine/cmdfiles.cpp:1741:24: note: Shadow variable
+            for (auto &color : g_dac_box)
+                       ^
 libid/fractals/Ant.cpp:276:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
     return value & high_bit ? result | 1U : result;
                             ^
@@ -1768,13 +1777,13 @@ libid/ui/stereo.cpp:288:16: note: Variable created here.
 libid/ui/stereo.cpp:297:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data = &v; // set static vars to stack structure
     ^
-tests/libid/engine/test_cmdfiles.cpp:1122:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+tests/libid/engine/test_cmdfiles.cpp:1292:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/engine/test_cmdfiles.cpp:1114:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+tests/libid/engine/test_cmdfiles.cpp:1284:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
     const std::string saved_browse_name{g_browse.name};
                                                 ^
-tests/libid/engine/test_cmdfiles.cpp:1122:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+tests/libid/engine/test_cmdfiles.cpp:1292:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
 tests/tools/image_compare.cpp:54:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]
@@ -1879,28 +1888,28 @@ wx/TextScreen.cpp:168:9: note: Same expression used in consecutive assignments o
 wx/TextScreen.cpp:276:18: style: Consider using std::fill or std::generate algorithm instead of a raw loop. [useStlAlgorithm]
             cell = CGACell(' ', attr);
                  ^
-x11/X11BaseDriver.cpp:349:29: style: Condition 'typed_filename.empty()' is always false [knownConditionTrueFalse]
+x11/X11BaseDriver.cpp:345:29: style: Condition 'typed_filename.empty()' is always false [knownConditionTrueFalse]
     if (typed_filename.empty())
                             ^
-x11/X11BaseDriver.cpp:377:34: style: Condition 'found.empty()' is always false [knownConditionTrueFalse]
+x11/X11BaseDriver.cpp:373:34: style: Condition 'found.empty()' is always false [knownConditionTrueFalse]
     fs::path selected{found.empty() ? typed_template_path(directory, speed_string) : fs::path{found}};
                                  ^
-x11/X11BaseDriver.cpp:441:13: style: Condition '!speed.empty()' is always true [knownConditionTrueFalse]
+x11/X11BaseDriver.cpp:437:13: style: Condition '!speed.empty()' is always true [knownConditionTrueFalse]
         if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::TEMPLATE)
             ^
-x11/X11BaseDriver.cpp:450:13: style: Condition '!speed.empty()' is always false [knownConditionTrueFalse]
+x11/X11BaseDriver.cpp:446:13: style: Condition '!speed.empty()' is always false [knownConditionTrueFalse]
         if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::SEARCH_PATH)
             ^
-x11/X11BaseDriver.cpp:441:25: note: Assuming that condition 'speed.empty()' is not redundant
+x11/X11BaseDriver.cpp:437:25: note: Assuming that condition 'speed.empty()' is not redundant
         if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::TEMPLATE)
                         ^
-x11/X11BaseDriver.cpp:450:13: note: Condition '!speed.empty()' is always false
+x11/X11BaseDriver.cpp:446:13: note: Condition '!speed.empty()' is always false
         if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::SEARCH_PATH)
             ^
-x11/X11BaseDriver.cpp:324:17: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
+x11/X11BaseDriver.cpp:320:17: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
         choices.push_back(&choice);
                 ^
-x11/X11BaseDriver.cpp:408:20: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
+x11/X11BaseDriver.cpp:404:20: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
             labels.push_back(choice->full_name);
                    ^
 x11/X11Text.cpp:600:15: style: Condition 'right<left' is always false [knownConditionTrueFalse]

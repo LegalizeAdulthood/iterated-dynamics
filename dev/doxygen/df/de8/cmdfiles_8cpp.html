@@ -157,8 +157,8 @@ $(function() {
 <code>#include &quot;<a class="el" href="../../d1/d3e/slideshw_8h_source.html">ui/slideshw.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../da/d83/stereo_8h_source.html">ui/stereo.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d1/d31/stop__msg_8h_source.html">ui/stop_msg.h</a>&quot;</code><br />
+<code>#include &lt;algos/string_algorithms.h&gt;</code><br />
 <code>#include &lt;config/path_limits.h&gt;</code><br />
-<code>#include &lt;config/string_lower.h&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;array&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
@@ -207,10 +207,12 @@ Enumerations</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a18f6566f767e73420d2d83ab10eceddb" id="r_a18f6566f767e73420d2d83ab10eceddb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a18f6566f767e73420d2d83ab10eceddb">id::engine::cmd_files</a> (int argc, const char *const *argv)</td></tr>
-<tr class="separator:a18f6566f767e73420d2d83ab10eceddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01113f03f5d8b978a4da4d1b2fefc138" id="r_a01113f03f5d8b978a4da4d1b2fefc138"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a01113f03f5d8b978a4da4d1b2fefc138">id::engine::cmd_files</a> (const std::vector&lt; std::string &gt; &amp;args)</td></tr>
+<tr class="separator:a01113f03f5d8b978a4da4d1b2fefc138"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25ab8257ebcd4a311d1ec0727d8bc6d7" id="r_a25ab8257ebcd4a311d1ec0727d8bc6d7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a25ab8257ebcd4a311d1ec0727d8bc6d7">id::engine::load_commands</a> (std::FILE *infile)</td></tr>
 <tr class="separator:a25ab8257ebcd4a311d1ec0727d8bc6d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a101b0b549b831e651d128f18554435ee" id="r_a101b0b549b831e651d128f18554435ee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a101b0b549b831e651d128f18554435ee">id::engine::next_command</a> (std::string &amp;cmd, std::FILE *handle, std::string &amp;line_buf, std::string_view &amp;line, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a> mode)</td></tr>
+<tr class="separator:a101b0b549b831e651d128f18554435ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ac4bb166478eb68991ef0fce696dc44" id="r_a9ac4bb166478eb68991ef0fce696dc44"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a769688215ff166356b98c8e456d18b2d">StopMsgFn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a9ac4bb166478eb68991ef0fce696dc44">id::engine::cmd_files_test::get_stop_msg</a> ()</td></tr>
 <tr class="separator:a9ac4bb166478eb68991ef0fce696dc44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0558410e2f5b59c40537e4954d23be7d" id="r_a0558410e2f5b59c40537e4954d23be7d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a0558410e2f5b59c40537e4954d23be7d">id::engine::cmd_files_test::set_stop_msg</a> (const <a class="el" href="../../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a769688215ff166356b98c8e456d18b2d">StopMsgFn</a> &amp;fn)</td></tr>
@@ -223,8 +225,8 @@ Functions</h2></td></tr>
 <tr class="separator:a75cc995fcad5c382ac600751fbf985d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7bc2155c33b97f297da4fb96dd273d3a" id="r_a7bc2155c33b97f297da4fb96dd273d3a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a7bc2155c33b97f297da4fb96dd273d3a">id::engine::cmd_files_test::set_print_document</a> (const <a class="el" href="../../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#af677eab029e56cd688cb514817e07d49">PrintDocFn</a> &amp;fn)</td></tr>
 <tr class="separator:a7bc2155c33b97f297da4fb96dd273d3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3d7d60883349237d05df9bbe7e9d04e" id="r_af3d7d60883349237d05df9bbe7e9d04e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af3d7d60883349237d05df9bbe7e9d04e">id::engine::cmd_arg</a> (char *cur_arg, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a> mode)</td></tr>
-<tr class="separator:af3d7d60883349237d05df9bbe7e9d04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a065c8c9fdd8e608bc78f5507631f9177" id="r_a065c8c9fdd8e608bc78f5507631f9177"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a065c8c9fdd8e608bc78f5507631f9177">id::engine::cmd_arg</a> (std::string_view cur_arg, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a> mode)</td></tr>
+<tr class="separator:a065c8c9fdd8e608bc78f5507631f9177"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af58bbd95e9fe7ed3b57f033b66e51df6" id="r_af58bbd95e9fe7ed3b57f033b66e51df6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af58bbd95e9fe7ed3b57f033b66e51df6">id::engine::set_3d_defaults</a> ()</td></tr>
 <tr class="separator:af58bbd95e9fe7ed3b57f033b66e51df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7024d3cca04b309e4cc428141f471802" id="r_a7024d3cca04b309e4cc428141f471802"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a7024d3cca04b309e4cc428141f471802">id::engine::init_msg</a> (const char *cmd_str, const char *bad_filename, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a> mode)</td></tr>
@@ -248,7 +250,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/de8/cmdfiles_8cpp_source.html#l03118">3118</a> of file <a class="el" href="../../df/de8/cmdfiles_8cpp_source.html">cmdfiles.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/de8/cmdfiles_8cpp_source.html#l03098">3098</a> of file <a class="el" href="../../df/de8/cmdfiles_8cpp_source.html">cmdfiles.cpp</a>.</p>
 
 </div>
 </div>
@@ -264,7 +266,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../df/de8/cmdfiles_8cpp_source.html#l03119">3119</a> of file <a class="el" href="../../df/de8/cmdfiles_8cpp_source.html">cmdfiles.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../df/de8/cmdfiles_8cpp_source.html#l03099">3099</a> of file <a class="el" href="../../df/de8/cmdfiles_8cpp_source.html">cmdfiles.cpp</a>.</p>
 
 </div>
 </div>

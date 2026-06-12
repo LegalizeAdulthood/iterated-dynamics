@@ -85,6 +85,8 @@ $(function() {
 <div class="textblock"><code>#include &lt;cstdio&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;string_view&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 </div>
 <p><a href="../../db/dda/cmdfiles_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -146,16 +148,18 @@ Functions</h2></td></tr>
 <tr class="separator:a08afc1aebd97eb799cf41fe906e19236"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a816bdc4a1e076ffa56ad2d67ce3db058" id="r_a816bdc4a1e076ffa56ad2d67ce3db058"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a816bdc4a1e076ffa56ad2d67ce3db058">id::engine::bit_set</a> (const <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a> <a class="el" href="../../df/d16/get__video__mode_8cpp.html#a8b08a4d2ec878257d64c55f64a62242c">flags</a>, const <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a> bit)</td></tr>
 <tr class="separator:a816bdc4a1e076ffa56ad2d67ce3db058"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a18f6566f767e73420d2d83ab10eceddb" id="r_a18f6566f767e73420d2d83ab10eceddb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a18f6566f767e73420d2d83ab10eceddb">id::engine::cmd_files</a> (int argc, const char *const *argv)</td></tr>
-<tr class="separator:a18f6566f767e73420d2d83ab10eceddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01113f03f5d8b978a4da4d1b2fefc138" id="r_a01113f03f5d8b978a4da4d1b2fefc138"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a01113f03f5d8b978a4da4d1b2fefc138">id::engine::cmd_files</a> (const std::vector&lt; std::string &gt; &amp;args)</td></tr>
+<tr class="separator:a01113f03f5d8b978a4da4d1b2fefc138"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25ab8257ebcd4a311d1ec0727d8bc6d7" id="r_a25ab8257ebcd4a311d1ec0727d8bc6d7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a25ab8257ebcd4a311d1ec0727d8bc6d7">id::engine::load_commands</a> (std::FILE *infile)</td></tr>
 <tr class="separator:a25ab8257ebcd4a311d1ec0727d8bc6d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af58bbd95e9fe7ed3b57f033b66e51df6" id="r_af58bbd95e9fe7ed3b57f033b66e51df6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af58bbd95e9fe7ed3b57f033b66e51df6">id::engine::set_3d_defaults</a> ()</td></tr>
 <tr class="separator:af58bbd95e9fe7ed3b57f033b66e51df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7024d3cca04b309e4cc428141f471802" id="r_a7024d3cca04b309e4cc428141f471802"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a7024d3cca04b309e4cc428141f471802">id::engine::init_msg</a> (const char *cmd_str, const char *bad_filename, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a> mode)</td></tr>
 <tr class="separator:a7024d3cca04b309e4cc428141f471802"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3d7d60883349237d05df9bbe7e9d04e" id="r_af3d7d60883349237d05df9bbe7e9d04e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af3d7d60883349237d05df9bbe7e9d04e">id::engine::cmd_arg</a> (char *cur_arg, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a> mode)</td></tr>
-<tr class="separator:af3d7d60883349237d05df9bbe7e9d04e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a065c8c9fdd8e608bc78f5507631f9177" id="r_a065c8c9fdd8e608bc78f5507631f9177"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a42c836e07f1574c898e98d78505a7a16">CmdArgFlags</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a065c8c9fdd8e608bc78f5507631f9177">id::engine::cmd_arg</a> (std::string_view cur_arg, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a> mode)</td></tr>
+<tr class="separator:a065c8c9fdd8e608bc78f5507631f9177"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a101b0b549b831e651d128f18554435ee" id="r_a101b0b549b831e651d128f18554435ee"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d31/namespaceid_1_1engine.html#a101b0b549b831e651d128f18554435ee">id::engine::next_command</a> (std::string &amp;cmd, std::FILE *handle, std::string &amp;line_buf, std::string_view &amp;line, <a class="el" href="../../dc/d31/namespaceid_1_1engine.html#af68143cd48b47c6c8345824b1b7f9160">CmdFile</a> mode)</td></tr>
+<tr class="separator:a101b0b549b831e651d128f18554435ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
