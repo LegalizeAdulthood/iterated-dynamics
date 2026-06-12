@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  packages: write
 
 env:
   FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
@@ -46,9 +47,9 @@ jobs:
           -StorePasswordInClearText \
           -Name GitHubPackages \
           -UserName "${{github.repository_owner}}" \
-          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+          -Password "${{github.token}}"
         mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+          setapikey "${{github.token}}" \
           -Source "${{env.FEED_URL}}"
 
     - name: Setup ruby
@@ -342,9 +343,9 @@ jobs:
           -StorePasswordInClearText \
           -Name GitHubPackages \
           -UserName "${{github.repository_owner}}" \
-          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+          -Password "${{github.token}}"
         ${{matrix.nuget}} \
-          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+          setapikey "${{github.token}}" \
           -Source "${{env.FEED_URL}}"
 
     - name: Setup CMake
@@ -361,7 +362,7 @@ jobs:
       if: ${{matrix.os == 'windows-2022'}}
       shell: cmd
       env:
-        TOKEN: ${{secrets.GH_PACKAGES_TOKEN}}
+        TOKEN: ${{github.token}}
       run: |
         @echo off
         echo runner os: %RUNNER_OS%
@@ -372,9 +373,9 @@ jobs:
         echo github ref: ${{github.ref}}
         echo package feed: %FEED_URL%
         if "%TOKEN%"=="" (
-          echo GH_PACKAGES_TOKEN: empty
+          echo GITHUB_TOKEN: empty
         ) else (
-          echo GH_PACKAGES_TOKEN: present
+          echo GITHUB_TOKEN: present
         )
         echo.
         echo cmake from PATH:
@@ -440,7 +441,7 @@ jobs:
       if: ${{matrix.os == 'ubuntu-latest'}}
       shell: bash
       env:
-        TOKEN: ${{secrets.GH_PACKAGES_TOKEN}}
+        TOKEN: ${{github.token}}
       run: |
         echo "runner os: ${RUNNER_OS}"
         echo "image os: ${ImageOS:-}"
@@ -450,9 +451,9 @@ jobs:
         echo "github ref: ${{github.ref}}"
         echo "package feed: ${FEED_URL}"
         if [ -z "${TOKEN}" ]; then
-          echo "GH_PACKAGES_TOKEN: empty"
+          echo "GITHUB_TOKEN: empty"
         else
-          echo "GH_PACKAGES_TOKEN: present"
+          echo "GITHUB_TOKEN: present"
         fi
         echo
         echo "cmake from PATH:"
@@ -752,9 +753,9 @@ jobs:
           -StorePasswordInClearText \
           -Name GitHubPackages \
           -UserName "${{github.repository_owner}}" \
-          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+          -Password "${{github.token}}"
         ${{matrix.nuget}} \
-          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+          setapikey "${{github.token}}" \
           -Source "${{env.FEED_URL}}"
 
     - name: Setup CMake
