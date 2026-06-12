@@ -13,6 +13,7 @@ jobs:
   publish-versioned-docs:
     permissions:
       contents: write
+      packages: write
     runs-on: ubuntu-latest
     outputs:
       version: ${{steps.version.outputs.version}}
@@ -46,9 +47,9 @@ jobs:
           -StorePasswordInClearText \
           -Name GitHubPackages \
           -UserName "${{github.repository_owner}}" \
-          -Password "${{secrets.GH_PACKAGES_TOKEN}}"
+          -Password "${{github.token}}"
         mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-          setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
+          setapikey "${{github.token}}" \
           -Source "${{env.FEED_URL}}"
 
     - name: Setup ruby
