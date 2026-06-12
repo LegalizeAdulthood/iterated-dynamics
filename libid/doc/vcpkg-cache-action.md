@@ -393,6 +393,42 @@ package public after publication, and organization package creation policy
 can affect allowed defaults, but the action should not promise to force
 public visibility for PAT-created packages.
 
+## GitHub Packages Gotchas
+
+Document these behaviors for action users and model them in diagnostics.
+
+- Public NuGet packages still generally require authentication.  Public
+  means no storage quota, not anonymous restore.
+- Fork pull requests should be treated as read-only.  Cache restore may
+  work, but cache writes should be skipped or clearly diagnosed.
+- `permissions: packages: write` only affects `GITHUB_TOKEN`.  It does
+  nothing for PAT mode.
+- Existing package visibility is sticky.  Switching token kinds does not
+  make an existing private package public.
+- Deleting and recreating package records can change creation behavior.
+  That is what exposed public package creation in this repository.
+- Making a package public is one-way.  GitHub says public packages cannot
+  be made private again.
+- Repository linking inherits access permissions, not necessarily
+  visibility.
+- PAT-created NuGet packages default private unless policy, UI, or API
+  behavior proves otherwise.
+- GitHub package quota errors can block downloads, not just uploads.
+- NuGet source config can be stale.  Existing sources must be verified,
+  updated, or recreated if they point at the wrong feed owner.
+- Package metadata listing and NuGet search/list behavior are not reliable
+  substitutes for an exact restore probe.
+- `vcpkg fetch nuget` is the source of truth for the NuGet tool vcpkg will
+  use.
+- vcpkg package identity includes ABI details, toolchain, triplet, port
+  files, and helper ports.
+- Pinning vcpkg and CMake reduces drift, but runner image and toolchain
+  changes can still change package identities.
+
+The analyzer should surface these as concrete diagnoses where possible.  If
+it only has partial evidence, it should report the uncertainty explicitly
+instead of inferring a successful cache state.
+
 ## Debug Output
 
 `debug` defaults to `false`.
