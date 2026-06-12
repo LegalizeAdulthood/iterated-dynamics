@@ -226,15 +226,14 @@ protected:
         std::rewind(m_file);
     }
 
-    int read_next(const CmdFile mode = CmdFile::AT_CMD_LINE, const int max_len = 0)
+    int read_next(const CmdFile mode = CmdFile::AT_CMD_LINE)
     {
-        const int buffer_len{max_len == 0 ? static_cast<int>(sizeof(m_cmd_buf)) : max_len};
-        return next_command(m_cmd_buf, buffer_len, m_file, m_line_buf, &m_line_offset, mode);
+        return next_command(m_command, m_file, m_line_buf, &m_line_offset, mode);
     }
 
     std::string command() const
     {
-        return m_cmd_buf;
+        return m_command;
     }
 
     fs::path test_input_path() const
@@ -247,7 +246,7 @@ protected:
         return fs::temp_directory_path() / (name + ".tmp");
     }
 
-    char m_cmd_buf[32]{};
+    std::string m_command;
     char m_line_buf[513]{};
     int m_line_offset{};
     fs::path m_input_path;
@@ -367,13 +366,6 @@ TEST_F(TestNextCommandError, returnsErrorForMissingContinuationLine)
     open_input("alpha\\");
 
     EXPECT_EQ(-1, read_next());
-}
-
-TEST_F(TestNextCommandError, returnsErrorWhenCommandExceedsBuffer)
-{
-    open_input("abcdef\n");
-
-    EXPECT_EQ(-1, read_next(CmdFile::AT_CMD_LINE, 4));
 }
 
 static fs::path home_file(const char *subdir, const char *filename)

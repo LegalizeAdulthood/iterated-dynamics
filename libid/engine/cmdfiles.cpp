@@ -636,18 +636,18 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
         clear_command_comments();
     }
 
-    char cmd_buf[10000]{};
+    std::string cmd;
     char line_buf[513];
     line_buf[0] = 0;
     int line_offset{};
     CmdArgFlags change_flag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
-    while (next_command(cmd_buf, std::size(cmd_buf), handle, line_buf, &line_offset, mode) > 0)
+    while (next_command(cmd, handle, line_buf, &line_offset, mode) > 0)
     {
-        if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && std::strcmp(cmd_buf, "}") == 0)
+        if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && cmd == "}")
         {
             break;
         }
-        const CmdArgFlags i = cmd_arg(cmd_buf, mode);
+        const CmdArgFlags i = cmd_arg(cmd.data(), mode);
         if (i == CmdArgFlags::BAD_ARG)
         {
             break;
@@ -665,20 +665,18 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
     return change_flag;
 }
 
-int next_command(
-    char *cmd_buf, const int max_len, std::FILE *handle, char *line_buf, int *line_offset, const CmdFile mode)
+int next_command(std::string &cmd, std::FILE *handle, char *line_buf, int *line_offset, const CmdFile mode)
 {
-    int cmd_len{};
+    cmd.clear();
     char *line_ptr = line_buf + *line_offset;
     while (true)
     {
         while (*line_ptr <= ' ' || *line_ptr == ';')
         {
-            if (cmd_len)                 // space or ; marks end of command
+            if (!cmd.empty()) // space or ; marks end of command
             {
-                cmd_buf[cmd_len] = 0;
                 *line_offset = static_cast<int>(line_ptr - line_buf);
-                return cmd_len;
+                return static_cast<int>(cmd.size());
             }
             while (*line_ptr && *line_ptr <= ' ')
             {
@@ -724,7 +722,7 @@ int next_command(
         {
             if (next_line(handle, line_buf, mode))
             {
-                arg_error(cmd_buf);           // missing continuation
+                arg_error(cmd.c_str()); // missing continuation
                 return -1;
             }
             line_ptr = line_buf;
@@ -734,12 +732,7 @@ int next_command(
             }
             continue;                      // loop to check end of line again
         }
-        cmd_buf[cmd_len] = *line_ptr++;    // copy character to command buffer
-        if (++cmd_len >= max_len)         // command too long?
-        {
-            arg_error(cmd_buf);
-            return -1;
-        }
+        cmd.push_back(*line_ptr++);        // copy character to command buffer
     }
 }
 

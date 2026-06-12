@@ -90,6 +90,6 @@ CmdArgFlags load_commands(std::FILE *infile);
 void set_3d_defaults();
 int init_msg(const char *cmd_str, const char *bad_filename, CmdFile mode);
 CmdArgFlags cmd_arg(char *cur_arg, CmdFile mode);
-int next_command(char *cmd_buf, int max_len, std::FILE *handle, char *line_buf, int *line_offset, CmdFile mode);
+int next_command(std::string &cmd, std::FILE *handle, char *line_buf, int *line_offset, CmdFile mode);
 
 } // namespace id::engine
