@@ -37,7 +37,7 @@ public:
     {
     }
 
-    bool init(int *argc, char **argv) override;
+    bool init(std::vector<std::string> &args) override;
     bool resize() override;
     void read_palette() override;
     void write_palette() override;
@@ -96,9 +96,9 @@ X11DiskDriver s_disk_driver;
 
 } // namespace
 
-bool X11DiskDriver::init(int *argc, char **argv)
+bool X11DiskDriver::init(std::vector<std::string> &args)
 {
-    if (!X11BaseDriver::init(argc, argv))
+    if (!X11BaseDriver::init(args))
     {
         return false;
     }

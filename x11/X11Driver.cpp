@@ -21,7 +21,7 @@ public:
     {
     }
 
-    bool init(int *argc, char **argv) override;
+    bool init(std::vector<std::string> &args) override;
 };
 
 #define DRIVER_MODE(width_, height_) {0, width_, height_, 256, nullptr, "                        "}
@@ -40,9 +40,9 @@ X11Driver s_x11_driver;
 
 } // namespace
 
-bool X11Driver::init(int *argc, char **argv)
+bool X11Driver::init(std::vector<std::string> &args)
 {
-    if (!X11BaseDriver::init(argc, argv))
+    if (!X11BaseDriver::init(args))
     {
         return false;
     }

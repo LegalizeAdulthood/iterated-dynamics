@@ -14,7 +14,7 @@ class MockDriver : public testing::StrictMock<Driver>
 public:
     MOCK_METHOD(const std::string &, get_name, (), (const, override));
     MOCK_METHOD(const std::string &, get_description, (), (const, override));
-    MOCK_METHOD(bool, init, (int *, char **), (override));
+    MOCK_METHOD(bool, init, (std::vector<std::string> &), (override));
     MOCK_METHOD(bool, validate_mode, (const engine::VideoInfo &), (override));
     MOCK_METHOD(void, get_max_screen, (int &, int &), (override));
     MOCK_METHOD(void, terminate, (), (override));

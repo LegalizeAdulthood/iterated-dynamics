@@ -341,7 +341,7 @@ static void resolve_startup_file_entry()
     }
 }
 
-void cmd_files(const int argc, const char *const *argv)
+void cmd_files(const std::vector<std::string> &args)
 {
     if (g_first_init)
     {
@@ -353,30 +353,30 @@ void cmd_files(const int argc, const char *const *argv)
     process_sstools_ini();
 
     // cycle through args
-    for (int i = 1; i < argc; i++)
+    for (std::size_t i = 1; i < args.size(); i++)
     {
-        char cur_arg[141];
-        std::strcpy(cur_arg, argv[i]);
-        if (cur_arg[0] == ';')             // start of comments?
+        std::string cur_arg{args[i]};
+        const char first_char{cur_arg.empty() ? '\0' : cur_arg.front()};
+        if (first_char == ';') // start of comments?
         {
             break;
         }
-        if (cur_arg[0] != '@')
+        if (first_char != '@')
         {
-            process_simple_command(cur_arg);
+            process_simple_command(cur_arg.data());
         }
         // @filename/setname?
-        else if (char *slash = std::strchr(cur_arg, '/'); slash != nullptr)
+        else if (char *slash = std::strchr(cur_arg.data(), '/'); slash != nullptr)
         {
-            if (!process_file_set_name(std::string{cur_arg + 1, slash}, slash + 1))
+            if (!process_file_set_name(std::string{cur_arg.data() + 1, slash}, slash + 1))
             {
-                arg_error(cur_arg);
+                arg_error(cur_arg.c_str());
             }
         }
         // @filename
         else
         {
-            process_file(cur_arg);
+            process_file(cur_arg.data());
         }
     }
     resolve_startup_file_entry();

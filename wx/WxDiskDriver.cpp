@@ -89,9 +89,9 @@ static void init_dac_box()
     g_dac_box[2][2] = 255;
 }
 
-bool WxDiskDriver::init(int *argc, char **argv)
+bool WxDiskDriver::init(std::vector<std::string> &args)
 {
-    if (!WxBaseDriver::init(argc, argv))
+    if (!WxBaseDriver::init(args))
     {
         return false;
     }

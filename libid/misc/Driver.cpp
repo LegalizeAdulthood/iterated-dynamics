@@ -21,9 +21,9 @@ static std::vector<Driver *> s_available;
 
 Driver *g_driver{};
 
-void load_driver(Driver *drv, int *argc, char **argv)
+void load_driver(Driver *drv, std::vector<std::string> &args)
 {
-    if (drv == nullptr || !drv->init(argc, argv))
+    if (drv == nullptr || !drv->init(args))
     {
         return;
     }
@@ -41,25 +41,25 @@ void load_driver(Driver *drv, int *argc, char **argv)
 // Go through the static list of drivers defined and try to initialize
 // them one at a time.  Returns the number of drivers initialized.
 //
-int init_drivers(int *argc, char **argv)
+int init_drivers(std::vector<std::string> &args)
 {
 #if ID_HAVE_DISK_DRIVER
-    load_driver(get_disk_driver(), argc, argv);
+    load_driver(get_disk_driver(), args);
 #endif
 
 #if ID_HAVE_GDI_DRIVER
-    load_driver(get_gdi_driver(), argc, argv);
+    load_driver(get_gdi_driver(), args);
 #endif
 
 #if ID_HAVE_X11_DRIVER
-    load_driver(get_x11_driver(), argc, argv);
+    load_driver(get_x11_driver(), args);
 #endif
 
 #if ID_HAVE_WX_DRIVER
-    load_driver(get_wx_driver(), argc, argv);
+    load_driver(get_wx_driver(), args);
 #endif
 #if ID_HAVE_WX_DISK_DRIVER
-    load_driver(get_wx_disk_driver(), argc, argv);
+    load_driver(get_wx_disk_driver(), args);
 #endif
 
     return static_cast<int>(s_available.size()); // number of drivers supported at runtime

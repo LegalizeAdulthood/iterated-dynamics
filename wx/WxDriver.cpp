@@ -124,7 +124,7 @@ void WxDriver::terminate()
     m_xor_pixels.clear();
 }
 
-bool WxDriver::init(int *argc, char **argv)
+bool WxDriver::init(std::vector<std::string> & /*args*/)
 {
     // nothing needs to be done in wxWidgets
     return true;

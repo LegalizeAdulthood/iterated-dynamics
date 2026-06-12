@@ -7,6 +7,7 @@
 #include <cassert>
 #include <filesystem>
 #include <string>
+#include <vector>
 
 namespace id::engine
 {
@@ -65,7 +66,7 @@ public:
 
     virtual const std::string &get_name() const = 0;                          // name of driver
     virtual const std::string &get_description() const = 0;                   // driver description
-    virtual bool init(int *argc, char **argv) = 0;                            // init the driver
+    virtual bool init(std::vector<std::string> &args) = 0;                    // init the driver
     virtual bool validate_mode(const engine::VideoInfo &mode) = 0;            // validate a id.cfg mode
     virtual void get_max_screen(int &width, int &height) = 0;                 // find max screen extents
     virtual void terminate() = 0;                                             // shutdown the driver
@@ -121,8 +122,8 @@ public:
         const char *hdg, const char *type_desc, const char *type_wildcard, std::string &result_filename) = 0;
 };
 
-void load_driver(Driver *drv, int *argc, char **argv);
-int init_drivers(int *argc, char **argv);
+void load_driver(Driver *drv, std::vector<std::string> &args);
+int init_drivers(std::vector<std::string> &args);
 void add_video_mode(Driver *drv, engine::VideoInfo *mode);
 void close_drivers();
 Driver *driver_find_by_name(const char *name);

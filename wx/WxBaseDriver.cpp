@@ -83,7 +83,7 @@ static void flush_output()
     }
 }
 
-bool WxBaseDriver::init(int *argc, char **argv)
+bool WxBaseDriver::init(std::vector<std::string> & /*args*/)
 {
     // nothing needs to be done in wxWidgets
     return true;

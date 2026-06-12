@@ -25,7 +25,7 @@ public:
     WxDiskDriver &operator=(const WxDiskDriver &) = delete;
     WxDiskDriver &operator=(WxDiskDriver &&) = delete;
 
-    bool init(int *argc, char **argv) override;
+    bool init(std::vector<std::string> &args) override;
     bool validate_mode(const engine::VideoInfo &mode) override;
     void get_max_screen(int &width, int &height) override;
     void pause() override;

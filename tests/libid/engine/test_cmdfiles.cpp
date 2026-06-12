@@ -2248,9 +2248,9 @@ TEST_F(TestParameterCommand, startupUsesTmpDirWhenTmpAndTempUnset)
     ValueSaver saved_special_dirs{g_special_dirs,
         std::make_shared<TestSpecialDirectories>(fs::path{ID_TEST_HOME_DIR}, fs::path{ID_TEST_DATA_DIR})};
     CurrentPathSaver current_dir{ID_TEST_HOME_DIR};
-    const char *argv[]{"id"};
+    const std::vector<std::string> args{"id"};
 
-    cmd_files(1, argv);
+    cmd_files(args);
 
     EXPECT_EQ(temp_dir.string(), adjust_dir(g_temp_dir.string()));
 }

@@ -41,7 +41,7 @@ public:
     {
     }
 
-    bool init(int *argc, char **argv) override;
+    bool init(std::vector<std::string> &args) override;
     bool resize() override;
     void read_palette() override;
     void write_palette() override;
@@ -105,9 +105,9 @@ static VideoInfo s_modes[] = {
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ***********************************************************************/
 
-bool DiskDriver::init(int *argc, char **argv)
+bool DiskDriver::init(std::vector<std::string> &args)
 {
-    if (!Win32BaseDriver::init(argc, argv))
+    if (!Win32BaseDriver::init(args))
     {
         return false;
     }

@@ -55,6 +55,7 @@
 #include <cstring>
 #include <ctime>
 #include <string>
+#include <vector>
 
 using namespace id::config;
 using namespace id::engine;
@@ -92,7 +93,7 @@ static void bad_id_cfg_msg()
     g_bad_config = ConfigStatus::BAD_WITH_MESSAGE;
 }
 
-static void main_restart(const int argc, const char *const argv[], MainContext &context)
+static void main_restart(const std::vector<std::string> &args, MainContext &context)
 {
     driver_check_memory();
     g_browse.auto_browse = false;
@@ -131,7 +132,7 @@ static void main_restart(const int argc, const char *const argv[], MainContext &
     driver_set_for_text();                          // switch to text mode
     g_save_dac = SaveDAC::NO;                       // don't save the VGA DAC
 
-    cmd_files(argc, argv);         // process the command-line
+    cmd_files(args);                                // process the command-line
     do_pause(0);                  // pause for error msg if not batch
     init_msg("", nullptr, CmdFile::AT_CMD_LINE);  // this causes driver_get_key if init_msg called on runup
 
@@ -388,15 +389,22 @@ static MainState main_image_start(MainContext &context)
 
 int id_main(int argc, char *argv[])
 {
+    std::vector<std::string> args;
+    args.reserve(static_cast<std::size_t>(argc));
+    for (int i = 0; i < argc; ++i)
+    {
+        args.emplace_back(argv[i]);
+    }
+
     // this traps non-math library floating point errors
     std::signal(SIGFPE, my_floating_point_err);
-    set_make_mig_script_executable(argc > 0 ? argv[0] : nullptr);
+    set_make_mig_script_executable(args.empty() ? nullptr : args.front().c_str());
 
     init_asm_vars();                       // initialize ASM stuff
     init_memory();
 
     // let drivers add their video modes
-    if (! init_drivers(&argc, argv))
+    if (!init_drivers(args))
     {
         init_failure("Sorry, I couldn't find any working video drivers for your system\n");
         std::exit(-1);
@@ -416,7 +424,7 @@ int id_main(int argc, char *argv[])
         {
         case MainState::RESTART:
             // insert key re-starts here
-            main_restart(argc, argv, context);
+            main_restart(args, context);
             state = MainState::RESTORE_START;
             break;
 

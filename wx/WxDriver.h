@@ -34,7 +34,7 @@ public:
     void shell() override;
     int key_pressed() override;
     void terminate() override;
-    bool init(int *argc, char **argv) override;
+    bool init(std::vector<std::string> &args) override;
     void unget_key(int key) override;
     int get_key() override;
     void hide_text_cursor() override;

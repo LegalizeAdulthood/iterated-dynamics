@@ -21,6 +21,8 @@
 #include <Windows.h>
 
 #include <cassert>
+#include <string>
+#include <vector>
 
 #include "win_text.h"
 #include "frame.h"
@@ -41,7 +43,7 @@ public:
     {
     }
 
-    bool init(int *argc, char **argv) override;
+    bool init(std::vector<std::string> &args) override;
     bool resize() override;
     int read_palette() override;
     int write_palette() override;
@@ -131,9 +133,9 @@ static void initdacbox()
 \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 ***********************************************************************/
 
-bool DiskDriver::init(int *argc, char **argv)
+bool DiskDriver::init(std::vector<std::string> &args)
 {
-    const bool base_init = Win32BaseDriver::init(argc, argv);
+    const bool base_init = Win32BaseDriver::init(args);
     if (!base_init)
     {
         return false;

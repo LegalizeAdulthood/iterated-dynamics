@@ -101,31 +101,27 @@ bool has_graphics_mode()
         g_video_table[g_adapter].y_dots > 0;
 }
 
-void remove_args(int *argc, char **argv, const int first, const int count)
+void remove_args(std::vector<std::string> &args, const std::size_t first, const std::size_t count)
 {
-    for (int i{first}; i + count <= *argc; ++i)
-    {
-        argv[i] = argv[i + count];
-    }
-    *argc -= count;
+    args.erase(args.begin() + first, args.begin() + std::min(first + count, args.size()));
 }
 
-std::string consume_geometry_arg(int *argc, char **argv)
+std::string consume_geometry_arg(std::vector<std::string> &args)
 {
     std::string geometry;
-    for (int i{1}; i < *argc;)
+    for (std::size_t i{1}; i < args.size();)
     {
-        const std::string_view arg{argv[i]};
+        const std::string_view arg{args[i]};
         if (arg == "-geometry" || arg == "--geometry" || arg == "-g")
         {
-            if (i + 1 < *argc)
+            if (i + 1 < args.size())
             {
-                geometry = argv[i + 1];
-                remove_args(argc, argv, i, 2);
+                geometry = args[i + 1];
+                remove_args(args, i, 2);
             }
             else
             {
-                remove_args(argc, argv, i, 1);
+                remove_args(args, i, 1);
             }
             continue;
         }
@@ -135,13 +131,13 @@ std::string consume_geometry_arg(int *argc, char **argv)
         if (arg.rfind(GEOMETRY_OPTION, 0) == 0)
         {
             geometry = std::string{arg.substr(GEOMETRY_OPTION.size())};
-            remove_args(argc, argv, i, 1);
+            remove_args(args, i, 1);
             continue;
         }
         if (arg.rfind(GEOMETRY_LONG_OPTION, 0) == 0)
         {
             geometry = std::string{arg.substr(GEOMETRY_LONG_OPTION.size())};
-            remove_args(argc, argv, i, 1);
+            remove_args(args, i, 1);
             continue;
         }
         ++i;
@@ -149,22 +145,22 @@ std::string consume_geometry_arg(int *argc, char **argv)
     return geometry;
 }
 
-std::string consume_font_arg(int *argc, char **argv)
+std::string consume_font_arg(std::vector<std::string> &args)
 {
     std::string font_name;
-    for (int i{1}; i < *argc;)
+    for (std::size_t i{1}; i < args.size();)
     {
-        const std::string_view arg{argv[i]};
+        const std::string_view arg{args[i]};
         if (arg == "-fn" || arg == "--font")
         {
-            if (i + 1 < *argc)
+            if (i + 1 < args.size())
             {
-                font_name = argv[i + 1];
-                remove_args(argc, argv, i, 2);
+                font_name = args[i + 1];
+                remove_args(args, i, 2);
             }
             else
             {
-                remove_args(argc, argv, i, 1);
+                remove_args(args, i, 1);
             }
             continue;
         }
@@ -173,7 +169,7 @@ std::string consume_font_arg(int *argc, char **argv)
         if (arg.rfind(FONT_LONG_OPTION, 0) == 0)
         {
             font_name = std::string{arg.substr(FONT_LONG_OPTION.size())};
-            remove_args(argc, argv, i, 1);
+            remove_args(args, i, 1);
             continue;
         }
         ++i;
@@ -483,19 +479,19 @@ X11BaseDriver::X11BaseDriver(const char *name, const char *description) :
 {
 }
 
-bool X11BaseDriver::init(int *argc, char **argv)
+bool X11BaseDriver::init(std::vector<std::string> &args)
 {
     if (!m_frame.init(window_title()))
     {
         return false;
     }
-    const std::string geometry{consume_geometry_arg(argc, argv)};
+    const std::string geometry{consume_geometry_arg(args)};
     if (!geometry.empty())
     {
         g_geometry = geometry;
     }
     m_frame.set_geometry(g_geometry);
-    const std::string font_name{consume_font_arg(argc, argv)};
+    const std::string font_name{consume_font_arg(args)};
     if (!font_name.empty())
     {
         g_font_name = font_name;

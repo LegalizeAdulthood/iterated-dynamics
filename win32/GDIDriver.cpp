@@ -44,7 +44,7 @@ public:
 
     void terminate() override;
     void get_max_screen(int &width, int &height) override;
-    bool init(int *argc, char **argv) override;
+    bool init(std::vector<std::string> &args) override;
     bool resize() override;
     void read_palette() override;
     void write_palette() override;
@@ -167,9 +167,9 @@ void GDIDriver::get_max_screen(int &width, int &height)
     height = desktop.bottom;
 }
 
-bool GDIDriver::init(int *argc, char **argv)
+bool GDIDriver::init(std::vector<std::string> &args)
 {
-    if (!Win32BaseDriver::init(argc, argv))
+    if (!Win32BaseDriver::init(args))
     {
         return false;
     }

@@ -38,7 +38,7 @@ public:
         return m_description;
     }
 
-    bool init(int *argc, char **argv) override;
+    bool init(std::vector<std::string> &args) override;
     bool validate_mode(const engine::VideoInfo &mode) override;
     void get_max_screen(int &width, int &height) override;
     void terminate() override;

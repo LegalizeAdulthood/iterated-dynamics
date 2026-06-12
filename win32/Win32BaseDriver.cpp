@@ -93,7 +93,7 @@ void Win32BaseDriver::terminate()
     g_frame.terminate();
 }
 
-bool Win32BaseDriver::init(int *argc, char **argv)
+bool Win32BaseDriver::init(std::vector<std::string> & /*args*/)
 {
     ODS("Win32BaseDriver::init");
     g_frame.init(g_instance, ID_PROGRAM_NAME);

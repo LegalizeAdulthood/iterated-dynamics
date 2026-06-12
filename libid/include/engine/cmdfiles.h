@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <filesystem>
 #include <string>
+#include <vector>
 
 namespace id::fractals
 {
@@ -84,7 +85,7 @@ extern BatchMode             g_init_batch;
 extern bool                  g_read_color;
 extern RecordColorsMode      g_record_colors;
 
-void cmd_files(int argc, const char *const *argv);
+void cmd_files(const std::vector<std::string> &args);
 CmdArgFlags load_commands(std::FILE *infile);
 void set_3d_defaults();
 int init_msg(const char *cmd_str, const char *bad_filename, CmdFile mode);

@@ -17,6 +17,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace id::engine;
 using namespace id::io;
@@ -86,20 +87,21 @@ TEST_F(TestLoadConfig, pixelLimits)
 
 TEST_F(TestLoadConfig, gdiDisk)
 {
+    std::vector<std::string> args{"id"};
     MockDriver gdi;
     const std::string gdi_name{"gdi"};
     MockDriver disk;
     const std::string disk_name{"disk"};
-    ExpectationSet init_gdi = EXPECT_CALL(gdi, init(nullptr, nullptr)).WillOnce(Return(true));
-    ExpectationSet init_disk = EXPECT_CALL(disk, init(nullptr, nullptr)).WillOnce(Return(true));
+    ExpectationSet init_gdi = EXPECT_CALL(gdi, init(Ref(args))).WillOnce(Return(true));
+    ExpectationSet init_disk = EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
     EXPECT_CALL(gdi, get_name()).WillRepeatedly(ReturnRef(gdi_name));
     EXPECT_CALL(gdi, validate_mode(_)).After(init_gdi).WillRepeatedly(Return(true));
     EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
     EXPECT_CALL(disk, validate_mode(_)).After(init_disk).WillRepeatedly(Return(true));
     EXPECT_CALL(gdi, terminate());
     EXPECT_CALL(disk, terminate());
-    load_driver(&gdi, nullptr, nullptr);
-    load_driver(&disk, nullptr, nullptr);
+    load_driver(&gdi, args);
+    load_driver(&disk, args);
 
     load_config(ID_TEST_HOME_CONFIG_FILE);
 
@@ -124,15 +126,16 @@ TEST_F(TestLoadConfig, gdiDisk)
 
 TEST_P(TestLoadConfigGifDimension, acceptsModeUpToGifLimit)
 {
+    std::vector<std::string> args{"id"};
     const int size{GetParam()};
     MockDriver disk;
     const std::string disk_name{"disk"};
-    EXPECT_CALL(disk, init(nullptr, nullptr)).WillOnce(Return(true));
+    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
     EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
     EXPECT_CALL(disk, validate_mode(AllOf(Field(&VideoInfo::x_dots, size), Field(&VideoInfo::y_dots, size))))
         .WillOnce(Return(true));
     EXPECT_CALL(disk, terminate());
-    load_driver(&disk, nullptr, nullptr);
+    load_driver(&disk, args);
 
     load_config(write_config(size, size).string());
 
@@ -157,10 +160,11 @@ INSTANTIATE_TEST_SUITE_P(GifDimension, TestLoadConfigGifDimension, Values(MAX_PI
 
 TEST_F(TestLoadConfig, rejectsModeAboveGifLimit)
 {
+    std::vector<std::string> args{"id"};
     MockDriver disk;
-    EXPECT_CALL(disk, init(nullptr, nullptr)).WillOnce(Return(true));
+    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
     EXPECT_CALL(disk, terminate());
-    load_driver(&disk, nullptr, nullptr);
+    load_driver(&disk, args);
 
     load_config(write_config(GIF_MAX_PIXELS + 1, GIF_MAX_PIXELS + 1).string());
 
