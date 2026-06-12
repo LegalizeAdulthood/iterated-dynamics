@@ -119,7 +119,7 @@ namespace id::engine
 
 static int get_max_cur_arg_len(const char *const float_val_str[], int num_args);
 static CmdArgFlags command_file(std::FILE *handle, CmdFile mode);
-static bool next_line(std::FILE *handle, char *line_buf, CmdFile mode);
+static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
 static void arg_error(const char *bad_arg);
 static void init_vars_run();
 static void init_vars_restart();
@@ -637,11 +637,10 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
     }
 
     std::string cmd;
-    char line_buf[513];
-    line_buf[0] = 0;
-    int line_offset{};
+    std::string line_buf;
+    std::string_view line;
     CmdArgFlags change_flag{}; // &1 fractal stuff chgd, &2 3d stuff chgd
-    while (next_command(cmd, handle, line_buf, &line_offset, mode) > 0)
+    while (next_command(cmd, handle, line_buf, line, mode) > 0)
     {
         if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) && cmd == "}")
         {
@@ -665,47 +664,41 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
     return change_flag;
 }
 
-int next_command(std::string &cmd, std::FILE *handle, char *line_buf, int *line_offset, const CmdFile mode)
+int next_command(std::string &cmd, std::FILE *handle, std::string &line_buf, std::string_view &line, const CmdFile mode)
 {
     cmd.clear();
-    char *line_ptr = line_buf + *line_offset;
     while (true)
     {
-        while (*line_ptr <= ' ' || *line_ptr == ';')
+        while (line.empty() || line[0] <= ' ' || line[0] == ';')
         {
             if (!cmd.empty()) // space or ; marks end of command
             {
-                *line_offset = static_cast<int>(line_ptr - line_buf);
                 return static_cast<int>(cmd.size());
             }
-            while (*line_ptr && *line_ptr <= ' ')
+            while (!line.empty() && line[0] <= ' ')
             {
-                ++line_ptr;                  // skip spaces and tabs
+                line.remove_prefix(1); // skip spaces and tabs
             }
-            if (*line_ptr == ';' || *line_ptr == 0)
+            if (!line.empty() && line[0] == ';')
             {
-                if (*line_ptr == ';'
-                    && (mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME)
-                    && (g_command_comment[0].empty() || g_command_comment[1].empty()
-                        || g_command_comment[2].empty() || g_command_comment[3].empty()))
+                if ((mode == CmdFile::AT_AFTER_STARTUP || mode == CmdFile::AT_CMD_LINE_SET_NAME) &&
+                    (g_command_comment[0].empty() || g_command_comment[1].empty() || g_command_comment[2].empty() ||
+                        g_command_comment[3].empty()))
                 {
                     // save comment
-                    ++line_ptr;
-                    while (*line_ptr && (*line_ptr == ' ' || *line_ptr == '\t'))
+                    line.remove_prefix(1);
+                    while (!line.empty() && (line[0] == ' ' || line[0] == '\t'))
                     {
-                        ++line_ptr;
+                        line.remove_prefix(1);
                     }
-                    if (*line_ptr)
+                    if (!line.empty())
                     {
-                        if (static_cast<int>(std::strlen(line_ptr)) >= MAX_COMMENT_LEN)
-                        {
-                            *(line_ptr+MAX_COMMENT_LEN-1) = 0;
-                        }
+                        const std::string_view comment{line.substr(0, MAX_COMMENT_LEN - 1)};
                         for (std::string &elem : g_command_comment)
                         {
                             if (elem.empty())
                             {
-                                elem = line_ptr;
+                                elem = comment;
                                 break;
                             }
                         }
@@ -715,36 +708,47 @@ int next_command(std::string &cmd, std::FILE *handle, char *line_buf, int *line_
                 {
                     return -1; // eof
                 }
-                line_ptr = line_buf; // start new line
+                line = line_buf; // start new line
+            }
+            else if (line.empty() && next_line(handle, line_buf, mode))
+            {
+                return -1; // eof
+            }
+            else if (line.empty())
+            {
+                line = line_buf;                 // start new line
             }
         }
-        if (*line_ptr == '\\' && *(line_ptr+1) == 0)              // continuation onto next line?
+        if (line[0] == '\\' && line.size() == 1) // continuation onto next line?
         {
             if (next_line(handle, line_buf, mode))
             {
                 arg_error(cmd.c_str()); // missing continuation
                 return -1;
             }
-            line_ptr = line_buf;
-            while (*line_ptr && *line_ptr <= ' ')
+            line = line_buf;
+            while (!line.empty() && line[0] <= ' ')
             {
-                ++line_ptr;                  // skip white space @ start next line
+                line.remove_prefix(1);     // skip white space @ start next line
             }
             continue;                      // loop to check end of line again
         }
-        cmd.push_back(*line_ptr++);        // copy character to command buffer
+        cmd.push_back(line[0]);            // copy character to command buffer
+        line.remove_prefix(1);
     }
 }
 
-static bool next_line(std::FILE *handle, char *line_buf, const CmdFile mode)
+static bool next_line(std::FILE *handle, std::string &line_buf, const CmdFile mode)
 {
     bool tools_section = true;
-    while (file_gets(line_buf, 512, handle) >= 0)
+    char raw_line[513];
+    while (file_gets(raw_line, 512, handle) >= 0)
     {
-        if (mode == CmdFile::SSTOOLS_INI && line_buf[0] == '[')   // check for [id]
+        line_buf = raw_line;
+        if (mode == CmdFile::SSTOOLS_INI && !line_buf.empty() && line_buf[0] == '[') // check for [id]
         {
             char tmp_buf[11];
-            std::strncpy(tmp_buf, &line_buf[1], 4);
+            std::strncpy(tmp_buf, line_buf.c_str() + 1, 4);
             tmp_buf[4] = 0;
             string_lower(tmp_buf);
             tools_section = std::strncmp(tmp_buf, "id]", 3) == 0;

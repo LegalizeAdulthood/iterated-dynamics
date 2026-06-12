@@ -228,7 +228,7 @@ protected:
 
     int read_next(const CmdFile mode = CmdFile::AT_CMD_LINE)
     {
-        return next_command(m_command, m_file, m_line_buf, &m_line_offset, mode);
+        return next_command(m_command, m_file, m_line_buf, m_line, mode);
     }
 
     std::string command() const
@@ -247,8 +247,8 @@ protected:
     }
 
     std::string m_command;
-    char m_line_buf[513]{};
-    int m_line_offset{};
+    std::string m_line_buf;
+    std::string_view m_line;
     fs::path m_input_path;
     std::FILE *m_file{};
 };
