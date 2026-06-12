@@ -309,6 +309,12 @@ jobs:
         name: pdf-docs
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src
 
+    - name: Verify prebuilt documentation
+      run: >
+        cmake -E sha256sum
+        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.html
+        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.pdf
+
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
       shell: bash
@@ -341,6 +347,16 @@ jobs:
           setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
           -Source "${{env.FEED_URL}}"
 
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
+      with:
+        cmake-version: '3.31'
+
+    - name: Bootstrap vcpkg Windows
+      if: ${{matrix.os == 'windows-2022'}}
+      shell: cmd
+      run: call "${{github.workspace}}\vcpkg\bootstrap-vcpkg.bat"
+
     - name: Inspect NuGet binary cache setup Windows
       if: ${{matrix.os == 'windows-2022'}}
       shell: cmd
@@ -367,15 +383,23 @@ jobs:
         echo.
         echo vcpkg submodule:
         git submodule status vcpkg
-        vcpkg\vcpkg version
+        if not exist vcpkg\vcpkg.exe (
+          echo vcpkg\vcpkg.exe not found
+          goto after_vcpkg_tool
+        )
+        vcpkg\vcpkg.exe version
         echo.
         echo nuget from PATH:
         where nuget
         nuget help | findstr /I /C:"NuGet Version"
         echo.
         echo nuget used by vcpkg:
-        for /f "usebackq delims=" %%i in (`vcpkg\vcpkg fetch nuget`) do set VCPKG_NUGET=%%i
+        for /f "usebackq delims=" %%i in (`vcpkg\vcpkg.exe fetch nuget`) do set VCPKG_NUGET=%%i
         echo %VCPKG_NUGET%
+        if "%VCPKG_NUGET%"=="" (
+          echo vcpkg nuget path not found
+          goto after_vcpkg_tool
+        )
         "%VCPKG_NUGET%" help | findstr /I /C:"NuGet Version"
         echo.
         echo nuget locals from PATH nuget:
@@ -390,6 +414,7 @@ jobs:
         echo sources from vcpkg nuget:
         "%VCPKG_NUGET%" sources list -Format Detailed
         echo.
+        :after_vcpkg_tool
         echo sanitized NuGet config files:
         if exist "%APPDATA%\NuGet\NuGet.Config" (
           echo %APPDATA%\NuGet\NuGet.Config
@@ -411,7 +436,11 @@ jobs:
         if exist "%RUNNER_TEMP%\feed-bearer.json" for %%F in ("%RUNNER_TEMP%\feed-bearer.json") do echo feed bearer bytes: %%~zF
         echo.
         echo package list probe:
-        "%VCPKG_NUGET%" list vcpkg-cmake-config -Source "%FEED_URL%" -NonInteractive -Verbosity detailed
+        if "%VCPKG_NUGET%"=="" (
+          echo package list probe skipped; vcpkg nuget path not found
+        ) else (
+          "%VCPKG_NUGET%" list vcpkg-cmake-config -Source "%FEED_URL%" -NonInteractive -Verbosity detailed
+        )
         exit /b 0
 
     - name: Inspect NuGet binary cache setup Linux
@@ -479,17 +508,6 @@ jobs:
         echo "package list probe:"
         mono "${vcpkg_nuget}" list vcpkg-cmake-config -Source "${FEED_URL}" -NonInteractive -Verbosity detailed || true
 
-    - name: Setup CMake
-      uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
-      with:
-        cmake-version: '3.31'
-
-    - name: Verify prebuilt documentation
-      run: >
-        cmake -E sha256sum
-        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.html
-        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.pdf
-
     - name: Run Workflow Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
       env:
@@ -507,42 +525,48 @@ jobs:
       shell: cmd
       run: |
         @echo off
-        echo vcpkg restore request:
-        if exist vcpkg\buildtrees\packages.config (
-          type vcpkg\buildtrees\packages.config
-        ) else (
-          echo vcpkg\buildtrees\packages.config not found
+        echo packages.config files under workspace:
+        for /f "delims=" %%F in ('where /r . packages.config 2^>NUL') do (
+          echo --- %%F
+          type "%%F"
         )
         echo.
-        echo nupkg files under vcpkg buildtrees:
-        dir /s /b vcpkg\buildtrees\*.nupkg 2>NUL
+        echo nupkg files under workspace:
+        for /f "delims=" %%F in ('where /r . *.nupkg 2^>NUL') do echo %%F
         echo.
-        echo nuspec files under vcpkg buildtrees:
-        dir /s /b vcpkg\buildtrees\*.nuspec 2>NUL
+        echo nuspec files under workspace:
+        for /f "delims=" %%F in ('where /r . *.nuspec 2^>NUL') do echo %%F
         echo.
-        echo NuGet related lines from vcpkg buildtrees logs:
-        findstr /S /I /C:"NuGet" /C:"Pushing" /C:"Authentication" /C:"Unauthorized" /C:"Forbidden" /C:"failed" vcpkg\buildtrees\*.log 2>NUL
+        echo vcpkg ABI info files under workspace:
+        for /f "delims=" %%F in ('where /r . vcpkg_abi_info.txt 2^>NUL') do (
+          echo --- %%F
+          type "%%F"
+        )
+        echo.
+        echo NuGet related lines from workspace logs:
+        for /f "delims=" %%F in ('where /r . *.log 2^>NUL') do (
+          findstr /I /C:"NuGet" /C:"Pushing" /C:"Authentication" /C:"Unauthorized" /C:"Forbidden" /C:"failed" "%%F"
+        )
         exit /b 0
 
     - name: Dump vcpkg NuGet artifacts Linux
       if: ${{always() && matrix.os == 'ubuntu-latest'}}
       shell: bash
       run: |
-        echo "vcpkg restore request:"
-        if [ -f vcpkg/buildtrees/packages.config ]; then
-          cat vcpkg/buildtrees/packages.config
-        else
-          echo "vcpkg/buildtrees/packages.config not found"
-        fi
+        echo "packages.config files under workspace:"
+        find . -name packages.config -print -exec cat {} \; || true
         echo
-        echo "nupkg files under vcpkg buildtrees:"
-        find vcpkg/buildtrees -name '*.nupkg' -print 2>/dev/null || true
+        echo "nupkg files under workspace:"
+        find . -name '*.nupkg' -print || true
         echo
-        echo "nuspec files under vcpkg buildtrees:"
-        find vcpkg/buildtrees -name '*.nuspec' -print 2>/dev/null || true
+        echo "nuspec files under workspace:"
+        find . -name '*.nuspec' -print || true
         echo
-        echo "NuGet related lines from vcpkg buildtrees logs:"
-        grep -RInE 'NuGet|Pushing|Authentication|Unauthorized|Forbidden|failed' vcpkg/buildtrees --include='*.log' || true
+        echo "vcpkg ABI info files under workspace:"
+        find . -name vcpkg_abi_info.txt -print -exec cat {} \; || true
+        echo
+        echo "NuGet related lines from workspace logs:"
+        find . -name '*.log' -exec grep -HInE 'NuGet|Pushing|Authentication|Unauthorized|Forbidden|failed' {} + || true
 
     - name: Build Setup package
       if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
@@ -686,6 +710,12 @@ jobs:
         name: pdf-docs
         path: ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src
 
+    - name: Verify prebuilt documentation
+      run: >
+        cmake -E sha256sum
+        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.html
+        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.pdf
+
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
       shell: bash
@@ -722,12 +752,6 @@ jobs:
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
         cmake-version: '3.31'
-
-    - name: Verify prebuilt documentation
-      run: >
-        cmake -E sha256sum
-        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.html
-        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.pdf
 
     - name: Run Workflow
       env: 
