@@ -7,6 +7,7 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 using namespace id::fractals;
@@ -27,7 +28,7 @@ TEST(TestCheckOrbitName, julibrotNames)
 
     for (const std::string &name : names)
     {
-        EXPECT_FALSE(check_orbit_name(name.c_str())) << name;
+        EXPECT_FALSE(check_orbit_name(name)) << name;
     }
 }
 
@@ -44,7 +45,21 @@ TEST(TestCheckOrbitName, notValidNames)
 
     for (const std::string &name : names)
     {
-        EXPECT_TRUE(check_orbit_name(name.c_str())) << name;
+        EXPECT_TRUE(check_orbit_name(name)) << name;
+    }
+}
+
+TEST(TestCheckOrbitName, honorsStringViewLength)
+{
+    for (int i = 0; i < g_num_fractal_types; ++i)
+    {
+        if (bit_set(g_fractal_specific[i].flags, FractalFlags::OK_JB))
+        {
+            const std::string storage{std::string{g_fractal_specific[i].name} + "-suffix"};
+            const std::string_view name{storage.data(), std::string_view{g_fractal_specific[i].name}.size()};
+            EXPECT_FALSE(check_orbit_name(name)) << name;
+            return;
+        }
     }
 }
 
