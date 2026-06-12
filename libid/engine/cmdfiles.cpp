@@ -1622,11 +1622,12 @@ static int parse_6bit_color(const char *&value)
     return k;
 }
 
-static CmdArgFlags parse_colors(const char *value)
+static CmdArgFlags parse_colors(const std::string_view value)
 {
-    if (*value == '@')
+    if (!value.empty() && value[0] == '@')
     {
-        fs::path map_path{&value[1]};
+        const std::string map_name{value.substr(1)};
+        fs::path map_path{map_name};
         fs::path path{find_file(ReadFile::MAP, map_path)};
         if (path.empty() && !map_path.has_extension())
         {
@@ -1639,7 +1640,7 @@ static CmdArgFlags parse_colors(const char *value)
         }
         else
         {
-            init_msg("", &value[1], CmdFile::AT_CMD_LINE_SET_NAME);
+            init_msg("", map_name.c_str(), CmdFile::AT_CMD_LINE_SET_NAME);
             goto bad_color;
         }
         if (validate_luts(g_map_name))
@@ -1652,44 +1653,44 @@ static CmdArgFlags parse_colors(const char *value)
         }
         else
         {
-            g_last_map_name = &value[1];
+            g_last_map_name = map_name;
             g_color_state = ColorState::MAP_FILE;
         }
     }
     else
     {
+        const std::string colors{value};
+        const char *color{colors.c_str()};
         int smooth{};
         int i{};
         bool hex_colors{};
-        while (*value)
+        while (*color)
         {
             if (i >= 256)
             {
                 goto bad_color;
             }
-            if (*value == '<')
+            if (*color == '<')
             {
-                if (i == 0
-                    || smooth
-                    || (smooth = std::atoi(value+1)) < 2
-                    || (value = std::strchr(value, '>')) == nullptr)
+                if (i == 0 || smooth || (smooth = std::atoi(color + 1)) < 2 ||
+                    (color = std::strchr(color, '>')) == nullptr)
                 {
                     goto bad_color;
                 }
                 i += smooth;
-                ++value;
+                ++color;
             }
             else
             {
-                const bool hex_color{*value == '#'};
+                const bool hex_color{*color == '#'};
                 if (hex_color)
                 {
                     hex_colors = true;
-                    ++value;
+                    ++color;
                 }
                 for (int j = 0; j < 3; ++j)
                 {
-                    const int k = hex_color ? parse_hex_color(value) : parse_6bit_color(value);
+                    const int k = hex_color ? parse_hex_color(color) : parse_6bit_color(color);
                     if (k == -1)
                     {
                         goto bad_color;
@@ -1704,18 +1705,17 @@ static CmdArgFlags parse_colors(const char *value)
                         {
                             while (++c_num < spread)
                             {
-                                g_dac_box[start+c_num][j] = static_cast<Byte>(k);
+                                g_dac_box[start + c_num][j] = static_cast<Byte>(k);
                             }
                         }
                         else
                         {
                             while (++c_num < spread)
                             {
-                                g_dac_box[start+c_num][j] =
-                                    static_cast<Byte>(
-                                    (c_num * g_dac_box[i][j] + (i - (start + c_num)) * g_dac_box[start][j] +
-                                        spread / 2) /
-                                    static_cast<Byte>(spread));
+                                g_dac_box[start + c_num][j] =
+                                    static_cast<Byte>((c_num * g_dac_box[i][j] +
+                                                          (i - (start + c_num)) * g_dac_box[start][j] + spread / 2) /
+                                        static_cast<Byte>(spread));
                             }
                         }
                     }
@@ -1749,7 +1749,7 @@ static CmdArgFlags parse_colors(const char *value)
         g_color_state = ColorState::UNKNOWN_MAP;
     }
     g_colors_preloaded = true;
-    std::memcpy(g_old_dac_box, g_dac_box, 256*3);
+    std::memcpy(g_old_dac_box, g_dac_box, 256 * 3);
     return CmdArgFlags::NONE;
 bad_color:
     return CmdArgFlags::BAD_ARG;
