@@ -77,9 +77,9 @@
 #include "ui/slideshw.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
+#include <algos/string_algorithms.h>
 
 #include <config/path_limits.h>
-#include <config/string_lower.h>
 
 #include <algorithm>
 #include <array>
@@ -747,12 +747,9 @@ static bool next_line(std::FILE *handle, std::string &line_buf, const CmdFile mo
         line_buf = raw_line;
         if (mode == CmdFile::SSTOOLS_INI && !line_buf.empty() && line_buf[0] == '[') // check for [id]
         {
-            char tmp_buf[11];
-            std::strncpy(tmp_buf, line_buf.c_str() + 1, 4);
-            tmp_buf[4] = 0;
-            string_lower(tmp_buf);
-            tools_section = std::strncmp(tmp_buf, "id]", 3) == 0;
-            continue;                              // skip tools section heading
+            const std::string section{id::algos::ascii_to_lower_copy(std::string_view{line_buf}.substr(1, 3))};
+            tools_section = section == "id]";
+            continue; // skip tools section heading
         }
         if (tools_section)
         {

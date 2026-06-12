@@ -355,7 +355,7 @@ TEST_F(TestNextCommand, joinsContinuationLine)
 
 TEST_F(TestNextCommand, sstoolsSkipsNonIdSections)
 {
-    open_input("[other]\nfoo\n[id]\nbar\n");
+    open_input("[other]\nfoo\n[ID]\nbar\n");
 
     EXPECT_EQ(3, read_next(CmdFile::SSTOOLS_INI));
     EXPECT_EQ("bar", command());
