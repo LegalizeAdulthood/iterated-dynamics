@@ -10,6 +10,8 @@ Copyright 2026 Richard Thomson
 
 Create reusable GitHub Actions for vcpkg binary caching backed by GitHub
 Packages NuGet feeds, using the workflow `GITHUB_TOKEN` path by default.
+Support personal access tokens as an explicit alternate path, with
+different diagnostics and quota warnings.
 
 The action should remove the repeated setup burden across repositories.
 It should make cache failures diagnosable without forcing each repository
@@ -30,7 +32,9 @@ debug:
 
 - missing token;
 - missing `packages: write` permission;
+- missing or insufficient PAT scopes;
 - wrong feed owner;
+- wrong PAT username;
 - unbootstrapped vcpkg;
 - missing NuGet or Mono;
 - GitHub Packages authentication failures;
@@ -92,13 +96,32 @@ steps:
     build-log: build.log
 ```
 
+PAT mode is supported for repositories that must read or write package
+feeds outside the workflow repository.  It should be explicit:
+
+```yaml
+- id: vc
+  uses: owner/vcpkg-github-cache/setup@v1
+  with:
+    token-kind: pat
+    token: ${{ secrets.PACKAGES_TOKEN }}
+    username: ${{ github.actor }}
+    feed-owner: LegalizeAdulthood
+```
+
+In PAT mode, workflow `permissions: packages: write` does not grant the PAT
+anything.  The PAT itself must have the needed package scopes.
+
 If the build output is not captured to a file, omit `build-log`.  The
 analyzer must then report feed and restore-probe health without claiming
 whether the actual build was a warm hit, partial hit, or cold seed.
 
 ## Setup Inputs
 
-- `token`: required.  Expected value is `${{ github.token }}`.
+- `token`: required.  Defaults are designed for `${{ github.token }}`.
+- `token-kind`: optional.  Defaults to `github`.
+- `username`: optional.  Defaults to the feed owner in `github` mode and to
+  `github.actor` in PAT mode.
 - `feed-owner`: optional.  Defaults to the owner parsed from
   `GITHUB_REPOSITORY`.
 - `vcpkg-root`: optional.  Defaults to `vcpkg`.
@@ -112,6 +135,14 @@ whether the actual build was a warm hit, partial hit, or cold seed.
 
 GitHub action inputs are strings.  Boolean inputs should treat only `true`,
 `1`, `yes`, and `on`, case-insensitively, as enabled.
+
+`token-kind` should support these values:
+
+- `github`: workflow `GITHUB_TOKEN`; default and preferred.
+- `pat`: personal access token, classic.
+
+Do not infer PAT behavior from the token value.  The token is secret and
+opaque.  Require callers to opt into PAT behavior with `token-kind: pat`.
 
 ## Setup Outputs
 
@@ -132,15 +163,16 @@ clear;nuget,https://nuget.pkg.github.com/OWNER/index.json,readwrite
 The setup action should:
 
 1. Register the token with the GitHub Actions secret masker.
-2. Resolve `vcpkg-root`.
-3. Optionally bootstrap vcpkg.
-4. Verify that vcpkg is bootstrapped.
-5. Ensure NuGet is available through `vcpkg fetch nuget`.
-6. Ensure Mono is available when the NuGet tool is a `.exe` on Unix.
-7. Configure the GitHub Packages NuGet source.
-8. Set the API key for the same feed.
-9. Emit `binary-sources`.
-10. Write a concise step summary.
+2. Resolve token kind.
+3. Resolve `vcpkg-root`.
+4. Optionally bootstrap vcpkg.
+5. Verify that vcpkg is bootstrapped.
+6. Ensure NuGet is available through `vcpkg fetch nuget`.
+7. Ensure Mono is available when the NuGet tool is a `.exe` on Unix.
+8. Configure the GitHub Packages NuGet source.
+9. Set the API key for the same feed.
+10. Emit `binary-sources`.
+11. Write a concise step summary.
 
 On Windows, run the vcpkg-fetched `nuget.exe` directly.  On Linux and
 macOS, run it as `mono /path/to/nuget.exe`.
@@ -155,15 +187,33 @@ The action should never assume bash exists on Windows.  Use direct process
 spawn for commands.  If a shell is needed, choose the platform-native shell
 explicitly and trace that choice when `trace` is enabled.
 
+In `github` mode:
+
+- require or warn about caller `permissions: packages: write`;
+- use `GITHUB_TOKEN` terminology in diagnostics;
+- expect packages to be associated with the workflow repository;
+- report public package creation as verified behavior, not as a promise.
+
+In `pat` mode:
+
+- do not diagnose workflow package permission as the source of PAT failure;
+- require `write:packages` for read/write caching;
+- require `read:packages` for read-only cache use;
+- warn that `repo` may be needed for private repository package access;
+- use `username` for NuGet authentication, not blindly `feed-owner`;
+- treat package visibility and quota status as unknown until probed.
+
 ## Analyze Inputs
 
-- `token`: required.  Expected value is `${{ github.token }}`.
+- `token`: required.  Defaults are designed for `${{ github.token }}`.
+- `token-kind`: optional.  Defaults to `github`.
+- `username`: optional.  Defaults to the feed owner in `github` mode and to
+  `github.actor` in PAT mode.
 - `feed-owner`: optional.  Defaults to the owner parsed from
   `GITHUB_REPOSITORY`.
 - `vcpkg-root`: optional.  Defaults to `vcpkg`.
 - `build-log`: optional path to a captured build log.
 - `package-config-glob`: optional.  Defaults to `**/packages.config`.
-- `expect-token`: optional.  Defaults to `github`.
 - `fail-on`: optional.  Defaults to `never`.
 - `debug`: optional.  Defaults to `false`.
 - `trace`: optional.  Defaults to `false`.
@@ -256,6 +306,19 @@ Package visibility: public
 Quota risk: none detected
 ```
 
+PAT mode summaries should be explicit about the different risk model:
+
+```text
+vcpkg GitHub Packages cache: warm hit
+
+Feed auth: ok
+Token path: PAT
+Restore: 15/15 packages from NuGet
+Build misses: 0
+Package visibility: private
+Quota risk: private package storage counts against quota
+```
+
 If no build log is supplied, the action must not claim a warm or cold build
 result.  It should say:
 
@@ -272,6 +335,11 @@ The analyzer should recognize these patterns.
 Token and permission failures:
 
 - `GITHUB_TOKEN` input is empty;
+- PAT input is empty;
+- PAT lacks `read:packages`;
+- PAT lacks `write:packages`;
+- PAT username does not match the authenticated package user;
+- workflow `packages: write` is missing in `github` mode;
 - feed probe returns `401` or `403`;
 - NuGet restore reports `Unauthorized`;
 - NuGet publish reports `Forbidden`;
@@ -312,10 +380,18 @@ Package visibility and quota risk:
 - report public packages as no storage quota risk;
 - report private packages as storage quota risk;
 - warn if a public repository creates private packages.
+- warn if PAT-created packages are private, even in a public repository.
 
 GitHub documentation does not state the public-repository behavior as a
 simple unconditional rule.  The action should report actual observed
 visibility when metadata is available instead of assuming it.
+
+NuGet publish with a PAT should not be modeled as having a "publish public"
+switch.  GitHub documents first publish as private.  Linked repositories
+inherit access permissions, not visibility.  Package admins can make a
+package public after publication, and organization package creation policy
+can affect allowed defaults, but the action should not promise to force
+public visibility for PAT-created packages.
 
 ## Debug Output
 
@@ -426,6 +502,10 @@ The probe should report:
 If the API cannot read visibility, report `unknown` and keep the main
 diagnosis based on restore and upload behavior.
 
+For PAT mode, visibility probing is part of the main diagnosis whenever
+package names are available.  A PAT-created package in a public repository
+must still be treated as quota risk until the probe reports `public`.
+
 ## NuGet Source Setup
 
 The setup action should configure both source credentials and the API key
@@ -438,12 +518,17 @@ nuget sources add
   -Source FEED_URL
   -StorePasswordInClearText
   -Name GitHubPackages
-  -UserName OWNER
+  -UserName USERNAME
   -Password TOKEN
 
 nuget setapikey TOKEN
   -Source FEED_URL
 ```
+
+`FEED_URL` uses `feed-owner`.  `USERNAME` is the repository owner in the
+default `github` mode and the authenticated user in PAT mode.  These values
+are often the same for personal repositories, but not for organization
+feeds or cross-repository caches.
 
 The action should use the vcpkg-fetched NuGet executable for both commands
 so the configured tool matches the tool vcpkg will use.
@@ -598,6 +683,10 @@ Fixture tests:
 
 - warm Windows restore with 15 packages;
 - cold or partial Linux seed with uploads;
+- PAT restore from an existing public package;
+- PAT publish that creates a private package;
+- PAT scope failure for restore;
+- PAT scope failure for upload;
 - quota blocked restore;
 - auth failure;
 - upload to zero binary caches;
@@ -621,6 +710,7 @@ integration runs for live GitHub Packages behavior.
 
 - A public repository can configure vcpkg NuGet binary caching with
   `GITHUB_TOKEN` and no PAT.
+- A repository can opt into PAT mode and get distinct PAT diagnostics.
 - Setup emits a usable `VCPKG_BINARY_SOURCES` value.
 - NuGet provisioning works on Windows, Linux, and macOS hosted runners.
 - The analyzer identifies warm hit, partial hit, cold seed, auth failure,
@@ -632,6 +722,7 @@ integration runs for live GitHub Packages behavior.
 - With `trace: true`, the action explains its commands and decisions.
 - No secret values appear in logs or artifacts.
 - Public package visibility is reported from metadata when available.
+- Private PAT-created packages are reported as quota risk.
 - The default output is concise.
 
 ## Open Questions
@@ -643,5 +734,9 @@ integration runs for live GitHub Packages behavior.
 - Should package visibility probing be enabled by default or only in
   analyze debug mode?
 - Should the action offer a read-only cache mode for pull request builds?
+- Should PAT mode offer a read-only default unless `access: readwrite` is
+  explicitly requested?
+- Should the action document manual package visibility steps, or leave them
+  to GitHub documentation links?
 - Should the repository ship one action with `mode`, or two separate action
   entry points?  The current plan prefers two entry points.
