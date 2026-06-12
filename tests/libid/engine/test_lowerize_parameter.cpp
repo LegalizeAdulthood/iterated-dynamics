@@ -6,8 +6,6 @@
 
 #include <gtest/gtest.h>
 
-#include <cstring>
-
 using namespace id::algos;
 using namespace id::engine;
 using namespace testing;
@@ -18,22 +16,22 @@ namespace id::test
 class TestLowerizeParameter : public Test, public WithParamInterface<const char *>
 {
 protected:
-    char m_line[100]{};
+    std::string m_line;
 };
 
 TEST_F(TestLowerizeParameter, argumentLowered)
 {
-    std::strcpy(m_line, "FOO=SOME_ARG");
+    m_line = "FOO=SOME_ARG";
 
     lowerize_parameter(m_line);
 
-    EXPECT_STREQ("foo=some_arg", m_line);
+    EXPECT_EQ("foo=some_arg", m_line);
 }
 
 TEST_P(TestLowerizeParameter, valueUnchanged)
 {
     const std::string param{GetParam()};
-    std::strcpy(m_line, (ascii_to_upper_copy(param) + "=SOME_ARG").c_str());
+    m_line = ascii_to_upper_copy(param) + "=SOME_ARG";
 
     lowerize_parameter(m_line);
 
@@ -42,11 +40,11 @@ TEST_P(TestLowerizeParameter, valueUnchanged)
 
 TEST_F(TestLowerizeParameter, rdsTextureValueUnchanged)
 {
-    std::strcpy(m_line, "RDS-TEXTURE=C:\\Tmp\\Texture.GIF");
+    m_line = "RDS-TEXTURE=C:\\Tmp\\Texture.GIF";
 
     lowerize_parameter(m_line);
 
-    EXPECT_STREQ("rds-texture=C:\\Tmp\\Texture.GIF", m_line);
+    EXPECT_EQ("rds-texture=C:\\Tmp\\Texture.GIF", m_line);
 }
 
 INSTANTIATE_TEST_SUITE_P(TestCaseSensitiveParameters, TestLowerizeParameter,

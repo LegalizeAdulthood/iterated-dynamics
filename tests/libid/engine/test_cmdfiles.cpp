@@ -75,7 +75,6 @@
 #include <cctype>
 #include <cstdio>
 #include <cstdlib>
-#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <memory>
@@ -172,7 +171,6 @@ protected:
     void TearDown() override;
     void exec_cmd_arg(const std::string &cur_arg, CmdFile mode = CmdFile::AT_AFTER_STARTUP);
 
-    std::vector<char> m_buffer;
     CmdArgFlags m_result{};
 };
 
@@ -191,9 +189,7 @@ void TestParameterCommand::TearDown()
 
 void TestParameterCommand::exec_cmd_arg(const std::string &cur_arg, const CmdFile mode)
 {
-    m_buffer.resize(cur_arg.size() + 1);
-    std::strcpy(m_buffer.data(), cur_arg.c_str());
-    m_result = cmd_arg(m_buffer.data(), mode);
+    m_result = cmd_arg(cur_arg, mode);
 }
 
 class TestNextCommand : public Test

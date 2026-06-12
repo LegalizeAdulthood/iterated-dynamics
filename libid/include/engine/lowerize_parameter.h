@@ -2,9 +2,11 @@
 //
 #pragma once
 
+#include <string>
+
 namespace id::engine
 {
 
-void lowerize_parameter(char *cur_arg);
+void lowerize_parameter(std::string &cur_arg);
 
 } // namespace id::engine

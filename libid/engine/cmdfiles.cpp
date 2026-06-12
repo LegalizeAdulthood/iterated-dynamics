@@ -646,7 +646,7 @@ static CmdArgFlags command_file(std::FILE *handle, const CmdFile mode)
         {
             break;
         }
-        const CmdArgFlags i = cmd_arg(cmd.data(), mode);
+        const CmdArgFlags i = cmd_arg(cmd, mode);
         if (i == CmdArgFlags::BAD_ARG)
         {
             break;
@@ -834,30 +834,22 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
     arg(cur_arg),
     mode(a_mode)
 {
-    char *cur_arg_ptr = arg.data();
-    value = std::strchr(&cur_arg_ptr[1], '=');
-    lowerize_parameter(cur_arg_ptr);
-    int j;
-
-    if (value != nullptr)
-    {
-        j = static_cast<int>(value++ - cur_arg_ptr);
-    }
-    else
-    {
-        j = static_cast<int>(std::strlen(cur_arg_ptr));
-        value = cur_arg_ptr + j;
-    }
+    lowerize_parameter(arg);
+    const std::size_t equals{arg.find('=', 1)};
+    const std::size_t variable_end{equals == std::string::npos ? arg.size() : equals};
+    const std::size_t value_offset{equals == std::string::npos ? arg.size() : equals + 1};
+    value = arg.data() + value_offset;
+    int j = static_cast<int>(variable_end);
     if (j > 20)
     {
-        arg_error(cur_arg_ptr); // keyword too long
+        arg_error(arg.c_str()); // keyword too long
         status = CmdArgFlags::BAD_ARG;
         return;
     }
-    variable = std::string(cur_arg_ptr, j);
-    value_len = static_cast<int>(std::strlen(value)); // note value's length
-    char_val[0] = value[0];                           // first letter of value
-    yes_no_val[0] = -1;                               // note yes|no value
+    variable = arg.substr(0, variable_end);
+    value_len = static_cast<int>(arg.size() - value_offset); // note value's length
+    char_val[0] = value[0];                                  // first letter of value
+    yes_no_val[0] = -1;                                      // note yes|no value
     if (char_val[0] == 'n')
     {
         yes_no_val[0] = 0;
@@ -4155,7 +4147,7 @@ static std::optional<CmdArgFlags> handle_command(const std::array<CommandHandler
 //      | 4 means 3d=yes specified
 //      | 8 means reset specified
 //
-CmdArgFlags cmd_arg(char *cur_arg, const CmdFile mode) // process a single argument
+CmdArgFlags cmd_arg(const std::string_view cur_arg, const CmdFile mode) // process a single argument
 {
     Command cmd{cur_arg, mode};
     if (cmd.status != CmdArgFlags::NONE)
