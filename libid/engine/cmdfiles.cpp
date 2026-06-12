@@ -805,12 +805,12 @@ void set_print_document(const PrintDocFn &fn)
 
 struct Command
 {
-    Command(char *cur_arg, CmdFile a_mode);
+    Command(std::string_view cur_arg, CmdFile a_mode);
     CmdArgFlags bad_arg() const;
     void init_msg() const;
     std::string_view string_val(int index) const;
 
-    char *arg;
+    std::string arg;
     CmdFile mode{};
     char *value{};
     std::string variable;
@@ -830,33 +830,34 @@ struct Command
     CmdArgFlags status{CmdArgFlags::NONE};
 };
 
-Command::Command(char *cur_arg, const CmdFile a_mode) :
+Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
     arg(cur_arg),
-    mode(a_mode),
-    value(std::strchr(&cur_arg[1], '='))
+    mode(a_mode)
 {
-    lowerize_parameter(cur_arg);
+    char *cur_arg_ptr = arg.data();
+    value = std::strchr(&cur_arg_ptr[1], '=');
+    lowerize_parameter(cur_arg_ptr);
     int j;
 
     if (value != nullptr)
     {
-        j = static_cast<int>(value++ - cur_arg);
+        j = static_cast<int>(value++ - cur_arg_ptr);
     }
     else
     {
-        j = static_cast<int>(std::strlen(cur_arg));
-        value = cur_arg + j;
+        j = static_cast<int>(std::strlen(cur_arg_ptr));
+        value = cur_arg_ptr + j;
     }
     if (j > 20)
     {
-        arg_error(cur_arg); // keyword too long
+        arg_error(cur_arg_ptr); // keyword too long
         status = CmdArgFlags::BAD_ARG;
         return;
     }
-    variable = std::string(cur_arg, j);
+    variable = std::string(cur_arg_ptr, j);
     value_len = static_cast<int>(std::strlen(value)); // note value's length
-    char_val[0] = value[0];               // first letter of value
-    yes_no_val[0] = -1;                    // note yes|no value
+    char_val[0] = value[0];                           // first letter of value
+    yes_no_val[0] = -1;                               // note yes|no value
     if (char_val[0] == 'n')
     {
         yes_no_val[0] = 0;
@@ -924,7 +925,7 @@ Command::Command(char *cur_arg, const CmdFile a_mode) :
             }
         }
         else if (std::sscanf(arg_ptr, "%ld%c", &ll, &tmp_c) > 0 // got an integer
-            && tmp_c == '/')                                   // needs a long int, ll, here for lyapunov
+            && tmp_c == '/')                                    // needs a long int, ll, here for lyapunov
         {
             ++num_float_params;
             ++num_int_params;
@@ -944,7 +945,7 @@ Command::Command(char *cur_arg, const CmdFile a_mode) :
             }
         }
         else if (double f_temp{}; std::sscanf(arg_ptr, "%lg%c", &f_temp, &tmp_c) > 0 // got a float
-                 && tmp_c == '/')
+            && tmp_c == '/')
         {
             ++num_float_params;
             if (total_params < 16)
@@ -984,7 +985,7 @@ std::string_view Command::string_val(const int index) const
 
 CmdArgFlags Command::bad_arg() const
 {
-    arg_error(arg);
+    arg_error(arg.c_str());
     return CmdArgFlags::BAD_ARG;
 }
 
