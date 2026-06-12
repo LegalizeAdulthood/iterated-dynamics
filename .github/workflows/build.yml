@@ -341,6 +341,144 @@ jobs:
           setapikey "${{secrets.GH_PACKAGES_TOKEN}}" \
           -Source "${{env.FEED_URL}}"
 
+    - name: Inspect NuGet binary cache setup Windows
+      if: ${{matrix.os == 'windows-2022'}}
+      shell: cmd
+      env:
+        TOKEN: ${{secrets.GH_PACKAGES_TOKEN}}
+      run: |
+        @echo off
+        echo runner os: %RUNNER_OS%
+        echo image os: %ImageOS%
+        echo image version: %ImageVersion%
+        echo github event: ${{github.event_name}}
+        echo github repository: ${{github.repository}}
+        echo github ref: ${{github.ref}}
+        echo package feed: %FEED_URL%
+        if "%TOKEN%"=="" (
+          echo GH_PACKAGES_TOKEN: empty
+        ) else (
+          echo GH_PACKAGES_TOKEN: present
+        )
+        echo.
+        echo cmake from PATH:
+        where cmake
+        cmake --version
+        echo.
+        echo vcpkg submodule:
+        git submodule status vcpkg
+        vcpkg\vcpkg version
+        echo.
+        echo nuget from PATH:
+        where nuget
+        nuget help | findstr /I /C:"NuGet Version"
+        echo.
+        echo nuget used by vcpkg:
+        for /f "usebackq delims=" %%i in (`vcpkg\vcpkg fetch nuget`) do set VCPKG_NUGET=%%i
+        echo %VCPKG_NUGET%
+        "%VCPKG_NUGET%" help | findstr /I /C:"NuGet Version"
+        echo.
+        echo nuget locals from PATH nuget:
+        nuget locals all -list
+        echo.
+        echo nuget locals from vcpkg nuget:
+        "%VCPKG_NUGET%" locals all -list
+        echo.
+        echo sources from PATH nuget:
+        nuget sources list -Format Detailed
+        echo.
+        echo sources from vcpkg nuget:
+        "%VCPKG_NUGET%" sources list -Format Detailed
+        echo.
+        echo sanitized NuGet config files:
+        if exist "%APPDATA%\NuGet\NuGet.Config" (
+          echo %APPDATA%\NuGet\NuGet.Config
+          findstr /V /I /C:"Password" /C:"apikey" "%APPDATA%\NuGet\NuGet.Config"
+        )
+        if exist "%USERPROFILE%\.nuget\NuGet\NuGet.Config" (
+          echo %USERPROFILE%\.nuget\NuGet\NuGet.Config
+          findstr /V /I /C:"Password" /C:"apikey" "%USERPROFILE%\.nuget\NuGet\NuGet.Config"
+        )
+        echo.
+        echo feed probe with basic auth:
+        curl.exe -sS -D "%RUNNER_TEMP%\feed-basic-headers.txt" -o "%RUNNER_TEMP%\feed-basic.json" -w "feed basic http status: %%{http_code}\n" -u "${{github.repository_owner}}:%TOKEN%" "%FEED_URL%"
+        if exist "%RUNNER_TEMP%\feed-basic-headers.txt" type "%RUNNER_TEMP%\feed-basic-headers.txt"
+        if exist "%RUNNER_TEMP%\feed-basic.json" for %%F in ("%RUNNER_TEMP%\feed-basic.json") do echo feed basic bytes: %%~zF
+        echo.
+        echo feed probe with bearer auth:
+        curl.exe -sS -D "%RUNNER_TEMP%\feed-bearer-headers.txt" -o "%RUNNER_TEMP%\feed-bearer.json" -w "feed bearer http status: %%{http_code}\n" -H "Authorization: Bearer %TOKEN%" "%FEED_URL%"
+        if exist "%RUNNER_TEMP%\feed-bearer-headers.txt" type "%RUNNER_TEMP%\feed-bearer-headers.txt"
+        if exist "%RUNNER_TEMP%\feed-bearer.json" for %%F in ("%RUNNER_TEMP%\feed-bearer.json") do echo feed bearer bytes: %%~zF
+        echo.
+        echo package list probe:
+        "%VCPKG_NUGET%" list vcpkg-cmake-config -Source "%FEED_URL%" -NonInteractive -Verbosity detailed
+        exit /b 0
+
+    - name: Inspect NuGet binary cache setup Linux
+      if: ${{matrix.os == 'ubuntu-latest'}}
+      shell: bash
+      env:
+        TOKEN: ${{secrets.GH_PACKAGES_TOKEN}}
+      run: |
+        echo "runner os: ${RUNNER_OS}"
+        echo "image os: ${ImageOS:-}"
+        echo "image version: ${ImageVersion:-}"
+        echo "github event: ${{github.event_name}}"
+        echo "github repository: ${{github.repository}}"
+        echo "github ref: ${{github.ref}}"
+        echo "package feed: ${FEED_URL}"
+        if [ -z "${TOKEN}" ]; then
+          echo "GH_PACKAGES_TOKEN: empty"
+        else
+          echo "GH_PACKAGES_TOKEN: present"
+        fi
+        echo
+        echo "cmake from PATH:"
+        command -v cmake || true
+        cmake --version || true
+        echo
+        echo "vcpkg submodule:"
+        git submodule status vcpkg || true
+        ./vcpkg/vcpkg version || true
+        echo
+        echo "nuget used by vcpkg:"
+        vcpkg_nuget="$(./vcpkg/vcpkg fetch nuget | tail -n 1)"
+        echo "${vcpkg_nuget}"
+        mono "${vcpkg_nuget}" help | grep -i "NuGet Version" || true
+        echo
+        echo "nuget locals from vcpkg nuget:"
+        mono "${vcpkg_nuget}" locals all -list || true
+        echo
+        echo "sources from vcpkg nuget:"
+        mono "${vcpkg_nuget}" sources list -Format Detailed || true
+        echo
+        echo "sanitized NuGet config files:"
+        for config in \
+          "${HOME}/.config/NuGet/NuGet.Config" \
+          "${HOME}/.nuget/NuGet/NuGet.Config"; do
+          if [ -f "${config}" ]; then
+            echo "${config}"
+            sed -E '/password|apikey/I d' "${config}" || true
+          fi
+        done
+        echo
+        echo "feed probe with basic auth:"
+        curl -sS -D "${RUNNER_TEMP}/feed-basic-headers.txt" -o "${RUNNER_TEMP}/feed-basic.json" -w "feed basic http status: %{http_code}\n" -u "${{github.repository_owner}}:${TOKEN}" "${FEED_URL}" || true
+        cat "${RUNNER_TEMP}/feed-basic-headers.txt" || true
+        if [ -f "${RUNNER_TEMP}/feed-basic.json" ]; then
+          wc -c "${RUNNER_TEMP}/feed-basic.json"
+        fi
+        echo
+        echo "feed probe with bearer auth:"
+        curl -sS -D "${RUNNER_TEMP}/feed-bearer-headers.txt" -o "${RUNNER_TEMP}/feed-bearer.json" -w "feed bearer http status: %{http_code}\n" -H "Authorization: Bearer ${TOKEN}" "${FEED_URL}" || true
+        cat "${RUNNER_TEMP}/feed-bearer-headers.txt" || true
+        if [ -f "${RUNNER_TEMP}/feed-bearer.json" ]; then
+          wc -c "${RUNNER_TEMP}/feed-bearer.json"
+        fi
+        echo
+        echo "package list probe:"
+        mono "${vcpkg_nuget}" list vcpkg-cmake-config -Source "${FEED_URL}" -NonInteractive -Verbosity detailed || true
+
     - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
@@ -363,6 +501,48 @@ jobs:
       env: 
         VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
       run: cmake --workflow --preset ci-${{matrix.preset}}
+
+    - name: Dump vcpkg NuGet artifacts Windows
+      if: ${{always() && matrix.os == 'windows-2022'}}
+      shell: cmd
+      run: |
+        @echo off
+        echo vcpkg restore request:
+        if exist vcpkg\buildtrees\packages.config (
+          type vcpkg\buildtrees\packages.config
+        ) else (
+          echo vcpkg\buildtrees\packages.config not found
+        )
+        echo.
+        echo nupkg files under vcpkg buildtrees:
+        dir /s /b vcpkg\buildtrees\*.nupkg 2>NUL
+        echo.
+        echo nuspec files under vcpkg buildtrees:
+        dir /s /b vcpkg\buildtrees\*.nuspec 2>NUL
+        echo.
+        echo NuGet related lines from vcpkg buildtrees logs:
+        findstr /S /I /C:"NuGet" /C:"Pushing" /C:"Authentication" /C:"Unauthorized" /C:"Forbidden" /C:"failed" vcpkg\buildtrees\*.log 2>NUL
+        exit /b 0
+
+    - name: Dump vcpkg NuGet artifacts Linux
+      if: ${{always() && matrix.os == 'ubuntu-latest'}}
+      shell: bash
+      run: |
+        echo "vcpkg restore request:"
+        if [ -f vcpkg/buildtrees/packages.config ]; then
+          cat vcpkg/buildtrees/packages.config
+        else
+          echo "vcpkg/buildtrees/packages.config not found"
+        fi
+        echo
+        echo "nupkg files under vcpkg buildtrees:"
+        find vcpkg/buildtrees -name '*.nupkg' -print 2>/dev/null || true
+        echo
+        echo "nuspec files under vcpkg buildtrees:"
+        find vcpkg/buildtrees -name '*.nuspec' -print 2>/dev/null || true
+        echo
+        echo "NuGet related lines from vcpkg buildtrees logs:"
+        grep -RInE 'NuGet|Pushing|Authentication|Unauthorized|Forbidden|failed' vcpkg/buildtrees --include='*.log' || true
 
     - name: Build Setup package
       if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
