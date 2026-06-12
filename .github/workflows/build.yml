@@ -434,13 +434,6 @@ jobs:
         curl.exe -sS -D "%RUNNER_TEMP%\feed-bearer-headers.txt" -o "%RUNNER_TEMP%\feed-bearer.json" -w "feed bearer http status: %%{http_code}\n" -H "Authorization: Bearer %TOKEN%" "%FEED_URL%"
         if exist "%RUNNER_TEMP%\feed-bearer-headers.txt" type "%RUNNER_TEMP%\feed-bearer-headers.txt"
         if exist "%RUNNER_TEMP%\feed-bearer.json" for %%F in ("%RUNNER_TEMP%\feed-bearer.json") do echo feed bearer bytes: %%~zF
-        echo.
-        echo package list probe:
-        if "%VCPKG_NUGET%"=="" (
-          echo package list probe skipped; vcpkg nuget path not found
-        ) else (
-          "%VCPKG_NUGET%" list vcpkg-cmake-config -Source "%FEED_URL%" -NonInteractive -Verbosity detailed
-        )
         exit /b 0
 
     - name: Inspect NuGet binary cache setup Linux
@@ -504,9 +497,6 @@ jobs:
         if [ -f "${RUNNER_TEMP}/feed-bearer.json" ]; then
           wc -c "${RUNNER_TEMP}/feed-bearer.json"
         fi
-        echo
-        echo "package list probe:"
-        mono "${vcpkg_nuget}" list vcpkg-cmake-config -Source "${FEED_URL}" -NonInteractive -Verbosity detailed || true
 
     - name: Run Workflow Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
@@ -526,9 +516,16 @@ jobs:
       run: |
         @echo off
         echo packages.config files under workspace:
+        set VCPKG_NUGET=
+        if exist vcpkg\vcpkg.exe (
+          for /f "usebackq delims=" %%i in (`vcpkg\vcpkg.exe fetch nuget`) do set VCPKG_NUGET=%%i
+        )
+        if "%VCPKG_NUGET%"=="" set VCPKG_NUGET=nuget
         for /f "delims=" %%F in ('where /r . packages.config 2^>NUL') do (
           echo --- %%F
           type "%%F"
+          echo restore probe for %%F
+          "%VCPKG_NUGET%" restore "%%F" -Source "%FEED_URL%" -NonInteractive -Verbosity detailed -PackagesDirectory "%RUNNER_TEMP%\vcpkg-restore-probe" -NoCache
         )
         echo.
         echo nupkg files under workspace:
@@ -554,7 +551,19 @@ jobs:
       shell: bash
       run: |
         echo "packages.config files under workspace:"
+        vcpkg_nuget=""
+        if [ -x ./vcpkg/vcpkg ]; then
+          vcpkg_nuget="$(./vcpkg/vcpkg fetch nuget | tail -n 1)"
+        fi
         find . -name packages.config -print -exec cat {} \; || true
+        find . -name packages.config -print0 | while IFS= read -r -d '' config; do
+          echo "restore probe for ${config}"
+          if [ -n "${vcpkg_nuget}" ]; then
+            mono "${vcpkg_nuget}" restore "${config}" -Source "${FEED_URL}" -NonInteractive -Verbosity detailed -PackagesDirectory "${RUNNER_TEMP}/vcpkg-restore-probe" -NoCache || true
+          else
+            echo "restore probe skipped; vcpkg nuget path not found"
+          fi
+        done
         echo
         echo "nupkg files under workspace:"
         find . -name '*.nupkg' -print || true
