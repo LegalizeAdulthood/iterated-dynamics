@@ -279,13 +279,13 @@ jobs:
       matrix:
         preset: [ debug, release ]
         # macos-latest is disabled for now
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest, windows-2022 ]
         include:
           #- os: macos-latest
           #  nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
           - os: ubuntu-latest
             nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
-          - os: windows-latest
+          - os: windows-2022
             nuget: nuget
 
     runs-on: ${{matrix.os}}
@@ -365,12 +365,12 @@ jobs:
       run: cmake --workflow --preset ci-${{matrix.preset}}
 
     - name: Build Setup package
-      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'release'}}
+      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
       run: cmake --build --preset ci-${{matrix.preset}} --target setup
 
     - name: Upload setup package artifacts
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'release'}}
+      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
       with:
         archive: false
         name: Setup-${{matrix.preset}}
@@ -380,7 +380,7 @@ jobs:
 
     - name: Upload msi package artifacts
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'release'}}
+      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
       with:
         archive: false
         name: Msi-${{matrix.preset}}
@@ -390,7 +390,7 @@ jobs:
 
     - name: Upload zip package artifacts
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'release'}}
+      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
       with:
         archive: false
         name: Zip-${{matrix.preset}}
@@ -476,13 +476,13 @@ jobs:
       matrix:
         preset: [ wx-debug, wx-release ]
         # macos-latest is disabled for now
-        os: [ ubuntu-latest, windows-latest ]
+        os: [ ubuntu-latest, windows-2022 ]
         include:
           #- os: macos-latest
           #  nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
           - os: ubuntu-latest
             nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
-          - os: windows-latest
+          - os: windows-2022
             nuget: nuget
 
     runs-on: ${{matrix.os}}
@@ -555,12 +555,12 @@ jobs:
       run: cmake --workflow --preset ci-${{matrix.preset}}
 
     - name: Build Setup package
-      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
+      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
       run: cmake --build --preset ci-${{matrix.preset}} --target setup
 
 #    - name: Upload setup package artifacts
 #      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-#      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
+#      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
 #      with:
 #        archive: false
 #        name: Setup-${{matrix.preset}}
@@ -569,7 +569,7 @@ jobs:
 #
 #    - name: Upload msi package artifacts
 #      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-#      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
+#      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
 #      with:
 #        archive: false
 #        name: Msi-${{matrix.preset}}
@@ -578,7 +578,7 @@ jobs:
 #
 #    - name: Upload zip package artifacts
 #      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-#      if: ${{matrix.os == 'windows-latest' && matrix.preset == 'wx-release'}}
+#      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
 #      with:
 #        archive: false
 #        name: Zip-${{matrix.preset}}
