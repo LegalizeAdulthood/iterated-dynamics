@@ -252,10 +252,10 @@ enum class GetFormulaError
 
 struct Token
 {
-    char str[80];
-    FormulaTokenType type;
-    TokenId id;
-    DComplex constant;
+    std::string text;
+    FormulaTokenType type{};
+    TokenId id{};
+    DComplex constant{};
 };
 
 struct FunctList
@@ -391,6 +391,8 @@ static ParserState s_parser;
 static constexpr std::array<std::string_view, 4> JUMP_LIST{"if", "elseif", "else", "endif"};
 static FormulaEntry s_formula_entry;
 constexpr int MAX_FORMULA_ERRORS{3};
+constexpr std::size_t MAX_FORMULA_TOKEN_TEXT{32};
+constexpr std::size_t MAX_TOKEN_TEXT{79};
 static std::array<ErrorData, MAX_FORMULA_ERRORS> s_errors{};
 
 static const std::array<FunctList, 34> FUNC_LIST
@@ -1280,7 +1282,7 @@ static void get_func_info(Token *tok)
 {
     for (int i = 0; i < static_cast<int>(FUNC_LIST.size()); i++)
     {
-        if (std::strcmp(FUNC_LIST[i].s, tok->str) == 0)
+        if (tok->text == FUNC_LIST[i].s)
         {
             tok->id = static_cast<TokenId>(i);
             if (tok->id >= TokenId::FUNC_FN1 && tok->id <= TokenId::FUNC_FN4)
@@ -1297,22 +1299,22 @@ static void get_func_info(Token *tok)
 
     for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++) // pick up flow control
     {
-        if (JUMP_LIST[i] == tok->str)
+        if (JUMP_LIST[i] == tok->text)
         {
             tok->type = FormulaTokenType::FLOW_CONTROL;
-            tok->id   = static_cast<TokenId>(i + 1);
+            tok->id = static_cast<TokenId>(i + 1);
             return;
         }
     }
     tok->type = FormulaTokenType::NOT_A_TOKEN;
-    tok->id   = TokenId::UNDEFINED_FUNCTION;
+    tok->id = TokenId::UNDEFINED_FUNCTION;
 }
 
 static void get_var_info(Token *tok)
 {
     for (int i = 0; i < static_cast<int>(VARIABLES.size()); i++)
     {
-        if (std::strcmp(VARIABLES[i], tok->str) == 0)
+        if (tok->text == VARIABLES[i])
         {
             tok->id = static_cast<TokenId>(i);
             switch (tok->id)
@@ -1333,7 +1335,7 @@ static void get_var_info(Token *tok)
         }
     }
     tok->type = FormulaTokenType::USER_NAMED_VARIABLE;
-    tok->id   = TokenId::NONE;
+    tok->id = TokenId::NONE;
 }
 
 /// @brief Fills in token structure where numeric constant is indicated.
@@ -1348,14 +1350,13 @@ static void get_var_info(Token *tok)
 ///
 static bool frm_get_constant(Reader &reader, Token *tok)
 {
-    int i = 1;
     bool getting_base = true;
     long file_pos = reader.tell();
     bool got_decimal_already = false;
     bool done = false;
-    tok->constant.x = 0.0;          //initialize values to 0
+    tok->constant.x = 0.0; // initialize values to 0
     tok->constant.y = 0.0;
-    if (tok->str[0] == '.')
+    if (tok->text[0] == '.')
     {
         got_decimal_already = true;
     }
@@ -1364,38 +1365,38 @@ static bool frm_get_constant(Reader &reader, Token *tok)
         switch (int c = frm_get_char(reader); c)
         {
         case EOF:
-            tok->str[i] = static_cast<char>(0);
             tok->type = FormulaTokenType::NOT_A_TOKEN;
-            tok->id   = TokenId::END_OF_FILE;
+            tok->id = TokenId::END_OF_FILE;
             return false;
-        CASE_NUM:
-            tok->str[i++] = static_cast<char>(c);
+CASE_NUM:
+            tok->text.push_back(static_cast<char>(c));
             file_pos = reader.tell();
             break;
         case '.':
             if (got_decimal_already || !getting_base)
             {
-                tok->str[i++] = static_cast<char>(c);
-                tok->str[i++] = static_cast<char>(0);
+                tok->text.push_back(static_cast<char>(c));
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
             }
-            tok->str[i++] = static_cast<char>(c);
+            tok->text.push_back(static_cast<char>(c));
             got_decimal_already = true;
             file_pos = reader.tell();
             break;
-        default :
-            if (c == 'e' && getting_base && (std::isdigit(tok->str[i-1]) || (tok->str[i-1] == '.' && i > 1)))
+        default:
+            if (c == 'e' && getting_base &&
+                (std::isdigit(static_cast<unsigned char>(tok->text.back())) ||
+                    (tok->text.back() == '.' && tok->text.size() > 1)))
             {
-                tok->str[i++] = static_cast<char>(c);
+                tok->text.push_back(static_cast<char>(c));
                 getting_base = false;
                 got_decimal_already = false;
                 file_pos = reader.tell();
                 c = frm_get_char(reader);
                 if (c == '-' || c == '+')
                 {
-                    tok->str[i++] = static_cast<char>(c);
+                    tok->text.push_back(static_cast<char>(c));
                     file_pos = reader.tell();
                 }
                 else
@@ -1405,16 +1406,14 @@ static bool frm_get_constant(Reader &reader, Token *tok)
             }
             else if (std::isalpha(c) || c == '_')
             {
-                tok->str[i++] = static_cast<char>(c);
-                tok->str[i++] = static_cast<char>(0);
+                tok->text.push_back(static_cast<char>(c));
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
             }
-            else if (tok->str[i-1] == 'e' || (tok->str[i-1] == '.' && i == 1))
+            else if (tok->text.back() == 'e' || (tok->text.back() == '.' && tok->text.size() == 1))
             {
-                tok->str[i++] = static_cast<char>(c);
-                tok->str[i++] = static_cast<char>(0);
+                tok->text.push_back(static_cast<char>(c));
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
                 tok->id = TokenId::ILL_FORMED_CONSTANT;
                 return false;
@@ -1422,45 +1421,42 @@ static bool frm_get_constant(Reader &reader, Token *tok)
             else
             {
                 reader.seek(file_pos);
-                tok->str[i++] = static_cast<char>(0);
                 done = true;
             }
             break;
         }
-        if (i == 33 && tok->str[32])
+        if (tok->text.size() == MAX_FORMULA_TOKEN_TEXT + 1)
         {
-            tok->str[33] = static_cast<char>(0);
             tok->type = FormulaTokenType::NOT_A_TOKEN;
             tok->id = TokenId::TOKEN_TOO_LONG;
             return false;
         }
-    }    // end of while loop. Now fill in the value
-    tok->constant.x = std::atof(tok->str);
+    } // end of while loop. Now fill in the value
+    tok->constant.x = std::atof(tok->text.c_str());
     tok->type = FormulaTokenType::REAL_CONSTANT;
-    tok->id   = TokenId::NONE;
+    tok->id = TokenId::NONE;
     return true;
 }
 
 static void is_complex_constant(Reader &reader, Token *tok)
 {
-    assert(tok->str[0] == '(');
+    assert(tok->text[0] == '(');
     Token temp_tok;
     int sign_value = 1;
     bool done = false;
     bool getting_real = true;
     std::FILE *debug_token = nullptr;
-    std::string token_text{tok->str[0]};
+    std::string token_text{tok->text[0]};
     const auto set_token_text = [&token_text, tok]()
     {
-        if (token_text.size() >= sizeof(tok->str))
+        if (token_text.size() > MAX_TOKEN_TEXT)
         {
-            tok->str[0] = static_cast<char>(0);
+            tok->text.clear();
             tok->type = FormulaTokenType::NOT_A_TOKEN;
             tok->id = TokenId::TOKEN_TOO_LONG;
             return false;
         }
-        std::copy(token_text.begin(), token_text.end(), tok->str);
-        tok->str[token_text.size()] = static_cast<char>(0);
+        tok->text = token_text;
         return true;
     };
 
@@ -1483,7 +1479,7 @@ CASE_NUM:
             {
                 fmt::print(debug_token, "Set temp_tok.token_str[0] to {:c}\n", c);
             }
-            temp_tok.str[0] = static_cast<char>(c);
+            temp_tok.text.assign(1, static_cast<char>(c));
             break;
         case '-':
             if (debug_token != nullptr)
@@ -1498,7 +1494,7 @@ CASE_NUM:
                 {
                     fmt::print(debug_token, "Set temp_tok.token_str[0] to {:c}\n", c);
                 }
-                temp_tok.str[0] = static_cast<char>(c);
+                temp_tok.text.assign(1, static_cast<char>(c));
             }
             else
             {
@@ -1535,7 +1531,7 @@ CASE_NUM:
                 {
                     token_text += '-';
                 }
-                token_text += temp_tok.str;
+                token_text += temp_tok.text;
                 token_text += ',';
                 tok->constant.x = temp_tok.constant.x * sign_value;
                 getting_real = false;
@@ -1547,7 +1543,7 @@ CASE_NUM:
                 {
                     token_text += '-';
                 }
-                token_text += temp_tok.str;
+                token_text += temp_tok.text;
                 token_text += ')';
                 if (!set_token_text())
                 {
@@ -1559,7 +1555,7 @@ CASE_NUM:
                 }
                 tok->constant.y = temp_tok.constant.x * sign_value;
                 tok->type = tok->constant.y ? FormulaTokenType::COMPLEX_CONSTANT : FormulaTokenType::REAL_CONSTANT;
-                tok->id   = TokenId::NONE;
+                tok->id = TokenId::NONE;
                 if (debug_token != nullptr)
                 {
                     fmt::print(debug_token, "Exiting with type set to {:d}\n",
@@ -1579,14 +1575,14 @@ CASE_NUM:
         }
     }
     reader.seek(file_pos);
-    tok->str[1] = static_cast<char>(0);
+    tok->text.resize(1);
     tok->constant.x = 0.0;
     tok->constant.y = tok->constant.x;
     tok->type = FormulaTokenType::PARENS;
     tok->id = TokenId::OPEN_PARENS;
     if (debug_token != nullptr)
     {
-        fmt::print(debug_token,  "Exiting with ID set to OPEN_PARENS\n");
+        fmt::print(debug_token, "Exiting with ID set to OPEN_PARENS\n");
         std::fclose(debug_token);
     }
 }
@@ -1594,7 +1590,6 @@ CASE_NUM:
 static bool frm_get_alpha(Reader &reader, Token *tok)
 {
     int c;
-    int i = 1;
     bool var_name_too_long = false;
     long last_file_pos = reader.tell();
     while ((c = frm_get_char(reader)) != EOF)
@@ -1605,41 +1600,37 @@ static bool frm_get_alpha(Reader &reader, Token *tok)
 CASE_ALPHA:
 CASE_NUM:
         case '_':
-            if (i < 79)
+            if (tok->text.size() < MAX_TOKEN_TEXT)
             {
-                tok->str[i++] = static_cast<char>(c);
+                tok->text.push_back(static_cast<char>(c));
             }
-            else
-            {
-                tok->str[i] = static_cast<char>(0);
-            }
-            if (i == 33)
+            if (tok->text.size() == MAX_FORMULA_TOKEN_TEXT + 1)
             {
                 var_name_too_long = true;
             }
             last_file_pos = file_pos;
             break;
         default:
-            if (c == '.')       // illegal character in variable or func name
+            if (c == '.') // illegal character in variable or func name
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = TokenId::ILLEGAL_VARIABLE_NAME;
-                tok->str[i++] = '.';
-                tok->str[i] = static_cast<char>(0);
+                tok->id = TokenId::ILLEGAL_VARIABLE_NAME;
+                if (tok->text.size() < MAX_TOKEN_TEXT)
+                {
+                    tok->text.push_back('.');
+                }
                 return false;
             }
             if (var_name_too_long)
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = TokenId::TOKEN_TOO_LONG;
-                tok->str[i] = static_cast<char>(0);
+                tok->id = TokenId::TOKEN_TOO_LONG;
                 reader.seek(last_file_pos);
                 return false;
             }
-            tok->str[i] = static_cast<char>(0);
             reader.seek(last_file_pos);
             get_func_info(tok);
-            if (c == '(') //getfuncinfo() correctly filled structure
+            if (c == '(') // getfuncinfo() correctly filled structure
             {
                 if (tok->type == FormulaTokenType::NOT_A_TOKEN)
                 {
@@ -1649,23 +1640,23 @@ CASE_NUM:
                     (tok->id == TokenId::ILLEGAL_VARIABLE_NAME || tok->id == TokenId::TOKEN_TOO_LONG))
                 {
                     tok->type = FormulaTokenType::NOT_A_TOKEN;
-                    tok->id   = TokenId::JUMP_WITH_ILLEGAL_CHAR;
+                    tok->id = TokenId::JUMP_WITH_ILLEGAL_CHAR;
                     return false;
                 }
                 return true;
             }
-            //can't use function names as variables
+            // can't use function names as variables
             if (tok->type == FormulaTokenType::FUNCTION || tok->type == FormulaTokenType::PARAM_FUNCTION)
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = TokenId::FUNC_USED_AS_VAR;
+                tok->id = TokenId::FUNC_USED_AS_VAR;
                 return false;
             }
             if (tok->type == FormulaTokenType::FLOW_CONTROL &&
                 (tok->id == TokenId::END_OF_FILE || tok->id == TokenId::ILLEGAL_CHARACTER))
             {
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = TokenId::JUMP_MISSING_BOOLEAN;
+                tok->id = TokenId::JUMP_MISSING_BOOLEAN;
                 return false;
             }
             if (tok->type == FormulaTokenType::FLOW_CONTROL &&
@@ -1676,16 +1667,16 @@ CASE_NUM:
                     return true;
                 }
                 tok->type = FormulaTokenType::NOT_A_TOKEN;
-                tok->id   = TokenId::JUMP_WITH_ILLEGAL_CHAR;
+                tok->id = TokenId::JUMP_WITH_ILLEGAL_CHAR;
                 return false;
             }
             get_var_info(tok);
             return true;
         }
     }
-    tok->str[0] = static_cast<char>(0);
+    tok->text.clear();
     tok->type = FormulaTokenType::NOT_A_TOKEN;
-    tok->id   = TokenId::END_OF_FILE;
+    tok->id = TokenId::END_OF_FILE;
     return false;
 }
 
@@ -1698,22 +1689,22 @@ static void frm_get_eos(Reader &reader, Token *this_token)
     {
         if (c == ':')
         {
-            this_token->str[0] = ':';
+            this_token->text.assign(1, ':');
         }
         last_file_pos = reader.tell();
     }
     if (c == '}')
     {
-        this_token->str[0] = '}';
+        this_token->text.assign(1, '}');
         this_token->type = FormulaTokenType::END_OF_FORMULA;
-        this_token->id   = TokenId::NONE;
+        this_token->id = TokenId::NONE;
     }
     else
     {
         reader.seek(last_file_pos);
-        if (this_token->str[0] == '\n')
+        if (this_token->text[0] == '\n')
         {
-            this_token->str[0] = ',';
+            this_token->text.assign(1, ',');
         }
     }
 }
@@ -1732,29 +1723,29 @@ static void frm_get_eos(Reader &reader, Token *this_token)
 ///
 static bool frm_get_token(Reader &reader, Token *this_token)
 {
-    int i = 1;
     long file_pos;
 
     switch (int c = frm_get_char(reader); c)
     {
 CASE_NUM:
     case '.':
-        this_token->str[0] = static_cast<char>(c);
+        this_token->text.assign(1, static_cast<char>(c));
         return frm_get_constant(reader, this_token);
 CASE_ALPHA:
     case '_':
-        this_token->str[0] = static_cast<char>(c);
+        this_token->text.assign(1, static_cast<char>(c));
         return frm_get_alpha(reader, this_token);
 CASE_TERMINATOR:
         this_token->type = FormulaTokenType::OPERATOR; // this may be changed below
-        this_token->str[0] = static_cast<char>(c);
+        this_token->id = TokenId::NONE;
+        this_token->text.assign(1, static_cast<char>(c));
         file_pos = reader.tell();
         if (c == '<' || c == '>' || c == '=')
         {
             c = frm_get_char(reader);
             if (c == '=')
             {
-                this_token->str[i++] = static_cast<char>(c);
+                this_token->text.push_back(static_cast<char>(c));
             }
             else
             {
@@ -1766,12 +1757,11 @@ CASE_TERMINATOR:
             c = frm_get_char(reader);
             if (c == '=')
             {
-                this_token->str[i++] = static_cast<char>(c);
+                this_token->text.push_back(static_cast<char>(c));
             }
             else
             {
                 reader.seek(file_pos);
-                this_token->str[1] = static_cast<char>(0);
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = TokenId::ILLEGAL_OPERATOR;
                 return false;
@@ -1782,7 +1772,7 @@ CASE_TERMINATOR:
             c = frm_get_char(reader);
             if (c == '|')
             {
-                this_token->str[i++] = static_cast<char>(c);
+                this_token->text.push_back(static_cast<char>(c));
             }
             else
             {
@@ -1794,62 +1784,57 @@ CASE_TERMINATOR:
             c = frm_get_char(reader);
             if (c == '&')
             {
-                this_token->str[i++] = static_cast<char>(c);
+                this_token->text.push_back(static_cast<char>(c));
             }
             else
             {
                 reader.seek(file_pos);
-                this_token->str[1] = static_cast<char>(0);
                 this_token->type = FormulaTokenType::NOT_A_TOKEN;
                 this_token->id = TokenId::ILLEGAL_OPERATOR;
                 return false;
             }
         }
-        else if (this_token->str[0] == '}')
+        else if (this_token->text[0] == '}')
         {
             this_token->type = FormulaTokenType::END_OF_FORMULA;
-            this_token->id   = TokenId::NONE;
+            this_token->id = TokenId::NONE;
         }
-        else if (this_token->str[0] == '\n'
-            || this_token->str[0] == ','
-            || this_token->str[0] == ':')
+        else if (this_token->text[0] == '\n' || this_token->text[0] == ',' || this_token->text[0] == ':')
         {
             frm_get_eos(reader, this_token);
         }
-        else if (this_token->str[0] == ')')
+        else if (this_token->text[0] == ')')
         {
             this_token->type = FormulaTokenType::PARENS;
             this_token->id = TokenId::CLOSE_PARENS;
         }
-        else if (this_token->str[0] == '(')
+        else if (this_token->text[0] == '(')
         {
-            /* the following function will set token_type to PARENS and
-               token_id to OPEN_PARENS if this is not the start of a
-               complex constant */
+            // The following function will set token_type to PARENS and
+            // token_id to OPEN_PARENS if this is not the start of a
+            // complex constant.
             is_complex_constant(reader, this_token);
             return true;
         }
-        this_token->str[i] = static_cast<char>(0);
         if (this_token->type == FormulaTokenType::OPERATOR)
         {
             for (int j = 0; j < static_cast<int>(s_op_list.size()); j++)
             {
-                if (std::strcmp(s_op_list[j], this_token->str) == 0)
+                if (this_token->text == s_op_list[j])
                 {
                     this_token->id = static_cast<TokenId>(j);
                     break;
                 }
             }
         }
-        return this_token->str[0] != '}';
+        return this_token->text[0] != '}';
     case EOF:
-        this_token->str[0] = static_cast<char>(0);
+        this_token->text.clear();
         this_token->type = FormulaTokenType::NOT_A_TOKEN;
         this_token->id = TokenId::END_OF_FILE;
         return false;
     default:
-        this_token->str[0] = static_cast<char>(c);
-        this_token->str[1] = static_cast<char>(0);
+        this_token->text.assign(1, static_cast<char>(c));
         this_token->type = FormulaTokenType::NOT_A_TOKEN;
         this_token->id = TokenId::ILLEGAL_CHARACTER;
         return false;
@@ -1908,10 +1893,11 @@ int frm_get_param_stuff(std::filesystem::path &path, const char *name)
                 "{:s}\n"
                 "token_type is {:d}\n"
                 "token_id is {:d}\n",
-                current_token.str,   //
+                current_token.text,  //
                 +current_token.type, //
                 +current_token.id);
-            if (current_token.type == FormulaTokenType::REAL_CONSTANT || current_token.type == FormulaTokenType::COMPLEX_CONSTANT)
+            if (current_token.type == FormulaTokenType::REAL_CONSTANT ||
+                current_token.type == FormulaTokenType::COMPLEX_CONSTANT)
             {
                 fmt::print(debug_token,
                     "Real value is {:f}\n"
@@ -2388,9 +2374,9 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
             }
             return {};
         }
-        if (temp_tok.str[0] != ',')
+        if (temp_tok.text[0] != ',')
         {
-            formula_text += temp_tok.str;
+            formula_text += temp_tok.text;
             done = true;
         }
     }
@@ -2414,7 +2400,7 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
             reader.seek(file_pos);
             break;
         default:
-            formula_text += temp_tok.str;
+            formula_text += temp_tok.text;
             break;
         }
     }
@@ -2594,14 +2580,14 @@ static void frm_error(Reader &reader, const long begin_frm)
             {
                 chars_to_error = statement_len;
                 frm_get_token(reader, &tok);
-                chars_in_error = static_cast<int>(std::string_view{tok.str}.size());
+                chars_in_error = static_cast<int>(tok.text.size());
                 statement_len += chars_in_error;
                 token_count++;
             }
             else
             {
                 frm_get_token(reader, &tok);
-                statement_len += static_cast<int>(std::string_view{tok.str}.size());
+                statement_len += static_cast<int>(tok.text.size());
                 token_count++;
             }
             if (tok.type == FormulaTokenType::END_OF_FORMULA ||
@@ -2622,7 +2608,7 @@ static void frm_error(Reader &reader, const long begin_frm)
             while (chars_to_error + chars_in_error > FORMULA_ERROR_TEXT_COLUMNS)
             {
                 frm_get_token(reader, &tok);
-                chars_to_error -= static_cast<int>(std::string_view{tok.str}.size());
+                chars_to_error -= static_cast<int>(tok.text.size());
                 token_count--;
             }
         }
@@ -2636,7 +2622,7 @@ static void frm_error(Reader &reader, const long begin_frm)
         while (formula_line.size() <= static_cast<std::size_t>(FORMULA_ERROR_TEXT_COLUMNS) && token_count--)
         {
             frm_get_token(reader, &tok);
-            formula_line += tok.str;
+            formula_line += tok.text;
         }
         reader.seek(s_errors[j].error_pos);
         frm_get_token(reader, &tok);
@@ -2712,7 +2698,7 @@ static bool frm_prescan(Reader &reader)
     {
         file_pos = reader.tell();
         frm_get_token(reader, &this_token);
-        s_parser.chars_in_formula += static_cast<int>(std::strlen(this_token.str));
+        s_parser.chars_in_formula += static_cast<int>(this_token.text.size());
         switch (this_token.type)
         {
         case FormulaTokenType::NOT_A_TOKEN:
@@ -3071,7 +3057,7 @@ static bool frm_prescan(Reader &reader)
                 }
                 file_pos = reader.tell();
                 frm_get_token(reader, &this_token);
-                if (this_token.str[0] == '-')
+                if (this_token.text[0] == '-')
                 {
                     record_error(ParseError::NO_NEG_AFTER_EXPONENT);
                 }
