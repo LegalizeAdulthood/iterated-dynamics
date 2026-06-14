@@ -57,6 +57,8 @@
 #include "ui/temp_msg.h"
 #include "ui/video.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cassert>
 #include <climits>
@@ -729,9 +731,12 @@ static int extend_blk_len(const int data_len)
 static int put_extend_blk(const int block_id, int block_len, const char *block_data)
 {
     int j;
-    char header[15];
-    std::strcpy(header, "!\377\013fractint");
-    std::sprintf(&header[11], "%03d", block_id);
+    if (block_id < 0 || block_id > 999)
+    {
+        return 0;
+    }
+    char header[15]{"!\377\013fractint"};
+    fmt::format_to_n(&header[11], 3, "{:03}", block_id);
     if (std::fwrite(header, 14, 1, s_outfile) != 1)
     {
         return 0;
