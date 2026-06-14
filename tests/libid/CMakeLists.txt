@@ -100,6 +100,7 @@ add_executable(test-id
     io/test_search_path.cpp
     io/test_trim_filename.cpp
     io/test_update_save_name.cpp
+    math/test_bigflt.cpp
     math/test_cmplx.cpp
     math/test_fpu087.cpp
     math/test_math.cpp
