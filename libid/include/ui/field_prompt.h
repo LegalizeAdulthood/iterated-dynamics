@@ -6,5 +6,6 @@ namespace id::ui
 {
 
 int field_prompt(const char *hdg, const char *instr, char *fld, int len, int (*check_key)(int key));
+int field_prompt(const char *hdg, const char *instr, char *fld, int len, int display_len, int (*check_key)(int key));
 
 } // namespace id::ui

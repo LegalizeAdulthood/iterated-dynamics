@@ -20,6 +20,8 @@
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 
+#include <config/path_limits.h>
+
 #include <algorithm>
 #include <array>
 #include <cstring>
@@ -417,17 +419,20 @@ static bool check_map_file()
     {
         if (ask_flag)
         {
-            char buff[80]{};
-            std::strcpy(buff, map_name.string().c_str());
+            constexpr int MAP_NAME_DISPLAY_LEN{60};
+            std::array<char, id::config::ID_FILE_MAX_PATH> buff{};
+            const std::string map_name_text{map_name.string()};
+            const std::size_t copy_len{std::min(map_name_text.size(), buff.size() - 1)};
+            std::copy_n(map_name_text.data(), copy_len, buff.data());
             ValueSaver saved_help_mode{g_help_mode, HelpLabels::NONE};
             const int i = field_prompt("Enter name of .map file to use,\n"
                                        "or '*' to use palette from the image to be loaded.",
-                nullptr, buff, 60, nullptr);
+                nullptr, buff.data(), static_cast<int>(buff.size() - 1), MAP_NAME_DISPLAY_LEN, nullptr);
             if (i < 0)
             {
                 return true;
             }
-            map_name = buff;
+            map_name = buff.data();
             if (buff[0] == '*')
             {
                 g_map_set = false;

@@ -25,10 +25,21 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
     int (*check_key)(int key)     // routine to check non data keys, or nullptr
 )
 {
+    return field_prompt(hdg, instr, fld, len, len, check_key);
+}
+
+int field_prompt(const char *hdg, // heading, \n delimited lines
+    const char *instr,            // additional instructions or nullptr
+    char *fld,                    // the field itself
+    const int len,                // field length (declare as 1 larger for \0)
+    const int display_len,        // field display width
+    int (*check_key)(int key)     // routine to check non data keys, or nullptr
+)
+{
     char buf[81]{};
     help_title();                                   // clear screen, display title
     driver_set_attr(1, 0, C_PROMPT_BKGRD, 24 * 80); // init rest to background
-    const char *char_ptr = hdg;                                  // count title lines, find widest
+    const char *char_ptr = hdg;                     // count title lines, find widest
     int box_width = 0;
     int i = box_width;
     int title_lines = 1;
@@ -44,15 +55,16 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
             box_width = i;
         }
     }
-    box_width = std::max(len, box_width);
-    i = title_lines + 4;                    // total rows in box
-    int title_row = (25 - i) / 2;               // top row of it all when centered
-    title_row -= title_row / 4;              // higher is better if lots extra
-    int title_col = (80 - box_width) / 2;        // center the box
+    const int field_width{std::max(0, display_len > 0 && display_len < len ? display_len : len)};
+    box_width = std::max(field_width, box_width);
+    i = title_lines + 4;                  // total rows in box
+    int title_row = (25 - i) / 2;         // top row of it all when centered
+    title_row -= title_row / 4;           // higher is better if lots extra
+    int title_col = (80 - box_width) / 2; // center the box
     title_col -= (90 - box_width) / 20;
-    const int prompt_col = title_col - (box_width - len) / 2;
-    int j = title_col;                          // add margin at each side of box
-    i = (82-box_width)/4;
+    const int prompt_col = title_col - (box_width - field_width) / 2;
+    int j = title_col;                    // add margin at each side of box
+    i = (82 - box_width) / 4;
     i = std::min(i, 3);
     j -= i;
     box_width += i * 2;
@@ -60,7 +72,7 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
     {
         driver_set_attr(title_row + k, j, C_PROMPT_LO, box_width);
     }
-    g_text_col_base = title_col;                  // set left margin for putstring
+    g_text_col_base = title_col;                       // set left margin for putstring
     driver_put_string(title_row, 0, C_PROMPT_HI, hdg); // display heading
     g_text_col_base = 0;
     i = title_row + title_lines + 4;
@@ -80,13 +92,13 @@ int field_prompt(const char *hdg, // heading, \n delimited lines
         }
         put_string_center(i, 0, 80, C_PROMPT_BKGRD, buf);
     }
-    else                                     // default instructions
+    else // default instructions
     {
         put_string_center(i, 0, 80, C_PROMPT_BKGRD, "Press ENTER when finished (or ESCAPE to back out)");
     }
     std::string field{fld};
-    const int ret{input_field(
-        InputFieldFlags::NONE, C_PROMPT_INPUT, field, len, title_row + title_lines + 1, prompt_col, check_key)};
+    const int ret{input_field(InputFieldFlags::NONE, C_PROMPT_INPUT, field, len, field_width,
+        title_row + title_lines + 1, prompt_col, check_key)};
     const std::size_t copy_len{std::min(field.size(), static_cast<std::size_t>(std::max(len, 0)))};
     std::copy_n(field.data(), copy_len, fld);
     fld[copy_len] = 0;

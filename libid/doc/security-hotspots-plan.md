@@ -41,19 +41,7 @@ current item is active.  Then mark each affected item separately.
 
 # High Probability
 
-Items: 176.
-
-## SH-065
-
-- Status: `pending`
-- Key: `AZwwyFFl0qvqV_CtK1v2`
-- Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_3d_params.cpp`
-- Line: `473`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
+Items: 175.
 
 ## SH-066
 
