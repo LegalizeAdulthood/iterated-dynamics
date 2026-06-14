@@ -256,13 +256,12 @@ static bool read_lsystem_file(const char *str)
                 const char *temp = std::strtok(nullptr, " =\t\n");
                 if (const int index = rule_present(*word); !index)
                 {
-                    char fixed[MAX_LSYS_LINE_LEN + 1];
-                    std::strcpy(fixed, word);
+                    std::string fixed{word};
                     if (temp)
                     {
-                        std::strcat(fixed, temp);
+                        fixed += temp;
                     }
-                    mem_err = save_rule(fixed, rul_ind++);
+                    mem_err = save_rule(fixed.c_str(), rul_ind++);
                 }
                 else if (temp)
                 {
