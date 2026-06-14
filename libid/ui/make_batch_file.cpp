@@ -67,6 +67,7 @@
 #include <fmt/format.h>
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cctype>
 #include <cfloat>
@@ -77,6 +78,7 @@
 #include <filesystem>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -115,21 +117,55 @@ static char par_key(const int x)
     return static_cast<char>(x < 10 ? '0' + x : 'a' - 10 + x);
 }
 
+constexpr int COLOR_SPEC_LEN{13};
+constexpr int VIDEO_MODE_KEY_NAME_LEN{4};
+
+template <std::size_t MAX_CHARS>
+std::array<char, MAX_CHARS + 1> prompt_buffer(const std::string_view source)
+{
+    std::array<char, MAX_CHARS + 1> result{};
+    const std::size_t copy_len{std::min(source.size(), MAX_CHARS)};
+    if (copy_len != 0)
+    {
+        std::copy_n(source.data(), copy_len, result.data());
+    }
+    return result;
+}
+
+static std::string make_color_spec_map_name(const std::string_view map_name)
+{
+    constexpr std::size_t MAX_COLOR_SPEC_FILENAME_LEN{12};
+    const std::size_t file_start{map_name.find_last_of("\\/:")};
+    const std::string_view filename{file_start == std::string_view::npos ? map_name : map_name.substr(file_start + 1)};
+    std::string result{"@"};
+    result.append(filename.substr(0, MAX_COLOR_SPEC_FILENAME_LEN));
+    return result;
+}
+
+static std::string make_piece_command_name(const std::string_view parameter_set_name, const int col, const int row)
+{
+    const std::string_view::const_iterator name_end{std::find_if(parameter_set_name.begin(), parameter_set_name.end(),
+        [](const char c) { return std::isspace(static_cast<unsigned char>(c)) != 0; })};
+    std::string result{parameter_set_name.substr(0, static_cast<std::size_t>(name_end - parameter_set_name.begin()))};
+    result += fmt::format("_{:c}{:c}", par_key(col), par_key(row));
+    return result;
+}
+
 struct MakeParParams
 {
     MakeParParams();
     bool prompt();
 
     bool colors_only{g_make_parameter_file_map}; // makepar map case
-    char input_command_file[80];
-    char input_command_name[ITEM_NAME_LEN + 1];
-    char input_comment[4][MAX_COMMENT_LEN];
-    char color_spec[14]{};
+    std::string input_command_file;
+    std::string input_command_name;
+    std::array<std::string, 4> input_comment;
+    std::string color_spec{"y"};
     int max_color{g_colors};
     int max_line_length{g_max_line_length};
     int x_multiple{1};
     int y_multiple{1};
-    char video_mode_key_name[5];
+    std::string video_mode_key_name;
 
     int piece_x_dots{g_logical_screen.x_dots};
     int piece_y_dots{g_logical_screen.y_dots};
@@ -139,9 +175,11 @@ private:
         g_got_real_dac || (g_is_true_color && g_true_mode == TrueColorMode::DEFAULT_COLOR)};
 };
 
-MakeParParams::MakeParParams()
+MakeParParams::MakeParParams() :
+    input_command_file{g_parameter_file.string()},
+    input_command_name{g_parameter_set_name},
+    video_mode_key_name{vid_mode_key_name(g_video_entry.key)}
 {
-    std::strcpy(color_spec, "y");
     if (m_prompt_record_colors)
     {
         --max_color;
@@ -170,72 +208,62 @@ MakeParParams::MakeParParams()
             max_color = 256;
         }
 
-        const char *str_ptr{};
         if (g_color_state == ColorState::DEFAULT_MAP)
         {
             // default colors
             if (g_map_specified)
             {
-                color_spec[0] = '@';
-                str_ptr = g_map_name.c_str();
+                color_spec = make_color_spec_map_name(g_map_name);
             }
         }
         else if (g_color_state == ColorState::MAP_FILE)
         {
             // colors match colorfile
-            color_spec[0] = '@';
-            str_ptr = g_last_map_name.c_str();
+            color_spec = make_color_spec_map_name(g_last_map_name);
         }
         else // colors match no .map that we know of
         {
-            std::strcpy(color_spec, "y");
-        }
-
-        if (str_ptr && color_spec[0] == '@')
-        {
-            const char *str_ptr2 = std::strrchr(str_ptr, SLASH_CH);
-            if (str_ptr2 != nullptr)
-            {
-                str_ptr = str_ptr2 + 1;
-            }
-            str_ptr2 = std::strrchr(str_ptr, ':');
-            if (str_ptr2 != nullptr)
-            {
-                str_ptr = str_ptr2 + 1;
-            }
-            std::strncpy(&color_spec[1], str_ptr, 12);
-            color_spec[13] = 0;
+            color_spec = "y";
         }
     }
-    std::strcpy(input_command_file, g_parameter_file.string().c_str());
-    std::strcpy(input_command_name, g_parameter_set_name.c_str());
-    for (int i = 0; i < 4; i++)
+    for (std::size_t i = 0; i < input_comment.size(); i++)
     {
-        std::strcpy(input_comment[i], expand_command_comment(i).c_str());
+        input_comment[i] = expand_command_comment(static_cast<int>(i));
     }
 
-    if (g_parameter_set_name.empty())
+    if (input_command_name.empty())
     {
-        std::strcpy(input_command_name, "test");
+        input_command_name = "test";
     }
-    vid_mode_key_name(g_video_entry.key, video_mode_key_name);
 }
 
 bool MakeParParams::prompt()
 {
     while (true)
     {
+        std::array<char, MAX_COMMENT_LEN> input_command_file_buffer{
+            prompt_buffer<MAX_COMMENT_LEN - 1>(input_command_file)};
+        std::array<char, ITEM_NAME_LEN + 1> input_command_name_buffer{prompt_buffer<ITEM_NAME_LEN>(input_command_name)};
+        std::array<std::array<char, MAX_COMMENT_LEN>, 4> input_comment_buffer{};
+        for (std::size_t i = 0; i < input_comment.size(); i++)
+        {
+            input_comment_buffer[i] = prompt_buffer<MAX_COMMENT_LEN - 1>(input_comment[i]);
+        }
+        std::array<char, COLOR_SPEC_LEN + 1> color_spec_buffer{prompt_buffer<COLOR_SPEC_LEN>(color_spec)};
+        std::array<char, VIDEO_MODE_KEY_NAME_LEN + 1> video_mode_key_name_buffer{
+            prompt_buffer<VIDEO_MODE_KEY_NAME_LEN>(video_mode_key_name)};
+
         constexpr int MAX_PROMPTS{18};
         ChoiceBuilder<MAX_PROMPTS> builder;
-        builder.string_buff("Parameter file", input_command_file, MAX_COMMENT_LEN - 1);
-        builder.string_buff("Name", input_command_name, ITEM_NAME_LEN);
-        builder.string_buff("Main comment", input_comment[0], MAX_COMMENT_LEN - 1);
-        builder.string_buff("Second comment", input_comment[1], MAX_COMMENT_LEN - 1);
-        builder.string_buff("Third comment", input_comment[2], MAX_COMMENT_LEN - 1);
-        builder.string_buff("Fourth comment", input_comment[3], MAX_COMMENT_LEN - 1);
+        builder.string_buff("Parameter file", input_command_file_buffer.data(), MAX_COMMENT_LEN - 1);
+        builder.string_buff("Name", input_command_name_buffer.data(), ITEM_NAME_LEN);
+        builder.string_buff("Main comment", input_comment_buffer[0].data(), MAX_COMMENT_LEN - 1);
+        builder.string_buff("Second comment", input_comment_buffer[1].data(), MAX_COMMENT_LEN - 1);
+        builder.string_buff("Third comment", input_comment_buffer[2].data(), MAX_COMMENT_LEN - 1);
+        builder.string_buff("Fourth comment", input_comment_buffer[3].data(), MAX_COMMENT_LEN - 1);
         if (m_prompt_record_colors)
         {
-            builder.string_buff("Record colors?", color_spec, 13);
+            builder.string_buff("Record colors?", color_spec_buffer.data(), COLOR_SPEC_LEN);
             builder.comment("    (no | yes | only for full info | @filename to point to a map file)");
             builder.int_number("# of colors", max_color);
             builder.comment("    (if recording full color info)");
@@ -245,28 +273,31 @@ bool MakeParParams::prompt()
         builder.comment("    **** The following is for generating images in pieces ****");
         builder.int_number("X multiple", x_multiple);
         builder.int_number("Y multiple", y_multiple);
-        builder.string_buff("Video mode", video_mode_key_name, 4);
+        builder.string_buff("Video mode", video_mode_key_name_buffer.data(), VIDEO_MODE_KEY_NAME_LEN);
         if (builder.prompt("Save Current Parameters") < 0)
         {
             return true;
         }
 
-        g_parameter_file = builder.read_string_buff(MAX_COMMENT_LEN - 1);
+        input_command_file = builder.read_string_buff(MAX_COMMENT_LEN - 1);
+        g_parameter_file = input_command_file;
         if (!has_ext(g_parameter_file))
         {
             g_parameter_file += ".par";   // default extension .par
         }
-        g_parameter_set_name = builder.read_string_buff(ITEM_NAME_LEN);
-        for (std::string &comment : g_command_comment)
+        input_command_name = builder.read_string_buff(ITEM_NAME_LEN);
+        g_parameter_set_name = input_command_name;
+        for (std::size_t i = 0; i < input_comment.size(); i++)
         {
-            comment = builder.read_string_buff(MAX_COMMENT_LEN - 1);
+            input_comment[i] = builder.read_string_buff(MAX_COMMENT_LEN - 1);
+            g_command_comment[i] = input_comment[i];
         }
         if (m_prompt_record_colors)
         {
-            std::string requested_colors{builder.read_string_buff(13)};
-            if (requested_colors[0] == 'o' || g_make_parameter_file_map)
+            color_spec = builder.read_string_buff(COLOR_SPEC_LEN);
+            if ((!color_spec.empty() && color_spec[0] == 'o') || g_make_parameter_file_map)
             {
-                requested_colors = "y";
+                color_spec = "y";
                 colors_only = true;
             }
             builder.read_comment();
@@ -290,7 +321,8 @@ bool MakeParParams::prompt()
         // get resolution from the video name (which must be valid)
         piece_y_dots = 0;
         piece_x_dots = 0;
-        if (const int key = check_vid_mode_key_name(builder.read_string_buff(4)); key > 0)
+        video_mode_key_name = builder.read_string_buff(VIDEO_MODE_KEY_NAME_LEN);
+        if (const int key = check_vid_mode_key_name(video_mode_key_name); key > 0)
         {
             if (const int i = check_vid_mode_key(key); i >= 0)
             {
@@ -361,11 +393,11 @@ skip_ui:
         {
             if (g_file_colors > 0)
             {
-                std::strcpy(params.color_spec, "y");
+                params.color_spec = "y";
             }
             else
             {
-                std::strcpy(params.color_spec, "n");
+                params.color_spec = "n";
             }
             if (g_make_parameter_file_map)
             {
@@ -468,21 +500,7 @@ skip_ui:
             {
                 if (params.x_multiple > 1 || params.y_multiple > 1)
                 {
-                    char piece_command_name[80];
-                    int w{};
-                    while (w < static_cast<int>(g_parameter_set_name.length()))
-                    {
-                        const char c = g_parameter_set_name[w];
-                        if (std::isspace(c) || c == 0)
-                        {
-                            break;
-                        }
-                        piece_command_name[w] = c;
-                        w++;
-                    }
-                    piece_command_name[w] = 0;
-                    std::strcat(
-                        piece_command_name, fmt::format("_{:c}{:c}", par_key(col), par_key(row)).c_str());
+                    const std::string piece_command_name{make_piece_command_name(g_parameter_set_name, col, row)};
                     fmt::print(s_param_file, "{:<19s}{{", piece_command_name);
                     g_image_region.m_min.x = piece_x_min + piece_delta_x*(col*params.piece_x_dots) + piece_delta_x2*(row*params.piece_y_dots);
                     g_image_region.m_max.x = piece_x_min + piece_delta_x*((col+1)*params.piece_x_dots - 1) + piece_delta_x2*((row+1)*params.piece_y_dots - 1);
@@ -546,7 +564,7 @@ skip_ui:
                             comment, to_string(g_version));
                     }
                 }
-                write_batch_params(params.color_spec, params.colors_only, params.max_color, col, row);
+                write_batch_params(params.color_spec.c_str(), params.colors_only, params.max_color, col, row);
                 if (params.x_multiple > 1 || params.y_multiple > 1)
                 {
                     fmt::print(s_param_file,
