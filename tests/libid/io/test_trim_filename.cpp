@@ -20,6 +20,16 @@ TEST(TestTrimFilename, fitsInRequestedSize)
     EXPECT_EQ(filename, result);
 }
 
+TEST(TestTrimFilename, truncatesLongFilenameWithoutParent)
+{
+    const std::string filename{"abcdefghijklmnopqrstuvwxyz.gif"};
+
+    const std::string result = trim_filename(filename, 16);
+
+    EXPECT_EQ(16U, result.size());
+    EXPECT_EQ("abcdef...xyz.gif", result);
+}
+
 #if defined(WIN32)
 TEST(TestTrimFilename, dropsIntermediateDirectoriesWindows)
 {

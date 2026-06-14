@@ -2,6 +2,7 @@
 //
 #include "io/trim_filename.h"
 
+#include <cstddef>
 #include <filesystem>
 #include <numeric>
 #include <vector>
@@ -13,6 +14,10 @@ namespace id::io
 
 std::string trim_filename(const std::string &filename, const int length)
 {
+    if (length <= 0)
+    {
+        return {};
+    }
     if (static_cast<int>(filename.length()) <= length)
     {
         return filename;
@@ -24,6 +29,20 @@ std::string trim_filename(const std::string &filename, const int length)
     {
         parts.push_back(path.filename());
         path = path.parent_path();
+    }
+    if (parts.empty())
+    {
+        constexpr char ellipsis[]{"..."};
+        constexpr std::size_t ellipsis_len{sizeof(ellipsis) - 1};
+        const std::size_t result_len{static_cast<std::size_t>(length)};
+        if (result_len <= ellipsis_len)
+        {
+            return std::string{ellipsis, result_len};
+        }
+        const std::size_t keep_len{result_len - ellipsis_len};
+        const std::size_t prefix_len{keep_len / 2};
+        const std::size_t suffix_len{keep_len - prefix_len};
+        return filename.substr(0, prefix_len) + ellipsis + filename.substr(filename.length() - suffix_len);
     }
     const fs::path start{path / parts.back() / "..."};
     parts.pop_back();
