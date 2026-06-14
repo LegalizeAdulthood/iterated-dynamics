@@ -20,6 +20,7 @@
 #include "io/gif_extensions.h"
 #include "io/library.h"
 #include "io/loadfile.h"
+#include "io/trim_filename.h"
 #include "math/big.h"
 #include "math/biginit.h"
 #include "math/round_float_double.h"
@@ -34,6 +35,7 @@
 
 #include <fmt/format.h>
 
+#include <algorithm>
 #include <filesystem>
 
 using namespace id::config;
@@ -257,7 +259,6 @@ rescan:  // entry for changed browse parms
         show_temp_msg(window.filename);
         while (status == FileWindowStatus::CONTINUE)
         {
-            char msg[40];
             while (!driver_key_pressed())
             {
                 std::time(&this_time);
@@ -379,11 +380,11 @@ rescan:  // entry for changed browse parms
             {
                 clear_temp_msg();
                 driver_stack_screen();
-                char new_name[60];
-                new_name[0] = 0;
-                std::strcpy(msg, "Enter the new filename for ");
-                std::strcpy(new_name, window.filename.c_str());
-                int i = field_prompt(msg, nullptr, new_name, 60, nullptr);
+                constexpr int new_name_len{60};
+                char new_name[new_name_len]{};
+                const std::string initial_name{trim_filename(window.filename, new_name_len - 1)};
+                std::copy(initial_name.begin(), initial_name.end(), new_name);
+                const int i = field_prompt("Enter the new filename for ", nullptr, new_name, new_name_len, nullptr);
                 driver_unstack_screen();
                 if (i != -1)
                 {
