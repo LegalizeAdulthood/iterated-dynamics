@@ -27,6 +27,5 @@ var searchData=
   ['inverse_5fjulia_2eh_24',['inverse_julia.h',['../d4/d68/inverse__julia_8h.html',1,'']]],
   ['inversion_2ecpp_25',['Inversion.cpp',['../d5/d79/Inversion_8cpp.html',1,'']]],
   ['inversion_2eh_26',['Inversion.h',['../da/d2f/Inversion_8h.html',1,'']]],
-  ['is_5fdirectory_2eh_27',['is_directory.h',['../d8/da5/is__directory_8h.html',1,'']]],
-  ['is_5fwriteable_2eh_28',['is_writeable.h',['../d0/d25/is__writeable_8h.html',1,'']]]
+  ['is_5fwriteable_2eh_27',['is_writeable.h',['../d0/d25/is__writeable_8h.html',1,'']]]
 ];

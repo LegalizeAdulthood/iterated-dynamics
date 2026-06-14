@@ -85,6 +85,7 @@ var menudata={children:[
 {text:"Variables",url:"namespacemembers_vars.html",children:[
 {text:"a",url:"namespacemembers_vars.html#index_a"},
 {text:"b",url:"namespacemembers_vars_b.html#index_b"},
+{text:"c",url:"namespacemembers_vars_c.html#index_c"},
 {text:"d",url:"namespacemembers_vars_d.html#index_d"},
 {text:"f",url:"namespacemembers_vars_f.html#index_f"},
 {text:"g",url:"namespacemembers_vars_g.html#index_g"},

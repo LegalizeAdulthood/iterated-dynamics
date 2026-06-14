@@ -31,7 +31,7 @@ var searchData=
   ['bot_5fright_28',['bot_right',['../db/d7d/file__get__window_8cpp.html#af8f30c554f43b2ae555fdc976e112742',1,'file_get_window.cpp']]],
   ['box_5fcount_29',['box_count',['../db/d7d/file__get__window_8cpp.html#ab0ceb59cf1023256275abc572df0bf34',1,'file_get_window.cpp']]],
   ['browsing_30',['browsing',['../de/d5e/structid_1_1engine_1_1Browse.html#a1478bd14aee0d4a90c17973267d1f0d4',1,'id::engine::Browse']]],
-  ['buf_31',['buf',['../d9/d9b/structid_1_1ui_1_1WriteBatchData.html#ae560e80daa70b636cf1ded81bf6c0ffa',1,'id::ui::WriteBatchData']]],
+  ['buf_31',['buf',['../d9/d9b/structid_1_1ui_1_1WriteBatchData.html#a756ebd3a32a58f88b909cecee65998a1',1,'id::ui::WriteBatchData']]],
   ['buffer_32',['buffer',['../db/dec/structhc_1_1HelpSource.html#a9f97a42707cec7638b1a57e6450f5f69',1,'hc::HelpSource::buffer'],['../d0/dff/help_8cpp.html#a32f93b88bc29ff5bb4f19b516c6824ee',1,'buffer:&#160;help.cpp']]],
   ['buffer_5fsize_33',['BUFFER_SIZE',['../d9/dcc/namespacehc.html#a2745d09753b22c5b334487559ac07635',1,'hc']]],
   ['bx_34',['bx',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a9454ea00920b5931789be45058f843bf',1,'id::io::FractalInfo']]]

@@ -23,7 +23,7 @@ var searchData=
   ['check_5fmemory_20',['check_memory',['../d1/d99/classid_1_1misc_1_1Win32BaseDriver.html#a67c798ed62f5efaa0b2eebe6914590cc',1,'id::misc::Win32BaseDriver::check_memory()'],['../d3/def/classid_1_1misc_1_1Driver.html#a072761a260f3b885b6354246478aa0ca',1,'id::misc::Driver::check_memory()']]],
   ['check_5forbit_5fname_21',['check_orbit_name',['../d5/d38/namespaceid_1_1fractals.html#aa63f240551b68369347e5b56a3f30ccd',1,'id::fractals']]],
   ['check_5fvid_5fmode_5fkey_22',['check_vid_mode_key',['../dc/d31/namespaceid_1_1engine.html#a69b7deacaadf3bf63d259f830587f350',1,'id::engine']]],
-  ['check_5fvid_5fmode_5fkey_5fname_23',['check_vid_mode_key_name',['../dc/d31/namespaceid_1_1engine.html#add4f9ccae5000774c95b77cd6cc576ff',1,'id::engine']]],
+  ['check_5fvid_5fmode_5fkey_5fname_23',['check_vid_mode_key_name',['../dc/d31/namespaceid_1_1engine.html#a2bb798a4defd9317de7f21b51abdaaa0',1,'id::engine']]],
   ['check_5fwrite_5ffile_24',['check_write_file',['../d0/d19/namespaceid_1_1io.html#a41897e998d57bf4e73f043536884509f',1,'id::io']]],
   ['chip2d_5forbit_25',['chip2d_orbit',['../d5/d38/namespaceid_1_1fractals.html#af910472d4e4bb73f6e0c714c5ff4ff8a',1,'id::fractals']]],
   ['circle_5forbit_26',['circle_orbit',['../d5/d38/namespaceid_1_1fractals.html#a469e57e28f1df15e889b9f4cf6438a68',1,'id::fractals']]],

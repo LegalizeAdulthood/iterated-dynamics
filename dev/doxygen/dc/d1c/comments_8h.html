@@ -82,9 +82,11 @@ $(function() {
   <div class="headertitle"><div class="title">comments.h File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;functional&gt;</code><br />
-<code>#include &lt;string&gt;</code><br />
+<div class="textblock"><code>#include &lt;array&gt;</code><br />
 <code>#include &lt;ctime&gt;</code><br />
+<code>#include &lt;functional&gt;</code><br />
+<code>#include &lt;string&gt;</code><br />
+<code>#include &lt;string_view&gt;</code><br />
 </div>
 <p><a href="../../dc/d1c/comments_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -111,13 +113,13 @@ Functions</h2></td></tr>
 <tr class="separator:a9a4eec006ac6634d87517334f3ffb832"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade64aa4b8e3da981c6878f5d7b2864a8" id="r_ade64aa4b8e3da981c6878f5d7b2864a8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ade64aa4b8e3da981c6878f5d7b2864a8">id::ui::init_comments</a> ()</td></tr>
 <tr class="separator:ade64aa4b8e3da981c6878f5d7b2864a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac35448e63b105cfa3c9e5824a5b0deb0" id="r_ac35448e63b105cfa3c9e5824a5b0deb0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ac35448e63b105cfa3c9e5824a5b0deb0">id::ui::parse_comments</a> (char *<a class="el" href="../../d1/d3e/history_8cpp.html#ad5a55c0b801d56b50a807ba2f510d98c">value</a>)</td></tr>
-<tr class="separator:ac35448e63b105cfa3c9e5824a5b0deb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8908e661b85b956cfee77bc3f7667095" id="r_a8908e661b85b956cfee77bc3f7667095"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a8908e661b85b956cfee77bc3f7667095">id::ui::parse_comments</a> (std::string_view <a class="el" href="../../d1/d3e/history_8cpp.html#ad5a55c0b801d56b50a807ba2f510d98c">value</a>)</td></tr>
+<tr class="separator:a8908e661b85b956cfee77bc3f7667095"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:aac5c22b1356a96ea171816c1b7db0833" id="r_aac5c22b1356a96ea171816c1b7db0833"><td class="memItemLeft" align="right" valign="top">char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#aac5c22b1356a96ea171816c1b7db0833">id::ui::g_par_comment</a> [4][<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a416d1db76c5630d3ac060dc5669740a4a2ee4e7695028ff558bd9ac1b5089c286">MAX_COMMENT_LEN</a>] {}</td></tr>
-<tr class="separator:aac5c22b1356a96ea171816c1b7db0833"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ee0917bc27b7a1dda5e82b1e3591cca" id="r_a5ee0917bc27b7a1dda5e82b1e3591cca"><td class="memItemLeft" align="right" valign="top">std::array&lt; std::string, 4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5ee0917bc27b7a1dda5e82b1e3591cca">id::ui::g_par_comment</a></td></tr>
+<tr class="separator:a5ee0917bc27b7a1dda5e82b1e3591cca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c4ec40f1b475f7b1c555e2d3c377244" id="r_a4c4ec40f1b475f7b1c555e2d3c377244"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a4c4ec40f1b475f7b1c555e2d3c377244">id::ui::g_command_comment</a> [4]</td></tr>
 <tr class="separator:a4c4ec40f1b475f7b1c555e2d3c377244"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f8893b2c253b88f60b97aa867c39ff3" id="r_a5f8893b2c253b88f60b97aa867c39ff3"><td class="memItemLeft" align="right" valign="top">std::function&lt; std::string()&gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5f8893b2c253b88f60b97aa867c39ff3">id::ui::g_get_cpu_id</a> {get_cpu_id}</td></tr>
