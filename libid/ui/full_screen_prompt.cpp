@@ -30,6 +30,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <string_view>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -368,7 +369,8 @@ void Prompt::set_horizontal_positions()
             values[i].uval.ch.list = noyes;
             values[i].uval.ch.list_len = 2;
         }
-        int j = static_cast<int>(std::strlen(prompts[i]));
+        const std::string_view prompt{prompts[i]};
+        int j = static_cast<int>(prompt.size());
         if (values[i].type == '*')
         {
             max_comment = std::max(j, max_comment);
