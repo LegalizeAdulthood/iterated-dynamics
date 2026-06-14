@@ -47,8 +47,8 @@ jobs:
         token: ${{github.token}}
         bootstrap: "true"
         install-nuget: "true"
-        debug: "true"
-        trace: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Run Workflow
       shell: pwsh
@@ -68,8 +68,8 @@ jobs:
         build-log: build.log
         artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{github.run_attempt}}
         fail-on: "never"
-        debug: "true"
-        trace: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Copy images for AsciiDoc artifact
       run: |
@@ -329,8 +329,8 @@ jobs:
         token: ${{github.token}}
         bootstrap: "true"
         install-nuget: "true"
-        debug: "true"
-        trace: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Run Workflow Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
@@ -360,8 +360,8 @@ jobs:
         build-log: build.log
         artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{matrix.os}}-${{matrix.preset}}-${{github.run_attempt}}
         fail-on: "never"
-        debug: "true"
-        trace: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Build Setup package
       if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
@@ -528,8 +528,8 @@ jobs:
         token: ${{github.token}}
         bootstrap: "true"
         install-nuget: "true"
-        debug: "true"
-        trace: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Run Workflow
       shell: pwsh
@@ -548,8 +548,8 @@ jobs:
         build-log: build.log
         artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{matrix.os}}-${{matrix.preset}}-${{github.run_attempt}}
         fail-on: "never"
-        debug: "true"
-        trace: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Build Setup package
       if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
