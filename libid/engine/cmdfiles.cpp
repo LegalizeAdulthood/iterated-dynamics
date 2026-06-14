@@ -2966,33 +2966,22 @@ static CmdArgFlags cmd_polyphony(const Command &cmd)
 
 static CmdArgFlags cmd_potential(const Command &cmd)
 {
-    int k{};
-    const char *value = cmd.value;
-    while (k < 3 && *value)
+    for (int k = 0; k < cmd.total_params && k < 3; ++k)
     {
+        const std::string value{cmd.string_val(k)};
         if (k == 1)
         {
-            g_potential.params[k] = std::atof(value);
+            g_potential.params[k] = std::atof(value.c_str());
         }
         else
         {
-            g_potential.params[k] = std::atoi(value);
-        }
-        k++;
-        value = std::strchr(value, '/');
-        if (value == nullptr)
-        {
-            k = 99;
-        }
-        else
-        {
-            ++value;
+            g_potential.params[k] = std::atoi(value.c_str());
         }
     }
     g_potential.store_16bit = false;
-    if (k < 99)
+    if (cmd.total_params > 3)
     {
-        if (std::string_view{value} != "16bit")
+        if (cmd.string_val(3) != "16bit")
         {
             return cmd.bad_arg();
         }
