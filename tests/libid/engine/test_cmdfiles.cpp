@@ -823,6 +823,65 @@ TEST_F(TestCommandMakePar, makeParWritesIdResetFromCompatibilityVersion)
     EXPECT_THAT(text, HasSubstr("  reset=1/3/2 type=mandel"));
 }
 
+TEST_F(TestCommandMakePar, makeParWritesTrimmedCornerValues)
+{
+    const fs::path path{par_path("trimmed-corners.par")};
+    fs::remove(path);
+    ValueSaver saved_use_center_mag{g_use_center_mag, false};
+    ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
+    ValueSaver saved_x_min{g_image_region.m_min.x, -1.25};
+    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, -1.25};
+    ValueSaver saved_x_max{g_image_region.m_max.x, 2.5};
+    ValueSaver saved_y_min{g_image_region.m_min.y, -3.75};
+    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, -3.75};
+    ValueSaver saved_y_max{g_image_region.m_max.y, 4.0};
+
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_THAT(read_file_contents(path), HasSubstr(" corners=-1.25/2.5/-3.75/4"));
+}
+
+TEST_F(TestCommandMakePar, makeParWrapsAtConfiguredLineLength)
+{
+    const fs::path path{par_path("wrapped.par")};
+    fs::remove(path);
+    ValueSaver saved_max_line_length{g_max_line_length, MIN_MAX_LINE_LENGTH};
+
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+
+    const std::string text{read_file_contents(path)};
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_THAT(text, HasSubstr(" passes=\n  corners="));
+
+    std::istringstream lines{text};
+    std::string line;
+    while (std::getline(lines, line))
+    {
+        if (line.rfind("  ", 0) == 0 && line.find("; Id Version") == std::string::npos)
+        {
+            EXPECT_LE(line.length(), static_cast<std::size_t>(g_max_line_length)) << line;
+        }
+    }
+}
+
+TEST_F(TestCommandMakePar, makeParMapOnlyWritesColors)
+{
+    const fs::path path{par_path("map-only.par")};
+    fs::remove(path);
+    ValueSaver saved_read_filename{g_read_filename, fs::path{}};
+    ValueSaver saved_map_name{g_map_name, std::string{"rainbow.map"}};
+    ValueSaver saved_file_colors{g_file_colors, 16};
+
+    exec_cmd_arg("makepar=" + path.filename().string() + "/bar", CmdFile::SSTOOLS_INI);
+
+    const std::string text{read_file_contents(path)};
+    EXPECT_EQ(CmdArgFlags::GOODBYE, m_result);
+    EXPECT_THAT(text, HasSubstr(" colors="));
+    EXPECT_THAT(text, Not(HasSubstr(" type=mandel")));
+    EXPECT_THAT(text, Not(HasSubstr(" reset=")));
+}
+
 TEST_F(TestParameterCommandError, resetBadArg)
 {
     ValueSaver saved_version{g_version, Version{1, 2, 3, 4, false}};

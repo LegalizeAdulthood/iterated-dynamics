@@ -39,6 +39,15 @@ code, Win32 support, and workflows.
 If one helper change removes multiple hotspots, implement it while the
 current item is active.  Then mark each affected item separately.
 
+# Active Slices
+
+- `make_batch_file` prompt and piece-name buffers: cover and refactor
+  `MakeParParams` fixed input buffers, `color_spec` construction, and
+  generated piece command names.  Target SH-086 through SH-095.
+- `make_batch_file` output helpers: cover and refactor numeric/string PAR
+  assembly, including `strip_zeros`, `put_float`, and the fixed
+  `WriteBatchData` buffer append path.  Target SH-096 through SH-099.
+
 # High Probability
 
 Items: 113.
