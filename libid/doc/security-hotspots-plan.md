@@ -41,31 +41,7 @@ current item is active.  Then mark each affected item separately.
 
 # High Probability
 
-Items: 234.
-
-## SH-006
-
-- Status: `pending`
-- Key: `AZwwyFO60qvqV_CtK1-V`
-- Rule: `cpp:S5813`
-- Area: `command-input`
-- Path: `libid/engine/cmdfiles.cpp`
-- Line: `894`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-007
-
-- Status: `pending`
-- Key: `AZwwyFO60qvqV_CtK1-W`
-- Rule: `cpp:S5813`
-- Area: `command-input`
-- Path: `libid/engine/cmdfiles.cpp`
-- Line: `970`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strlen" is safe here.
+Items: 232.
 
 ## SH-008
 

@@ -85,6 +85,7 @@
 #include <cassert>
 #include <cctype>
 #include <cfloat>
+#include <charconv>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -129,8 +130,10 @@ static bool type_needs_file_entry();
 static bool type_has_file_entry();
 static void reset_startup_commands();
 static void resolve_startup_file_entry();
-static int  get_bf(BigFloat bf, const char *cur_arg);
+static int get_bf(BigFloat bf, const char *cur_arg);
 static bool is_a_big_float(const char *str);
+static bool parse_command_number(std::string_view text, long &value);
+static bool parse_command_number(std::string_view text, double &value);
 
 // variables defined by the command line/files processor
 RecordColorsMode g_record_colors{RecordColorsMode::NONE}; // default PAR color-writing method
@@ -142,19 +145,59 @@ bool g_read_color{true};                                  // flag for reading co
 // true: user has specified a directory for Orgform formula compilation files
 bool g_organize_formulas_search{};
 
-bool g_escape_exit{};                        // set to true to avoid the "are you sure?" screen
-bool g_first_init{true};                     // first time into cmdfiles?
-fs::path g_parameter_file;                   // file to find parameter sets in
-std::string g_parameter_set_name;            // Name of parameter set (if not empty)
+bool g_escape_exit{};             // set to true to avoid the "are you sure?" screen
+bool g_first_init{true};          // first time into cmdfiles?
+fs::path g_parameter_file;        // file to find parameter sets in
+std::string g_parameter_set_name; // Name of parameter set (if not empty)
 
-static int s_init_random_seed{}; //
-static bool s_init_corners{};    // corners set via corners= or center-mag=?
-static bool s_init_params{};     // params set via params=?
-static bool s_init_functions{};  // trig functions set via function=?
+static int s_init_random_seed{};  //
+static bool s_init_corners{};     // corners set via corners= or center-mag=?
+static bool s_init_params{};      // params set via params=?
+static bool s_init_functions{};   // trig functions set via function=?
 
 static std::string extract_filename(const fs::path &source)
 {
     return source.filename().string();
+}
+
+static bool parse_command_number(std::string_view text, long &value)
+{
+    while (!text.empty() && std::isspace(static_cast<unsigned char>(text.front())) != 0)
+    {
+        text.remove_prefix(1);
+    }
+    if (!text.empty() && text.front() == '+')
+    {
+        text.remove_prefix(1);
+    }
+    if (text.empty())
+    {
+        return false;
+    }
+    const char *const first{text.data()};
+    const char *const last{first + text.size()};
+    const std::from_chars_result result{std::from_chars(first, last, value)};
+    return result.ec == std::errc{} && result.ptr == last;
+}
+
+static bool parse_command_number(std::string_view text, double &value)
+{
+    while (!text.empty() && std::isspace(static_cast<unsigned char>(text.front())) != 0)
+    {
+        text.remove_prefix(1);
+    }
+    if (!text.empty() && text.front() == '+')
+    {
+        text.remove_prefix(1);
+    }
+    if (text.empty())
+    {
+        return false;
+    }
+    const char *const first{text.data()};
+    const char *const last{first + text.size()};
+    const std::from_chars_result result{std::from_chars(first, last, value)};
+    return result.ec == std::errc{} && result.ptr == last;
 }
 
 // cmdfiles(argc,argv) process the command-line arguments
@@ -856,31 +899,23 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
         yes_no_val[0] = 1;
     }
 
-    char *arg_ptr = arg.data() + value_offset;
-    num_float_params = 0;
-    num_int_params = 0;
-    total_params = 0;
     num_val = 0;
-    while (*arg_ptr) // count and pre-parse parms
+    for (std::size_t value_pos{}; value_pos < value.size();) // count and pre-parse parms
     {
-        long ll;
-        bool last_arg{};
-        char *arg_ptr2 = std::strchr(arg_ptr, '/');
-        if (arg_ptr2 == nullptr) // find next '/'
-        {
-            arg_ptr2 = arg_ptr + std::strlen(arg_ptr);
-            *arg_ptr2 = '/';
-            last_arg = true;
-        }
+        const std::size_t slash{value.find('/', value_pos)};
+        const std::size_t value_end{slash == std::string_view::npos ? value.size() : slash};
+        const std::string_view token{value.substr(value_pos, value_end - value_pos)};
+        const std::string_view remaining{value.substr(value_pos)};
+        const char *const token_ptr{value.data() + value_pos};
         if (total_params == 0)
         {
             num_val = NON_NUMERIC;
         }
         if (total_params < 16)
         {
-            string_vals[total_params] = arg_ptr;
-            string_val_lens[total_params] = static_cast<int>(arg_ptr2 - arg_ptr);
-            char_val[total_params] = *arg_ptr; // first letter of value
+            string_vals[total_params] = token_ptr;
+            string_val_lens[total_params] = static_cast<int>(token.size());
+            char_val[total_params] = *token_ptr; // first letter of value
             if (char_val[total_params] == 'n')
             {
                 yes_no_val[total_params] = 0;
@@ -890,38 +925,33 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
                 yes_no_val[total_params] = 1;
             }
         }
-        char next{};
-        char tmp_c{};
-        if (std::sscanf(arg_ptr, "%c%c", &next, &tmp_c) > 0 // NULL entry
-            && (next == '/' || next == '=') && tmp_c == '/')
+        if (remaining.size() >= 2 && (remaining[0] == '/' || remaining[0] == '=') && remaining[1] == '/')
         {
-            j = 0;
             ++num_float_params;
             ++num_int_params;
             if (total_params < 16)
             {
-                float_vals[total_params] = j;
+                float_vals[total_params] = 0;
                 float_val_strs[total_params] = "0";
             }
             if (total_params < 64)
             {
-                int_vals[total_params] = j;
+                int_vals[total_params] = 0;
                 has_val[total_params] = true;
             }
             if (total_params == 0)
             {
-                num_val = j;
+                num_val = 0;
             }
         }
-        else if (std::sscanf(arg_ptr, "%ld%c", &ll, &tmp_c) > 0 // got an integer
-            && tmp_c == '/')                                    // needs a long int, ll, here for lyapunov
+        else if (long ll{}; parse_command_number(token, ll)) // needs a long int here for lyapunov
         {
             ++num_float_params;
             ++num_int_params;
             if (total_params < 16)
             {
                 float_vals[total_params] = ll;
-                float_val_strs[total_params] = arg_ptr;
+                float_val_strs[total_params] = token_ptr;
             }
             if (total_params < 64)
             {
@@ -933,37 +963,34 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
                 num_val = static_cast<int>(ll);
             }
         }
-        else if (double f_temp{}; std::sscanf(arg_ptr, "%lg%c", &f_temp, &tmp_c) > 0 // got a float
-            && tmp_c == '/')
+        else if (double f_temp{}; parse_command_number(token, f_temp)) // got a float
         {
             ++num_float_params;
             if (total_params < 16)
             {
                 float_vals[total_params] = f_temp;
-                float_val_strs[total_params] = arg_ptr;
+                float_val_strs[total_params] = token_ptr;
             }
         }
         // using arbitrary precision and above failed
-        else if (static_cast<int>(std::strlen(arg_ptr)) > 513                           // very long command
-            || (total_params > 0                                                        //
-                   && float_vals[total_params - 1] == std::numeric_limits<float>::max() //
-                   && total_params < 6)                                                 //
-            || is_a_big_float(arg_ptr))
+        else if (remaining.size() > 513                                                  // very long command
+            || (total_params > 0 && total_params < 6                                     //
+                   && float_vals[total_params - 1] == std::numeric_limits<float>::max()) //
+            || is_a_big_float(token_ptr))
         {
             ++num_float_params;
-            float_vals[total_params] = std::numeric_limits<float>::max();
-            float_val_strs[total_params] = arg_ptr;
+            if (total_params < 16)
+            {
+                float_vals[total_params] = std::numeric_limits<float>::max();
+                float_val_strs[total_params] = token_ptr;
+            }
         }
         ++total_params;
-        arg_ptr = arg_ptr2; // on to the next
-        if (last_arg)
+        if (slash == std::string_view::npos)
         {
-            *arg_ptr = 0;
+            break;
         }
-        else
-        {
-            ++arg_ptr;
-        }
+        value_pos = slash + 1;
     }
 }
 
