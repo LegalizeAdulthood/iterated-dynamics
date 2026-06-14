@@ -124,6 +124,30 @@ TEST_F(TestLoadConfig, gdiDisk)
     close_drivers();
 }
 
+TEST_F(TestLoadConfig, parsesFinalLineWithoutTrailingNewline)
+{
+    std::vector<std::string> args{"id"};
+    MockDriver disk;
+    const std::string disk_name{"disk"};
+    const std::string comment{"last char"};
+    EXPECT_CALL(disk, init(Ref(args))).WillOnce(Return(true));
+    EXPECT_CALL(disk, get_name()).WillRepeatedly(ReturnRef(disk_name));
+    EXPECT_CALL(disk, validate_mode(_)).WillOnce(Return(true));
+    EXPECT_CALL(disk, terminate());
+    load_driver(&disk, args);
+    const std::filesystem::path path{config_path()};
+    std::ofstream cfg{path};
+    ASSERT_TRUE(cfg) << "Unable to write " << path;
+    cfg << "F1,320,200,256,disk," << comment;
+    cfg.close();
+
+    load_config(path.string());
+
+    ASSERT_EQ(1, g_video_table_len);
+    EXPECT_STREQ(comment.c_str(), g_video_table[0].comment);
+    close_drivers();
+}
+
 TEST_P(TestLoadConfigGifDimension, acceptsModeUpToGifLimit)
 {
     std::vector<std::string> args{"id"};

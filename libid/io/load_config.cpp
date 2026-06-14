@@ -8,13 +8,11 @@
 #include "misc/Driver.h"
 
 #include <algorithm>
-#include <cassert>
-#include <cstdio>
+#include <array>
 #include <cstdlib>
-#include <cstring>
-#include <filesystem>
-#include <initializer_list>
+#include <fstream>
 #include <iterator>
+#include <string>
 #include <string_view>
 
 using namespace id::engine;
@@ -42,88 +40,91 @@ void load_config()
 
 void load_config(const std::string &cfg_path)
 {
-    std::FILE   *cfg_file;
-    VideoInfo    video_entry;
-    char        *fields[5]{};
+    std::ifstream cfg_file{cfg_path};
+    VideoInfo video_entry;
 
-    if (cfg_path.empty()                                             // can't find the file
-        || (cfg_file = std::fopen(cfg_path.c_str(), "r")) == nullptr) // can't open it
+    if (cfg_path.empty() || !cfg_file)
     {
         g_bad_config = ConfigStatus::BAD_NO_MESSAGE;
         return;
     }
 
     int line_num = 0;
-    char temp_string[150];
+    std::string line;
     std::fill_n(std::begin(g_cfg_line_nums), g_video_table_len, -1);
-    while (g_video_table_len < MAX_VIDEO_MODES
-        && std::fgets(temp_string, std::size(temp_string), cfg_file))
+    while (g_video_table_len < MAX_VIDEO_MODES && std::getline(cfg_file, line))
     {
-        if (std::strchr(temp_string, '\n') == nullptr)
-        {
-            // finish reading the line
-            while (std::fgetc(cfg_file) != '\n' && !std::feof(cfg_file))
-            {
-            }
-        }
         ++line_num;
-        if (temp_string[0] == ';')
+        if (!line.empty() && line.back() == '\r')
         {
-            continue;   // comment line
+            line.pop_back();
         }
-        temp_string[120] = 0;
-        temp_string[std::strlen(temp_string) -1] = 0; // zap trailing \n
-        int j = -1;
-        int i = j;
-        // key, 0: mode name, 1: x, 2: y, 3: colors, 4: driver, 5: comments
-        while (true)
+        if (!line.empty() && line[0] == ';')
         {
-            if (temp_string[++i] < ' ')
+            continue; // comment line
+        }
+        if (line.size() > 120)
+        {
+            line.resize(120);
+        }
+        for (char &ch : line)
+        {
+            if (static_cast<unsigned char>(ch) < ' ')
             {
-                if (temp_string[i] == 0)
-                {
-                    break;
-                }
-                temp_string[i] = ' '; // convert tab (or whatever) to blank
-            }
-            else if (temp_string[i] == ',' && ++j < 6)
-            {
-                assert(j >= 0 && j < 11);
-                fields[j] = &temp_string[i + 1]; // remember start of next field
-                temp_string[i] = 0;              // make field a separate string
+                ch = ' '; // convert tab (or whatever) to blank
             }
         }
-        const int key = check_vid_mode_key_name(temp_string);
-        assert(fields[0]);
-        const long x_dots = std::atol(fields[0]);
-        assert(fields[1]);
-        const long y_dots = std::atol(fields[1]);
-        assert(fields[2]);
-        const int colors = std::atoi(fields[2]);
+        // key, 0: x, 1: y, 2: colors, 3: driver, 4: comments
+        std::string_view line_view{line};
+        const std::size_t key_end{line_view.find(',')};
+        if (key_end == std::string_view::npos)
+        {
+            g_bad_config = ConfigStatus::BAD_NO_MESSAGE;
+            return;
+        }
+        const std::string_view key_name{line_view.substr(0, key_end)};
+        std::array<std::string_view, 5> fields{};
+        std::size_t field_start{key_end + 1};
+        for (int field = 0; field < 4; ++field)
+        {
+            const std::size_t field_end{line_view.find(',', field_start)};
+            if (field_end == std::string_view::npos)
+            {
+                g_bad_config = ConfigStatus::BAD_NO_MESSAGE;
+                return;
+            }
+            fields[field] = line_view.substr(field_start, field_end - field_start);
+            field_start = field_end + 1;
+        }
+        fields[4] = line_view.substr(field_start);
 
-        if (j < 4 ||
-                key < 0 ||
-                x_dots < MIN_PIXELS || x_dots > GIF_MAX_PIXELS ||
-                y_dots < MIN_PIXELS || y_dots > GIF_MAX_PIXELS ||
-                (colors != 0 && colors != 2 && colors != 4 && colors != 16 &&
-                 colors != 256)
-           )
+        const int key = check_vid_mode_key_name(key_name);
+        const std::string x_field{fields[0]};
+        const long x_dots = std::atol(x_field.c_str());
+        const std::string y_field{fields[1]};
+        const long y_dots = std::atol(y_field.c_str());
+        const std::string colors_field{fields[2]};
+        const int colors = std::atoi(colors_field.c_str());
+
+        if (key < 0 || x_dots < MIN_PIXELS || x_dots > GIF_MAX_PIXELS || y_dots < MIN_PIXELS ||
+            y_dots > GIF_MAX_PIXELS || (colors != 0 && colors != 2 && colors != 4 && colors != 16 && colors != 256))
         {
             g_bad_config = ConfigStatus::BAD_NO_MESSAGE;
             return;
         }
         g_cfg_line_nums[g_video_table_len] = line_num; // for update_id_cfg
 
-        std::memset(&video_entry, 0, sizeof(video_entry));
-        std::strncpy(&video_entry.comment[0], fields[4], std::size(video_entry.comment));
-        video_entry.comment[25] = 0;
-        video_entry.key      = key;
+        video_entry = {};
+        const std::size_t comment_len{std::min(fields[4].size(), std::size(video_entry.comment) - 1)};
+        std::copy_n(fields[4].data(), comment_len, video_entry.comment);
+        video_entry.key = key;
         video_entry.x_dots = static_cast<int>(x_dots);
         video_entry.y_dots = static_cast<int>(y_dots);
-        video_entry.colors      = colors;
+        video_entry.colors = colors;
 
         // if valid, add to supported modes
-        video_entry.driver = driver_find_by_name(fields[3]);
+        const std::string driver_name{fields[3]};
+        video_entry.driver = driver_find_by_name(driver_name.c_str());
         if (video_entry.driver != nullptr && video_entry.driver->validate_mode(video_entry))
         {
             // look for a synonym mode and if found, overwrite its key
@@ -147,7 +148,6 @@ void load_config(const std::string &cfg_path)
             }
         }
     }
-    std::fclose(cfg_file);
 }
 
 } // namespace id::io
