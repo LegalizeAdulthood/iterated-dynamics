@@ -657,35 +657,35 @@ static ConstArg *is_const(const char *str, const int len)
     // next line enforces variable vs constant naming convention
     for (unsigned n = 0U; n < g_formula.var_index; n++)
     {
-        if (g_formula.vars[n].len == len)
+        if (static_cast<int>(g_formula.vars[n].text.size()) == len)
         {
-            if (string_case_equal(g_formula.vars[n].s, str, len))
+            if (string_case_equal(g_formula.vars[n].text.data(), str, len))
             {
-                if (n == 1)          // The formula uses 'p1'.
+                if (n == 1) // The formula uses 'p1'.
                 {
                     g_formula.uses_p1 = true;
                 }
-                if (n == 2)          // The formula uses 'p2'.
+                if (n == 2) // The formula uses 'p2'.
                 {
                     g_formula.uses_p2 = true;
                 }
-                if (n == 7)          // The formula uses 'rand'.
+                if (n == 7) // The formula uses 'rand'.
                 {
                     g_formula.uses_rand = true;
                 }
-                if (n == 8)          // The formula uses 'p3'.
+                if (n == 8) // The formula uses 'p3'.
                 {
                     g_formula.uses_p3 = true;
                 }
-                if (n == 13)          // The formula uses 'ismand'.
+                if (n == 13) // The formula uses 'ismand'.
                 {
                     g_formula.uses_ismand = true;
                 }
-                if (n == 17)          // The formula uses 'p4'.
+                if (n == 17) // The formula uses 'p4'.
                 {
                     g_formula.uses_p4 = true;
                 }
-                if (n == 18)          // The formula uses 'p5'.
+                if (n == 18) // The formula uses 'p5'.
                 {
                     g_formula.uses_p5 = true;
                 }
@@ -696,14 +696,12 @@ static ConstArg *is_const(const char *str, const int len)
             }
         }
     }
-    g_formula.vars[g_formula.var_index].s = str;
-    g_formula.vars[g_formula.var_index].len = len;
-    g_formula.vars[g_formula.var_index].a.d.x = 0.0;
-    g_formula.vars[g_formula.var_index].a.d.y = 0.0;
+    ConstArg &var = g_formula.vars[g_formula.var_index];
+    var.text = std::string_view{str, static_cast<std::size_t>(len)};
+    var.a.d.x = 0.0;
+    var.a.d.y = 0.0;
 
-    if (std::isdigit(str[0])
-        || (str[0] == '-' && (std::isdigit(str[1]) || str[1] == '.'))
-        || str[0] == '.')
+    if (std::isdigit(str[0]) || (str[0] == '-' && (std::isdigit(str[1]) || str[1] == '.')) || str[0] == '.')
     {
         DComplex z;
         assert(g_formula.op_index > 0);
@@ -714,7 +712,7 @@ static ConstArg *is_const(const char *str, const int len)
             g_formula.op_index--;
             str = str - 1;
             s_parser.init_n--;
-            g_formula.vars[g_formula.var_index].len++;
+            var.text = std::string_view{str, var.text.size() + 1};
         }
         unsigned n;
         for (n = 1; std::isdigit(str[n]) || str[n] == '.'; n++)
@@ -722,16 +720,15 @@ static ConstArg *is_const(const char *str, const int len)
         }
         if (str[n] == ',')
         {
-            unsigned j = n + skip_white_space(&str[n+1]) + 1;
-            if (std::isdigit(str[j])
-                || (str[j] == '-' && (std::isdigit(str[j+1]) || str[j+1] == '.'))
-                || str[j] == '.')
+            unsigned j = n + skip_white_space(&str[n + 1]) + 1;
+            if (std::isdigit(str[j]) || (str[j] == '-' && (std::isdigit(str[j + 1]) || str[j + 1] == '.')) ||
+                str[j] == '.')
             {
                 z.y = std::atof(&str[j]);
                 for (; std::isdigit(str[j]) || str[j] == '.' || str[j] == '-'; j++)
                 {
                 }
-                g_formula.vars[g_formula.var_index].len = j;
+                var.text = std::string_view{str, j};
             }
             else
             {
@@ -743,8 +740,7 @@ static ConstArg *is_const(const char *str, const int len)
             z.y = 0.0;
         }
         z.x = std::atof(str);
-        g_formula.vars[g_formula.var_index].a.d = z;
-        g_formula.vars[g_formula.var_index].s = str;
+        var.a.d = z;
     }
     return &g_formula.vars[g_formula.var_index++];
 }
@@ -858,8 +854,7 @@ static bool parse_formula_text(const std::string &text)
     g_formula.max_function = 0;
     for (g_formula.var_index = 0; g_formula.var_index < static_cast<unsigned>(VARIABLES.size()); g_formula.var_index++)
     {
-        g_formula.vars[g_formula.var_index].s = VARIABLES[g_formula.var_index];
-        g_formula.vars[g_formula.var_index].len = static_cast<int>(std::strlen(VARIABLES[g_formula.var_index]));
+        g_formula.vars[g_formula.var_index].text = VARIABLES[g_formula.var_index];
     }
     cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
     const double const_pi = std::atan(1.0) * 4;
@@ -1093,8 +1088,8 @@ static bool parse_formula_text(const std::string &text)
                 {
                     ConstArg *c = is_const(&text[s_parser.init_n], len);
                     g_formula.load[g_formula.load_index++] = &c->a;
-                    push_pending_op(stk_lod, 1 - (s_parser.paren + equals)*15);
-                    s_parser.n = s_parser.init_n + c->len - 1;
+                    push_pending_op(stk_lod, 1 - (s_parser.paren + equals) * 15);
+                    s_parser.n = s_parser.init_n + static_cast<int>(c->text.size()) - 1;
                 }
             }
             break;
@@ -3193,10 +3188,9 @@ static std::string get_variable_name(int var_index)
     if (var_index < static_cast<int>(g_formula.vars.size()) && var_index < g_formula.var_index)
     {
         const ConstArg &var = g_formula.vars[var_index];
-        if (var.s != nullptr && var.len > 0)
+        if (!var.text.empty())
         {
-            // Use len to avoid reading past the intended string
-            return std::string(var.s, var.len);
+            return std::string(var.text);
         }
     }
 

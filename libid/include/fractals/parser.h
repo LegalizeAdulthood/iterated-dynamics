@@ -6,6 +6,7 @@
 
 #include <filesystem>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace id::fractals
@@ -22,8 +23,7 @@ enum class JumpControlType
 
 struct ConstArg
 {
-    const char *s;
-    int len;
+    std::string_view text;
     math::Arg a;
 };
 
