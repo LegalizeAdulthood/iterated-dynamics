@@ -33,48 +33,51 @@ int check_vid_mode_key(const int key)
     return -1;
 }
 
-int check_vid_mode_key_name(const char *key_name)
+int check_vid_mode_key_name(std::string_view key_name)
 {
     int key_set = ID_KEY_F1 - 1;
-    if (*key_name == 'S' || *key_name == 's')
+    if (!key_name.empty() && (key_name.front() == 'S' || key_name.front() == 's'))
     {
         key_set = ID_KEY_SHF_F1 - 1;
-        ++key_name;
+        key_name.remove_prefix(1);
     }
-    else if (*key_name == 'C' || *key_name == 'c')
+    else if (!key_name.empty() && (key_name.front() == 'C' || key_name.front() == 'c'))
     {
         key_set = ID_KEY_CTL_F1 - 1;
-        ++key_name;
+        key_name.remove_prefix(1);
     }
-    else if (*key_name == 'A' || *key_name == 'a')
+    else if (!key_name.empty() && (key_name.front() == 'A' || key_name.front() == 'a'))
     {
         key_set = ID_KEY_ALT_F1 - 1;
-        ++key_name;
+        key_name.remove_prefix(1);
     }
-    if (*key_name != 'F' && *key_name != 'f')
+    if (key_name.empty() || (key_name.front() != 'F' && key_name.front() != 'f'))
     {
         return 0;
     }
-    if (*++key_name < '1' || *key_name > '9')
+    key_name.remove_prefix(1);
+    if (key_name.empty() || key_name.front() < '1' || key_name.front() > '9')
     {
         return 0;
     }
-    int i = *key_name - '0';
-    if (*++key_name != 0 && *key_name != ' ')
+    int i = key_name.front() - '0';
+    key_name.remove_prefix(1);
+    if (!key_name.empty() && key_name.front() != ' ')
     {
-        if (*key_name != '0' || i != 1)
+        if (key_name.front() != '0' || i != 1)
         {
             return 0;
         }
         i = 10;
-        ++key_name;
+        key_name.remove_prefix(1);
     }
-    while (*key_name)
+    while (!key_name.empty())
     {
-        if (*key_name++ != ' ')
+        if (key_name.front() != ' ')
         {
             return 0;
         }
+        key_name.remove_prefix(1);
     }
     if ((i += key_set) < 2)
     {

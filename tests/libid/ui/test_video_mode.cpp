@@ -9,6 +9,9 @@
 
 #include <gtest/gtest.h>
 
+#include <string>
+#include <string_view>
+
 using namespace id::engine;
 using namespace id::misc;
 using namespace id::ui;
@@ -66,6 +69,14 @@ TEST(TestVideoMode, checkKeyNameAltFnKey)
     EXPECT_EQ(0, check_vid_mode_key_name("af0"));
     EXPECT_EQ(0, check_vid_mode_key_name("aff"));
     EXPECT_EQ(0, check_vid_mode_key_name("af11"));
+}
+
+TEST(TestVideoMode, checkKeyNameHonorsStringViewLength)
+{
+    const std::string storage{"F6-suffix"};
+    const std::string_view key_name{storage.data(), 2};
+
+    EXPECT_EQ(ID_KEY_F6, check_vid_mode_key_name(key_name));
 }
 
 TEST(TestVideoMode, checkKeyFnKeyNoModes)

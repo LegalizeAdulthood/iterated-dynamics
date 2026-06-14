@@ -3,6 +3,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 
 namespace id::engine
 {
@@ -14,7 +15,7 @@ struct VideoInfo;
 int check_vid_mode_key(int key);
 
 // returns key number for the passed key name, 0 if not a key name
-int check_vid_mode_key_name(const char *key_name);
+int check_vid_mode_key_name(std::string_view key_name);
 
 // set buffer to name of passed key number
 void vid_mode_key_name(int key, char *buffer);
