@@ -95,86 +95,44 @@ static bool needs_light_params()
 
 static bool prompt_3d_mode()
 {
-    int sphere;
-    std::array<const char *, 21> prompts3d;
-    std::array<FullScreenValues, 21> values;
-    int k;
+    ChoiceBuilder<12> builder;
 
     if (g_targa_out && g_overlay_3d)
     {
         g_targa_overlay = true;
     }
 
-    k = -1;
-
-    prompts3d[++k] = "Preview mode?";
-    values[k].type = 'y';
-    values[k].uval.ch.val = g_preview ? 1 : 0;
-
-    prompts3d[++k] = "    Show box?";
-    values[k].type = 'y';
-    values[k].uval.ch.val = g_show_box ? 1 : 0;
-
-    prompts3d[++k] = "Coarseness, preview/grid/ray (in y dir)";
-    values[k].type = 'i';
-    values[k].uval.ival = g_preview_factor;
-
-    prompts3d[++k] = "Spherical projection?";
-    values[k].type = 'y';
-    sphere = g_sphere ? 1 : 0;
-    values[k].uval.ch.val = sphere;
-
-    prompts3d[++k] = "Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,";
-    values[k].type = 'i';
-    values[k].uval.ival = static_cast<int>(g_glasses_type);
-
-    prompts3d[++k] = "                  3=photo,4=stereo pair)";
-    values[k].type = '*';
-
-    prompts3d[++k] = "Ray trace output? (No, DKB/POV-Ray, VIVID, RAW, MTV,";
-    values[k].type = 'l';
     static const char *raytrace_formats[]{"No", "DKB/POV-Ray", "VIVID", "Raw", "MTV", "Rayshade", "AcroSpin", "DXF"};
-    values[k].uval.ch.list = raytrace_formats;
-    values[k].uval.ch.list_len = static_cast<int>(std::size(raytrace_formats));
-    values[k].uval.ch.vlen = 11;
-    values[k].uval.ch.val = static_cast<int>(g_raytrace_format);
-    prompts3d[++k] = "                Rayshade, AcroSpin, DXF)";
-    values[k].type = '*';
-
-    prompts3d[++k] = "    Brief output?";
-    values[k].type = 'y';
-    values[k].uval.ch.val = g_brief ? 1 : 0;
-
-    prompts3d[++k] = "    Output file name";
-    values[k].type = 's';
-    std::strcpy(values[k].uval.sval, g_raytrace_filename.c_str());
-
-    prompts3d[++k] = "Targa output?";
-    values[k].type = 'y';
-    values[k].uval.ch.val = g_targa_out ? 1 : 0;
-
-    prompts3d[++k] = "Use grayscale value for depth? (if \"no\" uses color number)";
-    values[k].type = 'y';
-    values[k].uval.ch.val = g_gray_flag ? 1 : 0;
+    builder.yes_no("Preview mode?", g_preview)
+        .yes_no("    Show box?", g_show_box)
+        .int_number("Coarseness, preview/grid/ray (in y dir)", g_preview_factor)
+        .yes_no("Spherical projection?", g_sphere)
+        .int_number("Stereo (R/B 3D)? (0=no,1=alternate,2=superimpose,", static_cast<int>(g_glasses_type))
+        .comment("                  3=photo,4=stereo pair)")
+        .list("Ray trace output? (No, DKB/POV-Ray, VIVID, RAW, MTV,", static_cast<int>(std::size(raytrace_formats)), 11,
+            raytrace_formats, static_cast<int>(g_raytrace_format))
+        .comment("                Rayshade, AcroSpin, DXF)")
+        .yes_no("    Brief output?", g_brief)
+        .string("    Output file name", g_raytrace_filename.c_str())
+        .yes_no("Targa output?", g_targa_out)
+        .yes_no("Use grayscale value for depth? (if \"no\" uses color number)", g_gray_flag);
 
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_MODE};
-        k = full_screen_prompt("3D Mode Selection", k + 1, prompts3d.data(), values.data(), 0, nullptr);
-    }
-    if (k < 0)
-    {
-        return false;
+        if (builder.prompt("3D Mode Selection") < 0)
+        {
+            return false;
+        }
     }
 
-    k = 0;
-    g_preview = values[k++].uval.ch.val != 0;
-    g_show_box = values[k++].uval.ch.val != 0;
-    g_preview_factor = values[k++].uval.ival;
-    sphere = values[k++].uval.ch.val;
-    g_glasses_type = static_cast<GlassesType>(values[k++].uval.ival);
-    k++;
-    g_raytrace_format = static_cast<RayTraceFormat>(values[k++].uval.ch.val);
-    k++;
+    g_preview = builder.read_yes_no();
+    g_show_box = builder.read_yes_no();
+    g_preview_factor = builder.read_int_number();
+    const bool sphere = builder.read_yes_no();
+    g_glasses_type = static_cast<GlassesType>(builder.read_int_number());
+    builder.read_comment();
+    g_raytrace_format = static_cast<RayTraceFormat>(builder.read_list());
+    builder.read_comment();
     {
         if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
         {
@@ -182,12 +140,12 @@ static bool prompt_3d_mode()
                      "the online documentation.");
         }
     }
-    g_brief = values[k++].uval.ch.val != 0;
+    g_brief = builder.read_yes_no();
 
-    g_raytrace_filename = values[k++].uval.sval;
+    g_raytrace_filename = builder.read_string();
 
-    g_targa_out = values[k++].uval.ch.val != 0;
-    g_gray_flag = values[k++].uval.ch.val != 0;
+    g_targa_out = builder.read_yes_no();
+    g_gray_flag = builder.read_yes_no();
 
     // check ranges
     g_preview_factor = std::max(g_preview_factor, 2);
