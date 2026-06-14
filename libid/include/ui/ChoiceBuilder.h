@@ -4,10 +4,12 @@
 
 #include "ui/full_screen_prompt.h"
 
+#include <algorithm>
 #include <array>
-#include <cstring>
+#include <cstddef>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 
 namespace id::ui
 {
@@ -91,13 +93,17 @@ public:
         m_values[m_current_build].uval.ch.val = value;
         return advance();
     }
+
     ChoiceBuilder &string(const char *choice, const char *value)
     {
         check_build_overflow();
         m_choices[m_current_build] = choice;
         m_values[m_current_build].type = 's';
-        std::strncpy(m_values[m_current_build].uval.sval, value, 16);
-        m_values[m_current_build].uval.sval[15] = 0;
+        char (&sval)[16] = m_values[m_current_build].uval.sval;
+        const std::string_view source{value};
+        const std::size_t copy_len{std::min(source.size(), sizeof(sval) - 1)};
+        std::copy_n(source.data(), copy_len, sval);
+        sval[copy_len] = 0;
         return advance();
     }
     ChoiceBuilder &string_buff(const char *choice, char *buffer, const int len)

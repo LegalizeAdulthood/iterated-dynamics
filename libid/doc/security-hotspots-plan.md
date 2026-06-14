@@ -41,19 +41,7 @@ current item is active.  Then mark each affected item separately.
 
 # High Probability
 
-Items: 194.
-
-## SH-046
-
-- Status: `pending`
-- Key: `AZwwyEo10qvqV_CtK1IV`
-- Rule: `cpp:S5816`
-- Area: `ui-prompt-menu`
-- Path: `libid/include/ui/ChoiceBuilder.h`
-- Line: `99`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strncpy" is safe here.
+Items: 193.
 
 ## SH-048
 
