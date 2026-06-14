@@ -19,7 +19,6 @@
 #include <cctype>
 #include <cstring>
 #include <string>
-#include <string_view>
 
 using namespace id::config;
 using namespace id::engine;
@@ -30,6 +29,7 @@ namespace id::ui
 {
 
 static const std::string SPEED_PROMPT{"Speed key string"};
+constexpr int MAX_SPEED_STRING_LEN{30};
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
@@ -38,46 +38,44 @@ static int is_a_dir_name(const char *name)
     return *name == '.' || ends_with_slash(name) ? 1 : 0;
 }
 
-static void footer_msg(int *i, const ChoiceFlags flags, const char *speed_string)
+static void footer_msg(int *i, const ChoiceFlags flags, const bool has_speed_string)
 {
     put_string_center((*i)++, 0, 80, C_PROMPT_BKGRD,
-        speed_string ? "Use the cursor keys or type a value to make a selection"
-                    : "Use the cursor keys to highlight your selection");
+        has_speed_string ? "Use the cursor keys or type a value to make a selection"
+                         : "Use the cursor keys to highlight your selection");
     put_string_center(*i++, 0, 80, C_PROMPT_BKGRD,
-        bit_set(flags, ChoiceFlags::MENU)
-            ? "Press ENTER for highlighted choice, or F1 for help"
+        bit_set(flags, ChoiceFlags::MENU) ? "Press ENTER for highlighted choice, or F1 for help"
             : bit_set(flags, ChoiceFlags::HELP)
             ? "Press ENTER for highlighted choice, ESCAPE to back out, or F1 for help"
             : "Press ENTER for highlighted choice, or ESCAPE to back out");
 }
 
-static void show_speed_string(const int speed_row, const char *speed_string,
+static void show_speed_string(const int speed_row, const std::string &speed_string,
     int (*speed_prompt)(int row, int col, int vid, const char *speed_string, int speed_match))
 {
     driver_put_string(speed_row, 0, C_PROMPT_BKGRD, std::string(80, ' '));
-    const std::string_view speed{speed_string};
-    if (!speed.empty())
+    if (!speed_string.empty())
     {
         // got a speedstring on the go
         driver_put_string(speed_row, 15, C_CHOICE_SP_INSTR, " ");
         int j;
         if (speed_prompt)
         {
-            j = speed_prompt(speed_row, 16, C_CHOICE_SP_INSTR, speed_string, 0);
+            j = speed_prompt(speed_row, 16, C_CHOICE_SP_INSTR, speed_string.c_str(), 0);
         }
         else
         {
             driver_put_string(speed_row, 16, C_CHOICE_SP_INSTR, SPEED_PROMPT);
             j = static_cast<int>(SPEED_PROMPT.length());
         }
-        std::string display{speed};
-        if (display.length() < 30)
+        std::string display{speed_string};
+        if (display.length() < MAX_SPEED_STRING_LEN)
         {
-            display.resize(30, ' ');
+            display.resize(MAX_SPEED_STRING_LEN, ' ');
         }
         driver_put_string(speed_row, 16 + j, C_CHOICE_SP_INSTR, " ");
         driver_put_string(speed_row, 17 + j, C_CHOICE_SP_KEYIN, display);
-        driver_move_cursor(speed_row, 17 + j + static_cast<int>(speed.size()));
+        driver_move_cursor(speed_row, 17 + j + static_cast<int>(speed_string.size()));
     }
     else
     {
@@ -85,31 +83,32 @@ static void show_speed_string(const int speed_row, const char *speed_string,
     }
 }
 
-static void process_speed_string(char *speed_string, //
-    const char **choices,                            // array of choice strings
-    int key,                                         //
-    int *current,                                    //
-    const int num_choices,                           //
+static void process_speed_string(std::string &speed_string, //
+    const char **choices,                                   // array of choice strings
+    int key,                                                //
+    int *current,                                           //
+    const int num_choices,                                  //
     const bool is_unsorted)
 {
-    int i = static_cast<int>(std::strlen(speed_string));
-    if (key == 8 && i > 0)   // backspace
+    int i = static_cast<int>(speed_string.size());
+    if (key == 8 && i > 0) // backspace
     {
-        speed_string[--i] = 0;
+        speed_string.pop_back();
+        --i;
     }
-    if (33 <= key && key <= 126 && i < 30)
+    if (33 <= key && key <= 126 && i < MAX_SPEED_STRING_LEN)
     {
         key = std::tolower(key);
-        speed_string[i] = static_cast<char>(key);
-        speed_string[++i] = 0;
+        speed_string.push_back(static_cast<char>(key));
+        ++i;
     }
     if (i > 0)
     {
         // locate matching type
         *current = 0;
         int comp_result;
-        while (*current < num_choices
-            && (comp_result = string_case_compare(speed_string, choices[*current], i)) != 0)
+        while (*current < num_choices &&
+            (comp_result = string_case_compare(speed_string.c_str(), choices[*current], i)) != 0)
         {
             if (comp_result < 0 && !is_unsorted)
             {
@@ -118,7 +117,7 @@ static void process_speed_string(char *speed_string, //
             }
             ++*current;
         }
-        if (*current >= num_choices)   // bumped end of list
+        if (*current >= num_choices) // bumped end of list
         {
             *current = num_choices - 1;
             /*if the list is unsorted, and the entry found is not the exact
@@ -130,7 +129,7 @@ static void process_speed_string(char *speed_string, //
             int temp = *current;
             while (++temp < num_choices)
             {
-                if (!choices[temp][i] && string_case_equal(speed_string, choices[temp], i))
+                if (!choices[temp][i] && string_case_equal(speed_string.c_str(), choices[temp], i))
                 {
                     *current = temp;
                     break;
@@ -177,15 +176,29 @@ int full_screen_choice(ChoiceFlags flags,                            //
     const int scrunch = bit_set(flags, ChoiceFlags::CRUNCH) ? 1 : 0; // scrunch up a line
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
+    const bool has_speed_string{speed_string != nullptr};
+    std::string active_speed_string{has_speed_string ? speed_string : ""};
+    bool speed_string_dirty{};
+    const auto finish = [&active_speed_string, has_speed_string, &ret, speed_string, &speed_string_dirty]() -> int
+    {
+        if (has_speed_string && speed_string_dirty)
+        {
+            std::copy(active_speed_string.begin(), active_speed_string.end(), speed_string);
+            speed_string[active_speed_string.size()] = 0;
+        }
+        return ret;
+    };
+
     // preset current to passed string
-    const int speed_len = speed_string == nullptr ? 0 : static_cast<int>(std::strlen(speed_string));
+    const int speed_len = static_cast<int>(active_speed_string.size());
     if (speed_len > 0)
     {
         current = 0;
         if (bit_set(flags, ChoiceFlags::NOT_SORTED))
         {
             int k{-1};
-            while (current < num_choices && (k = string_case_compare(speed_string, choices[current], speed_len)) != 0)
+            while (current < num_choices &&
+                (k = string_case_compare(active_speed_string.c_str(), choices[current], speed_len)) != 0)
             {
                 ++current;
             }
@@ -197,11 +210,12 @@ int full_screen_choice(ChoiceFlags flags,                            //
         else
         {
             int k{1};
-            while (current < num_choices && (k = string_case_compare(speed_string, choices[current], speed_len)) > 0)
+            while (current < num_choices &&
+                (k = string_case_compare(active_speed_string.c_str(), choices[current], speed_len)) > 0)
             {
                 ++current;
             }
-            if (k < 0 && current > 0)  // oops - overshot
+            if (k < 0 && current > 0) // oops - overshot
             {
                 --current;
             }
@@ -214,9 +228,9 @@ int full_screen_choice(ChoiceFlags flags,                            //
 
     while (true)
     {
-        if (current >= num_choices)  // no real choice in the list?
+        if (current >= num_choices) // no real choice in the list?
         {
-            return ret;
+            return finish();
         }
         if ((attributes[current] & 256) == 0)
         {
@@ -280,7 +294,7 @@ int full_screen_choice(ChoiceFlags flags,                            //
     {
         reqd_rows += 2;              // standard instructions
     }
-    if (speed_string)
+    if (has_speed_string)
     {
         ++reqd_rows;   // a row for speedkey prompt
     }
@@ -355,7 +369,7 @@ int full_screen_choice(ChoiceFlags flags,                            //
     {
         driver_put_string(top_left_row - 1, top_left_col, C_PROMPT_MED, hdg2);
     }
-    int speed_row = 0;  // speed key prompt
+    int speed_row = 0;                                                     // speed key prompt
     {
         int i = top_left_row + box_depth + 1;
         if (instr == nullptr || bit_set(flags, ChoiceFlags::INSTRUCTIONS)) // display default instructions
@@ -364,17 +378,18 @@ int full_screen_choice(ChoiceFlags flags,                            //
             {
                 ++i;
             }
-            if (speed_string)
+            if (has_speed_string)
             {
                 speed_row = i;
-                *speed_string = 0;
+                active_speed_string.clear();
+                speed_string_dirty = true;
                 if (++i < 22)
                 {
                     ++i;
                 }
             }
             i -= scrunch;
-            footer_msg(&i, flags, speed_string);
+            footer_msg(&i, flags, has_speed_string);
         }
         if (instr)                            // display caller's instructions
         {
@@ -479,9 +494,9 @@ int full_screen_choice(ChoiceFlags flags,                            //
                               C_CHOICE_CURRENT, item_ptr);
         }
 
-        if (speed_string)                     // show speedstring if any
+        if (has_speed_string) // show speedstring if any
         {
-            show_speed_string(speed_row, speed_string, speed_prompt);
+            show_speed_string(speed_row, active_speed_string, speed_prompt);
         }
         else
         {
@@ -517,9 +532,9 @@ int full_screen_choice(ChoiceFlags flags,                            //
         case ID_KEY_ENTER:
         case ID_KEY_ENTER_2:
             ret = current;
-            return ret;
+            return finish();
         case ID_KEY_ESC:
-            return ret;
+            return finish();
         case ID_KEY_DOWN_ARROW:
             increment = box_width;
             rev_increment = 0 - increment;
@@ -687,7 +702,7 @@ int full_screen_choice(ChoiceFlags flags,                            //
                 ret = (*check_key)(key, current);
                 if (ret < -1 || ret > 0)
                 {
-                    return ret;
+                    return finish();
                 }
                 if (ret == -1)
                 {
@@ -695,19 +710,21 @@ int full_screen_choice(ChoiceFlags flags,                            //
                 }
             }
             ret = -1;
-            if (speed_string)
+            if (has_speed_string)
             {
-                process_speed_string(speed_string, choices, key, &current, num_choices,
-                    bit_set(flags, ChoiceFlags::NOT_SORTED));
+                process_speed_string(
+                    active_speed_string, choices, key, &current, num_choices, bit_set(flags, ChoiceFlags::NOT_SORTED));
+                speed_string_dirty = true;
             }
             break;
         }
-        if (increment)                  // apply cursor movement
+        if (increment)            // apply cursor movement
         {
             current += increment;
-            if (speed_string)               // zap speedstring
+            if (has_speed_string) // zap speedstring
             {
-                speed_string[0] = 0;
+                active_speed_string.clear();
+                speed_string_dirty = true;
             }
         }
         while (true)
