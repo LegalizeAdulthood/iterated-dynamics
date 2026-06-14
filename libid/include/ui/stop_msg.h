@@ -14,7 +14,6 @@ enum class StopMsgFlags
     NO_STACK    = 1,
     CANCEL      = 2,
     NO_BUZZER   = 4,
-    FIXED_FONT  = 8,
     INFO_ONLY   = 16
 };
 

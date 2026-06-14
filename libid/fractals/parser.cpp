@@ -2220,7 +2220,7 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
         {
             msg_buff += static_cast<char>(reader.get_char());
         }
-        stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
+        stop_msg(msg_buff);
         return false;
     }
     // get symmetry
@@ -2240,10 +2240,10 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
                 return false;
             case '\r':
             case '\n':
-                stop_msg(StopMsgFlags::FIXED_FONT, parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
+                stop_msg(parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
                 return false;
             case '{':
-                stop_msg(StopMsgFlags::FIXED_FONT, parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN));
+                stop_msg(parse_error_text(ParseError::NO_MATCH_RIGHT_PAREN));
                 return false;
             case ' ':
             case '\t':
@@ -2274,7 +2274,7 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
             std::string msg_buff{parse_error_text(ParseError::INVALID_SYM_USING_NOSYM)};
             msg_buff += ":\n   ";
             msg_buff += sym_buf;
-            stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
+            stop_msg(msg_buff);
         }
     }
     if (c != '{')
@@ -2286,11 +2286,11 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
             switch (c)
             {
             case EOF:
-                stop_msg(StopMsgFlags::FIXED_FONT, parse_error_text(ParseError::UNEXPECTED_EOF));
+                stop_msg(parse_error_text(ParseError::UNEXPECTED_EOF));
                 return false;
             case '\r':
             case '\n':
-                stop_msg(StopMsgFlags::FIXED_FONT, parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
+                stop_msg(parse_error_text(ParseError::NO_LEFT_BRACKET_FIRST_LINE));
                 return false;
             case '{':
                 done = true;
@@ -2368,7 +2368,7 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
         frm_get_token(reader, &temp_tok);
         if (temp_tok.type == FormulaTokenType::NOT_A_TOKEN)
         {
-            stop_msg(StopMsgFlags::FIXED_FONT, "Unexpected token error in PrepareFormula\n");
+            stop_msg("Unexpected token error in PrepareFormula\n");
             reader.seek(file_pos);
             if (debug_fp != nullptr)
             {
@@ -2378,7 +2378,7 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
         }
         if (temp_tok.type == FormulaTokenType::END_OF_FORMULA)
         {
-            stop_msg(StopMsgFlags::FIXED_FONT, "Formula has no executable instructions\n");
+            stop_msg("Formula has no executable instructions\n");
             reader.seek(file_pos);
             if (debug_fp != nullptr)
             {
@@ -2400,7 +2400,7 @@ static std::string prepare_formula(Reader &reader, const bool report_bad_sym)
         switch (temp_tok.type)
         {
         case FormulaTokenType::NOT_A_TOKEN:
-            stop_msg(StopMsgFlags::FIXED_FONT, "Unexpected token error in prepare_formula\n");
+            stop_msg("Unexpected token error in prepare_formula\n");
             reader.seek(file_pos);
             if (debug_fp != nullptr)
             {
@@ -2632,7 +2632,7 @@ static void frm_error(Reader &reader, const long begin_frm)
         }
         std::strcat(msg_buff, "\n");
     }
-    stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
+    stop_msg(msg_buff);
 }
 
 /// @brief Parses the formula from an open file for syntax errors and accumulates data for memory allocation.
