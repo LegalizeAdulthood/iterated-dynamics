@@ -1,27 +1,27 @@
 # Security Hotspots Plan
 
-This plan tracks review and cleanup of all SonarCloud security hotspots
-for the project.
+This plan tracks review and cleanup of all current SonarCloud security
+hotspots for the project.
 
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
-status `TO_REVIEW`.
+status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 264.
+Total hotspots: 86.
 
-Review one work item at a time.  Each `##` heading is one Sonar key
-and one call site.
+Review one work item at a time. Each `##` heading is one Sonar key and one
+call site.
 
 # Review Policy
 
-Work in small slices.  Each work item removes one hotspot or documents
-why that hotspot is safe and ready for Sonar review.
+Work in small slices. Each work item removes one hotspot or documents why
+that hotspot is safe and ready for Sonar review.
 
 Prefer eliminating raw C buffer ownership where a local `std::string`,
 `std::array`, `std::string_view`, `fmt`, or parser abstraction makes the
 contract simpler.
 
-Do not mechanically replace one C API with another.  The replacement must
-make the size contract explicit and testable.  Avoid swapping `strcpy` for
+Do not mechanically replace one C API with another. The replacement must
+make the size contract explicit and testable. Avoid swapping `strcpy` for
 `strncpy` as the terminal fix.
 
 Give production code priority over tests, but keep test-only hotspots in
@@ -37,324 +37,102 @@ Within a probability bucket, production code comes before tests, legacy
 code, Win32 support, and workflows.
 
 If one helper change removes multiple hotspots, implement it while the
-current item is active.  Then mark each affected item separately.
+current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 99.
+Items: 70.
 
-## SH-071
-
-- Status: `pending`
-- Key: `AZwwyE-U0qvqV_CtK1gy`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_fract_type.cpp`
-- Line: `828`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-072
+## SH-199
 
 - Status: `pending`
-- Key: `AZwwyE8P0qvqV_CtK1bo`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_rds_params.cpp`
-- Line: `85`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-073
-
-- Status: `pending`
-- Key: `AZ58sSjgxhoxqMM9Z1TY`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_rds_params.cpp`
-- Line: `86`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-074
-
-- Status: `pending`
-- Key: `AZwwyE8P0qvqV_CtK1bq`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_rds_params.cpp`
-- Line: `87`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-075
-
-- Status: `pending`
-- Key: `AZwwyFDj0qvqV_CtK1p0`
-- Rule: `cpp:S5816`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_toggles.cpp`
-- Line: `187`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strncpy" is safe here.
-
-## SH-076
-
-- Status: `pending`
-- Key: `AZwwyFDj0qvqV_CtK1p8`
+- Key: `AZwwyFNd0qvqV_CtK18j`
 - Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_toggles.cpp`
-- Line: `228`
+- Area: `engine-core`
+- Path: `libid/engine/trig_fns.cpp`
+- Line: `115`
+- Range: `115:8-115:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-07-02T02:17:49+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
-## SH-077
+## SH-200
 
 - Status: `pending`
-- Key: `AZwwyFDt0qvqV_CtK1qX`
-- Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_toggles2.cpp`
-- Line: `89`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-078
-
-- Status: `pending`
-- Key: `AZwwyFDt0qvqV_CtK1qY`
-- Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_toggles2.cpp`
-- Line: `96`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-079
-
-- Status: `pending`
-- Key: `AZwwyFB10qvqV_CtK1n7`
+- Key: `AZwwyFNd0qvqV_CtK18k`
 - Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_video_mode.cpp`
-- Line: `530`
+- Area: `engine-core`
+- Path: `libid/engine/trig_fns.cpp`
+- Line: `119`
+- Range: `119:12-119:23`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-07-13T05:31:30+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcat" is safe here.
 
-## SH-080
+## SH-201
 
 - Status: `pending`
-- Key: `AZwwyFB10qvqV_CtK1n8`
+- Key: `AZwwyFNd0qvqV_CtK18l`
 - Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_video_mode.cpp`
-- Line: `534`
+- Area: `engine-core`
+- Path: `libid/engine/trig_fns.cpp`
+- Line: `120`
+- Range: `120:12-120:23`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-07-13T05:31:30+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcat" is safe here.
 
-## SH-081
+## SH-203
 
 - Status: `pending`
-- Key: `AZwwyFB10qvqV_CtK1n9`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_video_mode.cpp`
-- Line: `538`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-082
-
-- Status: `pending`
-- Key: `AZwwyFB10qvqV_CtK1n-`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_video_mode.cpp`
-- Line: `542`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-083
-
-- Status: `pending`
-- Key: `AZwwyFB10qvqV_CtK1n_`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_video_mode.cpp`
-- Line: `546`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-084
-
-- Status: `pending`
-- Key: `AZwwyFB10qvqV_CtK1oA`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_video_mode.cpp`
-- Line: `550`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-085
-
-- Status: `pending`
-- Key: `AZwwyFB10qvqV_CtK1oB`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_video_mode.cpp`
-- Line: `554`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-100
-
-- Status: `pending`
-- Key: `AZwwyFAE0qvqV_CtK1kQ`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/rotate.cpp`
-- Line: `566`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-101
-
-- Status: `pending`
-- Key: `AZwwyE_Y0qvqV_CtK1hf`
+- Key: `AZwwyFMU0qvqV_CtK16X`
 - Rule: `cpp:S6069`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/select_video_mode.cpp`
-- Line: `52`
+- Area: `engine-core`
+- Path: `libid/engine/video_mode.cpp`
+- Line: `117`
+- Range: `117:8-117:20`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-07T05:44:42+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
 
-## SH-102
+## SH-182
 
 - Status: `pending`
-- Key: `AZwwyE8o0qvqV_CtK1cL`
-- Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/slideshw.cpp`
-- Line: `138`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-103
-
-- Status: `pending`
-- Key: `AZwwyE8o0qvqV_CtK1cY`
+- Key: `AZwwyFjq0qvqV_CtK2S0`
 - Rule: `cpp:S5813`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/slideshw.cpp`
-- Line: `316`
+- Area: `help-compiler`
+- Path: `hc/AsciiDocCompiler.cpp`
+- Line: `234`
+- Range: `234:32-234:43`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-06-22T23:25:19+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
-
-## SH-104
-
-- Status: `pending`
-- Key: `AZwwyE8o0qvqV_CtK1ca`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/slideshw.cpp`
-- Line: `333`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-105
-
-- Status: `pending`
-- Key: `AZwwyE8o0qvqV_CtK1cm`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/slideshw.cpp`
-- Line: `502`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-147
-
-- Status: `pending`
-- Key: `AZwwyFAe0qvqV_CtK1lH`
-- Rule: `cpp:S5816`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/temp_msg.cpp`
-- Line: `52`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strncpy" is safe here.
-
-## SH-148
-
-- Status: `pending`
-- Key: `AZwwyFAe0qvqV_CtK1lK`
-- Rule: `cpp:S5813`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/temp_msg.cpp`
-- Line: `68`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-149
-
-- Status: `pending`
-- Key: `AZwwyE_D0qvqV_CtK1hV`
-- Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/thinking.cpp`
-- Line: `47`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-150
-
-- Status: `pending`
-- Key: `AZwwyE_D0qvqV_CtK1hW`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/thinking.cpp`
-- Line: `48`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-151
-
-- Status: `pending`
-- Key: `AZwwyE_D0qvqV_CtK1hX`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/thinking.cpp`
-- Line: `49`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
 
 ## SH-152
 
@@ -364,8 +142,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/decode_info.cpp`
 - Line: `61`
+- Range: `61:8-61:20`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-18T04:09:11+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strncpy" is safe here.
 
 ## SH-153
@@ -376,8 +160,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/decode_info.cpp`
 - Line: `65`
+- Range: `65:8-65:20`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-18T04:09:11+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strncpy" is safe here.
 
 ## SH-154
@@ -388,8 +178,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/encoder.cpp`
 - Line: `733`
+- Range: `733:4-733:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-155
@@ -400,8 +196,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/encoder.cpp`
 - Line: `734`
+- Range: `734:4-734:16`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-18T14:49:28+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
 
@@ -413,8 +215,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/encoder.cpp`
 - Line: `762`
+- Range: `762:4-762:16`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T06:18:11+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strncpy" is safe here.
 
 ## SH-157
@@ -425,8 +233,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/encoder.cpp`
 - Line: `796`
+- Range: `796:4-796:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-158
@@ -437,8 +251,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/ends_with_slash.cpp`
 - Line: `14`
+- Range: `14:35-14:46`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-18T03:55:59+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
 
 ## SH-159
@@ -449,8 +269,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/expand_dirname.cpp`
 - Line: `22`
+- Range: `22:8-22:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T02:24:18+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-160
@@ -461,8 +287,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/expand_dirname.cpp`
 - Line: `23`
+- Range: `23:8-23:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T02:24:18+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-161
@@ -473,8 +305,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/expand_dirname.cpp`
 - Line: `23`
+- Range: `23:50-23:61`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T02:24:18+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
 
 ## SH-162
@@ -485,8 +323,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/file_item.cpp`
 - Line: `175`
+- Range: `175:20-175:31`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-07-20T17:46:56+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-163
@@ -497,8 +341,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/fix_dirname.cpp`
 - Line: `18`
+- Range: `18:34-18:45`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-18T03:55:59+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
 
 ## SH-164
@@ -509,8 +359,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/fix_dirname.cpp`
 - Line: `28`
+- Range: `28:4-28:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T00:55:19+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcat" is safe here.
 
 ## SH-165
@@ -521,8 +377,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/fix_dirname.cpp`
 - Line: `34`
+- Range: `34:4-34:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T00:55:19+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-166
@@ -533,8 +395,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/loadfile.cpp`
 - Line: `1379`
+- Range: `1379:20-1379:31`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-167
@@ -545,8 +413,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/loadfile.cpp`
 - Line: `1444`
+- Range: `1444:20-1444:31`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-07T07:02:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-168
@@ -557,8 +431,14 @@ Items: 99.
 - Area: `io-path-metadata`
 - Path: `libid/io/loadfile.cpp`
 - Line: `1551`
+- Range: `1551:4-1551:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-169
@@ -569,8 +449,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bigflt.cpp`
 - Line: `74`
+- Range: `74:16-74:27`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
 
 ## SH-170
@@ -581,8 +467,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bigflt.cpp`
 - Line: `174`
+- Range: `174:8-174:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-171
@@ -593,8 +485,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bigflt.cpp`
 - Line: `199`
+- Range: `199:8-199:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-172
@@ -605,8 +503,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bigflt.cpp`
 - Line: `216`
+- Range: `216:8-216:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-173
@@ -617,8 +521,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bigflt.cpp`
 - Line: `2255`
+- Range: `2255:8-2255:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-174
@@ -629,8 +539,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bigflt.cpp`
 - Line: `2293`
+- Range: `2293:4-2293:16`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-18T14:49:28+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
 
@@ -642,8 +558,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bigflt.cpp`
 - Line: `2305`
+- Range: `2305:8-2305:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-176
@@ -654,8 +576,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bignum.cpp`
 - Line: `268`
+- Range: `268:33-268:44`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-18T04:22:16+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
 
 ## SH-177
@@ -666,8 +594,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bignum.cpp`
 - Line: `382`
+- Range: `382:4-382:10`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T00:00:54+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-178
@@ -678,8 +612,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/bignum.cpp`
 - Line: `383`
+- Range: `383:25-383:36`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-18T04:22:16+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
 
 ## SH-179
@@ -690,8 +630,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/math/round_float_double.cpp`
 - Line: `14`
+- Range: `14:4-14:16`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-24T20:18:13+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
 
@@ -703,8 +649,14 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/ui/double_to_string.cpp`
 - Line: `17`
+- Range: `17:8-17:20`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-10T03:41:19+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
 
@@ -716,142 +668,430 @@ Items: 99.
 - Area: `math-number-format`
 - Path: `libid/ui/double_to_string.cpp`
 - Line: `18`
+- Range: `18:12-18:23`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-10T03:41:19+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
 
-## SH-182
+## SH-071
 
 - Status: `pending`
-- Key: `AZwwyFjq0qvqV_CtK2S0`
-- Rule: `cpp:S5813`
-- Area: `help-compiler`
-- Path: `hc/AsciiDocCompiler.cpp`
-- Line: `234`
+- Key: `AZwwyE-U0qvqV_CtK1gy`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_fract_type.cpp`
+- Line: `836`
+- Range: `836:8-836:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
-- Message: Make sure use of "strlen" is safe here.
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-04-19T19:24:23+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
 
-## SH-199
+## SH-075
 
 - Status: `pending`
-- Key: `AZwwyFNd0qvqV_CtK18j`
+- Key: `AZwwyFDj0qvqV_CtK1p0`
+- Rule: `cpp:S5816`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_toggles.cpp`
+- Line: `187`
+- Range: `187:4-187:16`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-07-18T23:58:33+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strncpy" is safe here.
+
+## SH-076
+
+- Status: `pending`
+- Key: `AZwwyFDj0qvqV_CtK1p8`
 - Rule: `cpp:S5801`
-- Area: `engine-core`
-- Path: `libid/engine/trig_fns.cpp`
-- Line: `116`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_toggles.cpp`
+- Line: `228`
+- Range: `228:8-228:19`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:30:52+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
-## SH-200
+## SH-077
 
 - Status: `pending`
-- Key: `AZwwyFNd0qvqV_CtK18k`
-- Rule: `cpp:S5814`
-- Area: `engine-core`
-- Path: `libid/engine/trig_fns.cpp`
-- Line: `120`
+- Key: `AZwwyFDt0qvqV_CtK1qX`
+- Rule: `cpp:S5801`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_toggles2.cpp`
+- Line: `89`
+- Range: `89:12-89:23`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-07-17T17:15:15+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcpy" is safe here.
 
-## SH-201
+## SH-078
 
 - Status: `pending`
-- Key: `AZwwyFNd0qvqV_CtK18l`
-- Rule: `cpp:S5814`
-- Area: `engine-core`
-- Path: `libid/engine/trig_fns.cpp`
-- Line: `121`
+- Key: `AZwwyFDt0qvqV_CtK1qY`
+- Rule: `cpp:S5801`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_toggles2.cpp`
+- Line: `96`
+- Range: `96:12-96:23`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:30:57+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcpy" is safe here.
 
-## SH-203
+## SH-079
 
 - Status: `pending`
-- Key: `AZwwyFMU0qvqV_CtK16X`
+- Key: `AZwwyFB10qvqV_CtK1n7`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_video_mode.cpp`
+- Line: `530`
+- Range: `530:8-530:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:33:41+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-080
+
+- Status: `pending`
+- Key: `AZwwyFB10qvqV_CtK1n8`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_video_mode.cpp`
+- Line: `534`
+- Range: `534:8-534:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:33:41+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-081
+
+- Status: `pending`
+- Key: `AZwwyFB10qvqV_CtK1n9`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_video_mode.cpp`
+- Line: `538`
+- Range: `538:8-538:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:33:41+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-082
+
+- Status: `pending`
+- Key: `AZwwyFB10qvqV_CtK1n-`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_video_mode.cpp`
+- Line: `542`
+- Range: `542:8-542:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:33:41+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-083
+
+- Status: `pending`
+- Key: `AZwwyFB10qvqV_CtK1n_`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_video_mode.cpp`
+- Line: `546`
+- Range: `546:8-546:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:33:41+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-084
+
+- Status: `pending`
+- Key: `AZwwyFB10qvqV_CtK1oA`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_video_mode.cpp`
+- Line: `550`
+- Range: `550:8-550:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:33:41+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-085
+
+- Status: `pending`
+- Key: `AZwwyFB10qvqV_CtK1oB`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/get_video_mode.cpp`
+- Line: `554`
+- Range: `554:8-554:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:33:41+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-100
+
+- Status: `pending`
+- Key: `AZwwyFAE0qvqV_CtK1kQ`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/rotate.cpp`
+- Line: `566`
+- Range: `566:12-566:23`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-101
+
+- Status: `pending`
+- Key: `AZwwyE_Y0qvqV_CtK1hf`
 - Rule: `cpp:S6069`
-- Area: `engine-core`
-- Path: `libid/engine/video_mode.cpp`
-- Line: `114`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/select_video_mode.cpp`
+- Line: `52`
+- Range: `52:4-52:16`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-04-24T01:46:17+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
 
-## SH-204
+## SH-102
 
 - Status: `pending`
-- Key: `AZwwyFkQ0qvqV_CtK2T0`
-- Rule: `c:S5801`
-- Area: `tests-legacy-win32`
-- Path: `legacy/dos/sound.c`
-- Line: `521`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-205
-
-- Status: `pending`
-- Key: `AZwwyFkQ0qvqV_CtK2T7`
-- Rule: `c:S5801`
-- Area: `tests-legacy-win32`
-- Path: `legacy/dos/sound.c`
-- Line: `633`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-206
-
-- Status: `pending`
-- Key: `AZwwyFkQ0qvqV_CtK2T_`
-- Rule: `c:S5801`
-- Area: `tests-legacy-win32`
-- Path: `legacy/dos/sound.c`
-- Line: `738`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-207
-
-- Status: `pending`
-- Key: `AZwwyFeL0qvqV_CtK2Of`
+- Key: `AZwwyE8o0qvqV_CtK1cL`
 - Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/engine/test_cmdfiles.cpp`
-- Line: `193`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/slideshw.cpp`
+- Line: `138`
+- Range: `138:12-138:23`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
-## SH-208
+## SH-103
 
 - Status: `pending`
-- Key: `AZwwyFef0qvqV_CtK2O4`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/engine/test_lowerize_parameter.cpp`
-- Line: `26`
+- Key: `AZwwyE8o0qvqV_CtK1cY`
+- Rule: `cpp:S5813`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/slideshw.cpp`
+- Line: `316`
+- Range: `316:45-316:56`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-21T20:34:11+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strlen" is safe here.
 
-## SH-209
+## SH-104
 
 - Status: `pending`
-- Key: `AZwwyFef0qvqV_CtK2O5`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/engine/test_lowerize_parameter.cpp`
-- Line: `36`
+- Key: `AZwwyE8o0qvqV_CtK1ca`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/slideshw.cpp`
+- Line: `333`
+- Range: `333:12-333:23`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-17T21:07:38+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-105
+
+- Status: `pending`
+- Key: `AZwwyE8o0qvqV_CtK1cm`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/slideshw.cpp`
+- Line: `502`
+- Range: `502:4-502:15`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-07T08:44:56+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-147
+
+- Status: `pending`
+- Key: `AZwwyFAe0qvqV_CtK1lH`
+- Rule: `cpp:S5816`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/temp_msg.cpp`
+- Line: `52`
+- Range: `52:4-52:16`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-08T02:45:59+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strncpy" is safe here.
+
+## SH-148
+
+- Status: `pending`
+- Key: `AZwwyFAe0qvqV_CtK1lK`
+- Rule: `cpp:S5813`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/temp_msg.cpp`
+- Line: `68`
+- Range: `68:37-68:48`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-18T04:35:35+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strlen" is safe here.
+
+## SH-149
+
+- Status: `pending`
+- Key: `AZwwyE_D0qvqV_CtK1hV`
+- Rule: `cpp:S5801`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/thinking.cpp`
+- Line: `47`
+- Range: `47:8-47:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-24T02:38:58+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
+
+## SH-150
+
+- Status: `pending`
+- Key: `AZwwyE_D0qvqV_CtK1hW`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/thinking.cpp`
+- Line: `48`
+- Range: `48:8-48:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-24T02:38:58+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
+
+## SH-151
+
+- Status: `pending`
+- Key: `AZwwyE_D0qvqV_CtK1hX`
+- Rule: `cpp:S5814`
+- Area: `ui-prompt-menu`
+- Path: `libid/ui/thinking.cpp`
+- Line: `49`
+- Range: `49:8-49:19`
+- Category: `buffer-overflow`
+- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-24T02:38:58+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcat" is safe here.
 
 ## SH-210
 
@@ -861,8 +1101,14 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `tests/libid/io/test_expand_dirname.cpp`
 - Line: `49`
+- Range: `49:4-49:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T02:24:18+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-211
@@ -873,8 +1119,14 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `tests/libid/io/test_expand_dirname.cpp`
 - Line: `50`
+- Range: `50:4-50:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T02:24:18+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-212
@@ -885,8 +1137,14 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `tests/libid/io/test_expand_dirname.cpp`
 - Line: `60`
+- Range: `60:4-60:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T02:24:18+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-213
@@ -897,8 +1155,14 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `tests/libid/io/test_expand_dirname.cpp`
 - Line: `69`
+- Range: `69:4-69:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-03-03T02:24:18+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-214
@@ -909,8 +1173,14 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `tests/libid/ui/test_ChoiceBuilder.cpp`
 - Line: `746`
+- Range: `746:66-746:78`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-08T02:58:12+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strncpy" is safe here.
 
 ## SH-215
@@ -921,284 +1191,68 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `tests/libid/ui/test_ChoiceBuilder.cpp`
 - Line: `761`
+- Range: `761:72-761:83`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-22T00:13:20+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
-## SH-216
+## SH-204
 
 - Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2N8`
-- Rule: `cpp:S5801`
+- Key: `AZwwyFkQ0qvqV_CtK2T0`
+- Rule: `c:S5801`
 - Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `82`
+- Path: `legacy/dos/sound.c`
+- Line: `521`
+- Range: `521:4-521:10`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2006-12-09T18:41:30+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
-## SH-217
+## SH-205
 
 - Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2N9`
-- Rule: `cpp:S5801`
+- Key: `AZwwyFkQ0qvqV_CtK2T7`
+- Rule: `c:S5801`
 - Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `101`
+- Path: `legacy/dos/sound.c`
+- Line: `633`
+- Range: `633:4-633:10`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2006-12-09T18:41:30+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
-## SH-218
+## SH-206
 
 - Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2N-`
-- Rule: `cpp:S5801`
+- Key: `AZwwyFkQ0qvqV_CtK2T_`
+- Rule: `c:S5801`
 - Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `110`
+- Path: `legacy/dos/sound.c`
+- Line: `738`
+- Range: `738:4-738:10`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-219
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2N_`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `119`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-220
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OA`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `128`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-221
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OB`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `138`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-222
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OC`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `148`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-223
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OD`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `158`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-224
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OE`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `168`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-225
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OF`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `178`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-226
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OG`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `188`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-227
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OH`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `198`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-228
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OI`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `207`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-229
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OJ`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `217`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-230
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OK`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `227`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-231
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OL`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `237`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-232
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OM`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `246`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-233
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2ON`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `255`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-234
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OO`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `264`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-235
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OP`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `273`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-236
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OQ`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `282`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-237
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OR`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `291`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-238
-
-- Status: `pending`
-- Key: `AZwwyFc_0qvqV_CtK2OS`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/ui/test_comments.cpp`
-- Line: `302`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2006-12-09T18:41:30+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-239
@@ -1209,8 +1263,14 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `win32/create_minidump.cpp`
 - Line: `83`
+- Range: `83:8-83:20`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2019-03-18T14:49:28+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
 
@@ -1222,8 +1282,14 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `win32/Win32BaseDriver.cpp`
 - Line: `514`
+- Range: `514:4-514:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-02-22T03:06:58+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
 
 ## SH-241
@@ -1234,10 +1300,15 @@ Items: 99.
 - Area: `tests-legacy-win32`
 - Path: `win32/WinText.cpp`
 - Line: `163`
+- Range: `163:4-163:15`
 - Category: `buffer-overflow`
 - Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here. rows are intentionally
-  accepted in Sonar with rationale. were not practical.
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-04-28T03:25:42+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
+- Message: Make sure use of "strcpy" is safe here.
 
 # Medium Probability
 
@@ -1251,8 +1322,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `libid/io/gifview.cpp`
 - Line: `375`
+- Range: `375:20-375:29`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-06T07:40:46+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1264,8 +1341,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `libid/ui/evolve.cpp`
 - Line: `447`
+- Range: `447:55-447:64`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-12-28T01:51:45+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1277,8 +1360,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `libid/ui/evolve.cpp`
 - Line: `591`
+- Range: `591:55-591:64`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-12-28T01:51:45+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1290,8 +1379,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `libid/ui/evolve.cpp`
 - Line: `886`
+- Range: `886:33-886:42`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-09-17T05:06:21+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1303,8 +1398,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `libid/ui/evolve.cpp`
 - Line: `901`
+- Range: `901:12-901:21`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2024-05-19T05:52:47+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1316,8 +1417,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `libid/ui/intro.cpp`
 - Line: `85`
+- Range: `85:8-85:17`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-01-07T06:22:49+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1329,8 +1436,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `libid/ui/rotate.cpp`
 - Line: `49`
+- Range: `49:11-49:20`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2026-06-08T16:39:41+0000`
+- Updated: `2026-06-08T16:39:41+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1342,8 +1455,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `libid/ui/starfield.cpp`
 - Line: `45`
+- Range: `45:11-45:20`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2026-06-08T16:39:41+0000`
+- Updated: `2026-06-08T16:39:41+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1355,8 +1474,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `tests/libid/engine/test_random_seed.cpp`
 - Line: `96`
+- Range: `96:22-96:31`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2026-06-08T16:39:41+0000`
+- Updated: `2026-06-08T16:39:41+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1368,8 +1493,14 @@ Items: 11.
 - Area: `randomness`
 - Path: `tests/libid/engine/test_random_seed.cpp`
 - Line: `97`
+- Range: `97:22-97:31`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2026-06-08T16:39:41+0000`
+- Updated: `2026-06-08T16:39:41+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
@@ -1381,14 +1512,20 @@ Items: 11.
 - Area: `randomness`
 - Path: `tests/libid/engine/test_random_seed.cpp`
 - Line: `102`
+- Range: `102:22-102:31`
 - Category: `weak-cryptography`
 - Probability: `MEDIUM`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2026-06-08T16:39:41+0000`
+- Updated: `2026-06-08T16:39:41+0000`
+- Flows: `0`
 - Message: Make sure that using this pseudorandom number generator "rand"
   is safe here.
 
 # Low Probability
 
-Items: 19.
+Items: 5.
 
 ## SH-253
 
@@ -1397,9 +1534,15 @@ Items: 19.
 - Rule: `cpp:S5443`
 - Area: `command-input`
 - Path: `libid/engine/cmdfiles.cpp`
-- Line: `425`
+- Line: `459`
+- Range: `459:27-459:32`
 - Category: `others`
 - Probability: `LOW`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-02-16T03:12:12+0000`
+- Updated: `2026-05-26T15:49:52+0000`
+- Flows: `0`
 - Message: Make sure publicly writable directories (accessed through an
   environment variable) are used safely here
 
@@ -1410,107 +1553,16 @@ Items: 19.
 - Rule: `cpp:S5443`
 - Area: `command-input`
 - Path: `libid/engine/cmdfiles.cpp`
-- Line: `428`
+- Line: `462`
+- Range: `462:19-462:25`
 - Category: `others`
 - Probability: `LOW`
+- Sonar Status: `TO_REVIEW`
+- Created: `2004-11-23T13:13:37+0000`
+- Updated: `2026-05-26T15:49:52+0000`
+- Flows: `0`
 - Message: Make sure publicly writable directories (accessed through an
   environment variable) are used safely here
-
-## SH-255
-
-- Status: `pending`
-- Key: `AZwwyFfA0qvqV_CtK2PE`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/analysis.yml`
-- Line: `38`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-256
-
-- Status: `pending`
-- Key: `AZwwyFfA0qvqV_CtK2PF`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/analysis.yml`
-- Line: `40`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-257
-
-- Status: `pending`
-- Key: `AZwwyFfA0qvqV_CtK2PG`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/analysis.yml`
-- Line: `102`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-258
-
-- Status: `pending`
-- Key: `AZwwyFfA0qvqV_CtK2PH`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/analysis.yml`
-- Line: `104`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-259
-
-- Status: `pending`
-- Key: `AZwwyFfA0qvqV_CtK2PI`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/analysis.yml`
-- Line: `182`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-260
-
-- Status: `pending`
-- Key: `AZwwyFfA0qvqV_CtK2PJ`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/analysis.yml`
-- Line: `184`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-261
-
-- Status: `pending`
-- Key: `AZwwyFe10qvqV_CtK2O8`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/build.yml`
-- Line: `49`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-262
-
-- Status: `pending`
-- Key: `AZwwyFe10qvqV_CtK2O9`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/build.yml`
-- Line: `51`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
 
 ## SH-263
 
@@ -1519,9 +1571,15 @@ Items: 19.
 - Rule: `githubactions:S7637`
 - Area: `github-workflows`
 - Path: `.github/workflows/build.yml`
-- Line: `55`
+- Line: `29`
+- Range: `29:12-29:30`
 - Category: `others`
 - Probability: `LOW`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2026-06-10T03:51:36+0000`
+- Updated: `2026-06-10T04:43:35+0000`
+- Flows: `0`
 - Message: Use full commit SHA hash for this dependency.
 
 ## SH-264
@@ -1531,82 +1589,16 @@ Items: 19.
 - Rule: `githubactions:S7637`
 - Area: `github-workflows`
 - Path: `.github/workflows/build.yml`
-- Line: `146`
+- Line: `144`
+- Range: `144:12-144:30`
 - Category: `others`
 - Probability: `LOW`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2025-10-26T15:45:58+0000`
+- Updated: `2026-02-06T02:20:33+0000`
+- Flows: `0`
 - Message: Use full commit SHA hash for this dependency.
-
-## SH-265
-
-- Status: `pending`
-- Key: `AZwwyFe10qvqV_CtK2O_`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/build.yml`
-- Line: `339`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-266
-
-- Status: `pending`
-- Key: `AZwwyFe10qvqV_CtK2PA`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/build.yml`
-- Line: `341`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-267
-
-- Status: `pending`
-- Key: `AZwwyFe10qvqV_CtK2PB`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/build.yml`
-- Line: `536`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-268
-
-- Status: `pending`
-- Key: `AZwwyFe10qvqV_CtK2PC`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/build.yml`
-- Line: `538`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-269
-
-- Status: `pending`
-- Key: `AZ6kqmM7OMiYihiGkbUb`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/docs.yml`
-- Line: `49`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
-
-## SH-270
-
-- Status: `pending`
-- Key: `AZ6kqmM7OMiYihiGkbUc`
-- Rule: `githubactions:S7636`
-- Area: `github-workflows`
-- Path: `.github/workflows/docs.yml`
-- Line: `51`
-- Category: `others`
-- Probability: `LOW`
-- Message: Avoid expanding secrets in a run block.
 
 ## SH-271
 
@@ -1615,16 +1607,13 @@ Items: 19.
 - Rule: `githubactions:S7637`
 - Area: `github-workflows`
 - Path: `.github/workflows/docs.yml`
-- Line: `55`
+- Line: `56`
+- Range: `56:12-56:30`
 - Category: `others`
 - Probability: `LOW`
+- Sonar Status: `TO_REVIEW`
+- Assignee: `AWqWD8MuvoFfNZkNexwB`
+- Created: `2026-06-07T21:23:26+0000`
+- Updated: `2026-06-08T00:31:54+0000`
+- Flows: `0`
 - Message: Use full commit SHA hash for this dependency.
-
-# Completion Criteria
-
-- Every item is marked `done` or `reviewed`.
-- SonarCloud shows no unreviewed hotspots for the project, or remaining
-  rows are intentionally accepted in Sonar with rationale.
-- Each code-changing item has focused tests or a documented reason tests
-  were not practical.
-- Full build and relevant focused tests pass before final cleanup.
