@@ -25,16 +25,6 @@ jobs:
         fetch-depth: 0
         submodules: true
 
-    - name: Setup vcpkg package cache
-      id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
-      with:
-        token: ${{github.token}}
-        bootstrap: "true"
-        install-nuget: "true"
-        debug: "false"
-        trace: "false"
-
     - name: Setup ruby
       uses: ruby/setup-ruby@v1
       with:
@@ -49,6 +39,16 @@ jobs:
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
         cmake-version: '3.31'
+
+    - name: Setup vcpkg package cache
+      id: vc
+      uses: LegalizeAdulthood/vcpkg-github-cache@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      with:
+        token: ${{github.token}}
+        bootstrap: "true"
+        install-nuget: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Run Workflow
       shell: pwsh
