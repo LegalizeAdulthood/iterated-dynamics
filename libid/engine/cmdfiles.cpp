@@ -811,9 +811,8 @@ struct Command
 
     std::string arg;
     CmdFile mode{};
-    char *value{};
+    std::string_view value;
     std::string variable;
-    int value_len{};                  // length of value
     int num_val{};                    // numeric value of arg
     char char_val[16]{};              // first character of arg
     int yes_no_val[16]{};             // 0 if 'n', 1 if 'y', -1 if not
@@ -837,7 +836,7 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
     const std::size_t equals{arg.find('=', 1)};
     const std::size_t variable_end{equals == std::string::npos ? arg.size() : equals};
     const std::size_t value_offset{equals == std::string::npos ? arg.size() : equals + 1};
-    value = arg.data() + value_offset;
+    value = std::string_view{arg}.substr(value_offset);
     int j = static_cast<int>(variable_end);
     if (j > 20)
     {
@@ -846,9 +845,8 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
         return;
     }
     variable = arg.substr(0, variable_end);
-    value_len = static_cast<int>(arg.size() - value_offset); // note value's length
-    char_val[0] = value[0];                                  // first letter of value
-    yes_no_val[0] = -1;                                      // note yes|no value
+    char_val[0] = value.empty() ? '\0' : value[0]; // first letter of value
+    yes_no_val[0] = -1;                            // note yes|no value
     if (char_val[0] == 'n')
     {
         yes_no_val[0] = 0;
@@ -858,7 +856,7 @@ Command::Command(const std::string_view cur_arg, const CmdFile a_mode) :
         yes_no_val[0] = 1;
     }
 
-    char *arg_ptr = value;
+    char *arg_ptr = arg.data() + value_offset;
     num_float_params = 0;
     num_int_params = 0;
     total_params = 0;
@@ -982,7 +980,7 @@ CmdArgFlags Command::bad_arg() const
 
 void Command::init_msg() const
 {
-    engine::init_msg(variable.c_str(), value, mode);
+    engine::init_msg(variable.c_str(), value.data(), mode);
 }
 
 struct CommandHandler
@@ -1000,10 +998,9 @@ static CmdArgFlags cmd_deprecated(const Command &/*cmd*/)
 // adapter parameter no longer used; check for bad argument anyway
 static CmdArgFlags cmd_adapter(const Command &cmd)
 {
-    if (const std::string_view value{cmd.value}; //
-        value != "egamono" && value != "hgc"     //
-        && value != "ega" && value != "cga"      //
-        && value != "mcga" && value != "vga")
+    if (cmd.value != "egamono" && cmd.value != "hgc" //
+        && cmd.value != "ega" && cmd.value != "cga"  //
+        && cmd.value != "mcga" && cmd.value != "vga")
     {
         return cmd.bad_arg();
     }
@@ -1050,7 +1047,7 @@ static CmdArgFlags cmd_exit_no_ask(const Command &cmd)
 // fpu deprecated; validate arg and gobble
 static CmdArgFlags cmd_fpu(const Command &cmd)
 {
-    if (const std::string_view value{cmd.value}; value == "387")
+    if (cmd.value == "387")
     {
         return CmdArgFlags::NONE;
     }
@@ -1074,7 +1071,7 @@ static CmdArgFlags cmd_make_doc(const Command &cmd)
         driver_set_attr(BOX_ROW + i, BOX_COL, C_DVID_LO, BOX_WIDTH);
     }
     driver_put_string(BOX_ROW + 2, BOX_COL + 4, C_DVID_HI, "Creating Help Document");
-    const std::string file{*cmd.value ? cmd.value : "id.txt"};
+    const std::string file{cmd.value.empty() ? "id.txt" : std::string{cmd.value}};
     driver_put_string(BOX_ROW + 4, BOX_COL + 4, C_DVID_LO, "Save name: " + file);
     driver_put_string(BOX_ROW + 6, BOX_COL + 4, C_DVID_LO, "Status:");
     cmd_files_test::s_print_document(file.c_str(), make_doc_msg_func);
@@ -1205,9 +1202,8 @@ static std::array<CommandHandler, 11> s_startup_commands{
 // 3d=?/?/..
 static CmdArgFlags cmd_3d(const Command &cmd)
 {
-    const std::string_view value{cmd.value};
     int yes_no = cmd.yes_no_val[0];
-    if (value == "overlay")
+    if (cmd.value == "overlay")
     {
         yes_no = 1;
         if (g_calc_status > CalcStatus::NO_FRACTAL) // if no image, treat same as 3D=yes
@@ -1230,7 +1226,7 @@ static CmdArgFlags cmd_3d_mode(const Command &cmd)
     int julibrot_mode = -1;
     for (int i = 0; i < 4; i++)
     {
-        if (g_julibrot_3d_options[i] == std::string_view{cmd.value})
+        if (g_julibrot_3d_options[i] == cmd.value)
         {
             julibrot_mode = i;
             break;
@@ -1311,11 +1307,11 @@ static CmdArgFlags cmd_attenuate(const Command &cmd)
 
 static CmdArgFlags cmd_auto_key(const Command &cmd)
 {
-    if (const std::string_view value{cmd.value}; value == "record")
+    if (cmd.value == "record")
     {
         g_slides = SlidesMode::RECORD;
     }
-    else if (value == "play")
+    else if (cmd.value == "play")
     {
         g_slides = SlidesMode::PLAY;
     }
@@ -1328,13 +1324,13 @@ static CmdArgFlags cmd_auto_key(const Command &cmd)
 
 static CmdArgFlags cmd_auto_key_name(const Command &cmd)
 {
-    if (const fs::path path{find_file(ReadFile::KEY, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::KEY, fs::path{std::string{cmd.value}})}; !path.empty())
     {
         g_auto_name = path;
     }
     else
     {
-        g_auto_name = cmd.value;
+        g_auto_name = std::string{cmd.value};
     }
     return CmdArgFlags::NONE;
 }
@@ -1373,31 +1369,31 @@ static CmdArgFlags cmd_bailout(const Command &cmd)
 // bailoutest=?
 static CmdArgFlags cmd_bailout_test(const Command &cmd)
 {
-    if (const std::string_view value{cmd.value}; value == "mod")
+    if (cmd.value == "mod")
     {
         g_bailout_test = Bailout::MOD;
     }
-    else if (value == "real")
+    else if (cmd.value == "real")
     {
         g_bailout_test = Bailout::REAL;
     }
-    else if (value == "imag")
+    else if (cmd.value == "imag")
     {
         g_bailout_test = Bailout::IMAG;
     }
-    else if (value == "or")
+    else if (cmd.value == "or")
     {
         g_bailout_test = Bailout::OR;
     }
-    else if (value == "and")
+    else if (cmd.value == "and")
     {
         g_bailout_test = Bailout::AND;
     }
-    else if (value == "manh")
+    else if (cmd.value == "manh")
     {
         g_bailout_test = Bailout::MANH;
     }
-    else if (value == "manr")
+    else if (cmd.value == "manr")
     {
         g_bailout_test = Bailout::MANR;
     }
@@ -2038,12 +2034,12 @@ static CmdArgFlags cmd_fast_restore(const Command &cmd)
 
 static CmdArgFlags cmd_filename(const Command &cmd)
 {
-    if (cmd.char_val[0] == '.' && cmd.value[1] != SLASH_CH)
+    if (cmd.char_val[0] == '.' && (cmd.value.size() == 1 || cmd.value[1] != SLASH_CH))
     {
-        g_image_filename_mask = std::string{"*"} + cmd.value;
+        g_image_filename_mask = std::string{"*"} + std::string{cmd.value};
         return CmdArgFlags::NONE;
     }
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value.size() > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
@@ -2053,7 +2049,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
         return cmd.bad_arg();
     }
 
-    g_read_filename = find_file(ReadFile::IMAGE, cmd.value);
+    g_read_filename = find_file(ReadFile::IMAGE, fs::path{std::string{cmd.value}});
     if (!g_read_filename.empty())
     {
         g_show_file = ShowFile::LOAD_IMAGE;
@@ -2070,7 +2066,7 @@ static CmdArgFlags cmd_filename(const Command &cmd)
 // fillcolor=?
 static CmdArgFlags cmd_fill_color(const Command &cmd)
 {
-    if (const std::string_view value{cmd.value}; value == "normal")
+    if (cmd.value == "normal")
     {
         g_fill_color = -1;
     }
@@ -2120,28 +2116,28 @@ static CmdArgFlags cmd_float(const Command &cmd)
 // formulafile=?
 static CmdArgFlags cmd_formula_file(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value.size() > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
-    if (const fs::path path{find_file(ReadFile::FORMULA, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::FORMULA, fs::path{std::string{cmd.value}})}; !path.empty())
     {
         g_formula_filename = path;
         return CmdArgFlags::FRACTAL_PARAM;
     }
 
-    g_formula_filename = cmd.value;
+    g_formula_filename = std::string{cmd.value};
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
 // formulaname=?
 static CmdArgFlags cmd_formula_name(const Command &cmd)
 {
-    if (cmd.value_len > ITEM_NAME_LEN)
+    if (cmd.value.size() > ITEM_NAME_LEN)
     {
         return cmd.bad_arg();
     }
-    g_formula_name = cmd.value;
+    g_formula_name = std::string{cmd.value};
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -2202,11 +2198,11 @@ static CmdArgFlags cmd_hertz(const Command &cmd)
 static CmdArgFlags cmd_ifs(const Command &cmd)
 {
     // ifs3d for old time's sake
-    if (cmd.value_len > ITEM_NAME_LEN)
+    if (cmd.value.size() > ITEM_NAME_LEN)
     {
         return cmd.bad_arg();
     }
-    g_ifs_name = cmd.value;
+    g_ifs_name = std::string{cmd.value};
     reset_ifs_definition();
     return CmdArgFlags::FRACTAL_PARAM;
 }
@@ -2214,11 +2210,11 @@ static CmdArgFlags cmd_ifs(const Command &cmd)
 // ifsfile=??
 static CmdArgFlags cmd_ifs_file(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value.size() > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
-    if (const fs::path path{find_file(ReadFile::IFS, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::IFS, fs::path{std::string{cmd.value}})}; !path.empty())
     {
         g_ifs_filename = path;
         reset_ifs_definition();
@@ -2231,7 +2227,7 @@ static CmdArgFlags cmd_ifs_file(const Command &cmd)
 // initorbit=?/?
 static CmdArgFlags cmd_init_orbit(const Command &cmd)
 {
-    if (const std::string_view value{cmd.value}; value == "pixel")
+    if (cmd.value == "pixel")
     {
         g_use_init_orbit = InitOrbitMode::PIXEL;
     }
@@ -2394,11 +2390,11 @@ static CmdArgFlags cmd_latitude(const Command &cmd)
 // lfile=?
 static CmdArgFlags cmd_l_file(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value.size() > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
-    if (const fs::path path{find_file(ReadFile::LSYSTEM, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::LSYSTEM, fs::path{std::string{cmd.value}})}; !path.empty())
     {
         g_l_system_filename = path;
         return CmdArgFlags::FRACTAL_PARAM;
@@ -2410,24 +2406,24 @@ static CmdArgFlags cmd_l_file(const Command &cmd)
 // librarydirs=path,...,path
 static CmdArgFlags cmd_library_dirs(const Command &cmd)
 {
-    if (cmd.value_len == 0)
+    if (cmd.value.empty())
     {
         return cmd.bad_arg();
     }
-    add_read_libraries(std::string_view{cmd.value, static_cast<std::size_t>(cmd.value_len)});
+    add_read_libraries(cmd.value);
     return CmdArgFlags::NONE;
 }
 
 // lightname=?
 static CmdArgFlags cmd_light_name(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value.size() > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
     if (g_first_init || cmd.mode == CmdFile::AT_AFTER_STARTUP)
     {
-        g_light_name = cmd.value;
+        g_light_name = std::string{cmd.value};
     }
     return CmdArgFlags::NONE;
 }
@@ -2448,11 +2444,11 @@ static CmdArgFlags cmd_light_source(const Command &cmd)
 // lname=?
 static CmdArgFlags cmd_l_name(const Command &cmd)
 {
-    if (cmd.value_len > ITEM_NAME_LEN)
+    if (cmd.value.size() > ITEM_NAME_LEN)
     {
         return cmd.bad_arg();
     }
-    g_l_system_name = cmd.value;
+    g_l_system_name = std::string{cmd.value};
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
@@ -2531,12 +2527,12 @@ static CmdArgFlags cmd_make_mig(const Command &cmd)
 // map=, set default colors
 static CmdArgFlags cmd_map(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value.size() > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
 
-    g_map_name = cmd.value;
+    g_map_name = std::string{cmd.value};
     set_color_palette_name(g_map_name);
     return CmdArgFlags::NONE;
 }
@@ -2765,18 +2761,18 @@ static CmdArgFlags cmd_orbit_save(const Command &cmd)
 // orbitsavename=?
 static CmdArgFlags cmd_orbit_save_name(const Command &cmd)
 {
-    g_orbit_save_name = cmd.value;
+    g_orbit_save_name = std::string{cmd.value};
     return CmdArgFlags::FRACTAL_PARAM;
 }
 
 // orgfrmdir=? [deprecated]
 static CmdArgFlags cmd_org_frm_dir(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_DIR - 1)
+    if (cmd.value.size() > ID_FILE_MAX_DIR - 1)
     {
         return cmd.bad_arg();
     }
-    if (!fs::is_directory(cmd.value))
+    if (!fs::is_directory(fs::path{std::string{cmd.value}}))
     {
         return cmd.bad_arg();
     }
@@ -2862,11 +2858,11 @@ static CmdArgFlags cmd_params(const Command &cmd)
 // parmfile=?
 static CmdArgFlags cmd_parm_file(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value.size() > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
-    if (const fs::path path{find_file(ReadFile::PARAMETER, cmd.value)}; !path.empty())
+    if (const fs::path path{find_file(ReadFile::PARAMETER, fs::path{std::string{cmd.value}})}; !path.empty())
     {
         g_parameter_file = path;
         return CmdArgFlags::FRACTAL_PARAM;
@@ -2877,13 +2873,13 @@ static CmdArgFlags cmd_parm_file(const Command &cmd)
 
 static CmdArgFlags cmd_passes(const Command &cmd)
 {
-    if (cmd.value_len == 0 || std::strchr("123bdgopst", cmd.char_val[0]) == nullptr)
+    if (cmd.value.empty() || std::strchr("123bdgopst", cmd.char_val[0]) == nullptr)
     {
         return cmd.bad_arg();
     }
     if (cmd.char_val[0] == 'g')
     {
-        if (cmd.value_len > 1)
+        if (cmd.value.size() > 1)
         {
             if (!std::isdigit(cmd.value[1]))
             {
@@ -3120,11 +3116,11 @@ static CmdArgFlags cmd_ray(const Command &cmd)
 
 static CmdArgFlags cmd_record_colors(const Command &cmd)
 {
-    if (*cmd.value != 'y' && *cmd.value != 'c' && *cmd.value != 'a')
+    if (cmd.char_val[0] != 'y' && cmd.char_val[0] != 'c' && cmd.char_val[0] != 'a')
     {
         return cmd.bad_arg();
     }
-    g_record_colors = static_cast<RecordColorsMode>(*cmd.value);
+    g_record_colors = static_cast<RecordColorsMode>(cmd.char_val[0]);
     return CmdArgFlags::NONE;
 }
 
@@ -3296,8 +3292,8 @@ static CmdArgFlags cmd_rds(const Command &cmd)
 
 static CmdArgFlags cmd_rds_texture(const Command &cmd)
 {
-    g_stereo_texture_filename = cmd.value;
-    g_stereo_texture_reuse = cmd.value_len > 0;
+    g_stereo_texture_filename = std::string{cmd.value};
+    g_stereo_texture_reuse = !cmd.value.empty();
     if (g_stereo_texture_reuse)
     {
         g_use_stereo_texture = true;
@@ -3307,20 +3303,20 @@ static CmdArgFlags cmd_rds_texture(const Command &cmd)
 
 static CmdArgFlags cmd_save_dir(const Command &cmd)
 {
-    g_save_dir = cmd.value;
-    set_save_library(cmd.value);
+    g_save_dir = std::string{cmd.value};
+    set_save_library(fs::path{std::string{cmd.value}});
     return CmdArgFlags::NONE;
 }
 
 static CmdArgFlags cmd_save_name(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_PATH - 1)
+    if (cmd.value.size() > ID_FILE_MAX_PATH - 1)
     {
         return cmd.bad_arg();
     }
     if (g_first_init || cmd.mode == CmdFile::AT_AFTER_STARTUP)
     {
-        g_save_filename = cmd.value;
+        g_save_filename = std::string{cmd.value};
     }
     return CmdArgFlags::NONE;
 }
@@ -3464,7 +3460,7 @@ static CmdArgFlags cmd_sound(const Command &cmd)
     {
         g_sound_flag &= ~SOUNDFLAG_ORBIT_MASK;
     }
-    else if (std::strncmp(cmd.value, "ye", 2) == 0 || cmd.char_val[0] == 'b')
+    else if (cmd.value.substr(0, 2) == "ye" || cmd.char_val[0] == 'b')
     {
         g_sound_flag |= SOUNDFLAG_BEEP;
     }
@@ -3472,7 +3468,7 @@ static CmdArgFlags cmd_sound(const Command &cmd)
     {
         g_sound_flag |= SOUNDFLAG_X;
     }
-    else if (cmd.char_val[0] == 'y' && std::strncmp(cmd.value, "ye", 2) != 0)
+    else if (cmd.char_val[0] == 'y' && cmd.value.substr(0, 2) != "ye")
     {
         g_sound_flag |= SOUNDFLAG_Y;
     }
@@ -3573,27 +3569,27 @@ static CmdArgFlags cmd_sustain(const Command &cmd)
 // symmetry=?
 static CmdArgFlags cmd_symmetry(const Command &cmd)
 {
-    if (const std::string_view value{cmd.value}; value == "xaxis")
+    if (cmd.value == "xaxis")
     {
         g_force_symmetry = SymmetryType::X_AXIS;
     }
-    else if (value == "yaxis")
+    else if (cmd.value == "yaxis")
     {
         g_force_symmetry = SymmetryType::Y_AXIS;
     }
-    else if (value == "xyaxis")
+    else if (cmd.value == "xyaxis")
     {
         g_force_symmetry = SymmetryType::XY_AXIS;
     }
-    else if (value == "origin")
+    else if (cmd.value == "origin")
     {
         g_force_symmetry = SymmetryType::ORIGIN;
     }
-    else if (value == "pi")
+    else if (cmd.value == "pi")
     {
         g_force_symmetry = SymmetryType::PI_SYM;
     }
-    else if (value == "none")
+    else if (cmd.value == "none")
     {
         g_force_symmetry = SymmetryType::NONE;
     }
@@ -3617,15 +3613,15 @@ static CmdArgFlags cmd_targa_overlay(const Command &cmd)
 
 static CmdArgFlags cmd_temp_dir(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_DIR - 1)
+    if (cmd.value.size() > ID_FILE_MAX_DIR - 1)
     {
         return cmd.bad_arg();
     }
-    if (!fs::is_directory(cmd.value))
+    if (!fs::is_directory(fs::path{std::string{cmd.value}}))
     {
         return cmd.bad_arg();
     }
-    g_temp_dir = cmd.value;
+    g_temp_dir = std::string{cmd.value};
     return CmdArgFlags::NONE;
 }
 
@@ -3730,7 +3726,7 @@ static CmdArgFlags cmd_true_mode(const Command &cmd)
 
 static CmdArgFlags cmd_type(const Command &cmd)
 {
-    std::string value{cmd.value, static_cast<std::string::size_type>(cmd.value_len)};
+    std::string value{cmd.value};
     if (!value.empty() && value.back() == '*')
     {
         value.pop_back();
@@ -3897,15 +3893,15 @@ static CmdArgFlags cmd_wave_type(const Command &cmd)
 
 static CmdArgFlags cmd_work_dir(const Command &cmd)
 {
-    if (cmd.value_len > ID_FILE_MAX_DIR - 1)
+    if (cmd.value.size() > ID_FILE_MAX_DIR - 1)
     {
         return cmd.bad_arg();
     }
-    if (!fs::is_directory(cmd.value))
+    if (!fs::is_directory(fs::path{std::string{cmd.value}}))
     {
         return cmd.bad_arg();
     }
-    g_working_dir = cmd.value;
+    g_working_dir = std::string{cmd.value};
     return CmdArgFlags::NONE;
 }
 
