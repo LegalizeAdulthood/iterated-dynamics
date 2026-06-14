@@ -5,6 +5,7 @@
 #include "modes.h"
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace hc
@@ -18,7 +19,7 @@ constexpr int BUFFER_SIZE{1024 * 1024}; // 1 MB
 // values for Content.flags
 enum
 {
-    CF_NEW_PAGE = 1         // true if section starts on a new page
+    CF_NEW_PAGE = 1 // true if section starts on a new page
 };
 
 struct Content
@@ -178,7 +179,7 @@ struct HelpSource
 
 extern HelpSource g_src;
 
-int find_topic_title(const char *title);
+int find_topic_title(std::string_view title);
 void read_src(const std::string &fname, Mode mode);
 
 } // namespace hc

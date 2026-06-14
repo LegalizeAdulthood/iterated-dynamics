@@ -11,16 +11,19 @@
 #include <config/string_case_compare.h>
 #include <helpcom.h>
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <fcntl.h>
 #include <stdexcept>
+#include <string_view>
 #include <system_error>
 
 #if defined(_WIN32)
 // disable unsafe CRT warnings
-#pragma warning(disable: 4996)
+#pragma warning(disable : 4996)
 #endif
 
 #if !defined(O_BINARY)
@@ -40,8 +43,8 @@ struct Include
 {
     std::string fname;
     std::FILE *file;
-    int   line;
-    int   col;
+    int line;
+    int col;
 };
 
 HelpSource g_src;
@@ -58,6 +61,39 @@ static std::vector<Include> s_include_stack; //
 static int s_read_char_buff[READ_CHAR_BUFF_SIZE];
 static int s_read_char_buff_pos{-1};
 static int s_read_char_sp{};
+
+static std::string_view cmd_text()
+{
+    return s_cmd;
+}
+
+static std::string_view cmd_arg(const std::size_t prefix_len)
+{
+    return cmd_text().substr(prefix_len);
+}
+
+static std::string_view trim_spaces(std::string_view text)
+{
+    while (!text.empty() && text[0] == ' ')
+    {
+        text.remove_prefix(1);
+    }
+    while (!text.empty() && text[text.size() - 1] == ' ')
+    {
+        text.remove_suffix(1);
+    }
+    return text;
+}
+
+static std::string_view trim_optional_quotes(std::string_view text)
+{
+    if (text.size() > 2 && text[0] == '\"' && text[text.size() - 1] == '\"')
+    {
+        text.remove_prefix(1);
+        text.remove_suffix(1);
+    }
+    return text;
+}
 
 void Content::label_topic(const int ctr)
 {
@@ -251,8 +287,8 @@ static void check_buffer(const unsigned int off)
 const Label *HelpSource::find_label(const char *name) const
 {
     const std::vector<Label> &collection{name[0] == '@' ? private_labels : labels};
-    const auto it = std::find_if(collection.begin(), collection.end(),
-        [name](const Label &label) { return name == label.name; });
+    const auto it =
+        std::find_if(collection.begin(), collection.end(), [name](const Label &label) { return name == label.name; });
     return it != collection.end() ? &*it : nullptr;
 }
 
@@ -262,37 +298,20 @@ void HelpSource::sort_labels()
     std::sort(private_labels.begin(), private_labels.end());
 }
 
-int find_topic_title(const char *title)
+int find_topic_title(std::string_view title)
 {
-    while (*title == ' ')
-    {
-        ++title;
-    }
-
-    int len = static_cast<int>(std::strlen(title)) - 1;
-    while (title[len] == ' ' && len > 0)
-    {
-        --len;
-    }
-
-    ++len;
-
-    if (len > 2 && title[0] == '\"' && title[len-1] == '\"')
-    {
-        ++title;
-        len -= 2;
-    }
+    title = trim_optional_quotes(trim_spaces(title));
 
     for (int t = 0; t < static_cast<int>(g_src.topics.size()); t++)
     {
-        if (static_cast<int>(g_src.topics[t].title.length()) == len
-            && string_case_equal(title, g_src.topics[t].title.c_str(), len))
+        if (g_src.topics[t].title.length() == title.length() &&
+            string_case_equal(title.data(), g_src.topics[t].title.c_str(), title.length()))
         {
             return t;
         }
     }
 
-    return -1;   // not found
+    return -1; // not found
 }
 
 /*
@@ -540,21 +559,13 @@ static void skip_over(const char *skip)
     }
 }
 
-static char *char_lit(const int ch)
+static std::string char_lit(const int ch)
 {
-    static char buff[16];
-
     if (ch >= 0x20 && ch <= 0x7E)
     {
-        std::sprintf(buff, "'%c'", ch);
+        return fmt::format("'{:c}'", static_cast<char>(ch));
     }
-    else
-    {
-        // ReSharper disable once CppPrintfExtraArg
-        std::sprintf(buff, R"('\x%02X')", static_cast<unsigned int>(ch & 0xFF));
-    }
-
-    return buff;
+    return fmt::format(R"('\x{:02X}')", static_cast<unsigned int>(ch & 0xFF));
 }
 
 static void put_spaces(int how_many)
@@ -586,7 +597,7 @@ static bool get_next_item()
     char *ptr = read_until(s_cmd, 128, ",}");
     const bool last = *ptr == '}';
     --ptr;
-    while (ptr >= s_cmd && std::strchr(" \t\r\n", *ptr))     // strip trailing spaces
+    while (ptr >= s_cmd && std::strchr(" \t\r\n", *ptr)) // strip trailing spaces
     {
         --ptr;
     }
@@ -595,14 +606,32 @@ static bool get_next_item()
     return last;
 }
 
+static std::string_view doc_content_item_name()
+{
+    std::string_view item{cmd_text()};
+    if (!item.empty() && item[0] == '\"')
+    {
+        item.remove_prefix(1);
+        if (!item.empty() && item[item.size() - 1] == '\"')
+        {
+            item.remove_suffix(1);
+        }
+        else
+        {
+            MSG_WARN(0, "Missing ending quote.");
+        }
+    }
+    return item;
+}
+
 static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 {
     Topic t;
-    t.flags     = TopicFlags::NONE;
-    t.title_len = static_cast<unsigned>(std::strlen(DOC_CONTENTS_TITLE)) +1;
-    t.title     = DOC_CONTENTS_TITLE;
-    t.doc_page  = -1;
-    t.num_page  = 0;
+    t.flags = TopicFlags::NONE;
+    t.title_len = static_cast<unsigned>(std::string_view{DOC_CONTENTS_TITLE}.size()) + 1;
+    t.title = DOC_CONTENTS_TITLE;
+    t.doc_page = -1;
+    t.num_page = 0;
 
     g_src.curr = g_src.buffer.data();
 
@@ -620,7 +649,7 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 
     while (true)
     {
-        if (const int ch = read_char(); ch == '{')   // process a Content entry
+        if (const int ch = read_char(); ch == '{') // process a Content entry
         {
             c.flags = 0;
             c.num_topic = 0;
@@ -646,20 +675,12 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 
             if (s_cmd[0] == '\"')
             {
-                char *ptr = &s_cmd[1];
-                if (ptr[static_cast<int>(std::strlen(ptr)) -1] == '\"')
-                {
-                    ptr[static_cast<int>(std::strlen(ptr)) -1] = '\0';
-                }
-                else
-                {
-                    MSG_WARN(0, "Missing ending quote.");
-                }
+                const std::string name{doc_content_item_name()};
 
                 c.is_label[c.num_topic] = false;
-                c.topic_name[c.num_topic] = ptr;
+                c.topic_name[c.num_topic] = name;
                 ++c.num_topic;
-                c.name = ptr;
+                c.name = name;
             }
             else
             {
@@ -684,18 +705,8 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 
                 if (s_cmd[0] == '\"')
                 {
-                    char *ptr = &s_cmd[1];
-                    if (ptr[static_cast<int>(std::strlen(ptr)) -1] == '\"')
-                    {
-                        ptr[static_cast<int>(std::strlen(ptr)) -1] = '\0';
-                    }
-                    else
-                    {
-                        MSG_WARN(0, "Missing ending quote.");
-                    }
-
                     c.is_label[c.num_topic] = false;
-                    c.topic_name[c.num_topic] = ptr;
+                    c.topic_name[c.num_topic] = doc_content_item_name();
                 }
                 else
                 {
@@ -712,7 +723,7 @@ static void process_doc_contents(char *(*format_toc)(char *buffer, Content &c))
 
             g_src.add_content(c);
         }
-        else if (ch == '~')   // end at any command
+        else if (ch == '~') // end at any command
         {
             unread_char(ch);
             break;
@@ -745,8 +756,8 @@ static void process_doc_contents(const Mode mode)
         process_doc_contents(
             [](char *buffer, Content &c)
             {
-                std::sprintf(buffer, "%-5s %*.0s%s", c.id.c_str(), c.indent * 2, "", c.name.c_str());
-                char *ptr = buffer + static_cast<int>(std::strlen(buffer));
+                const std::string text{fmt::format("{:<5} {:>{}}{}", c.id, "", c.indent * 2, c.name)};
+                char *ptr = std::copy(text.begin(), text.end(), buffer);
                 while (ptr - buffer < PAGE_WIDTH - 10)
                 {
                     *ptr++ = '.';
@@ -757,11 +768,11 @@ static void process_doc_contents(const Mode mode)
     }
 }
 
-static int parse_link()   // returns length of link or 0 on error
+static int parse_link() // returns length of link or 0 on error
 {
     char *ptr;
     bool bad = false;
-    int   len;
+    int len;
     int   err_offset;
 
     Link l;
@@ -792,6 +803,7 @@ static int parse_link()   // returns length of link or 0 on error
     if (s_cmd[0] == '=')   // it's an "explicit" link to a label or "special"
     {
         ptr = std::strchr(s_cmd, ' ');
+        const char *label_end = ptr != nullptr ? ptr : end;
 
         if (ptr == nullptr)
         {
@@ -806,7 +818,7 @@ static int parse_link()   // returns length of link or 0 on error
 
         if (s_cmd[1] == '-')
         {
-            l.type      = LinkTypes::LT_SPECIAL;
+            l.type = LinkTypes::LT_SPECIAL;
             l.topic_num = std::atoi(&s_cmd[1]);
             l.topic_off = 0;
             l.name.clear();
@@ -814,7 +826,7 @@ static int parse_link()   // returns length of link or 0 on error
         else
         {
             l.type = LinkTypes::LT_LABEL;
-            if (static_cast<int>(std::strlen(s_cmd)) > 32)
+            if (label_end - s_cmd > 32)
             {
                 MSG_WARN(err_offset, "Label is long.");
             }
@@ -994,8 +1006,11 @@ static int create_table()
         break;
 
         default:
-            MSG_ERROR(0, "Unexpected character %s.", char_lit(ch));
+        {
+            const std::string character{char_lit(ch)};
+            MSG_ERROR(0, "Unexpected character %s.", character.c_str());
             break;
+        }
         }
     }
     while (!done);
@@ -1165,7 +1180,7 @@ static void put_a_char(const int ch, const Topic &t)
     }
 }
 
-enum class ParseStates // states for FSM's
+enum class ParseStates      // states for FSM's
 {
     START,                  // initial state, between paragraphs
     START_FIRST_LINE,       // spaces at start of first line
@@ -1182,9 +1197,11 @@ enum class ParseStates // states for FSM's
 
 static void check_command_length(const int err_offset, const int len)
 {
-    if (static_cast<int>(std::strlen(s_cmd)) != len)
+    const std::string_view command{cmd_text()};
+    if (command.size() != static_cast<std::size_t>(len))
     {
-        MSG_ERROR(err_offset, "Invalid text after a command \"%s\"", s_cmd+len);
+        const char *extra = command.size() > static_cast<std::size_t>(len) ? s_cmd + len : "";
+        MSG_ERROR(err_offset, "Invalid text after a command \"%s\"", extra);
     }
 }
 
@@ -1374,8 +1391,8 @@ void read_src(const std::string &fname, Mode mode)
                         in_topic = true;
                     }
 
-                    const char *topic_title = &s_cmd[6];
-                    const size_t title_len = std::strlen(topic_title);
+                    const std::string_view topic_title{cmd_arg(6)};
+                    const size_t title_len = topic_title.size();
                     if (title_len == 0)
                     {
                         MSG_WARN(err_offset, "Topic has no title.");
@@ -1394,7 +1411,7 @@ void read_src(const std::string &fname, Mode mode)
                         MSG_ERROR(err_offset, "Topic title already exists.");
                     }
 
-                    t.start(topic_title, static_cast<int>(title_len));
+                    t.start(topic_title.data(), static_cast<int>(title_len));
                     formatting = true;
                     centering = false;
                     state = ParseStates::START;
@@ -1408,7 +1425,7 @@ void read_src(const std::string &fname, Mode mode)
                 }
                 if (string_case_equal(s_cmd, "Data=", 5))
                 {
-                    if (in_topic)  // if we're in a topic, finish it
+                    if (in_topic) // if we're in a topic, finish it
                     {
                         end_topic(t);
                     }
@@ -1417,25 +1434,25 @@ void read_src(const std::string &fname, Mode mode)
                         in_topic = true;
                     }
 
-                    const char *data = &s_cmd[5];
-                    if (data[0] == '\0')
+                    const std::string_view data{cmd_arg(5)};
+                    if (data.empty())
                     {
                         MSG_WARN(err_offset, "Data topic has no label.");
                     }
 
-                    if (!validate_label_name(data))
+                    if (!validate_label_name(data.data()))
                     {
-                        MSG_ERROR(err_offset, "Label \"%s\" contains illegal characters.", data);
+                        MSG_ERROR(err_offset, "Label \"%s\" contains illegal characters.", data.data());
                         continue;
                     }
 
-                    if (g_src.find_label(data) != nullptr)
+                    if (g_src.find_label(data.data()) != nullptr)
                     {
-                        MSG_ERROR(err_offset, "Label \"%s\" already exists", data);
+                        MSG_ERROR(err_offset, "Label \"%s\" already exists", data.data());
                         continue;
                     }
 
-                    if (s_cmd[5] == '@')
+                    if (!data.empty() && data[0] == '@')
                     {
                         MSG_WARN(err_offset, "Data topic has a local label.");
                     }
@@ -1443,7 +1460,7 @@ void read_src(const std::string &fname, Mode mode)
                     t.start("", 0);
                     t.flags |= TopicFlags::DATA;
 
-                    if (static_cast<int>(std::strlen(data)) > 32)
+                    if (data.size() > 32)
                     {
                         MSG_WARN(err_offset, "Label name is long.");
                     }
@@ -1703,26 +1720,27 @@ void read_src(const std::string &fname, Mode mode)
                 }
                 else if (string_case_equal(s_cmd, "Label=", 6))
                 {
-                    if (const char *label_name = &s_cmd[6]; std::strlen(label_name) == 0)
+                    const std::string_view label_name{cmd_arg(6)};
+                    if (label_name.empty())
                     {
                         MSG_ERROR(err_offset, "Label has no name.");
                     }
-                    else if (!validate_label_name(label_name))
+                    else if (!validate_label_name(label_name.data()))
                     {
-                        MSG_ERROR(err_offset, "Label \"%s\" contains illegal characters.", label_name);
+                        MSG_ERROR(err_offset, "Label \"%s\" contains illegal characters.", label_name.data());
                     }
-                    else if (g_src.find_label(label_name) != nullptr)
+                    else if (g_src.find_label(label_name.data()) != nullptr)
                     {
-                        MSG_ERROR(err_offset, "Label \"%s\" already exists", label_name);
+                        MSG_ERROR(err_offset, "Label \"%s\" already exists", label_name.data());
                     }
                     else
                     {
-                        if (static_cast<int>(std::strlen(label_name)) > 32)
+                        if (label_name.size() > 32)
                         {
                             MSG_WARN(err_offset, "Label name is long.");
                         }
 
-                        if (bit_set(t.flags, TopicFlags::DATA) && s_cmd[6] == '@')
+                        if (bit_set(t.flags, TopicFlags::DATA) && label_name[0] == '@')
                         {
                             MSG_WARN(err_offset, "Data topic has a local label.");
                         }
