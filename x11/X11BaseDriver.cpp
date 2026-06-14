@@ -404,15 +404,14 @@ bool get_a_file_name(const char *hdg, const char *type_wildcard, std::string &re
             labels.push_back(choice->full_name);
         }
 
-        char speed_string[81]{};
-        copy_cstr(speed_string, selected_name);
+        std::string speed_string{selected_name};
         const std::string heading{make_file_browser_heading(hdg, directory, pattern)};
         const std::string instructions{
             std::string{"Press F4 to toggle sort "} + (do_sort ? "off" : "on") + ", F6 for current directory"};
         g_filename_speed_state = FilenameSpeedState::MATCHING;
         const ChoiceFlags flags{ChoiceFlags::INSTRUCTIONS | (do_sort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED)};
         const int choice{full_screen_choice(flags, heading.c_str(), nullptr, instructions.c_str(),
-            static_cast<int>(labels.size()), labels.data(), attributes.data(), 0, 99, 0, 0, nullptr, speed_string,
+            static_cast<int>(labels.size()), labels.data(), attributes.data(), 0, 99, 0, 0, nullptr, &speed_string,
             filename_speed_prompt, check_file_browser_key)};
 
         if (choice == -ID_KEY_F4)
@@ -432,7 +431,7 @@ bool get_a_file_name(const char *hdg, const char *type_wildcard, std::string &re
             return true;
         }
 
-        const std::string speed{speed_string};
+        const std::string &speed{speed_string};
         const FileChoice *selected{choices[choice]};
         if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::TEMPLATE)
         {
