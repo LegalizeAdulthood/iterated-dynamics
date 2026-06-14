@@ -7,6 +7,7 @@
 
 #include <fmt/format.h>
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -58,11 +59,11 @@ void decode_fractal_info_big_endian(FractalInfo *info, const int dir)
 
     if (dir == 1)
     {
-        std::strncpy(info->info_id, reinterpret_cast<char *>(buf_ptr), 8);
+        std::copy_n(reinterpret_cast<const char *>(buf_ptr), sizeof(info->info_id), info->info_id);
     }
     else
     {
-        std::strncpy(reinterpret_cast<char *>(buf_ptr), info->info_id, 8);
+        std::copy_n(info->info_id, sizeof(info->info_id), reinterpret_cast<char *>(buf_ptr));
     }
     buf_ptr += 8;
     get_int16(&info->iterations_old, &buf_ptr, dir);
