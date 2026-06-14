@@ -1446,8 +1446,21 @@ static void is_complex_constant(Reader &reader, Token *tok)
     int sign_value = 1;
     bool done = false;
     bool getting_real = true;
-    std::FILE * debug_token = nullptr;
-    tok->str[1] = static_cast<char>(0);  // so we can concatenate later
+    std::FILE *debug_token = nullptr;
+    std::string token_text{tok->str[0]};
+    const auto set_token_text = [&token_text, tok]()
+    {
+        if (token_text.size() >= sizeof(tok->str))
+        {
+            tok->str[0] = static_cast<char>(0);
+            tok->type = FormulaTokenType::NOT_A_TOKEN;
+            tok->id = TokenId::TOKEN_TOO_LONG;
+            return false;
+        }
+        std::copy(token_text.begin(), token_text.end(), tok->str);
+        tok->str[token_text.size()] = static_cast<char>(0);
+        return true;
+    };
 
     const long file_pos = reader.tell();
     if (g_debug_flag == DebugFlags::WRITE_FORMULA_DEBUG_INFORMATION)
@@ -1462,7 +1475,7 @@ static void is_complex_constant(Reader &reader, Token *tok)
         int c = frm_get_char(reader);
         switch (c)
         {
-CASE_NUM :
+CASE_NUM:
         case '.':
             if (debug_token != nullptr)
             {
@@ -1470,10 +1483,10 @@ CASE_NUM :
             }
             temp_tok.str[0] = static_cast<char>(c);
             break;
-        case '-' :
+        case '-':
             if (debug_token != nullptr)
             {
-                fmt::print(debug_token,  "First char is a minus\n");
+                fmt::print(debug_token, "First char is a minus\n");
             }
             sign_value = -1;
             c = frm_get_char(reader);
@@ -1489,7 +1502,7 @@ CASE_NUM :
             {
                 if (debug_token != nullptr)
                 {
-                    fmt::print(debug_token,  "First char not a . or NUM\n");
+                    fmt::print(debug_token, "First char not a . or NUM\n");
                 }
                 done = true;
             }
@@ -1497,15 +1510,15 @@ CASE_NUM :
         default:
             if (debug_token != nullptr)
             {
-                fmt::print(debug_token,  "First char not a . or NUM\n");
+                fmt::print(debug_token, "First char not a . or NUM\n");
             }
             done = true;
             break;
         }
         if (debug_token != nullptr)
         {
-            fmt::print(debug_token, "Calling frmgetconstant unless done is true; done is {:s}\n",
-                done ? "true" : "false");
+            fmt::print(
+                debug_token, "Calling frmgetconstant unless done is true; done is {:s}\n", done ? "true" : "false");
         }
         if (!done && frm_get_constant(reader, &temp_tok))
         {
@@ -1514,14 +1527,14 @@ CASE_NUM :
             {
                 fmt::print(debug_token, "frmgetconstant returned 1; next token is {:c}\n", c);
             }
-            if (getting_real && c == ',')   // we have the real part now
+            if (getting_real && c == ',') // we have the real part now
             {
                 if (sign_value == -1)
                 {
-                    std::strcat(tok->str, "-");
+                    token_text += '-';
                 }
-                std::strcat(tok->str, temp_tok.str);
-                std::strcat(tok->str, ",");
+                token_text += temp_tok.str;
+                token_text += ',';
                 tok->constant.x = temp_tok.constant.x * sign_value;
                 getting_real = false;
                 sign_value = 1;
@@ -1530,10 +1543,18 @@ CASE_NUM :
             {
                 if (sign_value == -1)
                 {
-                    std::strcat(tok->str, "-");
+                    token_text += '-';
                 }
-                std::strcat(tok->str, temp_tok.str);
-                std::strcat(tok->str, ")");
+                token_text += temp_tok.str;
+                token_text += ')';
+                if (!set_token_text())
+                {
+                    if (debug_token != nullptr)
+                    {
+                        std::fclose(debug_token);
+                    }
+                    return;
+                }
                 tok->constant.y = temp_tok.constant.x * sign_value;
                 tok->type = tok->constant.y ? FormulaTokenType::COMPLEX_CONSTANT : FormulaTokenType::REAL_CONSTANT;
                 tok->id   = TokenId::NONE;
