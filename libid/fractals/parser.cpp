@@ -2213,17 +2213,13 @@ static bool frm_check_name_and_sym(Reader &reader, const bool report_bad_sym)
 
     if (i > ITEM_NAME_LEN)
     {
-        int j;
-        const int k = static_cast<int>(std::strlen(parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE)));
-        char msg_buff[100];
-        std::strcpy(msg_buff, parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE));
-        std::strcat(msg_buff, ":\n   ");
+        std::string msg_buff{parse_error_text(ParseError::FORMULA_NAME_TOO_LARGE)};
+        msg_buff += ":\n   ";
         reader.seek(file_pos);
-        for (j = 0; j < i && j < 25; j++)
+        for (int j = 0; j < i && j < 25; j++)
         {
-            msg_buff[j+k+2] = static_cast<char>(reader.get_char());
+            msg_buff += static_cast<char>(reader.get_char());
         }
-        msg_buff[j+k+2] = static_cast<char>(0);
         stop_msg(StopMsgFlags::FIXED_FONT, msg_buff);
         return false;
     }
