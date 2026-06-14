@@ -53,6 +53,7 @@
 #include <ctime>
 #include <functional>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <tuple>
 #include <vector>
@@ -389,7 +390,8 @@ static ParserState s_parser;
 
 static constexpr std::array<std::string_view, 4> JUMP_LIST{"if", "elseif", "else", "endif"};
 static FormulaEntry s_formula_entry;
-static std::array<ErrorData, 3> s_errors{};
+constexpr int MAX_FORMULA_ERRORS{3};
+static std::array<ErrorData, MAX_FORMULA_ERRORS> s_errors{};
 
 static const std::array<FunctList, 34> FUNC_LIST
 {
@@ -2526,13 +2528,40 @@ void free_work_area()
 
 static void frm_error(Reader &reader, const long begin_frm)
 {
+    constexpr int STOP_MSG_SCREEN_ROWS{25};
+    constexpr int STOP_MSG_SCREEN_COLUMNS{80};
+    constexpr int STOP_MSG_TOP_ROW{4};
+    constexpr int STOP_MSG_LEFT_MARGIN{2};
+    constexpr int STOP_MSG_PROMPT_GAP{2};
+    constexpr int STOP_MSG_MAX_LINES{STOP_MSG_SCREEN_ROWS - STOP_MSG_TOP_ROW - STOP_MSG_PROMPT_GAP};
+    constexpr int STOP_MSG_MAX_COLUMNS{STOP_MSG_SCREEN_COLUMNS - STOP_MSG_LEFT_MARGIN};
+    constexpr int FORMULA_ERROR_TEXT_COLUMNS{74};
+    static_assert(1 + MAX_FORMULA_ERRORS * 3 <= STOP_MSG_MAX_LINES);
+    static_assert(2 + FORMULA_ERROR_TEXT_COLUMNS <= STOP_MSG_MAX_COLUMNS);
+
     Token tok;
     int chars_to_error = 0;
     int chars_in_error = 0;
-    char msg_buff[900];
-    std::strcpy(msg_buff, "\n");
+    int line_count = 0;
+    std::string msg_buff;
+    const auto append_line = [&](const std::string_view line)
+    {
+        if (line_count >= STOP_MSG_MAX_LINES)
+        {
+            return;
+        }
+        if (line_count > 0)
+        {
+            msg_buff += '\n';
+        }
+        const std::string_view clipped{line.substr(0, static_cast<std::size_t>(STOP_MSG_MAX_COLUMNS))};
+        msg_buff.append(clipped.data(), clipped.size());
+        ++line_count;
+    };
 
-    for (int j = 0; j < 3 && s_errors[j].start_pos; j++)
+    append_line("");
+
+    for (int j = 0; j < MAX_FORMULA_ERRORS && s_errors[j].start_pos; j++)
     {
         const bool initialization_error = s_errors[j].error_number == ParseError::SECOND_COLON;
         reader.seek(begin_frm);
@@ -2548,15 +2577,12 @@ static void frm_error(Reader &reader, const long begin_frm)
             {
                 stop_msg("Unexpected EOF or end-of-formula in error function.\n");
                 reader.seek(s_errors[j].error_pos);
-                frm_get_token(reader, &tok); //reset file to end of error token
+                frm_get_token(reader, &tok); // reset file to end of error token
                 return;
             }
         }
-        std::strcat(msg_buff,
-            fmt::format("Error({:d}) at line {:d}:  {:s}\n  ", //
-                +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number))
-                .c_str());
-        int i = static_cast<int>(std::strlen(msg_buff));
+        append_line(fmt::format("Error({:d}) at line {:d}:  {:s}", //
+            +s_errors[j].error_number, line_number, parse_error_text(s_errors[j].error_number)));
         reader.seek(s_errors[j].start_pos);
         int token_count = 0;
         int statement_len = token_count;
@@ -2568,18 +2594,19 @@ static void frm_error(Reader &reader, const long begin_frm)
             {
                 chars_to_error = statement_len;
                 frm_get_token(reader, &tok);
-                chars_in_error = static_cast<int>(std::strlen(tok.str));
+                chars_in_error = static_cast<int>(std::string_view{tok.str}.size());
                 statement_len += chars_in_error;
                 token_count++;
             }
             else
             {
                 frm_get_token(reader, &tok);
-                statement_len += static_cast<int>(std::strlen(tok.str));
+                statement_len += static_cast<int>(std::string_view{tok.str}.size());
                 token_count++;
             }
             if (tok.type == FormulaTokenType::END_OF_FORMULA ||
-                (tok.type == FormulaTokenType::OPERATOR && (tok.id == TokenId::OP_COMMA || tok.id == TokenId::OP_COLON)) ||
+                (tok.type == FormulaTokenType::OPERATOR &&
+                    (tok.id == TokenId::OP_COMMA || tok.id == TokenId::OP_COLON)) ||
                 (tok.type == FormulaTokenType::NOT_A_TOKEN && tok.id == TokenId::END_OF_FILE))
             {
                 done = true;
@@ -2590,12 +2617,12 @@ static void frm_error(Reader &reader, const long begin_frm)
             }
         }
         reader.seek(s_errors[j].start_pos);
-        if (chars_in_error < 74)
+        if (chars_in_error < FORMULA_ERROR_TEXT_COLUMNS)
         {
-            while (chars_to_error + chars_in_error > 74)
+            while (chars_to_error + chars_in_error > FORMULA_ERROR_TEXT_COLUMNS)
             {
                 frm_get_token(reader, &tok);
-                chars_to_error -= static_cast<int>(std::strlen(tok.str));
+                chars_to_error -= static_cast<int>(std::string_view{tok.str}.size());
                 token_count--;
             }
         }
@@ -2605,32 +2632,31 @@ static void frm_error(Reader &reader, const long begin_frm)
             chars_to_error = 0;
             token_count = 1;
         }
-        while (static_cast<int>(std::strlen(&msg_buff[i])) <=74 && token_count--)
+        std::string formula_line;
+        while (formula_line.size() <= static_cast<std::size_t>(FORMULA_ERROR_TEXT_COLUMNS) && token_count--)
         {
             frm_get_token(reader, &tok);
-            std::strcat(msg_buff, tok.str);
+            formula_line += tok.str;
         }
         reader.seek(s_errors[j].error_pos);
         frm_get_token(reader, &tok);
-        if (static_cast<int>(std::strlen(&msg_buff[i])) > 74)
+        if (formula_line.size() > static_cast<std::size_t>(FORMULA_ERROR_TEXT_COLUMNS))
         {
-            msg_buff[i + 74] = static_cast<char>(0);
+            formula_line.resize(static_cast<std::size_t>(FORMULA_ERROR_TEXT_COLUMNS));
         }
-        std::strcat(msg_buff, "\n");
-        i = static_cast<int>(std::strlen(msg_buff));
-        while (chars_to_error-- > -2)
-        {
-            std::strcat(msg_buff, " ");
-        }
+        append_line("  " + formula_line);
+
+        std::string caret_line(static_cast<std::size_t>(std::max(0, chars_to_error + 2)), ' ');
         if (s_errors[j].error_number == ParseError::TOKEN_TOO_LONG)
         {
             chars_in_error = 33;
         }
-        while (chars_in_error-- && static_cast<int>(std::strlen(&msg_buff[i])) <=74)
+        caret_line.append(static_cast<std::size_t>(std::max(0, chars_in_error)), '^');
+        if (caret_line.size() > static_cast<std::size_t>(2 + FORMULA_ERROR_TEXT_COLUMNS))
         {
-            std::strcat(msg_buff, "^");
+            caret_line.resize(static_cast<std::size_t>(2 + FORMULA_ERROR_TEXT_COLUMNS));
         }
-        std::strcat(msg_buff, "\n");
+        append_line(caret_line);
     }
     stop_msg(msg_buff);
 }
