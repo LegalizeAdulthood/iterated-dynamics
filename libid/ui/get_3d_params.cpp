@@ -40,6 +40,7 @@ namespace id::ui
 static bool prompt_3d_mode();
 static bool select_3d_fill_type();
 static bool prompt_3d_geometry();
+static bool needs_light_params();
 static bool get_light_params();
 static bool check_map_file();
 static bool get_funny_glasses_params();
@@ -60,31 +61,36 @@ const std::string GLASSES1_MAP_NAME{"glasses1.map"};
 
 int get_3d_params() // prompt for 3D parameters
 {
-restart_1:
-    if (!prompt_3d_mode())
+    while (true)
     {
-        return -1;
-    }
-
-    if (g_raytrace_format == RayTraceFormat::NONE && !select_3d_fill_type())
-    {
-        goto restart_1;
-    }
-restart_3:
-
-    if (!prompt_3d_geometry())
-    {
-        goto restart_1;
-    }
-
-    if (g_targa_out || illumine() || g_raytrace_format != RayTraceFormat::NONE)
-    {
-        if (get_light_params())
+        if (!prompt_3d_mode())
         {
-            goto restart_3;
+            return -1;
+        }
+
+        if (g_raytrace_format == RayTraceFormat::NONE && !select_3d_fill_type())
+        {
+            continue;
+        }
+
+        while (true)
+        {
+            if (!prompt_3d_geometry())
+            {
+                break;
+            }
+
+            if (!needs_light_params() || !get_light_params())
+            {
+                return 0;
+            }
         }
     }
-    return 0;
+}
+
+static bool needs_light_params()
+{
+    return g_targa_out || illumine() || g_raytrace_format != RayTraceFormat::NONE;
 }
 
 static bool prompt_3d_mode()
