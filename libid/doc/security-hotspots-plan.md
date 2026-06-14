@@ -6,7 +6,7 @@ for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`.
 
-Total hotspots: 265.
+Total hotspots: 264.
 
 Review one work item at a time.  Each `##` heading is one Sonar key
 and one call site.
@@ -41,7 +41,7 @@ current item is active.  Then mark each affected item separately.
 
 # High Probability
 
-Items: 235.
+Items: 234.
 
 ## SH-006
 
@@ -2430,18 +2430,6 @@ Items: 235.
 - Category: `buffer-overflow`
 - Probability: `HIGH`
 - Message: Make sure use of "strcat" is safe here.
-
-## SH-202
-
-- Status: `pending`
-- Key: `AZwwyFNd0qvqV_CtK18m`
-- Rule: `cpp:S5816`
-- Area: `engine-core`
-- Path: `libid/engine/trig_fns.cpp`
-- Line: `130`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strncpy" is safe here.
 
 ## SH-203
 

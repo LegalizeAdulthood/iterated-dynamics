@@ -2158,20 +2158,12 @@ static CmdArgFlags cmd_full_color(const Command &cmd)
 
 static CmdArgFlags cmd_function(const Command &cmd)
 {
-    int k = 0;
-    const char *value = cmd.value;
-    while (*value && k < 4)
+    for (int k = 0; k < cmd.total_params && k < 4; ++k)
     {
-        if (set_trig_array(k++, value))
+        if (set_trig_array(k, cmd.string_val(k)))
         {
             return cmd.bad_arg();
         }
-        value = std::strchr(value, '/');
-        if (value == nullptr)
-        {
-            break;
-        }
-        ++value;
     }
     g_new_bifurcation_functions_loaded = true; // for old bifs
     s_init_functions = true;

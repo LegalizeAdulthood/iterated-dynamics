@@ -79,6 +79,7 @@
 #include <fstream>
 #include <memory>
 #include <sstream>
+#include <string>
 #include <string_view>
 #include <utility>
 #include <vector>
@@ -1892,6 +1893,17 @@ TEST_F(TestParameterCommand, noBoFYes)
 
     EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
     EXPECT_FALSE(g_bof_match_book_images);
+}
+
+TEST_F(TestParameterCommand, setTrigArrayHonorsStringViewLength)
+{
+    ValueSaver saved_trig_index0{g_trig_index[0], TrigFn::IDENT};
+    const std::string storage{"sin-suffix"};
+    const std::string_view name{storage.data(), 3};
+
+    set_trig_array(0, name);
+
+    EXPECT_EQ(TrigFn::SIN, g_trig_index[0]);
 }
 
 TEST_F(TestParameterCommand, functionSin)

@@ -3,6 +3,7 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 
 namespace id::engine
 {
@@ -61,7 +62,7 @@ extern const int             g_num_trig_functions;
 /// return function= parameter form of active functions
 std::string get_function_param();
 void trig_details(char *buf);
-int set_trig_array(int k, const char *name);
+int set_trig_array(int k, std::string_view name);
 void set_trig_pointers(int which);
 void save_trig_functions();
 void restore_trig_functions();

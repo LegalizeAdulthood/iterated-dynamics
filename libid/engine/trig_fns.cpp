@@ -9,12 +9,11 @@
 #include "fractals/parser.h"
 #include "math/arg.h"
 
-#include <config/string_lower.h>
+#include <algos/string_algorithms.h>
 
 #include <cstdio>
 #include <cstring>
 
-using namespace id::config;
 using namespace id::fractals;
 using namespace id::math;
 
@@ -124,22 +123,21 @@ void trig_details(char *buf)
 }
 
 // set array of trig function indices according to "function=" command
-int set_trig_array(const int k, const char *name)
+int set_trig_array(const int k, std::string_view name)
 {
-    char trig_name[10];
-    std::strncpy(trig_name, name, 6);
-    trig_name[6] = 0; // safety first
-
-    if (char *slash = std::strchr(trig_name, '/'); slash != nullptr)
+    if (const std::size_t slash{name.find('/')}; slash != std::string_view::npos)
     {
-        *slash = 0;
+        name = name.substr(0, slash);
     }
-
-    string_lower(trig_name);
+    if (name.size() > 6)
+    {
+        name = name.substr(0, 6);
+    }
+    const std::string trig_name{id::algos::ascii_to_lower_copy(name)};
 
     for (int i = 0; i < g_num_trig_functions; i++)
     {
-        if (std::strcmp(trig_name, g_trig_fn[i].name) == 0)
+        if (trig_name == g_trig_fn[i].name)
         {
             g_trig_index[k] = static_cast<TrigFn>(i);
             set_trig_pointers(k);
