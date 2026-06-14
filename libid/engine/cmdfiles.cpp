@@ -1090,10 +1090,10 @@ static CmdArgFlags cmd_make_par(const Command &cmd)
     }
     std::string par_file{cmd.value};
     std::string entry_name;
-    if (char *slash = std::strchr(cmd.value, '/'); slash != nullptr)
+    if (const std::string::size_type slash{par_file.find_first_of('/')}; slash != std::string::npos)
     {
-        par_file.assign(cmd.value, slash);
-        entry_name.assign(slash + 1);
+        entry_name = par_file.substr(slash + 1);
+        par_file.erase(slash);
     }
 
     g_parameter_file = par_file;
