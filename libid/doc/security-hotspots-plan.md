@@ -41,19 +41,7 @@ current item is active.  Then mark each affected item separately.
 
 # High Probability
 
-Items: 229.
-
-## SH-011
-
-- Status: `pending`
-- Key: `AZwwyE260qvqV_CtK1Si`
-- Rule: `cpp:S5801`
-- Area: `command-input`
-- Path: `libid/fractals/lsystem.cpp`
-- Line: `144`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
+Items: 228.
 
 ## SH-012
 

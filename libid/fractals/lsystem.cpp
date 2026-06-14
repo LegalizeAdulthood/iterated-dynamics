@@ -140,18 +140,15 @@ static LDouble get_number(const char **str)
         (*str)++;
         break;
     }
-    char num_str[30];
-    std::strcpy(num_str, "");
-    int i = 0;
+    const char *const num_start = *str;
     while ((**str <= '9' && **str >= '0') || **str == '.')
     {
-        num_str[i++] = **str;
         (*str)++;
     }
+    const std::string num_str{num_start, *str};
     (*str)--;
-    num_str[i] = 0;
-    LDouble ret = std::atof(num_str);
-    if (ret <= 0.0)   // this is a sanity check
+    LDouble ret = std::atof(num_str.c_str());
+    if (ret <= 0.0) // this is a sanity check
     {
         return 0;
     }
