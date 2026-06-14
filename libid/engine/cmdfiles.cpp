@@ -117,7 +117,6 @@ using namespace id::ui;
 namespace id::engine
 {
 
-static int get_max_cur_arg_len(const char *const float_val_str[], int num_args);
 static CmdArgFlags command_file(std::FILE *handle, CmdFile mode);
 static bool next_line(std::FILE *handle, std::string &line_buf, CmdFile mode);
 static void arg_error(const char *bad_arg);
@@ -1821,8 +1820,12 @@ static CmdArgFlags cmd_corners(const Command &cmd)
 
     s_init_corners = true;
     // good first approx, but dec could be too big
-    if (int dec = get_max_cur_arg_len(cmd.float_val_strs, cmd.total_params) + 1;
-        (dec > DBL_DIG + 1 || g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) &&
+    int dec = 1;
+    for (int k = 0; k < cmd.total_params; ++k)
+    {
+        dec = std::max(dec, static_cast<int>(cmd.string_val(k).size()) + 1);
+    }
+    if ((dec > DBL_DIG + 1 || g_debug_flag == DebugFlags::FORCE_ARBITRARY_PRECISION_MATH) &&
         g_debug_flag != DebugFlags::PREVENT_ARBITRARY_PRECISION_MATH)
     {
         const BFMathType old_bf_math = g_bf_math;
@@ -4245,29 +4248,6 @@ static int get_bf(BigFloat bf, const char *cur_arg)
         str_to_bf(bf, cur_arg);
     }
     return 0;
-}
-
-// Get length of current args
-static int get_cur_arg_len(const char *cur_arg)
-{
-    if (const char *s = std::strchr(cur_arg, '/'); s)
-    {
-        return static_cast<int>(s - cur_arg);
-    }
-
-    return static_cast<int>(std::strlen(cur_arg));
-}
-
-// Get max length of current args
-static int get_max_cur_arg_len(const char *const float_val_str[], const int num_args)
-{
-    int max_str = 0;
-    for (int i = 0; i < num_args; i++)
-    {
-        int tmp = get_cur_arg_len(float_val_str[i]);
-        max_str = std::max(tmp, max_str);
-    }
-    return max_str;
 }
 
 static std::string to_string(CmdFile value)
