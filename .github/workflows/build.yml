@@ -13,9 +13,6 @@ permissions:
   contents: write
   packages: write
 
-env:
-  FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
-
 jobs:
   #############################################################################
   ascii-doc:
@@ -28,29 +25,15 @@ jobs:
         fetch-depth: 0
         submodules: true
 
-    - name: Install System Dependencies for building AsciiDoc
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
-        echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
-        sudo dpkg-reconfigure man-db
-        sudo apt-get update
-        sudo apt-get install --no-install-recommends -y mono-complete
-
-    - name: Add NuGet sources
-      shell: bash
-      run: |
-        mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-          sources add \
-          -Source "${{env.FEED_URL}}" \
-          -StorePasswordInClearText \
-          -Name GitHubPackages \
-          -UserName "${{github.repository_owner}}" \
-          -Password "${{github.token}}"
-        mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-          setapikey "${{github.token}}" \
-          -Source "${{env.FEED_URL}}"
+    - name: Setup vcpkg package cache
+      id: vc
+      uses: LegalizeAdulthood/vcpkg-github-cache@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      with:
+        token: ${{github.token}}
+        bootstrap: "true"
+        install-nuget: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Setup ruby
       uses: ruby/setup-ruby@v1
@@ -68,11 +51,25 @@ jobs:
         cmake-version: '3.31'
 
     - name: Run Workflow
-      env: 
-        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+      shell: pwsh
       run: |
         cmake --version
-        cmake --workflow --preset ci-ascii-doc
+        cmake --workflow --preset ci-ascii-doc 2>&1 |
+          Tee-Object -FilePath build.log
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
+
+    - name: Analyze vcpkg package cache
+      if: always()
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      with:
+        token: ${{github.token}}
+        build-log: build.log
+        artifact-name: vcpkg-cache-diagnostics-${{github.job}}
+        fail-on: "never"
+        debug: "false"
+        trace: "false"
 
     - name: Copy images for AsciiDoc artifact
       run: |
@@ -281,13 +278,6 @@ jobs:
         preset: [ debug, release ]
         # macos-latest is disabled for now
         os: [ ubuntu-latest, windows-2022 ]
-        include:
-          #- os: macos-latest
-          #  nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
-          - os: ubuntu-latest
-            nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
-          - os: windows-2022
-            nuget: nuget
 
     runs-on: ${{matrix.os}}
 
@@ -322,261 +312,56 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
         echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
         sudo dpkg-reconfigure man-db
         sudo apt-get update
-        sudo apt-get install --no-install-recommends -y mono-complete libx11-dev xauth xvfb
-
-    #- name: Install Prerequisites macOS
-    #  if: ${{matrix.os == 'macos-latest'}}
-    #  shell: bash
-    #  run: |
-    #    ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
-
-    - name: Add NuGet sources
-      shell: bash
-      run: |
-        ${{matrix.nuget}} \
-          sources add \
-          -Source "${{env.FEED_URL}}" \
-          -StorePasswordInClearText \
-          -Name GitHubPackages \
-          -UserName "${{github.repository_owner}}" \
-          -Password "${{github.token}}"
-        ${{matrix.nuget}} \
-          setapikey "${{github.token}}" \
-          -Source "${{env.FEED_URL}}"
+        sudo apt-get install --no-install-recommends -y libx11-dev xauth xvfb
 
     - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
         cmake-version: '3.31'
 
-    - name: Bootstrap vcpkg Windows
-      if: ${{matrix.os == 'windows-2022'}}
-      shell: cmd
-      run: call "${{github.workspace}}\vcpkg\bootstrap-vcpkg.bat"
-
-    - name: Inspect NuGet binary cache setup Windows
-      if: ${{matrix.os == 'windows-2022'}}
-      shell: cmd
-      env:
-        TOKEN: ${{github.token}}
-      run: |
-        @echo off
-        echo runner os: %RUNNER_OS%
-        echo image os: %ImageOS%
-        echo image version: %ImageVersion%
-        echo github event: ${{github.event_name}}
-        echo github repository: ${{github.repository}}
-        echo github ref: ${{github.ref}}
-        echo package feed: %FEED_URL%
-        if "%TOKEN%"=="" (
-          echo GITHUB_TOKEN: empty
-        ) else (
-          echo GITHUB_TOKEN: present
-        )
-        echo.
-        echo cmake from PATH:
-        where cmake
-        cmake --version
-        echo.
-        echo vcpkg submodule:
-        git submodule status vcpkg
-        if not exist vcpkg\vcpkg.exe (
-          echo vcpkg\vcpkg.exe not found
-          goto after_vcpkg_tool
-        )
-        vcpkg\vcpkg.exe version
-        echo.
-        echo nuget from PATH:
-        where nuget
-        nuget help | findstr /I /C:"NuGet Version"
-        echo.
-        echo nuget used by vcpkg:
-        for /f "usebackq delims=" %%i in (`vcpkg\vcpkg.exe fetch nuget`) do set VCPKG_NUGET=%%i
-        echo %VCPKG_NUGET%
-        if "%VCPKG_NUGET%"=="" (
-          echo vcpkg nuget path not found
-          goto after_vcpkg_tool
-        )
-        "%VCPKG_NUGET%" help | findstr /I /C:"NuGet Version"
-        echo.
-        echo nuget locals from PATH nuget:
-        nuget locals all -list
-        echo.
-        echo nuget locals from vcpkg nuget:
-        "%VCPKG_NUGET%" locals all -list
-        echo.
-        echo sources from PATH nuget:
-        nuget sources list -Format Detailed
-        echo.
-        echo sources from vcpkg nuget:
-        "%VCPKG_NUGET%" sources list -Format Detailed
-        echo.
-        :after_vcpkg_tool
-        echo sanitized NuGet config files:
-        if exist "%APPDATA%\NuGet\NuGet.Config" (
-          echo %APPDATA%\NuGet\NuGet.Config
-          findstr /V /I /C:"Password" /C:"apikey" "%APPDATA%\NuGet\NuGet.Config"
-        )
-        if exist "%USERPROFILE%\.nuget\NuGet\NuGet.Config" (
-          echo %USERPROFILE%\.nuget\NuGet\NuGet.Config
-          findstr /V /I /C:"Password" /C:"apikey" "%USERPROFILE%\.nuget\NuGet\NuGet.Config"
-        )
-        echo.
-        echo feed probe with basic auth:
-        curl.exe -sS -D "%RUNNER_TEMP%\feed-basic-headers.txt" -o "%RUNNER_TEMP%\feed-basic.json" -w "feed basic http status: %%{http_code}\n" -u "${{github.repository_owner}}:%TOKEN%" "%FEED_URL%"
-        if exist "%RUNNER_TEMP%\feed-basic-headers.txt" type "%RUNNER_TEMP%\feed-basic-headers.txt"
-        if exist "%RUNNER_TEMP%\feed-basic.json" for %%F in ("%RUNNER_TEMP%\feed-basic.json") do echo feed basic bytes: %%~zF
-        echo.
-        echo feed probe with bearer auth:
-        curl.exe -sS -D "%RUNNER_TEMP%\feed-bearer-headers.txt" -o "%RUNNER_TEMP%\feed-bearer.json" -w "feed bearer http status: %%{http_code}\n" -H "Authorization: Bearer %TOKEN%" "%FEED_URL%"
-        if exist "%RUNNER_TEMP%\feed-bearer-headers.txt" type "%RUNNER_TEMP%\feed-bearer-headers.txt"
-        if exist "%RUNNER_TEMP%\feed-bearer.json" for %%F in ("%RUNNER_TEMP%\feed-bearer.json") do echo feed bearer bytes: %%~zF
-        exit /b 0
-
-    - name: Inspect NuGet binary cache setup Linux
-      if: ${{matrix.os == 'ubuntu-latest'}}
-      shell: bash
-      env:
-        TOKEN: ${{github.token}}
-      run: |
-        echo "runner os: ${RUNNER_OS}"
-        echo "image os: ${ImageOS:-}"
-        echo "image version: ${ImageVersion:-}"
-        echo "github event: ${{github.event_name}}"
-        echo "github repository: ${{github.repository}}"
-        echo "github ref: ${{github.ref}}"
-        echo "package feed: ${FEED_URL}"
-        if [ -z "${TOKEN}" ]; then
-          echo "GITHUB_TOKEN: empty"
-        else
-          echo "GITHUB_TOKEN: present"
-        fi
-        echo
-        echo "cmake from PATH:"
-        command -v cmake || true
-        cmake --version || true
-        echo
-        echo "vcpkg submodule:"
-        git submodule status vcpkg || true
-        ./vcpkg/vcpkg version || true
-        echo
-        echo "nuget used by vcpkg:"
-        vcpkg_nuget="$(./vcpkg/vcpkg fetch nuget | tail -n 1)"
-        echo "${vcpkg_nuget}"
-        mono "${vcpkg_nuget}" help | grep -i "NuGet Version" || true
-        echo
-        echo "nuget locals from vcpkg nuget:"
-        mono "${vcpkg_nuget}" locals all -list || true
-        echo
-        echo "sources from vcpkg nuget:"
-        mono "${vcpkg_nuget}" sources list -Format Detailed || true
-        echo
-        echo "sanitized NuGet config files:"
-        for config in \
-          "${HOME}/.config/NuGet/NuGet.Config" \
-          "${HOME}/.nuget/NuGet/NuGet.Config"; do
-          if [ -f "${config}" ]; then
-            echo "${config}"
-            sed -E '/password|apikey/I d' "${config}" || true
-          fi
-        done
-        echo
-        echo "feed probe with basic auth:"
-        curl -sS -D "${RUNNER_TEMP}/feed-basic-headers.txt" -o "${RUNNER_TEMP}/feed-basic.json" -w "feed basic http status: %{http_code}\n" -u "${{github.repository_owner}}:${TOKEN}" "${FEED_URL}" || true
-        cat "${RUNNER_TEMP}/feed-basic-headers.txt" || true
-        if [ -f "${RUNNER_TEMP}/feed-basic.json" ]; then
-          wc -c "${RUNNER_TEMP}/feed-basic.json"
-        fi
-        echo
-        echo "feed probe with bearer auth:"
-        curl -sS -D "${RUNNER_TEMP}/feed-bearer-headers.txt" -o "${RUNNER_TEMP}/feed-bearer.json" -w "feed bearer http status: %{http_code}\n" -H "Authorization: Bearer ${TOKEN}" "${FEED_URL}" || true
-        cat "${RUNNER_TEMP}/feed-bearer-headers.txt" || true
-        if [ -f "${RUNNER_TEMP}/feed-bearer.json" ]; then
-          wc -c "${RUNNER_TEMP}/feed-bearer.json"
-        fi
+    - name: Setup vcpkg package cache
+      id: vc
+      uses: LegalizeAdulthood/vcpkg-github-cache@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      with:
+        token: ${{github.token}}
+        bootstrap: "true"
+        install-nuget: "true"
+        debug: "false"
+        trace: "false"
 
     - name: Run Workflow Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
-      env:
-        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
-      run: xvfb-run -a cmake --workflow --preset ci-${{matrix.preset}}
+      shell: pwsh
+      run: |
+        xvfb-run -a cmake --workflow --preset ci-${{matrix.preset}} 2>&1 |
+          Tee-Object -FilePath build.log
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
 
     - name: Run Workflow
       if: ${{matrix.os != 'ubuntu-latest'}}
-      env: 
-        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
-      run: cmake --workflow --preset ci-${{matrix.preset}}
-
-    - name: Dump vcpkg NuGet artifacts Windows
-      if: ${{always() && matrix.os == 'windows-2022'}}
-      shell: cmd
+      shell: pwsh
       run: |
-        @echo off
-        echo packages.config files under workspace:
-        set VCPKG_NUGET=
-        if exist vcpkg\vcpkg.exe (
-          for /f "usebackq delims=" %%i in (`vcpkg\vcpkg.exe fetch nuget`) do set VCPKG_NUGET=%%i
-        )
-        if "%VCPKG_NUGET%"=="" set VCPKG_NUGET=nuget
-        for /f "delims=" %%F in ('where /r . packages.config 2^>NUL') do (
-          echo --- %%F
-          type "%%F"
-          echo restore probe for %%F
-          "%VCPKG_NUGET%" restore "%%F" -Source "%FEED_URL%" -NonInteractive -Verbosity detailed -PackagesDirectory "%RUNNER_TEMP%\vcpkg-restore-probe" -NoCache
-        )
-        echo.
-        echo nupkg files under workspace:
-        for /f "delims=" %%F in ('where /r . *.nupkg 2^>NUL') do echo %%F
-        echo.
-        echo nuspec files under workspace:
-        for /f "delims=" %%F in ('where /r . *.nuspec 2^>NUL') do echo %%F
-        echo.
-        echo vcpkg ABI info files under workspace:
-        for /f "delims=" %%F in ('where /r . vcpkg_abi_info.txt 2^>NUL') do (
-          echo --- %%F
-          type "%%F"
-        )
-        echo.
-        echo NuGet related lines from workspace logs:
-        for /f "delims=" %%F in ('where /r . *.log 2^>NUL') do (
-          findstr /I /C:"NuGet" /C:"Pushing" /C:"Authentication" /C:"Unauthorized" /C:"Forbidden" /C:"failed" "%%F"
-        )
-        exit /b 0
+        cmake --workflow --preset ci-${{matrix.preset}} 2>&1 |
+          Tee-Object -FilePath build.log
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
 
-    - name: Dump vcpkg NuGet artifacts Linux
-      if: ${{always() && matrix.os == 'ubuntu-latest'}}
-      shell: bash
-      run: |
-        echo "packages.config files under workspace:"
-        vcpkg_nuget=""
-        if [ -x ./vcpkg/vcpkg ]; then
-          vcpkg_nuget="$(./vcpkg/vcpkg fetch nuget | tail -n 1)"
-        fi
-        find . -name packages.config -print -exec cat {} \; || true
-        find . -name packages.config -print0 | while IFS= read -r -d '' config; do
-          echo "restore probe for ${config}"
-          if [ -n "${vcpkg_nuget}" ]; then
-            mono "${vcpkg_nuget}" restore "${config}" -Source "${FEED_URL}" -NonInteractive -Verbosity detailed -PackagesDirectory "${RUNNER_TEMP}/vcpkg-restore-probe" -NoCache || true
-          else
-            echo "restore probe skipped; vcpkg nuget path not found"
-          fi
-        done
-        echo
-        echo "nupkg files under workspace:"
-        find . -name '*.nupkg' -print || true
-        echo
-        echo "nuspec files under workspace:"
-        find . -name '*.nuspec' -print || true
-        echo
-        echo "vcpkg ABI info files under workspace:"
-        find . -name vcpkg_abi_info.txt -print -exec cat {} \; || true
-        echo
-        echo "NuGet related lines from workspace logs:"
-        find . -name '*.log' -exec grep -HInE 'NuGet|Pushing|Authentication|Unauthorized|Forbidden|failed' {} + || true
+    - name: Analyze vcpkg package cache
+      if: always()
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      with:
+        token: ${{github.token}}
+        build-log: build.log
+        artifact-name: vcpkg-cache-diagnostics-${{github.job}}-${{matrix.os}}-${{matrix.preset}}
+        fail-on: "never"
+        debug: "false"
+        trace: "false"
 
     - name: Build Setup package
       if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
@@ -622,6 +407,7 @@ jobs:
         if-no-files-found: error
         compression-level: 0
 
+  #############################################################################
   # When a tag is pushed, create a draft release from the build assets
   release:
     if: ${{github.event_name == 'push' && github.ref_type == 'tag'}}
@@ -691,13 +477,6 @@ jobs:
         preset: [ wx-debug, wx-release ]
         # macos-latest is disabled for now
         os: [ ubuntu-latest, windows-2022 ]
-        include:
-          #- os: macos-latest
-          #  nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
-          - os: ubuntu-latest
-            nuget: mono `./vcpkg/vcpkg fetch nuget | tail -n 1`
-          - os: windows-2022
-            nuget: nuget
 
     runs-on: ${{matrix.os}}
 
@@ -732,41 +511,45 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
         echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
         sudo dpkg-reconfigure man-db
         sudo apt-get update
         sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install 
-
-    #- name: Install Prerequisites macOS
-    #  if: ${{matrix.os == 'macos-latest'}}
-    #  shell: bash
-    #  run: |
-    # ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
-
-    - name: Add NuGet sources
-      shell: bash
-      run: |
-        ${{matrix.nuget}} \
-          sources add \
-          -Source "${{env.FEED_URL}}" \
-          -StorePasswordInClearText \
-          -Name GitHubPackages \
-          -UserName "${{github.repository_owner}}" \
-          -Password "${{github.token}}"
-        ${{matrix.nuget}} \
-          setapikey "${{github.token}}" \
-          -Source "${{env.FEED_URL}}"
 
     - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
         cmake-version: '3.31'
 
+    - name: Setup vcpkg package cache
+      id: vc
+      uses: LegalizeAdulthood/vcpkg-github-cache@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      with:
+        token: ${{github.token}}
+        bootstrap: "true"
+        install-nuget: "true"
+        debug: "false"
+        trace: "false"
+
     - name: Run Workflow
-      env: 
-        VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
-      run: cmake --workflow --preset ci-${{matrix.preset}}
+      shell: pwsh
+      run: |
+        cmake --workflow --preset ci-${{matrix.preset}} 2>&1 |
+          Tee-Object -FilePath build.log
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
+
+    - name: Analyze vcpkg package cache
+      if: always()
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      with:
+        token: ${{github.token}}
+        build-log: build.log
+        artifact-name: vcpkg-cache-diagnostics-${{github.job}}-${{matrix.os}}-${{matrix.preset}}
+        fail-on: "never"
+        debug: "false"
+        trace: "false"
 
     - name: Build Setup package
       if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
