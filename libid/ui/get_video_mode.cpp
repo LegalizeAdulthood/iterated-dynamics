@@ -520,40 +520,45 @@ int get_video_mode(FractalInfo *info, ExtBlock3 *blk_3_info)
     return 0;
 }
 
+static std::string video_choice_error_flags(const unsigned flags)
+{
+    std::string result;
+    result.reserve(7);
+    if (flags & (VI_VIEW_SMALLER | VI_COLORS_SMALLER | VI_BAD_ASPECT))
+    {
+        result += '*';
+    }
+    if (flags & VI_DISK)
+    {
+        result += 'D';
+    }
+    if (flags & VI_VIEW_SMALLER)
+    {
+        result += 'R';
+    }
+    if (flags & VI_COLORS_SMALLER)
+    {
+        result += 'C';
+    }
+    if (flags & VI_BAD_ASPECT)
+    {
+        result += 'A';
+    }
+    if (flags & VI_VIEW_BIGGER)
+    {
+        result += 'v';
+    }
+    if (flags & VI_COLORS_BIGGER)
+    {
+        result += 'c';
+    }
+    return result;
+}
+
 static void format_item(const int choice, char *buf)
 {
-    char err_buf[10];
-    err_buf[0] = 0;
-    const unsigned tmp_flags = s_video_choices[choice].flags;
-    if (tmp_flags & VI_VIEW_SMALLER + VI_COLORS_SMALLER + VI_BAD_ASPECT)
-    {
-        std::strcat(err_buf, "*");
-    }
-    if (tmp_flags & VI_DISK)
-    {
-        std::strcat(err_buf, "D");
-    }
-    if (tmp_flags & VI_VIEW_SMALLER)
-    {
-        std::strcat(err_buf, "R");
-    }
-    if (tmp_flags & VI_COLORS_SMALLER)
-    {
-        std::strcat(err_buf, "C");
-    }
-    if (tmp_flags & VI_BAD_ASPECT)
-    {
-        std::strcat(err_buf, "A");
-    }
-    if (tmp_flags & VI_VIEW_BIGGER)
-    {
-        std::strcat(err_buf, "v");
-    }
-    if (tmp_flags & VI_COLORS_BIGGER)
-    {
-        std::strcat(err_buf, "c");
-    }
-    format_video_choice(s_video_choices[choice].entry_num, err_buf, buf);
+    const std::string err{video_choice_error_flags(s_video_choices[choice].flags)};
+    format_video_choice(s_video_choices[choice].entry_num, err.c_str(), buf);
 }
 
 static int check_mode_key(const int key, int /*choice*/)
