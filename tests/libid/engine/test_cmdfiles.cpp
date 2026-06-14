@@ -2889,6 +2889,31 @@ TEST_F(TestParameterCommand, cornersFourValues)
     EXPECT_EQ(4.0, g_image_region.m_max.y);
 }
 
+TEST_F(TestParameterCommand, cornersLongValueSelectsBigFloatPrecision)
+{
+    constexpr std::string_view x_min{"1.23456789012345678901"};
+    constexpr int expected_decimals = static_cast<int>(x_min.size()) + 1;
+    ValueSaver saved_fractal_type{g_fractal_type, FractalType::MANDEL};
+    ValueSaver saved_bf_digits{g_bf_digits, 0};
+    ValueSaver saved_bf_math{g_bf_math, BFMathType::NONE};
+    ValueSaver saved_decimals{g_decimals, 0};
+    ValueSaver saved_debug_flag{g_debug_flag, DebugFlags::NONE};
+    ValueSaver saved_use_center_mag{g_use_center_mag, true};
+    ValueSaver saved_x_min{g_image_region.m_min.x, 111.0};
+    ValueSaver saved_x_3rd{g_image_region.m_3rd.x, 222.0};
+    ValueSaver saved_x_max{g_image_region.m_max.x, 333.0};
+    ValueSaver saved_y_min{g_image_region.m_min.y, 444.0};
+    ValueSaver saved_y_3rd{g_image_region.m_3rd.y, 555.0};
+    ValueSaver saved_y_max{g_image_region.m_max.y, 666.0};
+
+    exec_cmd_arg("corners=" + std::string{x_min} + "/2/3/4");
+
+    EXPECT_EQ(CmdArgFlags::FRACTAL_PARAM, m_result);
+    EXPECT_EQ(BFMathType::BIG_NUM, g_bf_math);
+    EXPECT_EQ(expected_decimals, g_decimals);
+    EXPECT_FALSE(g_use_center_mag);
+}
+
 TEST_F(TestParameterCommand, cornersSixValues)
 {
     ValueSaver saved_use_center_mag{g_use_center_mag, true};
