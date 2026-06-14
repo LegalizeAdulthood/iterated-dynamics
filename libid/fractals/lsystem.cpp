@@ -53,6 +53,8 @@ enum
 {
     MAX_LSYS_LINE_LEN = 255 // this limits line length to 255
 };
+constexpr int MAX_LSYS_ERROR_LINES = 6;
+constexpr std::size_t MAX_LSYS_ERROR_LINE_LEN = 80;
 
 struct LSysTurtleState
 {
@@ -186,10 +188,23 @@ static bool read_lsystem_file(const char *str)
 
     g_max_angle = 0;
     int rul_ind = 0;
-    char msg_buff[6 * 80 + 1]{};                                // enough for 6 full lines
-    const auto append_error = [&](const std::string &s)
+    std::string msg_buff;
+    const auto append_error = [&](std::string s)
     {
-        std::strcat(msg_buff, s.c_str());
+        if (err >= MAX_LSYS_ERROR_LINES)
+        {
+            return;
+        }
+        if (!s.empty() && s.back() == '\n')
+        {
+            s.pop_back();
+        }
+        if (s.size() > MAX_LSYS_ERROR_LINE_LEN)
+        {
+            s.resize(MAX_LSYS_ERROR_LINE_LEN);
+        }
+        msg_buff += s;
+        msg_buff += '\n';
         ++err;
     };
 
@@ -287,7 +302,7 @@ static bool read_lsystem_file(const char *str)
     }
     if (err)
     {
-        msg_buff[std::strlen(msg_buff)-1] = 0; // strip trailing \n
+        msg_buff.pop_back(); // strip trailing \n
         stop_msg(msg_buff);
         return true;
     }
