@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 79.
+Total hotspots: 73.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,7 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 63.
+Items: 57.
 
 ## SH-199
 
@@ -458,115 +458,6 @@ Items: 63.
 - Updated: `2026-02-06T02:20:33+0000`
 - Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
-
-## SH-170
-
-- Status: `pending`
-- Key: `AZwwyFQy0qvqV_CtK2Bs`
-- Rule: `cpp:S5801`
-- Area: `math-number-format`
-- Path: `libid/math/bigflt.cpp`
-- Line: `174`
-- Range: `174:8-174:19`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-171
-
-- Status: `pending`
-- Key: `AZwwyFQy0qvqV_CtK2Bu`
-- Rule: `cpp:S5801`
-- Area: `math-number-format`
-- Path: `libid/math/bigflt.cpp`
-- Line: `199`
-- Range: `199:8-199:19`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-172
-
-- Status: `pending`
-- Key: `AZwwyFQy0qvqV_CtK2Bw`
-- Rule: `cpp:S5801`
-- Area: `math-number-format`
-- Path: `libid/math/bigflt.cpp`
-- Line: `216`
-- Range: `216:8-216:19`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-173
-
-- Status: `pending`
-- Key: `AZwwyFQy0qvqV_CtK2DE`
-- Rule: `cpp:S5801`
-- Area: `math-number-format`
-- Path: `libid/math/bigflt.cpp`
-- Line: `2255`
-- Range: `2255:8-2255:19`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-174
-
-- Status: `pending`
-- Key: `AZwwyFQy0qvqV_CtK2DF`
-- Rule: `cpp:S6069`
-- Area: `math-number-format`
-- Path: `libid/math/bigflt.cpp`
-- Line: `2293`
-- Range: `2293:4-2293:16`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2019-03-18T14:49:28+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "sprintf" function is safe here or replace it
-  with a call to "snprintf".
-
-## SH-175
-
-- Status: `pending`
-- Key: `AZwwyFQy0qvqV_CtK2DG`
-- Rule: `cpp:S5801`
-- Area: `math-number-format`
-- Path: `libid/math/bigflt.cpp`
-- Line: `2305`
-- Range: `2305:8-2305:19`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
 
 ## SH-176
 

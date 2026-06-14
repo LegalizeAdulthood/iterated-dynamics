@@ -14,12 +14,23 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <cstdlib>
 #include <cstring>
 #include <string>
-#include <vector>
 
 using namespace id::misc;
 
 namespace id::math
 {
+
+namespace
+{
+
+char *copy_to_buffer(char *s, const std::string &text);
+std::string unsafe_bf_to_string(BigFloat r, int dec);
+std::string unsafe_bf_to_string_e(BigFloat r, int dec);
+std::string unsafe_bf_to_string_f(BigFloat r, int dec);
+std::string bf10_to_string_e(BigFloat10 n, int dec);
+std::string bf10_to_string_f(BigFloat10 n, int dec);
+
+} // namespace
 
 /********************************************************************/
 // bf_hexdump() - for debugging, dumps to stdout
@@ -168,61 +179,89 @@ int strlen_needed_bf()
 // USES: g_bf_tmp1 - g_bf_tmp2
 /********************************************************************/
 
-char *unsafe_bf_to_str(char *s, BigFloat r, const int dec)
+namespace
+{
+
+char *copy_to_buffer(char *s, const std::string &text)
+{
+    text.copy(s, text.length());
+    s[text.length()] = '\0';
+    return s;
+}
+
+std::string unsafe_bf_to_string(BigFloat r, const int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
     {
-        std::strcpy(s, "0.0");
-        return s;
+        return "0.0";
     }
 
     copy_bf(g_bf_tmp1, r);
     unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
     int power = static_cast<S16>(BIG_ACCESS16(g_bf10_tmp + dec + 2)); // where the exponent is stored
-    if (power > -4 && power < 6)   // tinker with this
+    if (power > -4 && power < 6)                                      // tinker with this
     {
-        bf10_to_str_f(s, g_bf10_tmp, dec);
+        return bf10_to_string_f(g_bf10_tmp, dec);
     }
-    else
-    {
-        bf10_to_str_e(s, g_bf10_tmp, dec);
-    }
-    return s;
+    return bf10_to_string_e(g_bf10_tmp, dec);
+}
+
+} // namespace
+
+char *unsafe_bf_to_str(char *s, BigFloat r, const int dec)
+{
+    return copy_to_buffer(s, unsafe_bf_to_string(r, dec));
 }
 
 /********************************************************************/
 // the e version puts it in scientific notation, (like printf's %e)
-char *unsafe_bf_to_str_e(char *s, BigFloat r, const int dec)
+namespace
+{
+
+std::string unsafe_bf_to_string_e(BigFloat r, const int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
     {
-        std::strcpy(s, "0.0");
-        return s;
+        return "0.0";
     }
 
     copy_bf(g_bf_tmp1, r);
     unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
-    bf10_to_str_e(s, g_bf10_tmp, dec);
-    return s;
+    return bf10_to_string_e(g_bf10_tmp, dec);
+}
+
+} // namespace
+
+char *unsafe_bf_to_str_e(char *s, BigFloat r, const int dec)
+{
+    return copy_to_buffer(s, unsafe_bf_to_string_e(r, dec));
 }
 
 /********************************************************************/
 // the f version puts it in decimal notation, (like printf's %f)
-char *unsafe_bf_to_str_f(char *s, BigFloat r, const int dec)
+namespace
+{
+
+std::string unsafe_bf_to_string_f(BigFloat r, const int dec)
 {
     LDouble value = bf_to_float(r);
     if (value == 0.0)
     {
-        std::strcpy(s, "0.0");
-        return s;
+        return "0.0";
     }
 
     copy_bf(g_bf_tmp1, r);
     unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
-    bf10_to_str_f(s, g_bf10_tmp, dec);
-    return s;
+    return bf10_to_string_f(g_bf10_tmp, dec);
+}
+
+} // namespace
+
+char *unsafe_bf_to_str_f(char *s, BigFloat r, const int dec)
+{
+    return copy_to_buffer(s, unsafe_bf_to_string_f(r, dec));
 }
 
 /*********************************************************************/
@@ -1186,25 +1225,22 @@ char *bf_to_str_f(char *s, BigFloat r, const int dec)
 /**********************************************************************/
 std::string bf_to_string(BigFloat r, const int dec)
 {
-    std::vector<char> text(strlen_needed_bf());
-    bf_to_str(text.data(), r, dec);
-    return text.data();
+    copy_bf(g_bf_tmp_copy1, r);
+    return unsafe_bf_to_string(g_bf_tmp_copy1, dec);
 }
 
 /**********************************************************************/
 std::string bf_to_string_e(BigFloat r, const int dec)
 {
-    std::vector<char> text(strlen_needed_bf());
-    bf_to_str_e(text.data(), r, dec);
-    return text.data();
+    copy_bf(g_bf_tmp_copy1, r);
+    return unsafe_bf_to_string_e(g_bf_tmp_copy1, dec);
 }
 
 /**********************************************************************/
 std::string bf_to_string_f(BigFloat r, const int dec)
 {
-    std::vector<char> text(strlen_needed_bf());
-    bf_to_str_f(text.data(), r, dec);
-    return text.data();
+    copy_bf(g_bf_tmp_copy1, r);
+    return unsafe_bf_to_string_f(g_bf_tmp_copy1, dec);
 }
 
 /**********************************************************************/
@@ -2274,121 +2310,150 @@ BigFloat10 div_a_bf10_int(BigFloat10 r, const int dec, const U16 n)
 // Takes a bf10 number and converts it to an ascii string, sci. notation
 // dec - number of decimals, not including the one extra for rounding
 
-char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
+namespace
+{
+
+std::string bf10_to_string_e(BigFloat10 n, int dec)
 {
     if (n[1] == 0)
     {
-        std::strcpy(s, "0.0");
-        return s;
+        return "0.0";
     }
 
     if (dec == 0)
     {
         dec = g_decimals;
     }
-    dec++;  // one extra byte for rounding
+    dec++; // one extra byte for rounding
     BigFloat10 power10 = n + dec + 1;
     const int p = static_cast<S16>(BIG_ACCESS16(power10));
 
     // if p is negative, it is not necessary to show all the decimal places
-    if (p < 0 && dec > 8) // 8 sounds like a reasonable value
+    if (p < 0 && dec > 8)       // 8 sounds like a reasonable value
     {
         dec = dec + p;
         dec = std::max(dec, 8); // let's keep at least a few
     }
 
-    if (n[0] == 1)   // sign flag
+    std::string text;
+    if (n[0] == 1) // sign flag
     {
-        *s++ = '-';
+        text.push_back('-');
     }
-    *s++ = static_cast<char>(n[1] + '0');
-    *s++ = '.';
+    text.push_back(static_cast<char>(n[1] + '0'));
+    text.push_back('.');
     for (int d = 2; d <= dec; d++)
     {
-        *s++ = static_cast<char>(n[d] + '0');
+        text.push_back(static_cast<char>(n[d] + '0'));
     }
     // clean up trailing 0's
-    while (*(s-1) == '0')
+    while (text.back() == '0')
     {
-        s--;
+        text.pop_back();
     }
-    if (*(s-1) == '.')   // put at least one 0 after the decimal
+    if (text.back() == '.') // put at least one 0 after the decimal
     {
-        *s++ = '0';
+        text.push_back('0');
     }
-    std::sprintf(s, "e%d", p);
-    return s;
+    text.push_back('e');
+    text += std::to_string(p);
+    return text;
+}
+
+} // namespace
+
+char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
+{
+    const std::string text{bf10_to_string_e(n, dec)};
+    copy_to_buffer(s, text);
+    const std::size_t exponent = text.find('e');
+    return exponent == std::string::npos ? s : s + exponent;
 }
 
 /****************************************************************************/
 // bf10tostr_f()
 // Takes a bf10 number and converts it to an ascii string, decimal notation
 
-char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
+namespace
+{
+
+std::string bf10_to_string_f(BigFloat10 n, int dec)
 {
     if (n[1] == 0)
     {
-        std::strcpy(s, "0.0");
-        return s;
+        return "0.0";
     }
 
     if (dec == 0)
     {
         dec = g_decimals;
     }
-    dec++;  // one extra byte for rounding
+    dec++; // one extra byte for rounding
     BigFloat10 power10 = n + dec + 1;
     const int p = static_cast<S16>(BIG_ACCESS16(power10));
 
     // if p is negative, it is not necessary to show all the decimal places
-    if (p < 0 && dec > 8) // 8 sounds like a reasonable value
+    if (p < 0 && dec > 8)       // 8 sounds like a reasonable value
     {
         dec = dec + p;
         dec = std::max(dec, 8); // let's keep at least a few
     }
 
-    if (n[0] == 1)   // sign flag
+    std::string text;
+    if (n[0] == 1) // sign flag
     {
-        *s++ = '-';
+        text.push_back('-');
     }
     if (p >= 0)
     {
         int d;
-        for (d = 1; d <= p+1; d++)
+        for (d = 1; d <= p + 1; d++)
         {
-            *s++ = static_cast<char>(n[d] + '0');
+            text.push_back(static_cast<char>(n[d] + '0'));
         }
-        *s++ = '.';
+        text.push_back('.');
         for (; d <= dec; d++)
         {
-            *s++ = static_cast<char>(n[d] + '0');
+            text.push_back(static_cast<char>(n[d] + '0'));
         }
     }
     else
     {
-        *s++ = '0';
-        *s++ = '.';
-        for (int d = 0; d > p+1; d--)
+        text.push_back('0');
+        text.push_back('.');
+        for (int d = 0; d > p + 1; d--)
         {
-            *s++ = '0';
+            text.push_back('0');
         }
         for (int d = 1; d <= dec; d++)
         {
-            *s++ = static_cast<char>(n[d] + '0');
+            text.push_back(static_cast<char>(n[d] + '0'));
         }
     }
 
     // clean up trailing 0's
-    while (*(s-1) == '0')
+    while (text.back() == '0')
     {
-        s--;
+        text.pop_back();
     }
-    if (*(s-1) == '.')   // put at least one 0 after the decimal
+    if (text.back() == '.') // put at least one 0 after the decimal
     {
-        *s++ = '0';
+        text.push_back('0');
     }
-    *s = '\0'; // terminating nul
-    return s;
+    return text;
+}
+
+} // namespace
+
+char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
+{
+    const std::string text{bf10_to_string_f(n, dec)};
+    copy_to_buffer(s, text);
+    if (text == "0.0")
+    {
+        return s;
+    }
+    return s + text.length();
 }
 
 } // namespace id::math
