@@ -131,7 +131,6 @@ add_library(libid
     include/io/gif_extensions.h
     include/io/gif_file.h io/gif_file.cpp
     include/io/has_ext.h
-    include/io/is_directory.h
     include/io/is_writeable.h
     include/io/library.h io/library.cpp
     include/io/loadfile.h io/loadfile.cpp

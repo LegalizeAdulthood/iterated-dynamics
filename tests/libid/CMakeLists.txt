@@ -91,7 +91,6 @@ add_executable(test-id
     io/test_encoder.cpp
     io/test_gif_file.cpp
     io/test_gifview.cpp
-    io/test_is_directory.cpp
     io/test_library.cpp
     io/test_loadfile.cpp
     io/test_loadmap.cpp

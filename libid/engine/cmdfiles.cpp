@@ -54,7 +54,6 @@
 #include "io/file_item.h"
 #include "io/gifview.h"
 #include "io/has_ext.h"
-#include "io/is_directory.h"
 #include "io/library.h"
 #include "io/loadfile.h"
 #include "io/loadmap.h"
@@ -426,7 +425,7 @@ static void init_vars_run()              // once per run init
     }
     if (p != nullptr)
     {
-        if (is_a_directory(p))
+        if (fs::is_directory(p))
         {
             g_temp_dir = p;
         }
@@ -2785,7 +2784,7 @@ static CmdArgFlags cmd_org_frm_dir(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (!is_a_directory(cmd.value))
+    if (!fs::is_directory(cmd.value))
     {
         return cmd.bad_arg();
     }
@@ -3641,7 +3640,7 @@ static CmdArgFlags cmd_temp_dir(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (!is_a_directory(cmd.value))
+    if (!fs::is_directory(cmd.value))
     {
         return cmd.bad_arg();
     }
@@ -3930,7 +3929,7 @@ static CmdArgFlags cmd_work_dir(const Command &cmd)
     {
         return cmd.bad_arg();
     }
-    if (!is_a_directory(cmd.value))
+    if (!fs::is_directory(cmd.value))
     {
         return cmd.bad_arg();
     }
