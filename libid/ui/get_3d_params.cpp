@@ -37,9 +37,12 @@ using namespace id::misc;
 namespace id::ui
 {
 
-static  bool get_light_params();
-static  bool check_map_file();
-static  bool get_funny_glasses_params();
+static bool prompt_3d_mode();
+static bool select_3d_fill_type();
+static bool prompt_3d_geometry();
+static bool get_light_params();
+static bool check_map_file();
+static bool get_funny_glasses_params();
 
 static std::filesystem::path targa_save_name(const std::string &name)
 {
@@ -55,15 +58,42 @@ static std::string s_funny_glasses_map_name;
 
 const std::string GLASSES1_MAP_NAME{"glasses1.map"};
 
-int get_3d_params()     // prompt for 3D parameters
+int get_3d_params() // prompt for 3D parameters
+{
+restart_1:
+    if (!prompt_3d_mode())
+    {
+        return -1;
+    }
+
+    if (g_raytrace_format == RayTraceFormat::NONE && !select_3d_fill_type())
+    {
+        goto restart_1;
+    }
+restart_3:
+
+    if (!prompt_3d_geometry())
+    {
+        goto restart_1;
+    }
+
+    if (g_targa_out || illumine() || g_raytrace_format != RayTraceFormat::NONE)
+    {
+        if (get_light_params())
+        {
+            goto restart_3;
+        }
+    }
+    return 0;
+}
+
+static bool prompt_3d_mode()
 {
     int sphere;
-    const char *s;
     std::array<const char *, 21> prompts3d;
     std::array<FullScreenValues, 21> values;
     int k;
 
-restart_1:
     if (g_targa_out && g_overlay_3d)
     {
         g_targa_overlay = true;
@@ -97,8 +127,7 @@ restart_1:
 
     prompts3d[++k] = "Ray trace output? (No, DKB/POV-Ray, VIVID, RAW, MTV,";
     values[k].type = 'l';
-    static const char *raytrace_formats[]{
-        "No", "DKB/POV-Ray", "VIVID", "Raw", "MTV", "Rayshade", "AcroSpin", "DXF"};
+    static const char *raytrace_formats[]{"No", "DKB/POV-Ray", "VIVID", "Raw", "MTV", "Rayshade", "AcroSpin", "DXF"};
     values[k].uval.ch.list = raytrace_formats;
     values[k].uval.ch.list_len = static_cast<int>(std::size(raytrace_formats));
     values[k].uval.ch.vlen = 11;
@@ -124,17 +153,17 @@ restart_1:
 
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_MODE};
-        k = full_screen_prompt("3D Mode Selection", k+1, prompts3d.data(), values.data(), 0, nullptr);
+        k = full_screen_prompt("3D Mode Selection", k + 1, prompts3d.data(), values.data(), 0, nullptr);
     }
     if (k < 0)
     {
-        return -1;
+        return false;
     }
 
     k = 0;
     g_preview = values[k++].uval.ch.val != 0;
     g_show_box = values[k++].uval.ch.val != 0;
-    g_preview_factor  = values[k++].uval.ival;
+    g_preview_factor = values[k++].uval.ival;
     sphere = values[k++].uval.ch.val;
     g_glasses_type = static_cast<GlassesType>(values[k++].uval.ival);
     k++;
@@ -144,7 +173,7 @@ restart_1:
         if (g_raytrace_format == RayTraceFormat::DKB_POVRAY)
         {
             stop_msg("DKB/POV-Ray output is obsolete but still works. See \"Ray Tracing Output\" in\n"
-                    "the online documentation.");
+                     "the online documentation.");
         }
     }
     g_brief = values[k++].uval.ch.val != 0;
@@ -152,7 +181,7 @@ restart_1:
     g_raytrace_filename = values[k++].uval.sval;
 
     g_targa_out = values[k++].uval.ch.val != 0;
-    g_gray_flag  = values[k++].uval.ch.val != 0;
+    g_gray_flag = values[k++].uval.ch.val != 0;
 
     // check ranges
     g_preview_factor = std::max(g_preview_factor, 2);
@@ -182,55 +211,66 @@ restart_1:
     }
     g_raytrace_format = std::min(g_raytrace_format, RayTraceFormat::DXF);
 
-    if (g_raytrace_format == RayTraceFormat::NONE)
-    {
-        std::array<const char *,11>choices;
-        std::array<int, 21> attributes;
-        k = 0;
-        choices[k++] = "make a surface grid";
-        choices[k++] = "just draw the points";
-        choices[k++] = "connect the dots (wire frame)";
-        choices[k++] = "surface fill (colors interpolated)";
-        choices[k++] = "surface fill (colors not interpolated)";
-        choices[k++] = "solid fill (bars up from \"ground\")";
-        if (g_sphere)
-        {
-            choices[k++] = "light source";
-        }
-        else
-        {
-            choices[k++] = "light source before transformation";
-            choices[k++] = "light source after transformation";
-        }
-        for (int i = 0; i < k; ++i)
-        {
-            attributes[i] = 1;
-        }
-        int i;
-        {
-            ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_FILL};
-            i = full_screen_choice(ChoiceFlags::HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices.data(),
-                attributes.data(), 0, 0, 0, +g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
-        }
-        if (i < 0)
-        {
-            goto restart_1;
-        }
-        g_fill_type = static_cast<FillType>(i - 1);
+    return true;
+}
 
-        if (g_glasses_type != GlassesType::NONE)
+static bool select_3d_fill_type()
+{
+    std::array<const char *, 11> choices;
+    std::array<int, 21> attributes;
+    int k = 0;
+    choices[k++] = "make a surface grid";
+    choices[k++] = "just draw the points";
+    choices[k++] = "connect the dots (wire frame)";
+    choices[k++] = "surface fill (colors interpolated)";
+    choices[k++] = "surface fill (colors not interpolated)";
+    choices[k++] = "solid fill (bars up from \"ground\")";
+    if (g_sphere)
+    {
+        choices[k++] = "light source";
+    }
+    else
+    {
+        choices[k++] = "light source before transformation";
+        choices[k++] = "light source after transformation";
+    }
+    for (int i = 0; i < k; ++i)
+    {
+        attributes[i] = 1;
+    }
+    int i;
+    {
+        ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_FILL};
+        i = full_screen_choice(ChoiceFlags::HELP, "Select 3D Fill Type", nullptr, nullptr, k, choices.data(),
+            attributes.data(), 0, 0, 0, +g_fill_type + 1, nullptr, nullptr, nullptr, nullptr);
+    }
+    if (i < 0)
+    {
+        return false;
+    }
+    g_fill_type = static_cast<FillType>(i - 1);
+
+    if (g_glasses_type != GlassesType::NONE)
+    {
+        if (get_funny_glasses_params())
         {
-            if (get_funny_glasses_params())
-            {
-                goto restart_1;
-            }
-        }
-        if (check_map_file())
-        {
-            goto restart_1;
+            return false;
         }
     }
-restart_3:
+    if (check_map_file())
+    {
+        return false;
+    }
+
+    return true;
+}
+
+static bool prompt_3d_geometry()
+{
+    const char *s;
+    std::array<const char *, 21> prompts3d;
+    std::array<FullScreenValues, 21> values;
+    int k;
 
     if (g_sphere)
     {
@@ -256,48 +296,48 @@ restart_3:
     k = -1;
     if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
     {
-        values[++k].uval.ival   = g_x_rot    ;
+        values[++k].uval.ival = g_x_rot;
         values[k].type = 'i';
-        values[++k].uval.ival   = g_y_rot    ;
+        values[++k].uval.ival = g_y_rot;
         values[k].type = 'i';
-        values[++k].uval.ival   = g_z_rot    ;
+        values[++k].uval.ival = g_z_rot;
         values[k].type = 'i';
     }
-    values[++k].uval.ival   = g_x_scale    ;
+    values[++k].uval.ival = g_x_scale;
     values[k].type = 'i';
 
-    values[++k].uval.ival   = g_y_scale    ;
+    values[++k].uval.ival = g_y_scale;
     values[k].type = 'i';
 
     prompts3d[++k] = "Surface Roughness scaling factor in pct";
     values[k].type = 'i';
-    values[k].uval.ival = g_rough     ;
+    values[k].uval.ival = g_rough;
 
     prompts3d[++k] = "'Water Level' (minimum color value)";
     values[k].type = 'i';
-    values[k].uval.ival = g_water_line ;
+    values[k].uval.ival = g_water_line;
 
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
         prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
         values[k].type = 'i';
-        values[k].uval.ival = g_viewer_z     ;
+        values[k].uval.ival = g_viewer_z;
 
         prompts3d[++k] = "X shift with perspective (positive = right)";
         values[k].type = 'i';
-        values[k].uval.ival = g_shift_x    ;
+        values[k].uval.ival = g_shift_x;
 
         prompts3d[++k] = "Y shift with perspective (positive = up   )";
         values[k].type = 'i';
-        values[k].uval.ival = g_shift_y    ;
+        values[k].uval.ival = g_shift_y;
 
         prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
         values[k].type = 'i';
-        values[k].uval.ival = g_adjust_3d.x    ;
+        values[k].uval.ival = g_adjust_3d.x;
 
         prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
         values[k].type = 'i';
-        values[k].uval.ival = g_adjust_3d.y    ;
+        values[k].uval.ival = g_adjust_3d.y;
 
         prompts3d[++k] = "First transparent color";
         values[k].type = 'i';
@@ -330,42 +370,35 @@ restart_3:
     }
     if (k < 0)
     {
-        goto restart_1;
+        return false;
     }
 
     k = 0;
     if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
     {
-        g_x_rot    = values[k++].uval.ival;
-        g_y_rot    = values[k++].uval.ival;
-        g_z_rot    = values[k++].uval.ival;
+        g_x_rot = values[k++].uval.ival;
+        g_y_rot = values[k++].uval.ival;
+        g_z_rot = values[k++].uval.ival;
     }
-    g_x_scale     = values[k++].uval.ival;
-    g_y_scale     = values[k++].uval.ival;
-    g_rough      = values[k++].uval.ival;
-    g_water_line  = values[k++].uval.ival;
+    g_x_scale = values[k++].uval.ival;
+    g_y_scale = values[k++].uval.ival;
+    g_rough = values[k++].uval.ival;
+    g_water_line = values[k++].uval.ival;
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
         g_viewer_z = values[k++].uval.ival;
-        g_shift_x     = values[k++].uval.ival;
-        g_shift_y     = values[k++].uval.ival;
-        g_adjust_3d.x     = values[k++].uval.ival;
-        g_adjust_3d.y     = values[k++].uval.ival;
+        g_shift_x = values[k++].uval.ival;
+        g_shift_y = values[k++].uval.ival;
+        g_adjust_3d.x = values[k++].uval.ival;
+        g_adjust_3d.y = values[k++].uval.ival;
         g_transparent_color_3d[0] = values[k++].uval.ival;
         g_transparent_color_3d[1] = values[k++].uval.ival;
     }
-    g_randomize_3d  = values[k++].uval.ival;
+    g_randomize_3d = values[k++].uval.ival;
     g_randomize_3d = std::min(g_randomize_3d, 7);
     g_randomize_3d = std::max(g_randomize_3d, 0);
 
-    if (g_targa_out || illumine() || g_raytrace_format != RayTraceFormat::NONE)
-    {
-        if (get_light_params())
-        {
-            goto restart_3;
-        }
-    }
-    return 0;
+    return true;
 }
 
 // ---------------------------------------------------------------------
