@@ -42,7 +42,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@01b24083a6ec71294ed78d615f0e9e920d8ccbfd # v1.0.0
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -62,7 +62,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@01b24083a6ec71294ed78d615f0e9e920d8ccbfd # v1.0.0
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -324,7 +324,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@01b24083a6ec71294ed78d615f0e9e920d8ccbfd # v1.0.0
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -354,7 +354,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@01b24083a6ec71294ed78d615f0e9e920d8ccbfd # v1.0.0
       with:
         token: ${{github.token}}
         build-log: build.log
@@ -523,7 +523,7 @@ jobs:
 
     - name: Setup vcpkg package cache
       id: vc
-      uses: LegalizeAdulthood/vcpkg-github-cache@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      uses: LegalizeAdulthood/vcpkg-github-cache@01b24083a6ec71294ed78d615f0e9e920d8ccbfd # v1.0.0
       with:
         token: ${{github.token}}
         bootstrap: "true"
@@ -542,7 +542,7 @@ jobs:
 
     - name: Analyze vcpkg package cache
       if: always()
-      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@a17a8a7f99558d29430388a87be54182bf8e9dfe # v1.0.0
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@01b24083a6ec71294ed78d615f0e9e920d8ccbfd # v1.0.0
       with:
         token: ${{github.token}}
         build-log: build.log
