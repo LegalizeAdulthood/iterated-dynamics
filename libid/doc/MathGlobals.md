@@ -300,8 +300,9 @@ The unsafe variants are used in inner loops where inputs are guaranteed valid, w
 The system supports multiple output formats:
 
 - `bn_to_str()` - standard decimal notation
-- `bf_to_str()` - standard decimal notation
-- `bf_to_str_e()` - scientific (exponential) notation
-- `bf_to_str_f()` - fixed-point notation
+- `bf_to_string()` - standard decimal notation
+- `bf_to_string_e()` - scientific (exponential) notation
+- `bf_to_string_f()` - fixed-point notation
 
-These functions require temporary buffers and return formatted strings for display or file output. The required buffer length is provided by `strlen_needed_bn()` and `strlen_needed_bf()`.
+`bn_to_str()` requires a temporary buffer. The bigfloat formatters return
+`std::string` values for display or file output.

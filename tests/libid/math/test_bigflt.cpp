@@ -9,7 +9,6 @@
 
 #include <gtest/gtest.h>
 
-#include <array>
 #include <string>
 
 using namespace id::engine;
@@ -41,15 +40,6 @@ protected:
         free_bf_vars();
     }
 
-    static std::string to_string(char *(*format)(char *, BigFloat, int), BigFloat value, const int decimals)
-    {
-        std::array<char, 128> text{};
-
-        format(text.data(), value, decimals);
-
-        return text.data();
-    }
-
     ValueSaver<long> m_saved_bailout_value;
     ValueSaver<Bailout> m_saved_bailout_test;
     ValueSaver<int> m_saved_bf_digits;
@@ -79,9 +69,6 @@ TEST_F(TestBigFloat, formatsZero)
     BigFloat value{alloc_stack(g_bf_length + 2)};
     clear_bf(value);
 
-    EXPECT_EQ("0.0", to_string(bf_to_str, value, 5));
-    EXPECT_EQ("0.0", to_string(bf_to_str_e, value, 5));
-    EXPECT_EQ("0.0", to_string(bf_to_str_f, value, 5));
     EXPECT_EQ("0.0", bf_to_string(value, 5));
     EXPECT_EQ("0.0", bf_to_string_e(value, 5));
     EXPECT_EQ("0.0", bf_to_string_f(value, 5));
@@ -92,7 +79,6 @@ TEST_F(TestBigFloat, formatsFixedDecimal)
     BigFloat value{alloc_stack(g_bf_length + 2)};
     str_to_bf(value, "1.25");
 
-    EXPECT_EQ("1.25", to_string(bf_to_str_f, value, 5));
     EXPECT_EQ("1.25", bf_to_string_f(value, 5));
 }
 
@@ -101,7 +87,6 @@ TEST_F(TestBigFloat, formatsScientificDecimal)
     BigFloat value{alloc_stack(g_bf_length + 2)};
     str_to_bf(value, "1.25");
 
-    EXPECT_EQ("1.25e0", to_string(bf_to_str_e, value, 5));
     EXPECT_EQ("1.25e0", bf_to_string_e(value, 5));
 }
 

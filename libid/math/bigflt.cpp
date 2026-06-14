@@ -23,7 +23,6 @@ namespace id::math
 namespace
 {
 
-char *copy_to_buffer(char *s, const std::string &text);
 std::string unsafe_bf_to_string(BigFloat r, int dec);
 std::string unsafe_bf_to_string_e(BigFloat r, int dec);
 std::string unsafe_bf_to_string_f(BigFloat r, int dec);
@@ -169,8 +168,7 @@ int strlen_needed_bf()
 }
 
 /********************************************************************/
-// bftostr() - converts a bigfloat into a scientific notation string
-//   s - string, must be large enough to hold the number.
+// bftostring() - converts a bigfloat into a scientific notation string
 // dec - decimal places, 0 for max
 //   r - bigfloat
 //   will convert to a floating point notation
@@ -181,13 +179,6 @@ int strlen_needed_bf()
 
 namespace
 {
-
-char *copy_to_buffer(char *s, const std::string &text)
-{
-    text.copy(s, text.length());
-    s[text.length()] = '\0';
-    return s;
-}
 
 std::string unsafe_bf_to_string(BigFloat r, const int dec)
 {
@@ -207,18 +198,6 @@ std::string unsafe_bf_to_string(BigFloat r, const int dec)
     return bf10_to_string_e(g_bf10_tmp, dec);
 }
 
-} // namespace
-
-char *unsafe_bf_to_str(char *s, BigFloat r, const int dec)
-{
-    return copy_to_buffer(s, unsafe_bf_to_string(r, dec));
-}
-
-/********************************************************************/
-// the e version puts it in scientific notation, (like printf's %e)
-namespace
-{
-
 std::string unsafe_bf_to_string_e(BigFloat r, const int dec)
 {
     LDouble value = bf_to_float(r);
@@ -231,18 +210,6 @@ std::string unsafe_bf_to_string_e(BigFloat r, const int dec)
     unsafe_bf_to_bf10(g_bf10_tmp, dec, g_bf_tmp1);
     return bf10_to_string_e(g_bf10_tmp, dec);
 }
-
-} // namespace
-
-char *unsafe_bf_to_str_e(char *s, BigFloat r, const int dec)
-{
-    return copy_to_buffer(s, unsafe_bf_to_string_e(r, dec));
-}
-
-/********************************************************************/
-// the f version puts it in decimal notation, (like printf's %f)
-namespace
-{
 
 std::string unsafe_bf_to_string_f(BigFloat r, const int dec)
 {
@@ -258,11 +225,6 @@ std::string unsafe_bf_to_string_f(BigFloat r, const int dec)
 }
 
 } // namespace
-
-char *unsafe_bf_to_str_f(char *s, BigFloat r, const int dec)
-{
-    return copy_to_buffer(s, unsafe_bf_to_string_f(r, dec));
-}
 
 /*********************************************************************/
 //  bn = floor(bf)
@@ -1196,30 +1158,6 @@ BigFloat div_bf_int(BigFloat r, BigFloat n, const U16 u)
     copy_bf(g_bf_tmp_copy1, n);
     unsafe_div_bf_int(r, g_bf_tmp_copy1, u);
     return r;
-}
-
-/**********************************************************************/
-char *bf_to_str(char *s, BigFloat r, const int dec)
-{
-    copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bf_to_str(s, g_bf_tmp_copy1, dec);
-    return s;
-}
-
-/**********************************************************************/
-char *bf_to_str_e(char *s, BigFloat r, const int dec)
-{
-    copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bf_to_str_e(s, g_bf_tmp_copy1, dec);
-    return s;
-}
-
-/**********************************************************************/
-char *bf_to_str_f(char *s, BigFloat r, const int dec)
-{
-    copy_bf(g_bf_tmp_copy1, r);
-    unsafe_bf_to_str_f(s, g_bf_tmp_copy1, dec);
-    return s;
 }
 
 /**********************************************************************/
@@ -2306,7 +2244,7 @@ BigFloat10 div_a_bf10_int(BigFloat10 r, const int dec, const U16 n)
 }
 
 /*************************************************************************/
-// bf10tostr_e()
+// bf10tostring_e()
 // Takes a bf10 number and converts it to an ascii string, sci. notation
 // dec - number of decimals, not including the one extra for rounding
 
@@ -2362,16 +2300,8 @@ std::string bf10_to_string_e(BigFloat10 n, int dec)
 
 } // namespace
 
-char *bf10_to_str_e(char *s, BigFloat10 n, int dec)
-{
-    const std::string text{bf10_to_string_e(n, dec)};
-    copy_to_buffer(s, text);
-    const std::size_t exponent = text.find('e');
-    return exponent == std::string::npos ? s : s + exponent;
-}
-
 /****************************************************************************/
-// bf10tostr_f()
+// bf10tostring_f()
 // Takes a bf10 number and converts it to an ascii string, decimal notation
 
 namespace
@@ -2444,16 +2374,5 @@ std::string bf10_to_string_f(BigFloat10 n, int dec)
 }
 
 } // namespace
-
-char *bf10_to_str_f(char *s, BigFloat10 n, int dec)
-{
-    const std::string text{bf10_to_string_f(n, dec)};
-    copy_to_buffer(s, text);
-    if (text == "0.0")
-    {
-        return s;
-    }
-    return s + text.length();
-}
 
 } // namespace id::math
