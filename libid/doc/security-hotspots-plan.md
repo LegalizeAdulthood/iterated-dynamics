@@ -41,31 +41,7 @@ current item is active.  Then mark each affected item separately.
 
 # High Probability
 
-Items: 180.
-
-## SH-061
-
-- Status: `pending`
-- Key: `AZwwyFBo0qvqV_CtK1nm`
-- Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/full_screen_prompt.cpp`
-- Line: `1073`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-062
-
-- Status: `pending`
-- Key: `AZwwyFBo0qvqV_CtK1no`
-- Rule: `cpp:S5813`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/full_screen_prompt.cpp`
-- Line: `1075`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strlen" is safe here.
+Items: 178.
 
 ## SH-063
 

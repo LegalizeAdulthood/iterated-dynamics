@@ -1057,7 +1057,6 @@ static int input_field_list(const int attr, // display attribute
 )
 {
     int init_val;
-    char buf[81];
     ValueSaver save_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     for (init_val = 0; init_val < list_len; ++init_val)
     {
@@ -1074,16 +1073,9 @@ static int input_field_list(const int attr, // display attribute
     int ret = -1;
     while (true)
     {
-        std::strcpy(buf, list[cur_val]);
-        {
-            int i = static_cast<int>(std::strlen(buf));
-            while (i < field_len)
-            {
-                buf[i++] = ' ';
-            }
-        }
-        buf[field_len] = 0;
-        driver_put_string(row, col, attr, buf);
+        std::string display{list[cur_val]};
+        display.resize(static_cast<std::size_t>(std::max(field_len, 0)), ' ');
+        driver_put_string(row, col, attr, display);
         switch (const int key = driver_key_cursor(row, col); key)
         {
         case ID_KEY_ENTER:
