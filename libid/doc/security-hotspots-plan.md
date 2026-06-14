@@ -39,15 +39,9 @@ code, Win32 support, and workflows.
 If one helper change removes multiple hotspots, implement it while the
 current item is active.  Then mark each affected item separately.
 
-# Active Slices
-
-- `make_batch_file` output helpers: cover and refactor numeric/string PAR
-  assembly, including `strip_zeros`, `put_float`, and the fixed
-  `WriteBatchData` buffer append path.  Target SH-096 through SH-099.
-
 # High Probability
 
-Items: 103.
+Items: 99.
 
 ## SH-071
 
@@ -228,56 +222,6 @@ Items: 103.
 - Category: `buffer-overflow`
 - Probability: `HIGH`
 - Message: Make sure use of "strcat" is safe here.
-
-## SH-096
-
-- Status: `pending`
-- Key: `AZwwyFFC0qvqV_CtK1uF`
-- Rule: `cpp:S5813`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/make_batch_file.cpp`
-- Line: `1817`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-097
-
-- Status: `pending`
-- Key: `AZwwyFFC0qvqV_CtK1uG`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/make_batch_file.cpp`
-- Line: `1825`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-098
-
-- Status: `pending`
-- Key: `AZwwyFFC0qvqV_CtK1uJ`
-- Rule: `cpp:S6069`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/make_batch_file.cpp`
-- Line: `1844`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "sprintf" function is safe here or replace it
-  with a call to "snprintf".
-
-## SH-099
-
-- Status: `pending`
-- Key: `AZwwyFFC0qvqV_CtK1uL`
-- Rule: `cpp:S6069`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/make_batch_file.cpp`
-- Line: `1848`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "sprintf" function is safe here or replace it
-  with a call to "snprintf".
 
 ## SH-100
 

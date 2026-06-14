@@ -139,8 +139,7 @@ TEST_F(TestPutEncodedColors, increasingSixBitRamp)
 
     put_encoded_colors(m_data, 256);
 
-    EXPECT_EQ(64, m_data.len);
-    EXPECT_STREQ("000<56>tttuuuvvv<3>zzz000<57>uuu<4>zzz000<57>uuu<4>zzz000<62>zzz", m_data.buf);
+    EXPECT_EQ("000<56>tttuuuvvv<3>zzz000<57>uuu<4>zzz000<57>uuu<4>zzz000<62>zzz", m_data.buf);
 }
 
 TEST_F(TestPutEncodedColors, values0Through9EncodedAsDigits)
@@ -151,8 +150,7 @@ TEST_F(TestPutEncodedColors, values0Through9EncodedAsDigits)
     put_encoded_colors(m_data, 10);
 
     constexpr std::string_view expected{"000999111888222777333666444555"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutEncodedColors, values10Through35EncodedAsUpperCaseLetters)
@@ -164,8 +162,7 @@ TEST_F(TestPutEncodedColors, values10Through35EncodedAsUpperCaseLetters)
 
     constexpr std::string_view expected{
         "AAAZZZBBBYYYCCCXXXDDDWWWEEEVVVFFFUUUGGGTTTHHHSSSIIIRRRJJJQQQKKKPPPLLLOOOMMMNNN"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutEncodedColors, values36Through63EncodedAsLowerCaseLetters)
@@ -189,8 +186,7 @@ TEST_F(TestPutEncodedColors, values36Through63EncodedAsLowerCaseLetters)
                                         "jjjooo"
                                         "kkknnn"
                                         "lllmmm"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutEncodedColors, smoothFourColors)
@@ -202,8 +198,7 @@ TEST_F(TestPutEncodedColors, smoothFourColors)
     put_encoded_colors(m_data, NUM_COLORS);
 
     constexpr std::string_view expected{"000<2>333"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutEncodedColors, smoothFiveColors)
@@ -215,8 +210,7 @@ TEST_F(TestPutEncodedColors, smoothFiveColors)
     put_encoded_colors(m_data, NUM_COLORS);
 
     constexpr std::string_view expected{"000<3>444"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
@@ -228,8 +222,7 @@ TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
     put_encoded_colors(m_data, NUM_COLORS);
 
     constexpr std::string_view expected{"#434343"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutFractalParams, antUsesTextRuleForFirstParam)
@@ -239,8 +232,7 @@ TEST_F(TestPutFractalParams, antUsesTextRuleForFirstParam)
     put_fractal_params(m_data);
 
     constexpr std::string_view expected{"params=101001011001/1200000.0/3.0/2.0/0.0/0.0"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutFractalParams, antUsesNumericRuleWhenTextIsEmpty)
@@ -248,8 +240,7 @@ TEST_F(TestPutFractalParams, antUsesNumericRuleWhenTextIsEmpty)
     put_fractal_params(m_data);
 
     constexpr std::string_view expected{"params=1100.0/1200000.0/3.0/2.0/0.0/0.0"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutRdsParams, skippedWhenImageIsNotRds)
@@ -258,8 +249,7 @@ TEST_F(TestPutRdsParams, skippedWhenImageIsNotRds)
 
     put_rds_params(m_data);
 
-    EXPECT_EQ(0, m_data.len);
-    EXPECT_STREQ("", m_data.buf);
+    EXPECT_TRUE(m_data.buf.empty());
 }
 
 TEST_F(TestPutRdsParams, randomDotsIncludeDepthBarsWidthAndGrayscale)
@@ -274,8 +264,7 @@ TEST_F(TestPutRdsParams, randomDotsIncludeDepthBarsWidthAndGrayscale)
     put_rds_params(m_data);
 
     constexpr std::string_view expected{"rds=random/-120/top stereowidth=4.5 usegrayscale=y"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 TEST_F(TestPutRdsParams, textureIncludesFilename)
@@ -291,8 +280,7 @@ TEST_F(TestPutRdsParams, textureIncludesFilename)
     put_rds_params(m_data);
 
     constexpr std::string_view expected{"rds=texture/80/none rds-texture=Texture.GIF"};
-    const std::string_view actual{m_data.buf, static_cast<size_t>(m_data.len)};
-    EXPECT_EQ(expected, actual);
+    EXPECT_EQ(expected, m_data.buf);
 }
 
 } // namespace

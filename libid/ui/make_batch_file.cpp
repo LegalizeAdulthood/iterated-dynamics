@@ -61,10 +61,11 @@
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
 
+#include <algos/string_algorithms.h>
 #include <config/string_case_compare.h>
-#include <config/string_lower.h>
 
 #include <fmt/format.h>
+#include <fmt/printf.h>
 
 #include <algorithm>
 #include <array>
@@ -72,7 +73,6 @@
 #include <cctype>
 #include <cfloat>
 #include <cmath>
-#include <cstdarg>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
@@ -102,14 +102,19 @@ int g_max_line_length{72};
 static std::FILE *s_param_file{};
 static WriteBatchData s_wb_data;
 
-static void put_param(WriteBatchData &wb_data, const char *param, ...);
-static void put_param(const char *param, ...);
+static void append_param(WriteBatchData &wb_data, std::string_view param);
+static void put_param(WriteBatchData &wb_data, const char *param);
+template <typename... Args>
+static void put_param(WriteBatchData &wb_data, const char *param, const Args &...args);
+static void put_param(const char *param);
+template <typename... Args>
+static void put_param(const char *param, const Args &...args);
 static void put_param_line();
 static void put_float(int slash, double value, int prec);
 static void put_bf(int slash, BigFloat r, int prec);
 static void put_filename(WriteBatchData &wb_data, const char *keyword, const char *fname);
 static void put_filename(const char *keyword, const char *fname);
-static void strip_zeros(char *buf);
+static void strip_zeros(std::string &buf);
 static void write_batch_params(const char *color_inf, bool colors_only, int max_color, int ii, int jj);
 
 static char par_key(const int x)
@@ -925,7 +930,7 @@ static void write_batch_params(
         bf_y_ctr = alloc_stack(g_bf_length+2);
     }
 
-    s_wb_data.len = 0; // force first parm to start on new line
+    s_wb_data.buf.clear(); // force first parm to start on new line
 
     // Using near string g_box_x for buffer after saving to extraseg
 
@@ -1000,12 +1005,12 @@ static void write_batch_params(
 
         if (g_user.std_calc_mode != CalcMode::SOLID_GUESS)
         {
-            put_param(" passes=%c", g_user.std_calc_mode);
+            put_param(" passes=%c", static_cast<char>(g_user.std_calc_mode));
         }
 
         if (g_stop_pass != 0)
         {
-            put_param(" passes=%c%c", g_user.std_calc_mode, static_cast<char>(g_stop_pass) + '0');
+            put_param(" passes=%c%c", static_cast<char>(g_user.std_calc_mode), static_cast<char>(g_stop_pass) + '0');
         }
 
         if (g_use_center_mag)
@@ -1710,7 +1715,7 @@ do_colors:
         }
     }
 
-    while (s_wb_data.len)   // flush the buffer
+    while (!s_wb_data.buf.empty())   // flush the buffer
     {
         put_param_line();
     }
@@ -1733,39 +1738,44 @@ static void put_filename(const char *keyword, const char *fname)
     put_filename(s_wb_data, keyword, fname);
 }
 
-static void put_param(WriteBatchData &wb_data, const char *param, std::va_list args)
+static void append_param(WriteBatchData &wb_data, std::string_view param)
 {
-    if (*param == ' '             // starting a new parm
-        && wb_data.len == 0)         // skip leading space
+    if (const std::size_t nul = param.find('\0'); nul != std::string_view::npos)
     {
-        ++param;
+        param = param.substr(0, nul);
     }
-    char *buf_ptr = wb_data.buf + wb_data.len;
-    std::vsprintf(buf_ptr, param, args);
-    while (*buf_ptr++)
+    if (!param.empty() && param[0] == ' ' // starting a new parm
+        && wb_data.buf.empty())           // skip leading space
     {
-        ++wb_data.len;
+        param.remove_prefix(1);
     }
-    while (wb_data.len > 200)
+    wb_data.buf += param;
+    while (&wb_data == &s_wb_data && wb_data.buf.length() > 200)
     {
         put_param_line();
     }
 }
 
-static void put_param(WriteBatchData &wb_data, const char *param, ...)
+static void put_param(WriteBatchData &wb_data, const char *param)
 {
-    std::va_list args;
-    va_start(args, param);
-    put_param(wb_data, param, args);
-    va_end(args);
+    append_param(wb_data, param);
 }
 
-static void put_param(const char *param, ...)
+template <typename... Args>
+static void put_param(WriteBatchData &wb_data, const char *param, const Args &...args)
 {
-    std::va_list args;
-    va_start(args, param);
-    put_param(s_wb_data, param, args);
-    va_end(args);
+    append_param(wb_data, fmt::sprintf(param, args...));
+}
+
+static void put_param(const char *param)
+{
+    put_param(s_wb_data, param);
+}
+
+template <typename... Args>
+static void put_param(const char *param, const Args &...args)
+{
+    put_param(s_wb_data, param, args...);
 }
 
 static int nice_line_length()
@@ -1775,7 +1785,7 @@ static int nice_line_length()
 
 static void put_param_line()
 {
-    int len = s_wb_data.len;
+    int len = static_cast<int>(s_wb_data.buf.length());
     if (len > nice_line_length())
     {
         len = nice_line_length();
@@ -1786,29 +1796,26 @@ static void put_param_line()
         if (len == 0)
         {
             len = nice_line_length() - 1;
-            while (++len < g_max_line_length //
-                && s_wb_data.buf[len]        //
+            while (++len < g_max_line_length                      //
+                && len < static_cast<int>(s_wb_data.buf.length()) //
                 && s_wb_data.buf[len] != ' ')
             {
             }
         }
     }
-    const int c = s_wb_data.buf[len];
-    s_wb_data.buf[len] = 0;
+    const int c = len < static_cast<int>(s_wb_data.buf.length()) ? s_wb_data.buf[len] : 0;
     std::fputs("  ", s_param_file);
-    std::fputs(s_wb_data.buf, s_param_file);
+    std::fputs(s_wb_data.buf.substr(0, static_cast<std::size_t>(len)).c_str(), s_param_file);
     if (c && c != ' ')
     {
         std::fputc('\\', s_param_file);
     }
     std::fputc('\n', s_param_file);
-    s_wb_data.buf[len] = static_cast<char>(c);
     if (c == ' ')
     {
         ++len;
     }
-    s_wb_data.len -= len;
-    std::memmove(s_wb_data.buf, s_wb_data.buf + len, s_wb_data.len + 1);
+    s_wb_data.buf.erase(0, static_cast<std::size_t>(len));
 }
 
 /*
@@ -1817,41 +1824,32 @@ static void put_param_line()
    shared with put_float().
 */
 
-static void strip_zeros(char *buf)
+static void strip_zeros(std::string &buf)
 {
-    string_lower(buf);
-    char *dot_ptr = std::strchr(buf, '.');
-    if (dot_ptr != nullptr)
+    buf = id::algos::ascii_to_lower_copy(buf);
+    const std::size_t dot = buf.find('.');
+    if (dot != std::string::npos)
     {
-        char *b_ptr;
-        ++dot_ptr;
-        char *exp_ptr = std::strchr(buf, 'e');
-        if (exp_ptr != nullptr)    // scientific notation with 'e'?
+        const std::size_t exp = buf.find('e');
+        const std::size_t end = exp == std::string::npos ? buf.length() : exp;
+        std::size_t last = end;
+        while (last > dot + 1 && buf[last - 1] == '0')
         {
-            b_ptr = exp_ptr;
+            --last;
         }
-        else
+        if (last < end)
         {
-            b_ptr = buf + std::strlen(buf);
-        }
-        while (--b_ptr > dot_ptr && *b_ptr == '0')
-        {
-            *b_ptr = 0;
-        }
-        if (exp_ptr && b_ptr < exp_ptr -1)
-        {
-            std::strcat(buf, exp_ptr);
+            buf.erase(last, end - last);
         }
     }
 }
 
 static void put_float(const int slash, const double value, const int prec)
 {
-    char buf[40];
-    char *buff_ptr = buf;
+    std::string buf;
     if (slash)
     {
-        *buff_ptr++ = '/';
+        buf = '/';
     }
     /* Idea of long double cast is to squeeze out another digit or two
        which might be needed (we have found cases where this digit makes
@@ -1859,14 +1857,14 @@ static void put_float(const int slash, const double value, const int prec)
 
     if (prec > 15)
     {
-        std::sprintf(buff_ptr, "%1.*Lg", prec, static_cast<long double>(value));
+        buf += fmt::sprintf("%1.*Lg", prec, static_cast<long double>(value));
     }
     else
     {
-        std::sprintf(buff_ptr, "%1.*g", prec, value);
+        buf += fmt::sprintf("%1.*g", prec, value);
     }
-    strip_zeros(buff_ptr);
-    put_param(buf);
+    strip_zeros(buf);
+    put_param(buf.c_str());
 }
 
 static void put_bf(const int slash, const BigFloat r, const int prec)
@@ -1879,8 +1877,13 @@ static void put_bf(const int slash, const BigFloat r, const int prec)
         *buff_ptr++ = '/';
     }
     bf_to_str(buff_ptr, r, prec);
-    strip_zeros(buff_ptr);
-    put_param(buf.data());
+    std::string value{buff_ptr};
+    strip_zeros(value);
+    if (slash)
+    {
+        value.insert(value.begin(), '/');
+    }
+    put_param(value.c_str());
 }
 
 } // namespace id::ui

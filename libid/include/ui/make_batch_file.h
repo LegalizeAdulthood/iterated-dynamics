@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <string>
+
 namespace id::ui
 {
 
@@ -13,8 +15,7 @@ enum
 
 struct WriteBatchData // buffer for parms to break lines nicely
 {
-    int len;
-    char buf[10000];
+    std::string buf;
 };
 
 extern bool g_make_parameter_file;
