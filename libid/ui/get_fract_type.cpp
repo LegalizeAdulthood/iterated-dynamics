@@ -28,11 +28,12 @@
 #include "ui/help.h"
 #include "ui/id_keys.h"
 #include "ui/set_default_params.h"
-#include "ui/shell_sort.h"
 #include "ui/stop_msg.h"
 
+#include <config/string_case_compare.h>
 #include <fmt/format.h>
 
+#include <algorithm>
 #include <array>
 #include <cstdio>
 #include <cstdlib>
@@ -56,7 +57,7 @@ namespace
 
 struct FractalTypeChoice
 {
-    char name[15];
+    std::string name;
     int num;
 };
 
@@ -126,9 +127,11 @@ static FractalType select_fract_type(FractalType t)
     {
         MAX_FRACT_TYPES = 200
     };
+
     std::string type_name;
     std::array<FractalTypeChoice, MAX_FRACT_TYPES> storage{};
     std::array<FractalTypeChoice *, MAX_FRACT_TYPES> choices;
+    std::array<const char *, MAX_FRACT_TYPES> choice_names;
     std::array<int, MAX_FRACT_TYPES> attributes;
 
     // steal existing array for "choices"
@@ -155,14 +158,20 @@ static FractalType select_fract_type(FractalType t)
         {
             continue;
         }
-        std::strcpy(choices[num_types]->name, specific.name);
-        choices[num_types]->name[14] = 0; // safety
-        choices[num_types]->num = i;      // remember where the real item is
+        choices[num_types]->name = specific.name;
+        choices[num_types]->num = i; // remember where the real item is
         ++num_types;
     }
-    shell_sort(&choices, num_types, sizeof(FractalTypeChoice *)); // sort list
+    // sort list
+    std::sort(choices.begin(), choices.begin() + num_types,
+        [](const FractalTypeChoice *lhs, const FractalTypeChoice *rhs)
+        { return config::string_case_compare(lhs->name.c_str(), rhs->name.c_str()) < 0; });
+    for (int i = 0; i < num_types; ++i)
+    {
+        choice_names[i] = choices[i]->name.c_str();
+    }
     int j = 0;
-    for (int i = 0; i < num_types; ++i)   // find starting choice in sorted list
+    for (int i = 0; i < num_types; ++i) // find starting choice in sorted list
     {
         if (g_fractal_specific[choices[i]->num].type == t)
         {
@@ -173,8 +182,8 @@ static FractalType select_fract_type(FractalType t)
 
     const int done = full_screen_choice(ChoiceFlags::HELP | ChoiceFlags::INSTRUCTIONS,
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
-        "Press F2 for a description of the highlighted type", num_types, (const char **) choices.data(),
-        attributes.data(), 0, 0, 0, j, nullptr, &type_name, nullptr, sel_fract_type_help);
+        "Press F2 for a description of the highlighted type", num_types, choice_names.data(), attributes.data(), 0, 0,
+        0, j, nullptr, &type_name, nullptr, sel_fract_type_help);
     if (done < 0)
     {
         return FractalType::NO_FRACTAL;

@@ -41,19 +41,7 @@ current item is active.  Then mark each affected item separately.
 
 # High Probability
 
-Items: 171.
-
-## SH-070
-
-- Status: `pending`
-- Key: `AZwwyE-U0qvqV_CtK1f-`
-- Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/get_fract_type.cpp`
-- Line: `158`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strcpy" is safe here.
+Items: 170.
 
 ## SH-071
 
