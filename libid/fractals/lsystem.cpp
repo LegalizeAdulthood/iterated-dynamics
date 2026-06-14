@@ -220,8 +220,8 @@ static bool read_lsystem_file(const char *str)
         }
         string_lower(inline1);
 
-        // not a blank line
-        if (const std::string_view line{inline1}; line.find_first_not_of(" \t\n") != std::string_view::npos)
+        if (const std::string_view line{inline1};
+            line.find_first_not_of(" \t\n") != std::string_view::npos) // not a blank line
         {
             bool check = false;
             word = std::strtok(inline1, " =\t\n");
