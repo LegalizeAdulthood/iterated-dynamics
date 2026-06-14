@@ -16,7 +16,6 @@
 #include "ui/ChoiceBuilder.h"
 #include "ui/field_prompt.h"
 #include "ui/full_screen_choice.h"
-#include "ui/full_screen_prompt.h"
 #include "ui/help.h"
 #include "ui/stereo.h"
 #include "ui/stop_msg.h"
@@ -231,90 +230,44 @@ static bool select_3d_fill_type()
 
 static bool prompt_3d_geometry()
 {
+    ChoiceBuilder<15> builder;
     const char *s;
-    std::array<const char *, 21> prompts3d;
-    std::array<FullScreenValues, 21> values;
-    int k;
 
     if (g_sphere)
     {
-        k = -1;
-        prompts3d[++k] = "Longitude start (degrees)";
-        prompts3d[++k] = "Longitude stop  (degrees)";
-        prompts3d[++k] = "Latitude start  (degrees)";
-        prompts3d[++k] = "Latitude stop   (degrees)";
-        prompts3d[++k] = "Radius scaling factor in pct";
+        builder.int_number("Longitude start (degrees)", g_x_rot)
+            .int_number("Longitude stop  (degrees)", g_y_rot)
+            .int_number("Latitude start  (degrees)", g_z_rot)
+            .int_number("Latitude stop   (degrees)", g_x_scale)
+            .int_number("Radius scaling factor in pct", g_y_scale);
     }
     else
     {
-        k = -1;
         if (g_raytrace_format == RayTraceFormat::NONE)
         {
-            prompts3d[++k] = "X-axis rotation in degrees";
-            prompts3d[++k] = "Y-axis rotation in degrees";
-            prompts3d[++k] = "Z-axis rotation in degrees";
+            builder.int_number("X-axis rotation in degrees", g_x_rot)
+                .int_number("Y-axis rotation in degrees", g_y_rot)
+                .int_number("Z-axis rotation in degrees", g_z_rot);
         }
-        prompts3d[++k] = "X-axis scaling factor in pct";
-        prompts3d[++k] = "Y-axis scaling factor in pct";
+        builder.int_number("X-axis scaling factor in pct", g_x_scale)
+            .int_number("Y-axis scaling factor in pct", g_y_scale);
     }
-    k = -1;
-    if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
-    {
-        values[++k].uval.ival = g_x_rot;
-        values[k].type = 'i';
-        values[++k].uval.ival = g_y_rot;
-        values[k].type = 'i';
-        values[++k].uval.ival = g_z_rot;
-        values[k].type = 'i';
-    }
-    values[++k].uval.ival = g_x_scale;
-    values[k].type = 'i';
 
-    values[++k].uval.ival = g_y_scale;
-    values[k].type = 'i';
-
-    prompts3d[++k] = "Surface Roughness scaling factor in pct";
-    values[k].type = 'i';
-    values[k].uval.ival = g_rough;
-
-    prompts3d[++k] = "'Water Level' (minimum color value)";
-    values[k].type = 'i';
-    values[k].uval.ival = g_water_line;
+    builder.int_number("Surface Roughness scaling factor in pct", g_rough)
+        .int_number("'Water Level' (minimum color value)", g_water_line);
 
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
-        prompts3d[++k] = "Perspective distance [1 - 999, 0 for no persp])";
-        values[k].type = 'i';
-        values[k].uval.ival = g_viewer_z;
-
-        prompts3d[++k] = "X shift with perspective (positive = right)";
-        values[k].type = 'i';
-        values[k].uval.ival = g_shift_x;
-
-        prompts3d[++k] = "Y shift with perspective (positive = up   )";
-        values[k].type = 'i';
-        values[k].uval.ival = g_shift_y;
-
-        prompts3d[++k] = "Image non-perspective X adjust (positive = right)";
-        values[k].type = 'i';
-        values[k].uval.ival = g_adjust_3d.x;
-
-        prompts3d[++k] = "Image non-perspective Y adjust (positive = up)";
-        values[k].type = 'i';
-        values[k].uval.ival = g_adjust_3d.y;
-
-        prompts3d[++k] = "First transparent color";
-        values[k].type = 'i';
-        values[k].uval.ival = g_transparent_color_3d[0];
-
-        prompts3d[++k] = "Last transparent color";
-        values[k].type = 'i';
-        values[k].uval.ival = g_transparent_color_3d[1];
+        builder.int_number("Perspective distance [1 - 999, 0 for no persp])", g_viewer_z)
+            .int_number("X shift with perspective (positive = right)", g_shift_x)
+            .int_number("Y shift with perspective (positive = up   )", g_shift_y)
+            .int_number("Image non-perspective X adjust (positive = right)", g_adjust_3d.x)
+            .int_number("Image non-perspective Y adjust (positive = up)", g_adjust_3d.y)
+            .int_number("First transparent color", g_transparent_color_3d[0])
+            .int_number("Last transparent color", g_transparent_color_3d[1]);
     }
 
-    prompts3d[++k] = "Randomize Colors      (0 - 7, '0' disables)";
-    values[k].type = 'i';
-    values[k++].uval.ival = g_randomize_3d;
+    builder.int_number("Randomize Colors      (0 - 7, '0' disables)", g_randomize_3d);
 
     if (g_sphere)
     {
@@ -330,35 +283,33 @@ static bool prompt_3d_geometry()
     }
     {
         ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_3D_PARAMETERS};
-        k = full_screen_prompt(s, k, prompts3d.data(), values.data(), 0, nullptr);
-    }
-    if (k < 0)
-    {
-        return false;
+        if (builder.prompt(s) < 0)
+        {
+            return false;
+        }
     }
 
-    k = 0;
     if (g_raytrace_format == RayTraceFormat::NONE || g_sphere)
     {
-        g_x_rot = values[k++].uval.ival;
-        g_y_rot = values[k++].uval.ival;
-        g_z_rot = values[k++].uval.ival;
+        g_x_rot = builder.read_int_number();
+        g_y_rot = builder.read_int_number();
+        g_z_rot = builder.read_int_number();
     }
-    g_x_scale = values[k++].uval.ival;
-    g_y_scale = values[k++].uval.ival;
-    g_rough = values[k++].uval.ival;
-    g_water_line = values[k++].uval.ival;
+    g_x_scale = builder.read_int_number();
+    g_y_scale = builder.read_int_number();
+    g_rough = builder.read_int_number();
+    g_water_line = builder.read_int_number();
     if (g_raytrace_format == RayTraceFormat::NONE)
     {
-        g_viewer_z = values[k++].uval.ival;
-        g_shift_x = values[k++].uval.ival;
-        g_shift_y = values[k++].uval.ival;
-        g_adjust_3d.x = values[k++].uval.ival;
-        g_adjust_3d.y = values[k++].uval.ival;
-        g_transparent_color_3d[0] = values[k++].uval.ival;
-        g_transparent_color_3d[1] = values[k++].uval.ival;
+        g_viewer_z = builder.read_int_number();
+        g_shift_x = builder.read_int_number();
+        g_shift_y = builder.read_int_number();
+        g_adjust_3d.x = builder.read_int_number();
+        g_adjust_3d.y = builder.read_int_number();
+        g_transparent_color_3d[0] = builder.read_int_number();
+        g_transparent_color_3d[1] = builder.read_int_number();
     }
-    g_randomize_3d = values[k++].uval.ival;
+    g_randomize_3d = builder.read_int_number();
     g_randomize_3d = std::min(g_randomize_3d, 7);
     g_randomize_3d = std::max(g_randomize_3d, 0);
 
