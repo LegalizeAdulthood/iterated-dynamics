@@ -4274,13 +4274,14 @@ int init_msg(const char *cmd_str, const char *bad_filename, const CmdFile mode)
             return -1;
         }
     }
-    char cmd[80];
-    std::strncpy(cmd, cmd_str, 30);
-    cmd[29] = 0;
-
-    if (*cmd)
+    std::string cmd{cmd_str};
+    if (cmd.size() > 29)
     {
-        std::strcat(cmd, "=");
+        cmd.resize(29);
+    }
+    if (!cmd.empty())
+    {
+        cmd += '=';
     }
     std::string msg;
     if (bad_filename)
