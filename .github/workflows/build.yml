@@ -47,8 +47,8 @@ jobs:
         token: ${{github.token}}
         bootstrap: "true"
         install-nuget: "true"
-        debug: "false"
-        trace: "false"
+        debug: "true"
+        trace: "true"
 
     - name: Run Workflow
       shell: pwsh
@@ -66,10 +66,10 @@ jobs:
       with:
         token: ${{github.token}}
         build-log: build.log
-        artifact-name: vcpkg-cache-diagnostics-${{github.job}}
+        artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{github.run_attempt}}
         fail-on: "never"
-        debug: "false"
-        trace: "false"
+        debug: "true"
+        trace: "true"
 
     - name: Copy images for AsciiDoc artifact
       run: |
@@ -329,8 +329,8 @@ jobs:
         token: ${{github.token}}
         bootstrap: "true"
         install-nuget: "true"
-        debug: "false"
-        trace: "false"
+        debug: "true"
+        trace: "true"
 
     - name: Run Workflow Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
@@ -358,10 +358,10 @@ jobs:
       with:
         token: ${{github.token}}
         build-log: build.log
-        artifact-name: vcpkg-cache-diagnostics-${{github.job}}-${{matrix.os}}-${{matrix.preset}}
+        artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{matrix.os}}-${{matrix.preset}}-${{github.run_attempt}}
         fail-on: "never"
-        debug: "false"
-        trace: "false"
+        debug: "true"
+        trace: "true"
 
     - name: Build Setup package
       if: ${{matrix.os == 'windows-2022' && matrix.preset == 'release'}}
@@ -528,8 +528,8 @@ jobs:
         token: ${{github.token}}
         bootstrap: "true"
         install-nuget: "true"
-        debug: "false"
-        trace: "false"
+        debug: "true"
+        trace: "true"
 
     - name: Run Workflow
       shell: pwsh
@@ -546,10 +546,10 @@ jobs:
       with:
         token: ${{github.token}}
         build-log: build.log
-        artifact-name: vcpkg-cache-diagnostics-${{github.job}}-${{matrix.os}}-${{matrix.preset}}
+        artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{matrix.os}}-${{matrix.preset}}-${{github.run_attempt}}
         fail-on: "never"
-        debug: "false"
-        trace: "false"
+        debug: "true"
+        trace: "true"
 
     - name: Build Setup package
       if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
