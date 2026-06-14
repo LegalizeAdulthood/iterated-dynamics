@@ -1124,7 +1124,7 @@ static int input_field_list(const int attr, // display attribute
         }
     }
 end:
-    std::strcpy(field, list[cur_val]);
+    copy_string(field, field_len, list[cur_val]);
     return ret;
 }
 
