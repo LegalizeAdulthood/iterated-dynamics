@@ -387,13 +387,7 @@ static void parser_allocate();
 CompiledFormula g_formula;
 static ParserState s_parser;
 
-static constexpr std::array<const char *, 4> JUMP_LIST
-{
-    "if",
-    "elseif",
-    "else",
-    "endif"
-};
+static constexpr std::array<std::string_view, 4> JUMP_LIST{"if", "elseif", "else", "endif"};
 static FormulaEntry s_formula_entry;
 static std::array<ErrorData, 3> s_errors{};
 
@@ -759,7 +753,7 @@ static JumpControlType is_jump(const char *str, const int len)
 {
     for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++)
     {
-        if (static_cast<int>(std::strlen(JUMP_LIST[i])) == len && string_case_equal(JUMP_LIST[i], str, len))
+        if (static_cast<int>(JUMP_LIST[i].size()) == len && string_case_equal(JUMP_LIST[i].data(), str, len))
         {
             return static_cast<JumpControlType>(i + 1);
         }
@@ -1306,7 +1300,7 @@ static void get_func_info(Token *tok)
 
     for (int i = 0; i < static_cast<int>(JUMP_LIST.size()); i++) // pick up flow control
     {
-        if (std::strcmp(JUMP_LIST[i], tok->str) == 0)
+        if (JUMP_LIST[i] == tok->str)
         {
             tok->type = FormulaTokenType::FLOW_CONTROL;
             tok->id   = static_cast<TokenId>(i + 1);

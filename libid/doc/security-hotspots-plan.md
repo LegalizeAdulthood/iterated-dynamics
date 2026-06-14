@@ -41,19 +41,7 @@ current item is active.  Then mark each affected item separately.
 
 # High Probability
 
-Items: 223.
-
-## SH-017
-
-- Status: `pending`
-- Key: `AZwwyE4I0qvqV_CtK1Uh`
-- Rule: `cpp:S5813`
-- Area: `command-input`
-- Path: `libid/fractals/parser.cpp`
-- Line: `762`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Message: Make sure use of "strlen" is safe here.
+Items: 222.
 
 ## SH-018
 
