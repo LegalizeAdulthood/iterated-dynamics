@@ -19,6 +19,7 @@
 #include <cctype>
 #include <cstring>
 #include <string>
+#include <string_view>
 
 using namespace id::config;
 using namespace id::engine;
@@ -260,11 +261,12 @@ int full_screen_choice(ChoiceFlags flags,                            //
         }
     }
 
-    if (col_width == 0)             // find the widest column
+    if (col_width == 0) // find the widest column
     {
         for (int i = 0; i < num_choices; ++i)
         {
-            const int len = static_cast<int>(std::strlen(choices[i]));
+            const std::string_view choice{choices[i]};
+            const int len = static_cast<int>(choice.size());
             col_width = std::max(len, col_width);
         }
     }
