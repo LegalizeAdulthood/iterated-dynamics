@@ -511,14 +511,14 @@ top:
             const int truncate_row = g_row;
             driver_put_string(++start_row, 2, C_GENERAL_MED, "Ctr");
             driver_put_string(start_row, 8, C_GENERAL_MED, "x");
-            bf_to_str(msg, bf_x_ctr, dec);
-            if (put_string_wrap(&start_row, 10, 78, C_GENERAL_HI, msg, 5))
+            const std::string x_center{bf_to_string(bf_x_ctr, dec)};
+            if (put_string_wrap(&start_row, 10, 78, C_GENERAL_HI, x_center, 5))
             {
                 truncate = true;
             }
             driver_put_string(++start_row, 8, C_GENERAL_MED, "y");
-            bf_to_str(msg, bf_y_ctr, dec);
-            if (put_string_wrap(&start_row, 10, 78, C_GENERAL_HI, msg, 5) || truncate)
+            const std::string y_center{bf_to_string(bf_y_ctr, dec)};
+            if (put_string_wrap(&start_row, 10, 78, C_GENERAL_HI, y_center, 5) || truncate)
             {
                 driver_put_string(truncate_row, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }

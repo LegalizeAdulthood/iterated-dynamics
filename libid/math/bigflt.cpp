@@ -13,6 +13,8 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <string>
+#include <vector>
 
 using namespace id::misc;
 
@@ -1179,6 +1181,30 @@ char *bf_to_str_f(char *s, BigFloat r, const int dec)
     copy_bf(g_bf_tmp_copy1, r);
     unsafe_bf_to_str_f(s, g_bf_tmp_copy1, dec);
     return s;
+}
+
+/**********************************************************************/
+std::string bf_to_string(BigFloat r, const int dec)
+{
+    std::vector<char> text(strlen_needed_bf());
+    bf_to_str(text.data(), r, dec);
+    return text.data();
+}
+
+/**********************************************************************/
+std::string bf_to_string_e(BigFloat r, const int dec)
+{
+    std::vector<char> text(strlen_needed_bf());
+    bf_to_str_e(text.data(), r, dec);
+    return text.data();
+}
+
+/**********************************************************************/
+std::string bf_to_string_f(BigFloat r, const int dec)
+{
+    std::vector<char> text(strlen_needed_bf());
+    bf_to_str_f(text.data(), r, dec);
+    return text.data();
 }
 
 /**********************************************************************/

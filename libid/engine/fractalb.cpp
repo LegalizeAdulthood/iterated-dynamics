@@ -129,16 +129,9 @@ void show_globals_bf(const char *s)
     }
 }
 
-static std::string bf_to_string(BigFloat g_bf_x_min, const int dec)
-{
-    char msg[100];
-    bf_to_str(msg, g_bf_x_min, dec);
-    return msg;
-}
-
 void show_corners_bf(const char *s)
 {
-    if (const int dec = std::min(g_decimals, 20);
+    if (const int dec = std::min(g_decimals, 20); //
         stop_msg(fmt::format("{:s}\n"
                              "bf_x_min={:s}\n"
                              "x_min= {:.20f} decimals {:d} g_bf_length {:d}\n"
@@ -158,14 +151,14 @@ void show_corners_bf(const char *s)
                              "bf_y_3rd={:s}\n"
                              "y_3rd= {:.20f}\n"
                              "\n",
-            s,                                                             //
-            bf_to_string(g_bf_x_min, dec).c_str(),                         //
-            g_image_region.m_min.x, g_decimals, g_bf_length,               //
-            bf_to_string(g_bf_x_max, dec).c_str(), g_image_region.m_max.x, //
-            bf_to_string(g_bf_y_min, dec).c_str(), g_image_region.m_min.y, //
-            bf_to_string(g_bf_y_max, dec).c_str(), g_image_region.m_max.y, //
-            bf_to_string(g_bf_x_3rd, dec).c_str(), g_image_region.m_3rd.x, //
-            bf_to_string(g_bf_y_3rd, dec).c_str(), g_image_region.m_3rd.y)))
+            s,                                                     //
+            bf_to_string(g_bf_x_min, dec),                         //
+            g_image_region.m_min.x, g_decimals, g_bf_length,       //
+            bf_to_string(g_bf_x_max, dec), g_image_region.m_max.x, //
+            bf_to_string(g_bf_y_min, dec), g_image_region.m_min.y, //
+            bf_to_string(g_bf_y_max, dec), g_image_region.m_max.y, //
+            bf_to_string(g_bf_x_3rd, dec), g_image_region.m_3rd.x, //
+            bf_to_string(g_bf_y_3rd, dec), g_image_region.m_3rd.y)))
     {
         goodbye();
     }
@@ -193,23 +186,16 @@ void show_corners_bf_save(const char *s)
                              "bf_save_y_3rd={:s}\n"
                              "y_3rd= {:.20f}\n"
                              "\n",
-            s,                                                                  //
-            bf_to_string(g_bf_save_x_min, dec).c_str(), g_image_region.m_min.x, //
-            bf_to_string(g_bf_save_x_max, dec).c_str(), g_image_region.m_max.x, //
-            bf_to_string(g_bf_save_y_min, dec).c_str(), g_image_region.m_min.y, //
-            bf_to_string(g_bf_save_y_max, dec).c_str(), g_image_region.m_max.y, //
-            bf_to_string(g_bf_save_x_3rd, dec).c_str(), g_image_region.m_3rd.x, //
-            bf_to_string(g_bf_save_y_3rd, dec).c_str(), g_image_region.m_3rd.y)))
+            s,                                                          //
+            bf_to_string(g_bf_save_x_min, dec), g_image_region.m_min.x, //
+            bf_to_string(g_bf_save_x_max, dec), g_image_region.m_max.x, //
+            bf_to_string(g_bf_save_y_min, dec), g_image_region.m_min.y, //
+            bf_to_string(g_bf_save_y_max, dec), g_image_region.m_max.y, //
+            bf_to_string(g_bf_save_x_3rd, dec), g_image_region.m_3rd.x, //
+            bf_to_string(g_bf_save_y_3rd, dec), g_image_region.m_3rd.y)))
     {
         goodbye();
     }
-}
-
-static std::string bf_to_string_e(BigFloat value, const int dec)
-{
-    char msg[100];
-    bf_to_str_e(msg, value, dec);
-    return msg;
 }
 
 void show_two_bf(const char *s1, BigFloat t1, const char *s2, BigFloat t2, const int digits)

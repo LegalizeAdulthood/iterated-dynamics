@@ -82,6 +82,9 @@ TEST_F(TestBigFloat, formatsZero)
     EXPECT_EQ("0.0", to_string(bf_to_str, value, 5));
     EXPECT_EQ("0.0", to_string(bf_to_str_e, value, 5));
     EXPECT_EQ("0.0", to_string(bf_to_str_f, value, 5));
+    EXPECT_EQ("0.0", bf_to_string(value, 5));
+    EXPECT_EQ("0.0", bf_to_string_e(value, 5));
+    EXPECT_EQ("0.0", bf_to_string_f(value, 5));
 }
 
 TEST_F(TestBigFloat, formatsFixedDecimal)
@@ -90,6 +93,7 @@ TEST_F(TestBigFloat, formatsFixedDecimal)
     str_to_bf(value, "1.25");
 
     EXPECT_EQ("1.25", to_string(bf_to_str_f, value, 5));
+    EXPECT_EQ("1.25", bf_to_string_f(value, 5));
 }
 
 TEST_F(TestBigFloat, formatsScientificDecimal)
@@ -98,6 +102,7 @@ TEST_F(TestBigFloat, formatsScientificDecimal)
     str_to_bf(value, "1.25");
 
     EXPECT_EQ("1.25e0", to_string(bf_to_str_e, value, 5));
+    EXPECT_EQ("1.25e0", bf_to_string_e(value, 5));
 }
 
 } // namespace id::test

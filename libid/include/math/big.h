@@ -8,6 +8,8 @@
 
 #include <config/port.h>
 
+#include <string>
+
 namespace id::math
 {
 
@@ -198,6 +200,9 @@ BigFloat div_bf_int(BigFloat r, BigFloat n, misc::U16 u);
 char *bf_to_str(char *s, BigFloat r, int dec);
 char *bf_to_str_e(char *s, BigFloat r, int dec);
 char *bf_to_str_f(char *s, BigFloat r, int dec);
+std::string bf_to_string(BigFloat r, int dec);
+std::string bf_to_string_e(BigFloat r, int dec);
+std::string bf_to_string_f(BigFloat r, int dec);
 BigFloat inv_bf(BigFloat r, BigFloat n);
 BigFloat div_bf(BigFloat r, BigFloat n1, BigFloat n2);
 BigFloat sqrt_bf(BigFloat r, BigFloat n);

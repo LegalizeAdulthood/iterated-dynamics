@@ -79,7 +79,6 @@
 #include <stdexcept>
 #include <string>
 #include <string_view>
-#include <vector>
 
 namespace fs = std::filesystem;
 
@@ -1869,15 +1868,7 @@ static void put_float(const int slash, const double value, const int prec)
 
 static void put_bf(const int slash, const BigFloat r, const int prec)
 {
-    std::vector<char> buf;              // "/-1.xxxxxxE-1234"
-    buf.resize(5000);
-    char *buff_ptr = buf.data();
-    if (slash)
-    {
-        *buff_ptr++ = '/';
-    }
-    bf_to_str(buff_ptr, r, prec);
-    std::string value{buff_ptr};
+    std::string value{bf_to_string(r, prec)};
     strip_zeros(value);
     if (slash)
     {
