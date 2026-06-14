@@ -428,33 +428,35 @@ void Prompt::display_box_heading()
         driver_set_attr(i, box_col, C_PROMPT_HI, box_width);
     }
 
-    char buffer[256];
-    char *hdg_line = buffer;
     // center each line of heading independently
-    int i;
-    std::strcpy(hdg_line, hdg);
-    for (i = 0; i < title_lines - 1; i++)
+    std::string_view hdg_line{hdg};
+    int i = 0;
+    for (; i < title_lines - 1; i++)
     {
-        char *next = std::strchr(hdg_line, '\n');
-        if (next == nullptr)
+        const std::size_t next = hdg_line.find('\n');
+        if (next == std::string_view::npos)
         {
             break; // shouldn't happen
         }
-        *next = '\0';
-        title_width = static_cast<int>(std::strlen(hdg_line));
-        driver_put_string(title_row + i, box_col + (box_width - title_width) / 2, C_PROMPT_HI, hdg_line);
-        *next = '\n';
-        hdg_line = next + 1;
+        const std::string_view line{hdg_line.substr(0, next)};
+        title_width = static_cast<int>(line.size());
+        driver_put_string(title_row + i, box_col + (box_width - title_width) / 2, C_PROMPT_HI, std::string{line});
+        hdg_line.remove_prefix(next + 1);
     }
     // add scrolling key message, if applicable
+    std::string final_line{hdg_line};
     if (in_scrolling_mode)
     {
-        *(hdg_line + 31) = static_cast<char>(0); // replace the ')'
-        std::strcat(hdg_line, ". Ctrl+<arrow key> to scroll text.)");
+        constexpr std::size_t scroll_heading_prefix_len{31};
+        if (final_line.size() > scroll_heading_prefix_len)
+        {
+            final_line.resize(scroll_heading_prefix_len);
+        }
+        final_line += ". Ctrl+<arrow key> to scroll text.)";
     }
 
-    title_width = static_cast<int>(std::strlen(hdg_line));
-    driver_put_string(title_row + i, box_col + (box_width - title_width) / 2, C_PROMPT_HI, hdg_line);
+    title_width = static_cast<int>(final_line.size());
+    driver_put_string(title_row + i, box_col + (box_width - title_width) / 2, C_PROMPT_HI, final_line);
 }
 
 void Prompt::display_extra_info()
