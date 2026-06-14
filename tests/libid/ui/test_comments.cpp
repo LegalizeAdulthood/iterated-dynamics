@@ -14,10 +14,10 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include <cstring>
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <string>
 
 using namespace id::config;
 using namespace id::engine;
@@ -79,7 +79,7 @@ private:
 
 TEST_F(TestComments, expandCpu)
 {
-    std::strcpy(g_par_comment[0], "; rendered on $cpu$ CPU");
+    g_par_comment[0] = "; rendered on $cpu$ CPU";
     StrictMock<MockFunction<std::string()>> get_cpu_id;
     g_get_cpu_id = get_cpu_id.AsStdFunction();
     EXPECT_CALL(get_cpu_id, Call()).WillOnce(Return("Intel Core i9"));
@@ -96,9 +96,26 @@ TEST_F(TestComments, emptyString)
     EXPECT_TRUE(result.empty());
 }
 
+TEST_F(TestComments, parseCommentsSplitsSlashDelimitedValues)
+{
+    parse_comments("main/second//fourth");
+
+    EXPECT_THAT(g_par_comment, ElementsAre("main", "second", "", "fourth"));
+}
+
+TEST_F(TestComments, parseCommentsTruncatesToLegacyLimit)
+{
+    const std::string comment(MAX_COMMENT_LEN + 10, 'x');
+
+    parse_comments(comment + "/tail");
+
+    EXPECT_EQ(std::string(MAX_COMMENT_LEN - 1, 'x'), g_par_comment[0]);
+    EXPECT_EQ("tail", g_par_comment[1]);
+}
+
 TEST_F(TestComments, replaceUnderscoresWithSpaces)
 {
-    std::strcpy(g_par_comment[0], "every_word_separated_with_underscore");
+    g_par_comment[0] = "every_word_separated_with_underscore";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -107,7 +124,7 @@ TEST_F(TestComments, replaceUnderscoresWithSpaces)
 
 TEST_F(TestComments, escapedUnderscore)
 {
-    std::strcpy(g_par_comment[0], R"(escaped\_underscore)");
+    g_par_comment[0] = R"(escaped\_underscore)";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -116,7 +133,7 @@ TEST_F(TestComments, escapedUnderscore)
 
 TEST_F(TestComments, escapedDollar)
 {
-    std::strcpy(g_par_comment[0], R"(escaped\$_dollar)");
+    g_par_comment[0] = R"(escaped\$_dollar)";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -125,7 +142,7 @@ TEST_F(TestComments, escapedDollar)
 
 TEST_F(TestComments, escapedBackslash)
 {
-    std::strcpy(g_par_comment[0], R"(escaped\\_backslash)");
+    g_par_comment[0] = R"(escaped\\_backslash)";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -135,7 +152,7 @@ TEST_F(TestComments, escapedBackslash)
 TEST_F(TestComments, expandZeroCalcTime)
 {
     g_calc_time = 0;
-    std::strcpy(g_par_comment[0], "$calctime$");
+    g_par_comment[0] = "$calctime$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -145,7 +162,7 @@ TEST_F(TestComments, expandZeroCalcTime)
 TEST_F(TestComments, expandHundredthsSecondsCalcTime)
 {
     g_calc_time = 42;
-    std::strcpy(g_par_comment[0], "$calctime$");
+    g_par_comment[0] = "$calctime$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -155,7 +172,7 @@ TEST_F(TestComments, expandHundredthsSecondsCalcTime)
 TEST_F(TestComments, expandSecondsCalcTime)
 {
     g_calc_time = 42 * 100 + 42;
-    std::strcpy(g_par_comment[0], "$calctime$");
+    g_par_comment[0] = "$calctime$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -165,7 +182,7 @@ TEST_F(TestComments, expandSecondsCalcTime)
 TEST_F(TestComments, expandMinutesCalcTime)
 {
     g_calc_time = (42 * 60 + 42) * 100 + 42;
-    std::strcpy(g_par_comment[0], "$calctime$");
+    g_par_comment[0] = "$calctime$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -175,7 +192,7 @@ TEST_F(TestComments, expandMinutesCalcTime)
 TEST_F(TestComments, expandHoursCalcTime)
 {
     g_calc_time = ((4 * 60 + 42) * 60 + 42) * 100 + 42;
-    std::strcpy(g_par_comment[0], "$calctime$");
+    g_par_comment[0] = "$calctime$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -185,7 +202,7 @@ TEST_F(TestComments, expandHoursCalcTime)
 TEST_F(TestComments, expandDaysCalcTime)
 {
     g_calc_time = (((4 * 24 + 4) * 60 + 42) * 60 + 42) * 100 + 42;
-    std::strcpy(g_par_comment[0], "$calctime$");
+    g_par_comment[0] = "$calctime$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -195,7 +212,7 @@ TEST_F(TestComments, expandDaysCalcTime)
 TEST_F(TestComments, expandVersion)
 {
     g_version = parse_legacy_version(1730);
-    std::strcpy(g_par_comment[0], "$version$");
+    g_par_comment[0] = "$version$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -204,7 +221,7 @@ TEST_F(TestComments, expandVersion)
 
 TEST_F(TestComments, expandPatch)
 {
-    std::strcpy(g_par_comment[0], "$patch$");
+    g_par_comment[0] = "$patch$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -214,7 +231,7 @@ TEST_F(TestComments, expandPatch)
 TEST_F(TestComments, expandXDots)
 {
     g_logical_screen.x_dots = 1964;
-    std::strcpy(g_par_comment[0], "$xdots$");
+    g_par_comment[0] = "$xdots$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -224,7 +241,7 @@ TEST_F(TestComments, expandXDots)
 TEST_F(TestComments, expandYDots)
 {
     g_logical_screen.y_dots = 1964;
-    std::strcpy(g_par_comment[0], "$ydots$");
+    g_par_comment[0] = "$ydots$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -234,7 +251,7 @@ TEST_F(TestComments, expandYDots)
 TEST_F(TestComments, expandVidKey)
 {
     g_video_entry.key = ID_KEY_F6;
-    std::strcpy(g_par_comment[0], "$vidkey$");
+    g_par_comment[0] = "$vidkey$";
 
     const std::string &result{expand_command_comment(0)};
 
@@ -243,7 +260,7 @@ TEST_F(TestComments, expandVidKey)
 
 TEST_F(TestComments, expandYear)
 {
-    std::strcpy(g_par_comment[0], "$year$");
+    g_par_comment[0] = "$year$";
 
     const std::string &result{expand_command_comment(0, m_test_time)};
 
@@ -252,7 +269,7 @@ TEST_F(TestComments, expandYear)
 
 TEST_F(TestComments, expandMonth)
 {
-    std::strcpy(g_par_comment[0], "$month$");
+    g_par_comment[0] = "$month$";
 
     const std::string &result{expand_command_comment(0, m_test_time)};
 
@@ -261,7 +278,7 @@ TEST_F(TestComments, expandMonth)
 
 TEST_F(TestComments, expandDay)
 {
-    std::strcpy(g_par_comment[0], "$day$");
+    g_par_comment[0] = "$day$";
 
     const std::string &result{expand_command_comment(0, m_test_time)};
 
@@ -270,7 +287,7 @@ TEST_F(TestComments, expandDay)
 
 TEST_F(TestComments, expandHour)
 {
-    std::strcpy(g_par_comment[0], "$hour$");
+    g_par_comment[0] = "$hour$";
 
     const std::string &result{expand_command_comment(0, m_test_time)};
 
@@ -279,7 +296,7 @@ TEST_F(TestComments, expandHour)
 
 TEST_F(TestComments, expandMinute)
 {
-    std::strcpy(g_par_comment[0], "$min$");
+    g_par_comment[0] = "$min$";
 
     const std::string &result{expand_command_comment(0, m_test_time)};
 
@@ -288,7 +305,7 @@ TEST_F(TestComments, expandMinute)
 
 TEST_F(TestComments, expandTime)
 {
-    std::strcpy(g_par_comment[0], "$time$");
+    g_par_comment[0] = "$time$";
 
     const std::string &result{expand_command_comment(0, m_test_time)};
 
@@ -299,7 +316,7 @@ TEST_F(TestComments, expandTime)
 
 TEST_F(TestComments, expandDate)
 {
-    std::strcpy(g_par_comment[0], "$date$");
+    g_par_comment[0] = "$date$";
 
     const std::string &result{expand_command_comment(0, m_test_time)};
 

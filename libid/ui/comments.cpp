@@ -12,8 +12,7 @@
 
 #include <libcpuid/libcpuid.h>
 
-#include <cstdio>
-#include <cstring>
+#include <algorithm>
 #include <ctime>
 #include <stdexcept>
 #include <string>
@@ -28,7 +27,7 @@ namespace id::ui
 static std::string get_cpu_id();
 
 std::string g_command_comment[4];
-char g_par_comment[4][MAX_COMMENT_LEN]{};
+std::array<std::string, 4> g_par_comment;
 std::function<std::string()> g_get_cpu_id{get_cpu_id};
 
 static std::string get_cpu_id()
@@ -148,34 +147,25 @@ static std::string expand_var(const std::string &var, const std::time_t local_ti
 }
 
 // extract comments from the comments= command
-void parse_comments(char *value)
+void parse_comments(std::string_view value)
 {
-    for (char *elem : g_par_comment)
+    for (std::string &elem : g_par_comment)
     {
-        char save = '\0';
-        if (*value == 0)
+        if (value.empty())
         {
             break;
         }
-        char *next = std::strchr(value, '/');
-        if (*value != '/')
+        const std::size_t next{value.find('/')};
+        if (value.front() != '/')
         {
-            if (next != nullptr)
-            {
-                save = *next;
-                *next = '\0';
-            }
-            std::strncpy(elem, value, MAX_COMMENT_LEN);
+            const std::size_t len{std::min(next, static_cast<std::size_t>(MAX_COMMENT_LEN - 1))};
+            elem = value.substr(0, len);
         }
-        if (next == nullptr)
+        if (next == std::string_view::npos)
         {
             break;
         }
-        if (save != '\0')
-        {
-            *next = save;
-        }
-        value = next+1;
+        value.remove_prefix(next + 1);
     }
 }
 
@@ -238,9 +228,9 @@ const std::string &expand_command_comment(const int i)
 
 void init_comments()
 {
-    for (char *comment : g_par_comment)
+    for (std::string &comment : g_par_comment)
     {
-        comment[0] = '\0';
+        comment.clear();
     }
 }
 

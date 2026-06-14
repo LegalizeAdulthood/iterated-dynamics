@@ -510,7 +510,7 @@ skip_ui:
                     int last = -1;
                     for (int k = 0; k < 4; k++)
                     {
-                        if (*g_par_comment[k])
+                        if (!g_par_comment[k].empty())
                         {
                             last = k;
                         }
