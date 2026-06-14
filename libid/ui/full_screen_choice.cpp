@@ -18,6 +18,8 @@
 #include <cassert>
 #include <cctype>
 #include <cstring>
+#include <string>
+#include <string_view>
 
 using namespace id::config;
 using namespace id::engine;
@@ -52,11 +54,9 @@ static void footer_msg(int *i, const ChoiceFlags flags, const char *speed_string
 static void show_speed_string(const int speed_row, const char *speed_string,
     int (*speed_prompt)(int row, int col, int vid, const char *speed_string, int speed_match))
 {
-    char buf[81];
-    std::memset(buf, ' ', 80);
-    buf[80] = 0;
-    driver_put_string(speed_row, 0, C_PROMPT_BKGRD, buf);
-    if (*speed_string)
+    driver_put_string(speed_row, 0, C_PROMPT_BKGRD, std::string(80, ' '));
+    const std::string_view speed{speed_string};
+    if (!speed.empty())
     {
         // got a speedstring on the go
         driver_put_string(speed_row, 15, C_CHOICE_SP_INSTR, " ");
@@ -70,16 +70,14 @@ static void show_speed_string(const int speed_row, const char *speed_string,
             driver_put_string(speed_row, 16, C_CHOICE_SP_INSTR, SPEED_PROMPT);
             j = static_cast<int>(SPEED_PROMPT.length());
         }
-        std::strcpy(buf, speed_string);
-        int i = static_cast<int>(std::strlen(buf));
-        while (i < 30)
+        std::string display{speed};
+        if (display.length() < 30)
         {
-            buf[i++] = ' ';
+            display.resize(30, ' ');
         }
-        buf[i] = 0;
-        driver_put_string(speed_row, 16+j, C_CHOICE_SP_INSTR, " ");
-        driver_put_string(speed_row, 17+j, C_CHOICE_SP_KEYIN, buf);
-        driver_move_cursor(speed_row, 17+j+ static_cast<int>(std::strlen(speed_string)));
+        driver_put_string(speed_row, 16 + j, C_CHOICE_SP_INSTR, " ");
+        driver_put_string(speed_row, 17 + j, C_CHOICE_SP_KEYIN, display);
+        driver_move_cursor(speed_row, 17 + j + static_cast<int>(speed.size()));
     }
     else
     {
