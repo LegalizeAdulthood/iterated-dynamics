@@ -1927,16 +1927,13 @@ x11/X11BaseDriver.cpp:345:29: style: Condition 'typed_filename.empty()' is alway
 x11/X11BaseDriver.cpp:373:34: style: Condition 'found.empty()' is always false [knownConditionTrueFalse]
     fs::path selected{found.empty() ? typed_template_path(directory, speed_string) : fs::path{found}};
                                  ^
-x11/X11BaseDriver.cpp:437:13: style: Condition '!speed.empty()' is always true [knownConditionTrueFalse]
-        if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::TEMPLATE)
-            ^
-x11/X11BaseDriver.cpp:446:13: style: Condition '!speed.empty()' is always false [knownConditionTrueFalse]
+x11/X11BaseDriver.cpp:445:13: style: Condition '!speed.empty()' is always false [knownConditionTrueFalse]
         if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::SEARCH_PATH)
             ^
-x11/X11BaseDriver.cpp:437:25: note: Assuming that condition 'speed.empty()' is not redundant
+x11/X11BaseDriver.cpp:436:25: note: Assuming that condition 'speed.empty()' is not redundant
         if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::TEMPLATE)
                         ^
-x11/X11BaseDriver.cpp:446:13: note: Condition '!speed.empty()' is always false
+x11/X11BaseDriver.cpp:445:13: note: Condition '!speed.empty()' is always false
         if (!speed.empty() && g_filename_speed_state == FilenameSpeedState::SEARCH_PATH)
             ^
 x11/X11BaseDriver.cpp:320:17: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
