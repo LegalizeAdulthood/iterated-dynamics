@@ -288,7 +288,6 @@ static long gfe_choose_entry(
     FileEntry storage[MAX_ENTRIES + 1]{};
     FileEntry *choices[MAX_ENTRIES + 1] = { nullptr };
     int attributes[MAX_ENTRIES + 1]{};
-    char instr[80];
 
     static bool do_sort = true;
 
@@ -311,15 +310,15 @@ retry:
         close_gfe_file();
         return -2; // back to file list
     }
-    std::strcpy(instr, o_instr);
+    std::string instr{o_instr};
     if (do_sort)
     {
-        std::strcat(instr, "off");
+        instr += "off";
         shell_sort(&choices, num_entries, sizeof(FileEntry *));
     }
     else
     {
-        std::strcat(instr, "on");
+        instr += "on";
     }
 
     std::strcpy(buf, entry_name.c_str()); // preset to last choice made
@@ -339,7 +338,7 @@ retry:
 
     const int i =
         full_screen_choice(ChoiceFlags::INSTRUCTIONS | (do_sort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED),
-            heading.c_str(), nullptr, instr, num_entries, (const char **) choices, attributes, box_width,
+            heading.c_str(), nullptr, instr.c_str(), num_entries, (const char **) choices, attributes, box_width,
             box_depth, col_width, 0, format_item, buf, nullptr, check_gfe_key);
     if (i == -ID_KEY_F4)
     {
