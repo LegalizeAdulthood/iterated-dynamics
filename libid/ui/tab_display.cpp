@@ -47,10 +47,10 @@
 
 #include <algorithm>
 #include <cmath>
-#include <cstdarg>
-#include <cstdio>
-#include <cstring>
 #include <ctime>
+#include <string>
+#include <string_view>
+#include <utility>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -74,17 +74,18 @@ static void area();
 // color   -- attribute (same as for putstring)
 // maxrow -- max number of rows to write
 // returns false if success, true if hit maxrow before done
-static bool put_string_wrap(int *row, int col1, const int col2, const int color, char *str, const int max_row)
+static bool put_string_wrap(
+    int *row, int col1, const int col2, const int color, const std::string_view text, const int max_row)
 {
     int dec_pt;
     bool done = false;
     const int start_row = *row;
-    int length = static_cast<int>(std::strlen(str));
+    int length = static_cast<int>(text.size());
     int padding = 3; // space between col1 and decimal.
     // find decimal point
     for (dec_pt = 0; dec_pt < length; dec_pt++)
     {
-        if (str[dec_pt] == '.')
+        if (text[dec_pt] == '.')
         {
             break;
         }
@@ -102,44 +103,48 @@ static bool put_string_wrap(int *row, int col1, const int col2, const int color,
         padding = 0;
     }
     col1 += padding;
-    dec_pt += col1+1; // column just past where decimal is
+    dec_pt += col1 + 1; // column just past where decimal is
+    std::size_t offset = 0;
     while (length > 0)
     {
-        if (col2-col1 < length)
+        const int width = col2 - col1;
+        if (width < length)
         {
             done = *row - start_row + 1 >= max_row;
-            char save1 = str[col2 - col1 + 1];
-            char save2 = str[col2 - col1 + 2];
-            if (done)
-            {
-                str[col2-col1+1]   = '+';
-            }
-            else
-            {
-                str[col2-col1+1]   = '\\';
-            }
-            str[col2-col1+2] = 0;
-            driver_put_string(*row, col1, color, str);
+            std::string line{text.substr(offset, width + 1)};
+            line += done ? '+' : '\\';
+            driver_put_string(*row, col1, color, line);
             if (done)
             {
                 break;
             }
-            str[col2-col1+1] = save1;
-            str[col2-col1+2] = save2;
-            str += col2-col1;
+            offset += width;
             (*row)++;
         }
         else
         {
-            driver_put_string(*row, col1, color, str);
+            driver_put_string(*row, col1, color, std::string{text.substr(offset)});
         }
-        length -= col2-col1;
+        length -= width;
         col1 = dec_pt; // align with decimal
     }
     return done;
 }
 
-static void show_str_var(const char *name, const char *var, int *row, char *msg)
+template <typename... Args>
+static std::string format_text(fmt::format_string<Args...> format, Args &&...args)
+{
+    return fmt::format(format, std::forward<Args>(args)...);
+}
+
+template <typename... Args>
+static void put_format(
+    const int row, const int col, const int color, fmt::format_string<Args...> format, Args &&...args)
+{
+    driver_put_string(row, col, color, format_text(format, std::forward<Args>(args)...));
+}
+
+static void show_str_var(const char *name, const char *var, int *row)
 {
     if (var == nullptr)
     {
@@ -147,106 +152,98 @@ static void show_str_var(const char *name, const char *var, int *row, char *msg)
     }
     if (*var != 0)
     {
-        std::sprintf(msg, "%s=%s", name, var);
-        driver_put_string((*row)++, 2, C_GENERAL_HI, msg);
+        put_format((*row)++, 2, C_GENERAL_HI, "{:s}={:s}", name, var);
     }
 }
 
-static void write_row(const int row, const char *format, ...)
+template <typename... Args>
+static void write_row(const int row, fmt::format_string<Args...> format, Args &&...args)
 {
-    char text[78]{};
-    std::va_list args;
-
-    va_start(args, format);
-    std::vsnprintf(text, std::size(text), format, args);
-    va_end(args);
-
-    driver_put_string(row, 2, C_GENERAL_HI, text);
+    put_format(row, 2, C_GENERAL_HI, format, std::forward<Args>(args)...);
 }
 
-static bool tab_display2(char *msg)
+static bool tab_display2()
 {
     int key = 0;
 
     help_title();
-    driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
+    driver_set_attr(1, 0, C_GENERAL_MED, 24 * 80); // init rest to background
 
     int row = 1;
     put_string_center(row++, 0, 80, C_PROMPT_HI, "Top Secret Developer's Screen");
 
     const std::string version{to_string(current_id_version())};
-    write_row(++row, "Version %s", version.c_str());
-    write_row(++row, "%ld of %ld bignum memory used", g_bignum_max_stack_addr, g_max_stack);
-    write_row(++row, "   %ld used for bignum globals", g_start_stack);
-    write_row(++row, "   %ld stack used == %ld variables of length %d", //
-        g_bignum_max_stack_addr - g_start_stack,                           //
+    write_row(++row, "Version {:s}", version);
+    write_row(++row, "{:d} of {:d} bignum memory used", g_bignum_max_stack_addr, g_max_stack);
+    write_row(++row, "   {:d} used for bignum globals", g_start_stack);
+    write_row(++row, "   {:d} stack used == {:d} variables of length {:d}", //
+        g_bignum_max_stack_addr - g_start_stack,                            //
         (g_bignum_max_stack_addr - g_start_stack) / (g_r_bf_length + 2), g_r_bf_length + 2);
     if (g_bf_math != BFMathType::NONE)
     {
-        write_row(++row, "g_int_length %-d g_bf_length %-d ", g_int_length, g_bf_length);
+        write_row(++row, "g_int_length {:d} g_bf_length {:d} ", g_int_length, g_bf_length);
     }
     row++;
-    show_str_var("tempdir",     g_temp_dir.string().c_str(),        &row, msg);
-    show_str_var("workdir",     g_working_dir.string().c_str(),     &row, msg);
-    show_str_var("filename",    g_read_filename.string().c_str(),   &row, msg);
-    show_str_var("formulafile", g_formula_filename.string().c_str(),&row, msg);
-    show_str_var("savename",    g_save_filename.string().c_str(),   &row, msg);
-    show_str_var("parmfile",    g_parameter_file.string().c_str(),  &row, msg);
-    show_str_var("ifsfile",     g_ifs_filename.string().c_str(),    &row, msg);
-    show_str_var("autokeyname", g_auto_name.string().c_str(),       &row, msg);
-    show_str_var("lightname",   g_light_name.c_str(),               &row, msg);
-    show_str_var("map",         g_map_name.c_str(),                 &row, msg);
-    write_row(row++, "Sizeof fractalspecific array %d",
-              g_num_fractal_types* static_cast<int>(sizeof(FractalSpecific)));
-    write_row(row, "calc_status %d pixel [%d, %d]", g_calc_status, g_col, row);
+    show_str_var("tempdir", g_temp_dir.string().c_str(), &row);
+    show_str_var("workdir", g_working_dir.string().c_str(), &row);
+    show_str_var("filename", g_read_filename.string().c_str(), &row);
+    show_str_var("formulafile", g_formula_filename.string().c_str(), &row);
+    show_str_var("savename", g_save_filename.string().c_str(), &row);
+    show_str_var("parmfile", g_parameter_file.string().c_str(), &row);
+    show_str_var("ifsfile", g_ifs_filename.string().c_str(), &row);
+    show_str_var("autokeyname", g_auto_name.string().c_str(), &row);
+    show_str_var("lightname", g_light_name.c_str(), &row);
+    show_str_var("map", g_map_name.c_str(), &row);
+    write_row(
+        row++, "Sizeof fractalspecific array {:d}", g_num_fractal_types * static_cast<int>(sizeof(FractalSpecific)));
+    write_row(row, "calc_status {:d} pixel [{:d}, {:d}]", static_cast<int>(g_calc_status), g_col, row);
     ++row;
     if (g_fractal_type == FractalType::FORMULA)
     {
-        write_row(row++, "Max_Ops (posp) %u Max_Args (vsp) %u",
-                  g_formula.op_index, g_formula.var_index);
-        write_row(row++, "   StoreIdx %d LoadIdx %d MaxOps var %u MaxArgs var %u LastInitOp %d", //
-            g_formula.store_index, g_formula.load_index,                                         //
+        write_row(row++, "Max_Ops (posp) {:d} Max_Args (vsp) {:d}", g_formula.op_index, g_formula.var_index);
+        write_row(row++, "   StoreIdx {:d} LoadIdx {:d} MaxOps var {:d} MaxArgs var {:d} LastInitOp {:d}", //
+            g_formula.store_index, g_formula.load_index,                                                   //
             g_formula.max_ops, g_formula.max_args, g_formula.last_init_op);
     }
     else if (g_rhombus_stack[0])
     {
-        write_row(row++, "SOI Recursion %d stack free %d %d %d %d %d %d %d %d %d %d",
-                  g_max_rhombus_depth+1,
-                  g_rhombus_stack[0], g_rhombus_stack[1], g_rhombus_stack[2],
-                  g_rhombus_stack[3], g_rhombus_stack[4], g_rhombus_stack[5],
-                  g_rhombus_stack[6], g_rhombus_stack[7], g_rhombus_stack[8],
-                  g_rhombus_stack[9]);
+        write_row(row++, "SOI Recursion {:d} stack free {:d} {:d} {:d} {:d} {:d} {:d} {:d} {:d} {:d} {:d}",
+            g_max_rhombus_depth + 1, g_rhombus_stack[0], g_rhombus_stack[1], g_rhombus_stack[2], g_rhombus_stack[3],
+            g_rhombus_stack[4], g_rhombus_stack[5], g_rhombus_stack[6], g_rhombus_stack[7], g_rhombus_stack[8],
+            g_rhombus_stack[9]);
     }
 
     /*
-        write_row(row++, "xdots %d ydots %d sxdots %d sydots %d", xdots, ydots, sxdots, sydots);
+        write_row(row++, "xdots {:d} ydots {:d} sxdots {:d} sydots {:d}", xdots, ydots, sxdots, sydots);
     */
-    write_row(row++, "%dx%d %s (%s)", g_logical_screen.x_dots, g_logical_screen.y_dots,
-              g_driver->get_name().c_str(), g_driver->get_description().c_str());
-    write_row(row++, "xxstart %d xxstop %d yystart %d yystop %d %s uses_ismand %d",
-              g_start_pt.x, g_stop_pt.x, g_start_pt.y, g_stop_pt.y,
-              g_cur_fractal_specific->orbit_calc ==  formula_orbit ? "slow parser" :
-              g_cur_fractal_specific->orbit_calc ==  bad_formula ? "bad formula" :
-              "", g_formula.uses_ismand ? 1 : 0);
+    write_row(row++, "{:d}x{:d} {:s} ({:s})", g_logical_screen.x_dots, g_logical_screen.y_dots, g_driver->get_name(),
+        g_driver->get_description());
+    write_row(row++, "xxstart {:d} xxstop {:d} yystart {:d} yystop {:d} {:s} uses_ismand {:d}", g_start_pt.x,
+        g_stop_pt.x, g_start_pt.y, g_stop_pt.y,
+        g_cur_fractal_specific->orbit_calc == formula_orbit     ? "slow parser"
+            : g_cur_fractal_specific->orbit_calc == bad_formula ? "bad formula"
+                                                                : "",
+        g_formula.uses_ismand ? 1 : 0);
     /*
-        write_row(row++, "ixstart %d ixstop %d iystart %d iystop %d bitshift %d",
-            ixstart, ixstop, iystart, iystop, bitshift);
+        write_row(row++, "ixstart {:d} ixstop {:d} iystart {:d} iystop {:d} bitshift {:d}",
+            ixstart, ixstop,
+       iystart, iystop, bitshift);
     */
-    write_row(row++, "minstackavail %d use_grid %s", g_soi_min_stack_available, true ? "yes" : "no");
+    write_row(row++, "minstackavail {:d} use_grid {:s}", g_soi_min_stack_available, true ? "yes" : "no");
     put_string_center(24, 0, 80, C_GENERAL_LO, "Press Esc to continue, Backspace for first screen");
-    *msg = 0;
+    std::string key_text;
 
     // display keycodes while waiting for ESC, BACKSPACE or TAB
     while (key != ID_KEY_ESC && key != ID_KEY_BACKSPACE && key != ID_KEY_TAB)
     {
-        driver_put_string(row, 2, C_GENERAL_HI, msg);
+        driver_put_string(row, 2, C_GENERAL_HI, key_text);
         key = get_a_key_no_help();
-        std::sprintf(msg, "%d (0x%04x)      ", key, static_cast<unsigned int>(key));
+        key_text = format_text("{:d} (0x{:04x})      ", key, static_cast<unsigned int>(key));
     }
     return key != ID_KEY_ESC;
 }
 
-int tab_display()       // display the status of the current image
+int tab_display() // display the status of the current image
 {
     int add_row = 0;
     BigFloat bf_x_ctr = nullptr;
@@ -256,20 +253,20 @@ int tab_display()       // display the status of the current image
     int saved = 0;
     int has_form_param = 0;
 
-    if (g_calc_status < CalcStatus::PARAMS_CHANGED)        // no active fractal image
+    if (g_calc_status < CalcStatus::PARAMS_CHANGED) // no active fractal image
     {
-        return 0;                // (no TAB on the credits screen)
+        return 0;                                   // (no TAB on the credits screen)
     }
-    if (g_calc_status == CalcStatus::IN_PROGRESS)        // next assumes CLOCKS_PER_SEC is 10^n, n>=2
+    if (g_calc_status == CalcStatus::IN_PROGRESS)   // next assumes CLOCKS_PER_SEC is 10^n, n>=2
     {
-        g_calc_time += (std::clock() - g_engine_timer_start) / (CLOCKS_PER_SEC/100);
+        g_calc_time += (std::clock() - g_engine_timer_start) / (CLOCKS_PER_SEC / 100);
     }
     driver_stack_screen();
     if (g_bf_math != BFMathType::NONE)
     {
         saved = save_stack();
-        bf_x_ctr = alloc_stack(g_bf_length+2);
-        bf_y_ctr = alloc_stack(g_bf_length+2);
+        bf_x_ctr = alloc_stack(g_bf_length + 2);
+        bf_y_ctr = alloc_stack(g_bf_length + 2);
     }
     if (g_fractal_type == FractalType::FORMULA)
     {
@@ -283,10 +280,10 @@ int tab_display()       // display the status of the current image
     }
 
 top:
-    int k = 0; /* initialize here so parameter line displays correctly on return
-                from control-tab */
+    int k = 0;                                     /* initialize here so parameter line displays correctly on return
+                                                    from control-tab */
     help_title();
-    driver_set_attr(1, 0, C_GENERAL_MED, 24*80); // init rest to background
+    driver_set_attr(1, 0, C_GENERAL_MED, 24 * 80); // init rest to background
     int start_row = 2;
     driver_put_string(start_row, 2, C_GENERAL_MED, "Fractal type:");
     if (g_display_3d > Display3DMode::NONE)
@@ -299,32 +296,30 @@ top:
         int i = 0;
         if (g_fractal_type == FractalType::FORMULA)
         {
-            driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(start_row+1, 16, C_GENERAL_HI, g_formula_name);
+            driver_put_string(start_row + 1, 3, C_GENERAL_MED, "Item name:");
+            driver_put_string(start_row + 1, 16, C_GENERAL_HI, g_formula_name);
             i = static_cast<int>(g_formula_name.length() + 1);
-            driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
-            driver_put_string(
-                start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_formula_filename, 29));
+            driver_put_string(start_row + 2, 3, C_GENERAL_MED, "Item file:");
+            driver_put_string(start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_formula_filename, 29));
         }
         trig_details(msg);
-        driver_put_string(start_row+1, 16+i, C_GENERAL_HI, msg);
+        driver_put_string(start_row + 1, 16 + i, C_GENERAL_HI, msg);
         if (g_fractal_type == FractalType::L_SYSTEM)
         {
-            driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(start_row+1, 16, C_GENERAL_HI, g_l_system_name);
-            driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
+            driver_put_string(start_row + 1, 3, C_GENERAL_MED, "Item name:");
+            driver_put_string(start_row + 1, 16, C_GENERAL_HI, g_l_system_name);
+            driver_put_string(start_row + 2, 3, C_GENERAL_MED, "Item file:");
             if (static_cast<int>(g_l_system_filename.string().length()) >= 28)
             {
                 add_row = 1;
             }
-            driver_put_string(
-                start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_l_system_filename, 29));
+            driver_put_string(start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_l_system_filename, 29));
         }
         if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
         {
-            driver_put_string(start_row+1, 3, C_GENERAL_MED, "Item name:");
-            driver_put_string(start_row+1, 16, C_GENERAL_HI, g_ifs_name);
-            driver_put_string(start_row+2, 3, C_GENERAL_MED, "Item file:");
+            driver_put_string(start_row + 1, 3, C_GENERAL_MED, "Item name:");
+            driver_put_string(start_row + 1, 16, C_GENERAL_HI, g_ifs_name);
+            driver_put_string(start_row + 2, 3, C_GENERAL_MED, "Item file:");
             if (static_cast<int>(g_ifs_filename.string().length()) >= 28)
             {
                 add_row = 1;
@@ -361,7 +356,7 @@ top:
 
     if (g_help_mode == HelpLabels::HELP_CYCLING)
     {
-        driver_put_string(start_row+1, 45, C_GENERAL_HI, "You are in color-cycling mode");
+        driver_put_string(start_row + 1, 45, C_GENERAL_HI, "You are in color-cycling mode");
     }
     ++start_row;
     // if (g_bf_math == bf_math_type::NONE)
@@ -373,9 +368,8 @@ top:
     }
     else
     {
-        std::sprintf(msg, "(%-d decimals)", g_decimals);
         driver_put_string(start_row, 45, C_GENERAL_HI, "Arbitrary precision ");
-        driver_put_string(-1, -1, C_GENERAL_HI, msg);
+        put_format(-1, -1, C_GENERAL_HI, "({:d} decimals)", g_decimals);
     }
     start_row += 1;
 
@@ -384,7 +378,7 @@ top:
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_RESUME))
         {
             driver_put_string(start_row++, 2, C_GENERAL_HI,
-                              "Note: can't resume this type after interrupts other than <Tab> and <F1>");
+                "Note: can't resume this type after interrupts other than <Tab> and <F1>");
         }
     }
     start_row += add_row;
@@ -399,8 +393,7 @@ top:
         switch (g_passes)
         {
         case Passes::SEQUENTIAL_SCAN:
-            std::sprintf(msg, "%d Pass Mode", g_total_passes);
-            driver_put_string(start_row, 2, C_GENERAL_HI, msg);
+            put_format(start_row, 2, C_GENERAL_HI, "{:d} Pass Mode", g_total_passes);
             if (g_user.std_calc_mode == CalcMode::THREE_PASS)
             {
                 driver_put_string(start_row, -1, C_GENERAL_HI, " (threepass)");
@@ -417,8 +410,8 @@ top:
             driver_put_string(start_row, 2, C_GENERAL_HI, "Boundary Tracing");
             break;
         case Passes::THREE_D:
-            std::sprintf(msg, "Processing row %d (of %d) of input image", g_current_row, g_file_y_dots);
-            driver_put_string(start_row, 2, C_GENERAL_HI, msg);
+            put_format(start_row, 2, C_GENERAL_HI, "Processing row {:d} (of {:d}) of input image", g_current_row,
+                g_file_y_dots);
             break;
         case Passes::TESSERAL:
             driver_put_string(start_row, 2, C_GENERAL_HI, "Tesseral");
@@ -435,62 +428,52 @@ top:
         ++start_row;
         if (g_passes == Passes::DIFFUSION)
         {
-            std::sprintf(msg, "%2.2f%% done, counter at %lu of %lu (%u bits)",
-                    100.0 * g_diffusion_counter /g_diffusion_limit,
-                    g_diffusion_counter, g_diffusion_limit, g_diffusion_bits);
-            driver_put_string(start_row, 2, C_GENERAL_MED, msg);
+            put_format(start_row, 2, C_GENERAL_MED, "{:2.2f}% done, counter at {:d} of {:d} ({:d} bits)",
+                100.0 * g_diffusion_counter / g_diffusion_limit, g_diffusion_counter, g_diffusion_limit,
+                g_diffusion_bits);
             ++start_row;
         }
         else if (g_passes != Passes::THREE_D)
         {
-            std::sprintf(msg, "Working on block (y, x) [%d, %d]...[%d, %d], ",
-                    g_start_pt.y, g_start_pt.x, g_stop_pt.y, g_stop_pt.x);
-            driver_put_string(start_row, 2, C_GENERAL_MED, msg);
+            put_format(start_row, 2, C_GENERAL_MED, "Working on block (y, x) [{:d}, {:d}]...[{:d}, {:d}], ",
+                g_start_pt.y, g_start_pt.x, g_stop_pt.y, g_stop_pt.x);
             if (g_passes == Passes::BOUNDARY_TRACE || g_passes == Passes::TESSERAL)
             {
                 driver_put_string(-1, -1, C_GENERAL_MED, "at ");
-                std::sprintf(msg, "[%d, %d]", g_current_row, g_current_column);
-                driver_put_string(-1, -1, C_GENERAL_HI, msg);
+                put_format(-1, -1, C_GENERAL_HI, "[{:d}, {:d}]", g_current_row, g_current_column);
             }
             else
             {
                 if (g_total_passes > 1)
                 {
                     driver_put_string(-1, -1, C_GENERAL_MED, "pass ");
-                    std::sprintf(msg, "%d", g_current_pass);
-                    driver_put_string(-1, -1, C_GENERAL_HI, msg);
+                    put_format(-1, -1, C_GENERAL_HI, "{:d}", g_current_pass);
                     driver_put_string(-1, -1, C_GENERAL_MED, " of ");
-                    std::sprintf(msg, "%d", g_total_passes);
-                    driver_put_string(-1, -1, C_GENERAL_HI, msg);
+                    put_format(-1, -1, C_GENERAL_HI, "{:d}", g_total_passes);
                     driver_put_string(-1, -1, C_GENERAL_MED, ", ");
                 }
                 driver_put_string(-1, -1, C_GENERAL_MED, "at row ");
-                std::sprintf(msg, "%d", g_current_row);
-                driver_put_string(-1, -1, C_GENERAL_HI, msg);
+                put_format(-1, -1, C_GENERAL_HI, "{:d}", g_current_row);
                 driver_put_string(-1, -1, C_GENERAL_MED, " col ");
-                std::sprintf(msg, "%d", g_col);
-                driver_put_string(-1, -1, C_GENERAL_HI, msg);
+                put_format(-1, -1, C_GENERAL_HI, "{:d}", g_col);
             }
             ++start_row;
         }
     }
     driver_put_string(start_row, 2, C_GENERAL_MED, "Calculation time:");
-    strncpy(msg, get_calculation_time(g_calc_time).c_str(), std::size(msg));
-    driver_put_string(-1, -1, C_GENERAL_HI, msg);
+    driver_put_string(-1, -1, C_GENERAL_HI, get_calculation_time(g_calc_time));
     if (g_passes == Passes::DIFFUSION && g_calc_status == CalcStatus::IN_PROGRESS) // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
         const std::string time{get_calculation_time(
             static_cast<long>(g_calc_time * (static_cast<double>(g_diffusion_limit) / g_diffusion_counter)))};
-        strncpy(msg, time.c_str(),std::size(msg));
-        driver_put_string(-1, -1, C_GENERAL_HI, msg);
+        driver_put_string(-1, -1, C_GENERAL_HI, time);
     }
 
     if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC) && g_color_iter != 0)
     {
         driver_put_string(start_row, -1, C_GENERAL_MED, " 1000's of points:");
-        std::sprintf(msg, " %ld of %ld", g_color_iter-2, g_max_count);
-        driver_put_string(start_row, -1, C_GENERAL_HI, msg);
+        put_format(start_row, -1, C_GENERAL_HI, " {:d} of {:d}", g_color_iter - 2, g_max_count);
     }
 
     ++start_row;
@@ -502,10 +485,9 @@ top:
         fmt::format("Driver: {:s}, {:s}", g_driver->get_name(), g_driver->get_description()));
     if (g_video_entry.x_dots && g_bf_math == BFMathType::NONE)
     {
-        std::sprintf(msg, "Video: %dx%dx%d %s",                               //
-            g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors, //
+        put_format(start_row++, 2, C_GENERAL_MED, "Video: {:d}x{:d}x{:d} {:s}", //
+            g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,   //
             g_video_entry.comment);
-        driver_put_string(start_row++, 2, C_GENERAL_MED, msg);
     }
     if (bit_clear(g_cur_fractal_specific->flags, FractalFlags::NO_ZOOM))
     {
@@ -541,17 +523,13 @@ top:
                 driver_put_string(truncate_row, 2, C_GENERAL_MED, "(Center values shown truncated to 320 decimals)");
             }
             driver_put_string(++start_row, 2, C_GENERAL_MED, "Mag");
-            std::sprintf(msg, "%10.8Le", magnification);
-            driver_put_string(-1, 11, C_GENERAL_HI, msg);
+            put_format(-1, 11, C_GENERAL_HI, "{:10.8e}", magnification);
             driver_put_string(++start_row, 2, C_GENERAL_MED, "X-Mag-Factor");
-            std::sprintf(msg, "%11.4f   ", x_mag_factor);
-            driver_put_string(-1, -1, C_GENERAL_HI, msg);
+            put_format(-1, -1, C_GENERAL_HI, "{:11.4f}   ", x_mag_factor);
             driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
-            std::sprintf(msg, "%9.3f   ", rotation);
-            driver_put_string(-1, -1, C_GENERAL_HI, msg);
+            put_format(-1, -1, C_GENERAL_HI, "{:9.3f}   ", rotation);
             driver_put_string(-1, -1, C_GENERAL_MED, "Skew");
-            std::sprintf(msg, "%9.3f", skew);
-            driver_put_string(-1, -1, C_GENERAL_HI, msg);
+            put_format(-1, -1, C_GENERAL_HI, "{:9.3f}", skew);
         }
         else // bf != 1
         {
@@ -559,34 +537,27 @@ top:
             double y_ctr;
             driver_put_string(start_row, 2, C_GENERAL_MED, "Corners:                X                     Y");
             driver_put_string(++start_row, 3, C_GENERAL_MED, "Top-l");
-            std::sprintf(msg, "%20.16f  %20.16f", g_image_region.m_min.x, g_image_region.m_max.y);
-            driver_put_string(-1, 17, C_GENERAL_HI, msg);
+            put_format(-1, 17, C_GENERAL_HI, "{:20.16f}  {:20.16f}", g_image_region.m_min.x, g_image_region.m_max.y);
             driver_put_string(++start_row, 3, C_GENERAL_MED, "Bot-r");
-            std::sprintf(msg, "%20.16f  %20.16f", g_image_region.m_max.x, g_image_region.m_min.y);
-            driver_put_string(-1, 17, C_GENERAL_HI, msg);
+            put_format(-1, 17, C_GENERAL_HI, "{:20.16f}  {:20.16f}", g_image_region.m_max.x, g_image_region.m_min.y);
 
             if (g_image_region.m_min.x != g_image_region.m_3rd.x || g_image_region.m_min.y != g_image_region.m_3rd.y)
             {
                 driver_put_string(++start_row, 3, C_GENERAL_MED, "Bot-l");
-                std::sprintf(msg, "%20.16f  %20.16f", g_image_region.m_3rd.x, g_image_region.m_3rd.y);
-                driver_put_string(-1, 17, C_GENERAL_HI, msg);
+                put_format(
+                    -1, 17, C_GENERAL_HI, "{:20.16f}  {:20.16f}", g_image_region.m_3rd.x, g_image_region.m_3rd.y);
             }
             cvt_center_mag(x_ctr, y_ctr, magnification, x_mag_factor, rotation, skew);
             driver_put_string(start_row += 2, 2, C_GENERAL_MED, "Ctr");
-            std::sprintf(msg, "%20.16f %20.16f  ", x_ctr, y_ctr);
-            driver_put_string(-1, -1, C_GENERAL_HI, msg);
+            put_format(-1, -1, C_GENERAL_HI, "{:20.16f} {:20.16f}  ", x_ctr, y_ctr);
             driver_put_string(-1, -1, C_GENERAL_MED, "Mag");
-            std::sprintf(msg, " %10.8Le", magnification);
-            driver_put_string(-1, -1, C_GENERAL_HI, msg);
+            put_format(-1, -1, C_GENERAL_HI, " {:10.8e}", magnification);
             driver_put_string(++start_row, 2, C_GENERAL_MED, "X-Mag-Factor");
-            std::sprintf(msg, "%11.4f   ", x_mag_factor);
-            driver_put_string(-1, -1, C_GENERAL_HI, msg);
+            put_format(-1, -1, C_GENERAL_HI, "{:11.4f}   ", x_mag_factor);
             driver_put_string(-1, -1, C_GENERAL_MED, "Rotation");
-            std::sprintf(msg, "%9.3f   ", rotation);
-            driver_put_string(-1, -1, C_GENERAL_HI, msg);
+            put_format(-1, -1, C_GENERAL_HI, "{:9.3f}   ", rotation);
             driver_put_string(-1, -1, C_GENERAL_MED, "Skew");
-            std::sprintf(msg, "%9.3f", skew);
-            driver_put_string(-1, -1, C_GENERAL_HI, msg);
+            put_format(-1, -1, C_GENERAL_HI, "{:9.3f}", skew);
         }
     }
 
@@ -598,7 +569,7 @@ top:
             if (type_has_param(g_fractal_type, i, &p))
             {
                 int col;
-                if (k%4 == 0)
+                if (k % 4 == 0)
                 {
                     start_row++;
                     col = 9;
@@ -607,69 +578,61 @@ top:
                 {
                     col = -1;
                 }
-                if (k == 0)   // only true with first displayed parameter
+                if (k == 0) // only true with first displayed parameter
                 {
                     driver_put_string(++start_row, 2, C_GENERAL_MED, "Params ");
                 }
-                std::sprintf(msg, "%3d: ", i+1);
-                driver_put_string(start_row, col, C_GENERAL_MED, msg);
+                put_format(start_row, col, C_GENERAL_MED, "{:3d}: ", i + 1);
                 if (p[0] == '+')
                 {
-                    std::sprintf(msg, "%-12d", static_cast<int>(g_params[i]));
+                    driver_put_string(-1, -1, C_GENERAL_HI, format_text("{:<12d}", static_cast<int>(g_params[i])));
                 }
                 else if (p[0] == '#')
                 {
-                    std::sprintf(msg, "%-12u", static_cast<U32>(g_params[i]));
+                    driver_put_string(-1, -1, C_GENERAL_HI, format_text("{:<12d}", static_cast<U32>(g_params[i])));
                 }
                 else
                 {
                     if ((std::abs(g_params[i]) < 0.00001 || std::abs(g_params[i]) > 100000.0) && g_params[i] != 0.0)
                     {
-                        std::sprintf(msg, "%-12.9e", g_params[i]);
+                        driver_put_string(-1, -1, C_GENERAL_HI, format_text("{:<12.9e}", g_params[i]));
                     }
                     else
                     {
-                        std::sprintf(msg, "%-12.9f", g_params[i]);
+                        driver_put_string(-1, -1, C_GENERAL_HI, format_text("{:<12.9f}", g_params[i]));
                     }
                 }
-                driver_put_string(-1, -1, C_GENERAL_HI, msg);
                 k++;
             }
         }
     }
     driver_put_string(start_row += 2, 2, C_GENERAL_MED, "Current (Max) Iteration: ");
-    std::sprintf(msg, "%ld (%ld)", g_color_iter, g_max_iterations);
-    driver_put_string(-1, -1, C_GENERAL_HI, msg);
+    put_format(-1, -1, C_GENERAL_HI, "{:d} ({:d})", g_color_iter, g_max_iterations);
     driver_put_string(-1, -1, C_GENERAL_MED, "     Effective bailout: ");
-    std::sprintf(msg, "%f", g_magnitude_limit);
-    driver_put_string(-1, -1, C_GENERAL_HI, msg);
+    put_format(-1, -1, C_GENERAL_HI, "{:f}", g_magnitude_limit);
 
-    if (g_fractal_type == FractalType::PLASMA || g_fractal_type == FractalType::ANT || g_fractal_type == FractalType::CELLULAR)
+    if (g_fractal_type == FractalType::PLASMA || g_fractal_type == FractalType::ANT ||
+        g_fractal_type == FractalType::CELLULAR)
     {
         driver_put_string(++start_row, 2, C_GENERAL_MED, "Current 'rseed': ");
-        std::sprintf(msg, "%d", g_random_seed);
-        driver_put_string(-1, -1, C_GENERAL_HI, msg);
+        put_format(-1, -1, C_GENERAL_HI, "{:d}", g_random_seed);
     }
 
     if (g_inversion.invert != 0)
     {
         driver_put_string(++start_row, 2, C_GENERAL_MED, "Inversion radius: ");
-        std::sprintf(msg, "%12.9f", g_inversion.radius);
-        driver_put_string(-1, -1, C_GENERAL_HI, msg);
+        put_format(-1, -1, C_GENERAL_HI, "{:12.9f}", g_inversion.radius);
         driver_put_string(-1, -1, C_GENERAL_MED, "  xcenter: ");
-        std::sprintf(msg, "%12.9f", g_inversion.center.x);
-        driver_put_string(-1, -1, C_GENERAL_HI, msg);
+        put_format(-1, -1, C_GENERAL_HI, "{:12.9f}", g_inversion.center.x);
         driver_put_string(-1, -1, C_GENERAL_MED, "  ycenter: ");
-        std::sprintf(msg, "%12.9f", g_inversion.center.y);
-        driver_put_string(-1, -1, C_GENERAL_HI, msg);
+        put_format(-1, -1, C_GENERAL_HI, "{:12.9f}", g_inversion.center.y);
     }
 
     if ((start_row += 2) < 23)
     {
         ++start_row;
     }
-    put_string_center(
-        24, 0, 80, C_GENERAL_LO, "Press any key to continue, F6 for area, Ctrl+Tab for next page");
+    put_string_center(24, 0, 80, C_GENERAL_LO, "Press any key to continue, F6 for area, Ctrl+Tab for next page");
     driver_hide_text_cursor();
     const int key = get_a_key_no_help();
     if (key == ID_KEY_F6)
@@ -681,7 +644,7 @@ top:
     }
     if (key == ID_KEY_CTL_TAB || key == ID_KEY_SHF_TAB || key == ID_KEY_F7)
     {
-        if (tab_display2(msg))
+        if (tab_display2())
         {
             goto top;
         }
@@ -698,7 +661,6 @@ top:
 static void area()
 {
     const char *msg;
-    char buf[160];
     long cnt = 0;
     if (g_inside_method < ColorMethod::COLOR)
     {
@@ -725,12 +687,11 @@ static void area()
         msg = "";
     }
     const DComplex size{g_image_region.size()};
-    std::sprintf(buf, "%s%ld inside pixels of %ld%s%f", msg, cnt,
-        static_cast<long>(g_logical_screen.x_dots) * static_cast<long>(g_logical_screen.y_dots),
-        ".  Total area ",
-        cnt / (static_cast<float>(g_logical_screen.x_dots) * static_cast<float>(g_logical_screen.y_dots)) *
-            size.x * size.y);
-    stop_msg(StopMsgFlags::NO_BUZZER, buf);
+    stop_msg(StopMsgFlags::NO_BUZZER,
+        format_text("{:s}{:d} inside pixels of {:d}{:s}{:f}", msg, cnt,
+            static_cast<long>(g_logical_screen.x_dots) * static_cast<long>(g_logical_screen.y_dots), ".  Total area ",
+            cnt / (static_cast<float>(g_logical_screen.x_dots) * static_cast<float>(g_logical_screen.y_dots)) * size.x *
+                size.y));
 }
 
 } // namespace id::ui
