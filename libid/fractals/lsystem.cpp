@@ -28,6 +28,7 @@
 #include <filesystem>
 #include <new>
 #include <string>
+#include <string_view>
 #include <vector>
 
 #ifdef max
@@ -219,7 +220,8 @@ static bool read_lsystem_file(const char *str)
         }
         string_lower(inline1);
 
-        if (static_cast<int>(std::strspn(inline1, " \t\n")) < static_cast<int>(std::strlen(inline1))) // not a blank line
+        // not a blank line
+        if (const std::string_view line{inline1}; line.find_first_not_of(" \t\n") != std::string_view::npos)
         {
             bool check = false;
             word = std::strtok(inline1, " =\t\n");
