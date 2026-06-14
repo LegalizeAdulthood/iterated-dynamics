@@ -3631,7 +3631,7 @@ static CmdArgFlags cmd_temp_dir(const Command &cmd)
 
 static CmdArgFlags cmd_text_colors(const Command &cmd)
 {
-    if (const char *value = cmd.value; std::string_view(value) == "mono")
+    if (cmd.total_params == 1 && cmd.string_val(0) == "mono")
     {
         std::fill(std::begin(g_text_color), std::end(g_text_color), BLACK * 16 + WHITE);
         g_text_color[28] = WHITE * 16 + BLACK;
@@ -3653,32 +3653,23 @@ static CmdArgFlags cmd_text_colors(const Command &cmd)
     }
     else
     {
-        std::size_t k{};
-        while (k < std::size(g_text_color))
+        const int color_count{static_cast<int>(std::size(g_text_color))};
+        for (int k = 0; k < cmd.total_params && k < color_count; ++k)
         {
-            if (*value == 0)
+            const std::string value{cmd.string_val(k)};
+            if (value.empty())
             {
-                break;
+                continue;
             }
-            if (*value != '/')
+            unsigned int hex_val;
+            std::sscanf(value.c_str(), "%x", &hex_val);
+            const unsigned int i = hex_val / 16 & 7;
+            unsigned int j = hex_val & 15;
+            if (i == j || (i == 0 && j == 8)) // force contrast
             {
-                unsigned int hex_val;
-                std::sscanf(value, "%x", &hex_val);
-                const unsigned int i = hex_val / 16 & 7;
-                unsigned int j = hex_val & 15;
-                if (i == j || (i == 0 && j == 8)) // force contrast
-                {
-                    j = 15;
-                }
-                g_text_color[k] = static_cast<Byte>(i * 16 + j);
-                value = std::strchr(value, '/');
-                if (value == nullptr)
-                {
-                    break;
-                }
+                j = 15;
             }
-            ++value;
-            ++k;
+            g_text_color[k] = static_cast<Byte>(i * 16 + j);
         }
     }
 
