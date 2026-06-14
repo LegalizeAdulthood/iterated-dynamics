@@ -164,28 +164,27 @@ static void process_speed_string(std::string &speed_string, //
     return is: n >= 0 for choice n selected,
               -1 for escape
               k for check_key routine return value k (if not 0 nor -1)
-              speed_string[0] != 0 on return if string is present
+              speed_string is not empty on return if string is present
 */
 int full_screen_choice(ChoiceFlags flags,                            //
     const char *hdg, const char *hdg2, const char *instr,            //
     int num_choices, const char **choices, const int *attributes,    //
     int box_width, int box_depth, int col_width,                     //
     int current, FormatItem *format_item,                            //
-    char *speed_string, SpeedPrompt *speed_prompt,                   //
+    std::string *speed_string, SpeedPrompt *speed_prompt,            //
     CheckKey *check_key)
 {
     const int scrunch = bit_set(flags, ChoiceFlags::CRUNCH) ? 1 : 0; // scrunch up a line
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::IGNORE_MOUSE};
     int ret = -1;
     const bool has_speed_string{speed_string != nullptr};
-    std::string active_speed_string{has_speed_string ? speed_string : ""};
+    std::string active_speed_string{has_speed_string ? *speed_string : ""};
     bool speed_string_dirty{};
     const auto finish = [&active_speed_string, has_speed_string, &ret, speed_string, &speed_string_dirty]() -> int
     {
         if (has_speed_string && speed_string_dirty)
         {
-            std::copy(active_speed_string.begin(), active_speed_string.end(), speed_string);
-            speed_string[active_speed_string.size()] = 0;
+            *speed_string = active_speed_string;
         }
         return ret;
     };

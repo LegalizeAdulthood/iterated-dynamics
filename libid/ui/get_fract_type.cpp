@@ -126,7 +126,7 @@ static FractalType select_fract_type(FractalType t)
     {
         MAX_FRACT_TYPES = 200
     };
-    char type_name[40];
+    std::string type_name;
     std::array<FractalTypeChoice, MAX_FRACT_TYPES> storage{};
     std::array<FractalTypeChoice *, MAX_FRACT_TYPES> choices;
     std::array<int, MAX_FRACT_TYPES> attributes;
@@ -171,11 +171,10 @@ static FractalType select_fract_type(FractalType t)
         }
     }
 
-    type_name[0] = 0;
     const int done = full_screen_choice(ChoiceFlags::HELP | ChoiceFlags::INSTRUCTIONS,
         g_julibrot ? "Select Orbit Algorithm for Julibrot" : "Select a Fractal Type", nullptr,
         "Press F2 for a description of the highlighted type", num_types, (const char **) choices.data(),
-        attributes.data(), 0, 0, 0, j, nullptr, type_name, nullptr, sel_fract_type_help);
+        attributes.data(), 0, 0, 0, j, nullptr, &type_name, nullptr, sel_fract_type_help);
     if (done < 0)
     {
         return FractalType::NO_FRACTAL;

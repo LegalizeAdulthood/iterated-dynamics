@@ -284,7 +284,6 @@ static long gfe_choose_entry(
     const ItemType type, const char *title, const std::filesystem::path &path, std::string &entry_name)
 {
     const char *o_instr = "Press F6 to select different file, F2 for details, F4 to toggle sort ";
-    char buf[101];
     FileEntry storage[MAX_ENTRIES + 1]{};
     FileEntry *choices[MAX_ENTRIES + 1] = { nullptr };
     int attributes[MAX_ENTRIES + 1]{};
@@ -321,7 +320,7 @@ retry:
         instr += "on";
     }
 
-    std::strcpy(buf, entry_name.c_str()); // preset to last choice made
+    std::string speed_string{entry_name}; // preset to last choice made
     const std::string heading{std::string{title} + " Selection\n"
         + "File: " + trim_filename(path, 68)};
     FormatItem *format_item{};
@@ -339,7 +338,7 @@ retry:
     const int i =
         full_screen_choice(ChoiceFlags::INSTRUCTIONS | (do_sort ? ChoiceFlags::NONE : ChoiceFlags::NOT_SORTED),
             heading.c_str(), nullptr, instr.c_str(), num_entries, (const char **) choices, attributes, box_width,
-            box_depth, col_width, 0, format_item, buf, nullptr, check_gfe_key);
+            box_depth, col_width, 0, format_item, &speed_string, nullptr, check_gfe_key);
     if (i == -ID_KEY_F4)
     {
         std::fseek(s_gfe.file, 0, SEEK_SET);

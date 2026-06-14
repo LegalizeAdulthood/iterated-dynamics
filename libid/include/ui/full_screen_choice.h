@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <string>
+
 namespace id::ui
 {
 
@@ -51,7 +53,7 @@ int full_screen_choice(ChoiceFlags flags,                         //
     int num_choices, const char **choices, const int *attributes, //
     int box_width, int box_depth, int col_width,                  //
     int current, FormatItem *format_item,                         //
-    char *speed_string, SpeedPrompt *speed_prompt,                //
+    std::string *speed_string, SpeedPrompt *speed_prompt,         //
     CheckKey *check_key);
 
 } // namespace id::ui
