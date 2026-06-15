@@ -231,7 +231,7 @@ bool AsciiDocProcessor::output(const PrintDocCommand cmd, ProcessDocumentInfo *p
         {
             print_anchor(m_section_topic_anchor);
         }
-        print_string(pd->title, std::strlen(pd->title));
+        print_string(m_content);
         print_char('\n', 2);
         return true;
 
