@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 30.
+Total hotspots: 27.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,7 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 14.
+Items: 11.
 
 ## SH-203
 
@@ -185,60 +185,6 @@ Items: 14.
 - Sonar Status: `TO_REVIEW`
 - Assignee: `AWqWD8MuvoFfNZkNexwB`
 - Created: `2025-09-22T00:13:20+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-204
-
-- Status: `pending`
-- Key: `AZwwyFkQ0qvqV_CtK2T0`
-- Rule: `c:S5801`
-- Area: `tests-legacy-win32`
-- Path: `legacy/dos/sound.c`
-- Line: `521`
-- Range: `521:4-521:10`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2006-12-09T18:41:30+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-205
-
-- Status: `pending`
-- Key: `AZwwyFkQ0qvqV_CtK2T7`
-- Rule: `c:S5801`
-- Area: `tests-legacy-win32`
-- Path: `legacy/dos/sound.c`
-- Line: `633`
-- Range: `633:4-633:10`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2006-12-09T18:41:30+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-206
-
-- Status: `pending`
-- Key: `AZwwyFkQ0qvqV_CtK2T_`
-- Rule: `c:S5801`
-- Area: `tests-legacy-win32`
-- Path: `legacy/dos/sound.c`
-- Line: `738`
-- Range: `738:4-738:10`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2006-12-09T18:41:30+0000`
 - Updated: `2026-02-06T02:20:33+0000`
 - Flows: `0`
 - Message: Make sure use of "strcpy" is safe here.
