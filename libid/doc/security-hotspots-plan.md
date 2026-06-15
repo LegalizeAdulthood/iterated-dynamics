@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 67.
+Total hotspots: 66.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,7 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 51.
+Items: 50.
 
 ## SH-199
 
@@ -130,24 +130,6 @@ Items: 51.
 - Sonar Status: `TO_REVIEW`
 - Assignee: `AWqWD8MuvoFfNZkNexwB`
 - Created: `2024-06-22T23:25:19+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-158
-
-- Status: `pending`
-- Key: `AZwwyEd80qvqV_CtK0--`
-- Rule: `cpp:S5813`
-- Area: `io-path-metadata`
-- Path: `libid/io/ends_with_slash.cpp`
-- Line: `14`
-- Range: `14:35-14:46`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-09-18T03:55:59+0000`
 - Updated: `2026-02-06T02:20:33+0000`
 - Flows: `0`
 - Message: Make sure use of "strlen" is safe here.

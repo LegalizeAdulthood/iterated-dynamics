@@ -34,9 +34,9 @@ constexpr int MAX_SPEED_STRING_LEN{30};
 
 /* For file list purposes only, it's a directory name if first
    char is a dot or last char is a slash */
-static int is_a_dir_name(const char *name)
+static int is_a_dir_name(const std::string_view name)
 {
-    return *name == '.' || ends_with_slash(name) ? 1 : 0;
+    return !name.empty() && (name[0] == '.' || ends_with_slash(name)) ? 1 : 0;
 }
 
 static void footer_msg(int *i, const ChoiceFlags flags, const bool has_speed_string)
