@@ -10,6 +10,8 @@
 #include <config/string_case_compare.h>
 #include <fmt/format.h>
 
+#include <algorithm>
+
 using namespace id::config;
 using namespace id::engine;
 using namespace id::misc;
@@ -172,7 +174,9 @@ top:
             {
                 if (buf[0] != 0 && !string_case_equal(buf, "comment") && !exclude_entry)
                 {
-                    std::strcpy(choices[num_entries].name, buf);
+                    const int entry_len{std::min<int>(len, ITEM_NAME_LEN)};
+                    std::copy_n(buf, entry_len, choices[num_entries].name);
+                    choices[num_entries].name[entry_len] = 0;
                     choices[num_entries].point = name_offset;
                     if (++num_entries >= MAX_ENTRIES)
                     {
