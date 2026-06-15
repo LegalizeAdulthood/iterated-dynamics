@@ -261,6 +261,7 @@ add_library(libid
     "doc/MiscGlobals.md"
     "doc/NetworkArchitecture.md"
     "doc/parser-bignum.md"
+    "doc/simd-highway.md"
     "doc/UIGlobals.md"
 )
 source_group("Docs" REGULAR_EXPRESSION ".*\\.md$")
