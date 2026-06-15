@@ -12,8 +12,10 @@
 #include <DbgHelp.h>
 #include <Windows.h>
 
-#include <cstdio>
+#include <fmt/format.h>
+
 #include <filesystem>
+#include <string>
 
 using namespace id::engine;
 using namespace id::io;
@@ -54,12 +56,12 @@ void create_minidump(EXCEPTION_POINTERS *ep)
         return;
     }
 
-    char minidump[MAX_PATH]{"id-" ID_GIT_HASH ".dmp"};
+    std::string minidump{"id-" ID_GIT_HASH ".dmp"};
     int i{1};
     fs::path path{g_save_dir};
     while (fs::exists(path / minidump))
     {
-        std::sprintf(minidump, "id-" ID_GIT_HASH "-%d.dmp", i++);
+        minidump = fmt::format("id-" ID_GIT_HASH "-{:d}.dmp", i++);
     }
     path /= minidump;
     HANDLE dump_file{CreateFileA(path.string().c_str(), GENERIC_READ | GENERIC_WRITE, 0, nullptr, CREATE_NEW,
@@ -79,9 +81,8 @@ void create_minidump(EXCEPTION_POINTERS *ep)
     _ASSERTE(status);
     if (!status)
     {
-        char msg[100];
-        std::sprintf(msg, "MiniDumpWriteDump failed with %08lx", GetLastError());
-        MessageBoxA(nullptr, msg, ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
+        const std::string msg{fmt::format("MiniDumpWriteDump failed with {:08x}", GetLastError())};
+        MessageBoxA(nullptr, msg.c_str(), ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
     }
     else
     {
@@ -94,12 +95,10 @@ void create_minidump(EXCEPTION_POINTERS *ep)
 
     if (g_init_batch != BatchMode::NORMAL)
     {
-        char msg[MAX_PATH * 2];
-        std::sprintf(msg,
-            "Unexpected error, crash dump saved to %s.\n"
-            "Please include this file with your bug report.",
-            minidump);
-        MessageBoxA(nullptr, msg, ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
+        const std::string msg{fmt::format("Unexpected error, crash dump saved to {:s}.\n"
+                                          "Please include this file with your bug report.",
+            minidump)};
+        MessageBoxA(nullptr, msg.c_str(), ID_PROGRAM_NAME ": Unexpected Error", MB_OK);
     }
 }
 
