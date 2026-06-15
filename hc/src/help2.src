@@ -3191,6 +3191,33 @@ image::help/images/thumbnails/type-burning-ship.png[link=help/images/type-burnin
 This fractal is a derivative of the classic Mandelbrot fractal with a twist.
 Some parts use absolute values in the equations and this gives an amazing
 angular quality to the fractal.
+
+~ADoc-
+With z(n) = x(n) + i*y(n) and degree d from 2 through 5:
+
+   z(n+1) = (|x(n)| + i*|y(n)|)^d + c\
+
+The value c is the screen pixel.  The first two parameters are added to z(0)
+as described for Mandelbrot-type sets; z(0) defaults to (0,0).  Burning Ship
+images are commonly reflected vertically.
+
+The parameters are perturbation of z(0) and d.
+~Online-,Doc-,ADoc+
+With stem:[z_n = x_n + i y_n] and degree stem:[d] from 2 through 5:
+
+~Format-
+[stem]
+++++
+z_(n+1) = (|x_n| + i |y_n|)^d + c
+++++
+~Format+
+
+The value stem:[c] is the screen pixel.  The first two parameters are added
+to stem:[z_0] as described for Mandelbrot-type sets; stem:[z_0] defaults to
+stem:[(0,0)].  Burning Ship images are commonly reflected vertically.
+
+The parameters are perturbation of stem:[z_0] and stem:[d].
+~Online+,Doc+
 ;
 ;
 ~Topic=Cellular Automata, Label=HT_CELLULAR
