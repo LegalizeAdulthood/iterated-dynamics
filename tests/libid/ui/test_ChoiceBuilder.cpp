@@ -7,9 +7,11 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cstring>
 #include <functional>
 #include <memory>
+#include <string_view>
 
 using namespace id::ui;
 using namespace testing;
@@ -332,7 +334,22 @@ FullScreenValuePredicate has_string_buff(char *buff, const int len, const int di
     };
 }
 
-MATCHER_P2(has_choice, n, str, "")  // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
+template <std::size_t N>
+void write_string_value(char (&dest)[N], const std::string_view text)
+{
+    const std::size_t copy_len{std::min(text.size(), N - 1)};
+    std::copy_n(text.data(), copy_len, dest);
+    dest[copy_len] = 0;
+}
+
+void write_string_buffer(char *dest, const std::size_t len, const std::string_view text)
+{
+    const std::size_t copy_len{std::min(text.size(), len - 1)};
+    std::copy_n(text.data(), copy_len, dest);
+    dest[copy_len] = 0;
+}
+
+MATCHER_P2(has_choice, n, str, "") // NOLINT(cppcoreguidelines-avoid-const-or-ref-data-members)
 {
     if (std::strcmp(arg[n], str) != 0)
     {
@@ -775,7 +792,7 @@ TEST_F(TestChoiceBuilderPrompting, readString)
 {
     ChoiceBuilder<1, Shim> builder;
     EXPECT_CALL(m_prompter, prompt(_, 1, NotNull(), _, _, _))
-        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { std::strncpy(values[0].uval.sval, "*.pot", 16); }),
+        .WillOnce(DoAll(WithArg<3>([](FullScreenValues *values) { write_string_value(values[0].uval.sval, "*.pot"); }),
             Return(ID_KEY_ENTER)));
     builder.string("Browse search filename mask ", "*.gif");
     const int result = builder.prompt("Evolution Mode Options", 255);
@@ -789,10 +806,11 @@ TEST_F(TestChoiceBuilderPrompting, readString)
 TEST_F(TestChoiceBuilderPrompting, readStringBuff)
 {
     ChoiceBuilder<1, Shim> builder;
-    EXPECT_CALL(m_prompter, prompt(_, 1, NotNull(), _, _, _))
-        .WillOnce(DoAll(WithArg<3>([](const FullScreenValues *values) { std::strcpy(values[0].uval.sbuf, "*.pot"); }),
-            Return(ID_KEY_ENTER)));
     constexpr int len{80};
+    EXPECT_CALL(m_prompter, prompt(_, 1, NotNull(), _, _, _))
+        .WillOnce(DoAll(
+            WithArg<3>([len](FullScreenValues *values) { write_string_buffer(values[0].uval.sbuf, len, "*.pot"); }),
+            Return(ID_KEY_ENTER)));
     char buff[len]{};
     builder.string_buff("Browse search filename mask ", buff, len);
     const int result = builder.prompt("Evolution Mode Options", 255);
