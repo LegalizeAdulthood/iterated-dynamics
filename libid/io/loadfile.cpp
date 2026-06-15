@@ -1258,7 +1258,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     int block_len;
     int data_len;
     int hdr_offset;
-    FormulaInfo formula_info;
+    FormulaInfo formula_info{};
     EvolutionInfo evolution_info;
     OrbitsInfo orbits_info;
 
@@ -1376,7 +1376,8 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                 if (std::strcmp(INFO_ID, &tmp_buff[i]) == 0)
                 {
                     // found header?
-                    std::strcpy(info->info_id, INFO_ID);
+                    static_assert(sizeof(INFO_ID) == sizeof(info->info_id));
+                    std::copy_n(INFO_ID, sizeof(info->info_id), info->info_id);
                     std::fseek(s_fp, hdr_offset = i - offset, SEEK_END);
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FractalInfo structure for the platform */
@@ -1441,7 +1442,8 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
                     load_ext_blk(reinterpret_cast<char *>(&formula_info), data_len);
                     // TODO: decode formula info?
-                    std::strcpy(blk_3_info->form_name, formula_info.form_name);
+                    static_assert(sizeof(formula_info.form_name) == sizeof(blk_3_info->form_name));
+                    std::copy_n(formula_info.form_name, sizeof(blk_3_info->form_name), blk_3_info->form_name);
                     blk_3_info->length = data_len;
                     blk_3_info->got_data = true;
                     if (data_len < sizeof(formula_info))
@@ -1548,7 +1550,9 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
         return false;
     }
 
-    std::strcpy(info->info_id, "GIFFILE");
+    static constexpr char GIF_FILE_ID[]{"GIFFILE"};
+    static_assert(sizeof(GIF_FILE_ID) == sizeof(info->info_id));
+    std::copy_n(GIF_FILE_ID, sizeof(info->info_id), info->info_id);
     info->iterations = INITIAL_MAX_ITERATIONS;
     info->iterations_old = INITIAL_MAX_ITERATIONS;
     info->fractal_type = static_cast<short>(FractalType::PLASMA);
