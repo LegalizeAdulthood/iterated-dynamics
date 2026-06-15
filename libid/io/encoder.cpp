@@ -68,6 +68,7 @@
 #include <iterator>
 #include <limits>
 #include <string>
+#include <string_view>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -85,7 +86,7 @@ static bool compress(int row_limit);
 static int shift_write(const Byte *color, int num_colors);
 static int extend_blk_len(int data_len);
 static int put_extend_blk(int block_id, int block_len, const char *block_data);
-static int store_item_name(const char *name);
+static int store_item_name(std::string_view name);
 
 static int s_num_saves{}; // For adjusting 'save-to-disk' filenames
 static std::FILE *s_outfile{};
@@ -551,17 +552,17 @@ bool encoder()
     // save_info.fractal_type gets modified in setup_save_info() in float only version, so we need to use fractype.
     if (g_fractal_type == FractalType::FORMULA)
     {
-        save_info.tot_extend_len += store_item_name(g_formula_name.c_str());
+        save_info.tot_extend_len += store_item_name(g_formula_name);
     }
     //    if (save_info.fractal_type == LSYSTEM)
     if (g_fractal_type == FractalType::L_SYSTEM)
     {
-        save_info.tot_extend_len += store_item_name(g_l_system_name.c_str());
+        save_info.tot_extend_len += store_item_name(g_l_system_name);
     }
     //    if (save_info.fractal_type == IFS || save_info.fractal_type == IFS3D)
     if (g_fractal_type == FractalType::IFS || g_fractal_type == FractalType::IFS_3D)
     {
-        save_info.tot_extend_len += store_item_name(g_ifs_name.c_str());
+        save_info.tot_extend_len += store_item_name(g_ifs_name);
     }
     if (g_display_3d <= Display3DMode::NONE && !g_iteration_ranges.empty())
     {
@@ -761,10 +762,11 @@ static int put_extend_blk(const int block_id, int block_len, const char *block_d
     return 1;
 }
 
-static int store_item_name(const char *name)
+static int store_item_name(const std::string_view name)
 {
     FormulaInfo formula_info{};
-    std::strncpy(formula_info.form_name, name, std::size(formula_info.form_name));
+    const std::size_t name_len{std::min(name.size(), std::size(formula_info.form_name) - 1)};
+    std::copy_n(name.data(), name_len, formula_info.form_name);
     if (g_fractal_type == FractalType::FORMULA)
     {
         formula_info.uses_p1 = static_cast<std::int16_t>(g_formula.uses_p1);
