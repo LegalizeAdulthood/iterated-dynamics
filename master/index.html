@@ -698,6 +698,10 @@ and rds-texture=.  (Fixes #227)</p>
 repeatable when a seed is specified.  (Fixes #363)</p>
 </li>
 <li>
+<p>Formula comparison operators now document that they compare only the
+real parts of operands.  (Fixes #358)</p>
+</li>
+<li>
 <p>Fractal types using random numbers now consistently honor rseed=,
 making seeded random fractals repeatable across fractal types.</p>
 </li>
@@ -3997,6 +4001,11 @@ formulas with both "Mandelbrot" and "Julia" behavior.</p></td>
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>Comparison operators compare only the real parts of their operands;
+imaginary parts are ignored.  The result has real part 1 for true or 0
+for false, and imaginary part 0.</p>
+</div>
 <div class="paragraph">
 <p>Unlike the C or similar languages, the assignment operator '=' can only
 be used as an isolated statement.  It cannot be used in an expression.
@@ -12956,7 +12965,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-15 16:34:36 UTC
+Last updated 2026-06-15 18:29:04 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
