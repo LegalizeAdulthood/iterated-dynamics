@@ -390,7 +390,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     char bailout_msg[50];
     long old_bailout = 0L;
     int prompt_num;
-    char msg[120];
+    std::string heading;
     const char *type_name;
     int ret = 0;
     static const char *trg[] =
@@ -825,22 +825,23 @@ gfp_top:
     }
     if (g_julibrot)
     {
-        *fmt::format_to(msg, "Julibrot Parameters (orbit={:s})", julia_orbit_name).out = '\0';
+        heading = fmt::format("Julibrot Parameters (orbit={:s})", julia_orbit_name);
     }
     else
     {
-        *fmt::format_to(msg, "Parameters for fractal type {:s}", type_name).out = '\0';
+        heading = fmt::format("Parameters for fractal type {:s}", type_name);
     }
     if (g_bf_math == BFMathType::NONE)
     {
-        std::strcat(msg, "\n(Press F6 for corner parameters)");
+        heading += "\n(Press F6 for corner parameters)";
         fn_key_mask = 1U << 6;     // F6 exits
     }
     full_screen_reset_scrolling();
     while (true)
     {
         ValueSaver saved_help_mode{g_help_mode, g_cur_fractal_specific->help_text};
-        int i = full_screen_prompt(msg, prompt_num, choices.data(), param_values.data(), fn_key_mask, s_tmp_stack);
+        int i = full_screen_prompt(
+            heading.c_str(), prompt_num, choices.data(), param_values.data(), fn_key_mask, s_tmp_stack);
         if (i < 0)
         {
             if (g_julibrot)
