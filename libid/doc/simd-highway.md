@@ -1,12 +1,20 @@
 # SIMD Highway Plan
 
-This document describes the first implementation plan for using Google
-Highway in the standard escape-time renderer.
+This document describes the implementation plan for using Google Highway in
+selected fractal renderers.
 
-The goal is not to replace every pass algorithm.  The goal is to add a
-SIMD implementation for the ordinary row scan when the current render state
-is compatible with vector execution.  Existing scalar code remains the
-complete behavior oracle and handles every unsupported case.
+Phase 1 covers standard escape-time fractals.  The goal is not to replace
+every pass algorithm.  The goal is to add a SIMD implementation for the
+ordinary row scan when the current render state is compatible with vector
+execution.
+
+Phase 2 covers 2D and 3D IFS fractal types.  IFS rendering is not a row
+scan.  The scalar renderer advances one random orbit at a time, so the SIMD
+shape is a batch of independent walkers.
+
+Existing scalar code remains the complete behavior oracle for unsupported
+states.  Where a SIMD algorithm deliberately changes the execution shape,
+the plan calls that out and adds a scalar batch reference for tests.
 
 ## Decisions
 
@@ -17,8 +25,10 @@ complete behavior oracle and handles every unsupported case.
 - Add a `simd=` option for diagnostics and test control.
 - Use SIMD automatically when the render state is eligible.
 - Fall back to scalar code unless the user explicitly forced SIMD.
-- Keep the first SIMD path narrow and easy to prove.
+- Keep each SIMD path narrow and easy to prove.
 - Refactor existing pass algorithms later, after the row kernel is trusted.
+- Treat escape-time fractals as Phase 1.
+- Treat 2D and 3D IFS fractal types as Phase 2.
 
 ## User Option
 
@@ -46,7 +56,22 @@ simd=stats
 `stats` can mean `auto` plus diagnostics: selected Highway target,
 eligibility result, fallback reason, row counts, and scalar tail counts.
 
-## High-Level Shape
+## Phases
+
+Phase 1 is the ordinary escape-time row renderer.  It should be
+byte-for-byte compatible with the existing scalar path for every supported
+state.
+
+Phase 2 is the IFS renderer.  A single IFS orbit is sequential, so the SIMD
+algorithm uses multiple independent walkers in lanes.  This is
+deterministic, but it is not the same pixel sequence as the current scalar
+single-walker implementation.  Phase 2 therefore needs its own scalar batch
+reference and should start as `simd=force` only until the compatibility
+policy is accepted.
+
+## Phase 1: Escape-Time Fractals
+
+### High-Level Shape
 
 The normal pass dispatcher remains responsible for traversal.  SIMD is
 selected inside the ordinary one-pass and two-pass path:
@@ -73,7 +98,7 @@ calls `one_or_two_pass()`, but the behavior should match the shape above.
 pixel grid arrays as input, writes a span of color indexes, then passes the
 span to the existing row output path.
 
-## Why Not `passes=h`
+### Why Not `passes=h`
 
 The existing `passes=` option chooses a traversal algorithm:
 
@@ -94,7 +119,7 @@ implementation detail.
 `simd=` is the correct control surface because it expresses implementation
 selection and gives tests a stable way to force scalar or SIMD behavior.
 
-## Initial Eligibility
+### Initial Eligibility
 
 Start with a deliberately small set of supported states.
 
@@ -125,7 +150,7 @@ The first SIMD path should target the same behavior as the optimized
 Mandelbrot/Julia calculator, not the full `standard_fractal_type()` feature
 set.
 
-## Data Model
+### Data Model
 
 The current pixel grid is already close to the needed structure of arrays:
 
@@ -162,7 +187,7 @@ The SIMD kernel should not call `dx_pixel()` or `dy_pixel()`.  Those
 functions depend on global `g_col` and `g_row`, which is the scalar shape
 the SIMD path is avoiding.
 
-## Render Constants
+### Render Constants
 
 Create a compact immutable parameter object before entering the SIMD pass:
 
@@ -184,7 +209,7 @@ Add fields only when a supported coloring or formula needs them.  Do not
 copy the entire global render state into this object.  The object is the
 contract for what the SIMD kernel actually supports.
 
-## Row Kernel
+### Row Kernel
 
 The first kernel should be row-oriented:
 
@@ -250,7 +275,7 @@ The exact initialization must be checked against
 current off-by-one iteration semantics even if the loop above changes
 shape.
 
-## Color Mapping
+### Color Mapping
 
 Keep first-slice color mapping simple and explicit:
 
@@ -265,7 +290,7 @@ Do not support log map, potential, decomposition, distance estimator, or
 special outside colors in the first slice.  Each one can be added later as
 a small post-process or as a separate kernel path.
 
-## Output
+### Output
 
 The SIMD pass should write spans, not individual pixels.
 
@@ -280,7 +305,7 @@ If the existing row helper is private to `calcfrac.cpp`, either move it to
 a small internal engine module or add a narrow wrapper.  Do not duplicate
 the full symmetry logic in the SIMD pass.
 
-## Highway Integration
+### Highway Integration
 
 Add the vcpkg dependency:
 
@@ -318,7 +343,7 @@ The non-target wrapper calls `HWY_DYNAMIC_DISPATCH(...)`.  Do not expose
 Highway vector types in public headers.  Pass scalar pointers, counts, and
 plain parameter structs across the dispatch boundary.
 
-## Testing Strategy
+### Testing Strategy
 
 Tests need to compare scalar and SIMD behavior directly.
 
@@ -361,9 +386,233 @@ Add image tests:
 The SIMD and scalar images should match byte-for-byte for the supported
 first-slice feature set.
 
+## Phase 2: IFS Fractals
+
+### Current Shape
+
+The 2D and 3D IFS entry points are:
+
+- `ifs2d()`
+- `ifs3d_calc()`
+- `IFS2D::iterate()`
+- `IFS3D::iterate()`
+
+Both scalar algorithms advance one orbit point per call:
+
+1. Generate a random number with `random_unit()`.
+2. Select an affine transform by cumulative probability.
+3. Apply that affine transform to the previous orbit point.
+4. Convert the new point to screen coordinates.
+5. Plot the point, either by transform index or by incrementing the
+   current pixel color.
+
+That dependency chain means the next point depends on the current point.
+Widening the loop over time would not expose simple lane parallelism.
+
+### SIMD Shape
+
+Use SIMD lanes as independent IFS walkers:
+
+```text
+lane 0: walker 0 point n -> point n + 1
+lane 1: walker 1 point n -> point n + 1
+lane 2: walker 2 point n -> point n + 1
+...
+```
+
+Each lane owns:
+
+```text
+x, y       current 2D point
+x, y, z    current 3D point
+rng        random stream state
+k          selected transform index
+active     lane still inside sane bounds
+```
+
+The SIMD kernel advances all lanes by one IFS step.  The pass driver calls
+the kernel until the configured point budget is exhausted or every lane is
+unbounded.
+
+This is deterministic if the lane RNG streams are deterministic.  It is not
+byte-for-byte identical to the old scalar single-walker renderer.  The test
+oracle for Phase 2 is a scalar batched walker that uses the same lane
+states, the same RNG streams, and the same lane output order.
+
+### Phase 2 Eligibility
+
+Start narrow.
+
+Eligible:
+
+- `type=ifs`
+- 2D IFS definitions loaded from `g_ifs_definition`
+- 3D IFS definitions loaded from `g_ifs_definition`
+- no orbit save file in the first slice
+- no real-time stereo glasses in the first 3D slice
+- deterministic per-lane RNG streams
+- scalar ordered plotting after SIMD point generation
+- transform-index coloring
+- histogram coloring only when plotting remains scalar and lane ordered
+
+Rejected at first:
+
+- raw orbit save output
+- real-time stereo plotting
+- direct vector scatter to the display buffer
+- shared global `random_unit()` inside the SIMD kernel
+- any mode that requires exact scalar single-walker output
+
+`simd=off` keeps the existing scalar IFS algorithm.  Initial Phase 2 should
+require `simd=force` for IFS.  After tests and image policy are settled,
+`simd=auto` can choose the batched IFS path.
+
+### IFS Data Model
+
+Convert `g_ifs_definition` into structure-of-arrays data before entering
+the SIMD loop.
+
+2D transform fields:
+
+```text
+a, b, c, d, e, f
+probability_cdf
+```
+
+3D transform fields:
+
+```text
+m00, m01, m02, tx
+m10, m11, m12, ty
+m20, m21, m22, tz
+probability_cdf
+```
+
+Keep the original vector as the file-format representation.  The SoA object
+is an execution representation built by the SIMD path.
+
+### RNG
+
+Do not call the global scalar RNG from inside the Highway kernel.  Add a
+small explicit RNG state for SIMD IFS walkers.
+
+Requirements:
+
+- deterministic from the existing seed
+- one independent stream per lane
+- scalar batch and SIMD batch use the same RNG state transition
+- tests can reproduce the same lane random values exactly
+
+The first implementation can seed lane streams by consuming the existing
+scalar RNG during setup, then use an explicit per-lane generator from that
+point onward.
+
+### Transform Selection
+
+For each lane, generate `r` in `[0, 1)`.  Select the first transform whose
+CDF is greater than or equal to `r`.
+
+Highway shape:
+
+```text
+selected = last transform
+for each transform i:
+    take_i = not chosen and r <= cdf[i]
+    selected = if take_i then i else selected
+    chosen = chosen or take_i
+```
+
+Use the selected transform masks to choose coefficients with
+`IfThenElse`.  This avoids gather in the first implementation and is fine
+for the small number of IFS transforms normally used.
+
+### 2D Kernel
+
+The 2D SIMD step computes:
+
+```text
+new_x = a[k] * x + b[k] * y + e[k]
+new_y = c[k] * x + d[k] * y + f[k]
+col = cvt.a * new_x + cvt.b * new_y + cvt.e
+row = cvt.c * new_x + cvt.d * new_y + cvt.f
+```
+
+Store `row`, `col`, and `k` into lane-order temporary arrays.  Then plot
+with existing scalar functions in lane order.
+
+Scalar ordered plotting keeps histogram coloring correct when multiple
+lanes hit the same pixel in one batch.
+
+### 3D Kernel
+
+The 3D SIMD step computes:
+
+```text
+new_x = m00[k] * x + m01[k] * y + m02[k] * z + tx[k]
+new_y = m10[k] * x + m11[k] * y + m12[k] * z + ty[k]
+new_z = m20[k] * x + m21[k] * y + m22[k] * z + tz[k]
+```
+
+Then apply the view matrix and screen projection in SIMD:
+
+```text
+view = double_mat * orbit
+if perspective:
+    view = perspective(view)
+col = cvt.a * view.x + cvt.b * view.y + cvt.e + g_xx_adjust
+row = cvt.c * view.x + cvt.d * view.y + cvt.f + g_yy_adjust
+```
+
+The current 3D path has a waste phase that finds min and max values before
+plotting.  Phase 2 can handle this in two steps:
+
+1. Batch the waste phase and reduce lane min/max values into scalar
+   min/max values.
+2. Build the final view matrix and batch the plotting phase.
+
+Start without real-time stereo.  Add stereo later by running the same
+projection for both view matrices and scalar plotting both images in lane
+order.
+
+### IFS Output
+
+Do not start with vector scatter.  Store lane results to temporary arrays
+and plot them with existing scalar `g_plot`, `get_color`, and
+color-sticking logic.
+
+This first output strategy preserves existing display side effects and
+avoids undefined ordering when two lanes target the same pixel.
+
+Later, a tiled histogram buffer can reduce display reads and writes:
+
+- accumulate hits in a private tile or image-sized buffer
+- resolve saturated colors after the batch
+- scatter only when the ordering policy is proven acceptable
+
+### IFS Testing Strategy
+
+Add a scalar batch reference first.  Compare SIMD against that reference,
+not against the old scalar single-walker orbit.
+
+Add tests for:
+
+- deterministic lane RNG setup
+- 2D transform selection by probability
+- 3D transform selection by probability
+- 2D scalar batch versus old scalar for one-lane mode
+- 2D scalar batch versus SIMD batch
+- 3D scalar batch versus SIMD batch
+- repeated pixel hits with histogram coloring
+- transform-index coloring
+- unbounded lane handling
+- `simd=force` IFS image tests with fixed seeds
+
+Keep existing scalar IFS image tests on `simd=off` or default scalar until
+the project chooses to rebaseline IFS images for batched SIMD.
+
 ## Implementation Slices
 
-### Slice 1: Option Plumbing
+### Phase 1 Slice 1: Option Plumbing
 
 - Add `SimdMode {AUTO, OFF, FORCE}`.
 - Add global/user state for the selected mode.
@@ -374,7 +623,7 @@ first-slice feature set.
 
 No Highway dependency is needed in this slice.
 
-### Slice 2: Eligibility Report
+### Phase 1 Slice 2: Eligibility Report
 
 - Add `can_use_highway_pass()`.
 - Return a small result object, not just `bool`.
@@ -385,7 +634,7 @@ No Highway dependency is needed in this slice.
 
 This slice still calls scalar rendering only.
 
-### Slice 3: Pixel Grid Views
+### Phase 1 Slice 3: Pixel Grid Views
 
 - Expose read-only grid views from `pixel_grid`.
 - Keep `dx_pixel()` and `dy_pixel()` unchanged for scalar users.
@@ -394,7 +643,7 @@ This slice still calls scalar rendering only.
 
 This slice is data access only.
 
-### Slice 4: Scalar Row Kernel
+### Phase 1 Slice 4: Scalar Row Kernel
 
 - Implement the new row-kernel interface in scalar C++ first.
 - Do not use Highway yet.
@@ -403,7 +652,7 @@ This slice is data access only.
 
 This de-risks semantics before adding SIMD.
 
-### Slice 5: Highway Build Integration
+### Phase 1 Slice 5: Highway Build Integration
 
 - Add `highway` to `vcpkg.json`.
 - Add `find_package` and link target in `libid/CMakeLists.txt`.
@@ -412,7 +661,7 @@ This de-risks semantics before adding SIMD.
 
 No behavior change should occur in this slice.
 
-### Slice 6: Highway Row Kernel
+### Phase 1 Slice 6: Highway Row Kernel
 
 - Implement the masked lane loop with Highway.
 - Handle partial final vectors.
@@ -421,27 +670,27 @@ No behavior change should occur in this slice.
 - Keep the pass dispatcher using scalar output until the row kernel is
   proven.
 
-### Slice 7: One-Pass Auto Selection
+### Phase 1 Slice 7: One-Pass Auto Selection
 
 - Route `passes=1 simd=auto` through Highway when eligible.
 - Route `passes=1 simd=off` through scalar code.
 - Route `passes=1 simd=force` through Highway or report rejection.
 - Add image comparison tests.
 
-### Slice 8: Two-Pass Auto Selection
+### Phase 1 Slice 8: Two-Pass Auto Selection
 
 - Add the same selection for `passes=2`.
 - Preserve the first-pass pixel replication behavior.
 - Add image comparison tests for both passes.
 
-### Slice 9: Diagnostics
+### Phase 1 Slice 9: Diagnostics
 
 - Add optional `simd=stats` or debug logging.
 - Report selected Highway target, rows rendered, scalar fallbacks, and
   rejection reason.
 - Keep diagnostics out of normal output unless explicitly requested.
 
-### Slice 10: Expand Eligibility
+### Phase 1 Slice 10: Expand Eligibility
 
 Add features one at a time, with scalar/SIMD comparison tests for each:
 
@@ -456,6 +705,83 @@ Add features one at a time, with scalar/SIMD comparison tests for each:
 Do not merge all special cases into one large kernel.  Prefer small kernels
 or post-processing steps with clear eligibility.
 
+### Phase 2 Slice 1: IFS Policy And Eligibility
+
+- Add IFS-specific SIMD eligibility.
+- Require `simd=force` for IFS at first.
+- Report why IFS SIMD is rejected.
+- Document that the batched IFS renderer is deterministic but not the old
+  scalar single-walker sequence.
+- Keep `simd=off` on the existing scalar IFS path.
+
+### Phase 2 Slice 2: IFS Execution Data
+
+- Build a SoA execution object from `g_ifs_definition`.
+- Include 2D coefficient arrays and CDF arrays.
+- Include 3D coefficient arrays and CDF arrays.
+- Add validation for row sizes and probability totals.
+- Add tests that the SoA object matches the original definition.
+
+### Phase 2 Slice 3: Explicit Lane RNG
+
+- Add an explicit RNG state type for IFS SIMD lanes.
+- Seed lane states deterministically from the current random seed.
+- Implement scalar and Highway-compatible random generation from that
+  state.
+- Add tests for reproducible lane random values.
+
+### Phase 2 Slice 4: Scalar Batched IFS2D
+
+- Implement a scalar batched IFS2D walker.
+- Use the same lane state layout planned for Highway.
+- Store lane `row`, `col`, and transform index arrays.
+- Plot lane results in scalar lane order.
+- Add tests for one-lane equivalence with the old scalar orbit where
+  practical.
+
+### Phase 2 Slice 5: Highway IFS2D Kernel
+
+- Implement vector transform selection.
+- Implement vector 2D affine transform.
+- Implement vector screen coordinate conversion.
+- Keep plotting scalar and lane ordered.
+- Compare Highway output to the scalar batch reference.
+
+### Phase 2 Slice 6: IFS2D Image Tests
+
+- Add fixed-seed `simd=force` image tests for 2D IFS.
+- Keep existing scalar tests on the scalar path.
+- Add tests for transform-index coloring and histogram coloring.
+
+### Phase 2 Slice 7: Scalar Batched IFS3D
+
+- Implement scalar batched IFS3D walkers.
+- Preserve the waste phase and min/max setup.
+- Store projected lane results before plotting.
+- Keep real-time stereo rejected.
+- Add scalar batch reference tests.
+
+### Phase 2 Slice 8: Highway IFS3D Kernel
+
+- Implement vector 3D affine transform.
+- Implement vector view matrix transform.
+- Implement vector perspective and screen projection where eligible.
+- Reduce waste-phase min/max across lanes.
+- Compare Highway output to the scalar batch reference.
+
+### Phase 2 Slice 9: IFS3D Image Tests
+
+- Add fixed-seed `simd=force` image tests for 3D IFS.
+- Cover non-perspective and perspective projection if both are supported.
+- Keep stereo rejected until a separate slice supports it.
+
+### Phase 2 Slice 10: IFS Auto Selection
+
+- Decide whether batched IFS output is acceptable for `simd=auto`.
+- If accepted, allow `simd=auto` for eligible IFS states.
+- If not accepted, keep IFS SIMD behind `simd=force`.
+- Update diagnostics to report IFS walker count and fallback reasons.
+
 ## Risks
 
 - Iteration counts may differ by one if the optimized scalar path semantics
@@ -469,6 +795,15 @@ or post-processing steps with clear eligibility.
   first SIMD path should reject states needing those effects.
 - Symmetry and two-pass replication can corrupt output if row-span
   boundaries are wrong.
+- IFS SIMD changes the execution shape from one walker to many walkers.
+  This is deterministic but not byte-for-byte compatible with the old
+  scalar single-walker output.
+- IFS histogram coloring depends on pixel update order.  The first SIMD
+  path must plot generated points in scalar lane order.
+- IFS direct scatter can produce different results when lanes collide on
+  one pixel.  Scatter should wait until the ordering policy is explicit.
+- IFS 3D setup has a waste phase that computes min/max values.  SIMD must
+  reduce those values consistently before plotting.
 
 ## Success Criteria
 
@@ -477,4 +812,6 @@ or post-processing steps with clear eligibility.
 - `simd=off` gives the old scalar result.
 - `simd=force` is reliable for tests and reports clear rejection reasons.
 - First-slice scalar and SIMD image outputs match for supported states.
+- Phase 2 SIMD IFS matches the scalar batched IFS reference.
+- Phase 2 keeps existing scalar IFS output available with `simd=off`.
 - Unsupported states continue to render through existing scalar engines.
