@@ -30,9 +30,11 @@
 #include <crtdbg.h>
 #include <commdlg.h>
 
+#include <algorithm>
 #include <cassert>
 #include <ctime>
 #include <filesystem>
+#include <string>
 
 using namespace id::config;
 using namespace id::engine;
@@ -510,10 +512,12 @@ bool Win32BaseDriver::get_filename(
     filter.append(2, 0);
     info.lpstrFilter = filter.data();
     info.nFilterIndex = 1;
-    char filename[ID_FILE_MAX_PATH]{};
-    std::strcpy(filename, path.string().c_str());
-    info.lpstrFile = filename;
-    info.nMaxFile = ID_FILE_MAX_PATH;
+    const std::string initial_filename{path.string()};
+    std::string filename(ID_FILE_MAX_PATH, '\0');
+    const std::size_t copy_len{std::min(initial_filename.size(), filename.size() - 1)};
+    initial_filename.copy(filename.data(), copy_len);
+    info.lpstrFile = filename.data();
+    info.nMaxFile = static_cast<DWORD>(filename.size());
     info.lpstrFileTitle = nullptr;
     info.nMaxFileTitle = 0;
     info.lpstrInitialDir = nullptr;
