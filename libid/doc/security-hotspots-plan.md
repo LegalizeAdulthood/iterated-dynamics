@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 52.
+Total hotspots: 48.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,7 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 36.
+Items: 32.
 
 ## SH-199
 
@@ -388,78 +388,6 @@ Items: 36.
 - Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
-
-## SH-102
-
-- Status: `pending`
-- Key: `AZwwyE8o0qvqV_CtK1cL`
-- Rule: `cpp:S5801`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/slideshw.cpp`
-- Line: `138`
-- Range: `138:12-138:23`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-103
-
-- Status: `pending`
-- Key: `AZwwyE8o0qvqV_CtK1cY`
-- Rule: `cpp:S5813`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/slideshw.cpp`
-- Line: `316`
-- Range: `316:45-316:56`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-09-21T20:34:11+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-104
-
-- Status: `pending`
-- Key: `AZwwyE8o0qvqV_CtK1ca`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/slideshw.cpp`
-- Line: `333`
-- Range: `333:12-333:23`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-105
-
-- Status: `pending`
-- Key: `AZwwyE8o0qvqV_CtK1cm`
-- Rule: `cpp:S5814`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/slideshw.cpp`
-- Line: `502`
-- Range: `502:4-502:15`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-01-07T08:44:56+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcat" is safe here.
 
 ## SH-147
 

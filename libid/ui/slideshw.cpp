@@ -21,13 +21,15 @@
 #include "ui/temp_msg.h"
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <cctype>
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <sstream>
+#include <string>
+#include <string_view>
 #include <system_error>
 #include <thread>
 
@@ -47,11 +49,6 @@ using namespace id::misc;
 namespace id::ui
 {
 
-enum
-{
-    MAX_MNEMONIC = 20   // max size of any mnemonic string
-};
-
 struct KeyMnemonic
 {
     int code;
@@ -61,8 +58,8 @@ struct KeyMnemonic
 static void sleep_secs(int secs);
 static int show_temp_msg_txt(int row, int col, int attr, int secs, const char *txt);
 static void message(int secs, const char *buf);
-static void slide_show_err(const char *msg);
-static void get_mnemonic(int code, char *mnemonic);
+static void slide_show_err(std::string_view msg);
+static std::string_view get_mnemonic(int code);
 
 using SlideClock = std::chrono::steady_clock;
 using SlideDuration = SlideClock::duration;
@@ -128,17 +125,16 @@ int get_slide_show_key_code(const char *mnemonic)
     return -1;
 }
 
-static void get_mnemonic(const int code, char *mnemonic)
+static std::string_view get_mnemonic(const int code)
 {
-    *mnemonic = 0;
     for (const KeyMnemonic &it : s_key_mnemonics)
     {
         if (code == it.code)
         {
-            std::strcpy(mnemonic, it.mnemonic);
-            break;
+            return it.mnemonic;
         }
     }
+    return {};
 }
 
 static int delay_milliseconds(const SlideDuration delay)
@@ -307,36 +303,35 @@ start:
         }
         else
         {
-            char buf[41];
-            buf[40] = 0;
-            if (std::fgets(buf, std::size(buf), s_slide_show_file) == nullptr)
+            std::array<char, 41> buf{};
+            if (std::fgets(buf.data(), static_cast<int>(buf.size()), s_slide_show_file) == nullptr)
             {
                 throw std::system_error(errno, std::system_category(), "slideshw failed fgets");
             }
-            const int len = static_cast<int>(std::strlen(buf));
-            buf[len-1] = 0; // zap newline
-            message(secs, buf);
+            const auto end = std::find(buf.begin(), buf.end(), '\0');
+            const auto newline = std::find(buf.begin(), end, '\n');
+            const std::string msg{buf.begin(), newline};
+            message(secs, msg.c_str());
         }
         out = 0;
     }
     else if (std::strcmp(buffer, "GOTO") == 0)
     {
-        if (std::fscanf(s_slide_show_file, "%s", buffer) != 1)
+        if (std::fscanf(s_slide_show_file, "%80s", buffer) != 1)
         {
             slide_show_err("GOTO needs target");
             out = 0;
         }
         else
         {
-            char line[80];
+            const std::string target{std::string{buffer} + ':'};
+            char line[81];
             std::fseek(s_slide_show_file, 0, SEEK_SET);
-            std::strcat(buffer, ":");
             int count;
             do
             {
-                count = std::fscanf(s_slide_show_file, "%s", line);
-            }
-            while (count == 1 && std::strcmp(line, buffer) != 0);
+                count = std::fscanf(s_slide_show_file, "%80s", line);
+            } while (count == 1 && target != line);
             if (std::feof(s_slide_show_file))
             {
                 slide_show_err("GOTO target not found");
@@ -378,9 +373,7 @@ start:
     }
     if (out == -12345)
     {
-        std::ostringstream msg;
-        msg << "Can't understand " << buffer;
-        slide_show_err(msg.str().c_str());
+        slide_show_err(std::string{"Can't understand "} + buffer);
         out = 0;
     }
     s_last1 = out;
@@ -455,11 +448,10 @@ void record_show(const int key)
             std::fprintf(s_slide_show_file, "\"\n");
             s_quotes = false;
         }
-        char mn[MAX_MNEMONIC]{};
-        get_mnemonic(key, mn);
-        if (*mn)
+        const std::string_view mnemonic{get_mnemonic(key)};
+        if (!mnemonic.empty())
         {
-            std::fprintf(s_slide_show_file, "%s", mn);
+            std::fwrite(mnemonic.data(), 1, mnemonic.size(), s_slide_show_file);
         }
         else if (key > 0 && key < ID_KEY_SPACE)
         {
@@ -495,12 +487,10 @@ static void sleep_secs(const int secs)
     g_slides = SlidesMode::PLAY;
 }
 
-static void slide_show_err(const char *msg)
+static void slide_show_err(const std::string_view msg)
 {
-    char msg_buff[300] = { "Slideshow error:\n" };
     stop_slide_show();
-    std::strcat(msg_buff, msg);
-    stop_msg(msg_buff);
+    stop_msg("Slideshow error:\n" + std::string{msg});
 }
 
 // handle_special_keys
