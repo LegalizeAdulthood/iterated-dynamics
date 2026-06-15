@@ -386,6 +386,8 @@ o Restore orbitdelay= paced timing for orbit sound (Fixes #325).\
 
 Code Cleanup in Version 1.4.0
 
+o Many small changes to avoid buffer overruns or other unbounded string
+  operations as reported by SonarQube.
 o The incomplete X11 driver for linux has been removed.  (Fixes #343)\
 o All identifiers are now inside a namespace to avoid collisions with
   external libraries.  wxWidgets on linux depends on glib which uses
