@@ -14,7 +14,8 @@
 #include <config/port.h>
 
 #include <cstdio>
-#include <cstring>
+#include <string>
+#include <string_view>
 #include <vector>
 
 using namespace id::engine;
@@ -46,29 +47,27 @@ void free_temp_msg()
 
 bool show_temp_msg(const char *msg)
 {
-    static size_t size = 0;
-    char buffer[41];
+    constexpr std::size_t TEMP_MSG_LEN{40};
+    const std::string buffer{std::string_view{msg}.substr(0, TEMP_MSG_LEN)};
 
-    std::strncpy(buffer, msg, 40);
-    buffer[40] = 0; // ensure max message len of 40 chars
-    if (driver_is_disk())  // disk video, screen in text mode, easy
+    if (driver_is_disk()) // disk video, screen in text mode, easy
     {
-        dvid_status(0, buffer);
+        dvid_status(0, buffer.c_str());
         return false;
     }
     if (g_first_init) // & cmdfiles hasn't finished 1st try
     {
         // TODO: handle this in an OS-specific way
-        std::printf("%s\n", buffer);
+        std::printf("%s\n", buffer.c_str());
         return false;
     }
 
     const int x_repeat = g_screen_x_dots >= 640 ? 2 : 1;
     const int y_repeat = g_screen_y_dots >= 300 ? 2 : 1;
-    s_text_x_dots = static_cast<int>(std::strlen(buffer)) * x_repeat * 8;
+    s_text_x_dots = static_cast<int>(buffer.size()) * x_repeat * 8;
     s_text_y_dots = y_repeat * 8;
 
-    size = static_cast<long>(s_text_x_dots) * static_cast<long>(s_text_y_dots);
+    const std::size_t size{static_cast<std::size_t>(s_text_x_dots) * static_cast<std::size_t>(s_text_y_dots)};
     if (s_text_save.size() != size)
     {
         s_text_save.clear();
@@ -79,15 +78,15 @@ bool show_temp_msg(const char *msg)
     g_logical_screen.x_offset = 0;
     if (s_text_save.empty()) // only save screen first time called
     {
-        s_text_save.resize(s_text_x_dots*s_text_y_dots);
+        s_text_save.resize(size);
         for (int i = 0; i < s_text_y_dots; ++i)
         {
-            read_span(i, 0, s_text_x_dots-1, &s_text_save[s_text_x_dots*i]);
+            read_span(i, 0, s_text_x_dots - 1, &s_text_save[s_text_x_dots * i]);
         }
     }
 
     find_special_colors(); // get g_color_dark & g_color_bright set
-    driver_display_string(0, 0, g_color_bright, g_color_dark, buffer);
+    driver_display_string(0, 0, g_color_bright, g_color_dark, buffer.c_str());
     g_logical_screen.x_offset = save_screen_x_offset;
     g_logical_screen.y_offset = save_screen_y_offset;
 

@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 32.
+Total hotspots: 30.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,7 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 16.
+Items: 14.
 
 ## SH-203
 
@@ -152,42 +152,6 @@ Items: 16.
 - Flows: `0`
 - Message: Make sure use of "sprintf" function is safe here or replace it
   with a call to "snprintf".
-
-## SH-147
-
-- Status: `pending`
-- Key: `AZwwyFAe0qvqV_CtK1lH`
-- Rule: `cpp:S5816`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/temp_msg.cpp`
-- Line: `52`
-- Range: `52:4-52:16`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-01-08T02:45:59+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strncpy" is safe here.
-
-## SH-148
-
-- Status: `pending`
-- Key: `AZwwyFAe0qvqV_CtK1lK`
-- Rule: `cpp:S5813`
-- Area: `ui-prompt-menu`
-- Path: `libid/ui/temp_msg.cpp`
-- Line: `68`
-- Range: `68:37-68:48`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-09-18T04:35:35+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strlen" is safe here.
 
 ## SH-214
 
