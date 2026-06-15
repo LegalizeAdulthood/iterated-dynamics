@@ -3612,6 +3612,10 @@ formulas with both "Mandelbrot" and "Julia" behavior.
 ~ADoc+
 ~Format+
 
+Comparison operators compare only the real parts of their operands; imaginary
+parts are ignored.  The result has real part 1 for true or 0 for false, and
+imaginary part 0.
+
 Unlike the C or similar languages, the assignment operator '=' can only be
 used as an isolated statement.  It cannot be used in an expression.  So the
 exression q=3+(w=6) is a syntax error.  Multiple variables can be assigned
