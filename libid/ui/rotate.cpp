@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <filesystem>
 
 using namespace id::engine;
 using namespace id::help;
@@ -555,15 +556,16 @@ static void set_palette3(Byte start[3], Byte middle[3], Byte finish[3])
 void save_palette()
 {
     driver_stack_screen();
-    char filename[256]{};
+    char buff[256]{};
     ValueSaver saved_help_mode{g_help_mode, HelpLabels::HELP_COLORMAP};
-    int i = field_prompt("Name of map file to write", nullptr, filename, 60, nullptr);
+    int i = field_prompt("Name of map file to write", nullptr, buff, 60, nullptr);
     driver_unstack_screen();
-    if (i != -1 && filename[0])
+    if (i != -1 && buff[0])
     {
-        if (std::strchr(filename, '.') == nullptr)
+        std::filesystem::path filename{buff};
+        if (!filename.has_extension())
         {
-            std::strcat(filename, ".map");
+            filename.replace_extension(".map");
         }
         const std::filesystem::path pal_name{get_checked_save_path(WriteFile::MAP, filename)};
         assert(!pal_name.empty());
