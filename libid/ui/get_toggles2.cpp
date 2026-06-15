@@ -11,16 +11,15 @@
 #include "engine/UserData.h"
 #include "helpdefs.h"
 #include "misc/Driver.h"
+#include "ui/ChoiceBuilder.h"
 #include "ui/diskvid.h"
-#include "ui/full_screen_prompt.h"
 #include "ui/help.h"
 
 #include <fmt/format.h>
 
 #include <array>
-#include <cstdio>
 #include <cstdlib>
-#include <cstring>
+#include <string>
 
 using namespace id::engine;
 using namespace id::help;
@@ -35,86 +34,51 @@ namespace id::ui
 
 int get_toggles2()
 {
-    std::array<const char *, 18> choices;
-    std::array<FullScreenValues, 23> values;
+    ChoiceBuilder<13> choices;
     std::array<double, 3> old_potential_param;
     std::array<double, 3> old_inversion;
 
     // fill up the choices (and previous values) arrays
-    int k = -1;
-
-    choices[++k] = "Look for finite attractor (0=no,>0=yes,<0=phase)";
-    values[k].type = 'i';
-    values[k].uval.ch.val = g_attractor.enabled ? 1 : 0;
-
-    choices[++k] = "Potential Max Color (0 means off)";
-    values[k].type = 'i';
     old_potential_param[0] = g_potential.params[0];
-    values[k].uval.ival = static_cast<int>(old_potential_param[0]);
-
-    choices[++k] = "          Slope";
-    values[k].type = 'd';
     old_potential_param[1] = g_potential.params[1];
-    values[k].uval.dval = old_potential_param[1];
-
-    choices[++k] = "          Bailout";
-    values[k].type = 'i';
     old_potential_param[2] = g_potential.params[2];
-    values[k].uval.ival = static_cast<int>(old_potential_param[2]);
 
-    choices[++k] = "          16 bit values";
-    values[k].type = 'y';
-    values[k].uval.ch.val = g_potential.store_16bit ? 1 : 0;
-
-    choices[++k] = "Distance Estimator (0=off, <0=edge, >0=on):";
-    values[k].type = 'L';
     long old_user_distance_estimator_value = g_user.distance_estimator_value;
-    values[k].uval.Lval = old_user_distance_estimator_value;
-
-    choices[++k] = "          width factor:";
-    values[k].type = 'i';
     int old_distance_estimator_width_factor = g_distance_estimator_width_factor;
-    values[k].uval.ival = old_distance_estimator_width_factor;
 
-    choices[++k] = "Inversion radius or \"auto\" (0 means off)";
-    choices[++k] = "          center X coordinate or \"auto\"";
-    choices[++k] = "          center Y coordinate or \"auto\"";
-    k = k - 3;
+    choices.int_number("Look for finite attractor (0=no,>0=yes,<0=phase)", g_attractor.enabled ? 1 : 0)
+        .int_number("Potential Max Color (0 means off)", static_cast<int>(old_potential_param[0]))
+        .double_number("          Slope", old_potential_param[1])
+        .int_number("          Bailout", static_cast<int>(old_potential_param[2]))
+        .yes_no("          16 bit values", g_potential.store_16bit)
+        .long_number("Distance Estimator (0=off, <0=edge, >0=on):", old_user_distance_estimator_value)
+        .int_number("          width factor:", old_distance_estimator_width_factor);
+    const char *inversion_choices[] = {"Inversion radius or \"auto\" (0 means off)",
+        "          center X coordinate or \"auto\"", "          center Y coordinate or \"auto\""};
     for (int i = 0; i < 3; i++)
     {
-        values[++k].type = 's';
         old_inversion[i] = g_inversion.params[i];
         if (g_inversion.params[i] == AUTO_INVERT)
         {
-            std::strcpy(values[k].uval.sval, "auto");
+            choices.string(inversion_choices[i], "auto");
         }
         else
         {
-            char buff[80]{};
-            *fmt::format_to(buff, "{:<1.15Lg}", g_inversion.params[i]).out = '\0';
-            buff[std::size(values[k].uval.sval)-1] = 0;
-            std::strcpy(values[k].uval.sval, buff);
+            const std::string value{fmt::format("{:<1.15Lg}", g_inversion.params[i])};
+            choices.string(inversion_choices[i], value.c_str());
         }
     }
-    choices[++k] = "  (use fixed radius & center when zooming)";
-    values[k].type = '*';
-
-    choices[++k] = "Color cycling from color (0 ... 254)";
-    values[k].type = 'i';
     int old_rotate_lo = g_color_cycle_range_lo;
-    values[k].uval.ival = old_rotate_lo;
-
-    choices[++k] = "              to   color (1 ... 255)";
-    values[k].type = 'i';
     int old_rotate_hi = g_color_cycle_range_hi;
-    values[k].uval.ival = old_rotate_hi;
+    choices.comment("  (use fixed radius & center when zooming)")
+        .int_number("Color cycling from color (0 ... 254)", old_rotate_lo)
+        .int_number("              to   color (1 ... 255)", old_rotate_hi);
 
     const HelpLabels old_help_mode = g_help_mode;
     g_help_mode = HelpLabels::HELP_Y_OPTIONS;
     {
-        const int i = full_screen_prompt("Extended Options\n"
-                              "(not all combinations make sense)",
-                              k+1, choices.data(), values.data(), 0, nullptr);
+        const int i = choices.prompt("Extended Options\n"
+                                     "(not all combinations make sense)");
         g_help_mode = old_help_mode;
         if (i < 0)
         {
@@ -123,64 +87,63 @@ int get_toggles2()
     }
 
     // now check out the results (*hopefully* in the same order <grin>)
-    k = -1;
     bool changed = false;
 
-    if (values[++k].uval.ch.val != 0 != g_attractor.enabled)
+    const bool attractor_enabled{choices.read_int_number() != 0};
+    if (attractor_enabled != g_attractor.enabled)
     {
-        g_attractor.enabled = values[k].uval.ch.val != 0;
+        g_attractor.enabled = attractor_enabled;
         changed = true;
     }
 
-    g_potential.params[0] = values[++k].uval.ival;
+    g_potential.params[0] = choices.read_int_number();
     if (g_potential.params[0] != old_potential_param[0])
     {
         changed = true;
     }
 
-    g_potential.params[1] = values[++k].uval.dval;
+    g_potential.params[1] = choices.read_double_number();
     if (g_potential.params[0] != 0.0 && g_potential.params[1] != old_potential_param[1])
     {
         changed = true;
     }
 
-    g_potential.params[2] = values[++k].uval.ival;
+    g_potential.params[2] = choices.read_int_number();
     if (g_potential.params[0] != 0.0 && g_potential.params[2] != old_potential_param[2])
     {
         changed = true;
     }
 
-    if (values[++k].uval.ch.val != 0 != g_potential.store_16bit)
+    const bool store_16bit{choices.read_yes_no()};
+    if (store_16bit != g_potential.store_16bit)
     {
-        g_potential.store_16bit = values[k].uval.ch.val != 0;
-        if (g_potential.store_16bit)                   // turned it on
+        g_potential.store_16bit = store_16bit;
+        if (g_potential.store_16bit) // turned it on
         {
             if (g_potential.params[0] != 0.0)
             {
                 changed = true;
             }
         }
-        else // turned it off
+        else                       // turned it off
         {
-            if (!driver_is_disk())   // ditch the disk video
+            if (!driver_is_disk()) // ditch the disk video
             {
                 end_disk();
             }
-            else     // keep disk video, but ditch the fraction part at end
+            else // keep disk video, but ditch the fraction part at end
             {
                 g_disk_16_bit = false;
             }
         }
     }
 
-    ++k;
-    g_user.distance_estimator_value = values[k].uval.Lval;
+    g_user.distance_estimator_value = choices.read_long_number();
     if (g_user.distance_estimator_value != old_user_distance_estimator_value)
     {
         changed = true;
     }
-    ++k;
-    g_distance_estimator_width_factor = values[k].uval.ival;
+    g_distance_estimator_width_factor = choices.read_int_number();
     if (g_user.distance_estimator_value && g_distance_estimator_width_factor != old_distance_estimator_width_factor)
     {
         changed = true;
@@ -188,25 +151,25 @@ int get_toggles2()
 
     for (int i = 0; i < 3; i++)
     {
-        if (values[++k].uval.sval[0] == 'a' || values[k].uval.sval[0] == 'A')
+        const char *value{choices.read_string()};
+        if (value[0] == 'a' || value[0] == 'A')
         {
             g_inversion.params[i] = AUTO_INVERT;
         }
         else
         {
-            g_inversion.params[i] = std::atof(values[k].uval.sval);
+            g_inversion.params[i] = std::atof(value);
         }
-        if (old_inversion[i] != g_inversion.params[i]
-            && (i == 0 || g_inversion.params[0] != 0.0))
+        if (old_inversion[i] != g_inversion.params[i] && (i == 0 || g_inversion.params[0] != 0.0))
         {
             changed = true;
         }
     }
     g_inversion.invert = g_inversion.params[0] == 0.0 ? 0 : 3;
-    ++k;
+    choices.read_comment();
 
-    g_color_cycle_range_lo = values[++k].uval.ival;
-    g_color_cycle_range_hi = values[++k].uval.ival;
+    g_color_cycle_range_lo = choices.read_int_number();
+    g_color_cycle_range_hi = choices.read_int_number();
     if (g_color_cycle_range_lo < 0 || g_color_cycle_range_hi > 255 || g_color_cycle_range_lo > g_color_cycle_range_hi)
     {
         g_color_cycle_range_lo = old_rotate_lo;

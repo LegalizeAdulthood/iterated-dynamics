@@ -502,6 +502,17 @@ TEST_F(TestChoiceBuilderPrompting, stringChoice)
     EXPECT_EQ(1, builder.count());
 }
 
+TEST_F(TestChoiceBuilderPrompting, stringChoiceTruncatesToFixedField)
+{
+    ChoiceBuilder<1, Shim> builder;
+    expect_choice_value("Browse search filename mask ", has_string("123456789012345"));
+
+    builder.string("Browse search filename mask ", "1234567890123456");
+    builder.prompt("Evolution Mode Options", 255);
+
+    EXPECT_EQ(1, builder.count());
+}
+
 TEST_F(TestChoiceBuilderPrompting, stringBufferChoice)
 {
     ChoiceBuilder<1, Shim> builder;
