@@ -11,8 +11,6 @@ Wesley Loewer's Big Numbers.        (C) 1994-95, Wesley B. Loewer
 #include <cfloat>
 #include <cmath>
 #include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <string>
 
 using namespace id::misc;
@@ -28,6 +26,36 @@ std::string unsafe_bf_to_string_e(BigFloat r, int dec);
 std::string unsafe_bf_to_string_f(BigFloat r, int dec);
 std::string bf10_to_string_e(BigFloat10 n, int dec);
 std::string bf10_to_string_f(BigFloat10 n, int dec);
+
+bool is_digit(const char c)
+{
+    return c >= '0' && c <= '9';
+}
+
+int parse_exponent(std::string_view text)
+{
+    bool negative = false;
+    if (!text.empty() && text.front() == '+')
+    {
+        text.remove_prefix(1);
+    }
+    else if (!text.empty() && text.front() == '-')
+    {
+        negative = true;
+        text.remove_prefix(1);
+    }
+
+    int exponent = 0;
+    for (const char c : text)
+    {
+        if (!is_digit(c))
+        {
+            break;
+        }
+        exponent = exponent * 10 + c - '0';
+    }
+    return negative ? -exponent : exponent;
+}
 
 } // namespace
 
@@ -51,81 +79,82 @@ void bf_hex_dump(BigFloat r)
 //         It may use scientific notation.
 // USES: g_bf_tmp1
 
-BigFloat str_to_bf(BigFloat r, const char *s)
+BigFloat str_to_bf(BigFloat r, std::string_view s)
 {
     Byte ones_byte;
     bool sign_flag = false;
-    const char *l;
     int power_ten = 0;
 
     clear_bf(r);
-
-    if (s[0] == '+')    // for + sign
+    if (s.empty())
     {
-        s++;
+        return r;
     }
-    else if (s[0] == '-')    // for neg sign
+
+    if (s[0] == '+') // for + sign
+    {
+        s.remove_prefix(1);
+    }
+    else if (s[0] == '-') // for neg sign
     {
         sign_flag = true;
-        s++;
+        s.remove_prefix(1);
+    }
+    if (s.empty())
+    {
+        return r;
     }
 
-    const char *d = std::strchr(s, '.');
-    const char *e = std::strchr(s, 'e');
-    if (e == nullptr)
+    const std::size_t d = s.find('.');
+    const std::size_t e = s.find_first_of("eE");
+    std::size_t l = s.size();
+    if (e != std::string_view::npos)
     {
-        e = std::strchr(s, 'E');
-    }
-    if (e != nullptr)
-    {
-        power_ten = std::atoi(e+1);    // read in the e (x10^) part
-        l = e - 1; // just before e
-    }
-    else
-    {
-        l = s + std::strlen(s) - 1;  // last digit
+        power_ten = parse_exponent(s.substr(e + 1)); // read in the e (x10^) part
+        l = e;                                       // just after last mantissa char
     }
 
-    if (d != nullptr) // is there a decimal point?
+    if (d != std::string_view::npos)                 // is there a decimal point?
     {
-        while (*l >= '0' && *l <= '9') // while a digit
+        while (l > 0 && is_digit(s[l - 1]))          // while a digit
         {
-            ones_byte = static_cast<Byte>(*l-- - '0');
+            ones_byte = static_cast<Byte>(s[--l] - '0');
             int_to_bf(g_bf_tmp1, ones_byte);
             unsafe_add_a_bf(r, g_bf_tmp1);
             div_a_bf_int(r, 10);
         }
 
-        if (*l-- == '.') // the digit was found
+        if (l > 0 && s[l - 1] == '.') // the digit was found
         {
-            bool keep_looping = *l >= '0' && *l <= '9' && l >= s;
+            --l;
+            bool keep_looping = l > 0 && is_digit(s[l - 1]);
             while (keep_looping) // while a digit
             {
-                ones_byte = static_cast<Byte>(*l-- - '0');
+                ones_byte = static_cast<Byte>(s[--l] - '0');
                 int_to_bf(g_bf_tmp1, ones_byte);
                 unsafe_add_a_bf(r, g_bf_tmp1);
-                keep_looping = *l >= '0' && *l <= '9' && l >= s;
+                keep_looping = l > 0 && is_digit(s[l - 1]);
                 if (keep_looping)
                 {
                     div_a_bf_int(r, 10);
-                    power_ten++;    // increase the power of ten
+                    power_ten++; // increase the power of ten
                 }
             }
         }
     }
     else
     {
-        bool keep_looping = *l >= '0' && *l <= '9' && l >= s;
+        bool keep_looping = l > 0 && is_digit(s[l - 1]);
         while (keep_looping) // while a digit
         {
-            ones_byte = static_cast<Byte>(*l-- - '0');
+            ones_byte = static_cast<Byte>(s[--l] - '0');
             int_to_bf(g_bf_tmp1, ones_byte);
             unsafe_add_a_bf(r, g_bf_tmp1);
-            keep_looping = *l >= '0' && *l <= '9' && l >= s;
+            keep_looping = l > 0 && is_digit(s[l - 1]);
             if (keep_looping)
             {
                 div_a_bf_int(r, 10);
-                power_ten++;    // increase the power of ten
+                power_ten++; // increase the power of ten
             }
         }
     }

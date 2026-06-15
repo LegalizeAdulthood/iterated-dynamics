@@ -10,6 +10,7 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <string_view>
 
 using namespace id::engine;
 using namespace id::fractals;
@@ -51,6 +52,17 @@ TEST_F(TestBigFloat, parsesPlainDecimal)
     BigFloat value{alloc_stack(g_bf_length + 2)};
 
     str_to_bf(value, "1.25");
+
+    EXPECT_EQ(1.25L, bf_to_float(value));
+}
+
+TEST_F(TestBigFloat, parsesStringViewWithoutTerminator)
+{
+    const std::string storage{"1.25x"};
+    const std::string_view text{storage.data(), 4};
+    BigFloat value{alloc_stack(g_bf_length + 2)};
+
+    str_to_bf(value, text);
 
     EXPECT_EQ(1.25L, bf_to_float(value));
 }

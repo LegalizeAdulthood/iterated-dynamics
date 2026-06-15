@@ -4240,8 +4240,7 @@ static int get_bf(BigFloat bf, const char *cur_arg)
 {
     if (const char *s = std::strchr(cur_arg, '/'); s)
     {
-        const std::string buff(cur_arg, s);
-        str_to_bf(bf, buff.c_str());
+        str_to_bf(bf, std::string_view{cur_arg, static_cast<std::size_t>(s - cur_arg)});
     }
     else
     {

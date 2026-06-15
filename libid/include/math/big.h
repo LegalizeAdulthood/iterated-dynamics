@@ -167,7 +167,7 @@ bool is_bn_zero(BigNum n);
 BigNum float_to_bn(BigNum r, LDouble f);
 
 void bf_hex_dump(BigFloat r);
-BigFloat str_to_bf(BigFloat r, const char *s);
+BigFloat str_to_bf(BigFloat r, std::string_view s);
 int strlen_needed_bf();
 BigNum bf_to_bn(BigNum n, BigFloat f);
 BigNum bn_to_bf(BigFloat f, BigNum n);
