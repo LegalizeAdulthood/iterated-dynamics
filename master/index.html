@@ -702,6 +702,10 @@ repeatable when a seed is specified.  (Fixes #363)</p>
 real parts of operands.  (Fixes #358)</p>
 </li>
 <li>
+<p>The Burning Ship fractal type now documents its formula and
+parameters.  (Fixes #426)</p>
+</li>
+<li>
 <p>Fractal types using random numbers now consistently honor rseed=,
 making seeded random fractals repeatable across fractal types.</p>
 </li>
@@ -3270,6 +3274,25 @@ are now truly alive and well in Id!</p>
 <p>This fractal is a derivative of the classic Mandelbrot fractal with a
 twist.  Some parts use absolute values in the equations and this gives
 an amazing angular quality to the fractal.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>With stem:[z_n = x_n + i y_n] and degree stem:[d] from 2 through 5:</pre>
+</div>
+</div>
+<div class="stemblock">
+<div class="content">
+\$z_(n+1) = (|x_n| + i |y_n|)^d + c\$
+</div>
+</div>
+<div class="paragraph">
+<p>The value \$c\$ is the screen pixel.  The first two parameters are
+added to \$z_0\$ as described for Mandelbrot-type sets; \$z_0\$
+defaults to \$(0,0)\$.  Burning Ship images are commonly reflected
+vertically.</p>
+</div>
+<div class="paragraph">
+<p>The parameters are perturbation of \$z_0\$ and \$d\$.</p>
 </div>
 </div>
 <div class="sect2">
@@ -12965,7 +12988,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-15 18:29:04 UTC
+Last updated 2026-06-15 19:00:49 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
