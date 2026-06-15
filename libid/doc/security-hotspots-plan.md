@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 48.
+Total hotspots: 45.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,7 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 32.
+Items: 29.
 
 ## SH-199
 
@@ -148,60 +148,6 @@ Items: 32.
 - Sonar Status: `TO_REVIEW`
 - Assignee: `AWqWD8MuvoFfNZkNexwB`
 - Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-176
-
-- Status: `pending`
-- Key: `AZwwyFRR0qvqV_CtK2D7`
-- Rule: `cpp:S5813`
-- Area: `math-number-format`
-- Path: `libid/math/bignum.cpp`
-- Line: `268`
-- Range: `268:33-268:44`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-09-18T04:22:16+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-177
-
-- Status: `pending`
-- Key: `AZwwyFRR0qvqV_CtK2EA`
-- Rule: `cpp:S5801`
-- Area: `math-number-format`
-- Path: `libid/math/bignum.cpp`
-- Line: `382`
-- Range: `382:4-382:10`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-01-06T00:00:54+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-178
-
-- Status: `pending`
-- Key: `AZwwyFRR0qvqV_CtK2EB`
-- Rule: `cpp:S5813`
-- Area: `math-number-format`
-- Path: `libid/math/bignum.cpp`
-- Line: `383`
-- Range: `383:25-383:36`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-09-18T04:22:16+0000`
 - Updated: `2026-02-06T02:20:33+0000`
 - Flows: `0`
 - Message: Make sure use of "strlen" is safe here.

@@ -9,6 +9,7 @@
 #include <config/port.h>
 
 #include <string>
+#include <string_view>
 
 namespace id::math
 {
@@ -132,9 +133,8 @@ S16 BIG_SET_S16(S16 *addr, S16 val);
 #define BIG_SET_S16(addr, val) (*(S16 *)(addr) = (S16)(val))
 #endif
 void bn_hex_dump(BigNum r);
-BigNum str_to_bn(BigNum r, char *s);
+BigNum str_to_bn(BigNum r, std::string_view s);
 int strlen_needed_bn();
-char *unsafe_bn_to_str(char *s, BigNum r, int dec);
 BigNum int_to_bn(BigNum r, long value);
 long bn_to_int(BigNum n);
 int  sign_bn(BigNum n);
@@ -155,7 +155,7 @@ BigNum mult_bn(BigNum r, BigNum n1, BigNum n2);
 BigNum full_square_bn(BigNum r, BigNum n);
 BigNum square_bn(BigNum r, BigNum n);
 BigNum div_bn_int(BigNum r, BigNum n, misc::U16 u);
-char *bn_to_str(char *s, BigNum r, int dec);
+std::string bn_to_string(BigNum r, int dec);
 BigNum inv_bn(BigNum r, BigNum n);
 BigNum div_bn(BigNum r, BigNum n1, BigNum n2);
 BigNum ln_bn(BigNum r, BigNum n);

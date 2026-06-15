@@ -44,17 +44,10 @@ namespace id::engine
 
 #ifndef NDEBUG
 //********************************************************************
-std::string bn_to_string(BigNum n, const int dec)
-{
-    char msg[200];
-    bn_to_str(msg, n, dec);
-    return msg;
-}
-
 void show_var_bn(const char *s, BigNum n)
 {
     std::string msg{s};
-    msg += ' ' + bn_to_string(n, 40);
+    msg += ' ' + math::bn_to_string(n, 40);
     msg.erase(79); // limit to 79 characters
     stop_msg(msg);
 }
@@ -101,13 +94,13 @@ void show_corners_bn(const char *s)
                              "y_3rd_bn={:s}\n"
                              "y_3rd   ={:.20f}\n"
                              "\n",
-            s,                                                     //
-            bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
-            bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
-            bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
-            bn_to_string(g_y_max_bn, dec), g_image_region.m_max.y, //
-            bn_to_string(g_x_3rd_bn, dec), g_image_region.m_3rd.x, //
-            bn_to_string(g_y_3rd_bn, dec), g_image_region.m_3rd.y)))
+            s,                                                           //
+            math::bn_to_string(g_x_min_bn, dec), g_image_region.m_min.x, //
+            math::bn_to_string(g_x_max_bn, dec), g_image_region.m_max.x, //
+            math::bn_to_string(g_y_min_bn, dec), g_image_region.m_min.y, //
+            math::bn_to_string(g_y_max_bn, dec), g_image_region.m_max.y, //
+            math::bn_to_string(g_x_3rd_bn, dec), g_image_region.m_3rd.x, //
+            math::bn_to_string(g_y_3rd_bn, dec), g_image_region.m_3rd.y)))
     {
         goodbye();
     }
@@ -255,8 +248,8 @@ void compare_values(const char *s, const LDouble x, BigNum bnx)
                              "bignum={:s}\n"
                              "double={:.20Lf}\n"
                              "\n",
-            s,                      //
-            bn_to_string(bnx, dec), //
+            s,                            //
+            math::bn_to_string(bnx, dec), //
             x)))
     {
         goodbye();

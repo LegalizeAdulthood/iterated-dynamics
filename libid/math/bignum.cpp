@@ -135,16 +135,91 @@ double wide number can then be ignored.
 
 #include <algorithm>
 #include <cfloat>
+#include <charconv>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <string>
+#include <string_view>
 
 using namespace id::misc;
 
 namespace id::math
 {
+namespace
+{
+
+long parse_long(const std::string_view text)
+{
+    long value{};
+    std::from_chars(text.data(), text.data() + text.size(), value);
+    return value;
+}
+
+void set_integer_part(BigNum ones_byte, const long value)
+{
+    switch (g_int_length)
+    {
+        // only 1, 2, or 4 are allowed
+    case 1:
+        *ones_byte = static_cast<Byte>(value);
+        break;
+    case 2:
+        BIG_SET16(ones_byte, static_cast<U16>(value));
+        break;
+    case 4:
+        BIG_SET32(ones_byte, value);
+        break;
+    }
+}
+
+std::string unsafe_bn_to_string(BigNum r, int dec)
+{
+    long value = 0;
+
+    if (dec == 0)
+    {
+        dec = g_decimals;
+    }
+    BigNum ones_byte = r + g_bn_length - g_int_length;
+
+    std::string result;
+    if (is_bn_neg(r))
+    {
+        neg_a_bn(r);
+        result += '-';
+    }
+    switch (g_int_length)
+    {
+        // only 1, 2, or 4 are allowed
+    case 1:
+        value = *ones_byte;
+        break;
+    case 2:
+        value = BIG_ACCESS16(ones_byte);
+        break;
+    case 4:
+        value = BIG_ACCESS32(ones_byte);
+        break;
+    }
+    result += std::to_string(value);
+    result += '.';
+    for (int d = 0; d < dec; d++)
+    {
+        *ones_byte = 0; // clear out highest byte
+        mult_a_bn_int(r, 10);
+        if (is_bn_zero(r))
+        {
+            break;
+        }
+        result += static_cast<char>(*ones_byte + '0');
+    }
+
+    return result;
+}
+
+} // namespace
 
 /*************************************************************************
 * The original bignumber code was written specifically for a Little Endian
@@ -245,67 +320,40 @@ void bn_hex_dump(BigNum r)
 //   note: the string may not be empty or have extra space and may
 //   not use scientific notation (2.3e4).
 
-BigNum str_to_bn(BigNum r, char *s)
+BigNum str_to_bn(BigNum r, std::string_view s)
 {
     bool sign_flag = false;
-    long value;
 
     clear_bn(r);
     BigNum ones_byte = r + g_bn_length - g_int_length;
 
-    if (s[0] == '+')    // for + sign
+    if (s[0] == '+') // for + sign
     {
-        s++;
+        s.remove_prefix(1);
     }
-    else if (s[0] == '-')    // for neg sign
+    else if (s[0] == '-') // for neg sign
     {
         sign_flag = true;
-        s++;
+        s.remove_prefix(1);
     }
 
-    if (std::strchr(s, '.') != nullptr) // is there a decimal point?
+    if (s.find('.') != std::string_view::npos)              // is there a decimal point?
     {
-        int l = static_cast<int>(std::strlen(s)) - 1;      // start with the last digit
-        while (s[l] >= '0' && s[l] <= '9') // while a digit
+        std::size_t l = s.size();                           // start just past the last digit
+        while (l > 0 && s[l - 1] >= '0' && s[l - 1] <= '9') // while a digit
         {
-            *ones_byte = static_cast<Byte>(s[l--] - '0');
+            *ones_byte = static_cast<Byte>(s[--l] - '0');
             div_a_bn_int(r, 10);
         }
 
-        if (s[l] == '.')
+        if (l > 0 && s[l - 1] == '.')
         {
-            value = std::atol(s);
-            switch (g_int_length)
-            {
-                // only 1, 2, or 4 are allowed
-            case 1:
-                *ones_byte = static_cast<Byte>(value);
-                break;
-            case 2:
-                BIG_SET16(ones_byte, static_cast<U16>(value));
-                break;
-            case 4:
-                BIG_SET32(ones_byte, value);
-                break;
-            }
+            set_integer_part(ones_byte, parse_long(s));
         }
     }
     else
     {
-        value = std::atol(s);
-        switch (g_int_length)
-        {
-            // only 1, 2, or 4 are allowed
-        case 1:
-            *ones_byte = static_cast<Byte>(value);
-            break;
-        case 2:
-            BIG_SET16(ones_byte, static_cast<U16>(value));
-            break;
-        case 4:
-            BIG_SET32(ones_byte, value);
-            break;
-        }
+        set_integer_part(ones_byte, parse_long(s));
     }
 
     if (sign_flag)
@@ -350,54 +398,6 @@ int strlen_needed_bn()
 //   SIDE-EFFECT: the bignumber, r, is destroyed.
 //                Copy it first if necessary.
 
-char *unsafe_bn_to_str(char *s, BigNum r, int dec)
-{
-    int l = 0;
-    long value = 0;
-
-    if (dec == 0)
-    {
-        dec = g_decimals;
-    }
-    BigNum ones_byte = r + g_bn_length - g_int_length;
-
-    if (is_bn_neg(r))
-    {
-        neg_a_bn(r);
-        *s++ = '-';
-    }
-    switch (g_int_length)
-    {
-        // only 1, 2, or 4 are allowed
-    case 1:
-        value = *ones_byte;
-        break;
-    case 2:
-        value = BIG_ACCESS16(ones_byte);
-        break;
-    case 4:
-        value = BIG_ACCESS32(ones_byte);
-        break;
-    }
-    strcpy(s, std::to_string(value).c_str());
-    l = static_cast<int>(std::strlen(s));
-    s[l++] = '.';
-    for (int d = 0; d < dec; d++)
-    {
-        *ones_byte = 0;  // clear out highest byte
-        mult_a_bn_int(r, 10);
-        if (is_bn_zero(r))
-        {
-            break;
-        }
-        s[l++] = static_cast<char>(*ones_byte + '0');
-    }
-    s[l] = '\0'; // don't forget nul char
-
-    return s;
-}
-
-/*********************************************************************/
 //  b = l
 //  Converts a long to a bignumber
 BigNum int_to_bn(BigNum r, const long value)
@@ -1376,9 +1376,9 @@ BigNum div_bn_int(BigNum r, BigNum n, const U16 u)
 }
 
 /**********************************************************************/
-char *bn_to_str(char *s, BigNum r, const int dec)
+std::string bn_to_string(BigNum r, const int dec)
 {
-    return unsafe_bn_to_str(s, copy_bn(g_bn_tmp_copy2, r), dec);
+    return unsafe_bn_to_string(copy_bn(g_bn_tmp_copy2, r), dec);
 }
 
 /**********************************************************************/
