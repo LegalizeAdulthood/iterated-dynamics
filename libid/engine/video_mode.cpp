@@ -6,8 +6,6 @@
 #include "engine/VideoInfo.h"
 #include "ui/id_keys.h"
 
-#include <cstdio>
-
 using namespace id::ui;
 
 namespace id::engine
@@ -86,24 +84,24 @@ int check_vid_mode_key_name(std::string_view key_name)
     return i;
 }
 
-void vid_mode_key_name(int key, char *buffer)
+std::string vid_mode_key_name(int key)
 {
-    *buffer = 0;
     if (key > 0)
     {
+        std::string name;
         if (key >= ID_KEY_ALT_F1 && key <= ID_KEY_ALT_F10)
         {
-            *buffer++ = 'A';
+            name = 'A';
             key -= ID_KEY_ALT_F1 - 1;
         }
         else if (key >= ID_KEY_CTL_F1 && key <= ID_KEY_CTL_F10)
         {
-            *buffer++ = 'C';
+            name = 'C';
             key -= ID_KEY_CTL_F1 - 1;
         }
         else if (key >= ID_KEY_SHF_F1 && key <= ID_KEY_SHF_F10)
         {
-            *buffer++ = 'S';
+            name = 'S';
             key -= ID_KEY_SHF_F1 - 1;
         }
         else if (key >= ID_KEY_F1 && key <= ID_KEY_F10)
@@ -112,10 +110,13 @@ void vid_mode_key_name(int key, char *buffer)
         }
         else
         {
-            return;
+            return {};
         }
-        std::sprintf(buffer, "F%d", key);
+        name += 'F';
+        name += std::to_string(key);
+        return name;
     }
+    return {};
 }
 
 bool is_valid_disk_video_mode(const VideoInfo &mode)
