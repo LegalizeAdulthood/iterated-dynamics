@@ -756,9 +756,9 @@ Ant and diffusion mutate a shared grid with strong order dependencies.
 L-system rendering is recursive string and turtle work, not a dense numeric
 loop.  The test calculator should not drive the SIMD plan.
 
-## Implementation Slices
+## Phase 1 Implementation Slices
 
-### Phase 1 Slice 1: Option Plumbing
+### 1. Option Plumbing
 
 - Add `SimdMode {AUTO, OFF, FORCE}`.
 - Add global/user state for the selected mode.
@@ -769,7 +769,7 @@ loop.  The test calculator should not drive the SIMD plan.
 
 No Highway dependency is needed in this slice.
 
-### Phase 1 Slice 2: Eligibility Report
+### 2. Eligibility Report
 
 - Add `can_use_highway_pass()`.
 - Return a small result object, not just `bool`.
@@ -780,7 +780,7 @@ No Highway dependency is needed in this slice.
 
 This slice still calls scalar rendering only.
 
-### Phase 1 Slice 3: Pixel Grid Views
+### 3. Pixel Grid Views
 
 - Expose read-only grid views from `pixel_grid`.
 - Keep `dx_pixel()` and `dy_pixel()` unchanged for scalar users.
@@ -789,7 +789,7 @@ This slice still calls scalar rendering only.
 
 This slice is data access only.
 
-### Phase 1 Slice 4: Scalar Row Kernel
+### 4. Scalar Row Kernel
 
 - Implement the new row-kernel interface in scalar C++ first.
 - Do not use Highway yet.
@@ -798,7 +798,7 @@ This slice is data access only.
 
 This de-risks semantics before adding SIMD.
 
-### Phase 1 Slice 5: Highway Build Integration
+### 5. Highway Build Integration
 
 - Add `highway` to `vcpkg.json`.
 - Add `find_package` and link target in `libid/CMakeLists.txt`.
@@ -807,7 +807,7 @@ This de-risks semantics before adding SIMD.
 
 No behavior change should occur in this slice.
 
-### Phase 1 Slice 6: Highway Row Kernel
+### 6. Highway Row Kernel
 
 - Implement the masked lane loop with Highway.
 - Handle partial final vectors.
@@ -816,27 +816,27 @@ No behavior change should occur in this slice.
 - Keep the pass dispatcher using scalar output until the row kernel is
   proven.
 
-### Phase 1 Slice 7: One-Pass Auto Selection
+### 7. One-Pass Auto Selection
 
 - Route `passes=1 simd=auto` through Highway when eligible.
 - Route `passes=1 simd=off` through scalar code.
 - Route `passes=1 simd=force` through Highway or report rejection.
 - Add image comparison tests.
 
-### Phase 1 Slice 8: Two-Pass Auto Selection
+### 8. Two-Pass Auto Selection
 
 - Add the same selection for `passes=2`.
 - Preserve the first-pass pixel replication behavior.
 - Add image comparison tests for both passes.
 
-### Phase 1 Slice 9: Diagnostics
+### 9. Diagnostics
 
 - Add optional `simd=stats` or debug logging.
 - Report selected Highway target, rows rendered, scalar fallbacks, and
   rejection reason.
 - Keep diagnostics out of normal output unless explicitly requested.
 
-### Phase 1 Slice 10: Expand Eligibility
+### 10. Expand Eligibility
 
 Add features one at a time, with scalar/SIMD comparison tests for each:
 
@@ -851,7 +851,9 @@ Add features one at a time, with scalar/SIMD comparison tests for each:
 Do not merge all special cases into one large kernel.  Prefer small kernels
 or post-processing steps with clear eligibility.
 
-### Phase 2 Slice 1: IFS Policy And Eligibility
+## Phase 2 Implementation Slices
+
+### 1. IFS Policy And Eligibility
 
 - Add IFS-specific SIMD eligibility.
 - Require `simd=force` for IFS at first.
@@ -860,7 +862,7 @@ or post-processing steps with clear eligibility.
   scalar single-walker sequence.
 - Keep `simd=off` on the existing scalar IFS path.
 
-### Phase 2 Slice 2: IFS Execution Data
+### 2. IFS Execution Data
 
 - Build a SoA execution object from `g_ifs_definition`.
 - Include 2D coefficient arrays and CDF arrays.
@@ -868,7 +870,7 @@ or post-processing steps with clear eligibility.
 - Add validation for row sizes and probability totals.
 - Add tests that the SoA object matches the original definition.
 
-### Phase 2 Slice 3: Explicit Lane RNG
+### 3. Explicit Lane RNG
 
 - Add an explicit RNG state type for IFS SIMD lanes.
 - Seed lane states deterministically from the current random seed.
@@ -876,7 +878,7 @@ or post-processing steps with clear eligibility.
   state.
 - Add tests for reproducible lane random values.
 
-### Phase 2 Slice 4: Scalar Batched IFS2D
+### 4. Scalar Batched IFS2D
 
 - Implement a scalar batched IFS2D walker.
 - Use the same lane state layout planned for Highway.
@@ -885,7 +887,7 @@ or post-processing steps with clear eligibility.
 - Add tests for one-lane equivalence with the old scalar orbit where
   practical.
 
-### Phase 2 Slice 5: Highway IFS2D Kernel
+### 5. Highway IFS2D Kernel
 
 - Implement vector transform selection.
 - Implement vector 2D affine transform.
@@ -893,13 +895,13 @@ or post-processing steps with clear eligibility.
 - Keep plotting scalar and lane ordered.
 - Compare Highway output to the scalar batch reference.
 
-### Phase 2 Slice 6: IFS2D Image Tests
+### 6. IFS2D Image Tests
 
 - Add fixed-seed `simd=force` image tests for 2D IFS.
 - Keep existing scalar tests on the scalar path.
 - Add tests for transform-index coloring and histogram coloring.
 
-### Phase 2 Slice 7: Scalar Batched IFS3D
+### 7. Scalar Batched IFS3D
 
 - Implement scalar batched IFS3D walkers.
 - Preserve the waste phase and min/max setup.
@@ -907,7 +909,7 @@ or post-processing steps with clear eligibility.
 - Keep real-time stereo rejected.
 - Add scalar batch reference tests.
 
-### Phase 2 Slice 8: Highway IFS3D Kernel
+### 8. Highway IFS3D Kernel
 
 - Implement vector 3D affine transform.
 - Implement vector view matrix transform.
@@ -915,20 +917,22 @@ or post-processing steps with clear eligibility.
 - Reduce waste-phase min/max across lanes.
 - Compare Highway output to the scalar batch reference.
 
-### Phase 2 Slice 9: IFS3D Image Tests
+### 9. IFS3D Image Tests
 
 - Add fixed-seed `simd=force` image tests for 3D IFS.
 - Cover non-perspective and perspective projection if both are supported.
 - Keep stereo rejected until a separate slice supports it.
 
-### Phase 2 Slice 10: IFS Auto Selection
+### 10. IFS Auto Selection
 
 - Decide whether batched IFS output is acceptable for `simd=auto`.
 - If accepted, allow `simd=auto` for eligible IFS states.
 - If not accepted, keep IFS SIMD behind `simd=force`.
 - Update diagnostics to report IFS walker count and fallback reasons.
 
-### Phase 3 Slice 1: Non-Standard Registry
+## Phase 3 Implementation Slices
+
+### 1. Non-Standard Registry
 
 - List non-standard fractal calculators and their SIMD family.
 - Add a family-level eligibility report.
@@ -936,14 +940,14 @@ or post-processing steps with clear eligibility.
 - Make `simd=force` report the family-specific rejection reason.
 - Add tests for classification and rejection.
 
-### Phase 3 Slice 2: Bifurcation Scalar Column Kernel
+### 2. Bifurcation Scalar Column Kernel
 
 - Extract a scalar column kernel for the simplest bifurcation path.
 - Keep old rendering behavior as the oracle.
 - Reject unsupported variants explicitly.
 - Add tests that the extracted kernel matches the old path.
 
-### Phase 3 Slice 3: Highway Bifurcation Kernel
+### 3. Highway Bifurcation Kernel
 
 - Process multiple columns per Highway vector.
 - Keep lane-local recurrence state.
@@ -951,42 +955,42 @@ or post-processing steps with clear eligibility.
 - Compare SIMD output to the scalar column kernel.
 - Add fixed image tests for the supported bifurcation subset.
 
-### Phase 3 Slice 4: Cellular Row Kernel
+### 4. Cellular Row Kernel
 
 - Extract a scalar next-row kernel.
 - Define central vector span and scalar boundary handling.
 - Replace scalar rolling sums with a vector-friendly window model.
 - Add tests for boundaries, narrow widths, and odd widths.
 
-### Phase 3 Slice 5: Highway Cellular Kernel
+### 5. Highway Cellular Kernel
 
 - Implement the central row span with Highway.
 - Keep boundary cells scalar.
 - Compare the full image against the scalar row kernel.
 - Add image tests for the supported cellular rule set.
 
-### Phase 3 Slice 6: Julibrot Scalar Pixel Kernel
+### 6. Julibrot Scalar Pixel Kernel
 
 - Extract a scalar pixel or depth-line kernel.
 - Choose the first SIMD axis: adjacent pixels or depth samples.
 - Reject stereo and complex side-effect modes.
 - Add tests against the current Julibrot output.
 
-### Phase 3 Slice 7: Highway Julibrot Kernel
+### 7. Highway Julibrot Kernel
 
 - Implement the selected vector axis with Highway.
 - Preserve scalar color semantics.
 - Add tail handling for odd widths or depth counts.
 - Compare supported images byte-for-byte with scalar output.
 
-### Phase 3 Slice 8: Walker Shared Infrastructure
+### 8. Walker Shared Infrastructure
 
 - Generalize explicit lane RNG and lane state from Phase 2.
 - Add scalar batched references for walker-style renderers.
 - Keep plotting scalar and lane ordered.
 - Use this for popcorn, dynamic 2D, Mandel cloud, and inverse Julia.
 
-### Phase 3 Slice 9: Popcorn And Dynamic Walkers
+### 9. Popcorn And Dynamic Walkers
 
 - Add scalar batched popcorn.
 - Add Highway popcorn point generation.
@@ -994,7 +998,7 @@ or post-processing steps with clear eligibility.
 - Compare SIMD output to the scalar batched references.
 - Keep `simd=auto` disabled until output policy is accepted.
 
-### Phase 3 Slice 10: Later Or Deferred Families
+### 10. Chaotic Orbit Epsilon Grid
 
 - Add a scalar epsilon-grid reference for Lorenz, orbit 2D, and orbit 3D.
 - Seed one lane with the original starting point.
@@ -1004,7 +1008,7 @@ or post-processing steps with clear eligibility.
 - Keep the mode behind `simd=force` until output policy is accepted.
 - Add fixed image tests showing sensitivity to initial conditions.
 
-### Phase 3 Slice 11: Later Or Deferred Families
+### 11. Later Or Deferred Families
 
 - Revisit inverse Julia random-walk batching.
 - Revisit plasma only with profiler evidence or a clear wavefront model.
