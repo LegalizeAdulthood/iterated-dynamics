@@ -2,24 +2,26 @@
 //
 #include "ui/double_to_string.h"
 
-#include <cstdio>
-#include <cstring>
+#include <string>
+
+#include <fmt/format.h>
 
 namespace id::ui
 {
 
-void double_to_string(char *buf, const double val)
+std::string double_to_string(const double val)
 {
     constexpr std::size_t length = 20;
     // cellular needs 16
     for (int i = 16; i > 0; --i)
     {
-        std::sprintf(buf, "%.*g", i, val);
-        if (std::strlen(buf) <= length)
+        std::string result{fmt::format("{:.{}g}", val, i)};
+        if (result.length() <= length)
         {
-            return;
+            return result;
         }
     }
+    return fmt::format("{:.1g}", val);
 }
 
 } // namespace id::ui

@@ -2,17 +2,18 @@
 //
 #include "math/round_float_double.h"
 
-#include <cstdio>
 #include <cstdlib>
+#include <string>
+
+#include <fmt/format.h>
 
 namespace id::math
 {
 
 void round_float_double(double *x) // make double converted from float look ok
 {
-    char buf[30];
-    std::sprintf(buf, "%-10.7g", *x);
-    *x = std::atof(buf);
+    const std::string buf{fmt::format("{:<10.7g}", *x)};
+    *x = std::atof(buf.c_str());
 }
 
 } // namespace id::math

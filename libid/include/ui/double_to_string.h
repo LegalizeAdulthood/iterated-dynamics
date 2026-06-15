@@ -2,9 +2,11 @@
 //
 #pragma once
 
+#include <string>
+
 namespace id::ui
 {
 
-void double_to_string(char *buf, double val);
+std::string double_to_string(double val);
 
 } // namespace id::ui

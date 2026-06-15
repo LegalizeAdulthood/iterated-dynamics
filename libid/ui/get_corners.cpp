@@ -41,13 +41,11 @@ namespace id::ui
 */
 static int cmp_dbl(double old, const double new_val)
 {
-    char buf[81];
-
     // change the old value with the same torture the new value had
-    double_to_string(buf, old);   // convert "old" to string
+    const std::string buf{double_to_string(old)};         // convert "old" to string
 
-    old = std::atof(buf);                // convert back
-    return std::abs(old-new_val) < DBL_EPSILON ? 0 : 1; // zero if same
+    old = std::atof(buf.c_str());                         // convert back
+    return std::abs(old - new_val) < DBL_EPSILON ? 0 : 1; // zero if same
 }
 
 int get_corners()

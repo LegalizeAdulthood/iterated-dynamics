@@ -105,6 +105,7 @@ add_executable(test-id
     math/test_cmplx.cpp
     math/test_fpu087.cpp
     math/test_math.cpp
+    math/test_round_float_double.cpp
     misc/driver_types.cpp
     misc/test_driver.cpp
     misc/test_ValueSaver.cpp
@@ -112,6 +113,7 @@ add_executable(test-id
     ui/test_ChoiceBuilder.cpp
     ui/test_comments.cpp
     ui/test_diskvid.cpp
+    ui/test_double_to_string.cpp
     ui/test_file_item.cpp
     ui/test_full_screen_prompt.cpp
     ui/test_history.cpp

@@ -918,11 +918,7 @@ static std::string prompt_value_string(const FullScreenValues *val)
     switch (val->type)
     {
     case 'd':
-    {
-        char buf[81];
-        double_to_string(buf, val->uval.dval);
-        return buf;
-    }
+        return double_to_string(val->uval.dval);
     case 'D':
         return fmt::format("{:d}", std::lround(val->uval.dval));
     case 'f':

@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 39.
+Total hotspots: 36.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,7 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 23.
+Items: 20.
 
 ## SH-203
 
@@ -94,62 +94,6 @@ Items: 23.
 - Sonar Status: `TO_REVIEW`
 - Assignee: `AWqWD8MuvoFfNZkNexwB`
 - Created: `2019-03-17T21:07:38+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-179
-
-- Status: `pending`
-- Key: `AZwwyFRk0qvqV_CtK2Ec`
-- Rule: `cpp:S6069`
-- Area: `math-number-format`
-- Path: `libid/math/round_float_double.cpp`
-- Line: `14`
-- Range: `14:4-14:16`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-24T20:18:13+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "sprintf" function is safe here or replace it
-  with a call to "snprintf".
-
-## SH-180
-
-- Status: `pending`
-- Key: `AZwwyFFY0qvqV_CtK1ue`
-- Rule: `cpp:S6069`
-- Area: `math-number-format`
-- Path: `libid/ui/double_to_string.cpp`
-- Line: `17`
-- Range: `17:8-17:20`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-10T03:41:19+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "sprintf" function is safe here or replace it
-  with a call to "snprintf".
-
-## SH-181
-
-- Status: `pending`
-- Key: `AZwwyFFY0qvqV_CtK1uf`
-- Rule: `cpp:S5813`
-- Area: `math-number-format`
-- Path: `libid/ui/double_to_string.cpp`
-- Line: `18`
-- Range: `18:12-18:23`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-10T03:41:19+0000`
 - Updated: `2026-02-06T02:20:33+0000`
 - Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
