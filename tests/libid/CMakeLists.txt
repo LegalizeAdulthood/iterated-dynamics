@@ -121,6 +121,7 @@ add_executable(test-id
     ui/test_slideshw.cpp
     ui/test_stereo.cpp
     ui/test_tab_display.cpp
+    ui/test_thinking.cpp
     ui/test_video_mode.cpp
 )
 if(ID_USE_WX)

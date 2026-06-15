@@ -2,10 +2,12 @@
 //
 #pragma once
 
+#include <string_view>
+
 namespace id::ui
 {
 
-bool thinking(const char *msg);
+bool thinking(std::string_view msg);
 
 void thinking_end();
 

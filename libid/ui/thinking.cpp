@@ -7,7 +7,7 @@
 #include "ui/help_title.h"
 #include "ui/text_screen.h"
 
-#include <cstring>
+#include <string>
 
 using namespace id::engine;
 using namespace id::misc;
@@ -15,11 +15,11 @@ using namespace id::misc;
 namespace id::ui
 {
 
-/* thinking(1,message):
+/* thinking(message):
       if thinking message not yet on display, it is displayed;
       otherwise the wheel is updated
       returns 0 to keep going, -1 if keystroke pending
-   thinking(0,nullptr):
+   thinking_end():
       call this when thinking phase is done
    */
 static int s_think_state{-1};
@@ -36,17 +36,16 @@ void thinking_end()
     }
 }
 
-bool thinking(const char *msg)
+bool thinking(const std::string_view msg)
 {
     if (s_think_state < 0)
     {
         driver_stack_screen();
         s_think_state = 0;
         help_title();
-        char buf[81];
-        std::strcpy(buf, "  ");
-        std::strcat(buf, msg);
-        std::strcat(buf, "    ");
+        std::string buf{"  "};
+        buf.append(msg.data(), msg.size());
+        buf += "    ";
         driver_put_string(4, 10, C_GENERAL_HI, buf);
         s_think_col = g_text_col - 3;
         s_think_count = 0;
