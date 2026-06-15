@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 66.
+Total hotspots: 59.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,7 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 50.
+Items: 43.
 
 ## SH-199
 
@@ -130,60 +130,6 @@ Items: 50.
 - Sonar Status: `TO_REVIEW`
 - Assignee: `AWqWD8MuvoFfNZkNexwB`
 - Created: `2024-06-22T23:25:19+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strlen" is safe here.
-
-## SH-159
-
-- Status: `pending`
-- Key: `AZwwyEjh0qvqV_CtK1Fc`
-- Rule: `cpp:S5801`
-- Area: `io-path-metadata`
-- Path: `libid/io/expand_dirname.cpp`
-- Line: `22`
-- Range: `22:8-22:19`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-03T02:24:18+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-160
-
-- Status: `pending`
-- Key: `AZwwyEjh0qvqV_CtK1Fd`
-- Rule: `cpp:S5801`
-- Area: `io-path-metadata`
-- Path: `libid/io/expand_dirname.cpp`
-- Line: `23`
-- Range: `23:8-23:19`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-03T02:24:18+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-161
-
-- Status: `pending`
-- Key: `AZwwyEjh0qvqV_CtK1Fe`
-- Rule: `cpp:S5813`
-- Area: `io-path-metadata`
-- Path: `libid/io/expand_dirname.cpp`
-- Line: `23`
-- Range: `23:50-23:61`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-03T02:24:18+0000`
 - Updated: `2026-02-06T02:20:33+0000`
 - Flows: `0`
 - Message: Make sure use of "strlen" is safe here.
@@ -730,78 +676,6 @@ Items: 50.
 - Updated: `2026-02-06T02:20:33+0000`
 - Flows: `0`
 - Message: Make sure use of "strcat" is safe here.
-
-## SH-210
-
-- Status: `pending`
-- Key: `AZwwyFaw0qvqV_CtK2Mx`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/io/test_expand_dirname.cpp`
-- Line: `49`
-- Range: `49:4-49:15`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-03T02:24:18+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-211
-
-- Status: `pending`
-- Key: `AZwwyFaw0qvqV_CtK2My`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/io/test_expand_dirname.cpp`
-- Line: `50`
-- Range: `50:4-50:15`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-03T02:24:18+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-212
-
-- Status: `pending`
-- Key: `AZwwyFaw0qvqV_CtK2Mz`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/io/test_expand_dirname.cpp`
-- Line: `60`
-- Range: `60:4-60:15`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-03T02:24:18+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-213
-
-- Status: `pending`
-- Key: `AZwwyFaw0qvqV_CtK2M0`
-- Rule: `cpp:S5801`
-- Area: `tests-legacy-win32`
-- Path: `tests/libid/io/test_expand_dirname.cpp`
-- Line: `69`
-- Range: `69:4-69:15`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-03-03T02:24:18+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
 
 ## SH-214
 

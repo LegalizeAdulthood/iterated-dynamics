@@ -84,7 +84,6 @@ add_executable(test-id
     fractals/test_seeded_fractals.cpp
     io/test_check_write_file.cpp
     io/test_check_write_file_data.h.in
-    io/test_expand_dirname.cpp
     io/test_find_file.cpp
     io/test_find_file.txt.in
     io/test_find_path.cpp
