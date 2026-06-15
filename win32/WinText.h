@@ -8,6 +8,7 @@
 #include <Windows.h>
 
 #include <array>
+#include <string>
 
 namespace id::misc
 {
@@ -101,7 +102,7 @@ private:
     bool m_cursor_owned{};
     HBITMAP m_bitmap[3]{};
     short m_cursor_pattern[3][40]{};
-    char m_title[128]{};
+    std::string m_title{};
     HWND m_window{};
     HWND m_parent{};
     HINSTANCE m_instance{};

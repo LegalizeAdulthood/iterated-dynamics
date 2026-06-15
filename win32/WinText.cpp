@@ -160,7 +160,7 @@ bool WinText::initialize(const HINSTANCE instance, const HWND parent, const LPCS
     WNDCLASS  wc;
 
     m_instance = instance;
-    std::strcpy(m_title, title);
+    m_title = title;
     m_parent = parent;
 
     bool return_value = GetClassInfoA(instance, WINDOW_CLASS, &wc) != 0;
@@ -174,7 +174,7 @@ bool WinText::initialize(const HINSTANCE instance, const HWND parent, const LPCS
         wc.hIcon = nullptr;
         wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
         wc.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
-        wc.lpszMenuName =  m_title;
+        wc.lpszMenuName = m_title.c_str();
         wc.lpszClassName = WINDOW_CLASS;
 
         return_value = RegisterClassA(&wc) != 0;
@@ -269,8 +269,8 @@ int WinText::text_on()
      * is going to call the window procedure.
      */
     s_me = this;
-    m_window = CreateWindowA(WINDOW_CLASS,                  //
-        m_title,                                              //
+    m_window = CreateWindowA(WINDOW_CLASS,                    //
+        m_title.c_str(),                                      //
         m_parent == nullptr ? WS_OVERLAPPEDWINDOW : WS_CHILD, //
         CW_USEDEFAULT,                                        //
         CW_USEDEFAULT,                                        //
