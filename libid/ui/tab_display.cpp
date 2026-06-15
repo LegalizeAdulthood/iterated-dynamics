@@ -302,8 +302,8 @@ top:
             driver_put_string(start_row + 2, 3, C_GENERAL_MED, "Item file:");
             driver_put_string(start_row + 2 + add_row, 16, C_GENERAL_HI, trim_filename(g_formula_filename, 29));
         }
-        trig_details(msg);
-        driver_put_string(start_row + 1, 16 + i, C_GENERAL_HI, msg);
+        const std::string details{trig_details()};
+        driver_put_string(start_row + 1, 16 + i, C_GENERAL_HI, details.c_str());
         if (g_fractal_type == FractalType::L_SYSTEM)
         {
             driver_put_string(start_row + 1, 3, C_GENERAL_MED, "Item name:");

@@ -11,9 +11,6 @@
 
 #include <algos/string_algorithms.h>
 
-#include <cstdio>
-#include <cstring>
-
 using namespace id::fractals;
 using namespace id::math;
 
@@ -85,16 +82,15 @@ TrigFn g_trig_index[4] =
 
 std::string get_function_param()
 {
-    char tmp_buff[80];
-    trig_details(tmp_buff);
-    if (tmp_buff[0])
+    const std::string details{trig_details()};
+    if (!details.empty())
     {
-        return std::string{" function="} + tmp_buff;
+        return std::string{" function="} + details;
     }
     return {};
 }
 
-void trig_details(char *buf)
+std::string trig_details()
 {
     int num_fn;
     if (g_fractal_type == FractalType::JULIBROT)
@@ -109,17 +105,17 @@ void trig_details(char *buf)
     {
         num_fn = g_formula.max_function;
     }
-    *buf = 0; // null string if none
+    std::string result;
     if (num_fn > 0)
     {
-        std::strcpy(buf, g_trig_fn[+g_trig_index[0]].name);
-        int i = 0;
-        while (++i < num_fn)
+        result = g_trig_fn[+g_trig_index[0]].name;
+        for (int i = 1; i < num_fn; ++i)
         {
-            std::strcat(buf, "/");
-            std::strcat(buf, g_trig_fn[+g_trig_index[i]].name);
+            result += '/';
+            result += g_trig_fn[+g_trig_index[i]].name;
         }
     }
+    return result;
 }
 
 // set array of trig function indices according to "function=" command

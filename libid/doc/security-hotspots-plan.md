@@ -6,7 +6,7 @@ hotspots for the project.
 Inventory source: SonarCloud project `LegalizeAdulthood_iterated-dynamics`,
 status `TO_REVIEW`, refreshed 2026-06-14.
 
-Total hotspots: 45.
+Total hotspots: 42.
 
 Review one work item at a time. Each `##` heading is one Sonar key and one
 call site.
@@ -41,61 +41,7 @@ current item is active. Then mark each affected item separately.
 
 # High Probability
 
-Items: 29.
-
-## SH-199
-
-- Status: `pending`
-- Key: `AZwwyFNd0qvqV_CtK18j`
-- Rule: `cpp:S5801`
-- Area: `engine-core`
-- Path: `libid/engine/trig_fns.cpp`
-- Line: `115`
-- Range: `115:8-115:19`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2024-07-02T02:17:49+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcpy" is safe here.
-
-## SH-200
-
-- Status: `pending`
-- Key: `AZwwyFNd0qvqV_CtK18k`
-- Rule: `cpp:S5814`
-- Area: `engine-core`
-- Path: `libid/engine/trig_fns.cpp`
-- Line: `119`
-- Range: `119:12-119:23`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-07-13T05:31:30+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcat" is safe here.
-
-## SH-201
-
-- Status: `pending`
-- Key: `AZwwyFNd0qvqV_CtK18l`
-- Rule: `cpp:S5814`
-- Area: `engine-core`
-- Path: `libid/engine/trig_fns.cpp`
-- Line: `120`
-- Range: `120:12-120:23`
-- Category: `buffer-overflow`
-- Probability: `HIGH`
-- Sonar Status: `TO_REVIEW`
-- Assignee: `AWqWD8MuvoFfNZkNexwB`
-- Created: `2025-07-13T05:31:30+0000`
-- Updated: `2026-02-06T02:20:33+0000`
-- Flows: `0`
-- Message: Make sure use of "strcat" is safe here.
+Items: 26.
 
 ## SH-203
 
