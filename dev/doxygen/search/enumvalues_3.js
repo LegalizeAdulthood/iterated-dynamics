@@ -20,7 +20,7 @@ var searchData=
   ['dot_17',['DOT',['../d0/d19/namespaceid_1_1io.html#a4b3ff89f8f933adcbe67154ea39c839ba40679521b5da0954b705341a2859f782',1,'id::io']]],
   ['dot_5fdot_18',['DOT_DOT',['../d0/d19/namespaceid_1_1io.html#a4b3ff89f8f933adcbe67154ea39c839bad55bbc8bd3dac814a7ca51e7989af78c',1,'id::io']]],
   ['double_19',['DOUBLE',['../dc/d76/namespaceid_1_1ui.html#a3866d1342c4dd9900f26f13724369290afd3e4ece78a7d422280d5ed379482229',1,'id::ui']]],
-  ['draw_5finterval_20',['DRAW_INTERVAL',['../df/d6d/namespaceid_1_1misc.html#ad414801554b2dbf292ca2b4942adc437ad8aa434725abe9601afe151fa193ae6c',1,'id::misc']]],
+  ['draw_5finterval_20',['DRAW_INTERVAL',['../df/d6d/namespaceid_1_1misc.html#ae29df7497d2a4a30bffcfbf30603d1c4ad8aa434725abe9601afe151fa193ae6c',1,'id::misc']]],
   ['dxf_21',['DXF',['../d6/daa/namespaceid_1_1geometry.html#a75b93a745d0e367e938aed7f2b72e5cba95382e19cba08e260c9981e453eda8d0',1,'id::geometry']]],
   ['dynamic_22',['DYNAMIC',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca0fcc90da4811c877ba9f9c12f7d60bc9',1,'id::fractals']]]
 ];

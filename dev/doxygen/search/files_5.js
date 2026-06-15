@@ -13,7 +13,5 @@ var searchData=
   ['evolve_2ecpp_10',['evolve.cpp',['../db/d95/evolve_8cpp.html',1,'']]],
   ['evolve_2eh_11',['evolve.h',['../d0/dc3/evolve_8h.html',1,'']]],
   ['evolver_5fmenu_5fswitch_2ecpp_12',['evolver_menu_switch.cpp',['../dd/d4c/evolver__menu__switch_8cpp.html',1,'']]],
-  ['evolver_5fmenu_5fswitch_2eh_13',['evolver_menu_switch.h',['../d3/d98/evolver__menu__switch_8h.html',1,'']]],
-  ['expand_5fdirname_2ecpp_14',['expand_dirname.cpp',['../df/d2e/expand__dirname_8cpp.html',1,'']]],
-  ['expand_5fdirname_2eh_15',['expand_dirname.h',['../df/d6b/expand__dirname_8h.html',1,'']]]
+  ['evolver_5fmenu_5fswitch_2eh_13',['evolver_menu_switch.h',['../d3/d98/evolver__menu__switch_8h.html',1,'']]]
 ];

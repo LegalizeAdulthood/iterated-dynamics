@@ -29,7 +29,7 @@ var searchData=
   ['nothing_26',['NOTHING',['../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1aa8697250efc73639dd2a6e7da243ac68b',1,'id::ui']]],
   ['nowhere_27',['NOWHERE',['../df/d6d/namespaceid_1_1misc.html#a711c9db7dfdac128667c32c802b2c3aeab71eea4c12f4d54d96cfaf039b574689',1,'id::misc']]],
   ['num_28',['NUM',['../dc/d76/namespaceid_1_1ui.html#aa145e9b2a6fbeb36339666e4da0f08b7a44119bf3bae5d40a8d0766b91c304aac',1,'id::ui']]],
-  ['num_5fbox_5fpoints_29',['NUM_BOX_POINTS',['../dc/d76/namespaceid_1_1ui.html#a2955e73c8d78dd5d117c823ed0de420fa0edb18a077bb581fc8ae5119efc33d7c',1,'id::ui']]],
+  ['num_5fbox_5fpoints_29',['NUM_BOX_POINTS',['../dc/d76/namespaceid_1_1ui.html#ac1f217aac73bee930a89b11234218a25a0edb18a077bb581fc8ae5119efc33d7c',1,'id::ui']]],
   ['num_5ffractal_5finfo_5ffuture_30',['NUM_FRACTAL_INFO_FUTURE',['../d0/d19/namespaceid_1_1io.html#a67e09ba59a6cf0e0b6e0089d9a18775fa8be001575a07a8335fc7a0ac088dbe19',1,'id::io']]],
   ['num_5fgenes_31',['NUM_GENES',['../dc/d76/namespaceid_1_1ui.html#aee46535f8df0f065f8ba60c2ad40683ca5f2f40b91d44746850b8ba26da8fffa1',1,'id::ui']]],
   ['num_5fifs_5f2d_5fparams_32',['NUM_IFS_2D_PARAMS',['../d5/d38/namespaceid_1_1fractals.html#a7e430517fe83ec48410a4261094a1816ab7f7d97390b67157877fd850dd6ccc37',1,'id::fractals']]],

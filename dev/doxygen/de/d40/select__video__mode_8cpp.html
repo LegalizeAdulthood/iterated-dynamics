@@ -76,7 +76,8 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">select_video_mode.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -95,13 +96,16 @@ $(function() {
 <code>#include &quot;<a class="el" href="../../d7/de4/id__keys_8h_source.html">ui/id_keys.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d1/d31/stop__msg_8h_source.html">ui/stop_msg.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d6/dac/tab__display_8h_source.html">ui/tab_display.h</a>&quot;</code><br />
+<code>#include &lt;fmt/format.h&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;cassert&gt;</code><br />
+<code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;cstdio&gt;</code><br />
 <code>#include &lt;cstring&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;numeric&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;string_view&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 </div>
 <p><a href="../../de/d40/select__video__mode_8cpp_source.html">Go to the source code of this file.</a></p>
@@ -119,6 +123,19 @@ Functions</h2></td></tr>
 <tr class="separator:ab37205356e0d463d932ecfc5d13712c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af58e6e66f37af99c3ce3d34b96dd5edf" id="r_af58e6e66f37af99c3ce3d34b96dd5edf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#af58e6e66f37af99c3ce3d34b96dd5edf">id::ui::request_video_mode</a> (int &amp;kbd_char)</td></tr>
 <tr class="separator:af58e6e66f37af99c3ce3d34b96dd5edf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a991dadeb65bd67ceed92b796ada0f1ac" id="r_a991dadeb65bd67ceed92b796ada0f1ac"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a991dadeb65bd67ceed92b796ada0f1ac">id::ui::VIDEO_MODE_ROW_LEN</a> = 80</td></tr>
+<tr class="separator:a991dadeb65bd67ceed92b796ada0f1ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e9f5e3450fd1a7d28afc162acc73c6d" id="r_a0e9f5e3450fd1a7d28afc162acc73c6d"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a0e9f5e3450fd1a7d28afc162acc73c6d">id::ui::VIDEO_MODE_KEY_LEN</a> = 5</td></tr>
+<tr class="separator:a0e9f5e3450fd1a7d28afc162acc73c6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8714465ff70215a1063d13972ef33af3" id="r_a8714465ff70215a1063d13972ef33af3"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a8714465ff70215a1063d13972ef33af3">id::ui::VIDEO_MODE_NAME_LEN</a> = 12</td></tr>
+<tr class="separator:a8714465ff70215a1063d13972ef33af3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a875cae6a968a2742be490638f4db1d63" id="r_a875cae6a968a2742be490638f4db1d63"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a875cae6a968a2742be490638f4db1d63">id::ui::VIDEO_MODE_DRIVER_LEN</a> = 12</td></tr>
+<tr class="separator:a875cae6a968a2742be490638f4db1d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11fb3b555740506f267d06c607be96fa" id="r_a11fb3b555740506f267d06c607be96fa"><td class="memItemLeft" align="right" valign="top">constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a11fb3b555740506f267d06c607be96fa">id::ui::VIDEO_MODE_COMMENT_LEN</a> = 26</td></tr>
+<tr class="separator:a11fb3b555740506f267d06c607be96fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
