@@ -51,6 +51,7 @@ public:
         m_values[m_current_build].uval.Lval = value;
         return advance();
     }
+
     ChoiceBuilder &float_number(const char *choice, float value)
     {
         check_build_overflow();
@@ -59,14 +60,22 @@ public:
         m_values[m_current_build].uval.dval = value;
         return advance();
     }
+
     ChoiceBuilder &double_number(const char *choice, double value)
+    {
+        return double_number(choice, value, 0);
+    }
+
+    ChoiceBuilder &double_number(const char *choice, double value, const int display_len)
     {
         check_build_overflow();
         m_choices[m_current_build] = choice;
         m_values[m_current_build].type = 'd';
+        m_values[m_current_build].display_len = display_len;
         m_values[m_current_build].uval.dval = value;
         return advance();
     }
+
     ChoiceBuilder &int_double_number(const char *choice, double value)
     {
         check_build_overflow();

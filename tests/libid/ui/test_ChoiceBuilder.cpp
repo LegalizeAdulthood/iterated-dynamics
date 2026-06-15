@@ -177,7 +177,7 @@ FullScreenValuePredicate has_float_number(const float number)
     };
 }
 
-FullScreenValuePredicate has_double_number(const double number)
+FullScreenValuePredicate has_double_number(const double number, const int display_len = 0)
 {
     return [=](MatchResultListener *listener, const FullScreenValues &value)
     {
@@ -191,6 +191,15 @@ FullScreenValuePredicate has_double_number(const double number)
         else
         {
             *listener << "; has value " << value.uval.dval;
+        }
+        if (value.display_len != display_len)
+        {
+            *listener << "; expected display length " << display_len << ", got " << value.display_len;
+            result = false;
+        }
+        else
+        {
+            *listener << "; has display length " << value.display_len;
         }
         return result;
     };
@@ -450,6 +459,18 @@ TEST_F(TestChoiceBuilderPrompting, doubleChoice)
     expect_choice_value("x parameter range (across screen)", has_double_number(123.456));
 
     builder.double_number("x parameter range (across screen)", 123.456);
+    builder.prompt("Evolution Mode Options", 255);
+
+    EXPECT_EQ(1, builder.count());
+}
+
+TEST_F(TestChoiceBuilderPrompting, doubleChoiceWithDisplayLength)
+{
+    ChoiceBuilder<1, Shim> builder;
+    constexpr int display_len{14};
+    expect_choice_value("x parameter range (across screen)", has_double_number(123.456, display_len));
+
+    builder.double_number("x parameter range (across screen)", 123.456, display_len);
     builder.prompt("Evolution Mode Options", 255);
 
     EXPECT_EQ(1, builder.count());

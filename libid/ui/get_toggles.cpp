@@ -13,21 +13,18 @@
 #include "io/check_write_file.h"
 #include "io/encoder.h"
 #include "io/save_timer.h"
-#include "ui/full_screen_prompt.h"
+#include "ui/ChoiceBuilder.h"
 #include "ui/help.h"
 
-#include <config/string_lower.h>
+#include <algos/string_algorithms.h>
 
 #include <fmt/format.h>
 
 #include <algorithm>
-#include <array>
-#include <cassert>
 #include <cstdlib>
-#include <cstring>
+#include <iterator>
 #include <string>
 
-using namespace id::config;
 using namespace id::engine;
 using namespace id::fractals;
 using namespace id::help;
@@ -53,27 +50,16 @@ namespace id::ui
 */
 int get_toggles()
 {
-    std::array<const char *, 20> choices;
-    std::array<FullScreenValues, 25> values;
-    int old_sound_flag;
-    const char *calc_modes[] = {
-        "1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
+    ChoiceBuilder<14> choices;
+    const char *calc_modes[] = {"1", "2", "3", "g", "g1", "g2", "g3", "g4", "g5", "g6", "b", "s", "t", "d", "o", "p"};
     const char *sound_modes[5] = {"off", "beep", "x", "y", "z"};
     const char *inside_modes[] = {
         "numb", "maxiter", "zmag", "bof60", "bof61", "epsiloncross", "startrail", "period", "atan", "fmod"};
     const char *outside_modes[] = {"numb", "iter", "real", "imag", "mult", "summ", "atan", "fmod", "tdis"};
 
-    int k = -1;
-
-    choices[++k] = "Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit], p[ert])";
-    values[k].type = 'l';
-    values[k].uval.ch.vlen = 3;
-    values[k].uval.ch.list_len = std::size(calc_modes);
-    values[k].uval.ch.list = calc_modes;
-    values[k].uval.ch.val =
-        g_user.std_calc_mode == CalcMode::ONE_PASS ? 0
-        : g_user.std_calc_mode == CalcMode::TWO_PASS ? 1
-        : g_user.std_calc_mode == CalcMode::THREE_PASS ? 2
+    const int calc_mode = g_user.std_calc_mode == CalcMode::ONE_PASS        ? 0
+        : g_user.std_calc_mode == CalcMode::TWO_PASS                        ? 1
+        : g_user.std_calc_mode == CalcMode::THREE_PASS                      ? 2
         : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 0 ? 3
         : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 1 ? 4
         : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 2 ? 5
@@ -81,167 +67,133 @@ int get_toggles()
         : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 4 ? 7
         : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 5 ? 8
         : g_user.std_calc_mode == CalcMode::SOLID_GUESS && g_stop_pass == 6 ? 9
-        : g_user.std_calc_mode == CalcMode::BOUNDARY_TRACE ? 10
-        : g_user.std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT ? 11
-        : g_user.std_calc_mode == CalcMode::TESSERAL ? 12
-        : g_user.std_calc_mode == CalcMode::DIFFUSION ? 13
-        : g_user.std_calc_mode == CalcMode::ORBIT ? 14
-        :        /* "p"erturbation */     15;
+        : g_user.std_calc_mode == CalcMode::BOUNDARY_TRACE                  ? 10
+        : g_user.std_calc_mode == CalcMode::SYNCHRONOUS_ORBIT               ? 11
+        : g_user.std_calc_mode == CalcMode::TESSERAL                        ? 12
+        : g_user.std_calc_mode == CalcMode::DIFFUSION                       ? 13
+        : g_user.std_calc_mode == CalcMode::ORBIT                           ? 14
+                                                                            : /* "p"erturbation */ 15;
     CalcMode old_user_std_calc_mode = g_user.std_calc_mode;
     int old_stop_pass = g_stop_pass;
-    choices[++k] = "Maximum Iterations (2 to 2,147,483,647)";
-    values[k].type = 'L';
     long old_max_iterations = g_max_iterations;
-    values[k].uval.Lval = old_max_iterations;
 
-    choices[++k] = "Inside Color (0-# of colors, if Inside=numb)";
-    values[k].type = 'i';
+    int inside_color;
     if (g_inside_method >= ColorMethod::COLOR)
     {
-        values[k].uval.ival = g_inside_color;
+        inside_color = g_inside_color;
     }
     else
     {
-        values[k].uval.ival = 0;
+        inside_color = 0;
     }
 
-    choices[++k] = "Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)";
-    values[k].type = 'l';
-    values[k].uval.ch.vlen = 12;
-    values[k].uval.ch.list_len = std::size(inside_modes);
-    values[k].uval.ch.list = inside_modes;
-    if (g_inside_method >= ColorMethod::COLOR)    // numb
+    int inside_mode = 0;
+    if (g_inside_method >= ColorMethod::COLOR) // numb
     {
-        values[k].uval.ch.val = 0;
+        inside_mode = 0;
     }
     else if (g_inside_method == ColorMethod::ITER)
     {
-        values[k].uval.ch.val = 1;
+        inside_mode = 1;
     }
     else if (g_inside_method == ColorMethod::ZMAG)
     {
-        values[k].uval.ch.val = 2;
+        inside_mode = 2;
     }
     else if (g_inside_method == ColorMethod::BOF60)
     {
-        values[k].uval.ch.val = 3;
+        inside_mode = 3;
     }
     else if (g_inside_method == ColorMethod::BOF61)
     {
-        values[k].uval.ch.val = 4;
+        inside_mode = 4;
     }
     else if (g_inside_method == ColorMethod::EPS_CROSS)
     {
-        values[k].uval.ch.val = 5;
+        inside_mode = 5;
     }
     else if (g_inside_method == ColorMethod::STAR_TRAIL)
     {
-        values[k].uval.ch.val = 6;
+        inside_mode = 6;
     }
     else if (g_inside_method == ColorMethod::PERIOD)
     {
-        values[k].uval.ch.val = 7;
+        inside_mode = 7;
     }
     else if (g_inside_method == ColorMethod::ATANI)
     {
-        values[k].uval.ch.val = 8;
+        inside_mode = 8;
     }
     else if (g_inside_method == ColorMethod::FMODI)
     {
-        values[k].uval.ch.val = 9;
+        inside_mode = 9;
     }
     const ColorMethod old_inside_method{g_inside_method};
     const int old_inside = g_inside_color;
 
-    choices[++k] = "Outside Color (0-# of colors, if Outside=numb)";
-    values[k].type = 'i';
+    int outside_color;
     if (g_outside_method >= ColorMethod::COLOR)
     {
-        values[k].uval.ival = g_outside_color;
+        outside_color = g_outside_color;
     }
     else
     {
-        values[k].uval.ival = 0;
+        outside_color = 0;
     }
 
-    choices[++k] = "Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)";
-    values[k].type = 'l';
-    values[k].uval.ch.vlen = 4;
-    values[k].uval.ch.list_len = std::size(outside_modes);
-    values[k].uval.ch.list = outside_modes;
-    if (g_outside_method >= ColorMethod::COLOR)    // numb
+    int outside_mode;
+    if (g_outside_method >= ColorMethod::COLOR) // numb
     {
-        values[k].uval.ch.val = 0;
+        outside_mode = 0;
     }
     else
     {
-        values[k].uval.ch.val = -+g_outside_method;
+        outside_mode = -+g_outside_method;
     }
     ColorMethod old_outside_method{g_outside_method};
     int old_outside = g_outside_color;
 
-    choices[++k] = "Savename (.GIF implied)";
-    values[k].type = 's';
     std::filesystem::path prev_save_name = g_save_filename;
-    assert(g_save_filename.filename().string().length() < 16);
-    std::strncpy(values[k].uval.sval, g_save_filename.filename().string().c_str(), 15);
-    values[k].uval.sval[15] = '\0'; // ensure null-termination
 
-    choices[++k] = "File Overwrite ('overwrite=')";
-    values[k].type = 'y';
-    values[k].uval.ch.val = g_overwrite_file ? 1 : 0;
+    const int old_sound_flag = g_sound_flag;
 
-    choices[++k] = "Sound (off, beep, x, y, z)";
-    values[k].type = 'l';
-    values[k].uval.ch.vlen = 4;
-    values[k].uval.ch.list_len = 5;
-    values[k].uval.ch.list = sound_modes;
-    values[k].uval.ch.val = (old_sound_flag = g_sound_flag) & SOUNDFLAG_ORBIT_MASK;
+    const long old_log_map_flag = g_log_map_flag;
+    const int old_biomorph = g_user.biomorph_value;
+    const int old_decomp = g_decomp[0];
+    const std::string fill_color{g_fill_color < 0 ? "normal" : fmt::format("{:d}", g_fill_color)};
+    const int old_fill_color = g_fill_color;
+    const double old_close_proximity = g_close_proximity;
 
+    choices
+        .list("Passes (1-3, g[es], b[ound], t[ess], d[iff], o[rbit], p[ert])", std::size(calc_modes), 3, calc_modes,
+            calc_mode)
+        .long_number("Maximum Iterations (2 to 2,147,483,647)", old_max_iterations)
+        .int_number("Inside Color (0-# of colors, if Inside=numb)", inside_color)
+        .list("Inside (numb,maxit,zmag,bof60,bof61,epscr,star,per,atan,fmod)", std::size(inside_modes), 12,
+            inside_modes, inside_mode)
+        .int_number("Outside Color (0-# of colors, if Outside=numb)", outside_color)
+        .list("Outside (numb,iter,real,imag,mult,summ,atan,fmod,tdis)", std::size(outside_modes), 4, outside_modes,
+            outside_mode)
+        .string("Savename (.GIF implied)", g_save_filename.filename().string().c_str())
+        .yes_no("File Overwrite ('overwrite=')", g_overwrite_file)
+        .list("Sound (off, beep, x, y, z)", std::size(sound_modes), 4, sound_modes,
+            old_sound_flag & SOUNDFLAG_ORBIT_MASK);
     if (g_iteration_ranges.empty())
     {
-        choices[++k] = "Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)";
-        values[k].type = 'L';
+        choices.long_number("Log Palette (0=no,1=yes,-1=old,+n=cmprsd,-n=sqrt, 2=auto)", old_log_map_flag);
     }
     else
     {
-        choices[++k] = "Log Palette (n/a, ranges= parameter is in effect)";
-        values[k].type = '*';
+        choices.comment("Log Palette (n/a, ranges= parameter is in effect)");
     }
-    long old_log_map_flag = g_log_map_flag;
-    values[k].uval.Lval = old_log_map_flag;
-
-    choices[++k] = "Biomorph Color (-1 means OFF)";
-    values[k].type = 'i';
-    int old_biomorph = g_user.biomorph_value;
-    values[k].uval.ival = old_biomorph;
-
-    choices[++k] = "Decomp Option (2,4,8,..,256, 0=OFF)";
-    values[k].type = 'i';
-    int old_decomp = g_decomp[0];
-    values[k].uval.ival = old_decomp;
-
-    choices[++k] = "Fill Color (normal,#) (works with passes=t, b and d)";
-    values[k].type = 's';
-    if (g_fill_color < 0)
-    {
-        std::strcpy(values[k].uval.sval, "normal");
-    }
-    else
-    {
-        *fmt::format_to(values[k].uval.sval, "{:d}", g_fill_color).out = '\0';
-    }
-    int old_fill_color = g_fill_color;
-
-    choices[++k] = "Proximity value for inside=epscross and fmod";
-    values[k].type = 'f'; // should be 'd', but prompts get messed up
-    double old_close_proximity = g_close_proximity;
-    values[k].uval.dval = old_close_proximity;
+    choices.int_number("Biomorph Color (-1 means OFF)", old_biomorph)
+        .int_number("Decomp Option (2,4,8,..,256, 0=OFF)", old_decomp)
+        .string("Fill Color (normal,#) (works with passes=t, b and d)", fill_color.c_str())
+        .double_number("Proximity value for inside=epscross and fmod", old_close_proximity, 14);
 
     const HelpLabels old_help_mode = g_help_mode;
     g_help_mode = HelpLabels::HELP_X_OPTIONS;
-    const int i = full_screen_prompt(
-        "Basic Options\n(not all combinations make sense)", k + 1, choices.data(), values.data(), 0, nullptr);
+    const int i = choices.prompt("Basic Options\n(not all combinations make sense)");
     g_help_mode = old_help_mode;
     if (i < 0)
     {
@@ -249,19 +201,18 @@ int get_toggles()
     }
 
     // now check out the results (*hopefully* in the same order <grin>)
-    k = -1;
-    int j = 0;   // return code
+    int j = 0; // return code
 
-    g_user.std_calc_mode = static_cast<CalcMode>(calc_modes[values[++k].uval.ch.val][0]);
-    g_stop_pass = static_cast<int>(calc_modes[values[k].uval.ch.val][1]) - static_cast<int>('0');
+    const int calc_choice{choices.read_list()};
+    g_user.std_calc_mode = static_cast<CalcMode>(calc_modes[calc_choice][0]);
+    g_stop_pass = static_cast<int>(calc_modes[calc_choice][1]) - static_cast<int>('0');
 
     if (g_stop_pass < 0 || g_stop_pass > 6 || g_user.std_calc_mode != CalcMode::SOLID_GUESS)
     {
         g_stop_pass = 0;
     }
 
-    if (g_user.std_calc_mode == CalcMode::ORBIT &&
-        g_fractal_type == FractalType::LYAPUNOV) // Oops,lyapunov type
+    if (g_user.std_calc_mode == CalcMode::ORBIT && g_fractal_type == FractalType::LYAPUNOV) // Oops,lyapunov type
     {
         // doesn't use 'new' & breaks orbits
         g_user.std_calc_mode = old_user_std_calc_mode;
@@ -275,8 +226,7 @@ int get_toggles()
     {
         j++;
     }
-    ++k;
-    g_max_iterations = values[k].uval.Lval;
+    g_max_iterations = choices.read_long_number();
     if (g_max_iterations < 0)
     {
         g_max_iterations = old_max_iterations;
@@ -288,7 +238,7 @@ int get_toggles()
         j++;
     }
 
-    g_inside_color = values[++k].uval.ival;
+    g_inside_color = choices.read_int_number();
     if (g_inside_color < 0)
     {
         g_inside_color = -g_inside_color;
@@ -298,7 +248,7 @@ int get_toggles()
         g_inside_color = g_inside_color % g_colors + g_inside_color / g_colors;
     }
 
-    if (int tmp = values[++k].uval.ch.val; tmp > 0)
+    if (int tmp = choices.read_list(); tmp > 0)
     {
         switch (tmp)
         {
@@ -348,7 +298,7 @@ int get_toggles()
         j++;
     }
 
-    g_outside_color = values[++k].uval.ival;
+    g_outside_color = choices.read_int_number();
     if (g_outside_color < 0)
     {
         g_outside_color = -g_outside_color;
@@ -358,7 +308,7 @@ int get_toggles()
         g_outside_color = g_outside_color % g_colors + g_outside_color / g_colors;
     }
 
-    if (int tmp = values[++k].uval.ch.val; tmp > 0)
+    if (int tmp = choices.read_list(); tmp > 0)
     {
         g_outside_method = static_cast<ColorMethod>(-tmp);
         g_outside_color = -1;
@@ -368,28 +318,37 @@ int get_toggles()
         j++;
     }
 
-    g_save_filename = g_save_filename.parent_path() / values[++k].uval.sval;
+    g_save_filename = g_save_filename.parent_path() / choices.read_string();
     if (g_save_filename != prev_save_name)
     {
         g_resave_flag = TimedSave::NONE;
         g_started_resaves = false; // forget pending increment
     }
-    g_overwrite_file = values[++k].uval.ch.val != 0;
+    g_overwrite_file = choices.read_yes_no();
 
-    g_sound_flag = (g_sound_flag >> 3) << 3 | values[++k].uval.ch.val;
-    if (g_sound_flag != old_sound_flag && ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP || (old_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP))
+    g_sound_flag = (g_sound_flag >> 3) << 3 | choices.read_list();
+    if (g_sound_flag != old_sound_flag &&
+        ((g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP ||
+            (old_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP))
     {
         j++;
     }
 
-    g_log_map_flag = values[++k].uval.Lval;
-    if (g_log_map_flag != old_log_map_flag)
+    if (g_iteration_ranges.empty())
     {
-        j++;
-        g_log_map_auto_calculate = false;          // turn it off, use the supplied value
+        g_log_map_flag = choices.read_long_number();
+        if (g_log_map_flag != old_log_map_flag)
+        {
+            j++;
+            g_log_map_auto_calculate = false; // turn it off, use the supplied value
+        }
+    }
+    else
+    {
+        choices.read_comment();
     }
 
-    g_user.biomorph_value = values[++k].uval.ival;
+    g_user.biomorph_value = choices.read_int_number();
     if (g_user.biomorph_value >= g_colors)
     {
         g_user.biomorph_value = g_user.biomorph_value % g_colors + g_user.biomorph_value / g_colors;
@@ -399,19 +358,20 @@ int get_toggles()
         j++;
     }
 
-    g_decomp[0] = values[++k].uval.ival;
+    g_decomp[0] = choices.read_int_number();
     if (g_decomp[0] != old_decomp)
     {
         j++;
     }
 
-    if (std::strncmp(string_lower(values[++k].uval.sval), "normal", 4) == 0)
+    const std::string new_fill_color{id::algos::ascii_to_lower_copy(choices.read_string())};
+    if (new_fill_color.compare(0, 4, "normal") == 0)
     {
         g_fill_color = -1;
     }
     else
     {
-        g_fill_color = std::atoi(values[k].uval.sval);
+        g_fill_color = std::atoi(new_fill_color.c_str());
     }
     if (g_fill_color < 0)
     {
@@ -426,8 +386,7 @@ int get_toggles()
         j++;
     }
 
-    ++k;
-    g_close_proximity = values[k].uval.dval;
+    g_close_proximity = choices.read_double_number();
     if (g_close_proximity != old_close_proximity)
     {
         j++;
