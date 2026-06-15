@@ -800,7 +800,8 @@ void setup_save_info(FractalInfo *save_info)
         g_formula.max_function = 0;
     }
     // set save parameters in save structure
-    std::strcpy(save_info->info_id, INFO_ID);
+    static_assert(sizeof(INFO_ID) == sizeof(save_info->info_id));
+    std::copy_n(INFO_ID, sizeof(save_info->info_id), save_info->info_id);
     save_info->info_version = FRACTAL_INFO_VERSION;
     save_info->iterations_old =
         static_cast<std::int16_t>(g_max_iterations <= std::numeric_limits<short>::max() ? g_max_iterations : std::numeric_limits<short>::max());
