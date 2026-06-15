@@ -12,6 +12,10 @@ Phase 2 covers 2D and 3D IFS fractal types.  IFS rendering is not a row
 scan.  The scalar renderer advances one random orbit at a time, so the SIMD
 shape is a batch of independent walkers.
 
+Phase 3 covers non-standard fractal types that do not render through
+`calc_standard_fractal()`.  These renderers have different dependency
+shapes, so each needs its own eligibility and test oracle.
+
 Existing scalar code remains the complete behavior oracle for unsupported
 states.  Where a SIMD algorithm deliberately changes the execution shape,
 the plan calls that out and adds a scalar batch reference for tests.
@@ -29,6 +33,7 @@ the plan calls that out and adds a scalar batch reference for tests.
 - Refactor existing pass algorithms later, after the row kernel is trusted.
 - Treat escape-time fractals as Phase 1.
 - Treat 2D and 3D IFS fractal types as Phase 2.
+- Treat other non-standard fractal renderers as Phase 3.
 
 ## User Option
 
@@ -68,6 +73,11 @@ deterministic, but it is not the same pixel sequence as the current scalar
 single-walker implementation.  Phase 2 therefore needs its own scalar batch
 reference and should start as `simd=force` only until the compatibility
 policy is accepted.
+
+Phase 3 is the set of remaining non-standard fractal renderers.  Some are
+good SIMD targets because they have independent columns, pixels, or walker
+states.  Others are poor targets because they are dominated by ordered grid
+mutation, recursive drawing, or one long dependent trajectory.
 
 ## Phase 1: Escape-Time Fractals
 
@@ -610,6 +620,142 @@ Add tests for:
 Keep existing scalar IFS image tests on `simd=off` or default scalar until
 the project chooses to rebaseline IFS images for batched SIMD.
 
+## Phase 3: Other Non-Standard Fractals
+
+### Scope
+
+Phase 3 covers fractal types whose calculator is not
+`calc_standard_fractal()` and which are not already covered by Phase 2 IFS.
+
+Observed calculator families:
+
+- bifurcation
+- cellular
+- dynamic 2D and Mandel cloud
+- inverse Julia
+- Julibrot
+- orbit 2D
+- orbit 3D
+- plasma
+- popcorn
+- ant
+- diffusion
+- L-system
+- test
+
+Do not try to put these behind one generic SIMD loop.  The useful SIMD
+shape differs by family.  Add one narrow SIMD renderer at a time, each with
+its own scalar reference and eligibility report.
+
+### Priority Implementation List
+
+Priority 1: bifurcation.
+
+Bifurcation renders mostly independent columns.  SIMD can process multiple
+columns at once while each lane advances its own scalar recurrence.
+
+Start with the simplest logistic path and reject periodicity, trig-heavy
+variants, and special plotting modes.  Then add variants one at a time.
+This is the best Phase 3 first target because the dependency shape is clear
+and output order is naturally column-local.
+
+Priority 2: cellular.
+
+Cellular has a row-to-row dependency, but cells within the next row depend
+only on a local window from the previous row.  SIMD can process adjacent
+columns by loading overlapping windows and producing one next-row span.
+
+The current rolling sum is scalar-shaped.  Refactor to a row kernel first,
+then replace the window update with vector loads, shifts, or prefix sums.
+Keep boundary cells scalar until the central span is proven.
+
+Priority 3: Julibrot.
+
+Julibrot is an escape-time renderer outside the standard path.  Screen
+pixels are independent, and each pixel scans through a depth line.  SIMD
+can run across adjacent pixels or across depth samples for one pixel.
+
+Start with monocular rendering, simple projection, and the same color
+semantics as the scalar path.  Reject stereo, unusual orbit modes, and any
+state that requires scalar side effects in the first slice.
+
+Priority 4: popcorn.
+
+Popcorn starts independent orbits from screen points, then plots orbit
+points into the image.  SIMD can advance several orbits as independent
+walkers, but plotting must remain scalar and lane ordered at first.
+
+Use the same model as IFS: explicit lane state, scalar batch reference,
+SIMD point generation, and ordered scalar plotting.  This avoids image
+differences when two lanes hit the same pixel.
+
+Priority 5: dynamic 2D and Mandel cloud.
+
+These are also walker-style renderers.  SIMD lanes can hold independent
+starting points or independent random seeds.  They should reuse the IFS and
+popcorn batching infrastructure where possible.
+
+Start only after the batched walker policy is stable.  The main decision is
+whether `simd=auto` may choose a deterministic batched output that is not
+the old single-walker sequence.
+
+Priority 6: chaotic orbit systems.
+
+This covers Lorenz, orbit 2D, and orbit 3D families where the historical
+renderer follows one dependent trajectory.
+
+The useful SIMD mode is not to accelerate one trajectory.  Instead, trace
+the original starting point plus a small epsilon grid around that starting
+point:
+
+```text
+lane 0: original starting point
+lane 1: start + (-eps, 0)
+lane 2: start + ( eps, 0)
+lane 3: start + (0, -eps)
+lane 4: start + (0,  eps)
+...
+```
+
+For 3D systems, extend the grid with z offsets.  Each lane advances its own
+trajectory with the same equation and the same time step.  The image then
+shows sensitivity to initial conditions directly: nearby starting points
+separate over time.
+
+This is an alternate visualization mode, not the old scalar single-orbit
+sequence.  It needs a scalar epsilon-grid reference, lane-ordered plotting,
+and explicit color policy for each trajectory.  Start behind `simd=force`
+until the output policy is accepted.
+
+Priority 7: inverse Julia.
+
+Inverse Julia has random-walk and queue-like behavior.  The random-walk
+case may batch like IFS.  Queue modes are more order-sensitive and should
+remain scalar until their ordering rules are explicit.
+
+Treat inverse Julia as a later walker-family target, not as an escape-time
+row target.
+
+Priority 8: plasma.
+
+Plasma has recursive subdivision and random displacement.  SIMD may help
+with level or wavefront midpoint updates, but the recursive structure and
+random sequence make it less direct than bifurcation, cellular, or
+Julibrot.
+
+Keep it low priority unless profiling shows plasma is important.
+
+Defer:
+
+- ant
+- diffusion
+- L-system
+- test
+
+Ant and diffusion mutate a shared grid with strong order dependencies.
+L-system rendering is recursive string and turtle work, not a dense numeric
+loop.  The test calculator should not drive the SIMD plan.
+
 ## Implementation Slices
 
 ### Phase 1 Slice 1: Option Plumbing
@@ -782,6 +928,88 @@ or post-processing steps with clear eligibility.
 - If not accepted, keep IFS SIMD behind `simd=force`.
 - Update diagnostics to report IFS walker count and fallback reasons.
 
+### Phase 3 Slice 1: Non-Standard Registry
+
+- List non-standard fractal calculators and their SIMD family.
+- Add a family-level eligibility report.
+- Keep all Phase 3 families scalar by default.
+- Make `simd=force` report the family-specific rejection reason.
+- Add tests for classification and rejection.
+
+### Phase 3 Slice 2: Bifurcation Scalar Column Kernel
+
+- Extract a scalar column kernel for the simplest bifurcation path.
+- Keep old rendering behavior as the oracle.
+- Reject unsupported variants explicitly.
+- Add tests that the extracted kernel matches the old path.
+
+### Phase 3 Slice 3: Highway Bifurcation Kernel
+
+- Process multiple columns per Highway vector.
+- Keep lane-local recurrence state.
+- Store lane results to temporary arrays before plotting if needed.
+- Compare SIMD output to the scalar column kernel.
+- Add fixed image tests for the supported bifurcation subset.
+
+### Phase 3 Slice 4: Cellular Row Kernel
+
+- Extract a scalar next-row kernel.
+- Define central vector span and scalar boundary handling.
+- Replace scalar rolling sums with a vector-friendly window model.
+- Add tests for boundaries, narrow widths, and odd widths.
+
+### Phase 3 Slice 5: Highway Cellular Kernel
+
+- Implement the central row span with Highway.
+- Keep boundary cells scalar.
+- Compare the full image against the scalar row kernel.
+- Add image tests for the supported cellular rule set.
+
+### Phase 3 Slice 6: Julibrot Scalar Pixel Kernel
+
+- Extract a scalar pixel or depth-line kernel.
+- Choose the first SIMD axis: adjacent pixels or depth samples.
+- Reject stereo and complex side-effect modes.
+- Add tests against the current Julibrot output.
+
+### Phase 3 Slice 7: Highway Julibrot Kernel
+
+- Implement the selected vector axis with Highway.
+- Preserve scalar color semantics.
+- Add tail handling for odd widths or depth counts.
+- Compare supported images byte-for-byte with scalar output.
+
+### Phase 3 Slice 8: Walker Shared Infrastructure
+
+- Generalize explicit lane RNG and lane state from Phase 2.
+- Add scalar batched references for walker-style renderers.
+- Keep plotting scalar and lane ordered.
+- Use this for popcorn, dynamic 2D, Mandel cloud, and inverse Julia.
+
+### Phase 3 Slice 9: Popcorn And Dynamic Walkers
+
+- Add scalar batched popcorn.
+- Add Highway popcorn point generation.
+- Add scalar batched dynamic 2D and Mandel cloud when policy is clear.
+- Compare SIMD output to the scalar batched references.
+- Keep `simd=auto` disabled until output policy is accepted.
+
+### Phase 3 Slice 10: Later Or Deferred Families
+
+- Add a scalar epsilon-grid reference for Lorenz, orbit 2D, and orbit 3D.
+- Seed one lane with the original starting point.
+- Seed the remaining lanes with small offsets around the starting point.
+- Advance each lane as an independent trajectory.
+- Plot lane results in scalar lane order with distinct trajectory colors.
+- Keep the mode behind `simd=force` until output policy is accepted.
+- Add fixed image tests showing sensitivity to initial conditions.
+
+### Phase 3 Slice 11: Later Or Deferred Families
+
+- Revisit inverse Julia random-walk batching.
+- Revisit plasma only with profiler evidence or a clear wavefront model.
+- Leave ant, diffusion, L-system, and test calculators scalar.
+
 ## Risks
 
 - Iteration counts may differ by one if the optimized scalar path semantics
@@ -804,6 +1032,12 @@ or post-processing steps with clear eligibility.
   one pixel.  Scatter should wait until the ordering policy is explicit.
 - IFS 3D setup has a waste phase that computes min/max values.  SIMD must
   reduce those values consistently before plotting.
+- Phase 3 renderers do not share one SIMD shape.  Treating them as one
+  generic backend would hide eligibility bugs.
+- Walker-style Phase 3 renderers can change pixel update order just like
+  IFS.  Keep ordered scalar plotting until the output policy is explicit.
+- Grid-mutating renderers such as ant and diffusion have strong ordering
+  dependencies and may not repay SIMD work.
 
 ## Success Criteria
 
@@ -814,4 +1048,6 @@ or post-processing steps with clear eligibility.
 - First-slice scalar and SIMD image outputs match for supported states.
 - Phase 2 SIMD IFS matches the scalar batched IFS reference.
 - Phase 2 keeps existing scalar IFS output available with `simd=off`.
+- Phase 3 accelerates at least bifurcation, cellular, and Julibrot through
+  family-specific SIMD paths.
 - Unsupported states continue to render through existing scalar engines.
