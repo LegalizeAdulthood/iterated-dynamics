@@ -17,13 +17,17 @@
 #include "ui/stop_msg.h"
 #include "ui/tab_display.h"
 
+#include <fmt/format.h>
+
 #include <algorithm>
 #include <cassert>
+#include <cstddef>
 #include <cstdio>
 #include <cstring>
 #include <filesystem>
 #include <numeric>
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace fs = std::filesystem;
@@ -43,17 +47,40 @@ static int check_mode_key(int key, int choice);
 static bool ent_less(int lhs, int rhs);
 static void update_id_cfg();
 
+constexpr std::size_t VIDEO_MODE_ROW_LEN = 80;
+constexpr std::size_t VIDEO_MODE_KEY_LEN = 5;
+constexpr std::size_t VIDEO_MODE_NAME_LEN = 12;
+constexpr std::size_t VIDEO_MODE_DRIVER_LEN = 12;
+constexpr std::size_t VIDEO_MODE_COMMENT_LEN = 26;
+
+static std::string_view bounded_string(const char *const text, const std::size_t max_len)
+{
+    const char *const end = std::find(text, text + max_len, '\0');
+    return {text, static_cast<std::size_t>(end - text)};
+}
+
+static void copy_row(char *const buf, const std::string_view row)
+{
+    const std::size_t count = std::min(row.size(), VIDEO_MODE_ROW_LEN);
+    std::copy_n(row.data(), count, buf);
+    buf[count] = '\0';
+}
+
 static void format_vid_table(const int choice, char *buf)
 {
     const int idx = s_entry_nums[choice];
     assert(idx < g_video_table_len);
     g_video_entry = g_video_table[idx];
     const std::string key_name = vid_mode_key_name(g_video_entry.key);
-    std::sprintf(buf, "%-5s %-12s %5d %5d %3d  %.12s %.26s",               // 34 chars
-        key_name.c_str(), g_video_entry.driver->get_description().c_str(), //
-        g_video_entry.x_dots, g_video_entry.y_dots, g_video_entry.colors,  //
-        g_video_entry.driver->get_name().c_str(),                          //
-        g_video_entry.comment);
+    const std::string &description = g_video_entry.driver->get_description();
+    const std::string &driver_name = g_video_entry.driver->get_name();
+    const std::string_view comment{bounded_string(g_video_entry.comment, sizeof(g_video_entry.comment))};
+    const std::string row{fmt::format("{:<5} {:<12} {:5d} {:5d} {:3d}  {:<12} {:<26}",
+        std::string_view{key_name}.substr(0, VIDEO_MODE_KEY_LEN),
+        std::string_view{description}.substr(0, VIDEO_MODE_NAME_LEN), g_video_entry.x_dots, g_video_entry.y_dots,
+        g_video_entry.colors, std::string_view{driver_name}.substr(0, VIDEO_MODE_DRIVER_LEN),
+        comment.substr(0, VIDEO_MODE_COMMENT_LEN))};
+    copy_row(buf, row);
 }
 
 int select_video_mode(const int current_mode)
