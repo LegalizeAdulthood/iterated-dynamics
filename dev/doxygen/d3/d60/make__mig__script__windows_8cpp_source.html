@@ -110,30 +110,32 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>    std::FILE *script_file, <span class="keyword">const</span> std::filesystem::path &amp;parameter_file, <span class="keyword">const</span> std::string &amp;entry_name)</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>{</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    fmt::print(script_file,</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="stringliteral">&quot;start/wait&quot;</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="stringliteral">&quot;start /b /wait&quot;</span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="stringliteral">&quot; id&quot;</span></div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="stringliteral">&quot; batch=yes&quot;</span></div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="stringliteral">&quot; overwrite=yes&quot;</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <span class="stringliteral">&quot; @{:s}/{:s}\n&quot;</span></div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="stringliteral">&quot;if errorlevel 2 goto oops\n&quot;</span>,</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        parameter_file.string(), entry_name);</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>}</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae6b5a29cf52907d2c98edbcded75f217">write_make_mig_script_finish</a>(std::FILE *script_file, <span class="keyword">const</span> <span class="keywordtype">int</span> x_multiple, <span class="keyword">const</span> <span class="keywordtype">int</span> y_multiple)</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>{</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    fmt::print(script_file,</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="stringliteral">&quot;start/wait&quot;</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="stringliteral">&quot; id&quot;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="stringliteral">&quot; makemig={:d}/{:d}\n&quot;</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="stringliteral">&quot;:oops\n&quot;</span>,</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        x_multiple, y_multiple);</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>}</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ac38d6f7b88915e1292e4237d7089d04c">finish_make_mig_script</a>(<span class="keyword">const</span> std::filesystem::path &amp; <span class="comment">/*script_path*/</span>)</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>{</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <span class="stringliteral">&quot; savedir=.&quot;</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="stringliteral">&quot; @{:s}/{:s}\n&quot;</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        <span class="stringliteral">&quot;if errorlevel 2 goto oops\n&quot;</span>,</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        parameter_file.string(), entry_name);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae6b5a29cf52907d2c98edbcded75f217">write_make_mig_script_finish</a>(std::FILE *script_file, <span class="keyword">const</span> <span class="keywordtype">int</span> x_multiple, <span class="keyword">const</span> <span class="keywordtype">int</span> y_multiple)</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>{</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    fmt::print(script_file,</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="stringliteral">&quot;start /b /wait&quot;</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="stringliteral">&quot; id&quot;</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="stringliteral">&quot; savedir=.&quot;</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="stringliteral">&quot; makemig={:d}/{:d}\n&quot;</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="stringliteral">&quot;:oops\n&quot;</span>,</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        x_multiple, y_multiple);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>}</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ac38d6f7b88915e1292e4237d7089d04c">finish_make_mig_script</a>(<span class="keyword">const</span> std::filesystem::path &amp; <span class="comment">/*script_path*/</span>)</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>{</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>} <span class="comment">// namespace id::ui</span></div>
 <div class="ttc" id="amake__mig__script_8h_html"><div class="ttname"><a href="../../d9/d4a/make__mig__script_8h.html">make_mig_script.h</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a90185aaa55b989a46b4d9c53a9794179"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a90185aaa55b989a46b4d9c53a9794179">id::ui::write_make_mig_script_header</a></div><div class="ttdeci">void write_make_mig_script_header(std::FILE *script_file)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00069">make_mig_script_unix.cpp:69</a></div></div>
