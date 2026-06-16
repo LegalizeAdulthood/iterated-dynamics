@@ -10,13 +10,15 @@ on:
     branches: [ "master", "id-*" ]
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 jobs:
   #############################################################################
   ascii-doc:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
     - name: Checkout
@@ -168,6 +170,8 @@ jobs:
     if: ${{github.event_name == 'push' && github.ref == 'refs/heads/master'}}
     needs: [ html-docs, pdf-docs ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     concurrency:
       group: master-docs
       cancel-in-progress: false
@@ -280,6 +284,9 @@ jobs:
         os: [ ubuntu-latest, windows-2022 ]
 
     runs-on: ${{matrix.os}}
+    permissions:
+      contents: read
+      packages: write
 
     steps:
     - name: Checkout
@@ -413,6 +420,8 @@ jobs:
     if: ${{github.event_name == 'push' && github.ref_type == 'tag'}}
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -479,6 +488,9 @@ jobs:
         os: [ ubuntu-latest, windows-2022 ]
 
     runs-on: ${{matrix.os}}
+    permissions:
+      contents: read
+      packages: write
 
     steps:
     - name: Checkout
