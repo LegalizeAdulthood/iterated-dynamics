@@ -11,6 +11,10 @@ This plan is only for the polling refactor.  It does not convert text
 screens to dialogs, add a tool stack, rewrite the event loop, or delete the
 `Driver` key API.
 
+The GitHub discussion also records the larger inversion-of-control path.
+Those items are kept in `Future Event-Driven Work` so the polling slices
+stay mechanical and behavior-preserving.
+
 ## Rules
 
 - `libid/ui` owns keyboard polling, key buffering, and legacy key side
@@ -66,6 +70,9 @@ Production:
   `ui/polling.cpp`.
 - `DriverKeyboardInput` forwards to `driver_key_pressed`,
   `driver_get_key`, `driver_wait_key_pressed`, and `driver_unget_key`.
+- The production forwarding path must preserve current driver side
+  effects: window-event pumping, redraw handling, key buffering, and mouse
+  notification delivery.
 - Keep the default instance in `ui/polling.cpp`; do not add a second key
   buffer.
 
@@ -441,6 +448,35 @@ Done when:
 - The only remaining inverse-Julia mouse subscription code is in
   `libid/ui`.
 - Tests or manual checks cover inverse-Julia mouse movement and exit.
+
+## Future Event-Driven Work
+
+This plan leaves the following ideas out of scope for the current polling
+slices.  They should be kept as future direction after direct polling calls
+are moved behind `libid/ui`.
+
+- Replace polling-driven calculation with idle-processing callbacks first.
+  Treat idle processing as a bridge to later worker-thread or distributed
+  rendering, not as wasted work.
+- Plan worker-thread and UI-thread communication as separate follow-up
+  work.  Do not mix thread ownership, cancellation, or result delivery into
+  this polling-boundary refactor.
+- Consider event callbacks that set calculation interrupt state instead of
+  polling `KeyboardInput` directly.  Keep that as a later implementation
+  choice, after the facade owns the boundary.
+- Convert blocking text screens to modal dialogs incrementally.  Start with
+  simple numeric input, then form-style prompts, then file-entry screens.
+- Build a tool interface for image interaction.  A tool should receive
+  mouse, keyboard, and modifier-key events, not only `MouseNotification`
+  calls.
+- Support a tool stack with a permanent default zoom tool.  Events should
+  go to the top tool, with optional fall-through to lower tools.
+- Allow multiple zoom tools over time, such as current zoom-box behavior,
+  XaoS-style continuous zoom, or ManpWIN-style controls.
+- Preserve accurate zoom-box area selection.  It is a required
+  interaction, not an artifact to discard when adding other zoom modes.
+- After blocking screens and tools own input, remove the `Driver` keyboard
+  API, custom message-pumping path, and custom event-loop workarounds.
 
 ## Exit Criteria
 
