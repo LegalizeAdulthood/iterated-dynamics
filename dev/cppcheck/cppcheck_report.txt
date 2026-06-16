@@ -2539,16 +2539,16 @@ libid/ui/get_fract_type.cpp:638:45: warning: Char literal compared with pointer 
 libid/ui/help.cpp:1332:9: style: Condition '!path.empty()' is always true [knownConditionTrueFalse]
     if (!path.empty())
         ^
-libid/ui/make_batch_file.cpp:1513:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1531:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:936:9: note: Assuming that condition 'colors_only' is not redundant
+libid/ui/make_batch_file.cpp:954:9: note: Assuming that condition 'colors_only' is not redundant
     if (colors_only)
         ^
-libid/ui/make_batch_file.cpp:1513:9: note: Condition '!colors_only' is always true
+libid/ui/make_batch_file.cpp:1531:9: note: Condition '!colors_only' is always true
     if (!colors_only)
         ^
-libid/ui/make_batch_file.cpp:1728:13: style: Condition '!filename.empty()' is always true [knownConditionTrueFalse]
+libid/ui/make_batch_file.cpp:1746:13: style: Condition '!filename.empty()' is always true [knownConditionTrueFalse]
         if (!filename.empty())
             ^
 libid/ui/menu_handler.cpp:107:36: style: Parameter 'context' can be declared with const [constParameter]
