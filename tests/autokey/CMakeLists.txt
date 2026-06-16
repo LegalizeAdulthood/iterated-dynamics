@@ -9,7 +9,10 @@ set(MAKEPAR_MIG_GOLD_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.ba
 set(MAKEPAR_MIG_NORMALIZE_SCRIPT_EXECUTABLE OFF)
 set(MAKEPAR_MIG_RUN_SCRIPT OFF)
 set(MAKEPAR_MIG_LABELS "autokey;ui")
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(MAKEPAR_MIG_RUN_SCRIPT ON)
+    set(MAKEPAR_MIG_LABELS "acceptance;autokey;ui")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(MAKEPAR_MIG_SCRIPT_FILE "makemig.sh")
     set(MAKEPAR_MIG_GOLD_SCRIPT "${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.sh")
     set(MAKEPAR_MIG_NORMALIZE_SCRIPT_EXECUTABLE ON)
@@ -23,10 +26,11 @@ id_make_test_home(makepar-mig-pieces MAKEPAR_MIG_PIECES_HOME
 add_test(NAME AutoKeyTest.makepar-mig-pieces
     COMMAND ${CMAKE_COMMAND}
         "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
+        "-DID_DIR=$<SHELL_PATH:$<TARGET_FILE_DIR:id>>"
         "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
         "-DINPUT_IMAGE=image/make_mig_input.gif"
         "-DAUTO_KEY=key/make_mig_pieces.key"
-        "-DGOLD_IMAGE=${CMAKE_SOURCE_DIR}/tests/images/gold-make_mig.gif"
+        "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig_pieces.gif"
         "-DTEST_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/test-make_mig_script.gif"
         "-DSCRIPT_FILE=${MAKEPAR_MIG_SCRIPT_FILE}"
         "-DGOLD_SCRIPT=${MAKEPAR_MIG_GOLD_SCRIPT}"

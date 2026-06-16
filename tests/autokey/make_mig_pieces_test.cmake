@@ -15,6 +15,7 @@ endif()
 
 if(DEBUG)
     dump_var(ID)
+    dump_var(ID_DIR)
     dump_var(IMAGE_COMPARE)
     dump_var(INPUT_IMAGE)
     dump_var(AUTO_KEY)
@@ -84,10 +85,21 @@ if(RUN_SCRIPT)
         "frmig_11.gif"
         "fractmig.gif"
         "${TEST_IMAGE}")
-    execute_process(
-        COMMAND "./${SCRIPT_FILE}"
-        RESULT_VARIABLE SCRIPT_RESULT
-        COMMAND_ECHO ${COMMAND_ECHO})
+    if(CMAKE_HOST_WIN32)
+        if(NOT DEFINED ID_DIR OR ID_DIR STREQUAL "")
+            message(FATAL_ERROR "ID_DIR is required to run '${SCRIPT_FILE}'.")
+        endif()
+        execute_process(
+            COMMAND "${CMAKE_COMMAND}" -E env "PATH=${ID_DIR};$ENV{PATH}"
+                cmd /c call "${SCRIPT_FILE}"
+            RESULT_VARIABLE SCRIPT_RESULT
+            COMMAND_ECHO ${COMMAND_ECHO})
+    else()
+        execute_process(
+            COMMAND "./${SCRIPT_FILE}"
+            RESULT_VARIABLE SCRIPT_RESULT
+            COMMAND_ECHO ${COMMAND_ECHO})
+    endif()
     if(SCRIPT_RESULT)
         if(EXISTS "${STOP_MESSAGE_FILE}")
             file(READ "${STOP_MESSAGE_FILE}" STOP_MESSAGE)

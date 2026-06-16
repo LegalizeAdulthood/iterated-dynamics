@@ -26,10 +26,11 @@ void write_make_mig_script_piece(
     std::FILE *script_file, const std::filesystem::path &parameter_file, const std::string &entry_name)
 {
     fmt::print(script_file,
-        "start/wait"
+        "start /b /wait"
         " id"
         " batch=yes"
         " overwrite=yes"
+        " savedir=."
         " @{:s}/{:s}\n"
         "if errorlevel 2 goto oops\n",
         parameter_file.string(), entry_name);
@@ -38,8 +39,9 @@ void write_make_mig_script_piece(
 void write_make_mig_script_finish(std::FILE *script_file, const int x_multiple, const int y_multiple)
 {
     fmt::print(script_file,
-        "start/wait"
+        "start /b /wait"
         " id"
+        " savedir=."
         " makemig={:d}/{:d}\n"
         ":oops\n",
         x_multiple, y_multiple);
