@@ -291,6 +291,8 @@ o Formula comparison operators now document that they compare only the real
   parts of operands.  (Fixes #358)
 o The Burning Ship fractal type now documents its formula and parameters.
   (Fixes #426)
+o makepar now writes legacy color ranges when saving parameters from legacy
+  GIF images.  (Fixes #428)
 o Fractal types using random numbers now consistently honor rseed=,
   making seeded random fractals repeatable across fractal types.
 o Formula, IFS, and L-system item names now preserve user-entered case

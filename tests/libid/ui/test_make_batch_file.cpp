@@ -4,10 +4,12 @@
 
 #include "ColorMapSaver.h"
 #include "engine/calcfrac.h"
+#include "engine/color_utils.h"
 #include "fractals/fractalp.h"
 #include "fractals/fractype.h"
 #include "misc/debug_flags.h"
 #include "misc/ValueSaver.h"
+#include "misc/version.h"
 #include "ui/stereo.h"
 
 #include <gtest/gtest.h>
@@ -34,6 +36,7 @@ protected:
     void up_down_values(int count, int up, int down);
     void iota4(int count);
     ColorMapSaver m_saved_dac_box;
+    ValueSaver<Version> m_saved_version{g_version, current_id_version()};
     std::array<Byte, 256> values{};
     WriteBatchData m_data{};
 };
@@ -223,6 +226,22 @@ TEST_F(TestPutEncodedColors, twoLeastLSBSetEncodedAsHex)
 
     constexpr std::string_view expected{"#434343"};
     EXPECT_EQ(expected, m_data.buf);
+}
+
+TEST_F(TestPutEncodedColors, legacyVersionWritesExpandedSixBitRampAsLegacyColors)
+{
+    ValueSaver saved_version{g_version, parse_legacy_version(2000)};
+    for (int i = 0; i < 256; ++i)
+    {
+        const Byte val{expand_6bit_color(static_cast<Byte>(i % 64))};
+        g_dac_box[i][0] = val;
+        g_dac_box[i][1] = val;
+        g_dac_box[i][2] = val;
+    }
+
+    put_encoded_colors(m_data, 256);
+
+    EXPECT_EQ("000<56>tttuuuvvv<3>zzz000<57>uuu<4>zzz000<57>uuu<4>zzz000<62>zzz", m_data.buf);
 }
 
 TEST_F(TestPutFractalParams, antUsesTextRuleForFirstParam)

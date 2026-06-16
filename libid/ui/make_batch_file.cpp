@@ -668,10 +668,26 @@ static int get_prec(const double a, const double b, const double c)
 
 static bool is_6bit_color(const int cur_color)
 {
+    if (g_version.legacy)
+    {
+        return true;
+    }
     // 3 character encoding can be used if all channels have the 2 LSBs zero.
     return (g_dac_box[cur_color][0] & 3U) == 0 //
         && (g_dac_box[cur_color][1] & 3U) == 0 //
         && (g_dac_box[cur_color][2] & 3U) == 0;
+}
+
+static int output_color_component(const int color, const int component)
+{
+    const int value{g_dac_box[color][component]};
+    return g_version.legacy ? value / 4 : value;
+}
+
+static int encoded_6bit_color_component(const int color, const int component)
+{
+    const int value{output_color_component(color, component)};
+    return g_version.legacy ? value : value / 4;
 }
 
 void put_encoded_colors(WriteBatchData &wb_data, const int max_color)
@@ -689,7 +705,7 @@ void put_encoded_colors(WriteBatchData &wb_data, const int max_color)
         {
             for (int j = 0; j < 3; ++j)
             {
-                int k = g_dac_box[cur_color][j]/4;
+                int k = encoded_6bit_color_component(cur_color, j);
                 assert(k < 64);
                 if (k < 10)
                 {
@@ -754,16 +770,18 @@ void put_encoded_colors(WriteBatchData &wb_data, const int max_color)
                 for (j = 0; j < 3; ++j)
                 {
                     // check pattern of chg per color
-                    if (g_debug_flag != DebugFlags::ALLOW_LARGE_COLORMAP_CHANGES &&
-                        scan_color > cur_color + 4 && scan_color < max_color - 5)
+                    if (g_debug_flag != DebugFlags::ALLOW_LARGE_COLORMAP_CHANGES && scan_color > cur_color + 4 &&
+                        scan_color < max_color - 5)
                     {
-                        if (std::abs(2 * g_dac_box[scan_color][j] - g_dac_box[scan_color - 5][j] -
-                                g_dac_box[scan_color + 5][j]) >= 2)
+                        if (std::abs(2 * output_color_component(scan_color, j) -
+                                output_color_component(scan_color - 5, j) -
+                                output_color_component(scan_color + 5, j)) >= 2)
                         {
                             break;
                         }
                     }
-                    const int delta = static_cast<int>(g_dac_box[scan_color][j]) - static_cast<int>(g_dac_box[scan_color - k - 1][j]);
+                    const int delta =
+                        output_color_component(scan_color, j) - output_color_component(scan_color - k - 1, j);
                     if (k == scan_color - cur_color)
                     {
                         diff1[k][j] = delta;
