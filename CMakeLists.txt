@@ -40,6 +40,18 @@ project("${ID_PROJECT_NAME}"
 
 include(CTest)
 
+# vcpkg provides giflib through CMake's built-in FindGIF module.
+# Pin the include path too, or FindGIF can pair a vcpkg library with
+# a host header from Homebrew on macOS.
+if(DEFINED VCPKG_INSTALLED_DIR AND DEFINED VCPKG_TARGET_TRIPLET)
+    set(ID_VCPKG_TARGET_DIR
+        "${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}")
+    if(EXISTS "${ID_VCPKG_TARGET_DIR}/include/gif_lib.h")
+        set(GIF_INCLUDE_DIR "${ID_VCPKG_TARGET_DIR}/include"
+            CACHE PATH "GIF include directory" FORCE)
+    endif()
+endif()
+
 set(home_dir "${CMAKE_SOURCE_DIR}/home")
 set(ID_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 execute_process(COMMAND "${GITCOMMAND}" log -1 --format=%h
