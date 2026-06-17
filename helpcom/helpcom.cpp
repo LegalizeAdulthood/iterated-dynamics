@@ -858,6 +858,7 @@ bool DocumentProcessor::topic_token()
     case TokenType::TOK_DONE:
     case TokenType::TOK_XONLINE: /* skip */
     case TokenType::TOK_XDOC:    /* ignore */
+    case TokenType::TOK_XADOC:   /* ignore */
         break;
     } /* switch */
 

@@ -171,6 +171,10 @@ std::ostream &operator<<(std::ostream &str, const Topic &topic)
             str << "  xdoc\n";
             break;
 
+        case TokenType::TOK_XADOC:
+            str << "  xadoc\n";
+            break;
+
         case TokenType::TOK_CENTER:
             str << "  center\n";
             break;
@@ -1426,6 +1430,9 @@ int HelpCompiler::process()
 
     case Mode::DELETE:
         delete_hlp_from_exe();
+        break;
+
+    case Mode::ASCII_DOC:
         break;
     }
 
