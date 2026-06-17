@@ -323,6 +323,11 @@ jobs:
         sudo apt-get update
         sudo apt-get install --no-install-recommends -y libx11-dev xauth xvfb
 
+    - name: Install Prerequisites macOS
+      if: ${{matrix.os == 'macos-latest'}}
+      shell: bash
+      run: brew install autoconf automake libtool pkg-config
+
     - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
       with:
