@@ -247,6 +247,76 @@ jobs:
         mode=tag
         base=""
         changed_files=""
+        include_roots=(
+          wx
+          wx/include
+          libid/include
+          config/include
+          algos/include
+          helpcom/include
+          hc
+        )
+
+        resolve_include() {
+          local source="$1"
+          local include="$2"
+          local source_dir
+          local root
+          local candidate
+          source_dir="$(dirname "$source")"
+          for candidate in "$source_dir/$include"; do
+            candidate="$(printf "%s\n" "$candidate" | sed "s#^\./##;s#//*#/#g")"
+            if git cat-file -e "$HEAD:$candidate" 2>/dev/null; then
+              printf "%s\n" "$candidate"
+              return 0
+            fi
+          done
+          for root in "${include_roots[@]}"; do
+            candidate="$root/$include"
+            candidate="$(printf "%s\n" "$candidate" | sed "s#^\./##;s#//*#/#g")"
+            if git cat-file -e "$HEAD:$candidate" 2>/dev/null; then
+              printf "%s\n" "$candidate"
+              return 0
+            fi
+          done
+          return 1
+        }
+
+        collect_headers_for() {
+          local source="$1"
+          local includes
+          local include
+          local header
+          includes="$(git show "$HEAD:$source" 2>/dev/null |
+            sed -n 's/^[[:space:]]*#[[:space:]]*include[[:space:]]*[<"]\([^>"]*\)[>"].*/\1/p' ||
+            true)"
+          while IFS= read -r include; do
+            if [ -z "$include" ]; then
+              continue
+            fi
+            header="$(resolve_include "$source" "$include" || true)"
+            if [ -n "$header" ] && ! grep -Fxq "$header" "$wx_header_list"; then
+              printf "%s\n" "$header" >> "$wx_header_list"
+              collect_headers_for "$header"
+            fi
+          done <<< "$includes"
+        }
+
+        collect_wx_headers() {
+          local source
+          local wx_sources
+          wx_header_list="$(mktemp)"
+          wx_sources="$(git ls-tree -r --name-only "$HEAD" wx |
+            grep -E '^wx/[^/]+[.]cpp$' ||
+            true)"
+          while IFS= read -r source; do
+            if [ -n "$source" ]; then
+              collect_headers_for "$source"
+            fi
+          done <<< "$wx_sources"
+          sort -u "$wx_header_list"
+        }
+
         if [ "$REF_TYPE" != "tag" ]; then
           mode=diff
           base="$BEFORE"
@@ -265,19 +335,30 @@ jobs:
             run_wx=true
           fi
           if [ "$run_wx" != "true" ]; then
+            wx_headers="$(collect_wx_headers)"
+            wx_header_count="$(printf "%s\n" "$wx_headers" | sed '/^$/d' | wc -l)"
+            echo "wx-changes header-count=$wx_header_count"
             for path in $changed_files; do
               case "$path" in
                 wx/*)
+                  echo "wx-changes matched-wx-path=$path"
                   run_wx=true
                   break
                   ;;
               esac
+              if printf "%s\n" "$wx_headers" | grep -Fxq "$path"; then
+                echo "wx-changes matched-wx-header=$path"
+                run_wx=true
+                break
+              fi
               if git grep -q "ID_USE_WX" "$HEAD" -- "$path" 2>/dev/null; then
+                echo "wx-changes matched-head-id-use-wx=$path"
                 run_wx=true
                 break
               fi
               if [ -n "$base" ] && ! [[ "$base" =~ ^0+$ ]] &&
                   git grep -q "ID_USE_WX" "$base" -- "$path" 2>/dev/null; then
+                echo "wx-changes matched-base-id-use-wx=$path"
                 run_wx=true
                 break
               fi
