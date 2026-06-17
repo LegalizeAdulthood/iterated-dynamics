@@ -29,5 +29,7 @@ endforeach()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(KILLER_MOSQUITO_GOLD GOLD "gold-linux-Killer_Mosquito")
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin" AND CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    set(KILLER_MOSQUITO_GOLD GOLD "gold-Killer_Mosquito-macOS-arm64")
 endif()
 add_par_test(Killer_Mosquito ${KILLER_MOSQUITO_GOLD})
