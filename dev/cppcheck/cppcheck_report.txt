@@ -76,31 +76,31 @@ hc/HelpCompiler.cpp:1573:9: note: First condition
 hc/HelpCompiler.cpp:1577:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/cmdfiles.cpp:209:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:211:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
-libid/engine/cmdfiles.cpp:3686:28: style: Condition 'value.empty()' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3688:28: style: Condition 'value.empty()' is always false [knownConditionTrueFalse]
             if (value.empty())
                            ^
-libid/engine/cmdfiles.cpp:3760:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:3762:9: style: Condition '!value.empty()' is always true [knownConditionTrueFalse]
     if (!value.empty() && value.back() == '*')
         ^
-libid/engine/cmdfiles.cpp:4174:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4176:28: style: Condition 'spillover.length()>70' is always false [knownConditionTrueFalse]
     if (spillover.length() > 70)
                            ^
-libid/engine/cmdfiles.cpp:4277:20: style: Condition 'cmd.size()>29' is always false [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4279:20: style: Condition 'cmd.size()>29' is always false [knownConditionTrueFalse]
     if (cmd.size() > 29)
                    ^
-libid/engine/cmdfiles.cpp:4281:9: style: Condition '!cmd.empty()' is always true [knownConditionTrueFalse]
+libid/engine/cmdfiles.cpp:4283:9: style: Condition '!cmd.empty()' is always true [knownConditionTrueFalse]
     if (!cmd.empty())
         ^
-libid/engine/cmdfiles.cpp:1762:24: style: Local variable 'color' shadows outer variable [shadowVariable]
+libid/engine/cmdfiles.cpp:1764:24: style: Local variable 'color' shadows outer variable [shadowVariable]
             for (auto &color : g_dac_box)
                        ^
-libid/engine/cmdfiles.cpp:1684:21: note: Shadowed declaration
+libid/engine/cmdfiles.cpp:1686:21: note: Shadowed declaration
         const char *color{colors.c_str()};
                     ^
-libid/engine/cmdfiles.cpp:1762:24: note: Shadow variable
+libid/engine/cmdfiles.cpp:1764:24: note: Shadow variable
             for (auto &color : g_dac_box)
                        ^
 libid/fractals/Ant.cpp:276:29: style: Clarify calculation precedence for '&' and '?'. [clarifyCalculation]
