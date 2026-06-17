@@ -651,7 +651,7 @@ bool encoder()
             evolution_info.future[j] = 0;
         }
 
-        decode_evolver_info(&evolution_info, 0);
+        decode_evolver_info(&evolution_info, DecodeDirection::TO_FILE);
         // evolution info block, 006
         save_info.tot_extend_len += extend_blk_len(sizeof(evolution_info));
         if (!put_extend_blk(6, sizeof(evolution_info), reinterpret_cast<char *>(&evolution_info)))
@@ -674,7 +674,7 @@ bool encoder()
         orbits_info.draw_mode = static_cast<char>(g_draw_mode);
 
         // some big-endian logic for the doubles needed here
-        decode_orbits_info(&orbits_info, 0);
+        decode_orbits_info(&orbits_info, DecodeDirection::TO_FILE);
         // orbits info block, 007
         save_info.tot_extend_len += extend_blk_len(sizeof(orbits_info));
         if (!put_extend_blk(7, sizeof(orbits_info), reinterpret_cast<char *>(&orbits_info)))
@@ -685,7 +685,7 @@ bool encoder()
 
     // main and last block, 001
     save_info.tot_extend_len += extend_blk_len(sizeof(FractalInfo));
-    decode_fractal_info(&save_info, 0);
+    decode_fractal_info(&save_info, DecodeDirection::TO_FILE);
     if (!put_extend_blk(1, sizeof(FractalInfo), reinterpret_cast<char *>(&save_info)))
     {
         goto oops;

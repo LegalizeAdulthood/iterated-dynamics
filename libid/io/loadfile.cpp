@@ -1356,7 +1356,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     file_read(info, 1, sizeof(FractalInfo), s_fp);
     if (std::strcmp(INFO_ID, info->info_id) == 0)
     {
-        decode_fractal_info(info, 1);
+        decode_fractal_info(info, DecodeDirection::FROM_FILE);
         hdr_offset = -1-FRACTAL_INFO_LEN;
     }
     else
@@ -1382,7 +1382,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FractalInfo structure for the platform */
                     file_read(info, 1, sizeof(FractalInfo), s_fp);
-                    decode_fractal_info(info, 1);
+                    decode_fractal_info(info, DecodeDirection::FROM_FILE);
                     offset = 10000; // force exit from outer loop
                     break;
                 }
@@ -1421,7 +1421,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                         break;
                     }
                     load_ext_blk(reinterpret_cast<char *>(info), sizeof(FractalInfo));
-                    decode_fractal_info(info, 1);
+                    decode_fractal_info(info, DecodeDirection::FROM_FILE);
                     scan_extend = 2;
                     // now we know total extension len, back up to first block
                     std::fseek(s_fp, 0L-info->tot_extend_len, SEEK_CUR);
@@ -1497,7 +1497,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
                     load_ext_blk(reinterpret_cast<char *>(&evolution_info), data_len);
-                    decode_evolver_info(&evolution_info, 1);
+                    decode_evolver_info(&evolution_info, DecodeDirection::FROM_FILE);
                     blk_6_info->length = data_len;
                     blk_6_info->got_data = true;
 
@@ -1527,7 +1527,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
                     load_ext_blk(reinterpret_cast<char *>(&orbits_info), data_len);
-                    decode_orbits_info(&orbits_info, 1);
+                    decode_orbits_info(&orbits_info, DecodeDirection::FROM_FILE);
                     blk_7_info->length = data_len;
                     blk_7_info->got_data = true;
                     blk_7_info->ox_min           = orbits_info.orbit_corner_min_x;

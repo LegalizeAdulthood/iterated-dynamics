@@ -39,23 +39,25 @@ static_assert(sizeof(OrbitsInfo) == 200, "OrbitsInfo size is incorrect");
  * If we aren't on a PC, things are rough for decoding the fractal info
  * structure in the GIF file.  These routines look after converting the
  * MS_DOS format data into a form we can use.
- * If dir==0, we convert to MSDOS form.  Otherwise, we convert from MSDOS.
+ * If dir==TO_FILE, we convert to file format (little-endian) form.
+ * Otherwise, we convert from file format (little-endian) form.
  */
 
-static void get_uint8(std::uint8_t *dst, unsigned char **src, int dir);
-static void get_int16(std::int16_t *dst, unsigned char **src, int dir);
-static void get_uint16(std::uint16_t *dst, unsigned char **src, int dir);
-static void get_int32(std::int32_t *dst, unsigned char **src, int dir);
-static void get_float(float *dst, unsigned char **src, int dir);
-static void get_double(double *dst, unsigned char **src, int dir);
+#if ID_BIG_ENDIAN
+static void get_uint8(std::uint8_t *dst, unsigned char **src, DecodeDirection dir);
+static void get_int16(std::int16_t *dst, unsigned char **src, DecodeDirection dir);
+static void get_uint16(std::uint16_t *dst, unsigned char **src, DecodeDirection dir);
+static void get_int32(std::int32_t *dst, unsigned char **src, DecodeDirection dir);
+static void get_float(float *dst, unsigned char **src, DecodeDirection dir);
+static void get_double(double *dst, unsigned char **src, DecodeDirection dir);
 
 /*
  * This routine gets a char out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_uint8(std::uint8_t *dst, unsigned char **src, const int dir)
+static void get_uint8(std::uint8_t *dst, unsigned char **src, DecodeDirection dir)
 {
-    if (dir == 1)
+    if (dir == DecodeDirection::FROM_FILE)
     {
         *dst = **src;
     }
@@ -70,9 +72,9 @@ static void get_uint8(std::uint8_t *dst, unsigned char **src, const int dir)
  * This routine gets an int16_t out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_int16(std::int16_t *dst, unsigned char **src, const int dir)
+static void get_int16(std::int16_t *dst, unsigned char **src, DecodeDirection dir)
 {
-    if (dir == 1)
+    if (dir == DecodeDirection::FROM_FILE)
     {
         *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
     }
@@ -88,9 +90,9 @@ static void get_int16(std::int16_t *dst, unsigned char **src, const int dir)
  * This routine gets a uint16_t out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_uint16(std::uint16_t *dst, unsigned char **src, const int dir)
+static void get_uint16(std::uint16_t *dst, unsigned char **src, DecodeDirection dir)
 {
-    if (dir == 1)
+    if (dir == DecodeDirection::FROM_FILE)
     {
         *dst = static_cast<std::uint16_t>((*src)[0]) + (static_cast<std::uint16_t>((*src)[1]) << 8);
     }
@@ -106,9 +108,9 @@ static void get_uint16(std::uint16_t *dst, unsigned char **src, const int dir)
  * This routine gets a long out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_int32(std::int32_t *dst, unsigned char **src, const int dir)
+static void get_int32(std::int32_t *dst, unsigned char **src, DecodeDirection dir)
 {
-    if (dir == 1)
+    if (dir == DecodeDirection::FROM_FILE)
     {
         *dst = static_cast<unsigned long>((*src)[0]) +
                (static_cast<unsigned long>((*src)[1]) << 8) +
@@ -142,11 +144,11 @@ static void get_int32(std::int32_t *dst, unsigned char **src, const int dir)
  * buffer;
  * It updates the buffer pointer accordingly.
  */
-static void get_double(double *dst, unsigned char **src, const int dir)
+static void get_double(double *dst, unsigned char **src, DecodeDirection dir)
 {
     int e;
     double f;
-    if (dir == 1)
+    if (dir == DecodeDirection::FROM_FILE)
     {
         int i;
         for (i = 0; i < DOS_DOUBLE_SIZE; i++)
@@ -225,11 +227,11 @@ static void get_double(double *dst, unsigned char **src, const int dir)
  * This routine gets a float out of the buffer.
  * It updates the buffer pointer accordingly.
  */
-static void get_float(float *dst, unsigned char **src, const int dir)
+static void get_float(float *dst, unsigned char **src, DecodeDirection dir)
 {
     int e;
     double f;
-    if (dir == 1)
+    if (dir == DecodeDirection::FROM_FILE)
     {
         int i;
         for (i = 0; i < DOS_FLOAT_SIZE; i++)
@@ -295,8 +297,7 @@ static void get_float(float *dst, unsigned char **src, const int dir)
     *src += DOS_FLOAT_SIZE;
 }
 
-#if ID_BIG_ENDIAN
-void decode_fractal_info_big_endian(FractalInfo *info, const int dir)
+void decode_fractal_info_big_endian(FractalInfo *info, const DecodeDirection dir)
 {
     std::vector<unsigned char> info_buff;
     info_buff.resize(sizeof(FractalInfo));
@@ -304,7 +305,7 @@ void decode_fractal_info_big_endian(FractalInfo *info, const int dir)
     unsigned char *buf_ptr = buf;
     std::memcpy(buf, info, sizeof(FractalInfo));
 
-    if (dir == 1)
+    if (dir == DecodeDirection::FROM_FILE)
     {
         std::copy_n(reinterpret_cast<const char *>(buf_ptr), sizeof(info->info_id), info->info_id);
     }
@@ -462,13 +463,13 @@ void decode_fractal_info_big_endian(FractalInfo *info, const int dir)
                    "Components add up to {:d} bytes, but sizeof(FractalInfo) = {:d}\n",
             static_cast<int>(buf_ptr - buf), sizeof(FractalInfo));
     }
-    if (dir == 0)
+    if (dir == DecodeDirection::TO_FILE)
     {
         std::memcpy(info, buf, sizeof(FractalInfo));
     }
 }
 
-void decode_evolver_info_big_endian(EvolutionInfo *info, const int dir)
+void decode_evolver_info_big_endian(EvolutionInfo *info, const DecodeDirection dir)
 {
     std::vector<unsigned char> evolution_info_buff;
     unsigned char *buf_ptr;
@@ -510,7 +511,7 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, const int dir)
                    "Components add up to {:d} bytes, but sizeof(EVOLUTION_INFO) = {:d}\n",
             static_cast<int>(buf_ptr - buf), sizeof(EvolutionInfo));
     }
-    if (dir == 0)
+    if (dir == DecodeDirection::TO_FILE)
     {
         std::memcpy(info, buf, sizeof(EvolutionInfo));
     }
@@ -546,7 +547,7 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, const int dir)
                    "Components add up to {:d} bytes, but sizeof(OrbitsInfo) = {:d}\n",
             static_cast<int>(buf_ptr - buf), sizeof(OrbitsInfo));
     }
-    if (dir == 0)
+    if (dir == DecodeDirection::TO_FILE)
     {
         std::memcpy(info, buf, sizeof(OrbitsInfo));
     }
