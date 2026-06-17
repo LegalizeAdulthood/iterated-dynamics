@@ -293,6 +293,8 @@ o The Burning Ship fractal type now documents its formula and parameters.
   (Fixes #426)
 o makepar now writes legacy color ranges when saving parameters from legacy
   GIF images.  (Fixes #428)
+o The build workflow now includes a macOS build and core unit tests.
+  (Fixes #42)
 o Fractal types using random numbers now consistently honor rseed=,
   making seeded random fractals repeatable across fractal types.
 o Formula, IFS, and L-system item names now preserve user-entered case
@@ -1619,7 +1621,7 @@ command to re-plot it.
 ;
 ~Topic=Id on Unix
 
-On Linux, Id uses a native X11 driver.  The driver uses an ordinary
+On Linux and macOS, Id uses the X11 driver.  The driver uses an ordinary
 TrueColor X visual and keeps Id's 256-color image buffer internally, so a
 PseudoColor display is not required.
 
@@ -1627,12 +1629,12 @@ On Linux, the executable file is named xid rather than id to avoid the
 standard system id utility.  Command-line examples that start with id
 should be typed with xid on Linux.
 
-The Linux X11 driver uses the same id.cfg video mode table as the Win32
-GDI driver.  Video modes whose driver field is "gdi" are accepted by the
-X11 driver when the requested size fits on the current X screen and the
-mode uses 256 colors.  Very large disk-video modes remain output modes,
-not display windows.  The standard video= parameter and video mode
-selection screen are available.
+The X11 driver uses the same id.cfg video mode table as the Win32 GDI
+driver.  Video modes whose driver field is "gdi" are accepted by the X11
+driver when the requested size fits on the current X screen and the mode
+uses 256 colors.  Very large disk-video modes remain output modes, not
+display windows.  The standard video= parameter and video mode selection
+screen are available.
 
 The X11 window requests the selected text or graphics size from the
 window manager.  If the window manager allows manual resizing, the video
@@ -1650,9 +1652,9 @@ savedir rules; on Linux the default save library follows
 XDG_DOCUMENTS_DIR or user-dirs.dirs and falls back to $HOME/Documents.
 See {File Parameters} and {Libraries}.
 
-Current Unix support is Linux/X11.  Continuous sound output is not
-implemented; the completion buzzer uses the X server bell when sound is
-enabled.  macOS and non-X11 Unix desktops are not currently supported.
+Current Unix support is Linux/X11 and macOS/X11.  Continuous sound output
+is not implemented; the completion buzzer uses the X server bell when
+sound is enabled.  Non-X11 Unix desktops are not currently supported.
 ;
 ;
 ;

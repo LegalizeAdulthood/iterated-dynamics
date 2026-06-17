@@ -280,8 +280,7 @@ jobs:
     strategy:
       matrix:
         preset: [ debug, release ]
-        # macos-latest is disabled for now
-        os: [ ubuntu-latest, windows-2022 ]
+        os: [ ubuntu-latest, windows-2022, macos-latest ]
 
     runs-on: ${{matrix.os}}
     permissions:
@@ -349,11 +348,21 @@ jobs:
           exit $LASTEXITCODE
         }
 
-    - name: Run Workflow
-      if: ${{matrix.os != 'ubuntu-latest'}}
+    - name: Run Workflow Windows
+      if: ${{matrix.os == 'windows-2022'}}
       shell: pwsh
       run: |
         cmake --workflow --preset ci-${{matrix.preset}} 2>&1 |
+          Tee-Object -FilePath build.log
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
+
+    - name: Run Workflow macOS
+      if: ${{matrix.os == 'macos-latest'}}
+      shell: pwsh
+      run: |
+        cmake --workflow --preset ci-macos-${{matrix.preset}} 2>&1 |
           Tee-Object -FilePath build.log
         if ($LASTEXITCODE -ne 0) {
           exit $LASTEXITCODE
