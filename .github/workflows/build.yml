@@ -223,10 +223,10 @@ jobs:
       run: git push origin gh-pages
 
   #############################################################################
-  wx_changes:
+  wx-changes:
     runs-on: ubuntu-latest
     outputs:
-      run_wx: ${{steps.changed_files.outputs.run_wx}}
+      run-wx: ${{steps.changed_files.outputs.run-wx}}
 
     steps:
     - name: Checkout
@@ -284,11 +284,11 @@ jobs:
             done
           fi
         fi
-        echo "wx_changes base=$base"
-        echo "wx_changes head=$HEAD"
-        echo "wx_changes mode=$mode"
-        echo "wx_changes run_wx=$run_wx"
-        echo "run_wx=$run_wx" >> "$GITHUB_OUTPUT"
+        echo "wx-changes base=$base"
+        echo "wx-changes head=$HEAD"
+        echo "wx-changes mode=$mode"
+        echo "wx-changes run-wx=$run_wx"
+        echo "run-wx=$run_wx" >> "$GITHUB_OUTPUT"
 
   #############################################################################
   build:
@@ -509,8 +509,8 @@ jobs:
 
   #############################################################################
   wx:
-    if: ${{needs.wx_changes.outputs.run_wx == 'true'}}
-    needs: [ html-docs, pdf-docs, wx_changes ]
+    if: ${{needs.wx-changes.outputs.run-wx == 'true'}}
+    needs: [ html-docs, pdf-docs, wx-changes ]
     strategy:
       matrix:
         preset: [ wx-debug, wx-release ]
