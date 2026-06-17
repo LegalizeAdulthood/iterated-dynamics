@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0-only
 #
-find_package(GIF REQUIRED)
+prefer_vcpkg_gif()
 find_package(fmt CONFIG REQUIRED)
 
 add_library(image-tool STATIC

@@ -2,7 +2,7 @@
 #
 find_package(boost_endian CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)
-find_package(GIF REQUIRED)
+prefer_vcpkg_gif()
 find_package(cpuid CONFIG REQUIRED)
 
 set(ID_MAKE_MIG_SCRIPT_SOURCE ui/make_mig_script_unix.cpp)
