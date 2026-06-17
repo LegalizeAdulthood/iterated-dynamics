@@ -1356,7 +1356,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
     file_read(info, 1, sizeof(FractalInfo), s_fp);
     if (std::strcmp(INFO_ID, info->info_id) == 0)
     {
-        decode_fractal_info(info, DecodeDirection::FROM_FILE);
+        decode_fractal_info(*info);
         hdr_offset = -1-FRACTAL_INFO_LEN;
     }
     else
@@ -1382,7 +1382,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     /* TODO: revise this to read members one at a time so we get natural alignment
                         of fields within the FractalInfo structure for the platform */
                     file_read(info, 1, sizeof(FractalInfo), s_fp);
-                    decode_fractal_info(info, DecodeDirection::FROM_FILE);
+                    decode_fractal_info(*info);
                     offset = 10000; // force exit from outer loop
                     break;
                 }
@@ -1421,11 +1421,12 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                         break;
                     }
                     load_ext_blk(reinterpret_cast<char *>(info), sizeof(FractalInfo));
-                    decode_fractal_info(info, DecodeDirection::FROM_FILE);
+                    decode_fractal_info(*info);
                     scan_extend = 2;
                     // now we know total extension len, back up to first block
                     std::fseek(s_fp, 0L-info->tot_extend_len, SEEK_CUR);
                     break;
+
                 case GifExtensionId::RESUME_INFO: // "fractint002", resume info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_2_info->resume_data.resize(data_len);
@@ -1436,6 +1437,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     blk_2_info->length = data_len;
                     blk_2_info->got_data = true;
                     break;
+
                 case GifExtensionId::FORMULA_INFO: // "fractint003", formula info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     // check data_len for backward compatibility
@@ -1468,6 +1470,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                         blk_3_info->uses_p5 = formula_info.uses_p5;
                     }
                     break;
+
                 case GifExtensionId::RANGES_INFO: // "fractint004", ranges info
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     assert(data_len % 2 == 0);  // should specify an integral number of 16-bit ints
@@ -1485,6 +1488,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     }
                     blk_4_info->got_data = true;
                     break;
+
                 case GifExtensionId::EXTENDED_PRECISION: // "fractint005", extended precision parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     blk_5_info->apm_data.resize(data_len);
@@ -1493,14 +1497,14 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     // TODO: decode extended precision parameters?
                     blk_5_info->got_data = true;
                     break;
+
                 case GifExtensionId::EVOLVER_INFO: // "fractint006", evolver params
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
                     load_ext_blk(reinterpret_cast<char *>(&evolution_info), data_len);
-                    decode_evolver_info(&evolution_info, DecodeDirection::FROM_FILE);
+                    decode_evolver_info(evolution_info);
                     blk_6_info->length = data_len;
                     blk_6_info->got_data = true;
-
                     blk_6_info->x_parameter_range = evolution_info.x_parameter_range;
                     blk_6_info->y_parameter_range = evolution_info.y_parameter_range;
                     blk_6_info->x_parameter_offset = evolution_info.x_parameter_offset;
@@ -1523,11 +1527,12 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                         blk_6_info->mutate[i]    = evolution_info.mutate[i];
                     }
                     break;
+
                 case GifExtensionId::ORBITS_INFO: // "fractint007", orbits parameters
                     skip_ext_blk(&block_len, &data_len); // once to get lengths
                     std::fseek(s_fp, 0 - block_len, SEEK_CUR);
                     load_ext_blk(reinterpret_cast<char *>(&orbits_info), data_len);
-                    decode_orbits_info(&orbits_info, DecodeDirection::FROM_FILE);
+                    decode_orbits_info(orbits_info);
                     blk_7_info->length = data_len;
                     blk_7_info->got_data = true;
                     blk_7_info->ox_min           = orbits_info.orbit_corner_min_x;
@@ -1539,6 +1544,7 @@ bool find_fractal_info(const std::string &gif_file, FractalInfo *info,   //
                     blk_7_info->keep_screen_coords= orbits_info.keep_screen_coords;
                     blk_7_info->draw_mode        = orbits_info.draw_mode;
                     break;
+
                 default:
                     skip_ext_blk(&block_len, &data_len);
                 }

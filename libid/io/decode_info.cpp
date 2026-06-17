@@ -44,6 +44,12 @@ static_assert(sizeof(OrbitsInfo) == 200, "OrbitsInfo size is incorrect");
  */
 
 #if ID_BIG_ENDIAN
+enum class DecodeDirection
+{
+    TO_FILE = 0,
+    FROM_FILE = 1,
+};
+
 static void get_uint8(std::uint8_t *dst, unsigned char **src, DecodeDirection dir);
 static void get_int16(std::int16_t *dst, unsigned char **src, DecodeDirection dir);
 static void get_uint16(std::uint16_t *dst, unsigned char **src, DecodeDirection dir);
@@ -72,18 +78,29 @@ static void get_uint8(std::uint8_t *dst, unsigned char **src, DecodeDirection di
  * This routine gets an int16_t out of the buffer.
  * It updates the buffer pointer accordingly.
  */
+static void decode_int16(std::int16_t *dst, unsigned char **src)
+{
+    *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+    *src += 2; // sizeof(std::uint16_t)
+}
+
+static void encode_int16(std::int16_t *dst, unsigned char **src)
+{
+    (*src)[0] = *dst & 0xff;
+    (*src)[1] = (*dst & 0xff00) >> 8;
+    *src += 2; // sizeof(std::uint16_t)
+}
+
 static void get_int16(std::int16_t *dst, unsigned char **src, DecodeDirection dir)
 {
     if (dir == DecodeDirection::FROM_FILE)
     {
-        *dst = static_cast<std::int16_t>((*src)[0] + (reinterpret_cast<char *>(*src)[1] << 8));
+        decode_int16(dst, src);
     }
     else
     {
-        (*src)[0] = *dst & 0xff;
-        (*src)[1] = (*dst & 0xff00) >> 8;
+        encode_int16(dst, src);
     }
-    *src += 2; // sizeof(std::uint16_t)
 }
 
 /*
@@ -297,7 +314,7 @@ static void get_float(float *dst, unsigned char **src, DecodeDirection dir)
     *src += DOS_FLOAT_SIZE;
 }
 
-void decode_fractal_info_big_endian(FractalInfo *info, const DecodeDirection dir)
+static void decode_fractal_info_big_endian(FractalInfo *info, const DecodeDirection dir)
 {
     std::vector<unsigned char> info_buff;
     info_buff.resize(sizeof(FractalInfo));
@@ -469,7 +486,17 @@ void decode_fractal_info_big_endian(FractalInfo *info, const DecodeDirection dir
     }
 }
 
-void decode_evolver_info_big_endian(EvolutionInfo *info, const DecodeDirection dir)
+void decode_fractal_info_big_endian(FractalInfo &info)
+{
+    decode_fractal_info_big_endian(&info, DecodeDirection::FROM_FILE);
+}
+
+void encode_fractal_info_big_endian(FractalInfo &info)
+{
+    decode_fractal_info_big_endian(&info, DecodeDirection::TO_FILE);
+}
+
+static void decode_evolver_info_big_endian(EvolutionInfo *info, const DecodeDirection dir)
 {
     std::vector<unsigned char> evolution_info_buff;
     unsigned char *buf_ptr;
@@ -517,7 +544,17 @@ void decode_evolver_info_big_endian(EvolutionInfo *info, const DecodeDirection d
     }
 }
 
-void decode_orbits_info_big_endian(OrbitsInfo *info, const int dir)
+void decode_evolver_info_big_endian(EvolutionInfo &info)
+{
+    decode_evolver_info_big_endian(&info, DecodeDirection::FROM_FILE);
+}
+
+void encode_evolver_info_big_endian(ui::EvolutionInfo &info)
+{
+    decode_evolver_info_big_endian(&info, DecodeDirection::TO_FILE);
+}
+
+static void decode_orbits_info_big_endian(OrbitsInfo *info, const DecodeDirection dir)
 {
     std::vector<unsigned char> orbits_info_buff;
     unsigned char *buf_ptr;
@@ -551,6 +588,16 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, const int dir)
     {
         std::memcpy(info, buf, sizeof(OrbitsInfo));
     }
+}
+
+void decode_orbits_info_big_endian(OrbitsInfo &info)
+{
+    decode_orbits_info_big_endian(&info, DecodeDirection::FROM_FILE);
+}
+
+void encode_orbits_info_big_endian(OrbitsInfo &info)
+{
+    decode_orbits_info_big_endian(&info, DecodeDirection::TO_FILE);
 }
 #endif
 

@@ -15,44 +15,74 @@ namespace id::io
 struct FractalInfo;
 struct OrbitsInfo;
 
-enum class DecodeDirection
-{
-    TO_FILE = 0,
-    FROM_FILE = 1,
-};
-
 // This decoding functions handle big endian binary blobs.
 // Iterated Dynamics always stores binary blobs, e.g. FRACTINT
 // extension blocks in GIF files, etc., in little endian
 // format.
 
 #if ID_BIG_ENDIAN
-void decode_evolver_info_big_endian(ui::EvolutionInfo *info, DecodeDirection dir);
-void decode_fractal_info_big_endian(FractalInfo *info, DecodeDirection dir);
-void decode_orbits_info_big_endian(OrbitsInfo *info, DecodeDirection dir);
+void decode_evolver_info_big_endian(ui::EvolutionInfo &info);
+void decode_fractal_info_big_endian(FractalInfo &info);
+void decode_orbits_info_big_endian(OrbitsInfo &info);
+void encode_evolver_info_big_endian(ui::EvolutionInfo &info);
+void encode_fractal_info_big_endian(FractalInfo &info);
+void encode_orbits_info_big_endian(OrbitsInfo &info);
 
-inline void decode_evolver_info(EvolutionInfo *info, DecodeDirection dir)
+inline void decode_evolver_info(ui::EvolutionInfo &info)
 {
-    decode_evolver_info_big_endian(info, dir);
+    decode_evolver_info_big_endian(info);
 }
-inline void decode_fractal_info(FractalInfo *info, DecodeDirection dir)
+
+inline void decode_fractal_info(FractalInfo &info)
 {
-    decode_fractal_info_big_endian(info, dir);
+    decode_fractal_info_big_endian(info);
 }
-inline void decode_orbits_info(OrbitsInfo *info, DecodeDirection dir)
+
+inline void decode_orbits_info(OrbitsInfo &info)
 {
-    decode_orbits_info_big_endian(info, dir);
+    decode_orbits_info_big_endian(info);
 }
+
+inline void encode_evolver_info(ui::EvolutionInfo &info)
+{
+    encode_evolver_info_big_endian(info);
+}
+
+inline void encode_fractal_info(FractalInfo &info)
+{
+    encode_fractal_info_big_endian(info);
+}
+
+inline void encode_orbits_info(OrbitsInfo &info)
+{
+    encode_orbits_info_big_endian(info);
+}
+
 #else
-inline void decode_evolver_info(ui::EvolutionInfo * /*info*/, DecodeDirection /*dir*/)
+inline void decode_evolver_info(ui::EvolutionInfo &info)
 {
 }
-inline void decode_fractal_info(FractalInfo * /*info*/, DecodeDirection /*dir*/)
+
+inline void decode_fractal_info(FractalInfo &info)
 {
 }
-inline void decode_orbits_info(OrbitsInfo * /*info*/, DecodeDirection /*dir*/)
+
+inline void decode_orbits_info(OrbitsInfo &info)
 {
 }
+
+inline void encode_evolver_info(ui::EvolutionInfo &info)
+{
+}
+
+inline void encode_fractal_info(FractalInfo &info)
+{
+}
+
+inline void encode_orbits_info(OrbitsInfo &info)
+{
+}
+
 #endif
 
-}
+} // namespace id::io
