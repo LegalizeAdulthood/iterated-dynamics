@@ -708,6 +708,10 @@ o makepar now writes legacy color ranges when saving parameters from
   legacy GIF images.  (Fixes #428)</p>
 </li>
 <li>
+<p>The build workflow now includes a macOS build and core unit tests.
+(Fixes #42)</p>
+</li>
+<li>
 <p>Fractal types using random numbers now consistently honor rseed=,
 making seeded random fractals repeatable across fractal types.</p>
 </li>
@@ -2469,7 +2473,7 @@ use the <kbd>@</kbd> command to re-plot it.</p>
 <div class="sect2">
 <h3 id="id-topic-28">Id on Unix</h3>
 <div class="paragraph">
-<p>On Linux, Id uses a native X11 driver.  The driver uses an ordinary
+<p>On Linux and macOS, Id uses the X11 driver.  The driver uses an ordinary
 TrueColor X visual and keeps Id&#8217;s 256-color image buffer internally, so
 a PseudoColor display is not required.</p>
 </div>
@@ -2479,12 +2483,12 @@ standard system id utility.  Command-line examples that start with id
 should be typed with xid on Linux.</p>
 </div>
 <div class="paragraph">
-<p>The Linux X11 driver uses the same id.cfg video mode table as the Win32
-GDI driver.  Video modes whose driver field is "gdi" are accepted by the
-X11 driver when the requested size fits on the current X screen and the
-mode uses 256 colors.  Very large disk-video modes remain output modes,
-not display windows.  The standard video= parameter and video mode
-selection screen are available.</p>
+<p>The X11 driver uses the same id.cfg video mode table as the Win32 GDI
+driver.  Video modes whose driver field is "gdi" are accepted by the X11
+driver when the requested size fits on the current X screen and the mode
+uses 256 colors.  Very large disk-video modes remain output modes, not
+display windows.  The standard video= parameter and video mode selection
+screen are available.</p>
 </div>
 <div class="paragraph">
 <p>The X11 window requests the selected text or graphics size from the
@@ -2505,9 +2509,10 @@ XDG_DOCUMENTS_DIR or user-dirs.dirs and falls back to $HOME/Documents.
 See <a href="#id-topic-136">File Parameters</a> and <a href="#id-topic-124">Libraries</a>.</p>
 </div>
 <div class="paragraph">
-<p>Current Unix support is Linux/X11.  Continuous sound output is not
-implemented; the completion buzzer uses the X server bell when sound is
-enabled.  macOS and non-X11 Unix desktops are not currently supported.</p>
+<p>Current Unix support is Linux/X11 and macOS/X11.  Continuous sound
+output is not implemented; the completion buzzer uses the X server bell
+when sound is enabled.  Non-X11 Unix desktops are not currently
+supported.</p>
 </div>
 </div>
 </div>
@@ -12981,7 +12986,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-16 23:41:42 UTC
+Last updated 2026-06-17 00:29:08 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
