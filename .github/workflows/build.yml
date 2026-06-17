@@ -429,20 +429,9 @@ jobs:
     - name: Install Prerequisites macOS
       if: ${{matrix.os == 'macos-latest'}}
       shell: bash
-      run: brew install autoconf automake libtool pkg-config
-
-    - name: Probe macOS X11 display
-      if: ${{matrix.os == 'macos-latest'}}
-      shell: bash
       run: |
+        brew install autoconf automake libtool pkg-config
         brew install --cask xquartz
-        ls -l /opt/X11/bin/Xvfb /opt/X11/bin/xdpyinfo
-        /opt/X11/bin/Xvfb :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
-        xvfb_pid=$!
-        trap 'kill "$xvfb_pid" || true; cat xvfb.log || true' EXIT
-        sleep 3
-        ps -p "$xvfb_pid"
-        /opt/X11/bin/xdpyinfo -display :99
 
     - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
@@ -481,13 +470,25 @@ jobs:
 
     - name: Run Workflow macOS
       if: ${{matrix.os == 'macos-latest'}}
-      shell: pwsh
+      shell: bash
       run: |
-        cmake --workflow --preset ci-macos-${{matrix.preset}} 2>&1 |
-          Tee-Object -FilePath build.log
-        if ($LASTEXITCODE -ne 0) {
-          exit $LASTEXITCODE
+        set -o pipefail
+        /opt/X11/bin/Xvfb :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
+        xvfb_pid=$!
+        cleanup() {
+          status=$?
+          kill "$xvfb_pid" || true
+          if [ "$status" -ne 0 ]; then
+            cat xvfb.log || true
+          fi
+          exit "$status"
         }
+        trap cleanup EXIT
+        sleep 3
+        ps -p "$xvfb_pid"
+        /opt/X11/bin/xdpyinfo -display :99
+        DISPLAY=:99 cmake --workflow --preset ci-${{matrix.preset}} 2>&1 |
+          tee build.log
 
     - name: Analyze vcpkg package cache
       if: always()
