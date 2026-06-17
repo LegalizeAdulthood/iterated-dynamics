@@ -20,11 +20,11 @@ struct OrbitsInfo;
 // extension blocks in GIF files, etc., in little endian
 // format.
 
+#if ID_BIG_ENDIAN
 void decode_evolver_info_big_endian(ui::EvolutionInfo *info, int dir);
 void decode_fractal_info_big_endian(FractalInfo *info, int dir);
 void decode_orbits_info_big_endian(OrbitsInfo *info, int dir);
 
-#if ID_BIG_ENDIAN
 inline void decode_evolver_info(EvolutionInfo *info, int dir)
 {
     decode_evolver_info_big_endian(info, dir);

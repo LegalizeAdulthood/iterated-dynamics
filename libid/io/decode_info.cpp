@@ -49,178 +49,6 @@ static void get_int32(std::int32_t *dst, unsigned char **src, int dir);
 static void get_float(float *dst, unsigned char **src, int dir);
 static void get_double(double *dst, unsigned char **src, int dir);
 
-void decode_fractal_info_big_endian(FractalInfo *info, const int dir)
-{
-    std::vector<unsigned char> info_buff;
-    info_buff.resize(sizeof(FractalInfo));
-    unsigned char *buf = info_buff.data();
-    unsigned char *buf_ptr = buf;
-    std::memcpy(buf, info, sizeof(FractalInfo));
-
-    if (dir == 1)
-    {
-        std::copy_n(reinterpret_cast<const char *>(buf_ptr), sizeof(info->info_id), info->info_id);
-    }
-    else
-    {
-        std::copy_n(info->info_id, sizeof(info->info_id), reinterpret_cast<char *>(buf_ptr));
-    }
-    buf_ptr += 8;
-    get_int16(&info->iterations_old, &buf_ptr, dir);
-    get_int16(&info->fractal_type, &buf_ptr, dir);
-    get_double(&info->x_min, &buf_ptr, dir);
-    get_double(&info->x_max, &buf_ptr, dir);
-    get_double(&info->y_min, &buf_ptr, dir);
-    get_double(&info->y_max, &buf_ptr, dir);
-    get_double(&info->c_real, &buf_ptr, dir);
-    get_double(&info->c_imag, &buf_ptr, dir);
-    get_int16(&info->ax, &buf_ptr, dir);
-    get_int16(&info->bx, &buf_ptr, dir);
-    get_int16(&info->cx, &buf_ptr, dir);
-    get_int16(&info->dx, &buf_ptr, dir);
-    get_int16(&info->dot_mode, &buf_ptr, dir);
-    get_uint16(&info->x_dots, &buf_ptr, dir);
-    get_uint16(&info->y_dots, &buf_ptr, dir);
-    get_int16(&info->colors, &buf_ptr, dir);
-    get_int16(&info->info_version, &buf_ptr, dir);
-    get_float(&info->param3, &buf_ptr, dir);
-    get_float(&info->param4, &buf_ptr, dir);
-    get_float(&info->potential[0], &buf_ptr, dir);
-    get_float(&info->potential[1], &buf_ptr, dir);
-    get_float(&info->potential[2], &buf_ptr, dir);
-    get_int16(&info->random_seed, &buf_ptr, dir);
-    get_int16(&info->random_seed_flag, &buf_ptr, dir);
-    get_int16(&info->biomorph, &buf_ptr, dir);
-    get_int16(&info->inside, &buf_ptr, dir);
-    {
-        short tmp = 0;
-        get_int16(&tmp, &buf_ptr, dir);
-        info->log_map = tmp;
-    }
-    get_float(&info->invert[0], &buf_ptr, dir);
-    get_float(&info->invert[1], &buf_ptr, dir);
-    get_float(&info->invert[2], &buf_ptr, dir);
-    get_int16(&info->decomp[0], &buf_ptr, dir);
-    get_int16(&info->decomp[1], &buf_ptr, dir);
-    get_int16(&info->symmetry, &buf_ptr, dir);
-    for (int i = 0; i < 16; i++)  // NOLINT(modernize-loop-convert)
-    {
-        get_int16(&info->init3d[i], &buf_ptr, dir);
-    }
-    get_int16(&info->preview_factor, &buf_ptr, dir);
-    get_int16(&info->x_trans, &buf_ptr, dir);
-    get_int16(&info->y_trans, &buf_ptr, dir);
-    get_int16(&info->red_crop_left, &buf_ptr, dir);
-    get_int16(&info->red_crop_right, &buf_ptr, dir);
-    get_int16(&info->blue_crop_left, &buf_ptr, dir);
-    get_int16(&info->blue_crop_right, &buf_ptr, dir);
-    get_int16(&info->red_bright, &buf_ptr, dir);
-    get_int16(&info->blue_bright, &buf_ptr, dir);
-    get_int16(&info->x_adjust, &buf_ptr, dir);
-    get_int16(&info->eye_separation, &buf_ptr, dir);
-    get_int16(&info->glasses_type, &buf_ptr, dir);
-    get_int16(&info->outside, &buf_ptr, dir);
-    get_double(&info->x3rd, &buf_ptr, dir);
-    get_double(&info->y3rd, &buf_ptr, dir);
-    get_uint8(reinterpret_cast<unsigned char *>(&info->std_calc_mode), &buf_ptr, dir);
-    get_uint8(reinterpret_cast<unsigned char *>(&info->use_init_orbit), &buf_ptr, dir);
-    get_int16(&info->calc_status, &buf_ptr, dir);
-    get_int32(&info->tot_extend_len, &buf_ptr, dir);
-    {
-        short tmp = 0;
-        get_int16(&tmp, &buf_ptr, dir);
-        info->dist_est = tmp;
-    }
-    get_int16(&info->float_flag, &buf_ptr, dir);
-    get_int16(&info->bailout_old, &buf_ptr, dir);
-    get_int32(&info->calc_time, &buf_ptr, dir);
-    for (int i = 0; i < 4; i++)  // NOLINT(modernize-loop-convert)
-    {
-        get_uint8(&info->trig_index[i], &buf_ptr, dir);
-    }
-    get_int16(&info->finite_attractor, &buf_ptr, dir);
-    get_double(&info->init_orbit[0], &buf_ptr, dir);
-    get_double(&info->init_orbit[1], &buf_ptr, dir);
-    get_int16(&info->periodicity, &buf_ptr, dir);
-    get_int16(&info->pot16bit, &buf_ptr, dir);
-    get_float(&info->final_aspect_ratio, &buf_ptr, dir);
-    get_int16(&info->system, &buf_ptr, dir);
-    get_int16(&info->release, &buf_ptr, dir);
-    get_int16(&info->display_3d, &buf_ptr, dir);
-    get_int16(&info->transparent[0], &buf_ptr, dir);
-    get_int16(&info->transparent[1], &buf_ptr, dir);
-    get_int16(&info->ambient, &buf_ptr, dir);
-    get_int16(&info->haze, &buf_ptr, dir);
-    get_int16(&info->randomize, &buf_ptr, dir);
-    get_int16(&info->rotate_lo, &buf_ptr, dir);
-    get_int16(&info->rotate_hi, &buf_ptr, dir);
-    get_int16(&info->dist_est_width, &buf_ptr, dir);
-    get_double(&info->d_param3, &buf_ptr, dir);
-    get_double(&info->d_param4, &buf_ptr, dir);
-    get_int16(&info->fill_color, &buf_ptr, dir);
-    get_double(&info->julibrot_x_max, &buf_ptr, dir);
-    get_double(&info->julibrot_x_min, &buf_ptr, dir);
-    get_double(&info->julibrot_y_max, &buf_ptr, dir);
-    get_double(&info->julibrot_y_min, &buf_ptr, dir);
-    get_int16(&info->julibrot_z_dots, &buf_ptr, dir);
-    get_float(&info->julibrot_origin_fp, &buf_ptr, dir);
-    get_float(&info->julibrot_depth_fp, &buf_ptr, dir);
-    get_float(&info->julibrot_height_fp, &buf_ptr, dir);
-    get_float(&info->julibrot_width_fp, &buf_ptr, dir);
-    get_float(&info->julibrot_dist_fp, &buf_ptr, dir);
-    get_float(&info->eyes_fp, &buf_ptr, dir);
-    get_int16(&info->orbit_type, &buf_ptr, dir);
-    get_int16(&info->juli3d_mode, &buf_ptr, dir);
-    get_int16(&info->max_fn, &buf_ptr, dir);
-    get_int16(&info->inverse_julia, &buf_ptr, dir);
-    get_double(&info->d_param5, &buf_ptr, dir);
-    get_double(&info->d_param6, &buf_ptr, dir);
-    get_double(&info->d_param7, &buf_ptr, dir);
-    get_double(&info->d_param8, &buf_ptr, dir);
-    get_double(&info->d_param9, &buf_ptr, dir);
-    get_double(&info->d_param10, &buf_ptr, dir);
-    get_int32(&info->bailout, &buf_ptr, dir);
-    get_int16(&info->bailout_test, &buf_ptr, dir);
-    get_int32(&info->iterations, &buf_ptr, dir);
-    get_int16(&info->bf_math, &buf_ptr, dir);
-    get_int16(&info->bf_length, &buf_ptr, dir);
-    get_int16(&info->y_adjust, &buf_ptr, dir);
-    get_int16(&info->old_demm_colors, &buf_ptr, dir);
-    get_int32(&info->log_map, &buf_ptr, dir);
-    get_int32(&info->dist_est, &buf_ptr, dir);
-    get_double(&info->d_invert[0], &buf_ptr, dir);
-    get_double(&info->d_invert[1], &buf_ptr, dir);
-    get_double(&info->d_invert[2], &buf_ptr, dir);
-    get_int16(&info->log_calc, &buf_ptr, dir);
-    get_int16(&info->stop_pass, &buf_ptr, dir);
-    get_int16(&info->quick_calc, &buf_ptr, dir);
-    get_double(&info->close_prox, &buf_ptr, dir);
-    get_int16(&info->no_bof, &buf_ptr, dir);
-    get_int32(&info->orbit_interval, &buf_ptr, dir);
-    get_int16(&info->orbit_delay, &buf_ptr, dir);
-    get_double(&info->math_tol[0], &buf_ptr, dir);
-    get_double(&info->math_tol[1], &buf_ptr, dir);
-    get_uint8(&info->version_major, &buf_ptr, dir);
-    get_uint8(&info->version_minor, &buf_ptr, dir);
-    get_uint8(&info->version_patch, &buf_ptr, dir);
-    get_uint8(&info->version_tweak, &buf_ptr, dir);
-
-    for (int i = 0; i < sizeof(info->future) / sizeof(short); i++)  // NOLINT(modernize-loop-convert)
-    {
-        get_int16(&info->future[i], &buf_ptr, dir);
-    }
-    if (buf_ptr-buf != sizeof(FractalInfo))
-    {
-        fmt::print("Warning: loadfile miscount on fractal_info structure.\n"
-                   "Components add up to {:d} bytes, but sizeof(FractalInfo) = {:d}\n",
-            static_cast<int>(buf_ptr - buf), sizeof(FractalInfo));
-    }
-    if (dir == 0)
-    {
-        std::memcpy(info, buf, sizeof(FractalInfo));
-    }
-}
-
 /*
  * This routine gets a char out of the buffer.
  * It updates the buffer pointer accordingly.
@@ -467,6 +295,179 @@ static void get_float(float *dst, unsigned char **src, const int dir)
     *src += DOS_FLOAT_SIZE;
 }
 
+#if ID_BIG_ENDIAN
+void decode_fractal_info_big_endian(FractalInfo *info, const int dir)
+{
+    std::vector<unsigned char> info_buff;
+    info_buff.resize(sizeof(FractalInfo));
+    unsigned char *buf = info_buff.data();
+    unsigned char *buf_ptr = buf;
+    std::memcpy(buf, info, sizeof(FractalInfo));
+
+    if (dir == 1)
+    {
+        std::copy_n(reinterpret_cast<const char *>(buf_ptr), sizeof(info->info_id), info->info_id);
+    }
+    else
+    {
+        std::copy_n(info->info_id, sizeof(info->info_id), reinterpret_cast<char *>(buf_ptr));
+    }
+    buf_ptr += 8;
+    get_int16(&info->iterations_old, &buf_ptr, dir);
+    get_int16(&info->fractal_type, &buf_ptr, dir);
+    get_double(&info->x_min, &buf_ptr, dir);
+    get_double(&info->x_max, &buf_ptr, dir);
+    get_double(&info->y_min, &buf_ptr, dir);
+    get_double(&info->y_max, &buf_ptr, dir);
+    get_double(&info->c_real, &buf_ptr, dir);
+    get_double(&info->c_imag, &buf_ptr, dir);
+    get_int16(&info->ax, &buf_ptr, dir);
+    get_int16(&info->bx, &buf_ptr, dir);
+    get_int16(&info->cx, &buf_ptr, dir);
+    get_int16(&info->dx, &buf_ptr, dir);
+    get_int16(&info->dot_mode, &buf_ptr, dir);
+    get_uint16(&info->x_dots, &buf_ptr, dir);
+    get_uint16(&info->y_dots, &buf_ptr, dir);
+    get_int16(&info->colors, &buf_ptr, dir);
+    get_int16(&info->info_version, &buf_ptr, dir);
+    get_float(&info->param3, &buf_ptr, dir);
+    get_float(&info->param4, &buf_ptr, dir);
+    get_float(&info->potential[0], &buf_ptr, dir);
+    get_float(&info->potential[1], &buf_ptr, dir);
+    get_float(&info->potential[2], &buf_ptr, dir);
+    get_int16(&info->random_seed, &buf_ptr, dir);
+    get_int16(&info->random_seed_flag, &buf_ptr, dir);
+    get_int16(&info->biomorph, &buf_ptr, dir);
+    get_int16(&info->inside, &buf_ptr, dir);
+    {
+        short tmp = 0;
+        get_int16(&tmp, &buf_ptr, dir);
+        info->log_map = tmp;
+    }
+    get_float(&info->invert[0], &buf_ptr, dir);
+    get_float(&info->invert[1], &buf_ptr, dir);
+    get_float(&info->invert[2], &buf_ptr, dir);
+    get_int16(&info->decomp[0], &buf_ptr, dir);
+    get_int16(&info->decomp[1], &buf_ptr, dir);
+    get_int16(&info->symmetry, &buf_ptr, dir);
+    for (int i = 0; i < 16; i++)  // NOLINT(modernize-loop-convert)
+    {
+        get_int16(&info->init3d[i], &buf_ptr, dir);
+    }
+    get_int16(&info->preview_factor, &buf_ptr, dir);
+    get_int16(&info->x_trans, &buf_ptr, dir);
+    get_int16(&info->y_trans, &buf_ptr, dir);
+    get_int16(&info->red_crop_left, &buf_ptr, dir);
+    get_int16(&info->red_crop_right, &buf_ptr, dir);
+    get_int16(&info->blue_crop_left, &buf_ptr, dir);
+    get_int16(&info->blue_crop_right, &buf_ptr, dir);
+    get_int16(&info->red_bright, &buf_ptr, dir);
+    get_int16(&info->blue_bright, &buf_ptr, dir);
+    get_int16(&info->x_adjust, &buf_ptr, dir);
+    get_int16(&info->eye_separation, &buf_ptr, dir);
+    get_int16(&info->glasses_type, &buf_ptr, dir);
+    get_int16(&info->outside, &buf_ptr, dir);
+    get_double(&info->x3rd, &buf_ptr, dir);
+    get_double(&info->y3rd, &buf_ptr, dir);
+    get_uint8(reinterpret_cast<unsigned char *>(&info->std_calc_mode), &buf_ptr, dir);
+    get_uint8(reinterpret_cast<unsigned char *>(&info->use_init_orbit), &buf_ptr, dir);
+    get_int16(&info->calc_status, &buf_ptr, dir);
+    get_int32(&info->tot_extend_len, &buf_ptr, dir);
+    {
+        short tmp = 0;
+        get_int16(&tmp, &buf_ptr, dir);
+        info->dist_est = tmp;
+    }
+    get_int16(&info->float_flag, &buf_ptr, dir);
+    get_int16(&info->bailout_old, &buf_ptr, dir);
+    get_int32(&info->calc_time, &buf_ptr, dir);
+    for (int i = 0; i < 4; i++)  // NOLINT(modernize-loop-convert)
+    {
+        get_uint8(&info->trig_index[i], &buf_ptr, dir);
+    }
+    get_int16(&info->finite_attractor, &buf_ptr, dir);
+    get_double(&info->init_orbit[0], &buf_ptr, dir);
+    get_double(&info->init_orbit[1], &buf_ptr, dir);
+    get_int16(&info->periodicity, &buf_ptr, dir);
+    get_int16(&info->pot16bit, &buf_ptr, dir);
+    get_float(&info->final_aspect_ratio, &buf_ptr, dir);
+    get_int16(&info->system, &buf_ptr, dir);
+    get_int16(&info->release, &buf_ptr, dir);
+    get_int16(&info->display_3d, &buf_ptr, dir);
+    get_int16(&info->transparent[0], &buf_ptr, dir);
+    get_int16(&info->transparent[1], &buf_ptr, dir);
+    get_int16(&info->ambient, &buf_ptr, dir);
+    get_int16(&info->haze, &buf_ptr, dir);
+    get_int16(&info->randomize, &buf_ptr, dir);
+    get_int16(&info->rotate_lo, &buf_ptr, dir);
+    get_int16(&info->rotate_hi, &buf_ptr, dir);
+    get_int16(&info->dist_est_width, &buf_ptr, dir);
+    get_double(&info->d_param3, &buf_ptr, dir);
+    get_double(&info->d_param4, &buf_ptr, dir);
+    get_int16(&info->fill_color, &buf_ptr, dir);
+    get_double(&info->julibrot_x_max, &buf_ptr, dir);
+    get_double(&info->julibrot_x_min, &buf_ptr, dir);
+    get_double(&info->julibrot_y_max, &buf_ptr, dir);
+    get_double(&info->julibrot_y_min, &buf_ptr, dir);
+    get_int16(&info->julibrot_z_dots, &buf_ptr, dir);
+    get_float(&info->julibrot_origin_fp, &buf_ptr, dir);
+    get_float(&info->julibrot_depth_fp, &buf_ptr, dir);
+    get_float(&info->julibrot_height_fp, &buf_ptr, dir);
+    get_float(&info->julibrot_width_fp, &buf_ptr, dir);
+    get_float(&info->julibrot_dist_fp, &buf_ptr, dir);
+    get_float(&info->eyes_fp, &buf_ptr, dir);
+    get_int16(&info->orbit_type, &buf_ptr, dir);
+    get_int16(&info->juli3d_mode, &buf_ptr, dir);
+    get_int16(&info->max_fn, &buf_ptr, dir);
+    get_int16(&info->inverse_julia, &buf_ptr, dir);
+    get_double(&info->d_param5, &buf_ptr, dir);
+    get_double(&info->d_param6, &buf_ptr, dir);
+    get_double(&info->d_param7, &buf_ptr, dir);
+    get_double(&info->d_param8, &buf_ptr, dir);
+    get_double(&info->d_param9, &buf_ptr, dir);
+    get_double(&info->d_param10, &buf_ptr, dir);
+    get_int32(&info->bailout, &buf_ptr, dir);
+    get_int16(&info->bailout_test, &buf_ptr, dir);
+    get_int32(&info->iterations, &buf_ptr, dir);
+    get_int16(&info->bf_math, &buf_ptr, dir);
+    get_int16(&info->bf_length, &buf_ptr, dir);
+    get_int16(&info->y_adjust, &buf_ptr, dir);
+    get_int16(&info->old_demm_colors, &buf_ptr, dir);
+    get_int32(&info->log_map, &buf_ptr, dir);
+    get_int32(&info->dist_est, &buf_ptr, dir);
+    get_double(&info->d_invert[0], &buf_ptr, dir);
+    get_double(&info->d_invert[1], &buf_ptr, dir);
+    get_double(&info->d_invert[2], &buf_ptr, dir);
+    get_int16(&info->log_calc, &buf_ptr, dir);
+    get_int16(&info->stop_pass, &buf_ptr, dir);
+    get_int16(&info->quick_calc, &buf_ptr, dir);
+    get_double(&info->close_prox, &buf_ptr, dir);
+    get_int16(&info->no_bof, &buf_ptr, dir);
+    get_int32(&info->orbit_interval, &buf_ptr, dir);
+    get_int16(&info->orbit_delay, &buf_ptr, dir);
+    get_double(&info->math_tol[0], &buf_ptr, dir);
+    get_double(&info->math_tol[1], &buf_ptr, dir);
+    get_uint8(&info->version_major, &buf_ptr, dir);
+    get_uint8(&info->version_minor, &buf_ptr, dir);
+    get_uint8(&info->version_patch, &buf_ptr, dir);
+    get_uint8(&info->version_tweak, &buf_ptr, dir);
+
+    for (int i = 0; i < sizeof(info->future) / sizeof(short); i++)  // NOLINT(modernize-loop-convert)
+    {
+        get_int16(&info->future[i], &buf_ptr, dir);
+    }
+    if (buf_ptr-buf != sizeof(FractalInfo))
+    {
+        fmt::print("Warning: loadfile miscount on fractal_info structure.\n"
+                   "Components add up to {:d} bytes, but sizeof(FractalInfo) = {:d}\n",
+            static_cast<int>(buf_ptr - buf), sizeof(FractalInfo));
+    }
+    if (dir == 0)
+    {
+        std::memcpy(info, buf, sizeof(FractalInfo));
+    }
+}
+
 void decode_evolver_info_big_endian(EvolutionInfo *info, const int dir)
 {
     std::vector<unsigned char> evolution_info_buff;
@@ -550,5 +551,6 @@ void decode_orbits_info_big_endian(OrbitsInfo *info, const int dir)
         std::memcpy(info, buf, sizeof(OrbitsInfo));
     }
 }
+#endif
 
 } // namespace id::io
