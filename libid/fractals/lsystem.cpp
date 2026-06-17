@@ -56,6 +56,7 @@ enum
 };
 constexpr int MAX_LSYS_ERROR_LINES = 6;
 constexpr std::size_t MAX_LSYS_ERROR_LINE_LEN = 80;
+constexpr float LSYS_SCALE_SENTINEL = 1.0e37F;
 
 struct LSysTurtleState
 {
@@ -792,7 +793,7 @@ static bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rul
     float horiz;
     if (x_max == x_min)
     {
-        horiz = static_cast<float>(1E37);
+        horiz = LSYS_SCALE_SENTINEL;
     }
     else
     {
@@ -801,7 +802,7 @@ static bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rul
     float vert;
     if (y_max == y_min)
     {
-        vert = static_cast<float>(1E37);
+        vert = LSYS_SCALE_SENTINEL;
     }
     else
     {
@@ -809,15 +810,15 @@ static bool lsys_find_scale(LSysCmd *command, LSysTurtleState *ts, LSysCmd **rul
     }
     const LDouble local_size = vert < horiz ? vert : horiz;
 
-    if (horiz == 1E37)
+    if (horiz == LSYS_SCALE_SENTINEL)
     {
-        ts->x_pos = g_logical_screen.x_dots/2;
+        ts->x_pos = g_logical_screen.x_dots / 2;
     }
     else
     {
-        ts->x_pos = (g_logical_screen.x_dots-local_size*(x_max+x_min))/2;
+        ts->x_pos = (g_logical_screen.x_dots - local_size * (x_max + x_min)) / 2;
     }
-    if (vert == 1E37)
+    if (vert == LSYS_SCALE_SENTINEL)
     {
         ts->y_pos = g_logical_screen.y_dots/2;
     }
