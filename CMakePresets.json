@@ -251,16 +251,6 @@
       }
     },
     {
-      "name": "core-unit-tests",
-      "hidden": true,
-      "description": "Run tests that do not require a display or generated image comparison",
-      "filter": {
-        "include": {
-          "label": "^(algos|config|hc|id)$"
-        }
-      }
-    },
-    {
       "name": "default",
       "displayName": "Test with default settings",
       "inherits": [ "settings" ],
@@ -306,20 +296,6 @@
       "name": "ci-release",
       "displayName": "CI Test with Release settings",
       "inherits": [ "settings" ],
-      "configurePreset": "ci-release",
-      "configuration": "RelWithDebInfo"
-    },
-    {
-      "name": "ci-macos-debug",
-      "displayName": "CI macOS Test with Debug settings",
-      "inherits": [ "settings", "core-unit-tests" ],
-      "configurePreset": "ci-debug",
-      "configuration": "Debug"
-    },
-    {
-      "name": "ci-macos-release",
-      "displayName": "CI macOS Test with Release settings",
-      "inherits": [ "settings", "core-unit-tests" ],
       "configurePreset": "ci-release",
       "configuration": "RelWithDebInfo"
     },
@@ -504,42 +480,6 @@
         {
           "type": "package",
           "name": "ci-release"
-        }
-      ]
-    },
-    {
-      "name": "ci-macos-debug",
-      "displayName": "CI macOS Workflow with Debug settings: configure, build and test",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "ci-debug"
-        },
-        {
-          "type": "build",
-          "name": "ci-debug"
-        },
-        {
-          "type": "test",
-          "name": "ci-macos-debug"
-        }
-      ]
-    },
-    {
-      "name": "ci-macos-release",
-      "displayName": "CI macOS Workflow with Release settings: configure, build and test",
-      "steps": [
-        {
-          "type": "configure",
-          "name": "ci-release"
-        },
-        {
-          "type": "build",
-          "name": "ci-release"
-        },
-        {
-          "type": "test",
-          "name": "ci-macos-release"
         }
       ]
     },
