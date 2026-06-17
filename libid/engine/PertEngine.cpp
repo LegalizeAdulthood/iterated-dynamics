@@ -436,6 +436,9 @@ int PertEngine::calculate_point(const Point &pt, const double magnified_radius, 
                         index = min_index;
                     }
                     break;
+
+                default:
+                    break;
                 }
             }
         }
