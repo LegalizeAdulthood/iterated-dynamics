@@ -382,8 +382,19 @@ jobs:
     needs: [ html-docs, pdf-docs ]
     strategy:
       matrix:
-        preset: [ debug, release ]
-        os: [ ubuntu-latest, windows-2022, macos-latest, macos-15-intel ]
+        include:
+        - os: ubuntu-latest
+          preset: debug
+        - os: ubuntu-latest
+          preset: release
+        - os: windows-2022
+          preset: debug
+        - os: windows-2022
+          preset: release
+        - os: macos-latest
+          preset: release
+        - os: macos-15-intel
+          preset: release
 
     runs-on: ${{matrix.os}}
     permissions:
