@@ -8,6 +8,8 @@ namespace id::test::data
 {
 
 // clang-format off
+constexpr bool ID_TEST_FILESYSTEM_CASE_SENSITIVE{@ID_TEST_FILESYSTEM_CASE_SENSITIVE@};
+
 constexpr const char *ID_TEST_DATA_DIR{"@ID_TEST_DATA_DIR@"};
 constexpr const char *ID_TEST_DATA_SUBDIR{"@ID_TEST_DATA_SUBDIR@"};
 constexpr const char *ID_TEST_DATA_SUBDIR_NAME{"@ID_TEST_DATA_SUBDIR_NAME@"};

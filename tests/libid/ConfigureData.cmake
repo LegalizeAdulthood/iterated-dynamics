@@ -14,6 +14,23 @@ set(ID_TEST_MAP_DIR         "${ID_TEST_HOME_DIR}/${ID_TEST_MAP_SUBDIR}")
 set(ID_TEST_PAR_SUBDIR      "par")
 set(ID_TEST_PAR_DIR         "${ID_TEST_HOME_DIR}/${ID_TEST_PAR_SUBDIR}")
 
+function(test_filesystem_case_sensitivity dir result_var)
+    file(MAKE_DIRECTORY "${dir}")
+    set(lower "${dir}/id-case-sensitive-probe.tmp")
+    set(upper "${dir}/ID-CASE-SENSITIVE-PROBE.TMP")
+    file(REMOVE "${lower}" "${upper}")
+    file(WRITE "${lower}" "probe\n")
+    if(EXISTS "${upper}")
+        set(result false)
+    else()
+        set(result true)
+    endif()
+    file(REMOVE "${lower}" "${upper}")
+    set("${result_var}" "${result}" PARENT_SCOPE)
+endfunction()
+
+test_filesystem_case_sensitivity("${ID_TEST_MAP_DIR}" ID_TEST_FILESYSTEM_CASE_SENSITIVE)
+
 # id.cfg test data
 set(ID_TEST_GDI_FN "F6")
 set(ID_TEST_GDI_FN_KEY "ID_KEY_F6")

@@ -3,6 +3,7 @@
 #include "test_data.h"
 
 #include <engine/cmdfiles.h>
+#include <engine/ImageRegion.h>
 #include <fractals/fractalp.h>
 #include <fractals/parser.h>
 
@@ -59,8 +60,8 @@ Uses ismand: false
  11: scrnmax         = (0.000000, 0.000000)
  12: maxit           = (0.000000, 0.000000)
  13: ismand          = (1.000000, 0.000000)
- 14: center          = (0.000000, 0.000000)
- 15: magxmag         = (inf, -nan)
+ 14: center          = (-0.500000, 0.000000)
+ 15: magxmag         = (0.666667, 1.333333)
  16: rotskew         = (0.000000, 0.000000)
  17: p4              = (0.000000, 0.000000)
  18: p5              = (0.000000, 0.000000)
@@ -164,6 +165,8 @@ TEST_F(ParserTest, moe)
     ValueSaver saved_formula_filename{g_formula_filename, "test.frm"};
     ValueSaver saved_formula_name{g_formula_name, s_moe.name};
     ValueSaver saved_formula_text{g_formula.formula};
+    ValueSaver saved_image_region{
+        g_image_region, ImageRegion{{-2.0, -1.5}, {1.0, 1.5}, {-2.0, -1.5}}};
 
     ASSERT_TRUE(parse_formula(s_moe, true)) << "Should have parsed formula";
 

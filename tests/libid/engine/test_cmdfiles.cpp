@@ -1460,23 +1460,35 @@ TEST_F(TestParameterCommand, colorsMapAddsDefaultExtension)
     EXPECT_EQ("test", g_last_map_name);
 }
 
-#if !defined(_WIN32)
-TEST_F(TestParameterCommandBatchError, colorsMapNameIsCaseSensitive)
+TEST_F(TestParameterCommand, colorsMapNameIsCaseSensitive)
 {
+    if constexpr (!ID_TEST_FILESYSTEM_CASE_SENSITIVE)
+    {
+        GTEST_SKIP() << "Map file names are case-insensitive on this filesystem";
+    }
+
     ColorMapSaver saved_dac_box;
     ValueSaver saved_map_name{g_map_name, ""};
     ValueSaver saved_last_map_name{g_last_map_name, ""};
     ValueSaver saved_first_init{g_first_init, false};
     ValueSaver saved_init_batch{g_init_batch, BatchMode::NORMAL};
-    EXPECT_CALL(m_goodbye, Call());
+    StrictMock<MockFunction<cmd_files_test::StopMsg>> stop_msg;
+    StrictMock<MockFunction<cmd_files_test::Goodbye>> goodbye;
+    cmd_files_test::StopMsgFn prev_stop_msg{cmd_files_test::get_stop_msg()};
+    cmd_files_test::GoodbyeFn prev_goodbye{cmd_files_test::get_goodbye()};
+    cmd_files_test::set_stop_msg(stop_msg.AsStdFunction());
+    cmd_files_test::set_goodbye(goodbye.AsStdFunction());
+    EXPECT_CALL(stop_msg, Call(StopMsgFlags::NONE, _)).WillOnce(Return(false));
+    EXPECT_CALL(goodbye, Call());
 
     exec_cmd_arg("colors=@TEST", CmdFile::AT_CMD_LINE_SET_NAME);
+    cmd_files_test::set_stop_msg(prev_stop_msg);
+    cmd_files_test::set_goodbye(prev_goodbye);
 
     EXPECT_EQ(CmdArgFlags::BAD_ARG, m_result);
     EXPECT_TRUE(g_map_name.empty());
     EXPECT_TRUE(g_last_map_name.empty());
 }
-#endif
 
 TEST_F(TestParameterCommandError, recordColorsInvalidValue)
 {
