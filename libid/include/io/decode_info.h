@@ -21,12 +21,12 @@ struct OrbitsInfo;
 // format.
 
 #if ID_BIG_ENDIAN
-void decode_evolver_info_big_endian(ui::EvolutionInfo &info);
-void decode_fractal_info_big_endian(FractalInfo &info);
-void decode_orbits_info_big_endian(OrbitsInfo &info);
-void encode_evolver_info_big_endian(ui::EvolutionInfo &info);
 void encode_fractal_info_big_endian(FractalInfo &info);
+void decode_fractal_info_big_endian(FractalInfo &info);
+void encode_evolver_info_big_endian(ui::EvolutionInfo &info);
+void decode_evolver_info_big_endian(ui::EvolutionInfo &info);
 void encode_orbits_info_big_endian(OrbitsInfo &info);
+void decode_orbits_info_big_endian(OrbitsInfo &info);
 
 inline void decode_evolver_info(ui::EvolutionInfo &info)
 {
