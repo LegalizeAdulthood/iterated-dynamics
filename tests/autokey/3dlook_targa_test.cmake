@@ -4,6 +4,8 @@ function(dump_var name)
     message(STATUS "${name}=${${name}}")
 endfunction()
 
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/ImageTestArtifacts.cmake")
+
 set(DEBUG ON)
 if(DEBUG)
     set(COMMAND_ECHO "STDOUT")
@@ -15,6 +17,8 @@ if(DEBUG)
     dump_var(ID)
     dump_var(IMAGE_COMPARE)
     dump_var(GOLD_IMAGE)
+    dump_var(DIFF_IMAGE)
+    dump_var(TEST_ARTIFACT_DIR)
     dump_var(ID_EXTRA_ARGS)
 endif()
 
@@ -25,6 +29,7 @@ set(TGA_FILE "image/3dlook-targa.tga")
 
 file(MAKE_DIRECTORY "image")
 file(REMOVE "${TGA_FILE}")
+file(REMOVE "${DIFF_IMAGE}")
 if(NOT EXISTS "${POT_FILE}")
     message(FATAL_ERROR "Potential file '${POT_FILE}' does not exist.")
 endif()
@@ -48,6 +53,14 @@ if(NOT EXISTS "${TGA_FILE}")
 endif()
 
 execute_process(
-    COMMAND "${IMAGE_COMPARE}" "${GOLD_IMAGE}" "${TGA_FILE}"
-    COMMAND_ERROR_IS_FATAL ANY
+    COMMAND "${IMAGE_COMPARE}" "--diff-image" "${DIFF_IMAGE}"
+        "${GOLD_IMAGE}" "${TGA_FILE}"
+    RESULT_VARIABLE IMAGE_COMPARE_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})
+if(IMAGE_COMPARE_RESULT)
+    copy_image_failure_artifacts("${TEST_ARTIFACT_DIR}"
+        "${GOLD_IMAGE}"
+        "${TGA_FILE}"
+        "${DIFF_IMAGE}")
+    message(FATAL_ERROR "Image comparison failed with result ${IMAGE_COMPARE_RESULT}.")
+endif()

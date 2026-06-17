@@ -5,6 +5,7 @@ function(dump_var name)
 endfunction()
 
 include(CompareGoldText)
+include(ImageTestArtifacts)
 
 set(DEBUG ON)
 if(DEBUG)
@@ -21,6 +22,8 @@ if(DEBUG)
     dump_var(AUTO_KEY)
     dump_var(GOLD_IMAGE)
     dump_var(TEST_IMAGE)
+    dump_var(DIFF_IMAGE)
+    dump_var(TEST_ARTIFACT_DIR)
     dump_var(SCRIPT_FILE)
     dump_var(GOLD_SCRIPT)
     dump_var(GOLD_PAR)
@@ -84,7 +87,8 @@ if(RUN_SCRIPT)
         "frmig_10.gif"
         "frmig_11.gif"
         "fractmig.gif"
-        "${TEST_IMAGE}")
+        "${TEST_IMAGE}"
+        "${DIFF_IMAGE}")
     if(CMAKE_HOST_WIN32)
         if(NOT DEFINED ID_DIR OR ID_DIR STREQUAL "")
             message(FATAL_ERROR "ID_DIR is required to run '${SCRIPT_FILE}'.")
@@ -118,7 +122,15 @@ if(RUN_SCRIPT)
     endforeach()
 
     file(COPY_FILE "${OUTPUT}" "${TEST_IMAGE}")
-    execute_process(COMMAND "${IMAGE_COMPARE}" "${GOLD_IMAGE}" "${TEST_IMAGE}"
-        COMMAND_ERROR_IS_FATAL ANY
+    execute_process(COMMAND "${IMAGE_COMPARE}" "--diff-image" "${DIFF_IMAGE}"
+            "${GOLD_IMAGE}" "${TEST_IMAGE}"
+        RESULT_VARIABLE IMAGE_COMPARE_RESULT
         COMMAND_ECHO ${COMMAND_ECHO})
+    if(IMAGE_COMPARE_RESULT)
+        copy_image_failure_artifacts("${TEST_ARTIFACT_DIR}"
+            "${GOLD_IMAGE}"
+            "${TEST_IMAGE}"
+            "${DIFF_IMAGE}")
+        message(FATAL_ERROR "Image comparison failed with result ${IMAGE_COMPARE_RESULT}.")
+    endif()
 endif()

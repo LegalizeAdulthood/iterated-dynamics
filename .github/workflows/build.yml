@@ -496,10 +496,7 @@ jobs:
       with:
         name: image-test-diagnostics-${{github.job}}-${{matrix.os}}-${{matrix.preset}}-${{github.run_attempt}}
         if-no-files-found: ignore
-        path: |
-          ${{github.workspace}}/build-ci-${{matrix.preset}}/**/test-*.gif
-          ${{github.workspace}}/build-ci-${{matrix.preset}}/**/test-*.pot
-          ${{github.workspace}}/build-ci-${{matrix.preset}}/**/*-diff.png
+        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/test-artifacts/
 
     - name: Analyze vcpkg package cache
       if: always()

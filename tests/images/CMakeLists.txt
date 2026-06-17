@@ -89,6 +89,8 @@ function(add_make_mig_test)
             "-DCOMPONENT_IMAGE_DIR=${CMAKE_CURRENT_SOURCE_DIR}"
             "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-make_mig.gif"
             "-DTEST_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/test-make_mig.gif"
+            "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/make-mig-diff.png"
+            "-DTEST_ARTIFACT_DIR=${CMAKE_BINARY_DIR}/test-artifacts/ImageTest.make-mig"
             "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
             -P "${CMAKE_CURRENT_SOURCE_DIR}/make_mig_test.cmake"
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/home"

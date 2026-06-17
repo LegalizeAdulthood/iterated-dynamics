@@ -4,6 +4,8 @@ function(dump_var name)
     message(STATUS "${name}=${${name}}")
 endfunction()
 
+include("${CMAKE_CURRENT_LIST_DIR}/../cmake/ImageTestArtifacts.cmake")
+
 set(DEBUG ON)
 if(DEBUG)
     set(COMMAND_ECHO "STDOUT")
@@ -17,6 +19,8 @@ if(DEBUG)
     dump_var(COMPONENT_IMAGE_DIR)
     dump_var(GOLD_IMAGE)
     dump_var(TEST_IMAGE)
+    dump_var(DIFF_IMAGE)
+    dump_var(TEST_ARTIFACT_DIR)
     dump_var(ID_EXTRA_ARGS)
 endif()
 
@@ -35,7 +39,8 @@ file(REMOVE
     "frmig_10.gif"
     "frmig_11.gif"
     "fractmig.gif"
-    "${TEST_IMAGE}")
+    "${TEST_IMAGE}"
+    "${DIFF_IMAGE}")
 foreach(component 00 01 10 11)
     set(COMPONENT_IMAGE "${COMPONENT_IMAGE_DIR}/make_mig_${component}.gif")
     if(NOT EXISTS "${COMPONENT_IMAGE}")
@@ -64,6 +69,14 @@ foreach(component 00 01 10 11)
 endforeach()
 
 file(COPY_FILE "${OUTPUT}" "${TEST_IMAGE}")
-execute_process(COMMAND "${IMAGE_COMPARE}" "${GOLD_IMAGE}" "${TEST_IMAGE}"
-    COMMAND_ERROR_IS_FATAL ANY
+execute_process(COMMAND "${IMAGE_COMPARE}" "--diff-image" "${DIFF_IMAGE}"
+        "${GOLD_IMAGE}" "${TEST_IMAGE}"
+    RESULT_VARIABLE IMAGE_COMPARE_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})
+if(IMAGE_COMPARE_RESULT)
+    copy_image_failure_artifacts("${TEST_ARTIFACT_DIR}"
+        "${GOLD_IMAGE}"
+        "${TEST_IMAGE}"
+        "${DIFF_IMAGE}")
+    message(FATAL_ERROR "Image comparison failed with result ${IMAGE_COMPARE_RESULT}.")
+endif()

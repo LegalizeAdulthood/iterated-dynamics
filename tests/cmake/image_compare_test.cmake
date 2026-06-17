@@ -4,6 +4,8 @@ function(dump_var name)
     message(STATUS "${name}=${${name}}")
 endfunction()
 
+include("${CMAKE_CURRENT_LIST_DIR}/ImageTestArtifacts.cmake")
+
 set(DEBUG ON)
 if(DEBUG)
     set(COMMAND_ECHO "STDOUT")
@@ -21,6 +23,7 @@ if(DEBUG)
     dump_var(TEST_SAVE_IMAGE)
     dump_var(TEST_KEEP_IMAGE)
     dump_var(DIFF_IMAGE)
+    dump_var(TEST_ARTIFACT_DIR)
     dump_var(IMAGE_TEST_IGNORE_COLORMAP)
     dump_var(ID_EXTRA_ARGS)
     message(STATUS "Parameters:")
@@ -55,5 +58,12 @@ endif()
 list(APPEND IMAGE_COMPARE_ARGS "--diff-image" "${DIFF_IMAGE}")
 list(APPEND IMAGE_COMPARE_ARGS "${GOLD_IMAGE}" "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}")
 execute_process(COMMAND "${IMAGE_COMPARE}" ${IMAGE_COMPARE_ARGS}
-    COMMAND_ERROR_IS_FATAL ANY
+    RESULT_VARIABLE IMAGE_COMPARE_RESULT
     COMMAND_ECHO ${COMMAND_ECHO})
+if(IMAGE_COMPARE_RESULT)
+    copy_image_failure_artifacts("${TEST_ARTIFACT_DIR}"
+        "${GOLD_IMAGE}"
+        "${TEST_KEEP_IMAGE}/${TEST_SAVE_IMAGE}"
+        "${DIFF_IMAGE}")
+    message(FATAL_ERROR "Image comparison failed with result ${IMAGE_COMPARE_RESULT}.")
+endif()
