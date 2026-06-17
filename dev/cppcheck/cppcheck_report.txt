@@ -3376,7 +3376,7 @@ libid/ui/get_fract_type.cpp:634:40: warning: Char literal compared with pointer 
 libid/ui/get_fract_type.cpp:638:45: warning: Char literal compared with pointer 'choices[prompt_num][0]'. Did you intend to dereference it? [charLiteralWithCharPtrCompare]
             else if (choices[prompt_num][0] == '#')
                                             ^
-libid/ui/help.cpp:1332:9: style: Condition '!path.empty()' is always true [knownConditionTrueFalse]
+libid/ui/help.cpp:1334:9: style: Condition '!path.empty()' is always true [knownConditionTrueFalse]
     if (!path.empty())
         ^
 libid/ui/make_batch_file.cpp:1531:9: style: Condition '!colors_only' is always true [knownConditionTrueFalse]
