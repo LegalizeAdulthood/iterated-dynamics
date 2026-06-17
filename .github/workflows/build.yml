@@ -244,34 +244,50 @@ jobs:
         REF_TYPE: ${{github.ref_type}}
       run: |
         run_wx=false
+        mode=tag
+        base=""
+        changed_files=""
         if [ "$REF_TYPE" != "tag" ]; then
+          mode=diff
           base="$BEFORE"
           if [ -n "$PR_BASE" ]; then
             base="$PR_BASE"
+            mode=pull-request
           fi
           if [ -z "$base" ] || [[ "$base" =~ ^0+$ ]]; then
+            mode=full-tree
             changed_files="$(git ls-tree -r --name-only "$HEAD")"
-          else
+          elif git cat-file -e "$base^{commit}" 2>/dev/null; then
             changed_files="$(git diff --name-only "$base" "$HEAD")"
+          else
+            mode=missing-base
+            echo "::warning::Base commit $base is unavailable; assuming wx changed"
+            run_wx=true
           fi
-          for path in $changed_files; do
-            case "$path" in
-              wx/*)
+          if [ "$run_wx" != "true" ]; then
+            for path in $changed_files; do
+              case "$path" in
+                wx/*)
+                  run_wx=true
+                  break
+                  ;;
+              esac
+              if git grep -q "ID_USE_WX" "$HEAD" -- "$path" 2>/dev/null; then
                 run_wx=true
                 break
-                ;;
-            esac
-            if git grep -q "ID_USE_WX" "$HEAD" -- "$path" 2>/dev/null; then
-              run_wx=true
-              break
-            fi
-            if [ -n "$base" ] && ! [[ "$base" =~ ^0+$ ]] &&
-                git grep -q "ID_USE_WX" "$base" -- "$path" 2>/dev/null; then
-              run_wx=true
-              break
-            fi
-          done
+              fi
+              if [ -n "$base" ] && ! [[ "$base" =~ ^0+$ ]] &&
+                  git grep -q "ID_USE_WX" "$base" -- "$path" 2>/dev/null; then
+                run_wx=true
+                break
+              fi
+            done
+          fi
         fi
+        echo "wx_changes base=$base"
+        echo "wx_changes head=$HEAD"
+        echo "wx_changes mode=$mode"
+        echo "wx_changes run_wx=$run_wx"
         echo "run_wx=$run_wx" >> "$GITHUB_OUTPUT"
 
   #############################################################################
