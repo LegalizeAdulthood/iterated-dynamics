@@ -95,8 +95,10 @@
 #include <functional>
 #include <iterator>
 #include <limits>
+#include <locale>
 #include <numeric>
 #include <optional>
+#include <sstream>
 #include <string>
 #include <string_view>
 #include <system_error>
@@ -193,10 +195,10 @@ static bool parse_command_number(std::string_view text, double &value)
     {
         return false;
     }
-    const char *const first{text.data()};
-    const char *const last{first + text.size()};
-    const std::from_chars_result result{std::from_chars(first, last, value)};
-    return result.ec == std::errc{} && result.ptr == last;
+    std::istringstream input{std::string{text}};
+    input.imbue(std::locale::classic());
+    input >> value;
+    return input && input.eof();
 }
 
 // cmdfiles(argc,argv) process the command-line arguments
