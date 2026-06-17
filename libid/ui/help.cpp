@@ -221,7 +221,8 @@ static void display_parse_text(const char *text, unsigned len, const int start_m
                     break;
                 }
 
-                if (tok == TokenType::TOK_XONLINE || tok == TokenType::TOK_XDOC)
+                if (tok == TokenType::TOK_XONLINE || tok == TokenType::TOK_XDOC ||
+                    tok == TokenType::TOK_XADOC)
                 {
                     curr += size;
                     len  -= size;
@@ -299,6 +300,7 @@ static void display_parse_text(const char *text, unsigned len, const int start_m
         case TokenType::TOK_XONLINE:  // skip
         case TokenType::TOK_FF:       // ignore
         case TokenType::TOK_XDOC:     // ignore
+        case TokenType::TOK_XADOC:    // ignore
         case TokenType::TOK_DONE:
         case TokenType::TOK_SPACE:
             break;
