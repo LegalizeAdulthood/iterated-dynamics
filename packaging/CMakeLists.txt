@@ -22,6 +22,27 @@ set(CPACK_RESOURCE_FILE_LICENSE         "${CMAKE_SOURCE_DIR}/LICENSE.txt")
 set(CPACK_RESOURCE_FILE_README          "${CMAKE_CURRENT_SOURCE_DIR}/ReadMe.txt")
 set(CPACK_PACKAGE_EXECUTABLES           "id" "${ID_PROGRAM_NAME}")
 
+set(ID_PACKAGE_VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
+set(ID_TRANSLATE_SYSTEM_NAME_Darwin "mac")
+set(ID_TRANSLATE_SYSTEM_NAME_Linux "linux")
+set(ID_TRANSLATE_SYSTEM_NAME_Windows "win")
+set(ID_TRANSLATE_SYSTEM_NAME "${ID_TRANSLATE_SYSTEM_NAME_${CMAKE_SYSTEM_NAME}}")
+set(ID_TRANSLATE_PROCESSOR_AMD64 "x64")
+set(ID_TRANSLATE_PROCESSOR_ARM64 "arm64")
+set(ID_TRANSLATE_PROCESSOR_aarch64 "arm64")
+set(ID_TRANSLATE_PROCESSOR_arm64 "arm64")
+set(ID_TRANSLATE_PROCESSOR_x86_64 "x64")
+set(ID_TRANSLATE_PROCESSOR "${ID_TRANSLATE_PROCESSOR_${CMAKE_SYSTEM_PROCESSOR}}")
+if(NOT ID_TRANSLATE_SYSTEM_NAME)
+    string(TOLOWER "${CMAKE_SYSTEM_NAME}" ID_TRANSLATE_SYSTEM_NAME)
+endif()
+if(NOT ID_TRANSLATE_PROCESSOR)
+    set(ID_TRANSLATE_PROCESSOR "${CMAKE_SYSTEM_PROCESSOR}")
+endif()
+set(ID_PACKAGE_BASE_NAME
+    "${ID_PROGRAM_NAME}-${ID_PACKAGE_VERSION}-${ID_TRANSLATE_SYSTEM_NAME}-${ID_TRANSLATE_PROCESSOR}")
+set(CPACK_PACKAGE_FILE_NAME "${ID_PACKAGE_BASE_NAME}")
+
 if(WIN32)
     set(CPACK_GENERATOR "ZIP" "WIX")
 
@@ -41,9 +62,6 @@ if(WIN32)
     set(CPACK_WIX_PATCH_FILE            "${CMAKE_CURRENT_SOURCE_DIR}/patch.xml")
     set(CPACK_WIX_INSTALL_SCOPE         "perMachine")
     
-    # Define the version for WiX variables in the Bundle.wxs
-    set(VERSION "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}")
-    
     # Add a custom target to build the Burn bootstrapper after the MSI is built
     add_custom_target(setup
         COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads
@@ -53,9 +71,9 @@ if(WIN32)
         COMMAND ${CPACK_WIX_CANDLE_EXECUTABLE}
             "-dProjectDir=$<SHELL_PATH:${CMAKE_CURRENT_SOURCE_DIR}/>"
             "-dID_PROGRAM_NAME=${ID_PROGRAM_NAME}"
-            "-dID_PACKAGE_FILE=$<SHELL_PATH:${CMAKE_BINARY_DIR}/${ID_PROGRAM_NAME}-${VERSION}-win64.msi>"
+            "-dID_PACKAGE_FILE=$<SHELL_PATH:${CMAKE_BINARY_DIR}/${ID_PACKAGE_BASE_NAME}.msi>"
             "-dID_VENDOR_NAME=${ID_VENDOR_NAME}"
-            "-dVERSION=${VERSION}"
+            "-dVERSION=${ID_PACKAGE_VERSION}"
             -ext WixBalExtension
             -ext WixUtilExtension
             -out ${CMAKE_CURRENT_BINARY_DIR}/bundle/Bundle.wixobj
@@ -63,7 +81,7 @@ if(WIN32)
         COMMAND ${CPACK_WIX_LIGHT_EXECUTABLE}
             -ext WixBalExtension 
             -ext WixUtilExtension
-            -out ${CMAKE_BINARY_DIR}/${ID_PROGRAM_NAME}-${VERSION}-Setup.exe
+            -out ${CMAKE_BINARY_DIR}/${ID_PACKAGE_BASE_NAME}-Setup.exe
             -b downloads=${CMAKE_CURRENT_BINARY_DIR}/bundle/downloads
             ${CMAKE_CURRENT_BINARY_DIR}/bundle/Bundle.wixobj
         DEPENDS package
