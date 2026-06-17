@@ -6,7 +6,13 @@
 
 #include <fmt/core.h>
 
+#include <cstdint>
 #include <string_view>
+#include <vector>
+
+#if defined(__APPLE__)
+#include <mach-o/dyld.h>
+#endif
 
 namespace fs = std::filesystem;
 
@@ -17,6 +23,40 @@ namespace
 {
 
 fs::path s_executable{"xid"};
+
+fs::path canonical_path(const fs::path &path)
+{
+    std::error_code err;
+    const fs::path canonical{fs::weakly_canonical(path, err)};
+    return err || canonical.empty() ? path : canonical;
+}
+
+fs::path current_executable_path()
+{
+#if defined(__APPLE__)
+    std::uint32_t size{1024};
+    std::vector<char> path(size);
+    if (_NSGetExecutablePath(path.data(), &size) != 0)
+    {
+        if (size == 0)
+        {
+            return {};
+        }
+        path.resize(size);
+        if (_NSGetExecutablePath(path.data(), &size) != 0)
+        {
+            return {};
+        }
+    }
+    return canonical_path(path.data());
+#elif defined(__linux__)
+    std::error_code err;
+    const fs::path self{fs::read_symlink("/proc/self/exe", err)};
+    return err ? fs::path{} : self;
+#else
+    return {};
+#endif
+}
 
 std::string shell_quote(const std::string_view text)
 {
@@ -49,9 +89,8 @@ void write_error_check(std::FILE *script_file)
 
 void set_make_mig_script_executable(const char *path)
 {
-    std::error_code err;
-    const fs::path self{fs::read_symlink("/proc/self/exe", err)};
-    if (!err && !self.empty())
+    const fs::path self{current_executable_path()};
+    if (!self.empty())
     {
         s_executable = self;
     }
