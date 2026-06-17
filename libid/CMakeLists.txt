@@ -281,6 +281,7 @@ set_source_files_properties(io/decode_info.cpp
         COMPILE_FLAGS $<$<CXX_COMPILER_ID:GNU>:-Wno-address-of-packed-member>)
 target_compile_options(libid PUBLIC ${ID_TARGET_OPTIONS})
 target_include_directories(libid PUBLIC include)
+prefer_vcpkg_gif_includes(libid)
 if(ID_USE_WX)
     set(ID_OS_LIBS os-wx)
 else()

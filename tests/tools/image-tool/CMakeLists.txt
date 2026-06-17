@@ -10,5 +10,6 @@ add_library(image-tool STATIC
     include/image-tool/gif_json.h
 )
 target_include_directories(image-tool PUBLIC include)
+prefer_vcpkg_gif_includes(image-tool)
 target_link_libraries(image-tool PUBLIC GIF::GIF fmt::fmt-header-only)
 target_folder(image-tool "Tests/Libraries")

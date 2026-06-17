@@ -46,7 +46,20 @@ function(_prefer_vcpkg_gif_configure_target)
     if(TARGET GIF::GIF)
         # Imported target includes are system includes by default, which lets
         # Homebrew's implicit include path win over vcpkg on macOS.
-        set_target_properties(GIF::GIF PROPERTIES IMPORTED_NO_SYSTEM TRUE)
+        set_target_properties(GIF::GIF PROPERTIES
+            IMPORTED_NO_SYSTEM TRUE
+            SYSTEM FALSE)
+    endif()
+endfunction()
+
+function(prefer_vcpkg_gif_includes target)
+    _prefer_vcpkg_gif_configure_target()
+    get_target_property(GIF_INCLUDE_DIRS GIF::GIF INTERFACE_INCLUDE_DIRECTORIES)
+    if(GIF_INCLUDE_DIRS)
+        message(STATUS
+            "Using GIF include directory for ${target}: ${GIF_INCLUDE_DIRS}")
+        set_target_properties(${target} PROPERTIES NO_SYSTEM_FROM_IMPORTED TRUE)
+        target_include_directories(${target} BEFORE PUBLIC ${GIF_INCLUDE_DIRS})
     endif()
 endfunction()
 

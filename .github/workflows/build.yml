@@ -460,12 +460,32 @@ jobs:
           exit $LASTEXITCODE
         }
 
-    - name: Run Workflow macOS
+    - name: Configure macOS
       if: ${{matrix.os == 'macos-latest'}}
       shell: pwsh
       run: |
-        cmake --workflow --preset ci-macos-${{matrix.preset}} 2>&1 |
+        cmake --preset ci-${{matrix.preset}} 2>&1 |
           Tee-Object -FilePath build.log
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
+
+    - name: Build macOS
+      if: ${{matrix.os == 'macos-latest'}}
+      shell: pwsh
+      run: |
+        cmake --build --preset ci-${{matrix.preset}} --verbose 2>&1 |
+          Tee-Object -FilePath build.log -Append
+        if ($LASTEXITCODE -ne 0) {
+          exit $LASTEXITCODE
+        }
+
+    - name: Test macOS
+      if: ${{matrix.os == 'macos-latest'}}
+      shell: pwsh
+      run: |
+        ctest --preset ci-macos-${{matrix.preset}} 2>&1 |
+          Tee-Object -FilePath build.log -Append
         if ($LASTEXITCODE -ne 0) {
           exit $LASTEXITCODE
         }
