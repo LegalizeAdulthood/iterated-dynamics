@@ -275,7 +275,7 @@ var searchData=
   ['sqr_5ffn_272',['SQR_FN',['../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca5de437242e659a966892f9d668830626',1,'id::fractals']]],
   ['sqr_5ftrig_5forbit_273',['sqr_trig_orbit',['../d5/d38/namespaceid_1_1fractals.html#ae1d5d3890a6cff8a90b32ddb8fd2d912',1,'id::fractals']]],
   ['sqr_5ftrig_5fper_5fimage_274',['sqr_trig_per_image',['../d5/d38/namespaceid_1_1fractals.html#af48e4ccbe2c118f33c2ce06417cabc05',1,'id::fractals']]],
-  ['sqrt_275',['sqrt',['../d0/db0/namespaceid_1_1math.html#aec7d095aaa2e633606ac99b938caf8e4',1,'id::math::sqrt(double x, double y)'],['../d0/db0/namespaceid_1_1math.html#ad580076a00bf89df3fb43eeda943b708',1,'id::math::sqrt(const DComplex &amp;z)'],['../dc/d31/namespaceid_1_1engine.html#afb93d78515f158d8ea00d0f408bf9416a36875f2500a09ee35d0bb7eb8c0b91b0',1,'id::engine::SQRT']]],
+  ['sqrt_275',['sqrt',['../dc/d31/namespaceid_1_1engine.html#afb93d78515f158d8ea00d0f408bf9416a36875f2500a09ee35d0bb7eb8c0b91b0',1,'id::engine::SQRT'],['../d0/db0/namespaceid_1_1math.html#aec7d095aaa2e633606ac99b938caf8e4',1,'id::math::sqrt(double x, double y)'],['../d0/db0/namespaceid_1_1math.html#ad580076a00bf89df3fb43eeda943b708',1,'id::math::sqrt(const DComplex &amp;z)']]],
   ['sqrt3_276',['SQRT3',['../d5/d38/namespaceid_1_1fractals.html#ace605f4912273668823e4f5d522e2a22',1,'id::fractals']]],
   ['sqrt_5fbf_277',['sqrt_bf',['../d0/db0/namespaceid_1_1math.html#ae5f7b8b4a665cdd933fa9f7832aa03d8',1,'id::math']]],
   ['sqrt_5fbn_278',['sqrt_bn',['../d0/db0/namespaceid_1_1math.html#a758b882307c7ca24edf16d47e6826e80',1,'id::math']]],
