@@ -68,7 +68,7 @@ add_test(NAME AutoKeyTest.rds-random
         "-DID=$<SHELL_PATH:$<TARGET_FILE:id>>"
         "-DIMAGE_COMPARE=$<SHELL_PATH:$<TARGET_FILE:image-compare>>"
         "-DGOLD_IMAGE=${CMAKE_CURRENT_SOURCE_DIR}/gold-rds-random.gif"
-        "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/rds-random-diff.gif"
+        "-DDIFF_IMAGE=${CMAKE_CURRENT_BINARY_DIR}/rds-random-diff.png"
         "-DID_EXTRA_ARGS=${ID_EXTRA_ARGS}"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/rds_random_test.cmake"
     WORKING_DIRECTORY "${RDS_RANDOM_HOME}"

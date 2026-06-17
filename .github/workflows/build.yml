@@ -490,6 +490,17 @@ jobs:
         DISPLAY=:99 cmake --workflow --preset ci-${{matrix.preset}} 2>&1 |
           tee build.log
 
+    - name: Upload failed image test artifacts
+      if: failure()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: image-test-diagnostics-${{github.job}}-${{matrix.os}}-${{matrix.preset}}-${{github.run_attempt}}
+        if-no-files-found: ignore
+        path: |
+          ${{github.workspace}}/build-ci-${{matrix.preset}}/**/test-*.gif
+          ${{github.workspace}}/build-ci-${{matrix.preset}}/**/test-*.pot
+          ${{github.workspace}}/build-ci-${{matrix.preset}}/**/*-diff.png
+
     - name: Analyze vcpkg package cache
       if: always()
       uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4305d9f202bf0131458407402f0cc7efc3412394 # v1.1.0
