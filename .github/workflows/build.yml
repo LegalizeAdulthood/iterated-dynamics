@@ -369,6 +369,7 @@ jobs:
         echo "wx-changes head=$HEAD"
         echo "wx-changes mode=$mode"
         echo "wx-changes run-wx=$run_wx"
+        echo "<h3>Build wx: $run_wx</h3>" >> "$GITHUB_STEP_SUMMARY"
         echo "run-wx=$run_wx" >> "$GITHUB_OUTPUT"
 
   #############################################################################
