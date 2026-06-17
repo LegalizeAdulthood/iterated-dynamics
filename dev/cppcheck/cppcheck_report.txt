@@ -136,13 +136,13 @@ libid/fractals/Cellular.cpp:144:32: note: Condition 't<0' is always false
 libid/fractals/Plasma.cpp:37:18: error: There is an unknown macro here somewhere. Configuration is required. If U16 is a macro then please configure it. [unknownMacro]
 static constexpr U16 (*GET_COLOR)(int x, int y){
                  ^
-libid/fractals/lsystem.cpp:115:20: style: Opposite expression on both sides of '&'. [oppositeExpression]
+libid/fractals/lsystem.cpp:116:20: style: Opposite expression on both sides of '&'. [oppositeExpression]
     return n == (n & -n);
                    ^
-libid/fractals/lsystem.cpp:936:21: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
+libid/fractals/lsystem.cpp:937:21: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
         s_rule_cmds.push_back(lsys_size_transform(rule.c_str(), &ts));
                     ^
-libid/fractals/lsystem.cpp:951:25: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
+libid/fractals/lsystem.cpp:952:25: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
             s_rule_cmds.push_back(lsys_draw_transform(rule.c_str(), &ts));
                         ^
 libid/fractals/parser.cpp:905:13: warning: Opposite inner 'if' condition leads to a dead code block. [oppositeInnerCondition]
