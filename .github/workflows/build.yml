@@ -345,6 +345,11 @@ jobs:
                   run_wx=true
                   break
                   ;;
+                .github/workflows/wx-requirements.txt)
+                  echo "wx-changes matched-wx-requirements=$path"
+                  run_wx=true
+                  break
+                  ;;
               esac
               if printf "%s\n" "$wx_headers" | grep -Fxq "$path"; then
                 echo "wx-changes matched-wx-header=$path"
