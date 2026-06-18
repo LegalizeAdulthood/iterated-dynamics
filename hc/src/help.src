@@ -274,8 +274,8 @@ New Features in Version 1.4.0
 
 o The Linux port is complete.  It provides native Linux text and
   graphics windows and uses the standard id.cfg video mode table.
-o The macOS port is complete, but untested.
-  See {Id on Linux and macOS} (Fixes #42)
+o The macOS port is complete.  See {Id on Linux and macOS}.
+  (Fixes #42)
 o Libraries are used to group data files for Id.  See {Libraries}.
   (Fixes #95)
 o The documentation is now available in PDF format.  (Fixes #262)\

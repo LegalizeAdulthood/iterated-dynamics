@@ -197,8 +197,8 @@ that directory.  Include files are similarly grouped in subdirectories of
 
 Additional files are in the following directories:
 
-- `unix`
-    Files needed for the unix platform.
+- `x11`
+    X11 driver for Linux and macOS.
 
 - `win32`
     Files needed for the Windows platform.

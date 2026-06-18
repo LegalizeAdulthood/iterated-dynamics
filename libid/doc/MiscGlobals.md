@@ -239,7 +239,7 @@ These variables represent fundamental system services that are difficult to elim
 The driver system abstracts platform differences:
 
 - Windows driver implementation in `win32/` directory
-- Unix driver implementation in `unix/` directory  
+- X11 driver implementation for Linux and macOS in `x11/` directory
 - Common driver interface in `misc/Driver.h`
 - Platform-specific behavior hidden behind driver interface
 - Cross-platform code calls driver functions without knowing platform
