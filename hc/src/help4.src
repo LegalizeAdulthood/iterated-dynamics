@@ -332,7 +332,8 @@ The default save library is "Iterated Dynamics" in the user's
 Documents folder on Windows.  On Linux, the Documents folder is taken
 from XDG_DOCUMENTS_DIR or from user-dirs.dirs in XDG_CONFIG_HOME or
 $HOME/.config.  If no Linux Documents folder is configured,
-$HOME/Documents is used.
+$HOME/Documents is used.  On macOS, the user's Documents folder is
+used.
 
 To locate an input file, Id looks in the following locations.
 First, if the input file is specified as an absolute path, it is
@@ -1168,7 +1169,8 @@ Sets the save library location used for writing output files.  All output
 files are created under this location.  The default save library is
 "Iterated Dynamics" in the user's Documents folder on Windows.  On Linux,
 the Documents folder is read from XDG_DOCUMENTS_DIR or user-dirs.dirs,
-falling back to $HOME/Documents.  See {Libraries}.
+falling back to $HOME/Documents.  On macOS, the user's Documents folder is
+uesd.  See {Libraries}.
 
 SAVENAME=[<path>\\][name]\
 Set the path and/or filename to use when you <S>ave a screen.  The default
@@ -1548,17 +1550,13 @@ your hard disk is getting too strenuous a workout.
 ;
 ~Topic=Customized Video Modes\, id.cfg
 
-If you have a favorite video mode that you would like to add to
-Id... if you want some new sizes of disk-video modes... if you want
-to remove table entries that you do not use... relief
-is here, and without even learning "C++"!
+While Id no longer drives the graphics card directly, the concept
+of a "video mode" still survives.  It determines the dimesions of
+the display window and the dimensoins of the saved image.  You can
+customize the table of modes by modifying the id.cfg file with your
+text editor.  Saving a backup copy of id.cfg first is of course
+highly recommended!
 
-You can do these things by modifying the id.cfg file with your text
-editor.  Saving a backup copy of id.cfg first is of course highly
-recommended!
-
-Id uses a video mode table to describe available video modes that
-you can use.
 The table is loaded from the file id.cfg each time Id is run.
 It can contain information for up to 300 video modes.
 The table entries, and the function keys they are tied to,
@@ -1581,9 +1579,9 @@ The fields are defined as:
 3. The number of pixels across the screen (X, from 2 to 65535)
 4. The number of pixels down the screen (Y, from 2 to 65535)
 5. The number of available colors (2, 4, 16, or 256)
-6. The name of the driver for the video mode.  The Win32 GDI and Linux X11
-   drivers use "gdi".  On Linux, X11 accepts 256-color "gdi" modes that
-   fit on the current X screen.  Disk modes use "disk".
+6. The name of the driver for the video mode.  The Win32 GDI, Linux X11
+   and macOS X11 drivers use "gdi".  Id accepts 256-color "gdi" modes that
+   fit on the current screen.  Disk modes use "disk".
 7. A comment describing the mode (25 chars max, leading blanks are OK)
 ~Format+
 

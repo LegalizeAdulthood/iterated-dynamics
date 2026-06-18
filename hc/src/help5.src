@@ -1212,9 +1212,14 @@ DISTRIBUTION OF ID
 
 New versions of Iterated Dynamics are released through github,
 <https://github.com/LegalizeAdulthood/iterated-dynamics>,
-and make their way to other systems from that point.  Id is available as
-a Windows MSI installer, a Windows ZIP file containing binaries, a Linux
-tar.gz package and as a source code ZIP file.
+and make their way to other systems from that point.  Id is available for
+Windows, Linux and macOS.  For Windows, you have a choice between a
+Setup program, a Windows MSI installer, or a ZIP file containing binaries.
+Linux and macOS users are provided with a tar.gz package.  Since Id is
+open source, you can always obtain the source code from github and follow
+the instructions in the ReadMe for building.  While source archives are
+provided automatically by github on the releases page, it is recommended
+that you clone the source code from github directly.
 
 The latest version of the code can always be found on the github repository.
 ;

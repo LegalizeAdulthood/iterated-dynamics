@@ -310,8 +310,8 @@ o Online HTML documentation is now published to versioned permalink URLs
   before approval for the latest URL.  (Fixes #366)
 o Autokey files can now use caret notation for control-key command
   initiators, such as ^S for <Ctrl+S>.
-o MIG piece generation now writes a makemig.sh shell script on Linux.
-  (Fixes #370)
+o MIG piece generation now writes a makemig.sh shell script on Linux and
+  macOS. (Fixes #370)
 o Disk-video modes can now generate GIF-sized images up to 65535x65535.
   Windowed display modes still require a physical display large enough
   for the configured mode.
