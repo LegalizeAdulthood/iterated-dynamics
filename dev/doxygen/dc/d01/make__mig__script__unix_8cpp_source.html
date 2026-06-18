@@ -90,134 +90,174 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;fmt/core.h&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;string_view&gt;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">namespace </span>fs = std::filesystem;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;cstdint&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &lt;string_view&gt;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>{</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#if defined(__APPLE__)</span></div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &lt;mach-o/dyld.h&gt;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span>fs = std::filesystem;</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>fs::path s_executable{<span class="stringliteral">&quot;xid&quot;</span>};</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>std::string shell_quote(<span class="keyword">const</span> std::string_view <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#a23c058547fbc73b5659191844a9f258c">text</a>)</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    std::string result{<span class="stringliteral">&quot;&#39;&quot;</span>};</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">char</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a> : <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#a23c058547fbc73b5659191844a9f258c">text</a>)</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    {</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a> == <span class="charliteral">&#39;\&#39;&#39;</span>)</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        {</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>            result += <span class="stringliteral">&quot;&#39;\\&#39;&#39;&quot;</span>;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        }</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>            result += <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a>;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        }</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    }</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    result += <span class="stringliteral">&quot;&#39;&quot;</span>;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">return</span> result;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>}</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keywordtype">void</span> write_error_check(std::FILE *script_file)</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>{</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    fmt::print(script_file,</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="stringliteral">&quot;status=$?\n&quot;</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="stringliteral">&quot;if [ \&quot;${{status}}\&quot; -ge 2 ]; then\n&quot;</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="stringliteral">&quot;    exit \&quot;${{status}}\&quot;\n&quot;</span></div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <span class="stringliteral">&quot;fi\n&quot;</span>);</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>}</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>} <span class="comment">// namespace</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
-<div class="foldopen" id="foldopen00050" data-start="{" data-end="}">
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ab0554036096ec99c11af47f65dbaed69">   50</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ab0554036096ec99c11af47f65dbaed69">set_make_mig_script_executable</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>)</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>{</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    std::error_code err;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">const</span> fs::path self{fs::read_symlink(<span class="stringliteral">&quot;/proc/self/exe&quot;</span>, err)};</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keywordflow">if</span> (!err &amp;&amp; !self.empty())</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        s_executable = self;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    }</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a> != <span class="keyword">nullptr</span> &amp;&amp; *<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a> != 0)</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        s_executable = <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    }</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">namespace</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>{</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>fs::path s_executable{<span class="stringliteral">&quot;xid&quot;</span>};</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>fs::path canonical_path(<span class="keyword">const</span> fs::path &amp;<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>)</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>{</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    std::error_code err;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>    <span class="keyword">const</span> fs::path canonical{fs::weakly_canonical(<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>, err)};</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">return</span> err || canonical.empty() ? <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a> : canonical;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>fs::path current_executable_path()</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>{</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">#if defined(__APPLE__)</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    std::uint32_t <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>{1024};</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    std::vector&lt;char&gt; <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>(<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>);</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordflow">if</span> (_NSGetExecutablePath(<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.data(), &amp;<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>) != 0)</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    {</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a> == 0)</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        {</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        }</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.resize(<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>);</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordflow">if</span> (_NSGetExecutablePath(<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.data(), &amp;<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a>) != 0)</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        {</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>            <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        }</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>    }</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="keywordflow">return</span> canonical_path(<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>.data());</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">#elif defined(__linux__)</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    std::error_code err;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <span class="keyword">const</span> fs::path self{fs::read_symlink(<span class="stringliteral">&quot;/proc/self/exe&quot;</span>, err)};</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordflow">return</span> err ? fs::path{} : self;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keywordflow">return</span> {};</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>}</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>std::string shell_quote(<span class="keyword">const</span> std::string_view <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#a23c058547fbc73b5659191844a9f258c">text</a>)</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>{</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    std::string result{<span class="stringliteral">&quot;&#39;&quot;</span>};</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keywordtype">char</span> <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a> : <a class="code hl_variable" href="../../dc/ddd/parser_8cpp.html#a23c058547fbc73b5659191844a9f258c">text</a>)</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    {</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a> == <span class="charliteral">&#39;\&#39;&#39;</span>)</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>            result += <span class="stringliteral">&quot;&#39;\\&#39;&#39;&quot;</span>;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        }</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        {</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            result += <a class="code hl_variable" href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a>;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        }</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    }</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    result += <span class="stringliteral">&quot;&#39;&quot;</span>;</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    <span class="keywordflow">return</span> result;</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>}</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="keywordtype">void</span> write_error_check(std::FILE *script_file)</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>{</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    fmt::print(script_file,</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        <span class="stringliteral">&quot;status=$?\n&quot;</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        <span class="stringliteral">&quot;if [ \&quot;${{status}}\&quot; -ge 2 ]; then\n&quot;</span></div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="stringliteral">&quot;    exit \&quot;${{status}}\&quot;\n&quot;</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <span class="stringliteral">&quot;fi\n&quot;</span>);</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>}</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>} <span class="comment">// namespace</span></div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="foldopen" id="foldopen00090" data-start="{" data-end="}">
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ab0554036096ec99c11af47f65dbaed69">   90</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ab0554036096ec99c11af47f65dbaed69">set_make_mig_script_executable</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>)</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>{</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="keyword">const</span> fs::path self{current_executable_path()};</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordflow">if</span> (!self.empty())</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    {</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        s_executable = self;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    }</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a> != <span class="keyword">nullptr</span> &amp;&amp; *<a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a> != 0)</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    {</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        s_executable = <a class="code hl_variable" href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a>;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    }</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>}</div>
 </div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
-<div class="foldopen" id="foldopen00064" data-start="{" data-end="}">
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ac125026c64bd52ed6356a64f5c9cf495">   64</a></span>std::filesystem::path <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ac125026c64bd52ed6356a64f5c9cf495">make_mig_script_filename</a>()</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>{</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordflow">return</span> <span class="stringliteral">&quot;makemig.sh&quot;</span>;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>}</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="foldopen" id="foldopen00103" data-start="{" data-end="}">
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ac125026c64bd52ed6356a64f5c9cf495">  103</a></span>std::filesystem::path <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ac125026c64bd52ed6356a64f5c9cf495">make_mig_script_filename</a>()</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>{</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">return</span> <span class="stringliteral">&quot;makemig.sh&quot;</span>;</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>}</div>
 </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
-<div class="foldopen" id="foldopen00069" data-start="{" data-end="}">
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a90185aaa55b989a46b4d9c53a9794179">   69</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a90185aaa55b989a46b4d9c53a9794179">write_make_mig_script_header</a>(std::FILE *script_file)</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>{</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    fmt::print(script_file,</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="stringliteral">&quot;#!/bin/sh\n&quot;</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="stringliteral">&quot;# SPDX-License-Identifier: GPL-3.0-only\n&quot;</span></div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="stringliteral">&quot;#\n&quot;</span></div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="stringliteral">&quot;# Copyright 2026 Richard Thomson\n&quot;</span></div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="stringliteral">&quot;#\n&quot;</span></div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="stringliteral">&quot;\n&quot;</span></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        <span class="stringliteral">&quot;id_bin={:s}\n&quot;</span></div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="stringliteral">&quot;script_dir=$(dirname \&quot;$0\&quot;)\n&quot;</span></div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        <span class="stringliteral">&quot;cd \&quot;${{script_dir}}\&quot; || exit 2\n&quot;</span></div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        <span class="stringliteral">&quot;\n&quot;</span>,</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        shell_quote(s_executable.string()));</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>}</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
+<div class="foldopen" id="foldopen00108" data-start="{" data-end="}">
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a90185aaa55b989a46b4d9c53a9794179">  108</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a90185aaa55b989a46b4d9c53a9794179">write_make_mig_script_header</a>(std::FILE *script_file)</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>{</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    fmt::print(script_file,</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        <span class="stringliteral">&quot;#!/bin/sh\n&quot;</span></div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        <span class="stringliteral">&quot;# SPDX-License-Identifier: GPL-3.0-only\n&quot;</span></div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="stringliteral">&quot;#\n&quot;</span></div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="stringliteral">&quot;# Copyright 2026 Richard Thomson\n&quot;</span></div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        <span class="stringliteral">&quot;#\n&quot;</span></div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        <span class="stringliteral">&quot;\n&quot;</span></div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        <span class="stringliteral">&quot;id_bin={:s}\n&quot;</span></div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <span class="stringliteral">&quot;script_dir=$(dirname \&quot;$0\&quot;)\n&quot;</span></div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        <span class="stringliteral">&quot;cd \&quot;${{script_dir}}\&quot; || exit 2\n&quot;</span></div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        <span class="stringliteral">&quot;\n&quot;</span>,</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        shell_quote(s_executable.string()));</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>}</div>
 </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="foldopen" id="foldopen00085" data-start="{" data-end="}">
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a9d097b186611480f6234e623daf95701">   85</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a9d097b186611480f6234e623daf95701">write_make_mig_script_piece</a>(</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    std::FILE *script_file, <span class="keyword">const</span> std::filesystem::path &amp;parameter_file, <span class="keyword">const</span> std::string &amp;entry_name)</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>{</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    fmt::print(script_file,</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <span class="stringliteral">&quot;\&quot;${{id_bin}}\&quot;&quot;</span></div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="stringliteral">&quot; batch=yes&quot;</span></div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="stringliteral">&quot; overwrite=yes&quot;</span></div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        <span class="stringliteral">&quot; savedir=.&quot;</span></div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="stringliteral">&quot; {:s}\n&quot;</span>,</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        shell_quote(fmt::format(<span class="stringliteral">&quot;@{:s}/{:s}&quot;</span>, parameter_file.string(), entry_name)));</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    write_error_check(script_file);</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>}</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="foldopen" id="foldopen00124" data-start="{" data-end="}">
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#a9d097b186611480f6234e623daf95701">  124</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a9d097b186611480f6234e623daf95701">write_make_mig_script_piece</a>(</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    std::FILE *script_file, <span class="keyword">const</span> std::filesystem::path &amp;parameter_file, <span class="keyword">const</span> std::string &amp;entry_name)</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>{</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    fmt::print(script_file,</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>        <span class="stringliteral">&quot;\&quot;${{id_bin}}\&quot;&quot;</span></div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        <span class="stringliteral">&quot; batch=yes&quot;</span></div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>        <span class="stringliteral">&quot; overwrite=yes&quot;</span></div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        <span class="stringliteral">&quot; savedir=.&quot;</span></div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        <span class="stringliteral">&quot; {:s}\n&quot;</span>,</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        shell_quote(fmt::format(<span class="stringliteral">&quot;@{:s}/{:s}&quot;</span>, parameter_file.string(), entry_name)));</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    write_error_check(script_file);</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>}</div>
 </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
-<div class="foldopen" id="foldopen00098" data-start="{" data-end="}">
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ae6b5a29cf52907d2c98edbcded75f217">   98</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae6b5a29cf52907d2c98edbcded75f217">write_make_mig_script_finish</a>(std::FILE *script_file, <span class="keyword">const</span> <span class="keywordtype">int</span> x_multiple, <span class="keyword">const</span> <span class="keywordtype">int</span> y_multiple)</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>{</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    fmt::print(script_file,</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        <span class="stringliteral">&quot;\&quot;${{id_bin}}\&quot;&quot;</span></div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        <span class="stringliteral">&quot; savedir=.&quot;</span></div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <span class="stringliteral">&quot; makemig={:d}/{:d}\n&quot;</span>,</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>        x_multiple, y_multiple);</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>}</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
+<div class="foldopen" id="foldopen00137" data-start="{" data-end="}">
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ae6b5a29cf52907d2c98edbcded75f217">  137</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ae6b5a29cf52907d2c98edbcded75f217">write_make_mig_script_finish</a>(std::FILE *script_file, <span class="keyword">const</span> <span class="keywordtype">int</span> x_multiple, <span class="keyword">const</span> <span class="keywordtype">int</span> y_multiple)</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>{</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>    fmt::print(script_file,</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        <span class="stringliteral">&quot;\&quot;${{id_bin}}\&quot;&quot;</span></div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>        <span class="stringliteral">&quot; savedir=.&quot;</span></div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>        <span class="stringliteral">&quot; makemig={:d}/{:d}\n&quot;</span>,</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        x_multiple, y_multiple);</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>}</div>
 </div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
-<div class="foldopen" id="foldopen00107" data-start="{" data-end="}">
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ac38d6f7b88915e1292e4237d7089d04c">  107</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ac38d6f7b88915e1292e4237d7089d04c">finish_make_mig_script</a>(<span class="keyword">const</span> std::filesystem::path &amp;script_path)</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>{</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    std::error_code err;</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    fs::permissions(script_path, fs::perms::owner_exec | fs::perms::group_exec | fs::perms::others_exec,</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        fs::perm_options::add, err);</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span> </div>
+<div class="foldopen" id="foldopen00146" data-start="{" data-end="}">
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#ac38d6f7b88915e1292e4237d7089d04c">  146</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#ac38d6f7b88915e1292e4237d7089d04c">finish_make_mig_script</a>(<span class="keyword">const</span> std::filesystem::path &amp;script_path)</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>{</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    std::error_code err;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    fs::permissions(script_path, fs::perms::owner_exec | fs::perms::group_exec | fs::perms::others_exec,</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        fs::perm_options::add, err);</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>}</div>
 </div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span> </div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>} <span class="comment">// namespace id::ui</span></div>
 <div class="ttc" id="afile__get__window_8cpp_html_a01a3a5e8c9197c526526a8936d06af4f"><div class="ttname"><a href="../../db/d7d/file__get__window_8cpp.html#a01a3a5e8c9197c526526a8936d06af4f">path</a></div><div class="ttdeci">std::filesystem::path path</div><div class="ttdef"><b>Definition</b> <a href="../../db/d7d/file__get__window_8cpp_source.html#l00079">file_get_window.cpp:79</a></div></div>
 <div class="ttc" id="alsystem_8cpp_html_af53f92900705f7de3c139a05b2f9ef16"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16">ch</a></div><div class="ttdeci">char ch</div><div class="ttdef"><b>Definition</b> <a href="../../da/db4/lsystem_8cpp_source.html#l00088">lsystem.cpp:88</a></div></div>
+<div class="ttc" id="alsystem_8cpp_html_af88e0188e5021971b6acf15dba5b5a21"><div class="ttname"><a href="../../da/db4/lsystem_8cpp.html#af88e0188e5021971b6acf15dba5b5a21">size</a></div><div class="ttdeci">LDouble size</div><div class="ttdef"><b>Definition</b> <a href="../../da/db4/lsystem_8cpp_source.html#l00067">lsystem.cpp:67</a></div></div>
 <div class="ttc" id="amake__mig__script_8h_html"><div class="ttname"><a href="../../d9/d4a/make__mig__script_8h.html">make_mig_script.h</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_a90185aaa55b989a46b4d9c53a9794179"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a90185aaa55b989a46b4d9c53a9794179">id::ui::write_make_mig_script_header</a></div><div class="ttdeci">void write_make_mig_script_header(std::FILE *script_file)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00069">make_mig_script_unix.cpp:69</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_a9d097b186611480f6234e623daf95701"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a9d097b186611480f6234e623daf95701">id::ui::write_make_mig_script_piece</a></div><div class="ttdeci">void write_make_mig_script_piece(std::FILE *script_file, const std::filesystem::path &amp;parameter_file, const std::string &amp;entry_name)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00085">make_mig_script_unix.cpp:85</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_ab0554036096ec99c11af47f65dbaed69"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ab0554036096ec99c11af47f65dbaed69">id::ui::set_make_mig_script_executable</a></div><div class="ttdeci">void set_make_mig_script_executable(const char *path)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00050">make_mig_script_unix.cpp:50</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_ac125026c64bd52ed6356a64f5c9cf495"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ac125026c64bd52ed6356a64f5c9cf495">id::ui::make_mig_script_filename</a></div><div class="ttdeci">std::filesystem::path make_mig_script_filename()</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00064">make_mig_script_unix.cpp:64</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_ac38d6f7b88915e1292e4237d7089d04c"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ac38d6f7b88915e1292e4237d7089d04c">id::ui::finish_make_mig_script</a></div><div class="ttdeci">void finish_make_mig_script(const std::filesystem::path &amp;script_path)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00107">make_mig_script_unix.cpp:107</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_ae6b5a29cf52907d2c98edbcded75f217"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ae6b5a29cf52907d2c98edbcded75f217">id::ui::write_make_mig_script_finish</a></div><div class="ttdeci">void write_make_mig_script_finish(std::FILE *script_file, int x_multiple, int y_multiple)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00098">make_mig_script_unix.cpp:98</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a90185aaa55b989a46b4d9c53a9794179"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a90185aaa55b989a46b4d9c53a9794179">id::ui::write_make_mig_script_header</a></div><div class="ttdeci">void write_make_mig_script_header(std::FILE *script_file)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00108">make_mig_script_unix.cpp:108</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_a9d097b186611480f6234e623daf95701"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a9d097b186611480f6234e623daf95701">id::ui::write_make_mig_script_piece</a></div><div class="ttdeci">void write_make_mig_script_piece(std::FILE *script_file, const std::filesystem::path &amp;parameter_file, const std::string &amp;entry_name)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00124">make_mig_script_unix.cpp:124</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ab0554036096ec99c11af47f65dbaed69"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ab0554036096ec99c11af47f65dbaed69">id::ui::set_make_mig_script_executable</a></div><div class="ttdeci">void set_make_mig_script_executable(const char *path)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00090">make_mig_script_unix.cpp:90</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ac125026c64bd52ed6356a64f5c9cf495"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ac125026c64bd52ed6356a64f5c9cf495">id::ui::make_mig_script_filename</a></div><div class="ttdeci">std::filesystem::path make_mig_script_filename()</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00103">make_mig_script_unix.cpp:103</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ac38d6f7b88915e1292e4237d7089d04c"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ac38d6f7b88915e1292e4237d7089d04c">id::ui::finish_make_mig_script</a></div><div class="ttdeci">void finish_make_mig_script(const std::filesystem::path &amp;script_path)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00146">make_mig_script_unix.cpp:146</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_ae6b5a29cf52907d2c98edbcded75f217"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#ae6b5a29cf52907d2c98edbcded75f217">id::ui::write_make_mig_script_finish</a></div><div class="ttdeci">void write_make_mig_script_finish(std::FILE *script_file, int x_multiple, int y_multiple)</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d01/make__mig__script__unix_8cpp_source.html#l00137">make_mig_script_unix.cpp:137</a></div></div>
 <div class="ttc" id="aparser_8cpp_html_a23c058547fbc73b5659191844a9f258c"><div class="ttname"><a href="../../dc/ddd/parser_8cpp.html#a23c058547fbc73b5659191844a9f258c">text</a></div><div class="ttdeci">std::string text</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00255">parser.cpp:255</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
