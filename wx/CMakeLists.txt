@@ -41,7 +41,7 @@ target_link_libraries(id PUBLIC gui)
 if(WIN32)
     target_id_resources(id)
 endif()
-gui_executable(id)
+gui_executable(id RUNTIME_NAME "$<IF:$<PLATFORM_ID:Windows>,id,xid>")
 vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
 install(TARGETS id
     DESTINATION .
