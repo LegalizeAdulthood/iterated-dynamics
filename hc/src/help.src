@@ -1646,8 +1646,8 @@ com.legalizeadulthood.iterated-dynamics.plist.  If the saved position is
 not valid for the current X screen, Id lets the window manager place the
 window.  A standard X geometry option such as "-geometry +100+100" can be
 used on the command line to choose the initial position for a run.  An
-X11 font can be selected with "-fn <font>" or "--font <font>".  On Linux,
-Id chooses a fixed font from the display DPI.
+X11 font can be selected with "-fn <font>" or "--font <font>".  The X11
+driver chooses a fixed font from the display DPI.
 
 Keyboard menus, help, text overlays, the text-mode file browser, mouse
 zoom, double-click zoom, image rendering, palette cycling, command shell
