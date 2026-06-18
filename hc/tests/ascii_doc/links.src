@@ -29,7 +29,7 @@
 ;
 ~Topic=New Features in 1.0
 See {Getting Started}.  See {"3D" Commands}.
-See {Punctuation: A/B (C)}.  See {=DUP_TWO second Same-Title}.
+See {Punctuation: A/B (C)}.  See {=DUP_TWO second Different Title}.
 
 Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.
@@ -115,7 +115,7 @@ Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.
 
 o {The Mandelbrot Set}\
-o {=DUP_TWO online Same-Title}\
+o {=DUP_TWO online Different Title}\
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.
@@ -170,7 +170,7 @@ Lots of text.  Lots of text.  Lots of text.  Lots of text.
 ;
 ;
 ~Topic=Same Title, Label=DUP_ONE
-See {=DUP_TWO second Same-Title}.
+See {=DUP_TWO second Different Title}.
 
 Lots of text.
 Lots of text.  Lots of text.  Lots of text.  Lots of text.
@@ -188,7 +188,7 @@ Lots of text.  Lots of text.  Lots of text.  Lots of text.
 ;
 ;
 ;
-~Topic=Same-Title, Label=DUP_TWO
+~Topic=Different Title, Label=DUP_TWO
 See {=DUP_ONE first Same Title}.
 
 Lots of text.

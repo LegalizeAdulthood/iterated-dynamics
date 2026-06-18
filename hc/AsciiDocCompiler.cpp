@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <fstream>
 #include <helpcom.h>
+#include <map>
 #include <stdexcept>
 
 using namespace id::help;
@@ -68,16 +69,73 @@ static std::string make_content_anchor(const int content_num)
     return "id-content-" + std::to_string(content_num);
 }
 
-static std::string make_topic_anchor(const int topic_num)
+static std::string make_readable_anchor(const std::string &title)
 {
-    return "id-topic-" + std::to_string(topic_num);
+    std::string anchor;
+    bool last_was_underscore{};
+    for (const char c : title)
+    {
+        const unsigned char ch{static_cast<unsigned char>(c)};
+        if (std::isalnum(ch) != 0)
+        {
+            anchor += static_cast<char>(std::tolower(ch));
+            last_was_underscore = false;
+        }
+        else if (!last_was_underscore)
+        {
+            anchor += '_';
+            last_was_underscore = true;
+        }
+    }
+    while (!anchor.empty() && anchor.front() == '_')
+    {
+        anchor.erase(0, 1);
+    }
+    while (!anchor.empty() && anchor.back() == '_')
+    {
+        anchor.pop_back();
+    }
+    return anchor;
+}
+
+static std::vector<std::string> make_topic_anchors()
+{
+    std::vector<std::string> anchors(g_src.topics.size());
+    std::map<std::string, int> anchor_topics;
+    for (int topic_num = 0; topic_num < static_cast<int>(g_src.topics.size()); ++topic_num)
+    {
+        const Topic &topic{g_src.topics[topic_num]};
+        if (!bit_set(topic.flags, TopicFlags::IN_DOC))
+        {
+            continue;
+        }
+
+        const std::string anchor{make_readable_anchor(topic.title)};
+        if (anchor.empty())
+        {
+            MSG_ERROR(0, "AsciiDoc anchor for topic title \"%s\" is empty.", topic.title.c_str());
+            continue;
+        }
+
+        const auto [it, inserted]{anchor_topics.emplace(anchor, topic_num)};
+        if (!inserted)
+        {
+            MSG_ERROR(0, "AsciiDoc anchor collision for topic titles \"%s\" and \"%s\".",
+                g_src.topics[it->second].title.c_str(), topic.title.c_str());
+            continue;
+        }
+
+        anchors[topic_num] = anchor;
+    }
+    return anchors;
 }
 
 class AsciiDocProcessor
 {
 public:
-    explicit AsciiDocProcessor(std::ostream &str) :
-        m_str(str)
+    explicit AsciiDocProcessor(std::ostream &str, const std::vector<std::string> &topic_anchors) :
+        m_str(str),
+        m_topic_anchors(topic_anchors)
     {
     }
 
@@ -109,6 +167,7 @@ private:
     }
 
     std::ostream &m_str;
+    const std::vector<std::string> &m_topic_anchors;
     int m_content_num{};
     int m_topic_num{};
     int m_spaces{};
@@ -153,7 +212,7 @@ bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
             const Topic &topic{g_src.topics[content.topic_num[0]]};
             if (topic.title == content.name)
             {
-                m_section_topic_anchor = make_topic_anchor(content.topic_num[0]);
+                m_section_topic_anchor = m_topic_anchors[content.topic_num[0]];
             }
         }
         pd->id = content.id.c_str();
@@ -171,7 +230,7 @@ bool AsciiDocProcessor::info(const PrintDocCommand cmd, ProcessDocumentInfo *pd)
             return false;
         }
         const Topic &topic{g_src.topics[content.topic_num[m_topic_num]]};
-        m_topic_anchor = make_topic_anchor(content.topic_num[m_topic_num]);
+        m_topic_anchor = m_topic_anchors[content.topic_num[m_topic_num]];
         if (topic.title != content.name)
         {
             m_topic = std::string(content.indent + 3, '=') + ' ' + topic.title;
@@ -307,7 +366,7 @@ void AsciiDocProcessor::set_link_text(const Link &link, const ProcessDocumentInf
     {
         m_link_text.erase(last_non_space + 1);
     }
-    m_link_markup = "<<" + make_topic_anchor(link.topic_num);
+    m_link_markup = "<<" + m_topic_anchors[link.topic_num];
     if (m_link_text != anchor_title)
     {
         m_link_markup += "," + m_link_text;
@@ -723,6 +782,12 @@ void AsciiDocCompiler::print_ascii_doc()
         throw std::runtime_error("First content block doesn't contain DocContent.");
     }
 
+    const std::vector<std::string> topic_anchors{make_topic_anchors()};
+    if (g_errors != 0)
+    {
+        return;
+    }
+
     const std::filesystem::path out_file{std::filesystem::path{m_options.output_dir} / fname};
     std::ofstream str{out_file};
     if (!str)
@@ -735,7 +800,7 @@ void AsciiDocCompiler::print_ascii_doc()
            ":toclevels: 4\n"
            ":experimental:\n";
 
-    AsciiDocProcessor(str).process();
+    AsciiDocProcessor(str, topic_anchors).process();
 }
 
 } // namespace hc

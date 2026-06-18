@@ -801,33 +801,38 @@ void HelpCompiler::write_link_source()
             "\n"
             "std::array<HelpLink, "
             << topics.size() << "> g_help_links = {\n";
-        const auto link_for_title = [](std::string text)
+        const auto link_for_title = [](const std::string &title)
         {
-            for (auto pos = text.find_first_of("/\""); pos != std::string::npos;
-                 pos = text.find_first_of("/\""))
+            std::string text;
+            bool last_was_underscore{};
+            for (const char c : title)
             {
-                text.erase(pos, 1);
-            }
-            std::transform(text.begin(), text.end(), text.begin(),
-                [](const char c)
+                const unsigned char test = static_cast<unsigned char>(c);
+                if (std::isalnum(test) != 0)
                 {
-                    const unsigned char test = static_cast<unsigned char>(c);
-                    return std::isalnum(test) ? static_cast<char>(std::tolower(test)) : '_';
-                });
-            for (auto pos = text.find("__"); pos != std::string::npos; pos = text.find("__"))
-            {
-                text.erase(pos, 1);
+                    text += static_cast<char>(std::tolower(test));
+                    last_was_underscore = false;
+                }
+                else if (!last_was_underscore)
+                {
+                    text += '_';
+                    last_was_underscore = true;
+                }
             }
-            if (const auto pos = text.find_last_not_of('_') + 1; pos != text.length())
+            while (!text.empty() && text.front() == '_')
             {
-                text.erase(pos);
+                text.erase(0, 1);
             }
-            return "id.html#_" + text;
+            while (!text.empty() && text.back() == '_')
+            {
+                text.pop_back();
+            }
+            return "id.html#" + text;
         };
         for (const auto &[topic_num, label] : topics)
         {
             src << "    HelpLink{ id::help::HelpLabels::" << label.name << ", \""
-                      << link_for_title(g_src.topics[topic_num].title) << "\" },\n";
+                << link_for_title(g_src.topics[topic_num].title) << "\" },\n";
         }
         src << "};\n"
                "\n"

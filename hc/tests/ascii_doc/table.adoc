@@ -8,7 +8,7 @@
 == Table Demonstration
 
 [[id-content-2]]
-[[id-topic-1]]
+[[burning_ship]]
 === Burning Ship
 
 (type=burning-ship)
@@ -20,7 +20,7 @@ twist.  Some parts use absolute values in the equations and this gives
 an amazing angular quality to the fractal.
 
 [[id-content-3]]
-[[id-topic-2]]
+[[cellular_automata]]
 === Cellular Automata
 
 (type=cellular)

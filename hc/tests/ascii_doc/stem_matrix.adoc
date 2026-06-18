@@ -5,7 +5,7 @@
 :experimental:
 
 [[id-content-1]]
-[[id-topic-1]]
+[[stem_matrix]]
 == Stem Matrix
 
 Hypercomplex multiplication formula:

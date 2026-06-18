@@ -5,7 +5,7 @@
 :experimental:
 
 [[id-content-1]]
-[[id-topic-1]]
+[[raw_blocks]]
 == Raw Blocks
 
 Before raw blocks.
@@ -25,7 +25,7 @@ o not a bullet
 |Cell before blank
 
 |Cell after blank
-|See <<id-topic-1>>
+|See <<raw_blocks>>
 |===
 
 After raw blocks.

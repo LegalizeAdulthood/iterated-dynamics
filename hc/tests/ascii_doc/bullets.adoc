@@ -8,7 +8,7 @@
 == Bullet Demonstration
 
 [[id-content-2]]
-[[id-topic-1]]
+[[bullets]]
 === Bullets
 
 This is a paragraph before.

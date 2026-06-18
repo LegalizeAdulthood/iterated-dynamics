@@ -5,7 +5,7 @@
 :experimental:
 
 [[id-content-1]]
-[[id-topic-1]]
+[[online_special_link]]
 == Online Special Link
 
 Visible AsciiDoc text.
