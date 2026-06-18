@@ -252,41 +252,60 @@ jobs:
           ref: gh-pages
           submodules: false
 
-      - name: Clear Directory
-        run: rm -rf dev/cppcheck dev/doxygen dev/msvc-static-analysis
-
       - name: Get CppCheck Report
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: CppCheck
-          path: dev/cppcheck
+          path: ${{ runner.temp }}/cppcheck
 
       - name: Get Doxygen Documentation
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: doxygen
-          path: dev/doxygen
+          path: ${{ runner.temp }}/doxygen
 
       - name: Get Static Anaysis Report
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: msvc-static-analysis
-          path: dev/msvc-static-analysis
+          path: ${{ runner.temp }}/msvc-static-analysis
 
-      - name: Update Contents
+      - name: Publish Developer Reports
         run: |
           git config user.name github-pages
           git config user.email pages-bot@example.com
-          git status
-          git add dev
-          git status
-          git commit -m "Update developer reports for ${{github.sha}}" || echo "No changes to commit"
-          git status
-          git log -n 1
 
-      - name: Push Updates
-        uses: ad-m/github-push-action@77c5b412c50b723d2a4fbc6d71fb5723bcd439aa # v1.0.0
-        with:
-          github_token: ${{github.token}}
-          branch: gh-pages
-          force: false
+          for attempt in 1 2 3; do
+            git fetch origin +refs/heads/gh-pages:refs/remotes/origin/gh-pages
+            git checkout -B gh-pages-dev-update origin/gh-pages
+            rm -rf dev/cppcheck dev/doxygen dev/msvc-static-analysis
+            mkdir -p dev
+            cp -R "${RUNNER_TEMP}/cppcheck" dev/cppcheck
+            cp -R "${RUNNER_TEMP}/doxygen" dev/doxygen
+            cp -R "${RUNNER_TEMP}/msvc-static-analysis" dev/msvc-static-analysis
+            git add -A dev
+            git status
+
+            if git diff --cached --quiet; then
+              echo "No changes to commit"
+              exit 0
+            fi
+
+            git commit -m "Update developer reports for ${{github.sha}}"
+            git log -n 1
+
+            git fetch origin +refs/heads/gh-pages:refs/remotes/origin/gh-pages
+            if ! git rebase origin/gh-pages; then
+              git rebase --abort || true
+              sleep $((attempt * 5))
+              continue
+            fi
+
+            if git push origin HEAD:gh-pages; then
+              exit 0
+            fi
+
+            sleep $((attempt * 5))
+          done
+
+          exit 1
