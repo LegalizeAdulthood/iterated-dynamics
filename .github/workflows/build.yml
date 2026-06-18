@@ -181,13 +181,13 @@ jobs:
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: html-docs
-        path: docs/html
+        path: ${{ runner.temp }}/html-docs
 
     - name: Download PDF documentation
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: pdf-docs
-        path: docs/pdf
+        path: ${{ runner.temp }}/pdf-docs
 
     - name: Checkout Pages
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -198,29 +198,49 @@ jobs:
         path: pages
 
     - name: Publish Master Documentation
-      run: |
-        test -f docs/html/id.html
-        test -f docs/pdf/id.pdf
-        rm -rf pages/master
-        install -D docs/html/id.html pages/master/index.html
-        install -D docs/pdf/id.pdf pages/master/id.pdf
-        if [ -d docs/html/help ]; then
-          cp -R docs/html/help pages/master/help
-        fi
-
-    - name: Update Contents
       working-directory: pages
       run: |
         git config user.name github-pages
         git config user.email pages-bot@example.com
-        git add -A .
-        git status
-        git commit -m "Publish master online documentation" || echo "No changes to commit"
-        git log -n 1
 
-    - name: Push Updates
-      working-directory: pages
-      run: git push origin gh-pages
+        test -f "${RUNNER_TEMP}/html-docs/id.html"
+        test -f "${RUNNER_TEMP}/pdf-docs/id.pdf"
+
+        for attempt in 1 2 3; do
+          git fetch origin +refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          git checkout -B gh-pages-master-update origin/gh-pages
+          rm -rf master
+          install -D "${RUNNER_TEMP}/html-docs/id.html" master/index.html
+          install -D "${RUNNER_TEMP}/pdf-docs/id.pdf" master/id.pdf
+          if [ -d "${RUNNER_TEMP}/html-docs/help" ]; then
+            cp -R "${RUNNER_TEMP}/html-docs/help" master/help
+          fi
+          git add -A master
+          git status
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+
+          git commit -m "Publish master online documentation"
+          git log -n 1
+
+          git fetch origin +refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          if ! git rebase origin/gh-pages; then
+            git rebase --abort || true
+            sleep $((attempt * 5))
+            continue
+          fi
+
+          if git push origin HEAD:gh-pages; then
+            exit 0
+          fi
+
+          sleep $((attempt * 5))
+        done
+
+        exit 1
 
   #############################################################################
   wx-changes:
