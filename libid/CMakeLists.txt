@@ -256,7 +256,6 @@ add_library(libid
     "doc/GlobalsIndex.md"
     "doc/inversion-of-control.md"
     "doc/IOGlobals.md"
-    "doc/macos.md"
     "doc/MathGlobals.md"
     "doc/MiscGlobals.md"
     "doc/NetworkArchitecture.md"

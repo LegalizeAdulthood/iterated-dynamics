@@ -6,10 +6,7 @@ if(WIN32 OR ID_USE_WX)
     return()
 endif()
 
-find_package(X11 QUIET)
-if(NOT X11_FOUND)
-    return()
-endif()
+find_package(X11 REQUIRED)
 
 add_library(os STATIC
     init_failure.cpp
