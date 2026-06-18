@@ -23,6 +23,7 @@
 #include <optional>
 #include <poll.h>
 #include <string>
+#include <string_view>
 #include <system_error>
 #include <utility>
 
@@ -55,8 +56,12 @@ struct X11WindowPosition
     int y{};
 };
 
+#if defined(__APPLE__)
+constexpr const char *const MACOS_WINDOW_POSITION_FILE{"com.legalizeadulthood.iterated-dynamics.plist"};
+#else
 constexpr const char *const WINDOW_POSITION_DIR{"iterated-dynamics"};
 constexpr const char *const WINDOW_POSITION_FILE{"x11-window.ini"};
+#endif
 
 long window_event_mask()
 {
@@ -66,6 +71,12 @@ long window_event_mask()
 
 std::filesystem::path window_position_path()
 {
+#if defined(__APPLE__)
+    if (const char *home = std::getenv("HOME"); home != nullptr && home[0] != '\0')
+    {
+        return std::filesystem::path{home} / "Library" / "Preferences" / MACOS_WINDOW_POSITION_FILE;
+    }
+#else
     if (const char *config_home = std::getenv("XDG_CONFIG_HOME"); config_home != nullptr && config_home[0] != '\0')
     {
         return std::filesystem::path{config_home} / WINDOW_POSITION_DIR / WINDOW_POSITION_FILE;
@@ -75,10 +86,12 @@ std::filesystem::path window_position_path()
     {
         return std::filesystem::path{home} / ".config" / WINDOW_POSITION_DIR / WINDOW_POSITION_FILE;
     }
+#endif
 
     return {};
 }
 
+#if !defined(__APPLE__)
 bool read_int_value(const std::string &line, const char *key, int &value)
 {
     const std::string prefix{std::string{key} + "="};
@@ -97,6 +110,119 @@ bool read_int_value(const std::string &line, const char *key, int &value)
     }
     return true;
 }
+#endif
+
+#if defined(__APPLE__)
+bool read_expected_line(std::istream &in, const char *expected)
+{
+    std::string line;
+    return std::getline(in, line) && line == expected;
+}
+
+std::optional<int> read_plist_integer(std::istream &in)
+{
+    std::string line;
+    if (!std::getline(in, line))
+    {
+        return {};
+    }
+
+    constexpr std::string_view PREFIX{"    <integer>"};
+    constexpr std::string_view SUFFIX{"</integer>"};
+    const std::string_view text{line};
+    if (text.size() <= PREFIX.size() + SUFFIX.size() || text.substr(0, PREFIX.size()) != PREFIX ||
+        text.substr(text.size() - SUFFIX.size()) != SUFFIX)
+    {
+        return {};
+    }
+
+    const std::string value{text.substr(PREFIX.size(), text.size() - PREFIX.size() - SUFFIX.size())};
+    try
+    {
+        std::size_t pos{};
+        const int result{std::stoi(value, &pos)};
+        if (pos != value.size())
+        {
+            return {};
+        }
+        return result;
+    }
+    catch (...)
+    {
+        return {};
+    }
+}
+
+std::optional<X11WindowPosition> read_window_position(std::istream &in)
+{
+    if (!read_expected_line(in, R"(<?xml version="1.0" encoding="UTF-8"?>)") ||
+        !read_expected_line(in,
+            R"(<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" )"
+            R"("http://www.apple.com/DTDs/PropertyList-1.0.dtd">)") ||
+        !read_expected_line(in, R"(<plist version="1.0">)") || !read_expected_line(in, "<dict>") ||
+        !read_expected_line(in, "    <key>X11WindowLeft</key>"))
+    {
+        return {};
+    }
+
+    const std::optional<int> left{read_plist_integer(in)};
+    if (!left.has_value() || !read_expected_line(in, "    <key>X11WindowTop</key>"))
+    {
+        return {};
+    }
+
+    const std::optional<int> top{read_plist_integer(in)};
+    std::string extra;
+    if (!top.has_value() || !read_expected_line(in, "</dict>") || !read_expected_line(in, "</plist>") ||
+        std::getline(in, extra))
+    {
+        return {};
+    }
+
+    return X11WindowPosition{*left, *top};
+}
+
+void write_window_position(std::ostream &out, const X11WindowPosition &position, Display *, int)
+{
+    out << R"(<?xml version="1.0" encoding="UTF-8"?>)" << '\n';
+    out << R"(<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" )"
+           R"("http://www.apple.com/DTDs/PropertyList-1.0.dtd">)"
+        << '\n';
+    out << R"(<plist version="1.0">)" << '\n';
+    out << "<dict>" << '\n';
+    out << "    <key>X11WindowLeft</key>" << '\n';
+    out << "    <integer>" << position.x << "</integer>" << '\n';
+    out << "    <key>X11WindowTop</key>" << '\n';
+    out << "    <integer>" << position.y << "</integer>" << '\n';
+    out << "</dict>" << '\n';
+    out << "</plist>" << '\n';
+}
+#else
+std::optional<X11WindowPosition> read_window_position(std::istream &in)
+{
+    X11WindowPosition position{};
+    bool have_x{};
+    bool have_y{};
+    for (std::string line; std::getline(in, line);)
+    {
+        have_x = read_int_value(line, "left", position.x) || have_x;
+        have_y = read_int_value(line, "top", position.y) || have_y;
+    }
+    if (!have_x || !have_y)
+    {
+        return {};
+    }
+    return position;
+}
+
+void write_window_position(std::ostream &out, const X11WindowPosition &position, Display *display, const int screen)
+{
+    out << "left=" << position.x << '\n';
+    out << "top=" << position.y << '\n';
+    out << "screen_width=" << DisplayWidth(display, screen) << '\n';
+    out << "screen_height=" << DisplayHeight(display, screen) << '\n';
+}
+#endif
 
 std::optional<X11WindowPosition> load_window_position(Display *display, const int screen)
 {
@@ -112,22 +238,15 @@ std::optional<X11WindowPosition> load_window_position(Display *display, const in
         return {};
     }
 
-    X11WindowPosition position{};
-    bool have_x{};
-    bool have_y{};
-    for (std::string line; std::getline(in, line);)
-    {
-        have_x = read_int_value(line, "left", position.x) || have_x;
-        have_y = read_int_value(line, "top", position.y) || have_y;
-    }
-    if (!have_x || !have_y)
+    const std::optional<X11WindowPosition> position{read_window_position(in)};
+    if (!position.has_value())
     {
         return {};
     }
 
     const int screen_width{DisplayWidth(display, screen)};
     const int screen_height{DisplayHeight(display, screen)};
-    if (position.x < 0 || position.y < 0 || position.x >= screen_width || position.y >= screen_height)
+    if (position->x < 0 || position->y < 0 || position->x >= screen_width || position->y >= screen_height)
     {
         return {};
     }
@@ -936,10 +1055,7 @@ void X11Frame::save_window_position() const
     {
         return;
     }
-    out << "left=" << x << '\n';
-    out << "top=" << y << '\n';
-    out << "screen_width=" << DisplayWidth(display, m_connection.screen()) << '\n';
-    out << "screen_height=" << DisplayHeight(display, m_connection.screen()) << '\n';
+    write_window_position(out, X11WindowPosition{x, y}, display, m_connection.screen());
 }
 
 } // namespace id::misc
