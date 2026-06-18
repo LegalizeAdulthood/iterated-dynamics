@@ -633,9 +633,7 @@ jobs:
     needs: [ html-docs, pdf-docs, wx-changes ]
     strategy:
       matrix:
-        preset: [ wx-debug, wx-release ]
-        # macos-latest is disabled for now
-        os: [ ubuntu-latest, windows-2022 ]
+        os: [ ubuntu-latest, windows-2022, macos-latest ]
 
     runs-on: ${{matrix.os}}
     permissions:
@@ -653,19 +651,19 @@ jobs:
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: html-docs
-        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src
+        path: ${{github.workspace}}/build-ci-wx-release/hc/src
 
     - name: Get prebuilt PDF documentation
       uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
       with:
         name: pdf-docs
-        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src
+        path: ${{github.workspace}}/build-ci-wx-release/hc/src
 
     - name: Verify prebuilt documentation
       run: >
         cmake -E sha256sum
-        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.html
-        ${{github.workspace}}/build-ci-${{matrix.preset}}/hc/src/id.pdf
+        ${{github.workspace}}/build-ci-wx-release/hc/src/id.html
+        ${{github.workspace}}/build-ci-wx-release/hc/src/id.pdf
 
     - name: Install Prerequisites Linux
       if: ${{matrix.os == 'ubuntu-latest'}}
@@ -677,6 +675,12 @@ jobs:
         sudo dpkg-reconfigure man-db
         sudo apt-get update
         sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install 
+
+    - name: Install Prerequisites macOS
+      if: ${{startsWith(matrix.os, 'macos-')}}
+      shell: bash
+      run: |
+        brew install autoconf automake libtool pkg-config
 
     - name: Setup CMake
       uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
@@ -696,7 +700,7 @@ jobs:
     - name: Run Workflow
       shell: pwsh
       run: |
-        cmake --workflow --preset ci-${{matrix.preset}} 2>&1 |
+        cmake --workflow --preset ci-wx-release 2>&1 |
           Tee-Object -FilePath build.log
         if ($LASTEXITCODE -ne 0) {
           exit $LASTEXITCODE
@@ -708,47 +712,47 @@ jobs:
       with:
         token: ${{github.token}}
         build-log: build.log
-        artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{matrix.os}}-${{matrix.preset}}-${{github.run_attempt}}
+        artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{matrix.os}}-wx-release-${{github.run_attempt}}
         fail-on: "never"
         debug: "false"
         trace: "false"
 
     - name: Build Setup package
-      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
-      run: cmake --build --preset ci-${{matrix.preset}} --target setup
+      if: ${{matrix.os == 'windows-2022'}}
+      run: cmake --build --preset ci-wx-release --target setup
 
 #    - name: Upload setup package artifacts
 #      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-#      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
+#      if: ${{matrix.os == 'windows-2022'}}
 #      with:
 #        archive: false
-#        name: Setup-${{matrix.preset}}
-#        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*-Setup.exe
+#        name: Setup-wx-release
+#        path: ${{github.workspace}}/build-ci-wx-release/*-Setup.exe
 #        compression-level: 0
 #
 #    - name: Upload msi package artifacts
 #      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-#      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
+#      if: ${{matrix.os == 'windows-2022'}}
 #      with:
 #        archive: false
-#        name: Msi-${{matrix.preset}}
-#        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.msi
+#        name: Msi-wx-release
+#        path: ${{github.workspace}}/build-ci-wx-release/*.msi
 #        compression-level: 0
 #
 #    - name: Upload zip package artifacts
 #      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-#      if: ${{matrix.os == 'windows-2022' && matrix.preset == 'wx-release'}}
+#      if: ${{matrix.os == 'windows-2022'}}
 #      with:
 #        archive: false
-#        name: Zip-${{matrix.preset}}
-#        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.zip
+#        name: Zip-wx-release
+#        path: ${{github.workspace}}/build-ci-wx-release/*.zip
 #        compression-level: 0
 #
 #    - name: Upload tar.gz package artifacts
 #      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-#      if: ${{matrix.os == 'ubuntu-latest' && matrix.preset == 'wx-release'}}
+#      if: ${{matrix.os == 'ubuntu-latest'}}
 #      with:
 #        archive: false
-#        name: Tar-${{matrix.preset}}
-#        path: ${{github.workspace}}/build-ci-${{matrix.preset}}/*.tar.gz
+#        name: Tar-wx-release
+#        path: ${{github.workspace}}/build-ci-wx-release/*.tar.gz
 #        compression-level: 0
