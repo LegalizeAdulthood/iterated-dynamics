@@ -1654,8 +1654,8 @@ zoom, double-click zoom, image rendering, palette cycling, command shell
 return, and expose redraw are implemented.  Output files use the normal
 savedir rules.  On Linux the default save library follows
 XDG_DOCUMENTS_DIR or user-dirs.dirs and falls back to $HOME/Documents.
-On macOS the default save library uses the user's Documents folder.  See
-{File Parameters} and {Libraries}.
+On macOS the default save library uses the user's $HOME/Documents folder.
+See {File Parameters} and {Libraries}.
 
 Continuous sound output is not implemented; the completion buzzer uses
 the X server bell when sound is enabled.  Non-X11 desktops are not

@@ -154,6 +154,10 @@ std::filesystem::path X11SpecialDirectories::program_dir() const
 
 std::filesystem::path X11SpecialDirectories::documents_dir() const
 {
+#if defined(__APPLE__)
+    const fs::path home{home_dir()};
+    return home.empty() ? fs::current_path() : home / "Documents";
+#else
     if (const char *documents_dir = std::getenv("XDG_DOCUMENTS_DIR");
         documents_dir != nullptr && documents_dir[0] != '\0')
     {
@@ -166,6 +170,7 @@ std::filesystem::path X11SpecialDirectories::documents_dir() const
 
     const fs::path home{home_dir()};
     return home.empty() ? fs::current_path() : home / "Documents";
+#endif
 }
 
 } // namespace
