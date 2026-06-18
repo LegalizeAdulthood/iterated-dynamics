@@ -12,9 +12,6 @@ on:
   pull_request:
     branches: [ "master" ]
 
-env:
-  FEED_URL: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
-
 jobs:
   #############################################################################
   msvc-static-analysis:
@@ -27,20 +24,6 @@ jobs:
           fetch-depth: 0
           submodules: true
 
-      - name: Add NuGet sources
-        shell: bash
-        run: |
-          nuget \
-            sources add \
-            -Source "${{env.FEED_URL}}" \
-            -StorePasswordInClearText \
-            -Name GitHubPackages \
-            -UserName "${{github.repository_owner}}" \
-            -Password "${{github.token}}"
-          nuget \
-            setapikey "${{github.token}}" \
-            -Source "${{env.FEED_URL}}"
-
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
         with:
@@ -49,17 +32,45 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2.0.0
 
+      - name: Setup vcpkg package cache
+        id: vc
+        uses: LegalizeAdulthood/vcpkg-github-cache@4305d9f202bf0131458407402f0cc7efc3412394 # v1.1.0
+        with:
+          token: ${{github.token}}
+          bootstrap: "true"
+          install-nuget: "true"
+          debug: "false"
+          trace: "false"
+
       - name: Configure CMake for Static Analysis
-        env: 
-          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+        shell: pwsh
         run: |
-          cmake --version
-          cmake --preset ci-debug
+          cmake --version 2>&1 |
+            Tee-Object -FilePath build.log
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+          cmake --preset ci-debug 2>&1 |
+            Tee-Object -FilePath build.log -Append
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
       - name: Run Static Analysis
         continue-on-error: true
         run: |
           msbuild build-ci-debug/ALL_BUILD.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:EnableClangTidyCodeAnalysis=false /p:RunCodeAnalysis=true /p:CodeAnalysisRuleSet=NativeRecommendedRules.ruleset /p:TreatWarningsAsErrors=false /v:q "/flp:logfile=msvc-static-analysis-report.txt;verbosity=q"
+
+      - name: Analyze vcpkg package cache
+        if: always()
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4305d9f202bf0131458407402f0cc7efc3412394 # v1.1.0
+        with:
+          token: ${{github.token}}
+          build-log: build.log
+          artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{github.run_attempt}}
+          fail-on: "never"
+          debug: "false"
+          trace: "false"
 
       - name: Upload Static Analysis Report
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -84,39 +95,44 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
           echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
           sudo dpkg-reconfigure man-db
           sudo apt-get update
           sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install 
-          sudo apt-get install --no-install-recommends -y mono-complete
-
-      - name: Add NuGet sources
-        shell: bash
-        run: |
-          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-            sources add \
-            -Source "${{env.FEED_URL}}" \
-            -StorePasswordInClearText \
-            -Name GitHubPackages \
-            -UserName "${{github.repository_owner}}" \
-            -Password "${{github.token}}"
-          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-            setapikey "${{github.token}}" \
-            -Source "${{env.FEED_URL}}"
 
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
         with:
           cmake-version: '3.31'
 
+      - name: Setup vcpkg package cache
+        id: vc
+        uses: LegalizeAdulthood/vcpkg-github-cache@4305d9f202bf0131458407402f0cc7efc3412394 # v1.1.0
+        with:
+          token: ${{github.token}}
+          bootstrap: "true"
+          install-nuget: "true"
+          debug: "false"
+          trace: "false"
+
       - name: Configure Compilation Database
-        env: 
-          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+        shell: bash
         run: |
-          cmake --version
-          cmake --preset cppcheck
-  
+          set -e -o pipefail
+          cmake --version 2>&1 | tee build.log
+          cmake --preset cppcheck 2>&1 | tee -a build.log
+
+      - name: Analyze vcpkg package cache
+        if: always()
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4305d9f202bf0131458407402f0cc7efc3412394 # v1.1.0
+        with:
+          token: ${{github.token}}
+          build-log: build.log
+          artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{github.run_attempt}}
+          fail-on: "never"
+          debug: "false"
+          trace: "false"
+
       - name: Run CppCheck
         uses: deep5050/cppcheck-action@b4d7c69b911c24817691b4b210586568a858b4c5 # v3.0
         with:
@@ -164,39 +180,45 @@ jobs:
 
       - name: Install Doxygen
         run: |
-          ${{github.workspace}}/vcpkg/bootstrap-vcpkg.sh
           echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
           sudo dpkg-reconfigure man-db
           sudo apt-get update
           sed 's/#.*//' ${{github.workspace}}/.github/workflows/wx-requirements.txt | xargs sudo apt-get install 
           sudo apt-get install --no-install-recommends -y doxygen graphviz
 
-      - name: Add NuGet sources
-        shell: bash
-        run: |
-          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-            sources add \
-            -Source "${{env.FEED_URL}}" \
-            -StorePasswordInClearText \
-            -Name GitHubPackages \
-            -UserName "${{github.repository_owner}}" \
-            -Password "${{github.token}}"
-          mono `./vcpkg/vcpkg fetch nuget | tail -n 1` \
-            setapikey "${{github.token}}" \
-            -Source "${{env.FEED_URL}}"
-
       - name: Setup CMake
         uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
         with:
           cmake-version: '3.31'
 
+      - name: Setup vcpkg package cache
+        id: vc
+        uses: LegalizeAdulthood/vcpkg-github-cache@4305d9f202bf0131458407402f0cc7efc3412394 # v1.1.0
+        with:
+          token: ${{github.token}}
+          bootstrap: "true"
+          install-nuget: "true"
+          debug: "false"
+          trace: "false"
+
       - name: Configure Compilation Database
-        env: 
-          VCPKG_BINARY_SOURCES: "clear;nuget,${{env.FEED_URL}},readwrite"
+        shell: bash
         run: |
-          cmake --version
-          cmake --preset cppcheck
-  
+          set -e -o pipefail
+          cmake --version 2>&1 | tee build.log
+          cmake --preset cppcheck 2>&1 | tee -a build.log
+
+      - name: Analyze vcpkg package cache
+        if: always()
+        uses: LegalizeAdulthood/vcpkg-github-cache/analyze@4305d9f202bf0131458407402f0cc7efc3412394 # v1.1.0
+        with:
+          token: ${{github.token}}
+          build-log: build.log
+          artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{github.run_attempt}}
+          fail-on: "never"
+          debug: "false"
+          trace: "false"
+
       - name: Get Project Version
         id: version
         run: |
