@@ -24,7 +24,7 @@ var searchData=
   ['window_20keys_21',['Slice 7: Orbits Window Keys',['../d3/da4/md_hc_2src_2indent.html#autotoc_md9',1,'']]],
   ['window_5fpos_5fkey_22',['WINDOW_POS_KEY',['../df/d6d/namespaceid_1_1misc.html#a4939f0e7920a36a98299311ecbd4ca81',1,'id::misc']]],
   ['windows_23',['WINDOWS',['../d0/d19/namespaceid_1_1io.html#a28722499294f64ef912180708094f4daad273a0465c8fbfd111aae706cdf9ec20',1,'id::io']]],
-  ['windows_20and_20linux_24',['windows and linux',['../db/d1e/md_ReadMe.html#autotoc_md45',1,'Building for wxWidgets on Windows and Linux'],['../db/d1e/md_ReadMe.html#autotoc_md44',1,'Building the Native Driver on Windows and Linux']]],
+  ['windows_20linux_20and_20macos_24',['windows linux and macos',['../db/d1e/md_ReadMe.html#autotoc_md45',1,'Building for wxWidgets on Windows, Linux and macOS'],['../db/d1e/md_ReadMe.html#autotoc_md44',1,'Building the Native Driver on Windows, Linux and macOS']]],
   ['winmain_25',['WinMain',['../d1/d66/win__main_8cpp.html#abc055912d3092fd7a9580db14ce2bbea',1,'win_main.cpp']]],
   ['wintext_26',['WinText',['../db/de5/classid_1_1misc_1_1WinText.html',1,'id::misc']]],
   ['wintext_2ecpp_27',['WinText.cpp',['../d9/d16/WinText_8cpp.html',1,'']]],
@@ -49,5 +49,5 @@ var searchData=
   ['write_5fspan_46',['write_span',['../dc/d76/namespaceid_1_1ui.html#a45b00a32fb255b64d09553663422dc31',1,'id::ui']]],
   ['writebatchdata_47',['WriteBatchData',['../d9/d9b/structid_1_1ui_1_1WriteBatchData.html',1,'id::ui']]],
   ['writefile_48',['WriteFile',['../d0/d19/namespaceid_1_1io.html#afef8aa2e895599e54fa155d399d514f4',1,'id::io']]],
-  ['wxwidgets_20on_20windows_20and_20linux_49',['Building for wxWidgets on Windows and Linux',['../db/d1e/md_ReadMe.html#autotoc_md45',1,'']]]
+  ['wxwidgets_20on_20windows_20linux_20and_20macos_49',['Building for wxWidgets on Windows, Linux and macOS',['../db/d1e/md_ReadMe.html#autotoc_md45',1,'']]]
 ];

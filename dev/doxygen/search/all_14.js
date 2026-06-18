@@ -56,7 +56,7 @@ var searchData=
   ['link_5ftopic_53',['link_topic',['../dc/df7/structhc_1_1Link.html#ae787728db09d18c6584551fd043466d6',1,'hc::Link']]],
   ['links_54',['Slice 10: X Options Screen Links',['../d3/da4/md_hc_2src_2indent.html#autotoc_md12',1,'']]],
   ['linktypes_55',['LinkTypes',['../d9/dcc/namespacehc.html#a489135c0083de606f6db881be8faff0e',1,'hc']]],
-  ['linux_56',['linux',['../db/d1e/md_ReadMe.html#autotoc_md45',1,'Building for wxWidgets on Windows and Linux'],['../db/d1e/md_ReadMe.html#autotoc_md44',1,'Building the Native Driver on Windows and Linux']]],
+  ['linux_20and_20macos_56',['linux and macos',['../db/d1e/md_ReadMe.html#autotoc_md45',1,'Building for wxWidgets on Windows, Linux and macOS'],['../db/d1e/md_ReadMe.html#autotoc_md44',1,'Building the Native Driver on Windows, Linux and macOS']]],
   ['list_57',['list',['../dc/d20/classid_1_1ui_1_1ChoiceBuilder.html#af0bf1f0cf2b13ed4619472a5d434d671',1,'id::ui::ChoiceBuilder::list()'],['../d8/d84/structid_1_1ui_1_1FullScreenValues.html#a2b0a8fa29772ae173e5c4ad132fa9b16',1,'id::ui::FullScreenValues::list']]],
   ['list_5flen_58',['list_len',['../d8/d84/structid_1_1ui_1_1FullScreenValues.html#af7044ec3ab7b39378abab4f8108a2b2f',1,'id::ui::FullScreenValues']]],
   ['ln_5fbf_59',['ln_bf',['../d0/db0/namespaceid_1_1math.html#aa021d91b95b3886a7a5e6ceac467ab31',1,'id::math']]],

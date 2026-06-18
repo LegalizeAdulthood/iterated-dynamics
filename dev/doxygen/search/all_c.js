@@ -236,7 +236,7 @@ var searchData=
   ['draw_5fparam_5fbox_233',['draw_param_box',['../dc/d76/namespaceid_1_1ui.html#a431cc16e59bb62bb2a9e4bb42f8f3452',1,'id::ui']]],
   ['draw_5fxor_5fline_234',['draw_xor_line',['../d3/def/classid_1_1misc_1_1Driver.html#ab6ce5e1034f294182975e8ef564b8a2f',1,'id::misc::Driver::draw_xor_line()'],['../df/d26/classid_1_1misc_1_1DiskDriver.html#a00f82d37325655055db725fc0df9c4ad',1,'id::misc::DiskDriver::draw_xor_line()'],['../da/d48/classid_1_1misc_1_1GDIDriver.html#a4734bb428af05ab7224e3aa940e35c2e',1,'id::misc::GDIDriver::draw_xor_line()'],['../d4/d08/structid_1_1misc_1_1Plot.html#ade84e789b32281319f0997477c520d7c',1,'id::misc::Plot::draw_xor_line()']]],
   ['driver_235',['driver',['../d3/def/classid_1_1misc_1_1Driver.html',1,'id::misc::Driver'],['../df/d1e/structid_1_1engine_1_1VideoInfo.html#a3159e0b086f206ea39ba88bb42141046',1,'id::engine::VideoInfo::driver']]],
-  ['driver_20on_20windows_20and_20linux_236',['Building the Native Driver on Windows and Linux',['../db/d1e/md_ReadMe.html#autotoc_md44',1,'']]],
+  ['driver_20on_20windows_20linux_20and_20macos_236',['Building the Native Driver on Windows, Linux and macOS',['../db/d1e/md_ReadMe.html#autotoc_md44',1,'']]],
   ['driver_2ecpp_237',['Driver.cpp',['../df/dd9/Driver_8cpp.html',1,'']]],
   ['driver_2eh_238',['Driver.h',['../dd/d3c/Driver_8h.html',1,'']]],
   ['driver_5fbuzzer_239',['driver_buzzer',['../df/d6d/namespaceid_1_1misc.html#aebaf6697e9882d268c02d56295c1877f',1,'id::misc']]],

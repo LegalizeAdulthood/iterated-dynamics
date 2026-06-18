@@ -3541,21 +3541,3 @@ x11/X11BaseDriver.cpp:320:17: style: Consider using std::transform algorithm ins
 x11/X11BaseDriver.cpp:404:20: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
             labels.push_back(choice->full_name);
                    ^
-x11/X11Text.cpp:600:15: style: Condition 'right<left' is always false [knownConditionTrueFalse]
-    if (right < left || bottom < top)
-              ^
-x11/X11Text.cpp:598:21: note: Assignment 'right=std::min(right,X11_TEXT_MAX_COL-1)', assigned value is 79
-    right = std::min(right, X11_TEXT_MAX_COL - 1);
-                    ^
-x11/X11Text.cpp:600:15: note: Condition 'right<left' is always false
-    if (right < left || bottom < top)
-              ^
-x11/X11Text.cpp:600:32: style: Condition 'bottom<top' is always false [knownConditionTrueFalse]
-    if (right < left || bottom < top)
-                               ^
-x11/X11Text.cpp:599:22: note: Assignment 'bottom=std::min(bottom,X11_TEXT_MAX_ROW-1)', assigned value is 24
-    bottom = std::min(bottom, X11_TEXT_MAX_ROW - 1);
-                     ^
-x11/X11Text.cpp:600:32: note: Condition 'bottom<top' is always false
-    if (right < left || bottom < top)
-                               ^

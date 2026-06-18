@@ -97,7 +97,7 @@ var searchData=
   ['fname2_94',['fname2',['../d1/d0b/structhc_1_1Options.html#a21653b6d8a15f635a969dbef210bb071',1,'hc::Options']]],
   ['fns_95',['fns',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a74ad2ea881aeec32ca672db358b01c01',1,'id::fractals::CompiledFormula']]],
   ['font_5fdepth_96',['FONT_DEPTH',['../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a282808c8e3d41eff23eb5d19c9945133',1,'id::ui']]],
-  ['for_20wxwidgets_20on_20windows_20and_20linux_97',['Building for wxWidgets on Windows and Linux',['../db/d1e/md_ReadMe.html#autotoc_md45',1,'']]],
+  ['for_20wxwidgets_20on_20windows_20linux_20and_20macos_97',['Building for wxWidgets on Windows, Linux and macOS',['../db/d1e/md_ReadMe.html#autotoc_md45',1,'']]],
   ['force_5farbitrary_5fprecision_5fmath_98',['FORCE_ARBITRARY_PRECISION_MATH',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0eba973fa3759648af68ec09288f4f479b3a',1,'id::misc']]],
   ['force_5fboundary_5ftrace_5ferror_99',['FORCE_BOUNDARY_TRACE_ERROR',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebadaebc5df79491eac0c5e8a61efa7922f',1,'id::misc']]],
   ['force_5fcomplex_5fpower_100',['FORCE_COMPLEX_POWER',['../df/d6d/namespaceid_1_1misc.html#a0298213198213579c2fb43cd3c6fe0ebaac70fe4257e8b6a38e7e54f4bfcabdf3',1,'id::misc']]],

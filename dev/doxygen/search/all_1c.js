@@ -50,7 +50,7 @@ var searchData=
   ['text_5ftemp_5fmsg_47',['text_temp_msg',['../dc/d76/namespaceid_1_1ui.html#a146eef39c7b63f167394d0704138948e',1,'id::ui']]],
   ['textcolors_48',['TextColors',['../dc/d31/namespaceid_1_1engine.html#a1c5b4939e426a771f0422c5608a8ffce',1,'id::engine']]],
   ['textcolors_20meaning_20table_49',['Slice 16: Textcolors Meaning Table',['../d3/da4/md_hc_2src_2indent.html#autotoc_md18',1,'']]],
-  ['the_20native_20driver_20on_20windows_20and_20linux_50',['Building the Native Driver on Windows and Linux',['../db/d1e/md_ReadMe.html#autotoc_md44',1,'']]],
+  ['the_20native_20driver_20on_20windows_20linux_20and_20macos_50',['Building the Native Driver on Windows, Linux and macOS',['../db/d1e/md_ReadMe.html#autotoc_md44',1,'']]],
   ['the_20standard_20library_51',['The Standard Library',['../d5/d38/md_Style.html#autotoc_md54',1,'']]],
   ['thinking_52',['thinking',['../dc/d76/namespaceid_1_1ui.html#a1898b63893b35d694a15eb1ccc241695',1,'id::ui']]],
   ['thinking_2ecpp_53',['thinking.cpp',['../df/dd9/thinking_8cpp.html',1,'']]],

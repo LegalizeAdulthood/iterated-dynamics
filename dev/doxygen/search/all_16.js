@@ -5,7 +5,7 @@ var searchData=
   ['namedtrigfunction_2',['NamedTrigFunction',['../d5/d25/structid_1_1engine_1_1NamedTrigFunction.html',1,'id::engine']]],
   ['names_3',['Names',['../d5/d38/md_Style.html#autotoc_md56',1,'']]],
   ['namespaces_4',['Namespaces',['../d5/d38/md_Style.html#autotoc_md66',1,'']]],
-  ['native_20driver_20on_20windows_20and_20linux_5',['Building the Native Driver on Windows and Linux',['../db/d1e/md_ReadMe.html#autotoc_md44',1,'']]],
+  ['native_20driver_20on_20windows_20linux_20and_20macos_5',['Building the Native Driver on Windows, Linux and macOS',['../db/d1e/md_ReadMe.html#autotoc_md44',1,'']]],
   ['navigate_5fgraphics_6',['NAVIGATE_GRAPHICS',['../dc/d76/namespaceid_1_1ui.html#af2cd118f0b25d48a16b72102e4ed450fa972b80b347cf6ab613b7b6c3e0939139',1,'id::ui']]],
   ['navigate_5ftext_7',['NAVIGATE_TEXT',['../dc/d76/namespaceid_1_1ui.html#af2cd118f0b25d48a16b72102e4ed450fa01456ee17c50543c5f2f4fb4faf3ccfe',1,'id::ui']]],
   ['neg_5fa_5fbf_8',['neg_a_bf',['../d0/db0/namespaceid_1_1math.html#a1b8973500e48242f2aebc202b588f2a9',1,'id::math']]],
