@@ -1347,7 +1347,7 @@ fork from Fractint.
 Richard decoupled the DOS and assembly language code from the rest of the
 code and created a driver abstraction that could be used to connect the
 code to modern environments.  He implemented the disk, Win32 GDI, and
-Linux X11 drivers used to provide their corresponding video modes.  The
+X11 drivers used to provide their corresponding video modes.  The
 CGA text window is emulated in order to have the user interface and help
 system.  He converted the entirety of the code to C++ to allow object
 oriented programming paradigms to be used.
@@ -1380,12 +1380,12 @@ requires careful attention to detail in how all these variables interact with
 each other.  Unit testing changes before applying them helps ensure that
 forward progress doesn't come at the expense of bugs.
 
-Github's actions provide continuous integration (CI) builds on Windows and
-Linux with every commit to the repository.  The actions build all the code
-and run the unit and acceptance tests every time the repository is
+Github's actions provide continuous integration (CI) builds on Windows,
+Linux and macOS with every commit to the repository.  The actions build all
+the code and run the unit and acceptance tests every time the repository is
 updated.  Richard uses Windows as his primary development environment and
-the CI builds ensure that the code continues to build and run on Linux.
-(This trips you up more often than you might think!)
+the CI builds ensure that the code continues to build and run on Linux and
+macOS.  (This trips you up more often than you might think!)
 
 Other libraries Richard has brought in are the boost.algorithm library for
 some string algorithms, the boost.endian library for marshalling the GIF
