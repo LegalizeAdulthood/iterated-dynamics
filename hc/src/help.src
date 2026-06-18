@@ -21,7 +21,7 @@
    { New Features in 1.4.0 }                { A Word About the Authors }
 
    { Display Mode Commands }
-   { Color Cycling Commands }               { Id on Unix }
+   { Color Cycling Commands }               { Id on Linux and macOS }
    { Palette Editing Commands }             { Using Id With a Mouse }
 
    { Summary of Fractal Types }             { GIF Save File Format }
@@ -59,7 +59,7 @@
 {1.14 , 1, "Evolver Commands"}
 {1.15 , 1, "RDS Commands"}
 {1.16 , 1, "Hints"}
-{1.17 , 1, "Id on Unix"}
+{1.17 , 1, "Id on Linux and macOS"}
 
 {2.   , 0, "Fractal Types", FF}
 {2.1  , 1, "The Mandelbrot Set"}
@@ -272,13 +272,17 @@ Version 1.4.0 is an interim release on the way to version 2.0.
 
 New Features in Version 1.4.0
 
+o The Linux port is complete.  It provides native Linux text and
+  graphics windows and uses the standard id.cfg video mode table.
+o The macOS port is complete, but untested.
+  See {Id on Linux and macOS} (Fixes #42)
+o Libraries are used to group data files for Id.  See {Libraries}.
+  (Fixes #95)
 o The documentation is now available in PDF format.  (Fixes #262)\
 o The raytrace output format can now be specified by name instead of
   just by number.  (Fixes #318)
 o The DXF raytrace output format is documented in the help file.
   (Fixes #317)
-o Libraries are used to group data files for Id.  See {Libraries}.
-  (Fixes #95)
 o The previous browse history limit of 16 files was relaxed; it is
   now limited only by available memory.
 o Random-dot stereogram generation now honors rseed=, making RDS output
@@ -293,8 +297,6 @@ o The Burning Ship fractal type now documents its formula and parameters.
   (Fixes #426)
 o makepar now writes legacy color ranges when saving parameters from legacy
   GIF images.  (Fixes #428)
-o The build workflow now includes a macOS build and core unit tests.
-  (Fixes #42)
 o Fractal types using random numbers now consistently honor rseed=,
   making seeded random fractals repeatable across fractal types.
 o Formula, IFS, and L-system item names now preserve user-entered case
@@ -308,8 +310,6 @@ o Online HTML documentation is now published to versioned permalink URLs
   before approval for the latest URL.  (Fixes #366)
 o Autokey files can now use caret notation for control-key command
   initiators, such as ^S for <Ctrl+S>.
-o The Linux/X11 port is complete.  It provides native Linux text and
-  graphics windows and uses the standard id.cfg video mode table.
 o MIG piece generation now writes a makemig.sh shell script on Linux.
   (Fixes #370)
 o Disk-video modes can now generate GIF-sized images up to 65535x65535.
@@ -1619,15 +1619,16 @@ command to re-plot it.
 ;
 ;
 ;
-~Topic=Id on Unix
+~Topic=Id on Linux and macOS
 
 On Linux and macOS, Id uses the X11 driver.  The driver uses an ordinary
 TrueColor X visual and keeps Id's 256-color image buffer internally, so a
-PseudoColor display is not required.
+PseudoColor display is not required.  On macOS, the X11 display is
+provided by XQuartz.
 
-On Linux, the executable file is named xid rather than id to avoid the
-standard system id utility.  Command-line examples that start with id
-should be typed with xid on Linux.
+On Linux and macOS, the executable file is named xid rather than id to
+avoid the standard system id utility.  Command-line examples that start
+with id should be typed with xid on Linux and macOS.
 
 The X11 driver uses the same id.cfg video mode table as the Win32 GDI
 driver.  Video modes whose driver field is "gdi" are accepted by the X11
@@ -1638,23 +1639,24 @@ screen are available.
 
 The X11 window requests the selected text or graphics size from the
 window manager.  If the window manager allows manual resizing, the video
-mode and image buffer remain the selected size.  Window position is
-remembered in the user's XDG configuration area, and a standard X
-geometry option such as "-geometry +100+100" can be used on the command
+mode and image buffer remain the selected size.  On Linux, the Window
+position is remembered in the user's XDG configuration area.  A standard
+X geometry option such as "-geometry +100+100" can be used on the command
 line to choose the initial position for a run.  An X11 font can be
-selected with "-fn <font>" or "--font <font>"; otherwise Id chooses a
+selected with "-fn <font>" or "--font <font>".  On Linux, Id chooses a
 fixed font from the display DPI.
 
 Keyboard menus, help, text overlays, the text-mode file browser, mouse
 zoom, double-click zoom, image rendering, palette cycling, command shell
 return, and expose redraw are implemented.  Output files use the normal
-savedir rules; on Linux the default save library follows
+savedir rules.  On Linux the default save library follows
 XDG_DOCUMENTS_DIR or user-dirs.dirs and falls back to $HOME/Documents.
-See {File Parameters} and {Libraries}.
+On macOS the default save library uses the user's Documents folder.  See
+{File Parameters} and {Libraries}.
 
-Current Unix support is Linux/X11 and macOS/X11.  Continuous sound output
-is not implemented; the completion buzzer uses the X server bell when
-sound is enabled.  Non-X11 Unix desktops are not currently supported.
+Continuous sound output is not implemented; the completion buzzer uses
+the X server bell when sound is enabled.  Non-X11 desktops are not
+currently supported.
 ;
 ;
 ;
