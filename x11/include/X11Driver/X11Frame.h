@@ -2,7 +2,7 @@
 //
 #pragma once
 
-#include "X11Connection.h"
+#include <X11Driver/X11Connection.h>
 
 #include <array>
 #include <chrono>

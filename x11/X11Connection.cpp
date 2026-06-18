@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "X11Connection.h"
+#include <X11Driver/X11Connection.h>
 
 namespace id::misc
 {

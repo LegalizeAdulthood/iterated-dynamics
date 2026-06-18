@@ -13,19 +13,25 @@ endif()
 
 add_library(os STATIC
     init_failure.cpp
-    X11BaseDriver.h X11BaseDriver.cpp
-    X11Connection.h X11Connection.cpp
+    include/X11Driver/X11BaseDriver.h X11BaseDriver.cpp
+    include/X11Driver/X11Connection.h X11Connection.cpp
     X11DiskDriver.cpp
     X11Driver.cpp
-    X11Frame.h X11Frame.cpp
-    X11Plot.h X11Plot.cpp
-    X11SpecialDirectories.cpp
-    X11Text.h X11Text.cpp
+    include/X11Driver/X11Frame.h X11Frame.cpp
+    include/X11Driver/X11Plot.h X11Plot.cpp
+    include/X11Driver/X11SpecialDirectories.h X11SpecialDirectories.cpp
+    include/X11Driver/X11Text.h X11Text.cpp
 )
+if(APPLE)
+    target_sources(os PRIVATE X11SpecialDirectoriesMac.cpp)
+else()
+    target_sources(os PRIVATE X11SpecialDirectoriesLinux.cpp)
+endif()
+
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})
 target_link_libraries(os PUBLIC X11::X11 os-hc help-defs)
-target_include_directories(os PRIVATE ../libid/include PUBLIC .)
+target_include_directories(os PRIVATE ../libid/include PUBLIC include)
 target_folder(os "Libraries")
 add_dependencies(os native-help)
 

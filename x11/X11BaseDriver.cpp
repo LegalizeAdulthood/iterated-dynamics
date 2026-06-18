@@ -2,7 +2,7 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "X11BaseDriver.h"
+#include <X11Driver/X11BaseDriver.h>
 
 #include <config/port_config.h>
 

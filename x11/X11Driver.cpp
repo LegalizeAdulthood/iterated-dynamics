@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "X11BaseDriver.h"
+#include <X11Driver/X11BaseDriver.h>
 
 #include "engine/video_mode.h"
 #include "engine/VideoInfo.h"

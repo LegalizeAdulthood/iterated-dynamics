@@ -2,7 +2,7 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "X11BaseDriver.h"
+#include <X11Driver/X11BaseDriver.h>
 
 #include "engine/spindac.h"
 #include "engine/video_mode.h"

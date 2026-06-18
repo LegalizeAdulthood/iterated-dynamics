@@ -2,7 +2,7 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "X11Text.h"
+#include <X11Driver/X11Text.h>
 
 #include <X11/Xresource.h>
 

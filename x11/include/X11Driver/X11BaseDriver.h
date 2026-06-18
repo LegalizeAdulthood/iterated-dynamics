@@ -4,9 +4,9 @@
 //
 #pragma once
 
-#include "X11Frame.h"
-#include "X11Plot.h"
-#include "X11Text.h"
+#include <X11Driver/X11Frame.h>
+#include <X11Driver/X11Plot.h>
+#include <X11Driver/X11Text.h>
 
 #include "misc/Driver.h"
 

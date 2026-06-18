@@ -2,7 +2,7 @@
 //
 // Copyright 2026 Richard Thomson
 //
-#include "X11Plot.h"
+#include <X11Driver/X11Plot.h>
 
 #include "engine/spindac.h"
 

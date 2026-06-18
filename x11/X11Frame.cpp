@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include "X11Frame.h"
+#include <X11Driver/X11Frame.h>
 
 #include "misc/Driver.h"
 #include "ui/goodbye.h"
