@@ -466,7 +466,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#id-topic-35">Evolver Commands</a></li>
 <li><a href="#id-topic-26">RDS Commands</a></li>
 <li><a href="#id-topic-27">Hints</a></li>
-<li><a href="#id-topic-28">Id on Unix</a></li>
+<li><a href="#id-topic-28">Id on Linux and macOS</a></li>
 </ul>
 </li>
 <li><a href="#id-topic-37">Fractal Types</a>
@@ -667,6 +667,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
+<p>The Linux port is complete.  It provides native Linux text and
+graphics windows and uses the standard id.cfg video mode table.</p>
+</li>
+<li>
+<p>The macOS port is complete, but untested.  See <a href="#id-topic-28">Id on Linux and macOS</a>
+(Fixes #42)</p>
+</li>
+<li>
+<p>Libraries are used to group data files for Id.  See <a href="#id-topic-124">Libraries</a>.  (Fixes
+#95)</p>
+</li>
+<li>
 <p>The documentation is now available in PDF format.  (Fixes #262)</p>
 </li>
 <li>
@@ -676,10 +688,6 @@ just by number.  (Fixes #318)</p>
 <li>
 <p>The DXF raytrace output format is documented in the help file.  (Fixes
 #317)</p>
-</li>
-<li>
-<p>Libraries are used to group data files for Id.  See <a href="#id-topic-124">Libraries</a>.  (Fixes
-#95)</p>
 </li>
 <li>
 <p>The previous browse history limit of 16 files was relaxed; it is now
@@ -708,10 +716,6 @@ o makepar now writes legacy color ranges when saving parameters from
   legacy GIF images.  (Fixes #428)</p>
 </li>
 <li>
-<p>The build workflow now includes a macOS build and core unit tests.
-(Fixes #42)</p>
-</li>
-<li>
 <p>Fractal types using random numbers now consistently honor rseed=,
 making seeded random fractals repeatable across fractal types.</p>
 </li>
@@ -737,12 +741,8 @@ before approval for the latest URL.  (Fixes #366)</p>
 initiators, such as ^S for <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>S</kbd></span>.</p>
 </li>
 <li>
-<p>The Linux/X11 port is complete.  It provides native Linux text and
-graphics windows and uses the standard id.cfg video mode table.</p>
-</li>
-<li>
-<p>MIG piece generation now writes a makemig.sh shell script on Linux.
-(Fixes #370)</p>
+<p>MIG piece generation now writes a makemig.sh shell script on Linux and
+macOS. (Fixes #370)</p>
 </li>
 <li>
 <p>Disk-video modes can now generate GIF-sized images up to 65535x65535.
@@ -2471,16 +2471,17 @@ use the <kbd>@</kbd> command to re-plot it.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="id-topic-28">Id on Unix</h3>
+<h3 id="id-topic-28">Id on Linux and macOS</h3>
 <div class="paragraph">
 <p>On Linux and macOS, Id uses the X11 driver.  The driver uses an ordinary
 TrueColor X visual and keeps Id&#8217;s 256-color image buffer internally, so
-a PseudoColor display is not required.</p>
+a PseudoColor display is not required.  On macOS, the X11 display is
+provided by XQuartz.</p>
 </div>
 <div class="paragraph">
-<p>On Linux, the executable file is named xid rather than id to avoid the
-standard system id utility.  Command-line examples that start with id
-should be typed with xid on Linux.</p>
+<p>On Linux and macOS, the executable file is named xid rather than id to
+avoid the standard system id utility.  Command-line examples that start
+with id should be typed with xid on Linux and macOS.</p>
 </div>
 <div class="paragraph">
 <p>The X11 driver uses the same id.cfg video mode table as the Win32 GDI
@@ -2493,26 +2494,29 @@ screen are available.</p>
 <div class="paragraph">
 <p>The X11 window requests the selected text or graphics size from the
 window manager.  If the window manager allows manual resizing, the video
-mode and image buffer remain the selected size.  Window position is
-remembered in the user&#8217;s XDG configuration area, and a standard X
-geometry option such as "-geometry +100+100" can be used on the command
-line to choose the initial position for a run.  An X11 font can be
-selected with "-fn &lt;font&gt;" or "--font &lt;font&gt;"; otherwise Id chooses a
-fixed font from the display DPI.</p>
+mode and image buffer remain the selected size.  On Linux, the window
+position is remembered in the user&#8217;s XDG configuration area.  On macOS,
+it is remembered in ~/Library/Preferences as
+com.legalizeadulthood.iterated-dynamics.plist.  If the saved position is
+not valid for the current X screen, Id lets the window manager place the
+window.  A standard X geometry option such as "-geometry +100+100" can
+be used on the command line to choose the initial position for a run.
+An X11 font can be selected with "-fn &lt;font&gt;" or "--font &lt;font&gt;".  The
+X11 driver chooses a fixed font from the display DPI.</p>
 </div>
 <div class="paragraph">
 <p>Keyboard menus, help, text overlays, the text-mode file browser, mouse
 zoom, double-click zoom, image rendering, palette cycling, command shell
 return, and expose redraw are implemented.  Output files use the normal
-savedir rules; on Linux the default save library follows
+savedir rules.  On Linux the default save library follows
 XDG_DOCUMENTS_DIR or user-dirs.dirs and falls back to $HOME/Documents.
-See <a href="#id-topic-136">File Parameters</a> and <a href="#id-topic-124">Libraries</a>.</p>
+On macOS the default save library uses the user&#8217;s $HOME/Documents
+folder.  See <a href="#id-topic-136">File Parameters</a> and <a href="#id-topic-124">Libraries</a>.</p>
 </div>
 <div class="paragraph">
-<p>Current Unix support is Linux/X11 and macOS/X11.  Continuous sound
-output is not implemented; the completion buzzer uses the X server bell
-when sound is enabled.  Non-X11 Unix desktops are not currently
-supported.</p>
+<p>Continuous sound output is not implemented; the completion buzzer uses
+the X server bell when sound is enabled.  Non-X11 desktops are not
+currently supported.</p>
 </div>
 </div>
 </div>
@@ -8250,7 +8254,8 @@ location is specified with the savedir parameter.</p>
 folder on Windows.  On Linux, the Documents folder is taken from
 XDG_DOCUMENTS_DIR or from user-dirs.dirs in XDG_CONFIG_HOME or
 $HOME/.config.  If no Linux Documents folder is configured,
-$HOME/Documents is used.</p>
+$HOME/Documents is used.  On macOS, the user&#8217;s $HOME/Documents folder is
+used.</p>
 </div>
 <div class="paragraph">
 <p>To locate an input file, Id looks in the following locations.  First, if
@@ -9125,7 +9130,8 @@ Sets the save library location used for writing output files.  All
 output files are created under this location.  The default save library
 is "Iterated Dynamics" in the user&#8217;s Documents folder on Windows.  On
 Linux, the Documents folder is read from XDG_DOCUMENTS_DIR or user-
-dirs.dirs, falling back to $HOME/Documents.  See <a href="#id-topic-124">Libraries</a>.</p>
+dirs.dirs, falling back to $HOME/Documents.  On macOS, the user&#8217;s
+$HOME/Documents folder is used.  See <a href="#id-topic-124">Libraries</a>.</p>
 </div>
 <div class="paragraph">
 <p>SAVENAME=[&lt;path&gt;\][name]
@@ -10003,22 +10009,17 @@ disk is getting too strenuous a workout.</p>
 <div class="sect2">
 <h3 id="id-topic-142">Customized Video Modes, id.cfg</h3>
 <div class="paragraph">
-<p>If you have a favorite video mode that you would like to add to Id&#8230;&#8203; if
-you want some new sizes of disk-video modes&#8230;&#8203; if you want to remove
-table entries that you do not use&#8230;&#8203; relief is here, and without even
-learning "C++"!</p>
+<p>While Id no longer drives the graphics card directly, the concept of a
+"video mode" still survives.  It determines the dimesions of the display
+window and the dimensoins of the saved image.  You can customize the
+table of modes by modifying the id.cfg file with your text editor.
+Saving a backup copy of id.cfg first is of course highly recommended!</p>
 </div>
 <div class="paragraph">
-<p>You can do these things by modifying the id.cfg file with your text
-editor.  Saving a backup copy of id.cfg first is of course highly
-recommended!</p>
-</div>
-<div class="paragraph">
-<p>Id uses a video mode table to describe available video modes that you
-can use.  The table is loaded from the file id.cfg each time Id is run.
-It can contain information for up to 300 video modes.  The table
-entries, and the function keys they are tied to, are displayed in the
-"select video mode" screen.</p>
+<p>The table is loaded from the file id.cfg each time Id is run.  It can
+contain information for up to 300 video modes.  The table entries, and
+the function keys they are tied to, are displayed in the "select video
+mode" screen.</p>
 </div>
 <div class="paragraph">
 <p>Since the saved image size is determined by the video mode, customizing
@@ -10051,9 +10052,9 @@ This field is only used for display in the vide mode selection screen.</p>
 <p>The number of available colors (2, 4, 16, or 256)</p>
 </li>
 <li>
-<p>The name of the driver for the video mode.  The Win32 GDI and Linux X11
-drivers use "gdi".  On Linux, X11 accepts 256-color "gdi" modes that
-fit on the current X screen.  Disk modes use "disk".</p>
+<p>The name of the driver for the video mode.  The Win32 GDI, Linux X11
+and macOS X11 drivers use "gdi".  Id accepts 256-color "gdi" modes that
+fit on the current screen.  Disk modes use "disk".</p>
 </li>
 <li>
 <p>A comment describing the mode (25 chars max, leading blanks are OK)</p>
@@ -12020,10 +12021,10 @@ from Fractint.</p>
 <p>Richard decoupled the DOS and assembly language code from the rest of
 the code and created a driver abstraction that could be used to connect
 the code to modern environments.  He implemented the disk, Win32 GDI,
-and Linux X11 drivers used to provide their corresponding video modes.
-The CGA text window is emulated in order to have the user interface and
-help system.  He converted the entirety of the code to C++ to allow
-object oriented programming paradigms to be used.</p>
+and X11 drivers used to provide their corresponding video modes.  The
+CGA text window is emulated in order to have the user interface and help
+system.  He converted the entirety of the code to C++ to allow object
+oriented programming paradigms to be used.</p>
 </div>
 <div class="paragraph">
 <p>Many magic numbers throughout the code were replaced with enums or other
@@ -12059,12 +12060,13 @@ applying them helps ensure that forward progress doesn&#8217;t come at the
 expense of bugs.</p>
 </div>
 <div class="paragraph">
-<p>Github&#8217;s actions provide continuous integration (CI) builds on Windows
-and Linux with every commit to the repository.  The actions build all
-the code and run the unit and acceptance tests every time the repository
-is updated.  Richard uses Windows as his primary development environment
-and the CI builds ensure that the code continues to build and run on
-Linux.  (This trips you up more often than you might think!)</p>
+<p>Github&#8217;s actions provide continuous integration (CI) builds on Windows,
+Linux and macOS with every commit to the repository.  The actions build
+all the code and run the unit and acceptance tests every time the
+repository is updated.  Richard uses Windows as his primary development
+environment and the CI builds ensure that the code continues to build
+and run on Linux and macOS.  (This trips you up more often than you
+might think!)</p>
 </div>
 <div class="paragraph">
 <p>Other libraries Richard has brought in are the boost.algorithm library
@@ -12228,9 +12230,14 @@ fibre in various configurations.</p>
 <div class="paragraph">
 <p>New versions of Iterated Dynamics are released through github,
 <a href="https://github.com/LegalizeAdulthood/iterated-dynamics" class="bare">https://github.com/LegalizeAdulthood/iterated-dynamics</a>, and make their
-way to other systems from that point.  Id is available as a Windows MSI
-installer, a Windows ZIP file containing binaries, a Linux tar.gz
-package and as a source code ZIP file.</p>
+way to other systems from that point.  Id is available for Windows,
+Linux and macOS.  For Windows, you have a choice between a Setup
+program, a Windows MSI installer, or a ZIP file containing binaries.
+Linux and macOS users are provided with a tar.gz package.  Since Id is
+open source, you can always obtain the source code from github and
+follow the instructions in the ReadMe for building.  While source
+archives are provided automatically by github on the releases page, it
+is recommended that you clone the source code from github directly.</p>
 </div>
 <div class="paragraph">
 <p>The latest version of the code can always be found on the github
@@ -12986,7 +12993,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-18 03:12:29 UTC
+Last updated 2026-06-18 19:08:44 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
