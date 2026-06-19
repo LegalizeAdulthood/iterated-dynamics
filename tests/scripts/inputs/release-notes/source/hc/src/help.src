@@ -17,11 +17,13 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-Version 1.4.0 is an interim release on the way to version 2.0.
+Version 1.4.0 is an interim release on the way to
+version 2.0.
 
 New Features in Version 1.4.0
 
-o New fake feature.\
+o New fake feature wraps onto
+  another source line.\
 
 Bugs Fixed in Version 1.4.0
 
