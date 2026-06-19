@@ -15,3 +15,7 @@ Version 1.4.0 is an interim release on the way to version 2.0.
 ## Known limitations
 
 - Known issue remains.
+
+# Fake Footer
+
+This is fake release footer text.

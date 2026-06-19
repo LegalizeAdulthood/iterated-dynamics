@@ -12,6 +12,8 @@
 #                   script's parent.
 #   OUTPUT_FILE     Release notes file to write; defaults to
 #                   release-notes-vM.N.P.md under ID_SOURCE_DIR.
+#   FOOTER_FILE     Markdown footer to append; defaults to
+#                   scripts/release-notes-footer.md under ID_SOURCE_DIR.
 #
 cmake_minimum_required(VERSION 3.23)
 
@@ -208,6 +210,56 @@ function(id_render_release_notes changelog_var release_version out_var)
     set(${out_var} "${lines}" PARENT_SCOPE)
 endfunction()
 
+function(id_trim_blank_edges lines_var out_var)
+    set(lines "${${lines_var}}")
+    while(TRUE)
+        list(LENGTH lines line_count)
+        if(line_count EQUAL 0)
+            break()
+        endif()
+        list(GET lines 0 line)
+        id_unprotect_line("${line}" line)
+        if(NOT line STREQUAL "")
+            break()
+        endif()
+        list(REMOVE_AT lines 0)
+    endwhile()
+
+    while(TRUE)
+        list(LENGTH lines line_count)
+        if(line_count EQUAL 0)
+            break()
+        endif()
+        math(EXPR last_index "${line_count} - 1")
+        list(GET lines ${last_index} line)
+        id_unprotect_line("${line}" line)
+        if(NOT line STREQUAL "")
+            break()
+        endif()
+        list(REMOVE_AT lines ${last_index})
+    endwhile()
+
+    set(${out_var} "${lines}" PARENT_SCOPE)
+endfunction()
+
+function(id_append_footer notes_var footer_path out_var)
+    id_read_lines("${footer_path}" footer_lines)
+    id_trim_blank_edges(${notes_var} notes)
+    id_trim_blank_edges(footer_lines footer)
+
+    set(result "${notes}")
+    list(LENGTH footer footer_count)
+    if(footer_count GREATER 0)
+        id_append_line(result "")
+        foreach(line IN LISTS footer)
+            id_unprotect_line("${line}" line)
+            id_append_line(result "${line}")
+        endforeach()
+    endif()
+
+    set(${out_var} "${result}" PARENT_SCOPE)
+endfunction()
+
 id_require_var(RELEASE_VERSION)
 id_parse_version("${RELEASE_VERSION}" RELEASE)
 
@@ -220,9 +272,14 @@ if(NOT DEFINED OUTPUT_FILE OR "${OUTPUT_FILE}" STREQUAL "")
     set(OUTPUT_FILE "${ID_SOURCE_DIR}/release-notes-${RELEASE_TAG}.md")
 endif()
 
+if(NOT DEFINED FOOTER_FILE OR "${FOOTER_FILE}" STREQUAL "")
+    set(FOOTER_FILE "${ID_SOURCE_DIR}/scripts/release-notes-footer.md")
+endif()
+
 id_read_lines("${ID_SOURCE_DIR}/hc/src/help.src" help_src_lines)
 id_extract_changelog(help_src_lines "${RELEASE_DISPLAY}" changelog_lines)
 id_render_release_notes(changelog_lines "${RELEASE_DISPLAY}" release_note_lines)
+id_append_footer(release_note_lines "${FOOTER_FILE}" release_note_lines)
 id_write_lines("${OUTPUT_FILE}" release_note_lines)
 
 message(STATUS "Wrote release notes for ${RELEASE_DISPLAY} to ${OUTPUT_FILE}")
