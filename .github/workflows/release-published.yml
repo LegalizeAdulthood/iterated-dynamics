@@ -1,0 +1,157 @@
+# SPDX-License-Identifier: GPL-3.0-only
+#
+name: release-published
+
+on:
+  release:
+    types: [ published ]
+
+permissions:
+  contents: write
+
+jobs:
+  post-release:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-published-${{github.event.release.tag_name}}
+      cancel-in-progress: false
+
+    steps:
+    - name: Checkout Source
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        submodules: false
+        path: source
+
+    - name: Checkout Pages
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        ref: gh-pages
+        submodules: false
+        path: pages
+
+    - name: Setup CMake
+      uses: jwlawson/actions-setup-cmake@0d6a7d60b009d01c9e7523be22153ff8f19460d3 # v2.2.0
+      with:
+        cmake-version: '3.31'
+
+    - name: Resolve Release Versions
+      id: version
+      env:
+        RELEASE_TAG: ${{github.event.release.tag_name}}
+      run: |
+        if [[ ! "${RELEASE_TAG}" =~ ^v([0-9]+)[.]([0-9]+)[.]([0-9]+)$ ]]; then
+          echo "Invalid release tag: ${RELEASE_TAG}"
+          exit 1
+        fi
+
+        major="${BASH_REMATCH[1]}"
+        minor="${BASH_REMATCH[2]}"
+        patch="${BASH_REMATCH[3]}"
+        next_patch="$((patch + 1))"
+
+        echo "release=${major}.${minor}.${patch}" >> "${GITHUB_OUTPUT}"
+        echo "next=${major}.${minor}.${next_patch}" >> "${GITHUB_OUTPUT}"
+        echo "tag=${RELEASE_TAG}" >> "${GITHUB_OUTPUT}"
+
+    - name: Resolve Source Branch
+      id: source
+      working-directory: source
+      env:
+        DEFAULT_BRANCH: ${{github.event.repository.default_branch}}
+        RELEASE_TAG: ${{steps.version.outputs.tag}}
+        TARGET: ${{github.event.release.target_commitish}}
+      run: |
+        git fetch origin "+refs/heads/*:refs/remotes/origin/*" \
+          "+refs/tags/*:refs/tags/*"
+
+        branch=""
+        if git show-ref --verify --quiet "refs/remotes/origin/${TARGET}"; then
+          branch="${TARGET}"
+        elif git merge-base --is-ancestor "${RELEASE_TAG}^{commit}" \
+            "origin/${DEFAULT_BRANCH}"; then
+          branch="${DEFAULT_BRANCH}"
+        else
+          branch="$(git for-each-ref \
+            --format='%(refname:short)' \
+            --contains "${RELEASE_TAG}^{commit}" \
+            "refs/remotes/origin/id-*" |
+            sed 's#^origin/##' |
+            sort |
+            head -n 1)"
+        fi
+
+        if [ -z "${branch}" ]; then
+          echo "Could not resolve source branch for ${RELEASE_TAG}"
+          exit 1
+        fi
+
+        git checkout -B "${branch}" "origin/${branch}"
+        echo "branch=${branch}" >> "${GITHUB_OUTPUT}"
+
+    - name: Prepare Post-Release Updates
+      run: >
+        cmake
+        -DID_SOURCE_DIR:STRING=${{github.workspace}}/source
+        -DRELEASE_VERSION:STRING=${{steps.version.outputs.release}}
+        -DNEXT_VERSION:STRING=${{steps.version.outputs.next}}
+        -DRELEASE_PAGES_DIR:STRING=${{github.workspace}}/pages
+        -P source/scripts/release-published.cmake
+
+    - name: Commit Source Updates
+      working-directory: source
+      env:
+        NEXT_VERSION: ${{steps.version.outputs.next}}
+        RELEASE_TAG: ${{steps.version.outputs.tag}}
+        SOURCE_BRANCH: ${{steps.source.outputs.branch}}
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@example.com
+        git add CMakeLists.txt packaging/CMakeLists.txt hc/src/help.src hc/src/help5.src
+        git status
+
+        if git diff --cached --quiet; then
+          echo "No source changes to commit"
+          exit 0
+        fi
+
+        git commit -m "Update version to ${NEXT_VERSION} after ${RELEASE_TAG}"
+        git fetch origin "${SOURCE_BRANCH}"
+        git rebase "origin/${SOURCE_BRANCH}"
+        git push origin "HEAD:${SOURCE_BRANCH}"
+
+    - name: Commit Pages Updates
+      working-directory: pages
+      env:
+        RELEASE_TAG: ${{steps.version.outputs.tag}}
+      run: |
+        git config user.name github-pages
+        git config user.email pages-bot@example.com
+        git add -A .
+        git status
+
+        if git diff --cached --quiet; then
+          echo "No pages changes to commit"
+          exit 0
+        fi
+
+        git commit -m "Promote online documentation for ${RELEASE_TAG}"
+
+        for attempt in 1 2 3; do
+          git fetch origin +refs/heads/gh-pages:refs/remotes/origin/gh-pages
+          if ! git rebase origin/gh-pages; then
+            git rebase --abort || true
+            sleep $((attempt * 5))
+            continue
+          fi
+
+          if git push origin HEAD:gh-pages; then
+            exit 0
+          fi
+
+          sleep $((attempt * 5))
+        done
+
+        exit 1
