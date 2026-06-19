@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
-#include <X11Driver/X11SpecialDirectories.h>
+// Copyright 2026 Richard Thomson
+//
+#include "io/special_dirs.h"
 
 #include <cctype>
-#include <cstdint>
 #include <cstdlib>
 #include <filesystem>
 #include <fstream>
@@ -23,6 +24,15 @@ namespace
 constexpr const char *PROC_SELF_EXE{"/proc/self/exe"};
 constexpr std::string_view DOCUMENTS_KEY{"XDG_DOCUMENTS_DIR"};
 constexpr const char *USER_DIRS_FILE{"user-dirs.dirs"};
+
+class LinuxSpecialDirectories : public SpecialDirectories
+{
+public:
+    ~LinuxSpecialDirectories() override = default;
+
+    fs::path program_dir() const override;
+    fs::path documents_dir() const override;
+};
 
 bool is_space(const char ch)
 {
@@ -57,6 +67,12 @@ std::string_view unquote(std::string_view text)
 bool starts_with(std::string_view text, const std::string_view prefix)
 {
     return text.size() >= prefix.size() && text.substr(0, prefix.size()) == prefix;
+}
+
+fs::path home_dir()
+{
+    const char *home = std::getenv("HOME");
+    return home != nullptr && home[0] != '\0' ? fs::path{home} : fs::path{};
 }
 
 fs::path expand_user_dir(std::string_view value)
@@ -127,9 +143,7 @@ std::optional<fs::path> read_user_documents_dir()
     return {};
 }
 
-} // namespace
-
-fs::path X11SpecialDirectories::program_dir() const
+fs::path LinuxSpecialDirectories::program_dir() const
 {
     std::error_code err;
     const fs::path executable{fs::read_symlink(PROC_SELF_EXE, err)};
@@ -140,7 +154,7 @@ fs::path X11SpecialDirectories::program_dir() const
     return executable.empty() ? fs::current_path() : executable.parent_path();
 }
 
-fs::path X11SpecialDirectories::documents_dir() const
+fs::path LinuxSpecialDirectories::documents_dir() const
 {
     if (const char *docs = std::getenv("XDG_DOCUMENTS_DIR"); docs != nullptr && docs[0] != '\0')
     {
@@ -153,6 +167,13 @@ fs::path X11SpecialDirectories::documents_dir() const
 
     const fs::path home{home_dir()};
     return home.empty() ? fs::current_path() : home / "Documents";
+}
+
+} // namespace
+
+std::shared_ptr<SpecialDirectories> create_special_directories()
+{
+    return std::make_shared<LinuxSpecialDirectories>();
 }
 
 } // namespace id::io

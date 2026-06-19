@@ -126,6 +126,22 @@ add_executable(test-id
     ui/test_thinking.cpp
     ui/test_video_mode.cpp
 )
+file(GENERATE
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/include/$<CONFIG>/test_executable_dir.h"
+    CONTENT [[// SPDX-License-Identifier: GPL-3.0-only
+//
+#pragma once
+
+namespace id::test::data
+{
+
+constexpr const char *ID_TEST_PROGRAM_DIR{"$<TARGET_FILE_DIR:test-id>"};
+
+} // namespace id::test::data
+]])
+if(NOT ID_USE_WX)
+    target_sources(test-id PRIVATE io/test_special_dirs.cpp)
+endif()
 if(ID_USE_WX)
     target_sources(test-id PRIVATE
         include/MockSpecialDirectories.h
@@ -147,7 +163,10 @@ source_group_subdir("IO" "io")
 source_group_subdir("Math" "math")
 source_group_subdir("Miscellaneous" "misc")
 source_group_subdir("UI" "ui")
-target_include_directories(test-id PUBLIC include "${CMAKE_CURRENT_BINARY_DIR}/include")
+target_include_directories(test-id PUBLIC
+    include
+    "${CMAKE_CURRENT_BINARY_DIR}/include"
+    "${CMAKE_CURRENT_BINARY_DIR}/include/$<CONFIG>")
 target_link_libraries(test-id PRIVATE GTest::gmock_main algos Boost::endian libid)
 target_folder(test-id "Tests")
 gtest_discover_tests(test-id PROPERTIES LABELS id)

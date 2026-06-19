@@ -10,6 +10,13 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(ID_MAKE_MIG_SCRIPT_SOURCE ui/make_mig_script_windows.cpp)
 endif()
 
+set(ID_SPECIAL_DIRECTORIES_SOURCE io/SpecialDirectoriesLinux.cpp)
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(ID_SPECIAL_DIRECTORIES_SOURCE io/SpecialDirectoriesWin.cpp)
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(ID_SPECIAL_DIRECTORIES_SOURCE io/SpecialDirectoriesMac.cpp)
+endif()
+
 add_library(libid
     include/engine/bailout_formula.h engine/bailout_formula.cpp
     include/engine/Browse.h engine/Browse.cpp
@@ -140,6 +147,7 @@ add_library(libid
     include/io/save_timer.h io/save_timer.cpp
     include/io/search_path.h io/search_path.cpp
     include/io/special_dirs.h io/special_dirs.cpp
+    ${ID_SPECIAL_DIRECTORIES_SOURCE}
     include/io/trim_filename.h io/trim_filename.cpp
     include/io/update_save_name.h io/update_save_name.cpp
 
@@ -287,6 +295,9 @@ else()
     set(ID_OS_LIBS "")
 endif()
 target_link_libraries(libid PRIVATE helpcom os ${ID_OS_LIBS} fmt::fmt-header-only)
+if(WIN32)
+    target_link_libraries(libid PRIVATE shell32.lib)
+endif()
 target_link_libraries(libid PUBLIC help-defs config algos Boost::endian GIF::GIF cpuid::cpuid)
 target_folder(libid "Libraries")
 add_dependencies(libid native-help)

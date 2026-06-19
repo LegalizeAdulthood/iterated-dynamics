@@ -57,7 +57,6 @@ else()
         Win32BaseDriver.h Win32BaseDriver.cpp
         WinText.h WinText.cpp
         instance.h
-        special_dirs.cpp
         win_defines.h
     )
 

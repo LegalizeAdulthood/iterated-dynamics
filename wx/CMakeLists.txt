@@ -32,7 +32,6 @@ add_executable(id
     WxBaseDriver.h WxBaseDriver.cpp
     WxDiskDriver.h WxDiskDriver.cpp
     WxDriver.h WxDriver.cpp
-    WxSpecialDirectories.cpp
     wx_id.h wx_id.cpp
 )
 source_group("CMake Templates" REGULAR_EXPRESSION "^.*\.in$")

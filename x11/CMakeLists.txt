@@ -16,14 +16,8 @@ add_library(os STATIC
     X11Driver.cpp
     include/X11Driver/X11Frame.h X11Frame.cpp
     include/X11Driver/X11Plot.h X11Plot.cpp
-    include/X11Driver/X11SpecialDirectories.h X11SpecialDirectories.cpp
     include/X11Driver/X11Text.h X11Text.cpp
 )
-if(APPLE)
-    target_sources(os PRIVATE X11SpecialDirectoriesMac.cpp)
-else()
-    target_sources(os PRIVATE X11SpecialDirectoriesLinux.cpp)
-endif()
 
 target_compile_definitions(os PRIVATE ${ID_TARGET_DEFINITIONS} $<$<CONFIG:Debug>:${ID_TARGET_DEFINITIONS_DEBUG}>)
 target_compile_options(os PRIVATE ${ID_TARGET_OPTIONS})

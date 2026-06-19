@@ -1,38 +1,43 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
+// Copyright 2026 Richard Thomson
+//
 #include "io/special_dirs.h"
 
-#include "win_defines.h"
+#define NOMINMAX
+#define WIN32_LEAN_AND_MEAN
 #include <ShlObj.h>
 #include <Windows.h>
 
+#include <filesystem>
 #include <stdexcept>
 #include <string>
 
 namespace id::io
 {
 
+namespace fs = std::filesystem;
+
 namespace
 {
 
-class Win32SpecialDirectories : public SpecialDirectories
+class WinSpecialDirectories : public SpecialDirectories
 {
 public:
-    Win32SpecialDirectories() = default;
-    ~Win32SpecialDirectories() override = default;
+    ~WinSpecialDirectories() override = default;
 
-    std::filesystem::path program_dir() const override;
-    std::filesystem::path documents_dir() const override;
+    fs::path program_dir() const override;
+    fs::path documents_dir() const override;
 };
 
-std::filesystem::path Win32SpecialDirectories::program_dir() const
+fs::path WinSpecialDirectories::program_dir() const
 {
     char buffer[MAX_PATH]{};
     GetModuleFileNameA(nullptr, buffer, MAX_PATH);
-    return std::filesystem::path{buffer}.parent_path();
+    return fs::path{buffer}.parent_path();
 }
 
-std::filesystem::path Win32SpecialDirectories::documents_dir() const
+fs::path WinSpecialDirectories::documents_dir() const
 {
     char buffer[MAX_PATH]{};
     const HRESULT status = SHGetFolderPathA(nullptr, CSIDL_MYDOCUMENTS, nullptr, SHGFP_TYPE_CURRENT, buffer);
@@ -47,7 +52,7 @@ std::filesystem::path Win32SpecialDirectories::documents_dir() const
 
 std::shared_ptr<SpecialDirectories> create_special_directories()
 {
-    return std::make_shared<Win32SpecialDirectories>();
+    return std::make_shared<WinSpecialDirectories>();
 }
 
 } // namespace id::io
