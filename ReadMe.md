@@ -145,11 +145,11 @@ To ensure your code will fit in wth the existing code base, check our
 
 If you wish to contribute but don't want to deal with the shifting changes
 on the master branch, checkout the code at the tag for the most recent
-release (currently the v1.3.1 tag) and create your own development branch
+release (currently the v1.4.0 tag) and create your own development branch
 from there:
 
 ```
-git checkout v1.3.1
+git checkout v1.4.0
 git checkout -b develop
 ```
 
