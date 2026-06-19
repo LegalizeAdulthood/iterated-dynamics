@@ -3,10 +3,21 @@
 add_test(NAME ScriptTest.release-published
     COMMAND ${CMAKE_COMMAND}
         "-DRELEASE_SCRIPT=${CMAKE_SOURCE_DIR}/scripts/release-published.cmake"
-        "-DINPUT_DIR=${CMAKE_CURRENT_SOURCE_DIR}/inputs"
-        "-DGOLD_DIR=${CMAKE_CURRENT_SOURCE_DIR}/gold"
+        "-DINPUT_DIR=${CMAKE_CURRENT_SOURCE_DIR}/inputs/release-published"
+        "-DGOLD_DIR=${CMAKE_CURRENT_SOURCE_DIR}/gold/release-published"
         "-DTEST_WORK_DIR=${CMAKE_CURRENT_BINARY_DIR}/release-published"
         "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/tests/cmake"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/release_published_test.cmake"
 )
 set_tests_properties(ScriptTest.release-published PROPERTIES LABELS "scripts")
+
+add_test(NAME ScriptTest.release-notes
+    COMMAND ${CMAKE_COMMAND}
+        "-DRELEASE_NOTES_SCRIPT=${CMAKE_SOURCE_DIR}/scripts/release-notes.cmake"
+        "-DINPUT_DIR=${CMAKE_CURRENT_SOURCE_DIR}/inputs/release-notes"
+        "-DGOLD_DIR=${CMAKE_CURRENT_SOURCE_DIR}/gold/release-notes"
+        "-DTEST_WORK_DIR=${CMAKE_CURRENT_BINARY_DIR}/release-notes"
+        "-DCMAKE_MODULE_PATH=${CMAKE_SOURCE_DIR}/tests/cmake"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/release_notes_test.cmake"
+)
+set_tests_properties(ScriptTest.release-notes PROPERTIES LABELS "scripts")
