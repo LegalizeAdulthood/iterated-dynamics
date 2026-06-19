@@ -1,0 +1,6 @@
+inside-work-tree=true
+branch=gh-pages
+status:
+ D help/old.txt
+ M index.html
+?? help/topic.txt

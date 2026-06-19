@@ -260,6 +260,7 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ;
+; RELEASE CHANGELOG BEGIN
 ~Topic=New Features in 1.4.0
 
 The source code for Iterated Dynamics lives on github:\
@@ -427,6 +428,7 @@ o Some formulas don't render correctly.  These problems have been around
 ;
 ;
 ;
+; RELEASE CHANGELOG END
 ~Topic=Introduction
 Iterated Dynamics, or Id for short, plots and manipulates images of
 "objects" -- actually, sets of mathematical points -- that have fractal

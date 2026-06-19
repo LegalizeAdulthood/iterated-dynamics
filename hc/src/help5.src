@@ -1851,6 +1851,7 @@ its own history spanning many years.  Please consult the Fractint help
 for its history.  To avoid being confused with a new release of Fractint,
 the code has been rebranded Iterated Dynamics, or Id for short, throughout.
 
+; RELEASE HISTORY INSERT
 Version 1.3.2 is an interim bug fix release on the way to version 2.0.
 
 Bugs Fixed in Version 1.3.2

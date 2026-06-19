@@ -1,0 +1,29 @@
+; fake history help
+~Topic=Revision History
+
+Iterated Dynamics is a fork of the DOS program Fractint.
+
+; RELEASE HISTORY INSERT
+Version 1.4.0 is an interim release on the way to version 2.0.
+
+New Features in Version 1.4.0
+
+o New fake feature.\
+
+Bugs Fixed in Version 1.4.0
+
+o Fixed fake bug.\
+
+Code Cleanup in Version 1.4.0
+
+o Remove obsolete code.\
+
+Known limitations:
+
+o Known issue remains.
+
+Version 1.3.2 is an interim bug fix release on the way to version 2.0.
+
+Bugs Fixed in Version 1.3.2
+
+o Old fake bug.\

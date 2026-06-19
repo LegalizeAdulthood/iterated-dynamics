@@ -1,0 +1,32 @@
+; fake current help
+~Format-
+   { New Features in 1.4.1 }                { Introduction }
+~Format+
+~DocContents
+{     , 0, "New Features in 1.4.1", FF}
+{     , 0, "Introduction", FF}
+;
+;
+;
+; RELEASE CHANGELOG BEGIN
+~Topic=New Features in 1.4.1
+
+The source code for Iterated Dynamics lives on github:\
+  <https://github.com/LegalizeAdulthood/iterated-dynamics>
+
+Found a bug?  File an issue on our github project!\
+  <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
+
+Version 1.4.1 is an interim release on the way to version 2.0.
+
+New Features in Version 1.4.1
+
+Bugs Fixed in Version 1.4.1
+
+Code Cleanup in Version 1.4.1
+;
+;
+;
+; RELEASE CHANGELOG END
+~Topic=Introduction
+This is a fake help file.
