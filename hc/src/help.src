@@ -18,7 +18,7 @@
    { Introduction }                         { Distribution of Iterated Dynamics }
    { Conditions on Use }                    { Contacting the Author }
    { Getting Started }                      { The Stone Soup Story }
-   { New Features in 1.4.0 }                { A Word About the Authors }
+   { New Features in 1.4.1 }                { A Word About the Authors }
 
    { Display Mode Commands }
    { Color Cycling Commands }               { Id on Linux and macOS }
@@ -39,7 +39,7 @@
 ;
 ;
 ~DocContents
-{     , 0, "New Features in 1.4.0", FF}
+{     , 0, "New Features in 1.4.1", FF}
 {     , 0, "Introduction", "Conditions on Use", FF}
 
 {1.   , 0, Iterated Dynamics Commands, FF}
@@ -261,7 +261,7 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ; RELEASE CHANGELOG BEGIN
-~Topic=New Features in 1.4.0
+~Topic=New Features in 1.4.1
 
 The source code for Iterated Dynamics lives on github:\
   <https://github.com/LegalizeAdulthood/iterated-dynamics>
@@ -269,162 +269,13 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-Version 1.4.0 is an interim release on the way to version 2.0.
+Version 1.4.1 is an interim release on the way to version 2.0.
 
-New Features in Version 1.4.0
+New Features in Version 1.4.1
 
-o The Linux port is complete.  It provides native Linux text and
-  graphics windows and uses the standard id.cfg video mode table.
-o The macOS port is complete.  See {Id on Linux and macOS}.
-  (Fixes #42)
-o Libraries are used to group data files for Id.  See {Libraries}.
-  (Fixes #95)
-o The documentation is now available in PDF format.  (Fixes #262)\
-o The raytrace output format can now be specified by name instead of
-  just by number.  (Fixes #318)
-o The DXF raytrace output format is documented in the help file.
-  (Fixes #317)
-o The previous browse history limit of 16 files was relaxed; it is
-  now limited only by available memory.
-o Random-dot stereogram generation now honors rseed=, making RDS output
-  deterministic when a seed is specified.
-o Random-dot stereograms can now be generated in batch mode using rds=
-  and rds-texture=.  (Fixes #227)
-o Formula rand now honors rseed=, making formulas that use rand repeatable
-  when a seed is specified.  (Fixes #363)
-o Formula comparison operators now document that they compare only the real
-  parts of operands.  (Fixes #358)
-o The Burning Ship fractal type now documents its formula and parameters.
-  (Fixes #426)
-o makepar now writes legacy color ranges when saving parameters from legacy
-  GIF images.  (Fixes #428)
-o Fractal types using random numbers now consistently honor rseed=,
-  making seeded random fractals repeatable across fractal types.
-o Formula, IFS, and L-system item names now preserve user-entered case
-  in parameter output while still matching entries case-insensitively.
-  (Fixes #364)
-o Image tests now cover periodicity checking with non-default settings.
-  (Fixes #354)
-o The bibliography now includes "Chaos and Fractals: New Frontiers of
-  Science".  (Fixes #365)
-o Online HTML documentation is now published to versioned permalink URLs
-  before approval for the latest URL.  (Fixes #366)
-o Autokey files can now use caret notation for control-key command
-  initiators, such as ^S for <Ctrl+S>.
-o MIG piece generation now writes a makemig.sh shell script on Linux and
-  macOS. (Fixes #370)
-o Disk-video modes can now generate GIF-sized images up to 65535x65535.
-  Windowed display modes still require a physical display large enough
-  for the configured mode.
+Bugs Fixed in Version 1.4.1
 
-Bugs Fixed in Version 1.4.0
-
-o Doxygen pages are now being generated from the source code.  Documentation
-  comments will be added over time to improve the generated documentation.
-  (Fixes #263)
-o @parfile functionality restored.  (It processes the first parameter
-  set in the file.)
-o List of fractal types in the repository ReadMe linked and condensed.
-  (Fixes #332)
-o Solid guessing no longer leaves parts of images unfinished when
-  symmetry splits work, such as in 640x480 video mode.  (Fixes #257)
-o Solid guessing no longer crashes in disk-video modes wider than 2048
-  pixels, such as the 8K disk-video mode.
-o Lambdafn with function=exp now honors the reset version when selecting
-  the Fractint-compatible bailout behavior.  (Fixes #107)
-o Legacy parameter sets now use the Fractint-compatible logmap table and
-  outside coloring behavior selected by reset.  (Fixes #104)
-o FrothyBasin now honors legacy Fractint parameter semantics selected by
-  reset, allowing @id.par/EvilFrog to render correctly.  (Fixes #105)
-o The @id.par/mandala parameter set now explicitly selects reset=1730 so
-  legacy outside=real coloring is used.  (Fixes #106)
-o The @example1.par/fireworks parameter set was removed because its
-  appearance depends on Fractint fixed-point artifacts.  (Fixes #391)
-o Ant rule strings from params= are now preserved so @example2.par/Ant
-  renders with the intended rule.  (Fixes #393)
-o Ant rules can now use exact integer text in params=, allowing rule
-  strings wider than Fractint's numeric formatting permits.
-o Legacy outside=atan coloring now uses the Fractint-compatible color
-  scaling selected by reset.  (Fixes #394)
-o @example2.par/Barnsleyj2-manr now selects the Fractint reset version
-  needed for its logmap=old coloring.  (Fixes #395)
-o The default inside color now matches Fractint, allowing
-  @example2.par/TileMandel to render correctly.  (Fixes #399)
-o Legacy 6-bit palette values are now expanded to the full 8-bit range
-  when loading old parameter colors, affected Id GIF files, and legacy
-  map files.
-o Parameter colors=@name now finds name.map when the extension is omitted.\
-o @lyapunov.par/Blob1 now renders correctly by restoring the legacy
-  Lyapunov reset behavior used by Fractint.  (Fixes #400)
-o Compatibility version handling now follows Fractint's model: <Insert>
-  restores the current Id version, bare reset selects Fractint 17.30
-  behavior, and explicit reset= values preserve old parameter behavior.
-o Included parameter sets now render consistently with the resolved Fractint
-  compatibility expectations.  (Fixes #117)
-o Setting type=formula, type=lsystem, or type=ifs on the command line
-  without specifying an item name now behaves like selecting the type
-  interactively.  (Fixes #71)
-o The function= parameter documentation now lists the default variable
-  functions.  (Fixes #390)
-o More mathematical formulas now render correctly in the AsciiDoc
-  documentation.
-o Debug output files are now written under the debug subdirectory of the
-  save library.  New debug files honor overwrite=no by choosing an
-  incremented name, while append-mode debug logs keep appending to the
-  same file.
-o Scratch files now use the temporary directory instead of the working
-  directory.
-o makepar= now writes PAR files correctly when Id is launched from a
-  directory other than the home library.  (Fixes #368)
-o Library searches now accept FRACTINT-style formulas, maps, and pars
-  subdirectories as read-only aliases.  (Fixes #421)
-o Formula entries embedded in a selected PAR file now load when
-  formulafile= names a missing formula file, matching Fractint fallback
-  behavior.  (Fixes #389)
-o MIG image component files are now removed from the image save library
-  after the final image is assembled.
-o The Linux executable is now named xid to avoid conflicting with the
-  standard id system utility.
-o Windows executables now embed icon and version resources directly.
-  (Fixes #386)
-o 3D Targa output now writes rendered pixels to the image save library.\
-o The bignum storage arena now matches the 64 KB allocator limit, avoiding
-  memory corruption in arbitrary precision math.
-o sound=off now suppresses completion buzzers.\
-o Restore orbitdelay= paced timing for orbit sound (Fixes #325).\
-
-Code Cleanup in Version 1.4.0
-
-o Many small changes to avoid buffer overruns or other unbounded string
-  operations as reported by SonarQube.
-o The incomplete X11 driver for linux has been removed.  (Fixes #343)\
-o All identifiers are now inside a namespace to avoid collisions with
-  external libraries.  wxWidgets on linux depends on glib which uses
-  g_ prefix for all identifiers and this conflicted with the same
-  prefix used by Id to identify all global variables.  (Fixes #330)
-o File output comparison tests were added for raytrace output and
-  orbit output to detect major regressions in the formatted output.
-o An autokey-driven UI test was added for generating MIG PAR and BAT
-  files.
-o Help text spelling was normalized to American English.\
-o More image comparison tests were added to cover more fractal types,
-  rotation and skew of the zoom box and the inversion, biomorph and
-  decomp options.  (Fixes #335, #336, #337, #341, #342)
-o The code has been restructured to increase the separation of image
-  computation from user interface.
-
-Known limitations:
-
-o This initial implementation of perturbation does not support
-  periodicity checking and only supports a limited number of inside and
-  outside coloring algorithms.  Suspend and resume is not supported with
-  perturbation.
-o Sound output does nothing, although all controls can be set through
-  parameters or interactive screens.  Sound output will be restored once a
-  suitable audio library has been identified.
-o Some formulas don't render correctly.  These problems have been around
-  forever as xfractint also renders them incorrectly.  This will be fixed
-  in a subsequent release.
+Code Cleanup in Version 1.4.1
 ;
 ;
 ;
