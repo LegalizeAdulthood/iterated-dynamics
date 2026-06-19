@@ -4,76 +4,76 @@ algos/string_algorithms.cpp:48:16: style: Consider using std::transform algorith
 algos/string_algorithms.cpp:59:16: style: Consider using std::transform algorithm instead of a raw loop. [useStlAlgorithm]
         result.push_back(ascii_to_upper(ch));
                ^
-hc/AsciiDocCompiler.cpp:37:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/AsciiDocCompiler.cpp:38:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/AsciiDocCompiler.cpp:33:9: note: First condition
+hc/AsciiDocCompiler.cpp:34:9: note: First condition
     if (!g_errors)
         ^
-hc/AsciiDocCompiler.cpp:37:9: note: Second condition
+hc/AsciiDocCompiler.cpp:38:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1527:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1532:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1523:9: note: First condition
+hc/HelpCompiler.cpp:1528:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1527:9: note: Second condition
+hc/HelpCompiler.cpp:1532:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1531:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1536:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1527:9: note: First condition
+hc/HelpCompiler.cpp:1532:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1531:9: note: Second condition
+hc/HelpCompiler.cpp:1536:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1535:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1540:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1531:9: note: First condition
+hc/HelpCompiler.cpp:1536:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1535:9: note: Second condition
+hc/HelpCompiler.cpp:1540:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1539:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1544:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1535:9: note: First condition
+hc/HelpCompiler.cpp:1540:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1539:9: note: Second condition
+hc/HelpCompiler.cpp:1544:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1543:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1548:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1539:9: note: First condition
+hc/HelpCompiler.cpp:1544:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1543:9: note: Second condition
+hc/HelpCompiler.cpp:1548:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1547:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1552:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1543:9: note: First condition
+hc/HelpCompiler.cpp:1548:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1547:9: note: Second condition
+hc/HelpCompiler.cpp:1552:9: note: Second condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1577:9: style: The if condition is the same as the previous if condition [duplicateCondition]
+hc/HelpCompiler.cpp:1582:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1573:9: note: First condition
+hc/HelpCompiler.cpp:1578:9: note: First condition
     if (!g_errors)
         ^
-hc/HelpCompiler.cpp:1577:9: note: Second condition
+hc/HelpCompiler.cpp:1582:9: note: Second condition
     if (!g_errors)
         ^
 libid/engine/cmdfiles.cpp:211:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]

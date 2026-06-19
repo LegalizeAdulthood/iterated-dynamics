@@ -35,7 +35,7 @@ var searchData=
   ['header_20guards_32',['Header Guards',['../d5/d38/md_Style.html#autotoc_md74',1,'']]],
   ['height_33',['height',['../d5/d7d/structid_1_1io_1_1MigMetadata.html#a71d60fde708e125309dce8dc7a414cf6',1,'id::io::MigMetadata::height'],['../db/ded/structid_1_1engine_1_1ImageRegion.html#a76c97bc28e1d671d51cbcd641aea395f',1,'id::engine::ImageRegion::height() const']]],
   ['height3_34',['height3',['../db/ded/structid_1_1engine_1_1ImageRegion.html#a2782781f0648564d0bbd090385bd20a8',1,'id::engine::ImageRegion']]],
-  ['help_35',['help',['../d0/d5f/namespaceid_1_1help.html#aa77b984f5cbafb3849ddca1c09e057eb',1,'id::help::help()'],['../dc/d76/namespaceid_1_1ui.html#a9f7061365fdd422f042ac348be5d5b32a4fc963e213bba362778f5c175eb4d5ff',1,'id::ui::HELP']]],
+  ['help_35',['help',['../dc/d76/namespaceid_1_1ui.html#a9f7061365fdd422f042ac348be5d5b32a4fc963e213bba362778f5c175eb4d5ff',1,'id::ui::HELP'],['../d0/d5f/namespaceid_1_1help.html#aa77b984f5cbafb3849ddca1c09e057eb',1,'id::help::help()']]],
   ['help_2ecpp_36',['help.cpp',['../d0/dff/help_8cpp.html',1,'']]],
   ['help_2eh_37',['help.h',['../db/df1/help_8h.html',1,'']]],
   ['help_5fformula_38',['help_formula',['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a526a11b864d03f375080339e93a5ed18',1,'id::fractals::FractalSpecific']]],
