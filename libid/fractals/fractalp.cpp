@@ -1959,7 +1959,6 @@ FractalDispatch g_fractal_dispatch{};
 FractalDispatch make_fractal_dispatch(const FractalSpecific &specific)
 {
     return {
-        &specific,
         specific.orbit_calc,
         specific.per_pixel,
         specific.per_image,

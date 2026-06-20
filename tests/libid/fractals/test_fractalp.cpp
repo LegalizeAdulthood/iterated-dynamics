@@ -157,7 +157,6 @@ TEST(TestFractalDispatch, seededDispatchMatchesDefaults)
         const FractalSpecific &from{g_fractal_specific[i]};
         const FractalDispatch dispatch{make_fractal_dispatch(from)};
 
-        EXPECT_EQ(&from, dispatch.specific) << "index " << i << ", " << from.name;
         EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc) << "index " << i << ", " << from.name;
         EXPECT_EQ(from.per_pixel, dispatch.per_pixel) << "index " << i << ", " << from.name;
         EXPECT_EQ(from.per_image, dispatch.per_image) << "index " << i << ", " << from.name;
@@ -175,7 +174,6 @@ TEST(TestFractalDispatch, setFractalTypeSeedsCurrentDispatch)
     set_fractal_type(FractalType::MANDEL);
 
     const FractalSpecific &from{*get_fractal_specific(FractalType::MANDEL)};
-    EXPECT_EQ(&from, g_fractal_dispatch.specific);
     EXPECT_EQ(from.orbit_calc, g_fractal_dispatch.orbit_calc);
     EXPECT_EQ(from.per_pixel, g_fractal_dispatch.per_pixel);
     EXPECT_EQ(from.per_image, g_fractal_dispatch.per_image);
@@ -188,7 +186,6 @@ TEST(TestFractalDispatch, makeDispatchFromTypeSeedsFromRequestedType)
     const FractalSpecific &from{*get_fractal_specific(FractalType::JULIA)};
     const FractalDispatch dispatch{make_fractal_dispatch(FractalType::JULIA)};
 
-    EXPECT_EQ(&from, dispatch.specific);
     EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc);
     EXPECT_EQ(from.per_pixel, dispatch.per_pixel);
     EXPECT_EQ(from.per_image, dispatch.per_image);
@@ -365,7 +362,6 @@ TEST(TestFractalDispatch, julibrotOrbitDispatchUsesSecondaryType)
 
     const FractalDispatch dispatch{make_julibrot_orbit_dispatch()};
 
-    EXPECT_EQ(get_fractal_specific(FractalType::JULIA_Z_POWER), dispatch.specific);
     EXPECT_EQ(mandel_z_power_cmplx_orbit, dispatch.orbit_calc);
     EXPECT_EQ(julibrot_table.orbit_calc, current_orbit_calc());
     expect_table_functions(FractalType::JULIBROT, julibrot_table);

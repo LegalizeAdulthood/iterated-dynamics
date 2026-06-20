@@ -124,7 +124,6 @@ struct FractalSpecific
 
 struct FractalDispatch
 {
-    const FractalSpecific *specific{};
     OrbitCalc orbit_calc{};
     PerPixel per_pixel{};
     PerImage per_image{};
