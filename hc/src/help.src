@@ -273,6 +273,9 @@ Version 1.4.1 is a bug fix release for version 1.4.0
 
 Bugs Fixed in Version 1.4.1
 
+o Linux release binaries are now built on Ubuntu 22.04 so they run on
+  distributions with older glibc, such as Debian Bookworm.
+
 New Features in Version 1.4.0
 
 o The Linux port is complete.  It provides native Linux text and
