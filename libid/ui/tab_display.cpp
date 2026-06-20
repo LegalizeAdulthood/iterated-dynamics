@@ -216,13 +216,14 @@ static bool tab_display2()
     /*
         write_row(row++, "xdots {:d} ydots {:d} sxdots {:d} sydots {:d}", xdots, ydots, sxdots, sydots);
     */
+    const OrbitCalc formula_status_orbit{g_fractal_type == FractalType::FORMULA ? current_orbit_calc() : nullptr};
     write_row(row++, "{:d}x{:d} {:s} ({:s})", g_logical_screen.x_dots, g_logical_screen.y_dots, g_driver->get_name(),
         g_driver->get_description());
     write_row(row++, "xxstart {:d} xxstop {:d} yystart {:d} yystop {:d} {:s} uses_ismand {:d}", g_start_pt.x,
         g_stop_pt.x, g_start_pt.y, g_stop_pt.y,
-        g_cur_fractal_specific->orbit_calc == formula_orbit     ? "slow parser"
-            : g_cur_fractal_specific->orbit_calc == bad_formula ? "bad formula"
-                                                                : "",
+        formula_status_orbit == formula_orbit     ? "slow parser"
+            : formula_status_orbit == bad_formula ? "bad formula"
+                                                  : "",
         g_formula.uses_ismand ? 1 : 0);
     /*
         write_row(row++, "ixstart {:d} ixstop {:d} iystart {:d} iystop {:d} bitshift {:d}",

@@ -145,28 +145,16 @@ FractalDispatch make_fractal_dispatch(const FractalSpecific &specific);
 inline void set_current_per_image(PerImage value)
 {
     g_fractal_dispatch.per_image = value;
-    if (g_cur_fractal_specific != nullptr)
-    {
-        g_cur_fractal_specific->per_image = value;
-    }
 }
 
 inline void set_current_per_pixel(PerPixel value)
 {
     g_fractal_dispatch.per_pixel = value;
-    if (g_cur_fractal_specific != nullptr)
-    {
-        g_cur_fractal_specific->per_pixel = value;
-    }
 }
 
 inline void set_current_orbit_calc(OrbitCalc value)
 {
     g_fractal_dispatch.orbit_calc = value;
-    if (g_cur_fractal_specific != nullptr)
-    {
-        g_cur_fractal_specific->orbit_calc = value;
-    }
 }
 
 inline void set_current_alternate_math(const AlternateMath &value)
