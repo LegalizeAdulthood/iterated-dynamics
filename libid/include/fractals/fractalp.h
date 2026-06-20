@@ -141,6 +141,7 @@ extern FractalDispatch       g_fractal_dispatch;
 
 FractalSpecific *get_fractal_specific(FractalType type);
 FractalDispatch make_fractal_dispatch(const FractalSpecific &specific);
+FractalDispatch make_fractal_dispatch(FractalType type);
 
 inline void set_current_per_image(PerImage value)
 {

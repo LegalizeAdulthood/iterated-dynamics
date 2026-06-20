@@ -9,6 +9,7 @@
 #include <engine/trig_fns.h>
 #include <fractals/formula.h>
 #include <fractals/frasetup.h>
+#include <fractals/julibrot.h>
 #include <fractals/lambda_fn.h>
 #include <fractals/parser.h>
 #include <fractals/phoenix.h>
@@ -182,6 +183,19 @@ TEST(TestFractalDispatch, setFractalTypeSeedsCurrentDispatch)
     EXPECT_EQ(from.symmetry, g_fractal_dispatch.symmetry);
 }
 
+TEST(TestFractalDispatch, makeDispatchFromTypeSeedsFromRequestedType)
+{
+    const FractalSpecific &from{*get_fractal_specific(FractalType::JULIA)};
+    const FractalDispatch dispatch{make_fractal_dispatch(FractalType::JULIA)};
+
+    EXPECT_EQ(&from, dispatch.specific);
+    EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc);
+    EXPECT_EQ(from.per_pixel, dispatch.per_pixel);
+    EXPECT_EQ(from.per_image, dispatch.per_image);
+    EXPECT_EQ(from.calc_type, dispatch.calc_type);
+    EXPECT_EQ(from.symmetry, dispatch.symmetry);
+}
+
 TEST(TestFractalDispatch, accessorsUseCurrentDispatch)
 {
     FractalDispatch dispatch{};
@@ -335,6 +349,24 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
         EXPECT_EQ(popcorn_fractal, current_orbit_calc());
         expect_table_functions(FractalType::POPCORN_JUL, table);
     }
+}
+
+TEST(TestFractalDispatch, julibrotOrbitDispatchUsesSecondaryType)
+{
+    DispatchSelectionState state{FractalType::JULIBROT};
+    const TableFunctions julibrot_table{table_functions(FractalType::JULIBROT)};
+    const TableFunctions orbit_table{table_functions(FractalType::JULIA_Z_POWER)};
+    ValueSaver saved_new_orbit_type{g_new_orbit_type, FractalType::JULIA_Z_POWER};
+    g_params[2] = 3.0;
+    g_params[3] = 1.0;
+
+    const FractalDispatch dispatch{make_julibrot_orbit_dispatch()};
+
+    EXPECT_EQ(get_fractal_specific(FractalType::JULIA_Z_POWER), dispatch.specific);
+    EXPECT_EQ(mandel_z_power_cmplx_orbit, dispatch.orbit_calc);
+    EXPECT_EQ(julibrot_table.orbit_calc, current_orbit_calc());
+    expect_table_functions(FractalType::JULIBROT, julibrot_table);
+    expect_table_functions(FractalType::JULIA_Z_POWER, orbit_table);
 }
 
 TEST(TestFractalSpecific, toJuliaExists)

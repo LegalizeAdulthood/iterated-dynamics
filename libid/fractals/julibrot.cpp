@@ -15,6 +15,7 @@
 #include "math/sqr.h"
 #include "misc/debug_flags.h"
 #include "misc/Driver.h"
+#include "misc/ValueSaver.h"
 #include "ui/get_3d_params.h"
 #include "ui/starfield.h"
 #include "ui/stop_msg.h"
@@ -101,7 +102,20 @@ static int s_z_pixel;
 static bool s_plotted{};
 static long s_n;
 
-static void z_line(double x, double y);
+static void z_line(const FractalDispatch &dispatch, double x, double y);
+
+FractalDispatch make_julibrot_orbit_dispatch()
+{
+    FractalDispatch dispatch{make_fractal_dispatch(g_new_orbit_type)};
+    if (g_new_orbit_type == FractalType::JULIA_Z_POWER)
+    {
+        const int exponent{static_cast<int>(g_params[2])};
+        const bool real_power{g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER &&
+            static_cast<double>(exponent) == g_params[2]};
+        dispatch.orbit_calc = real_power ? mandel_z_power_orbit : mandel_z_power_cmplx_orbit;
+    }
+    return dispatch;
+}
 
 bool julibrot_per_image()
 {
@@ -177,7 +191,7 @@ int julibrot_per_pixel()
     return 1;
 }
 
-static void z_line(const double x, const double y)
+static void z_line(const FractalDispatch &dispatch, const double x, const double y)
 {
     s_jb.x_pixel = x;
     s_jb.y_pixel = y;
@@ -235,7 +249,7 @@ static void z_line(const double x, const double y)
 
         for (s_n = 0; s_n < g_max_iterations; s_n++)
         {
-            if (get_fractal_specific(g_new_orbit_type)->orbit_calc())
+            if (dispatch.orbit_calc())
             {
                 break;
             }
@@ -275,18 +289,10 @@ static void z_line(const double x, const double y)
 Standard4D::Standard4D()
 {
     g_c_exponent = static_cast<int>(g_params[2]);
-
+    m_orbit_dispatch = make_julibrot_orbit_dispatch();
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER)
     {
-        if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER &&
-            static_cast<double>(g_c_exponent) == g_params[2])
-        {
-            get_fractal_specific(g_new_orbit_type)->orbit_calc = mandel_z_power_orbit;
-        }
-        else
-        {
-            get_fractal_specific(g_new_orbit_type)->orbit_calc = mandel_z_power_cmplx_orbit;
-        }
+        ValueSaver saved_dispatch{g_fractal_dispatch, m_orbit_dispatch};
         get_julia_attractor(g_params[0], g_params[1]); // another attractor?
     }
     m_y_dot = (g_logical_screen.y_dots >> 1) - 1;
@@ -304,10 +310,10 @@ bool Standard4D::iterate()
 
     g_col = m_x_dot;
     g_row = m_y_dot;
-    z_line(m_x, m_y);
+    z_line(m_orbit_dispatch, m_x, m_y);
     g_col = g_logical_screen.x_dots - g_col - 1;
     g_row = g_logical_screen.y_dots - g_row - 1;
-    z_line(-m_x, -m_y);
+    z_line(m_orbit_dispatch, -m_x, -m_y);
     ++m_x_dot;
     m_x += s_jb.inch_per_x_dot;
     if (m_x_dot == g_logical_screen.x_dots)

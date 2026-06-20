@@ -2,10 +2,10 @@
 //
 #pragma once
 
+#include "fractals/fractalp.h"
+
 namespace id::fractals
 {
-
-enum class FractalType;
 
 enum class Julibrot3DMode
 {
@@ -57,6 +57,7 @@ extern SaveDAC               g_save_dac;
 
 bool julibrot_per_image();
 int julibrot_per_pixel();
+FractalDispatch make_julibrot_orbit_dispatch();
 
 class Standard4D
 {
@@ -69,6 +70,7 @@ private:
     double m_x{};
     int m_y_dot{};
     int m_x_dot{};
+    FractalDispatch m_orbit_dispatch{};
 };
 
 } // namespace id::fractals
