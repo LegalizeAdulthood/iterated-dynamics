@@ -1,7 +1,7 @@
 # Calc-Type Dispatch
 
 `g_cur_fractal_specific->calc_type` is static table metadata.
-`FractalDispatch::calc_type` is the runtime pixel calculation function.
+`g_dispatch.calc_type()` is the runtime pixel calculation function.
 
 They are not equivalent.
 
@@ -29,8 +29,8 @@ The same setup paths may force dispatch `calc_type` back to
 used.
 
 This does not create pointer divergence from the table, but it shows that
-`FractalDispatch::calc_type` is deliberately runtime state selected by
-setup code.
+`g_dispatch.calc_type()` is deliberately runtime state selected by setup
+code.
 
 ### Showdot Wrapper
 
@@ -50,7 +50,7 @@ The wrapper later calls `s_calc_type_tmp()`.
 
 - `g_fractal_type`
 - `g_cur_fractal_specific`
-- `g_fractal_dispatch`
+- `g_dispatch`
 
 Per-image setup may then override dispatch for the current calculation.
 
@@ -62,14 +62,14 @@ Per-image setup may then override dispatch for the current calculation.
 - `per_pixel`
 - `per_image`
 
-It does not swap `calc_type`.  In this case dispatch `calc_type` and
+It does not swap `calc_type`.  In this case `g_dispatch.calc_type()` and
 `g_cur_fractal_specific->calc_type` may still match while lower-level
 math functions differ.
 
 ## Implication
 
 Use `g_cur_fractal_specific->calc_type` only for static type capability
-tests.  Use `current_calc_type()` after calculation setup when the
+tests.  Use `g_dispatch.calc_type()` after calculation setup when the
 actual runtime pixel calculator is needed.
 
 ## Implementation Slices
@@ -82,23 +82,7 @@ function pointers into explicit calculation dispatch state.
 These slices assume `FractalSpecific` is already const and runtime-selected
 functions already live in dispatch state.
 
-### Slice 1: Classify Calc-Type Reads
-
-Work:
-
-- Audit every read of `calc_type`.
-- Mark each read as static capability metadata or runtime calculator
-  dispatch.
-- Replace runtime reads with the dispatch accessor.
-- Keep table reads only where static type capability is being tested.
-
-Done when:
-
-- Runtime code does not inspect `FractalSpecific::calc_type`.
-- Static checks are named or commented as static metadata checks.
-- Tests still cover non-standard and standard dispatch decisions.
-
-### Slice 2: Guard Dispatch Lifetime
+### Slice 1: Guard Dispatch Lifetime
 
 Work:
 
@@ -113,7 +97,7 @@ Done when:
 - Tests cover type change before setup and type change followed by setup.
 - Runtime dispatch access fails clearly if setup has not prepared it.
 
-### Slice 3: Test Mandel And Julia Selection
+### Slice 2: Test Mandel And Julia Selection
 
 Work:
 
@@ -128,7 +112,7 @@ Done when:
 - The tests compare table metadata and dispatch state separately.
 - Changing the static table cannot hide a runtime selection bug.
 
-### Slice 4: Test Showdot Wrapping
+### Slice 3: Test Showdot Wrapping
 
 Work:
 
@@ -143,7 +127,7 @@ Done when:
 - Nested setup and teardown leave dispatch unchanged except for the
   wrapper.
 
-### Slice 5: Test Alternate Math Dispatch
+### Slice 4: Test Alternate Math Dispatch
 
 Work:
 
@@ -158,7 +142,7 @@ Done when:
 - `calc_type` table metadata remains unchanged.
 - Fallback to `BFMathType::NONE` is tested.
 
-### Slice 6: Add Boundary Checks
+### Slice 5: Add Boundary Checks
 
 Work:
 

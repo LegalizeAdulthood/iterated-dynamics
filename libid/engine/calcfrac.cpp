@@ -740,19 +740,26 @@ static void init_calc_fract()
     }
 }
 
-static bool is_standard_fractal()
+static bool static_calc_type_uses_standard_engine()
 {
-    return g_cur_fractal_specific->calc_type == standard_fractal_type //
-        || g_cur_fractal_specific->calc_type == calc_mandelbrot_type  //
-        || g_cur_fractal_specific->calc_type == lyapunov_type         //
-        || g_cur_fractal_specific->calc_type == froth_type;
+    const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
+    return table_calc_type == standard_fractal_type //
+        || table_calc_type == calc_mandelbrot_type  //
+        || table_calc_type == lyapunov_type         //
+        || table_calc_type == froth_type;
+}
+
+static bool static_calc_type_supports_orbit_mode()
+{
+    const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
+    return table_calc_type == standard_fractal_type;
 }
 
 static void calc_non_standard_fractal()
 {
-    g_dispatch.set_calc_type(g_cur_fractal_specific->calc_type);
+    g_dispatch.init_calc_type(*g_cur_fractal_specific);
     // per_image can override
-    g_symmetry = g_cur_fractal_specific->symmetry;            // calc type & symmetry
+    g_symmetry = g_cur_fractal_specific->symmetry;            // table symmetry
     g_plot = g_put_color;                                     // defaults when setsymmetry not called or does nothing
     g_begin_pt.x = 0;
     g_begin_pt.y = 0;
@@ -862,7 +869,7 @@ static void finish_calc_fract()
 int calc_fract()
 {
     init_calc_fract();
-    if (is_standard_fractal())
+    if (static_calc_type_uses_standard_engine())
     {
         calc_standard_fractal();
     }
@@ -946,7 +953,7 @@ static void perform_work_list()
     {
         g_std_calc_mode = CalcMode::ONE_PASS;
     }
-    if (g_std_calc_mode == CalcMode::ORBIT && g_cur_fractal_specific->calc_type != standard_fractal_type)
+    if (g_std_calc_mode == CalcMode::ORBIT && !static_calc_type_supports_orbit_mode())
     {
         g_std_calc_mode = CalcMode::ONE_PASS;
     }
@@ -1034,8 +1041,8 @@ static void perform_work_list()
 
     while (g_num_work_list > 0)
     {
-        g_dispatch.set_calc_type(g_cur_fractal_specific->calc_type); // per_image can override
-        g_symmetry = g_cur_fractal_specific->symmetry;                       // calc type & symmetry
+        g_dispatch.init_calc_type(*g_cur_fractal_specific); // per_image can override
+        g_symmetry = g_cur_fractal_specific->symmetry;      // table symmetry
         g_plot = g_put_color; // defaults when set symmetry not called or does nothing
 
         // pull top entry off work list

@@ -206,11 +206,12 @@ init_restart:
     g_distance_estimator = g_user.distance_estimator_value;
     g_biomorph           = g_user.biomorph_value;
 
+    const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
     g_potential.flag = false;
     if (g_potential.params[0] != 0.0                                   //
         && g_colors >= 64                                              //
-        && (g_cur_fractal_specific->calc_type == standard_fractal_type //
-               || g_cur_fractal_specific->calc_type == calc_mandelbrot_type))
+        && (table_calc_type == standard_fractal_type                   //
+               || table_calc_type == calc_mandelbrot_type))
     {
         g_potential.flag = true;
         g_user.distance_estimator_value = 0;

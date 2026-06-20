@@ -163,6 +163,11 @@ public:
     void set_calc_type(CalcType value)      { m_calc_type = value; }
     // clang-format on
 
+    void init_calc_type(const FractalSpecific &specific)
+    {
+        m_calc_type = specific.calc_type;
+    }
+
     void set_current_alternate_math(const AlternateMath &value)
     {
         m_orbit_calc = value.orbit_calc;

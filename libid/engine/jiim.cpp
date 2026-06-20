@@ -1353,11 +1353,16 @@ void InverseJulia::process()
 
 } // namespace
 
+static bool static_calc_type_allows_jiim()
+{
+    const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
+    return table_calc_type == standard_fractal_type || table_calc_type == froth_type;
+}
+
 void jiim(const JIIMType which)
 {
     // must use standard fractal or be calcfroth
-    if (g_cur_fractal_specific->calc_type != standard_fractal_type &&
-        g_cur_fractal_specific->calc_type != froth_type)
+    if (!static_calc_type_allows_jiim())
     {
         return;
     }
