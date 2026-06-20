@@ -8,7 +8,7 @@ var searchData=
   ['ops_5',['ops',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#ac9bfe890d0e7f873d5add2e9893f8e03',1,'id::fractals::CompiledFormula']]],
   ['orbit_6',['orbit',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#a024af965f38f1db7f4caad705926a19b',1,'id::fractals::ViewTransform3D']]],
   ['orbit_5fbailout_7',['orbit_bailout',['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a98ec36e22951e4ec89eb676557625529',1,'id::fractals::FractalSpecific']]],
-  ['orbit_5fcalc_8',['orbit_calc',['../db/d29/structid_1_1fractals_1_1AlternateMath.html#ab35e79a0fe8a9afc399f111096dd5e78',1,'id::fractals::AlternateMath::orbit_calc'],['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a24f45fda57c239b903e92a245a20f540',1,'id::fractals::FractalSpecific::orbit_calc']]],
+  ['orbit_5fcalc_8',['orbit_calc',['../db/d29/structid_1_1fractals_1_1AlternateMath.html#adbe8376bd5343f714748a5c0a983f69f',1,'id::fractals::AlternateMath::orbit_calc'],['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#aac22244d7d138f086c9349437499403c',1,'id::fractals::FractalSpecific::orbit_calc']]],
   ['orbit_5fcorner_9',['orbit_corner',['../d1/d3e/history_8cpp.html#afaded0039deebb0fc04d448bef0fb530',1,'history.cpp']]],
   ['orbit_5fcorner_5f3rd_5fx_10',['orbit_corner_3rd_x',['../dc/d64/structid_1_1io_1_1OrbitsInfo.html#afed93464ccc7009d6c4cec9458fe1705',1,'id::io::OrbitsInfo']]],
   ['orbit_5fcorner_5f3rd_5fy_11',['orbit_corner_3rd_y',['../dc/d64/structid_1_1io_1_1OrbitsInfo.html#a550d59c14d28af7a90298c07de56fbd7',1,'id::io::OrbitsInfo']]],

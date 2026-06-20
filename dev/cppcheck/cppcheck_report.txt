@@ -3409,15 +3409,21 @@ libid/ui/stereo.cpp:288:16: note: Variable created here.
 libid/ui/stereo.cpp:297:5: note: Non-local variable 's_data' will use pointer to local variable 'v'.
     s_data = &v; // set static vars to stack structure
     ^
-tests/libid/engine/test_cmdfiles.cpp:1352:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
+tests/libid/engine/test_cmdfiles.cpp:1353:5: style: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value. [knownConditionTrueFalse]
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/engine/test_cmdfiles.cpp:1344:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
+tests/libid/engine/test_cmdfiles.cpp:1345:49: note: 'saved_browse_name' is assigned value 'g_browse.name' here.
     const std::string saved_browse_name{g_browse.name};
                                                 ^
-tests/libid/engine/test_cmdfiles.cpp:1352:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
+tests/libid/engine/test_cmdfiles.cpp:1353:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
+tests/libid/fractals/test_fractalp.cpp:254:20: style: Unused variable: reset_parser [unusedVariable]
+    ParserResetter reset_parser;
+                   ^
+tests/libid/fractals/test_fractalp.cpp:269:20: style: Unused variable: reset_parser [unusedVariable]
+    ParserResetter reset_parser;
+                   ^
 tests/tools/image_compare.cpp:54:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]
         + std::abs(pixel1[1] - pixel2[1]) //
                          ^

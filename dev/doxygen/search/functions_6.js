@@ -30,7 +30,7 @@ var searchData=
   ['get_5ffract_5fparams_27',['get_fract_params',['../dc/d76/namespaceid_1_1ui.html#afe01addb6a1866fd10c84dddbe89b3d0',1,'id::ui']]],
   ['get_5ffract_5ftype_28',['get_fract_type',['../dc/d76/namespaceid_1_1ui.html#a20bae8fd3326ffd01e7872e7c59df505',1,'id::ui']]],
   ['get_5ffractal_5finfo_29',['get_fractal_info',['../d0/d19/namespaceid_1_1io.html#a2e5bfb008b5eb84705bcb41b4bc6cb71',1,'id::io']]],
-  ['get_5ffractal_5fspecific_30',['get_fractal_specific',['../d5/d38/namespaceid_1_1fractals.html#ab6b8cef1abb365db77de08d7fdda8a98',1,'id::fractals']]],
+  ['get_5ffractal_5fspecific_30',['get_fractal_specific',['../d5/d38/namespaceid_1_1fractals.html#abb5e7d100a3d56b321e7a5b06189d5dd',1,'id::fractals']]],
   ['get_5ffunction_5fparam_31',['get_function_param',['../dc/d31/namespaceid_1_1engine.html#aefd0f13eee7ed3b613a84ef32516d949',1,'id::engine']]],
   ['get_5fgdi_5fdriver_32',['get_gdi_driver',['../df/d6d/namespaceid_1_1misc.html#aa7fc03c3ce154252c71ed541fd49f34e',1,'id::misc']]],
   ['get_5fgoodbye_33',['get_goodbye',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#af345d65deb161669deeba6c4ebe417a4',1,'id::engine::cmd_files_test']]],

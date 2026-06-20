@@ -21,7 +21,7 @@
  <tbody>
  <tr id="projectrow">
   <td id="projectalign">
-   <div id="projectname">Iterated Dynamics<span id="projectnumber">&#160;1.4.1.0</span>
+   <div id="projectname">Iterated Dynamics<span id="projectnumber">&#160;1.5.0.0</span>
    </div>
    <div id="projectbrief">A fractal generator</div>
   </td>
@@ -112,6 +112,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d22/structid_1_1fractals_1_1FormulaEntry.html">FormulaEntry</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/db4/classid_1_1fractals_1_1FractalDispatch.html">FractalDispatch</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html">FrothyBasin</a></td></tr>
@@ -151,18 +153,26 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a3adb2e06749b53cfded1e0a7c8f80a09" id="r_a3adb2e06749b53cfded1e0a7c8f80a09"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a3adb2e06749b53cfded1e0a7c8f80a09">PerturbationReference</a> = void(const std::complex&lt; double &gt; &amp;center, std::complex&lt; double &gt; &amp;<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td></tr>
-<tr class="separator:a3adb2e06749b53cfded1e0a7c8f80a09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34ae9f42cb9640ce28a80f2fd2e4b680" id="r_a34ae9f42cb9640ce28a80f2fd2e4b680"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a34ae9f42cb9640ce28a80f2fd2e4b680">PerturbationReferenceBF</a> = void(const <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a4d5f6572bc73064acd0a74ed40295475">math::BFComplex</a> &amp;center, <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a4d5f6572bc73064acd0a74ed40295475">math::BFComplex</a> &amp;<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td></tr>
-<tr class="separator:a34ae9f42cb9640ce28a80f2fd2e4b680"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38ef6a5a23ea8bf05a6811e77d9c7543" id="r_a38ef6a5a23ea8bf05a6811e77d9c7543"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a38ef6a5a23ea8bf05a6811e77d9c7543">PerturbationPoint</a> = void(const std::complex&lt; double &gt; &amp;ref, std::complex&lt; double &gt; &amp;delta_n, const std::complex&lt; double &gt; &amp;delta0)</td></tr>
-<tr class="separator:a38ef6a5a23ea8bf05a6811e77d9c7543"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f079ad827bc20a8a718dc0bd5abf417" id="r_a8f079ad827bc20a8a718dc0bd5abf417"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a8f079ad827bc20a8a718dc0bd5abf417">OrbitCalc</a> = int(*)()</td></tr>
+<tr class="separator:a8f079ad827bc20a8a718dc0bd5abf417"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93a2d8312b165b4688070e7d5ba8f60f" id="r_a93a2d8312b165b4688070e7d5ba8f60f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a93a2d8312b165b4688070e7d5ba8f60f">OrbitCalc3D</a> = int(*)(double *<a class="el" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, double *<a class="el" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, double *<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td></tr>
+<tr class="separator:a93a2d8312b165b4688070e7d5ba8f60f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a595f4ac4594c5dca1de33379d67ddb99" id="r_a595f4ac4594c5dca1de33379d67ddb99"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a595f4ac4594c5dca1de33379d67ddb99">PerPixel</a> = int(*)()</td></tr>
+<tr class="separator:a595f4ac4594c5dca1de33379d67ddb99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb0e3584c8a0fd551fea5010f1f892f2" id="r_abb0e3584c8a0fd551fea5010f1f892f2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#abb0e3584c8a0fd551fea5010f1f892f2">PerImage</a> = bool(*)()</td></tr>
+<tr class="separator:abb0e3584c8a0fd551fea5010f1f892f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf9a916686e99e4182bda28d0d79af2e" id="r_acf9a916686e99e4182bda28d0d79af2e"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#acf9a916686e99e4182bda28d0d79af2e">CalcType</a> = int(*)()</td></tr>
+<tr class="separator:acf9a916686e99e4182bda28d0d79af2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab71e7cff66d67807e187052ec037ac18" id="r_ab71e7cff66d67807e187052ec037ac18"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab71e7cff66d67807e187052ec037ac18">PerturbationReference</a> = void(*)(const std::complex&lt; double &gt; &amp;center, std::complex&lt; double &gt; &amp;<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td></tr>
+<tr class="separator:ab71e7cff66d67807e187052ec037ac18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23c20f8293abe5df1f25bad0dcaa8a71" id="r_a23c20f8293abe5df1f25bad0dcaa8a71"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a23c20f8293abe5df1f25bad0dcaa8a71">PerturbationReferenceBF</a> = void(*)(const <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a4d5f6572bc73064acd0a74ed40295475">math::BFComplex</a> &amp;center, <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a4d5f6572bc73064acd0a74ed40295475">math::BFComplex</a> &amp;<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td></tr>
+<tr class="separator:a23c20f8293abe5df1f25bad0dcaa8a71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d9f2b5c060adabf26facc5e2ca3c704" id="r_a7d9f2b5c060adabf26facc5e2ca3c704"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a7d9f2b5c060adabf26facc5e2ca3c704">PerturbationPoint</a> = void(*)(const std::complex&lt; double &gt; &amp;ref, std::complex&lt; double &gt; &amp;delta_n, const std::complex&lt; double &gt; &amp;delta0)</td></tr>
+<tr class="separator:a7d9f2b5c060adabf26facc5e2ca3c704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa9e32b95bcbb8cf87f3b04f51848840b" id="r_aa9e32b95bcbb8cf87f3b04f51848840b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#aa9e32b95bcbb8cf87f3b04f51848840b">Function</a> = void()</td></tr>
 <tr class="separator:aa9e32b95bcbb8cf87f3b04f51848840b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab281b1f4c2bcc740e8108bd3f1a5b51b" id="r_ab281b1f4c2bcc740e8108bd3f1a5b51b"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab281b1f4c2bcc740e8108bd3f1a5b51b">FunctionPtr</a> = <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#aa9e32b95bcbb8cf87f3b04f51848840b">Function</a> *</td></tr>
 <tr class="separator:ab281b1f4c2bcc740e8108bd3f1a5b51b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42a8dd6a513106249bd8d8dbd543abd7" id="r_a42a8dd6a513106249bd8d8dbd543abd7"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a42a8dd6a513106249bd8d8dbd543abd7">VF</a> = int(*)()</td></tr>
-<tr class="separator:a42a8dd6a513106249bd8d8dbd543abd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89d009a25ef537cd6fd1428da1f78643" id="r_a89d009a25ef537cd6fd1428da1f78643"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a89d009a25ef537cd6fd1428da1f78643">PlotFn</a> = void(*)(int <a class="el" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, int <a class="el" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, int color)</td></tr>
 <tr class="separator:a89d009a25ef537cd6fd1428da1f78643"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -521,14 +531,16 @@ Functions</h2></td></tr>
 <tr class="separator:aab9372ab2e9da08f67ceed825741b07d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f367b718edc66cf6f1c1580957e2155" id="r_a9f367b718edc66cf6f1c1580957e2155"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9f367b718edc66cf6f1c1580957e2155">bit_clear</a> (const <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91">FractalFlags</a> <a class="el" href="../../d1/d3e/history_8cpp.html#ad5a55c0b801d56b50a807ba2f510d98c">value</a>, const <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a861db74cd05f15795af4e24adff55d91">FractalFlags</a> bit)</td></tr>
 <tr class="separator:a9f367b718edc66cf6f1c1580957e2155"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6b8cef1abb365db77de08d7fdda8a98" id="r_ab6b8cef1abb365db77de08d7fdda8a98"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab6b8cef1abb365db77de08d7fdda8a98">get_fractal_specific</a> (<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">FractalType</a> <a class="el" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>)</td></tr>
-<tr class="separator:ab6b8cef1abb365db77de08d7fdda8a98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb5e7d100a3d56b321e7a5b06189d5dd" id="r_abb5e7d100a3d56b321e7a5b06189d5dd"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#abb5e7d100a3d56b321e7a5b06189d5dd">get_fractal_specific</a> (<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">FractalType</a> <a class="el" href="../../dc/ddd/parser_8cpp.html#ac1a6b8e717172dda4f0bc27962b78b61">type</a>)</td></tr>
+<tr class="separator:abb5e7d100a3d56b321e7a5b06189d5dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb7d76e5843483f22f634acb1f7a1b07" id="r_afb7d76e5843483f22f634acb1f7a1b07"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#afb7d76e5843483f22f634acb1f7a1b07">per_image</a> ()</td></tr>
 <tr class="separator:afb7d76e5843483f22f634acb1f7a1b07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac87ea9d67315ef2c25591f409280c340" id="r_ac87ea9d67315ef2c25591f409280c340"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ac87ea9d67315ef2c25591f409280c340">per_pixel</a> ()</td></tr>
 <tr class="separator:ac87ea9d67315ef2c25591f409280c340"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3ed11e842e478a934f6c1246f329e10" id="r_af3ed11e842e478a934f6c1246f329e10"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#af3ed11e842e478a934f6c1246f329e10">orbit_calc</a> ()</td></tr>
 <tr class="separator:af3ed11e842e478a934f6c1246f329e10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25ca65c96e54c481ebf65992d69bc9fa" id="r_a25ca65c96e54c481ebf65992d69bc9fa"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a25ca65c96e54c481ebf65992d69bc9fa">calc_type</a> ()</td></tr>
+<tr class="separator:a25ca65c96e54c481ebf65992d69bc9fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77b82cb50d2f96d2417c5432effadaa7" id="r_a77b82cb50d2f96d2417c5432effadaa7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a77b82cb50d2f96d2417c5432effadaa7">set_fractal_type</a> (const <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">FractalType</a> <a class="el" href="../../d1/d3e/history_8cpp.html#ad5a55c0b801d56b50a807ba2f510d98c">value</a>)</td></tr>
 <tr class="separator:a77b82cb50d2f96d2417c5432effadaa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a84a7c8145cc196bdcd38c2bdf6726685" id="r_a84a7c8145cc196bdcd38c2bdf6726685"><td class="memItemLeft" align="right" valign="top">constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a84a7c8145cc196bdcd38c2bdf6726685">operator+</a> (const <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">FractalType</a> rhs)</td></tr>
@@ -733,6 +745,8 @@ Functions</h2></td></tr>
 <tr class="separator:ab6e84a30288f242bb8c7c41a67218d2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1f6e85e29253e98cf14701128131c64" id="r_ab1f6e85e29253e98cf14701128131c64"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab1f6e85e29253e98cf14701128131c64">julibrot_per_pixel</a> ()</td></tr>
 <tr class="separator:ab1f6e85e29253e98cf14701128131c64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ef684f40317019c4f91ea1223033c31" id="r_a9ef684f40317019c4f91ea1223033c31"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d9/db4/classid_1_1fractals_1_1FractalDispatch.html">FractalDispatch</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9ef684f40317019c4f91ea1223033c31">make_julibrot_orbit_dispatch</a> ()</td></tr>
+<tr class="separator:a9ef684f40317019c4f91ea1223033c31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbdc114f84c4cd0c31ee72efa5f557f5" id="r_afbdc114f84c4cd0c31ee72efa5f557f5"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#afbdc114f84c4cd0c31ee72efa5f557f5">lambda_orbit</a> ()</td></tr>
 <tr class="separator:afbdc114f84c4cd0c31ee72efa5f557f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcdc56fafff048baec7a0350ad1b4f73" id="r_abcdc56fafff048baec7a0350ad1b4f73"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#abcdc56fafff048baec7a0350ad1b4f73">lambda_trig_per_image</a> ()</td></tr>
@@ -977,8 +991,8 @@ Functions</h2></td></tr>
 <tr class="separator:afc025e9894fc6d112e64a16786398733"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11c266106868c9d994c4ad79190ff855" id="r_a11c266106868c9d994c4ad79190ff855"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../df/d6d/namespaceid_1_1misc.html#a259a277aebf5f382b4ea073ae476e242">U16</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a11c266106868c9d994c4ad79190ff855">from_digit</a> (const char <a class="el" href="../../d1/d3e/history_8cpp.html#ad5a55c0b801d56b50a807ba2f510d98c">value</a>)</td></tr>
 <tr class="separator:a11c266106868c9d994c4ad79190ff855"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a40a78ae1d06b15a2f2b6e3f2b3ebd586" id="r_a40a78ae1d06b15a2f2b6e3f2b3ebd586"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a42a8dd6a513106249bd8d8dbd543abd7">VF</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a40a78ae1d06b15a2f2b6e3f2b3ebd586">orbit_cast</a> (int(*<a class="el" href="../../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82">f</a>)(double *<a class="el" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>, double *<a class="el" href="../../dc/ddd/parser_8cpp.html#ab87f55bd0280d90925050a4188c14ab5">s</a>, double *<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>))</td></tr>
-<tr class="separator:a40a78ae1d06b15a2f2b6e3f2b3ebd586"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad97fa490730a03b9c74ff152238f58a7" id="r_ad97fa490730a03b9c74ff152238f58a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a8f079ad827bc20a8a718dc0bd5abf417">OrbitCalc</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ad97fa490730a03b9c74ff152238f58a7">orbit_cast</a> (<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a93a2d8312b165b4688070e7d5ba8f60f">OrbitCalc3D</a> <a class="el" href="../../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82">f</a>)</td></tr>
+<tr class="separator:ad97fa490730a03b9c74ff152238f58a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2dbf6cadcca1c3b1a14acff3edd731a" id="r_af2dbf6cadcca1c3b1a14acff3edd731a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#af2dbf6cadcca1c3b1a14acff3edd731a">is_pow2</a> (const int <a class="el" href="../../da/db4/lsystem_8cpp.html#a0a627514f9cfe29006d6bcd8e4ba2b2e">n</a>)</td></tr>
 <tr class="separator:af2dbf6cadcca1c3b1a14acff3edd731a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad277620bc453d0e71f241699d6267edd" id="r_ad277620bc453d0e71f241699d6267edd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a89d009a25ef537cd6fd1428da1f78643">PlotFn</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ad277620bc453d0e71f241699d6267edd">plot_cast</a> (void(*<a class="el" href="../../da/db4/lsystem_8cpp.html#a64818c4898c1da8fb119990aa049fe82">f</a>)(int <a class="el" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, int <a class="el" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, <a class="el" href="../../df/d6d/namespaceid_1_1misc.html#a259a277aebf5f382b4ea073ae476e242">U16</a> color))</td></tr>
@@ -998,16 +1012,18 @@ Variables</h2></td></tr>
 <tr class="separator:adbcbcd23654916a8ed77ed2a47b7fd34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a582183fd10833374e8a57143c64323" id="r_a2a582183fd10833374e8a57143c64323"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a2a582183fd10833374e8a57143c64323">g_frm_is_mandelbrot</a> {true}</td></tr>
 <tr class="separator:a2a582183fd10833374e8a57143c64323"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a16c24a2f6c4ba9fd0fa930cd70fd9a4e" id="r_a16c24a2f6c4ba9fd0fa930cd70fd9a4e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../db/d29/structid_1_1fractals_1_1AlternateMath.html">AlternateMath</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a16c24a2f6c4ba9fd0fa930cd70fd9a4e">g_alternate_math</a> []</td></tr>
-<tr class="separator:a16c24a2f6c4ba9fd0fa930cd70fd9a4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65823937a6ced37d2b620ce2c1da38e3" id="r_a65823937a6ced37d2b620ce2c1da38e3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a65823937a6ced37d2b620ce2c1da38e3">g_fractal_specific</a> []</td></tr>
-<tr class="separator:a65823937a6ced37d2b620ce2c1da38e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae096c6317511e839cda49e5d3f7c2eab" id="r_ae096c6317511e839cda49e5d3f7c2eab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/da6/structid_1_1fractals_1_1MoreParams.html">MoreParams</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ae096c6317511e839cda49e5d3f7c2eab">g_more_fractal_params</a> []</td></tr>
-<tr class="separator:ae096c6317511e839cda49e5d3f7c2eab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad852d72cdd09d408d2e91cd3dd8fea81" id="r_ad852d72cdd09d408d2e91cd3dd8fea81"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ad852d72cdd09d408d2e91cd3dd8fea81">g_num_fractal_types</a> = static_cast&lt;int&gt;(std::size(<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a65823937a6ced37d2b620ce2c1da38e3">g_fractal_specific</a>)) - 1</td></tr>
-<tr class="separator:ad852d72cdd09d408d2e91cd3dd8fea81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5f6eb64b7e4b50d1dafd13a39d324d6" id="r_ac5f6eb64b7e4b50d1dafd13a39d324d6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ac5f6eb64b7e4b50d1dafd13a39d324d6">g_cur_fractal_specific</a> {}</td></tr>
-<tr class="separator:ac5f6eb64b7e4b50d1dafd13a39d324d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a126aa3b04d8b2a061e665ca95cc46008" id="r_a126aa3b04d8b2a061e665ca95cc46008"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="../../db/d29/structid_1_1fractals_1_1AlternateMath.html">AlternateMath</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a126aa3b04d8b2a061e665ca95cc46008">g_alternate_math</a> []</td></tr>
+<tr class="separator:a126aa3b04d8b2a061e665ca95cc46008"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a181aefc9f45cc8ff5d75b89881d8f7d9" id="r_a181aefc9f45cc8ff5d75b89881d8f7d9"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a181aefc9f45cc8ff5d75b89881d8f7d9">g_fractal_specific</a> []</td></tr>
+<tr class="separator:a181aefc9f45cc8ff5d75b89881d8f7d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a884755dcc9ca3d500268648d16a427e4" id="r_a884755dcc9ca3d500268648d16a427e4"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="../../d6/da6/structid_1_1fractals_1_1MoreParams.html">MoreParams</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a884755dcc9ca3d500268648d16a427e4">g_more_fractal_params</a> []</td></tr>
+<tr class="separator:a884755dcc9ca3d500268648d16a427e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef6e84de41e6c3f487f6a582e3089530" id="r_aef6e84de41e6c3f487f6a582e3089530"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#aef6e84de41e6c3f487f6a582e3089530">g_num_fractal_types</a> = static_cast&lt;int&gt;(std::size(<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a181aefc9f45cc8ff5d75b89881d8f7d9">g_fractal_specific</a>)) - 1</td></tr>
+<tr class="separator:aef6e84de41e6c3f487f6a582e3089530"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a210cbd75f4b689dce3b1d874711430be" id="r_a210cbd75f4b689dce3b1d874711430be"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a210cbd75f4b689dce3b1d874711430be">g_cur_fractal_specific</a> {}</td></tr>
+<tr class="separator:a210cbd75f4b689dce3b1d874711430be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae2e5960daaf3daf72d00d133ed7a370" id="r_aae2e5960daaf3daf72d00d133ed7a370"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d9/db4/classid_1_1fractals_1_1FractalDispatch.html">FractalDispatch</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#aae2e5960daaf3daf72d00d133ed7a370">g_dispatch</a> {}</td></tr>
+<tr class="separator:aae2e5960daaf3daf72d00d133ed7a370"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8898c104e963fc6badfc418e0c2a8c5e" id="r_a8898c104e963fc6badfc418e0c2a8c5e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">FractalType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a8898c104e963fc6badfc418e0c2a8c5e">g_fractal_type</a> {<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dca09b8a4807d75a6784e1ddd0a1b5afd9c">FractalType::NO_FRACTAL</a>}</td></tr>
 <tr class="separator:a8898c104e963fc6badfc418e0c2a8c5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8619e2c2ffd4c819df5850d84cc71611" id="r_a8619e2c2ffd4c819df5850d84cc71611"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html">FrothyBasin</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a> {}</td></tr>
@@ -1114,6 +1130,22 @@ Variables</h2></td></tr>
 <tr class="separator:a8e30389a65257fd4a8733fa447fed5fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
+<a id="acf9a916686e99e4182bda28d0d79af2e" name="acf9a916686e99e4182bda28d0d79af2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acf9a916686e99e4182bda28d0d79af2e">&#9670;&#160;</a></span>CalcType</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#acf9a916686e99e4182bda28d0d79af2e">id::fractals::CalcType</a> = typedef int (*)()</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00021">21</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+
+</div>
+</div>
 <a id="aa9e32b95bcbb8cf87f3b04f51848840b" name="aa9e32b95bcbb8cf87f3b04f51848840b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa9e32b95bcbb8cf87f3b04f51848840b">&#9670;&#160;</a></span>Function</h2>
 
@@ -1146,51 +1178,115 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a38ef6a5a23ea8bf05a6811e77d9c7543" name="a38ef6a5a23ea8bf05a6811e77d9c7543"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38ef6a5a23ea8bf05a6811e77d9c7543">&#9670;&#160;</a></span>PerturbationPoint</h2>
+<a id="a8f079ad827bc20a8a718dc0bd5abf417" name="a8f079ad827bc20a8a718dc0bd5abf417"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f079ad827bc20a8a718dc0bd5abf417">&#9670;&#160;</a></span>OrbitCalc</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a38ef6a5a23ea8bf05a6811e77d9c7543">id::fractals::PerturbationPoint</a> = typedef void( const std::complex&lt;double&gt; &amp;ref, std::complex&lt;double&gt; &amp;delta_n, const std::complex&lt;double&gt; &amp;delta0)</td>
+          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a8f079ad827bc20a8a718dc0bd5abf417">id::fractals::OrbitCalc</a> = typedef int (*)()</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00089">89</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00017">17</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
-<a id="a3adb2e06749b53cfded1e0a7c8f80a09" name="a3adb2e06749b53cfded1e0a7c8f80a09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3adb2e06749b53cfded1e0a7c8f80a09">&#9670;&#160;</a></span>PerturbationReference</h2>
+<a id="a93a2d8312b165b4688070e7d5ba8f60f" name="a93a2d8312b165b4688070e7d5ba8f60f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a93a2d8312b165b4688070e7d5ba8f60f">&#9670;&#160;</a></span>OrbitCalc3D</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a3adb2e06749b53cfded1e0a7c8f80a09">id::fractals::PerturbationReference</a> = typedef void(const std::complex&lt;double&gt; &amp;center, std::complex&lt;double&gt; &amp;<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td>
+          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a93a2d8312b165b4688070e7d5ba8f60f">id::fractals::OrbitCalc3D</a> = typedef int (*)(double *<a class="el" href="../../d2/d1e/julibrot_8cpp.html#af88b946fb90d5f08b5fb740c70e98c10">x</a>, double *<a class="el" href="../../d2/d1e/julibrot_8cpp.html#ab927965981178aa1fba979a37168db2a">y</a>, double *<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00087">87</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00018">18</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
-<a id="a34ae9f42cb9640ce28a80f2fd2e4b680" name="a34ae9f42cb9640ce28a80f2fd2e4b680"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34ae9f42cb9640ce28a80f2fd2e4b680">&#9670;&#160;</a></span>PerturbationReferenceBF</h2>
+<a id="abb0e3584c8a0fd551fea5010f1f892f2" name="abb0e3584c8a0fd551fea5010f1f892f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb0e3584c8a0fd551fea5010f1f892f2">&#9670;&#160;</a></span>PerImage</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a34ae9f42cb9640ce28a80f2fd2e4b680">id::fractals::PerturbationReferenceBF</a> = typedef void(const <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a4d5f6572bc73064acd0a74ed40295475">math::BFComplex</a> &amp;center, <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a4d5f6572bc73064acd0a74ed40295475">math::BFComplex</a> &amp;<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td>
+          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#abb0e3584c8a0fd551fea5010f1f892f2">id::fractals::PerImage</a> = typedef bool (*)()</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00088">88</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00020">20</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+
+</div>
+</div>
+<a id="a595f4ac4594c5dca1de33379d67ddb99" name="a595f4ac4594c5dca1de33379d67ddb99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a595f4ac4594c5dca1de33379d67ddb99">&#9670;&#160;</a></span>PerPixel</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a595f4ac4594c5dca1de33379d67ddb99">id::fractals::PerPixel</a> = typedef int (*)()</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00019">19</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+
+</div>
+</div>
+<a id="a7d9f2b5c060adabf26facc5e2ca3c704" name="a7d9f2b5c060adabf26facc5e2ca3c704"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d9f2b5c060adabf26facc5e2ca3c704">&#9670;&#160;</a></span>PerturbationPoint</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a7d9f2b5c060adabf26facc5e2ca3c704">id::fractals::PerturbationPoint</a> = typedef void (*)( const std::complex&lt;double&gt; &amp;ref, std::complex&lt;double&gt; &amp;delta_n, const std::complex&lt;double&gt; &amp;delta0)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00095">95</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+
+</div>
+</div>
+<a id="ab71e7cff66d67807e187052ec037ac18" name="ab71e7cff66d67807e187052ec037ac18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab71e7cff66d67807e187052ec037ac18">&#9670;&#160;</a></span>PerturbationReference</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#ab71e7cff66d67807e187052ec037ac18">id::fractals::PerturbationReference</a> = typedef void (*)(const std::complex&lt;double&gt; &amp;center, std::complex&lt;double&gt; &amp;<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00093">93</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+
+</div>
+</div>
+<a id="a23c20f8293abe5df1f25bad0dcaa8a71" name="a23c20f8293abe5df1f25bad0dcaa8a71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23c20f8293abe5df1f25bad0dcaa8a71">&#9670;&#160;</a></span>PerturbationReferenceBF</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a23c20f8293abe5df1f25bad0dcaa8a71">id::fractals::PerturbationReferenceBF</a> = typedef void (*)(const <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a4d5f6572bc73064acd0a74ed40295475">math::BFComplex</a> &amp;center, <a class="el" href="../../d0/db0/namespaceid_1_1math.html#a4d5f6572bc73064acd0a74ed40295475">math::BFComplex</a> &amp;<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00094">94</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -1207,22 +1303,6 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../dd/d9e/Plasma_8cpp_source.html#l00030">30</a> of file <a class="el" href="../../dd/d9e/Plasma_8cpp_source.html">Plasma.cpp</a>.</p>
-
-</div>
-</div>
-<a id="a42a8dd6a513106249bd8d8dbd543abd7" name="a42a8dd6a513106249bd8d8dbd543abd7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42a8dd6a513106249bd8d8dbd543abd7">&#9670;&#160;</a></span>VF</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a42a8dd6a513106249bd8d8dbd543abd7">id::fractals::VF</a> = typedef int (*)()</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l00204">204</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
 
 </div>
 </div>
@@ -1498,7 +1578,7 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="a861db74cd05f15795af4e24adff55d91a5390b251d091b1b19334fa18d47e31f6" name="a861db74cd05f15795af4e24adff55d91a5390b251d091b1b19334fa18d47e31f6"></a>PERTURB&#160;</td><td class="fielddoc"></td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00034">34</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00040">40</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -2127,7 +2207,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00082">82</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00088">88</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -2165,7 +2245,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00078">78</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00084">84</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -2342,6 +2422,33 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a25ca65c96e54c481ebf65992d69bc9fa" name="a25ca65c96e54c481ebf65992d69bc9fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25ca65c96e54c481ebf65992d69bc9fa">&#9670;&#160;</a></span>calc_type()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int id::fractals::calc_type </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00199">199</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+
+</div>
+</div>
 <a id="ab87e138bc2c038fdd01d31aacac471ce" name="ab87e138bc2c038fdd01d31aacac471ce"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab87e138bc2c038fdd01d31aacac471ce">&#9670;&#160;</a></span>cellular_per_image()</h2>
 
@@ -2413,7 +2520,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00792">792</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00790">790</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -3921,7 +4028,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01195">1195</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01193">1193</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -3957,7 +4064,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00842">842</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00840">840</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -4244,18 +4351,18 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01539">1539</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01537">1537</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
-<a id="ab6b8cef1abb365db77de08d7fdda8a98" name="ab6b8cef1abb365db77de08d7fdda8a98"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6b8cef1abb365db77de08d7fdda8a98">&#9670;&#160;</a></span>get_fractal_specific()</h2>
+<a id="abb5e7d100a3d56b321e7a5b06189d5dd" name="abb5e7d100a3d56b321e7a5b06189d5dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abb5e7d100a3d56b321e7a5b06189d5dd">&#9670;&#160;</a></span>get_fractal_specific()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> * id::fractals::get_fractal_specific </td>
+          <td class="memname">const <a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> * id::fractals::get_fractal_specific </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a9661bbee1757e8915ab9d6e4eda682dc">FractalType</a>&#160;</td>
           <td class="paramname"><em>type</em></td><td>)</td>
@@ -4264,7 +4371,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l01960">1960</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l01959">1959</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
 
 </div>
 </div>
@@ -4381,7 +4488,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00752">752</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00750">750</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -4474,7 +4581,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00716">716</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00714">714</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -4510,7 +4617,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00784">784</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00782">782</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -4565,7 +4672,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00864">864</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00862">862</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -4603,7 +4710,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01796">1796</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01794">1794</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -4641,7 +4748,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00495">495</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00493">493</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -4784,7 +4891,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00106">106</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00120">120</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -4803,7 +4910,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00167">167</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00181">181</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -4839,7 +4946,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00764">764</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00762">762</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -4970,7 +5077,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00889">889</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00887">887</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -5006,7 +5113,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00640">640</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00638">638</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -5042,7 +5149,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00675">675</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00673">673</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -5078,7 +5185,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00695">695</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00693">693</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -5114,7 +5221,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00658">658</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00656">656</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -5248,6 +5355,25 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../d1/d12/magnet_8cpp_source.html#l00077">77</a> of file <a class="el" href="../../d1/d12/magnet_8cpp_source.html">magnet.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a9ef684f40317019c4f91ea1223033c31" name="a9ef684f40317019c4f91ea1223033c31"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ef684f40317019c4f91ea1223033c31">&#9670;&#160;</a></span>make_julibrot_orbit_dispatch()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d9/db4/classid_1_1fractals_1_1FractalDispatch.html">FractalDispatch</a> id::fractals::make_julibrot_orbit_dispatch </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00107">107</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -5397,7 +5523,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00827">827</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00825">825</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -5871,7 +5997,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00819">819</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00817">817</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -5985,7 +6111,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00066">66</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00072">72</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -6013,7 +6139,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00058">58</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00064">64</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -6325,7 +6451,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00070">70</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00076">76</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -6363,7 +6489,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00062">62</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00068">68</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -6391,7 +6517,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00074">74</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00080">80</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -6410,7 +6536,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00291">291</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00289">289</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -6429,7 +6555,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01819">1819</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01817">1817</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -6456,27 +6582,27 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00135">135</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00195">195</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
-<a id="a40a78ae1d06b15a2f2b6e3f2b3ebd586" name="a40a78ae1d06b15a2f2b6e3f2b3ebd586"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a40a78ae1d06b15a2f2b6e3f2b3ebd586">&#9670;&#160;</a></span>orbit_cast()</h2>
+<a id="ad97fa490730a03b9c74ff152238f58a7" name="ad97fa490730a03b9c74ff152238f58a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad97fa490730a03b9c74ff152238f58a7">&#9670;&#160;</a></span>orbit_cast()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a42a8dd6a513106249bd8d8dbd543abd7">VF</a> id::fractals::orbit_cast </td>
+          <td class="memname"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a8f079ad827bc20a8a718dc0bd5abf417">OrbitCalc</a> id::fractals::orbit_cast </td>
           <td>(</td>
-          <td class="paramtype">int(*)(double *<a class="el" href="../../d0/dff/help_8cpp.html#a83fcd78492ca8164a577f3f1f349f67d">r</a>, double *<a class="el" href="../../dc/ddd/parser_8cpp.html#ab87f55bd0280d90925050a4188c14ab5">s</a>, double *<a class="el" href="../../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95">z</a>)&#160;</td>
+          <td class="paramtype"><a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a93a2d8312b165b4688070e7d5ba8f60f">OrbitCalc3D</a>&#160;</td>
           <td class="paramname"><em>f</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l00206">206</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l00204">204</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
 
 </div>
 </div>
@@ -6628,7 +6754,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00127">127</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00187">187</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -6655,7 +6781,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00131">131</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00191">191</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -6862,7 +6988,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00740">740</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00738">738</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -6901,7 +7027,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01450">1450</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01448">1448</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -6920,7 +7046,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01412">1412</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l01410">1410</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -7067,7 +7193,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00802">802</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00800">800</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -7217,7 +7343,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00725">725</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00723">723</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -7245,7 +7371,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00140">140</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d61/fractalp_8h_source.html#l00204">204</a> of file <a class="el" href="../../d7/d61/fractalp_8h_source.html">fractalp.h</a>.</p>
 
 </div>
 </div>
@@ -7265,7 +7391,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00259">259</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00257">257</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -7586,7 +7712,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00811">811</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html#l00809">809</a> of file <a class="el" href="../../dd/dfc/lorenz_8cpp_source.html">lorenz.cpp</a>.</p>
 
 </div>
 </div>
@@ -8025,14 +8151,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a16c24a2f6c4ba9fd0fa930cd70fd9a4e" name="a16c24a2f6c4ba9fd0fa930cd70fd9a4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a16c24a2f6c4ba9fd0fa930cd70fd9a4e">&#9670;&#160;</a></span>g_alternate_math</h2>
+<a id="a126aa3b04d8b2a061e665ca95cc46008" name="a126aa3b04d8b2a061e665ca95cc46008"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a126aa3b04d8b2a061e665ca95cc46008">&#9670;&#160;</a></span>g_alternate_math</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../db/d29/structid_1_1fractals_1_1AlternateMath.html">AlternateMath</a> id::fractals::g_alternate_math</td>
+          <td class="memname">const <a class="el" href="../../db/d29/structid_1_1fractals_1_1AlternateMath.html">AlternateMath</a> id::fractals::g_alternate_math</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -8095,19 +8221,35 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ac5f6eb64b7e4b50d1dafd13a39d324d6" name="ac5f6eb64b7e4b50d1dafd13a39d324d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac5f6eb64b7e4b50d1dafd13a39d324d6">&#9670;&#160;</a></span>g_cur_fractal_specific</h2>
+<a id="a210cbd75f4b689dce3b1d874711430be" name="a210cbd75f4b689dce3b1d874711430be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a210cbd75f4b689dce3b1d874711430be">&#9670;&#160;</a></span>g_cur_fractal_specific</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> * id::fractals::g_cur_fractal_specific {}</td>
+          <td class="memname">const <a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> * id::fractals::g_cur_fractal_specific {}</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l01958">1958</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l01956">1956</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
+
+</div>
+</div>
+<a id="aae2e5960daaf3daf72d00d133ed7a370" name="aae2e5960daaf3daf72d00d133ed7a370"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae2e5960daaf3daf72d00d133ed7a370">&#9670;&#160;</a></span>g_dispatch</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../d9/db4/classid_1_1fractals_1_1FractalDispatch.html">FractalDispatch</a> id::fractals::g_dispatch {}</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l01957">1957</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
 
 </div>
 </div>
@@ -8139,7 +8281,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00088">88</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00089">89</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8191,19 +8333,19 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a65823937a6ced37d2b620ce2c1da38e3" name="a65823937a6ced37d2b620ce2c1da38e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65823937a6ced37d2b620ce2c1da38e3">&#9670;&#160;</a></span>g_fractal_specific</h2>
+<a id="a181aefc9f45cc8ff5d75b89881d8f7d9" name="a181aefc9f45cc8ff5d75b89881d8f7d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a181aefc9f45cc8ff5d75b89881d8f7d9">&#9670;&#160;</a></span>g_fractal_specific</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> id::fractals::g_fractal_specific</td>
+          <td class="memname">const <a class="el" href="../../d6/d98/structid_1_1fractals_1_1FractalSpecific.html">FractalSpecific</a> id::fractals::g_fractal_specific</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l00212">212</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l00210">210</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
 
 </div>
 </div>
@@ -8347,7 +8489,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00075">75</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00076">76</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8363,7 +8505,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00090">90</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00091">91</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8379,14 +8521,14 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">{</div>
-<div class="line">    <a class="code hl_function" href="../../d5/d38/namespaceid_1_1fractals.html#aa707c55ad86890bf84de920375691808">to_string</a>(Julibrot3DMode::MONOCULAR), </div>
-<div class="line">    <a class="code hl_function" href="../../d5/d38/namespaceid_1_1fractals.html#aa707c55ad86890bf84de920375691808">to_string</a>(Julibrot3DMode::LEFT_EYE),  </div>
-<div class="line">    <a class="code hl_function" href="../../d5/d38/namespaceid_1_1fractals.html#aa707c55ad86890bf84de920375691808">to_string</a>(Julibrot3DMode::RIGHT_EYE), </div>
-<div class="line">    <a class="code hl_function" href="../../d5/d38/namespaceid_1_1fractals.html#aa707c55ad86890bf84de920375691808">to_string</a>(Julibrot3DMode::RED_BLUE)   </div>
+<div class="line">    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a8a2069fada317d6497c806dcf6be49c0">to_string</a>(Julibrot3DMode::MONOCULAR), </div>
+<div class="line">    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a8a2069fada317d6497c806dcf6be49c0">to_string</a>(Julibrot3DMode::LEFT_EYE),  </div>
+<div class="line">    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a8a2069fada317d6497c806dcf6be49c0">to_string</a>(Julibrot3DMode::RIGHT_EYE), </div>
+<div class="line">    <a class="code hl_function" href="../../df/d6d/namespaceid_1_1misc.html#a8a2069fada317d6497c806dcf6be49c0">to_string</a>(Julibrot3DMode::RED_BLUE)   </div>
 <div class="line">}</div>
-<div class="ttc" id="anamespaceid_1_1fractals_html_aa707c55ad86890bf84de920375691808"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#aa707c55ad86890bf84de920375691808">id::fractals::to_string</a></div><div class="ttdeci">constexpr const char * to_string(const Julibrot3DMode value)</div><div class="ttdef"><b>Definition</b> <a href="../../d6/dca/julibrot_8h_source.html#l00025">julibrot.h:25</a></div></div>
+<div class="ttc" id="anamespaceid_1_1misc_html_a8a2069fada317d6497c806dcf6be49c0"><div class="ttname"><a href="../../df/d6d/namespaceid_1_1misc.html#a8a2069fada317d6497c806dcf6be49c0">id::misc::to_string</a></div><div class="ttdeci">std::string to_string(const Version &amp;value)</div><div class="ttdef"><b>Definition</b> <a href="../../d5/d1f/version_8cpp_source.html#l00030">version.cpp:30</a></div></div>
 </div><!-- fragment -->
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00092">92</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00093">93</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8402,7 +8544,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00089">89</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00090">90</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8418,7 +8560,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00087">87</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00088">88</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8434,7 +8576,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00085">85</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00086">86</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8450,7 +8592,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00084">84</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00085">85</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8466,7 +8608,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00086">86</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00087">87</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8482,7 +8624,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00080">80</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00081">81</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8498,7 +8640,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00078">78</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00079">79</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8514,7 +8656,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00081">81</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00082">82</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8530,7 +8672,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00079">79</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00080">80</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8546,7 +8688,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00083">83</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00084">84</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8662,14 +8804,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ae096c6317511e839cda49e5d3f7c2eab" name="ae096c6317511e839cda49e5d3f7c2eab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae096c6317511e839cda49e5d3f7c2eab">&#9670;&#160;</a></span>g_more_fractal_params</h2>
+<a id="a884755dcc9ca3d500268648d16a427e4" name="a884755dcc9ca3d500268648d16a427e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a884755dcc9ca3d500268648d16a427e4">&#9670;&#160;</a></span>g_more_fractal_params</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="../../d6/da6/structid_1_1fractals_1_1MoreParams.html">MoreParams</a> id::fractals::g_more_fractal_params</td>
+          <td class="memname">const <a class="el" href="../../d6/da6/structid_1_1fractals_1_1MoreParams.html">MoreParams</a> id::fractals::g_more_fractal_params</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -8703,7 +8845,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00091">91</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00092">92</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>
@@ -8723,19 +8865,19 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ad852d72cdd09d408d2e91cd3dd8fea81" name="ad852d72cdd09d408d2e91cd3dd8fea81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad852d72cdd09d408d2e91cd3dd8fea81">&#9670;&#160;</a></span>g_num_fractal_types</h2>
+<a id="aef6e84de41e6c3f487f6a582e3089530" name="aef6e84de41e6c3f487f6a582e3089530"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef6e84de41e6c3f487f6a582e3089530">&#9670;&#160;</a></span>g_num_fractal_types</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int id::fractals::g_num_fractal_types = static_cast&lt;int&gt;(std::size(<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a65823937a6ced37d2b620ce2c1da38e3">g_fractal_specific</a>)) - 1</td>
+          <td class="memname">const int id::fractals::g_num_fractal_types = static_cast&lt;int&gt;(std::size(<a class="el" href="../../d5/d38/namespaceid_1_1fractals.html#a181aefc9f45cc8ff5d75b89881d8f7d9">g_fractal_specific</a>)) - 1</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l01956">1956</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html#l01954">1954</a> of file <a class="el" href="../../dd/dc7/fractalp_8cpp_source.html">fractalp.cpp</a>.</p>
 
 </div>
 </div>
@@ -8863,7 +9005,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00098">98</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html#l00099">99</a> of file <a class="el" href="../../d2/d1e/julibrot_8cpp_source.html">julibrot.cpp</a>.</p>
 
 </div>
 </div>

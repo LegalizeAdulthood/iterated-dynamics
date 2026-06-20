@@ -5,7 +5,7 @@ var searchData=
   ['c_5freal_2',['c_real',['../dc/da2/structid_1_1io_1_1FractalInfo.html#ae3908c3b5f2c1a56df52f8d6c1545500',1,'id::io::FractalInfo']]],
   ['calc_5fstatus_3',['calc_status',['../d8/d4c/set__default__params_8cpp.html#a78bf4263bf7be01f3d8896dd2fc7567b',1,'calc_status:&#160;set_default_params.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#a32bdeda5124bf1eb9ace13bc9c7885e1',1,'id::io::FractalInfo::calc_status']]],
   ['calc_5ftime_4',['calc_time',['../dc/da2/structid_1_1io_1_1FractalInfo.html#ae334600f9750dcaba5facc68a8382520',1,'id::io::FractalInfo']]],
-  ['calc_5ftype_5',['calc_type',['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#adbd15d278a24eb140620e4a7091c10e6',1,'id::fractals::FractalSpecific']]],
+  ['calc_5ftype_5',['calc_type',['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#abd9d3be3e8780bd2dbe62024e7bcfe51',1,'id::fractals::FractalSpecific']]],
   ['center_6',['center',['../d2/d78/structid_1_1engine_1_1Inversion.html#a5c7ad030e92e42e0aa4aef6d6122e921',1,'id::engine::Inversion']]],
   ['ch_7',['ch',['../d8/d84/structid_1_1ui_1_1FullScreenValues.html#ab660ac8315538d92c0c4122daf10edf8',1,'id::ui::FullScreenValues::ch'],['../da/db4/lsystem_8cpp.html#af53f92900705f7de3c139a05b2f9ef16',1,'ch:&#160;lsystem.cpp']]],
   ['char_5fval_8',['char_val',['../da/d3b/structid_1_1engine_1_1Command.html#a47f5388244ecee88ce37eaf9845db520',1,'id::engine::Command']]],
