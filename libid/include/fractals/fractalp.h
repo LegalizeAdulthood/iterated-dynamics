@@ -158,6 +158,11 @@ inline void set_current_orbit_calc(OrbitCalc value)
     g_fractal_dispatch.orbit_calc = value;
 }
 
+inline void set_current_calc_type(CalcType value)
+{
+    g_fractal_dispatch.calc_type = value;
+}
+
 inline void set_current_alternate_math(const AlternateMath &value)
 {
     g_fractal_dispatch.orbit_calc = value.orbit_calc;

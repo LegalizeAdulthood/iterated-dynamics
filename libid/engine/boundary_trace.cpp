@@ -6,12 +6,14 @@
 #include "engine/show_dot.h"
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
+#include "fractals/fractalp.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
 #include <cstring>
 
 using namespace id::ui;
+using namespace id::fractals;
 
 namespace id::engine
 {
@@ -96,7 +98,7 @@ int boundary_trace()
             int trail_color = g_color;
             g_row = cur_row;
             g_col = cur_col;
-            if (g_calc_type() == -1) // g_color, g_row, g_col are global
+            if (current_calc_type()() == -1) // g_color, g_row, g_col are global
             {
                 if (g_show_dot != BK_COLOR)   // remove show dot pixel
                 {
@@ -137,8 +139,8 @@ int boundary_trace()
                     && g_row <= g_i_stop_pt.y)
                 {
                     g_color = get_color(g_col, g_row);
-                    // g_color, g_row, g_col are global for g_calc_type()
-                    if (g_color == BK_COLOR && g_calc_type()== -1)
+                    // g_color, g_row, g_col are global for current_calc_type()
+                    if (g_color == BK_COLOR && current_calc_type()() == -1)
                     {
                         if (g_show_dot != BK_COLOR)   // remove show dot pixel
                         {

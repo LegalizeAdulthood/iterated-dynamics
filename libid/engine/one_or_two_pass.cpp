@@ -5,9 +5,11 @@
 #include "engine/calcfrac.h"
 #include "engine/resume.h"
 #include "engine/work_list.h"
+#include "fractals/fractalp.h"
 #include "ui/video.h"
 
 using namespace id::ui;
+using namespace id::fractals;
 
 namespace id::engine
 {
@@ -79,7 +81,7 @@ static int standard_calc(const int pass_num)
             }
             if (pass_num == 1 || g_std_calc_mode == CalcMode::ONE_PASS || (g_row&1) != 0 || (g_col&1) != 0)
             {
-                if (g_calc_type() == -1)   // standard_fractal(), calcmand() or calcmandfp()
+                if (current_calc_type()() == -1)   // standard_fractal(), calcmand() or calcmandfp()
                 {
                     return -1;          // interrupted
                 }

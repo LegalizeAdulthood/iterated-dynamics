@@ -141,7 +141,6 @@ extern int                   g_atan_colors;         //
 extern int                   g_biomorph;            // flag for biomorph
 extern CalcStatus            g_calc_status;
 extern long                  g_calc_time;
-extern int                 (*g_calc_type)();
 extern double                g_close_enough;
 extern double                g_close_proximity;
 extern int                   g_col;

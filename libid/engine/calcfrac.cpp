@@ -166,7 +166,6 @@ bool g_use_old_distance_estimator{};              //
 bool g_old_demm_colors{};                         //
 CalcStatus g_calc_status{CalcStatus::NO_FRACTAL}; //
 long g_calc_time{};                               //
-int (*g_calc_type)(){};                           //
 bool g_quick_calc{};                              //
 double g_close_proximity{0.01};                   //
 double g_close_enough{};                          //
@@ -751,9 +750,9 @@ static bool is_standard_fractal()
 
 static void calc_non_standard_fractal()
 {
-    g_calc_type = current_calc_type();              // per_image can override
-    g_symmetry = g_cur_fractal_specific->symmetry;   //   calctype & symmetry
-    g_plot = g_put_color;                            // defaults when setsymmetry not called or does nothing
+    set_current_calc_type(g_cur_fractal_specific->calc_type); // per_image can override
+    g_symmetry = g_cur_fractal_specific->symmetry;            // calc type & symmetry
+    g_plot = g_put_color;                                     // defaults when setsymmetry not called or does nothing
     g_begin_pt.x = 0;
     g_begin_pt.y = 0;
     g_start_pt.x = 0;
@@ -773,7 +772,7 @@ static void calc_non_standard_fractal()
         // next two lines in case periodicity changed
         g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
         set_symmetry(g_symmetry, false);
-        engine_timer(g_calc_type); // non-standard fractal engine
+        engine_timer(current_calc_type()); // non-standard fractal engine
     }
     if (check_key())
     {
@@ -1034,9 +1033,8 @@ static void perform_work_list()
 
     while (g_num_work_list > 0)
     {
-        // per_image can override
-        g_calc_type = current_calc_type();
-        g_symmetry = g_cur_fractal_specific->symmetry; //   calc type & symmetry
+        set_current_calc_type(g_cur_fractal_specific->calc_type); // per_image can override
+        g_symmetry = g_cur_fractal_specific->symmetry;            // calc type & symmetry
         g_plot = g_put_color; // defaults when set symmetry not called or does nothing
 
         // pull top entry off work list
@@ -1134,8 +1132,8 @@ static void perform_work_list()
             {
                 s_show_dot_width = -1;
             }
-            s_calc_type_tmp = g_calc_type;
-            g_calc_type    = calc_type_show_dot;
+            s_calc_type_tmp = current_calc_type();
+            set_current_calc_type(calc_type_show_dot);
         }
 
         // some common initialization for escape-time pixel level routines
@@ -2658,7 +2656,7 @@ static long auto_log_map()
     const long old_max_it = g_max_iterations;
     for (g_col = 0; g_col < x_stop; g_col++) // top row
     {
-        g_color = g_calc_type();
+        g_color = current_calc_type()();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2681,7 +2679,7 @@ static long auto_log_map()
     g_col = x_stop;
     for (g_row = 0; g_row < y_stop; g_row++) // right  side
     {
-        g_color = g_calc_type();
+        g_color = current_calc_type()();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2704,7 +2702,7 @@ static long auto_log_map()
     g_col = 0;
     for (g_row = 0; g_row < y_stop; g_row++) // left  side
     {
-        g_color = g_calc_type();
+        g_color = current_calc_type()();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2727,7 +2725,7 @@ static long auto_log_map()
     g_row = y_stop ;
     for (g_col = 0; g_col < x_stop; g_col++) // bottom row
     {
-        g_color = g_calc_type();
+        g_color = current_calc_type()();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout

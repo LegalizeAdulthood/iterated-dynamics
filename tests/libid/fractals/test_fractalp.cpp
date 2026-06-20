@@ -223,13 +223,16 @@ TEST(TestFractalDispatch, settersOnlyUpdateDispatch)
     set_current_orbit_calc(test_orbit_calc);
     set_current_per_pixel(test_per_pixel);
     set_current_per_image(test_per_image);
+    set_current_calc_type(test_calc_type);
 
     EXPECT_EQ(test_orbit_calc, g_fractal_dispatch.orbit_calc);
     EXPECT_EQ(test_per_pixel, g_fractal_dispatch.per_pixel);
     EXPECT_EQ(test_per_image, g_fractal_dispatch.per_image);
+    EXPECT_EQ(test_calc_type, g_fractal_dispatch.calc_type);
     EXPECT_EQ(nullptr, specific.orbit_calc);
     EXPECT_EQ(nullptr, specific.per_pixel);
     EXPECT_EQ(nullptr, specific.per_image);
+    EXPECT_EQ(nullptr, specific.calc_type);
 }
 
 TEST(TestFractalDispatch, alternateMathOnlyUpdatesDispatch)

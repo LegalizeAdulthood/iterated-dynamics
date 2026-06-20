@@ -46,7 +46,7 @@ bool burning_ship_per_image()
         return mandel_perturbation_per_image();
     }
     // use the main processing loop
-    g_calc_type = standard_fractal_type;
+    set_current_calc_type(standard_fractal_type);
     return true;
 }
 
@@ -117,13 +117,13 @@ bool mandel_per_image()
         }
         if (use_calc_mandelbrot())
         {
-            g_calc_type = calc_mandelbrot_type; // the normal case
+            set_current_calc_type(calc_mandelbrot_type); // the normal case
             calc_mandelbrot_init();
         }
         else
         {
             // special case: use the main processing loop
-            g_calc_type = standard_fractal_type;
+            set_current_calc_type(standard_fractal_type);
         }
         break;
 
@@ -245,13 +245,13 @@ bool julia_per_image()
         */
         if (use_calc_mandelbrot())
         {
-            g_calc_type = calc_mandelbrot_type; // the normal case
+            set_current_calc_type(calc_mandelbrot_type); // the normal case
             calc_mandelbrot_init();
         }
         else
         {
             // special case: use the main processing loop
-            g_calc_type = standard_fractal_type;
+            set_current_calc_type(standard_fractal_type);
             get_julia_attractor(0.0, 0.0);    // another attractor?
         }
         break;

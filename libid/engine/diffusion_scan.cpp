@@ -4,6 +4,7 @@
 
 #include "engine/calcfrac.h"
 #include "engine/work_list.h"
+#include "fractals/fractalp.h"
 
 #include <algorithm>
 #include <cmath>
@@ -11,6 +12,8 @@
 
 namespace id::engine
 {
+
+using namespace id::fractals;
 
 // routines in this module
 static int diffusion_engine();
@@ -131,10 +134,10 @@ static void count_to_int(const unsigned long c, int &x, int &y, const int dif_of
 }
 
 // Calculate the point
-#define CALCULATE               \
-    g_reset_periodicity = true; \
-    if (g_calc_type() == -1)    \
-        return -1;              \
+#define CALCULATE                    \
+    g_reset_periodicity = true;      \
+    if (current_calc_type()() == -1) \
+        return -1;                   \
     g_reset_periodicity = false
 
 static int diffusion_engine()
