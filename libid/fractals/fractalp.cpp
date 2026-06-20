@@ -159,7 +159,7 @@ enum
 };
 
 // clang-format off
-MoreParams g_more_fractal_params[] =
+const MoreParams g_more_fractal_params[] =
 {
     {FractalType::ICON,                 {"Omega", "+Degree of symmetry", "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
     {FractalType::ICON_3D,              {"Omega", "+Degree of symmetry", "", "", "", ""}, {0, 3, 0, 0, 0, 0}},
@@ -176,7 +176,7 @@ MoreParams g_more_fractal_params[] =
 
 //  type math orbitcalc fnct per_pixel fnct per_image fnct
 // clang-format off
-AlternateMath g_alternate_math[] =
+const AlternateMath g_alternate_math[] =
 {
 #define USE_BN
 #ifdef USE_BN
@@ -1951,7 +1951,7 @@ const FractalSpecific g_fractal_specific[] = {
     } //
 };
 
-int g_num_fractal_types = static_cast<int>(std::size(g_fractal_specific)) - 1;
+const int g_num_fractal_types = static_cast<int>(std::size(g_fractal_specific)) - 1;
 
 const FractalSpecific *g_cur_fractal_specific{};
 FractalDispatch g_fractal_dispatch{};

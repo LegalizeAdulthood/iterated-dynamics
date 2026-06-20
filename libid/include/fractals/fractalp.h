@@ -132,10 +132,10 @@ struct FractalDispatch
     engine::SymmetryType symmetry{};
 };
 
-extern AlternateMath         g_alternate_math[];    // alternate math function pointers
+extern const AlternateMath   g_alternate_math[];    // alternate math function pointers
 extern const FractalSpecific g_fractal_specific[];
-extern MoreParams            g_more_fractal_params[];
-extern int                   g_num_fractal_types;
+extern const MoreParams      g_more_fractal_params[];
+extern const int             g_num_fractal_types;
 extern const FractalSpecific *g_cur_fractal_specific;
 extern FractalDispatch       g_fractal_dispatch;
 
