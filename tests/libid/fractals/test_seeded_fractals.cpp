@@ -153,9 +153,9 @@ public:
     LyapunovState() :
         m_lyapunov(get_fractal_specific(FractalType::LYAPUNOV)),
         m_saved_cur_fractal_specific(g_cur_fractal_specific, m_lyapunov),
-        m_saved_dispatch(g_fractal_dispatch, make_fractal_dispatch(*m_lyapunov))
+        m_saved_dispatch(g_dispatch, FractalDispatch(*m_lyapunov))
     {
-        set_current_orbit_calc(no_orbit);
+        g_dispatch.set_orbit_calc(no_orbit);
         g_params[0] = 65.0;
         g_params[2] = 0.0;
         g_max_iterations = 2;

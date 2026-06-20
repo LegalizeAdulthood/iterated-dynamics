@@ -81,7 +81,7 @@ static int standard_calc(const int pass_num)
             }
             if (pass_num == 1 || g_std_calc_mode == CalcMode::ONE_PASS || (g_row&1) != 0 || (g_col&1) != 0)
             {
-                if (current_calc_type()() == -1)   // standard_fractal(), calcmand() or calcmandfp()
+                if (calc_type() == -1)   // standard_fractal(), calcmand() or calcmandfp()
                 {
                     return -1;          // interrupted
                 }

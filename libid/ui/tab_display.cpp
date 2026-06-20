@@ -216,7 +216,7 @@ static bool tab_display2()
     /*
         write_row(row++, "xdots {:d} ydots {:d} sxdots {:d} sydots {:d}", xdots, ydots, sxdots, sydots);
     */
-    const OrbitCalc formula_status_orbit{g_fractal_type == FractalType::FORMULA ? current_orbit_calc() : nullptr};
+    const OrbitCalc formula_status_orbit{g_fractal_type == FractalType::FORMULA ? g_dispatch.orbit_calc() : nullptr};
     write_row(row++, "{:d}x{:d} {:s} ({:s})", g_logical_screen.x_dots, g_logical_screen.y_dots, g_driver->get_name(),
         g_driver->get_description());
     write_row(row++, "xxstart {:d} xxstop {:d} yystart {:d} yystop {:d} {:s} uses_ismand {:d}", g_start_pt.x,

@@ -416,13 +416,13 @@ static int tess_col(const int x, const int y1, const int y2)
     g_col = x;
     g_row = y1;
     g_reset_periodicity = true;
-    int col_color = current_calc_type()();
+    int col_color = calc_type();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_row <= y2)
     {
         // generate the column
-        const int i = current_calc_type()();
+        const int i = calc_type();
         if (i < 0)
         {
             return -3;
@@ -440,13 +440,13 @@ static int tess_row(const int x1, const int x2, const int y)
     g_row = y;
     g_col = x1;
     g_reset_periodicity = true;
-    int row_color = current_calc_type()();
+    int row_color = calc_type();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
     while (++g_col <= x2)
     {
         // generate the row
-        const int i = current_calc_type()();
+        const int i = calc_type();
         if (i < 0)
         {
             return -3;

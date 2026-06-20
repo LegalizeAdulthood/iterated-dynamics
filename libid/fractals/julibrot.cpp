@@ -106,13 +106,13 @@ static void z_line(const FractalDispatch &dispatch, double x, double y);
 
 FractalDispatch make_julibrot_orbit_dispatch()
 {
-    FractalDispatch dispatch{make_fractal_dispatch(g_new_orbit_type)};
+    FractalDispatch dispatch{g_new_orbit_type};
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER)
     {
         const int exponent{static_cast<int>(g_params[2])};
         const bool real_power{g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER &&
             static_cast<double>(exponent) == g_params[2]};
-        dispatch.orbit_calc = real_power ? mandel_z_power_orbit : mandel_z_power_cmplx_orbit;
+        dispatch.set_orbit_calc(real_power ? mandel_z_power_orbit : mandel_z_power_cmplx_orbit);
     }
     return dispatch;
 }
@@ -249,7 +249,7 @@ static void z_line(const FractalDispatch &dispatch, const double x, const double
 
         for (s_n = 0; s_n < g_max_iterations; s_n++)
         {
-            if (dispatch.orbit_calc())
+            if (dispatch.orbit_calc()())
             {
                 break;
             }
@@ -292,7 +292,7 @@ Standard4D::Standard4D()
     m_orbit_dispatch = make_julibrot_orbit_dispatch();
     if (g_new_orbit_type == FractalType::JULIA_Z_POWER)
     {
-        ValueSaver saved_dispatch{g_fractal_dispatch, m_orbit_dispatch};
+        ValueSaver saved_dispatch{g_dispatch, m_orbit_dispatch};
         get_julia_attractor(g_params[0], g_params[1]); // another attractor?
     }
     m_y_dot = (g_logical_screen.y_dots >> 1) - 1;

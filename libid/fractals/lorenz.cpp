@@ -152,7 +152,7 @@ static const double &PAR_D{g_params[3]};
 // OrbitCalc has no arguments so jump through hoops here
 static int orbit(double *x, double *y, double *z)
 {
-    return (*reinterpret_cast<OrbitCalc3D>(current_orbit_calc()))(x, y, z);
+    return (*reinterpret_cast<OrbitCalc3D>(g_dispatch.orbit_calc()))(x, y, z);
 }
 
 static int orbit(double *x, double *y)

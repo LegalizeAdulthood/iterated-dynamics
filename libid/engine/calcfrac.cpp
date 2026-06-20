@@ -750,7 +750,8 @@ static bool is_standard_fractal()
 
 static void calc_non_standard_fractal()
 {
-    set_current_calc_type(g_cur_fractal_specific->calc_type); // per_image can override
+    g_dispatch.set_calc_type(g_cur_fractal_specific->calc_type);
+    // per_image can override
     g_symmetry = g_cur_fractal_specific->symmetry;            // calc type & symmetry
     g_plot = g_put_color;                                     // defaults when setsymmetry not called or does nothing
     g_begin_pt.x = 0;
@@ -772,7 +773,7 @@ static void calc_non_standard_fractal()
         // next two lines in case periodicity changed
         g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
         set_symmetry(g_symmetry, false);
-        engine_timer(current_calc_type()); // non-standard fractal engine
+        engine_timer(g_dispatch.calc_type()); // non-standard fractal engine
     }
     if (check_key())
     {
@@ -912,11 +913,11 @@ static void work_list_pop_front()
 // general escape-time engine routines
 static void perform_work_list()
 {
-    ValueSaver saved_dispatch{g_fractal_dispatch};
+    ValueSaver saved_dispatch{g_dispatch};
 
     if (const int alt = find_alternate_math(g_fractal_type, g_bf_math); alt > -1)
     {
-        set_current_alternate_math(g_alternate_math[alt]);
+        g_dispatch.set_current_alternate_math(g_alternate_math[alt]);
     }
     else
     {
@@ -1033,8 +1034,8 @@ static void perform_work_list()
 
     while (g_num_work_list > 0)
     {
-        set_current_calc_type(g_cur_fractal_specific->calc_type); // per_image can override
-        g_symmetry = g_cur_fractal_specific->symmetry;            // calc type & symmetry
+        g_dispatch.set_calc_type(g_cur_fractal_specific->calc_type); // per_image can override
+        g_symmetry = g_cur_fractal_specific->symmetry;                       // calc type & symmetry
         g_plot = g_put_color; // defaults when set symmetry not called or does nothing
 
         // pull top entry off work list
@@ -1132,8 +1133,8 @@ static void perform_work_list()
             {
                 s_show_dot_width = -1;
             }
-            s_calc_type_tmp = current_calc_type();
-            set_current_calc_type(calc_type_show_dot);
+            s_calc_type_tmp = g_dispatch.calc_type();
+            g_dispatch.set_calc_type(calc_type_show_dot);
         }
 
         // some common initialization for escape-time pixel level routines
@@ -2656,7 +2657,7 @@ static long auto_log_map()
     const long old_max_it = g_max_iterations;
     for (g_col = 0; g_col < x_stop; g_col++) // top row
     {
-        g_color = current_calc_type()();
+        g_color = calc_type();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2679,7 +2680,7 @@ static long auto_log_map()
     g_col = x_stop;
     for (g_row = 0; g_row < y_stop; g_row++) // right  side
     {
-        g_color = current_calc_type()();
+        g_color = calc_type();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2702,7 +2703,7 @@ static long auto_log_map()
     g_col = 0;
     for (g_row = 0; g_row < y_stop; g_row++) // left  side
     {
-        g_color = current_calc_type()();
+        g_color = calc_type();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout
@@ -2725,7 +2726,7 @@ static long auto_log_map()
     g_row = y_stop ;
     for (g_col = 0; g_col < x_stop; g_col++) // bottom row
     {
-        g_color = current_calc_type()();
+        g_color = calc_type();
         if (g_color == -1)
         {
             goto ack; // key pressed, bailout

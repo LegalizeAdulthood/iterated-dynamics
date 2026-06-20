@@ -122,13 +122,59 @@ struct FractalSpecific
     PerturbationPoint pert_pt{};            // compute point via perturbation
 };
 
-struct FractalDispatch
+const FractalSpecific *get_fractal_specific(FractalType type);
+
+class FractalDispatch
 {
-    OrbitCalc orbit_calc{};
-    PerPixel per_pixel{};
-    PerImage per_image{};
-    CalcType calc_type{};
-    engine::SymmetryType symmetry{};
+public:
+    FractalDispatch() = default;
+
+    FractalDispatch(const FractalDispatch &rhs) = default;
+
+    FractalDispatch(OrbitCalc orbit, PerPixel pixel, PerImage image, CalcType calc) :
+        m_orbit_calc(orbit),
+        m_per_pixel(pixel),
+        m_per_image(image),
+        m_calc_type(calc)
+    {
+    }
+
+    FractalDispatch(const FractalSpecific &specific) :
+        m_orbit_calc(specific.orbit_calc),
+        m_per_pixel(specific.per_pixel),
+        m_per_image(specific.per_image),
+        m_calc_type(specific.calc_type)
+    {
+    }
+
+    FractalDispatch(FractalType type) :
+        FractalDispatch(*get_fractal_specific(type))
+    {
+    }
+
+    // clang-format off
+    OrbitCalc orbit_calc() const            { return m_orbit_calc; }
+    void set_orbit_calc(OrbitCalc value)    { m_orbit_calc = value; }
+    PerPixel per_pixel() const              { return m_per_pixel; }
+    void set_per_pixel(PerPixel value)      { m_per_pixel = value; }
+    PerImage per_image() const              { return m_per_image; }
+    void set_per_image(PerImage value)      { m_per_image = value; }
+    CalcType calc_type() const              { return m_calc_type; }
+    void set_calc_type(CalcType value)      { m_calc_type = value; }
+    // clang-format on
+
+    void set_current_alternate_math(const AlternateMath &value)
+    {
+        m_orbit_calc = value.orbit_calc;
+        m_per_pixel = value.per_pixel;
+        m_per_image = value.per_image;
+    }
+
+private:
+    OrbitCalc m_orbit_calc{};
+    PerPixel m_per_pixel{};
+    PerImage m_per_image{};
+    CalcType m_calc_type{};
 };
 
 extern const AlternateMath   g_alternate_math[];    // alternate math function pointers
@@ -136,77 +182,30 @@ extern const FractalSpecific g_fractal_specific[];
 extern const MoreParams      g_more_fractal_params[];
 extern const int             g_num_fractal_types;
 extern const FractalSpecific *g_cur_fractal_specific;
-extern FractalDispatch       g_fractal_dispatch;
-
-const FractalSpecific *get_fractal_specific(FractalType type);
-FractalDispatch make_fractal_dispatch(const FractalSpecific &specific);
-FractalDispatch make_fractal_dispatch(FractalType type);
-
-inline void set_current_per_image(PerImage value)
-{
-    g_fractal_dispatch.per_image = value;
-}
-
-inline void set_current_per_pixel(PerPixel value)
-{
-    g_fractal_dispatch.per_pixel = value;
-}
-
-inline void set_current_orbit_calc(OrbitCalc value)
-{
-    g_fractal_dispatch.orbit_calc = value;
-}
-
-inline void set_current_calc_type(CalcType value)
-{
-    g_fractal_dispatch.calc_type = value;
-}
-
-inline void set_current_alternate_math(const AlternateMath &value)
-{
-    g_fractal_dispatch.orbit_calc = value.orbit_calc;
-    g_fractal_dispatch.per_pixel = value.per_pixel;
-    g_fractal_dispatch.per_image = value.per_image;
-}
-
-inline PerImage current_per_image()
-{
-    return g_fractal_dispatch.per_image;
-}
-
-inline PerPixel current_per_pixel()
-{
-    return g_fractal_dispatch.per_pixel;
-}
-
-inline OrbitCalc current_orbit_calc()
-{
-    return g_fractal_dispatch.orbit_calc;
-}
-
-inline CalcType current_calc_type()
-{
-    return g_fractal_dispatch.calc_type;
-}
+extern FractalDispatch       g_dispatch;
 
 inline bool per_image()
 {
-    return current_per_image()();
+    return g_dispatch.per_image()();
 }
 inline int per_pixel()
 {
-    return current_per_pixel()();
+    return g_dispatch.per_pixel()();
 }
 inline int orbit_calc()
 {
-    return current_orbit_calc()();
+    return g_dispatch.orbit_calc()();
+}
+inline int calc_type()
+{
+    return g_dispatch.calc_type()();
 }
 
 inline void set_fractal_type(const FractalType value)
 {
     g_fractal_type = value;
     g_cur_fractal_specific = get_fractal_specific(value);
-    g_fractal_dispatch = make_fractal_dispatch(*g_cur_fractal_specific);
+    g_dispatch = FractalDispatch(*g_cur_fractal_specific);
 }
 
 } // namespace id::fractals

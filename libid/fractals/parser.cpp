@@ -2422,8 +2422,8 @@ bool parse_formula(std::filesystem::path &path, const std::string &name, const b
 {
     //  first set the pointers so they point to a fn which always returns 1
     assert(g_cur_fractal_specific == get_fractal_specific(FractalType::FORMULA));
-    set_current_per_pixel(bad_formula);
-    set_current_orbit_calc(bad_formula);
+    g_dispatch.set_per_pixel(bad_formula);
+    g_dispatch.set_orbit_calc(bad_formula);
 
     if (g_formula_name.empty())
     {
@@ -2454,8 +2454,8 @@ bool parse_formula(std::filesystem::path &path, const std::string &name, const b
     if (result)
     {
         // all parses succeeded so set the pointers back to good functions
-        set_current_per_pixel(formula_per_pixel);
-        set_current_orbit_calc(formula_orbit);
+        g_dispatch.set_per_pixel(formula_per_pixel);
+        g_dispatch.set_orbit_calc(formula_orbit);
     }
     return !result;
 }

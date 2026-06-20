@@ -299,7 +299,7 @@ bool newton_per_image()
         g_symmetry = SymmetryType::X_AXIS;
     }
 
-    set_current_calc_type(standard_fractal_type);
+    g_dispatch.set_calc_type(standard_fractal_type);
     return true;
 }
 

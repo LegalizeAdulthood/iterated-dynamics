@@ -1053,7 +1053,7 @@ TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
     ValueSaver saved_version{g_version};
     ValueSaver saved_fractal_type{g_fractal_type};
     ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific};
-    ValueSaver saved_dispatch{g_fractal_dispatch};
+    ValueSaver saved_dispatch{g_dispatch};
     ValueSaver saved_trig_index{g_trig_index[0]};
     ValueSaver saved_float_param{g_float_param};
     ValueSaver saved_param_z1{g_param_z1};

@@ -108,25 +108,25 @@ static int lambda_exponent_fractal()
 
 bool lambda_trig_per_image()
 {
-    set_current_orbit_calc(lambda_trig_orbit);
+    g_dispatch.set_orbit_calc(lambda_trig_orbit);
     switch (g_trig_index[0])
     {
     case TrigFn::SIN:
     case TrigFn::COSXX:
     case TrigFn::COS:
         g_symmetry = SymmetryType::PI_SYM;
-        set_current_orbit_calc(lambda_trig_fractal1);
+        g_dispatch.set_orbit_calc(lambda_trig_fractal1);
         break;
     case TrigFn::SINH:
     case TrigFn::COSH:
         g_symmetry = SymmetryType::ORIGIN;
-        set_current_orbit_calc(lambda_trig_fractal2);
+        g_dispatch.set_orbit_calc(lambda_trig_fractal2);
         break;
     case TrigFn::SQR:
         g_symmetry = SymmetryType::ORIGIN;
         break;
     case TrigFn::EXP:
-        set_current_orbit_calc(lambda_exponent_fractal);
+        g_dispatch.set_orbit_calc(lambda_exponent_fractal);
         g_symmetry = SymmetryType::NONE;
         break;
     case TrigFn::LOG:
@@ -142,21 +142,21 @@ bool lambda_trig_per_image()
 
 bool mandel_trig_per_image()
 {
-    set_current_orbit_calc(lambda_trig_orbit);
+    g_dispatch.set_orbit_calc(lambda_trig_orbit);
     g_symmetry = SymmetryType::XY_AXIS_NO_PARAM;
     switch (g_trig_index[0])
     {
     case TrigFn::SIN:
     case TrigFn::COSXX:
-        set_current_orbit_calc(lambda_trig_fractal1);
+        g_dispatch.set_orbit_calc(lambda_trig_fractal1);
         break;
     case TrigFn::SINH:
     case TrigFn::COSH:
-        set_current_orbit_calc(lambda_trig_fractal2);
+        g_dispatch.set_orbit_calc(lambda_trig_fractal2);
         break;
     case TrigFn::EXP:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;
-        set_current_orbit_calc(lambda_exponent_fractal);
+        g_dispatch.set_orbit_calc(lambda_exponent_fractal);
         break;
     case TrigFn::LOG:
         g_symmetry = SymmetryType::X_AXIS_NO_PARAM;

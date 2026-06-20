@@ -98,7 +98,7 @@ int boundary_trace()
             int trail_color = g_color;
             g_row = cur_row;
             g_col = cur_col;
-            if (current_calc_type()() == -1) // g_color, g_row, g_col are global
+            if (calc_type() == -1) // g_color, g_row, g_col are global
             {
                 if (g_show_dot != BK_COLOR)   // remove show dot pixel
                 {
@@ -140,7 +140,7 @@ int boundary_trace()
                 {
                     g_color = get_color(g_col, g_row);
                     // g_color, g_row, g_col are global for current_calc_type()
-                    if (g_color == BK_COLOR && current_calc_type()() == -1)
+                    if (g_color == BK_COLOR && calc_type() == -1)
                     {
                         if (g_show_dot != BK_COLOR)   // remove show dot pixel
                         {

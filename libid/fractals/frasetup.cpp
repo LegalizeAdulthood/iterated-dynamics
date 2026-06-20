@@ -46,13 +46,13 @@ bool burning_ship_per_image()
         return mandel_perturbation_per_image();
     }
     // use the main processing loop
-    set_current_calc_type(standard_fractal_type);
+    g_dispatch.set_calc_type(standard_fractal_type);
     return true;
 }
 
 bool standalone_per_image()
 {
-    engine_timer(current_calc_type());
+    engine_timer(g_dispatch.calc_type());
     return false;               // effectively disable solid-guessing
 }
 
@@ -117,13 +117,13 @@ bool mandel_per_image()
         }
         if (use_calc_mandelbrot())
         {
-            set_current_calc_type(calc_mandelbrot_type); // the normal case
+            g_dispatch.set_calc_type(calc_mandelbrot_type); // the normal case
             calc_mandelbrot_init();
         }
         else
         {
             // special case: use the main processing loop
-            set_current_calc_type(standard_fractal_type);
+            g_dispatch.set_calc_type(standard_fractal_type);
         }
         break;
 
@@ -150,11 +150,11 @@ bool mandel_per_image()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && static_cast<double>(g_c_exponent) == g_params[2])
         {
-            set_current_orbit_calc(mandel_z_power_orbit);
+            g_dispatch.set_orbit_calc(mandel_z_power_orbit);
         }
         else
         {
-            set_current_orbit_calc(mandel_z_power_cmplx_orbit);
+            g_dispatch.set_orbit_calc(mandel_z_power_cmplx_orbit);
         }
         break;
     case FractalType::MAGNET_1M:
@@ -245,13 +245,13 @@ bool julia_per_image()
         */
         if (use_calc_mandelbrot())
         {
-            set_current_calc_type(calc_mandelbrot_type); // the normal case
+            g_dispatch.set_calc_type(calc_mandelbrot_type); // the normal case
             calc_mandelbrot_init();
         }
         else
         {
             // special case: use the main processing loop
-            set_current_calc_type(standard_fractal_type);
+            g_dispatch.set_calc_type(standard_fractal_type);
             get_julia_attractor(0.0, 0.0);    // another attractor?
         }
         break;
@@ -262,11 +262,11 @@ bool julia_per_image()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && static_cast<double>(g_c_exponent) == g_params[2])
         {
-            set_current_orbit_calc(mandel_z_power_orbit);
+            g_dispatch.set_orbit_calc(mandel_z_power_orbit);
         }
         else
         {
-            set_current_orbit_calc(mandel_z_power_cmplx_orbit);
+            g_dispatch.set_orbit_calc(mandel_z_power_cmplx_orbit);
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
         break;
@@ -343,11 +343,11 @@ bool julia_per_image()
         }
         if (default_functions && g_debug_flag == DebugFlags::FORCE_REAL_POPCORN)
         {
-            set_current_orbit_calc(popcorn_fractal);
+            g_dispatch.set_orbit_calc(popcorn_fractal);
         }
         else
         {
-            set_current_orbit_calc(popcorn_orbit);
+            g_dispatch.set_orbit_calc(popcorn_orbit);
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;

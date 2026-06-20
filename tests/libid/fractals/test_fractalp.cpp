@@ -88,7 +88,7 @@ public:
 private:
     ValueSaver<FractalType> m_saved_type{g_fractal_type};
     ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific};
-    ValueSaver<FractalDispatch> m_saved_dispatch{g_fractal_dispatch};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
     ValueSaver<FiniteAttractor> m_saved_attractor{g_attractor, FiniteAttractor{}};
     ValueSaver<CalcMode> m_saved_std_calc_mode{g_std_calc_mode, CalcMode::ONE_PASS};
     ValueSaver<DebugFlags> m_saved_debug_flag{g_debug_flag, DebugFlags::NONE};
@@ -155,13 +155,12 @@ TEST(TestFractalDispatch, seededDispatchMatchesDefaults)
     for (int i = 0; i < g_num_fractal_types; ++i)
     {
         const FractalSpecific &from{g_fractal_specific[i]};
-        const FractalDispatch dispatch{make_fractal_dispatch(from)};
+        const FractalDispatch dispatch{FractalDispatch(from)};
 
-        EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.per_pixel, dispatch.per_pixel) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.per_image, dispatch.per_image) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.calc_type, dispatch.calc_type) << "index " << i << ", " << from.name;
-        EXPECT_EQ(from.symmetry, dispatch.symmetry) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc()) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.per_pixel, dispatch.per_pixel()) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.per_image, dispatch.per_image()) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.calc_type, dispatch.calc_type()) << "index " << i << ", " << from.name;
     }
 }
 
@@ -169,63 +168,61 @@ TEST(TestFractalDispatch, setFractalTypeSeedsCurrentDispatch)
 {
     ValueSaver saved_type{g_fractal_type};
     ValueSaver saved_specific{g_cur_fractal_specific};
-    ValueSaver saved_dispatch{g_fractal_dispatch};
+    ValueSaver saved_dispatch{g_dispatch};
 
     set_fractal_type(FractalType::MANDEL);
 
     const FractalSpecific &from{*get_fractal_specific(FractalType::MANDEL)};
-    EXPECT_EQ(from.orbit_calc, g_fractal_dispatch.orbit_calc);
-    EXPECT_EQ(from.per_pixel, g_fractal_dispatch.per_pixel);
-    EXPECT_EQ(from.per_image, g_fractal_dispatch.per_image);
-    EXPECT_EQ(from.calc_type, g_fractal_dispatch.calc_type);
-    EXPECT_EQ(from.symmetry, g_fractal_dispatch.symmetry);
+    EXPECT_EQ(from.orbit_calc, g_dispatch.orbit_calc());
+    EXPECT_EQ(from.per_pixel, g_dispatch.per_pixel());
+    EXPECT_EQ(from.per_image, g_dispatch.per_image());
+    EXPECT_EQ(from.calc_type, g_dispatch.calc_type());
 }
 
 TEST(TestFractalDispatch, makeDispatchFromTypeSeedsFromRequestedType)
 {
     const FractalSpecific &from{*get_fractal_specific(FractalType::JULIA)};
-    const FractalDispatch dispatch{make_fractal_dispatch(FractalType::JULIA)};
+    const FractalDispatch dispatch{FractalType::JULIA};
 
-    EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc);
-    EXPECT_EQ(from.per_pixel, dispatch.per_pixel);
-    EXPECT_EQ(from.per_image, dispatch.per_image);
-    EXPECT_EQ(from.calc_type, dispatch.calc_type);
-    EXPECT_EQ(from.symmetry, dispatch.symmetry);
+    EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc());
+    EXPECT_EQ(from.per_pixel, dispatch.per_pixel());
+    EXPECT_EQ(from.per_image, dispatch.per_image());
+    EXPECT_EQ(from.calc_type, dispatch.calc_type());
 }
 
 TEST(TestFractalDispatch, accessorsUseCurrentDispatch)
 {
     FractalDispatch dispatch{};
-    dispatch.orbit_calc = test_orbit_calc;
-    dispatch.per_pixel = test_per_pixel;
-    dispatch.per_image = test_per_image;
-    dispatch.calc_type = test_calc_type;
+    dispatch.set_orbit_calc(test_orbit_calc);
+    dispatch.set_per_pixel(test_per_pixel);
+    dispatch.set_per_image(test_per_image);
+    dispatch.set_calc_type(test_calc_type);
 
     ValueSaver saved_specific{g_cur_fractal_specific, nullptr};
-    ValueSaver saved_dispatch{g_fractal_dispatch, dispatch};
+    ValueSaver saved_dispatch{g_dispatch, dispatch};
 
     EXPECT_TRUE(per_image());
     EXPECT_EQ(23, per_pixel());
     EXPECT_EQ(17, orbit_calc());
-    EXPECT_EQ(test_calc_type, current_calc_type());
-    EXPECT_EQ(31, current_calc_type()());
+    EXPECT_EQ(test_calc_type, g_dispatch.calc_type());
+    EXPECT_EQ(31, calc_type());
 }
 
 TEST(TestFractalDispatch, settersOnlyUpdateDispatch)
 {
     FractalSpecific specific{};
     ValueSaver saved_specific{g_cur_fractal_specific, &specific};
-    ValueSaver saved_dispatch{g_fractal_dispatch};
+    ValueSaver saved_dispatch{g_dispatch};
 
-    set_current_orbit_calc(test_orbit_calc);
-    set_current_per_pixel(test_per_pixel);
-    set_current_per_image(test_per_image);
-    set_current_calc_type(test_calc_type);
+    g_dispatch.set_orbit_calc(test_orbit_calc);
+    g_dispatch.set_per_pixel(test_per_pixel);
+    g_dispatch.set_per_image(test_per_image);
+    g_dispatch.set_calc_type(test_calc_type);
 
-    EXPECT_EQ(test_orbit_calc, g_fractal_dispatch.orbit_calc);
-    EXPECT_EQ(test_per_pixel, g_fractal_dispatch.per_pixel);
-    EXPECT_EQ(test_per_image, g_fractal_dispatch.per_image);
-    EXPECT_EQ(test_calc_type, g_fractal_dispatch.calc_type);
+    EXPECT_EQ(test_orbit_calc, g_dispatch.orbit_calc());
+    EXPECT_EQ(test_per_pixel, g_dispatch.per_pixel());
+    EXPECT_EQ(test_per_image, g_dispatch.per_image());
+    EXPECT_EQ(test_calc_type, g_dispatch.calc_type());
     EXPECT_EQ(nullptr, specific.orbit_calc);
     EXPECT_EQ(nullptr, specific.per_pixel);
     EXPECT_EQ(nullptr, specific.per_image);
@@ -240,13 +237,13 @@ TEST(TestFractalDispatch, alternateMathOnlyUpdatesDispatch)
         FractalType::MANDEL, math::BFMathType::BIG_NUM, test_orbit_calc, test_per_pixel, test_per_image};
 
     ValueSaver saved_specific{g_cur_fractal_specific, &specific};
-    ValueSaver saved_dispatch{g_fractal_dispatch, dispatch};
+    ValueSaver saved_dispatch{g_dispatch, dispatch};
 
-    set_current_alternate_math(alternate);
+    g_dispatch.set_current_alternate_math(alternate);
 
-    EXPECT_EQ(test_orbit_calc, g_fractal_dispatch.orbit_calc);
-    EXPECT_EQ(test_per_pixel, g_fractal_dispatch.per_pixel);
-    EXPECT_EQ(test_per_image, g_fractal_dispatch.per_image);
+    EXPECT_EQ(test_orbit_calc, g_dispatch.orbit_calc());
+    EXPECT_EQ(test_per_pixel, g_dispatch.per_pixel());
+    EXPECT_EQ(test_per_image, g_dispatch.per_image());
     EXPECT_EQ(nullptr, specific.orbit_calc);
     EXPECT_EQ(nullptr, specific.per_pixel);
     EXPECT_EQ(nullptr, specific.per_image);
@@ -262,8 +259,8 @@ TEST(TestFractalDispatch, formulaParseFailureOnlyUpdatesDispatch)
     fs::path path{"unused.frm"};
 
     EXPECT_TRUE(parse_formula(path, g_formula_name, true));
-    EXPECT_EQ(bad_formula, g_fractal_dispatch.orbit_calc);
-    EXPECT_EQ(bad_formula, g_fractal_dispatch.per_pixel);
+    EXPECT_EQ(bad_formula, g_dispatch.orbit_calc());
+    EXPECT_EQ(bad_formula, g_dispatch.per_pixel());
     expect_table_functions(FractalType::FORMULA, table);
 }
 
@@ -277,8 +274,8 @@ TEST(TestFractalDispatch, formulaParseSuccessOnlyUpdatesDispatch)
     fs::path path{fs::path{ID_TEST_FRM_DIR} / ID_TEST_FRM_FILE};
 
     EXPECT_FALSE(parse_formula(path, g_formula_name, true));
-    EXPECT_EQ(formula_orbit, g_fractal_dispatch.orbit_calc);
-    EXPECT_EQ(formula_per_pixel, g_fractal_dispatch.per_pixel);
+    EXPECT_EQ(formula_orbit, g_dispatch.orbit_calc());
+    EXPECT_EQ(formula_per_pixel, g_dispatch.per_pixel());
     expect_table_functions(FractalType::FORMULA, table);
 }
 
@@ -292,7 +289,7 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
 
         EXPECT_TRUE(mandel_per_image());
 
-        EXPECT_EQ(mandel_z_power_cmplx_orbit, current_orbit_calc());
+        EXPECT_EQ(mandel_z_power_cmplx_orbit, g_dispatch.orbit_calc());
         expect_table_functions(FractalType::MANDEL_Z_POWER, table);
     }
 
@@ -303,7 +300,7 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
 
         EXPECT_TRUE(mandel_trig_per_image());
 
-        EXPECT_EQ(lambda_trig_orbit, current_orbit_calc());
+        EXPECT_EQ(lambda_trig_orbit, g_dispatch.orbit_calc());
         expect_table_functions(FractalType::MANDEL_FN, table);
     }
 
@@ -314,7 +311,7 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
 
         EXPECT_TRUE(phoenix_per_image());
 
-        EXPECT_EQ(phoenix_plus_fractal, current_orbit_calc());
+        EXPECT_EQ(phoenix_plus_fractal, g_dispatch.orbit_calc());
         expect_table_functions(FractalType::PHOENIX, table);
     }
 
@@ -328,8 +325,8 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
 
         EXPECT_TRUE(trig_plus_trig_per_image());
 
-        EXPECT_EQ(trig_plus_trig_orbit, current_orbit_calc());
-        EXPECT_EQ(other_julia_per_pixel, current_per_pixel());
+        EXPECT_EQ(trig_plus_trig_orbit, g_dispatch.orbit_calc());
+        EXPECT_EQ(other_julia_per_pixel, g_dispatch.per_pixel());
         expect_table_functions(FractalType::FN_PLUS_FN, table);
     }
 
@@ -346,7 +343,7 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
 
         EXPECT_TRUE(julia_per_image());
 
-        EXPECT_EQ(popcorn_fractal, current_orbit_calc());
+        EXPECT_EQ(popcorn_fractal, g_dispatch.orbit_calc());
         expect_table_functions(FractalType::POPCORN_JUL, table);
     }
 }
@@ -362,8 +359,8 @@ TEST(TestFractalDispatch, julibrotOrbitDispatchUsesSecondaryType)
 
     const FractalDispatch dispatch{make_julibrot_orbit_dispatch()};
 
-    EXPECT_EQ(mandel_z_power_cmplx_orbit, dispatch.orbit_calc);
-    EXPECT_EQ(julibrot_table.orbit_calc, current_orbit_calc());
+    EXPECT_EQ(mandel_z_power_cmplx_orbit, dispatch.orbit_calc());
+    EXPECT_EQ(julibrot_table.orbit_calc, g_dispatch.orbit_calc());
     expect_table_functions(FractalType::JULIBROT, julibrot_table);
     expect_table_functions(FractalType::JULIA_Z_POWER, orbit_table);
 }

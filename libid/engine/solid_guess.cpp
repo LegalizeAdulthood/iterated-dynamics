@@ -136,7 +136,7 @@ int SolidGuess::scan()
             for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
             {
                 // calc top row
-                if (current_calc_type()() == -1)
+                if (calc_type() == -1)
                 {
                     add_work_list(g_start_pt.x, g_start_pt.y, //
                         g_stop_pt.x, g_stop_pt.y,             //
@@ -162,7 +162,7 @@ int SolidGuess::scan()
                 g_reset_periodicity = true;
                 for (g_col = g_i_start_pt.x; g_col <= g_i_stop_pt.x; g_col += m_max_block)
                 {
-                    i = current_calc_type()();
+                    i = calc_type();
                     if (i == -1)
                     {
                         break;
@@ -292,7 +292,7 @@ static int calc_a_dot(const int x, const int y)
 {
     g_col = x;
     g_row = y;
-    return current_calc_type()();
+    return calc_type();
 }
 
 bool SolidGuess::guess_row(bool first_pass, int y, int block_size)

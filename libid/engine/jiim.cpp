@@ -1341,7 +1341,7 @@ void InverseJulia::process()
     ValueSaver saved_debug_flag{g_debug_flag};
     ValueSaver saved_help_mode{
         g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
-    ValueSaver saved_dispatch{g_fractal_dispatch};
+    ValueSaver saved_dispatch{g_dispatch};
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::POSITION};
 
     start();
