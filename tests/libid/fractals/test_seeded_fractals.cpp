@@ -153,8 +153,9 @@ public:
     LyapunovState() :
         m_lyapunov(get_fractal_specific(FractalType::LYAPUNOV)),
         m_saved_cur_fractal_specific(g_cur_fractal_specific, m_lyapunov),
-        m_saved_orbit_calc(m_lyapunov->orbit_calc, no_orbit)
+        m_saved_dispatch(g_fractal_dispatch, make_fractal_dispatch(*m_lyapunov))
     {
+        set_current_orbit_calc(no_orbit);
         g_params[0] = 65.0;
         g_params[2] = 0.0;
         g_max_iterations = 2;
@@ -195,10 +196,10 @@ private:
     MockDriver m_driver;
     FractalParamSaver m_saved_params;
     MinimalImageState m_image;
-    FractalSpecific *m_lyapunov;
+    const FractalSpecific *m_lyapunov;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
-    ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific;
-    ValueSaver<int (*)(void)> m_saved_orbit_calc;
+    ValueSaver<const FractalSpecific *> m_saved_cur_fractal_specific;
+    ValueSaver<FractalDispatch> m_saved_dispatch;
     ValueSaver<Inversion> m_saved_inversion{g_inversion, Inversion{}};
     ValueSaver<ImageRegion> m_saved_image_region{g_image_region};
     ValueSaver<LDouble> m_saved_delta_x{g_delta_x};

@@ -87,7 +87,7 @@ public:
 
 private:
     ValueSaver<FractalType> m_saved_type{g_fractal_type};
-    ValueSaver<FractalSpecific *> m_saved_specific{g_cur_fractal_specific};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific};
     ValueSaver<FractalDispatch> m_saved_dispatch{g_fractal_dispatch};
     ValueSaver<FiniteAttractor> m_saved_attractor{g_attractor, FiniteAttractor{}};
     ValueSaver<CalcMode> m_saved_std_calc_mode{g_std_calc_mode, CalcMode::ONE_PASS};
@@ -365,6 +365,21 @@ TEST(TestFractalDispatch, julibrotOrbitDispatchUsesSecondaryType)
     EXPECT_EQ(get_fractal_specific(FractalType::JULIA_Z_POWER), dispatch.specific);
     EXPECT_EQ(mandel_z_power_cmplx_orbit, dispatch.orbit_calc);
     EXPECT_EQ(julibrot_table.orbit_calc, current_orbit_calc());
+    expect_table_functions(FractalType::JULIBROT, julibrot_table);
+    expect_table_functions(FractalType::JULIA_Z_POWER, orbit_table);
+}
+
+TEST(TestFractalDispatch, julibrotSetupLeavesTableEntries)
+{
+    DispatchSelectionState state{FractalType::JULIBROT};
+    const TableFunctions julibrot_table{table_functions(FractalType::JULIBROT)};
+    const TableFunctions orbit_table{table_functions(FractalType::JULIA_Z_POWER)};
+    ValueSaver saved_new_orbit_type{g_new_orbit_type, FractalType::JULIA_Z_POWER};
+    g_params[2] = 3.0;
+    g_params[3] = 1.0;
+
+    Standard4D standard;
+
     expect_table_functions(FractalType::JULIBROT, julibrot_table);
     expect_table_functions(FractalType::JULIA_Z_POWER, orbit_table);
 }

@@ -132,23 +132,25 @@ static bool look(MainContext &context)
 static void toggle_mandelbrot_julia(MainContext &context)
 {
     static ImageRegion s_j; // "Julia mode" entry point
+    FractalType to_julia{g_cur_fractal_specific->to_julia};
+    FractalType to_mandel{g_cur_fractal_specific->to_mandel};
 
     if (g_fractal_type == FractalType::FORMULA)
     {
         if (g_frm_is_mandelbrot)
         {
-            get_fractal_specific(g_fractal_type)->to_julia = g_fractal_type;
-            get_fractal_specific(g_fractal_type)->to_mandel = FractalType::NO_FRACTAL;
+            to_julia = g_fractal_type;
+            to_mandel = FractalType::NO_FRACTAL;
             g_frm_is_mandelbrot = false;
         }
         else
         {
-            get_fractal_specific(g_fractal_type)->to_julia = FractalType::NO_FRACTAL;
-            get_fractal_specific(g_fractal_type)->to_mandel = g_fractal_type;
+            to_julia = FractalType::NO_FRACTAL;
+            to_mandel = g_fractal_type;
             g_frm_is_mandelbrot = true;
         }
     }
-    if (g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL //
+    if (to_julia != FractalType::NO_FRACTAL //
         && g_params[0] == 0.0 && g_params[1] == 0.0)
     {
         // switch to corresponding Julia set
@@ -161,7 +163,7 @@ static void toggle_mandelbrot_julia(MainContext &context)
             driver_unget_key(key);
             return;
         }
-        set_fractal_type(g_cur_fractal_specific->to_julia);
+        set_fractal_type(to_julia);
         if (g_julia_c.x == JULIA_C_NOT_SET || g_julia_c.y == JULIA_C_NOT_SET)
         {
             g_params[0] = (g_image_region.m_max.x + g_image_region.m_min.x) / 2;
@@ -195,10 +197,10 @@ static void toggle_mandelbrot_julia(MainContext &context)
         g_calc_status = CalcStatus::PARAMS_CHANGED;
         context.more_keys = false;
     }
-    else if (g_cur_fractal_specific->to_mandel != FractalType::NO_FRACTAL)
+    else if (to_mandel != FractalType::NO_FRACTAL)
     {
         // switch to corresponding Mandel set
-        set_fractal_type(g_cur_fractal_specific->to_mandel);
+        set_fractal_type(to_mandel);
         if (context.from_mandel)
         {
             g_image_region = s_j;

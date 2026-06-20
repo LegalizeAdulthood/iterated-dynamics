@@ -75,7 +75,7 @@ protected:
 
     MakeBatchParamSaver m_saved_params;
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::ANT};
-    ValueSaver<FractalSpecific *> m_saved_fractal_specific{
+    ValueSaver<const FractalSpecific *> m_saved_fractal_specific{
         g_cur_fractal_specific, get_fractal_specific(FractalType::ANT)};
     ValueSaver<DebugFlags> m_saved_debug_flag{g_debug_flag, DebugFlags::NONE};
     WriteBatchData m_data{};

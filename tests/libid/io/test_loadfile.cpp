@@ -293,7 +293,8 @@ protected:
     ValueSaver<bool> saved_fast_restore{g_fast_restore};
     ValueSaver<bool> saved_view_window{g_viewport.enabled};
     ValueSaver<FractalType> saved_fractal_type{g_fractal_type, FractalType::JULIA};
-    ValueSaver<FractalSpecific *> saved_fractal_specific{g_cur_fractal_specific, get_fractal_specific(FractalType::JULIA)};
+    ValueSaver<const FractalSpecific *> saved_fractal_specific{
+        g_cur_fractal_specific, get_fractal_specific(FractalType::JULIA)};
     ValueSaver<int> saved_invert{g_inversion.invert};
     ValueSaver<bool> saved_make_parameter_file{g_make_parameter_file};
     ValueSaver<int> saved_colors{g_colors};

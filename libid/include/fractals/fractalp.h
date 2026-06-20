@@ -133,13 +133,13 @@ struct FractalDispatch
 };
 
 extern AlternateMath         g_alternate_math[];    // alternate math function pointers
-extern FractalSpecific       g_fractal_specific[];
+extern const FractalSpecific g_fractal_specific[];
 extern MoreParams            g_more_fractal_params[];
 extern int                   g_num_fractal_types;
-extern FractalSpecific      *g_cur_fractal_specific;
+extern const FractalSpecific *g_cur_fractal_specific;
 extern FractalDispatch       g_fractal_dispatch;
 
-FractalSpecific *get_fractal_specific(FractalType type);
+const FractalSpecific *get_fractal_specific(FractalType type);
 FractalDispatch make_fractal_dispatch(const FractalSpecific &specific);
 FractalDispatch make_fractal_dispatch(FractalType type);
 

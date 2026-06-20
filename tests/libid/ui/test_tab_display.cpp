@@ -77,7 +77,7 @@ protected:
     TabDisplayParamSaver m_param_saver;
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver<FractalSpecific *> m_saved_fractal_specific{
+    ValueSaver<const FractalSpecific *> m_saved_fractal_specific{
         g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<CalcStatus> m_saved_calc_status{g_calc_status, CalcStatus::COMPLETED};
     ValueSaver<Passes> m_saved_passes{g_passes, Passes::NONE};

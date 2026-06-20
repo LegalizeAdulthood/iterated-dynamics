@@ -288,7 +288,7 @@ public:
 private:
     bool m_commit{};
     FractalType m_fractal_type{g_fractal_type};
-    FractalSpecific *m_fractal_specific{g_cur_fractal_specific};
+    const FractalSpecific *m_fractal_specific{g_cur_fractal_specific};
 };
 
 } // namespace
@@ -400,7 +400,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
     std::FILE *entry_file;
     std::vector<const char *> trig_name_ptr;
     const char *bail_name_ptr[] = {"mod", "real", "imag", "or", "and", "manh", "manr"};
-    FractalSpecific *jb_orbit = nullptr;
+    const FractalSpecific *jb_orbit = nullptr;
     int first_param = 0;
     int last_param  = MAX_PARAMS;
     int fn_key_mask = 0;
@@ -524,7 +524,7 @@ int get_fract_params(bool prompt_for_type_params)        // prompt for type-spec
         }
         s_tmp_stack[j+1] = 0;
     }
-    FractalSpecific *save_specific = g_cur_fractal_specific;
+    const FractalSpecific *save_specific = g_cur_fractal_specific;
     int orbit_bailout;
 
 gfp_top:

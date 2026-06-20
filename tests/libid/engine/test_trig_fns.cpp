@@ -21,7 +21,7 @@ class TestTrigFns : public testing::Test
 {
 protected:
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::FORMULA};
-    ValueSaver<FractalSpecific *> m_saved_fractal_specific{
+    ValueSaver<const FractalSpecific *> m_saved_fractal_specific{
         g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<int> m_saved_max_function{g_formula.max_function, 0};
     ValueSaver<TrigFn> m_saved_trig_index0{g_trig_index[0], TrigFn::SIN};

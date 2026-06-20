@@ -685,7 +685,7 @@ protected:
     ValueSaver<Version> m_saved_version{g_version, Version{1, 2, 3, 4, false}};
     ValueSaver<fs::path> m_saved_save_dir{g_save_dir, ID_TEST_DATA_DIR};
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver<FractalSpecific *> m_saved_cur_fractal_specific{
+    ValueSaver<const FractalSpecific *> m_saved_cur_fractal_specific{
         g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<int> m_saved_x_dots{g_file_x_dots, 800};
     ValueSaver<int> m_saved_y_dots{g_file_y_dots, 600};

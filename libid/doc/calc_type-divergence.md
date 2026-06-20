@@ -77,23 +77,7 @@ runtime pixel calculator is needed.
 Goal: make `g_fractal_specific` immutable by moving runtime-selected
 function pointers into explicit calculation dispatch state.
 
-### Slice 1: Make FractalSpecific Const
-
-Work:
-
-- Change `g_fractal_specific` to a const array.
-- Change `g_cur_fractal_specific` and `get_fractal_specific()` to return
-  const pointers.
-- Update tests and helpers that save or inspect the current type.
-- Add a test that renders or setup paths do not modify table entries.
-
-Done when:
-
-- The compiler rejects writes to `FractalSpecific` entries.
-- Runtime behavior still changes through dispatch.
-- The static table is immutable metadata.
-
-### Slice 2: Retire Compatibility State
+### Slice 1: Retire Compatibility State
 
 Work:
 
@@ -113,7 +97,7 @@ Done when:
 These slices assume `FractalSpecific` is already const and runtime-selected
 functions already live in dispatch state.
 
-### Slice 3: Classify Calc-Type Reads
+### Slice 2: Classify Calc-Type Reads
 
 Work:
 
@@ -129,7 +113,7 @@ Done when:
 - Static checks are named or commented as static metadata checks.
 - Tests still cover non-standard and standard dispatch decisions.
 
-### Slice 4: Guard Dispatch Lifetime
+### Slice 3: Guard Dispatch Lifetime
 
 Work:
 
@@ -144,7 +128,7 @@ Done when:
 - Tests cover type change before setup and type change followed by setup.
 - Runtime dispatch access fails clearly if setup has not prepared it.
 
-### Slice 5: Test Mandel And Julia Selection
+### Slice 4: Test Mandel And Julia Selection
 
 Work:
 
@@ -159,7 +143,7 @@ Done when:
 - The tests compare table metadata and dispatch state separately.
 - Changing the static table cannot hide a runtime selection bug.
 
-### Slice 6: Test Showdot Wrapping
+### Slice 5: Test Showdot Wrapping
 
 Work:
 
@@ -176,7 +160,7 @@ Done when:
 - Nested setup and teardown leave dispatch unchanged except for the
   wrapper.
 
-### Slice 7: Test Alternate Math Dispatch
+### Slice 6: Test Alternate Math Dispatch
 
 Work:
 
@@ -191,7 +175,7 @@ Done when:
 - `calc_type` table metadata remains unchanged.
 - Fallback to `BFMathType::NONE` is tested.
 
-### Slice 8: Add Boundary Checks
+### Slice 7: Add Boundary Checks
 
 Work:
 
@@ -207,7 +191,7 @@ Done when:
 - The check fails on new direct runtime table use.
 - Allowed static metadata reads stay explicit.
 
-### Slice 9: Remove Compatibility Names
+### Slice 8: Remove Compatibility Names
 
 Work:
 

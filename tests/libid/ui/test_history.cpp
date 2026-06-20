@@ -44,7 +44,7 @@ protected:
     ValueSaver<Version> m_saved_version{g_version};
     ValueSaver<Version> m_saved_file_version{g_file_version};
     ValueSaver<FractalType> m_saved_fractal_type{g_fractal_type, FractalType::MANDEL};
-    ValueSaver<FractalSpecific *> m_saved_fractal_specific{
+    ValueSaver<const FractalSpecific *> m_saved_fractal_specific{
         g_cur_fractal_specific, get_fractal_specific(FractalType::MANDEL)};
     ValueSaver<DebugFlags> m_saved_debug_flag{g_debug_flag, DebugFlags::NONE};
     ValueSaver<Driver *> m_saved_driver{g_driver, &m_driver};

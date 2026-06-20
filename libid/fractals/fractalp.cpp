@@ -207,7 +207,7 @@ OrbitCalc orbit_cast(OrbitCalc3D f)
 }
 
 // This array is indexed by the enum fractal_type.
-FractalSpecific g_fractal_specific[] = {
+const FractalSpecific g_fractal_specific[] = {
     /*
     {
         fractal name,
@@ -1953,7 +1953,7 @@ FractalSpecific g_fractal_specific[] = {
 
 int g_num_fractal_types = static_cast<int>(std::size(g_fractal_specific)) - 1;
 
-FractalSpecific *g_cur_fractal_specific{};
+const FractalSpecific *g_cur_fractal_specific{};
 FractalDispatch g_fractal_dispatch{};
 
 FractalDispatch make_fractal_dispatch(const FractalSpecific &specific)
@@ -1972,7 +1972,7 @@ FractalDispatch make_fractal_dispatch(const FractalType type)
     return make_fractal_dispatch(*get_fractal_specific(type));
 }
 
-FractalSpecific *get_fractal_specific(const FractalType type)
+const FractalSpecific *get_fractal_specific(const FractalType type)
 {
     // g_fractal_specific is sorted by the type member, so we can use binary search.
     if (const auto it = std::lower_bound(&g_fractal_specific[0], &g_fractal_specific[g_num_fractal_types],
