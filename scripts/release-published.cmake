@@ -237,59 +237,6 @@ function(id_extract_changelog lines_var release_version out_var)
     set(${out_var} "${history}" PARENT_SCOPE)
 endfunction()
 
-function(id_update_project_version path release_project next_project)
-    id_read_lines("${path}" lines)
-    set(result)
-    set(match_count 0)
-    list(LENGTH lines line_count)
-    if(line_count GREATER 0)
-        math(EXPR last_index "${line_count} - 1")
-        foreach(line_index RANGE 0 ${last_index})
-            list(GET lines ${line_index} line)
-            id_unprotect_line("${line}" line)
-            if(line MATCHES "^([ \t]*)VERSION[ \t]+${release_project}[ \t]*$")
-                id_append_line(result "${CMAKE_MATCH_1}VERSION ${next_project}")
-                math(EXPR match_count "${match_count} + 1")
-            else()
-                id_append_line(result "${line}")
-            endif()
-        endforeach()
-    endif()
-    if(NOT match_count EQUAL 1)
-        id_fail("CMake project version is not ${release_project}")
-    endif()
-    id_write_lines("${path}" result)
-endfunction()
-
-function(id_update_product_guid path next_version)
-    string(UUID product_guid
-        NAMESPACE "0E9EE50A-71DB-4723-BC37-CC831B7A7EF7"
-        NAME "Iterated Dynamics ${next_version}"
-        TYPE SHA1
-        UPPER)
-
-    id_read_lines("${path}" lines)
-    set(result)
-    set(match_count 0)
-    list(LENGTH lines line_count)
-    if(line_count GREATER 0)
-        math(EXPR last_index "${line_count} - 1")
-        foreach(line_index RANGE 0 ${last_index})
-            list(GET lines ${line_index} line)
-            id_unprotect_line("${line}" line)
-            if(line MATCHES "^([ \t]*set\\(CPACK_WIX_PRODUCT_GUID[ \t]+)\"[0-9A-Fa-f-]+\"(\\).*)$")
-                set(line "${CMAKE_MATCH_1}\"${product_guid}\"${CMAKE_MATCH_2}")
-                math(EXPR match_count "${match_count} + 1")
-            endif()
-            id_append_line(result "${line}")
-        endforeach()
-    endif()
-    if(NOT match_count EQUAL 1)
-        id_fail("Could not find CPACK_WIX_PRODUCT_GUID assignment")
-    endif()
-    id_write_lines("${path}" result)
-endfunction()
-
 function(id_update_changelog help_src_path help5_src_path release_version next_version)
     id_read_lines("${help_src_path}" help_src_lines)
     id_read_lines("${help5_src_path}" help5_lines)
@@ -320,6 +267,23 @@ function(id_update_changelog help_src_path help5_src_path release_version next_v
         "New Features in ${next_version}"
         help_src_lines)
     id_write_lines("${help_src_path}" help_src_lines)
+endfunction()
+
+function(id_update_source_version source_dir current_version next_version)
+    set(args
+        "${CMAKE_COMMAND}"
+        "-DID_SOURCE_DIR:STRING=${source_dir}"
+        "-DCURRENT_VERSION:STRING=${current_version}"
+        "-DNEXT_VERSION:STRING=${next_version}")
+    if(DRY_RUN)
+        list(APPEND args "-DDRY_RUN:BOOL=ON")
+    endif()
+    list(APPEND args -P "${CMAKE_CURRENT_LIST_DIR}/new-version.cmake")
+
+    execute_process(COMMAND ${args} RESULT_VARIABLE result)
+    if(NOT result EQUAL 0)
+        id_fail("new-version.cmake failed with result ${result}")
+    endif()
 endfunction()
 
 function(id_promote_docs pages_dir doc_version)
@@ -355,13 +319,10 @@ if(NOT DEFINED ID_SOURCE_DIR OR "${ID_SOURCE_DIR}" STREQUAL "")
 endif()
 file(TO_CMAKE_PATH "${ID_SOURCE_DIR}" ID_SOURCE_DIR)
 
-id_update_project_version(
-    "${ID_SOURCE_DIR}/CMakeLists.txt"
+id_update_source_version(
+    "${ID_SOURCE_DIR}"
     "${RELEASE_PROJECT}"
     "${NEXT_PROJECT}")
-id_update_product_guid(
-    "${ID_SOURCE_DIR}/packaging/CMakeLists.txt"
-    "${NEXT_DISPLAY}")
 id_update_changelog(
     "${ID_SOURCE_DIR}/hc/src/help.src"
     "${ID_SOURCE_DIR}/hc/src/help5.src"
