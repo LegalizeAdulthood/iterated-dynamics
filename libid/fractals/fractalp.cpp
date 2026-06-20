@@ -1956,6 +1956,18 @@ FractalSpecific g_fractal_specific[] = {
 int g_num_fractal_types = static_cast<int>(std::size(g_fractal_specific)) - 1;
 
 FractalSpecific *g_cur_fractal_specific{};
+FractalDispatch g_fractal_dispatch{};
+
+FractalDispatch make_fractal_dispatch(const FractalSpecific &specific)
+{
+    return {
+        &specific,
+        specific.orbit_calc,
+        specific.per_pixel,
+        specific.per_image,
+        specific.calc_type,
+        specific.symmetry};
+}
 
 FractalSpecific *get_fractal_specific(const FractalType type)
 {

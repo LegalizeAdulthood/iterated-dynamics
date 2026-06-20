@@ -77,23 +77,7 @@ runtime pixel calculator is needed.
 Goal: make `g_fractal_specific` immutable by moving runtime-selected
 function pointers into explicit calculation dispatch state.
 
-### Slice 1: Add Fractal Dispatch State
-
-Work:
-
-- Add a `FractalDispatch` object seeded from `FractalSpecific`.
-- Store the selected `orbit_calc`, `per_pixel`, `per_image`, `calc_type`,
-  and symmetry in the dispatch.
-- Keep `FractalSpecific` as the source of default values.
-- Keep existing call sites on the old table fields for now.
-
-Done when:
-
-- A dispatch can be built from any `FractalSpecific` entry.
-- Tests verify the seeded dispatch matches table defaults.
-- No behavior changes.
-
-### Slice 2: Route Runtime Calls Through Dispatch
+### Slice 1: Route Runtime Calls Through Dispatch
 
 Work:
 
@@ -110,7 +94,7 @@ Done when:
 - Static checks still read `g_cur_fractal_specific->calc_type`.
 - Existing image and unit tests pass.
 
-### Slice 3: Move Alternate Math Selection
+### Slice 2: Move Alternate Math Selection
 
 Work:
 
@@ -124,7 +108,7 @@ Done when:
 - `g_fractal_specific` entries are unchanged before and after a render.
 - Existing arbitrary-precision tests pass.
 
-### Slice 4: Move Per-Image Function Selection
+### Slice 3: Move Per-Image Function Selection
 
 Work:
 
@@ -139,7 +123,7 @@ Done when:
 - Table entries remain at their default functions.
 - Variant-specific tests assert the selected dispatch function.
 
-### Slice 5: Support Secondary Orbit Dispatch
+### Slice 4: Support Secondary Orbit Dispatch
 
 Work:
 
@@ -154,7 +138,7 @@ Done when:
 - Julibrot z-power selection uses a secondary dispatch.
 - Tests cover current type and secondary orbit type independently.
 
-### Slice 6: Make FractalSpecific Const
+### Slice 5: Make FractalSpecific Const
 
 Work:
 
@@ -170,7 +154,7 @@ Done when:
 - Runtime behavior still changes through dispatch.
 - The static table is immutable metadata.
 
-### Slice 7: Retire Compatibility State
+### Slice 6: Retire Compatibility State
 
 Work:
 
@@ -190,7 +174,7 @@ Done when:
 These slices assume `FractalSpecific` is already const and runtime-selected
 functions already live in dispatch state.
 
-### Slice 8: Classify Calc-Type Reads
+### Slice 7: Classify Calc-Type Reads
 
 Work:
 
@@ -206,7 +190,7 @@ Done when:
 - Static checks are named or commented as static metadata checks.
 - Tests still cover non-standard and standard dispatch decisions.
 
-### Slice 9: Guard Dispatch Lifetime
+### Slice 8: Guard Dispatch Lifetime
 
 Work:
 
@@ -221,7 +205,7 @@ Done when:
 - Tests cover type change before setup and type change followed by setup.
 - Runtime dispatch access fails clearly if setup has not prepared it.
 
-### Slice 10: Test Mandel And Julia Selection
+### Slice 9: Test Mandel And Julia Selection
 
 Work:
 
@@ -236,7 +220,7 @@ Done when:
 - The tests compare table metadata and dispatch state separately.
 - Changing the static table cannot hide a runtime selection bug.
 
-### Slice 11: Test Showdot Wrapping
+### Slice 10: Test Showdot Wrapping
 
 Work:
 
@@ -253,7 +237,7 @@ Done when:
 - Nested setup and teardown leave dispatch unchanged except for the
   wrapper.
 
-### Slice 12: Test Alternate Math Dispatch
+### Slice 11: Test Alternate Math Dispatch
 
 Work:
 
@@ -268,7 +252,7 @@ Done when:
 - `calc_type` table metadata remains unchanged.
 - Fallback to `BFMathType::NONE` is tested.
 
-### Slice 13: Add Boundary Checks
+### Slice 12: Add Boundary Checks
 
 Work:
 
@@ -284,7 +268,7 @@ Done when:
 - The check fails on new direct runtime table use.
 - Allowed static metadata reads stay explicit.
 
-### Slice 14: Remove Compatibility Names
+### Slice 13: Remove Compatibility Names
 
 Work:
 

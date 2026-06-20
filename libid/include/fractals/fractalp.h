@@ -116,13 +116,25 @@ struct FractalSpecific
     PerturbationPoint *pert_pt{};           // compute point via perturbation
 };
 
+struct FractalDispatch
+{
+    const FractalSpecific *specific{};
+    int (*orbit_calc)(){};
+    int (*per_pixel)(){};
+    bool (*per_image)(){};
+    int (*calc_type)(){};
+    engine::SymmetryType symmetry{};
+};
+
 extern AlternateMath         g_alternate_math[];    // alternate math function pointers
 extern FractalSpecific       g_fractal_specific[];
 extern MoreParams            g_more_fractal_params[];
 extern int                   g_num_fractal_types;
 extern FractalSpecific      *g_cur_fractal_specific;
+extern FractalDispatch       g_fractal_dispatch;
 
 FractalSpecific *get_fractal_specific(FractalType type);
+FractalDispatch make_fractal_dispatch(const FractalSpecific &specific);
 
 inline bool per_image()
 {
@@ -141,6 +153,7 @@ inline void set_fractal_type(const FractalType value)
 {
     g_fractal_type = value;
     g_cur_fractal_specific = get_fractal_specific(value);
+    g_fractal_dispatch = make_fractal_dispatch(*g_cur_fractal_specific);
 }
 
 } // namespace id::fractals

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 //
 #include <fractals/fractalp.h>
+#include <misc/ValueSaver.h>
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -41,6 +42,39 @@ TEST(TestFractalSpecific, typeMatchesGet)
         const FractalSpecific &from{g_fractal_specific[i]};
         EXPECT_EQ(&from, get_fractal_specific(from.type)) << "index " << i << ", " << g_fractal_specific[i].name;
     }
+}
+
+TEST(TestFractalDispatch, seededDispatchMatchesDefaults)
+{
+    for (int i = 0; i < g_num_fractal_types; ++i)
+    {
+        const FractalSpecific &from{g_fractal_specific[i]};
+        const FractalDispatch dispatch{make_fractal_dispatch(from)};
+
+        EXPECT_EQ(&from, dispatch.specific) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.orbit_calc, dispatch.orbit_calc) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.per_pixel, dispatch.per_pixel) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.per_image, dispatch.per_image) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.calc_type, dispatch.calc_type) << "index " << i << ", " << from.name;
+        EXPECT_EQ(from.symmetry, dispatch.symmetry) << "index " << i << ", " << from.name;
+    }
+}
+
+TEST(TestFractalDispatch, setFractalTypeSeedsCurrentDispatch)
+{
+    ValueSaver saved_type{g_fractal_type};
+    ValueSaver saved_specific{g_cur_fractal_specific};
+    ValueSaver saved_dispatch{g_fractal_dispatch};
+
+    set_fractal_type(FractalType::MANDEL);
+
+    const FractalSpecific &from{*get_fractal_specific(FractalType::MANDEL)};
+    EXPECT_EQ(&from, g_fractal_dispatch.specific);
+    EXPECT_EQ(from.orbit_calc, g_fractal_dispatch.orbit_calc);
+    EXPECT_EQ(from.per_pixel, g_fractal_dispatch.per_pixel);
+    EXPECT_EQ(from.per_image, g_fractal_dispatch.per_image);
+    EXPECT_EQ(from.calc_type, g_fractal_dispatch.calc_type);
+    EXPECT_EQ(from.symmetry, g_fractal_dispatch.symmetry);
 }
 
 TEST(TestFractalSpecific, toJuliaExists)
