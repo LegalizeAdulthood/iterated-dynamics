@@ -18,7 +18,7 @@
    { Introduction }                         { Distribution of Iterated Dynamics }
    { Conditions on Use }                    { Contacting the Author }
    { Getting Started }                      { The Stone Soup Story }
-   { New Features in 1.4.0 }                { A Word About the Authors }
+   { New Features in 1.4.1 }                { A Word About the Authors }
 
    { Display Mode Commands }
    { Color Cycling Commands }               { Id on Linux and macOS }
@@ -39,7 +39,7 @@
 ;
 ;
 ~DocContents
-{     , 0, "New Features in 1.4.0", FF}
+{     , 0, "New Features in 1.4.1", FF}
 {     , 0, "Introduction", "Conditions on Use", FF}
 
 {1.   , 0, Iterated Dynamics Commands, FF}
@@ -261,7 +261,7 @@ integrated documentation file software was written by Ethan Nagel.
 ;
 ;
 ; RELEASE CHANGELOG BEGIN
-~Topic=New Features in 1.4.0
+~Topic=New Features in 1.4.1
 
 The source code for Iterated Dynamics lives on github:\
   <https://github.com/LegalizeAdulthood/iterated-dynamics>
@@ -269,7 +269,9 @@ The source code for Iterated Dynamics lives on github:\
 Found a bug?  File an issue on our github project!\
   <https://github.com/LegalizeAdulthood/iterated-dynamics/issues>
 
-Version 1.4.0 is an interim release on the way to version 2.0.
+Version 1.4.1 is a bug fix release for version 1.4.0
+
+Bugs Fixed in Version 1.4.1
 
 New Features in Version 1.4.0
 

@@ -51,7 +51,7 @@ if(WIN32)
     set(CPACK_PACKAGE_ICON              "${CMAKE_SOURCE_DIR}/win32/Id.ico")
     set(CPACK_WIX_UPGRADE_GUID          "0E9EE50A-71DB-4723-BC37-CC831B7A7EF7")
     # Change the product GUID every time the version is changed
-    set(CPACK_WIX_PRODUCT_GUID          "854328A9-21A2-41D7-8C53-D7EA9F96CDFD")
+    set(CPACK_WIX_PRODUCT_GUID          "7DFB5E5B-865B-5CC1-A93B-1759405A4082")
     set(CPACK_WIX_PRODUCT_ICON          "${CMAKE_SOURCE_DIR}/win32/Id.ico")
     set(CPACK_WIX_UI_BANNER             "${CMAKE_CURRENT_SOURCE_DIR}/banner.png")
     set(CPACK_WIX_UI_DIALOG             "${CMAKE_CURRENT_SOURCE_DIR}/dialog.png")
