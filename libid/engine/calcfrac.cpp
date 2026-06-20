@@ -751,7 +751,7 @@ static bool is_standard_fractal()
 
 static void calc_non_standard_fractal()
 {
-    g_calc_type = g_cur_fractal_specific->calc_type; // per_image can override
+    g_calc_type = current_calc_type();              // per_image can override
     g_symmetry = g_cur_fractal_specific->symmetry;   //   calctype & symmetry
     g_plot = g_put_color;                            // defaults when setsymmetry not called or does nothing
     g_begin_pt.x = 0;
@@ -767,7 +767,7 @@ static void calc_non_standard_fractal()
     g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
     g_distance_estimator = 0;                // only standard escape time engine supports distest
     // per_image routine is run here
-    if (g_cur_fractal_specific->per_image())
+    if (per_image())
     {
         // not a stand-alone
         // next two lines in case periodicity changed
@@ -916,12 +916,13 @@ static void perform_work_list()
     ValueSaver saved_orbit_calc{g_cur_fractal_specific->orbit_calc}; // one orbit iteration
     ValueSaver saved_per_pixel{g_cur_fractal_specific->per_pixel};   // once-per-pixel init
     ValueSaver saved_per_image{g_cur_fractal_specific->per_image};   // once-per-image setup
+    ValueSaver saved_dispatch{g_fractal_dispatch};
 
     if (const int alt = find_alternate_math(g_fractal_type, g_bf_math); alt > -1)
     {
-        g_cur_fractal_specific->orbit_calc = g_alternate_math[alt].orbit_calc;
-        g_cur_fractal_specific->per_pixel = g_alternate_math[alt].per_pixel;
-        g_cur_fractal_specific->per_image = g_alternate_math[alt].per_image;
+        set_current_orbit_calc(g_alternate_math[alt].orbit_calc);
+        set_current_per_pixel(g_alternate_math[alt].per_pixel);
+        set_current_per_image(g_alternate_math[alt].per_image);
     }
     else
     {
@@ -1039,7 +1040,7 @@ static void perform_work_list()
     while (g_num_work_list > 0)
     {
         // per_image can override
-        g_calc_type = g_cur_fractal_specific->calc_type;
+        g_calc_type = current_calc_type();
         g_symmetry = g_cur_fractal_specific->symmetry; //   calc type & symmetry
         g_plot = g_put_color; // defaults when set symmetry not called or does nothing
 
@@ -1060,7 +1061,7 @@ static void perform_work_list()
 
         g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
 
-        g_cur_fractal_specific->per_image();
+        per_image();
         if (g_show_dot >= 0)
         {
             find_special_colors();
@@ -1424,7 +1425,7 @@ int standard_fractal_type()
     }
     g_overflow = false;           // reset integer math overflow flag
 
-    g_cur_fractal_specific->per_pixel(); // initialize the calculations
+    per_pixel(); // initialize the calculations
 
     attracted = false;
 
@@ -1501,7 +1502,7 @@ int standard_fractal_type()
             // if above exit taken, the later test vs dem_delta will place this
             // point on the boundary, because mag(old)<bailout just now
 
-            if (g_cur_fractal_specific->orbit_calc() || g_overflow)
+            if (orbit_calc() || g_overflow)
             {
                 if (g_use_old_distance_estimator)
                 {
@@ -1525,7 +1526,7 @@ int standard_fractal_type()
             g_old_z = g_new_z;
         }
         // the usual case
-        else if ((g_cur_fractal_specific->orbit_calc() && g_inside_method != ColorMethod::STAR_TRAIL) || g_overflow)
+        else if ((orbit_calc() && g_inside_method != ColorMethod::STAR_TRAIL) || g_overflow)
         {
             break;
         }

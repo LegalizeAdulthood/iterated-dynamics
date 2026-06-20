@@ -1053,6 +1053,7 @@ TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
     ValueSaver saved_version{g_version};
     ValueSaver saved_fractal_type{g_fractal_type};
     ValueSaver saved_cur_fractal_specific{g_cur_fractal_specific};
+    ValueSaver saved_dispatch{g_fractal_dispatch};
     ValueSaver saved_trig_index{g_trig_index[0]};
     ValueSaver saved_float_param{g_float_param};
     ValueSaver saved_param_z1{g_param_z1};
@@ -1067,7 +1068,7 @@ TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
     g_magnitude_limit = 64.0;
     lambda_trig_per_image();
     g_old_z = DComplex{9.0, 0.0};
-    EXPECT_EQ(0, g_cur_fractal_specific->orbit_calc());
+    EXPECT_EQ(0, orbit_calc());
 
     exec_cmd_arg("reset=2003");
     set_trig_array(0, "exp");
@@ -1077,7 +1078,7 @@ TEST_F(TestParameterCommand, resetVersionControlsLambdaExpBailout)
     g_magnitude_limit = 64.0;
     lambda_trig_per_image();
     g_old_z = DComplex{9.0, 0.0};
-    EXPECT_EQ(1, g_cur_fractal_specific->orbit_calc());
+    EXPECT_EQ(1, orbit_calc());
 }
 
 TEST_F(TestParameterCommand, atanColorsUseLegacyScaleThrough2002)

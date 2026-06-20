@@ -154,7 +154,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
 
     for (unsigned long counter = 0UL; counter < m_filter_cycles; counter++)
     {
-        if (g_cur_fractal_specific->orbit_calc())
+        if (orbit_calc())
         {
             return;
         }
@@ -165,7 +165,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
         unsigned long counter;
         for (counter = 0; counter < static_cast<unsigned long>(g_max_iterations) ; counter++)
         {
-            if (g_cur_fractal_specific->orbit_calc())
+            if (orbit_calc())
             {
                 return;
             }
@@ -178,7 +178,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
         {
             for (counter = 0; counter < m_filter_cycles ; counter++)
             {
-                if (g_cur_fractal_specific->orbit_calc())
+                if (orbit_calc())
                 {
                     return;
                 }
@@ -192,7 +192,7 @@ void Bifurcation::verhulst()          // P. F. Verhulst (1845)
     }
     for (unsigned long counter = 0UL; counter < static_cast<unsigned long>(g_max_iterations) ; counter++)
     {
-        if (g_cur_fractal_specific->orbit_calc())
+        if (orbit_calc())
         {
             return;
         }

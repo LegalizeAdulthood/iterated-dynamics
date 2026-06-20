@@ -69,8 +69,6 @@ std::string g_orbit_save_name{"orbits.raw"};
 namespace
 {
 
-using OrbitCalc = int (*)(double *x, double *y, double *z);
-
 /* BAD_PIXEL is used to cutoff orbits that are diverging. It might be better
 to test the actual floating point orbit values, but this seems safe for now.
 A higher value cannot be used - to test, turn off math coprocessor and
@@ -151,10 +149,10 @@ static const double &PAR_B{g_params[1]};
 static const double &PAR_C{g_params[2]};
 static const double &PAR_D{g_params[3]};
 
-// OrbitCalc is declared with no arguments so jump through hoops here
+// OrbitCalc has no arguments so jump through hoops here
 static int orbit(double *x, double *y, double *z)
 {
-    return (*reinterpret_cast<OrbitCalc>(g_cur_fractal_specific->orbit_calc))(x, y, z);
+    return (*reinterpret_cast<OrbitCalc3D>(current_orbit_calc()))(x, y, z);
 }
 
 static int orbit(double *x, double *y)
@@ -1565,7 +1563,7 @@ int funny_glasses_call(int (*calc)())
         g_which_image = StereoImage::BLUE;
         if (bit_set(g_cur_fractal_specific->flags, FractalFlags::INF_CALC))
         {
-            g_cur_fractal_specific->per_image(); // reset for 2nd image
+            per_image(); // reset for 2nd image
         }
         plot_setup();
         g_plot = g_standard_plot;

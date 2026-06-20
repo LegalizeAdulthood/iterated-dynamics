@@ -14,13 +14,19 @@ using namespace id::misc;
 namespace id::fractals
 {
 
+using OrbitCalc = int (*)();
+using OrbitCalc3D = int (*)(double *x, double *y, double *z);
+using PerPixel = int (*)();
+using PerImage = bool (*)();
+using CalcType = int (*)();
+
 struct AlternateMath
 {
     FractalType type;      // index in fractalname of the fractal
     math::BFMathType math; // kind of math used
-    int (*orbit_calc)();   // function that calculates one orbit
-    int (*per_pixel)();    // once-per-pixel init
-    bool (*per_image)();   // once-per-image setup
+    OrbitCalc orbit_calc;  // function that calculates one orbit
+    PerPixel per_pixel;    // once-per-pixel init
+    PerImage per_image;    // once-per-image setup
 };
 
 struct MoreParams
@@ -84,9 +90,9 @@ inline bool bit_clear(const FractalFlags value, const FractalFlags bit)
     return (value & bit) == FractalFlags::NONE;
 }
 
-using PerturbationReference = void(const std::complex<double> &center, std::complex<double> &z);
-using PerturbationReferenceBF = void(const math::BFComplex &center, math::BFComplex &z);
-using PerturbationPoint = void(
+using PerturbationReference = void (*)(const std::complex<double> &center, std::complex<double> &z);
+using PerturbationReferenceBF = void (*)(const math::BFComplex &center, math::BFComplex &z);
+using PerturbationPoint = void (*)(
     const std::complex<double> &ref, std::complex<double> &delta_n, const std::complex<double> &delta0);
 
 struct FractalSpecific
@@ -106,23 +112,23 @@ struct FractalSpecific
     FractalType to_julia;                   // mandel-to-julia switch
     FractalType to_mandel;                  // julia-to-mandel switch
     engine::SymmetryType symmetry;          // applicable symmetry logic
-    int (*orbit_calc)();                    // function that calculates one orbit
-    int (*per_pixel)();                     // once-per-pixel init
-    bool (*per_image)();                    // once-per-image setup
-    int (*calc_type)();                     // name of main fractal function
+    OrbitCalc orbit_calc;                   // function that calculates one orbit
+    PerPixel per_pixel;                     // once-per-pixel init
+    PerImage per_image;                     // once-per-image setup
+    CalcType calc_type;                     // name of main fractal function
     int orbit_bailout;                      // usual bailout value for orbit calc
-    PerturbationReference *pert_ref{};      // compute perturbation reference orbit
-    PerturbationReferenceBF *pert_ref_bf{}; // compute BFComplex perturbation reference orbit
-    PerturbationPoint *pert_pt{};           // compute point via perturbation
+    PerturbationReference pert_ref{};       // compute perturbation reference orbit
+    PerturbationReferenceBF pert_ref_bf{};  // compute BFComplex perturbation reference orbit
+    PerturbationPoint pert_pt{};            // compute point via perturbation
 };
 
 struct FractalDispatch
 {
     const FractalSpecific *specific{};
-    int (*orbit_calc)(){};
-    int (*per_pixel)(){};
-    bool (*per_image)(){};
-    int (*calc_type)(){};
+    OrbitCalc orbit_calc{};
+    PerPixel per_pixel{};
+    PerImage per_image{};
+    CalcType calc_type{};
     engine::SymmetryType symmetry{};
 };
 
@@ -136,17 +142,64 @@ extern FractalDispatch       g_fractal_dispatch;
 FractalSpecific *get_fractal_specific(FractalType type);
 FractalDispatch make_fractal_dispatch(const FractalSpecific &specific);
 
+inline void set_current_per_image(PerImage value)
+{
+    g_fractal_dispatch.per_image = value;
+    if (g_cur_fractal_specific != nullptr)
+    {
+        g_cur_fractal_specific->per_image = value;
+    }
+}
+
+inline void set_current_per_pixel(PerPixel value)
+{
+    g_fractal_dispatch.per_pixel = value;
+    if (g_cur_fractal_specific != nullptr)
+    {
+        g_cur_fractal_specific->per_pixel = value;
+    }
+}
+
+inline void set_current_orbit_calc(OrbitCalc value)
+{
+    g_fractal_dispatch.orbit_calc = value;
+    if (g_cur_fractal_specific != nullptr)
+    {
+        g_cur_fractal_specific->orbit_calc = value;
+    }
+}
+
+inline PerImage current_per_image()
+{
+    return g_fractal_dispatch.per_image;
+}
+
+inline PerPixel current_per_pixel()
+{
+    return g_fractal_dispatch.per_pixel;
+}
+
+inline OrbitCalc current_orbit_calc()
+{
+    return g_fractal_dispatch.orbit_calc;
+}
+
+inline CalcType current_calc_type()
+{
+    return g_fractal_dispatch.calc_type;
+}
+
 inline bool per_image()
 {
-    return get_fractal_specific(g_fractal_type)->per_image();
+    return current_per_image()();
 }
 inline int per_pixel()
 {
-    return get_fractal_specific(g_fractal_type)->per_pixel();
+    return current_per_pixel()();
 }
 inline int orbit_calc()
 {
-    return get_fractal_specific(g_fractal_type)->orbit_calc();
+    return current_orbit_calc()();
 }
 
 inline void set_fractal_type(const FractalType value)

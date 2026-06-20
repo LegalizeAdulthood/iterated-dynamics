@@ -59,17 +59,17 @@ static int skinner_trig_sub_sqr_fractal()
 
 static bool trig_plus_sqr_setup()
 {
-    g_cur_fractal_specific->per_pixel = julia_per_pixel;
-    g_cur_fractal_specific->orbit_calc = trig_plus_sqr_fractal;
+    set_current_per_pixel(julia_per_pixel);
+    set_current_orbit_calc(trig_plus_sqr_fractal);
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_param_z2.x == 1.0)          // Scott variant
         {
-            g_cur_fractal_specific->orbit_calc =  scott_trig_plus_sqr_fractal;
+            set_current_orbit_calc(scott_trig_plus_sqr_fractal);
         }
         else if (g_param_z2.x == -1.0)      // Skinner variant
         {
-            g_cur_fractal_specific->orbit_calc =  skinner_trig_sub_sqr_fractal;
+            set_current_orbit_calc(skinner_trig_sub_sqr_fractal);
         }
     }
     return julia_per_image();
@@ -102,17 +102,17 @@ bool trig_plus_trig_per_image()
     {
         return trig_plus_sqr_setup();
     }
-    g_cur_fractal_specific->per_pixel = other_julia_per_pixel;
-    g_cur_fractal_specific->orbit_calc = trig_plus_trig_orbit;
+    set_current_per_pixel(other_julia_per_pixel);
+    set_current_orbit_calc(trig_plus_trig_orbit);
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 && g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_param_z2.x == 1.0)          // Scott variant
         {
-            g_cur_fractal_specific->orbit_calc =  scott_trig_plus_trig_fractal;
+            set_current_orbit_calc(scott_trig_plus_trig_fractal);
         }
         else if (g_param_z2.x == -1.0)      // Skinner variant
         {
-            g_cur_fractal_specific->orbit_calc =  skinner_trig_sub_trig_fractal;
+            set_current_orbit_calc(skinner_trig_sub_trig_fractal);
         }
     }
     return julia_per_image();
@@ -327,17 +327,17 @@ bool z_x_trig_plus_z_per_image()
             break;
         }
     }
-    g_cur_fractal_specific->orbit_calc = z_x_trig_plus_z_orbit;
+    set_current_orbit_calc(z_x_trig_plus_z_orbit);
     if (g_param_z1.x == 1.0 && g_param_z1.y == 0.0 && g_param_z2.y == 0.0 &&
         g_debug_flag != DebugFlags::FORCE_STANDARD_FRACTAL)
     {
         if (g_param_z2.x == 1.0) // Scott variant
         {
-            g_cur_fractal_specific->orbit_calc = scott_z_x_trig_plus_z_fractal;
+            set_current_orbit_calc(scott_z_x_trig_plus_z_fractal);
         }
         else if (g_param_z2.x == -1.0) // Skinner variant
         {
-            g_cur_fractal_specific->orbit_calc = skinner_z_x_trig_sub_z_fractal;
+            set_current_orbit_calc(skinner_z_x_trig_sub_z_fractal);
         }
     }
     return julia_per_image();

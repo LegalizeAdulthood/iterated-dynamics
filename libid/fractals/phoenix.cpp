@@ -181,17 +181,17 @@ bool phoenix_per_image()
     g_params[2] = static_cast<double>(g_degree);
     if (g_degree == 0)
     {
-        g_cur_fractal_specific->orbit_calc = phoenix_orbit;
+        set_current_orbit_calc(phoenix_orbit);
     }
     if (g_degree >= 2)
     {
         g_degree = g_degree - 1;
-        g_cur_fractal_specific->orbit_calc = phoenix_plus_fractal;
+        set_current_orbit_calc(phoenix_plus_fractal);
     }
     if (g_degree <= -3)
     {
         g_degree = std::abs(g_degree) - 2;
-        g_cur_fractal_specific->orbit_calc = phoenix_minus_fractal;
+        set_current_orbit_calc(phoenix_minus_fractal);
     }
 
     return true;
@@ -220,7 +220,7 @@ bool phoenix_cplx_per_image()
         {
             g_symmetry = SymmetryType::X_AXIS;
         }
-        g_cur_fractal_specific->orbit_calc = phoenix_fractal_cplx_orbit;
+        set_current_orbit_calc(phoenix_fractal_cplx_orbit);
     }
     if (g_degree >= 2)
     {
@@ -233,7 +233,7 @@ bool phoenix_cplx_per_image()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        g_cur_fractal_specific->orbit_calc = phoenix_cplx_plus_fractal;
+        set_current_orbit_calc(phoenix_cplx_plus_fractal);
     }
     if (g_degree <= -3)
     {
@@ -246,7 +246,7 @@ bool phoenix_cplx_per_image()
         {
             g_symmetry = SymmetryType::NONE;
         }
-        g_cur_fractal_specific->orbit_calc = phoenix_cplx_minus_fractal;
+        set_current_orbit_calc(phoenix_cplx_minus_fractal);
     }
 
     return true;
@@ -263,17 +263,17 @@ bool mand_phoenix_per_image()
     g_params[2] = static_cast<double>(g_degree);
     if (g_degree == 0)
     {
-        g_cur_fractal_specific->orbit_calc = phoenix_orbit;
+        set_current_orbit_calc(phoenix_orbit);
     }
     if (g_degree >= 2)
     {
         g_degree = g_degree - 1;
-        g_cur_fractal_specific->orbit_calc = phoenix_plus_fractal;
+        set_current_orbit_calc(phoenix_plus_fractal);
     }
     if (g_degree <= -3)
     {
         g_degree = std::abs(g_degree) - 2;
-        g_cur_fractal_specific->orbit_calc = phoenix_minus_fractal;
+        set_current_orbit_calc(phoenix_minus_fractal);
     }
 
     return true;
@@ -294,17 +294,17 @@ bool mand_phoenix_cplx_per_image()
     }
     if (g_degree == 0)
     {
-        g_cur_fractal_specific->orbit_calc = phoenix_fractal_cplx_orbit;
+        set_current_orbit_calc(phoenix_fractal_cplx_orbit);
     }
     if (g_degree >= 2)
     {
         g_degree = g_degree - 1;
-        g_cur_fractal_specific->orbit_calc = phoenix_cplx_plus_fractal;
+        set_current_orbit_calc(phoenix_cplx_plus_fractal);
     }
     if (g_degree <= -3)
     {
         g_degree = std::abs(g_degree) - 2;
-        g_cur_fractal_specific->orbit_calc = phoenix_cplx_minus_fractal;
+        set_current_orbit_calc(phoenix_cplx_minus_fractal);
     }
 
     return true;

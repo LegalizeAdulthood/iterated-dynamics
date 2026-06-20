@@ -201,11 +201,9 @@ AlternateMath g_alternate_math[] =
 // clang-format on
 
 // use next to cast orbitcalcs() that have arguments
-using VF = int (*)();
-
-VF orbit_cast(int (*f)(double *r, double *s, double *z))
+OrbitCalc orbit_cast(OrbitCalc3D f)
 {
-    return reinterpret_cast<VF>(f); // NOLINT(clang-diagnostic-cast-function-type-strict)
+    return reinterpret_cast<OrbitCalc>(f); // NOLINT(clang-diagnostic-cast-function-type-strict)
 }
 
 // This array is indexed by the enum fractal_type.

@@ -14,6 +14,26 @@ using namespace id::fractals;
 namespace id::test
 {
 
+static int test_orbit_calc()
+{
+    return 17;
+}
+
+static int test_per_pixel()
+{
+    return 23;
+}
+
+static bool test_per_image()
+{
+    return true;
+}
+
+static int test_calc_type()
+{
+    return 31;
+}
+
 TEST(TestFractalSpecific, perturbationFlagRequiresPerturbationFunctions)
 {
     for (int i = 0; i < g_num_fractal_types; ++i)
@@ -75,6 +95,42 @@ TEST(TestFractalDispatch, setFractalTypeSeedsCurrentDispatch)
     EXPECT_EQ(from.per_image, g_fractal_dispatch.per_image);
     EXPECT_EQ(from.calc_type, g_fractal_dispatch.calc_type);
     EXPECT_EQ(from.symmetry, g_fractal_dispatch.symmetry);
+}
+
+TEST(TestFractalDispatch, accessorsUseCurrentDispatch)
+{
+    FractalDispatch dispatch{};
+    dispatch.orbit_calc = test_orbit_calc;
+    dispatch.per_pixel = test_per_pixel;
+    dispatch.per_image = test_per_image;
+    dispatch.calc_type = test_calc_type;
+
+    ValueSaver saved_specific{g_cur_fractal_specific, nullptr};
+    ValueSaver saved_dispatch{g_fractal_dispatch, dispatch};
+
+    EXPECT_TRUE(per_image());
+    EXPECT_EQ(23, per_pixel());
+    EXPECT_EQ(17, orbit_calc());
+    EXPECT_EQ(test_calc_type, current_calc_type());
+    EXPECT_EQ(31, current_calc_type()());
+}
+
+TEST(TestFractalDispatch, settersUpdateDispatchAndCompatibilityTable)
+{
+    FractalSpecific specific{};
+    ValueSaver saved_specific{g_cur_fractal_specific, &specific};
+    ValueSaver saved_dispatch{g_fractal_dispatch};
+
+    set_current_orbit_calc(test_orbit_calc);
+    set_current_per_pixel(test_per_pixel);
+    set_current_per_image(test_per_image);
+
+    EXPECT_EQ(test_orbit_calc, g_fractal_dispatch.orbit_calc);
+    EXPECT_EQ(test_per_pixel, g_fractal_dispatch.per_pixel);
+    EXPECT_EQ(test_per_image, g_fractal_dispatch.per_image);
+    EXPECT_EQ(test_orbit_calc, specific.orbit_calc);
+    EXPECT_EQ(test_per_pixel, specific.per_pixel);
+    EXPECT_EQ(test_per_image, specific.per_image);
 }
 
 TEST(TestFractalSpecific, toJuliaExists)

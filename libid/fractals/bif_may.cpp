@@ -30,7 +30,7 @@ bool bifurc_may_per_image()
 {
     g_params[2] = std::max(g_params[2], 2.0);
     s_beta = static_cast<long>(g_params[2]);
-    engine_timer(g_cur_fractal_specific->calc_type);
+    engine_timer(current_calc_type());
     return false;
 }
 

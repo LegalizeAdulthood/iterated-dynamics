@@ -52,7 +52,7 @@ bool burning_ship_per_image()
 
 bool standalone_per_image()
 {
-    engine_timer(g_cur_fractal_specific->calc_type);
+    engine_timer(current_calc_type());
     return false;               // effectively disable solid-guessing
 }
 
@@ -150,11 +150,11 @@ bool mandel_per_image()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && static_cast<double>(g_c_exponent) == g_params[2])
         {
-            get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_orbit;
+            set_current_orbit_calc(mandel_z_power_orbit);
         }
         else
         {
-            get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_cmplx_orbit;
+            set_current_orbit_calc(mandel_z_power_cmplx_orbit);
         }
         break;
     case FractalType::MAGNET_1M:
@@ -262,11 +262,11 @@ bool julia_per_image()
         }
         if (g_params[3] == 0.0 && g_debug_flag != DebugFlags::FORCE_COMPLEX_POWER && static_cast<double>(g_c_exponent) == g_params[2])
         {
-            get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_orbit;
+            set_current_orbit_calc(mandel_z_power_orbit);
         }
         else
         {
-            get_fractal_specific(g_fractal_type)->orbit_calc = mandel_z_power_cmplx_orbit;
+            set_current_orbit_calc(mandel_z_power_cmplx_orbit);
         }
         get_julia_attractor(g_params[0], g_params[1]);  // another attractor?
         break;
@@ -343,11 +343,11 @@ bool julia_per_image()
         }
         if (default_functions && g_debug_flag == DebugFlags::FORCE_REAL_POPCORN)
         {
-            g_cur_fractal_specific->orbit_calc = popcorn_fractal;
+            set_current_orbit_calc(popcorn_fractal);
         }
         else
         {
-            g_cur_fractal_specific->orbit_calc = popcorn_orbit;
+            set_current_orbit_calc(popcorn_orbit);
         }
         get_julia_attractor(0.0, 0.0);    // another attractor?
         break;

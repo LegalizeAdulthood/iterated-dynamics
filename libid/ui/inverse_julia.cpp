@@ -29,7 +29,7 @@ int inverse_julia_fractal_type()
             free_queue();
             return -1;
         }
-        color = g_cur_fractal_specific->orbit_calc();
+        color = orbit_calc();
         g_old_z = g_new_z;
     }
     free_queue();
