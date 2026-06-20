@@ -77,22 +77,7 @@ runtime pixel calculator is needed.
 Goal: make `g_fractal_specific` immutable by moving runtime-selected
 function pointers into explicit calculation dispatch state.
 
-### Slice 1: Move Alternate Math Selection
-
-Work:
-
-- Change `BF_MATH` alternate math setup to update only dispatch state.
-- Remove compatibility table writes from alternate math setup.
-- Remove temporary saves of table function pointers.
-- Preserve the current fallback to `BFMathType::NONE`.
-
-Done when:
-
-- Alternate math changes only the current calculation dispatch.
-- `g_fractal_specific` entries are unchanged before and after a render.
-- Existing arbitrary-precision tests pass.
-
-### Slice 2: Move Per-Image Function Selection
+### Slice 1: Move Per-Image Function Selection
 
 Work:
 
@@ -107,7 +92,7 @@ Done when:
 - Table entries remain at their default functions.
 - Variant-specific tests assert the selected dispatch function.
 
-### Slice 3: Support Secondary Orbit Dispatch
+### Slice 2: Support Secondary Orbit Dispatch
 
 Work:
 
@@ -122,7 +107,7 @@ Done when:
 - Julibrot z-power selection uses a secondary dispatch.
 - Tests cover current type and secondary orbit type independently.
 
-### Slice 4: Make FractalSpecific Const
+### Slice 3: Make FractalSpecific Const
 
 Work:
 
@@ -138,7 +123,7 @@ Done when:
 - Runtime behavior still changes through dispatch.
 - The static table is immutable metadata.
 
-### Slice 5: Retire Compatibility State
+### Slice 4: Retire Compatibility State
 
 Work:
 
@@ -158,7 +143,7 @@ Done when:
 These slices assume `FractalSpecific` is already const and runtime-selected
 functions already live in dispatch state.
 
-### Slice 6: Classify Calc-Type Reads
+### Slice 5: Classify Calc-Type Reads
 
 Work:
 
@@ -174,7 +159,7 @@ Done when:
 - Static checks are named or commented as static metadata checks.
 - Tests still cover non-standard and standard dispatch decisions.
 
-### Slice 7: Guard Dispatch Lifetime
+### Slice 6: Guard Dispatch Lifetime
 
 Work:
 
@@ -189,7 +174,7 @@ Done when:
 - Tests cover type change before setup and type change followed by setup.
 - Runtime dispatch access fails clearly if setup has not prepared it.
 
-### Slice 8: Test Mandel And Julia Selection
+### Slice 7: Test Mandel And Julia Selection
 
 Work:
 
@@ -204,7 +189,7 @@ Done when:
 - The tests compare table metadata and dispatch state separately.
 - Changing the static table cannot hide a runtime selection bug.
 
-### Slice 9: Test Showdot Wrapping
+### Slice 8: Test Showdot Wrapping
 
 Work:
 
@@ -221,7 +206,7 @@ Done when:
 - Nested setup and teardown leave dispatch unchanged except for the
   wrapper.
 
-### Slice 10: Test Alternate Math Dispatch
+### Slice 9: Test Alternate Math Dispatch
 
 Work:
 
@@ -236,7 +221,7 @@ Done when:
 - `calc_type` table metadata remains unchanged.
 - Fallback to `BFMathType::NONE` is tested.
 
-### Slice 11: Add Boundary Checks
+### Slice 10: Add Boundary Checks
 
 Work:
 
@@ -252,7 +237,7 @@ Done when:
 - The check fails on new direct runtime table use.
 - Allowed static metadata reads stay explicit.
 
-### Slice 12: Remove Compatibility Names
+### Slice 11: Remove Compatibility Names
 
 Work:
 

@@ -133,6 +133,26 @@ TEST(TestFractalDispatch, settersUpdateDispatchAndCompatibilityTable)
     EXPECT_EQ(test_per_image, specific.per_image);
 }
 
+TEST(TestFractalDispatch, alternateMathOnlyUpdatesDispatch)
+{
+    FractalSpecific specific{};
+    FractalDispatch dispatch{};
+    AlternateMath alternate{
+        FractalType::MANDEL, math::BFMathType::BIG_NUM, test_orbit_calc, test_per_pixel, test_per_image};
+
+    ValueSaver saved_specific{g_cur_fractal_specific, &specific};
+    ValueSaver saved_dispatch{g_fractal_dispatch, dispatch};
+
+    set_current_alternate_math(alternate);
+
+    EXPECT_EQ(test_orbit_calc, g_fractal_dispatch.orbit_calc);
+    EXPECT_EQ(test_per_pixel, g_fractal_dispatch.per_pixel);
+    EXPECT_EQ(test_per_image, g_fractal_dispatch.per_image);
+    EXPECT_EQ(nullptr, specific.orbit_calc);
+    EXPECT_EQ(nullptr, specific.per_pixel);
+    EXPECT_EQ(nullptr, specific.per_image);
+}
+
 TEST(TestFractalSpecific, toJuliaExists)
 {
     for (int i = 0; i < g_num_fractal_types; ++i)

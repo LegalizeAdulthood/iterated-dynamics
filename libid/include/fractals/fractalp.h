@@ -169,6 +169,13 @@ inline void set_current_orbit_calc(OrbitCalc value)
     }
 }
 
+inline void set_current_alternate_math(const AlternateMath &value)
+{
+    g_fractal_dispatch.orbit_calc = value.orbit_calc;
+    g_fractal_dispatch.per_pixel = value.per_pixel;
+    g_fractal_dispatch.per_image = value.per_image;
+}
+
 inline PerImage current_per_image()
 {
     return g_fractal_dispatch.per_image;

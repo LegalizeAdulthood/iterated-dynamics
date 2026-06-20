@@ -913,16 +913,11 @@ static void work_list_pop_front()
 // general escape-time engine routines
 static void perform_work_list()
 {
-    ValueSaver saved_orbit_calc{g_cur_fractal_specific->orbit_calc}; // one orbit iteration
-    ValueSaver saved_per_pixel{g_cur_fractal_specific->per_pixel};   // once-per-pixel init
-    ValueSaver saved_per_image{g_cur_fractal_specific->per_image};   // once-per-image setup
     ValueSaver saved_dispatch{g_fractal_dispatch};
 
     if (const int alt = find_alternate_math(g_fractal_type, g_bf_math); alt > -1)
     {
-        set_current_orbit_calc(g_alternate_math[alt].orbit_calc);
-        set_current_per_pixel(g_alternate_math[alt].per_pixel);
-        set_current_per_image(g_alternate_math[alt].per_image);
+        set_current_alternate_math(g_alternate_math[alt]);
     }
     else
     {
