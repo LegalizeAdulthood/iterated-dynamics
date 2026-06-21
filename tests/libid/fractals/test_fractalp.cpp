@@ -23,6 +23,7 @@
 
 #include <algorithm>
 #include <filesystem>
+#include <stdexcept>
 
 namespace fs = std::filesystem;
 
@@ -164,18 +165,34 @@ TEST(TestFractalDispatch, seededDispatchMatchesDefaults)
     }
 }
 
-TEST(TestFractalDispatch, setFractalTypeSeedsCurrentDispatch)
+TEST(TestFractalDispatch, setFractalTypeSeedsFunctionsAndInvalidatesCalcType)
 {
     ValueSaver saved_type{g_fractal_type};
     ValueSaver saved_specific{g_cur_fractal_specific};
     ValueSaver saved_dispatch{g_dispatch};
 
+    g_dispatch.set_calc_type(test_calc_type);
     set_fractal_type(FractalType::MANDEL);
 
     const FractalSpecific &from{*get_fractal_specific(FractalType::MANDEL)};
     EXPECT_EQ(from.orbit_calc, g_dispatch.orbit_calc());
     EXPECT_EQ(from.per_pixel, g_dispatch.per_pixel());
     EXPECT_EQ(from.per_image, g_dispatch.per_image());
+    EXPECT_FALSE(g_dispatch.has_calc_type());
+    EXPECT_THROW(g_dispatch.calc_type(), std::runtime_error);
+}
+
+TEST(TestFractalDispatch, initCalcTypeAfterTypeChangePreparesDispatch)
+{
+    ValueSaver saved_type{g_fractal_type};
+    ValueSaver saved_specific{g_cur_fractal_specific};
+    ValueSaver saved_dispatch{g_dispatch};
+
+    set_fractal_type(FractalType::MANDEL);
+    g_dispatch.init_calc_type(*g_cur_fractal_specific);
+
+    const FractalSpecific &from{*get_fractal_specific(FractalType::MANDEL)};
+    EXPECT_TRUE(g_dispatch.has_calc_type());
     EXPECT_EQ(from.calc_type, g_dispatch.calc_type());
 }
 

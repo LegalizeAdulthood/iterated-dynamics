@@ -159,8 +159,10 @@ public:
     void set_per_pixel(PerPixel value)      { m_per_pixel = value; }
     PerImage per_image() const              { return m_per_image; }
     void set_per_image(PerImage value)      { m_per_image = value; }
-    CalcType calc_type() const              { return m_calc_type; }
+    CalcType calc_type() const;
     void set_calc_type(CalcType value)      { m_calc_type = value; }
+    void clear_calc_type()                  { m_calc_type = nullptr; }
+    bool has_calc_type() const              { return m_calc_type != nullptr; }
     // clang-format on
 
     void init_calc_type(const FractalSpecific &specific)
@@ -211,6 +213,7 @@ inline void set_fractal_type(const FractalType value)
     g_fractal_type = value;
     g_cur_fractal_specific = get_fractal_specific(value);
     g_dispatch = FractalDispatch(*g_cur_fractal_specific);
+    g_dispatch.clear_calc_type();
 }
 
 } // namespace id::fractals

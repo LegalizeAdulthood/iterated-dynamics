@@ -46,13 +46,16 @@ The wrapper later calls `s_calc_type_tmp()`.
 
 ### Dispatch Seed
 
-`set_fractal_type()` seeds dispatch from static table metadata:
+`set_fractal_type()` seeds function dispatch from static table metadata
+and invalidates runtime `calc_type`:
 
 - `g_fractal_type`
 - `g_cur_fractal_specific`
 - `g_dispatch`
 
-Per-image setup may then override dispatch for the current calculation.
+Calculation setup calls `g_dispatch.init_calc_type()` from the table
+default before per-image setup may override dispatch for the current
+calculation.
 
 ### Alternate Math
 
@@ -82,22 +85,7 @@ function pointers into explicit calculation dispatch state.
 These slices assume `FractalSpecific` is already const and runtime-selected
 functions already live in dispatch state.
 
-### Slice 1: Guard Dispatch Lifetime
-
-Work:
-
-- Make `set_fractal_type()` seed or invalidate dispatch explicitly.
-- Add an assertion or status check before runtime dispatch is used.
-- Prevent a dispatch selected for one type from being reused after a type
-  change.
-
-Done when:
-
-- Changing type cannot leave a stale runtime calculator active.
-- Tests cover type change before setup and type change followed by setup.
-- Runtime dispatch access fails clearly if setup has not prepared it.
-
-### Slice 2: Test Mandel And Julia Selection
+### Slice 1: Test Mandel And Julia Selection
 
 Work:
 
@@ -112,7 +100,7 @@ Done when:
 - The tests compare table metadata and dispatch state separately.
 - Changing the static table cannot hide a runtime selection bug.
 
-### Slice 3: Test Showdot Wrapping
+### Slice 2: Test Showdot Wrapping
 
 Work:
 
@@ -127,7 +115,7 @@ Done when:
 - Nested setup and teardown leave dispatch unchanged except for the
   wrapper.
 
-### Slice 4: Test Alternate Math Dispatch
+### Slice 3: Test Alternate Math Dispatch
 
 Work:
 
@@ -142,7 +130,7 @@ Done when:
 - `calc_type` table metadata remains unchanged.
 - Fallback to `BFMathType::NONE` is tested.
 
-### Slice 5: Add Boundary Checks
+### Slice 4: Add Boundary Checks
 
 Work:
 

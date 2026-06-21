@@ -28,6 +28,7 @@ bool halley_per_image()
     g_periodicity_check = 0;
 
     set_fractal_type(FractalType::HALLEY);
+    g_dispatch.init_calc_type(*g_cur_fractal_specific);
 
     g_degree = static_cast<int>(g_param_z1.x);
     g_degree = std::max(g_degree, 2);

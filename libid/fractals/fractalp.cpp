@@ -1956,6 +1956,15 @@ const int g_num_fractal_types = static_cast<int>(std::size(g_fractal_specific)) 
 const FractalSpecific *g_cur_fractal_specific{};
 FractalDispatch g_dispatch{};
 
+CalcType FractalDispatch::calc_type() const
+{
+    if (m_calc_type == nullptr)
+    {
+        throw std::runtime_error{"FractalDispatch calc_type is not initialized"};
+    }
+    return m_calc_type;
+}
+
 const FractalSpecific *get_fractal_specific(const FractalType type)
 {
     // g_fractal_specific is sorted by the type member, so we can use binary search.
