@@ -140,6 +140,12 @@ bool calc_interrupted();
 returns the current calculation-interrupt flag.  Each handler decides
 which keys, if any, request interruption for its context.
 
+`MainLoopKeyboardHandler` is the outer image UI context.  It sits below
+more-specific handlers, consumes keys that reach it, records the key as
+the next main-loop command, and requests calculation interruption.  This
+preserves the current model: a key interrupts rendering, then the main
+loop handles that key as a command.
+
 Rules:
 
 - Push and pop handlers with scoped ownership so stale handlers cannot
@@ -150,9 +156,9 @@ Rules:
   state needed by its context.
 - Orbit toggling is a handler policy: the orbit handler consumes `o` and
   `O`, toggles orbit display, and does not request interruption.
-- The image-render handler consumes keys that should return control to
-  the outer UI, records the command for that UI, and requests
-  interruption.
+- The main-loop handler is the fallback render command handler.  It
+  consumes keys not handled by more-specific contexts, records the next
+  command, and requests interruption.
 
 Caller rules:
 
@@ -276,24 +282,26 @@ Direct polling or key consumption exists outside `libid/ui` in:
 `ui/check_key` already owns one useful legacy rule: a pending key means
 interrupt unless it is `o` or `O`, which toggles orbit display.
 
-## Slice 1: Add Image-Render Keyboard Context
+## Slice 1: Add Main-Loop Keyboard Context
 
 Work:
 
-- Add `ImageRenderKeyboardHandler` in `libid/ui`.
-- Move command capture from `libid/ui/big_while_loop.cpp:753-772`.
-- Push it while an image calculation is active.
-- Make it consume keys that should return control to the outer UI.
-- Make it record the consumed command for the outer UI instead of using
-  `driver_unget_key`.
-- Make it request calculation interruption after recording such a command.
+- Add `MainLoopKeyboardHandler` in `libid/ui`.
+- Move main-loop command capture from
+  `libid/ui/big_while_loop.cpp:753-772`.
+- Push it while the image UI main loop is active.
+- Make it consume keys that reach the main-loop context.
+- Make it record the next command for the main loop.
+- Make it request calculation interruption after recording a command.
 - Reset calculation-interrupt state at calculation start.
+- Keep existing direct polling call sites unchanged.
 
 Done when:
 
-- The outer UI can retrieve a command captured during rendering.
+- The main loop can retrieve the next command captured by the handler.
 - Captured commands preserve existing resume/menu behavior.
 - Calculation code still has no knowledge of which key interrupted work.
+- Existing direct polling call sites are unchanged.
 
 ## Slice 2: Add Orbit Toggle Handler
 
@@ -305,9 +313,9 @@ Work:
   `libid/engine/calcfrac.cpp:1254-1266`.
 - Make it consume `o` and `O`, toggle `g_show_orbit`, and leave
   calculation-interrupt state unchanged.
-- Push it above the image-render handler while rendering contexts support
+- Push it above the main-loop handler while rendering contexts support
   orbit toggling.
-- Keep non-orbit key behavior owned by the image-render handler.
+- Keep non-orbit key behavior owned by the main-loop handler.
 
 Done when:
 
@@ -338,7 +346,7 @@ Work:
 - Replace the Mandelbrot hot-path direct key check with
   `calc_interrupted()`.
 - Preserve the special `o` and `O` behavior through the orbit handler.
-- Leave all other key meaning to the active image-render handler.
+- Leave all other key meaning to the active main-loop handler.
 - Remove `misc/Driver.h` includes made unnecessary by the move.
 
 Done when:
