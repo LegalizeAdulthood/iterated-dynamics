@@ -442,7 +442,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
-<li><a href="#new_features_in_1_4_0">New Features in 1.4.0</a></li>
+<li><a href="#new_features_in_1_4_1">New Features in 1.4.1</a></li>
 <li><a href="#introduction">Introduction</a>
 <ul class="sectlevel2">
 <li><a href="#conditions_on_use">Conditions on Use</a></li>
@@ -457,6 +457,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#palette_editing_commands">Palette Editing Commands</a></li>
 <li><a href="#image_save_restore_commands">Image Save/Restore Commands</a></li>
 <li><a href="#parameter_save_restore_commands">Parameter Save/Restore Commands</a></li>
+<li><a href="#_3d_commands">"3D" Commands</a></li>
 <li><a href="#interrupting_and_resuming">Interrupting and Resuming</a></li>
 <li><a href="#orbits_window">Orbits Window</a></li>
 <li><a href="#view_window">View Window</a></li>
@@ -543,11 +544,19 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#parameter_explorer_evolver">Parameter Explorer/Evolver</a></li>
 <li><a href="#random_dot_stereograms_rds">Random Dot Stereograms (RDS)</a></li>
 <li><a href="#freestyle_mode_tutorial">Freestyle mode tutorial</a></li>
+</ul>
+</li>
+<li><a href="#_3d_images">"3D" Images</a>
+<ul class="sectlevel2">
+<li><a href="#_3d_overview">3D Overview</a></li>
+<li><a href="#_3d_mode_selection">3D Mode Selection</a></li>
 <li><a href="#select_fill_type_screen">Select Fill Type Screen</a></li>
 <li><a href="#stereo_3d_viewing">Stereo 3D Viewing</a></li>
 <li><a href="#rectangular_coordinate_transformation">Rectangular Coordinate Transformation</a></li>
+<li><a href="#_3d_color_parameters">3D Color Parameters</a></li>
 <li><a href="#light_source_parameters">Light Source Parameters</a></li>
 <li><a href="#spherical_projection">Spherical Projection</a></li>
+<li><a href="#_3d_overlay_mode">3D Overlay Mode</a></li>
 <li><a href="#making_terrains">Making Terrains</a></li>
 <li><a href="#making_3d_slides">Making 3D Slides</a></li>
 <li><a href="#interfacing_with_ray_tracing_programs">Interfacing with Ray Tracing Programs</a></li>
@@ -576,6 +585,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#envelopes">Envelopes</a></li>
 </ul>
 </li>
+<li><a href="#_3d_parameters">3D Parameters</a></li>
 <li><a href="#batch_mode">Batch Mode</a></li>
 <li><a href="#browser_parameters">Browser Parameters</a></li>
 <li><a href="#passes_parameters">Passes Parameters</a></li>
@@ -638,7 +648,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div id="content">
 <div class="sect1">
-<h2 id="new_features_in_1_4_0">New Features in 1.4.0</h2>
+<h2 id="new_features_in_1_4_1">New Features in 1.4.1</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The source code for Iterated Dynamics lives on github:
@@ -649,7 +659,22 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
   <a href="https://github.com/LegalizeAdulthood/iterated-dynamics/issues" class="bare">https://github.com/LegalizeAdulthood/iterated-dynamics/issues</a></p>
 </div>
 <div class="paragraph">
-<p>Version 1.4.0 is an interim release on the way to version 2.0.</p>
+<p>Version 1.4.1 is a bug fix release for version 1.4.0</p>
+</div>
+<div class="paragraph">
+<p>Bugs Fixed in Version 1.4.1</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The "3D" Commands help topic now renders correctly in HTML
+documentation.</p>
+</li>
+<li>
+<p>Linux release binaries are now built on Ubuntu 22.04 so they run on
+distributions with older glibc, such as Debian Bookworm.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>New Features in Version 1.4.0</p>
@@ -2008,12 +2033,11 @@ requires a 4GB temporary disk file!</p>
 <div class="paragraph">
 <p>The <kbd>G</kbd> command lets you give a startup parameter interactively.</p>
 </div>
-<div id="id-content-11" class="paragraph">
-<p>[[3d_commands]]
-=== "3D" Commands</p>
 </div>
+<div class="sect2">
+<h3 id="_3d_commands">"3D" Commands</h3>
 <div class="paragraph">
-<p>See <a href="#3d_images">[3d_images]</a> for details of these commands.</p>
+<p>See <a href="#_3d_images">"3D" Images</a> for details of these commands.</p>
 </div>
 <div class="paragraph">
 <p><kbd>3</kbd>
@@ -5593,7 +5617,7 @@ change, for a smoothed-out, cloud-like effect.  The more colors your
 video mode supports, the better.  The result, believe it or not, is a
 fractal landscape viewed as a contour map, with colors indicating
 constant elevation.  To see this, save and view with the <kbd>3</kbd> command
-(see <a href="#3d_images">[3d_images]</a>) and your "cloud" will be converted to a mountain!</p>
+(see <a href="#_3d_images">"3D" Images</a>) and your "cloud" will be converted to a mountain!</p>
 </div>
 <div class="paragraph">
 <p>You&#8217;ve got to try <a href="#color_cycling_commands">color cycling</a> on these (hit "+" or "-").  If you
@@ -5649,7 +5673,7 @@ independent of screen resolution.</p>
 </div>
 <div class="paragraph">
 <p>Saved plasma-cloud screens are excellent starting images for fractal
-"landscapes" created with the <a href="#3d_commands">"3D" commands</a>.</p>
+"landscapes" created with the <a href="#_3d_commands">"3D" commands</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -6650,7 +6674,7 @@ and marksjulia types.</p>
 <div class="paragraph">
 <p>Id&#8217;s images are usually calculated by the "level set" method, producing
 bands of color corresponding to regions where the calculation gives the
-same value.  When "3D" transformed (see <a href="#3d_images">[3d_images]</a>), most images other
+same value.  When "3D" transformed (see <a href="#_3d_images">"3D" Images</a>), most images other
 than plasma clouds are like terraced landscapes: most of the surface is
 either horizontal or vertical.</p>
 </div>
@@ -7312,14 +7336,14 @@ calculated.</p>
 Remember that the <kbd>H</kbd> key can be used to hide the palette box and expose
 the whole image.</p>
 </div>
-<div id="id-content-92" class="paragraph">
-<p>[[3d_images]]
-== "3D" Images</p>
 </div>
-<div class="paragraph">
-<p>[[3d_overview]]
-=== 3D Overview</p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="_3d_images">"3D" Images</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_3d_overview">3D Overview</h3>
 <div class="paragraph">
 <p>Id can restore images in "3D".  Important: we use quotation marks
 because it does not create images of 3D fractal objects (there are such,
@@ -7371,10 +7395,9 @@ and pan around a 3D image that has been twisted, stretched, perspective-
 ized, and water-leveled.  (Actually, we do, but it remains to be
 implemented in a future version of Id&#8230;&#8203;)</p>
 </div>
-<div id="id-content-93" class="paragraph">
-<p>[[3d_mode_selection]]
-=== 3D Mode Selection</p>
 </div>
+<div class="sect2">
+<h3 id="_3d_mode_selection">3D Mode Selection</h3>
 <div class="paragraph">
 <p>After hitting <kbd>3</kbd> and getting past the filename prompt and video mode
 selection, you&#8217;re presented with a "3D Mode Selection" screen.  If you
@@ -7685,7 +7708,7 @@ better.</p>
 <div class="paragraph">
 <p>The "Funny Glasses Parameters" (stereo 3D) screen is presented only if
 you select a non-zero stereo option in the prior 3D parameters.  (See
-<a href="#3d_mode_selection">[3d_mode_selection]</a>.)  We suggest you definitely use defaults at first on
+<a href="#_3d_mode_selection">3D Mode Selection</a>.)  We suggest you definitely use defaults at first on
 this screen.</p>
 </div>
 <div class="paragraph">
@@ -7795,13 +7818,12 @@ not change perspective.  They are used just for positioning the final
 image on the screen.  Shifting of any type is not available if you have
 selected a ray tracing option.</p>
 </div>
-<div id="id-content-97" class="paragraph">
-<p>[[3d_color_parameters]]
-=== 3D Color Parameters</p>
 </div>
+<div class="sect2">
+<h3 id="_3d_color_parameters">3D Color Parameters</h3>
 <div class="paragraph">
 <p>You are asked for a range of "transparent" colors, if any.  This option
-is most useful when using the <a href="#3d_overlay_mode">[3d_overlay_mode]</a>.  Enter the color range
+is most useful when using the <a href="#_3d_overlay_mode">3D Overlay Mode</a>.  Enter the color range
 (minimum and maximum value) for which you do not want to overwrite
 whatever may already be on the screen.  The default is no transparency
 (overwrite everything).</p>
@@ -7939,12 +7961,11 @@ then consider a faster system.
 </tr>
 </table>
 </div>
-<div id="id-content-100" class="paragraph">
-<p>[[3d_overlay_mode]]
-=== 3D Overlay Mode</p>
 </div>
+<div class="sect2">
+<h3 id="_3d_overlay_mode">3D Overlay Mode</h3>
 <div class="paragraph">
-<p>While the <kbd>3</kbd> command (see <a href="#3d_images">[3d_images]</a>) creates its image on a blank
+<p>While the <kbd>3</kbd> command (see <a href="#_3d_images">"3D" Images</a>) creates its image on a blank
 screen, the <kbd>#</kbd> (or <span class="keyseq"><kbd>Shift</kbd>+<kbd>3</kbd></span>) command draws a second image over an
 existing displayed image.  This image can be any restored image from a
 <kbd>R</kbd> command or the result of a just executed <kbd>3</kbd> command.  So you can do
@@ -8088,7 +8109,7 @@ chips using the 7-sprocket Busch-European Emde masks."</p>
 <h3 id="interfacing_with_ray_tracing_programs">Interfacing with Ray Tracing Programs</h3>
 <div class="paragraph">
 <p>(Also see "Ray Tracing Output", "Brief", and "Output File Name" in
-<a href="#3d_mode_selection">[3d_mode_selection]</a>.)</p>
+<a href="#_3d_mode_selection">3D Mode Selection</a>.)</p>
 </div>
 <div class="paragraph">
 <p>Id allows you to save your 3D transforms in files which may be fed to a
@@ -9580,10 +9601,10 @@ orbit: 12345678901234567</pre>
           notes held on at any one time, though more than four may be sounding
           if there is a long release value.</p>
 </div>
-<div id="id-content-122" class="paragraph">
-<p>[[3d_parameters]]
-=== 3D Parameters</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_3d_parameters">3D Parameters</h3>
 <div class="paragraph">
 <p>To stay out of trouble, specify all the 3D parameters, even if you want
 to use what you think are the default values.  It takes a little
@@ -9641,7 +9662,7 @@ XYADJUST=nn/nn             This shifts the image in the x/y dir
 </div>
 <div class="paragraph">
 <p>The ray parameter can either be specified as a numeric value (nnn) or as
-text.  See the table in <a href="#3d_mode_selection">[3d_mode_selection]</a>.</p>
+text.  See the table in <a href="#_3d_mode_selection">3D Mode Selection</a>.</p>
 </div>
 <div class="paragraph">
 <p>Below are commands that support Marc Reinig&#8217;s terrain features.</p>
@@ -9689,7 +9710,6 @@ background=r/g/b, the default is sky blue.</p>
 This parameter allows you to specify the width in inches of the image
 for the purpose of getting the correct stereo effect when viewing RDS
 images.  See <a href="#random_dot_stereograms_rds">Random Dot Stereograms (RDS)</a>.</p>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -12987,7 +13007,7 @@ parsed and validated and the results ignored.
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-06-19 16:31:04 UTC
+Last updated 2026-06-21 03:07:42 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
