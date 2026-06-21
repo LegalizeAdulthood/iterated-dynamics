@@ -110,6 +110,8 @@ public:
 
     virtual bool handle_key(int key) = 0;
 };
+
+using KeyboardHandlerPtr = std::shared_ptr<KeyboardHandler>;
 }
 ```
 
@@ -117,10 +119,11 @@ public:
 does not return an interrupt result.  Handlers that want calculation to
 yield set calculation-interrupt state owned by the UI.
 
-The UI maintains a stack of active `KeyboardHandler` objects.  When a key
-is available, the UI reads it from `KeyboardInput` and offers it to the
-handler stack from top to bottom.  The first handler that returns `true`
-stops propagation.  If no handler consumes the key, the key is discarded.
+The UI maintains a stack of active `KeyboardHandlerPtr` values.  When a
+key is available, the UI reads it from `KeyboardInput` and offers it to
+the handler stack from top to bottom.  The first handler that returns
+`true` stops propagation.  If no handler consumes the key, the key is
+discarded.
 
 Calculation code must not interpret keys.  It only calls:
 
@@ -271,27 +274,7 @@ Direct polling or key consumption exists outside `libid/ui` in:
 `ui/check_key` already owns one useful legacy rule: a pending key means
 interrupt unless it is `o` or `O`, which toggles orbit display.
 
-## Slice 1: Add Keyboard Handler Stack
-
-Work:
-
-- Add `KeyboardHandler` with `bool handle_key(int key)`.
-- Add UI-owned push and pop operations for a handler stack.
-- Add scoped handler registration so handlers are always popped.
-- Add UI-owned calculation-interrupt state.
-- Add `calc_interrupted()` to pump pending keys through the stack and
-  return the interrupt state.
-- Keep existing polling call sites unchanged.
-
-Done when:
-
-- Tests cover handler propagation from top to bottom.
-- Tests cover consumed keys stopping propagation.
-- Tests cover unconsumed keys being discarded.
-- Tests cover a handler requesting calculation interruption.
-- Existing keyboard polling call sites are unchanged.
-
-## Slice 2: Add Image-Render Keyboard Context
+## Slice 1: Add Image-Render Keyboard Context
 
 Work:
 
@@ -310,7 +293,7 @@ Done when:
 - Captured commands preserve existing resume/menu behavior.
 - Calculation code still has no knowledge of which key interrupted work.
 
-## Slice 3: Add Orbit Toggle Handler
+## Slice 2: Add Orbit Toggle Handler
 
 Work:
 
@@ -330,7 +313,7 @@ Done when:
 - Other keys still return control to the outer UI.
 - Focused tests cover handler ordering for orbit keys and other keys.
 
-## Slice 4: Route Existing Check-Key Path Through Handlers
+## Slice 3: Route Existing Check-Key Path Through Handlers
 
 Work:
 
@@ -346,7 +329,7 @@ Done when:
 - Orbit toggling is handled only by the orbit handler.
 - The existing `check_key()` render paths preserve resume behavior.
 
-## Slice 5: Move Mandelbrot Hot-Path Polling
+## Slice 4: Move Mandelbrot Hot-Path Polling
 
 Work:
 
@@ -362,7 +345,7 @@ Done when:
 - The hot path does not interpret key values.
 - Orbit-toggle and interruption behavior are covered by focused tests.
 
-## Slice 6: Move Pure Render Interrupt Probes
+## Slice 5: Move Pure Render Interrupt Probes
 
 Work:
 
@@ -379,7 +362,7 @@ Done when:
 - Calculation code only asks whether calculation was interrupted.
 - Existing interruption return paths are unchanged.
 
-## Slice 7: Move Lorenz Orbit Interrupt
+## Slice 6: Move Lorenz Orbit Interrupt
 
 Work:
 
@@ -394,7 +377,7 @@ Done when:
 - The orbit interrupt location in `lorenz.cpp` has no direct key polling.
 - Orbit plotting still allocates the same resume data on interruption.
 
-## Slice 8: Move Sound Pending-Key Check
+## Slice 7: Move Sound Pending-Key Check
 
 Work:
 
@@ -410,7 +393,7 @@ Done when:
 - `sound.cpp` has no direct key polling calls.
 - Sound output is still skipped when input is pending.
 
-## Slice 9: Move Wait-Until Key Wakeup
+## Slice 8: Move Wait-Until Key Wakeup
 
 Work:
 
@@ -426,7 +409,7 @@ Done when:
 - `wait_until.cpp` has no direct key polling calls.
 - Existing wait timing tests pass against the UI keyboard seam.
 
-## Slice 10: Move Inverse-Julia Keyboard Context
+## Slice 9: Move Inverse-Julia Keyboard Context
 
 Work:
 
@@ -445,7 +428,7 @@ Done when:
 - The active JIIM handler owns inverse-Julia key meaning.
 - Tests or manual checks cover inverse-Julia keyboard exit.
 
-## Slice 11: Move Lorenz Stereo Save Prompt
+## Slice 10: Move Lorenz Stereo Save Prompt
 
 Work:
 
@@ -463,7 +446,7 @@ Done when:
   polling.
 - Photographer-mode save and continue behavior is unchanged.
 
-## Slice 12: Move JIIM Mouse Handling
+## Slice 11: Move JIIM Mouse Handling
 
 Work:
 

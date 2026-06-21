@@ -225,6 +225,7 @@ add_library(libid
     include/ui/init_failure.h
     include/ui/intro.h ui/intro.cpp
     include/ui/input_field.h ui/input_field.cpp
+    include/ui/KeyboardHandler.h ui/KeyboardHandler.cpp
     include/ui/KeyboardInput.h ui/KeyboardInput.cpp
     include/ui/inverse_julia.h ui/inverse_julia.cpp
     include/ui/make_batch_file.h ui/make_batch_file.cpp
