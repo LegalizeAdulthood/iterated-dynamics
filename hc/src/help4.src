@@ -1340,7 +1340,7 @@ sound=x|y|z option to be written to a file "sound.txt" in the current
 directory.  Bill Jemison has made some intriguing music with this option.
 ;
 ;
-~Topic=3D Parameters
+~Topic=3D Parameters, ADocAnchor=_3d_parameters
 
 To stay out of trouble, specify all the 3D parameters, even if you want to
 use what you think are the default values.  It takes a little practice to

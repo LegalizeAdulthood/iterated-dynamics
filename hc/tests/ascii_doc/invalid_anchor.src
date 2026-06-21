@@ -1,0 +1,25 @@
+; SPDX-License-Identifier: GPL-3.0-only
+;
+~HdrFile=helpdefs.h
+~HlpFile=id.hlp
+~Version=100
+~FormatExclude=8
+;
+;
+;
+~DocContents
+{1.   , 0, Container, "3D Mode Selection", FF}
+;
+; End of DoContents
+;
+;
+;
+~Topic=Container
+
+Container text.
+;
+;
+;
+~Topic=3D Mode Selection
+
+Body text.

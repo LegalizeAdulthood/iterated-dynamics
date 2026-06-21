@@ -138,13 +138,14 @@ struct Topic
     void release_topic_text(bool save) const;
     void start(const char *str, int len);
 
-    TopicFlags flags;        // see #defines for TF_???
-    int       doc_page;       // page number in document where topic starts
-    unsigned  title_len;      // length of title
+    TopicFlags flags;         // see #defines for TF_???
+    int doc_page;             // page number in document where topic starts
+    unsigned title_len;       // length of title
     std::string title;        // title for this topic
-    int       num_page;       // number of pages
+    std::string adoc_anchor;  // explicit AsciiDoc anchor
+    int num_page;             // number of pages
     std::vector<Page> page;   // list of pages
-    unsigned  text_len;       // length of topic text
+    unsigned text_len;        // length of topic text
     long      text;           // topic text (all pages)
     long      offset;         // offset from start of file to topic
 

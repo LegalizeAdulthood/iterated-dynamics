@@ -273,6 +273,7 @@ Version 1.4.1 is a bug fix release for version 1.4.0
 
 Bugs Fixed in Version 1.4.1
 
+o The "3D" Commands help topic now renders correctly in HTML documentation.\
 o Linux release binaries are now built on Ubuntu 22.04 so they run on
   distributions with older glibc, such as Debian Bookworm.
 
@@ -1377,7 +1378,7 @@ PostScript printer, it does not preserve aspect ratio with other printers.
 ;
 ;
 ;
-~Topic=\"3D\" Commands
+~Topic=\"3D\" Commands, ADocAnchor=_3d_commands
 
 See {\"3D\" Images} for details of these commands.
 

@@ -38,11 +38,11 @@
 === Drawing Method
 
 [[id-content-9]]
-[[3d_images]]
+[[_3d_images]]
 == "3D" Images
 
 [[id-content-10]]
-[[3d_mode_selection]]
+[[_3d_mode_selection]]
 === 3D Mode Selection
 
 [[id-content-11]]

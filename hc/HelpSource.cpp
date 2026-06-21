@@ -250,6 +250,7 @@ void Topic::start(const char *str, const int len)
     flags = TopicFlags::NONE;
     title_len = len;
     title.assign(str, len);
+    adoc_anchor.clear();
     doc_page = -1;
     num_page = 0;
     g_src.curr = g_src.buffer.data();
@@ -506,7 +507,18 @@ static bool validate_label_name(const char *name)
         }
     }
 
-    return true;  // valid
+    return true; // valid
+}
+
+static bool validate_adoc_anchor(const std::string_view name)
+{
+    if (name.empty() || (std::isalpha(static_cast<unsigned char>(name[0])) == 0 && name[0] != '_'))
+    {
+        return false;
+    }
+
+    return std::all_of(name.begin(), name.end(),
+        [](const unsigned char ch) { return std::isalnum(ch) != 0 || ch == '_' || ch == '-'; });
 }
 
 static char *read_until(char *buff, int len, const char *stop_chars)
@@ -1750,6 +1762,22 @@ void read_src(const std::string &fname, Mode mode)
                         lbl.topic_off = static_cast<unsigned>(g_src.curr - g_src.buffer.data());
                         lbl.doc_page  = -1;
                         g_src.add_label(lbl);
+                    }
+                }
+                else if (string_case_equal(s_cmd, "ADocAnchor=", 11))
+                {
+                    const std::string_view adoc_anchor{cmd_arg(11)};
+                    if (!validate_adoc_anchor(adoc_anchor))
+                    {
+                        MSG_ERROR(err_offset, "ADocAnchor \"%s\" is not a valid AsciiDoc anchor.", adoc_anchor.data());
+                    }
+                    else if (!t.adoc_anchor.empty())
+                    {
+                        MSG_ERROR(err_offset, "ADocAnchor has already been defined for this topic.");
+                    }
+                    else
+                    {
+                        t.adoc_anchor = adoc_anchor;
                     }
                 }
                 else if (string_case_equal(s_cmd, "Table=", 6))

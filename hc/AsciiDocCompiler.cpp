@@ -98,6 +98,17 @@ static std::string make_readable_anchor(const std::string &title)
     return anchor;
 }
 
+static bool is_valid_asciidoc_anchor(const std::string &anchor)
+{
+    if (anchor.empty() || (std::isalpha(static_cast<unsigned char>(anchor[0])) == 0 && anchor[0] != '_'))
+    {
+        return false;
+    }
+
+    return std::all_of(anchor.begin(), anchor.end(),
+        [](const unsigned char ch) { return std::isalnum(ch) != 0 || ch == '_' || ch == '-'; });
+}
+
 static std::vector<std::string> make_topic_anchors()
 {
     std::vector<std::string> anchors(g_src.topics.size());
@@ -110,10 +121,16 @@ static std::vector<std::string> make_topic_anchors()
             continue;
         }
 
-        const std::string anchor{make_readable_anchor(topic.title)};
+        const std::string anchor{topic.adoc_anchor.empty() ? make_readable_anchor(topic.title) : topic.adoc_anchor};
         if (anchor.empty())
         {
             MSG_ERROR(0, "AsciiDoc anchor for topic title \"%s\" is empty.", topic.title.c_str());
+            continue;
+        }
+        if (!is_valid_asciidoc_anchor(anchor))
+        {
+            MSG_ERROR(
+                0, "AsciiDoc anchor \"%s\" for topic title \"%s\" is invalid.", anchor.c_str(), topic.title.c_str());
             continue;
         }
 
