@@ -66,7 +66,7 @@ Semantics:
 
 Production:
 
-- Add `DriverKeyboardInput final : public KeyboardInput` in
+- Add `DriverKeyboardInput : public KeyboardInput` in
   `ui/KeyboardInput.cpp`.
 - `DriverKeyboardInput` forwards to `driver_key_pressed`,
   `driver_get_key`, `driver_wait_key_pressed`, and `driver_unget_key`.
@@ -94,31 +94,73 @@ The `kb_xxx` free functions delegate to `g_keyboard_input`.  Production
 points it at `DriverKeyboardInput`.  Tests may replace it with a fake
 `KeyboardInput`.
 
-Calculation code should use semantic helpers:
+The initial slice only introduces this generic input facade.  It must not
+move existing polling call sites or introduce per-site semantic helpers.
+Later slices should first identify a reusable polling shape, then move a
+set of matching call sites to that mechanism.
+
+## Keyboard Handler Stack
+
+`KeyboardInput` owns queue mechanics.  It does not decide what a key means
+in a particular UI context.
+
+Add a separate handler interface for key meaning:
 
 ```cpp
 namespace id::ui
 {
-bool calculation_interrupted();
-bool calculation_interrupted_or_orbit_toggled();
-bool input_pending();
+class KeyboardHandler
+{
+public:
+    virtual ~KeyboardHandler() = default;
+
+    virtual bool handle_key(int key) = 0;
+};
 }
 ```
 
-Semantics:
+`handle_key()` returns `true` only when the handler consumed the key.  It
+does not return an interrupt result.  Handlers that want calculation to
+yield set calculation-interrupt state owned by the UI.
 
-- `calculation_interrupted()` returns `kb_pending_key() != 0`.
-- `calculation_interrupted_or_orbit_toggled()` preserves the Mandelbrot
-  hot-path rule: `o` or `O` is consumed and toggles `g_show_orbit`; any
-  other pending key reports interruption and is left pending.
-- `input_pending()` is for delay and sound code that must wake or avoid
-  output when a key is pending, without consuming that key.
+The UI maintains a stack of active `KeyboardHandler` objects.  When a key
+is available, the UI reads it from `KeyboardInput` and offers it to the
+handler stack from top to bottom.  The first handler that returns `true`
+stops propagation.  If no handler consumes the key, the key is discarded.
+
+Calculation code must not interpret keys.  It only calls:
+
+```cpp
+namespace id::ui
+{
+bool calc_interrupted();
+}
+```
+
+`calc_interrupted()` pumps pending keys through the handler stack and
+returns the current calculation-interrupt flag.  Each handler decides
+which keys, if any, request interruption for its context.
+
+Rules:
+
+- Push and pop handlers with scoped ownership so stale handlers cannot
+  remain on the stack.
+- Reset calculation-interrupt state at the start of each calculation.
+- Do not use `push_key()` as the normal handoff between contexts.  The
+  interested handler should consume the key and record the command or
+  state needed by its context.
+- Orbit toggling is a handler policy: the orbit handler consumes `o` and
+  `O`, toggles orbit display, and does not request interruption.
+- The image-render handler consumes keys that should return control to
+  the outer UI, records the command for that UI, and requests
+  interruption.
 
 Caller rules:
 
 - `libid/engine` and `libid/fractals` may include
   `ui/KeyboardInput.h`.
-- `libid/engine` and `libid/fractals` must use only semantic helpers.
+- `libid/engine` and `libid/fractals` should not call raw `Driver`
+  keyboard methods after a matching reusable mechanism exists.
 - Direct `Driver` key calls stay in `DriverKeyboardInput` and driver
   classes.
 - New abstract interfaces are exposed through global pointers, like
@@ -241,124 +283,133 @@ Work:
 
 - Add a small `ui/KeyboardInput` API around the current `Driver` key
   methods.
-- Expose semantic operations: pending key, read key, wait key, push key.
-- Add a calculation helper for "pending key means interrupt".
-- Keep `ui/check_key` as the orbit-toggle helper.
+- Expose only generic operations: pending key, read key, wait key, and
+  push key.
+- Do not change `ui/check_key`, `engine`, `fractals`, or any existing
+  keyboard polling call site.
 - Add tests that verify the facade forwards to `MockDriver`.
 
 Done when:
 
-- New code can poll only through `libid/ui`.
+- New code can use the generic input facade through `libid/ui`.
 - The facade preserves the current `Driver` call behavior.
 - Tests cover pending, read, wait, and push operations.
+- Existing keyboard polling call sites are unchanged.
 
-## Slice 2: Move Mandelbrot Hot-Path Polling
+## Slice 2: Add Keyboard Handler Stack
 
 Work:
 
-- Move the direct key check in `engine/calcfrac.cpp` to `libid/ui`.
-- Preserve the `o` and `O` orbit toggle exactly.
-- Leave non-orbit keys pending and report interruption.
+- Add `KeyboardHandler` with `bool handle_key(int key)`.
+- Add UI-owned push and pop operations for a handler stack.
+- Add scoped handler registration so handlers are always popped.
+- Add UI-owned calculation-interrupt state.
+- Add `calc_interrupted()` to pump pending keys through the stack and
+  return the interrupt state.
+- Keep existing polling call sites unchanged.
+
+Done when:
+
+- Tests cover handler propagation from top to bottom.
+- Tests cover consumed keys stopping propagation.
+- Tests cover unconsumed keys being discarded.
+- Tests cover a handler requesting calculation interruption.
+- Existing keyboard polling call sites are unchanged.
+
+## Slice 3: Add Image-Render Keyboard Context
+
+Work:
+
+- Add `ImageRenderKeyboardHandler` in `libid/ui`.
+- Move command capture from `libid/ui/big_while_loop.cpp:753-772`.
+- Push it while an image calculation is active.
+- Make it consume keys that should return control to the outer UI.
+- Make it record the consumed command for the outer UI instead of using
+  `driver_unget_key`.
+- Make it request calculation interruption after recording such a command.
+- Reset calculation-interrupt state at calculation start.
+
+Done when:
+
+- The outer UI can retrieve a command captured during rendering.
+- Captured commands preserve existing resume/menu behavior.
+- Calculation code still has no knowledge of which key interrupted work.
+
+## Slice 4: Add Orbit Toggle Handler
+
+Work:
+
+- Add `OrbitToggleKeyboardHandler` in `libid/ui`.
+- Move orbit key handling from `libid/ui/check_key.cpp:17-32`.
+- Move Mandelbrot orbit handling from
+  `libid/engine/calcfrac.cpp:1254-1266`.
+- Make it consume `o` and `O`, toggle `g_show_orbit`, and leave
+  calculation-interrupt state unchanged.
+- Push it above the image-render handler while rendering contexts support
+  orbit toggling.
+- Keep non-orbit key behavior owned by the image-render handler.
+
+Done when:
+
+- `o` and `O` toggle orbit display without interrupting calculation.
+- Other keys still return control to the outer UI.
+- Focused tests cover handler ordering for orbit keys and other keys.
+
+## Slice 5: Route Existing Check-Key Path Through Handlers
+
+Work:
+
+- Change `ui/check_key` to call `calc_interrupted()`.
+- Preserve current callers and return values.
+- Remove direct orbit-toggle behavior from `check_key`; it belongs to the
+  orbit handler.
+
+Done when:
+
+- Existing `check_key()` callers still receive a boolean interruption
+  result.
+- Orbit toggling is handled only by the orbit handler.
+- The existing `check_key()` render paths preserve resume behavior.
+
+## Slice 6: Move Mandelbrot Hot-Path Polling
+
+Work:
+
+- Replace the Mandelbrot hot-path direct key check with
+  `calc_interrupted()`.
+- Preserve the special `o` and `O` behavior through the orbit handler.
+- Leave all other key meaning to the active image-render handler.
 - Remove `misc/Driver.h` includes made unnecessary by the move.
 
 Done when:
 
-- `calcfrac.cpp` has no direct key polling calls.
+- `calcfrac.cpp` has no direct Mandelbrot hot-path key polling.
+- The hot path does not interpret key values.
 - Orbit-toggle and interruption behavior are covered by focused tests.
 
-## Slice 3: Move Inverse-Julia Keyboard Polling
+## Slice 7: Move Pure Render Interrupt Probes
 
 Work:
 
-- Extract inverse-Julia key wait, drain, read, and requeue from
-  `engine/jiim.cpp` into `libid/ui`.
-- Keep calculation code receiving decisions, not raw key polling.
-- Preserve pushed-back key behavior.
+- Replace direct pending-key interrupt probes with `calc_interrupted()`.
+- Cover `engine/PertEngine.cpp`, `engine/solid_guess.cpp`,
+  `engine/soi.cpp`, `fractals/lsystem.cpp`, and
+  `fractals/lyapunov.cpp`.
+- Preserve each local return value and resume behavior.
 - Remove `misc/Driver.h` includes made unnecessary by the move.
 
 Done when:
 
-- `jiim.cpp` has no direct key polling calls.
-- The UI layer owns inverse-Julia blocking reads, drains, and requeue.
-- Tests or manual checks cover inverse-Julia keyboard exit.
+- Those files have no direct key polling calls.
+- Calculation code only asks whether calculation was interrupted.
+- Existing interruption return paths are unchanged.
 
-## Slice 4: Move Perturbation Interrupt Check
-
-Work:
-
-- Replace the reference-pass `driver_key_pressed` check in
-  `engine/PertEngine.cpp` with a semantic UI helper.
-- Keep the `-1` interruption result unchanged.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
-
-Done when:
-
-- `PertEngine.cpp` has no direct key polling calls.
-- Existing perturbation behavior is unchanged.
-
-## Slice 5: Move Solid-Guess Interrupt Checks
-
-Work:
-
-- Replace the block-repaint `driver_key_pressed` checks in
-  `engine/solid_guess.cpp` with a semantic UI helper.
-- Keep return values and work-list resume behavior unchanged.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
-
-Done when:
-
-- `solid_guess.cpp` has no direct key polling calls.
-- Solid-guess interruption still resumes from the same work point.
-
-## Slice 6: Move SOI Interrupt Checks
-
-Work:
-
-- Replace recursive scan `driver_key_pressed` checks in `engine/soi.cpp`
-  with a semantic UI helper.
-- Keep recursive unwind and `true` interruption results unchanged.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
-
-Done when:
-
-- `soi.cpp` has no direct key polling calls.
-- SOI interruption still exits through the same status paths.
-
-## Slice 7: Move Sound Pending-Key Check
-
-Work:
-
-- Replace the pending-key suppression check in `engine/sound.cpp` with a
-  semantic UI helper.
-- Preserve the rule that pending input suppresses `driver_sound_on`.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
-
-Done when:
-
-- `sound.cpp` has no direct key polling calls.
-- Sound output is still skipped when input is pending.
-
-## Slice 8: Move Wait-Until Key Wakeup
-
-Work:
-
-- Replace the delay-loop key wakeup in `engine/wait_until.cpp` with a
-  semantic UI helper.
-- Keep sleep interval and wakeup behavior unchanged.
-- Update `test_wait_until` to use a fake `KeyboardInput`.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
-
-Done when:
-
-- `wait_until.cpp` has no direct key polling calls.
-- Existing wait timing tests pass against the UI keyboard seam.
-
-## Slice 9: Move Lorenz Orbit Interrupt
+## Slice 8: Move Lorenz Orbit Interrupt
 
 Work:
 
 - Replace the `plot_orbits2d` interrupt check in
-  `fractals/lorenz.cpp` with a semantic UI helper.
+  `fractals/lorenz.cpp` with `calc_interrupted()`.
 - Keep `driver_mute`, resume allocation, and return value unchanged.
 - Remove `misc/Driver.h` includes if the later Lorenz slice also no
   longer needs it.
@@ -368,12 +419,65 @@ Done when:
 - The orbit interrupt location in `lorenz.cpp` has no direct key polling.
 - Orbit plotting still allocates the same resume data on interruption.
 
-## Slice 10: Move Lorenz Stereo Save Prompt
+## Slice 9: Move Sound Pending-Key Check
 
 Work:
 
-- Extract the photographer-mode save prompt loop in `fractals/lorenz.cpp`
-  into `libid/ui`.
+- Move the sound pending-key check behind generic `KeyboardInput`
+  polling.
+- Preserve the rule that pending input suppresses `driver_sound_on`.
+- Keep this separate from `calc_interrupted()` because it is not a
+  calculation interrupt.
+- Remove `misc/Driver.h` includes made unnecessary by the move.
+
+Done when:
+
+- `sound.cpp` has no direct key polling calls.
+- Sound output is still skipped when input is pending.
+
+## Slice 10: Move Wait-Until Key Wakeup
+
+Work:
+
+- Move the delay-loop key wakeup behind generic `KeyboardInput` polling.
+- Keep sleep interval and wakeup behavior unchanged.
+- Keep this separate from `calc_interrupted()` because it is not a
+  calculation interrupt.
+- Update `test_wait_until` to use a fake `KeyboardInput`.
+- Remove `misc/Driver.h` includes made unnecessary by the move.
+
+Done when:
+
+- `wait_until.cpp` has no direct key polling calls.
+- Existing wait timing tests pass against the UI keyboard seam.
+
+## Slice 11: Move Inverse-Julia Keyboard Context
+
+Work:
+
+- Add `InverseJuliaKeyboardHandler` for the modal JIIM context.
+- Move key interpretation from `libid/engine/jiim.cpp:655-869`.
+- Move key drain polling from `libid/engine/jiim.cpp:1136-1147`.
+- Move final key requeue from `libid/engine/jiim.cpp:1335-1336`.
+- Push it while inverse-Julia is active and pop it on exit.
+- Move key meaning out of `engine/jiim.cpp` into that handler.
+- Keep cursor movement, save, exit, and requeue behavior unchanged.
+- Avoid adding per-call-site keyboard helper functions.
+
+Done when:
+
+- `jiim.cpp` has no direct key polling calls.
+- The active JIIM handler owns inverse-Julia key meaning.
+- Tests or manual checks cover inverse-Julia keyboard exit.
+
+## Slice 12: Move Lorenz Stereo Save Prompt
+
+Work:
+
+- Add `LorenzStereoSaveKeyboardHandler` for the photographer-mode save
+  loop.
+- Move the save prompt loop from
+  `libid/fractals/lorenz.cpp:1553-1561`.
 - Preserve repeated `s` or `S` save behavior.
 - Keep calculation code receiving the decision to continue.
 - Remove `misc/Driver.h` includes made unnecessary by the move.
@@ -384,50 +488,7 @@ Done when:
   polling.
 - Photographer-mode save and continue behavior is unchanged.
 
-## Slice 11: Move L-System Interrupt Check
-
-Work:
-
-- Replace the recursive draw `driver_key_pressed` check in
-  `fractals/lsystem.cpp` with a semantic UI helper.
-- Keep counter rollback and null return behavior unchanged.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
-
-Done when:
-
-- `lsystem.cpp` has no direct key polling calls.
-- L-system interruption still unwinds through the same null return.
-
-## Slice 12: Move Lyapunov Interrupt Check
-
-Work:
-
-- Replace the per-pixel `driver_key_pressed` check in
-  `fractals/lyapunov.cpp` with a semantic UI helper.
-- Keep the `-1` interruption result unchanged.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
-
-Done when:
-
-- `lyapunov.cpp` has no direct key polling calls.
-- Lyapunov interruption still reports `-1`.
-
-## Slice 13: Add A Keyboard Boundary Check
-
-Work:
-
-- Add a grep-style check to the developer workflow or tests.
-- Fail if `driver_get_key`, `driver_key_pressed`,
-  `driver_wait_key_pressed`, or `driver_unget_key` appear under
-  `libid/engine` or `libid/fractals`.
-- Allow comments only by deleting or rewriting stale comments.
-
-Done when:
-
-- The boundary check is easy to run locally.
-- The check fails on new calculation-layer keyboard polling calls.
-
-## Slice 14: Move JIIM Mouse Handling
+## Slice 13: Move JIIM Mouse Handling
 
 Work:
 
