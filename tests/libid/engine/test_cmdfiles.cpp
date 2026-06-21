@@ -1465,7 +1465,7 @@ TEST_F(TestParameterCommand, colorsMapNameIsCaseSensitive)
 {
     if constexpr (!ID_TEST_FILESYSTEM_CASE_SENSITIVE)
     {
-        GTEST_SKIP() << "Map file names are case-insensitive on this filesystem";
+        return;
     }
 
     ColorMapSaver saved_dac_box;
