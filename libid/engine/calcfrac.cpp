@@ -122,7 +122,7 @@ static long auto_log_map();
 
 static DComplex s_saved{};            //
 static double s_rq_lim_save{};        //
-static int (*s_calc_type_tmp)(){};    //
+static CalcType s_calc_type_tmp{};    //
 static double s_dem_delta{};          //
 static double s_dem_width{};          // distance estimator variables
 static double s_dem_too_big{};        //
@@ -512,6 +512,15 @@ static int calc_type_show_dot()
     const int out = s_calc_type_tmp();
     show_dot_save_restore(start_x, stop_x, start_y, stop_y, direction, ShowDotAction::RESTORE);
     return out;
+}
+
+CalcType wrap_show_dot_calc_type(const int show_dot_width, const int show_dot_color)
+{
+    s_show_dot_width = show_dot_width;
+    s_show_dot_color = show_dot_color;
+    s_calc_type_tmp = g_dispatch.calc_type();
+    g_dispatch.set_calc_type(calc_type_show_dot);
+    return s_calc_type_tmp;
 }
 
 static void fix_inversion(double *x) // make double converted from string look ok
@@ -1140,8 +1149,7 @@ static void perform_work_list()
             {
                 s_show_dot_width = -1;
             }
-            s_calc_type_tmp = g_dispatch.calc_type();
-            g_dispatch.set_calc_type(calc_type_show_dot);
+            wrap_show_dot_calc_type(s_show_dot_width, s_show_dot_color);
         }
 
         // some common initialization for escape-time pixel level routines

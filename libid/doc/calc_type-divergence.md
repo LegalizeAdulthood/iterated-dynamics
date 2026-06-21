@@ -85,22 +85,7 @@ function pointers into explicit calculation dispatch state.
 These slices assume `FractalSpecific` is already const and runtime-selected
 functions already live in dispatch state.
 
-### Slice 1: Test Showdot Wrapping
-
-Work:
-
-- Test that showdot saves the current runtime calculator.
-- Test that the wrapper calls the saved calculator.
-- Test that disabling showdot restores the prior dispatch state.
-
-Done when:
-
-- Showdot never writes table metadata.
-- Tests cover showdot with an optimized Mandelbrot runtime calculator.
-- Nested setup and teardown leave dispatch unchanged except for the
-  wrapper.
-
-### Slice 2: Test Alternate Math Dispatch
+### Slice 1: Test Alternate Math Dispatch
 
 Work:
 
@@ -115,7 +100,7 @@ Done when:
 - `calc_type` table metadata remains unchanged.
 - Fallback to `BFMathType::NONE` is tested.
 
-### Slice 3: Add Boundary Checks
+### Slice 2: Add Boundary Checks
 
 Work:
 
