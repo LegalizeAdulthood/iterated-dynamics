@@ -85,22 +85,7 @@ function pointers into explicit calculation dispatch state.
 These slices assume `FractalSpecific` is already const and runtime-selected
 functions already live in dispatch state.
 
-### Slice 1: Test Alternate Math Dispatch
-
-Work:
-
-- Add tests for `BF_MATH` alternate dispatch.
-- Verify alternate math swaps `orbit_calc`, `per_pixel`, and `per_image`.
-- Verify alternate math does not change static `calc_type`.
-- Verify no alternate entry leaves dispatch partially updated.
-
-Done when:
-
-- Alternate math behavior is asserted through dispatch.
-- `calc_type` table metadata remains unchanged.
-- Fallback to `BFMathType::NONE` is tested.
-
-### Slice 2: Add Boundary Checks
+### Slice 1: Add Boundary Checks
 
 Work:
 

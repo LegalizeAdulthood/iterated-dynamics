@@ -213,6 +213,7 @@ int calc_mandelbrot_type();
 int standard_fractal_type();
 void init_atan_colors();
 int find_alternate_math(fractals::FractalType type, math::BFMathType math);
+bool select_alternate_math_dispatch();
 int potential(double mag, long iterations);
 void sym_pi_plot(int x, int y, int color);
 void sym_pi_plot2j(int x, int y, int color);

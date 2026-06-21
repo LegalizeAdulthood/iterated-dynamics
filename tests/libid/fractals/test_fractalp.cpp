@@ -300,6 +300,8 @@ TEST(TestFractalDispatch, alternateMathOnlyUpdatesDispatch)
 {
     FractalSpecific specific{};
     FractalDispatch dispatch{};
+    specific.calc_type = standard_fractal_type;
+    dispatch.set_calc_type(test_calc_type);
     AlternateMath alternate{
         FractalType::MANDEL, math::BFMathType::BIG_NUM, test_orbit_calc, test_per_pixel, test_per_image};
 
@@ -311,9 +313,54 @@ TEST(TestFractalDispatch, alternateMathOnlyUpdatesDispatch)
     EXPECT_EQ(test_orbit_calc, g_dispatch.orbit_calc());
     EXPECT_EQ(test_per_pixel, g_dispatch.per_pixel());
     EXPECT_EQ(test_per_image, g_dispatch.per_image());
+    EXPECT_EQ(test_calc_type, g_dispatch.calc_type());
     EXPECT_EQ(nullptr, specific.orbit_calc);
     EXPECT_EQ(nullptr, specific.per_pixel);
     EXPECT_EQ(nullptr, specific.per_image);
+    EXPECT_EQ(standard_fractal_type, specific.calc_type);
+}
+
+TEST(TestFractalDispatch, alternateMathDispatchUsesMatchingBfEntry)
+{
+    DispatchSelectionState state{FractalType::MANDEL_Z_POWER};
+    const FractalSpecific &table{*get_fractal_specific(FractalType::MANDEL_Z_POWER)};
+    const TableFunctions table_funcs{table_functions(FractalType::MANDEL_Z_POWER)};
+    const int alt{find_alternate_math(FractalType::MANDEL_Z_POWER, BFMathType::BIG_FLT)};
+
+    ASSERT_NE(-1, alt);
+    const AlternateMath &alternate{g_alternate_math[alt]};
+    ASSERT_EQ(FractalType::MANDEL_Z_POWER, alternate.type);
+    ASSERT_EQ(BFMathType::BIG_FLT, alternate.math);
+
+    g_dispatch.init_calc_type(table);
+    g_bf_math = BFMathType::BIG_FLT;
+
+    EXPECT_TRUE(select_alternate_math_dispatch());
+
+    EXPECT_EQ(BFMathType::BIG_FLT, g_bf_math);
+    EXPECT_EQ(alternate.orbit_calc, g_dispatch.orbit_calc());
+    EXPECT_EQ(alternate.per_pixel, g_dispatch.per_pixel());
+    EXPECT_EQ(alternate.per_image, g_dispatch.per_image());
+    EXPECT_EQ(table.calc_type, g_dispatch.calc_type());
+    expect_table_functions(FractalType::MANDEL_Z_POWER, table_funcs);
+}
+
+TEST(TestFractalDispatch, alternateMathFallbackLeavesDispatchUnchanged)
+{
+    DispatchSelectionState state{FractalType::JULIA_Z_POWER};
+    FractalDispatch dispatch{test_orbit_calc, test_per_pixel, test_per_image, test_calc_type};
+    ValueSaver saved_dispatch{g_dispatch, dispatch};
+
+    g_bf_math = BFMathType::BIG_NUM;
+
+    ASSERT_EQ(-1, find_alternate_math(FractalType::JULIA_Z_POWER, BFMathType::BIG_NUM));
+    EXPECT_FALSE(select_alternate_math_dispatch());
+
+    EXPECT_EQ(BFMathType::NONE, g_bf_math);
+    EXPECT_EQ(test_orbit_calc, g_dispatch.orbit_calc());
+    EXPECT_EQ(test_per_pixel, g_dispatch.per_pixel());
+    EXPECT_EQ(test_per_image, g_dispatch.per_image());
+    EXPECT_EQ(test_calc_type, g_dispatch.calc_type());
 }
 
 TEST(TestFractalDispatch, formulaParseFailureOnlyUpdatesDispatch)

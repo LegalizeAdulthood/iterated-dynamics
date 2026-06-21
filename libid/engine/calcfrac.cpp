@@ -903,17 +903,25 @@ int find_alternate_math(const FractalType type, const BFMathType math)
     {
         return -1;
     }
-    int i = -1;
-    FractalType current;
-    while ((current = g_alternate_math[++i].type) != type && current != FractalType::NO_FRACTAL)
+    for (int i = 0; g_alternate_math[i].type != FractalType::NO_FRACTAL; ++i)
     {
+        if (g_alternate_math[i].type == type && g_alternate_math[i].math == math)
+        {
+            return i;
+        }
     }
-    int ret = -1;
-    if (current == type && g_alternate_math[i].math != BFMathType::NONE)
+    return -1;
+}
+
+bool select_alternate_math_dispatch()
+{
+    if (const int alt = find_alternate_math(g_fractal_type, g_bf_math); alt > -1)
     {
-        ret = i;
+        g_dispatch.set_current_alternate_math(g_alternate_math[alt]);
+        return true;
     }
-    return ret;
+    g_bf_math = BFMathType::NONE;
+    return false;
 }
 
 static void work_list_pop_front()
@@ -931,14 +939,7 @@ static void perform_work_list()
 {
     ValueSaver saved_dispatch{g_dispatch};
 
-    if (const int alt = find_alternate_math(g_fractal_type, g_bf_math); alt > -1)
-    {
-        g_dispatch.set_current_alternate_math(g_alternate_math[alt]);
-    }
-    else
-    {
-        g_bf_math = BFMathType::NONE;
-    }
+    select_alternate_math_dispatch();
 
     if (g_potential.flag && g_potential.store_16bit)
     {
