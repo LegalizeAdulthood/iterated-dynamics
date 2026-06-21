@@ -85,22 +85,7 @@ function pointers into explicit calculation dispatch state.
 These slices assume `FractalSpecific` is already const and runtime-selected
 functions already live in dispatch state.
 
-### Slice 1: Test Mandel And Julia Selection
-
-Work:
-
-- Add tests for Mandelbrot and Julia optimized selection.
-- Verify the const table remains at the static default calculator.
-- Verify dispatch selects `calc_mandelbrot_type` only when eligible.
-- Verify dispatch falls back to `standard_fractal_type` when ineligible.
-
-Done when:
-
-- Tests cover both optimized and fallback paths.
-- The tests compare table metadata and dispatch state separately.
-- Changing the static table cannot hide a runtime selection bug.
-
-### Slice 2: Test Showdot Wrapping
+### Slice 1: Test Showdot Wrapping
 
 Work:
 
@@ -115,7 +100,7 @@ Done when:
 - Nested setup and teardown leave dispatch unchanged except for the
   wrapper.
 
-### Slice 3: Test Alternate Math Dispatch
+### Slice 2: Test Alternate Math Dispatch
 
 Work:
 
@@ -130,7 +115,7 @@ Done when:
 - `calc_type` table metadata remains unchanged.
 - Fallback to `BFMathType::NONE` is tested.
 
-### Slice 4: Add Boundary Checks
+### Slice 3: Add Boundary Checks
 
 Work:
 

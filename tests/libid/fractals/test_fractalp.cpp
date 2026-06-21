@@ -4,13 +4,17 @@
 #include <fractals/fractalp.h>
 #include <misc/ValueSaver.h>
 
+#include <engine/bailout_formula.h>
+#include <engine/calc_frac_init.h>
 #include <engine/calcfrac.h>
 #include <engine/fractals.h>
+#include <engine/sound.h>
 #include <engine/trig_fns.h>
 #include <fractals/formula.h>
 #include <fractals/frasetup.h>
 #include <fractals/julibrot.h>
 #include <fractals/lambda_fn.h>
+#include <fractals/lorenz.h>
 #include <fractals/parser.h>
 #include <fractals/phoenix.h>
 #include <fractals/pickover_mandelbrot.h>
@@ -20,8 +24,10 @@
 #include <gtest/gtest.h>
 #include <math/big.h>
 #include <misc/debug_flags.h>
+#include <ui/editpal.h>
 
 #include <algorithm>
+#include <array>
 #include <filesystem>
 #include <stdexcept>
 
@@ -110,6 +116,36 @@ private:
     ValueSaver<TrigFn> m_saved_trig_1{g_trig_index[1], TrigFn::COS};
     ValueSaver<TrigFn> m_saved_trig_2{g_trig_index[2], TrigFn::SIN};
     ValueSaver<TrigFn> m_saved_trig_3{g_trig_index[3], TrigFn::COS};
+};
+
+class MandelJuliaCalcTypeState
+{
+public:
+    explicit MandelJuliaCalcTypeState(const FractalType type)
+    {
+        set_fractal_type(type);
+        g_dispatch.init_calc_type(*g_cur_fractal_specific);
+    }
+
+private:
+    ValueSaver<FractalType> m_saved_type{g_fractal_type};
+    ValueSaver<const FractalSpecific *> m_saved_specific{g_cur_fractal_specific};
+    ValueSaver<FractalDispatch> m_saved_dispatch{g_dispatch};
+    ValueSaver<DebugFlags> m_saved_debug_flag{g_debug_flag, DebugFlags::NONE};
+    ValueSaver<long> m_saved_distance_estimator{g_distance_estimator, 0};
+    ValueSaver<std::array<int, 2>> m_saved_decomp{g_decomp, std::array<int, 2>{0, 0}};
+    ValueSaver<int> m_saved_biomorph{g_biomorph, -1};
+    ValueSaver<ColorMethod> m_saved_inside_method{g_inside_method, ColorMethod::ITER};
+    ValueSaver<ColorMethod> m_saved_outside_method{g_outside_method, ColorMethod::ITER};
+    ValueSaver<InitOrbitMode> m_saved_use_init_orbit{g_use_init_orbit, InitOrbitMode::NORMAL};
+    ValueSaver<int> m_saved_sound_flag{g_sound_flag, SOUNDFLAG_OFF};
+    ValueSaver<FiniteAttractor> m_saved_attractor{g_attractor, FiniteAttractor{}};
+    ValueSaver<bool> m_saved_using_jiim{id::ui::g_using_jiim, false};
+    ValueSaver<Bailout> m_saved_bailout_test{g_bailout_test, Bailout::MOD};
+    ValueSaver<int> m_saved_orbit_save_flags{g_orbit_save_flags, 0};
+    ValueSaver<BFMathType> m_saved_bf_math{g_bf_math, BFMathType::NONE};
+    ValueSaver<double> m_saved_param_2{g_params[2], 2.0};
+    ValueSaver<double> m_saved_param_3{g_params[3], 0.0};
 };
 
 class ParserResetter
@@ -363,6 +399,35 @@ TEST(TestFractalDispatch, perImageSelectorsOnlyUpdateDispatch)
         EXPECT_EQ(popcorn_fractal, g_dispatch.orbit_calc());
         expect_table_functions(FractalType::POPCORN_JUL, table);
     }
+}
+
+static void expect_mandel_julia_calc_type_selection(const FractalType type, const PerImage setup, const bool optimized)
+{
+    MandelJuliaCalcTypeState state{type};
+    const FractalSpecific &table{*get_fractal_specific(type)};
+    const CalcType expected{optimized ? calc_mandelbrot_type : standard_fractal_type};
+
+    if (!optimized)
+    {
+        g_debug_flag = DebugFlags::FORCE_STANDARD_FRACTAL;
+    }
+
+    ASSERT_EQ(standard_fractal_type, table.calc_type);
+    ASSERT_TRUE(setup());
+    EXPECT_EQ(standard_fractal_type, table.calc_type);
+    EXPECT_EQ(expected, g_dispatch.calc_type());
+}
+
+TEST(TestFractalDispatch, mandelAndJuliaEligibleUseOptimizedCalcType)
+{
+    expect_mandel_julia_calc_type_selection(FractalType::MANDEL, mandel_per_image, true);
+    expect_mandel_julia_calc_type_selection(FractalType::JULIA, julia_per_image, true);
+}
+
+TEST(TestFractalDispatch, mandelAndJuliaIneligibleFallBackToStandardCalcType)
+{
+    expect_mandel_julia_calc_type_selection(FractalType::MANDEL, mandel_per_image, false);
+    expect_mandel_julia_calc_type_selection(FractalType::JULIA, julia_per_image, false);
 }
 
 TEST(TestFractalDispatch, julibrotOrbitDispatchUsesSecondaryType)
