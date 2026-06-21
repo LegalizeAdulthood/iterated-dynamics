@@ -2,6 +2,8 @@
 //
 #pragma once
 
+#include <memory>
+
 namespace id::ui
 {
 
@@ -16,6 +18,8 @@ public:
     virtual void push_key(int key) = 0;
 };
 
-extern KeyboardInput *g_kb_input;
+using KeyboardInputPtr = std::shared_ptr<KeyboardInput>;
+
+extern KeyboardInputPtr g_kb_input;
 
 } // namespace id::ui

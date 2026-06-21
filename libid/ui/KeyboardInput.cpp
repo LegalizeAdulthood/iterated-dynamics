@@ -4,6 +4,8 @@
 
 #include "misc/Driver.h"
 
+#include <memory>
+
 using namespace id::misc;
 
 namespace id::ui
@@ -33,8 +35,6 @@ public:
     }
 };
 
-static DriverKeyboardInput s_driver_keyboard_input;
-
-KeyboardInput *g_kb_input{&s_driver_keyboard_input};
+KeyboardInputPtr g_kb_input{std::make_shared<DriverKeyboardInput>()};
 
 } // namespace id::ui

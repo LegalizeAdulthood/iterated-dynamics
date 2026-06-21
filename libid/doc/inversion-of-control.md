@@ -81,7 +81,9 @@ Access:
 ```cpp
 namespace id::ui
 {
-extern KeyboardInput *g_kb_input;
+using KeyboardInputPtr = std::shared_ptr<KeyboardInput>;
+
+extern KeyboardInputPtr g_kb_input;
 }
 ```
 

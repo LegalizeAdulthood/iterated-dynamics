@@ -107,13 +107,13 @@ protected:
         reset_calc_interrupted();
     }
 
-    FakeKeyboardInput m_input;
-    ValueSaver<KeyboardInput *> m_saved_input{g_kb_input, &m_input};
+    std::shared_ptr<FakeKeyboardInput> m_input{std::make_shared<FakeKeyboardInput>()};
+    ValueSaver<KeyboardInputPtr> m_saved_input{g_kb_input, m_input};
 };
 
 TEST_F(TestKeyboardHandler, calcInterruptedOffersKeyFromTopToBottom)
 {
-    m_input.add_key(17);
+    m_input->add_key(17);
     KeyboardEvents events;
     auto bottom{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
     auto top{std::make_shared<RecordingKeyboardHandler>(2, false, events)};
@@ -127,7 +127,7 @@ TEST_F(TestKeyboardHandler, calcInterruptedOffersKeyFromTopToBottom)
 
 TEST_F(TestKeyboardHandler, consumedKeyStopsPropagation)
 {
-    m_input.add_key(23);
+    m_input->add_key(23);
     KeyboardEvents events;
     auto bottom{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
     auto top{std::make_shared<RecordingKeyboardHandler>(2, true, events)};
@@ -141,7 +141,7 @@ TEST_F(TestKeyboardHandler, consumedKeyStopsPropagation)
 
 TEST_F(TestKeyboardHandler, unconsumedKeyIsDiscarded)
 {
-    m_input.add_key(29);
+    m_input->add_key(29);
     KeyboardEvents events;
     auto handler{std::make_shared<RecordingKeyboardHandler>(1, false, events)};
     ScopedKeyboardHandler scope{handler};
@@ -149,12 +149,12 @@ TEST_F(TestKeyboardHandler, unconsumedKeyIsDiscarded)
     EXPECT_FALSE(calc_interrupted());
 
     EXPECT_THAT(events, ElementsAre(Pair(1, 29)));
-    EXPECT_TRUE(m_input.empty());
+    EXPECT_TRUE(m_input->empty());
 }
 
 TEST_F(TestKeyboardHandler, handlerRequestsCalculationInterruption)
 {
-    m_input.add_key(31);
+    m_input->add_key(31);
     KeyboardEvents events;
     auto handler{std::make_shared<RecordingKeyboardHandler>(1, true, events)};
     handler->interrupt_calc();
@@ -174,7 +174,7 @@ TEST_F(TestKeyboardHandler, scopedHandlerRegistrationPopsHandler)
     {
         ScopedKeyboardHandler top_scope{top};
     }
-    m_input.add_key(37);
+    m_input->add_key(37);
 
     EXPECT_FALSE(calc_interrupted());
 
