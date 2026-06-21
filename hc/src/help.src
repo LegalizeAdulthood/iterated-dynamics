@@ -276,6 +276,10 @@ New Features in Version 1.5
 Bugs Fixed in Version 1.5
 
 Code Cleanup in Version 1.5
+
+o Runtime fractal dispatch now uses explicit dispatch state for selected
+  function pointers, leaving the FractalSpecific table as constant
+  metadata.
 ;
 ;
 ;

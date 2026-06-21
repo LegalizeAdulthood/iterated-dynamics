@@ -10,21 +10,6 @@ work.
 
 ## Included Work
 
-### [`g_calc_type` Correctness](calc_type-divergence.md)
-
-Protect the distinction between static fractal table metadata and the
-runtime pixel calculator.
-
-Release boundary:
-
-- Add tests or invariants for Mandel/Julia optimized selection, show-dot
-  wrapping, stale values before setup, and alternate-math behavior where
-  practical.
-- Use `g_cur_fractal_specific->calc_type` only for static capability
-  checks.
-- Use `g_calc_type` only after setup when runtime calculator identity is
-  needed.
-
 ### [Polling I/O Refactor](inversion-of-control.md)
 
 Move direct keyboard and mouse polling out of calculation code and into

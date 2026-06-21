@@ -257,7 +257,6 @@ add_library(libid
     include/ui/video.h ui/video.cpp
     include/ui/zoom.h ui/zoom.cpp
 
-    "doc/calc_type-divergence.md"
     "doc/EngineGlobals.md"
     "doc/FractalGlobals.md"
     "doc/GeometryGlobals.md"
