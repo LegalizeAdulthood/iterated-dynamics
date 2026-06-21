@@ -161,6 +161,7 @@ current topic.
 | Online[+/-] | Local | Enables/disables display of text in the online help. |
 | Doc[+/-] | Local | Enables/disables display of text in the printed document.  (Currently ignored.) |
 | ADoc[+/-] | Local | Enables/disables display of text in the AsciiDoc output. |
+| ADocAnchor=NAME | Local | Sets the AsciiDoc anchor for the current topic. |
 | FormatExclude=NUM | Both | Set the format disable column number. |
 | FormatExclude=n | Both | Turn this feature off. |
 | FormatExclude[+/-] | Both | Temporarily enable/disable this feature. |

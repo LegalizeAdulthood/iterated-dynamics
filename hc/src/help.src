@@ -1227,7 +1227,7 @@ PostScript printer, it does not preserve aspect ratio with other printers.
 ;
 ;
 ;
-~Topic=\"3D\" Commands
+~Topic=\"3D\" Commands, ADocAnchor=_3d_commands
 
 See {\"3D\" Images} for details of these commands.
 

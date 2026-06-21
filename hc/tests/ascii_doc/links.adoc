@@ -8,7 +8,7 @@
 [[new_features_in_1_0]]
 == New Features in 1.0
 
-See <<getting_started>>.  See <<3d_commands>>.  See <<punctuation_a_b_c>>.  See
+See <<getting_started>>.  See <<_3d_commands>>.  See <<punctuation_a_b_c>>.  See
 <<different_title,second Different Title>>.
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
@@ -182,7 +182,7 @@ Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
 text.  Lots of text.  Lots of text.
 
 [[id-content-9]]
-[[3d_commands]]
+[[_3d_commands]]
 == "3D" Commands
 
 Lots of text.  Lots of text.  Lots of text.  Lots of text.  Lots of
