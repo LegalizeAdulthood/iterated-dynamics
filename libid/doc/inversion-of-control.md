@@ -30,9 +30,9 @@ stay mechanical and behavior-preserving.
 
 Add:
 
-- `libid/include/ui/polling.h`
-- `libid/ui/polling.cpp`
-- `tests/libid/ui/test_polling.cpp`
+- `libid/include/ui/KeyboardInput.h`
+- `libid/ui/KeyboardInput.cpp`
+- `tests/libid/ui/test_KeyboardInput.cpp`
 
 Keep key codes as `int`.  This is a boundary move, not a new input event
 model.
@@ -67,14 +67,14 @@ Semantics:
 Production:
 
 - Add `DriverKeyboardInput final : public KeyboardInput` in
-  `ui/polling.cpp`.
+  `ui/KeyboardInput.cpp`.
 - `DriverKeyboardInput` forwards to `driver_key_pressed`,
   `driver_get_key`, `driver_wait_key_pressed`, and `driver_unget_key`.
 - The production forwarding path must preserve current driver side
   effects: window-event pumping, redraw handling, key buffering, and mouse
   notification delivery.
-- Keep the default instance in `ui/polling.cpp`; do not add a second key
-  buffer.
+- Keep the default instance in `ui/KeyboardInput.cpp`; do not add a
+  second key buffer.
 
 Accessors:
 
@@ -116,7 +116,8 @@ Semantics:
 
 Caller rules:
 
-- `libid/engine` and `libid/fractals` may include `ui/polling.h`.
+- `libid/engine` and `libid/fractals` may include
+  `ui/KeyboardInput.h`.
 - `libid/engine` and `libid/fractals` must use only semantic helpers.
 - Direct `Driver` key calls stay in `DriverKeyboardInput` and driver
   classes.
@@ -238,7 +239,8 @@ interrupt unless it is `o` or `O`, which toggles orbit display.
 
 Work:
 
-- Add a small `ui/polling` API around the current `Driver` key methods.
+- Add a small `ui/KeyboardInput` API around the current `Driver` key
+  methods.
 - Expose semantic operations: pending key, read key, wait key, push key.
 - Add a calculation helper for "pending key means interrupt".
 - Keep `ui/check_key` as the orbit-toggle helper.
