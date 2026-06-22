@@ -2,10 +2,12 @@
 //
 #include "ui/KeyboardHandler.h"
 
-#include "ui/KeyboardInput.h"
+#include "misc/Driver.h"
 
 #include <cassert>
 #include <vector>
+
+using namespace id::misc;
 
 namespace id::ui
 {
@@ -70,9 +72,9 @@ void reset_calc_interrupted()
 
 bool calc_interrupted()
 {
-    while (g_kb_input->pending_key() != 0)
+    while (driver_key_pressed() != 0)
     {
-        dispatch_key(g_kb_input->read_key());
+        dispatch_key(driver_get_key());
     }
     return s_calc_interrupted;
 }
