@@ -2,103 +2,59 @@
 SPDX-License-Identifier: GPL-3.0-only
 -->
 
-# Polling I/O Refactor Plan
+# Polling I/O Handler Stack Plan
 
-Goal: move direct polling I/O out of calculation code and into `libid/ui`.
-Keep the current polling behavior while doing it.
+Goal: route the existing polling keyboard I/O through a stack of UI-owned
+key handlers, then move direct polling out of calculation code.
 
-This plan is only for the polling refactor.  It does not convert text
-screens to dialogs, add a tool stack, rewrite the event loop, or delete the
-`Driver` key API.
+This is not yet the full inversion-of-control design.  It is the
+intermediate step that preserves today's polling behavior while moving key
+meaning into UI contexts.  After polling sites use the handler stack, the
+engine can move to a worker thread and the GUI thread can dispatch key
+events to the same stack.
 
-The GitHub discussion also records the larger inversion-of-control path.
-Those items are kept in `Future Event-Driven Work` so the polling slices
-stay mechanical and behavior-preserving.
+This also moves the code toward hexagonal architecture.  The engine becomes
+less coupled to input adapters, while `libid/ui` owns keyboard and mouse
+interaction at the edge.
+
+The GitHub discussion records the larger inversion-of-control path.  Those
+items are kept in `Future Event-Driven Work` so the polling slices stay
+mechanical and behavior-preserving.
 
 ## Rules
 
-- `libid/ui` owns keyboard polling, key buffering, and legacy key side
-  effects.
+- The driver remains the production key queue while polling I/O exists.
+- Only `libid/ui` directly interacts with keyboard and mouse input.
+- `libid/ui` owns keyboard dispatch, key meaning, mouse subscriptions, and
+  legacy input side effects.
 - Calculation code may ask whether work should stop.
-- Calculation code must not call `driver_get_key`,
-  `driver_key_pressed`, `driver_wait_key_pressed`, or
-  `driver_unget_key`.
+- Code outside `libid/ui` must not call `driver_get_key`,
+  `driver_key_pressed`, `driver_wait_key_pressed`, or `driver_unget_key`.
+- Code outside `libid/ui` must not use `MouseNotification`,
+  `mouse_subscribe`, `mouse_unsubscribe`, `g_cursor_mouse_tracking`, or
+  `g_look_at_mouse`.
 - Keep behavior first.  Rename and reshape after the calls are moved.
 - Keep each slice small enough to review by inspection and focused tests.
+- End each slice that changes calculation control flow with manual testing
+  steps.
 
-## Proposed Polling API
+## Existing Polling Source
 
-Add:
+Do not add a second production key queue.  The driver key queue remains the
+source of pending keys while the program still polls.
 
-- `libid/include/ui/KeyboardInput.h`
-- `libid/ui/KeyboardInput.cpp`
-- `tests/libid/ui/test_KeyboardInput.cpp`
+The UI keyboard dispatcher polls the driver queue, reads available keys,
+and offers them to the active handler stack.  This keeps the current driver
+side effects in one place: window-event pumping, redraw handling, key
+buffering, and mouse notification delivery.
 
-Keep key codes as `int`.  This is a boundary move, not a new input event
-model.
-
-Interface:
-
-```cpp
-namespace id::ui
-{
-class KeyboardInput
-{
-public:
-    virtual ~KeyboardInput() = default;
-
-    virtual int pending_key() = 0;
-    virtual int read_key() = 0;
-    virtual int wait_for_key(bool timeout) = 0;
-    virtual void push_key(int key) = 0;
-};
-}
-```
-
-Semantics:
-
-- `pending_key()` returns the pending key code, or zero.  It does not
-  consume the key.
-- `read_key()` consumes one key.  It may block, exactly as the driver does
-  today.
-- `wait_for_key()` waits for a key using the current timeout rule.
-- `push_key()` requeues one key.
-
-Production:
-
-- Add `DriverKeyboardInput : public KeyboardInput` in
-  `ui/KeyboardInput.cpp`.
-- `DriverKeyboardInput` forwards to `driver_key_pressed`,
-  `driver_get_key`, `driver_wait_key_pressed`, and `driver_unget_key`.
-- The production forwarding path must preserve current driver side
-  effects: window-event pumping, redraw handling, key buffering, and mouse
-  notification delivery.
-- Keep the default instance in `ui/KeyboardInput.cpp`; do not add a
-  second key buffer.
-
-Access:
-
-```cpp
-namespace id::ui
-{
-using KeyboardInputPtr = std::shared_ptr<KeyboardInput>;
-
-extern KeyboardInputPtr g_kb_input;
-}
-```
-
-Production points `g_kb_input` at `DriverKeyboardInput`.  Tests may
-replace it with a fake `KeyboardInput`.
-
-The initial slice only introduces this generic input facade.  It must not
-move existing polling call sites or introduce per-site semantic helpers.
-Later slices should first identify a reusable polling shape, then move a
-set of matching call sites to that mechanism.
+Later event-driven work can dispatch GUI key events to the same handler
+stack without changing the calculation-side contract.
 
 ## Keyboard Handler Stack
 
-`KeyboardInput` owns queue mechanics.  It does not decide what a key means
-in a particular UI context.
+The driver owns queue mechanics while polling I/O exists.  Handlers decide
+what a key means in a particular UI context.
 
 Add a separate handler interface for key meaning:
 
@@ -121,9 +77,9 @@ using KeyboardHandlerPtr = std::shared_ptr<KeyboardHandler>;
 does not return an interrupt result.  Handlers that want calculation to
 yield set calculation-interrupt state owned by the UI.
 
-The UI maintains a stack of active `KeyboardHandlerPtr` values.  When a
-key is available, the UI reads it from `KeyboardInput` and offers it to
-the handler stack from top to bottom.  The first handler that returns
+The UI maintains a stack of active `KeyboardHandlerPtr` values.  When a key
+is available, the UI dispatcher reads it from the driver queue and offers
+it to the handler stack from top to bottom.  The first handler that returns
 `true` stops propagation.  If no handler consumes the key, the key is
 discarded.
 
@@ -136,8 +92,8 @@ bool calc_interrupted();
 }
 ```
 
-`calc_interrupted()` pumps pending keys through the handler stack and
-returns the current calculation-interrupt flag.  Each handler decides
+`calc_interrupted()` pumps pending driver keys through the handler stack
+and returns the current calculation-interrupt flag.  Each handler decides
 which keys, if any, request interruption for its context.
 
 `MainLoopKeyboardHandler` is the outer image UI context.  It sits below
@@ -151,9 +107,9 @@ Rules:
 - Push and pop handlers with scoped ownership so stale handlers cannot
   remain on the stack.
 - Reset calculation-interrupt state at the start of each calculation.
-- Do not use `push_key()` as the normal handoff between contexts.  The
-  interested handler should consume the key and record the command or
-  state needed by its context.
+- Do not requeue keys as the normal handoff between contexts.  The
+  interested handler should consume the key and record the command or state
+  needed by its context.
 - Orbit toggling is a handler policy: the orbit handler consumes `o` and
   `O`, toggles orbit display, and does not request interruption.
 - The main-loop handler is the fallback render command handler.  It
@@ -162,20 +118,17 @@ Rules:
 
 Caller rules:
 
-- `libid/engine` and `libid/fractals` may include
-  `ui/KeyboardInput.h`.
-- `libid/engine` and `libid/fractals` should not call raw `Driver`
-  keyboard methods after a matching reusable mechanism exists.
-- Direct `Driver` key calls stay in `DriverKeyboardInput` and driver
-  classes.
-- New abstract interfaces are exposed through global pointers, like
-  `g_driver`.  Use `g_kb_input` for `KeyboardInput` and
-  `g_mouse_input` for mouse interaction.  Do not drag them through
-  engine call chains.
-- Tests install a fake `KeyboardInput`; most tests should not need
-  `MockDriver`.
-- Later event-driven work may replace the facade internals without
-  touching calculation code.
+- Non-UI code may include `ui/KeyboardHandler.h` only for
+  calculation-interrupt checks.
+- Non-UI code should not call raw `Driver` keyboard methods after a
+  matching reusable handler mechanism exists.
+- Direct `Driver` key calls stay in the UI dispatcher and driver classes.
+- Direct mouse notification, subscription, and mouse-state manipulation
+  stay in `libid/ui`.
+- Tests that exercise polling use `MockDriver`; tests that exercise key
+  meaning call handlers directly.
+- Later event-driven work may replace driver polling with GUI event
+  dispatch without touching calculation code.
 
 ## Non-UI Includes Of UI Headers
 
@@ -391,11 +344,12 @@ Done when:
 
 Work:
 
-- Move the sound pending-key check behind generic `KeyboardInput`
-  polling.
+- Move the sound pending-key check behind a UI-owned polling query.
 - Preserve the rule that pending input suppresses `driver_sound_on`.
 - Keep this separate from `calc_interrupted()` because it is not a
   calculation interrupt.
+- Do not add a second key queue; the query still reads the driver queue
+  while polling I/O exists.
 - Remove `misc/Driver.h` includes made unnecessary by the move.
 
 Done when:
@@ -407,11 +361,11 @@ Done when:
 
 Work:
 
-- Move the delay-loop key wakeup behind generic `KeyboardInput` polling.
+- Move the delay-loop key wakeup behind a UI-owned polling query.
 - Keep sleep interval and wakeup behavior unchanged.
 - Keep this separate from `calc_interrupted()` because it is not a
   calculation interrupt.
-- Update `test_wait_until` to use a fake `KeyboardInput`.
+- Update `test_wait_until` to use `MockDriver` for the polling behavior.
 - Remove `misc/Driver.h` includes made unnecessary by the move.
 
 Done when:
@@ -465,9 +419,6 @@ Work:
 - Move inverse-Julia mouse subscribe and unsubscribe calls to `libid/ui`.
 - Move `g_cursor_mouse_tracking` and `g_look_at_mouse` manipulation to
   the UI code that owns the subscription.
-- Add a small `MouseInput` abstract interface for inverse-Julia
-  mouse/cursor state if needed.
-- Expose the active mouse interface as `g_mouse_input`.
 - Keep `jiim.cpp` receiving position updates and "mouse changed" decisions.
 - Remove `ui/mouse.h` from `engine/jiim.cpp`.
 
@@ -486,17 +437,23 @@ This plan leaves the following ideas out of scope for the current polling
 slices.  They should be kept as future direction after direct polling calls
 are moved behind `libid/ui`.
 
+- Convert `Frame`, `WinText`, and `Plot` to wxWidgets controls while the
+  current polling code still pumps GUI events.
+- Add menu-bar support, with blocking text screens still preventing normal
+  menu interaction until they are migrated.
+- Convert blocking text screens to modal dialogs incrementally.  Start with
+  simple numeric input, then form-style prompts, then file-entry screens.
+- After text screens are dialogs, remove the menu-bar blocking workaround.
 - Replace polling-driven calculation with idle-processing callbacks first.
   Treat idle processing as a bridge to later worker-thread or distributed
   rendering, not as wasted work.
 - Plan worker-thread and UI-thread communication as separate follow-up
   work.  Do not mix thread ownership, cancellation, or result delivery into
   this polling-boundary refactor.
-- Consider event callbacks that set calculation interrupt state instead of
-  polling `KeyboardInput` directly.  Keep that as a later implementation
-  choice, after the facade owns the boundary.
-- Convert blocking text screens to modal dialogs incrementally.  Start with
-  simple numeric input, then form-style prompts, then file-entry screens.
+- Replace driver polling in the UI dispatcher with GUI-thread event
+  dispatch to the same handler stack.
+- Let event callbacks set calculation-interrupt state through the active
+  handlers once the engine runs on a worker thread.
 - Build a tool interface for image interaction.  A tool should receive
   mouse, keyboard, and modifier-key events, not only `MouseNotification`
   calls.
@@ -512,12 +469,15 @@ are moved behind `libid/ui`.
 ## Exit Criteria
 
 - `rg "driver_(get_key|key_pressed|wait_key_pressed|unget_key)" \
-  libid/engine libid/fractals` returns no matches.
+  libid/engine libid/fractals libid/geometry libid/io libid/math \
+  libid/misc` returns no matches.
 - `rg "MouseNotification|mouse_subscribe|mouse_unsubscribe" \
-  libid/engine libid/fractals` returns no matches.
+  libid/engine libid/fractals libid/geometry libid/io libid/math \
+  libid/misc` returns no matches.
 - `rg "g_look_at_mouse|g_cursor_mouse_tracking" \
-  libid/engine libid/fractals` returns no matches.
-- `libid/ui` is the only libid layer with direct polling I/O.
+  libid/engine libid/fractals libid/geometry libid/io libid/math \
+  libid/misc` returns no matches.
+- `libid/ui` is the only libid layer with direct keyboard and mouse I/O.
 - Calculation code reports interruption or decisions without owning input.
 - Current behavior is preserved while longer-term architecture stays out of
   scope.

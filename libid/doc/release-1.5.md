@@ -12,16 +12,20 @@ work.
 
 ### [Polling I/O Refactor](inversion-of-control.md)
 
-Move direct keyboard and mouse polling out of calculation code and into
-`libid/ui`, preserving current behavior.
+Move direct keyboard interaction out of engine calculation code and into
+`libid/ui`, preserving current polling behavior.  Also move remaining JIIM
+input ownership out of engine code and into `libid/ui`.
 
 Release boundary:
 
-- Complete slices 1-14.
-- Direct `Driver` key calls no longer appear under `libid/engine` or
-  `libid/fractals`.
-- Inverse-Julia mouse handling is owned by `libid/ui`.
-- Keep future event-driven and tool-stack work out of 1.5.
+- Complete the keyboard handler-stack slices needed for engine code to stop
+  interpreting keys directly.
+- Only `libid/ui` directly interacts with keyboard and mouse input.
+- Direct `Driver` key calls no longer appear outside `libid/ui` and driver
+  classes.
+- Remaining JIIM keyboard and mouse input code is owned by `libid/ui`.
+- Keep modal dialogs, event dispatch, worker threading, and tool-stack work
+  out of 1.5.
 
 ### [SIMD Phase 1](simd-highway.md)
 
@@ -42,4 +46,6 @@ Release boundary:
 - SIMD Phase 3 non-standard renderers.
 - BF formula parser work.
 - Network and distributed rendering.
+- Modal dialog conversion.
+- Event-driven GUI dispatch and worker-thread rendering.
 - Broad global-state refactoring outside the included work.
