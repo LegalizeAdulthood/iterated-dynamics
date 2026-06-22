@@ -13,6 +13,9 @@ hc/AsciiDocCompiler.cpp:34:9: note: First condition
 hc/AsciiDocCompiler.cpp:38:9: note: Second condition
     if (!g_errors)
         ^
+hc/AsciiDocCompiler.cpp:125:25: style: Condition 'anchor.empty()' is always false [knownConditionTrueFalse]
+        if (anchor.empty())
+                        ^
 hc/HelpCompiler.cpp:1532:9: style: The if condition is the same as the previous if condition [duplicateCondition]
     if (!g_errors)
         ^
@@ -3418,10 +3421,10 @@ tests/libid/engine/test_cmdfiles.cpp:1345:49: note: 'saved_browse_name' is assig
 tests/libid/engine/test_cmdfiles.cpp:1353:5: note: The comparison 'saved_browse_name == g_browse.name' is always true because 'saved_browse_name' and 'g_browse.name' represent the same value.
     EXPECT_EQ(saved_browse_name, g_browse.name);
     ^
-tests/libid/fractals/test_fractalp.cpp:254:20: style: Unused variable: reset_parser [unusedVariable]
+tests/libid/fractals/test_fractalp.cpp:368:20: style: Unused variable: reset_parser [unusedVariable]
     ParserResetter reset_parser;
                    ^
-tests/libid/fractals/test_fractalp.cpp:269:20: style: Unused variable: reset_parser [unusedVariable]
+tests/libid/fractals/test_fractalp.cpp:383:20: style: Unused variable: reset_parser [unusedVariable]
     ParserResetter reset_parser;
                    ^
 tests/tools/image_compare.cpp:54:26: error: The address of local variable 'pixels' is accessed at non-zero index. [objectIndex]

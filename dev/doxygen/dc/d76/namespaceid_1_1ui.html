@@ -106,6 +106,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d68/structid_1_1ui_1_1GetFileEntry.html">GetFileEntry</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/de6/classid_1_1ui_1_1KeyboardHandler.html">KeyboardHandler</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/db5/structid_1_1ui_1_1KeyMnemonic.html">KeyMnemonic</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d34/structid_1_1ui_1_1MainContext.html">MainContext</a></td></tr>
@@ -134,6 +136,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d5f/classid_1_1ui_1_1RGBEditorNotification.html">RGBEditorNotification</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/d95/classid_1_1ui_1_1ScopedKeyboardHandler.html">ScopedKeyboardHandler</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/dad/structid_1_1ui_1_1StereoData.html">StereoData</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d9/de8/classid_1_1ui_1_1StereoSaveRestore.html">StereoSaveRestore</a></td></tr>
@@ -149,6 +153,8 @@ Typedefs</h2></td></tr>
 <tr class="separator:a60f40e884dc0c32865f718e1abcf08de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a885fe1c9ea99478c84fbf4101df76b47" id="r_a885fe1c9ea99478c84fbf4101df76b47"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a885fe1c9ea99478c84fbf4101df76b47">CheckKey</a> = int(int key, int choice)</td></tr>
 <tr class="separator:a885fe1c9ea99478c84fbf4101df76b47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e073219250ba8f17eba8e2c3158b864" id="r_a5e073219250ba8f17eba8e2c3158b864"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a> = std::shared_ptr&lt; <a class="el" href="../../dc/de6/classid_1_1ui_1_1KeyboardHandler.html">KeyboardHandler</a> &gt;</td></tr>
+<tr class="separator:a5e073219250ba8f17eba8e2c3158b864"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acaead30b3b330a69c0419009b8c37ffb" id="r_acaead30b3b330a69c0419009b8c37ffb"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#acaead30b3b330a69c0419009b8c37ffb">MouseNotificationPtr</a> = std::shared_ptr&lt; <a class="el" href="../../dd/df9/classid_1_1ui_1_1MouseNotification.html">MouseNotification</a> &gt;</td></tr>
 <tr class="separator:acaead30b3b330a69c0419009b8c37ffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a660443d33fe1d397fa38e81ffe1e9526" id="r_a660443d33fe1d397fa38e81ffe1e9526"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a660443d33fe1d397fa38e81ffe1e9526">SlideClock</a> = std::chrono::steady_clock</td></tr>
@@ -694,6 +700,16 @@ Functions</h2></td></tr>
 <tr class="separator:a9e5b3e8dea9ec734ded845aa6e2cd2aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae207042bd1d6e583eb916f78118b5286" id="r_ae207042bd1d6e583eb916f78118b5286"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ae207042bd1d6e583eb916f78118b5286">inverse_julia_fractal_type</a> ()</td></tr>
 <tr class="separator:ae207042bd1d6e583eb916f78118b5286"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6caaf1d9730fa285b3d84310e0a3051" id="r_ae6caaf1d9730fa285b3d84310e0a3051"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ae6caaf1d9730fa285b3d84310e0a3051">push_keyboard_handler</a> (<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a> handler)</td></tr>
+<tr class="separator:ae6caaf1d9730fa285b3d84310e0a3051"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac695de5cc58cc14860e6004c8ce9a627" id="r_ac695de5cc58cc14860e6004c8ce9a627"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ac695de5cc58cc14860e6004c8ce9a627">pop_keyboard_handler</a> (const <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a> &amp;handler)</td></tr>
+<tr class="separator:ac695de5cc58cc14860e6004c8ce9a627"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98023311e694a654472136501fe53317" id="r_a98023311e694a654472136501fe53317"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a98023311e694a654472136501fe53317">set_calc_interrupted</a> ()</td></tr>
+<tr class="separator:a98023311e694a654472136501fe53317"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5b1c33ff31d4f266fbdc2c3bfd6aed2" id="r_ae5b1c33ff31d4f266fbdc2c3bfd6aed2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">reset_calc_interrupted</a> ()</td></tr>
+<tr class="separator:ae5b1c33ff31d4f266fbdc2c3bfd6aed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a538a23a444bdd84a2b88109eb208d32e" id="r_a538a23a444bdd84a2b88109eb208d32e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a538a23a444bdd84a2b88109eb208d32e">calc_interrupted</a> ()</td></tr>
+<tr class="separator:a538a23a444bdd84a2b88109eb208d32e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6d64b6affcaa911d618ddf957d89540" id="r_af6d64b6affcaa911d618ddf957d89540"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#af6d64b6affcaa911d618ddf957d89540">main_menu</a> (bool full_menu)</td></tr>
 <tr class="separator:af6d64b6affcaa911d618ddf957d89540"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ea6f91a6979c6025d6836f30f619518" id="r_a8ea6f91a6979c6025d6836f30f619518"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ad33b7b3fa99f680abe13ec0053a38b1a">MainState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a8ea6f91a6979c6025d6836f30f619518">main_menu_switch</a> (<a class="el" href="../../df/d34/structid_1_1ui_1_1MainContext.html">MainContext</a> &amp;context)</td></tr>
@@ -1173,6 +1189,22 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../d4/dfc/full__screen__choice_8h_source.html#l00047">47</a> of file <a class="el" href="../../d4/dfc/full__screen__choice_8h_source.html">full_screen_choice.h</a>.</p>
+
+</div>
+</div>
+<a id="a5e073219250ba8f17eba8e2c3158b864" name="a5e073219250ba8f17eba8e2c3158b864"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e073219250ba8f17eba8e2c3158b864">&#9670;&#160;</a></span>KeyboardHandlerPtr</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">id::ui::KeyboardHandlerPtr</a> = typedef std::shared_ptr&lt;<a class="el" href="../../dc/de6/classid_1_1ui_1_1KeyboardHandler.html">KeyboardHandler</a>&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d9/dec/KeyboardHandler_8h_source.html#l00018">18</a> of file <a class="el" href="../../d9/dec/KeyboardHandler_8h_source.html">KeyboardHandler.h</a>.</p>
 
 </div>
 </div>
@@ -2226,6 +2258,25 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../d1/d31/stop__msg_8h_source.html#l00028">28</a> of file <a class="el" href="../../d1/d31/stop__msg_8h_source.html">stop_msg.h</a>.</p>
+
+</div>
+</div>
+<a id="a538a23a444bdd84a2b88109eb208d32e" name="a538a23a444bdd84a2b88109eb208d32e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a538a23a444bdd84a2b88109eb208d32e">&#9670;&#160;</a></span>calc_interrupted()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool id::ui::calc_interrupted </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00073">73</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>
@@ -6038,6 +6089,26 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ac695de5cc58cc14860e6004c8ce9a627" name="ac695de5cc58cc14860e6004c8ce9a627"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac695de5cc58cc14860e6004c8ce9a627">&#9670;&#160;</a></span>pop_keyboard_handler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::ui::pop_keyboard_handler </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a> &amp;&#160;</td>
+          <td class="paramname"><em>handler</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00052">52</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a776855881398c5bb889103552dc254a1" name="a776855881398c5bb889103552dc254a1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a776855881398c5bb889103552dc254a1">&#9670;&#160;</a></span>pot_start_disk()</h2>
 
@@ -6076,6 +6147,26 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../da/d7f/make__batch__file_8cpp_source.html#l00128">128</a> of file <a class="el" href="../../da/d7f/make__batch__file_8cpp_source.html">make_batch_file.cpp</a>.</p>
+
+</div>
+</div>
+<a id="ae6caaf1d9730fa285b3d84310e0a3051" name="ae6caaf1d9730fa285b3d84310e0a3051"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6caaf1d9730fa285b3d84310e0a3051">&#9670;&#160;</a></span>push_keyboard_handler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::ui::push_keyboard_handler </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a>&#160;</td>
+          <td class="paramname"><em>handler</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00046">46</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>
@@ -6581,6 +6672,25 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
 
 </div>
 </div>
+<a id="ae5b1c33ff31d4f266fbdc2c3bfd6aed2" name="ae5b1c33ff31d4f266fbdc2c3bfd6aed2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">&#9670;&#160;</a></span>reset_calc_interrupted()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::ui::reset_calc_interrupted </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00068">68</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
+
+</div>
+</div>
 <a id="a3a20629ed4a8176a7210a38e77420321" name="a3a20629ed4a8176a7210a38e77420321"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3a20629ed4a8176a7210a38e77420321">&#9670;&#160;</a></span>reset_zoom_corners()</h2>
 
@@ -6830,6 +6940,25 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../de/d40/select__video__mode_8cpp_source.html#l00086">86</a> of file <a class="el" href="../../de/d40/select__video__mode_8cpp_source.html">select_video_mode.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a98023311e694a654472136501fe53317" name="a98023311e694a654472136501fe53317"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98023311e694a654472136501fe53317">&#9670;&#160;</a></span>set_calc_interrupted()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::ui::set_calc_interrupted </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00063">63</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>

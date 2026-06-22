@@ -1,7 +1,28 @@
 var searchData=
 [
-  ['newton_2ecpp_0',['newton.cpp',['../dc/dac/newton_8cpp.html',1,'']]],
-  ['newton_2eh_1',['newton.h',['../d5/da2/newton_8h.html',1,'']]],
-  ['not_5fdisk_5fmsg_2ecpp_2',['not_disk_msg.cpp',['../d3/d51/not__disk__msg_8cpp.html',1,'']]],
-  ['not_5fdisk_5fmsg_2eh_3',['not_disk_msg.h',['../d0/dd7/not__disk__msg_8h.html',1,'']]]
+  ['magnet_2ecpp_0',['magnet.cpp',['../d1/d12/magnet_8cpp.html',1,'']]],
+  ['magnet_2eh_1',['magnet.h',['../d5/dcc/magnet_8h.html',1,'']]],
+  ['main_5fmenu_2ecpp_2',['main_menu.cpp',['../df/dd3/main__menu_8cpp.html',1,'']]],
+  ['main_5fmenu_2eh_3',['main_menu.h',['../d9/de5/main__menu_8h.html',1,'']]],
+  ['main_5fmenu_5fswitch_2ecpp_4',['main_menu_switch.cpp',['../d5/d8f/main__menu__switch_8cpp.html',1,'']]],
+  ['main_5fmenu_5fswitch_2eh_5',['main_menu_switch.h',['../d3/d37/main__menu__switch_8h.html',1,'']]],
+  ['main_5fstate_2eh_6',['main_state.h',['../d2/d03/main__state_8h.html',1,'']]],
+  ['make_5fbatch_5ffile_2ecpp_7',['make_batch_file.cpp',['../da/d7f/make__batch__file_8cpp.html',1,'']]],
+  ['make_5fbatch_5ffile_2eh_8',['make_batch_file.h',['../de/df3/make__batch__file_8h.html',1,'']]],
+  ['make_5fmig_2ecpp_9',['make_mig.cpp',['../d1/db8/make__mig_8cpp.html',1,'']]],
+  ['make_5fmig_2eh_10',['make_mig.h',['../dc/d59/make__mig_8h.html',1,'']]],
+  ['make_5fmig_5fscript_2eh_11',['make_mig_script.h',['../d9/d4a/make__mig__script_8h.html',1,'']]],
+  ['make_5fmig_5fscript_5funix_2ecpp_12',['make_mig_script_unix.cpp',['../dc/d01/make__mig__script__unix_8cpp.html',1,'']]],
+  ['make_5fmig_5fscript_5fwindows_2ecpp_13',['make_mig_script_windows.cpp',['../d3/d60/make__mig__script__windows_8cpp.html',1,'']]],
+  ['mandelbrot_5fmix_2ecpp_14',['mandelbrot_mix.cpp',['../da/d08/mandelbrot__mix_8cpp.html',1,'']]],
+  ['mandelbrot_5fmix_2eh_15',['mandelbrot_mix.h',['../db/d45/mandelbrot__mix_8h.html',1,'']]],
+  ['memory_2ecpp_16',['memory.cpp',['../d8/d71/memory_8cpp.html',1,'']]],
+  ['memory_2eh_17',['memory.h',['../dc/d18/memory_8h.html',1,'']]],
+  ['menu_5fhandler_2ecpp_18',['menu_handler.cpp',['../d0/de9/menu__handler_8cpp.html',1,'']]],
+  ['menu_5fhandler_2eh_19',['menu_handler.h',['../dc/d2c/menu__handler_8h.html',1,'']]],
+  ['messages_2ecpp_20',['messages.cpp',['../de/d23/messages_8cpp.html',1,'']]],
+  ['messages_2eh_21',['messages.h',['../d5/d48/messages_8h.html',1,'']]],
+  ['modes_2eh_22',['modes.h',['../d9/daa/modes_8h.html',1,'']]],
+  ['mouse_2ecpp_23',['mouse.cpp',['../d1/d75/mouse_8cpp.html',1,'']]],
+  ['mouse_2eh_24',['mouse.h',['../dc/ded/mouse_8h.html',1,'']]]
 ];

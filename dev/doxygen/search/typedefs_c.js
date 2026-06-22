@@ -1,11 +1,14 @@
 var searchData=
 [
-  ['s16_0',['S16',['../df/d6d/namespaceid_1_1misc.html#abc9dba2740d98d48adbadf1873bc9e04',1,'id::misc']]],
-  ['s32_1',['S32',['../df/d6d/namespaceid_1_1misc.html#ac8684cb41871181a0be72c3a98d56840',1,'id::misc']]],
-  ['s8_2',['S8',['../df/d6d/namespaceid_1_1misc.html#a7801b752519dbbca0440dc5dab21f569',1,'id::misc']]],
-  ['slideclock_3',['SlideClock',['../dc/d76/namespaceid_1_1ui.html#a660443d33fe1d397fa38e81ffe1e9526',1,'id::ui']]],
-  ['slideduration_4',['SlideDuration',['../dc/d76/namespaceid_1_1ui.html#a2f7c5d976c7a8ea7e91bafef67f269c0',1,'id::ui']]],
-  ['speedprompt_5',['SpeedPrompt',['../dc/d76/namespaceid_1_1ui.html#a60f40e884dc0c32865f718e1abcf08de',1,'id::ui']]],
-  ['stopmsg_6',['StopMsg',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a77a7ead6474fc7d488092c591b3cac05',1,'id::engine::cmd_files_test']]],
-  ['stopmsgfn_7',['StopMsgFn',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#a769688215ff166356b98c8e456d18b2d',1,'id::engine::cmd_files_test']]]
+  ['pathlist_0',['PathList',['../d0/d19/namespaceid_1_1io.html#a3c34d28fdd8c8594080ea05d591a9410',1,'id::io']]],
+  ['perimage_1',['PerImage',['../d5/d38/namespaceid_1_1fractals.html#abb0e3584c8a0fd551fea5010f1f892f2',1,'id::fractals']]],
+  ['perpixel_2',['PerPixel',['../d5/d38/namespaceid_1_1fractals.html#a595f4ac4594c5dca1de33379d67ddb99',1,'id::fractals']]],
+  ['perturbationpoint_3',['PerturbationPoint',['../d5/d38/namespaceid_1_1fractals.html#a7d9f2b5c060adabf26facc5e2ca3c704',1,'id::fractals']]],
+  ['perturbationreference_4',['PerturbationReference',['../d5/d38/namespaceid_1_1fractals.html#ab71e7cff66d67807e187052ec037ac18',1,'id::fractals']]],
+  ['perturbationreferencebf_5',['PerturbationReferenceBF',['../d5/d38/namespaceid_1_1fractals.html#a23c20f8293abe5df1f25bad0dcaa8a71',1,'id::fractals']]],
+  ['plotfn_6',['PlotFn',['../d5/d38/namespaceid_1_1fractals.html#a89d009a25ef537cd6fd1428da1f78643',1,'id::fractals']]],
+  ['point2i_7',['Point2i',['../d0/db0/namespaceid_1_1math.html#a8d72fde170f940da4ee5505076ad62f4',1,'id::math']]],
+  ['pointcolor_8',['PointColor',['../d6/daa/namespaceid_1_1geometry.html#ab894bfd7131b036ca9dd5e305fb0f649',1,'id::geometry']]],
+  ['printdoc_9',['PrintDoc',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#ad5d2f2a0b7dd9c27a51a6fbeed729576',1,'id::engine::cmd_files_test']]],
+  ['printdocfn_10',['printdocfn',['../da/d59/namespaceid_1_1engine_1_1cmd__files__test.html#af677eab029e56cd688cb514817e07d49',1,'id::engine::cmd_files_test::PrintDocFn'],['../d0/d5f/namespaceid_1_1help.html#a9dfdb17fb3bcedab2987cde6db8c0427',1,'id::help::PrintDocFn']]]
 ];
