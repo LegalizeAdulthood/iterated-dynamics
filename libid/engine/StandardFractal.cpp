@@ -19,7 +19,6 @@
 #include "engine/tesseral.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
-#include "ui/check_key.h"
 #include "ui/diskvid.h"
 
 #include <cassert>
@@ -190,11 +189,6 @@ void StandardFractal::run_current_work_item()
 
     if (done())
     {
-        return;
-    }
-    if (ui::check_key())
-    {
-        suspend();
         return;
     }
     if (g_num_work_list == 0)

@@ -37,7 +37,6 @@
 #include "engine/solid_guess.h"
 #include "engine/sound.h"
 #include "engine/spindac.h"
-#include "engine/StandardFractal.h"
 #include "engine/sticky_orbits.h"
 #include "engine/tesseral.h"
 #include "engine/UserData.h"
@@ -67,6 +66,7 @@
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
 #include "ui/frothy_basin.h"
+#include "ui/standard_fractal.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
 
@@ -827,12 +827,7 @@ int calc_fract()
     init_calc_fract();
     if (static_calc_type_uses_standard_engine())
     {
-        StandardFractal standard_fractal;
-        standard_fractal.resume();
-        while (!standard_fractal.done())
-        {
-            standard_fractal.iterate();
-        }
+        standard_fractal();
     }
     else
     {
