@@ -20,6 +20,7 @@ Release boundary:
 
 - Complete the `StandardFractal` wrapper slices needed for standard
   rendering to follow the existing UI/calculation-object pattern.
+- Complete the FrothyBasin wrapper slice so it follows the same pattern.
 - Complete the keyboard handler-stack support needed by the standard UI
   wrapper.
 - Only `libid/ui` directly interacts with keyboard and mouse input.

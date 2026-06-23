@@ -51,8 +51,9 @@ libid/fractals/<Type>.cpp or libid/engine/<Type>.cpp
 ```
 
 `libid/ui/inverse_julia.cpp` is close, but JIIM still has engine-side
-keyboard and mouse ownership.  `libid/ui/frothy_basin.cpp` is not this
-pattern; it is still a UI-side per-pixel helper that calls `check_key()`.
+keyboard and mouse ownership.  `libid/ui/frothy_basin.cpp` is another
+near-match: FrothyBasin has a calculation object, but the UI file is still
+a per-pixel calc-type helper that the engine calls for keyboard checks.
 
 ## Target Shape
 
@@ -76,6 +77,11 @@ public:
 includes the current standard pass, work list position, active rectangle,
 active row and column, and the active pixel's orbit state when a pixel
 needs to yield before it is finished.
+
+`StandardFractal` also owns the standard-mode dispatch currently selected
+by `g_std_calc_mode`, including synchronous orbit, Tesseral, boundary
+trace, solid guessing, diffusion scan, orbit mode, perturbation, and the
+one-pass and two-pass paths.
 
 The UI wrapper owns input policy.  It constructs or resumes
 `StandardFractal`, polls input through the active UI context, asks the
@@ -183,6 +189,8 @@ Work:
 
 - Move work-list setup, resume, pop, and completion state from
   `libid/engine/calcfrac.cpp:938-1228` into `StandardFractal`.
+- Move the standard-mode dispatch from
+  `libid/engine/calcfrac.cpp:1170-1208` into `StandardFractal`.
 - Make `iterate()` advance a bounded unit of work instead of running the
   whole work list.
 - Make `done()` report whether all standard phases and work-list items are
@@ -284,11 +292,14 @@ Work:
 
 - Move active pixel state from
   `libid/engine/calcfrac.cpp:1323-2030` into `StandardFractal`.
+- Include Tesseral's bounded box state from `libid/engine/tesseral.cpp`.
 - Replace the `check_key()` calls at
   `libid/engine/calcfrac.cpp:1477` and
-  `libid/engine/calcfrac.cpp:1996` by returning from
+  `libid/engine/calcfrac.cpp:1996`, and
+  `libid/engine/tesseral.cpp:371`, by returning from
   `StandardFractal::iterate()`.
 - Make a long-running pixel advance in bounded orbit chunks.
+- Make a long-running Tesseral pass advance in bounded box chunks.
 - Keep color, potential, distance-estimator, sound, and orbit-save side
   effects unchanged.
 - Preserve the current bailout and periodicity behavior.
@@ -296,12 +307,15 @@ Work:
 Done when:
 
 - The standard pixel path has no direct keyboard polling.
+- The Tesseral standard-mode path has no direct keyboard polling.
 - Long-running standard pixels can yield back to the UI wrapper.
+- Long-running Tesseral work can yield back to the UI wrapper.
 - Pixel-local state survives across calls to `iterate()`.
 
 Manual testing:
 
 - Render a deep or high-iteration Mandelbrot image and interrupt it.
+- Render with `passes=t` and interrupt it.
 - Toggle orbit display during a slow render.
 - Resume and confirm the image completes correctly.
 
@@ -323,16 +337,46 @@ Done when:
 - `StandardFractal` owns standard iteration state.
 - `calcfrac.cpp` no longer calls direct keyboard polling for standard
   rendering.
+- `tesseral.cpp` no longer calls direct keyboard polling.
 
 Manual testing:
 
 - Render standard Mandelbrot, Julia, formula, and Newton examples.
+- Render a Tesseral-pass image.
 - Interrupt and resume at least one one-pass and one two-pass image.
 - Verify orbit toggling during standard rendering.
 
+### Slice 8: Move FrothyBasin To Wrapper Shape
+
+Work:
+
+- Reshape `libid/ui/frothy_basin.cpp:14-29` from a per-pixel calc-type
+  helper into a UI wrapper around `fractals::FrothyBasin`.
+- Move the keyboard-check cadence from
+  `libid/fractals/FrothyBasin.cpp:202-218` into the UI wrapper.
+- Extend `fractals::FrothyBasin` with the state needed for
+  `resume()`, `suspend()`, `done()`, and `iterate()`.
+- Keep FrothyBasin color, attractor, palette, and orbit-in-window behavior
+  unchanged.
+- Remove the need for `libid/fractals/fractalp.cpp:1641-1650` to dispatch
+  a UI per-pixel helper as the calculation type.
+
+Done when:
+
+- FrothyBasin follows the same UI-wrapper/calculation-object structure as
+  the existing converted types.
+- FrothyBasin keyboard polling is owned by its UI wrapper.
+- The engine no longer calls a UI per-pixel FrothyBasin calc type.
+
+Manual testing:
+
+- Render a FrothyBasin image.
+- Interrupt and resume a FrothyBasin render.
+- Use orbit-in-window behavior for FrothyBasin.
+
 ## JIIM Slices
 
-### Slice 8: Move Inverse-Julia Keyboard Context
+### Slice 9: Move Inverse-Julia Keyboard Context
 
 Work:
 
@@ -355,7 +399,7 @@ Manual testing:
 - Save from the modal context.
 - Exit and confirm the following UI command behavior is unchanged.
 
-### Slice 9: Move JIIM Mouse Handling
+### Slice 10: Move JIIM Mouse Handling
 
 Work:
 
@@ -386,7 +430,7 @@ These slices happen after the standard renderer has the UI wrapper shape.
 They should use the same rule: move input ownership to `libid/ui`; leave
 calculation code with state, decisions, and return values.
 
-### Slice 10: Move Pure Render Interrupt Probes
+### Slice 11: Move Pure Render Interrupt Probes
 
 Work:
 
@@ -408,7 +452,7 @@ Manual testing:
 - Render one example for each changed path.
 - Interrupt each render and confirm the outer UI resumes control.
 
-### Slice 11: Move Lorenz UI Prompts
+### Slice 12: Move Lorenz UI Prompts
 
 Work:
 
@@ -431,7 +475,7 @@ Manual testing:
 - Render a Lorenz orbit and interrupt it.
 - Exercise photographer-mode save with repeated `s` or `S`.
 
-### Slice 12: Move Non-Interrupt Pending-Key Queries
+### Slice 13: Move Non-Interrupt Pending-Key Queries
 
 Work:
 
@@ -512,7 +556,10 @@ are moved behind `libid/ui`.
 
 - Standard escape-time rendering is driven by a UI wrapper around
   `StandardFractal`.
-- `StandardFractal` owns standard renderer iteration and resume state.
+- `StandardFractal` owns standard renderer iteration, mode dispatch, and
+  resume state.
+- FrothyBasin is driven by a UI wrapper around its calculation object, not
+  by an engine-called UI per-pixel helper.
 - `rg "driver_(get_key|key_pressed|wait_key_pressed|unget_key)" \
   libid/engine libid/fractals libid/geometry libid/io libid/math \
   libid/misc` returns no matches.
