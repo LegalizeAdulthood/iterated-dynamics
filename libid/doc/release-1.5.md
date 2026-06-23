@@ -18,8 +18,10 @@ input ownership out of engine code and into `libid/ui`.
 
 Release boundary:
 
-- Complete the keyboard handler-stack slices needed for engine code to stop
-  interpreting keys directly.
+- Complete the `StandardFractal` wrapper slices needed for standard
+  rendering to follow the existing UI/calculation-object pattern.
+- Complete the keyboard handler-stack support needed by the standard UI
+  wrapper.
 - Only `libid/ui` directly interacts with keyboard and mouse input.
 - Direct `Driver` key calls no longer appear outside `libid/ui` and driver
   classes.
