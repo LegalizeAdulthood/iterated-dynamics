@@ -113,13 +113,15 @@ enum class ShowDotDirection
     UPPER_LEFT = 4
 };
 
-void perform_work_list();
 static void decomposition();
-static void set_symmetry(SymmetryType sym, bool use_list);
+void set_symmetry(SymmetryType sym, bool use_list);
 static bool x_sym_split(int x_axis_row, bool x_axis_between);
 static bool y_sym_split(int y_axis_col, bool y_axis_between);
 static void put_true_color_disk(int x, int y, int color);
-static long auto_log_map();
+long auto_log_map();
+void cleanup_standard_fractal_show_dot();
+void setup_standard_fractal_distance_estimator();
+void setup_standard_fractal_show_dot();
 
 static DComplex s_saved{};            //
 static double s_rq_lim_save{};        //
@@ -759,18 +761,12 @@ static bool static_calc_type_uses_standard_engine()
         || table_calc_type == froth_type;
 }
 
-static bool static_calc_type_supports_orbit_mode()
-{
-    const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
-    return table_calc_type == standard_fractal_type;
-}
-
 static void calc_non_standard_fractal()
 {
     g_dispatch.init_calc_type(*g_cur_fractal_specific);
     // per_image can override
-    g_symmetry = g_cur_fractal_specific->symmetry;            // table symmetry
-    g_plot = g_put_color;                                     // defaults when setsymmetry not called or does nothing
+    g_symmetry = g_cur_fractal_specific->symmetry; // table symmetry
+    g_plot = g_put_color;                          // defaults when setsymmetry not called or does nothing
     g_begin_pt.x = 0;
     g_begin_pt.y = 0;
     g_start_pt.x = 0;
@@ -880,312 +876,151 @@ bool select_alternate_math_dispatch()
     return false;
 }
 
-static void work_list_pop_front()
+void setup_standard_fractal_distance_estimator()
 {
-    assert(g_num_work_list > 0);
-    --g_num_work_list;
-    for (int i = 0; i < g_num_work_list; ++i)
+    double d_x_size;
+    double d_y_size;
+    double aspect;
+    if (g_distance_estimator_x_dots && g_distance_estimator_y_dots)
     {
-        g_work_list[i] = g_work_list[i + 1];
-    }
-}
-
-// general escape-time engine routines
-void perform_work_list()
-{
-    ValueSaver saved_dispatch{g_dispatch};
-
-    select_alternate_math_dispatch();
-
-    if (g_potential.flag && g_potential.store_16bit)
-    {
-        const CalcMode tmp_calc_mode = g_std_calc_mode;
-
-        g_std_calc_mode = CalcMode::ONE_PASS; // force 1 pass
-        if (!g_resuming)
-        {
-            if (pot_start_disk() < 0)
-            {
-                g_potential.store_16bit = false;       // startdisk failed or cancelled
-                g_std_calc_mode = tmp_calc_mode; // maybe we can carry on???
-            }
-        }
-    }
-    if (g_std_calc_mode == CalcMode::BOUNDARY_TRACE && bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_TRACE))
-    {
-        g_std_calc_mode = CalcMode::ONE_PASS;
-    }
-    if (g_std_calc_mode == CalcMode::SOLID_GUESS && bit_set(g_cur_fractal_specific->flags, FractalFlags::NO_GUESS))
-    {
-        g_std_calc_mode = CalcMode::ONE_PASS;
-    }
-    if (g_std_calc_mode == CalcMode::ORBIT && !static_calc_type_supports_orbit_mode())
-    {
-        g_std_calc_mode = CalcMode::ONE_PASS;
-    }
-
-    // default set up a new worklist
-    g_num_work_list = 0;
-    add_work_list({0, 0}, {g_logical_screen.x_dots - 1, g_logical_screen.y_dots - 1}, {0, 0}, 0, 0);
-    if (g_resuming) // restore worklist, if we can't the above will stay in place
-    {
-        const int version = start_resume();
-        get_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
-        end_resume();
-        if (version < 2)
-        {
-            g_begin_pt.x = 0;
-        }
-    }
-
-    if (g_distance_estimator) // setup stuff for distance estimator
-    {
-        double d_x_size;
-        double d_y_size;
-        double aspect;
-        if (g_distance_estimator_x_dots && g_distance_estimator_y_dots)
-        {
-            aspect = static_cast<double>(g_distance_estimator_y_dots) /
-                static_cast<double>(g_distance_estimator_x_dots);
-            d_x_size = g_distance_estimator_x_dots-1;
-            d_y_size = g_distance_estimator_y_dots-1;
-        }
-        else
-        {
-            aspect = static_cast<double>(g_logical_screen.y_dots) / static_cast<double>(g_logical_screen.x_dots);
-            d_x_size = g_logical_screen.x_dots-1;
-            d_y_size = g_logical_screen.y_dots-1;
-        }
-
-        const DComplex del{g_image_region.m_max - g_image_region.m_3rd}; // calculate stepsizes
-        const DComplex del2{g_image_region.size3()};
-        const double del_xx2 = del2.x / d_y_size;
-        const double del_yy2 = del2.y / d_x_size;
-
-        g_use_old_distance_estimator = false;
-        g_magnitude_limit = s_rq_lim_save; // just in case changed to DEM_BAILOUT earlier
-        if (g_distance_estimator != 1 || g_colors == 2)   // not doing regular outside colors
-        {
-            g_magnitude_limit = std::max(g_magnitude_limit, DEM_BAILOUT);
-        }
-        // must be mandel type, formula, or old PAR/GIF
-        s_dem_mandel = g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL
-            || g_use_old_distance_estimator
-            || g_fractal_type == FractalType::FORMULA;
-        s_dem_delta = sqr(del.x) + sqr(del_yy2);
-        double f_temp = sqr(del.y) + sqr(del_xx2);
-        s_dem_delta = std::max(f_temp, s_dem_delta);
-        if (g_distance_estimator_width_factor == 0)
-        {
-            g_distance_estimator_width_factor = 1;
-        }
-        f_temp = g_distance_estimator_width_factor;
-        if (g_distance_estimator_width_factor > 0)
-        {
-            s_dem_delta *= sqr(f_temp)/10000; // multiply by thickness desired
-        }
-        else
-        {
-            s_dem_delta *= 1/(sqr(f_temp)*10000); // multiply by thickness desired
-        }
-        const DComplex size{g_image_region.size()};
-        const DComplex size3{g_image_region.size3()};
-        s_dem_width = (std::sqrt(sqr(size.x) + sqr(size3.x)) * aspect
-                     + std::sqrt(sqr(size.y) + sqr(size3.y))) / g_distance_estimator;
-        f_temp = g_magnitude_limit < DEM_BAILOUT ? DEM_BAILOUT : g_magnitude_limit;
-        f_temp += 3; // bailout plus just a bit
-        const double f_temp2 = std::log(f_temp);
-        if (g_use_old_distance_estimator)
-        {
-            s_dem_too_big = sqr(f_temp) * sqr(f_temp2) * 4 / s_dem_delta;
-        }
-        else
-        {
-            s_dem_too_big = std::abs(f_temp) * std::abs(f_temp2) * 2 / std::sqrt(s_dem_delta);
-        }
-    }
-
-    while (g_num_work_list > 0)
-    {
-        g_dispatch.init_calc_type(*g_cur_fractal_specific); // per_image can override
-        g_symmetry = g_cur_fractal_specific->symmetry;      // table symmetry
-        g_plot = g_put_color; // defaults when set symmetry not called or does nothing
-
-        // pull top entry off work list
-        g_start_pt.x = g_work_list[0].start.x;
-        g_start_pt.y = g_work_list[0].start.y;
-        g_i_start_pt.x = g_work_list[0].start.x;
-        g_i_start_pt.y = g_work_list[0].start.y;
-        g_stop_pt.x = g_work_list[0].stop.x;
-        g_stop_pt.y = g_work_list[0].stop.y;
-        g_i_stop_pt.x = g_work_list[0].stop.x;
-        g_i_stop_pt.y = g_work_list[0].stop.y;
-        g_begin_pt.x = g_work_list[0].begin.x;
-        g_begin_pt.y = g_work_list[0].begin.y;
-        g_work_pass = g_work_list[0].pass;
-        g_work_symmetry = g_work_list[0].symmetry;
-        work_list_pop_front();
-
-        g_calc_status = CalcStatus::IN_PROGRESS; // mark as in-progress
-
-        per_image();
-        if (g_show_dot >= 0)
-        {
-            find_special_colors();
-            switch (g_auto_show_dot)
-            {
-            case AutoShowDot::DARK:
-                s_show_dot_color = g_color_dark % g_colors;
-                break;
-            case AutoShowDot::MEDIUM:
-                s_show_dot_color = g_color_medium % g_colors;
-                break;
-            case AutoShowDot::BRIGHT:
-            case AutoShowDot::AUTOMATIC:
-                s_show_dot_color = g_color_bright % g_colors;
-                break;
-            case AutoShowDot::NONE:
-                s_show_dot_color = g_show_dot % g_colors;
-                break;
-            }
-            if (g_size_dot <= 0)
-            {
-                s_show_dot_width = -1;
-            }
-            else
-            {
-                // Arbitrary sanity limit, however s_show_dot_width will
-                // overflow if width gets near 256.
-                if (const double width = static_cast<double>(g_size_dot) * g_logical_screen.x_dots / 1024.0;
-                    width > 150.0)
-                {
-                    s_show_dot_width = 150;
-                }
-                else if (width > 0.0)
-                {
-                    s_show_dot_width = static_cast<int>(width);
-                }
-                else
-                {
-                    s_show_dot_width = -1;
-                }
-            }
-            while (s_show_dot_width >= 0)
-            {
-                // We're using near memory, so get the amount down
-                // to something reasonable. The polynomial used to
-                // calculate savedotslen is exactly right for the
-                // triangular-shaped shotdot cursor. The that cursor
-                // is changed, this formula must match.
-                while ((s_save_dots_len = sqr(s_show_dot_width) + 5*s_show_dot_width + 4) > 1000)
-                {
-                    s_show_dot_width--;
-                }
-                bool resized = false;
-                try
-                {
-                    s_save_dots.resize(s_save_dots_len);
-                    resized = true;
-                }
-                catch (const std::bad_alloc &)
-                {
-                }
-
-                if (resized)
-                {
-                    s_save_dots_len /= 2;
-                    s_fill_buff = s_save_dots.data() + s_save_dots_len;
-                    std::memset(s_fill_buff, s_show_dot_color, s_save_dots_len);
-                    break;
-                }
-                // There's even less free memory than we thought, so reduce
-                // showdot_width still more
-                s_show_dot_width--;
-            }
-            if (s_save_dots.empty())
-            {
-                s_show_dot_width = -1;
-            }
-            wrap_show_dot_calc_type(s_show_dot_width, s_show_dot_color);
-        }
-
-        // some common initialization for escape-time pixel level routines
-        g_close_enough = g_delta_min*std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
-        g_keyboard_check_interval = g_max_keyboard_check_interval;
-
-        set_symmetry(g_symmetry, true);
-
-        if (!g_resuming && (std::abs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
-        {
-            // calculate round screen edges to work out best start for logmap
-            g_log_map_flag = auto_log_map() * (g_log_map_flag / std::abs(g_log_map_flag));
-            setup_log_table();
-        }
-
-        // call the appropriate escape-time engine
-        switch (g_std_calc_mode)
-        {
-        case CalcMode::SYNCHRONOUS_ORBIT:
-            soi();
-            break;
-
-        case CalcMode::TESSERAL:
-            tesseral();
-            break;
-
-        case CalcMode::BOUNDARY_TRACE:
-            boundary_trace();
-            break;
-
-        case CalcMode::SOLID_GUESS:
-            // TODO: fix this
-            // horrible cludge preventing crash when coming back from perturbation and math = bignum/bigflt
-            if (g_calc_status != CalcStatus::COMPLETED)
-            {
-                solid_guess();
-            }
-            break;
-
-        case CalcMode::DIFFUSION:
-            diffusion_scan();
-            break;
-
-        case CalcMode::ORBIT:
-            sticky_orbits();
-            break;
-
-        case CalcMode::PERTURBATION:
-            // we already finished perturbation
-            if (bit_set(g_cur_fractal_specific->flags, FractalFlags::PERTURB))
-            {
-                return;
-            }
-            break;
-
-        default:
-            one_or_two_pass();
-            break;
-        }
-        if (!s_save_dots.empty())
-        {
-            s_save_dots.clear();
-            s_fill_buff = nullptr;
-        }
-        if (check_key())   // interrupted?
-        {
-            break;
-        }
-    }
-
-    if (g_num_work_list > 0)
-    {
-        // interrupted, resumable
-        alloc_resume(sizeof(g_work_list)+20, 2);
-        put_resume_len(sizeof(g_num_work_list), &g_num_work_list, sizeof(g_work_list), g_work_list, 0);
+        aspect = static_cast<double>(g_distance_estimator_y_dots) / static_cast<double>(g_distance_estimator_x_dots);
+        d_x_size = g_distance_estimator_x_dots - 1;
+        d_y_size = g_distance_estimator_y_dots - 1;
     }
     else
     {
-        g_calc_status = CalcStatus::COMPLETED; // completed
+        aspect = static_cast<double>(g_logical_screen.y_dots) / static_cast<double>(g_logical_screen.x_dots);
+        d_x_size = g_logical_screen.x_dots - 1;
+        d_y_size = g_logical_screen.y_dots - 1;
+    }
+
+    const DComplex del{g_image_region.m_max - g_image_region.m_3rd}; // calculate stepsizes
+    const DComplex del2{g_image_region.size3()};
+    const double del_xx2 = del2.x / d_y_size;
+    const double del_yy2 = del2.y / d_x_size;
+
+    g_use_old_distance_estimator = false;
+    g_magnitude_limit = s_rq_lim_save;              // just in case changed to DEM_BAILOUT earlier
+    if (g_distance_estimator != 1 || g_colors == 2) // not doing regular outside colors
+    {
+        g_magnitude_limit = std::max(g_magnitude_limit, DEM_BAILOUT);
+    }
+    // must be mandel type, formula, or old PAR/GIF
+    s_dem_mandel = g_cur_fractal_specific->to_julia != FractalType::NO_FRACTAL || g_use_old_distance_estimator ||
+        g_fractal_type == FractalType::FORMULA;
+    s_dem_delta = sqr(del.x) + sqr(del_yy2);
+    double f_temp = sqr(del.y) + sqr(del_xx2);
+    s_dem_delta = std::max(f_temp, s_dem_delta);
+    if (g_distance_estimator_width_factor == 0)
+    {
+        g_distance_estimator_width_factor = 1;
+    }
+    f_temp = g_distance_estimator_width_factor;
+    if (g_distance_estimator_width_factor > 0)
+    {
+        s_dem_delta *= sqr(f_temp) / 10000; // multiply by thickness desired
+    }
+    else
+    {
+        s_dem_delta *= 1 / (sqr(f_temp) * 10000); // multiply by thickness desired
+    }
+    const DComplex size{g_image_region.size()};
+    const DComplex size3{g_image_region.size3()};
+    s_dem_width =
+        (std::sqrt(sqr(size.x) + sqr(size3.x)) * aspect + std::sqrt(sqr(size.y) + sqr(size3.y))) / g_distance_estimator;
+    f_temp = g_magnitude_limit < DEM_BAILOUT ? DEM_BAILOUT : g_magnitude_limit;
+    f_temp += 3; // bailout plus just a bit
+    const double f_temp2 = std::log(f_temp);
+    if (g_use_old_distance_estimator)
+    {
+        s_dem_too_big = sqr(f_temp) * sqr(f_temp2) * 4 / s_dem_delta;
+    }
+    else
+    {
+        s_dem_too_big = std::abs(f_temp) * std::abs(f_temp2) * 2 / std::sqrt(s_dem_delta);
+    }
+}
+
+void setup_standard_fractal_show_dot()
+{
+    if (g_show_dot < 0)
+    {
+        return;
+    }
+    find_special_colors();
+    switch (g_auto_show_dot)
+    {
+    case AutoShowDot::DARK:
+        s_show_dot_color = g_color_dark % g_colors;
+        break;
+    case AutoShowDot::MEDIUM:
+        s_show_dot_color = g_color_medium % g_colors;
+        break;
+    case AutoShowDot::BRIGHT:
+    case AutoShowDot::AUTOMATIC:
+        s_show_dot_color = g_color_bright % g_colors;
+        break;
+    case AutoShowDot::NONE:
+        s_show_dot_color = g_show_dot % g_colors;
+        break;
+    }
+    if (g_size_dot <= 0)
+    {
+        s_show_dot_width = -1;
+    }
+    else
+    {
+        if (const double width = static_cast<double>(g_size_dot) * g_logical_screen.x_dots / 1024.0; width > 150.0)
+        {
+            s_show_dot_width = 150;
+        }
+        else if (width > 0.0)
+        {
+            s_show_dot_width = static_cast<int>(width);
+        }
+        else
+        {
+            s_show_dot_width = -1;
+        }
+    }
+    while (s_show_dot_width >= 0)
+    {
+        while ((s_save_dots_len = sqr(s_show_dot_width) + 5 * s_show_dot_width + 4) > 1000)
+        {
+            s_show_dot_width--;
+        }
+        bool resized = false;
+        try
+        {
+            s_save_dots.resize(s_save_dots_len);
+            resized = true;
+        }
+        catch (const std::bad_alloc &)
+        {
+        }
+
+        if (resized)
+        {
+            s_save_dots_len /= 2;
+            s_fill_buff = s_save_dots.data() + s_save_dots_len;
+            std::memset(s_fill_buff, s_show_dot_color, s_save_dots_len);
+            break;
+        }
+        s_show_dot_width--;
+    }
+    if (s_save_dots.empty())
+    {
+        s_show_dot_width = -1;
+    }
+    wrap_show_dot_calc_type(s_show_dot_width, s_show_dot_color);
+}
+
+void cleanup_standard_fractal_show_dot()
+{
+    if (!s_save_dots.empty())
+    {
+        s_save_dots.clear();
+        s_fill_buff = nullptr;
     }
 }
 
@@ -2294,12 +2129,12 @@ static bool y_sym_split(const int y_axis_col, const bool y_axis_between)
 }
 
 // set up proper symmetrical plot functions
-static void set_symmetry(SymmetryType sym, const bool use_list)
+void set_symmetry(SymmetryType sym, const bool use_list)
 {
     int i;
     // pixel number for origin
     bool x_axis_between = false;
-    bool y_axis_between = false;         // if axis between 2 pixels, not on one
+    bool y_axis_between = false; // if axis between 2 pixels, not on one
     double f_temp;
     BigFloat bft1;
     int saved = 0;
@@ -2618,7 +2453,7 @@ origin_symmetry:
     }
 }
 
-static long auto_log_map()
+long auto_log_map()
 {
     // calculate round screen edges to avoid wasted colours in logmap
     const int x_stop = g_logical_screen.x_dots - 1; // don't use symmetry

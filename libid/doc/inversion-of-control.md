@@ -157,35 +157,7 @@ key is discarded.
 
 Line ranges are current anchors.  They may drift as slices land.
 
-### Slice 1: Move Work-List State Into StandardFractal
-
-Work:
-
-- Move work-list setup, resume, pop, and completion state from
-  `libid/engine/calcfrac.cpp:938-1228` into `StandardFractal`.
-- Move the standard-mode dispatch from
-  `libid/engine/calcfrac.cpp:1170-1208` into `StandardFractal`.
-- Make `iterate()` advance a bounded unit of work instead of running the
-  whole work list.
-- Make `done()` report whether all standard phases and work-list items are
-  complete.
-- Make `suspend()` write the same resume data currently written by
-  `perform_work_list()`.
-- Keep existing keyboard polling locations unchanged in this slice.
-
-Done when:
-
-- Work-list ownership is in `StandardFractal`.
-- Resume data is unchanged.
-- Existing standard images still render identically.
-
-Manual testing:
-
-- Render one-pass and two-pass Mandelbrot images.
-- Interrupt and resume each mode.
-- Render a standard image that uses potential output.
-
-### Slice 2: Add the UI Standard Wrapper
+### Slice 1: Add the UI Standard Wrapper
 
 Work:
 
@@ -211,7 +183,7 @@ Manual testing:
 - Confirm rendering returns to the main loop and the command is handled.
 - Confirm resume still continues the interrupted image.
 
-### Slice 3: Use Standard Render Keyboard Handlers
+### Slice 2: Use Standard Render Keyboard Handlers
 
 Work:
 
@@ -236,7 +208,7 @@ Manual testing:
 - Press a normal command key during a Mandelbrot render and confirm the
   render yields to the main loop.
 
-### Slice 4: Remove Mandelbrot Hot-Path Polling
+### Slice 3: Remove Mandelbrot Hot-Path Polling
 
 Work:
 
@@ -260,7 +232,7 @@ Manual testing:
 - Toggle orbit display with `o` during the render.
 - Resume the interrupted render.
 
-### Slice 5: Make Standard Pixels Yieldable
+### Slice 4: Make Standard Pixels Yieldable
 
 Work:
 
@@ -293,7 +265,7 @@ Manual testing:
 - Toggle orbit display during a slow render.
 - Resume and confirm the image completes correctly.
 
-### Slice 6: Finish Standard Calcfrac Cleanup
+### Slice 5: Finish Standard Calcfrac Cleanup
 
 Work:
 
@@ -320,7 +292,7 @@ Manual testing:
 - Interrupt and resume at least one one-pass and one two-pass image.
 - Verify orbit toggling during standard rendering.
 
-### Slice 7: Move FrothyBasin To Wrapper Shape
+### Slice 6: Move FrothyBasin To Wrapper Shape
 
 Work:
 
@@ -350,7 +322,7 @@ Manual testing:
 
 ## JIIM Slices
 
-### Slice 8: Move Inverse-Julia Keyboard Context
+### Slice 7: Move Inverse-Julia Keyboard Context
 
 Work:
 
@@ -373,7 +345,7 @@ Manual testing:
 - Save from the modal context.
 - Exit and confirm the following UI command behavior is unchanged.
 
-### Slice 9: Move JIIM Mouse Handling
+### Slice 8: Move JIIM Mouse Handling
 
 Work:
 
@@ -404,7 +376,7 @@ These slices happen after the standard renderer has the UI wrapper shape.
 They should use the same rule: move input ownership to `libid/ui`; leave
 calculation code with state, decisions, and return values.
 
-### Slice 10: Move Pure Render Interrupt Probes
+### Slice 9: Move Pure Render Interrupt Probes
 
 Work:
 
@@ -426,7 +398,7 @@ Manual testing:
 - Render one example for each changed path.
 - Interrupt each render and confirm the outer UI resumes control.
 
-### Slice 11: Move Lorenz UI Prompts
+### Slice 10: Move Lorenz UI Prompts
 
 Work:
 
@@ -449,7 +421,7 @@ Manual testing:
 - Render a Lorenz orbit and interrupt it.
 - Exercise photographer-mode save with repeated `s` or `S`.
 
-### Slice 12: Move Non-Interrupt Pending-Key Queries
+### Slice 11: Move Non-Interrupt Pending-Key Queries
 
 Work:
 
