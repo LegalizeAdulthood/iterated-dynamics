@@ -31,6 +31,13 @@ void dispatch_key(const int key)
 
 } // namespace
 
+bool MainLoopKeyboardHandler::handle_key(const int key)
+{
+    driver_unget_key(key);
+    set_calc_interrupted();
+    return true;
+}
+
 ScopedKeyboardHandler::ScopedKeyboardHandler(KeyboardHandlerPtr handler) :
     m_handler{std::move(handler)}
 {
@@ -75,6 +82,10 @@ bool calc_interrupted()
     while (driver_key_pressed() != 0)
     {
         dispatch_key(driver_get_key());
+        if (s_calc_interrupted)
+        {
+            break;
+        }
     }
     return s_calc_interrupted;
 }

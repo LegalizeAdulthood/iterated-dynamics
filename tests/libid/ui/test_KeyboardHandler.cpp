@@ -134,6 +134,18 @@ TEST_F(TestKeyboardHandler, handlerRequestsCalculationInterruption)
     EXPECT_THAT(events, ElementsAre(Pair(1, 31)));
 }
 
+TEST_F(TestKeyboardHandler, mainLoopHandlerRequeuesKeyAndInterrupts)
+{
+    InSequence sequence;
+    EXPECT_CALL(m_driver, key_pressed()).WillOnce(Return(41));
+    EXPECT_CALL(m_driver, get_key()).WillOnce(Return(41));
+    EXPECT_CALL(m_driver, unget_key(41));
+    auto handler{std::make_shared<MainLoopKeyboardHandler>()};
+    ScopedKeyboardHandler scope{handler};
+
+    EXPECT_TRUE(calc_interrupted());
+}
+
 TEST_F(TestKeyboardHandler, scopedHandlerRegistrationPopsHandler)
 {
     KeyboardEvents events;

@@ -157,32 +157,7 @@ key is discarded.
 
 Line ranges are current anchors.  They may drift as slices land.
 
-### Slice 1: Use Standard Render Keyboard Handlers
-
-Work:
-
-- Add or reuse `MainLoopKeyboardHandler` for the outer image UI context.
-- Add `OrbitToggleKeyboardHandler` for `o` and `O`.
-- Push the main-loop handler while the image UI loop is active.
-- Push the orbit handler while standard rendering supports orbit toggling.
-- Replace raw driver polling in `libid/ui/standard_fractal.cpp` with the
-  UI dispatcher and handler stack.
-- Reset UI-owned calculation interruption state at standard render start.
-
-Done when:
-
-- The standard UI wrapper does not interpret raw driver keys directly.
-- `o` and `O` toggle orbit display without interrupting calculation.
-- Other keys interrupt rendering and are recorded for the main loop.
-
-Manual testing:
-
-- Press `o` during a Mandelbrot render and confirm orbit display toggles
-  without ending the render.
-- Press a normal command key during a Mandelbrot render and confirm the
-  render yields to the main loop.
-
-### Slice 2: Remove Mandelbrot Hot-Path Polling
+### Slice 1: Remove Mandelbrot Hot-Path Polling
 
 Work:
 
@@ -206,7 +181,7 @@ Manual testing:
 - Toggle orbit display with `o` during the render.
 - Resume the interrupted render.
 
-### Slice 3: Make Standard Pixels Yieldable
+### Slice 2: Make Standard Pixels Yieldable
 
 Work:
 
@@ -239,7 +214,7 @@ Manual testing:
 - Toggle orbit display during a slow render.
 - Resume and confirm the image completes correctly.
 
-### Slice 4: Finish Standard Calcfrac Cleanup
+### Slice 3: Finish Standard Calcfrac Cleanup
 
 Work:
 
@@ -266,7 +241,7 @@ Manual testing:
 - Interrupt and resume at least one one-pass and one two-pass image.
 - Verify orbit toggling during standard rendering.
 
-### Slice 5: Move FrothyBasin To Wrapper Shape
+### Slice 4: Move FrothyBasin To Wrapper Shape
 
 Work:
 
@@ -296,7 +271,7 @@ Manual testing:
 
 ## JIIM Slices
 
-### Slice 6: Move Inverse-Julia Keyboard Context
+### Slice 5: Move Inverse-Julia Keyboard Context
 
 Work:
 
@@ -319,7 +294,7 @@ Manual testing:
 - Save from the modal context.
 - Exit and confirm the following UI command behavior is unchanged.
 
-### Slice 7: Move JIIM Mouse Handling
+### Slice 6: Move JIIM Mouse Handling
 
 Work:
 
@@ -350,7 +325,7 @@ These slices happen after the standard renderer has the UI wrapper shape.
 They should use the same rule: move input ownership to `libid/ui`; leave
 calculation code with state, decisions, and return values.
 
-### Slice 8: Move Pure Render Interrupt Probes
+### Slice 7: Move Pure Render Interrupt Probes
 
 Work:
 
@@ -372,7 +347,7 @@ Manual testing:
 - Render one example for each changed path.
 - Interrupt each render and confirm the outer UI resumes control.
 
-### Slice 9: Move Lorenz UI Prompts
+### Slice 8: Move Lorenz UI Prompts
 
 Work:
 
@@ -395,7 +370,7 @@ Manual testing:
 - Render a Lorenz orbit and interrupt it.
 - Exercise photographer-mode save with repeated `s` or `S`.
 
-### Slice 10: Move Non-Interrupt Pending-Key Queries
+### Slice 9: Move Non-Interrupt Pending-Key Queries
 
 Work:
 

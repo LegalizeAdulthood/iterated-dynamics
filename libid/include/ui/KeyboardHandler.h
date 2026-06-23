@@ -17,6 +17,12 @@ public:
 
 using KeyboardHandlerPtr = std::shared_ptr<KeyboardHandler>;
 
+class MainLoopKeyboardHandler : public KeyboardHandler
+{
+public:
+    bool handle_key(int key) override;
+};
+
 class ScopedKeyboardHandler
 {
 public:
