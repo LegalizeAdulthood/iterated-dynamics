@@ -66,6 +66,7 @@
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
 #include "ui/frothy_basin.h"
+#include "ui/KeyboardHandler.h"
 #include "ui/standard_fractal.h"
 #include "ui/stop_msg.h"
 #include "ui/video.h"
@@ -533,7 +534,9 @@ static void fix_inversion(double *x) // make double converted from string look o
 
 static void init_calc_fract()
 {
-    g_attractor.count = 0;          // default to no known finite attractors
+    const bool resuming{g_calc_status == CalcStatus::RESUMABLE};
+
+    g_attractor.count = 0; // default to no known finite attractors
     g_display_3d = Display3DMode::NONE;
     g_basin = 0;
     g_put_color = put_color_a;
@@ -686,7 +689,10 @@ static void init_calc_fract()
     init_atan_colors();
 
     // ORBIT stuff
-    g_show_orbit = g_start_show_orbit;
+    if (!resuming)
+    {
+        g_show_orbit = g_start_show_orbit;
+    }
     g_orbit_save_index = 0;
     g_orbit_color = 15;
     if (g_colors < 16)
@@ -735,10 +741,10 @@ static void init_calc_fract()
         g_inversion.invert = 3; // so values will not be changed if we come back
     }
 
-    g_close_enough = g_delta_min*std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+    g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
     s_rq_lim_save = g_magnitude_limit;
     g_magnitude_limit2 = std::sqrt(g_magnitude_limit);
-    g_resuming = g_calc_status == CalcStatus::RESUMABLE;
+    g_resuming = resuming;
     if (!g_resuming) // free resume_info memory if any is hanging around
     {
         end_resume();
@@ -1033,23 +1039,15 @@ int calc_mandelbrot_type()
         g_init.x = dx_pixel();
         g_init.y = dy_pixel();
     }
-    g_keyboard_check_interval--;                // Only check the keyboard sometimes
+    g_keyboard_check_interval--; // Only check interruption sometimes
     if (g_keyboard_check_interval < 0)
     {
         g_keyboard_check_interval = 1000;
-        if (const int key = driver_key_pressed(); key)
+        if (calc_interrupted())
         {
-            if (key == 'o' || key == 'O')
-            {
-                driver_get_key();
-                g_show_orbit = !g_show_orbit;
-            }
-            else
-            {
-                g_color_iter = -1;
-                g_color = -1;
-                return -1;
-            }
+            g_color_iter = -1;
+            g_color = -1;
+            return -1;
         }
     }
     if (mandelbrot_orbit() >= 0)

@@ -157,31 +157,7 @@ key is discarded.
 
 Line ranges are current anchors.  They may drift as slices land.
 
-### Slice 1: Remove Mandelbrot Hot-Path Polling
-
-Work:
-
-- Move key handling out of
-  `libid/engine/calcfrac.cpp:1239-1319`.
-- Preserve the current keyboard check cadence as an iteration budget owned
-  by `StandardFractal` or the standard UI wrapper.
-- Keep orbit toggling owned by `OrbitToggleKeyboardHandler`.
-- Keep all non-orbit key meaning owned by `MainLoopKeyboardHandler`.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
-
-Done when:
-
-- The Mandelbrot fast pixel path has no direct keyboard polling.
-- The Mandelbrot fast pixel path does not interpret key values.
-- Standard rendering still yields at the same practical cadence.
-
-Manual testing:
-
-- Render a fast Mandelbrot image and interrupt it.
-- Toggle orbit display with `o` during the render.
-- Resume the interrupted render.
-
-### Slice 2: Make Standard Pixels Yieldable
+### Slice 1: Make Standard Pixels Yieldable
 
 Work:
 
@@ -214,7 +190,7 @@ Manual testing:
 - Toggle orbit display during a slow render.
 - Resume and confirm the image completes correctly.
 
-### Slice 3: Finish Standard Calcfrac Cleanup
+### Slice 2: Finish Standard Calcfrac Cleanup
 
 Work:
 
@@ -241,7 +217,7 @@ Manual testing:
 - Interrupt and resume at least one one-pass and one two-pass image.
 - Verify orbit toggling during standard rendering.
 
-### Slice 4: Move FrothyBasin To Wrapper Shape
+### Slice 3: Move FrothyBasin To Wrapper Shape
 
 Work:
 
@@ -271,7 +247,7 @@ Manual testing:
 
 ## JIIM Slices
 
-### Slice 5: Move Inverse-Julia Keyboard Context
+### Slice 4: Move Inverse-Julia Keyboard Context
 
 Work:
 
@@ -294,7 +270,7 @@ Manual testing:
 - Save from the modal context.
 - Exit and confirm the following UI command behavior is unchanged.
 
-### Slice 6: Move JIIM Mouse Handling
+### Slice 5: Move JIIM Mouse Handling
 
 Work:
 
@@ -325,7 +301,7 @@ These slices happen after the standard renderer has the UI wrapper shape.
 They should use the same rule: move input ownership to `libid/ui`; leave
 calculation code with state, decisions, and return values.
 
-### Slice 7: Move Pure Render Interrupt Probes
+### Slice 6: Move Pure Render Interrupt Probes
 
 Work:
 
@@ -347,7 +323,7 @@ Manual testing:
 - Render one example for each changed path.
 - Interrupt each render and confirm the outer UI resumes control.
 
-### Slice 8: Move Lorenz UI Prompts
+### Slice 7: Move Lorenz UI Prompts
 
 Work:
 
@@ -370,7 +346,7 @@ Manual testing:
 - Render a Lorenz orbit and interrupt it.
 - Exercise photographer-mode save with repeated `s` or `S`.
 
-### Slice 9: Move Non-Interrupt Pending-Key Queries
+### Slice 8: Move Non-Interrupt Pending-Key Queries
 
 Work:
 
@@ -395,8 +371,8 @@ Manual testing:
 
 Direct polling or key consumption exists outside `libid/ui` in:
 
-- `libid/engine/calcfrac.cpp`: standard renderer polling, including the
-  Mandelbrot hot-path orbit toggle.
+- `libid/engine/calcfrac.cpp`: standard renderer polling outside the
+  Mandelbrot hot path.
 - `libid/engine/jiim.cpp`: inverse-Julia key wait, drain, and requeue.
 - `libid/engine/PertEngine.cpp`: interrupt check during reference pass.
 - `libid/engine/solid_guess.cpp`: interrupt checks during block repaint.
