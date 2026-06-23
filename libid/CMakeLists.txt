@@ -60,6 +60,7 @@ add_library(libid
     include/engine/solid_guess.h engine/solid_guess.cpp
     include/engine/sound.h engine/sound.cpp
     include/engine/spindac.h engine/spindac.cpp
+    include/engine/StandardFractal.h engine/StandardFractal.cpp
     include/engine/sticky_orbits.h engine/sticky_orbits.cpp
     include/engine/tesseral.h engine/tesseral.cpp
     include/engine/text_color.h engine/text_color.cpp

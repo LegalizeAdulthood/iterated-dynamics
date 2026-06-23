@@ -37,6 +37,7 @@
 #include "engine/solid_guess.h"
 #include "engine/sound.h"
 #include "engine/spindac.h"
+#include "engine/StandardFractal.h"
 #include "engine/sticky_orbits.h"
 #include "engine/tesseral.h"
 #include "engine/UserData.h"
@@ -112,7 +113,7 @@ enum class ShowDotDirection
     UPPER_LEFT = 4
 };
 
-static void perform_work_list();
+void perform_work_list();
 static void decomposition();
 static void set_symmetry(SymmetryType sym, bool use_list);
 static bool x_sym_split(int x_axis_row, bool x_axis_between);
@@ -804,56 +805,6 @@ static void calc_non_standard_fractal()
     }
 }
 
-// standard escape-time engine
-static void calc_standard_fractal()
-{
-    const auto timer_work_list{[]
-        {
-            perform_work_list();
-            return 0;
-        }};
-    if (g_std_calc_mode == CalcMode::THREE_PASS) // convoluted 'g' + '2' hybrid
-    {
-        ValueSaver saved_calc_mode{g_std_calc_mode};
-        if (!g_resuming || g_three_pass)
-        {
-            g_std_calc_mode = CalcMode::SOLID_GUESS;
-            g_three_pass = true;
-            engine_timer(timer_work_list);
-            if (g_calc_status == CalcStatus::COMPLETED)
-            {
-                if (g_logical_screen.x_dots >= 640) // '2' is silly after 'g' for low res
-                {
-                    g_std_calc_mode = CalcMode::TWO_PASS;
-                }
-                else
-                {
-                    g_std_calc_mode = CalcMode::ONE_PASS;
-                }
-                engine_timer(timer_work_list);
-                g_three_pass = false;
-            }
-        }
-        else // resuming '2' pass
-        {
-            if (g_logical_screen.x_dots >= 640)
-            {
-                g_std_calc_mode = CalcMode::TWO_PASS;
-            }
-            else
-            {
-                g_std_calc_mode = CalcMode::ONE_PASS;
-            }
-            engine_timer(timer_work_list);
-        }
-    }
-    else // main case, much nicer!
-    {
-        g_three_pass = false;
-        engine_timer(timer_work_list);
-    }
-}
-
 static void finish_calc_fract()
 {
     g_calc_time += g_timer_interval;
@@ -880,7 +831,12 @@ int calc_fract()
     init_calc_fract();
     if (static_calc_type_uses_standard_engine())
     {
-        calc_standard_fractal();
+        StandardFractal standard_fractal;
+        standard_fractal.resume();
+        while (!standard_fractal.done())
+        {
+            standard_fractal.iterate();
+        }
     }
     else
     {
@@ -935,7 +891,7 @@ static void work_list_pop_front()
 }
 
 // general escape-time engine routines
-static void perform_work_list()
+void perform_work_list()
 {
     ValueSaver saved_dispatch{g_dispatch};
 
