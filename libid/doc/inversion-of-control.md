@@ -151,66 +151,225 @@ them to the active handler stack from top to bottom.  The first handler
 that returns `true` stops propagation.  If no handler consumes the key, the
 key is discarded.
 
-## Remaining Polling Cleanup
+## Remaining Inversion-of-Control Slices
 
-These slices happen after the standard renderer has the UI wrapper shape.
-They should use the same rule: move input ownership to `libid/ui`; leave
-calculation code with state, decisions, and return values.
+These slices use the existing pattern from `libid/ui/ant.cpp`,
+`libid/ui/bifurcation.cpp`, `libid/ui/cellular.cpp`, and similar files:
 
-### Slice 1: Move Pure Render Interrupt Probes
+```text
+ui wrapper
+    construct or resume renderer
+    poll keyboard input for the active UI context
+    call suspend() or exit when the UI decides to stop
+    call iterate() until the renderer reports no more work
+
+calculation object
+    own calculation state
+    expose iterate(), done() when useful, resume(), and suspend()
+    do not poll keyboard or mouse input
+```
+
+Do not introduce a new progress-result enum unless an individual renderer
+needs more state than the existing `iterate()` and `done()` pattern can
+express.
+
+### Slice 1: StandardFractal Pixel Yielding
 
 Work:
 
-- Replace direct pending-key interrupt probes with UI-owned interruption
-  checks.
-- Cover `engine/calcfrac.cpp`, `engine/PertEngine.cpp`,
-  `engine/solid_guess.cpp`, `engine/soi.cpp`, `fractals/lsystem.cpp`,
-  and `fractals/lyapunov.cpp`.
-- Preserve each local return value and resume behavior.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
+- Keep `ui/standard_fractal.cpp` as the owner of keyboard polling for
+  standard rendering.
+- Make the standard-pixel path under
+  `libid/engine/calcfrac.cpp:1290-1833` yield through the existing
+  `StandardFractal::iterate()` loop instead of using `check_key()`.
+- Remove the direct standard-pixel fallback path that calls
+  `StandardFractal::calculate_standard_pixel(false)` outside the yielding
+  `StandardFractal` context, or reshape that caller so it is driven by a
+  `StandardFractal` instance.
+- Preserve the current `iterate()` / `done()` / `suspend()` API shape.
 
 Done when:
 
-- Those files have no direct key polling calls.
-- Calculation code only reports whether it should stop or suspend.
+- The standard pixel orbit code does bounded work and returns to
+  `ui/standard_fractal.cpp` for input polling.
+- `calcfrac.cpp` no longer calls `check_key()` for standard pixel
+  interruption.
 
 Manual testing:
 
-- Render one example for each changed path.
-- Interrupt each render and confirm the outer UI resumes control.
+- Render `type=mandel passes=1` and interrupt it.
+- Toggle orbit display with `o` during rendering and confirm rendering
+  continues.
 
-### Slice 2: Move Lorenz UI Prompts
+### Slice 2: StandardFractal SolidGuess State
 
 Work:
 
-- Move the `plot_orbits2d` interrupt behavior from
-  `libid/fractals/lorenz.cpp` into the owning UI wrapper.
-- Add `LorenzStereoSaveKeyboardHandler` for the photographer-mode save
-  loop.
-- Move the save prompt loop from
-  `libid/fractals/lorenz.cpp:1553-1561`.
-- Preserve repeated `s` or `S` save behavior.
-- Remove `misc/Driver.h` includes made unnecessary by the move.
+- Keep `SolidGuess` as the calculation object in
+  `libid/engine/solid_guess.cpp`.
+- Change `StandardFractal` to own a `SolidGuess` instance while
+  `passes=g` work is active.
+- Move scan position, row repaint position, and any needed block state
+  into `SolidGuess` so `SolidGuess::iterate()` can do bounded work and
+  return to `StandardFractal`.
+- Remove the key probes from `SolidGuess::guess_row()`.
 
 Done when:
 
-- Lorenz calculation code has no direct key polling.
+- `solid_guess.cpp` has no direct keyboard polling.
+- `ui/standard_fractal.cpp` can interrupt and suspend solid guessing
+  between `StandardFractal::iterate()` calls.
+
+Manual testing:
+
+- Render `type=mandel passes=g` and interrupt it.
+- Resume the interrupted render.
+
+### Slice 3: StandardFractal SOI State
+
+Work:
+
+- Add an SOI calculation object owned by `StandardFractal` for
+  `passes=s`.
+- Replace the recursive SOI control flow in `libid/engine/soi.cpp` with
+  resumable state that can advance by bounded scan or rhombus steps.
+- Keep SOI math, stack-depth tracking, and resume behavior unchanged.
+- Remove key probes from `soi.cpp`.
+
+Done when:
+
+- `soi.cpp` has no direct keyboard polling.
+- SOI returns control to `ui/standard_fractal.cpp` between bounded units
+  of work.
+
+Manual testing:
+
+- Render `type=mandel passes=s` and interrupt it.
+- Resume the interrupted render.
+
+### Slice 4: StandardFractal Perturbation State
+
+Work:
+
+- Keep `PertEngine` as the perturbation calculation object.
+- Split `PertEngine::calculate_one_frame()` into incremental state:
+  reference pass, selected reference point, point index, glitch list, and
+  progress text.
+- Make `StandardFractal` own and advance the active `PertEngine`.
+- Remove the key probe from `PertEngine.cpp`.
+
+Done when:
+
+- `PertEngine.cpp` has no direct keyboard polling.
+- Perturbation setup advances through `StandardFractal::iterate()`.
+
+Manual testing:
+
+- Render a perturbation-enabled Mandelbrot image and interrupt it.
+- Confirm progress text and completion still work.
+
+### Slice 5: StandardFractal Orbit Mode State
+
+Work:
+
+- Replace the polling path through `sticky_orbits()` and
+  `plot_orbits2d()` with an orbit-mode calculation object owned by
+  `StandardFractal`.
+- Keep rectangle, line, and function orbit drawing state in the orbit-mode
+  object.
+- Move the interruption decision and resume request to
+  `ui/standard_fractal.cpp`.
+- Leave Lorenz orbit math in calculation code, but remove keyboard polling
+  from `plot_orbits2d()`.
+
+Done when:
+
+- Standard orbit mode returns control to `ui/standard_fractal.cpp`
+  between bounded orbit-drawing steps.
+- `plot_orbits2d()` no longer polls keyboard input.
+
+Manual testing:
+
+- Render `type=mandel passes=o` and interrupt it.
+- Resume the interrupted render.
+
+### Slice 6: LSystem Renderer
+
+Work:
+
+- Add a `fractals::LSystem` calculation object for the renderer state in
+  `libid/fractals/lsystem.cpp`.
+- Add `libid/ui/lsystem.cpp` to construct or resume `LSystem`, poll
+  keyboard input, call `suspend()`, and drive `iterate()`.
+- Convert the recursive turtle draw path to resumable command-stack state
+  owned by `LSystem`.
+- Remove the key probe from `draw_lsys()`.
+
+Done when:
+
+- `lsystem.cpp` has no direct keyboard polling.
+- L-system rendering follows the same UI/calculation split as Ant and
+  Bifurcation.
+
+Manual testing:
+
+- Render one L-system image and interrupt it.
+- Resume the interrupted render if resume is supported for the selected
+  L-system.
+
+### Slice 7: Lyapunov Renderer
+
+Work:
+
+- Add a `fractals::Lyapunov` calculation object for per-pixel Lyapunov
+  state.
+- Add `libid/ui/lyapunov.cpp` to own keyboard polling and drive
+  `Lyapunov::iterate()`.
+- Stop treating Lyapunov keyboard ownership as standard-engine detail even
+  if Lyapunov still shares standard pixel-grid setup.
+- Remove the key probe from `lyapunov_type()`.
+
+Done when:
+
+- `lyapunov.cpp` has no direct keyboard polling.
+- Lyapunov rendering has an explicit UI wrapper and calculation object.
+
+Manual testing:
+
+- Render one Lyapunov image and interrupt it.
+- Confirm image tests for Lyapunov still pass.
+
+### Slice 8: Lorenz Photographer Mode
+
+Work:
+
+- Add `LorenzStereoKeyboardHandler` in `libid/ui`.
+- Move the photographer-mode `s` / `S` save loop from
+  `libid/fractals/lorenz.cpp:1553-1561` into the UI code that owns the
+  stereo workflow.
+- Preserve repeated `s` / `S` saves before the second image is rendered.
+
+Done when:
+
+- Lorenz calculation code does not consume photographer-mode keys.
 - Photographer-mode save and continue behavior is unchanged.
 
 Manual testing:
 
-- Render a Lorenz orbit and interrupt it.
-- Exercise photographer-mode save with repeated `s` or `S`.
+- Exercise photographer mode.
+- Press `s` repeatedly before rendering the second image.
 
-### Slice 3: Move Non-Interrupt Pending-Key Queries
+### Slice 9: Non-Interrupt Pending-Key Utilities
 
 Work:
 
-- Move the sound pending-key check behind a UI-owned polling query.
-- Preserve the rule that pending input suppresses `driver_sound_on`.
-- Move the delay-loop key wakeup behind a UI-owned polling query.
-- Keep sleep interval and wakeup behavior unchanged.
-- Keep these separate from calculation interruption.
+- Treat `engine/sound.cpp` and `engine/wait_until.cpp` separately from
+  render interruption.
+- Preserve the rule that pending input suppresses tone playback.
+- Preserve the rule that delay loops wake when input is pending.
+- Move the direct keyboard polling behind UI-owned timing or sound
+  coordination without making calculation code ask whether rendering
+  should stop.
 
 Done when:
 
