@@ -826,7 +826,7 @@ static void finish_calc_fract()
     }
 }
 
-// calcfract - the top level routine for generating an image
+// calc_fract - the top level routine for generating an image
 int calc_fract()
 {
     init_calc_fract();
