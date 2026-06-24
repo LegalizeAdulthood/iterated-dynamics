@@ -4,6 +4,8 @@
 
 #include "ui/KeyboardHandler.h"
 
+#include <memory>
+
 namespace id::engine
 {
 class InverseJuliaKeyboardContext;
@@ -13,6 +15,22 @@ namespace id::ui
 {
 
 class CrossHairCursor;
+
+class InverseJuliaMouseScope
+{
+public:
+    explicit InverseJuliaMouseScope(CrossHairCursor &cursor);
+    ~InverseJuliaMouseScope();
+
+    InverseJuliaMouseScope(const InverseJuliaMouseScope &) = delete;
+    InverseJuliaMouseScope(InverseJuliaMouseScope &&) = delete;
+    InverseJuliaMouseScope &operator=(const InverseJuliaMouseScope &) = delete;
+    InverseJuliaMouseScope &operator=(InverseJuliaMouseScope &&) = delete;
+
+private:
+    class Impl;
+    std::shared_ptr<Impl> m_impl;
+};
 
 int inverse_julia_fractal_type();
 KeyboardHandlerPtr make_inverse_julia_keyboard_handler(engine::InverseJuliaKeyboardContext &context);

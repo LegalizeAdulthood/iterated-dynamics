@@ -27,7 +27,6 @@
 #include "ui/help.h"
 #include "ui/inverse_julia.h"
 #include "ui/KeyboardHandler.h"
-#include "ui/mouse.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
 #include "ui/video.h"
@@ -446,20 +445,6 @@ OrbitFlags &operator^=(OrbitFlags &lhs, const OrbitFlags rhs)
     return lhs;
 }
 
-class InverseJuliaMouseNotification : public NullMouseNotification
-{
-public:
-    ~InverseJuliaMouseNotification() override = default;
-
-    void move(int x, int y, int key_flags) override;
-};
-
-void InverseJuliaMouseNotification::move(const int x, const int y, const int key_flags)
-{
-    s_cursor.set_pos(x, y);
-    NullMouseNotification::move(x, y, key_flags);
-}
-
 class InverseJulia : public InverseJuliaKeyboardContext
 {
 public:
@@ -515,7 +500,6 @@ private:
     bool m_first_time{true};
     int m_old_screen_x_offset{g_logical_screen.x_offset};
     int m_old_screen_y_offset{g_logical_screen.y_offset};
-    int m_mouse_subscription{-1};
     bool m_still{true};
     bool m_leave_now{};
 
@@ -665,10 +649,6 @@ void InverseJulia::start()
 
     m_iter = 1;
     m_zoom = 1.0f;
-
-    g_cursor_mouse_tracking = true;
-    assert(m_mouse_subscription == -1);
-    m_mouse_subscription = mouse_subscribe(std::make_shared<InverseJuliaMouseNotification>());
 }
 
 JIIMType InverseJulia::which() const
@@ -1213,9 +1193,6 @@ bool InverseJulia::iterate()
 
 void InverseJulia::finish()
 {
-    mouse_unsubscribe(m_mouse_subscription);
-    m_mouse_subscription = -1;
-
     free_queue();
 
     if (m_key != 's' && m_key != 'S')
@@ -1251,7 +1228,6 @@ void InverseJulia::finish()
             restore_rect(0, 0, g_logical_screen.x_dots, g_logical_screen.y_dots);
         }
     }
-    g_cursor_mouse_tracking = false;
     g_line_buff.clear();
     s_screen_rect.clear();
     g_using_jiim = false;
@@ -1285,13 +1261,15 @@ void InverseJulia::process()
     ValueSaver saved_help_mode{
         g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
     ValueSaver saved_dispatch{g_dispatch};
-    ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::POSITION};
     auto keyboard_handler{make_inverse_julia_keyboard_handler(*this)};
     ScopedKeyboardHandler keyboard_scope{keyboard_handler};
 
     start();
-    while (iterate())
     {
+        InverseJuliaMouseScope mouse_scope{s_cursor};
+        while (iterate())
+        {
+        }
     }
     finish();
 }

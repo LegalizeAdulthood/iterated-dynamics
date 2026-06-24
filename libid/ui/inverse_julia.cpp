@@ -6,10 +6,12 @@
 #include "engine/resume.h"
 #include "fractals/fractalp.h"
 #include "misc/Driver.h"
+#include "misc/ValueSaver.h"
 #include "ui/check_key.h"
 #include "ui/editpal.h"
 #include "ui/get_a_number.h"
 #include "ui/id_keys.h"
+#include "ui/mouse.h"
 
 #include <memory>
 
@@ -23,6 +25,24 @@ namespace id::ui
 
 namespace
 {
+
+class InverseJuliaMouseNotification : public NullMouseNotification
+{
+public:
+    explicit InverseJuliaMouseNotification(CrossHairCursor &cursor) :
+        m_cursor{cursor}
+    {
+    }
+
+    void move(int x, int y, int key_flags) override
+    {
+        m_cursor.set_pos(x, y);
+        NullMouseNotification::move(x, y, key_flags);
+    }
+
+private:
+    CrossHairCursor &m_cursor;
+};
 
 class InverseJuliaKeyboardHandler : public KeyboardHandler
 {
@@ -210,6 +230,29 @@ private:
 };
 
 } // namespace
+
+class InverseJuliaMouseScope::Impl
+{
+public:
+    explicit Impl(CrossHairCursor &cursor) :
+        m_saved_look_at_mouse{g_look_at_mouse, MouseLook::POSITION},
+        m_saved_cursor_mouse_tracking{g_cursor_mouse_tracking, true},
+        m_subscription{std::make_shared<InverseJuliaMouseNotification>(cursor)}
+    {
+    }
+
+private:
+    ValueSaver<MouseLook> m_saved_look_at_mouse;
+    ValueSaver<bool> m_saved_cursor_mouse_tracking;
+    MouseSubscription m_subscription;
+};
+
+InverseJuliaMouseScope::InverseJuliaMouseScope(CrossHairCursor &cursor) :
+    m_impl{std::make_shared<Impl>(cursor)}
+{
+}
+
+InverseJuliaMouseScope::~InverseJuliaMouseScope() = default;
 
 KeyboardHandlerPtr make_inverse_julia_keyboard_handler(InverseJuliaKeyboardContext &context)
 {

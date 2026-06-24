@@ -151,42 +151,13 @@ them to the active handler stack from top to bottom.  The first handler
 that returns `true` stops propagation.  If no handler consumes the key, the
 key is discarded.
 
-## JIIM Slices
-
-Line ranges are current anchors.  They may drift as slices land.
-
-### Slice 1: Move JIIM Mouse Handling
-
-Work:
-
-- Move `InverseJuliaMouseNotification` from `engine/jiim.cpp` to
-  `libid/ui`.
-- Move inverse-Julia mouse subscribe and unsubscribe calls to `libid/ui`.
-- Move `g_cursor_mouse_tracking` and `g_look_at_mouse` manipulation to the
-  UI code that owns the subscription.
-- Keep `jiim.cpp` receiving position updates and mouse-change decisions.
-- Remove `ui/mouse.h` from `engine/jiim.cpp`.
-
-Done when:
-
-- `engine/jiim.cpp` has no direct `MouseNotification`,
-  `mouse_subscribe`, `mouse_unsubscribe`, `g_cursor_mouse_tracking`, or
-  `g_look_at_mouse` use.
-- The only inverse-Julia mouse subscription code is in `libid/ui`.
-
-Manual testing:
-
-- Enter inverse-Julia mode.
-- Move the mouse and confirm the cursor updates.
-- Exit inverse-Julia mode and confirm mouse tracking state is restored.
-
 ## Remaining Polling Cleanup
 
 These slices happen after the standard renderer has the UI wrapper shape.
 They should use the same rule: move input ownership to `libid/ui`; leave
 calculation code with state, decisions, and return values.
 
-### Slice 2: Move Pure Render Interrupt Probes
+### Slice 1: Move Pure Render Interrupt Probes
 
 Work:
 
@@ -208,7 +179,7 @@ Manual testing:
 - Render one example for each changed path.
 - Interrupt each render and confirm the outer UI resumes control.
 
-### Slice 3: Move Lorenz UI Prompts
+### Slice 2: Move Lorenz UI Prompts
 
 Work:
 
@@ -231,7 +202,7 @@ Manual testing:
 - Render a Lorenz orbit and interrupt it.
 - Exercise photographer-mode save with repeated `s` or `S`.
 
-### Slice 4: Move Non-Interrupt Pending-Key Queries
+### Slice 3: Move Non-Interrupt Pending-Key Queries
 
 Work:
 
@@ -266,11 +237,6 @@ Direct polling or key consumption exists outside `libid/ui` in:
 - `libid/fractals/lorenz.cpp`: orbit interrupt and stereo save prompt.
 - `libid/fractals/lsystem.cpp`: recursive draw interrupt.
 - `libid/fractals/lyapunov.cpp`: per-pixel interrupt.
-
-Direct mouse ownership exists outside `libid/ui` in:
-
-- `libid/engine/jiim.cpp`: inverse-Julia mouse notification and mouse
-  tracking state.
 
 ## Future Event-Driven Work
 
