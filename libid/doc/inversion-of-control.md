@@ -173,7 +173,66 @@ Do not introduce a new progress-result enum unless an individual renderer
 needs more state than the existing `iterate()` and `done()` pattern can
 express.
 
-### Slice 1: StandardFractal Pixel Yielding
+### Slice 1: StandardPass Boundary
+
+Work:
+
+- Add grouped standard-pass state owned directly by `StandardFractal`.
+- Do not introduce a virtual `StandardPass` base class or polymorphic pass
+  hierarchy.
+- Group pass-specific screen traversal state: current row, current column,
+  subdivision state, block state, or scan stack.
+- Group pass-specific fill decisions: SOI, solid guess, diffusion,
+  boundary trace, and Tesseral can color pixels based on surrounding
+  orbit results.
+- Use explicit dispatch, such as a switch on `CalcMode` or a variant, to
+  advance the active pass state.
+- The active pass state asks the standard pixel/orbit calculator to
+  compute an orbit only when it decides a pixel needs real orbit work.
+- Keep fractal-type-specific orbit math separate from pass traversal and
+  fill decisions.
+- Add the boundary without changing active pass behavior.
+
+Done when:
+
+- `StandardFractal` has an explicit place to own active pass state.
+- The plan-level split is reflected in code names and ownership, even if
+  existing pass implementations are still called through temporary
+  dispatch branches.
+
+Manual testing:
+
+- Render `type=mandel passes=1`.
+- Render `type=mandel passes=t`.
+- Render `type=mandel passes=g`.
+
+### Slice 2: StandardPass Adapter
+
+Work:
+
+- Add temporary dispatch branches for existing pass entry points so
+  `StandardFractal` can drive all standard modes through grouped pass
+  state.
+- These branches may still call existing one-pass, two-pass, boundary
+  trace, Tesseral, solid guess, diffusion, SOI, orbit, and perturbation
+  entry points.
+- Keep this dispatch thin and temporary; it exists to make later slices
+  convert one pass at a time without adding virtual functions.
+- Do not move keyboard polling in this slice.
+
+Done when:
+
+- `StandardFractal::run_current_work_item_mode()` dispatches through the
+  grouped pass state.
+- Existing standard rendering behavior is unchanged.
+
+Manual testing:
+
+- Render one image for each visible pass mode: `passes=1`, `passes=2`,
+  `passes=t`, `passes=b`, `passes=g`, `passes=d`, `passes=s`, and
+  `passes=o`.
+
+### Slice 3: StandardFractal Pixel Yielding
 
 Work:
 
@@ -201,11 +260,11 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 2: StandardFractal SolidGuess State
+### Slice 4: StandardFractal SolidGuess State
 
 Work:
 
-- Keep `SolidGuess` as the calculation object in
+- Keep `SolidGuess` as a concrete state holder in
   `libid/engine/solid_guess.cpp`.
 - Change `StandardFractal` to own a `SolidGuess` instance while
   `passes=g` work is active.
@@ -225,12 +284,11 @@ Manual testing:
 - Render `type=mandel passes=g` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 3: StandardFractal SOI State
+### Slice 5: StandardFractal SOI State
 
 Work:
 
-- Add an SOI calculation object owned by `StandardFractal` for
-  `passes=s`.
+- Add concrete SOI state owned by `StandardFractal` for `passes=s`.
 - Replace the recursive SOI control flow in `libid/engine/soi.cpp` with
   resumable state that can advance by bounded scan or rhombus steps.
 - Keep SOI math, stack-depth tracking, and resume behavior unchanged.
@@ -247,7 +305,7 @@ Manual testing:
 - Render `type=mandel passes=s` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 4: StandardFractal Perturbation State
+### Slice 6: StandardFractal Perturbation State
 
 Work:
 
@@ -268,15 +326,15 @@ Manual testing:
 - Render a perturbation-enabled Mandelbrot image and interrupt it.
 - Confirm progress text and completion still work.
 
-### Slice 5: StandardFractal Orbit Mode State
+### Slice 7: StandardFractal Orbit Mode State
 
 Work:
 
 - Replace the polling path through `sticky_orbits()` and
-  `plot_orbits2d()` with an orbit-mode calculation object owned by
+  `plot_orbits2d()` with concrete orbit-mode state owned by
   `StandardFractal`.
 - Keep rectangle, line, and function orbit drawing state in the orbit-mode
-  object.
+  state.
 - Move the interruption decision and resume request to
   `ui/standard_fractal.cpp`.
 - Leave Lorenz orbit math in calculation code, but remove keyboard polling
@@ -293,7 +351,7 @@ Manual testing:
 - Render `type=mandel passes=o` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 6: LSystem Renderer
+### Slice 8: LSystem Renderer
 
 Work:
 
@@ -317,7 +375,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 7: Lyapunov Renderer
+### Slice 9: Lyapunov Renderer
 
 Work:
 
@@ -339,7 +397,7 @@ Manual testing:
 - Render one Lyapunov image and interrupt it.
 - Confirm image tests for Lyapunov still pass.
 
-### Slice 8: Lorenz Photographer Mode
+### Slice 10: Lorenz Photographer Mode
 
 Work:
 
@@ -359,7 +417,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 9: Non-Interrupt Pending-Key Utilities
+### Slice 11: Non-Interrupt Pending-Key Utilities
 
 Work:
 
