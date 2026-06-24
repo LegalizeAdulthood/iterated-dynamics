@@ -37,6 +37,30 @@ void setup_standard_fractal_show_dot();
 namespace
 {
 
+StandardFractal *s_active_standard_fractal{};
+
+class ActiveStandardFractalScope
+{
+public:
+    explicit ActiveStandardFractalScope(StandardFractal &standard_fractal) :
+        m_previous{set_active_standard_fractal(&standard_fractal)}
+    {
+    }
+
+    ~ActiveStandardFractalScope()
+    {
+        set_active_standard_fractal(m_previous);
+    }
+
+    ActiveStandardFractalScope(const ActiveStandardFractalScope &) = delete;
+    ActiveStandardFractalScope(ActiveStandardFractalScope &&) = delete;
+    ActiveStandardFractalScope &operator=(const ActiveStandardFractalScope &) = delete;
+    ActiveStandardFractalScope &operator=(ActiveStandardFractalScope &&) = delete;
+
+private:
+    StandardFractal *m_previous{};
+};
+
 bool calc_type_supports_orbit_mode()
 {
     const fractals::CalcType table_calc_type{fractals::g_cur_fractal_specific->calc_type};
@@ -50,18 +74,38 @@ CalcMode followup_calc_mode()
 
 } // namespace
 
+StandardFractal *active_standard_fractal()
+{
+    return s_active_standard_fractal;
+}
+
+StandardFractal *set_active_standard_fractal(StandardFractal *standard_fractal)
+{
+    StandardFractal *previous{s_active_standard_fractal};
+    s_active_standard_fractal = standard_fractal;
+    return previous;
+}
+
 void StandardFractal::resume()
 {
     m_requested_calc_mode = g_std_calc_mode;
     m_after_work_list = AfterWorkList::COMPLETE;
     m_phase = Phase::START;
     m_dispatch_saved = false;
+    m_tesseral.reset();
     m_timer_started = false;
+    m_work_item_active = false;
+    m_work_item_yielded = false;
     m_work_list_started = false;
+    clear_standard_pixel();
 }
 
 void StandardFractal::suspend()
 {
+    if (m_tesseral != nullptr && !m_tesseral->done())
+    {
+        m_tesseral->suspend();
+    }
     if (g_num_work_list > 0)
     {
         alloc_resume(sizeof(g_work_list) + 20, 2);
@@ -71,6 +115,13 @@ void StandardFractal::suspend()
     {
         g_calc_status = CalcStatus::COMPLETED;
     }
+    if (m_work_item_active)
+    {
+        cleanup_standard_fractal_show_dot();
+        m_work_item_active = false;
+    }
+    m_tesseral.reset();
+    clear_standard_pixel();
     complete();
 }
 
@@ -86,6 +137,8 @@ void StandardFractal::iterate()
         return;
     }
 
+    ActiveStandardFractalScope active_standard_fractal{*this};
+    m_work_item_yielded = false;
     start_timer();
     if (m_phase == Phase::START)
     {
@@ -98,8 +151,42 @@ void StandardFractal::iterate()
     update_timer();
 }
 
+void StandardFractal::clear_standard_pixel()
+{
+    m_tan_table.fill(0.0);
+    m_deriv = {};
+    m_dem_new = {};
+    m_last_z = {};
+    m_mem_value = 0.0;
+    m_min_orbit = 100000.0;
+    m_total_dist = 0.0;
+    m_cycle_len = -1;
+    m_dem_color = -1;
+    m_min_index = 0;
+    m_save_max_it = 0;
+    m_saved_and = 0;
+    m_saved_color_iter = 0;
+    m_check_freq = 0;
+    m_hooper = 0;
+    m_standard_pixel_col = 0;
+    m_standard_pixel_row = 0;
+    m_saved_incr = 1;
+    m_attracted = false;
+    m_caught_a_cycle = false;
+    m_standard_pixel_active = false;
+    m_standard_pixel_input_checked = false;
+    m_standard_pixel_iteration_started = false;
+}
+
 void StandardFractal::complete()
 {
+    if (m_work_item_active)
+    {
+        cleanup_standard_fractal_show_dot();
+        m_work_item_active = false;
+    }
+    m_tesseral.reset();
+    clear_standard_pixel();
     if (m_requested_calc_mode == CalcMode::THREE_PASS)
     {
         g_std_calc_mode = m_requested_calc_mode;
@@ -149,48 +236,57 @@ void StandardFractal::run_current_work_item()
     {
         start_work_list();
     }
-    if (g_num_work_list <= 0)
+    if (!m_work_item_active && g_num_work_list <= 0)
     {
         finish_work_list();
         return;
     }
 
-    fractals::g_dispatch.init_calc_type(*fractals::g_cur_fractal_specific); // per_image can override
-    g_symmetry = fractals::g_cur_fractal_specific->symmetry;                // table symmetry
-    g_plot = g_put_color; // defaults when set symmetry not called or does nothing
-
-    g_start_pt = g_work_list[0].start;
-    g_i_start_pt = g_work_list[0].start;
-    g_stop_pt = g_work_list[0].stop;
-    g_i_stop_pt = g_work_list[0].stop;
-    g_begin_pt = g_work_list[0].begin;
-    g_work_pass = g_work_list[0].pass;
-    g_work_symmetry = g_work_list[0].symmetry;
-    pop_work_list_front();
-
-    g_calc_status = CalcStatus::IN_PROGRESS;
-
-    fractals::per_image();
-    setup_standard_fractal_show_dot();
-
-    g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
-    g_keyboard_check_interval = g_max_keyboard_check_interval;
-
-    set_symmetry(g_symmetry, true);
-
-    if (!g_resuming && (std::abs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
+    if (!m_work_item_active)
     {
-        g_log_map_flag = auto_log_map() * (g_log_map_flag / std::abs(g_log_map_flag));
-        setup_log_table();
+        fractals::g_dispatch.init_calc_type(*fractals::g_cur_fractal_specific); // per_image can override
+        g_symmetry = fractals::g_cur_fractal_specific->symmetry;                // table symmetry
+        g_plot = g_put_color; // defaults when set symmetry not called or does nothing
+
+        g_start_pt = g_work_list[0].start;
+        g_i_start_pt = g_work_list[0].start;
+        g_stop_pt = g_work_list[0].stop;
+        g_i_stop_pt = g_work_list[0].stop;
+        g_begin_pt = g_work_list[0].begin;
+        g_work_pass = g_work_list[0].pass;
+        g_work_symmetry = g_work_list[0].symmetry;
+        pop_work_list_front();
+
+        g_calc_status = CalcStatus::IN_PROGRESS;
+
+        fractals::per_image();
+        setup_standard_fractal_show_dot();
+
+        g_close_enough = g_delta_min * std::pow(2.0, -static_cast<double>(std::abs(g_periodicity_check)));
+        g_keyboard_check_interval = g_max_keyboard_check_interval;
+
+        set_symmetry(g_symmetry, true);
+
+        if (!g_resuming && (std::abs(g_log_map_flag) == 2 || (g_log_map_flag && g_log_map_auto_calculate)))
+        {
+            g_log_map_flag = auto_log_map() * (g_log_map_flag / std::abs(g_log_map_flag));
+            setup_log_table();
+        }
+        m_work_item_active = true;
     }
 
     run_current_work_item_mode();
-    cleanup_standard_fractal_show_dot();
 
     if (done())
     {
         return;
     }
+    if (m_work_item_yielded)
+    {
+        return;
+    }
+    cleanup_standard_fractal_show_dot();
+    m_work_item_active = false;
     if (g_num_work_list == 0)
     {
         finish_work_list();
@@ -206,7 +302,18 @@ void StandardFractal::run_current_work_item_mode()
         break;
 
     case CalcMode::TESSERAL:
-        tesseral();
+        if (m_tesseral == nullptr)
+        {
+            m_tesseral = std::make_unique<Tesseral>();
+        }
+        if (!m_tesseral->iterate() || !m_tesseral->done())
+        {
+            m_work_item_yielded = true;
+        }
+        else
+        {
+            m_tesseral.reset();
+        }
         break;
 
     case CalcMode::BOUNDARY_TRACE:

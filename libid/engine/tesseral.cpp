@@ -9,7 +9,6 @@
 #include "engine/VideoInfo.h"
 #include "engine/work_list.h"
 #include "fractals/fractalp.h"
-#include "ui/check_key.h"
 #include "ui/video.h"
 
 #include <vector>
@@ -20,36 +19,6 @@ using namespace id::fractals;
 namespace id::engine
 {
 
-struct Tess             // one of these per box to be done gets stacked
-{
-    int x1{};
-    int x2{};
-    int y1{};
-    int y2{};                  // left/right top/bottom x/y coords
-    int top{};
-    int bot{};
-    int lft{};
-    int rgt{}; // edge colors, -1 mixed, -2 unknown
-};
-
-class Tesseral
-{
-public:
-    Tesseral();
-
-    bool done() const;
-    void next_box();
-    bool split_needed();
-    void fill_box();
-    bool split_box();
-    void suspend();
-
-private:
-    bool m_guess_plot{};  // paint 1st pass row at a time?
-    Tess m_stack[4096 / sizeof(Tess)]{};
-    Tess *m_tp{};
-};
-
 static int tess_check_col(int x, int y1, int y2);
 static int tess_check_row(int x1, int x2, int y);
 static int tess_col(int x, int y1, int y2);
@@ -59,17 +28,43 @@ Tesseral::Tesseral() :
     m_guess_plot(g_plot != g_put_color && g_plot != sym_plot2),
     m_tp(&m_stack[0])
 {
-    m_tp->x1 = g_i_start_pt.x;                              // set up initial box
+    auto interrupted = [this](const int color)
+    {
+        if (color == -3)
+        {
+            m_interrupted = true;
+            return true;
+        }
+        return false;
+    };
+
+    m_tp->x1 = g_i_start_pt.x; // set up initial box
     m_tp->x2 = g_i_stop_pt.x;
     m_tp->y1 = g_i_start_pt.y;
     m_tp->y2 = g_i_stop_pt.y;
 
-    if (g_work_pass == 0) // not resuming
+    if (g_work_pass == 0)                                                    // not resuming
     {
-        m_tp->top = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_start_pt.y);     // Do top row
-        m_tp->bot = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_stop_pt.y);      // Do bottom row
-        m_tp->lft = tess_col(g_i_start_pt.x, g_i_start_pt.y+1, g_i_stop_pt.y-1); // Do left column
-        m_tp->rgt = tess_col(g_i_stop_pt.x, g_i_start_pt.y+1, g_i_stop_pt.y-1);  // Do right column
+        m_tp->top = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_start_pt.y); // Do top row
+        if (interrupted(m_tp->top))
+        {
+            return;
+        }
+        m_tp->bot = tess_row(g_i_start_pt.x, g_i_stop_pt.x, g_i_stop_pt.y); // Do bottom row
+        if (interrupted(m_tp->bot))
+        {
+            return;
+        }
+        m_tp->lft = tess_col(g_i_start_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1); // Do left column
+        if (interrupted(m_tp->lft))
+        {
+            return;
+        }
+        m_tp->rgt = tess_col(g_i_stop_pt.x, g_i_start_pt.y + 1, g_i_stop_pt.y - 1); // Do right column
+        if (interrupted(m_tp->rgt))
+        {
+            return;
+        }
     }
     else // resuming, rebuild work stack
     {
@@ -135,6 +130,27 @@ Tesseral::Tesseral() :
 bool Tesseral::done() const
 {
     return m_tp < &m_stack[0];
+}
+
+bool Tesseral::iterate()
+{
+    if (m_interrupted)
+    {
+        return false;
+    }
+    if (done())
+    {
+        return true;
+    }
+
+    next_box();
+    if (split_needed())
+    {
+        return !split_box();
+    }
+
+    fill_box();
+    return true;
 }
 
 void Tesseral::next_box()
@@ -356,22 +372,9 @@ int tesseral()
 
     while (!tess.done())
     {
-        tess.next_box();
-
-        if (tess.split_needed())
+        if (!tess.iterate())
         {
-            if (tess.split_box())
-            {
-                break;
-            }
-        }
-        else
-        {
-            tess.fill_box();
-            if (check_key())
-            {
-                break;
-            }
+            break;
         }
     }
 
@@ -419,6 +422,10 @@ static int tess_col(const int x, const int y1, const int y2)
     int col_color = calc_type();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
+    if (col_color < 0)
+    {
+        return -3;
+    }
     while (++g_row <= y2)
     {
         // generate the column
@@ -443,6 +450,10 @@ static int tess_row(const int x1, const int x2, const int y)
     int row_color = calc_type();
     // cppcheck-suppress redundantAssignment
     g_reset_periodicity = false;
+    if (row_color < 0)
+    {
+        return -3;
+    }
     while (++g_col <= x2)
     {
         // generate the row

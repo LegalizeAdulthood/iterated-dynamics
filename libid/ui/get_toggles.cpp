@@ -365,7 +365,7 @@ int get_toggles()
     }
 
     const std::string new_fill_color{id::algos::ascii_to_lower_copy(choices.read_string())};
-    if (new_fill_color.compare(0, 4, "normal") == 0)
+    if (new_fill_color.compare(0, 4, "norm") == 0)
     {
         g_fill_color = -1;
     }

@@ -37,6 +37,7 @@
 #include "engine/solid_guess.h"
 #include "engine/sound.h"
 #include "engine/spindac.h"
+#include "engine/StandardFractal.h"
 #include "engine/sticky_orbits.h"
 #include "engine/tesseral.h"
 #include "engine/UserData.h"
@@ -1106,160 +1107,208 @@ static void set_new_z_from_bignum()
 // per pixel 1/2/b/g, called with g_row & g_col set
 int standard_fractal_type()
 {
-    double tan_table[16]{};
-    int hooper{};
-    double mem_value{};
-    double min_orbit{100000.0}; // orbit value closest to origin
-    long min_index{};           // iteration of min_orbit
-    long cycle_len{-1};
-    long saved_color_iter{};
-    bool caught_a_cycle{};
-    bool attracted{};
-    DComplex deriv{};
-    long dem_color{-1};
-    DComplex dem_new{};
-    double total_dist{};
-    DComplex last_z{};
-
-    const long save_max_it = g_max_iterations;
-    if (g_inside_method == ColorMethod::STAR_TRAIL)
+    if (StandardFractal *standard_fractal = active_standard_fractal(); standard_fractal != nullptr)
     {
-        std::fill(std::begin(tan_table), std::end(tan_table), 0.0);
-        g_max_iterations = 16;
-    }
-    if (g_periodicity_check == 0 || g_inside_method == ColorMethod::ZMAG || g_inside_method == ColorMethod::STAR_TRAIL)
-    {
-        g_old_color_iter = 2147483647L;       // don't check periodicity at all
-    }
-    else if (g_inside_method == ColorMethod::PERIOD)       // for display-periodicity
-    {
-        g_old_color_iter = g_max_iterations / 5 * 4; // don't check until nearly done
-    }
-    else if (g_reset_periodicity)
-    {
-        g_old_color_iter = 255;               // don't check periodicity 1st 250 iterations
+        return standard_fractal->calculate_standard_pixel(true);
     }
 
-    // Jonathan - how about this idea ? skips first saved value which never works
+    StandardFractal standard_fractal;
+    return standard_fractal.calculate_standard_pixel(false);
+}
+
+int StandardFractal::calculate_standard_pixel(const bool yield_to_ui)
+{
+    if (m_standard_pixel_active && (m_standard_pixel_col != g_col || m_standard_pixel_row != g_row))
+    {
+        clear_standard_pixel();
+    }
+
+    if (!m_standard_pixel_active)
+    {
+        m_tan_table.fill(0.0);
+        m_hooper = 0;
+        m_mem_value = 0.0;
+        m_min_orbit = 100000.0; // orbit value closest to origin
+        m_min_index = 0;
+        m_cycle_len = -1;
+        m_saved_color_iter = 0;
+        m_caught_a_cycle = false;
+        m_attracted = false;
+        m_deriv = {};
+        m_dem_color = -1;
+        m_dem_new = {};
+        m_total_dist = 0.0;
+        m_last_z = {};
+        m_save_max_it = g_max_iterations;
+        m_standard_pixel_col = g_col;
+        m_standard_pixel_row = g_row;
+        m_standard_pixel_active = true;
+        m_standard_pixel_input_checked = false;
+        m_standard_pixel_iteration_started = false;
+
+        if (g_inside_method == ColorMethod::STAR_TRAIL)
+        {
+            g_max_iterations = 16;
+        }
+        if (g_periodicity_check == 0 || g_inside_method == ColorMethod::ZMAG ||
+            g_inside_method == ColorMethod::STAR_TRAIL)
+        {
+            g_old_color_iter = 2147483647L;              // don't check periodicity at all
+        }
+        else if (g_inside_method == ColorMethod::PERIOD) // for display-periodicity
+        {
+            g_old_color_iter = g_max_iterations / 5 * 4; // don't check until nearly done
+        }
+        else if (g_reset_periodicity)
+        {
+            g_old_color_iter = 255; // don't check periodicity 1st 250 iterations
+        }
+
+        // Jonathan - how about this idea ? skips first saved value which never works
 #ifdef MIN_SAVED_AND
-    g_old_color_iter = std::max<long>(g_old_color_iter, MIN_SAVED_AND);
+        g_old_color_iter = std::max<long>(g_old_color_iter, MIN_SAVED_AND);
 #else
-    g_old_color_iter = std::max(g_old_color_iter, g_first_saved_and);
+        g_old_color_iter = std::max(g_old_color_iter, g_first_saved_and);
 #endif
-    // really fractal specific, but we'll leave it here
-    if (g_use_init_orbit == InitOrbitMode::VALUE)
-    {
-        s_saved = g_init_orbit;
-    }
-    else
-    {
-        s_saved.x = 0;
-        s_saved.y = 0;
-    }
-    if (g_bf_math != BFMathType::NONE)
-    {
-        if (g_decimals > 200)
+        // really fractal specific, but we'll leave it here
+        if (g_use_init_orbit == InitOrbitMode::VALUE)
         {
-            g_keyboard_check_interval = -1;
+            s_saved = g_init_orbit;
         }
-        if (g_bf_math == BFMathType::BIG_NUM)
+        else
         {
-            clear_bn(g_saved_z_bn.x);
-            clear_bn(g_saved_z_bn.y);
+            s_saved.x = 0;
+            s_saved.y = 0;
         }
-        else if (g_bf_math == BFMathType::BIG_FLT)
+        if (g_bf_math != BFMathType::NONE)
         {
-            clear_bf(g_saved_z_bf.x);
-            clear_bf(g_saved_z_bf.y);
-        }
-    }
-    g_init.y = dy_pixel();
-    if (g_distance_estimator)
-    {
-        if (g_use_old_distance_estimator)
-        {
-            g_magnitude_limit = s_rq_lim_save;
-            if (g_distance_estimator != 1 || g_colors == 2) // not doing regular outside colors
+            if (g_decimals > 200)
             {
-                // so go straight for dem bailout
-                g_magnitude_limit = std::max(g_magnitude_limit, DEM_BAILOUT);
+                g_keyboard_check_interval = -1;
             }
-            dem_color = -1;
+            if (g_bf_math == BFMathType::BIG_NUM)
+            {
+                clear_bn(g_saved_z_bn.x);
+                clear_bn(g_saved_z_bn.y);
+            }
+            else if (g_bf_math == BFMathType::BIG_FLT)
+            {
+                clear_bf(g_saved_z_bf.x);
+                clear_bf(g_saved_z_bf.y);
+            }
         }
-        deriv.x = 1;
-        deriv.y = 0;
-        g_magnitude = 0;
-    }
-    g_orbit_save_index = 0;
-    g_color_iter = 0;
-    if (g_fractal_type == FractalType::JULIA)
-    {
-        g_color_iter = -1;
-    }
-    caught_a_cycle = false;
-    long saved_and;
-    if (g_inside_method == ColorMethod::PERIOD)
-    {
-        saved_and = 16;           // begin checking every 16th cycle
-    }
-    else
-    {
+        g_init.y = dy_pixel();
+        if (g_distance_estimator)
+        {
+            if (g_use_old_distance_estimator)
+            {
+                g_magnitude_limit = s_rq_lim_save;
+                if (g_distance_estimator != 1 || g_colors == 2) // not doing regular outside colors
+                {
+                    // so go straight for dem bailout
+                    g_magnitude_limit = std::max(g_magnitude_limit, DEM_BAILOUT);
+                }
+                m_dem_color = -1;
+            }
+            m_deriv.x = 1;
+            m_deriv.y = 0;
+            g_magnitude = 0;
+        }
+        g_orbit_save_index = 0;
+        g_color_iter = 0;
+        if (g_fractal_type == FractalType::JULIA)
+        {
+            g_color_iter = -1;
+        }
+        if (g_inside_method == ColorMethod::PERIOD)
+        {
+            m_saved_and = 16; // begin checking every 16th cycle
+        }
+        else
+        {
 #ifdef MIN_SAVED_AND
-        savedand = MIN_SAVED_AND;
+            m_saved_and = MIN_SAVED_AND;
 #else
-        saved_and = g_first_saved_and;                // begin checking every other cycle
+            m_saved_and = g_first_saved_and; // begin checking every other cycle
 #endif
-    }
-    int saved_incr = 1;               // for periodicity checking, start checking the very first time
-
-    if (g_inside_method <= ColorMethod::BOF60 && g_inside_method >= ColorMethod::BOF61)
-    {
-        g_magnitude = 0;
-        min_orbit = 100000.0;
-    }
-    g_overflow = false;           // reset integer math overflow flag
-
-    per_pixel(); // initialize the calculations
-
-    attracted = false;
-
-    if (g_outside_method == ColorMethod::TDIS)
-    {
-        if (g_bf_math == BFMathType::BIG_NUM)
-        {
-            g_old_z = cmplx_bn_to_float(g_old_z_bn);
         }
-        else if (g_bf_math == BFMathType::BIG_FLT)
-        {
-            g_old_z = cmplx_bf_to_float(g_old_z_bf);
-        }
-        last_z.x = g_old_z.x;
-        last_z.y = g_old_z.y;
-    }
+        m_saved_incr = 1; // for periodicity checking, start checking the very first time
 
-    int check_freq;
-    const bool orbit_sound = (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP;
-    if ((orbit_sound || g_show_dot >= 0) && g_orbit_delay > 0)
-    {
-        check_freq = 16;
+        if (g_inside_method <= ColorMethod::BOF60 && g_inside_method >= ColorMethod::BOF61)
+        {
+            g_magnitude = 0;
+            m_min_orbit = 100000.0;
+        }
+        g_overflow = false; // reset integer math overflow flag
+
+        per_pixel();        // initialize the calculations
+
+        if (g_outside_method == ColorMethod::TDIS)
+        {
+            if (g_bf_math == BFMathType::BIG_NUM)
+            {
+                g_old_z = cmplx_bn_to_float(g_old_z_bn);
+            }
+            else if (g_bf_math == BFMathType::BIG_FLT)
+            {
+                g_old_z = cmplx_bf_to_float(g_old_z_bf);
+            }
+            m_last_z.x = g_old_z.x;
+            m_last_z.y = g_old_z.y;
+        }
+
+        const bool orbit_sound = (g_sound_flag & SOUNDFLAG_ORBIT_MASK) > SOUNDFLAG_BEEP;
+        if ((orbit_sound || g_show_dot >= 0) && g_orbit_delay > 0)
+        {
+            m_check_freq = 16;
+        }
+        else
+        {
+            m_check_freq = 2048;
+        }
+
+        if (g_show_orbit)
+        {
+            sound_time_write();
+        }
     }
     else
     {
-        check_freq = 2048;
+        if (g_inside_method == ColorMethod::STAR_TRAIL)
+        {
+            g_max_iterations = 16;
+        }
     }
-
-    if (g_show_orbit)
+    while (true)
     {
-        sound_time_write();
-    }
-    while (++g_color_iter < g_max_iterations)
-    {
+        if (!m_standard_pixel_iteration_started)
+        {
+            ++g_color_iter;
+            m_standard_pixel_input_checked = false;
+            if (g_color_iter >= g_max_iterations)
+            {
+                break;
+            }
+            m_standard_pixel_iteration_started = true;
+        }
         // calculation of one orbit goes here
         // input in "old" -- output in "new"
-        if (g_color_iter % check_freq == 0)
+        if (!m_standard_pixel_input_checked && g_color_iter % m_check_freq == 0)
         {
-            if (check_key())
+            m_standard_pixel_input_checked = true;
+            if (yield_to_ui)
             {
+                if (calc_interrupted())
+                {
+                    clear_standard_pixel();
+                    g_max_iterations = m_save_max_it;
+                    return -1;
+                }
+            }
+            else if (check_key())
+            {
+                clear_standard_pixel();
+                g_max_iterations = m_save_max_it;
                 return -1;
             }
         }
@@ -1271,24 +1320,24 @@ int standard_fractal_type()
             // Algorithms from Peitgen & Saupe, Science of Fractal Images, p.198
             if (s_dem_mandel)
             {
-                f_temp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y) + 1;
+                f_temp = 2 * (g_old_z.x * m_deriv.x - g_old_z.y * m_deriv.y) + 1;
             }
             else
             {
-                f_temp = 2 * (g_old_z.x * deriv.x - g_old_z.y * deriv.y);
+                f_temp = 2 * (g_old_z.x * m_deriv.x - g_old_z.y * m_deriv.y);
             }
-            deriv.y = 2 * (g_old_z.y * deriv.x + g_old_z.x * deriv.y);
-            deriv.x = f_temp;
+            m_deriv.y = 2 * (g_old_z.y * m_deriv.x + g_old_z.x * m_deriv.y);
+            m_deriv.x = f_temp;
             if (g_use_old_distance_estimator)
             {
-                if (sqr(deriv.x)+sqr(deriv.y) > s_dem_too_big)
+                if (sqr(m_deriv.x) + sqr(m_deriv.y) > s_dem_too_big)
                 {
                     break;
                 }
             }
             else
             {
-                if (std::max(std::abs(deriv.x), std::abs(deriv.y)) > s_dem_too_big)
+                if (std::max(std::abs(m_deriv.x), std::abs(m_deriv.y)) > s_dem_too_big)
                 {
                     break;
                 }
@@ -1300,10 +1349,10 @@ int standard_fractal_type()
             {
                 if (g_use_old_distance_estimator)
                 {
-                    if (dem_color < 0)
+                    if (m_dem_color < 0)
                     {
-                        dem_color = g_color_iter;
-                        dem_new = g_new_z;
+                        m_dem_color = g_color_iter;
+                        m_dem_new = g_new_z;
                     }
                     if (g_magnitude_limit >= DEM_BAILOUT
                         || g_magnitude >= (g_magnitude_limit = DEM_BAILOUT)
@@ -1348,21 +1397,21 @@ int standard_fractal_type()
                     g_old_z = g_new_z;
                     {
                         const int tmp_color = static_cast<int>((g_color_iter - 1) % g_and_color + 1);
-                        tan_table[tmp_color-1] = g_new_z.y/(g_new_z.x+.000001);
+                        m_tan_table[tmp_color - 1] = g_new_z.y / (g_new_z.x + .000001);
                     }
                 }
             }
             else if (g_inside_method == ColorMethod::EPS_CROSS)
             {
-                hooper = 0;
+                m_hooper = 0;
                 if (std::abs(g_new_z.x) < std::abs(g_close_proximity))
                 {
-                    hooper = g_close_proximity > 0 ? 1 : -1; // close to y axis
+                    m_hooper = g_close_proximity > 0 ? 1 : -1; // close to y axis
                     goto plot_inside;
                 }
                 if (std::abs(g_new_z.y) < std::abs(g_close_proximity))
                 {
-                    hooper = g_close_proximity > 0 ? 2 : -2; // close to x axis
+                    m_hooper = g_close_proximity > 0 ? 2 : -2; // close to x axis
                     goto plot_inside;
                 }
             }
@@ -1370,7 +1419,7 @@ int standard_fractal_type()
             {
                 if (const double mag = fmod_test(); mag < g_close_proximity)
                 {
-                    mem_value = mag;
+                    m_mem_value = mag;
                 }
             }
             else if (g_inside_method <= ColorMethod::BOF60 && g_inside_method >= ColorMethod::BOF61)
@@ -1379,10 +1428,10 @@ int standard_fractal_type()
                 {
                     g_magnitude = sqr(g_new_z.x) + sqr(g_new_z.y);
                 }
-                if (g_magnitude < min_orbit)
+                if (g_magnitude < m_min_orbit)
                 {
-                    min_orbit = g_magnitude;
-                    min_index = g_color_iter + 1;
+                    m_min_orbit = g_magnitude;
+                    m_min_index = g_color_iter + 1;
                 }
             }
         }
@@ -1392,15 +1441,15 @@ int standard_fractal_type()
             set_new_z_from_bignum();
             if (g_outside_method == ColorMethod::TDIS)
             {
-                total_dist += std::sqrt(sqr(last_z.x-g_new_z.x)+sqr(last_z.y-g_new_z.y));
-                last_z.x = g_new_z.x;
-                last_z.y = g_new_z.y;
+                m_total_dist += std::sqrt(sqr(m_last_z.x - g_new_z.x) + sqr(m_last_z.y - g_new_z.y));
+                m_last_z.x = g_new_z.x;
+                m_last_z.y = g_new_z.y;
             }
             else if (g_outside_method == ColorMethod::FMOD)
             {
                 if (const double mag = fmod_test(); mag < g_close_proximity)
                 {
-                    mem_value = mag;
+                    m_mem_value = mag;
                 }
             }
         }
@@ -1420,7 +1469,7 @@ int standard_fractal_type()
                     {
                         if (at.x + at.y < g_attractor.radius)
                         {
-                            attracted = true;
+                            m_attracted = true;
                             if (g_attractor.enabled)
                             {
                                 g_color_iter = g_color_iter % g_attractor.period[i] + 1;
@@ -1430,7 +1479,7 @@ int standard_fractal_type()
                     }
                 }
             }
-            if (attracted)
+            if (m_attracted)
             {
                 break;              // AHA! Eaten by an attractor
             }
@@ -1438,9 +1487,9 @@ int standard_fractal_type()
 
         if (g_color_iter > g_old_color_iter) // check periodicity
         {
-            if ((g_color_iter & saved_and) == 0)            // time to save a new value
+            if ((g_color_iter & m_saved_and) == 0) // time to save a new value
             {
-                saved_color_iter = g_color_iter;
+                m_saved_color_iter = g_color_iter;
                 if (g_bf_math == BFMathType::BIG_NUM)
                 {
                     copy_bn(g_saved_z_bn.x, g_new_z_bn.x);
@@ -1455,10 +1504,10 @@ int standard_fractal_type()
                 {
                     s_saved = g_new_z;    // floating pt fractals
                 }
-                if (--saved_incr == 0)    // time to lengthen the periodicity?
+                if (--m_saved_incr == 0)  // time to lengthen the periodicity?
                 {
-                    saved_and = (saved_and << 1) + 1;       // longer periodicity
-                    saved_incr = g_periodicity_next_saved_incr;// restart counter
+                    m_saved_and = (m_saved_and << 1) + 1;         // longer periodicity
+                    m_saved_incr = g_periodicity_next_saved_incr; // restart counter
                 }
             }
             else                // check against an old save
@@ -1472,7 +1521,7 @@ int standard_fractal_type()
                         if (cmp_bn(abs_a_bn(sub_bn(g_bn_tmp, g_saved_z_bn.y, g_new_z_bn.y)),
                                 g_close_enough_bn) < 0)
                         {
-                            caught_a_cycle = true;
+                            m_caught_a_cycle = true;
                         }
                     }
                 }
@@ -1484,7 +1533,7 @@ int standard_fractal_type()
                         if (cmp_bf(abs_a_bf(sub_bf(g_bf_tmp, g_saved_z_bf.y, g_new_z_bf.y)),
                                 g_close_enough_bf) < 0)
                         {
-                            caught_a_cycle = true;
+                            m_caught_a_cycle = true;
                         }
                     }
                 }
@@ -1494,17 +1543,18 @@ int standard_fractal_type()
                     {
                         if (std::abs(s_saved.y - g_new_z.y) < g_close_enough)
                         {
-                            caught_a_cycle = true;
+                            m_caught_a_cycle = true;
                         }
                     }
                 }
-                if (caught_a_cycle)
+                if (m_caught_a_cycle)
                 {
-                    cycle_len = g_color_iter-saved_color_iter;
+                    m_cycle_len = g_color_iter - m_saved_color_iter;
                     g_color_iter = g_max_iterations - 1;
                 }
             }
         }
+        m_standard_pixel_iteration_started = false;
     }  // end while (g_color_iter++ < maxit)
 
     if (g_show_orbit)
@@ -1578,11 +1628,11 @@ int standard_fractal_type()
         }
         else if (g_outside_method == ColorMethod::FMOD)
         {
-            g_color_iter = static_cast<long>(mem_value * g_colors / g_close_proximity);
+            g_color_iter = static_cast<long>(m_mem_value * g_colors / g_close_proximity);
         }
         else if (g_outside_method == ColorMethod::TDIS)
         {
-            g_color_iter = static_cast<long>(total_dist);
+            g_color_iter = static_cast<long>(m_total_dist);
         }
 
         // eliminate negative colors & wrap arounds
@@ -1602,7 +1652,7 @@ int standard_fractal_type()
         else
         {
             const double temp = std::log(dist);
-            dist = dist * sqr(temp) / (sqr(deriv.x) + sqr(deriv.y));
+            dist = dist * sqr(temp) / (sqr(m_deriv.x) + sqr(m_deriv.y));
         }
         if (dist < s_dem_delta)     // point is on the edge
         {
@@ -1637,8 +1687,8 @@ int standard_fractal_type()
         }
         if (g_use_old_distance_estimator)
         {
-            g_color_iter = dem_color;
-            g_new_z = dem_new;
+            g_color_iter = m_dem_color;
+            g_new_z = m_dem_new;
         }
         // use pixel's "regular" color
     }
@@ -1655,7 +1705,7 @@ int standard_fractal_type()
         }
     }
 
-    if (g_outside_method >= ColorMethod::COLOR && !attracted)       // merge escape-time stripes
+    if (g_outside_method >= ColorMethod::COLOR && !m_attracted) // merge escape-time stripes
     {
         g_color_iter = g_outside_color;
     }
@@ -1666,7 +1716,7 @@ int standard_fractal_type()
     goto plot_pixel;
 
 plot_inside: // we're "inside"
-    if (g_periodicity_check < 0 && caught_a_cycle)
+    if (g_periodicity_check < 0 && m_caught_a_cycle)
     {
         g_color_iter = 7;           // show periodicity
     }
@@ -1681,7 +1731,7 @@ plot_inside: // we're "inside"
             g_color_iter = 0;
             for (int i = 1; i < 16; i++)
             {
-                if (const double diff = tan_table[0] - tan_table[i]; std::abs(diff) < .05)
+                if (const double diff = m_tan_table[0] - m_tan_table[i]; std::abs(diff) < .05)
                 {
                     g_color_iter = i;
                     break;
@@ -1690,9 +1740,9 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_method == ColorMethod::PERIOD)
         {
-            if (cycle_len > 0)
+            if (m_cycle_len > 0)
             {
-                g_color_iter = cycle_len;
+                g_color_iter = m_cycle_len;
             }
             else
             {
@@ -1701,17 +1751,17 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_method == ColorMethod::EPS_CROSS)
         {
-            if (hooper == 1)
+            if (m_hooper == 1)
             {
                 constexpr int GREEN = 2;
                 g_color_iter = GREEN;
             }
-            else if (hooper == 2)
+            else if (m_hooper == 2)
             {
                 constexpr int YELLOW = 6;
                 g_color_iter = YELLOW;
             }
-            else if (hooper == 0)
+            else if (m_hooper == 0)
             {
                 g_color_iter = g_max_iterations;
             }
@@ -1722,7 +1772,7 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_method == ColorMethod::FMODI)
         {
-            g_color_iter = static_cast<long>(mem_value * g_colors / g_close_proximity);
+            g_color_iter = static_cast<long>(m_mem_value * g_colors / g_close_proximity);
         }
         else if (g_inside_method == ColorMethod::ATANI)            // "atan"
         {
@@ -1730,11 +1780,11 @@ plot_inside: // we're "inside"
         }
         else if (g_inside_method == ColorMethod::BOF60)
         {
-            g_color_iter = static_cast<long>(std::sqrt(min_orbit) * 75);
+            g_color_iter = static_cast<long>(std::sqrt(m_min_orbit) * 75);
         }
         else if (g_inside_method == ColorMethod::BOF61)
         {
-            g_color_iter = min_index;
+            g_color_iter = m_min_index;
         }
         else if (g_inside_method == ColorMethod::ZMAG)
         {
@@ -1774,14 +1824,15 @@ plot_pixel:
     }
     g_plot(g_col, g_row, g_color);
 
-    g_max_iterations = save_max_it;
+    g_max_iterations = m_save_max_it;
+    clear_standard_pixel();
     if ((g_keyboard_check_interval -= std::abs(g_real_color_iter)) <= 0)
     {
-        if (check_key())
+        g_keyboard_check_interval = g_max_keyboard_check_interval;
+        if (!yield_to_ui && check_key())
         {
             return -1;
         }
-        g_keyboard_check_interval = g_max_keyboard_check_interval;
     }
     return g_color;
 }

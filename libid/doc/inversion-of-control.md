@@ -153,71 +153,11 @@ them to the active handler stack from top to bottom.  The first handler
 that returns `true` stops propagation.  If no handler consumes the key, the
 key is discarded.
 
-## Standard Fractal Slices
+## Remaining Wrapper Slices
 
 Line ranges are current anchors.  They may drift as slices land.
 
-### Slice 1: Make Standard Pixels Yieldable
-
-Work:
-
-- Move active pixel state from
-  `libid/engine/calcfrac.cpp:1323-2030` into `StandardFractal`.
-- Include Tesseral's bounded box state from `libid/engine/tesseral.cpp`.
-- Replace the `check_key()` calls at
-  `libid/engine/calcfrac.cpp:1477` and
-  `libid/engine/calcfrac.cpp:1996`, and
-  `libid/engine/tesseral.cpp:371`, by returning from
-  `StandardFractal::iterate()`.
-- Make a long-running pixel advance in bounded orbit chunks.
-- Make a long-running Tesseral pass advance in bounded box chunks.
-- Keep color, potential, distance-estimator, sound, and orbit-save side
-  effects unchanged.
-- Preserve the current bailout and periodicity behavior.
-
-Done when:
-
-- The standard pixel path has no direct keyboard polling.
-- The Tesseral standard-mode path has no direct keyboard polling.
-- Long-running standard pixels can yield back to the UI wrapper.
-- Long-running Tesseral work can yield back to the UI wrapper.
-- Pixel-local state survives across calls to `iterate()`.
-
-Manual testing:
-
-- Render a deep or high-iteration Mandelbrot image and interrupt it.
-- Render with `passes=t` and interrupt it.
-- Toggle orbit display during a slow render.
-- Resume and confirm the image completes correctly.
-
-### Slice 2: Finish Standard Calcfrac Cleanup
-
-Work:
-
-- Remove standard-render polling from `libid/engine/calcfrac.cpp`.
-- Remove standard-render dependency on `ui/check_key.h`.
-- Keep `calc_fract()` responsible for calculation setup and finish only if
-  that remains the least disruptive route.
-- Prefer moving image-level UI decisions to `libid/ui` when the call graph
-  permits it without broad churn.
-- Keep per-pixel helpers as calculation helpers, not UI entry points.
-
-Done when:
-
-- Standard rendering input ownership is in `libid/ui`.
-- `StandardFractal` owns standard iteration state.
-- `calcfrac.cpp` no longer calls direct keyboard polling for standard
-  rendering.
-- `tesseral.cpp` no longer calls direct keyboard polling.
-
-Manual testing:
-
-- Render standard Mandelbrot, Julia, formula, and Newton examples.
-- Render a Tesseral-pass image.
-- Interrupt and resume at least one one-pass and one two-pass image.
-- Verify orbit toggling during standard rendering.
-
-### Slice 3: Move FrothyBasin To Wrapper Shape
+### Slice 1: Move FrothyBasin To Wrapper Shape
 
 Work:
 
@@ -247,7 +187,7 @@ Manual testing:
 
 ## JIIM Slices
 
-### Slice 4: Move Inverse-Julia Keyboard Context
+### Slice 2: Move Inverse-Julia Keyboard Context
 
 Work:
 
@@ -270,7 +210,7 @@ Manual testing:
 - Save from the modal context.
 - Exit and confirm the following UI command behavior is unchanged.
 
-### Slice 5: Move JIIM Mouse Handling
+### Slice 3: Move JIIM Mouse Handling
 
 Work:
 
@@ -301,15 +241,15 @@ These slices happen after the standard renderer has the UI wrapper shape.
 They should use the same rule: move input ownership to `libid/ui`; leave
 calculation code with state, decisions, and return values.
 
-### Slice 6: Move Pure Render Interrupt Probes
+### Slice 4: Move Pure Render Interrupt Probes
 
 Work:
 
 - Replace direct pending-key interrupt probes with UI-owned interruption
   checks.
-- Cover `engine/PertEngine.cpp`, `engine/solid_guess.cpp`,
-  `engine/soi.cpp`, `fractals/lsystem.cpp`, and
-  `fractals/lyapunov.cpp`.
+- Cover `engine/calcfrac.cpp`, `engine/PertEngine.cpp`,
+  `engine/solid_guess.cpp`, `engine/soi.cpp`, `fractals/lsystem.cpp`,
+  and `fractals/lyapunov.cpp`.
 - Preserve each local return value and resume behavior.
 - Remove `misc/Driver.h` includes made unnecessary by the move.
 
@@ -323,7 +263,7 @@ Manual testing:
 - Render one example for each changed path.
 - Interrupt each render and confirm the outer UI resumes control.
 
-### Slice 7: Move Lorenz UI Prompts
+### Slice 5: Move Lorenz UI Prompts
 
 Work:
 
@@ -346,7 +286,7 @@ Manual testing:
 - Render a Lorenz orbit and interrupt it.
 - Exercise photographer-mode save with repeated `s` or `S`.
 
-### Slice 8: Move Non-Interrupt Pending-Key Queries
+### Slice 6: Move Non-Interrupt Pending-Key Queries
 
 Work:
 
@@ -371,8 +311,8 @@ Manual testing:
 
 Direct polling or key consumption exists outside `libid/ui` in:
 
-- `libid/engine/calcfrac.cpp`: standard renderer polling outside the
-  Mandelbrot hot path.
+- `libid/engine/calcfrac.cpp`: non-standard wrapper polling and direct
+  standard-pixel fallback polling.
 - `libid/engine/jiim.cpp`: inverse-Julia key wait, drain, and requeue.
 - `libid/engine/PertEngine.cpp`: interrupt check during reference pass.
 - `libid/engine/solid_guess.cpp`: interrupt checks during block repaint.
