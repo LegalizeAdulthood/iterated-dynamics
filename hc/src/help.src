@@ -275,6 +275,9 @@ New Features in Version 1.5
 
 Bugs Fixed in Version 1.5
 
+o Cross-hair cursors now repaint while tracking mouse movement in the
+  palette editor and Julia point picker.
+
 Code Cleanup in Version 1.5
 
 o Runtime fractal dispatch now uses explicit dispatch state for selected

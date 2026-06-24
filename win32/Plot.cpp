@@ -524,7 +524,7 @@ void Plot::flush()
 {
     if (m_dirty)
     {
-        InvalidateRect(m_window, &m_dirty_region, FALSE);
+        InvalidateRect(m_window, nullptr, FALSE);
         m_dirty = false;
         m_dirty_region = {-1, -1, -1, -1};
     }

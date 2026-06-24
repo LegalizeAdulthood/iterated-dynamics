@@ -12,6 +12,16 @@ using namespace id::engine;
 namespace id::ui
 {
 
+namespace
+{
+
+constexpr int MAX_6BIT_RGB{63};
+constexpr int MAX_8BIT_RGB{255};
+constexpr int MEDIUM_MIN_BRIGHTNESS{80 * MAX_8BIT_RGB / MAX_6BIT_RGB};
+constexpr int MEDIUM_MAX_BRIGHTNESS{150 * MAX_8BIT_RGB / MAX_6BIT_RGB};
+
+} // namespace
+
 int g_color_dark{};   // darkest color in palette
 int g_color_bright{}; // brightest color in palette
 int g_color_medium{}; // nearest to medbright grey in palette
@@ -56,7 +66,7 @@ void find_special_colors()
             min_b = brt;
             g_color_dark = i;
         }
-        if (brt < 150 && brt > 80)
+        if (brt < MEDIUM_MAX_BRIGHTNESS && brt > MEDIUM_MIN_BRIGHTNESS)
         {
             int min_gun = g_dac_box[i][0];
             int max_gun = min_gun;

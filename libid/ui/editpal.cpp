@@ -46,11 +46,12 @@ namespace id::ui
 
 enum
 {
-    FONT_DEPTH = 8,  // font size
-    CSIZE_MIN = 8,   // csize cannot be smaller than this
+    FONT_DEPTH = 8,          // font size
+    CSIZE_MIN = 8,           // csize cannot be smaller than this
     BOX_INC = 1,
     CSIZE_INC = 2,
     CURSOR_BLINK_RATE = 300, // timer ticks between cursor blinks
+    CURSOR_POLL_INTERVAL = 25,
     FAR_RESERVE = 8192L,     // amount of mem we will leave avail.
     TITLE_LEN = 17,
     EDITOR_WIDTH = 8 * 4 + 4,
@@ -707,7 +708,7 @@ CrossHairCursor::CrossHairCursor() :
     m_y(g_screen_y_dots / 2),
     m_hidden(1),
     m_last_blink{},
-    m_blink{},
+    m_blink(true),
     m_top{},
     m_bottom{},
     m_left{},
@@ -805,8 +806,12 @@ int ColorEditor::edit()
     g_cursor_mouse_tracking = true;
     while (!m_done)
     {
-        s_cursor.wait_key();
-        key = driver_get_key();
+        key = s_cursor.wait_key();
+        if (key == 0)
+        {
+            continue;
+        }
+        driver_get_key();
 
         switch (key)
         {
@@ -989,8 +994,12 @@ bool MoveBox::process()
     MouseSubscription sub{std::make_shared<MoveBoxNotification>(*this)};
     while (true)
     {
-        s_cursor.wait_key();
-        key = driver_get_key();
+        key = s_cursor.wait_key();
+        if (key == 0)
+        {
+            continue;
+        }
+        driver_get_key();
 
         if (key == ID_KEY_ENTER || key == ID_KEY_ENTER_2 || key == ID_KEY_ESC || key == 'H' || key == 'h')
         {
@@ -1174,9 +1183,16 @@ void CrossHairCursor::check_blink()
 
 int CrossHairCursor::wait_key()
 {
-    while (!driver_wait_key_pressed(true) && !m_pos_updated)
+    while (!driver_key_pressed())
     {
+        driver_delay(CURSOR_POLL_INTERVAL);
         check_blink();
+        if (m_pos_updated)
+        {
+            m_pos_updated = false;
+            driver_flush();
+            return 0;
+        }
     }
     m_pos_updated = false;
 
