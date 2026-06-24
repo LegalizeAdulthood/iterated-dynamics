@@ -71,15 +71,44 @@ public:
 }
 ```
 
-`StandardFractal` owns the standard renderer's iteration state.  That
-includes the current standard pass, work list position, active rectangle,
-active row and column, and the active pixel's orbit state when a pixel
-needs to yield before it is finished.
+`StandardFractal` owns the standard renderer lifecycle.  That includes the
+work list, the active work-list item, the active `StandardPass`, and the
+active pixel's orbit state when a pixel needs to yield before it is
+finished.
+
+The active `StandardPass` owns pass-specific traversal and fill state.
+That includes active row and column, subdivision state, block state, scan
+stack, and decisions about whether a pixel needs real orbit work or can be
+filled from surrounding pixels.
+
+The pass algorithm does not compute the orbit.  It advances traversal and
+fill state, then sets up the state needed for the next call to the
+standard orbit function.  `StandardFractal` calls the correct orbit
+function after the pass has prepared the current pixel state.  The chosen
+function depends on the selected fractal type and orbit algorithm.  During
+this refactor, that communication may remain indirect through existing
+globals such as `g_row`, `g_col`, `g_color`, and `g_plot`.  Removing those
+globals is separate work.
+
+A practical implementation is a non-virtual `StandardPass` wrapper that
+holds a `std::variant` of concrete pass state types.  `StandardPass`
+exposes one small interface, such as `resume()`, `suspend()`, `done()`,
+and `iterate()`, and dispatches to the active variant alternative with
+`std::visit`.
 
 `StandardFractal` also owns the standard-mode dispatch currently selected
 by `g_std_calc_mode`, including synchronous orbit, Tesseral, boundary
-trace, solid guessing, diffusion scan, orbit mode, perturbation, and the
-one-pass and two-pass paths.
+trace, solid guessing, diffusion scan, orbit mode, and the one-pass and
+two-pass paths.
+
+Perturbation is not a standard pass.  GitHub issue #180 records that the
+current implementation computes the full image during fractal setup, which
+is the wrong layer.  Perturbation is an alternate way to compute an
+escape-time orbit for a pixel.  It belongs below the pass layer as a
+standard orbit strategy.  `passes=p` should remain as compatibility
+syntax, but should select perturbation orbit calculation while using the
+default standard traversal.  For traversal purposes, `passes=p` is
+synonymous with the default solid-guessing path.
 
 The UI wrapper owns input policy.  It constructs or resumes
 `StandardFractal`, polls input through the active UI context, asks the
@@ -94,6 +123,32 @@ compatibility during the refactor, the final shape should still separate:
 - standard calculation object
 - per-pixel escape-time helpers
 - per-orbit helper functions
+
+## Current Audit Snapshot
+
+The current code is already part-way through this plan:
+
+- `libid/ui/standard_fractal.cpp` already owns standard-render keyboard
+  polling through the handler stack.
+- `StandardFractal::run_current_work_item_mode()` is already a thin
+  explicit `CalcMode` dispatch.
+- Tesseral is closest to the target shape.  `StandardFractal` owns a
+  `Tesseral`, and `Tesseral` has `iterate()`, `done()`, and `suspend()`.
+- The one-pass and two-pass paths still use `g_row`, `g_col`,
+  `g_work_pass`, and the global work list as traversal state.
+- Boundary trace is still a monolithic function with static trail state
+  and work-list resume on pixel interruption.
+- Diffusion has resumable globals, such as `g_diffusion_counter`,
+  `g_diffusion_bits`, and `g_diffusion_limit`, but not an owned pass
+  object.
+- Solid guessing has a concrete `SolidGuess` class, but it is stack-local
+  inside `solid_guess()` and still probes keyboard input.
+- SOI still uses recursive control flow plus static/global rhombus state.
+- Orbit mode still runs through `sticky_orbits()` and `plot_orbits2d()`,
+  with traversal and interruption outside `StandardFractal`.
+- Perturbation has a `PertEngine`, but it is file-static in
+  `perturbation.cpp`, computes the full frame during setup, and should be
+  moved below the pass layer per issue #180.
 
 ## Input Rules
 
@@ -148,8 +203,8 @@ calculation interruption.
 
 The UI dispatcher polls the driver queue, reads available keys, and offers
 them to the active handler stack from top to bottom.  The first handler
-that returns `true` stops propagation.  If no handler consumes the key, the
-key is discarded.
+that returns `true` stops propagation.  If no handler consumes the key,
+the key is discarded.
 
 ## Remaining Inversion-of-Control Slices
 
@@ -173,40 +228,79 @@ Do not introduce a new progress-result enum unless an individual renderer
 needs more state than the existing `iterate()` and `done()` pattern can
 express.
 
-### Slice 1: StandardPass Boundary
+The audit found that the StandardPass Adapter shape mostly exists already.
+The remaining standard-pass work is mostly ownership and bounded
+iteration: moving pass traversal state out of globals, statics, stack
+locals, and recursive frames into concrete `StandardPass` state.
+
+### Slice 1: SOI Recursive Class Refactor
 
 Work:
 
-- Add grouped standard-pass state owned directly by `StandardFractal`.
+- Purely refactor `libid/engine/soi.cpp`; do not make SOI resumable in
+  this slice.
+- Keep the recursive SOI algorithm and rendered output unchanged.
+- Add a concrete `SOI` class in `soi.cpp` to own recursive SOI scratch
+  state.
+- Move file-static scratch state such as `s_zi`, `s_state`, `s_t_width`,
+  `s_equal`, and rhombus recursion depth into `SOI`.
+- Keep externally visible tab-display state global for now, including
+  `g_rhombus_stack`, `g_max_rhombus_depth`,
+  `g_soi_min_stack_available`, and `g_soi_min_stack`.
+- Convert internal helper functions such as `rhombus()`,
+  `rhombus_aux()`, `rhombus2()`, and `soi_orbit()` to private class
+  methods.
+- Keep the existing public `soi()` function as a thin delegating wrapper.
+- Do not remove key probes in this slice unless the class boundary makes
+  that mechanical and behavior-neutral.
+
+Done when:
+
+- SOI scratch state is owned by a concrete class instead of file statics.
+- The external SOI entry point and behavior are unchanged.
+- The existing recursive control flow is still recognizable.
+- `ImageTest.passes-synchronous-orbits` passes.
+
+### Slice 2: StandardPass Boundary
+
+Work:
+
+- Add grouped standard-pass state owned by concrete `StandardPass` state
+  objects.
 - Do not introduce a virtual `StandardPass` base class or polymorphic pass
   hierarchy.
+- Prefer one `StandardPass` wrapper around a `std::variant` of concrete
+  pass implementations.
 - Group pass-specific screen traversal state: current row, current column,
   subdivision state, block state, or scan stack.
 - Group pass-specific fill decisions: SOI, solid guess, diffusion,
   boundary trace, and Tesseral can color pixels based on surrounding
   orbit results.
 - Use explicit dispatch, such as a switch on `CalcMode` or a variant, to
-  advance the active pass state.
-- The active pass state asks the standard pixel/orbit calculator to
-  compute an orbit only when it decides a pixel needs real orbit work.
+  advance the active `StandardPass`.
+- The active `StandardPass` sets up state for the next standard orbit call
+  only when it decides a pixel needs real orbit work.
+- Keep the existing global-variable handoff between pass traversal and
+  orbit calculation until a later refactor replaces it deliberately.
 - Keep fractal-type-specific orbit math separate from pass traversal and
   fill decisions.
+- Do not model perturbation as a pass.  It is an alternate orbit strategy
+  under the pass layer.
 - Add the boundary without changing active pass behavior.
 
 Done when:
 
-- `StandardFractal` has an explicit place to own active pass state.
+- `StandardFractal` has an explicit place to own or select the active
+  `StandardPass`.
+- `StandardPass` exposes a single non-virtual interface and dispatches to
+  its active variant alternative.
+- Each concrete `StandardPass` owns its pass-specific traversal and fill
+  state.
 - The plan-level split is reflected in code names and ownership, even if
   existing pass implementations are still called through temporary
   dispatch branches.
 
-Manual testing:
-
-- Render `type=mandel passes=1`.
-- Render `type=mandel passes=t`.
-- Render `type=mandel passes=g`.
-
-### Slice 2: StandardPass Adapter
+### Slice 3: StandardPass Adapter
 
 Work:
 
@@ -214,8 +308,10 @@ Work:
   `StandardFractal` can drive all standard modes through grouped pass
   state.
 - These branches may still call existing one-pass, two-pass, boundary
-  trace, Tesseral, solid guess, diffusion, SOI, orbit, and perturbation
-  entry points.
+  trace, Tesseral, solid guess, diffusion, SOI, and orbit entry points.
+- Do not add perturbation as a pass adapter.  Normalize `passes=p` before
+  pass dispatch, or treat it as orbit-function selection after pass
+  traversal has set up the current pixel state.
 - Keep this dispatch thin and temporary; it exists to make later slices
   convert one pass at a time without adding virtual functions.
 - Do not move keyboard polling in this slice.
@@ -226,13 +322,7 @@ Done when:
   grouped pass state.
 - Existing standard rendering behavior is unchanged.
 
-Manual testing:
-
-- Render one image for each visible pass mode: `passes=1`, `passes=2`,
-  `passes=t`, `passes=b`, `passes=g`, `passes=d`, `passes=s`, and
-  `passes=o`.
-
-### Slice 3: StandardFractal Pixel Yielding
+### Slice 4: StandardFractal Pixel Yielding
 
 Work:
 
@@ -260,14 +350,14 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 4: StandardFractal SolidGuess State
+### Slice 5: StandardFractal SolidGuess State
 
 Work:
 
 - Keep `SolidGuess` as a concrete state holder in
   `libid/engine/solid_guess.cpp`.
-- Change `StandardFractal` to own a `SolidGuess` instance while
-  `passes=g` work is active.
+- Change the concrete solid-guess `StandardPass` state to own a
+  `SolidGuess` instance while `passes=g` work is active.
 - Move scan position, row repaint position, and any needed block state
   into `SolidGuess` so `SolidGuess::iterate()` can do bounded work and
   return to `StandardFractal`.
@@ -284,13 +374,14 @@ Manual testing:
 - Render `type=mandel passes=g` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 5: StandardFractal SOI State
+### Slice 6: StandardFractal SOI Resume State
 
 Work:
 
-- Add concrete SOI state owned by `StandardFractal` for `passes=s`.
-- Replace the recursive SOI control flow in `libid/engine/soi.cpp` with
-  resumable state that can advance by bounded scan or rhombus steps.
+- Convert the `SOI` class from the cleanup slice into concrete
+  `StandardPass` state for `passes=s`.
+- Replace the recursive SOI control flow with resumable state that can
+  advance by bounded scan or rhombus steps.
 - Keep SOI math, stack-depth tracking, and resume behavior unchanged.
 - Remove key probes from `soi.cpp`.
 
@@ -299,40 +390,56 @@ Done when:
 - `soi.cpp` has no direct keyboard polling.
 - SOI returns control to `ui/standard_fractal.cpp` between bounded units
   of work.
+- `ImageTest.passes-synchronous-orbits` passes.
 
 Manual testing:
 
 - Render `type=mandel passes=s` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 6: StandardFractal Perturbation State
+### Slice 7: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
 - Keep `PertEngine` as the perturbation calculation object.
-- Split `PertEngine::calculate_one_frame()` into incremental state:
-  reference pass, selected reference point, point index, glitch list, and
-  progress text.
-- Make `StandardFractal` own and advance the active `PertEngine`.
+- Stop treating perturbation as a standard pass or full-image setup path.
+- Replace the `perturbation.cpp` full-frame setup calculation with a
+  standard orbit strategy used after normal pass traversal sets up the
+  current pixel state.
+- Make `passes=p` compatibility syntax.  It selects perturbation orbit
+  calculation, while the traversal behaves like the default `passes=g`.
+- Use the standard work list to represent pixels or regions that still
+  need work, including glitch points that must be recomputed.
+- Split `PertEngine::calculate_one_frame()` into resumable state:
+  reference pass, selected reference point, point index, glitch list,
+  current work-list item, and progress text.
+- Make `StandardFractal` own and advance the active `PertEngine` only as
+  part of standard orbit calculation, not as a peer pass algorithm.
 - Remove the key probe from `PertEngine.cpp`.
+- Consider a `perturbation=epsilon` parameter for the glitch-divergence
+  threshold after the ownership boundary is correct.
 
 Done when:
 
 - `PertEngine.cpp` has no direct keyboard polling.
-- Perturbation setup advances through `StandardFractal::iterate()`.
+- Perturbation no longer computes the full image during fractal setup.
+- `StandardFractal` traverses the image through the normal pass path while
+  perturbation supplies the orbit implementation.
+- `passes=p` preserves user-visible compatibility and no longer appears
+  as a peer `StandardPass`.
 
 Manual testing:
 
-- Render a perturbation-enabled Mandelbrot image and interrupt it.
-- Confirm progress text and completion still work.
+- Interrupt and resume the perturbation-enabled render.
+- Confirm progress text remains responsive during interruption and
+  resume.
 
-### Slice 7: StandardFractal Orbit Mode State
+### Slice 8: StandardFractal Orbit Mode State
 
 Work:
 
 - Replace the polling path through `sticky_orbits()` and
-  `plot_orbits2d()` with concrete orbit-mode state owned by
-  `StandardFractal`.
+  `plot_orbits2d()` with concrete orbit-mode `StandardPass` state.
 - Keep rectangle, line, and function orbit drawing state in the orbit-mode
   state.
 - Move the interruption decision and resume request to
@@ -351,7 +458,7 @@ Manual testing:
 - Render `type=mandel passes=o` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 8: LSystem Renderer
+### Slice 9: LSystem Renderer
 
 Work:
 
@@ -375,7 +482,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 9: Lyapunov Renderer
+### Slice 10: Lyapunov Renderer
 
 Work:
 
@@ -395,9 +502,8 @@ Done when:
 Manual testing:
 
 - Render one Lyapunov image and interrupt it.
-- Confirm image tests for Lyapunov still pass.
 
-### Slice 10: Lorenz Photographer Mode
+### Slice 11: Lorenz Photographer Mode
 
 Work:
 
@@ -417,7 +523,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 11: Non-Interrupt Pending-Key Utilities
+### Slice 12: Non-Interrupt Pending-Key Utilities
 
 Work:
 
@@ -458,22 +564,23 @@ Direct polling or key consumption exists outside `libid/ui` in:
 ## Future Event-Driven Work
 
 This plan leaves the following ideas out of scope for the current polling
-slices.  They should be kept as future direction after direct polling calls
-are moved behind `libid/ui`.
+slices.  They should be kept as future direction after direct polling
+calls are moved behind `libid/ui`.
 
 - Convert `Frame`, `WinText`, and `Plot` to wxWidgets controls while the
   current polling code still pumps GUI events.
 - Add menu-bar support, with blocking text screens still preventing normal
   menu interaction until they are migrated.
-- Convert blocking text screens to modal dialogs incrementally.  Start with
-  simple numeric input, then form-style prompts, then file-entry screens.
+- Convert blocking text screens to modal dialogs incrementally.  Start
+  with simple numeric input, then form-style prompts, then file-entry
+  screens.
 - After text screens are dialogs, remove the menu-bar blocking workaround.
 - Replace polling-driven calculation with idle-processing callbacks first.
   Treat idle processing as a bridge to later worker-thread or distributed
   rendering.
 - Plan worker-thread and UI-thread communication as separate follow-up
-  work.  Do not mix thread ownership, cancellation, or result delivery into
-  this polling-boundary refactor.
+  work.  Do not mix thread ownership, cancellation, or result delivery
+  into this polling-boundary refactor.
 - Replace driver polling in the UI dispatcher with GUI-thread event
   dispatch to the same handler stack.
 - Let event callbacks set calculation-interrupt state through the active
@@ -507,5 +614,5 @@ are moved behind `libid/ui`.
   libid/misc` returns no matches.
 - `libid/ui` is the only libid layer with direct keyboard and mouse I/O.
 - Calculation code reports interruption or decisions without owning input.
-- Current behavior is preserved while longer-term architecture stays out of
-  scope.
+- Current behavior is preserved while longer-term architecture stays out
+  of scope.
