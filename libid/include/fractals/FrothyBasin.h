@@ -15,11 +15,13 @@ public:
     FrothyBasin &operator=(const FrothyBasin &) = delete;
     FrothyBasin &operator=(FrothyBasin &&) = delete;
 
-    int calc();
-    bool keyboard_check();
-    void keyboard_reset();
-
     bool per_image();
+    void resume();
+    void suspend();
+    bool done() const;
+    void iterate();
+
+    int calc();
     int orbit();
 
 private:
@@ -44,12 +46,13 @@ private:
     double m_right_x2{};
     double m_right_x3{};
     double m_right_x4{};
+    int m_col{};
+    int m_row{};
 };
 
 extern FrothyBasin g_frothy_basin;
 
 int froth_orbit();
 int froth_per_pixel();
-bool froth_per_image();
 
 } // namespace id::fractals

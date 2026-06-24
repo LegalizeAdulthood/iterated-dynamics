@@ -66,7 +66,6 @@
 #include "ui/check_key.h"
 #include "ui/diskvid.h"
 #include "ui/find_special_colors.h"
-#include "ui/frothy_basin.h"
 #include "ui/KeyboardHandler.h"
 #include "ui/standard_fractal.h"
 #include "ui/stop_msg.h"
@@ -764,8 +763,7 @@ static bool static_calc_type_uses_standard_engine()
     const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
     return table_calc_type == standard_fractal_type //
         || table_calc_type == calc_mandelbrot_type  //
-        || table_calc_type == lyapunov_type         //
-        || table_calc_type == froth_type;
+        || table_calc_type == lyapunov_type;
 }
 
 static void calc_non_standard_fractal()

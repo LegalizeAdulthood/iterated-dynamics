@@ -1646,7 +1646,7 @@ const FractalSpecific g_fractal_specific[] = {
         -2.8F, 2.8F, -2.355F, 1.845F,                     //
         FractalType::NO_FRACTAL, FractalType::NO_FRACTAL, //
         SymmetryType::NONE,                               //
-        froth_orbit, froth_per_pixel, froth_per_image,    //
+        froth_orbit, froth_per_pixel, standalone_per_image, //
         froth_type,                                       //
         FROTH_BAILOUT                                     //
     },

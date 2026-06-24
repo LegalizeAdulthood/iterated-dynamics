@@ -10,6 +10,7 @@
 #include "engine/Inversion.h"
 #include "engine/orbit.h"
 #include "engine/pixel_grid.h"
+#include "engine/resume.h"
 #include "engine/show_dot.h"
 #include "engine/spindac.h"
 #include "engine/VideoInfo.h"
@@ -199,15 +200,50 @@ int FrothyBasin::orbit()
     return 0;
 }
 
-bool FrothyBasin::keyboard_check()
+void FrothyBasin::resume()
 {
-    g_keyboard_check_interval -= std::abs(g_real_color_iter);
-    return g_keyboard_check_interval <= 0;
+    g_passes = Passes::SEQUENTIAL_SCAN;
+    g_current_pass = 1;
+    g_total_passes = 1;
+    if (g_resuming)
+    {
+        start_resume();
+        get_resume(m_row, m_col);
+        end_resume();
+        return;
+    }
+    m_row = g_i_start_pt.y;
+    m_col = g_i_start_pt.x;
 }
 
-void FrothyBasin::keyboard_reset()
+void FrothyBasin::suspend()
 {
-    g_keyboard_check_interval = g_max_keyboard_check_interval;
+    alloc_resume(20, 1);
+    put_resume(m_row, m_col);
+}
+
+bool FrothyBasin::done() const
+{
+    return m_row > g_i_stop_pt.y;
+}
+
+void FrothyBasin::iterate()
+{
+    if (done())
+    {
+        return;
+    }
+    g_row = m_row;
+    g_col = m_col;
+    g_current_row = g_row;
+    g_current_column = g_col;
+    calc();
+    ++m_col;
+    if (m_col > g_i_stop_pt.x)
+    {
+        m_col = g_i_start_pt.x;
+        ++m_row;
+    }
 }
 
 int FrothyBasin::calc()
@@ -439,11 +475,6 @@ int FrothyBasin::calc()
     g_plot(g_col, g_row, g_color);
 
     return g_color;
-}
-
-bool froth_per_image()
-{
-    return g_frothy_basin.per_image();
 }
 
 // These last two froth functions are for the orbit-in-window feature.

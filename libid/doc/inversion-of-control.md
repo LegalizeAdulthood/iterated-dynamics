@@ -51,9 +51,7 @@ libid/fractals/<Type>.cpp or libid/engine/<Type>.cpp
 ```
 
 `libid/ui/inverse_julia.cpp` is close, but JIIM still has engine-side
-keyboard and mouse ownership.  `libid/ui/frothy_basin.cpp` is another
-near-match: FrothyBasin has a calculation object, but the UI file is still
-a per-pixel calc-type helper that the engine calls for keyboard checks.
+keyboard and mouse ownership.
 
 ## Target Shape
 
@@ -153,41 +151,11 @@ them to the active handler stack from top to bottom.  The first handler
 that returns `true` stops propagation.  If no handler consumes the key, the
 key is discarded.
 
-## Remaining Wrapper Slices
+## JIIM Slices
 
 Line ranges are current anchors.  They may drift as slices land.
 
-### Slice 1: Move FrothyBasin To Wrapper Shape
-
-Work:
-
-- Reshape `libid/ui/frothy_basin.cpp:14-29` from a per-pixel calc-type
-  helper into a UI wrapper around `fractals::FrothyBasin`.
-- Move the keyboard-check cadence from
-  `libid/fractals/FrothyBasin.cpp:202-218` into the UI wrapper.
-- Extend `fractals::FrothyBasin` with the state needed for
-  `resume()`, `suspend()`, `done()`, and `iterate()`.
-- Keep FrothyBasin color, attractor, palette, and orbit-in-window behavior
-  unchanged.
-- Remove the need for `libid/fractals/fractalp.cpp:1641-1650` to dispatch
-  a UI per-pixel helper as the calculation type.
-
-Done when:
-
-- FrothyBasin follows the same UI-wrapper/calculation-object structure as
-  the existing converted types.
-- FrothyBasin keyboard polling is owned by its UI wrapper.
-- The engine no longer calls a UI per-pixel FrothyBasin calc type.
-
-Manual testing:
-
-- Render a FrothyBasin image.
-- Interrupt and resume a FrothyBasin render.
-- Use orbit-in-window behavior for FrothyBasin.
-
-## JIIM Slices
-
-### Slice 2: Move Inverse-Julia Keyboard Context
+### Slice 1: Move Inverse-Julia Keyboard Context
 
 Work:
 
@@ -210,7 +178,7 @@ Manual testing:
 - Save from the modal context.
 - Exit and confirm the following UI command behavior is unchanged.
 
-### Slice 3: Move JIIM Mouse Handling
+### Slice 2: Move JIIM Mouse Handling
 
 Work:
 
@@ -241,7 +209,7 @@ These slices happen after the standard renderer has the UI wrapper shape.
 They should use the same rule: move input ownership to `libid/ui`; leave
 calculation code with state, decisions, and return values.
 
-### Slice 4: Move Pure Render Interrupt Probes
+### Slice 3: Move Pure Render Interrupt Probes
 
 Work:
 
@@ -263,7 +231,7 @@ Manual testing:
 - Render one example for each changed path.
 - Interrupt each render and confirm the outer UI resumes control.
 
-### Slice 5: Move Lorenz UI Prompts
+### Slice 4: Move Lorenz UI Prompts
 
 Work:
 
@@ -286,7 +254,7 @@ Manual testing:
 - Render a Lorenz orbit and interrupt it.
 - Exercise photographer-mode save with repeated `s` or `S`.
 
-### Slice 6: Move Non-Interrupt Pending-Key Queries
+### Slice 5: Move Non-Interrupt Pending-Key Queries
 
 Work:
 
@@ -369,8 +337,6 @@ are moved behind `libid/ui`.
   `StandardFractal`.
 - `StandardFractal` owns standard renderer iteration, mode dispatch, and
   resume state.
-- FrothyBasin is driven by a UI wrapper around its calculation object, not
-  by an engine-called UI per-pixel helper.
 - `rg "driver_(get_key|key_pressed|wait_key_pressed|unget_key)" \
   libid/engine libid/fractals libid/geometry libid/io libid/math \
   libid/misc` returns no matches.
