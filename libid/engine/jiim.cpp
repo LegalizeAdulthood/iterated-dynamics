@@ -24,9 +24,9 @@
 #include "ui/editpal.h"
 #include "ui/find_special_colors.h"
 #include "ui/frothy_basin.h"
-#include "ui/get_a_number.h"
 #include "ui/help.h"
-#include "ui/id_keys.h"
+#include "ui/inverse_julia.h"
+#include "ui/KeyboardHandler.h"
 #include "ui/mouse.h"
 #include "ui/stop_msg.h"
 #include "ui/temp_msg.h"
@@ -460,16 +460,33 @@ void InverseJuliaMouseNotification::move(const int x, const int y, const int key
     NullMouseNotification::move(x, y, key_flags);
 }
 
-class InverseJulia
+class InverseJulia : public InverseJuliaKeyboardContext
 {
 public:
     explicit InverseJulia(JIIMType which);
 
     void process();
+    JIIMType which() const override;
+    void begin_key_batch() override;
+    bool leaving_now() const override;
+    void set_last_key(int key) override;
+    void leave_now() override;
+    void leave_after_refresh() override;
+    bool continuing() const override;
+    void reset_julia_selection() override;
+    void select_julia_from_cursor() override;
+    void reset_zoom() override;
+    void zoom(float factor) override;
+    void toggle_circle_mode() override;
+    void toggle_line_mode() override;
+    void toggle_numbers() override;
+    void set_exact_point(DComplex point) override;
+    void toggle_hidden_fractal() override;
+    void set_secret_mode(int mode) override;
+    void move_cursor(int d_col, int d_row) override;
 
 private:
     void start();
-    bool handle_key_press(bool &still);
     bool iterate_jiim();
     void iterate_orbit();
     bool iterate();
@@ -499,6 +516,8 @@ private:
     int m_old_screen_x_offset{g_logical_screen.x_offset};
     int m_old_screen_y_offset{g_logical_screen.y_offset};
     int m_mouse_subscription{-1};
+    bool m_still{true};
+    bool m_leave_now{};
 
     static OrbitFlags s_mode; // point, circle, ...
     static int s_ran_dir;
@@ -652,189 +671,112 @@ void InverseJulia::start()
     m_mouse_subscription = mouse_subscribe(std::make_shared<InverseJuliaMouseNotification>());
 }
 
-bool InverseJulia::handle_key_press(bool &still)
+JIIMType InverseJulia::which() const
 {
-    s_cursor.wait_key();
-    m_key = driver_get_key();
+    return m_which;
+}
 
-    int d_col = 0;
-    int d_row = 0;
-    constexpr int BIG_DELTA{4};
-    constexpr int SMALL_DELTA{1};
-    constexpr float ZOOM_INCREMENT{1.15f};
+void InverseJulia::begin_key_batch()
+{
+    m_still = true;
+    m_leave_now = false;
+}
+
+bool InverseJulia::leaving_now() const
+{
+    return m_leave_now;
+}
+
+void InverseJulia::set_last_key(const int key)
+{
+    m_key = key;
+}
+
+void InverseJulia::leave_now()
+{
+    m_leave_now = true;
+}
+
+void InverseJulia::leave_after_refresh()
+{
+    m_still = false;
+}
+
+bool InverseJulia::continuing() const
+{
+    return m_still;
+}
+
+void InverseJulia::reset_julia_selection()
+{
     g_julia_c.x = JULIA_C_NOT_SET;
     g_julia_c.y = JULIA_C_NOT_SET;
-    switch (m_key)
+}
+
+void InverseJulia::select_julia_from_cursor()
+{
+    g_julia_c = m_c;
+}
+
+void InverseJulia::reset_zoom()
+{
+    m_zoom = 1.0F;
+}
+
+void InverseJulia::zoom(const float factor)
+{
+    m_zoom *= factor;
+}
+
+void InverseJulia::toggle_circle_mode()
+{
+    s_mode ^= OrbitFlags::CIRCLE;
+}
+
+void InverseJulia::toggle_line_mode()
+{
+    s_mode ^= OrbitFlags::LINE;
+}
+
+void InverseJulia::toggle_numbers()
+{
+    s_show_numbers = !s_show_numbers;
+    if (s_window_style == JuliaWindowStyle::LARGE && !s_show_numbers)
     {
-    case ID_KEY_CTL_KEYPAD_5: // ctrl - keypad 5
-    case ID_KEY_KEYPAD_5:     // keypad 5
-        break;                // do nothing
-
-    case ID_KEY_CTL_PAGE_UP:
-        d_col = BIG_DELTA;
-        d_row = -BIG_DELTA;
-        break;
-
-    case ID_KEY_CTL_PAGE_DOWN:
-        d_col = BIG_DELTA;
-        d_row = BIG_DELTA;
-        break;
-
-    case ID_KEY_CTL_HOME:
-        d_col = -BIG_DELTA;
-        d_row = -BIG_DELTA;
-        break;
-
-    case ID_KEY_CTL_END:
-        d_col = -BIG_DELTA;
-        d_row = BIG_DELTA;
-        break;
-
-    case ID_KEY_PAGE_UP:
-        d_col = SMALL_DELTA;
-        d_row = -SMALL_DELTA;
-        break;
-
-    case ID_KEY_PAGE_DOWN:
-        d_col = SMALL_DELTA;
-        d_row = SMALL_DELTA;
-        break;
-
-    case ID_KEY_HOME:
-        d_col = -SMALL_DELTA;
-        d_row = -SMALL_DELTA;
-        break;
-
-    case ID_KEY_END:
-        d_col = -SMALL_DELTA;
-        d_row = SMALL_DELTA;
-        break;
-
-    case ID_KEY_UP_ARROW:
-        d_row = -SMALL_DELTA;
-        break;
-
-    case ID_KEY_DOWN_ARROW:
-        d_row = SMALL_DELTA;
-        break;
-
-    case ID_KEY_LEFT_ARROW:
-        d_col = -SMALL_DELTA;
-        break;
-
-    case ID_KEY_RIGHT_ARROW:
-        d_col = SMALL_DELTA;
-        break;
-
-    case ID_KEY_CTL_UP_ARROW:
-        d_row = -BIG_DELTA;
-        break;
-
-    case ID_KEY_CTL_DOWN_ARROW:
-        d_row = BIG_DELTA;
-        break;
-
-    case ID_KEY_CTL_LEFT_ARROW:
-        d_col = -BIG_DELTA;
-        break;
-
-    case ID_KEY_CTL_RIGHT_ARROW:
-        d_col = BIG_DELTA;
-        break;
-
-    case 'z':
-    case 'Z':
-        m_zoom = 1.0f;
-        break;
-
-    case '<':
-    case ',':
-        m_zoom /= ZOOM_INCREMENT;
-        break;
-
-    case '>':
-    case '.':
-        m_zoom *= ZOOM_INCREMENT;
-        break;
-
-    case ID_KEY_SPACE:
-        g_julia_c = m_c;
-        return true;
-
-    case 'c':
-    case 'C':
-        s_mode ^= OrbitFlags::CIRCLE;
-        break;
-
-    case 'l':
-    case 'L':
-        s_mode ^= OrbitFlags::LINE;
-        break;
-
-    case 'n':
-    case 'N':
-        s_show_numbers = !s_show_numbers;
-        if (s_window_style == JuliaWindowStyle::LARGE && !s_show_numbers)
-        {
-            s_cursor.hide();
-            clear_temp_msg();
-            s_cursor.show();
-        }
-        break;
-
-    case 'p':
-    case 'P':
-        get_a_number(&m_c.x, &m_c.y);
-        m_exact = true;
-        g_col = static_cast<int>(std::lround(m_cvt.a * m_c.x + m_cvt.b * m_c.y + m_cvt.e));
-        g_row = static_cast<int>(std::lround(m_cvt.c * m_c.x + m_cvt.d * m_c.y + m_cvt.f));
-        d_row = 0;
-        d_col = 0;
-        break;
-
-    case 'h': // hide fractal toggle
-    case 'H': // hide fractal toggle
-        if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
-        {
-            s_window_style = JuliaWindowStyle::HIDDEN;
-        }
-        else if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res)
-        {
-            restore_rect(g_video_start_x, g_video_start_y, g_logical_screen.x_dots, g_logical_screen.y_dots);
-            s_window_style = JuliaWindowStyle::FULL_SCREEN;
-        }
-        break;
-
-    case '0':
-    case '1':
-    case '2':
-        // don't use '3', it's already meaningful
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-        if (m_which == JIIMType::JIIM)
-        {
-            s_secret_mode = static_cast<SecretMode>(m_key - '0');
-        }
-        else
-        {
-            still = false;
-        }
-        break;
-
-    default:
-        still = false;
-        break;
+        s_cursor.hide();
+        clear_temp_msg();
+        s_cursor.show();
     }
+}
 
-    if (m_key == 's' || m_key == 'S')
+void InverseJulia::set_exact_point(const DComplex point)
+{
+    m_c = point;
+    m_exact = true;
+    g_col = static_cast<int>(std::lround(m_cvt.a * m_c.x + m_cvt.b * m_c.y + m_cvt.e));
+    g_row = static_cast<int>(std::lround(m_cvt.c * m_c.x + m_cvt.d * m_c.y + m_cvt.f));
+}
+
+void InverseJulia::toggle_hidden_fractal()
+{
+    if (s_window_style == JuliaWindowStyle::FULL_SCREEN)
     {
-        return true;
+        s_window_style = JuliaWindowStyle::HIDDEN;
     }
+    else if (s_window_style == JuliaWindowStyle::HIDDEN && s_win_width == g_vesa_x_res)
+    {
+        restore_rect(g_video_start_x, g_video_start_y, g_logical_screen.x_dots, g_logical_screen.y_dots);
+        s_window_style = JuliaWindowStyle::FULL_SCREEN;
+    }
+}
 
+void InverseJulia::set_secret_mode(const int mode)
+{
+    s_secret_mode = static_cast<SecretMode>(mode);
+}
+
+void InverseJulia::move_cursor(const int d_col, const int d_row)
+{
     if (d_col > 0 || d_row > 0)
     {
         m_exact = false;
@@ -865,7 +807,6 @@ bool InverseJulia::handle_key_press(bool &still)
     }
 
     s_cursor.set_pos(g_col, g_row);
-    return false;
 }
 
 bool InverseJulia::iterate_jiim()
@@ -1119,7 +1060,6 @@ void InverseJulia::iterate_orbit()
 
 bool InverseJulia::iterate()
 {
-    bool still{true};
     bool mouse_updated{};
     if (s_cursor.get_x() != g_col || s_cursor.get_y() != g_row)
     {
@@ -1131,19 +1071,18 @@ bool InverseJulia::iterate()
     {
         s_cursor.check_blink();
     }
-    else
+    const bool key_pressed{process_inverse_julia_keyboard(*this, s_cursor, !m_actively_computing && !mouse_updated)};
+    if (leaving_now())
     {
-        s_cursor.wait_key();
+        return false;
     }
-    if (driver_key_pressed() || m_first_time || mouse_updated)
+    if (key_pressed || m_first_time || mouse_updated)
     {
         m_first_time = false;
-        while (driver_key_pressed())
+        const bool cursor_was_visible{!s_cursor.hidden()};
+        if (cursor_was_visible)
         {
-            if (handle_key_press(still))
-            {
-                return false;
-            }
+            s_cursor.hide();
         }
 
         if (!m_exact)
@@ -1230,6 +1169,10 @@ bool InverseJulia::iterate()
         {
             fill_rect(s_corner_x, s_corner_y, s_win_width, s_win_height, g_color_dark);
         }
+        if (cursor_was_visible)
+        {
+            s_cursor.show();
+        }
     }
 
     if (m_which == JIIMType::JIIM)
@@ -1265,7 +1208,7 @@ bool InverseJulia::iterate()
     }
     g_old_z = g_new_z;
 
-    return still;
+    return continuing();
 }
 
 void InverseJulia::finish()
@@ -1333,7 +1276,7 @@ void InverseJulia::finish()
         clear_temp_msg();
     }
     s_show_numbers = false;
-    driver_unget_key(m_key);
+    requeue_inverse_julia_key(m_key);
 }
 
 void InverseJulia::process()
@@ -1343,6 +1286,8 @@ void InverseJulia::process()
         g_help_mode, m_which == JIIMType::JIIM ? HelpLabels::HELP_JIIM : HelpLabels::HELP_ORBITS};
     ValueSaver saved_dispatch{g_dispatch};
     ValueSaver saved_look_at_mouse{g_look_at_mouse, MouseLook::POSITION};
+    auto keyboard_handler{make_inverse_julia_keyboard_handler(*this)};
+    ScopedKeyboardHandler keyboard_scope{keyboard_handler};
 
     start();
     while (iterate())
@@ -1356,7 +1301,9 @@ void InverseJulia::process()
 static bool static_calc_type_allows_jiim()
 {
     const CalcType table_calc_type{g_cur_fractal_specific->calc_type};
-    return table_calc_type == standard_fractal_type || table_calc_type == froth_type;
+    return table_calc_type == standard_fractal_type //
+        || table_calc_type == calc_mandelbrot_type  //
+        || table_calc_type == froth_type;
 }
 
 void jiim(const JIIMType which)

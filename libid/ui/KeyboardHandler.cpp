@@ -18,17 +18,6 @@ namespace
 std::vector<KeyboardHandlerPtr> s_keyboard_handlers;
 bool s_calc_interrupted{};
 
-void dispatch_key(const int key)
-{
-    for (auto it = s_keyboard_handlers.rbegin(); it != s_keyboard_handlers.rend(); ++it)
-    {
-        if ((*it)->handle_key(key))
-        {
-            break;
-        }
-    }
-}
-
 } // namespace
 
 bool MainLoopKeyboardHandler::handle_key(const int key)
@@ -67,6 +56,18 @@ void pop_keyboard_handler(const KeyboardHandlerPtr &handler)
     }
 }
 
+bool dispatch_keyboard_key(const int key)
+{
+    for (auto it = s_keyboard_handlers.rbegin(); it != s_keyboard_handlers.rend(); ++it)
+    {
+        if ((*it)->handle_key(key))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void set_calc_interrupted()
 {
     s_calc_interrupted = true;
@@ -81,7 +82,7 @@ bool calc_interrupted()
 {
     while (driver_key_pressed() != 0)
     {
-        dispatch_key(driver_get_key());
+        dispatch_keyboard_key(driver_get_key());
         if (s_calc_interrupted)
         {
             break;
