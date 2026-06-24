@@ -7,7 +7,7 @@ var searchData=
   ['halley_5forbit_4',['halley_orbit',['../d5/d38/namespaceid_1_1fractals.html#a5e5e6e148d023651bdd30fb36041b7bc',1,'id::fractals']]],
   ['halley_5fper_5fimage_5',['halley_per_image',['../d5/d38/namespaceid_1_1fractals.html#a7aaf05cd96b738243353ec6a86a51589',1,'id::fractals']]],
   ['halley_5fper_5fpixel_6',['halley_per_pixel',['../d5/d38/namespaceid_1_1fractals.html#a1861f3400782d4cb95dd7aff39996f55',1,'id::fractals']]],
-  ['handle_5fkey_7',['handle_key',['../dc/de6/classid_1_1ui_1_1KeyboardHandler.html#aff056be26da8e03b7c16549aa2281c56',1,'id::ui::KeyboardHandler']]],
+  ['handle_5fkey_7',['handle_key',['../d8/dcf/classid_1_1ui_1_1MainLoopKeyboardHandler.html#a4909acc72973a9c67b7538669d8618bc',1,'id::ui::MainLoopKeyboardHandler::handle_key()'],['../dc/de6/classid_1_1ui_1_1KeyboardHandler.html#aff056be26da8e03b7c16549aa2281c56',1,'id::ui::KeyboardHandler::handle_key()']]],
   ['handle_5fspecial_5fkeys_8',['handle_special_keys',['../dc/d76/namespaceid_1_1ui.html#a23fa5bf3a85f7a787f57ff046c3528a5',1,'id::ui']]],
   ['has_5fcalc_5ftype_9',['has_calc_type',['../d9/db4/classid_1_1fractals_1_1FractalDispatch.html#a345551ccaa303a1d50d88986d0c7ae21',1,'id::fractals::FractalDispatch']]],
   ['has_5fext_10',['has_ext',['../d0/d19/namespaceid_1_1io.html#abc207d0c907b6c31c3412d51a12c8f65',1,'id::io']]],

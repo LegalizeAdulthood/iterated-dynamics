@@ -44,5 +44,6 @@ var searchData=
   ['current_41',['CURRENT',['../d0/db0/namespaceid_1_1math.html#a5efcc98b6a48297577e70bdaa3e19952aa2770969c827f0f2910f6179418462df',1,'id::math']]],
   ['curs_5finc_42',['CURS_INC',['../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ae32015bb7ad766dae475c82d6a381aef',1,'id::ui']]],
   ['cursor_5fblink_5frate_43',['CURSOR_BLINK_RATE',['../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ac174aa46cade2f253605b6a979b0b375',1,'id::ui']]],
-  ['cyan_44',['CYAN',['../dc/d31/namespaceid_1_1engine.html#a1c5b4939e426a771f0422c5608a8ffcea8657402e48110de87f7f45b204bc3a31',1,'id::engine']]]
+  ['cursor_5fpoll_5finterval_44',['CURSOR_POLL_INTERVAL',['../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ab8dfc154b31040acc2b39bd655e25ec0',1,'id::ui']]],
+  ['cyan_45',['CYAN',['../dc/d31/namespaceid_1_1engine.html#a1c5b4939e426a771f0422c5608a8ffcea8657402e48110de87f7f45b204bc3a31',1,'id::engine']]]
 ];

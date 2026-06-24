@@ -623,7 +623,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00524" name="l00524"></a><span class="lineno">  524</span>{</div>
 <div class="line"><a id="l00525" name="l00525"></a><span class="lineno">  525</span>    <span class="keywordflow">if</span> (m_dirty)</div>
 <div class="line"><a id="l00526" name="l00526"></a><span class="lineno">  526</span>    {</div>
-<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>        InvalidateRect(m_window, &amp;m_dirty_region, FALSE);</div>
+<div class="line"><a id="l00527" name="l00527"></a><span class="lineno">  527</span>        InvalidateRect(m_window, <span class="keyword">nullptr</span>, FALSE);</div>
 <div class="line"><a id="l00528" name="l00528"></a><span class="lineno">  528</span>        m_dirty = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00529" name="l00529"></a><span class="lineno">  529</span>        m_dirty_region = {-1, -1, -1, -1};</div>
 <div class="line"><a id="l00530" name="l00530"></a><span class="lineno">  530</span>    }</div>

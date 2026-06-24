@@ -86,48 +86,85 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">//</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="../../d3/d85/ui_2frothy__basin_8h.html">ui/frothy_basin.h</a>&quot;</span></div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../de/ded/FrothyBasin_8h.html">fractals/FrothyBasin.h</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/dba/check__key_8h.html">ui/check_key.h</a>&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a>;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="comment">// Froth Fractal type</span></div>
-<div class="foldopen" id="foldopen00014" data-start="{" data-end="}">
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#acde51052a117f4c0dd49d3124b6dce12">   14</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acde51052a117f4c0dd49d3124b6dce12">froth_type</a>()   <span class="comment">// per pixel 1/2/g, called with row &amp; col set</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="../../d6/dd9/calcfrac_8h.html">engine/calcfrac.h</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="../../de/ded/FrothyBasin_8h.html">fractals/FrothyBasin.h</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="../../d1/dba/check__key_8h.html">ui/check_key.h</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &lt;cstdlib&gt;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a>;</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">using namespace </span><a class="code hl_namespace" href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a>;</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>{</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">check_key</a>())</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    {</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>        <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>    }</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    <span class="keyword">const</span> <span class="keywordtype">int</span> calc = <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#ab8f90d38e10d6ebc23396c3d5565d39d">calc</a>();</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#adddb0e773565e79c8580c90802fe87d6">keyboard_check</a>())</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    {</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">check_key</a>())</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        {</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>            <span class="keywordflow">return</span> -1;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>        }</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>        <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a5ac2f2f25f27d80cae2ef9b5059b7652">keyboard_reset</a>();</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    }</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>{</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keywordtype">bool</span> keyboard_check_due()</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>{</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4b4ec6e6d21022567659c1d48876ea7d">g_keyboard_check_interval</a> -= std::abs(<a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4418df6686b78a2098a6598285a1900e">g_real_color_iter</a>);</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keywordflow">return</span> <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4b4ec6e6d21022567659c1d48876ea7d">g_keyboard_check_interval</a> &lt;= 0;</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keywordtype">void</span> keyboard_reset()</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>{</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#a4b4ec6e6d21022567659c1d48876ea7d">g_keyboard_check_interval</a> = <a class="code hl_variable" href="../../dc/d31/namespaceid_1_1engine.html#aec628ef0bee7d532ccca251efbdb6d2f">g_max_keyboard_check_interval</a>;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keywordflow">return</span> calc;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>}</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>} <span class="comment">// namespace</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="foldopen" id="foldopen00033" data-start="{" data-end="}">
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="../../dc/d76/namespaceid_1_1ui.html#acde51052a117f4c0dd49d3124b6dce12">   33</a></span><span class="keywordtype">int</span> <a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#acde51052a117f4c0dd49d3124b6dce12">froth_type</a>()</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>{</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keywordflow">if</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a6b5c82129b9e26fcb209b5605ea08b86">per_image</a>())</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    {</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    keyboard_reset();</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#aa2f9e99be4fd03c081489dd20383159d">resume</a>();</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordflow">while</span> (!<a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a466c3a3eb6f7875d88c7a7e8cb0d41c0">done</a>())</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">check_key</a>())</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a7a3ed559b1dcb8c886b40a0cc1e2ab88">suspend</a>();</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        }</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a04c631dda2180376704e0362f6d708e2">iterate</a>();</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordflow">if</span> (keyboard_check_due())</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            <span class="keywordflow">if</span> (<a class="code hl_function" href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">check_key</a>())</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            {</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                <a class="code hl_variable" href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">g_frothy_basin</a>.<a class="code hl_function" href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a7a3ed559b1dcb8c886b40a0cc1e2ab88">suspend</a>();</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                <span class="keywordflow">return</span> -1;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>            }</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>            keyboard_reset();</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        }</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    }</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>}</div>
 </div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span> </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>} <span class="comment">// namespace id::ui</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>} <span class="comment">// namespace id::ui</span></div>
 <div class="ttc" id="aFrothyBasin_8h_html"><div class="ttname"><a href="../../de/ded/FrothyBasin_8h.html">FrothyBasin.h</a></div></div>
+<div class="ttc" id="acalcfrac_8h_html"><div class="ttname"><a href="../../d6/dd9/calcfrac_8h.html">calcfrac.h</a></div></div>
 <div class="ttc" id="acheck__key_8h_html"><div class="ttname"><a href="../../d1/dba/check__key_8h.html">check_key.h</a></div></div>
-<div class="ttc" id="aclassid_1_1fractals_1_1FrothyBasin_html_a5ac2f2f25f27d80cae2ef9b5059b7652"><div class="ttname"><a href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a5ac2f2f25f27d80cae2ef9b5059b7652">id::fractals::FrothyBasin::keyboard_reset</a></div><div class="ttdeci">void keyboard_reset()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00208">FrothyBasin.cpp:208</a></div></div>
-<div class="ttc" id="aclassid_1_1fractals_1_1FrothyBasin_html_ab8f90d38e10d6ebc23396c3d5565d39d"><div class="ttname"><a href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#ab8f90d38e10d6ebc23396c3d5565d39d">id::fractals::FrothyBasin::calc</a></div><div class="ttdeci">int calc()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00213">FrothyBasin.cpp:213</a></div></div>
-<div class="ttc" id="aclassid_1_1fractals_1_1FrothyBasin_html_adddb0e773565e79c8580c90802fe87d6"><div class="ttname"><a href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#adddb0e773565e79c8580c90802fe87d6">id::fractals::FrothyBasin::keyboard_check</a></div><div class="ttdeci">bool keyboard_check()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00202">FrothyBasin.cpp:202</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1FrothyBasin_html_a04c631dda2180376704e0362f6d708e2"><div class="ttname"><a href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a04c631dda2180376704e0362f6d708e2">id::fractals::FrothyBasin::iterate</a></div><div class="ttdeci">void iterate()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00230">FrothyBasin.cpp:230</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1FrothyBasin_html_a466c3a3eb6f7875d88c7a7e8cb0d41c0"><div class="ttname"><a href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a466c3a3eb6f7875d88c7a7e8cb0d41c0">id::fractals::FrothyBasin::done</a></div><div class="ttdeci">bool done() const</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00225">FrothyBasin.cpp:225</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1FrothyBasin_html_a6b5c82129b9e26fcb209b5605ea08b86"><div class="ttname"><a href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a6b5c82129b9e26fcb209b5605ea08b86">id::fractals::FrothyBasin::per_image</a></div><div class="ttdeci">bool per_image()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00085">FrothyBasin.cpp:85</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1FrothyBasin_html_a7a3ed559b1dcb8c886b40a0cc1e2ab88"><div class="ttname"><a href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a7a3ed559b1dcb8c886b40a0cc1e2ab88">id::fractals::FrothyBasin::suspend</a></div><div class="ttdeci">void suspend()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00219">FrothyBasin.cpp:219</a></div></div>
+<div class="ttc" id="aclassid_1_1fractals_1_1FrothyBasin_html_aa2f9e99be4fd03c081489dd20383159d"><div class="ttname"><a href="../../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#aa2f9e99be4fd03c081489dd20383159d">id::fractals::FrothyBasin::resume</a></div><div class="ttdeci">void resume()</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00203">FrothyBasin.cpp:203</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html">id::engine</a></div><div class="ttdef"><b>Definition</b> <a href="../../d1/d84/bailout__formula_8h_source.html#l00005">bailout_formula.h:6</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a4418df6686b78a2098a6598285a1900e"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a4418df6686b78a2098a6598285a1900e">id::engine::g_real_color_iter</a></div><div class="ttdeci">long g_real_color_iter</div><div class="ttdef"><b>Definition</b> <a href="../../d9/da8/calcfrac_8cpp_source.html#l00155">calcfrac.cpp:155</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_a4b4ec6e6d21022567659c1d48876ea7d"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#a4b4ec6e6d21022567659c1d48876ea7d">id::engine::g_keyboard_check_interval</a></div><div class="ttdeci">int g_keyboard_check_interval</div><div class="ttdef"><b>Definition</b> <a href="../../d9/da8/calcfrac_8cpp_source.html#l00180">calcfrac.cpp:180</a></div></div>
+<div class="ttc" id="anamespaceid_1_1engine_html_aec628ef0bee7d532ccca251efbdb6d2f"><div class="ttname"><a href="../../dc/d31/namespaceid_1_1engine.html#aec628ef0bee7d532ccca251efbdb6d2f">id::engine::g_max_keyboard_check_interval</a></div><div class="ttdeci">int g_max_keyboard_check_interval</div><div class="ttdef"><b>Definition</b> <a href="../../d9/da8/calcfrac_8cpp_source.html#l00181">calcfrac.cpp:181</a></div></div>
 <div class="ttc" id="anamespaceid_1_1fractals_html"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html">id::fractals</a></div><div class="ttdef"><b>Definition</b> <a href="../../d6/dd9/calcfrac_8h_source.html#l00015">calcfrac.h:16</a></div></div>
-<div class="ttc" id="anamespaceid_1_1fractals_html_a8619e2c2ffd4c819df5850d84cc71611"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">id::fractals::g_frothy_basin</a></div><div class="ttdeci">FrothyBasin g_frothy_basin</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00036">FrothyBasin.cpp:36</a></div></div>
+<div class="ttc" id="anamespaceid_1_1fractals_html_a8619e2c2ffd4c819df5850d84cc71611"><div class="ttname"><a href="../../d5/d38/namespaceid_1_1fractals.html#a8619e2c2ffd4c819df5850d84cc71611">id::fractals::g_frothy_basin</a></div><div class="ttdeci">FrothyBasin g_frothy_basin</div><div class="ttdef"><b>Definition</b> <a href="../../dd/def/FrothyBasin_8cpp_source.html#l00037">FrothyBasin.cpp:37</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html">id::ui</a></div><div class="ttdef"><b>Definition</b> <a href="../../d3/d07/decode__info_8h_source.html#l00007">decode_info.h:8</a></div></div>
 <div class="ttc" id="anamespaceid_1_1ui_html_a4aa0ffdec8ad2f8ef523e1241c8b7150"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#a4aa0ffdec8ad2f8ef523e1241c8b7150">id::ui::check_key</a></div><div class="ttdeci">bool check_key()</div><div class="ttdef"><b>Definition</b> <a href="../../de/d04/check__key_8cpp_source.html#l00015">check_key.cpp:15</a></div></div>
-<div class="ttc" id="anamespaceid_1_1ui_html_acde51052a117f4c0dd49d3124b6dce12"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#acde51052a117f4c0dd49d3124b6dce12">id::ui::froth_type</a></div><div class="ttdeci">int froth_type()</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d94/frothy__basin_8cpp_source.html#l00014">frothy_basin.cpp:14</a></div></div>
+<div class="ttc" id="anamespaceid_1_1ui_html_acde51052a117f4c0dd49d3124b6dce12"><div class="ttname"><a href="../../dc/d76/namespaceid_1_1ui.html#acde51052a117f4c0dd49d3124b6dce12">id::ui::froth_type</a></div><div class="ttdeci">int froth_type()</div><div class="ttdef"><b>Definition</b> <a href="../../dc/d94/frothy__basin_8cpp_source.html#l00033">frothy_basin.cpp:33</a></div></div>
 <div class="ttc" id="aui_2frothy__basin_8h_html"><div class="ttname"><a href="../../d3/d85/ui_2frothy__basin_8h.html">frothy_basin.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

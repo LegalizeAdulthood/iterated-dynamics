@@ -24,13 +24,12 @@ var searchData=
   ['resume_21',['resume',['../df/d34/structid_1_1ui_1_1MainContext.html#a0b38e1a0ca91fe89add8bddf1430ce2a',1,'id::ui::MainContext']]],
   ['resume_5fdata_22',['resume_data',['../dd/dfd/structid_1_1io_1_1ExtBlock2.html#acffa3fb07f1e5ff4ba3417ac2602b6f1',1,'id::io::ExtBlock2']]],
   ['reverse_23',['reverse',['../d6/dad/structid_1_1ui_1_1StereoData.html#a9ee953fd53340402f6b077608fe65c1c',1,'id::ui::StereoData::reverse'],['../da/db4/lsystem_8cpp.html#a5a604e770f9bc2d5b56e132dbf51270d',1,'reverse:&#160;lsystem.cpp']]],
-  ['rgt_24',['rgt',['../df/dc6/structid_1_1engine_1_1Tess.html#a10bdaaa294c1759cca1980e563dae460',1,'id::engine::Tess']]],
-  ['right_5feye_25',['right_eye',['../d2/d1e/julibrot_8cpp.html#affa4112d6c1d215eaf19c9a9905a3554',1,'julibrot.cpp']]],
-  ['rotate_5fhi_26',['rotate_hi',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a8869aca24dbb5df16e92d486b6ac203e',1,'id::io::FractalInfo']]],
-  ['rotate_5flo_27',['rotate_lo',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a7bb7e7ea6bfde356f31442ac24893b58',1,'id::io::FractalInfo']]],
-  ['row_28',['row',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#a8025abb41a16a3cbc7671b01bf18c805',1,'id::fractals::ViewTransform3D']]],
-  ['row1_29',['row1',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#ae803e62765105f5c96df7112b5284e13',1,'id::fractals::ViewTransform3D']]],
-  ['row_5flen_30',['row_len',['../d0/d3a/structid_1_1misc_1_1PlotBufferSize.html#a2ecf0543e3596d4bb2f8c0f4a416f769',1,'id::misc::PlotBufferSize']]],
-  ['rq_31',['rq',['../de/d47/soi_8cpp.html#a9efbfe1dab868d5a623c493e272fb29f',1,'soi.cpp']]],
-  ['rxy_32',['rxy',['../da/d49/structid_1_1fractals_1_1LyapunovSequence.html#aca86117bbedffa4338514c1f2dfe0c00',1,'id::fractals::LyapunovSequence']]]
+  ['right_5feye_24',['right_eye',['../d2/d1e/julibrot_8cpp.html#affa4112d6c1d215eaf19c9a9905a3554',1,'julibrot.cpp']]],
+  ['rotate_5fhi_25',['rotate_hi',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a8869aca24dbb5df16e92d486b6ac203e',1,'id::io::FractalInfo']]],
+  ['rotate_5flo_26',['rotate_lo',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a7bb7e7ea6bfde356f31442ac24893b58',1,'id::io::FractalInfo']]],
+  ['row_27',['row',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#a8025abb41a16a3cbc7671b01bf18c805',1,'id::fractals::ViewTransform3D']]],
+  ['row1_28',['row1',['../da/dd6/structid_1_1fractals_1_1ViewTransform3D.html#ae803e62765105f5c96df7112b5284e13',1,'id::fractals::ViewTransform3D']]],
+  ['row_5flen_29',['row_len',['../d0/d3a/structid_1_1misc_1_1PlotBufferSize.html#a2ecf0543e3596d4bb2f8c0f4a416f769',1,'id::misc::PlotBufferSize']]],
+  ['rq_30',['rq',['../de/d47/soi_8cpp.html#a9efbfe1dab868d5a623c493e272fb29f',1,'soi.cpp']]],
+  ['rxy_31',['rxy',['../da/d49/structid_1_1fractals_1_1LyapunovSequence.html#aca86117bbedffa4338514c1f2dfe0c00',1,'id::fractals::LyapunovSequence']]]
 ];

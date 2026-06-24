@@ -79,6 +79,15 @@ hc/HelpCompiler.cpp:1578:9: note: First condition
 hc/HelpCompiler.cpp:1582:9: note: Second condition
     if (!g_errors)
         ^
+libid/engine/StandardFractal.cpp:140:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
+    ActiveStandardFractalScope active_standard_fractal{*this};
+                               ^
+libid/engine/StandardFractal.cpp:77:18: note: Shadowed declaration
+StandardFractal *active_standard_fractal()
+                 ^
+libid/engine/StandardFractal.cpp:140:32: note: Shadow variable
+    ActiveStandardFractalScope active_standard_fractal{*this};
+                               ^
 libid/engine/cmdfiles.cpp:211:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]
     if (sstools_ini.empty())
                          ^
@@ -3328,13 +3337,13 @@ libid/ui/diskvid.cpp:318:14: style: Consider using std::fill algorithm instead o
 libid/ui/double_to_string.cpp:19:29: style: Condition 'result.length()<=length' is always true [knownConditionTrueFalse]
         if (result.length() <= length)
                             ^
-libid/ui/editpal.cpp:1619:22: error: Array index -1 is out of bounds. [negativeContainerIndex]
+libid/ui/editpal.cpp:1635:22: error: Array index -1 is out of bounds. [negativeContainerIndex]
     else if (curr == m_curr[which] || curr < 0)
                      ^
-libid/ui/editpal.cpp:2194:23: note: Calling function 'set_curr', 1st argument '-1' value is -1
+libid/ui/editpal.cpp:2210:23: note: Calling function 'set_curr', 1st argument '-1' value is -1
             set_curr(-1, 0);
                       ^
-libid/ui/editpal.cpp:1619:22: note: Negative array index
+libid/ui/editpal.cpp:1635:22: note: Negative array index
     else if (curr == m_curr[which] || curr < 0)
                      ^
 libid/ui/evolve.cpp:792:27: style: The comparison 'old_variations > 0' is always false. [knownConditionTrueFalse]

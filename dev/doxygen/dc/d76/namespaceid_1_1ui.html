@@ -106,11 +106,15 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d3/d68/structid_1_1ui_1_1GetFileEntry.html">GetFileEntry</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d0/d03/classid_1_1ui_1_1InverseJuliaMouseScope.html">InverseJuliaMouseScope</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/de6/classid_1_1ui_1_1KeyboardHandler.html">KeyboardHandler</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d6/db5/structid_1_1ui_1_1KeyMnemonic.html">KeyMnemonic</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/d34/structid_1_1ui_1_1MainContext.html">MainContext</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dcf/classid_1_1ui_1_1MainLoopKeyboardHandler.html">MainLoopKeyboardHandler</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/dfd/structid_1_1ui_1_1MakeParParams.html">MakeParParams</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -406,24 +410,26 @@ Enumerations</h2></td></tr>
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a87b3416c49e1896189d35e83f179a11e">CSIZE_INC</a> = 2
 , <br />
 &#160;&#160;<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ac174aa46cade2f253605b6a979b0b375">CURSOR_BLINK_RATE</a> = 300
+, <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ab8dfc154b31040acc2b39bd655e25ec0">CURSOR_POLL_INTERVAL</a> = 25
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ab5f02aedec35d8859c5ee1ef67f59ffe">FAR_RESERVE</a> = 8192L
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16af7b9c56c2e76931d7ac58e6ee9b6b076">TITLE_LEN</a> = 17
-, <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a0d263f52c4fef7b61f56a135fda30ce6">EDITOR_WIDTH</a> = 8 * 4 + 4
 , <br />
-&#160;&#160;<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ac0a0a2da02f9b54707900dfa38ccf0cd">EDITOR_HEIGHT</a> = 8 + 4
+&#160;&#160;<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a0d263f52c4fef7b61f56a135fda30ce6">EDITOR_WIDTH</a> = 8 * 4 + 4
+, <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ac0a0a2da02f9b54707900dfa38ccf0cd">EDITOR_HEIGHT</a> = 8 + 4
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a813cc3f80e31f147083ce53f2808f845">STATUS_LEN</a> = 4
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ae32015bb7ad766dae475c82d6a381aef">CURS_INC</a> = 1
-, <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a3a0200cb86ae8e271c0b7bd85688d6e3">RGB_EDITOR_WIDTH</a> = 62
 , <br />
-&#160;&#160;<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16aa768a17f029ac355413c000d53399876">RGB_EDITOR_HEIGHT</a> = 1 + 1 + EDITOR_HEIGHT * 3 - 2 + 2
+&#160;&#160;<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a3a0200cb86ae8e271c0b7bd85688d6e3">RGB_EDITOR_WIDTH</a> = 62
+, <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16aa768a17f029ac355413c000d53399876">RGB_EDITOR_HEIGHT</a> = 1 + 1 + EDITOR_HEIGHT * 3 - 2 + 2
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ac729f81d26fb7126b747d7f7dc3e9f9b">RGB_EDITOR_B_WIDTH</a> = RGB_EDITOR_WIDTH - (2 + EDITOR_WIDTH + 1 + 2)
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16ae53e05cbe2cab4a89f461e311c7ce979">RGB_EDITOR_B_HEIGHT</a> = RGB_EDITOR_HEIGHT - 4
-, <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a10ad8b0ee364761bef03b41f00b1ac96">PAL_TABLE_PAL_X</a> = 1
 , <br />
-&#160;&#160;<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a708dc88e033a8b6e38228e210c4bf768">PAL_TABLE_PAL_Y</a> = 2 + RGB_EDITOR_HEIGHT + 2
+&#160;&#160;<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a10ad8b0ee364761bef03b41f00b1ac96">PAL_TABLE_PAL_X</a> = 1
+, <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a708dc88e033a8b6e38228e210c4bf768">PAL_TABLE_PAL_Y</a> = 2 + RGB_EDITOR_HEIGHT + 2
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a5beeff2e84e8e6bc00bb2258a3bf15c8">UNDO_DATA</a> = 1
 , <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16aa39bc91fe195516ea2aa3611baac9ec9">UNDO_DATA_SINGLE</a> = 2
-, <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a481657534123c8fc8ad95efbf3ad96ab">UNDO_ROTATE</a> = 3
+, <br />
+&#160;&#160;<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1350ec2303767bc8a26790e0f09cfb16a481657534123c8fc8ad95efbf3ad96ab">UNDO_ROTATE</a> = 3
 <br />
  }</td></tr>
 <tr class="separator:a1350ec2303767bc8a26790e0f09cfb16"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -700,10 +706,18 @@ Functions</h2></td></tr>
 <tr class="separator:a9e5b3e8dea9ec734ded845aa6e2cd2aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae207042bd1d6e583eb916f78118b5286" id="r_ae207042bd1d6e583eb916f78118b5286"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ae207042bd1d6e583eb916f78118b5286">inverse_julia_fractal_type</a> ()</td></tr>
 <tr class="separator:ae207042bd1d6e583eb916f78118b5286"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95076ba20db1921b05fe6e365dea334e" id="r_a95076ba20db1921b05fe6e365dea334e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a95076ba20db1921b05fe6e365dea334e">make_inverse_julia_keyboard_handler</a> (<a class="el" href="../../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html">engine::InverseJuliaKeyboardContext</a> &amp;context)</td></tr>
+<tr class="separator:a95076ba20db1921b05fe6e365dea334e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdc2384c0935b8513c16d1167859f71e" id="r_afdc2384c0935b8513c16d1167859f71e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#afdc2384c0935b8513c16d1167859f71e">process_inverse_julia_keyboard</a> (<a class="el" href="../../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html">engine::InverseJuliaKeyboardContext</a> &amp;context, <a class="el" href="../../d6/ddb/classid_1_1ui_1_1CrossHairCursor.html">CrossHairCursor</a> &amp;cursor, bool wait_for_key)</td></tr>
+<tr class="separator:afdc2384c0935b8513c16d1167859f71e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6187df3f5982f944c819e75b150a7ea" id="r_ac6187df3f5982f944c819e75b150a7ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ac6187df3f5982f944c819e75b150a7ea">requeue_inverse_julia_key</a> (int key)</td></tr>
+<tr class="separator:ac6187df3f5982f944c819e75b150a7ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6caaf1d9730fa285b3d84310e0a3051" id="r_ae6caaf1d9730fa285b3d84310e0a3051"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ae6caaf1d9730fa285b3d84310e0a3051">push_keyboard_handler</a> (<a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a> handler)</td></tr>
 <tr class="separator:ae6caaf1d9730fa285b3d84310e0a3051"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac695de5cc58cc14860e6004c8ce9a627" id="r_ac695de5cc58cc14860e6004c8ce9a627"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ac695de5cc58cc14860e6004c8ce9a627">pop_keyboard_handler</a> (const <a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a> &amp;handler)</td></tr>
 <tr class="separator:ac695de5cc58cc14860e6004c8ce9a627"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4360c3db3e584f575977876c6ab7b976" id="r_a4360c3db3e584f575977876c6ab7b976"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a4360c3db3e584f575977876c6ab7b976">dispatch_keyboard_key</a> (int key)</td></tr>
+<tr class="separator:a4360c3db3e584f575977876c6ab7b976"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98023311e694a654472136501fe53317" id="r_a98023311e694a654472136501fe53317"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a98023311e694a654472136501fe53317">set_calc_interrupted</a> ()</td></tr>
 <tr class="separator:a98023311e694a654472136501fe53317"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5b1c33ff31d4f266fbdc2c3bfd6aed2" id="r_ae5b1c33ff31d4f266fbdc2c3bfd6aed2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">reset_calc_interrupted</a> ()</td></tr>
@@ -828,6 +842,8 @@ Functions</h2></td></tr>
 <tr class="separator:a23fa5bf3a85f7a787f57ff046c3528a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31b8be0b29882a1670223fb506d6b198" id="r_a31b8be0b29882a1670223fb506d6b198"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a31b8be0b29882a1670223fb506d6b198">standard_4d_type</a> ()</td></tr>
 <tr class="separator:a31b8be0b29882a1670223fb506d6b198"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e688959350c92a1795050189623c358" id="r_a1e688959350c92a1795050189623c358"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a1e688959350c92a1795050189623c358">standard_fractal</a> ()</td></tr>
+<tr class="separator:a1e688959350c92a1795050189623c358"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aae7c8331b54387779b030b56f1aa40fd" id="r_aae7c8331b54387779b030b56f1aa40fd"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#aae7c8331b54387779b030b56f1aa40fd">get_star_field_params</a> ()</td></tr>
 <tr class="separator:aae7c8331b54387779b030b56f1aa40fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91ff987a87be5f11e2fb5ba567fd7f4e" id="r_a91ff987a87be5f11e2fb5ba567fd7f4e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a91ff987a87be5f11e2fb5ba567fd7f4e">star_field</a> ()</td></tr>
@@ -1511,6 +1527,7 @@ Variables</h2></td></tr>
 <tr><td class="fieldname"><a id="a1350ec2303767bc8a26790e0f09cfb16a111466bf41cac54caa857725a7cbf065" name="a1350ec2303767bc8a26790e0f09cfb16a111466bf41cac54caa857725a7cbf065"></a>BOX_INC&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a1350ec2303767bc8a26790e0f09cfb16a87b3416c49e1896189d35e83f179a11e" name="a1350ec2303767bc8a26790e0f09cfb16a87b3416c49e1896189d35e83f179a11e"></a>CSIZE_INC&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a1350ec2303767bc8a26790e0f09cfb16ac174aa46cade2f253605b6a979b0b375" name="a1350ec2303767bc8a26790e0f09cfb16ac174aa46cade2f253605b6a979b0b375"></a>CURSOR_BLINK_RATE&#160;</td><td class="fielddoc"></td></tr>
+<tr><td class="fieldname"><a id="a1350ec2303767bc8a26790e0f09cfb16ab8dfc154b31040acc2b39bd655e25ec0" name="a1350ec2303767bc8a26790e0f09cfb16ab8dfc154b31040acc2b39bd655e25ec0"></a>CURSOR_POLL_INTERVAL&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a1350ec2303767bc8a26790e0f09cfb16ab5f02aedec35d8859c5ee1ef67f59ffe" name="a1350ec2303767bc8a26790e0f09cfb16ab5f02aedec35d8859c5ee1ef67f59ffe"></a>FAR_RESERVE&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a1350ec2303767bc8a26790e0f09cfb16af7b9c56c2e76931d7ac58e6ee9b6b076" name="a1350ec2303767bc8a26790e0f09cfb16af7b9c56c2e76931d7ac58e6ee9b6b076"></a>TITLE_LEN&#160;</td><td class="fielddoc"></td></tr>
 <tr><td class="fieldname"><a id="a1350ec2303767bc8a26790e0f09cfb16a0d263f52c4fef7b61f56a135fda30ce6" name="a1350ec2303767bc8a26790e0f09cfb16a0d263f52c4fef7b61f56a135fda30ce6"></a>EDITOR_WIDTH&#160;</td><td class="fielddoc"></td></tr>
@@ -2276,7 +2293,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00073">73</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00081">81</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>
@@ -2428,7 +2445,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01003">1003</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01002">1002</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -2564,7 +2581,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01127">1127</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01126">1126</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -2717,6 +2734,26 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00499">499</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a4360c3db3e584f575977876c6ab7b976" name="a4360c3db3e584f575977876c6ab7b976"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4360c3db3e584f575977876c6ab7b976">&#9670;&#160;</a></span>dispatch_keyboard_key()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool id::ui::dispatch_keyboard_key </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00059">59</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>
@@ -2963,7 +3000,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l02825">2825</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l02841">2841</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
 
 </div>
 </div>
@@ -3222,7 +3259,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html#l00024">24</a> of file <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html">find_special_colors.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html#l00034">34</a> of file <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html">find_special_colors.cpp</a>.</p>
 
 </div>
 </div>
@@ -3336,7 +3373,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../dc/d94/frothy__basin_8cpp_source.html#l00014">14</a> of file <a class="el" href="../../dc/d94/frothy__basin_8cpp_source.html">frothy_basin.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../dc/d94/frothy__basin_8cpp_source.html#l00033">33</a> of file <a class="el" href="../../dc/d94/frothy__basin_8cpp_source.html">frothy_basin.cpp</a>.</p>
 
 </div>
 </div>
@@ -3905,7 +3942,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00513">513</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00514">514</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
 
 </div>
 </div>
@@ -4253,7 +4290,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01136">1136</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01135">1135</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -4331,7 +4368,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l00733">733</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l00732">732</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -4495,7 +4532,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html#l00016">16</a> of file <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html">inverse_julia.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html#l00290">290</a> of file <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html">inverse_julia.cpp</a>.</p>
 
 </div>
 </div>
@@ -4594,6 +4631,26 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../da/d7f/make__batch__file_8cpp_source.html#l00363">363</a> of file <a class="el" href="../../da/d7f/make__batch__file_8cpp_source.html">make_batch_file.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a95076ba20db1921b05fe6e365dea334e" name="a95076ba20db1921b05fe6e365dea334e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95076ba20db1921b05fe6e365dea334e">&#9670;&#160;</a></span>make_inverse_julia_keyboard_handler()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a> id::ui::make_inverse_julia_keyboard_handler </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html">engine::InverseJuliaKeyboardContext</a> &amp;&#160;</td>
+          <td class="paramname"><em>context</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html#l00257">257</a> of file <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html">inverse_julia.cpp</a>.</p>
 
 </div>
 </div>
@@ -5000,7 +5057,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01011">1011</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01010">1010</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -6105,7 +6162,7 @@ Variables</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00052">52</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00048">48</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>
@@ -6125,6 +6182,42 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../d7/da9/diskvid_8cpp_source.html#l00123">123</a> of file <a class="el" href="../../d7/da9/diskvid_8cpp_source.html">diskvid.cpp</a>.</p>
+
+</div>
+</div>
+<a id="afdc2384c0935b8513c16d1167859f71e" name="afdc2384c0935b8513c16d1167859f71e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdc2384c0935b8513c16d1167859f71e">&#9670;&#160;</a></span>process_inverse_julia_keyboard()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool id::ui::process_inverse_julia_keyboard </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="../../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html">engine::InverseJuliaKeyboardContext</a> &amp;&#160;</td>
+          <td class="paramname"><em>context</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d6/ddb/classid_1_1ui_1_1CrossHairCursor.html">CrossHairCursor</a> &amp;&#160;</td>
+          <td class="paramname"><em>cursor</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>wait_for_key</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html#l00262">262</a> of file <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html">inverse_julia.cpp</a>.</p>
 
 </div>
 </div>
@@ -6166,7 +6259,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00046">46</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00042">42</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>
@@ -6314,7 +6407,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00518">518</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00519">519</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
 
 </div>
 </div>
@@ -6509,7 +6602,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d3f/read__ticker_8cpp_source.html#l00012">12</a> of file <a class="el" href="../../d3/d3f/read__ticker_8cpp_source.html">read_ticker.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d3/d3f/read__ticker_8cpp_source.html#l00023">23</a> of file <a class="el" href="../../d3/d3f/read__ticker_8cpp_source.html">read_ticker.cpp</a>.</p>
 
 </div>
 </div>
@@ -6628,7 +6721,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01078">1078</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01077">1077</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -6648,7 +6741,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01093">1093</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01092">1092</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -6672,6 +6765,26 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
 
 </div>
 </div>
+<a id="ac6187df3f5982f944c819e75b150a7ea" name="ac6187df3f5982f944c819e75b150a7ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac6187df3f5982f944c819e75b150a7ea">&#9670;&#160;</a></span>requeue_inverse_julia_key()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void id::ui::requeue_inverse_julia_key </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>key</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html#l00285">285</a> of file <a class="el" href="../../d7/d41/inverse__julia_8cpp_source.html">inverse_julia.cpp</a>.</p>
+
+</div>
+</div>
 <a id="ae5b1c33ff31d4f266fbdc2c3bfd6aed2" name="ae5b1c33ff31d4f266fbdc2c3bfd6aed2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae5b1c33ff31d4f266fbdc2c3bfd6aed2">&#9670;&#160;</a></span>reset_calc_interrupted()</h2>
 
@@ -6687,7 +6800,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00068">68</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00076">76</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>
@@ -6706,7 +6819,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01064">1064</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01063">1063</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -6958,7 +7071,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00063">63</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html#l00071">71</a> of file <a class="el" href="../../d3/d5d/KeyboardHandler_8cpp_source.html">KeyboardHandler.cpp</a>.</p>
 
 </div>
 </div>
@@ -7294,7 +7407,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01101">1101</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01100">1100</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -7314,7 +7427,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01114">1114</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01113">1113</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -7373,6 +7486,25 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
 </div><div class="memdoc">
 
 <p class="definition">Definition at line <a class="el" href="../../d0/d10/standard__4d_8cpp_source.html#l00014">14</a> of file <a class="el" href="../../d0/d10/standard__4d_8cpp_source.html">standard_4d.cpp</a>.</p>
+
+</div>
+</div>
+<a id="a1e688959350c92a1795050189623c358" name="a1e688959350c92a1795050189623c358"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e688959350c92a1795050189623c358">&#9670;&#160;</a></span>standard_fractal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int id::ui::standard_fractal </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="../../d3/d23/standard__fractal_8cpp_source.html#l00045">45</a> of file <a class="el" href="../../d3/d23/standard__fractal_8cpp_source.html">standard_fractal.cpp</a>.</p>
 
 </div>
 </div>
@@ -7975,7 +8107,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01213">1213</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01212">1212</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -7995,7 +8127,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01198">1198</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01197">1197</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -8015,7 +8147,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01145">1145</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01144">1144</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -8035,7 +8167,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01207">1207</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01206">1206</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -8055,7 +8187,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01189">1189</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01188">1188</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -8075,7 +8207,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01172">1172</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d8/d90/zoom_8cpp_source.html#l01171">1171</a> of file <a class="el" href="../../d8/d90/zoom_8cpp_source.html">zoom.cpp</a>.</p>
 
 </div>
 </div>
@@ -8343,7 +8475,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html#l00016">16</a> of file <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html">find_special_colors.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html#l00026">26</a> of file <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html">find_special_colors.cpp</a>.</p>
 
 </div>
 </div>
@@ -8359,7 +8491,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html#l00015">15</a> of file <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html">find_special_colors.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html#l00025">25</a> of file <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html">find_special_colors.cpp</a>.</p>
 
 </div>
 </div>
@@ -8375,7 +8507,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html#l00017">17</a> of file <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html">find_special_colors.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html#l00027">27</a> of file <a class="el" href="../../d1/d3d/find__special__colors_8cpp_source.html">find_special_colors.cpp</a>.</p>
 
 </div>
 </div>
@@ -8983,7 +9115,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00366">366</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00367">367</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
 
 </div>
 </div>
@@ -9306,7 +9438,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00365">365</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00366">366</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
 
 </div>
 </div>
@@ -9586,7 +9718,7 @@ template&lt;std::size_t MAX_CHARS&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00071">71</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
+<p class="definition">Definition at line <a class="el" href="../../db/df6/editpal_8cpp_source.html#l00072">72</a> of file <a class="el" href="../../db/df6/editpal_8cpp_source.html">editpal.cpp</a>.</p>
 
 </div>
 </div>

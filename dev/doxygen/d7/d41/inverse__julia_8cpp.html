@@ -75,6 +75,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">inverse_julia.cpp File Reference</div></div>
@@ -84,10 +85,22 @@ $(function() {
 <code>#include &quot;<a class="el" href="../../dd/d84/jiim_8h_source.html">engine/jiim.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d2/d95/resume_8h_source.html">engine/resume.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d7/d61/fractalp_8h_source.html">fractals/fractalp.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../dd/d3c/Driver_8h_source.html">misc/Driver.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d3/d59/ValueSaver_8h_source.html">misc/ValueSaver.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="../../d1/dba/check__key_8h_source.html">ui/check_key.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../de/db4/editpal_8h_source.html">ui/editpal.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d5/d13/get__a__number_8h_source.html">ui/get_a_number.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../d7/de4/id__keys_8h_source.html">ui/id_keys.h</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="../../dc/ded/mouse_8h_source.html">ui/mouse.h</a>&quot;</code><br />
+<code>#include &lt;memory&gt;</code><br />
 </div>
 <p><a href="../../d7/d41/inverse__julia_8cpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/dbd/classid_1_1ui_1_1InverseJuliaMouseScope_1_1Impl.html">id::ui::InverseJuliaMouseScope::Impl</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:d5/dd7/namespaceid" id="r_d5/dd7/namespaceid"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d5/dd7/namespaceid.html">id</a></td></tr>
@@ -97,6 +110,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
+<tr class="memitem:a95076ba20db1921b05fe6e365dea334e" id="r_a95076ba20db1921b05fe6e365dea334e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a5e073219250ba8f17eba8e2c3158b864">KeyboardHandlerPtr</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#a95076ba20db1921b05fe6e365dea334e">id::ui::make_inverse_julia_keyboard_handler</a> (<a class="el" href="../../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html">engine::InverseJuliaKeyboardContext</a> &amp;context)</td></tr>
+<tr class="separator:a95076ba20db1921b05fe6e365dea334e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdc2384c0935b8513c16d1167859f71e" id="r_afdc2384c0935b8513c16d1167859f71e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#afdc2384c0935b8513c16d1167859f71e">id::ui::process_inverse_julia_keyboard</a> (<a class="el" href="../../d7/d08/classid_1_1engine_1_1InverseJuliaKeyboardContext.html">engine::InverseJuliaKeyboardContext</a> &amp;context, <a class="el" href="../../d6/ddb/classid_1_1ui_1_1CrossHairCursor.html">CrossHairCursor</a> &amp;cursor, bool wait_for_key)</td></tr>
+<tr class="separator:afdc2384c0935b8513c16d1167859f71e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6187df3f5982f944c819e75b150a7ea" id="r_ac6187df3f5982f944c819e75b150a7ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ac6187df3f5982f944c819e75b150a7ea">id::ui::requeue_inverse_julia_key</a> (int key)</td></tr>
+<tr class="separator:ac6187df3f5982f944c819e75b150a7ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae207042bd1d6e583eb916f78118b5286" id="r_ae207042bd1d6e583eb916f78118b5286"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dc/d76/namespaceid_1_1ui.html#ae207042bd1d6e583eb916f78118b5286">id::ui::inverse_julia_fractal_type</a> ()</td></tr>
 <tr class="separator:ae207042bd1d6e583eb916f78118b5286"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
