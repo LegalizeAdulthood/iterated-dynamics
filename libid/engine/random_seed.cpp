@@ -40,7 +40,7 @@ int random15()
 int random15(std::uint32_t &state)
 {
     state = state * RANDOM_MULTIPLIER + RANDOM_INCREMENT;
-    return static_cast<int>((state >> 16U) & RANDOM_MAX);
+    return static_cast<int>((state >> 16U) & ID_RANDOM_MAX);
 }
 
 int random_int(const int limit)
@@ -50,7 +50,7 @@ int random_int(const int limit)
 
 double random_unit()
 {
-    return static_cast<double>(random15()) / RANDOM_MAX;
+    return static_cast<double>(random15()) / ID_RANDOM_MAX;
 }
 
 } // namespace id::engine

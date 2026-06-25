@@ -50,13 +50,13 @@ int lyapunov_type()
     g_overflow = false;
     if (g_params[1] == 1)
     {
-        g_population = (1.0 + random15()) / (2.0 + RANDOM_MAX);
+        g_population = (1.0 + random15()) / (2.0 + ID_RANDOM_MAX);
     }
     else if (g_params[1] == 0)
     {
         if (population_exceeded() || g_population == 0 || g_population == 1)
         {
-            g_population = (1.0 + random15()) / (2.0 + RANDOM_MAX);
+            g_population = (1.0 + random15()) / (2.0 + ID_RANDOM_MAX);
         }
     }
     else
