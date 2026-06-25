@@ -1827,6 +1827,10 @@ plot_pixel:
     if ((g_keyboard_check_interval -= std::abs(g_real_color_iter)) <= 0)
     {
         g_keyboard_check_interval = g_max_keyboard_check_interval;
+        if (yield_to_ui && calc_interrupted())
+        {
+            return -1;
+        }
         if (!yield_to_ui && check_key())
         {
             return -1;
