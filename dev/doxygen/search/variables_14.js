@@ -10,5 +10,5 @@ var searchData=
   ['uses_5fp4_7',['uses_p4',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a8f4f0be3b9d2c55af0df74fbe7425879',1,'id::fractals::CompiledFormula::uses_p4'],['../dd/dcb/structid_1_1io_1_1FormulaInfo.html#a8657c46746f7ac19267604035e20f78b',1,'id::io::FormulaInfo::uses_p4'],['../db/de4/structid_1_1io_1_1ExtBlock3.html#a31bf246076f75c8d70a991d9cf411b61',1,'id::io::ExtBlock3::uses_p4']]],
   ['uses_5fp5_8',['uses_p5',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#a00411f0bd128268a9ddf6d8e069f20e9',1,'id::fractals::CompiledFormula::uses_p5'],['../dd/dcb/structid_1_1io_1_1FormulaInfo.html#a4bc3e5615053b7d21092e2e6e8b17964',1,'id::io::FormulaInfo::uses_p5'],['../db/de4/structid_1_1io_1_1ExtBlock3.html#ae528ce85e17aa10f7daf42cf5e103209',1,'id::io::ExtBlock3::uses_p5']]],
   ['uses_5frand_9',['uses_rand',['../d0/d47/structid_1_1fractals_1_1CompiledFormula.html#ab8273353fbdceb2cc22a890e3824352b',1,'id::fractals::CompiledFormula']]],
-  ['uval_10',['uval',['../d8/d84/structid_1_1ui_1_1FullScreenValues.html#aa1be2b73f4815410c675aac39bf733b0',1,'id::ui::FullScreenValues']]]
+  ['uval_10',['uval',['../d8/d84/structid_1_1ui_1_1FullScreenValues.html#a0a24f6a4b1d8666b82a2c3dd0ecb85e8',1,'id::ui::FullScreenValues']]]
 ];

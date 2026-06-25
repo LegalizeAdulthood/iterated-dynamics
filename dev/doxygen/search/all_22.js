@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['z_0',['z',['../df/d3e/structid_1_1engine_1_1FiniteAttractor.html#a902da3710f36c0531aaa5fd50e8b3ec3',1,'id::engine::FiniteAttractor::z'],['../d5/d81/structid_1_1math_1_1HyperComplex.html#a552956a8ba308433ca2c223af623231d',1,'id::math::HyperComplex::z'],['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#ab1c581f7a23e192df2269505ed2f1a82',1,'id::fractals::MandelbrotMix::z'],['../de/d47/soi_8cpp.html#a08caa2a5cdd52c62ef4ee550b3516a95',1,'z:&#160;soi.cpp']]],
+  ['z_0',['z',['../df/d3e/structid_1_1engine_1_1FiniteAttractor.html#a902da3710f36c0531aaa5fd50e8b3ec3',1,'id::engine::FiniteAttractor::z'],['../d5/d81/structid_1_1math_1_1HyperComplex.html#a552956a8ba308433ca2c223af623231d',1,'id::math::HyperComplex::z'],['../d7/de2/structid_1_1fractals_1_1MandelbrotMix.html#ab1c581f7a23e192df2269505ed2f1a82',1,'id::fractals::MandelbrotMix::z']]],
   ['z_5frot_1',['z_rot',['../d6/daa/namespaceid_1_1geometry.html#a1d2a4eeab6b037311609418d1e96ef1a',1,'id::geometry']]],
   ['z_5fscroll_2',['z_scroll',['../da/d47/structid_1_1engine_1_1Viewport.html#adbd04ea6fea77ad293c7dd135c4a77e7',1,'id::engine::Viewport']]],
   ['z_5fx_5ftrig_5fplus_5fz_5forbit_3',['z_x_trig_plus_z_orbit',['../d5/d38/namespaceid_1_1fractals.html#ab3e7620e76f350d6b60947aa6d4dfaa9',1,'id::fractals']]],

@@ -10,7 +10,7 @@ var searchData=
   ['_7ecompiler_7',['~Compiler',['../d0/de5/classhc_1_1Compiler.html#a13e88e829577a49d8f8b7a71324ef965',1,'hc::Compiler']]],
   ['_7ecrosshaircursor_8',['~CrossHairCursor',['../d6/ddb/classid_1_1ui_1_1CrossHairCursor.html#ae7ba38343011eedc38a2cedb77af3810',1,'id::ui::CrossHairCursor']]],
   ['_7ecurrentpathsaver_9',['~CurrentPathSaver',['../df/d30/classid_1_1io_1_1CurrentPathSaver.html#a0f6b1b036e8f80944a836d25965b2d09',1,'id::io::CurrentPathSaver']]],
-  ['_7ediffusion_10',['~Diffusion',['../dd/d94/classid_1_1fractals_1_1Diffusion.html#aa07494cc3007cc384c55804e8e215e9c',1,'id::fractals::Diffusion']]],
+  ['_7ediffusion_10',['~diffusion',['../d4/dbc/classid_1_1engine_1_1Diffusion.html#aaf486a693675498697e2a1990a09d974',1,'id::engine::Diffusion::~Diffusion()'],['../dd/d94/classid_1_1fractals_1_1Diffusion.html#aa07494cc3007cc384c55804e8e215e9c',1,'id::fractals::Diffusion::~Diffusion()']]],
   ['_7edriver_11',['~Driver',['../d3/def/classid_1_1misc_1_1Driver.html#a763afaca906d9825dc7f1759851cb97d',1,'id::misc::Driver']]],
   ['_7edynamic2d_12',['~Dynamic2D',['../d9/db3/classid_1_1fractals_1_1Dynamic2D.html#afb3b70b37b7b3a95885d0f6075ab8b1b',1,'id::fractals::Dynamic2D']]],
   ['_7efrothybasin_13',['~frothybasin',['../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a15e75edbd13714067d00b2a46963e72c',1,'id::fractals::FrothyBasin::~FrothyBasin()=default'],['../d6/d28/classid_1_1fractals_1_1FrothyBasin.html#a15e75edbd13714067d00b2a46963e72c',1,'id::fractals::FrothyBasin::~FrothyBasin()=default']]],

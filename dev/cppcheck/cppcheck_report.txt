@@ -79,13 +79,13 @@ hc/HelpCompiler.cpp:1578:9: note: First condition
 hc/HelpCompiler.cpp:1582:9: note: Second condition
     if (!g_errors)
         ^
-libid/engine/StandardFractal.cpp:140:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
+libid/engine/StandardFractal.cpp:176:32: style: Local variable 'active_standard_fractal' shadows outer function [shadowFunction]
     ActiveStandardFractalScope active_standard_fractal{*this};
                                ^
-libid/engine/StandardFractal.cpp:77:18: note: Shadowed declaration
+libid/engine/StandardFractal.cpp:88:18: note: Shadowed declaration
 StandardFractal *active_standard_fractal()
                  ^
-libid/engine/StandardFractal.cpp:140:32: note: Shadow variable
+libid/engine/StandardFractal.cpp:176:32: note: Shadow variable
     ActiveStandardFractalScope active_standard_fractal{*this};
                                ^
 libid/engine/cmdfiles.cpp:211:26: style: Condition 'sstools_ini.empty()' is always false [knownConditionTrueFalse]

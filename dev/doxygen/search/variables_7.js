@@ -8,7 +8,6 @@ var searchData=
   ['hdr_5ffilename_5',['hdr_filename',['../db/dec/structhc_1_1HelpSource.html#aba84967f8e04e3f3254cd37de412e2aa',1,'hc::HelpSource']]],
   ['height_6',['height',['../d5/d7d/structid_1_1io_1_1MigMetadata.html#a71d60fde708e125309dce8dc7a414cf6',1,'id::io::MigMetadata']]],
   ['help_5fformula_7',['help_formula',['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a526a11b864d03f375080339e93a5ed18',1,'id::fractals::FractalSpecific']]],
-  ['help_5freal_8',['help_real',['../de/d47/soi_8cpp.html#ae19e0a933182399f8a67a126a50f1175',1,'soi.cpp']]],
-  ['help_5ftext_9',['help_text',['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a25dcbf1ff93cb38c1581975d6f007fcf',1,'id::fractals::FractalSpecific']]],
-  ['hlp_5ffilename_10',['hlp_filename',['../db/dec/structhc_1_1HelpSource.html#a578aaaaacf44960d2906cadfc84e5aa7',1,'hc::HelpSource']]]
+  ['help_5ftext_8',['help_text',['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a25dcbf1ff93cb38c1581975d6f007fcf',1,'id::fractals::FractalSpecific']]],
+  ['hlp_5ffilename_9',['hlp_filename',['../db/dec/structhc_1_1HelpSource.html#a578aaaaacf44960d2906cadfc84e5aa7',1,'hc::HelpSource']]]
 ];

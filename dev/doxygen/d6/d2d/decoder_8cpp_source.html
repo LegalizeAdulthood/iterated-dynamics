@@ -447,7 +447,7 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span><span class="comment">//</span></div>
 <div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span><span class="keyword">static</span> <span class="keywordtype">short</span> get_next_code()</div>
 <div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>{</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    <span class="keyword">static</span> Byte <a class="code hl_variable" href="../../de/d47/soi_8cpp.html#a541ba36dcff56771282931ea48b7670a">b1</a>;              <span class="comment">// Current byte</span></div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    <span class="keyword">static</span> Byte b1;              <span class="comment">// Current byte</span></div>
 <div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>    <span class="keyword">static</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> ret_code;</div>
 <div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span> </div>
 <div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>    <span class="keywordflow">if</span> (s_num_bits_left == 0)</div>
@@ -467,12 +467,12 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>                <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#ad1300eaf24cb4baf3be4f4141afcc299">get_bytes</a>(s_byte_buff, s_num_avail_bytes);</div>
 <div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>            }</div>
 <div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>        }</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>        <a class="code hl_variable" href="../../de/d47/soi_8cpp.html#a541ba36dcff56771282931ea48b7670a">b1</a> = *s_ptr_bytes++;</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span>        b1 = *s_ptr_bytes++;</div>
 <div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>        s_num_bits_left = 8;</div>
 <div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>        --s_num_avail_bytes;</div>
 <div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>    }</div>
 <div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span> </div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    ret_code = <span class="keyword">static_cast&lt;</span><span class="keywordtype">short</span><span class="keyword">&gt;</span>(<a class="code hl_variable" href="../../de/d47/soi_8cpp.html#a541ba36dcff56771282931ea48b7670a">b1</a> &gt;&gt; (8 - s_num_bits_left));</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>    ret_code = <span class="keyword">static_cast&lt;</span><span class="keywordtype">short</span><span class="keyword">&gt;</span>(b1 &gt;&gt; (8 - s_num_bits_left));</div>
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    <span class="keywordflow">while</span> (s_curr_size &gt; s_num_bits_left)</div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>    {</div>
 <div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>        <span class="keywordflow">if</span> (s_num_avail_bytes &lt;= 0)</div>
@@ -490,8 +490,8 @@ $(document).ready(function() { init_codefold(1); });
 <div class="line"><a id="l00404" name="l00404"></a><span class="lineno">  404</span>                <a class="code hl_function" href="../../d0/d19/namespaceid_1_1io.html#ad1300eaf24cb4baf3be4f4141afcc299">get_bytes</a>(s_byte_buff, s_num_avail_bytes);</div>
 <div class="line"><a id="l00405" name="l00405"></a><span class="lineno">  405</span>            }</div>
 <div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>        }</div>
-<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>        <a class="code hl_variable" href="../../de/d47/soi_8cpp.html#a541ba36dcff56771282931ea48b7670a">b1</a> = *s_ptr_bytes++;</div>
-<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>        ret_code |= <a class="code hl_variable" href="../../de/d47/soi_8cpp.html#a541ba36dcff56771282931ea48b7670a">b1</a> &lt;&lt; s_num_bits_left;</div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>        b1 = *s_ptr_bytes++;</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>        ret_code |= b1 &lt;&lt; s_num_bits_left;</div>
 <div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span>        s_num_bits_left += 8;</div>
 <div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>        --s_num_avail_bytes;</div>
 <div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span>    }</div>
@@ -539,7 +539,6 @@ $(document).ready(function() { init_codefold(1); });
 <div class="ttc" id="aparser_8cpp_html_aef565e5502196fb85f662a37cfec4227"><div class="ttname"><a href="../../dc/ddd/parser_8cpp.html#aef565e5502196fb85f662a37cfec4227">ptr</a></div><div class="ttdeci">FunctionPtr ptr</div><div class="ttdef"><b>Definition</b> <a href="../../dc/ddd/parser_8cpp_source.html#l00264">parser.cpp:264</a></div></div>
 <div class="ttc" id="apixel__limits_8h_html"><div class="ttname"><a href="../../d4/d5b/pixel__limits_8h.html">pixel_limits.h</a></div></div>
 <div class="ttc" id="asized__types_8h_html"><div class="ttname"><a href="../../d8/dc1/sized__types_8h.html">sized_types.h</a></div></div>
-<div class="ttc" id="asoi_8cpp_html_a541ba36dcff56771282931ea48b7670a"><div class="ttname"><a href="../../de/d47/soi_8cpp.html#a541ba36dcff56771282931ea48b7670a">b1</a></div><div class="ttdeci">DoubleComplex b1[3]</div><div class="ttdef"><b>Definition</b> <a href="../../de/d47/soi_8cpp_source.html#l00060">soi.cpp:60</a></div></div>
 <div class="ttc" id="avideo_8h_html"><div class="ttname"><a href="../../dd/d78/video_8h.html">video.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

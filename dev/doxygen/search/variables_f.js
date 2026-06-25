@@ -4,7 +4,7 @@ var searchData=
   ['page_1',['page',['../d8/dff/structhc_1_1Topic.html#ab040fcef261a0a9e858c386a78738ff0',1,'hc::Topic']]],
   ['page_5fnum_2',['page_num',['../d2/daa/structid_1_1help_1_1ProcessDocumentInfo.html#af0f38dacd5e426862aa9c969c4f8482b',1,'id::help::ProcessDocumentInfo']]],
   ['page_5fnum_5fpos_3',['page_num_pos',['../d4/d84/structhc_1_1Content.html#aedcf74537398c69a94f1e5f2a93305d7',1,'hc::Content']]],
-  ['param_4',['param',['../da/db4/lsystem_8cpp.html#af16d1dd9486e5263abb44ad19e947161',1,'lsystem.cpp']]],
+  ['param_4',['param',['../da/db4/lsystem_8cpp.html#a205e5a3a4173749bdaec66e2ce06a1ff',1,'lsystem.cpp']]],
   ['param3_5',['param3',['../dc/da2/structid_1_1io_1_1FractalInfo.html#a741674d9fadb0730cec86a4985891336',1,'id::io::FractalInfo']]],
   ['param4_6',['param4',['../dc/da2/structid_1_1io_1_1FractalInfo.html#aef0e4b474416c145aa0a05f6399517ca',1,'id::io::FractalInfo']]],
   ['param_5fnames_7',['param_names',['../d6/da6/structid_1_1fractals_1_1MoreParams.html#a4d191135860a1dad962ea339ebbddc54',1,'id::fractals::MoreParams::param_names'],['../d6/d98/structid_1_1fractals_1_1FractalSpecific.html#a40186bcb81f2c979940a24014d1286bd',1,'id::fractals::FractalSpecific::param_names']]],
@@ -41,8 +41,9 @@ var searchData=
   ['potential_5fparams_38',['potential_params',['../d1/d3e/history_8cpp.html#ae8879506368c38dd698700bcdfe9f28f',1,'history.cpp']]],
   ['preview_5ffactor_39',['preview_factor',['../d1/d3e/history_8cpp.html#a7bf92905c78810eacfe5910958558419',1,'preview_factor:&#160;history.cpp'],['../dc/da2/structid_1_1io_1_1FractalInfo.html#ae5d873cbd09ebd6e6c301e2d8e091293',1,'id::io::FractalInfo::preview_factor']]],
   ['private_5flabels_40',['private_labels',['../db/dec/structhc_1_1HelpSource.html#a21412b93a46ad1dffd7fb7881281ce2f',1,'hc::HelpSource']]],
-  ['ptr_41',['ptr',['../dc/ddd/parser_8cpp.html#aef565e5502196fb85f662a37cfec4227',1,'parser.cpp']]],
-  ['ptrs_42',['ptrs',['../db/def/structid_1_1fractals_1_1JumpControl.html#a8ecc7fe1e01d16b603cfd478c81f1944',1,'id::fractals::JumpControl']]],
-  ['px_43',['px',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a50e4a2ac4ab16c5d4c099e6a5fa31c26',1,'id::ui::EvolutionInfo::px'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#a10a3a05c545c02526310b007eaede25b',1,'id::io::ExtBlock6::px']]],
-  ['py_44',['py',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a1dbeca2ddba0df675d6cf00ad1d0d782',1,'id::ui::EvolutionInfo::py'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#ad11918e34fcf459136339ef5b06a2a64',1,'id::io::ExtBlock6::py']]]
+  ['progress_5fpercent_41',['progress_percent',['../de/dd2/structid_1_1engine_1_1StandardPassStatus.html#a2a7c6c3cad1e715995d73df974b73026',1,'id::engine::StandardPassStatus']]],
+  ['ptr_42',['ptr',['../dc/ddd/parser_8cpp.html#aef565e5502196fb85f662a37cfec4227',1,'parser.cpp']]],
+  ['ptrs_43',['ptrs',['../db/def/structid_1_1fractals_1_1JumpControl.html#a8ecc7fe1e01d16b603cfd478c81f1944',1,'id::fractals::JumpControl']]],
+  ['px_44',['px',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a50e4a2ac4ab16c5d4c099e6a5fa31c26',1,'id::ui::EvolutionInfo::px'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#a10a3a05c545c02526310b007eaede25b',1,'id::io::ExtBlock6::px']]],
+  ['py_45',['py',['../d3/de9/structid_1_1ui_1_1EvolutionInfo.html#a1dbeca2ddba0df675d6cf00ad1d0d782',1,'id::ui::EvolutionInfo::py'],['../de/deb/structid_1_1io_1_1ExtBlock6.html#ad11918e34fcf459136339ef5b06a2a64',1,'id::io::ExtBlock6::py']]]
 ];
