@@ -818,6 +818,7 @@ jobs:
             curl \
             git \
             ninja \
+            nuget \
             rsync-- \
             unzip-- \
             zip
