@@ -585,6 +585,145 @@ jobs:
         compression-level: 0
 
   #############################################################################
+  build-freebsd:
+    needs: [ html-docs, pdf-docs ]
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      with:
+        fetch-depth: 0
+        submodules: true
+
+    - name: Get prebuilt HTML documentation
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: html-docs
+        path: ${{github.workspace}}/build-ci-release/hc/src
+
+    - name: Get prebuilt PDF documentation
+      uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+      with:
+        name: pdf-docs
+        path: ${{github.workspace}}/build-ci-release/hc/src
+
+    - name: Verify prebuilt documentation
+      run: >
+        cmake -E sha256sum
+        ${{github.workspace}}/build-ci-release/hc/src/id.html
+        ${{github.workspace}}/build-ci-release/hc/src/id.pdf
+
+    - name: Generate vcpkg cache setup script
+      id: vc
+      uses: LegalizeAdulthood/vcpkg-github-cache@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      with:
+        token: ${{github.token}}
+        execution-mode: emit-script
+        target-os: freebsd
+        bootstrap: "true"
+        install-nuget: "true"
+        install-mono: "true"
+        debug: "false"
+        trace: "false"
+
+    - name: Run FreeBSD workflow
+      uses: vmactions/freebsd-vm@b84ab5559b5a1bb4b8ee2737d2506a16e1737636 # v1.4.8
+      env:
+        VCPKG_GITHUB_CACHE_TOKEN: ${{github.token}}
+        VCPKG_ROOT: vcpkg
+      with:
+        release: "14.3"
+        usesh: true
+        sync: rsync
+        copyback: true
+        envs: VCPKG_GITHUB_CACHE_TOKEN VCPKG_ROOT
+        prepare: |
+          pkg update
+          pkg install -y \
+            autoconf \
+            automake \
+            bash \
+            bison \
+            cmake \
+            curl \
+            gettext-tools \
+            git \
+            gmake \
+            libX11 \
+            libtool \
+            ninja \
+            patchelf \
+            perl5 \
+            pkgconf \
+            rsync \
+            unzip \
+            xauth \
+            xorg-vfbserver \
+            zip
+        run: |
+          set +e
+          set -u
+          mkdir -p .freebsd-copyback
+
+          {
+            status=0
+            sh "${{steps.vc.outputs.setup-script}}" || status=$?
+            if [ "${status}" -eq 0 ]; then
+              . "${{steps.vc.outputs.setup-env}}" || status=$?
+            fi
+            if [ "${status}" -eq 0 ]; then
+              test -f build-ci-release/hc/src/id.html &&
+              test -f build-ci-release/hc/src/id.pdf &&
+              cmake --version
+              status=$?
+            fi
+            if [ "${status}" -eq 0 ]; then
+              /usr/local/bin/Xvfb :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
+              xvfb_pid=$!
+              sleep 3
+              DISPLAY=:99 cmake --workflow --preset ci-release
+              status=$?
+              kill "$xvfb_pid" || true
+            fi
+            echo "${status}" > build.status
+          } 2>&1 | tee build.log
+
+          cp build.log build.status .freebsd-copyback/
+          if [ -f xvfb.log ]; then
+            cp xvfb.log .freebsd-copyback/
+          fi
+          find . -mindepth 1 -maxdepth 1 ! -name .git \
+            ! -name .freebsd-copyback -exec rm -rf {} +
+          mv .freebsd-copyback/* .
+          rmdir .freebsd-copyback
+
+    # TODO: Copy CPack artifacts back out of the FreeBSD VM and upload them.
+
+    - name: Analyze vcpkg package cache
+      if: always()
+      uses: LegalizeAdulthood/vcpkg-github-cache/analyze@61ad6626abf2cf9e92ea53078c695dbfb0ad6e8d # v1.3.0
+      with:
+        token: ${{github.token}}
+        build-log: build.log
+        artifact-name: vcpkg-cache-diagnostics-${{github.workflow}}-${{github.job}}-${{github.run_attempt}}
+        fail-on: "never"
+        debug: "false"
+        trace: "false"
+
+    - name: Check FreeBSD build status
+      if: always()
+      run: |
+        if [ ! -f build.status ]; then
+          echo "build.status was not copied back from the FreeBSD VM"
+          exit 1
+        fi
+        exit "$(cat build.status)"
+
+  #############################################################################
   # When a tag is pushed, create a draft release from the build assets
   release:
     if: ${{github.event_name == 'push' && github.ref_type == 'tag'}}
