@@ -842,6 +842,7 @@ jobs:
               /usr/X11R6/bin/Xvfb :99 -screen 0 1024x768x24 >xvfb.log 2>&1 &
               xvfb_pid=$!
               sleep 3
+              export VCPKG_FORCE_SYSTEM_BINARIES=1
               DISPLAY=:99 cmake --workflow --preset ci-release
               status=$?
               kill "$xvfb_pid" || true
