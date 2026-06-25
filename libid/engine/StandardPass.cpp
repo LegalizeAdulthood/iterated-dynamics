@@ -2,7 +2,6 @@
 //
 #include "engine/StandardPass.h"
 
-#include "engine/soi.h"
 #include "engine/sticky_orbits.h"
 #include "engine/UserData.h"
 
@@ -128,8 +127,7 @@ bool StandardPass::iterate()
     switch (m_state.index())
     {
     case SYNCHRONOUS_ORBIT:
-        soi();
-        return true;
+        return std::get<SOI>(m_state).iterate();
 
     case BOUNDARY_TRACE:
         return std::get<BoundaryTrace>(m_state).iterate();
@@ -183,7 +181,7 @@ void StandardPass::select(const CalcMode calc_mode)
         break;
 
     case CalcMode::SYNCHRONOUS_ORBIT:
-        m_state.emplace<SynchronousOrbit>();
+        m_state.emplace<SOI>();
         break;
 
     case CalcMode::BOUNDARY_TRACE:

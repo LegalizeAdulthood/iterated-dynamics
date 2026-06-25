@@ -38,58 +38,6 @@ enum
     BASIN_COLOR = 0
 };
 
-namespace
-{
-
-class SOI
-{
-public:
-    void calculate();
-
-private:
-    bool rhombus(double c_re1, double c_re2, double c_im1, double c_im2,     //
-        int x1, int x2, int y1, int y2, long iter);
-    bool rhombus_aux(double c_re1, double c_re2, double c_im1, double c_im2, //
-        int x1, int x2, int y1, int y2, long iter);
-    bool rhombus2(double cre1, double cre2, double cim1, double cim2,        //
-        int x1, int x2, int y1, int y2,                                      //
-        double zre1, double zim1, double zre2, double zim2,                  //
-        double zre3, double zim3, double zre4, double zim4,                  //
-        double zre5, double zim5, double zre6, double zim6,                  //
-        double zre7, double zim7, double zre8, double zim8,                  //
-        double zre9, double zim9, long iter);
-    bool rhombus2(double cre1, double cre2, double cim1, double cim2,        //
-        int x1, int x2, int y1, int y2,                                      //
-        DComplex z1, DComplex z2,                                  //
-        DComplex z3, DComplex z4,                                  //
-        double zre5, double zim5, double zre6, double zim6,                  //
-        double zre7, double zim7, double zre8, double zim8,                  //
-        double zre9, double zim9, long iter);
-    void soi_orbit(DComplex &z, DComplex &rq, double cr, double ci, bool &esc);
-
-    DComplex m_zi[9]{};
-    bool m_esc[9]{};
-    bool m_t_esc[4]{};
-    DComplex m_z{};
-    DComplex m_step{};
-    double m_interleave_step{};
-    double m_help_real{};
-    DComplex m_scan_z{};
-    DComplex m_b1[3]{};
-    DComplex m_b2[3]{};
-    DComplex m_b3[3]{};
-    DComplex m_limit{};
-    DComplex m_rq[9]{};
-    DComplex m_corner[2]{};
-    DComplex m_tz[4]{};
-    DComplex m_tq[4]{};
-    double m_t_width{};
-    double m_equal{};
-    int m_rhombus_depth{-1};
-};
-
-} // namespace
-
 int g_rhombus_stack[10]{};
 int g_max_rhombus_depth{};
 int g_soi_min_stack_available{};
@@ -809,10 +757,16 @@ void SOI::calculate()
         1);
 }
 
+bool SOI::iterate()
+{
+    calculate();
+    return true;
+}
+
 void soi()
 {
     SOI soi_calculation;
-    soi_calculation.calculate();
+    soi_calculation.iterate();
 }
 
 } // namespace id::engine
