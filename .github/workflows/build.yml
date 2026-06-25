@@ -847,6 +847,7 @@ jobs:
                 status=1
               else
                 nuget_dir=$(dirname "${nuget_exe}")
+                chmod +x "${nuget_exe}"
                 ln -sf nuget.exe "${nuget_dir}/nuget"
                 export PATH="${nuget_dir}:${PATH}"
               fi
