@@ -32,9 +32,4 @@ target_include_directories(id PUBLIC .)
 target_link_libraries(id PUBLIC libid)
 gui_executable(id RUNTIME_NAME xid)
 vs_debugger_directory(id "${CMAKE_SOURCE_DIR}/home")
-install(TARGETS id
-    DESTINATION .
-    RUNTIME_DEPENDENCIES
-        PRE_EXCLUDE_REGEXES "api-ms-.*" "ext-ms-.*"
-        POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
-)
+install(TARGETS id DESTINATION .)
