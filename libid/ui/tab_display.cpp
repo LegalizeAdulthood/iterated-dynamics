@@ -5,7 +5,6 @@
 #include "engine/calc_frac_init.h"
 #include "engine/cmdfiles.h"
 #include "engine/convert_center_mag.h"
-#include "engine/diffusion_scan.h"
 #include "engine/engine_timer.h"
 #include "engine/ImageRegion.h"
 #include "engine/Inversion.h"
@@ -14,6 +13,7 @@
 #include "engine/random_seed.h"
 #include "engine/soi.h"
 #include "engine/spindac.h"
+#include "engine/StandardFractal.h"
 #include "engine/text_color.h"
 #include "engine/trig_fns.h"
 #include "engine/type_has_param.h"
@@ -281,8 +281,10 @@ int tab_display() // display the status of the current image
     }
 
 top:
-    int k = 0;                                     /* initialize here so parameter line displays correctly on return
-                                                    from control-tab */
+    const StandardPassStatus pass_status{current_standard_pass_status()};
+    // Initialize here so parameter line displays correctly on return
+    // from control-tab.
+    int k = 0;
     help_title();
     driver_set_attr(1, 0, C_GENERAL_MED, 24 * 80); // init rest to background
     int start_row = 2;
@@ -391,83 +393,28 @@ top:
     if (g_passes != Passes::NONE &&
         (g_calc_status == CalcStatus::IN_PROGRESS || g_calc_status == CalcStatus::RESUMABLE))
     {
-        switch (g_passes)
+        if (g_passes == Passes::THREE_D)
         {
-        case Passes::SEQUENTIAL_SCAN:
-            put_format(start_row, 2, C_GENERAL_HI, "{:d} Pass Mode", g_total_passes);
-            if (g_user.std_calc_mode == CalcMode::THREE_PASS)
-            {
-                driver_put_string(start_row, -1, C_GENERAL_HI, " (threepass)");
-            }
-            break;
-        case Passes::SOLID_GUESS:
-            driver_put_string(start_row, 2, C_GENERAL_HI, "Solid Guessing");
-            if (g_user.std_calc_mode == CalcMode::THREE_PASS)
-            {
-                driver_put_string(start_row, -1, C_GENERAL_HI, " (threepass)");
-            }
-            break;
-        case Passes::BOUNDARY_TRACE:
-            driver_put_string(start_row, 2, C_GENERAL_HI, "Boundary Tracing");
-            break;
-        case Passes::THREE_D:
             put_format(start_row, 2, C_GENERAL_HI, "Processing row {:d} (of {:d}) of input image", g_current_row,
                 g_file_y_dots);
-            break;
-        case Passes::TESSERAL:
-            driver_put_string(start_row, 2, C_GENERAL_HI, "Tesseral");
-            break;
-        case Passes::DIFFUSION:
-            driver_put_string(start_row, 2, C_GENERAL_HI, "Diffusion");
-            break;
-        case Passes::ORBITS:
-            driver_put_string(start_row, 2, C_GENERAL_HI, "Orbits");
-            break;
-        case Passes::NONE:
-            break;
-        }
-        ++start_row;
-        if (g_passes == Passes::DIFFUSION)
-        {
-            put_format(start_row, 2, C_GENERAL_MED, "{:2.2f}% done, counter at {:d} of {:d} ({:d} bits)",
-                100.0 * g_diffusion_counter / g_diffusion_limit, g_diffusion_counter, g_diffusion_limit,
-                g_diffusion_bits);
             ++start_row;
         }
-        else if (g_passes != Passes::THREE_D)
+        else if (!pass_status.title.empty())
         {
-            put_format(start_row, 2, C_GENERAL_MED, "Working on block (y, x) [{:d}, {:d}]...[{:d}, {:d}], ",
-                g_start_pt.y, g_start_pt.x, g_stop_pt.y, g_stop_pt.x);
-            if (g_passes == Passes::BOUNDARY_TRACE || g_passes == Passes::TESSERAL)
+            driver_put_string(start_row++, 2, C_GENERAL_HI, pass_status.title);
+            if (!pass_status.detail.empty())
             {
-                driver_put_string(-1, -1, C_GENERAL_MED, "at ");
-                put_format(-1, -1, C_GENERAL_HI, "[{:d}, {:d}]", g_current_row, g_current_column);
+                driver_put_string(start_row++, 2, C_GENERAL_MED, pass_status.detail);
             }
-            else
-            {
-                if (g_total_passes > 1)
-                {
-                    driver_put_string(-1, -1, C_GENERAL_MED, "pass ");
-                    put_format(-1, -1, C_GENERAL_HI, "{:d}", g_current_pass);
-                    driver_put_string(-1, -1, C_GENERAL_MED, " of ");
-                    put_format(-1, -1, C_GENERAL_HI, "{:d}", g_total_passes);
-                    driver_put_string(-1, -1, C_GENERAL_MED, ", ");
-                }
-                driver_put_string(-1, -1, C_GENERAL_MED, "at row ");
-                put_format(-1, -1, C_GENERAL_HI, "{:d}", g_current_row);
-                driver_put_string(-1, -1, C_GENERAL_MED, " col ");
-                put_format(-1, -1, C_GENERAL_HI, "{:d}", g_col);
-            }
-            ++start_row;
         }
     }
     driver_put_string(start_row, 2, C_GENERAL_MED, "Calculation time:");
     driver_put_string(-1, -1, C_GENERAL_HI, get_calculation_time(g_calc_time));
-    if (g_passes == Passes::DIFFUSION && g_calc_status == CalcStatus::IN_PROGRESS) // estimate total time
+    if (pass_status.progress_percent > 0.0F && g_calc_status == CalcStatus::IN_PROGRESS) // estimate total time
     {
         driver_put_string(-1, -1, C_GENERAL_MED, " estimated total time: ");
-        const std::string time{get_calculation_time(
-            static_cast<long>(g_calc_time * (static_cast<double>(g_diffusion_limit) / g_diffusion_counter)))};
+        const std::string time{
+            get_calculation_time(static_cast<long>(g_calc_time * (100.0F / pass_status.progress_percent)))};
         driver_put_string(-1, -1, C_GENERAL_HI, time);
     }
 

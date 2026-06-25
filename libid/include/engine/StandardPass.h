@@ -8,10 +8,18 @@
 #include "engine/solid_guess.h"
 #include "engine/tesseral.h"
 
+#include <string>
 #include <variant>
 
 namespace id::engine
 {
+
+struct StandardPassStatus
+{
+    std::string title;
+    std::string detail;
+    float progress_percent{};
+};
 
 class StandardPass
 {
@@ -27,6 +35,7 @@ public:
     bool iterate();
     void reset();
     void select(CalcMode calc_mode);
+    StandardPassStatus status() const;
     void suspend();
 
 private:

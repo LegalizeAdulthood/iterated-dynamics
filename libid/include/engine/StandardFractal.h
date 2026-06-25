@@ -24,6 +24,8 @@ public:
 
     void iterate();
 
+    StandardPassStatus standard_pass_status() const;
+
 private:
     enum class Phase
     {
@@ -86,6 +88,7 @@ private:
 };
 
 StandardFractal *active_standard_fractal();
+StandardPassStatus current_standard_pass_status();
 StandardFractal *set_active_standard_fractal(StandardFractal *standard_fractal);
 
 } // namespace id::engine

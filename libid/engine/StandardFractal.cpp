@@ -31,6 +31,7 @@ namespace
 {
 
 StandardFractal *s_active_standard_fractal{};
+StandardPassStatus s_standard_pass_status{};
 
 class ActiveStandardFractalScope
 {
@@ -65,11 +66,41 @@ CalcMode followup_calc_mode()
     return g_logical_screen.x_dots >= 640 ? CalcMode::TWO_PASS : CalcMode::ONE_PASS;
 }
 
+bool is_standard_pass_display()
+{
+    switch (g_passes)
+    {
+    case Passes::SEQUENTIAL_SCAN:
+    case Passes::SOLID_GUESS:
+    case Passes::BOUNDARY_TRACE:
+    case Passes::TESSERAL:
+    case Passes::DIFFUSION:
+    case Passes::ORBITS:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 } // namespace
 
 StandardFractal *active_standard_fractal()
 {
     return s_active_standard_fractal;
+}
+
+StandardPassStatus current_standard_pass_status()
+{
+    if (!is_standard_pass_display())
+    {
+        return {};
+    }
+    if (s_active_standard_fractal != nullptr)
+    {
+        return s_active_standard_fractal->standard_pass_status();
+    }
+    return s_standard_pass_status;
 }
 
 StandardFractal *set_active_standard_fractal(StandardFractal *standard_fractal)
@@ -90,12 +121,14 @@ void StandardFractal::resume()
     m_work_item_active = false;
     m_work_item_yielded = false;
     m_work_list_started = false;
+    s_standard_pass_status = {};
     clear_standard_pixel();
 }
 
 void StandardFractal::suspend()
 {
     m_standard_pass.suspend();
+    s_standard_pass_status = m_standard_pass.status();
     if (g_num_work_list > 0)
     {
         alloc_resume(sizeof(g_work_list) + 20, 2);
@@ -118,6 +151,11 @@ void StandardFractal::suspend()
 bool StandardFractal::done() const
 {
     return m_phase == Phase::COMPLETE;
+}
+
+StandardPassStatus StandardFractal::standard_pass_status() const
+{
+    return m_standard_pass.status();
 }
 
 void StandardFractal::iterate()
@@ -296,7 +334,9 @@ void StandardFractal::run_current_work_item_mode()
     }
 
     m_standard_pass.select(g_std_calc_mode);
-    if (!m_standard_pass.iterate())
+    const bool pass_completed{m_standard_pass.iterate()};
+    s_standard_pass_status = m_standard_pass.status();
+    if (!pass_completed)
     {
         m_work_item_yielded = true;
     }
