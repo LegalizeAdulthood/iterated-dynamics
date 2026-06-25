@@ -2,7 +2,6 @@
 //
 #include "engine/StandardPass.h"
 
-#include "engine/diffusion_scan.h"
 #include "engine/soi.h"
 #include "engine/sticky_orbits.h"
 #include "engine/UserData.h"
@@ -100,12 +99,16 @@ StandardPassStatus StandardPass::status() const
 
     if (!status.detail.empty() || m_state.index() == DIFFUSION)
     {
-        if (m_state.index() == DIFFUSION && g_diffusion_limit != 0)
+        if (m_state.index() == DIFFUSION)
         {
-            status.progress_percent =
-                100.0F * static_cast<float>(g_diffusion_counter) / static_cast<float>(g_diffusion_limit);
-            status.detail = fmt::format("{:2.2f}% done, counter at {:d} of {:d} ({:d} bits)", status.progress_percent,
-                g_diffusion_counter, g_diffusion_limit, g_diffusion_bits);
+            const Diffusion &diffusion{std::get<Diffusion>(m_state)};
+            if (diffusion.limit() != 0)
+            {
+                status.progress_percent =
+                    100.0F * static_cast<float>(diffusion.counter()) / static_cast<float>(diffusion.limit());
+                status.detail = fmt::format("{:2.2f}% done, counter at {:d} of {:d} ({:d} bits)",
+                    status.progress_percent, diffusion.counter(), diffusion.limit(), diffusion.bits());
+            }
         }
         return status;
     }
@@ -139,8 +142,7 @@ bool StandardPass::iterate()
         return true;
 
     case DIFFUSION:
-        diffusion_scan();
-        return true;
+        return std::get<Diffusion>(m_state).iterate();
 
     case TESSERAL:
     {

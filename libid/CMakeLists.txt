@@ -30,6 +30,7 @@ add_library(libid
     include/engine/color_utils.h
     include/engine/convert_center_mag.h engine/convert_center_mag.cpp
     include/engine/convert_corners.h engine/convert_corners.cpp
+    include/engine/Diffusion.h engine/Diffusion.cpp
     include/engine/diffusion_scan.h engine/diffusion_scan.cpp
     include/engine/engine_timer.h engine/engine_timer.cpp
     include/engine/find_extra_param.h engine/find_extra_param.cpp

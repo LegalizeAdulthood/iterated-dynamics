@@ -4,6 +4,7 @@
 
 #include "engine/boundary_trace.h"
 #include "engine/calcfrac.h"
+#include "engine/Diffusion.h"
 #include "engine/one_or_two_pass.h"
 #include "engine/solid_guess.h"
 #include "engine/tesseral.h"
@@ -57,10 +58,6 @@ private:
     };
 
     struct SynchronousOrbit
-    {
-    };
-
-    struct Diffusion
     {
     };
 

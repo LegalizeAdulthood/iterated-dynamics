@@ -19,7 +19,6 @@
 #include "engine/calc_frac_init.h"
 #include "engine/calmanfp.h"
 #include "engine/cmdfiles.h"
-#include "engine/diffusion_scan.h"
 #include "engine/engine_timer.h"
 #include "engine/fractalb.h"
 #include "engine/fractals.h"

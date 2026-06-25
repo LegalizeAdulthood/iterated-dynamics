@@ -145,9 +145,8 @@ The current code is already part-way through this plan:
   `g_work_pass`, and the global work list as traversal state.
 - Boundary trace is still a monolithic function with static trail state
   and work-list resume on pixel interruption.
-- Diffusion has resumable globals, such as `g_diffusion_counter`,
-  `g_diffusion_bits`, and `g_diffusion_limit`, but not an owned pass
-  object.
+- Diffusion scan traversal state is owned by the `StandardPass`
+  diffusion class.
 - Solid guessing has a concrete `SolidGuess` class, but it is stack-local
   inside `solid_guess()` and still probes keyboard input.
 - SOI still uses recursive control flow plus static/global rhombus state.
@@ -242,31 +241,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: StandardPass Diffusion State
-
-Work:
-
-- Move the `Diffusion` placeholder out of `StandardPass.h` into a
-  pass-specific header and implementation file.
-- Make `Diffusion` the concrete class that `StandardPass` stores in its
-  variant for diffusion scan.
-- Move diffusion traversal state into that class.
-- Delegate from `StandardPass::iterate()` to `Diffusion`.
-- Move resumable globals such as `g_diffusion_counter`,
-  `g_diffusion_bits`, and `g_diffusion_limit` into the pass state.
-- Keep tab-display progress state available through the existing global
-  names or explicit accessors until tab display is refactored.
-- Keep `diffusion_scan()` as a thin compatibility wrapper if needed.
-- Preserve synchronous behavior and existing key polling.
-
-Done when:
-
-- `Diffusion` is no longer an empty struct in `StandardPass.h`.
-- Diffusion traversal state is owned by the `Diffusion` class.
-- `diffusion_scan.cpp` no longer owns pass progress in globals.
-- `ImageTest.passes-diffusion` passes.
-
-### Slice 2: StandardPass SOI State
+### Slice 1: StandardPass SOI State
 
 Work:
 
@@ -291,7 +266,7 @@ Done when:
   stack-local object for each call.
 - `ImageTest.passes-synchronous-orbits` passes.
 
-### Slice 3: StandardPass Orbit Mode State
+### Slice 2: StandardPass Orbit Mode State
 
 Work:
 
@@ -318,7 +293,7 @@ Done when:
   pass state in file statics.
 - `ImageTest.passes-orbit` passes.
 
-### Slice 4: StandardFractal Pixel Yielding
+### Slice 3: StandardFractal Pixel Yielding
 
 Work:
 
@@ -346,7 +321,7 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 5: StandardFractal Perturbation Orbit Strategy
+### Slice 4: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
@@ -383,7 +358,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 6: LSystem Renderer
+### Slice 5: LSystem Renderer
 
 Work:
 
@@ -407,7 +382,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 7: Lyapunov Renderer
+### Slice 6: Lyapunov Renderer
 
 Work:
 
@@ -428,7 +403,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 8: Lorenz Photographer Mode
+### Slice 7: Lorenz Photographer Mode
 
 Work:
 
@@ -448,7 +423,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 9: Non-Interrupt Pending-Key Utilities
+### Slice 8: Non-Interrupt Pending-Key Utilities
 
 Work:
 
