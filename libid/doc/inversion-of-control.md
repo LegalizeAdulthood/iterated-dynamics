@@ -151,8 +151,8 @@ The current code is already part-way through this plan:
   inside `solid_guess()` and still probes keyboard input.
 - SOI still uses recursive control flow plus direct key polling, but its
   calculation state is owned by the `StandardPass` SOI class.
-- Orbit mode still runs through `sticky_orbits()` and `plot_orbits2d()`,
-  with traversal and interruption outside `StandardFractal`.
+- Orbit mode traversal is owned by the `StandardPass` sticky-orbits
+  class; interruption still happens in the orbit plotting helper.
 - Perturbation has a `PertEngine`, but it is file-static in
   `perturbation.cpp`, computes the full frame during setup, and should be
   moved below the pass layer per issue #180.
@@ -242,34 +242,7 @@ alternatives.  These ownership slices should preserve synchronous
 behavior and existing polling.  After pass state is owned, later slices
 can change control flow and remove direct input from calculation code.
 
-### Slice 1: StandardPass Orbit Mode State
-
-Work:
-
-- Move the orbit-mode placeholder out of `StandardPass.h` into a
-  pass-specific header and implementation file.
-- Use a concrete orbit-mode class such as `StickyOrbits` so it does not
-  collide with the existing orbit calculation helpers.
-- Make that class the concrete object that `StandardPass` stores in its
-  variant for orbit mode.
-- Delegate from `StandardPass::iterate()` to the orbit-mode class.
-- Replace file-static or implicit state in `sticky_orbits()` and
-  `plot_orbits2d()` with owned orbit-mode state where practical.
-- Keep rectangle, line, and function orbit drawing state in the pass
-  class.
-- Keep `sticky_orbits()` as a thin compatibility wrapper if needed.
-- Preserve synchronous behavior and existing key polling.
-
-Done when:
-
-- The orbit-mode placeholder is no longer an empty struct in
-  `StandardPass.h`.
-- Standard orbit-mode state is owned by the orbit-mode class.
-- `sticky_orbits.cpp` and related orbit drawing code no longer own
-  pass state in file statics.
-- `ImageTest.passes-orbit` passes.
-
-### Slice 2: StandardFractal Pixel Yielding
+### Slice 1: StandardFractal Pixel Yielding
 
 Work:
 
@@ -297,7 +270,7 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 3: StandardFractal Perturbation Orbit Strategy
+### Slice 2: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
@@ -334,7 +307,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 4: LSystem Renderer
+### Slice 3: LSystem Renderer
 
 Work:
 
@@ -358,7 +331,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 5: Lyapunov Renderer
+### Slice 4: Lyapunov Renderer
 
 Work:
 
@@ -379,7 +352,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 6: Lorenz Photographer Mode
+### Slice 5: Lorenz Photographer Mode
 
 Work:
 
@@ -399,7 +372,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 7: Non-Interrupt Pending-Key Utilities
+### Slice 6: Non-Interrupt Pending-Key Utilities
 
 Work:
 

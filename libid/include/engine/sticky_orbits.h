@@ -13,7 +13,19 @@ enum class OrbitDrawMode
     FUNCTION = 'f',
 };
 
-extern OrbitDrawMode         g_draw_mode;
+extern OrbitDrawMode g_draw_mode;
+
+class StickyOrbits
+{
+public:
+    bool iterate();
+    int scan();
+
+private:
+    int draw_function();
+    int draw_line();
+    int draw_rectangle();
+};
 
 int sticky_orbits();
 

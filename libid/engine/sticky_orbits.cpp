@@ -18,7 +18,7 @@ namespace id::engine
 
 OrbitDrawMode g_draw_mode{OrbitDrawMode::RECTANGLE};
 
-static int orbit_draw_rectangle()
+int StickyOrbits::draw_rectangle()
 {
     // draw a rectangle
     g_row = g_begin_pt.y;
@@ -44,7 +44,7 @@ static int orbit_draw_rectangle()
     return 0;
 }
 
-static int orbit_draw_line()
+int StickyOrbits::draw_line()
 {
     int final;                               // final row or column number
     int g;                                   // used to test for new row or column
@@ -185,7 +185,7 @@ static int orbit_draw_line()
 }
 
 // this code does not yet work???
-static int orbit_draw_function()
+int StickyOrbits::draw_function()
 {
     double x_ctr;
     double y_ctr;
@@ -220,7 +220,13 @@ static int orbit_draw_function()
     return 0;
 }
 
-int sticky_orbits()
+bool StickyOrbits::iterate()
+{
+    scan();
+    return true;
+}
+
+int StickyOrbits::scan()
 {
     g_passes = Passes::ORBITS; // for <tab> screen
     g_total_passes = 1;
@@ -235,14 +241,20 @@ int sticky_orbits()
     {
     case OrbitDrawMode::RECTANGLE:
     default:
-        return orbit_draw_rectangle();
+        return draw_rectangle();
 
     case OrbitDrawMode::LINE:
-        return orbit_draw_line();
+        return draw_line();
 
     case OrbitDrawMode::FUNCTION:
-        return orbit_draw_function();
+        return draw_function();
     }
+}
+
+int sticky_orbits()
+{
+    StickyOrbits sticky_orbits;
+    return sticky_orbits.scan();
 }
 
 } // namespace id::engine

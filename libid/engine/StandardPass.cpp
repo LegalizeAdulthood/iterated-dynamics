@@ -2,7 +2,6 @@
 //
 #include "engine/StandardPass.h"
 
-#include "engine/sticky_orbits.h"
 #include "engine/UserData.h"
 
 #include <fmt/format.h>
@@ -149,8 +148,7 @@ bool StandardPass::iterate()
     }
 
     case ORBIT:
-        sticky_orbits();
-        return true;
+        return std::get<StickyOrbits>(m_state).iterate();
 
     case ONE_PASS:
         return std::get<OnePass>(m_state).iterate();
@@ -201,7 +199,7 @@ void StandardPass::select(const CalcMode calc_mode)
         break;
 
     case CalcMode::ORBIT:
-        m_state.emplace<Orbit>();
+        m_state.emplace<StickyOrbits>();
         break;
 
     default:

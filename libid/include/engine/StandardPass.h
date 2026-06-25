@@ -8,6 +8,7 @@
 #include "engine/one_or_two_pass.h"
 #include "engine/soi.h"
 #include "engine/solid_guess.h"
+#include "engine/sticky_orbits.h"
 #include "engine/tesseral.h"
 
 #include <string>
@@ -58,11 +59,8 @@ private:
     {
     };
 
-    struct Orbit
-    {
-    };
-
-    using State = std::variant<NoPass, OnePass, TwoPass, SOI, BoundaryTrace, SolidGuess, Diffusion, Tesseral, Orbit>;
+    using State =
+        std::variant<NoPass, OnePass, TwoPass, SOI, BoundaryTrace, SolidGuess, Diffusion, Tesseral, StickyOrbits>;
 
     State m_state{NoPass{}};
 };
