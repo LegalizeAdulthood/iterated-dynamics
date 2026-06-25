@@ -3,11 +3,10 @@
 #pragma once
 
 #include "engine/calcfrac.h"
-#include "engine/tesseral.h"
+#include "engine/StandardPass.h"
 #include "fractals/fractalp.h"
 
 #include <array>
-#include <memory>
 
 namespace id::engine
 {
@@ -52,7 +51,7 @@ private:
     void update_timer();
 
     fractals::FractalDispatch m_saved_dispatch{};
-    std::unique_ptr<Tesseral> m_tesseral{};
+    StandardPass m_standard_pass{};
     std::array<double, 16> m_tan_table{};
     math::DComplex m_deriv{};
     math::DComplex m_dem_new{};

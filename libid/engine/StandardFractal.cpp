@@ -92,7 +92,7 @@ void StandardFractal::resume()
     m_after_work_list = AfterWorkList::COMPLETE;
     m_phase = Phase::START;
     m_dispatch_saved = false;
-    m_tesseral.reset();
+    m_standard_pass.reset();
     m_timer_started = false;
     m_work_item_active = false;
     m_work_item_yielded = false;
@@ -102,10 +102,7 @@ void StandardFractal::resume()
 
 void StandardFractal::suspend()
 {
-    if (m_tesseral != nullptr && !m_tesseral->done())
-    {
-        m_tesseral->suspend();
-    }
+    m_standard_pass.suspend();
     if (g_num_work_list > 0)
     {
         alloc_resume(sizeof(g_work_list) + 20, 2);
@@ -120,7 +117,7 @@ void StandardFractal::suspend()
         cleanup_standard_fractal_show_dot();
         m_work_item_active = false;
     }
-    m_tesseral.reset();
+    m_standard_pass.reset();
     clear_standard_pixel();
     complete();
 }
@@ -185,7 +182,7 @@ void StandardFractal::complete()
         cleanup_standard_fractal_show_dot();
         m_work_item_active = false;
     }
-    m_tesseral.reset();
+    m_standard_pass.reset();
     clear_standard_pixel();
     if (m_requested_calc_mode == CalcMode::THREE_PASS)
     {
@@ -286,6 +283,7 @@ void StandardFractal::run_current_work_item()
         return;
     }
     cleanup_standard_fractal_show_dot();
+    m_standard_pass.reset();
     m_work_item_active = false;
     if (g_num_work_list == 0)
     {
@@ -295,6 +293,8 @@ void StandardFractal::run_current_work_item()
 
 void StandardFractal::run_current_work_item_mode()
 {
+    m_standard_pass.select(g_std_calc_mode);
+
     switch (g_std_calc_mode)
     {
     case CalcMode::SYNCHRONOUS_ORBIT:
@@ -302,17 +302,13 @@ void StandardFractal::run_current_work_item_mode()
         break;
 
     case CalcMode::TESSERAL:
-        if (m_tesseral == nullptr)
-        {
-            m_tesseral = std::make_unique<Tesseral>();
-        }
-        if (!m_tesseral->iterate() || !m_tesseral->done())
+        if (!m_standard_pass.tesseral().iterate() || !m_standard_pass.tesseral().done())
         {
             m_work_item_yielded = true;
         }
         else
         {
-            m_tesseral.reset();
+            m_standard_pass.reset();
         }
         break;
 

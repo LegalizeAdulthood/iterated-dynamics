@@ -233,46 +233,7 @@ The remaining standard-pass work is mostly ownership and bounded
 iteration: moving pass traversal state out of globals, statics, stack
 locals, and recursive frames into concrete `StandardPass` state.
 
-### Slice 1: StandardPass Boundary
-
-Work:
-
-- Add grouped standard-pass state owned by concrete `StandardPass` state
-  objects.
-- Do not introduce a virtual `StandardPass` base class or polymorphic pass
-  hierarchy.
-- Prefer one `StandardPass` wrapper around a `std::variant` of concrete
-  pass implementations.
-- Group pass-specific screen traversal state: current row, current column,
-  subdivision state, block state, or scan stack.
-- Group pass-specific fill decisions: SOI, solid guess, diffusion,
-  boundary trace, and Tesseral can color pixels based on surrounding
-  orbit results.
-- Use explicit dispatch, such as a switch on `CalcMode` or a variant, to
-  advance the active `StandardPass`.
-- The active `StandardPass` sets up state for the next standard orbit call
-  only when it decides a pixel needs real orbit work.
-- Keep the existing global-variable handoff between pass traversal and
-  orbit calculation until a later refactor replaces it deliberately.
-- Keep fractal-type-specific orbit math separate from pass traversal and
-  fill decisions.
-- Do not model perturbation as a pass.  It is an alternate orbit strategy
-  under the pass layer.
-- Add the boundary without changing active pass behavior.
-
-Done when:
-
-- `StandardFractal` has an explicit place to own or select the active
-  `StandardPass`.
-- `StandardPass` exposes a single non-virtual interface and dispatches to
-  its active variant alternative.
-- Each concrete `StandardPass` owns its pass-specific traversal and fill
-  state.
-- The plan-level split is reflected in code names and ownership, even if
-  existing pass implementations are still called through temporary
-  dispatch branches.
-
-### Slice 2: StandardPass Adapter
+### Slice 1: StandardPass Adapter
 
 Work:
 
@@ -294,7 +255,7 @@ Done when:
   grouped pass state.
 - Existing standard rendering behavior is unchanged.
 
-### Slice 3: StandardFractal Pixel Yielding
+### Slice 2: StandardFractal Pixel Yielding
 
 Work:
 
@@ -322,7 +283,7 @@ Manual testing:
 - Toggle orbit display with `o` during rendering and confirm rendering
   continues.
 
-### Slice 4: StandardFractal SolidGuess State
+### Slice 3: StandardFractal SolidGuess State
 
 Work:
 
@@ -346,7 +307,7 @@ Manual testing:
 - Render `type=mandel passes=g` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 5: StandardFractal SOI Resume State
+### Slice 4: StandardFractal SOI Resume State
 
 Work:
 
@@ -369,7 +330,7 @@ Manual testing:
 - Render `type=mandel passes=s` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 6: StandardFractal Perturbation Orbit Strategy
+### Slice 5: StandardFractal Perturbation Orbit Strategy
 
 Work:
 
@@ -406,7 +367,7 @@ Manual testing:
 - Confirm progress text remains responsive during interruption and
   resume.
 
-### Slice 7: StandardFractal Orbit Mode State
+### Slice 6: StandardFractal Orbit Mode State
 
 Work:
 
@@ -430,7 +391,7 @@ Manual testing:
 - Render `type=mandel passes=o` and interrupt it.
 - Resume the interrupted render.
 
-### Slice 8: LSystem Renderer
+### Slice 7: LSystem Renderer
 
 Work:
 
@@ -454,7 +415,7 @@ Manual testing:
 - Resume the interrupted render if resume is supported for the selected
   L-system.
 
-### Slice 9: Lyapunov Renderer
+### Slice 8: Lyapunov Renderer
 
 Work:
 
@@ -475,7 +436,7 @@ Manual testing:
 
 - Render one Lyapunov image and interrupt it.
 
-### Slice 10: Lorenz Photographer Mode
+### Slice 9: Lorenz Photographer Mode
 
 Work:
 
@@ -495,7 +456,7 @@ Manual testing:
 - Exercise photographer mode.
 - Press `s` repeatedly before rendering the second image.
 
-### Slice 11: Non-Interrupt Pending-Key Utilities
+### Slice 10: Non-Interrupt Pending-Key Utilities
 
 Work:
 

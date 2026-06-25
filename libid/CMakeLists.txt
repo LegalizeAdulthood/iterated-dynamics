@@ -61,6 +61,7 @@ add_library(libid
     include/engine/sound.h engine/sound.cpp
     include/engine/spindac.h engine/spindac.cpp
     include/engine/StandardFractal.h engine/StandardFractal.cpp
+    include/engine/StandardPass.h engine/StandardPass.cpp
     include/engine/sticky_orbits.h engine/sticky_orbits.cpp
     include/engine/tesseral.h engine/tesseral.cpp
     include/engine/text_color.h engine/text_color.cpp
